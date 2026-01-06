@@ -902,11 +902,16 @@ export function patch(params: PatchContentParams): PatchContentResult {
     return __.toNativeObject(bean.execute());
 }
 
-export interface UpdateMetadataParams {
-    key: string;
+export interface EditableContentMetadata {
+    source: Content;
     language?: string;
     owner?: string;
-    branches?: string[];
+    variantOf?: string;
+}
+
+export interface UpdateMetadataParams {
+    key: string;
+    editor: (v: EditableContentMetadata) => EditableContentMetadata;
 }
 
 export interface UpdateMetadataResult<Data extends Record<string, unknown> = Record<string, unknown>, Type extends string = string> {
@@ -922,25 +927,20 @@ export interface BranchUpdateMetadataResult<Data extends Record<string, unknown>
 interface UpdateMetadataHandler {
     setKey(value: string): void;
 
-    setLanguage(value?: string): void;
-
-    setOwner(value?: string): void;
-
-    setBranches(value: string[]): void;
+    setEditor(value: ScriptValue): void;
 
     execute(): UpdateMetadataResult;
 }
 
 /**
- * This function updates metadata (language and owner) for a content.
+ * This function updates metadata (language, owner, and variantOf) for a content.
+ * The update is applied to both master and draft branches.
  *
  * @example-ref examples/content/updateMetadata.js
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.key Path or id to the content.
- * @param {string} [params.language] Language code to set for the content.
- * @param {string} [params.owner] Owner principal key to set for the content.
- * @param {string[]} [params.branches=[]] List of branches to update the content in. If not specified, the context's branch is used.
+ * @param {function} params.editor Editor callback function to modify metadata.
  *
  * @returns {object} Updated content metadata result as JSON.
  */
@@ -949,21 +949,13 @@ export function updateMetadata(params: UpdateMetadataParams): UpdateMetadataResu
 
     const {
         key,
-        language,
-        owner,
-        branches = [],
+        editor,
     } = params ?? {};
 
     const bean: UpdateMetadataHandler = __.newBean<UpdateMetadataHandler>('com.enonic.xp.lib.content.UpdateMetadataHandler');
 
     bean.setKey(key);
-    if (language != null) {
-        bean.setLanguage(language);
-    }
-    if (owner != null) {
-        bean.setOwner(owner);
-    }
-    bean.setBranches(branches);
+    bean.setEditor(__.toScriptValue(editor));
 
     return __.toNativeObject(bean.execute());
 }

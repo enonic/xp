@@ -1,15 +1,13 @@
 package com.enonic.xp.lib.content;
 
-import java.util.Locale;
-
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.EditableContentMetadata;
 import com.enonic.xp.content.UpdateMetadataParams;
 import com.enonic.xp.content.UpdateMetadataResult;
-import com.enonic.xp.security.PrincipalKey;
 
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.when;
@@ -67,23 +65,20 @@ public class UpdateMetadataHandlerTest
 
     private UpdateMetadataResult invokeUpdateMetadata( final UpdateMetadataParams params, final Content content )
     {
-        final Content.Builder<?> builder = Content.create( content );
-
-        if ( params.getLanguage() != null )
+        final EditableContentMetadata editableMetadata = new EditableContentMetadata( content );
+        
+        if ( params.getEditor() != null )
         {
-            builder.language( params.getLanguage() );
+            params.getEditor().edit( editableMetadata );
         }
 
-        if ( params.getOwner() != null )
-        {
-            builder.owner( params.getOwner() );
-        }
+        final Content updatedContent = editableMetadata.build();
 
-        final Content updatedContent = builder.build();
-
+        // Always returns both draft and master branches
         return UpdateMetadataResult.create()
             .contentId( updatedContent.getId() )
-            .addResult( params.getBranches().isEmpty() ? contentService.getBranch() : params.getBranches().first(), updatedContent )
+            .addResult( Branch.from( "draft" ), updatedContent )
+            .addResult( Branch.from( "master" ), updatedContent )
             .build();
     }
 }

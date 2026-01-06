@@ -82,12 +82,6 @@ public final class UpdateContentHandler
             target.displayName = displayName;
         }
 
-        final String languageCode = Converters.convert( map.get( "language" ), String.class );
-        if ( languageCode != null )
-        {
-            target.language = Locale.forLanguageTag( languageCode );
-        }
-
         final Object data = map.get( "data" );
         if ( data instanceof Map )
         {

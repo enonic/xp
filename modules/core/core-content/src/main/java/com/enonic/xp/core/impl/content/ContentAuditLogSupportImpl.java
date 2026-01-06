@@ -232,15 +232,6 @@ public class ContentAuditLogSupportImpl
 
         paramsSet.addString( "contentId", safeToString( params.getContentId() ) );
         paramsSet.addString( "modifier", safeToString( modifier ) );
-        paramsSet.addStrings( "branches", params.getBranches().stream().map( Branch::toString ).collect( Collectors.toList() ) );
-        if ( params.getLanguage() != null )
-        {
-            paramsSet.addString( "language", params.getLanguage().toLanguageTag() );
-        }
-        if ( params.getOwner() != null )
-        {
-            paramsSet.addString( "owner", safeToString( params.getOwner() ) );
-        }
 
         result.getResults().forEach( ( branchResult ) -> {
             final Branch branch = branchResult.branch();

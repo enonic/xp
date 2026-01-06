@@ -5,8 +5,11 @@ var assert = require('/lib/xp/testing');
 // Update content metadata by path
 var result = contentLib.updateMetadata({
     key: '/a/b/mycontent',
-    language: 'en',
-    owner: 'user:system:new-owner'
+    editor: function (c) {
+        c.language = 'en';
+        c.owner = 'user:system:new-owner';
+        return c;
+    }
 });
 
 if (result) {

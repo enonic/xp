@@ -1,7 +1,11 @@
 package com.enonic.xp.core.impl.content;
 
+import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentMetadataEditor;
+import com.enonic.xp.content.EditableContentMetadata;
 import com.enonic.xp.content.UpdateMetadataParams;
 import com.enonic.xp.content.UpdateMetadataResult;
 import com.enonic.xp.node.PatchNodeParams;
@@ -37,12 +41,15 @@ public class UpdateMetadataCommand
     {
         final Content contentBeforeChange = getContent( params.getContentId() );
 
-        final Content updatedContent = updateMetadata( contentBeforeChange );
+        final Content updatedContent = editMetadata( params.getEditor(), contentBeforeChange );
+
+        // Always patch both master and draft branches
+        final Branches branches = Branches.from( Branch.from( "draft" ), Branch.from( "master" ) );
 
         final PatchNodeParams patchNodeParams = PatchNodeParamsFactory.create()
             .editedContent( updatedContent )
             .versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.PATCH_ATTR ) )
-            .branches( params.getBranches() )
+            .branches( branches )
             .contentTypeService( this.contentTypeService )
             .xDataService( this.xDataService )
             .pageDescriptorService( this.pageDescriptorService )
@@ -64,21 +71,14 @@ public class UpdateMetadataCommand
         return builder.build();
     }
 
-    private Content updateMetadata( final Content original )
+    private Content editMetadata( final ContentMetadataEditor editor, final Content original )
     {
-        final Content.Builder<?> builder = Content.create( original );
-
-        if ( params.getLanguage() != null )
+        final EditableContentMetadata editableMetadata = new EditableContentMetadata( original );
+        if ( editor != null )
         {
-            builder.language( params.getLanguage() );
+            editor.edit( editableMetadata );
         }
-
-        if ( params.getOwner() != null )
-        {
-            builder.owner( params.getOwner() );
-        }
-
-        return builder.build();
+        return editableMetadata.build();
     }
 
     public static final class Builder

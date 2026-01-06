@@ -4,7 +4,10 @@ var content = require('/lib/xp/content.js');
 exports.updateLanguage = function () {
     var result = content.updateMetadata({
         key: '123456',
-        language: 'en'
+        editor: function (c) {
+            c.language = 'en';
+            return c;
+        }
     });
 
     assert.assertEquals('123456', result.contentId);
@@ -14,7 +17,10 @@ exports.updateLanguage = function () {
 exports.updateOwner = function () {
     var result = content.updateMetadata({
         key: '123456',
-        owner: 'user:system:new-owner'
+        editor: function (c) {
+            c.owner = 'user:system:new-owner';
+            return c;
+        }
     });
 
     assert.assertEquals('123456', result.contentId);
@@ -24,8 +30,11 @@ exports.updateOwner = function () {
 exports.updateLanguageAndOwner = function () {
     var result = content.updateMetadata({
         key: '123456',
-        language: 'no',
-        owner: 'user:system:new-owner'
+        editor: function (c) {
+            c.language = 'no';
+            c.owner = 'user:system:new-owner';
+            return c;
+        }
     });
 
     assert.assertEquals('123456', result.contentId);

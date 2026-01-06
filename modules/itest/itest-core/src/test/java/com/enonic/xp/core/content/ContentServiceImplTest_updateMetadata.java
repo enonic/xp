@@ -41,7 +41,9 @@ class ContentServiceImplTest_updateMetadata
 
         final UpdateMetadataParams updateMetadataParams = UpdateMetadataParams.create()
             .contentId( content.getId() )
-            .language( Locale.forLanguageTag( "en" ) )
+            .editor( edit -> {
+                edit.language = Locale.forLanguageTag( "en" );
+            } )
             .build();
 
         final UpdateMetadataResult result = this.contentService.updateMetadata( updateMetadataParams );
@@ -72,7 +74,9 @@ class ContentServiceImplTest_updateMetadata
 
         final UpdateMetadataParams updateMetadataParams = UpdateMetadataParams.create()
             .contentId( content.getId() )
-            .owner( newOwner )
+            .editor( edit -> {
+                edit.owner = newOwner;
+            } )
             .build();
 
         final UpdateMetadataResult result = this.contentService.updateMetadata( updateMetadataParams );
@@ -101,8 +105,10 @@ class ContentServiceImplTest_updateMetadata
 
         final UpdateMetadataParams updateMetadataParams = UpdateMetadataParams.create()
             .contentId( content.getId() )
-            .language( Locale.forLanguageTag( "no" ) )
-            .owner( newOwner )
+            .editor( edit -> {
+                edit.language = Locale.forLanguageTag( "no" );
+                edit.owner = newOwner;
+            } )
             .build();
 
         final UpdateMetadataResult result = this.contentService.updateMetadata( updateMetadataParams );
@@ -130,7 +136,9 @@ class ContentServiceImplTest_updateMetadata
 
         final UpdateMetadataParams updateMetadataParams = UpdateMetadataParams.create()
             .contentId( content.getId() )
-            .language( Locale.forLanguageTag( "en" ) )
+            .editor( edit -> {
+                edit.language = Locale.forLanguageTag( "en" );
+            } )
             .build();
 
         assertThrows( ForbiddenAccessException.class, () -> ContextBuilder.from( ContextAccessor.current() )
