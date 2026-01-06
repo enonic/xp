@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -18,6 +19,11 @@ public final class SimpleExecutor
 {
     private final ExecutorService executorService;
 
+    private SimpleExecutor( final ExecutorService executorService )
+    {
+        this.executorService = executorService;
+    }
+
     /**
      * Constructs {@linkplain SimpleExecutor} with customized thread naming pattern and uncaughtExceptionHandler.
      *
@@ -29,8 +35,14 @@ public final class SimpleExecutor
     public SimpleExecutor( final Function<ThreadFactory, ExecutorService> executorServiceSupplier, final String namePattern,
                            final Consumer<Throwable> uncaughtExceptionHandler )
     {
+        this( executorServiceSupplier.apply( new ThreadFactoryImpl( namePattern, uncaughtExceptionHandler ) ) );
+    }
+
+    public static SimpleExecutor ofVirtual( String name, final Consumer<Throwable> uncaughtExceptionHandler )
+    {
         Objects.requireNonNull( uncaughtExceptionHandler, "uncaughtExceptionHandler is required" );
-        executorService = executorServiceSupplier.apply( new ThreadFactoryImpl( namePattern, uncaughtExceptionHandler ) );
+        return new SimpleExecutor( Executors.newSingleThreadExecutor(
+            Thread.ofVirtual().name( name, 0 ).uncaughtExceptionHandler( ( _, e ) -> uncaughtExceptionHandler.accept( e ) ).factory() ) );
     }
 
     /**
