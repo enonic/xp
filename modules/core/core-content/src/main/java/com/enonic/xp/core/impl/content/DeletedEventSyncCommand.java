@@ -48,7 +48,7 @@ final class DeletedEventSyncCommand
                         final DeleteContentParams deleteParams =
                             DeleteContentParams.create().contentPath( content.getTargetContent().getPath() ).build();
 
-                        contentService.delete( deleteParams );
+                        layersContentService.delete( deleteParams );
                     }
                 }
             } );
@@ -81,12 +81,15 @@ final class DeletedEventSyncCommand
 
     private boolean removedInSource( final ContentToSync contentToSync )
     {
-        return contentToSync.getSourceCtx().callWith( () -> contentService.getById( contentToSync.getTargetContent().getId() ).isEmpty() );
+        return contentToSync.getSourceCtx()
+            .callWith( () -> layersContentService.getById( contentToSync.getTargetContent().getId() ).isEmpty() );
     }
 
     private boolean hasNoChildren( final ContentToSync contentToSync, final Set<ContentId> idsToRemove )
     {
-        return this.contentService.findAllByParent( contentToSync.getTargetContent().getPath() ).stream().allMatch( idsToRemove::contains );
+        return this.layersContentService.findAllByParent( contentToSync.getTargetContent().getPath() )
+            .stream()
+            .allMatch( idsToRemove::contains );
     }
 
     private boolean hasNoInboundDependencies( final ContentToSync contentToSync, final Set<ContentId> idsToRemove )
@@ -102,7 +105,7 @@ final class DeletedEventSyncCommand
                               .build() )
             .size( -1 )
             .build();
-        final ContentIds inboundDependencies = this.contentService.find( query ).getContentIds();
+        final ContentIds inboundDependencies = this.layersContentService.find( query ).getContentIds();
         return inboundDependencies.stream().allMatch( idsToRemove::contains );
     }
 

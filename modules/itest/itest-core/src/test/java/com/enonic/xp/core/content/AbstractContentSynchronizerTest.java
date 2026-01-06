@@ -32,7 +32,7 @@ import com.enonic.xp.core.impl.content.ContentAuditLogFilterService;
 import com.enonic.xp.core.impl.content.ContentAuditLogSupportImpl;
 import com.enonic.xp.core.impl.content.ContentConfig;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
-import com.enonic.xp.core.impl.content.InternalContentService;
+import com.enonic.xp.core.impl.content.LayersContentService;
 import com.enonic.xp.core.impl.content.SiteConfigServiceImpl;
 import com.enonic.xp.core.impl.content.XDataMappingServiceImpl;
 import com.enonic.xp.core.impl.media.MediaInfoServiceImpl;
@@ -94,7 +94,7 @@ public abstract class AbstractContentSynchronizerTest
 
     protected ContentServiceImpl contentService;
 
-    protected InternalContentService internalContentService;
+    protected LayersContentService layersContentService;
 
     protected MediaInfoServiceImpl mediaInfoService;
 
@@ -346,9 +346,9 @@ public abstract class AbstractContentSynchronizerTest
         contentService.setXDataMappingService( xDataMappingService );
         contentService.setContentAuditLogSupport( contentAuditLogSupport );
 
-        internalContentService =
-            new InternalContentService( nodeService, contentTypeService, eventPublisher, xDataService, siteService, pageDescriptorService,
-                                        partDescriptorService, layoutDescriptorService, config );
+        layersContentService =
+            new LayersContentService( nodeService, contentTypeService, eventPublisher, xDataService, siteService, pageDescriptorService,
+                                      partDescriptorService, layoutDescriptorService, config );
     }
 
     protected Content createContent( final ContentPath parent )

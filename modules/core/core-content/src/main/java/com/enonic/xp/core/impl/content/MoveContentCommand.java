@@ -41,10 +41,13 @@ final class MoveContentCommand
 
     private final ContentDataSerializer contentDataSerializer = new ContentDataSerializer();
 
+    private final boolean stopInherit;
+
     private MoveContentCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
+        this.stopInherit = builder.stopInherit;
     }
 
     public static Builder create( final MoveContentParams params )
@@ -87,7 +90,7 @@ final class MoveContentCommand
         }
         else
         {
-            if ( params.stopInherit() )
+            if ( stopInherit )
             {
                 processors.add( InheritedContentDataProcessor.PARENT );
             }
@@ -103,7 +106,7 @@ final class MoveContentCommand
         }
         else
         {
-            if ( params.stopInherit() )
+            if ( stopInherit )
             {
                 processors.add( InheritedContentDataProcessor.NAME );
             }
@@ -150,7 +153,8 @@ final class MoveContentCommand
                 .extraDatas( extraData )
                 .contentTypeName( type )
                 .contentName( ContentName.from( nodePath.getName().toString() ) )
-                .displayName( displayName ).page( page )
+                .displayName( displayName )
+                .page( page )
                 .contentTypeService( contentTypeService )
                 .contentValidators( contentValidators )
                 .build()
@@ -168,9 +172,17 @@ final class MoveContentCommand
     {
         private final MoveContentParams params;
 
+        private boolean stopInherit = true;
+
         Builder( final MoveContentParams params )
         {
             this.params = params;
+        }
+
+        public Builder stopInherit( final boolean stopInherit )
+        {
+            this.stopInherit = stopInherit;
+            return this;
         }
 
         @Override

@@ -43,10 +43,13 @@ final class ArchiveContentCommand
 
     private final PathResolver pathResolver;
 
+    private final boolean stopInherit;
+
     private ArchiveContentCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
+        this.stopInherit = builder.stopInherit;
         this.pathResolver = new PathResolver();
     }
 
@@ -79,9 +82,9 @@ final class ArchiveContentCommand
 
         validateLocation( originalNode );
 
-        final NodeIds descendants = nodeService.findByParent(
-                FindNodesByParentParams.create().recursive( true ).parentPath( originalNode.path() ).build() )
-            .getNodeIds();
+        final NodeIds descendants =
+            nodeService.findByParent( FindNodesByParentParams.create().recursive( true ).parentPath( originalNode.path() ).build() )
+                .getNodeIds();
 
         final ContentIds descendantContents = ContentNodeHelper.toContentIds( descendants );
 
@@ -93,7 +96,11 @@ final class ArchiveContentCommand
 
         this.nodeService.refresh( RefreshMode.SEARCH );
 
-        return ArchiveContentsResult.create().addArchived( contentId ).addArchived( descendantContents ).addUnpublished( unpublishedContents ).build();
+        return ArchiveContentsResult.create()
+            .addArchived( contentId )
+            .addArchived( descendantContents )
+            .addUnpublished( unpublishedContents )
+            .build();
     }
 
     private ContentIds unpublish( final ContentId contentId, final ContentIds descendants )
@@ -102,12 +109,8 @@ final class ArchiveContentCommand
             .nodeService( nodeService )
             .contentTypeService( contentTypeService )
             .eventPublisher( eventPublisher )
-            .params( UnpublishContentParams.create()
-                         .contentIds( ContentIds.create()
-                                          .addAll( descendants )
-                                          .add( contentId )
-                                          .build() )
-                         .build() )
+            .params(
+                UnpublishContentParams.create().contentIds( ContentIds.create().addAll( descendants ).add( contentId ).build() ).build() )
             .build()
             .execute()
             .getUnpublishedContents();
@@ -149,10 +152,8 @@ final class ArchiveContentCommand
 
         final NodePath newPath = pathResolver.buildArchivedPath( node.path() );
 
-        final MoveNodeParams.Builder moveParams = MoveNodeParams.create()
-            .nodeId( node.id() )
-            .newParentPath( ArchiveConstants.ARCHIVE_ROOT_PATH )
-            .refresh( RefreshMode.ALL );
+        final MoveNodeParams.Builder moveParams =
+            MoveNodeParams.create().nodeId( node.id() ).newParentPath( ArchiveConstants.ARCHIVE_ROOT_PATH ).refresh( RefreshMode.ALL );
 
         if ( params.getArchiveContentListener() != null )
         {
@@ -165,7 +166,7 @@ final class ArchiveContentCommand
         }
 
         final var processors = CompositeNodeDataProcessor.create().add( updateProperties( originalPath ) );
-        if ( params.stopInherit() )
+        if ( stopInherit )
         {
             processors.add( InheritedContentDataProcessor.ALL );
         }
@@ -190,9 +191,17 @@ final class ArchiveContentCommand
     {
         private final ArchiveContentParams params;
 
+        private boolean stopInherit = true;
+
         private Builder( final ArchiveContentParams params )
         {
             this.params = params;
+        }
+
+        public Builder stopInherit( final boolean stopInherit )
+        {
+            this.stopInherit = stopInherit;
+            return this;
         }
 
         @Override

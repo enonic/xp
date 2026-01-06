@@ -87,7 +87,7 @@ class ParentContentSynchronizerTest
     @BeforeEach
     void setUp()
     {
-        synchronizer = new ParentContentSynchronizer( this.internalContentService );
+        synchronizer = new ParentContentSynchronizer( this.layersContentService );
 
         syncContentService =
             new SyncContentServiceImpl( contentTypeService, nodeService, eventPublisher, projectService, contentService, synchronizer,
@@ -103,7 +103,7 @@ class ParentContentSynchronizerTest
                                .syncEventType( ContentSyncEventType.UPDATED )
                                .build() );
 
-        return layerContext.callWith( () -> internalContentService.getById( contentId ) );
+        return layerContext.callWith( () -> layersContentService.getById( contentId ) );
     }
 
     private Optional<Content> syncDeleted( final ContentId contentId )
@@ -115,7 +115,7 @@ class ParentContentSynchronizerTest
                                .syncEventType( ContentSyncEventType.DELETED )
                                .build() );
 
-        return layerContext.callWith( () -> internalContentService.getById( contentId ) );
+        return layerContext.callWith( () -> layersContentService.getById( contentId ) );
     }
 
     private void sync( final ContentId contentId, final boolean includeChildren )
@@ -365,7 +365,7 @@ class ParentContentSynchronizerTest
         } ).contentId( sourceContent.getId() ).build() ) );
 
         final Optional<Content> patchedContent =
-            projectContext.callWith( () -> this.internalContentService.getById( sourceContent.getId() ) );
+            projectContext.callWith( () -> this.layersContentService.getById( sourceContent.getId() ) );
         final Optional<Content> targetContent = syncPatched( sourceContent.getId() );
 
         compareSynched( patchedContent.orElseThrow(), targetContent.orElseThrow() );
@@ -620,7 +620,6 @@ class ParentContentSynchronizerTest
                                                           .contentToMove( sourceChild1.getId() )
                                                           .contentToMoveBefore( sourceChild2.getId() )
                                                           .build() )
-                                     .stopInherit( true )
                                      .build() );
 
             syncContentService.resetInheritance( ResetContentInheritParams.create()
@@ -737,7 +736,7 @@ class ParentContentSynchronizerTest
 
         assertFalse( layerContext.callWith( () -> {
             final ContentId id = sourceContent.getId();
-            return internalContentService.getById( id ).isPresent();
+            return layersContentService.getById( id ).isPresent();
         } ) );
     }
 
@@ -755,33 +754,33 @@ class ParentContentSynchronizerTest
 
         assertFalse( childLayerContext.callWith( () -> {
             final ContentId id = sourceContent.getId();
-            return internalContentService.getById( id ).isPresent();
+            return layersContentService.getById( id ).isPresent();
         } ) );
         assertFalse( layerContext.callWith( () -> {
             final ContentId id = sourceContent.getId();
-            return internalContentService.getById( id ).isPresent();
+            return layersContentService.getById( id ).isPresent();
         } ) );
 
         sync( sourceContent.getId(), project.getName(), layer.getName() );
 
         assertTrue( layerContext.callWith( () -> {
             final ContentId id = sourceContent.getId();
-            return internalContentService.getById( id ).isPresent();
+            return layersContentService.getById( id ).isPresent();
         } ) );
         assertFalse( childLayerContext.callWith( () -> {
             final ContentId id = sourceContent.getId();
-            return internalContentService.getById( id ).isPresent();
+            return layersContentService.getById( id ).isPresent();
         } ) );
 
         sync( sourceContent.getId(), layer.getName(), childLayer.getName() );
 
         assertTrue( childLayerContext.callWith( () -> {
             final ContentId id = sourceContent.getId();
-            return internalContentService.getById( id ).isPresent();
+            return layersContentService.getById( id ).isPresent();
         } ) );
         assertTrue( layerContext.callWith( () -> {
             final ContentId id = sourceContent.getId();
-            return internalContentService.getById( id ).isPresent();
+            return layersContentService.getById( id ).isPresent();
         } ) );
     }
 
@@ -795,7 +794,7 @@ class ParentContentSynchronizerTest
 
         assertTrue( layerContext.callWith( () -> {
             final ContentId id = sourceChild1.getId();
-            return internalContentService.getById( id ).isPresent();
+            return layersContentService.getById( id ).isPresent();
         } ) );
 
         final Content sourceChild1_1 = projectContext.callWith( () -> createContent( sourceContent.getPath(), "child1_1" ) );
@@ -804,7 +803,7 @@ class ParentContentSynchronizerTest
 
         assertTrue( layerContext.callWith( () -> {
             final ContentId id = sourceChild1_1.getId();
-            return internalContentService.getById( id ).isPresent();
+            return layersContentService.getById( id ).isPresent();
         } ) );
 
         projectContext.callWith( () -> contentService.move(
@@ -819,7 +818,7 @@ class ParentContentSynchronizerTest
         assertEquals( "/child1_1", layerContext.callWith( () -> contentService.getById( sourceChild1_1.getId() ).getPath().toString() ) );
         assertFalse( layerContext.callWith( () -> {
             final ContentId id = sourceChild1.getId();
-            return internalContentService.getById( id ).isPresent();
+            return layersContentService.getById( id ).isPresent();
         } ) );
 
     }
@@ -834,11 +833,11 @@ class ParentContentSynchronizerTest
 
         assertTrue( layerContext.callWith( () -> {
             final ContentId id = sourceContent.getId();
-            return internalContentService.getById( id ).isPresent();
+            return layersContentService.getById( id ).isPresent();
         } ) );
         assertFalse( layerContext.callWith( () -> {
             final ContentId id = sourceChild1.getId();
-            return internalContentService.getById( id ).isPresent();
+            return layersContentService.getById( id ).isPresent();
         } ) );
     }
 
@@ -853,15 +852,15 @@ class ParentContentSynchronizerTest
 
         assertTrue( layerContext.callWith( () -> {
             final ContentId id = sourceContent.getId();
-            return internalContentService.getById( id ).isPresent();
+            return layersContentService.getById( id ).isPresent();
         } ) );
         assertTrue( layerContext.callWith( () -> {
             final ContentId id = sourceChild1.getId();
-            return internalContentService.getById( id ).isPresent();
+            return layersContentService.getById( id ).isPresent();
         } ) );
         assertTrue( layerContext.callWith( () -> {
             final ContentId id = sourceChild1_1.getId();
-            return internalContentService.getById( id ).isPresent();
+            return layersContentService.getById( id ).isPresent();
         } ) );
     }
 
@@ -949,7 +948,7 @@ class ParentContentSynchronizerTest
                                .syncEventType( ContentSyncEventType.CREATED )
                                .build() );
 
-        return layerContext.callWith( () -> internalContentService.getById( contentId ) );
+        return layerContext.callWith( () -> layersContentService.getById( contentId ) );
     }
 
     private Optional<Content> syncUpdated( final ContentId contentId )
@@ -961,7 +960,7 @@ class ParentContentSynchronizerTest
                                .syncEventType( ContentSyncEventType.UPDATED )
                                .build() );
 
-        return layerContext.callWith( () -> internalContentService.getById( contentId ) );
+        return layerContext.callWith( () -> layersContentService.getById( contentId ) );
     }
 
     private Optional<Content> syncMoved( final ContentId contentId )
@@ -973,7 +972,7 @@ class ParentContentSynchronizerTest
                                .syncEventType( ContentSyncEventType.MOVED )
                                .build() );
 
-        return layerContext.callWith( () -> internalContentService.getById( contentId ) );
+        return layerContext.callWith( () -> layersContentService.getById( contentId ) );
     }
 
     private Optional<Content> syncSorted( final ContentId contentId )
@@ -985,7 +984,7 @@ class ParentContentSynchronizerTest
                                .syncEventType( ContentSyncEventType.SORTED )
                                .build() );
 
-        return layerContext.callWith( () -> internalContentService.getById( contentId ) );
+        return layerContext.callWith( () -> layersContentService.getById( contentId ) );
     }
 
     private ExtraData createExtraData()

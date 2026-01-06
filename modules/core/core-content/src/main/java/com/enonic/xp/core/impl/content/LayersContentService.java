@@ -51,7 +51,7 @@ import com.enonic.xp.util.BinaryReference;
 
 @Component(configurationPid = "com.enonic.xp.content")
 @NullMarked
-public class InternalContentService
+public class LayersContentService
 {
     private final NodeService nodeService;
 
@@ -76,11 +76,11 @@ public class InternalContentService
     private final ContentConfig config;
 
     @Activate
-    public InternalContentService( @Reference final NodeService nodeService, @Reference final ContentTypeService contentTypeService,
-                                   @Reference final EventPublisher eventPublisher, @Reference final XDataService xDataService,
-                                   @Reference final SiteService siteService, @Reference final PageDescriptorService pageDescriptorService,
-                                   @Reference final PartDescriptorService partDescriptorService,
-                                   @Reference final LayoutDescriptorService layoutDescriptorService, ContentConfig config )
+    public LayersContentService( @Reference final NodeService nodeService, @Reference final ContentTypeService contentTypeService,
+                                 @Reference final EventPublisher eventPublisher, @Reference final XDataService xDataService,
+                                 @Reference final SiteService siteService, @Reference final PageDescriptorService pageDescriptorService,
+                                 @Reference final PartDescriptorService partDescriptorService,
+                                 @Reference final LayoutDescriptorService layoutDescriptorService, ContentConfig config )
     {
         this.nodeService = nodeService;
         this.contentTypeService = contentTypeService;
@@ -122,6 +122,7 @@ public class InternalContentService
             .nodeService( nodeService )
             .eventPublisher( eventPublisher )
             .contentTypeService( contentTypeService )
+            .stopInherit( false )
             .build()
             .execute();
     }
@@ -132,6 +133,7 @@ public class InternalContentService
             .nodeService( nodeService )
             .eventPublisher( eventPublisher )
             .contentTypeService( contentTypeService )
+            .stopInherit( false )
             .build()
             .execute();
     }
@@ -173,6 +175,7 @@ public class InternalContentService
             .eventPublisher( this.eventPublisher )
             .xDataService( this.xDataService )
             .contentValidators( this.contentValidators )
+            .stopInherit( false )
             .build()
             .execute();
     }
@@ -183,6 +186,7 @@ public class InternalContentService
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
             .eventPublisher( this.eventPublisher )
+            .stopInherit( false )
             .build()
             .execute();
     }

@@ -52,7 +52,7 @@ import com.enonic.xp.core.impl.content.ContentAuditLogFilterService;
 import com.enonic.xp.core.impl.content.ContentAuditLogSupportImpl;
 import com.enonic.xp.core.impl.content.ContentConfig;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
-import com.enonic.xp.core.impl.content.InternalContentService;
+import com.enonic.xp.core.impl.content.LayersContentService;
 import com.enonic.xp.core.impl.content.SiteConfigServiceImpl;
 import com.enonic.xp.core.impl.content.XDataMappingServiceImpl;
 import com.enonic.xp.core.impl.content.validate.ContentNameValidator;
@@ -148,7 +148,7 @@ public abstract class AbstractContentServiceTest
 
     protected ContentServiceImpl contentService;
 
-    protected InternalContentService internalContentService;
+    protected LayersContentService layersContentService;
 
     protected ContentConfig config;
 
@@ -361,9 +361,9 @@ public abstract class AbstractContentServiceTest
         contentService.addContentValidator( new OccurrenceValidator() );
         contentService.addContentValidator( new ExtraDataValidator( xDataService ) );
 
-        internalContentService =
-            new InternalContentService( nodeService, contentTypeService, eventPublisher, xDataService, siteService, pageDescriptorService,
-                                        partDescriptorService, layoutDescriptorService, config );
+        layersContentService =
+            new LayersContentService( nodeService, contentTypeService, eventPublisher, xDataService, siteService, pageDescriptorService,
+                                      partDescriptorService, layoutDescriptorService, config );
     }
 
     @AfterEach

@@ -45,7 +45,7 @@ final class UpdatedEventSyncCommand
 
                         doSyncAttachments( content, updateParams );
 
-                        contentService.patch( updateParams.build() );
+                        layersContentService.patch( updateParams.build() );
                     }
                 }
             }
@@ -66,7 +66,8 @@ final class UpdatedEventSyncCommand
 
         content.getSourceContent().getAttachments().forEach( sourceAttachment -> {
             ByteSource sourceBinary = content.getSourceCtx()
-                .callWith( () -> contentService.getBinary( content.getSourceContent().getId(), sourceAttachment.getBinaryReference() ) );
+                .callWith(
+                    () -> layersContentService.getBinary( content.getSourceContent().getId(), sourceAttachment.getBinaryReference() ) );
 
             attachmentsBuilder.add( CreateAttachment.create()
                                         .name( sourceAttachment.getName() )

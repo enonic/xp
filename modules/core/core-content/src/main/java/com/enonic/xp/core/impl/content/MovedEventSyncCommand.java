@@ -61,11 +61,11 @@ final class MovedEventSyncCommand
 
         if ( !toArchive.isEmpty() )
         {
-            MovedEventSyncArchiver.create().contentService( contentService ).addContents( toArchive ).build().execute();
+            MovedEventSyncArchiver.create().contentService( layersContentService ).addContents( toArchive ).build().execute();
         }
         if ( !toRestore.isEmpty() )
         {
-            MovedEventSyncRestorer.create().contentService( contentService ).addContents( toRestore ).build().execute();
+            MovedEventSyncRestorer.create().contentService( layersContentService ).addContents( toRestore ).build().execute();
         }
         if ( !toMove.isEmpty() )
         {
@@ -87,27 +87,26 @@ final class MovedEventSyncCommand
             {
                 content.getTargetCtx().runWith( () -> {
                     final ContentId sourceParentId = content.getSourceCtx()
-                        .callWith( () -> contentService.getByPath( content.getSourceContent().getParentPath() ).orElseThrow() )
+                        .callWith( () -> layersContentService.getByPath( content.getSourceContent().getParentPath() ).orElseThrow() )
                         .getId();
 
-                    contentService.getById( sourceParentId )
+                    layersContentService.getById( sourceParentId )
                         .map( Content::getPath )
-                        .or( () -> sourceParentId.equals(
-                            content.getSourceCtx().callWith( () -> contentService.getByPath( ContentPath.ROOT ).orElseThrow() ).getId() )
-                            ? Optional.of( ContentPath.ROOT )
-                            : Optional.empty() )
+                        .or( () -> sourceParentId.equals( content.getSourceCtx()
+                                                              .callWith(
+                                                                  () -> layersContentService.getByPath( ContentPath.ROOT ).orElseThrow() )
+                                                              .getId() ) ? Optional.of( ContentPath.ROOT ) : Optional.empty() )
                         .ifPresent( targetParentPath -> {
                             if ( !content.getTargetContent().getPath().equals( content.getSourceContent().getPath() ) )
                             {
                                 final ContentPath newPath =
                                     buildNewPath( targetParentPath, content.getSourceContent().getName(), content.getTargetContent() );
 
-                                contentService.move( MoveContentParams.create()
-                                                         .contentId( content.getTargetContent().getId() )
-                                                         .newName( newPath.getName() )
-                                                         .parentContentPath( targetParentPath )
-                                                         .stopInherit( false )
-                                                         .build() );
+                                layersContentService.move( MoveContentParams.create()
+                                                               .contentId( content.getTargetContent().getId() )
+                                                               .newName( newPath.getName() )
+                                                               .parentContentPath( targetParentPath )
+                                                               .build() );
                             }
                         } );
                 } );

@@ -45,18 +45,18 @@ final class CreatedEventSyncCommand
         try
         {
             content.getSourceCtx()
-                .runWith( () -> contentService.getByPath( content.getSourceContent().getParentPath() )
+                .runWith( () -> layersContentService.getByPath( content.getSourceContent().getParentPath() )
                     .map( Content::getId )
                     .ifPresent( parentId -> content.getTargetCtx().runWith( () -> {
                         if ( content.getSourceContent().getParentPath().isRoot() )
                         {
-                            contentService.importContent( createImportParams( content, ContentPath.ROOT ) );
+                            layersContentService.importContent( createImportParams( content, ContentPath.ROOT ) );
                         }
                         else
                         {
-                            contentService.getById( parentId )
+                            layersContentService.getById( parentId )
                                 .map( Content::getPath )
-                                .ifPresent( path -> contentService.importContent( createImportParams( content, path ) ) );
+                                .ifPresent( path -> layersContentService.importContent( createImportParams( content, path ) ) );
                         }
                     } ) ) );
 
@@ -75,7 +75,7 @@ final class CreatedEventSyncCommand
         for ( Attachment attachment : sourceContent.getAttachments() )
         {
             final ByteSource binary =
-                content.getSourceCtx().callWith( () -> contentService.getBinary( content.getId(), attachment.getBinaryReference() ) );
+                content.getSourceCtx().callWith( () -> layersContentService.getBinary( content.getId(), attachment.getBinaryReference() ) );
             attachments.add( CreateAttachment.create()
                                  .name( attachment.getName() )
                                  .label( attachment.getLabel() )

@@ -37,8 +37,8 @@ final class MovedEventSyncArchiver
     protected void execute()
     {
         getRoots().forEach( content -> content.getTargetCtx()
-            .runWith( () -> contentService.archive(
-                ArchiveContentParams.create().contentId( content.getTargetContent().getId() ).stopInherit( false ).build() ) ) );
+            .runWith( () -> layersContentService.archive(
+                ArchiveContentParams.create().contentId( content.getTargetContent().getId() ).build() ) ) );
     }
 
     private Set<ContentToSync> getRoots()
@@ -85,7 +85,7 @@ final class MovedEventSyncArchiver
                               .build() )
             .size( -1 )
             .build();
-        return this.contentService.find( query ).getContentIds();
+        return this.layersContentService.find( query ).getContentIds();
     }
 
     private Map<Content, Context> getAllArchived( final List<ContentToSync> contentToSync )
@@ -95,7 +95,7 @@ final class MovedEventSyncArchiver
 
         final Stream<Map.Entry<Content, Context>> childrenStream = contentToSync.stream()
             .flatMap( c -> c.getTargetCtx()
-                .callWith( () -> contentService.getByIds( contentService.findAllByParent( c.getTargetContent().getPath() ) )
+                .callWith( () -> layersContentService.getByIds( layersContentService.findAllByParent( c.getTargetContent().getPath() ) )
                     .stream()
                     .map( child -> Maps.immutableEntry( child, c.getTargetCtx() ) ) ) );
 

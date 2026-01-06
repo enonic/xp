@@ -211,13 +211,13 @@ class ContentServiceImplTest_restore
         final Content content = createContent( ContentPath.ROOT, "content" );
         this.contentService.delete( DeleteContentParams.create().contentPath( content.getPath() ).build() );
 
-        final ContentId importedId = archiveContext().callWith( () -> this.internalContentService.importContent( ImportContentParams.create()
-                                                                                                             .importContent( content )
-                                                                                                             .targetPath(
-                                                                                                                 content.getPath() )
-                                                                                                             .inherit( EnumSet.allOf(
-                                                                                                                 ContentInheritType.class ) )
-                                                                                                             .build() )
+        final ContentId importedId = archiveContext().callWith( () -> this.layersContentService.importContent( ImportContentParams.create()
+                                                                                                                   .importContent( content )
+                                                                                                                   .targetPath(
+                                                                                                                       content.getPath() )
+                                                                                                                   .inherit( EnumSet.allOf(
+                                                                                                                       ContentInheritType.class ) )
+                                                                                                                   .build() )
             .getContent()
             .getId() );
 
@@ -225,27 +225,6 @@ class ContentServiceImplTest_restore
 
         final Set<ContentInheritType> inherit = this.contentService.getById( importedId ).getInherit();
         assertThat( inherit ).isEmpty();
-    }
-
-    @Test
-    void restore_dont_stop_inherited()
-    {
-        final Content content = createContent( ContentPath.ROOT, "content" );
-        this.contentService.delete( DeleteContentParams.create().contentPath( content.getPath() ).build() );
-
-        final ContentId importedId = archiveContext().callWith( () -> this.internalContentService.importContent( ImportContentParams.create()
-                                                                                                             .importContent( content )
-                                                                                                             .targetPath( content.getPath() )
-                                                                                                             .inherit( EnumSet.allOf(
-                                                                                                                 ContentInheritType.class ) )
-                                                                                                             .build() )
-            .getContent()
-            .getId() );
-
-        this.contentService.restore( RestoreContentParams.create().contentId( importedId ).stopInherit( false ).build() );
-
-        final Set<ContentInheritType> inherit = this.contentService.getById( importedId ).getInherit();
-        assertEquals( 4, inherit.size() );
     }
 
     @Test

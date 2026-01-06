@@ -2,23 +2,21 @@ package com.enonic.xp.core.impl.content;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentInheritType;
-import com.enonic.xp.content.ContentService;
 
 abstract class MovedEventSyncSynchronizer
 {
-    protected final InternalContentService contentService;
+    protected final LayersContentService layersContentService;
 
     protected final List<ContentToSync> contents;
 
     MovedEventSyncSynchronizer( final Builder<?> builder )
     {
-        this.contentService = builder.contentService;
+        this.layersContentService = builder.layersContentService;
         this.contents = builder.contents.build();
     }
 
@@ -33,11 +31,11 @@ abstract class MovedEventSyncSynchronizer
     {
         private final ImmutableList.Builder<ContentToSync> contents = ImmutableList.builder();
 
-        private InternalContentService contentService;
+        private LayersContentService layersContentService;
 
-        T contentService( final InternalContentService contentService )
+        T contentService( final LayersContentService layersContentService )
         {
-            this.contentService = contentService;
+            this.layersContentService = layersContentService;
             return (T) this;
         }
 

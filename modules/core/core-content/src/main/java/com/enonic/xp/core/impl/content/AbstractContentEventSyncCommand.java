@@ -10,13 +10,13 @@ import com.enonic.xp.content.ContentPath;
 
 public abstract class AbstractContentEventSyncCommand
 {
-    final InternalContentService contentService;
+    final LayersContentService layersContentService;
 
     final List<ContentToSync> contentToSync;
 
     AbstractContentEventSyncCommand( final Builder<?> builder )
     {
-        this.contentService = builder.contentService;
+        this.layersContentService = builder.layersContentService;
         this.contentToSync = builder.contentToSync;
     }
 
@@ -43,7 +43,7 @@ public abstract class AbstractContentEventSyncCommand
         if ( targetContent == null || targetContent.getInherit().contains( ContentInheritType.NAME ) )
         {
             newName = name.toString();
-            while ( contentService.getByPath( ContentPath.from( newParentPath, newName ) ).isPresent() )
+            while ( layersContentService.getByPath( ContentPath.from( newParentPath, newName ) ).isPresent() )
             {
                 newName = NameValueResolver.name( newName );
             }
@@ -60,11 +60,11 @@ public abstract class AbstractContentEventSyncCommand
     {
         protected List<ContentToSync> contentToSync;
 
-        private InternalContentService contentService;
+        private LayersContentService layersContentService;
 
-        public B contentService( final InternalContentService contentService )
+        public B contentService( final LayersContentService layersContentService )
         {
-            this.contentService = contentService;
+            this.layersContentService = layersContentService;
             return (B) this;
         }
 
@@ -76,7 +76,7 @@ public abstract class AbstractContentEventSyncCommand
 
         void validate()
         {
-            Objects.requireNonNull( contentService );
+            Objects.requireNonNull( layersContentService );
             Objects.requireNonNull( contentToSync, "contentToSync cannot be null" );
         }
 

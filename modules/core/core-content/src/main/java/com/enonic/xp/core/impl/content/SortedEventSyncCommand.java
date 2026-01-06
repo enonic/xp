@@ -40,21 +40,18 @@ final class SortedEventSyncCommand
             {
                 if ( needToSort( sourceContent, targetContent ) )
                 {
-                    final SortContentParams sortParams = SortContentParams.create()
-                        .childOrder( sourceContent.getChildOrder() )
-                        .contentId( sourceContent.getId() )
-                        .stopInherit( false )
-                        .build();
+                    final SortContentParams sortParams =
+                        SortContentParams.create().childOrder( sourceContent.getChildOrder() ).contentId( sourceContent.getId() ).build();
 
-                    contentService.sort( sortParams );
+                    layersContentService.sort( sortParams );
                 }
                 if ( sourceContent.getChildOrder().isManualOrder() )
                 {
                     final List<ContentToSync> childrenToSync =
-                        contentService.getByIds( contentService.findAllChildren( targetContent.getPath() ) )
+                        layersContentService.getByIds( layersContentService.findAllChildren( targetContent.getPath() ) )
                             .stream()
                             .map( childTargetContent -> content.getSourceCtx()
-                                .callWith( () -> contentService.getById( childTargetContent.getId() ) )
+                                .callWith( () -> layersContentService.getById( childTargetContent.getId() ) )
                                 .map( childSourceContent -> ContentToSync.create()
                                     .sourceCtx( content.getSourceCtx() )
                                     .targetCtx( content.getTargetCtx() )
@@ -67,7 +64,11 @@ final class SortedEventSyncCommand
 
                     if ( !childrenToSync.isEmpty() )
                     {
-                        UpdatedEventSyncCommand.create().contentService( contentService ).contentToSync( childrenToSync ).build().sync();
+                        UpdatedEventSyncCommand.create()
+                            .contentService( layersContentService )
+                            .contentToSync( childrenToSync )
+                            .build()
+                            .sync();
                     }
                 }
             }

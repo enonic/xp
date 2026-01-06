@@ -99,7 +99,7 @@ class ProjectContentEventListenerTest
     @BeforeEach
     void setUp()
     {
-        final ParentContentSynchronizer synchronizer = new ParentContentSynchronizer( internalContentService );
+        final ParentContentSynchronizer synchronizer = new ParentContentSynchronizer( layersContentService );
         listener = new ProjectContentEventListener( this.projectService, synchronizer, Runnable::run );
 
         syncContentService =
@@ -376,40 +376,37 @@ class ProjectContentEventListenerTest
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
         projectContext.callWith( () -> pushNodes( ContentConstants.BRANCH_MASTER, NodeId.from( sourceContent.getId() ) ) );
 
-        projectContext.callWith( () -> {
-            return contentService.patch( PatchContentParams.create()
-                                             .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
-                                             .createAttachments( CreateAttachments.create()
-                                                                     .add( CreateAttachment.create()
-                                                                               .mimeType( "image/gif" )
-                                                                               .byteSource( ByteSource.wrap( "data1".getBytes() ) )
-                                                                               .name( "MyImage1.gif" )
-                                                                               .build() )
-                                                                     .add( CreateAttachment.create()
-                                                                               .mimeType( "image/gif" )
-                                                                               .byteSource( ByteSource.wrap( "data2".getBytes() ) )
-                                                                               .name( "MyImage2.gif" )
-                                                                               .build() )
-                                                                     .build() )
-                                             .contentId( sourceContent.getId() )
-                                             .patcher( ( edit -> {
+        projectContext.callWith( () -> contentService.patch( PatchContentParams.create()
+                                         .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
+                                         .createAttachments( CreateAttachments.create()
+                                                                 .add( CreateAttachment.create()
+                                                                           .mimeType( "image/gif" )
+                                                                           .byteSource( ByteSource.wrap( "data1".getBytes() ) )
+                                                                           .name( "MyImage1.gif" )
+                                                                           .build() )
+                                                                 .add( CreateAttachment.create()
+                                                                           .mimeType( "image/gif" )
+                                                                           .byteSource( ByteSource.wrap( "data2".getBytes() ) )
+                                                                           .name( "MyImage2.gif" )
+                                                                           .build() )
+                                                                 .build() )
+                                         .contentId( sourceContent.getId() )
+                                         .patcher( ( edit -> {
 
-                                                 final Attachment a1 = Attachment.create()
-                                                     .mimeType( "image/gif" )
-                                                     .label( "My Image 1" )
-                                                     .name( "MyImage1.gif" )
-                                                     .build();
-                                                 final Attachment a2 = Attachment.create()
-                                                     .mimeType( "image/gif" )
-                                                     .label( "My Image 2" )
-                                                     .name( "MyImage2.gif" )
-                                                     .build();
+                                             final Attachment a1 = Attachment.create()
+                                                 .mimeType( "image/gif" )
+                                                 .label( "My Image 1" )
+                                                 .name( "MyImage1.gif" )
+                                                 .build();
+                                             final Attachment a2 = Attachment.create()
+                                                 .mimeType( "image/gif" )
+                                                 .label( "My Image 2" )
+                                                 .name( "MyImage2.gif" )
+                                                 .build();
 
-                                                 edit.attachments.setValue( Attachments.create().add( a1 ).add( a2 ).build() );
-                                             } ) )
-                                             .build() );
-
-        } );
+                                             edit.attachments.setValue( Attachments.create().add( a1 ).add( a2 ).build() );
+                                         } ) )
+                                         .build() ) );
 
         handleEvents();
 
@@ -652,8 +649,8 @@ class ProjectContentEventListenerTest
 
         handleEvents(); // not synced
 
-        assertTrue( layerContext.callWith( () -> internalContentService.getById( sourceContent1.getId() ).isPresent() ) );
-        assertTrue( layerContext.callWith( () -> internalContentService.getById( sourceContent2.getId() ).isPresent() ) );
+        assertTrue( layerContext.callWith( () -> layersContentService.getById( sourceContent1.getId() ).isPresent() ) );
+        assertTrue( layerContext.callWith( () -> layersContentService.getById( sourceContent2.getId() ).isPresent() ) );
     }
 
     @Test
@@ -1006,9 +1003,7 @@ class ProjectContentEventListenerTest
         assertThat( result.getContents() ).map( Content::getName )
             .containsExactly( sourceChild2.getName(), sourceChild1.getName(), sourceChild3.getName() );
 
-        layerContext.runWith( () -> {
-            assertTrue( contentService.getById( sourceContent.getId() ).getChildOrder().isManualOrder() );
-        } );
+        layerContext.runWith( () -> assertTrue( contentService.getById( sourceContent.getId() ).getChildOrder().isManualOrder() ) );
     }
 
     @Test
@@ -1061,14 +1056,10 @@ class ProjectContentEventListenerTest
 
         handleEvents();
 
-        layerContext.runWith( () -> {
-            createContent( ContentPath.ROOT, "newName" );
-        } );
+        layerContext.runWith( () -> createContent( ContentPath.ROOT, "newName" ) );
 
-        projectContext.runWith( () -> {
-            contentService.move(
-                MoveContentParams.create().contentId( sourceContent.getId() ).newName( ContentName.from( "newName" ) ).build() );
-        } );
+        projectContext.runWith( () -> contentService.move(
+            MoveContentParams.create().contentId( sourceContent.getId() ).newName( ContentName.from( "newName" ) ).build() ) );
         handleEvents();
 
         assertEquals( "newName-1", layerContext.callWith( () -> contentService.getById( sourceContent.getId() ) ).getName().toString() );
@@ -1089,9 +1080,9 @@ class ProjectContentEventListenerTest
         handleEvents();
 
         layerContext.runWith( () -> {
-            assertFalse( internalContentService.getById( sourceContent.getId() ).isPresent() );
-            assertFalse( internalContentService.getById( sourceChild1.getId() ).isPresent() );
-            assertFalse( internalContentService.getById( sourceChild2.getId() ).isPresent() );
+            assertFalse( layersContentService.getById( sourceContent.getId() ).isPresent() );
+            assertFalse( layersContentService.getById( sourceChild1.getId() ).isPresent() );
+            assertFalse( layersContentService.getById( sourceChild2.getId() ).isPresent() );
         } );
     }
 
@@ -1109,11 +1100,11 @@ class ProjectContentEventListenerTest
         handleEvents();
 
         layerContext.runWith( () -> {
-            assertTrue( internalContentService.getById( sourceContent.getId() ).isPresent() );
+            assertTrue( layersContentService.getById( sourceContent.getId() ).isPresent() );
             final ContentId id1 = sourceChild1.getId();
-            assertTrue( internalContentService.getById( id1 ).isPresent() );
+            assertTrue( layersContentService.getById( id1 ).isPresent() );
             final ContentId id = sourceChild2.getId();
-            assertTrue( internalContentService.getById( id ).isPresent() );
+            assertTrue( layersContentService.getById( id ).isPresent() );
         } );
     }
 

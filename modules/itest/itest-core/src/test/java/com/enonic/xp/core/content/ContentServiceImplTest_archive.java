@@ -35,7 +35,6 @@ import static com.enonic.xp.content.ContentConstants.CONTENT_ROOT_PATH_ATTRIBUTE
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -125,36 +124,16 @@ class ContentServiceImplTest_archive
         final Content content = createContent( ContentPath.ROOT, "content" );
         this.contentService.delete( DeleteContentParams.create().contentPath( content.getPath() ).build() );
 
-        this.internalContentService.importContent( ImportContentParams.create()
-                                               .importContent( content )
-                                               .targetPath( content.getPath() )
-                                               .inherit( EnumSet.allOf( ContentInheritType.class ) )
-                                               .build() );
+        this.layersContentService.importContent( ImportContentParams.create()
+                                                     .importContent( content )
+                                                     .targetPath( content.getPath() )
+                                                     .inherit( EnumSet.allOf( ContentInheritType.class ) )
+                                                     .build() );
 
         this.contentService.archive( ArchiveContentParams.create().contentId( content.getId() ).build() );
 
         final Content archived = archiveContext().callWith( () -> this.contentService.getById( content.getId() ) );
-        assertThat(archived.getInherit() ).isEmpty();
-    }
-
-    @Test
-    void archive_dont_stop_inherited()
-    {
-        final Content content = createContent( ContentPath.ROOT, "content" );
-        this.contentService.delete( DeleteContentParams.create().contentPath( content.getPath() ).build() );
-
-        this.internalContentService.importContent( ImportContentParams.create()
-                                               .importContent( content )
-                                               .targetPath( content.getPath() )
-                                               .inherit( EnumSet.allOf( ContentInheritType.class ) )
-                                               .build() );
-
-        this.contentService.archive( ArchiveContentParams.create().contentId( content.getId() ).stopInherit( false ).build() );
-
-        archiveContext().runWith( () -> {
-            final Content archived = this.contentService.getById( content.getId() );
-            assertThat( archived.getInherit() ).containsExactly( ContentInheritType.values() );
-        } );
+        assertThat( archived.getInherit() ).isEmpty();
     }
 
     @Test
@@ -212,14 +191,15 @@ class ContentServiceImplTest_archive
 
         this.contentService.publish( PushContentParams.create().contentIds( ContentIds.from( content2.getId() ) ).build() );
 
-        this.contentService.move( MoveContentParams.create().contentId( content2.getId() ).parentContentPath( content1.getPath() ).build() );
+        this.contentService.move(
+            MoveContentParams.create().contentId( content2.getId() ).parentContentPath( content1.getPath() ).build() );
 
         final ArchiveContentsResult archiveContentsResult =
             this.contentService.archive( ArchiveContentParams.create().contentId( content1.getId() ).build() );
 
-        assertThat(archiveContentsResult.getUnpublishedContents()).containsExactly( content2.getId() );
+        assertThat( archiveContentsResult.getUnpublishedContents() ).containsExactly( content2.getId() );
 
-        assertThat(archiveContentsResult.getArchivedContents()).containsExactly( content1.getId(), content2.getId() );
+        assertThat( archiveContentsResult.getArchivedContents() ).containsExactly( content1.getId(), content2.getId() );
 
         ctxMasterSu().runWith( () -> {
             assertFalse( this.contentService.contentExists( content2.getId() ) );
