@@ -24,6 +24,8 @@ public class ZipExportWriter
 
     private final String exportName;
 
+    private boolean closed = false;
+
     private ZipExportWriter( final String exportName, final ZipArchiveOutputStream zipArchiveOutputStream )
     {
         this.exportName = exportName;
@@ -95,6 +97,10 @@ public class ZipExportWriter
     public void close()
         throws IOException
     {
-        zipArchiveOutputStream.close();
+        if ( !closed )
+        {
+            zipArchiveOutputStream.close();
+            closed = true;
+        }
     }
 }
