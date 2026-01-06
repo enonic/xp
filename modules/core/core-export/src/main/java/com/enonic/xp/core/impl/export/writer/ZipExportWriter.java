@@ -1,8 +1,6 @@
 package com.enonic.xp.core.impl.export.writer;
 
-import java.io.FilterOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -10,7 +8,6 @@ import java.nio.file.StandardOpenOption;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
-import org.apache.commons.compress.archivers.zip.ZipMethod;
 
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
@@ -58,10 +55,11 @@ public class ZipExportWriter
 
         try
         {
+            final byte[] data = export.getBytes( java.nio.charset.StandardCharsets.UTF_8 );
             final ZipArchiveEntry archiveEntry = new ZipArchiveEntry( entryPath );
-            archiveEntry.setMethod( ZipMethod.STORED.getCode() );
+            archiveEntry.setSize( data.length );
             zipArchiveOutputStream.putArchiveEntry( archiveEntry );
-            zipArchiveOutputStream.write( export.getBytes( java.nio.charset.StandardCharsets.UTF_8 ) );
+            zipArchiveOutputStream.write( data );
             zipArchiveOutputStream.closeArchiveEntry();
         }
         catch ( IOException e )
@@ -78,7 +76,6 @@ public class ZipExportWriter
         try
         {
             final ZipArchiveEntry archiveEntry = new ZipArchiveEntry( entryPath );
-            archiveEntry.setMethod( ZipMethod.STORED.getCode() );
             zipArchiveOutputStream.putArchiveEntry( archiveEntry );
 
             try ( var in = source.openStream() )
@@ -94,6 +91,7 @@ public class ZipExportWriter
         }
     }
 
+    @Override
     public void close()
         throws IOException
     {
