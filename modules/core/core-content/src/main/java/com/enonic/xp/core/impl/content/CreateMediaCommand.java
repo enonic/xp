@@ -17,8 +17,6 @@ import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.page.PageDefaultValuesProcessor;
 import com.enonic.xp.schema.content.ContentTypeFromMimeTypeResolver;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.site.SiteConfigService;
-import com.enonic.xp.site.XDataMappingService;
 
 final class CreateMediaCommand
     extends AbstractCreatingOrUpdatingContentCommand
@@ -33,10 +31,6 @@ final class CreateMediaCommand
 
     private final XDataDefaultValuesProcessor xDataDefaultValuesProcessor;
 
-    private final XDataMappingService xDataMappingService;
-
-    private final SiteConfigService siteConfigService;
-
     private CreateMediaCommand( final Builder builder )
     {
         super( builder );
@@ -45,8 +39,6 @@ final class CreateMediaCommand
         this.formDefaultValuesProcessor = builder.formDefaultValuesProcessor;
         this.pageFormDefaultValuesProcessor = builder.pageFormDefaultValuesProcessor;
         this.xDataDefaultValuesProcessor = builder.xDataDefaultValuesProcessor;
-        this.xDataMappingService = builder.xDataMappingService;
-        this.siteConfigService = builder.siteConfigService;
     }
 
     Content execute()
@@ -149,10 +141,6 @@ final class CreateMediaCommand
 
         private XDataDefaultValuesProcessor xDataDefaultValuesProcessor;
 
-        private XDataMappingService xDataMappingService;
-
-        private SiteConfigService siteConfigService;
-
         public Builder params( final CreateMediaParams params )
         {
             this.params = params;
@@ -183,18 +171,6 @@ final class CreateMediaCommand
             return this;
         }
 
-        public Builder xDataMappingService( final XDataMappingService xDataMappingService )
-        {
-            this.xDataMappingService = xDataMappingService;
-            return this;
-        }
-
-        public Builder siteConfigService( final SiteConfigService siteConfigService )
-        {
-            this.siteConfigService = siteConfigService;
-            return this;
-        }
-
         @Override
         void validate()
         {
@@ -202,8 +178,6 @@ final class CreateMediaCommand
             Objects.requireNonNull( params, "params cannot be null" );
             Objects.requireNonNull( formDefaultValuesProcessor );
             Objects.requireNonNull( xDataDefaultValuesProcessor );
-            Objects.requireNonNull( xDataMappingService );
-            Objects.requireNonNull( siteConfigService );
         }
 
         public CreateMediaCommand build()

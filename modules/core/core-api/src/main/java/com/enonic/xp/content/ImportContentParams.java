@@ -4,19 +4,16 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Objects;
 
-import com.enonic.xp.node.BinaryAttachments;
-import com.enonic.xp.node.InsertManualStrategy;
+import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.project.ProjectName;
 
 public final class ImportContentParams
 {
-    private final BinaryAttachments binaryAttachments;
+    private final CreateAttachments attachments;
 
     private final Content content;
 
     private final ContentPath targetPath;
-
-    private final InsertManualStrategy insertManualStrategy;
 
     private final EnumSet<ContentInheritType> inherit;
 
@@ -28,10 +25,9 @@ public final class ImportContentParams
 
     private ImportContentParams( Builder builder )
     {
-        binaryAttachments = builder.binaryAttachments;
+        attachments = builder.attachments;
         content = builder.content;
         targetPath = builder.targetPath;
-        insertManualStrategy = builder.insertManualStrategy;
         inherit = builder.inherit;
         importPermissions = builder.importPermissions;
         importPermissionsOnCreate = builder.importPermissionsOnCreate;
@@ -53,14 +49,9 @@ public final class ImportContentParams
         return targetPath;
     }
 
-    public InsertManualStrategy getInsertManualStrategy()
+    public CreateAttachments getAttachments()
     {
-        return insertManualStrategy;
-    }
-
-    public BinaryAttachments getBinaryAttachments()
-    {
-        return binaryAttachments;
+        return attachments;
     }
 
     public EnumSet<ContentInheritType> getInherit()
@@ -85,13 +76,11 @@ public final class ImportContentParams
 
     public static final class Builder
     {
-        private BinaryAttachments binaryAttachments;
+        private CreateAttachments attachments;
 
         private Content content;
 
         private ContentPath targetPath;
-
-        private InsertManualStrategy insertManualStrategy;
 
         private EnumSet<ContentInheritType> inherit;
 
@@ -105,9 +94,9 @@ public final class ImportContentParams
         {
         }
 
-        public Builder binaryAttachments( BinaryAttachments binaryAttachments )
+        public Builder attachments( CreateAttachments attachments )
         {
-            this.binaryAttachments = binaryAttachments;
+            this.attachments = attachments;
             return this;
         }
 
@@ -120,12 +109,6 @@ public final class ImportContentParams
         public Builder targetPath( ContentPath targetPath )
         {
             this.targetPath = targetPath;
-            return this;
-        }
-
-        public Builder insertManualStrategy( InsertManualStrategy insertManualStrategy )
-        {
-            this.insertManualStrategy = insertManualStrategy;
             return this;
         }
 

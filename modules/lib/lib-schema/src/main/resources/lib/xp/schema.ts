@@ -33,7 +33,7 @@ export type {
 
 function checkRequired<T extends object>(obj: T, name: keyof T): void {
     if (obj == null || obj[name] === undefined) {
-        throw `Parameter '${String(name)}' is required`;
+        throw Error(`Parameter '${String(name)}' is required`);
     }
 }
 
@@ -79,12 +79,10 @@ export interface Schema {
 export interface ContentTypeSchema
     extends Schema {
     form: FormItem[];
-    config: {
-        [configName: string]: {
+    config: Record<string, {
             [attributeKey: string]: string;
             value: string;
-        }[]
-    };
+        }[]>;
     xDataNames?: string[];
 }
 
@@ -151,12 +149,10 @@ export interface ComponentDescriptor {
     resource: string;
     type: ComponentDescriptorType;
     form: FormItem[];
-    config: {
-        [configName: string]: {
+    config: Record<string, {
             [attributeKey: string]: string;
             value: string;
-        }[]
-    };
+        }[]>;
 }
 
 export interface LayoutDescriptor

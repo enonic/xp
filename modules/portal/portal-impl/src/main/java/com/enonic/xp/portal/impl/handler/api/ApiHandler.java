@@ -40,8 +40,6 @@ public class ApiHandler
 {
     private static final Pattern URL_PATTERN = Pattern.compile( "^/api$" );
 
-    private static final ApplicationKey WELCOME_APP_KEY = ApplicationKey.from( "com.enonic.xp.app.sdk" );
-
     private final ApplicationService applicationService;
 
     private final ApiDescriptorService apiDescriptorService;
@@ -70,8 +68,7 @@ public class ApiHandler
     @Override
     protected boolean canHandle( final WebRequest webRequest )
     {
-        boolean isSDK = applicationService.get( WELCOME_APP_KEY ) != null;
-        boolean isIndexEnabled = isSDK || RunMode.get() == RunMode.DEV
+        boolean isIndexEnabled = RunMode.isDev()
             ? apiIndexMode == ApiIndexMode.ON || apiIndexMode == ApiIndexMode.AUTO
             : apiIndexMode == ApiIndexMode.ON;
         return isIndexEnabled && URL_PATTERN.matcher( webRequest.getRawPath() ).matches();

@@ -34,9 +34,6 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.PatchNodeResult;
-import com.enonic.xp.schema.content.ContentType;
-import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.util.BinaryReference;
@@ -144,12 +141,11 @@ final class UpdateContentCommand
 
     private BiPredicate<Content, Content> isContentTheSame()
     {
-        return ( c1, c2 ) -> Objects.equals( c1.getId(), c2.getId() ) && Objects.equals( c1.getPath(), c2.getPath() )
-            && Objects.equals( c1.getDisplayName(), c2.getDisplayName() ) &&
-            Objects.equals( c1.getType(), c2.getType() ) && Objects.equals( c1.getCreator(), c2.getCreator() ) &&
-            Objects.equals( c1.getOwner(), c2.getOwner() ) && Objects.equals( c1.getCreatedTime(), c2.getCreatedTime() ) &&
-            Objects.equals( c1.getInherit(), c2.getInherit() ) && Objects.equals( c1.getOriginProject(), c2.getOriginProject() ) &&
-            Objects.equals( c1.getChildOrder(), c2.getChildOrder() ) &&
+        return ( c1, c2 ) -> Objects.equals( c1.getId(), c2.getId() ) && Objects.equals( c1.getPath(), c2.getPath() ) &&
+            Objects.equals( c1.getDisplayName(), c2.getDisplayName() ) && Objects.equals( c1.getType(), c2.getType() ) &&
+            Objects.equals( c1.getCreator(), c2.getCreator() ) && Objects.equals( c1.getOwner(), c2.getOwner() ) &&
+            Objects.equals( c1.getCreatedTime(), c2.getCreatedTime() ) && Objects.equals( c1.getInherit(), c2.getInherit() ) &&
+            Objects.equals( c1.getOriginProject(), c2.getOriginProject() ) && Objects.equals( c1.getChildOrder(), c2.getChildOrder() ) &&
             Objects.equals( c1.getPermissions(), c2.getPermissions() ) && Objects.equals( c1.getAttachments(), c2.getAttachments() ) &&
             Objects.equals( c1.getData(), c2.getData() ) && Objects.equals( c1.getAllExtraData(), c2.getAllExtraData() ) &&
             Objects.equals( c1.getPage(), c2.getPage() ) && Objects.equals( c1.getLanguage(), c2.getLanguage() ) &&
@@ -163,23 +159,21 @@ final class UpdateContentCommand
 
     private boolean isStoppingInheritContent( final Set<ContentInheritType> currentInherit )
     {
-        return params.stopInherit() && currentInherit.contains( ContentInheritType.CONTENT );
+        return currentInherit.contains( ContentInheritType.CONTENT );
     }
 
     private Set<ContentInheritType> stopInherit( final Set<ContentInheritType> currentInherit )
     {
-        if ( params.stopInherit() )
+        if ( currentInherit.contains( ContentInheritType.CONTENT ) || currentInherit.contains( ContentInheritType.NAME ) )
         {
-            if ( currentInherit.contains( ContentInheritType.CONTENT ) || currentInherit.contains( ContentInheritType.NAME ) )
-            {
-                final EnumSet<ContentInheritType> newInherit = EnumSet.copyOf( currentInherit );
+            final EnumSet<ContentInheritType> newInherit = EnumSet.copyOf( currentInherit );
 
-                newInherit.remove( ContentInheritType.CONTENT );
-                newInherit.remove( ContentInheritType.NAME );
+            newInherit.remove( ContentInheritType.CONTENT );
+            newInherit.remove( ContentInheritType.NAME );
 
-                return newInherit;
-            }
+            return newInherit;
         }
+
         return currentInherit;
     }
 
@@ -190,7 +184,8 @@ final class UpdateContentCommand
         if ( !params.isClearAttachments() && editedContent.getValidationErrors() != null &&
             editedContent.getValidationErrors().hasErrors() )
         {
-            editedContent.getValidationErrors().stream()
+            editedContent.getValidationErrors()
+                .stream()
                 .filter( validationError -> validationError instanceof AttachmentValidationError )
                 .map( validationError -> (AttachmentValidationError) validationError )
                 .filter( validationError -> !params.getRemoveAttachments().contains( validationError.getAttachment() ) )
@@ -204,7 +199,8 @@ final class UpdateContentCommand
             .contentTypeName( editedContent.getType() )
             .contentName( editedContent.getName() )
             .displayName( editedContent.getDisplayName() )
-            .createAttachments( params.getCreateAttachments() ).page( editedContent.getPage() )
+            .createAttachments( params.getCreateAttachments() )
+            .page( editedContent.getPage() )
             .contentValidators( this.contentValidators )
             .contentTypeService( this.contentTypeService )
             .validationErrorsBuilder( validationErrorsBuilder )
@@ -248,10 +244,8 @@ final class UpdateContentCommand
         {
             if ( contentProcessor.supports( content.getType() ) )
             {
-                final ProcessUpdateParams processUpdateParams = ProcessUpdateParams.create()
-                    .mediaInfo( mediaInfo )
-                    .content( content )
-                    .build();
+                final ProcessUpdateParams processUpdateParams =
+                    ProcessUpdateParams.create().mediaInfo( mediaInfo ).content( content ).build();
                 final ProcessUpdateResult result = contentProcessor.processUpdate( processUpdateParams );
                 content = result.getContent();
             }
@@ -320,11 +314,6 @@ final class UpdateContentCommand
         {
             checkAdminAccess();
         }
-    }
-
-    private ContentType getContentType( final ContentTypeName contentTypeName )
-    {
-        return contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ) );
     }
 
     public static class Builder

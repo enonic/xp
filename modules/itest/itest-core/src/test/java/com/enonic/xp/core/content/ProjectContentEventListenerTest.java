@@ -99,7 +99,7 @@ class ProjectContentEventListenerTest
     @BeforeEach
     void setUp()
     {
-        final ParentContentSynchronizer synchronizer = new ParentContentSynchronizer( contentService );
+        final ParentContentSynchronizer synchronizer = new ParentContentSynchronizer( layersContentService );
         listener = new ProjectContentEventListener( this.projectService, synchronizer, Runnable::run );
 
         syncContentService =
@@ -241,43 +241,37 @@ class ProjectContentEventListenerTest
 
         handleEvents();
 
-        final PatchContentResult patchedContentResult = projectContext.callWith( () -> {
+        final PatchContentResult patchedContentResult = projectContext.callWith(
+            () -> contentService.patch( PatchContentParams.create().contentId( sourceContent.getId() ).patcher( ( edit -> {
+                edit.data.setValue( new PropertyTree() );
+                edit.displayName.setValue( "newDisplayName" );
+                edit.extraDatas.setValue( ExtraDatas.create().add( createExtraData() ).build() );
+                edit.owner.setValue( PrincipalKey.from( "user:system:newOwner" ) );
+                edit.language.setValue( Locale.forLanguageTag( "no" ) );
+                edit.page.setValue( createPage() );
 
-            final PatchContentResult result =
-                contentService.patch( PatchContentParams.create().contentId( sourceContent.getId() ).patcher( ( edit -> {
-                    edit.data.setValue( new PropertyTree() );
-                    edit.displayName.setValue( "newDisplayName" );
-                    edit.extraDatas.setValue( ExtraDatas.create().add( createExtraData() ).build() );
-                    edit.owner.setValue( PrincipalKey.from( "user:system:newOwner" ) );
-                    edit.language.setValue( Locale.forLanguageTag( "no" ) );
-                    edit.page.setValue( createPage() );
+                edit.valid.setValue( false );
+                edit.validationErrors.setValue( ValidationErrors.create()
+                                                    .add( ValidationError.dataError(
+                                                        ValidationErrorCode.from( ApplicationKey.SYSTEM, "errorCode" ),
+                                                        PropertyPath.from( "/property" ) ).build() )
+                                                    .build() );
 
-                    edit.valid.setValue( false );
-                    edit.validationErrors.setValue( ValidationErrors.create()
-                                                        .add( ValidationError.dataError(
-                                                            ValidationErrorCode.from( ApplicationKey.SYSTEM, "errorCode" ),
-                                                            PropertyPath.from( "/property" ) ).build() )
-                                                        .build() );
+                edit.modifiedTime.setValue( Instant.parse( "2023-10-01T12:00:00Z" ) );
+                edit.modifier.setValue( PrincipalKey.from( "user:system:modifier1" ) );
 
-                    edit.modifiedTime.setValue( Instant.parse( "2023-10-01T12:00:00Z" ) );
-                    edit.modifier.setValue( PrincipalKey.from( "user:system:modifier1" ) );
+                edit.childOrder.setValue( ChildOrder.from( "modifiedtime ASC" ) );
 
-                    edit.childOrder.setValue( ChildOrder.from( "modifiedtime ASC" ) );
+                edit.originProject.setValue( ProjectName.from( "new-origin-project" ) );
 
-                    edit.originProject.setValue( ProjectName.from( "new-origin-project" ) );
+                edit.originalParentPath.setValue( ContentPath.from( "/newOriginalParent" ) );
 
-                    edit.originalParentPath.setValue( ContentPath.from( "/newOriginalParent" ) );
+                edit.originalName.setValue( ContentName.from( "newOriginalName" ) );
 
-                    edit.originalName.setValue( ContentName.from( "newOriginalName" ) );
+                edit.archivedTime.setValue( Instant.parse( "2023-10-02T12:00:00Z" ) );
 
-                    edit.archivedTime.setValue( Instant.parse( "2023-10-02T12:00:00Z" ) );
-
-                    edit.archivedBy.setValue( PrincipalKey.from( "user:system:archivedBy" ) );
-                } ) ).build() );
-
-            return result;
-
-        } );
+                edit.archivedBy.setValue( PrincipalKey.from( "user:system:archivedBy" ) );
+            } ) ).build() ) );
 
         final Content patchedContent = patchedContentResult.getResult( ContentConstants.BRANCH_DRAFT );
 
@@ -322,8 +316,7 @@ class ProjectContentEventListenerTest
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
         projectContext.callWith( () -> pushNodes( ContentConstants.BRANCH_MASTER, NodeId.from( sourceContent.getId() ) ) );
 
-        projectContext.callWith( () -> {
-            return contentService.patch( PatchContentParams.create()
+        projectContext.callWith( () ->  contentService.patch( PatchContentParams.create()
                                              .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
                                              .createAttachments( CreateAttachments.create()
                                                                      .add( CreateAttachment.create()
@@ -338,24 +331,23 @@ class ProjectContentEventListenerTest
                                                                                .build() )
                                                                      .build() )
                                              .contentId( sourceContent.getId() )
-                                             .patcher( ( edit -> {
+                                             .patcher( edit -> {
 
-                                                 final Attachment a1 = Attachment.create()
-                                                     .mimeType( "image/gif" )
-                                                     .label( "My Image 1" )
-                                                     .name( "MyImage1.gif" )
-                                                     .build();
-                                                 final Attachment a2 = Attachment.create()
-                                                     .mimeType( "image/gif" )
-                                                     .label( "My Image 2" )
-                                                     .name( "MyImage2.gif" )
-                                                     .build();
+                                                                     final Attachment a1 = Attachment.create()
+                                                                         .mimeType( "image/gif" )
+                                                                         .label( "My Image 1" )
+                                                                         .name( "MyImage1.gif" )
+                                                                         .build();
+                                                                     final Attachment a2 = Attachment.create()
+                                                                         .mimeType( "image/gif" )
+                                                                         .label( "My Image 2" )
+                                                                         .name( "MyImage2.gif" )
+                                                                         .build();
 
-                                                 edit.attachments.setValue( Attachments.create().add( a1 ).add( a2 ).build() );
-                                             } ) )
-                                             .build() );
-
-        } );
+                                                                     edit.attachments.setValue(
+                                                                         Attachments.create().add( a1 ).add( a2 ).build() );
+                                                                 } )
+                                                                 .build() ) );
 
         handleEvents();
 
@@ -366,13 +358,13 @@ class ProjectContentEventListenerTest
             .callWith( () -> contentService.getById( sourceContent.getId() ) );
 
         Attachments attachments3 = targetContent.getAttachments();
-        assertTrue( attachments3.byName( "MyImage1.gif" ) != null );
+        assertNotNull( attachments3.byName( "MyImage1.gif" ) );
         Attachments attachments2 = targetContent.getAttachments();
-        assertTrue( attachments2.byName( "MyImage1.gif" ) != null );
+        assertNotNull( attachments2.byName( "MyImage1.gif" ) );
         Attachments attachments1 = contentInMaster.getAttachments();
-        assertTrue( attachments1.byName( "MyImage2.gif" ) != null );
+        assertNotNull( attachments1.byName( "MyImage2.gif" ) );
         Attachments attachments = contentInMaster.getAttachments();
-        assertTrue( attachments.byName( "MyImage2.gif" ) != null );
+        assertNotNull( attachments.byName( "MyImage2.gif" ) );
     }
 
     @Test
@@ -381,8 +373,7 @@ class ProjectContentEventListenerTest
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
         projectContext.callWith( () -> pushNodes( ContentConstants.BRANCH_MASTER, NodeId.from( sourceContent.getId() ) ) );
 
-        projectContext.callWith( () -> {
-            return contentService.patch( PatchContentParams.create()
+        projectContext.callWith( () ->  contentService.patch( PatchContentParams.create()
                                              .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
                                              .createAttachments( CreateAttachments.create()
                                                                      .add( CreateAttachment.create()
@@ -399,22 +390,20 @@ class ProjectContentEventListenerTest
                                              .contentId( sourceContent.getId() )
                                              .patcher( ( edit -> {
 
-                                                 final Attachment a1 = Attachment.create()
-                                                     .mimeType( "image/gif" )
-                                                     .label( "My Image 1" )
-                                                     .name( "MyImage1.gif" )
-                                                     .build();
-                                                 final Attachment a2 = Attachment.create()
-                                                     .mimeType( "image/gif" )
-                                                     .label( "My Image 2" )
-                                                     .name( "MyImage2.gif" )
-                                                     .build();
+                                             final Attachment a1 = Attachment.create()
+                                                 .mimeType( "image/gif" )
+                                                 .label( "My Image 1" )
+                                                 .name( "MyImage1.gif" )
+                                                 .build();
+                                             final Attachment a2 = Attachment.create()
+                                                 .mimeType( "image/gif" )
+                                                 .label( "My Image 2" )
+                                                 .name( "MyImage2.gif" )
+                                                 .build();
 
-                                                 edit.attachments.setValue( Attachments.create().add( a1 ).add( a2 ).build() );
-                                             } ) )
-                                             .build() );
-
-        } );
+                                             edit.attachments.setValue( Attachments.create().add( a1 ).add( a2 ).build() );
+                                         } ) )
+                                         .build() ) );
 
         handleEvents();
 
@@ -425,17 +414,16 @@ class ProjectContentEventListenerTest
             .callWith( () -> contentService.getById( sourceContent.getId() ) );
 
         Attachments attachments9 = targetContent.getAttachments();
-        assertTrue( attachments9.byName( "MyImage1.gif" ) != null );
+        assertNotNull( attachments9.byName( "MyImage1.gif" ) );
         Attachments attachments8 = contentInMaster.getAttachments();
-        assertTrue( attachments8.byName( "MyImage1.gif" ) != null );
+        assertNotNull( attachments8.byName( "MyImage1.gif" ) );
         Attachments attachments7 = targetContent.getAttachments();
-        assertTrue( attachments7.byName( "MyImage2.gif" ) != null );
+        assertNotNull( attachments7.byName( "MyImage2.gif" ) );
         Attachments attachments6 = contentInMaster.getAttachments();
-        assertTrue( attachments6.byName( "MyImage2.gif" ) != null );
+        assertNotNull( attachments6.byName( "MyImage2.gif" ) );
 
         //remove attachment
-        projectContext.callWith( () -> {
-            return contentService.patch( PatchContentParams.create()
+        projectContext.callWith( () ->  contentService.patch( PatchContentParams.create()
                                              .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
                                              .contentId( sourceContent.getId() )
                                              .createAttachments( CreateAttachments.create()
@@ -458,11 +446,10 @@ class ProjectContentEventListenerTest
                                                      .name( "MyImage3.gif" )
                                                      .build();
 
-                                                 edit.attachments.setValue( Attachments.create().add( a2 ).add( a3 ).build() );
-                                             } ) )
-                                             .build() );
-
-        } );
+                                                                     edit.attachments.setValue(
+                                                                         Attachments.create().add( a2 ).add( a3 ).build() );
+                                                                 } ) )
+                                                                 .build() ) );
 
         handleEvents();
 
@@ -473,17 +460,17 @@ class ProjectContentEventListenerTest
             .callWith( () -> contentService.getById( sourceContent.getId() ) );
 
         Attachments attachments5 = targetContent.getAttachments();
-        assertFalse( attachments5.byName( "MyImage1.gif" ) != null );
+        assertNull( attachments5.byName( "MyImage1.gif" ) );
         Attachments attachments4 = contentInMaster.getAttachments();
-        assertFalse( attachments4.byName( "MyImage1.gif" ) != null );
+        assertNull( attachments4.byName( "MyImage1.gif" ) );
         Attachments attachments3 = targetContent.getAttachments();
-        assertTrue( attachments3.byName( "MyImage2.gif" ) != null );
+        assertNotNull( attachments3.byName( "MyImage2.gif" ) );
         Attachments attachments2 = contentInMaster.getAttachments();
-        assertTrue( attachments2.byName( "MyImage2.gif" ) != null );
+        assertNotNull( attachments2.byName( "MyImage2.gif" ) );
         Attachments attachments1 = targetContent.getAttachments();
-        assertTrue( attachments1.byName( "MyImage3.gif" ) != null );
+        assertNotNull( attachments1.byName( "MyImage3.gif" ) );
         Attachments attachments = contentInMaster.getAttachments();
-        assertTrue( attachments.byName( "MyImage3.gif" ) != null );
+        assertNotNull( attachments.byName( "MyImage3.gif" ) );
     }
 
     @Test
@@ -653,8 +640,8 @@ class ProjectContentEventListenerTest
 
         handleEvents(); // not synced
 
-        assertTrue( layerContext.callWith( () -> contentService.contentExists( sourceContent1.getId() ) ) );
-        assertTrue( layerContext.callWith( () -> contentService.contentExists( sourceContent2.getId() ) ) );
+        assertTrue( layerContext.callWith( () -> layersContentService.getById( sourceContent1.getId() ).isPresent() ) );
+        assertTrue( layerContext.callWith( () -> layersContentService.getById( sourceContent2.getId() ).isPresent() ) );
     }
 
     @Test
@@ -1007,9 +994,7 @@ class ProjectContentEventListenerTest
         assertThat( result.getContents() ).map( Content::getName )
             .containsExactly( sourceChild2.getName(), sourceChild1.getName(), sourceChild3.getName() );
 
-        layerContext.runWith( () -> {
-            assertTrue( contentService.getById( sourceContent.getId() ).getChildOrder().isManualOrder() );
-        } );
+        layerContext.runWith( () -> assertTrue( contentService.getById( sourceContent.getId() ).getChildOrder().isManualOrder() ) );
     }
 
     @Test
@@ -1062,14 +1047,10 @@ class ProjectContentEventListenerTest
 
         handleEvents();
 
-        layerContext.runWith( () -> {
-            createContent( ContentPath.ROOT, "newName" );
-        } );
+        layerContext.runWith( () -> createContent( ContentPath.ROOT, "newName" ) );
 
-        projectContext.runWith( () -> {
-            contentService.move(
-                MoveContentParams.create().contentId( sourceContent.getId() ).newName( ContentName.from( "newName" ) ).build() );
-        } );
+        projectContext.runWith( () -> contentService.move(
+            MoveContentParams.create().contentId( sourceContent.getId() ).newName( ContentName.from( "newName" ) ).build() ) );
         handleEvents();
 
         assertEquals( "newName-1", layerContext.callWith( () -> contentService.getById( sourceContent.getId() ) ).getName().toString() );
@@ -1090,9 +1071,9 @@ class ProjectContentEventListenerTest
         handleEvents();
 
         layerContext.runWith( () -> {
-            assertFalse( contentService.contentExists( sourceContent.getId() ) );
-            assertFalse( contentService.contentExists( sourceChild1.getId() ) );
-            assertFalse( contentService.contentExists( sourceChild2.getId() ) );
+            assertFalse( layersContentService.getById( sourceContent.getId() ).isPresent() );
+            assertFalse( layersContentService.getById( sourceChild1.getId() ).isPresent() );
+            assertFalse( layersContentService.getById( sourceChild2.getId() ).isPresent() );
         } );
     }
 
@@ -1110,9 +1091,11 @@ class ProjectContentEventListenerTest
         handleEvents();
 
         layerContext.runWith( () -> {
-            assertTrue( contentService.contentExists( sourceContent.getId() ) );
-            assertTrue( contentService.contentExists( sourceChild1.getId() ) );
-            assertTrue( contentService.contentExists( sourceChild2.getId() ) );
+            assertTrue( layersContentService.getById( sourceContent.getId() ).isPresent() );
+            final ContentId id1 = sourceChild1.getId();
+            assertTrue( layersContentService.getById( id1 ).isPresent() );
+            final ContentId id = sourceChild2.getId();
+            assertTrue( layersContentService.getById( id ).isPresent() );
         } );
     }
 
@@ -1123,15 +1106,11 @@ class ProjectContentEventListenerTest
 
         handleEvents();
 
-        childLayerContext.runWith( () -> {
-            contentService.move(
-                MoveContentParams.create().contentId( sourceContent.getId() ).newName( ContentName.from( "newName1" ) ).build() );
-        } );
+        childLayerContext.runWith( () -> contentService.move(
+            MoveContentParams.create().contentId( sourceContent.getId() ).newName( ContentName.from( "newName1" ) ).build() ) );
 
-        secondChildLayerContext.runWith( () -> {
-            contentService.move(
-                MoveContentParams.create().contentId( sourceContent.getId() ).newName( ContentName.from( "newName2" ) ).build() );
-        } );
+        secondChildLayerContext.runWith( () -> contentService.move(
+            MoveContentParams.create().contentId( sourceContent.getId() ).newName( ContentName.from( "newName2" ) ).build() ) );
 
         mixedChildLayerContext.runWith( () -> {
             syncContentService.syncProject( ProjectSyncParams.create().targetProject( mixedChildLayer.getName() ).build() );
@@ -1140,9 +1119,8 @@ class ProjectContentEventListenerTest
 
         handleEvents();
 
-        mixedChildLayerContext.runWith( () -> {
-            contentService.delete( DeleteContentParams.create().contentPath( ContentPath.from( "/newName1" ) ).build() );
-        } );
+        mixedChildLayerContext.runWith(
+            () -> contentService.delete( DeleteContentParams.create().contentPath( ContentPath.from( "/newName1" ) ).build() ) );
 
         handleEvents();
 

@@ -20,6 +20,6 @@ exports.addMembersWithoutKey = function () {
     try {
         auth.addMembers(null, ['user:mystore:user1', 'group:mystore:group1']);
     } catch (e) {
-        t.assertEquals("Parameter 'principalKey' is required", e);
+        t.assertEquals("Parameter 'principalKey' is required", e.message);
     }
 }

@@ -20,6 +20,8 @@ import com.enonic.xp.resource.MockResource;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.server.RunMode;
+import com.enonic.xp.server.RunModeSupport;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
@@ -190,6 +192,7 @@ class AssetHandlerTest
 
         final ResourceKey resourceKey = ResourceKey.from( ApplicationKey.from( "demo" ), "META-INF/MANIFEST.MF" );
         when( this.resourceService.getResource( resourceKey ) ).thenReturn( MockResource.empty( resourceKey, 1 ) );
+        RunModeSupport.set( RunMode.PROD );
 
         final WebResponse res = this.handler.handle( this.request );
         assertNotNull( res );

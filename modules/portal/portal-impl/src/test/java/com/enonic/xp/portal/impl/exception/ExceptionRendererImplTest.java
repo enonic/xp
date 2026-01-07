@@ -14,7 +14,6 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -36,6 +35,7 @@ import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.server.RunMode;
+import com.enonic.xp.server.RunModeSupport;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.web.HttpStatus;
@@ -62,8 +62,6 @@ class ExceptionRendererImplTest
 
     private PortalUrlService portalUrlService;
 
-    private ContentService contentService;
-
     private IdProviderControllerService idProviderControllerService;
 
     private ErrorHandlerScriptFactory errorHandlerScriptFactory;
@@ -75,12 +73,11 @@ class ExceptionRendererImplTest
     {
         this.resourceService = mock( ResourceService.class );
         this.portalUrlService = mock( PortalUrlService.class );
-        this.contentService = mock( ContentService.class );
         this.idProviderControllerService = mock( IdProviderControllerService.class );
         this.errorHandlerScriptFactory = mock( ErrorHandlerScriptFactory.class );
         this.postProcessor = new MockPostProcessor();
-        this.renderer =
-            new ExceptionRendererImpl( resourceService, portalUrlService, errorHandlerScriptFactory, null, postProcessor, RunMode.DEV );
+        RunModeSupport.set( RunMode.DEV );
+        this.renderer = new ExceptionRendererImpl( resourceService, portalUrlService, errorHandlerScriptFactory, null, postProcessor );
         this.request = new PortalRequest();
 
         final HttpServletRequest rawRequest = mock( HttpServletRequest.class );
@@ -119,6 +116,7 @@ class ExceptionRendererImplTest
     @Test
     void render_with_tip()
     {
+        RunModeSupport.set( RunMode.PROD );
         this.renderer = new ExceptionRendererImpl( resourceService, portalUrlService, errorHandlerScriptFactory, null, postProcessor );
 
         this.request.getHeaders().put( HttpHeaders.ACCEPT, "text/html,text/*" );
@@ -308,9 +306,10 @@ class ExceptionRendererImplTest
     void testRenderForbidden()
         throws IOException
     {
+        RunModeSupport.set( RunMode.PROD );
         this.renderer =
             new ExceptionRendererImpl( resourceService, portalUrlService, errorHandlerScriptFactory, idProviderControllerService,
-                                       postProcessor, RunMode.PROD );
+                                       postProcessor );
 
         when( idProviderControllerService.execute( any( IdProviderControllerExecutionParams.class ) ) ).thenReturn( null );
         when( portalUrlService.identityUrl( any( IdentityUrlParams.class ) ) ).thenReturn( "logoutUrl" );

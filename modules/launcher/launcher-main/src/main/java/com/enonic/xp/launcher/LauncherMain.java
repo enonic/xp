@@ -2,11 +2,11 @@ package com.enonic.xp.launcher;
 
 import com.enonic.xp.launcher.impl.LauncherImpl;
 
-public final class LauncherMain
+final class LauncherMain
 {
-    private final Launcher launcher;
+    private final LauncherImpl launcher;
 
-    public LauncherMain( final Launcher launcher )
+    private LauncherMain( final LauncherImpl launcher )
     {
         this.launcher = launcher;
     }
@@ -16,14 +16,13 @@ public final class LauncherMain
     {
         System.setProperty( "java.awt.headless", "true" );
         System.setProperty( "java.net.preferIPv4Stack", "true" );
-        new ShutdownHook( this.launcher::stop ).register();
+        Runtime.getRuntime().addShutdownHook( new ShutdownHook( this.launcher::stop ) );
         this.launcher.start();
     }
 
-    public static void main( final String... args )
+    static void main( final String... args )
         throws Exception
     {
-        final Launcher launcher = new LauncherImpl( args );
-        new LauncherMain( launcher ).launch();
+        new LauncherMain( new LauncherImpl( args ) ).launch();
     }
 }

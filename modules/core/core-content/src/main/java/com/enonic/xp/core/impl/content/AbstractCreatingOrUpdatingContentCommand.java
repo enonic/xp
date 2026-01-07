@@ -39,7 +39,6 @@ import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageTemplate;
-import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.region.Component;
@@ -96,8 +95,6 @@ class AbstractCreatingOrUpdatingContentCommand
 
     final SiteConfigService siteConfigService;
 
-    final PageTemplateService pageTemplateService;
-
     final boolean allowUnsafeAttachmentNames;
 
     AbstractCreatingOrUpdatingContentCommand( final Builder<?> builder )
@@ -113,7 +110,6 @@ class AbstractCreatingOrUpdatingContentCommand
         this.layoutDescriptorService = builder.layoutDescriptorService;
         this.xDataMappingService = builder.xDataMappingService;
         this.siteConfigService = builder.siteConfigService;
-        this.pageTemplateService = builder.pageTemplateService;
     }
 
     ExtraDatas mergeExtraData( final ContentTypeName type, final PropertyTree data, final ContentPath parent, final ExtraDatas extraDatas )
@@ -298,8 +294,7 @@ class AbstractCreatingOrUpdatingContentCommand
 
         if ( page.hasTemplate() )
         {
-            final PageTemplate pageTemplate = pageTemplateService.getByKey( page.getTemplate() );
-
+            final PageTemplate pageTemplate = (PageTemplate) getContent( page.getTemplate().getContentId() );
             if ( pageTemplate != null && pageTemplate.getPage() != null && pageTemplate.getPage().hasDescriptor() )
             {
                 return pageDescriptorService.getByKey( pageTemplate.getPage().getDescriptor() );
@@ -369,8 +364,6 @@ class AbstractCreatingOrUpdatingContentCommand
 
         private PageDescriptorService pageDescriptorService;
 
-        private PageTemplateService pageTemplateService;
-
         private PartDescriptorService partDescriptorService;
 
         private LayoutDescriptorService layoutDescriptorService;
@@ -395,7 +388,6 @@ class AbstractCreatingOrUpdatingContentCommand
             this.layoutDescriptorService = source.layoutDescriptorService;
             this.xDataMappingService = source.xDataMappingService;
             this.siteConfigService = source.siteConfigService;
-            this.pageTemplateService = source.pageTemplateService;
         }
 
         @SuppressWarnings("unchecked")
@@ -436,12 +428,6 @@ class AbstractCreatingOrUpdatingContentCommand
         B pageDescriptorService( final PageDescriptorService pageDescriptorService )
         {
             this.pageDescriptorService = pageDescriptorService;
-            return (B) this;
-        }
-
-        B pageTemplateService( final PageTemplateService pageTemplateService )
-        {
-            this.pageTemplateService = pageTemplateService;
             return (B) this;
         }
 

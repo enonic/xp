@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.content;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -9,6 +10,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.archive.ArchiveConstants;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.MoveContentParams;
@@ -37,17 +39,16 @@ final class MovedEventSyncCommand
 
         for ( ContentToSync contentToSync : contentToSync )
         {
-            if ( !contentToSync.getSourceContext()
+            if ( !contentToSync.getSourceCtx()
                 .getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE )
-                .equals( contentToSync.getTargetContext().getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE ) ) )
+                .equals( contentToSync.getTargetCtx().getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE ) ) )
             {
-                if ( ArchiveConstants.ARCHIVE_ROOT_PATH.equals(
-                    contentToSync.getSourceContext().getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE ) ) )
+                if ( ArchiveConstants.ARCHIVE_ROOT_PATH.equals( contentToSync.getSourceCtx().getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE ) ) )
                 {
                     toArchive.add( contentToSync );
                 }
                 else if ( ArchiveConstants.ARCHIVE_ROOT_PATH.equals(
-                    contentToSync.getTargetContext().getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE ) ) )
+                    contentToSync.getTargetCtx().getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE ) ) )
                 {
                     toRestore.add( contentToSync );
                 }
@@ -60,11 +61,11 @@ final class MovedEventSyncCommand
 
         if ( !toArchive.isEmpty() )
         {
-            MovedEventSyncArchiver.create().contentService( contentService ).addContents( toArchive ).build().execute();
+            MovedEventSyncArchiver.create().contentService( layersContentService ).addContents( toArchive ).build().execute();
         }
         if ( !toRestore.isEmpty() )
         {
-            MovedEventSyncRestorer.create().contentService( contentService ).addContents( toRestore ).build().execute();
+            MovedEventSyncRestorer.create().contentService( layersContentService ).addContents( toRestore ).build().execute();
         }
         if ( !toMove.isEmpty() )
         {
@@ -77,40 +78,37 @@ final class MovedEventSyncCommand
         final Set<ContentPath> paths =
             contents.stream().map( content -> content.getSourceContent().getPath() ).collect( Collectors.toSet() );
 
-        final List<ContentToSync> rootsToSync = contents.stream()
-            .filter( content -> !paths.contains( content.getSourceContent().getParentPath() ) )
-            .collect( Collectors.toList() );
+        final List<ContentToSync> rootsToSync =
+            contents.stream().filter( content -> !paths.contains( content.getSourceContent().getParentPath() ) ).toList();
 
         for ( ContentToSync content : rootsToSync )
         {
             if ( isToSync( content.getTargetContent() ) )
             {
-                content.getTargetContext().runWith( () -> {
-                    final Content sourceParent =
-                        content.getSourceContext().callWith( () -> contentService.getByPath( content.getSourceContent().getParentPath() ) );
-                    final Content sourceRoot = content.getSourceContext().callWith( () -> contentService.getByPath( ContentPath.ROOT ) );
+                content.getTargetCtx().runWith( () -> {
+                    final ContentId sourceParentId = content.getSourceCtx()
+                        .callWith( () -> layersContentService.getByPath( content.getSourceContent().getParentPath() ).orElseThrow() )
+                        .getId();
 
-                    final ContentPath targetParentPath = contentService.contentExists( sourceParent.getId() )
-                        ? contentService.getById( sourceParent.getId() ).getPath()
-                        : sourceRoot.getId().equals( sourceParent.getId() ) ? ContentPath.ROOT : null;
+                    layersContentService.getById( sourceParentId )
+                        .map( Content::getPath )
+                        .or( () -> sourceParentId.equals( content.getSourceCtx()
+                                                              .callWith(
+                                                                  () -> layersContentService.getByPath( ContentPath.ROOT ).orElseThrow() )
+                                                              .getId() ) ? Optional.of( ContentPath.ROOT ) : Optional.empty() )
+                        .ifPresent( targetParentPath -> {
+                            if ( !content.getTargetContent().getPath().equals( content.getSourceContent().getPath() ) )
+                            {
+                                final ContentPath newPath =
+                                    buildNewPath( targetParentPath, content.getSourceContent().getName(), content.getTargetContent() );
 
-                    if ( targetParentPath == null )
-                    {
-                        return;
-                    }
-
-                    if ( !content.getTargetContent().getPath().equals( content.getSourceContent().getPath() ) )
-                    {
-                        final ContentPath newPath =
-                            buildNewPath( targetParentPath, content.getSourceContent().getName(), content.getTargetContent() );
-
-                        contentService.move( MoveContentParams.create()
-                                                 .contentId( content.getTargetContent().getId() )
-                                                 .newName( newPath.getName() )
-                                                 .parentContentPath( targetParentPath )
-                                                 .stopInherit( false )
-                                                 .build() );
-                    }
+                                layersContentService.move( MoveContentParams.create()
+                                                               .contentId( content.getTargetContent().getId() )
+                                                               .newName( newPath.getName() )
+                                                               .parentContentPath( targetParentPath )
+                                                               .build() );
+                            }
+                        } );
                 } );
             }
         }
@@ -118,7 +116,8 @@ final class MovedEventSyncCommand
 
     private boolean isToSync( final Content targetContent )
     {
-        return targetContent.getInherit().contains( ContentInheritType.PARENT ) || targetContent.getInherit().contains( ContentInheritType.NAME );
+        return targetContent.getInherit().contains( ContentInheritType.PARENT ) ||
+            targetContent.getInherit().contains( ContentInheritType.NAME );
     }
 
     public static class Builder

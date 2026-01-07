@@ -21,15 +21,12 @@ import com.enonic.xp.server.RunMode;
 
 public final class ApplicationFactory
 {
-    private final RunMode runMode;
-
     private final NodeService nodeService;
 
     private final AppConfig appConfig;
 
-    ApplicationFactory( final RunMode runMode, final NodeService nodeService, final AppConfig appConfig )
+    ApplicationFactory( final NodeService nodeService, final AppConfig appConfig )
     {
-        this.runMode = runMode;
         this.nodeService = nodeService;
         this.appConfig = appConfig;
     }
@@ -53,7 +50,7 @@ public final class ApplicationFactory
         final ClassLoaderApplicationUrlResolver classLoaderUrlResolver = createClassLoaderUrlResolver( bundle );
         final FakeSiteXmlUrlResolver fakeSiteXmlUrlResolver = new FakeSiteXmlUrlResolver( appKey, nodeService );
 
-        final boolean addCLR = RunMode.DEV.equals( this.runMode ) && classLoaderUrlResolver != null;
+        final boolean addCLR = RunMode.isDev() && classLoaderUrlResolver != null;
 
         if ( appConfig.virtual_enabled() && appConfig.virtual_schema_override() )
         {
@@ -73,7 +70,7 @@ public final class ApplicationFactory
         {
             case "bundle":
                 final ClassLoaderApplicationUrlResolver classLoaderUrlResolver = createClassLoaderUrlResolver( bundle );
-                final boolean addCLR = RunMode.DEV.equals( this.runMode ) && classLoaderUrlResolver != null;
+                final boolean addCLR = RunMode.isDev() && classLoaderUrlResolver != null;
 
                 return addCLR
                     ? new MultiApplicationUrlResolver( classLoaderUrlResolver, new BundleApplicationUrlResolver( bundle ) )

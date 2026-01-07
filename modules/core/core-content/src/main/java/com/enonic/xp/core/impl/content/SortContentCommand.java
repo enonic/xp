@@ -21,12 +21,22 @@ class SortContentCommand
 {
     private final SortContentParams params;
 
+    private final boolean stopInherit;
+
+    private SortContentCommand( final Builder builder )
+    {
+        super( builder );
+        this.params = builder.params;
+        this.stopInherit = builder.stopInherit;
+    }
+
     public static Builder create( final SortContentParams params )
     {
         return new Builder( params );
     }
 
-    SortContentResult execute() {
+    SortContentResult execute()
+    {
         try
         {
             final SortNodeParams.Builder paramsBuilder = SortNodeParams.create()
@@ -45,7 +55,7 @@ class SortContentCommand
                                                   .build() );
             }
 
-            if ( params.stopInherit() )
+            if ( stopInherit )
             {
                 paramsBuilder.processor( InheritedContentDataProcessor.SORT );
             }
@@ -68,20 +78,22 @@ class SortContentCommand
         }
     }
 
-    private SortContentCommand( final Builder builder )
-    {
-        super( builder );
-        this.params = builder.params;
-    }
-
     public static class Builder
         extends AbstractContentCommand.Builder<SortContentCommand.Builder>
     {
         private final SortContentParams params;
 
+        private boolean stopInherit = true;
+
         private Builder( final SortContentParams params )
         {
             this.params = Objects.requireNonNull( params, "params cannot be null" );
+        }
+
+        public Builder stopInherit( final boolean stopInherit )
+        {
+            this.stopInherit = stopInherit;
+            return this;
         }
 
         @Override

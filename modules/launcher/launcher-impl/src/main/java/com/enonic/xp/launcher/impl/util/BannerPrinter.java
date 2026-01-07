@@ -3,8 +3,7 @@ package com.enonic.xp.launcher.impl.util;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
-import com.enonic.xp.launcher.VersionInfo;
-import com.enonic.xp.launcher.impl.SharedConstants;
+import com.enonic.xp.launcher.impl.VersionInfo;
 import com.enonic.xp.launcher.impl.env.Environment;
 
 public final class BannerPrinter
@@ -31,7 +30,6 @@ public final class BannerPrinter
         System.out.println( "# Install directory is " + this.env.getInstallDir() );
         System.out.println( "# Home directory is " + this.env.getHomeDir() );
         System.out.println();
-        printWarnings();
     }
 
     private String getFormattedBuildInfo()
@@ -50,23 +48,6 @@ public final class BannerPrinter
     {
         return String.format( "%s %s (%s)", System.getProperty( "os.name" ), System.getProperty( "os.version" ),
                               System.getProperty( "os.arch" ) );
-    }
-
-    private void printWarnings()
-    {
-        final boolean devMode = "dev".equalsIgnoreCase( System.getProperty( SharedConstants.XP_RUN_MODE ) );
-        if ( devMode )
-        {
-            printDevModeWarning();
-        }
-    }
-
-    private void printDevModeWarning()
-    {
-        System.out.println( "*" );
-        System.out.println( "* DEV mode is ON. This will slow down the system and should NOT BE used in production." );
-        System.out.println( "*" );
-        System.out.println();
     }
 
     private String loadBanner()

@@ -19,13 +19,13 @@ export type {PrincipalKey, UserKey, GroupKey, RoleKey, Principal, ScriptValue, U
 
 function checkRequired<T extends object>(obj: T, name: keyof T): void {
     if (obj == null || obj[name] == null) {
-        throw `Parameter '${String(name)}' is required`;
+        throw Error(`Parameter '${String(name)}' is required`);
     }
 }
 
 function checkRequiredValue(value: unknown, name: string): void {
     if (typeof value === 'undefined' || value === null) {
-        throw `Parameter '${String(name)}' is required`;
+        throw Error(`Parameter '${String(name)}' is required`);
     }
 }
 

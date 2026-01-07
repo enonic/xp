@@ -20,7 +20,6 @@ final class BundleInfoFinder
     }
 
     List<BundleInfo> find()
-        throws Exception
     {
         final Set<BundleInfo> set = new HashSet<>();
         for ( final Map.Entry<Integer, File> entry : findBundleDirs().entrySet() )

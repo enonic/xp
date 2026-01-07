@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
 
+import org.jspecify.annotations.NonNull;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -57,8 +58,6 @@ import com.enonic.xp.content.GetPublishStatusResult;
 import com.enonic.xp.content.GetPublishStatusesParams;
 import com.enonic.xp.content.GetPublishStatusesResult;
 import com.enonic.xp.content.HasUnpublishedChildrenParams;
-import com.enonic.xp.content.ImportContentParams;
-import com.enonic.xp.content.ImportContentResult;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.MoveContentsResult;
 import com.enonic.xp.content.PatchContentParams;
@@ -79,7 +78,6 @@ import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.content.XDataDefaultValuesProcessor;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.core.impl.content.page.PageTemplateServiceImpl;
 import com.enonic.xp.core.impl.content.processor.ContentProcessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
@@ -92,7 +90,6 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.page.PageDefaultValuesProcessor;
 import com.enonic.xp.page.PageDescriptorService;
-import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
@@ -145,8 +142,6 @@ public class ContentServiceImpl
 
     private final PageDescriptorService pageDescriptorService;
 
-    private final PageTemplateService pageTemplateService;
-
     private final PartDescriptorService partDescriptorService;
 
     private final LayoutDescriptorService layoutDescriptorService;
@@ -173,7 +168,6 @@ public class ContentServiceImpl
         this.formDefaultValuesProcessor = formDefaultValuesProcessor;
         this.pageFormDefaultValuesProcessor = pageFormDefaultValuesProcessor;
         this.xDataDefaultValuesProcessor = xDataDefaultValuesProcessor;
-        this.pageTemplateService = new PageTemplateServiceImpl( this );
     }
 
     @Override
@@ -195,7 +189,6 @@ public class ContentServiceImpl
             .xDataMappingService( this.xDataMappingService )
             .siteConfigService( this.siteConfigService )
             .pageDescriptorService( this.pageDescriptorService )
-            .pageTemplateService( new PageTemplateServiceImpl( this ) )
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
             .allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() )
@@ -244,7 +237,6 @@ public class ContentServiceImpl
             .pageFormDefaultValuesProcessor( this.pageFormDefaultValuesProcessor )
             .xDataDefaultValuesProcessor( this.xDataDefaultValuesProcessor )
             .pageDescriptorService( this.pageDescriptorService )
-            .pageTemplateService( this.pageTemplateService )
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
             .allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() )
@@ -270,7 +262,6 @@ public class ContentServiceImpl
             .contentProcessors( this.contentProcessors )
             .contentValidators( this.contentValidators )
             .pageDescriptorService( this.pageDescriptorService )
-            .pageTemplateService( this.pageTemplateService )
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
             .xDataMappingService( this.xDataMappingService )
@@ -295,7 +286,6 @@ public class ContentServiceImpl
             .eventPublisher( this.eventPublisher )
             .mediaInfoService( this.mediaInfoService )
             .pageDescriptorService( this.pageDescriptorService )
-            .pageTemplateService( this.pageTemplateService )
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
             .siteService( this.siteService )
@@ -501,6 +491,7 @@ public class ContentServiceImpl
     }
 
     @Override
+    @NonNull
     public Content getByPath( final ContentPath path )
     {
         return Tracer.trace( "content.getByPath", trace -> trace.put( "path", path ), () -> doGetByPath( path ),
@@ -892,20 +883,6 @@ public class ContentServiceImpl
     }
 
     @Override
-    public ImportContentResult importContent( final ImportContentParams params )
-    {
-        verifyDraftBranch();
-
-        return ImportContentCommand.create()
-            .params( params )
-            .nodeService( nodeService )
-            .contentTypeService( contentTypeService )
-            .eventPublisher( eventPublisher )
-            .build()
-            .execute();
-    }
-
-    @Override
     public PatchContentResult patch( final PatchContentParams params )
     {
         requireAdminRole();
@@ -921,7 +898,6 @@ public class ContentServiceImpl
             .contentProcessors( this.contentProcessors )
             .contentValidators( this.contentValidators )
             .pageDescriptorService( this.pageDescriptorService )
-            .pageTemplateService( this.pageTemplateService )
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
             .allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() )
@@ -947,7 +923,6 @@ public class ContentServiceImpl
             .contentProcessors( this.contentProcessors )
             .contentValidators( this.contentValidators )
             .pageDescriptorService( this.pageDescriptorService )
-            .pageTemplateService( this.pageTemplateService )
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
             .allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() )

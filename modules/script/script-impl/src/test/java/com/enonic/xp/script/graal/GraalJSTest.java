@@ -46,7 +46,7 @@ class GraalJSTest
 
         ScriptExecutor scriptExecutor =
             new GraalScriptExecutor( new GraalJSContextFactory(), Executors.newSingleThreadExecutor(), getClass().getClassLoader(),
-                                     scriptSettings, new ServiceRegistryImpl( bundleContext ), resourceService, application, RunMode.DEV );
+                                     scriptSettings, new ServiceRegistryImpl( bundleContext ), resourceService, application );
 
         ScriptExports scriptExports = scriptExecutor.executeMain( ResourceKey.from( "graaljs:require-test.js" ) );
 

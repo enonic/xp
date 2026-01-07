@@ -11,9 +11,6 @@ declare global {
     interface XpLibraries {
         '/lib/xp/content': typeof import('./content');
     }
-
-    // eslint-disable-next-line @typescript-eslint/no-empty-interface
-    interface XpXData {}
 }
 
 import {
@@ -52,19 +49,19 @@ const isNumber = (value: unknown): value is number => typeof value === 'number' 
 function checkRequiredString<T extends object>(obj: T, name: keyof T): void {
     checkRequired(obj, name);
     if (!isString(obj[name])) {
-        throw `Required parameter '${String(name)}' is not a string!`;
+        throw Error(`Required parameter '${String(name)}' is not a string!`);
     }
 }
 
 function checkOptionalString<T extends object>(obj: T, name: keyof T): void {
     if (obj?.[name] != null && !isString(obj[name])) {
-        throw `Optional parameter '${String(name)}' is not a string!`;
+        throw Error(`Optional parameter '${String(name)}' is not a string!`);
     }
 }
 
 function checkOptionalNumber<T extends object>(obj: T, name: keyof T): void {
     if (obj?.[name] != null && !isNumber(obj[name])) {
-        throw `Optional parameter '${String(name)}' is not a number!`;
+        throw Error(`Optional parameter '${String(name)}' is not a number!`);
     }
 }
 
@@ -187,18 +184,18 @@ export interface PatchableContent<
     archivedBy: UserKey;
 }
 
-/* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any*/
+/* eslint-disable @typescript-eslint/no-explicit-any*/
 declare const Java: any;
 
 export const ARCHIVE_ROOT_PATH = Java.type('com.enonic.xp.archive.ArchiveConstants').ARCHIVE_ROOT_PATH as string;
 
 export const CONTENT_ROOT_PATH = Java.type('com.enonic.xp.content.ContentConstants').CONTENT_ROOT_PATH as string;
 
-/* eslint-enable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any */
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 function checkRequired<T extends object>(obj: T, name: keyof T): void {
     if (obj == null || obj[name] == null) {
-        throw `Parameter '${String(name)}' is required`;
+        throw Error(`Parameter '${String(name)}' is required`);
     }
 }
 
@@ -1259,9 +1256,7 @@ export interface ApplyPermissionsParams {
     removePermissions?: AccessControlEntry[];
 }
 
-export interface ApplyPermissionsResult {
-    [nodeId: string]: BranchResult[];
-}
+export type ApplyPermissionsResult = Record<string, BranchResult[]>;
 
 export interface BranchResult {
     branch: string;

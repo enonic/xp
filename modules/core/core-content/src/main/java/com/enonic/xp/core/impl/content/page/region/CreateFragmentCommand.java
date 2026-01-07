@@ -64,19 +64,13 @@ final class CreateFragmentCommand
             type( ContentTypeName.fragment() ).
             contentData( new PropertyTree() ).
             workflowInfo( params.getWorkflowInfo() ).
-            build();
-
-        final Content content = contentService.create( createContent );
-
-        final Page page = Page.create().
+            page( Page.create().
             config( this.params.getConfig() ).
             fragment( this.params.getComponent() ).
+            build() ).
             build();
 
-        final UpdateContentParams params = new UpdateContentParams().
-            contentId( content.getId() ).editor( edit -> edit.page = new EditablePage( page ) );
-
-        return this.contentService.update( params );
+        return contentService.create( createContent );
     }
 
     private String generateDisplayName( final Component component )

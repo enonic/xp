@@ -6,7 +6,7 @@ exports.testGetWithoutKey = function () {
     try {
         sharedMap.get();
     } catch (e) {
-        assert.assertEquals('Parameter "key" is required', e);
+        assert.assertEquals('Parameter "key" is required', e.message);
     }
 };
 
@@ -20,7 +20,7 @@ exports.testDeleteWithoutKey = function () {
     try {
         sharedMap.delete();
     } catch (e) {
-        assert.assertEquals('Parameter "key" is required', e);
+        assert.assertEquals('Parameter "key" is required', e.message);
     }
 };
 
@@ -34,7 +34,7 @@ exports.testSetWithoutKey = function () {
     try {
         sharedMap.set({});
     } catch (e) {
-        assert.assertEquals('Parameter "key" is required', e);
+        assert.assertEquals('Parameter "key" is required', e.message);
     }
 };
 
@@ -72,7 +72,7 @@ exports.testModifyWithoutKey = function () {
     try {
         sharedMap.modify({});
     } catch (e) {
-        assert.assertEquals('Parameter "key" is required', e);
+        assert.assertEquals('Parameter "key" is required', e.message);
     }
 };
 
@@ -83,7 +83,7 @@ exports.testModifyWithoutFunc = function () {
             key: 'key'
         });
     } catch (e) {
-        assert.assertEquals('Parameter "func" is required', e);
+        assert.assertEquals('Parameter "func" is required', e.message);
     }
 };
 
@@ -95,6 +95,6 @@ exports.testModifyWithWrongArgumentFunc = function () {
             func: 1
         });
     } catch (e) {
-        assert.assertEquals('Parameter "func" is not a function', e);
+        assert.assertEquals('Parameter "func" is not a function', e.message);
     }
 };

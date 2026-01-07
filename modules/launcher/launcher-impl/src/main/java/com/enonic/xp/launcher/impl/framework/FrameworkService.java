@@ -128,12 +128,16 @@ public class FrameworkService
         registerServices();
 
         final int operationsStartLevel = Integer.parseInt( this.config.get( SharedConstants.XP_OSGI_STARTLEVEL ) );
-        startLevelService.setStartLevel( operationsStartLevel, event -> serverStarted() );
+        startLevelService.setStartLevel( operationsStartLevel, this::serverStarted );
     }
 
-    private void serverStarted()
+    private void serverStarted( final FrameworkEvent event )
     {
         LOG.info( "Started Enonic XP in {} ms", System.currentTimeMillis() - this.startTime );
+        if ( "dev".equalsIgnoreCase( System.getProperty( SharedConstants.XP_RUN_MODE ) ) )
+        {
+            LOG.warn( "DEV mode is ON. This will slow down the system and should NOT BE used in production." );
+        }
     }
 
     public void stop()
@@ -204,9 +208,10 @@ public class FrameworkService
     private void startActivators()
         throws Exception
     {
+        final BundleContext bundleContext = this.felix.getBundleContext();
         for ( final BundleActivator activator : this.activators )
         {
-            activator.start( this.felix.getBundleContext() );
+            activator.start( bundleContext );
         }
     }
 

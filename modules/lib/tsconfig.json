@@ -30,7 +30,6 @@
         },
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
-        "skipLibCheck": true,
         "strict": true
     },
     "include": [
