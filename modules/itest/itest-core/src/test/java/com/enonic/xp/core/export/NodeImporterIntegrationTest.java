@@ -9,14 +9,21 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import com.google.common.io.ByteSource;
+
 import com.enonic.xp.core.AbstractNodeTest;
+import com.enonic.xp.core.impl.export.NodeExporter;
 import com.enonic.xp.core.impl.export.NodeImporter;
+import com.enonic.xp.core.impl.export.reader.ZipVirtualFile;
 import com.enonic.xp.core.impl.export.writer.NodeExportPathResolver;
+import com.enonic.xp.core.impl.export.writer.ZipExportWriter;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.export.ImportNodeException;
 import com.enonic.xp.export.NodeImportListener;
 import com.enonic.xp.export.NodeImportResult;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
@@ -24,6 +31,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.util.BinaryReference;
+import com.enonic.xp.vfs.VirtualFile;
 import com.enonic.xp.vfs.VirtualFiles;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -480,6 +488,218 @@ class NodeImporterIntegrationTest
             resolve( NodeExportPathResolver.BINARY_FOLDER ) );
 
         Files.write( nodeFileDir.resolve( fileName ), bytes );
+    }
+
+    @Test
+    void import_from_archive()
+        throws Exception
+    {
+        // Create a node to export
+        final Node myNode = createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "myArchiveNode" ).build() );
+        refresh();
+
+        // Export to zip archive
+        final Path exportDir = temporaryFolder.resolve( "exports" );
+        Files.createDirectories( exportDir );
+        final String exportName = "archive-export";
+
+        try (ZipExportWriter writer = ZipExportWriter.create( exportDir, exportName ))
+        {
+            NodeExporter.create()
+                .nodeService( nodeService )
+                .nodeExportWriter( writer )
+                .sourceNodePath( NodePath.ROOT )
+                .targetDirectory( exportDir.resolve( exportName ) )
+                .xpVersion( "1.0.0" )
+                .build()
+                .execute();
+        }
+
+        // Delete the node
+        nodeService.delete( DeleteNodeParams.create().nodeId( myNode.id() ).build() );
+        refresh();
+        assertNull( nodeService.getByPath( myNode.path() ) );
+
+        // Import from zip archive
+        final Path zipFile = exportDir.resolve( exportName + ".zip" );
+        final VirtualFile source = ZipVirtualFile.from( zipFile );
+
+        final NodeImportResult result =
+            NodeImporter.create().nodeService( nodeService ).targetNodePath( NodePath.ROOT ).sourceDirectory( source ).build().execute();
+
+        assertEquals( 0, result.getImportErrors().size() );
+        assertEquals( 1, result.getAddedNodes().getSize() ); // myArchiveNode
+        assertEquals( 1, result.getUpdateNodes().getSize() ); // root
+
+        // Verify node was recreated
+        final Node importedNode = nodeService.getByPath( new NodePath( "/myArchiveNode" ) );
+        assertNotNull( importedNode );
+        assertEquals( myNode.name(), importedNode.name() );
+    }
+
+    @Test
+    void import_from_archive_with_binaries()
+        throws Exception
+    {
+        // Create a node with binary attachment
+        final BinaryReference binaryRef = BinaryReference.from( "myImage.jpg" );
+        final byte[] binaryData = "fake image content".getBytes();
+
+        final PropertyTree data = new PropertyTree();
+        data.addBinaryReference( "image", binaryRef );
+
+        final Node nodeWithBinary = createNode( CreateNodeParams.create()
+                                                    .parent( NodePath.ROOT )
+                                                    .name( "nodeWithBinary" )
+                                                    .data( data )
+                                                    .attachBinary( binaryRef, ByteSource.wrap( binaryData ) )
+                                                    .build() );
+        refresh();
+
+        // Export to zip archive
+        final Path exportDir = temporaryFolder.resolve( "exports" );
+        Files.createDirectories( exportDir );
+        final String exportName = "binary-archive-export";
+
+        try (ZipExportWriter writer = ZipExportWriter.create( exportDir, exportName ))
+        {
+            NodeExporter.create()
+                .nodeService( nodeService )
+                .nodeExportWriter( writer )
+                .sourceNodePath( NodePath.ROOT )
+                .targetDirectory( exportDir.resolve( exportName ) )
+                .xpVersion( "1.0.0" )
+                .build()
+                .execute();
+        }
+
+        // Delete the node
+        nodeService.delete( DeleteNodeParams.create().nodeId( nodeWithBinary.id() ).build() );
+        refresh();
+
+        // Import from zip archive
+        final Path zipFile = exportDir.resolve( exportName + ".zip" );
+        final VirtualFile source = ZipVirtualFile.from( zipFile );
+
+        final NodeImportResult result =
+            NodeImporter.create().nodeService( nodeService ).targetNodePath( NodePath.ROOT ).sourceDirectory( source ).build().execute();
+
+        assertEquals( 0, result.getImportErrors().size() );
+        assertEquals( 1, result.getAddedNodes().getSize() );
+
+        // Verify node and binary were recreated
+        final Node importedNode = nodeService.getByPath( new NodePath( "/nodeWithBinary" ) );
+        assertNotNull( importedNode );
+        assertEquals( 1, importedNode.getAttachedBinaries().getSize() );
+
+        final AttachedBinary attachedBinary = importedNode.getAttachedBinaries().getByBinaryReference( binaryRef );
+        assertNotNull( attachedBinary );
+
+        // Verify binary content
+        final ByteSource importedBinarySource = nodeService.getBinary( importedNode.id(), importedNode.getNodeVersionId(), binaryRef );
+        assertNotNull( importedBinarySource );
+        assertEquals( new String( binaryData ), new String( importedBinarySource.read() ) );
+    }
+
+    @Test
+    void import_from_archive_deep_tree()
+        throws Exception
+    {
+        // Create a deep node tree
+        final Node level1 = createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "level1" ).build() );
+        final Node level2 = createNode( CreateNodeParams.create().parent( level1.path() ).name( "level2" ).build() );
+        final Node level3 = createNode( CreateNodeParams.create().parent( level2.path() ).name( "level3" ).build() );
+        refresh();
+
+        // Export to zip archive
+        final Path exportDir = temporaryFolder.resolve( "exports" );
+        Files.createDirectories( exportDir );
+        final String exportName = "deep-tree-archive";
+
+        try (ZipExportWriter writer = ZipExportWriter.create( exportDir, exportName ))
+        {
+            NodeExporter.create()
+                .nodeService( nodeService )
+                .nodeExportWriter( writer )
+                .sourceNodePath( NodePath.ROOT )
+                .targetDirectory( exportDir.resolve( exportName ) )
+                .xpVersion( "1.0.0" )
+                .build()
+                .execute();
+        }
+
+        // Delete the tree
+        nodeService.delete( DeleteNodeParams.create().nodeId( level1.id() ).build() );
+        refresh();
+
+        // Import from zip archive
+        final Path zipFile = exportDir.resolve( exportName + ".zip" );
+        final VirtualFile source = ZipVirtualFile.from( zipFile );
+
+        final NodeImportResult result =
+            NodeImporter.create().nodeService( nodeService ).targetNodePath( NodePath.ROOT ).sourceDirectory( source ).build().execute();
+
+        assertEquals( 0, result.getImportErrors().size() );
+        assertEquals( 3, result.getAddedNodes().getSize() ); // level1, level2, level3
+        assertEquals( 1, result.getUpdateNodes().getSize() ); // root
+
+        // Verify all nodes were recreated
+        assertNotNull( nodeService.getByPath( new NodePath( "/level1" ) ) );
+        assertNotNull( nodeService.getByPath( new NodePath( "/level1/level2" ) ) );
+        assertNotNull( nodeService.getByPath( new NodePath( "/level1/level2/level3" ) ) );
+    }
+
+    @Test
+    void import_from_archive_with_node_ids()
+        throws Exception
+    {
+        // Create a node
+        final Node myNode = createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "nodeWithId" ).build() );
+        final NodeId originalNodeId = myNode.id();
+        refresh();
+
+        // Export to zip archive with IDs
+        final Path exportDir = temporaryFolder.resolve( "exports" );
+        Files.createDirectories( exportDir );
+        final String exportName = "export-with-ids";
+
+        try (ZipExportWriter writer = ZipExportWriter.create( exportDir, exportName ))
+        {
+            NodeExporter.create()
+                .nodeService( nodeService )
+                .nodeExportWriter( writer )
+                .sourceNodePath( NodePath.ROOT )
+                .targetDirectory( exportDir.resolve( exportName ) )
+                .xpVersion( "1.0.0" )
+                .exportNodeIds( true )
+                .build()
+                .execute();
+        }
+
+        // Delete the node
+        nodeService.delete( DeleteNodeParams.create().nodeId( myNode.id() ).build() );
+        refresh();
+
+        // Import from zip archive with IDs
+        final Path zipFile = exportDir.resolve( exportName + ".zip" );
+        final VirtualFile source = ZipVirtualFile.from( zipFile );
+
+        final NodeImportResult result = NodeImporter.create()
+            .nodeService( nodeService )
+            .targetNodePath( NodePath.ROOT )
+            .sourceDirectory( source )
+            .importNodeIds( true )
+            .build()
+            .execute();
+
+        assertEquals( 0, result.getImportErrors().size() );
+        assertEquals( 1, result.getAddedNodes().getSize() );
+
+        // Verify node was recreated with the same ID
+        final Node importedNode = nodeService.getById( originalNodeId );
+        assertNotNull( importedNode );
+        assertEquals( originalNodeId, importedNode.id() );
+        assertEquals( "nodeWithId", importedNode.name().toString() );
     }
 
     private void createNodeXmlFile( final Path exportPath, boolean ordered )
