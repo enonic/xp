@@ -79,22 +79,22 @@ public final class UpdateMetadataHandler
 
     private void updateMetadata( final EditableContentMetadata target, final Map<?, ?> map )
     {
-        final String languageCode = Converters.convert( map.get( "language" ), String.class );
-        if ( languageCode != null )
+        if ( map.containsKey( "language" ) )
         {
-            target.language = Locale.forLanguageTag( languageCode );
+            final String languageCode = Converters.convert( map.get( "language" ), String.class );
+            target.language = languageCode != null ? Locale.forLanguageTag( languageCode ) : null;
         }
 
-        final String ownerKey = Converters.convert( map.get( "owner" ), String.class );
-        if ( ownerKey != null )
+        if ( map.containsKey( "owner" ) )
         {
-            target.owner = PrincipalKey.from( ownerKey );
+            final String ownerKey = Converters.convert( map.get( "owner" ), String.class );
+            target.owner = ownerKey != null ? PrincipalKey.from( ownerKey ) : null;
         }
 
-        final String variantOfId = Converters.convert( map.get( "variantOf" ), String.class );
-        if ( variantOfId != null )
+        if ( map.containsKey( "variantOf" ) )
         {
-            target.variantOf = ContentId.from( variantOfId );
+            final String variantOfId = Converters.convert( map.get( "variantOf" ), String.class );
+            target.variantOf = variantOfId != null ? ContentId.from( variantOfId ) : null;
         }
     }
 
