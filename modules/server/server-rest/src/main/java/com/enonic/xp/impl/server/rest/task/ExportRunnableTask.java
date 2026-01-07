@@ -44,7 +44,7 @@ public class ExportRunnableTask
         this.exportName = builder.exportName;
         this.includeVersions = builder.includeVersions;
         this.exportWithIds = builder.exportWithIds;
-        this.archive = builder.archive;
+        this.archive = true;
 
         this.exportService = builder.exportService;
     }

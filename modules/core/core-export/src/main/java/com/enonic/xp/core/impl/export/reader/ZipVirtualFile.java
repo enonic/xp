@@ -154,6 +154,7 @@ public class ZipVirtualFile
 
         final String prefix = entryPath.isEmpty() ? "" : entryPath + "/";
         final Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
+        final java.util.Set<String> addedPaths = new java.util.HashSet<>();
 
         while ( entries.hasMoreElements() )
         {
@@ -163,11 +164,28 @@ public class ZipVirtualFile
             if ( name.startsWith( prefix ) && !name.equals( prefix ) )
             {
                 final String relativeName = name.substring( prefix.length() );
-                // Only immediate children (no additional slashes)
-                if ( isImmediateChild( relativeName ) )
+
+                // Get the first path element (immediate child name)
+                final int slashIndex = relativeName.indexOf( '/' );
+                final String childName;
+
+                if ( slashIndex == -1 )
                 {
-                    children.add( new ZipVirtualFile( zipFile, basePath, name.endsWith( "/" ) ? name.substring( 0, name.length() - 1 ) : name,
-                                                      zipFilePath ) );
+                    // It's a file directly in this folder
+                    childName = relativeName;
+                }
+                else
+                {
+                    // It's a subdirectory (either explicit or implicit from nested file paths)
+                    childName = relativeName.substring( 0, slashIndex );
+                }
+
+                final String childPath = prefix + childName;
+
+                if ( !addedPaths.contains( childPath ) )
+                {
+                    addedPaths.add( childPath );
+                    children.add( new ZipVirtualFile( zipFile, basePath, childPath, zipFilePath ) );
                 }
             }
         }
@@ -175,22 +193,6 @@ public class ZipVirtualFile
         return children;
     }
 
-    /**
-     * Checks if the relative name represents an immediate child (no subdirectories).
-     * A trailing slash is allowed for directory entries.
-     */
-    private boolean isImmediateChild( final String relativeName )
-    {
-        if ( relativeName.isEmpty() )
-        {
-            return false;
-        }
-
-        final int slashIndex = relativeName.indexOf( '/' );
-        // No slash means it's a file in this directory
-        // Slash at the end means it's a directory in this directory
-        return slashIndex == -1 || ( relativeName.endsWith( "/" ) && slashIndex == relativeName.length() - 1 );
-    }
 
     @Override
     public CharSource getCharSource()
@@ -220,7 +222,17 @@ public class ZipVirtualFile
     @Override
     public VirtualFile resolve( final VirtualFilePath path )
     {
-        final String newPath = entryPath.isEmpty() ? path.getPath() : entryPath + "/" + path.getPath();
+        final String pathStr = path.getPath();
+
+        // If the path starts with basePath, treat it as an absolute path within the zip
+        // This mimics Path.resolve() behavior where resolve(absolutePath) returns absolutePath
+        if ( pathStr.startsWith( basePath + "/" ) || pathStr.equals( basePath ) )
+        {
+            return new ZipVirtualFile( zipFile, basePath, pathStr, zipFilePath );
+        }
+
+        // Otherwise, resolve relative to current entryPath
+        final String newPath = entryPath.isEmpty() ? pathStr : entryPath + "/" + pathStr;
         return new ZipVirtualFile( zipFile, basePath, newPath, zipFilePath );
     }
 

@@ -19,9 +19,10 @@ import com.enonic.xp.export.NodeExportResult;
 import com.enonic.xp.export.NodeImportResult;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.vfs.VirtualFile;
 
@@ -60,8 +61,8 @@ class CompressedExportImportIntegrationTest
         assertTrue( Files.exists( zipFile ), "Zip file should exist" );
         assertTrue( Files.size( zipFile ) > 0, "Zip file should not be empty" );
 
-        // Delete the original node
-        this.nodeService.delete( myNode.id() );
+        // Delete the original node (but not root)
+        this.nodeService.delete( DeleteNodeParams.create().nodeId( myNode.id() ).build() );
         refresh();
         assertThat( getNode( myNode.id() ) ).isNull();
 
@@ -69,13 +70,16 @@ class CompressedExportImportIntegrationTest
         final NodeImportResult importResult = importFromZip( zipFile, NodePath.ROOT );
 
         assertEquals( 0, importResult.getImportErrors().size() );
-        assertEquals( 2, importResult.getAddedNodes().getSize() ); // root + myNode
+        // root is updated (already exists), myNode is added
+        assertEquals( 1, importResult.getAddedNodes().getSize() ); // myNode
+        assertEquals( 1, importResult.getUpdateNodes().getSize() ); // root
 
         // Verify node was recreated
         final Node importedNode = getNodeByPath( new NodePath( "/myNode" ) );
         assertNotNull( importedNode );
         assertEquals( myNode.name(), importedNode.name() );
     }
+
 
     @Test
     void export_and_import_deep_node_tree_compressed()
@@ -109,14 +113,16 @@ class CompressedExportImportIntegrationTest
         assertTrue( Files.exists( zipFile ) );
 
         // Delete all nodes
-        this.nodeService.delete( level1.id() );
+        this.nodeService.delete( DeleteNodeParams.create().nodeId( level1.id() ).build() );
         refresh();
 
         // Import from zip
         final NodeImportResult importResult = importFromZip( zipFile, NodePath.ROOT );
 
         assertEquals( 0, importResult.getImportErrors().size() );
-        assertEquals( 10, importResult.getAddedNodes().getSize() );
+        // root is updated, 9 child nodes are added
+        assertEquals( 9, importResult.getAddedNodes().getSize() );
+        assertEquals( 1, importResult.getUpdateNodes().getSize() ); // root
 
         // Verify all nodes were recreated
         assertNotNull( getNodeByPath( new NodePath( "/level1" ) ) );
@@ -173,8 +179,8 @@ class CompressedExportImportIntegrationTest
         assertEquals( 0, exportResult.getExportErrors().size() );
 
         // Delete nodes
-        this.nodeService.delete( nodeWithBinary1.id() );
-        this.nodeService.delete( nodeWithBinary2.id() );
+        this.nodeService.delete( DeleteNodeParams.create().nodeId( nodeWithBinary1.id() ).build() );
+        this.nodeService.delete( DeleteNodeParams.create().nodeId( nodeWithBinary2.id() ).build() );
         refresh();
 
         // Import from zip
@@ -182,7 +188,9 @@ class CompressedExportImportIntegrationTest
         final NodeImportResult importResult = importFromZip( zipFile, NodePath.ROOT );
 
         assertEquals( 0, importResult.getImportErrors().size() );
-        assertEquals( 3, importResult.getAddedNodes().getSize() );
+        // root is updated, 2 nodes with binaries are added
+        assertEquals( 2, importResult.getAddedNodes().getSize() );
+        assertEquals( 1, importResult.getUpdateNodes().getSize() ); // root
 
         // Verify nodes and binaries
         final Node imported1 = getNodeByPath( new NodePath( "/node-with-binary-1" ) );
@@ -223,7 +231,7 @@ class CompressedExportImportIntegrationTest
         assertEquals( 0, exportResult.getExportErrors().size() );
 
         // Delete nodes
-        this.nodeService.delete( parent.id() );
+        this.nodeService.delete( DeleteNodeParams.create().nodeId( parent.id() ).build() );
         refresh();
 
         // Import from zip
@@ -267,7 +275,7 @@ class CompressedExportImportIntegrationTest
         assertEquals( 0, exportResult.getExportErrors().size() );
 
         // Delete the subtree
-        this.nodeService.delete( child1.id() );
+        this.nodeService.delete( DeleteNodeParams.create().nodeId( child1.id() ).build() );
         refresh();
         assertThat( getNode( child1.id() ) ).isNull();
 
@@ -328,7 +336,7 @@ class CompressedExportImportIntegrationTest
         }
 
         // Delete node
-        this.nodeService.delete( updatedNode.id() );
+        this.nodeService.delete( DeleteNodeParams.create().nodeId( updatedNode.id() ).build() );
         refresh();
 
         // Import from zip
@@ -357,7 +365,7 @@ class CompressedExportImportIntegrationTest
         final Path exportDir = temporaryFolder.resolve( "exports" );
         Files.createDirectories( exportDir );
 
-        exportToZip( "structure-test", NodePath.ROOT, exportDir );
+        NodeExportResult nodeExportResult = exportToZip( "structure-test", parent.path(), exportDir );
 
         // Verify we can read the zip structure
         final Path zipFile = exportDir.resolve( "structure-test.zip" );
@@ -383,7 +391,7 @@ class CompressedExportImportIntegrationTest
                 .nodeService( this.nodeService )
                 .nodeExportWriter( writer )
                 .sourceNodePath( sourcePath )
-                .targetDirectory( exportDir.resolve( exportName ) )
+                .targetDirectory( exportDir.resolve( exportName ) ).xpVersion( "1.1.0" )
                 .build()
                 .execute();
         }

@@ -51,7 +51,7 @@ public class ImportRunnableTask
         this.exportName = builder.exportName;
         this.importWithIds = builder.importWithIds;
         this.importWithPermissions = builder.importWithPermissions;
-        this.archive = builder.archive;
+        this.archive = true;
         this.xslSource = builder.xslSource;
         this.xslParams = builder.xslParams;
 

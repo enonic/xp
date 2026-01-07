@@ -24,11 +24,14 @@ public class ZipExportWriter
 
     private final String exportName;
 
+    private final Path baseDirectory;
+
     private boolean closed = false;
 
-    private ZipExportWriter( final String exportName, final ZipArchiveOutputStream zipArchiveOutputStream )
+    private ZipExportWriter( final String exportName, final Path baseDirectory, final ZipArchiveOutputStream zipArchiveOutputStream )
     {
         this.exportName = exportName;
+        this.baseDirectory = baseDirectory.normalize();
         this.zipArchiveOutputStream = zipArchiveOutputStream;
     }
 
@@ -38,11 +41,12 @@ public class ZipExportWriter
         try
         {
             Files.createDirectories( basePath );
+            final Path baseDirectory = basePath.resolve( exportName );
             final ZipArchiveOutputStream zipArchiveOutputStream = new ZipArchiveOutputStream(
                 Files.newByteChannel( basePath.resolve( exportName + ZIP_FILE_EXTENSION ), StandardOpenOption.CREATE,
                                       StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING ) );
 
-            return new ZipExportWriter( exportName, zipArchiveOutputStream );
+            return new ZipExportWriter( exportName, baseDirectory, zipArchiveOutputStream );
         }
         catch ( IOException e )
         {
@@ -53,7 +57,7 @@ public class ZipExportWriter
     @Override
     public void writeElement( final Path itemPath, final String export )
     {
-        final String entryPath = exportName + "/" + itemPath.toString().replace( '\\', '/' );
+        final String entryPath = resolveEntryPath( itemPath );
 
         try
         {
@@ -73,7 +77,7 @@ public class ZipExportWriter
     @Override
     public void writeSource( final Path itemPath, final ByteSource source )
     {
-        final String entryPath = exportName + "/" + itemPath.toString().replace( '\\', '/' );
+        final String entryPath = resolveEntryPath( itemPath );
 
         try
         {
@@ -91,6 +95,20 @@ public class ZipExportWriter
         {
             throw new ExportNodeException( "failed to write source to zip with path " + itemPath + ": " + e, e );
         }
+    }
+
+    private String resolveEntryPath( final Path itemPath )
+    {
+        final Path normalizedItem = itemPath.normalize();
+
+        if ( !normalizedItem.startsWith( baseDirectory ) )
+        {
+            throw new ExportNodeException( "Item path " + itemPath + " is not within export base " + baseDirectory );
+        }
+
+        final Path relativePath = baseDirectory.relativize( normalizedItem );
+        final String relativePathStr = relativePath.toString().replace( '\\', '/' );
+        return relativePathStr.isEmpty() ? exportName : exportName + "/" + relativePathStr;
     }
 
     @Override

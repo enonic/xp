@@ -29,7 +29,7 @@ public final class ExportNodesParams
         this.sourceNodePath = builder.sourceNodePath;
         this.includeNodeIds = builder.includeNodeIds;
         this.includeVersions = builder.includeVersions;
-        this.archive = builder.archive;
+        this.archive = true;
         this.nodeExportListener = builder.nodeExportListener;
     }
 
