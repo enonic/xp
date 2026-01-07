@@ -66,8 +66,6 @@ class ContentServiceImplTest_updateMetadata
 
         final Content content = this.contentService.create( createContentParams );
 
-        final PrincipalKey originalOwner = content.getOwner();
-
         final PrincipalKey newOwner = PrincipalKey.from( "user:system:new-owner" );
 
         final UpdateContentMetadataParams updateContentMetadataParams =

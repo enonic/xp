@@ -39,6 +39,18 @@ public class UpdateMetadataHandlerTest
     }
 
     @Test
+    void unsetLanguage()
+    {
+        final Content content = TestDataFixtures.newSmallContent();
+        when( this.contentService.getById( content.getId() ) ).thenReturn( content );
+
+        when( this.contentService.updateMetadata( isA( UpdateContentMetadataParams.class ) ) ).thenAnswer(
+            invocationOnMock -> invokeUpdateMetadata( invocationOnMock.getArgument( 0 ), content ) );
+
+        runFunction( "/test/UpdateMetadataHandlerTest.js", "unsetLanguage" );
+    }
+
+    @Test
     void updateOwner()
     {
         final Content content = TestDataFixtures.newSmallContent();
@@ -66,10 +78,7 @@ public class UpdateMetadataHandlerTest
     {
         final EditableContentMetadata editableMetadata = new EditableContentMetadata( content );
 
-        if ( params.getEditor() != null )
-        {
-            params.getEditor().edit( editableMetadata );
-        }
+        params.getEditor().edit( editableMetadata );
 
         final Content updatedContent = editableMetadata.build();
 

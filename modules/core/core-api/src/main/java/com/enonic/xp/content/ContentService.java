@@ -1,5 +1,7 @@
 package com.enonic.xp.content;
 
+import org.jspecify.annotations.NullMarked;
+
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -32,6 +34,7 @@ public interface ContentService
 
     PatchContentResult patch( PatchContentParams params );
 
+    @NullMarked
     UpdateContentMetadataResult updateMetadata( UpdateContentMetadataParams params );
 
     DuplicateContentsResult duplicate( DuplicateContentParams params );

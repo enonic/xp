@@ -7,6 +7,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
 
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.NullMarked;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -910,9 +911,12 @@ public class ContentServiceImpl
     }
 
     @Override
+    @NullMarked
     public UpdateContentMetadataResult updateMetadata( final UpdateContentMetadataParams params )
     {
         requireAdminRole();
+
+        verifyDraftBranch();
 
         final UpdateContentMetadataResult result = UpdateMetadataCommand.create( params )
             .nodeService( this.nodeService )

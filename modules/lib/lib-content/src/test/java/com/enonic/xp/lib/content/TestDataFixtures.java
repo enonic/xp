@@ -124,6 +124,7 @@ public final class TestDataFixtures
             name( "mycontent" ).
             type( ContentTypeName.from( "test:myContentType" ) ).
             displayName( "My Content" ).
+            language( Locale.ENGLISH ).
             parentPath( ContentPath.from( "/a/b" ) ).
             modifier( PrincipalKey.from( "user:system:admin" ) ).
             modifiedTime( Instant.ofEpochSecond( 0 ) ).

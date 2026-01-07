@@ -2,19 +2,23 @@ package com.enonic.xp.content;
 
 import java.util.Objects;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
+@NullMarked
 public final class UpdateContentMetadataParams
 {
-    private final ContentId id;
+    private final ContentId contentId;
 
     private final ContentMetadataEditor editor;
 
     private UpdateContentMetadataParams( final Builder builder )
     {
-        this.id = builder.id;
-        this.editor = builder.editor;
+        this.contentId = Objects.requireNonNull( builder.contentId, "contentId is required" );
+        this.editor = Objects.requireNonNull( builder.editor, "editor is required" );
     }
 
     public static Builder create()
@@ -24,7 +28,7 @@ public final class UpdateContentMetadataParams
 
     public ContentId getContentId()
     {
-        return id;
+        return contentId;
     }
 
     public ContentMetadataEditor getEditor()
@@ -34,8 +38,10 @@ public final class UpdateContentMetadataParams
 
     public static final class Builder
     {
-        private ContentId id;
+        @Nullable
+        private ContentId contentId;
 
+        @Nullable
         private ContentMetadataEditor editor;
 
         private Builder()
@@ -44,7 +50,7 @@ public final class UpdateContentMetadataParams
 
         public Builder contentId( final ContentId id )
         {
-            this.id = id;
+            this.contentId = id;
             return this;
         }
 
@@ -56,7 +62,6 @@ public final class UpdateContentMetadataParams
 
         public UpdateContentMetadataParams build()
         {
-            Objects.requireNonNull( this.id, "ContentId is required" );
             return new UpdateContentMetadataParams( this );
         }
     }
