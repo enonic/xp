@@ -43,7 +43,7 @@ public class ApplicationFactoryServiceImpl
         this.nodeService = nodeService;
         this.appConfig = config;
 
-        this.factory = new ApplicationFactory( RunMode.get(), nodeService, appConfig );
+        this.factory = new ApplicationFactory( nodeService, appConfig );
 
         this.bundleTracker =
             new BundleTracker<>( context, Bundle.INSTALLED + Bundle.RESOLVED + Bundle.STARTING + Bundle.STOPPING + Bundle.ACTIVE,

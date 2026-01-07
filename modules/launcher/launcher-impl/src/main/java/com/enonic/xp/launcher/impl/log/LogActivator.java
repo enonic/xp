@@ -11,7 +11,7 @@ import org.osgi.service.log.admin.LoggerAdmin;
 import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
-public class Activator
+public class LogActivator
     implements BundleActivator
 {
     static
@@ -90,7 +90,8 @@ public class Activator
         }
 
         @Override
-        public void removedService( final ServiceReference<LogReaderService> reference, final SimpleEntry<LogReaderService, LogbackLogListener> entry )
+        public void removedService( final ServiceReference<LogReaderService> reference,
+                                    final SimpleEntry<LogReaderService, LogbackLogListener> entry )
         {
             withLocalClassloader( () -> {
                 entry.getKey().removeLogListener( entry.getValue() );
@@ -105,7 +106,7 @@ public class Activator
         final ClassLoader originalClassloader = currentThread.getContextClassLoader();
         try
         {
-            currentThread.setContextClassLoader( Activator.class.getClassLoader() );
+            currentThread.setContextClassLoader( LogActivator.class.getClassLoader() );
             return action.get();
         }
         finally

@@ -69,7 +69,7 @@ public final class ScriptExecutorImpl
 
     public ScriptExecutorImpl( final Executor asyncExecutor, final ClassLoader classLoader, final ScriptSettings scriptSettings,
                                final ServiceRegistry serviceRegistry, final ResourceService resourceService,
-                               final ApplicationInfoBuilder appInfo, final RunMode runMode )
+                               final ApplicationInfoBuilder appInfo )
     {
         this.asyncExecutor = asyncExecutor;
         this.scriptSettings = scriptSettings;
@@ -79,7 +79,7 @@ public final class ScriptExecutorImpl
         this.engine = NashornHelper.getScriptEngine( this.classLoader );
         this.javascriptHelper = new JavascriptHelperFactory( this.engine ).create();
         this.scriptValueFactory = new ScriptValueFactoryImpl( this.javascriptHelper );
-        this.exportsCache = new ScriptExportsCache<>( runMode, resourceService::getResource, this::runDisposers );
+        this.exportsCache = new ScriptExportsCache<>( resourceService::getResource, this::runDisposers );
 
         final Bindings global = new SimpleBindings();
         global.putAll( this.scriptSettings.getGlobalVariables() );
@@ -90,14 +90,20 @@ public final class ScriptExecutorImpl
     @Override
     public ScriptExports executeMain( final ResourceKey key )
     {
-        exportsCache.expireCacheIfNeeded();
+        if ( RunMode.isDev() )
+        {
+            exportsCache.expireCacheIfNeeded();
+        }
         return doExecuteMain( key );
     }
 
     @Override
     public CompletableFuture<ScriptExports> executeMainAsync( final ResourceKey key )
     {
-        exportsCache.expireCacheIfNeeded();
+        if ( RunMode.isDev() )
+        {
+            exportsCache.expireCacheIfNeeded();
+        }
         return CompletableFuture.completedFuture( key ).thenApplyAsync( this::doExecuteMain, asyncExecutor );
     }
 

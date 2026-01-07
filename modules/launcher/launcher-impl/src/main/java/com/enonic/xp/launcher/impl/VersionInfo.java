@@ -1,4 +1,4 @@
-package com.enonic.xp.launcher;
+package com.enonic.xp.launcher.impl;
 
 import java.io.InputStream;
 import java.util.Map;

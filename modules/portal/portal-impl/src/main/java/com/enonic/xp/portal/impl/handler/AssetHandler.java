@@ -91,7 +91,7 @@ public class AssetHandler
         final PortalResponse.Builder portalResponse =
             PortalResponse.create().contentType( MediaTypes.instance().fromFile( resource.getKey().getName() ) ).body( resource );
 
-        if ( !nullToEmpty( fingerprint ).isBlank() && !nullToEmpty( cacheControlHeader ).isBlank() && RunMode.get() != RunMode.DEV &&
+        if ( !nullToEmpty( fingerprint ).isBlank() && !nullToEmpty( cacheControlHeader ).isBlank() && RunMode.isProd() &&
             resourceKey.getPath().equals( assetPath ) && fingerprintMatches( applicationKey, fingerprint ) )
         {
             portalResponse.header( HttpHeaders.CACHE_CONTROL, cacheControlHeader );

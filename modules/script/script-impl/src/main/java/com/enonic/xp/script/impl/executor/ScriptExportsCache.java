@@ -10,12 +10,9 @@ import java.util.function.Function;
 
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.server.RunMode;
 
 public final class ScriptExportsCache<T>
 {
-    private final RunMode runMode;
-
     private final Function<ResourceKey, Resource> resourceLookup;
 
     private final Runnable expiredCallback;
@@ -24,9 +21,8 @@ public final class ScriptExportsCache<T>
 
     private final Lock lock = new ReentrantLock();
 
-    public ScriptExportsCache( final RunMode runMode, final Function<ResourceKey, Resource> resourceLookup, Runnable expiredCallback )
+    public ScriptExportsCache( final Function<ResourceKey, Resource> resourceLookup, Runnable expiredCallback )
     {
-        this.runMode = runMode;
         this.resourceLookup = resourceLookup;
         this.expiredCallback = expiredCallback;
     }
@@ -67,11 +63,6 @@ public final class ScriptExportsCache<T>
 
     public void expireCacheIfNeeded()
     {
-        if ( this.runMode != RunMode.DEV )
-        {
-            return;
-        }
-
         if ( isExpired() )
         {
             expiredCallback.run();

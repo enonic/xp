@@ -22,7 +22,7 @@ public class ApplicationFactoryServiceMock
     @Mock(stubOnly = true)
     private NodeService nodeService;
 
-    private final ApplicationFactory factory = new ApplicationFactory( RunMode.get(), nodeService, Mockito.mock( AppConfig.class ) );
+    private final ApplicationFactory factory = new ApplicationFactory( nodeService, Mockito.mock( AppConfig.class ) );
 
     private final Map<Bundle, ApplicationAdaptor> map = new HashMap<>();
 

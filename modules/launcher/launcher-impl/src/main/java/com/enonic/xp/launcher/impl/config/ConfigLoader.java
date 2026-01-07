@@ -1,6 +1,7 @@
 package com.enonic.xp.launcher.impl.config;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -28,7 +29,7 @@ public final class ConfigLoader
     }
 
     public ConfigProperties load()
-        throws Exception
+        throws IOException
     {
         final ConfigProperties props = new ConfigProperties();
         props.putAll( loadDefaultProperties() );
@@ -38,7 +39,7 @@ public final class ConfigLoader
     }
 
     private Map<String, String> loadDefaultProperties()
-        throws Exception
+        throws IOException
     {
         final InputStream stream = getClass().getResourceAsStream( DEFAULT_CONFIG );
         Objects.requireNonNull( stream, "Could not find " + DEFAULT_CONFIG );
@@ -50,7 +51,7 @@ public final class ConfigLoader
     }
 
     private Map<String, String> loadFileProperties()
-        throws Exception
+        throws IOException
     {
         final Path file = this.env.getHomeDir().resolve( "config" ).resolve( CONFIG_FILE );
         if ( !Files.isRegularFile( file ) )
@@ -65,7 +66,7 @@ public final class ConfigLoader
     }
 
     private Map<String, String> loadProperties( final Reader reader )
-        throws Exception
+        throws IOException
     {
         final Properties props = new Properties();
         props.load( reader );

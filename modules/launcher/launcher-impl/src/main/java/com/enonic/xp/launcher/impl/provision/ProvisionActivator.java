@@ -2,11 +2,14 @@ package com.enonic.xp.launcher.impl.provision;
 
 import java.net.URI;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleException;
 import org.osgi.framework.startlevel.BundleStartLevel;
 import org.osgi.framework.wiring.BundleRevision;
 import org.slf4j.Logger;
@@ -19,11 +22,14 @@ public final class ProvisionActivator
 
     private final Path systemDir;
 
-    private BundleContext context;
+    private final Consumer<List<Bundle>> installListener;
 
-    public ProvisionActivator( final Path systemDir )
+    private volatile BundleContext context;
+
+    public ProvisionActivator( final Path systemDir, Consumer<List<Bundle>> installListener )
     {
         this.systemDir = systemDir;
+        this.installListener = installListener;
     }
 
     @Override
@@ -46,7 +52,9 @@ public final class ProvisionActivator
     {
         if ( this.context.getBundles().length == 1 )
         {
-            installBundles();
+            final List<Bundle> bundles = installBundles();
+            installListener.accept( bundles );
+            startBundles( bundles );
         }
         else
         {
@@ -54,27 +62,45 @@ public final class ProvisionActivator
         }
     }
 
-    private void installBundles()
+    private List<Bundle> installBundles()
         throws Exception
     {
         final BundleInfoFinder finder = new BundleInfoFinder( this.systemDir );
         final List<BundleInfo> list = finder.find();
-
+        final List<Bundle> bundles = new ArrayList<>();
         LOG.info( "Installing {} bundles...", list.size() );
         for ( final BundleInfo info : list )
         {
-            installBundle( info );
+            final Bundle bundle = installBundle( info );
+            bundles.add( bundle );
+        }
+        return bundles;
+    }
+
+    private void startBundles( List<Bundle> bundles )
+        throws BundleException
+    {
+        LOG.info( "Starting {} bundles...", bundles.size() );
+        for ( Bundle bundle : bundles )
+        {
+            startBundle( bundle );
         }
     }
 
-    private void installBundle( final BundleInfo info )
-        throws Exception
+    private Bundle installBundle( final BundleInfo info )
+        throws BundleException
     {
         LOG.debug( "Installing bundle {} at start-level {}", info.getLocation(), info.getLevel() );
 
         final URI uri = info.getUri();
         final Bundle bundle = this.context.installBundle( uri.toString() );
         bundle.adapt( BundleStartLevel.class ).setStartLevel( info.getLevel() );
+        return bundle;
+    }
+
+    private void startBundle( final Bundle bundle )
+        throws BundleException
+    {
         if ( !isFragmentBundle( bundle ) )
         {
             bundle.start();

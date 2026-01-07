@@ -13,11 +13,12 @@ import com.enonic.xp.core.impl.app.resolver.MultiApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.NodeResourceApplicationUrlResolver;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.server.RunMode;
+import com.enonic.xp.server.RunModeSupport;
 
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -37,8 +38,9 @@ class ApplicationFactoryTest
     {
         final Bundle bundle = deploy( "app1", true, false );
         final AppConfig appConfig = mock( AppConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
+        RunModeSupport.set( RunMode.PROD );
 
-        final Application app = new ApplicationFactory( RunMode.PROD, nodeService, appConfig ).create( bundle );
+        final Application app = new ApplicationFactory( nodeService, appConfig ).create( bundle );
         assertNotNull( app );
         assertNull( app.getConfig() );
     }
@@ -50,11 +52,11 @@ class ApplicationFactoryTest
 
         final AppConfig appConfig = mock( AppConfig.class );
         when( appConfig.virtual_enabled() ).thenReturn( false );
+        RunModeSupport.set( RunMode.PROD );
 
-        final ApplicationUrlResolver resolver =
-            new ApplicationFactory( RunMode.PROD, nodeService, appConfig ).createUrlResolver( bundle, null );
+        final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService, appConfig ).createUrlResolver( bundle, null );
         assertNotNull( resolver );
-        assertTrue( resolver instanceof BundleApplicationUrlResolver );
+        assertInstanceOf( BundleApplicationUrlResolver.class, resolver );
     }
 
     @Test
@@ -65,11 +67,11 @@ class ApplicationFactoryTest
         final AppConfig appConfig = mock( AppConfig.class );
         when( appConfig.virtual_enabled() ).thenReturn( true );
         when( appConfig.virtual_schema_override() ).thenReturn( true );
+        RunModeSupport.set( RunMode.DEV );
 
-        final ApplicationUrlResolver resolver =
-            new ApplicationFactory( RunMode.DEV, nodeService, appConfig ).createUrlResolver( bundle, null );
+        final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService, appConfig ).createUrlResolver( bundle, null );
         assertNotNull( resolver );
-        assertTrue( resolver instanceof MultiApplicationUrlResolver );
+        assertInstanceOf( MultiApplicationUrlResolver.class, resolver );
     }
 
     @Test
@@ -80,9 +82,9 @@ class ApplicationFactoryTest
         final AppConfig appConfig = mock( AppConfig.class );
         when( appConfig.virtual_enabled() ).thenReturn( true );
         when( appConfig.virtual_schema_override() ).thenReturn( false );
+        RunModeSupport.set( RunMode.DEV );
 
-        final ApplicationUrlResolver resolver =
-            new ApplicationFactory( RunMode.DEV, nodeService, appConfig ).createUrlResolver( bundle, null );
+        final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService, appConfig ).createUrlResolver( bundle, null );
         assertNotNull( resolver );
     }
 
@@ -94,9 +96,9 @@ class ApplicationFactoryTest
         final AppConfig appConfig = mock( AppConfig.class );
         when( appConfig.virtual_enabled() ).thenReturn( true );
         when( appConfig.virtual_schema_override() ).thenReturn( false );
+        RunModeSupport.set( RunMode.PROD );
 
-        final ApplicationUrlResolver resolver =
-            new ApplicationFactory( RunMode.PROD, nodeService, appConfig ).createUrlResolver( bundle, null );
+        final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService, appConfig ).createUrlResolver( bundle, null );
         assertNotNull( resolver );
     }
 
@@ -107,11 +109,11 @@ class ApplicationFactoryTest
 
         final AppConfig appConfig = mock( AppConfig.class );
         when( appConfig.virtual_enabled() ).thenReturn( false );
+        RunModeSupport.set( RunMode.DEV );
 
-        final ApplicationUrlResolver resolver =
-            new ApplicationFactory( RunMode.DEV, nodeService, appConfig ).createUrlResolver( bundle, null );
+        final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService, appConfig ).createUrlResolver( bundle, null );
         assertNotNull( resolver );
-        assertTrue( resolver instanceof MultiApplicationUrlResolver );
+        assertInstanceOf( MultiApplicationUrlResolver.class, resolver );
     }
 
     @Test
@@ -122,11 +124,11 @@ class ApplicationFactoryTest
         final AppConfig appConfig = mock( AppConfig.class );
         when( appConfig.virtual_enabled() ).thenReturn( true );
         when( appConfig.virtual_schema_override() ).thenReturn( true );
+        RunModeSupport.set( RunMode.DEV );
 
-        final ApplicationUrlResolver resolver =
-            new ApplicationFactory( RunMode.DEV, nodeService, appConfig ).createUrlResolver( bundle, null );
+        final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService, appConfig ).createUrlResolver( bundle, null );
         assertNotNull( resolver );
-        assertTrue( resolver instanceof MultiApplicationUrlResolver );
+        assertInstanceOf( MultiApplicationUrlResolver.class, resolver );
     }
 
     @Test
@@ -136,11 +138,11 @@ class ApplicationFactoryTest
 
         final AppConfig appConfig = mock( AppConfig.class );
         when( appConfig.virtual_enabled() ).thenReturn( false );
+        RunModeSupport.set( RunMode.DEV );
 
-        final ApplicationUrlResolver resolver =
-            new ApplicationFactory( RunMode.DEV, nodeService, appConfig ).createUrlResolver( bundle, null );
+        final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService, appConfig ).createUrlResolver( bundle, null );
         assertNotNull( resolver );
-        assertTrue( resolver instanceof BundleApplicationUrlResolver );
+        assertInstanceOf( BundleApplicationUrlResolver.class, resolver );
     }
 
     @Test
@@ -151,10 +153,11 @@ class ApplicationFactoryTest
         final AppConfig appConfig = mock( AppConfig.class );
         when( appConfig.virtual_enabled() ).thenReturn( true );
         when( appConfig.virtual_schema_override() ).thenReturn( false );
+        RunModeSupport.set( RunMode.DEV );
 
-        final ApplicationFactory applicationFactory = new ApplicationFactory( RunMode.DEV, nodeService, appConfig );
-        assertTrue( applicationFactory.createUrlResolver( bundle, "virtual" ) instanceof NodeResourceApplicationUrlResolver );
-        assertTrue( applicationFactory.createUrlResolver( bundle, "bundle" ) instanceof MultiApplicationUrlResolver );
+        final ApplicationFactory applicationFactory = new ApplicationFactory( nodeService, appConfig );
+        assertInstanceOf( NodeResourceApplicationUrlResolver.class, applicationFactory.createUrlResolver( bundle, "virtual" ) );
+        assertInstanceOf( MultiApplicationUrlResolver.class, applicationFactory.createUrlResolver( bundle, "bundle" ) );
 
         assertThrows( IllegalArgumentException.class, () -> applicationFactory.createUrlResolver( bundle, "unknown" ) );
     }

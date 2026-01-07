@@ -1,4 +1,4 @@
-package com.enonic.xp.launcher;
+package com.enonic.xp.launcher.impl;
 
 import java.util.Map;
 import java.util.Properties;

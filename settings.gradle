@@ -118,7 +118,6 @@ include 'lib:lib-schema'
 include 'lib:lib-app'
 include 'lib:lib-grid'
 
-include 'launcher:launcher-api'
 include 'launcher:launcher-impl'
 include 'launcher:launcher-main'
 

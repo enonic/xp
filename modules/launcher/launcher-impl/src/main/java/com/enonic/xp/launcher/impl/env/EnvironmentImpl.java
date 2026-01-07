@@ -1,7 +1,6 @@
 package com.enonic.xp.launcher.impl.env;
 
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -38,9 +37,6 @@ final class EnvironmentImpl
     @Override
     public Map<String, String> getAsMap()
     {
-        final Map<String, String> map = new HashMap<>();
-        map.put( SharedConstants.XP_HOME_DIR, this.homeDir.toString() );
-        map.put( SharedConstants.XP_INSTALL_DIR, this.installDir.toString() );
-        return map;
+        return Map.of( SharedConstants.XP_HOME_DIR, this.homeDir.toString(), SharedConstants.XP_INSTALL_DIR, this.installDir.toString() );
     }
 }

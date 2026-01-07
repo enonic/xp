@@ -16,7 +16,6 @@ import com.enonic.xp.script.impl.util.NashornHelper;
 import com.enonic.xp.script.impl.value.ScriptValueFactory;
 import com.enonic.xp.script.impl.value.ScriptValueFactoryImpl;
 import com.enonic.xp.script.runtime.ScriptSettings;
-import com.enonic.xp.server.RunMode;
 
 public class NashornScriptFixturesFacade
     implements ScriptFixturesFacade
@@ -33,6 +32,6 @@ public class NashornScriptFixturesFacade
     {
         return new ScriptExecutorImpl( Executors.newSingleThreadExecutor(), application.getClassLoader(), scriptSettings, serviceRegistry,
                                        resourceService, new ApplicationInfoBuilder( application.getKey(), application.getConfig(),
-                                                                                    application.getVersion() ), RunMode.DEV );
+                                                                                    application.getVersion() ) );
     }
 }
