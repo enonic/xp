@@ -39,7 +39,7 @@ expectNotAssignable<NotFoundResponse>({
 // ────────────────────────────────────────────────────────────────────────────
 // Scenario: JSON body
 // ────────────────────────────────────────────────────────────────────────────
-type MyObject = {
+interface MyObject {
     key: string
 };
 const object = {
@@ -104,7 +104,7 @@ const fullResponse = {
         'Cache-Control': 'http1',
         'content-encoding': 'http2',
         Etag: 123,
-        'X-My-Header': 'my-value',      
+        'X-My-Header': 'my-value',
     },
     postProcess: true,
     redirect: '/some/other/url',

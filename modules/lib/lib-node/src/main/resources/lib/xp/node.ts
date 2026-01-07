@@ -92,7 +92,7 @@ type WithRequiredProperty<T, K extends keyof T> = T & { [P in K]-?: T[P] };
 
 function checkRequired<T extends object>(obj: T, name: keyof T): void {
     if (obj == null || obj[name] == null) {
-        throw `Parameter '${String(name)}' is required`;
+        throw Error(`Parameter '${String(name)}' is required`);
     }
 }
 
@@ -188,8 +188,7 @@ const multiRepoConnectFactory: MultiRepoNodeHandleFactory = __.newBean<MultiRepo
 function argsToStringArray(argsArray: (string | string[])[]): string[] {
     const array: string[] = [];
 
-    for (let i = 0; i < argsArray.length; i++) {
-        const currArgument = argsArray[i];
+    for (const currArgument of argsArray) {
         if (Array.isArray(currArgument)) {
             currArgument.forEach((v) => {
                 array.push(v);
@@ -217,7 +216,7 @@ function prepareGetParams(params: (string | GetNodeParams | (string | GetNodePar
             checkRequired(param, 'key');
             bean.add(param.key, __.nullOrValue(param.versionId));
         } else {
-            throw 'Unsupported type';
+            throw Error('Unsupported type');
         }
     });
 }
@@ -521,9 +520,7 @@ export interface ApplyPermissionsParams {
     scope?: string;
 }
 
-export interface ApplyPermissionsResult {
-    [nodeId: string]: BranchResult[];
-}
+export type ApplyPermissionsResult = Record<string, BranchResult[]>;
 
 export interface BranchResult {
     branch: string;
@@ -592,7 +589,7 @@ export interface NodeConfigEntry {
     languages: string[];
 }
 
-export type CommonNodeProperties = {
+export interface CommonNodeProperties {
     _childOrder: string;
     // _id: string; // Not on create
     // _indexConfig: Partial<NodeIndexConfigParams> | NodeIndexConfigParams | NodeIndexConfig; // Different on read vs write
@@ -859,7 +856,7 @@ class RepoConnectionImpl
         } = params ?? {};
 
         if (typeof key === 'undefined' && typeof keys === 'undefined') {
-            throw "Parameter key' or 'keys' is required";
+            throw Error('Parameter "key" or "keys" is required');
         }
 
         const handlerParams: PushNodeHandlerParams = __.newBean<PushNodeHandlerParams>('com.enonic.xp.lib.node.PushNodeHandlerParams');

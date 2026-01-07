@@ -115,7 +115,7 @@ exports.createWithoutName = function () {
             schedule: {type: 'CRON', value: '* * * * *', timeZone: 'GMT+5:30'}
         });
     } catch (e) {
-        assert.assertEquals('Parameter \'name\' is required', e);
+        assert.assertEquals('Parameter \'name\' is required', e.message);
     }
 };
 
@@ -130,7 +130,7 @@ exports.createWithoutCalendar = function () {
             config: {}
         });
     } catch (e) {
-        assert.assertEquals('Parameter \'schedule\' is required', e);
+        assert.assertEquals('Parameter \'schedule\' is required', e.message);
     }
 };
 
@@ -145,7 +145,7 @@ exports.createWithoutDescriptor = function () {
             schedule: {type: 'CRON', value: '* * * * *', timeZone: 'GMT+5:30'}
         });
     } catch (e) {
-        assert.assertEquals('Parameter \'descriptor\' is required', e);
+        assert.assertEquals('Parameter \'descriptor\' is required', e.message);
     }
 };
 

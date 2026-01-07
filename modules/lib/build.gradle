@@ -4,7 +4,7 @@ plugins {
 }
 
 node {
-    version = '22.19.0'
+    version = '24.11.1'
     download = true
 }
 

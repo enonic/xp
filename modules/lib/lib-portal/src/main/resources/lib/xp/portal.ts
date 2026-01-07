@@ -26,7 +26,7 @@ export type {
 
 function checkRequired<T extends object>(obj: T, name: keyof T): void {
     if (obj == null || obj[name] == null) {
-        throw `Parameter '${String(name)}' is required`;
+        throw Error(`Parameter '${String(name)}' is required`);
     }
 }
 
@@ -40,7 +40,7 @@ export interface SiteConfig<Config> {
     config: Config;
 }
 
-export type Without<T, U> = { [P in Exclude<keyof T, keyof U>]?: never };
+export type Without<T, U> = Partial<Record<Exclude<keyof T, keyof U>, never>>;
 export type XOR<T, U> = T | U extends object ? (Without<T, U> & U) | (Without<U, T> & T) : T | U;
 
 export type IdXorPath = XOR<{ id: string }, { path: string }>;
@@ -742,9 +742,7 @@ export interface MultipartItem {
     size: number;
 }
 
-export interface MultipartForm {
-    [key: string]: MultipartItem | MultipartItem[];
-}
+export type MultipartForm = Record<string, MultipartItem | MultipartItem[]>;
 
 interface MultipartHandler {
     getForm(): MultipartForm;

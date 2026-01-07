@@ -19,13 +19,13 @@ export type {ScriptValue} from '@enonic-types/core';
 
 function checkRequiredValue(value: unknown, name: string): void {
     if (value == null) {
-        throw `Parameter '${String(name)}' is required`;
+        throw Error(`Parameter '${String(name)}' is required`);
     }
 }
 
 function checkRequired<T extends object>(obj: T, name: keyof T): void {
     if (obj == null || obj[name] === undefined) {
-        throw `Parameter '${String(name)}' is required`;
+        throw Error(`Parameter '${String(name)}' is required`);
     }
 }
 
@@ -312,7 +312,7 @@ interface ModifyRepositoryHandler {
  */
 export function modify(params: ModifyRepositoryParams): Repository {
     if (params.scope) {
-        throw 'The parameter \'scope\' is not supported';
+        throw Error('The parameter \'scope\' is not supported');
     }
 
     checkRequired(params, 'id');

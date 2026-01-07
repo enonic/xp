@@ -19,7 +19,7 @@ export type {ScriptValue, UserKey} from '@enonic-types/core';
 
 function checkRequired<T extends object>(obj: T, name: keyof T): void {
     if (obj == null || obj[name] == null) {
-        throw `Parameter '${String(name)}' is required`;
+        throw Error(`Parameter '${String(name)}' is required`);
     }
 }
 
@@ -195,7 +195,7 @@ interface GetTaskHandler {
  */
 export function get(taskId: string): TaskInfo | null {
     if (taskId === undefined) {
-        throw 'Parameter taskId is required';
+        throw Error('Parameter "taskId" is required');
     }
 
     const bean: GetTaskHandler = __.newBean<GetTaskHandler>('com.enonic.xp.lib.task.GetTaskHandler');
@@ -278,7 +278,7 @@ export function isRunning(task: string): boolean {
     const bean: IsRunningHandler = __.newBean<IsRunningHandler>('com.enonic.xp.lib.task.IsRunningHandler');
 
     if (task === undefined) {
-        throw 'Parameter task is required';
+        throw Error('Parameter "task" is required');
     }
 
     return __.toNativeObject(bean.isRunning(task));
