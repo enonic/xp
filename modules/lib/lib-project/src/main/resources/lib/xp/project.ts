@@ -200,7 +200,7 @@ interface DeleteProjectHandler {
  *
  * @returns {boolean} `true` if the project was successfully deleted.
  */
-export function _delete(params: DeleteProjectParams): boolean {
+export function del(params: DeleteProjectParams): boolean {
     checkRequired(params, 'id');
 
     const bean: DeleteProjectHandler = __.newBean<DeleteProjectHandler>('com.enonic.xp.lib.project.DeleteProjectHandler');
@@ -211,7 +211,7 @@ export function _delete(params: DeleteProjectParams): boolean {
 }
 
 export {
-    _delete as delete,
+    del as delete,
 };
 
 export interface GetProjectParams {

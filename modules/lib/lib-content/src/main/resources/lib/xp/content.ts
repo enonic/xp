@@ -470,7 +470,7 @@ interface DeleteContentHandler {
  *
  * @returns {boolean} True if deleted, false otherwise.
  */
-function _delete(params: DeleteContentParams): boolean {
+export function del(params: DeleteContentParams): boolean {
     checkRequired(params, 'key');
 
     const bean: DeleteContentHandler = __.newBean<DeleteContentHandler>('com.enonic.xp.lib.content.DeleteContentHandler');
@@ -479,7 +479,7 @@ function _delete(params: DeleteContentParams): boolean {
 }
 
 export {
-    _delete as delete,
+    del as delete,
 };
 
 export interface ContentsResult<

@@ -167,7 +167,7 @@ interface DeleteScheduledJobHandler {
  * @param {object} params JSON with the parameters.
  * @param {string} params.name job to be deleted name.
  */
-function _delete(params: DeleteScheduledJobParams): boolean {
+export function del(params: DeleteScheduledJobParams): boolean {
     checkRequired(params, 'name');
 
     const bean: DeleteScheduledJobHandler = __.newBean<DeleteScheduledJobHandler>('com.enonic.xp.lib.scheduler.DeleteScheduledJobHandler');
@@ -178,7 +178,7 @@ function _delete(params: DeleteScheduledJobParams): boolean {
 }
 
 export {
-    _delete as delete,
+    del as delete,
 };
 
 export interface GetScheduledJobParams {
