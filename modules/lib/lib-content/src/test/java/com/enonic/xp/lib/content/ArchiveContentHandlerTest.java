@@ -20,7 +20,7 @@ class ArchiveContentHandlerTest
         when( this.contentService.getByPath( ContentPath.from( "/path/to/mycontent" ) ) ).thenReturn( content );
 
         when( this.contentService.archive( Mockito.isA( ArchiveContentParams.class ) ) ).thenAnswer(
-            invocationOnMock -> invokeArchive( (ArchiveContentParams) invocationOnMock.getArguments()[0] ) );
+            invocationOnMock -> invokeArchive( invocationOnMock.getArgument( 0 ) ) );
 
         runScript( "/lib/xp/examples/content/archive.js" );
     }

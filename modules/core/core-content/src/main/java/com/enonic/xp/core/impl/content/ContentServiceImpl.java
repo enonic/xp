@@ -72,10 +72,10 @@ import com.enonic.xp.content.SortContentParams;
 import com.enonic.xp.content.SortContentResult;
 import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UnpublishContentsResult;
+import com.enonic.xp.content.UpdateContentMetadataParams;
+import com.enonic.xp.content.UpdateContentMetadataResult;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
-import com.enonic.xp.content.UpdateMetadataParams;
-import com.enonic.xp.content.UpdateMetadataResult;
 import com.enonic.xp.content.XDataDefaultValuesProcessor;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -194,7 +194,8 @@ public class ContentServiceImpl
             .xDataDefaultValuesProcessor( this.xDataDefaultValuesProcessor )
             .xDataMappingService( this.xDataMappingService )
             .siteConfigService( this.siteConfigService )
-            .pageDescriptorService( this.pageDescriptorService ).pageTemplateService( new PageTemplateServiceImpl( this ) )
+            .pageDescriptorService( this.pageDescriptorService )
+            .pageTemplateService( new PageTemplateServiceImpl( this ) )
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
             .allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() )
@@ -242,7 +243,8 @@ public class ContentServiceImpl
             .formDefaultValuesProcessor( this.formDefaultValuesProcessor )
             .pageFormDefaultValuesProcessor( this.pageFormDefaultValuesProcessor )
             .xDataDefaultValuesProcessor( this.xDataDefaultValuesProcessor )
-            .pageDescriptorService( this.pageDescriptorService ).pageTemplateService( this.pageTemplateService )
+            .pageDescriptorService( this.pageDescriptorService )
+            .pageTemplateService( this.pageTemplateService )
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
             .allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() )
@@ -267,7 +269,8 @@ public class ContentServiceImpl
             .xDataService( this.xDataService )
             .contentProcessors( this.contentProcessors )
             .contentValidators( this.contentValidators )
-            .pageDescriptorService( this.pageDescriptorService ).pageTemplateService( this.pageTemplateService )
+            .pageDescriptorService( this.pageDescriptorService )
+            .pageTemplateService( this.pageTemplateService )
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
             .xDataMappingService( this.xDataMappingService )
@@ -917,7 +920,8 @@ public class ContentServiceImpl
             .xDataService( this.xDataService )
             .contentProcessors( this.contentProcessors )
             .contentValidators( this.contentValidators )
-            .pageDescriptorService( this.pageDescriptorService ).pageTemplateService( this.pageTemplateService )
+            .pageDescriptorService( this.pageDescriptorService )
+            .pageTemplateService( this.pageTemplateService )
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
             .allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() )
@@ -930,11 +934,11 @@ public class ContentServiceImpl
     }
 
     @Override
-    public UpdateMetadataResult updateMetadata( final UpdateMetadataParams params )
+    public UpdateContentMetadataResult updateMetadata( final UpdateContentMetadataParams params )
     {
         requireAdminRole();
 
-        final UpdateMetadataResult result = UpdateMetadataCommand.create( params )
+        final UpdateContentMetadataResult result = UpdateMetadataCommand.create( params )
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
             .eventPublisher( this.eventPublisher )

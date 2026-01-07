@@ -1,6 +1,7 @@
 package com.enonic.xp.lib.project;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -12,9 +13,10 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.content.EditableContent;
+import com.enonic.xp.content.EditableContentMetadata;
 import com.enonic.xp.content.ExtraDatas;
-import com.enonic.xp.content.UpdateContentParams;
+import com.enonic.xp.content.UpdateContentMetadataParams;
+import com.enonic.xp.content.UpdateContentMetadataResult;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.PropertyTreeMarshallerService;
 import com.enonic.xp.project.CreateProjectParams;
@@ -49,6 +51,7 @@ public abstract class BaseProjectHandlerTest
         final Content.Builder contentRoot = Content.create()
             .id( ContentId.from( "123" ) )
             .name( ContentName.from( "root" ) )
+            .language( Locale.JAPANESE )
             .parentPath( ContentPath.ROOT )
             .permissions( AccessControlList.create()
                               .add( AccessControlEntry.create().principal( RoleKeys.EVERYONE ).allow( Permission.READ ).build() )
@@ -57,15 +60,15 @@ public abstract class BaseProjectHandlerTest
             .extraDatas( ExtraDatas.empty() );
 
         Mockito.when( contentService.getByPath( ContentPath.ROOT ) ).thenReturn( contentRoot.build() );
-        Mockito.when( contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenAnswer( mock -> {
+        Mockito.when( contentService.updateMetadata( any() ) ).thenAnswer( mock -> {
 
-            final UpdateContentParams params = (UpdateContentParams) mock.getArguments()[0];
-            final EditableContent editableContent = new EditableContent( contentRoot.build() );
+            final UpdateContentMetadataParams params = mock.getArgument( 0 );
+            final EditableContentMetadata editableContent = new EditableContentMetadata( contentRoot.build() );
             params.getEditor().edit( editableContent );
 
-            contentRoot.language( editableContent.language );
+            contentRoot.language( editableContent.source.getLanguage() );
             Mockito.when( contentService.getByPath( ContentPath.ROOT ) ).thenReturn( contentRoot.build() );
-            return contentRoot.build();
+            return UpdateContentMetadataResult.create().content( contentRoot.build() ).build();
         } );
     }
 
@@ -73,9 +76,9 @@ public abstract class BaseProjectHandlerTest
     {
         final Map<ProjectName, Project> projects = new HashMap<>();
 
-        when( this.projectService.create( any( CreateProjectParams.class ) ) ).thenAnswer( mock -> {
+        when( this.projectService.create( any( CreateProjectParams.class ) ) ).thenAnswer( invocation -> {
 
-            final Project project = createProject( (CreateProjectParams) mock.getArguments()[0] );
+            final Project project = createProject( (CreateProjectParams) invocation.getArgument( 0 ) );
             Mockito.when( projectService.get( project.getName() ) ).thenReturn( project );
             Mockito.when( projectService.delete( project.getName() ) ).thenReturn( true );
 
@@ -84,9 +87,9 @@ public abstract class BaseProjectHandlerTest
             return project;
         } );
 
-        when( this.projectService.modify( any( ModifyProjectParams.class ) ) ).thenAnswer( mock -> {
+        when( this.projectService.modify( any( ModifyProjectParams.class ) ) ).thenAnswer( invocation -> {
 
-            final Project project = createProject( (ModifyProjectParams) mock.getArguments()[0] );
+            final Project project = createProject( (ModifyProjectParams) invocation.getArgument( 0 ) );
             Mockito.when( projectService.get( project.getName() ) ).thenReturn( project );
 
             projects.put( project.getName(), project );
@@ -98,11 +101,11 @@ public abstract class BaseProjectHandlerTest
 
         when( this.projectService.getAvailableApplications( any( ProjectName.class ) ) ).thenAnswer( mock -> {
 
-            final Project project = projects.get( mock.getArgument(0) );
+            final Project project = projects.get( mock.getArgument( 0 ) );
 
             if ( project == null )
             {
-                throw new ProjectNotFoundException( mock.getArgument(0) );
+                throw new ProjectNotFoundException( mock.getArgument( 0 ) );
             }
             return ApplicationKeys.from(
                 project.getSiteConfigs().stream().map( SiteConfig::getApplicationKey ).collect( Collectors.toList() ) );
@@ -110,13 +113,14 @@ public abstract class BaseProjectHandlerTest
 
         when( this.projectService.getPermissions( any( ProjectName.class ) ) ).thenReturn( ProjectPermissions.create().build() );
 
-        when( this.projectService.modifyPermissions( any( ProjectName.class ), any( ProjectPermissions.class ) ) ).thenAnswer( mock -> {
-            final ProjectName projectName = (ProjectName) mock.getArguments()[0];
-            final ProjectPermissions projectPermissions = (ProjectPermissions) mock.getArguments()[1];
-            Mockito.when( projectService.getPermissions( projectName ) ).thenReturn( projectPermissions );
+        when( this.projectService.modifyPermissions( any( ProjectName.class ), any( ProjectPermissions.class ) ) ).thenAnswer(
+            invocation -> {
+                final ProjectName projectName = invocation.getArgument( 0 );
+                final ProjectPermissions projectPermissions = invocation.getArgument( 1 );
+                Mockito.when( projectService.getPermissions( projectName ) ).thenReturn( projectPermissions );
 
-            return projectPermissions;
-        } );
+                return projectPermissions;
+            } );
     }
 
     private Project createProject( final ModifyProjectParams params )

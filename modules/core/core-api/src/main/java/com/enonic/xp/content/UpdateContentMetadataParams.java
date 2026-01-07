@@ -5,13 +5,13 @@ import java.util.Objects;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public final class UpdateMetadataParams
+public final class UpdateContentMetadataParams
 {
     private final ContentId id;
 
     private final ContentMetadataEditor editor;
 
-    private UpdateMetadataParams( final Builder builder )
+    private UpdateContentMetadataParams( final Builder builder )
     {
         this.id = builder.id;
         this.editor = builder.editor;
@@ -54,10 +54,10 @@ public final class UpdateMetadataParams
             return this;
         }
 
-        public UpdateMetadataParams build()
+        public UpdateContentMetadataParams build()
         {
             Objects.requireNonNull( this.id, "ContentId is required" );
-            return new UpdateMetadataParams( this );
+            return new UpdateContentMetadataParams( this );
         }
     }
 }

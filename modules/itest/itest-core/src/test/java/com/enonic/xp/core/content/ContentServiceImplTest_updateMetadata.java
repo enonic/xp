@@ -7,8 +7,8 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.content.UpdateMetadataParams;
-import com.enonic.xp.content.UpdateMetadataResult;
+import com.enonic.xp.content.UpdateContentMetadataParams;
+import com.enonic.xp.content.UpdateContentMetadataResult;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
@@ -39,21 +39,19 @@ class ContentServiceImplTest_updateMetadata
 
         assertNull( content.getLanguage() );
 
-        final UpdateMetadataParams updateMetadataParams = UpdateMetadataParams.create()
-            .contentId( content.getId() )
-            .editor( edit -> {
+        final UpdateContentMetadataParams updateContentMetadataParams =
+            UpdateContentMetadataParams.create().contentId( content.getId() ).editor( edit -> {
                 edit.language = Locale.forLanguageTag( "en" );
-            } )
-            .build();
+            } ).build();
 
-        final UpdateMetadataResult result = this.contentService.updateMetadata( updateMetadataParams );
+        final UpdateContentMetadataResult result = this.contentService.updateMetadata( updateContentMetadataParams );
 
         final Content updatedContent = this.contentService.getById( content.getId() );
 
         assertEquals( Locale.forLanguageTag( "en" ), updatedContent.getLanguage() );
         assertEquals( updatedContent.getCreatedTime(), content.getCreatedTime() );
         assertEquals( updatedContent.getModifier(), content.getModifier() );
-        assertEquals( content.getId(), result.getContentId() );
+        assertEquals( content.getId(), result.getContent().getId() );
     }
 
     @Test
@@ -72,21 +70,19 @@ class ContentServiceImplTest_updateMetadata
 
         final PrincipalKey newOwner = PrincipalKey.from( "user:system:new-owner" );
 
-        final UpdateMetadataParams updateMetadataParams = UpdateMetadataParams.create()
-            .contentId( content.getId() )
-            .editor( edit -> {
+        final UpdateContentMetadataParams updateContentMetadataParams =
+            UpdateContentMetadataParams.create().contentId( content.getId() ).editor( edit -> {
                 edit.owner = newOwner;
-            } )
-            .build();
+            } ).build();
 
-        final UpdateMetadataResult result = this.contentService.updateMetadata( updateMetadataParams );
+        final UpdateContentMetadataResult result = this.contentService.updateMetadata( updateContentMetadataParams );
 
         final Content updatedContent = this.contentService.getById( content.getId() );
 
         assertEquals( newOwner, updatedContent.getOwner() );
         assertEquals( updatedContent.getCreatedTime(), content.getCreatedTime() );
         assertEquals( updatedContent.getModifier(), content.getModifier() );
-        assertEquals( content.getId(), result.getContentId() );
+        assertEquals( content.getId(), result.getContent().getId() );
     }
 
     @Test
@@ -103,15 +99,13 @@ class ContentServiceImplTest_updateMetadata
 
         final PrincipalKey newOwner = PrincipalKey.from( "user:system:new-owner" );
 
-        final UpdateMetadataParams updateMetadataParams = UpdateMetadataParams.create()
-            .contentId( content.getId() )
-            .editor( edit -> {
+        final UpdateContentMetadataParams updateContentMetadataParams =
+            UpdateContentMetadataParams.create().contentId( content.getId() ).editor( edit -> {
                 edit.language = Locale.forLanguageTag( "no" );
                 edit.owner = newOwner;
-            } )
-            .build();
+            } ).build();
 
-        final UpdateMetadataResult result = this.contentService.updateMetadata( updateMetadataParams );
+        final UpdateContentMetadataResult result = this.contentService.updateMetadata( updateContentMetadataParams );
 
         final Content updatedContent = this.contentService.getById( content.getId() );
 
@@ -119,7 +113,7 @@ class ContentServiceImplTest_updateMetadata
         assertEquals( newOwner, updatedContent.getOwner() );
         assertEquals( updatedContent.getCreatedTime(), content.getCreatedTime() );
         assertEquals( updatedContent.getModifier(), content.getModifier() );
-        assertEquals( content.getId(), result.getContentId() );
+        assertEquals( content.getId(), result.getContent().getId() );
     }
 
     @Test
@@ -134,18 +128,16 @@ class ContentServiceImplTest_updateMetadata
 
         final Content content = this.contentService.create( createContentParams );
 
-        final UpdateMetadataParams updateMetadataParams = UpdateMetadataParams.create()
-            .contentId( content.getId() )
-            .editor( edit -> {
+        final UpdateContentMetadataParams updateContentMetadataParams =
+            UpdateContentMetadataParams.create().contentId( content.getId() ).editor( edit -> {
                 edit.language = Locale.forLanguageTag( "en" );
-            } )
-            .build();
+            } ).build();
 
         assertThrows( ForbiddenAccessException.class, () -> ContextBuilder.from( ContextAccessor.current() )
             .authInfo( AuthenticationInfo.create().user( ContextAccessor.current().getAuthInfo().getUser() ).build() )
             .build()
             .runWith( () -> {
-                this.contentService.updateMetadata( updateMetadataParams );
+                this.contentService.updateMetadata( updateContentMetadataParams );
             } ) );
     }
 }

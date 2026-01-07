@@ -30,7 +30,7 @@ public class ResolverTestSupport
     private Resource loadResource( final InvocationOnMock invocation )
         throws Exception
     {
-        return loadResource( (ResourceKey) invocation.getArguments()[0] );
+        return loadResource( (ResourceKey) invocation.getArgument( 0 ) );
     }
 
     private Resource loadResource( final ResourceKey key )

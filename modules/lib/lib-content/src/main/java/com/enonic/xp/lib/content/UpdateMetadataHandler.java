@@ -9,11 +9,11 @@ import com.enonic.xp.content.ContentMetadataEditor;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.EditableContentMetadata;
-import com.enonic.xp.content.UpdateMetadataParams;
-import com.enonic.xp.content.UpdateMetadataResult;
+import com.enonic.xp.content.UpdateContentMetadataParams;
+import com.enonic.xp.content.UpdateContentMetadataResult;
 import com.enonic.xp.convert.Converters;
 import com.enonic.xp.lib.content.mapper.ContentMapper;
-import com.enonic.xp.lib.content.mapper.UpdateMetadataResultMapper;
+import com.enonic.xp.lib.content.mapper.UpdateContentMetadataResultMapper;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.security.PrincipalKey;
 
@@ -33,14 +33,12 @@ public final class UpdateMetadataHandler
             return null;
         }
 
-        final UpdateMetadataParams params = UpdateMetadataParams.create()
-            .contentId( existingContent.getId() )
-            .editor( newContentMetadataEditor( existingContent ) )
-            .build();
+        final UpdateContentMetadataParams params =
+            UpdateContentMetadataParams.create().contentId( existingContent.getId() ).editor( newContentMetadataEditor() ).build();
 
-        final UpdateMetadataResult result = this.contentService.updateMetadata( params );
+        final UpdateContentMetadataResult result = this.contentService.updateMetadata( params );
 
-        return new UpdateMetadataResultMapper( result );
+        return new UpdateContentMetadataResultMapper( result );
     }
 
     @Override
@@ -68,7 +66,7 @@ public final class UpdateMetadataHandler
         }
     }
 
-    private ContentMetadataEditor newContentMetadataEditor( final Content existingContent )
+    private ContentMetadataEditor newContentMetadataEditor()
     {
         return edit -> {
             final ScriptValue value = this.editor.call( new ContentMapper( edit.source ) );

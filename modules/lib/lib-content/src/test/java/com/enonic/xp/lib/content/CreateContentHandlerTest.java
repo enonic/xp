@@ -38,7 +38,7 @@ class CreateContentHandlerTest
     private void mockCreateContent()
     {
         when( this.contentService.create( any( CreateContentParams.class ) ) ).thenAnswer(
-            mock -> createContent( (CreateContentParams) mock.getArguments()[0] ) );
+            invocation -> createContent( invocation.getArgument( 0 ) ) );
 
         final FormItemSet eSet = FormItemSet.create()
             .name( "e" )
@@ -149,11 +149,11 @@ class CreateContentHandlerTest
     void createContentAutoGenerateName()
     {
         when( this.contentService.create( any( CreateContentParams.class ) ) ).thenAnswer(
-            mock -> createContent( (CreateContentParams) mock.getArguments()[0] ) );
+            invocation -> createContent( invocation.getArgument( 0 ) ) );
 
         final ContentType contentType = ContentType.create().name( "test:myContentType" ).superType( ContentTypeName.structured() ).build();
 
-        when( this.contentTypeService.getByName(any() ) ).thenReturn( contentType );
+        when( this.contentTypeService.getByName( any() ) ).thenReturn( contentType );
 
         runFunction( "/test/CreateContentHandlerTest.js", "createContentAutoGenerateName" );
     }
@@ -162,7 +162,7 @@ class CreateContentHandlerTest
     void createContentAutoGenerateNameWithExistingName()
     {
         when( this.contentService.create( any( CreateContentParams.class ) ) ).thenAnswer(
-            mock -> createContent( (CreateContentParams) mock.getArguments()[0] ) );
+            invocation -> createContent( invocation.getArgument( 0 ) ) );
 
         when( this.contentService.contentExists( Mockito.eq( ContentPath.from( "/a/b/my-content" ) ) ) ).thenReturn( true );
         when( this.contentService.contentExists( Mockito.eq( ContentPath.from( "/a/b/my-content-1" ) ) ) ).thenReturn( true );
@@ -179,7 +179,7 @@ class CreateContentHandlerTest
     void createContentWithWorkflow()
     {
         when( this.contentService.create( any( CreateContentParams.class ) ) ).thenAnswer(
-            mock -> createContent( (CreateContentParams) mock.getArguments()[0] ) );
+            invocation -> createContent( invocation.getArgument( 0 ) ) );
 
         final ContentType contentType = ContentType.create().name( "test:myContentType" ).superType( ContentTypeName.structured() ).build();
 

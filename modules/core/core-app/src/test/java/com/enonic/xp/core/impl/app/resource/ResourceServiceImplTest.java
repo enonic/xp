@@ -204,7 +204,7 @@ class ResourceServiceImplTest
         final NodeService nodeService = mock( NodeService.class );
 
         when( repositoryService.get( projectName.getRepoId() ) ).thenAnswer( invocation -> {
-            final RepositoryId repositoryId = (RepositoryId) invocation.getArguments()[0];
+            final RepositoryId repositoryId = invocation.getArgument( 0 );
             return Repository.create()
                 .id( repositoryId )
                 .branches( Branches.from( VirtualAppConstants.VIRTUAL_APP_BRANCH, Branch.from( "master" ) ) )
@@ -212,8 +212,7 @@ class ResourceServiceImplTest
         } );
 
         when( nodeService.getByPath( new NodePath( "/myapp" ) ) ).thenReturn( appNode );
-        when( nodeService.getByPath( new NodePath( "/myapp/site/parts/my-part/my-part.xml" ) ) ).thenReturn(
-            partSchemaNode );
+        when( nodeService.getByPath( new NodePath( "/myapp/site/parts/my-part/my-part.xml" ) ) ).thenReturn( partSchemaNode );
 
         final ApplicationUrlResolver applicationUrlResolver =
             new NodeResourceApplicationUrlResolver( ApplicationKey.from( "myapp" ), nodeService );

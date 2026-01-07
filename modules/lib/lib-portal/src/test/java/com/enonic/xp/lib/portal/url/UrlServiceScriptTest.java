@@ -24,7 +24,7 @@ class UrlServiceScriptTest
 
     private Object urlAnswer( final InvocationOnMock invocation )
     {
-        return invocation.getArguments()[0].toString();
+        return invocation.getArgument( 0 ).toString();
     }
 
     private boolean execute( final String method )

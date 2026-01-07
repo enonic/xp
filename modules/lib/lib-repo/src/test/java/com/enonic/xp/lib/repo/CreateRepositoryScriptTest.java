@@ -21,15 +21,14 @@ class CreateRepositoryScriptTest
     {
         super.initialize();
         repositoryService = Mockito.mock( RepositoryService.class );
-        Mockito.when( repositoryService.createRepository( Mockito.isA( CreateRepositoryParams.class ) ) ).
-            thenAnswer( invocation -> {
-                final CreateRepositoryParams params = (CreateRepositoryParams) invocation.getArguments()[0];
-                return Repository.create().
-                    id( params.getRepositoryId() ).
-                    branches( Branches.from( RepositoryConstants.MASTER_BRANCH ) ).
-                    transientFlag( params.isTransient() ).
-                    build();
-            } );
+        Mockito.when( repositoryService.createRepository( Mockito.isA( CreateRepositoryParams.class ) ) ).thenAnswer( invocation -> {
+            final CreateRepositoryParams params = invocation.getArgument( 0 );
+            return Repository.create()
+                .id( params.getRepositoryId() )
+                .branches( Branches.from( RepositoryConstants.MASTER_BRANCH ) )
+                .transientFlag( params.isTransient() )
+                .build();
+        } );
         addService( RepositoryService.class, repositoryService );
     }
 

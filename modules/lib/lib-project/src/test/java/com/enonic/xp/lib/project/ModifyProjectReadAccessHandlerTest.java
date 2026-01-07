@@ -25,14 +25,18 @@ class ModifyProjectReadAccessHandlerTest
         super.initialize();
 
         when( this.contentService.applyPermissions( any( ApplyContentPermissionsParams.class ) ) ).thenAnswer( mock -> {
-            final ApplyContentPermissionsParams params = (ApplyContentPermissionsParams) mock.getArguments()[0];
+            final ApplyContentPermissionsParams params = mock.getArgument( 0 );
 
-            Mockito.when( contentService.getByPath( ContentPath.ROOT ) ).thenReturn( Content.create().id( ContentId.from( "123" ) ).
-                name( ContentName.from( "root" ) ).
-                parentPath( ContentPath.ROOT ).
-                permissions( AccessControlList.empty() ).
-                data( new PropertyTree() ).
-                extraDatas( ExtraDatas.empty() ).permissions( params.getPermissions() ).build() );
+            Mockito.when( contentService.getByPath( ContentPath.ROOT ) )
+                .thenReturn( Content.create()
+                                 .id( ContentId.from( "123" ) )
+                                 .name( ContentName.from( "root" ) )
+                                 .parentPath( ContentPath.ROOT )
+                                 .permissions( AccessControlList.empty() )
+                                 .data( new PropertyTree() )
+                                 .extraDatas( ExtraDatas.empty() )
+                                 .permissions( params.getPermissions() )
+                                 .build() );
 
             return null;
         } );

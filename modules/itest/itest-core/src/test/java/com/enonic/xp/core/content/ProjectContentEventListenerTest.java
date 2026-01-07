@@ -326,11 +326,13 @@ class ProjectContentEventListenerTest
             return contentService.patch( PatchContentParams.create()
                                              .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
                                              .createAttachments( CreateAttachments.create()
-                                                                     .add( CreateAttachment.create().mimeType( "image/gif" )
+                                                                     .add( CreateAttachment.create()
+                                                                               .mimeType( "image/gif" )
                                                                                .byteSource( ByteSource.wrap( "data1".getBytes() ) )
                                                                                .name( "MyImage1.gif" )
                                                                                .build() )
-                                                                     .add( CreateAttachment.create().mimeType( "image/gif" )
+                                                                     .add( CreateAttachment.create()
+                                                                               .mimeType( "image/gif" )
                                                                                .byteSource( ByteSource.wrap( "data2".getBytes() ) )
                                                                                .name( "MyImage2.gif" )
                                                                                .build() )
@@ -383,11 +385,13 @@ class ProjectContentEventListenerTest
             return contentService.patch( PatchContentParams.create()
                                              .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
                                              .createAttachments( CreateAttachments.create()
-                                                                     .add( CreateAttachment.create().mimeType( "image/gif" )
+                                                                     .add( CreateAttachment.create()
+                                                                               .mimeType( "image/gif" )
                                                                                .byteSource( ByteSource.wrap( "data1".getBytes() ) )
                                                                                .name( "MyImage1.gif" )
                                                                                .build() )
-                                                                     .add( CreateAttachment.create().mimeType( "image/gif" )
+                                                                     .add( CreateAttachment.create()
+                                                                               .mimeType( "image/gif" )
                                                                                .byteSource( ByteSource.wrap( "data2".getBytes() ) )
                                                                                .name( "MyImage2.gif" )
                                                                                .build() )
@@ -435,18 +439,21 @@ class ProjectContentEventListenerTest
                                              .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
                                              .contentId( sourceContent.getId() )
                                              .createAttachments( CreateAttachments.create()
-                                                                     .add( CreateAttachment.create().mimeType( "image/gif" )
+                                                                     .add( CreateAttachment.create()
+                                                                               .mimeType( "image/gif" )
                                                                                .byteSource( ByteSource.wrap( "new-data".getBytes() ) )
                                                                                .name( "MyImage3.gif" )
                                                                                .build() )
                                                                      .build() )
                                              .patcher( ( edit -> {
-                                                 final Attachment a2 = Attachment.create().mimeType( "image/gif" )
+                                                 final Attachment a2 = Attachment.create()
+                                                     .mimeType( "image/gif" )
                                                      .label( "My Image 2" )
                                                      .name( "MyImage2.gif" )
                                                      .build();
 
-                                                 final Attachment a3 = Attachment.create().mimeType( "image/gif" )
+                                                 final Attachment a3 = Attachment.create()
+                                                     .mimeType( "image/gif" )
                                                      .label( "My Image 3" )
                                                      .name( "MyImage3.gif" )
                                                      .build();
@@ -515,8 +522,6 @@ class ProjectContentEventListenerTest
                 edit.data = new PropertyTree();
                 edit.displayName = "newDisplayName";
                 edit.extraDatas = ExtraDatas.create().add( createExtraData() ).build();
-                edit.owner = PrincipalKey.from( "user:system:newOwner" );
-                edit.language = Locale.forLanguageTag( "no" );
                 edit.page = new EditablePage( createPage() );
             } ) ) ) );
 
@@ -539,8 +544,6 @@ class ProjectContentEventListenerTest
                 edit.data = new PropertyTree();
                 edit.displayName = "newDisplayName";
                 edit.extraDatas = ExtraDatas.create().build();
-                edit.owner = PrincipalKey.from( "user:system:newOwner" );
-                edit.language = Locale.forLanguageTag( "no" );
                 edit.page = new EditablePage( createPage() );
             } ) ) ) );
 
@@ -889,10 +892,8 @@ class ProjectContentEventListenerTest
 
         handleEvents();
 
-        projectContext.runWith( () -> contentService.sort( SortContentParams.create()
-                                                                        .contentId( sourceContent.getId() )
-                                                                        .childOrder( ChildOrder.from( "_name DESC" ) )
-                                                                        .build() ) );
+        projectContext.runWith( () -> contentService.sort(
+            SortContentParams.create().contentId( sourceContent.getId() ).childOrder( ChildOrder.from( "_name DESC" ) ).build() ) );
 
         handleEvents();
 
@@ -909,21 +910,19 @@ class ProjectContentEventListenerTest
 
         handleEvents();
 
-        final SortContentResult sortedInChild = layerContext.callWith( () -> contentService.sort( SortContentParams.create()
-                                                                                                     .contentId( sourceContent.getId() )
-                                                                                                     .childOrder(
-                                                                                                         ChildOrder.from( "_name DESC" ) )
-                                                                                                     .build() ) );
+        final SortContentResult sortedInChild = layerContext.callWith( () -> contentService.sort(
+            SortContentParams.create().contentId( sourceContent.getId() ).childOrder( ChildOrder.from( "_name DESC" ) ).build() ) );
 
         assertEquals( 3, sortedInChild.getContent().getInherit().size() );
         assertFalse( sortedInChild.getContent().getInherit().contains( ContentInheritType.SORT ) );
 
-        final SortContentResult  sortedInParent = projectContext.callWith( () -> contentService.sort(
+        final SortContentResult sortedInParent = projectContext.callWith( () -> contentService.sort(
             SortContentParams.create().contentId( sourceContent.getId() ).childOrder( ChildOrder.from( "_name ASC" ) ).build() ) );
 
         handleEvents();
 
-        assertNotEquals( sortedInParent.getContent().getChildOrder(), layerContext.callWith( () -> contentService.getById( sortedInChild.getContent().getId() ) ).getChildOrder() );
+        assertNotEquals( sortedInParent.getContent().getChildOrder(),
+                         layerContext.callWith( () -> contentService.getById( sortedInChild.getContent().getId() ) ).getChildOrder() );
 
     }
 
@@ -937,10 +936,8 @@ class ProjectContentEventListenerTest
 
         handleEvents();
 
-        projectContext.runWith( () -> contentService.sort( SortContentParams.create()
-                                                                        .contentId( sourceContent.getId() )
-                                                                        .childOrder( ChildOrder.from( "_name DESC" ) )
-                                                                        .build() ) );
+        projectContext.runWith( () -> contentService.sort(
+            SortContentParams.create().contentId( sourceContent.getId() ).childOrder( ChildOrder.from( "_name DESC" ) ).build() ) );
 
         handleEvents();
 
@@ -980,10 +977,8 @@ class ProjectContentEventListenerTest
 
         handleEvents();
 
-        projectContext.runWith( () -> contentService.sort( SortContentParams.create()
-                                                                        .contentId( sourceContent.getId() )
-                                                                        .childOrder( ChildOrder.from( "_name DESC" ) )
-                                                                        .build() ) );
+        projectContext.runWith( () -> contentService.sort(
+            SortContentParams.create().contentId( sourceContent.getId() ).childOrder( ChildOrder.from( "_name DESC" ) ).build() ) );
 
         handleEvents();
 
@@ -1002,10 +997,8 @@ class ProjectContentEventListenerTest
 
         handleEvents();
 
-        projectContext.runWith( () -> contentService.sort( SortContentParams.create()
-                                                                        .contentId( sourceContent.getId() )
-                                                                        .childOrder( ChildOrder.from( "_name DESC" ) )
-                                                                        .build() ) );
+        projectContext.runWith( () -> contentService.sort(
+            SortContentParams.create().contentId( sourceContent.getId() ).childOrder( ChildOrder.from( "_name DESC" ) ).build() ) );
 
         handleEvents();
 
@@ -1196,13 +1189,12 @@ class ProjectContentEventListenerTest
 
         final DescriptorKey pageDescriptorKey = DescriptorKey.from( "abc:abc" );
 
-        when( pageDescriptorService.getByKey( pageDescriptorKey ) )
-            .thenReturn( PageDescriptor.create()
-                             .displayName( "Landing page" )
-                             .config( pageDescriptorForm )
-                             .key( DescriptorKey.from( "module:landing-page" ) )
-                             .regions( RegionDescriptors.create().build() )
-                             .build() );
+        when( pageDescriptorService.getByKey( pageDescriptorKey ) ).thenReturn( PageDescriptor.create()
+                                                                                    .displayName( "Landing page" )
+                                                                                    .config( pageDescriptorForm )
+                                                                                    .key( DescriptorKey.from( "module:landing-page" ) )
+                                                                                    .regions( RegionDescriptors.create().build() )
+                                                                                    .build() );
 
         return Page.create().descriptor( pageDescriptorKey ).config( config ).regions( Regions.create().build() ).build();
     }

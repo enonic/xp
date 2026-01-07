@@ -40,6 +40,8 @@ public class ContentAttributesHelper
 
     public static final String PATCH_ATTR = "content.patch";
 
+    public static final String UPDATE_METADATA_ATTR = "content.updateMetadata";
+
     public static final String ARCHIVE_ATTR = "content.archive";
 
     public static final String RESTORE_ATTR = "content.restore";
@@ -92,6 +94,17 @@ public class ContentAttributesHelper
     {
         return Attributes.create()
             .attribute( UPDATE_ATTR, GenericValue.newObject()
+                .put( FIELDS_PROPERTY, GenericValue.fromRawJava( modifiedFields ) )
+                .put( USER_PROPERTY, getCurrentUserKey().toString() )
+                .put( OPTIME_PROPERTY, Instant.now( MILLIS_CLOCK ).toString() )
+                .build() )
+            .build();
+    }
+
+    public static Attributes updateMetadataHistoryAttr( final List<String> modifiedFields )
+    {
+        return Attributes.create()
+            .attribute( UPDATE_METADATA_ATTR, GenericValue.newObject()
                 .put( FIELDS_PROPERTY, GenericValue.fromRawJava( modifiedFields ) )
                 .put( USER_PROPERTY, getCurrentUserKey().toString() )
                 .put( OPTIME_PROPERTY, Instant.now( MILLIS_CLOCK ).toString() )

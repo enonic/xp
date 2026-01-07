@@ -33,8 +33,7 @@ class SiteServiceImplTest
     protected void initialize()
     {
         this.mixinService = mock( MixinService.class );
-        when( this.mixinService.inlineFormItems( Mockito.any() ) ).
-            thenAnswer( ( invocation ) -> invocation.getArguments()[0] );
+        when( this.mixinService.inlineFormItems( Mockito.any() ) ).thenAnswer( invocation -> invocation.getArgument( 0 ) );
         addApplication( "myapp", "/apps/myapp" );
 
         this.service = new SiteServiceImpl();

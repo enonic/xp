@@ -56,7 +56,7 @@ class MacroProcessorScriptTest
 
         this.resourceService = mock( ResourceService.class );
         when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {
-            final ResourceKey resourceKey = (ResourceKey) invocation.getArguments()[0];
+            final ResourceKey resourceKey = invocation.getArgument( 0 );
             final URL resourceUrl =
                 MacroProcessorScriptTest.class.getResource( "/" + resourceKey.getApplicationKey() + resourceKey.getPath() );
             return new UrlResource( resourceKey, resourceUrl );

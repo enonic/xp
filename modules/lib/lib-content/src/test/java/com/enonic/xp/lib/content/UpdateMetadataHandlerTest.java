@@ -3,11 +3,10 @@ package com.enonic.xp.lib.content;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.EditableContentMetadata;
-import com.enonic.xp.content.UpdateMetadataParams;
-import com.enonic.xp.content.UpdateMetadataResult;
+import com.enonic.xp.content.UpdateContentMetadataParams;
+import com.enonic.xp.content.UpdateContentMetadataResult;
 
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.when;
@@ -21,8 +20,8 @@ public class UpdateMetadataHandlerTest
         final Content content = TestDataFixtures.newExampleContent();
         when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( content );
 
-        when( this.contentService.updateMetadata( Mockito.isA( UpdateMetadataParams.class ) ) ).thenAnswer(
-            invocationOnMock -> invokeUpdateMetadata( (UpdateMetadataParams) invocationOnMock.getArguments()[0], content ) );
+        when( this.contentService.updateMetadata( Mockito.isA( UpdateContentMetadataParams.class ) ) ).thenAnswer(
+            invocationOnMock -> invokeUpdateMetadata( invocationOnMock.getArgument( 0 ), content ) );
 
         runScript( "/lib/xp/examples/content/updateMetadata.js" );
     }
@@ -33,8 +32,8 @@ public class UpdateMetadataHandlerTest
         final Content content = TestDataFixtures.newSmallContent();
         when( this.contentService.getById( content.getId() ) ).thenReturn( content );
 
-        when( this.contentService.updateMetadata( isA( UpdateMetadataParams.class ) ) ).thenAnswer(
-            invocationOnMock -> invokeUpdateMetadata( (UpdateMetadataParams) invocationOnMock.getArguments()[0], content ) );
+        when( this.contentService.updateMetadata( isA( UpdateContentMetadataParams.class ) ) ).thenAnswer(
+            invocationOnMock -> invokeUpdateMetadata( invocationOnMock.getArgument( 0 ), content ) );
 
         runFunction( "/test/UpdateMetadataHandlerTest.js", "updateLanguage" );
     }
@@ -45,8 +44,8 @@ public class UpdateMetadataHandlerTest
         final Content content = TestDataFixtures.newSmallContent();
         when( this.contentService.getById( content.getId() ) ).thenReturn( content );
 
-        when( this.contentService.updateMetadata( isA( UpdateMetadataParams.class ) ) ).thenAnswer(
-            invocationOnMock -> invokeUpdateMetadata( (UpdateMetadataParams) invocationOnMock.getArguments()[0], content ) );
+        when( this.contentService.updateMetadata( isA( UpdateContentMetadataParams.class ) ) ).thenAnswer(
+            invocationOnMock -> invokeUpdateMetadata( invocationOnMock.getArgument( 0 ), content ) );
 
         runFunction( "/test/UpdateMetadataHandlerTest.js", "updateOwner" );
     }
@@ -57,16 +56,16 @@ public class UpdateMetadataHandlerTest
         final Content content = TestDataFixtures.newSmallContent();
         when( this.contentService.getById( content.getId() ) ).thenReturn( content );
 
-        when( this.contentService.updateMetadata( isA( UpdateMetadataParams.class ) ) ).thenAnswer(
-            invocationOnMock -> invokeUpdateMetadata( (UpdateMetadataParams) invocationOnMock.getArguments()[0], content ) );
+        when( this.contentService.updateMetadata( isA( UpdateContentMetadataParams.class ) ) ).thenAnswer(
+            invocationOnMock -> invokeUpdateMetadata( invocationOnMock.getArgument( 0 ), content ) );
 
         runFunction( "/test/UpdateMetadataHandlerTest.js", "updateLanguageAndOwner" );
     }
 
-    private UpdateMetadataResult invokeUpdateMetadata( final UpdateMetadataParams params, final Content content )
+    private UpdateContentMetadataResult invokeUpdateMetadata( final UpdateContentMetadataParams params, final Content content )
     {
         final EditableContentMetadata editableMetadata = new EditableContentMetadata( content );
-        
+
         if ( params.getEditor() != null )
         {
             params.getEditor().edit( editableMetadata );
@@ -74,11 +73,6 @@ public class UpdateMetadataHandlerTest
 
         final Content updatedContent = editableMetadata.build();
 
-        // Always returns both draft and master branches
-        return UpdateMetadataResult.create()
-            .contentId( updatedContent.getId() )
-            .addResult( Branch.from( "draft" ), updatedContent )
-            .addResult( Branch.from( "master" ), updatedContent )
-            .build();
+        return UpdateContentMetadataResult.create().content( updatedContent ).build();
     }
 }

@@ -915,13 +915,7 @@ export interface UpdateMetadataParams {
 }
 
 export interface UpdateMetadataResult<Data extends Record<string, unknown> = Record<string, unknown>, Type extends string = string> {
-    contentId: string;
-    results: BranchUpdateMetadataResult<Data, Type>[];
-}
-
-export interface BranchUpdateMetadataResult<Data extends Record<string, unknown> = Record<string, unknown>, Type extends string = string> {
-    branch: string;
-    content: Content<Data, Type> | null;
+    content: Content<Data, Type>;
 }
 
 interface UpdateMetadataHandler {

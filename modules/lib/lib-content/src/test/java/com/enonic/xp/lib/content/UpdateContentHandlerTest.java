@@ -40,7 +40,7 @@ class UpdateContentHandlerTest
         when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( content );
 
         when( this.contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenAnswer(
-            invocationOnMock -> invokeUpdate( (UpdateContentParams) invocationOnMock.getArguments()[0], content ) );
+            invocationOnMock -> invokeUpdate( invocationOnMock.getArgument( 0 ), content ) );
 
         mockXData();
         runScript( "/lib/xp/examples/content/update.js" );
@@ -53,8 +53,7 @@ class UpdateContentHandlerTest
         when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
 
         when( this.contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenAnswer(
-            invocationOnMock -> invokeUpdate( (UpdateContentParams) invocationOnMock.getArguments()[0],
-                                              TestDataFixtures.newSmallContent() ) );
+            invocationOnMock -> invokeUpdate( invocationOnMock.getArgument( 0 ), TestDataFixtures.newSmallContent() ) );
 
         mockXData();
 
@@ -83,8 +82,7 @@ class UpdateContentHandlerTest
         when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
 
         when( this.contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenAnswer(
-            invocationOnMock -> invokeUpdate( (UpdateContentParams) invocationOnMock.getArguments()[0],
-                                              TestDataFixtures.newSmallContent() ) );
+            invocationOnMock -> invokeUpdate( invocationOnMock.getArgument( 0 ), TestDataFixtures.newSmallContent() ) );
 
         mockXData();
 
@@ -104,8 +102,7 @@ class UpdateContentHandlerTest
     void updateById()
     {
         when( this.contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenAnswer(
-            invocationOnMock -> invokeUpdate( (UpdateContentParams) invocationOnMock.getArguments()[0],
-                                              TestDataFixtures.newSmallContent() ) );
+            invocationOnMock -> invokeUpdate( invocationOnMock.getArgument( 0 ), TestDataFixtures.newSmallContent() ) );
 
         final Content content = TestDataFixtures.newSmallContent();
         when( this.contentService.getById( content.getId() ) ).thenReturn( content );
@@ -122,8 +119,7 @@ class UpdateContentHandlerTest
         when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
 
         when( this.contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenAnswer(
-            invocationOnMock -> invokeUpdate( (UpdateContentParams) invocationOnMock.getArguments()[0],
-                                              TestDataFixtures.newSmallContent() ) );
+            invocationOnMock -> invokeUpdate( invocationOnMock.getArgument( 0 ), TestDataFixtures.newSmallContent() ) );
 
         mockXData();
 
@@ -137,8 +133,7 @@ class UpdateContentHandlerTest
         when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
 
         when( this.contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenAnswer(
-            invocationOnMock -> invokeUpdate( (UpdateContentParams) invocationOnMock.getArguments()[0],
-                                              TestDataFixtures.newSmallContent() ) );
+            invocationOnMock -> invokeUpdate( invocationOnMock.getArgument( 0 ), TestDataFixtures.newSmallContent() ) );
 
         mockXData();
 
@@ -152,8 +147,7 @@ class UpdateContentHandlerTest
         when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
 
         when( this.contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenAnswer(
-            invocationOnMock -> invokeUpdate( (UpdateContentParams) invocationOnMock.getArguments()[0],
-                                              TestDataFixtures.newSmallContent() ) );
+            invocationOnMock -> invokeUpdate( invocationOnMock.getArgument( 0 ), TestDataFixtures.newSmallContent() ) );
 
         mockXData();
 
@@ -173,8 +167,7 @@ class UpdateContentHandlerTest
         when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
 
         when( this.contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenAnswer(
-            invocationOnMock -> invokeUpdate( (UpdateContentParams) invocationOnMock.getArguments()[0],
-                                              TestDataFixtures.newSmallContent() ) );
+            invocationOnMock -> invokeUpdate( invocationOnMock.getArgument( 0 ), TestDataFixtures.newSmallContent() ) );
 
         mockXData();
 

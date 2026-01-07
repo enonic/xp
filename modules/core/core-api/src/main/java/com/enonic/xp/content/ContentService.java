@@ -32,7 +32,7 @@ public interface ContentService
 
     PatchContentResult patch( PatchContentParams params );
 
-    UpdateMetadataResult updateMetadata( UpdateMetadataParams params );
+    UpdateContentMetadataResult updateMetadata( UpdateContentMetadataParams params );
 
     DuplicateContentsResult duplicate( DuplicateContentParams params );
 
