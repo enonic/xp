@@ -37,6 +37,9 @@ public interface ContentService
     @NullMarked
     UpdateContentMetadataResult updateMetadata( UpdateContentMetadataParams params );
 
+    @NullMarked
+    UpdateWorkflowResult updateWorkflow( UpdateWorkflowParams params );
+
     DuplicateContentsResult duplicate( DuplicateContentParams params );
 
     ArchiveContentsResult archive( ArchiveContentParams params );

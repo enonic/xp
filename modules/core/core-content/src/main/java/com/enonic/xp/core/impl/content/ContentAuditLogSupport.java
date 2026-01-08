@@ -44,6 +44,8 @@ interface ContentAuditLogSupport
 
     void updateMetadata( UpdateContentMetadataParams params, UpdateContentMetadataResult result );
 
+    void updateWorkflow( UpdateWorkflowParams params, UpdateWorkflowResult result );
+
     void delete( DeleteContentParams params, DeleteContentsResult contents );
 
     void publish( PushContentParams params, PublishContentResult result );
