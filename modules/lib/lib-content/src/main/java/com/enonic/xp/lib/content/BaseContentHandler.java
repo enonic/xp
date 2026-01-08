@@ -2,6 +2,8 @@ package com.enonic.xp.lib.content;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Consumer;
 
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.attachment.CreateAttachments;
@@ -110,5 +112,13 @@ public abstract class BaseContentHandler
     protected boolean strictDataValidation()
     {
         return true;
+    }
+
+    protected <T> void edit( Map<String, ?> map, String key, Class<T> type, Consumer<Optional<T>> fieldEditor )
+    {
+        if ( map.containsKey( key ) )
+        {
+            fieldEditor.accept( Optional.ofNullable( map.get( key ) ).map( type::cast ) );
+        }
     }
 }

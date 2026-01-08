@@ -60,7 +60,6 @@ import com.enonic.xp.form.Input;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.page.EditablePage;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.project.ModifyProjectParams;
@@ -316,22 +315,25 @@ class ProjectContentEventListenerTest
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
         projectContext.callWith( () -> pushNodes( ContentConstants.BRANCH_MASTER, NodeId.from( sourceContent.getId() ) ) );
 
-        projectContext.callWith( () ->  contentService.patch( PatchContentParams.create()
-                                             .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
-                                             .createAttachments( CreateAttachments.create()
-                                                                     .add( CreateAttachment.create()
-                                                                               .mimeType( "image/gif" )
-                                                                               .byteSource( ByteSource.wrap( "data1".getBytes() ) )
-                                                                               .name( "MyImage1.gif" )
-                                                                               .build() )
-                                                                     .add( CreateAttachment.create()
-                                                                               .mimeType( "image/gif" )
-                                                                               .byteSource( ByteSource.wrap( "data2".getBytes() ) )
-                                                                               .name( "MyImage2.gif" )
-                                                                               .build() )
-                                                                     .build() )
-                                             .contentId( sourceContent.getId() )
-                                             .patcher( edit -> {
+        projectContext.callWith( () -> contentService.patch( PatchContentParams.create()
+                                                                 .branches( Branches.from( ContentConstants.BRANCH_DRAFT,
+                                                                                           ContentConstants.BRANCH_MASTER ) )
+                                                                 .createAttachments( CreateAttachments.create()
+                                                                                         .add( CreateAttachment.create()
+                                                                                                   .mimeType( "image/gif" )
+                                                                                                   .byteSource( ByteSource.wrap(
+                                                                                                       "data1".getBytes() ) )
+                                                                                                   .name( "MyImage1.gif" )
+                                                                                                   .build() )
+                                                                                         .add( CreateAttachment.create()
+                                                                                                   .mimeType( "image/gif" )
+                                                                                                   .byteSource( ByteSource.wrap(
+                                                                                                       "data2".getBytes() ) )
+                                                                                                   .name( "MyImage2.gif" )
+                                                                                                   .build() )
+                                                                                         .build() )
+                                                                 .contentId( sourceContent.getId() )
+                                                                 .patcher( edit -> {
 
                                                                      final Attachment a1 = Attachment.create()
                                                                          .mimeType( "image/gif" )
@@ -373,37 +375,41 @@ class ProjectContentEventListenerTest
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
         projectContext.callWith( () -> pushNodes( ContentConstants.BRANCH_MASTER, NodeId.from( sourceContent.getId() ) ) );
 
-        projectContext.callWith( () ->  contentService.patch( PatchContentParams.create()
-                                             .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
-                                             .createAttachments( CreateAttachments.create()
-                                                                     .add( CreateAttachment.create()
-                                                                               .mimeType( "image/gif" )
-                                                                               .byteSource( ByteSource.wrap( "data1".getBytes() ) )
-                                                                               .name( "MyImage1.gif" )
-                                                                               .build() )
-                                                                     .add( CreateAttachment.create()
-                                                                               .mimeType( "image/gif" )
-                                                                               .byteSource( ByteSource.wrap( "data2".getBytes() ) )
-                                                                               .name( "MyImage2.gif" )
-                                                                               .build() )
-                                                                     .build() )
-                                             .contentId( sourceContent.getId() )
-                                             .patcher( ( edit -> {
+        projectContext.callWith( () -> contentService.patch( PatchContentParams.create()
+                                                                 .branches( Branches.from( ContentConstants.BRANCH_DRAFT,
+                                                                                           ContentConstants.BRANCH_MASTER ) )
+                                                                 .createAttachments( CreateAttachments.create()
+                                                                                         .add( CreateAttachment.create()
+                                                                                                   .mimeType( "image/gif" )
+                                                                                                   .byteSource( ByteSource.wrap(
+                                                                                                       "data1".getBytes() ) )
+                                                                                                   .name( "MyImage1.gif" )
+                                                                                                   .build() )
+                                                                                         .add( CreateAttachment.create()
+                                                                                                   .mimeType( "image/gif" )
+                                                                                                   .byteSource( ByteSource.wrap(
+                                                                                                       "data2".getBytes() ) )
+                                                                                                   .name( "MyImage2.gif" )
+                                                                                                   .build() )
+                                                                                         .build() )
+                                                                 .contentId( sourceContent.getId() )
+                                                                 .patcher( ( edit -> {
 
-                                             final Attachment a1 = Attachment.create()
-                                                 .mimeType( "image/gif" )
-                                                 .label( "My Image 1" )
-                                                 .name( "MyImage1.gif" )
-                                                 .build();
-                                             final Attachment a2 = Attachment.create()
-                                                 .mimeType( "image/gif" )
-                                                 .label( "My Image 2" )
-                                                 .name( "MyImage2.gif" )
-                                                 .build();
+                                                                     final Attachment a1 = Attachment.create()
+                                                                         .mimeType( "image/gif" )
+                                                                         .label( "My Image 1" )
+                                                                         .name( "MyImage1.gif" )
+                                                                         .build();
+                                                                     final Attachment a2 = Attachment.create()
+                                                                         .mimeType( "image/gif" )
+                                                                         .label( "My Image 2" )
+                                                                         .name( "MyImage2.gif" )
+                                                                         .build();
 
-                                             edit.attachments.setValue( Attachments.create().add( a1 ).add( a2 ).build() );
-                                         } ) )
-                                         .build() ) );
+                                                                     edit.attachments.setValue(
+                                                                         Attachments.create().add( a1 ).add( a2 ).build() );
+                                                                 } ) )
+                                                                 .build() ) );
 
         handleEvents();
 
@@ -423,28 +429,30 @@ class ProjectContentEventListenerTest
         assertNotNull( attachments6.byName( "MyImage2.gif" ) );
 
         //remove attachment
-        projectContext.callWith( () ->  contentService.patch( PatchContentParams.create()
-                                             .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
-                                             .contentId( sourceContent.getId() )
-                                             .createAttachments( CreateAttachments.create()
-                                                                     .add( CreateAttachment.create()
-                                                                               .mimeType( "image/gif" )
-                                                                               .byteSource( ByteSource.wrap( "new-data".getBytes() ) )
-                                                                               .name( "MyImage3.gif" )
-                                                                               .build() )
-                                                                     .build() )
-                                             .patcher( ( edit -> {
-                                                 final Attachment a2 = Attachment.create()
-                                                     .mimeType( "image/gif" )
-                                                     .label( "My Image 2" )
-                                                     .name( "MyImage2.gif" )
-                                                     .build();
+        projectContext.callWith( () -> contentService.patch( PatchContentParams.create()
+                                                                 .branches( Branches.from( ContentConstants.BRANCH_DRAFT,
+                                                                                           ContentConstants.BRANCH_MASTER ) )
+                                                                 .contentId( sourceContent.getId() )
+                                                                 .createAttachments( CreateAttachments.create()
+                                                                                         .add( CreateAttachment.create()
+                                                                                                   .mimeType( "image/gif" )
+                                                                                                   .byteSource( ByteSource.wrap(
+                                                                                                       "new-data".getBytes() ) )
+                                                                                                   .name( "MyImage3.gif" )
+                                                                                                   .build() )
+                                                                                         .build() )
+                                                                 .patcher( ( edit -> {
+                                                                     final Attachment a2 = Attachment.create()
+                                                                         .mimeType( "image/gif" )
+                                                                         .label( "My Image 2" )
+                                                                         .name( "MyImage2.gif" )
+                                                                         .build();
 
-                                                 final Attachment a3 = Attachment.create()
-                                                     .mimeType( "image/gif" )
-                                                     .label( "My Image 3" )
-                                                     .name( "MyImage3.gif" )
-                                                     .build();
+                                                                     final Attachment a3 = Attachment.create()
+                                                                         .mimeType( "image/gif" )
+                                                                         .label( "My Image 3" )
+                                                                         .name( "MyImage3.gif" )
+                                                                         .build();
 
                                                                      edit.attachments.setValue(
                                                                          Attachments.create().add( a2 ).add( a3 ).build() );
@@ -509,7 +517,7 @@ class ProjectContentEventListenerTest
                 edit.data = new PropertyTree();
                 edit.displayName = "newDisplayName";
                 edit.extraDatas = ExtraDatas.create().add( createExtraData() ).build();
-                edit.page = new EditablePage( createPage() );
+                edit.page( createPage() );
             } ) ) ) );
 
         handleEvents();
@@ -531,7 +539,7 @@ class ProjectContentEventListenerTest
                 edit.data = new PropertyTree();
                 edit.displayName = "newDisplayName";
                 edit.extraDatas = ExtraDatas.create().build();
-                edit.page = new EditablePage( createPage() );
+                edit.page( createPage() );
             } ) ) ) );
 
         handleEvents();

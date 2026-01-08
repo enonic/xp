@@ -1,8 +1,6 @@
 package com.enonic.xp.lib.content;
 
-import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentEditor;
@@ -74,8 +72,9 @@ public final class UpdateContentHandler
         };
     }
 
-    private void updateContent( final EditableContent target, final Map<?, ?> map, final Content existingContent )
+    private void updateContent( final EditableContent target, final Map<String, ?> map, final Content existingContent )
     {
+        edit( map, "displayName", String.class, val -> target.displayName = val.orElse( null ) );
         final String displayName = Converters.convert( map.get( "displayName" ), String.class );
         if ( displayName != null )
         {
@@ -103,36 +102,24 @@ public final class UpdateContentHandler
         }
     }
 
-    private void updatePage( final EditableContent target, final Map<?, ?> map )
+    private void updatePage( final EditableContent target, final Map<String, ?> map )
     {
-        final Object page = map.get( "page" );
-        if ( page instanceof Map<?, ?> pageMap )
+        if ( map.containsKey( "page" ) )
         {
-            if ( pageMap.containsKey( "descriptor" ) )
+            final Map<String, ?> pageMap = (Map<String, ?>) map.get( "page" );
+            if ( pageMap == null )
             {
-                target.page.descriptor =
-                    Optional.ofNullable( (String) pageMap.get( "descriptor" ) ).map( DescriptorKey::from ).orElse( null );
+                target.withoutPage();
             }
-            if ( pageMap.containsKey( "template" ) )
+            else
             {
-                target.page.template =
-                    Optional.ofNullable( (String) pageMap.get( "template" ) ).map( PageTemplateKey::from ).orElse( null );
-            }
-            if ( pageMap.containsKey( "regions" ) )
-            {
-                target.page.regions =
-                    Optional.ofNullable( (Map<String, Object>) pageMap.get( "regions" ) ).map( this::createRegions ).orElse( null );
-            }
-            if ( pageMap.containsKey( "fragment" ) )
-            {
-                target.page.fragment =
-                    Optional.ofNullable( (Map<String, Object>) pageMap.get( "fragment" ) ).map( this::createComponent ).orElse( null );
-            }
-            if ( pageMap.containsKey( "config" ) )
-            {
-                target.page.config = Optional.ofNullable( (Map<String, Object>) pageMap.get( "config" ) )
-                    .map( dataMap -> createPropertyTree( dataMap, target.source.getType() ) )
-                    .orElse( null );
+                edit( pageMap, "descriptor", String.class,
+                       val -> target.page().descriptor = val.map( DescriptorKey::from ).orElse( null ) );
+                edit( pageMap, "template", String.class, val -> target.page().template = val.map( PageTemplateKey::from ).orElse( null ) );
+                edit( pageMap, "regions", Map.class, val -> target.page().regions = val.map( this::createRegions ).orElse( null ) );
+                edit( pageMap, "fragment", Map.class, val -> target.page().fragment = val.map( this::createComponent ).orElse( null ) );
+                edit( pageMap, "config", Map.class, val -> target.page().config =
+                    val.map( dataMap -> createPropertyTree( dataMap, target.source.getType() ) ).orElse( null ) );
             }
         }
     }

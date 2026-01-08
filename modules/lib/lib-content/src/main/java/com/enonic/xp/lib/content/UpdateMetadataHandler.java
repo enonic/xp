@@ -11,7 +11,6 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.EditableContentMetadata;
 import com.enonic.xp.content.UpdateContentMetadataParams;
 import com.enonic.xp.content.UpdateContentMetadataResult;
-import com.enonic.xp.convert.Converters;
 import com.enonic.xp.lib.content.mapper.ContentMapper;
 import com.enonic.xp.lib.content.mapper.UpdateContentMetadataResultMapper;
 import com.enonic.xp.script.ScriptValue;
@@ -27,8 +26,12 @@ public final class UpdateMetadataHandler
     @Override
     protected Object doExecute()
     {
-        final Content existingContent = getExistingContent( this.key );
-        if ( existingContent == null )
+        final Content existingContent;
+        try
+        {
+            existingContent = getExistingContent( this.key );
+        }
+        catch ( final ContentNotFoundException e )
         {
             return null;
         }
@@ -49,20 +52,13 @@ public final class UpdateMetadataHandler
 
     private Content getExistingContent( final String key )
     {
-        try
+        if ( !key.startsWith( "/" ) )
         {
-            if ( !key.startsWith( "/" ) )
-            {
-                return this.contentService.getById( ContentId.from( key ) );
-            }
-            else
-            {
-                return this.contentService.getByPath( ContentPath.from( key ) );
-            }
+            return this.contentService.getById( ContentId.from( key ) );
         }
-        catch ( final ContentNotFoundException e )
+        else
         {
-            return null;
+            return this.contentService.getByPath( ContentPath.from( key ) );
         }
     }
 
@@ -77,25 +73,11 @@ public final class UpdateMetadataHandler
         };
     }
 
-    private void updateMetadata( final EditableContentMetadata target, final Map<?, ?> map )
+    private void updateMetadata( final EditableContentMetadata target, final Map<String, ?> map )
     {
-        if ( map.containsKey( "language" ) )
-        {
-            final String languageCode = Converters.convert( map.get( "language" ), String.class );
-            target.language = languageCode != null ? Locale.forLanguageTag( languageCode ) : null;
-        }
-
-        if ( map.containsKey( "owner" ) )
-        {
-            final String ownerKey = Converters.convert( map.get( "owner" ), String.class );
-            target.owner = ownerKey != null ? PrincipalKey.from( ownerKey ) : null;
-        }
-
-        if ( map.containsKey( "variantOf" ) )
-        {
-            final String variantOfId = Converters.convert( map.get( "variantOf" ), String.class );
-            target.variantOf = variantOfId != null ? ContentId.from( variantOfId ) : null;
-        }
+        edit( map, "language", String.class, val -> target.language = val.map( Locale::forLanguageTag ).orElse( null ) );
+        edit( map, "owner", String.class, val -> target.owner = val.map( PrincipalKey::from ).orElse( null ) );
+        edit( map, "variantOf", String.class, val -> target.variantOf = val.map( ContentId::from ).orElse( null ) );
     }
 
     public void setKey( final String key )

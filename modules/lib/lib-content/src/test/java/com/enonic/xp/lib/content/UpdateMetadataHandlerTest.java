@@ -74,6 +74,18 @@ public class UpdateMetadataHandlerTest
         runFunction( "/test/UpdateMetadataHandlerTest.js", "updateLanguageAndOwner" );
     }
 
+    @Test
+    void updateVariantOf()
+    {
+        final Content content = TestDataFixtures.newSmallContent();
+        when( this.contentService.getById( content.getId() ) ).thenReturn( content );
+
+        when( this.contentService.updateMetadata( isA( UpdateContentMetadataParams.class ) ) ).thenAnswer(
+            invocationOnMock -> invokeUpdateMetadata( invocationOnMock.getArgument( 0 ), content ) );
+
+        runFunction( "/test/UpdateMetadataHandlerTest.js", "updateVariantOf" );
+    }
+
     private UpdateContentMetadataResult invokeUpdateMetadata( final UpdateContentMetadataParams params, final Content content )
     {
         final EditableContentMetadata editableMetadata = new EditableContentMetadata( content );
