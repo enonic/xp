@@ -6,6 +6,10 @@ apply plugin: 'maven-publish'
 
 def defaultEncoding = 'UTF-8'
 
+configurations {
+    mockitoAgent
+}
+
 compileJava {
     options.encoding = defaultEncoding
     options.compilerArgs = ['-Xlint:-options'] // , '-Xlint:unchecked', '-Xlint:deprecation']
@@ -17,11 +21,14 @@ compileTestJava {
 }
 
 dependencies {
-    testImplementation(platform(libs.junit.bom))
+    testImplementation( platform( libs.junit.bom ) )
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testImplementation libs.mockito.core
     testImplementation libs.mockito.junitjupiter
+    mockitoAgent( libs.mockito.core ) {
+        transitive = false
+    }
     testImplementation libs.assertj.core
     testImplementation libs.equalsverifier
     testRuntimeOnly libs.slf4j.simple
@@ -30,29 +37,32 @@ dependencies {
 java {
     withSourcesJar()
     toolchain {
-        languageVersion = JavaLanguageVersion.of(25)
+        languageVersion = JavaLanguageVersion.of( 25 )
     }
     sourceCompatibility = JavaVersion.VERSION_25
     targetCompatibility = sourceCompatibility
 }
 
-test {
-    useJUnitPlatform {
-        excludeTags 'elasticsearch'
+tasks {
+    test {
+        useJUnitPlatform {
+            excludeTags 'elasticsearch'
+        }
+        systemProperty 'java.awt.headless', 'true'
+        systemProperty 'xp.script-engine', project.findProperty( "xp.script-engine" ) ?: 'Nashorn'
+        maxHeapSize = '2G'
+        doFirst {
+            jvmArgs += ["-javaagent:${configurations.mockitoAgent.asPath}", "-XX:TieredStopAtLevel=1"]
+        }
     }
-    systemProperty 'java.awt.headless', 'true'
-    systemProperty 'xp.script-engine', project.findProperty("xp.script-engine")?:'Nashorn'
-    maxHeapSize = '2G'
-    jvmArgs '-XX:TieredStopAtLevel=1'
 }
-
 
 jacocoTestReport {
     dependsOn test
-    executionData.from = fileTree(layout.buildDirectory).include("/jacoco/*.exec")
+    executionData.from = fileTree( layout.buildDirectory ).include( "/jacoco/*.exec" )
 }
 
-def bundleSymbolicName = "${project.group}.${project.name.replace('-', '.')}"
+def bundleSymbolicName = "${project.group}.${project.name.replace( '-', '.' )}"
 def implementationVersion = project.version
 
 jar {

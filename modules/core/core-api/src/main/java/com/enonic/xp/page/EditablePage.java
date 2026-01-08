@@ -1,5 +1,8 @@
 package com.enonic.xp.page;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
@@ -9,19 +12,28 @@ import com.enonic.xp.region.Regions;
 @PublicApi
 public final class EditablePage
 {
+    @Nullable
     public DescriptorKey descriptor;
 
+    @Nullable
     public PageTemplateKey template;
 
+    @Nullable
     public Regions regions;
 
+    @Nullable
     public Component fragment;
 
+    @Nullable
     public PropertyTree config;
 
     public boolean customized;
 
-    public EditablePage( final Page source )
+    public EditablePage()
+    {
+    }
+
+    public EditablePage( @NonNull final Page source )
     {
         this.descriptor = source.getDescriptor();
         this.template = source.getTemplate();
@@ -31,6 +43,7 @@ public final class EditablePage
         this.fragment = source.getFragment();
     }
 
+    @NonNull
     public Page build()
     {
         final Page.Builder builder = Page.create();

@@ -147,7 +147,7 @@ class UpdateContentCommandTest
             Content.create( createContent( new PropertyTree() ) ).setInherit( EnumSet.of( ContentInheritType.CONTENT ) ).build();
 
         UpdateContentParams params =
-            new UpdateContentParams().contentId( existingContent.getId() ).editor( edit -> edit.language = Locale.CANADA );
+            new UpdateContentParams().contentId( existingContent.getId() ).editor( edit -> edit.data.setString( "lang", Locale.CANADA.toString() ) );
 
         UpdateContentCommand command = createCommand( params );
 
@@ -159,8 +159,9 @@ class UpdateContentCommandTest
         when( contentType.getForm() ).thenReturn( Form.create().build() );
 
         Node result = ContentFixture.mockContentNode( existingContent );
-        result.data().setString( "data.language", Locale.CANADA.toString() );
-        when( nodeService.patch( any() ) ).thenReturn( PatchNodeResult.create().addResult( ContentConstants.BRANCH_DRAFT, result ).build() );
+        result.data().setString( "data.data.lang", Locale.CANADA.toString() );
+        when( nodeService.patch( any() ) ).thenReturn(
+            PatchNodeResult.create().addResult( ContentConstants.BRANCH_DRAFT, result ).build() );
 
         ContextBuilder.from( ContextAccessor.current() ).branch( ContentConstants.BRANCH_DRAFT ).build().runWith( command::execute );
 
@@ -258,7 +259,8 @@ class UpdateContentCommandTest
         ContentType contentType = mock( ContentType.class );
         when( contentTypeService.getByName( any() ) ).thenReturn( contentType );
         when( contentType.getForm() ).thenReturn( Form.empty() );
-        when( nodeService.patch( any() ) ).thenReturn( PatchNodeResult.create().addResult( ContentConstants.BRANCH_DRAFT, mockNode ).build() );
+        when( nodeService.patch( any() ) ).thenReturn(
+            PatchNodeResult.create().addResult( ContentConstants.BRANCH_DRAFT, mockNode ).build() );
 
         ContextBuilder.from( ContextAccessor.current() ).branch( ContentConstants.BRANCH_DRAFT ).build().runWith( command::execute );
 
@@ -272,8 +274,9 @@ class UpdateContentCommandTest
         final Content existingContent =
             Content.create( createContent( new PropertyTree() ) ).setInherit( EnumSet.of( ContentInheritType.CONTENT ) ).build();
 
-        final UpdateContentParams params = new UpdateContentParams().contentId( existingContent.getId() ).requireValid( true )
-            .editor( edit -> edit.language = Locale.CANADA );
+        final UpdateContentParams params = new UpdateContentParams().contentId( existingContent.getId() )
+            .requireValid( true )
+            .editor( edit -> edit.data.setString( "lang", Locale.CANADA.toString() ) );
 
         final UpdateContentCommand command = UpdateContentCommand.create( createCommand( params ) )
             .params( params )
@@ -304,7 +307,8 @@ class UpdateContentCommandTest
         when( contentTypeService.getByName( isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
 
         Node result = ContentFixture.mockContentNode( existingContent );
-        when( nodeService.patch( any() ) ).thenReturn( PatchNodeResult.create().addResult( ContentConstants.BRANCH_DRAFT, result ).build() );
+        when( nodeService.patch( any() ) ).thenReturn(
+            PatchNodeResult.create().addResult( ContentConstants.BRANCH_DRAFT, result ).build() );
 
         assertThrows( ContentDataValidationException.class, () -> ContextBuilder.from( ContextAccessor.current() )
             .branch( ContentConstants.BRANCH_DRAFT )

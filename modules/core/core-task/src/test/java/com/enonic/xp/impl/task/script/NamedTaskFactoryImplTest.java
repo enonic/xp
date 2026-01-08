@@ -65,7 +65,7 @@ class NamedTaskFactoryImplTest
 
         ResourceService resourceService = mock( ResourceService.class );
         final Answer<Object> getResource = invocation -> {
-            final ResourceKey resourceKey = (ResourceKey) invocation.getArguments()[0];
+            final ResourceKey resourceKey = invocation.getArgument( 0 );
             final URL resourceUrl =
                 NamedTaskFactoryImplTest.class.getResource( "/" + resourceKey.getApplicationKey() + resourceKey.getPath() );
             return new UrlResource( resourceKey, resourceUrl );

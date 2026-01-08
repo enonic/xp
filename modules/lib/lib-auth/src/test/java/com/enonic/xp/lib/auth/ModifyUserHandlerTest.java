@@ -33,11 +33,11 @@ class ModifyUserHandlerTest
     @Test
     void testExamples()
     {
-        Mockito.<Optional<? extends Principal>>when( securityService.getUser( Mockito.any() ) ).thenReturn(
-            Optional.of( TestDataFixtures.getTestUser() ) );
+        Mockito.<Optional<? extends Principal>>when( securityService.getUser( Mockito.any() ) )
+            .thenReturn( Optional.of( TestDataFixtures.getTestUser() ) );
 
-        Mockito.when( this.securityService.updateUser( Mockito.isA( UpdateUserParams.class ) ) ).thenAnswer(
-            invocationOnMock -> invokeUpdate( (UpdateUserParams) invocationOnMock.getArguments()[0] ) );
+        Mockito.when( this.securityService.updateUser( Mockito.isA( UpdateUserParams.class ) ) )
+            .thenAnswer( invocationOnMock -> invokeUpdate( invocationOnMock.getArgument( 0 ) ) );
 
         runScript( "/lib/xp/examples/auth/modifyUser.js" );
     }
@@ -45,12 +45,11 @@ class ModifyUserHandlerTest
     @Test
     void testModifyUser()
     {
-        Mockito.<Optional<? extends Principal>>when(
-            securityService.getUser( PrincipalKey.from( "user:myIdProvider:userId" ) ) ).thenReturn(
-            Optional.of( TestDataFixtures.getTestUser() ) );
+        Mockito.<Optional<? extends Principal>>when( securityService.getUser( PrincipalKey.from( "user:myIdProvider:userId" ) ) )
+            .thenReturn( Optional.of( TestDataFixtures.getTestUser() ) );
 
-        Mockito.when( this.securityService.updateUser( Mockito.isA( UpdateUserParams.class ) ) ).thenAnswer(
-            invocationOnMock -> invokeUpdate( (UpdateUserParams) invocationOnMock.getArguments()[0] ) );
+        Mockito.when( this.securityService.updateUser( Mockito.isA( UpdateUserParams.class ) ) )
+            .thenAnswer( invocationOnMock -> invokeUpdate( invocationOnMock.getArgument( 0 ) ) );
 
         runFunction( "/test/modifyUser-test.js", "modifyUser" );
     }

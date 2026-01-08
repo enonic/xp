@@ -687,7 +687,8 @@ class CreateContentCommandTest
             .xDataMappingService( this.xDataMappingService )
             .siteConfigService( this.siteConfigService )
             .formDefaultValuesProcessor( ( form, data ) -> {
-            } ).pageFormDefaultValuesProcessor( ( page ) -> {
+            } )
+            .pageFormDefaultValuesProcessor( ( page ) -> {
             } )
             .xDataDefaultValuesProcessor( extraDatas -> {
             } )
@@ -696,7 +697,7 @@ class CreateContentCommandTest
 
     private Node mockNodeServiceCreate( final InvocationOnMock invocation )
     {
-        CreateNodeParams params = (CreateNodeParams) invocation.getArguments()[0];
+        CreateNodeParams params = invocation.getArgument( 0 );
 
         final AccessControlList permissions = AccessControlList.create()
             .add( AccessControlEntry.create().allowAll().principal( PrincipalKey.ofAnonymous() ).build() )

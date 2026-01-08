@@ -3,7 +3,6 @@ package com.enonic.xp.portal.impl.handler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -254,7 +253,7 @@ class IdentityHandlerTest
 
     public VirtualHost initVirtualHost( final HttpServletRequest rawRequest, final VirtualHost virtualHost )
     {
-        Mockito.doAnswer( ( InvocationOnMock invocation ) -> virtualHostKey = (String) invocation.getArguments()[0] )
+        Mockito.doAnswer( invocation -> virtualHostKey = invocation.getArgument( 0 ) )
             .when( rawRequest )
             .setAttribute( Mockito.any(), Mockito.isA( VirtualHost.class ) );
 

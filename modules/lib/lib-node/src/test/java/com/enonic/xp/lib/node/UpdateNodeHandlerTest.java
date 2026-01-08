@@ -59,27 +59,22 @@ public class UpdateNodeHandlerTest
 
     private void mockUpdateNode( final Node originalNode )
     {
-        Mockito.when( this.nodeService.update( Mockito.isA( UpdateNodeParams.class ) ) ).then( new Answer<Node>()
-        {
-            @Override
-            public Node answer( InvocationOnMock invocation )
+        Mockito.when( this.nodeService.update( Mockito.isA( UpdateNodeParams.class ) ) ).then( (Answer<Node>) invocation -> {
+            final UpdateNodeParams updateNodeParams = invocation.getArgument( 0 );
+            final EditableNode editableNode = new EditableNode( originalNode );
+            updateNodeParams.getEditor().edit( editableNode );
+
+            final Node editedNode = editableNode.build();
+            final Node.Builder builder = Node.create( editedNode );
+
+            final BinaryAttachments binaryAttachments = updateNodeParams.getBinaryAttachments();
+            final AttachedBinaries.Builder binariesBuilder = AttachedBinaries.create();
+            for ( final BinaryAttachment binaryAttachment : binaryAttachments )
             {
-                final UpdateNodeParams updateNodeParams = (UpdateNodeParams) invocation.getArguments()[0];
-                final EditableNode editableNode = new EditableNode( originalNode );
-                updateNodeParams.getEditor().edit( editableNode );
-
-                final Node editedNode = editableNode.build();
-                final Node.Builder builder = Node.create( editedNode );
-
-                final BinaryAttachments binaryAttachments = updateNodeParams.getBinaryAttachments();
-                final AttachedBinaries.Builder binariesBuilder = AttachedBinaries.create();
-                for ( final BinaryAttachment binaryAttachment : binaryAttachments )
-                {
-                    binariesBuilder.add( new AttachedBinary( binaryAttachment.getReference(), "fisk" ) );
-                }
-
-                return builder.attachedBinaries( binariesBuilder.build() ).build();
+                binariesBuilder.add( new AttachedBinary( binaryAttachment.getReference(), "fisk" ) );
             }
+
+            return builder.attachedBinaries( binariesBuilder.build() ).build();
         } );
     }
 
@@ -157,16 +152,16 @@ public class UpdateNodeHandlerTest
         final EditableNode editedNode = getEditedNode( node );
         assertEquals( "modifiedValue", editedNode.data.getString( "myString" ) );
         // Validate that properties not changed keeps original type
-        assertTrue( editedNode.data.getProperty( "untouchedString" ).getType().equals( ValueTypes.STRING ) );
-        assertTrue( editedNode.data.getProperty( "untouchedBoolean" ).getType().equals( ValueTypes.BOOLEAN ) );
-        assertTrue( editedNode.data.getProperty( "untouchedDouble" ).getType().equals( ValueTypes.DOUBLE ) );
-        assertTrue( editedNode.data.getProperty( "untouchedLong" ).getType().equals( ValueTypes.LONG ) );
-        assertTrue( editedNode.data.getProperty( "untouchedLink" ).getType().equals( ValueTypes.LINK ) );
-        assertTrue( editedNode.data.getProperty( "untouchedInstant" ).getType().equals( ValueTypes.DATE_TIME ) );
-        assertTrue( editedNode.data.getProperty( "untouchedGeoPoint" ).getType().equals( ValueTypes.GEO_POINT ) );
-        assertTrue( editedNode.data.getProperty( "untouchedLocalDate" ).getType().equals( ValueTypes.LOCAL_DATE ) );
-        assertTrue( editedNode.data.getProperty( "untouchedReference" ).getType().equals( ValueTypes.REFERENCE ) );
-        assertTrue( editedNode.data.getProperty( "untouchedBinaryRef" ).getType().equals( ValueTypes.BINARY_REFERENCE ) );
+        assertEquals( ValueTypes.STRING, editedNode.data.getProperty( "untouchedString" ).getType() );
+        assertEquals( ValueTypes.BOOLEAN, editedNode.data.getProperty( "untouchedBoolean" ).getType() );
+        assertEquals( ValueTypes.DOUBLE, editedNode.data.getProperty( "untouchedDouble" ).getType() );
+        assertEquals( ValueTypes.LONG, editedNode.data.getProperty( "untouchedLong" ).getType() );
+        assertEquals( ValueTypes.LINK, editedNode.data.getProperty( "untouchedLink" ).getType() );
+        assertEquals( ValueTypes.DATE_TIME, editedNode.data.getProperty( "untouchedInstant" ).getType() );
+        assertEquals( ValueTypes.GEO_POINT, editedNode.data.getProperty( "untouchedGeoPoint" ).getType() );
+        assertEquals( ValueTypes.LOCAL_DATE, editedNode.data.getProperty( "untouchedLocalDate" ).getType() );
+        assertEquals( ValueTypes.REFERENCE, editedNode.data.getProperty( "untouchedReference" ).getType() );
+        assertEquals( ValueTypes.BINARY_REFERENCE, editedNode.data.getProperty( "untouchedBinaryRef" ).getType() );
     }
 
     private EditableNode getEditedNode( final Node node )

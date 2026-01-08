@@ -48,7 +48,7 @@ public abstract class AbstractScriptTest
 
         final ResourceService resourceService = Mockito.mock( ResourceService.class );
         Mockito.when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {
-            final ResourceKey resourceKey = (ResourceKey) invocation.getArguments()[0];
+            final ResourceKey resourceKey = invocation.getArgument( 0 );
             final URL resourceUrl = AbstractScriptTest.class.getResource( "/" + resourceKey.getApplicationKey() + resourceKey.getPath() );
             return new UrlResource( resourceKey, resourceUrl );
         } );

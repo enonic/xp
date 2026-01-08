@@ -899,6 +899,58 @@ export function patch(params: PatchContentParams): PatchContentResult {
     return __.toNativeObject(bean.execute());
 }
 
+export interface EditableContentMetadata {
+    source: Content;
+    language?: string;
+    owner?: string;
+    variantOf?: string;
+}
+
+export interface UpdateMetadataParams {
+    key: string;
+    editor: (v: EditableContentMetadata) => EditableContentMetadata;
+}
+
+export interface UpdateMetadataResult<Data extends Record<string, unknown> = Record<string, unknown>, Type extends string = string> {
+    content: Content<Data, Type>;
+}
+
+interface UpdateMetadataHandler {
+    setKey(value: string): void;
+
+    setEditor(value: ScriptValue): void;
+
+    execute(): UpdateMetadataResult;
+}
+
+/**
+ * This function updates metadata (language, owner, and variantOf) for a content.
+ * The update is applied to both master and draft branches.
+ *
+ * @example-ref examples/content/updateMetadata.js
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key Path or id to the content.
+ * @param {function} params.editor Editor callback function to modify metadata.
+ *
+ * @returns {object} Updated content metadata result as JSON.
+ */
+export function updateMetadata(params: UpdateMetadataParams): UpdateMetadataResult {
+    checkRequired(params, 'key');
+
+    const {
+        key,
+        editor,
+    } = params ?? {};
+
+    const bean: UpdateMetadataHandler = __.newBean<UpdateMetadataHandler>('com.enonic.xp.lib.content.UpdateMetadataHandler');
+
+    bean.setKey(key);
+    bean.setEditor(__.toScriptValue(editor));
+
+    return __.toNativeObject(bean.execute());
+}
+
 export interface PublishContentParams {
     keys: string[];
     schedule?: Schedule;

@@ -7,6 +7,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
 
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.NullMarked;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -71,6 +72,8 @@ import com.enonic.xp.content.SortContentParams;
 import com.enonic.xp.content.SortContentResult;
 import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UnpublishContentsResult;
+import com.enonic.xp.content.UpdateContentMetadataParams;
+import com.enonic.xp.content.UpdateContentMetadataResult;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.content.XDataDefaultValuesProcessor;
@@ -903,6 +906,34 @@ public class ContentServiceImpl
             .execute();
 
         contentAuditLogSupport.patch( params, result );
+
+        return result;
+    }
+
+    @Override
+    @NullMarked
+    public UpdateContentMetadataResult updateMetadata( final UpdateContentMetadataParams params )
+    {
+        requireAdminRole();
+
+        verifyDraftBranch();
+
+        final UpdateContentMetadataResult result = UpdateMetadataCommand.create( params )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .eventPublisher( this.eventPublisher )
+            .siteService( this.siteService )
+            .xDataService( this.xDataService )
+            .contentProcessors( this.contentProcessors )
+            .contentValidators( this.contentValidators )
+            .pageDescriptorService( this.pageDescriptorService )
+            .partDescriptorService( this.partDescriptorService )
+            .layoutDescriptorService( this.layoutDescriptorService )
+            .allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() )
+            .build()
+            .execute();
+
+        contentAuditLogSupport.updateMetadata( params, result );
 
         return result;
     }

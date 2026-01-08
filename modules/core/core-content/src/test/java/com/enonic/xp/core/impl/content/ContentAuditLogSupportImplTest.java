@@ -53,6 +53,8 @@ import com.enonic.xp.content.SortContentParams;
 import com.enonic.xp.content.SortContentResult;
 import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UnpublishContentsResult;
+import com.enonic.xp.content.UpdateContentMetadataParams;
+import com.enonic.xp.content.UpdateContentMetadataResult;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.context.Context;
@@ -137,6 +139,37 @@ class ContentAuditLogSupportImplTest
 
         test( support::update, params, content );
     }
+
+    @Test
+    void updateMetadataContent()
+        throws Exception
+    {
+        final UpdateContentMetadataParams params = UpdateContentMetadataParams.create()
+            .contentId( ContentId.from( "contentId" ) )
+            .editor( edit -> {} )
+            .build();
+
+        final Content content = Content.create()
+            .id( ContentId.from( "contentId" ) )
+            .type( ContentTypeName.site() )
+            .name( "contentName" )
+            .displayName( "Content Name" )
+            .parentPath( ContentPath.ROOT )
+            .build();
+
+        final UpdateContentMetadataResult result = UpdateContentMetadataResult.create()
+            .content( content )
+            .build();
+
+        ArgumentCaptor<LogAuditLogParams> argumentCaptor = test( support::updateMetadata, params, result );
+
+        assertEquals( "system.content.updateMetadata", argumentCaptor.getValue().getType() );
+        assertEquals( "contentId", argumentCaptor.getValue().getData().getSet( "params" ).getString( "contentId" ) );
+        assertEquals( "user:system:testUser", argumentCaptor.getValue().getData().getSet( "params" ).getString( "modifier" ) );
+        assertEquals( "contentId", argumentCaptor.getValue().getData().getSet( "result" ).getString( "id" ) );
+        assertEquals( "/contentName", argumentCaptor.getValue().getData().getSet( "result" ).getString( "path" ) );
+    }
+
 
     @Test
     void testPatchContent()

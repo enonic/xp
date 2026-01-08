@@ -90,7 +90,7 @@ class AssetHandlerTest
 
     private Resource getResource( final InvocationOnMock invocation )
     {
-        final Resource res = this.resources.get( invocation.getArguments()[0] );
+        final Resource res = this.resources.get( invocation.getArgument( 0 ) );
         return res != null ? res : this.nullResource;
     }
 

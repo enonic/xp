@@ -20,7 +20,7 @@ import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
-import com.enonic.xp.content.UpdateContentParams;
+import com.enonic.xp.content.UpdateContentMetadataParams;
 import com.enonic.xp.content.WorkflowCheckState;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
@@ -151,7 +151,8 @@ class ContentServiceImplTest_create
     void create_with_root_language()
     {
         final Content root = this.contentService.getByPath( ContentPath.ROOT );
-        contentService.update( new UpdateContentParams().contentId( root.getId() ).editor( edit -> edit.language = Locale.ENGLISH ) );
+        contentService.updateMetadata(
+            UpdateContentMetadataParams.create().contentId( root.getId() ).editor( edit -> edit.language = Locale.ENGLISH ).build() );
 
         final CreateContentParams createContentParams = CreateContentParams.create()
             .contentData( new PropertyTree() )
@@ -180,9 +181,7 @@ class ContentServiceImplTest_create
             .type( ContentTypeName.shortcut() )
             .build();
 
-        assertThrows( IllegalArgumentException.class, () -> {
-            this.contentService.create( createContentParams );
-        } );
+        assertThrows( IllegalArgumentException.class, () -> this.contentService.create( createContentParams ) );
     }
 
     @Test

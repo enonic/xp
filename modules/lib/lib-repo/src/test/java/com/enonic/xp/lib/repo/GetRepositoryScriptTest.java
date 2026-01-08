@@ -21,14 +21,10 @@ class GetRepositoryScriptTest
     {
         super.initialize();
         repositoryService = Mockito.mock( RepositoryService.class );
-        Mockito.when( repositoryService.get( Mockito.any() ) ).
-            thenAnswer( invocation -> {
-                final RepositoryId repositoryId = (RepositoryId) invocation.getArguments()[0];
-                return Repository.create().
-                    id( repositoryId ).
-                    branches( Branches.from( RepositoryConstants.MASTER_BRANCH ) ).
-                    build();
-            } );
+        Mockito.when( repositoryService.get( Mockito.any() ) ).thenAnswer( invocation -> {
+            final RepositoryId repositoryId = invocation.getArgument( 0 );
+            return Repository.create().id( repositoryId ).branches( Branches.from( RepositoryConstants.MASTER_BRANCH ) ).build();
+        } );
         addService( RepositoryService.class, repositoryService );
     }
 

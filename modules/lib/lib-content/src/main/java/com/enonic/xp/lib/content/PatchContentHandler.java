@@ -2,13 +2,11 @@ package com.enonic.xp.lib.content;
 
 import java.time.Instant;
 import java.time.format.DateTimeParseException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import com.enonic.xp.attachment.Attachment;
@@ -28,7 +26,6 @@ import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.PatchContentParams;
 import com.enonic.xp.content.PatchContentResult;
 import com.enonic.xp.content.PatchableContent;
-import com.enonic.xp.convert.Converters;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.lib.content.mapper.ContentMapper;
 import com.enonic.xp.lib.content.mapper.PatchContentResultMapper;
@@ -138,38 +135,35 @@ public final class PatchContentHandler
 
     private void patchContent( final PatchableContent target, final Map<String, Object> map )
     {
-        parse( map, "displayName", String.class, val -> target.displayName.setValue( val ) );
-        parse( map, "language", String.class, val -> target.language.setValue( Locale.forLanguageTag( val ) ) );
-        parse( map, "childOrder", String.class, val -> target.childOrder.setValue( ChildOrder.from( val ) ) );
-        parse( map, "owner", String.class, val -> target.owner.setValue( PrincipalKey.from( val ) ) );
-        parse( map, "creator", String.class, val -> target.creator.setValue( PrincipalKey.from( val ) ) );
-        parse( map, "createdTime", String.class, val -> target.createdTime.setValue( Instant.parse( val ) ) );
-        parse( map, "modifier", String.class, val -> target.modifier.setValue( PrincipalKey.from( val ) ) );
-        parse( map, "modifiedTime", String.class, val -> target.modifiedTime.setValue( Instant.parse( val ) ) );
-
-        parse( map, "data", Map.class, val -> target.data.setValue( createPropertyTree( val, target.type.originalValue ) ) );
-        parse( map, "x", Map.class, val -> target.extraDatas.setValue( createExtraDatas( val, target.type.originalValue ) ) );
-        parse( map, "publish", Map.class, val -> target.publishInfo.setValue( createContentPublishInfo( val ) ) );
-        parse( map, "workflow", Map.class, val -> target.workflowInfo.setValue( createWorkflowInfo( val ) ) );
-
-        parse( map, "page", Map.class, val -> target.page.setValue( createPage( val ) ) );
-        parse( map, "validationErrors", List.class, val -> target.validationErrors.setValue( createValidationErrors( val ) ) );
-
-        parse( map, "valid", Boolean.class, target.valid::setValue );
-        parse( map, "processedReferences", String[].class, val -> target.processedReferences.setValue(
-            Arrays.stream( val ).map( ContentId::from ).collect( ContentIds.collector() ) ) );
-        parse( map, "manualOrderValue", Long.class, target.manualOrderValue::setValue );
-        parse( map, "inherit", List.class, ( List val ) -> {
-            final Set collect = (Set) val.stream().map( str -> ContentInheritType.valueOf( str.toString() ) ).collect( Collectors.toSet() );
-            target.inherit.setValue( collect );
-        } );
-        parse( map, "variantOf", ContentId.class, target.variantOf::setValue );
-
-        parse( map, "originProject", String.class, val -> target.originProject.setValue( ProjectName.from( val ) ) );
-        parse( map, "originalParentPath", String.class, val -> target.originalParentPath.setValue( ContentPath.from( val ) ) );
-        parse( map, "originalName", String.class, val -> target.originalName.setValue( ContentName.from( val ) ) );
-        parse( map, "archivedTime", String.class, val -> target.archivedTime.setValue( Instant.parse( val ) ) );
-        parse( map, "archivedBy", String.class, val -> target.archivedBy.setValue( PrincipalKey.from( val ) ) );
+        edit( map, "displayName", String.class, v -> target.displayName.setValue( v.orElse( null ) ) );
+        edit( map, "language", String.class, v -> target.language.setValue( v.map( Locale::forLanguageTag ).orElse( null ) ) );
+        edit( map, "childOrder", String.class, v -> target.childOrder.setValue( v.map( ChildOrder::from ).orElse( null ) ) );
+        edit( map, "owner", String.class, v -> target.owner.setValue( v.map( PrincipalKey::from ).orElse( null ) ) );
+        edit( map, "creator", String.class, v -> target.creator.setValue( v.map( PrincipalKey::from ).orElse( null ) ) );
+        edit( map, "createdTime", String.class, v -> target.createdTime.setValue( v.map( Instant::parse ).orElse( null ) ) );
+        edit( map, "modifier", String.class, v -> target.modifier.setValue( v.map( PrincipalKey::from ).orElse( null ) ) );
+        edit( map, "modifiedTime", String.class, v -> target.modifiedTime.setValue( v.map( Instant::parse ).orElse( null ) ) );
+        edit( map, "data", Map.class,
+               v -> target.data.setValue( v.map( val -> createPropertyTree( val, target.type.originalValue ) ).orElse( null ) ) );
+        edit( map, "x", Map.class,
+               v -> target.extraDatas.setValue( v.map( val -> createExtraDatas( val, target.type.originalValue ) ).orElse( null ) ) );
+        edit( map, "publish", Map.class, v -> target.publishInfo.setValue( v.map( this::createContentPublishInfo ).orElse( null ) ) );
+        edit( map, "workflow", Map.class, v -> target.workflowInfo.setValue( v.map( this::createWorkflowInfo ).orElse( null ) ) );
+        edit( map, "page", Map.class, v -> target.page.setValue( v.map( this::createPage ).orElse( null ) ) );
+        edit( map, "validationErrors", List.class,
+               v -> target.validationErrors.setValue( v.map( this::createValidationErrors ).orElse( null ) ) );
+        edit( map, "valid", Boolean.class, v -> target.valid.setValue( v.orElse( null ) ) );
+        edit( map, "processedReferences", String[].class,
+               v -> target.processedReferences.setValue( v.map( ContentIds::from ).orElse( null ) ) );
+        edit( map, "manualOrderValue", Long.class, v -> target.manualOrderValue.setValue( v.orElse( null ) ) );
+        edit( map, "inherit", List.class, v -> target.inherit.setValue( v.map( this::createInherit ).orElse( null ) ) );
+        edit( map, "variantOf", String.class, v -> target.variantOf.setValue( v.map( ContentId::from ).orElse( null ) ) );
+        edit( map, "originProject", String.class, v -> target.originProject.setValue( v.map( ProjectName::from ).orElse( null ) ) );
+        edit( map, "originalParentPath", String.class,
+               v -> target.originalParentPath.setValue( v.map( ContentPath::from ).orElse( null ) ) );
+        edit( map, "originalName", String.class, v -> target.originalName.setValue( v.map( ContentName::from ).orElse( null ) ) );
+        edit( map, "archivedTime", String.class, v -> target.archivedTime.setValue( v.map( Instant::parse ).orElse( null ) ) );
+        edit( map, "archivedBy", String.class, v -> target.archivedBy.setValue( v.map( PrincipalKey::from ).orElse( null ) ) );
     }
 
     private void patchAttachments( final PatchableContent target, final Map<String, Object> map )
@@ -192,15 +186,6 @@ public final class PatchContentHandler
         target.attachments.setValue( parsedAttachments );
     }
 
-    private <T> void parse( Map<?, ?> map, String key, Class<T> type, Consumer<T> consumer )
-    {
-        T converted = Converters.convert( map.get( key ), type );
-        if ( converted != null )
-        {
-            consumer.accept( converted );
-        }
-    }
-
     private ContentPublishInfo createContentPublishInfo( final Map<String, Object> value )
     {
         if ( value == null )
@@ -213,6 +198,11 @@ public final class PatchContentHandler
             .to( getInstant( value, "to" ) )
             .first( getInstant( value, "first" ) )
             .build();
+    }
+
+    private Set<ContentInheritType> createInherit( final List<String> list )
+    {
+        return list.stream().map( ContentInheritType::valueOf ).collect( Collectors.toSet() );
     }
 
     private Instant getInstant( final Map<String, Object> valueMap, final String key )

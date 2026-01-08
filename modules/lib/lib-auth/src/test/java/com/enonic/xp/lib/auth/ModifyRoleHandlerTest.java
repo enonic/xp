@@ -33,11 +33,11 @@ class ModifyRoleHandlerTest
     @Test
     void testExamples()
     {
-        Mockito.<Optional<? extends Principal>>when( securityService.getRole( Mockito.any() ) ).thenReturn(
-            Optional.of( TestDataFixtures.getTestUser() ) );
+        Mockito.<Optional<? extends Principal>>when( securityService.getRole( Mockito.any() ) )
+            .thenReturn( Optional.of( TestDataFixtures.getTestUser() ) );
 
-        Mockito.when( this.securityService.updateRole( Mockito.isA( UpdateRoleParams.class ) ) ).thenAnswer(
-            invocationOnMock -> invokeUpdate( (UpdateRoleParams) invocationOnMock.getArguments()[0] ) );
+        Mockito.when( this.securityService.updateRole( Mockito.isA( UpdateRoleParams.class ) ) )
+            .thenAnswer( invocationOnMock -> invokeUpdate( invocationOnMock.getArgument( 0 ) ) );
 
         runScript( "/lib/xp/examples/auth/modifyRole.js" );
     }
@@ -45,12 +45,11 @@ class ModifyRoleHandlerTest
     @Test
     void testModifyRole()
     {
-        Mockito.<Optional<? extends Principal>>when(
-            securityService.getRole( PrincipalKey.from( "role:aRole" ) ) ).thenReturn(
-            Optional.of( TestDataFixtures.getTestUser() ) );
+        Mockito.<Optional<? extends Principal>>when( securityService.getRole( PrincipalKey.from( "role:aRole" ) ) )
+            .thenReturn( Optional.of( TestDataFixtures.getTestUser() ) );
 
-        Mockito.when( this.securityService.updateRole( Mockito.isA( UpdateRoleParams.class ) ) ).thenAnswer(
-            invocationOnMock -> invokeUpdate( (UpdateRoleParams) invocationOnMock.getArguments()[0] ) );
+        Mockito.when( this.securityService.updateRole( Mockito.isA( UpdateRoleParams.class ) ) )
+            .thenAnswer( invocationOnMock -> invokeUpdate( invocationOnMock.getArgument( 0 ) ) );
 
         runFunction( "/test/modifyRole-test.js", "modifyRole" );
     }
