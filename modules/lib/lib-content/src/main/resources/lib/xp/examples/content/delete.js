@@ -1,9 +1,9 @@
-var contentLib = require('/lib/xp/content');
-var assert = require('/lib/xp/testing');
+const contentLib = require('/lib/xp/content');
+const assert = require('/lib/xp/testing');
 
 // BEGIN
 // Deletes a content by path.
-var result = contentLib.delete({
+var result = contentLib.deleteContent({
     key: '/features/js-libraries/mycontent'
 });
 

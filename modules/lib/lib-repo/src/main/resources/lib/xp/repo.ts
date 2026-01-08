@@ -156,7 +156,7 @@ interface DeleteRepositoryHandler {
  * @return {boolean} true if deleted, false otherwise.
  *
  */
-function _delete(id: string): boolean {
+export function deleteRepo(id: string): boolean {
     checkRequiredValue(id, 'id');
     const bean: DeleteRepositoryHandler = __.newBean<DeleteRepositoryHandler>('com.enonic.xp.lib.repo.DeleteRepositoryHandler');
     bean.setRepositoryId(id);
@@ -164,7 +164,7 @@ function _delete(id: string): boolean {
 }
 
 export {
-    _delete as delete,
+    deleteRepo as delete,
 };
 
 interface ListRepositoriesHandler {

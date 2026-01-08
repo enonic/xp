@@ -1,8 +1,8 @@
-var assert = require('/lib/xp/testing.js');
-var scheduler = require('/lib/xp/scheduler.js');
+const assert = require('/lib/xp/testing.js');
+const schedulerLib = require('/lib/xp/scheduler.js');
 
 function createJob() {
-    scheduler.create({
+    schedulerLib.create({
         name: 'myjob',
         descriptor: 'appKey:task',
         description: 'job description',
@@ -26,7 +26,7 @@ function createJob() {
 exports.deleteJob = function () {
     createJob();
 
-    var result = scheduler.delete({
+    let result = schedulerLib.deleteJob({
         name: 'myjob'
     });
 
@@ -35,7 +35,7 @@ exports.deleteJob = function () {
 
 exports.deleteNotExist = function () {
 
-    var result = scheduler.delete({
+    let result = schedulerLib.deleteJob({
         name: 'myjob'
     });
 
@@ -45,7 +45,7 @@ exports.deleteNotExist = function () {
 exports.deleteNull = function () {
 
     try {
-        scheduler.delete({
+        schedulerLib.deleteJob({
             name: null
         });
     } catch (e) {

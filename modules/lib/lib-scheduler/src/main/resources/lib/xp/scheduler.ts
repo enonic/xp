@@ -160,14 +160,14 @@ interface DeleteScheduledJobHandler {
 }
 
 /**
- * Removes scheduled job.
+ * Deletes a scheduled job.
  *
  * @example-ref examples/scheduler/delete.js
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.name job to be deleted name.
  */
-function _delete(params: DeleteScheduledJobParams): boolean {
+export function deleteJob(params: DeleteScheduledJobParams): boolean {
     checkRequired(params, 'name');
 
     const bean: DeleteScheduledJobHandler = __.newBean<DeleteScheduledJobHandler>('com.enonic.xp.lib.scheduler.DeleteScheduledJobHandler');
@@ -178,7 +178,7 @@ function _delete(params: DeleteScheduledJobParams): boolean {
 }
 
 export {
-    _delete as delete,
+    deleteJob as delete,
 };
 
 export interface GetScheduledJobParams {
