@@ -951,6 +951,55 @@ export function updateMetadata(params: UpdateMetadataParams): UpdateMetadataResu
     return __.toNativeObject(bean.execute());
 }
 
+export interface EditableWorkflow {
+    source: Content;
+    state?: string;
+    checks?: Record<string, string>;
+}
+
+export interface UpdateWorkflowParams {
+    key: string;
+    editor: (v: EditableWorkflow) => EditableWorkflow;
+}
+
+export interface UpdateWorkflowResult<Data extends Record<string, unknown> = Record<string, unknown>, Type extends string = string> {
+    content: Content<Data, Type>;
+}
+
+interface UpdateWorkflowHandler {
+    setKey(value: string): void;
+
+    setEditor(value: ScriptValue): void;
+
+    execute(): UpdateWorkflowResult;
+}
+
+/**
+ * This function updates workflow information (state and checks) for a content.
+ * The update is applied to both master and draft branches.
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key Path or id to the content.
+ * @param {function} params.editor Editor callback function to modify workflow.
+ *
+ * @returns {object} Updated workflow result as JSON.
+ */
+export function updateWorkflow(params: UpdateWorkflowParams): UpdateWorkflowResult {
+    checkRequired(params, 'key');
+
+    const {
+        key,
+        editor,
+    } = params ?? {};
+
+    const bean: UpdateWorkflowHandler = __.newBean<UpdateWorkflowHandler>('com.enonic.xp.lib.content.UpdateWorkflowHandler');
+
+    bean.setKey(key);
+    bean.setEditor(__.toScriptValue(editor));
+
+    return __.toNativeObject(bean.execute());
+}
+
 export interface PublishContentParams {
     keys: string[];
     schedule?: Schedule;
