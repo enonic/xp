@@ -29,6 +29,8 @@ import com.enonic.xp.content.UpdateContentMetadataParams;
 import com.enonic.xp.content.UpdateContentMetadataResult;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
+import com.enonic.xp.content.UpdateWorkflowParams;
+import com.enonic.xp.content.UpdateWorkflowResult;
 
 interface ContentAuditLogSupport
 {
