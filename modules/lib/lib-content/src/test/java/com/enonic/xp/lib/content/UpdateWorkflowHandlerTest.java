@@ -1,0 +1,65 @@
+package com.enonic.xp.lib.content;
+
+import java.util.Map;
+
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.EditableWorkflow;
+import com.enonic.xp.content.UpdateWorkflowParams;
+import com.enonic.xp.content.UpdateWorkflowResult;
+
+import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.Mockito.when;
+
+public class UpdateWorkflowHandlerTest
+    extends BaseContentHandlerTest
+{
+    @Test
+    void updateWorkflowState()
+    {
+        final Content content = TestDataFixtures.newSmallContent();
+        when( this.contentService.getById( content.getId() ) ).thenReturn( content );
+
+        when( this.contentService.updateWorkflow( isA( UpdateWorkflowParams.class ) ) ).thenAnswer(
+            invocationOnMock -> invokeUpdateWorkflow( invocationOnMock.getArgument( 0 ), content ) );
+
+        runFunction( "/test/UpdateWorkflowHandlerTest.js", "updateWorkflowState" );
+    }
+
+    @Test
+    void updateWorkflowChecks()
+    {
+        final Content content = TestDataFixtures.newSmallContent();
+        when( this.contentService.getById( content.getId() ) ).thenReturn( content );
+
+        when( this.contentService.updateWorkflow( isA( UpdateWorkflowParams.class ) ) ).thenAnswer(
+            invocationOnMock -> invokeUpdateWorkflow( invocationOnMock.getArgument( 0 ), content ) );
+
+        runFunction( "/test/UpdateWorkflowHandlerTest.js", "updateWorkflowChecks" );
+    }
+
+    @Test
+    void updateWorkflowStateAndChecks()
+    {
+        final Content content = TestDataFixtures.newSmallContent();
+        when( this.contentService.getById( content.getId() ) ).thenReturn( content );
+
+        when( this.contentService.updateWorkflow( isA( UpdateWorkflowParams.class ) ) ).thenAnswer(
+            invocationOnMock -> invokeUpdateWorkflow( invocationOnMock.getArgument( 0 ), content ) );
+
+        runFunction( "/test/UpdateWorkflowHandlerTest.js", "updateWorkflowStateAndChecks" );
+    }
+
+    private UpdateWorkflowResult invokeUpdateWorkflow( final UpdateWorkflowParams params, final Content content )
+    {
+        final EditableWorkflow editableWorkflow = new EditableWorkflow( content );
+
+        params.getEditor().edit( editableWorkflow );
+
+        final Content updatedContent = editableWorkflow.build();
+
+        return UpdateWorkflowResult.create().content( updatedContent ).build();
+    }
+}
