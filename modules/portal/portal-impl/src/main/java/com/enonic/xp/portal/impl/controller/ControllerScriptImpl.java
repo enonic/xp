@@ -19,6 +19,8 @@ final class ControllerScriptImpl
 {
     private static final String ALL_SCRIPT_METHOD_NAME = "all";
 
+    private static final String ALL_SCRIPT_METHOD_NAME_UPPERCASE = "ALL";
+
     private final ScriptExports scriptExports;
 
     ControllerScriptImpl( final ScriptExports scriptExports )
@@ -48,12 +50,21 @@ final class ControllerScriptImpl
     {
         final HttpMethod method = portalRequest.getMethod();
         final boolean isHead = method == HttpMethod.HEAD;
-        String runMethod = isHead ? "get" : method.toString().toLowerCase();
+        final String methodName = isHead ? HttpMethod.GET.name() : method.name();
+        final String methodNameLowercase = methodName.toLowerCase();
+
+        // Try uppercase first (new preferred style), then lowercase (backward compatibility)
+        String runMethod = this.scriptExports.hasMethod( methodName ) ? methodName : methodNameLowercase;
 
         final boolean exists = this.scriptExports.hasMethod( runMethod );
         if ( !exists )
         {
-            if ( this.scriptExports.hasMethod( ALL_SCRIPT_METHOD_NAME ) )
+            // Try uppercase ALL first, then lowercase all for backward compatibility
+            if ( this.scriptExports.hasMethod( ALL_SCRIPT_METHOD_NAME_UPPERCASE ) )
+            {
+                runMethod = ALL_SCRIPT_METHOD_NAME_UPPERCASE;
+            }
+            else if ( this.scriptExports.hasMethod( ALL_SCRIPT_METHOD_NAME ) )
             {
                 runMethod = ALL_SCRIPT_METHOD_NAME;
             }
