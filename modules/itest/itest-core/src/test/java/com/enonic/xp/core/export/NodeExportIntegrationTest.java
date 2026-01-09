@@ -5,7 +5,6 @@ import java.nio.file.Path;
 import java.time.Instant;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -45,7 +44,7 @@ class NodeExportIntegrationTest
     {
         final Node myNode = createNode( NodePath.ROOT, "myNode" );
 
-        final NodeExportResult result = doExportRoot( false );
+        final NodeExportResult result = doExportRoot();
 
         assertEquals( 2, result.size() );
         assertExported( myNode );
@@ -65,7 +64,7 @@ class NodeExportIntegrationTest
             attachBinary( binaryRef, ByteSource.wrap( "this is a binary file".getBytes() ) ).
             build() );
 
-        final NodeExportResult result = doExportRoot( false );
+        final NodeExportResult result = doExportRoot();
 
         assertEquals( 2, result.size() );
         assertEquals( 1, result.getExportedBinaries().size() );
@@ -82,14 +81,13 @@ class NodeExportIntegrationTest
             editor( ( n ) -> n.data.addInstant( "myInstant", Instant.now() ) ).
             build() );
 
-        final NodeExportResult result = doExportRoot( true );
+        final NodeExportResult result = doExportRoot();
 
         assertEquals( 2, result.size() );
 
         printPaths();
 
         assertExported( updatedNode );
-        assertVersionExported( updatedNode, node );
     }
 
     @Test
@@ -103,13 +101,12 @@ class NodeExportIntegrationTest
                 .getFirst()
                 .getNode();
 
-        final NodeExportResult result = doExportRoot( true );
+        final NodeExportResult result = doExportRoot();
 
         assertEquals( 2, result.size() );
 
         printPaths();
         assertExported( renamedNode );
-        assertVersionExported( renamedNode, originalNode );
     }
 
     @Test
@@ -134,14 +131,13 @@ class NodeExportIntegrationTest
             attachBinary( binaryRefUpdated, ByteSource.wrap( "this is another binary file".getBytes() ) ).
             build() );
 
-        final NodeExportResult result = doExportRoot( true );
+        final NodeExportResult result = doExportRoot();
 
         printPaths();
 
         assertEquals( 2, result.size() );
         assertExported( myNode );
         assertBinaryExported( updatedNode, binaryRefUpdated );
-        assertVersionBinaryExported( updatedNode, myNode, binaryRef );
     }
 
     @Test
@@ -284,7 +280,6 @@ class NodeExportIntegrationTest
         assertFileExists( "myExport/child1/child1_1/child1_1_2/_/node.xml" );
     }
 
-    @Disabled("Wait with this until decided how to handle versions. Only in dump, or in export too?")
     @Test
     void create_binary_files()
     {
@@ -383,7 +378,7 @@ class NodeExportIntegrationTest
 
     // Asserts and Utils
 
-    private NodeExportResult doExportRoot( final boolean exportVersions )
+    private NodeExportResult doExportRoot()
     {
         return NodeExporter.create().
             nodeService( this.nodeService ).
@@ -397,14 +392,6 @@ class NodeExportIntegrationTest
     private void assertExported( final Node node )
     {
         assertThat( getBaseFolder( node ).resolve( NodeExportPathResolver.NODE_XML_EXPORT_NAME ) ).exists();
-    }
-
-    private void assertVersionExported( final Node exportedNode, final Node exportedVersion )
-    {
-        assertThat( getBaseFolder( exportedNode ).
-            resolve( NodeExportPathResolver.VERSION_FOLDER ).
-            resolve( exportedVersion.getNodeVersionId().toString() ).
-            resolve( exportedVersion.name().toString() ).resolve( NodeExportPathResolver.NODE_XML_EXPORT_NAME ) ).exists();
     }
 
     private void assertBinaryExported( final Node node, final BinaryReference ref )
