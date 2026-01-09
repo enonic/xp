@@ -1,14 +1,13 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.EnumSet;
 import java.util.List;
 
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
-import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentMetadataEditor;
 import com.enonic.xp.content.EditableContentMetadata;
+import com.enonic.xp.content.PatchableContent;
 import com.enonic.xp.content.UpdateContentMetadataParams;
 import com.enonic.xp.content.UpdateContentMetadataResult;
 import com.enonic.xp.node.PatchNodeParams;
@@ -45,13 +44,7 @@ public class UpdateMetadataCommand
         final Content contentBeforeChange = getContent( params.getContentId() );
 
         Content editedContent = editMetadata( params.getEditor(), contentBeforeChange );
-
-        if ( editedContent.getInherit().contains( ContentInheritType.CONTENT ) )
-        {
-            final EnumSet<ContentInheritType> newInherit = EnumSet.copyOf( editedContent.getInherit() );
-            newInherit.remove( ContentInheritType.CONTENT );
-            editedContent = Content.create( editedContent).setInherit( newInherit ).build();
-        }
+        editedContent = editContentInherit( editedContent );
 
         final List<String> modifiedFields = ContentAttributesHelper.modifiedFields( contentBeforeChange, editedContent );
 
@@ -83,6 +76,13 @@ public class UpdateMetadataCommand
             editor.edit( editableMetadata );
         }
         return editableMetadata.build();
+    }
+
+    private Content editContentInherit( final Content content )
+    {
+        final PatchableContent patchableContent = new PatchableContent( content );
+        patchableContent.inherit.setPatcher( c -> stopDataInherit( c.inherit.originalValue ) );
+        return patchableContent.build();
     }
 
     public static final class Builder

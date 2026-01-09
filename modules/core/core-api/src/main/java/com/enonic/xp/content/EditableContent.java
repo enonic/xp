@@ -51,7 +51,7 @@ public final class EditableContent
     @NonNull
     public EditablePage page()
     {
-        return this.page == null ? this.page = new EditablePage() : this.page;
+        return this.page == null ? this.page = new EditablePage( Page.create().build() ) : this.page;
     }
 
     /**

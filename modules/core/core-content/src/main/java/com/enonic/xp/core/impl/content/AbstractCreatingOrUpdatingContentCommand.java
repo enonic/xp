@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.security.DigestInputStream;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -21,6 +22,7 @@ import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentValidator;
@@ -367,6 +369,21 @@ class AbstractCreatingOrUpdatingContentCommand
             Objects.equals( c1.getOriginalParentPath(), c2.getOriginalParentPath() ) &&
             Objects.equals( c1.getArchivedTime(), c2.getArchivedTime() ) && Objects.equals( c1.getArchivedBy(), c2.getArchivedBy() ) &&
             Objects.equals( c1.getVariantOf(), c2.getVariantOf() );
+    }
+
+    protected Set<ContentInheritType> stopDataInherit( final Set<ContentInheritType> currentInherit )
+    {
+        if ( currentInherit.contains( ContentInheritType.CONTENT ) || currentInherit.contains( ContentInheritType.NAME ) )
+        {
+            final EnumSet<ContentInheritType> newInherit = EnumSet.copyOf( currentInherit );
+
+            newInherit.remove( ContentInheritType.CONTENT );
+            newInherit.remove( ContentInheritType.NAME );
+
+            return newInherit;
+        }
+
+        return currentInherit;
     }
 
     public static class Builder<B extends Builder<B>>

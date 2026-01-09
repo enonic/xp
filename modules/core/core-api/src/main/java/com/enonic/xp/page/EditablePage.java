@@ -12,6 +12,9 @@ import com.enonic.xp.region.Regions;
 @PublicApi
 public final class EditablePage
 {
+    @NonNull
+    public final Page source;
+
     @Nullable
     public DescriptorKey descriptor;
 
@@ -29,12 +32,9 @@ public final class EditablePage
 
     public boolean customized;
 
-    public EditablePage()
-    {
-    }
-
     public EditablePage( @NonNull final Page source )
     {
+        this.source = source;
         this.descriptor = source.getDescriptor();
         this.template = source.getTemplate();
         this.regions = source.hasRegions() ? source.getRegions().copy() : null;

@@ -1,12 +1,10 @@
 package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
-import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
@@ -126,7 +124,7 @@ final class UpdateContentCommand
     private Content editContentMetadata( Content content, final boolean editModifier )
     {
         final PatchableContent patchableContent = new PatchableContent( content );
-        patchableContent.inherit.setPatcher( c -> stopInherit( c.inherit.originalValue ) );
+        patchableContent.inherit.setPatcher( c -> stopDataInherit( c.inherit.originalValue ) );
         patchableContent.attachments.setPatcher( c -> mergeExistingAndUpdatedAttachments( c.attachments.originalValue ) );
         if ( editModifier )
         {
@@ -136,21 +134,6 @@ final class UpdateContentCommand
         patchableContent.validationErrors.setPatcher( c -> validateContent( c.source ) );
         patchableContent.valid.setPatcher( c -> !c.validationErrors.getProducedValue().hasErrors() );
         return patchableContent.build();
-    }
-
-    private Set<ContentInheritType> stopInherit( final Set<ContentInheritType> currentInherit )
-    {
-        if ( currentInherit.contains( ContentInheritType.CONTENT ) || currentInherit.contains( ContentInheritType.NAME ) )
-        {
-            final EnumSet<ContentInheritType> newInherit = EnumSet.copyOf( currentInherit );
-
-            newInherit.remove( ContentInheritType.CONTENT );
-            newInherit.remove( ContentInheritType.NAME );
-
-            return newInherit;
-        }
-
-        return currentInherit;
     }
 
     private ValidationErrors validateContent( final Content editedContent )
