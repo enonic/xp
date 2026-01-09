@@ -326,9 +326,7 @@ class CompressedExportImportIntegrationTest
                 .nodeService( this.nodeService )
                 .nodeExportWriter( writer )
                 .sourceNodePath( NodePath.ROOT )
-                .targetDirectory( exportDir.resolve( "version-export" ) )
-                .exportVersions( true )
-                .build()
+                .targetDirectory( exportDir.resolve( "version-export" ) ).build()
                 .execute();
 
             assertEquals( 2, exportResult.size() ); // root + node
