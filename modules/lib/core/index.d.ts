@@ -6,19 +6,11 @@ export interface NestedRecord {
 
 declare global {
     interface XpBeans {}
-    interface XpLayoutMap {
-        [layoutDescriptor: ComponentDescriptor]: NestedRecord;
-    }
+    type XpLayoutMap = Record<ComponentDescriptor, NestedRecord>;
     interface XpLibraries {}
-    interface XpPageMap {
-        [pageDescriptor: ComponentDescriptor]: NestedRecord;
-    }
-    interface XpPartMap {
-        [partDescriptor: ComponentDescriptor]: NestedRecord;
-    }
-    interface XpXData {
-        [key: string]: Record<string, Record<string, unknown>>;
-    }
+    type XpPageMap = Record<ComponentDescriptor, NestedRecord>;
+    type XpPartMap = Record<ComponentDescriptor, NestedRecord>;
+    type XpXData = Record<string, Record<string, Record<string, unknown>>>;
 }
 
 export interface App {
@@ -538,6 +530,7 @@ export interface ValidationError {
     message: string;
     i18n: string;
     errorCode: ValidationErrorCode;
+    /* eslint-disable @typescript-eslint/no-explicit-any*/
     args: any[];
 }
 
@@ -559,7 +552,7 @@ export interface FragmentComponent {
 }
 
 export interface LayoutComponent<
-    Descriptor extends ComponentDescriptor = ComponentDescriptor,
+    Descriptor extends LayoutDescriptor = LayoutDescriptor,
     Config extends NestedRecord = Descriptor extends LayoutDescriptor
         ? XpLayoutMap[Descriptor]
         : NestedRecord,
@@ -574,12 +567,13 @@ export interface LayoutComponent<
     regions: Regions;
 }
 type LayoutDescriptor = keyof XpLayoutMap;
+/* eslint-disable @typescript-eslint/no-explicit-any*/
 type Layout = LayoutDescriptor extends any // this lets us iterate over every member of the union
     ? LayoutComponent<LayoutDescriptor, XpLayoutMap[LayoutDescriptor]>
     : never;
 
 export interface PartComponent<
-    Descriptor extends ComponentDescriptor = ComponentDescriptor,
+    Descriptor extends PartDescriptor = PartDescriptor,
     Config extends NestedRecord =
         Descriptor extends PartDescriptor
         ? XpPartMap[Descriptor]
@@ -591,6 +585,7 @@ export interface PartComponent<
     path?: string // Missing in fragmentPreview https://github.com/enonic/xp/issues/10116
 }
 type PartDescriptor = keyof XpPartMap;
+/* eslint-disable @typescript-eslint/no-explicit-any*/
 type Part = PartDescriptor extends any // this lets us iterate over every member of the union
     ? PartComponent<PartDescriptor, XpPartMap[PartDescriptor]>
     : never;
@@ -598,7 +593,7 @@ type Part = PartDescriptor extends any // this lets us iterate over every member
 // NOTE: This reflect lib-portal.getContent where page templates are resolved.
 // WARNING: This does NOT reflect lib-content.getContent where page templates are NOT resolved!
 export interface PageComponent<
-    Descriptor extends ComponentDescriptor = ComponentDescriptor,
+    Descriptor extends PageDescriptor = PageDescriptor,
     Config extends NestedRecord =
         Descriptor extends PageDescriptor
         ? XpPageMap[Descriptor]
@@ -616,6 +611,7 @@ export interface PageComponent<
 }
 
 type PageDescriptor = keyof XpPageMap;
+/* eslint-disable @typescript-eslint/no-explicit-any*/
 type Page = PageDescriptor extends any // this lets us iterate over every member of the union
     ? PageComponent<PageDescriptor, XpPageMap[PageDescriptor]>
     : never;
@@ -627,7 +623,7 @@ export interface TextComponent {
 }
 
 export type Component<
-    Descriptor extends ComponentDescriptor = LayoutDescriptor | PageDescriptor | PartDescriptor,
+    Descriptor extends ComponentDescriptor = ComponentDescriptor,
     Config extends NestedRecord = NestedRecord,
     Regions extends (
         Descriptor extends LayoutDescriptor
@@ -701,10 +697,10 @@ export interface Content<
     fragment?: Type extends 'portal:fragment' ? _Component : never;
 }
 
-export type Workflow = {
+export interface Workflow {
     state: 'IN_PROGRESS' | 'PENDING_APPROVAL' | 'REJECTED' | 'READY';
     checks?: Record<string, 'PENDING' | 'REJECTED' | 'APPROVED'>;
-};
+}
 
 export type ContentInheritValue = 'CONTENT' | 'PARENT' | 'NAME' | 'SORT';
 
@@ -1091,9 +1087,7 @@ export interface Highlight {
     properties?: Record<string, Highlight>;
 }
 
-export interface HighlightResult {
-    [highlightedFieldName: string]: string[];
-}
+export type HighlightResult = Record<string, string[]>;
 
 export interface ExistsFilter {
     exists: {
@@ -1211,12 +1205,10 @@ export interface FormItemInput {
         value: string;
         type: ValueType;
     }
-    config: {
-        [configName: string]: {
+    config: Record<string, {
             [attributeKey: string]: string;
             value: string;
-        }[]
-    }
+        }[]>
 }
 
 export interface FormItemOptionSet {
