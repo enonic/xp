@@ -67,7 +67,6 @@ public class ExportServiceImpl
                 .nodeExportWriter( exportWriter )
                 .targetDirectory( targetDirectory )
                 .xpVersion( xpVersion )
-                .exportNodeIds( params.isIncludeNodeIds() )
                 .nodeExportListener( params.getNodeExportListener() )
                 .build()
                 .execute();
@@ -108,8 +107,7 @@ public class ExportServiceImpl
         final NodeImportResult result = NodeImporter.create()
             .nodeService( this.nodeService )
             .sourceDirectory( source )
-            .targetNodePath( params.getTargetNodePath() )
-            .importNodeIds( params.isImportNodeids() )
+            .targetNodePath( params.getTargetNodePath() ).importNodeIds( params.isImportNodeIds() )
             .importPermissions( params.isImportPermissions() )
             .xslt( params.getXslt() )
             .xsltParams( params.getXsltParams() )

@@ -38,8 +38,6 @@ public class NodeExporter
 
     private final String xpVersion;
 
-    private final boolean exportNodeIds;
-
     private final NodeExportListener nodeExportListener;
 
     private final NodeExportResult.Builder result = NodeExportResult.create();
@@ -53,7 +51,6 @@ public class NodeExporter
         this.exportWriter = builder.exportWriter;
         this.targetDirectory = builder.targetDirectory;
         this.xpVersion = builder.xpVersion;
-        this.exportNodeIds = builder.exportNodeIds;
         this.nodeExportListener = builder.nodeExportListener;
     }
 
@@ -117,10 +114,7 @@ public class NodeExporter
 
         final Node relativeNode = Node.create( node ).parentPath( newParentPath ).build();
 
-        final XmlNodeSerializer serializer = new XmlNodeSerializer();
-        serializer.exportNodeIds( this.exportNodeIds );
-        serializer.node( relativeNode );
-        final String serializedNode = serializer.serialize();
+        final String serializedNode = new XmlNodeSerializer().node( relativeNode ).serialize();
 
         final Path nodeXmlPath = baseFolder.resolve( NodeExportPathResolver.NODE_XML_EXPORT_NAME );
         exportWriter.writeElement( nodeXmlPath, serializedNode );
@@ -261,8 +255,6 @@ public class NodeExporter
 
         private String xpVersion;
 
-        private boolean exportNodeIds = true;
-
         private NodeExportListener nodeExportListener;
 
         private Builder()
@@ -296,12 +288,6 @@ public class NodeExporter
         public Builder xpVersion( final String xpVersion )
         {
             this.xpVersion = xpVersion;
-            return this;
-        }
-
-        public Builder exportNodeIds( final boolean exportNodeIds )
-        {
-            this.exportNodeIds = exportNodeIds;
             return this;
         }
 

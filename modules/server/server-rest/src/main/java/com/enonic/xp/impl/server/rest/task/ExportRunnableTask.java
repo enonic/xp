@@ -27,8 +27,6 @@ public class ExportRunnableTask
 
     private final String exportName;
 
-    private final boolean exportWithIds;
-
     private final boolean archive;
 
     private final ExportService exportService;
@@ -40,7 +38,6 @@ public class ExportRunnableTask
         this.branch = builder.branch;
         this.nodePath = builder.nodePath;
         this.exportName = builder.exportName;
-        this.exportWithIds = builder.exportWithIds;
         this.archive = builder.archive;
 
         this.exportService = builder.exportService;
@@ -58,7 +55,6 @@ public class ExportRunnableTask
             ExportNodesParams.create()
                 .sourceNodePath( nodePath )
                 .exportName( exportName )
-                .includeNodeIds( exportWithIds )
                 .archive( archive )
                 .nodeExportListener( new ExportListenerImpl( progressReporter ) )
                 .build() ) );
@@ -80,8 +76,6 @@ public class ExportRunnableTask
         private NodePath nodePath;
 
         private String exportName;
-
-        private boolean exportWithIds;
 
         private boolean archive;
 
@@ -108,12 +102,6 @@ public class ExportRunnableTask
         public Builder exportName( final String exportName )
         {
             this.exportName = exportName;
-            return this;
-        }
-
-        public Builder exportWithIds( final boolean exportWithIds )
-        {
-            this.exportWithIds = exportWithIds;
             return this;
         }
 

@@ -18,8 +18,6 @@ public class ExportHandler
 
     private String exportName;
 
-    private Boolean includeNodeIds;
-
     private Function<Long, Void> nodeExported;
 
     private Function<Long, Void> nodeResolved;
@@ -30,11 +28,6 @@ public class ExportHandler
             .sourceNodePath( new NodePath( sourceNodePath ) )
             .exportName( exportName )
             .nodeExportListener( new FunctionBasedNodeExportListener( nodeExported, nodeResolved ) );
-
-        if ( includeNodeIds != null )
-        {
-            paramsBuilder.includeNodeIds( includeNodeIds );
-        }
 
         final NodeExportResult nodeImportResult = this.context.getService( ExportService.class ).get().exportNodes( paramsBuilder.build() );
         return new NodeExportResultMapper( nodeImportResult );
@@ -48,11 +41,6 @@ public class ExportHandler
     public void setExportName( final String exportName )
     {
         this.exportName = exportName;
-    }
-
-    public void setIncludeNodeIds( final Boolean includeNodeIds )
-    {
-        this.includeNodeIds = includeNodeIds;
     }
 
     public void setNodeExported( final Function<Long, Void> nodeExported )

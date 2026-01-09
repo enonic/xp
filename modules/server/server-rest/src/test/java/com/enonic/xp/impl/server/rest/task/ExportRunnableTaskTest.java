@@ -50,7 +50,6 @@ class ExportRunnableTaskTest
             .branch( params.getSourceRepoPath().getBranch() )
             .nodePath( params.getSourceRepoPath().getNodePath() )
             .exportName( params.getExportName() )
-            .exportWithIds( params.isExportWithIds() )
             .archive( params.isArchive() )
             .build();
     }
@@ -65,7 +64,7 @@ class ExportRunnableTaskTest
 
         when( this.exportService.exportNodes( any( ExportNodesParams.class ) ) ).thenReturn( nodeExportResult );
 
-        final ExportRunnableTask task = createTask( new ExportNodesRequestJson( "a:b:c", "export", true, false ) );
+        final ExportRunnableTask task = createTask( new ExportNodesRequestJson( "a:b:c", "export", false ) );
 
         ProgressReporter progressReporter = mock( ProgressReporter.class );
 
@@ -89,7 +88,7 @@ class ExportRunnableTaskTest
 
         when( this.exportService.exportNodes( any( ExportNodesParams.class ) ) ).thenReturn( nodeExportResult );
 
-        final ExportRunnableTask task = createTask( new ExportNodesRequestJson( "a:b:c", "export", true, true ) );
+        final ExportRunnableTask task = createTask( new ExportNodesRequestJson( "a:b:c", "export", true ) );
 
         ProgressReporter progressReporter = mock( ProgressReporter.class );
 

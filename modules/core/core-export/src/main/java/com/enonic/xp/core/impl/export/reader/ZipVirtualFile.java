@@ -10,9 +10,12 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipFile;
 
 import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
@@ -25,7 +28,7 @@ import com.enonic.xp.vfs.VirtualFilePaths;
 public class ZipVirtualFile
     implements VirtualFile
 {
-    private final org.apache.commons.compress.archivers.zip.ZipFile zipFile;
+    private final ZipFile zipFile;
 
     private final String entryPath;
 
@@ -35,8 +38,7 @@ public class ZipVirtualFile
 
     private final Path zipFilePath;
 
-    private ZipVirtualFile( final org.apache.commons.compress.archivers.zip.ZipFile zipFile, final String basePath,
-                            final String entryPath, final Path zipFilePath )
+    private ZipVirtualFile( final ZipFile zipFile, final String basePath, final String entryPath, final Path zipFilePath )
     {
         this.zipFile = zipFile;
         this.basePath = basePath;
@@ -57,27 +59,64 @@ public class ZipVirtualFile
         throws IOException
     {
         final SeekableByteChannel seekableByteChannel = Files.newByteChannel( zipPath, StandardOpenOption.READ );
-        final org.apache.commons.compress.archivers.zip.ZipFile zipFile = new org.apache.commons.compress.archivers.zip.ZipFile(
-            seekableByteChannel );
+        final ZipFile zipFile = ZipFile.builder().setSeekableByteChannel( seekableByteChannel ).get();
 
-        // Find the base path (root directory in the zip)
+        final String basePath = resolveBasePath( zipFile, zipPath );
+
+        return new ZipVirtualFile( zipFile, basePath, basePath, zipPath );
+    }
+
+    private static String resolveBasePath( final ZipFile zipFile, final Path zipPath )
+    {
+        final Set<String> rootFolders = new HashSet<>();
         final Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
-        String basePath = "";
+        final String archiveName = getArchiveNameWithoutExtension( zipPath );
 
         while ( entries.hasMoreElements() )
         {
             final ZipArchiveEntry entry = entries.nextElement();
             final String name = entry.getName();
 
-            // Find the first entry that's not a directory and extract its base path
-            if ( !entry.isDirectory() && name.contains( "/" ) )
+            final int slashIndex = name.indexOf( '/' );
+            if ( slashIndex > 0 )
             {
-                basePath = name.substring( 0, name.indexOf( '/' ) );
-                break;
+                final String rootFolder = name.substring( 0, slashIndex );
+
+                if ( isSystemFolder( rootFolder ) )
+                {
+                    continue;
+                }
+
+                // Early exit: found single non-system folder matching archive name
+                if ( rootFolder.equals( archiveName ) )
+                {
+                    return archiveName;
+                }
+
+                rootFolders.add( rootFolder );
             }
         }
 
-        return new ZipVirtualFile( zipFile, basePath, basePath, zipPath );
+        if ( rootFolders.size() == 1 )
+        {
+            return rootFolders.iterator().next();
+        }
+
+        throw new IllegalArgumentException( "Cannot determine base path for zip archive '" + zipPath.getFileName() +
+                                                "'. Expected exactly one root folder or a folder matching archive name '" + archiveName +
+                                                "'. Found: " + rootFolders );
+    }
+
+    private static boolean isSystemFolder( final String folderName )
+    {
+        return folderName.startsWith( "__" ) || folderName.startsWith( "." );
+    }
+
+    private static String getArchiveNameWithoutExtension( final Path zipPath )
+    {
+        final String fileName = zipPath.getFileName().toString();
+        final int dotIndex = fileName.lastIndexOf( '.' );
+        return dotIndex > 0 ? fileName.substring( 0, dotIndex ) : fileName;
     }
 
     @Override
@@ -154,7 +193,7 @@ public class ZipVirtualFile
 
         final String prefix = entryPath.isEmpty() ? "" : entryPath + "/";
         final Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
-        final java.util.Set<String> addedPaths = new java.util.HashSet<>();
+        final Set<String> addedPaths = new HashSet<>();
 
         while ( entries.hasMoreElements() )
         {

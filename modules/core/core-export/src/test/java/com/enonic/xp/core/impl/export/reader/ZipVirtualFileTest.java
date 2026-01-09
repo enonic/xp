@@ -1,7 +1,12 @@
 package com.enonic.xp.core.impl.export.reader;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -13,6 +18,7 @@ import com.enonic.xp.vfs.VirtualFilePaths;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ZipVirtualFileTest
@@ -219,5 +225,132 @@ class ZipVirtualFileTest
         assertTrue( nodeXml.exists(), "node.xml should exist" );
         assertTrue( nodeXml.isFile(), "node.xml should be a file" );
     }
-}
 
+    @Test
+    void testIgnoresMacOSXSystemFolder()
+        throws IOException
+    {
+        // Create zip with __MACOSX folder (as macOS does when zipping)
+        final Path zipFile = tempDir.resolve( "with-macosx.zip" );
+
+        try (OutputStream fos = Files.newOutputStream( zipFile ); ZipOutputStream zos = new ZipOutputStream( fos ))
+        {
+            // Add __MACOSX folder (should be ignored)
+            addZipEntry( zos, "__MACOSX/._file.txt", "macos metadata" );
+
+            // Add actual export folder
+            addZipEntry( zos, "my-export/_/node.xml", "<node/>" );
+            addZipEntry( zos, "my-export/export.properties", "xp.version=1.0" );
+        }
+
+        final VirtualFile root = ZipVirtualFile.from( zipFile );
+
+        // Should use my-export as base, not __MACOSX
+        assertEquals( "my-export", root.getName() );
+        assertTrue( root.exists() );
+
+        // Should have 2 children: _ and export.properties (not __MACOSX)
+        var children = root.getChildren();
+        assertEquals( 2, children.size() );
+    }
+
+    @Test
+    void testIgnoresHiddenFolders()
+        throws IOException
+    {
+        final Path zipFile = tempDir.resolve( "with-hidden.zip" );
+
+        try (OutputStream fos = Files.newOutputStream( zipFile ); ZipOutputStream zos = new ZipOutputStream( fos ))
+        {
+            // Add hidden folder (should be ignored)
+            addZipEntry( zos, ".git/config", "git config" );
+
+            // Add actual export folder
+            addZipEntry( zos, "export-data/_/node.xml", "<node/>" );
+        }
+
+        final VirtualFile root = ZipVirtualFile.from( zipFile );
+
+        // Should use export-data as base, not .git
+        assertEquals( "export-data", root.getName() );
+    }
+
+    @Test
+    void testFallbackToArchiveName()
+        throws IOException
+    {
+        // Create zip with multiple root folders, but one matches archive name
+        final Path zipFile = tempDir.resolve( "my-archive.zip" );
+
+        try (OutputStream fos = Files.newOutputStream( zipFile ); ZipOutputStream zos = new ZipOutputStream( fos ))
+        {
+            // Add multiple root folders
+            addZipEntry( zos, "other-folder/file.txt", "other" );
+            addZipEntry( zos, "my-archive/_/node.xml", "<node/>" );
+        }
+
+        final VirtualFile root = ZipVirtualFile.from( zipFile );
+
+        // Should fallback to archive name (my-archive)
+        assertEquals( "my-archive", root.getName() );
+    }
+
+    @Test
+    void testThrowsExceptionForMultipleFoldersWithoutArchiveNameMatch()
+        throws IOException
+    {
+        final Path zipFile = tempDir.resolve( "ambiguous.zip" );
+
+        try (OutputStream fos = Files.newOutputStream( zipFile ); ZipOutputStream zos = new ZipOutputStream( fos ))
+        {
+            // Add multiple root folders, none matching archive name
+            addZipEntry( zos, "folder1/file.txt", "content1" );
+            addZipEntry( zos, "folder2/file.txt", "content2" );
+        }
+
+        // Should throw exception because cannot determine base path
+        assertThrows( IllegalArgumentException.class, () -> ZipVirtualFile.from( zipFile ) );
+    }
+
+    @Test
+    void testThrowsExceptionForEmptyArchive()
+        throws IOException
+    {
+        final Path zipFile = tempDir.resolve( "empty.zip" );
+
+        try (OutputStream fos = Files.newOutputStream( zipFile ); ZipOutputStream zos = new ZipOutputStream( fos ))
+        {
+            // Empty zip - no entries
+        }
+
+        // Should throw exception because no root folders found
+        assertThrows( IllegalArgumentException.class, () -> ZipVirtualFile.from( zipFile ) );
+    }
+
+    @Test
+    void testSingleRootFolderWithDifferentName()
+        throws IOException
+    {
+        // Archive name doesn't match folder name, but there's only one folder
+        final Path zipFile = tempDir.resolve( "archive.zip" );
+
+        try (OutputStream fos = Files.newOutputStream( zipFile ); ZipOutputStream zos = new ZipOutputStream( fos ))
+        {
+            addZipEntry( zos, "different-name/_/node.xml", "<node/>" );
+            addZipEntry( zos, "different-name/data.txt", "data" );
+        }
+
+        final VirtualFile root = ZipVirtualFile.from( zipFile );
+
+        // Should use the single root folder name
+        assertEquals( "different-name", root.getName() );
+    }
+
+    private void addZipEntry( final ZipOutputStream zos, final String path, final String content )
+        throws IOException
+    {
+        zos.putNextEntry( new ZipEntry( path ) );
+        zos.write( content.getBytes( StandardCharsets.UTF_8 ) );
+        zos.closeEntry();
+    }
+}

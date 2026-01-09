@@ -15,8 +15,6 @@ public final class ExportNodesParams
 
     private final NodePath sourceNodePath;
 
-    private final boolean includeNodeIds;
-
     private final boolean archive;
 
     private final NodeExportListener nodeExportListener;
@@ -25,7 +23,6 @@ public final class ExportNodesParams
     {
         this.exportName = builder.exportName;
         this.sourceNodePath = builder.sourceNodePath;
-        this.includeNodeIds = builder.includeNodeIds;
         this.archive = builder.archive;
         this.nodeExportListener = builder.nodeExportListener;
     }
@@ -45,11 +42,6 @@ public final class ExportNodesParams
         return sourceNodePath;
     }
 
-    public boolean isIncludeNodeIds()
-    {
-        return includeNodeIds;
-    }
-
     public boolean isArchive()
     {
         return archive;
@@ -65,8 +57,6 @@ public final class ExportNodesParams
         private String exportName;
 
         private NodePath sourceNodePath;
-
-        private boolean includeNodeIds = true;
 
         private boolean archive = false;
 
@@ -85,12 +75,6 @@ public final class ExportNodesParams
         public Builder sourceNodePath( final NodePath sourceNodePath )
         {
             this.sourceNodePath = sourceNodePath;
-            return this;
-        }
-
-        public Builder includeNodeIds( final boolean includeNodeIds )
-        {
-            this.includeNodeIds = includeNodeIds;
             return this;
         }
 

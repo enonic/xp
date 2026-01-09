@@ -671,7 +671,6 @@ class NodeImporterIntegrationTest
                 .sourceNodePath( NodePath.ROOT )
                 .targetDirectory( exportDir.resolve( exportName ) )
                 .xpVersion( "1.0.0" )
-                .exportNodeIds( true )
                 .build()
                 .execute();
         }
@@ -688,7 +687,6 @@ class NodeImporterIntegrationTest
             .nodeService( nodeService )
             .targetNodePath( NodePath.ROOT )
             .sourceDirectory( source )
-            .importNodeIds( true )
             .build()
             .execute();
 

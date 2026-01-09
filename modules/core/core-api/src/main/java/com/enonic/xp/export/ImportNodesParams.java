@@ -64,7 +64,7 @@ public final class ImportNodesParams
         return exportName;
     }
 
-    public boolean isImportNodeids()
+    public boolean isImportNodeIds()
     {
         return importNodeIds;
     }
