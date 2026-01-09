@@ -390,7 +390,6 @@ class NodeExportIntegrationTest
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.ROOT ).
             targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).
-            exportVersions( exportVersions ).
             build().
             execute();
     }
