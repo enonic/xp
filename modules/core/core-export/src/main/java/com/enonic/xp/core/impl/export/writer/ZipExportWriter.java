@@ -26,8 +26,6 @@ public class ZipExportWriter
 
     private final Path baseDirectory;
 
-    private boolean closed = false;
-
     private ZipExportWriter( final String exportName, final Path baseDirectory, final ZipArchiveOutputStream zipArchiveOutputStream )
     {
         this.exportName = exportName;
@@ -117,7 +115,7 @@ public class ZipExportWriter
         final StringBuilder sb = new StringBuilder( exportName );
         for ( Path component : relativePath )
         {
-            sb.append( '/' ).append( component.toString() );
+            sb.append( '/' ).append( component );
         }
         return sb.toString();
     }
@@ -126,10 +124,6 @@ public class ZipExportWriter
     public void close()
         throws IOException
     {
-        if ( !closed )
-        {
-            zipArchiveOutputStream.close();
-            closed = true;
-        }
+        zipArchiveOutputStream.close();
     }
 }
