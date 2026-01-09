@@ -1,9 +1,8 @@
 package com.enonic.xp.script.impl.function;
 
-import java.util.List;
+import java.util.stream.Stream;
 
-import com.google.common.io.Files;
-
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 
@@ -21,48 +20,31 @@ public final class RequireResolver
 
     public ResourceKey resolve( final String path )
     {
-        if ( path.startsWith( "/" ) )
-        {
-            return resolveAbsolute( path );
-        }
-        else
-        {
-            return resolveRelative( path );
-        }
-    }
-
-    private ResourceKey resolveAbsolute( final String path )
-    {
-        return doResolve( this.baseKey.resolve( path ) );
-    }
-
-    private ResourceKey resolveRelative( final String path )
-    {
-        return doResolve( this.baseKey.resolve( "../" + path ) );
+        return doResolve( this.baseKey.resolve( path.startsWith( "/" ) ? path : "../" + path ) );
     }
 
     private ResourceKey doResolve( final ResourceKey key )
     {
-        for ( final String path : findSearchPaths( key.getPath() ) )
-        {
-            final ResourceKey pathKey = ResourceKey.from( key.getApplicationKey(), path );
-            if ( exists( pathKey ) )
-            {
-                return pathKey;
-            }
-        }
-
-        return key;
+        final ApplicationKey applicationKey = key.getApplicationKey();
+        return findSearchPaths( key.getPath() ).map( path -> ResourceKey.from( applicationKey, path ) )
+            .filter( this::exists )
+            .findFirst()
+            .orElse( key );
     }
 
-    static List<String> findSearchPaths( final String path )
+    static Stream<String> findSearchPaths( final String path )
     {
-        if ( !Files.getFileExtension( path ).isEmpty() )
+        if ( path.endsWith( ".js" ) || path.endsWith( ".json" ) )
         {
-            return List.of( path );
+            return Stream.of( path );
         }
 
-        return List.of( path + ".js", path + "/index.js", path + ".json", path + "/index.json" );
+        if ( path.endsWith( "/" ) )
+        {
+            return Stream.of( "index.js", "index.json" ).map( s -> path + s );
+        }
+
+        return Stream.of( ".js", "/index.js", ".json", "/index.json" ).map( s -> path + s );
     }
 
     private boolean exists( final ResourceKey key )
