@@ -86,6 +86,11 @@ public class UpdateWorkflowCommand
     
     private Set<ContentInheritType> unsetInherit( final Set<ContentInheritType> inherit, final ContentInheritType... typesToRemove )
     {
+        if ( inherit == null )
+        {
+            return EnumSet.noneOf( ContentInheritType.class );
+        }
+        
         final EnumSet<ContentInheritType> result = inherit.isEmpty() 
             ? EnumSet.noneOf( ContentInheritType.class ) 
             : EnumSet.copyOf( inherit );
