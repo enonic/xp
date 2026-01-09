@@ -609,12 +609,6 @@ public class Content
             return (BUILDER) this;
         }
 
-        public BUILDER hasChildren( final boolean hasChildren )
-        {
-            this.hasChildren = hasChildren;
-            return (BUILDER) this;
-        }
-
         public BUILDER setInherit( final Set<ContentInheritType> inherit )
         {
             if ( inherit != null )

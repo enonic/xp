@@ -7,6 +7,7 @@ import java.security.DigestInputStream;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
@@ -19,6 +20,7 @@ import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
+import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentValidator;
@@ -347,6 +349,24 @@ class AbstractCreatingOrUpdatingContentCommand
     {
         return fileName.endsWith( ".exe" ) || fileName.endsWith( ".msi" ) || fileName.endsWith( ".dmg" ) || fileName.endsWith( ".bat" ) ||
             fileName.endsWith( ".sh" );
+    }
+
+    protected BiPredicate<Content, Content> isContentTheSame()
+    {
+        return ( c1, c2 ) -> Objects.equals( c1.getId(), c2.getId() ) && Objects.equals( c1.getPath(), c2.getPath() ) &&
+            Objects.equals( c1.getDisplayName(), c2.getDisplayName() ) && Objects.equals( c1.getType(), c2.getType() ) &&
+            Objects.equals( c1.getCreator(), c2.getCreator() ) && Objects.equals( c1.getOwner(), c2.getOwner() ) &&
+            Objects.equals( c1.getCreatedTime(), c2.getCreatedTime() ) && Objects.equals( c1.getInherit(), c2.getInherit() ) &&
+            Objects.equals( c1.getOriginProject(), c2.getOriginProject() ) && Objects.equals( c1.getChildOrder(), c2.getChildOrder() ) &&
+            Objects.equals( c1.getPermissions(), c2.getPermissions() ) && Objects.equals( c1.getAttachments(), c2.getAttachments() ) &&
+            Objects.equals( c1.getData(), c2.getData() ) && Objects.equals( c1.getAllExtraData(), c2.getAllExtraData() ) &&
+            Objects.equals( c1.getPage(), c2.getPage() ) && Objects.equals( c1.getLanguage(), c2.getLanguage() ) &&
+            Objects.equals( c1.getPublishInfo(), c2.getPublishInfo() ) && Objects.equals( c1.getWorkflowInfo(), c2.getWorkflowInfo() ) &&
+            Objects.equals( c1.getManualOrderValue(), c2.getManualOrderValue() ) &&
+            Objects.equals( c1.getOriginalName(), c2.getOriginalName() ) &&
+            Objects.equals( c1.getOriginalParentPath(), c2.getOriginalParentPath() ) &&
+            Objects.equals( c1.getArchivedTime(), c2.getArchivedTime() ) && Objects.equals( c1.getArchivedBy(), c2.getArchivedBy() ) &&
+            Objects.equals( c1.getVariantOf(), c2.getVariantOf() );
     }
 
     public static class Builder<B extends Builder<B>>

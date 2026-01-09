@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.BiPredicate;
 
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
@@ -99,7 +98,7 @@ final class UpdateContentCommand
         checkAccess( contentBeforeChange, editedContent );
         validate( editedContent );
 
-        if ( isStoppingInheritContent( contentBeforeChange.getInherit() ) )
+        if ( contentBeforeChange.getInherit().contains( ContentInheritType.CONTENT ) )
         {
             nodeService.commit( NodeCommitEntry.create().message( "Base inherited version" ).build(),
                                 NodeIds.from( NodeId.from( params.getContentId() ) ) );
@@ -137,29 +136,6 @@ final class UpdateContentCommand
         patchableContent.validationErrors.setPatcher( c -> validateContent( c.source ) );
         patchableContent.valid.setPatcher( c -> !c.validationErrors.getProducedValue().hasErrors() );
         return patchableContent.build();
-    }
-
-    private BiPredicate<Content, Content> isContentTheSame()
-    {
-        return ( c1, c2 ) -> Objects.equals( c1.getId(), c2.getId() ) && Objects.equals( c1.getPath(), c2.getPath() ) &&
-            Objects.equals( c1.getDisplayName(), c2.getDisplayName() ) && Objects.equals( c1.getType(), c2.getType() ) &&
-            Objects.equals( c1.getCreator(), c2.getCreator() ) && Objects.equals( c1.getOwner(), c2.getOwner() ) &&
-            Objects.equals( c1.getCreatedTime(), c2.getCreatedTime() ) && Objects.equals( c1.getInherit(), c2.getInherit() ) &&
-            Objects.equals( c1.getOriginProject(), c2.getOriginProject() ) && Objects.equals( c1.getChildOrder(), c2.getChildOrder() ) &&
-            Objects.equals( c1.getPermissions(), c2.getPermissions() ) && Objects.equals( c1.getAttachments(), c2.getAttachments() ) &&
-            Objects.equals( c1.getData(), c2.getData() ) && Objects.equals( c1.getAllExtraData(), c2.getAllExtraData() ) &&
-            Objects.equals( c1.getPage(), c2.getPage() ) && Objects.equals( c1.getLanguage(), c2.getLanguage() ) &&
-            Objects.equals( c1.getPublishInfo(), c2.getPublishInfo() ) && Objects.equals( c1.getWorkflowInfo(), c2.getWorkflowInfo() ) &&
-            Objects.equals( c1.getManualOrderValue(), c2.getManualOrderValue() ) &&
-            Objects.equals( c1.getOriginalName(), c2.getOriginalName() ) &&
-            Objects.equals( c1.getOriginalParentPath(), c2.getOriginalParentPath() ) &&
-            Objects.equals( c1.getArchivedTime(), c2.getArchivedTime() ) && Objects.equals( c1.getArchivedBy(), c2.getArchivedBy() ) &&
-            Objects.equals( c1.getVariantOf(), c2.getVariantOf() );
-    }
-
-    private boolean isStoppingInheritContent( final Set<ContentInheritType> currentInherit )
-    {
-        return currentInherit.contains( ContentInheritType.CONTENT );
     }
 
     private Set<ContentInheritType> stopInherit( final Set<ContentInheritType> currentInherit )

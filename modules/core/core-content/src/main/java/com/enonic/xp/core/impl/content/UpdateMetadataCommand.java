@@ -1,10 +1,12 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.EnumSet;
 import java.util.List;
 
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentMetadataEditor;
 import com.enonic.xp.content.EditableContentMetadata;
 import com.enonic.xp.content.UpdateContentMetadataParams;
@@ -42,7 +44,15 @@ public class UpdateMetadataCommand
     {
         final Content contentBeforeChange = getContent( params.getContentId() );
 
-        final Content editedContent = editMetadata( params.getEditor(), contentBeforeChange );
+        Content editedContent = editMetadata( params.getEditor(), contentBeforeChange );
+
+        if ( editedContent.getInherit().contains( ContentInheritType.CONTENT ) )
+        {
+            final EnumSet<ContentInheritType> newInherit = EnumSet.copyOf( editedContent.getInherit() );
+            newInherit.remove( ContentInheritType.CONTENT );
+            editedContent = Content.create( editedContent).setInherit( newInherit ).build();
+        }
+
         final List<String> modifiedFields = ContentAttributesHelper.modifiedFields( contentBeforeChange, editedContent );
 
         final PatchNodeParams patchNodeParams = PatchNodeParamsFactory.create()
