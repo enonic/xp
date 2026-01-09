@@ -17,13 +17,9 @@ import com.enonic.xp.export.NodeExportResult;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
-import com.enonic.xp.node.GetNodeVersionsParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.NodeVersion;
-import com.enonic.xp.node.NodeVersionMetadata;
-import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.util.BinaryReference;
@@ -44,8 +40,6 @@ public class NodeExporter
 
     private final boolean exportNodeIds;
 
-    private final boolean exportVersions;
-
     private final NodeExportListener nodeExportListener;
 
     private final NodeExportResult.Builder result = NodeExportResult.create();
@@ -60,7 +54,6 @@ public class NodeExporter
         this.targetDirectory = builder.targetDirectory;
         this.xpVersion = builder.xpVersion;
         this.exportNodeIds = builder.exportNodeIds;
-        this.exportVersions = builder.exportVersions;
         this.nodeExportListener = builder.nodeExportListener;
     }
 
@@ -114,56 +107,10 @@ public class NodeExporter
 
     private void writeNode( final Node node )
     {
-        writeVersion( node, resolveNodeDataFolder( node ) );
-
-        if ( exportVersions )
-        {
-            writeVersions( node );
-        }
+        doWriteNode( node, resolveNodeDataFolder( node ) );
     }
 
-    private void writeVersions( final Node node )
-    {
-        if ( node.isRoot() )
-        {
-            return;
-        }
-
-        final NodeVersionQueryResult versions = this.nodeService.findVersions( GetNodeVersionsParams.create().
-            from( 0 ).
-            size( -1 ).
-            nodeId( node.id() ).
-            build() );
-
-        for ( final NodeVersionMetadata version : versions.getNodeVersionMetadatas() )
-        {
-            if ( version.getNodeVersionId().equals( node.getNodeVersionId() ) )
-            {
-                continue;
-            }
-
-            final NodeVersion nodeVersion = this.nodeService.getByNodeVersionKey( version.getNodeVersionKey() );
-
-            final Node exportNode = Node.create( nodeVersion )
-                .name( version.getNodePath().getName() )
-                .parentPath( version.getNodePath().getParentPath() )
-                .timestamp( version.getTimestamp() )
-                .nodeVersionId( version.getNodeVersionId() )
-                .build();
-
-            writeVersion( exportNode, resolveNodeVersionBasePath( node, version ) );
-        }
-    }
-
-    private Path resolveNodeVersionBasePath( final Node originalNode, final NodeVersionMetadata nodeVersion )
-    {
-        return resolveNodeDataFolder( originalNode ).
-            resolve( NodeExportPathResolver.VERSION_FOLDER ).
-            resolve( nodeVersion.getNodeVersionId().toString() ).
-            resolve( nodeVersion.getNodePath().getName().toString() );
-    }
-
-    private void writeVersion( final Node node, final Path baseFolder )
+    private void doWriteNode( final Node node, final Path baseFolder )
     {
         final NodePath newParentPath =
             new NodePath( "/" + node.toString().substring( this.sourceNodePath.toString().length() ) );
@@ -316,8 +263,6 @@ public class NodeExporter
 
         private boolean exportNodeIds = true;
 
-        private boolean exportVersions = false;
-
         private NodeExportListener nodeExportListener;
 
         private Builder()
@@ -357,12 +302,6 @@ public class NodeExporter
         public Builder exportNodeIds( final boolean exportNodeIds )
         {
             this.exportNodeIds = exportNodeIds;
-            return this;
-        }
-
-        public Builder exportVersions( final boolean exportVersions )
-        {
-            this.exportVersions = exportVersions;
             return this;
         }
 

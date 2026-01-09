@@ -99,16 +99,27 @@ public class ZipExportWriter
 
     private String resolveEntryPath( final Path itemPath )
     {
-        final Path normalizedItem = itemPath.normalize();
+        final Path normalizedItem = itemPath.toAbsolutePath().normalize();
+        final Path normalizedBase = baseDirectory.toAbsolutePath().normalize();
 
-        if ( !normalizedItem.startsWith( baseDirectory ) )
+        if ( !normalizedItem.startsWith( normalizedBase ) )
         {
             throw new ExportNodeException( "Item path " + itemPath + " is not within export base " + baseDirectory );
         }
 
-        final Path relativePath = baseDirectory.relativize( normalizedItem );
-        final String relativePathStr = relativePath.toString().replace( '\\', '/' );
-        return relativePathStr.isEmpty() ? exportName : exportName + "/" + relativePathStr;
+        final Path relativePath = normalizedBase.relativize( normalizedItem );
+
+        if ( relativePath.getNameCount() == 0 )
+        {
+            return exportName;
+        }
+
+        final StringBuilder sb = new StringBuilder( exportName );
+        for ( Path component : relativePath )
+        {
+            sb.append( '/' ).append( component.toString() );
+        }
+        return sb.toString();
     }
 
     @Override

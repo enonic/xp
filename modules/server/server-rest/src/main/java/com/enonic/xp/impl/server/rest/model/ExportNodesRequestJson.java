@@ -12,14 +12,11 @@ public class ExportNodesRequestJson
 
     private final boolean exportWithIds;
 
-    private final boolean includeVersions;
-
     private final boolean archive;
 
     public ExportNodesRequestJson( @JsonProperty("sourceRepoPath") final String sourceRepoPath, //
                                    @JsonProperty("exportName") final String exportName, //
                                    @JsonProperty("exportWithIds") final Boolean exportWithIds, //
-                                   @JsonProperty("includeVersions") final Boolean includeVersions, //
                                    @JsonProperty("archive") final Boolean archive )
     {
         Objects.requireNonNull( sourceRepoPath, "sourceRepoPath is required" );
@@ -28,7 +25,6 @@ public class ExportNodesRequestJson
         this.sourceRepoPath = RepoPath.from( sourceRepoPath );
         this.exportName = exportName;
         this.exportWithIds = exportWithIds != null ? exportWithIds : true;
-        this.includeVersions = includeVersions != null ? includeVersions : false;
         this.archive = archive != null ? archive : false;
     }
 
@@ -45,11 +41,6 @@ public class ExportNodesRequestJson
     public boolean isExportWithIds()
     {
         return exportWithIds;
-    }
-
-    public boolean isIncludeVersions()
-    {
-        return includeVersions;
     }
 
     public boolean isArchive()

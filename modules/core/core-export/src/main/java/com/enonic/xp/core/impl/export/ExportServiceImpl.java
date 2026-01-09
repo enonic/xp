@@ -68,7 +68,6 @@ public class ExportServiceImpl
                 .targetDirectory( targetDirectory )
                 .xpVersion( xpVersion )
                 .exportNodeIds( params.isIncludeNodeIds() )
-                .exportVersions( params.isIncludeVersions() )
                 .nodeExportListener( params.getNodeExportListener() )
                 .build()
                 .execute();

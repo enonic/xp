@@ -47,7 +47,6 @@ public final class RepositoryResource
             .branch( params.getSourceRepoPath().getBranch() )
             .nodePath( params.getSourceRepoPath().getNodePath() )
             .exportName( params.getExportName() )
-            .includeVersions( params.isIncludeVersions() )
             .exportWithIds( params.isExportWithIds() )
             .archive( params.isArchive() )
             .exportService( exportService )
