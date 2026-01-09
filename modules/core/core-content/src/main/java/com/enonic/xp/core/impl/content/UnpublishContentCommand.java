@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Objects;
 
 import com.enonic.xp.content.ContentConstants;
@@ -69,8 +70,8 @@ public class UnpublishContentCommand
                 {
                     nodeService.applyVersionAttributes( ApplyVersionAttributesParams.create()
                                                             .nodeVersionId( deleted.nodeVersionId() )
-                                                            .addAttributes(
-                                                                ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.UNPUBLISH_ATTR ) )
+                                                            .addAttributes( ContentAttributesHelper.versionHistoryAttr(
+                                                                ContentAttributesHelper.UNPUBLISH_ATTR ) )
                                                             .build() );
                 }
             }
@@ -93,18 +94,23 @@ public class UnpublishContentCommand
     {
         for ( final var deleted : deleteNodeResult )
         {
-            final Node updated = nodeService.update( UpdateNodeParams.create().id( deleted ).editor( toBeEdited -> {
-                PropertySet publishInfo = toBeEdited.data.getSet( ContentPropertyNames.PUBLISH_INFO );
-                if ( publishInfo != null )
-                {
-                    publishInfo.removeProperties( ContentPropertyNames.PUBLISH_FROM );
-                    publishInfo.removeProperties( ContentPropertyNames.PUBLISH_TO );
-                    if ( publishInfo.getInstant( ContentPropertyNames.PUBLISH_FIRST ).isAfter( now ) )
+            final UpdateNodeParams updateParams = UpdateNodeParams.create()
+                .id( deleted )
+                .versionAttributes( ContentAttributesHelper.unpublishInfoAttr( List.of( ContentPropertyNames.PUBLISH_INFO ) ) )
+                .editor( toBeEdited -> {
+                    PropertySet publishInfo = toBeEdited.data.getSet( ContentPropertyNames.PUBLISH_INFO );
+                    if ( publishInfo != null )
                     {
-                        publishInfo.removeProperties( ContentPropertyNames.PUBLISH_FIRST );
+                        publishInfo.removeProperties( ContentPropertyNames.PUBLISH_FROM );
+                        publishInfo.removeProperties( ContentPropertyNames.PUBLISH_TO );
+                        if ( publishInfo.getInstant( ContentPropertyNames.PUBLISH_FIRST ).isAfter( now ) )
+                        {
+                            publishInfo.removeProperties( ContentPropertyNames.PUBLISH_FIRST );
+                        }
                     }
-                }
-            } ).build() );
+                } )
+                .build();
+            final Node updated = nodeService.update( updateParams );
 
             nodeService.commit( CommitNodeParams.create()
                                     .nodeCommitEntry( NodeCommitEntry.create().message( ContentConstants.UNPUBLISH_COMMIT_PREFIX ).build() )

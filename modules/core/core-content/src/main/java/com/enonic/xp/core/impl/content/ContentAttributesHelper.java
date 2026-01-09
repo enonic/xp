@@ -112,6 +112,17 @@ public class ContentAttributesHelper
             .build();
     }
 
+    public static Attributes unpublishInfoAttr( final List<String> modifiedFields )
+    {
+        return Attributes.create()
+            .attribute( UNPUBLISH_ATTR, GenericValue.newObject()
+                .put( FIELDS_PROPERTY, GenericValue.fromRawJava( modifiedFields ) )
+                .put( USER_PROPERTY, getCurrentUserKey().toString() )
+                .put( OPTIME_PROPERTY, Instant.now( MILLIS_CLOCK ).toString() )
+                .build() )
+            .build();
+    }
+
     public static Instant getOpTime( final GenericValue attribute )
     {
         return Instant.parse( attribute.property( ContentAttributesHelper.OPTIME_PROPERTY ).asString() );
