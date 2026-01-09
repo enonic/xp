@@ -8,23 +8,22 @@ import com.enonic.xp.annotation.PublicApi;
 @PublicApi
 public final class EditableWorkflow
 {
-    public final Content source;
+    public final WorkflowInfo source;
 
     public WorkflowState state;
 
     public Map<String, WorkflowCheckState> checks;
 
-    public EditableWorkflow( final Content source )
+    public EditableWorkflow( final WorkflowInfo source )
     {
         this.source = source;
-        final WorkflowInfo workflowInfo = source.getWorkflowInfo();
-        this.state = workflowInfo != null ? workflowInfo.getState() : null;
-        this.checks = workflowInfo != null && workflowInfo.getChecks() != null
-            ? new HashMap<>( workflowInfo.getChecks() )
+        this.state = source != null ? source.getState() : null;
+        this.checks = source != null && source.getChecks() != null
+            ? new HashMap<>( source.getChecks() )
             : new HashMap<>();
     }
 
-    public Content build()
+    public WorkflowInfo build()
     {
         final WorkflowInfo.Builder builder = WorkflowInfo.create();
         if ( state != null )
@@ -36,6 +35,6 @@ public final class EditableWorkflow
             builder.checks( checks );
         }
 
-        return Content.create( this.source ).workflowInfo( builder.build() ).build();
+        return builder.build();
     }
 }

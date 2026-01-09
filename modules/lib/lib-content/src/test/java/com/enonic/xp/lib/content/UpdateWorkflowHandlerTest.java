@@ -54,11 +54,13 @@ public class UpdateWorkflowHandlerTest
 
     private UpdateWorkflowResult invokeUpdateWorkflow( final UpdateWorkflowParams params, final Content content )
     {
-        final EditableWorkflow editableWorkflow = new EditableWorkflow( content );
+        final EditableWorkflow editableWorkflow = new EditableWorkflow( content.getWorkflowInfo() );
 
         params.getEditor().edit( editableWorkflow );
 
-        final Content updatedContent = editableWorkflow.build();
+        final Content updatedContent = Content.create( content )
+            .workflowInfo( editableWorkflow.build() )
+            .build();
 
         return UpdateWorkflowResult.create().content( updatedContent ).build();
     }

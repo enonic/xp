@@ -952,7 +952,10 @@ export function updateMetadata(params: UpdateMetadataParams): UpdateMetadataResu
 }
 
 export interface EditableWorkflow {
-    source: Content;
+    source: {
+        state: string;
+        checks: Record<string, string>;
+    };
     state?: string;
     checks?: Record<string, string>;
 }
@@ -976,7 +979,7 @@ interface UpdateWorkflowHandler {
 
 /**
  * This function updates workflow information (state and checks) for a content.
- * The update is applied to both master and draft branches.
+ * The update is applied to the draft branch only.
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.key Path or id to the content.

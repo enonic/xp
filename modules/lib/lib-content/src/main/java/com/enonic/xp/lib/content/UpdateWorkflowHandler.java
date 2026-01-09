@@ -12,8 +12,8 @@ import com.enonic.xp.content.UpdateWorkflowResult;
 import com.enonic.xp.content.WorkflowCheckState;
 import com.enonic.xp.content.WorkflowEditor;
 import com.enonic.xp.content.WorkflowState;
-import com.enonic.xp.lib.content.mapper.ContentMapper;
 import com.enonic.xp.lib.content.mapper.UpdateWorkflowResultMapper;
+import com.enonic.xp.lib.content.mapper.WorkflowInfoMapper;
 import com.enonic.xp.script.ScriptValue;
 
 public final class UpdateWorkflowHandler
@@ -65,7 +65,7 @@ public final class UpdateWorkflowHandler
     private WorkflowEditor newWorkflowEditor()
     {
         return edit -> {
-            final ScriptValue value = this.editor.call( new ContentMapper( edit.source ) );
+            final ScriptValue value = this.editor.call( new WorkflowInfoMapper( edit.source ) );
             if ( value != null )
             {
                 updateWorkflow( edit, value.getMap() );

@@ -1,10 +1,13 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.EditableWorkflow;
 import com.enonic.xp.content.UpdateWorkflowParams;
 import com.enonic.xp.content.UpdateWorkflowResult;
@@ -48,7 +51,7 @@ public class UpdateWorkflowCommand
         final PatchNodeParams patchNodeParams = PatchNodeParamsFactory.create()
             .editedContent( editedContent )
             .versionAttributes( ContentAttributesHelper.updateWorkflowHistoryAttr( modifiedFields ) )
-            .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
+            .branches( Branches.from( ContentConstants.BRANCH_DRAFT ) )
             .contentTypeService( this.contentTypeService )
             .xDataService( this.xDataService )
             .pageDescriptorService( this.pageDescriptorService )
@@ -67,12 +70,32 @@ public class UpdateWorkflowCommand
 
     private Content editWorkflow( final WorkflowEditor editor, final Content original )
     {
-        final EditableWorkflow editableWorkflow = new EditableWorkflow( original );
+        final EditableWorkflow editableWorkflow = new EditableWorkflow( original.getWorkflowInfo() );
         if ( editor != null )
         {
             editor.edit( editableWorkflow );
         }
-        return editableWorkflow.build();
+        
+        final Set<ContentInheritType> updatedInherit = unsetInherit( original.getInherit(), ContentInheritType.CONTENT, ContentInheritType.NAME );
+        
+        return Content.create( original )
+            .workflowInfo( editableWorkflow.build() )
+            .setInherit( updatedInherit )
+            .build();
+    }
+    
+    private Set<ContentInheritType> unsetInherit( final Set<ContentInheritType> inherit, final ContentInheritType... typesToRemove )
+    {
+        final EnumSet<ContentInheritType> result = inherit.isEmpty() 
+            ? EnumSet.noneOf( ContentInheritType.class ) 
+            : EnumSet.copyOf( inherit );
+        
+        for ( ContentInheritType type : typesToRemove )
+        {
+            result.remove( type );
+        }
+        
+        return result;
     }
 
     public static final class Builder
