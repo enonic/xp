@@ -10,6 +10,8 @@ public final class VacuumTaskResult
 
     private final long failed;
 
+    private final long skipped;
+
     private final String taskName;
 
     private VacuumTaskResult( final Builder builder )
@@ -18,6 +20,7 @@ public final class VacuumTaskResult
         deleted = builder.deleted;
         inUse = builder.inUse;
         failed = builder.failed;
+        skipped = builder.skipped;
         taskName = builder.taskName;
     }
 
@@ -41,6 +44,11 @@ public final class VacuumTaskResult
         return failed;
     }
 
+    public long getSkipped()
+    {
+        return skipped;
+    }
+
     public String getTaskName()
     {
         return taskName;
@@ -49,7 +57,7 @@ public final class VacuumTaskResult
     @Override
     public String toString()
     {
-        return "VacuumTaskResult{" + "processed=" + processed + ", deleted=" + deleted + ", failed=" + failed + '}';
+        return "VacuumTaskResult{" + "processed=" + processed + ", deleted=" + deleted + ", failed=" + failed + ", skipped=" + skipped + '}';
     }
 
     public static Builder create()
@@ -66,6 +74,8 @@ public final class VacuumTaskResult
         private long inUse;
 
         private long failed;
+
+        private long skipped;
 
         private String taskName;
 
@@ -95,6 +105,12 @@ public final class VacuumTaskResult
         public Builder failed()
         {
             failed++;
+            return this;
+        }
+
+        public Builder skipped()
+        {
+            skipped++;
             return this;
         }
 

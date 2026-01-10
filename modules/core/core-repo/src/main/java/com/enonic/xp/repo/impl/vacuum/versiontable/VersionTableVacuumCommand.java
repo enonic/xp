@@ -41,6 +41,8 @@ import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositorySegmentUtils;
 import com.enonic.xp.repository.RepositoryService;
+import com.enonic.xp.util.GenericValue;
+import com.enonic.xp.vacuum.VacuumConstants;
 import com.enonic.xp.vacuum.VacuumListener;
 import com.enonic.xp.vacuum.VacuumTaskResult;
 
@@ -198,6 +200,14 @@ public class VersionTableVacuumCommand
     {
         result.processed();
 
+        // Check if version is protected from vacuum
+        if ( isPreventedFromVacuum( version ) )
+        {
+            LOG.debug( "Version prevented from vacuum [{}/ {}]", version.getNodeId(), version.getNodeVersionId() );
+            result.skipped();
+            return false;
+        }
+
         switch ( findVersionsInBranches( repository, version ) )
         {
             case NO_VERSION_FOUND:
@@ -236,6 +246,17 @@ public class VersionTableVacuumCommand
             }
         }
         return nodeFound ? BRANCH_CHECK_RESULT.OTHER_VERSION_FOUND : BRANCH_CHECK_RESULT.NO_VERSION_FOUND;
+    }
+
+    private boolean isPreventedFromVacuum( final NodeVersionMetadata versionMetadata )
+    {
+        if ( versionMetadata.getAttributes() == null )
+        {
+            return false;
+        }
+
+        final GenericValue preventVacuum = versionMetadata.getAttributes().get( VacuumConstants.PREVENT_VACUUM_ATTRIBUTE );
+        return preventVacuum != null && preventVacuum.asBoolean();
     }
 
     private NodeVersionQuery createQuery( NodeVersionId lastVersionId, Instant ageThreshold )
