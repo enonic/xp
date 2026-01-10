@@ -13,7 +13,6 @@ public final class VacuumConstants
      * <p>
      * When this attribute is set to {@code true} on a version, the vacuum process will skip it
      * and preserve the version even if it would normally be eligible for deletion.
-     * </p>
      * <p>
      * Example usage:
      * <pre>
@@ -27,7 +26,6 @@ public final class VacuumConstants
      *         .build());
      * }
      * </pre>
-     * </p>
      *
      * @see com.enonic.xp.node.NodeService#applyVersionAttributes(com.enonic.xp.node.ApplyVersionAttributesParams)
      */
