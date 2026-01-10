@@ -44,6 +44,12 @@ public final class VacuumTaskResult
         return failed;
     }
 
+    /**
+     * Returns the number of versions that were skipped during vacuum.
+     * Versions can be skipped if they are marked with the preventVacuum attribute.
+     *
+     * @return the number of skipped versions
+     */
     public long getSkipped()
     {
         return skipped;
