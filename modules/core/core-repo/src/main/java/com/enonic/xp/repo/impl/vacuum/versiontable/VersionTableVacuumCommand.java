@@ -255,8 +255,8 @@ public class VersionTableVacuumCommand
             return false;
         }
 
-        final GenericValue preventVacuum = versionMetadata.getAttributes().get( VacuumConstants.PREVENT_VACUUM_ATTRIBUTE );
-        return preventVacuum != null && preventVacuum.asBoolean();
+        // Check if vacuum.skip attribute is present (value doesn't matter)
+        return versionMetadata.getAttributes().get( VacuumConstants.PREVENT_VACUUM_ATTRIBUTE ) != null;
     }
 
     private NodeVersionQuery createQuery( NodeVersionId lastVersionId, Instant ageThreshold )

@@ -254,12 +254,12 @@ class VersionTableVacuumTaskTest
             .build() );
         final NodeVersionId firstVersionId = versionsResult.getNodeVersionMetadatas().first().getNodeVersionId();
         
-        // Mark the first version to prevent vacuum
+        // Mark the first version to prevent vacuum (just presence of attribute matters)
         NodeHelper.runAsAdmin( () -> {
             this.nodeService.applyVersionAttributes( ApplyVersionAttributesParams.create()
                 .nodeVersionId( firstVersionId )
                 .addAttributes( Attributes.create()
-                    .attribute( VacuumConstants.PREVENT_VACUUM_ATTRIBUTE, GenericValue.booleanValue( true ) )
+                    .attribute( VacuumConstants.PREVENT_VACUUM_ATTRIBUTE, GenericValue.stringValue( "" ) )
                     .build() )
                 .build() );
             return null;

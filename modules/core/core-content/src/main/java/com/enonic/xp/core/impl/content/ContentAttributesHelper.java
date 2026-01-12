@@ -15,6 +15,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Attributes;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.util.GenericValue;
+import com.enonic.xp.vacuum.VacuumConstants;
 
 public class ContentAttributesHelper
 {
@@ -98,6 +99,7 @@ public class ContentAttributesHelper
                 .put( USER_PROPERTY, getCurrentUserKey().toString() )
                 .put( OPTIME_PROPERTY, Instant.now( MILLIS_CLOCK ).toString() )
                 .build() )
+            .attribute( VacuumConstants.PREVENT_VACUUM_ATTRIBUTE, GenericValue.stringValue( "" ) )
             .build();
     }
 
