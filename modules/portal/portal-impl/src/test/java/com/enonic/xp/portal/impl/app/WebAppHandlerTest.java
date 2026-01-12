@@ -111,5 +111,51 @@ class WebAppHandlerTest
         final WebResponse response = this.handler.doHandle( this.request, null, this.chain );
         assertEquals( HttpStatus.INTERNAL_SERVER_ERROR, response.getStatus() );
     }
+
+    @Test
+    void handle_redirectWhenNoTrailingSlash()
+        throws Exception
+    {
+        this.request.setApplicationKey( ApplicationKey.from( "myapp" ) );
+        this.request.setRawPath( "/webapp/myapp" );
+
+        final WebResponse response = this.handler.doHandle( this.request, null, this.chain );
+        assertEquals( HttpStatus.FOUND, response.getStatus() );
+        assertEquals( "/webapp/myapp/", response.getHeaders().get( "location" ) );
+    }
+
+    @Test
+    void handle_redirectWhenNoTrailingSlashWithQueryString()
+        throws Exception
+    {
+        this.request.setApplicationKey( ApplicationKey.from( "myapp" ) );
+        this.request.setRawPath( "/webapp/myapp" );
+        
+        final HttpServletRequest rawRequest = mock( HttpServletRequest.class );
+        when( rawRequest.getQueryString() ).thenReturn( "param=value&other=test" );
+        this.request.setRawRequest( rawRequest );
+
+        final WebResponse response = this.handler.doHandle( this.request, null, this.chain );
+        assertEquals( HttpStatus.FOUND, response.getStatus() );
+        assertEquals( "/webapp/myapp/?param=value&other=test", response.getHeaders().get( "location" ) );
+    }
+
+    @Test
+    void handle_noRedirectWhenHasTrailingSlash()
+        throws Exception
+    {
+        this.request.setApplicationKey( ApplicationKey.from( "myapp" ) );
+        this.request.setBaseUri( "/webapp/myapp" );
+        this.request.setRawPath( "/webapp/myapp/" );
+
+        final ControllerScript script = mock( ControllerScript.class );
+        when( this.controllerScriptFactory.fromScript( ResourceKey.from( "myapp:/webapp/webapp.js" ) ) ).thenReturn( script );
+
+        final PortalResponse response = PortalResponse.create().build();
+        when( script.execute( any() ) ).thenReturn( response );
+
+        assertSame( response, this.handler.doHandle( this.request, null, this.chain ) );
+        assertEquals( "/webapp/myapp", this.request.getContextPath() );
+    }
 }
 
