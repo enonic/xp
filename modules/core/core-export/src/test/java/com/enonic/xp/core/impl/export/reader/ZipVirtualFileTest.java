@@ -123,6 +123,7 @@ class ZipVirtualFileTest
         try (ZipExportWriter writer = ZipExportWriter.create( tempDir, exportName ))
         {
             writer.writeElement( baseDir.resolve( "a" ).resolve( "b" ).resolve( "c.txt" ), "content" );
+            writer.writeElement( baseDir.resolve( "export.properties" ), "xp.version=1.0" );
         }
 
         final Path zipFile = tempDir.resolve( exportName + ".zip" );
@@ -235,17 +236,17 @@ class ZipVirtualFileTest
 
         try (OutputStream fos = Files.newOutputStream( zipFile ); ZipOutputStream zos = new ZipOutputStream( fos ))
         {
-            // Add __MACOSX folder (should be ignored)
+            // Add __MACOSX folder (should be ignored because no export.properties)
             addZipEntry( zos, "__MACOSX/._file.txt", "macos metadata" );
 
-            // Add actual export folder
+            // Add actual export folder with export.properties
             addZipEntry( zos, "my-export/_/node.xml", "<node/>" );
             addZipEntry( zos, "my-export/export.properties", "xp.version=1.0" );
         }
 
         final VirtualFile root = ZipVirtualFile.from( zipFile );
 
-        // Should use my-export as base, not __MACOSX
+        // Should use my-export as base (has export.properties), not __MACOSX
         assertEquals( "my-export", root.getName() );
         assertTrue( root.exists() );
 
@@ -262,53 +263,74 @@ class ZipVirtualFileTest
 
         try (OutputStream fos = Files.newOutputStream( zipFile ); ZipOutputStream zos = new ZipOutputStream( fos ))
         {
-            // Add hidden folder (should be ignored)
+            // Add hidden folder (should be ignored because no export.properties)
             addZipEntry( zos, ".git/config", "git config" );
 
-            // Add actual export folder
+            // Add actual export folder with export.properties
             addZipEntry( zos, "export-data/_/node.xml", "<node/>" );
+            addZipEntry( zos, "export-data/export.properties", "xp.version=1.0" );
         }
 
         final VirtualFile root = ZipVirtualFile.from( zipFile );
 
-        // Should use export-data as base, not .git
+        // Should use export-data as base (has export.properties), not .git
         assertEquals( "export-data", root.getName() );
     }
 
     @Test
-    void testFallbackToArchiveName()
+    void testSelectsFolderWithExportProperties()
         throws IOException
     {
-        // Create zip with multiple root folders, but one matches archive name
-        final Path zipFile = tempDir.resolve( "my-archive.zip" );
+        // Create zip with multiple root folders, but only one has export.properties
+        final Path zipFile = tempDir.resolve( "multiple-folders.zip" );
 
         try (OutputStream fos = Files.newOutputStream( zipFile ); ZipOutputStream zos = new ZipOutputStream( fos ))
         {
-            // Add multiple root folders
+            // Add folder without export.properties
             addZipEntry( zos, "other-folder/file.txt", "other" );
-            addZipEntry( zos, "my-archive/_/node.xml", "<node/>" );
+
+            // Add folder with export.properties
+            addZipEntry( zos, "correct-export/_/node.xml", "<node/>" );
+            addZipEntry( zos, "correct-export/export.properties", "xp.version=1.0" );
         }
 
         final VirtualFile root = ZipVirtualFile.from( zipFile );
 
-        // Should fallback to archive name (my-archive)
-        assertEquals( "my-archive", root.getName() );
+        // Should use correct-export (has export.properties)
+        assertEquals( "correct-export", root.getName() );
     }
 
     @Test
-    void testThrowsExceptionForMultipleFoldersWithoutArchiveNameMatch()
+    void testThrowsExceptionForMultipleFoldersWithExportProperties()
         throws IOException
     {
         final Path zipFile = tempDir.resolve( "ambiguous.zip" );
 
         try (OutputStream fos = Files.newOutputStream( zipFile ); ZipOutputStream zos = new ZipOutputStream( fos ))
         {
-            // Add multiple root folders, none matching archive name
+            // Add multiple folders with export.properties
+            addZipEntry( zos, "folder1/export.properties", "xp.version=1.0" );
+            addZipEntry( zos, "folder2/export.properties", "xp.version=1.0" );
+        }
+
+        // Should throw exception because multiple folders have export.properties
+        assertThrows( IllegalArgumentException.class, () -> ZipVirtualFile.from( zipFile ) );
+    }
+
+    @Test
+    void testThrowsExceptionForNoExportProperties()
+        throws IOException
+    {
+        final Path zipFile = tempDir.resolve( "no-export-properties.zip" );
+
+        try (OutputStream fos = Files.newOutputStream( zipFile ); ZipOutputStream zos = new ZipOutputStream( fos ))
+        {
+            // Add folders without export.properties
             addZipEntry( zos, "folder1/file.txt", "content1" );
             addZipEntry( zos, "folder2/file.txt", "content2" );
         }
 
-        // Should throw exception because cannot determine base path
+        // Should throw exception because no folder has export.properties
         assertThrows( IllegalArgumentException.class, () -> ZipVirtualFile.from( zipFile ) );
     }
 
@@ -323,26 +345,26 @@ class ZipVirtualFileTest
             // Empty zip - no entries
         }
 
-        // Should throw exception because no root folders found
+        // Should throw exception because no folder with export.properties found
         assertThrows( IllegalArgumentException.class, () -> ZipVirtualFile.from( zipFile ) );
     }
 
     @Test
-    void testSingleRootFolderWithDifferentName()
+    void testSingleFolderWithExportProperties()
         throws IOException
     {
-        // Archive name doesn't match folder name, but there's only one folder
+        // Archive name doesn't match folder name, but folder has export.properties
         final Path zipFile = tempDir.resolve( "archive.zip" );
 
         try (OutputStream fos = Files.newOutputStream( zipFile ); ZipOutputStream zos = new ZipOutputStream( fos ))
         {
             addZipEntry( zos, "different-name/_/node.xml", "<node/>" );
-            addZipEntry( zos, "different-name/data.txt", "data" );
+            addZipEntry( zos, "different-name/export.properties", "xp.version=1.0" );
         }
 
         final VirtualFile root = ZipVirtualFile.from( zipFile );
 
-        // Should use the single root folder name
+        // Should use the folder with export.properties
         assertEquals( "different-name", root.getName() );
     }
 
