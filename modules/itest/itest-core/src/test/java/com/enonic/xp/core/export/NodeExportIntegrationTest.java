@@ -149,7 +149,7 @@ class NodeExportIntegrationTest
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.ROOT ).
-            targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).
+            targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).xpVersion( "1.0.0" ).
             build().
             execute();
 
@@ -177,7 +177,7 @@ class NodeExportIntegrationTest
             .nodeService( this.nodeService )
             .nodeExportWriter( new FileExportWriter() )
             .sourceNodePath( NodePath.ROOT )
-            .targetDirectory( this.temporaryFolder.resolve( "myExport" ) )
+            .targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).xpVersion( "1.0.0" )
             .nodeExportListener( nodeExportListener ).
             build().
             execute();
@@ -219,7 +219,7 @@ class NodeExportIntegrationTest
             .nodeService( this.nodeService )
             .nodeExportWriter( new FileExportWriter() )
             .sourceNodePath( NodePath.ROOT )
-            .targetDirectory( this.temporaryFolder.resolve( "myExport" ) )
+            .targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).xpVersion( "1.0.0" )
             .build()
             .execute();
 
@@ -243,7 +243,7 @@ class NodeExportIntegrationTest
             .nodeService( this.nodeService )
             .nodeExportWriter( new FileExportWriter() )
             .sourceNodePath( new NodePath( "/mynode/child1/child1_1" ) )
-            .targetDirectory( this.temporaryFolder.resolve( "myExport" ) )
+            .targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).xpVersion( "1.0.0" )
             .build()
             .execute();
 
@@ -268,7 +268,7 @@ class NodeExportIntegrationTest
             .nodeService( this.nodeService )
             .nodeExportWriter( new FileExportWriter() )
             .sourceNodePath( new NodePath( "/mynode/child1" ) )
-            .targetDirectory( this.temporaryFolder.resolve( "myExport" ) )
+            .targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).xpVersion( "1.0.0" )
             .build()
             .execute();
 
@@ -301,7 +301,7 @@ class NodeExportIntegrationTest
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.ROOT ).
-            targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).
+            targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).xpVersion( "1.0.0" ).
             build().
             execute();
 
@@ -321,22 +321,11 @@ class NodeExportIntegrationTest
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.ROOT ).
-            targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).
+            xpVersion( "X.Y.Z-SNAPSHOT" ).targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).
             build().
             execute();
 
-        assertFileDoesNotExist( "myExport/export.properties" );
-
-        NodeExporter.create().
-            nodeService( this.nodeService ).
-            nodeExportWriter( new FileExportWriter() ).
-            sourceNodePath( NodePath.ROOT ).
-            xpVersion( "X.Y.Z-SNAPSHOT" ).
-            targetDirectory( this.temporaryFolder.resolve( "myRoot" ).resolve( "myExport" ) ).
-            build().
-            execute();
-
-        assertFileExists( "myRoot/myExport/export.properties" );
+        assertFileExists( "myExport/export.properties" );
     }
 
     @Test
@@ -346,14 +335,22 @@ class NodeExportIntegrationTest
         refresh();
 
         final ExportWriter exportWriter = Mockito.mock( ExportWriter.class );
-        Mockito.doThrow( new RuntimeException( "exception message" ) ).when( exportWriter ).writeElement( Mockito.isA( Path.class ),
-                                                                                                          Mockito.anyString() );
+
+        // Allow export.properties to be written, but throw exception for node.xml
+        Mockito.doAnswer( invocation -> {
+            Path path = invocation.getArgument( 0 );
+            if ( path.toString().endsWith( "export.properties" ) )
+            {
+                return null; // Allow export.properties
+            }
+            throw new RuntimeException( "exception message" );
+        } ).when( exportWriter ).writeElement( Mockito.isA( Path.class ), Mockito.anyString() );
 
         final NodeExportResult result = NodeExporter.create().
             nodeService( this.nodeService ).
             nodeExportWriter( exportWriter ).
             sourceNodePath( NodePath.ROOT ).
-            targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).
+            targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).xpVersion( "1.0.0" ).
             build().
             execute();
 
@@ -368,7 +365,7 @@ class NodeExportIntegrationTest
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.create().addElement( "unknown" ).build() ).
-            targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).
+            targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).xpVersion( "1.0.0" ).
             build().
             execute();
 
@@ -384,7 +381,7 @@ class NodeExportIntegrationTest
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.ROOT ).
-            targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).
+            targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).xpVersion( "1.0.0" ).
             build().
             execute();
     }
