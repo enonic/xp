@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.export;
 
 import java.nio.file.Path;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +51,7 @@ public class NodeExporter
         this.nodeService = builder.nodeService;
         this.exportWriter = builder.exportWriter;
         this.targetDirectory = builder.targetDirectory;
-        this.xpVersion = builder.xpVersion;
+        this.xpVersion = Objects.requireNonNull( builder.xpVersion );
         this.nodeExportListener = builder.nodeExportListener;
     }
 
@@ -109,8 +110,7 @@ public class NodeExporter
 
     private void doWriteNode( final Node node, final Path baseFolder )
     {
-        final NodePath newParentPath =
-            new NodePath( "/" + node.toString().substring( this.sourceNodePath.toString().length() ) );
+        final NodePath newParentPath = new NodePath( "/" + node.toString().substring( this.sourceNodePath.toString().length() ) );
 
         final Node relativeNode = Node.create( node ).parentPath( newParentPath ).build();
 
@@ -135,9 +135,8 @@ public class NodeExporter
 
     private FindNodesByParentResult doExport( final NodePath nodePath )
     {
-        final FindNodesByParentResult children = nodeService.findByParent( FindNodesByParentParams.create().
-            parentPath( nodePath ).
-            build() );
+        final FindNodesByParentResult children =
+            nodeService.findByParent( FindNodesByParentParams.create().parentPath( nodePath ).build() );
 
         final Nodes childNodes = this.nodeService.getByIds( children.getNodeIds() );
 
@@ -192,23 +191,14 @@ public class NodeExporter
 
     private void writeExportProperties()
     {
-        if ( xpVersion != null )
-        {
-            final Path exportPropertiesPath = this.targetDirectory.resolve( NodeExportPathResolver.EXPORT_PROPERTIES_NAME );
-
-            exportWriter.writeElement( exportPropertiesPath, "xp.version = " + xpVersion );
-        }
+        final Path exportPropertiesPath = this.targetDirectory.resolve( NodeExportPathResolver.EXPORT_PROPERTIES_NAME );
+        exportWriter.writeElement( exportPropertiesPath, "xp.version = " + xpVersion );
     }
 
     private long getRecursiveNodeCountByParentPath( final NodePath nodePath )
     {
-        return nodeService.
-            findByParent( FindNodesByParentParams.create().
-                countOnly( true ).
-                parentPath( nodePath ).
-                recursive( true ).
-                build() ).
-            getTotalHits();
+        return nodeService.findByParent(
+            FindNodesByParentParams.create().countOnly( true ).parentPath( nodePath ).recursive( true ).build() ).getTotalHits();
     }
 
     private Path resolveNodeDataFolder( final Node node )

@@ -68,9 +68,8 @@ public class ZipVirtualFile
 
     private static String resolveBasePath( final ZipFile zipFile, final Path zipPath )
     {
-        final Set<String> rootFolders = new HashSet<>();
+        final Set<String> foldersWithExportProperties = new HashSet<>();
         final Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
-        final String archiveName = getArchiveNameWithoutExtension( zipPath );
 
         while ( entries.hasMoreElements() )
         {
@@ -82,41 +81,27 @@ public class ZipVirtualFile
             {
                 final String rootFolder = name.substring( 0, slashIndex );
 
-                if ( isSystemFolder( rootFolder ) )
+                // Check if this is an export.properties file in a root folder
+                if ( name.equals( rootFolder + "/export.properties" ) )
                 {
-                    continue;
+                    foldersWithExportProperties.add( rootFolder );
+                    if ( foldersWithExportProperties.size() > 2 )
+                    {
+                        throw new IllegalArgumentException( "Cannot determine base path for zip archive '" + zipPath.getFileName() +
+                                                                "'. No folder with export.properties found." );
+                    }
                 }
-
-                // Early exit: found single non-system folder matching archive name
-                if ( rootFolder.equals( archiveName ) )
-                {
-                    return archiveName;
-                }
-
-                rootFolders.add( rootFolder );
             }
         }
 
-        if ( rootFolders.size() == 1 )
+        if ( foldersWithExportProperties.size() == 1 )
         {
-            return rootFolders.iterator().next();
+            return foldersWithExportProperties.iterator().next();
         }
 
-        throw new IllegalArgumentException( "Cannot determine base path for zip archive '" + zipPath.getFileName() +
-                                                "'. Expected exactly one root folder or a folder matching archive name '" + archiveName +
-                                                "'. Found: " + rootFolders );
-    }
-
-    private static boolean isSystemFolder( final String folderName )
-    {
-        return folderName.startsWith( "__" ) || folderName.startsWith( "." );
-    }
-
-    private static String getArchiveNameWithoutExtension( final Path zipPath )
-    {
-        final String fileName = zipPath.getFileName().toString();
-        final int dotIndex = fileName.lastIndexOf( '.' );
-        return dotIndex > 0 ? fileName.substring( 0, dotIndex ) : fileName;
+        throw new IllegalArgumentException(
+            "Cannot determine base path for zip archive '" + zipPath.getFileName() + "'. Found multiple folders with export.properties: " +
+                foldersWithExportProperties );
     }
 
     @Override
