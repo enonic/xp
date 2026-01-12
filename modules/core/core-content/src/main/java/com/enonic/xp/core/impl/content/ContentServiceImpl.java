@@ -304,16 +304,6 @@ public class ContentServiceImpl
         return content;
     }
 
-    private void requireAdminRole()
-    {
-        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-
-        if ( !( authInfo.hasRole( RoleKeys.ADMIN ) || authInfo.hasRole( RoleKeys.CONTENT_MANAGER_ADMIN ) ) )
-        {
-            throw new ForbiddenAccessException( authInfo.getUser() );
-        }
-    }
-
     @Override
     public DeleteContentsResult delete( final DeleteContentParams params )
     {
@@ -914,8 +904,6 @@ public class ContentServiceImpl
     @NullMarked
     public UpdateContentMetadataResult updateMetadata( final UpdateContentMetadataParams params )
     {
-        requireAdminRole();
-
         verifyDraftBranch();
 
         final UpdateContentMetadataResult result = UpdateMetadataCommand.create( params )
@@ -943,6 +931,16 @@ public class ContentServiceImpl
         if ( !ContentConstants.BRANCH_DRAFT.equals( ContextAccessor.current().getBranch() ) )
         {
             throw new IllegalStateException( String.format( "Branch must be %s", ContentConstants.BRANCH_DRAFT ) );
+        }
+    }
+
+    private static void requireAdminRole()
+    {
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+
+        if ( !( authInfo.hasRole( RoleKeys.ADMIN ) || authInfo.hasRole( RoleKeys.CONTENT_MANAGER_ADMIN ) ) )
+        {
+            throw new ForbiddenAccessException( authInfo.getUser() );
         }
     }
 
