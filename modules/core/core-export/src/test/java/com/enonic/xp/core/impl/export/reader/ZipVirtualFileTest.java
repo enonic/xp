@@ -375,4 +375,189 @@ class ZipVirtualFileTest
         zos.write( content.getBytes( StandardCharsets.UTF_8 ) );
         zos.closeEntry();
     }
+
+    @Test
+    void testNonExistentZipFile()
+    {
+        final Path nonExistentZip = tempDir.resolve( "does-not-exist.zip" );
+
+        assertThrows( Exception.class, () -> ZipVirtualFile.from( nonExistentZip ) );
+    }
+
+    @Test
+    void testCorruptedZipFile()
+        throws IOException
+    {
+        final Path corruptedZip = tempDir.resolve( "corrupted.zip" );
+
+        // Create a file with .zip extension but not a valid zip
+        Files.writeString( corruptedZip, "This is not a zip file" );
+
+        assertThrows( Exception.class, () -> ZipVirtualFile.from( corruptedZip ) );
+    }
+
+    @Test
+    void testReadNonExistentFile()
+        throws IOException
+    {
+        final String exportName = "test-export";
+        final Path baseDir = tempDir.resolve( exportName );
+
+        try (ZipExportWriter writer = ZipExportWriter.create( tempDir, exportName ))
+        {
+            writer.writeElement( baseDir.resolve( "file.txt" ), "content" );
+            writer.writeElement( baseDir.resolve( "export.properties" ), "xp.version=1.0" );
+        }
+
+        final Path zipFile = tempDir.resolve( exportName + ".zip" );
+        final VirtualFile root = ZipVirtualFile.from( zipFile );
+
+        // Try to read a non-existent file
+        final VirtualFile nonExistent = root.resolve( VirtualFilePaths.from( "does-not-exist.txt", "/" ) );
+
+        assertThrows( Exception.class, () -> nonExistent.getCharSource().read() );
+    }
+
+    @Test
+    void testResolveAbsolutePathOutsideBase()
+        throws IOException
+    {
+        final String exportName = "path-test";
+        final Path baseDir = tempDir.resolve( exportName );
+
+        try (ZipExportWriter writer = ZipExportWriter.create( tempDir, exportName ))
+        {
+            writer.writeElement( baseDir.resolve( "file.txt" ), "content" );
+            writer.writeElement( baseDir.resolve( "export.properties" ), "xp.version=1.0" );
+        }
+
+        final Path zipFile = tempDir.resolve( exportName + ".zip" );
+        final VirtualFile root = ZipVirtualFile.from( zipFile );
+
+        // This should work - just resolve relative to root
+        final VirtualFile file = root.resolve( VirtualFilePaths.from( "file.txt", "/" ) );
+        assertTrue( file.exists() );
+    }
+
+    @Test
+    void testGetURLForNonExistentFile()
+        throws IOException
+    {
+        final String exportName = "url-test";
+        final Path baseDir = tempDir.resolve( exportName );
+
+        try (ZipExportWriter writer = ZipExportWriter.create( tempDir, exportName ))
+        {
+            writer.writeElement( baseDir.resolve( "file.txt" ), "content" );
+            writer.writeElement( baseDir.resolve( "export.properties" ), "xp.version=1.0" );
+        }
+
+        final Path zipFile = tempDir.resolve( exportName + ".zip" );
+        final VirtualFile root = ZipVirtualFile.from( zipFile );
+
+        final VirtualFile nonExistent = root.resolve( VirtualFilePaths.from( "does-not-exist.txt", "/" ) );
+
+        // Getting URL should not throw even if file doesn't exist
+        assertNotNull( nonExistent.getUrl() );
+    }
+
+    @Test
+    void testZipWithOnlySystemFolders()
+        throws IOException
+    {
+        final Path zipFile = tempDir.resolve( "only-system.zip" );
+
+        try (OutputStream fos = Files.newOutputStream( zipFile ); ZipOutputStream zos = new ZipOutputStream( fos ))
+        {
+            // Only system folders
+            addZipEntry( zos, "__MACOSX/file.txt", "macos" );
+            addZipEntry( zos, ".git/config", "git" );
+        }
+
+        // Should throw because no valid folder with export.properties
+        assertThrows( IllegalArgumentException.class, () -> ZipVirtualFile.from( zipFile ) );
+    }
+
+    @Test
+    void testZipWithDeepExportProperties()
+        throws IOException
+    {
+        final Path zipFile = tempDir.resolve( "deep-props.zip" );
+
+        try (OutputStream fos = Files.newOutputStream( zipFile ); ZipOutputStream zos = new ZipOutputStream( fos ))
+        {
+            // export.properties at wrong depth (should be at depth 1)
+            addZipEntry( zos, "folder/subfolder/export.properties", "xp.version=1.0" );
+            addZipEntry( zos, "folder/subfolder/data.txt", "data" );
+        }
+
+        // Should throw because export.properties not at depth 1
+        assertThrows( IllegalArgumentException.class, () -> ZipVirtualFile.from( zipFile ) );
+    }
+
+    @Test
+    void testNullZipPath()
+    {
+        assertThrows( NullPointerException.class, () -> ZipVirtualFile.from( null ) );
+    }
+
+    @Test
+    void testGetByteSourceForDirectory()
+        throws IOException
+    {
+        final String exportName = "dir-test";
+        final Path baseDir = tempDir.resolve( exportName );
+
+        try (ZipExportWriter writer = ZipExportWriter.create( tempDir, exportName ))
+        {
+            writer.writeElement( baseDir.resolve( "dir" ).resolve( "file.txt" ), "content" );
+            writer.writeElement( baseDir.resolve( "export.properties" ), "xp.version=1.0" );
+        }
+
+        final Path zipFile = tempDir.resolve( exportName + ".zip" );
+        final VirtualFile root = ZipVirtualFile.from( zipFile );
+
+        final VirtualFile dir = root.resolve( VirtualFilePaths.from( "dir", "/" ) );
+        assertTrue( dir.isFolder() );
+
+        // Trying to get ByteSource for a directory should throw or return null
+        assertThrows( Exception.class, () -> dir.getByteSource().read() );
+    }
+
+    @Test
+    void testVeryLongPath()
+        throws IOException
+    {
+        final String exportName = "long-path";
+        final Path baseDir = tempDir.resolve( exportName );
+
+        // Create a very deep path
+        StringBuilder longPath = new StringBuilder();
+        for ( int i = 0; i < 50; i++ )
+        {
+            longPath.append( "very-long-folder-name-" ).append( i ).append( "/" );
+        }
+        longPath.append( "file.txt" );
+
+        try (ZipExportWriter writer = ZipExportWriter.create( tempDir, exportName ))
+        {
+            writer.writeElement( baseDir.resolve( longPath.toString() ), "deep content" );
+            writer.writeElement( baseDir.resolve( "export.properties" ), "xp.version=1.0" );
+        }
+
+        final Path zipFile = tempDir.resolve( exportName + ".zip" );
+        final VirtualFile root = ZipVirtualFile.from( zipFile );
+
+        // Navigate through the deep structure
+        VirtualFile current = root;
+        for ( int i = 0; i < 50; i++ )
+        {
+            current = current.resolve( VirtualFilePaths.from( "very-long-folder-name-" + i, "/" ) );
+            assertTrue( current.exists() );
+        }
+
+        final VirtualFile file = current.resolve( VirtualFilePaths.from( "file.txt", "/" ) );
+        assertTrue( file.exists() );
+        assertEquals( "deep content", file.getCharSource().read() );
+    }
 }

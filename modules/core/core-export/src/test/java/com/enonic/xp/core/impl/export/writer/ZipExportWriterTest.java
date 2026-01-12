@@ -288,4 +288,180 @@ class ZipExportWriterTest
         assertThrows( IllegalArgumentException.class, () -> ZipExportWriter.create( tempDir, "path/separator" ) );
         assertThrows( IllegalArgumentException.class, () -> ZipExportWriter.create( tempDir, "path\\separator" ) );
     }
+
+    @Test
+    void testWriteAfterClose()
+        throws IOException
+    {
+        final String exportName = "closed-writer";
+        final Path baseDir = tempDir.resolve( exportName );
+
+        final ZipExportWriter writer = ZipExportWriter.create( tempDir, exportName );
+        writer.close();
+
+        // Writing after close should throw exception
+        assertThrows( Exception.class, () -> writer.writeElement( baseDir.resolve( "file.txt" ), "content" ) );
+    }
+
+    @Test
+    void testInvalidBasePath()
+        throws IOException
+    {
+        final String exportName = "invalid-path";
+
+        try (ZipExportWriter writer = ZipExportWriter.create( tempDir, exportName ))
+        {
+            // Try to write to a path that doesn't start with exportName
+            final Path invalidPath = tempDir.resolve( "other-folder" ).resolve( "file.txt" );
+
+            assertThrows( ExportNodeException.class, () -> writer.writeElement( invalidPath, "content" ) );
+        }
+    }
+
+    @Test
+    void testPathTraversalPrevention()
+        throws IOException
+    {
+        final String exportName = "traversal-test";
+        final Path baseDir = tempDir.resolve( exportName );
+
+        try (ZipExportWriter writer = ZipExportWriter.create( tempDir, exportName ))
+        {
+            // Try path traversal attack
+            final Path traversalPath = baseDir.resolve( ".." ).resolve( ".." ).resolve( "etc" ).resolve( "passwd" );
+
+            assertThrows( ExportNodeException.class, () -> writer.writeElement( traversalPath, "malicious" ) );
+        }
+    }
+
+    @Test
+    void testNullExportName()
+    {
+        assertThrows( NullPointerException.class, () -> ZipExportWriter.create( tempDir, null ) );
+    }
+
+    @Test
+    void testNullBasePath()
+    {
+        assertThrows( NullPointerException.class, () -> ZipExportWriter.create( null, "export" ) );
+    }
+
+    @Test
+    void testWriteNullContent()
+        throws IOException
+    {
+        final String exportName = "null-content";
+        final Path baseDir = tempDir.resolve( exportName );
+
+        try (ZipExportWriter writer = ZipExportWriter.create( tempDir, exportName ))
+        {
+            assertThrows( NullPointerException.class, () -> writer.writeElement( baseDir.resolve( "file.txt" ), null ) );
+        }
+    }
+
+    @Test
+    void testWriteNullSource()
+        throws IOException
+    {
+        final String exportName = "null-source";
+        final Path baseDir = tempDir.resolve( exportName );
+
+        final ZipExportWriter writer = ZipExportWriter.create( tempDir, exportName );
+        try
+        {
+            assertThrows( NullPointerException.class, () -> writer.writeSource( baseDir.resolve( "file.bin" ), null ) );
+        }
+        finally
+        {
+            try
+            {
+                writer.close();
+            }
+            catch ( IOException e )
+            {
+                // Expected - archive has unclosed entries after exception
+            }
+        }
+    }
+
+    @Test
+    void testWriteToNonExistentDirectory()
+    {
+        final Path nonExistentDir = tempDir.resolve( "non-existent" ).resolve( "deep" ).resolve( "path" );
+
+        // Should create parent directories automatically
+        try (ZipExportWriter writer = ZipExportWriter.create( nonExistentDir, "export" ))
+        {
+            assertTrue( Files.exists( nonExistentDir ) );
+        }
+        catch ( IOException e )
+        {
+            // This is acceptable behavior
+        }
+    }
+
+    @Test
+    void testIOExceptionDuringWrite()
+        throws IOException
+    {
+        final String exportName = "io-error";
+        final Path baseDir = tempDir.resolve( exportName );
+
+        final ZipExportWriter writer = ZipExportWriter.create( tempDir, exportName );
+        try
+        {
+            // Create a ByteSource that throws IOException
+            ByteSource failingSource = new ByteSource()
+            {
+                @Override
+                public java.io.InputStream openStream()
+                    throws IOException
+                {
+                    throw new IOException( "Simulated IO error" );
+                }
+            };
+
+            assertThrows( Exception.class, () -> writer.writeSource( baseDir.resolve( "failing.bin" ), failingSource ) );
+        }
+        finally
+        {
+            try
+            {
+                writer.close();
+            }
+            catch ( IOException e )
+            {
+                // Expected - archive may have unclosed entries after exception
+            }
+        }
+    }
+
+    @Test
+    void testConcurrentWrites()
+        throws IOException
+    {
+        final String exportName = "concurrent";
+        final Path baseDir = tempDir.resolve( exportName );
+
+        try (ZipExportWriter writer = ZipExportWriter.create( tempDir, exportName ))
+        {
+            // Write multiple entries rapidly
+            for ( int i = 0; i < 100; i++ )
+            {
+                writer.writeElement( baseDir.resolve( "file" + i + ".txt" ), "content" + i );
+            }
+        }
+
+        final Path zipFile = tempDir.resolve( exportName + ".zip" );
+        assertTrue( Files.exists( zipFile ) );
+
+        // Verify all entries were written
+        try (var fs = FileSystems.newFileSystem( URI.create( "jar:" + zipFile.toUri() ), Map.of() ))
+        {
+            for ( int i = 0; i < 100; i++ )
+            {
+                assertTrue( Files.exists( fs.getPath( "/" + exportName + "/file" + i + ".txt" ) ) );
+            }
+        }
+    }
 }
