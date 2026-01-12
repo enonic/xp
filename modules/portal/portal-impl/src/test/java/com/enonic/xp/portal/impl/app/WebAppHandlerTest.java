@@ -130,7 +130,7 @@ class WebAppHandlerTest
     {
         this.request.setApplicationKey( ApplicationKey.from( "myapp" ) );
         this.request.setRawPath( "/webapp/myapp" );
-        
+
         final HttpServletRequest rawRequest = mock( HttpServletRequest.class );
         when( rawRequest.getQueryString() ).thenReturn( "param=value&other=test" );
         this.request.setRawRequest( rawRequest );
