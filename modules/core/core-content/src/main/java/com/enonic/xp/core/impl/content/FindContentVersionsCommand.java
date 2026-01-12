@@ -2,18 +2,24 @@ package com.enonic.xp.core.impl.content;
 
 import java.util.List;
 
+import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentVersion;
 import com.enonic.xp.content.ContentVersionId;
 import com.enonic.xp.content.ContentVersions;
 import com.enonic.xp.content.FindContentVersionsResult;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.GetNodeVersionsParams;
+import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionQueryResult;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.acl.Permission;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.GenericValue;
 
 public class FindContentVersionsCommand
@@ -42,6 +48,10 @@ public class FindContentVersionsCommand
 
     public FindContentVersionsResult execute()
     {
+        final Node node = nodeService.getById( NodeId.from( this.contentId ) );
+        
+        checkModifyPermission( node );
+
         final NodeVersionQueryResult nodeVersionQueryResult = nodeService.findVersions(
             GetNodeVersionsParams.create().nodeId( NodeId.from( this.contentId ) ).from( this.from ).size( this.size ).build() );
 
@@ -51,6 +61,28 @@ public class FindContentVersionsCommand
         return findContentVersionsResultBuilder.contentVersions(
                 nodeVersionQueryResult.getNodeVersionMetadatas().stream().map( this::createVersion ).collect( ContentVersions.collector() ) )
             .build();
+    }
+
+    private void checkModifyPermission( final Node node )
+    {
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+        
+        // Admin users always have access
+        if ( authInfo.hasRole( RoleKeys.ADMIN ) )
+        {
+            return;
+        }
+        
+        // Check if user has MODIFY permission
+        final boolean hasModifyPermission = node.getPermissions().isAllowedFor( authInfo.getPrincipals(), Permission.MODIFY );
+        
+        if ( !hasModifyPermission )
+        {
+            throw new ContentAccessException( null,
+                                             authInfo.getUser(), 
+                                             ContentNodeHelper.translateNodePathToContentPath( node.path() ), 
+                                             Permission.MODIFY );
+        }
     }
 
     public ContentVersion createVersion( final NodeVersionMetadata nodeVersionMetadata )
