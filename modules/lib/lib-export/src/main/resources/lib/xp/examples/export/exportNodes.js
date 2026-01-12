@@ -7,8 +7,6 @@ var t = require('/lib/xp/testing');
 let exportNodes = exportLib.exportNodes({
     sourceNodePath: '/content',
     exportName: 'export-1',
-    includeNodeIds: true,
-    includeVersions: true
 });
 // END
 

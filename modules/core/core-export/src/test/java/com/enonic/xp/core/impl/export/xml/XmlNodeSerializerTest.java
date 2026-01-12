@@ -41,7 +41,7 @@ class XmlNodeSerializerTest
         final Node node = doCreateNode( instant );
 
         final XmlNodeSerializer serializer = new XmlNodeSerializer();
-        serializer.node( node ).exportNodeIds( true );
+        serializer.node( node );
 
         final String result = serializer.serialize();
 

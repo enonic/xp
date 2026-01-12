@@ -1,7 +1,8 @@
 package com.enonic.xp.core.impl.export;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Path;
-import java.util.Objects;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -9,7 +10,10 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.core.impl.export.reader.ZipVirtualFile;
+import com.enonic.xp.core.impl.export.writer.ExportWriter;
 import com.enonic.xp.core.impl.export.writer.FileExportWriter;
+import com.enonic.xp.core.impl.export.writer.ZipExportWriter;
 import com.enonic.xp.export.ExportNodesParams;
 import com.enonic.xp.export.ExportService;
 import com.enonic.xp.export.ImportNodesParams;
@@ -51,30 +55,59 @@ public class ExportServiceImpl
     {
         final Path targetDirectory = exportConfiguration.getExportsDir().resolve( params.getExportName() );
 
-        return NodeExporter.create()
-            .sourceNodePath( params.getSourceNodePath() )
-            .nodeService( this.nodeService )
-            .nodeExportWriter( new FileExportWriter() )
-            .targetDirectory( targetDirectory )
-            .xpVersion( xpVersion )
-            .exportNodeIds( params.isIncludeNodeIds() )
-            .exportVersions( params.isIncludeVersions() )
-            .nodeExportListener( params.getNodeExportListener() )
-            .build()
-            .execute();
+        final ExportWriter exportWriter = params.isArchive()
+            ? ZipExportWriter.create( exportConfiguration.getExportsDir(), params.getExportName() )
+            : new FileExportWriter();
+
+        try ( exportWriter )
+        {
+            return NodeExporter.create()
+                .sourceNodePath( params.getSourceNodePath() )
+                .nodeService( this.nodeService )
+                .nodeExportWriter( exportWriter )
+                .targetDirectory( targetDirectory )
+                .xpVersion( xpVersion )
+                .nodeExportListener( params.getNodeExportListener() )
+                .build()
+                .execute();
+        }
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
     }
 
     @Override
     public NodeImportResult importNodes( final ImportNodesParams params )
     {
-        VirtualFile source = Objects.requireNonNullElseGet( params.getSource(), () -> VirtualFiles.from(
-            exportConfiguration.getExportsDir().resolve( params.getExportName() ) ) );
+        VirtualFile source = params.getSource();
+
+        if ( source == null )
+        {
+            final Path exportPath = exportConfiguration.getExportsDir().resolve( params.getExportName() );
+
+            if ( params.isArchive() )
+            {
+                final Path zipPath = exportConfiguration.getExportsDir().resolve( params.getExportName() + ".zip" );
+                try
+                {
+                    source = ZipVirtualFile.from( zipPath );
+                }
+                catch ( IOException e )
+                {
+                    throw new UncheckedIOException( e );
+                }
+            }
+            else
+            {
+                source = VirtualFiles.from( exportPath );
+            }
+        }
 
         final NodeImportResult result = NodeImporter.create()
             .nodeService( this.nodeService )
             .sourceDirectory( source )
-            .targetNodePath( params.getTargetNodePath() )
-            .importNodeIds( params.isImportNodeids() )
+            .targetNodePath( params.getTargetNodePath() ).importNodeIds( params.isImportNodeIds() )
             .importPermissions( params.isImportPermissions() )
             .xslt( params.getXslt() )
             .xsltParams( params.getXsltParams() )

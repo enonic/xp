@@ -5,7 +5,6 @@ import java.nio.file.Path;
 import java.time.Instant;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -45,7 +44,7 @@ class NodeExportIntegrationTest
     {
         final Node myNode = createNode( NodePath.ROOT, "myNode" );
 
-        final NodeExportResult result = doExportRoot( false );
+        final NodeExportResult result = doExportRoot();
 
         assertEquals( 2, result.size() );
         assertExported( myNode );
@@ -65,7 +64,7 @@ class NodeExportIntegrationTest
             attachBinary( binaryRef, ByteSource.wrap( "this is a binary file".getBytes() ) ).
             build() );
 
-        final NodeExportResult result = doExportRoot( false );
+        final NodeExportResult result = doExportRoot();
 
         assertEquals( 2, result.size() );
         assertEquals( 1, result.getExportedBinaries().size() );
@@ -82,14 +81,13 @@ class NodeExportIntegrationTest
             editor( ( n ) -> n.data.addInstant( "myInstant", Instant.now() ) ).
             build() );
 
-        final NodeExportResult result = doExportRoot( true );
+        final NodeExportResult result = doExportRoot();
 
         assertEquals( 2, result.size() );
 
         printPaths();
 
         assertExported( updatedNode );
-        assertVersionExported( updatedNode, node );
     }
 
     @Test
@@ -103,13 +101,12 @@ class NodeExportIntegrationTest
                 .getFirst()
                 .getNode();
 
-        final NodeExportResult result = doExportRoot( true );
+        final NodeExportResult result = doExportRoot();
 
         assertEquals( 2, result.size() );
 
         printPaths();
         assertExported( renamedNode );
-        assertVersionExported( renamedNode, originalNode );
     }
 
     @Test
@@ -134,14 +131,13 @@ class NodeExportIntegrationTest
             attachBinary( binaryRefUpdated, ByteSource.wrap( "this is another binary file".getBytes() ) ).
             build() );
 
-        final NodeExportResult result = doExportRoot( true );
+        final NodeExportResult result = doExportRoot();
 
         printPaths();
 
         assertEquals( 2, result.size() );
         assertExported( myNode );
         assertBinaryExported( updatedNode, binaryRefUpdated );
-        assertVersionBinaryExported( updatedNode, myNode, binaryRef );
     }
 
     @Test
@@ -153,7 +149,7 @@ class NodeExportIntegrationTest
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.ROOT ).
-            targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).
+            targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).xpVersion( "1.0.0" ).
             build().
             execute();
 
@@ -181,7 +177,7 @@ class NodeExportIntegrationTest
             .nodeService( this.nodeService )
             .nodeExportWriter( new FileExportWriter() )
             .sourceNodePath( NodePath.ROOT )
-            .targetDirectory( this.temporaryFolder.resolve( "myExport" ) )
+            .targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).xpVersion( "1.0.0" )
             .nodeExportListener( nodeExportListener ).
             build().
             execute();
@@ -223,7 +219,7 @@ class NodeExportIntegrationTest
             .nodeService( this.nodeService )
             .nodeExportWriter( new FileExportWriter() )
             .sourceNodePath( NodePath.ROOT )
-            .targetDirectory( this.temporaryFolder.resolve( "myExport" ) )
+            .targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).xpVersion( "1.0.0" )
             .build()
             .execute();
 
@@ -247,7 +243,7 @@ class NodeExportIntegrationTest
             .nodeService( this.nodeService )
             .nodeExportWriter( new FileExportWriter() )
             .sourceNodePath( new NodePath( "/mynode/child1/child1_1" ) )
-            .targetDirectory( this.temporaryFolder.resolve( "myExport" ) )
+            .targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).xpVersion( "1.0.0" )
             .build()
             .execute();
 
@@ -272,7 +268,7 @@ class NodeExportIntegrationTest
             .nodeService( this.nodeService )
             .nodeExportWriter( new FileExportWriter() )
             .sourceNodePath( new NodePath( "/mynode/child1" ) )
-            .targetDirectory( this.temporaryFolder.resolve( "myExport" ) )
+            .targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).xpVersion( "1.0.0" )
             .build()
             .execute();
 
@@ -284,7 +280,6 @@ class NodeExportIntegrationTest
         assertFileExists( "myExport/child1/child1_1/child1_1_2/_/node.xml" );
     }
 
-    @Disabled("Wait with this until decided how to handle versions. Only in dump, or in export too?")
     @Test
     void create_binary_files()
     {
@@ -306,7 +301,7 @@ class NodeExportIntegrationTest
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.ROOT ).
-            targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).
+            targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).xpVersion( "1.0.0" ).
             build().
             execute();
 
@@ -326,22 +321,11 @@ class NodeExportIntegrationTest
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.ROOT ).
-            targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).
+            xpVersion( "X.Y.Z-SNAPSHOT" ).targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).
             build().
             execute();
 
-        assertFileDoesNotExist( "myExport/export.properties" );
-
-        NodeExporter.create().
-            nodeService( this.nodeService ).
-            nodeExportWriter( new FileExportWriter() ).
-            sourceNodePath( NodePath.ROOT ).
-            xpVersion( "X.Y.Z-SNAPSHOT" ).
-            targetDirectory( this.temporaryFolder.resolve( "myRoot" ).resolve( "myExport" ) ).
-            build().
-            execute();
-
-        assertFileExists( "myRoot/myExport/export.properties" );
+        assertFileExists( "myExport/export.properties" );
     }
 
     @Test
@@ -351,14 +335,22 @@ class NodeExportIntegrationTest
         refresh();
 
         final ExportWriter exportWriter = Mockito.mock( ExportWriter.class );
-        Mockito.doThrow( new RuntimeException( "exception message" ) ).when( exportWriter ).writeElement( Mockito.isA( Path.class ),
-                                                                                                          Mockito.anyString() );
+
+        // Allow export.properties to be written, but throw exception for node.xml
+        Mockito.doAnswer( invocation -> {
+            Path path = invocation.getArgument( 0 );
+            if ( path.toString().endsWith( "export.properties" ) )
+            {
+                return null; // Allow export.properties
+            }
+            throw new RuntimeException( "exception message" );
+        } ).when( exportWriter ).writeElement( Mockito.isA( Path.class ), Mockito.anyString() );
 
         final NodeExportResult result = NodeExporter.create().
             nodeService( this.nodeService ).
             nodeExportWriter( exportWriter ).
             sourceNodePath( NodePath.ROOT ).
-            targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).
+            targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).xpVersion( "1.0.0" ).
             build().
             execute();
 
@@ -373,7 +365,7 @@ class NodeExportIntegrationTest
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.create().addElement( "unknown" ).build() ).
-            targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).
+            targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).xpVersion( "1.0.0" ).
             build().
             execute();
 
@@ -383,14 +375,13 @@ class NodeExportIntegrationTest
 
     // Asserts and Utils
 
-    private NodeExportResult doExportRoot( final boolean exportVersions )
+    private NodeExportResult doExportRoot()
     {
         return NodeExporter.create().
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.ROOT ).
-            targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).
-            exportVersions( exportVersions ).
+            targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).xpVersion( "1.0.0" ).
             build().
             execute();
     }
@@ -398,14 +389,6 @@ class NodeExportIntegrationTest
     private void assertExported( final Node node )
     {
         assertThat( getBaseFolder( node ).resolve( NodeExportPathResolver.NODE_XML_EXPORT_NAME ) ).exists();
-    }
-
-    private void assertVersionExported( final Node exportedNode, final Node exportedVersion )
-    {
-        assertThat( getBaseFolder( exportedNode ).
-            resolve( NodeExportPathResolver.VERSION_FOLDER ).
-            resolve( exportedVersion.getNodeVersionId().toString() ).
-            resolve( exportedVersion.name().toString() ).resolve( NodeExportPathResolver.NODE_XML_EXPORT_NAME ) ).exists();
     }
 
     private void assertBinaryExported( final Node node, final BinaryReference ref )

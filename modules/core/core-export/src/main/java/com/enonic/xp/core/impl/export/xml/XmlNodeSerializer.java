@@ -29,8 +29,6 @@ public final class XmlNodeSerializer
 
     private Node node;
 
-    private boolean exportNodeIds;
-
     public XmlNodeSerializer()
     {
         this.builder = DomBuilder.create( "node" );
@@ -42,12 +40,6 @@ public final class XmlNodeSerializer
         return this;
     }
 
-    public XmlNodeSerializer exportNodeIds( final boolean value )
-    {
-        this.exportNodeIds = value;
-        return this;
-    }
-
     public String serialize()
     {
         serializeNode();
@@ -56,11 +48,7 @@ public final class XmlNodeSerializer
 
     private void serializeNode()
     {
-        if ( this.exportNodeIds )
-        {
-            serializeValueElement( "id", this.node.id() );
-        }
-
+        serializeValueElement( "id", this.node.id() );
         serializeValueElement( "childOrder", this.node.getChildOrder() );
         serializeValueElement( "nodeType", this.node.getNodeType() );
         serializeValueElement( "timestamp", this.node.getTimestamp() );

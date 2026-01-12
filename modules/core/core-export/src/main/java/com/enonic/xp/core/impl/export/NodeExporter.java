@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.export;
 
 import java.nio.file.Path;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,13 +18,9 @@ import com.enonic.xp.export.NodeExportResult;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
-import com.enonic.xp.node.GetNodeVersionsParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.NodeVersion;
-import com.enonic.xp.node.NodeVersionMetadata;
-import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.util.BinaryReference;
@@ -42,10 +39,6 @@ public class NodeExporter
 
     private final String xpVersion;
 
-    private final boolean exportNodeIds;
-
-    private final boolean exportVersions;
-
     private final NodeExportListener nodeExportListener;
 
     private final NodeExportResult.Builder result = NodeExportResult.create();
@@ -58,9 +51,7 @@ public class NodeExporter
         this.nodeService = builder.nodeService;
         this.exportWriter = builder.exportWriter;
         this.targetDirectory = builder.targetDirectory;
-        this.xpVersion = builder.xpVersion;
-        this.exportNodeIds = builder.exportNodeIds;
-        this.exportVersions = builder.exportVersions;
+        this.xpVersion = Objects.requireNonNull( builder.xpVersion );
         this.nodeExportListener = builder.nodeExportListener;
     }
 
@@ -114,66 +105,16 @@ public class NodeExporter
 
     private void writeNode( final Node node )
     {
-        writeVersion( node, resolveNodeDataFolder( node ) );
-
-        if ( exportVersions )
-        {
-            writeVersions( node );
-        }
+        doWriteNode( node, resolveNodeDataFolder( node ) );
     }
 
-    private void writeVersions( final Node node )
+    private void doWriteNode( final Node node, final Path baseFolder )
     {
-        if ( node.isRoot() )
-        {
-            return;
-        }
-
-        final NodeVersionQueryResult versions = this.nodeService.findVersions( GetNodeVersionsParams.create().
-            from( 0 ).
-            size( -1 ).
-            nodeId( node.id() ).
-            build() );
-
-        for ( final NodeVersionMetadata version : versions.getNodeVersionMetadatas() )
-        {
-            if ( version.getNodeVersionId().equals( node.getNodeVersionId() ) )
-            {
-                continue;
-            }
-
-            final NodeVersion nodeVersion = this.nodeService.getByNodeVersionKey( version.getNodeVersionKey() );
-
-            final Node exportNode = Node.create( nodeVersion )
-                .name( version.getNodePath().getName() )
-                .parentPath( version.getNodePath().getParentPath() )
-                .timestamp( version.getTimestamp() )
-                .nodeVersionId( version.getNodeVersionId() )
-                .build();
-
-            writeVersion( exportNode, resolveNodeVersionBasePath( node, version ) );
-        }
-    }
-
-    private Path resolveNodeVersionBasePath( final Node originalNode, final NodeVersionMetadata nodeVersion )
-    {
-        return resolveNodeDataFolder( originalNode ).
-            resolve( NodeExportPathResolver.VERSION_FOLDER ).
-            resolve( nodeVersion.getNodeVersionId().toString() ).
-            resolve( nodeVersion.getNodePath().getName().toString() );
-    }
-
-    private void writeVersion( final Node node, final Path baseFolder )
-    {
-        final NodePath newParentPath =
-            new NodePath( "/" + node.toString().substring( this.sourceNodePath.toString().length() ) );
+        final NodePath newParentPath = new NodePath( "/" + node.toString().substring( this.sourceNodePath.toString().length() ) );
 
         final Node relativeNode = Node.create( node ).parentPath( newParentPath ).build();
 
-        final XmlNodeSerializer serializer = new XmlNodeSerializer();
-        serializer.exportNodeIds( this.exportNodeIds );
-        serializer.node( relativeNode );
-        final String serializedNode = serializer.serialize();
+        final String serializedNode = new XmlNodeSerializer().node( relativeNode ).serialize();
 
         final Path nodeXmlPath = baseFolder.resolve( NodeExportPathResolver.NODE_XML_EXPORT_NAME );
         exportWriter.writeElement( nodeXmlPath, serializedNode );
@@ -194,9 +135,8 @@ public class NodeExporter
 
     private FindNodesByParentResult doExport( final NodePath nodePath )
     {
-        final FindNodesByParentResult children = nodeService.findByParent( FindNodesByParentParams.create().
-            parentPath( nodePath ).
-            build() );
+        final FindNodesByParentResult children =
+            nodeService.findByParent( FindNodesByParentParams.create().parentPath( nodePath ).build() );
 
         final Nodes childNodes = this.nodeService.getByIds( children.getNodeIds() );
 
@@ -251,23 +191,14 @@ public class NodeExporter
 
     private void writeExportProperties()
     {
-        if ( xpVersion != null )
-        {
-            final Path exportPropertiesPath = this.targetDirectory.resolve( NodeExportPathResolver.EXPORT_PROPERTIES_NAME );
-
-            exportWriter.writeElement( exportPropertiesPath, "xp.version = " + xpVersion );
-        }
+        final Path exportPropertiesPath = this.targetDirectory.resolve( NodeExportPathResolver.EXPORT_PROPERTIES_NAME );
+        exportWriter.writeElement( exportPropertiesPath, "xp.version = " + xpVersion );
     }
 
     private long getRecursiveNodeCountByParentPath( final NodePath nodePath )
     {
-        return nodeService.
-            findByParent( FindNodesByParentParams.create().
-                countOnly( true ).
-                parentPath( nodePath ).
-                recursive( true ).
-                build() ).
-            getTotalHits();
+        return nodeService.findByParent(
+            FindNodesByParentParams.create().countOnly( true ).parentPath( nodePath ).recursive( true ).build() ).getTotalHits();
     }
 
     private Path resolveNodeDataFolder( final Node node )
@@ -314,10 +245,6 @@ public class NodeExporter
 
         private String xpVersion;
 
-        private boolean exportNodeIds = true;
-
-        private boolean exportVersions = false;
-
         private NodeExportListener nodeExportListener;
 
         private Builder()
@@ -351,18 +278,6 @@ public class NodeExporter
         public Builder xpVersion( final String xpVersion )
         {
             this.xpVersion = xpVersion;
-            return this;
-        }
-
-        public Builder exportNodeIds( final boolean exportNodeIds )
-        {
-            this.exportNodeIds = exportNodeIds;
-            return this;
-        }
-
-        public Builder exportVersions( final boolean exportVersions )
-        {
-            this.exportVersions = exportVersions;
             return this;
         }
 

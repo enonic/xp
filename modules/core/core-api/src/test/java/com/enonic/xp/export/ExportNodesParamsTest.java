@@ -14,10 +14,9 @@ class ExportNodesParamsTest
     {
         ExportNodesParams.Builder builder = ExportNodesParams.create();
 
-        builder.includeNodeIds( true ).sourceNodePath( NodePath.ROOT ).exportName( "target" );
+        builder.sourceNodePath( NodePath.ROOT ).exportName( "target" );
         ExportNodesParams result = builder.build();
 
-        assertTrue( result.isIncludeNodeIds() );
         assertTrue( result.getSourceNodePath().isRoot() );
         assertEquals( "target", result.getExportName() );
     }

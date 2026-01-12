@@ -118,8 +118,6 @@ export function importNodes(params: ImportNodesParams): ImportNodesResult {
 export interface ExportNodesParams {
     sourceNodePath: string;
     exportName: string;
-    includeNodeIds?: boolean;
-    includeVersions?: boolean;
     nodeResolved?: (numberOfNodes: number) => void;
     nodeExported?: (numberOfExportedNodes: number) => void;
 }
@@ -139,10 +137,6 @@ interface ExportHandler {
 
     setExportName(value: string): void;
 
-    setIncludeNodeIds(value: boolean): void;
-
-    setIncludeVersions(value: boolean): void;
-
     setNodeExported(fn?: ((i: number) => void) | null): void;
 
     setNodeResolved(fn?: ((i: number) => void) | null): void;
@@ -159,8 +153,6 @@ interface ExportHandler {
  * @param {object} params JSON with the parameters.
  * @param {string} params.sourceNodePath Source nodes path.
  * @param {string} params.exportName Export name.
- * @param {boolean} [params.includeNodeIds=true] Set to true to export node IDs.
- * @param {boolean} [params.includeVersions=false] Set to true to export all node versions.
  * @param {function} [params.nodeResolved] A function to be called before export starts with number of nodes to export.
  * @param {function} [params.nodeExported] A function to be called during export with number of nodes exported since last call.
  *
@@ -173,8 +165,6 @@ export function exportNodes(params: ExportNodesParams): ExportNodesResult {
     const {
         sourceNodePath,
         exportName,
-        includeNodeIds = true,
-        includeVersions = false,
         nodeResolved,
         nodeExported,
     } = params ?? {};
@@ -183,8 +173,6 @@ export function exportNodes(params: ExportNodesParams): ExportNodesResult {
 
     bean.setSourceNodePath(sourceNodePath);
     bean.setExportName(exportName);
-    bean.setIncludeNodeIds(includeNodeIds);
-    bean.setIncludeVersions(includeVersions);
     bean.setNodeExported(__.nullOrValue(nodeExported));
     bean.setNodeResolved(__.nullOrValue(nodeResolved));
 
