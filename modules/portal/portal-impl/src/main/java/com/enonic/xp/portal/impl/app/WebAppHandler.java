@@ -66,6 +66,24 @@ public final class WebAppHandler
         final ApplicationKey applicationKey = ApplicationKey.from( matcher.group( 1 ) );
         final String restPath = matcher.group( 2 );
 
+        // Redirect if URL doesn't end with trailing slash (restPath is null for /webapp/{appname})
+        if ( restPath == null )
+        {
+            String redirectUrl = portalRequest.getRawPath() + "/";
+            
+            // Preserve query string if present
+            final String queryString = portalRequest.getRawRequest().getQueryString();
+            if ( queryString != null )
+            {
+                redirectUrl = redirectUrl + "?" + queryString;
+            }
+            
+            return WebResponse.create().
+                status( com.enonic.xp.web.HttpStatus.FOUND ).
+                header( "Location", redirectUrl ).
+                build();
+        }
+
         final Trace trace = Tracer.newTrace( "renderApp" );
         if ( trace == null )
         {
