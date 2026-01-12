@@ -41,6 +41,7 @@ import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositorySegmentUtils;
 import com.enonic.xp.repository.RepositoryService;
+import com.enonic.xp.vacuum.VacuumConstants;
 import com.enonic.xp.vacuum.VacuumListener;
 import com.enonic.xp.vacuum.VacuumTaskResult;
 
@@ -67,11 +68,6 @@ public class VersionTableVacuumCommand
     private final int batchSize;
 
     private VacuumTaskResult.Builder result;
-
-    private enum BRANCH_CHECK_RESULT
-    {
-        SAME_VERSION_FOUND, OTHER_VERSION_FOUND, NO_VERSION_FOUND
-    }
 
     private VersionTableVacuumCommand( final Builder builder )
     {
@@ -142,10 +138,11 @@ public class VersionTableVacuumCommand
 
             for ( NodeVersionMetadata version : versions )
             {
-                final boolean toDelete = processVersion( repository, version );
+                result.processed();
+                final boolean toDelete = canDeleteVersion( repository, version );
                 if ( toDelete )
                 {
-                    LOG.debug( "Version's timestamp = '{}', nodeId = '{}', versionId = '{}'", version.getTimestamp(), version.getNodeId(),
+                    LOG.debug( "Delete version timestamp = '{}', nodeId = '{}', versionId = '{}'", version.getTimestamp(), version.getNodeId(),
                                version.getNodeVersionId() );
                     result.deleted();
                     versionService.delete( version.getNodeVersionId(), context );
@@ -155,10 +152,7 @@ public class VersionTableVacuumCommand
                         binaryBlobToCheckSet.addAll( version.getBinaryBlobKeys().getSet() );
                     }
                 }
-                else
-                {
-                    result.inUse();
-                }
+
                 lastVersionId = version.getNodeVersionId();
                 counter++;
             }
@@ -194,27 +188,10 @@ public class VersionTableVacuumCommand
         blobStore.removeRecord( segment, blobKey );
     }
 
-    private boolean processVersion( final Repository repository, final NodeVersionMetadata version )
+    private boolean canDeleteVersion( final Repository repository, final NodeVersionMetadata version )
     {
-        result.processed();
-
-        switch ( findVersionsInBranches( repository, version ) )
-        {
-            case NO_VERSION_FOUND:
-                LOG.debug( "No version found in branch for [{}/ {}]", version.getNodeId(), version.getNodeVersionId() );
-                return true;
-            case OTHER_VERSION_FOUND:
-                LOG.debug( "Other version found in branch for [{}/ {}]", version.getNodeId(), version.getNodeVersionId() );
-                return version.getNodeCommitId() == null;
-            default:
-                return false;
-        }
-    }
-
-    private BRANCH_CHECK_RESULT findVersionsInBranches( final Repository repository, final NodeVersionMetadata versionMetadata )
-    {
-        final NodeId nodeId = versionMetadata.getNodeId();
-        final NodeVersionId versionId = versionMetadata.getNodeVersionId();
+        final NodeId nodeId = version.getNodeId();
+        final NodeVersionId versionId = version.getNodeVersionId();
 
         boolean nodeFound = false;
         for ( final Branch branch : repository.getBranches() )
@@ -227,7 +204,8 @@ public class VersionTableVacuumCommand
             {
                 if ( versionId.equals( node.getVersionId() ) )
                 {
-                    return BRANCH_CHECK_RESULT.SAME_VERSION_FOUND;
+                    result.inUse();
+                    return false;
                 }
                 else
                 {
@@ -235,7 +213,22 @@ public class VersionTableVacuumCommand
                 }
             }
         }
-        return nodeFound ? BRANCH_CHECK_RESULT.OTHER_VERSION_FOUND : BRANCH_CHECK_RESULT.NO_VERSION_FOUND;
+        if ( nodeFound )
+        {
+            boolean skip = version.getNodeCommitId() != null ||
+                version.getAttributes() != null && version.getAttributes().get( VacuumConstants.VACUUM_SKIP_ATTRIBUTE ) != null;
+            if ( skip )
+            {
+                LOG.debug( "Skipping version found in branch for [{}/ {}]", nodeId, versionId );
+                result.skipped();
+            }
+            return !skip;
+        }
+        else
+        {
+            LOG.debug( "No version found in branch for [{}/ {}]", nodeId, versionId );
+            return true;
+        }
     }
 
     private NodeVersionQuery createQuery( NodeVersionId lastVersionId, Instant ageThreshold )

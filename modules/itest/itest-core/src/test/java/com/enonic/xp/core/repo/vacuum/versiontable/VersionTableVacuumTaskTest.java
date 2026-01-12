@@ -16,9 +16,13 @@ import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.UpdateNodeParams;
+import com.enonic.xp.node.ApplyVersionAttributesParams;
+import com.enonic.xp.node.Attributes;
 import com.enonic.xp.repo.impl.node.NodeHelper;
 import com.enonic.xp.repo.impl.vacuum.VacuumTaskParams;
 import com.enonic.xp.repo.impl.vacuum.versiontable.VersionTableVacuumTask;
@@ -30,8 +34,11 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.util.GenericValue;
+import com.enonic.xp.vacuum.VacuumConstants;
 import com.enonic.xp.vacuum.VacuumTaskResult;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class VersionTableVacuumTaskTest
@@ -234,5 +241,59 @@ class VersionTableVacuumTaskTest
                 editor( node -> node.data.setLong( "someValue", value ) ).
                 build() );
         }
+    }
+
+    @Test
+    void version_with_vacuumSkip_attribute_not_deleted()
+    {
+        final Node node1 = createNode( NodePath.ROOT, "node1" );
+        refresh();
+        
+        // Get the first version ID
+        final NodeVersionQueryResult versionsResult = this.nodeService.findVersions( NodeVersionQuery.create()
+            .nodeId( node1.id() )
+            .size( 1 )
+            .build() );
+        final NodeVersionId firstVersionId = versionsResult.getNodeVersionMetadatas().first().getNodeVersionId();
+        
+        // Mark the first version to prevent vacuum
+        NodeHelper.runAsAdmin( () -> {
+            this.nodeService.applyVersionAttributes( ApplyVersionAttributesParams.create()
+                .nodeVersionId( firstVersionId )
+                .addAttributes( Attributes.create()
+                    .attribute( VacuumConstants.VACUUM_SKIP_ATTRIBUTE, GenericValue.newObject().build() )
+                    .build() )
+                .build() );
+            return null;
+        } );
+        
+        // Update the node to create more versions
+        updateNode( node1.id(), 2 );
+        pushNodes( WS_OTHER, node1.id() );
+        // Delete the node
+        doDeleteNode( node1.id() );
+        refresh();
+        
+        // Should have 3 versions total (1 initial + 2 updates, delete doesn't create version)
+        assertVersions( node1.id(), 3 );
+        
+        // Run vacuum
+        final VacuumTaskResult result = NodeHelper.runAsAdmin( () -> this.task.execute( VacuumTaskParams.create()
+            .vacuumStartedAt( Instant.now() )
+            .ageThreshold( NEGATIVE_AGE_THRESHOLD_MILLIS )
+            .build() ) );
+        refresh();
+
+        assertEquals( 1, result.getSkipped() );
+
+        // One version kept because it is in one of the branches, another because its not is in use and vacuum.skip is in place
+        assertVersions( node1.id(), 2 );
+
+        // Verify it's the vacuum.skip version remains - event after it is not use in any branch
+        final NodeVersionQueryResult remainingVersions = this.nodeService.findVersions( NodeVersionQuery.create()
+            .nodeId( node1.id() )
+            .size( -1 )
+            .build() );
+        assertThat( remainingVersions.getNodeVersionMetadatas() ).map( NodeVersionMetadata::getNodeVersionId ).contains( firstVersionId );
     }
 }

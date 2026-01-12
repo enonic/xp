@@ -15,6 +15,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Attributes;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.util.GenericValue;
+import com.enonic.xp.vacuum.VacuumConstants;
 
 public class ContentAttributesHelper
 {
@@ -79,6 +80,17 @@ public class ContentAttributesHelper
             .build();
     }
 
+    public static Attributes versionHistoryAttrNoVacuum( final String key )
+    {
+        return Attributes.create()
+            .attribute( key, GenericValue.newObject()
+                .put( USER_PROPERTY, getCurrentUserKey().toString() )
+                .put( OPTIME_PROPERTY, Instant.now( MILLIS_CLOCK ).toString() )
+                .build() )
+            .attribute( VacuumConstants.VACUUM_SKIP_ATTRIBUTE, GenericValue.newObject().build() )
+            .build();
+    }
+
     public static Attributes moveVersionHistoryAttr( final List<String> modifiedFields )
     {
         return Attributes.create()
@@ -98,6 +110,7 @@ public class ContentAttributesHelper
                 .put( USER_PROPERTY, getCurrentUserKey().toString() )
                 .put( OPTIME_PROPERTY, Instant.now( MILLIS_CLOCK ).toString() )
                 .build() )
+            .attribute( VacuumConstants.VACUUM_SKIP_ATTRIBUTE, GenericValue.newObject().build() )
             .build();
     }
 
@@ -120,6 +133,7 @@ public class ContentAttributesHelper
                 .put( USER_PROPERTY, getCurrentUserKey().toString() )
                 .put( OPTIME_PROPERTY, Instant.now( MILLIS_CLOCK ).toString() )
                 .build() )
+            .attribute( VacuumConstants.VACUUM_SKIP_ATTRIBUTE, GenericValue.newObject().build() )
             .build();
     }
 
