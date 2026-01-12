@@ -16,6 +16,7 @@ import com.enonic.xp.portal.impl.websocket.WebSocketEndpointImpl;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
+import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
@@ -70,16 +71,16 @@ public final class WebAppHandler
         if ( restPath == null )
         {
             String redirectUrl = portalRequest.getRawPath() + "/";
-            
+
             // Preserve query string if present
             final String queryString = portalRequest.getRawRequest().getQueryString();
             if ( queryString != null )
             {
                 redirectUrl = redirectUrl + "?" + queryString;
             }
-            
+
             return WebResponse.create().
-                status( com.enonic.xp.web.HttpStatus.FOUND ).
+                status( HttpStatus.FOUND ).
                 header( "Location", redirectUrl ).
                 build();
         }
