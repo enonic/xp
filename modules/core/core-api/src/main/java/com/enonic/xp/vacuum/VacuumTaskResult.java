@@ -46,7 +46,6 @@ public final class VacuumTaskResult
 
     /**
      * Returns the number of versions that were skipped during vacuum.
-     * Versions can be skipped if they are marked with the preventVacuum attribute.
      *
      * @return the number of skipped versions
      */

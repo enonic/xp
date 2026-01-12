@@ -17,6 +17,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.UpdateNodeParams;
@@ -37,6 +38,7 @@ import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.vacuum.VacuumConstants;
 import com.enonic.xp.vacuum.VacuumTaskResult;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class VersionTableVacuumTaskTest
@@ -242,7 +244,7 @@ class VersionTableVacuumTaskTest
     }
 
     @Test
-    void version_with_preventVacuum_attribute_not_deleted()
+    void version_with_vacuumSkip_attribute_not_deleted()
     {
         final Node node1 = createNode( NodePath.ROOT, "node1" );
         refresh();
@@ -254,12 +256,12 @@ class VersionTableVacuumTaskTest
             .build() );
         final NodeVersionId firstVersionId = versionsResult.getNodeVersionMetadatas().first().getNodeVersionId();
         
-        // Mark the first version to prevent vacuum (just presence of attribute matters)
+        // Mark the first version to prevent vacuum
         NodeHelper.runAsAdmin( () -> {
             this.nodeService.applyVersionAttributes( ApplyVersionAttributesParams.create()
                 .nodeVersionId( firstVersionId )
                 .addAttributes( Attributes.create()
-                    .attribute( VacuumConstants.PREVENT_VACUUM_ATTRIBUTE, GenericValue.stringValue( "" ) )
+                    .attribute( VacuumConstants.VACUUM_SKIP_ATTRIBUTE, GenericValue.newObject().build() )
                     .build() )
                 .build() );
             return null;
@@ -267,7 +269,7 @@ class VersionTableVacuumTaskTest
         
         // Update the node to create more versions
         updateNode( node1.id(), 2 );
-        
+        pushNodes( WS_OTHER, node1.id() );
         // Delete the node
         doDeleteNode( node1.id() );
         refresh();
@@ -281,19 +283,17 @@ class VersionTableVacuumTaskTest
             .ageThreshold( NEGATIVE_AGE_THRESHOLD_MILLIS )
             .build() ) );
         refresh();
-        
-        // The protected version should be skipped
-        assertEquals( 1, result.getSkipped(), "One version should have been skipped" );
-        
-        // Only the first version (protected) should remain
-        assertVersions( node1.id(), 1 );
-        
-        // Verify it's the first version that remains
+
+        assertEquals( 1, result.getSkipped() );
+
+        // One version kept because it is in one of the branches, another because its not is in use and vacuum.skip is in place
+        assertVersions( node1.id(), 2 );
+
+        // Verify it's the vacuum.skip version remains - event after it is not use in any branch
         final NodeVersionQueryResult remainingVersions = this.nodeService.findVersions( NodeVersionQuery.create()
             .nodeId( node1.id() )
-            .size( 1 )
+            .size( -1 )
             .build() );
-        assertEquals( firstVersionId, remainingVersions.getNodeVersionMetadatas().first().getNodeVersionId(),
-            "The protected version should remain" );
+        assertThat( remainingVersions.getNodeVersionMetadatas() ).map( NodeVersionMetadata::getNodeVersionId ).contains( firstVersionId );
     }
 }

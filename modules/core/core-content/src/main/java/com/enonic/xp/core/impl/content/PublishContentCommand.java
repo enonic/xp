@@ -128,7 +128,7 @@ public class PublishContentCommand
             nodeService.applyVersionAttributes( ApplyVersionAttributesParams.create()
                                                     .nodeVersionId( pushNodeResult.getNodeVersionId() )
                                                     .addAttributes(
-                                                        ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.PUBLISH_ATTR ) )
+                                                        ContentAttributesHelper.versionHistoryAttrNoVacuum( ContentAttributesHelper.PUBLISH_ATTR ) )
                                                     .build() );
         }
 
