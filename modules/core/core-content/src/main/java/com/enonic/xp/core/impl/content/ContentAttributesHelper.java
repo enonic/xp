@@ -80,17 +80,6 @@ public class ContentAttributesHelper
             .build();
     }
 
-    public static Attributes versionHistoryAttrNoVacuum( final String key )
-    {
-        return Attributes.create()
-            .attribute( key, GenericValue.newObject()
-                .put( USER_PROPERTY, getCurrentUserKey().toString() )
-                .put( OPTIME_PROPERTY, Instant.now( MILLIS_CLOCK ).toString() )
-                .build() )
-            .attribute( VacuumConstants.VACUUM_SKIP_ATTRIBUTE, GenericValue.newObject().build() )
-            .build();
-    }
-
     public static Attributes moveVersionHistoryAttr( final List<String> modifiedFields )
     {
         return Attributes.create()
