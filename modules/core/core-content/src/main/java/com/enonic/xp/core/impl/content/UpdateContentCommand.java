@@ -96,7 +96,7 @@ final class UpdateContentCommand
             return contentBeforeChange;
         }
 
-        editedContent = editContentWorkflow( editedContent );
+        editedContent = postEditContentMetadata( editedContent );
 
         checkAccess( contentBeforeChange, editedContent );
         validate( editedContent );
@@ -129,16 +129,16 @@ final class UpdateContentCommand
     private Content editContentMetadata( Content content )
     {
         final PatchableContent patchableContent = new PatchableContent( content );
-        patchableContent.inherit.setPatcher( c -> stopDataInherit( c.inherit.originalValue ) );
         patchableContent.attachments.setPatcher( c -> mergeExistingAndUpdatedAttachments( c.attachments.originalValue ) );
         patchableContent.validationErrors.setPatcher( c -> validateContent( c.source ) );
         patchableContent.valid.setPatcher( c -> !c.validationErrors.getProducedValue().hasErrors() );
         return patchableContent.build();
     }
 
-    private Content editContentWorkflow( Content content )
+    private Content postEditContentMetadata( Content content )
     {
         final PatchableContent patchableContent = new PatchableContent( content );
+        patchableContent.inherit.setPatcher( c -> stopDataInherit( c.inherit.originalValue ) );
         patchableContent.workflowInfo.setValue( Objects.requireNonNullElse( workflowInfo, WorkflowInfo.inProgress() ) );
         patchableContent.modifier.setValue( getCurrentUserKey() );
         patchableContent.modifiedTime.setValue( Instant.now() );

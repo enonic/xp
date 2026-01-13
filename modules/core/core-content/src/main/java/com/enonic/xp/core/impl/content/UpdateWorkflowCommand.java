@@ -1,13 +1,10 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.EnumSet;
 import java.util.List;
-import java.util.Set;
 
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
-import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.EditableWorkflow;
 import com.enonic.xp.content.UpdateWorkflowParams;
 import com.enonic.xp.content.UpdateWorkflowResult;
@@ -63,9 +60,7 @@ public class UpdateWorkflowCommand
 
         final PatchNodeResult result = nodeService.patch( patchNodeParams );
 
-        return UpdateWorkflowResult.create()
-            .content( ContentNodeTranslator.fromNode( result.getResults().getFirst().node() ) )
-            .build();
+        return UpdateWorkflowResult.create().content( ContentNodeTranslator.fromNode( result.getResults().getFirst().node() ) ).build();
     }
 
     private Content editWorkflow( final WorkflowEditor editor, final Content original )
@@ -75,32 +70,11 @@ public class UpdateWorkflowCommand
         {
             editor.edit( editableWorkflow );
         }
-        
-        final Set<ContentInheritType> updatedInherit = unsetInherit( original.getInherit(), ContentInheritType.CONTENT, ContentInheritType.NAME );
-        
+
         return Content.create( original )
             .workflowInfo( editableWorkflow.build() )
-            .setInherit( updatedInherit )
+            .setInherit( stopDataInherit( original.getInherit() ) )
             .build();
-    }
-    
-    private Set<ContentInheritType> unsetInherit( final Set<ContentInheritType> inherit, final ContentInheritType... typesToRemove )
-    {
-        if ( inherit == null )
-        {
-            return EnumSet.noneOf( ContentInheritType.class );
-        }
-        
-        final EnumSet<ContentInheritType> result = inherit.isEmpty() 
-            ? EnumSet.noneOf( ContentInheritType.class ) 
-            : EnumSet.copyOf( inherit );
-        
-        for ( ContentInheritType type : typesToRemove )
-        {
-            result.remove( type );
-        }
-        
-        return result;
     }
 
     public static final class Builder

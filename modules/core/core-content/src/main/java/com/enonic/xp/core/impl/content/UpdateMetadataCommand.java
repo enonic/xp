@@ -5,7 +5,6 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentMetadataEditor;
 import com.enonic.xp.content.EditableContentMetadata;
-import com.enonic.xp.content.PatchableContent;
 import com.enonic.xp.content.UpdateContentMetadataParams;
 import com.enonic.xp.content.UpdateContentMetadataResult;
 import com.enonic.xp.node.PatchNodeParams;
@@ -42,7 +41,8 @@ public class UpdateMetadataCommand
         final Content contentBeforeChange = getContent( params.getContentId() );
 
         Content editedContent = editMetadata( params.getEditor(), contentBeforeChange );
-        editedContent = editContentInherit( editedContent );
+
+        editedContent = Content.create( editedContent ).setInherit( stopDataInherit( editedContent.getInherit() ) ).build();
 
         final String[] modifiedFields = ContentAttributesHelper.modifiedFields( contentBeforeChange, editedContent );
 
@@ -74,13 +74,6 @@ public class UpdateMetadataCommand
             editor.edit( editableMetadata );
         }
         return editableMetadata.build();
-    }
-
-    private Content editContentInherit( final Content content )
-    {
-        final PatchableContent patchableContent = new PatchableContent( content );
-        patchableContent.inherit.setPatcher( c -> stopDataInherit( c.inherit.originalValue ) );
-        return patchableContent.build();
     }
 
     public static final class Builder

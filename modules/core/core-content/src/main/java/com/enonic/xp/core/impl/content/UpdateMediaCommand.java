@@ -60,13 +60,11 @@ final class UpdateMediaCommand
         final ContentTypeName resolvedTypeFromMimeType = ContentTypeFromMimeTypeResolver.resolve( mediaType );
         final ContentTypeName type = resolvedTypeFromMimeType != null
             ? resolvedTypeFromMimeType
-            : isExecutableContentType( mediaType, params.getName() )
-                ? ContentTypeName.executableMedia()
-                : ContentTypeName.unknownMedia();
+            : isExecutableContentType( mediaType, params.getName() ) ? ContentTypeName.executableMedia() : ContentTypeName.unknownMedia();
 
         final Content existingContent = getContent( params.getContent() );
-        Preconditions.checkArgument( existingContent.getType().equals( type ),
-                                     "Updated content must be of type: %s", existingContent.getType() );
+        Preconditions.checkArgument( existingContent.getType().equals( type ), "Updated content must be of type: %s",
+                                     existingContent.getType() );
 
         final CreateAttachment mediaAttachment = CreateAttachment.create()
             .name( params.getName().toString() )
@@ -84,7 +82,7 @@ final class UpdateMediaCommand
             .altText( params.getAltText() )
             .artist( params.getArtistList().isEmpty() ? List.of( "" ) : params.getArtistList() )
             .copyright( params.getCopyright() )
-            .tags( params.getTagList().isEmpty() ? List.of("") : params.getTagList() );
+            .tags( params.getTagList().isEmpty() ? List.of( "" ) : params.getTagList() );
 
         final UpdateContentParams updateParams = new UpdateContentParams().contentId( params.getContent() )
             .clearAttachments( true )
@@ -94,7 +92,6 @@ final class UpdateMediaCommand
         return UpdateContentCommand.create( this )
             .params( updateParams )
             .mediaInfo( mediaInfo )
-            .workflowInfo( existingContent.getWorkflowInfo() )
             .contentTypeService( this.contentTypeService )
             .siteService( this.siteService )
             .xDataService( this.xDataService )

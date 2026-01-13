@@ -954,10 +954,8 @@ export function updateMetadata(params: UpdateMetadataParams): UpdateMetadataResu
 export interface EditableWorkflow {
     source: {
         state?: string;
-        checks?: Record<string, string>;
     };
     state?: string;
-    checks?: Record<string, string>;
 }
 
 export interface UpdateWorkflowParams {

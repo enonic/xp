@@ -2,6 +2,7 @@ package com.enonic.xp.core.content;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -13,7 +14,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.mockito.ArgumentCaptor;
 
 import com.google.common.io.ByteSource;
-import com.google.common.io.ByteStreams;
 import com.google.common.net.HttpHeaders;
 
 import com.enonic.xp.audit.AuditLogService;
@@ -373,7 +373,6 @@ public abstract class AbstractContentSynchronizerTest
     }
 
     protected Media createMedia( final String name, final ContentPath parentPath )
-        throws IOException
     {
         final CreateMediaParams params = new CreateMediaParams().byteSource( loadImage( "cat-small.jpg" ) )
             .name( "cat-small.jpg" )
@@ -386,11 +385,16 @@ public abstract class AbstractContentSynchronizerTest
     }
 
     protected ByteSource loadImage( final String name )
-        throws IOException
     {
         final InputStream imageStream = this.getClass().getResourceAsStream( name );
-
-        return ByteSource.wrap( ByteStreams.toByteArray( imageStream ) );
+        try (imageStream)
+        {
+            return ByteSource.wrap( imageStream.readAllBytes() );
+        }
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
     }
 
     protected void compareSynched( final Content sourceContent, final Content targetContent )
