@@ -23,8 +23,6 @@ public final class EditableContent
 
     public ExtraDatas extraDatas;
 
-    public WorkflowInfo workflowInfo;
-
     private EditablePage page;
 
     /**
@@ -70,7 +68,6 @@ public final class EditableContent
         this.data = source.getData().copy();
         this.extraDatas = source.getAllExtraData().copy();
         this.page = this.page( source.getPage() );
-        this.workflowInfo = source.getWorkflowInfo();
     }
 
     @NonNull
@@ -81,7 +78,6 @@ public final class EditableContent
             .data( data )
             .extraDatas( extraDatas )
             .page( page != null ? page.build() : null )
-            .workflowInfo( workflowInfo )
             .build();
     }
 }

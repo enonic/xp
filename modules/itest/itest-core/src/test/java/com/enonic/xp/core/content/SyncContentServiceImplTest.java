@@ -18,7 +18,9 @@ import com.enonic.xp.content.ResetContentInheritParams;
 import com.enonic.xp.content.SortContentParams;
 import com.enonic.xp.content.SortContentResult;
 import com.enonic.xp.content.UpdateContentParams;
+import com.enonic.xp.content.UpdateWorkflowParams;
 import com.enonic.xp.content.WorkflowInfo;
+import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.core.impl.content.ContentEventsSyncParams;
 import com.enonic.xp.core.impl.content.ContentSyncEventType;
 import com.enonic.xp.core.impl.content.ParentContentSynchronizer;
@@ -85,10 +87,8 @@ class SyncContentServiceImplTest
 
         syncCreated( source.getId() );
 
-        layerContext.runWith( () -> contentService.update( new UpdateContentParams().contentId( source.getId() ).editor( edit -> {
-            edit.workflowInfo = WorkflowInfo.ready();
-            edit.data = new PropertyTree();
-        } ) ) );
+        layerContext.runWith( () -> contentService.updateWorkflow(
+            UpdateWorkflowParams.create().contentId( source.getId() ).editor( edit -> edit.state = WorkflowState.READY ).build() ) );
 
         syncContentService.resetInheritance( ResetContentInheritParams.create()
                                                  .contentId( source.getId() )
@@ -112,10 +112,8 @@ class SyncContentServiceImplTest
 
         syncCreated( source.getId() );
 
-        layerContext.runWith( () -> contentService.update( new UpdateContentParams().contentId( source.getId() ).editor( edit -> {
-            edit.workflowInfo = WorkflowInfo.ready();
-            edit.data = new PropertyTree();
-        } ) ) );
+        layerContext.runWith( () -> contentService.updateWorkflow(
+            UpdateWorkflowParams.create().contentId( source.getId() ).editor( edit -> edit.state = WorkflowState.READY ).build() ) );
 
         projectContext.runWith( () -> contentService.delete( DeleteContentParams.create().contentPath( source.getPath() ).build() ) );
 

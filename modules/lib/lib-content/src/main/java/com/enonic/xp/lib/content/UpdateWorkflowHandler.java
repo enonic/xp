@@ -9,7 +9,6 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.EditableWorkflow;
 import com.enonic.xp.content.UpdateWorkflowParams;
 import com.enonic.xp.content.UpdateWorkflowResult;
-import com.enonic.xp.content.WorkflowCheckState;
 import com.enonic.xp.content.WorkflowEditor;
 import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.lib.content.mapper.UpdateWorkflowResultMapper;
@@ -76,13 +75,6 @@ public final class UpdateWorkflowHandler
     private void updateWorkflow( final EditableWorkflow target, final Map<String, ?> map )
     {
         edit( map, "state", String.class, val -> target.state = val.map( WorkflowState::valueOf ).orElse( null ) );
-
-        final Object checks = map.get( "checks" );
-        if ( checks instanceof Map )
-        {
-            target.checks.clear();
-            ( (Map<String, String>) checks ).forEach( ( key, value ) -> target.checks.put( key, WorkflowCheckState.valueOf( value ) ) );
-        }
     }
 
     public void setKey( final String key )

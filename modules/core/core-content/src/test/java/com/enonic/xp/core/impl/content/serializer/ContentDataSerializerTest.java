@@ -1,7 +1,5 @@
 package com.enonic.xp.core.impl.content.serializer;
 
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
 
 import com.google.common.io.ByteSource;
@@ -19,7 +17,6 @@ import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.ValidationError;
 import com.enonic.xp.content.ValidationErrorCode;
 import com.enonic.xp.content.ValidationErrors;
-import com.enonic.xp.content.WorkflowCheckState;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.core.impl.content.CreateContentTranslatorParams;
@@ -111,7 +108,8 @@ class ContentDataSerializerTest
             .name( "myContent" )
             .parentPath( ContentPath.ROOT )
             .creator( PrincipalKey.ofAnonymous() )
-            .modifier( PrincipalKey.ofAnonymous() ).page( page )
+            .modifier( PrincipalKey.ofAnonymous() )
+            .page( page )
             .attachments( Attachments.from(
                 Attachment.create().label( binaryLabel ).size( 11 ).mimeType( binaryMimeType ).name( binaryName ).build() ) )
             .validationErrors( ValidationErrors.create()
@@ -326,16 +324,7 @@ class ContentDataSerializerTest
     @Test
     void create_propertyTree_populated_with_workflowInfo()
     {
-        final String check1Name = "myCheck1";
-        final WorkflowCheckState check1State = WorkflowCheckState.APPROVED;
-
-        final String check2Name = "myCheck2";
-        final WorkflowCheckState check2State = WorkflowCheckState.PENDING;
-
-        final WorkflowInfo workflowInfo = WorkflowInfo.create()
-            .state( WorkflowState.PENDING_APPROVAL )
-            .checks( Map.of( check1Name, check1State, check2Name, check2State ) )
-            .build();
+        final WorkflowInfo workflowInfo = WorkflowInfo.create().state( WorkflowState.PENDING_APPROVAL ).build();
 
         final ContentDataSerializer contentDataSerializer = new ContentDataSerializer();
 
@@ -354,10 +343,6 @@ class ContentDataSerializerTest
 
         final PropertySet workflowData = data.getSet( ContentPropertyNames.WORKFLOW_INFO );
         assertEquals( workflowInfo.getState().toString(), workflowData.getString( ContentPropertyNames.WORKFLOW_INFO_STATE ) );
-
-        final PropertySet workflowChecks = workflowData.getSet( ContentPropertyNames.WORKFLOW_INFO_CHECKS );
-        assertEquals( check1State.toString(), workflowChecks.getString( check1Name ) );
-        assertEquals( check2State.toString(), workflowChecks.getString( check2Name ) );
     }
 
     @Test

@@ -1,9 +1,6 @@
 package com.enonic.xp.lib.content;
 
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.EditableWorkflow;
@@ -28,39 +25,13 @@ public class UpdateWorkflowHandlerTest
         runFunction( "/test/UpdateWorkflowHandlerTest.js", "updateWorkflowState" );
     }
 
-    @Test
-    void updateWorkflowChecks()
-    {
-        final Content content = TestDataFixtures.newSmallContent();
-        when( this.contentService.getById( content.getId() ) ).thenReturn( content );
-
-        when( this.contentService.updateWorkflow( isA( UpdateWorkflowParams.class ) ) ).thenAnswer(
-            invocationOnMock -> invokeUpdateWorkflow( invocationOnMock.getArgument( 0 ), content ) );
-
-        runFunction( "/test/UpdateWorkflowHandlerTest.js", "updateWorkflowChecks" );
-    }
-
-    @Test
-    void updateWorkflowStateAndChecks()
-    {
-        final Content content = TestDataFixtures.newSmallContent();
-        when( this.contentService.getById( content.getId() ) ).thenReturn( content );
-
-        when( this.contentService.updateWorkflow( isA( UpdateWorkflowParams.class ) ) ).thenAnswer(
-            invocationOnMock -> invokeUpdateWorkflow( invocationOnMock.getArgument( 0 ), content ) );
-
-        runFunction( "/test/UpdateWorkflowHandlerTest.js", "updateWorkflowStateAndChecks" );
-    }
-
     private UpdateWorkflowResult invokeUpdateWorkflow( final UpdateWorkflowParams params, final Content content )
     {
         final EditableWorkflow editableWorkflow = new EditableWorkflow( content.getWorkflowInfo() );
 
         params.getEditor().edit( editableWorkflow );
 
-        final Content updatedContent = Content.create( content )
-            .workflowInfo( editableWorkflow.build() )
-            .build();
+        final Content updatedContent = Content.create( content ).workflowInfo( editableWorkflow.build() ).build();
 
         return UpdateWorkflowResult.create().content( updatedContent ).build();
     }

@@ -94,12 +94,6 @@ public final class UpdateContentHandler
         }
 
         updatePage( target, map );
-
-        final Object workflowInfo = map.get( "workflow" );
-        if ( workflowInfo instanceof Map )
-        {
-            target.workflowInfo = createWorkflowInfo( (Map) workflowInfo );
-        }
     }
 
     private void updatePage( final EditableContent target, final Map<String, ?> map )

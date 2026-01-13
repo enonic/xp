@@ -91,7 +91,6 @@ final class UpdateMediaCommand
             .createAttachments( CreateAttachments.from( mediaAttachment ) )
             .editor( editable -> {
                 mediaFormBuilder.build( editable.data );
-                editable.workflowInfo = params.getWorkflowInfo();
             } );
 
         return UpdateContentCommand.create( this )

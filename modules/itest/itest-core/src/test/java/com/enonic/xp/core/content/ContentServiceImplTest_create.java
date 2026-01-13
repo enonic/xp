@@ -1,7 +1,6 @@
 package com.enonic.xp.core.content;
 
 import java.util.Locale;
-import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -21,7 +20,6 @@ import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.UpdateContentMetadataParams;
-import com.enonic.xp.content.WorkflowCheckState;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.core.impl.content.XDataMappingServiceImpl;
@@ -192,21 +190,16 @@ class ContentServiceImplTest_create
             .displayName( "This is my content" )
             .parent( ContentPath.ROOT )
             .type( ContentTypeName.folder() )
-            .workflowInfo( WorkflowInfo.create()
-                               .state( WorkflowState.PENDING_APPROVAL )
-                               .checks( Map.of( "My check", WorkflowCheckState.REJECTED ) )
-                               .build() )
+            .workflowInfo( WorkflowInfo.create().state( WorkflowState.PENDING_APPROVAL ).build() )
             .build();
 
         final Content content = this.contentService.create( createContentParams );
         assertNotNull( content.getWorkflowInfo() );
         assertEquals( WorkflowState.PENDING_APPROVAL, content.getWorkflowInfo().getState() );
-        assertEquals( Map.of( "My check", WorkflowCheckState.REJECTED ), content.getWorkflowInfo().getChecks() );
 
         final Content storedContent = this.contentService.getById( content.getId() );
         assertNotNull( storedContent.getWorkflowInfo() );
         assertEquals( WorkflowState.PENDING_APPROVAL, storedContent.getWorkflowInfo().getState() );
-        assertEquals( Map.of( "My check", WorkflowCheckState.REJECTED ), storedContent.getWorkflowInfo().getChecks() );
     }
 
     @Test

@@ -127,8 +127,7 @@ class ContentServiceImplTest_media
 
         final UpdateMediaParams updateMediaParams = new UpdateMediaParams().content( content.getId() )
             .name( "dart-small" )
-            .byteSource( loadImage( "darth-small.jpg" ) )
-            .workflowInfo( WorkflowInfo.inProgress() );
+            .byteSource( loadImage( "darth-small.jpg" ) );
 
         this.contentService.update( updateMediaParams );
 

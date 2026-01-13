@@ -65,10 +65,7 @@ var expected = {
     },
     'publish': {},
     'workflow': {
-        'state': 'READY',
-        'checks': {
-            'Review by marketing': 'APPROVED'
-        }
+        'state': 'READY'
     }
 };
 // END

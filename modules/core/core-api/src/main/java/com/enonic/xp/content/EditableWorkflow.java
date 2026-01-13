@@ -1,6 +1,5 @@
 package com.enonic.xp.content;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -18,9 +17,6 @@ public final class EditableWorkflow
     {
         this.source = source;
         this.state = source != null ? source.getState() : null;
-        this.checks = source != null && source.getChecks() != null
-            ? new HashMap<>( source.getChecks() )
-            : new HashMap<>();
     }
 
     public WorkflowInfo build()
@@ -29,10 +25,6 @@ public final class EditableWorkflow
         if ( state != null )
         {
             builder.state( state );
-        }
-        if ( checks != null )
-        {
-            builder.checks( checks );
         }
 
         return builder.build();

@@ -80,9 +80,6 @@ var expected = {
                 },
                 "workflow": {
                     "state": "READY",
-                    "checks": {
-                        "Review by marketing": "APPROVED"
-                    }
                 }
             }
         }
