@@ -1,8 +1,8 @@
 package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -83,10 +83,10 @@ final class UpdateContentCommand
         editedContent = editContent( params.getEditor(), contentBeforeChange );
         editedContent = processContent( editedContent );
 
-        final List<String> modifiedFields = ContentAttributesHelper.modifiedFields( contentBeforeChange, editedContent );
+        final String[] modifiedFields = ContentAttributesHelper.modifiedFields( contentBeforeChange, editedContent );
 
-        editedContent =
-            editContentMetadata( editedContent, modifiedFields.stream().anyMatch( ContentAttributesHelper.EDITORIAL_FIELDS::contains ) );
+        editedContent = editContentMetadata( editedContent, Arrays.stream( modifiedFields )
+            .anyMatch( ContentAttributesHelper.EDITORIAL_FIELDS::contains ) );
 
         if ( isContentTheSame().test( contentBeforeChange, editedContent ) )
         {
@@ -105,7 +105,7 @@ final class UpdateContentCommand
         final PatchNodeParams patchNodeParams = PatchNodeParamsFactory.create()
             .editedContent( editedContent )
             .createAttachments( params.getCreateAttachments() )
-            .versionAttributes( ContentAttributesHelper.updateVersionHistoryAttr( modifiedFields ) )
+            .versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.UPDATE_ATTR, modifiedFields ) )
             .branches( Branches.from( ContextAccessor.current().getBranch() ) )
             .contentTypeService( this.contentTypeService )
             .xDataService( this.xDataService )

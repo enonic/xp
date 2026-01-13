@@ -172,7 +172,7 @@ final class ArchiveContentCommand
         }
         moveParams.processor( processors.build() );
 
-        moveParams.versionAttributes( ContentAttributesHelper.versionHistoryAttrNoVacuum( ContentAttributesHelper.ARCHIVE_ATTR ) );
+        moveParams.versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.ARCHIVE_ATTR ) );
 
         return nodeService.move( moveParams.build() );
     }

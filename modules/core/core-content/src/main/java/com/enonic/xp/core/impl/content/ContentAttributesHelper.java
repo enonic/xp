@@ -60,14 +60,14 @@ public class ContentAttributesHelper
 
     public static final Set<String> EDITORIAL_FIELDS = Set.of( "displayName", "data", "x", "page", "attachments" );
 
-    public static List<String> modifiedFields( Content existingContent, Content updatedContent )
+    public static String[] modifiedFields( Content existingContent, Content updatedContent )
     {
         return FIELD_GETTERS.entrySet()
             .stream()
             .filter( e -> !Objects.equals( e.getValue().apply( existingContent ), e.getValue().apply( updatedContent ) ) )
             .map( Map.Entry::getKey )
             .sorted()
-            .toList();
+            .toArray( String[]::new );
     }
 
     public static Attributes versionHistoryAttr( final String key )
@@ -77,59 +77,15 @@ public class ContentAttributesHelper
                 .put( USER_PROPERTY, getCurrentUserKey().toString() )
                 .put( OPTIME_PROPERTY, Instant.now( MILLIS_CLOCK ).toString() )
                 .build() )
+            .attribute( VacuumConstants.VACUUM_SKIP_ATTRIBUTE, GenericValue.newObject().build() )
             .build();
     }
 
-    public static Attributes versionHistoryAttrNoVacuum( final String key )
+    public static Attributes versionHistoryAttr( final String key, String... modifiedFields )
     {
         return Attributes.create()
             .attribute( key, GenericValue.newObject()
-                .put( USER_PROPERTY, getCurrentUserKey().toString() )
-                .put( OPTIME_PROPERTY, Instant.now( MILLIS_CLOCK ).toString() )
-                .build() )
-            .attribute( VacuumConstants.VACUUM_SKIP_ATTRIBUTE, GenericValue.newObject().build() )
-            .build();
-    }
-
-    public static Attributes moveVersionHistoryAttr( final List<String> modifiedFields )
-    {
-        return Attributes.create()
-            .attribute( MOVE_ATTR, GenericValue.newObject()
-                .put( FIELDS_PROPERTY, GenericValue.fromRawJava( modifiedFields ) )
-                .put( USER_PROPERTY, getCurrentUserKey().toString() )
-                .put( OPTIME_PROPERTY, Instant.now( MILLIS_CLOCK ).toString() )
-                .build() )
-            .build();
-    }
-
-    public static Attributes updateVersionHistoryAttr( final List<String> modifiedFields )
-    {
-        return Attributes.create()
-            .attribute( UPDATE_ATTR, GenericValue.newObject()
-                .put( FIELDS_PROPERTY, GenericValue.fromRawJava( modifiedFields ) )
-                .put( USER_PROPERTY, getCurrentUserKey().toString() )
-                .put( OPTIME_PROPERTY, Instant.now( MILLIS_CLOCK ).toString() )
-                .build() )
-            .attribute( VacuumConstants.VACUUM_SKIP_ATTRIBUTE, GenericValue.newObject().build() )
-            .build();
-    }
-
-    public static Attributes updateMetadataHistoryAttr( final List<String> modifiedFields )
-    {
-        return Attributes.create()
-            .attribute( UPDATE_METADATA_ATTR, GenericValue.newObject()
-                .put( FIELDS_PROPERTY, GenericValue.fromRawJava( modifiedFields ) )
-                .put( USER_PROPERTY, getCurrentUserKey().toString() )
-                .put( OPTIME_PROPERTY, Instant.now( MILLIS_CLOCK ).toString() )
-                .build() )
-            .build();
-    }
-
-    public static Attributes unpublishInfoAttr( final List<String> modifiedFields )
-    {
-        return Attributes.create()
-            .attribute( UNPUBLISH_ATTR, GenericValue.newObject()
-                .put( FIELDS_PROPERTY, GenericValue.fromRawJava( modifiedFields ) )
+                .put( FIELDS_PROPERTY, GenericValue.fromRawJava( List.of( modifiedFields ) ) )
                 .put( USER_PROPERTY, getCurrentUserKey().toString() )
                 .put( OPTIME_PROPERTY, Instant.now( MILLIS_CLOCK ).toString() )
                 .build() )
@@ -153,5 +109,4 @@ public class ContentAttributesHelper
 
         return context.getAuthInfo().getUser() != null ? context.getAuthInfo().getUser().getKey() : PrincipalKey.ofAnonymous();
     }
-
 }

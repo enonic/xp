@@ -120,7 +120,8 @@ final class MoveContentCommand
             .nodeId( sourceNodeId )
             .newName( newNodeName )
             .newParentPath( newParentPath )
-            .versionAttributes( ContentAttributesHelper.moveVersionHistoryAttr( modifiedFields ) )
+            .versionAttributes(
+                ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.MOVE_ATTR, modifiedFields.toArray( String[]::new ) ) )
             .processor( processors.build() )
             .refresh( RefreshMode.ALL );
 
