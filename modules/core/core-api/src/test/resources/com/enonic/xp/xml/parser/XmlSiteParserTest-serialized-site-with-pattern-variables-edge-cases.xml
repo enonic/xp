@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site xmlns="urn:enonic:xp:model:1.0">
+  <mappings>
+    <mapping controller="controller1.js" order="10">
+      <pattern>/test/.+</pattern>
+    </mapping>
+  </mappings>
+</site>

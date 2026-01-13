@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site xmlns="urn:enonic:xp:model:1.0">
+  <mappings>
+    <mapping controller="controller1.js" order="10">
+      <pattern>/_/static/${app.name}/.+</pattern>
+    </mapping>
+    <mapping controller="controller2.js" order="20">
+      <pattern>/api/${app.name}/.*</pattern>
+    </mapping>
+    <mapping controller="controller3.js" order="30">
+      <pattern>/${app.name}/resource/.*</pattern>
+    </mapping>
+  </mappings>
+</site>

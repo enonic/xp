@@ -193,6 +193,63 @@ class XmlSiteParserTest
     }
 
     @Test
+    void testSiteXmlDeserializationWithPatternVariables()
+    {
+        final String xml = loadTestXml( "serialized-site-with-pattern-variables.xml" );
+
+        final SiteDescriptor.Builder siteDescriptorBuilder = SiteDescriptor.create();
+        ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );
+
+        siteDescriptorBuilder.applicationKey( applicationKey );
+
+        this.parser.source( xml ).currentApplication( applicationKey ).siteDescriptorBuilder( siteDescriptorBuilder ).parse();
+
+        SiteDescriptor siteDescriptor = siteDescriptorBuilder.build();
+
+        assertEquals( 3, siteDescriptor.getMappingDescriptors().getSize() );
+
+        final ControllerMappingDescriptor mapping1 = siteDescriptor.getMappingDescriptors().get( 0 );
+        final ControllerMappingDescriptor mapping2 = siteDescriptor.getMappingDescriptors().get( 1 );
+        final ControllerMappingDescriptor mapping3 = siteDescriptor.getMappingDescriptors().get( 2 );
+
+        assertEquals( "myapplication:/controller1.js", mapping1.getController().toString() );
+        assertEquals( "/_/static/myapplication/.+", mapping1.getPattern().toString() );
+        assertEquals( 10, mapping1.getOrder() );
+
+        assertEquals( "myapplication:/controller2.js", mapping2.getController().toString() );
+        assertEquals( "/api/myapplication/.*", mapping2.getPattern().toString() );
+        assertEquals( 20, mapping2.getOrder() );
+
+        assertEquals( "myapplication:/controller3.js", mapping3.getController().toString() );
+        assertEquals( "/myapplication/resource/.*", mapping3.getPattern().toString() );
+        assertEquals( 30, mapping3.getOrder() );
+    }
+
+    @Test
+    void testSiteXmlDeserializationWithPatternVariablesEdgeCases()
+    {
+        final String xml = loadTestXml( "serialized-site-with-pattern-variables-edge-cases.xml" );
+
+        final SiteDescriptor.Builder siteDescriptorBuilder = SiteDescriptor.create();
+        ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );
+
+        siteDescriptorBuilder.applicationKey( applicationKey );
+
+        this.parser.source( xml ).currentApplication( applicationKey ).siteDescriptorBuilder( siteDescriptorBuilder ).parse();
+
+        SiteDescriptor siteDescriptor = siteDescriptorBuilder.build();
+
+        assertEquals( 1, siteDescriptor.getMappingDescriptors().getSize() );
+
+        final ControllerMappingDescriptor mapping1 = siteDescriptor.getMappingDescriptors().get( 0 );
+
+        // Pattern without variables should work as before
+        assertEquals( "myapplication:/controller1.js", mapping1.getController().toString() );
+        assertEquals( "/test/.+", mapping1.getPattern().toString() );
+        assertEquals( 10, mapping1.getOrder() );
+    }
+
+    @Test
     void testSiteXmlWithUtf8BomEncoding()
     {
         final String xml = loadTestFile( "utf8bom.xml", StandardCharsets.UTF_8 );

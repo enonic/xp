@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.enonic.xp.app.ApplicationRelativeResolver;
+import com.enonic.xp.core.internal.Interpolator;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.XDataMapping;
@@ -200,11 +201,23 @@ public final class XmlSiteParser
             if ( !isNullOrEmpty( pattern ) )
             {
                 final boolean invert = "true".equals( patternElement.getAttribute( MAPPING_DESCRIPTOR_INVERT_ATTRIBUTE, "false" ) );
-                builder.pattern( pattern );
+                final String interpolatedPattern = interpolatePattern( pattern );
+                builder.pattern( interpolatedPattern );
                 builder.invertPattern( invert );
             }
         }
 
         return builder.build();
+    }
+
+    private String interpolatePattern( final String pattern )
+    {
+        return Interpolator.classic().interpolate( pattern, variableName -> {
+            if ( "app.name".equals( variableName ) )
+            {
+                return this.currentApplication.getName();
+            }
+            return null;
+        } );
     }
 }
