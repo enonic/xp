@@ -2,12 +2,15 @@ package com.enonic.xp.session;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.google.common.collect.ImmutableMap;
 
 public class SessionMock
     implements Session
 {
+    private static final AtomicInteger sessionCounter = new AtomicInteger( 0 );
+
     private SessionKey key = SessionKey.from( "mock-session" );
 
     private final Map<String, Object> attributes = new ConcurrentHashMap<>();
@@ -72,7 +75,7 @@ public class SessionMock
     @Override
     public String changeSessionId()
     {
-        this.key = SessionKey.from( "mock-session-" + System.currentTimeMillis() );
+        this.key = SessionKey.from( "mock-session-" + sessionCounter.incrementAndGet() );
         return this.key.toString();
     }
 
