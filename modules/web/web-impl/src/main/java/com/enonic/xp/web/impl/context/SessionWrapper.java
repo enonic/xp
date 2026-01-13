@@ -116,4 +116,20 @@ final class SessionWrapper
 
         session.invalidate();
     }
+
+    @Override
+    public String changeSessionId()
+    {
+        return request.changeSessionId();
+    }
+
+    @Override
+    public void setMaxInactiveInterval( final int seconds )
+    {
+        HttpSession session = request.getSession( false );
+        if ( session != null )
+        {
+            session.setMaxInactiveInterval( seconds );
+        }
+    }
 }

@@ -212,6 +212,22 @@ class LoginHandlerTest
         verify( session, times( 5 ) ).invalidate();
     }
 
+    @Test
+    void testSessionTimeoutIsSet()
+    {
+        final AuthenticationInfo authInfo = TestDataFixtures.createAuthenticationInfo();
+
+        Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
+
+        final SessionMock session = Mockito.spy( new SessionMock() );
+        ContextAccessor.current().getLocalScope().setSession( session );
+
+        runFunction( "/test/login-test.js", "loginWithSessionTimeout" );
+
+        final Session currentSession = ContextAccessor.current().getLocalScope().getSession();
+        assertEquals( 1800, ( (SessionMock) currentSession ).getMaxInactiveInterval() );
+    }
+
     private static class AuthTokenMatcher
         implements ArgumentMatcher<AuthenticationToken>
     {

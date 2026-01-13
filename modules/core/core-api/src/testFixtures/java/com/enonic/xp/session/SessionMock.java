@@ -8,9 +8,11 @@ import com.google.common.collect.ImmutableMap;
 public class SessionMock
     implements Session
 {
-    private final SessionKey key = SessionKey.from( "mock-session" );
+    private SessionKey key = SessionKey.from( "mock-session" );
 
     private final Map<String, Object> attributes = new ConcurrentHashMap<>();
+
+    private int maxInactiveInterval = -1;
 
     @Override
     public SessionKey getKey()
@@ -65,5 +67,23 @@ public class SessionMock
     public void invalidate()
     {
         this.attributes.clear();
+    }
+
+    @Override
+    public String changeSessionId()
+    {
+        this.key = SessionKey.from( "mock-session-" + System.currentTimeMillis() );
+        return this.key.toString();
+    }
+
+    @Override
+    public void setMaxInactiveInterval( final int seconds )
+    {
+        this.maxInactiveInterval = seconds;
+    }
+
+    public int getMaxInactiveInterval()
+    {
+        return this.maxInactiveInterval;
     }
 }
