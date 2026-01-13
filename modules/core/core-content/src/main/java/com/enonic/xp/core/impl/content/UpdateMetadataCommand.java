@@ -1,7 +1,5 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.List;
-
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
@@ -46,11 +44,11 @@ public class UpdateMetadataCommand
         Content editedContent = editMetadata( params.getEditor(), contentBeforeChange );
         editedContent = editContentInherit( editedContent );
 
-        final List<String> modifiedFields = ContentAttributesHelper.modifiedFields( contentBeforeChange, editedContent );
+        final String[] modifiedFields = ContentAttributesHelper.modifiedFields( contentBeforeChange, editedContent );
 
         final PatchNodeParams patchNodeParams = PatchNodeParamsFactory.create()
             .editedContent( editedContent )
-            .versionAttributes( ContentAttributesHelper.updateMetadataHistoryAttr( modifiedFields ) )
+            .versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.UPDATE_METADATA_ATTR, modifiedFields ) )
             .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
             .contentTypeService( this.contentTypeService )
             .xDataService( this.xDataService )
