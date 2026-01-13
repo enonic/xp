@@ -6,7 +6,6 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.function.Function;
 
 import com.enonic.xp.content.Content;
@@ -59,8 +58,6 @@ public class ContentAttributesHelper
         Map.of( "displayName", Content::getDisplayName, "data", Content::getData, "x", Content::getAllExtraData, "page", Content::getPage,
                 "owner", Content::getOwner, "language", Content::getLanguage, "publish", Content::getPublishInfo, "workflow",
                 Content::getWorkflowInfo, "variantOf", Content::getVariantOf, "attachments", Content::getAttachments );
-
-    public static final Set<String> EDITORIAL_FIELDS = Set.of( "displayName", "data", "x", "page", "attachments" );
 
     public static String[] modifiedFields( Content existingContent, Content updatedContent )
     {

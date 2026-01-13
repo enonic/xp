@@ -89,13 +89,12 @@ final class UpdateMediaCommand
         final UpdateContentParams updateParams = new UpdateContentParams().contentId( params.getContent() )
             .clearAttachments( true )
             .createAttachments( CreateAttachments.from( mediaAttachment ) )
-            .editor( editable -> {
-                mediaFormBuilder.build( editable.data );
-            } );
+            .editor( editable -> mediaFormBuilder.build( editable.data ) );
 
         return UpdateContentCommand.create( this )
             .params( updateParams )
             .mediaInfo( mediaInfo )
+            .workflowInfo( existingContent.getWorkflowInfo() )
             .contentTypeService( this.contentTypeService )
             .siteService( this.siteService )
             .xDataService( this.xDataService )

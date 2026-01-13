@@ -11,8 +11,6 @@ public final class EditableWorkflow
 
     public WorkflowState state;
 
-    public Map<String, WorkflowCheckState> checks;
-
     public EditableWorkflow( final WorkflowInfo source )
     {
         this.source = source;

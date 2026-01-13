@@ -20,6 +20,7 @@ import com.enonic.xp.content.Media;
 import com.enonic.xp.content.PatchableContent;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.ValidationErrors;
+import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.content.processor.ContentProcessor;
 import com.enonic.xp.core.impl.content.processor.ProcessUpdateParams;
@@ -42,11 +43,14 @@ final class UpdateContentCommand
 
     private final MediaInfo mediaInfo;
 
+    private final WorkflowInfo workflowInfo;
+
     private UpdateContentCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
         this.mediaInfo = builder.mediaInfo;
+        this.workflowInfo = builder.workflowInfo;
     }
 
     public static Builder create( final UpdateContentParams params )
@@ -85,13 +89,14 @@ final class UpdateContentCommand
 
         final String[] modifiedFields = ContentAttributesHelper.modifiedFields( contentBeforeChange, editedContent );
 
-        editedContent = editContentMetadata( editedContent, Arrays.stream( modifiedFields )
-            .anyMatch( ContentAttributesHelper.EDITORIAL_FIELDS::contains ) );
+        editedContent = editContentMetadata( editedContent );
 
         if ( isContentTheSame().test( contentBeforeChange, editedContent ) )
         {
             return contentBeforeChange;
         }
+
+        editedContent = editContentWorkflow( editedContent );
 
         checkAccess( contentBeforeChange, editedContent );
         validate( editedContent );
@@ -121,18 +126,22 @@ final class UpdateContentCommand
         return ContentNodeTranslator.fromNode( result.getResult( ContextAccessor.current().getBranch() ) );
     }
 
-    private Content editContentMetadata( Content content, final boolean editModifier )
+    private Content editContentMetadata( Content content )
     {
         final PatchableContent patchableContent = new PatchableContent( content );
         patchableContent.inherit.setPatcher( c -> stopDataInherit( c.inherit.originalValue ) );
         patchableContent.attachments.setPatcher( c -> mergeExistingAndUpdatedAttachments( c.attachments.originalValue ) );
-        if ( editModifier )
-        {
-            patchableContent.modifier.setValue( getCurrentUserKey() );
-            patchableContent.modifiedTime.setValue( Instant.now() );
-        }
         patchableContent.validationErrors.setPatcher( c -> validateContent( c.source ) );
         patchableContent.valid.setPatcher( c -> !c.validationErrors.getProducedValue().hasErrors() );
+        return patchableContent.build();
+    }
+
+    private Content editContentWorkflow( Content content )
+    {
+        final PatchableContent patchableContent = new PatchableContent( content );
+        patchableContent.workflowInfo.setValue( Objects.requireNonNullElse( workflowInfo, WorkflowInfo.inProgress() ) );
+        patchableContent.modifier.setValue( getCurrentUserKey() );
+        patchableContent.modifiedTime.setValue( Instant.now() );
         return patchableContent.build();
     }
 
@@ -282,6 +291,8 @@ final class UpdateContentCommand
 
         private MediaInfo mediaInfo;
 
+        private WorkflowInfo workflowInfo;
+
         Builder( final UpdateContentParams params )
         {
             this.params = params;
@@ -301,6 +312,12 @@ final class UpdateContentCommand
         Builder mediaInfo( final MediaInfo value )
         {
             this.mediaInfo = value;
+            return this;
+        }
+
+        Builder workflowInfo( final WorkflowInfo value )
+        {
+            this.workflowInfo = value;
             return this;
         }
 
