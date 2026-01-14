@@ -19,7 +19,6 @@ import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.Nodes;
@@ -161,7 +160,7 @@ public class NodeExporter
         }
     }
 
-    private FindNodesByParentResult doExport( final NodePath nodePath )
+    private void doExport( final NodePath nodePath )
     {
         final long totalHits = nodeService.findByParent(
             FindNodesByParentParams.create().parentPath( nodePath ).countOnly( true ).build() ).getTotalHits();
@@ -189,9 +188,6 @@ public class NodeExporter
 
             from += BATCH_SIZE;
         }
-
-        // Return a result with the total count for compatibility
-        return FindNodesByParentResult.create().totalHits( totalHits ).nodeIds( NodeIds.empty() ).build();
     }
 
 
