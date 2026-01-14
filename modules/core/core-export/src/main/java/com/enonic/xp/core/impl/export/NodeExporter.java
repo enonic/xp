@@ -1,6 +1,8 @@
 package com.enonic.xp.core.impl.export;
 
 import java.nio.file.Path;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Objects;
 
 import org.slf4j.Logger;
@@ -71,15 +73,7 @@ public class NodeExporter
                 nodeExportListener.nodeResolved( childNodeCount + 1 );
             }
 
-            try
-            {
-                exportNode( rootNode );
-            }
-            catch ( Exception e )
-            {
-                LOG.error( String.format( "Failed to export node with path [%s]", rootNode.path() ), e );
-                result.addError( new ExportError( e.toString() ) );
-            }
+            exportNodeIteratively( rootNode );
         }
         else
         {
@@ -91,82 +85,59 @@ public class NodeExporter
         return result.build();
     }
 
-
-    private void exportNode( final Node node )
+    /**
+     * Iterative BFS export to avoid stack overflow on deep hierarchies.
+     * Uses a queue instead of recursion to process nodes level by level.
+     */
+    private void exportNodeIteratively( final Node rootNode )
     {
-        writeNode( node );
+        final Deque<NodePath> queue = new ArrayDeque<>();
 
-        if ( nodeExportListener != null )
+        // Export root node first
+        try
         {
-            nodeExportListener.nodeExported( 1L );
+            writeNode( rootNode );
+            notifyNodeExported();
+            result.addNodePath( rootNode.path() );
+            queue.add( rootNode.path() );
+        }
+        catch ( Exception e )
+        {
+            LOG.error( String.format( "Failed to export node with path [%s]", rootNode.path() ), e );
+            result.addError( new ExportError( e.toString() ) );
+            return;
         }
 
-        result.addNodePath( node.path() );
-        doExportChildNodes( node.path() );
+        // Process queue iteratively (BFS)
+        while ( !queue.isEmpty() )
+        {
+            final NodePath parentPath = queue.poll();
+            exportChildNodes( parentPath, queue );
+        }
     }
 
-    private void writeNode( final Node node )
-    {
-        doWriteNode( node, resolveNodeDataFolder( node ) );
-    }
-
-    private void doWriteNode( final Node node, final Path baseFolder )
-    {
-        final NodePath newParentPath = new NodePath( "/" + node.toString().substring( this.sourceNodePath.toString().length() ) );
-
-        final Node relativeNode = Node.create( node ).parentPath( newParentPath ).build();
-
-        final String serializedNode = new XmlNodeSerializer().node( relativeNode ).serialize();
-
-        final Path nodeXmlPath = baseFolder.resolve( NodeExportPathResolver.NODE_XML_EXPORT_NAME );
-        exportWriter.writeElement( nodeXmlPath, serializedNode );
-
-        exportNodeBinaries( relativeNode, baseFolder );
-    }
-
-    private void doExportChildNodes( final NodePath parentPath )
+    private void exportChildNodes( final NodePath parentPath, final Deque<NodePath> queue )
     {
         final Node parentNode = nodeService.getByPath( parentPath );
 
-        final long totalHits = doExport( parentPath );
+        final long totalHits =
+            nodeService.findByParent( FindNodesByParentParams.create().parentPath( parentPath ).countOnly( true ).build() ).getTotalHits();
 
-        // For manual ordering, we need to write the order list
-        // We need the names in the correct order, so we load nodes in batches
-        if ( parentNode != null && parentNode.getChildOrder() != null && parentNode.getChildOrder().isManualOrder() )
+        if ( totalHits == 0 )
         {
-            final StringBuilder orderBuilder = new StringBuilder();
-
-            int from = 0;
-            while ( from < totalHits )
-            {
-                final FindNodesByParentResult batch = nodeService.findByParent(
-                    FindNodesByParentParams.create().parentPath( parentPath ).from( from ).size( BATCH_SIZE ).build() );
-
-                final Nodes childNodes = this.nodeService.getByIds( batch.getNodeIds() );
-
-                for ( final Node node : childNodes )
-                {
-                    orderBuilder.append( node.name().toString() ).append( LINE_SEPARATOR );
-                }
-
-                from += BATCH_SIZE;
-            }
-
-            final Path nodeOrderListPath = resolveNodeDataFolder( parentNode ).resolve( NodeExportPathResolver.ORDER_EXPORT_NAME );
-            exportWriter.writeElement( nodeOrderListPath, orderBuilder.toString() );
+            return;
         }
-    }
 
-    private long doExport( final NodePath nodePath )
-    {
-        final long totalHits = nodeService.findByParent(
-            FindNodesByParentParams.create().parentPath( nodePath ).countOnly( true ).build() ).getTotalHits();
+        // For manual ordering, collect child names while exporting
+        final boolean needsOrderList =
+            parentNode != null && parentNode.getChildOrder() != null && parentNode.getChildOrder().isManualOrder();
+        final StringBuilder orderBuilder = needsOrderList ? new StringBuilder() : null;
 
         int from = 0;
         while ( from < totalHits )
         {
             final FindNodesByParentResult batch = nodeService.findByParent(
-                FindNodesByParentParams.create().parentPath( nodePath ).from( from ).size( BATCH_SIZE ).build() );
+                FindNodesByParentParams.create().parentPath( parentPath ).from( from ).size( BATCH_SIZE ).build() );
 
             final Nodes childNodes = this.nodeService.getByIds( batch.getNodeIds() );
 
@@ -174,7 +145,18 @@ public class NodeExporter
             {
                 try
                 {
-                    exportNode( child );
+                    writeNode( child );
+                    notifyNodeExported();
+                    result.addNodePath( child.path() );
+
+                    // Add to queue for processing children later
+                    queue.add( child.path() );
+
+                    // Collect name for order list
+                    if ( orderBuilder != null )
+                    {
+                        orderBuilder.append( child.name().toString() ).append( LINE_SEPARATOR );
+                    }
                 }
                 catch ( Exception e )
                 {
@@ -186,7 +168,36 @@ public class NodeExporter
             from += BATCH_SIZE;
         }
 
-        return totalHits;
+        // Write order list if manual ordering
+        if ( orderBuilder != null )
+        {
+            final Path nodeOrderListPath = resolveNodeDataFolder( parentNode ).resolve( NodeExportPathResolver.ORDER_EXPORT_NAME );
+            exportWriter.writeElement( nodeOrderListPath, orderBuilder.toString() );
+        }
+    }
+
+    private void notifyNodeExported()
+    {
+        if ( nodeExportListener != null )
+        {
+            nodeExportListener.nodeExported( 1L );
+        }
+    }
+
+    private void writeNode( final Node node )
+    {
+        final Path baseFolder = resolveNodeDataFolder( node );
+
+        final NodePath newParentPath = new NodePath( "/" + node.toString().substring( this.sourceNodePath.toString().length() ) );
+
+        final Node relativeNode = Node.create( node ).parentPath( newParentPath ).build();
+
+        final String serializedNode = new XmlNodeSerializer().node( relativeNode ).serialize();
+
+        final Path nodeXmlPath = baseFolder.resolve( NodeExportPathResolver.NODE_XML_EXPORT_NAME );
+        exportWriter.writeElement( nodeXmlPath, serializedNode );
+
+        exportNodeBinaries( relativeNode, baseFolder );
     }
 
 
