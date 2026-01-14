@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.Arrays;
+
 import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectRole;
@@ -25,11 +27,8 @@ public class ProjectAccessHelper
 
     public static boolean hasAnyAccess( final AuthenticationInfo authenticationInfo, final ProjectName projectName )
     {
-        return hasAdminAccess( authenticationInfo ) || hasPermissions( authenticationInfo, projectName, ProjectRole.OWNER ) ||
-            hasPermissions( authenticationInfo, projectName, ProjectRole.EDITOR ) ||
-            hasPermissions( authenticationInfo, projectName, ProjectRole.AUTHOR ) ||
-            hasPermissions( authenticationInfo, projectName, ProjectRole.CONTRIBUTOR ) ||
-            hasPermissions( authenticationInfo, projectName, ProjectRole.VIEWER );
+        return hasAdminAccess( authenticationInfo ) ||
+            Arrays.stream( ProjectRole.values() ).anyMatch( r -> hasPermissions( authenticationInfo, projectName, r ) );
     }
 
     public static boolean hasAccess( AuthenticationInfo authenticationInfo, ProjectName projectName, ProjectRole projectRole )
