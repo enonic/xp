@@ -17,7 +17,7 @@ import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateWorkflowParams;
-import com.enonic.xp.content.WorkflowState;
+import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
@@ -73,7 +73,7 @@ class ContentServiceImplTest_publish_update_publishedTime
 
         this.contentService.update( updateContentParams );
         this.contentService.updateWorkflow(
-            UpdateWorkflowParams.create().contentId( content.getId() ).editor( edit -> edit.state = WorkflowState.READY ).build() );
+            UpdateWorkflowParams.create().contentId( content.getId() ).editor( edit -> edit.workflow = WorkflowInfo.ready() ).build() );
 
         doPublishContent( content );
         assertVersions( content.getId(), 5 );

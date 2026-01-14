@@ -559,15 +559,15 @@ class ProjectContentEventListenerTest
         projectContext.callWith( () -> {
             contentService.updateWorkflow( UpdateWorkflowParams.create()
                                                .contentId( sourceContent.getId() )
-                                               .editor( ( edit -> edit.state = WorkflowState.READY ) )
+                                               .editor( ( edit -> edit.workflow = WorkflowInfo.ready() ) )
                                                .build() );
 
             handleEvents();
 
             final Content sourceContentReady = contentService.updateWorkflow( UpdateWorkflowParams.create()
                                                                                   .contentId( sourceContent.getId() )
-                                                                                  .editor(
-                                                                                      ( edit -> edit.state = WorkflowState.IN_PROGRESS ) )
+                                                                                  .editor( ( edit -> edit.workflow =
+                                                                                      WorkflowInfo.inProgress() ) )
                                                                                   .build() ).getContent();
 
             handleEvents();

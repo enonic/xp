@@ -6,6 +6,8 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 
+import org.jspecify.annotations.NonNull;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 
@@ -301,6 +303,7 @@ public class Content
         return processedReferences;
     }
 
+    @NonNull
     public WorkflowInfo getWorkflowInfo()
     {
         return workflowInfo;
@@ -409,8 +412,6 @@ public class Content
         protected PrincipalKey creator;
 
         protected PrincipalKey modifier;
-
-        protected boolean hasChildren;
 
         protected EnumSet<ContentInheritType> inherit = EnumSet.noneOf( ContentInheritType.class );
 

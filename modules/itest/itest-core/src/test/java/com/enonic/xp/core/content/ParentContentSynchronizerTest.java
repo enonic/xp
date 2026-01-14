@@ -39,7 +39,7 @@ import com.enonic.xp.content.UpdateWorkflowParams;
 import com.enonic.xp.content.ValidationError;
 import com.enonic.xp.content.ValidationErrorCode;
 import com.enonic.xp.content.ValidationErrors;
-import com.enonic.xp.content.WorkflowState;
+import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.core.impl.content.ContentEventsSyncParams;
 import com.enonic.xp.core.impl.content.ContentSyncEventType;
 import com.enonic.xp.core.impl.content.ContentSyncParams;
@@ -281,7 +281,7 @@ class ParentContentSynchronizerTest
                 new UpdateContentParams().contentId( sourceContent.getId() ).editor( ( edit -> edit.data = new PropertyTree() ) ) );
             contentService.updateWorkflow( UpdateWorkflowParams.create()
                                                .contentId( sourceContent.getId() )
-                                               .editor( edit -> edit.state = WorkflowState.READY )
+                                               .editor( edit -> edit.workflow = WorkflowInfo.ready() )
                                                .build() );
         } );
 
@@ -314,7 +314,7 @@ class ParentContentSynchronizerTest
                                        .caption( "caption" ) );
             contentService.updateWorkflow( UpdateWorkflowParams.create()
                                                .contentId( sourceContent.getId() )
-                                               .editor( edit -> edit.state = WorkflowState.READY )
+                                               .editor( edit -> edit.workflow = WorkflowInfo.ready() )
                                                .build() );
         } );
 
@@ -398,7 +398,7 @@ class ParentContentSynchronizerTest
                                                                .build() ) );
             return contentService.updateWorkflow( UpdateWorkflowParams.create()
                                                       .contentId( sourceContent.getId() )
-                                                      .editor( edit -> edit.state = WorkflowState.READY )
+                                                      .editor( edit -> edit.workflow = WorkflowInfo.ready() )
                                                       .build() ).getContent();
         } );
 
@@ -418,7 +418,7 @@ class ParentContentSynchronizerTest
                                                                .build() ) );
             return contentService.updateWorkflow( UpdateWorkflowParams.create()
                                                       .contentId( sourceContent.getId() )
-                                                      .editor( edit -> edit.state = WorkflowState.READY )
+                                                      .editor( edit -> edit.workflow = WorkflowInfo.ready() )
                                                       .build() ).getContent();
         } );
 
@@ -446,7 +446,7 @@ class ParentContentSynchronizerTest
             contentService.update( updateContentParams );
             contentService.updateWorkflow( UpdateWorkflowParams.create()
                                                .contentId( sourceContent.getId() )
-                                               .editor( edit -> edit.state = WorkflowState.READY )
+                                               .editor( edit -> edit.workflow = WorkflowInfo.ready() )
                                                .build() );
         } );
 
@@ -474,7 +474,7 @@ class ParentContentSynchronizerTest
             contentService.update( updateContentParams );
             contentService.updateWorkflow( UpdateWorkflowParams.create()
                                                .contentId( sourceContent.getId() )
-                                               .editor( edit -> edit.state = WorkflowState.READY )
+                                               .editor( edit -> edit.workflow = WorkflowInfo.ready() )
                                                .build() );
         } );
 
@@ -493,7 +493,7 @@ class ParentContentSynchronizerTest
             contentService.update( updateContentParams );
             contentService.updateWorkflow( UpdateWorkflowParams.create()
                                                .contentId( sourceContent.getId() )
-                                               .editor( edit -> edit.state = WorkflowState.READY )
+                                               .editor( edit -> edit.workflow = WorkflowInfo.ready() )
                                                .build() );
         } );
 
@@ -523,7 +523,7 @@ class ParentContentSynchronizerTest
                                        } ) );
             contentService.updateWorkflow( UpdateWorkflowParams.create()
                                                .contentId( sourceContent.getId() )
-                                               .editor( edit -> edit.state = WorkflowState.READY )
+                                               .editor( edit -> edit.workflow = WorkflowInfo.ready() )
                                                .build() );
         } );
 
@@ -531,12 +531,16 @@ class ParentContentSynchronizerTest
 
         assertNotNull( targetContentWithThumbnail.getAttachments().byName( AttachmentNames.THUMBNAIL ) );
 
-        projectContext.runWith( () -> contentService.update( new UpdateContentParams().contentId( sourceContent.getId() )
-                                                                 .removeAttachments( BinaryReferences.from( AttachmentNames.THUMBNAIL ) )
-                                                                 .editor( _ -> {
-                                                                 } ) ) );
-        contentService.updateWorkflow(
-            UpdateWorkflowParams.create().contentId( sourceContent.getId() ).editor( edit -> edit.state = WorkflowState.READY ).build() );
+        projectContext.runWith( () -> {
+            contentService.update( new UpdateContentParams().contentId( sourceContent.getId() )
+                                       .removeAttachments( BinaryReferences.from( AttachmentNames.THUMBNAIL ) )
+                                       .editor( _ -> {
+                                       } ) );
+            contentService.updateWorkflow( UpdateWorkflowParams.create()
+                                               .contentId( sourceContent.getId() )
+                                               .editor( edit -> edit.workflow = WorkflowInfo.ready() )
+                                               .build() );
+        } );
 
         final Content targetContentWithoutThumbnail = syncUpdated( sourceContent.getId() ).orElseThrow();
 

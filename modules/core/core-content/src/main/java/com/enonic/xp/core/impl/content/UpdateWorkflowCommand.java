@@ -5,7 +5,7 @@ import java.util.List;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
-import com.enonic.xp.content.EditableWorkflow;
+import com.enonic.xp.content.EditableContentWorkflow;
 import com.enonic.xp.content.UpdateWorkflowParams;
 import com.enonic.xp.content.UpdateWorkflowResult;
 import com.enonic.xp.content.WorkflowEditor;
@@ -65,16 +65,13 @@ public class UpdateWorkflowCommand
 
     private Content editWorkflow( final WorkflowEditor editor, final Content original )
     {
-        final EditableWorkflow editableWorkflow = new EditableWorkflow( original.getWorkflowInfo() );
+        final EditableContentWorkflow editableWorkflow = new EditableContentWorkflow( original );
         if ( editor != null )
         {
             editor.edit( editableWorkflow );
         }
 
-        return Content.create( original )
-            .workflowInfo( editableWorkflow.build() )
-            .setInherit( stopDataInherit( original.getInherit() ) )
-            .build();
+        return Content.create( editableWorkflow.build() ).setInherit( stopDataInherit( original.getInherit() ) ).build();
     }
 
     public static final class Builder

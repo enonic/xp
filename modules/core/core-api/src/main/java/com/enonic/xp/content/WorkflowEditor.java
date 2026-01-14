@@ -8,5 +8,5 @@ import com.enonic.xp.annotation.PublicApi;
 @NullMarked
 public interface WorkflowEditor
 {
-    void edit( EditableWorkflow edit );
+    void edit( EditableContentWorkflow edit );
 }

@@ -813,6 +813,7 @@ interface PatchContentHandler {
  */
 export function modify<Data = Record<string, unknown>, Type extends string = string>(params: ModifyContentParams<Data, Type>): Content<Data, Type> | null {
     checkRequired(params, 'key');
+    checkRequired(params, 'editor');
 
     const {
         key,
@@ -847,6 +848,7 @@ export function modify<Data = Record<string, unknown>, Type extends string = str
 
 export function update<Data extends Record<string, unknown> = Record<string, unknown>, Type extends string = string>(params: UpdateContentParams<Data, Type>): Content<Data, Type> | null {
     checkRequired(params, 'key');
+    checkRequired(params, 'editor');
 
     const {
         key,
@@ -879,6 +881,7 @@ export function update<Data extends Record<string, unknown> = Record<string, unk
  */
 export function patch(params: PatchContentParams): PatchContentResult {
     checkRequired(params, 'key');
+    checkRequired(params, 'patcher');
 
     const {
         key,
@@ -937,6 +940,7 @@ interface UpdateMetadataHandler {
  */
 export function updateMetadata(params: UpdateMetadataParams): UpdateMetadataResult {
     checkRequired(params, 'key');
+    checkRequired(params, 'editor');
 
     const {
         key,
@@ -987,6 +991,7 @@ interface UpdateWorkflowHandler {
  */
 export function updateWorkflow(params: UpdateWorkflowParams): UpdateWorkflowResult {
     checkRequired(params, 'key');
+    checkRequired(params, 'editor');
 
     const {
         key,

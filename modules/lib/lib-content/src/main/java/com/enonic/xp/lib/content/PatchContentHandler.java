@@ -2,11 +2,13 @@ package com.enonic.xp.lib.content;
 
 import java.time.Instant;
 import java.time.format.DateTimeParseException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.enonic.xp.attachment.Attachment;
@@ -135,35 +137,36 @@ public final class PatchContentHandler
 
     private void patchContent( final PatchableContent target, final Map<String, Object> map )
     {
-        edit( map, "displayName", String.class, v -> target.displayName.setValue( v.orElse( null ) ) );
-        edit( map, "language", String.class, v -> target.language.setValue( v.map( Locale::forLanguageTag ).orElse( null ) ) );
-        edit( map, "childOrder", String.class, v -> target.childOrder.setValue( v.map( ChildOrder::from ).orElse( null ) ) );
-        edit( map, "owner", String.class, v -> target.owner.setValue( v.map( PrincipalKey::from ).orElse( null ) ) );
-        edit( map, "creator", String.class, v -> target.creator.setValue( v.map( PrincipalKey::from ).orElse( null ) ) );
-        edit( map, "createdTime", String.class, v -> target.createdTime.setValue( v.map( Instant::parse ).orElse( null ) ) );
-        edit( map, "modifier", String.class, v -> target.modifier.setValue( v.map( PrincipalKey::from ).orElse( null ) ) );
-        edit( map, "modifiedTime", String.class, v -> target.modifiedTime.setValue( v.map( Instant::parse ).orElse( null ) ) );
-        edit( map, "data", Map.class,
-               v -> target.data.setValue( v.map( val -> createPropertyTree( val, target.type.originalValue ) ).orElse( null ) ) );
-        edit( map, "x", Map.class,
-               v -> target.extraDatas.setValue( v.map( val -> createExtraDatas( val, target.type.originalValue ) ).orElse( null ) ) );
-        edit( map, "publish", Map.class, v -> target.publishInfo.setValue( v.map( this::createContentPublishInfo ).orElse( null ) ) );
-        edit( map, "workflow", Map.class, v -> target.workflowInfo.setValue( v.map( this::createWorkflowInfo ).orElse( null ) ) );
-        edit( map, "page", Map.class, v -> target.page.setValue( v.map( this::createPage ).orElse( null ) ) );
-        edit( map, "validationErrors", List.class,
-               v -> target.validationErrors.setValue( v.map( this::createValidationErrors ).orElse( null ) ) );
-        edit( map, "valid", Boolean.class, v -> target.valid.setValue( v.orElse( null ) ) );
-        edit( map, "processedReferences", String[].class,
-               v -> target.processedReferences.setValue( v.map( ContentIds::from ).orElse( null ) ) );
-        edit( map, "manualOrderValue", Long.class, v -> target.manualOrderValue.setValue( v.orElse( null ) ) );
-        edit( map, "inherit", List.class, v -> target.inherit.setValue( v.map( this::createInherit ).orElse( null ) ) );
-        edit( map, "variantOf", String.class, v -> target.variantOf.setValue( v.map( ContentId::from ).orElse( null ) ) );
-        edit( map, "originProject", String.class, v -> target.originProject.setValue( v.map( ProjectName::from ).orElse( null ) ) );
-        edit( map, "originalParentPath", String.class,
-               v -> target.originalParentPath.setValue( v.map( ContentPath::from ).orElse( null ) ) );
-        edit( map, "originalName", String.class, v -> target.originalName.setValue( v.map( ContentName::from ).orElse( null ) ) );
-        edit( map, "archivedTime", String.class, v -> target.archivedTime.setValue( v.map( Instant::parse ).orElse( null ) ) );
-        edit( map, "archivedBy", String.class, v -> target.archivedBy.setValue( v.map( PrincipalKey::from ).orElse( null ) ) );
+        edit( map, "displayName", String.class, Function.identity(), target.displayName );
+        edit( map, "language", String.class, Locale::forLanguageTag, target.language );
+        edit( map, "childOrder", String.class, ChildOrder::from, target.childOrder );
+        edit( map, "owner", String.class, PrincipalKey::from, target.owner );
+        edit( map, "creator", String.class, PrincipalKey::from, target.creator );
+        edit( map, "createdTime", String.class, Instant::parse, target.createdTime );
+        edit( map, "modifier", String.class, PrincipalKey::from, target.modifier );
+        edit( map, "modifiedTime", String.class, Instant::parse, target.modifiedTime );
+        edit( map, "data", Map.class, v -> createPropertyTree( v, target.type.originalValue ), target.data );
+        edit( map, "x", Map.class, v -> createExtraDatas( v, target.type.originalValue ), target.extraDatas );
+        edit( map, "publish", Map.class, this::createContentPublishInfo, target.publishInfo );
+        edit( map, "workflow", Map.class, this::createWorkflowInfo, target.workflowInfo );
+        edit( map, "page", Map.class, this::createPage, target.page );
+        edit( map, "validationErrors", List.class, this::createValidationErrors, target.validationErrors );
+        edit( map, "valid", Boolean.class, Function.identity(), target.valid );
+        edit( map, "processedReferences", String[].class, ContentIds::from, target.processedReferences );
+        edit( map, "manualOrderValue", Long.class, Function.identity(), target.manualOrderValue );
+        edit( map, "inherit", String[].class, this::createInherit, target.inherit );
+        edit( map, "variantOf", String.class, ContentId::from, target.variantOf );
+        edit( map, "originProject", String.class, ProjectName::from, target.originProject );
+        edit( map, "originalParentPath", String.class, ContentPath::from, target.originalParentPath );
+        edit( map, "originalName", String.class, ContentName::from, target.originalName );
+        edit( map, "archivedTime", String.class, Instant::parse, target.archivedTime );
+        edit( map, "archivedBy", String.class, PrincipalKey::from, target.archivedBy );
+    }
+
+    private <T, R> void edit( Map<String, ?> map, String key, Class<T> type, Function<T, R> mapper,
+                              PatchableContent.PatchableField<R> field )
+    {
+        edit( map, key, type, v -> v.map( mapper ).ifPresentOrElse( field::setValue, field::remove ) );
     }
 
     private void patchAttachments( final PatchableContent target, final Map<String, Object> map )
@@ -200,9 +203,9 @@ public final class PatchContentHandler
             .build();
     }
 
-    private Set<ContentInheritType> createInherit( final List<String> list )
+    private Set<ContentInheritType> createInherit( final String[] list )
     {
-        return list.stream().map( ContentInheritType::valueOf ).collect( Collectors.toSet() );
+        return Arrays.stream( list ).map( ContentInheritType::valueOf ).collect( Collectors.toSet() );
     }
 
     private Instant getInstant( final Map<String, Object> valueMap, final String key )

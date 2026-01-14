@@ -46,13 +46,13 @@ public final class EditablePage
     @NonNull
     public Page build()
     {
-        final Page.Builder builder = Page.create();
-        builder.descriptor( descriptor );
-        builder.template( template );
-        builder.regions( regions );
-        builder.config( config );
-        builder.customized( customized );
-        builder.fragment( fragment );
-        return builder.build();
+        return Page.create()
+            .descriptor( descriptor )
+            .template( template )
+            .regions( regions )
+            .config( config )
+            .customized( customized )
+            .fragment( fragment )
+            .build();
     }
 }

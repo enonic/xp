@@ -32,7 +32,7 @@ class ContentServiceImplTest_updateWorkflow
         final Content content = this.contentService.create( createContentParams );
 
         final UpdateWorkflowParams params = UpdateWorkflowParams.create().contentId( content.getId() ).editor( edit -> {
-            edit.state = WorkflowState.PENDING_APPROVAL;
+            edit.workflow = WorkflowInfo.create().state( WorkflowState.PENDING_APPROVAL ).build();
         } ).build();
 
         final UpdateWorkflowResult result = this.contentService.updateWorkflow( params );

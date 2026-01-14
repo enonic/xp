@@ -3,7 +3,7 @@ package com.enonic.xp.lib.content;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.EditableWorkflow;
+import com.enonic.xp.content.EditableContentWorkflow;
 import com.enonic.xp.content.UpdateWorkflowParams;
 import com.enonic.xp.content.UpdateWorkflowResult;
 
@@ -27,12 +27,10 @@ public class UpdateWorkflowHandlerTest
 
     private UpdateWorkflowResult invokeUpdateWorkflow( final UpdateWorkflowParams params, final Content content )
     {
-        final EditableWorkflow editableWorkflow = new EditableWorkflow( content.getWorkflowInfo() );
+        final EditableContentWorkflow editableWorkflow = new EditableContentWorkflow( content );
 
         params.getEditor().edit( editableWorkflow );
 
-        final Content updatedContent = Content.create( content ).workflowInfo( editableWorkflow.build() ).build();
-
-        return UpdateWorkflowResult.create().content( updatedContent ).build();
+        return UpdateWorkflowResult.create().content( editableWorkflow.build() ).build();
     }
 }

@@ -6,13 +6,13 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.EditableWorkflow;
+import com.enonic.xp.content.EditableContentWorkflow;
 import com.enonic.xp.content.UpdateWorkflowParams;
 import com.enonic.xp.content.UpdateWorkflowResult;
 import com.enonic.xp.content.WorkflowEditor;
-import com.enonic.xp.content.WorkflowState;
+import com.enonic.xp.content.WorkflowInfo;
+import com.enonic.xp.lib.content.mapper.ContentMapper;
 import com.enonic.xp.lib.content.mapper.UpdateWorkflowResultMapper;
-import com.enonic.xp.lib.content.mapper.WorkflowInfoMapper;
 import com.enonic.xp.script.ScriptValue;
 
 public final class UpdateWorkflowHandler
@@ -64,7 +64,7 @@ public final class UpdateWorkflowHandler
     private WorkflowEditor newWorkflowEditor()
     {
         return edit -> {
-            final ScriptValue value = this.editor.call( new WorkflowInfoMapper( edit.source ) );
+            final ScriptValue value = this.editor.call( new ContentMapper( edit.source ) );
             if ( value != null )
             {
                 updateWorkflow( edit, value.getMap() );
@@ -72,9 +72,9 @@ public final class UpdateWorkflowHandler
         };
     }
 
-    private void updateWorkflow( final EditableWorkflow target, final Map<String, ?> map )
+    private void updateWorkflow( final EditableContentWorkflow target, final Map<String, ?> map )
     {
-        edit( map, "state", String.class, val -> target.state = val.map( WorkflowState::valueOf ).orElse( null ) );
+        edit( map, "state", String.class, v -> target.workflow = v.map( val -> WorkflowInfo.create().state( val ).build() ).orElseThrow() );
     }
 
     public void setKey( final String key )
