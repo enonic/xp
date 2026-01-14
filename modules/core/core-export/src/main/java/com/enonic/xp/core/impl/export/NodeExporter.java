@@ -128,15 +128,12 @@ public class NodeExporter
     {
         final Node parentNode = nodeService.getByPath( parentPath );
 
-        doExport( parentPath );
+        final long totalHits = doExport( parentPath );
 
         // For manual ordering, we need to write the order list
         // We need the names in the correct order, so we load nodes in batches
         if ( parentNode != null && parentNode.getChildOrder() != null && parentNode.getChildOrder().isManualOrder() )
         {
-            final long totalHits = nodeService.findByParent(
-                FindNodesByParentParams.create().parentPath( parentPath ).countOnly( true ).build() ).getTotalHits();
-
             final StringBuilder orderBuilder = new StringBuilder();
 
             int from = 0;
@@ -160,7 +157,7 @@ public class NodeExporter
         }
     }
 
-    private void doExport( final NodePath nodePath )
+    private long doExport( final NodePath nodePath )
     {
         final long totalHits = nodeService.findByParent(
             FindNodesByParentParams.create().parentPath( nodePath ).countOnly( true ).build() ).getTotalHits();
@@ -188,6 +185,8 @@ public class NodeExporter
 
             from += BATCH_SIZE;
         }
+
+        return totalHits;
     }
 
 
