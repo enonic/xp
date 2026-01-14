@@ -40,6 +40,7 @@ import {
     UserKey,
     ValidationError,
     Workflow,
+    WorkflowState,
 } from '@enonic-types/core';
 
 const isString = (value: unknown): value is string => value instanceof String || typeof value === 'string';
@@ -956,10 +957,8 @@ export function updateMetadata(params: UpdateMetadataParams): UpdateMetadataResu
 }
 
 export interface EditableWorkflow {
-    source: {
-        state?: string;
-    };
-    state?: string;
+    source: Content;
+    state: WorkflowState;
 }
 
 export interface UpdateWorkflowParams {

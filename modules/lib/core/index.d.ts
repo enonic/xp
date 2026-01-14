@@ -728,8 +728,10 @@ export interface Content<
     fragment?: Type extends 'portal:fragment' ? _Component : never;
 }
 
+export type WorkflowState = 'IN_PROGRESS' | 'PENDING_APPROVAL' | 'REJECTED' | 'READY';
+
 export interface Workflow {
-    state: 'IN_PROGRESS' | 'PENDING_APPROVAL' | 'REJECTED' | 'READY';
+    state: WorkflowState;
 }
 
 export type ContentInheritValue = 'CONTENT' | 'PARENT' | 'NAME' | 'SORT';

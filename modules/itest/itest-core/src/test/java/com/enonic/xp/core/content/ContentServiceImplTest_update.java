@@ -163,9 +163,9 @@ class ContentServiceImplTest_update
     {
 
         //Mocks the content service to return our content type
-        final ContentTypeService contentTypeService = Mockito.mock( ContentTypeService.class );
+        final ContentTypeService contentTypeService = mock( ContentTypeService.class );
         this.contentService.setContentTypeService( contentTypeService );
-        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) )
+        when( contentTypeService.getByName( isA( GetContentTypeParams.class ) ) )
             .thenReturn( createContentTypeForAllInputTypes() );
 
         //Creates a valid content

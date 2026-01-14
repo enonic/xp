@@ -43,14 +43,11 @@ final class UpdateContentCommand
 
     private final MediaInfo mediaInfo;
 
-    private final WorkflowInfo workflowInfo;
-
     private UpdateContentCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
         this.mediaInfo = builder.mediaInfo;
-        this.workflowInfo = builder.workflowInfo;
     }
 
     public static Builder create( final UpdateContentParams params )
@@ -139,7 +136,7 @@ final class UpdateContentCommand
     {
         final PatchableContent patchableContent = new PatchableContent( content );
         patchableContent.inherit.setPatcher( c -> stopDataInherit( c.inherit.originalValue ) );
-        patchableContent.workflowInfo.setValue( Objects.requireNonNullElse( workflowInfo, WorkflowInfo.inProgress() ) );
+        patchableContent.workflowInfo.setValue( WorkflowInfo.inProgress() );
         patchableContent.modifier.setValue( getCurrentUserKey() );
         patchableContent.modifiedTime.setValue( Instant.now() );
         return patchableContent.build();
@@ -312,12 +309,6 @@ final class UpdateContentCommand
         Builder mediaInfo( final MediaInfo value )
         {
             this.mediaInfo = value;
-            return this;
-        }
-
-        Builder workflowInfo( final WorkflowInfo value )
-        {
-            this.workflowInfo = value;
             return this;
         }
 
