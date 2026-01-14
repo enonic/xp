@@ -29,6 +29,8 @@ public class NodeExporter
 {
     private static final String LINE_SEPARATOR = System.lineSeparator();
 
+    private static final int BATCH_SIZE = 100;
+
     private final NodePath sourceNodePath;
 
     private final NodeService nodeService;
@@ -126,33 +128,72 @@ public class NodeExporter
     {
         final Node parentNode = nodeService.getByPath( parentPath );
 
-        final FindNodesByParentResult children = doExport( parentPath );
+        doExport( parentPath );
 
-        final Nodes childNodes = this.nodeService.getByIds( children.getNodeIds() );
+        // For manual ordering, we need to write the order list
+        // We need the names in the correct order, so we load nodes in batches
+        if ( parentNode != null && parentNode.getChildOrder() != null && parentNode.getChildOrder().isManualOrder() )
+        {
+            final FindNodesByParentResult totalResult =
+                nodeService.findByParent( FindNodesByParentParams.create().parentPath( parentPath ).size( 0 ).build() );
 
-        writeNodeOrderList( parentNode, childNodes );
+            final long totalHits = totalResult.getTotalHits();
+
+            final StringBuilder orderBuilder = new StringBuilder();
+
+            int from = 0;
+            while ( from < totalHits )
+            {
+                final FindNodesByParentResult batch = nodeService.findByParent(
+                    FindNodesByParentParams.create().parentPath( parentPath ).from( from ).size( BATCH_SIZE ).build() );
+
+                final Nodes childNodes = this.nodeService.getByIds( batch.getNodeIds() );
+
+                for ( final Node node : childNodes )
+                {
+                    orderBuilder.append( node.name().toString() ).append( LINE_SEPARATOR );
+                }
+
+                from += BATCH_SIZE;
+            }
+
+            final Path nodeOrderListPath = resolveNodeDataFolder( parentNode ).resolve( NodeExportPathResolver.ORDER_EXPORT_NAME );
+            exportWriter.writeElement( nodeOrderListPath, orderBuilder.toString() );
+        }
     }
 
     private FindNodesByParentResult doExport( final NodePath nodePath )
     {
-        final FindNodesByParentResult children =
-            nodeService.findByParent( FindNodesByParentParams.create().parentPath( nodePath ).build() );
+        final FindNodesByParentResult totalResult =
+            nodeService.findByParent( FindNodesByParentParams.create().parentPath( nodePath ).size( 0 ).build() );
 
-        final Nodes childNodes = this.nodeService.getByIds( children.getNodeIds() );
+        final long totalHits = totalResult.getTotalHits();
 
-        for ( final Node child : childNodes )
+        int from = 0;
+        while ( from < totalHits )
         {
-            try
+            final FindNodesByParentResult batch = nodeService.findByParent(
+                FindNodesByParentParams.create().parentPath( nodePath ).from( from ).size( BATCH_SIZE ).build() );
+
+            final Nodes childNodes = this.nodeService.getByIds( batch.getNodeIds() );
+
+            for ( final Node child : childNodes )
             {
-                exportNode( child );
+                try
+                {
+                    exportNode( child );
+                }
+                catch ( Exception e )
+                {
+                    LOG.error( String.format( "Failed to export node with path [%s]", child.path() ), e );
+                    result.addError( new ExportError( e.toString() ) );
+                }
             }
-            catch ( Exception e )
-            {
-                LOG.error( String.format( "Failed to export node with path [%s]", child.path() ), e );
-                result.addError( new ExportError( e.toString() ) );
-            }
+
+            from += BATCH_SIZE;
         }
-        return children;
+
+        return totalResult;
     }
 
 
@@ -168,25 +209,6 @@ public class NodeExporter
 
             result.addBinary( relativeNode.path(), reference );
         }
-    }
-
-    private void writeNodeOrderList( final Node parent, final Nodes children )
-    {
-        if ( parent == null || parent.getChildOrder() == null || !parent.getChildOrder().isManualOrder() )
-        {
-            return;
-        }
-
-        final StringBuilder builder = new StringBuilder();
-
-        for ( final Node node : children )
-        {
-            builder.append( node.name().toString() ).append( LINE_SEPARATOR );
-        }
-
-        final Path nodeOrderListPath = resolveNodeDataFolder( parent ).resolve( NodeExportPathResolver.ORDER_EXPORT_NAME );
-
-        exportWriter.writeElement( nodeOrderListPath, builder.toString() );
     }
 
     private void writeExportProperties()
