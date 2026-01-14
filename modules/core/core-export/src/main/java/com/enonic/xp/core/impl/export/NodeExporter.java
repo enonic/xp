@@ -19,6 +19,7 @@ import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.Nodes;
@@ -134,10 +135,8 @@ public class NodeExporter
         // We need the names in the correct order, so we load nodes in batches
         if ( parentNode != null && parentNode.getChildOrder() != null && parentNode.getChildOrder().isManualOrder() )
         {
-            final FindNodesByParentResult totalResult =
-                nodeService.findByParent( FindNodesByParentParams.create().parentPath( parentPath ).size( 0 ).build() );
-
-            final long totalHits = totalResult.getTotalHits();
+            final long totalHits = nodeService.findByParent(
+                FindNodesByParentParams.create().parentPath( parentPath ).countOnly( true ).build() ).getTotalHits();
 
             final StringBuilder orderBuilder = new StringBuilder();
 
@@ -164,10 +163,8 @@ public class NodeExporter
 
     private FindNodesByParentResult doExport( final NodePath nodePath )
     {
-        final FindNodesByParentResult totalResult =
-            nodeService.findByParent( FindNodesByParentParams.create().parentPath( nodePath ).size( 0 ).build() );
-
-        final long totalHits = totalResult.getTotalHits();
+        final long totalHits = nodeService.findByParent(
+            FindNodesByParentParams.create().parentPath( nodePath ).countOnly( true ).build() ).getTotalHits();
 
         int from = 0;
         while ( from < totalHits )
@@ -193,7 +190,8 @@ public class NodeExporter
             from += BATCH_SIZE;
         }
 
-        return totalResult;
+        // Return a result with the total count for compatibility
+        return FindNodesByParentResult.create().totalHits( totalHits ).nodeIds( NodeIds.empty() ).build();
     }
 
 
