@@ -164,7 +164,7 @@ final class CreateContentCommand
     {
         if ( params.getType().isSite() && SiteConfigsDataSerializer.fromData( params.getData().getRoot() ).isNotEmpty() )
         {
-            checkAdminAccess();
+            checkOwnerAccess();
         }
     }
 
@@ -287,7 +287,8 @@ final class CreateContentCommand
             .contentTypeName( builder.getType() )
             .contentName( builder.getName() )
             .displayName( builder.getDisplayName() )
-            .createAttachments( builder.getCreateAttachments() ).page( builder.getPage() )
+            .createAttachments( builder.getCreateAttachments() )
+            .page( builder.getPage() )
             .contentValidators( this.contentValidators )
             .contentTypeService( this.contentTypeService )
             .build()

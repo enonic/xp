@@ -25,16 +25,20 @@ public class ProjectAccessHelper
         return ADMIN_ACCESS.stream().anyMatch( authenticationInfo::hasRole );
     }
 
-    public static boolean hasAccess( AuthenticationInfo authenticationInfo, ProjectName projectName, ProjectRole... projectRole )
+    public static boolean hasAnyAccess( final AuthenticationInfo authenticationInfo, final ProjectName projectName )
+    {
+        return hasAdminAccess( authenticationInfo ) ||
+            Arrays.stream( ProjectRole.values() ).anyMatch( r -> hasPermissions( authenticationInfo, projectName, r ) );
+    }
+
+    public static boolean hasAccess( AuthenticationInfo authenticationInfo, ProjectName projectName, ProjectRole projectRole )
     {
         return hasAdminAccess( authenticationInfo ) || hasPermissions( authenticationInfo, projectName, projectRole );
     }
 
     private static boolean hasPermissions( final AuthenticationInfo authenticationInfo, final ProjectName projectName,
-                                          ProjectRole... projectRoles )
+                                           ProjectRole projectRole )
     {
-        return Arrays.stream( projectRoles )
-            .map( projectRole -> createRoleKey( projectName, projectRole ) )
-            .anyMatch( authenticationInfo::hasRole );
+        return authenticationInfo.hasRole( createRoleKey( projectName, projectRole ) );
     }
 }

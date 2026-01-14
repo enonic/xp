@@ -271,7 +271,7 @@ final class UpdateContentCommand
             !Objects.equals( SiteConfigsDataSerializer.fromData( originalSite.getData().getRoot() ),
                              SiteConfigsDataSerializer.fromData( editedSite.getData().getRoot() ) ) )
         {
-            checkAdminAccess();
+            checkOwnerAccess();
         }
     }
 
