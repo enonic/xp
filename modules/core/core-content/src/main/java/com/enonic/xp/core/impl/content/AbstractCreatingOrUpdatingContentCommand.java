@@ -334,7 +334,7 @@ class AbstractCreatingOrUpdatingContentCommand
         return EXECUTABLE_CONTENT_TYPES.stream().anyMatch( mediaType::is ) && isExecutableFileName( fileName.toString() );
     }
 
-    void checkAdminAccess()
+    void checkOwnerAccess()
         throws ForbiddenAccessException
     {
         final Context context = ContextAccessor.current();

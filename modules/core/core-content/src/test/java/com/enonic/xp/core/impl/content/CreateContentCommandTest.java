@@ -605,7 +605,7 @@ class CreateContentCommandTest
             .authInfo( AuthenticationInfo.create()
                            .principals( RoleKeys.AUTHENTICATED )
                            .principals( RoleKeys.CONTENT_MANAGER_APP )
-                           .principals( ProjectAccessHelper.createRoleKey( projectName, ProjectRole.OWNER ) ) // важно!
+                           .principals( ProjectAccessHelper.createRoleKey( projectName, ProjectRole.OWNER ) )
                            .user( repoOwner )
                            .build() )
             .build()

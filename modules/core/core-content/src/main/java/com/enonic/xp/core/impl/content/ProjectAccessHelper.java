@@ -1,7 +1,5 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.Arrays;
-
 import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectRole;
@@ -25,16 +23,23 @@ public class ProjectAccessHelper
         return ADMIN_ACCESS.stream().anyMatch( authenticationInfo::hasRole );
     }
 
-    public static boolean hasAccess( AuthenticationInfo authenticationInfo, ProjectName projectName, ProjectRole... projectRole )
+    public static boolean hasAnyAccess( final AuthenticationInfo authenticationInfo, final ProjectName projectName )
+    {
+        return hasAdminAccess( authenticationInfo ) || hasPermissions( authenticationInfo, projectName, ProjectRole.OWNER ) ||
+            hasPermissions( authenticationInfo, projectName, ProjectRole.EDITOR ) ||
+            hasPermissions( authenticationInfo, projectName, ProjectRole.AUTHOR ) ||
+            hasPermissions( authenticationInfo, projectName, ProjectRole.CONTRIBUTOR ) ||
+            hasPermissions( authenticationInfo, projectName, ProjectRole.VIEWER );
+    }
+
+    public static boolean hasAccess( AuthenticationInfo authenticationInfo, ProjectName projectName, ProjectRole projectRole )
     {
         return hasAdminAccess( authenticationInfo ) || hasPermissions( authenticationInfo, projectName, projectRole );
     }
 
     private static boolean hasPermissions( final AuthenticationInfo authenticationInfo, final ProjectName projectName,
-                                          ProjectRole... projectRoles )
+                                           ProjectRole projectRole )
     {
-        return Arrays.stream( projectRoles )
-            .map( projectRole -> createRoleKey( projectName, projectRole ) )
-            .anyMatch( authenticationInfo::hasRole );
+        return authenticationInfo.hasRole( createRoleKey( projectName, projectRole ) );
     }
 }

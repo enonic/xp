@@ -77,6 +77,7 @@ import com.enonic.xp.content.UpdateContentMetadataResult;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.content.XDataDefaultValuesProcessor;
+import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.content.processor.ContentProcessor;
@@ -91,13 +92,13 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.page.PageDefaultValuesProcessor;
 import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.xdata.XDataService;
-import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.Site;
@@ -706,6 +707,9 @@ public class ContentServiceImpl
     @Override
     public FindContentVersionsResult getVersions( final FindContentVersionsParams params )
     {
+        requireAnyRole();
+        verifyDraftBranch();
+
         return FindContentVersionsCommand.create()
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
@@ -876,9 +880,8 @@ public class ContentServiceImpl
     @Override
     public PatchContentResult patch( final PatchContentParams params )
     {
-        requireAdminRole();
-
         verifyDraftBranch();
+        requireAdminRole();
 
         final PatchContentResult result = PatchContentCommand.create( params )
             .nodeService( this.nodeService )
@@ -928,7 +931,12 @@ public class ContentServiceImpl
 
     private static void verifyDraftBranch()
     {
-        if ( !ContentConstants.BRANCH_DRAFT.equals( ContextAccessor.current().getBranch() ) )
+        final Context ctx = ContextAccessor.current();
+        if ( ProjectName.from( ctx.getRepositoryId() ) == null )
+        {
+            throw new IllegalStateException( "Repository must be a project repository" );
+        }
+        if ( !ContentConstants.BRANCH_DRAFT.equals( ctx.getBranch() ) )
         {
             throw new IllegalStateException( String.format( "Branch must be %s", ContentConstants.BRANCH_DRAFT ) );
         }
@@ -937,8 +945,18 @@ public class ContentServiceImpl
     private static void requireAdminRole()
     {
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+        if ( !ProjectAccessHelper.hasAdminAccess( authInfo ) )
+        {
+            throw new ForbiddenAccessException( authInfo.getUser() );
+        }
+    }
 
-        if ( !( authInfo.hasRole( RoleKeys.ADMIN ) || authInfo.hasRole( RoleKeys.CONTENT_MANAGER_ADMIN ) ) )
+    private static void requireAnyRole()
+    {
+        final Context ctx = ContextAccessor.current();
+
+        final AuthenticationInfo authInfo = ctx.getAuthInfo();
+        if ( !ProjectAccessHelper.hasAnyAccess( authInfo, ProjectName.from( ctx.getRepositoryId() ) ) )
         {
             throw new ForbiddenAccessException( authInfo.getUser() );
         }
