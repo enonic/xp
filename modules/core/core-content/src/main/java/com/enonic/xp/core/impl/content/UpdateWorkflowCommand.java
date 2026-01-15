@@ -1,7 +1,5 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.List;
-
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
@@ -9,6 +7,7 @@ import com.enonic.xp.content.EditableContentWorkflow;
 import com.enonic.xp.content.UpdateWorkflowParams;
 import com.enonic.xp.content.UpdateWorkflowResult;
 import com.enonic.xp.content.WorkflowEditor;
+import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.PatchNodeResult;
 
@@ -43,11 +42,15 @@ public class UpdateWorkflowCommand
         final Content contentBeforeChange = getContent( params.getContentId() );
 
         final Content editedContent = editWorkflow( params.getEditor(), contentBeforeChange );
-        final List<String> modifiedFields = ContentAttributesHelper.modifiedFields( contentBeforeChange, editedContent );
+
+        final String[] modifiedFields = ContentAttributesHelper.modifiedFields( contentBeforeChange, editedContent );
+
+        final Attributes updateWorkflowAttr =
+            ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.UPDATE_WORKFLOW_ATTR, modifiedFields );
 
         final PatchNodeParams patchNodeParams = PatchNodeParamsFactory.create()
             .editedContent( editedContent )
-            .versionAttributes( ContentAttributesHelper.updateWorkflowHistoryAttr( modifiedFields ) )
+            .versionAttributes( updateWorkflowAttr )
             .branches( Branches.from( ContentConstants.BRANCH_DRAFT ) )
             .contentTypeService( this.contentTypeService )
             .xDataService( this.xDataService )
