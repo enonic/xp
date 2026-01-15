@@ -61,15 +61,19 @@ public class ExportServiceImpl
 
         try ( exportWriter )
         {
-            return NodeExporter.create()
+            final NodeExporter.Builder exporterBuilder = NodeExporter.create()
                 .sourceNodePath( params.getSourceNodePath() )
                 .nodeService( this.nodeService )
                 .nodeExportWriter( exportWriter )
                 .targetDirectory( targetDirectory )
-                .xpVersion( xpVersion )
-                .nodeExportListener( params.getNodeExportListener() )
-                .build()
-                .execute();
+                .xpVersion( xpVersion ).nodeExportListener( params.getNodeExportListener() );
+
+            if ( params.getBatchSize() != null )
+            {
+                exporterBuilder.batchSize( params.getBatchSize() );
+            }
+
+            return exporterBuilder.build().execute();
         }
         catch ( IOException e )
         {

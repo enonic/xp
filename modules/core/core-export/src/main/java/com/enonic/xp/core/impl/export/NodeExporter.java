@@ -17,12 +17,20 @@ import com.enonic.xp.export.NodeExportListener;
 import com.enonic.xp.export.NodeExportResult;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.FindNodesByParentParams;
-import com.enonic.xp.node.FindNodesByParentResult;
+import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.RefreshMode;
+import com.enonic.xp.query.expr.CompareExpr;
+import com.enonic.xp.query.expr.FieldExpr;
+import com.enonic.xp.query.expr.FieldOrderExpr;
+import com.enonic.xp.query.expr.OrderExpr;
+import com.enonic.xp.query.expr.QueryExpr;
+import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.util.BinaryReference;
 
 public class NodeExporter
@@ -39,6 +47,8 @@ public class NodeExporter
 
     private final String xpVersion;
 
+    private final int batchSize;
+
     private final NodeExportListener nodeExportListener;
 
     private final NodeExportResult.Builder result = NodeExportResult.create();
@@ -52,6 +62,7 @@ public class NodeExporter
         this.exportWriter = builder.exportWriter;
         this.targetDirectory = builder.targetDirectory;
         this.xpVersion = Objects.requireNonNull( builder.xpVersion );
+        this.batchSize = builder.batchSize;
         this.nodeExportListener = builder.nodeExportListener;
     }
 
@@ -71,7 +82,9 @@ public class NodeExporter
 
             try
             {
-                exportNode( rootNode );
+                writeNode( rootNode );
+                writeNodeOrderList( rootNode );
+                doExportChildNodes( rootNode.path() );
             }
             catch ( Exception e )
             {
@@ -90,22 +103,17 @@ public class NodeExporter
     }
 
 
-    private void exportNode( final Node node )
+    private void writeNode( final Node node )
     {
-        writeNode( node );
-
         if ( nodeExportListener != null )
         {
             nodeExportListener.nodeExported( 1L );
         }
 
-        result.addNodePath( node.path() );
-        doExportChildNodes( node.path() );
-    }
-
-    private void writeNode( final Node node )
-    {
         doWriteNode( node, resolveNodeDataFolder( node ) );
+
+        result.addNodePath( node.path() );
+
     }
 
     private void doWriteNode( final Node node, final Path baseFolder )
@@ -124,37 +132,44 @@ public class NodeExporter
 
     private void doExportChildNodes( final NodePath parentPath )
     {
-        final Node parentNode = nodeService.getByPath( parentPath );
+        int from = 0;
+        boolean hasMore = true;
 
-        final FindNodesByParentResult children = doExport( parentPath );
+        final String childrenPattern = parentPath.isRoot() ? "/?*" : parentPath + "/*";
 
-        final Nodes childNodes = this.nodeService.getByIds( children.getNodeIds() );
-
-        writeNodeOrderList( parentNode, childNodes );
-    }
-
-    private FindNodesByParentResult doExport( final NodePath nodePath )
-    {
-        final FindNodesByParentResult children =
-            nodeService.findByParent( FindNodesByParentParams.create().parentPath( nodePath ).build() );
-
-        final Nodes childNodes = this.nodeService.getByIds( children.getNodeIds() );
-
-        for ( final Node child : childNodes )
+        while ( hasMore )
         {
-            try
-            {
-                exportNode( child );
-            }
-            catch ( Exception e )
-            {
-                LOG.error( String.format( "Failed to export node with path [%s]", child.path() ), e );
-                result.addError( new ExportError( e.toString() ) );
-            }
-        }
-        return children;
-    }
+            final FindNodesByQueryResult batch = nodeService.findByQuery( NodeQuery.create()
+                                                                              .query( QueryExpr.from(
+                                                                                  CompareExpr.like( FieldExpr.from( NodeIndexPath.PATH ),
+                                                                                                    ValueExpr.string(
+                                                                                                        childrenPattern ) ) ) )
+                                                                              .addOrderBy( FieldOrderExpr.create( NodeIndexPath.PATH,
+                                                                                                                  OrderExpr.Direction.ASC ) )
+                                                                              .from( from )
+                                                                              .size( this.batchSize )
+                                                                              .build() );
 
+            final Nodes childNodes = this.nodeService.getByIds( batch.getNodeIds() );
+
+            for ( final Node child : childNodes )
+            {
+                try
+                {
+                    writeNode( child );
+                    writeNodeOrderList( child );
+                }
+                catch ( Exception e )
+                {
+                    LOG.error( String.format( "Failed to export node with path [%s]", child.path() ), e );
+                    result.addError( new ExportError( e.toString() ) );
+                }
+            }
+
+            from += this.batchSize;
+            hasMore = from < batch.getTotalHits();
+        }
+    }
 
     private void exportNodeBinaries( final Node relativeNode, final Path nodeDataFolder )
     {
@@ -170,21 +185,29 @@ public class NodeExporter
         }
     }
 
-    private void writeNodeOrderList( final Node parent, final Nodes children )
+    private void writeNodeOrderList( final Node node )
     {
-        if ( parent == null || parent.getChildOrder() == null || !parent.getChildOrder().isManualOrder() )
+        if ( node == null || node.getChildOrder() == null || !node.getChildOrder().isManualOrder() )
+        {
+            return;
+        }
+
+        final Nodes children = this.nodeService.getByIds(
+            nodeService.findByParent( FindNodesByParentParams.create().parentPath( node.path() ).build() ).getNodeIds() );
+
+        if ( children.isEmpty() )
         {
             return;
         }
 
         final StringBuilder builder = new StringBuilder();
 
-        for ( final Node node : children )
+        for ( final Node child : children )
         {
-            builder.append( node.name().toString() ).append( LINE_SEPARATOR );
+            builder.append( child.name().toString() ).append( LINE_SEPARATOR );
         }
 
-        final Path nodeOrderListPath = resolveNodeDataFolder( parent ).resolve( NodeExportPathResolver.ORDER_EXPORT_NAME );
+        final Path nodeOrderListPath = resolveNodeDataFolder( node ).resolve( NodeExportPathResolver.ORDER_EXPORT_NAME );
 
         exportWriter.writeElement( nodeOrderListPath, builder.toString() );
     }
@@ -245,6 +268,8 @@ public class NodeExporter
 
         private String xpVersion;
 
+        private int batchSize = 1000;
+
         private NodeExportListener nodeExportListener;
 
         private Builder()
@@ -278,6 +303,12 @@ public class NodeExporter
         public Builder xpVersion( final String xpVersion )
         {
             this.xpVersion = xpVersion;
+            return this;
+        }
+
+        public Builder batchSize( final int batchSize )
+        {
+            this.batchSize = batchSize;
             return this;
         }
 

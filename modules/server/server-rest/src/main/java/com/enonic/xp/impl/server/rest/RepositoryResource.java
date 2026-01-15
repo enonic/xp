@@ -46,8 +46,7 @@ public final class RepositoryResource
             .repositoryId( params.getSourceRepoPath().getRepositoryId() )
             .branch( params.getSourceRepoPath().getBranch() )
             .nodePath( params.getSourceRepoPath().getNodePath() )
-            .exportName( params.getExportName() )
-            .archive( params.isArchive() )
+            .exportName( params.getExportName() ).archive( params.isArchive() ).batchSize( params.getBatchSize() )
             .exportService( exportService )
             .build();
         final TaskId taskId = taskService.submitLocalTask(
