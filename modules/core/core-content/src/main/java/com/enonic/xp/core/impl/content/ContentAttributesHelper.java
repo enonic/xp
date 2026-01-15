@@ -6,7 +6,6 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.function.Function;
 
 import com.enonic.xp.content.Content;
@@ -43,6 +42,8 @@ public class ContentAttributesHelper
 
     public static final String UPDATE_METADATA_ATTR = "content.updateMetadata";
 
+    public static final String UPDATE_WORKFLOW_ATTR = "content.updateWorkflow";
+
     public static final String ARCHIVE_ATTR = "content.archive";
 
     public static final String RESTORE_ATTR = "content.restore";
@@ -57,8 +58,6 @@ public class ContentAttributesHelper
         Map.of( "displayName", Content::getDisplayName, "data", Content::getData, "x", Content::getAllExtraData, "page", Content::getPage,
                 "owner", Content::getOwner, "language", Content::getLanguage, "publish", Content::getPublishInfo, "workflow",
                 Content::getWorkflowInfo, "variantOf", Content::getVariantOf, "attachments", Content::getAttachments );
-
-    public static final Set<String> EDITORIAL_FIELDS = Set.of( "displayName", "data", "x", "page", "attachments" );
 
     public static String[] modifiedFields( Content existingContent, Content updatedContent )
     {
@@ -90,6 +89,17 @@ public class ContentAttributesHelper
                 .put( OPTIME_PROPERTY, Instant.now( MILLIS_CLOCK ).toString() )
                 .build() )
             .attribute( VacuumConstants.VACUUM_SKIP_ATTRIBUTE, GenericValue.newObject().build() )
+            .build();
+    }
+
+    public static Attributes updateWorkflowHistoryAttr( final List<String> modifiedFields )
+    {
+        return Attributes.create()
+            .attribute( UPDATE_WORKFLOW_ATTR, GenericValue.newObject()
+                .put( FIELDS_PROPERTY, GenericValue.fromRawJava( modifiedFields ) )
+                .put( USER_PROPERTY, getCurrentUserKey().toString() )
+                .put( OPTIME_PROPERTY, Instant.now( MILLIS_CLOCK ).toString() )
+                .build() )
             .build();
     }
 

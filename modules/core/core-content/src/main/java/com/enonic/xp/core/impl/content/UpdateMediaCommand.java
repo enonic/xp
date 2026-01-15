@@ -60,13 +60,11 @@ final class UpdateMediaCommand
         final ContentTypeName resolvedTypeFromMimeType = ContentTypeFromMimeTypeResolver.resolve( mediaType );
         final ContentTypeName type = resolvedTypeFromMimeType != null
             ? resolvedTypeFromMimeType
-            : isExecutableContentType( mediaType, params.getName() )
-                ? ContentTypeName.executableMedia()
-                : ContentTypeName.unknownMedia();
+            : isExecutableContentType( mediaType, params.getName() ) ? ContentTypeName.executableMedia() : ContentTypeName.unknownMedia();
 
         final Content existingContent = getContent( params.getContent() );
-        Preconditions.checkArgument( existingContent.getType().equals( type ),
-                                     "Updated content must be of type: %s", existingContent.getType() );
+        Preconditions.checkArgument( existingContent.getType().equals( type ), "Updated content must be of type: %s",
+                                     existingContent.getType() );
 
         final CreateAttachment mediaAttachment = CreateAttachment.create()
             .name( params.getName().toString() )
@@ -84,15 +82,12 @@ final class UpdateMediaCommand
             .altText( params.getAltText() )
             .artist( params.getArtistList().isEmpty() ? List.of( "" ) : params.getArtistList() )
             .copyright( params.getCopyright() )
-            .tags( params.getTagList().isEmpty() ? List.of("") : params.getTagList() );
+            .tags( params.getTagList().isEmpty() ? List.of( "" ) : params.getTagList() );
 
         final UpdateContentParams updateParams = new UpdateContentParams().contentId( params.getContent() )
             .clearAttachments( true )
             .createAttachments( CreateAttachments.from( mediaAttachment ) )
-            .editor( editable -> {
-                mediaFormBuilder.build( editable.data );
-                editable.workflowInfo = params.getWorkflowInfo();
-            } );
+            .editor( editable -> mediaFormBuilder.build( editable.data ) );
 
         return UpdateContentCommand.create( this )
             .params( updateParams )

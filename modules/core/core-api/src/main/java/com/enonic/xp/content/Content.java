@@ -6,6 +6,8 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 
+import org.jspecify.annotations.NonNull;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 
@@ -108,7 +110,7 @@ public class Content
         this.permissions = requireNonNullElse( builder.permissions, AccessControlList.empty() );
         this.language = builder.language;
         this.processedReferences = builder.processedReferences.build();
-        this.workflowInfo = requireNonNullElse(builder.workflowInfo, WorkflowInfo.ready() );
+        this.workflowInfo = requireNonNullElse( builder.workflowInfo, WorkflowInfo.ready() );
         this.manualOrderValue = builder.manualOrderValue;
         this.originalName = builder.originalName;
         this.originalParentPath = builder.originalParentPath;
@@ -301,6 +303,7 @@ public class Content
         return processedReferences;
     }
 
+    @NonNull
     public WorkflowInfo getWorkflowInfo()
     {
         return workflowInfo;
@@ -350,16 +353,14 @@ public class Content
 
         final Content other = (Content) o;
 
-        return Objects.equals( id, other.id ) && Objects.equals( path, other.path ) &&
-            Objects.equals( displayName, other.displayName ) && Objects.equals( type, other.type ) && valid == other.valid &&
-            Objects.equals( modifier, other.modifier ) && Objects.equals( validationErrors, other.validationErrors ) &&
-            Objects.equals( creator, other.creator ) && Objects.equals( owner, other.owner ) &&
-            Objects.equals( createdTime, other.createdTime ) && Objects.equals( modifiedTime, other.modifiedTime ) &&
-            Objects.equals( inherit, other.inherit ) &&
+        return Objects.equals( id, other.id ) && Objects.equals( path, other.path ) && Objects.equals( displayName, other.displayName ) &&
+            Objects.equals( type, other.type ) && valid == other.valid && Objects.equals( modifier, other.modifier ) &&
+            Objects.equals( validationErrors, other.validationErrors ) && Objects.equals( creator, other.creator ) &&
+            Objects.equals( owner, other.owner ) && Objects.equals( createdTime, other.createdTime ) &&
+            Objects.equals( modifiedTime, other.modifiedTime ) && Objects.equals( inherit, other.inherit ) &&
             Objects.equals( originProject, other.originProject ) && Objects.equals( childOrder, other.childOrder ) &&
-            Objects.equals( permissions, other.permissions ) &&
-            Objects.equals( attachments, other.attachments ) && Objects.equals( data, other.data ) &&
-            Objects.equals( extraDatas, other.extraDatas ) && Objects.equals( page, other.page ) &&
+            Objects.equals( permissions, other.permissions ) && Objects.equals( attachments, other.attachments ) &&
+            Objects.equals( data, other.data ) && Objects.equals( extraDatas, other.extraDatas ) && Objects.equals( page, other.page ) &&
             Objects.equals( language, other.language ) && Objects.equals( publishInfo, other.publishInfo ) &&
             Objects.equals( processedReferences, other.processedReferences ) && Objects.equals( workflowInfo, other.workflowInfo ) &&
             Objects.equals( manualOrderValue, other.manualOrderValue ) && Objects.equals( originalName, other.originalName ) &&
@@ -370,10 +371,10 @@ public class Content
     @Override
     public int hashCode()
     {
-        return Objects.hash( id, path, displayName, type, valid, modifier, creator, owner, createdTime, modifiedTime,
-                             inherit, originProject, childOrder, permissions, attachments, data,
-                             extraDatas, page, language, publishInfo, processedReferences, workflowInfo, manualOrderValue, originalName,
-                             originalParentPath, archivedTime, archivedBy, variantOf );
+        return Objects.hash( id, path, displayName, type, valid, modifier, creator, owner, createdTime, modifiedTime, inherit,
+                             originProject, childOrder, permissions, attachments, data, extraDatas, page, language, publishInfo,
+                             processedReferences, workflowInfo, manualOrderValue, originalName, originalParentPath, archivedTime,
+                             archivedBy, variantOf );
     }
 
     public static class Builder<BUILDER extends Builder>
@@ -411,8 +412,6 @@ public class Content
         protected PrincipalKey creator;
 
         protected PrincipalKey modifier;
-
-        protected boolean hasChildren;
 
         protected EnumSet<ContentInheritType> inherit = EnumSet.noneOf( ContentInheritType.class );
 

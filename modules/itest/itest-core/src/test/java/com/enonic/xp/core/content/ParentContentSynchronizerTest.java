@@ -1,6 +1,5 @@
 package com.enonic.xp.core.content;
 
-import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
 import java.util.Locale;
@@ -36,9 +35,11 @@ import com.enonic.xp.content.ResetContentInheritParams;
 import com.enonic.xp.content.SortContentParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
+import com.enonic.xp.content.UpdateWorkflowParams;
 import com.enonic.xp.content.ValidationError;
 import com.enonic.xp.content.ValidationErrorCode;
 import com.enonic.xp.content.ValidationErrors;
+import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.core.impl.content.ContentEventsSyncParams;
 import com.enonic.xp.core.impl.content.ContentSyncEventType;
 import com.enonic.xp.core.impl.content.ContentSyncParams;
@@ -275,8 +276,14 @@ class ParentContentSynchronizerTest
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content1" ) );
         final Content targetContent = syncCreated( sourceContent.getId() ).orElseThrow();
 
-        projectContext.callWith( () -> contentService.update(
-            new UpdateContentParams().contentId( sourceContent.getId() ).editor( ( edit -> edit.data = new PropertyTree() ) ) ) );
+        projectContext.runWith( () -> {
+            contentService.update(
+                new UpdateContentParams().contentId( sourceContent.getId() ).editor( ( edit -> edit.data = new PropertyTree() ) ) );
+            contentService.updateWorkflow( UpdateWorkflowParams.create()
+                                               .contentId( sourceContent.getId() )
+                                               .editor( edit -> edit.workflow = WorkflowInfo.ready() )
+                                               .build() );
+        } );
 
         final Content targetContentUpdated = syncUpdated( sourceContent.getId() ).orElseThrow();
 
@@ -295,23 +302,20 @@ class ParentContentSynchronizerTest
         final Content sourceContent = projectContext.callWith( () -> createMedia( "media", ContentPath.ROOT ) );
         final Content targetContent = syncCreated( sourceContent.getId() ).orElseThrow();
 
-        projectContext.callWith( () -> {
-            try
-            {
-                return contentService.update( new UpdateMediaParams().content( sourceContent.getId() )
-                                                  .name( "new name" )
-                                                  .byteSource( loadImage( "darth-small.jpg" ) )
-                                                  .mimeType( "image/jpeg" )
-                                                  .artist( List.of( "artist" ) )
-                                                  .altText( "alt text" )
-                                                  .copyright( "copy" )
-                                                  .tags( List.of( "my new tags" ) )
-                                                  .caption( "caption" ) );
-            }
-            catch ( IOException e )
-            {
-                throw new RuntimeException( e );
-            }
+        projectContext.runWith( () -> {
+            contentService.update( new UpdateMediaParams().content( sourceContent.getId() )
+                                       .name( "new name" )
+                                       .byteSource( loadImage( "darth-small.jpg" ) )
+                                       .mimeType( "image/jpeg" )
+                                       .artist( List.of( "artist" ) )
+                                       .altText( "alt text" )
+                                       .copyright( "copy" )
+                                       .tags( List.of( "my new tags" ) )
+                                       .caption( "caption" ) );
+            contentService.updateWorkflow( UpdateWorkflowParams.create()
+                                               .contentId( sourceContent.getId() )
+                                               .editor( edit -> edit.workflow = WorkflowInfo.ready() )
+                                               .build() );
         } );
 
         final Content targetContentUpdated = syncUpdated( sourceContent.getId() ).orElseThrow();
@@ -384,21 +388,18 @@ class ParentContentSynchronizerTest
         syncCreated( sourceContent.getId() );
 
         Content sourceContentUpdated = projectContext.callWith( () -> {
-            try
-            {
-                return contentService.update( new UpdateContentParams().contentId( sourceContent.getId() )
-                                                  .createAttachments( CreateAttachments.create()
-                                                                          .add( CreateAttachment.create()
-                                                                                    .name( "new name" )
-                                                                                    .byteSource( loadImage( "darth-small.jpg" ) )
-                                                                                    .mimeType( "image/jpeg" )
-                                                                                    .build() )
-                                                                          .build() ) );
-            }
-            catch ( IOException e )
-            {
-                throw new RuntimeException( e );
-            }
+            contentService.update( new UpdateContentParams().contentId( sourceContent.getId() )
+                                       .createAttachments( CreateAttachments.create()
+                                                               .add( CreateAttachment.create()
+                                                                         .name( "new name" )
+                                                                         .byteSource( loadImage( "darth-small.jpg" ) )
+                                                                         .mimeType( "image/jpeg" )
+                                                                         .build() )
+                                                               .build() ) );
+            return contentService.updateWorkflow( UpdateWorkflowParams.create()
+                                                      .contentId( sourceContent.getId() )
+                                                      .editor( edit -> edit.workflow = WorkflowInfo.ready() )
+                                                      .build() ).getContent();
         } );
 
         Content targetContentUpdated = syncUpdated( sourceContent.getId() ).orElseThrow();
@@ -406,22 +407,19 @@ class ParentContentSynchronizerTest
         assertEquals( sourceContentUpdated.getAttachments(), targetContentUpdated.getAttachments() );
 
         sourceContentUpdated = projectContext.callWith( () -> {
-            try
-            {
-                return contentService.update( new UpdateContentParams().contentId( sourceContent.getId() )
-                                                  .clearAttachments( true )
-                                                  .createAttachments( CreateAttachments.create()
-                                                                          .add( CreateAttachment.create()
-                                                                                    .name( "new name 1" )
-                                                                                    .byteSource( loadImage( "darth-small.jpg" ) )
-                                                                                    .mimeType( "image/jpeg" )
-                                                                                    .build() )
-                                                                          .build() ) );
-            }
-            catch ( IOException e )
-            {
-                throw new RuntimeException( e );
-            }
+            contentService.update( new UpdateContentParams().contentId( sourceContent.getId() )
+                                       .clearAttachments( true )
+                                       .createAttachments( CreateAttachments.create()
+                                                               .add( CreateAttachment.create()
+                                                                         .name( "new name 1" )
+                                                                         .byteSource( loadImage( "darth-small.jpg" ) )
+                                                                         .mimeType( "image/jpeg" )
+                                                                         .build() )
+                                                               .build() ) );
+            return contentService.updateWorkflow( UpdateWorkflowParams.create()
+                                                      .contentId( sourceContent.getId() )
+                                                      .editor( edit -> edit.workflow = WorkflowInfo.ready() )
+                                                      .build() ).getContent();
         } );
 
         targetContentUpdated = syncUpdated( sourceContent.getId() ).orElseThrow();
@@ -436,23 +434,20 @@ class ParentContentSynchronizerTest
         final Content targetContent = syncCreated( sourceContent.getId() ).orElseThrow();
 
         projectContext.runWith( () -> {
-            try
-            {
-                final UpdateContentParams updateContentParams = new UpdateContentParams();
-                updateContentParams.contentId( targetContent.getId() )
-                    .editor( edit -> edit.displayName = "new display name" )
-                    .createAttachments( CreateAttachments.from( CreateAttachment.create()
-                                                                    .byteSource( loadImage( "darth-small.jpg" ) )
-                                                                    .name( AttachmentNames.THUMBNAIL )
-                                                                    .mimeType( "image/jpeg" )
-                                                                    .build() ) );
+            final UpdateContentParams updateContentParams = new UpdateContentParams();
+            updateContentParams.contentId( targetContent.getId() )
+                .editor( edit -> edit.displayName = "new display name" )
+                .createAttachments( CreateAttachments.from( CreateAttachment.create()
+                                                                .byteSource( loadImage( "darth-small.jpg" ) )
+                                                                .name( AttachmentNames.THUMBNAIL )
+                                                                .mimeType( "image/jpeg" )
+                                                                .build() ) );
 
-                this.contentService.update( updateContentParams );
-            }
-            catch ( IOException e )
-            {
-                throw new RuntimeException( e );
-            }
+            contentService.update( updateContentParams );
+            contentService.updateWorkflow( UpdateWorkflowParams.create()
+                                               .contentId( sourceContent.getId() )
+                                               .editor( edit -> edit.workflow = WorkflowInfo.ready() )
+                                               .build() );
         } );
 
         final Content targetContentUpdated = syncUpdated( sourceContent.getId() ).orElseThrow();
@@ -467,45 +462,39 @@ class ParentContentSynchronizerTest
         final Content targetContent = syncCreated( sourceContent.getId() ).orElseThrow();
 
         projectContext.runWith( () -> {
-            try
-            {
-                final UpdateContentParams updateContentParams = new UpdateContentParams();
-                updateContentParams.contentId( targetContent.getId() )
-                    .editor( edit -> edit.displayName = "new display name" )
-                    .createAttachments( CreateAttachments.from( CreateAttachment.create()
-                                                                    .byteSource( loadImage( "darth-small.jpg" ) )
-                                                                    .name( AttachmentNames.THUMBNAIL )
-                                                                    .mimeType( "image/jpeg" )
-                                                                    .build() ) );
+            final UpdateContentParams updateContentParams = new UpdateContentParams();
+            updateContentParams.contentId( targetContent.getId() )
+                .editor( edit -> edit.displayName = "new display name" )
+                .createAttachments( CreateAttachments.from( CreateAttachment.create()
+                                                                .byteSource( loadImage( "darth-small.jpg" ) )
+                                                                .name( AttachmentNames.THUMBNAIL )
+                                                                .mimeType( "image/jpeg" )
+                                                                .build() ) );
 
-                this.contentService.update( updateContentParams );
-            }
-            catch ( IOException e )
-            {
-                throw new RuntimeException( e );
-            }
+            contentService.update( updateContentParams );
+            contentService.updateWorkflow( UpdateWorkflowParams.create()
+                                               .contentId( sourceContent.getId() )
+                                               .editor( edit -> edit.workflow = WorkflowInfo.ready() )
+                                               .build() );
         } );
 
         final Content thumbnailCreated = syncUpdated( sourceContent.getId() ).orElseThrow();
 
         projectContext.runWith( () -> {
-            try
-            {
-                final UpdateContentParams updateContentParams = new UpdateContentParams();
-                updateContentParams.contentId( targetContent.getId() )
-                    .editor( edit -> edit.displayName = "new display name" )
-                    .createAttachments( CreateAttachments.from( CreateAttachment.create()
-                                                                    .byteSource( loadImage( "cat-small.jpg" ) )
-                                                                    .name( AttachmentNames.THUMBNAIL )
-                                                                    .mimeType( "image/jpeg" )
-                                                                    .build() ) );
+            final UpdateContentParams updateContentParams = new UpdateContentParams();
+            updateContentParams.contentId( targetContent.getId() )
+                .editor( edit -> edit.displayName = "new display name" )
+                .createAttachments( CreateAttachments.from( CreateAttachment.create()
+                                                                .byteSource( loadImage( "cat-small.jpg" ) )
+                                                                .name( AttachmentNames.THUMBNAIL )
+                                                                .mimeType( "image/jpeg" )
+                                                                .build() ) );
 
-                this.contentService.update( updateContentParams );
-            }
-            catch ( IOException e )
-            {
-                throw new RuntimeException( e );
-            }
+            contentService.update( updateContentParams );
+            contentService.updateWorkflow( UpdateWorkflowParams.create()
+                                               .contentId( sourceContent.getId() )
+                                               .editor( edit -> edit.workflow = WorkflowInfo.ready() )
+                                               .build() );
         } );
 
         final Content thumbnailUpdated = syncUpdated( sourceContent.getId() ).orElseThrow();
@@ -520,27 +509,38 @@ class ParentContentSynchronizerTest
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content1" ) );
         syncCreated( sourceContent.getId() );
 
-        projectContext.runWith( () -> contentService.update( new UpdateContentParams().contentId( sourceContent.getId() )
-                                                                 .createAttachments( CreateAttachments.create()
-                                                                                         .add( CreateAttachment.create()
-                                                                                                   .name( AttachmentNames.THUMBNAIL )
-                                                                                                   .byteSource( ByteSource.wrap(
-                                                                                                       "this is image".getBytes() ) )
-                                                                                                   .mimeType( "image/png" )
-                                                                                                   .text( "This is the image" )
-                                                                                                   .build() )
-                                                                                         .build() )
-                                                                 .editor( _ -> {
-                                                                 } ) ) );
+        projectContext.runWith( () -> {
+            contentService.update( new UpdateContentParams().contentId( sourceContent.getId() )
+                                       .createAttachments( CreateAttachments.create()
+                                                               .add( CreateAttachment.create()
+                                                                         .name( AttachmentNames.THUMBNAIL )
+                                                                         .byteSource( ByteSource.wrap( "this is image".getBytes() ) )
+                                                                         .mimeType( "image/png" )
+                                                                         .text( "This is the image" )
+                                                                         .build() )
+                                                               .build() )
+                                       .editor( _ -> {
+                                       } ) );
+            contentService.updateWorkflow( UpdateWorkflowParams.create()
+                                               .contentId( sourceContent.getId() )
+                                               .editor( edit -> edit.workflow = WorkflowInfo.ready() )
+                                               .build() );
+        } );
 
         final Content targetContentWithThumbnail = syncUpdated( sourceContent.getId() ).orElseThrow();
 
         assertNotNull( targetContentWithThumbnail.getAttachments().byName( AttachmentNames.THUMBNAIL ) );
 
-        projectContext.runWith( () -> contentService.update( new UpdateContentParams().contentId( sourceContent.getId() )
-                                                                 .removeAttachments( BinaryReferences.from( AttachmentNames.THUMBNAIL ) )
-                                                                 .editor( _ -> {
-                                                                 } ) ) );
+        projectContext.runWith( () -> {
+            contentService.update( new UpdateContentParams().contentId( sourceContent.getId() )
+                                       .removeAttachments( BinaryReferences.from( AttachmentNames.THUMBNAIL ) )
+                                       .editor( _ -> {
+                                       } ) );
+            contentService.updateWorkflow( UpdateWorkflowParams.create()
+                                               .contentId( sourceContent.getId() )
+                                               .editor( edit -> edit.workflow = WorkflowInfo.ready() )
+                                               .build() );
+        } );
 
         final Content targetContentWithoutThumbnail = syncUpdated( sourceContent.getId() ).orElseThrow();
 

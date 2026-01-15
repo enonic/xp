@@ -42,6 +42,7 @@ import com.enonic.xp.content.ReorderChildContentParams;
 import com.enonic.xp.content.SortContentParams;
 import com.enonic.xp.content.SortContentResult;
 import com.enonic.xp.content.UpdateContentParams;
+import com.enonic.xp.content.UpdateWorkflowParams;
 import com.enonic.xp.content.ValidationError;
 import com.enonic.xp.content.ValidationErrorCode;
 import com.enonic.xp.content.ValidationErrors;
@@ -556,17 +557,18 @@ class ProjectContentEventListenerTest
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
 
         projectContext.callWith( () -> {
-
-            contentService.update( new UpdateContentParams().contentId( sourceContent.getId() )
-                                       .editor(
-                                           ( edit -> edit.workflowInfo = WorkflowInfo.create().state( WorkflowState.READY ).build() ) ) );
+            contentService.updateWorkflow( UpdateWorkflowParams.create()
+                                               .contentId( sourceContent.getId() )
+                                               .editor( ( edit -> edit.workflow = WorkflowInfo.ready() ) )
+                                               .build() );
 
             handleEvents();
 
-            final Content sourceContentReady = contentService.update( new UpdateContentParams().contentId( sourceContent.getId() )
-                                                                          .editor( ( edit -> edit.workflowInfo = WorkflowInfo.create()
-                                                                              .state( WorkflowState.IN_PROGRESS )
-                                                                              .build() ) ) );
+            final Content sourceContentReady = contentService.updateWorkflow( UpdateWorkflowParams.create()
+                                                                                  .contentId( sourceContent.getId() )
+                                                                                  .editor( ( edit -> edit.workflow =
+                                                                                      WorkflowInfo.inProgress() ) )
+                                                                                  .build() ).getContent();
 
             handleEvents();
 

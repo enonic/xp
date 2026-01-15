@@ -2,6 +2,7 @@ package com.enonic.xp.lib.content;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -10,6 +11,7 @@ import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.content.WorkflowInfo;
+import com.enonic.xp.convert.Converters;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.PropertyTreeMarshallerService;
 import com.enonic.xp.lib.content.deserializer.AttachmentsDeserializer;
@@ -118,7 +120,8 @@ public abstract class BaseContentHandler
     {
         if ( map.containsKey( key ) )
         {
-            fieldEditor.accept( Optional.ofNullable( map.get( key ) ).map( type::cast ) );
+            fieldEditor.accept( Optional.ofNullable( map.get( key ) )
+                                    .map( v -> Objects.requireNonNull( Converters.convert( v, type ), "cannot convert" ) ) );
         }
     }
 }

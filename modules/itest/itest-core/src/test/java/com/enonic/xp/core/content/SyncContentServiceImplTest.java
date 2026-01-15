@@ -17,13 +17,12 @@ import com.enonic.xp.content.ProjectSyncParams;
 import com.enonic.xp.content.ResetContentInheritParams;
 import com.enonic.xp.content.SortContentParams;
 import com.enonic.xp.content.SortContentResult;
-import com.enonic.xp.content.UpdateContentParams;
+import com.enonic.xp.content.UpdateWorkflowParams;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.core.impl.content.ContentEventsSyncParams;
 import com.enonic.xp.core.impl.content.ContentSyncEventType;
 import com.enonic.xp.core.impl.content.ParentContentSynchronizer;
 import com.enonic.xp.core.impl.content.SyncContentServiceImpl;
-import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.project.ProjectName;
 
@@ -85,10 +84,8 @@ class SyncContentServiceImplTest
 
         syncCreated( source.getId() );
 
-        layerContext.runWith( () -> contentService.update( new UpdateContentParams().contentId( source.getId() ).editor( edit -> {
-            edit.workflowInfo = WorkflowInfo.ready();
-            edit.data = new PropertyTree();
-        } ) ) );
+        layerContext.runWith( () -> contentService.updateWorkflow(
+            UpdateWorkflowParams.create().contentId( source.getId() ).editor( edit -> edit.workflow = WorkflowInfo.ready() ).build() ) );
 
         syncContentService.resetInheritance( ResetContentInheritParams.create()
                                                  .contentId( source.getId() )
@@ -112,10 +109,8 @@ class SyncContentServiceImplTest
 
         syncCreated( source.getId() );
 
-        layerContext.runWith( () -> contentService.update( new UpdateContentParams().contentId( source.getId() ).editor( edit -> {
-            edit.workflowInfo = WorkflowInfo.ready();
-            edit.data = new PropertyTree();
-        } ) ) );
+        layerContext.runWith( () -> contentService.updateWorkflow(
+            UpdateWorkflowParams.create().contentId( source.getId() ).editor( edit -> edit.workflow = WorkflowInfo.ready() ).build() ) );
 
         projectContext.runWith( () -> contentService.delete( DeleteContentParams.create().contentPath( source.getPath() ).build() ) );
 

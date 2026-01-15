@@ -3,19 +3,20 @@ package com.enonic.xp.core.impl.content;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
-import com.enonic.xp.content.ContentMetadataEditor;
-import com.enonic.xp.content.EditableContentMetadata;
-import com.enonic.xp.content.UpdateContentMetadataParams;
-import com.enonic.xp.content.UpdateContentMetadataResult;
+import com.enonic.xp.content.EditableContentWorkflow;
+import com.enonic.xp.content.UpdateWorkflowParams;
+import com.enonic.xp.content.UpdateWorkflowResult;
+import com.enonic.xp.content.WorkflowEditor;
+import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.PatchNodeResult;
 
-public class UpdateMetadataCommand
+public class UpdateWorkflowCommand
     extends AbstractCreatingOrUpdatingContentCommand
 {
-    private final UpdateContentMetadataParams params;
+    private final UpdateWorkflowParams params;
 
-    private UpdateMetadataCommand( final Builder builder )
+    private UpdateWorkflowCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
@@ -26,30 +27,31 @@ public class UpdateMetadataCommand
         return new Builder();
     }
 
-    public static Builder create( final UpdateContentMetadataParams params )
+    public static Builder create( final UpdateWorkflowParams params )
     {
         return create().params( params );
     }
 
-    UpdateContentMetadataResult execute()
+    UpdateWorkflowResult execute()
     {
         return doExecute();
     }
 
-    private UpdateContentMetadataResult doExecute()
+    private UpdateWorkflowResult doExecute()
     {
         final Content contentBeforeChange = getContent( params.getContentId() );
 
-        Content editedContent = editMetadata( params.getEditor(), contentBeforeChange );
-
-        editedContent = Content.create( editedContent ).setInherit( stopDataInherit( editedContent.getInherit() ) ).build();
+        final Content editedContent = editWorkflow( params.getEditor(), contentBeforeChange );
 
         final String[] modifiedFields = ContentAttributesHelper.modifiedFields( contentBeforeChange, editedContent );
 
+        final Attributes updateWorkflowAttr =
+            ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.UPDATE_WORKFLOW_ATTR, modifiedFields );
+
         final PatchNodeParams patchNodeParams = PatchNodeParamsFactory.create()
             .editedContent( editedContent )
-            .versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.UPDATE_METADATA_ATTR, modifiedFields ) )
-            .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
+            .versionAttributes( updateWorkflowAttr )
+            .branches( Branches.from( ContentConstants.BRANCH_DRAFT ) )
             .contentTypeService( this.contentTypeService )
             .xDataService( this.xDataService )
             .pageDescriptorService( this.pageDescriptorService )
@@ -61,40 +63,39 @@ public class UpdateMetadataCommand
 
         final PatchNodeResult result = nodeService.patch( patchNodeParams );
 
-        return UpdateContentMetadataResult.create()
-            .content( ContentNodeTranslator.fromNode( result.getResults().getFirst().node() ) )
-            .build();
+        return UpdateWorkflowResult.create().content( ContentNodeTranslator.fromNode( result.getResults().getFirst().node() ) ).build();
     }
 
-    private Content editMetadata( final ContentMetadataEditor editor, final Content original )
+    private Content editWorkflow( final WorkflowEditor editor, final Content original )
     {
-        final EditableContentMetadata editableMetadata = new EditableContentMetadata( original );
+        final EditableContentWorkflow editableWorkflow = new EditableContentWorkflow( original );
         if ( editor != null )
         {
-            editor.edit( editableMetadata );
+            editor.edit( editableWorkflow );
         }
-        return editableMetadata.build();
+
+        return Content.create( editableWorkflow.build() ).setInherit( stopDataInherit( original.getInherit() ) ).build();
     }
 
     public static final class Builder
         extends AbstractCreatingOrUpdatingContentCommand.Builder<Builder>
     {
-        private UpdateContentMetadataParams params;
+        private UpdateWorkflowParams params;
 
         private Builder()
         {
         }
 
-        public Builder params( final UpdateContentMetadataParams params )
+        public Builder params( final UpdateWorkflowParams params )
         {
             this.params = params;
             return this;
         }
 
-        public UpdateMetadataCommand build()
+        public UpdateWorkflowCommand build()
         {
             this.validate();
-            return new UpdateMetadataCommand( this );
+            return new UpdateWorkflowCommand( this );
         }
     }
 }

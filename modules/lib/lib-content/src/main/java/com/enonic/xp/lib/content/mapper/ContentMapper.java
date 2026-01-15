@@ -1,7 +1,6 @@
 package com.enonic.xp.lib.content.mapper;
 
 import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -12,7 +11,6 @@ import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.ValidationErrors;
-import com.enonic.xp.content.WorkflowCheckState;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.lib.common.PropertyTreeMapper;
@@ -110,12 +108,6 @@ public final class ContentMapper
         if ( info != null )
         {
             gen.value( "state", info.getState().toString() );
-            gen.map( "checks" );
-            for ( Map.Entry<String, WorkflowCheckState> e : info.getChecks().entrySet() )
-            {
-                gen.value( e.getKey(), e.getValue().toString() );
-            }
-            gen.end();
         }
         gen.end();
     }

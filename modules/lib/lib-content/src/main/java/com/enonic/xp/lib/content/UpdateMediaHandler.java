@@ -1,7 +1,6 @@
 package com.enonic.xp.lib.content;
 
 import java.util.Arrays;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,8 +11,6 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.UpdateMediaParams;
-import com.enonic.xp.content.WorkflowCheckState;
-import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.lib.content.mapper.ContentMapper;
 import com.enonic.xp.script.ScriptValue;
 
@@ -62,7 +59,6 @@ public class UpdateMediaHandler
         params.artist( artist );
         params.copyright( copyright );
         params.tags( tags );
-        params.workflowInfo( createWorkflowInfo( workflow ) );
 
         final Content result = this.contentService.update( params );
         return new ContentMapper( result );
@@ -85,25 +81,6 @@ public class UpdateMediaHandler
         {
             return null;
         }
-    }
-
-    protected WorkflowInfo createWorkflowInfo( Map<String, Object> map )
-    {
-        if ( map == null )
-        {
-            return null;
-        }
-
-        Object state = map.get( "state" );
-        Object checks = map.get( "checks" );
-        Map<String, WorkflowCheckState> checkMapBuilder = new LinkedHashMap<>();
-
-        if ( checks != null )
-        {
-            ( (Map<String, String>) checks ).forEach( ( key, value ) -> checkMapBuilder.put( key, WorkflowCheckState.valueOf( value ) ) );
-        }
-
-        return WorkflowInfo.create().state( state instanceof String ? (String) state : null ).checks( checkMapBuilder ).build();
     }
 
     public void setKey( final String key )

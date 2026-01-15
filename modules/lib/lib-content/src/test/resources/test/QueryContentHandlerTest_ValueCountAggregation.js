@@ -26,8 +26,7 @@ var expectedJson = {
             'attachments': {},
             'publish': {},
             'workflow': {
-                'state': 'READY',
-                'checks': {}
+                'state': 'READY'
             }
         },
         {
@@ -51,8 +50,7 @@ var expectedJson = {
             'attachments': {},
             'publish': {},
             'workflow': {
-                'state': 'READY',
-                'checks': {}
+                'state': 'READY'
             }
         },
         {
@@ -76,8 +74,7 @@ var expectedJson = {
             'attachments': {},
             'publish': {},
             'workflow': {
-                'state': 'READY',
-                'checks': {}
+                'state': 'READY'
             }
         },
         {
@@ -101,8 +98,7 @@ var expectedJson = {
             'attachments': {},
             'publish': {},
             'workflow': {
-                'state': 'READY',
-                'checks': {}
+                'state': 'READY'
             }
         },
         {
@@ -127,7 +123,6 @@ var expectedJson = {
             'publish': {},
             'workflow': {
                 'state': 'READY',
-                'checks': {}
             }
         }
     ],
@@ -146,28 +141,28 @@ var expectedJson = {
     }
 };
 
-exports.queryWithAggregations = function() {
-  var result = content.query({
-      'start': 0,
-      'count': 10,
-      'query': 'type = \'com.app:Product\'',
-      'aggregations': {
-          'products': {
-              'terms': {
-                  'field': 'data.category',
-                  'order': '_count asc',
-                  'size': 10
-                  },
-              'aggregations': {
-                  'countProductsWithPrice': {
-                      'count': {
-                          'field': 'data.price'
-                      }
-                  }
-              }
-          }
-      }
-  });
+exports.queryWithAggregations = function () {
+    var result = content.query({
+        'start': 0,
+        'count': 10,
+        'query': 'type = \'com.app:Product\'',
+        'aggregations': {
+            'products': {
+                'terms': {
+                    'field': 'data.category',
+                    'order': '_count asc',
+                    'size': 10
+                },
+                'aggregations': {
+                    'countProductsWithPrice': {
+                        'count': {
+                            'field': 'data.price'
+                        }
+                    }
+                }
+            }
+        }
+    });
 
-  assert.assertJsonEquals(expectedJson, result);
+    assert.assertJsonEquals(expectedJson, result);
 };

@@ -41,10 +41,7 @@ var result1 = contentLib.create({
         }
     },
     workflow: {
-        state: 'PENDING_APPROVAL',
-        checks: {
-            'Review by lawyer': 'PENDING'
-        }
+        state: 'PENDING_APPROVAL'
     }
 });
 
@@ -123,10 +120,7 @@ var expected = {
     'attachments': {},
     'publish': {},
     'workflow': {
-        'state': 'PENDING_APPROVAL',
-        'checks': {
-            'Review by lawyer': 'PENDING'
-        }
+        'state': 'PENDING_APPROVAL'
     }
 };
 // END
@@ -148,7 +142,6 @@ assert.assertJsonEquals({
     'attachments': {},
     'publish': {},
     'workflow': {
-        'state': 'READY',
-        'checks': {}
+        'state': 'READY'
     }
 }, result2);

@@ -30,8 +30,7 @@ var expected = {
     'attachments': {},
     'publish': {},
     'workflow': {
-        'state': 'READY',
-        'checks': {}
+        'state': 'READY'
     }
 };
 // END

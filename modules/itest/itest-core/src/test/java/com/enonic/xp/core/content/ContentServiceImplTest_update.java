@@ -3,7 +3,6 @@ package com.enonic.xp.core.content;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -25,9 +24,6 @@ import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.UpdateContentParams;
-import com.enonic.xp.content.WorkflowCheckState;
-import com.enonic.xp.content.WorkflowInfo;
-import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.content.XDataMappingServiceImpl;
@@ -72,20 +68,19 @@ class ContentServiceImplTest_update
     @Test
     void update_content_modified_time_updated()
     {
-        final CreateContentParams createContentParams = CreateContentParams.create().
-            contentData( new PropertyTree() ).
-            displayName( "This is my content" ).
-            parent( ContentPath.ROOT ).
-            type( ContentTypeName.folder() ).
-            build();
+        final CreateContentParams createContentParams = CreateContentParams.create()
+            .contentData( new PropertyTree() )
+            .displayName( "This is my content" )
+            .parent( ContentPath.ROOT )
+            .type( ContentTypeName.folder() )
+            .build();
 
         final Content content = this.contentService.create( createContentParams );
 
         final UpdateContentParams updateContentParams = new UpdateContentParams();
-        updateContentParams.contentId( content.getId() ).
-            editor( edit -> {
-                edit.displayName = "new display name";
-            } );
+        updateContentParams.contentId( content.getId() ).editor( edit -> {
+            edit.displayName = "new display name";
+        } );
 
         this.contentService.update( updateContentParams );
 
@@ -109,24 +104,20 @@ class ContentServiceImplTest_update
 
         final ByteSource image = loadImage( "cat-small.jpg" );
 
-        final CreateContentParams createContentParams = CreateContentParams.create().
-            contentData( new PropertyTree() ).
-            displayName( "This is my content" ).
-            parent( ContentPath.ROOT ).
-            type( ContentTypeName.imageMedia() ).
-            createAttachments( createAttachment( "cat", "image/jpeg", image ) ).
-            build();
+        final CreateContentParams createContentParams = CreateContentParams.create()
+            .contentData( new PropertyTree() )
+            .displayName( "This is my content" )
+            .parent( ContentPath.ROOT )
+            .type( ContentTypeName.imageMedia() )
+            .createAttachments( createAttachment( "cat", "image/jpeg", image ) )
+            .build();
 
         final Content content = this.contentService.create( createContentParams );
 
         final UpdateContentParams updateContentParams = new UpdateContentParams();
-        updateContentParams.
-            contentId( content.getId() ).
-            editor( edit -> {
-                edit.displayName = "new display name";
-            } ).
-            clearAttachments( true ).
-            createAttachments( createAttachment( "darth", "image/jpeg", loadImage( "darth-small.jpg" ) ) );
+        updateContentParams.contentId( content.getId() ).editor( edit -> {
+            edit.displayName = "new display name";
+        } ).clearAttachments( true ).createAttachments( createAttachment( "darth", "image/jpeg", loadImage( "darth-small.jpg" ) ) );
 
         this.contentService.update( updateContentParams );
 
@@ -143,22 +134,20 @@ class ContentServiceImplTest_update
         data.setString( "testString", "value" );
         data.setString( "testString2", "value" );
 
-        final CreateContentParams createContentParams = CreateContentParams.create().
-            contentData( data ).
-            displayName( "This is my content" ).
-            parent( ContentPath.ROOT ).
-            type( ContentTypeName.folder() ).
-            build();
+        final CreateContentParams createContentParams = CreateContentParams.create()
+            .contentData( data )
+            .displayName( "This is my content" )
+            .parent( ContentPath.ROOT )
+            .type( ContentTypeName.folder() )
+            .build();
 
         final Content content = this.contentService.create( createContentParams );
 
         final UpdateContentParams updateContentParams = new UpdateContentParams();
-        updateContentParams.
-            contentId( content.getId() ).
-            editor( edit -> {
-                final PropertyTree editData = edit.data;
-                editData.setString( "testString", "value-updated" );
-            } );
+        updateContentParams.contentId( content.getId() ).editor( edit -> {
+            final PropertyTree editData = edit.data;
+            editData.setString( "testString", "value-updated" );
+        } );
 
         this.contentService.update( updateContentParams );
 
@@ -174,21 +163,21 @@ class ContentServiceImplTest_update
     {
 
         //Mocks the content service to return our content type
-        final ContentTypeService contentTypeService = Mockito.mock( ContentTypeService.class );
+        final ContentTypeService contentTypeService = mock( ContentTypeService.class );
         this.contentService.setContentTypeService( contentTypeService );
-        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).
-            thenReturn( createContentTypeForAllInputTypes() );
+        when( contentTypeService.getByName( isA( GetContentTypeParams.class ) ) )
+            .thenReturn( createContentTypeForAllInputTypes() );
 
         //Creates a valid content
         PropertyTree data = createPropertyTreeForAllInputTypes();
 
-        final Content content = this.contentService.create( CreateContentParams.create().
-            type( ContentTypeName.from( "myContentType" ) ).
-            contentData( data ).
-            name( "myContent" ).
-            parent( ContentPath.ROOT ).
-            displayName( "my display-name" ).
-            build() );
+        final Content content = this.contentService.create( CreateContentParams.create()
+                                                                .type( ContentTypeName.from( "myContentType" ) )
+                                                                .contentData( data )
+                                                                .name( "myContent" )
+                                                                .parent( ContentPath.ROOT )
+                                                                .displayName( "my display-name" )
+                                                                .build() );
 
         //Updates the content with an incorrect value
         PropertyTree invalidData = new PropertyTree();
@@ -283,11 +272,9 @@ class ContentServiceImplTest_update
     private void update_incorrect_content_data( Content content, PropertyTree invalidData )
     {
         final UpdateContentParams updateContentParams = new UpdateContentParams();
-        updateContentParams.
-            contentId( content.getId() ).
-            editor( edit -> {
-                edit.data = invalidData;
-            } );
+        updateContentParams.contentId( content.getId() ).editor( edit -> {
+            edit.data = invalidData;
+        } );
 
         boolean illegalArgumentExceptionThrown = false;
         try
@@ -363,25 +350,22 @@ class ContentServiceImplTest_update
     {
         final ByteSource thumbnail = loadImage( "cat-small.jpg" );
 
-        final CreateContentParams createContentParams = CreateContentParams.create().
-            displayName( "This is my content" ).
-            parent( ContentPath.ROOT ).
-            type( ContentTypeName.folder() ).
-            contentData( new PropertyTree() ).
-            build();
+        final CreateContentParams createContentParams = CreateContentParams.create()
+            .displayName( "This is my content" )
+            .parent( ContentPath.ROOT )
+            .type( ContentTypeName.folder() )
+            .contentData( new PropertyTree() )
+            .build();
 
         final Content content = this.contentService.create( createContentParams );
 
         final UpdateContentParams updateContentParams = new UpdateContentParams();
-        updateContentParams.contentId( content.getId() ).
-            editor( edit -> {
+        updateContentParams.contentId( content.getId() )
+            .editor( edit -> {
                 edit.displayName = "new display name";
-            } ).
-            createAttachments( CreateAttachments.from( CreateAttachment.create().
-                byteSource( thumbnail ).
-                name( AttachmentNames.THUMBNAIL ).
-                mimeType( "image/jpeg" ).
-                build() ) );
+            } )
+            .createAttachments( CreateAttachments.from(
+                CreateAttachment.create().byteSource( thumbnail ).name( AttachmentNames.THUMBNAIL ).mimeType( "image/jpeg" ).build() ) );
 
         this.contentService.update( updateContentParams );
 
@@ -391,10 +375,9 @@ class ContentServiceImplTest_update
         assertEquals( thumbnail.size(), updatedContentThumbnail.getSize() );
 
         final UpdateContentParams updateContentParams2 = new UpdateContentParams();
-        updateContentParams2.contentId( content.getId() ).
-            editor( edit -> {
-                edit.displayName = "brand new display name";
-            } );
+        updateContentParams2.contentId( content.getId() ).editor( edit -> {
+            edit.displayName = "brand new display name";
+        } );
 
         this.contentService.update( updateContentParams2 );
 
@@ -411,25 +394,22 @@ class ContentServiceImplTest_update
     {
         final ByteSource thumbnail = loadImage( "cat-small.jpg" );
 
-        final CreateContentParams createContentParams = CreateContentParams.create().
-            displayName( "This is my content" ).
-            parent( ContentPath.ROOT ).
-            type( ContentTypeName.folder() ).
-            contentData( new PropertyTree() ).
-            build();
+        final CreateContentParams createContentParams = CreateContentParams.create()
+            .displayName( "This is my content" )
+            .parent( ContentPath.ROOT )
+            .type( ContentTypeName.folder() )
+            .contentData( new PropertyTree() )
+            .build();
 
         final Content content = this.contentService.create( createContentParams );
 
         final UpdateContentParams updateContentParams = new UpdateContentParams();
-        updateContentParams.contentId( content.getId() ).
-            editor( edit -> {
+        updateContentParams.contentId( content.getId() )
+            .editor( edit -> {
                 edit.displayName = "new display name";
-            } ).
-            createAttachments( CreateAttachments.from( CreateAttachment.create().
-                byteSource( thumbnail ).
-                name( AttachmentNames.THUMBNAIL ).
-                mimeType( "image/jpeg" ).
-                build() ) );
+            } )
+            .createAttachments( CreateAttachments.from(
+                CreateAttachment.create().byteSource( thumbnail ).name( AttachmentNames.THUMBNAIL ).mimeType( "image/jpeg" ).build() ) );
 
         this.contentService.update( updateContentParams );
 
@@ -441,15 +421,12 @@ class ContentServiceImplTest_update
         final ByteSource newThumbnail = loadImage( "darth-small.jpg" );
 
         final UpdateContentParams updateContentParams2 = new UpdateContentParams();
-        updateContentParams2.contentId( content.getId() ).
-            editor( edit -> {
+        updateContentParams2.contentId( content.getId() )
+            .editor( edit -> {
                 edit.displayName = "yet another display name";
-            } ).
-            createAttachments( CreateAttachments.from( CreateAttachment.create().
-                byteSource( newThumbnail ).
-                name( AttachmentNames.THUMBNAIL ).
-                mimeType( "image/jpeg" ).
-                build() ) );
+            } )
+            .createAttachments( CreateAttachments.from(
+                CreateAttachment.create().byteSource( newThumbnail ).name( AttachmentNames.THUMBNAIL ).mimeType( "image/jpeg" ).build() ) );
 
         this.contentService.update( updateContentParams2 );
 
@@ -465,20 +442,16 @@ class ContentServiceImplTest_update
     {
         final ByteSource thumbnail = loadImage( "cat-small.jpg" );
 
-        final CreateContentParams createContentParams = CreateContentParams.create().
-            displayName( "This is my content" ).
-            parent( ContentPath.ROOT ).
-            type( ContentTypeName.folder() ).
-            contentData( new PropertyTree() ).
-            createAttachments( CreateAttachments.from( CreateAttachment.create().
-            byteSource( thumbnail ).
-            name( AttachmentNames.THUMBNAIL ).
-            mimeType( "image/jpeg" ).
-            build() ) ).
-            build();
+        final CreateContentParams createContentParams = CreateContentParams.create()
+            .displayName( "This is my content" )
+            .parent( ContentPath.ROOT )
+            .type( ContentTypeName.folder() )
+            .contentData( new PropertyTree() )
+            .createAttachments( CreateAttachments.from(
+                CreateAttachment.create().byteSource( thumbnail ).name( AttachmentNames.THUMBNAIL ).mimeType( "image/jpeg" ).build() ) )
+            .build();
 
         final Content content = this.contentService.create( createContentParams );
-
 
         final Content createdContent = this.contentService.getById( content.getId() );
         final Attachment createdContentThumbnail = createdContent.getAttachments().byName( AttachmentNames.THUMBNAIL );
@@ -488,12 +461,9 @@ class ContentServiceImplTest_update
         final ByteSource newThumbnail = loadImage( "cat-small.jpg" );
 
         final UpdateContentParams updateContentParams = new UpdateContentParams();
-        updateContentParams.contentId( content.getId() ).
-            createAttachments( CreateAttachments.from( CreateAttachment.create().
-            byteSource( newThumbnail ).
-            name( AttachmentNames.THUMBNAIL ).
-            mimeType( "image/jpeg" ).
-            build() ) );
+        updateContentParams.contentId( content.getId() )
+            .createAttachments( CreateAttachments.from(
+                CreateAttachment.create().byteSource( newThumbnail ).name( AttachmentNames.THUMBNAIL ).mimeType( "image/jpeg" ).build() ) );
 
         this.contentService.update( updateContentParams );
 
@@ -505,37 +475,6 @@ class ContentServiceImplTest_update
     }
 
     @Test
-    void update_workflow_info()
-    {
-        final CreateContentParams createContentParams = CreateContentParams.create().
-            contentData( new PropertyTree() ).
-            displayName( "This is my content" ).
-            parent( ContentPath.ROOT ).
-            type( ContentTypeName.folder() ).
-            workflowInfo( WorkflowInfo.inProgress() ).
-            build();
-
-        final Content content = this.contentService.create( createContentParams );
-
-        final UpdateContentParams updateContentParams = new UpdateContentParams();
-        updateContentParams.
-            contentId( content.getId() ).
-            editor( edit -> {
-                edit.workflowInfo = WorkflowInfo.create().state( WorkflowState.PENDING_APPROVAL ).checks(
-                    Map.of( "Laywer review", WorkflowCheckState.PENDING ) ).build();
-            } );
-
-        this.contentService.update( updateContentParams );
-
-        final Content storedContent = this.contentService.getById( content.getId() );
-        assertNotNull( storedContent.getWorkflowInfo() );
-        assertNotNull( storedContent.getWorkflowInfo().getState() );
-        assertNotNull( storedContent.getWorkflowInfo().getChecks() );
-        assertEquals( WorkflowState.PENDING_APPROVAL, storedContent.getWorkflowInfo().getState() );
-        assertEquals( Map.of( "Laywer review", WorkflowCheckState.PENDING ), storedContent.getWorkflowInfo().getChecks() );
-    }
-
-    @Test
     void audit_data()
     {
         final ArgumentCaptor<LogAuditLogParams> captor = ArgumentCaptor.forClass( LogAuditLogParams.class );
@@ -544,22 +483,20 @@ class ContentServiceImplTest_update
         data.setString( "testString", "value" );
         data.setString( "testString2", "value" );
 
-        final CreateContentParams createContentParams = CreateContentParams.create().
-            contentData( data ).
-            displayName( "This is my content" ).
-            parent( ContentPath.ROOT ).
-            type( ContentTypeName.folder() ).
-            build();
+        final CreateContentParams createContentParams = CreateContentParams.create()
+            .contentData( data )
+            .displayName( "This is my content" )
+            .parent( ContentPath.ROOT )
+            .type( ContentTypeName.folder() )
+            .build();
 
         final Content content = this.contentService.create( createContentParams );
 
         final UpdateContentParams updateContentParams = new UpdateContentParams();
-        updateContentParams.
-            contentId( content.getId() ).
-            editor( edit -> {
-                final PropertyTree editData = edit.data;
-                editData.setString( "testString", "value-updated" );
-            } );
+        updateContentParams.contentId( content.getId() ).editor( edit -> {
+            final PropertyTree editData = edit.data;
+            editData.setString( "testString", "value-updated" );
+        } );
 
         Mockito.reset( auditLogService );
 
@@ -568,7 +505,7 @@ class ContentServiceImplTest_update
         verify( auditLogService, atMostOnce() ).log( captor.capture() );
 
         final LogAuditLogParams log = captor.getValue();
-        assertThat( log ).extracting( LogAuditLogParams::getType).isEqualTo( "system.content.update" ) ;
+        assertThat( log ).extracting( LogAuditLogParams::getType ).isEqualTo( "system.content.update" );
         assertThat( log ).extracting( l -> l.getData().getSet( "result" ) )
             .extracting( result -> result.getString( "id" ), result -> result.getString( "path" ) )
             .containsExactly( content.getId().toString(), content.getPath().toString() );

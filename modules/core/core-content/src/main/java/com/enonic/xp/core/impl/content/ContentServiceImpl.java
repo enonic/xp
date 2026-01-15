@@ -76,6 +76,8 @@ import com.enonic.xp.content.UpdateContentMetadataParams;
 import com.enonic.xp.content.UpdateContentMetadataResult;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
+import com.enonic.xp.content.UpdateWorkflowParams;
+import com.enonic.xp.content.UpdateWorkflowResult;
 import com.enonic.xp.content.XDataDefaultValuesProcessor;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -925,6 +927,32 @@ public class ContentServiceImpl
             .execute();
 
         contentAuditLogSupport.updateMetadata( params, result );
+
+        return result;
+    }
+
+    @Override
+    @NullMarked
+    public UpdateWorkflowResult updateWorkflow( final UpdateWorkflowParams params )
+    {
+        verifyDraftBranch();
+
+        final UpdateWorkflowResult result = UpdateWorkflowCommand.create( params )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .eventPublisher( this.eventPublisher )
+            .siteService( this.siteService )
+            .xDataService( this.xDataService )
+            .contentProcessors( this.contentProcessors )
+            .contentValidators( this.contentValidators )
+            .pageDescriptorService( this.pageDescriptorService )
+            .partDescriptorService( this.partDescriptorService )
+            .layoutDescriptorService( this.layoutDescriptorService )
+            .allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() )
+            .build()
+            .execute();
+
+        contentAuditLogSupport.updateWorkflow( params, result );
 
         return result;
     }

@@ -147,10 +147,7 @@ var expectedJson = {
         "to": "2016-11-22T10:36:00Z"
     },
     'workflow': {
-        'state': 'READY',
-        'checks': {
-            'Review by marketing': 'APPROVED'
-        }
+        'state': 'READY'
     }
 };
 

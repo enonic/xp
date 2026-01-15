@@ -52,6 +52,8 @@ import com.enonic.xp.content.UpdateContentMetadataParams;
 import com.enonic.xp.content.UpdateContentMetadataResult;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
+import com.enonic.xp.content.UpdateWorkflowParams;
+import com.enonic.xp.content.UpdateWorkflowResult;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -237,6 +239,32 @@ public class ContentAuditLogSupportImpl
         addContent( resultSet, result.getContent() );
 
         log( "system.content.updateMetadata", data, params.getContentId(), rootContext );
+    }
+
+    @Override
+    public void updateWorkflow( final UpdateWorkflowParams params, final UpdateWorkflowResult result )
+    {
+        final Context context = ContextBuilder.copyOf( ContextAccessor.current() ).build();
+
+        executor.execute( () -> doUpdateWorkflow( params, result, context ) );
+    }
+
+    private void doUpdateWorkflow( final UpdateWorkflowParams params, final UpdateWorkflowResult result,
+                                   final Context rootContext )
+    {
+        final PropertyTree data = new PropertyTree();
+        final PropertySet paramsSet = data.addSet( "params" );
+        final PropertySet resultSet = data.addSet( "result" );
+
+        final PrincipalKey modifier =
+            rootContext.getAuthInfo().getUser() != null ? rootContext.getAuthInfo().getUser().getKey() : PrincipalKey.ofAnonymous();
+
+        paramsSet.addString( "contentId", safeToString( params.getContentId() ) );
+        paramsSet.addString( "modifier", safeToString( modifier ) );
+
+        addContent( resultSet, result.getContent() );
+
+        log( "system.content.updateWorkflow", data, params.getContentId(), rootContext );
     }
 
     @Override

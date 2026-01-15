@@ -14,7 +14,6 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.content.UpdateMediaParams;
-import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.core.impl.content.XDataMappingServiceImpl;
 import com.enonic.xp.core.impl.schema.xdata.XDataServiceImpl;
@@ -46,9 +45,7 @@ class ContentServiceImplTest_media
     void create_media_image()
     {
         final CreateMediaParams createMediaParams = new CreateMediaParams();
-        createMediaParams.byteSource( loadImage( "cat-small.jpg" ) ).
-            name( "Small cat" ).
-            parent( ContentPath.ROOT );
+        createMediaParams.byteSource( loadImage( "cat-small.jpg" ) ).name( "Small cat" ).parent( ContentPath.ROOT );
 
         final Content content = this.contentService.create( createMediaParams );
 
@@ -69,9 +66,7 @@ class ContentServiceImplTest_media
     {
         final CreateMediaParams createMediaParams = new CreateMediaParams();
         // file ending with point is illegal on Windows
-        createMediaParams.byteSource( loadImage( "cat-small.jpg" ) ).
-            name( "cat-small." ).
-            parent( ContentPath.ROOT );
+        createMediaParams.byteSource( loadImage( "cat-small.jpg" ) ).name( "cat-small." ).parent( ContentPath.ROOT );
 
         assertThrows( IllegalArgumentException.class, () -> this.contentService.create( createMediaParams ) );
     }
@@ -81,9 +76,7 @@ class ContentServiceImplTest_media
     {
         final CreateMediaParams createMediaParams = new CreateMediaParams();
         // file ending with point is illegal on Windows
-        createMediaParams.byteSource( loadImage( "cat-small.jpg" ) ).
-            name( "cat-small." ).
-            parent( ContentPath.ROOT );
+        createMediaParams.byteSource( loadImage( "cat-small.jpg" ) ).name( "cat-small." ).parent( ContentPath.ROOT );
 
         when( config.attachments_allowUnsafeNames() ).thenReturn( true );
 
@@ -100,9 +93,7 @@ class ContentServiceImplTest_media
     void no_file_extension_in_display_name()
     {
         final CreateMediaParams createMediaParams = new CreateMediaParams();
-        createMediaParams.byteSource( loadImage( "cat-small.jpg" ) ).
-            name( "Small cat.jpg" ).
-            parent( ContentPath.ROOT );
+        createMediaParams.byteSource( loadImage( "cat-small.jpg" ) ).name( "Small cat.jpg" ).parent( ContentPath.ROOT );
 
         final Content content = this.contentService.create( createMediaParams );
 
@@ -125,10 +116,8 @@ class ContentServiceImplTest_media
 
         assertEquals( WorkflowState.READY, content.getWorkflowInfo().getState() );
 
-        final UpdateMediaParams updateMediaParams = new UpdateMediaParams().content( content.getId() )
-            .name( "dart-small" )
-            .byteSource( loadImage( "darth-small.jpg" ) )
-            .workflowInfo( WorkflowInfo.inProgress() );
+        final UpdateMediaParams updateMediaParams =
+            new UpdateMediaParams().content( content.getId() ).name( "dart-small" ).byteSource( loadImage( "darth-small.jpg" ) );
 
         this.contentService.update( updateMediaParams );
 
@@ -157,9 +146,8 @@ class ContentServiceImplTest_media
 
         final Content storedContent = this.contentService.getById( content.getId() );
 
-        final UpdateMediaParams updateMediaParams = new UpdateMediaParams().content( content.getId() )
-            .name( "Small cat" )
-            .byteSource( loadImage( "cat-small.jpg" ) );
+        final UpdateMediaParams updateMediaParams =
+            new UpdateMediaParams().content( content.getId() ).name( "Small cat" ).byteSource( loadImage( "cat-small.jpg" ) );
 
         this.contentService.update( updateMediaParams );
 
@@ -171,17 +159,13 @@ class ContentServiceImplTest_media
     void update_media_image_invalid_file_name()
     {
         final CreateMediaParams createMediaParams = new CreateMediaParams();
-        createMediaParams.byteSource( loadImage( "cat-small.jpg" ) ).
-            name( "Small cat" ).
-            parent( ContentPath.ROOT );
+        createMediaParams.byteSource( loadImage( "cat-small.jpg" ) ).name( "Small cat" ).parent( ContentPath.ROOT );
 
         final Content content = this.contentService.create( createMediaParams );
 
         // file ending with point is illegal on Windows
-        final UpdateMediaParams updateMediaParams = new UpdateMediaParams().
-            content( content.getId() ).
-            name( "dart-small." ).
-            byteSource( loadImage( "darth-small.jpg" ) );
+        final UpdateMediaParams updateMediaParams =
+            new UpdateMediaParams().content( content.getId() ).name( "dart-small." ).byteSource( loadImage( "darth-small.jpg" ) );
 
         assertThrows( IllegalArgumentException.class, () -> this.contentService.update( updateMediaParams ) );
     }
@@ -193,13 +177,13 @@ class ContentServiceImplTest_media
         final ArgumentCaptor<LogAuditLogParams> captor = ArgumentCaptor.forClass( LogAuditLogParams.class );
 
         final CreateMediaParams createMediaParams = new CreateMediaParams();
-        createMediaParams.byteSource( loadImage( "cat-small.jpg" ) ).
-            name( "Small cat" ).
-            altText( "alt text" ).
-            caption( "caption" ).
-            copyright( "copyright" ).
-            artist( "artist" ).
-            parent( ContentPath.ROOT );
+        createMediaParams.byteSource( loadImage( "cat-small.jpg" ) )
+            .name( "Small cat" )
+            .altText( "alt text" )
+            .caption( "caption" )
+            .copyright( "copyright" )
+            .artist( "artist" )
+            .parent( ContentPath.ROOT );
 
         Mockito.reset( auditLogService );
 
@@ -208,7 +192,7 @@ class ContentServiceImplTest_media
         verify( auditLogService, atMostOnce() ).log( captor.capture() );
 
         final LogAuditLogParams log = captor.getValue();
-        assertThat( log ).extracting( LogAuditLogParams::getType).isEqualTo( "system.content.create" ) ;
+        assertThat( log ).extracting( LogAuditLogParams::getType ).isEqualTo( "system.content.create" );
         assertThat( log ).extracting( l -> l.getData().getSet( "result" ) )
             .extracting( result -> result.getString( "id" ), result -> result.getString( "path" ) )
             .containsExactly( content.getId().toString(), content.getPath().toString() );
@@ -218,10 +202,10 @@ class ContentServiceImplTest_media
     void create_media_document()
     {
         final CreateMediaParams createMediaParams = new CreateMediaParams();
-        createMediaParams.byteSource( loadImage( "document.pdf" ) ).
-            name( "document.pdf" ).
-            mimeType( "application/pdf" ).
-            parent( ContentPath.ROOT );
+        createMediaParams.byteSource( loadImage( "document.pdf" ) )
+            .name( "document.pdf" )
+            .mimeType( "application/pdf" )
+            .parent( ContentPath.ROOT );
 
         final Content content = this.contentService.create( createMediaParams );
 

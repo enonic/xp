@@ -147,10 +147,7 @@ var expectedJson = {
         'to': '2018-11-03T10:00:01Z',
     },
     'workflow': {
-        'state': 'READY',
-        'checks': {
-            'Review by marketing': 'APPROVED'
-        }
+        'state': 'READY'
     }
 };
 
@@ -300,11 +297,7 @@ exports.patchNotMappedXDataFieldName = function () {
 exports.patchWorkflowInfo = function () {
 
     var expected = {
-        'state': 'IN_PROGRESS',
-        'checks': {
-            'a': 'PENDING',
-            'b': 'APPROVED'
-        }
+        'state': 'IN_PROGRESS'
     };
 
     var result = content.patch({
@@ -312,11 +305,7 @@ exports.patchWorkflowInfo = function () {
         patcher(c) {
             globalPatcher(c);
             c.workflow = {
-                state: 'IN_PROGRESS',
-                checks: {
-                    a: 'PENDING',
-                    b: 'APPROVED'
-                }
+                state: 'IN_PROGRESS'
             };
 
             return c;
