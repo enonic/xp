@@ -6,6 +6,8 @@ import java.util.regex.Pattern;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import jakarta.servlet.RequestDispatcher;
+
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
@@ -25,6 +27,7 @@ import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.handler.BaseWebHandler;
 import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.handler.WebHandlerChain;
+import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketContext;
 import com.enonic.xp.web.websocket.WebSocketEndpoint;
@@ -67,10 +70,10 @@ public final class WebAppHandler
         final ApplicationKey applicationKey = ApplicationKey.from( matcher.group( 1 ) );
         final String restPath = matcher.group( 2 );
 
-        // Redirect if URL doesn't end with trailing slash (restPath is null for /webapp/{appname})
-        if ( restPath == null )
+        if ( !((String)webRequest.getRawRequest().getAttribute( RequestDispatcher.FORWARD_REQUEST_URI )).endsWith( "/" ) )
         {
-            String redirectUrl = portalRequest.getRawPath() + "/";
+            String redirectUrl = ServletRequestUrlHelper.createUri( portalRequest.getRawRequest(),
+                portalRequest.getRawPath() + "/" );
 
             // Preserve query string if present
             final String queryString = portalRequest.getRawRequest().getQueryString();
