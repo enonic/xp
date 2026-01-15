@@ -100,6 +100,7 @@ public class NodeExporter
             try
             {
                 writeNode( rootNode );
+                writeNodeOrderList( rootNode );
                 doExportChildNodes( rootNode.path() );
             }
             catch ( Exception e )
@@ -192,23 +193,19 @@ public class NodeExporter
 
     private void doExportChildNodes( final NodePath parentPath )
     {
-        final Node parentNode = nodeService.getByPath( parentPath );
-
         int from = 0;
         boolean hasMore = true;
 
-        final Nodes.Builder allChildrenBuilder = Nodes.create();
+        final String childrenPattern = parentPath.isRoot() ? "/?*" : parentPath + "/*";
+
 
         while ( hasMore )
         {
             final FindNodesByQueryResult batch = nodeService.findByQuery( NodeQuery.create()
                                                                               .query( QueryExpr.from(
                                                                                   CompareExpr.like( FieldExpr.from( NodeIndexPath.PATH ),
-                                                                                                    ValueExpr.string( parentPath.toString()
-                                                                                                                          .endsWith( "/" )
-                                                                                                                          ? parentPath + "*"
-                                                                                                                          : parentPath +
-                                                                                                                              "/*" ) ) ) )
+                                                                                                    ValueExpr.string(
+                                                                                                        childrenPattern ) ) ) )
                                                                               .addOrderBy( FieldOrderExpr.create( NodeIndexPath.PATH,
                                                                                                                   OrderExpr.Direction.ASC ) )
                                                                               .from( from )
@@ -222,7 +219,7 @@ public class NodeExporter
                 try
                 {
                     writeNode( child );
-                    allChildrenBuilder.add( child );
+                    writeNodeOrderList( child );
                 }
                 catch ( Exception e )
                 {
@@ -234,33 +231,7 @@ public class NodeExporter
             from += this.batchSize;
             hasMore = from < batch.getTotalHits();
         }
-
-        writeNodeOrderList( parentNode, allChildrenBuilder.build() );
     }
-
-//    private FindNodesByParentResult doExport( final NodePath nodePath )
-//    {
-//        final FindNodesByParentResult children = nodeService.findByParent( FindNodesByParentParams.create().
-//            parentPath( nodePath ).
-//            build() );
-//
-//        final Nodes childNodes = this.nodeService.getByIds( children.getNodeIds() );
-//
-//        for ( final Node child : childNodes )
-//        {
-//            try
-//            {
-//                exportNode( child );
-//            }
-//            catch ( Exception e )
-//            {
-//                LOG.error( String.format( "Failed to export node with path [%s]", child.path() ), e );
-//                result.addError( new ExportError( e.toString() ) );
-//            }
-//        }
-//        return children;
-//    }
-
 
     private void exportNodeBinaries( final Node relativeNode, final Path nodeDataFolder )
     {
@@ -279,21 +250,29 @@ public class NodeExporter
         }
     }
 
-    private void writeNodeOrderList( final Node parent, final Nodes children )
+    private void writeNodeOrderList( final Node node )
     {
-        if ( parent == null || parent.getChildOrder() == null || !parent.getChildOrder().isManualOrder() )
+        if ( node == null || node.getChildOrder() == null || !node.getChildOrder().isManualOrder() )
+        {
+            return;
+        }
+
+        final Nodes children = this.nodeService.getByIds(
+            nodeService.findByParent( FindNodesByParentParams.create().parentPath( node.path() ).build() ).getNodeIds() );
+
+        if ( children.isEmpty() )
         {
             return;
         }
 
         final StringBuilder builder = new StringBuilder();
 
-        for ( final Node node : children )
+        for ( final Node child : children )
         {
-            builder.append( node.name().toString() ).append( LINE_SEPARATOR );
+            builder.append( child.name().toString() ).append( LINE_SEPARATOR );
         }
 
-        final Path nodeOrderListPath = resolveNodeDataFolder( parent ).resolve( NodeExportPathResolver.ORDER_EXPORT_NAME );
+        final Path nodeOrderListPath = resolveNodeDataFolder( node ).resolve( NodeExportPathResolver.ORDER_EXPORT_NAME );
 
         if ( !dryRun )
         {
