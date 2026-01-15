@@ -23,6 +23,8 @@ public class ExportNodesParams
 
     private final boolean includeVersions;
 
+    private final int batchSize;
+
     private final NodeExportListener nodeExportListener;
 
     private ExportNodesParams( Builder builder )
@@ -41,6 +43,7 @@ public class ExportNodesParams
         this.dryRun = builder.dryRun;
         this.includeNodeIds = builder.includeNodeIds;
         this.includeVersions = builder.includeVersions;
+        this.batchSize = builder.batchSize;
         this.nodeExportListener = builder.nodeExportListener;
     }
 
@@ -79,6 +82,11 @@ public class ExportNodesParams
         return includeVersions;
     }
 
+    public int getBatchSize()
+    {
+        return batchSize;
+    }
+
     public NodeExportListener getNodeExportListener()
     {
         return nodeExportListener;
@@ -104,6 +112,8 @@ public class ExportNodesParams
         private boolean includeNodeIds = true;
 
         private boolean includeVersions = false;
+
+        private int batchSize = 100;
 
         private NodeExportListener nodeExportListener;
 
@@ -151,6 +161,12 @@ public class ExportNodesParams
         public Builder includeVersions( final boolean includeVersions )
         {
             this.includeVersions = includeVersions;
+            return this;
+        }
+
+        public Builder batchSize( final int batchSize )
+        {
+            this.batchSize = batchSize;
             return this;
         }
 

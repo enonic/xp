@@ -16,16 +16,24 @@ import com.enonic.xp.export.NodeExportListener;
 import com.enonic.xp.export.NodeExportResult;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.FindNodesByParentParams;
-import com.enonic.xp.node.FindNodesByParentResult;
+import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.GetNodeVersionsParams;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.RefreshMode;
+import com.enonic.xp.query.expr.CompareExpr;
+import com.enonic.xp.query.expr.FieldExpr;
+import com.enonic.xp.query.expr.FieldOrderExpr;
+import com.enonic.xp.query.expr.OrderExpr;
+import com.enonic.xp.query.expr.QueryExpr;
+import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.util.BinaryReference;
 
 public class NodeExporter
@@ -50,6 +58,8 @@ public class NodeExporter
 
     private final boolean exportVersions;
 
+    private final int batchSize;
+
     private final NodeExportListener nodeExportListener;
 
     private final NodeExportResult.Builder result = NodeExportResult.create();
@@ -67,6 +77,7 @@ public class NodeExporter
         this.dryRun = builder.dryRun;
         this.exportNodeIds = builder.exportNodeIds;
         this.exportVersions = builder.exportVersions;
+        this.batchSize = builder.batchSize;
         this.nodeExportListener = builder.nodeExportListener;
     }
 
@@ -88,7 +99,8 @@ public class NodeExporter
 
             try
             {
-                exportNode( rootNode );
+                writeNode( rootNode );
+                doExportChildNodes( rootNode.path() );
             }
             catch ( Exception e )
             {
@@ -107,27 +119,22 @@ public class NodeExporter
     }
 
 
-    private void exportNode( final Node node )
+    private void writeNode( final Node node )
     {
-        writeNode( node );
+        writeVersion( node, resolveNodeDataFolder( node ) );
 
         if ( nodeExportListener != null )
         {
             nodeExportListener.nodeExported( 1L );
         }
 
-        result.addNodePath( node.path() );
-        doExportChildNodes( node.path() );
-    }
-
-    private void writeNode( final Node node )
-    {
-        writeVersion( node, resolveNodeDataFolder( node ) );
-
         if ( exportVersions )
         {
             writeVersions( node );
         }
+
+        result.addNodePath( node.path() );
+
     }
 
     private void writeVersions( final Node node )
@@ -138,11 +145,8 @@ public class NodeExporter
         }
 
         // TODO: Batch this?
-        final NodeVersionQueryResult versions = this.nodeService.findVersions( GetNodeVersionsParams.create().
-            from( 0 ).
-            size( -1 ).
-            nodeId( node.id() ).
-            build() );
+        final NodeVersionQueryResult versions =
+            this.nodeService.findVersions( GetNodeVersionsParams.create().from( 0 ).size( -1 ).nodeId( node.id() ).build() );
 
         for ( final NodeVersionMetadata version : versions.getNodeVersionsMetadata() )
         {
@@ -161,16 +165,14 @@ public class NodeExporter
 
     private Path resolveNodeVersionBasePath( final Node originalNode, final NodeVersionMetadata nodeVersion )
     {
-        return resolveNodeDataFolder( originalNode ).
-            resolve( NodeExportPathResolver.VERSION_FOLDER ).
-            resolve( nodeVersion.getNodeVersionId().toString() ).
-            resolve( nodeVersion.getNodePath().getName() );
+        return resolveNodeDataFolder( originalNode ).resolve( NodeExportPathResolver.VERSION_FOLDER )
+            .resolve( nodeVersion.getNodeVersionId().toString() )
+            .resolve( nodeVersion.getNodePath().getName() );
     }
 
     private void writeVersion( final Node node, final Path baseFolder )
     {
-        final NodePath newParentPath =
-            new NodePath( "/" + node.toString().substring( this.sourceNodePath.toString().length() ) );
+        final NodePath newParentPath = new NodePath( "/" + node.toString().substring( this.sourceNodePath.toString().length() ) );
 
         final Node relativeNode = Node.create( node ).parentPath( newParentPath ).build();
 
@@ -192,35 +194,72 @@ public class NodeExporter
     {
         final Node parentNode = nodeService.getByPath( parentPath );
 
-        final FindNodesByParentResult children = doExport( parentPath );
+        int from = 0;
+        boolean hasMore = true;
 
-        final Nodes childNodes = this.nodeService.getByIds( children.getNodeIds() );
+        final Nodes.Builder allChildrenBuilder = Nodes.create();
 
-        writeNodeOrderList( parentNode, childNodes );
-    }
-
-    private FindNodesByParentResult doExport( final NodePath nodePath )
-    {
-        final FindNodesByParentResult children = nodeService.findByParent( FindNodesByParentParams.create().
-            parentPath( nodePath ).
-            build() );
-
-        final Nodes childNodes = this.nodeService.getByIds( children.getNodeIds() );
-
-        for ( final Node child : childNodes )
+        while ( hasMore )
         {
-            try
+            final FindNodesByQueryResult batch = nodeService.findByQuery( NodeQuery.create()
+                                                                              .query( QueryExpr.from(
+                                                                                  CompareExpr.like( FieldExpr.from( NodeIndexPath.PATH ),
+                                                                                                    ValueExpr.string( parentPath.toString()
+                                                                                                                          .endsWith( "/" )
+                                                                                                                          ? parentPath + "*"
+                                                                                                                          : parentPath +
+                                                                                                                              "/*" ) ) ) )
+                                                                              .addOrderBy( FieldOrderExpr.create( NodeIndexPath.PATH,
+                                                                                                                  OrderExpr.Direction.ASC ) )
+                                                                              .from( from )
+                                                                              .size( this.batchSize )
+                                                                              .build() );
+
+            final Nodes childNodes = this.nodeService.getByIds( batch.getNodeIds() );
+
+            for ( final Node child : childNodes )
             {
-                exportNode( child );
+                try
+                {
+                    writeNode( child );
+                    allChildrenBuilder.add( child );
+                }
+                catch ( Exception e )
+                {
+                    LOG.error( String.format( "Failed to export node with path [%s]", child.path() ), e );
+                    result.addError( new ExportError( e.toString() ) );
+                }
             }
-            catch ( Exception e )
-            {
-                LOG.error( String.format( "Failed to export node with path [%s]", child.path() ), e );
-                result.addError( new ExportError( e.toString() ) );
-            }
+
+            from += this.batchSize;
+            hasMore = from < batch.getTotalHits();
         }
-        return children;
+
+        writeNodeOrderList( parentNode, allChildrenBuilder.build() );
     }
+
+//    private FindNodesByParentResult doExport( final NodePath nodePath )
+//    {
+//        final FindNodesByParentResult children = nodeService.findByParent( FindNodesByParentParams.create().
+//            parentPath( nodePath ).
+//            build() );
+//
+//        final Nodes childNodes = this.nodeService.getByIds( children.getNodeIds() );
+//
+//        for ( final Node child : childNodes )
+//        {
+//            try
+//            {
+//                exportNode( child );
+//            }
+//            catch ( Exception e )
+//            {
+//                LOG.error( String.format( "Failed to export node with path [%s]", child.path() ), e );
+//                result.addError( new ExportError( e.toString() ) );
+//            }
+//        }
+//        return children;
+//    }
 
 
     private void exportNodeBinaries( final Node relativeNode, final Path nodeDataFolder )
@@ -232,9 +271,8 @@ public class NodeExporter
 
             if ( !dryRun )
             {
-                this.exportWriter.writeSource( nodeDataFolder.
-                    resolve( NodeExportPathResolver.BINARY_FOLDER ).
-                    resolve( reference.toString() ), byteSource );
+                this.exportWriter.writeSource(
+                    nodeDataFolder.resolve( NodeExportPathResolver.BINARY_FOLDER ).resolve( reference.toString() ), byteSource );
             }
 
             result.addBinary( relativeNode.path(), reference );
@@ -278,13 +316,8 @@ public class NodeExporter
 
     private long getRecursiveNodeCountByParentPath( final NodePath nodePath )
     {
-        return nodeService.
-            findByParent( FindNodesByParentParams.create().
-                countOnly( true ).
-                parentPath( nodePath ).
-                recursive( true ).
-                build() ).
-            getTotalHits();
+        return nodeService.findByParent(
+            FindNodesByParentParams.create().countOnly( true ).parentPath( nodePath ).recursive( true ).build() ).getTotalHits();
     }
 
     private Path resolveNodeDataFolder( final Node node )
@@ -338,6 +371,8 @@ public class NodeExporter
         private boolean exportNodeIds = true;
 
         private boolean exportVersions = false;
+
+        private int batchSize = 1000;
 
         private NodeExportListener nodeExportListener;
 
@@ -396,6 +431,12 @@ public class NodeExporter
         public Builder exportVersions( final boolean exportVersions )
         {
             this.exportVersions = exportVersions;
+            return this;
+        }
+
+        public Builder batchSize( final int batchSize )
+        {
+            this.batchSize = batchSize;
             return this;
         }
 

@@ -56,7 +56,7 @@ public class ExportServiceImpl
             .xpVersion( xpVersion )
             .dryRun( params.isDryRun() )
             .exportNodeIds( params.isIncludeNodeIds() )
-            .exportVersions( params.isIncludeVersions() )
+            .exportVersions( params.isIncludeVersions() ).batchSize( params.getBatchSize() )
             .nodeExportListener( params.getNodeExportListener() )
             .build()
             .execute();

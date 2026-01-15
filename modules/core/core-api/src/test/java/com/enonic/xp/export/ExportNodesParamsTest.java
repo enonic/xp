@@ -28,4 +28,30 @@ public class ExportNodesParamsTest
 
         assertEquals( "root", result.getRootDirectory() );
     }
+
+    @Test
+    public void batchSize_default()
+    {
+        ExportNodesParams result = ExportNodesParams.create().sourceNodePath( NodePath.ROOT ).targetDirectory( "target" ).build();
+
+        assertEquals( 100, result.getBatchSize() );
+    }
+
+    @Test
+    public void batchSize_custom()
+    {
+        ExportNodesParams result =
+            ExportNodesParams.create().sourceNodePath( NodePath.ROOT ).targetDirectory( "target" ).batchSize( 50 ).build();
+
+        assertEquals( 50, result.getBatchSize() );
+    }
+
+    @Test
+    public void batchSize_large()
+    {
+        ExportNodesParams result =
+            ExportNodesParams.create().sourceNodePath( NodePath.ROOT ).targetDirectory( "target" ).batchSize( 1000 ).build();
+
+        assertEquals( 1000, result.getBatchSize() );
+    }
 }

@@ -120,6 +120,7 @@ export interface ExportNodesParams {
     exportName: string;
     includeNodeIds?: boolean;
     includeVersions?: boolean;
+    batchSize?: number;
     nodeResolved?: (numberOfNodes: number) => void;
     nodeExported?: (numberOfExportedNodes: number) => void;
 }
@@ -143,6 +144,8 @@ interface ExportHandler {
 
     setIncludeVersions(value: boolean): void;
 
+    setBatchSize(value?: number | null): void;
+
     setNodeExported(fn?: ((i: number) => void) | null): void;
 
     setNodeResolved(fn?: ((i: number) => void) | null): void;
@@ -161,6 +164,7 @@ interface ExportHandler {
  * @param {string} params.exportName Export name.
  * @param {boolean} [params.includeNodeIds=true] Set to true to export node IDs.
  * @param {boolean} [params.includeVersions=false] Set to true to export all node versions.
+ * @param {number} [params.batchSize=100] Number of nodes to export in each batch.
  * @param {function} [params.nodeResolved] A function to be called before export starts with number of nodes to export.
  * @param {function} [params.nodeExported] A function to be called during export with number of nodes exported since last call.
  *
@@ -175,6 +179,7 @@ export function exportNodes(params: ExportNodesParams): ExportNodesResult {
         exportName,
         includeNodeIds = true,
         includeVersions = false,
+        batchSize,
         nodeResolved,
         nodeExported,
     } = params ?? {};
@@ -185,6 +190,7 @@ export function exportNodes(params: ExportNodesParams): ExportNodesResult {
     bean.setExportName(exportName);
     bean.setIncludeNodeIds(includeNodeIds);
     bean.setIncludeVersions(includeVersions);
+    bean.setBatchSize(__.nullOrValue(batchSize));
     bean.setNodeExported(__.nullOrValue(nodeExported));
     bean.setNodeResolved(__.nullOrValue(nodeResolved));
 

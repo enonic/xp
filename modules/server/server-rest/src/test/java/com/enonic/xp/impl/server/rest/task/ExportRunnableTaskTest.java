@@ -18,6 +18,7 @@ import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.util.BinaryReference;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -51,7 +52,7 @@ class ExportRunnableTaskTest
             .exportName( params.getExportName() )
             .includeVersions( params.isIncludeVersions() )
             .exportWithIds( params.isExportWithIds() )
-            .dryRun( params.isDryRun() )
+            .dryRun( params.isDryRun() ).batchSize( params.getBatchSize() )
             .build();
     }
 
@@ -65,7 +66,7 @@ class ExportRunnableTaskTest
 
         when( this.exportService.exportNodes( any( ExportNodesParams.class ) ) ).thenReturn( nodeExportResult );
 
-        final ExportRunnableTask task = createTask( new ExportNodesRequestJson( "a:b:c", "export", true, true, true ) );
+        final ExportRunnableTask task = createTask( new ExportNodesRequestJson( "a:b:c", "export", true, true, true, null ) );
 
         ProgressReporter progressReporter = mock( ProgressReporter.class );
 
@@ -76,6 +77,45 @@ class ExportRunnableTaskTest
 
         final String result = progressReporterCaptor.getValue();
         jsonTestHelper.assertJsonEquals( jsonTestHelper.loadTestJson( "exportNodes_result.json" ), jsonTestHelper.stringToJson( result ) );
+    }
+
+    @Test
+    void exportNodes_withBatchSize()
+    {
+        final NodeExportResult nodeExportResult = NodeExportResult.create()
+            .addNodePath( new NodePath( "/node/path" ) )
+            .addBinary( new NodePath( "/binary" ), BinaryReference.from( "binaryRef" ) )
+            .build();
+
+        final ArgumentCaptor<ExportNodesParams> paramsCaptor = ArgumentCaptor.forClass( ExportNodesParams.class );
+        when( this.exportService.exportNodes( paramsCaptor.capture() ) ).thenReturn( nodeExportResult );
+
+        final ExportRunnableTask task = createTask( new ExportNodesRequestJson( "a:b:c", "export", true, true, true, 50 ) );
+
+        ProgressReporter progressReporter = mock( ProgressReporter.class );
+
+        task.run( TaskId.from( "taskId" ), progressReporter );
+
+        final ExportNodesParams capturedParams = paramsCaptor.getValue();
+        assertEquals( 50, capturedParams.getBatchSize() );
+    }
+
+    @Test
+    void exportNodes_withDefaultBatchSize()
+    {
+        final NodeExportResult nodeExportResult = NodeExportResult.create().addNodePath( new NodePath( "/node/path" ) ).build();
+
+        final ArgumentCaptor<ExportNodesParams> paramsCaptor = ArgumentCaptor.forClass( ExportNodesParams.class );
+        when( this.exportService.exportNodes( paramsCaptor.capture() ) ).thenReturn( nodeExportResult );
+
+        final ExportRunnableTask task = createTask( new ExportNodesRequestJson( "a:b:c", "export", true, true, true, null ) );
+
+        ProgressReporter progressReporter = mock( ProgressReporter.class );
+
+        task.run( TaskId.from( "taskId" ), progressReporter );
+
+        final ExportNodesParams capturedParams = paramsCaptor.getValue();
+        assertEquals( 100, capturedParams.getBatchSize() );
     }
 
 }

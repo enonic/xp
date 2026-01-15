@@ -32,6 +32,8 @@ public class ExportRunnableTask
 
     private final boolean includeVersions;
 
+    private final Integer batchSize;
+
     private final ExportService exportService;
 
 
@@ -44,6 +46,7 @@ public class ExportRunnableTask
         this.includeVersions = builder.includeVersions;
         this.exportWithIds = builder.exportWithIds;
         this.dryRun = builder.dryRun;
+        this.batchSize = builder.batchSize;
 
         this.exportService = builder.exportService;
     }
@@ -56,15 +59,21 @@ public class ExportRunnableTask
     @Override
     public void run( final TaskId id, final ProgressReporter progressReporter )
     {
-        final NodeExportResult result = getContext( branch, repositoryId ).callWith( () -> this.exportService.exportNodes(
-            ExportNodesParams.create()
-                .sourceNodePath( nodePath )
-                .exportName( exportName )
-                .dryRun( dryRun )
-                .includeNodeIds( exportWithIds )
-                .includeVersions( includeVersions )
-                .nodeExportListener( new ExportListenerImpl( progressReporter ) )
-                .build() ) );
+        final ExportNodesParams.Builder paramsBuilder = ExportNodesParams.create()
+            .sourceNodePath( nodePath )
+            .exportName( exportName )
+            .dryRun( dryRun )
+            .includeNodeIds( exportWithIds )
+            .includeVersions( includeVersions )
+            .nodeExportListener( new ExportListenerImpl( progressReporter ) );
+
+        if ( batchSize != null )
+        {
+            paramsBuilder.batchSize( batchSize );
+        }
+
+        final NodeExportResult result =
+            getContext( branch, repositoryId ).callWith( () -> this.exportService.exportNodes( paramsBuilder.build() ) );
 
         progressReporter.info( NodeExportResultJson.from( result ).toString() );
     }
@@ -89,6 +98,8 @@ public class ExportRunnableTask
         private boolean dryRun;
 
         private boolean includeVersions;
+
+        private Integer batchSize;
 
         private ExportService exportService;
 
@@ -131,6 +142,12 @@ public class ExportRunnableTask
         public Builder includeVersions( final boolean includeVersions )
         {
             this.includeVersions = includeVersions;
+            return this;
+        }
+
+        public Builder batchSize( final Integer batchSize )
+        {
+            this.batchSize = batchSize;
             return this;
         }
 

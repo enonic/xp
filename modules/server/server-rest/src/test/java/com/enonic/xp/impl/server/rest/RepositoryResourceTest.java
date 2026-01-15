@@ -84,6 +84,26 @@ public class RepositoryResourceTest
     }
 
     @Test
+    public void exportNodes_withBatchSize()
+        throws Exception
+    {
+        when( taskService.submitLocalTask( any() ) ).thenReturn( TaskId.from( "task-id" ) );
+
+        final String result = request().path( "repo/export" )
+            .entity( readFromFile( "export_params_with_batch_size.json" ), MediaType.APPLICATION_JSON_TYPE )
+            .post()
+            .getAsString();
+
+        final ArgumentCaptor<SubmitLocalTaskParams> captor = ArgumentCaptor.forClass( SubmitLocalTaskParams.class );
+
+        verify( taskService, times( 1 ) ).submitLocalTask( captor.capture() );
+        assertThat( captor.getValue() ).extracting( SubmitLocalTaskParams::getName, SubmitLocalTaskParams::getDescription )
+            .containsExactly( null, "Export my_export_batch" );
+
+        assertStringJson( "{\"taskId\" : \"task-id\"}", result );
+    }
+
+    @Test
     public void importNodes()
         throws Exception
     {
