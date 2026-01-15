@@ -115,8 +115,8 @@ class UpdateContentCommandTest
     {
         ContentId contentId = ContentId.from( "mycontent" );
 
-        UpdateContentCommand command = createCommand( new UpdateContentParams().contentId( contentId ).editor( edit -> {
-        } ) );
+        UpdateContentCommand command = createCommand( new UpdateContentParams().contentId( contentId ).editor( _ -> {
+        } ) ).build();
 
         when( nodeService.getById( isA( NodeId.class ) ) ).thenThrow( new NodeNotFoundException( "Node not found" ) );
 
@@ -128,8 +128,8 @@ class UpdateContentCommandTest
     {
         Content existingContent = createContent( new PropertyTree() );
 
-        UpdateContentCommand command = createCommand( new UpdateContentParams().contentId( existingContent.getId() ).editor( edit -> {
-        } ) );
+        UpdateContentCommand command = createCommand( new UpdateContentParams().contentId( existingContent.getId() ).editor( _ -> {
+        } ) ).build();
 
         Node mockNode = ContentFixture.mockContentNode( existingContent );
         when( nodeService.getById( NodeId.from( existingContent.getId() ) ) ).thenReturn( mockNode );
@@ -149,7 +149,7 @@ class UpdateContentCommandTest
         UpdateContentParams params =
             new UpdateContentParams().contentId( existingContent.getId() ).editor( edit -> edit.data.setString( "lang", Locale.CANADA.toString() ) );
 
-        UpdateContentCommand command = createCommand( params );
+        UpdateContentCommand command = createCommand( params ).build();
 
         Node mockNode = ContentFixture.mockContentNode( existingContent );
         when( nodeService.getById( NodeId.from( existingContent.getId() ) ) ).thenReturn( mockNode );
@@ -192,7 +192,7 @@ class UpdateContentCommandTest
         final UpdateContentParams params =
             new UpdateContentParams().editor( c -> c.data.removeProperties( "siteConfig" ) ).contentId( existingContent.getId() );
 
-        final UpdateContentCommand command = UpdateContentCommand.create( createCommand( params ) ).params( params ).build();
+        final UpdateContentCommand command = createCommand( params ).build();
 
         Node mockNode = ContentFixture.mockContentNode( existingContent );
         when( nodeService.getById( NodeId.from( existingContent.getId() ) ) ).thenReturn( mockNode );
@@ -230,8 +230,7 @@ class UpdateContentCommandTest
 
         final UpdateContentParams params = new UpdateContentParams().contentId( existingContent.getId() );
 
-        final UpdateContentCommand command =
-            UpdateContentCommand.create( createCommand( params ) ).params( params ).contentProcessors( List.of( new ContentProcessor()
+        final UpdateContentCommand command = createCommand( params ).contentProcessors( List.of( new ContentProcessor()
             {
                 @Override
                 public boolean supports( final ContentTypeName contentType )
@@ -278,8 +277,7 @@ class UpdateContentCommandTest
             .requireValid( true )
             .editor( edit -> edit.data.setString( "lang", Locale.CANADA.toString() ) );
 
-        final UpdateContentCommand command = UpdateContentCommand.create( createCommand( params ) )
-            .params( params )
+        final UpdateContentCommand command = createCommand( params )
             .contentValidators( List.of( new ContentNameValidator(), new SiteConfigsValidator( siteService ), new OccurrenceValidator(),
                                          new ExtraDataValidator( xDataService ) ) )
             .build();
@@ -316,7 +314,7 @@ class UpdateContentCommandTest
             .runWith( command::execute ) );
     }
 
-    private UpdateContentCommand createCommand( UpdateContentParams params )
+    private UpdateContentCommand.Builder createCommand( UpdateContentParams params )
     {
         return UpdateContentCommand.create( params )
             .contentTypeService( contentTypeService )
@@ -329,8 +327,7 @@ class UpdateContentCommandTest
             .partDescriptorService( partDescriptorService )
             .layoutDescriptorService( layoutDescriptorService )
             .xDataMappingService( xDataMappingService )
-            .siteConfigService( siteConfigService )
-            .build();
+            .siteConfigService( siteConfigService );
     }
 
     private Content createContent( PropertyTree contentData )

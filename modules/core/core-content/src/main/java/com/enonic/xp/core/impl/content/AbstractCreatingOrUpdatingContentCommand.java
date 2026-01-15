@@ -101,9 +101,12 @@ class AbstractCreatingOrUpdatingContentCommand
 
     final boolean allowUnsafeAttachmentNames;
 
+    final boolean layersSync;
+
     AbstractCreatingOrUpdatingContentCommand( final Builder<?> builder )
     {
         super( builder );
+        this.layersSync = builder.layersSync;
         this.xDataService = builder.xDataService;
         this.siteService = builder.siteService;
         this.contentProcessors = List.copyOf( builder.contentProcessors );
@@ -409,22 +412,16 @@ class AbstractCreatingOrUpdatingContentCommand
 
         private SiteConfigService siteConfigService;
 
+        private boolean layersSync;
+
         Builder()
         {
         }
 
-        Builder( final AbstractCreatingOrUpdatingContentCommand source )
+        B layersSync()
         {
-            super( source );
-            this.xDataService = source.xDataService;
-            this.siteService = source.siteService;
-            this.contentProcessors = source.contentProcessors;
-            this.contentValidators = source.contentValidators;
-            this.pageDescriptorService = source.pageDescriptorService;
-            this.partDescriptorService = source.partDescriptorService;
-            this.layoutDescriptorService = source.layoutDescriptorService;
-            this.xDataMappingService = source.xDataMappingService;
-            this.siteConfigService = source.siteConfigService;
+            this.layersSync = true;
+            return (B) this;
         }
 
         @SuppressWarnings("unchecked")

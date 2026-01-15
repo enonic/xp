@@ -34,11 +34,6 @@ final class UpdateMediaCommand
         return new Builder( params );
     }
 
-    public static Builder create( final UpdateMediaParams params, final AbstractCreatingOrUpdatingContentCommand source )
-    {
-        return new Builder( params, source );
-    }
-
     Content execute()
     {
         params.validate();
@@ -89,15 +84,20 @@ final class UpdateMediaCommand
             .createAttachments( CreateAttachments.from( mediaAttachment ) )
             .editor( editable -> mediaFormBuilder.build( editable.data ) );
 
-        return UpdateContentCommand.create( this )
-            .params( updateParams )
-            .mediaInfo( mediaInfo )
+        return UpdateContentCommand.create( updateParams )
+            .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
+            .eventPublisher( this.eventPublisher )
             .siteService( this.siteService )
             .xDataService( this.xDataService )
+            .contentProcessors( this.contentProcessors )
+            .contentValidators( this.contentValidators )
             .pageDescriptorService( this.pageDescriptorService )
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
+            .xDataMappingService( this.xDataMappingService )
+            .siteConfigService( this.siteConfigService )
+            .allowUnsafeAttachmentNames( allowUnsafeAttachmentNames )
             .build()
             .execute();
     }
@@ -111,12 +111,6 @@ final class UpdateMediaCommand
 
         Builder( final UpdateMediaParams params )
         {
-            this.params = params;
-        }
-
-        Builder( final UpdateMediaParams params, final AbstractCreatingOrUpdatingContentCommand source )
-        {
-            super( source );
             this.params = params;
         }
 

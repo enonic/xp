@@ -97,11 +97,14 @@ final class CreateMediaCommand
             createAttachments( CreateAttachments.from( mediaAttachment ) ).
             build();
 
-        final CreateContentCommand createCommand = CreateContentCommand.create( this )
-            .mediaInfo( mediaInfo )
-            .params( createContentParams )
+        final CreateContentCommand createCommand = CreateContentCommand.create()
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .eventPublisher( this.eventPublisher )
             .siteService( this.siteService )
             .xDataService( this.xDataService )
+            .contentProcessors( this.contentProcessors )
+            .contentValidators( this.contentValidators )
             .formDefaultValuesProcessor( this.formDefaultValuesProcessor )
             .pageFormDefaultValuesProcessor( this.pageFormDefaultValuesProcessor )
             .xDataDefaultValuesProcessor( this.xDataDefaultValuesProcessor )
@@ -111,6 +114,8 @@ final class CreateMediaCommand
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
             .allowUnsafeAttachmentNames( this.allowUnsafeAttachmentNames )
+            .mediaInfo( mediaInfo )
+            .params( createContentParams )
             .build();
 
         return createCommand.execute();

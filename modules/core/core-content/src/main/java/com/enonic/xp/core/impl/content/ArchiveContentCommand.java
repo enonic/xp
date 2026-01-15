@@ -37,19 +37,16 @@ import static com.enonic.xp.content.ContentPropertyNames.ORIGINAL_NAME;
 import static com.enonic.xp.content.ContentPropertyNames.ORIGINAL_PARENT_PATH;
 
 final class ArchiveContentCommand
-    extends AbstractContentCommand
+    extends AbstractCreatingOrUpdatingContentCommand
 {
     private final ArchiveContentParams params;
 
     private final PathResolver pathResolver;
 
-    private final boolean stopInherit;
-
     private ArchiveContentCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
-        this.stopInherit = builder.stopInherit;
         this.pathResolver = new PathResolver();
     }
 
@@ -166,13 +163,15 @@ final class ArchiveContentCommand
         }
 
         final var processors = CompositeNodeDataProcessor.create().add( updateProperties( originalPath ) );
-        if ( stopInherit )
+        if ( !layersSync )
         {
             processors.add( InheritedContentDataProcessor.ALL );
         }
         moveParams.processor( processors.build() );
 
-        moveParams.versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.ARCHIVE_ATTR ) );
+        moveParams.versionAttributes( layersSync
+                                          ? ContentAttributesHelper.layersSyncAttr()
+                                          : ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.ARCHIVE_ATTR ) );
 
         return nodeService.move( moveParams.build() );
     }
@@ -187,21 +186,13 @@ final class ArchiveContentCommand
     }
 
     public static class Builder
-        extends AbstractContentCommand.Builder<Builder>
+        extends AbstractCreatingOrUpdatingContentCommand.Builder<Builder>
     {
         private final ArchiveContentParams params;
-
-        private boolean stopInherit = true;
 
         private Builder( final ArchiveContentParams params )
         {
             this.params = params;
-        }
-
-        public Builder stopInherit( final boolean stopInherit )
-        {
-            this.stopInherit = stopInherit;
-            return this;
         }
 
         @Override

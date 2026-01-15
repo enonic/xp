@@ -1,7 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -53,11 +52,6 @@ final class UpdateContentCommand
     public static Builder create( final UpdateContentParams params )
     {
         return new Builder( params );
-    }
-
-    public static Builder create( final AbstractCreatingOrUpdatingContentCommand source )
-    {
-        return new Builder( source );
     }
 
     Content execute()
@@ -284,26 +278,13 @@ final class UpdateContentCommand
     public static class Builder
         extends AbstractCreatingOrUpdatingContentCommand.Builder<Builder>
     {
-        private UpdateContentParams params;
+        private final UpdateContentParams params;
 
         private MediaInfo mediaInfo;
-
-        private WorkflowInfo workflowInfo;
 
         Builder( final UpdateContentParams params )
         {
             this.params = params;
-        }
-
-        Builder( final AbstractCreatingOrUpdatingContentCommand source )
-        {
-            super( source );
-        }
-
-        Builder params( final UpdateContentParams value )
-        {
-            this.params = value;
-            return this;
         }
 
         Builder mediaInfo( final MediaInfo value )
