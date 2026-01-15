@@ -493,7 +493,6 @@ class AbstractCreatingOrUpdatingContentCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( xDataService );
         }
     }
 
