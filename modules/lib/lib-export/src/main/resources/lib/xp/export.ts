@@ -156,7 +156,7 @@ interface ExportHandler {
  * @param {object} params JSON with the parameters.
  * @param {string} params.sourceNodePath Source nodes path.
  * @param {string} params.exportName Export name.
- * @param {number} [params.batchSize=100] Number of nodes to export in each batch.
+ * @param {number} [params.batchSize=1000] Number of nodes to export in each batch.
  * @param {function} [params.nodeResolved] A function to be called before export starts with number of nodes to export.
  * @param {function} [params.nodeExported] A function to be called during export with number of nodes exported since last call.
  *
