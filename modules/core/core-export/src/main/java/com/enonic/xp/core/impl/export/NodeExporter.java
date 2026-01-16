@@ -13,7 +13,6 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.export.writer.ExportWriter;
 import com.enonic.xp.core.impl.export.writer.NodeExportPathResolver;
 import com.enonic.xp.core.impl.export.xml.XmlNodeSerializer;
-import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.export.ExportError;
 import com.enonic.xp.export.NodeExportListener;
 import com.enonic.xp.export.NodeExportResult;
@@ -31,13 +30,13 @@ import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.expr.CompareExpr;
-import com.enonic.xp.query.expr.DslExpr;
 import com.enonic.xp.query.expr.FieldExpr;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.LogicalExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
+import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.util.BinaryReference;
 
 public class NodeExporter
@@ -87,17 +86,7 @@ public class NodeExporter
                 nodeExportListener.nodeResolved( childNodeCount + 1 );
             }
 
-//            try
-//            {
-//                writeNode( rootNode );
-//                writeNodeOrderList( rootNode );
             doExportNodes( rootNode.path() );
-//            }
-//            catch ( Exception e )
-//            {
-//                LOG.error( String.format( "Failed to export node with path [%s]", rootNode.path() ), e );
-//                result.addError( new ExportError( e.toString() ) );
-//            }
         }
         else
         {
@@ -139,8 +128,7 @@ public class NodeExporter
 
     private void doExportNodes( final NodePath parentPath )
     {
-        final QueryExpr nodesQuery = parentPath.isRoot()
-            ? QueryExpr.from( DslExpr.from( new PropertyTree() ) )
+        final QueryExpr nodesQuery = parentPath.isRoot() ? QueryExpr.from( QueryParser.parseCostraintExpression( "" ) )
             : QueryExpr.from(
                 LogicalExpr.or( CompareExpr.eq( FieldExpr.from( NodeIndexPath.PATH ), ValueExpr.string( parentPath.toString() ) ),
                                 CompareExpr.like( FieldExpr.from( NodeIndexPath.PATH ), ValueExpr.string( parentPath + "/*" ) ) ) );
