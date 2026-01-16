@@ -96,7 +96,10 @@ public final class ExportNodesParams
 
         public Builder batchSize( final Integer batchSize )
         {
-            this.batchSize = batchSize;
+            if ( batchSize != null )
+            {
+                this.batchSize = batchSize;
+            }
             return this;
         }
 
