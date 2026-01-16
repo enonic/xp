@@ -18,6 +18,8 @@ public class ExportHandler
 
     private String exportName;
 
+    private Integer batchSize;
+
     private Function<Long, Void> nodeExported;
 
     private Function<Long, Void> nodeResolved;
@@ -29,6 +31,10 @@ public class ExportHandler
             .exportName( exportName )
             .nodeExportListener( new FunctionBasedNodeExportListener( nodeExported, nodeResolved ) );
 
+        if ( batchSize != null )
+        {
+            paramsBuilder.batchSize( batchSize );
+        }
         final NodeExportResult nodeImportResult = this.context.getService( ExportService.class ).get().exportNodes( paramsBuilder.build() );
         return new NodeExportResultMapper( nodeImportResult );
     }
@@ -41,6 +47,11 @@ public class ExportHandler
     public void setExportName( final String exportName )
     {
         this.exportName = exportName;
+    }
+
+    public void setBatchSize( final Integer batchSize )
+    {
+        this.batchSize = batchSize;
     }
 
     public void setNodeExported( final Function<Long, Void> nodeExported )

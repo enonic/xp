@@ -29,6 +29,8 @@ public class ExportRunnableTask
 
     private final boolean archive;
 
+    private final Integer batchSize;
+
     private final ExportService exportService;
 
 
@@ -39,6 +41,7 @@ public class ExportRunnableTask
         this.nodePath = builder.nodePath;
         this.exportName = builder.exportName;
         this.archive = builder.archive;
+        this.batchSize = builder.batchSize;
 
         this.exportService = builder.exportService;
     }
@@ -51,13 +54,19 @@ public class ExportRunnableTask
     @Override
     public void run( final TaskId id, final ProgressReporter progressReporter )
     {
-        final NodeExportResult result = getContext( branch, repositoryId ).callWith( () -> this.exportService.exportNodes(
-            ExportNodesParams.create()
-                .sourceNodePath( nodePath )
-                .exportName( exportName )
-                .archive( archive )
-                .nodeExportListener( new ExportListenerImpl( progressReporter ) )
-                .build() ) );
+        final ExportNodesParams.Builder paramsBuilder = ExportNodesParams.create()
+            .sourceNodePath( nodePath )
+            .exportName( exportName )
+            .archive( archive )
+            .nodeExportListener( new ExportListenerImpl( progressReporter ) );
+
+        if ( batchSize != null )
+        {
+            paramsBuilder.batchSize( batchSize );
+        }
+
+        final NodeExportResult result =
+            getContext( branch, repositoryId ).callWith( () -> this.exportService.exportNodes( paramsBuilder.build() ) );
 
         progressReporter.progress( ProgressReportParams.create( NodeExportResultJson.from( result ).toString() ).build() );
     }
@@ -78,6 +87,8 @@ public class ExportRunnableTask
         private String exportName;
 
         private boolean archive;
+
+        private Integer batchSize;
 
         private ExportService exportService;
 
@@ -108,6 +119,12 @@ public class ExportRunnableTask
         public Builder archive( final boolean archive )
         {
             this.archive = archive;
+            return this;
+        }
+
+        public Builder batchSize( final Integer batchSize )
+        {
+            this.batchSize = batchSize;
             return this;
         }
 
