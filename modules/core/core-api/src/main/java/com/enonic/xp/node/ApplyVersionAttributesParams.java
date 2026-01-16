@@ -12,7 +12,7 @@ import com.google.common.collect.ImmutableSet;
  * Represents the parameters used to apply attributes to a specific node version.
  * This class encapsulates details about the node version and the attributes
  * to be added or removed.
- * <p/>
+ * <p>
  * See {@link NodeService#applyVersionAttributes(ApplyVersionAttributesParams)} for more details.
  */
 @NullMarked
