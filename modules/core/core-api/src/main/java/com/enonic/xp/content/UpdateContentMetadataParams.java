@@ -38,11 +38,9 @@ public final class UpdateContentMetadataParams
 
     public static final class Builder
     {
-        @Nullable
-        private ContentId contentId;
+        private @Nullable ContentId contentId;
 
-        @Nullable
-        private ContentMetadataEditor editor;
+        private @Nullable ContentMetadataEditor editor;
 
         private Builder()
         {

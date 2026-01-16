@@ -485,8 +485,7 @@ public class ContentServiceImpl
     }
 
     @Override
-    @NonNull
-    public Content getByPath( final ContentPath path )
+    public @NonNull Content getByPath( final ContentPath path )
     {
         return Tracer.trace( "content.getByPath", trace -> trace.put( "path", path ), () -> doGetByPath( path ),
                              ( trace, content ) -> trace.put( "id", content.getId() ) );

@@ -186,8 +186,7 @@ public class NodeServiceImpl
         return node;
     }
 
-    @Nullable
-    private Node doGetById( final NodeId id )
+    private @Nullable Node doGetById( final NodeId id )
     {
         return GetNodeByIdCommand.create()
             .id( id )
@@ -199,7 +198,7 @@ public class NodeServiceImpl
     }
 
     @Override
-    public Node getByPath( final NodePath path )
+    public @Nullable Node getByPath( final NodePath path )
     {
         verifyContext();
 
@@ -215,8 +214,7 @@ public class NodeServiceImpl
         } );
     }
 
-    @Nullable
-    private Node executeGetByPath( final NodePath path )
+    private @Nullable Node executeGetByPath( final NodePath path )
     {
         return GetNodeByPathCommand.create()
             .nodePath( path )
@@ -744,12 +742,13 @@ public class NodeServiceImpl
     {
         verifyContext();
         return Tracer.trace( "node.getBinary", trace -> {
-            trace.put( "id", nodeId );
-            trace.put( "versionId", nodeVersionId );
-            trace.put( "reference", reference );
-            trace.put( "repo", ContextAccessor.current().getRepositoryId() );
-            trace.put( "branch", ContextAccessor.current().getBranch() );
-        }, () -> executeGetBinary( nodeId, nodeVersionId, reference ), ( trace, byteSource ) -> trace.put( "size", byteSource.sizeIfKnown().or( -1L ) ) );
+                                 trace.put( "id", nodeId );
+                                 trace.put( "versionId", nodeVersionId );
+                                 trace.put( "reference", reference );
+                                 trace.put( "repo", ContextAccessor.current().getRepositoryId() );
+                                 trace.put( "branch", ContextAccessor.current().getBranch() );
+                             }, () -> executeGetBinary( nodeId, nodeVersionId, reference ),
+                             ( trace, byteSource ) -> trace.put( "size", byteSource.sizeIfKnown().or( -1L ) ) );
     }
 
     private ByteSource executeGetBinary( final NodeId nodeId, final NodeVersionId nodeVersionId, final BinaryReference reference )
@@ -904,7 +903,7 @@ public class NodeServiceImpl
             .map( NodeBranchEntry::getVersionId )
             .collect( NodeVersionIds.collector() );
 
-        return  doCommit( nodeCommitEntry , nodeVersionIds );
+        return doCommit( nodeCommitEntry, nodeVersionIds );
     }
 
     private NodeCommitEntry doCommit( NodeCommitEntry entry, NodeVersionIds versionIds )

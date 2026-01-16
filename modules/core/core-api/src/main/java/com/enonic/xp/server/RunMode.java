@@ -8,8 +8,7 @@ public enum RunMode
 
     private static volatile RunMode runMode;
 
-    @NonNull
-    public static RunMode get()
+    public static @NonNull RunMode get()
     {
         if ( runMode != null )
         {
