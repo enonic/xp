@@ -83,8 +83,8 @@ public final class PatchNodeCommand
     private void verifyPermissions()
     {
         final InternalContext internalContext = InternalContext.create( ContextAccessor.current() ).build();
-        final Branch firstBranch = this.branches.first();
-        final Node persistedNode = getPersistedNode( firstBranch );
+        final Branch originBranch = ContextAccessor.current().getBranch();
+        final Node persistedNode = getPersistedNode( originBranch );
 
         if ( this.branches.getSize() == 1 )
         {
@@ -93,13 +93,14 @@ public final class PatchNodeCommand
         }
 
         final Map<Branch, NodeVersionId> activeNodeMap = getActiveNodes( this.branches );
+        final NodeVersionId originVersionId = activeNodeMap.get( originBranch );
 
         for ( Branch branch : this.branches )
         {
             Permission requiredPermission;
 
-            if ( branch.equals( firstBranch ) ||
-                !activeNodeMap.get( firstBranch ).equals( persistedNode.getNodeVersionId() ) )
+            if ( branch.equals( originBranch ) ||
+                !activeNodeMap.get( branch ).equals( originVersionId ) )
             {
                 requiredPermission = Permission.MODIFY;
             }
@@ -162,7 +163,7 @@ public final class PatchNodeCommand
 
         if ( patchedNode != null )
         {
-            this.nodeStorageService.push( NodeBranchEntry.fromNodeVersionMetadata( patchedNode.metadata() ), this.branches.first(),
+            this.nodeStorageService.push( NodeBranchEntry.fromNodeVersionMetadata( patchedNode.metadata() ), ContextAccessor.current().getBranch(),
                                           internalContext );
 
             return patchedNode;
