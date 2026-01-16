@@ -257,15 +257,12 @@ class VersionTableVacuumTaskTest
         final NodeVersionId firstVersionId = versionsResult.getNodeVersionMetadatas().first().getNodeVersionId();
         
         // Mark the first version to prevent vacuum
-        NodeHelper.runAsAdmin( () -> {
-            this.nodeService.applyVersionAttributes( ApplyVersionAttributesParams.create()
-                .nodeVersionId( firstVersionId )
-                .addAttributes( Attributes.create()
-                    .attribute( VacuumConstants.VACUUM_SKIP_ATTRIBUTE, GenericValue.newObject().build() )
-                    .build() )
-                .build() );
-            return null;
-        } );
+        NodeHelper.runAsAdmin( () -> this.nodeService.applyVersionAttributes( ApplyVersionAttributesParams.create()
+            .nodeVersionId( firstVersionId )
+            .addAttributes( Attributes.create()
+                .attribute( VacuumConstants.VACUUM_SKIP_ATTRIBUTE, GenericValue.newObject().build() )
+                .build() )
+            .build() ) );
         
         // Update the node to create more versions
         updateNode( node1.id(), 2 );

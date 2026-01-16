@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,6 +24,8 @@ import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
+import com.enonic.xp.node.ApplyVersionAttributesParams;
+import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.CommitNodeParams;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DeleteNodeParams;
@@ -72,6 +75,7 @@ import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.TraceManager;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
+import com.enonic.xp.util.GenericValue;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -633,6 +637,43 @@ class NodeServiceImplTest
         assertEquals( ContextAccessor.current().getBranch(), multiRepoNodeHit.getBranch() );
     }
 
+    @Test
+    void applyVersionAttributes()
+    {
+        // Create a node
+        final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
+
+        // Add initial attributes
+        final Attributes initialAttributes = Attributes.create()
+            .attribute( "attr1", GenericValue.stringValue( "value1" ) )
+            .attribute( "attr2", GenericValue.numberValue( 42 ) )
+            .build();
+
+        final Attributes appliedAttributes = nodeService.applyVersionAttributes( ApplyVersionAttributesParams.create()
+                                                                                      .nodeVersionId( createdNode.getNodeVersionId() )
+                                                                                      .addAttributes( initialAttributes )
+                                                                                      .build() );
+
+        // Verify attributes were added
+        assertEquals( GenericValue.stringValue( "value1" ), appliedAttributes.get( "attr1" ) );
+        assertEquals( GenericValue.numberValue( 42 ), appliedAttributes.get( "attr2" ) );
+
+        // Add more attributes and remove one
+        final Attributes moreAttributes = Attributes.create()
+            .attribute( "attr3", GenericValue.booleanValue( true ) )
+            .build();
+
+        final Attributes updatedAttributes = nodeService.applyVersionAttributes( ApplyVersionAttributesParams.create()
+                                                                                      .nodeVersionId( createdNode.getNodeVersionId() )
+                                                                                      .addAttributes( moreAttributes )
+                                                                                      .removeAttributes( Set.of( "attr1" ) )
+                                                                                      .build() );
+
+        // Verify attr1 was removed, attr2 still exists, and attr3 was added
+        assertNull( updatedAttributes.get( "attr1" ) );
+        assertEquals( GenericValue.numberValue( 42 ), updatedAttributes.get( "attr2" ) );
+        assertEquals( GenericValue.booleanValue( true ), updatedAttributes.get( "attr3" ) );
+    }
 
     private NodeVersionMetadatas getVersionsMetadata( NodeId nodeId )
     {
