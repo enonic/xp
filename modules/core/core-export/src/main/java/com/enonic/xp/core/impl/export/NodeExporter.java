@@ -192,19 +192,29 @@ public class NodeExporter
             return;
         }
 
-        final Nodes children = this.nodeService.getByIds(
-            nodeService.findByParent( FindNodesByParentParams.create().parentPath( node.path() ).build() ).getNodeIds() );
+        final StringBuilder builder = new StringBuilder();
+        int from = 0;
+        boolean hasMore = true;
 
-        if ( children.isEmpty() )
+        while ( hasMore )
         {
-            return;
+            final var findResult = nodeService.findByParent(
+                FindNodesByParentParams.create().parentPath( node.path() ).from( from ).size( this.batchSize ).build() );
+
+            final Nodes children = this.nodeService.getByIds( findResult.getNodeIds() );
+
+            for ( final Node child : children )
+            {
+                builder.append( child.name().toString() ).append( LINE_SEPARATOR );
+            }
+
+            from += this.batchSize;
+            hasMore = from < findResult.getTotalHits();
         }
 
-        final StringBuilder builder = new StringBuilder();
-
-        for ( final Node child : children )
+        if ( builder.isEmpty() )
         {
-            builder.append( child.name().toString() ).append( LINE_SEPARATOR );
+            return;
         }
 
         final Path nodeOrderListPath = resolveNodeDataFolder( node ).resolve( NodeExportPathResolver.ORDER_EXPORT_NAME );
