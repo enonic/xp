@@ -119,10 +119,10 @@ public class LayersContentService
     public void archive( final ArchiveContentParams params )
     {
         ArchiveContentCommand.create( params )
+            .layersSync()
             .nodeService( nodeService )
             .eventPublisher( eventPublisher )
             .contentTypeService( contentTypeService )
-            .stopInherit( false )
             .build()
             .execute();
     }
@@ -130,10 +130,10 @@ public class LayersContentService
     public void restore( final RestoreContentParams params )
     {
         RestoreContentCommand.create( params )
+            .layersSync()
             .nodeService( nodeService )
             .eventPublisher( eventPublisher )
             .contentTypeService( contentTypeService )
-            .stopInherit( false )
             .build()
             .execute();
     }
@@ -152,6 +152,7 @@ public class LayersContentService
     public PatchContentResult patch( final PatchContentParams params )
     {
         return PatchContentCommand.create( params )
+            .layersSync()
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
             .eventPublisher( this.eventPublisher )
@@ -170,12 +171,12 @@ public class LayersContentService
     public MoveContentsResult move( final MoveContentParams params )
     {
         return MoveContentCommand.create( params )
+            .layersSync()
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
             .eventPublisher( this.eventPublisher )
             .xDataService( this.xDataService )
             .contentValidators( this.contentValidators )
-            .stopInherit( false )
             .build()
             .execute();
     }
@@ -183,10 +184,10 @@ public class LayersContentService
     public SortContentResult sort( final SortContentParams params )
     {
         return SortContentCommand.create( params )
+            .layersSync()
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
             .eventPublisher( this.eventPublisher )
-            .stopInherit( false )
             .build()
             .execute();
     }

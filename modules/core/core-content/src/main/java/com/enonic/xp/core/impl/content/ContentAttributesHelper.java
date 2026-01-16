@@ -28,7 +28,7 @@ public class ContentAttributesHelper
 
     public static final String DUPLICATE_ATTR = "content.duplicate";
 
-    public static final String IMPORT_ATTR = "content.import";
+    public static final String SYNC_ATTR = "content.sync";
 
     public static final String UPDATE_ATTR = "content.update";
 
@@ -80,6 +80,16 @@ public class ContentAttributesHelper
             .build();
     }
 
+    public static Attributes layersSyncAttr()
+    {
+        return Attributes.create()
+            .attribute( SYNC_ATTR, GenericValue.newObject()
+                .put( USER_PROPERTY, getCurrentUserKey().toString() )
+                .put( OPTIME_PROPERTY, Instant.now( MILLIS_CLOCK ).toString() )
+                .build() )
+            .build();
+    }
+
     public static Attributes versionHistoryAttr( final String key, String... modifiedFields )
     {
         return Attributes.create()
@@ -89,17 +99,6 @@ public class ContentAttributesHelper
                 .put( OPTIME_PROPERTY, Instant.now( MILLIS_CLOCK ).toString() )
                 .build() )
             .attribute( VacuumConstants.VACUUM_SKIP_ATTRIBUTE, GenericValue.newObject().build() )
-            .build();
-    }
-
-    public static Attributes updateWorkflowHistoryAttr( final List<String> modifiedFields )
-    {
-        return Attributes.create()
-            .attribute( UPDATE_WORKFLOW_ATTR, GenericValue.newObject()
-                .put( FIELDS_PROPERTY, GenericValue.fromRawJava( modifiedFields ) )
-                .put( USER_PROPERTY, getCurrentUserKey().toString() )
-                .put( OPTIME_PROPERTY, Instant.now( MILLIS_CLOCK ).toString() )
-                .build() )
             .build();
     }
 

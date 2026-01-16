@@ -17,17 +17,14 @@ import com.enonic.xp.node.SortNodeParams;
 import com.enonic.xp.node.SortNodeResult;
 
 class SortContentCommand
-    extends AbstractContentCommand
+    extends AbstractCreatingOrUpdatingContentCommand
 {
     private final SortContentParams params;
-
-    private final boolean stopInherit;
 
     private SortContentCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
-        this.stopInherit = builder.stopInherit;
     }
 
     public static Builder create( final SortContentParams params )
@@ -55,12 +52,14 @@ class SortContentCommand
                                                   .build() );
             }
 
-            if ( stopInherit )
+            if ( !layersSync )
             {
                 paramsBuilder.processor( InheritedContentDataProcessor.SORT );
             }
 
-            paramsBuilder.versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.SORT_ATTR ) );
+            paramsBuilder.versionAttributes( layersSync
+                                                 ? ContentAttributesHelper.layersSyncAttr()
+                                                 : ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.SORT_ATTR ) );
 
             final SortNodeResult sortNodeResult = nodeService.sort( paramsBuilder.build() );
 
@@ -79,21 +78,13 @@ class SortContentCommand
     }
 
     public static class Builder
-        extends AbstractContentCommand.Builder<SortContentCommand.Builder>
+        extends AbstractCreatingOrUpdatingContentCommand.Builder<SortContentCommand.Builder>
     {
         private final SortContentParams params;
-
-        private boolean stopInherit = true;
 
         private Builder( final SortContentParams params )
         {
             this.params = Objects.requireNonNull( params, "params cannot be null" );
-        }
-
-        public Builder stopInherit( final boolean stopInherit )
-        {
-            this.stopInherit = stopInherit;
-            return this;
         }
 
         @Override

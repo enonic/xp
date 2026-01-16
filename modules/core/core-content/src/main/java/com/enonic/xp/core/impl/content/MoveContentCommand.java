@@ -41,13 +41,10 @@ final class MoveContentCommand
 
     private final ContentDataSerializer contentDataSerializer = new ContentDataSerializer();
 
-    private final boolean stopInherit;
-
     private MoveContentCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
-        this.stopInherit = builder.stopInherit;
     }
 
     public static Builder create( final MoveContentParams params )
@@ -90,7 +87,7 @@ final class MoveContentCommand
         }
         else
         {
-            if ( stopInherit )
+            if ( !layersSync )
             {
                 processors.add( InheritedContentDataProcessor.PARENT );
             }
@@ -106,7 +103,7 @@ final class MoveContentCommand
         }
         else
         {
-            if ( stopInherit )
+            if ( !layersSync )
             {
                 processors.add( InheritedContentDataProcessor.NAME );
             }
@@ -120,8 +117,10 @@ final class MoveContentCommand
             .nodeId( sourceNodeId )
             .newName( newNodeName )
             .newParentPath( newParentPath )
-            .versionAttributes(
-                ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.MOVE_ATTR, modifiedFields.toArray( String[]::new ) ) )
+            .versionAttributes( layersSync
+                                    ? ContentAttributesHelper.layersSyncAttr()
+                                    : ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.MOVE_ATTR,
+                                                                                  modifiedFields.toArray( String[]::new ) ) )
             .processor( processors.build() )
             .refresh( RefreshMode.ALL );
 
@@ -173,17 +172,9 @@ final class MoveContentCommand
     {
         private final MoveContentParams params;
 
-        private boolean stopInherit = true;
-
         Builder( final MoveContentParams params )
         {
             this.params = params;
-        }
-
-        public Builder stopInherit( final boolean stopInherit )
-        {
-            this.stopInherit = stopInherit;
-            return this;
         }
 
         @Override
