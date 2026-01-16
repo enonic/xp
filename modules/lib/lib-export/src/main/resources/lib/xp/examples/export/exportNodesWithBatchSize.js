@@ -7,7 +7,6 @@ var t = require('/lib/xp/testing');
 let exportNodes = exportLib.exportNodes({
     sourceNodePath: '/content',
     exportName: 'export-batch',
-    includeNodeIds: true,
     batchSize: 25
 });
 // END
