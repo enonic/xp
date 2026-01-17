@@ -14,7 +14,7 @@ class ControllerScriptImpl_allMethodsTest
     void testGET()
     {
         this.portalRequest.setMethod( HttpMethod.GET );
-        execute( "myapplication:/controller/uppercase.js" );
+        execute( "myapplication:/controller/methods.js" );
         assertEquals( HttpStatus.OK, this.portalResponse.getStatus() );
         assertEquals( "GET handler", this.portalResponse.getBody() );
     }
@@ -23,7 +23,7 @@ class ControllerScriptImpl_allMethodsTest
     void testPOST()
     {
         this.portalRequest.setMethod( HttpMethod.POST );
-        execute( "myapplication:/controller/uppercase.js" );
+        execute( "myapplication:/controller/methods.js" );
         assertEquals( HttpStatus.CREATED, this.portalResponse.getStatus() );
         assertEquals( "POST handler", this.portalResponse.getBody() );
     }
@@ -32,7 +32,7 @@ class ControllerScriptImpl_allMethodsTest
     void testDELETE()
     {
         this.portalRequest.setMethod( HttpMethod.DELETE );
-        execute( "myapplication:/controller/uppercase.js" );
+        execute( "myapplication:/controller/methods.js" );
         assertEquals( HttpStatus.OK, this.portalResponse.getStatus() );
         assertEquals( "DELETE handler", this.portalResponse.getBody() );
     }
@@ -41,7 +41,7 @@ class ControllerScriptImpl_allMethodsTest
     void testPATCH()
     {
         this.portalRequest.setMethod( HttpMethod.PATCH );
-        execute( "myapplication:/controller/uppercase.js" );
+        execute( "myapplication:/controller/methods.js" );
         assertEquals( HttpStatus.OK, this.portalResponse.getStatus() );
         assertEquals( "PATCH handler", this.portalResponse.getBody() );
     }
@@ -50,7 +50,7 @@ class ControllerScriptImpl_allMethodsTest
     void testLowercase_backwardCompatibility()
     {
         this.portalRequest.setMethod( HttpMethod.POST );
-        execute( "myapplication:/controller/mixed.js" );
+        execute( "myapplication:/controller/mixedMethods.js" );
         assertEquals( HttpStatus.ACCEPTED, this.portalResponse.getStatus() );
     }
 
@@ -63,46 +63,10 @@ class ControllerScriptImpl_allMethodsTest
     }
 
     @Test
-    void testUppercaseGET()
-    {
-        this.portalRequest.setMethod( HttpMethod.GET );
-        execute( "myapplication:/controller/uppercase.js" );
-        assertEquals( HttpStatus.OK, this.portalResponse.getStatus() );
-        assertEquals( "GET handler", this.portalResponse.getBody() );
-    }
-
-    @Test
-    void testUppercasePOST()
-    {
-        this.portalRequest.setMethod( HttpMethod.POST );
-        execute( "myapplication:/controller/uppercase.js" );
-        assertEquals( HttpStatus.CREATED, this.portalResponse.getStatus() );
-        assertEquals( "POST handler", this.portalResponse.getBody() );
-    }
-
-    @Test
-    void testUppercaseDELETE()
-    {
-        this.portalRequest.setMethod( HttpMethod.DELETE );
-        execute( "myapplication:/controller/uppercase.js" );
-        assertEquals( HttpStatus.OK, this.portalResponse.getStatus() );
-        assertEquals( "DELETE handler", this.portalResponse.getBody() );
-    }
-
-    @Test
-    void testUppercasePATCH()
-    {
-        this.portalRequest.setMethod( HttpMethod.PATCH );
-        execute( "myapplication:/controller/uppercase.js" );
-        assertEquals( HttpStatus.OK, this.portalResponse.getStatus() );
-        assertEquals( "PATCH handler", this.portalResponse.getBody() );
-    }
-
-    @Test
     void testMethodNotSupported()
     {
         this.portalRequest.setMethod( HttpMethod.PUT );
-        execute( "myapplication:/controller/uppercase.js" );
+        execute( "myapplication:/controller/methods.js" );
         assertEquals( HttpStatus.METHOD_NOT_ALLOWED, this.portalResponse.getStatus() );
     }
 
@@ -110,7 +74,7 @@ class ControllerScriptImpl_allMethodsTest
     void testHEAD_fallsBackToGET()
     {
         this.portalRequest.setMethod( HttpMethod.HEAD );
-        execute( "myapplication:/controller/uppercase.js" );
+        execute( "myapplication:/controller/methods.js" );
         assertEquals( HttpStatus.OK, this.portalResponse.getStatus() );
     }
 }
