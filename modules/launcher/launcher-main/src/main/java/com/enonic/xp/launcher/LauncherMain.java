@@ -12,10 +12,8 @@ final class LauncherMain
     }
 
     private void launch()
-        throws Exception
     {
         System.setProperty( "java.awt.headless", "true" );
-        System.setProperty( "java.net.preferIPv4Stack", "true" );
         Runtime.getRuntime().addShutdownHook( new ShutdownHook( this.launcher::stop ) );
         this.launcher.start();
     }
