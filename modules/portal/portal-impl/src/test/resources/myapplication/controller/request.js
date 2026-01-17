@@ -1,6 +1,4 @@
-exports.get = function (req) {
-    return {
-        status: 200,
-        body: req
-    }
-};
+exports.GET = req => ({
+    status: 200,
+    body: req
+});
