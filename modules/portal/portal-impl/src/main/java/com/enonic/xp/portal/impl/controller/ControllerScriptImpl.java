@@ -1,5 +1,8 @@
 package com.enonic.xp.portal.impl.controller;
 
+import java.util.Locale;
+import java.util.stream.Stream;
+
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
@@ -8,7 +11,6 @@ import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.impl.mapper.PortalRequestMapper;
 import com.enonic.xp.portal.impl.mapper.WebSocketEventMapper;
 import com.enonic.xp.script.ScriptExports;
-import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
@@ -17,10 +19,6 @@ import com.enonic.xp.web.websocket.WebSocketEvent;
 final class ControllerScriptImpl
     implements ControllerScript
 {
-    private static final String ALL_SCRIPT_METHOD_NAME = "all";
-
-    private static final String ALL_SCRIPT_METHOD_NAME_UPPERCASE = "ALL";
-
     private final ScriptExports scriptExports;
 
     ControllerScriptImpl( final ScriptExports scriptExports )
@@ -49,35 +47,14 @@ final class ControllerScriptImpl
     private PortalResponse doExecute( final PortalRequest portalRequest )
     {
         final HttpMethod method = portalRequest.getMethod();
-        final boolean isHead = method == HttpMethod.HEAD;
-        final String methodName = isHead ? HttpMethod.GET.name() : method.name();
-        final String methodNameLowercase = methodName.toLowerCase();
+        final String methodName = method == HttpMethod.HEAD ? HttpMethod.GET.name() : method.name();
 
-        // Try uppercase first (new preferred style), then lowercase (backward compatibility)
-        String runMethod = this.scriptExports.hasMethod( methodName ) ? methodName : methodNameLowercase;
-
-        final boolean exists = this.scriptExports.hasMethod( runMethod );
-        if ( !exists )
-        {
-            // Try uppercase ALL first, then lowercase all for backward compatibility
-            if ( this.scriptExports.hasMethod( ALL_SCRIPT_METHOD_NAME_UPPERCASE ) )
-            {
-                runMethod = ALL_SCRIPT_METHOD_NAME_UPPERCASE;
-            }
-            else if ( this.scriptExports.hasMethod( ALL_SCRIPT_METHOD_NAME ) )
-            {
-                runMethod = ALL_SCRIPT_METHOD_NAME;
-            }
-            else
-            {
-                return new PortalResponseSerializer( null, HttpStatus.METHOD_NOT_ALLOWED ).serialize();
-            }
-        }
-
-        final PortalRequestMapper requestMapper = new PortalRequestMapper( portalRequest );
-        final ScriptValue result = this.scriptExports.executeMethod( runMethod, requestMapper );
-
-        return new PortalResponseSerializer( result ).serialize();
+        return Stream.of( methodName, methodName.toLowerCase( Locale.ROOT ), "all" )
+            .filter( this.scriptExports::hasMethod )
+            .findFirst()
+            .map( n -> new PortalResponseSerializer( this.scriptExports.executeMethod( n, new PortalRequestMapper( portalRequest ) ) ) )
+            .orElseGet( () -> new PortalResponseSerializer( null, HttpStatus.METHOD_NOT_ALLOWED ) )
+            .serialize();
     }
 
     @Override

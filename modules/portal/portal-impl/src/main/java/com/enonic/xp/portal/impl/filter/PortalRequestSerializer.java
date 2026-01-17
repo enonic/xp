@@ -76,7 +76,7 @@ public final class PortalRequestSerializer
         final String method = ( value != null ) ? value.getValue( String.class ) : null;
         if ( method != null )
         {
-            req.setMethod( HttpMethod.valueOf( method.toUpperCase() ) );
+            req.setMethod( HttpMethod.valueOf( method.toUpperCase( Locale.ROOT ) ) );
         }
     }
 
