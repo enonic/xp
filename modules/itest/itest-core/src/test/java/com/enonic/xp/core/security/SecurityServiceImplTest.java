@@ -712,7 +712,7 @@ class SecurityServiceImplTest
 
             final User user = securityService.createUser( createUser );
 
-            final UsernamePasswordAuthToken authToken = new UsernamePasswordAuthToken( SYSTEM, "user1", "runar" );
+            final UsernamePasswordAuthToken authToken = new UsernamePasswordAuthToken( SYSTEM, "User1", "runar" );
 
             final AuthenticationInfo authInfo = securityService.authenticate( authToken );
             assertTrue( authInfo.isAuthenticated() );
