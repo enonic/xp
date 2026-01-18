@@ -57,7 +57,8 @@ public class NodeHandleFactory
 
         if ( username != null )
         {
-            authInfo = runAsAuthenticated( () -> getAuthenticationInfo( username, idProvider ) );
+            authInfo = runAsAuthenticated( () -> this.securityService.authenticate(
+                new VerifiedUsernameAuthToken( idProvider == null ? IdProviderKey.system() : IdProviderKey.from( idProvider ), username ) ) );
         }
         if ( principals != null )
         {
@@ -65,12 +66,6 @@ public class NodeHandleFactory
         }
 
         return authInfo;
-    }
-
-    private AuthenticationInfo getAuthenticationInfo( final String username, final String idProvider )
-    {
-        return this.securityService.authenticate(
-            new VerifiedUsernameAuthToken( idProvider == null ? IdProviderKey.system() : IdProviderKey.from( idProvider ), username ) );
     }
 
     private <T> T runAsAuthenticated( final Callable<T> runnable )
