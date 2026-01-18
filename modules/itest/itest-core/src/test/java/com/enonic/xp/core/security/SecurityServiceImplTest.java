@@ -706,7 +706,7 @@ class SecurityServiceImplTest
                 .userKey( PrincipalKey.ofUser( SYSTEM, "user1" ) )
                 .displayName( "User 1" )
                 .email( "user1@enonic.com" )
-                .login( "User1" )
+                .login( "user1" )
                 .password( "runar" )
                 .build();
 
