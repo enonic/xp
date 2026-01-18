@@ -2,7 +2,6 @@ package com.enonic.xp.security.auth;
 
 import java.util.Objects;
 
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.NullMarked;
 
 import com.enonic.xp.annotation.PublicApi;

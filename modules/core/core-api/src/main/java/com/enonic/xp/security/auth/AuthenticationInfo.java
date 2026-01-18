@@ -3,6 +3,7 @@ package com.enonic.xp.security.auth;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
@@ -21,6 +22,7 @@ import com.enonic.xp.security.User;
 public final class AuthenticationInfo
     implements Serializable
 {
+    @Serial
     private static final long serialVersionUID = 5464920698278527343L;
 
     private transient User user;
@@ -88,6 +90,7 @@ public final class AuthenticationInfo
         return new Builder( false ).principals( PrincipalKey.ofAnonymous(), RoleKeys.EVERYONE ).build();
     }
 
+    @Serial
     private void readObject( ObjectInputStream ois )
         throws ClassNotFoundException, IOException
     {
@@ -97,6 +100,7 @@ public final class AuthenticationInfo
         this.user = this.authenticated ? deserializedUser : null;
     }
 
+    @Serial
     private void writeObject( ObjectOutputStream oos )
         throws IOException
     {
