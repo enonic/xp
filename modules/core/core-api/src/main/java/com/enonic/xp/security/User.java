@@ -15,9 +15,6 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 public final class User
     extends Principal
 {
-    @Deprecated
-    public static final User ANONYMOUS = anonymous();
-
     private final String email;
 
     private final String login;
