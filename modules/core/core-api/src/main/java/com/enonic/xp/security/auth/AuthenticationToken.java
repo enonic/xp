@@ -11,7 +11,7 @@ import com.enonic.xp.security.IdProviderKey;
 public abstract sealed class AuthenticationToken
     permits PasswordAuthToken, VerifiedEmailAuthToken, VerifiedUsernameAuthToken
 {
-    protected IdProviderKey idProvider;
+    private final IdProviderKey idProvider;
 
     protected AuthenticationToken( final @NonNull IdProviderKey idProvider )
     {
