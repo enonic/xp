@@ -5,27 +5,16 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.security.IdProviderKey;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 class UsernamePasswordAuthTokenTest
 {
     @Test
     void userName()
     {
-        final UsernamePasswordAuthToken token = new UsernamePasswordAuthToken();
-        token.setUsername( "user" );
-
-        assertNull( token.getIdProvider() );
+        final UsernamePasswordAuthToken token = new UsernamePasswordAuthToken( IdProviderKey.system(), "user", "password" );
+        assertEquals( IdProviderKey.system(), token.getIdProvider() );
         assertEquals( "user", token.getUsername() );
+        assertEquals( "password", token.getPassword() );
     }
 
-    @Test
-    void userNameWithIdProvider()
-    {
-        final UsernamePasswordAuthToken token = new UsernamePasswordAuthToken();
-        token.setUsername( "store\\user" );
-
-        assertEquals( IdProviderKey.from( "store" ), token.getIdProvider() );
-        assertEquals( "user", token.getUsername() );
-    }
 }

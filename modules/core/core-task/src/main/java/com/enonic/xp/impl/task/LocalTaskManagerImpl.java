@@ -4,7 +4,7 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executor;
@@ -25,7 +25,9 @@ import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.impl.task.distributed.DescribedTask;
 import com.enonic.xp.impl.task.distributed.TaskManager;
 import com.enonic.xp.impl.task.event.TaskEvents;
+import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.User;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.task.ProgressReportParams;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskInfo;
@@ -167,8 +169,10 @@ public final class LocalTaskManagerImpl
     private void doSubmitTask( final DescribedTask runnableTask )
     {
         final TaskId id = runnableTask.getTaskId();
-        final User user = runnableTask.getTaskContext().getAuthInfo() != null ? Objects.requireNonNullElse(
-            runnableTask.getTaskContext().getAuthInfo().getUser(), User.ANONYMOUS ) : User.ANONYMOUS;
+        final PrincipalKey principalKey = Optional.ofNullable( runnableTask.getTaskContext().getAuthInfo() )
+            .map( AuthenticationInfo::getUser )
+            .map( User::getKey )
+            .orElse( PrincipalKey.ofAnonymous() );
         final TaskInfo info = TaskInfo.create()
             .id( id )
             .description( runnableTask.getDescription() )
@@ -177,7 +181,7 @@ public final class LocalTaskManagerImpl
             .startTime( Instant.now( clock ) )
             .application( runnableTask.getApplicationKey() )
             .node( clusterConfig == null ? null : clusterConfig.name() )
-            .user( user.getKey() )
+            .user( principalKey )
             .build();
 
         final TaskInfoHolder taskInfoHolder = TaskInfoHolder.create().taskInfo( info ).build();

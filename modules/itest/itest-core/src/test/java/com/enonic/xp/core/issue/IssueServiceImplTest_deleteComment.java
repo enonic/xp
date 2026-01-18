@@ -28,16 +28,14 @@ class IssueServiceImplTest_deleteComment
     void setup()
     {
         this.issue = this.createIssue( CreateIssueParams.create().title( "issue-1" ) );
-        final User creator = User.ANONYMOUS;
+        final User creator = User.anonymous();
         this.comment = this.createComment( creator, "Comment One" );
     }
 
     @Test
     void comments_delete()
     {
-        DeleteIssueCommentParams params = DeleteIssueCommentParams.create().
-            comment( this.comment.getId() ).
-            build();
+        DeleteIssueCommentParams params = DeleteIssueCommentParams.create().comment( this.comment.getId() ).build();
 
         final DeleteIssueCommentResult result = this.issueService.deleteComment( params );
 
@@ -48,9 +46,7 @@ class IssueServiceImplTest_deleteComment
     @Test
     void comments_deleteNotExisting()
     {
-        DeleteIssueCommentParams params = DeleteIssueCommentParams.create().
-            comment( NodeId.from( UUID.randomUUID() ) ).
-            build();
+        DeleteIssueCommentParams params = DeleteIssueCommentParams.create().comment( NodeId.from( UUID.randomUUID() ) ).build();
 
         final DeleteIssueCommentResult result = this.issueService.deleteComment( params );
 
@@ -60,12 +56,12 @@ class IssueServiceImplTest_deleteComment
 
     private IssueComment createComment( final User creator, final String text )
     {
-        CreateIssueCommentParams params = CreateIssueCommentParams.create().
-            issue( this.issue.getId() ).
-            text( text ).
-            creator( creator.getKey() ).
-            creatorDisplayName( creator.getDisplayName() ).
-            build();
+        CreateIssueCommentParams params = CreateIssueCommentParams.create()
+            .issue( this.issue.getId() )
+            .text( text )
+            .creator( creator.getKey() )
+            .creatorDisplayName( creator.getDisplayName() )
+            .build();
 
         return this.issueService.createComment( params );
     }

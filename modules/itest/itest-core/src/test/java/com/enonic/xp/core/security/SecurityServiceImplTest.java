@@ -63,9 +63,7 @@ import com.enonic.xp.security.UpdateUserParams;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.IdProviderAccessControlEntry;
 import com.enonic.xp.security.acl.IdProviderAccessControlList;
-import com.enonic.xp.security.auth.AuthenticationException;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.security.auth.AuthenticationToken;
 import com.enonic.xp.security.auth.EmailPasswordAuthToken;
 import com.enonic.xp.security.auth.UsernamePasswordAuthToken;
 import com.enonic.xp.security.auth.VerifiedEmailAuthToken;
@@ -133,17 +131,18 @@ class SecurityServiceImplTest
 
         RepositoryServiceImpl repositoryService =
             new RepositoryServiceImpl( repositoryEntryService, indexServiceInternal, nodeRepositoryService, storageService, searchService );
-        SystemRepoInitializer.create().
-            setIndexServiceInternal( indexServiceInternal ).
-            setRepositoryService( repositoryService ).
-            setNodeStorageService( storageService ).
-            build().
-            initialize();
+        SystemRepoInitializer.create()
+            .setIndexServiceInternal( indexServiceInternal )
+            .setRepositoryService( repositoryService )
+            .setNodeStorageService( storageService )
+            .build()
+            .initialize();
 
         this.nodeService =
             new NodeServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService, repositoryService );
 
-        IndexServiceImpl indexService = new IndexServiceImpl( indexServiceInternal, indexedDataService, searchService, nodeDao, repositoryEntryService );
+        IndexServiceImpl indexService =
+            new IndexServiceImpl( indexServiceInternal, indexedDataService, searchService, nodeDao, repositoryEntryService );
 
         AuditLogConfig auditLogConfig = mock( AuditLogConfig.class );
         Mockito.when( auditLogConfig.isEnabled() ).thenReturn( true );
@@ -672,11 +671,7 @@ class SecurityServiceImplTest
 
             final User user = securityService.createUser( createUser );
 
-            final EmailPasswordAuthToken authToken = new EmailPasswordAuthToken();
-            authToken.setEmail( "user1@enonic.com" );
-            authToken.setPassword( "password" );
-            authToken.setIdProvider( SYSTEM );
-
+            final EmailPasswordAuthToken authToken = new EmailPasswordAuthToken( SYSTEM, "user1@enonic.com", "password" );
             final AuthenticationInfo authInfo = securityService.authenticate( authToken );
             assertTrue( authInfo.isAuthenticated() );
             assertEquals( user.getKey(), authInfo.getUser().getKey() );
@@ -697,11 +692,7 @@ class SecurityServiceImplTest
 
             securityService.createUser( createUser );
 
-            final EmailPasswordAuthToken authToken = new EmailPasswordAuthToken();
-            authToken.setEmail( "user1@enonic.com" );
-            authToken.setPassword( "password" );
-            authToken.setIdProvider( SYSTEM );
-
+            final EmailPasswordAuthToken authToken = new EmailPasswordAuthToken( SYSTEM, "user1@enonic.com", "password" );
             final AuthenticationInfo authInfo = securityService.authenticate( authToken );
             assertFalse( authInfo.isAuthenticated() );
         } );
@@ -712,19 +703,16 @@ class SecurityServiceImplTest
     {
         runAsAdmin( () -> {
             final CreateUserParams createUser = CreateUserParams.create()
-                .userKey( PrincipalKey.ofUser( SYSTEM, "User1" ) )
+                .userKey( PrincipalKey.ofUser( SYSTEM, "user1" ) )
                 .displayName( "User 1" )
                 .email( "user1@enonic.com" )
-                .login( "User1" )
+                .login( "user1" )
                 .password( "runar" )
                 .build();
 
             final User user = securityService.createUser( createUser );
 
-            final UsernamePasswordAuthToken authToken = new UsernamePasswordAuthToken();
-            authToken.setUsername( "User1" );
-            authToken.setPassword( "runar" );
-            authToken.setIdProvider( SYSTEM );
+            final UsernamePasswordAuthToken authToken = new UsernamePasswordAuthToken( SYSTEM, "User1", "runar" );
 
             final AuthenticationInfo authInfo = securityService.authenticate( authToken );
             assertTrue( authInfo.isAuthenticated() );
@@ -746,10 +734,7 @@ class SecurityServiceImplTest
 
             final User user = securityService.createUser( createUser );
 
-            final VerifiedEmailAuthToken authToken = new VerifiedEmailAuthToken();
-            authToken.setEmail( "user1@enonic.com" );
-            authToken.setIdProvider( SYSTEM );
-
+            final VerifiedEmailAuthToken authToken = new VerifiedEmailAuthToken( SYSTEM, "user1@enonic.com" );
             final AuthenticationInfo authInfo = securityService.authenticate( authToken );
             assertTrue( authInfo.isAuthenticated() );
             assertEquals( user.getKey(), authInfo.getUser().getKey() );
@@ -770,35 +755,12 @@ class SecurityServiceImplTest
 
             final User user = securityService.createUser( createUser );
 
-            final VerifiedUsernameAuthToken authToken = new VerifiedUsernameAuthToken();
-            authToken.setUsername( "user1" );
-            authToken.setIdProvider( SYSTEM );
+            final VerifiedUsernameAuthToken authToken = new VerifiedUsernameAuthToken( SYSTEM, "user1" );
 
             final AuthenticationInfo authInfo = securityService.authenticate( authToken );
             assertTrue( authInfo.isAuthenticated() );
             assertEquals( user.getKey(), authInfo.getUser().getKey() );
         } );
-    }
-
-    @Test
-    void testAuthenticateUnsupportedToken()
-    {
-        assertThrows( AuthenticationException.class, () -> runAsAdmin( () -> {
-            final CreateUserParams createUser = CreateUserParams.create()
-                .userKey( PrincipalKey.ofUser( SYSTEM, "User1" ) )
-                .displayName( "User 1" )
-                .email( "user1@enonic.com" )
-                .login( "User1" )
-                .build();
-
-            final User user = securityService.createUser( createUser );
-
-            final CustomAuthenticationToken authToken = new CustomAuthenticationToken();
-            authToken.setIdProvider( SYSTEM );
-
-            final AuthenticationInfo authInfo = securityService.authenticate( authToken );
-            assertEquals( user.getKey(), authInfo.getUser().getKey() );
-        } ) );
     }
 
     @Test
@@ -939,7 +901,6 @@ class SecurityServiceImplTest
 
             final IdProvider idProviderCreated = securityService.createIdProvider( createIdProvider );
 
-
             securityService.deleteIdProvider( IdProviderKey.from( "enonic" ) );
 
             assertNull( securityService.getIdProvider( IdProviderKey.from( "enonic" ) ) );
@@ -1067,10 +1028,7 @@ class SecurityServiceImplTest
 
             final User user = securityService.createUser( createUser1 );
 
-            final UsernamePasswordAuthToken authToken = new UsernamePasswordAuthToken();
-            authToken.setUsername( "user1" );
-            authToken.setPassword( "runar" );
-            authToken.setIdProvider( SYSTEM );
+            final UsernamePasswordAuthToken authToken = new UsernamePasswordAuthToken( SYSTEM, "user1", "runar" );
 
             AuthenticationInfo authInfo = securityService.authenticate( authToken );
             assertFalse( authInfo.isAuthenticated() );
@@ -1149,18 +1107,13 @@ class SecurityServiceImplTest
 
     private Context adminCtx()
     {
-        final AuthenticationInfo authInfo = AuthenticationInfo.create().principals( RoleKeys.ADMIN ).user( User.ANONYMOUS ).build();
+        final AuthenticationInfo authInfo = AuthenticationInfo.create().principals( RoleKeys.ADMIN ).user( User.anonymous() ).build();
 
         return ContextBuilder.create()
             .authInfo( authInfo )
             .repositoryId( SystemConstants.SYSTEM_REPO_ID )
             .branch( SecurityConstants.BRANCH_SECURITY )
             .build();
-    }
-
-    private static class CustomAuthenticationToken
-        extends AuthenticationToken
-    {
     }
 
 }

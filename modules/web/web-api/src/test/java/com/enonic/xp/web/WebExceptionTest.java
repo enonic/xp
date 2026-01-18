@@ -16,7 +16,7 @@ class WebExceptionTest
     void forbidden_403_for_authenticated()
     {
         // for already authenticated users forbidden must not allow ID Provider to re-authenticate
-        final AuthenticationInfo authenticationInfo = AuthenticationInfo.create().user( User.ANONYMOUS ).build();
+        final AuthenticationInfo authenticationInfo = AuthenticationInfo.create().user( User.anonymous() ).build();
         final Context authenticatedContext = ContextBuilder.from( ContextAccessor.current() ).authInfo( authenticationInfo ).build();
 
         final WebException webException = authenticatedContext.callWith( () -> WebException.forbidden( "some message" ) );

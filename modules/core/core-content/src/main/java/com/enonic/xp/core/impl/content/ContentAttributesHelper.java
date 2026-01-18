@@ -115,7 +115,6 @@ public class ContentAttributesHelper
     static PrincipalKey getCurrentUserKey()
     {
         final Context context = ContextAccessor.current();
-
         return context.getAuthInfo().getUser() != null ? context.getAuthInfo().getUser().getKey() : PrincipalKey.ofAnonymous();
     }
 }

@@ -17,7 +17,7 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.xdata.XData;
-import com.enonic.xp.security.User;
+import com.enonic.xp.security.PrincipalKey;
 
 import static com.enonic.xp.media.MediaInfo.CAMERA_INFO_METADATA_NAME;
 import static org.mockito.ArgumentMatchers.isA;
@@ -84,7 +84,7 @@ class GetDynamicContentSchemaHandlerTest
                 .displayName( "My mixin display name" )
                 .modifiedTime( Instant.parse( "2010-01-01T10:00:00Z" ) )
                 .createdTime( Instant.parse( "2009-01-01T10:00:00Z" ) )
-                .creator( User.ANONYMOUS.getKey() )
+                .creator( PrincipalKey.ofAnonymous() )
                 .addFormItem( Input.create().name( "inputToBeMixedIn" ).label( "Mixed in" ).inputType( InputTypeName.TEXT_LINE ).build() )
                 .build();
 

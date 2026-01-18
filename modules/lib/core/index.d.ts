@@ -64,7 +64,7 @@ export interface DoubleUnderscore {
      * If the JavaScript variable is defined, it is returned as is.
      * @param value Value to convert
      */
-    nullOrValue: <T = object>(value: T) => T | null | undefined;
+    nullOrValue: <T = object>(value: T) => T | null;
 
     /**
      * Doc registerMock.

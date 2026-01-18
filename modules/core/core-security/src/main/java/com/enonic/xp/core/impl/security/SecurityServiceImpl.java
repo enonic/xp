@@ -323,30 +323,13 @@ public final class SecurityServiceImpl
             return authenticateSu( (UsernamePasswordAuthToken) token );
         }
 
-        if ( token.getIdProvider() != null )
-        {
-            return doAuthenticate( token, token.getIdProvider() );
-        }
-        else
-        {
-            final IdProviders idProviders = callAsAuthenticated( this::getIdProviders );
-            for ( IdProvider idProvider : idProviders )
-            {
-                final AuthenticationInfo authInfo = doAuthenticate( token, idProvider.getKey() );
-                if ( authInfo.isAuthenticated() )
-                {
-                    return authInfo;
-                }
-            }
-            return AuthenticationInfo.unAuthenticated();
-        }
+        return doAuthenticate( token );
     }
 
     private boolean isSuAuthenticationEnabled( final AuthenticationToken token )
     {
-        if ( this.suPasswordValue != null && token instanceof UsernamePasswordAuthToken )
+        if ( this.suPasswordValue != null && token instanceof UsernamePasswordAuthToken usernamePasswordAuthToken )
         {
-            UsernamePasswordAuthToken usernamePasswordAuthToken = (UsernamePasswordAuthToken) token;
             return ( usernamePasswordAuthToken.getIdProvider() == null ||
                 IdProviderKey.system().equals( usernamePasswordAuthToken.getIdProvider() ) ) &&
                 PrincipalKey.ofSuperUser().getId().equals( usernamePasswordAuthToken.getUsername() );
@@ -416,45 +399,42 @@ public final class SecurityServiceImpl
         }
     }
 
-    private AuthenticationInfo doAuthenticate( final AuthenticationToken token, final IdProviderKey idProvider )
+    private AuthenticationInfo doAuthenticate( final AuthenticationToken token )
     {
         return callAsAuthenticated( () -> {
             final IndexPath principalField;
             final String principalValue;
             final Function<User, Boolean> subjectVerifier;
-            if ( token instanceof UsernamePasswordAuthToken )
+            switch ( token )
             {
-                final UsernamePasswordAuthToken authToken = (UsernamePasswordAuthToken) token;
-                principalField = PrincipalIndexPath.LOGIN_KEY;
-                principalValue = authToken.getUsername();
-                subjectVerifier = user -> passwordEncoder.validate( authToken.getPassword(), user.getAuthenticationHash() );
+                case UsernamePasswordAuthToken authToken ->
+                {
+                    principalField = PrincipalIndexPath.LOGIN_KEY;
+                    principalValue = authToken.getUsername();
+                    subjectVerifier = user -> passwordEncoder.validate( authToken.getPassword(), user.getAuthenticationHash() );
+                }
+                case EmailPasswordAuthToken authToken ->
+                {
+                    principalField = PrincipalIndexPath.EMAIL_KEY;
+                    principalValue = authToken.getEmail();
+                    subjectVerifier = user -> passwordEncoder.validate( authToken.getPassword(), user.getAuthenticationHash() );
+                }
+                case VerifiedUsernameAuthToken authToken ->
+                {
+                    principalField = PrincipalIndexPath.LOGIN_KEY;
+                    principalValue = authToken.getUsername();
+                    subjectVerifier = user -> true;
+                }
+                case VerifiedEmailAuthToken authToken ->
+                {
+                    principalField = PrincipalIndexPath.EMAIL_KEY;
+                    principalValue = authToken.getEmail();
+                    subjectVerifier = user -> true;
+                }
+                default -> throw new AuthenticationException( "Authentication token not supported: " + token.getClass() );
             }
-            else if ( token instanceof EmailPasswordAuthToken )
-            {
-                final EmailPasswordAuthToken authToken = (EmailPasswordAuthToken) token;
-                principalField = PrincipalIndexPath.EMAIL_KEY;
-                principalValue = authToken.getEmail();
-                subjectVerifier = user -> passwordEncoder.validate( authToken.getPassword(), user.getAuthenticationHash() );
-            }
-            else if ( token instanceof VerifiedUsernameAuthToken )
-            {
-                final VerifiedUsernameAuthToken authToken = (VerifiedUsernameAuthToken) token;
-                principalField = PrincipalIndexPath.LOGIN_KEY;
-                principalValue = authToken.getUsername();
-                subjectVerifier = user -> true;
-            }
-            else if ( token instanceof VerifiedEmailAuthToken )
-            {
-                final VerifiedEmailAuthToken authToken = (VerifiedEmailAuthToken) token;
-                principalField = PrincipalIndexPath.EMAIL_KEY;
-                principalValue = authToken.getEmail();
-                subjectVerifier = user -> true;
-            }
-            else
-            {
-                throw new AuthenticationException( "Authentication token not supported: " + token.getClass().getSimpleName() );
-            }
-            return findUserAndVerify( () -> findPrincipalByField( principalField, principalValue, idProvider ), subjectVerifier );
+            return findUserAndVerify( () -> findPrincipalByField( principalField, principalValue, token.getIdProvider() ),
+                                      subjectVerifier );
         } );
     }
 
@@ -486,8 +466,7 @@ public final class SecurityServiceImpl
         final CompareExpr idProviderExpr =
             CompareExpr.create( FieldExpr.from( PrincipalIndexPath.ID_PROVIDER_KEY ), CompareExpr.Operator.EQ,
                                 ValueExpr.string( idProvider.toString() ) );
-        final CompareExpr userNameExpr =
-            CompareExpr.create( FieldExpr.from( field ), CompareExpr.Operator.EQ, ValueExpr.string( value ) );
+        final CompareExpr userNameExpr = CompareExpr.create( FieldExpr.from( field ), CompareExpr.Operator.EQ, ValueExpr.string( value ) );
         final QueryExpr query = QueryExpr.from( LogicalExpr.and( idProviderExpr, userNameExpr ) );
         final Nodes nodes = callWithContext( () -> {
             final FindNodesByQueryResult result = nodeService.findByQuery( NodeQuery.create().query( query ).build() );
@@ -516,10 +495,6 @@ public final class SecurityServiceImpl
             }
 
             final User user = PrincipalNodeTranslator.userFromNode( node );
-            if ( user == null )
-            {
-                throw new NodeNotFoundException( "setPassword failed, user with key " + key + " not found" );
-            }
 
             final String authenticationHash = password != null ? this.passwordEncoder.encodePassword( password ) : null;
 
@@ -657,7 +632,7 @@ public final class SecurityServiceImpl
         Preconditions.checkArgument( userKey.isUser(), "Expected principal key of type User" );
 
         final Node node = callWithContext( () -> this.nodeService.getByPath( userKey.toPath() ) );
-        return node == null ? Optional.empty() : Optional.ofNullable( PrincipalNodeTranslator.userFromNode( node ) );
+        return Optional.ofNullable( node ).map( PrincipalNodeTranslator::userFromNode );
     }
 
     @Override
@@ -714,7 +689,7 @@ public final class SecurityServiceImpl
         Preconditions.checkArgument( groupKey.isGroup(), "Expected principal key of type Group" );
 
         final Node node = callWithContext( () -> this.nodeService.getByPath( groupKey.toPath() ) );
-        return node == null ? Optional.empty() : Optional.ofNullable( PrincipalNodeTranslator.groupFromNode( node ) );
+        return Optional.ofNullable( node ).map( PrincipalNodeTranslator::groupFromNode );
     }
 
     @Override
@@ -771,24 +746,18 @@ public final class SecurityServiceImpl
         Preconditions.checkArgument( roleKey.isRole(), "Expected principal key of type Role" );
 
         final Node node = callWithContext( () -> this.nodeService.getByPath( roleKey.toPath() ) );
-        return node == null ? Optional.empty() : Optional.ofNullable( PrincipalNodeTranslator.roleFromNode( node ) );
+        return Optional.ofNullable( node ).map( PrincipalNodeTranslator::roleFromNode );
     }
 
     @Override
     public Optional<? extends Principal> getPrincipal( final PrincipalKey principalKey )
     {
-        switch ( Objects.requireNonNull( principalKey, "Principal key was null" ).getType() )
+        return switch ( Objects.requireNonNull( principalKey, "Principal key was null" ).getType() )
         {
-            case USER:
-                return getUser( principalKey );
-
-            case GROUP:
-                return getGroup( principalKey );
-
-            case ROLE:
-                return getRole( principalKey );
-        }
-        return Optional.empty();
+            case USER -> getUser( principalKey );
+            case GROUP -> getGroup( principalKey );
+            case ROLE -> getRole( principalKey );
+        };
     }
 
     @Override
@@ -829,8 +798,7 @@ public final class SecurityServiceImpl
             deletedNodes = callWithContext( () -> {
                 final NodePath idProviderNodePath = IdProviderNodeTranslator.toIdProviderNodePath( idProviderKey );
                 return this.nodeService.delete(
-                        DeleteNodeParams.create().nodePath( idProviderNodePath ).refresh( RefreshMode.ALL ).build() )
-                    .getNodeIds();
+                    DeleteNodeParams.create().nodePath( idProviderNodePath ).refresh( RefreshMode.ALL ).build() ).getNodeIds();
             } );
         }
         catch ( NodeAccessException e )
@@ -860,8 +828,7 @@ public final class SecurityServiceImpl
                 doRemoveMemberships( principalKey );
 
                 return this.nodeService.delete(
-                        DeleteNodeParams.create().nodePath( principalKey.toPath() ).refresh( RefreshMode.ALL ).build() )
-                    .getNodeIds();
+                    DeleteNodeParams.create().nodePath( principalKey.toPath() ).refresh( RefreshMode.ALL ).build() ).getNodeIds();
             } );
         }
         catch ( NodeNotFoundException e ) // catch doRemoveRelationships and doRemoveMemberships leak of permissions
@@ -1065,7 +1032,8 @@ public final class SecurityServiceImpl
 
     private Context getAuthenticatedContext()
     {
-        final AuthenticationInfo authInfo = AuthenticationInfo.create().principals( RoleKeys.AUTHENTICATED ).user( User.ANONYMOUS ).build();
+        final AuthenticationInfo authInfo =
+            AuthenticationInfo.create().principals( RoleKeys.AUTHENTICATED ).user( User.anonymous() ).build();
         return ContextBuilder.create()
             .branch( SecurityConstants.BRANCH_SECURITY )
             .repositoryId( SystemConstants.SYSTEM_REPO_ID )

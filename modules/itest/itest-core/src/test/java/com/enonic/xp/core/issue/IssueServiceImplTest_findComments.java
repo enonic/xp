@@ -25,13 +25,13 @@ class IssueServiceImplTest_findComments
     void setup()
     {
         this.issue = this.createIssue( CreateIssueParams.create().title( "issue-1" ) );
-        final User creator = User.ANONYMOUS;
-        final User creator2 = User.create().
-            key( PrincipalKey.from( "user:store:user2" ) ).
-            login( "user2" ).
-            email( "user2@email.com" ).
-            displayName( "User 2" ).
-            build();
+        final User creator = User.anonymous();
+        final User creator2 = User.create()
+            .key( PrincipalKey.from( "user:store:user2" ) )
+            .login( "user2" )
+            .email( "user2@email.com" )
+            .displayName( "User 2" )
+            .build();
         this.createComment( creator, "Comment One" );
         this.createComment( creator, "Comment Two" );
         this.createComment( creator2, "Another Comment" );
@@ -40,9 +40,7 @@ class IssueServiceImplTest_findComments
     @Test
     void comments_find()
     {
-        IssueCommentQuery query = IssueCommentQuery.create().
-            issue( this.issue.getId() ).
-            build();
+        IssueCommentQuery query = IssueCommentQuery.create().issue( this.issue.getId() ).build();
 
         final FindIssueCommentsResult result = this.issueService.findComments( query );
 
@@ -53,26 +51,23 @@ class IssueServiceImplTest_findComments
     @Test
     void comments_findByUser()
     {
-        IssueCommentQuery query = IssueCommentQuery.create().
-            issue( this.issue.getId() ).
-            creator( User.ANONYMOUS.getKey() ).
-            build();
+        IssueCommentQuery query = IssueCommentQuery.create().issue( this.issue.getId() ).creator( User.anonymous().getKey() ).build();
 
         final FindIssueCommentsResult result = this.issueService.findComments( query );
 
         assertNotNull( result );
         assertEquals( 2, result.getIssueComments().size() );
-        assertTrue( result.getIssueComments().stream().allMatch( c -> c.getCreator().equals( User.ANONYMOUS.getKey() ) ) );
+        assertTrue( result.getIssueComments().stream().allMatch( c -> c.getCreator().equals( User.anonymous().getKey() ) ) );
     }
 
     private IssueComment createComment( final User creator, final String text )
     {
-        CreateIssueCommentParams params = CreateIssueCommentParams.create().
-            issue( this.issue.getId() ).
-            text( text ).
-            creator( creator.getKey() ).
-            creatorDisplayName( creator.getDisplayName() ).
-            build();
+        CreateIssueCommentParams params = CreateIssueCommentParams.create()
+            .issue( this.issue.getId() )
+            .text( text )
+            .creator( creator.getKey() )
+            .creatorDisplayName( creator.getDisplayName() )
+            .build();
 
         return this.issueService.createComment( params );
     }

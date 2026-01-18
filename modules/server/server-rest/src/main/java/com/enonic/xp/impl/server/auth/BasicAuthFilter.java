@@ -18,6 +18,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import com.enonic.xp.annotation.Order;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.LocalScope;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.auth.EmailPasswordAuthToken;
@@ -106,19 +107,38 @@ public final class BasicAuthFilter
 
         if ( isValidEmail( user ) )
         {
-            final EmailPasswordAuthToken emailAuthToken = new EmailPasswordAuthToken();
-            emailAuthToken.setEmail( user );
-            emailAuthToken.setPassword( password );
-            authInfo = securityService.authenticate( emailAuthToken );
+            authInfo = securityService.authenticate( new EmailPasswordAuthToken( IdProviderKey.system(), user, password ) );
         }
         if ( !authInfo.isAuthenticated() )
         {
-            final UsernamePasswordAuthToken usernameAuthToken = new UsernamePasswordAuthToken();
-            usernameAuthToken.setUsername( user );
-            usernameAuthToken.setPassword( password );
-            authInfo = securityService.authenticate( usernameAuthToken );
+            authInfo = securityService.authenticate( parseUsernameAndCreateToken( user, password ) );
         }
         return authInfo;
+    }
+
+    private UsernamePasswordAuthToken parseUsernameAndCreateToken( final String username, final String password )
+    {
+        if ( username.chars().filter( c -> c == '\\' ).count() == 1 )
+        {
+            final String[] userParts = username.split( "\\\\" );
+            if ( userParts.length != 2 )
+            {
+                return new UsernamePasswordAuthToken( IdProviderKey.system(), username, password );
+            }
+
+            try
+            {
+                return new UsernamePasswordAuthToken( IdProviderKey.from( userParts[0] ), userParts[1], password );
+            }
+            catch ( IllegalArgumentException e )
+            {
+                return new UsernamePasswordAuthToken( IdProviderKey.system(), username, password );
+            }
+        }
+        else
+        {
+            return new UsernamePasswordAuthToken( IdProviderKey.system(), username, password );
+        }
     }
 
     private boolean isValidEmail( final String value )

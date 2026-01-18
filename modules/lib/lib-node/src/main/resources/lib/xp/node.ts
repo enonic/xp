@@ -1310,7 +1310,7 @@ interface NodeHandleContext {
  * @param {object} params.branch branch id
  * @param {object} [params.user] User to execute the callback with. Default is the current user.
  * @param {string} params.user.login Login of the user.
- * @param {string} [params.user.idProvider] Id provider containing the user. By default, all the id providers will be used.
+ * @param {string} [params.user.idProvider] Id provider containing the user. By default, the system id provider is used.
  * @param {string[]} [params.principals] Additional principals to execute the callback with.
  * @returns {RepoConnection} Returns a new repo-connection.
  */
@@ -1351,7 +1351,7 @@ export interface MultiRepoConnectParams {
  * @param {object} params.sources.branch branch id
  * @param {object} [params.sources.user] User to execute the callback with. Default is the current user.
  * @param {string} params.sources.user.login Login of the user.
- * @param {string} [params.sources.user.idProvider] Id provider containing the user. By default, all the id providers will be used.
+ * @param {string} [params.sources.user.idProvider] Id provider containing the user. By default, the system id provider is used.
  * @param {string[]} params.sources.principals Principals to execute the callback with.
  *
  * @returns {MultiRepoConnection} Returns a new multirepo-connection.
