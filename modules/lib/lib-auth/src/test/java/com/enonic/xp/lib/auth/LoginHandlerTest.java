@@ -209,7 +209,8 @@ class LoginHandlerTest
         public boolean matches( AuthenticationToken argument )
         {
             return argument instanceof final EmailPasswordAuthToken authToken &&
-                this.thisObject.getIdProvider() == IdProviderKey.system() && this.thisObject.getEmail().equals( authToken.getEmail() ) &&
+                this.thisObject.getIdProvider().equals( authToken.getIdProvider() ) &&
+                this.thisObject.getEmail().equals( authToken.getEmail() ) &&
                 this.thisObject.getPassword().equals( authToken.getPassword() );
 
         }
