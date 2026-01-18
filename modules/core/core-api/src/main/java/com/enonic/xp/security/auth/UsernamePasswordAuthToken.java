@@ -12,9 +12,9 @@ public final class UsernamePasswordAuthToken
 {
     private final String username;
 
-    public UsernamePasswordAuthToken( final IdProviderKey idProvider, final String username )
+    public UsernamePasswordAuthToken( final IdProviderKey idProvider, final String username, final String password )
     {
-        super( idProvider );
+        super( idProvider, password );
         this.username = username;
     }
 

@@ -131,17 +131,8 @@ public final class LoginHandler
 
         if ( isValidEmail( this.user ) )
         {
-            final AuthenticationToken authToken;
-            if ( this.skipAuth )
-            {
-                authToken = new VerifiedEmailAuthToken( idp, this.user );
-            }
-            else
-            {
-                final EmailPasswordAuthToken emailAuthToken = new EmailPasswordAuthToken( idp, this.user );
-                emailAuthToken.setPassword( this.password );
-                authToken = emailAuthToken;
-            }
+            final AuthenticationToken authToken =
+                this.skipAuth ? new VerifiedEmailAuthToken( idp, this.user ) : new EmailPasswordAuthToken( idp, this.user, this.password );
             authInfo = this.securityServiceSupplier.get().authenticate( authToken );
         }
 
@@ -154,9 +145,7 @@ public final class LoginHandler
             }
             else
             {
-                final UsernamePasswordAuthToken usernameAuthToken = new UsernamePasswordAuthToken( idp, this.user );
-                usernameAuthToken.setPassword( this.password );
-                authToken = usernameAuthToken;
+                authToken = new UsernamePasswordAuthToken( idp, this.user, this.password );
             }
             authInfo = this.securityServiceSupplier.get().authenticate( authToken );
         }

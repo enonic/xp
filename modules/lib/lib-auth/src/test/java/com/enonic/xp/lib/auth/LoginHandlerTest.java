@@ -164,11 +164,10 @@ class LoginHandlerTest
         final AuthenticationInfo authInfo =
             AuthenticationInfo.create().user( TestDataFixtures.getSystemTestUser() ).principals( RoleKeys.ADMIN_LOGIN ).build();
 
-        final EmailPasswordAuthToken expectedAuthToken = new EmailPasswordAuthToken( IdProviderKey.system(), "user1@enonic.com" );
-        expectedAuthToken.setPassword( "pwd123" );
+        final EmailPasswordAuthToken expectedAuthToken = new EmailPasswordAuthToken( IdProviderKey.system(), "user1@enonic.com", "pwd123" );
 
-        final AuthTokenMatcher matcher = new AuthTokenMatcher( expectedAuthToken );
-        Mockito.when( this.securityService.authenticate( Mockito.argThat( matcher ) ) ).thenReturn( authInfo );
+        Mockito.when( this.securityService.authenticate( Mockito.argThat( new AuthTokenMatcher( expectedAuthToken ) ) ) )
+            .thenReturn( authInfo );
 
         runFunction( "/test/login-test.js", "loginUnspecifiedIdProvider" );
 

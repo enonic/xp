@@ -107,41 +107,37 @@ public final class BasicAuthFilter
 
         if ( isValidEmail( user ) )
         {
-            final EmailPasswordAuthToken emailAuthToken = new EmailPasswordAuthToken( IdProviderKey.system(), user );
-            emailAuthToken.setPassword( password );
-            authInfo = securityService.authenticate( emailAuthToken );
+            authInfo = securityService.authenticate( new EmailPasswordAuthToken( IdProviderKey.system(), user, password ) );
         }
         if ( !authInfo.isAuthenticated() )
         {
-            final UsernamePasswordAuthToken usernameAuthToken = tokenFromUsername( user );
-            usernameAuthToken.setPassword( password );
-            authInfo = securityService.authenticate( usernameAuthToken );
+            authInfo = securityService.authenticate( tokenFromUsername( user, password ) );
         }
         return authInfo;
     }
 
-    public UsernamePasswordAuthToken tokenFromUsername( final String username )
+    public UsernamePasswordAuthToken tokenFromUsername( final String username, final String password )
     {
         if ( username.chars().filter( c -> c == '\\' ).count() == 1 )
         {
             final String[] userParts = username.split( "\\\\" );
             if ( userParts.length != 2 )
             {
-                return new UsernamePasswordAuthToken( IdProviderKey.system(), username );
+                return new UsernamePasswordAuthToken( IdProviderKey.system(), username, password );
             }
 
             try
             {
-                return new UsernamePasswordAuthToken( IdProviderKey.from( userParts[0] ), userParts[1] );
+                return new UsernamePasswordAuthToken( IdProviderKey.from( userParts[0] ), userParts[1], password );
             }
             catch ( IllegalArgumentException e )
             {
-                return new UsernamePasswordAuthToken( IdProviderKey.system(), username );
+                return new UsernamePasswordAuthToken( IdProviderKey.system(), username, password );
             }
         }
         else
         {
-            return new UsernamePasswordAuthToken( IdProviderKey.system(), username );
+            return new UsernamePasswordAuthToken( IdProviderKey.system(), username, password );
         }
     }
 

@@ -17,9 +17,9 @@ public final class EmailPasswordAuthToken
 {
     private final String email;
 
-    public EmailPasswordAuthToken( final IdProviderKey idProvider, final String email )
+    public EmailPasswordAuthToken( final IdProviderKey idProvider, final String email, final String password )
     {
-        super( idProvider );
+        super( idProvider, password );
         this.email = checkValidEmail( email );
     }
 

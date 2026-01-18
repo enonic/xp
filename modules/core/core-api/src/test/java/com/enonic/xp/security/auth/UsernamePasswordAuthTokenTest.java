@@ -11,9 +11,10 @@ class UsernamePasswordAuthTokenTest
     @Test
     void userName()
     {
-        final UsernamePasswordAuthToken token = new UsernamePasswordAuthToken( IdProviderKey.system(), "user" );
+        final UsernamePasswordAuthToken token = new UsernamePasswordAuthToken( IdProviderKey.system(), "user", "password" );
         assertEquals( IdProviderKey.system(), token.getIdProvider() );
         assertEquals( "user", token.getUsername() );
+        assertEquals( "password", token.getPassword() );
     }
 
 }

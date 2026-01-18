@@ -671,9 +671,7 @@ class SecurityServiceImplTest
 
             final User user = securityService.createUser( createUser );
 
-            final EmailPasswordAuthToken authToken = new EmailPasswordAuthToken( SYSTEM, "user1@enonic.com" );
-            authToken.setPassword( "password" );
-
+            final EmailPasswordAuthToken authToken = new EmailPasswordAuthToken( SYSTEM, "user1@enonic.com", "password" );
             final AuthenticationInfo authInfo = securityService.authenticate( authToken );
             assertTrue( authInfo.isAuthenticated() );
             assertEquals( user.getKey(), authInfo.getUser().getKey() );
@@ -694,9 +692,7 @@ class SecurityServiceImplTest
 
             securityService.createUser( createUser );
 
-            final EmailPasswordAuthToken authToken = new EmailPasswordAuthToken( SYSTEM, "user1@enonic.com" );
-            authToken.setPassword( "password" );
-
+            final EmailPasswordAuthToken authToken = new EmailPasswordAuthToken( SYSTEM, "user1@enonic.com", "password" );
             final AuthenticationInfo authInfo = securityService.authenticate( authToken );
             assertFalse( authInfo.isAuthenticated() );
         } );
@@ -716,8 +712,7 @@ class SecurityServiceImplTest
 
             final User user = securityService.createUser( createUser );
 
-            final UsernamePasswordAuthToken authToken = new UsernamePasswordAuthToken( SYSTEM, "user1" );
-            authToken.setPassword( "runar" );
+            final UsernamePasswordAuthToken authToken = new UsernamePasswordAuthToken( SYSTEM, "user1", "runar" );
 
             final AuthenticationInfo authInfo = securityService.authenticate( authToken );
             assertTrue( authInfo.isAuthenticated() );
@@ -1033,8 +1028,7 @@ class SecurityServiceImplTest
 
             final User user = securityService.createUser( createUser1 );
 
-            final UsernamePasswordAuthToken authToken = new UsernamePasswordAuthToken( SYSTEM, "user1" );
-            authToken.setPassword( "runar" );
+            final UsernamePasswordAuthToken authToken = new UsernamePasswordAuthToken( SYSTEM, "user1", "runar" );
 
             AuthenticationInfo authInfo = securityService.authenticate( authToken );
             assertFalse( authInfo.isAuthenticated() );
