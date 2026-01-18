@@ -111,12 +111,12 @@ public final class BasicAuthFilter
         }
         if ( !authInfo.isAuthenticated() )
         {
-            authInfo = securityService.authenticate( tokenFromUsername( user, password ) );
+            authInfo = securityService.authenticate( parseUsernameAndCreateToken( user, password ) );
         }
         return authInfo;
     }
 
-    public UsernamePasswordAuthToken tokenFromUsername( final String username, final String password )
+    private UsernamePasswordAuthToken parseUsernameAndCreateToken( final String username, final String password )
     {
         if ( username.chars().filter( c -> c == '\\' ).count() == 1 )
         {
