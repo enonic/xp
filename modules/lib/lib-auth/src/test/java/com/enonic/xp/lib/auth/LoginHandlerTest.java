@@ -103,7 +103,6 @@ class LoginHandlerTest
         Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
         Mockito.when( this.securityService.getIdProviders() ).thenReturn( idProviders );
 
-
         runFunction( "/test/login-test.js", "loginWithScopeNONE" );
 
         assertNull( ContextAccessor.current().getLocalScope().getSession() );
@@ -146,20 +145,6 @@ class LoginHandlerTest
     }
 
     @Test
-    void testLoginMultipleIdProvider()
-    {
-        final AuthenticationInfo authInfo = TestDataFixtures.createAuthenticationInfo();
-
-        Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
-
-        runFunction( "/test/login-test.js", "loginMultipleIdProvider" );
-
-        final Session session = ContextAccessor.current().getLocalScope().getSession();
-        final AuthenticationInfo sessionAuthInfo = session.getAttribute( AuthenticationInfo.class );
-        assertEquals( authInfo, sessionAuthInfo );
-    }
-
-    @Test
     void testInvalidLogin()
     {
         final AuthenticationInfo authInfo = AuthenticationInfo.unAuthenticated();
@@ -176,12 +161,11 @@ class LoginHandlerTest
     @Test
     void testLoginUnspecifiedIdProvider()
     {
-        final AuthenticationInfo authInfo = TestDataFixtures.createAuthenticationInfo();
+        final AuthenticationInfo authInfo =
+            AuthenticationInfo.create().user( TestDataFixtures.getSystemTestUser() ).principals( RoleKeys.ADMIN_LOGIN ).build();
 
-        final EmailPasswordAuthToken expectedAuthToken = new EmailPasswordAuthToken();
-        expectedAuthToken.setEmail( "user1@enonic.com" );
+        final EmailPasswordAuthToken expectedAuthToken = new EmailPasswordAuthToken( IdProviderKey.system(), "user1@enonic.com" );
         expectedAuthToken.setPassword( "pwd123" );
-        expectedAuthToken.setIdProvider( null );
 
         final AuthTokenMatcher matcher = new AuthTokenMatcher( expectedAuthToken );
         Mockito.when( this.securityService.authenticate( Mockito.argThat( matcher ) ) ).thenReturn( authInfo );
@@ -199,7 +183,7 @@ class LoginHandlerTest
         final AuthenticationInfo authInfo = TestDataFixtures.createAuthenticationInfo();
 
         final IdProviders idProviders =
-            IdProviders.from( IdProvider.create().displayName( "system" ).key( IdProviderKey.from( "system" ) ).build() );
+            IdProviders.from( IdProvider.create().displayName( "system" ).key( IdProviderKey.system() ).build() );
 
         Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
         Mockito.when( this.securityService.getIdProviders() ).thenReturn( idProviders );
@@ -225,17 +209,10 @@ class LoginHandlerTest
         @Override
         public boolean matches( AuthenticationToken argument )
         {
-            if ( !( argument instanceof EmailPasswordAuthToken ) )
-            {
-                return false;
-            }
-
-            final EmailPasswordAuthToken authToken = (EmailPasswordAuthToken) argument;
-
-            return
-                this.thisObject.getIdProvider() == null &&
-                this.thisObject.getEmail().equals( authToken.getEmail() ) &&
+            return argument instanceof final EmailPasswordAuthToken authToken &&
+                this.thisObject.getIdProvider() == IdProviderKey.system() && this.thisObject.getEmail().equals( authToken.getEmail() ) &&
                 this.thisObject.getPassword().equals( authToken.getPassword() );
+
         }
     }
 }

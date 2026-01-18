@@ -1,43 +1,25 @@
 package com.enonic.xp.security.auth;
 
+import org.jspecify.annotations.NullMarked;
+
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.security.IdProviderKey;
 
 @PublicApi
+@NullMarked
 public final class VerifiedUsernameAuthToken
     extends AuthenticationToken
 {
-    private String username;
+    private final String username;
+
+    public VerifiedUsernameAuthToken( final IdProviderKey idProvider, final String username )
+    {
+        super( idProvider );
+        this.username = username;
+    }
 
     public String getUsername()
     {
         return this.username;
-    }
-
-    public void setUsername( final String username )
-    {
-        if ( username.chars().filter( c -> c == '\\' ).count() == 1 )
-        {
-            final String[] userParts = username.split( "\\\\" );
-            if ( userParts.length != 2 )
-            {
-                this.username = username;
-                return;
-            }
-
-            try
-            {
-                setIdProvider( IdProviderKey.from( userParts[0] ) );
-                this.username = userParts[1];
-            }
-            catch ( IllegalArgumentException e )
-            {
-                this.username = username;
-            }
-        }
-        else
-        {
-            this.username = username;
-        }
     }
 }

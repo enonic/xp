@@ -39,7 +39,7 @@ class ApplyPermissionsHandlerTest
         SecurityService securityService = Mockito.mock( SecurityService.class );
         addService( SecurityService.class, securityService );
 
-        final Optional<? extends Principal> value = Optional.of( User.ANONYMOUS );
+        final Optional<? extends Principal> value = Optional.of( User.anonymous() );
         Mockito.<Optional<? extends Principal>>when( securityService.getPrincipal( Mockito.any( PrincipalKey.class ) ) )
             .thenReturn( value );
 
@@ -71,7 +71,7 @@ class ApplyPermissionsHandlerTest
         SecurityService securityService = Mockito.mock( SecurityService.class );
         addService( SecurityService.class, securityService );
 
-        final Optional<? extends Principal> value = Optional.of( User.ANONYMOUS );
+        final Optional<? extends Principal> value = Optional.of( User.anonymous() );
         Mockito.<Optional<? extends Principal>>when( securityService.getPrincipal( Mockito.any( PrincipalKey.class ) ) )
             .thenReturn( value );
 
@@ -86,7 +86,7 @@ class ApplyPermissionsHandlerTest
         SecurityService securityService = Mockito.mock( SecurityService.class );
         addService( SecurityService.class, securityService );
 
-        final Optional<? extends Principal> value = Optional.of( User.ANONYMOUS );
+        final Optional<? extends Principal> value = Optional.of( User.anonymous() );
         Mockito.<Optional<? extends Principal>>when( securityService.getPrincipal( Mockito.any( PrincipalKey.class ) ) )
             .thenReturn( value );
 
@@ -102,7 +102,7 @@ class ApplyPermissionsHandlerTest
         SecurityService securityService = Mockito.mock( SecurityService.class );
         addService( SecurityService.class, securityService );
 
-        final Optional<? extends Principal> value = Optional.of( User.ANONYMOUS );
+        final Optional<? extends Principal> value = Optional.of( User.anonymous() );
         Mockito.<Optional<? extends Principal>>when( securityService.getPrincipal( Mockito.any( PrincipalKey.class ) ) )
             .thenReturn( value );
 
@@ -120,7 +120,7 @@ class ApplyPermissionsHandlerTest
         SecurityService securityService = Mockito.mock( SecurityService.class );
         addService( SecurityService.class, securityService );
 
-        final Optional<? extends Principal> value = Optional.of( User.ANONYMOUS );
+        final Optional<? extends Principal> value = Optional.of( User.anonymous() );
         Mockito.<Optional<? extends Principal>>when( securityService.getPrincipal( Mockito.any( PrincipalKey.class ) ) )
             .thenReturn( value );
 
@@ -164,7 +164,7 @@ class ApplyPermissionsHandlerTest
         SecurityService securityService = Mockito.mock( SecurityService.class );
         addService( SecurityService.class, securityService );
 
-        final Optional<? extends Principal> value = Optional.of( User.ANONYMOUS );
+        final Optional<? extends Principal> value = Optional.of( User.anonymous() );
         Mockito.<Optional<? extends Principal>>when( securityService.getPrincipal( Mockito.any( PrincipalKey.class ) ) )
             .thenReturn( value );
 

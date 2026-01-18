@@ -1,32 +1,25 @@
 package com.enonic.xp.security.auth;
 
+import java.util.Objects;
+
+import org.jspecify.annotations.NonNull;
+
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.security.IdProviderKey;
 
 @PublicApi
-public abstract class AuthenticationToken
+public abstract sealed class AuthenticationToken
+    permits PasswordAuthToken, VerifiedEmailAuthToken, VerifiedUsernameAuthToken
 {
-    private IdProviderKey idProvider;
+    protected IdProviderKey idProvider;
 
-    private boolean rememberMe;
+    protected AuthenticationToken( final @NonNull IdProviderKey idProvider )
+    {
+        this.idProvider = Objects.requireNonNull( idProvider );
+    }
 
     public final IdProviderKey getIdProvider()
     {
         return this.idProvider;
-    }
-
-    public final void setIdProvider( final IdProviderKey idProvider )
-    {
-        this.idProvider = idProvider;
-    }
-
-    public final boolean isRememberMe()
-    {
-        return this.rememberMe;
-    }
-
-    public final void setRememberMe( final boolean rememberMe )
-    {
-        this.rememberMe = rememberMe;
     }
 }

@@ -65,7 +65,7 @@ interface LoginHandler {
 
     setPassword(value?: string): void;
 
-    setIdProvider(value?: string[]): void;
+    setIdProvider(value?: string | null): void;
 
     setScope(value?: LoginScopeType): void;
 
@@ -86,8 +86,8 @@ const isLoginParams = (params: unknown): params is LoginParams =>
  * @example-ref examples/auth/login.js
  *
  * @param {object} params JSON parameters.
- * @param {string} params.user Name of user to log in.
- * @param {string} [params.idProvider] Name of id provider where the user is stored. If not specified it will try all available id providers, in alphabetical order.
+ * @param {string} params.user Name of the user to log in.
+ * @param {string} [params.idProvider] Name of id provider where the user is stored. If not specified system id provider will be used.
  * @param {string} [params.password] Password for the user. Ignored if skipAuth is set to true, mandatory otherwise.
  * @param {('SESSION'|'REQUEST'|'NONE')} [params.scope=SESSION] The scope of this login. Two values are valid. SESSION logs the user in and creates a session in XP for use in future requests. REQUEST logs the user in but only for this particular request and thus does not create a session.
  * @param {boolean} [params.skipAuth=false] Skip authentication.
@@ -121,9 +121,8 @@ export function login(params: LoginParams | LoginWithoutPasswordParams): LoginRe
             bean.setPassword(password);
         }
     }
-    if (idProvider) {
-        bean.setIdProvider(([] as string[]).concat(idProvider));
-    }
+    bean.setIdProvider(__.nullOrValue(idProvider));
+
 
     return __.toNativeObject(bean.login());
 }
@@ -154,7 +153,9 @@ interface GetUserHandler {
 }
 
 export function getUser(params?: { includeProfile?: false }): User | null;
-export function getUser<Profile extends Record<string, unknown> = Record<string, unknown>>(params: { includeProfile: true }): UserWithProfile<Profile> | null;
+export function getUser<Profile extends Record<string, unknown> = Record<string, unknown>>(params: {
+    includeProfile: true
+}): UserWithProfile<Profile> | null;
 /**
  * Returns the logged-in user. If not logged-in, this will return *undefined*.
  *
@@ -644,7 +645,8 @@ interface GetIdProviderConfigHandler<IdProviderConfig extends Record<string, unk
  * @returns {object} The ID provider configuration as JSON.
  */
 export function getIdProviderConfig<IdProviderConfig extends Record<string, unknown>>(): IdProviderConfig | null {
-    const bean: GetIdProviderConfigHandler<IdProviderConfig> = __.newBean<GetIdProviderConfigHandler<IdProviderConfig>>('com.enonic.xp.lib.auth.GetIdProviderConfigHandler');
+    const bean: GetIdProviderConfigHandler<IdProviderConfig> = __.newBean<GetIdProviderConfigHandler<IdProviderConfig>>(
+        'com.enonic.xp.lib.auth.GetIdProviderConfigHandler');
     return __.toNativeObject(bean.execute());
 }
 
@@ -744,8 +746,10 @@ interface FindUsersHandler {
     execute(): FindPrincipalsResult<User | UserWithProfile>;
 }
 
-export function findUsers(params: FindUsersParams & {includeProfile?: false}): FindPrincipalsResult<User>;
-export function findUsers<Profile extends Record<string, unknown> = Record<string, unknown>>(params: FindUsersParams & {includeProfile: true}): FindPrincipalsResult<UserWithProfile<Profile>>;
+export function findUsers(params: FindUsersParams & { includeProfile?: false }): FindPrincipalsResult<User>;
+export function findUsers<Profile extends Record<string, unknown> = Record<string, unknown>>(params: FindUsersParams & {
+    includeProfile: true
+}): FindPrincipalsResult<UserWithProfile<Profile>>;
 /**
  * Search for users matching the specified query.
  *

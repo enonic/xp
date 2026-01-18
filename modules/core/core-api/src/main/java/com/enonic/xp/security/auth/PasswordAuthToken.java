@@ -1,12 +1,17 @@
 package com.enonic.xp.security.auth;
 
-import com.enonic.xp.annotation.PublicApi;
+import com.enonic.xp.security.IdProviderKey;
 
-@PublicApi
-public abstract class PasswordAuthToken
+public abstract sealed class PasswordAuthToken
     extends AuthenticationToken
+    permits EmailPasswordAuthToken, UsernamePasswordAuthToken
 {
     private String password;
+
+    protected PasswordAuthToken( final IdProviderKey idProvider )
+    {
+        super( idProvider );
+    }
 
     public final String getPassword()
     {

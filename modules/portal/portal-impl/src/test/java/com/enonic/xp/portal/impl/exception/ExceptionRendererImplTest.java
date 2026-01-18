@@ -332,7 +332,7 @@ class ExceptionRendererImplTest
         assertTrue( body.contains( "<h3>403 - Forbidden</h3>" ) );
 
         // test with already authenticated user
-        final AuthenticationInfo authenticationInfo = AuthenticationInfo.create().user( User.ANONYMOUS ).build();
+        final AuthenticationInfo authenticationInfo = AuthenticationInfo.create().user( User.anonymous() ).build();
         final Context context = ContextBuilder.from( ContextAccessor.current() ).authInfo( authenticationInfo ).build();
 
         final PortalResponse response =

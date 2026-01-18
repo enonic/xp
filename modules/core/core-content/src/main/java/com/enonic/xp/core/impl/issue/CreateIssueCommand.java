@@ -1,8 +1,8 @@
 package com.enonic.xp.core.impl.issue;
 
 import java.time.Instant;
+import java.util.Objects;
 
-import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.issue.serializer.IssueDataSerializer;
 import com.enonic.xp.data.PropertyTree;
@@ -82,16 +82,12 @@ public class CreateIssueCommand
 
     User getCurrentUser()
     {
-        final Context context = ContextAccessor.current();
-        return context.getAuthInfo().getUser() != null ? context.getAuthInfo().getUser() : User.ANONYMOUS;
+        return Objects.requireNonNullElseGet( ContextAccessor.current().getAuthInfo().getUser(), User::anonymous );
     }
 
     private long countTotalIssues()
     {
-        final IssueQuery query = IssueQuery.create().
-            size( 0 ).
-            count( true ).
-            build();
+        final IssueQuery query = IssueQuery.create().size( 0 ).count( true ).build();
 
         final NodeQuery nodeQuery = IssueQueryNodeQueryTranslator.translate( query );
 
@@ -145,16 +141,16 @@ public class CreateIssueCommand
 
             final IndexConfigDocument indexConfigDocument = IssueIndexConfigFactory.create();
 
-            final CreateNodeParams.Builder builder = CreateNodeParams.create().
-                setNodeId( NodeId.from( params.getId() ) ).
-                name( NodeName.from( issueName ) ).
-                parent( IssueConstants.ISSUE_ROOT_PATH ).
-                data( contentAsData ).
-                indexConfigDocument( indexConfigDocument ).
-                inheritPermissions( true ).
-                childOrder( IssueConstants.DEFAULT_CHILD_ORDER ).
-                nodeType( IssueConstants.ISSUE_NODE_COLLECTION ).
-                refresh( RefreshMode.ALL );
+            final CreateNodeParams.Builder builder = CreateNodeParams.create()
+                .setNodeId( NodeId.from( params.getId() ) )
+                .name( NodeName.from( issueName ) )
+                .parent( IssueConstants.ISSUE_ROOT_PATH )
+                .data( contentAsData )
+                .indexConfigDocument( indexConfigDocument )
+                .inheritPermissions( true )
+                .childOrder( IssueConstants.DEFAULT_CHILD_ORDER )
+                .nodeType( IssueConstants.ISSUE_NODE_COLLECTION )
+                .refresh( RefreshMode.ALL );
 
             return builder.build();
         }

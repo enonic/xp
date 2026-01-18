@@ -9,11 +9,11 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.impl.scheduler.ScheduledJobPropertyNames;
 import com.enonic.xp.impl.scheduler.distributed.CronCalendarImpl;
 import com.enonic.xp.impl.scheduler.distributed.OneTimeCalendarImpl;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.scheduler.CreateScheduledJobParams;
 import com.enonic.xp.scheduler.CronCalendar;
 import com.enonic.xp.scheduler.EditableScheduledJob;
@@ -25,7 +25,6 @@ import com.enonic.xp.scheduler.ScheduledJob;
 import com.enonic.xp.scheduler.ScheduledJobEditor;
 import com.enonic.xp.scheduler.ScheduledJobName;
 import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.security.User;
 import com.enonic.xp.task.TaskId;
 
 public class SchedulerSerializer
@@ -59,7 +58,7 @@ public class SchedulerSerializer
         }
 
         final Instant now = Instant.now();
-        final PrincipalKey contextUser = getCurrentUser().getKey();
+        final PrincipalKey contextUser = getCurrentUserKey();
 
         data.setString( ScheduledJobPropertyNames.CREATOR, contextUser.toString() );
         data.setString( ScheduledJobPropertyNames.MODIFIER, contextUser.toString() );
@@ -102,7 +101,7 @@ public class SchedulerSerializer
             data.setInstant( ScheduledJobPropertyNames.CREATED_TIME, modifiedJob.getCreatedTime() );
         }
 
-        data.setString( ScheduledJobPropertyNames.MODIFIER, getCurrentUser().getKey().toString() );
+        data.setString( ScheduledJobPropertyNames.MODIFIER, getCurrentUserKey().toString() );
         data.setInstant( ScheduledJobPropertyNames.MODIFIED_TIME, Instant.now() );
 
         return tree;
@@ -112,40 +111,28 @@ public class SchedulerSerializer
     {
         final PropertySet data = node.data().getRoot();
 
-        return ScheduledJob.create().
-            name( ScheduledJobName.from( node.name().toString() ) ).
-            description( data.getString( ScheduledJobPropertyNames.DESCRIPTION ) ).
-            enabled( data.getBoolean( ScheduledJobPropertyNames.ENABLED ) ).
-            calendar( Optional.ofNullable( data.getSet( ScheduledJobPropertyNames.CALENDAR ) ).
-                map( SchedulerSerializer::createCalendar ).
-                orElse( null ) ).
-            descriptor( Optional.ofNullable( data.getString( ScheduledJobPropertyNames.DESCRIPTOR ) ).
-                map( DescriptorKey::from ).
-                orElse( null ) ).
-            config( Optional.ofNullable( data.getSet( ScheduledJobPropertyNames.CONFIG ) ).
-                map( PropertySet::toTree ).
-                orElse( null ) ).
-            user( Optional.ofNullable( data.getString( ScheduledJobPropertyNames.USER ) ).
-                map( PrincipalKey::from ).
-                orElse( null ) ).
-            lastRun( Optional.ofNullable( data.getInstant( ScheduledJobPropertyNames.LAST_RUN ) ).
-                orElse( null ) ).
-            lastTaskId( Optional.ofNullable( data.getString( ScheduledJobPropertyNames.LAST_TASK_ID ) ).
-                map( TaskId::from ).
-                orElse( null ) ).
-            creator( Optional.ofNullable( data.getString( ScheduledJobPropertyNames.CREATOR ) ).
-                map( PrincipalKey::from ).
-                orElse( null ) ).
-            modifier( Optional.ofNullable( data.getString( ScheduledJobPropertyNames.MODIFIER ) ).
-                map( PrincipalKey::from ).
-                orElse( null ) ).
-            createdTime( Optional.ofNullable( data.getString( ScheduledJobPropertyNames.CREATED_TIME ) ).
-                map( Instant::parse ).
-                orElse( null ) ).
-            modifiedTime( Optional.ofNullable( data.getString( ScheduledJobPropertyNames.MODIFIED_TIME ) ).
-                map( Instant::parse ).
-                orElse( null ) ).
-            build();
+        return ScheduledJob.create()
+            .name( ScheduledJobName.from( node.name().toString() ) )
+            .description( data.getString( ScheduledJobPropertyNames.DESCRIPTION ) )
+            .enabled( data.getBoolean( ScheduledJobPropertyNames.ENABLED ) )
+            .calendar( Optional.ofNullable( data.getSet( ScheduledJobPropertyNames.CALENDAR ) )
+                           .map( SchedulerSerializer::createCalendar )
+                           .orElse( null ) )
+            .descriptor(
+                Optional.ofNullable( data.getString( ScheduledJobPropertyNames.DESCRIPTOR ) ).map( DescriptorKey::from ).orElse( null ) )
+            .config( Optional.ofNullable( data.getSet( ScheduledJobPropertyNames.CONFIG ) ).map( PropertySet::toTree ).orElse( null ) )
+            .user( Optional.ofNullable( data.getString( ScheduledJobPropertyNames.USER ) ).map( PrincipalKey::from ).orElse( null ) )
+            .lastRun( Optional.ofNullable( data.getInstant( ScheduledJobPropertyNames.LAST_RUN ) ).orElse( null ) )
+            .lastTaskId(
+                Optional.ofNullable( data.getString( ScheduledJobPropertyNames.LAST_TASK_ID ) ).map( TaskId::from ).orElse( null ) )
+            .creator( Optional.ofNullable( data.getString( ScheduledJobPropertyNames.CREATOR ) ).map( PrincipalKey::from ).orElse( null ) )
+            .modifier(
+                Optional.ofNullable( data.getString( ScheduledJobPropertyNames.MODIFIER ) ).map( PrincipalKey::from ).orElse( null ) )
+            .createdTime(
+                Optional.ofNullable( data.getString( ScheduledJobPropertyNames.CREATED_TIME ) ).map( Instant::parse ).orElse( null ) )
+            .modifiedTime(
+                Optional.ofNullable( data.getString( ScheduledJobPropertyNames.MODIFIED_TIME ) ).map( Instant::parse ).orElse( null ) )
+            .build();
     }
 
     private static ScheduledJob editScheduledJob( final ScheduledJobEditor editor, final ScheduledJob original )
@@ -195,10 +182,7 @@ public class SchedulerSerializer
         switch ( calendarType )
         {
             case CRON:
-                return CronCalendarImpl.create().
-                    value( value ).
-                    timeZone( TimeZone.getTimeZone( timeZone ) ).
-                    build();
+                return CronCalendarImpl.create().value( value ).timeZone( TimeZone.getTimeZone( timeZone ) ).build();
             case ONE_TIME:
                 return OneTimeCalendarImpl.create().value( Instant.parse( value ) ).build();
             default:
@@ -206,9 +190,9 @@ public class SchedulerSerializer
         }
     }
 
-    private static User getCurrentUser()
+    private static PrincipalKey getCurrentUserKey()
     {
         final Context context = ContextAccessor.current();
-        return context.getAuthInfo().getUser() != null ? context.getAuthInfo().getUser() : User.ANONYMOUS;
+        return context.getAuthInfo().getUser() != null ? context.getAuthInfo().getUser().getKey() : PrincipalKey.ofAnonymous();
     }
 }

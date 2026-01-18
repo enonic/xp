@@ -61,10 +61,7 @@ public class NodeHandleFactory
         }
         if ( principals != null )
         {
-            authInfo = AuthenticationInfo.
-                copyOf( authInfo ).
-                principals( principals ).
-                build();
+            authInfo = AuthenticationInfo.copyOf( authInfo ).principals( principals ).build();
         }
 
         return authInfo;
@@ -72,19 +69,19 @@ public class NodeHandleFactory
 
     private AuthenticationInfo getAuthenticationInfo( final String username, final String idProvider )
     {
-        final VerifiedUsernameAuthToken token = new VerifiedUsernameAuthToken();
-        token.setUsername( username );
-        token.setIdProvider( idProvider == null ? null : IdProviderKey.from( idProvider ) );
-        return this.securityService.authenticate( token );
+        return this.securityService.authenticate(
+            new VerifiedUsernameAuthToken( idProvider == null ? IdProviderKey.system() : IdProviderKey.from( idProvider ), username ) );
     }
 
     private <T> T runAsAuthenticated( final Callable<T> runnable )
     {
-        final AuthenticationInfo authInfo = AuthenticationInfo.create().principals( RoleKeys.AUTHENTICATED ).user( User.ANONYMOUS ).build();
-        return ContextBuilder.from( ContextAccessor.current() ).
-            authInfo( authInfo ).
-            repositoryId( SystemConstants.SYSTEM_REPO_ID ).
-            branch( SecurityConstants.BRANCH_SECURITY ).build().
-            callWith( runnable );
+        final AuthenticationInfo authInfo =
+            AuthenticationInfo.create().principals( RoleKeys.AUTHENTICATED ).user( User.anonymous() ).build();
+        return ContextBuilder.from( ContextAccessor.current() )
+            .authInfo( authInfo )
+            .repositoryId( SystemConstants.SYSTEM_REPO_ID )
+            .branch( SecurityConstants.BRANCH_SECURITY )
+            .build()
+            .callWith( runnable );
     }
 }

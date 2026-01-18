@@ -103,7 +103,7 @@ public final class AuthenticationInfo
         oos.writeBoolean( authenticated );
         String principalKeys = principals.stream().map( PrincipalKey::toString ).collect( Collectors.joining( "," ) );
         oos.writeUTF( principalKeys );
-        serializeUser( oos, authenticated ? this.user : User.ANONYMOUS );
+        serializeUser( oos, authenticated ? this.user : User.anonymous() );
     }
 
     private void serializeUser( final ObjectOutputStream oos, final User user )

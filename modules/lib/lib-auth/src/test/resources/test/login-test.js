@@ -99,33 +99,6 @@ exports.loginNoIdProvider = function () {
 
 };
 
-exports.loginMultipleIdProvider = function () {
-
-    var result = auth.login({
-        user: 'user1@enonic.com',
-        password: 'pwd123',
-        idProvider: ['enonic', 'system']
-    });
-
-    var expectedJson = {
-        authenticated: true,
-        user: {
-            'type': 'user',
-            'key': 'user:enonic:user1',
-            'displayName': 'User 1',
-            'modifiedTime': '1970-01-01T00:00:00Z',
-            'disabled': false,
-            'email': 'user1@enonic.com',
-            'login': 'user1',
-            'idProvider': 'enonic',
-            'hasPassword': false
-        }
-    };
-
-    t.assertJsonEquals(expectedJson, result);
-
-};
-
 exports.loginUnspecifiedIdProvider = function () {
 
     var result = auth.login({
@@ -137,13 +110,13 @@ exports.loginUnspecifiedIdProvider = function () {
         authenticated: true,
         user: {
             'type': 'user',
-            'key': 'user:enonic:user1',
+            'key': 'user:system:user1',
             'displayName': 'User 1',
             'modifiedTime': '1970-01-01T00:00:00Z',
             'disabled': false,
             'email': 'user1@enonic.com',
             'login': 'user1',
-            'idProvider': 'enonic',
+            'idProvider': 'system',
             'hasPassword': false
         }
     };

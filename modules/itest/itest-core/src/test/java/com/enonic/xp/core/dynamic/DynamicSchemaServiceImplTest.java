@@ -50,7 +50,6 @@ import com.enonic.xp.core.impl.app.resource.ResourceServiceImpl;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
 import com.enonic.xp.core.impl.project.ProjectConfig;
 import com.enonic.xp.core.impl.project.ProjectServiceImpl;
-import com.enonic.xp.core.impl.project.init.ContentInitializer;
 import com.enonic.xp.core.impl.security.SecurityAuditLogSupportImpl;
 import com.enonic.xp.core.impl.security.SecurityConfig;
 import com.enonic.xp.core.impl.security.SecurityInitializer;
@@ -146,7 +145,7 @@ class DynamicSchemaServiceImplTest
     private static Context createAdminContext()
     {
         return ContextBuilder.copyOf( ctxDefault() )
-            .authInfo( AuthenticationInfo.create().principals( RoleKeys.AUTHENTICATED, RoleKeys.ADMIN ).user( User.ANONYMOUS ).build() )
+            .authInfo( AuthenticationInfo.create().principals( RoleKeys.AUTHENTICATED, RoleKeys.ADMIN ).user( User.anonymous() ).build() )
             .build();
     }
 
@@ -154,7 +153,7 @@ class DynamicSchemaServiceImplTest
     {
         return ContextBuilder.copyOf( ctxDefault() )
             .authInfo(
-                AuthenticationInfo.create().principals( RoleKeys.AUTHENTICATED, RoleKeys.SCHEMA_ADMIN ).user( User.ANONYMOUS ).build() )
+                AuthenticationInfo.create().principals( RoleKeys.AUTHENTICATED, RoleKeys.SCHEMA_ADMIN ).user( User.anonymous() ).build() )
             .build();
     }
 
@@ -196,22 +195,22 @@ class DynamicSchemaServiceImplTest
         final RepositoryEntryServiceImpl repositoryEntryService =
             new RepositoryEntryServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService );
 
-        IndexServiceImpl indexService = new IndexServiceImpl( indexServiceInternal, indexedDataService, searchService, nodeDao, repositoryEntryService );
+        IndexServiceImpl indexService =
+            new IndexServiceImpl( indexServiceInternal, indexedDataService, searchService, nodeDao, repositoryEntryService );
 
         final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl( indexServiceInternal );
 
-
         RepositoryServiceImpl repositoryService =
-            new RepositoryServiceImpl( repositoryEntryService, indexServiceInternal, nodeRepositoryService, storageService,
-                                       searchService );
-        SystemRepoInitializer.create().
-            setIndexServiceInternal( indexServiceInternal ).
-            setRepositoryService( repositoryService ).
-            setNodeStorageService( storageService ).
-            build().
-            initialize();
+            new RepositoryServiceImpl( repositoryEntryService, indexServiceInternal, nodeRepositoryService, storageService, searchService );
+        SystemRepoInitializer.create()
+            .setIndexServiceInternal( indexServiceInternal )
+            .setRepositoryService( repositoryService )
+            .setNodeStorageService( storageService )
+            .build()
+            .initialize();
 
-        nodeService = new NodeServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService, repositoryService );
+        nodeService =
+            new NodeServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService, repositoryService );
 
         Path cacheDir = Files.createDirectory( this.felixTempFolder.resolve( "cache" ) ).toAbsolutePath();
 
@@ -219,11 +218,7 @@ class DynamicSchemaServiceImplTest
         felix.start();
 
         ApplicationRepoServiceImpl repoService = new ApplicationRepoServiceImpl( nodeService );
-        ApplicationRepoInitializer.create().
-            setIndexService( indexService ).
-            setNodeService( nodeService ).
-            build().
-            initialize();
+        ApplicationRepoInitializer.create().setIndexService( indexService ).setNodeService( nodeService ).build().initialize();
 
         BundleContext bundleContext = felix.getBundleContext();
 
@@ -266,8 +261,8 @@ class DynamicSchemaServiceImplTest
             .initialize();
 
         ApplicationService applicationService =
-            new ApplicationServiceImpl( applicationRegistry, repoService, eventPublisher, appFilterService,
-                                        virtualAppService, new ApplicationAuditLogSupportImpl( mock( AuditLogService.class ) ) );
+            new ApplicationServiceImpl( applicationRegistry, repoService, eventPublisher, appFilterService, virtualAppService,
+                                        new ApplicationAuditLogSupportImpl( mock( AuditLogService.class ) ) );
 
         createSchemaAdminContext().runWith( () -> applicationService.createVirtualApplication(
             CreateVirtualApplicationParams.create().key( ApplicationKey.from( "myapp" ) ).build() ) );
@@ -275,7 +270,8 @@ class DynamicSchemaServiceImplTest
         createAdminContext().runWith( () -> applicationService.createVirtualApplication(
             CreateVirtualApplicationParams.create().key( ApplicationKey.from( "my-other-app" ) ).build() ) );
 
-        projectService = new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService, eventPublisher, mock( ProjectConfig.class ) );
+        projectService = new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService, eventPublisher,
+                                                 mock( ProjectConfig.class ) );
         projectService.initialize();
 
         createAdminContext().runWith( () -> projectService.create(
@@ -961,8 +957,8 @@ class DynamicSchemaServiceImplTest
         assertEquals( "myapp:/site/site.xml", result.getResource().getKey().toString() );
         assertNotNull( siteDescriptor.getModifiedTime() );
 
-        final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/site/site.xml" ) ) );
+        final Node resourceNode =
+            VirtualAppContext.createAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/myapp/site/site.xml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -1000,8 +996,8 @@ class DynamicSchemaServiceImplTest
         assertEquals( resource, result.getResource().readString() );
         assertEquals( "myapp:/site/site.xml", result.getResource().getKey().toString() );
 
-        final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/site/site.xml" ) ) );
+        final Node resourceNode =
+            VirtualAppContext.createAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/myapp/site/site.xml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -1028,8 +1024,8 @@ class DynamicSchemaServiceImplTest
         assertEquals( resource, result.getResource().readString() );
         assertEquals( "myapp:/site/site.xml", result.getResource().getKey().toString() );
 
-        final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/site/site.xml" ) ) );
+        final Node resourceNode =
+            VirtualAppContext.createAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/myapp/site/site.xml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -1087,8 +1083,8 @@ class DynamicSchemaServiceImplTest
         assertEquals( "myapp:/site/styles.xml", result.getResource().getKey().toString() );
         assertNotNull( styleDescriptor.getModifiedTime() );
 
-        final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/site/styles.xml" ) ) );
+        final Node resourceNode =
+            VirtualAppContext.createAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/myapp/site/styles.xml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -1117,8 +1113,8 @@ class DynamicSchemaServiceImplTest
         assertEquals( resource, result.getResource().readString() );
         assertEquals( "myapp:/site/styles.xml", result.getResource().getKey().toString() );
 
-        final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/site/styles.xml" ) ) );
+        final Node resourceNode =
+            VirtualAppContext.createAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/myapp/site/styles.xml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -1268,7 +1264,7 @@ class DynamicSchemaServiceImplTest
         results = createAdminContext().callWith( () -> dynamicSchemaService.listContentSchemas(
             ListDynamicContentSchemasParams.create().applicationKey( applicationKey ).type( DynamicContentSchemaType.MIXIN ).build() ) );
 
-        assertThat( results ).usingRecursiveComparison().isEqualTo( List.of( mixin1, mixin2  ) );
+        assertThat( results ).usingRecursiveComparison().isEqualTo( List.of( mixin1, mixin2 ) );
 
         results = createAdminContext().callWith( () -> dynamicSchemaService.listContentSchemas( ListDynamicContentSchemasParams.create()
                                                                                                     .applicationKey( ApplicationKey.from(
@@ -1340,27 +1336,27 @@ class DynamicSchemaServiceImplTest
 
         assertTrue( results.isEmpty() );
 
-         createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
-            CreateDynamicContentSchemaParams.create()
-                .name( MixinName.from( "myapp:mytype1" ) )
-                .resource( readResource( "_mixin.xml" ) )
-                .type( DynamicContentSchemaType.MIXIN )
-                .build() ) );
-         createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
-            CreateDynamicContentSchemaParams.create()
-                .name( MixinName.from( "myapp:mytype2" ) )
-                .resource( readResource( "_mixin.xml" ) )
-                .type( DynamicContentSchemaType.MIXIN )
-                .build() ) );
-         createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
-            CreateDynamicContentSchemaParams.create()
-                .name( MixinName.from( "my-other-app:mytype" ) )
-                .resource( readResource( "_mixin.xml" ) )
-                .type( DynamicContentSchemaType.MIXIN )
-                .build() ) );
+        createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema( CreateDynamicContentSchemaParams.create()
+                                                                                           .name( MixinName.from( "myapp:mytype1" ) )
+                                                                                           .resource( readResource( "_mixin.xml" ) )
+                                                                                           .type( DynamicContentSchemaType.MIXIN )
+                                                                                           .build() ) );
+        createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema( CreateDynamicContentSchemaParams.create()
+                                                                                           .name( MixinName.from( "myapp:mytype2" ) )
+                                                                                           .resource( readResource( "_mixin.xml" ) )
+                                                                                           .type( DynamicContentSchemaType.MIXIN )
+                                                                                           .build() ) );
+        createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema( CreateDynamicContentSchemaParams.create()
+                                                                                           .name( MixinName.from( "my-other-app:mytype" ) )
+                                                                                           .resource( readResource( "_mixin.xml" ) )
+                                                                                           .type( DynamicContentSchemaType.MIXIN )
+                                                                                           .build() ) );
 
-        assertThrows( ForbiddenAccessException.class, () ->  VirtualAppContext.createContext().callWith( () -> dynamicSchemaService.listContentSchemas(
-            ListDynamicContentSchemasParams.create().applicationKey( applicationKey ).type( DynamicContentSchemaType.MIXIN ).build() )) );
+        assertThrows( ForbiddenAccessException.class, () -> VirtualAppContext.createContext()
+            .callWith( () -> dynamicSchemaService.listContentSchemas( ListDynamicContentSchemasParams.create()
+                                                                          .applicationKey( applicationKey )
+                                                                          .type( DynamicContentSchemaType.MIXIN )
+                                                                          .build() ) ) );
     }
 
     @Test
@@ -1469,11 +1465,11 @@ class DynamicSchemaServiceImplTest
                 .type( DynamicContentSchemaType.CONTENT_TYPE )
                 .build() ) );
 
-        assertThrows( ForbiddenAccessException.class, () -> VirtualAppContext.createContext().callWith( () -> dynamicSchemaService.deleteContentSchema(
-            DeleteDynamicContentSchemaParams.create()
-                .name( contentType.getSchema().getName() )
-                .type( DynamicContentSchemaType.CONTENT_TYPE )
-                .build() ) ));
+        assertThrows( ForbiddenAccessException.class, () -> VirtualAppContext.createContext()
+            .callWith( () -> dynamicSchemaService.deleteContentSchema( DeleteDynamicContentSchemaParams.create()
+                                                                           .name( contentType.getSchema().getName() )
+                                                                           .type( DynamicContentSchemaType.CONTENT_TYPE )
+                                                                           .build() ) ) );
 
     }
 

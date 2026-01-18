@@ -3,13 +3,12 @@ package com.enonic.xp.security;
 import java.text.MessageFormat;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.exception.BaseException;
+import com.enonic.xp.exception.NotFoundException;
 
 @PublicApi
 public class IdProviderNotFoundException
-    extends BaseException
+    extends NotFoundException
 {
-
     private final IdProviderKey idProviderKey;
 
     public IdProviderNotFoundException( final IdProviderKey idProviderKey )

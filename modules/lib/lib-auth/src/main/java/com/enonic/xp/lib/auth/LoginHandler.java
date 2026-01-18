@@ -28,7 +28,7 @@ public final class LoginHandler
 
     private boolean skipAuth;
 
-    private String[] idProvider;
+    private String idProvider;
 
     private Integer sessionTimeout;
 
@@ -55,7 +55,7 @@ public final class LoginHandler
         this.skipAuth = skipAuth;
     }
 
-    public void setIdProvider( final String[] idProvider )
+    public void setIdProvider( final String idProvider )
     {
         this.idProvider = idProvider;
     }
@@ -72,7 +72,7 @@ public final class LoginHandler
 
     public LoginResultMapper login()
     {
-        AuthenticationInfo authInfo = attemptLogin();
+        AuthenticationInfo authInfo = authenticate();
 
         if ( authInfo.isAuthenticated() )
         {
@@ -123,27 +123,10 @@ public final class LoginHandler
         }
     }
 
-    private AuthenticationInfo attemptLogin()
+    private AuthenticationInfo authenticate()
     {
-        if ( idProvider == null || idProvider.length == 0 )
-        {
-            return authenticate( null );
-        }
+        final IdProviderKey idp = idProvider == null ? IdProviderKey.system() : IdProviderKey.from( idProvider );
 
-        for ( String uStore : idProvider )
-        {
-            final AuthenticationInfo authInfo = authenticate( IdProviderKey.from( uStore ) );
-            if ( authInfo.isAuthenticated() )
-            {
-                return authInfo;
-            }
-        }
-
-        return AuthenticationInfo.unAuthenticated();
-    }
-
-    private AuthenticationInfo authenticate( IdProviderKey idProvider )
-    {
         AuthenticationInfo authInfo = AuthenticationInfo.unAuthenticated();
 
         if ( isValidEmail( this.user ) )
@@ -151,17 +134,12 @@ public final class LoginHandler
             final AuthenticationToken authToken;
             if ( this.skipAuth )
             {
-                final VerifiedEmailAuthToken verifiedEmailAuthToken = new VerifiedEmailAuthToken();
-                verifiedEmailAuthToken.setEmail( this.user );
-                verifiedEmailAuthToken.setIdProvider( idProvider );
-                authToken = verifiedEmailAuthToken;
+                authToken = new VerifiedEmailAuthToken( idp, this.user );
             }
             else
             {
-                final EmailPasswordAuthToken emailAuthToken = new EmailPasswordAuthToken();
-                emailAuthToken.setEmail( this.user );
+                final EmailPasswordAuthToken emailAuthToken = new EmailPasswordAuthToken( idp, this.user );
                 emailAuthToken.setPassword( this.password );
-                emailAuthToken.setIdProvider( idProvider );
                 authToken = emailAuthToken;
             }
             authInfo = this.securityServiceSupplier.get().authenticate( authToken );
@@ -172,17 +150,12 @@ public final class LoginHandler
             final AuthenticationToken authToken;
             if ( this.skipAuth )
             {
-                final VerifiedUsernameAuthToken verifiedUsernameAuthToken = new VerifiedUsernameAuthToken();
-                verifiedUsernameAuthToken.setUsername( this.user );
-                verifiedUsernameAuthToken.setIdProvider( idProvider );
-                authToken = verifiedUsernameAuthToken;
+                authToken = new VerifiedUsernameAuthToken( idp, this.user );
             }
             else
             {
-                final UsernamePasswordAuthToken usernameAuthToken = new UsernamePasswordAuthToken();
-                usernameAuthToken.setUsername( this.user );
+                final UsernamePasswordAuthToken usernameAuthToken = new UsernamePasswordAuthToken( idp, this.user );
                 usernameAuthToken.setPassword( this.password );
-                usernameAuthToken.setIdProvider( idProvider );
                 authToken = usernameAuthToken;
             }
             authInfo = this.securityServiceSupplier.get().authenticate( authToken );

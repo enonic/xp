@@ -31,16 +31,14 @@ class NodePermissionsResolverTest
     @Test
     void hasPermissionEmptyACL()
     {
-        final AuthenticationInfo authInfo = AuthenticationInfo.create().
-            user( User.ANONYMOUS ).
-            principals( PrincipalKey.ofAnonymous() ).
-            build();
+        final AuthenticationInfo authInfo =
+            AuthenticationInfo.create().user( User.anonymous() ).principals( PrincipalKey.ofAnonymous() ).build();
 
-        final AccessControlList nodePermissions = AccessControlList.create().
-            add( AccessControlEntry.create().principal( USER_A ).allow( READ ).build() ).
-            add( AccessControlEntry.create().principal( GROUP_B ).allow( CREATE ).build() ).
-            add( AccessControlEntry.create().principal( ROLE_C ).allow( MODIFY ).build() ).
-            build();
+        final AccessControlList nodePermissions = AccessControlList.create()
+            .add( AccessControlEntry.create().principal( USER_A ).allow( READ ).build() )
+            .add( AccessControlEntry.create().principal( GROUP_B ).allow( CREATE ).build() )
+            .add( AccessControlEntry.create().principal( ROLE_C ).allow( MODIFY ).build() )
+            .build();
 
         assertFalse( NodePermissionsResolver.userHasPermission( authInfo, READ, nodePermissions ) );
         assertFalse( NodePermissionsResolver.userHasPermission( authInfo, CREATE, nodePermissions ) );
@@ -51,16 +49,16 @@ class NodePermissionsResolverTest
     @Test
     void hasPermissionAll()
     {
-        final AuthenticationInfo authInfo = AuthenticationInfo.create().
-            user( User.create().key( USER_A ).login( "usera" ).build() ).
-            principals( USER_A, GROUP_B, ROLE_C ).
-            build();
+        final AuthenticationInfo authInfo = AuthenticationInfo.create()
+            .user( User.create().key( USER_A ).login( "usera" ).build() )
+            .principals( USER_A, GROUP_B, ROLE_C )
+            .build();
 
-        final AccessControlList nodePermissions = AccessControlList.create().
-            add( AccessControlEntry.create().principal( USER_A ).allow( READ ).build() ).
-            add( AccessControlEntry.create().principal( GROUP_B ).allow( CREATE ).build() ).
-            add( AccessControlEntry.create().principal( ROLE_C ).allow( READ, MODIFY, CREATE ).build() ).
-            build();
+        final AccessControlList nodePermissions = AccessControlList.create()
+            .add( AccessControlEntry.create().principal( USER_A ).allow( READ ).build() )
+            .add( AccessControlEntry.create().principal( GROUP_B ).allow( CREATE ).build() )
+            .add( AccessControlEntry.create().principal( ROLE_C ).allow( READ, MODIFY, CREATE ).build() )
+            .build();
 
         assertTrue( NodePermissionsResolver.userHasPermission( authInfo, READ, nodePermissions ) );
         assertTrue( NodePermissionsResolver.userHasPermission( authInfo, CREATE, nodePermissions ) );
@@ -71,16 +69,14 @@ class NodePermissionsResolverTest
     @Test
     void hasPermissionSome()
     {
-        final AuthenticationInfo authInfo = AuthenticationInfo.create().
-            user( User.create().key( USER_A ).login( "usera" ).build() ).
-            principals( USER_A, ROLE_C ).
-            build();
+        final AuthenticationInfo authInfo =
+            AuthenticationInfo.create().user( User.create().key( USER_A ).login( "usera" ).build() ).principals( USER_A, ROLE_C ).build();
 
-        final AccessControlList nodePermissions = AccessControlList.create().
-            add( AccessControlEntry.create().principal( USER_A ).allow( READ ).build() ).
-            add( AccessControlEntry.create().principal( GROUP_B ).allow( CREATE ).build() ).
-            add( AccessControlEntry.create().principal( ROLE_C ).allow( MODIFY ).build() ).
-            build();
+        final AccessControlList nodePermissions = AccessControlList.create()
+            .add( AccessControlEntry.create().principal( USER_A ).allow( READ ).build() )
+            .add( AccessControlEntry.create().principal( GROUP_B ).allow( CREATE ).build() )
+            .add( AccessControlEntry.create().principal( ROLE_C ).allow( MODIFY ).build() )
+            .build();
 
         assertTrue( NodePermissionsResolver.userHasPermission( authInfo, READ, nodePermissions ) );
         assertFalse( NodePermissionsResolver.userHasPermission( authInfo, CREATE, nodePermissions ) );
@@ -92,16 +88,14 @@ class NodePermissionsResolverTest
     void system_admin_has_permission()
     {
 
-        final AuthenticationInfo authInfo = AuthenticationInfo.create().
-            user( User.create().key( USER_A ).login( "usera" ).build() ).
-            principals( RoleKeys.ADMIN ).
-            build();
+        final AuthenticationInfo authInfo =
+            AuthenticationInfo.create().user( User.create().key( USER_A ).login( "usera" ).build() ).principals( RoleKeys.ADMIN ).build();
 
-        final AccessControlList nodePermissions = AccessControlList.create().
-            add( AccessControlEntry.create().principal( USER_A ).allow( READ ).build() ).
-            add( AccessControlEntry.create().principal( GROUP_B ).allow( CREATE ).build() ).
-            add( AccessControlEntry.create().principal( ROLE_C ).allow( MODIFY ).build() ).
-            build();
+        final AccessControlList nodePermissions = AccessControlList.create()
+            .add( AccessControlEntry.create().principal( USER_A ).allow( READ ).build() )
+            .add( AccessControlEntry.create().principal( GROUP_B ).allow( CREATE ).build() )
+            .add( AccessControlEntry.create().principal( ROLE_C ).allow( MODIFY ).build() )
+            .build();
 
         assertTrue( NodePermissionsResolver.userHasPermission( authInfo, READ, nodePermissions ) );
         assertTrue( NodePermissionsResolver.userHasPermission( authInfo, CREATE, nodePermissions ) );

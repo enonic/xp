@@ -29,7 +29,7 @@ public final class ContextHandlerBean
     {
         final ContextBuilder builder = ContextBuilder.from( this.context.get() );
         applyRepository( builder, params.repository );
-        applyAuthInfo( builder, params.username, params.idProvider, params.principals );
+        applyAuthInfo( builder, params.idProvider, params.username, params.principals );
         applyBranch( builder, params.branch );
         addAttributes( builder, params.attributes );
 
@@ -54,13 +54,16 @@ public final class ContextHandlerBean
         }
     }
 
-    private void applyAuthInfo( final ContextBuilder builder, final String username, final String idProvider,
+    private void applyAuthInfo( final ContextBuilder builder, final String idProvider, final String username,
                                 final PrincipalKey[] principals )
     {
         AuthenticationInfo authInfo = this.context.get().getAuthInfo();
         if ( username != null )
         {
-            authInfo = runAsAuthenticated( () -> getAuthenticationInfo( username, idProvider ) );
+            authInfo = runAsAuthenticated( () -> this.securityService.get()
+                .authenticate(
+                    new VerifiedUsernameAuthToken( idProvider == null ? IdProviderKey.system() : IdProviderKey.from( idProvider ),
+                                                   username ) ) );
         }
         if ( principals != null )
         {
@@ -89,17 +92,10 @@ public final class ContextHandlerBean
         }
     }
 
-    private AuthenticationInfo getAuthenticationInfo( final String username, final String idProvider )
-    {
-        final VerifiedUsernameAuthToken token = new VerifiedUsernameAuthToken();
-        token.setUsername( username );
-        token.setIdProvider( idProvider == null ? null : IdProviderKey.from( idProvider ) );
-        return this.securityService.get().authenticate( token );
-    }
-
     private <T> T runAsAuthenticated( final Callable<T> runnable )
     {
-        final AuthenticationInfo authInfo = AuthenticationInfo.create().principals( RoleKeys.AUTHENTICATED ).user( User.ANONYMOUS ).build();
+        final AuthenticationInfo authInfo =
+            AuthenticationInfo.create().principals( RoleKeys.AUTHENTICATED ).user( User.anonymous() ).build();
         return ContextBuilder.from( this.context.get() )
             .authInfo( authInfo )
             .repositoryId( SystemConstants.SYSTEM_REPO_ID )
