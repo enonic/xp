@@ -38,11 +38,9 @@ public final class UpdateWorkflowParams
 
     public static final class Builder
     {
-        @Nullable
-        private ContentId contentId;
+        private @Nullable ContentId contentId;
 
-        @Nullable
-        private WorkflowEditor editor;
+        private @Nullable WorkflowEditor editor;
 
         private Builder()
         {

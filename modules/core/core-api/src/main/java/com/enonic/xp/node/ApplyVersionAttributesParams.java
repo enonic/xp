@@ -57,8 +57,7 @@ public final class ApplyVersionAttributesParams
 
     public static final class Builder
     {
-        @Nullable
-        private NodeVersionId nodeVersionId;
+        private @Nullable NodeVersionId nodeVersionId;
 
         private final Attributes.Builder addAttributes = Attributes.create();
 

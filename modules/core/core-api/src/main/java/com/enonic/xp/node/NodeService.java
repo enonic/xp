@@ -1,6 +1,7 @@
 package com.enonic.xp.node;
 
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import com.google.common.io.ByteSource;
 
@@ -30,7 +31,7 @@ public interface NodeService
 
     Nodes getByIds( NodeIds ids );
 
-    Node getByPath( NodePath path );
+    @Nullable Node getByPath( NodePath path );
 
     Nodes getByPaths( NodePaths paths );
 

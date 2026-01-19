@@ -12,23 +12,17 @@ import com.enonic.xp.region.Regions;
 @PublicApi
 public final class EditablePage
 {
-    @NonNull
-    public final Page source;
+    public final @NonNull Page source;
 
-    @Nullable
-    public DescriptorKey descriptor;
+    public @Nullable DescriptorKey descriptor;
 
-    @Nullable
-    public PageTemplateKey template;
+    public @Nullable PageTemplateKey template;
 
-    @Nullable
-    public Regions regions;
+    public @Nullable Regions regions;
 
-    @Nullable
-    public Component fragment;
+    public @Nullable Component fragment;
 
-    @Nullable
-    public PropertyTree config;
+    public @Nullable PropertyTree config;
 
     public boolean customized;
 
@@ -43,8 +37,7 @@ public final class EditablePage
         this.fragment = source.getFragment();
     }
 
-    @NonNull
-    public Page build()
+    public @NonNull Page build()
     {
         return Page.create()
             .descriptor( descriptor )

@@ -303,8 +303,7 @@ public class Content
         return processedReferences;
     }
 
-    @NonNull
-    public WorkflowInfo getWorkflowInfo()
+    public @NonNull WorkflowInfo getWorkflowInfo()
     {
         return workflowInfo;
     }

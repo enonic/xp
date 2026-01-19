@@ -14,8 +14,7 @@ import com.enonic.xp.page.Page;
 @PublicApi
 public final class EditableContent
 {
-    @NonNull
-    public final Content source;
+    public final @NonNull Content source;
 
     public String displayName;
 
@@ -46,8 +45,7 @@ public final class EditableContent
      *
      * @return the editable page of the content
      */
-    @NonNull
-    public EditablePage page()
+    public @NonNull EditablePage page()
     {
         return this.page == null ? this.page = new EditablePage( Page.create().build() ) : this.page;
     }
@@ -70,8 +68,7 @@ public final class EditableContent
         this.page = this.page( source.getPage() );
     }
 
-    @NonNull
-    public Content build()
+    public @NonNull Content build()
     {
         return Content.create( this.source )
             .displayName( displayName )
