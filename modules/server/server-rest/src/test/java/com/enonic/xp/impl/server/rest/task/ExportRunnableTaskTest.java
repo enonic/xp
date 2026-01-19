@@ -20,7 +20,6 @@ import com.enonic.xp.task.TaskId;
 import com.enonic.xp.util.BinaryReference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -139,6 +138,6 @@ class ExportRunnableTaskTest
         task.run( TaskId.from( "taskId" ), progressReporter );
 
         final ExportNodesParams capturedParams = paramsCaptor.getValue();
-        assertNull( capturedParams.getBatchSize() );
+        assertEquals( 1000, capturedParams.getBatchSize() );
     }
 }
