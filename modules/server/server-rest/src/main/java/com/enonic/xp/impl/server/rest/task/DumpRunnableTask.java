@@ -19,8 +19,6 @@ public class DumpRunnableTask
 
     private final boolean includeVersions;
 
-    private final boolean archive;
-
     private final Integer maxAge;
 
     private final Integer maxVersions;
@@ -33,7 +31,6 @@ public class DumpRunnableTask
     {
         this.name = builder.name;
         this.includeVersions = builder.includeVersions;
-        this.archive = builder.archive;
         this.maxAge = builder.maxAge;
         this.maxVersions = builder.maxVersions;
         this.dumpService = builder.dumpService;
@@ -59,7 +56,6 @@ public class DumpRunnableTask
             .includeBinaries( true )
             .includeVersions( includeVersions )
             .maxAge( maxAge )
-            .archive( archive )
             .maxVersions( maxVersions )
             .listener( new SystemDumpListenerImpl( progressReporter ) )
             .build();
@@ -73,8 +69,6 @@ public class DumpRunnableTask
         private String name;
 
         private boolean includeVersions;
-
-        private boolean archive;
 
         private Integer maxAge;
 
@@ -99,12 +93,6 @@ public class DumpRunnableTask
         public Builder includeVersions( final boolean includeVersions )
         {
             this.includeVersions = includeVersions;
-            return this;
-        }
-
-        public Builder archive( final boolean archive )
-        {
-            this.archive = archive;
             return this;
         }
 

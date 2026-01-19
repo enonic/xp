@@ -1,8 +1,11 @@
 package com.enonic.xp.core.export;
 
-import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.zip.ZipFile;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,8 +16,8 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.core.impl.export.NodeExporter;
 import com.enonic.xp.core.impl.export.writer.ExportWriter;
-import com.enonic.xp.core.impl.export.writer.FileExportWriter;
 import com.enonic.xp.core.impl.export.writer.NodeExportPathResolver;
+import com.enonic.xp.core.impl.export.writer.ZipExportWriter;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.export.NodeExportListener;
 import com.enonic.xp.export.NodeExportResult;
@@ -27,12 +30,14 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.util.BinaryReference;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class NodeExportIntegrationTest
     extends AbstractNodeTest
 {
+    private static final String EXPORT_NAME = "myExport";
+
     @BeforeEach
     void setUp()
     {
@@ -41,6 +46,7 @@ class NodeExportIntegrationTest
 
     @Test
     void single_node()
+        throws IOException
     {
         final Node myNode = createNode( NodePath.ROOT, "myNode" );
 
@@ -52,6 +58,7 @@ class NodeExportIntegrationTest
 
     @Test
     void single_node_with_binary()
+        throws IOException
     {
         final BinaryReference binaryRef = BinaryReference.from( "myFile" );
         final PropertyTree data = new PropertyTree();
@@ -74,6 +81,7 @@ class NodeExportIntegrationTest
 
     @Test
     void single_node_multiple_versions()
+        throws IOException
     {
         final Node node = createNode( NodePath.ROOT, "myNode" );
         final Node updatedNode = updateNode( UpdateNodeParams.create().
@@ -92,6 +100,7 @@ class NodeExportIntegrationTest
 
     @Test
     void single_node_changed_name()
+        throws IOException
     {
         final Node originalNode = createNode( NodePath.ROOT, "initial-name" );
 
@@ -111,6 +120,7 @@ class NodeExportIntegrationTest
 
     @Test
     void single_node_with_binary_changed()
+        throws IOException
     {
         final BinaryReference binaryRef = BinaryReference.from( "myFile" );
         final BinaryReference binaryRefUpdated = BinaryReference.from( "myOtherFile" );
@@ -142,25 +152,32 @@ class NodeExportIntegrationTest
 
     @Test
     void one_node_file()
+        throws IOException
     {
         createNode( NodePath.ROOT, "mynode" );
 
-        final NodeExportResult result = NodeExporter.create().
-            nodeService( this.nodeService ).
-            nodeExportWriter( new FileExportWriter() ).
-            sourceNodePath( NodePath.ROOT ).
-            targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).xpVersion( "1.0.0" ).
-            build().
-            execute();
+        final NodeExportResult result;
+        try (ZipExportWriter exportWriter = ZipExportWriter.create( this.temporaryFolder, EXPORT_NAME ))
+        {
+            result = NodeExporter.create()
+                .nodeService( this.nodeService )
+                .nodeExportWriter( exportWriter )
+                .sourceNodePath( NodePath.ROOT )
+                .targetDirectory( this.temporaryFolder.resolve( EXPORT_NAME ) )
+                .xpVersion( "1.0.0" )
+                .build()
+                .execute();
+        }
 
         assertEquals( 2, result.size() );
 
-        assertFileExists( "myExport/_/node.xml" );
-        assertFileExists( "myExport/mynode/_/node.xml" );
+        assertZipEntryExists( EXPORT_NAME + "/_/node.xml" );
+        assertZipEntryExists( EXPORT_NAME + "/mynode/_/node.xml" );
     }
 
     @Test
     void children_nodes()
+        throws IOException
     {
         final Node root = createNode( NodePath.ROOT, "mynode" );
         final Node child1 = createNode( root.path(), "child1" );
@@ -173,26 +190,31 @@ class NodeExportIntegrationTest
 
         final NodeExportListener nodeExportListener = Mockito.mock( NodeExportListener.class );
 
-        final NodeExportResult result = NodeExporter.create()
-            .nodeService( this.nodeService )
-            .nodeExportWriter( new FileExportWriter() )
-            .sourceNodePath( NodePath.ROOT )
-            .targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).xpVersion( "1.0.0" )
-            .nodeExportListener( nodeExportListener ).
-            build().
-            execute();
+        final NodeExportResult result;
+        try (ZipExportWriter exportWriter = ZipExportWriter.create( this.temporaryFolder, EXPORT_NAME ))
+        {
+            result = NodeExporter.create()
+                .nodeService( this.nodeService )
+                .nodeExportWriter( exportWriter )
+                .sourceNodePath( NodePath.ROOT )
+                .targetDirectory( this.temporaryFolder.resolve( EXPORT_NAME ) )
+                .xpVersion( "1.0.0" )
+                .nodeExportListener( nodeExportListener )
+                .build()
+                .execute();
+        }
 
         assertEquals( 9, result.size() );
 
-        assertFileExists( "myExport/_/node.xml" );
-        assertFileExists( "myExport/mynode/_/node.xml" );
-        assertFileExists( "myExport/mynode/child1/_/node.xml" );
-        assertFileExists( "myExport/mynode/child1/child1_1/_/node.xml" );
-        assertFileExists( "myExport/mynode/child1/child1_2/_/node.xml" );
-        assertFileExists( "myExport/mynode/child1/child1_2/child1_2_1/_/node.xml" );
-        assertFileExists( "myExport/mynode/child1/child1_2/child1_2_2/_/node.xml" );
-        assertFileExists( "myExport/mynode/child2/_/node.xml" );
-        assertFileExists( "myExport/mynode/child2/child2_1/_/node.xml" );
+        assertZipEntryExists( EXPORT_NAME + "/_/node.xml" );
+        assertZipEntryExists( EXPORT_NAME + "/mynode/_/node.xml" );
+        assertZipEntryExists( EXPORT_NAME + "/mynode/child1/_/node.xml" );
+        assertZipEntryExists( EXPORT_NAME + "/mynode/child1/child1_1/_/node.xml" );
+        assertZipEntryExists( EXPORT_NAME + "/mynode/child1/child1_2/_/node.xml" );
+        assertZipEntryExists( EXPORT_NAME + "/mynode/child1/child1_2/child1_2_1/_/node.xml" );
+        assertZipEntryExists( EXPORT_NAME + "/mynode/child1/child1_2/child1_2_2/_/node.xml" );
+        assertZipEntryExists( EXPORT_NAME + "/mynode/child2/_/node.xml" );
+        assertZipEntryExists( EXPORT_NAME + "/mynode/child2/child2_1/_/node.xml" );
 
         Mockito.verify( nodeExportListener ).
             nodeResolved( 9L );
@@ -202,6 +224,7 @@ class NodeExportIntegrationTest
 
     @Test
     void writerOrderList()
+        throws IOException
     {
         final Node root =
             Node.create().name( NodeName.from( "root" ) ).parentPath( NodePath.ROOT ).childOrder( ChildOrder.manualOrder() ).build();
@@ -215,23 +238,29 @@ class NodeExportIntegrationTest
         createNode( root.path(), "child5" );
         createNode( root.path(), "child6" );
 
-        final NodeExportResult result = NodeExporter.create()
-            .nodeService( this.nodeService )
-            .nodeExportWriter( new FileExportWriter() )
-            .sourceNodePath( NodePath.ROOT )
-            .targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).xpVersion( "1.0.0" )
-            .build()
-            .execute();
+        final NodeExportResult result;
+        try (ZipExportWriter exportWriter = ZipExportWriter.create( this.temporaryFolder, EXPORT_NAME ))
+        {
+            result = NodeExporter.create()
+                .nodeService( this.nodeService )
+                .nodeExportWriter( exportWriter )
+                .sourceNodePath( NodePath.ROOT )
+                .targetDirectory( this.temporaryFolder.resolve( EXPORT_NAME ) )
+                .xpVersion( "1.0.0" )
+                .build()
+                .execute();
+        }
 
         assertEquals( 8, result.size() );
 
-        assertFileExists( "myExport/root/_/node.xml" );
-        assertFileExists( "myExport/root/_/manualChildOrder.txt" );
+        assertZipEntryExists( EXPORT_NAME + "/root/_/node.xml" );
+        assertZipEntryExists( EXPORT_NAME + "/root/_/manualChildOrder.txt" );
     }
 
 
     @Test
     void export_from_child_of_child()
+        throws IOException
     {
         final Node root = createNode( NodePath.ROOT, "mynode" );
         final Node child1 = createNode( root.path(), "child1" );
@@ -239,23 +268,29 @@ class NodeExportIntegrationTest
         createNode( child1_1.path(), "child1_1_1" );
         createNode( child1_1.path(), "child1_1_2" );
 
-        final NodeExportResult result = NodeExporter.create()
-            .nodeService( this.nodeService )
-            .nodeExportWriter( new FileExportWriter() )
-            .sourceNodePath( new NodePath( "/mynode/child1/child1_1" ) )
-            .targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).xpVersion( "1.0.0" )
-            .build()
-            .execute();
+        final NodeExportResult result;
+        try (ZipExportWriter exportWriter = ZipExportWriter.create( this.temporaryFolder, EXPORT_NAME ))
+        {
+            result = NodeExporter.create()
+                .nodeService( this.nodeService )
+                .nodeExportWriter( exportWriter )
+                .sourceNodePath( new NodePath( "/mynode/child1/child1_1" ) )
+                .targetDirectory( this.temporaryFolder.resolve( EXPORT_NAME ) )
+                .xpVersion( "1.0.0" )
+                .build()
+                .execute();
+        }
 
         assertEquals( 3, result.getExportedNodes().getSize() );
 
-        assertFileExists( "myExport/child1_1/_/node.xml" );
-        assertFileExists( "myExport/child1_1/child1_1_1/_/node.xml" );
-        assertFileExists( "myExport/child1_1/child1_1_2/_/node.xml" );
+        assertZipEntryExists( EXPORT_NAME + "/child1_1/_/node.xml" );
+        assertZipEntryExists( EXPORT_NAME + "/child1_1/child1_1_1/_/node.xml" );
+        assertZipEntryExists( EXPORT_NAME + "/child1_1/child1_1_2/_/node.xml" );
     }
 
     @Test
     void include_export_root_and_nested_children()
+        throws IOException
     {
         final Node root = createNode( NodePath.ROOT, "mynode" );
         final Node child1 = createNode( root.path(), "child1" );
@@ -264,24 +299,30 @@ class NodeExportIntegrationTest
         createNode( child1_1.path(), "child1_1_1" );
         createNode( child1_1.path(), "child1_1_2" );
 
-        final NodeExportResult result = NodeExporter.create()
-            .nodeService( this.nodeService )
-            .nodeExportWriter( new FileExportWriter() )
-            .sourceNodePath( new NodePath( "/mynode/child1" ) )
-            .targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).xpVersion( "1.0.0" )
-            .build()
-            .execute();
+        final NodeExportResult result;
+        try (ZipExportWriter exportWriter = ZipExportWriter.create( this.temporaryFolder, EXPORT_NAME ))
+        {
+            result = NodeExporter.create()
+                .nodeService( this.nodeService )
+                .nodeExportWriter( exportWriter )
+                .sourceNodePath( new NodePath( "/mynode/child1" ) )
+                .targetDirectory( this.temporaryFolder.resolve( EXPORT_NAME ) )
+                .xpVersion( "1.0.0" )
+                .build()
+                .execute();
+        }
 
         assertEquals( 4, result.getExportedNodes().getSize() );
 
-        assertFileExists( "myExport/child1/_/node.xml" );
-        assertFileExists( "myExport/child1/child1_1/_/node.xml" );
-        assertFileExists( "myExport/child1/child1_1/child1_1_1/_/node.xml" );
-        assertFileExists( "myExport/child1/child1_1/child1_1_2/_/node.xml" );
+        assertZipEntryExists( EXPORT_NAME + "/child1/_/node.xml" );
+        assertZipEntryExists( EXPORT_NAME + "/child1/child1_1/_/node.xml" );
+        assertZipEntryExists( EXPORT_NAME + "/child1/child1_1/child1_1_1/_/node.xml" );
+        assertZipEntryExists( EXPORT_NAME + "/child1/child1_1/child1_1_2/_/node.xml" );
     }
 
     @Test
     void create_binary_files()
+        throws IOException
     {
         final PropertyTree data = new PropertyTree();
         final BinaryReference binaryRef1 = BinaryReference.from( "image1.jpg" );
@@ -297,35 +338,45 @@ class NodeExportIntegrationTest
             attachBinary( binaryRef2, ByteSource.wrap( "this-is-the-binary-data-for-image2".getBytes() ) ).
             build() );
 
-        final NodeExportResult result = NodeExporter.create().
-            nodeService( this.nodeService ).
-            nodeExportWriter( new FileExportWriter() ).
-            sourceNodePath( NodePath.ROOT ).
-            targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).xpVersion( "1.0.0" ).
-            build().
-            execute();
+        final NodeExportResult result;
+        try (ZipExportWriter exportWriter = ZipExportWriter.create( this.temporaryFolder, EXPORT_NAME ))
+        {
+            result = NodeExporter.create()
+                .nodeService( this.nodeService )
+                .nodeExportWriter( exportWriter )
+                .sourceNodePath( NodePath.ROOT )
+                .targetDirectory( this.temporaryFolder.resolve( EXPORT_NAME ) )
+                .xpVersion( "1.0.0" )
+                .build()
+                .execute();
+        }
 
         assertEquals( 2, result.getExportedNodes().getSize() );
         assertEquals( 2, result.getExportedBinaries().size() );
 
-        assertFileExists( "myExport/_/node.xml" );
-        assertFileExists( "myExport/my-node/_/node.xml" );
-        assertFileExists( "myExport/my-node/_/bin/image1.jpg" );
-        assertFileExists( "myExport/my-node/_/bin/image2.jpg" );
+        assertZipEntryExists( EXPORT_NAME + "/_/node.xml" );
+        assertZipEntryExists( EXPORT_NAME + "/my-node/_/node.xml" );
+        assertZipEntryExists( EXPORT_NAME + "/my-node/_/bin/image1.jpg" );
+        assertZipEntryExists( EXPORT_NAME + "/my-node/_/bin/image2.jpg" );
     }
 
     @Test
     void export_properties()
+        throws IOException
     {
-        NodeExporter.create().
-            nodeService( this.nodeService ).
-            nodeExportWriter( new FileExportWriter() ).
-            sourceNodePath( NodePath.ROOT ).
-            xpVersion( "X.Y.Z-SNAPSHOT" ).targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).
-            build().
-            execute();
+        try (ZipExportWriter exportWriter = ZipExportWriter.create( this.temporaryFolder, EXPORT_NAME ))
+        {
+            NodeExporter.create()
+                .nodeService( this.nodeService )
+                .nodeExportWriter( exportWriter )
+                .sourceNodePath( NodePath.ROOT )
+                .xpVersion( "X.Y.Z-SNAPSHOT" )
+                .targetDirectory( this.temporaryFolder.resolve( EXPORT_NAME ) )
+                .build()
+                .execute();
+        }
 
-        assertFileExists( "myExport/export.properties" );
+        assertZipEntryExists( EXPORT_NAME + "/export.properties" );
     }
 
     @Test
@@ -346,11 +397,12 @@ class NodeExportIntegrationTest
             throw new RuntimeException( "exception message" );
         } ).when( exportWriter ).writeElement( Mockito.isA( Path.class ), Mockito.anyString() );
 
-        final NodeExportResult result = NodeExporter.create().
-            nodeService( this.nodeService ).
-            nodeExportWriter( exportWriter ).
-            sourceNodePath( NodePath.ROOT ).
-            targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).xpVersion( "1.0.0" ).
+        final NodeExportResult result = NodeExporter.create().nodeService( this.nodeService )
+            .nodeExportWriter( exportWriter )
+            .sourceNodePath( NodePath.ROOT )
+            .targetDirectory( this.temporaryFolder.resolve( EXPORT_NAME ) )
+            .xpVersion( "1.0.0" )
+            .
             build().
             execute();
 
@@ -360,14 +412,20 @@ class NodeExportIntegrationTest
 
     @Test
     void testRootNotFound()
+        throws IOException
     {
-        final NodeExportResult result = NodeExporter.create().
-            nodeService( this.nodeService ).
-            nodeExportWriter( new FileExportWriter() ).
-            sourceNodePath( NodePath.create().addElement( "unknown" ).build() ).
-            targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).xpVersion( "1.0.0" ).
-            build().
-            execute();
+        final NodeExportResult result;
+        try (ZipExportWriter exportWriter = ZipExportWriter.create( this.temporaryFolder, EXPORT_NAME ))
+        {
+            result = NodeExporter.create()
+                .nodeService( this.nodeService )
+                .nodeExportWriter( exportWriter )
+                .sourceNodePath( NodePath.create().addElement( "unknown" ).build() )
+                .targetDirectory( this.temporaryFolder.resolve( EXPORT_NAME ) )
+                .xpVersion( "1.0.0" )
+                .build()
+                .execute();
+        }
 
         assertEquals( 0, result.size() );
         assertEquals( "Node with path '/unknown' not found in branch 'draft', nothing to export", result.getExportErrors().getFirst().toString() );
@@ -376,72 +434,69 @@ class NodeExportIntegrationTest
     // Asserts and Utils
 
     private NodeExportResult doExportRoot()
+        throws IOException
     {
-        return NodeExporter.create().
-            nodeService( this.nodeService ).
-            nodeExportWriter( new FileExportWriter() ).
-            sourceNodePath( NodePath.ROOT ).
-            targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).xpVersion( "1.0.0" ).
-            build().
-            execute();
+        try (ZipExportWriter exportWriter = ZipExportWriter.create( this.temporaryFolder, EXPORT_NAME ))
+        {
+            return NodeExporter.create()
+                .nodeService( this.nodeService )
+                .nodeExportWriter( exportWriter )
+                .sourceNodePath( NodePath.ROOT )
+                .targetDirectory( this.temporaryFolder.resolve( EXPORT_NAME ) )
+                .xpVersion( "1.0.0" )
+                .build()
+                .execute();
+        }
     }
 
     private void assertExported( final Node node )
+        throws IOException
     {
-        assertThat( getBaseFolder( node ).resolve( NodeExportPathResolver.NODE_XML_EXPORT_NAME ) ).exists();
+        final String entryPath = EXPORT_NAME + node.path().toString() + "/" + NodeExportPathResolver.SYSTEM_FOLDER_NAME + "/" +
+            NodeExportPathResolver.NODE_XML_EXPORT_NAME;
+        assertZipEntryExists( entryPath );
     }
 
     private void assertBinaryExported( final Node node, final BinaryReference ref )
+        throws IOException
     {
-        final Path baseFolder = getBaseFolder( node );
-        assertThat( baseFolder.resolve( NodeExportPathResolver.BINARY_FOLDER ).resolve( ref.toString() ) ).exists();
-    }
-
-    private void assertVersionBinaryExported( final Node exportedNode, final Node exportedVersion, final BinaryReference ref )
-    {
-        assertThat( getBaseFolder( exportedNode ).
-            resolve( NodeExportPathResolver.VERSION_FOLDER ).
-            resolve( exportedVersion.getNodeVersionId().toString() ).
-            resolve( exportedVersion.name().toString() ).resolve( NodeExportPathResolver.BINARY_FOLDER ).resolve( ref.toString() ) ).exists();
-    }
-
-    private Path getBaseFolder( final Node node )
-    {
-        return temporaryFolder.resolve( "myExport" ).resolve( node.path().toString().substring( 1 ) ).resolve( NodeExportPathResolver.SYSTEM_FOLDER_NAME );
+        final String entryPath = EXPORT_NAME + node.path().toString() + "/" + NodeExportPathResolver.SYSTEM_FOLDER_NAME + "/" +
+            NodeExportPathResolver.BINARY_FOLDER + "/" + ref.toString();
+        assertZipEntryExists( entryPath );
     }
 
     private void printPaths()
+        throws IOException
     {
-        final File file = this.temporaryFolder.toFile();
-
-        doPrintPaths( file );
-    }
-
-    private void doPrintPaths( final File file )
-    {
-        if ( file.isDirectory() )
+        final Path zipPath = temporaryFolder.resolve( EXPORT_NAME + ".zip" );
+        if ( !zipPath.toFile().exists() )
         {
-            final File[] children = file.listFiles();
-
-            for ( final File child : children )
-            {
-                doPrintPaths( child );
-            }
+            System.out.println( "Zip file does not exist: " + zipPath );
+            return;
         }
-        else
+        try (ZipFile zipFile = new ZipFile( zipPath.toFile() ))
         {
-            System.out.println( file.toPath() );
+            zipFile.stream().forEach( entry -> System.out.println( entry.getName() ) );
         }
     }
 
-    private void assertFileExists( final String path )
+    private void assertZipEntryExists( final String entryPath )
+        throws IOException
     {
-        assertThat( temporaryFolder.resolve( path ) ).exists();
+        final Set<String> entries = getZipEntries();
+        assertTrue( entries.contains( entryPath ), "Expected entry '" + entryPath + "' not found in zip. Entries: " + entries );
     }
 
-    private void assertFileDoesNotExist( final String path )
+    private Set<String> getZipEntries()
+        throws IOException
     {
-        assertThat( temporaryFolder.resolve( path ) ).doesNotExist();
+        final Path zipPath = temporaryFolder.resolve( EXPORT_NAME + ".zip" );
+        final Set<String> entryNames = new HashSet<>();
+        try (ZipFile zipFile = new ZipFile( zipPath.toFile() ))
+        {
+            zipFile.stream().forEach( entry -> entryNames.add( entry.getName() ) );
+        }
+        return entryNames;
     }
 
 }

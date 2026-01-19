@@ -16,8 +16,6 @@ public class ImportNodesRequestJson
 
     private final boolean importWithPermissions;
 
-    private final boolean archive;
-
     private final String xslSource;
 
     private final Map<String, Object> xslParams;
@@ -27,7 +25,6 @@ public class ImportNodesRequestJson
                                    @JsonProperty("targetRepoPath") final String targetRepoPath, //
                                    @JsonProperty("importWithIds") final Boolean importWithIds, //
                                    @JsonProperty("importWithPermissions") final Boolean importWithPermissions, //
-                                   @JsonProperty("archive") final Boolean archive, //
                                    @JsonProperty("xslSource") final String xslSource, //
                                    @JsonProperty("xslParams") final Map<String, Object> xslParams )
 
@@ -40,7 +37,6 @@ public class ImportNodesRequestJson
         this.exportName = exportName;
         this.importWithIds = importWithIds != null ? importWithIds : true;
         this.importWithPermissions = importWithPermissions != null ? importWithPermissions : true;
-        this.archive = archive != null ? archive : false;
         this.xslSource = xslSource;
         this.xslParams = xslParams;
     }
@@ -65,10 +61,6 @@ public class ImportNodesRequestJson
         return importWithPermissions;
     }
 
-    public boolean isArchive()
-    {
-        return archive;
-    }
 
     public String getXslSource()
     {

@@ -31,13 +31,11 @@ import com.enonic.xp.core.impl.audit.AuditLogConstants;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.dump.BranchDumpResult;
-import com.enonic.xp.dump.DumpUpgradeResult;
 import com.enonic.xp.dump.RepoDumpResult;
 import com.enonic.xp.dump.RepoLoadResult;
 import com.enonic.xp.dump.SystemDumpListener;
 import com.enonic.xp.dump.SystemDumpParams;
 import com.enonic.xp.dump.SystemDumpResult;
-import com.enonic.xp.dump.SystemDumpUpgradeParams;
 import com.enonic.xp.dump.SystemLoadListener;
 import com.enonic.xp.dump.SystemLoadParams;
 import com.enonic.xp.dump.SystemLoadResult;
@@ -45,9 +43,9 @@ import com.enonic.xp.dump.VersionsLoadResult;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexPath;
+import com.enonic.xp.node.ApplyVersionAttributesParams;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.Attributes;
-import com.enonic.xp.node.ApplyVersionAttributesParams;
 import com.enonic.xp.node.BinaryAttachment;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.GetActiveNodeVersionsParams;
@@ -72,12 +70,11 @@ import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.config.RepoConfigurationDynamic;
-import com.enonic.xp.repo.impl.dump.DumpConstants;
 import com.enonic.xp.repo.impl.dump.DumpServiceImpl;
 import com.enonic.xp.repo.impl.dump.FileUtils;
 import com.enonic.xp.repo.impl.dump.RepoDumpException;
+import com.enonic.xp.repo.impl.dump.RepoLoadException;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
-import com.enonic.xp.repo.impl.dump.reader.FileDumpReader;
 import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre5.Pre5ContentConstants;
 import com.enonic.xp.repo.impl.node.NodeHelper;
 import com.enonic.xp.repo.impl.repository.CreateRepositoryIndexParams;
@@ -94,11 +91,9 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
-import com.enonic.xp.upgrade.UpgradeListener;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.util.Reference;
-import com.enonic.xp.util.Version;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -143,7 +138,7 @@ class DumpServiceImplTest
         refresh();
 
         final SystemDumpResult systemDumpResult = NodeHelper.runAsAdmin( () -> this.dumpService.dump(
-            SystemDumpParams.create().archive( true ).includeVersions( true ).dumpName( "testDump" ).build() ) );
+            SystemDumpParams.create().includeVersions( true ).dumpName( "testDump" ).build() ) );
 
         // 4 of node, 1 of root
         assertEquals( 5, systemDumpResult.get( testRepoId ).getVersions() );
@@ -152,7 +147,7 @@ class DumpServiceImplTest
         assertEquals( 2, branchDumpResult.getSuccessful() );
 
         NodeHelper.runAsAdmin( () -> this.dumpService.load(
-            SystemLoadParams.create().archive( true ).includeVersions( true ).dumpName( "testDump" ).build() ) );
+            SystemLoadParams.create().includeVersions( true ).dumpName( "testDump" ).build() ) );
 
         final Repositories newRepos = NodeHelper.runAsAdmin( this::doListRepositories );
 
@@ -767,45 +762,6 @@ class DumpServiceImplTest
     }
 
     @Test
-    void upgrade_up_to_date()
-    {
-        NodeHelper.runAsAdmin( () -> {
-            doDump( SystemDumpParams.create().dumpName( "testDump" ).build() );
-
-            final SystemDumpUpgradeParams params = SystemDumpUpgradeParams.create().dumpName( "testDump" ).build();
-            final DumpUpgradeResult result = this.dumpService.upgrade( params );
-            Assertions.assertEquals( DumpConstants.MODEL_VERSION, result.getInitialVersion() );
-            assertEquals( DumpConstants.MODEL_VERSION, result.getUpgradedVersion() );
-        } );
-    }
-
-    @Test
-    void upgrade()
-        throws Exception
-    {
-        final String dumpName = "testDump";
-        createIncompatibleDump( dumpName );
-
-        NodeHelper.runAsAdmin( () -> {
-            final UpgradeListener upgradeListener = mock( UpgradeListener.class );
-
-            final SystemDumpUpgradeParams params =
-                SystemDumpUpgradeParams.create().dumpName( dumpName ).upgradeListener( upgradeListener ).build();
-
-            final DumpUpgradeResult result = this.dumpService.upgrade( params );
-            assertEquals( new Version( 0, 0, 0 ), result.getInitialVersion() );
-            assertEquals( DumpConstants.MODEL_VERSION, result.getUpgradedVersion() );
-
-            Mockito.verify( upgradeListener, Mockito.times( 8 ) ).upgraded();
-            Mockito.verify( upgradeListener, Mockito.times( 1 ) ).total( 8 );
-
-            FileDumpReader reader = FileDumpReader.create( null, temporaryFolder, dumpName );
-            final DumpMeta updatedMeta = reader.getDumpMeta();
-            assertEquals( DumpConstants.MODEL_VERSION, updatedMeta.getModelVersion() );
-        } );
-    }
-
-    @Test
     void loadWithUpgrade()
         throws Exception
     {
@@ -813,49 +769,8 @@ class DumpServiceImplTest
         createIncompatibleDump( dumpName );
 
         NodeHelper.runAsAdmin( () -> {
-            this.dumpService.load( SystemLoadParams.create().dumpName( dumpName ).upgrade( true ).includeVersions( true ).build() );
-
-            FileDumpReader reader = FileDumpReader.create( null, temporaryFolder, dumpName );
-            final DumpMeta updatedMeta = reader.getDumpMeta();
-            assertEquals( DumpConstants.MODEL_VERSION, updatedMeta.getModelVersion() );
-
-            final NodeId nodeId = NodeId.from( "f0fb822c-092d-41f9-a961-f3811d81e55a" );
-            final NodeId fragmentNodeId = NodeId.from( "7ee16649-85c6-4a76-8788-74be03be6c7a" );
-            final NodeId postNodeId = NodeId.from( "1f798176-5868-411b-8093-242820c20620" );
-            final NodePath nodePath = new NodePath( "/content/mysite" );
-            final NodeVersionId draftNodeVersionId = NodeVersionId.from( "f3765655d5f0c7c723887071b517808dae00556c" );
-            final NodeVersionId masterNodeVersionId = NodeVersionId.from( "02e61f29a57309834d96bbf7838207ac456bbf5c" );
-
-            ContextBuilder.from( ContextAccessor.current() ).repositoryId( "com.enonic.cms.default" ).build().runWith( () -> {
-                final Node draftNode = nodeService.getById( nodeId );
-                assertNotNull( draftNode );
-                assertEquals( draftNodeVersionId, draftNode.getNodeVersionId() );
-                assertEquals( nodePath, draftNode.path() );
-                assertEquals( "2019-02-20T14:44:06.883Z", draftNode.getTimestamp().toString() );
-
-                final Node masterNode = ContextBuilder.from( ContextAccessor.current() )
-                    .branch( Branch.from( "master" ) )
-                    .build()
-                    .callWith( () -> nodeService.getById( nodeId ) );
-                assertNotNull( masterNode );
-                assertEquals( masterNodeVersionId, masterNode.getNodeVersionId() );
-                assertEquals( nodePath, masterNode.path() );
-                assertEquals( "2018-11-23T11:14:21.662Z", masterNode.getTimestamp().toString() );
-
-                checkCommitUpgrade( nodeId );
-                checkPageFlatteningUpgradePage( draftNode );
-
-                final Node fragmentNode = nodeService.getById( fragmentNodeId );
-                checkPageFlatteningUpgradeFragment( fragmentNode );
-
-                checkRepositoryUpgrade( updatedMeta );
-
-                final Node postNode = nodeService.getById( postNodeId );
-                checkHtmlAreaUpgrade( draftNode, postNode );
-
-                checkLanguageUpgrade( draftNode );
-            } );
-
+            Assertions.assertThrows( RepoLoadException.class, () -> this.dumpService.load(
+                SystemLoadParams.create().dumpName( dumpName ).archive( false ).includeVersions( true ).build() ) );
         } );
     }
 
