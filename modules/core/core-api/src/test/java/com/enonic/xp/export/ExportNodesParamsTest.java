@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.node.NodePath;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ExportNodesParamsTest
@@ -23,11 +22,11 @@ class ExportNodesParamsTest
     }
 
     @Test
-    void batchSize_default_is_null()
+    void batchSize_default_is_1000()
     {
         ExportNodesParams result = ExportNodesParams.create().sourceNodePath( NodePath.ROOT ).exportName( "target" ).build();
 
-        assertNull( result.getBatchSize() );
+        assertEquals( 1000, result.getBatchSize() );
     }
 
     @Test
