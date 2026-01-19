@@ -1,4 +1,4 @@
-exports.get = function (req) {
+exports.GET = req => {
 
     var mode = req.params['mode'];
 
@@ -13,5 +13,4 @@ exports.get = function (req) {
             status: 200
         };
     }
-
 };

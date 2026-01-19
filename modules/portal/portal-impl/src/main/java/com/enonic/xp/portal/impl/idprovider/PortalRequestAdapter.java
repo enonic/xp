@@ -39,7 +39,7 @@ class PortalRequestAdapter
         final PortalRequest result = new PortalRequest();
 
         result.setRawRequest( req );
-        result.setMethod( HttpMethod.valueOf( req.getMethod().toUpperCase( Locale.ROOT ) ) );
+        result.setMethod( HttpMethod.valueOf( req.getMethod() ) );
         result.setScheme( req.getScheme() );
         result.setHost( req.getServerName() );
         result.setPort( req.getServerPort() );

@@ -1,6 +1,5 @@
 package com.enonic.xp.web.impl.serializer;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
@@ -15,16 +14,16 @@ import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 public final class RequestSerializer
 {
     private final WebRequest webRequest;
+
     public RequestSerializer( final WebRequest webRequest )
     {
         this.webRequest = webRequest;
     }
 
     public void serialize( final HttpServletRequest request )
-        throws IOException {
+    {
         webRequest.setRawRequest( request );
-        webRequest.setMethod( HttpMethod.valueOf( request.getMethod().toUpperCase() ) );
-
+        webRequest.setMethod( HttpMethod.valueOf( request.getMethod() ) );
         webRequest.setScheme( request.getScheme() );
         webRequest.setHost( request.getServerName() );
         webRequest.setPort( request.getServerPort() );
