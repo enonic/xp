@@ -38,7 +38,7 @@ goto fail
 
 :init
 set XP_INSTALL=%DIRNAME%..
-set DEFAULT_JAVA_OPTS=-XX:-OmitStackTraceInFastThrow -XX:+AlwaysPreTouch
+set DEFAULT_JAVA_OPTS=-XX:-OmitStackTraceInFastThrow -XX:+AlwaysPreTouch -Djava.net.preferIPv4Stack=true
 set DEFAULT_JAVA_DEBUG_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005
 set CONSTANT_XP_OPTS=-Dfile.encoding=UTF8 -Dmapper.allow_dots_in_name=true --add-exports java.base/jdk.internal.ref=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.nio=ALL-UNNAMED --add-opens java.base/sun.nio.ch=ALL-UNNAMED --add-opens java.management/sun.management=ALL-UNNAMED --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED --enable-native-access=ALL-UNNAMED --enable-native-access=org.graalvm.truffle
 
