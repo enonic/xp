@@ -61,8 +61,7 @@ public class ExportServiceImpl
 
         try ( exportWriter )
         {
-            return NodeExporter.create()
-                .sourceNodePath( params.getSourceNodePath() )
+            return NodeExporter.create().sourceNodePath( params.getSourceNodePath() ).batchSize( params.getBatchSize() )
                 .nodeService( this.nodeService )
                 .nodeExportWriter( exportWriter )
                 .targetDirectory( targetDirectory )

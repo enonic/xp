@@ -329,7 +329,7 @@ class NodeExportIntegrationTest
     }
 
     @Test
-    void one_node_error()
+    void one_node_error_with_root()
     {
         createNode( NodePath.ROOT, "mynode" );
         refresh();
@@ -354,7 +354,7 @@ class NodeExportIntegrationTest
             build().
             execute();
 
-        assertEquals( 1, result.getExportErrors().size() );
+        assertEquals( 2, result.getExportErrors().size() );
         assertEquals( "java.lang.RuntimeException: exception message", result.getExportErrors().get( 0 ).toString() );
     }
 

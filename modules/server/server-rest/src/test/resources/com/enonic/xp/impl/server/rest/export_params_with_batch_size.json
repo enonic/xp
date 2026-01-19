@@ -1,0 +1,6 @@
+{
+  "sourceRepoPath": "repo:branch:/path/to/content",
+  "exportName": "my_export_batch",
+  "batchSize": 50
+}
+
