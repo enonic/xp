@@ -68,7 +68,7 @@ public class NodeExporter
         this.exportWriter = builder.exportWriter;
         this.targetDirectory = builder.targetDirectory;
         this.xpVersion = Objects.requireNonNull( builder.xpVersion );
-        this.batchSize = builder.batchSize;
+        this.batchSize = Math.max( 1, builder.batchSize );
         this.nodeExportListener = builder.nodeExportListener;
     }
 
