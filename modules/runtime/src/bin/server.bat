@@ -45,7 +45,7 @@ set CONSTANT_XP_OPTS=-Dfile.encoding=UTF8 -Dmapper.allow_dots_in_name=true --add
 if "%JAVA_OPTS%" == "" set JAVA_OPTS=%DEFAULT_JAVA_OPTS%
 if "%JAVA_DEBUG_OPTS%" == "" set JAVA_DEBUG_OPTS=%DEFAULT_JAVA_DEBUG_OPTS%
 
-if "%1"=="debug" set JAVA_OPTS=%JAVA_OPçTS% %JAVA_DEBUG_OPTS%
+if "%1"=="debug" set JAVA_OPTS=%JAVA_OPTS% %JAVA_DEBUG_OPTS%
 
 if defined XP_TMP (
   set "TMPDIR=%XP_TMP%"
