@@ -70,26 +70,21 @@ class ApplicationServiceTest
         AppConfig appConfig = mock( AppConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
 
         ApplicationRepoServiceImpl repoService = new ApplicationRepoServiceImpl( nodeService );
-        ApplicationRepoInitializer.create().
-            setIndexService( indexService ).
-            setNodeService( nodeService ).
-            build().
-            initialize();
+        ApplicationRepoInitializer.create().setIndexService( indexService ).setNodeService( nodeService ).build().initialize();
 
         BundleContext bundleContext = felix.getBundleContext();
 
-        ApplicationFactoryServiceImpl applicationFactoryService = new ApplicationFactoryServiceImpl( bundleContext, nodeService, appConfig );
+        ApplicationFactoryServiceImpl applicationFactoryService =
+            new ApplicationFactoryServiceImpl( bundleContext, nodeService, appConfig );
         applicationFactoryService.activate();
 
         ApplicationAuditLogSupportImpl applicationAuditLogSupport = new ApplicationAuditLogSupportImpl( mock( AuditLogService.class ) );
         applicationAuditLogSupport.activate( appConfig );
 
-        this.applicationService = new ApplicationServiceImpl( new ApplicationRegistryImpl( bundleContext, new ApplicationListenerHub(),
-                                                                                           applicationFactoryService ), repoService,
-                                                              new EventPublisherImpl( Executors.newSingleThreadExecutor() ),
-                                                              new AppFilterServiceImpl( appConfig ),
-                                                              new VirtualAppService(  nodeService ),
-                                                              applicationAuditLogSupport );
+        this.applicationService = new ApplicationServiceImpl(
+            new ApplicationRegistryImpl( bundleContext, new ApplicationListenerHub(), applicationFactoryService ), repoService,
+            new EventPublisherImpl( Executors.newSingleThreadExecutor() ), new AppFilterServiceImpl( appConfig ),
+            new VirtualAppService( nodeService ), applicationAuditLogSupport );
     }
 
     @AfterEach
@@ -142,7 +137,7 @@ class ApplicationServiceTest
     private Context adminContext()
     {
         return ContextBuilder.from( ContextAccessor.current() )
-            .authInfo( AuthenticationInfo.create().principals( RoleKeys.ADMIN ).user( User.ANONYMOUS ).build() )
+            .authInfo( AuthenticationInfo.create().principals( RoleKeys.ADMIN ).user( User.anonymous() ).build() )
             .build();
     }
 
@@ -162,7 +157,8 @@ class ApplicationServiceTest
                                                              .setHeader( Constants.BUNDLE_SYMBOLICNAME, "appName" )
                                                              .setHeader( Constants.BUNDLE_VERSION, appVersion )
                                                              .setHeader( "X-Bundle-Type", "application" )
-                                                             .addResource( "site/site.xml", getClass().getResource( "/myapp/site/site.xml" ) )
+                                                             .addResource( "site/site.xml",
+                                                                           getClass().getResource( "/myapp/site/site.xml" ) )
                                                              .build() ) );
     }
 

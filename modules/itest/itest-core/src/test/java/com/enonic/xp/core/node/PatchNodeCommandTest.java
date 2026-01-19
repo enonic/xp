@@ -267,7 +267,7 @@ class PatchNodeCommandTest
                                           .addPermissions( AccessControlList.create()
                                                                .add( AccessControlEntry.create()
                                                                          .allowAll()
-                                                                         .principal( User.ANONYMOUS.getKey() )
+                                                                         .principal( User.anonymous().getKey() )
                                                                          .build() )
                                                                .build() )
                                           .build() );
@@ -278,7 +278,7 @@ class PatchNodeCommandTest
                                           .addPermissions( AccessControlList.create()
                                                                .add( AccessControlEntry.create()
                                                                          .allow( Permission.READ )
-                                                                         .principal( User.ANONYMOUS.getKey() )
+                                                                         .principal( PrincipalKey.ofAnonymous() )
                                                                          .build() )
                                                                .build() )
                                           .build() );
@@ -287,8 +287,9 @@ class PatchNodeCommandTest
 
         final Branch branch = ContextAccessor.current().getBranch();
 
-        final Context userContext =
-            ContextBuilder.from( ContextAccessor.current() ).authInfo( AuthenticationInfo.create().user( User.ANONYMOUS ).build() ).build();
+        final Context userContext = ContextBuilder.from( ContextAccessor.current() )
+            .authInfo( AuthenticationInfo.create().user( User.anonymous() ).build() )
+            .build();
 
         final PatchNodeResult result = userContext.callWith( () -> nodeService.patch( PatchNodeParams.create()
                                                                                           .id( createdNode.id() )

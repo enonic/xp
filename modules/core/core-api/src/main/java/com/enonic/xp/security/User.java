@@ -15,12 +15,6 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 public final class User
     extends Principal
 {
-    public static final User ANONYMOUS = User.create().
-        key( PrincipalKey.ofAnonymous() ).
-        displayName( "Anonymous User" ).
-        login( "anonymous" ).
-        build();
-
     private final String email;
 
     private final String login;
@@ -65,6 +59,11 @@ public final class User
     public PropertyTree getProfile()
     {
         return profile;
+    }
+
+    public static User anonymous()
+    {
+        return User.create().key( PrincipalKey.ofAnonymous() ).displayName( "Anonymous User" ).login( "anonymous" ).build();
     }
 
     @Override

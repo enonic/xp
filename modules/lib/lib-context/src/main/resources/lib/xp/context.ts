@@ -80,7 +80,7 @@ const bean: ContextHandler = __.newBean<ContextHandler>('com.enonic.xp.lib.conte
  * @param {string} [context.branch] Name of the branch to execute the callback in. Default is the current branch set in portal.
  * @param {object} [context.user] User to execute the callback with. Default is the current user.
  * @param {string} context.user.login Login of the user.
- * @param {string} [context.user.idProvider] Id provider containing the user. By default, all the id providers will be used.
+ * @param {string} [context.user.idProvider] Id provider containing the user. By default, the system id provider will be used.
  * @param {array} [context.principals] Additional principals to execute the callback with.
  * @param {object} [context.attributes] Additional Context attributes.
  * @param {function} callback Function to execute.

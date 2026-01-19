@@ -33,22 +33,12 @@ class AccessControlTest
     @Test
     void index_has_read()
     {
-        final AccessControlList aclList = AccessControlList.create().
-            add( AccessControlEntry.create().
-                principal( PrincipalKey.from( "user:myidprovider:rmy" ) ).
-                allow( Permission.READ ).
-                build() ).
-            add( AccessControlEntry.create().
-                principal( PrincipalKey.from( "user:myidprovider:tsi" ) ).
-                allow( Permission.READ ).
-                build() ).
-            build();
+        final AccessControlList aclList = AccessControlList.create()
+            .add( AccessControlEntry.create().principal( PrincipalKey.from( "user:myidprovider:rmy" ) ).allow( Permission.READ ).build() )
+            .add( AccessControlEntry.create().principal( PrincipalKey.from( "user:myidprovider:tsi" ) ).allow( Permission.READ ).build() )
+            .build();
 
-        final CreateNodeParams params = CreateNodeParams.create().
-            name( "my-node" ).
-            parent( NodePath.ROOT ).
-            permissions( aclList ).
-            build();
+        final CreateNodeParams params = CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).permissions( aclList ).build();
 
         this.nodeService.create( params );
     }
@@ -57,39 +47,23 @@ class AccessControlTest
     @Test
     void role_system_admin_can_access_everything()
     {
-        final AccessControlList aclList = AccessControlList.create().
-            add( AccessControlEntry.create().
-                principal( PrincipalKey.from( "user:myidprovider:rmy" ) ).
-                allow( Permission.READ ).
-                build() ).
-            add( AccessControlEntry.create().
-                principal( PrincipalKey.from( "user:myidprovider:tsi" ) ).
-                allow( Permission.READ ).
-                build() ).
-            build();
+        final AccessControlList aclList = AccessControlList.create()
+            .add( AccessControlEntry.create().principal( PrincipalKey.from( "user:myidprovider:rmy" ) ).allow( Permission.READ ).build() )
+            .add( AccessControlEntry.create().principal( PrincipalKey.from( "user:myidprovider:tsi" ) ).allow( Permission.READ ).build() )
+            .build();
 
-        final CreateNodeParams params = CreateNodeParams.create().
-            name( "my-node" ).
-            parent( NodePath.ROOT ).
-            permissions( aclList ).
-            build();
+        final CreateNodeParams params = CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).permissions( aclList ).build();
 
         final Node node = this.nodeService.create( params );
 
-        final Context anonContext = ContextBuilder.from( ctxDefault() ).
-            authInfo( AuthenticationInfo.create().
-                user( User.ANONYMOUS ).
-                build() ).
-            build();
+        final Context anonContext =
+            ContextBuilder.from( ctxDefault() ).authInfo( AuthenticationInfo.create().user( User.anonymous() ).build() ).build();
 
         assertNull( anonContext.callWith( () -> getNode( node.id() ) ) );
 
-        final Context anonContextWithAdminUserRole = ContextBuilder.from( ctxDefault() ).
-            authInfo( AuthenticationInfo.create().
-                principals( RoleKeys.ADMIN ).
-                user( User.ANONYMOUS ).
-                build() ).
-            build();
+        final Context anonContextWithAdminUserRole = ContextBuilder.from( ctxDefault() )
+            .authInfo( AuthenticationInfo.create().principals( RoleKeys.ADMIN ).user( User.anonymous() ).build() )
+            .build();
 
         assertNotNull( anonContextWithAdminUserRole.callWith( () -> getNode( node.id() ) ) );
     }

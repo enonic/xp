@@ -246,13 +246,8 @@ public class RescheduleTask
             return ContextBuilder.from( ContextAccessor.current() ).authInfo( AuthenticationInfo.unAuthenticated() ).build();
         }
 
-        final AuthenticationInfo authInfo = OsgiSupport.withService( SecurityService.class, securityService -> {
-            final VerifiedUsernameAuthToken token = new VerifiedUsernameAuthToken();
-            token.setIdProvider( user.getIdProviderKey() );
-            token.setUsername( user.getId() );
-
-            return securityService.authenticate( token );
-        } );
+        final AuthenticationInfo authInfo = OsgiSupport.withService( SecurityService.class, securityService -> securityService.authenticate(
+            new VerifiedUsernameAuthToken( user.getIdProviderKey(), user.getId() ) ) );
 
         return ContextBuilder.from( ContextAccessor.current() ).authInfo( authInfo ).build();
     }

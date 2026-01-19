@@ -13,13 +13,13 @@ class PrincipalTest
     @Test
     void testCreateUser()
     {
-        final User user = User.create().
-            login( "userlogin" ).
-            displayName( "my user" ).
-            key( PrincipalKey.ofUser( IdProviderKey.from( "myidprovider" ), "userid" ) ).
-            email( "user@email" ).
-            modifiedTime( Instant.ofEpochSecond( 0 ) ).
-            build();
+        final User user = User.create()
+            .login( "userlogin" )
+            .displayName( "my user" )
+            .key( PrincipalKey.ofUser( IdProviderKey.from( "myidprovider" ), "userid" ) )
+            .email( "user@email" )
+            .modifiedTime( Instant.ofEpochSecond( 0 ) )
+            .build();
 
         assertEquals( "userlogin", user.getLogin() );
         assertEquals( "my user", user.getDisplayName() );
@@ -39,11 +39,11 @@ class PrincipalTest
     @Test
     void testCreateGroup()
     {
-        final Group group = Group.create().
-            displayName( "my group" ).
-            key( PrincipalKey.ofGroup( IdProviderKey.from( "myidprovider" ), "groupid" ) ).
-            modifiedTime( Instant.ofEpochSecond( 0 ) ).
-            build();
+        final Group group = Group.create()
+            .displayName( "my group" )
+            .key( PrincipalKey.ofGroup( IdProviderKey.from( "myidprovider" ), "groupid" ) )
+            .modifiedTime( Instant.ofEpochSecond( 0 ) )
+            .build();
 
         assertEquals( "my group", group.getDisplayName() );
         assertEquals( PrincipalKey.from( "group:myidprovider:groupid" ), group.getKey() );
@@ -58,21 +58,21 @@ class PrincipalTest
     @Test
     void testAnonymous()
     {
-        assertTrue( User.ANONYMOUS.getKey().isAnonymous() );
-        assertEquals( "anonymous", User.ANONYMOUS.getKey().getId() );
-        assertEquals( "anonymous", User.ANONYMOUS.getName() );
-        assertEquals( "Anonymous User", User.ANONYMOUS.getDisplayName() );
-        assertEquals( "user:system:anonymous", User.ANONYMOUS.toString() );
+        assertTrue( User.anonymous().getKey().isAnonymous() );
+        assertEquals( "anonymous", User.anonymous().getKey().getId() );
+        assertEquals( "anonymous", User.anonymous().getName() );
+        assertEquals( "Anonymous User", User.anonymous().getDisplayName() );
+        assertEquals( "user:system:anonymous", User.anonymous().toString() );
     }
 
     @Test
     void testCreateRole()
     {
-        final Role role = Role.create().
-            displayName( "my role" ).
-            key( PrincipalKey.ofRole( "administrators" ) ).
-            modifiedTime( Instant.ofEpochSecond( 0 ) ).
-            build();
+        final Role role = Role.create()
+            .displayName( "my role" )
+            .key( PrincipalKey.ofRole( "administrators" ) )
+            .modifiedTime( Instant.ofEpochSecond( 0 ) )
+            .build();
 
         assertEquals( "my role", role.getDisplayName() );
         assertEquals( PrincipalKey.from( "role:administrators" ), role.getKey() );
