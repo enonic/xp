@@ -51,7 +51,6 @@ public final class SystemResource
         TaskId taskId = DumpRunnableTask.create()
             .name( params.getName() )
             .includeVersions( params.isIncludeVersions() )
-            .archive( params.isArchive() )
             .maxAge( params.getMaxAge() )
             .maxVersions( params.getMaxVersions() )
             .taskService( taskService )
@@ -68,7 +67,6 @@ public final class SystemResource
         final LoadRunnableTask task = LoadRunnableTask.create()
             .name( params.getName() )
             .upgrade( params.isUpgrade() )
-            .archive( params.isArchive() )
             .taskService( taskService )
             .dumpService( dumpService )
             .build();

@@ -67,7 +67,6 @@ class LoadRunnableTaskTest
             .dumpService( dumpService )
             .name( params.getName() )
             .upgrade( params.isUpgrade() )
-            .archive( params.isArchive() )
             .build();
     }
 
@@ -96,8 +95,7 @@ class LoadRunnableTaskTest
 
         when( this.dumpService.load( any( SystemLoadParams.class ) ) ).thenReturn( systemLoadResult );
 
-        final LoadRunnableTask task =
-            createTask( new SystemLoadRequestJson( params.getDumpName(), params.isUpgrade(), params.isArchive() ) );
+        final LoadRunnableTask task = createTask( new SystemLoadRequestJson( params.getDumpName(), params.isUpgrade() ) );
 
         ProgressReporter progressReporter = mock( ProgressReporter.class );
 

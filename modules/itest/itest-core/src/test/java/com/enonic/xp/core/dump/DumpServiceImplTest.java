@@ -45,9 +45,9 @@ import com.enonic.xp.dump.VersionsLoadResult;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexPath;
+import com.enonic.xp.node.ApplyVersionAttributesParams;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.Attributes;
-import com.enonic.xp.node.ApplyVersionAttributesParams;
 import com.enonic.xp.node.BinaryAttachment;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.GetActiveNodeVersionsParams;
@@ -143,7 +143,7 @@ class DumpServiceImplTest
         refresh();
 
         final SystemDumpResult systemDumpResult = NodeHelper.runAsAdmin( () -> this.dumpService.dump(
-            SystemDumpParams.create().archive( true ).includeVersions( true ).dumpName( "testDump" ).build() ) );
+            SystemDumpParams.create().includeVersions( true ).dumpName( "testDump" ).build() ) );
 
         // 4 of node, 1 of root
         assertEquals( 5, systemDumpResult.get( testRepoId ).getVersions() );
@@ -152,7 +152,7 @@ class DumpServiceImplTest
         assertEquals( 2, branchDumpResult.getSuccessful() );
 
         NodeHelper.runAsAdmin( () -> this.dumpService.load(
-            SystemLoadParams.create().archive( true ).includeVersions( true ).dumpName( "testDump" ).build() ) );
+            SystemLoadParams.create().includeVersions( true ).dumpName( "testDump" ).build() ) );
 
         final Repositories newRepos = NodeHelper.runAsAdmin( this::doListRepositories );
 

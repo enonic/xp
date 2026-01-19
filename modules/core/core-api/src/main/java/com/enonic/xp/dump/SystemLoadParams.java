@@ -8,8 +8,6 @@ public final class SystemLoadParams
 
     private final boolean upgrade;
 
-    private final boolean archive;
-
     private final SystemLoadListener listener;
 
     private SystemLoadParams( final Builder builder )
@@ -18,7 +16,6 @@ public final class SystemLoadParams
         this.includeVersions = builder.includeVersions;
         this.listener = builder.listener;
         this.upgrade = builder.upgrade;
-        this.archive = builder.archive;
     }
 
     public String getDumpName()
@@ -41,11 +38,6 @@ public final class SystemLoadParams
         return upgrade;
     }
 
-    public boolean isArchive()
-    {
-        return archive;
-    }
-
     public static Builder create()
     {
         return new Builder();
@@ -58,8 +50,6 @@ public final class SystemLoadParams
         private boolean includeVersions = false;
 
         private boolean upgrade = false;
-
-        private boolean archive;
 
         private SystemLoadListener listener;
 
@@ -88,12 +78,6 @@ public final class SystemLoadParams
         public Builder upgrade( final boolean upgrade )
         {
             this.upgrade = upgrade;
-            return this;
-        }
-
-        public Builder archive( final boolean archive )
-        {
-            this.archive = archive;
             return this;
         }
 

@@ -222,9 +222,7 @@ public class DumpServiceImpl
 
         final Path basePath = ensureBasePath();
 
-        final DumpWriter writer = params.isArchive()
-            ? ZipDumpWriter.create( basePath, params.getDumpName(), blobStore )
-            : FileDumpWriter.create( basePath, params.getDumpName(), blobStore );
+        final DumpWriter writer = ZipDumpWriter.create( basePath, params.getDumpName(), blobStore );
         try (writer)
         {
             final List<Repository> repositories = repositoryEntryService.findRepositoryEntryIds()
@@ -292,9 +290,7 @@ public class DumpServiceImpl
 
         final SystemLoadResult.Builder results = SystemLoadResult.create();
 
-        final DumpReader dumpReader = params.isArchive()
-            ? ZipDumpReader.create( params.getListener(), basePath, params.getDumpName() )
-            : FileDumpReader.create( params.getListener(), basePath, params.getDumpName() );
+        final DumpReader dumpReader = ZipDumpReader.create( params.getListener(), basePath, params.getDumpName() );
 
         try (dumpReader)
         {
@@ -403,15 +399,8 @@ public class DumpServiceImpl
         {
             if ( params.isUpgrade() )
             {
-                if ( params.isArchive() )
-                {
-                    throw new RepoLoadException(
-                        "Cannot load system-dump; upgrade is not possible on archived dump; unarchive and upgrade the system-dump" );
-                }
-                final SystemDumpUpgradeParams dumpUpgradeParams = SystemDumpUpgradeParams.create().
-                    dumpName( params.getDumpName() ).
-                    build();
-                doUpgrade( basePath, dumpUpgradeParams );
+                throw new RepoLoadException(
+                    "Cannot load system-dump; upgrade is not possible on archived dump; unarchive and upgrade the system-dump" );
             }
             else
             {

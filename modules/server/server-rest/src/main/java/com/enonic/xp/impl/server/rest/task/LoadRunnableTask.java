@@ -19,8 +19,6 @@ public class LoadRunnableTask
 
     private final boolean upgrade;
 
-    private final boolean archive;
-
     private final TaskService taskService;
 
     private final DumpService dumpService;
@@ -31,7 +29,6 @@ public class LoadRunnableTask
     {
         this.name = builder.name;
         this.upgrade = builder.upgrade;
-        this.archive = builder.archive;
         this.taskService = builder.taskService;
         this.dumpService = builder.dumpService;
     }
@@ -61,7 +58,6 @@ public class LoadRunnableTask
         final SystemLoadResult systemLoadResult = this.dumpService.load( SystemLoadParams.create()
                                                                              .dumpName( name )
                                                                              .upgrade( upgrade )
-                                                                             .archive( archive )
                                                                              .includeVersions( true )
                                                                              .listener( loadDumpListener )
                                                                              .build() );
@@ -74,8 +70,6 @@ public class LoadRunnableTask
         private String name;
 
         private boolean upgrade;
-
-        private boolean archive;
 
         private DumpService dumpService;
 
@@ -96,12 +90,6 @@ public class LoadRunnableTask
         public Builder upgrade( boolean upgrade )
         {
             this.upgrade = upgrade;
-            return this;
-        }
-
-        public Builder archive( boolean archive )
-        {
-            this.archive = archive;
             return this;
         }
 
