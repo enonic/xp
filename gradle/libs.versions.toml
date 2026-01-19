@@ -74,7 +74,7 @@ jsoup = { module = "org.jsoup:jsoup", version = "1.21.2" }
 
 owaspsanitizer = { module = "com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer", version = "20260102.1" }
 
-bytebuddy = { module = "net.bytebuddy:byte-buddy", version = "1.18.3" }
+bytebuddy = { module = "net.bytebuddy:byte-buddy", version = "1.18.4" }
 
 cronutils = { module = "com.cronutils:cron-utils", version = "9.2.1" }
 
