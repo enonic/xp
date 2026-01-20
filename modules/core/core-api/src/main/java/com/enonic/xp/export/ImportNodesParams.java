@@ -81,7 +81,7 @@ public final class ImportNodesParams
         return xsltParams;
     }
 
-    public NodeImportListener getNodeExportListener()
+    public NodeImportListener getNodeImportListener()
     {
         return nodeImportListener;
     }
