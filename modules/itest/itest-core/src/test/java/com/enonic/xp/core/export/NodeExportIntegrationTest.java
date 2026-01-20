@@ -402,10 +402,8 @@ class NodeExportIntegrationTest
             .sourceNodePath( NodePath.ROOT )
             .targetDirectory( this.temporaryFolder.resolve( EXPORT_NAME ) )
             .xpVersion( "1.0.0" )
-            .
-            build().
-            execute();
-
+            .build()
+            .execute();
         assertEquals( 2, result.getExportErrors().size() );
         assertEquals( "java.lang.RuntimeException: exception message", result.getExportErrors().get( 0 ).toString() );
     }
