@@ -5,7 +5,7 @@ var modifyProjectExpected = {
     id: 'myproject',
     displayName: 'new display name',
     description: 'new description',
-    language: 'fr',
+    language: 'ja',
     parents: [],
     siteConfig: [
         {
@@ -43,7 +43,7 @@ exports.modifyProject = function () {
         id: 'myproject',
         displayName: 'new display name',
         description: 'new description',
-        language: 'fr',
+        language: 'ja',
         siteConfig: [
             {
                 applicationKey: 'appKey1',
@@ -69,6 +69,7 @@ var modifyDescriptionExpected = {
     id: 'myproject',
     displayName: 'project display name',
     description: 'new description',
+    language: 'ja',
     parents: [],
     permissions: {
         owner: [
@@ -99,6 +100,7 @@ var modifyDisplayNameExpected = {
     id: 'myproject',
     displayName: 'new display name',
     description: 'project description',
+    language: 'ja',
     parents: [],
     permissions: {
         owner: [
@@ -129,7 +131,7 @@ var modifyLanguageExpected = {
     id: 'myproject',
     displayName: 'project display name',
     description: 'project description',
-    language: 'no',
+    language: 'ja',
     parents: [],
     permissions: {
         owner: [
@@ -149,6 +151,7 @@ var modifyApplicationsExpected = {
     id: 'myproject',
     displayName: 'project display name',
     description: 'project description',
+    language: 'ja',
     parents: [],
     siteConfig: [
         {
@@ -177,7 +180,7 @@ exports.modifyLanguage = function () {
 
     var result = project.modify({
         id: 'myproject',
-        language: 'no'
+        language: 'ja'
     });
 
     assert.assertJsonEquals(modifyLanguageExpected, result);

@@ -1,16 +1,36 @@
 package com.enonic.xp.server;
 
+import org.jspecify.annotations.NonNull;
+
 public enum RunMode
 {
     DEV, PROD;
 
-    public static RunMode get()
+    private static volatile RunMode runMode;
+
+    public static @NonNull RunMode get()
     {
-        return get( System.getProperty( "xp.runMode" ) );
+        if ( runMode != null )
+        {
+            return runMode;
+        }
+        final RunMode computed = DEV.name().equalsIgnoreCase( System.getProperty( "xp.runMode" ) ) ? DEV : PROD;
+        runMode = computed;
+        return computed;
     }
 
-    protected static RunMode get( final String value )
+    public static boolean isDev()
     {
-        return DEV.name().equalsIgnoreCase( value ) ? DEV : PROD;
+        return get() == DEV;
+    }
+
+    public static boolean isProd()
+    {
+        return get() == PROD;
+    }
+
+    static void set( final RunMode value )
+    {
+        runMode = value;
     }
 }

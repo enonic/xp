@@ -3,8 +3,13 @@ package com.enonic.xp.content;
 import java.time.Instant;
 import java.util.EnumSet;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
+
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.attachment.Attachments;
@@ -16,6 +21,7 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 
 @PublicApi
+@NullMarked
 public class PatchableContent
 {
     public final Content source;
@@ -123,8 +129,6 @@ public class PatchableContent
             .manualOrderValue( manualOrderValue.produce() )
             .setInherit( inherit.produce() )
             .variantOf( variantOf.produce() )
-
-            // differs from "update"
             .modifier( modifier.produce() )
             .modifiedTime( modifiedTime.produce() )
             .attachments( attachments.produce() )
@@ -140,61 +144,53 @@ public class PatchableContent
             .build();
     }
 
-    private enum EditableFieldPolicy
-    {
-        KEEP, REPLACE, REMOVE
-    }
-
     public class PatchableField<T>
     {
-        public T originalValue;
+        public final @Nullable T originalValue;
 
-        private T producedValue;
+        private @Nullable AtomicReference<@Nullable T> producedValue;
 
-        private EditableFieldPolicy policy;
+        private Function<PatchableContent, @Nullable T> patcher;
 
-        private Function<PatchableContent, T> patcher;
-
-        PatchableField( T value )
+        PatchableField( @Nullable T value )
         {
             this.originalValue = value;
-            this.policy = EditableFieldPolicy.KEEP;
+            this.patcher = _ -> this.originalValue;
         }
 
         public PatchableField<T> setPatcher( Function<PatchableContent, T> patcher )
         {
-            this.patcher = patcher;
-            this.policy = EditableFieldPolicy.REPLACE;
+            this.patcher = Objects.requireNonNull( patcher );
             return this;
         }
 
         public PatchableField<T> setValue( T value )
         {
-            this.patcher = ( content ) -> value;
-            this.policy = EditableFieldPolicy.REPLACE;
+            this.patcher = ( _ ) -> value;
             return this;
         }
 
         public void remove()
         {
-            this.policy = EditableFieldPolicy.REMOVE;
+            this.patcher = ( _ ) -> null;
         }
 
-        public T getProducedValue()
+        public @Nullable T getProducedValue()
         {
-            return this.producedValue;
-        }
-
-        T produce()
-        {
-            this.producedValue = switch ( policy )
+            if ( this.producedValue == null )
             {
-                case KEEP -> originalValue;
-                case REPLACE -> patcher.apply( PatchableContent.this );
-                case REMOVE -> null;
-            };
+                throw new IllegalStateException( "Produced value not yet available" );
+            }
+            return this.producedValue.get();
+        }
 
-            return this.producedValue;
+        @Nullable T produce()
+        {
+            if ( this.producedValue == null )
+            {
+                this.producedValue = new AtomicReference<>( this.patcher.apply( PatchableContent.this ) );
+            }
+            return this.producedValue.get();
         }
     }
 }

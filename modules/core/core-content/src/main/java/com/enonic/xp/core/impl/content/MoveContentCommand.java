@@ -29,6 +29,7 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
+import com.enonic.xp.page.Page;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 import static com.enonic.xp.core.impl.content.ContentNodeHelper.translateNodePathToContentPath;
@@ -86,7 +87,7 @@ final class MoveContentCommand
         }
         else
         {
-            if ( params.stopInherit() )
+            if ( !layersSync )
             {
                 processors.add( InheritedContentDataProcessor.PARENT );
             }
@@ -102,7 +103,7 @@ final class MoveContentCommand
         }
         else
         {
-            if ( params.stopInherit() )
+            if ( !layersSync )
             {
                 processors.add( InheritedContentDataProcessor.NAME );
             }
@@ -116,7 +117,10 @@ final class MoveContentCommand
             .nodeId( sourceNodeId )
             .newName( newNodeName )
             .newParentPath( newParentPath )
-            .versionAttributes( ContentAttributesHelper.moveVersionHistoryAttr( modifiedFields ) )
+            .versionAttributes( layersSync
+                                    ? ContentAttributesHelper.layersSyncAttr()
+                                    : ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.MOVE_ATTR,
+                                                                                  modifiedFields.toArray( String[]::new ) ) )
             .processor( processors.build() )
             .refresh( RefreshMode.ALL );
 
@@ -141,13 +145,16 @@ final class MoveContentCommand
             final ContentTypeName type = ContentTypeName.from( data.getProperty( ContentPropertyNames.TYPE ).getString() );
             final Mixins mixins = data.hasProperty( ContentPropertyNames.MIXINS ) ? contentDataSerializer.fromMixinData(
                 data.getProperty( ContentPropertyNames.MIXINS ).getSet() ) : null;
+            final Page page = data.hasProperty( ContentPropertyNames.PAGE ) ? contentDataSerializer.fromPageData(
+                data.getProperty( ContentPropertyNames.PAGE ).getSet() ) : null;
 
             final ValidationErrors validationErrors = ValidateContentDataCommand.create()
                 .data( contentData )
-                .mixins( mixins )
+                .extraDatas( extraData )
                 .contentTypeName( type )
                 .contentName( ContentName.from( nodePath.getName().toString() ) )
                 .displayName( displayName )
+                .page( page )
                 .contentTypeService( contentTypeService )
                 .contentValidators( contentValidators )
                 .build()

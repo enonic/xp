@@ -1,7 +1,6 @@
 package com.enonic.xp.core.content;
 
 import java.util.Locale;
-import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -15,14 +14,12 @@ import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
-import com.enonic.xp.content.ContentDataValidationException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.Mixin;
 import com.enonic.xp.content.Mixins;
-import com.enonic.xp.content.UpdateContentParams;
-import com.enonic.xp.content.WorkflowCheckState;
+import com.enonic.xp.content.UpdateContentMetadataParams;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.core.impl.content.MixinMappingServiceImpl;
@@ -152,7 +149,8 @@ class ContentServiceImplTest_create
     void create_with_root_language()
     {
         final Content root = this.contentService.getByPath( ContentPath.ROOT );
-        contentService.update( new UpdateContentParams().contentId( root.getId() ).editor( edit -> edit.language = Locale.ENGLISH ) );
+        contentService.updateMetadata(
+            UpdateContentMetadataParams.create().contentId( root.getId() ).editor( edit -> edit.language = Locale.ENGLISH ).build() );
 
         final CreateContentParams createContentParams = CreateContentParams.create()
             .contentData( new PropertyTree() )
@@ -181,9 +179,7 @@ class ContentServiceImplTest_create
             .type( ContentTypeName.shortcut() )
             .build();
 
-        assertThrows( IllegalArgumentException.class, () -> {
-            this.contentService.create( createContentParams );
-        } );
+        assertThrows( IllegalArgumentException.class, () -> this.contentService.create( createContentParams ) );
     }
 
     @Test
@@ -194,21 +190,16 @@ class ContentServiceImplTest_create
             .displayName( "This is my content" )
             .parent( ContentPath.ROOT )
             .type( ContentTypeName.folder() )
-            .workflowInfo( WorkflowInfo.create()
-                               .state( WorkflowState.PENDING_APPROVAL )
-                               .checks( Map.of( "My check", WorkflowCheckState.REJECTED ) )
-                               .build() )
+            .workflowInfo( WorkflowInfo.create().state( WorkflowState.PENDING_APPROVAL ).build() )
             .build();
 
         final Content content = this.contentService.create( createContentParams );
         assertNotNull( content.getWorkflowInfo() );
         assertEquals( WorkflowState.PENDING_APPROVAL, content.getWorkflowInfo().getState() );
-        assertEquals( Map.of( "My check", WorkflowCheckState.REJECTED ), content.getWorkflowInfo().getChecks() );
 
         final Content storedContent = this.contentService.getById( content.getId() );
         assertNotNull( storedContent.getWorkflowInfo() );
         assertEquals( WorkflowState.PENDING_APPROVAL, storedContent.getWorkflowInfo().getState() );
-        assertEquals( Map.of( "My check", WorkflowCheckState.REJECTED ), storedContent.getWorkflowInfo().getChecks() );
     }
 
     @Test
@@ -276,7 +267,7 @@ class ContentServiceImplTest_create
             .requireValid( true )
             .build();
 
-        assertThrows( ContentDataValidationException.class, () -> this.contentService.create( createContentParams ) );
+        assertThrows( IllegalArgumentException.class, () -> this.contentService.create( createContentParams ) );
     }
 
     @Test

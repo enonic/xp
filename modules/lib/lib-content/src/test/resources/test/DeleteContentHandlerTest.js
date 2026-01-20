@@ -1,8 +1,8 @@
-var assert = require('/lib/xp/testing.js');
-var content = require('/lib/xp/content.js');
+const assert = require('/lib/xp/testing.js');
+const contentLib = require('/lib/xp/content.js');
 
 exports.deleteById = function () {
-    var result = content.delete({
+    let result = contentLib.deleteContent({
         key: '123456'
     });
 
@@ -10,7 +10,7 @@ exports.deleteById = function () {
 };
 
 exports.deleteByPath = function () {
-    var result = content.delete({
+    let result = contentLib.deleteContent({
         key: '/a/b'
     });
 
@@ -18,7 +18,7 @@ exports.deleteByPath = function () {
 };
 
 exports.deleteById_notFound = function () {
-    var result = content.delete({
+    let result = contentLib.deleteContent({
         key: '123456'
     });
 
@@ -26,7 +26,7 @@ exports.deleteById_notFound = function () {
 };
 
 exports.deleteByPath_notFound = function () {
-    var result = content.delete({
+    let result = contentLib.deleteContent({
         key: '/a/b'
     });
 

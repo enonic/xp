@@ -15,9 +15,8 @@ import org.osgi.util.tracker.BundleTrackerCustomizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.xp.app.ApplicationBundleUtils;
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.ApplicationRegistry;
+import com.enonic.xp.core.internal.ApplicationBundleUtils;
 import com.enonic.xp.core.internal.Dictionaries;
 
 @Component(immediate = true)
@@ -81,13 +80,13 @@ public class ApplicationConfigInvalidator
 
         private ServiceRegistration<ManagedService> registerReloader( final Bundle bundle )
         {
-            final ApplicationKey key = ApplicationKey.from( bundle );
+            final String appName = ApplicationBundleUtils.getApplicationName( bundle );
             final ApplicationConfigReloader reloader = new ApplicationConfigReloader( bundle, applicationRegistry );
 
             final BundleContext context = bundle.getBundleContext();
 
-            LOG.debug( "Register app {} config reloader for bundle {}", key, bundle.getBundleId() );
-            return context.registerService( ManagedService.class, reloader, Dictionaries.of( Constants.SERVICE_PID, key.getName() ) );
+            LOG.debug( "Register app {} config reloader for bundle {}", appName, bundle.getBundleId() );
+            return context.registerService( ManagedService.class, reloader, Dictionaries.of( Constants.SERVICE_PID, appName ) );
         }
     }
 }

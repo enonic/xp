@@ -1,24 +1,19 @@
 export type ComponentDescriptor = `${string}:${string}`;
 
 export interface NestedRecord {
-	[name: PropertyKey]: NestedRecord | unknown
+    [name: PropertyKey]: NestedRecord | unknown
 }
 
 declare global {
     interface XpBeans {}
-    interface XpLayoutMap {
-        [layoutDescriptor: ComponentDescriptor]: NestedRecord;
-    }
+
+    type XpLayoutMap = Record<ComponentDescriptor, NestedRecord>;
+
     interface XpLibraries {}
-    interface XpPageMap {
-        [pageDescriptor: ComponentDescriptor]: NestedRecord;
-    }
-    interface XpPartMap {
-        [partDescriptor: ComponentDescriptor]: NestedRecord;
-    }
-    interface XpMixin {
-        [key: string]: Record<string, Record<string, unknown>>;
-    }
+
+    type XpPageMap = Record<ComponentDescriptor, NestedRecord>;
+    type XpPartMap = Record<ComponentDescriptor, NestedRecord>;
+    type XpMixin = Record<string, Record<string, Record<string, unknown>>>;
 }
 
 export interface App {
@@ -69,7 +64,7 @@ export interface DoubleUnderscore {
      * If the JavaScript variable is defined, it is returned as is.
      * @param value Value to convert
      */
-    nullOrValue: <T = object>(value: T) => T | null | undefined;
+    nullOrValue: <T = object>(value: T) => T | null;
 
     /**
      * Doc registerMock.
@@ -221,15 +216,40 @@ export type ResponseCookies = Record<string, string | ComplexCookie | undefined>
 export type RequestHeaders = Record<string, string | undefined>;
 export type ResponseHeaders = Record<string, string | number | (string | number)[] | undefined>;
 
-export interface DefaultRequestCookies extends RequestCookies {
+export interface DefaultRequestCookies
+    extends RequestCookies {
     JSESSIONID?: string;
 }
 
-export type SecFetchDest = 'audio' | 'audioworklet' | 'document' | 'embed' | 'empty' | 'fencedframe' | 'font' | 'frame' | 'iframe' | 'image' | 'manifest' | 'object' | 'paintworklet' | 'report' | 'script' | 'serviceworker' | 'sharedworker' | 'style' | 'track' | 'video' | 'webidentity' | 'worker' | 'xslt';
-export type SecFetchMode = 'cors'| 'navigate' | 'no-cors' | 'same-origin' | 'websocket';
+export type SecFetchDest =
+    'audio'
+    | 'audioworklet'
+    | 'document'
+    | 'embed'
+    | 'empty'
+    | 'fencedframe'
+    | 'font'
+    | 'frame'
+    | 'iframe'
+    | 'image'
+    | 'manifest'
+    | 'object'
+    | 'paintworklet'
+    | 'report'
+    | 'script'
+    | 'serviceworker'
+    | 'sharedworker'
+    | 'style'
+    | 'track'
+    | 'video'
+    | 'webidentity'
+    | 'worker'
+    | 'xslt';
+export type SecFetchMode = 'cors' | 'navigate' | 'no-cors' | 'same-origin' | 'websocket';
 export type SecFetchSite = 'cross-site' | 'same-origin' | 'same-site' | 'none';
 
-export interface DefaultRequestHeaders extends RequestHeaders {
+export interface DefaultRequestHeaders
+    extends RequestHeaders {
     Accept?: string;
     'Accept-Charset'?: string;
     'Accept-Encoding'?: string;
@@ -278,11 +298,13 @@ export interface RequestConstructorParams {
     webSocket: boolean;
 }
 
-export interface RequestInterface extends RequestConstructorParams {
+export interface RequestInterface
+    extends RequestConstructorParams {
     getHeader: RequestGetHeaderFunction;
 }
 
-export interface DefaultRequest extends RequestInterface {
+export interface DefaultRequest
+    extends RequestInterface {
     cookies: DefaultRequestCookies;
     headers: DefaultRequestHeaders;
 }
@@ -298,7 +320,8 @@ export type SerializableRequest<T extends RequestInterface = DefaultRequest> = O
     body?: unknown[] | Record<string, unknown> | boolean | number | string | null;
 };
 
-export interface DefaultResponseHeaders extends ResponseHeaders {
+export interface DefaultResponseHeaders
+    extends ResponseHeaders {
     'Cache-Control'?: string;
     'Content-Encoding'?: string;
     'Content-Type'?: string;
@@ -313,10 +336,10 @@ export interface DefaultResponseHeaders extends ResponseHeaders {
 // So perhaps it's better to enforce that, so it's consistent both ways.
 // It also causes problems in ResponseProcessors, since they work with both from and to Java.
 export interface PageContributions {
-	headBegin?: string[];
-	headEnd?: string[];
-	bodyBegin?: string[];
-	bodyEnd?: string[];
+    headBegin?: string[];
+    headEnd?: string[];
+    bodyBegin?: string[];
+    bodyEnd?: string[];
 }
 
 export type ResponseBody = unknown[] | Record<string, unknown> | boolean | number | string | null | ByteSource;
@@ -332,11 +355,13 @@ export interface MappedResponse {
     status: number;
 }
 
-export interface ResponseInterface extends Partial<MappedResponse> {
+export interface ResponseInterface
+    extends Partial<MappedResponse> {
     redirect?: string;
 }
 
-export interface DefaultResponse extends ResponseInterface {
+export interface DefaultResponse
+    extends ResponseInterface {
     contentType?: LiteralUnion<'text/html' | 'application/json'>;
     headers?: DefaultResponseHeaders;
 }
@@ -363,7 +388,7 @@ export interface WebSocketSession {
     id: string;
     params: Record<string, string | string[]>;
     path: string;
-    user: Omit<User,'type'>;
+    user: Omit<User, 'type'>;
 }
 
 export type WebSocketEventType = 'open' | 'message' | 'error' | 'close';
@@ -452,7 +477,8 @@ export interface ErrorController {
     handleError?: ErrorRequestHandler;
 }
 
-export interface IdProviderController extends Controller {
+export interface IdProviderController
+    extends Controller {
     autoLogin?: AutoLoginRequestHandler;
     handle401?: RequestHandler;
     login?: RequestHandler;
@@ -460,9 +486,9 @@ export interface IdProviderController extends Controller {
 }
 
 export interface HttpFilterController<
-  RequestFromJava extends RequestInterface = DefaultRequest,
-  ResponseFromNext extends ResponseInterface = Response,
-  ResponseToJava extends ResponseInterface = ResponseFromNext
+    RequestFromJava extends RequestInterface = DefaultRequest,
+    ResponseFromNext extends ResponseInterface = Response,
+    ResponseToJava extends ResponseInterface = ResponseFromNext
 > {
     filter: (
         request: RequestFromJava,
@@ -538,6 +564,7 @@ export interface ValidationError {
     message: string;
     i18n: string;
     errorCode: ValidationErrorCode;
+    /* eslint-disable @typescript-eslint/no-explicit-any*/
     args: any[];
 }
 
@@ -559,13 +586,12 @@ export interface FragmentComponent {
 }
 
 export interface LayoutComponent<
-    Descriptor extends ComponentDescriptor = ComponentDescriptor,
+    Descriptor extends LayoutDescriptor = LayoutDescriptor,
     Config extends NestedRecord = Descriptor extends LayoutDescriptor
-        ? XpLayoutMap[Descriptor]
-        : NestedRecord,
-    Regions extends
-        Record<string, Region<(FragmentComponent | PartComponent | TextComponent)[]>> =
-        Record<string, Region<(FragmentComponent | Part          | TextComponent)[]>>
+                                  ? XpLayoutMap[Descriptor]
+                                  : NestedRecord,
+    Regions extends Record<string, Region<(FragmentComponent | PartComponent | TextComponent)[]>> =
+        Record<string, Region<(FragmentComponent | Part | TextComponent)[]>>
 > {
     type: 'layout'
     descriptor: Descriptor
@@ -573,13 +599,15 @@ export interface LayoutComponent<
     path?: string // Missing in fragmentPreview https://github.com/enonic/xp/issues/10116
     regions: Regions;
 }
+
 type LayoutDescriptor = keyof XpLayoutMap;
+/* eslint-disable @typescript-eslint/no-explicit-any*/
 type Layout = LayoutDescriptor extends any // this lets us iterate over every member of the union
-    ? LayoutComponent<LayoutDescriptor, XpLayoutMap[LayoutDescriptor]>
-    : never;
+              ? LayoutComponent<LayoutDescriptor, XpLayoutMap[LayoutDescriptor]>
+              : never;
 
 export interface PartComponent<
-    Descriptor extends ComponentDescriptor = ComponentDescriptor,
+    Descriptor extends PartDescriptor = PartDescriptor,
     Config extends NestedRecord =
         Descriptor extends PartDescriptor
         ? XpPartMap[Descriptor]
@@ -590,22 +618,23 @@ export interface PartComponent<
     config: Config
     path?: string // Missing in fragmentPreview https://github.com/enonic/xp/issues/10116
 }
+
 type PartDescriptor = keyof XpPartMap;
+/* eslint-disable @typescript-eslint/no-explicit-any*/
 type Part = PartDescriptor extends any // this lets us iterate over every member of the union
-    ? PartComponent<PartDescriptor, XpPartMap[PartDescriptor]>
-    : never;
+            ? PartComponent<PartDescriptor, XpPartMap[PartDescriptor]>
+            : never;
 
 // NOTE: This reflect lib-portal.getContent where page templates are resolved.
 // WARNING: This does NOT reflect lib-content.getContent where page templates are NOT resolved!
 export interface PageComponent<
-    Descriptor extends ComponentDescriptor = ComponentDescriptor,
+    Descriptor extends PageDescriptor = PageDescriptor,
     Config extends NestedRecord =
         Descriptor extends PageDescriptor
         ? XpPageMap[Descriptor]
         : NestedRecord,
-    Regions extends
-        Record<string, Region<(FragmentComponent | LayoutComponent | PartComponent | TextComponent)[]>> =
-        Record<string, Region<(FragmentComponent | Layout          | Part          | TextComponent)[]>>
+    Regions extends Record<string, Region<(FragmentComponent | LayoutComponent | PartComponent | TextComponent)[]>> =
+        Record<string, Region<(FragmentComponent | Layout | Part | TextComponent)[]>>
 > {
     config: Config
     descriptor: Descriptor
@@ -616,9 +645,10 @@ export interface PageComponent<
 }
 
 type PageDescriptor = keyof XpPageMap;
+/* eslint-disable @typescript-eslint/no-explicit-any*/
 type Page = PageDescriptor extends any // this lets us iterate over every member of the union
-    ? PageComponent<PageDescriptor, XpPageMap[PageDescriptor]>
-    : never;
+            ? PageComponent<PageDescriptor, XpPageMap[PageDescriptor]>
+            : never;
 
 export interface TextComponent {
     type: 'text'
@@ -627,15 +657,15 @@ export interface TextComponent {
 }
 
 export type Component<
-    Descriptor extends ComponentDescriptor = LayoutDescriptor | PageDescriptor | PartDescriptor,
+    Descriptor extends ComponentDescriptor = ComponentDescriptor,
     Config extends NestedRecord = NestedRecord,
     Regions extends (
         Descriptor extends LayoutDescriptor
         ? Record<string, Region<(FragmentComponent | PartComponent | TextComponent)[]>>
         : Record<string, Region>
-    ) = Descriptor extends LayoutDescriptor
-        ? Record<string, Region<(FragmentComponent | PartComponent | TextComponent)[]>>
-        : Record<string, Region>,
+        ) = Descriptor extends LayoutDescriptor
+            ? Record<string, Region<(FragmentComponent | PartComponent | TextComponent)[]>>
+            : Record<string, Region>,
 > =
     | FragmentComponent
     | LayoutComponent<Descriptor, Config, Regions>
@@ -644,27 +674,24 @@ export type Component<
     | TextComponent;
 
 export interface PageRegion<
-    Components extends
-        (FragmentComponent | LayoutComponent | PartComponent | TextComponent)[] =
-        (FragmentComponent | Layout          | Part          | TextComponent)[]
+    Components extends (FragmentComponent | LayoutComponent | PartComponent | TextComponent)[] =
+        (FragmentComponent | Layout | Part | TextComponent)[]
 > {
     name: string;
     components: Components;
 }
 
 export interface LayoutRegion<
-    Components extends
-        (FragmentComponent | PartComponent | TextComponent)[] =
-        (FragmentComponent | Part          | TextComponent)[]
+    Components extends (FragmentComponent | PartComponent | TextComponent)[] =
+        (FragmentComponent | Part | TextComponent)[]
 > {
     name: string;
     components: Components;
 }
 
 export type Region<
-    Components extends
-        (FragmentComponent | LayoutComponent | PartComponent | TextComponent)[] =
-        (FragmentComponent | Layout          | Part          | TextComponent)[]
+    Components extends (FragmentComponent | LayoutComponent | PartComponent | TextComponent)[] =
+        (FragmentComponent | Layout | Part | TextComponent)[]
 // @ts-expect-error TODO LayoutRegion can't eat LayoutComponent nor Layout!!!
 > = PageRegion<Components> | LayoutRegion<Components>;
 
@@ -682,7 +709,7 @@ export interface Content<
     createdTime: string;
     modifiedTime?: string;
     owner: string;
-    data: Type extends 'portal:fragment' ? Record<string,never> : Data;
+    data: Type extends 'portal:fragment' ? Record<string, never> : Data;
     type: Type;
     displayName: string;
     hasChildren: boolean;
@@ -701,29 +728,30 @@ export interface Content<
     fragment?: Type extends 'portal:fragment' ? _Component : never;
 }
 
-export type Workflow = {
-    state: 'IN_PROGRESS' | 'PENDING_APPROVAL' | 'REJECTED' | 'READY';
-    checks?: Record<string, 'PENDING' | 'REJECTED' | 'APPROVED'>;
-};
+export type WorkflowState = 'IN_PROGRESS' | 'PENDING_APPROVAL' | 'REJECTED' | 'READY';
+
+export interface Workflow {
+    state: WorkflowState;
+}
 
 export type ContentInheritValue = 'CONTENT' | 'PARENT' | 'NAME' | 'SORT';
 
 export type ContentComponentConstraint<Type extends string> =
     Type extends 'portal:fragment'
-        ? LayoutComponent | PartComponent
-        : PageComponent;
+    ? LayoutComponent | PartComponent
+    : PageComponent;
 
 export type ContentComponent<Type extends string> =
     Type extends 'portal:fragment'
-        ? Layout | Part
-        : Page;
+    ? Layout | Part
+    : Page;
 
 // Compliant with npm module ts-brand
 type Brand<
     Base,
     Branding
 > = Base & {
-  '__type__': Branding
+    '__type__': Branding
 };
 
 export type ByteSource = Brand<object, 'ByteSource'>;
@@ -743,10 +771,15 @@ export interface Resource {
 
 export interface ResourceKey {
     getApplicationKey(): string;
+
     getPath(): string;
+
     getUri(): string;
+
     isRoot(): boolean;
+
     getName(): string;
+
     getExtension(): string;
 }
 
@@ -1091,9 +1124,7 @@ export interface Highlight {
     properties?: Record<string, Highlight>;
 }
 
-export interface HighlightResult {
-    [highlightedFieldName: string]: string[];
-}
+export type HighlightResult = Record<string, string[]>;
 
 export interface ExistsFilter {
     exists: {
@@ -1212,12 +1243,10 @@ export interface FormItemInput {
         value: string;
         type: ValueType;
     }
-    config: {
-        [configName: string]: {
-            [attributeKey: string]: string;
-            value: string;
-        }[]
-    }
+    config: Record<string, {
+        [attributeKey: string]: string;
+        value: string;
+    }[]>
 }
 
 export interface FormItemOptionSet {

@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.storage;
 
 
 import java.util.Collection;
+import java.util.Set;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.Attributes;
@@ -39,7 +40,7 @@ public interface NodeStorageService
 
     NodeCommitEntry commit( NodeCommitEntry entry, NodeVersionIds versionIds, InternalContext context );
 
-    void addAttributes( NodeVersionId versionId, Attributes attributes, InternalContext context );
+    Attributes changeAttributes( NodeVersionId versionId, Attributes attributes, final Set<String> removeAttributes, InternalContext context );
 
     Node get( NodeId nodeId, InternalContext context );
 

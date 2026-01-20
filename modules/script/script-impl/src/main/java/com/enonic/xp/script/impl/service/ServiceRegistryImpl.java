@@ -1,5 +1,7 @@
 package com.enonic.xp.script.impl.service;
 
+import java.util.Objects;
+
 import org.osgi.framework.BundleContext;
 
 public final class ServiceRegistryImpl
@@ -9,7 +11,7 @@ public final class ServiceRegistryImpl
 
     public ServiceRegistryImpl( final BundleContext bundleContext )
     {
-        this.bundleContext = bundleContext;
+        this.bundleContext = Objects.requireNonNull( bundleContext );
     }
 
     @Override

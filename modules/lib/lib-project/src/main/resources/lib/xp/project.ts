@@ -19,7 +19,7 @@ export type {ScriptValue} from '@enonic-types/core';
 
 function checkRequired<T extends object>(obj: T, name: keyof T): void {
     if (obj == null || obj[name] === undefined) {
-        throw `Parameter '${String(name)}' is required`;
+        throw Error(`Parameter '${String(name)}' is required`);
     }
 }
 
@@ -200,7 +200,7 @@ interface DeleteProjectHandler {
  *
  * @returns {boolean} `true` if the project was successfully deleted.
  */
-export function _delete(params: DeleteProjectParams): boolean {
+export function deleteProject(params: DeleteProjectParams): boolean {
     checkRequired(params, 'id');
 
     const bean: DeleteProjectHandler = __.newBean<DeleteProjectHandler>('com.enonic.xp.lib.project.DeleteProjectHandler');
@@ -211,7 +211,7 @@ export function _delete(params: DeleteProjectParams): boolean {
 }
 
 export {
-    _delete as delete,
+    deleteProject as delete,
 };
 
 export interface GetProjectParams {

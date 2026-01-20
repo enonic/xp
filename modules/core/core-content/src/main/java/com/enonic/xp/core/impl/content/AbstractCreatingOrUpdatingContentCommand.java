@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.security.DigestInputStream;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
@@ -19,6 +21,8 @@ import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentValidator;
@@ -27,16 +31,30 @@ import com.enonic.xp.content.Mixins;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.content.processor.ContentProcessor;
+import com.enonic.xp.core.impl.content.validate.InputValidator;
 import com.enonic.xp.core.internal.FileNames;
 import com.enonic.xp.core.internal.HexCoder;
 import com.enonic.xp.core.internal.security.MessageDigests;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.exception.ForbiddenAccessException;
+import com.enonic.xp.form.Form;
+import com.enonic.xp.inputtype.InputTypes;
+import com.enonic.xp.page.Page;
+import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectRole;
+import com.enonic.xp.region.Component;
+import com.enonic.xp.region.LayoutComponent;
+import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.LayoutDescriptorService;
+import com.enonic.xp.region.PartComponent;
+import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.region.PartDescriptorService;
+import com.enonic.xp.region.Region;
+import com.enonic.xp.region.Regions;
+import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinDescriptor;
 import com.enonic.xp.schema.mixin.MixinName;
@@ -44,7 +62,9 @@ import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigService;
+import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
+import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.CmsService;
 import com.enonic.xp.site.MixinMappingService;
 import com.enonic.xp.site.MixinOption;
@@ -80,9 +100,12 @@ class AbstractCreatingOrUpdatingContentCommand
 
     final boolean allowUnsafeAttachmentNames;
 
+    final boolean layersSync;
+
     AbstractCreatingOrUpdatingContentCommand( final Builder<?> builder )
     {
         super( builder );
+        this.layersSync = builder.layersSync;
         this.mixinService = builder.mixinService;
         this.cmsService = builder.cmsService;
         this.contentProcessors = List.copyOf( builder.contentProcessors );
@@ -163,6 +186,130 @@ class AbstractCreatingOrUpdatingContentCommand
         }
     }
 
+    void validateContentData( ContentTypeName contentTypeName, final PropertyTree data )
+    {
+        if ( contentTypeName.isUnstructured() )
+        {
+            return;
+        }
+
+        ContentType contentType = contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ) );
+        if ( contentType != null )
+        {
+            validateForm( contentType.getForm(), data, "Incorrect content property" );
+        }
+    }
+
+    void validateMixins( final ExtraDatas extraDatas )
+    {
+        for ( ExtraData extraData : extraDatas )
+        {
+            XData xData = xDataService.getByName( extraData.getName() );
+            if ( xData != null )
+            {
+                validateForm( xData.getForm(), extraData.getData(), "Incorrect mixin property" );
+            }
+        }
+    }
+
+    void validateSiteConfigs( final PropertyTree siteConfigsData )
+    {
+        SiteConfigs siteConfigs = SiteConfigsDataSerializer.fromData( siteConfigsData.getRoot() );
+
+        for ( SiteConfig siteConfig : siteConfigs )
+        {
+            SiteDescriptor descriptor = siteService.getDescriptor( siteConfig.getApplicationKey() );
+            if ( descriptor != null )
+            {
+                validateForm( descriptor.getForm(), siteConfig.getConfig(), "Incorrect site config property" );
+            }
+        }
+    }
+
+    void validatePage( final Page page )
+    {
+        if ( page == null )
+        {
+            return;
+        }
+
+        PageDescriptor descriptor = getPageDescriptor( page );
+        if ( descriptor != null )
+        {
+            validateForm( descriptor.getConfig(), page.getConfig(), "Incorrect page property" );
+        }
+
+        if ( page.hasRegions() )
+        {
+            validateRegions( page.getRegions() );
+        }
+    }
+
+    private void validateRegions( final Regions regions )
+    {
+        for ( Region region : regions )
+        {
+            for ( Component component : region.getComponents() )
+            {
+                if ( component instanceof PartComponent part )
+                {
+                    PartDescriptor d = partDescriptorService.getByKey( part.getDescriptor() );
+                    if ( d != null )
+                    {
+                        validateForm( d.getConfig(), part.getConfig(), "Incorrect part component property" );
+                    }
+                }
+                else if ( component instanceof LayoutComponent layout )
+                {
+                    LayoutDescriptor d = layoutDescriptorService.getByKey( layout.getDescriptor() );
+                    if ( d != null )
+                    {
+                        validateForm( d.getConfig(), layout.getConfig(), "Incorrect layout component property" );
+                        if ( layout.hasRegions() )
+                        {
+                            validateRegions( layout.getRegions() );
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void validateForm( Form form, PropertyTree data, String errorMessage )
+    {
+        if ( form == null || data == null )
+        {
+            return;
+        }
+        try
+        {
+            InputValidator.create().form( form ).inputTypeResolver( InputTypes.BUILTIN ).build().validate( data );
+        }
+        catch ( Exception e )
+        {
+            throw new IllegalArgumentException( errorMessage, e );
+        }
+    }
+
+    private PageDescriptor getPageDescriptor( final Page page )
+    {
+        if ( page.hasDescriptor() )
+        {
+            return pageDescriptorService.getByKey( page.getDescriptor() );
+        }
+
+        if ( page.hasTemplate() )
+        {
+            final PageTemplate pageTemplate = (PageTemplate) getContent( page.getTemplate().getContentId() );
+            if ( pageTemplate != null && pageTemplate.getPage() != null && pageTemplate.getPage().hasDescriptor() )
+            {
+                return pageDescriptorService.getByKey( pageTemplate.getPage().getDescriptor() );
+            }
+        }
+
+        return null;
+    }
+
     void validateCreateAttachments( final CreateAttachments createAttachments )
     {
         if ( !allowUnsafeAttachmentNames && createAttachments != null )
@@ -189,7 +336,7 @@ class AbstractCreatingOrUpdatingContentCommand
         return EXECUTABLE_CONTENT_TYPES.stream().anyMatch( mediaType::is ) && isExecutableFileName( fileName.toString() );
     }
 
-    void checkAdminAccess()
+    void checkOwnerAccess()
         throws ForbiddenAccessException
     {
         final Context context = ContextAccessor.current();
@@ -206,6 +353,39 @@ class AbstractCreatingOrUpdatingContentCommand
     {
         return fileName.endsWith( ".exe" ) || fileName.endsWith( ".msi" ) || fileName.endsWith( ".dmg" ) || fileName.endsWith( ".bat" ) ||
             fileName.endsWith( ".sh" );
+    }
+
+    protected BiPredicate<Content, Content> isContentTheSame()
+    {
+        return ( c1, c2 ) -> Objects.equals( c1.getId(), c2.getId() ) && Objects.equals( c1.getPath(), c2.getPath() ) &&
+            Objects.equals( c1.getDisplayName(), c2.getDisplayName() ) && Objects.equals( c1.getType(), c2.getType() ) &&
+            Objects.equals( c1.getCreator(), c2.getCreator() ) && Objects.equals( c1.getOwner(), c2.getOwner() ) &&
+            Objects.equals( c1.getCreatedTime(), c2.getCreatedTime() ) && Objects.equals( c1.getInherit(), c2.getInherit() ) &&
+            Objects.equals( c1.getOriginProject(), c2.getOriginProject() ) && Objects.equals( c1.getChildOrder(), c2.getChildOrder() ) &&
+            Objects.equals( c1.getPermissions(), c2.getPermissions() ) && Objects.equals( c1.getAttachments(), c2.getAttachments() ) &&
+            Objects.equals( c1.getData(), c2.getData() ) && Objects.equals( c1.getAllExtraData(), c2.getAllExtraData() ) &&
+            Objects.equals( c1.getPage(), c2.getPage() ) && Objects.equals( c1.getLanguage(), c2.getLanguage() ) &&
+            Objects.equals( c1.getPublishInfo(), c2.getPublishInfo() ) && Objects.equals( c1.getWorkflowInfo(), c2.getWorkflowInfo() ) &&
+            Objects.equals( c1.getManualOrderValue(), c2.getManualOrderValue() ) &&
+            Objects.equals( c1.getOriginalName(), c2.getOriginalName() ) &&
+            Objects.equals( c1.getOriginalParentPath(), c2.getOriginalParentPath() ) &&
+            Objects.equals( c1.getArchivedTime(), c2.getArchivedTime() ) && Objects.equals( c1.getArchivedBy(), c2.getArchivedBy() ) &&
+            Objects.equals( c1.getVariantOf(), c2.getVariantOf() );
+    }
+
+    protected Set<ContentInheritType> stopDataInherit( final Set<ContentInheritType> currentInherit )
+    {
+        if ( currentInherit.contains( ContentInheritType.CONTENT ) || currentInherit.contains( ContentInheritType.NAME ) )
+        {
+            final EnumSet<ContentInheritType> newInherit = EnumSet.copyOf( currentInherit );
+
+            newInherit.remove( ContentInheritType.CONTENT );
+            newInherit.remove( ContentInheritType.NAME );
+
+            return newInherit;
+        }
+
+        return currentInherit;
     }
 
     public static class Builder<B extends Builder<B>>
@@ -231,6 +411,8 @@ class AbstractCreatingOrUpdatingContentCommand
 
         private SiteConfigService siteConfigService;
 
+        private boolean layersSync;
+
         Builder()
         {
         }
@@ -247,6 +429,12 @@ class AbstractCreatingOrUpdatingContentCommand
             this.layoutDescriptorService = source.layoutDescriptorService;
             this.mixinMappingService = source.mixinMappingService;
             this.siteConfigService = source.siteConfigService;
+        }
+
+        B layersSync()
+        {
+            this.layersSync = true;
+            return (B) this;
         }
 
         @SuppressWarnings("unchecked")

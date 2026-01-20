@@ -44,7 +44,7 @@ public final class IndexConfigDocumentJson
 
         if ( json.allTextConfig != null )
         {
-            json.allTextConfig.fromJson().getLanguages().forEach( builder::addAllTextConfigLanguage );
+            builder.allTextConfig( json.allTextConfig.fromJson() );
         }
         return builder.build();
     }

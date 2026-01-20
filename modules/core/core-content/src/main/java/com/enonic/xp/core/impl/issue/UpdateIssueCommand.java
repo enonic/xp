@@ -1,8 +1,8 @@
 package com.enonic.xp.core.impl.issue;
 
 import java.time.Instant;
+import java.util.Objects;
 
-import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.issue.serializer.IssueDataSerializer;
 import com.enonic.xp.issue.EditableIssue;
@@ -60,26 +60,17 @@ public class UpdateIssueCommand
             editor.edit( editableIssue );
         }
 
-        return editableIssue.builder().
-            modifiedTime( Instant.now() ).
-            modifier( getCurrentUser().getKey() ).
-            build();
+        return editableIssue.builder().modifiedTime( Instant.now() ).modifier( getCurrentUser().getKey() ).build();
     }
 
     private Issue getIssue( final IssueId issueId )
     {
-        return GetIssueByIdCommand.create().
-            issueId( issueId ).
-            nodeService( this.nodeService ).
-            build().
-            execute();
+        return GetIssueByIdCommand.create().issueId( issueId ).nodeService( this.nodeService ).build().execute();
     }
 
     User getCurrentUser()
     {
-        final Context context = ContextAccessor.current();
-
-        return context.getAuthInfo().getUser() != null ? context.getAuthInfo().getUser() : User.ANONYMOUS;
+        return Objects.requireNonNullElseGet( ContextAccessor.current().getAuthInfo().getUser(), User::anonymous );
     }
 
     public static Builder create()

@@ -10,6 +10,7 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueType;
 import com.enonic.xp.data.ValueTypes;
+import com.enonic.xp.index.AllTextIndexConfig;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.index.IndexValueProcessor;
@@ -26,8 +27,6 @@ public final class XmlNodeSerializer
 
     private Node node;
 
-    private boolean exportNodeIds;
-
     public XmlNodeSerializer()
     {
         this.builder = DomBuilder.create( "node" );
@@ -39,12 +38,6 @@ public final class XmlNodeSerializer
         return this;
     }
 
-    public XmlNodeSerializer exportNodeIds( final boolean value )
-    {
-        this.exportNodeIds = value;
-        return this;
-    }
-
     public String serialize()
     {
         serializeNode();
@@ -53,11 +46,7 @@ public final class XmlNodeSerializer
 
     private void serializeNode()
     {
-        if ( this.exportNodeIds )
-        {
-            serializeValueElement( "id", this.node.id() );
-        }
-
+        serializeValueElement( "id", this.node.id() );
         serializeValueElement( "childOrder", this.node.getChildOrder() );
         serializeValueElement( "nodeType", this.node.getNodeType() );
         serializeValueElement( "timestamp", this.node.getTimestamp() );
@@ -113,13 +102,22 @@ public final class XmlNodeSerializer
         this.builder.end();
 
         this.builder.start( "allTextIndexConfig" );
-        if ( !value.getAllTextConfig().getLanguages().isEmpty() )
+        serialize( value.getAllTextConfig() );
+        this.builder.end();
+    }
+
+    private void serialize( final AllTextIndexConfig value )
+    {
+        serializeValueElement( "enabled", value.isEnabled() );
+        serializeValueElement( "nGram", value.isnGram() );
+        serializeValueElement( "fulltext", value.isFulltext() );
+
+        if ( !value.getLanguages().isEmpty() )
         {
             this.builder.start( "languages" );
-            value.getAllTextConfig().getLanguages().forEach( language -> serializeValueElement( "language", language ) );
+            value.getLanguages().forEach( language -> serializeValueElement( "language", language ) );
             this.builder.end();
         }
-        this.builder.end();
     }
 
     private void serialize( final IndexConfig value )
@@ -159,7 +157,7 @@ public final class XmlNodeSerializer
         serialize( value.getIndexConfig() );
         this.builder.end();
 
-        serializeValueElement( "path", value.getPath() );
+        serializeValueElement( "path", value.getIndexPath() );
         this.builder.end();
     }
 

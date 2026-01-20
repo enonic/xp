@@ -4,5 +4,5 @@ import com.enonic.xp.index.PatternIndexConfigDocument;
 
 public interface ContentIndexConfigProcessor
 {
-    PatternIndexConfigDocument.Builder processDocument( PatternIndexConfigDocument.Builder builder );
+    PatternIndexConfigDocument processDocument( PatternIndexConfigDocument builder );
 }

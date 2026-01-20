@@ -34,7 +34,7 @@ import static com.enonic.xp.content.ContentPropertyNames.ORIGINAL_PARENT_PATH;
 import static com.google.common.base.Strings.nullToEmpty;
 
 final class RestoreContentCommand
-    extends AbstractContentCommand
+    extends AbstractCreatingOrUpdatingContentCommand
 {
     private final RestoreContentParams params;
 
@@ -122,7 +122,9 @@ final class RestoreContentCommand
             .nodeId( nodeToRestore.id() )
             .newParentPath( parentPathToRestore )
             .newName( newNodeName )
-            .versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.RESTORE_ATTR ) )
+            .versionAttributes( layersSync
+                                    ? ContentAttributesHelper.layersSyncAttr()
+                                    : ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.RESTORE_ATTR ) )
             .refresh( RefreshMode.ALL );
 
         if ( params.getRestoreContentListener() != null )
@@ -131,7 +133,7 @@ final class RestoreContentCommand
         }
 
         final var processors = CompositeNodeDataProcessor.create().add( updateProperties() );
-        if ( this.params.stopInherit() )
+        if ( !layersSync )
         {
             processors.add( InheritedContentDataProcessor.ALL );
         }
@@ -211,7 +213,7 @@ final class RestoreContentCommand
     }
 
     static class Builder
-        extends AbstractContentCommand.Builder<Builder>
+        extends AbstractCreatingOrUpdatingContentCommand.Builder<Builder>
     {
         private final RestoreContentParams params;
 

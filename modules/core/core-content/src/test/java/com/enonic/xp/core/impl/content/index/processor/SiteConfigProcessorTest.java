@@ -140,6 +140,6 @@ class SiteConfigProcessorTest
 
         final CmsConfigProcessor configProcessor = new CmsConfigProcessor( getConfigForms( cmsService, siteConfigs ) );
 
-        return configProcessor.processDocument( PatternIndexConfigDocument.create() ).build();
+        return configProcessor.processDocument( PatternIndexConfigDocument.empty() );
     }
 }

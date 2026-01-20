@@ -3,6 +3,7 @@ package com.enonic.xp.impl.server.rest.task.listener;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.dump.SystemLoadListener;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.task.ProgressReportParams;
 import com.enonic.xp.task.ProgressReporter;
 
 public class SystemLoadListenerImpl
@@ -47,7 +48,7 @@ public class SystemLoadListenerImpl
             final int progress = Math.round(
                 100 * ( ( (float) ( currentBranch - 1 ) / total ) + ( (float) currentBranchProgress / currentBranchTotal / total ) ) );
 
-            progressReporter.progress( progress, 100 );
+            progressReporter.progress( ProgressReportParams.create( progress, 100 ).build() );
         }
     }
 

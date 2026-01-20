@@ -1,16 +1,14 @@
 package com.enonic.xp.core.impl.content;
 
 import java.util.Collection;
-import java.util.List;
-
-import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.project.ProjectName;
 
 public final class ContentEventsSyncParams
 {
-    private final List<ContentId> contentIds;
+    private final ContentIds contentIds;
 
     private final ProjectName sourceProject;
 
@@ -31,7 +29,7 @@ public final class ContentEventsSyncParams
         return new Builder();
     }
 
-    public List<ContentId> getContentIds()
+    public ContentIds getContentIds()
     {
         return contentIds;
     }
@@ -53,7 +51,7 @@ public final class ContentEventsSyncParams
 
     public static final class Builder
     {
-        private final ImmutableList.Builder<ContentId> contentIds = ImmutableList.builder();
+        private final ContentIds.Builder contentIds = ContentIds.create();
 
         private ProjectName sourceProject;
 

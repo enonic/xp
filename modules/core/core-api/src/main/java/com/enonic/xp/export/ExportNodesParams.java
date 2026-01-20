@@ -15,9 +15,9 @@ public final class ExportNodesParams
 
     private final NodePath sourceNodePath;
 
-    private final boolean includeNodeIds;
+    private final boolean archive;
 
-    private final boolean includeVersions;
+    private final int batchSize;
 
     private final NodeExportListener nodeExportListener;
 
@@ -25,8 +25,8 @@ public final class ExportNodesParams
     {
         this.exportName = builder.exportName;
         this.sourceNodePath = builder.sourceNodePath;
-        this.includeNodeIds = builder.includeNodeIds;
-        this.includeVersions = builder.includeVersions;
+        this.archive = builder.archive;
+        this.batchSize = builder.batchSize;
         this.nodeExportListener = builder.nodeExportListener;
     }
 
@@ -45,14 +45,14 @@ public final class ExportNodesParams
         return sourceNodePath;
     }
 
-    public boolean isIncludeNodeIds()
+    public boolean isArchive()
     {
-        return includeNodeIds;
+        return archive;
     }
 
-    public boolean isIncludeVersions()
+    public int getBatchSize()
     {
-        return includeVersions;
+        return batchSize;
     }
 
     public NodeExportListener getNodeExportListener()
@@ -66,9 +66,9 @@ public final class ExportNodesParams
 
         private NodePath sourceNodePath;
 
-        private boolean includeNodeIds = true;
+        private boolean archive = false;
 
-        private boolean includeVersions = false;
+        private int batchSize = 1000;
 
         private NodeExportListener nodeExportListener;
 
@@ -88,15 +88,15 @@ public final class ExportNodesParams
             return this;
         }
 
-        public Builder includeNodeIds( final boolean includeNodeIds )
+        public Builder archive( final boolean archive )
         {
-            this.includeNodeIds = includeNodeIds;
+            this.archive = archive;
             return this;
         }
 
-        public Builder includeVersions( final boolean includeVersions )
+        public Builder batchSize( final int batchSize )
         {
-            this.includeVersions = includeVersions;
+            this.batchSize = batchSize;
             return this;
         }
 

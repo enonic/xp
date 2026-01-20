@@ -22,8 +22,7 @@ var expectedJson = {
             'attachments': {},
             'publish': {},
             'workflow': {
-                'state': 'READY',
-                'checks': {}
+                'state': 'READY'
             }
         },
         {
@@ -43,8 +42,7 @@ var expectedJson = {
             'attachments': {},
             'publish': {},
             'workflow': {
-                'state': 'READY',
-                'checks': {}
+                'state': 'READY'
             }
         }
     ]
@@ -53,9 +51,9 @@ var expectedJson = {
 exports.query = function () {
 
     var result = content.query({
-        'start': 0,
-        'count': 100,
-        'filters': [
+            'start': 0,
+            'count': 100,
+            'filters': [
                 {
                     'exists': {
                         'field': 'field1'
@@ -67,9 +65,9 @@ exports.query = function () {
                     }
                 }
             ],
-        'contentTypes': [
-            'article',
-            'comment'
+            'contentTypes': [
+                'article',
+                'comment'
             ]
         }
     );

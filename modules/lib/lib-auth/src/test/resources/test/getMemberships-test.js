@@ -78,6 +78,6 @@ exports.getMembershipsWithoutKey = function () {
     try {
         auth.getMemberships();
     } catch (e) {
-        t.assertEquals("Parameter 'principalKey' is required", e);
+        t.assertEquals("Parameter 'principalKey' is required", e.message);
     }
 };

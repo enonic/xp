@@ -12,6 +12,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.UpdateMediaParams;
+import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.security.PrincipalKey;
@@ -44,7 +45,7 @@ class UpdateMediaHandlerTest
             data.setString( "mimeType", params.getMimeType() );
             data.setValues( "tags", params.getTagList().stream().map( ValueFactory::newString ).collect( Collectors.toList() ) );
 
-            return Content.create( content ).data( data ).workflowInfo( params.getWorkflowInfo() ).build();
+            return Content.create( content ).workflowInfo( WorkflowInfo.inProgress() ).data( data ).build();
         } );
 
         runScript( "/lib/xp/examples/content/updateMedia.js" );

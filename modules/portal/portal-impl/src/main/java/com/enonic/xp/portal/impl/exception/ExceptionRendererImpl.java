@@ -64,29 +64,17 @@ public final class ExceptionRendererImpl
 
     private final PostProcessor postProcessor;
 
-    private final RunMode runMode;
-
-
-    ExceptionRendererImpl( final ResourceService resourceService, final PortalUrlService portalUrlService,
-                           final ErrorHandlerScriptFactory errorHandlerScriptFactory,
-                           final IdProviderControllerService idProviderControllerService, final PostProcessor postProcessor,
-                           final RunMode runMode )
-    {
-        this.resourceService = resourceService;
-        this.portalUrlService = portalUrlService;
-        this.errorHandlerScriptFactory = errorHandlerScriptFactory;
-        this.idProviderControllerService = idProviderControllerService;
-        this.postProcessor = postProcessor;
-        this.runMode = runMode;
-    }
-
     @Activate
     public ExceptionRendererImpl( @Reference final ResourceService resourceService, @Reference final PortalUrlService portalUrlService,
                                   @Reference final ErrorHandlerScriptFactory errorHandlerScriptFactory,
                                   @Reference final IdProviderControllerService idProviderControllerService,
                                   @Reference final PostProcessor postProcessor )
     {
-        this( resourceService, portalUrlService, errorHandlerScriptFactory, idProviderControllerService, postProcessor, RunMode.get() );
+        this.resourceService = resourceService;
+        this.portalUrlService = portalUrlService;
+        this.errorHandlerScriptFactory = errorHandlerScriptFactory;
+        this.idProviderControllerService = idProviderControllerService;
+        this.postProcessor = postProcessor;
     }
 
     @Override
@@ -244,12 +232,7 @@ public final class ExceptionRendererImpl
 
     private PortalResponse renderInternalErrorPage( final WebRequest req, String tip, final WebException cause )
     {
-        final ExceptionInfo info = ExceptionInfo.create( cause.getStatus() )
-            .runMode( runMode )
-            .cause( cause )
-            .tip( tip )
-            .resourceService( resourceService )
-            .portalUrlService( portalUrlService );
+        final ExceptionInfo info = toErrorInfo( cause ).tip( tip );
 
         logIfNeeded( info );
         return info.toResponse( req );
@@ -258,10 +241,10 @@ public final class ExceptionRendererImpl
     private ExceptionInfo toErrorInfo( final WebException cause )
     {
         return ExceptionInfo.create( cause.getStatus() )
-            .runMode( runMode )
+            .withDebugInfo( RunMode.isDev() )
             .cause( cause )
-            .resourceService( this.resourceService )
-            .portalUrlService( this.portalUrlService );
+            .resourceService( resourceService )
+            .portalUrlService( portalUrlService );
     }
 
     private void logIfNeeded( final ExceptionInfo info )

@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -181,7 +182,7 @@ public class NodeStorageServiceImpl
     }
 
     @Override
-    public void addAttributes( final NodeVersionId versionId, Attributes value, final InternalContext context )
+    public Attributes changeAttributes( final NodeVersionId versionId, final Attributes addAttributes, final Set<String> removeAttributes, final InternalContext context )
     {
         final NodeVersionMetadata existingVersion = this.versionService.getVersion( versionId, context );
 
@@ -189,9 +190,12 @@ public class NodeStorageServiceImpl
         final Attributes.Builder builder = Attributes.create();
         if ( attributes != null )
         {
-            builder.addAll( attributes.entrySet() );
+            builder.addAll( attributes.entrySet()
+                                .stream()
+                                .filter( entry -> !removeAttributes.contains( entry.getKey() ) )
+                                .toList() );
         }
-        final Attributes newAttrs = builder.addAll( value.entrySet() ).buildKeepingLast();
+        final Attributes newAttrs = builder.addAll( addAttributes.entrySet() ).buildKeepingLast();
         final NodeVersionMetadata updatedVersion = NodeVersionMetadata.create()
             .nodeVersionId( existingVersion.getNodeVersionId() )
             .nodeVersionKey( existingVersion.getNodeVersionKey() )
@@ -203,6 +207,7 @@ public class NodeStorageServiceImpl
             .nodeCommitId( existingVersion.getNodeCommitId() )
             .build();
         this.versionService.store( updatedVersion, context );
+        return newAttrs;
     }
 
     @Override

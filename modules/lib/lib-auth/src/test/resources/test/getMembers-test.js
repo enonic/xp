@@ -48,6 +48,6 @@ exports.getMembersWithoutKey = function () {
     try {
         auth.getMembers();
     } catch (e) {
-        t.assertEquals("Parameter 'principalKey' is required", e);
+        t.assertEquals("Parameter 'principalKey' is required", e.message);
     }
 };

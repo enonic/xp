@@ -7,6 +7,8 @@ import java.util.Spliterator;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -22,6 +24,7 @@ import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.ApplyNodePermissionsResult;
 import com.enonic.xp.node.ApplyVersionAttributesParams;
+import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.CommitNodeParams;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DeleteNodeParams;
@@ -96,6 +99,7 @@ import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
 
+@NullMarked
 @Component(immediate = true)
 public class NodeServiceImpl
     implements NodeService
@@ -182,7 +186,7 @@ public class NodeServiceImpl
         return node;
     }
 
-    private Node doGetById( final NodeId id )
+    private @Nullable Node doGetById( final NodeId id )
     {
         return GetNodeByIdCommand.create()
             .id( id )
@@ -194,7 +198,7 @@ public class NodeServiceImpl
     }
 
     @Override
-    public Node getByPath( final NodePath path )
+    public @Nullable Node getByPath( final NodePath path )
     {
         verifyContext();
 
@@ -210,7 +214,7 @@ public class NodeServiceImpl
         } );
     }
 
-    private Node executeGetByPath( final NodePath path )
+    private @Nullable Node executeGetByPath( final NodePath path )
     {
         return GetNodeByPathCommand.create()
             .nodePath( path )
@@ -717,12 +721,7 @@ public class NodeServiceImpl
             trace.put( "reference", reference );
             trace.put( "repo", ContextAccessor.current().getRepositoryId() );
             trace.put( "branch", ContextAccessor.current().getBranch() );
-        }, () -> executeGetBinary( nodeId, reference ), ( trace, byteSource ) -> {
-            if ( byteSource != null )
-            {
-                trace.put( "size", byteSource.sizeIfKnown().or( -1L ) );
-            }
-        } );
+        }, () -> executeGetBinary( nodeId, reference ), ( trace, byteSource ) -> trace.put( "size", byteSource.sizeIfKnown().or( -1L ) ) );
     }
 
     private ByteSource executeGetBinary( final NodeId nodeId, final BinaryReference reference )
@@ -743,17 +742,13 @@ public class NodeServiceImpl
     {
         verifyContext();
         return Tracer.trace( "node.getBinary", trace -> {
-            trace.put( "id", nodeId );
-            trace.put( "versionId", nodeVersionId );
-            trace.put( "reference", reference );
-            trace.put( "repo", ContextAccessor.current().getRepositoryId() );
-            trace.put( "branch", ContextAccessor.current().getBranch() );
-        }, () -> executeGetBinary( nodeId, nodeVersionId, reference ), ( trace, byteSource ) -> {
-            if ( byteSource != null )
-            {
-                trace.put( "size", byteSource.sizeIfKnown().or( -1L ) );
-            }
-        } );
+                                 trace.put( "id", nodeId );
+                                 trace.put( "versionId", nodeVersionId );
+                                 trace.put( "reference", reference );
+                                 trace.put( "repo", ContextAccessor.current().getRepositoryId() );
+                                 trace.put( "branch", ContextAccessor.current().getBranch() );
+                             }, () -> executeGetBinary( nodeId, nodeVersionId, reference ),
+                             ( trace, byteSource ) -> trace.put( "size", byteSource.sizeIfKnown().or( -1L ) ) );
     }
 
     private ByteSource executeGetBinary( final NodeId nodeId, final NodeVersionId nodeVersionId, final BinaryReference reference )
@@ -863,6 +858,7 @@ public class NodeServiceImpl
             .nodeVersionId( params.getNodeVersionId() )
             .nodeCommitId( params.getNodeCommitId() )
             .timestamp( params.getTimestamp() )
+            .attributes( params.getAttributes() )
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )
             .indexServiceInternal( this.indexServiceInternal )
@@ -907,7 +903,7 @@ public class NodeServiceImpl
             .map( NodeBranchEntry::getVersionId )
             .collect( NodeVersionIds.collector() );
 
-        return  doCommit( nodeCommitEntry , nodeVersionIds );
+        return doCommit( nodeCommitEntry, nodeVersionIds );
     }
 
     private NodeCommitEntry doCommit( NodeCommitEntry entry, NodeVersionIds versionIds )
@@ -925,15 +921,18 @@ public class NodeServiceImpl
     }
 
     @Override
-    public void applyVersionAttributes( final ApplyVersionAttributesParams params )
+    @NullMarked
+    public Attributes applyVersionAttributes( final ApplyVersionAttributesParams params )
     {
         verifyContext();
 
         final InternalContext context =
             InternalContext.create( ContextAccessor.current() ).searchPreference( SearchPreference.PRIMARY ).build();
-        nodeStorageService.addAttributes( params.getNodeVersionId(), params.getAddAttributes(), context );
-
+        final Attributes result =
+            nodeStorageService.changeAttributes( params.getNodeVersionId(), params.getAddAttributes(), params.getRemoveAttributes(),
+                                                 context );
         refresh( RefreshMode.STORAGE );
+        return result;
     }
 
     @Override

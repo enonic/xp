@@ -22,7 +22,8 @@ public final class ObjectMapperHelper
             .disable( SerializationFeature.WRITE_DATES_AS_TIMESTAMPS )
             .disable( SerializationFeature.FAIL_ON_EMPTY_BEANS )
             .enable( MapperFeature.SORT_PROPERTIES_ALPHABETICALLY )
-            .serializationInclusion( JsonInclude.Include.NON_NULL )
-            .addModule( new JavaTimeModule() ).build();
+            .defaultPropertyInclusion( JsonInclude.Value.construct( JsonInclude.Include.NON_NULL, JsonInclude.Include.NON_NULL ) )
+            .addModule( new JavaTimeModule() )
+            .build();
     }
 }

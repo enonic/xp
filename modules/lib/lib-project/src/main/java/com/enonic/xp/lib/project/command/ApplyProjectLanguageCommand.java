@@ -1,13 +1,10 @@
 package com.enonic.xp.lib.project.command;
 
 import java.util.Locale;
-import java.util.Objects;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.UpdateContentParams;
-import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.security.User;
+import com.enonic.xp.content.UpdateContentMetadataParams;
 
 public final class ApplyProjectLanguageCommand
     extends AbstractProjectRootCommand
@@ -35,18 +32,11 @@ public final class ApplyProjectLanguageCommand
         return projectRepoContext.callWith( () -> {
             final Content root = this.contentService.getByPath( ContentPath.ROOT );
 
-            final UpdateContentParams params = new UpdateContentParams().
-                contentId( root.getId() ).
-                editor( edit -> edit.language = this.language );
+            final UpdateContentMetadataParams params =
+                UpdateContentMetadataParams.create().contentId( root.getId() ).editor( edit -> edit.language = this.language ).build();
 
-            return this.contentService.update( params ).
-                getLanguage();
+            return this.contentService.updateMetadata( params ).getContent().getLanguage();
         } );
-    }
-
-    private User getCurrentUser()
-    {
-        return Objects.requireNonNullElse( ContextAccessor.current().getAuthInfo().getUser(), User.ANONYMOUS );
     }
 
     public static final class Builder

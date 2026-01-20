@@ -33,11 +33,11 @@ class ModifyGroupHandlerTest
     @Test
     void testExamples()
     {
-        Mockito.<Optional<? extends Principal>>when( securityService.getGroup( Mockito.any() ) ).thenReturn(
-            Optional.of( TestDataFixtures.getTestUser() ) );
+        Mockito.<Optional<? extends Principal>>when( securityService.getGroup( Mockito.any() ) )
+            .thenReturn( Optional.of( TestDataFixtures.getTestUser() ) );
 
-        Mockito.when( this.securityService.updateGroup( Mockito.isA( UpdateGroupParams.class ) ) ).thenAnswer(
-            invocationOnMock -> invokeUpdate( (UpdateGroupParams) invocationOnMock.getArguments()[0] ) );
+        Mockito.when( this.securityService.updateGroup( Mockito.isA( UpdateGroupParams.class ) ) )
+            .thenAnswer( invocationOnMock -> invokeUpdate( invocationOnMock.getArgument( 0 ) ) );
 
         runScript( "/lib/xp/examples/auth/modifyGroup.js" );
     }
@@ -45,12 +45,11 @@ class ModifyGroupHandlerTest
     @Test
     void testModifyGroup()
     {
-        Mockito.<Optional<? extends Principal>>when(
-            securityService.getGroup( PrincipalKey.from( "group:myGroupStore:groupId" ) ) ).thenReturn(
-            Optional.of( TestDataFixtures.getTestUser() ) );
+        Mockito.<Optional<? extends Principal>>when( securityService.getGroup( PrincipalKey.from( "group:myGroupStore:groupId" ) ) )
+            .thenReturn( Optional.of( TestDataFixtures.getTestUser() ) );
 
-        Mockito.when( this.securityService.updateGroup( Mockito.isA( UpdateGroupParams.class ) ) ).thenAnswer(
-            invocationOnMock -> invokeUpdate( (UpdateGroupParams) invocationOnMock.getArguments()[0] ) );
+        Mockito.when( this.securityService.updateGroup( Mockito.isA( UpdateGroupParams.class ) ) )
+            .thenAnswer( invocationOnMock -> invokeUpdate( invocationOnMock.getArgument( 0 ) ) );
 
         runFunction( "/test/modifyGroup-test.js", "modifyGroup" );
     }

@@ -32,8 +32,6 @@ public final class UpdateMediaParams
 
     private List<String> tags = List.of();
 
-    private WorkflowInfo workflowInfo;
-
     public UpdateMediaParams content( final ContentId value )
     {
         this.content = value;
@@ -100,12 +98,6 @@ public final class UpdateMediaParams
         return this;
     }
 
-    public UpdateMediaParams workflowInfo( final WorkflowInfo workflowInfo )
-    {
-        this.workflowInfo = workflowInfo;
-        return this;
-    }
-
     public void validate()
     {
         Objects.requireNonNull( this.content, "content to update is required" );
@@ -166,10 +158,5 @@ public final class UpdateMediaParams
     public List<String> getTagList()
     {
         return tags;
-    }
-
-    public WorkflowInfo getWorkflowInfo()
-    {
-        return workflowInfo;
     }
 }

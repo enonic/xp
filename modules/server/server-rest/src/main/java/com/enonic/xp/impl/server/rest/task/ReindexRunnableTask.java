@@ -7,6 +7,7 @@ import com.enonic.xp.index.IndexService;
 import com.enonic.xp.index.ReindexParams;
 import com.enonic.xp.index.ReindexResult;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.task.ProgressReportParams;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
@@ -51,7 +52,7 @@ public class ReindexRunnableTask
                                                                     .repositoryId( repository )
                                                                     .build() );
 
-        progressReporter.info( ReindexResultJson.create( result ).toString() );
+        progressReporter.progress( ProgressReportParams.create( ReindexResultJson.create( result ).toString() ).build() );
     }
 
     public static class Builder

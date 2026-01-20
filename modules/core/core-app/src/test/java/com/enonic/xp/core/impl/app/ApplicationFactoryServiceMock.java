@@ -22,14 +22,14 @@ public class ApplicationFactoryServiceMock
     @Mock(stubOnly = true)
     private NodeService nodeService;
 
-    private final ApplicationFactory factory = new ApplicationFactory( RunMode.get(), nodeService, Mockito.mock( AppConfig.class ) );
+    private final ApplicationFactory factory = new ApplicationFactory( nodeService, Mockito.mock( AppConfig.class ) );
 
     private final Map<Bundle, ApplicationAdaptor> map = new HashMap<>();
 
     @Override
     public ApplicationAdaptor getApplication( final Bundle bundle )
     {
-        return map.computeIfAbsent( bundle, b -> factory.create( b ) );
+        return map.computeIfAbsent( bundle, factory::create );
     }
 
     @Override
@@ -37,8 +37,8 @@ public class ApplicationFactoryServiceMock
     {
         return map.entrySet()
             .stream()
-            .filter( e -> e.getKey().getSymbolicName().equals( applicationKey.getName() ) )
-            .map( e -> e.getValue() )
+            .filter( e -> ApplicationHelper.getApplicationKey( e.getKey() ).equals( applicationKey ) )
+            .map( Map.Entry::getValue )
             .findAny();
     }
 
@@ -47,7 +47,7 @@ public class ApplicationFactoryServiceMock
     {
         return map.entrySet()
             .stream()
-            .filter( e -> e.getKey().getSymbolicName().equals( applicationKey.getName() ) )
+            .filter( e -> ApplicationHelper.getApplicationKey( e.getKey() ).equals( applicationKey ) )
             .map( Map.Entry::getValue )
             .map( ApplicationAdaptor::getUrlResolver )
             .findAny();

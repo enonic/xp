@@ -61,11 +61,11 @@ class SchedulerServiceImplTest
     private static final User REPO_TEST_DEFAULT_USER =
         User.create().key( PrincipalKey.ofUser( IdProviderKey.system(), "repo-test-user" ) ).login( "repo-test-user" ).build();
 
-    private static final AuthenticationInfo REPO_TEST_ADMIN_USER_AUTHINFO = AuthenticationInfo.create().
-        principals( RoleKeys.AUTHENTICATED ).
-        principals( RoleKeys.ADMIN ).
-        user( REPO_TEST_DEFAULT_USER ).
-        build();
+    private static final AuthenticationInfo REPO_TEST_ADMIN_USER_AUTHINFO = AuthenticationInfo.create()
+        .principals( RoleKeys.AUTHENTICATED )
+        .principals( RoleKeys.ADMIN )
+        .user( REPO_TEST_DEFAULT_USER )
+        .build();
 
     private SchedulerServiceImpl schedulerService;
 
@@ -79,11 +79,11 @@ class SchedulerServiceImplTest
 
     private static Context adminContext()
     {
-        return ContextBuilder.create().
-            branch( "master" ).
-            repositoryId( SchedulerConstants.SCHEDULER_REPO_ID ).
-            authInfo( REPO_TEST_ADMIN_USER_AUTHINFO ).
-            build();
+        return ContextBuilder.create()
+            .branch( "master" )
+            .repositoryId( SchedulerConstants.SCHEDULER_REPO_ID )
+            .authInfo( REPO_TEST_ADMIN_USER_AUTHINFO )
+            .build();
     }
 
     @BeforeEach
@@ -122,15 +122,15 @@ class SchedulerServiceImplTest
         config.addString( "string", "value" );
         final PrincipalKey user = PrincipalKey.from( "user:system:user" );
 
-        final CreateScheduledJobParams params = CreateScheduledJobParams.create().
-            name( name ).
-            descriptor( descriptor ).
-            calendar( calendar ).
-            config( config ).
-            description( "description" ).
-            enabled( true ).
-            user( user ).
-            build();
+        final CreateScheduledJobParams params = CreateScheduledJobParams.create()
+            .name( name )
+            .descriptor( descriptor )
+            .calendar( calendar )
+            .config( config )
+            .description( "description" )
+            .enabled( true )
+            .user( user )
+            .build();
 
         final Instant now = Instant.now();
 
@@ -164,15 +164,15 @@ class SchedulerServiceImplTest
 
         final PrincipalKey user = PrincipalKey.from( "user:system:user" );
 
-        final CreateScheduledJobParams params = CreateScheduledJobParams.create().
-            name( name ).
-            descriptor( descriptor ).
-            calendar( calendar ).
-            config( config ).
-            description( "description" ).
-            enabled( true ).
-            user( user ).
-            build();
+        final CreateScheduledJobParams params = CreateScheduledJobParams.create()
+            .name( name )
+            .descriptor( descriptor )
+            .calendar( calendar )
+            .config( config )
+            .description( "description" )
+            .enabled( true )
+            .user( user )
+            .build();
 
         final Instant now = Instant.now();
 
@@ -194,12 +194,12 @@ class SchedulerServiceImplTest
         final ScheduledJobName name = ScheduledJobName.from( "test" );
         final CronCalendar calendar = calendarService.cron( "* * * * *", TimeZone.getDefault() );
 
-        final CreateScheduledJobParams params = CreateScheduledJobParams.create().
-            name( name ).
-            calendar( calendar ).
-            descriptor( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.features" ), "landing" ) ).
-            config( new PropertyTree() ).
-            build();
+        final CreateScheduledJobParams params = CreateScheduledJobParams.create()
+            .name( name )
+            .calendar( calendar )
+            .descriptor( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.features" ), "landing" ) )
+            .config( new PropertyTree() )
+            .build();
 
         assertThrows( NodeAccessException.class, () -> schedulerService.create( params ) );
     }
@@ -210,12 +210,12 @@ class SchedulerServiceImplTest
         final ScheduledJobName name = ScheduledJobName.from( "test" );
         final CronCalendar calendar = calendarService.cron( "* * * * *", TimeZone.getDefault() );
 
-        final CreateScheduledJobParams params = CreateScheduledJobParams.create().
-            name( name ).
-            calendar( calendar ).
-            descriptor( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.features" ), "landing" ) ).
-            config( new PropertyTree() ).
-            build();
+        final CreateScheduledJobParams params = CreateScheduledJobParams.create()
+            .name( name )
+            .calendar( calendar )
+            .descriptor( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.features" ), "landing" ) )
+            .config( new PropertyTree() )
+            .build();
 
         adminContext().runWith( () -> schedulerService.create( params ) );
 
@@ -228,36 +228,36 @@ class SchedulerServiceImplTest
         final ScheduledJobName name = ScheduledJobName.from( "test" );
         final CronCalendar calendar = calendarService.cron( "* * * * *", TimeZone.getDefault() );
 
-        final CreateScheduledJobParams params = CreateScheduledJobParams.create().
-            name( name ).
-            calendar( calendar ).
-            descriptor( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.features" ), "landing" ) ).
-            config( new PropertyTree() ).
-            build();
+        final CreateScheduledJobParams params = CreateScheduledJobParams.create()
+            .name( name )
+            .calendar( calendar )
+            .descriptor( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.features" ), "landing" ) )
+            .config( new PropertyTree() )
+            .build();
 
         Context context = ContextAccessor.current();
-        final AuthenticationInfo authenticationInfo = AuthenticationInfo.copyOf( AuthenticationInfo.unAuthenticated() ).
-            user( null ).
-            principals( context.getAuthInfo().getPrincipals() ).
-            principals( RoleKeys.ADMIN ).
-            build();
+        final AuthenticationInfo authenticationInfo = AuthenticationInfo.copyOf( AuthenticationInfo.unAuthenticated() )
+            .user( null )
+            .principals( context.getAuthInfo().getPrincipals() )
+            .principals( RoleKeys.ADMIN )
+            .build();
 
         context = ContextBuilder.from( context ).authInfo( authenticationInfo ).build();
 
         final ScheduledJob scheduledJob = context.callWith( () -> schedulerService.create( params ) );
 
-        assertEquals( User.ANONYMOUS.getKey(), scheduledJob.getCreator() );
-        assertEquals( User.ANONYMOUS.getKey(), scheduledJob.getModifier() );
+        assertEquals( User.anonymous().getKey(), scheduledJob.getCreator() );
+        assertEquals( User.anonymous().getKey(), scheduledJob.getModifier() );
     }
 
     @Test
     void modifyNotCreated()
     {
-        assertThrows( NodeNotFoundException.class,
-                      () -> adminContext().runWith( () -> schedulerService.modify( ModifyScheduledJobParams.create().
-                          name( ScheduledJobName.from( "nonExist" ) ).
-                          editor( edit -> edit.enabled = false ).
-                          build() ) ) );
+        assertThrows( NodeNotFoundException.class, () -> adminContext().runWith( () -> schedulerService.modify(
+            ModifyScheduledJobParams.create()
+                .name( ScheduledJobName.from( "nonExist" ) )
+                .editor( edit -> edit.enabled = false )
+                .build() ) ) );
 
     }
 
@@ -266,18 +266,19 @@ class SchedulerServiceImplTest
     {
         final ScheduledJobName name = ScheduledJobName.from( "test" );
 
-        adminContext().callWith( () -> schedulerService.create( CreateScheduledJobParams.create().
-            name( name ).
-            descriptor( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ), "task1" ) ).
-            calendar( calendarService.cron( "* * * * *", TimeZone.getTimeZone( "GMT+5:30" ) ) ).
-            config( new PropertyTree() ).
-            enabled( true ).
-            build() ) );
+        adminContext().callWith( () -> schedulerService.create( CreateScheduledJobParams.create()
+                                                                    .name( name )
+                                                                    .descriptor(
+                                                                        DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ),
+                                                                                            "task1" ) )
+                                                                    .calendar( calendarService.cron( "* * * * *",
+                                                                                                     TimeZone.getTimeZone( "GMT+5:30" ) ) )
+                                                                    .config( new PropertyTree() )
+                                                                    .enabled( true )
+                                                                    .build() ) );
 
-        adminContext().callWith( () -> schedulerService.modify( ModifyScheduledJobParams.create().
-            name( name ).
-            editor( edit -> edit.enabled = false ).
-            build() ) );
+        adminContext().callWith( () -> schedulerService.modify(
+            ModifyScheduledJobParams.create().name( name ).editor( edit -> edit.enabled = false ).build() ) );
     }
 
     @Test
@@ -286,40 +287,41 @@ class SchedulerServiceImplTest
     {
         final ScheduledJobName name = ScheduledJobName.from( "test" );
 
-        adminContext().callWith( () -> schedulerService.create( CreateScheduledJobParams.create().
-            name( name ).
-            descriptor( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ), "task1" ) ).
-            calendar( calendarService.cron( "* * * * *", TimeZone.getTimeZone( "GMT+5:30" ) ) ).
-            config( new PropertyTree() ).
-            build() ) );
+        adminContext().callWith( () -> schedulerService.create( CreateScheduledJobParams.create()
+                                                                    .name( name )
+                                                                    .descriptor(
+                                                                        DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ),
+                                                                                            "task1" ) )
+                                                                    .calendar( calendarService.cron( "* * * * *",
+                                                                                                     TimeZone.getTimeZone( "GMT+5:30" ) ) )
+                                                                    .config( new PropertyTree() )
+                                                                    .build() ) );
 
         final Instant now = Instant.now();
 
         Thread.sleep( 100 );
 
-        final User user = User.create().
-            key( PrincipalKey.ofUser( IdProviderKey.system(), "user1" ) ).
-            displayName( "User 1" ).
-            email( "user1@enonic.com" ).
-            login( "user1" ).
-            build();
+        final User user = User.create()
+            .key( PrincipalKey.ofUser( IdProviderKey.system(), "user1" ) )
+            .displayName( "User 1" )
+            .email( "user1@enonic.com" )
+            .login( "user1" )
+            .build();
 
         final Context adminContext = adminContext();
         final Context userAdminContext = ContextBuilder.from( adminContext )
             .authInfo( AuthenticationInfo.copyOf( adminContext.getAuthInfo() ).user( user ).build() )
             .build();
 
-        final ScheduledJob modifiedJob = userAdminContext.callWith( () -> schedulerService.modify( ModifyScheduledJobParams.create().
-            name( name ).
-            editor( edit -> {
+        final ScheduledJob modifiedJob =
+            userAdminContext.callWith( () -> schedulerService.modify( ModifyScheduledJobParams.create().name( name ).editor( edit -> {
                 edit.enabled = true;
                 edit.description = "new description";
                 edit.descriptor = DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ), "task2" );
                 edit.config.addString( "string", "value" );
                 edit.user = PrincipalKey.from( "user:provider:user" );
                 edit.calendar = calendarService.oneTime( Instant.parse( "2021-02-25T10:44:33.170079900Z" ) );
-            } ).
-            build() ) );
+            } ).build() ) );
 
         assertEquals( name, modifiedJob.getName() );
         assertEquals( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ), "task2" ), modifiedJob.getDescriptor() );
@@ -341,35 +343,36 @@ class SchedulerServiceImplTest
     {
         final ScheduledJobName name = ScheduledJobName.from( "test" );
 
-        adminContext().callWith( () -> schedulerService.create( CreateScheduledJobParams.create().
-            name( name ).
-            descriptor( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ), "task1" ) ).
-            calendar( calendarService.cron( "* * * * *", TimeZone.getTimeZone( "GMT+5:30" ) ) ).
-            config( new PropertyTree() ).
-            build() ) );
+        adminContext().callWith( () -> schedulerService.create( CreateScheduledJobParams.create()
+                                                                    .name( name )
+                                                                    .descriptor(
+                                                                        DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ),
+                                                                                            "task1" ) )
+                                                                    .calendar( calendarService.cron( "* * * * *",
+                                                                                                     TimeZone.getTimeZone( "GMT+5:30" ) ) )
+                                                                    .config( new PropertyTree() )
+                                                                    .build() ) );
 
         final TaskId lastTaskId = TaskId.from( "task-id" );
         final Instant lastRun = Instant.parse( "2021-02-25T10:44:33.170079900Z" );
 
-        adminContext().runWith( () -> UpdateLastRunCommand.create().
-            name( name ).
-            lastTaskId( lastTaskId ).
-            lastRun( lastRun ).
-            nodeService( nodeService ).
-            build().
-            execute() );
+        adminContext().runWith( () -> UpdateLastRunCommand.create()
+            .name( name )
+            .lastTaskId( lastTaskId )
+            .lastRun( lastRun )
+            .nodeService( nodeService )
+            .build()
+            .execute() );
 
         final ScheduledJob runJob = adminContext().callWith( () -> schedulerService.get( name ) );
 
         assertEquals( lastRun, runJob.getLastRun() );
         assertEquals( lastTaskId, runJob.getLastTaskId() );
 
-        final ScheduledJob modifiedJob = adminContext().callWith( () -> schedulerService.modify( ModifyScheduledJobParams.create().
-            name( name ).
-            editor( edit -> {
+        final ScheduledJob modifiedJob =
+            adminContext().callWith( () -> schedulerService.modify( ModifyScheduledJobParams.create().name( name ).editor( edit -> {
                 edit.enabled = true;
-            } ).
-            build() ) );
+            } ).build() ) );
 
         assertNull( modifiedJob.getLastRun() );
         assertNull( modifiedJob.getLastTaskId() );
@@ -389,14 +392,17 @@ class SchedulerServiceImplTest
     {
         final ScheduledJobName name = ScheduledJobName.from( "test" );
 
-        adminContext().callWith( () -> schedulerService.create( CreateScheduledJobParams.create().
-            name( name ).
-            descriptor( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ), "task1" ) ).
-            calendar( calendarService.cron( "* * * * *", TimeZone.getTimeZone( "GMT+5:30" ) ) ).
-            config( new PropertyTree() ).
-            build() ) );
+        adminContext().callWith( () -> schedulerService.create( CreateScheduledJobParams.create()
+                                                                    .name( name )
+                                                                    .descriptor(
+                                                                        DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ),
+                                                                                            "task1" ) )
+                                                                    .calendar( calendarService.cron( "* * * * *",
+                                                                                                     TimeZone.getTimeZone( "GMT+5:30" ) ) )
+                                                                    .config( new PropertyTree() )
+                                                                    .build() ) );
 
-        assertThrows( NodeAccessException.class, () -> schedulerService.delete( name ));
+        assertThrows( NodeAccessException.class, () -> schedulerService.delete( name ) );
     }
 
     @Test
@@ -404,12 +410,15 @@ class SchedulerServiceImplTest
     {
         final ScheduledJobName name = ScheduledJobName.from( "test" );
 
-        adminContext().callWith( () -> schedulerService.create( CreateScheduledJobParams.create().
-            name( name ).
-            descriptor( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ), "task1" ) ).
-            calendar( calendarService.cron( "* * * * *", TimeZone.getTimeZone( "GMT+5:30" ) ) ).
-            config( new PropertyTree() ).
-            build() ) );
+        adminContext().callWith( () -> schedulerService.create( CreateScheduledJobParams.create()
+                                                                    .name( name )
+                                                                    .descriptor(
+                                                                        DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ),
+                                                                                            "task1" ) )
+                                                                    .calendar( calendarService.cron( "* * * * *",
+                                                                                                     TimeZone.getTimeZone( "GMT+5:30" ) ) )
+                                                                    .config( new PropertyTree() )
+                                                                    .build() ) );
 
         final boolean deleted = adminContext().callWith( () -> schedulerService.delete( name ) );
 
@@ -429,12 +438,15 @@ class SchedulerServiceImplTest
     {
         final ScheduledJobName name = ScheduledJobName.from( "test" );
 
-        adminContext().callWith( () -> schedulerService.create( CreateScheduledJobParams.create().
-            name( name ).
-            descriptor( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ), "task1" ) ).
-            calendar( calendarService.cron( "* * * * *", TimeZone.getTimeZone( "GMT+5:30" ) ) ).
-            config( new PropertyTree() ).
-            build() ) );
+        adminContext().callWith( () -> schedulerService.create( CreateScheduledJobParams.create()
+                                                                    .name( name )
+                                                                    .descriptor(
+                                                                        DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ),
+                                                                                            "task1" ) )
+                                                                    .calendar( calendarService.cron( "* * * * *",
+                                                                                                     TimeZone.getTimeZone( "GMT+5:30" ) ) )
+                                                                    .config( new PropertyTree() )
+                                                                    .build() ) );
 
         assertNull( schedulerService.get( name ) );
     }
@@ -448,13 +460,13 @@ class SchedulerServiceImplTest
         final PropertyTree config = new PropertyTree();
         config.addString( "string", "value" );
 
-        adminContext().callWith( () -> schedulerService.create( CreateScheduledJobParams.create().
-            name( name ).
-            descriptor( descriptor ).
-            calendar( calendar ).
-            config( config ).
-            description( "description" ).
-            build() ) );
+        adminContext().callWith( () -> schedulerService.create( CreateScheduledJobParams.create()
+                                                                    .name( name )
+                                                                    .descriptor( descriptor )
+                                                                    .calendar( calendar )
+                                                                    .config( config )
+                                                                    .description( "description" )
+                                                                    .build() ) );
 
         final ScheduledJob scheduledJob = adminContext().callWith( () -> schedulerService.get( name ) );
 
@@ -477,13 +489,13 @@ class SchedulerServiceImplTest
         final PropertyTree config = new PropertyTree();
         config.addString( "string", "value" );
 
-        adminContext().callWith( () -> schedulerService.create( CreateScheduledJobParams.create().
-            name( name ).
-            descriptor( descriptor ).
-            calendar( calendar ).
-            config( config ).
-            description( "description" ).
-            build() ) );
+        adminContext().callWith( () -> schedulerService.create( CreateScheduledJobParams.create()
+                                                                    .name( name )
+                                                                    .descriptor( descriptor )
+                                                                    .calendar( calendar )
+                                                                    .config( config )
+                                                                    .description( "description" )
+                                                                    .build() ) );
 
         assertEquals( 0, schedulerService.list().size() );
     }
@@ -498,23 +510,23 @@ class SchedulerServiceImplTest
         final PropertyTree config = new PropertyTree();
         config.addString( "string", "value" );
 
-        adminContext().callWith( () -> schedulerService.create( CreateScheduledJobParams.create().
-            name( ScheduledJobName.from( "test1" ) ).
-            descriptor( descriptor ).
-            calendar( calendar ).
-            config( config ).
-            description( "description" ).
-            build() ) );
+        adminContext().callWith( () -> schedulerService.create( CreateScheduledJobParams.create()
+                                                                    .name( ScheduledJobName.from( "test1" ) )
+                                                                    .descriptor( descriptor )
+                                                                    .calendar( calendar )
+                                                                    .config( config )
+                                                                    .description( "description" )
+                                                                    .build() ) );
 
         assertEquals( 1, adminContext().callWith( () -> schedulerService.list() ).size() );
 
-        adminContext().callWith( () -> schedulerService.create( CreateScheduledJobParams.create().
-            name( ScheduledJobName.from( "test2" ) ).
-            descriptor( descriptor ).
-            calendar( calendar ).
-            config( config ).
-            description( "description" ).
-            build() ) );
+        adminContext().callWith( () -> schedulerService.create( CreateScheduledJobParams.create()
+                                                                    .name( ScheduledJobName.from( "test2" ) )
+                                                                    .descriptor( descriptor )
+                                                                    .calendar( calendar )
+                                                                    .config( config )
+                                                                    .description( "description" )
+                                                                    .build() ) );
 
         assertEquals( 2, adminContext().callWith( () -> schedulerService.list() ).size() );
     }

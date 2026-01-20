@@ -26,9 +26,7 @@ class XmlNodeParserTest
 
         final Node node = builder.build();
 
-        final XmlNodeSerializer serializer = new XmlNodeSerializer();
-        serializer.node( node ).exportNodeIds( true );
-        final String result = serializer.serialize();
+        final String result = new XmlNodeSerializer().node( node ).serialize();
 
         assertXml( "node.xml", result );
     }
@@ -46,9 +44,7 @@ class XmlNodeParserTest
 
         final Node node = builder.build();
 
-        final XmlNodeSerializer serializer = new XmlNodeSerializer();
-        serializer.node( node ).exportNodeIds( true );
-        final String result = serializer.serialize();
+        final String result = new XmlNodeSerializer().node( node ).serialize();
 
         assertXml( "node.xml", result );
     }

@@ -57,11 +57,6 @@ public @interface JettyConfig
     int http_responseHeaderSize() default 32 * 1024;
 
     /**
-     * Jetty HTTP compliance mode
-     */
-    String http_compliance() default "RFC7230_NO_AMBIGUOUS_URIS";
-
-    /**
      * Session cookie name.
      */
     String session_cookieName() default "JSESSIONID";
@@ -104,7 +99,7 @@ public @interface JettyConfig
     /**
      * Content will only be compressed if content length is either unknown or greater than value.
      */
-    int gzip_minSize() default 23;
+    int gzip_minSize() default 32;
 
     /**
      * Logging to file enabled.

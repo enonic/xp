@@ -22,8 +22,7 @@ var expectedJson = {
             'attachments': {},
             'publish': {},
             'workflow': {
-                'state': 'READY',
-                'checks': {}
+                'state': 'READY'
             }
         },
         {
@@ -43,8 +42,7 @@ var expectedJson = {
             'attachments': {},
             'publish': {},
             'workflow': {
-                'state': 'READY',
-                'checks': {}
+                'state': 'READY'
             }
         },
         {
@@ -64,8 +62,7 @@ var expectedJson = {
             'attachments': {},
             'publish': {},
             'workflow': {
-                'state': 'READY',
-                'checks': {}
+                'state': 'READY'
             }
         }
     ],
@@ -315,8 +312,7 @@ var expectedJsonExistsDslExpr = {
             'attachments': {},
             'publish': {},
             'workflow': {
-                'state': 'READY',
-                'checks': {}
+                'state': 'READY'
             }
         },
         {
@@ -336,8 +332,7 @@ var expectedJsonExistsDslExpr = {
             'attachments': {},
             'publish': {},
             'workflow': {
-                'state': 'READY',
-                'checks': {}
+                'state': 'READY'
             }
         },
         {
@@ -357,8 +352,7 @@ var expectedJsonExistsDslExpr = {
             'attachments': {},
             'publish': {},
             'workflow': {
-                'state': 'READY',
-                'checks': {}
+                'state': 'READY'
             }
         }
     ]

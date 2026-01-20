@@ -52,7 +52,8 @@ import com.enonic.xp.core.impl.app.resource.ResourceServiceImpl;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
 import com.enonic.xp.core.impl.project.ProjectConfig;
 import com.enonic.xp.core.impl.project.ProjectServiceImpl;
-import com.enonic.xp.core.impl.project.init.ContentInitializer;
+import com.enonic.xp.core.impl.project.ProjectConfig;
+import com.enonic.xp.core.impl.project.ProjectServiceImpl;
 import com.enonic.xp.core.impl.security.SecurityAuditLogSupportImpl;
 import com.enonic.xp.core.impl.security.SecurityConfig;
 import com.enonic.xp.core.impl.security.SecurityInitializer;
@@ -147,7 +148,7 @@ class DynamicSchemaServiceImplTest
     private static Context createAdminContext()
     {
         return ContextBuilder.copyOf( ctxDefault() )
-            .authInfo( AuthenticationInfo.create().principals( RoleKeys.AUTHENTICATED, RoleKeys.ADMIN ).user( User.ANONYMOUS ).build() )
+            .authInfo( AuthenticationInfo.create().principals( RoleKeys.AUTHENTICATED, RoleKeys.ADMIN ).user( User.anonymous() ).build() )
             .build();
     }
 
@@ -155,7 +156,7 @@ class DynamicSchemaServiceImplTest
     {
         return ContextBuilder.copyOf( ctxDefault() )
             .authInfo(
-                AuthenticationInfo.create().principals( RoleKeys.AUTHENTICATED, RoleKeys.SCHEMA_ADMIN ).user( User.ANONYMOUS ).build() )
+                AuthenticationInfo.create().principals( RoleKeys.AUTHENTICATED, RoleKeys.SCHEMA_ADMIN ).user( User.anonymous() ).build() )
             .build();
     }
 
@@ -263,8 +264,8 @@ class DynamicSchemaServiceImplTest
             .initialize();
 
         ApplicationService applicationService =
-            new ApplicationServiceImpl( applicationRegistry, repoService, eventPublisher, appFilterService,
-                                        virtualAppService, new ApplicationAuditLogSupportImpl( mock( AuditLogService.class ) ) );
+            new ApplicationServiceImpl( applicationRegistry, repoService, eventPublisher, appFilterService, virtualAppService,
+                                        new ApplicationAuditLogSupportImpl( mock( AuditLogService.class ) ) );
 
         createSchemaAdminContext().runWith( () -> applicationService.createVirtualApplication(
             CreateVirtualApplicationParams.create().key( ApplicationKey.from( "myapp" ) ).build() ) );
@@ -272,7 +273,8 @@ class DynamicSchemaServiceImplTest
         createAdminContext().runWith( () -> applicationService.createVirtualApplication(
             CreateVirtualApplicationParams.create().key( ApplicationKey.from( "my-other-app" ) ).build() ) );
 
-        projectService = new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService, eventPublisher, mock( ProjectConfig.class ) );
+        projectService = new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService, eventPublisher,
+                                                 mock( ProjectConfig.class ) );
         projectService.initialize();
 
         createAdminContext().runWith( () -> projectService.create(
@@ -1108,8 +1110,8 @@ class DynamicSchemaServiceImplTest
         assertEquals( "myapp:/cms/styles/image.yml", result.getResource().getKey().toString() );
         assertNotNull( styleDescriptor.getModifiedTime() );
 
-        final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/styles/image.yml" ) ) );
+        final Node resourceNode =
+            VirtualAppContext.createAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/styles/image.yml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -1138,8 +1140,8 @@ class DynamicSchemaServiceImplTest
         assertEquals( resource, result.getResource().readString() );
         assertEquals( "myapp:/cms/styles/image.yml", result.getResource().getKey().toString() );
 
-        final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/styles/image.yml" ) ) );
+        final Node resourceNode =
+            VirtualAppContext.createAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/styles/image.yml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }

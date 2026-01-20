@@ -45,7 +45,7 @@ var expected = {
         },
         'configs': [
             {
-                'path': 'displayName',
+                'path': 'displayname',
                 'config': {
                     'decideByType': false,
                     'enabled': true,
@@ -57,7 +57,13 @@ var expected = {
                     'languages': []
                 }
             }
-        ]
+        ],
+        'allText': {
+            'enabled': true,
+            'nGram': true,
+            'fulltext': true,
+            'languages': []
+        }
     },
     '_permissions': [
         {

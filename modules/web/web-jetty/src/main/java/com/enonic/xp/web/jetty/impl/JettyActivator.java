@@ -2,10 +2,10 @@ package com.enonic.xp.web.jetty.impl;
 
 import java.util.List;
 
-import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
-import org.eclipse.jetty.ee10.servlet.ServletHolder;
-import org.eclipse.jetty.ee10.servlet.SessionHandler;
-import org.eclipse.jetty.ee10.websocket.jakarta.server.config.JakartaWebSocketServletContainerInitializer;
+import org.eclipse.jetty.ee11.servlet.ServletContextHandler;
+import org.eclipse.jetty.ee11.servlet.ServletHolder;
+import org.eclipse.jetty.ee11.servlet.SessionHandler;
+import org.eclipse.jetty.ee11.websocket.jakarta.server.config.JakartaWebSocketServletContainerInitializer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
@@ -71,7 +71,7 @@ public final class JettyActivator
         this.jettySessionStoreConfigurator.configure( server );
         new HttpConfigurator().configure( this.config, server );
         new RequestLogConfigurator().configure( this.config, server );
-        new ErrorHandlerConfigurator().configure( RunMode.get(), server );
+        new ErrorHandlerConfigurator().configure( server );
 
         final ContextHandlerCollection contexts = new ContextHandlerCollection();
         ServletContextHandler xpServletContextHandler = null;

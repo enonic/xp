@@ -14,6 +14,7 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.UserEditor;
 import com.enonic.xp.testing.ScriptTestSupport;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -36,11 +37,10 @@ class ModifyProfileHandlerTest
     {
         final User user = TestDataFixtures.getTestUser();
 
-        Mockito.when( securityService.getUser( Mockito.any() ) ).
-            thenReturn( Optional.of( user ) );
+        Mockito.when( securityService.getUser( Mockito.any() ) ).thenReturn( Optional.of( user ) );
 
-        Mockito.when( this.securityService.updateUser( Mockito.isA( UpdateUserParams.class ) ) ).
-            thenAnswer( invocationOnMock -> invokeUpdate( (UpdateUserParams) invocationOnMock.getArguments()[0], user ) );
+        Mockito.when( this.securityService.updateUser( Mockito.isA( UpdateUserParams.class ) ) )
+            .thenAnswer( invocationOnMock -> invokeUpdate( invocationOnMock.getArgument( 0 ), user ) );
 
         runScript( "/lib/xp/examples/auth/modifyProfile.js" );
     }
@@ -51,27 +51,25 @@ class ModifyProfileHandlerTest
 
         final User user = TestDataFixtures.getTestUserWithProfile();
 
-        Mockito.when( securityService.getUser( Mockito.any() ) ).
-            thenReturn( Optional.of( user ) );
+        Mockito.when( securityService.getUser( Mockito.any() ) ).thenReturn( Optional.of( user ) );
 
-        Mockito.when( this.securityService.updateUser( Mockito.isA( UpdateUserParams.class ) ) ).
-            thenAnswer( invocationOnMock -> {
-                final User editedUser = invokeUpdate( (UpdateUserParams) invocationOnMock.getArguments()[0], user );
-                final PropertySet profile = editedUser.getProfile().getSet( "myApp" );
+        Mockito.when( this.securityService.updateUser( Mockito.isA( UpdateUserParams.class ) ) ).thenAnswer( invocationOnMock -> {
+            final User editedUser = invokeUpdate( invocationOnMock.getArgument( 0 ), user );
+            final PropertySet profile = editedUser.getProfile().getSet( "myApp" );
 
-                assertTrue( profile.getProperty( "untouchedString" ).getType().equals( ValueTypes.STRING ) );
-                assertTrue( profile.getProperty( "untouchedBoolean" ).getType().equals( ValueTypes.BOOLEAN ) );
-                assertTrue( profile.getProperty( "untouchedDouble" ).getType().equals( ValueTypes.DOUBLE ) );
-                assertTrue( profile.getProperty( "untouchedLong" ).getType().equals( ValueTypes.LONG ) );
-                assertTrue( profile.getProperty( "untouchedLink" ).getType().equals( ValueTypes.LINK ) );
-                assertTrue( profile.getProperty( "untouchedInstant" ).getType().equals( ValueTypes.DATE_TIME ) );
-                assertTrue( profile.getProperty( "untouchedGeoPoint" ).getType().equals( ValueTypes.GEO_POINT ) );
-                assertTrue( profile.getProperty( "untouchedLocalDate" ).getType().equals( ValueTypes.LOCAL_DATE ) );
-                assertTrue( profile.getProperty( "untouchedReference" ).getType().equals( ValueTypes.REFERENCE ) );
-                assertTrue( profile.getProperty( "untouchedBinaryRef" ).getType().equals( ValueTypes.BINARY_REFERENCE ) );
+            assertEquals( ValueTypes.STRING, profile.getProperty( "untouchedString" ).getType() );
+            assertEquals( ValueTypes.BOOLEAN, profile.getProperty( "untouchedBoolean" ).getType() );
+            assertEquals( ValueTypes.DOUBLE, profile.getProperty( "untouchedDouble" ).getType() );
+            assertEquals( ValueTypes.LONG, profile.getProperty( "untouchedLong" ).getType() );
+            assertEquals( ValueTypes.LINK, profile.getProperty( "untouchedLink" ).getType() );
+            assertEquals( ValueTypes.DATE_TIME, profile.getProperty( "untouchedInstant" ).getType() );
+            assertEquals( ValueTypes.GEO_POINT, profile.getProperty( "untouchedGeoPoint" ).getType() );
+            assertEquals( ValueTypes.LOCAL_DATE, profile.getProperty( "untouchedLocalDate" ).getType() );
+            assertEquals( ValueTypes.REFERENCE, profile.getProperty( "untouchedReference" ).getType() );
+            assertEquals( ValueTypes.BINARY_REFERENCE, profile.getProperty( "untouchedBinaryRef" ).getType() );
 
-                return editedUser;
-            } );
+            return editedUser;
+        } );
 
         runScript( "/test/modifyProfile-test.js" );
 

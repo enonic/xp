@@ -53,7 +53,6 @@ import static com.enonic.xp.content.ContentPropertyNames.TYPE;
 import static com.enonic.xp.content.ContentPropertyNames.VALID;
 import static com.enonic.xp.content.ContentPropertyNames.VARIANT_OF;
 import static com.enonic.xp.content.ContentPropertyNames.WORKFLOW_INFO;
-import static com.enonic.xp.content.ContentPropertyNames.WORKFLOW_INFO_CHECKS;
 import static com.enonic.xp.content.ContentPropertyNames.WORKFLOW_INFO_STATE;
 import static com.enonic.xp.core.impl.content.serializer.ComponentDataSerializer.COMPONENTS;
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -69,7 +68,7 @@ public final class ContentDataSerializer
 
     private final ValidationErrorsSerializer validationErrorsSerializer;
 
-    public ContentDataSerializer( )
+    public ContentDataSerializer()
     {
         this( new PageDataSerializer() );
     }
@@ -255,9 +254,6 @@ public final class ContentDataSerializer
 
             final PropertySet workflowInfo = contentAsData.addSet( WORKFLOW_INFO );
             workflowInfo.addString( WORKFLOW_INFO_STATE, data.getState().toString() );
-
-            final PropertySet workflowInfoChecks = workflowInfo.addSet( WORKFLOW_INFO_CHECKS );
-            data.getChecks().forEach( ( key, value ) -> workflowInfoChecks.addString( key, value.toString() ) );
         }
     }
 

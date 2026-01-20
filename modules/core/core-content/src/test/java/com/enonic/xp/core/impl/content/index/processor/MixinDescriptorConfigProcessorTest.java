@@ -84,6 +84,6 @@ class MixinDescriptorConfigProcessorTest
 
         final MixinConfigProcessor configProcessor = new MixinConfigProcessor( descriptors );
 
-        return configProcessor.processDocument( PatternIndexConfigDocument.create() ).build();
+        return configProcessor.processDocument( PatternIndexConfigDocument.empty() );
     }
 }

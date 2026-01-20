@@ -3,6 +3,7 @@ package com.enonic.xp.impl.task;
 import java.util.UUID;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.core.internal.ApplicationBundleUtils;
 import com.enonic.xp.core.internal.osgi.OsgiSupport;
 import com.enonic.xp.impl.task.distributed.DescribedTask;
 import com.enonic.xp.impl.task.distributed.TaskContext;
@@ -34,7 +35,8 @@ public class DescribedTaskImpl
         this.context = context;
 
         this.description = description;
-        this.applicationKey = ApplicationKey.from( OsgiSupport.getBundle( runnableTask.getClass() ) );
+        this.applicationKey =
+            ApplicationKey.from( ApplicationBundleUtils.getApplicationName( OsgiSupport.getBundle( runnableTask.getClass() ) ) );
         this.name = name == null ? "task-" + this.applicationKey + "-" + this.taskId : name;
     }
 

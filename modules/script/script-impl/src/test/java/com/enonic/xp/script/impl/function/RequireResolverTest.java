@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.resource.ResourceKey;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class RequireResolverTest
@@ -58,8 +59,12 @@ class RequireResolverTest
     @Test
     void findAllSearchPaths()
     {
-        assertEquals( "[/a.js]", RequireResolver.findSearchPaths( "/a.js" ).toString() );
-        assertEquals( "[/a.js, /a/index.js, /a.json, /a/index.json]", RequireResolver.findSearchPaths( "/a" ).toString() );
+        assertThat( RequireResolver.findSearchPaths( "/a.js" ) ).containsExactly( "/a.js" );
+        assertThat( RequireResolver.findSearchPaths( "/a" ) ).containsExactly( "/a.js", "/a/index.js", "/a.json", "/a/index.json" );
+
+        assertThat( RequireResolver.findSearchPaths( "/com.enonic.app.myapp.js" ) ).containsExactly( "/com.enonic.app.myapp.js" );
+        assertThat( RequireResolver.findSearchPaths( "/a.json" ) ).containsExactly( "/a.json" );
+        assertThat( RequireResolver.findSearchPaths( "/next.js/" ) ).containsExactly( "/next.js/index.js", "/next.js/index.json" );
     }
 
     private ResourceKey resolve( final String base, final String path )

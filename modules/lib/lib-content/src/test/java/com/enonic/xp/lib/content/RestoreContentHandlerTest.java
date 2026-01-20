@@ -20,7 +20,7 @@ class RestoreContentHandlerTest
         when( this.contentService.getByPath( ContentPath.from( "/path/to/mycontent" ) ) ).thenReturn( content );
 
         when( this.contentService.restore( Mockito.isA( RestoreContentParams.class ) ) ).thenAnswer(
-            invocationOnMock -> invokeRestore( (RestoreContentParams) invocationOnMock.getArguments()[0], content ) );
+            invocationOnMock -> invokeRestore( invocationOnMock.getArgument( 0 ), content ) );
 
         runScript( "/lib/xp/examples/content/restore.js" );
     }

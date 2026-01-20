@@ -1,12 +1,11 @@
 package com.enonic.xp.launcher.impl;
 
-import java.nio.file.Path;
-import java.util.Map;
+import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import com.enonic.xp.launcher.Launcher;
-import com.enonic.xp.launcher.VersionInfo;
+import org.osgi.framework.Bundle;
+
 import com.enonic.xp.launcher.impl.config.ConfigLoader;
 import com.enonic.xp.launcher.impl.config.ConfigProperties;
 import com.enonic.xp.launcher.impl.env.Environment;
@@ -15,12 +14,11 @@ import com.enonic.xp.launcher.impl.env.SystemProperties;
 import com.enonic.xp.launcher.impl.framework.FrameworkLifecycleActor;
 import com.enonic.xp.launcher.impl.framework.FrameworkLifecycleService;
 import com.enonic.xp.launcher.impl.framework.FrameworkService;
-import com.enonic.xp.launcher.impl.log.Activator;
+import com.enonic.xp.launcher.impl.log.LogActivator;
 import com.enonic.xp.launcher.impl.provision.ProvisionActivator;
 import com.enonic.xp.launcher.impl.util.BannerPrinter;
 
 public final class LauncherImpl
-    implements Launcher
 {
     private final String[] args;
 
@@ -28,107 +26,66 @@ public final class LauncherImpl
 
     private final VersionInfo version;
 
-    private Environment env;
+    private final Environment env;
 
-    private ConfigProperties config;
+    private final ConfigProperties config;
 
-    private FrameworkService framework;
+    private volatile FrameworkService framework;
 
-    private ExecutorService frameworkLifecycleExecutor;
+    private volatile ExecutorService frameworkLifecycleExecutor;
 
     public LauncherImpl( final String... args )
+        throws Exception
     {
         this.args = args;
         applySystemPropertyArgs();
         this.systemProperties = SystemProperties.getDefault();
         this.version = VersionInfo.get();
+        this.env = new EnvironmentResolver( this.systemProperties ).resolve();
+        System.getProperties().putAll( this.env.getAsMap() );
+        this.config = loadConfiguration();
     }
 
-    private void resolveEnv()
+    public void start()
     {
-        final EnvironmentResolver resolver = new EnvironmentResolver( this.systemProperties );
-        this.env = resolver.resolve();
+        printBanner();
+        createFramework();
+        this.framework.start();
+    }
 
-        System.getProperties().putAll( this.env.getAsMap() );
+    public void stop()
+    {
+        this.framework.stop();
+        this.frameworkLifecycleExecutor.shutdownNow();
     }
 
     private void printBanner()
     {
-        final BannerPrinter banner = new BannerPrinter( this.env, this.version );
-        banner.printBanner();
-    }
-
-    private void loadConfiguration()
-        throws Exception
-    {
-        final ConfigLoader loader = new ConfigLoader( this.env );
-        this.config = loader.load();
-        this.config.putAll( this.systemProperties );
-        this.config.putAll( this.version.getAsMap() );
-        this.config.interpolate();
-    }
-
-    private void applyConfigToSystemProperties()
-    {
-        for ( final Map.Entry<String, String> entry : this.config.entrySet() )
-        {
-            System.setProperty( entry.getKey(), entry.getValue() );
-        }
+        new BannerPrinter( this.env, this.version ).printBanner();
     }
 
     private void createFramework()
     {
         this.framework = new FrameworkService( this.config );
 
-        addLoggingActivator();
-        addProvisionActivator();
-        setupLifecycleService();
-    }
-
-    private void addProvisionActivator()
-    {
-        final Path systemDir = this.env.getInstallDir().resolve( "system" );
-        final ProvisionActivator activator = new ProvisionActivator( systemDir );
-        this.framework.activator( activator );
-    }
-
-    private void addLoggingActivator()
-    {
         this.framework.activator( new org.apache.felix.log.Activator() );
-        this.framework.activator( new Activator() );
-    }
+        this.framework.activator( new LogActivator() );
+        this.framework.activator( new ProvisionActivator( this.env.getInstallDir().resolve( "system" ), bl -> {
+            if ( System.getProperty( SharedConstants.XP_RUN_MODE ) == null )
+            {
+                bl.stream()
+                    .map( Bundle::getSymbolicName )
+                    .filter( "com.enonic.xp.app.sdk"::equals )
+                    .findAny()
+                    .ifPresent( _ -> System.setProperty( SharedConstants.XP_RUN_MODE, "dev" ) );
+            }
+        } ) );
 
-    private void setupLifecycleService()
-    {
-        this.frameworkLifecycleExecutor = Executors.newSingleThreadExecutor( r -> {
-            final Thread thread = Executors.defaultThreadFactory().newThread( r );
-            thread.setName( "Framework Lifecycle" );
-            return thread;
-        } );
-
+        this.frameworkLifecycleExecutor =
+            Executors.newSingleThreadExecutor( r -> Thread.ofPlatform().name( "Framework Lifecycle" ).unstarted( r ) );
         this.framework.service( FrameworkLifecycleService.class,
                                 new FrameworkLifecycleService( new FrameworkLifecycleActor( framework )::accept,
                                                                frameworkLifecycleExecutor ) );
-    }
-
-    @Override
-    public void start()
-        throws Exception
-    {
-        resolveEnv();
-        printBanner();
-        loadConfiguration();
-        applyConfigToSystemProperties();
-        createFramework();
-
-        this.framework.start();
-    }
-
-    @Override
-    public void stop()
-    {
-        this.framework.stop();
-        this.frameworkLifecycleExecutor.shutdownNow();
     }
 
     private void applySystemPropertyArgs()
@@ -137,7 +94,7 @@ public final class LauncherImpl
         {
             if ( arg.equalsIgnoreCase( "dev" ) )
             {
-                setRunMode( "dev" );
+                System.setProperty( SharedConstants.XP_RUN_MODE, "dev" );
             }
             else if ( arg.startsWith( "-D" ) )
             {
@@ -155,8 +112,15 @@ public final class LauncherImpl
         }
     }
 
-    private void setRunMode( final String mode )
+    private ConfigProperties loadConfiguration()
+        throws IOException
     {
-        System.setProperty( SharedConstants.XP_RUN_MODE, mode );
+        ConfigProperties config = new ConfigLoader( this.env ).load();
+        config.putAll( this.systemProperties );
+        config.putAll( this.version.getAsMap() );
+        config.interpolate();
+
+        config.forEach( System::setProperty );
+        return config;
     }
 }

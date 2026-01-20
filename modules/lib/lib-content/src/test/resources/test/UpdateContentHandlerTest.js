@@ -11,7 +11,7 @@ var expectedJson = {
     'modifiedTime': '1970-01-01T00:00:00Z',
     'type': 'test:myContentType',
     'displayName': 'Modified',
-    'language': 'es',
+    'language': 'en',
     'valid': false,
     'data': {
         'a': 2,
@@ -147,10 +147,7 @@ var expectedJson = {
         "to": "2016-11-22T10:36:00Z"
     },
     'workflow': {
-        'state': 'READY',
-        'checks': {
-            'Review by marketing': 'APPROVED'
-        }
+        'state': 'READY'
     }
 };
 

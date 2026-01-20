@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.index.AllTextIndexConfig;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexValueProcessors;
@@ -40,7 +41,7 @@ class XmlNodeSerializerTest
         final Node node = doCreateNode( instant );
 
         final XmlNodeSerializer serializer = new XmlNodeSerializer();
-        serializer.node( node ).exportNodeIds( true );
+        serializer.node( node );
 
         final String result = serializer.serialize();
 
@@ -116,7 +117,7 @@ class XmlNodeSerializerTest
         indexConfigDocumentBuilder.analyzer( "no" );
         indexConfigDocumentBuilder.add( "mydata", indexConfig );
 
-        indexConfigDocumentBuilder.addAllTextConfigLanguage( "en" );
+        indexConfigDocumentBuilder.allTextConfig( AllTextIndexConfig.create().addLanguage( "en" ).build() );
 
         // Permissions
         final Permission createPermission = Permission.CREATE;

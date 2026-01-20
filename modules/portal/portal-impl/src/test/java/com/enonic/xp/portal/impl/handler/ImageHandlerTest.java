@@ -346,7 +346,7 @@ class ImageHandlerTest
         final WebResponse res = this.handler.handle( this.request );
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
-        assertEquals( MediaType.create( "image", "avif" ), res.getContentType() );
+        assertEquals( MediaType.AVIF, res.getContentType() );
         assertInstanceOf( ByteSource.class, res.getBody() );
         assertNull( res.getHeaders().get( "Content-Encoding" ) );
     }

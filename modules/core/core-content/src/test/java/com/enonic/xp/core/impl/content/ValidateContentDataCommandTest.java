@@ -6,7 +6,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ValidationErrors;
@@ -16,7 +15,6 @@ import com.enonic.xp.core.impl.content.validate.OccurrenceValidator;
 import com.enonic.xp.core.impl.content.validate.SiteConfigsValidator;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.FieldSet;
-import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;

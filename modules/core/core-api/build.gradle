@@ -1,10 +1,9 @@
 dependencies {
     api libs.slf4j.api
-    api( libs.guava.guava ) {
-        exclude group: 'com.google.code.findbugs'
-    }
+    api libs.guava.guava
     api libs.osgi.core
     api libs.osgi.service.component
+    api libs.jspecify
     compileOnlyApi libs.osgi.service.componentannotations
 
     implementation project( ':core:core-internal' )

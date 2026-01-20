@@ -63,8 +63,7 @@ var expected = {
     },
     'publish': {},
     'workflow': {
-        'state': 'READY',
-        'checks': {}
+        'state': 'READY'
     }
 };
 // END

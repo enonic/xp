@@ -8,14 +8,20 @@ import java.util.stream.StreamSupport;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.AttachmentValidationError;
+import com.enonic.xp.content.ComponentConfigValidationError;
 import com.enonic.xp.content.DataValidationError;
+import com.enonic.xp.content.MixinConfigValidationError;
+import com.enonic.xp.content.SiteConfigValidationError;
 import com.enonic.xp.content.ValidationError;
 import com.enonic.xp.content.ValidationErrorCode;
 import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.core.internal.json.ObjectMapperHelper;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.region.ComponentPath;
+import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.util.BinaryReference;
 
 import static com.enonic.xp.content.ContentPropertyNames.VALIDATION_ERRORS;
@@ -47,13 +53,31 @@ public class ValidationErrorsSerializer
                     }
                 }
 
-                if ( validationError instanceof DataValidationError )
+                switch ( validationError )
                 {
-                    propertySet.addString( "propertyPath", ( (DataValidationError) validationError ).getPropertyPath().toString() );
-                }
-                else if ( validationError instanceof AttachmentValidationError )
-                {
-                    propertySet.addString( "attachment", ( (AttachmentValidationError) validationError ).getAttachment().toString() );
+                    case ComponentConfigValidationError componentError ->
+                    {
+                        propertySet.addString( "propertyPath", componentError.getPropertyPath().toString() );
+                        propertySet.addString( "applicationKey", componentError.getApplicationKey().toString() );
+                        propertySet.addString( "componentPath", componentError.getComponentPath().toString() );
+                    }
+                    case SiteConfigValidationError configError ->
+                    {
+                        propertySet.addString( "propertyPath", configError.getPropertyPath().toString() );
+                        propertySet.addString( "applicationKey", configError.getApplicationKey().toString() );
+                    }
+                    case MixinConfigValidationError mixinError ->
+                    {
+                        propertySet.addString( "propertyPath", mixinError.getPropertyPath().toString() );
+                        propertySet.addString( "mixinName", mixinError.getMixinName().toString() );
+                    }
+                    case DataValidationError dataValidationError ->
+                        propertySet.addString( "propertyPath", dataValidationError.getPropertyPath().toString() );
+                    case AttachmentValidationError attachmentValidationError ->
+                        propertySet.addString( "attachment", attachmentValidationError.getAttachment().toString() );
+                    default ->
+                    {
+                    }
                 }
                 return propertySet;
             } ).toArray( PropertySet[]::new ) );
@@ -91,11 +115,42 @@ public class ValidationErrorsSerializer
 
         if ( ve.hasProperty( "propertyPath" ) )
         {
-            return ValidationError.dataError( errorCode, PropertyPath.from( ve.getString( "propertyPath" ) ) )
-                .message( ve.getString( "message" ), true )
-                .i18n( ve.getString( "i18n" ) )
-                .args( args )
-                .build();
+            final PropertyPath propertyPath = PropertyPath.from( ve.getString( "propertyPath" ) );
+
+            if ( ve.hasProperty( "mixinName" ) )
+            {
+                return ValidationError.mixinConfigError( errorCode, propertyPath, XDataName.from( ve.getString( "mixinName" ) ) )
+                    .message( ve.getString( "message" ), true )
+                    .i18n( ve.getString( "i18n" ) )
+                    .args( args )
+                    .build();
+            }
+            else if ( ve.hasProperty( "componentPath" ) )
+            {
+                return ValidationError.componentConfigError( errorCode, propertyPath,
+                                                             ApplicationKey.from( ve.getString( "applicationKey" ) ),
+                                                             ComponentPath.from( ve.getString( "componentPath" ) ) )
+                    .message( ve.getString( "message" ), true )
+                    .i18n( ve.getString( "i18n" ) )
+                    .args( args )
+                    .build();
+            }
+            else if ( ve.hasProperty( "applicationKey" ) )
+            {
+                return ValidationError.siteConfigError( errorCode, propertyPath, ApplicationKey.from( ve.getString( "applicationKey" ) ) )
+                    .message( ve.getString( "message" ), true )
+                    .i18n( ve.getString( "i18n" ) )
+                    .args( args )
+                    .build();
+            }
+            else
+            {
+                return ValidationError.dataError( errorCode, propertyPath )
+                    .message( ve.getString( "message" ), true )
+                    .i18n( ve.getString( "i18n" ) )
+                    .args( args )
+                    .build();
+            }
         }
         else if ( ve.hasProperty( "attachment" ) )
         {

@@ -1,5 +1,8 @@
 package com.enonic.xp.page;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
@@ -9,20 +12,23 @@ import com.enonic.xp.region.Regions;
 @PublicApi
 public final class EditablePage
 {
-    public DescriptorKey descriptor;
+    public final @NonNull Page source;
 
-    public PageTemplateKey template;
+    public @Nullable DescriptorKey descriptor;
 
-    public Regions regions;
+    public @Nullable PageTemplateKey template;
 
-    public Component fragment;
+    public @Nullable Regions regions;
 
-    public PropertyTree config;
+    public @Nullable Component fragment;
+
+    public @Nullable PropertyTree config;
 
     public boolean customized;
 
-    public EditablePage( final Page source )
+    public EditablePage( @NonNull final Page source )
     {
+        this.source = source;
         this.descriptor = source.getDescriptor();
         this.template = source.getTemplate();
         this.regions = source.hasRegions() ? source.getRegions().copy() : null;
@@ -31,15 +37,15 @@ public final class EditablePage
         this.fragment = source.getFragment();
     }
 
-    public Page build()
+    public @NonNull Page build()
     {
-        final Page.Builder builder = Page.create();
-        builder.descriptor( descriptor );
-        builder.template( template );
-        builder.regions( regions );
-        builder.config( config );
-        builder.customized( customized );
-        builder.fragment( fragment );
-        return builder.build();
+        return Page.create()
+            .descriptor( descriptor )
+            .template( template )
+            .regions( regions )
+            .config( config )
+            .customized( customized )
+            .fragment( fragment )
+            .build();
     }
 }

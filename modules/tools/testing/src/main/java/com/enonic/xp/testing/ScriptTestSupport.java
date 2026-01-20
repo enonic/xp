@@ -23,7 +23,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.core.impl.app.ApplicationBuilder;
+import com.enonic.xp.core.impl.app.ApplicationImpl;
 import com.enonic.xp.core.impl.app.resolver.ClassLoaderApplicationUrlResolver;
 import com.enonic.xp.core.internal.Dictionaries;
 import com.enonic.xp.portal.PortalRequest;
@@ -213,16 +213,14 @@ public abstract class ScriptTestSupport
 
     private ScriptExecutor createExecutor()
     {
-        return ScriptFixturesFacade.getInstance().createExecutor( this.scriptSettings.build(), this.serviceRegistry, this.resourceService,
-                                                    createApplication() );
+        return ScriptFixturesFacade.getInstance()
+            .createExecutor( this.scriptSettings.build(), this.serviceRegistry, this.resourceService, createApplication() );
     }
 
     private Application createApplication()
     {
         final Bundle bundle = createBundle();
-        final ApplicationBuilder builder = new ApplicationBuilder();
-        builder.classLoader( getClass().getClassLoader() );
-        URL[] resourcesPath;
+        final URL[] resourcesPath;
         try
         {
             resourcesPath = new URL[]{Path.of( "src/test/resources" ).toUri().toURL()};
@@ -231,11 +229,10 @@ public abstract class ScriptTestSupport
         {
             throw new UncheckedIOException( e );
         }
-        URLClassLoader loader = new URLClassLoader( resourcesPath, ClassLoader.getPlatformClassLoader() );
-        builder.urlResolver( new ClassLoaderApplicationUrlResolver( loader, ApplicationKey.from( bundle ) ) );
-        builder.config( ConfigBuilder.create().build() );
-        builder.bundle( bundle );
-        return builder.build();
+        final ApplicationImpl application = new ApplicationImpl( bundle, new ClassLoaderApplicationUrlResolver(
+            new URLClassLoader( resourcesPath, ClassLoader.getPlatformClassLoader() ), appKey ), getClass().getClassLoader() );
+        application.setConfig( ConfigBuilder.create().build() );
+        return application;
     }
 
     private Bundle createBundle()

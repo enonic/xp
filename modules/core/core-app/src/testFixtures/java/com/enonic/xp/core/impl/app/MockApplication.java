@@ -9,14 +9,15 @@ import java.time.Instant;
 import java.util.Set;
 
 import org.osgi.framework.Bundle;
-import org.osgi.framework.Version;
+import org.osgi.framework.ServiceRegistration;
 
+import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.config.Configuration;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.ClassLoaderApplicationUrlResolver;
-import com.enonic.xp.resource.Resource;
+import com.enonic.xp.util.Version;
 
 public class MockApplication
     implements ApplicationAdaptor
@@ -70,12 +71,6 @@ public class MockApplication
     public String getMinSystemVersion()
     {
         return "1.0.0";
-    }
-
-    @Override
-    public boolean includesSystemVersion( final Version version )
-    {
-        return true;
     }
 
     @Override
@@ -142,8 +137,9 @@ public class MockApplication
             throw new UncheckedIOException( e );
         }
         final URLClassLoader loader = new URLClassLoader( new URL[]{url}, null );
-        this.urlResolver =
-            new ClassLoaderApplicationUrlResolver( loader, bundle != null ? ApplicationKey.from( bundle ) : ApplicationKey.SYSTEM );
+        this.urlResolver = new ClassLoaderApplicationUrlResolver( loader, bundle != null
+            ? ApplicationKey.from( bundle.getSymbolicName() )
+            : ApplicationKey.SYSTEM );
     }
 
     public ApplicationUrlResolver getUrlResolver()
@@ -172,5 +168,16 @@ public class MockApplication
     public Set<String> getCapabilities()
     {
         return Set.of();
+    }
+
+    @Override
+    public ServiceRegistration<Application> getRegistration()
+    {
+        return null;
+    }
+
+    @Override
+    public void setRegistration( final ServiceRegistration<Application> reference )
+    {
     }
 }

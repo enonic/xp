@@ -193,7 +193,6 @@ public class PatchNodeParamsFactory
             this.cmsService = value;
             return this;
         }
-
         void validate()
         {
             Objects.requireNonNull( editedContent, "editedContent cannot be null" );

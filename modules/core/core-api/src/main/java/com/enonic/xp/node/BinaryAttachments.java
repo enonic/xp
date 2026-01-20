@@ -1,5 +1,8 @@
 package com.enonic.xp.node;
 
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -27,6 +30,11 @@ public final class BinaryAttachments
         return stream().filter( ba -> ba.getReference().equals( binaryReference ) ).findFirst().orElse( null );
     }
 
+    public static Collector<BinaryAttachment, ?, BinaryAttachments> collector()
+    {
+        return Collectors.collectingAndThen( ImmutableList.toImmutableList(), BinaryAttachments::fromInternal );
+    }
+
     private static BinaryAttachments fromInternal( final ImmutableList<BinaryAttachment> list )
     {
         return list.isEmpty() ? EMPTY : new BinaryAttachments( list );
@@ -48,6 +56,12 @@ public final class BinaryAttachments
         public Builder add( final BinaryAttachment binaryAttachment )
         {
             this.binaryAttachments.add( binaryAttachment );
+            return this;
+        }
+
+        public Builder addAll( final Iterable<BinaryAttachment> binaryAttachments )
+        {
+            this.binaryAttachments.addAll( binaryAttachments );
             return this;
         }
 

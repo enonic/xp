@@ -41,8 +41,8 @@ class CreateIssueCommandTest
     {
         final CreateIssueParams params = createIssueParams().build();
         final CreateIssueCommand command = createIssueCommand( params );
-        Mockito.when( this.nodeService.findByQuery( Mockito.any( NodeQuery.class ) ) ).thenReturn(
-            FindNodesByQueryResult.create().build() );
+        Mockito.when( this.nodeService.findByQuery( Mockito.any( NodeQuery.class ) ) )
+            .thenReturn( FindNodesByQueryResult.create().build() );
 
         final Issue issue = command.execute();
 
@@ -57,37 +57,33 @@ class CreateIssueCommandTest
     {
         final CreateIssueParams params = CreateIssueParams.create().build();
         final CreateIssueCommand command = createIssueCommand( params );
-        assertThrows(IllegalArgumentException.class, () -> command.execute() );
+        assertThrows( IllegalArgumentException.class, () -> command.execute() );
     }
 
 
     private CreateIssueParams.Builder createIssueParams()
     {
-        return CreateIssueParams.create().
-            title( "title" );
+        return CreateIssueParams.create().title( "title" );
     }
 
     private CreateIssueCommand createIssueCommand( CreateIssueParams params )
     {
-        return CreateIssueCommand.create().
-            params( params ).
-            nodeService( this.nodeService ).
-            build();
+        return CreateIssueCommand.create().params( params ).nodeService( this.nodeService ).build();
     }
 
     private Node mockNodeServiceCreate( final InvocationOnMock invocation )
     {
-        CreateNodeParams params = (CreateNodeParams) invocation.getArguments()[0];
+        CreateNodeParams params = invocation.getArgument( 0 );
 
-        return Node.create().
-            id( params.getNodeId() != null ? params.getNodeId() : new NodeId() ).
-            parentPath( params.getParent() ).
-            name( NodeName.from( params.getName() ) ).
-            data( params.getData() ).
-            indexConfigDocument( params.getIndexConfigDocument() ).
-            childOrder( params.getChildOrder() != null ? params.getChildOrder() : IssueConstants.DEFAULT_CHILD_ORDER ).
-            nodeType( params.getNodeType() != null ? params.getNodeType() : IssueConstants.ISSUE_NODE_COLLECTION ).
-            timestamp( Instant.now() ).
-            build();
+        return Node.create()
+            .id( params.getNodeId() != null ? params.getNodeId() : new NodeId() )
+            .parentPath( params.getParent() )
+            .name( NodeName.from( params.getName() ) )
+            .data( params.getData() )
+            .indexConfigDocument( params.getIndexConfigDocument() )
+            .childOrder( params.getChildOrder() != null ? params.getChildOrder() : IssueConstants.DEFAULT_CHILD_ORDER )
+            .nodeType( params.getNodeType() != null ? params.getNodeType() : IssueConstants.ISSUE_NODE_COLLECTION )
+            .timestamp( Instant.now() )
+            .build();
     }
 }

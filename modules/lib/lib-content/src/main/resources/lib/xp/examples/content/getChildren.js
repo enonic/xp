@@ -41,8 +41,7 @@ var expected = {
             'attachments': {},
             'publish': {},
             'workflow': {
-                'state': 'READY',
-                'checks': {}
+                'state': 'READY'
             }
         },
         {
@@ -62,8 +61,7 @@ var expected = {
             'attachments': {},
             'publish': {},
             'workflow': {
-                'state': 'READY',
-                'checks': {}
+                'state': 'READY'
             }
         }
     ]

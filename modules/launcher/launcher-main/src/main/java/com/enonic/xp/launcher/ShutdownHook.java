@@ -7,9 +7,4 @@ final class ShutdownHook
     {
         super( runnable, "XP Shutdown Hook" );
     }
-
-    public void register()
-    {
-        Runtime.getRuntime().addShutdownHook( this );
-    }
 }

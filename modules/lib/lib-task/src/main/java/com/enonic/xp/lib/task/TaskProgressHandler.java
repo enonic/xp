@@ -1,5 +1,6 @@
 package com.enonic.xp.lib.task;
 
+import com.enonic.xp.task.ProgressReportParams;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.TaskProgressReporterContext;
 
@@ -34,14 +35,11 @@ public final class TaskProgressHandler
         {
             throw new RuntimeException( "The reportProgress function must be called from within a task." );
         }
-        if ( info != null )
-        {
-            progressReporter.info( info );
-        }
-        if ( current != null && total != null )
-        {
-            progressReporter.progress( current.intValue(), total.intValue() );
-        }
+        progressReporter.progress( ProgressReportParams.create()
+                                       .current( current != null ? current.intValue() : null )
+                                       .total( total != null ? total.intValue() : null )
+                                       .message( info )
+                                       .build() );
     }
 
 }

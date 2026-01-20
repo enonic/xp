@@ -5,8 +5,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.osgi.framework.BundleContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -41,11 +39,11 @@ class ConfigInterpolatorTest
         return props;
     }
 
-    private BundleContext newBundleContext()
+    private Properties newBundleContext()
     {
-        final BundleContext bundleContext = Mockito.mock( BundleContext.class );
-        Mockito.when( bundleContext.getProperty( "bundleProp" ) ).thenReturn( "fromBundle" );
-        return bundleContext;
+        final Properties props = new Properties();
+        props.put( "bundleProp", "fromBundle" );
+        return props;
     }
 
     @Test
@@ -67,8 +65,7 @@ class ConfigInterpolatorTest
     @Test
     void environment()
     {
-        final ConfigInterpolator interpolator = new ConfigInterpolator();
-        interpolator.environment( newEnvironment() );
+        final ConfigInterpolator interpolator = new ConfigInterpolator().environment( newEnvironment() );
         final Configuration config = interpolator.interpolate( newConfig() );
 
         assertNotNull( config );
@@ -86,8 +83,7 @@ class ConfigInterpolatorTest
     @Test
     void systemProperties()
     {
-        final ConfigInterpolator interpolator = new ConfigInterpolator();
-        interpolator.systemProperties( newSystemProperties() );
+        final ConfigInterpolator interpolator = new ConfigInterpolator().systemProperties( newSystemProperties() );
         final Configuration config = interpolator.interpolate( newConfig() );
 
         assertNotNull( config );
@@ -101,10 +97,10 @@ class ConfigInterpolatorTest
     }
 
     @Test
-    void bundleContext()
+    void addLookup()
     {
         final ConfigInterpolator interpolator = new ConfigInterpolator();
-        interpolator.bundleContext( newBundleContext() );
+        interpolator.addLookup( newBundleContext()::getProperty );
         final Configuration config = interpolator.interpolate( newConfig() );
 
         assertNotNull( config );

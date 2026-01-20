@@ -1,7 +1,6 @@
 package com.enonic.xp.impl.task;
 
 import java.time.Duration;
-import java.util.concurrent.Executors;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -20,8 +19,7 @@ public class TaskManagerExecutorImpl
 
     public TaskManagerExecutorImpl()
     {
-        simpleExecutor =
-            new SimpleExecutor( Executors::newCachedThreadPool, "task-manager-thread-%d", e -> LOG.error( "Task execution failed", e ) );
+        simpleExecutor = SimpleExecutor.ofVirtual( "task-manager-thread", e -> LOG.error( "Task execution failed", e ) );
     }
 
     @Deactivate

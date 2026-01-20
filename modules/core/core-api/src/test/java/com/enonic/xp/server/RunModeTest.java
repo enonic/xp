@@ -9,16 +9,10 @@ class RunModeTest
     @Test
     void testInfo()
     {
-        assertEquals( RunMode.PROD, RunMode.get( "prod" ) );
+        RunMode.set( RunMode.PROD );
+        assertEquals( RunMode.PROD, RunMode.get() );
 
-        assertEquals( RunMode.PROD, RunMode.get( "PROD" ) );
-
-        assertEquals( RunMode.DEV, RunMode.get( "dev" ) );
-
-        assertEquals( RunMode.DEV, RunMode.get( "DEV" ) );
-
-        assertEquals( RunMode.PROD, RunMode.get( "other" ) );
-
-        assertEquals( RunMode.PROD, RunMode.get( null ) );
+        RunMode.set( RunMode.DEV );
+        assertEquals( RunMode.DEV, RunMode.get() );
     }
 }

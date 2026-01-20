@@ -1,5 +1,8 @@
 package com.enonic.xp.node;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -7,6 +10,7 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.util.BinaryReference;
 
 @PublicApi
+@NullMarked
 public interface NodeService
 {
     Node create( CreateNodeParams params );
@@ -27,7 +31,7 @@ public interface NodeService
 
     Nodes getByIds( NodeIds ids );
 
-    Node getByPath( NodePath path );
+    @Nullable Node getByPath( NodePath path );
 
     Nodes getByPaths( NodePaths paths );
 
@@ -85,5 +89,16 @@ public interface NodeService
 
     void importNodeCommit( ImportNodeCommitParams params );
 
-    void applyVersionAttributes( ApplyVersionAttributesParams params );
+    /**
+     * Applies the specified attribute changes to a particular node version.
+     * Adds new attributes and removes existing attributes on the target version.
+     * <p>
+     * If an attribute with the same key already exists, its value is replaced.
+     * If the same key is present in both the addAttributes set and the removeAttributes set, the attribute is added.
+     *
+     * @param params parameters describing the target {@code NodeVersionId}, the attributes to add,
+     *               and the attribute keys to remove
+     * @return resulting attributes
+     */
+    Attributes applyVersionAttributes( ApplyVersionAttributesParams params );
 }

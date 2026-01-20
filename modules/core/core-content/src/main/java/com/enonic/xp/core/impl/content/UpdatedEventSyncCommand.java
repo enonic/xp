@@ -34,7 +34,7 @@ final class UpdatedEventSyncCommand
 
     private void doSync( final ContentToSync content )
     {
-        content.getTargetContext().runWith( () -> {
+        content.getTargetCtx().runWith( () -> {
             if ( isContentSyncable( content.getSourceContent(), content.getTargetContent() ) )
             {
                 if ( isToSyncData( content.getTargetContent() ) )
@@ -45,7 +45,7 @@ final class UpdatedEventSyncCommand
 
                         doSyncAttachments( content, updateParams );
 
-                        contentService.patch( updateParams.build() );
+                        layersContentService.patch( updateParams.build() );
                     }
                 }
             }
@@ -65,8 +65,9 @@ final class UpdatedEventSyncCommand
         CreateAttachments.Builder attachmentsBuilder = CreateAttachments.create();
 
         content.getSourceContent().getAttachments().forEach( sourceAttachment -> {
-            ByteSource sourceBinary = content.getSourceContext()
-                .callWith( () -> contentService.getBinary( content.getSourceContent().getId(), sourceAttachment.getBinaryReference() ) );
+            ByteSource sourceBinary = content.getSourceCtx()
+                .callWith(
+                    () -> layersContentService.getBinary( content.getSourceContent().getId(), sourceAttachment.getBinaryReference() ) );
 
             attachmentsBuilder.add( CreateAttachment.create()
                                         .name( sourceAttachment.getName() )

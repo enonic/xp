@@ -31,8 +31,8 @@ public class CreateMediaHandlerTest
     @Test
     void testExample()
     {
-        Mockito.when( this.contentService.create( Mockito.any( CreateMediaParams.class ) ) ).thenAnswer(
-            mock -> createContent( (CreateMediaParams) mock.getArguments()[0] ) );
+        Mockito.when( this.contentService.create( Mockito.any( CreateMediaParams.class ) ) )
+            .thenAnswer( invocation -> createContent( invocation.getArgument( 0 ) ) );
 
         runScript( "/lib/xp/examples/content/createMedia.js" );
     }
@@ -40,8 +40,8 @@ public class CreateMediaHandlerTest
     @Test
     void createMedia()
     {
-        Mockito.when( this.contentService.create( Mockito.any( CreateMediaParams.class ) ) ).thenAnswer(
-            mock -> createContent( (CreateMediaParams) mock.getArguments()[0] ) );
+        Mockito.when( this.contentService.create( Mockito.any( CreateMediaParams.class ) ) )
+            .thenAnswer( invocation -> createContent( invocation.getArgument( 0 ) ) );
 
         runFunction( "/test/CreateMediaHandlerTest.js", "createMedia" );
 
@@ -55,8 +55,8 @@ public class CreateMediaHandlerTest
     @Test
     void createMediaWithFocalPoints()
     {
-        Mockito.when( this.contentService.create( Mockito.any( CreateMediaParams.class ) ) ).thenAnswer(
-            mock -> createContent( (CreateMediaParams) mock.getArguments()[0] ) );
+        Mockito.when( this.contentService.create( Mockito.any( CreateMediaParams.class ) ) )
+            .thenAnswer( invocation -> createContent( invocation.getArgument( 0 ) ) );
 
         runFunction( "/test/CreateMediaHandlerTest.js", "createMediaWithFocalPoints" );
 
@@ -70,8 +70,8 @@ public class CreateMediaHandlerTest
     @Test
     void createMediaAsPDFDocument()
     {
-        Mockito.when( this.contentService.create( Mockito.any( CreateMediaParams.class ) ) ).thenAnswer( mock -> {
-            final CreateMediaParams params = (CreateMediaParams) mock.getArguments()[0];
+        Mockito.when( this.contentService.create( Mockito.any( CreateMediaParams.class ) ) ).thenAnswer( invocation -> {
+            final CreateMediaParams params = invocation.getArgument( 0 );
 
             final PropertyTree propertyTree = new PropertyTree();
             final PropertySet attachmentSet = propertyTree.newSet();
@@ -79,24 +79,25 @@ public class CreateMediaHandlerTest
 
             propertyTree.addSet( "media", attachmentSet );
 
-            return Media.create().
-                id( ContentId.from( "dbc077af-fb97-4b17-a567-ad69e85f1010" ) ).
-                name( params.getName() ).
-                parentPath( params.getParent() ).
-                type( ContentTypeName.documentMedia() ).
-                displayName( params.getName().toString() ).
-                valid( true ).
-                creator( PrincipalKey.ofAnonymous() ).
-                data( propertyTree ).
-                attachments( Attachments.create().
-                    add( Attachment.create().
-                        name( "documentName.pdf" ).
-                        label( "source" ).
-                        mimeType( "application/pdf" ).
-                        size( 653453 ).
-                        build() ).
-                    build() ).
-                createdTime( Instant.parse( "1975-01-08T00:00:00Z" ) ).build();
+            return Media.create()
+                .id( ContentId.from( "dbc077af-fb97-4b17-a567-ad69e85f1010" ) )
+                .name( params.getName() )
+                .parentPath( params.getParent() )
+                .type( ContentTypeName.documentMedia() )
+                .displayName( params.getName().toString() )
+                .valid( true )
+                .creator( PrincipalKey.ofAnonymous() )
+                .data( propertyTree )
+                .attachments( Attachments.create()
+                                  .add( Attachment.create()
+                                            .name( "documentName.pdf" )
+                                            .label( "source" )
+                                            .mimeType( "application/pdf" )
+                                            .size( 653453 )
+                                            .build() )
+                                  .build() )
+                .createdTime( Instant.parse( "1975-01-08T00:00:00Z" ) )
+                .build();
         } );
 
         runFunction( "/test/CreateMediaHandlerTest.js", "createMediaAsPDF" );
@@ -120,8 +121,9 @@ public class CreateMediaHandlerTest
         final ContentAlreadyExistsException exception =
             new ContentAlreadyExistsException( ContentPath.from( "/a/b/my-content.jpg" ), RepositoryId.from( "some.repo" ),
                                                Branch.from( "draft" ) );
-        Mockito.when( this.contentService.create( Mockito.any( CreateMediaParams.class ) ) ).thenThrow( exception ).
-            thenAnswer( mock -> createContent( (CreateMediaParams) mock.getArguments()[0] ) );
+        Mockito.when( this.contentService.create( Mockito.any( CreateMediaParams.class ) ) )
+            .thenThrow( exception )
+            .thenAnswer( invocation -> createContent( invocation.getArgument( 0 ) ) );
 
         Mockito.when( this.contentService.contentExists( Mockito.eq( ContentPath.from( "/a/b/my-content.jpg" ) ) ) ).thenReturn( true );
         Mockito.when( this.contentService.contentExists( Mockito.eq( ContentPath.from( "/a/b/my-content-1.jpg" ) ) ) ).thenReturn( true );

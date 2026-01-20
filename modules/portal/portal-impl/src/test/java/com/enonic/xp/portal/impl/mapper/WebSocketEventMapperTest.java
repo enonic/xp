@@ -26,12 +26,12 @@ class WebSocketEventMapperTest
         final Session session = mock( Session.class );
         when( session.getRequestURI() ).thenReturn( URI.create( "http://localhost/ws" ) );
         when( session.getId() ).thenReturn( "1" );
-        when( session.getUserPrincipal() ).thenReturn( User.ANONYMOUS );
-        final WebSocketEvent webSocketEvent = WebSocketEvent.create().
-            type( WebSocketEventType.MESSAGE ).
-            session( session ).
-            data( new TreeMap<>( Map.of( "a", "b", "c", "d") ) ).
-            build();
+        when( session.getUserPrincipal() ).thenReturn( User.anonymous() );
+        final WebSocketEvent webSocketEvent = WebSocketEvent.create()
+            .type( WebSocketEventType.MESSAGE )
+            .session( session )
+            .data( new TreeMap<>( Map.of( "a", "b", "c", "d" ) ) )
+            .build();
         assertHelper.assertJson( "websocketevent-user.json", new WebSocketEventMapper( webSocketEvent ) );
     }
 }

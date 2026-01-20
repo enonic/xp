@@ -5,6 +5,7 @@ import org.eclipse.jetty.server.Server;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.server.RunMode;
+import com.enonic.xp.server.RunModeSupport;
 import com.enonic.xp.web.jetty.impl.LastResortErrorHandler;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,7 +16,8 @@ class ErrorHandlerConfiguratorTest
     void testConfigure_prod()
     {
         final Server server = new Server();
-        new ErrorHandlerConfigurator().configure( RunMode.PROD, server );
+        RunModeSupport.set( RunMode.PROD );
+        new ErrorHandlerConfigurator().configure( server );
         final Request.Handler errorHandler = server.getErrorHandler();
         assertThat( errorHandler ).isInstanceOf( LastResortErrorHandler.class );
 

@@ -172,7 +172,7 @@ public class SendMailScriptTest
         }
         catch ( ResourceProblemException e )
         {
-            assertEquals( "Parameter 'from' is required", e.getMessage() );
+            assertEquals( "Error: Parameter 'from' is required", e.getMessage() );
         }
 
         assertNull( this.actualMessage );
@@ -204,7 +204,7 @@ public class SendMailScriptTest
         }
         catch ( ResourceProblemException e )
         {
-            assertEquals( "Parameter 'to' is required", e.getMessage() );
+            assertEquals( "Error: Parameter 'to' is required", e.getMessage() );
         }
 
         assertNull( this.actualMessage );

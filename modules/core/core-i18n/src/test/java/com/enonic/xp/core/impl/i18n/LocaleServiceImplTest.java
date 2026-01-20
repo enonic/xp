@@ -49,7 +49,7 @@ class LocaleServiceImplTest
 
     private Resource loadResource( final InvocationOnMock invocation )
     {
-        final ResourceKey resourceKey = (ResourceKey) invocation.getArguments()[0];
+        final ResourceKey resourceKey = invocation.getArgument( 0 );
         final String path = resourceKey.getName();
         final URL url = getClass().getResource( path.substring( path.lastIndexOf( '/' ) + 1 ) );
         return new UrlResource( resourceKey, url );
@@ -153,8 +153,7 @@ class LocaleServiceImplTest
                                "myapplication:/i18n/myphrases_en_US.properties", "myapplication:/i18n/myphrases_en_US_1.properties",
                                "myapplication:/i18n/myphrases_fr.properties", "myapplication:/i18n/myphrases_ca.properties" );
 
-        when( resourceService.findFiles( any(), Mockito.eq( "^\\Q/i18n/myphrases\\E.*\\.properties$" ) ) )
-            .thenReturn( resourceKeys );
+        when( resourceService.findFiles( any(), Mockito.eq( "^\\Q/i18n/myphrases\\E.*\\.properties$" ) ) ).thenReturn( resourceKeys );
 
         final Set<Locale> locales = localeService.getLocales( ApplicationKey.from( "myapplication" ), "i18n/myphrases" );
 

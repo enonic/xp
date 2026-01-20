@@ -44,35 +44,8 @@ class ScriptExportsCacheTest
 
         when( resourceLookup.apply( resourceKey ) ).thenReturn( resource );
 
-        final ScriptExportsCache scriptExportsCache = new ScriptExportsCache( RunMode.PROD, resourceLookup, expiredCallback );
+        final ScriptExportsCache scriptExportsCache = new ScriptExportsCache( resourceLookup, expiredCallback );
         final Object getOrCompute1 = scriptExportsCache.getOrCompute( resourceKey, requireFunction );
-        final Object getOrCompute2 = scriptExportsCache.getOrCompute( resourceKey, requireFunction );
-
-        assertAll( () -> assertSame( value, getOrCompute1 ), () -> assertSame( value, getOrCompute2 ) );
-
-        verify( resourceLookup, times( 1 ) ).apply( resourceKey );
-        verifyNoMoreInteractions( resourceLookup );
-
-        verify( requireFunction, times( 1 ) ).apply( resource );
-        verifyNoMoreInteractions( requireFunction );
-    }
-
-    @Test
-    void expireCacheIfNeeded_has_no_effect_in_prod()
-        throws Exception
-    {
-        final ResourceKey resourceKey = ResourceKey.from( ApplicationKey.from( "some.app" ), "main.js" );
-        final Resource resource = mock( Resource.class );
-        when( resource.getTimestamp() ).thenReturn( 1L, 2L );
-
-        final Object value = new Object();
-        when( requireFunction.apply( resource ) ).thenReturn( value );
-
-        when( resourceLookup.apply( resourceKey ) ).thenReturn( resource );
-
-        final ScriptExportsCache scriptExportsCache = new ScriptExportsCache( RunMode.PROD, resourceLookup, expiredCallback );
-        final Object getOrCompute1 = scriptExportsCache.getOrCompute( resourceKey, requireFunction );
-        scriptExportsCache.expireCacheIfNeeded();
         final Object getOrCompute2 = scriptExportsCache.getOrCompute( resourceKey, requireFunction );
 
         assertAll( () -> assertSame( value, getOrCompute1 ), () -> assertSame( value, getOrCompute2 ) );
@@ -97,7 +70,7 @@ class ScriptExportsCacheTest
 
         when( resourceLookup.apply( resourceKey ) ).thenReturn( resource );
 
-        final ScriptExportsCache scriptExportsCache = new ScriptExportsCache( RunMode.DEV, resourceLookup, expiredCallback );
+        final ScriptExportsCache scriptExportsCache = new ScriptExportsCache( resourceLookup, expiredCallback );
         final Object getOrCompute1 = scriptExportsCache.getOrCompute( resourceKey, requireFunction );
         scriptExportsCache.expireCacheIfNeeded();
         final Object getOrCompute2 = scriptExportsCache.getOrCompute( resourceKey, requireFunction );
@@ -125,7 +98,7 @@ class ScriptExportsCacheTest
         when( resourceExtra.getTimestamp() ).thenReturn( 2L, 3L );
         when( resourceLookup.apply( resourceKeyExtra ) ).thenReturn( resourceExtra );
 
-        final ScriptExportsCache scriptExportsCache = new ScriptExportsCache( RunMode.DEV, resourceLookup, expiredCallback );
+        final ScriptExportsCache scriptExportsCache = new ScriptExportsCache( resourceLookup, expiredCallback );
         scriptExportsCache.getOrCompute( resourceKey, requireFunction );
         scriptExportsCache.getOrCompute( resourceKeyExtra, requireFunction );
         scriptExportsCache.expireCacheIfNeeded();

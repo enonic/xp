@@ -43,6 +43,7 @@ import {
     UserKey,
     ValidationError,
     Workflow,
+    WorkflowState,
 } from '@enonic-types/core';
 
 const isString = (value: unknown): value is string => value instanceof String || typeof value === 'string';
@@ -52,19 +53,19 @@ const isNumber = (value: unknown): value is number => typeof value === 'number' 
 function checkRequiredString<T extends object>(obj: T, name: keyof T): void {
     checkRequired(obj, name);
     if (!isString(obj[name])) {
-        throw `Required parameter '${String(name)}' is not a string!`;
+        throw Error(`Required parameter '${String(name)}' is not a string!`);
     }
 }
 
 function checkOptionalString<T extends object>(obj: T, name: keyof T): void {
     if (obj?.[name] != null && !isString(obj[name])) {
-        throw `Optional parameter '${String(name)}' is not a string!`;
+        throw Error(`Optional parameter '${String(name)}' is not a string!`);
     }
 }
 
 function checkOptionalNumber<T extends object>(obj: T, name: keyof T): void {
     if (obj?.[name] != null && !isNumber(obj[name])) {
-        throw `Optional parameter '${String(name)}' is not a number!`;
+        throw Error(`Optional parameter '${String(name)}' is not a number!`);
     }
 }
 
@@ -187,18 +188,18 @@ export interface PatchableContent<
     archivedBy: UserKey;
 }
 
-/* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any*/
+/* eslint-disable @typescript-eslint/no-explicit-any*/
 declare const Java: any;
 
 export const ARCHIVE_ROOT_PATH = Java.type('com.enonic.xp.archive.ArchiveConstants').ARCHIVE_ROOT_PATH as string;
 
 export const CONTENT_ROOT_PATH = Java.type('com.enonic.xp.content.ContentConstants').CONTENT_ROOT_PATH as string;
 
-/* eslint-enable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any */
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 function checkRequired<T extends object>(obj: T, name: keyof T): void {
     if (obj == null || obj[name] == null) {
-        throw `Parameter '${String(name)}' is required`;
+        throw Error(`Parameter '${String(name)}' is required`);
     }
 }
 
@@ -473,7 +474,7 @@ interface DeleteContentHandler {
  *
  * @returns {boolean} True if deleted, false otherwise.
  */
-function _delete(params: DeleteContentParams): boolean {
+export function deleteContent(params: DeleteContentParams): boolean {
     checkRequired(params, 'key');
 
     const bean: DeleteContentHandler = __.newBean<DeleteContentHandler>('com.enonic.xp.lib.content.DeleteContentHandler');
@@ -482,7 +483,7 @@ function _delete(params: DeleteContentParams): boolean {
 }
 
 export {
-    _delete as delete,
+    deleteContent as delete,
 };
 
 export interface ContentsResult<
@@ -816,6 +817,7 @@ interface PatchContentHandler {
  */
 export function modify<Data = Record<string, unknown>, Type extends string = string>(params: ModifyContentParams<Data, Type>): Content<Data, Type> | null {
     checkRequired(params, 'key');
+    checkRequired(params, 'editor');
 
     const {
         key,
@@ -850,6 +852,7 @@ export function modify<Data = Record<string, unknown>, Type extends string = str
 
 export function update<Data extends Record<string, unknown> = Record<string, unknown>, Type extends string = string>(params: UpdateContentParams<Data, Type>): Content<Data, Type> | null {
     checkRequired(params, 'key');
+    checkRequired(params, 'editor');
 
     const {
         key,
@@ -882,6 +885,7 @@ export function update<Data extends Record<string, unknown> = Record<string, unk
  */
 export function patch(params: PatchContentParams): PatchContentResult {
     checkRequired(params, 'key');
+    checkRequired(params, 'patcher');
 
     const {
         key,
@@ -898,6 +902,108 @@ export function patch(params: PatchContentParams): PatchContentResult {
     bean.setAttachments(__.toScriptValue(attachments));
     bean.setBranches(branches);
     bean.setSkipSync(skipSync);
+
+    return __.toNativeObject(bean.execute());
+}
+
+export interface EditableContentMetadata {
+    source: Content;
+    language?: string;
+    owner?: string;
+    variantOf?: string;
+}
+
+export interface UpdateMetadataParams {
+    key: string;
+    editor: (v: EditableContentMetadata) => EditableContentMetadata;
+}
+
+export interface UpdateMetadataResult<Data extends Record<string, unknown> = Record<string, unknown>, Type extends string = string> {
+    content: Content<Data, Type>;
+}
+
+interface UpdateMetadataHandler {
+    setKey(value: string): void;
+
+    setEditor(value: ScriptValue): void;
+
+    execute(): UpdateMetadataResult;
+}
+
+/**
+ * This function updates metadata (language, owner, and variantOf) for a content.
+ * The update is applied to both master and draft branches.
+ *
+ * @example-ref examples/content/updateMetadata.js
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key Path or id to the content.
+ * @param {function} params.editor Editor callback function to modify metadata.
+ *
+ * @returns {object} Updated content metadata result as JSON.
+ */
+export function updateMetadata(params: UpdateMetadataParams): UpdateMetadataResult {
+    checkRequired(params, 'key');
+    checkRequired(params, 'editor');
+
+    const {
+        key,
+        editor,
+    } = params ?? {};
+
+    const bean: UpdateMetadataHandler = __.newBean<UpdateMetadataHandler>('com.enonic.xp.lib.content.UpdateMetadataHandler');
+
+    bean.setKey(key);
+    bean.setEditor(__.toScriptValue(editor));
+
+    return __.toNativeObject(bean.execute());
+}
+
+export interface EditableWorkflow {
+    source: Content;
+    state: WorkflowState;
+}
+
+export interface UpdateWorkflowParams {
+    key: string;
+    editor: (v: EditableWorkflow) => EditableWorkflow;
+}
+
+export interface UpdateWorkflowResult<Data extends Record<string, unknown> = Record<string, unknown>, Type extends string = string> {
+    content: Content<Data, Type>;
+}
+
+interface UpdateWorkflowHandler {
+    setKey(value: string): void;
+
+    setEditor(value: ScriptValue): void;
+
+    execute(): UpdateWorkflowResult;
+}
+
+/**
+ * This function updates workflow information (state and checks) for a content.
+ * The update is applied to the draft branch only.
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key Path or id to the content.
+ * @param {function} params.editor Editor callback function to modify workflow.
+ *
+ * @returns {object} Updated workflow result as JSON.
+ */
+export function updateWorkflow(params: UpdateWorkflowParams): UpdateWorkflowResult {
+    checkRequired(params, 'key');
+    checkRequired(params, 'editor');
+
+    const {
+        key,
+        editor,
+    } = params ?? {};
+
+    const bean: UpdateWorkflowHandler = __.newBean<UpdateWorkflowHandler>('com.enonic.xp.lib.content.UpdateWorkflowHandler');
+
+    bean.setKey(key);
+    bean.setEditor(__.toScriptValue(editor));
 
     return __.toNativeObject(bean.execute());
 }
@@ -1207,9 +1313,7 @@ export interface ApplyPermissionsParams {
     removePermissions?: AccessControlEntry[];
 }
 
-export interface ApplyPermissionsResult {
-    [nodeId: string]: BranchResult[];
-}
+export type ApplyPermissionsResult = Record<string, BranchResult[]>;
 
 export interface BranchResult {
     branch: string;

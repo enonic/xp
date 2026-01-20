@@ -43,8 +43,7 @@ var expectedJson = {
     'attachments': {},
     'publish': {},
     'workflow': {
-        'state': 'READY',
-        'checks': {}
+        'state': 'READY'
     }
 };
 
@@ -118,8 +117,7 @@ var expectedJsonAutoGenerateName = {
     'attachments': {},
     'publish': {},
     'workflow': {
-        'state': 'READY',
-        'checks': {}
+        'state': 'READY'
     }
 };
 
@@ -149,8 +147,7 @@ var expectedJsonAutoGenerateName2 = {
     'attachments': {},
     'publish': {},
     'workflow': {
-        'state': 'READY',
-        'checks': {}
+        'state': 'READY'
     }
 };
 
@@ -182,8 +179,7 @@ var expectedJsonWithChildOrder = {
     'attachments': {},
     'publish': {},
     'workflow': {
-        'state': 'READY',
-        'checks': {}
+        'state': 'READY'
     }
 };
 
@@ -217,10 +213,7 @@ var expectedJsonWithWorkflow = {
     'attachments': {},
     'publish': {},
     'workflow': {
-        'state': 'PENDING_APPROVAL',
-        'checks': {
-            'Review by lawyer': 'PENDING'
-        }
+        'state': 'PENDING_APPROVAL'
     }
 };
 
@@ -231,10 +224,7 @@ exports.createContentWithWorkflow = function () {
         contentType: 'test:myContentType',
         data: {},
         'workflow': {
-            'state': 'PENDING_APPROVAL',
-            'checks': {
-                'Review by lawyer': 'PENDING'
-            }
+            'state': 'PENDING_APPROVAL'
         }
     });
 
@@ -311,8 +301,7 @@ var expectedJsonWithPage = {
     'attachments': {},
     'publish': {},
     'workflow': {
-        'state': 'READY',
-        'checks': {}
+        'state': 'READY'
     }
 };
 

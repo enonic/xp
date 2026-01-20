@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import com.enonic.xp.app.ApplicationDescriptor;
 import com.enonic.xp.app.ApplicationDescriptorService;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.core.internal.ApplicationBundleUtils;
 
 @Component(immediate = true)
 public class ApplicationDescriptorServiceImpl
@@ -92,7 +93,7 @@ public class ApplicationDescriptorServiceImpl
         }
         catch ( final Exception t )
         {
-            LOG.warn( "Unable to load application descriptor for " + bundle.getSymbolicName(), t );
+            LOG.warn( "Unable to load application descriptor for {}", ApplicationBundleUtils.getApplicationName( bundle ), t );
         }
     }
 
@@ -102,7 +103,7 @@ public class ApplicationDescriptorServiceImpl
         builder.bundle( bundle );
 
         final ApplicationDescriptor applicationDescriptor = builder.build();
-        registerApplicationDescriptor( ApplicationKey.from( bundle ), applicationDescriptor );
+        registerApplicationDescriptor( ApplicationHelper.getApplicationKey( bundle ), applicationDescriptor );
     }
 
     private void registerApplicationDescriptor( final ApplicationKey applicationKey, final ApplicationDescriptor applicationDescriptor )
@@ -112,7 +113,7 @@ public class ApplicationDescriptorServiceImpl
 
     private void removeBundle( final Bundle bundle )
     {
-        final ApplicationKey applicationKey = ApplicationKey.from( bundle );
+        final ApplicationKey applicationKey = ApplicationHelper.getApplicationKey( bundle );
         unregisterApplicationDescriptor( applicationKey );
     }
 

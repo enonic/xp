@@ -605,7 +605,7 @@ class CreateContentCommandTest
             .authInfo( AuthenticationInfo.create()
                            .principals( RoleKeys.AUTHENTICATED )
                            .principals( RoleKeys.CONTENT_MANAGER_APP )
-                           .principals( ProjectAccessHelper.createRoleKey( projectName, ProjectRole.OWNER ) ) // важно!
+                           .principals( ProjectAccessHelper.createRoleKey( projectName, ProjectRole.OWNER ) )
                            .user( repoOwner )
                            .build() )
             .build()
@@ -691,7 +691,7 @@ class CreateContentCommandTest
 
     private Node mockNodeServiceCreate( final InvocationOnMock invocation )
     {
-        CreateNodeParams params = (CreateNodeParams) invocation.getArguments()[0];
+        CreateNodeParams params = invocation.getArgument( 0 );
 
         final AccessControlList permissions = AccessControlList.create()
             .add( AccessControlEntry.create().allowAll().principal( PrincipalKey.ofAnonymous() ).build() )

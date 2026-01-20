@@ -39,7 +39,7 @@ exports.assetUrlTest_invalidProperty = function () {
             }
         });
     } catch (e) {
-        assert.assertEquals('Parameter \'path\' is required', e);
+        assert.assertEquals('Parameter \'path\' is required', e.message);
     }
     return true;
 };

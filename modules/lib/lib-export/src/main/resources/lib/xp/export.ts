@@ -19,7 +19,7 @@ export type {ResourceKey} from '@enonic-types/core';
 
 function checkRequired<T extends object>(obj: T, name: keyof T): void {
     if (obj == null || obj[name] == null) {
-        throw `Parameter '${String(name)}' is required`;
+        throw Error(`Parameter '${String(name)}' is required`);
     }
 }
 
@@ -118,8 +118,7 @@ export function importNodes(params: ImportNodesParams): ImportNodesResult {
 export interface ExportNodesParams {
     sourceNodePath: string;
     exportName: string;
-    includeNodeIds?: boolean;
-    includeVersions?: boolean;
+    batchSize?: number;
     nodeResolved?: (numberOfNodes: number) => void;
     nodeExported?: (numberOfExportedNodes: number) => void;
 }
@@ -139,9 +138,7 @@ interface ExportHandler {
 
     setExportName(value: string): void;
 
-    setIncludeNodeIds(value: boolean): void;
-
-    setIncludeVersions(value: boolean): void;
+    setBatchSize(value?: number | null): void;
 
     setNodeExported(fn?: ((i: number) => void) | null): void;
 
@@ -159,8 +156,7 @@ interface ExportHandler {
  * @param {object} params JSON with the parameters.
  * @param {string} params.sourceNodePath Source nodes path.
  * @param {string} params.exportName Export name.
- * @param {boolean} [params.includeNodeIds=true] Set to true to export node IDs.
- * @param {boolean} [params.includeVersions=false] Set to true to export all node versions.
+ * @param {number} [params.batchSize=1000] Number of nodes to export in each batch.
  * @param {function} [params.nodeResolved] A function to be called before export starts with number of nodes to export.
  * @param {function} [params.nodeExported] A function to be called during export with number of nodes exported since last call.
  *
@@ -173,9 +169,8 @@ export function exportNodes(params: ExportNodesParams): ExportNodesResult {
     const {
         sourceNodePath,
         exportName,
-        includeNodeIds = true,
-        includeVersions = false,
         nodeResolved,
+        batchSize,
         nodeExported,
     } = params ?? {};
 
@@ -183,8 +178,7 @@ export function exportNodes(params: ExportNodesParams): ExportNodesResult {
 
     bean.setSourceNodePath(sourceNodePath);
     bean.setExportName(exportName);
-    bean.setIncludeNodeIds(includeNodeIds);
-    bean.setIncludeVersions(includeVersions);
+    bean.setBatchSize(__.nullOrValue(batchSize));
     bean.setNodeExported(__.nullOrValue(nodeExported));
     bean.setNodeResolved(__.nullOrValue(nodeResolved));
 

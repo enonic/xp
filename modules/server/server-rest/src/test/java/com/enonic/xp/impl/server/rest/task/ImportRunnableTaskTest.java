@@ -15,6 +15,7 @@ import com.enonic.xp.home.HomeDirSupport;
 import com.enonic.xp.impl.server.rest.model.ImportNodesRequestJson;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.support.JsonTestHelper;
+import com.enonic.xp.task.ProgressReportParams;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.util.BinaryReference;
@@ -70,15 +71,17 @@ class ImportRunnableTaskTest
         final PropertyTree repoData = new PropertyTree();
         repoData.addString( "key", "value" );
 
-        final ImportRunnableTask task = createTask( new ImportNodesRequestJson( "export", "system-repo:master:a", true, true, "", null ) );
+        final ImportRunnableTask task =
+            createTask( new ImportNodesRequestJson( "export", "system-repo:master:a", true, true, false, "", null ) );
 
         ProgressReporter progressReporter = mock( ProgressReporter.class );
         task.run( TaskId.from( "taskId" ), progressReporter );
 
-        final ArgumentCaptor<String> progressReporterCaptor = ArgumentCaptor.forClass( String.class );
-        verify( progressReporter, times( 1 ) ).info( progressReporterCaptor.capture() );
+        final ArgumentCaptor<ProgressReportParams> progressReporterCaptor = ArgumentCaptor.forClass( ProgressReportParams.class );
+        verify( progressReporter, times( 1 ) ).progress( progressReporterCaptor.capture() );
 
-        final String result = progressReporterCaptor.getValue();
-        jsonTestHelper.assertJsonEquals( jsonTestHelper.loadTestJson( "importNodes_result.json" ), jsonTestHelper.stringToJson( result ) );
+        final ProgressReportParams result = progressReporterCaptor.getValue();
+        jsonTestHelper.assertJsonEquals( jsonTestHelper.loadTestJson( "importNodes_result.json" ),
+                                         jsonTestHelper.stringToJson( result.getMessage() ) );
     }
 }

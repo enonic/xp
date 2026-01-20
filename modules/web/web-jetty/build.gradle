@@ -5,6 +5,7 @@ dependencies {
     implementation libs.jetty.servlet
     implementation libs.jetty.servlets
     implementation libs.jetty.jmx
+    implementation libs.jetty.compression.server
     implementation libs.jetty.websocket.server
     implementation libs.jakarta.annotation
     implementation libs.micrometer.jetty12

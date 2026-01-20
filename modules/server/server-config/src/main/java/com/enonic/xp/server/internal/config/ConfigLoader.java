@@ -18,10 +18,7 @@ final class ConfigLoader
 
     ConfigLoader( final BundleContext context )
     {
-        this.interpolator = new ConfigInterpolator();
-        this.interpolator.bundleContext( context );
-        this.interpolator.environment( System.getenv() );
-        this.interpolator.systemProperties( System.getProperties() );
+        this.interpolator = new ConfigInterpolator().addLookup( context::getProperty );
     }
 
     Map<String, String> load( final File file )

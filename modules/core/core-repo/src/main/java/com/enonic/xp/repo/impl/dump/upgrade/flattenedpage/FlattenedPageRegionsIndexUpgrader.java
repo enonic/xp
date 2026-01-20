@@ -4,13 +4,13 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.index.IndexConfig;
+import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.index.IndexValueProcessors;
 import com.enonic.xp.index.PathIndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
-import com.enonic.xp.descriptor.DescriptorKey;
 
 import static com.enonic.xp.data.PropertyPath.ELEMENT_DIVIDER;
 import static com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageTargetConstants.TGT_COMPONENTS_KEY;
@@ -27,19 +27,21 @@ import static com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageTa
 
 public class FlattenedPageRegionsIndexUpgrader
 {
-    private static final List<PathIndexConfig> BASE_REGIONS_CONFIGS = List.of( PathIndexConfig.create().path(
-        PropertyPath.from( String.join( ELEMENT_DIVIDER, TGT_COMPONENTS_KEY, IMAGE, TGT_ID_KEY ) ) ).indexConfig(
-        IndexConfig.MINIMAL ).build(), PathIndexConfig.create().path(
-        PropertyPath.from( String.join( ELEMENT_DIVIDER, TGT_COMPONENTS_KEY, FRAGMENT, TGT_ID_KEY ) ) ).indexConfig(
-        IndexConfig.MINIMAL ).build(), PathIndexConfig.create().path(
-        PropertyPath.from( String.join( ELEMENT_DIVIDER, TGT_COMPONENTS_KEY, PART, TGT_DESCRIPTOR_KEY ) ) ).indexConfig(
-        IndexConfig.MINIMAL ).build(), PathIndexConfig.create().path(
-        PropertyPath.from( String.join( ELEMENT_DIVIDER, TGT_COMPONENTS_KEY, LAYOUT, TGT_DESCRIPTOR_KEY ) ) ).indexConfig(
-        IndexConfig.MINIMAL ).build(), PathIndexConfig.create().path(
-        PropertyPath.from( String.join( ELEMENT_DIVIDER, TGT_COMPONENTS_KEY, TEXT, TGT_VALUE_KEY ) ) ).indexConfig(
-        IndexConfig.create( IndexConfig.FULLTEXT ).
-            addIndexValueProcessor( IndexValueProcessors.HTML_STRIPPER ).
-            build() ).build() );
+    private static final List<PathIndexConfig> BASE_REGIONS_CONFIGS = List.of(
+        PathIndexConfig.create().path( IndexPath.from( TGT_COMPONENTS_KEY, IMAGE, TGT_ID_KEY ) ).indexConfig( IndexConfig.MINIMAL ).build(),
+        PathIndexConfig.create()
+            .path( IndexPath.from( TGT_COMPONENTS_KEY, FRAGMENT, TGT_ID_KEY ) )
+            .indexConfig( IndexConfig.MINIMAL )
+            .build(), PathIndexConfig.create()
+            .path( IndexPath.from( TGT_COMPONENTS_KEY, PART, TGT_DESCRIPTOR_KEY ) )
+            .indexConfig( IndexConfig.MINIMAL )
+            .build(), PathIndexConfig.create()
+            .path( IndexPath.from( TGT_COMPONENTS_KEY, LAYOUT, TGT_DESCRIPTOR_KEY ) )
+            .indexConfig( IndexConfig.MINIMAL )
+            .build(), PathIndexConfig.create()
+            .path( IndexPath.from( TGT_COMPONENTS_KEY, TEXT, TGT_VALUE_KEY ) )
+            .indexConfig( IndexConfig.create( IndexConfig.FULLTEXT ).addIndexValueProcessor( IndexValueProcessors.HTML_STRIPPER ).build() )
+            .build() );
 
     private static final Pattern HTML_AREA_CONFIG_PATH_PATTERN =
         Pattern.compile( "(?i)^page\\.(region\\.component\\.(layoutcomponent|partcomponent)\\.)+config\\.(\\S+)$" );
@@ -73,8 +75,7 @@ public class FlattenedPageRegionsIndexUpgrader
     {
         this.upgradeComponents();
 
-        sourceIndexConfigDocument.getPathIndexConfigs().
-            forEach( this::upgradeHtmlAreas );
+        sourceIndexConfigDocument.getPathIndexConfigs().forEach( this::upgradeHtmlAreas );
     }
 
 
@@ -114,7 +115,7 @@ public class FlattenedPageRegionsIndexUpgrader
 
     private void upgradeHtmlAreas( final PathIndexConfig pathIndexConfig )
     {
-        final Matcher matcher = HTML_AREA_CONFIG_PATH_PATTERN.matcher( pathIndexConfig.getPath().toString() );
+        final Matcher matcher = HTML_AREA_CONFIG_PATH_PATTERN.matcher( pathIndexConfig.getIndexPath().toString() );
 
         if ( matcher.find() )
         {

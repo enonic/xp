@@ -1,7 +1,9 @@
 package com.enonic.xp.web.jetty.impl.configurator;
 
-import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
-import org.eclipse.jetty.server.handler.gzip.GzipHandler;
+import org.eclipse.jetty.compression.gzip.GzipCompression;
+import org.eclipse.jetty.compression.server.CompressionConfig;
+import org.eclipse.jetty.compression.server.CompressionHandler;
+import org.eclipse.jetty.ee11.servlet.ServletContextHandler;
 
 public final class GZipConfigurator
     extends JettyConfigurator<ServletContextHandler>
@@ -13,10 +15,12 @@ public final class GZipConfigurator
         {
             return;
         }
-
-        final GzipHandler handler = new GzipHandler();
-        handler.setMinGzipSize( this.config.gzip_minSize() );
-        handler.addExcludedMimeTypes( "application/octet-stream" );
+        GzipCompression gzip = new GzipCompression();
+        gzip.setMinCompressSize( this.config.gzip_minSize() );
+        CompressionConfig cfg = CompressionConfig.builder().defaults().compressExcludeMimeType( "application/octet-stream" ).build();
+        CompressionHandler handler = new CompressionHandler();
+        handler.putCompression( gzip );
+        handler.putConfiguration( "/", cfg );
 
         this.object.insertHandler( handler );
     }

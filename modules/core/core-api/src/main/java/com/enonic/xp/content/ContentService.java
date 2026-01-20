@@ -1,5 +1,7 @@
 package com.enonic.xp.content;
 
+import org.jspecify.annotations.NullMarked;
+
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -32,6 +34,12 @@ public interface ContentService
 
     PatchContentResult patch( PatchContentParams params );
 
+    @NullMarked
+    UpdateContentMetadataResult updateMetadata( UpdateContentMetadataParams params );
+
+    @NullMarked
+    UpdateWorkflowResult updateWorkflow( UpdateWorkflowParams params );
+
     DuplicateContentsResult duplicate( DuplicateContentParams params );
 
     ArchiveContentsResult archive( ArchiveContentParams params );
@@ -41,8 +49,6 @@ public interface ContentService
     SortContentResult sort( SortContentParams params );
 
     ApplyContentPermissionsResult applyPermissions( ApplyContentPermissionsParams params );
-
-    ImportContentResult importContent( ImportContentParams params );
 
     CompareContentResults resolvePublishDependencies( ResolvePublishDependenciesParams params );
 

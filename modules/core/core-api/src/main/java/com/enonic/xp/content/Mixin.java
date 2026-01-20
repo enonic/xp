@@ -37,7 +37,7 @@ public final class Mixin
 
     public static ApplicationKey fromApplicationPrefix( final String applicationPrefixName )
     {
-        return ApplicationKey.from( applicationPrefixName, "-" );
+        return ApplicationKey.from( applicationPrefixName.replace( "-", "." ) );
     }
 
     public void setName( final MixinName name )

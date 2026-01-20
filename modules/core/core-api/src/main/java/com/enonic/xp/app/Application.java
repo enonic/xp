@@ -3,11 +3,10 @@ package com.enonic.xp.app;
 import java.time.Instant;
 import java.util.Set;
 
-import org.osgi.framework.Bundle;
-import org.osgi.framework.Version;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.config.Configuration;
+import com.enonic.xp.util.Version;
 
 @PublicApi
 public interface Application
@@ -24,15 +23,11 @@ public interface Application
 
     String getMinSystemVersion();
 
-    boolean includesSystemVersion( Version version );
-
     String getUrl();
 
     String getVendorName();
 
     String getVendorUrl();
-
-    Bundle getBundle();
 
     ClassLoader getClassLoader();
 

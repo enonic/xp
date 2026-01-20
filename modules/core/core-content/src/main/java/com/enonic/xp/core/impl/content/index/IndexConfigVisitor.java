@@ -1,9 +1,9 @@
 package com.enonic.xp.core.impl.content.index;
 
-import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.InputVisitor;
 import com.enonic.xp.index.IndexConfig;
+import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.index.IndexValueProcessors;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.inputtype.InputTypeName;
@@ -40,14 +40,14 @@ public class IndexConfigVisitor
         }
     }
 
-    private PropertyPath createPath( final Input input )
+    private IndexPath createPath( final Input input )
     {
         if ( this.parentElement == null )
         {
-            return PropertyPath.from( input.getPath().toString() );
+            return IndexPath.from( input.getPath().toString() );
         }
 
-        return PropertyPath.from( parentElement, input.getPath().getElementsAsArray() );
+        return IndexPath.from( this.parentElement, input.getPath().toString() ); // both delimited by "."
     }
 
 }

@@ -65,6 +65,6 @@ exports.getPrincipalWithoutKey = function () {
     try {
         auth.getPrincipal();
     } catch (e) {
-        t.assertEquals("Parameter 'principalKey' is required", e);
+        t.assertEquals("Parameter 'principalKey' is required", e.message);
     }
 };

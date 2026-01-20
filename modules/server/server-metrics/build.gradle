@@ -23,7 +23,7 @@ jar {
              '!io.prometheus.metrics.expositionformats.generated.*,' +
              '!io.prometheus.metrics.expositionformats.internal.*,' +
              'io.prometheus.metrics.*,',
-         'Import-Package': 'io.prometheus.metrics.tracer.initializer.*;resolution:=optional,*',
+         'Import-Package': 'io.prometheus.metrics.tracer.initializer.*;resolution:=optional,javax.annotation;resolution:=optional,*',
          'Private-Package': 'io.prometheus.metrics.shaded.*,io.prometheus.metrics.expositionformats.internal.*,io.prometheus.metrics.expositionformats.generated.*'
     )
     }

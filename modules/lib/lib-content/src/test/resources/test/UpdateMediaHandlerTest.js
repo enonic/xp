@@ -8,7 +8,7 @@ exports.updateMediaValidate = function () {
     try {
         contentLib.updateMedia({});
     } catch (e) {
-        assert.assertEquals('Parameter \'data\' is required', e);
+        assert.assertEquals('Parameter \'data\' is required', e.message);
     }
 
     try {
@@ -16,7 +16,7 @@ exports.updateMediaValidate = function () {
             data: stream,
         });
     } catch (e) {
-        assert.assertEquals('Parameter \'key\' is required', e);
+        assert.assertEquals('Parameter \'key\' is required', e.message);
     }
 
     try {
@@ -25,7 +25,7 @@ exports.updateMediaValidate = function () {
             key: 123,
         });
     } catch (e) {
-        assert.assertEquals(`Required parameter 'key' is not a string!`, e);
+        assert.assertEquals(`Required parameter 'key' is not a string!`, e.message);
     }
 
     try {
@@ -34,7 +34,7 @@ exports.updateMediaValidate = function () {
             key: '/a/b/c',
         });
     } catch (e) {
-        assert.assertEquals('Parameter \'name\' is required', e);
+        assert.assertEquals('Parameter \'name\' is required', e.message);
     }
 
     try {
@@ -45,7 +45,7 @@ exports.updateMediaValidate = function () {
             focalX: 'invalidValue'
         });
     } catch (e) {
-        assert.assertEquals(`Optional parameter 'focalX' is not a number!`, e);
+        assert.assertEquals(`Optional parameter 'focalX' is not a number!`, e.message);
     }
 };
 

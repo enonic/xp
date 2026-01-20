@@ -37,7 +37,7 @@ import static com.enonic.xp.content.ContentPropertyNames.ORIGINAL_NAME;
 import static com.enonic.xp.content.ContentPropertyNames.ORIGINAL_PARENT_PATH;
 
 final class ArchiveContentCommand
-    extends AbstractContentCommand
+    extends AbstractCreatingOrUpdatingContentCommand
 {
     private final ArchiveContentParams params;
 
@@ -79,9 +79,9 @@ final class ArchiveContentCommand
 
         validateLocation( originalNode );
 
-        final NodeIds descendants = nodeService.findByParent(
-                FindNodesByParentParams.create().recursive( true ).parentPath( originalNode.path() ).build() )
-            .getNodeIds();
+        final NodeIds descendants =
+            nodeService.findByParent( FindNodesByParentParams.create().recursive( true ).parentPath( originalNode.path() ).build() )
+                .getNodeIds();
 
         final ContentIds descendantContents = ContentNodeHelper.toContentIds( descendants );
 
@@ -93,7 +93,11 @@ final class ArchiveContentCommand
 
         this.nodeService.refresh( RefreshMode.SEARCH );
 
-        return ArchiveContentsResult.create().addArchived( contentId ).addArchived( descendantContents ).addUnpublished( unpublishedContents ).build();
+        return ArchiveContentsResult.create()
+            .addArchived( contentId )
+            .addArchived( descendantContents )
+            .addUnpublished( unpublishedContents )
+            .build();
     }
 
     private ContentIds unpublish( final ContentId contentId, final ContentIds descendants )
@@ -102,12 +106,8 @@ final class ArchiveContentCommand
             .nodeService( nodeService )
             .contentTypeService( contentTypeService )
             .eventPublisher( eventPublisher )
-            .params( UnpublishContentParams.create()
-                         .contentIds( ContentIds.create()
-                                          .addAll( descendants )
-                                          .add( contentId )
-                                          .build() )
-                         .build() )
+            .params(
+                UnpublishContentParams.create().contentIds( ContentIds.create().addAll( descendants ).add( contentId ).build() ).build() )
             .build()
             .execute()
             .getUnpublishedContents();
@@ -149,10 +149,8 @@ final class ArchiveContentCommand
 
         final NodePath newPath = pathResolver.buildArchivedPath( node.path() );
 
-        final MoveNodeParams.Builder moveParams = MoveNodeParams.create()
-            .nodeId( node.id() )
-            .newParentPath( ArchiveConstants.ARCHIVE_ROOT_PATH )
-            .refresh( RefreshMode.ALL );
+        final MoveNodeParams.Builder moveParams =
+            MoveNodeParams.create().nodeId( node.id() ).newParentPath( ArchiveConstants.ARCHIVE_ROOT_PATH ).refresh( RefreshMode.ALL );
 
         if ( params.getArchiveContentListener() != null )
         {
@@ -165,13 +163,15 @@ final class ArchiveContentCommand
         }
 
         final var processors = CompositeNodeDataProcessor.create().add( updateProperties( originalPath ) );
-        if ( params.stopInherit() )
+        if ( !layersSync )
         {
             processors.add( InheritedContentDataProcessor.ALL );
         }
         moveParams.processor( processors.build() );
 
-        moveParams.versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.ARCHIVE_ATTR ) );
+        moveParams.versionAttributes( layersSync
+                                          ? ContentAttributesHelper.layersSyncAttr()
+                                          : ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.ARCHIVE_ATTR ) );
 
         return nodeService.move( moveParams.build() );
     }
@@ -186,7 +186,7 @@ final class ArchiveContentCommand
     }
 
     public static class Builder
-        extends AbstractContentCommand.Builder<Builder>
+        extends AbstractCreatingOrUpdatingContentCommand.Builder<Builder>
     {
         private final ArchiveContentParams params;
 

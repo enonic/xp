@@ -30,7 +30,7 @@ jobs:
           PREVIOS_RELEASE_TAG: ${{ steps.get_previous_release_tag.outputs.previous_release_tag }}
           OUTPUT_FILE: changelog.md
 
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         with:
           name: changelog
           path: changelog.md
@@ -46,7 +46,7 @@ jobs:
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
-          java-version: 21
+          java-version: 25
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v5
@@ -68,7 +68,7 @@ jobs:
         run: ./gradlew publish -PrepoKey=${{ steps.publish_vars.outputs.repo }} -PrepoUser=ci -PrepoPassword=${{ secrets.ARTIFACTORY_PASSWORD }}
 
       - name: Download changelog
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: changelog
 

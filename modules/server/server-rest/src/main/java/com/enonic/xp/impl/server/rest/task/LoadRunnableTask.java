@@ -6,6 +6,7 @@ import com.enonic.xp.dump.SystemLoadParams;
 import com.enonic.xp.dump.SystemLoadResult;
 import com.enonic.xp.impl.server.rest.model.SystemLoadResultJson;
 import com.enonic.xp.impl.server.rest.task.listener.SystemLoadListenerImpl;
+import com.enonic.xp.task.ProgressReportParams;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
@@ -51,7 +52,7 @@ public class LoadRunnableTask
 
         result = doLoadFromSystemDump();
 
-        progressReporter.info( result.toString() );
+        progressReporter.progress( ProgressReportParams.create( result.toString() ).build() );
     }
 
 

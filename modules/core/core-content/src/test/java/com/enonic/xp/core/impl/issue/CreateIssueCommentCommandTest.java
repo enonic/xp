@@ -42,16 +42,16 @@ class CreateIssueCommentCommandTest
     {
         final Node issueNode = Node.create().name( "parent-issue" ).build();
         final PrincipalKey creator = PrincipalKey.from( "user:store:one" );
-        final CreateIssueCommentParams params = CreateIssueCommentParams.create().
-            issue( IssueId.create() ).
-            creator( creator ).
-            creatorDisplayName( "Creator One" ).
-            text( "Comment text..." ).
-            build();
+        final CreateIssueCommentParams params = CreateIssueCommentParams.create()
+            .issue( IssueId.create() )
+            .creator( creator )
+            .creatorDisplayName( "Creator One" )
+            .text( "Comment text..." )
+            .build();
 
         final CreateIssueCommentCommand command = createIssueCommentCommand( params );
-        Mockito.when( this.nodeService.findByQuery( Mockito.any( NodeQuery.class ) ) ).thenReturn(
-            FindNodesByQueryResult.create().build() );
+        Mockito.when( this.nodeService.findByQuery( Mockito.any( NodeQuery.class ) ) )
+            .thenReturn( FindNodesByQueryResult.create().build() );
 
         Mockito.when( this.nodeService.getById( Mockito.any( NodeId.class ) ) ).thenReturn( issueNode );
 
@@ -68,20 +68,20 @@ class CreateIssueCommentCommandTest
     {
         final PrincipalKey creator = PrincipalKey.from( "user:store:one" );
 
-        final CreateIssueCommentParams params = CreateIssueCommentParams.create().
-            creator( creator ).
-            issue( IssueId.create() ).
-            creatorDisplayName( "Creator One" ).
-            text( "Comment text..." ).
-            build();
+        final CreateIssueCommentParams params = CreateIssueCommentParams.create()
+            .creator( creator )
+            .issue( IssueId.create() )
+            .creatorDisplayName( "Creator One" )
+            .text( "Comment text..." )
+            .build();
 
         final CreateIssueCommentCommand command = createIssueCommentCommand( params );
-        Mockito.when( this.nodeService.findByQuery( Mockito.any( NodeQuery.class ) ) ).thenReturn(
-            FindNodesByQueryResult.create().build() );
+        Mockito.when( this.nodeService.findByQuery( Mockito.any( NodeQuery.class ) ) )
+            .thenReturn( FindNodesByQueryResult.create().build() );
 
         Mockito.when( this.nodeService.getById( Mockito.any( NodeId.class ) ) ).thenThrow( new NodeNotFoundException( "Node not found" ) );
 
-        assertThrows(NodeNotFoundException.class, () -> command.execute());
+        assertThrows( NodeNotFoundException.class, () -> command.execute() );
     }
 
     @Test
@@ -89,7 +89,7 @@ class CreateIssueCommentCommandTest
     {
         final CreateIssueCommentParams params = CreateIssueCommentParams.create().issue( IssueId.create() ).build();
         final CreateIssueCommentCommand command = createIssueCommentCommand( params );
-        assertThrows(IllegalArgumentException.class, () -> command.execute());
+        assertThrows( IllegalArgumentException.class, () -> command.execute() );
     }
 
     @Test
@@ -97,30 +97,27 @@ class CreateIssueCommentCommandTest
     {
         final CreateIssueCommentParams params = CreateIssueCommentParams.create().text( "text" ).build();
         final CreateIssueCommentCommand command = createIssueCommentCommand( params );
-        assertThrows(IllegalArgumentException.class, () -> command.execute());
+        assertThrows( IllegalArgumentException.class, () -> command.execute() );
     }
 
     private CreateIssueCommentCommand createIssueCommentCommand( CreateIssueCommentParams params )
     {
-        return CreateIssueCommentCommand.create().
-            params( params ).
-            nodeService( this.nodeService ).
-            build();
+        return CreateIssueCommentCommand.create().params( params ).nodeService( this.nodeService ).build();
     }
 
     private Node mockNodeServiceCreate( final InvocationOnMock invocation )
     {
-        CreateNodeParams params = (CreateNodeParams) invocation.getArguments()[0];
+        CreateNodeParams params = invocation.getArgument( 0 );
 
-        return Node.create().
-            id( params.getNodeId() != null ? params.getNodeId() : new NodeId() ).
-            parentPath( params.getParent() ).
-            name( NodeName.from( params.getName() ) ).
-            data( params.getData() ).
-            indexConfigDocument( params.getIndexConfigDocument() ).
-            childOrder( params.getChildOrder() != null ? params.getChildOrder() : IssueCommentConstants.DEFAULT_CHILD_ORDER ).
-            nodeType( params.getNodeType() != null ? params.getNodeType() : IssueCommentConstants.NODE_COLLECTION ).
-            timestamp( Instant.now() ).
-            build();
+        return Node.create()
+            .id( params.getNodeId() != null ? params.getNodeId() : new NodeId() )
+            .parentPath( params.getParent() )
+            .name( NodeName.from( params.getName() ) )
+            .data( params.getData() )
+            .indexConfigDocument( params.getIndexConfigDocument() )
+            .childOrder( params.getChildOrder() != null ? params.getChildOrder() : IssueCommentConstants.DEFAULT_CHILD_ORDER )
+            .nodeType( params.getNodeType() != null ? params.getNodeType() : IssueCommentConstants.NODE_COLLECTION )
+            .timestamp( Instant.now() )
+            .build();
     }
 }

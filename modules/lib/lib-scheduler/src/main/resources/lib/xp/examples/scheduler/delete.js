@@ -1,7 +1,7 @@
-var assert = require('/lib/xp/testing.js');
-var schedulerLib1 = require('/lib/xp/scheduler');
+const assert = require('/lib/xp/testing.js');
+const schedulerLib = require('/lib/xp/scheduler');
 
-schedulerLib1.create({
+schedulerLib.create({
     name: 'myJob',
     descriptor: 'appKey:task',
     enabled: false,
@@ -10,9 +10,7 @@ schedulerLib1.create({
 
 // Deletes existing scheduled job
 // BEGIN
-var schedulerLib = require('/lib/xp/scheduler');
-
-var result = schedulerLib.delete({
+var result = schedulerLib.deleteJob({
     name: 'myJob'
 });
 // END

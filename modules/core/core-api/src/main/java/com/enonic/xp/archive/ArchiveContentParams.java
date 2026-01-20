@@ -12,15 +12,12 @@ public final class ArchiveContentParams
 
     private final ArchiveContentListener archiveContentListener;
 
-    private final boolean stopInherit;
-
     private final String message;
 
     private ArchiveContentParams( final Builder builder )
     {
         this.contentId = builder.contentId;
         this.archiveContentListener = builder.archiveContentListener;
-        this.stopInherit = builder.stopInherit;
         this.message = builder.message;
     }
 
@@ -39,11 +36,6 @@ public final class ArchiveContentParams
         return archiveContentListener;
     }
 
-    public boolean stopInherit()
-    {
-        return stopInherit;
-    }
-
     public String getMessage()
     {
         return message;
@@ -54,8 +46,6 @@ public final class ArchiveContentParams
         private ContentId contentId;
 
         private ArchiveContentListener archiveContentListener;
-
-        private boolean stopInherit = true;
 
         private String message;
 
@@ -72,12 +62,6 @@ public final class ArchiveContentParams
         public Builder archiveContentListener( ArchiveContentListener archiveContentListener )
         {
             this.archiveContentListener = archiveContentListener;
-            return this;
-        }
-
-        public Builder stopInherit( boolean stopInherit )
-        {
-            this.stopInherit = stopInherit;
             return this;
         }
 

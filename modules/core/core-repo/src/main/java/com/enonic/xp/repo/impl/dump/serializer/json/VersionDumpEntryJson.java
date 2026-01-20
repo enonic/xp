@@ -2,16 +2,20 @@ package com.enonic.xp.repo.impl.dump.serializer.json;
 
 
 import java.time.Instant;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repo.impl.dump.model.VersionMeta;
+import com.enonic.xp.util.GenericValue;
 
 public class VersionDumpEntryJson
 {
@@ -39,6 +43,9 @@ public class VersionDumpEntryJson
     @JsonProperty("commitId")
     private String commitId;
 
+    @JsonProperty("attributes")
+    private Map<String, Object> attributes;
+
     @SuppressWarnings("unused")
     public VersionDumpEntryJson()
     {
@@ -53,10 +60,24 @@ public class VersionDumpEntryJson
         indexConfigBlobKey = builder.indexConfigBlobKey;
         accessControlBlobKey = builder.accessControlBlobKey;
         commitId = builder.commitId;
+        attributes = builder.attributes;
     }
 
     public static VersionMeta fromJson( final VersionDumpEntryJson json )
     {
+        final Attributes attributes;
+        if ( json.getAttributes() != null )
+        {
+            final Attributes.Builder attrsBuilder = Attributes.create();
+            json.getAttributes().entrySet().stream()
+                .forEach( entry -> attrsBuilder.attribute( entry.getKey(), GenericValue.fromRawJava( entry.getValue() ) ) );
+            attributes = attrsBuilder.build();
+        }
+        else
+        {
+            attributes = null;
+        }
+
         return VersionMeta.create()
             .nodePath( new NodePath( json.nodePath ) )
             .timestamp( json.getTimestamp() != null ? Instant.parse( json.getTimestamp() ) : null )
@@ -67,11 +88,23 @@ public class VersionDumpEntryJson
                                  .accessControlBlobKey( BlobKey.from( json.getAccessControlBlobKey() ) )
                                  .build() )
             .nodeCommitId( json.getCommitId() == null ? null : NodeCommitId.from( json.getCommitId() ) )
+            .attributes( attributes )
             .build();
     }
 
     public static VersionDumpEntryJson from( final VersionMeta meta )
     {
+        final Map<String, Object> attributesMap;
+        if ( meta.attributes() != null )
+        {
+            attributesMap = meta.attributes().entrySet().stream()
+                .collect( Collectors.toMap( Map.Entry::getKey, entry -> entry.getValue().toRawJava() ) );
+        }
+        else
+        {
+            attributesMap = null;
+        }
+
         return VersionDumpEntryJson.create().
             nodePath( meta.nodePath().toString() ).
             timestamp( Objects.toString( meta.timestamp(), null ) ).
@@ -80,6 +113,7 @@ public class VersionDumpEntryJson
             indexConfigBlobKey( meta.nodeVersionKey().getIndexConfigBlobKey().toString() ).
             accessControlBlobKey( meta.nodeVersionKey().getAccessControlBlobKey().toString() ).
             commitId( Objects.toString( meta.nodeCommitId(), null ) ).
+            attributes( attributesMap ).
             build();
     }
 
@@ -128,6 +162,11 @@ public class VersionDumpEntryJson
         return commitId;
     }
 
+    public Map<String, Object> getAttributes()
+    {
+        return attributes;
+    }
+
     public static final class Builder
     {
         private String nodePath;
@@ -144,6 +183,8 @@ public class VersionDumpEntryJson
 
         private String commitId;
 
+        private Map<String, Object> attributes;
+
         private Builder()
         {
         }
@@ -157,6 +198,7 @@ public class VersionDumpEntryJson
             this.indexConfigBlobKey = source.getIndexConfigBlobKey();
             this.accessControlBlobKey = source.getAccessControlBlobKey();
             this.commitId = source.getCommitId();
+            this.attributes = source.getAttributes();
         }
 
         public Builder nodePath( final String val )
@@ -198,6 +240,12 @@ public class VersionDumpEntryJson
         public Builder commitId( final String val )
         {
             commitId = val;
+            return this;
+        }
+
+        public Builder attributes( final Map<String, Object> val )
+        {
+            attributes = val;
             return this;
         }
 

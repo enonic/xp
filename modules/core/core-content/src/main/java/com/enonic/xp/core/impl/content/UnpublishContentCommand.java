@@ -13,6 +13,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.node.ApplyVersionAttributesParams;
+import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.CommitNodeParams;
 import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.DeleteNodeResult;
@@ -65,12 +66,13 @@ public class UnpublishContentCommand
                     }
                 }
 
+                final Attributes unpublishAttr = ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.UNPUBLISH_ATTR );
+
                 for ( DeleteNodeResult.Result deleted : deleteNodeResult.getDeleted() )
                 {
                     nodeService.applyVersionAttributes( ApplyVersionAttributesParams.create()
                                                             .nodeVersionId( deleted.nodeVersionId() )
-                                                            .addAttributes(
-                                                                ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.UNPUBLISH_ATTR ) )
+                                                            .addAttributes( unpublishAttr )
                                                             .build() );
                 }
             }
@@ -91,20 +93,24 @@ public class UnpublishContentCommand
 
     private void removePublishInfoAndCommit( final NodeIds deleteNodeResult, Instant now )
     {
+        final Attributes unpublishInfoAttr =
+            ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.UNPUBLISH_ATTR, ContentPropertyNames.PUBLISH_INFO );
         for ( final var deleted : deleteNodeResult )
         {
-            final Node updated = nodeService.update( UpdateNodeParams.create().id( deleted ).editor( toBeEdited -> {
-                PropertySet publishInfo = toBeEdited.data.getSet( ContentPropertyNames.PUBLISH_INFO );
-                if ( publishInfo != null )
-                {
-                    publishInfo.removeProperties( ContentPropertyNames.PUBLISH_FROM );
-                    publishInfo.removeProperties( ContentPropertyNames.PUBLISH_TO );
-                    if ( publishInfo.getInstant( ContentPropertyNames.PUBLISH_FIRST ).isAfter( now ) )
+            final UpdateNodeParams updateParams =
+                UpdateNodeParams.create().id( deleted ).versionAttributes( unpublishInfoAttr ).editor( toBeEdited -> {
+                    PropertySet publishInfo = toBeEdited.data.getSet( ContentPropertyNames.PUBLISH_INFO );
+                    if ( publishInfo != null )
                     {
-                        publishInfo.removeProperties( ContentPropertyNames.PUBLISH_FIRST );
+                        publishInfo.removeProperties( ContentPropertyNames.PUBLISH_FROM );
+                        publishInfo.removeProperties( ContentPropertyNames.PUBLISH_TO );
+                        if ( publishInfo.getInstant( ContentPropertyNames.PUBLISH_FIRST ).isAfter( now ) )
+                        {
+                            publishInfo.removeProperties( ContentPropertyNames.PUBLISH_FIRST );
+                        }
                     }
-                }
-            } ).build() );
+                } ).build();
+            final Node updated = nodeService.update( updateParams );
 
             nodeService.commit( CommitNodeParams.create()
                                     .nodeCommitEntry( NodeCommitEntry.create().message( ContentConstants.UNPUBLISH_COMMIT_PREFIX ).build() )

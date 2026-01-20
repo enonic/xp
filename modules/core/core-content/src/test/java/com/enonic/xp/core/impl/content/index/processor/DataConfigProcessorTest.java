@@ -79,6 +79,6 @@ class DataConfigProcessorTest
         final DataConfigProcessor configProcessor =
             new DataConfigProcessor( getDataForm( contentTypeService, contentTypeName) );
 
-        return configProcessor.processDocument( PatternIndexConfigDocument.create() ).build();
+        return configProcessor.processDocument( PatternIndexConfigDocument.empty() );
     }
 }

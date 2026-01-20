@@ -1,8 +1,6 @@
 package com.enonic.xp.app;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.osgi.framework.Bundle;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
@@ -39,16 +37,6 @@ class ApplicationKeyTest
         final ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );
 
         assertEquals( ApplicationKey.from( "myapplication" ), applicationKey );
-    }
-
-    @Test
-    void fromBundle()
-    {
-        final Bundle bundle = Mockito.mock( Bundle.class );
-        Mockito.when( bundle.getSymbolicName() ).thenReturn( "myapplication" );
-        ApplicationKey applicationKey = ApplicationKey.from( bundle );
-
-        assertEquals( ApplicationKey.from( "myapplication" ).toString(), applicationKey.toString() );
     }
 
     @Test

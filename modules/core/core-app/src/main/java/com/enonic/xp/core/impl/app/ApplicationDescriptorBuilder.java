@@ -9,7 +9,7 @@ import java.time.Instant;
 import org.osgi.framework.Bundle;
 
 import com.enonic.xp.app.ApplicationDescriptor;
-import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.core.internal.ApplicationBundleUtils;
 import com.enonic.xp.icon.Icon;
 
 final class ApplicationDescriptorBuilder
@@ -44,7 +44,7 @@ final class ApplicationDescriptorBuilder
             }
             catch ( IOException e )
             {
-                throw new RuntimeException( "Unable to load application icon for " + bundle.getSymbolicName(), e );
+                throw new RuntimeException( "Unable to load application icon for " + ApplicationBundleUtils.getApplicationName( bundle ), e );
             }
         }
 

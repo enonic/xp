@@ -29,8 +29,6 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
 {
     private static final MediaType SVG_MEDIA_TYPE = MediaType.SVG_UTF_8.withoutParameters();
 
-    private static final MediaType AVIF_MEDIA_TYPE = MediaType.create( "image", "avif" );
-
     protected ContentService contentService;
 
     protected WebRequest request;
@@ -75,7 +73,7 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
 
         final MediaType contentType;
         final ByteSource body;
-        if ( attachmentMimeType.is( MediaType.GIF ) || attachmentMimeType.is( AVIF_MEDIA_TYPE ) ||
+        if ( attachmentMimeType.is( MediaType.GIF ) || attachmentMimeType.is( MediaType.AVIF ) ||
             attachmentMimeType.is( MediaType.WEBP ) || attachmentMimeType.is( SVG_MEDIA_TYPE ) )
         {
             contentType = attachmentMimeType;

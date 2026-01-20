@@ -65,6 +65,7 @@ public class VersionEntryProcessor
                     nodeVersion( nodeVersion ).
                     nodeVersionId( version.version() ).
                     nodeCommitId( version.nodeCommitId() ).
+                    attributes( version.attributes() ).
                     build() );
 
                 addBinary( nodeVersion, result );

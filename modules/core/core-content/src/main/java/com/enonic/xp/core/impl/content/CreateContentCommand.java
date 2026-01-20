@@ -20,7 +20,6 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.content.processor.ContentProcessor;
 import com.enonic.xp.core.impl.content.processor.ProcessCreateParams;
 import com.enonic.xp.core.impl.content.processor.ProcessCreateResult;
-import com.enonic.xp.core.impl.content.validate.InputValidator;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.media.MediaInfo;
@@ -55,11 +54,6 @@ final class CreateContentCommand
     static Builder create()
     {
         return new Builder();
-    }
-
-    static Builder create( AbstractCreatingOrUpdatingContentCommand source )
-    {
-        return new Builder( source );
     }
 
     Content execute()
@@ -118,7 +112,10 @@ final class CreateContentCommand
     private void validateBlockingChecks( final CreateContentParams params )
     {
         validateParentChildRelations( params.getParent(), params.getType() );
-        validatePropertyTree( params );
+        validateContentData( params.getType(), params.getData() );
+        validateSiteConfigs( params.getData() );
+        validatePage( params.getPage() );
+        validateMixins( params.getExtraDatas() );
         validateCreateAttachments( params.getCreateAttachments() );
         validateImageAttachment( params );
     }
@@ -143,32 +140,11 @@ final class CreateContentCommand
         }
     }
 
-    private void validatePropertyTree( final CreateContentParams params )
-    {
-        if ( !params.getType().isUnstructured() )
-        {
-            final ContentType contentType = contentTypeService.getByName( new GetContentTypeParams().contentTypeName( params.getType() ) );
-
-            try
-            {
-                InputValidator.create()
-                    .form( contentType.getForm() )
-                    .inputTypeResolver( InputTypes.BUILTIN )
-                    .build()
-                    .validate( params.getData() );
-            }
-            catch ( final Exception e )
-            {
-                throw new IllegalArgumentException( "Incorrect content property", e );
-            }
-        }
-    }
-
     private void checkAccess()
     {
         if ( params.getType().isSite() && SiteConfigsDataSerializer.fromData( params.getData().getRoot() ).isNotEmpty() )
         {
-            checkAdminAccess();
+            checkOwnerAccess();
         }
     }
 
@@ -292,6 +268,7 @@ final class CreateContentCommand
             .contentName( builder.getName() )
             .displayName( builder.getDisplayName() )
             .createAttachments( builder.getCreateAttachments() )
+            .page( builder.getPage() )
             .contentValidators( this.contentValidators )
             .contentTypeService( this.contentTypeService )
             .build()
@@ -317,11 +294,6 @@ final class CreateContentCommand
 
         private Builder()
         {
-        }
-
-        private Builder( final AbstractCreatingOrUpdatingContentCommand source )
-        {
-            super( source );
         }
 
         Builder params( final CreateContentParams params )

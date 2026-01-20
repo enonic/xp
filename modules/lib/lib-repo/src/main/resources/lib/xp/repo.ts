@@ -19,13 +19,13 @@ export type {ScriptValue} from '@enonic-types/core';
 
 function checkRequiredValue(value: unknown, name: string): void {
     if (value == null) {
-        throw `Parameter '${String(name)}' is required`;
+        throw Error(`Parameter '${String(name)}' is required`);
     }
 }
 
 function checkRequired<T extends object>(obj: T, name: keyof T): void {
     if (obj == null || obj[name] === undefined) {
-        throw `Parameter '${String(name)}' is required`;
+        throw Error(`Parameter '${String(name)}' is required`);
     }
 }
 
@@ -156,7 +156,7 @@ interface DeleteRepositoryHandler {
  * @return {boolean} true if deleted, false otherwise.
  *
  */
-function _delete(id: string): boolean {
+export function deleteRepo(id: string): boolean {
     checkRequiredValue(id, 'id');
     const bean: DeleteRepositoryHandler = __.newBean<DeleteRepositoryHandler>('com.enonic.xp.lib.repo.DeleteRepositoryHandler');
     bean.setRepositoryId(id);
@@ -164,7 +164,7 @@ function _delete(id: string): boolean {
 }
 
 export {
-    _delete as delete,
+    deleteRepo as delete,
 };
 
 interface ListRepositoriesHandler {
@@ -312,7 +312,7 @@ interface ModifyRepositoryHandler {
  */
 export function modify(params: ModifyRepositoryParams): Repository {
     if (params.scope) {
-        throw 'The parameter \'scope\' is not supported';
+        throw Error('The parameter \'scope\' is not supported');
     }
 
     checkRequired(params, 'id');

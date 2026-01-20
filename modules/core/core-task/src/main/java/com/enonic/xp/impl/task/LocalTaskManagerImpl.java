@@ -4,7 +4,7 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executor;
@@ -25,7 +25,10 @@ import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.impl.task.distributed.DescribedTask;
 import com.enonic.xp.impl.task.distributed.TaskManager;
 import com.enonic.xp.impl.task.event.TaskEvents;
+import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.User;
+import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.task.ProgressReportParams;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskInfo;
 import com.enonic.xp.task.TaskProgress;
@@ -97,7 +100,7 @@ public final class LocalTaskManagerImpl
             .collect( Collectors.toUnmodifiableList() );
     }
 
-    private void updateProgress( final TaskId taskId, final int current, final int total )
+    private void updateProgress( final TaskId taskId, final ProgressReportParams params )
     {
         final TaskInfoHolder ctx = tasks.get( taskId );
         if ( ctx == null )
@@ -105,26 +108,22 @@ public final class LocalTaskManagerImpl
             return;
         }
         final TaskInfo taskInfo = ctx.getTaskInfo();
-        final TaskProgress updatedProgress = taskInfo.getProgress().copy().current( current ).total( total ).build();
+        final TaskProgress.Builder updatedProgress = taskInfo.getProgress().copy();
 
-        final TaskInfo updatedInfo = taskInfo.copy().progress( updatedProgress ).build();
-        final TaskInfoHolder updatedCtx = ctx.copy().taskInfo( updatedInfo ).build();
-        tasks.put( taskId, updatedCtx );
-
-        eventPublisher.publish( TaskEvents.updated( updatedInfo ) );
-    }
-
-    private void updateProgress( final TaskId taskId, final String message )
-    {
-        final TaskInfoHolder ctx = tasks.get( taskId );
-        if ( ctx == null )
+        if ( params.getCurrent() != null )
         {
-            return;
+            updatedProgress.current( params.getCurrent() );
         }
-        final TaskInfo taskInfo = ctx.getTaskInfo();
-        final TaskProgress updatedProgress = taskInfo.getProgress().copy().info( message ).build();
+        if ( params.getTotal() != null )
+        {
+            updatedProgress.total( params.getTotal() );
+        }
+        if ( params.getMessage() != null )
+        {
+            updatedProgress.info( params.getMessage() );
+        }
 
-        final TaskInfo updatedInfo = taskInfo.copy().progress( updatedProgress ).build();
+        final TaskInfo updatedInfo = taskInfo.copy().progress( updatedProgress.build() ).build();
         final TaskInfoHolder updatedCtx = ctx.copy().taskInfo( updatedInfo ).build();
         tasks.put( taskId, updatedCtx );
 
@@ -170,8 +169,10 @@ public final class LocalTaskManagerImpl
     private void doSubmitTask( final DescribedTask runnableTask )
     {
         final TaskId id = runnableTask.getTaskId();
-        final User user = runnableTask.getTaskContext().getAuthInfo() != null ? Objects.requireNonNullElse(
-            runnableTask.getTaskContext().getAuthInfo().getUser(), User.ANONYMOUS ) : User.ANONYMOUS;
+        final PrincipalKey principalKey = Optional.ofNullable( runnableTask.getTaskContext().getAuthInfo() )
+            .map( AuthenticationInfo::getUser )
+            .map( User::getKey )
+            .orElse( PrincipalKey.ofAnonymous() );
         final TaskInfo info = TaskInfo.create()
             .id( id )
             .description( runnableTask.getDescription() )
@@ -180,7 +181,7 @@ public final class LocalTaskManagerImpl
             .startTime( Instant.now( clock ) )
             .application( runnableTask.getApplicationKey() )
             .node( clusterConfig == null ? null : clusterConfig.name() )
-            .user( user.getKey() )
+            .user( principalKey )
             .build();
 
         final TaskInfoHolder taskInfoHolder = TaskInfoHolder.create().taskInfo( info ).build();
@@ -231,20 +232,28 @@ public final class LocalTaskManagerImpl
         @Override
         public void failed( final String message )
         {
-            updateProgress( taskId, message );
+            updateProgress( taskId, ProgressReportParams.create( message ).build() );
             updateState( taskId, TaskState.FAILED );
         }
 
         @Override
-        public void progress( final int current, final int total )
+        public void progress( final ProgressReportParams params )
         {
-            updateProgress( taskId, current, total );
+            updateProgress( taskId, params );
         }
 
+        @Deprecated
+        @Override
+        public void progress( final int current, final int total )
+        {
+            updateProgress( taskId, ProgressReportParams.create( current, total ).build() );
+        }
+
+        @Deprecated
         @Override
         public void info( final String message )
         {
-            updateProgress( taskId, message );
+            updateProgress( taskId, ProgressReportParams.create( message ).build() );
         }
     }
 

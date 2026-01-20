@@ -16,6 +16,8 @@ import com.enonic.xp.content.DuplicateContentsResult;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UpdateContentParams;
+import com.enonic.xp.content.UpdateWorkflowParams;
+import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
@@ -45,10 +47,10 @@ class ContentServiceImplTest_publish_update_publishedTime
         assertNotNull( storedContent.getPublishInfo().getFirst() );
         assertNotNull( storedContent.getPublishInfo().getFrom() );
 
-        final Content publishedContent = ContextBuilder.from( ContextAccessor.current() ).
-            branch( ContentConstants.BRANCH_MASTER ).
-            build().
-            callWith( () -> this.contentService.getById( content.getId() ) );
+        final Content publishedContent = ContextBuilder.from( ContextAccessor.current() )
+            .branch( ContentConstants.BRANCH_MASTER )
+            .build()
+            .callWith( () -> this.contentService.getById( content.getId() ) );
 
         assertEquals( storedContent.getPublishInfo(), publishedContent.getPublishInfo() );
     }
@@ -67,13 +69,14 @@ class ContentServiceImplTest_publish_update_publishedTime
         assertNotNull( publishInfo.getFrom() );
 
         final UpdateContentParams updateContentParams = new UpdateContentParams();
-        updateContentParams.contentId( content.getId() ).
-            editor( edit -> edit.displayName = "new display name" );
+        updateContentParams.contentId( content.getId() ).editor( edit -> edit.displayName = "new display name" );
 
         this.contentService.update( updateContentParams );
+        this.contentService.updateWorkflow(
+            UpdateWorkflowParams.create().contentId( content.getId() ).editor( edit -> edit.workflow = WorkflowInfo.ready() ).build() );
 
         doPublishContent( content );
-        assertVersions( content.getId(), 4 );
+        assertVersions( content.getId(), 5 );
 
         final ContentPublishInfo unUpdatedPublishInfo = this.contentService.getById( content.getId() ).getPublishInfo();
         assertEquals( publishInfo, unUpdatedPublishInfo );
@@ -87,7 +90,7 @@ class ContentServiceImplTest_publish_update_publishedTime
 
         final ContentPublishInfo publishInfo = this.contentService.getById( content.getId() ).getPublishInfo();
 
-        doUnpublishContent( content);
+        doUnpublishContent( content );
 
         doPublishContent( content );
 
@@ -101,9 +104,7 @@ class ContentServiceImplTest_publish_update_publishedTime
     {
 
         final Content rootContent = createContent( ContentPath.ROOT );
-        this.contentService.publish( PushContentParams.create().
-            contentIds( ContentIds.from( rootContent.getId() ) ).
-            build() );
+        this.contentService.publish( PushContentParams.create().contentIds( ContentIds.from( rootContent.getId() ) ).build() );
 
         final Content duplicateContent = doDuplicateContent( rootContent );
 
@@ -136,28 +137,24 @@ class ContentServiceImplTest_publish_update_publishedTime
 
     private void doPublishContent( final Content content )
     {
-        this.contentService.publish( PushContentParams.create().
-            contentIds( ContentIds.from( content.getId() ) ).
-            includeDependencies( false ).
-            build() );
+        this.contentService.publish(
+            PushContentParams.create().contentIds( ContentIds.from( content.getId() ) ).includeDependencies( false ).build() );
     }
 
     private void doUnpublishContent( final Content content )
     {
-        this.contentService.unpublish( UnpublishContentParams.create().
-            contentIds( ContentIds.from( content.getId() ) ).
-            build() );
+        this.contentService.unpublish( UnpublishContentParams.create().contentIds( ContentIds.from( content.getId() ) ).build() );
     }
 
     private Content doCreateContent()
     {
-        final CreateContentParams createContentParams = CreateContentParams.create().
-            contentData( new PropertyTree() ).
-            displayName( "This is my content" ).
-            name( "myContent" ).
-            parent( ContentPath.ROOT ).
-            type( ContentTypeName.folder() ).
-            build();
+        final CreateContentParams createContentParams = CreateContentParams.create()
+            .contentData( new PropertyTree() )
+            .displayName( "This is my content" )
+            .name( "myContent" )
+            .parent( ContentPath.ROOT )
+            .type( ContentTypeName.folder() )
+            .build();
 
         return this.contentService.create( createContentParams );
     }

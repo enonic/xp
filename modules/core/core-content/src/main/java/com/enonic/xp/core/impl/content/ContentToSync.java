@@ -14,16 +14,16 @@ public final class ContentToSync
 
     private final Content targetContent;
 
-    private final Context sourceContext;
+    private final Context sourceCtx;
 
-    private final Context targetContext;
+    private final Context targetCtx;
 
     public ContentToSync( final Builder builder )
     {
         this.sourceContent = builder.sourceContent;
         this.targetContent = builder.targetContent;
-        this.sourceContext = builder.sourceContext;
-        this.targetContext = builder.targetContext;
+        this.sourceCtx = builder.sourceCtx;
+        this.targetCtx = builder.targetCtx;
     }
 
     public static Builder create()
@@ -51,14 +51,14 @@ public final class ContentToSync
         return targetContent;
     }
 
-    public Context getSourceContext()
+    public Context getSourceCtx()
     {
-        return sourceContext;
+        return sourceCtx;
     }
 
-    public Context getTargetContext()
+    public Context getTargetCtx()
     {
-        return targetContext;
+        return targetCtx;
     }
 
     public static class Builder
@@ -67,9 +67,9 @@ public final class ContentToSync
 
         private Content targetContent;
 
-        private Context sourceContext;
+        private Context sourceCtx;
 
-        private Context targetContext;
+        private Context targetCtx;
 
         private Builder()
         {
@@ -80,8 +80,8 @@ public final class ContentToSync
         {
             this.sourceContent = source.sourceContent;
             this.targetContent = source.targetContent;
-            this.sourceContext = source.sourceContext;
-            this.targetContext = source.targetContext;
+            this.sourceCtx = source.sourceCtx;
+            this.targetCtx = source.targetCtx;
         }
 
         public Builder sourceContent( final Content sourceContent )
@@ -96,22 +96,22 @@ public final class ContentToSync
             return this;
         }
 
-        public Builder sourceContext( final Context sourceContext )
+        public Builder sourceCtx( final Context sourceCtx )
         {
-            this.sourceContext = sourceContext;
+            this.sourceCtx = sourceCtx;
             return this;
         }
 
-        public Builder targetContext( final Context targetContext )
+        public Builder targetCtx( final Context targetCtx )
         {
-            this.targetContext = targetContext;
+            this.targetCtx = targetCtx;
             return this;
         }
 
         private void validate()
         {
-            Objects.requireNonNull( sourceContext, "sourceContext is required" );
-            Objects.requireNonNull( targetContext, "targetContext is required" );
+            Objects.requireNonNull( sourceCtx, "sourceCtx is required" );
+            Objects.requireNonNull( targetCtx, "targetCtx is required" );
             Preconditions.checkArgument( sourceContent != null || targetContent != null, "source or target content is required" );
         }
 

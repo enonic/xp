@@ -36,7 +36,7 @@ public final class MediaTypes
         this.mediaTypes.put( "bmp", MediaType.BMP );
         this.mediaTypes.put( "ico", MediaType.ICO );
         this.mediaTypes.put( "webp", MediaType.WEBP );
-        this.mediaTypes.put( "avif", MediaType.create( "image", "avif" ) );
+        this.mediaTypes.put( "avif", MediaType.AVIF );
         this.mediaTypes.put( "apng", MediaType.create( "image", "apng" ) );
         this.mediaTypes.put( "pdf", MediaType.PDF );
         this.mediaTypes.put( "json", MediaType.JSON_UTF_8.withoutParameters() );

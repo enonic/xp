@@ -32,7 +32,7 @@ final class ExceptionInfo
 
     private PortalUrlService portalUrlService;
 
-    private RunMode runMode;
+    private boolean withDebugInfo;
 
     private ExceptionInfo( final HttpStatus status )
     {
@@ -66,9 +66,9 @@ final class ExceptionInfo
         return this;
     }
 
-    public ExceptionInfo runMode( final RunMode runMode )
+    public ExceptionInfo withDebugInfo( boolean withDebugInfo )
     {
-        this.runMode = runMode;
+        this.withDebugInfo = withDebugInfo;
         return this;
     }
 
@@ -118,7 +118,7 @@ final class ExceptionInfo
     public PortalResponse toHtmlResponse( final WebRequest req )
     {
         final ErrorPageBuilder builder;
-        if ( runMode == RunMode.DEV )
+        if ( withDebugInfo )
         {
             builder = new ErrorPageRichBuilder().
                 cause( this.cause ).

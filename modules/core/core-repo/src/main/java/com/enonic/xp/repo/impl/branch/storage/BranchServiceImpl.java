@@ -78,21 +78,15 @@ public class BranchServiceImpl
         final RepositoryId repositoryId = context.getRepositoryId();
         final Branch branch = context.getBranch();
 
-        final boolean[] alreadyExists = {false};
         cache.asMap().compute( new BranchPath( repositoryId, branch, nodeBranchEntry.getNodePath() ), ( cK, inCache ) -> {
             if ( inCache != null && !inCache.getNodeId().equals( nodeBranchEntry.getNodeId() ) )
             {
-                alreadyExists[0] = true;
-                return inCache;
+                throw new NodeAlreadyExistAtPathException( nodeBranchEntry.getNodePath(), repositoryId, branch );
             }
 
             this.storageDao.store( BranchStorageRequestFactory.create( nodeBranchEntry, cK.getRepositoryId(), cK.getBranch() ) );
             return nodeBranchEntry;
         } );
-        if ( alreadyExists[0] )
-        {
-            throw new NodeAlreadyExistAtPathException( nodeBranchEntry.getNodePath(), repositoryId, branch );
-        }
     }
 
     @Override

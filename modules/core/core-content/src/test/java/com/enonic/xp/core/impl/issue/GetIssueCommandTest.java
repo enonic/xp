@@ -55,25 +55,22 @@ class GetIssueCommandTest
 
     private GetIssueByIdCommand getIssueCommand( IssueId issueId )
     {
-        return GetIssueByIdCommand.create().
-            issueId( issueId ).
-            nodeService( this.nodeService ).
-            build();
+        return GetIssueByIdCommand.create().issueId( issueId ).nodeService( this.nodeService ).build();
     }
 
     private Node mockNodeServiceGet( final InvocationOnMock invocation )
     {
-        NodeId nodeId = (NodeId) invocation.getArguments()[0];
+        NodeId nodeId = invocation.getArgument( 0 );
 
-        return Node.create().
-            id( nodeId != null ? nodeId : new NodeId() ).
-            parentPath( IssueConstants.ISSUE_ROOT_PATH ).
-            name( "title" ).
-            data( this.createMockData() ).
-            childOrder( IssueConstants.DEFAULT_CHILD_ORDER ).
-            nodeType( IssueConstants.ISSUE_NODE_COLLECTION ).
-            timestamp( Instant.now() ).
-            build();
+        return Node.create()
+            .id( nodeId != null ? nodeId : new NodeId() )
+            .parentPath( IssueConstants.ISSUE_ROOT_PATH )
+            .name( "title" )
+            .data( this.createMockData() )
+            .childOrder( IssueConstants.DEFAULT_CHILD_ORDER )
+            .nodeType( IssueConstants.ISSUE_NODE_COLLECTION )
+            .timestamp( Instant.now() )
+            .build();
     }
 
     private PropertyTree createMockData()

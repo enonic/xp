@@ -1,8 +1,8 @@
 package com.enonic.xp.core.impl.content.index.processor;
 
 import com.enonic.xp.content.ContentConstants;
-import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.index.IndexConfig;
+import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 
 import static com.enonic.xp.content.ContentPropertyNames.APPLICATION_KEY;
@@ -21,20 +21,21 @@ public class BaseConfigProcessor
     implements ContentIndexConfigProcessor
 {
     @Override
-    public PatternIndexConfigDocument.Builder processDocument( final PatternIndexConfigDocument.Builder builder )
+    public PatternIndexConfigDocument processDocument( final PatternIndexConfigDocument builder )
     {
-        builder.analyzer( ContentConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER ).
+        final PatternIndexConfigDocument.Builder configBuilder = PatternIndexConfigDocument.create( builder );
+
+        configBuilder.analyzer( ContentConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER ).
             add( CREATOR, IndexConfig.MINIMAL ).
             add( MODIFIER, IndexConfig.MINIMAL ).
             add( CREATED_TIME, IndexConfig.MINIMAL ).
             add( MODIFIED_TIME, IndexConfig.MINIMAL ).
-            add( OWNER, IndexConfig.MINIMAL ).
-            add( PropertyPath.from( DATA, SITECONFIG, APPLICATION_KEY ), IndexConfig.MINIMAL ).
+            add( OWNER, IndexConfig.MINIMAL ).add( IndexPath.from( DATA, SITECONFIG, APPLICATION_KEY ), IndexConfig.MINIMAL ).
             add( SITE, IndexConfig.NONE ).
             add( TYPE, IndexConfig.MINIMAL ).
             add( ATTACHMENT, IndexConfig.MINIMAL ).
             defaultConfig( IndexConfig.BY_TYPE );
 
-        return builder;
+        return configBuilder.build();
     }
 }

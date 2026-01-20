@@ -15,14 +15,11 @@ public final class RestoreContentParams
 
     private final RestoreContentListener restoreContentListener;
 
-    private final boolean stopInherit;
-
     private RestoreContentParams( final Builder builder )
     {
         this.contentId = builder.contentId;
         this.parentPath = builder.parentPath;
         this.restoreContentListener = builder.restoreContentListener;
-        this.stopInherit = builder.stopInherit;
     }
 
     public static RestoreContentParams.Builder create()
@@ -45,11 +42,6 @@ public final class RestoreContentParams
         return restoreContentListener;
     }
 
-    public boolean stopInherit()
-    {
-        return stopInherit;
-    }
-
     public static final class Builder
     {
         private ContentId contentId;
@@ -57,8 +49,6 @@ public final class RestoreContentParams
         private ContentPath parentPath;
 
         private RestoreContentListener restoreContentListener;
-
-        private boolean stopInherit = true;
 
         private Builder()
         {
@@ -79,12 +69,6 @@ public final class RestoreContentParams
         public Builder restoreContentListener( RestoreContentListener restoreContentListener )
         {
             this.restoreContentListener = restoreContentListener;
-            return this;
-        }
-
-        public Builder stopInherit( boolean stopInherit )
-        {
-            this.stopInherit = stopInherit;
             return this;
         }
 

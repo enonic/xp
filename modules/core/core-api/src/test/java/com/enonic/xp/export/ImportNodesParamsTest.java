@@ -29,7 +29,7 @@ class ImportNodesParamsTest
 
         ImportNodesParams result = builder.build();
 
-        assertTrue( result.isImportNodeids() );
+        assertTrue( result.isImportNodeIds() );
         assertTrue( result.isImportPermissions() );
         assertTrue( result.getTargetNodePath().isRoot() );
         assertNotNull( result.getSource() );

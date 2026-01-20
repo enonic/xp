@@ -43,14 +43,16 @@ class ContentTest
     @Test
     void given_a_controller_and_a_pageTemplate_when_build_then_IllegalArgumentException_is_thrown()
     {
-        assertThrows(IllegalArgumentException.class, () -> {
-            Content.create().
-                    path(MY_CONTENT_PATH).
-                    page(Page.create().
-                            descriptor(DescriptorKey.from("abc:abc")).
-                            template(PageTemplateKey.from("123")).
-                            config(new PropertyTree()).regions( Regions.create().build() ).
-                            build()).build();
+        assertThrows( IllegalArgumentException.class, () -> {
+            Content.create()
+                .path( MY_CONTENT_PATH )
+                .page( Page.create()
+                           .descriptor( DescriptorKey.from( "abc:abc" ) )
+                           .template( PageTemplateKey.from( "123" ) )
+                           .config( new PropertyTree() )
+                           .regions( Regions.create().build() )
+                           .build() )
+                .build();
         } );
     }
 
@@ -59,6 +61,5 @@ class ContentTest
     {
         Content content = Content.create().path( MY_CONTENT_PATH ).build();
         assertEquals( WorkflowState.READY, content.getWorkflowInfo().getState() );
-        assertTrue( content.getWorkflowInfo().getChecks().isEmpty() );
     }
 }

@@ -63,37 +63,34 @@ class UpdateIssueCommandTest
 
     private UpdateIssueCommand updateIssueCommand( UpdateIssueParams params )
     {
-        return UpdateIssueCommand.create().
-            params( params ).
-            nodeService( this.nodeService ).
-            build();
+        return UpdateIssueCommand.create().params( params ).nodeService( this.nodeService ).build();
     }
 
     private Node mockNodeServiceUpdate( final InvocationOnMock invocation )
     {
-        UpdateNodeParams params = (UpdateNodeParams) invocation.getArguments()[0];
+        UpdateNodeParams params = invocation.getArgument( 0 );
 
         return createMockNode( params.getId() );
     }
 
     private Node mockNodeServiceGet( final InvocationOnMock invocation )
     {
-        NodeId nodeId = (NodeId) invocation.getArguments()[0];
+        NodeId nodeId = invocation.getArgument( 0 );
 
         return createMockNode( nodeId );
     }
 
     private Node createMockNode( NodeId nodeId )
     {
-        return Node.create().
-            id( nodeId ).
-            parentPath( IssueConstants.ISSUE_ROOT_PATH ).
-            name( "title" ).
-            data( this.createMockData() ).
-            childOrder( IssueConstants.DEFAULT_CHILD_ORDER ).
-            nodeType( IssueConstants.ISSUE_NODE_COLLECTION ).
-            timestamp( Instant.now() ).
-            build();
+        return Node.create()
+            .id( nodeId )
+            .parentPath( IssueConstants.ISSUE_ROOT_PATH )
+            .name( "title" )
+            .data( this.createMockData() )
+            .childOrder( IssueConstants.DEFAULT_CHILD_ORDER )
+            .nodeType( IssueConstants.ISSUE_NODE_COLLECTION )
+            .timestamp( Instant.now() )
+            .build();
     }
 
     private PropertyTree createMockData()

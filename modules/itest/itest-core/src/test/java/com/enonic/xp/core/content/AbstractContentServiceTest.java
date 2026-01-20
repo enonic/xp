@@ -52,6 +52,7 @@ import com.enonic.xp.core.impl.content.ContentAuditLogFilterService;
 import com.enonic.xp.core.impl.content.ContentAuditLogSupportImpl;
 import com.enonic.xp.core.impl.content.ContentConfig;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
+import com.enonic.xp.core.impl.content.LayersContentService;
 import com.enonic.xp.core.impl.content.SiteConfigServiceImpl;
 import com.enonic.xp.core.impl.content.MixinMappingServiceImpl;
 import com.enonic.xp.core.impl.content.schema.ContentTypeServiceImpl;
@@ -81,6 +82,7 @@ import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.project.CreateProjectParams;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.region.LayoutDescriptorService;
@@ -147,6 +149,8 @@ public abstract class AbstractContentServiceTest
 
     protected ContentServiceImpl contentService;
 
+    protected LayersContentService layersContentService;
+
     protected ContentConfig config;
 
     protected NodeServiceImpl nodeService;
@@ -170,6 +174,8 @@ public abstract class AbstractContentServiceTest
     protected ContentAuditLogFilterService contentAuditLogFilterService;
 
     protected PageDescriptorService pageDescriptorService;
+
+    protected PageTemplateService pageTemplateService;
 
     protected EventPublisher eventPublisher;
 
@@ -204,11 +210,11 @@ public abstract class AbstractContentServiceTest
 
     public Context ctxMasterSu()
     {
-        return ContextBuilder.create()
-            .branch( ContentConstants.BRANCH_MASTER )
-            .repositoryId( testprojectName.getRepoId() )
-            .authInfo( ContentInitializer.SUPER_USER_AUTH )
-            .build();
+        return ContextBuilder.create().
+            branch( ContentConstants.BRANCH_MASTER ).
+            repositoryId( testprojectName.getRepoId() ).
+            authInfo( ContentInitializer.SUPER_USER_AUTH ).
+            build();
     }
 
     @BeforeAll
@@ -291,6 +297,7 @@ public abstract class AbstractContentServiceTest
         contentTypeService = new ContentTypeServiceImpl( resourceService, null, formFragmentService );
 
         this.pageDescriptorService = mock( PageDescriptorService.class );
+        this.pageTemplateService = mock( PageTemplateService.class );
         PartDescriptorService partDescriptorService = mock( PartDescriptorService.class );
         LayoutDescriptorService layoutDescriptorService = mock( LayoutDescriptorService.class );
         auditLogService = mock( AuditLogService.class );
@@ -344,6 +351,10 @@ public abstract class AbstractContentServiceTest
         contentService.addContentValidator( new SiteConfigsValidator( cmsService ) );
         contentService.addContentValidator( new OccurrenceValidator() );
         contentService.addContentValidator( new MixinValidator( mixinService ) );
+
+        layersContentService =
+            new LayersContentService( nodeService, contentTypeService, eventPublisher, xDataService, siteService, pageDescriptorService,
+                                      partDescriptorService, layoutDescriptorService, config );
     }
 
     @AfterEach
@@ -388,6 +399,12 @@ public abstract class AbstractContentServiceTest
     {
         return createAndPublishContent( parentPath, publishFrom, null );
     }
+
+    protected Content createAndPublishContent( final ContentPath parentPath, final Instant publishFrom, final Instant publishTo )
+    {
+        final CreateContentParams params =
+            createContentBuilder( parentPath, "This is my test content #" + UUID.randomUUID(), new PropertyTree(), ExtraDatas.empty(),
+                                  ContentTypeName.folder() ).build();
 
     protected Content createAndPublishContent( final ContentPath parentPath, final Instant publishFrom, final Instant publishTo )
     {

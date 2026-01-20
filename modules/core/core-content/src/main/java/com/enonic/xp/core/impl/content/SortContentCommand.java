@@ -17,16 +17,23 @@ import com.enonic.xp.node.SortNodeParams;
 import com.enonic.xp.node.SortNodeResult;
 
 class SortContentCommand
-    extends AbstractContentCommand
+    extends AbstractCreatingOrUpdatingContentCommand
 {
     private final SortContentParams params;
+
+    private SortContentCommand( final Builder builder )
+    {
+        super( builder );
+        this.params = builder.params;
+    }
 
     public static Builder create( final SortContentParams params )
     {
         return new Builder( params );
     }
 
-    SortContentResult execute() {
+    SortContentResult execute()
+    {
         try
         {
             final SortNodeParams.Builder paramsBuilder = SortNodeParams.create()
@@ -45,12 +52,14 @@ class SortContentCommand
                                                   .build() );
             }
 
-            if ( params.stopInherit() )
+            if ( !layersSync )
             {
                 paramsBuilder.processor( InheritedContentDataProcessor.SORT );
             }
 
-            paramsBuilder.versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.SORT_ATTR ) );
+            paramsBuilder.versionAttributes( layersSync
+                                                 ? ContentAttributesHelper.layersSyncAttr()
+                                                 : ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.SORT_ATTR ) );
 
             final SortNodeResult sortNodeResult = nodeService.sort( paramsBuilder.build() );
 
@@ -68,14 +77,8 @@ class SortContentCommand
         }
     }
 
-    private SortContentCommand( final Builder builder )
-    {
-        super( builder );
-        this.params = builder.params;
-    }
-
     public static class Builder
-        extends AbstractContentCommand.Builder<SortContentCommand.Builder>
+        extends AbstractCreatingOrUpdatingContentCommand.Builder<SortContentCommand.Builder>
     {
         private final SortContentParams params;
 

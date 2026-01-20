@@ -53,4 +53,10 @@ public class FileExportWriter
             throw new ExportNodeException( "failed to report source to path " + itemPath + ": " + e, e );
         }
     }
+
+    @Override
+    public void close()
+    {
+        // Nothing to close for file writer
+    }
 }

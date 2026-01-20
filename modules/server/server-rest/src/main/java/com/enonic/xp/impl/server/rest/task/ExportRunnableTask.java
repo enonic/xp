@@ -11,6 +11,7 @@ import com.enonic.xp.impl.server.rest.model.NodeExportResultJson;
 import com.enonic.xp.impl.server.rest.task.listener.ExportListenerImpl;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.task.ProgressReportParams;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
@@ -26,9 +27,9 @@ public class ExportRunnableTask
 
     private final String exportName;
 
-    private final boolean exportWithIds;
+    private final boolean archive;
 
-    private final boolean includeVersions;
+    private final Integer batchSize;
 
     private final ExportService exportService;
 
@@ -39,8 +40,8 @@ public class ExportRunnableTask
         this.branch = builder.branch;
         this.nodePath = builder.nodePath;
         this.exportName = builder.exportName;
-        this.includeVersions = builder.includeVersions;
-        this.exportWithIds = builder.exportWithIds;
+        this.archive = builder.archive;
+        this.batchSize = builder.batchSize;
 
         this.exportService = builder.exportService;
     }
@@ -53,16 +54,21 @@ public class ExportRunnableTask
     @Override
     public void run( final TaskId id, final ProgressReporter progressReporter )
     {
-        final NodeExportResult result = getContext( branch, repositoryId ).callWith( () -> this.exportService.exportNodes(
-            ExportNodesParams.create()
-                .sourceNodePath( nodePath )
-                .exportName( exportName )
-                .includeNodeIds( exportWithIds )
-                .includeVersions( includeVersions )
-                .nodeExportListener( new ExportListenerImpl( progressReporter ) )
-                .build() ) );
+        final ExportNodesParams.Builder paramsBuilder = ExportNodesParams.create()
+            .sourceNodePath( nodePath )
+            .exportName( exportName )
+            .archive( archive )
+            .nodeExportListener( new ExportListenerImpl( progressReporter ) );
 
-        progressReporter.info( NodeExportResultJson.from( result ).toString() );
+        if ( batchSize != null )
+        {
+            paramsBuilder.batchSize( batchSize );
+        }
+
+        final NodeExportResult result =
+            getContext( branch, repositoryId ).callWith( () -> this.exportService.exportNodes( paramsBuilder.build() ) );
+
+        progressReporter.progress( ProgressReportParams.create( NodeExportResultJson.from( result ).toString() ).build() );
     }
 
     private Context getContext( final Branch branch, final RepositoryId repositoryId )
@@ -80,9 +86,9 @@ public class ExportRunnableTask
 
         private String exportName;
 
-        private boolean exportWithIds;
+        private boolean archive;
 
-        private boolean includeVersions;
+        private Integer batchSize;
 
         private ExportService exportService;
 
@@ -110,15 +116,15 @@ public class ExportRunnableTask
             return this;
         }
 
-        public Builder exportWithIds( final boolean exportWithIds )
+        public Builder archive( final boolean archive )
         {
-            this.exportWithIds = exportWithIds;
+            this.archive = archive;
             return this;
         }
 
-        public Builder includeVersions( final boolean includeVersions )
+        public Builder batchSize( final Integer batchSize )
         {
-            this.includeVersions = includeVersions;
+            this.batchSize = batchSize;
             return this;
         }
 

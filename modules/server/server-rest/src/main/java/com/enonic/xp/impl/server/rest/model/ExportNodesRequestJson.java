@@ -10,22 +10,22 @@ public class ExportNodesRequestJson
 
     private final String exportName;
 
-    private final boolean exportWithIds;
+    private final boolean archive;
 
-    private final boolean includeVersions;
+    private final Integer batchSize;
 
     public ExportNodesRequestJson( @JsonProperty("sourceRepoPath") final String sourceRepoPath, //
                                    @JsonProperty("exportName") final String exportName, //
-                                   @JsonProperty("exportWithIds") final Boolean exportWithIds, //
-                                   @JsonProperty("includeVersions") final Boolean includeVersions )
+                                   @JsonProperty("archive") final Boolean archive, //
+                                   @JsonProperty("batchSize") final Integer batchSize )
     {
         Objects.requireNonNull( sourceRepoPath, "sourceRepoPath is required" );
         Objects.requireNonNull( exportName, "exportName is required" );
 
         this.sourceRepoPath = RepoPath.from( sourceRepoPath );
         this.exportName = exportName;
-        this.exportWithIds = exportWithIds != null ? exportWithIds : true;
-        this.includeVersions = includeVersions != null ? includeVersions : false;
+        this.archive = archive != null ? archive : false;
+        this.batchSize = batchSize;
     }
 
     public RepoPath getSourceRepoPath()
@@ -38,13 +38,13 @@ public class ExportNodesRequestJson
         return exportName;
     }
 
-    public boolean isExportWithIds()
+    public boolean isArchive()
     {
-        return exportWithIds;
+        return archive;
     }
 
-    public boolean isIncludeVersions()
+    public Integer getBatchSize()
     {
-        return includeVersions;
+        return batchSize;
     }
 }

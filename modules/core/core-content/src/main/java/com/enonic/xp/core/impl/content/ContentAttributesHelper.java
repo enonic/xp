@@ -15,6 +15,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Attributes;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.util.GenericValue;
+import com.enonic.xp.vacuum.VacuumConstants;
 
 public class ContentAttributesHelper
 {
@@ -28,7 +29,7 @@ public class ContentAttributesHelper
 
     public static final String DUPLICATE_ATTR = "content.duplicate";
 
-    public static final String IMPORT_ATTR = "content.import";
+    public static final String SYNC_ATTR = "content.sync";
 
     public static final String UPDATE_ATTR = "content.update";
 
@@ -39,6 +40,10 @@ public class ContentAttributesHelper
     public static final String SORT_ATTR = "content.sort";
 
     public static final String PATCH_ATTR = "content.patch";
+
+    public static final String UPDATE_METADATA_ATTR = "content.updateMetadata";
+
+    public static final String UPDATE_WORKFLOW_ATTR = "content.updateWorkflow";
 
     public static final String ARCHIVE_ATTR = "content.archive";
 
@@ -55,16 +60,14 @@ public class ContentAttributesHelper
                 "owner", Content::getOwner, "language", Content::getLanguage, "publish", Content::getPublishInfo, "workflow",
                 Content::getWorkflowInfo, "variantOf", Content::getVariantOf, "attachments", Content::getAttachments );
 
-    public static final Set<String> EDITORIAL_FIELDS = Set.of( "displayName", "data", "x", "page", "attachments" );
-
-    public static List<String> modifiedFields( Content existingContent, Content updatedContent )
+    public static String[] modifiedFields( Content existingContent, Content updatedContent )
     {
         return FIELD_GETTERS.entrySet()
             .stream()
             .filter( e -> !Objects.equals( e.getValue().apply( existingContent ), e.getValue().apply( updatedContent ) ) )
             .map( Map.Entry::getKey )
             .sorted()
-            .toList();
+            .toArray( String[]::new );
     }
 
     public static Attributes versionHistoryAttr( final String key )
@@ -74,28 +77,29 @@ public class ContentAttributesHelper
                 .put( USER_PROPERTY, getCurrentUserKey().toString() )
                 .put( OPTIME_PROPERTY, Instant.now( MILLIS_CLOCK ).toString() )
                 .build() )
+            .attribute( VacuumConstants.VACUUM_SKIP_ATTRIBUTE, GenericValue.newObject().build() )
             .build();
     }
 
-    public static Attributes moveVersionHistoryAttr( final List<String> modifiedFields )
+    public static Attributes layersSyncAttr()
     {
         return Attributes.create()
-            .attribute( MOVE_ATTR, GenericValue.newObject()
-                .put( FIELDS_PROPERTY, GenericValue.fromRawJava( modifiedFields ) )
+            .attribute( SYNC_ATTR, GenericValue.newObject()
                 .put( USER_PROPERTY, getCurrentUserKey().toString() )
                 .put( OPTIME_PROPERTY, Instant.now( MILLIS_CLOCK ).toString() )
                 .build() )
             .build();
     }
 
-    public static Attributes updateVersionHistoryAttr( final List<String> modifiedFields )
+    public static Attributes versionHistoryAttr( final String key, String... modifiedFields )
     {
         return Attributes.create()
-            .attribute( UPDATE_ATTR, GenericValue.newObject()
-                .put( FIELDS_PROPERTY, GenericValue.fromRawJava( modifiedFields ) )
+            .attribute( key, GenericValue.newObject()
+                .put( FIELDS_PROPERTY, GenericValue.fromRawJava( List.of( modifiedFields ) ) )
                 .put( USER_PROPERTY, getCurrentUserKey().toString() )
                 .put( OPTIME_PROPERTY, Instant.now( MILLIS_CLOCK ).toString() )
                 .build() )
+            .attribute( VacuumConstants.VACUUM_SKIP_ATTRIBUTE, GenericValue.newObject().build() )
             .build();
     }
 

@@ -1,19 +1,42 @@
 package com.enonic.xp.script;
 
+import java.util.Arrays;
+
 import com.enonic.xp.app.Application;
-import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.script.impl.async.ScriptAsyncService;
 import com.enonic.xp.script.impl.executor.ScriptExecutor;
 import com.enonic.xp.script.impl.service.ServiceRegistry;
+import com.enonic.xp.script.impl.standard.ScriptRuntimeImpl;
 import com.enonic.xp.script.impl.value.ScriptValueFactory;
+import com.enonic.xp.script.runtime.ScriptRuntime;
 import com.enonic.xp.script.runtime.ScriptRuntimeFactory;
 import com.enonic.xp.script.runtime.ScriptSettings;
 
 public interface ScriptFixturesFacade
 {
-    ScriptRuntimeFactory scriptRuntimeFactory( ApplicationService applicationService, ResourceService resourceService,
-                                               ScriptAsyncService scriptAsyncService );
+    default ScriptRuntimeFactory scriptRuntimeFactory( ResourceService resourceService, ServiceRegistry services,
+                                                       Application... applications )
+    {
+        return new ScriptRuntimeFactory()
+        {
+
+            @Override
+            public ScriptRuntime create( final ScriptSettings settings )
+            {
+                return new ScriptRuntimeImpl( applicationKey -> createExecutor( settings, services, resourceService,
+                                                                                Arrays.stream( applications )
+                                                                                    .filter( app -> app.getKey().equals( applicationKey ) )
+                                                                                    .findFirst()
+                                                                                    .orElseThrow() ) );
+            }
+
+            @Override
+            public void dispose( final ScriptRuntime runtime )
+            {
+
+            }
+        };
+    }
 
     ScriptValueFactory<?> scriptValueFactory();
 

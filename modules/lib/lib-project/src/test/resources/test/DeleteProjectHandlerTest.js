@@ -1,10 +1,10 @@
-var assert = require('/lib/xp/testing.js');
-var project = require('/lib/xp/project.js');
+const assert = require('/lib/xp/testing.js');
+const projectLib = require('/lib/xp/project.js');
 
 exports.deleteProject = function () {
     createProject();
 
-    var result = project.delete({
+    let result = projectLib.deleteProject({
         id: 'myproject'
     });
 
@@ -13,7 +13,7 @@ exports.deleteProject = function () {
 
 exports.deleteNotExistProject = function () {
 
-    var result = project.delete({
+    let result = projectLib.deleteProject({
         id: 'myproject'
     });
 
@@ -24,7 +24,7 @@ exports.deleteNotExistProject = function () {
 exports.deleteProjectNull = function () {
     try {
 
-        project.delete({
+        projectLib.deleteProject({
             id: null
         });
         throw new Error('IllegalArgumentException should be thrown.');
@@ -36,7 +36,7 @@ exports.deleteProjectNull = function () {
 };
 
 function createProject() {
-    project.create({
+    projectLib.create({
         id: 'myproject',
         displayName: 'project display name',
         description: 'project description',

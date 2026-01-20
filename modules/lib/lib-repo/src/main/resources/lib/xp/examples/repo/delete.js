@@ -1,9 +1,9 @@
-var repoLib = require('/lib/xp/repo.js');
-var t = require('/lib/xp/testing');
+const repoLib = require('/lib/xp/repo.js');
+const t = require('/lib/xp/testing');
 
 // BEGIN
 // Retrieves a repository
-var result = repoLib.delete('test-repo');
+var result = repoLib.deleteRepo('test-repo');
 
 if (result) {
     log.info('Repository deleted');

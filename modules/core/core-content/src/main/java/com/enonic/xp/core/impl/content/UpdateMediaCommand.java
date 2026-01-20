@@ -34,11 +34,6 @@ final class UpdateMediaCommand
         return new Builder( params );
     }
 
-    public static Builder create( final UpdateMediaParams params, final AbstractCreatingOrUpdatingContentCommand source )
-    {
-        return new Builder( params, source );
-    }
-
     Content execute()
     {
         params.validate();
@@ -60,13 +55,11 @@ final class UpdateMediaCommand
         final ContentTypeName resolvedTypeFromMimeType = ContentTypeFromMimeTypeResolver.resolve( mediaType );
         final ContentTypeName type = resolvedTypeFromMimeType != null
             ? resolvedTypeFromMimeType
-            : isExecutableContentType( mediaType, params.getName() )
-                ? ContentTypeName.executableMedia()
-                : ContentTypeName.unknownMedia();
+            : isExecutableContentType( mediaType, params.getName() ) ? ContentTypeName.executableMedia() : ContentTypeName.unknownMedia();
 
         final Content existingContent = getContent( params.getContent() );
-        Preconditions.checkArgument( existingContent.getType().equals( type ),
-                                     "Updated content must be of type: %s", existingContent.getType() );
+        Preconditions.checkArgument( existingContent.getType().equals( type ), "Updated content must be of type: %s",
+                                     existingContent.getType() );
 
         final CreateAttachment mediaAttachment = CreateAttachment.create()
             .name( params.getName().toString() )
@@ -84,25 +77,27 @@ final class UpdateMediaCommand
             .altText( params.getAltText() )
             .artist( params.getArtistList().isEmpty() ? List.of( "" ) : params.getArtistList() )
             .copyright( params.getCopyright() )
-            .tags( params.getTagList().isEmpty() ? List.of("") : params.getTagList() );
+            .tags( params.getTagList().isEmpty() ? List.of( "" ) : params.getTagList() );
 
         final UpdateContentParams updateParams = new UpdateContentParams().contentId( params.getContent() )
             .clearAttachments( true )
             .createAttachments( CreateAttachments.from( mediaAttachment ) )
-            .editor( editable -> {
-                mediaFormBuilder.build( editable.data );
-                editable.workflowInfo = params.getWorkflowInfo();
-            } );
+            .editor( editable -> mediaFormBuilder.build( editable.data ) );
 
-        return UpdateContentCommand.create( this )
-            .params( updateParams )
-            .mediaInfo( mediaInfo )
+        return UpdateContentCommand.create( updateParams )
+            .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
             .cmsService( this.cmsService )
             .mixinService( this.mixinService )
+            .eventPublisher( this.eventPublisher )
+            .contentProcessors( this.contentProcessors )
+            .contentValidators( this.contentValidators )
             .pageDescriptorService( this.pageDescriptorService )
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
+            .xDataMappingService( this.xDataMappingService )
+            .siteConfigService( this.siteConfigService )
+            .allowUnsafeAttachmentNames( allowUnsafeAttachmentNames )
             .build()
             .execute();
     }
@@ -116,12 +111,6 @@ final class UpdateMediaCommand
 
         Builder( final UpdateMediaParams params )
         {
-            this.params = params;
-        }
-
-        Builder( final UpdateMediaParams params, final AbstractCreatingOrUpdatingContentCommand source )
-        {
-            super( source );
             this.params = params;
         }
 

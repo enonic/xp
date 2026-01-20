@@ -86,13 +86,13 @@ export type {
     UserKey,
     ValueCountAggregation,
     ValueType,
-  } from '@enonic-types/core';
+} from '@enonic-types/core';
 
 type WithRequiredProperty<T, K extends keyof T> = T & { [P in K]-?: T[P] };
 
 function checkRequired<T extends object>(obj: T, name: keyof T): void {
     if (obj == null || obj[name] == null) {
-        throw `Parameter '${String(name)}' is required`;
+        throw Error(`Parameter '${String(name)}' is required`);
     }
 }
 
@@ -183,13 +183,13 @@ interface MultiRepoNodeHandleFactory {
 
 const factory: NodeHandleFactory = __.newBean<NodeHandleFactory>('com.enonic.xp.lib.node.NodeHandleFactory');
 
-const multiRepoConnectFactory: MultiRepoNodeHandleFactory = __.newBean<MultiRepoNodeHandleFactory>('com.enonic.xp.lib.node.MultiRepoNodeHandleFactory');
+const multiRepoConnectFactory: MultiRepoNodeHandleFactory = __.newBean<MultiRepoNodeHandleFactory>(
+    'com.enonic.xp.lib.node.MultiRepoNodeHandleFactory');
 
 function argsToStringArray(argsArray: (string | string[])[]): string[] {
     const array: string[] = [];
 
-    for (let i = 0; i < argsArray.length; i++) {
-        const currArgument = argsArray[i];
+    for (const currArgument of argsArray) {
         if (Array.isArray(currArgument)) {
             currArgument.forEach((v) => {
                 array.push(v);
@@ -217,7 +217,7 @@ function prepareGetParams(params: (string | GetNodeParams | (string | GetNodePar
             checkRequired(param, 'key');
             bean.add(param.key, __.nullOrValue(param.versionId));
         } else {
-            throw 'Unsupported type';
+            throw Error('Unsupported type');
         }
     });
 }
@@ -521,9 +521,7 @@ export interface ApplyPermissionsParams {
     scope?: string;
 }
 
-export interface ApplyPermissionsResult {
-    [nodeId: string]: BranchResult[];
-}
+export type ApplyPermissionsResult = Record<string, BranchResult[]>;
 
 export interface BranchResult {
     branch: string;
@@ -592,7 +590,7 @@ export interface NodeConfigEntry {
     languages: string[];
 }
 
-export type CommonNodeProperties = {
+export interface CommonNodeProperties {
     _childOrder: string;
     // _id: string; // Not on create
     // _indexConfig: Partial<NodeIndexConfigParams> | NodeIndexConfigParams | NodeIndexConfig; // Different on read vs write
@@ -763,6 +761,7 @@ class RepoConnectionImpl
      */
     patch(params: PatchNodeParams): PatchNodeResult {
         checkRequired(params, 'key');
+        checkRequired(params, 'editor');
 
         const {
             key,
@@ -859,7 +858,7 @@ class RepoConnectionImpl
         } = params ?? {};
 
         if (typeof key === 'undefined' && typeof keys === 'undefined') {
-            throw "Parameter key' or 'keys' is required";
+            throw Error('Parameter "key" or "keys" is required');
         }
 
         const handlerParams: PushNodeHandlerParams = __.newBean<PushNodeHandlerParams>('com.enonic.xp.lib.node.PushNodeHandlerParams');
@@ -893,7 +892,8 @@ class RepoConnectionImpl
             includeChildren = false,
         } = params ?? {};
 
-        const handlerParams: DiffBranchesHandlerParams = __.newBean<DiffBranchesHandlerParams>('com.enonic.xp.lib.node.DiffBranchesHandlerParams');
+        const handlerParams: DiffBranchesHandlerParams = __.newBean<DiffBranchesHandlerParams>(
+            'com.enonic.xp.lib.node.DiffBranchesHandlerParams');
 
         handlerParams.setKey(key);
         handlerParams.setTargetBranch(target);
@@ -1032,7 +1032,8 @@ class RepoConnectionImpl
             count = 10,
         } = params ?? {};
 
-        const handlerParams: FindVersionsHandlerParams = __.newBean<FindVersionsHandlerParams>('com.enonic.xp.lib.node.FindVersionsHandlerParams');
+        const handlerParams: FindVersionsHandlerParams = __.newBean<FindVersionsHandlerParams>(
+            'com.enonic.xp.lib.node.FindVersionsHandlerParams');
 
         handlerParams.setKey(key);
         handlerParams.setStart(start);
@@ -1082,7 +1083,8 @@ class RepoConnectionImpl
             recursive = false,
         } = params ?? {};
 
-        const handlerParams: FindChildrenHandlerParams = __.newBean<FindChildrenHandlerParams>('com.enonic.xp.lib.node.FindChildrenHandlerParams');
+        const handlerParams: FindChildrenHandlerParams = __.newBean<FindChildrenHandlerParams>(
+            'com.enonic.xp.lib.node.FindChildrenHandlerParams');
 
         handlerParams.setParentKey(parentKey);
         handlerParams.setStart(start);
@@ -1190,7 +1192,8 @@ class RepoConnectionImpl
             refresh,
         } = params ?? {};
 
-        const handlerParams: DuplicateNodeHandlerParams = __.newBean<DuplicateNodeHandlerParams>('com.enonic.xp.lib.node.DuplicateNodeHandlerParams');
+        const handlerParams: DuplicateNodeHandlerParams = __.newBean<DuplicateNodeHandlerParams>(
+            'com.enonic.xp.lib.node.DuplicateNodeHandlerParams');
 
         handlerParams.setNodeId(nodeId);
         handlerParams.setIncludeChildren(includeChildren);
@@ -1307,7 +1310,7 @@ interface NodeHandleContext {
  * @param {object} params.branch branch id
  * @param {object} [params.user] User to execute the callback with. Default is the current user.
  * @param {string} params.user.login Login of the user.
- * @param {string} [params.user.idProvider] Id provider containing the user. By default, all the id providers will be used.
+ * @param {string} [params.user.idProvider] Id provider containing the user. By default, the system id provider is used.
  * @param {string[]} [params.principals] Additional principals to execute the callback with.
  * @returns {RepoConnection} Returns a new repo-connection.
  */
@@ -1348,13 +1351,14 @@ export interface MultiRepoConnectParams {
  * @param {object} params.sources.branch branch id
  * @param {object} [params.sources.user] User to execute the callback with. Default is the current user.
  * @param {string} params.sources.user.login Login of the user.
- * @param {string} [params.sources.user.idProvider] Id provider containing the user. By default, all the id providers will be used.
+ * @param {string} [params.sources.user.idProvider] Id provider containing the user. By default, the system id provider is used.
  * @param {string[]} params.sources.principals Principals to execute the callback with.
  *
  * @returns {MultiRepoConnection} Returns a new multirepo-connection.
  */
 export function multiRepoConnect(params: MultiRepoConnectParams): MultiRepoConnection {
-    const multiRepoNodeHandleContext: MultiRepoNodeHandleContext = __.newBean<MultiRepoNodeHandleContext>('com.enonic.xp.lib.node.MultiRepoNodeHandleContext');
+    const multiRepoNodeHandleContext: MultiRepoNodeHandleContext = __.newBean<MultiRepoNodeHandleContext>(
+        'com.enonic.xp.lib.node.MultiRepoNodeHandleContext');
 
     params.sources.forEach((source: ConnectParams) => {
         checkRequired(source, 'repoId');

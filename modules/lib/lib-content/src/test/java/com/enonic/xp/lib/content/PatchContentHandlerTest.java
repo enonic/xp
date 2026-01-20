@@ -52,7 +52,7 @@ public class PatchContentHandlerTest
         when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( content );
 
         when( this.contentService.patch( Mockito.isA( PatchContentParams.class ) ) ).thenAnswer(
-            invocationOnMock -> invokePatch( (PatchContentParams) invocationOnMock.getArguments()[0], content ) );
+            invocationOnMock -> invokePatch( invocationOnMock.getArgument( 0 ), content ) );
 
         mockMixins();
         runScript( "/lib/xp/examples/content/patch.js" );
@@ -67,8 +67,7 @@ public class PatchContentHandlerTest
         when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
 
         when( this.contentService.patch( Mockito.isA( PatchContentParams.class ) ) ).thenAnswer(
-            invocationOnMock -> invokePatch( (PatchContentParams) invocationOnMock.getArguments()[0],
-                                             TestDataFixtures.newSmallContent() ) );
+            invocationOnMock -> invokePatch( invocationOnMock.getArgument( 0 ), TestDataFixtures.newSmallContent() ) );
 
         mockMixins();
 
@@ -100,8 +99,7 @@ public class PatchContentHandlerTest
         when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
 
         when( this.contentService.patch( Mockito.isA( PatchContentParams.class ) ) ).thenAnswer(
-            invocationOnMock -> invokePatch( (PatchContentParams) invocationOnMock.getArguments()[0],
-                                             TestDataFixtures.newSmallContent() ) );
+            invocationOnMock -> invokePatch( invocationOnMock.getArgument( 0 ), TestDataFixtures.newSmallContent() ) );
 
         mockMixins();
 
@@ -122,8 +120,7 @@ public class PatchContentHandlerTest
     void patchById()
     {
         when( this.contentService.patch( Mockito.isA( PatchContentParams.class ) ) ).thenAnswer(
-            invocationOnMock -> invokePatch( (PatchContentParams) invocationOnMock.getArguments()[0],
-                                             TestDataFixtures.newSmallContent() ) );
+            invocationOnMock -> invokePatch( invocationOnMock.getArgument( 0 ), TestDataFixtures.newSmallContent() ) );
 
         final Content content = TestDataFixtures.newSmallContent();
         when( this.contentTypeService.getByName( isA( GetContentTypeParams.class ) ) ).thenReturn(
@@ -144,8 +141,7 @@ public class PatchContentHandlerTest
         when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
 
         when( this.contentService.patch( Mockito.isA( PatchContentParams.class ) ) ).thenAnswer(
-            invocationOnMock -> invokePatch( (PatchContentParams) invocationOnMock.getArguments()[0],
-                                             TestDataFixtures.newSmallContent() ) );
+            invocationOnMock -> invokePatch( invocationOnMock.getArgument( 0 ), TestDataFixtures.newSmallContent() ) );
 
         mockMixins();
 
@@ -161,8 +157,7 @@ public class PatchContentHandlerTest
         when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
 
         when( this.contentService.patch( Mockito.isA( PatchContentParams.class ) ) ).thenAnswer(
-            invocationOnMock -> invokePatch( (PatchContentParams) invocationOnMock.getArguments()[0],
-                                             TestDataFixtures.newSmallContent() ) );
+            invocationOnMock -> invokePatch( invocationOnMock.getArgument( 0 ), TestDataFixtures.newSmallContent() ) );
 
         mockMixins();
 
@@ -184,8 +179,7 @@ public class PatchContentHandlerTest
         when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
 
         when( this.contentService.patch( Mockito.isA( PatchContentParams.class ) ) ).thenAnswer(
-            invocationOnMock -> invokePatch( (PatchContentParams) invocationOnMock.getArguments()[0],
-                                             TestDataFixtures.newSmallContent() ) );
+            invocationOnMock -> invokePatch( invocationOnMock.getArgument( 0 ), TestDataFixtures.newSmallContent() ) );
 
         mockMixins();
 
@@ -201,8 +195,7 @@ public class PatchContentHandlerTest
         when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
 
         when( this.contentService.patch( Mockito.isA( PatchContentParams.class ) ) ).thenAnswer(
-            invocationOnMock -> invokePatch( (PatchContentParams) invocationOnMock.getArguments()[0],
-                                             TestDataFixtures.newSmallContent() ) );
+            invocationOnMock -> invokePatch( invocationOnMock.getArgument( 0 ), TestDataFixtures.newSmallContent() ) );
 
         mockMixins();
 
@@ -239,8 +232,7 @@ public class PatchContentHandlerTest
         when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
 
         when( this.contentService.patch( Mockito.isA( PatchContentParams.class ) ) ).thenAnswer(
-            invocationOnMock -> invokePatch( (PatchContentParams) invocationOnMock.getArguments()[0],
-                                             TestDataFixtures.newSmallContent() ) );
+            invocationOnMock -> invokePatch( invocationOnMock.getArgument( 0 ), TestDataFixtures.newSmallContent() ) );
 
         mockMixins();
 
@@ -276,7 +268,7 @@ public class PatchContentHandlerTest
         when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
 
         when( this.contentService.patch( Mockito.isA( PatchContentParams.class ) ) ).thenAnswer(
-            invocationOnMock -> invokePatch( (PatchContentParams) invocationOnMock.getArguments()[0], content ) );
+            invocationOnMock -> invokePatch( invocationOnMock.getArgument( 0 ), content ) );
 
         mockMixins();
 
@@ -317,7 +309,7 @@ public class PatchContentHandlerTest
         when( this.contentService.getByPath( contentWithoutAttachments.getPath() ) ).thenReturn( contentWithoutAttachments );
 
         when( this.contentService.patch( Mockito.isA( PatchContentParams.class ) ) ).thenAnswer(
-            invocationOnMock -> invokePatch( (PatchContentParams) invocationOnMock.getArguments()[0], contentWithoutAttachments ) );
+            invocationOnMock -> invokePatch( invocationOnMock.getArgument( 0 ), contentWithoutAttachments ) );
 
         mockMixins();
 

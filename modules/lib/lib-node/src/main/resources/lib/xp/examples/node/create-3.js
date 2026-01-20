@@ -37,7 +37,13 @@ var expected = {
             'indexValueProcessors': [],
             'languages': []
             },
-        'configs': []
+        'configs': [],
+        'allText': {
+            'enabled': true,
+            'nGram': true,
+            'fulltext': true,
+            'languages': []
+        }
         },
     '_permissions': [
             {

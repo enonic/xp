@@ -51,7 +51,7 @@ public class ZipDumpReader
         {
             final SeekableByteChannel seekableByteChannel =
                 Files.newByteChannel( basePath.resolve( dumpName + ".zip" ), EnumSet.of( StandardOpenOption.READ ) );
-            final ZipFile zipFile = new ZipFile( seekableByteChannel );
+            final ZipFile zipFile = ZipFile.builder().setSeekableByteChannel( seekableByteChannel ).get();
 
             return create( listener, dumpName, zipFile );
         }

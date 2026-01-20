@@ -25,8 +25,12 @@ import com.enonic.xp.content.SortContentParams;
 import com.enonic.xp.content.SortContentResult;
 import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UnpublishContentsResult;
+import com.enonic.xp.content.UpdateContentMetadataParams;
+import com.enonic.xp.content.UpdateContentMetadataResult;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
+import com.enonic.xp.content.UpdateWorkflowParams;
+import com.enonic.xp.content.UpdateWorkflowResult;
 
 interface ContentAuditLogSupport
 {
@@ -39,6 +43,10 @@ interface ContentAuditLogSupport
     void update( UpdateMediaParams params, Content content );
 
     void patch( PatchContentParams params, PatchContentResult result );
+
+    void updateMetadata( UpdateContentMetadataParams params, UpdateContentMetadataResult result );
+
+    void updateWorkflow( UpdateWorkflowParams params, UpdateWorkflowResult result );
 
     void delete( DeleteContentParams params, DeleteContentsResult contents );
 

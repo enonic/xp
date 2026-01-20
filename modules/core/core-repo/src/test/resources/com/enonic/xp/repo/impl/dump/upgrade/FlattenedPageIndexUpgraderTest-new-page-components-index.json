@@ -45,7 +45,7 @@
         ],
         "nGram": false
       },
-      "path": "components.part.config.com-enonic-app-features.getComponent.*"
+      "path": "components.part.config.com-enonic-app-features.getcomponent.*"
     },
     {
       "indexConfig": {

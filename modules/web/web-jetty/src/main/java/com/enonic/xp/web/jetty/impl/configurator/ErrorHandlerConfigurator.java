@@ -7,12 +7,11 @@ import com.enonic.xp.web.jetty.impl.LastResortErrorHandler;
 
 public class ErrorHandlerConfigurator
 {
-    public void configure( RunMode runMode, Server server )
+    public void configure( Server server )
     {
-        if ( runMode != RunMode.DEV )
+        if ( RunMode.isProd() )
         {
             server.setErrorHandler( new LastResortErrorHandler() );
         }
     }
-
 }

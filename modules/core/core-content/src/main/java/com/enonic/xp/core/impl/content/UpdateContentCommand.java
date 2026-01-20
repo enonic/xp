@@ -1,13 +1,10 @@
 package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
-import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
-import java.util.function.BiPredicate;
 
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
@@ -23,12 +20,11 @@ import com.enonic.xp.content.Media;
 import com.enonic.xp.content.PatchableContent;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.ValidationErrors;
+import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.content.processor.ContentProcessor;
 import com.enonic.xp.core.impl.content.processor.ProcessUpdateParams;
 import com.enonic.xp.core.impl.content.processor.ProcessUpdateResult;
-import com.enonic.xp.core.impl.content.validate.InputValidator;
-import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeCommitEntry;
@@ -36,9 +32,6 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.PatchNodeResult;
-import com.enonic.xp.schema.content.ContentType;
-import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.util.BinaryReference;
@@ -60,11 +53,6 @@ final class UpdateContentCommand
     public static Builder create( final UpdateContentParams params )
     {
         return new Builder( params );
-    }
-
-    public static Builder create( final AbstractCreatingOrUpdatingContentCommand source )
-    {
-        return new Builder( source );
     }
 
     Content execute()
@@ -91,20 +79,21 @@ final class UpdateContentCommand
         editedContent = editContent( params.getEditor(), contentBeforeChange );
         editedContent = processContent( editedContent );
 
-        final List<String> modifiedFields = ContentAttributesHelper.modifiedFields( contentBeforeChange, editedContent );
+        final String[] modifiedFields = ContentAttributesHelper.modifiedFields( contentBeforeChange, editedContent );
 
-        editedContent =
-            editContentMetadata( editedContent, modifiedFields.stream().anyMatch( ContentAttributesHelper.EDITORIAL_FIELDS::contains ) );
+        editedContent = editContentMetadata( editedContent );
 
         if ( isContentTheSame().test( contentBeforeChange, editedContent ) )
         {
             return contentBeforeChange;
         }
 
+        editedContent = postEditContentMetadata( editedContent );
+
         checkAccess( contentBeforeChange, editedContent );
         validate( editedContent );
 
-        if ( isStoppingInheritContent( contentBeforeChange.getInherit() ) )
+        if ( contentBeforeChange.getInherit().contains( ContentInheritType.CONTENT ) )
         {
             nodeService.commit( NodeCommitEntry.create().message( "Base inherited version" ).build(),
                                 NodeIds.from( NodeId.from( params.getContentId() ) ) );
@@ -113,7 +102,7 @@ final class UpdateContentCommand
         final PatchNodeParams patchNodeParams = PatchNodeParamsFactory.create()
             .editedContent( editedContent )
             .createAttachments( params.getCreateAttachments() )
-            .versionAttributes( ContentAttributesHelper.updateVersionHistoryAttr( modifiedFields ) )
+            .versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.UPDATE_ATTR, modifiedFields ) )
             .branches( Branches.from( ContextAccessor.current().getBranch() ) )
             .contentTypeService( this.contentTypeService )
             .mixinService( this.mixinService )
@@ -132,57 +121,20 @@ final class UpdateContentCommand
     private Content editContentMetadata( Content content, final boolean editModifier )
     {
         final PatchableContent patchableContent = new PatchableContent( content );
-        patchableContent.inherit.setPatcher( c -> stopInherit( c.inherit.originalValue ) );
         patchableContent.attachments.setPatcher( c -> mergeExistingAndUpdatedAttachments( c.attachments.originalValue ) );
-        if ( editModifier )
-        {
-            patchableContent.modifier.setValue( getCurrentUserKey() );
-            patchableContent.modifiedTime.setValue( Instant.now() );
-        }
         patchableContent.validationErrors.setPatcher( c -> validateContent( c.source ) );
         patchableContent.valid.setPatcher( c -> !c.validationErrors.getProducedValue().hasErrors() );
         return patchableContent.build();
     }
 
-    private BiPredicate<Content, Content> isContentTheSame()
+    private Content postEditContentMetadata( Content content )
     {
-        return ( c1, c2 ) -> Objects.equals( c1.getId(), c2.getId() ) && Objects.equals( c1.getPath(), c2.getPath() )
-            && Objects.equals( c1.getDisplayName(), c2.getDisplayName() ) &&
-            Objects.equals( c1.getType(), c2.getType() ) && Objects.equals( c1.getCreator(), c2.getCreator() ) &&
-            Objects.equals( c1.getOwner(), c2.getOwner() ) && Objects.equals( c1.getCreatedTime(), c2.getCreatedTime() ) &&
-            Objects.equals( c1.getInherit(), c2.getInherit() ) && Objects.equals( c1.getOriginProject(), c2.getOriginProject() ) &&
-            Objects.equals( c1.getChildOrder(), c2.getChildOrder() ) &&
-            Objects.equals( c1.getPermissions(), c2.getPermissions() ) && Objects.equals( c1.getAttachments(), c2.getAttachments() ) &&
-            Objects.equals( c1.getData(), c2.getData() ) && Objects.equals( c1.getMixins(), c2.getMixins() ) &&
-            Objects.equals( c1.getPage(), c2.getPage() ) && Objects.equals( c1.getLanguage(), c2.getLanguage() ) &&
-            Objects.equals( c1.getPublishInfo(), c2.getPublishInfo() ) && Objects.equals( c1.getWorkflowInfo(), c2.getWorkflowInfo() ) &&
-            Objects.equals( c1.getManualOrderValue(), c2.getManualOrderValue() ) &&
-            Objects.equals( c1.getOriginalName(), c2.getOriginalName() ) &&
-            Objects.equals( c1.getOriginalParentPath(), c2.getOriginalParentPath() ) &&
-            Objects.equals( c1.getArchivedTime(), c2.getArchivedTime() ) && Objects.equals( c1.getArchivedBy(), c2.getArchivedBy() ) &&
-            Objects.equals( c1.getVariantOf(), c2.getVariantOf() );
-    }
-
-    private boolean isStoppingInheritContent( final Set<ContentInheritType> currentInherit )
-    {
-        return params.stopInherit() && currentInherit.contains( ContentInheritType.CONTENT );
-    }
-
-    private Set<ContentInheritType> stopInherit( final Set<ContentInheritType> currentInherit )
-    {
-        if ( params.stopInherit() )
-        {
-            if ( currentInherit.contains( ContentInheritType.CONTENT ) || currentInherit.contains( ContentInheritType.NAME ) )
-            {
-                final EnumSet<ContentInheritType> newInherit = EnumSet.copyOf( currentInherit );
-
-                newInherit.remove( ContentInheritType.CONTENT );
-                newInherit.remove( ContentInheritType.NAME );
-
-                return newInherit;
-            }
-        }
-        return currentInherit;
+        final PatchableContent patchableContent = new PatchableContent( content );
+        patchableContent.inherit.setPatcher( c -> stopDataInherit( c.inherit.originalValue ) );
+        patchableContent.workflowInfo.setValue( WorkflowInfo.inProgress() );
+        patchableContent.modifier.setValue( getCurrentUserKey() );
+        patchableContent.modifiedTime.setValue( Instant.now() );
+        return patchableContent.build();
     }
 
     private ValidationErrors validateContent( final Content editedContent )
@@ -192,7 +144,8 @@ final class UpdateContentCommand
         if ( !params.isClearAttachments() && editedContent.getValidationErrors() != null &&
             editedContent.getValidationErrors().hasErrors() )
         {
-            editedContent.getValidationErrors().stream()
+            editedContent.getValidationErrors()
+                .stream()
                 .filter( validationError -> validationError instanceof AttachmentValidationError )
                 .map( validationError -> (AttachmentValidationError) validationError )
                 .filter( validationError -> !params.getRemoveAttachments().contains( validationError.getAttachment() ) )
@@ -207,6 +160,7 @@ final class UpdateContentCommand
             .contentName( editedContent.getName() )
             .displayName( editedContent.getDisplayName() )
             .createAttachments( params.getCreateAttachments() )
+            .page( editedContent.getPage() )
             .contentValidators( this.contentValidators )
             .contentTypeService( this.contentTypeService )
             .validationErrorsBuilder( validationErrorsBuilder )
@@ -250,10 +204,8 @@ final class UpdateContentCommand
         {
             if ( contentProcessor.supports( content.getType() ) )
             {
-                final ProcessUpdateParams processUpdateParams = ProcessUpdateParams.create()
-                    .mediaInfo( mediaInfo )
-                    .content( content )
-                    .build();
+                final ProcessUpdateParams processUpdateParams =
+                    ProcessUpdateParams.create().mediaInfo( mediaInfo ).content( content ).build();
                 final ProcessUpdateResult result = contentProcessor.processUpdate( processUpdateParams );
                 content = result.getContent();
             }
@@ -285,7 +237,10 @@ final class UpdateContentCommand
             } );
         }
 
-        validatePropertyTree( editedContent );
+        validateContentData( editedContent.getType(), editedContent.getData() );
+        validateMixins( editedContent.getAllExtraData() );
+        validatePage( editedContent.getPage() );
+        validateSiteConfigs( editedContent.getData() );
 
         if ( editedContent.getType().isImageMedia() )
         {
@@ -311,60 +266,26 @@ final class UpdateContentCommand
         }
     }
 
-    private void validatePropertyTree( final Content editedContent )
-    {
-        final ContentType contentType = getContentType( editedContent.getType() );
-
-        try
-        {
-            InputValidator.create()
-                .form( contentType.getForm() )
-                .inputTypeResolver( InputTypes.BUILTIN )
-                .build()
-                .validate( editedContent.getData() );
-        }
-        catch ( final Exception e )
-        {
-            throw new IllegalArgumentException( "Invalid property for content: " + editedContent.getPath(), e );
-        }
-    }
-
     private void checkAccess( final Content contentBeforeChange, final Content editedContent )
     {
         if ( contentBeforeChange instanceof Site originalSite && editedContent instanceof Site editedSite &&
             !Objects.equals( SiteConfigsDataSerializer.fromData( originalSite.getData().getRoot() ),
                              SiteConfigsDataSerializer.fromData( editedSite.getData().getRoot() ) ) )
         {
-            checkAdminAccess();
+            checkOwnerAccess();
         }
-    }
-
-    private ContentType getContentType( final ContentTypeName contentTypeName )
-    {
-        return contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ) );
     }
 
     public static class Builder
         extends AbstractCreatingOrUpdatingContentCommand.Builder<Builder>
     {
-        private UpdateContentParams params;
+        private final UpdateContentParams params;
 
         private MediaInfo mediaInfo;
 
         Builder( final UpdateContentParams params )
         {
             this.params = params;
-        }
-
-        Builder( final AbstractCreatingOrUpdatingContentCommand source )
-        {
-            super( source );
-        }
-
-        Builder params( final UpdateContentParams value )
-        {
-            this.params = value;
-            return this;
         }
 
         Builder mediaInfo( final MediaInfo value )

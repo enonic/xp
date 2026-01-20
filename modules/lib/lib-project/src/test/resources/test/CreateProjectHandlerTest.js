@@ -5,7 +5,7 @@ var createProjectExpected = {
     id: 'myproject',
     displayName: 'project display name',
     description: 'project description',
-    language: 'no',
+    language: 'ja',
     parents: [],
     permissions: {
         owner: [
@@ -26,7 +26,7 @@ exports.createProject = function () {
         id: 'myproject',
         displayName: 'project display name',
         description: 'project description',
-        language: 'no',
+        language: 'ja',
         readAccess: {public: true},
         permissions: {
             owner: ['user:system:owner2', 'user:system:owner1'], viewer: ['user:system:viewer1']
@@ -40,7 +40,7 @@ var createProjectWithOneParentExpected = {
     id: 'myproject',
     displayName: 'project display name',
     description: 'project description',
-    language: 'no',
+    language: 'ja',
     parents: ['testparent'],
     parent: 'testparent',
     permissions: {},
@@ -54,7 +54,7 @@ exports.createProjectWithOneParent = function () {
         id: 'myproject',
         displayName: 'project display name',
         description: 'project description',
-        language: 'no',
+        language: 'ja',
         parents: ['testparent'],
         readAccess: {public: true},
         permissions: {}
@@ -99,7 +99,7 @@ var createProjectWithoutPermissionsExpected = {
     id: 'myproject',
     displayName: 'project display name',
     description: 'project description',
-    language: 'no',
+    language: 'ja',
     parents: [],
     permissions: {},
     readAccess: {

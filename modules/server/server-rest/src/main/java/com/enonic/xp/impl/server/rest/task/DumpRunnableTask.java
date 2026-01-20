@@ -5,6 +5,7 @@ import com.enonic.xp.dump.SystemDumpParams;
 import com.enonic.xp.dump.SystemDumpResult;
 import com.enonic.xp.impl.server.rest.model.SystemDumpResultJson;
 import com.enonic.xp.impl.server.rest.task.listener.SystemDumpListenerImpl;
+import com.enonic.xp.task.ProgressReportParams;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.SubmitLocalTaskParams;
@@ -64,7 +65,7 @@ public class DumpRunnableTask
             .build();
 
         final SystemDumpResult result = this.dumpService.dump( systemDumpParams );
-        progressReporter.info( SystemDumpResultJson.from( result ).toString() );
+        progressReporter.progress( ProgressReportParams.create( SystemDumpResultJson.from( result ).toString() ).build() );
     }
 
     public static class Builder

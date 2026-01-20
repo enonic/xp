@@ -6,6 +6,8 @@ import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.NullMarked;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -57,8 +59,6 @@ import com.enonic.xp.content.GetPublishStatusResult;
 import com.enonic.xp.content.GetPublishStatusesParams;
 import com.enonic.xp.content.GetPublishStatusesResult;
 import com.enonic.xp.content.HasUnpublishedChildrenParams;
-import com.enonic.xp.content.ImportContentParams;
-import com.enonic.xp.content.ImportContentResult;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.MoveContentsResult;
 import com.enonic.xp.content.PatchContentParams;
@@ -72,8 +72,13 @@ import com.enonic.xp.content.SortContentParams;
 import com.enonic.xp.content.SortContentResult;
 import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UnpublishContentsResult;
+import com.enonic.xp.content.UpdateContentMetadataParams;
+import com.enonic.xp.content.UpdateContentMetadataResult;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
+import com.enonic.xp.content.UpdateWorkflowParams;
+import com.enonic.xp.content.UpdateWorkflowResult;
+import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.content.processor.ContentProcessor;
@@ -86,13 +91,13 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.mixin.MixinService;
-import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.CmsService;
@@ -268,7 +273,8 @@ public class ContentServiceImpl
             .layoutDescriptorService( this.layoutDescriptorService )
             .cmsService( this.cmsService )
             .mixinService( this.mixinService )
-            .mixinMappingService( this.mixinMappingService ).siteConfigService( this.siteConfigService )
+            .mixinMappingService( this.mixinMappingService )
+            .siteConfigService( this.siteConfigService )
             .contentProcessors( this.contentProcessors )
             .contentValidators( this.contentValidators )
             .allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() )
@@ -278,16 +284,6 @@ public class ContentServiceImpl
         contentAuditLogSupport.update( params, content );
 
         return content;
-    }
-
-    private void requireAdminRole()
-    {
-        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-
-        if ( !( authInfo.hasRole( RoleKeys.ADMIN ) || authInfo.hasRole( RoleKeys.CONTENT_MANAGER_ADMIN ) ) )
-        {
-            throw new ForbiddenAccessException( authInfo.getUser() );
-        }
     }
 
     @Override
@@ -468,7 +464,7 @@ public class ContentServiceImpl
     }
 
     @Override
-    public Content getByPath( final ContentPath path )
+    public @NonNull Content getByPath( final ContentPath path )
     {
         return Tracer.trace( "content.getByPath", trace -> trace.put( "path", path ), () -> doGetByPath( path ),
                              ( trace, content ) -> trace.put( "id", content.getId() ) );
@@ -691,6 +687,9 @@ public class ContentServiceImpl
     @Override
     public FindContentVersionsResult getVersions( final FindContentVersionsParams params )
     {
+        requireAnyRole();
+        verifyDraftBranch();
+
         return FindContentVersionsCommand.create()
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
@@ -859,25 +858,10 @@ public class ContentServiceImpl
     }
 
     @Override
-    public ImportContentResult importContent( final ImportContentParams params )
-    {
-        verifyDraftBranch();
-
-        return ImportContentCommand.create()
-            .params( params )
-            .nodeService( nodeService )
-            .contentTypeService( contentTypeService )
-            .eventPublisher( eventPublisher )
-            .build()
-            .execute();
-    }
-
-    @Override
     public PatchContentResult patch( final PatchContentParams params )
     {
-        requireAdminRole();
-
         verifyDraftBranch();
+        requireAdminRole();
 
         final PatchContentResult result = PatchContentCommand.create( params )
             .nodeService( this.nodeService )
@@ -899,11 +883,88 @@ public class ContentServiceImpl
         return result;
     }
 
+    @Override
+    @NullMarked
+    public UpdateContentMetadataResult updateMetadata( final UpdateContentMetadataParams params )
+    {
+        verifyDraftBranch();
+
+        final UpdateContentMetadataResult result = UpdateMetadataCommand.create( params )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .eventPublisher( this.eventPublisher )
+            .siteService( this.siteService )
+            .xDataService( this.xDataService )
+            .contentProcessors( this.contentProcessors )
+            .contentValidators( this.contentValidators )
+            .pageDescriptorService( this.pageDescriptorService )
+            .partDescriptorService( this.partDescriptorService )
+            .layoutDescriptorService( this.layoutDescriptorService )
+            .allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() )
+            .build()
+            .execute();
+
+        contentAuditLogSupport.updateMetadata( params, result );
+
+        return result;
+    }
+
+    @Override
+    @NullMarked
+    public UpdateWorkflowResult updateWorkflow( final UpdateWorkflowParams params )
+    {
+        verifyDraftBranch();
+
+        final UpdateWorkflowResult result = UpdateWorkflowCommand.create( params )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .eventPublisher( this.eventPublisher )
+            .siteService( this.siteService )
+            .xDataService( this.xDataService )
+            .contentProcessors( this.contentProcessors )
+            .contentValidators( this.contentValidators )
+            .pageDescriptorService( this.pageDescriptorService )
+            .partDescriptorService( this.partDescriptorService )
+            .layoutDescriptorService( this.layoutDescriptorService )
+            .allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() )
+            .build()
+            .execute();
+
+        contentAuditLogSupport.updateWorkflow( params, result );
+
+        return result;
+    }
+
     private static void verifyDraftBranch()
     {
-        if ( !ContentConstants.BRANCH_DRAFT.equals( ContextAccessor.current().getBranch() ) )
+        final Context ctx = ContextAccessor.current();
+        if ( ProjectName.from( ctx.getRepositoryId() ) == null )
+        {
+            throw new IllegalStateException( "Repository must be a project repository" );
+        }
+        if ( !ContentConstants.BRANCH_DRAFT.equals( ctx.getBranch() ) )
         {
             throw new IllegalStateException( String.format( "Branch must be %s", ContentConstants.BRANCH_DRAFT ) );
+        }
+    }
+
+    private static void requireAdminRole()
+    {
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+        if ( !ProjectAccessHelper.hasAdminAccess( authInfo ) )
+        {
+            throw new ForbiddenAccessException( authInfo.getUser() );
+        }
+    }
+
+    private static void requireAnyRole()
+    {
+        final Context ctx = ContextAccessor.current();
+
+        final AuthenticationInfo authInfo = ctx.getAuthInfo();
+        if ( !ProjectAccessHelper.hasAnyAccess( authInfo, ProjectName.from( ctx.getRepositoryId() ) ) )
+        {
+            throw new ForbiddenAccessException( authInfo.getUser() );
         }
     }
 

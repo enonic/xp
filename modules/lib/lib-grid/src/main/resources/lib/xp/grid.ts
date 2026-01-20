@@ -124,7 +124,7 @@ class SharedMapImpl<Map extends GridMap>
         const key = requireNotNull(params.key, 'key');
         const func = requireNotNull(params.func, 'func');
         if (typeof func !== 'function') {
-            throw 'Parameter "func" is not a function';
+            throw Error('Parameter "func" is not a function');
         }
 
         const ttlSeconds = __.nullOrValue(params.ttlSeconds);
@@ -152,7 +152,7 @@ class SharedMapImpl<Map extends GridMap>
 
 function requireNotNull<T>(value: T, parameterName: string): T {
     if (value == null) {
-        throw `Parameter "${parameterName}" is required`;
+        throw Error(`Parameter "${parameterName}" is required`);
     }
     return value;
 }

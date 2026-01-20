@@ -14,11 +14,7 @@ var updateResult = contentLib.updateMedia({
     caption: 'Caption',
     copyright: 'Copyright',
     mimeType: 'text/plan',
-    tags: ['tag1', 'tag2'],
-    workflow: {
-        state: 'IN_PROGRESS',
-        checks: {}
-    }
+    tags: ['tag1', 'tag2']
 });
 // END
 
@@ -50,8 +46,7 @@ var expectedJson = {
     "attachments": {},
     "publish": {},
     "workflow": {
-        "state": "IN_PROGRESS",
-        "checks": {}
+        "state": "IN_PROGRESS"
     }
 };
 // END

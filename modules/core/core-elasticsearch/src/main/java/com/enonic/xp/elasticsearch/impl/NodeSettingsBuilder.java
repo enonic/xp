@@ -60,7 +60,7 @@ final class NodeSettingsBuilder
             build();
 
         return new ConfigInterpolator().
-            bundleContext( this.context ).
+            addLookup( this.context::getProperty ).
             interpolate( config );
     }
 

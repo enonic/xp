@@ -20,8 +20,7 @@ public class EventPublisherExecutorImpl
 
     public EventPublisherExecutorImpl()
     {
-        simpleExecutor = new SimpleExecutor( Executors::newSingleThreadExecutor, "event-publisher-thread",
-                                             e -> LOG.error( "Event publishing failed", e ) );
+        simpleExecutor = SimpleExecutor.ofSingle( "event-publisher-thread", e -> LOG.error( "Event publishing failed", e ) );
     }
 
     @Deactivate

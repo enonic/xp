@@ -163,7 +163,7 @@ class PageHandlerTest
     @Test
     void getContentExistsButInsufficientRights()
     {
-        final AuthenticationInfo authenticationInfo = AuthenticationInfo.create().user( User.ANONYMOUS ).build();
+        final AuthenticationInfo authenticationInfo = AuthenticationInfo.create().user( User.anonymous() ).build();
         final Context authenticatedContext = ContextBuilder.from( ContextAccessor.current() ).authInfo( authenticationInfo ).build();
 
         final ContentPath path = ContentPath.from( "/site/somepath/content" );

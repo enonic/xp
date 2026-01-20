@@ -22,16 +22,28 @@ import com.enonic.xp.util.Reference;
 
 public class TestDataFixtures
 {
+    public static User getSystemTestUser()
+    {
+        return User.create()
+            .key( PrincipalKey.ofUser( IdProviderKey.system(), "user1" ) )
+            .displayName( "User 1" )
+            .modifiedTime( Instant.ofEpochSecond( 0 ) )
+            .email( "user1@enonic.com" )
+            .login( "user1" )
+            .profile( getProfile() )
+            .build();
+    }
+
     public static User getTestUser()
     {
-        return User.create().
-            key( PrincipalKey.ofUser( IdProviderKey.from( "enonic" ), "user1" ) ).
-            displayName( "User 1" ).
-            modifiedTime( Instant.ofEpochSecond( 0 ) ).
-            email( "user1@enonic.com" ).
-            login( "user1" ).
-            profile( getProfile() ).
-            build();
+        return User.create()
+            .key( PrincipalKey.ofUser( IdProviderKey.from( "enonic" ), "user1" ) )
+            .displayName( "User 1" )
+            .modifiedTime( Instant.ofEpochSecond( 0 ) )
+            .email( "user1@enonic.com" )
+            .login( "user1" )
+            .profile( getProfile() )
+            .build();
     }
 
     private static PropertyTree getProfile()
@@ -50,13 +62,13 @@ public class TestDataFixtures
     public static User getTestUser2()
     {
 
-        return User.create().
-            key( PrincipalKey.ofUser( IdProviderKey.from( "enonic" ), "user2" ) ).
-            displayName( "User 2" ).
-            modifiedTime( Instant.ofEpochSecond( 0 ) ).
-            email( "user2@enonic.com" ).
-            login( "user2" ).
-            build();
+        return User.create()
+            .key( PrincipalKey.ofUser( IdProviderKey.from( "enonic" ), "user2" ) )
+            .displayName( "User 2" )
+            .modifiedTime( Instant.ofEpochSecond( 0 ) )
+            .email( "user2@enonic.com" )
+            .login( "user2" )
+            .build();
     }
 
     public static User getTestUserWithProfile()
@@ -77,54 +89,54 @@ public class TestDataFixtures
 
         profile.setSet( "myApp", data );
 
-        return User.create().
-            key( PrincipalKey.ofUser( IdProviderKey.from( "enonic" ), "user1" ) ).
-            displayName( "User 1" ).
-            modifiedTime( Instant.ofEpochSecond( 0 ) ).
-            email( "user1@enonic.com" ).
-            login( "user1" ).
-            profile( profile ).
-            build();
+        return User.create()
+            .key( PrincipalKey.ofUser( IdProviderKey.from( "enonic" ), "user1" ) )
+            .displayName( "User 1" )
+            .modifiedTime( Instant.ofEpochSecond( 0 ) )
+            .email( "user1@enonic.com" )
+            .login( "user1" )
+            .profile( profile )
+            .build();
     }
 
     public static User getTestUserWithoutEmail()
     {
-        return User.create().
-            key( PrincipalKey.ofUser( IdProviderKey.from( "enonic" ), "user1" ) ).
-            displayName( "User 1" ).
-            modifiedTime( Instant.ofEpochSecond( 0 ) ).
-            login( "user1" ).
-            build();
+        return User.create()
+            .key( PrincipalKey.ofUser( IdProviderKey.from( "enonic" ), "user1" ) )
+            .displayName( "User 1" )
+            .modifiedTime( Instant.ofEpochSecond( 0 ) )
+            .login( "user1" )
+            .build();
     }
 
     public static Role getTestRole()
     {
-        return Role.create().
-            key( PrincipalKey.ofRole( "aRole" ) ).
-            displayName( "Role Display Name" ).
-            modifiedTime( Instant.ofEpochSecond( 0 ) ).
-            description( "description" ).
-            build();
+        return Role.create()
+            .key( PrincipalKey.ofRole( "aRole" ) )
+            .displayName( "Role Display Name" )
+            .modifiedTime( Instant.ofEpochSecond( 0 ) )
+            .description( "description" )
+            .build();
     }
 
     public static Group getTestGroup()
     {
-        return Group.create().
-            key( PrincipalKey.ofGroup( IdProviderKey.system(), "group-a" ) ).
-            displayName( "Group A" ).
-            modifiedTime( Instant.ofEpochSecond( 0 ) ).
-            description( "description" ).
-            build();
+        return Group.create()
+            .key( PrincipalKey.ofGroup( IdProviderKey.system(), "group-a" ) )
+            .displayName( "Group A" )
+            .modifiedTime( Instant.ofEpochSecond( 0 ) )
+            .description( "description" )
+            .build();
     }
 
     public static IdProvider getTestIdProvider()
     {
-        return IdProvider.create().
-            key( IdProviderKey.from( "idProviderTestKey" ) ).
-            description( "Id Provider used for testing" ).
-            displayName( "Id Provider test" ).
-            idProviderConfig( getTestIdProviderConfig() ).
-            build();
+        return IdProvider.create()
+            .key( IdProviderKey.from( "idProviderTestKey" ) )
+            .description( "Id Provider used for testing" )
+            .displayName( "Id Provider test" )
+            .idProviderConfig( getTestIdProviderConfig() )
+            .build();
     }
 
     private static IdProviderConfig getTestIdProviderConfig()
@@ -137,10 +149,7 @@ public class TestDataFixtures
         config.setSet( "set", backgroundPropertySet );
         config.setString( "string", "stringValue" );
 
-        return IdProviderConfig.create().
-            applicationKey( ApplicationKey.from( "com.enonic.app.test" ) ).
-            config( config ).
-            build();
+        return IdProviderConfig.create().applicationKey( ApplicationKey.from( "com.enonic.app.test" ) ).config( config ).build();
     }
 
     public static AuthenticationInfo createAuthenticationInfo()
