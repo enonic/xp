@@ -96,7 +96,7 @@ public class ExportServiceImpl
             .targetNodePath( params.getTargetNodePath() ).importNodeIds( params.isImportNodeIds() )
             .importPermissions( params.isImportPermissions() )
             .xslt( params.getXslt() )
-            .xsltParams( params.getXsltParams() ).nodeImportListener( params.getNodeExportListener() )
+            .xsltParams( params.getXsltParams() ).nodeImportListener( params.getNodeImportListener() )
             .build()
             .execute();
 
