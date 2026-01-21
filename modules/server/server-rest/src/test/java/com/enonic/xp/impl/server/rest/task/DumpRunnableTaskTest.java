@@ -52,7 +52,6 @@ class DumpRunnableTaskTest
             .dumpService( dumpService )
             .name( params.getName() )
             .includeVersions( params.isIncludeVersions() )
-            .archive( params.isArchive() )
             .maxAge( params.getMaxAge() )
             .maxVersions( params.getMaxVersions() )
             .build();
@@ -89,8 +88,7 @@ class DumpRunnableTaskTest
         when( this.dumpService.dump( any( SystemDumpParams.class ) ) ).thenReturn( systemDumpResult );
 
         final DumpRunnableTask task = createTask(
-            new SystemDumpRequestJson( params.getDumpName(), params.isIncludeVersions(), params.getMaxAge(), params.getMaxVersions(),
-                                       params.isArchive() ) );
+            new SystemDumpRequestJson( params.getDumpName(), params.isIncludeVersions(), params.getMaxAge(), params.getMaxVersions() ) );
 
 
         task.run( TaskId.from( "taskId" ), progressReporter );

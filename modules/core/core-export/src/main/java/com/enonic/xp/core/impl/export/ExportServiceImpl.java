@@ -12,7 +12,6 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.export.reader.ZipVirtualFile;
 import com.enonic.xp.core.impl.export.writer.ExportWriter;
-import com.enonic.xp.core.impl.export.writer.FileExportWriter;
 import com.enonic.xp.core.impl.export.writer.ZipExportWriter;
 import com.enonic.xp.export.ExportNodesParams;
 import com.enonic.xp.export.ExportService;
@@ -25,7 +24,6 @@ import com.enonic.xp.repository.internal.InternalRepositoryService;
 import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.server.VersionInfo;
 import com.enonic.xp.vfs.VirtualFile;
-import com.enonic.xp.vfs.VirtualFiles;
 
 @Component(immediate = true)
 @SuppressWarnings("UnusedDeclaration")
@@ -55,9 +53,7 @@ public class ExportServiceImpl
     {
         final Path targetDirectory = exportConfiguration.getExportsDir().resolve( params.getExportName() );
 
-        final ExportWriter exportWriter = params.isArchive()
-            ? ZipExportWriter.create( exportConfiguration.getExportsDir(), params.getExportName() )
-            : new FileExportWriter();
+        final ExportWriter exportWriter = ZipExportWriter.create( exportConfiguration.getExportsDir(), params.getExportName() );
 
         try ( exportWriter )
         {
@@ -83,23 +79,14 @@ public class ExportServiceImpl
 
         if ( source == null )
         {
-            final Path exportPath = exportConfiguration.getExportsDir().resolve( params.getExportName() );
-
-            if ( params.isArchive() )
+            final Path zipPath = exportConfiguration.getExportsDir().resolve( params.getExportName() + ".zip" );
+            try
             {
-                final Path zipPath = exportConfiguration.getExportsDir().resolve( params.getExportName() + ".zip" );
-                try
-                {
-                    source = ZipVirtualFile.from( zipPath );
-                }
-                catch ( IOException e )
-                {
-                    throw new UncheckedIOException( e );
-                }
+                source = ZipVirtualFile.from( zipPath );
             }
-            else
+            catch ( IOException e )
             {
-                source = VirtualFiles.from( exportPath );
+                throw new UncheckedIOException( e );
             }
         }
 
@@ -109,8 +96,7 @@ public class ExportServiceImpl
             .targetNodePath( params.getTargetNodePath() ).importNodeIds( params.isImportNodeIds() )
             .importPermissions( params.isImportPermissions() )
             .xslt( params.getXslt() )
-            .xsltParams( params.getXsltParams() )
-            .nodeImportListener( params.getNodeImportListener() )
+            .xsltParams( params.getXsltParams() ).nodeImportListener( params.getNodeImportListener() )
             .build()
             .execute();
 

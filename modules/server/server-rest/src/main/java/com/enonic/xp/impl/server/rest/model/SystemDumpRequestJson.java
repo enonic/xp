@@ -8,8 +8,6 @@ public class SystemDumpRequestJson
 
     private final boolean includeVersions;
 
-    private final boolean archive;
-
     private final Integer maxAge;
 
     private final Integer maxVersions;
@@ -17,13 +15,12 @@ public class SystemDumpRequestJson
     public SystemDumpRequestJson( @JsonProperty("name") final String name, //
                                   @JsonProperty("includeVersions") final boolean includeVersions, //
                                   @JsonProperty("maxAge") final Integer maxAge, //
-                                  @JsonProperty("maxVersions") final Integer maxVersions, @JsonProperty("archive") final boolean archive )
+                                  @JsonProperty("maxVersions") final Integer maxVersions )
     {
         this.name = name;
         this.maxAge = maxAge;
         this.maxVersions = maxVersions;
         this.includeVersions = includeVersions;
-        this.archive = archive;
     }
 
     public String getName()
@@ -44,10 +41,5 @@ public class SystemDumpRequestJson
     public Integer getMaxVersions()
     {
         return maxVersions;
-    }
-
-    public boolean isArchive()
-    {
-        return archive;
     }
 }
