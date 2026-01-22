@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import com.enonic.xp.content.ContentValidator;
 import com.enonic.xp.content.ContentValidatorParams;
 import com.enonic.xp.content.Mixin;
+import com.enonic.xp.content.ValidationError;
 import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.schema.mixin.MixinDescriptor;
@@ -46,7 +47,12 @@ public class MixinValidator
             final Form form = mixinDescriptor.getForm();
             if ( mixin.getData().getRoot().getPropertySize() > 0 )
             {
-                OccurrenceValidator.validate( form, mixin.getData().getRoot(), validationErrorsBuilder );
+                OccurrenceValidator.validate( form, mixin.getData().getRoot(),
+                                              ( errorCode, propertyPath, i18nPrefix ) -> ValidationError.mixinConfigError( errorCode,
+                                                                                                                           propertyPath,
+                                                                                                                           name )
+                                                  .i18n( i18nPrefix + ".mixin" )
+                                                  .args( name ), validationErrorsBuilder );
             }
         }
     }

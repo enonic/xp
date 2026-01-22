@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import com.enonic.xp.content.Mixins;
 import com.enonic.xp.core.impl.content.index.processor.AttachmentConfigProcessor;
 import com.enonic.xp.core.impl.content.index.processor.BaseConfigProcessor;
+import com.enonic.xp.core.impl.content.index.processor.CmsConfigProcessor;
 import com.enonic.xp.core.impl.content.index.processor.ContentIndexConfigProcessor;
 import com.enonic.xp.core.impl.content.index.processor.ContentIndexConfigProcessors;
 import com.enonic.xp.core.impl.content.index.processor.DataConfigProcessor;

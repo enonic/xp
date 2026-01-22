@@ -584,6 +584,7 @@ public class ContentServiceImpl
             .nodeService( nodeService )
             .eventPublisher( eventPublisher )
             .contentTypeService( contentTypeService )
+            .mixinService( mixinService )
             .build()
             .execute();
 
@@ -601,6 +602,7 @@ public class ContentServiceImpl
             .nodeService( nodeService )
             .eventPublisher( eventPublisher )
             .contentTypeService( contentTypeService )
+            .mixinService( mixinService )
             .build()
             .execute();
 
@@ -710,6 +712,7 @@ public class ContentServiceImpl
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
             .eventPublisher( this.eventPublisher )
+            .mixinService( mixinService )
             .build()
             .execute();
 
@@ -893,8 +896,8 @@ public class ContentServiceImpl
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
             .eventPublisher( this.eventPublisher )
-            .siteService( this.siteService )
-            .xDataService( this.xDataService )
+            .cmsService( this.cmsService )
+            .mixinService( this.mixinService )
             .contentProcessors( this.contentProcessors )
             .contentValidators( this.contentValidators )
             .pageDescriptorService( this.pageDescriptorService )
@@ -919,8 +922,8 @@ public class ContentServiceImpl
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
             .eventPublisher( this.eventPublisher )
-            .siteService( this.siteService )
-            .xDataService( this.xDataService )
+            .cmsService( this.cmsService )
+            .mixinService( this.mixinService )
             .contentProcessors( this.contentProcessors )
             .contentValidators( this.contentValidators )
             .pageDescriptorService( this.pageDescriptorService )

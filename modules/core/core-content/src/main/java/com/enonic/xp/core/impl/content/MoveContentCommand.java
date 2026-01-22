@@ -150,7 +150,7 @@ final class MoveContentCommand
 
             final ValidationErrors validationErrors = ValidateContentDataCommand.create()
                 .data( contentData )
-                .extraDatas( extraData )
+                .mixins( mixins )
                 .contentTypeName( type )
                 .contentName( ContentName.from( nodePath.getName().toString() ) )
                 .displayName( displayName )

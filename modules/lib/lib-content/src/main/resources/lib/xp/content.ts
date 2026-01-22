@@ -11,9 +11,6 @@ declare global {
     interface XpLibraries {
         '/lib/xp/content': typeof import('./content');
     }
-
-    // eslint-disable-next-line @typescript-eslint/no-empty-interface
-    interface XpMixin {}
 }
 
 import {

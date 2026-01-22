@@ -95,7 +95,7 @@ final class UpdateMediaCommand
             .pageDescriptorService( this.pageDescriptorService )
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
-            .xDataMappingService( this.xDataMappingService )
+            .mixinMappingService( this.mixinMappingService )
             .siteConfigService( this.siteConfigService )
             .allowUnsafeAttachmentNames( allowUnsafeAttachmentNames )
             .build()

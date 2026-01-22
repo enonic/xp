@@ -9,6 +9,7 @@ import java.time.Instant;
 import org.osgi.framework.Bundle;
 
 import com.enonic.xp.app.ApplicationDescriptor;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.internal.ApplicationBundleUtils;
 import com.enonic.xp.icon.Icon;
 
@@ -29,9 +30,12 @@ final class ApplicationDescriptorBuilder
     public ApplicationDescriptor build()
     {
         final URL url = bundle.getResource( APP_DESCRIPTOR_FILENAME );
-        final String xml = readAppYml( url );
+        final String yaml = readAppYml( url );
 
-        final ApplicationDescriptor.Builder appDescriptorBuilder = YmlApplicationDescriptorParser.parse( xml, ApplicationKey.from( bundle ) );
+        final String applicationName = ApplicationBundleUtils.getApplicationName( bundle );
+
+        final ApplicationDescriptor.Builder appDescriptorBuilder =
+            YmlApplicationDescriptorParser.parse( yaml, ApplicationKey.from( applicationName ) );
 
         if ( hasAppIcon( bundle ) )
         {
@@ -44,7 +48,7 @@ final class ApplicationDescriptorBuilder
             }
             catch ( IOException e )
             {
-                throw new RuntimeException( "Unable to load application icon for " + ApplicationBundleUtils.getApplicationName( bundle ), e );
+                throw new RuntimeException( "Unable to load application icon for " + applicationName, e );
             }
         }
 

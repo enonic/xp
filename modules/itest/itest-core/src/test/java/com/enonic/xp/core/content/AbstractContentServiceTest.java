@@ -38,11 +38,11 @@ import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentVersion;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.content.Mixins;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.content.FindContentVersionsParams;
 import com.enonic.xp.content.FindContentVersionsResult;
+import com.enonic.xp.content.Mixins;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -53,8 +53,8 @@ import com.enonic.xp.core.impl.content.ContentAuditLogSupportImpl;
 import com.enonic.xp.core.impl.content.ContentConfig;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
 import com.enonic.xp.core.impl.content.LayersContentService;
-import com.enonic.xp.core.impl.content.SiteConfigServiceImpl;
 import com.enonic.xp.core.impl.content.MixinMappingServiceImpl;
+import com.enonic.xp.core.impl.content.SiteConfigServiceImpl;
 import com.enonic.xp.core.impl.content.schema.ContentTypeServiceImpl;
 import com.enonic.xp.core.impl.content.validate.ContentNameValidator;
 import com.enonic.xp.core.impl.content.validate.MixinValidator;
@@ -78,7 +78,6 @@ import com.enonic.xp.extractor.ExtractedData;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.page.PageDescriptorService;
@@ -118,6 +117,7 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.CmsService;
+import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Reference;
 
@@ -353,7 +353,7 @@ public abstract class AbstractContentServiceTest
         contentService.addContentValidator( new MixinValidator( mixinService ) );
 
         layersContentService =
-            new LayersContentService( nodeService, contentTypeService, eventPublisher, xDataService, siteService, pageDescriptorService,
+            new LayersContentService( nodeService, contentTypeService, eventPublisher, mixinService, cmsService, pageDescriptorService,
                                       partDescriptorService, layoutDescriptorService, config );
     }
 
@@ -403,12 +403,6 @@ public abstract class AbstractContentServiceTest
     protected Content createAndPublishContent( final ContentPath parentPath, final Instant publishFrom, final Instant publishTo )
     {
         final CreateContentParams params =
-            createContentBuilder( parentPath, "This is my test content #" + UUID.randomUUID(), new PropertyTree(), ExtraDatas.empty(),
-                                  ContentTypeName.folder() ).build();
-
-    protected Content createAndPublishContent( final ContentPath parentPath, final Instant publishFrom, final Instant publishTo )
-    {
-        final CreateContentParams params =
             createContentBuilder( parentPath, "This is my test content #" + UUID.randomUUID(), new PropertyTree(), Mixins.empty(),
                                   ContentTypeName.folder() ).build();
 
@@ -425,8 +419,7 @@ public abstract class AbstractContentServiceTest
         return doCreateContent( parentPath, displayName, data, Mixins.empty(), type );
     }
 
-    protected Content createContent( final ContentPath parentPath, final String displayName, final PropertyTree data,
-                                     final Mixins mixins )
+    protected Content createContent( final ContentPath parentPath, final String displayName, final PropertyTree data, final Mixins mixins )
     {
         return doCreateContent( parentPath, displayName, data, mixins, ContentTypeName.folder() );
     }
@@ -535,62 +528,118 @@ public abstract class AbstractContentServiceTest
 
     protected ContentType createContentTypeForAllInputTypes()
     {
-        final FormItemSet set = FormItemSet.create()
-            .name( "set" )
-            .addFormItem( Input.create().label( "String" ).name( "setString" ).inputType( InputTypeName.TEXT_LINE ).build() )
-            .addFormItem( Input.create().label( "Double" ).name( "setDouble" ).inputType( InputTypeName.DOUBLE ).build() )
-            .build();
+        final FormItemSet set = FormItemSet.create().
+            name( "set" ).
+            addFormItem( Input.create().
+            label( "String" ).
+            name( "setString" ).
+            inputType( InputTypeName.TEXT_LINE ).
+            build() ).
+            addFormItem( Input.create().
+            label( "Double" ).
+            name( "setDouble" ).
+            inputType( InputTypeName.DOUBLE ).
+            build() ).
+            build();
 
-        return ContentType.create()
-            .superType( ContentTypeName.documentMedia() )
-            .name( "myContentType" )
-            .addFormItem( Input.create().label( "Textline" ).name( "textLine" ).inputType( InputTypeName.TEXT_LINE ).build() )
-            .addFormItem( Input.create().name( "stringArray" ).label( "String array" ).inputType( InputTypeName.TEXT_LINE ).build() )
-            .addFormItem( Input.create().name( "double" ).label( "Double" ).inputType( InputTypeName.DOUBLE ).build() )
-            .addFormItem( Input.create().name( "long" ).label( "Long" ).inputType( InputTypeName.LONG ).build() )
-            .addFormItem( Input.create()
-                              .name( "comboBox" )
-                              .label( "Combobox" )
-                              .inputType( InputTypeName.COMBO_BOX )
-                              .inputTypeConfig( GenericValue.newObject()
-                                                    .put( "options", GenericValue.newList()
-                                                        .add( GenericValue.newObject()
-                                                                  .put( "value", "value1" )
-                                                                  .put( "label", GenericValue.newObject().put( "text", "label1" ).build() )
-                                                                  .build() )
-                                                        .add( GenericValue.newObject()
-                                                                  .put( "value", "value2" )
-                                                                  .put( "label", GenericValue.newObject().put( "text", "label2" ).build() )
-                                                                  .build() )
-                                                        .build() )
-                                                    .build() )
-                              .build() )
-            .addFormItem( Input.create().name( "checkbox" ).label( "Checkbox" ).inputType( InputTypeName.CHECK_BOX ).build() )
-            .addFormItem( Input.create().name( "tag" ).label( "Tag" ).inputType( InputTypeName.TAG ).build() )
-            .addFormItem( Input.create()
-                              .name( "contentSelector" )
-                              .label( "Content selector" )
-                              .inputType( InputTypeName.CONTENT_SELECTOR )
-                              .inputTypeProperty( "allowContentType", ContentTypeName.folder().toString() )
-                              .build() )
-            .addFormItem( Input.create()
-                              .name( "contentTypeFilter" )
-                              .label( "Content type filter" )
-                              .inputType( InputTypeName.CONTENT_TYPE_FILTER )
-                              .build() )
-            .addFormItem( Input.create()
-                              .name( "siteConfigurator" )
-                              .inputType( InputTypeName.SITE_CONFIGURATOR )
-                              .label( "Site configurator" )
-                              .build() )
-            .addFormItem( Input.create().name( "date" ).label( "Date" ).inputType( InputTypeName.DATE ).build() )
-            .addFormItem( Input.create().name( "time" ).label( "Time" ).inputType( InputTypeName.TIME ).build() )
-            .addFormItem( Input.create().name( "geoPoint" ).label( "Geopoint" ).inputType( InputTypeName.GEO_POINT ).build() )
-            .addFormItem( Input.create().name( "htmlArea" ).label( "Htmlarea" ).inputType( InputTypeName.HTML_AREA ).build() )
-            .addFormItem( Input.create().name( "localDateTime" ).label( "Local datetime" ).inputType( InputTypeName.DATE_TIME ).build() )
-            .addFormItem( Input.create().name( "dateTime" ).label( "Datetime" ).inputType( InputTypeName.INSTANT ).build() )
-            .addFormItem( set )
-            .build();
+        return ContentType.create().
+            superType( ContentTypeName.documentMedia() ).
+            name( "myContentType" ).
+            addFormItem( Input.create().
+            label( "Textline" ).
+            name( "textLine" ).
+            inputType( InputTypeName.TEXT_LINE ).
+            build() ).
+            addFormItem( Input.create().
+            name( "stringArray" ).
+            label( "String array" ).
+            inputType( InputTypeName.TEXT_LINE ).
+            build() ).
+            addFormItem( Input.create().
+            name( "double" ).
+            label( "Double" ).
+            inputType( InputTypeName.DOUBLE ).
+            build() ).
+            addFormItem( Input.create().
+            name( "long" ).
+            label( "Long" ).
+            inputType( InputTypeName.LONG ).
+            build() ).
+            addFormItem( Input.create().
+            name( "comboBox" ).
+            label( "Combobox" ).
+            inputType( InputTypeName.COMBO_BOX ).
+            inputTypeConfig( GenericValue.newObject()
+                                  .put( "options", GenericValue.newList()
+                                      .add( GenericValue.newObject()
+                                                .put( "value", "value1" )
+                                                .put( "label", GenericValue.newObject().put( "text", "label1" ).build() )
+                                                .build() )
+                                      .add( GenericValue.newObject()
+                                                .put( "value", "value2" )
+                                                .put( "label", GenericValue.newObject().put( "text", "label2" ).build() )
+                                                .build() )
+                                      .build() )
+                                  .build() ).
+            build() ).
+            addFormItem( Input.create().
+            name( "checkbox" ).
+            label( "Checkbox" ).
+            inputType( InputTypeName.CHECK_BOX ).
+            build() ).
+            addFormItem( Input.create().
+            name( "tag" ).
+            label( "Tag" ).
+            inputType( InputTypeName.TAG ).
+            build() ).
+            addFormItem( Input.create().
+            name( "contentSelector" ).
+            label( "Content selector" ).
+            inputType( InputTypeName.CONTENT_SELECTOR ).
+            inputTypeProperty( "allowContentType", ContentTypeName.folder().toString() ).
+            build() ).
+            addFormItem( Input.create().
+            name( "contentTypeFilter" ).
+            label( "Content type filter" ).
+            inputType( InputTypeName.CONTENT_TYPE_FILTER ).
+            build() ).
+            addFormItem( Input.create().
+            name( "siteConfigurator" ).
+            inputType( InputTypeName.SITE_CONFIGURATOR ).
+            label( "Site configurator" ).
+            build() ).
+            addFormItem( Input.create().
+            name( "date" ).
+            label( "Date" ).
+            inputType( InputTypeName.DATE ).
+            build() ).
+            addFormItem( Input.create().
+            name( "time" ).
+            label( "Time" ).
+            inputType( InputTypeName.TIME ).
+            build() ).
+            addFormItem( Input.create().
+            name( "geoPoint" ).
+            label( "Geopoint" ).
+            inputType( InputTypeName.GEO_POINT ).
+            build() ).
+            addFormItem( Input.create().
+            name( "htmlArea" ).
+            label( "Htmlarea" ).
+            inputType( InputTypeName.HTML_AREA ).
+            build() ).
+            addFormItem( Input.create().
+            name( "localDateTime" ).
+            label( "Local datetime" ).
+            inputType( InputTypeName.DATE_TIME ).
+            build() ).
+            addFormItem( Input.create().
+            name( "dateTime" ).
+            label( "Datetime" ).
+            inputType( InputTypeName.INSTANT ).
+            build() ).
+            addFormItem( set ).
+            build();
     }
 
     protected void assertOrder( final Iterable<ContentId> contentIds, final Content... expectedOrder )
@@ -600,8 +649,9 @@ public abstract class AbstractContentServiceTest
 
     protected void assertVersions( final ContentId contentId, final int expected )
     {
-        FindContentVersionsResult versions =
-            this.contentService.getVersions( FindContentVersionsParams.create().contentId( contentId ).build() );
+        FindContentVersionsResult versions = this.contentService.getVersions( FindContentVersionsParams.create().
+            contentId( contentId ).
+            build() );
 
         assertEquals( expected, versions.getContentVersions().getSize() );
 
@@ -649,8 +699,10 @@ public abstract class AbstractContentServiceTest
 
         ident += 3;
 
-        final FindContentByParentResult result =
-            this.contentService.findByParent( FindContentByParentParams.create().parentId( root.getId() ).size( -1 ).build() );
+        final FindContentByParentResult result = this.contentService.findByParent( FindContentByParentParams.create().
+            parentId( root.getId() ).
+            size( -1 ).
+            build() );
 
         for ( final Content content : result.getContents() )
         {

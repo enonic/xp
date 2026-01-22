@@ -56,19 +56,20 @@ import com.enonic.xp.region.Region;
 import com.enonic.xp.region.Regions;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.mixin.MixinDescriptor;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.site.SiteConfig;
-import com.enonic.xp.site.SiteConfigService;
-import com.enonic.xp.site.SiteConfigs;
-import com.enonic.xp.site.SiteConfigsDataSerializer;
-import com.enonic.xp.site.SiteDescriptor;
+import com.enonic.xp.site.CmsDescriptor;
 import com.enonic.xp.site.CmsService;
 import com.enonic.xp.site.MixinMappingService;
 import com.enonic.xp.site.MixinOption;
 import com.enonic.xp.site.MixinOptions;
+import com.enonic.xp.site.SiteConfig;
+import com.enonic.xp.site.SiteConfigService;
+import com.enonic.xp.site.SiteConfigs;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
 
 class AbstractCreatingOrUpdatingContentCommand
     extends AbstractContentCommand
@@ -200,14 +201,14 @@ class AbstractCreatingOrUpdatingContentCommand
         }
     }
 
-    void validateMixins( final ExtraDatas extraDatas )
+    void validateMixins( final Mixins mixins )
     {
-        for ( ExtraData extraData : extraDatas )
+        for ( Mixin mixin : mixins )
         {
-            XData xData = xDataService.getByName( extraData.getName() );
-            if ( xData != null )
+            MixinDescriptor mixinDescriptor = mixinService.getByName( mixin.getName() );
+            if ( mixinDescriptor != null )
             {
-                validateForm( xData.getForm(), extraData.getData(), "Incorrect mixin property" );
+                validateForm( mixinDescriptor.getForm(), mixin.getData(), "Incorrect mixin property" );
             }
         }
     }
@@ -218,7 +219,7 @@ class AbstractCreatingOrUpdatingContentCommand
 
         for ( SiteConfig siteConfig : siteConfigs )
         {
-            SiteDescriptor descriptor = siteService.getDescriptor( siteConfig.getApplicationKey() );
+            CmsDescriptor descriptor = cmsService.getDescriptor( siteConfig.getApplicationKey() );
             if ( descriptor != null )
             {
                 validateForm( descriptor.getForm(), siteConfig.getConfig(), "Incorrect site config property" );
@@ -363,7 +364,7 @@ class AbstractCreatingOrUpdatingContentCommand
             Objects.equals( c1.getCreatedTime(), c2.getCreatedTime() ) && Objects.equals( c1.getInherit(), c2.getInherit() ) &&
             Objects.equals( c1.getOriginProject(), c2.getOriginProject() ) && Objects.equals( c1.getChildOrder(), c2.getChildOrder() ) &&
             Objects.equals( c1.getPermissions(), c2.getPermissions() ) && Objects.equals( c1.getAttachments(), c2.getAttachments() ) &&
-            Objects.equals( c1.getData(), c2.getData() ) && Objects.equals( c1.getAllExtraData(), c2.getAllExtraData() ) &&
+            Objects.equals( c1.getData(), c2.getData() ) && Objects.equals( c1.getMixins(), c2.getMixins() ) &&
             Objects.equals( c1.getPage(), c2.getPage() ) && Objects.equals( c1.getLanguage(), c2.getLanguage() ) &&
             Objects.equals( c1.getPublishInfo(), c2.getPublishInfo() ) && Objects.equals( c1.getWorkflowInfo(), c2.getWorkflowInfo() ) &&
             Objects.equals( c1.getManualOrderValue(), c2.getManualOrderValue() ) &&

@@ -1,8 +1,8 @@
 package com.enonic.xp.core.impl.content.index.processor;
 
 import com.enonic.xp.core.impl.content.index.IndexConfigVisitor;
-import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.index.IndexConfig;
+import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.schema.mixin.MixinDescriptors;
 import com.enonic.xp.schema.mixin.MixinName;
@@ -20,9 +20,11 @@ public class MixinConfigProcessor
     }
 
     @Override
-    public PatternIndexConfigDocument.Builder processDocument( final PatternIndexConfigDocument.Builder builder )
+    public PatternIndexConfigDocument processDocument( final PatternIndexConfigDocument config )
     {
-        builder.add( PropertyPath.from( MIXINS, "*" ), IndexConfig.BY_TYPE );
+        final PatternIndexConfigDocument.Builder builder = PatternIndexConfigDocument.create( config );
+
+        builder.add( IndexPath.from( MIXINS, "*" ), IndexConfig.BY_TYPE );
 
         if ( this.descriptors != null )
         {
@@ -34,7 +36,7 @@ public class MixinConfigProcessor
             } );
         }
 
-        return builder;
+        return builder.build();
     }
 
     private String getApplicationPrefix( final MixinName mixinName )

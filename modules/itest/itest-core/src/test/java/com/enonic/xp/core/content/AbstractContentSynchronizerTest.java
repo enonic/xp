@@ -38,6 +38,7 @@ import com.enonic.xp.core.impl.content.MixinMappingServiceImpl;
 import com.enonic.xp.core.impl.media.MediaInfoServiceImpl;
 import com.enonic.xp.core.impl.project.ProjectConfig;
 import com.enonic.xp.core.impl.project.ProjectServiceImpl;
+import com.enonic.xp.core.impl.content.schema.ContentTypeServiceImpl;
 import com.enonic.xp.core.impl.security.SecurityAuditLogSupportImpl;
 import com.enonic.xp.core.impl.security.SecurityConfig;
 import com.enonic.xp.core.impl.security.SecurityInitializer;
@@ -341,7 +342,7 @@ public abstract class AbstractContentSynchronizerTest
         contentService.setContentAuditLogSupport( contentAuditLogSupport );
 
         layersContentService =
-            new LayersContentService( nodeService, contentTypeService, eventPublisher, xDataService, siteService, pageDescriptorService,
+            new LayersContentService( nodeService, contentTypeService, eventPublisher, mixinService, cmsService, pageDescriptorService,
                                       partDescriptorService, layoutDescriptorService, config );
     }
 

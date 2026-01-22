@@ -11,7 +11,7 @@ import com.google.common.collect.ImmutableList;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.region.ComponentPath;
-import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.util.BinaryReference;
 
 public sealed class ValidationError
@@ -85,7 +85,7 @@ public sealed class ValidationError
     }
 
     public static Builder mixinConfigError( final ValidationErrorCode errorCode, final PropertyPath propertyPath,
-                                            final XDataName mixinName )
+                                            final MixinName mixinName )
     {
         Builder builder = dataError( errorCode, propertyPath );
         builder.mixinName = mixinName;
@@ -138,7 +138,7 @@ public sealed class ValidationError
 
         private String i18n;
 
-        private XDataName mixinName;
+        private MixinName mixinName;
 
         private String message;
 

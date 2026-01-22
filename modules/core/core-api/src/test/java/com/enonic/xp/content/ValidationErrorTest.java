@@ -12,7 +12,7 @@ import nl.jqno.equalsverifier.Warning;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.region.ComponentPath;
-import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.util.BinaryReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -156,7 +156,7 @@ class ValidationErrorTest
         EqualsVerifier.forClass( MixinConfigValidationError.class )
             .withRedefinedSuperclass()
             .withPrefabValues( PropertyPath.class, PropertyPath.from( "red" ), PropertyPath.from( "blue" ) )
-            .withPrefabValues( XDataName.class, XDataName.from( "app1:name1" ), XDataName.from( "app2:name2" ) )
+            .withPrefabValues( MixinName.class, MixinName.from( "app1:name1" ), MixinName.from( "app2:name2" ) )
             .withNonnullFields( "args", "propertyPath", "mixinName" )
             .verify();
 

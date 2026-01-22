@@ -115,7 +115,7 @@ final class CreateContentCommand
         validateContentData( params.getType(), params.getData() );
         validateSiteConfigs( params.getData() );
         validatePage( params.getPage() );
-        validateMixins( params.getExtraDatas() );
+        validateMixins( params.getMixins() );
         validateCreateAttachments( params.getCreateAttachments() );
         validateImageAttachment( params );
     }

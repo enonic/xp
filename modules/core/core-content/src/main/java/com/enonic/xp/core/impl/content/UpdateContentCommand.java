@@ -2,7 +2,6 @@ package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -118,7 +117,7 @@ final class UpdateContentCommand
         return ContentNodeTranslator.fromNode( result.getResult( ContextAccessor.current().getBranch() ) );
     }
 
-    private Content editContentMetadata( Content content, final boolean editModifier )
+    private Content editContentMetadata( Content content )
     {
         final PatchableContent patchableContent = new PatchableContent( content );
         patchableContent.attachments.setPatcher( c -> mergeExistingAndUpdatedAttachments( c.attachments.originalValue ) );
@@ -238,7 +237,7 @@ final class UpdateContentCommand
         }
 
         validateContentData( editedContent.getType(), editedContent.getData() );
-        validateMixins( editedContent.getAllExtraData() );
+        validateMixins( editedContent.getMixins() );
         validatePage( editedContent.getPage() );
         validateSiteConfigs( editedContent.getData() );
 
