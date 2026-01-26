@@ -72,7 +72,8 @@ class CompressedExportImportIntegrationTest
         assertEquals( 0, importResult.getImportErrors().size() );
         // root is updated (already exists), myNode is added
         assertEquals( 1, importResult.getAddedNodes().getSize() ); // myNode
-        assertEquals( 1, importResult.getUpdateNodes().getSize() ); // root
+        assertEquals( 0, importResult.getUpdateNodes().getSize() );
+        assertEquals( 1, importResult.getSkippedNodes().getSize() ); // root
 
         // Verify node was recreated
         final Node importedNode = getNodeByPath( new NodePath( "/myNode" ) );
@@ -122,7 +123,8 @@ class CompressedExportImportIntegrationTest
         assertEquals( 0, importResult.getImportErrors().size() );
         // root is updated, 9 child nodes are added
         assertEquals( 9, importResult.getAddedNodes().getSize() );
-        assertEquals( 1, importResult.getUpdateNodes().getSize() ); // root
+        assertEquals( 0, importResult.getUpdateNodes().getSize() );
+        assertEquals( 1, importResult.getSkippedNodes().getSize() ); // root
 
         // Verify all nodes were recreated
         assertNotNull( getNodeByPath( new NodePath( "/level1" ) ) );
@@ -190,7 +192,8 @@ class CompressedExportImportIntegrationTest
         assertEquals( 0, importResult.getImportErrors().size() );
         // root is updated, 2 nodes with binaries are added
         assertEquals( 2, importResult.getAddedNodes().getSize() );
-        assertEquals( 1, importResult.getUpdateNodes().getSize() ); // root
+        assertEquals( 0, importResult.getUpdateNodes().getSize() );
+        assertEquals( 1, importResult.getSkippedNodes().getSize() ); // root
 
         // Verify nodes and binaries
         final Node imported1 = getNodeByPath( new NodePath( "/node-with-binary-1" ) );
