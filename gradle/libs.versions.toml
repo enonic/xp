@@ -21,7 +21,7 @@ mockito-junitjupiter = { module = "org.mockito:mockito-junit-jupiter", version.r
 
 equalsverifier = { module = "nl.jqno.equalsverifier:equalsverifier", version = "4.3.1" }
 
-assertj-core = { module = "org.assertj:assertj-core", version = "3.27.6" }
+assertj-core = { module = "org.assertj:assertj-core", version = "3.27.7" }
 
 tinybundles = { module = "org.ops4j.pax.tinybundles:tinybundles", version = "4.0.1" }
 
