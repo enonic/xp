@@ -237,22 +237,42 @@ public final class NodeImporter
 
         final NodePath importNodePath = NodeImportPathResolver.resolveNodeImportPath( nodeFolder, this.exportRoot, this.importRoot );
 
-        final ImportNodeResult importNodeResult = importNode( nodeFolder, settings, newNode, importNodePath );
+        //if node is root, then allow import only if importNodePath is also root
+        if ( newNode.isRoot() )
+        {
+            if ( !importNodePath.isRoot() )
+            {
+                throw new ImportNodeException( "Cannot import root node to non-root location: " + importNodePath );
+            }
 
-        if ( nodeImportListener != null )
-        {
-            nodeImportListener.nodeImported( 1L );
-        }
-        if ( importNodeResult.isPreExisting() )
-        {
-            result.updated( importNodeResult.getNode().path() );
+            if ( nodeImportListener != null )
+            {
+                nodeImportListener.nodeSkipped( 1L );
+            }
+
+            result.skipped( importNodePath );
+
+            return nodeService.getByPath( importNodePath );
         }
         else
         {
-            result.added( importNodeResult.getNode().path() );
-        }
+            final ImportNodeResult importNodeResult = importNode( nodeFolder, settings, newNode, importNodePath );
 
-        return importNodeResult.getNode();
+            if ( nodeImportListener != null )
+            {
+                nodeImportListener.nodeImported( 1L );
+            }
+            if ( importNodeResult.isPreExisting() )
+            {
+                result.updated( importNodeResult.getNode().path() );
+            }
+            else
+            {
+                result.added( importNodeResult.getNode().path() );
+            }
+
+            return importNodeResult.getNode();
+        }
     }
 
     private ImportNodeResult importNode( final VirtualFile nodeFolder, final ProcessNodeSettings processNodeSettings,

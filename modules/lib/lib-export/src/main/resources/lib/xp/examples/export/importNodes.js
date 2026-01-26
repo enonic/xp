@@ -22,6 +22,7 @@ var expected = {
     'updatedNodes': [
         '/updated'
     ],
+    'skippedNodes': [],
     'importedBinaries': [
         'binaryPath [ref]'
     ],

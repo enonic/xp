@@ -15,10 +15,14 @@ public class FunctionBasedNodeImportListener
 
     private final Function<Long, Void> nodeResolved;
 
-    public FunctionBasedNodeImportListener( final Function<Long, Void> nodeImported, final Function<Long, Void> nodeResolved )
+    private final Function<Long, Void> nodeSkipped;
+
+    public FunctionBasedNodeImportListener( final Function<Long, Void> nodeImported, final Function<Long, Void> nodeResolved,
+                                            final Function<Long, Void> nodeSkipped )
     {
         this.nodeImported = requireNonNullElse( nodeImported, NULL_FUNCTION );
         this.nodeResolved = requireNonNullElse( nodeResolved, NULL_FUNCTION );
+        this.nodeSkipped = requireNonNullElse( nodeSkipped, NULL_FUNCTION );
     }
 
     @Override
@@ -31,5 +35,11 @@ public class FunctionBasedNodeImportListener
     public void nodeResolved( final long count )
     {
         nodeResolved.apply( count );
+    }
+
+    @Override
+    public void nodeSkipped( final long count )
+    {
+        nodeSkipped.apply( count );
     }
 }

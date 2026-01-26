@@ -21,13 +21,24 @@ public class ImportListenerImpl
     @Override
     public void nodeImported( final long count )
     {
-        current = Math.addExact( current, count );
-        progressReporter.progress( ProgressReportParams.create( Math.toIntExact( current ), total ).build() );
+        addProgress( count );
+    }
+
+    @Override
+    public void nodeSkipped( final long count )
+    {
+        addProgress( count );
     }
 
     @Override
     public void nodeResolved( final long count )
     {
         total = Math.toIntExact( count );
+    }
+
+    private void addProgress( final long count )
+    {
+        current = Math.addExact( current, count );
+        progressReporter.progress( ProgressReportParams.create( Math.toIntExact( current ), total ).build() );
     }
 }

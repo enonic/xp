@@ -69,7 +69,8 @@ class NodeImporterIntegrationTest
             execute();
 
         assertEquals( 0, result.getImportErrors().size() );
-        assertEquals( 1, result.getUpdateNodes().getSize() );
+        assertEquals( 0, result.getUpdateNodes().getSize() );
+        assertEquals( 1, result.getSkippedNodes().getSize() );
         assertEquals( 1, result.getAddedNodes().getSize() );
     }
 
@@ -90,7 +91,8 @@ class NodeImporterIntegrationTest
 
         assertEquals( 0, result.getImportErrors().size() );
         assertEquals( 1, result.getAddedNodes().getSize() );
-        assertEquals( 1, result.getUpdateNodes().getSize() );
+        assertEquals( 0, result.getUpdateNodes().getSize() );
+        assertEquals( 1, result.getSkippedNodes().getSize() );
     }
 
     @Test
@@ -109,7 +111,8 @@ class NodeImporterIntegrationTest
             execute();
 
         assertEquals( 0, result.getImportErrors().size() );
-        assertEquals( 1, result.getUpdateNodes().getSize() );
+        assertEquals( 0, result.getUpdateNodes().getSize() );
+        assertEquals( 1, result.getSkippedNodes().getSize() );
         assertEquals( 1, result.getAddedNodes().getSize() );
 
         final Node node1234 = nodeService.getById( NodeId.from( "1234" ) );
@@ -133,7 +136,8 @@ class NodeImporterIntegrationTest
 
         assertEquals( 0, result.getImportErrors().size() );
         assertEquals( 1, result.getAddedNodes().getSize() );
-        assertEquals( 1, result.getUpdateNodes().getSize() );
+        assertEquals( 0, result.getUpdateNodes().getSize() );
+        assertEquals( 1, result.getSkippedNodes().getSize() );
 
         final NodeImportResult updateResult = NodeImporter.create().
             nodeService( nodeService ).
@@ -144,7 +148,8 @@ class NodeImporterIntegrationTest
 
         assertEquals( 0, updateResult.getImportErrors().size() );
         assertEquals( 0, updateResult.getAddedNodes().getSize() );
-        assertEquals( 2, updateResult.getUpdateNodes().getSize() );
+        assertEquals( 1, updateResult.getUpdateNodes().getSize() );
+        assertEquals( 1, updateResult.getSkippedNodes().getSize() );
     }
 
 
@@ -169,7 +174,8 @@ class NodeImporterIntegrationTest
 
         assertEquals( 0, result.getImportErrors().size() );
         assertEquals( 4, result.getAddedNodes().getSize() );
-        assertEquals( 1, result.getUpdateNodes().getSize() );
+        assertEquals( 0, result.getUpdateNodes().getSize() );
+        assertEquals( 1, result.getSkippedNodes().getSize() );
 
         final Node mynode = assertNodeExists( NodePath.ROOT, "mynode" );
         final Node mychild = assertNodeExists( mynode.path(), "mychild" );
@@ -177,7 +183,7 @@ class NodeImporterIntegrationTest
         assertNodeExists( mychildchild.path(), "mychildchildchild" );
 
         Mockito.verify( nodeImportListener ).nodeResolved( 5L );
-        Mockito.verify( nodeImportListener, Mockito.times( 5 ) ).nodeImported( 1L );
+        Mockito.verify( nodeImportListener, Mockito.times( 4 ) ).nodeImported( 1L );
     }
 
     @Test
@@ -198,17 +204,16 @@ class NodeImporterIntegrationTest
 
         final NodeImportResult result = NodeImporter.create().
             nodeService( this.nodeService ).
-            targetNodePath( importRoot ).
-            sourceDirectory( VirtualFiles.from( temporaryFolder.resolve( "myExport" ) ) ).
+            targetNodePath( importRoot ).sourceDirectory( VirtualFiles.from( temporaryFolder.resolve( "myExport", "mynode" ) ) ).
             build().
             execute();
 
         assertEquals( 0, result.getImportErrors().size() );
-        assertEquals( 4, result.getAddedNodes().getSize() );
+        assertEquals( 3, result.getAddedNodes().getSize() );
+        assertEquals( 0, result.getSkippedNodes().getSize() );
         assertEquals( 1, result.getUpdateNodes().getSize() );
 
-        final Node mynode = assertNodeExists( importRoot, "mynode" );
-        final Node mychild = assertNodeExists( mynode.path(), "mychild" );
+        final Node mychild = assertNodeExists( importRoot, "mychild" ); // "mynode" becomes "my-import-here"
         final Node mychildchild = assertNodeExists( mychild.path(), "mychildchild" );
         assertNodeExists( mychildchild.path(), "mychildchildchild" );
     }
@@ -241,8 +246,10 @@ class NodeImporterIntegrationTest
             execute();
 
         assertEquals( 1, result.getImportErrors().size() );
-        assertEquals( 1, result.getUpdateNodes().getSize() );
+        assertEquals( 0, result.getUpdateNodes().getSize() );
         assertEquals( 0, result.getAddedNodes().getSize() );
+        assertEquals( 1, result.getSkippedNodes().getSize() );
+
     }
 
     @Test
@@ -263,7 +270,8 @@ class NodeImporterIntegrationTest
             execute();
 
         assertEquals( 5, result.getAddedNodes().getSize() );
-        assertEquals( 1, result.getUpdateNodes().getSize() );
+        assertEquals( 0, result.getUpdateNodes().getSize() );
+        assertEquals( 1, result.getSkippedNodes().getSize() );
         assertEquals( 1, result.getImportErrors().size() );
     }
 
@@ -292,7 +300,8 @@ class NodeImporterIntegrationTest
 
         assertEquals( 0, result.getImportErrors().size() );
         assertEquals( 7, result.getAddedNodes().getSize() );
-        assertEquals( 1, result.getUpdateNodes().getSize() );
+        assertEquals( 0, result.getUpdateNodes().getSize() );
+        assertEquals( 1, result.getSkippedNodes().getSize() );
 
         final Node mynode = assertNodeExists( NodePath.ROOT, "mynode" );
         assertNull( mynode.getManualOrderValue() );
@@ -328,7 +337,8 @@ class NodeImporterIntegrationTest
 
         assertEquals( 0, result.getImportErrors().size() );
         assertEquals( 3, result.getAddedNodes().getSize() );
-        assertEquals( 1, result.getUpdateNodes().getSize() );
+        assertEquals( 0, result.getUpdateNodes().getSize() );
+        assertEquals( 1, result.getSkippedNodes().getSize() );
 
         final Node mynode = assertNodeExists( NodePath.ROOT, "mynode" );
         assertNodeExists( mynode.path(), "mychild1" );
@@ -353,7 +363,8 @@ class NodeImporterIntegrationTest
 
         assertEquals( 2, result.getImportErrors().size() );
         assertEquals( 0, result.getAddedNodes().getSize() );
-        assertEquals( 1, result.getUpdateNodes().getSize() );
+        assertEquals( 0, result.getUpdateNodes().getSize() );
+        assertEquals( 1, result.getSkippedNodes().getSize() );
     }
 
     @Test
@@ -401,7 +412,8 @@ class NodeImporterIntegrationTest
 
         assertEquals( 0, result.getImportErrors().size() );
         assertEquals( 4, result.getAddedNodes().getSize() );
-        assertEquals( 1, result.getUpdateNodes().getSize() );
+        assertEquals( 0, result.getUpdateNodes().getSize() );
+        assertEquals( 1, result.getSkippedNodes().getSize() );
 
         final Node myNode = assertNodeExists( NodePath.ROOT, "mynode" );
         final Node myChild = assertNodeExists( myNode.path(), myChildName );
@@ -432,7 +444,8 @@ class NodeImporterIntegrationTest
             execute();
 
         assertEquals( 0, result.getImportErrors().size() );
-        assertEquals( 1, result.getUpdateNodes().getSize() );
+        assertEquals( 0, result.getUpdateNodes().getSize() );
+        assertEquals( 1, result.getSkippedNodes().getSize() );
         assertEquals( 1, result.getAddedNodes().getSize() );
         final Node importedNode = this.nodeService.getByPath( result.getAddedNodes().first() );
         assertNotNull( importedNode );
@@ -529,7 +542,8 @@ class NodeImporterIntegrationTest
 
         assertEquals( 0, result.getImportErrors().size() );
         assertEquals( 1, result.getAddedNodes().getSize() ); // myArchiveNode
-        assertEquals( 1, result.getUpdateNodes().getSize() ); // root
+        assertEquals( 0, result.getUpdateNodes().getSize() );
+        assertEquals( 1, result.getSkippedNodes().getSize() );
 
         // Verify node was recreated
         final Node importedNode = nodeService.getByPath( new NodePath( "/myArchiveNode" ) );
@@ -641,7 +655,8 @@ class NodeImporterIntegrationTest
 
         assertEquals( 0, result.getImportErrors().size() );
         assertEquals( 3, result.getAddedNodes().getSize() ); // level1, level2, level3
-        assertEquals( 1, result.getUpdateNodes().getSize() ); // root
+        assertEquals( 0, result.getUpdateNodes().getSize() );
+        assertEquals( 1, result.getSkippedNodes().getSize() );
 
         // Verify all nodes were recreated
         assertNotNull( nodeService.getByPath( new NodePath( "/level1" ) ) );
@@ -698,6 +713,70 @@ class NodeImporterIntegrationTest
         assertNotNull( importedNode );
         assertEquals( originalNodeId, importedNode.id() );
         assertEquals( "nodeWithId", importedNode.name().toString() );
+    }
+
+    @Test
+    void import_root_node_to_non_root_reports_error()
+        throws Exception
+    {
+        // Create an export with root node and a child
+        final Path rootDir = resolveInTemporaryFolder( "rootExport" );
+        copyFormResource( "root-node.xml", Files.createDirectories( rootDir.resolve( NodeExportPathResolver.SYSTEM_FOLDER_NAME ) )
+            .resolve( NodeExportPathResolver.NODE_XML_EXPORT_NAME ) );
+
+        final Path childDir = Files.createDirectories( rootDir.resolve( "rootchild" ).resolve( "_" ) );
+        copyFormResource( "root-child-node.xml", childDir.resolve( NodeExportPathResolver.NODE_XML_EXPORT_NAME ) );
+
+        // Create target node
+        final NodePath targetPath = new NodePath( "/my-target" );
+        nodeService.create( CreateNodeParams.create().parent( targetPath.getParentPath() ).name( targetPath.getName() ).build() );
+
+        // Attempt to import root node to non-root location should report error
+        final NodeImportResult result = NodeImporter.create()
+            .nodeService( nodeService )
+            .targetNodePath( targetPath )
+            .sourceDirectory( VirtualFiles.from( rootDir ) )
+            .build()
+            .execute();
+
+        assertEquals( 1, result.getImportErrors().size() );
+        assertTrue( result.getImportErrors().get( 0 ).getMessage().contains( "Cannot import root node to non-root location" ) );
+    }
+
+    @Test
+    void import_root_to_root_skips_root_and_imports_children()
+        throws Exception
+    {
+        // Create an export with root node and children
+        final Path rootDir = resolveInTemporaryFolder( "rootExport2" );
+        copyFormResource( "root-node.xml", Files.createDirectories( rootDir.resolve( NodeExportPathResolver.SYSTEM_FOLDER_NAME ) )
+            .resolve( NodeExportPathResolver.NODE_XML_EXPORT_NAME ) );
+
+        final Path child1Dir = Files.createDirectories( rootDir.resolve( "child1" ).resolve( "_" ) );
+        copyFormResource( "root-child-node.xml", child1Dir.resolve( NodeExportPathResolver.NODE_XML_EXPORT_NAME ) );
+
+        final Path child2Dir = Files.createDirectories( rootDir.resolve( "child2" ).resolve( "_" ) );
+        copyFormResource( "node_unordered.xml", child2Dir.resolve( NodeExportPathResolver.NODE_XML_EXPORT_NAME ) );
+
+        // Import root to root
+        final NodeImportResult result = NodeImporter.create()
+            .nodeService( nodeService )
+            .targetNodePath( NodePath.ROOT )
+            .sourceDirectory( VirtualFiles.from( rootDir ) )
+            .build()
+            .execute();
+
+        // Assert that root was skipped and children were imported
+        assertEquals( 0, result.getImportErrors().size() );
+        assertEquals( 1, result.getSkippedNodes().getSize(), "Root node should be skipped" );
+        assertEquals( NodePath.ROOT, result.getSkippedNodes().first(), "Skipped node should be root" );
+        assertEquals( 2, result.getAddedNodes().getSize(), "Two children should be added" );
+        assertEquals( 0, result.getUpdateNodes().getSize() );
+        assertEquals( 1, result.getSkippedNodes().getSize(), "Root should be skipped" );
+
+        // Verify children exist
+        assertNodeExists( NodePath.ROOT, "child1" );
+        assertNodeExists( NodePath.ROOT, "child2" );
     }
 
     private void createNodeXmlFile( final Path exportPath, boolean ordered )

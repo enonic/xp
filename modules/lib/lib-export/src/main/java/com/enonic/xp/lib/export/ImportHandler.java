@@ -34,11 +34,13 @@ public class ImportHandler
 
     private Function<Long, Void> nodeResolved;
 
+    private Function<Long, Void> nodeSkipped;
+
     public NodeImportResultMapper execute()
     {
         final ImportNodesParams.Builder paramsBuilder = ImportNodesParams.create()
             .targetNodePath( new NodePath( targetNodePath ) )
-            .nodeImportListener( new FunctionBasedNodeImportListener( nodeImported, nodeResolved ) );
+            .nodeImportListener( new FunctionBasedNodeImportListener( nodeImported, nodeResolved, nodeSkipped ) );
 
         if ( source instanceof ResourceKey )
         {
@@ -112,6 +114,11 @@ public class ImportHandler
     public void setNodeResolved( final Function<Long, Void> nodeResolved )
     {
         this.nodeResolved = nodeResolved;
+    }
+
+    public void setNodeSkipped( final Function<Long, Void> nodeSkipped )
+    {
+        this.nodeSkipped = nodeSkipped;
     }
 
     private VirtualFile toVirtualFile( final ResourceKey resourceKey )
