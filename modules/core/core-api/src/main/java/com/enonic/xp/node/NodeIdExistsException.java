@@ -6,8 +6,24 @@ import com.enonic.xp.annotation.PublicApi;
 public class NodeIdExistsException
     extends RuntimeException
 {
-    public NodeIdExistsException( final NodeId nodeId )
+    private final NodeId nodeId;
+
+    private final NodePath nodePath;
+
+    public NodeIdExistsException( final NodeId nodeId, final NodePath nodePath )
     {
-        super( "Node " + nodeId + " already exists" );
+        super( "Node " + nodeId + " at path " + nodePath + " already exists" );
+        this.nodeId = nodeId;
+        this.nodePath = nodePath;
+    }
+
+    public NodeId getNodeId()
+    {
+        return nodeId;
+    }
+
+    public NodePath getNodePath()
+    {
+        return nodePath;
     }
 }
