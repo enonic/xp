@@ -6,5 +6,5 @@ public interface NodeImportListener
 
     void nodeResolved( long count );
 
-    void nodeSkipped( long count );
+    void nodeSkipped( int count );
 }

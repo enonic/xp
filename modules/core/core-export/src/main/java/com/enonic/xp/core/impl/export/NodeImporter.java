@@ -247,7 +247,7 @@ public final class NodeImporter
 
             if ( nodeImportListener != null )
             {
-                nodeImportListener.nodeSkipped( 1L );
+                nodeImportListener.nodeSkipped( 1 );
             }
 
             result.skipped( importNodePath );
