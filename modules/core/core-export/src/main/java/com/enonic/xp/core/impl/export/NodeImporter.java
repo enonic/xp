@@ -260,7 +260,7 @@ public final class NodeImporter
 
             if ( nodeImportListener != null )
             {
-                nodeImportListener.nodeImported( 1L );
+                nodeImportListener.nodeImported( 1 );
             }
             if ( importNodeResult.isPreExisting() )
             {
