@@ -2,6 +2,7 @@ package com.enonic.xp.node;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.exception.DuplicateElementException;
 import com.enonic.xp.repository.RepositoryId;
 
 @PublicApi
