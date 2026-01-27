@@ -11,7 +11,7 @@ public class ImportListenerImpl
 
     private int total;
 
-    private long current;
+    private int current;
 
     public ImportListenerImpl( final ProgressReporter progressReporter )
     {
@@ -19,26 +19,26 @@ public class ImportListenerImpl
     }
 
     @Override
-    public void nodeImported( final long count )
+    public void nodeImported( final int count )
     {
         addProgress( count );
     }
 
     @Override
-    public void nodeSkipped( final long count )
+    public void nodeSkipped( final int count )
     {
         addProgress( count );
     }
 
     @Override
-    public void nodeResolved( final long count )
+    public void nodeResolved( final int count )
     {
-        total = Math.toIntExact( count );
+        total = count;
     }
 
-    private void addProgress( final long count )
+    private void addProgress( final int count )
     {
-        current = Math.addExact( current, count );
-        progressReporter.progress( ProgressReportParams.create( Math.toIntExact( current ), total ).build() );
+        current += count;
+        progressReporter.progress( ProgressReportParams.create( current, total ).build() );
     }
 }

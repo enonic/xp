@@ -2,9 +2,9 @@ package com.enonic.xp.export;
 
 public interface NodeImportListener
 {
-    void nodeImported( long count );
+    void nodeImported( int count );
 
-    void nodeResolved( long count );
+    void nodeResolved( int count );
 
     void nodeSkipped( int count );
 }
