@@ -379,8 +379,7 @@ class CreateContentCommandTest
         final Node parentNode = Node.create()
             .id( NodeId.from( "id1" ) )
             .name( "parent" )
-            .parentPath( ContentConstants.CONTENT_ROOT_PATH )
-            .data( parentNodeData )
+            .parentPath( ContentConstants.CONTENT_ROOT_PATH ).data( parentNodeData ).nodeType( ContentConstants.CONTENT_NODE_COLLECTION )
             .build();
 
         when( nodeService.getByPath( Mockito.eq( new NodePath( "/content/parent" ) ) ) ).thenReturn( parentNode );
@@ -411,8 +410,7 @@ class CreateContentCommandTest
         final Node parentNode = Node.create()
             .id( NodeId.from( "id1" ) )
             .name( "parent" )
-            .parentPath( ContentConstants.CONTENT_ROOT_PATH )
-            .data( parentNodeData )
+            .parentPath( ContentConstants.CONTENT_ROOT_PATH ).data( parentNodeData ).nodeType( ContentConstants.CONTENT_NODE_COLLECTION )
             .build();
 
         when( nodeService.getByPath( Mockito.eq( new NodePath( "/content" ) ) ) ).thenReturn( parentNode );
@@ -480,8 +478,7 @@ class CreateContentCommandTest
         final Node parentNode = Node.create()
             .id( NodeId.from( "id1" ) )
             .name( "parent" )
-            .parentPath( ContentConstants.CONTENT_ROOT_PATH )
-            .data( parentNodeData )
+            .parentPath( ContentConstants.CONTENT_ROOT_PATH ).data( parentNodeData ).nodeType( ContentConstants.CONTENT_NODE_COLLECTION )
             .build();
 
         when( nodeService.getByPath( Mockito.eq( new NodePath( "/content/parent" ) ) ) ).thenReturn( parentNode );
@@ -514,8 +511,7 @@ class CreateContentCommandTest
         final Node parentNode = Node.create()
             .id( NodeId.from( "id1" ) )
             .name( "_templates" )
-            .parentPath( ContentConstants.CONTENT_ROOT_PATH )
-            .data( parentNodeData )
+            .parentPath( ContentConstants.CONTENT_ROOT_PATH ).data( parentNodeData ).nodeType( ContentConstants.CONTENT_NODE_COLLECTION )
             .build();
 
         when( nodeService.getByPath( Mockito.eq( new NodePath( "/content/_templates" ) ) ) ).thenReturn( parentNode );
@@ -548,8 +544,7 @@ class CreateContentCommandTest
         final Node parentNode = Node.create()
             .id( NodeId.from( "id1" ) )
             .name( "_templates" )
-            .parentPath( ContentConstants.CONTENT_ROOT_PATH )
-            .data( parentNodeData )
+            .parentPath( ContentConstants.CONTENT_ROOT_PATH ).data( parentNodeData ).nodeType( ContentConstants.CONTENT_NODE_COLLECTION )
             .build();
 
         when( nodeService.getByPath( Mockito.eq( new NodePath( "/content/_templates" ) ) ) ).thenReturn( parentNode );
@@ -730,8 +725,13 @@ class CreateContentCommandTest
         tree.addString( ContentPropertyNames.LANGUAGE, language );
         tree.addSet( ContentPropertyNames.DATA, tree.newSet() );
 
-        final Node contentRootNode =
-            Node.create().id( NodeId.from( "id1" ) ).name( "content" ).parentPath( NodePath.ROOT ).data( tree ).build();
+        final Node contentRootNode = Node.create()
+            .id( NodeId.from( "id1" ) )
+            .name( "content" )
+            .parentPath( NodePath.ROOT )
+            .data( tree )
+            .nodeType( ContentConstants.CONTENT_NODE_COLLECTION )
+            .build();
 
         when( nodeService.getByPath( ContentConstants.CONTENT_ROOT_PATH ) ).thenReturn( contentRootNode );
 
@@ -747,8 +747,13 @@ class CreateContentCommandTest
         data.setString( ContentPropertyNames.LANGUAGE, language );
         data.addStrings( ContentPropertyNames.INHERIT, inherit.stream().map( ContentInheritType::name ).collect( Collectors.toList() ) );
 
-        final Node contentNode =
-            Node.create().id( NodeId.from( "id1" ) ).name( name ).parentPath( new NodePath( parentPath ) ).data( data ).build();
+        final Node contentNode = Node.create()
+            .id( NodeId.from( "id1" ) )
+            .name( name )
+            .parentPath( new NodePath( parentPath ) )
+            .data( data )
+            .nodeType( ContentConstants.CONTENT_NODE_COLLECTION )
+            .build();
 
         when( nodeService.getByPath( contentNode.path() ) ).thenReturn( contentNode );
 
@@ -761,7 +766,13 @@ class CreateContentCommandTest
         nodeData.setSet( ContentPropertyNames.DATA, nodeData.newSet() );
         nodeData.setString( ContentPropertyNames.CREATOR, "user:myidprovider:user1" );
 
-        final Node node = Node.create().id( NodeId.from( name ) ).name( name ).parentPath( parentPath ).data( nodeData ).build();
+        final Node node = Node.create()
+            .id( NodeId.from( name ) )
+            .name( name )
+            .parentPath( parentPath )
+            .data( nodeData )
+            .nodeType( ContentConstants.CONTENT_NODE_COLLECTION )
+            .build();
 
         when( nodeService.getByPath( Mockito.eq( node.path() ) ) ).thenReturn( node );
         when( nodeService.getById( Mockito.eq( node.id() ) ) ).thenReturn( node );

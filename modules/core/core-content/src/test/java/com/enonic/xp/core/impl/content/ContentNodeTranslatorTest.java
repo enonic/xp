@@ -3,6 +3,7 @@ package com.enonic.xp.core.impl.content;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
@@ -41,6 +42,12 @@ class ContentNodeTranslatorTest
         rootDataSet.setSet( ContentPropertyNames.DATA, rootDataSet.newSet() );
         rootDataSet.setString( ContentPropertyNames.CREATOR, "user:myidprovider:user1" );
 
-        return Node.create().id( ID_1 ).name( "contentRoot" ).parentPath( parentPath ).data( rootDataSet ).build();
+        return Node.create()
+            .id( ID_1 )
+            .name( "contentRoot" )
+            .parentPath( parentPath )
+            .data( rootDataSet )
+            .nodeType( ContentConstants.CONTENT_NODE_COLLECTION )
+            .build();
     }
 }
