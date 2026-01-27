@@ -6,7 +6,7 @@ import com.enonic.xp.repository.RepositoryId;
 
 @PublicApi
 public class NodeIdExistsException
-    extends RuntimeException
+    extends DuplicateElementException
 {
     private final NodeId nodeId;
 
