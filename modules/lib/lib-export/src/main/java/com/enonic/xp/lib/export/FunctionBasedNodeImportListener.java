@@ -9,7 +9,7 @@ import static java.util.Objects.requireNonNullElse;
 public class FunctionBasedNodeImportListener
     implements NodeImportListener
 {
-    private static final Function<Integer, Void> NULL_FUNCTION = aLong -> null;
+    private static final Function<Integer, Void> NULL_FUNCTION = _ -> null;
 
     private final Function<Integer, Void> nodeImported;
 
