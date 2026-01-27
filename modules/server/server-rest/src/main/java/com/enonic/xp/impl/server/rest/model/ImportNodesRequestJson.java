@@ -6,7 +6,7 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class ImportNodesRequestJson
+public final class ImportNodesRequestJson
 {
     private final RepoPath targetRepoPath;
 

@@ -11,7 +11,7 @@ public class ExportListenerImpl
 
     private int total;
 
-    private long current;
+    private int current;
 
     public ExportListenerImpl( final ProgressReporter progressReporter )
     {
@@ -19,15 +19,15 @@ public class ExportListenerImpl
     }
 
     @Override
-    public void nodeExported( final long count )
+    public void nodeExported( final int count )
     {
-        current = Math.addExact( current, count );
+        current += count;
         progressReporter.progress( ProgressReportParams.create( Math.toIntExact( current ), total ).build() );
     }
 
     @Override
-    public void nodeResolved( final long count )
+    public void nodeResolved( final int count )
     {
-        total = Math.toIntExact( count );
+        total = count;
     }
 }

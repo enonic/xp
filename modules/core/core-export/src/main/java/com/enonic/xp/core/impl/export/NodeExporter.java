@@ -82,7 +82,7 @@ public class NodeExporter
         {
             if ( nodeExportListener != null )
             {
-                final long childNodeCount = getRecursiveNodeCountByParentPath( sourceNodePath );
+                final int childNodeCount = getRecursiveNodeCountByParentPath( sourceNodePath );
                 nodeExportListener.nodeResolved( childNodeCount + 1 );
             }
 
@@ -103,7 +103,7 @@ public class NodeExporter
     {
         if ( nodeExportListener != null )
         {
-            nodeExportListener.nodeExported( 1L );
+            nodeExportListener.nodeExported( 1 );
         }
 
         doWriteNode( node, resolveNodeDataFolder( node ) );
@@ -228,10 +228,11 @@ public class NodeExporter
         exportWriter.writeElement( exportPropertiesPath, "xp.version = " + xpVersion );
     }
 
-    private long getRecursiveNodeCountByParentPath( final NodePath nodePath )
+    private int getRecursiveNodeCountByParentPath( final NodePath nodePath )
     {
-        return nodeService.findByParent(
-            FindNodesByParentParams.create().countOnly( true ).parentPath( nodePath ).recursive( true ).build() ).getTotalHits();
+        return Math.toIntExact(
+            nodeService.findByParent( FindNodesByParentParams.create().countOnly( true ).parentPath( nodePath ).recursive( true ).build() )
+                .getTotalHits() );
     }
 
     private Path resolveNodeDataFolder( final Node node )
