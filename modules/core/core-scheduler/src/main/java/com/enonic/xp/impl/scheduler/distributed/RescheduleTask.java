@@ -1,5 +1,6 @@
 package com.enonic.xp.impl.scheduler.distributed;
 
+import java.time.Clock;
 import java.time.Instant;
 import java.util.Comparator;
 import java.util.List;
@@ -41,6 +42,8 @@ public class RescheduleTask
 {
     private static final long serialVersionUID = 0;
 
+    static Clock clock = Clock.systemUTC();
+
     public static final String NAME = "rescheduleTask";
 
     private static final Logger LOG = LoggerFactory.getLogger( RescheduleTask.class );
@@ -48,7 +51,6 @@ public class RescheduleTask
     private static final AtomicInteger FAILED_COUNT = new AtomicInteger( 0 );
 
     private static final PriorityQueue<JobToRun> QUEUE = new PriorityQueue<>( Comparator.comparing( a -> a.timeToRun ) );
-
 
     @Override
     public String getName()
@@ -58,7 +60,7 @@ public class RescheduleTask
 
     private static void fillJobsToSchedule( final Map<ScheduledJobName, ScheduledJob> jobs )
     {
-        final Instant now = Instant.now();
+        final Instant now = Instant.now( clock );
 
         final Predicate<ScheduledJob> filterAlreadyScheduled =
             job -> !QUEUE.stream().map( entity -> entity.name ).collect( Collectors.toSet() ).contains( job.getName() );
@@ -160,7 +162,7 @@ public class RescheduleTask
         {
             final JobToRun peek = QUEUE.peek();
 
-            if ( peek.timeToRun.isAfter( Instant.now() ) )
+            if ( peek.timeToRun.isAfter( Instant.now( clock ) ) )
             {
                 break;
             }
@@ -183,7 +185,7 @@ public class RescheduleTask
                     adminContext().runWith( () -> OsgiSupport.withService( NodeService.class, nodeService -> UpdateLastRunCommand.create()
                         .nodeService( nodeService )
                         .name( job.getName() )
-                        .lastRun( Instant.now() )
+                        .lastRun( Instant.now( clock ) )
                         .lastTaskId( taskId )
                         .build()
                         .execute() ) );
@@ -216,7 +218,7 @@ public class RescheduleTask
                 adminContext().runWith( () -> OsgiSupport.withService( NodeService.class, nodeService -> UpdateLastRunCommand.create()
                     .nodeService( nodeService )
                     .name( failedJob.job.name )
-                    .lastRun( Instant.now() )
+                    .lastRun( Instant.now( clock ) )
                     .lastTaskId( null )
                     .build()
                     .execute() ) );
