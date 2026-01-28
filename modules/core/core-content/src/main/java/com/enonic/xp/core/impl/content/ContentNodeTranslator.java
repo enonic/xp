@@ -3,6 +3,7 @@ package com.enonic.xp.core.impl.content;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.archive.ArchiveConstants;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
@@ -73,7 +74,7 @@ public class ContentNodeTranslator
         }
 
         if ( !ContentConstants.CONTENT_NODE_COLLECTION.equals( node.getNodeType() ) &&
-            !ContentConstants.CONTENT_ROOT_PATH.equals( node.path() ) )
+            !ArchiveConstants.ARCHIVE_ROOT_PATH.equals( node.path() ) && !ContentConstants.CONTENT_ROOT_PATH.equals( node.path() ) )
         {
             throw new IllegalArgumentException(
                 "Node '" + node.path() + "' [" + node.id() + "] is not a content. Node type: " + node.getNodeType() );
