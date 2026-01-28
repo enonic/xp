@@ -180,7 +180,8 @@ public final class CreateNodeCommand
 
             if ( existingNode != null )
             {
-                throw new NodeIdExistsException( existingNode.id() );
+                throw new NodeIdExistsException( existingNode.id(), existingNode.path(), ContextAccessor.current().getRepositoryId(),
+                                                 ContextAccessor.current().getBranch() );
             }
         }
 
