@@ -17,9 +17,8 @@ compileTestJava {
 }
 
 dependencies {
-    testImplementation libs.junit.jupiter.api
-    testImplementation libs.junit.jupiter.params
-    testRuntimeOnly libs.junit.jupiter.engine
+    testImplementation( platform( libs.junit.bom ) )
+    testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testImplementation libs.mockito.core
     testImplementation libs.mockito.junitjupiter
