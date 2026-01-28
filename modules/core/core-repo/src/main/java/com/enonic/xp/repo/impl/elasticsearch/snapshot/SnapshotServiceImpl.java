@@ -337,7 +337,7 @@ public class SnapshotServiceImpl
         }
         else
         {
-            return snapshots.getFirst();
+            return snapshots.get( 0 );
         }
     }
 
