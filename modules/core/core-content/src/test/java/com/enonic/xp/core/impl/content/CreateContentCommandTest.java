@@ -720,7 +720,7 @@ class CreateContentCommandTest
     {
 
         final PropertyTree tree = new PropertyTree();
-        tree.addString( ContentPropertyNames.TYPE, "folder" );
+        tree.addString( ContentPropertyNames.TYPE, ContentTypeName.folder().toString() );
         tree.addString( ContentPropertyNames.CREATOR, "user:system:user1" );
         tree.addString( ContentPropertyNames.LANGUAGE, language );
         tree.addSet( ContentPropertyNames.DATA, tree.newSet() );
@@ -729,8 +729,7 @@ class CreateContentCommandTest
             .id( NodeId.from( "id1" ) )
             .name( "content" )
             .parentPath( NodePath.ROOT )
-            .data( tree )
-            .nodeType( ContentConstants.CONTENT_NODE_COLLECTION )
+            .data( tree ).nodeType( NodeType.DEFAULT_NODE_COLLECTION )
             .build();
 
         when( nodeService.getByPath( ContentConstants.CONTENT_ROOT_PATH ) ).thenReturn( contentRootNode );

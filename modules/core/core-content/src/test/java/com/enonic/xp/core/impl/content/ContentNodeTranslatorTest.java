@@ -11,6 +11,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeType;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -23,19 +24,21 @@ class ContentNodeTranslatorTest
     @Test
     void testNodeOutsideOfContentRoot()
     {
-        assertThrows( ContentNotFoundException.class, () -> ContentNodeTranslator.fromNode( createNode( NodePath.ROOT ) ) );
         assertThrows( ContentNotFoundException.class,
-                      () -> ContentNodeTranslator.fromNode( createNode( new NodePath( "/non-content" ) ) ) );
+                      () -> ContentNodeTranslator.fromNode( createNode( NodePath.ROOT, ContentConstants.CONTENT_NODE_COLLECTION ) ) );
+        assertThrows( ContentNotFoundException.class, () -> ContentNodeTranslator.fromNode(
+            createNode( new NodePath( "/non-content" ), ContentConstants.CONTENT_NODE_COLLECTION ) ) );
     }
 
     @Test
     void testNodeOutsideOfContentRootAllowed()
     {
-        final Content content = ContentNodeTranslator.fromNodeWithAnyRootPath( createNode( NodePath.ROOT ) );
+        final Content content =
+            ContentNodeTranslator.fromNodeWithAnyRootPath( createNode( NodePath.ROOT, ContentConstants.CONTENT_NODE_COLLECTION ) );
         assertEquals( ContentPath.ROOT, content.getPath() );
     }
 
-    private Node createNode( final NodePath parentPath )
+    private Node createNode( final NodePath parentPath, final NodeType nodeType )
     {
         final PropertyTree rootDataSet = new PropertyTree();
         rootDataSet.setString( ContentPropertyNames.TYPE, ContentTypeName.unstructured().toString() );
@@ -46,8 +49,7 @@ class ContentNodeTranslatorTest
             .id( ID_1 )
             .name( "contentRoot" )
             .parentPath( parentPath )
-            .data( rootDataSet )
-            .nodeType( ContentConstants.CONTENT_NODE_COLLECTION )
+            .data( rootDataSet ).nodeType( nodeType )
             .build();
     }
 }
