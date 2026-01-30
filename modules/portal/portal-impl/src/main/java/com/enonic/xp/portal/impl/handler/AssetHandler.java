@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.handler;
 
 import java.util.EnumSet;
+import java.util.HexFormat;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -13,7 +14,6 @@ import org.osgi.service.component.annotations.Reference;
 import com.google.common.net.HttpHeaders;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.core.internal.HexCoder;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.resource.Resource;
@@ -112,6 +112,10 @@ public class AssetHandler
     private boolean fingerprintMatches( ApplicationKey applicationKey, String providedFingerprint )
     {
         final Resource resource = resourceService.getResource( ResourceKey.from( applicationKey, "META-INF/MANIFEST.MF" ) );
-        return resource.exists() && HexCoder.toHex( resource.getTimestamp() ).equals( providedFingerprint );
+        if ( !resource.exists() )
+        {
+            return false;
+        }
+        return HexFormat.of().toHexDigits( resource.getTimestamp() ).equals( providedFingerprint );
     }
 }

@@ -4,8 +4,10 @@ import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.Security;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.HexFormat;
 import java.util.function.Supplier;
 
 import javax.crypto.Mac;
@@ -21,7 +23,6 @@ import com.google.common.base.Suppliers;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.core.internal.HexCoder;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.security.RoleKeys;
@@ -72,7 +73,7 @@ public class RedirectChecksumService
             throw new IllegalStateException( e );
         }
 
-        return HexCoder.toHex( Arrays.copyOf( mac.doFinal( redirect.getBytes( StandardCharsets.UTF_8 ) ), 20 ) );
+        return HexFormat.of().formatHex( mac.doFinal( redirect.getBytes( StandardCharsets.UTF_8 ) ), 0,20  );
     }
 
     public boolean verifyChecksum( final String redirect, final String checksum )
@@ -89,5 +90,10 @@ public class RedirectChecksumService
             .repositoryId( SystemConstants.SYSTEM_REPO_ID )
             .branch( SystemConstants.BRANCH_SYSTEM )
             .build();
+    }
+
+    static void main()
+    {
+        System.out.println(Security.getAlgorithms( "MessageDigest"));
     }
 }

@@ -1,7 +1,9 @@
 package com.enonic.xp.admin.impl.portal.widget;
 
-import com.google.common.hash.Hashing;
+import java.util.Arrays;
+import java.util.Base64;
 
+import com.enonic.xp.core.internal.security.MessageDigests;
 import com.enonic.xp.icon.Icon;
 
 public final class IconHashResolver
@@ -12,6 +14,8 @@ public final class IconHashResolver
 
     public static String resolve( final Icon icon )
     {
-        return Hashing.md5().hashBytes( icon.toByteArray() ).toString();
+        return Base64.getUrlEncoder()
+            .withoutPadding()
+            .encodeToString( Arrays.copyOf( MessageDigests.sha512().digest( icon.toByteArray() ), 16 ) );
     }
 }

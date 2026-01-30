@@ -4,12 +4,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.security.DigestInputStream;
+import java.util.HexFormat;
 
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 
 import com.enonic.xp.content.ContentPropertyNames;
-import com.enonic.xp.core.internal.HexCoder;
 import com.enonic.xp.core.internal.security.MessageDigests;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
@@ -44,12 +44,10 @@ public final class AttachmentSerializer
         try (InputStream inputStream = byteSource.openStream(); DigestInputStream digestInputStream = new DigestInputStream( inputStream,
                                                                                                                              MessageDigests.sha512() ))
         {
-
             long size = ByteStreams.exhaust( digestInputStream );
             attachmentSet.addLong( ContentPropertyNames.ATTACHMENT_SIZE, size );
-
-            attachmentSet.addString( ContentPropertyNames.ATTACHMENT_SHA512,
-                                     HexCoder.toHex( digestInputStream.getMessageDigest().digest() ) );
+            attachmentSet.addString( ContentPropertyNames.ATTACHMENT_SHA512, HexFormat.of().formatHex(
+                digestInputStream.getMessageDigest().digest() ) );
 
         }
         catch ( IOException e )

@@ -4,6 +4,7 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.HexFormat;
 import java.util.function.Consumer;
 
 import org.junit.jupiter.api.AfterEach;
@@ -17,7 +18,6 @@ import com.google.common.io.ByteSource;
 import com.sun.net.httpserver.HttpServer;
 
 import com.enonic.xp.event.Event;
-import com.enonic.xp.util.HexEncoder;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -74,8 +74,9 @@ class ApplicationLoaderTest
         throws Exception
     {
         final byte[] bytes = "this is a test".getBytes( StandardCharsets.UTF_8 );
-        final byte[] sha512 = HexEncoder.fromHex(
-            "7d0a8468ed220400c0b8e6f335baa7e070ce880a37e2ac5995b9a97b809026de626da636ac7365249bb974c719edf543b52ed286646f437dc7f810cc2068375c" );
+        final byte[] sha512 = HexFormat.of()
+            .parseHex(
+                "7d0a8468ed220400c0b8e6f335baa7e070ce880a37e2ac5995b9a97b809026de626da636ac7365249bb974c719edf543b52ed286646f437dc7f810cc2068375c" );
 
         this.server.createContext( "/", exchange -> {
 
@@ -95,8 +96,9 @@ class ApplicationLoaderTest
     void load_with_sha512_wrong()
     {
         final byte[] bytes = "this is a test".getBytes( StandardCharsets.UTF_8 );
-        final byte[] sha512 = HexEncoder.fromHex(
-            "0d0a8468ed220400c0b8e6f335baa7e070ce880a37e2ac5995b9a97b809026de626da636ac7365249bb974c719edf543b52ed286646f437dc7f810cc2068375c" );
+        final byte[] sha512 = HexFormat.of()
+            .parseHex(
+                "0d0a8468ed220400c0b8e6f335baa7e070ce880a37e2ac5995b9a97b809026de626da636ac7365249bb974c719edf543b52ed286646f437dc7f810cc2068375c" );
 
         this.server.createContext( "/", exchange -> {
 

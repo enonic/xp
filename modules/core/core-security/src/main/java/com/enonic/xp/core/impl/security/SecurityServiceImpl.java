@@ -1,9 +1,11 @@
 package com.enonic.xp.core.impl.security;
 
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.time.Clock;
 import java.time.Instant;
+import java.util.HexFormat;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
@@ -18,13 +20,12 @@ import java.util.regex.Pattern;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import com.google.common.hash.HashFunction;
-import com.google.common.hash.Hashing;
 import com.google.common.util.concurrent.Striped;
 
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.core.internal.security.MessageDigests;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.index.IndexPath;
@@ -103,8 +104,7 @@ public final class SecurityServiceImpl
 
     private static final String SU_PASSWORD_PROPERTY_KEY = "xp.suPassword";
 
-    private static final Pattern SU_PASSWORD_PATTERN =
-        Pattern.compile( "(?:\\{(sha1|sha256|sha512|md5)\\})?(\\S+)", Pattern.CASE_INSENSITIVE );
+    private static final Pattern SU_PASSWORD_PATTERN = Pattern.compile( "(?:\\{(sha256|sha512)})?(\\S+)", Pattern.CASE_INSENSITIVE );
 
     private static final List<PrincipalKey> NON_REMOVABLE_PRINCIPLES = List.of( PrincipalKey.ofSuperUser(), RoleKeys.ADMIN );
 
@@ -330,8 +330,7 @@ public final class SecurityServiceImpl
     {
         if ( this.suPasswordValue != null && token instanceof UsernamePasswordAuthToken usernamePasswordAuthToken )
         {
-            return ( usernamePasswordAuthToken.getIdProvider() == null ||
-                IdProviderKey.system().equals( usernamePasswordAuthToken.getIdProvider() ) ) &&
+            return IdProviderKey.system().equals( usernamePasswordAuthToken.getIdProvider() ) &&
                 PrincipalKey.ofSuperUser().getId().equals( usernamePasswordAuthToken.getUsername() );
         }
         return false;
@@ -365,26 +364,14 @@ public final class SecurityServiceImpl
             return plainPassword;
         }
 
-        final HashFunction hashFunction;
-        switch ( this.suPasswordHashing )
+        final MessageDigest hashFunction = switch ( this.suPasswordHashing )
         {
-            case "sha1":
-                hashFunction = Hashing.sha1();
-                break;
-            case "sha256":
-                hashFunction = Hashing.sha256();
-                break;
-            case "sha512":
-                hashFunction = Hashing.sha512();
-                break;
-            case "md5":
-                hashFunction = Hashing.md5();
-                break;
-            default:
-                throw new IllegalArgumentException( "Incorrect type of encryption: " + this.suPasswordHashing );
-        }
+            case "sha256" -> MessageDigests.sha256();
+            case "sha512" -> MessageDigests.sha512();
+            default -> throw new IllegalArgumentException( "Incorrect type of encryption: " + this.suPasswordHashing );
+        };
 
-        return hashFunction.newHasher().putString( plainPassword, StandardCharsets.UTF_8 ).hash().toString();
+        return HexFormat.of().formatHex( hashFunction.digest( plainPassword.getBytes( StandardCharsets.UTF_8 ) ) );
     }
 
     private void addRandomDelay()

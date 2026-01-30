@@ -2,12 +2,11 @@ package com.enonic.xp.core.impl.security;
 
 import java.security.MessageDigest;
 import java.security.SecureRandom;
+import java.util.HexFormat;
 import java.util.Objects;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
-
-import com.enonic.xp.util.HexEncoder;
 
 final class PBKDF2Encoder
     implements PasswordEncoder
@@ -32,8 +31,8 @@ final class PBKDF2Encoder
 
         final byte[] encodedPwd = encodePassword( plainPassword.toCharArray(), salt, LENGTH, ITERATIONS );
 
-        final String saltAsString = HexEncoder.toHex( salt );
-        final String encodedAsString = HexEncoder.toHex( encodedPwd );
+        final String saltAsString = HexFormat.of().formatHex( salt );
+        final String encodedAsString = HexFormat.of().formatHex( encodedPwd );
         return new AuthenticationHash( saltAsString, encodedAsString, this.getType() ).toString();
     }
 
@@ -53,8 +52,8 @@ final class PBKDF2Encoder
             throw new IllegalArgumentException( "Incorrect type of encryption, expected '" + this.getType() + "', got '" + type + "'" );
         }
 
-        final byte[] correctHash = HexEncoder.fromHex( authenticationHash.pwd );
-        final byte[] generatedHash = encodePassword( key.toCharArray(), HexEncoder.fromHex( authenticationHash.salt ), LENGTH, ITERATIONS );
+        final byte[] correctHash = HexFormat.of().parseHex( authenticationHash.pwd );
+        final byte[] generatedHash = encodePassword( key.toCharArray(), HexFormat.of().parseHex( authenticationHash.salt ), LENGTH, ITERATIONS );
 
         return MessageDigest.isEqual( correctHash, generatedHash );
     }
