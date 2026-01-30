@@ -50,9 +50,14 @@ import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.PatchNodeResult;
 import com.enonic.xp.node.UpdateNodeParams;
+import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.LayoutDescriptorService;
+import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.PartDescriptorService;
+import com.enonic.xp.region.Region;
+import com.enonic.xp.region.Regions;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
@@ -342,5 +347,80 @@ class UpdateContentCommandTest
             .creator( PrincipalKey.from( "user:system:admin" ) )
             .data( contentData )
             .build();
+    }
+
+    private Content createContentWithPage( Page page )
+    {
+        return Content.create()
+            .id( ContentId.from( "1" ) )
+            .parentPath( ContentPath.ROOT )
+            .name( "mycontent" )
+            .createdTime( CREATED_TIME )
+            .displayName( "MyContent" )
+            .owner( PrincipalKey.from( "user:system:admin" ) )
+            .creator( PrincipalKey.from( "user:system:admin" ) )
+            .data( new PropertyTree() )
+            .page( page )
+            .build();
+    }
+
+    @Test
+    void updateContentWithPageContainingPartComponentWithoutDescriptor()
+    {
+        final PartComponent partComponent = PartComponent.create().build();
+        final Region region = Region.create().name( "main" ).add( partComponent ).build();
+        final Regions regions = Regions.create().add( region ).build();
+        final Page page = Page.create().regions( regions ).build();
+
+        final Content existingContent = createContentWithPage( page );
+
+        final UpdateContentParams params =
+            new UpdateContentParams().contentId( existingContent.getId() ).editor( edit -> edit.displayName = "Updated" );
+
+        final UpdateContentCommand command = createCommand( params ).build();
+
+        final Node mockNode = ContentFixture.mockContentNode( existingContent );
+        when( nodeService.getById( NodeId.from( existingContent.getId() ) ) ).thenReturn( mockNode );
+
+        final ContentType contentType = mock( ContentType.class );
+        when( contentTypeService.getByName( isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
+        when( contentType.getForm() ).thenReturn( Form.create().build() );
+
+        when( nodeService.patch( any() ) ).thenReturn(
+            PatchNodeResult.create().addResult( ContentConstants.BRANCH_DRAFT, mockNode ).build() );
+
+        ContextBuilder.from( ContextAccessor.current() ).branch( ContentConstants.BRANCH_DRAFT ).build().runWith( command::execute );
+
+        verify( nodeService, times( 1 ) ).patch( isA( PatchNodeParams.class ) );
+    }
+
+    @Test
+    void updateContentWithPageContainingLayoutComponentWithoutDescriptor()
+    {
+        final LayoutComponent layoutComponent = LayoutComponent.create().build();
+        final Region region = Region.create().name( "main" ).add( layoutComponent ).build();
+        final Regions regions = Regions.create().add( region ).build();
+        final Page page = Page.create().regions( regions ).build();
+
+        final Content existingContent = createContentWithPage( page );
+
+        final UpdateContentParams params =
+            new UpdateContentParams().contentId( existingContent.getId() ).editor( edit -> edit.displayName = "Updated" );
+
+        final UpdateContentCommand command = createCommand( params ).build();
+
+        final Node mockNode = ContentFixture.mockContentNode( existingContent );
+        when( nodeService.getById( NodeId.from( existingContent.getId() ) ) ).thenReturn( mockNode );
+
+        final ContentType contentType = mock( ContentType.class );
+        when( contentTypeService.getByName( isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
+        when( contentType.getForm() ).thenReturn( Form.create().build() );
+
+        when( nodeService.patch( any() ) ).thenReturn(
+            PatchNodeResult.create().addResult( ContentConstants.BRANCH_DRAFT, mockNode ).build() );
+
+        ContextBuilder.from( ContextAccessor.current() ).branch( ContentConstants.BRANCH_DRAFT ).build().runWith( command::execute );
+
+        verify( nodeService, times( 1 ) ).patch( isA( PatchNodeParams.class ) );
     }
 }
