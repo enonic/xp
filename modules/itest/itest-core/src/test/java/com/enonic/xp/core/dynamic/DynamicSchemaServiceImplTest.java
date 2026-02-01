@@ -50,6 +50,7 @@ import com.enonic.xp.core.impl.app.resource.ResourceServiceImpl;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
 import com.enonic.xp.core.impl.project.ProjectConfig;
 import com.enonic.xp.core.impl.project.ProjectServiceImpl;
+import com.enonic.xp.core.impl.security.PasswordEncoderFactory;
 import com.enonic.xp.core.impl.security.SecurityAuditLogSupportImpl;
 import com.enonic.xp.core.impl.security.SecurityConfig;
 import com.enonic.xp.core.impl.security.SecurityInitializer;
@@ -244,7 +245,7 @@ class DynamicSchemaServiceImplTest
         final SecurityAuditLogSupportImpl securityAuditLogSupport = new SecurityAuditLogSupportImpl( mock( AuditLogService.class ) );
         securityAuditLogSupport.activate( securityConfig );
 
-        SecurityServiceImpl securityService = new SecurityServiceImpl( nodeService, securityAuditLogSupport );
+        SecurityServiceImpl securityService = new SecurityServiceImpl( nodeService, securityAuditLogSupport, new PasswordEncoderFactory() );
         SecurityInitializer.create()
             .setIndexService( indexService )
             .setSecurityService( securityService )

@@ -1,15 +1,16 @@
 package com.enonic.xp.core.impl.security;
 
 import java.security.MessageDigest;
-import java.security.SecureRandom;
 import java.util.HexFormat;
-import java.util.Objects;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
+import org.jspecify.annotations.NullMarked;
+
+@NullMarked
 final class PBKDF2Encoder
-    implements PasswordEncoder
+    implements PasswordVerifier
 {
     private static final String ALGORITHM = "PBKDF2WithHmacSHA1";
 
@@ -17,112 +18,40 @@ final class PBKDF2Encoder
 
     private static final int ITERATIONS = 1000;
 
-    private final SecureRandom secureRandom;
-
-    PBKDF2Encoder(final SecureRandom secureRandom)
-    {
-        this.secureRandom = secureRandom;
-    }
-
     @Override
-    public String encodePassword( final String plainPassword )
+    public boolean verify( final char[] plainPassword, final String encodedPassword )
     {
-        final byte[] salt = createSalt();
+        final String[] elements = encodedPassword.split( ":" );
 
-        final byte[] encodedPwd = encodePassword( plainPassword.toCharArray(), salt, LENGTH, ITERATIONS );
-
-        final String saltAsString = HexFormat.of().formatHex( salt );
-        final String encodedAsString = HexFormat.of().formatHex( encodedPwd );
-        return new AuthenticationHash( saltAsString, encodedAsString, this.getType() ).toString();
-    }
-
-    @Override
-    public boolean validate( final String key, final String correctPasswordKey )
-    {
-        if ( Objects.requireNonNullElse( key, "" ).isEmpty() || Objects.requireNonNullElse( correctPasswordKey, "" ).isEmpty() )
+        if ( elements.length != 3 )
         {
-            return false;
+            throw new IllegalArgumentException( "Could not parse authentication key; wrong format" );
         }
 
-        final AuthenticationHash authenticationHash = AuthenticationHash.from( correctPasswordKey );
-
-        final String type = authenticationHash.type;
-        if ( !type.equals( this.getType() ) )
+        final String type = elements[0];
+        if ( !"PBKDF2".equals( type ) )
         {
-            throw new IllegalArgumentException( "Incorrect type of encryption, expected '" + this.getType() + "', got '" + type + "'" );
+            throw new IllegalArgumentException( "Incorrect type of encryption, expected 'PBKDF2', got '" + type + "'" );
         }
 
-        final byte[] correctHash = HexFormat.of().parseHex( authenticationHash.pwd );
-        final byte[] generatedHash = encodePassword( key.toCharArray(), HexFormat.of().parseHex( authenticationHash.salt ), LENGTH, ITERATIONS );
+        final byte[] salt = HexFormat.of().parseHex( elements[1] );
+        final byte[] correctHash = HexFormat.of().parseHex( elements[2] );
+        final byte[] generatedHash = hashPassword( plainPassword, salt );
 
         return MessageDigest.isEqual( correctHash, generatedHash );
     }
 
-    @Override
-    public String getType()
-    {
-        return "PBKDF2";
-    }
-
-
-    private byte[] encodePassword( final char[] password, byte[] salt, final int length, final int iterationCount )
+    private byte[] hashPassword( final char[] password, byte[] salt )
     {
         try
         {
-            PBEKeySpec spec = new PBEKeySpec( password, salt, iterationCount, length * 8 );
+            PBEKeySpec spec = new PBEKeySpec( password, salt, ITERATIONS, LENGTH * 8 );
             SecretKeyFactory keyFactory = SecretKeyFactory.getInstance( ALGORITHM );
             return keyFactory.generateSecret( spec ).getEncoded();
         }
         catch ( Exception e )
         {
             throw new RuntimeException( e );
-        }
-    }
-
-    private byte[] createSalt()
-    {
-        byte[] salt = new byte[20];
-        secureRandom.nextBytes( salt );
-        return salt;
-    }
-
-    private static class AuthenticationHash
-    {
-        private final String salt;
-
-        private final String pwd;
-
-        private final String type;
-
-        private static final String SEPARATOR = ":";
-
-        private AuthenticationHash( final String salt, final String pwd, final String type )
-        {
-            this.salt = salt;
-            this.pwd = pwd;
-            this.type = type;
-        }
-
-        public static AuthenticationHash from( final String key )
-        {
-            final String[] elements = key.split( SEPARATOR );
-
-            if ( elements.length != 3 )
-            {
-                throw new IllegalArgumentException( "Could not parse authentication key; wrong format" );
-            }
-
-            final String name = elements[0];
-            final String salt = elements[1];
-            final String pwd = elements[2];
-
-            return new AuthenticationHash( salt, pwd, name );
-        }
-
-        @Override
-        public String toString()
-        {
-            return this.type + SEPARATOR + this.salt + SEPARATOR + this.pwd;
         }
     }
 }

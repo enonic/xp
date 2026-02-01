@@ -43,7 +43,7 @@ class GetWidgetIconHandlerTest
         final Multimap<String, String> params = HashMultimap.create();
         params.put( "app", "myapp" );
         params.put( "widget", "mywidget" );
-        params.put( "v", "d41d8cd98f00b204e9800998ecf8427e" );
+        params.put( "v", "z4PhNX7vuL3xVChQ1m2ABw" );
 
         final WebRequest webRequest = mock( WebRequest.class );
         when( webRequest.getParams() ).thenReturn( params );

@@ -13,10 +13,13 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.locks.Lock;
-import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -89,10 +92,10 @@ import com.enonic.xp.security.UserQuery;
 import com.enonic.xp.security.UserQueryResult;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.IdProviderAccessControlList;
-import com.enonic.xp.security.auth.AuthenticationException;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.auth.AuthenticationToken;
 import com.enonic.xp.security.auth.EmailPasswordAuthToken;
+import com.enonic.xp.security.auth.PasswordAuthToken;
 import com.enonic.xp.security.auth.UsernamePasswordAuthToken;
 import com.enonic.xp.security.auth.VerifiedEmailAuthToken;
 import com.enonic.xp.security.auth.VerifiedUsernameAuthToken;
@@ -110,9 +113,7 @@ public final class SecurityServiceImpl
 
     static Clock clock = Clock.systemUTC();
 
-    private final SecureRandom secureRandom = new SecureRandom();
-
-    private final PasswordEncoder passwordEncoder = new PBKDF2Encoder( secureRandom );
+    private final PasswordEncoderFactory passwordEncoderFactory;
 
     private final Striped<Lock> userEmailLocks = Striped.lazyWeakLock( 100 );
 
@@ -124,10 +125,12 @@ public final class SecurityServiceImpl
 
     private String suPasswordValue;
 
-    public SecurityServiceImpl( final NodeService nodeService, final SecurityAuditLogSupport securityAuditLogSupport )
+    public SecurityServiceImpl( final NodeService nodeService, final SecurityAuditLogSupport securityAuditLogSupport,
+                                PasswordEncoderFactory passwordEncoderFactory )
     {
         this.nodeService = nodeService;
         this.securityAuditLogSupport = securityAuditLogSupport;
+        this.passwordEncoderFactory = passwordEncoderFactory;
         initializeSuPassword();
     }
 
@@ -313,11 +316,6 @@ public final class SecurityServiceImpl
     @Override
     public AuthenticationInfo authenticate( final AuthenticationToken token )
     {
-        if ( !( token instanceof VerifiedUsernameAuthToken ) && !( token instanceof VerifiedEmailAuthToken ) )
-        {
-            addRandomDelay();
-        }
-
         if ( isSuAuthenticationEnabled( token ) )
         {
             return authenticateSu( (UsernamePasswordAuthToken) token );
@@ -338,6 +336,7 @@ public final class SecurityServiceImpl
 
     private AuthenticationInfo authenticateSu( final UsernamePasswordAuthToken token )
     {
+        PasswordEncoderFactory.addRandomDelay();
         final String hashedTokenPassword = hashSuPassword( token.getPassword() );
         if ( this.suPasswordValue.equals( hashedTokenPassword ) )
         {
@@ -374,61 +373,59 @@ public final class SecurityServiceImpl
         return HexFormat.of().formatHex( hashFunction.digest( plainPassword.getBytes( StandardCharsets.UTF_8 ) ) );
     }
 
-    private void addRandomDelay()
-    {
-        try
-        {
-            Thread.sleep( secureRandom.nextInt( 130 ) + 20 );
-        }
-        catch ( InterruptedException e )
-        {
-            // Thread interrupted during sleep, nothing to do
-        }
-    }
-
     private AuthenticationInfo doAuthenticate( final AuthenticationToken token )
     {
         return callAsAuthenticated( () -> {
             final IndexPath principalField;
             final String principalValue;
-            final Function<User, Boolean> subjectVerifier;
+            final Predicate<User> subjectVerifier;
             switch ( token )
             {
-                case UsernamePasswordAuthToken authToken ->
+                case PasswordAuthToken authToken ->
                 {
-                    principalField = PrincipalIndexPath.LOGIN_KEY;
-                    principalValue = authToken.getUsername();
-                    subjectVerifier = user -> passwordEncoder.validate( authToken.getPassword(), user.getAuthenticationHash() );
-                }
-                case EmailPasswordAuthToken authToken ->
-                {
-                    principalField = PrincipalIndexPath.EMAIL_KEY;
-                    principalValue = authToken.getEmail();
-                    subjectVerifier = user -> passwordEncoder.validate( authToken.getPassword(), user.getAuthenticationHash() );
+                    switch ( authToken )
+                    {
+                        case UsernamePasswordAuthToken usernamePasswordAuthToken ->
+                        {
+                            principalField = PrincipalIndexPath.LOGIN_KEY;
+                            principalValue = usernamePasswordAuthToken.getUsername();
+                        }
+                        case EmailPasswordAuthToken emailPasswordAuthToken ->
+                        {
+                            principalField = PrincipalIndexPath.EMAIL_KEY;
+                            principalValue = emailPasswordAuthToken.getEmail();
+                        }
+                    }
+                    subjectVerifier = user -> verifyUserPassword( user, authToken.getPassword() );
                 }
                 case VerifiedUsernameAuthToken authToken ->
                 {
                     principalField = PrincipalIndexPath.LOGIN_KEY;
                     principalValue = authToken.getUsername();
-                    subjectVerifier = user -> true;
+                    subjectVerifier = _ -> true;
                 }
                 case VerifiedEmailAuthToken authToken ->
                 {
                     principalField = PrincipalIndexPath.EMAIL_KEY;
                     principalValue = authToken.getEmail();
-                    subjectVerifier = user -> true;
+                    subjectVerifier = _ -> true;
                 }
-                default -> throw new AuthenticationException( "Authentication token not supported: " + token.getClass() );
             }
             return findUserAndVerify( () -> findPrincipalByField( principalField, principalValue, token.getIdProvider() ),
                                       subjectVerifier );
         } );
     }
 
-    private AuthenticationInfo findUserAndVerify( final Supplier<User> findUser, final Function<User, Boolean> verifier )
+    private boolean verifyUserPassword( final @Nullable User user, @NonNull String password )
+    {
+        return passwordEncoderFactory.validatorFor( user != null ? user.getAuthenticationHash() : null )
+            .validate( password.toCharArray() ) && user != null && !user.isDisabled();
+    }
+
+    private AuthenticationInfo findUserAndVerify( final Supplier<User> findUser, final Predicate<@Nullable User> verifier )
     {
         final User user = findUser.get();
-        if ( user != null && !user.isDisabled() && verifier.apply( user ) )
+        if ( verifier.test( user ) )
         {
             return createAuthInfo( user );
         }
@@ -474,7 +471,6 @@ public final class SecurityServiceImpl
         Preconditions.checkArgument( key.isUser(), "Expected principal key of type User" );
 
         return callWithContext( () -> {
-
             final Node node = callWithContext( () -> this.nodeService.getByPath( key.toPath() ) );
             if ( node == null )
             {
@@ -483,7 +479,7 @@ public final class SecurityServiceImpl
 
             final User user = PrincipalNodeTranslator.userFromNode( node );
 
-            final String authenticationHash = password != null ? this.passwordEncoder.encodePassword( password ) : null;
+            final String authenticationHash = password != null ? this.passwordEncoderFactory.defaultEncoder().encode( password.toCharArray()) : null;
 
             final User userToUpdate = User.create( user ).authenticationHash( authenticationHash ).build();
 

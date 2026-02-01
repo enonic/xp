@@ -39,6 +39,7 @@ import com.enonic.xp.core.impl.media.MediaInfoServiceImpl;
 import com.enonic.xp.core.impl.project.ProjectConfig;
 import com.enonic.xp.core.impl.project.ProjectServiceImpl;
 import com.enonic.xp.core.impl.schema.content.ContentTypeServiceImpl;
+import com.enonic.xp.core.impl.security.PasswordEncoderFactory;
 import com.enonic.xp.core.impl.security.SecurityAuditLogSupportImpl;
 import com.enonic.xp.core.impl.security.SecurityConfig;
 import com.enonic.xp.core.impl.security.SecurityInitializer;
@@ -193,7 +194,8 @@ public abstract class AbstractContentSynchronizerTest
             final SecurityAuditLogSupportImpl securityAuditLogSupport = new SecurityAuditLogSupportImpl( auditLogService );
             securityAuditLogSupport.activate( securityConfig );
 
-            final SecurityServiceImpl securityService = new SecurityServiceImpl( this.nodeService, securityAuditLogSupport );
+            final SecurityServiceImpl securityService =
+                new SecurityServiceImpl( this.nodeService, securityAuditLogSupport, new PasswordEncoderFactory() );
 
             SecurityInitializer.create()
                 .setIndexService( indexService )

@@ -17,6 +17,7 @@ import com.enonic.xp.core.impl.event.EventPublisherImpl;
 import com.enonic.xp.core.impl.issue.IssueServiceImpl;
 import com.enonic.xp.core.impl.project.ProjectConfig;
 import com.enonic.xp.core.impl.project.ProjectServiceImpl;
+import com.enonic.xp.core.impl.security.PasswordEncoderFactory;
 import com.enonic.xp.core.impl.security.SecurityAuditLogSupportImpl;
 import com.enonic.xp.core.impl.security.SecurityConfig;
 import com.enonic.xp.core.impl.security.SecurityInitializer;
@@ -62,15 +63,13 @@ public abstract class AbstractIssueServiceTest
     public static final User TEST_DEFAULT_USER =
         User.create().key( PrincipalKey.ofUser( IdProviderKey.system(), "test-user" ) ).login( "test-user" ).build();
 
-    public static final AuthenticationInfo TEST_DEFAULT_USER_AUTHINFO = AuthenticationInfo.create().
-        principals( RoleKeys.AUTHENTICATED ).
-        principals( RoleKeys.CONTENT_MANAGER_ADMIN ).
-        user( TEST_DEFAULT_USER ).
-        build();
+    public static final AuthenticationInfo TEST_DEFAULT_USER_AUTHINFO = AuthenticationInfo.create()
+        .principals( RoleKeys.AUTHENTICATED )
+        .principals( RoleKeys.CONTENT_MANAGER_ADMIN )
+        .user( TEST_DEFAULT_USER )
+        .build();
 
-    protected static final Branch WS_DEFAULT = Branch.create().
-        value( "draft" ).
-        build();
+    protected static final Branch WS_DEFAULT = Branch.create().value( "draft" ).build();
 
     protected IssueServiceImpl issueService;
 
@@ -87,11 +86,8 @@ public abstract class AbstractIssueServiceTest
 
         executorService = Executors.newSingleThreadExecutor();
 
-        final Context ctx = ContextBuilder.create().
-            branch( WS_DEFAULT ).
-            repositoryId( TEST_REPO_ID ).
-            authInfo( TEST_DEFAULT_USER_AUTHINFO ).
-            build();
+        final Context ctx =
+            ContextBuilder.create().branch( WS_DEFAULT ).repositoryId( TEST_REPO_ID ).authInfo( TEST_DEFAULT_USER_AUTHINFO ).build();
 
         initialContext = ContextAccessor.current();
         ContextAccessorSupport.getInstance().set( ctx );
@@ -135,22 +131,23 @@ public abstract class AbstractIssueServiceTest
 
         final RepositoryServiceImpl repositoryService =
             new RepositoryServiceImpl( repositoryEntryService, indexServiceInternal, nodeRepositoryService, storageService, searchService );
-        SystemRepoInitializer.create().
-            setIndexServiceInternal( indexServiceInternal ).
-            setRepositoryService( repositoryService ).
-            setNodeStorageService( storageService ).
-            build().
-            initialize();
+        SystemRepoInitializer.create()
+            .setIndexServiceInternal( indexServiceInternal )
+            .setRepositoryService( repositoryService )
+            .setNodeStorageService( storageService )
+            .build()
+            .initialize();
 
-        nodeService = new NodeServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService,
-                                           repositoryService );
+        nodeService =
+            new NodeServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService, repositoryService );
 
         issueService.setNodeService( nodeService );
 
         final SecurityAuditLogSupportImpl securityAuditLogSupport = new SecurityAuditLogSupportImpl( mock( AuditLogService.class ) );
         securityAuditLogSupport.activate( mock( SecurityConfig.class ) );
 
-        final SecurityServiceImpl securityService = new SecurityServiceImpl( nodeService, securityAuditLogSupport );
+        final SecurityServiceImpl securityService =
+            new SecurityServiceImpl( nodeService, securityAuditLogSupport, new PasswordEncoderFactory() );
         SecurityInitializer.create()
             .setIndexService( indexService )
             .setSecurityService( securityService )

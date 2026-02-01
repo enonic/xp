@@ -11,6 +11,7 @@ import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.audit.config.AuditLogConfig;
+import com.enonic.xp.core.impl.security.PasswordEncoderFactory;
 import com.enonic.xp.core.impl.security.SecurityAuditLogSupportImpl;
 import com.enonic.xp.core.impl.security.SecurityConfig;
 import com.enonic.xp.core.impl.security.SecurityInitializer;
@@ -156,7 +157,7 @@ class SecurityServiceImplTest
         SecurityAuditLogSupportImpl securityAuditLogSupport = new SecurityAuditLogSupportImpl( auditLogService );
         securityAuditLogSupport.activate( securityConfig );
 
-        securityService = new SecurityServiceImpl( this.nodeService, securityAuditLogSupport );
+        securityService = new SecurityServiceImpl( this.nodeService, securityAuditLogSupport, new PasswordEncoderFactory() );
 
         runAsAdmin( () -> SecurityInitializer.create()
             .setIndexService( indexService )
