@@ -2,10 +2,8 @@ package com.enonic.xp.core.impl.security;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.security.SecureRandom;
 import java.time.Clock;
 import java.time.Instant;
-import java.util.HexFormat;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
@@ -123,7 +121,7 @@ public final class SecurityServiceImpl
 
     private String suPasswordHashing;
 
-    private String suPasswordValue;
+    private byte[] suPasswordValue;
 
     public SecurityServiceImpl( final NodeService nodeService, final SecurityAuditLogSupport securityAuditLogSupport,
                                 PasswordEncoderFactory passwordEncoderFactory )
@@ -144,7 +142,8 @@ public final class SecurityServiceImpl
             {
                 this.suPasswordHashing = suPasswordMatcher.group( 1 );
                 this.suPasswordHashing = this.suPasswordHashing == null ? null : this.suPasswordHashing.toLowerCase();
-                this.suPasswordValue = suPasswordMatcher.group( 2 );
+                this.suPasswordValue =
+                    Optional.ofNullable( suPasswordMatcher.group( 2 ) ).map( s -> s.getBytes( StandardCharsets.UTF_8 ) ).orElse( null );
             }
         }
     }
@@ -337,8 +336,8 @@ public final class SecurityServiceImpl
     private AuthenticationInfo authenticateSu( final UsernamePasswordAuthToken token )
     {
         PasswordEncoderFactory.addRandomDelay();
-        final String hashedTokenPassword = hashSuPassword( token.getPassword() );
-        if ( this.suPasswordValue.equals( hashedTokenPassword ) )
+        final byte[] hashedTokenPassword = hashSuPassword( token.getPassword() );
+        if ( MessageDigest.isEqual( hashedTokenPassword, this.suPasswordValue ) )
         {
             final User admin = User.create()
                 .key( PrincipalKey.ofSuperUser() )
@@ -356,11 +355,11 @@ public final class SecurityServiceImpl
         }
     }
 
-    private String hashSuPassword( final String plainPassword )
+    private byte[] hashSuPassword( final String plainPassword )
     {
         if ( this.suPasswordHashing == null )
         {
-            return plainPassword;
+            return plainPassword.getBytes( StandardCharsets.UTF_8 );
         }
 
         final MessageDigest hashFunction = switch ( this.suPasswordHashing )
@@ -370,7 +369,7 @@ public final class SecurityServiceImpl
             default -> throw new IllegalArgumentException( "Incorrect type of encryption: " + this.suPasswordHashing );
         };
 
-        return HexFormat.of().formatHex( hashFunction.digest( plainPassword.getBytes( StandardCharsets.UTF_8 ) ) );
+        return hashFunction.digest( plainPassword.getBytes( StandardCharsets.UTF_8 ) );
     }
 
     private AuthenticationInfo doAuthenticate( final AuthenticationToken token )
@@ -418,8 +417,10 @@ public final class SecurityServiceImpl
 
     private boolean verifyUserPassword( final @Nullable User user, @NonNull String password )
     {
-        return passwordEncoderFactory.validatorFor( user != null ? user.getAuthenticationHash() : null )
-            .validate( password.toCharArray() ) && user != null && !user.isDisabled();
+        // order matters. First verify the password, then check for non-existing/disabled user to avoid timing attacks
+        return
+            passwordEncoderFactory.validatorFor( user != null ? user.getAuthenticationHash() : null ).validate( password.toCharArray() ) &&
+                user != null && !user.isDisabled();
     }
 
     private AuthenticationInfo findUserAndVerify( final Supplier<User> findUser, final Predicate<@Nullable User> verifier )
@@ -479,7 +480,8 @@ public final class SecurityServiceImpl
 
             final User user = PrincipalNodeTranslator.userFromNode( node );
 
-            final String authenticationHash = password != null ? this.passwordEncoderFactory.defaultEncoder().encode( password.toCharArray()) : null;
+            final String authenticationHash =
+                password != null ? this.passwordEncoderFactory.defaultEncoder().encode( password.toCharArray() ) : null;
 
             final User userToUpdate = User.create( user ).authenticationHash( authenticationHash ).build();
 

@@ -10,8 +10,7 @@ import java.util.regex.Pattern;
 final class PHCParser
 {
     private static final Pattern PHC_PATTERN = Pattern.compile(
-        "^\\$" + "(?<id>[^$]+)" + "(?:\\$(?<version>v=\\d+))?" + "(?:\\$(?<params>[^$=]+=[^$]+(?:,[^$=]+=[^$]+)*))?" +
-            "(?:\\$(?<salt>[^$=]+))?" + "(?:\\$(?<hash>[^$=]+))?" + "\\$?$" );
+        "^\\$(?<id>[^$]+)(?:\\$(?<version>v=\\d+))?(?:\\$(?<params>[^$]+=[^$]*))?(?:\\$(?<salt>[^$=]+)?(?:\\$(?<hash>[^$=]+))?)?$" );
 
     private PHCParser()
     {
