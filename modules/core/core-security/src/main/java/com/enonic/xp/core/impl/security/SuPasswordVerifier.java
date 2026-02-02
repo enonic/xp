@@ -30,9 +30,12 @@ public class SuPasswordVerifier
 
     private final Supplier<MessageDigest> digestSupplier;
 
-    String encodedPassword = System.getProperty( SU_PASSWORD_PROPERTY_KEY, "" );
-
     public SuPasswordVerifier()
+    {
+        this( System.getProperty( SU_PASSWORD_PROPERTY_KEY, "" ) );
+    }
+
+    SuPasswordVerifier( final String encodedPassword )
     {
         if ( encodedPassword.isEmpty() )
         {

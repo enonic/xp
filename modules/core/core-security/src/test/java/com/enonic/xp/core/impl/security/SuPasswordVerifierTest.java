@@ -20,8 +20,7 @@ class SuPasswordVerifierTest
         final char[] password = "testpassword".toCharArray();
         final String hash = computeSha256Hash( password );
 
-        final SuPasswordVerifier verifier = new SuPasswordVerifier();
-        verifier.encodedPassword = "{sha256}" + hash;
+        final SuPasswordVerifier verifier = new SuPasswordVerifier( "{sha256}" + hash );
 
         assertTrue( verifier.verify( "testpassword".toCharArray(), null ) );
     }
@@ -32,8 +31,7 @@ class SuPasswordVerifierTest
         final char[] password = "testpassword".toCharArray();
         final String hash = computeSha256Hash( password );
 
-        final SuPasswordVerifier verifier = new SuPasswordVerifier();
-        verifier.encodedPassword = "{sha256}" + hash;
+        final SuPasswordVerifier verifier = new SuPasswordVerifier( "{sha256}" + hash );
 
         assertFalse( verifier.verify( "wrongpassword".toCharArray(), null ) );
     }
@@ -44,8 +42,7 @@ class SuPasswordVerifierTest
         final char[] password = "testpassword".toCharArray();
         final String hash = computeSha512Hash( password );
 
-        final SuPasswordVerifier verifier = new SuPasswordVerifier();
-        verifier.encodedPassword = "{sha512}" + hash;
+        final SuPasswordVerifier verifier = new SuPasswordVerifier( "{sha512}" + hash );
 
         assertTrue( verifier.verify( "testpassword".toCharArray(), null ) );
     }
@@ -56,8 +53,7 @@ class SuPasswordVerifierTest
         final char[] password = "testpassword".toCharArray();
         final String hash = computeSha512Hash( password );
 
-        final SuPasswordVerifier verifier = new SuPasswordVerifier();
-        verifier.encodedPassword = "{sha512}" + hash;
+        final SuPasswordVerifier verifier = new SuPasswordVerifier( "{sha512}" + hash );
 
         assertFalse( verifier.verify( "wrongpassword".toCharArray(), null ) );
     }
@@ -65,8 +61,7 @@ class SuPasswordVerifierTest
     @Test
     void verify_empty_property_fails()
     {
-        final SuPasswordVerifier verifier = new SuPasswordVerifier();
-        verifier.encodedPassword = "";
+        final SuPasswordVerifier verifier = new SuPasswordVerifier( "" );
 
         assertFalse( verifier.verify( "anypassword".toCharArray(), null ) );
     }
@@ -74,8 +69,7 @@ class SuPasswordVerifierTest
     @Test
     void verify_invalid_format_fails()
     {
-        final SuPasswordVerifier verifier = new SuPasswordVerifier();
-        verifier.encodedPassword = "invalidformat";
+        final SuPasswordVerifier verifier = new SuPasswordVerifier( "invalidformat" );
 
         assertFalse( verifier.verify( "anypassword".toCharArray(), null ) );
     }
@@ -86,8 +80,7 @@ class SuPasswordVerifierTest
         final char[] password = "TestPassword".toCharArray();
         final String hash = computeSha256Hash( password );
 
-        final SuPasswordVerifier verifier = new SuPasswordVerifier();
-        verifier.encodedPassword = "{sha256}" + hash;
+        final SuPasswordVerifier verifier = new SuPasswordVerifier( "{sha256}" + hash );
 
         assertTrue( verifier.verify( "TestPassword".toCharArray(), null ) );
         assertFalse( verifier.verify( "testpassword".toCharArray(), null ) );
