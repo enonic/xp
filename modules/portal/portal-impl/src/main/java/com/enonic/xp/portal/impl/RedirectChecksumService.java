@@ -4,8 +4,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.Security;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.HexFormat;
 import java.util.function.Supplier;
@@ -73,7 +71,7 @@ public class RedirectChecksumService
             throw new IllegalStateException( e );
         }
 
-        return HexFormat.of().formatHex( mac.doFinal( redirect.getBytes( StandardCharsets.UTF_8 ) ), 0,20  );
+        return HexFormat.of().formatHex( mac.doFinal( redirect.getBytes( StandardCharsets.UTF_8 ) ), 0, 20 );
     }
 
     public boolean verifyChecksum( final String redirect, final String checksum )
@@ -90,10 +88,5 @@ public class RedirectChecksumService
             .repositoryId( SystemConstants.SYSTEM_REPO_ID )
             .branch( SystemConstants.BRANCH_SYSTEM )
             .build();
-    }
-
-    static void main()
-    {
-        System.out.println(Security.getAlgorithms( "MessageDigest"));
     }
 }

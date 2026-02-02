@@ -12,11 +12,21 @@ public final class PasswordSecurityService
 {
     private static final PBKDF2Encoder LEGACY_VERIFIER = new PBKDF2Encoder();
 
-    static final SuPasswordVerifier SU_PASSWORD_VERIFIER = new SuPasswordVerifier();
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+
+    private final SuPasswordVerifier suPasswordVerifier;
 
     private volatile PHCEncoder phcEncoder;
 
-    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+    public PasswordSecurityService()
+    {
+        this( new SuPasswordVerifier() );
+    }
+
+    public PasswordSecurityService( final SuPasswordVerifier suPasswordVerifier )
+    {
+        this.suPasswordVerifier = suPasswordVerifier;
+    }
 
     @Activate
     @Modified
@@ -34,7 +44,7 @@ public final class PasswordSecurityService
     {
         return plainPassword -> {
             addRandomDelay();
-            return SU_PASSWORD_VERIFIER.verify( plainPassword, null );
+            return suPasswordVerifier.verify( plainPassword, null );
         };
     }
 
@@ -53,7 +63,7 @@ public final class PasswordSecurityService
         }
     }
 
-    static void addRandomDelay()
+    private static void addRandomDelay()
     {
         // legacy validators use random delay before verifying password
         try
