@@ -30,11 +30,11 @@ final class PHCEncoder
 
     private final int saltLength;
 
-    private final SecureRandom secureRandom = new SecureRandom();
+    private final SecureRandom secureRandom;
 
     private final Supplier<String> dummyHash = Suppliers.memoize( () -> encode( "__dummy__".toCharArray() ) );
 
-    PHCEncoder( final String policy )
+    PHCEncoder( final String policy, final SecureRandom secureRandom )
     {
         var policyData = PHCParser.parse( policy );
         if ( !PHC_ID.equals( policyData.id() ) )
@@ -44,13 +44,14 @@ final class PHCEncoder
         this.keyLength = policyData.paramInt( "l" );
         this.iterations = policyData.paramInt( "i" );
         this.saltLength = policyData.paramInt( "slen" );
+        this.secureRandom = secureRandom;
     }
 
     @Override
     public String encode( final char[] plainPassword )
     {
-        final byte[] salt = new byte[saltLength];
-        secureRandom.nextBytes( salt );
+        final byte[] salt = new byte[this.saltLength];
+        this.secureRandom.nextBytes( salt );
 
         final byte[] hash = hashPassword( plainPassword, salt, this.iterations, this.keyLength );
 
@@ -73,7 +74,7 @@ final class PHCEncoder
 
         final byte[] generatedHash = hashPassword( plainPassword, phcData.salt(), iterations, keyLength );
 
-        // order matters. First check the hash, then check for empty password to avoid timing attacks
+        // Order matters. First check the hash, then check for empty password to avoid timing attacks
         return MessageDigest.isEqual( phcData.hash(), generatedHash ) && !Strings.isNullOrEmpty( phc );
     }
 

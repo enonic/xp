@@ -10,12 +10,9 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.locks.Lock;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
-
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.Striped;
 
@@ -166,7 +163,7 @@ public final class SecurityServiceImpl
         final PrincipalKey from = relationship.getFrom();
         if ( FORBIDDEN_FROM_RELATIONSHIP.contains( from ) )
         {
-            throw new IllegalArgumentException( "Invalid 'from' value in relationship: " + from.toString() );
+            throw new IllegalArgumentException( "Invalid 'from' value in relationship: " + from );
         }
         callWithContext( () -> {
             final UpdateNodeParams updateNodeParams = PrincipalNodeTranslator.addRelationshipToUpdateNodeParams( relationship );
@@ -321,14 +318,14 @@ public final class SecurityServiceImpl
         return callAsAuthenticated( () -> {
             final IndexPath principalField;
             final String principalValue;
-            final Predicate<User> subjectVerifier;
+            final Predicate<User> credentialsVerifier;
             switch ( token )
             {
                 case PasswordAuthToken authToken ->
                 {
                     if ( authToken.getPassword().isEmpty() )
                     {
-                        // fail fast. Empty passwords are not worth checking
+                        // Empty passwords are not worth checking
                         return AuthenticationInfo.unAuthenticated();
                     }
                     switch ( authToken )
@@ -344,51 +341,39 @@ public final class SecurityServiceImpl
                             principalValue = emailPasswordAuthToken.getEmail();
                         }
                     }
-                    subjectVerifier = user -> verifyUserPassword( user, authToken.getPassword() );
+                    credentialsVerifier = verifyUserPassword( authToken.getPassword() );
                 }
                 case VerifiedUsernameAuthToken authToken ->
                 {
                     principalField = PrincipalIndexPath.LOGIN_KEY;
                     principalValue = authToken.getUsername();
-                    subjectVerifier = this::verifyUserActive;
+                    credentialsVerifier = _ -> true;
                 }
                 case VerifiedEmailAuthToken authToken ->
                 {
                     principalField = PrincipalIndexPath.EMAIL_KEY;
                     principalValue = authToken.getEmail();
-                    subjectVerifier = this::verifyUserActive;
+                    credentialsVerifier = _ -> true;
                 }
             }
-            return findUserAndVerify( () -> findPrincipalByField( principalField, principalValue, token.getIdProvider() ),
-                                      subjectVerifier );
+            final User user = findPrincipalByField( principalField, principalValue, token.getIdProvider() );
+
+            // Order matters. First verify the password, then check for non-existing/disabled user to avoid timing attacks
+            if ( credentialsVerifier.test( user ) && user != null && !user.isDisabled() )
+            {
+                return createAuthInfo( user );
+            }
+            else
+            {
+                return AuthenticationInfo.unAuthenticated();
+            }
         } );
     }
 
-    private boolean verifyUserPassword( final @Nullable User user, @NonNull String password )
+    private Predicate<User> verifyUserPassword( final String password )
     {
-        // order matters. First verify the password, then check for non-existing/disabled user to avoid timing attacks
-        return
-            passwordSecurityService.validatorFor( user != null ? user.getAuthenticationHash() : null ).validate( password.toCharArray() ) &&
-                verifyUserActive( user );
-    }
-
-    private boolean verifyUserActive( final @Nullable User user )
-    {
-        return user != null && !user.isDisabled();
-    }
-
-    private AuthenticationInfo findUserAndVerify( final Supplier<User> findUser, final Predicate<@Nullable User> verifier )
-    {
-        final User user = findUser.get();
-        // verification should be run regardless of user found or not to mitigate timing attacks
-        if ( verifier.test( user ) )
-        {
-            return createAuthInfo( user );
-        }
-        else
-        {
-            return AuthenticationInfo.unAuthenticated();
-        }
+        return user -> passwordSecurityService.validatorFor( Strings.nullToEmpty( user != null ? user.getAuthenticationHash() : "" ) )
+            .validate( password.toCharArray() );
     }
 
     private AuthenticationInfo createAuthInfo( final User user )

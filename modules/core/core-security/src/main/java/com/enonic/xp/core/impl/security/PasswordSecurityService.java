@@ -2,18 +2,17 @@ package com.enonic.xp.core.impl.security;
 
 import java.security.SecureRandom;
 
+import org.jspecify.annotations.NonNull;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
-
-import com.google.common.base.Strings;
 
 @Component(configurationPid = "com.enonic.xp.security", service = PasswordSecurityService.class)
 public final class PasswordSecurityService
 {
     private static final PBKDF2Encoder LEGACY_VERIFIER = new PBKDF2Encoder();
 
-    private static final SuPasswordVerifier SU_PASSWORD_VERIFIER = new SuPasswordVerifier();
+    static final SuPasswordVerifier SU_PASSWORD_VERIFIER = new SuPasswordVerifier();
 
     private volatile PHCEncoder phcEncoder;
 
@@ -23,7 +22,7 @@ public final class PasswordSecurityService
     @Modified
     public void activate( final SecurityConfig config )
     {
-        this.phcEncoder = new PHCEncoder( config.password_policy() );
+        this.phcEncoder = new PHCEncoder( config.password_policy(), SECURE_RANDOM );
     }
 
     public PasswordEncoder defaultEncoder()
@@ -31,22 +30,26 @@ public final class PasswordSecurityService
         return phcEncoder;
     }
 
-    public PasswordValidator suPasswordValidator() {
+    public PasswordValidator suPasswordValidator()
+    {
+        return plainPassword -> {
             addRandomDelay();
-            return plainPassword -> SU_PASSWORD_VERIFIER.verify( plainPassword, null );
+            return SU_PASSWORD_VERIFIER.verify( plainPassword, null );
+        };
     }
 
-    public PasswordValidator validatorFor( final String authenticationHash )
+    public PasswordValidator validatorFor( final @NonNull String authHash )
     {
-        String authHash = Strings.nullToEmpty( authenticationHash );
         if ( authHash.isEmpty() || authHash.startsWith( "$" ) )
         {
             return plainPassword -> phcEncoder.verify( plainPassword, authHash );
         }
         else
         {
-            addRandomDelay();
-            return plainPassword -> LEGACY_VERIFIER.verify( plainPassword, authHash );
+            return plainPassword -> {
+                addRandomDelay();
+                return LEGACY_VERIFIER.verify( plainPassword, authHash );
+            };
         }
     }
 
@@ -59,7 +62,7 @@ public final class PasswordSecurityService
         }
         catch ( InterruptedException e )
         {
-            // Thread interrupted during sleep, nothing to do
+            Thread.currentThread().interrupt();
         }
     }
 }

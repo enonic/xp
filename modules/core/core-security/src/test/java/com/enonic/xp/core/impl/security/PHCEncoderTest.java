@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.security;
 
+import java.security.SecureRandom;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +16,7 @@ class PHCEncoderTest
     @BeforeEach
     void setUp()
     {
-        this.encoder = new PHCEncoder( "$pbkdf2-sha512$i=210000,l=64,slen=16" );
+        this.encoder = new PHCEncoder( "$pbkdf2-sha512$i=210000,l=64,slen=16", new SecureRandom() );
     }
 
     @Test
@@ -32,7 +34,8 @@ class PHCEncoderTest
     @Test
     void verify_preexisting()
     {
-        final String preexistingHash = "$pbkdf2-sha512$i=210000,l=64$S/z9ekKo6im8UkB8wouyqw$hPnWhSiQjKYZzx8fcB8hgk66SNxLKq3wqIXWEcxsMgflu8hmFHRkjwzCUSocQhPnNBITDWHiii3rbdYO43Mu/w";
+        final String preexistingHash =
+            "$pbkdf2-sha512$i=210000,l=64$S/z9ekKo6im8UkB8wouyqw$hPnWhSiQjKYZzx8fcB8hgk66SNxLKq3wqIXWEcxsMgflu8hmFHRkjwzCUSocQhPnNBITDWHiii3rbdYO43Mu/w";
 
         assertTrue( encoder.verify( "pass123".toCharArray(), preexistingHash ) );
         assertFalse( encoder.verify( "wrongpassword".toCharArray(), preexistingHash ) );

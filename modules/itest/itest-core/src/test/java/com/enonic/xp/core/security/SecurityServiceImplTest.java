@@ -725,6 +725,27 @@ class SecurityServiceImplTest
     }
 
     @Test
+    void testAuthenticateByUserEmptyPwd()
+    {
+        runAsAdmin( () -> {
+            final CreateUserParams createUser = CreateUserParams.create()
+                .userKey( PrincipalKey.ofUser( SYSTEM, "user1" ) )
+                .displayName( "User 1" )
+                .email( "user1@enonic.com" )
+                .login( "user1" )
+                .password( "runar" )
+                .build();
+
+            securityService.createUser( createUser );
+
+            final UsernamePasswordAuthToken authToken = new UsernamePasswordAuthToken( SYSTEM, "User1", "" );
+
+            final AuthenticationInfo authInfo = securityService.authenticate( authToken );
+            assertFalse( authInfo.isAuthenticated() );
+        } );
+    }
+
+    @Test
     void testAuthenticateByEmail()
     {
         runAsAdmin( () -> {
@@ -903,7 +924,7 @@ class SecurityServiceImplTest
                 .description( "id provider description" )
                 .build();
 
-            final IdProvider idProviderCreated = securityService.createIdProvider( createIdProvider );
+            securityService.createIdProvider( createIdProvider );
 
             securityService.deleteIdProvider( IdProviderKey.from( "enonic" ) );
 

@@ -12,7 +12,6 @@ import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Strings;
 import com.google.common.base.Supplier;
 
 import com.enonic.xp.core.internal.security.MessageDigests;
@@ -31,18 +30,19 @@ public class SuPasswordVerifier
 
     private final Supplier<MessageDigest> digestSupplier;
 
+    String encodedPassword = System.getProperty( SU_PASSWORD_PROPERTY_KEY, "" );
+
     public SuPasswordVerifier()
     {
-        String encodedPassword = System.getProperty( SU_PASSWORD_PROPERTY_KEY, "" );
-        if ( Strings.isNullOrEmpty( encodedPassword ) )
+        if ( encodedPassword.isEmpty() )
         {
             this.correctHash = null;
             this.digestSupplier = () -> null;
+            LOG.warn( SU_PASSWORD_PROPERTY_KEY + " is not set" );
             return;
-
         }
 
-        final Matcher suPasswordMatcher = SU_PASSWORD_PATTERN.matcher( Strings.nullToEmpty( encodedPassword ) );
+        final Matcher suPasswordMatcher = SU_PASSWORD_PATTERN.matcher( encodedPassword );
         if ( suPasswordMatcher.find() )
         {
             final String alg = suPasswordMatcher.group( 1 );
@@ -68,11 +68,11 @@ public class SuPasswordVerifier
     {
         if ( this.correctHash == null )
         {
-            // fail fast since there is no benefit to hide from timing attacks that su password is not set
+            // Fail fast since there is no benefit to hide from timing attacks that su password is not set
             return false;
         }
         byte[] generatedHash = hashPassword( plainPassword );
-        return MessageDigest.isEqual( correctHash, generatedHash );
+        return MessageDigest.isEqual( this.correctHash, generatedHash );
     }
 
     private byte[] hashPassword( final char[] plainPassword )
