@@ -8,10 +8,12 @@ import org.osgi.service.component.annotations.Modified;
 
 import com.google.common.base.Strings;
 
-@Component(configurationPid = "com.enonic.xp.security", service = PasswordEncoderFactory.class)
-public final class PasswordEncoderFactory
+@Component(configurationPid = "com.enonic.xp.security", service = PasswordSecurityService.class)
+public final class PasswordSecurityService
 {
     private static final PBKDF2Encoder LEGACY_VERIFIER = new PBKDF2Encoder();
+
+    private static final SuPasswordVerifier SU_PASSWORD_VERIFIER = new SuPasswordVerifier();
 
     private volatile PHCEncoder phcEncoder;
 
@@ -27,6 +29,11 @@ public final class PasswordEncoderFactory
     public PasswordEncoder defaultEncoder()
     {
         return phcEncoder;
+    }
+
+    public PasswordValidator suPasswordValidator() {
+            addRandomDelay();
+            return plainPassword -> SU_PASSWORD_VERIFIER.verify( plainPassword, null );
     }
 
     public PasswordValidator validatorFor( final String authenticationHash )
@@ -45,6 +52,7 @@ public final class PasswordEncoderFactory
 
     static void addRandomDelay()
     {
+        // legacy validators use random delay before verifying password
         try
         {
             Thread.sleep( SECURE_RANDOM.nextInt( 130 ) + 20 );

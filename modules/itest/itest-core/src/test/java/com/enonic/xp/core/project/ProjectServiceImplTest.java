@@ -27,7 +27,7 @@ import com.enonic.xp.core.impl.project.ProjectCircleDependencyException;
 import com.enonic.xp.core.impl.project.ProjectConfig;
 import com.enonic.xp.core.impl.project.ProjectMultipleParentsException;
 import com.enonic.xp.core.impl.project.ProjectServiceImpl;
-import com.enonic.xp.core.impl.security.PasswordEncoderFactory;
+import com.enonic.xp.core.impl.security.PasswordSecurityService;
 import com.enonic.xp.core.impl.security.SecurityAuditLogSupportImpl;
 import com.enonic.xp.core.impl.security.SecurityConfig;
 import com.enonic.xp.core.impl.security.SecurityInitializer;
@@ -80,6 +80,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 class ProjectServiceImplTest
     extends AbstractNodeTest
@@ -174,8 +175,8 @@ class ProjectServiceImplTest
     @BeforeEach
     void setUp()
     {
-        final SecurityConfig securityConfig = mock( SecurityConfig.class );
-        when( securityConfig.auditlog_enabled() ).thenReturn( true );
+        final SecurityConfig securityConfig = mock( SecurityConfig.class, withSettings().stubOnly()
+            .defaultAnswer( invocationOnMock -> invocationOnMock.getMethod().getDefaultValue() ) );
 
         projectConfig = mock( ProjectConfig.class );
 
@@ -184,7 +185,10 @@ class ProjectServiceImplTest
         final SecurityAuditLogSupportImpl securityAuditLogSupport = new SecurityAuditLogSupportImpl( auditLogService );
         securityAuditLogSupport.activate( securityConfig );
 
-        securityService = new SecurityServiceImpl( this.nodeService, securityAuditLogSupport, new PasswordEncoderFactory() );
+        final PasswordSecurityService passwordSecurityService = new PasswordSecurityService();
+        passwordSecurityService.activate( securityConfig );
+
+        securityService = new SecurityServiceImpl( this.nodeService, securityAuditLogSupport, passwordSecurityService );
 
         adminContext().runWith( () -> {
             SecurityInitializer.create()

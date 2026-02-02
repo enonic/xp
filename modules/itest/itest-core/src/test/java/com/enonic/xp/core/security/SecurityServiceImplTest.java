@@ -11,7 +11,7 @@ import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.audit.config.AuditLogConfig;
-import com.enonic.xp.core.impl.security.PasswordEncoderFactory;
+import com.enonic.xp.core.impl.security.PasswordSecurityService;
 import com.enonic.xp.core.impl.security.SecurityAuditLogSupportImpl;
 import com.enonic.xp.core.impl.security.SecurityConfig;
 import com.enonic.xp.core.impl.security.SecurityInitializer;
@@ -151,13 +151,16 @@ class SecurityServiceImplTest
 
         AuditLogService auditLogService = mock( AuditLogService.class, withSettings().stubOnly() );
 
-        SecurityConfig securityConfig = mock( SecurityConfig.class );
-        Mockito.when( securityConfig.auditlog_enabled() ).thenReturn( true );
+        SecurityConfig securityConfig = mock( SecurityConfig.class, withSettings().stubOnly()
+            .defaultAnswer( invocationOnMock -> invocationOnMock.getMethod().getDefaultValue() ) );
 
         SecurityAuditLogSupportImpl securityAuditLogSupport = new SecurityAuditLogSupportImpl( auditLogService );
         securityAuditLogSupport.activate( securityConfig );
 
-        securityService = new SecurityServiceImpl( this.nodeService, securityAuditLogSupport, new PasswordEncoderFactory() );
+        final PasswordSecurityService passwordSecurityService = new PasswordSecurityService();
+        passwordSecurityService.activate( securityConfig );
+
+        securityService = new SecurityServiceImpl( this.nodeService, securityAuditLogSupport, passwordSecurityService );
 
         runAsAdmin( () -> SecurityInitializer.create()
             .setIndexService( indexService )

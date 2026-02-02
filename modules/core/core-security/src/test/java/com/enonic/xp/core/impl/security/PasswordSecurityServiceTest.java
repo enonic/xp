@@ -8,15 +8,15 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
-class PasswordEncoderFactoryTest
+class PasswordSecurityServiceTest
 {
-    private PasswordEncoderFactory factory;
+    private PasswordSecurityService factory;
 
     @BeforeEach
     void setUp()
     {
         final SecurityConfig securityConfig = mock( SecurityConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
-        this.factory = new PasswordEncoderFactory();
+        this.factory = new PasswordSecurityService();
         this.factory.activate( securityConfig );
     }
 

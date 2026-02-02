@@ -1,7 +1,5 @@
 package com.enonic.xp.core.impl.security;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.LinkedHashSet;
@@ -13,8 +11,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.locks.Lock;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -26,7 +22,6 @@ import com.google.common.util.concurrent.Striped;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.core.internal.security.MessageDigests;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.index.IndexPath;
@@ -103,15 +98,11 @@ public final class SecurityServiceImpl
 {
     private static final Set<PrincipalKey> FORBIDDEN_FROM_RELATIONSHIP = Set.of( RoleKeys.EVERYONE, RoleKeys.AUTHENTICATED );
 
-    private static final String SU_PASSWORD_PROPERTY_KEY = "xp.suPassword";
-
-    private static final Pattern SU_PASSWORD_PATTERN = Pattern.compile( "(?:\\{(sha256|sha512)})?(\\S+)", Pattern.CASE_INSENSITIVE );
-
     private static final List<PrincipalKey> NON_REMOVABLE_PRINCIPLES = List.of( PrincipalKey.ofSuperUser(), RoleKeys.ADMIN );
 
     static Clock clock = Clock.systemUTC();
 
-    private final PasswordEncoderFactory passwordEncoderFactory;
+    private final PasswordSecurityService passwordSecurityService;
 
     private final Striped<Lock> userEmailLocks = Striped.lazyWeakLock( 100 );
 
@@ -119,33 +110,12 @@ public final class SecurityServiceImpl
 
     private final SecurityAuditLogSupport securityAuditLogSupport;
 
-    private String suPasswordHashing;
-
-    private byte[] suPasswordValue;
-
     public SecurityServiceImpl( final NodeService nodeService, final SecurityAuditLogSupport securityAuditLogSupport,
-                                PasswordEncoderFactory passwordEncoderFactory )
+                                PasswordSecurityService passwordSecurityService )
     {
         this.nodeService = nodeService;
         this.securityAuditLogSupport = securityAuditLogSupport;
-        this.passwordEncoderFactory = passwordEncoderFactory;
-        initializeSuPassword();
-    }
-
-    private void initializeSuPassword()
-    {
-        final String suPasswordPropertyValue = System.getProperty( SU_PASSWORD_PROPERTY_KEY, "" );
-        if ( !suPasswordPropertyValue.isEmpty() )
-        {
-            final Matcher suPasswordMatcher = SU_PASSWORD_PATTERN.matcher( suPasswordPropertyValue );
-            if ( suPasswordMatcher.find() )
-            {
-                this.suPasswordHashing = suPasswordMatcher.group( 1 );
-                this.suPasswordHashing = this.suPasswordHashing == null ? null : this.suPasswordHashing.toLowerCase();
-                this.suPasswordValue =
-                    Optional.ofNullable( suPasswordMatcher.group( 2 ) ).map( s -> s.getBytes( StandardCharsets.UTF_8 ) ).orElse( null );
-            }
-        }
+        this.passwordSecurityService = passwordSecurityService;
     }
 
     @Override
@@ -315,29 +285,20 @@ public final class SecurityServiceImpl
     @Override
     public AuthenticationInfo authenticate( final AuthenticationToken token )
     {
-        if ( isSuAuthenticationEnabled( token ) )
+        if ( token instanceof UsernamePasswordAuthToken usernamePasswordAuthToken &&
+            PrincipalKey.ofSuperUser().getIdProviderKey().equals( usernamePasswordAuthToken.getIdProvider() ) &&
+            PrincipalKey.ofSuperUser().getId().equals( usernamePasswordAuthToken.getUsername() ) )
         {
-            return authenticateSu( (UsernamePasswordAuthToken) token );
+            return authenticateSu( usernamePasswordAuthToken );
         }
 
         return doAuthenticate( token );
     }
 
-    private boolean isSuAuthenticationEnabled( final AuthenticationToken token )
+    private AuthenticationInfo authenticateSu( final UsernamePasswordAuthToken authToken )
     {
-        if ( this.suPasswordValue != null && token instanceof UsernamePasswordAuthToken usernamePasswordAuthToken )
-        {
-            return IdProviderKey.system().equals( usernamePasswordAuthToken.getIdProvider() ) &&
-                PrincipalKey.ofSuperUser().getId().equals( usernamePasswordAuthToken.getUsername() );
-        }
-        return false;
-    }
-
-    private AuthenticationInfo authenticateSu( final UsernamePasswordAuthToken token )
-    {
-        PasswordEncoderFactory.addRandomDelay();
-        final byte[] hashedTokenPassword = hashSuPassword( token.getPassword() );
-        if ( MessageDigest.isEqual( hashedTokenPassword, this.suPasswordValue ) )
+        if ( !authToken.getPassword().isEmpty() &&
+            passwordSecurityService.suPasswordValidator().validate( authToken.getPassword().toCharArray() ) )
         {
             final User admin = User.create()
                 .key( PrincipalKey.ofSuperUser() )
@@ -355,23 +316,6 @@ public final class SecurityServiceImpl
         }
     }
 
-    private byte[] hashSuPassword( final String plainPassword )
-    {
-        if ( this.suPasswordHashing == null )
-        {
-            return plainPassword.getBytes( StandardCharsets.UTF_8 );
-        }
-
-        final MessageDigest hashFunction = switch ( this.suPasswordHashing )
-        {
-            case "sha256" -> MessageDigests.sha256();
-            case "sha512" -> MessageDigests.sha512();
-            default -> throw new IllegalArgumentException( "Incorrect type of encryption: " + this.suPasswordHashing );
-        };
-
-        return hashFunction.digest( plainPassword.getBytes( StandardCharsets.UTF_8 ) );
-    }
-
     private AuthenticationInfo doAuthenticate( final AuthenticationToken token )
     {
         return callAsAuthenticated( () -> {
@@ -382,6 +326,11 @@ public final class SecurityServiceImpl
             {
                 case PasswordAuthToken authToken ->
                 {
+                    if ( authToken.getPassword().isEmpty() )
+                    {
+                        // fail fast. Empty passwords are not worth checking
+                        return AuthenticationInfo.unAuthenticated();
+                    }
                     switch ( authToken )
                     {
                         case UsernamePasswordAuthToken usernamePasswordAuthToken ->
@@ -401,13 +350,13 @@ public final class SecurityServiceImpl
                 {
                     principalField = PrincipalIndexPath.LOGIN_KEY;
                     principalValue = authToken.getUsername();
-                    subjectVerifier = _ -> true;
+                    subjectVerifier = this::verifyUserActive;
                 }
                 case VerifiedEmailAuthToken authToken ->
                 {
                     principalField = PrincipalIndexPath.EMAIL_KEY;
                     principalValue = authToken.getEmail();
-                    subjectVerifier = _ -> true;
+                    subjectVerifier = this::verifyUserActive;
                 }
             }
             return findUserAndVerify( () -> findPrincipalByField( principalField, principalValue, token.getIdProvider() ),
@@ -419,13 +368,19 @@ public final class SecurityServiceImpl
     {
         // order matters. First verify the password, then check for non-existing/disabled user to avoid timing attacks
         return
-            passwordEncoderFactory.validatorFor( user != null ? user.getAuthenticationHash() : null ).validate( password.toCharArray() ) &&
-                user != null && !user.isDisabled();
+            passwordSecurityService.validatorFor( user != null ? user.getAuthenticationHash() : null ).validate( password.toCharArray() ) &&
+                verifyUserActive( user );
+    }
+
+    private boolean verifyUserActive( final @Nullable User user )
+    {
+        return user != null && !user.isDisabled();
     }
 
     private AuthenticationInfo findUserAndVerify( final Supplier<User> findUser, final Predicate<@Nullable User> verifier )
     {
         final User user = findUser.get();
+        // verification should be run regardless of user found or not to mitigate timing attacks
         if ( verifier.test( user ) )
         {
             return createAuthInfo( user );
@@ -481,7 +436,7 @@ public final class SecurityServiceImpl
             final User user = PrincipalNodeTranslator.userFromNode( node );
 
             final String authenticationHash =
-                password != null ? this.passwordEncoderFactory.defaultEncoder().encode( password.toCharArray() ) : null;
+                password != null ? this.passwordSecurityService.defaultEncoder().encode( password.toCharArray() ) : null;
 
             final User userToUpdate = User.create( user ).authenticationHash( authenticationHash ).build();
 

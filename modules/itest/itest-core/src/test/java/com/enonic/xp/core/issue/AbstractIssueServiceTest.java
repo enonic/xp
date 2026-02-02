@@ -17,7 +17,7 @@ import com.enonic.xp.core.impl.event.EventPublisherImpl;
 import com.enonic.xp.core.impl.issue.IssueServiceImpl;
 import com.enonic.xp.core.impl.project.ProjectConfig;
 import com.enonic.xp.core.impl.project.ProjectServiceImpl;
-import com.enonic.xp.core.impl.security.PasswordEncoderFactory;
+import com.enonic.xp.core.impl.security.PasswordSecurityService;
 import com.enonic.xp.core.impl.security.SecurityAuditLogSupportImpl;
 import com.enonic.xp.core.impl.security.SecurityConfig;
 import com.enonic.xp.core.impl.security.SecurityInitializer;
@@ -54,6 +54,7 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.withSettings;
 
 public abstract class AbstractIssueServiceTest
     extends AbstractElasticsearchIntegrationTest
@@ -143,11 +144,17 @@ public abstract class AbstractIssueServiceTest
 
         issueService.setNodeService( nodeService );
 
+        final SecurityConfig securityConfig = mock( SecurityConfig.class, withSettings().stubOnly()
+            .defaultAnswer( invocationOnMock -> invocationOnMock.getMethod().getDefaultValue() ) );
+
         final SecurityAuditLogSupportImpl securityAuditLogSupport = new SecurityAuditLogSupportImpl( mock( AuditLogService.class ) );
-        securityAuditLogSupport.activate( mock( SecurityConfig.class ) );
+        securityAuditLogSupport.activate( securityConfig );
+
+        final PasswordSecurityService passwordSecurityService = new PasswordSecurityService();
+        passwordSecurityService.activate( securityConfig );
 
         final SecurityServiceImpl securityService =
-            new SecurityServiceImpl( nodeService, securityAuditLogSupport, new PasswordEncoderFactory() );
+            new SecurityServiceImpl( nodeService, securityAuditLogSupport, passwordSecurityService );
         SecurityInitializer.create()
             .setIndexService( indexService )
             .setSecurityService( securityService )
