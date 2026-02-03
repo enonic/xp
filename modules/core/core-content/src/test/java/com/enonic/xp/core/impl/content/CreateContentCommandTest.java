@@ -32,9 +32,17 @@ import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeType;
+import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectRole;
+import com.enonic.xp.region.LayoutComponent;
+import com.enonic.xp.region.LayoutDescriptorService;
+import com.enonic.xp.region.PartComponent;
+import com.enonic.xp.region.PartDescriptorService;
+import com.enonic.xp.region.Region;
+import com.enonic.xp.region.Regions;
+import com.enonic.xp.region.TextComponent;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
@@ -75,6 +83,10 @@ class CreateContentCommandTest
 
     private PageDescriptorService pageDescriptorService;
 
+    private PartDescriptorService partDescriptorService;
+
+    private LayoutDescriptorService layoutDescriptorService;
+
     private XDataMappingService xDataMappingService;
 
     private SiteConfigService siteConfigService;
@@ -87,6 +99,8 @@ class CreateContentCommandTest
         this.siteService = Mockito.mock( SiteService.class );
         this.nodeService = Mockito.mock( NodeService.class );
         this.pageDescriptorService = Mockito.mock( PageDescriptorService.class );
+        this.partDescriptorService = Mockito.mock( PartDescriptorService.class );
+        this.layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
         this.eventPublisher = Mockito.mock( EventPublisher.class );
         this.xDataService = Mockito.mock( XDataService.class );
         this.contentTypeService = Mockito.mock( ContentTypeService.class );
@@ -684,6 +698,8 @@ class CreateContentCommandTest
             .xDataService( this.xDataService )
             .siteService( this.siteService )
             .pageDescriptorService( this.pageDescriptorService )
+            .partDescriptorService( this.partDescriptorService )
+            .layoutDescriptorService( this.layoutDescriptorService )
             .xDataMappingService( this.xDataMappingService )
             .siteConfigService( this.siteConfigService )
             .formDefaultValuesProcessor( ( form, data ) -> {
@@ -767,6 +783,90 @@ class CreateContentCommandTest
         when( nodeService.getById( Mockito.eq( node.id() ) ) ).thenReturn( node );
 
         return node.path();
+    }
+
+    @Test
+    void createContentWithPageContainingTextComponent()
+    {
+        final TextComponent textComponent = TextComponent.create().text( "Hello" ).build();
+        final Region region = Region.create().name( "main" ).add( textComponent ).build();
+        final Regions regions = Regions.create().add( region ).build();
+        final Page page = Page.create().regions( regions ).build();
+
+        final CreateContentParams params = CreateContentParams.create()
+            .type( ContentTypeName.folder() )
+            .name( "test" )
+            .parent( ContentPath.ROOT )
+            .contentData( new PropertyTree() )
+            .displayName( "Test" )
+            .page( page )
+            .build();
+
+        final CreateContentCommand command = createContentCommand( params );
+
+        when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn(
+            ContentType.create().superType( ContentTypeName.folder() ).name( ContentTypeName.folder() ).build() );
+
+        mockContentRootNode();
+
+        final Content createdContent = command.execute();
+        assertNotNull( createdContent );
+    }
+
+    @Test
+    void createContentWithPageContainingPartComponentWithoutDescriptor()
+    {
+        final PartComponent partComponent = PartComponent.create().build();
+        final Region region = Region.create().name( "main" ).add( partComponent ).build();
+        final Regions regions = Regions.create().add( region ).build();
+        final Page page = Page.create().regions( regions ).build();
+
+        final CreateContentParams params = CreateContentParams.create()
+            .type( ContentTypeName.folder() )
+            .name( "test" )
+            .parent( ContentPath.ROOT )
+            .contentData( new PropertyTree() )
+            .displayName( "Test" )
+            .page( page )
+            .build();
+
+        final CreateContentCommand command = createContentCommand( params );
+
+        when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn(
+            ContentType.create().superType( ContentTypeName.folder() ).name( ContentTypeName.folder() ).build() );
+
+        mockContentRootNode();
+
+        final Content createdContent = command.execute();
+        assertNotNull( createdContent );
+    }
+
+    @Test
+    void createContentWithPageContainingLayoutComponentWithoutDescriptor()
+    {
+        final LayoutComponent layoutComponent = LayoutComponent.create().build();
+        final Region region = Region.create().name( "main" ).add( layoutComponent ).build();
+        final Regions regions = Regions.create().add( region ).build();
+        final Page page = Page.create().regions( regions ).build();
+
+        final CreateContentParams params = CreateContentParams.create()
+            .type( ContentTypeName.folder() )
+            .name( "test" )
+            .parent( ContentPath.ROOT )
+            .contentData( new PropertyTree() )
+            .displayName( "Test" )
+            .page( page )
+            .build();
+
+        final CreateContentCommand command = createContentCommand( params );
+
+        when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn(
+            ContentType.create().superType( ContentTypeName.folder() ).name( ContentTypeName.folder() ).build() );
+
+        mockContentRootNode();
+
+        final Content createdContent = command.execute();
+        assertNotNull( createdContent );
     }
 
 }

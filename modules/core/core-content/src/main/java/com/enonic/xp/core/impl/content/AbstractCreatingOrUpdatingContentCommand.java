@@ -46,6 +46,7 @@ import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.region.Component;
+import com.enonic.xp.region.DescriptorBasedComponent;
 import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.LayoutDescriptorService;
@@ -252,7 +253,13 @@ class AbstractCreatingOrUpdatingContentCommand
         {
             for ( Component component : region.getComponents() )
             {
-                if ( component instanceof PartComponent part )
+                if ( !( component instanceof DescriptorBasedComponent descriptorBasedComponent ) ||
+                    !descriptorBasedComponent.hasDescriptor() )
+                {
+                    continue;
+                }
+
+                if ( descriptorBasedComponent instanceof PartComponent part )
                 {
                     PartDescriptor d = partDescriptorService.getByKey( part.getDescriptor() );
                     if ( d != null )
@@ -260,7 +267,7 @@ class AbstractCreatingOrUpdatingContentCommand
                         validateForm( d.getConfig(), part.getConfig(), "Incorrect part component property" );
                     }
                 }
-                else if ( component instanceof LayoutComponent layout )
+                else if ( descriptorBasedComponent instanceof LayoutComponent layout )
                 {
                     LayoutDescriptor d = layoutDescriptorService.getByKey( layout.getDescriptor() );
                     if ( d != null )
