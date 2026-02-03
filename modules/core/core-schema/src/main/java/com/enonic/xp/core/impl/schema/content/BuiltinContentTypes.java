@@ -266,7 +266,7 @@ final class BuiltinContentTypes
         .setFinal( true )
         .setAbstract( false )
         .form( SHORTCUT_FORM )
-        .superType( ContentTypeName.shortcut() )
+        .superType( ContentTypeName.structured() )
         .build();
 
     private static final ContentType FRAGMENT = createSystemType( ContentTypeName.fragment() ).allowChildContent( true )
