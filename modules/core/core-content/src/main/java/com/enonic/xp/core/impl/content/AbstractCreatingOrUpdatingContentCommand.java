@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.security.DigestInputStream;
 import java.util.EnumSet;
+import java.util.HexFormat;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -33,7 +34,6 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.content.processor.ContentProcessor;
 import com.enonic.xp.core.impl.content.validate.InputValidator;
 import com.enonic.xp.core.internal.FileNames;
-import com.enonic.xp.core.internal.HexCoder;
 import com.enonic.xp.core.internal.security.MessageDigests;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.exception.ForbiddenAccessException;
@@ -179,8 +179,7 @@ class AbstractCreatingOrUpdatingContentCommand
         {
             long size = ByteStreams.exhaust( digestInputStream );
             builder.size( size );
-            builder.sha512( HexCoder.toHex( digestInputStream.getMessageDigest().digest() ) );
-
+            builder.sha512( HexFormat.of().formatHex( digestInputStream.getMessageDigest().digest() ) );
         }
         catch ( IOException e )
         {

@@ -54,6 +54,7 @@ import com.enonic.xp.core.impl.project.ProjectConfig;
 import com.enonic.xp.core.impl.project.ProjectServiceImpl;
 import com.enonic.xp.core.impl.project.ProjectConfig;
 import com.enonic.xp.core.impl.project.ProjectServiceImpl;
+import com.enonic.xp.core.impl.security.PasswordSecurityService;
 import com.enonic.xp.core.impl.security.SecurityAuditLogSupportImpl;
 import com.enonic.xp.core.impl.security.SecurityConfig;
 import com.enonic.xp.core.impl.security.SecurityInitializer;
@@ -125,6 +126,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -241,13 +243,16 @@ class DynamicSchemaServiceImplTest
         ApplicationRegistry applicationRegistry =
             new ApplicationRegistryImpl( bundleContext, new ApplicationListenerHub(), applicationFactoryService );
 
-        final SecurityConfig securityConfig = mock( SecurityConfig.class );
-        when( securityConfig.auditlog_enabled() ).thenReturn( Boolean.TRUE );
+        final SecurityConfig securityConfig = mock( SecurityConfig.class, withSettings().stubOnly()
+            .defaultAnswer( invocationOnMock -> invocationOnMock.getMethod().getDefaultValue() ) );
 
         final SecurityAuditLogSupportImpl securityAuditLogSupport = new SecurityAuditLogSupportImpl( mock( AuditLogService.class ) );
         securityAuditLogSupport.activate( securityConfig );
 
-        SecurityServiceImpl securityService = new SecurityServiceImpl( nodeService, securityAuditLogSupport );
+        final PasswordSecurityService passwordSecurityService = new PasswordSecurityService();
+        passwordSecurityService.activate( securityConfig );
+
+        SecurityServiceImpl securityService = new SecurityServiceImpl( nodeService, securityAuditLogSupport, passwordSecurityService );
         SecurityInitializer.create()
             .setIndexService( indexService )
             .setSecurityService( securityService )

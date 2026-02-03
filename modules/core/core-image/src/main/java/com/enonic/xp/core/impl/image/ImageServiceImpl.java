@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.HexFormat;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Set;
@@ -42,7 +43,6 @@ import com.enonic.xp.image.ImageHelper;
 import com.enonic.xp.image.ImageService;
 import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.media.ImageOrientation;
-import com.enonic.xp.util.HexEncoder;
 
 @Component
 public class ImageServiceImpl
@@ -136,7 +136,7 @@ public class ImageServiceImpl
         final String key = String.join( "/", binaryKey, cropping, scale, filter, format, background, orientation, quality,
                                         readImageParams.getBinaryReference().toString() );
         final HashCode hashCode = Hashing.sha1().hashString( key, StandardCharsets.UTF_8 );
-        final String hash = HexEncoder.toHex( hashCode.asBytes() );
+        final String hash = HexFormat.of().formatHex( hashCode.asBytes() );
         return cacheFolder.resolve( hash.substring( 0, 2 ) )
             .resolve( hash.substring( 2, 4 ) )
             .resolve( hash.substring( 4, 6 ) )

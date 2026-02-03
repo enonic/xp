@@ -27,6 +27,7 @@ import com.enonic.xp.core.impl.project.ProjectCircleDependencyException;
 import com.enonic.xp.core.impl.project.ProjectConfig;
 import com.enonic.xp.core.impl.project.ProjectMultipleParentsException;
 import com.enonic.xp.core.impl.project.ProjectServiceImpl;
+import com.enonic.xp.core.impl.security.PasswordSecurityService;
 import com.enonic.xp.core.impl.security.SecurityAuditLogSupportImpl;
 import com.enonic.xp.core.impl.security.SecurityConfig;
 import com.enonic.xp.core.impl.security.SecurityInitializer;
@@ -79,6 +80,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 class ProjectServiceImplTest
     extends AbstractNodeTest
@@ -173,8 +175,8 @@ class ProjectServiceImplTest
     @BeforeEach
     void setUp()
     {
-        final SecurityConfig securityConfig = mock( SecurityConfig.class );
-        when( securityConfig.auditlog_enabled() ).thenReturn( true );
+        final SecurityConfig securityConfig = mock( SecurityConfig.class, withSettings().stubOnly()
+            .defaultAnswer( invocationOnMock -> invocationOnMock.getMethod().getDefaultValue() ) );
 
         projectConfig = mock( ProjectConfig.class );
 
@@ -183,7 +185,10 @@ class ProjectServiceImplTest
         final SecurityAuditLogSupportImpl securityAuditLogSupport = new SecurityAuditLogSupportImpl( auditLogService );
         securityAuditLogSupport.activate( securityConfig );
 
-        securityService = new SecurityServiceImpl( this.nodeService, securityAuditLogSupport );
+        final PasswordSecurityService passwordSecurityService = new PasswordSecurityService();
+        passwordSecurityService.activate( securityConfig );
+
+        securityService = new SecurityServiceImpl( this.nodeService, securityAuditLogSupport, passwordSecurityService );
 
         adminContext().runWith( () -> {
             SecurityInitializer.create()
@@ -294,8 +299,7 @@ class ProjectServiceImplTest
     {
         final RepositoryId projectRepoId = RepositoryId.from( "com.enonic.cms.test-project" );
 
-        final RuntimeException ex =
-            assertThrows( RuntimeException.class, () -> doCreateProject( ProjectName.from( projectRepoId ) ) );
+        final RuntimeException ex = assertThrows( RuntimeException.class, () -> doCreateProject( ProjectName.from( projectRepoId ) ) );
 
         assertEquals( "Denied [user:system:test-user] user access for [create] operation", ex.getMessage() );
     }
@@ -306,8 +310,7 @@ class ProjectServiceImplTest
         final RepositoryId projectRepoId = RepositoryId.from( "com.enonic.cms.test-project" );
 
         contentCustomManagerContext().runWith( () -> {
-            final RuntimeException ex =
-                assertThrows( RuntimeException.class, () -> doCreateProject( ProjectName.from( projectRepoId ) ) );
+            final RuntimeException ex = assertThrows( RuntimeException.class, () -> doCreateProject( ProjectName.from( projectRepoId ) ) );
 
             assertEquals( "Denied [user:system:custom-user] user access for [create] operation", ex.getMessage() );
         } );
@@ -505,7 +508,8 @@ class ProjectServiceImplTest
 
             final RuntimeException ex = assertThrows( RuntimeException.class, () -> projectService.delete( projectName ) );
 
-            assertEquals( "Denied [user:system:custom-user] user access to [test-project] project for [delete] operation", ex.getMessage() );
+            assertEquals( "Denied [user:system:custom-user] user access to [test-project] project for [delete] operation",
+                          ex.getMessage() );
         } );
     }
 
@@ -651,8 +655,7 @@ class ProjectServiceImplTest
         final Project createdProject = doCreateProjectAsAdmin( ProjectName.from( "test-project" ) );
 
         contentManagerContext().runWith( () -> {
-            final RuntimeException ex =
-                assertThrows( RuntimeException.class, () -> projectService.get( createdProject.getName() ) );
+            final RuntimeException ex = assertThrows( RuntimeException.class, () -> projectService.get( createdProject.getName() ) );
             assertEquals( "Denied [user:system:repo-test-user] user access to [test-project] project for [get] operation",
                           ex.getMessage() );
 
@@ -943,7 +946,7 @@ class ProjectServiceImplTest
             adminContext().callWith( () -> projectService.getAvailableApplications( child.getName() ) );
 
         assertThat( parentAvailableApplications ).map( ApplicationKey::getName ).containsExactly( "app1", "app2" );
-        assertThat( childAvailableApplications ).map( ApplicationKey::getName ).containsExactly(  "app2", "app3", "app1" );
+        assertThat( childAvailableApplications ).map( ApplicationKey::getName ).containsExactly( "app2", "app3", "app1" );
     }
 
     @Test
@@ -976,7 +979,7 @@ class ProjectServiceImplTest
                 () -> projectService.getAvailableApplications( child.getName() ) );
 
         assertThat( parentAvailableApplications ).map( ApplicationKey::getName ).containsExactly( "app1", "app2" );
-        assertThat( childAvailableApplications ).map( ApplicationKey::getName ).containsExactly(  "app2", "app3", "app1" );
+        assertThat( childAvailableApplications ).map( ApplicationKey::getName ).containsExactly( "app2", "app3", "app1" );
     }
 
     @Test

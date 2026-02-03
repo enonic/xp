@@ -1,12 +1,11 @@
 package com.enonic.xp.blob;
 
 import java.io.IOException;
+import java.util.HexFormat;
 import java.util.Objects;
 
 import com.google.common.hash.Hashing;
 import com.google.common.io.ByteSource;
-
-import com.enonic.xp.util.HexEncoder;
 
 public final class BlobKey
 {
@@ -44,7 +43,7 @@ public final class BlobKey
     {
         try
         {
-            return from( HexEncoder.toHex( in.hash( Hashing.sha1() ).asBytes() ) );
+            return from( HexFormat.of().formatHex( in.hash( Hashing.sha1() ).asBytes() ) );
         }
         catch ( final IOException e )
         {

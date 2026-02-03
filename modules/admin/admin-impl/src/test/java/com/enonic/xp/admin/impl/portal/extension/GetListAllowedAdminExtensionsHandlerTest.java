@@ -102,7 +102,7 @@ class GetListAllowedAdminExtensionsHandlerTest
 
         final ObjectNode objectNode = body.get( 0 );
         assertEquals( "myapp:myextension", objectNode.get( "key" ).asText() );
-        assertEquals( "?icon&app=myapp&extension=myextension&v=d41d8cd98f00b204e9800998ecf8427e", objectNode.get( "iconUrl" ).asText() );
+        assertEquals( "?icon&app=myapp&extension=myextension&v=z4PhNX7vuL3xVChQ1m2ABw", objectNode.get( "iconUrl" ).asText() );
         assertEquals( "myapp/myextension", objectNode.get( "url" ).asText() );
         assertEquals( "localizedDescription", objectNode.get( "description" ).asText() );
         assertEquals( "myInterface", objectNode.get( "interfaces" ).get( 0 ).asText() );

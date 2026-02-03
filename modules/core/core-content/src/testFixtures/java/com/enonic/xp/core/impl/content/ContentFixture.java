@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
@@ -32,6 +33,7 @@ public final class ContentFixture
             .name( name )
             .parentPath( new NodePath( "/content" ) )
             .data( nodeContentData )
+            .nodeType( ContentConstants.CONTENT_NODE_COLLECTION )
             .build();
     }
 
@@ -47,7 +49,7 @@ public final class ContentFixture
             .id( NodeId.from( content.getId() ) )
             .name( content.getName().toString() )
             .parentPath( ContentNodeHelper.translateContentPathToNodePath( content.getParentPath() ) )
-            .data( nodeContentData )
+            .data( nodeContentData ).nodeType( ContentConstants.CONTENT_NODE_COLLECTION )
             .build();
     }
 

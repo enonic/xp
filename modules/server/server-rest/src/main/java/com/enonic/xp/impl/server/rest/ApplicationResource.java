@@ -2,6 +2,7 @@ package com.enonic.xp.impl.server.rest;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.HexFormat;
 import java.util.Optional;
 import java.util.Set;
 
@@ -28,7 +29,6 @@ import com.enonic.xp.impl.server.rest.model.ApplicationInstalledJson;
 import com.enonic.xp.impl.server.rest.model.ApplicationParams;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.util.HexEncoder;
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
 
@@ -68,7 +68,7 @@ public final class ApplicationResource
     public ApplicationInstallResultJson installUrl( final ApplicationInstallParams params )
     {
         final String urlString = params.getUrl();
-        final byte[] sha512 = Optional.ofNullable( params.getSha512() ).map( HexEncoder::fromHex ).orElse( null );
+        final byte[] sha512 = Optional.ofNullable( params.getSha512() ).map( HexFormat.of()::parseHex ).orElse( null );
         final ApplicationInstallResultJson result = new ApplicationInstallResultJson();
         String failure;
         try

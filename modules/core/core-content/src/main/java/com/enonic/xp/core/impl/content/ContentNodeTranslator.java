@@ -3,7 +3,9 @@ package com.enonic.xp.core.impl.content;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.archive.ArchiveConstants;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.Contents;
@@ -69,6 +71,13 @@ public class ContentNodeTranslator
                 .branch( ContextAccessor.current().getBranch() )
                 .contentRoot( ContentNodeHelper.getContentRoot() )
                 .build();
+        }
+
+        if ( !ContentConstants.CONTENT_NODE_COLLECTION.equals( node.getNodeType() ) &&
+            !ArchiveConstants.ARCHIVE_ROOT_PATH.equals( node.path() ) && !ContentConstants.CONTENT_ROOT_PATH.equals( node.path() ) )
+        {
+            throw new IllegalArgumentException(
+                "Node '" + node.path() + "' [" + node.id() + "] is not a content. Node type: " + node.getNodeType() );
         }
 
         final Content.Builder<?> builder = CONTENT_DATA_SERIALIZER.fromData( node.data().getRoot() );
