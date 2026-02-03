@@ -66,8 +66,6 @@ addBundle( libs.jackson.databind, 8 )
 addBundle( libs.jackson.datatype.jsr310, 8 )
 addBundle( libs.jackson.dataformat.yaml, 8 )
 addBundle( libs.snakeyaml, 8 )
-addBundle( libs.jackson.jakarta.base, 8 )
-addBundle( libs.jackson.jakarta.jsonprovider, 8 )
 addBundle( libs.ethlo.time, 8 )
 addBundle( libs.networknt.jsv, 8 )
 

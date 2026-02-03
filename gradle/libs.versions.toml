@@ -95,7 +95,6 @@ jackson-core = { module = "com.fasterxml.jackson.core:jackson-core", version.ref
 jackson-annotations = { module = "com.fasterxml.jackson.core:jackson-annotations", version = "2.21" }
 jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
 jackson-datatype-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version.ref = "jackson" }
-jackson-jakarta-base = { module = "com.fasterxml.jackson.jakarta.rs:jackson-jakarta-rs-base", version.ref = "jackson" }
 jackson-jakarta-jsonprovider = { module = "com.fasterxml.jackson.jakarta.rs:jackson-jakarta-rs-json-provider", version.ref = "jackson" }
 jackson-dataformat-smile = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-smile", version.ref = "jackson" }
 jackson-dataformat-cbor = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor", version.ref = "jackson" }
