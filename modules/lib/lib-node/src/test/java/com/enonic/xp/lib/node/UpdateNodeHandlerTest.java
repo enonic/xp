@@ -8,7 +8,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 
@@ -39,6 +38,7 @@ import com.enonic.xp.util.Link;
 import com.enonic.xp.util.Reference;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -162,6 +162,20 @@ public class UpdateNodeHandlerTest
         assertEquals( ValueTypes.LOCAL_DATE, editedNode.data.getProperty( "untouchedLocalDate" ).getType() );
         assertEquals( ValueTypes.REFERENCE, editedNode.data.getProperty( "untouchedReference" ).getType() );
         assertEquals( ValueTypes.BINARY_REFERENCE, editedNode.data.getProperty( "untouchedBinaryRef" ).getType() );
+    }
+
+    @Test
+    void testEditorReturnsNull()
+    {
+        final PropertyTree data = new PropertyTree();
+        data.setString( "myString", "originalValue" );
+
+        final Node node = Node.create().id( NodeId.from( "abc" ) ).parentPath( NodePath.ROOT ).data( data ).name( "myNode" ).build();
+
+        mockGetNode( node );
+
+        assertThatThrownBy( () -> runScript( "/lib/xp/examples/node/update-null-editor.js" ) ).hasMessageContaining(
+            "Editor script did not return a value" ).rootCause().isInstanceOf( IllegalArgumentException.class );
     }
 
     private EditableNode getEditedNode( final Node node )
