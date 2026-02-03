@@ -16,6 +16,8 @@ public final class NodeImportResult
 
     public final NodePaths updateNodes;
 
+    public final NodePaths skippedNodes;
+
     private final List<ImportError> importErrors;
 
     private final List<String> importedBinaries;
@@ -24,6 +26,7 @@ public final class NodeImportResult
     {
         this.addedNodes = builder.addedNodes.build();
         this.updateNodes = builder.updatedNodes.build();
+        this.skippedNodes = builder.skippedNodes.build();
         this.importErrors = builder.importErrors;
         this.importedBinaries = builder.importedBinaries;
     }
@@ -53,10 +56,15 @@ public final class NodeImportResult
         return updateNodes;
     }
 
+    public NodePaths getSkippedNodes()
+    {
+        return skippedNodes;
+    }
+
     @Override
     public String toString()
     {
-        return "NodeImportResult{ addedNodes=" + addedNodes + ", updateNodes=" + updateNodes +
+        return "NodeImportResult{ addedNodes=" + addedNodes + ", updateNodes=" + updateNodes + ", skippedNodes=" + skippedNodes +
             ", importErrors=" + Arrays.toString( importErrors.toArray() ) + ", importedBinaries=" +
             Arrays.toString( importedBinaries.toArray() ) + '}';
     }
@@ -66,6 +74,8 @@ public final class NodeImportResult
         private final NodePaths.Builder addedNodes = NodePaths.create();
 
         private final NodePaths.Builder updatedNodes = NodePaths.create();
+
+        private final NodePaths.Builder skippedNodes = NodePaths.create();
 
         private final List<String> importedBinaries = new ArrayList<>();
 
@@ -84,6 +94,12 @@ public final class NodeImportResult
         public Builder updated( final NodePath nodePath )
         {
             this.updatedNodes.addNodePath( nodePath );
+            return this;
+        }
+
+        public Builder skipped( final NodePath nodePath )
+        {
+            this.skippedNodes.addNodePath( nodePath );
             return this;
         }
 
@@ -144,10 +160,7 @@ public final class NodeImportResult
         @Override
         public String toString()
         {
-            return "ImportError{" +
-                "exception=" + exception +
-                ", message='" + message + '\'' +
-                '}';
+            return "ImportError{" + "exception=" + exception + ", message='" + message + '\'' + '}';
         }
     }
 

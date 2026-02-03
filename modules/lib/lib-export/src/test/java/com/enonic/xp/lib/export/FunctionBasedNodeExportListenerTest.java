@@ -1,6 +1,6 @@
 package com.enonic.xp.lib.export;
 
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.jupiter.api.Test;
 
@@ -12,8 +12,8 @@ class FunctionBasedNodeExportListenerTest
     @Test
     void call_functions()
     {
-        AtomicLong nodesResolved = new AtomicLong();
-        AtomicLong nodesImported = new AtomicLong();
+        AtomicInteger nodesResolved = new AtomicInteger();
+        AtomicInteger nodesImported = new AtomicInteger();
 
         final FunctionBasedNodeExportListener functionBasedNodeImportListener = new FunctionBasedNodeExportListener( i -> {
             nodesImported.addAndGet( i );

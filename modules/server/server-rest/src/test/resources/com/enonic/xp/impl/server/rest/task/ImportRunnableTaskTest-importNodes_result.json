@@ -6,6 +6,7 @@
   "importedBinaries": [
     "/binary [binaryRef]"
   ],
+  "skippedNodes": [],
   "updateNodes": [
     "/node2/path2"
   ]

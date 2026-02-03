@@ -15,8 +15,6 @@ public final class ExportNodesParams
 
     private final NodePath sourceNodePath;
 
-    private final boolean archive;
-
     private final int batchSize;
 
     private final NodeExportListener nodeExportListener;
@@ -25,7 +23,6 @@ public final class ExportNodesParams
     {
         this.exportName = builder.exportName;
         this.sourceNodePath = builder.sourceNodePath;
-        this.archive = builder.archive;
         this.batchSize = builder.batchSize;
         this.nodeExportListener = builder.nodeExportListener;
     }
@@ -45,11 +42,6 @@ public final class ExportNodesParams
         return sourceNodePath;
     }
 
-    public boolean isArchive()
-    {
-        return archive;
-    }
-
     public int getBatchSize()
     {
         return batchSize;
@@ -65,8 +57,6 @@ public final class ExportNodesParams
         private String exportName;
 
         private NodePath sourceNodePath;
-
-        private boolean archive = false;
 
         private int batchSize = 1000;
 
@@ -85,12 +75,6 @@ public final class ExportNodesParams
         public Builder sourceNodePath( final NodePath sourceNodePath )
         {
             this.sourceNodePath = sourceNodePath;
-            return this;
-        }
-
-        public Builder archive( final boolean archive )
-        {
-            this.archive = archive;
             return this;
         }
 

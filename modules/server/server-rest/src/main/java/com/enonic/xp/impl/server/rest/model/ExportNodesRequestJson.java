@@ -10,13 +10,10 @@ public class ExportNodesRequestJson
 
     private final String exportName;
 
-    private final boolean archive;
-
     private final Integer batchSize;
 
     public ExportNodesRequestJson( @JsonProperty("sourceRepoPath") final String sourceRepoPath, //
                                    @JsonProperty("exportName") final String exportName, //
-                                   @JsonProperty("archive") final Boolean archive, //
                                    @JsonProperty("batchSize") final Integer batchSize )
     {
         Objects.requireNonNull( sourceRepoPath, "sourceRepoPath is required" );
@@ -24,7 +21,6 @@ public class ExportNodesRequestJson
 
         this.sourceRepoPath = RepoPath.from( sourceRepoPath );
         this.exportName = exportName;
-        this.archive = archive != null ? archive : false;
         this.batchSize = batchSize;
     }
 
@@ -38,10 +34,6 @@ public class ExportNodesRequestJson
         return exportName;
     }
 
-    public boolean isArchive()
-    {
-        return archive;
-    }
 
     public Integer getBatchSize()
     {

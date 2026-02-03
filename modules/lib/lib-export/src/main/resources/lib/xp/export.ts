@@ -32,6 +32,7 @@ export interface ImportNodesParams {
     includePermissions?: boolean;
     nodeResolved?: (numberOfNodes: number) => void;
     nodeImported?: (numberOfImportedNodes: number) => void;
+    nodeSkipped?: (numberOfSkippedNodes: number) => void;
 }
 
 export interface ImportNodesError {
@@ -64,6 +65,8 @@ interface ImportHandler {
 
     setNodeImported(fn?: ((i: number) => void) | null): void;
 
+    setNodeSkipped(fn?: ((i: number) => void) | null): void;
+
     execute(): ImportNodesResult;
 }
 
@@ -83,6 +86,7 @@ interface ImportHandler {
  * @param {boolean} [params.includePermissions=false] Set to true to use Node permissions from the import, false to use target node permissions.
  * @param {function} [params.nodeResolved] A function to be called before import starts with number of nodes to import.
  * @param {function} [params.nodeImported] A function to be called during import with number of nodes imported since last call.
+ * @param {function} [params.nodeSkipped] A function to be called during import with number of nodes skipped since last call.
  *
  * @returns {ImportNodesResult} Node import results.
  */
@@ -99,6 +103,7 @@ export function importNodes(params: ImportNodesParams): ImportNodesResult {
         includePermissions = false,
         nodeResolved,
         nodeImported,
+        nodeSkipped,
     } = params ?? {};
 
     const bean: ImportHandler = __.newBean<ImportHandler>('com.enonic.xp.lib.export.ImportHandler');
@@ -111,6 +116,7 @@ export function importNodes(params: ImportNodesParams): ImportNodesResult {
     bean.setIncludePermissions(includePermissions);
     bean.setNodeImported(__.nullOrValue(nodeImported));
     bean.setNodeResolved(__.nullOrValue(nodeResolved));
+    bean.setNodeSkipped(__.nullOrValue(nodeSkipped));
 
     return __.toNativeObject(bean.execute());
 }

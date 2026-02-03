@@ -20,9 +20,9 @@ public class ExportHandler
 
     private Integer batchSize;
 
-    private Function<Long, Void> nodeExported;
+    private Function<Integer, Void> nodeExported;
 
-    private Function<Long, Void> nodeResolved;
+    private Function<Integer, Void> nodeResolved;
 
     public NodeExportResultMapper execute()
     {
@@ -54,12 +54,12 @@ public class ExportHandler
         this.batchSize = batchSize;
     }
 
-    public void setNodeExported( final Function<Long, Void> nodeExported )
+    public void setNodeExported( final Function<Integer, Void> nodeExported )
     {
         this.nodeExported = nodeExported;
     }
 
-    public void setNodeResolved( final Function<Long, Void> nodeResolved )
+    public void setNodeResolved( final Function<Integer, Void> nodeResolved )
     {
         this.nodeResolved = nodeResolved;
     }

@@ -19,6 +19,11 @@ final class NodeHandlerUtils
     {
         final ScriptValue appliedResult = applyEditor( node, editorScript );
 
+        if ( appliedResult == null )
+        {
+            throw new IllegalArgumentException( "Editor script did not return a value." );
+        }
+
         final BinaryAttachments attachments = new BinaryAttachmentsParser().parse( appliedResult );
         final NodeEditor nodeEditor = createEditor( appliedResult );
 

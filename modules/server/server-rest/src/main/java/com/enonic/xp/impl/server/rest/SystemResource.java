@@ -51,7 +51,6 @@ public final class SystemResource
         TaskId taskId = DumpRunnableTask.create()
             .name( params.getName() )
             .includeVersions( params.isIncludeVersions() )
-            .archive( params.isArchive() )
             .maxAge( params.getMaxAge() )
             .maxVersions( params.getMaxVersions() )
             .taskService( taskService )

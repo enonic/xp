@@ -59,7 +59,7 @@ public final class SystemLoadParams
 
         private boolean upgrade = false;
 
-        private boolean archive;
+        private boolean archive = true;
 
         private SystemLoadListener listener;
 

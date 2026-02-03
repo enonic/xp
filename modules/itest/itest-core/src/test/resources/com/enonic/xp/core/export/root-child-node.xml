@@ -1,0 +1,18 @@
+<node>
+  <childOrder>_name ASC</childOrder>
+  <nodeType>content</nodeType>
+  <permissions/>
+  <data>
+    <string name="testData">root child value</string>
+  </data>
+  <indexConfigs>
+    <defaultConfig>
+      <decideByType>false</decideByType>
+      <enabled>true</enabled>
+      <nGram>false</nGram>
+      <fulltext>false</fulltext>
+      <includeInAllText>false</includeInAllText>
+    </defaultConfig>
+    <pathIndexConfigs/>
+  </indexConfigs>
+</node>

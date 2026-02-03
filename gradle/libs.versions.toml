@@ -1,15 +1,15 @@
 [versions]
-jackson = "2.20.1"
+jackson = "2.21.0"
 junit5 = "6.0.2"
 mockito = "5.21.0"
 slf4j = "2.0.17"
-jetty = "12.1.5"
+jetty = "12.1.6"
 resteasy = "7.0.1.Final"
 hazelcast = "5.6.0"
 tika = "3.2.3"
 micrometer = "1.16.2"
 prometheus = "1.4.3"
-graalvm = "25.0.1"
+graalvm = "25.0.2"
 guava = "33.5.0-jre"
 
 [libraries]
@@ -19,9 +19,9 @@ junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.re
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
 mockito-junitjupiter = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockito" }
 
-equalsverifier = { module = "nl.jqno.equalsverifier:equalsverifier", version = "4.3" }
+equalsverifier = { module = "nl.jqno.equalsverifier:equalsverifier", version = "4.3.1" }
 
-assertj-core = { module = "org.assertj:assertj-core", version = "3.27.6" }
+assertj-core = { module = "org.assertj:assertj-core", version = "3.27.7" }
 
 tinybundles = { module = "org.ops4j.pax.tinybundles:tinybundles", version = "4.0.1" }
 
@@ -32,8 +32,8 @@ slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
 slf4j-jultoslf4j = { module = "org.slf4j:jul-to-slf4j", version.ref = "slf4j" }
 slf4j-jcloverslf4j= { module = "org.slf4j:jcl-over-slf4j", version.ref = "slf4j" }
 slf4j-log4joverslf4j = { module = "org.slf4j:log4j-over-slf4j", version.ref = "slf4j" }
-jboss-logging = { module = "org.jboss.logging:jboss-logging", version = "3.6.1.Final" }
-logback-classic = { module = "ch.qos.logback:logback-classic", version = "1.5.24" }
+jboss-logging = { module = "org.jboss.logging:jboss-logging", version = "3.6.2.Final" }
+logback-classic = { module = "ch.qos.logback:logback-classic", version = "1.5.27" }
 
 jakarta-activation = { module = "jakarta.activation:jakarta.activation-api", version = "2.1.4" }
 jakarta-mail = { module = "com.sun.mail:jakarta.mail", version = "2.0.2" }
@@ -92,7 +92,7 @@ commons-compress = { module = "org.apache.commons:commons-compress", version = "
 commons-lang3 = { module = "org.apache.commons:commons-lang3", version = "3.20.0" }
 
 jackson-core = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson" }
-jackson-annotations = { module = "com.fasterxml.jackson.core:jackson-annotations", version = "2.20" }
+jackson-annotations = { module = "com.fasterxml.jackson.core:jackson-annotations", version = "2.21" }
 jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
 jackson-datatype-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version.ref = "jackson" }
 jackson-jakarta-base = { module = "com.fasterxml.jackson.jakarta.rs:jackson-jakarta-rs-base", version.ref = "jackson" }

@@ -27,8 +27,6 @@ public class ExportRunnableTask
 
     private final String exportName;
 
-    private final boolean archive;
-
     private final Integer batchSize;
 
     private final ExportService exportService;
@@ -40,7 +38,6 @@ public class ExportRunnableTask
         this.branch = builder.branch;
         this.nodePath = builder.nodePath;
         this.exportName = builder.exportName;
-        this.archive = builder.archive;
         this.batchSize = builder.batchSize;
 
         this.exportService = builder.exportService;
@@ -57,7 +54,6 @@ public class ExportRunnableTask
         final ExportNodesParams.Builder paramsBuilder = ExportNodesParams.create()
             .sourceNodePath( nodePath )
             .exportName( exportName )
-            .archive( archive )
             .nodeExportListener( new ExportListenerImpl( progressReporter ) );
 
         if ( batchSize != null )
@@ -86,8 +82,6 @@ public class ExportRunnableTask
 
         private String exportName;
 
-        private boolean archive;
-
         private Integer batchSize;
 
         private ExportService exportService;
@@ -113,12 +107,6 @@ public class ExportRunnableTask
         public Builder exportName( final String exportName )
         {
             this.exportName = exportName;
-            return this;
-        }
-
-        public Builder archive( final boolean archive )
-        {
-            this.archive = archive;
             return this;
         }
 

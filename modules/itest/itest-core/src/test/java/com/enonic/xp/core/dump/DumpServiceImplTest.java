@@ -11,7 +11,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Predicate;
 import java.util.stream.StreamSupport;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -31,13 +30,11 @@ import com.enonic.xp.core.impl.audit.AuditLogConstants;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.dump.BranchDumpResult;
-import com.enonic.xp.dump.DumpUpgradeResult;
 import com.enonic.xp.dump.RepoDumpResult;
 import com.enonic.xp.dump.RepoLoadResult;
 import com.enonic.xp.dump.SystemDumpListener;
 import com.enonic.xp.dump.SystemDumpParams;
 import com.enonic.xp.dump.SystemDumpResult;
-import com.enonic.xp.dump.SystemDumpUpgradeParams;
 import com.enonic.xp.dump.SystemLoadListener;
 import com.enonic.xp.dump.SystemLoadParams;
 import com.enonic.xp.dump.SystemLoadResult;
@@ -45,9 +42,9 @@ import com.enonic.xp.dump.VersionsLoadResult;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexPath;
+import com.enonic.xp.node.ApplyVersionAttributesParams;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.Attributes;
-import com.enonic.xp.node.ApplyVersionAttributesParams;
 import com.enonic.xp.node.BinaryAttachment;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.GetActiveNodeVersionsParams;
@@ -94,11 +91,9 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
-import com.enonic.xp.upgrade.UpgradeListener;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.util.Reference;
-import com.enonic.xp.util.Version;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -143,7 +138,7 @@ class DumpServiceImplTest
         refresh();
 
         final SystemDumpResult systemDumpResult = NodeHelper.runAsAdmin( () -> this.dumpService.dump(
-            SystemDumpParams.create().archive( true ).includeVersions( true ).dumpName( "testDump" ).build() ) );
+            SystemDumpParams.create().includeVersions( true ).dumpName( "testDump" ).build() ) );
 
         // 4 of node, 1 of root
         assertEquals( 5, systemDumpResult.get( testRepoId ).getVersions() );
@@ -152,7 +147,7 @@ class DumpServiceImplTest
         assertEquals( 2, branchDumpResult.getSuccessful() );
 
         NodeHelper.runAsAdmin( () -> this.dumpService.load(
-            SystemLoadParams.create().archive( true ).includeVersions( true ).dumpName( "testDump" ).build() ) );
+            SystemLoadParams.create().includeVersions( true ).dumpName( "testDump" ).build() ) );
 
         final Repositories newRepos = NodeHelper.runAsAdmin( this::doListRepositories );
 
@@ -767,45 +762,6 @@ class DumpServiceImplTest
     }
 
     @Test
-    void upgrade_up_to_date()
-    {
-        NodeHelper.runAsAdmin( () -> {
-            doDump( SystemDumpParams.create().dumpName( "testDump" ).build() );
-
-            final SystemDumpUpgradeParams params = SystemDumpUpgradeParams.create().dumpName( "testDump" ).build();
-            final DumpUpgradeResult result = this.dumpService.upgrade( params );
-            Assertions.assertEquals( DumpConstants.MODEL_VERSION, result.getInitialVersion() );
-            assertEquals( DumpConstants.MODEL_VERSION, result.getUpgradedVersion() );
-        } );
-    }
-
-    @Test
-    void upgrade()
-        throws Exception
-    {
-        final String dumpName = "testDump";
-        createIncompatibleDump( dumpName );
-
-        NodeHelper.runAsAdmin( () -> {
-            final UpgradeListener upgradeListener = mock( UpgradeListener.class );
-
-            final SystemDumpUpgradeParams params =
-                SystemDumpUpgradeParams.create().dumpName( dumpName ).upgradeListener( upgradeListener ).build();
-
-            final DumpUpgradeResult result = this.dumpService.upgrade( params );
-            assertEquals( new Version( 0, 0, 0 ), result.getInitialVersion() );
-            assertEquals( DumpConstants.MODEL_VERSION, result.getUpgradedVersion() );
-
-            Mockito.verify( upgradeListener, Mockito.times( 8 ) ).upgraded();
-            Mockito.verify( upgradeListener, Mockito.times( 1 ) ).total( 8 );
-
-            FileDumpReader reader = FileDumpReader.create( null, temporaryFolder, dumpName );
-            final DumpMeta updatedMeta = reader.getDumpMeta();
-            assertEquals( DumpConstants.MODEL_VERSION, updatedMeta.getModelVersion() );
-        } );
-    }
-
-    @Test
     void loadWithUpgrade()
         throws Exception
     {
@@ -813,7 +769,7 @@ class DumpServiceImplTest
         createIncompatibleDump( dumpName );
 
         NodeHelper.runAsAdmin( () -> {
-            this.dumpService.load( SystemLoadParams.create().dumpName( dumpName ).upgrade( true ).includeVersions( true ).build() );
+            this.dumpService.load( SystemLoadParams.create().dumpName( dumpName ).upgrade( true ).archive( false ).includeVersions( true ).build() );
 
             FileDumpReader reader = FileDumpReader.create( null, temporaryFolder, dumpName );
             final DumpMeta updatedMeta = reader.getDumpMeta();

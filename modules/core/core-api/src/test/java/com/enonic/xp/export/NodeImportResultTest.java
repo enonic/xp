@@ -42,6 +42,7 @@ class NodeImportResultTest
         expected += "NodeImportResult{";
         expected += " addedNodes=[/], ";
         expected += "updateNodes=[/], ";
+        expected += "skippedNodes=[], ";
         expected += "importErrors=[ImportError{exception=java.lang.Exception, message='null'}], ";
         expected += "importedBinaries=[path [binary ref]]";
         expected += "}";

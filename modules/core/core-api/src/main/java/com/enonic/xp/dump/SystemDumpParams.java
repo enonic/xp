@@ -14,8 +14,6 @@ public final class SystemDumpParams
 
     private final SystemDumpListener listener;
 
-    private final boolean archive;
-
     private SystemDumpParams( final Builder builder )
     {
         dumpName = builder.dumpName;
@@ -24,7 +22,6 @@ public final class SystemDumpParams
         maxAge = builder.maxAge;
         maxVersions = builder.maxVersions;
         this.listener = builder.listener;
-        this.archive = builder.archive;
     }
 
     public String getDumpName()
@@ -62,10 +59,6 @@ public final class SystemDumpParams
         return listener;
     }
 
-    public boolean isArchive()
-    {
-        return archive;
-    }
 
     public static final class Builder
     {
@@ -81,7 +74,6 @@ public final class SystemDumpParams
 
         private SystemDumpListener listener;
 
-        private boolean archive;
 
         private Builder()
         {
@@ -123,11 +115,6 @@ public final class SystemDumpParams
             return this;
         }
 
-        public Builder archive( final boolean archive )
-        {
-            this.archive = archive;
-            return this;
-        }
 
         public SystemDumpParams build()
         {

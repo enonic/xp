@@ -111,13 +111,20 @@ public class SnapshotServiceImpl
 
         final RepositoryIds repositoriesToSnapshot = resolveRepositoriesIdsToSnapshot( snapshotParams.getRepositoryId() );
 
-        return SnapshotExecutor.create()
+        LOG.debug( "Creating snapshot with name {}, Repositories to snapshot: {}", snapshotParams.getSnapshotName(),
+                   repositoriesToSnapshot );
+
+        final SnapshotResult result = SnapshotExecutor.create()
             .snapshotName( snapshotParams.getSnapshotName() )
             .repositories( repositoriesToSnapshot )
             .client( this.client )
             .snapshotRepositoryName( SNAPSHOT_REPOSITORY_NAME )
             .build()
             .execute();
+
+        LOG.debug( "Snapshot '{}' completed with state: {}", result.getName(), result.getState() );
+
+        return result;
     }
 
     @Override
@@ -293,13 +300,18 @@ public class SnapshotServiceImpl
 
     private void registerRepository()
     {
+        final Path snapshotsDir = getSnapshotsDir();
+
+        LOG.debug( "Registering snapshot repository '{}' at location: {}", SNAPSHOT_REPOSITORY_NAME, snapshotsDir );
+
         final PutRepositoryRequestBuilder requestBuilder =
             new PutRepositoryRequestBuilder( this.client.admin().cluster(), PutRepositoryAction.INSTANCE ).setName(
                     SNAPSHOT_REPOSITORY_NAME )
-                .setType( "fs" )
-                .setSettings( Settings.settingsBuilder().put( "compress", true ).put( "location", getSnapshotsDir() ).build() );
+                .setType( "fs" ).setSettings( Settings.settingsBuilder().put( "compress", true ).put( "location", snapshotsDir ).build() );
 
         this.client.admin().cluster().putRepository( requestBuilder.request() ).actionGet();
+
+        LOG.debug( "Snapshot repository '{}' registered successfully", SNAPSHOT_REPOSITORY_NAME );
     }
 
     private Path getSnapshotsDir()
@@ -386,11 +398,15 @@ public class SnapshotServiceImpl
 
     private void doDeleteSnapshot( final String snapshotName )
     {
+        LOG.debug( "Deleting snapshot: {}", snapshotName );
+
         checkSnapshotRepository();
 
         final DeleteSnapshotRequest deleteSnapshotRequest = new DeleteSnapshotRequest( SNAPSHOT_REPOSITORY_NAME, snapshotName );
 
         this.client.admin().cluster().deleteSnapshot( deleteSnapshotRequest ).actionGet();
+
+        LOG.debug( "Snapshot '{}' deleted successfully", snapshotName );
     }
 
     private String determineNameOfLatestSnapshot()
@@ -407,6 +423,8 @@ public class SnapshotServiceImpl
             .skip( snapshotResults.getSize() - 1 )
             .findFirst()
             .orElseThrow( () -> new SnapshotException( "No snapshots found" ) );
+
+        LOG.debug( "Latest snapshot determined: {}", snapshotResult.getName() );
 
         return snapshotResult.getName();
     }

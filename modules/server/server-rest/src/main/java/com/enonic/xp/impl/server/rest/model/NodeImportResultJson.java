@@ -13,6 +13,8 @@ public class NodeImportResultJson
 
     private final List<String> updateNodes = new ArrayList<>();
 
+    private final List<String> skippedNodes = new ArrayList<>();
+
     private final List<String> importErrors = new ArrayList<>();
 
     private final List<String> importedBinaries = new ArrayList<>();
@@ -29,6 +31,11 @@ public class NodeImportResultJson
         for ( final NodePath nodePath : result.getUpdateNodes() )
         {
             json.updateNodes.add( nodePath.toString() );
+        }
+
+        for ( final NodePath nodePath : result.getSkippedNodes() )
+        {
+            json.skippedNodes.add( nodePath.toString() );
         }
 
         for ( final NodeImportResult.ImportError importError : result.getImportErrors() )
@@ -51,6 +58,12 @@ public class NodeImportResultJson
     public List<String> getUpdateNodes()
     {
         return updateNodes;
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    public List<String> getSkippedNodes()
+    {
+        return skippedNodes;
     }
 
     @SuppressWarnings("UnusedDeclaration")

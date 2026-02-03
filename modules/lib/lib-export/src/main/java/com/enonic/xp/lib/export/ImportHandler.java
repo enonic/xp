@@ -30,15 +30,17 @@ public class ImportHandler
 
     private Boolean includePermissions;
 
-    private Function<Long, Void> nodeImported;
+    private Function<Integer, Void> nodeImported;
 
-    private Function<Long, Void> nodeResolved;
+    private Function<Integer, Void> nodeResolved;
+
+    private Function<Integer, Void> nodeSkipped;
 
     public NodeImportResultMapper execute()
     {
         final ImportNodesParams.Builder paramsBuilder = ImportNodesParams.create()
             .targetNodePath( new NodePath( targetNodePath ) )
-            .nodeImportListener( new FunctionBasedNodeImportListener( nodeImported, nodeResolved ) );
+            .nodeImportListener( new FunctionBasedNodeImportListener( nodeImported, nodeResolved, nodeSkipped ) );
 
         if ( source instanceof ResourceKey )
         {
@@ -104,14 +106,19 @@ public class ImportHandler
         this.includePermissions = includePermissions;
     }
 
-    public void setNodeImported( final Function<Long, Void> nodeImported )
+    public void setNodeImported( final Function<Integer, Void> nodeImported )
     {
         this.nodeImported = nodeImported;
     }
 
-    public void setNodeResolved( final Function<Long, Void> nodeResolved )
+    public void setNodeResolved( final Function<Integer, Void> nodeResolved )
     {
         this.nodeResolved = nodeResolved;
+    }
+
+    public void setNodeSkipped( final Function<Integer, Void> nodeSkipped )
+    {
+        this.nodeSkipped = nodeSkipped;
     }
 
     private VirtualFile toVirtualFile( final ResourceKey resourceKey )

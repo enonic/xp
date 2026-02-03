@@ -2,7 +2,7 @@ package com.enonic.xp.export;
 
 public interface NodeExportListener
 {
-    void nodeExported( long count );
+    void nodeExported( int count );
 
-    void nodeResolved( long count );
+    void nodeResolved( int count );
 }

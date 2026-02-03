@@ -222,9 +222,7 @@ public class DumpServiceImpl
 
         final Path basePath = ensureBasePath();
 
-        final DumpWriter writer = params.isArchive()
-            ? ZipDumpWriter.create( basePath, params.getDumpName(), blobStore )
-            : FileDumpWriter.create( basePath, params.getDumpName(), blobStore );
+        final DumpWriter writer = ZipDumpWriter.create( basePath, params.getDumpName(), blobStore );
         try (writer)
         {
             final List<Repository> repositories = repositoryEntryService.findRepositoryEntryIds()
