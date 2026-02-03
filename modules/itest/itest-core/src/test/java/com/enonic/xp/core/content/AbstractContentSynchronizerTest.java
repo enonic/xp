@@ -39,6 +39,7 @@ import com.enonic.xp.core.impl.media.MediaInfoServiceImpl;
 import com.enonic.xp.core.impl.project.ProjectConfig;
 import com.enonic.xp.core.impl.project.ProjectServiceImpl;
 import com.enonic.xp.core.impl.schema.content.ContentTypeServiceImpl;
+import com.enonic.xp.core.impl.security.PasswordSecurityService;
 import com.enonic.xp.core.impl.security.SecurityAuditLogSupportImpl;
 import com.enonic.xp.core.impl.security.SecurityConfig;
 import com.enonic.xp.core.impl.security.SecurityInitializer;
@@ -77,6 +78,7 @@ import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 public abstract class AbstractContentSynchronizerTest
     extends AbstractNodeTest
@@ -182,8 +184,8 @@ public abstract class AbstractContentSynchronizerTest
     private void setUpProjectService()
     {
         adminContext().runWith( () -> {
-            final SecurityConfig securityConfig = mock( SecurityConfig.class );
-            when( securityConfig.auditlog_enabled() ).thenReturn( true );
+            final SecurityConfig securityConfig = mock( SecurityConfig.class, withSettings().stubOnly()
+                .defaultAnswer( invocationOnMock -> invocationOnMock.getMethod().getDefaultValue() ) );
 
             final ProjectConfig projectConfig = mock( ProjectConfig.class );
             when( projectConfig.multiInheritance() ).thenReturn( true );
@@ -193,7 +195,11 @@ public abstract class AbstractContentSynchronizerTest
             final SecurityAuditLogSupportImpl securityAuditLogSupport = new SecurityAuditLogSupportImpl( auditLogService );
             securityAuditLogSupport.activate( securityConfig );
 
-            final SecurityServiceImpl securityService = new SecurityServiceImpl( this.nodeService, securityAuditLogSupport );
+            final PasswordSecurityService passwordSecurityService = new PasswordSecurityService();
+            passwordSecurityService.activate( securityConfig );
+
+            final SecurityServiceImpl securityService =
+                new SecurityServiceImpl( this.nodeService, securityAuditLogSupport, passwordSecurityService );
 
             SecurityInitializer.create()
                 .setIndexService( indexService )

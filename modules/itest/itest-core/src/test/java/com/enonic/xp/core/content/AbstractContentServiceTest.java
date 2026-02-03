@@ -65,6 +65,7 @@ import com.enonic.xp.core.impl.project.ProjectConfig;
 import com.enonic.xp.core.impl.project.ProjectServiceImpl;
 import com.enonic.xp.core.impl.project.init.ContentInitializer;
 import com.enonic.xp.core.impl.schema.content.ContentTypeServiceImpl;
+import com.enonic.xp.core.impl.security.PasswordSecurityService;
 import com.enonic.xp.core.impl.security.SecurityAuditLogSupportImpl;
 import com.enonic.xp.core.impl.security.SecurityConfig;
 import com.enonic.xp.core.impl.security.SecurityInitializer;
@@ -125,6 +126,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 public abstract class AbstractContentServiceTest
     extends AbstractElasticsearchIntegrationTest
@@ -138,11 +140,11 @@ public abstract class AbstractContentServiceTest
     public static final User TEST_DEFAULT_USER =
         User.create().key( PrincipalKey.ofUser( IdProviderKey.system(), "test-user" ) ).login( "test-user" ).build();
 
-    public static final AuthenticationInfo TEST_DEFAULT_USER_AUTHINFO = AuthenticationInfo.create().
-        principals( RoleKeys.AUTHENTICATED ).
-        principals( RoleKeys.CONTENT_MANAGER_ADMIN ).
-        user( TEST_DEFAULT_USER ).
-        build();
+    public static final AuthenticationInfo TEST_DEFAULT_USER_AUTHINFO = AuthenticationInfo.create()
+        .principals( RoleKeys.AUTHENTICATED )
+        .principals( RoleKeys.CONTENT_MANAGER_ADMIN )
+        .user( TEST_DEFAULT_USER )
+        .build();
 
     protected ProjectServiceImpl projectService;
 
@@ -195,28 +197,25 @@ public abstract class AbstractContentServiceTest
 
     protected Context ctxMaster()
     {
-        return ContextBuilder.create().
-            branch( ContentConstants.BRANCH_MASTER ).
-            repositoryId( testprojectName.getRepoId() ).
-            authInfo( TEST_DEFAULT_USER_AUTHINFO ).
-            build();
+        return ContextBuilder.create()
+            .branch( ContentConstants.BRANCH_MASTER )
+            .repositoryId( testprojectName.getRepoId() )
+            .authInfo( TEST_DEFAULT_USER_AUTHINFO )
+            .build();
     }
 
     public Context ctxMasterAnonymous()
     {
-        return ContextBuilder.create().
-            branch( ContentConstants.BRANCH_MASTER ).
-            repositoryId( testprojectName.getRepoId() ).
-            build();
+        return ContextBuilder.create().branch( ContentConstants.BRANCH_MASTER ).repositoryId( testprojectName.getRepoId() ).build();
     }
 
     public Context ctxMasterSu()
     {
-        return ContextBuilder.create().
-            branch( ContentConstants.BRANCH_MASTER ).
-            repositoryId( testprojectName.getRepoId() ).
-            authInfo( ContentInitializer.SUPER_USER_AUTH ).
-            build();
+        return ContextBuilder.create()
+            .branch( ContentConstants.BRANCH_MASTER )
+            .repositoryId( testprojectName.getRepoId() )
+            .authInfo( ContentInitializer.SUPER_USER_AUTH )
+            .build();
     }
 
     @BeforeAll
@@ -266,16 +265,16 @@ public abstract class AbstractContentServiceTest
         final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl( indexServiceInternal );
 
         RepositoryServiceImpl repositoryService =
-            new RepositoryServiceImpl( repositoryEntryService, indexServiceInternal, nodeRepositoryService, storageService,
-                                       searchService );
-        SystemRepoInitializer.create().
-            setIndexServiceInternal( indexServiceInternal ).
-            setRepositoryService( repositoryService ).
-            setNodeStorageService( storageService ).
-            build().
-            initialize();
+            new RepositoryServiceImpl( repositoryEntryService, indexServiceInternal, nodeRepositoryService, storageService, searchService );
+        SystemRepoInitializer.create()
+            .setIndexServiceInternal( indexServiceInternal )
+            .setRepositoryService( repositoryService )
+            .setNodeStorageService( storageService )
+            .build()
+            .initialize();
 
-        nodeService = new NodeServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService, repositoryService );
+        nodeService =
+            new NodeServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService, repositoryService );
 
         mixinService = mock( MixinService.class );
         when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
@@ -285,13 +284,10 @@ public abstract class AbstractContentServiceTest
         Map<String, List<String>> metadata = new HashMap<>();
         metadata.put( HttpHeaders.CONTENT_TYPE, List.of( "image/jpeg" ) );
 
-        final ExtractedData extractedData = ExtractedData.create().
-            metadata( metadata ).
-            build();
+        final ExtractedData extractedData = ExtractedData.create().metadata( metadata ).build();
 
         final BinaryExtractor extractor = mock( BinaryExtractor.class );
-        when( extractor.extract( Mockito.isA( ByteSource.class ) ) ).
-            thenReturn( extractedData );
+        when( extractor.extract( Mockito.isA( ByteSource.class ) ) ).thenReturn( extractedData );
 
         MediaInfoServiceImpl mediaInfoService = new MediaInfoServiceImpl( extractor );
 
@@ -317,15 +313,19 @@ public abstract class AbstractContentServiceTest
         final ContentAuditLogSupportImpl contentAuditLogSupport =
             new ContentAuditLogSupportImpl( contentConfig, Runnable::run, auditLogService, contentAuditLogFilterService );
 
-        final SecurityConfig securityConfig = mock( SecurityConfig.class );
-        when( securityConfig.auditlog_enabled() ).thenReturn( Boolean.TRUE );
+        final SecurityConfig securityConfig = mock( SecurityConfig.class, withSettings().stubOnly()
+            .defaultAnswer( invocationOnMock -> invocationOnMock.getMethod().getDefaultValue() ) );
 
         final ProjectConfig projectConfig = mock( ProjectConfig.class );
 
         final SecurityAuditLogSupportImpl securityAuditLogSupport = new SecurityAuditLogSupportImpl( auditLogService );
         securityAuditLogSupport.activate( securityConfig );
 
-        final SecurityServiceImpl securityService = new SecurityServiceImpl( nodeService, securityAuditLogSupport );
+        final PasswordSecurityService passwordSecurityService = new PasswordSecurityService();
+        passwordSecurityService.activate( securityConfig );
+
+        final SecurityServiceImpl securityService =
+            new SecurityServiceImpl( nodeService, securityAuditLogSupport, passwordSecurityService );
         SecurityInitializer.create()
             .setIndexService( indexService )
             .setSecurityService( securityService )
@@ -333,7 +333,8 @@ public abstract class AbstractContentServiceTest
             .build()
             .initialize();
 
-        projectService = new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService, eventPublisher, projectConfig );
+        projectService =
+            new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService, eventPublisher, projectConfig );
         projectService.initialize();
 
         projectService.create( CreateProjectParams.create().name( testprojectName ).displayName( "test" ).build() );
@@ -381,18 +382,16 @@ public abstract class AbstractContentServiceTest
         try (InputStream stream = this.getClass().getResourceAsStream( name ))
         {
             return ByteSource.wrap( stream.readAllBytes() );
-        } catch ( IOException e ) {
+        }
+        catch ( IOException e )
+        {
             throw new UncheckedIOException( e );
         }
     }
 
     protected CreateAttachments createAttachment( final String name, final String mimeType, final ByteSource byteSource )
     {
-        return CreateAttachments.from( CreateAttachment.create().
-            name( name ).
-            mimeType( mimeType ).
-            byteSource( byteSource ).
-            build() );
+        return CreateAttachments.from( CreateAttachment.create().name( name ).mimeType( mimeType ).byteSource( byteSource ).build() );
     }
 
     protected Content createContent( ContentPath parentPath )
@@ -486,24 +485,24 @@ public abstract class AbstractContentServiceTest
     private CreateContentParams.Builder createContentBuilder( final ContentPath parentPath, final String displayName,
                                                               final PropertyTree data, final ExtraDatas extraDatas, ContentTypeName type )
     {
-        return CreateContentParams.create().
-            displayName( displayName ).
-            parent( parentPath ).
-            contentData( data ).
-            extraDatas( extraDatas ).
-            type( type );
+        return CreateContentParams.create()
+            .displayName( displayName )
+            .parent( parentPath )
+            .contentData( data )
+            .extraDatas( extraDatas )
+            .type( type );
     }
 
     protected PropertyTree createPropertyTreeForAllInputTypes()
     {
 
         //Creates a content and a reference to this object
-        final Content referredContent = this.contentService.create( CreateContentParams.create().
-            contentData( new PropertyTree() ).
-            displayName( "Referred content" ).
-            parent( ContentPath.ROOT ).
-            type( ContentTypeName.folder() ).
-            build() );
+        final Content referredContent = this.contentService.create( CreateContentParams.create()
+                                                                        .contentData( new PropertyTree() )
+                                                                        .displayName( "Referred content" )
+                                                                        .parent( ContentPath.ROOT )
+                                                                        .type( ContentTypeName.folder() )
+                                                                        .build() );
         final Reference reference = Reference.from( referredContent.getId().toString() );
 
         //Creates the property tree with value assigned for each attribute
@@ -540,110 +539,63 @@ public abstract class AbstractContentServiceTest
 
     protected ContentType createContentTypeForAllInputTypes()
     {
-        final FormItemSet set = FormItemSet.create().
-            name( "set" ).
-            addFormItem( Input.create().
-                label( "String" ).
-                name( "setString" ).
-                inputType( InputTypeName.TEXT_LINE ).
-                build() ).
-            addFormItem( Input.create().
-                label( "Double" ).
-                name( "setDouble" ).
-                inputType( InputTypeName.DOUBLE ).
-                build() ).
-            build();
+        final FormItemSet set = FormItemSet.create()
+            .name( "set" )
+            .addFormItem( Input.create().label( "String" ).name( "setString" ).inputType( InputTypeName.TEXT_LINE ).build() )
+            .addFormItem( Input.create().label( "Double" ).name( "setDouble" ).inputType( InputTypeName.DOUBLE ).build() )
+            .build();
 
-        return ContentType.create().
-            superType( ContentTypeName.documentMedia() ).
-            name( "myContentType" ).
-            addFormItem( Input.create().
-                label( "Textline" ).
-                name( "textLine" ).
-                inputType( InputTypeName.TEXT_LINE ).
-                build() ).
-            addFormItem( Input.create().
-                name( "stringArray" ).
-                label( "String array" ).
-                inputType( InputTypeName.TEXT_LINE ).
-                build() ).
-            addFormItem( Input.create().
-                name( "double" ).
-                label( "Double" ).
-                inputType( InputTypeName.DOUBLE ).
-                build() ).
-            addFormItem( Input.create().
-                name( "long" ).
-                label( "Long" ).
-                inputType( InputTypeName.LONG ).
-                build() ).
-            addFormItem( Input.create().
-                name( "comboBox" ).
-                label( "Combobox" ).
-                inputType( InputTypeName.COMBO_BOX ).
-                inputTypeProperty( InputTypeProperty.create( "option", "label1" ).attribute( "value", "value1" ).build() ).
-                inputTypeProperty( InputTypeProperty.create( "option", "label2" ).attribute( "value", "value2" ).build() ).
-                build() ).
-            addFormItem( Input.create().
-                name( "checkbox" ).
-                label( "Checkbox" ).
-                inputType( InputTypeName.CHECK_BOX ).
-                build() ).
-            addFormItem( Input.create().
-                name( "tag" ).
-                label( "Tag" ).
-                inputType( InputTypeName.TAG ).
-                build() ).
-            addFormItem( Input.create().
-                name( "contentSelector" ).
-                label( "Content selector" ).
-                inputType( InputTypeName.CONTENT_SELECTOR ).
-                inputTypeProperty( InputTypeProperty.create( "allowContentType", ContentTypeName.folder().toString() ).build() ).
-                build() ).
-            addFormItem( Input.create().
-                name( "contentTypeFilter" ).
-                label( "Content type filter" ).
-                inputType( InputTypeName.CONTENT_TYPE_FILTER ).
-                build() ).
-            addFormItem( Input.create().
-                name( "siteConfigurator" ).
-                inputType( InputTypeName.SITE_CONFIGURATOR ).
-                label( "Site configurator" ).
-                build() ).
-            addFormItem( Input.create().
-                name( "date" ).
-                label( "Date" ).
-                inputType( InputTypeName.DATE ).
-                build() ).
-            addFormItem( Input.create().
-                name( "time" ).
-                label( "Time" ).
-                inputType( InputTypeName.TIME ).
-                build() ).
-            addFormItem( Input.create().
-                name( "geoPoint" ).
-                label( "Geopoint" ).
-                inputType( InputTypeName.GEO_POINT ).
-                build() ).
-            addFormItem( Input.create().
-                name( "htmlArea" ).
-                label( "Htmlarea" ).
-                inputType( InputTypeName.HTML_AREA ).
-                build() ).
-            addFormItem( Input.create().
-                name( "localDateTime" ).
-                label( "Local datetime" ).
-                inputType( InputTypeName.DATE_TIME ).
-                inputTypeProperty( InputTypeProperty.create( "timezone", "false" ).build() ).
-                build() ).
-            addFormItem( Input.create().
-                name( "dateTime" ).
-                label( "Datetime" ).
-                inputType( InputTypeName.DATE_TIME ).
-                inputTypeProperty( InputTypeProperty.create( "timezone", "true" ).build() ).
-                build() ).
-            addFormItem( set ).
-            build();
+        return ContentType.create()
+            .superType( ContentTypeName.documentMedia() )
+            .name( "myContentType" )
+            .addFormItem( Input.create().label( "Textline" ).name( "textLine" ).inputType( InputTypeName.TEXT_LINE ).build() )
+            .addFormItem( Input.create().name( "stringArray" ).label( "String array" ).inputType( InputTypeName.TEXT_LINE ).build() )
+            .addFormItem( Input.create().name( "double" ).label( "Double" ).inputType( InputTypeName.DOUBLE ).build() )
+            .addFormItem( Input.create().name( "long" ).label( "Long" ).inputType( InputTypeName.LONG ).build() )
+            .addFormItem( Input.create()
+                              .name( "comboBox" )
+                              .label( "Combobox" )
+                              .inputType( InputTypeName.COMBO_BOX )
+                              .inputTypeProperty( InputTypeProperty.create( "option", "label1" ).attribute( "value", "value1" ).build() )
+                              .inputTypeProperty( InputTypeProperty.create( "option", "label2" ).attribute( "value", "value2" ).build() )
+                              .build() )
+            .addFormItem( Input.create().name( "checkbox" ).label( "Checkbox" ).inputType( InputTypeName.CHECK_BOX ).build() )
+            .addFormItem( Input.create().name( "tag" ).label( "Tag" ).inputType( InputTypeName.TAG ).build() )
+            .addFormItem( Input.create()
+                              .name( "contentSelector" )
+                              .label( "Content selector" )
+                              .inputType( InputTypeName.CONTENT_SELECTOR )
+                              .inputTypeProperty(
+                                  InputTypeProperty.create( "allowContentType", ContentTypeName.folder().toString() ).build() )
+                              .build() )
+            .addFormItem( Input.create()
+                              .name( "contentTypeFilter" )
+                              .label( "Content type filter" )
+                              .inputType( InputTypeName.CONTENT_TYPE_FILTER )
+                              .build() )
+            .addFormItem( Input.create()
+                              .name( "siteConfigurator" )
+                              .inputType( InputTypeName.SITE_CONFIGURATOR )
+                              .label( "Site configurator" )
+                              .build() )
+            .addFormItem( Input.create().name( "date" ).label( "Date" ).inputType( InputTypeName.DATE ).build() )
+            .addFormItem( Input.create().name( "time" ).label( "Time" ).inputType( InputTypeName.TIME ).build() )
+            .addFormItem( Input.create().name( "geoPoint" ).label( "Geopoint" ).inputType( InputTypeName.GEO_POINT ).build() )
+            .addFormItem( Input.create().name( "htmlArea" ).label( "Htmlarea" ).inputType( InputTypeName.HTML_AREA ).build() )
+            .addFormItem( Input.create()
+                              .name( "localDateTime" )
+                              .label( "Local datetime" )
+                              .inputType( InputTypeName.DATE_TIME )
+                              .inputTypeProperty( InputTypeProperty.create( "timezone", "false" ).build() )
+                              .build() )
+            .addFormItem( Input.create()
+                              .name( "dateTime" )
+                              .label( "Datetime" )
+                              .inputType( InputTypeName.DATE_TIME )
+                              .inputTypeProperty( InputTypeProperty.create( "timezone", "true" ).build() )
+                              .build() )
+            .addFormItem( set )
+            .build();
     }
 
     protected void assertOrder( final Iterable<ContentId> contentIds, final Content... expectedOrder )
@@ -653,9 +605,8 @@ public abstract class AbstractContentServiceTest
 
     protected void assertVersions( final ContentId contentId, final int expected )
     {
-        FindContentVersionsResult versions = this.contentService.getVersions( FindContentVersionsParams.create().
-            contentId( contentId ).
-            build() );
+        FindContentVersionsResult versions =
+            this.contentService.getVersions( FindContentVersionsParams.create().contentId( contentId ).build() );
 
         assertEquals( expected, versions.getContentVersions().getSize() );
 
@@ -703,10 +654,8 @@ public abstract class AbstractContentServiceTest
 
         ident += 3;
 
-        final FindContentByParentResult result = this.contentService.findByParent( FindContentByParentParams.create().
-            parentId( root.getId() ).
-            size( -1 ).
-            build() );
+        final FindContentByParentResult result =
+            this.contentService.findByParent( FindContentByParentParams.create().parentId( root.getId() ).size( -1 ).build() );
 
         for ( final Content content : result.getContents() )
         {

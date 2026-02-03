@@ -7,9 +7,19 @@ public class MessageDigests
 {
     public static MessageDigest sha512()
     {
+        return getInstance( "SHA-512" );
+    }
+
+    public static MessageDigest sha256()
+    {
+        return getInstance( "SHA-256" );
+    }
+
+    private static MessageDigest getInstance( final String algorithmName )
+    {
         try
         {
-            return MessageDigest.getInstance( "SHA-512" );
+            return MessageDigest.getInstance( algorithmName );
         }
         catch ( NoSuchAlgorithmException e )
         {

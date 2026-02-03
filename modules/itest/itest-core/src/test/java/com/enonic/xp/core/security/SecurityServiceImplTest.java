@@ -11,6 +11,7 @@ import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.audit.config.AuditLogConfig;
+import com.enonic.xp.core.impl.security.PasswordSecurityService;
 import com.enonic.xp.core.impl.security.SecurityAuditLogSupportImpl;
 import com.enonic.xp.core.impl.security.SecurityConfig;
 import com.enonic.xp.core.impl.security.SecurityInitializer;
@@ -150,13 +151,16 @@ class SecurityServiceImplTest
 
         AuditLogService auditLogService = mock( AuditLogService.class, withSettings().stubOnly() );
 
-        SecurityConfig securityConfig = mock( SecurityConfig.class );
-        Mockito.when( securityConfig.auditlog_enabled() ).thenReturn( true );
+        SecurityConfig securityConfig = mock( SecurityConfig.class, withSettings().stubOnly()
+            .defaultAnswer( invocationOnMock -> invocationOnMock.getMethod().getDefaultValue() ) );
 
         SecurityAuditLogSupportImpl securityAuditLogSupport = new SecurityAuditLogSupportImpl( auditLogService );
         securityAuditLogSupport.activate( securityConfig );
 
-        securityService = new SecurityServiceImpl( this.nodeService, securityAuditLogSupport );
+        final PasswordSecurityService passwordSecurityService = new PasswordSecurityService();
+        passwordSecurityService.activate( securityConfig );
+
+        securityService = new SecurityServiceImpl( this.nodeService, securityAuditLogSupport, passwordSecurityService );
 
         runAsAdmin( () -> SecurityInitializer.create()
             .setIndexService( indexService )
@@ -721,6 +725,27 @@ class SecurityServiceImplTest
     }
 
     @Test
+    void testAuthenticateByUserEmptyPwd()
+    {
+        runAsAdmin( () -> {
+            final CreateUserParams createUser = CreateUserParams.create()
+                .userKey( PrincipalKey.ofUser( SYSTEM, "user1" ) )
+                .displayName( "User 1" )
+                .email( "user1@enonic.com" )
+                .login( "user1" )
+                .password( "runar" )
+                .build();
+
+            securityService.createUser( createUser );
+
+            final UsernamePasswordAuthToken authToken = new UsernamePasswordAuthToken( SYSTEM, "User1", "" );
+
+            final AuthenticationInfo authInfo = securityService.authenticate( authToken );
+            assertFalse( authInfo.isAuthenticated() );
+        } );
+    }
+
+    @Test
     void testAuthenticateByEmail()
     {
         runAsAdmin( () -> {
@@ -899,7 +924,7 @@ class SecurityServiceImplTest
                 .description( "id provider description" )
                 .build();
 
-            final IdProvider idProviderCreated = securityService.createIdProvider( createIdProvider );
+            securityService.createIdProvider( createIdProvider );
 
             securityService.deleteIdProvider( IdProviderKey.from( "enonic" ) );
 

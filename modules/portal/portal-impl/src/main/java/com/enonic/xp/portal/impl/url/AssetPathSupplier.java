@@ -1,11 +1,11 @@
 package com.enonic.xp.portal.impl.url;
 
+import java.util.HexFormat;
 import java.util.Objects;
 import java.util.function.Supplier;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.core.internal.HexCoder;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
@@ -44,8 +44,7 @@ final class AssetPathSupplier
             throw new IllegalArgumentException( "Could not find application [" + applicationKey + "]" );
         }
 
-        final String fingerprint =
-            RunMode.isDev() ? String.valueOf( stableTime() ) : HexCoder.toHex( resource.getTimestamp() );
+        final String fingerprint = RunMode.isDev() ? String.valueOf( stableTime() ) : HexFormat.of().toHexDigits( resource.getTimestamp() );
 
         UrlBuilderHelper.appendPart( url, applicationKey + ":" + fingerprint );
         UrlBuilderHelper.appendAndEncodePathParts( url, path );
