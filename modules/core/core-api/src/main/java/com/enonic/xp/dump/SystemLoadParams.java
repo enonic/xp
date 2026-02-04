@@ -1,5 +1,7 @@
 package com.enonic.xp.dump;
 
+import com.enonic.xp.repository.RepositoryIds;
+
 public final class SystemLoadParams
 {
     private final String dumpName;
@@ -12,6 +14,8 @@ public final class SystemLoadParams
 
     private final SystemLoadListener listener;
 
+    private final RepositoryIds repositories;
+
     private SystemLoadParams( final Builder builder )
     {
         this.dumpName = builder.dumpName;
@@ -19,6 +23,7 @@ public final class SystemLoadParams
         this.listener = builder.listener;
         this.upgrade = builder.upgrade;
         this.archive = builder.archive;
+        this.repositories = builder.repositories;
     }
 
     public String getDumpName()
@@ -46,6 +51,11 @@ public final class SystemLoadParams
         return archive;
     }
 
+    public RepositoryIds getRepositories()
+    {
+        return repositories;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -62,6 +72,8 @@ public final class SystemLoadParams
         private boolean archive = true;
 
         private SystemLoadListener listener;
+
+        private RepositoryIds repositories;
 
         private Builder()
         {
@@ -94,6 +106,12 @@ public final class SystemLoadParams
         public Builder archive( final boolean archive )
         {
             this.archive = archive;
+            return this;
+        }
+
+        public Builder repositories( final RepositoryIds repositories )
+        {
+            this.repositories = repositories;
             return this;
         }
 

@@ -6,6 +6,7 @@ import com.enonic.xp.dump.SystemLoadParams;
 import com.enonic.xp.dump.SystemLoadResult;
 import com.enonic.xp.impl.server.rest.model.SystemLoadResultJson;
 import com.enonic.xp.impl.server.rest.task.listener.SystemLoadListenerImpl;
+import com.enonic.xp.repository.RepositoryIds;
 import com.enonic.xp.task.ProgressReportParams;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.RunnableTask;
@@ -21,6 +22,8 @@ public class LoadRunnableTask
 
     private final boolean archive;
 
+    private final RepositoryIds repositories;
+
     private final TaskService taskService;
 
     private final DumpService dumpService;
@@ -32,6 +35,7 @@ public class LoadRunnableTask
         this.name = builder.name;
         this.upgrade = builder.upgrade;
         this.archive = builder.archive;
+        this.repositories = builder.repositories;
         this.taskService = builder.taskService;
         this.dumpService = builder.dumpService;
     }
@@ -61,7 +65,7 @@ public class LoadRunnableTask
         final SystemLoadResult systemLoadResult = this.dumpService.load( SystemLoadParams.create()
                                                                              .dumpName( name )
                                                                              .upgrade( upgrade )
-                                                                             .archive( archive )
+                                                                             .archive( archive ).repositories( repositories )
                                                                              .includeVersions( true )
                                                                              .listener( loadDumpListener )
                                                                              .build() );
@@ -76,6 +80,8 @@ public class LoadRunnableTask
         private boolean upgrade;
 
         private boolean archive;
+
+        private RepositoryIds repositories;
 
         private DumpService dumpService;
 
@@ -102,6 +108,12 @@ public class LoadRunnableTask
         public Builder archive( boolean archive )
         {
             this.archive = archive;
+            return this;
+        }
+
+        public Builder repositories( RepositoryIds repositories )
+        {
+            this.repositories = repositories;
             return this;
         }
 

@@ -47,6 +47,7 @@ import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.BinaryAttachment;
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.GetActiveNodeVersionsParams;
 import com.enonic.xp.node.GetActiveNodeVersionsResult;
 import com.enonic.xp.node.GetNodeVersionsParams;
@@ -1109,5 +1110,103 @@ class DumpServiceImplTest
             // N.B. Writing "current time" (even System#nanoTime) does not have the same guarantee due low timer resolution.
             n.data.setLong( "update", UPDATE_COUNTER.incrementAndGet() );
         } ).build() );
+    }
+
+    @Test
+    void partial_load_single_repository()
+    {
+        final RepositoryEntry repo1 = NodeHelper.runAsAdmin( () -> doCreateRepository( RepositoryId.from( "repo-to-load" ), false ) );
+        final RepositoryEntry repo2 = NodeHelper.runAsAdmin( () -> doCreateRepository( RepositoryId.from( "repo-to-keep" ), false ) );
+
+        final Context repo1Context = ContextBuilder.from( ContextAccessor.current() )
+            .repositoryId( repo1.getId() )
+            .branch( RepositoryConstants.MASTER_BRANCH )
+            .build();
+
+        final Context repo2Context = ContextBuilder.from( ContextAccessor.current() )
+            .repositoryId( repo2.getId() )
+            .branch( RepositoryConstants.MASTER_BRANCH )
+            .build();
+
+        final Node nodeInRepo1 = repo1Context.callWith( () -> createNode( NodePath.ROOT, "node-in-repo1" ) );
+        final Node nodeInRepo2 = repo2Context.callWith( () -> createNode( NodePath.ROOT, "node-in-repo2" ) );
+
+        NodeHelper.runAsAdmin( () -> doDump( SystemDumpParams.create().dumpName( "partialDump" ).build() ) );
+
+        // Delete node from repo1 after dump - this will be restored by partial load
+        repo1Context.runWith( () -> nodeService.delete( DeleteNodeParams.create().nodeId( nodeInRepo1.id() ).build() ) );
+        repo1Context.runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
+        assertNull( repo1Context.callWith( () -> getNode( nodeInRepo1.id() ) ) );
+
+        // Add new node to repo1 after dump - this should be removed by partial load
+        final Node newNodeInRepo1 = repo1Context.callWith( () -> createNode( NodePath.ROOT, "new-node-in-repo1" ) );
+
+        // Add new node to repo2 after dump - this should survive partial load
+        final Node newNodeInRepo2 = repo2Context.callWith( () -> createNode( NodePath.ROOT, "new-node-in-repo2" ) );
+
+        // Partial load only repo1
+        NodeHelper.runAsAdmin( () -> this.dumpService.load( SystemLoadParams.create()
+                                                                .dumpName( "partialDump" )
+                                                                .includeVersions( true )
+                                                                .repositories( RepositoryIds.from( repo1.getId() ) )
+                                                                .build() ) );
+
+        // Verify repo1 was restored from dump (original node exists, new node removed)
+        final Node restoredNodeInRepo1 = repo1Context.callWith( () -> getNode( nodeInRepo1.id() ) );
+        assertNotNull( restoredNodeInRepo1 );
+        assertNull( repo1Context.callWith( () -> getNode( newNodeInRepo1.id() ) ) );
+
+        // Verify repo2 was NOT touched (both old and new nodes exist)
+        final Node existingNodeInRepo2 = repo2Context.callWith( () -> getNode( nodeInRepo2.id() ) );
+        assertNotNull( existingNodeInRepo2 );
+        final Node newNodeStillExists = repo2Context.callWith( () -> getNode( newNodeInRepo2.id() ) );
+        assertNotNull( newNodeStillExists );
+    }
+
+    @Test
+    void partial_load_preserves_repositories_outside_list()
+    {
+        final RepositoryEntry repoInsideList =
+            NodeHelper.runAsAdmin( () -> doCreateRepository( RepositoryId.from( "repo-inside-list" ), false ) );
+        final RepositoryEntry repoOutsideList =
+            NodeHelper.runAsAdmin( () -> doCreateRepository( RepositoryId.from( "repo-outside-list" ), false ) );
+
+        NodeHelper.runAsAdmin( () -> doDump( SystemDumpParams.create().dumpName( "partialDump2" ).build() ) );
+
+        final Repositories reposBefore = NodeHelper.runAsAdmin( this::doListRepositories );
+
+        // Partial load only repoInsideList
+        NodeHelper.runAsAdmin( () -> this.dumpService.load( SystemLoadParams.create()
+                                                                .dumpName( "partialDump2" )
+                                                                .includeVersions( true )
+                                                                .repositories( RepositoryIds.from( repoInsideList.getId() ) )
+                                                                .build() ) );
+
+        final Repositories reposAfter = NodeHelper.runAsAdmin( this::doListRepositories );
+
+        // Both repositories should still exist
+        assertThat( reposAfter ).map( Repository::getId ).contains( repoInsideList.getId(), repoOutsideList.getId() );
+        assertEquals( reposBefore.getIds().getSize(), reposAfter.getIds().getSize() );
+    }
+
+    @Test
+    void partial_load_does_not_delete_system_repo()
+    {
+        final RepositoryEntry userRepo = NodeHelper.runAsAdmin( () -> doCreateRepository( RepositoryId.from( "user-repo" ), false ) );
+
+        NodeHelper.runAsAdmin( () -> doDump( SystemDumpParams.create().dumpName( "partialDump3" ).build() ) );
+
+        // Partial load requesting system-repo should not touch it
+        NodeHelper.runAsAdmin( () -> this.dumpService.load( SystemLoadParams.create()
+                                                                .dumpName( "partialDump3" )
+                                                                .includeVersions( true )
+                                                                .repositories(
+                                                                    RepositoryIds.from( userRepo.getId(), SystemConstants.SYSTEM_REPO_ID ) )
+                                                                .build() ) );
+
+        final Repositories reposAfter = NodeHelper.runAsAdmin( this::doListRepositories );
+
+        // System repo should still exist
+        assertThat( reposAfter ).map( Repository::getId ).contains( SystemConstants.SYSTEM_REPO_ID );
     }
 }
