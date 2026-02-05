@@ -25,7 +25,7 @@ class PortalRequestTest
     void setScheme()
     {
         final PortalRequest request = new PortalRequest();
-        assertEquals( null, request.getScheme() );
+        assertNull( request.getScheme() );
 
         request.setScheme( "http" );
         assertEquals( "http", request.getScheme() );
@@ -35,7 +35,7 @@ class PortalRequestTest
     void setHost()
     {
         final PortalRequest request = new PortalRequest();
-        assertEquals( null, request.getHost() );
+        assertNull( request.getHost() );
 
         request.setHost( "localhost" );
         assertEquals( "localhost", request.getHost() );
@@ -54,7 +54,7 @@ class PortalRequestTest
     void setPath()
     {
         final PortalRequest request = new PortalRequest();
-        assertEquals( null, request.getPath() );
+        assertNull( request.getPath() );
 
         request.setPath( "/root" );
         assertEquals( "/root", request.getPath() );
@@ -64,7 +64,7 @@ class PortalRequestTest
     void setRawPath()
     {
         final PortalRequest request = new PortalRequest();
-        assertEquals( null, request.getRawPath() );
+        assertEquals( "/", request.getRawPath() );
 
         request.setRawPath( "/root" );
         assertEquals( "/root", request.getRawPath() );
@@ -74,7 +74,7 @@ class PortalRequestTest
     void setUrl()
     {
         final PortalRequest request = new PortalRequest();
-        assertEquals( null, request.getUrl() );
+        assertNull( request.getUrl() );
 
         request.setUrl( "http.//localhost:8080/root?param=value" );
         assertEquals( "http.//localhost:8080/root?param=value", request.getUrl() );
@@ -84,7 +84,7 @@ class PortalRequestTest
     void setMode()
     {
         final PortalRequest request = new PortalRequest();
-        assertEquals( RenderMode.LIVE, request.getMode() );
+        assertNull( request.getMode() );
 
         request.setMode( RenderMode.EDIT );
         assertEquals( RenderMode.EDIT, request.getMode() );

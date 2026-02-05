@@ -1,17 +1,16 @@
 package com.enonic.xp.portal.impl.app;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.google.common.net.HttpHeaders;
+
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
+import com.enonic.xp.portal.impl.handler.PathMatchers;
 import com.enonic.xp.portal.impl.websocket.WebSocketEndpointImpl;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.trace.Trace;
@@ -33,10 +32,6 @@ import com.enonic.xp.web.websocket.WebSocketEndpoint;
 public final class WebAppHandler
     extends BaseWebHandler
 {
-    public static final String PATTERN_PREFIX = "/webapp/";
-
-    public static final Pattern PATTERN = Pattern.compile( PATTERN_PREFIX + "([^/]+)(/(?:.)*)?" );
-
     private ControllerScriptFactory controllerScriptFactory;
 
     private ExceptionMapper exceptionMapper;
@@ -51,48 +46,29 @@ public final class WebAppHandler
     @Override
     protected boolean canHandle( final WebRequest req )
     {
-        return PATTERN.matcher( req.getRawPath() ).matches();
+        return req instanceof PortalRequest portalRequest && portalRequest.getBaseUri().startsWith( PathMatchers.WEBAPP_PREFIX );
     }
 
     @Override
     protected WebResponse doHandle( final WebRequest webRequest, final WebResponse res, final WebHandlerChain chain )
         throws Exception
     {
-        PortalRequest portalRequest = (PortalRequest) webRequest;
+        final PortalRequest portalRequest = (PortalRequest) webRequest;
         portalRequest.setContextPath( portalRequest.getBaseUri() );
 
-        final Matcher matcher = PATTERN.matcher( portalRequest.getRawPath() );
-        matcher.matches();
-
-        final ApplicationKey applicationKey = ApplicationKey.from( matcher.group( 1 ) );
-        final String restPath = matcher.group( 2 );
-
-        // Redirect if URL doesn't end with trailing slash (restPath is null for /webapp/{appname})
-        if ( restPath == null )
+        final String restPath = portalRequest.getRawPath().substring( portalRequest.getBaseUri().length() );
+        if ( restPath.isEmpty() )
         {
-            String redirectUrl = portalRequest.getRawPath() + "/";
-
-            // Preserve query string if present
-            final String queryString = portalRequest.getRawRequest().getQueryString();
-            if ( queryString != null )
-            {
-                redirectUrl = redirectUrl + "?" + queryString;
-            }
-
-            return WebResponse.create().
-                status( HttpStatus.FOUND ).
-                header( "Location", redirectUrl ).
-                build();
+            return handleRedirect( webRequest );
         }
-
         final Trace trace = Tracer.newTrace( "renderApp" );
         if ( trace == null )
         {
             return handleRequest( portalRequest );
         }
-        return Tracer.traceEx( trace, () -> {
+        return Tracer.trace( trace, () -> {
             final WebResponse resp = handleRequest( portalRequest );
-            addTraceInfo( trace, applicationKey, restPath );
+            addTraceInfo( trace, portalRequest.getApplicationKey(), restPath );
             return resp;
         } );
     }
@@ -109,6 +85,19 @@ public final class WebAppHandler
         {
             return handleError( req, e );
         }
+    }
+
+    private WebResponse handleRedirect( WebRequest webRequest )
+    {
+        String redirectUrl = webRequest.getPath() + "/";
+
+        final String queryString = webRequest.getRawRequest().getQueryString();
+        if ( queryString != null )
+        {
+            redirectUrl = redirectUrl + "?" + queryString;
+        }
+
+        return WebResponse.create().status( HttpStatus.TEMPORARY_REDIRECT ).header( HttpHeaders.LOCATION, redirectUrl ).build();
     }
 
     private PortalResponse executeController( final PortalRequest req )

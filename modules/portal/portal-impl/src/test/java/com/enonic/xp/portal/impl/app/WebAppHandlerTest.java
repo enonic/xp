@@ -74,9 +74,12 @@ class WebAppHandlerTest
     void canHandle()
     {
         this.request.setRawPath( "/site/a/b" );
+        this.request.setBaseUri( "/site" );
+
         assertFalse( this.handler.canHandle( this.request ) );
 
         this.request.setRawPath( "/webapp/myapp" );
+        this.request.setBaseUri( "/webapp/myapp" );
         assertTrue( this.handler.canHandle( this.request ) );
 
         this.request.setRawPath( "/webapp/myapp/a/b" );
@@ -107,37 +110,10 @@ class WebAppHandlerTest
     {
         this.request.setApplicationKey( ApplicationKey.from( "myapp" ) );
         this.request.setRawPath( "/webapp/myapp/a.txt" );
+        this.request.setBaseUri( "/webapp/myapp" );
 
         final WebResponse response = this.handler.doHandle( this.request, null, this.chain );
         assertEquals( HttpStatus.INTERNAL_SERVER_ERROR, response.getStatus() );
-    }
-
-    @Test
-    void handle_redirectWhenNoTrailingSlash()
-        throws Exception
-    {
-        this.request.setApplicationKey( ApplicationKey.from( "myapp" ) );
-        this.request.setRawPath( "/webapp/myapp" );
-
-        final WebResponse response = this.handler.doHandle( this.request, null, this.chain );
-        assertEquals( HttpStatus.FOUND, response.getStatus() );
-        assertEquals( "/webapp/myapp/", response.getHeaders().get( "location" ) );
-    }
-
-    @Test
-    void handle_redirectWhenNoTrailingSlashWithQueryString()
-        throws Exception
-    {
-        this.request.setApplicationKey( ApplicationKey.from( "myapp" ) );
-        this.request.setRawPath( "/webapp/myapp" );
-
-        final HttpServletRequest rawRequest = mock( HttpServletRequest.class );
-        when( rawRequest.getQueryString() ).thenReturn( "param=value&other=test" );
-        this.request.setRawRequest( rawRequest );
-
-        final WebResponse response = this.handler.doHandle( this.request, null, this.chain );
-        assertEquals( HttpStatus.FOUND, response.getStatus() );
-        assertEquals( "/webapp/myapp/?param=value&other=test", response.getHeaders().get( "location" ) );
     }
 
     @Test
@@ -146,6 +122,7 @@ class WebAppHandlerTest
     {
         this.request.setApplicationKey( ApplicationKey.from( "myapp" ) );
         this.request.setBaseUri( "/webapp/myapp" );
+        this.request.setPath( "/webapp/myapp" );
         this.request.setRawPath( "/webapp/myapp/" );
 
         final ControllerScript script = mock( ControllerScript.class );
@@ -156,6 +133,47 @@ class WebAppHandlerTest
 
         assertSame( response, this.handler.doHandle( this.request, null, this.chain ) );
         assertEquals( "/webapp/myapp", this.request.getContextPath() );
+    }
+
+    @Test
+    void doHandle_redirectsWhenNoTrailingSlash()
+        throws Exception
+    {
+        final HttpServletRequest rawRequest = mock( HttpServletRequest.class );
+
+        final PortalRequest webRequest = new PortalRequest();
+        webRequest.setRawPath( "/webapp/myapp" );
+        webRequest.setPath( "/webapp/myapp" );
+        webRequest.setBaseUri( "/webapp/myapp" );
+        webRequest.setRawRequest( rawRequest );
+
+        final WebResponse webResponse = WebResponse.create().build();
+
+        WebResponse response = this.handler.doHandle( webRequest, webResponse, null );
+
+        assertEquals( HttpStatus.TEMPORARY_REDIRECT, response.getStatus() );
+        assertEquals( "/webapp/myapp/", response.getHeaders().get( "Location" ) );
+    }
+
+    @Test
+    void doHandle_redirectsWhenNoTrailingSlashWithQueryString()
+        throws Exception
+    {
+        final HttpServletRequest rawRequest = mock( HttpServletRequest.class );
+        when( rawRequest.getQueryString() ).thenReturn( "param=value&other=test" );
+
+        final PortalRequest webRequest = new PortalRequest();
+        webRequest.setRawPath( "/webapp/myapp" );
+        webRequest.setPath( "/webapp/myapp" );
+        webRequest.setBaseUri( "/webapp/myapp" );
+        webRequest.setRawRequest( rawRequest );
+
+        final WebResponse webResponse = WebResponse.create().build();
+
+        WebResponse response = this.handler.doHandle( webRequest, webResponse, null );
+
+        assertEquals( HttpStatus.TEMPORARY_REDIRECT, response.getStatus() );
+        assertEquals( "/webapp/myapp/?param=value&other=test", response.getHeaders().get( "Location" ) );
     }
 }
 

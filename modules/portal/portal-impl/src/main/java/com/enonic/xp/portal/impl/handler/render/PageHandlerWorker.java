@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import com.google.common.net.HttpHeaders;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.data.Property;
@@ -88,7 +89,7 @@ final class PageHandlerWorker
 
         final String targetUrl = this.portalUrlService.pageUrl( pageUrlParams );
 
-        return PortalResponse.create().status( HttpStatus.TEMPORARY_REDIRECT ).header( "Location", targetUrl ).build();
+        return PortalResponse.create().status( HttpStatus.TEMPORARY_REDIRECT ).header( HttpHeaders.LOCATION, targetUrl ).build();
     }
 
     private Multimap<String, String> getShortcutParameters( final Content content )

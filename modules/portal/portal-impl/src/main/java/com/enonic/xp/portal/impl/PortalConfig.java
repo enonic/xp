@@ -18,5 +18,7 @@ public @interface PortalConfig
 
     boolean legacy_imageService_enabled() default true;
 
+    boolean legacy_assetService_enabled() default true;
+
     boolean legacy_httpService_enabled() default true;
 }

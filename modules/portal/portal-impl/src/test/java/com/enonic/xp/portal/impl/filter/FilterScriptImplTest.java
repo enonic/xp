@@ -12,6 +12,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.filter.FilterScript;
 import com.enonic.xp.portal.impl.script.PortalScriptServiceImpl;
 import com.enonic.xp.resource.ResourceKey;
@@ -51,6 +52,8 @@ class FilterScriptImplTest
     void setup()
     {
         this.portalRequest = new PortalRequest();
+        this.portalRequest.setMode( RenderMode.LIVE );
+        this.portalRequest.setRawPath( "/site/project/branch/path" );
         this.portalResponse = PortalResponse.create().build();
 
         final Application application = Mockito.mock( Application.class );

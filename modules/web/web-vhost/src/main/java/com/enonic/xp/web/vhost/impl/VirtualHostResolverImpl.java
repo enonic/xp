@@ -45,7 +45,7 @@ public class VirtualHostResolverImpl
     {
         String serverName = req.getServerName();
         return virtualHostMappings.stream()
-            .map( virtualHost -> virtualHost.matches( serverName, req.getRequestURI() ) )
+            .map( virtualHost -> virtualHost.matches( serverName, req.getPathInfo() ) )
             .filter( Objects::nonNull )
             .findFirst()
             .orElse( null );
@@ -66,19 +66,19 @@ public class VirtualHostResolverImpl
             this.pattern = originalHost.startsWith( "~" ) ? Pattern.compile( originalHost.substring( 1 ), Pattern.CASE_INSENSITIVE ) : null;
         }
 
-        VirtualHostMapping matches( String serverName, String requestURI )
+        VirtualHostMapping matches( String serverName, String pathInfo )
         {
             if ( pattern != null )
             {
                 Matcher matcher = pattern.matcher( serverName );
-                if ( matcher.matches() && matchesSource( requestURI ) )
+                if ( matcher.matches() && matchesSource( pathInfo ) )
                 {
                     return new VirtualHostMapping( virtualHost.getName(), serverName, virtualHost.getSource(),
                                                    matcher.replaceAll( virtualHost.getTarget() ), createIdProvidersMapping(),
                                                    virtualHost.getOrder(), virtualHost.getContext() );
                 }
             }
-            else if ( originalHost.equalsIgnoreCase( serverName ) && matchesSource( requestURI ) )
+            else if ( originalHost.equalsIgnoreCase( serverName ) && matchesSource( pathInfo ) )
             {
                 return new VirtualHostMapping( virtualHost.getName(), serverName, virtualHost.getSource(), virtualHost.getTarget(),
                                                createIdProvidersMapping(), virtualHost.getOrder(), virtualHost.getContext() );
@@ -86,10 +86,10 @@ public class VirtualHostResolverImpl
             return null;
         }
 
-        boolean matchesSource( String requestURI )
+        boolean matchesSource( String pathInfo )
         {
-            return "/".equals( virtualHost.getSource() ) || requestURI.equals( virtualHost.getSource() ) ||
-                requestURI.startsWith( virtualHost.getSource() + "/" );
+            return "/".equals( virtualHost.getSource() ) || pathInfo.equals( virtualHost.getSource() ) ||
+                pathInfo.startsWith( virtualHost.getSource() + "/" );
         }
 
         VirtualHostIdProvidersMapping createIdProvidersMapping()

@@ -11,6 +11,7 @@ import com.google.common.net.MediaType;
 
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.web.HttpMethod;
 
 import static java.util.stream.Collectors.joining;
@@ -55,6 +56,7 @@ class PostProcessorImplTest
         final PortalResponse portalResponse = PortalResponse.create().contentType( MediaType.JAVASCRIPT_UTF_8 ).body( "" ).build();
 
         final PortalRequest portalRequest = new PortalRequest();
+        portalRequest.setMode( RenderMode.LIVE );
         portalRequest.setMethod( HttpMethod.GET );
 
         final PortalResponse result = postProcessor.processResponse( portalRequest, portalResponse );
@@ -91,6 +93,7 @@ class PostProcessorImplTest
         final PortalResponse.Builder portalResponseBuilder = PortalResponse.create().contentType( MediaType.HTML_UTF_8 ).body( html );
 
         final PortalRequest portalRequest = new PortalRequest();
+        portalRequest.setMode( RenderMode.LIVE );
         portalRequest.setMethod( httpMethod );
 
         final PortalResponse portalResponse = postProcessor.processResponse( portalRequest, portalResponseBuilder.build() );
@@ -112,6 +115,7 @@ class PostProcessorImplTest
         final PortalResponse.Builder portalResponseBuilder = PortalResponse.create().contentType( MediaType.HTML_UTF_8 ).body( html );
 
         final PortalRequest portalRequest = new PortalRequest();
+        portalRequest.setMode( RenderMode.LIVE );
         portalRequest.setMethod( httpMethod );
 
         final PortalResponse portalResponse = postProcessor.processResponse( portalRequest, portalResponseBuilder.build() );

@@ -1,9 +1,6 @@
 package com.enonic.xp.portal.impl.handler;
 
-import java.util.Objects;
-import java.util.concurrent.Callable;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.io.IOException;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -22,8 +19,6 @@ import com.enonic.xp.web.handler.WebHandlerChain;
 public class ApiDispatcher
     extends BaseWebHandler
 {
-    private static final Pattern HANDLER_PATTERN = Pattern.compile( "^/(_|api)/(?<handler>[^/]+)" );
-
     private final SlashApiHandler apiHandler;
 
     private final ComponentHandler componentHandler;
@@ -45,6 +40,8 @@ public class ApiDispatcher
     private volatile boolean legacyAttachmentServiceEnabled;
 
     private volatile boolean legacyHttpServiceEnabled;
+
+    private volatile boolean legacyAssetServiceEnabled;
 
     @Activate
     public ApiDispatcher( @Reference final SlashApiHandler apiHandler, @Reference final ComponentHandler componentHandler,
@@ -71,49 +68,44 @@ public class ApiDispatcher
         this.legacyImageServiceEnabled = config.legacy_imageService_enabled();
         this.legacyAttachmentServiceEnabled = config.legacy_attachmentService_enabled();
         this.legacyHttpServiceEnabled = config.legacy_httpService_enabled();
+        this.legacyAssetServiceEnabled = config.legacy_assetService_enabled();
     }
 
     @Override
     protected boolean canHandle( final WebRequest webRequest )
     {
-        final String path = Objects.requireNonNullElse( webRequest.getEndpointPath(), webRequest.getRawPath() );
-        return path.startsWith( "/_/" ) || path.startsWith( "/api/" );
+        return webRequest.getEndpointPath() != null || webRequest.getBasePath().startsWith( PathMatchers.API_PREFIX );
     }
 
     @Override
     protected WebResponse doHandle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
         throws Exception
     {
-        final String handler = resolveHandler( webRequest );
-        return switch ( handler )
+        return switch ( HandlerHelper.findEndpoint( webRequest ) )
         {
             case "attachment" ->
-                doHandleLegacyHandler( webResponse, legacyAttachmentServiceEnabled, () -> attachmentHandler.handle( webRequest ) );
-            case "image" -> doHandleLegacyHandler( webResponse, legacyImageServiceEnabled, () -> imageHandler.handle( webRequest ) );
-            case "service" -> doHandleLegacyHandler( webResponse, legacyHttpServiceEnabled, () -> serviceHandler.handle( webRequest ) );
-            case "error" -> errorHandler.handle( webRequest );
-            case "idprovider" -> identityHandler.handle( webRequest, webResponse );
-            case "asset" -> assetHandler.handle( webRequest );
-            case "component" -> componentHandler.handle( webRequest );
-            default -> apiHandler.handle( webRequest );
+                doHandleLegacyHandler( webRequest, webResponse, legacyAttachmentServiceEnabled, attachmentHandler::handle );
+            case "image" -> doHandleLegacyHandler( webRequest, webResponse, legacyImageServiceEnabled, imageHandler::handle );
+            case "service" -> doHandleLegacyHandler( webRequest, webResponse, legacyHttpServiceEnabled, serviceHandler::handle );
+            case "asset" -> doHandleLegacyHandler( webRequest, webResponse, legacyAssetServiceEnabled, assetHandler::handle );
+            case "error" -> doHandleLegacyHandler( webRequest, webResponse, true, errorHandler::handle );
+            case "idprovider" -> doHandleLegacyHandler( webRequest, webResponse, true, identityHandler::handle );
+            case "component" -> doHandleLegacyHandler( webRequest, webResponse, true, componentHandler::handle );
+            case null, default -> apiHandler.handle( webRequest );
         };
     }
 
-    private String resolveHandler( final WebRequest webRequest )
+    private WebResponse doHandleLegacyHandler( final WebRequest webRequest, WebResponse webResponse, final boolean handlerEnabled,
+                                               final HandlerFunction<WebRequest, WebResponse> handler )
+        throws IOException
     {
-        final String path = Objects.requireNonNullElse( webRequest.getEndpointPath(), webRequest.getRawPath() );
-        final Matcher matcher = HANDLER_PATTERN.matcher( path );
-        if ( !matcher.find() )
-        {
-            throw new IllegalStateException( "Invalid API path: " + path );
-        }
-        return matcher.group( "handler" );
+        return handlerEnabled ? handler.apply( webRequest ) : WebResponse.create( webResponse ).status( HttpStatus.NOT_FOUND ).build();
     }
 
-    private WebResponse doHandleLegacyHandler( final WebResponse webResponse, final boolean handlerEnabled,
-                                               final Callable<WebResponse> handler )
-        throws Exception
+    @FunctionalInterface
+    private interface HandlerFunction<T extends WebRequest, R extends WebResponse>
     {
-        return handlerEnabled ? handler.call() : WebResponse.create( webResponse ).status( HttpStatus.NOT_FOUND ).build();
+        R apply( T t )
+            throws IOException;
     }
 }

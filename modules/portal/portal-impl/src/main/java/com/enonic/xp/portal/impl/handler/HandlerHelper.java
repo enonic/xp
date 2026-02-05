@@ -12,6 +12,7 @@ import com.google.common.primitives.Longs;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.project.ProjectName;
@@ -30,18 +31,29 @@ public final class HandlerHelper
     {
     }
 
-    public static String findPreRestPath( final WebRequest req, final String endpoint )
-    {
-        final String rawPath = req.getRawPath();
-        final int endpointPathIndex = rawPath.indexOf( "/_/" );
-        return rawPath.substring( 0, endpointPathIndex + ( "/_/" + endpoint ).length() );
-    }
-
     public static String findRestPath( final WebRequest req, final String endpoint )
     {
         final String endpointPath = req.getEndpointPath();
         final String value = "/_/" + endpoint + "/";
         return endpointPath.length() > value.length() ? endpointPath.substring( value.length() ) : "";
+    }
+
+    /**
+     * Finds the endpoint name from the request's endpoint path.
+     * The endpoint path is expected to start with /_/ followed by the endpoint name and optionally more path segments.
+     *
+     * @return the api name or null if the request does not have an endpoint path
+     */
+    public static String findEndpoint( final WebRequest request )
+    {
+        final String endpointPath = request.getEndpointPath();
+        if ( endpointPath == null || !endpointPath.startsWith( "/_/" ) )
+        {
+            return null;
+        }
+        final String afterPrefix = endpointPath.substring( 3 );
+        final int slashIndex = afterPrefix.indexOf( '/' );
+        return slashIndex == -1 ? afterPrefix : afterPrefix.substring( 0, slashIndex );
     }
 
     public static String getParameter( final WebRequest req, final String name )
@@ -160,4 +172,20 @@ public final class HandlerHelper
         }
     }
 
+    public static DescriptorKey resolveDescriptorKey( final String descriptorKey )
+    {
+        try
+        {
+            final DescriptorKey key = DescriptorKey.from( descriptorKey );
+            if ( key.getName().isEmpty() )
+            {
+                throw WebException.notFound( String.format( "Descriptor key [%s] not found", descriptorKey ) );
+            }
+            return key;
+        }
+        catch ( Exception e )
+        {
+            throw WebException.notFound( String.format( "Descriptor key [%s] not found", descriptorKey ) );
+        }
+    }
 }

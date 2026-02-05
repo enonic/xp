@@ -11,7 +11,6 @@ import com.enonic.xp.admin.tool.AdminToolDescriptorService;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.resource.ResourceKey;
@@ -23,6 +22,7 @@ import com.enonic.xp.web.handler.BaseHandlerTest;
 import com.enonic.xp.web.handler.WebHandlerChain;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -32,7 +32,6 @@ import static org.mockito.Mockito.when;
 class AdminToolHandlerTest
     extends BaseHandlerTest
 {
-
     private AdminToolHandler handler;
 
     private PortalRequest portalRequest;
@@ -69,7 +68,6 @@ class AdminToolHandlerTest
 
         this.portalRequest = new PortalRequest();
         this.portalRequest.setRawRequest( this.rawRequest );
-        this.portalRequest.setMode( RenderMode.ADMIN );
         final DescriptorKey defaultDescriptorKey = AdminToolPortalHandler.DEFAULT_DESCRIPTOR_KEY;
         this.portalRequest.setBaseUri( AdminToolPortalHandler.ADMIN_TOOL_BASE + "/" + defaultDescriptorKey.getApplicationKey() + "/" +
                                            defaultDescriptorKey.getName() );
@@ -83,8 +81,17 @@ class AdminToolHandlerTest
     @Test
     void testCanHandle()
     {
-        this.portalRequest.setRawPath( "/admin/webapp/tool/1" );
+        this.portalRequest.setBaseUri( "/admin/webapp/tool" );
         assertTrue( this.handler.canHandle( this.portalRequest ) );
+
+        this.portalRequest.setBaseUri( "/admin/" );
+        assertTrue( this.handler.canHandle( this.portalRequest ) );
+
+        this.portalRequest.setBaseUri( "/admin" );
+        assertTrue( this.handler.canHandle( this.portalRequest ) );
+
+        this.portalRequest.setBaseUri( "/admins" );
+        assertFalse( this.handler.canHandle( this.portalRequest ) );
     }
 
     @Test
@@ -134,11 +141,6 @@ class AdminToolHandlerTest
         assertEquals( "Invalid admin tool mount", ex.getMessage() );
 
         this.portalRequest.setRawPath( "/admin/tool/" );
-        ex = assertThrows( WebException.class, () -> this.handler.doHandle( this.portalRequest, this.webResponse, this.chain ) );
-        assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
-        assertEquals( "Invalid admin tool mount", ex.getMessage() );
-
-        this.portalRequest.setRawPath( "/admin/" );
         ex = assertThrows( WebException.class, () -> this.handler.doHandle( this.portalRequest, this.webResponse, this.chain ) );
         assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
         assertEquals( "Invalid admin tool mount", ex.getMessage() );

@@ -13,6 +13,7 @@ import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.rendering.RenderException;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
 import com.enonic.xp.region.Component;
@@ -60,6 +61,7 @@ class ComponentInstructionTest
         returnOnRender( "<b>part content</b>" );
 
         final PortalRequest portalRequest = new PortalRequest();
+        portalRequest.setMode( RenderMode.LIVE );
         final Content content = createPage( "content-id", "content-name", "myapplication:content-type" );
         portalRequest.setContent( content );
         final Site site = createSite( "site-id", "site-name", "myapplication:content-type" );
@@ -71,16 +73,15 @@ class ComponentInstructionTest
     @Test
     void testLayoutNoServiceReturnsSameObject()
     {
-        final LayoutComponent layoutComponent =
-            LayoutComponent.create().descriptor( DescriptorKey.from( "myapplication:layout" ) ).build();
+        final LayoutComponent layoutComponent = LayoutComponent.create().descriptor( DescriptorKey.from( "myapplication:layout" ) ).build();
 
-        testLayoutIsReturned(layoutComponent);
+        testLayoutIsReturned( layoutComponent );
     }
 
     @Test
     void testEmptyLayout()
     {
-        testLayoutIsReturned(LayoutComponent.create().build());
+        testLayoutIsReturned( LayoutComponent.create().build() );
     }
 
     private void testLayoutIsReturned( final LayoutComponent layoutComponent )
@@ -89,6 +90,7 @@ class ComponentInstructionTest
         returnOnRender( "render result", captor.capture() );
 
         final PortalRequest portalRequest = new PortalRequest();
+        portalRequest.setMode( RenderMode.LIVE );
 
         final Content content = createPage( "content-id", "content-name", "myapplication:content-type", layoutComponent );
         portalRequest.setContent( content );
@@ -102,11 +104,12 @@ class ComponentInstructionTest
     void testFragmentContentNotLayoutThrowsException()
     {
         final PortalRequest portalRequest = new PortalRequest();
+        portalRequest.setMode( RenderMode.LIVE );
 
         final Content content = createFragmentPage( "content-id", "content-name" );
         portalRequest.setContent( content );
 
-        assertThrows( RenderException.class, () -> instruction.evaluate( portalRequest, "COMPONENT myRegion/0" ));
+        assertThrows( RenderException.class, () -> instruction.evaluate( portalRequest, "COMPONENT myRegion/0" ) );
     }
 
     @Test
@@ -118,10 +121,11 @@ class ComponentInstructionTest
         final LayoutComponent layoutComponent = LayoutComponent.create().descriptor( layoutDescriptorKey ).regions( regions ).build();
 
         final PortalRequest portalRequest = new PortalRequest();
+        portalRequest.setMode( RenderMode.LIVE );
         final Content content = createFragmentPage( "content-id", "content-name", layoutComponent );
         portalRequest.setContent( content );
 
-        assertThrows( RenderException.class, () -> instruction.evaluate( portalRequest, "COMPONENT r1/0" ));
+        assertThrows( RenderException.class, () -> instruction.evaluate( portalRequest, "COMPONENT r1/0" ) );
     }
 
     @Test
@@ -139,6 +143,7 @@ class ComponentInstructionTest
         final LayoutComponent layoutComponent = LayoutComponent.create().descriptor( layoutDescriptorKey ).regions( regions ).build();
 
         final PortalRequest portalRequest = new PortalRequest();
+        portalRequest.setMode( RenderMode.LIVE );
         final Content content = createFragmentPage( "content-id", "content-name", layoutComponent );
         portalRequest.setContent( content );
 
@@ -154,6 +159,7 @@ class ComponentInstructionTest
         doReturn( component ).when( componentService ).getByKey( isA( DescriptorKey.class ) );
 
         final PortalRequest portalRequest = new PortalRequest();
+        portalRequest.setMode( RenderMode.LIVE );
         final Content content = createPage( "content-id", "content-name", "myapplication:content-type" );
         portalRequest.setContent( content );
         final Site site = createSite( "site-id", "site-name", "myapplication:content-type" );
@@ -171,6 +177,7 @@ class ComponentInstructionTest
         doReturn( component ).when( componentService ).getByKey( isA( DescriptorKey.class ) );
 
         final PortalRequest portalRequest = new PortalRequest();
+        portalRequest.setMode( RenderMode.LIVE );
         final Content content = createFragmentPage( "content-id", "content-name" );
         portalRequest.setContent( content );
         final Site site = createSite( "site-id", "site-name", "myapplication:content-type" );
@@ -235,17 +242,16 @@ class ComponentInstructionTest
     void testComponentNotFoundThrows()
     {
         final PortalRequest portalRequest = new PortalRequest();
+        portalRequest.setMode( RenderMode.LIVE );
         final Content content = createPage( "content-id", "content-name", "myapplication:content-type" );
         portalRequest.setContent( content );
 
-        assertThrows( RenderException.class, () -> instruction.evaluate( portalRequest, "COMPONENT myRegion/1" ));
+        assertThrows( RenderException.class, () -> instruction.evaluate( portalRequest, "COMPONENT myRegion/1" ) );
     }
 
     private PartComponent createPartComponent()
     {
-        return PartComponent.create().
-            descriptor( DescriptorKey.from( "myapplication:myparttemplate" ) ).
-            build();
+        return PartComponent.create().descriptor( DescriptorKey.from( "myapplication:myparttemplate" ) ).build();
     }
 
     private Content createPage( final String id, final String name, final String contentTypeName )
@@ -258,25 +264,20 @@ class ComponentInstructionTest
         PropertyTree rootDataSet = new PropertyTree();
         rootDataSet.addString( "property1", "value1" );
 
-        Region region = Region.create().
-            name( "myRegion" ).
-            add( regionComponent ).
-            build();
+        Region region = Region.create().name( "myRegion" ).add( regionComponent ).build();
 
         Regions regions = Regions.create().add( region ).build();
-        Page page = Page.create().
-            template( PageTemplateKey.from( "my-page" ) ).regions( regions ).
-            build();
+        Page page = Page.create().template( PageTemplateKey.from( "my-page" ) ).regions( regions ).build();
 
-        return Content.create().
-            id( ContentId.from( id ) ).
-            path( ContentPath.from( name ) ).
-            owner( PrincipalKey.from( "user:myStore:me" ) ).
-            displayName( "My Content" ).
-            modifier( PrincipalKey.from( "user:system:admin" ) ).
-            type( ContentTypeName.from( contentTypeName ) ).
-            page( page ).
-            build();
+        return Content.create()
+            .id( ContentId.from( id ) )
+            .path( ContentPath.from( name ) )
+            .owner( PrincipalKey.from( "user:myStore:me" ) )
+            .displayName( "My Content" )
+            .modifier( PrincipalKey.from( "user:system:admin" ) )
+            .type( ContentTypeName.from( contentTypeName ) )
+            .page( page )
+            .build();
     }
 
     private Content createFragmentPage( final String id, final String name )
@@ -286,20 +287,17 @@ class ComponentInstructionTest
 
     private Content createFragmentPage( final String id, final String name, final Component fragmentComponent )
     {
-        Page page = Page.create().
-            template( PageTemplateKey.from( "my-page" ) ).
-            fragment( fragmentComponent ).
-            build();
+        Page page = Page.create().template( PageTemplateKey.from( "my-page" ) ).fragment( fragmentComponent ).build();
 
-        return Content.create().
-            id( ContentId.from( id ) ).
-            path( ContentPath.from( name ) ).
-            owner( PrincipalKey.from( "user:myStore:me" ) ).
-            displayName( "My Content" ).
-            modifier( PrincipalKey.from( "user:system:admin" ) ).
-            type( ContentTypeName.fragment() ).
-            page( page ).
-            build();
+        return Content.create()
+            .id( ContentId.from( id ) )
+            .path( ContentPath.from( name ) )
+            .owner( PrincipalKey.from( "user:myStore:me" ) )
+            .displayName( "My Content" )
+            .modifier( PrincipalKey.from( "user:system:admin" ) )
+            .type( ContentTypeName.fragment() )
+            .page( page )
+            .build();
     }
 
     private Site createSite( final String id, final String name, final String contentTypeName )
@@ -307,23 +305,20 @@ class ComponentInstructionTest
         PropertyTree rootDataSet = new PropertyTree();
         rootDataSet.addString( "property1", "value1" );
 
-        Page page = Page.create().
-            template( PageTemplateKey.from( "my-page" ) ).
-            config( rootDataSet ).
-            build();
+        Page page = Page.create().template( PageTemplateKey.from( "my-page" ) ).config( rootDataSet ).build();
 
-        return Site.create().
-            id( ContentId.from( id ) ).
-            path( ContentPath.from( name ) ).
-            owner( PrincipalKey.from( "user:myStore:me" ) ).
-            displayName( "My Content" ).
-            modifier( PrincipalKey.from( "user:system:admin" ) ).
-            type( ContentTypeName.from( contentTypeName ) ).
-            page( page ).
-            build();
+        return Site.create()
+            .id( ContentId.from( id ) )
+            .path( ContentPath.from( name ) )
+            .owner( PrincipalKey.from( "user:myStore:me" ) )
+            .displayName( "My Content" )
+            .modifier( PrincipalKey.from( "user:system:admin" ) )
+            .type( ContentTypeName.from( contentTypeName ) )
+            .page( page )
+            .build();
     }
 
-    private RendererDelegate returnOnRender( final String renderResult, final Object renderObject  )
+    private RendererDelegate returnOnRender( final String renderResult, final Object renderObject )
     {
         when( rendererDelegate.render( renderObject, any() ) ).thenReturn( PortalResponse.create().body( renderResult ).build() );
         return rendererDelegate;

@@ -68,7 +68,6 @@ class IdentityHandlerTest
         this.handler = new IdentityHandler( idProviderControllerService, redirectChecksumService );
 
         this.request.setMethod( HttpMethod.GET );
-        this.request.setEndpointPath( "/_/idprovider/myidprovider?param1=value1" );
         this.request.setRawPath( "/site/project/branch/_/idprovider/myidprovider?param1=value1" );
         this.request.setRawRequest( rawRequest );
 
@@ -92,7 +91,7 @@ class IdentityHandlerTest
 
         this.request.setMethod( HttpMethod.OPTIONS );
 
-        final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build() );
+        final WebResponse res = this.handler.handle( this.request );
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( "GET,POST,HEAD,OPTIONS,PUT,DELETE,TRACE,PATCH", res.getHeaders().get( "Allow" ) );
@@ -102,11 +101,11 @@ class IdentityHandlerTest
     void testNotValidUrlPattern()
         throws Exception
     {
-        this.request.setEndpointPath( "/_/idprovider/" );
+        this.request.setRawPath( "/_/idprovider/" );
 
         try
         {
-            this.handler.handle( this.request, PortalResponse.create().build() );
+            this.handler.handle( this.request );
             fail( "Should throw exception" );
         }
         catch ( final WebException e )
@@ -120,7 +119,7 @@ class IdentityHandlerTest
     void testHandle()
         throws Exception
     {
-        final WebResponse portalResponse = this.handler.handle( this.request, PortalResponse.create().build() );
+        final WebResponse portalResponse = this.handler.handle( this.request );
 
         assertEquals( HttpStatus.OK, portalResponse.getStatus() );
         assertEquals( "/site/project/branch/_/idprovider/myidprovider", this.request.getContextPath() );
@@ -130,13 +129,12 @@ class IdentityHandlerTest
     void testHandle_redirect()
         throws Exception
     {
-        this.request.setEndpointPath( "/_/idprovider/myidprovider/login" );
         this.request.setRawPath( "/site/project/branch/_/idprovider/myidprovider/login" );
         when( redirectChecksumService.verifyChecksum( "https://example.com", "some-good-checksum" ) ).thenReturn( true );
 
         this.request.getParams().put( "redirect", "https://example.com" );
         this.request.getParams().put( "_ticket", "some-good-checksum" );
-        this.handler.handle( this.request, PortalResponse.create().build() );
+        this.handler.handle( this.request );
 
         assertTrue( this.request.isValidTicket() );
     }
@@ -145,13 +143,12 @@ class IdentityHandlerTest
     void testHandle_redirect_invalid()
         throws Exception
     {
-        this.request.setEndpointPath( "/_/idprovider/myidprovider/login" );
         this.request.setRawPath( "/site/project/branch/_/idprovider/myidprovider/login" );
         when( redirectChecksumService.verifyChecksum( "https://example.com", "some-bad-checksum" ) ).thenReturn( false );
 
         this.request.getParams().put( "redirect", "https://example.com" );
         this.request.getParams().put( "_ticket", "some-bad-checksum" );
-        this.handler.handle( this.request, PortalResponse.create().build() );
+        this.handler.handle( this.request );
 
         assertFalse( this.request.isValidTicket() );
     }
@@ -169,7 +166,7 @@ class IdentityHandlerTest
 
         try
         {
-            this.handler.handle( this.request, PortalResponse.create().build() );
+            this.handler.handle( this.request );
         }
         catch ( final WebException e )
         {
@@ -188,7 +185,7 @@ class IdentityHandlerTest
 
         VirtualHostHelper.setVirtualHost( rawRequest, initVirtualHost( rawRequest, virtualHost ) );
 
-        final WebResponse portalResponse = this.handler.handle( this.request, PortalResponse.create().build() );
+        final WebResponse portalResponse = this.handler.handle( this.request );
 
         assertEquals( HttpStatus.OK, portalResponse.getStatus() );
         assertEquals( "/site/project/branch/_/idprovider/myidprovider", this.request.getContextPath() );
@@ -205,7 +202,7 @@ class IdentityHandlerTest
 
         VirtualHostHelper.setVirtualHost( rawRequest, virtualHost );
 
-        final WebResponse portalResponse = this.handler.handle( this.request, PortalResponse.create().build() );
+        final WebResponse portalResponse = this.handler.handle( this.request );
 
         assertEquals( HttpStatus.OK, portalResponse.getStatus() );
         assertEquals( "/site/project/branch/_/idprovider/myidprovider", this.request.getContextPath() );
@@ -216,7 +213,7 @@ class IdentityHandlerTest
     {
         this.request.setMethod( HttpMethod.CONNECT );
 
-        WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request, WebResponse.create().build() ) );
+        WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
         assertEquals( HttpStatus.METHOD_NOT_ALLOWED, ex.getStatus() );
         assertEquals( "Method CONNECT not allowed", ex.getMessage() );
     }
@@ -238,15 +235,14 @@ class IdentityHandlerTest
 
         VirtualHostHelper.setVirtualHost( rawRequest, initVirtualHost( rawRequest, virtualHost ) );
 
-        this.request.setEndpointPath( "/_/idprovider/myidprovider/login" );
         this.request.setRawPath( "/_/idprovider/myidprovider/login" );
 
-        WebResponse res = this.handler.handle( this.request, PortalResponse.create().build() );
+        WebResponse res = this.handler.handle( this.request );
         assertEquals( HttpStatus.OK, res.getStatus() );
 
         // test invalid context path
         this.request.setRawPath( "/webapp/com.enonic.app.myapp/path/_/idprovider/myidprovider/login" );
-        WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request, PortalResponse.create().build() ) );
+        WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
         assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
         assertEquals( "Not a valid idprovider url pattern", ex.getMessage() );
     }

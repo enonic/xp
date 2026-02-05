@@ -3,10 +3,8 @@ package com.enonic.xp.portal.impl.handler;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.Objects;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.regex.MatchResult;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -24,6 +22,7 @@ import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
+import com.enonic.xp.portal.handler.WebHandlerHelper;
 import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.portal.impl.api.DynamicUniversalApiHandler;
 import com.enonic.xp.portal.impl.api.DynamicUniversalApiHandlerRegistry;
@@ -33,7 +32,6 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
-import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.trace.Trace;
@@ -54,14 +52,6 @@ import com.enonic.xp.webapp.WebappService;
 @Component(service = SlashApiHandler.class)
 public class SlashApiHandler
 {
-    private static final Predicate<WebRequest> IS_STANDARD_METHOD = req -> HttpMethod.standard().contains( req.getMethod() );
-
-    private static final Pattern API_PATTERN = Pattern.compile( "^/(_|api)/(?<appKey>[^/]+):(?<apiKey>[^/]+)/?" );
-
-    private static final Pattern MOUNT_WEBAPP_ENDPOINT_PATTERN = Pattern.compile( "^/webapp/(?<baseAppKey>[^/]+)(?<restPath>.*?)/_/" );
-
-    private static final Pattern MOUNT_ADMINTOOL_API_PATTERN = Pattern.compile( "^/admin/(?<appKey>[^/]+)/(?<tool>[^/]+)/_/" );
-
     private final ControllerScriptFactory controllerScriptFactory;
 
     private final ApiDescriptorService apiDescriptorService;
@@ -99,26 +89,34 @@ public class SlashApiHandler
     public WebResponse handle( final WebRequest webRequest )
         throws Exception
     {
-        final String path = Objects.requireNonNullElse( webRequest.getEndpointPath(), webRequest.getRawPath() );
-        final Matcher matcher = API_PATTERN.matcher( path );
-        if ( !matcher.find() )
+        final String endpoint = HandlerHelper.findEndpoint( webRequest );
+        final DescriptorKey descriptorKey;
+        if ( webRequest.getBasePath().startsWith( PathMatchers.API_PREFIX ) )
         {
-            throw new IllegalArgumentException( "Invalid API path: " + path );
+            final MatchResult matcher = PathMatchers.api( webRequest );
+            if ( !matcher.hasMatch() )
+            {
+                throw WebException.notFound( "Invalid api path" );
+            }
+            descriptorKey = HandlerHelper.resolveDescriptorKey( matcher.group( "descriptor" ) );
+        }
+        else if ( endpoint != null )
+        {
+            descriptorKey = HandlerHelper.resolveDescriptorKey( endpoint );
+        }
+        else
+        {
+            throw new IllegalStateException( "Cannot find api endpoint or api path in request" );
         }
 
-        final ApplicationKey applicationKey = HandlerHelper.resolveApplicationKey( matcher.group( "appKey" ) );
-
-        if ( !IS_STANDARD_METHOD.test( webRequest ) )
+        if ( !HttpMethod.isStandard( webRequest.getMethod() ) )
         {
             throw new WebException( HttpStatus.METHOD_NOT_ALLOWED, String.format( "Method %s not allowed", webRequest.getMethod() ) );
         }
-
         if ( webRequest.getMethod() == HttpMethod.OPTIONS )
         {
             return HandlerHelper.handleDefaultOptions( HttpMethod.standard() );
         }
-
-        final DescriptorKey descriptorKey = DescriptorKey.from( applicationKey, Objects.requireNonNull( matcher.group( "apiKey" ) ) );
 
         final PortalRequest portalRequest = createPortalRequest( webRequest, descriptorKey );
 
@@ -130,11 +128,8 @@ public class SlashApiHandler
             throw WebException.notFound( String.format( "API [%s] not found", descriptorKey ) );
         }
 
-        verifyAccessToApi( apiDescriptor );
-        if ( !verifyRequestMounted( apiDescriptor, portalRequest ) )
-        {
-            throw WebException.notFound( String.format( "API [%s] is not mounted", descriptorKey ) );
-        }
+        verifyAccessToApi( apiDescriptor, portalRequest );
+        verifyRequestMounted( apiDescriptor, portalRequest );
 
         final Supplier<WebResponse> handler = dynamicApiHandler != null
             ? () -> executeDynamicApiHandler( portalRequest, dynamicApiHandler )
@@ -152,54 +147,60 @@ public class SlashApiHandler
                                  final Supplier<WebResponse> supplier )
         throws Exception
     {
-        final Trace trace = Tracer.newTrace( "UniversalAPI" );
+        final Trace trace = Tracer.newTrace( "universalAPI" );
         if ( trace == null )
         {
             return handleAPIRequest( portalRequest, supplier );
         }
         return Tracer.traceEx( trace, () -> {
             final WebResponse response = handleAPIRequest( portalRequest, supplier );
-            addTranceInfo( trace, descriptorKey, portalRequest.getRawPath(), response );
+            addTranceInfo( trace, descriptorKey, response );
             return response;
         } );
     }
 
-    private boolean verifyRequestMounted( final ApiDescriptor apiDescriptor, final PortalRequest portalRequest )
+    private void verifyRequestMounted( final ApiDescriptor apiDescriptor, final PortalRequest portalRequest )
     {
-        final String rawPath = portalRequest.getRawPath();
+        final String basePath = portalRequest.getBasePath();
+
         final DescriptorKey descriptorKey = apiDescriptor.getKey();
 
+        final boolean result;
         if ( portalRequest.getEndpointPath() == null )
         {
-            return rawPath.startsWith( "/api/" ) && apiDescriptor.isMount();
+            result = apiDescriptor.isMount();
         }
-        else if ( rawPath.startsWith( "/site/" ) || rawPath.startsWith( "/admin/site/" ) )
+        else if ( PortalRequestHelper.isSiteBase( portalRequest ) )
         {
-            return verifyRequestMountedOnSites( descriptorKey, portalRequest );
+            result = verifyRequestMountedOnSites( descriptorKey, portalRequest );
         }
-        else if ( rawPath.startsWith( "/webapp/" ) )
+        else if ( basePath.startsWith( PathMatchers.WEBAPP_PREFIX ) )
         {
-            return verifyPathMountedOnWebapps( descriptorKey, portalRequest );
+            result = verifyPathMountedOnWebapps( descriptorKey, portalRequest );
         }
-        else if ( rawPath.startsWith( "/admin/" ) )
+        else if ( basePath.startsWith( PathMatchers.ADMIN_TOOL_PREFIX ) )
         {
-            return verifyPathMountedOnAdminTool( descriptorKey, portalRequest );
+            result = verifyPathMountedOnAdminTool( descriptorKey, portalRequest );
         }
         else
         {
-            return false;
+            result = false;
+        }
+        if ( !result )
+        {
+            throw WebException.notFound( String.format( "API [%s] is not mounted", descriptorKey ) );
         }
     }
 
     private boolean verifyPathMountedOnAdminTool( final DescriptorKey descriptorKey, final PortalRequest portalRequest )
     {
-        final Matcher matcher = MOUNT_ADMINTOOL_API_PATTERN.matcher( portalRequest.getRawPath() );
-        if ( !matcher.find() )
+        final MatchResult matcher = PathMatchers.adminTool( portalRequest );
+        if ( !matcher.hasMatch() )
         {
             return false;
         }
 
-        final ApplicationKey applicationKey = HandlerHelper.resolveApplicationKey( matcher.group( "appKey" ) );
+        final ApplicationKey applicationKey = HandlerHelper.resolveApplicationKey( matcher.group( "app" ) );
         final String tool = matcher.group( "tool" );
 
         final AdminToolDescriptor adminToolDescriptor = adminToolDescriptorService.getByKey( DescriptorKey.from( applicationKey, tool ) );
@@ -208,21 +209,18 @@ public class SlashApiHandler
             return false;
         }
 
-        return adminToolDescriptor.getApiMounts()
-            .stream()
-            .anyMatch( descriptor -> descriptor.getName().equals( descriptorKey.getName() ) &&
-                descriptor.getApplicationKey().equals( descriptorKey.getApplicationKey() ) );
+        return adminToolDescriptor.getApiMounts().contains( descriptorKey );
     }
 
     private boolean verifyPathMountedOnWebapps( final DescriptorKey descriptorKey, final PortalRequest portalRequest )
     {
-        final Matcher webappMatcher = MOUNT_WEBAPP_ENDPOINT_PATTERN.matcher( portalRequest.getRawPath() );
-        if ( !webappMatcher.find() )
+        final MatchResult matcher = PathMatchers.webapp( portalRequest );
+        if ( !matcher.hasMatch() )
         {
             return false;
         }
 
-        final ApplicationKey baseAppKey = HandlerHelper.resolveApplicationKey( webappMatcher.group( "baseAppKey" ) );
+        final ApplicationKey baseAppKey = HandlerHelper.resolveApplicationKey( matcher.group( "app" ) );
 
         final WebappDescriptor webappDescriptor = webappService.getDescriptor( baseAppKey );
         if ( webappDescriptor == null )
@@ -230,57 +228,35 @@ public class SlashApiHandler
             return false;
         }
 
-        return webappDescriptor.getApiMounts()
-            .stream()
-            .anyMatch( descriptor -> descriptor.getName().equals( descriptorKey.getName() ) &&
-                descriptor.getApplicationKey().equals( descriptorKey.getApplicationKey() ) );
+        return webappDescriptor.getApiMounts().contains( descriptorKey );
     }
 
     private boolean verifyRequestMountedOnSites( final DescriptorKey descriptorKey, final PortalRequest portalRequest )
     {
-        if ( "media".equals( descriptorKey.getApplicationKey().toString() ) )
-        {
-            return true;
-        }
-
-        final SiteConfigs siteConfigs = portalRequest.getSite() != null ? SiteConfigsDataSerializer.fromData(
-            portalRequest.getSite().getData().getRoot() )
-            : portalRequest.getProject() != null ? portalRequest.getProject().getSiteConfigs() : SiteConfigs.empty();
-
-        if ( siteConfigs.isEmpty() )
+        if ( !"/".equals( PortalRequestHelper.getSiteRelativePath( portalRequest ) ) )
         {
             return false;
         }
 
-        for ( SiteConfig siteConfig : siteConfigs )
+        if ( ApplicationKey.MEDIA_MOD.equals( descriptorKey.getApplicationKey() ) )
         {
-            final SiteDescriptor siteDescriptor = siteService.getDescriptor( siteConfig.getApplicationKey() );
-
-            if ( siteDescriptor != null )
-            {
-                final DescriptorKey apiMountDescriptor = siteDescriptor.getApiMounts()
-                    .stream()
-                    .filter( descriptor -> descriptor.getName().equals( descriptorKey.getName() ) &&
-                        descriptor.getApplicationKey().equals( descriptorKey.getApplicationKey() ) )
-                    .findAny()
-                    .orElse( null );
-
-                if ( apiMountDescriptor != null )
-                {
-                    return "/".equals( PortalRequestHelper.getSiteRelativePath( portalRequest ) );
-                }
-            }
+            return true;
         }
 
-        return false;
+        final SiteConfigs siteConfigs = PortalRequestHelper.getSiteConfigs( portalRequest );
+
+        return siteConfigs.stream()
+            .map( SiteConfig::getApplicationKey )
+            .map( siteService::getDescriptor )
+            .filter( Objects::nonNull )
+            .map( SiteDescriptor::getApiMounts )
+            .anyMatch( mounts -> mounts.contains( descriptorKey ) );
     }
 
-    private static void addTranceInfo( final Trace trace, final DescriptorKey descriptorKey, final String rawPath,
-                                       final WebResponse response )
+    private static void addTranceInfo( final Trace trace, final DescriptorKey descriptorKey, final WebResponse response )
     {
         trace.put( "app", descriptorKey.getApplicationKey().toString() );
         trace.put( "api", descriptorKey.getName() );
-        trace.put( "rawPath", rawPath );
         HandlerHelper.addTraceInfo( trace, response );
     }
 
@@ -303,8 +279,13 @@ public class SlashApiHandler
         }
     }
 
-    private void verifyAccessToApi( final ApiDescriptor apiDescriptor )
+    private void verifyAccessToApi( final ApiDescriptor apiDescriptor, final PortalRequest portalRequest )
     {
+        if ( portalRequest.getBasePath().startsWith( PathMatchers.ADMIN_TOOL_PREFIX ) )
+        {
+            WebHandlerHelper.checkAdminLoginRole( portalRequest );
+        }
+
         final PrincipalKeys principals = ContextAccessor.current().getAuthInfo().getPrincipals();
         if ( !apiDescriptor.isAccessAllowed( principals ) )
         {
@@ -321,12 +302,13 @@ public class SlashApiHandler
 
         if ( webRequest.getEndpointPath() != null )
         {
-            portalRequest.setContextPath( HandlerHelper.findPreRestPath( webRequest, descriptorKey.toString() ) );
+            portalRequest.setContextPath( webRequest.getBasePath() + "/_/" + descriptorKey );
         }
         else
         {
-            portalRequest.setBaseUri( "/api/" + descriptorKey );
-            portalRequest.setContextPath( "/api/" + descriptorKey );
+            final String baseUri = PathMatchers.API_PREFIX + descriptorKey;
+            portalRequest.setBaseUri( baseUri );
+            portalRequest.setContextPath( baseUri );
         }
 
         portalRequest.setApplicationKey( descriptorKey.getApplicationKey() );

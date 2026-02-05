@@ -19,6 +19,7 @@ class ControllerScriptImpl_requestTest
     void testSimple()
     {
         this.portalRequest.setMethod( HttpMethod.GET );
+        this.portalRequest.setMode( RenderMode.LIVE );
         this.portalRequest.setPort( 80 );
 
         execute( "myapplication:/controller/request.js" );
@@ -34,6 +35,7 @@ class ControllerScriptImpl_requestTest
         this.portalRequest.setScheme( "http" );
         this.portalRequest.setHost( "enonic.com" );
         this.portalRequest.setPort( 80 );
+        this.portalRequest.setRawPath( "/my/page" );
         this.portalRequest.setPath( "/my/page" );
         this.portalRequest.setUrl( "http://enonic.com/my/page?debug=true" );
         this.portalRequest.setRepositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) );

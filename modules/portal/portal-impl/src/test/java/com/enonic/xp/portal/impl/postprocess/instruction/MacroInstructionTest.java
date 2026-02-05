@@ -17,6 +17,7 @@ import com.enonic.xp.macro.MacroDescriptors;
 import com.enonic.xp.macro.MacroKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.rendering.RenderException;
 import com.enonic.xp.portal.macro.MacroProcessor;
 import com.enonic.xp.portal.macro.MacroProcessorFactory;
@@ -54,6 +55,7 @@ class MacroInstructionTest
         macroInstruction.setMacroProcessorFactory( macroProcessorFactory );
 
         portalRequest = new PortalRequest();
+        portalRequest.setMode( RenderMode.LIVE );
         Site site = createSite( "site-id", "site-name", "myapplication:content-type" );
         portalRequest.setSite( site );
         portalRequest.setContent( site );
@@ -66,11 +68,13 @@ class MacroInstructionTest
         MacroDescriptor macroDescriptor = MacroDescriptor.create().key( key ).build();
         when( macroDescriptorService.getByKey( key ) ).thenReturn( macroDescriptor );
 
-        MacroProcessor macro = ( ctx ) -> PortalResponse.create().body(
-            ctx.getName() + ": param1=" + ctx.getParameter( "param1" ).get( 0 ) + ", body=" + ctx.getBody() ).build();
+        MacroProcessor macro = ( ctx ) -> PortalResponse.create()
+            .body( ctx.getName() + ": param1=" + ctx.getParameter( "param1" ).get( 0 ) + ", body=" + ctx.getBody() )
+            .build();
         when( macroProcessorFactory.fromScript( any() ) ).thenReturn( macro );
 
-        assertEquals( "mymacro: param1=value1, body=body", macroInstruction.evaluate( portalRequest, "MACRO _name=\"mymacro\" param1=\"value1\" _body=\"body\"" ).getBody() );
+        assertEquals( "mymacro: param1=value1, body=body",
+                      macroInstruction.evaluate( portalRequest, "MACRO _name=\"mymacro\" param1=\"value1\" _body=\"body\"" ).getBody() );
     }
 
     @Test
@@ -138,8 +142,9 @@ class MacroInstructionTest
         when( macroDescriptorService.getByKey( key ) ).thenReturn( macroDescriptor );
         when( macroDescriptorService.getByApplication( any() ) ).thenReturn( MacroDescriptors.empty() );
 
-        MacroProcessor macro = ( ctx ) -> PortalResponse.create().body(
-            ctx.getName() + ": param1=" + ctx.getParameter( "param1" ) + ", body=" + ctx.getBody() ).build();
+        MacroProcessor macro = ( ctx ) -> PortalResponse.create()
+            .body( ctx.getName() + ": param1=" + ctx.getParameter( "param1" ) + ", body=" + ctx.getBody() )
+            .build();
         when( macroProcessorFactory.fromScript( any() ) ).thenReturn( macro );
 
         String outputHtml =
@@ -165,20 +170,23 @@ class MacroInstructionTest
     void testInstructionMacroParamsCaseInsensitive()
     {
         MacroKey key = MacroKey.from( "myapp:mymacro" );
-        Form form = Form.create().
-            addFormItem( createTextLineInput( "param1", "Param 1" ).occurrences( 1, 1 ).build() ).
-            addFormItem( createTextLineInput( "param2", "Param 2" ).occurrences( 1, 1 ).build() ).
+        Form form = Form.create()
+            .addFormItem( createTextLineInput( "param1", "Param 1" ).occurrences( 1, 1 ).build() )
+            .addFormItem( createTextLineInput( "param2", "Param 2" ).occurrences( 1, 1 ).build() )
+            .
 
-            build();
+                build();
         MacroDescriptor macroDescriptor = MacroDescriptor.create().key( key ).form( form ).build();
         when( macroDescriptorService.getByKey( key ) ).thenReturn( macroDescriptor );
         when( macroDescriptorService.getByApplication( key.getApplicationKey() ) ).thenReturn( MacroDescriptors.from( macroDescriptor ) );
 
-        MacroProcessor macro = ( ctx ) -> PortalResponse.create().body(
-            ctx.getName() + ": param1=" + ctx.getParameter( "param1" ) + ", body=" + ctx.getBody() ).build();
+        MacroProcessor macro = ( ctx ) -> PortalResponse.create()
+            .body( ctx.getName() + ": param1=" + ctx.getParameter( "param1" ) + ", body=" + ctx.getBody() )
+            .build();
         when( macroProcessorFactory.fromScript( any() ) ).thenReturn( macro );
 
-        assertEquals( "mymacro: param1=[value1], body=body", macroInstruction.evaluate( portalRequest, "MACRO _name=\"MYMACRO\" PARAM1=\"value1\" _body=\"body\"" ).getBody() );
+        assertEquals( "mymacro: param1=[value1], body=body",
+                      macroInstruction.evaluate( portalRequest, "MACRO _name=\"MYMACRO\" PARAM1=\"value1\" _body=\"body\"" ).getBody() );
     }
 
     @Test
@@ -188,39 +196,35 @@ class MacroInstructionTest
         MacroDescriptor macroDescriptor = MacroDescriptor.create().key( key ).build();
         when( macroDescriptorService.getByKey( key ) ).thenReturn( macroDescriptor );
 
-        MacroProcessor macro = ( ctx ) -> PortalResponse.create().body(
-            ctx.getName() + ": param1=" + ctx.getParameter( "param1" ).get( 0 ) + ", body=" + ctx.getBody() ).build();
+        MacroProcessor macro = ( ctx ) -> PortalResponse.create()
+            .body( ctx.getName() + ": param1=" + ctx.getParameter( "param1" ).get( 0 ) + ", body=" + ctx.getBody() )
+            .build();
         when( macroProcessorFactory.fromScript( any() ) ).thenReturn( macro );
 
         assertEquals( "mymacro: param1=value1, body=body", macroInstruction.evaluate( portalRequest,
-                                                                                      "MACRO _name=\"mymacro\" param1=\"value1\" param1=\"value2\" param2=\"other\" _body=\"body\"" ).getBody() );
+                                                                                      "MACRO _name=\"mymacro\" param1=\"value1\" param1=\"value2\" param2=\"other\" _body=\"body\"" )
+            .getBody() );
     }
 
     private Site createSite( final String id, final String name, final String contentTypeName )
     {
         PropertyTree rootDataSet = new PropertyTree();
-        SiteConfig siteConfig = SiteConfig.create().
-            application( ApplicationKey.from( "myapp" ) ).
-            config( new PropertyTree() ).build();
+        SiteConfig siteConfig = SiteConfig.create().application( ApplicationKey.from( "myapp" ) ).config( new PropertyTree() ).build();
         SiteConfigsDataSerializer.toData( SiteConfigs.from( siteConfig ), rootDataSet.getRoot() );
 
-        return Site.create().
-            id( ContentId.from( id ) ).
-            path( ContentPath.from( name ) ).
-            owner( PrincipalKey.from( "user:myStore:me" ) ).
-            displayName( "My Content" ).
-            modifier( PrincipalKey.from( "user:system:admin" ) ).
-            type( ContentTypeName.from( contentTypeName ) ).
-            data( rootDataSet ).
-            build();
+        return Site.create()
+            .id( ContentId.from( id ) )
+            .path( ContentPath.from( name ) )
+            .owner( PrincipalKey.from( "user:myStore:me" ) )
+            .displayName( "My Content" )
+            .modifier( PrincipalKey.from( "user:system:admin" ) )
+            .type( ContentTypeName.from( contentTypeName ) )
+            .data( rootDataSet )
+            .build();
     }
 
     private Input.Builder createTextLineInput( final String name, final String label )
     {
-        return Input.create().
-            inputType( InputTypeName.TEXT_LINE ).
-            label( label ).
-            name( name ).
-            immutable( true );
+        return Input.create().inputType( InputTypeName.TEXT_LINE ).label( label ).name( name ).immutable( true );
     }
 }

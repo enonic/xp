@@ -1,13 +1,11 @@
 package com.enonic.xp.portal.impl.handler.api;
 
-import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -18,12 +16,12 @@ import com.google.common.net.MediaType;
 
 import com.enonic.xp.api.ApiDescriptor;
 import com.enonic.xp.api.ApiDescriptorService;
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.portal.impl.api.ApiConfig;
 import com.enonic.xp.portal.impl.api.ApiIndexMode;
 import com.enonic.xp.portal.impl.api.DynamicUniversalApiHandlerRegistry;
+import com.enonic.xp.portal.impl.handler.PathMatchers;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.server.RunMode;
@@ -35,11 +33,9 @@ import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.handler.WebHandlerChain;
 
 @Component(immediate = true, service = WebHandler.class, configurationPid = "com.enonic.xp.api")
-public class ApiHandler
+public class ApiIndexHandler
     extends BaseWebHandler
 {
-    private static final Pattern URL_PATTERN = Pattern.compile( "^/api$" );
-
     private final ApplicationService applicationService;
 
     private final ApiDescriptorService apiDescriptorService;
@@ -49,8 +45,9 @@ public class ApiHandler
     private volatile ApiIndexMode apiIndexMode;
 
     @Activate
-    public ApiHandler( @Reference final ApplicationService applicationService, @Reference final ApiDescriptorService apiDescriptorService,
-                       @Reference final DynamicUniversalApiHandlerRegistry universalApiHandlerRegistry )
+    public ApiIndexHandler( @Reference final ApplicationService applicationService,
+                            @Reference final ApiDescriptorService apiDescriptorService,
+                            @Reference final DynamicUniversalApiHandlerRegistry universalApiHandlerRegistry )
     {
         super( -49, EnumSet.of( HttpMethod.GET, HttpMethod.OPTIONS ) );
         this.applicationService = applicationService;
@@ -68,10 +65,9 @@ public class ApiHandler
     @Override
     protected boolean canHandle( final WebRequest webRequest )
     {
-        boolean isIndexEnabled = RunMode.isDev()
-            ? apiIndexMode == ApiIndexMode.ON || apiIndexMode == ApiIndexMode.AUTO
-            : apiIndexMode == ApiIndexMode.ON;
-        return isIndexEnabled && URL_PATTERN.matcher( webRequest.getRawPath() ).matches();
+        boolean isIndexEnabled = apiIndexMode == ApiIndexMode.ON || apiIndexMode == ApiIndexMode.AUTO && RunMode.isDev();
+        return isIndexEnabled && PathMatchers.API_BASE.equals( webRequest.getBasePath() ) ||
+            PathMatchers.API_PREFIX.equals( webRequest.getBasePath() );
     }
 
     @Override
@@ -83,20 +79,12 @@ public class ApiHandler
 
     private List<Map<String, Object>> getApiResources()
     {
-        final List<Map<String, Object>> result = new ArrayList<>();
-
-        universalApiHandlerRegistry.getAllApiDescriptors()
-            .stream()
-            .filter( ApiDescriptor::isMount )
-            .forEach( descriptor -> result.add( map( descriptor ) ) );
-
-        applicationService.getInstalledApplications()
-            .forEach( application -> apiDescriptorService.getByApplication( application.getKey() )
+        return Stream.concat( universalApiHandlerRegistry.getAllApiDescriptors().stream(), applicationService.getInstalledApplications()
                 .stream()
-                .filter( ApiDescriptor::isMount )
-                .forEach( descriptor -> result.add( map( descriptor ) ) ) );
-
-        return result;
+                .flatMap( application -> apiDescriptorService.getByApplication( application.getKey() ).stream() ) )
+            .filter( ApiDescriptor::isMount )
+            .map( this::map )
+            .toList();
     }
 
     private Map<String, Object> map( final ApiDescriptor apiDescriptor )
@@ -108,10 +96,10 @@ public class ApiHandler
         result.put( "descriptor", descriptorKey.toString() );
         result.put( "application", descriptorKey.getApplicationKey().toString() );
         result.put( "name", descriptorKey.getName() );
-        result.put( "allowedPrincipals", Objects.requireNonNullElseGet( apiDescriptor.getAllowedPrincipals(), PrincipalKeys::empty )
+        result.put( "allowedPrincipals", Objects.requireNonNullElse( apiDescriptor.getAllowedPrincipals(), PrincipalKeys.empty() )
             .stream()
             .map( PrincipalKey::toString )
-            .collect( Collectors.toList() ) );
+            .toList() );
         result.put( "displayName", apiDescriptor.getDisplayName() );
         result.put( "description", apiDescriptor.getDescription() );
         result.put( "documentationUrl", apiDescriptor.getDocumentationUrl() );

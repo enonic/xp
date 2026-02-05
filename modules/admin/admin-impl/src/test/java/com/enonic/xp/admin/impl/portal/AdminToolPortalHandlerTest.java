@@ -3,12 +3,9 @@ package com.enonic.xp.admin.impl.portal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.google.common.net.HttpHeaders;
-
 import jakarta.servlet.http.HttpServletRequest;
 
 import com.enonic.xp.web.HttpMethod;
-import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.exception.ExceptionMapper;
@@ -76,39 +73,32 @@ class AdminToolPortalHandlerTest
     }
 
     @Test
-    void testDoHandleRedirect()
-    {
-        this.request.setRawPath( "/admin/" );
-
-        final WebResponse webResponse = this.handler.doHandle( this.request, response, null );
-        assertEquals( HttpStatus.TEMPORARY_REDIRECT, webResponse.getStatus() );
-        assertEquals( "/admin", webResponse.getHeaders().get( HttpHeaders.LOCATION ) );
-    }
-
-    @Test
     void testDoHandleOnSlashAdmin()
+        throws Exception
     {
         this.request.setRawPath( "/admin" );
 
-        final WebResponse webResponse = this.handler.doHandle( this.request, response, chain );
+        final WebResponse webResponse = this.handler.handle( this.request, response, chain );
         assertEquals( this.response, webResponse );
     }
 
     @Test
     void testDoHandle()
+        throws Exception
     {
         this.request.setRawPath( "/admin/app/toolname" );
 
-        final WebResponse webResponse = this.handler.doHandle( this.request, response, chain );
+        final WebResponse webResponse = this.handler.handle( this.request, response, chain );
         assertEquals( this.response, webResponse );
     }
 
     @Test
     void testDoHandleDescriptorNotFoundFallbackToSlashAdmin()
+        throws Exception
     {
         this.request.setRawPath( "/admin/app" );
 
-        final WebResponse webResponse = this.handler.doHandle( this.request, response, chain );
+        final WebResponse webResponse = this.handler.handle( this.request, response, chain );
         assertEquals( this.response, webResponse );
     }
 }

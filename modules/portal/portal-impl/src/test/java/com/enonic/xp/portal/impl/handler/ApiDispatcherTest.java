@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
@@ -13,7 +14,6 @@ import com.enonic.xp.web.WebResponse;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -61,72 +61,70 @@ class ApiDispatcherTest
     @Test
     void testCanHandle()
     {
-        WebRequest webRequest = mock( WebRequest.class );
-        when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
-
-        when( webRequest.getRawPath() ).thenReturn( "/path" );
-        assertFalse( this.handler.canHandle( webRequest ) );
+        final WebRequest webRequest1 = new WebRequest();
+        webRequest1.setMethod( HttpMethod.GET );
+        webRequest1.setRawPath( "/path" );
+        assertFalse( this.handler.canHandle( webRequest1 ) );
 
         // test media
-        when( webRequest.getEndpointPath() ).thenReturn( null );
-        when( webRequest.getRawPath() ).thenReturn( "/api/media:image/project:branch/id:fingerprint/name" );
-        assertTrue( this.handler.canHandle( webRequest ) );
+        final WebRequest webRequest2 = new WebRequest();
+        webRequest2.setMethod( HttpMethod.GET );
+        webRequest2.setRawPath( "/api/media:image/project:branch/id:fingerprint/name" );
+        assertTrue( this.handler.canHandle( webRequest2 ) );
 
         // test image
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/image/id:version/scale/name" );
-        when( webRequest.getRawPath() ).thenReturn( "path-to-content/_/image/id:version/scale/name" );
-        assertTrue( this.handler.canHandle( webRequest ) );
+        final WebRequest webRequest3 = new WebRequest();
+        webRequest3.setMethod( HttpMethod.GET );
+        webRequest3.setRawPath( "/path-to-content/_/image/id:version/scale/name" );
+        assertTrue( this.handler.canHandle( webRequest3 ) );
 
         // test attachment
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/attachment/mode/id:version/name" );
-        when( webRequest.getRawPath() ).thenReturn( "path-to-content/_/attachment/mode/id:version/name" );
-        assertTrue( this.handler.canHandle( webRequest ) );
+        final WebRequest webRequest4 = new WebRequest();
+        webRequest4.setMethod( HttpMethod.GET );
+        webRequest4.setRawPath( "/path-to-content/_/attachment/mode/id:version/name" );
+        assertTrue( this.handler.canHandle( webRequest4 ) );
 
         // test service
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/service/application/name" );
-        when( webRequest.getRawPath() ).thenReturn( "contextPath/_/service/application/name" );
-        assertTrue( this.handler.canHandle( webRequest ) );
+        final WebRequest webRequest5 = new WebRequest();
+        webRequest5.setMethod( HttpMethod.GET );
+        webRequest5.setRawPath( "/contextPath/_/service/application/name" );
+        assertTrue( this.handler.canHandle( webRequest5 ) );
 
         // test asset
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/asset/application:ts/pathToAsset" );
-        when( webRequest.getRawPath() ).thenReturn( "contextPath/_/asset/application:ts/pathToAsset" );
-        assertTrue( this.handler.canHandle( webRequest ) );
+        final WebRequest webRequest6 = new WebRequest();
+        webRequest6.setMethod( HttpMethod.GET );
+        webRequest6.setRawPath( "/contextPath/_/asset/application:ts/pathToAsset" );
+        assertTrue( this.handler.canHandle( webRequest6 ) );
 
         // test error
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/error/message" );
-        when( webRequest.getRawPath() ).thenReturn( "contextPath/_/error/message" );
-        assertTrue( this.handler.canHandle( webRequest ) );
+        final WebRequest webRequest7 = new WebRequest();
+        webRequest7.setMethod( HttpMethod.GET );
+        webRequest7.setRawPath( "/contextPath/_/error/message" );
+        assertTrue( this.handler.canHandle( webRequest7 ) );
 
         // test idprovider
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/idprovider/name/function" );
-        when( webRequest.getRawPath() ).thenReturn( "contextPath/_/idprovider/name/function" );
-        assertTrue( this.handler.canHandle( webRequest ) );
+        final WebRequest webRequest8 = new WebRequest();
+        webRequest8.setMethod( HttpMethod.GET );
+        webRequest8.setRawPath( "/contextPath/_/idprovider/name/function" );
+        assertTrue( this.handler.canHandle( webRequest8 ) );
 
         // test component
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/component/pathToComponent" );
-        when( webRequest.getRawPath() ).thenReturn( "/site/project/branch/content/_/component/pathToComponent" );
-        assertTrue( this.handler.canHandle( webRequest ) );
+        final WebRequest webRequest9 = new WebRequest();
+        webRequest9.setMethod( HttpMethod.GET );
+        webRequest9.setRawPath( "/site/project/branch/content/_/component/pathToComponent" );
+        assertTrue( this.handler.canHandle( webRequest9 ) );
 
         // test slashApi
-        when( webRequest.getEndpointPath() ).thenReturn( null );
-        when( webRequest.getRawPath() ).thenReturn( "/api/com.enonic.app.myapp:api-key" );
-        assertTrue( this.handler.canHandle( webRequest ) );
+        final WebRequest webRequest10 = new WebRequest();
+        webRequest10.setMethod( HttpMethod.GET );
+        webRequest10.setRawPath( "/api/com.enonic.app.myapp:api-key" );
+        assertTrue( this.handler.canHandle( webRequest10 ) );
 
         // test handle as endpoint
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/com.enonic.app.myapp:api-key" );
-        when( webRequest.getRawPath() ).thenReturn( "path-to-content/_/com.enonic.app.myapp:api-key" );
-        assertTrue( this.handler.canHandle( webRequest ) );
-    }
-
-    @Test
-    void testDoHandleFailed()
-    {
-        final WebRequest webRequest = mock( WebRequest.class );
-        when( webRequest.getEndpointPath() ).thenReturn( null );
-        when( webRequest.getRawPath() ).thenReturn( "/site/project/branch/path" );
-
-        IllegalStateException ex = assertThrows( IllegalStateException.class, () -> this.handler.doHandle( webRequest, null, null ) );
-        assertEquals( "Invalid API path: /site/project/branch/path", ex.getMessage() );
+        final WebRequest webRequest11 = new WebRequest();
+        webRequest11.setMethod( HttpMethod.GET );
+        webRequest11.setRawPath( "/path-to-content/_/com.enonic.app.myapp:api-key" );
+        assertTrue( this.handler.canHandle( webRequest11 ) );
     }
 
     @Test
@@ -134,10 +132,10 @@ class ApiDispatcherTest
         throws Exception
     {
         final PortalRequest portalRequest = new PortalRequest();
+        portalRequest.setMode( RenderMode.LIVE );
         portalRequest.setMethod( HttpMethod.GET );
         portalRequest.setBaseUri( "/site" );
-        portalRequest.setRawPath( "path-to-content/_/image/id:version/scale/name" );
-        portalRequest.setEndpointPath( "/_/image/id:version/scale/name" );
+        portalRequest.setRawPath( "/path-to-content/_/image/id:version/scale/name" );
 
         final PortalResponse webResponse = PortalResponse.create().build();
         when( imageHandler.handle( any( WebRequest.class ) ) ).thenReturn( webResponse );
@@ -151,10 +149,10 @@ class ApiDispatcherTest
         throws Exception
     {
         final PortalRequest portalRequest = new PortalRequest();
+        portalRequest.setMode( RenderMode.LIVE );
         portalRequest.setMethod( HttpMethod.GET );
         portalRequest.setBaseUri( "/site" );
-        portalRequest.setRawPath( "path-to-content/_/attachment/mode/id:version/name" );
-        portalRequest.setEndpointPath( "/_/attachment/mode/id:version/name" );
+        portalRequest.setRawPath( "/path-to-content/_/attachment/mode/id:version/name" );
 
         // test canHandle
         assertTrue( this.handler.canHandle( portalRequest ) );
@@ -170,10 +168,9 @@ class ApiDispatcherTest
     void testHandleService()
         throws Exception
     {
-        final WebRequest webRequest = mock( WebRequest.class );
-        when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/service/application/name" );
-        when( webRequest.getRawPath() ).thenReturn( "contextPath/_/service/application/name" );
+        final WebRequest webRequest = new WebRequest();
+        webRequest.setMethod( HttpMethod.GET );
+        webRequest.setRawPath( "/contextPath/_/service/application/name" );
 
         final PortalResponse webResponse = PortalResponse.create().build();
         when( serviceHandler.handle( any( WebRequest.class ) ) ).thenReturn( webResponse );
@@ -186,10 +183,9 @@ class ApiDispatcherTest
     void testHandleAsset()
         throws Exception
     {
-        final WebRequest webRequest = mock( WebRequest.class );
-        when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/asset/application:ts/pathToAsset" );
-        when( webRequest.getRawPath() ).thenReturn( "contextPath/_/asset/application:ts/pathToAsset" );
+        final WebRequest webRequest = new WebRequest();
+        webRequest.setMethod( HttpMethod.GET );
+        webRequest.setRawPath( "/contextPath/_/asset/application:ts/pathToAsset" );
 
         final PortalResponse webResponse = PortalResponse.create().build();
         when( assetHandler.handle( any( WebRequest.class ) ) ).thenReturn( webResponse );
@@ -202,10 +198,9 @@ class ApiDispatcherTest
     void testHandleError()
         throws Exception
     {
-        final WebRequest webRequest = mock( WebRequest.class );
-        when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/error/message" );
-        when( webRequest.getRawPath() ).thenReturn( "contextPath/_/error/message" );
+        final WebRequest webRequest = new WebRequest();
+        webRequest.setMethod( HttpMethod.GET );
+        webRequest.setRawPath( "/contextPath/_/error/message" );
 
         final PortalResponse webResponse = PortalResponse.create().build();
         when( errorHandler.handle( any( WebRequest.class ) ) ).thenReturn( webResponse );
@@ -218,13 +213,12 @@ class ApiDispatcherTest
     void testHandleIdProvider()
         throws Exception
     {
-        final WebRequest webRequest = mock( WebRequest.class );
-        when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/idprovider/name/function" );
-        when( webRequest.getRawPath() ).thenReturn( "contextPath/_/idprovider/name/function" );
+        final WebRequest webRequest = new WebRequest();
+        webRequest.setMethod( HttpMethod.GET );
+        webRequest.setRawPath( "/contextPath/_/idprovider/name/function" );
 
         final PortalResponse webResponse = PortalResponse.create().build();
-        when( identityHandler.handle( any( WebRequest.class ), any( WebResponse.class ) ) ).thenReturn( webResponse );
+        when( identityHandler.handle( any( WebRequest.class ) ) ).thenReturn( webResponse );
 
         // test handle
         assertEquals( webResponse, this.handler.doHandle( webRequest, webResponse, null ) );
@@ -235,10 +229,10 @@ class ApiDispatcherTest
         throws Exception
     {
         final PortalRequest portalRequest = new PortalRequest();
+        portalRequest.setMode( RenderMode.LIVE );
         portalRequest.setMethod( HttpMethod.GET );
         portalRequest.setBaseUri( "/site" );
         portalRequest.setRawPath( "/site/project/branch/content/_/component/pathToComponent" );
-        portalRequest.setEndpointPath( "/_/component/pathToComponent" );
 
         final PortalResponse webResponse = PortalResponse.create().build();
         when( componentHandler.handle( any( WebRequest.class ) ) ).thenReturn( webResponse );
@@ -251,23 +245,23 @@ class ApiDispatcherTest
     void testSlashApi()
         throws Exception
     {
-        final WebRequest webRequest = mock( WebRequest.class );
-        when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
-        when( webRequest.getEndpointPath() ).thenReturn( null );
-        when( webRequest.getRawPath() ).thenReturn( "/api/com.enonic.app.myapp:api-key" );
+        final WebRequest webRequest1 = new WebRequest();
+        webRequest1.setMethod( HttpMethod.GET );
+        webRequest1.setRawPath( "/api/com.enonic.app.myapp:api-key" );
 
         final PortalResponse webResponse = PortalResponse.create().build();
         when( slashApiHandler.handle( any( WebRequest.class ) ) ).thenReturn( webResponse );
 
         // test handle
-        assertEquals( webResponse, this.handler.doHandle( webRequest, webResponse, null ) );
+        assertEquals( webResponse, this.handler.doHandle( webRequest1, webResponse, null ) );
 
         // test handle as endpoint
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/com.enonic.app.myapp:api-key" );
-        when( webRequest.getRawPath() ).thenReturn( "path-to-content/_/com.enonic.app.myapp:api-key" );
+        final WebRequest webRequest2 = new WebRequest();
+        webRequest2.setMethod( HttpMethod.GET );
+        webRequest2.setRawPath( "/path-to-content/_/com.enonic.app.myapp:api-key" );
 
         // test handle
-        assertEquals( webResponse, this.handler.doHandle( webRequest, webResponse, null ) );
+        assertEquals( webResponse, this.handler.doHandle( webRequest2, webResponse, null ) );
     }
 
     @Test
@@ -281,23 +275,23 @@ class ApiDispatcherTest
 
         this.handler.activate( portalConfig );
 
-        final WebRequest webRequest = mock( WebRequest.class );
-        when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
-
         // test image
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/image/id:version/scale/name" );
-        when( webRequest.getRawPath() ).thenReturn( "path-to-content/_/image/id:version/scale/name" );
-        assertEquals( HttpStatus.NOT_FOUND, this.handler.doHandle( webRequest, WebResponse.create().build(), null ).getStatus() );
+        final WebRequest webRequest1 = new WebRequest();
+        webRequest1.setMethod( HttpMethod.GET );
+        webRequest1.setRawPath( "/path-to-content/_/image/id:version/scale/name" );
+        assertEquals( HttpStatus.NOT_FOUND, this.handler.doHandle( webRequest1, WebResponse.create().build(), null ).getStatus() );
 
         // test attachment
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/attachment/mode/id:version/name" );
-        when( webRequest.getRawPath() ).thenReturn( "path-to-content/_/attachment/mode/id:version/name" );
-        assertEquals( HttpStatus.NOT_FOUND, this.handler.doHandle( webRequest, WebResponse.create().build(), null ).getStatus() );
+        final WebRequest webRequest2 = new WebRequest();
+        webRequest2.setMethod( HttpMethod.GET );
+        webRequest2.setRawPath( "/path-to-content/_/attachment/mode/id:version/name" );
+        assertEquals( HttpStatus.NOT_FOUND, this.handler.doHandle( webRequest2, WebResponse.create().build(), null ).getStatus() );
 
         // test service
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/service/application/name" );
-        when( webRequest.getRawPath() ).thenReturn( "contextPath/_/service/application/name" );
-        assertEquals( HttpStatus.NOT_FOUND, this.handler.doHandle( webRequest, WebResponse.create().build(), null ).getStatus() );
+        final WebRequest webRequest3 = new WebRequest();
+        webRequest3.setMethod( HttpMethod.GET );
+        webRequest3.setRawPath( "/contextPath/_/service/application/name" );
+        assertEquals( HttpStatus.NOT_FOUND, this.handler.doHandle( webRequest3, WebResponse.create().build(), null ).getStatus() );
     }
 
 }

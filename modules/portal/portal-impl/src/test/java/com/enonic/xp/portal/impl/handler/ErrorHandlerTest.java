@@ -27,14 +27,14 @@ class ErrorHandlerTest
         this.handler = new ErrorHandler();
 
         this.request.setMethod( HttpMethod.GET );
-        this.request.setEndpointPath( "/_/error/401" );
+        this.request.setRawPath( "/_/error/401" );
     }
 
     @Test
     void testOptions()
         throws Exception
     {
-        this.request.setEndpointPath( "/_/error/401" );
+        this.request.setRawPath( "/_/error/401" );
         this.request.setMethod( HttpMethod.OPTIONS );
 
         final WebResponse res = this.handler.handle( this.request );
@@ -47,7 +47,7 @@ class ErrorHandlerTest
     void testNoCode()
         throws Exception
     {
-        this.request.setEndpointPath( "/_/error/other" );
+        this.request.setRawPath( "/_/error/other" );
 
         try
         {
@@ -65,7 +65,7 @@ class ErrorHandlerTest
     void testNoMessage()
         throws Exception
     {
-        this.request.setEndpointPath( "/_/error/401" );
+        this.request.setRawPath( "/_/error/401" );
 
         try
         {
@@ -83,7 +83,7 @@ class ErrorHandlerTest
     void testWithMessage()
         throws Exception
     {
-        this.request.setEndpointPath( "/_/error/401" );
+        this.request.setRawPath( "/_/error/401" );
         this.request.getParams().put( "message", "Some error message" );
 
         try
