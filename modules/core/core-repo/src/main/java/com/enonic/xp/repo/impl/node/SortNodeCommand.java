@@ -147,7 +147,7 @@ public class SortNodeCommand
         {
             final Node node = doGetById( nodeId );
             final Node updatedNode = Node.create( node ).manualOrderValue( resolver.getAsLong() ).timestamp( Instant.now( CLOCK ) ).build();
-            final Node storedNode = this.nodeStorageService.store( StoreNodeParams.newVersion( updatedNode ), internalContext ).node();
+            final Node storedNode = this.nodeStorageService.store( StoreNodeParams.newVersion( updatedNode, params.getChildVersionAttributes() ), internalContext ).node();
             result.addReorderedNode( storedNode );
         }
     }
@@ -197,7 +197,7 @@ public class SortNodeCommand
                 continue;
             }
             final Node updatedNode = Node.create( node ).timestamp( Instant.now( CLOCK ) ).manualOrderValue( newOrderValue ).build();
-            final Node storedNode = this.nodeStorageService.store( StoreNodeParams.newVersion( updatedNode ), internalContext ).node();
+            final Node storedNode = this.nodeStorageService.store( StoreNodeParams.newVersion( updatedNode, params.getChildVersionAttributes() ), internalContext ).node();
             visitedNodes.put( storedNode.id(), storedNode );
 
             result.addReorderedNode( storedNode );

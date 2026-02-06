@@ -61,6 +61,11 @@ class SortContentCommand
                                                  ? ContentAttributesHelper.layersSyncAttr()
                                                  : ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.SORT_ATTR ) );
 
+            paramsBuilder.childVersionAttributes( layersSync
+                                                      ? ContentAttributesHelper.layersSyncAttr()
+                                                      : ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.SORT_ATTR,
+                                                                                                     "manualOrderValue" ) );
+
             final SortNodeResult sortNodeResult = nodeService.sort( paramsBuilder.build() );
 
             final Content content = ContentNodeTranslator.fromNode( sortNodeResult.getNode() );
