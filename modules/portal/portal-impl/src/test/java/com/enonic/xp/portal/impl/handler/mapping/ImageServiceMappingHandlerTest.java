@@ -9,10 +9,10 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.filter.FilterScript;
@@ -52,8 +52,6 @@ class ImageServiceMappingHandlerTest
 {
     private ImageServiceMappingHandler handler;
 
-    private ContentService contentService;
-
     private ResourceService resourceService;
 
     private SiteService siteService;
@@ -68,7 +66,7 @@ class ImageServiceMappingHandlerTest
     final void setup()
     {
         this.request = new PortalRequest();
-        this.contentService = mock( ContentService.class );
+        this.request.setMode( RenderMode.LIVE );
         this.resourceService = mock( ResourceService.class );
         this.rendererDelegate = mock( RendererDelegate.class );
         this.siteService = mock( SiteService.class );
@@ -92,7 +90,7 @@ class ImageServiceMappingHandlerTest
         this.request.setRepositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) );
         this.request.setBranch( ContentConstants.BRANCH_MASTER );
         this.request.setBaseUri( "/site" );
-        this.request.setEndpointPath( "/_/image/123456/scale-100-100/image-name.jpg" );
+        this.request.setRawPath( "/site/repo/branch/_/image/123456/scale-100-100/image-name.jpg" );
     }
 
     private void setupContentInsideSite( final SiteConfigs siteConfigs )
@@ -111,16 +109,16 @@ class ImageServiceMappingHandlerTest
     @Test
     void canHandle()
     {
-        this.request.setEndpointPath( null );
+        this.request.setRawPath( "/" );
         assertFalse( this.handler.canHandle( this.request ) );
 
-        this.request.setEndpointPath( "/_/other/123456/scale-100-100/image-name.jpg" );
+        this.request.setRawPath( "/_/other/123456/scale-100-100/image-name.jpg" );
         assertFalse( this.handler.canHandle( this.request ) );
 
-        this.request.setEndpointPath( "/image/123456/scale-100-100/image-name.jpg" );
-        assertFalse( this.handler.canHandle( this.request ) );
+        this.request.setRawPath( "/_/image/123456/scale-100-100/image-name.jpg" );
+        assertTrue( this.handler.canHandle( this.request ) );
 
-        this.request.setEndpointPath( "/_/image/123456/scale-100-100/image-name.jpg" );
+        this.request.setRawPath( "/_/attachment/123456/image-name.jpg" );
         assertTrue( this.handler.canHandle( this.request ) );
     }
 
@@ -138,7 +136,7 @@ class ImageServiceMappingHandlerTest
     void notValidUrlPattern()
         throws Exception
     {
-        this.request.setEndpointPath( "/_/image/" );
+        this.request.setRawPath( "/_/image/" );
 
         this.handler.handle( this.request, PortalResponse.create().build(), webHandlerChain );
         verify( webHandlerChain, times( 1 ) ).handle( eq( request ), isA( PortalResponse.class ) );
@@ -169,7 +167,40 @@ class ImageServiceMappingHandlerTest
 
         setupContentInsideSite( SiteConfigs.from( SiteConfig.create().application( myapplication ).config( new PropertyTree() ).build() ) );
 
-        this.request.setEndpointPath( "/_/image/path/to/image-name.jpg" );
+        this.request.setRawPath( "/_/image/path/to/image-name.jpg" );
+
+        final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), webHandlerChain );
+
+        assertEquals( body, res.getBody() );
+        verify( webHandlerChain, never() ).handle( eq( request ), isA( PortalResponse.class ) );
+    }
+
+    @Test
+    void controllerFromSiteConfig_attachment()
+        throws Exception
+    {
+        final Resource resource = mock( Resource.class );
+        when( resource.exists() ).thenReturn( true );
+
+        final ResourceKey controller1 = ResourceKey.from( "demo:/services/test1" );
+
+        when( this.resourceService.getResource( controller1 ) ).thenReturn( resource );
+
+        final ControllerMappingDescriptor siteMapping =
+            ControllerMappingDescriptor.create().controller( controller1 ).service( "attachment" ).build();
+
+        final ControllerMappingDescriptors siteMappings = ControllerMappingDescriptors.from( siteMapping );
+        final SiteDescriptor siteDescriptor = SiteDescriptor.create().mappingDescriptors( siteMappings ).build();
+        final ApplicationKey myapplication = ApplicationKey.from( "myapplication" );
+        when( this.siteService.getDescriptor( eq( myapplication ) ) ).thenReturn( siteDescriptor );
+
+        final String body = "Project body";
+
+        when( rendererDelegate.render( eq( siteMapping ), same( request ) ) ).thenReturn( PortalResponse.create().body( body ).build() );
+
+        setupContentInsideSite( SiteConfigs.from( SiteConfig.create().application( myapplication ).config( new PropertyTree() ).build() ) );
+
+        this.request.setRawPath( "/_/attachment/path/to/attachment-name.jpg" );
 
         final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), webHandlerChain );
 
@@ -195,7 +226,7 @@ class ImageServiceMappingHandlerTest
 
         setupContentInsideSite( SiteConfigs.from( SiteConfig.create().application( myapplication ).config( new PropertyTree() ).build() ) );
 
-        this.request.setEndpointPath( "/_/image/path/to/image-name.jpg" );
+        this.request.setRawPath( "/_/image/path/to/image-name.jpg" );
 
         this.handler.handle( this.request, PortalResponse.create().build(), webHandlerChain );
 
@@ -219,7 +250,7 @@ class ImageServiceMappingHandlerTest
 
         setupContentInsideSite( SiteConfigs.from( SiteConfig.create().application( myapplication ).config( new PropertyTree() ).build() ) );
 
-        this.request.setEndpointPath( "/_/image/path/to/image-name.jpg" );
+        this.request.setRawPath( "/_/image/path/to/image-name.jpg" );
 
         this.handler.handle( this.request, PortalResponse.create().build(), webHandlerChain );
 

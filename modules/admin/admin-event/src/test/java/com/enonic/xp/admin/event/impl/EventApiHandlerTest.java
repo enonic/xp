@@ -41,9 +41,9 @@ class EventApiHandlerTest
     @Test
     void testHandle()
     {
-        WebRequest request = mock( WebRequest.class );
-        when( request.getRawRequest() ).thenReturn( mock( HttpServletRequest.class ) );
-        when( request.isWebSocket() ).thenReturn( true );
+        final WebRequest request = new WebRequest();
+        request.setRawRequest( mock( HttpServletRequest.class ) );
+        request.setWebSocketContext( mock( com.enonic.xp.web.websocket.WebSocketContext.class ) );
 
         WebResponse response = instance.handle( request );
 
@@ -56,9 +56,8 @@ class EventApiHandlerTest
     @Test
     void testHandleBadRequest()
     {
-        WebRequest request = mock( WebRequest.class );
-        when( request.getRawRequest() ).thenReturn( mock( HttpServletRequest.class ) );
-        when( request.isWebSocket() ).thenReturn( false );
+        final WebRequest request = new WebRequest();
+        request.setRawRequest( mock( HttpServletRequest.class ) );
 
         WebResponse response = instance.handle( request );
 

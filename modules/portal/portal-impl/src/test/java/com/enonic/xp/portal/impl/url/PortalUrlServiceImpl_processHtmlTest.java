@@ -28,6 +28,7 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.impl.macro.MacroServiceImpl;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.html.HtmlDocument;
 import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
@@ -84,6 +85,7 @@ class PortalUrlServiceImpl_processHtmlTest
         req = mock( HttpServletRequest.class );
 
         this.portalRequest = new PortalRequest();
+        this.portalRequest.setMode( RenderMode.LIVE );
         this.portalRequest.setBranch( Branch.from( "draft" ) );
         this.portalRequest.setRepositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) );
         this.portalRequest.setBaseUri( "/site" );
@@ -201,6 +203,7 @@ class PortalUrlServiceImpl_processHtmlTest
     @Test
     void testMultipleLinksWithRequestWithContextWithBaseUrl()
     {
+        portalRequest.setMode( null );
         portalRequest.setBaseUri( "/api/guillotine:graphql" );
         portalRequest.setRepositoryId( null );
         portalRequest.setBranch( null );
@@ -231,6 +234,7 @@ class PortalUrlServiceImpl_processHtmlTest
     @Test
     void testMultipleLinksWithRequestWithContextWithoutBaseUrl()
     {
+        portalRequest.setMode( null );
         portalRequest.setBaseUri( "/api/guillotine:graphql" );
         portalRequest.setRepositoryId( null );
         portalRequest.setBranch( null );

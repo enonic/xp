@@ -25,6 +25,7 @@ import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.filter.FilterScript;
@@ -99,6 +100,7 @@ class MappingHandlerTest
     public final void setup()
     {
         this.request = new PortalRequest();
+        this.request.setMode( RenderMode.LIVE );
         this.request.setRepositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) );
         this.request.setBranch( ContentConstants.BRANCH_DRAFT );
         final ControllerScriptFactory controllerScriptFactory = mock( ControllerScriptFactory.class );
@@ -180,7 +182,7 @@ class MappingHandlerTest
     void testNoMatch_endpointPath()
         throws Exception
     {
-        this.request.setEndpointPath( "something" );
+        this.request.setRawPath( "/_/something" );
         final WebHandlerChain chain = mock( WebHandlerChain.class );
         final PortalResponse response = PortalResponse.create().build();
 
@@ -440,7 +442,8 @@ class MappingHandlerTest
         siteConfigAsSet.addString( "applicationKey", siteConfig.getApplicationKey().toString() );
         siteConfigAsSet.addSet( "config", siteConfig.getConfig().getRoot().copy( parentSet.getTree() ) );
 
-        return Site.create().data( siteData )
+        return Site.create()
+            .data( siteData )
             .id( ContentId.from( id ) )
             .path( ContentPath.from( path ) )
             .owner( PrincipalKey.from( "user:myStore:me" ) )

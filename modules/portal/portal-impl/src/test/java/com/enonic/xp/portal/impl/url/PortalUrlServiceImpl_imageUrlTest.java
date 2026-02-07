@@ -17,6 +17,7 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.macro.MacroService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
 import com.enonic.xp.portal.url.ImageUrlGeneratorParams;
 import com.enonic.xp.portal.url.ImageUrlParams;
@@ -67,6 +68,7 @@ class PortalUrlServiceImpl_imageUrlTest
         req = mock( HttpServletRequest.class );
 
         portalRequest = new PortalRequest();
+        portalRequest.setMode( RenderMode.LIVE );
         portalRequest.setRawRequest( req );
 
         PortalRequestAccessor.set( portalRequest );
@@ -222,6 +224,7 @@ class PortalUrlServiceImpl_imageUrlTest
     @Test
     void testWithNoSiteRequestInContextWithVirtualHost()
     {
+        portalRequest.setMode( null );
         portalRequest.setBaseUri( "/api/app:api" );
         portalRequest.setRepositoryId( null );
         portalRequest.setBranch( null );
@@ -254,6 +257,7 @@ class PortalUrlServiceImpl_imageUrlTest
     @Test
     void testWithNoSiteRequestWithBaseUrlIgnoreRewrite()
     {
+        portalRequest.setMode( null );
         portalRequest.setBaseUri( "/webapp/myapp" );
         portalRequest.setRepositoryId( null );
         portalRequest.setBranch( null );
@@ -286,6 +290,7 @@ class PortalUrlServiceImpl_imageUrlTest
     @Test
     void testWithNoSiteRequestInContextWithDefaultVirtualHost()
     {
+        portalRequest.setMode( null );
         portalRequest.setBaseUri( "/api/app:api" );
         portalRequest.setRepositoryId( null );
         portalRequest.setBranch( null );
@@ -319,6 +324,7 @@ class PortalUrlServiceImpl_imageUrlTest
     @Test
     void testWithNoSiteRequestNonApiBaseUri()
     {
+        portalRequest.setMode( null );
         portalRequest.setBaseUri( "/webapp/myapp" );
         portalRequest.setRepositoryId( null );
         portalRequest.setBranch( null );
@@ -343,6 +349,7 @@ class PortalUrlServiceImpl_imageUrlTest
     @Test
     void testWithNoSiteRequestNonApiBaseUriWithVirtualHost()
     {
+        portalRequest.setMode( null );
         portalRequest.setBaseUri( "/webapp/myapp" );
         portalRequest.setRepositoryId( null );
         portalRequest.setBranch( null );
@@ -375,6 +382,7 @@ class PortalUrlServiceImpl_imageUrlTest
     @Test
     void testWithNoSiteRequestWithEmptyBaseUriWithIgnoringRewrite()
     {
+        portalRequest.setMode( null );
         portalRequest.setBaseUri( "" );
         portalRequest.setRepositoryId( null );
         portalRequest.setBranch( null );

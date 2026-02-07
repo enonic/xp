@@ -46,7 +46,7 @@ class VirtualHostResolverImplTest
 
         HttpServletRequest req = mock( HttpServletRequest.class );
         when( req.getServerName() ).thenReturn( "localhost" );
-        when( req.getRequestURI() ).thenReturn( "/a/b" );
+        when( req.getPathInfo() ).thenReturn( "/a/b" );
 
         assertNull( virtualHostResolver.resolveVirtualHost( req ) );
     }
@@ -62,7 +62,7 @@ class VirtualHostResolverImplTest
 
         HttpServletRequest req = mock( HttpServletRequest.class );
         when( req.getServerName() ).thenReturn( "foo.no" );
-        when( req.getRequestURI() ).thenReturn( "/a" );
+        when( req.getPathInfo() ).thenReturn( "/a" );
 
         assertNull( virtualHostResolver.resolveVirtualHost( req ) );
     }
@@ -78,7 +78,7 @@ class VirtualHostResolverImplTest
 
         HttpServletRequest req = mock( HttpServletRequest.class );
         when( req.getServerName() ).thenReturn( "foo.no" );
-        when( req.getRequestURI() ).thenReturn( "/a/b" );
+        when( req.getPathInfo() ).thenReturn( "/a/b" );
 
         assertNotNull( virtualHostResolver.resolveVirtualHost( req ) );
     }
@@ -138,7 +138,7 @@ class VirtualHostResolverImplTest
 
         HttpServletRequest req = mock( HttpServletRequest.class );
         when( req.getServerName() ).thenReturn( "no.domain.com" );
-        when( req.getRequestURI() ).thenReturn( URI.create( "https://no.domain.com" ).getPath() );
+        when( req.getPathInfo() ).thenReturn( URI.create( "https://no.domain.com" ).getPath() );
 
         final VirtualHostResolver virtualHostResolver = new VirtualHostResolverImpl( virtualHostService );
         VirtualHost mapping = virtualHostResolver.resolveVirtualHost( req );
@@ -168,7 +168,7 @@ class VirtualHostResolverImplTest
 
         HttpServletRequest req = mock( HttpServletRequest.class );
         when( req.getServerName() ).thenReturn( "no.domain.com" );
-        when( req.getRequestURI() ).thenReturn( URI.create( "https://no.domain.com/source/path/123" ).getPath() );
+        when( req.getPathInfo() ).thenReturn( URI.create( "https://no.domain.com/source/path/123" ).getPath() );
 
         final VirtualHostResolver virtualHostResolver = new VirtualHostResolverImpl( virtualHostService );
         VirtualHost mapping = virtualHostResolver.resolveVirtualHost( req );
@@ -191,7 +191,7 @@ class VirtualHostResolverImplTest
 
         HttpServletRequest req = mock( HttpServletRequest.class );
         when( req.getServerName() ).thenReturn( "no.domain.com" );
-        when( req.getRequestURI() ).thenReturn( URI.create( "https://no.domain.com" ).getPath() );
+        when( req.getPathInfo() ).thenReturn( URI.create( "https://no.domain.com" ).getPath() );
 
         final VirtualHostResolver virtualHostResolver = new VirtualHostResolverImpl( virtualHostService );
         VirtualHost mapping = virtualHostResolver.resolveVirtualHost( req );
@@ -212,8 +212,8 @@ class VirtualHostResolverImplTest
         when( virtualHostService.getVirtualHosts() ).thenReturn( virtualHosts );
 
         HttpServletRequest req = mock( HttpServletRequest.class );
-        when( req.getRequestURI() ).thenReturn( URI.create( "https://domain.com/source" ).getPath() );
         when( req.getServerName() ).thenReturn( "DoMaIn.com" );
+        when( req.getPathInfo() ).thenReturn( URI.create( "https://domain.com/source" ).getPath() );
 
         final VirtualHostResolver virtualHostResolver = new VirtualHostResolverImpl( virtualHostService );
         VirtualHost mapping = virtualHostResolver.resolveVirtualHost( req );
@@ -235,7 +235,7 @@ class VirtualHostResolverImplTest
 
         HttpServletRequest req = mock( HttpServletRequest.class );
         when( req.getServerName() ).thenReturn( "no.domain.com" );
-        when( req.getRequestURI() ).thenReturn( URI.create( "https://no.domain.com" ).getPath() );
+        when( req.getPathInfo() ).thenReturn( URI.create( "https://no.domain.com" ).getPath() );
 
         final VirtualHostResolver virtualHostResolver = new VirtualHostResolverImpl( virtualHostService );
         VirtualHost mapping = virtualHostResolver.resolveVirtualHost( req );
@@ -272,8 +272,8 @@ class VirtualHostResolverImplTest
         when( virtualHostService.getVirtualHosts() ).thenReturn( virtualHosts );
 
         HttpServletRequest req = mock( HttpServletRequest.class );
-        when( req.getRequestURI() ).thenReturn( "/source" );
         when( req.getServerName() ).thenReturn( "domain.com" );
+        when( req.getPathInfo() ).thenReturn( "/source" );
 
         final VirtualHostResolver virtualHostResolver = new VirtualHostResolverImpl( virtualHostService );
         final VirtualHost virtualHost = virtualHostResolver.resolveVirtualHost( req );

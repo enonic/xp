@@ -371,6 +371,7 @@ class PortalUrlService_baseUrlTest
     void testWithNonSiteRequestInContextWithoutBaseUrl()
     {
         portalRequest.setBaseUri( "/api" );
+        portalRequest.setMode( null );
         portalRequest.setRepositoryId( null );
         portalRequest.setBranch( null );
         portalRequest.setRawPath( "/api/application:apikey" );
@@ -443,6 +444,7 @@ class PortalUrlService_baseUrlTest
     void testWithNonSiteRequestInContextWithBaseUrl()
     {
         portalRequest.setBaseUri( "/api" );
+        portalRequest.setMode( null );
         portalRequest.setRepositoryId( null );
         portalRequest.setBranch( null );
         portalRequest.setRawPath( "/api/application:apikey" );

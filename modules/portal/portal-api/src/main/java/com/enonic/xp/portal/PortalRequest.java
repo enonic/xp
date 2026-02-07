@@ -17,7 +17,7 @@ import com.enonic.xp.web.WebRequest;
 public final class PortalRequest
     extends WebRequest
 {
-    private RenderMode mode = RenderMode.LIVE;
+    private RenderMode mode;
 
     private RepositoryId repositoryId;
 

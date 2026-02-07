@@ -11,6 +11,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.script.PortalScriptServiceImpl;
 import com.enonic.xp.portal.macro.MacroContext;
 import com.enonic.xp.portal.macro.MacroProcessor;
@@ -38,8 +39,11 @@ class MacroProcessorScriptTest
     @BeforeEach
     void setup()
     {
+        final PortalRequest portalRequest = new PortalRequest();
+        portalRequest.setMode( RenderMode.LIVE );
+
         this.macroContext = MacroContext.create()
-            .request( new PortalRequest() )
+            .request( portalRequest )
             .name( "macroName" )
             .body( "body" )
             .param( "firstParam", "firstParamValue" )
@@ -82,7 +86,7 @@ class MacroProcessorScriptTest
     {
         final PortalResponse response = execute( "myapplication:/macro/macro.js" );
         assertEquals(
-            "Macro context: {\"name\":\"macroName\",\"body\":\"body\",\"params\":{\"firstParam\":\"firstParamValue\",\"secondParam\":\"secondParamValue\"},\"request\":{\"port\":0,\"mode\":\"live\",\"webSocket\":false,\"params\":{},\"headers\":{},\"cookies\":{},\"locales\":[]},\"document\":\"<h1>document</h1>\"}",
+            "Macro context: {\"name\":\"macroName\",\"body\":\"body\",\"params\":{\"firstParam\":\"firstParamValue\",\"secondParam\":\"secondParamValue\"},\"request\":{\"port\":0,\"rawPath\":\"/\",\"mode\":\"live\",\"webSocket\":false,\"params\":{},\"headers\":{},\"cookies\":{},\"locales\":[]},\"document\":\"<h1>document</h1>\"}",
             response.getBody() );
         assertEquals( 1, response.getContributions( HtmlTag.HEAD_END ).size() );
         assertEquals( 1, response.getContributions( HtmlTag.BODY_END ).size() );

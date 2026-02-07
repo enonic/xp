@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.handler;
 
+import java.io.IOException;
 import java.util.EnumSet;
 import java.util.HexFormat;
 import java.util.function.Predicate;
@@ -56,7 +57,7 @@ public class AssetHandler
     }
 
     public WebResponse handle( final WebRequest webRequest )
-        throws Exception
+        throws IOException
     {
         final String restPath = HandlerHelper.findRestPath( webRequest, "asset" );
 

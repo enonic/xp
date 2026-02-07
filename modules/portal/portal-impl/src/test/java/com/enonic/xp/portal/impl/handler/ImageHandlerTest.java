@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import com.google.common.io.ByteSource;
 import com.google.common.net.MediaType;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.content.Content;
@@ -22,6 +24,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.image.ImageService;
 import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
@@ -62,6 +65,7 @@ class ImageHandlerTest
     final void setup()
     {
         this.request = new PortalRequest();
+        this.request.setMode( RenderMode.LIVE );
         this.contentService = mock( ContentService.class );
         this.imageService = mock( ImageService.class );
 
@@ -73,7 +77,7 @@ class ImageHandlerTest
         this.request.setBranch( ContentConstants.BRANCH_MASTER );
         this.request.setBaseUri( "/site" );
         this.request.setContentPath( ContentPath.from( "/path/to/content" ) );
-        this.request.setEndpointPath( "/_/image/123456/scale-100-100/image-name.jpg" );
+        this.request.setRawPath( "/_/image/123456/scale-100-100/image-name.jpg" );
     }
 
     private void setupContent()
@@ -130,7 +134,8 @@ class ImageHandlerTest
     private void setupImageContent( final String type )
         throws Exception
     {
-        final Attachment attachment = Attachment.create().name( "enonic-logo." + type ).mimeType( "image/" + type ).label( "source" ).build();
+        final Attachment attachment =
+            Attachment.create().name( "enonic-logo." + type ).mimeType( "image/" + type ).label( "source" ).build();
 
         final Content content = createContent( "123456", "path/to/image-name." + type, attachment );
 
@@ -190,7 +195,7 @@ class ImageHandlerTest
         setupContent();
         this.request.setMethod( HttpMethod.OPTIONS );
         this.request.setBaseUri( "/site" );
-        this.request.setEndpointPath( "/_/image/123456/scale-100-100/image-name.jpg" );
+        this.request.setRawPath( "/_/image/123456/scale-100-100/image-name.jpg" );
 
         final WebResponse res = this.handler.handle( this.request );
         assertNotNull( res );
@@ -202,7 +207,7 @@ class ImageHandlerTest
     void notValidUrlPattern()
         throws Exception
     {
-        this.request.setEndpointPath( "/_/image/" );
+        this.request.setRawPath( "/_/image/" );
 
         try
         {
@@ -222,7 +227,7 @@ class ImageHandlerTest
     {
         setupContent();
 
-        this.request.setEndpointPath( "/_/image/123456/scale-100-100/image-name.jpg" );
+        this.request.setRawPath( "/_/image/123456/scale-100-100/image-name.jpg" );
 
         final WebResponse res = this.handler.handle( this.request );
         assertNotNull( res );
@@ -237,7 +242,7 @@ class ImageHandlerTest
     {
         setupContent();
 
-        this.request.setEndpointPath( "/_/image/123456/scale-100-100/image-name.jpg" );
+        this.request.setRawPath( "/_/image/123456/scale-100-100/image-name.jpg" );
         this.request.getParams().put( "filter", "sepia()" );
         this.request.getParams().put( "quality", "75" );
         this.request.getParams().put( "background", "0x0" );
@@ -254,7 +259,7 @@ class ImageHandlerTest
     {
         when( this.contentService.getById( ContentId.from( "654321" ) ) ).thenThrow( ContentNotFoundException.class );
 
-        this.request.setEndpointPath( "/_/image/654321/scale-100-100/image-name.jpg" );
+        this.request.setRawPath( "/_/image/654321/scale-100-100/image-name.jpg" );
         final WebException webException = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
         assertEquals( HttpStatus.NOT_FOUND, webException.getStatus() );
         assertEquals( "Content with id [654321] not found", webException.getMessage() );
@@ -266,7 +271,7 @@ class ImageHandlerTest
     {
         setupContent();
 
-        this.request.setEndpointPath( "/_/image/123456/scale-100-100/image-name.jpg" );
+        this.request.setRawPath( "/_/image/123456/scale-100-100/image-name.jpg" );
         this.request.getParams().put( "filter", "sepia()" );
         this.request.getParams().put( "quality", "75" );
         this.request.getParams().put( "background", "0x0" );
@@ -284,7 +289,7 @@ class ImageHandlerTest
     {
         setupContent();
 
-        this.request.setEndpointPath( "/_/image/123456/scale-100-100/image-name.jpg" );
+        this.request.setRawPath( "/_/image/123456/scale-100-100/image-name.jpg" );
         this.request.getParams().put( "quality", "-1" );
 
         final WebException webException = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
@@ -297,7 +302,7 @@ class ImageHandlerTest
     {
         setupContent();
 
-        this.request.setEndpointPath( "/_/image/123456/full/image-name.png" );
+        this.request.setRawPath( "/_/image/123456/full/image-name.png" );
 
         final WebException webException = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
         assertEquals( HttpStatus.NOT_FOUND, webException.getStatus() );
@@ -307,9 +312,9 @@ class ImageHandlerTest
     void gifImage()
         throws Exception
     {
-        setupImageContent("gif");
+        setupImageContent( "gif" );
 
-        this.request.setEndpointPath( "/_/image/123456/full/image-name.gif" );
+        this.request.setRawPath( "/_/image/123456/full/image-name.gif" );
 
         final WebResponse res = this.handler.handle( this.request );
         assertNotNull( res );
@@ -323,9 +328,9 @@ class ImageHandlerTest
     void webpImage()
         throws Exception
     {
-        setupImageContent("webp");
+        setupImageContent( "webp" );
 
-        this.request.setEndpointPath( "/_/image/123456/full/image-name.webp" );
+        this.request.setRawPath( "/_/image/123456/full/image-name.webp" );
 
         final WebResponse res = this.handler.handle( this.request );
         assertNotNull( res );
@@ -339,9 +344,9 @@ class ImageHandlerTest
     void avifImage()
         throws Exception
     {
-        setupImageContent("avif");
+        setupImageContent( "avif" );
 
-        this.request.setEndpointPath( "/_/image/123456/full/image-name.avif" );
+        this.request.setRawPath( "/_/image/123456/full/image-name.avif" );
 
         final WebResponse res = this.handler.handle( this.request );
         assertNotNull( res );
@@ -358,7 +363,7 @@ class ImageHandlerTest
     {
         setupContentSvg();
 
-        this.request.setEndpointPath( "/_/image/123456/full/image-name.svg" );
+        this.request.setRawPath( "/_/image/123456/full/image-name.svg" );
 
         final WebResponse res = this.handler.handle( this.request );
         assertNotNull( res );
@@ -376,7 +381,7 @@ class ImageHandlerTest
     {
         setupContentSvgz();
 
-        this.request.setEndpointPath( "/_/image/123456/full/image-name.svgz" );
+        this.request.setRawPath( "/_/image/123456/full/image-name.svgz" );
 
         final WebResponse res = this.handler.handle( this.request );
         assertNotNull( res );
@@ -394,7 +399,7 @@ class ImageHandlerTest
     {
         mockCachableContent();
 
-        this.request.setEndpointPath( "/_/image/123456/scale-100-100/image-name.jpg.png" );
+        this.request.setRawPath( "/_/image/123456/scale-100-100/image-name.jpg.png" );
 
         final WebResponse res = this.handler.handle( this.request );
         assertAll( () -> assertEquals( HttpStatus.OK, res.getStatus() ), () -> assertEquals( MediaType.PNG, res.getContentType() ),
@@ -407,7 +412,7 @@ class ImageHandlerTest
     {
         mockCachableContent();
 
-        this.request.setEndpointPath( "/_/image/123456:bb6d2c0f3112f562ec454654b9aebe7ab47ba865/scale-100-100/image-name.jpg.png" );
+        this.request.setRawPath( "/_/image/123456:bb6d2c0f3112f562ec454654b9aebe7ab47ba865/scale-100-100/image-name.jpg.png" );
 
         final WebResponse res = this.handler.handle( this.request );
 
@@ -420,7 +425,7 @@ class ImageHandlerTest
     {
         mockCachableContent();
 
-        this.request.setEndpointPath( "/_/image/123456:bb6d2c0f3112f562ec454654b9aebe7ab47ba865/scale-100-100/image-name.jpg.png" );
+        this.request.setRawPath( "/_/image/123456:bb6d2c0f3112f562ec454654b9aebe7ab47ba865/scale-100-100/image-name.jpg.png" );
 
         this.request.setBranch( ContentConstants.BRANCH_DRAFT );
         final WebResponse resDraft = this.handler.handle( this.request );
@@ -433,7 +438,7 @@ class ImageHandlerTest
     {
         mockCachableContent();
 
-        this.request.setEndpointPath( "/_/image/123456:654321/scale-100-100/image-name.jpg.png" );
+        this.request.setRawPath( "/_/image/123456:654321/scale-100-100/image-name.jpg.png" );
 
         final WebResponse res = this.handler.handle( this.request );
 
@@ -456,8 +461,10 @@ class ImageHandlerTest
         final PortalRequest portalRequest = new PortalRequest();
         portalRequest.setMethod( HttpMethod.GET );
         portalRequest.setBaseUri( "/unknown" );
-        portalRequest.setRawPath( "path-to-content/_/image/id:version/scale/name" );
-        portalRequest.setEndpointPath( "/_/image/id:version/scale/name" );
+        portalRequest.setRawPath( "/path-to-content/_/image/id:version/scale/name" );
+        final HttpServletRequest rawRequest = mock( HttpServletRequest.class );
+        when( rawRequest.isUserInRole( RoleKeys.ADMIN_LOGIN_ID ) ).thenReturn( true );
+        portalRequest.setRawRequest( rawRequest );
 
         WebException ex = assertThrows( WebException.class, () -> this.handler.handle( portalRequest ) );
         assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );

@@ -28,22 +28,32 @@ import static org.mockito.Mockito.when;
 class HandlerHelperTest
 {
     @Test
-    void testFindPreRestPath()
+    void testFindRestPath()
     {
-        final WebRequest req = mock( WebRequest.class );
-        when( req.getRawPath() ).thenReturn( "/prePath/_/app/path" );
+        final WebRequest req = new WebRequest();
+        req.setRawPath( "/prePath/_/app/path" );
 
-        assertEquals( "/prePath/_/app", HandlerHelper.findPreRestPath( req, "app" ) );
+        assertEquals( "path", HandlerHelper.findRestPath( req, "app" ) );
     }
 
     @Test
-    void testFindRestPath()
+    void testFindEndpoint()
     {
-        final WebRequest req = mock( WebRequest.class );
-        when( req.getEndpointPath() ).thenReturn( "app" );
-        when( req.getRawPath() ).thenReturn( "/prePath/_/app/path" );
+        final WebRequest req1 = new WebRequest();
+        req1.setRawPath( "/path/_/service/app/name" );
+        assertEquals( "service", HandlerHelper.findEndpoint( req1 ) );
 
-        assertEquals( "", HandlerHelper.findRestPath( req, "app" ) );
+        final WebRequest req2 = new WebRequest();
+        req2.setRawPath( "/path/_/" );
+        assertEquals( "", HandlerHelper.findEndpoint( req2 ) );
+
+        final WebRequest req3 = new WebRequest();
+        req3.setRawPath( "/path/_/com.enonic.app.myapp:api-key" );
+        assertEquals( "com.enonic.app.myapp:api-key", HandlerHelper.findEndpoint( req3 ) );
+
+        final WebRequest req4 = new WebRequest();
+        req4.setRawPath( "/path/without/endpoint" );
+        assertNull( HandlerHelper.findEndpoint( req4 ) );
     }
 
     @Test

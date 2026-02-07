@@ -3,6 +3,8 @@ package com.enonic.xp.site;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
+import org.jspecify.annotations.Nullable;
+
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -20,6 +22,7 @@ public final class SiteConfigs
         super( list );
     }
 
+    @Nullable
     public SiteConfig get( final ApplicationKey applicationKey )
     {
         return stream().filter( sc -> applicationKey.equals( sc.getApplicationKey() ) ).findFirst().orElse( null );

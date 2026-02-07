@@ -79,6 +79,7 @@ class ExceptionRendererImplTest
         RunModeSupport.set( RunMode.DEV );
         this.renderer = new ExceptionRendererImpl( resourceService, portalUrlService, errorHandlerScriptFactory, null, postProcessor );
         this.request = new PortalRequest();
+        this.request.setMode( RenderMode.LIVE );
 
         final HttpServletRequest rawRequest = mock( HttpServletRequest.class );
         this.request.setRawRequest( rawRequest );

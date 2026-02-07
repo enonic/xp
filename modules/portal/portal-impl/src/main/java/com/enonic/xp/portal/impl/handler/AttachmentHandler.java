@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.handler;
 
+import java.io.IOException;
 import java.util.EnumSet;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
@@ -13,10 +14,10 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.WebHandlerHelper;
 import com.enonic.xp.portal.impl.PortalConfig;
+import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.portal.impl.handler.attachment.AttachmentHandlerWorker;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
@@ -59,7 +60,7 @@ public class AttachmentHandler
     }
 
     public PortalResponse handle( final WebRequest webRequest )
-        throws Exception
+        throws IOException
     {
         WebHandlerHelper.checkAdminAccess( webRequest );
 

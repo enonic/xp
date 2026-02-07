@@ -1,6 +1,6 @@
 package com.enonic.xp.portal.impl.handler;
 
-import java.util.function.Predicate;
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,16 +16,12 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.impl.PortalRequestHelper;
-import com.enonic.xp.portal.impl.app.WebAppHandler;
 import com.enonic.xp.portal.impl.websocket.WebSocketEndpointImpl;
-import com.enonic.xp.project.Project;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.service.ServiceDescriptor;
 import com.enonic.xp.service.ServiceDescriptorService;
-import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigs;
-import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.HttpMethod;
@@ -40,9 +36,7 @@ import com.enonic.xp.web.websocket.WebSocketEndpoint;
 @Component(service = ServiceHandler.class)
 public class ServiceHandler
 {
-    private static final Predicate<WebRequest> IS_STANDARD_METHOD = req -> HttpMethod.standard().contains( req.getMethod() );
-
-    private static final Pattern PATTERN = Pattern.compile( "(?<appKey>[^/]+)/(?<serviceName>[^/]+)" );
+    private static final Pattern PATTERN = Pattern.compile( "^([^/]+)/([^/]+)" );
 
     private final ServiceDescriptorService serviceDescriptorService;
 
@@ -57,7 +51,7 @@ public class ServiceHandler
     }
 
     public WebResponse handle( final WebRequest webRequest )
-        throws Exception
+        throws IOException
     {
         final String restPath = HandlerHelper.findRestPath( webRequest, "service" );
         final Matcher matcher = PATTERN.matcher( restPath );
@@ -66,7 +60,7 @@ public class ServiceHandler
             throw WebException.notFound( "Not a valid service url pattern" );
         }
 
-        if ( !IS_STANDARD_METHOD.test( webRequest ) )
+        if ( !HttpMethod.isStandard( webRequest.getMethod() ) )
         {
             throw new WebException( HttpStatus.METHOD_NOT_ALLOWED, String.format( "Method %s not allowed", webRequest.getMethod() ) );
         }
@@ -104,7 +98,7 @@ public class ServiceHandler
     {
         final PortalRequest portalRequest =
             webRequest instanceof PortalRequest ? (PortalRequest) webRequest : new PortalRequest( webRequest );
-        portalRequest.setContextPath( HandlerHelper.findPreRestPath( portalRequest, "service" ) + "/" + servicePath );
+        portalRequest.setContextPath( portalRequest.getBasePath() + "/_/service/" + servicePath );
 
         //Retrieves the ServiceDescriptor
         final ServiceDescriptor serviceDescriptor = serviceDescriptorService.getByKey( descriptorKey );
@@ -122,12 +116,7 @@ public class ServiceHandler
 
         if ( PortalRequestHelper.isSiteBase( portalRequest ) )
         {
-            final Site site = portalRequest.getSite();
-            final Project project = portalRequest.getProject();
-
-            final SiteConfigs siteConfigs = site != null
-                ? SiteConfigsDataSerializer.fromData( site.getData().getRoot() )
-                : project != null ? project.getSiteConfigs() : SiteConfigs.empty();
+            final SiteConfigs siteConfigs = PortalRequestHelper.getSiteConfigs( portalRequest );
 
             //Checks if the application is set on the current site or project
             if ( siteConfigs.get( descriptorKey.getApplicationKey() ) == null )
@@ -136,9 +125,9 @@ public class ServiceHandler
             }
         }
 
-        //Checks if the application is set on the current application
-        final ApplicationKey baseApplicationKey = getBaseApplicationKey( portalRequest );
-        if ( baseApplicationKey != null && !baseApplicationKey.equals( descriptorKey.getApplicationKey() ) )
+        //Checks if the application is set on the current webapp
+        if ( portalRequest.getBaseUri().startsWith( PathMatchers.WEBAPP_PREFIX ) &&
+            !descriptorKey.getApplicationKey().equals( portalRequest.getApplicationKey() ) )
         {
             throw WebException.forbidden( String.format( "Service [%s] forbidden for this application", descriptorKey ) );
         }
@@ -147,17 +136,6 @@ public class ServiceHandler
         portalRequest.setApplicationKey( descriptorKey.getApplicationKey() );
 
         return portalRequest;
-    }
-
-    private ApplicationKey getBaseApplicationKey( PortalRequest portalRequest )
-    {
-        final Matcher matcher = WebAppHandler.PATTERN.matcher( portalRequest.getRawPath() );
-        if ( matcher.matches() )
-        {
-            final String applicationBase = matcher.group( 1 );
-            return ApplicationKey.from( applicationBase );
-        }
-        return null;
     }
 
     private WebSocketEndpoint newWebSocketEndpoint( final WebSocketConfig config, final ControllerScript script,

@@ -33,9 +33,9 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class ApiHandlerTest
+class ApiIndexHandlerTest
 {
-    private ApiHandler handler;
+    private ApiIndexHandler handler;
 
     private ApplicationService applicationService;
 
@@ -52,7 +52,7 @@ class ApiHandlerTest
         this.apiDescriptorService = mock( ApiDescriptorService.class );
         this.universalApiHandlerRegistry = new DynamicUniversalApiHandlerRegistry();
 
-        this.handler = new ApiHandler( this.applicationService, this.apiDescriptorService, this.universalApiHandlerRegistry );
+        this.handler = new ApiIndexHandler( this.applicationService, this.apiDescriptorService, this.universalApiHandlerRegistry );
         this.apiConfig = mock( ApiConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         this.handler.activate( apiConfig );
     }
@@ -64,39 +64,53 @@ class ApiHandlerTest
     }
 
     @Test
-    void testCanHandle()
+    void testCanHandle_dev()
     {
-        WebRequest webRequest = mock( WebRequest.class );
-
         RunModeSupport.set( RunMode.DEV );
 
-        when( webRequest.getRawPath() ).thenReturn( "/api" );
-        assertTrue( this.handler.canHandle( webRequest ) );
+        final WebRequest webRequest1 = new WebRequest();
+        webRequest1.setRawPath( "/api" );
+        assertTrue( this.handler.canHandle( webRequest1 ) );
 
-        when( webRequest.getRawPath() ).thenReturn( "/admin/api" );
-        assertFalse( this.handler.canHandle( webRequest ) );
+        final WebRequest webRequest2 = new WebRequest();
+        webRequest2.setRawPath( "/admin/api" );
+        assertFalse( this.handler.canHandle( webRequest2 ) );
 
-        when( webRequest.getRawPath() ).thenReturn( "/adm/api" );
-        assertFalse( this.handler.canHandle( webRequest ) );
+        final WebRequest webRequest3 = new WebRequest();
+        webRequest3.setRawPath( "/adm/api" );
+        assertFalse( this.handler.canHandle( webRequest3 ) );
 
-        when( webRequest.getRawPath() ).thenReturn( "/api/" );
-        assertFalse( this.handler.canHandle( webRequest ) );
+        final WebRequest webRequest4 = new WebRequest();
+        webRequest4.setRawPath( "/api/" );
+        assertTrue( this.handler.canHandle( webRequest4 ) );
 
-        when( webRequest.getRawPath() ).thenReturn( "/path" );
-        assertFalse( this.handler.canHandle( webRequest ) );
+        final WebRequest webRequest5 = new WebRequest();
+        webRequest5.setRawPath( "/path" );
+        assertFalse( this.handler.canHandle( webRequest5 ) );
 
         when( apiConfig.api_index_enabled() ).thenReturn( "on" );
-        when( webRequest.getRawPath() ).thenReturn( "/api" );
-        assertTrue( this.handler.canHandle( webRequest ) );
+        this.handler.activate( apiConfig );
+        final WebRequest webRequest6 = new WebRequest();
+        webRequest6.setRawPath( "/api" );
+        assertTrue( this.handler.canHandle( webRequest6 ) );
+    }
+
+    @Test
+    void testCanHandle_prod()
+    {
+        RunModeSupport.set( RunMode.PROD );
 
         RunModeSupport.set( RunMode.PROD );
 
-        when( webRequest.getRawPath() ).thenReturn( "/api" );
-        assertFalse( this.handler.canHandle( webRequest ) );
+        final WebRequest webRequest7 = new WebRequest();
+        webRequest7.setRawPath( "/api" );
+        assertFalse( this.handler.canHandle( webRequest7 ) );
 
         when( apiConfig.api_index_enabled() ).thenReturn( "off" );
-        when( webRequest.getRawPath() ).thenReturn( "/api" );
-        assertFalse( this.handler.canHandle( webRequest ) );
+        this.handler.activate( apiConfig );
+        final WebRequest webRequest8 = new WebRequest();
+        webRequest8.setRawPath( "/api" );
+        assertFalse( this.handler.canHandle( webRequest8 ) );
     }
 
     @Test
@@ -132,8 +146,7 @@ class ApiHandlerTest
                                                            "description", "Event API", "documentationUrl", "https://docs.enonic.com",
                                                            "allowedPrincipals", RoleKeys.ADMIN_LOGIN.toString() ) );
 
-        WebResponse webResponse =
-            this.handler.doHandle( mock( WebRequest.class ), mock( WebResponse.class ), mock( WebHandlerChain.class ) );
+        WebResponse webResponse = this.handler.doHandle( new WebRequest(), WebResponse.create().build(), mock( WebHandlerChain.class ) );
 
         assertEquals( HttpStatus.OK, webResponse.getStatus() );
         final Object body = webResponse.getBody();

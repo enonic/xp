@@ -6,6 +6,7 @@ import java.util.function.Function;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.portal.impl.handler.PathMatchers;
 import com.enonic.xp.portal.url.BaseUrlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.project.ProjectService;
@@ -51,7 +52,7 @@ final class ContentBaseUrlResolver
         String result;
         if ( resolvedBaseUrl == null )
         {
-            result = "/site/" + baseUrlMetadata.getProjectName() + "/" + baseUrlMetadata.getBranch();
+            result = PathMatchers.SITE_PREFIX + baseUrlMetadata.getProjectName() + "/" + baseUrlMetadata.getBranch();
         }
         else
         {

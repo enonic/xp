@@ -10,21 +10,26 @@ public final class WebHandlerHelper
 {
     public static void checkAdminAccess( final WebRequest webRequest )
     {
-        if ( !isLiveMode( webRequest ) && !hasAdminRight( webRequest ) )
+        if ( isLiveMode( webRequest ) )
         {
-            throw WebException.forbidden( "You don't have permission to access this resource" );
+            return;
         }
+        checkAdminLoginRole( webRequest );
     }
 
     private static boolean isLiveMode( final WebRequest webRequest )
     {
-        return webRequest instanceof PortalRequest && RenderMode.LIVE == ( (PortalRequest) webRequest ).getMode();
+        return webRequest instanceof PortalRequest portalRequest && RenderMode.LIVE == portalRequest.getMode();
     }
 
-    private static boolean hasAdminRight( final WebRequest webRequest )
+    public static void checkAdminLoginRole( final WebRequest webRequest )
     {
-        return webRequest.getRawRequest().isUserInRole( RoleKeys.ADMIN_LOGIN_ID ) ||
-            webRequest.getRawRequest().isUserInRole( RoleKeys.ADMIN_ID );
+        if ( webRequest.getRawRequest().isUserInRole( RoleKeys.ADMIN_LOGIN_ID ) ||
+            webRequest.getRawRequest().isUserInRole( RoleKeys.ADMIN_ID ) )
+        {
+            return;
+        }
+        throw WebException.forbidden( "You don't have permission to access this resource" );
     }
 
     private WebHandlerHelper()

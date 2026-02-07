@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -55,33 +54,29 @@ public final class VirtualHostFilter
             if ( virtualHost == null )
             {
                 LOG.warn( "Virtual host mapping could not be resolved for host [{}] and path [{}]", req.getServerName(),
-                          req.getRequestURI() );
+                          req.getPathInfo() );
                 res.setStatus( HttpServletResponse.SC_NOT_FOUND );
             }
             else
             {
                 VirtualHostHelper.setVirtualHost( req, virtualHost );
-                final String targetPath = VirtualHostInternalHelper.getFullTargetPath( virtualHost, req );
-
-                final RequestDispatcher dispatcher = req.getRequestDispatcher( targetPath );
-                dispatcher.forward( req, res );
+                chain.doFilter( new VirtualHostRequestWrapper( req, virtualHost ), res );
             }
         }
         else
         {
-            final VirtualHostMapping defaultVirtualHostMapping = generateDefaultVirtualHostMapping( req );
-            VirtualHostHelper.setVirtualHost( req, defaultVirtualHostMapping );
+            final VirtualHostMapping virtualHost = generateDefaultVirtualHostMapping( req );
+            VirtualHostHelper.setVirtualHost( req, virtualHost );
             chain.doFilter( req, res );
         }
     }
 
-    private VirtualHostMapping generateDefaultVirtualHostMapping( final HttpServletRequest req )
+    private static VirtualHostMapping generateDefaultVirtualHostMapping( final HttpServletRequest req )
     {
         final String serverName = req.getServerName();
 
-        return new VirtualHostMapping( serverName, serverName, "/", "/", VirtualHostIdProvidersMapping.create().
-            setDefaultIdProvider( IdProviderKey.system() ).
-            build(), Integer.MAX_VALUE );
+        return new VirtualHostMapping( serverName, serverName, "/", "/",
+                                       VirtualHostIdProvidersMapping.create().setDefaultIdProvider( IdProviderKey.system() ).build(),
+                                       Integer.MAX_VALUE );
     }
-
 }

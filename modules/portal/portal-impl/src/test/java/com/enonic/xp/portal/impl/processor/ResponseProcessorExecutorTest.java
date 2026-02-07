@@ -15,6 +15,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.rendering.RenderException;
 import com.enonic.xp.portal.impl.script.PortalScriptServiceImpl;
 import com.enonic.xp.portal.postprocess.HtmlTag;
@@ -47,6 +48,7 @@ class ResponseProcessorExecutorTest
     void setup()
     {
         this.portalRequest = new PortalRequest();
+        this.portalRequest.setMode( RenderMode.LIVE );
         this.portalResponse = PortalResponse.create().build();
 
         final Application application = mock( Application.class );

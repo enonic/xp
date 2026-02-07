@@ -54,29 +54,27 @@ class WidgetApiHandlerTest
     @Test
     void testInvalidPattern()
     {
-        final WebRequest webRequest = mock( WebRequest.class );
-        when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
+        final WebRequest webRequest1 = new WebRequest();
+        webRequest1.setMethod( HttpMethod.GET );
+        webRequest1.setRawPath( "/path/to/some/resource" );
 
-        when( webRequest.getEndpointPath() ).thenReturn( null );
-        when( webRequest.getRawPath() ).thenReturn( "/path/to/some/resource" );
-
-        NullPointerException npe = assertThrows( NullPointerException.class, () -> this.handler.handle( webRequest ) );
+        NullPointerException npe = assertThrows( NullPointerException.class, () -> this.handler.handle( webRequest1 ) );
         assertEquals( "Endpoint path cannot be null", npe.getMessage() );
 
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/somePath" );
-        when( webRequest.getRawPath() ).thenReturn( "/path/_/somePath" );
+        final WebRequest webRequest2 = new WebRequest();
+        webRequest2.setMethod( HttpMethod.GET );
+        webRequest2.setRawPath( "/path/_/somePath" );
 
-        IllegalArgumentException ex = assertThrows( IllegalArgumentException.class, () -> this.handler.handle( webRequest ) );
+        IllegalArgumentException ex = assertThrows( IllegalArgumentException.class, () -> this.handler.handle( webRequest2 ) );
         assertEquals( "Invalid Widget API path: /_/somePath", ex.getMessage() );
     }
 
     @Test
     void testInvalidApplicationKey()
     {
-        final WebRequest webRequest = mock( WebRequest.class );
-        when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin:widget/<app>/widgetName" );
-        when( webRequest.getRawPath() ).thenReturn( "/path/_/admin:widget/<app>/widgetName" );
+        final WebRequest webRequest = new WebRequest();
+        webRequest.setMethod( HttpMethod.GET );
+        webRequest.setRawPath( "/path/_/admin:widget/<app>/widgetName" );
 
         IllegalArgumentException ex = assertThrows( IllegalArgumentException.class, () -> this.handler.handle( webRequest ) );
         assertEquals( "Invalid application key: <app>", ex.getMessage() );
@@ -88,10 +86,9 @@ class WidgetApiHandlerTest
         when( widgetDescriptorService.getByKey( eq( DescriptorKey.from( ApplicationKey.from( "app" ), "widgetName" ) ) ) ).thenReturn(
             null );
 
-        final WebRequest webRequest = mock( WebRequest.class );
-        when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin:widget/app/widgetName" );
-        when( webRequest.getRawPath() ).thenReturn( "/path/_/admin:widget/app/widgetName" );
+        final WebRequest webRequest = new WebRequest();
+        webRequest.setMethod( HttpMethod.GET );
+        webRequest.setRawPath( "/path/_/admin:widget/app/widgetName" );
 
         WebException ex = assertThrows( WebException.class, () -> this.handler.handle( webRequest ) );
         assertEquals( "Widget [app:widgetName] not found", ex.getMessage() );
@@ -109,10 +106,9 @@ class WidgetApiHandlerTest
 
         when( widgetDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( widgetDescriptor );
 
-        final WebRequest webRequest = mock( WebRequest.class );
-        when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin:widget/app/widgetName" );
-        when( webRequest.getRawPath() ).thenReturn( "/path/_/admin:widget/app/widgetName" );
+        final WebRequest webRequest = new WebRequest();
+        webRequest.setMethod( HttpMethod.GET );
+        webRequest.setRawPath( "/path/_/admin:widget/app/widgetName" );
 
         WebException ex = assertThrows( WebException.class, () -> this.handler.handle( webRequest ) );
         assertEquals( HttpStatus.UNAUTHORIZED, ex.getStatus() );
@@ -134,10 +130,9 @@ class WidgetApiHandlerTest
 
         when( adminToolDescriptorService.getByKey( eq( adminToolDescriptorKey ) ) ).thenReturn( adminToolDescriptor );
 
-        final WebRequest webRequest = mock( WebRequest.class );
-        when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin:widget/app/widgetName" );
-        when( webRequest.getRawPath() ).thenReturn( "/admin/myapp/toolName/_/admin:widget/app/widgetName" );
+        final WebRequest webRequest = new WebRequest();
+        webRequest.setMethod( HttpMethod.GET );
+        webRequest.setRawPath( "/admin/myapp/toolName/_/admin:widget/app/widgetName" );
 
         final ControllerScript controllerScript = mock( ControllerScript.class );
         when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn( PortalResponse.create().build() );
@@ -167,10 +162,9 @@ class WidgetApiHandlerTest
 
         when( adminToolDescriptorService.getByKey( eq( adminToolDescriptorKey ) ) ).thenReturn( adminToolDescriptor );
 
-        final WebRequest webRequest = mock( WebRequest.class );
-        when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin:widget/app/widgetName" );
-        when( webRequest.getRawPath() ).thenReturn( "/admin/myapp/toolName/_/admin:widget/app/widgetName" );
+        final WebRequest webRequest = new WebRequest();
+        webRequest.setMethod( HttpMethod.GET );
+        webRequest.setRawPath( "/admin/myapp/toolName/_/admin:widget/app/widgetName" );
 
         final ControllerScript controllerScript = mock( ControllerScript.class );
         when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn( PortalResponse.create().build() );
@@ -200,10 +194,9 @@ class WidgetApiHandlerTest
 
         when( adminToolDescriptorService.getByKey( eq( adminToolDescriptorKey ) ) ).thenReturn( adminToolDescriptor );
 
-        final WebRequest webRequest = mock( WebRequest.class );
-        when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin:widget/app/widgetName" );
-        when( webRequest.getRawPath() ).thenReturn( "/admin/myapp/toolName/_/admin:widget/app/widgetName" );
+        final WebRequest webRequest = new WebRequest();
+        webRequest.setMethod( HttpMethod.GET );
+        webRequest.setRawPath( "/admin/myapp/toolName/_/admin:widget/app/widgetName" );
 
         final ControllerScript controllerScript = mock( ControllerScript.class );
         when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn( PortalResponse.create().build() );
@@ -231,10 +224,9 @@ class WidgetApiHandlerTest
 
         when( adminToolDescriptorService.getByKey( eq( adminToolDescriptorKey ) ) ).thenReturn( adminToolDescriptor );
 
-        final WebRequest webRequest = mock( WebRequest.class );
-        when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin:widget/app/widgetName" );
-        when( webRequest.getRawPath() ).thenReturn( "/admin/myapp/toolName/_/admin:widget/app/widgetName" );
+        final WebRequest webRequest = new WebRequest();
+        webRequest.setMethod( HttpMethod.GET );
+        webRequest.setRawPath( "/admin/myapp/toolName/_/admin:widget/app/widgetName" );
 
         final ControllerScript controllerScript = mock( ControllerScript.class );
         when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn( PortalResponse.create().build() );
@@ -250,7 +242,8 @@ class WidgetApiHandlerTest
     {
         final DescriptorKey widgetDescriptorKey = DescriptorKey.from( ApplicationKey.from( "app" ), "widgetName" );
 
-        final WidgetDescriptor widgetDescriptor = WidgetDescriptor.create().key( widgetDescriptorKey ).addInterface( "myInterface" ).build();
+        final WidgetDescriptor widgetDescriptor =
+            WidgetDescriptor.create().key( widgetDescriptorKey ).addInterface( "myInterface" ).build();
 
         when( widgetDescriptorService.getByKey( eq( widgetDescriptorKey ) ) ).thenReturn( widgetDescriptor );
 
@@ -260,10 +253,9 @@ class WidgetApiHandlerTest
 
         when( adminToolDescriptorService.getByKey( eq( adminToolDescriptorKey ) ) ).thenReturn( adminToolDescriptor );
 
-        final WebRequest webRequest = mock( WebRequest.class );
-        when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin:widget/app/widgetName" );
-        when( webRequest.getRawPath() ).thenReturn( "/admin/myapp/toolName/_/admin:widget/app/widgetName" );
+        final WebRequest webRequest = new WebRequest();
+        webRequest.setMethod( HttpMethod.GET );
+        webRequest.setRawPath( "/admin/myapp/toolName/_/admin:widget/app/widgetName" );
 
         final ControllerScript controllerScript = mock( ControllerScript.class );
         when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn( PortalResponse.create().build() );
@@ -280,7 +272,8 @@ class WidgetApiHandlerTest
     {
         final DescriptorKey widgetDescriptorKey = DescriptorKey.from( ApplicationKey.from( "app" ), "widgetName" );
 
-        final WidgetDescriptor widgetDescriptor = WidgetDescriptor.create().key( widgetDescriptorKey ).addInterface( "myInterface" ).build();
+        final WidgetDescriptor widgetDescriptor =
+            WidgetDescriptor.create().key( widgetDescriptorKey ).addInterface( "myInterface" ).build();
 
         when( widgetDescriptorService.getByKey( eq( widgetDescriptorKey ) ) ).thenReturn( widgetDescriptor );
 
@@ -288,10 +281,9 @@ class WidgetApiHandlerTest
 
         when( adminToolDescriptorService.getByKey( eq( adminToolDescriptorKey ) ) ).thenReturn( null );
 
-        final WebRequest webRequest = mock( WebRequest.class );
-        when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin:widget/app/widgetName" );
-        when( webRequest.getRawPath() ).thenReturn( "/admin/myapp/toolName/_/admin:widget/app/widgetName" );
+        final WebRequest webRequest = new WebRequest();
+        webRequest.setMethod( HttpMethod.GET );
+        webRequest.setRawPath( "/admin/myapp/toolName/_/admin:widget/app/widgetName" );
 
         final ControllerScript controllerScript = mock( ControllerScript.class );
         when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn( PortalResponse.create().build() );
@@ -308,14 +300,14 @@ class WidgetApiHandlerTest
     {
         final DescriptorKey widgetDescriptorKey = DescriptorKey.from( ApplicationKey.from( "app" ), "widgetName" );
 
-        final WidgetDescriptor widgetDescriptor = WidgetDescriptor.create().key( widgetDescriptorKey ).addInterface( "myInterface" ).build();
+        final WidgetDescriptor widgetDescriptor =
+            WidgetDescriptor.create().key( widgetDescriptorKey ).addInterface( "myInterface" ).build();
 
         when( widgetDescriptorService.getByKey( eq( widgetDescriptorKey ) ) ).thenReturn( widgetDescriptor );
 
-        final WebRequest webRequest = mock( WebRequest.class );
-        when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin:widget/app/widgetName" );
-        when( webRequest.getRawPath() ).thenReturn( "/admin/app/_/admin:widget/app/widgetName" );
+        final WebRequest webRequest = new WebRequest();
+        webRequest.setMethod( HttpMethod.GET );
+        webRequest.setRawPath( "/admin/app/_/admin:widget/app/widgetName" );
 
         final ControllerScript controllerScript = mock( ControllerScript.class );
         when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn( PortalResponse.create().build() );

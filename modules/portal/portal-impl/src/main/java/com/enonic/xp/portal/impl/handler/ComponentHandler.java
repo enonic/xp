@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.handler;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,7 +68,7 @@ public class ComponentHandler
     }
 
     public WebResponse handle( final WebRequest webRequest )
-        throws Exception
+        throws IOException
     {
         if ( !PortalRequestHelper.isSiteBase( webRequest ) )
         {
@@ -97,7 +98,7 @@ public class ComponentHandler
         trace.put( "componentPath", portalRequest.getComponent().getPath() );
         trace.put( "type", portalRequest.getComponent().getType().toString() );
 
-        return Tracer.traceEx( trace, () -> doHandle( portalRequest ) );
+        return Tracer.trace( trace, () -> doHandle( portalRequest ) );
     }
 
     private PortalResponse doHandle( final PortalRequest portalRequest )

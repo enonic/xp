@@ -1,7 +1,5 @@
 package com.enonic.xp.admin.impl.portal;
 
-import java.util.regex.Pattern;
-
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -25,8 +23,6 @@ import com.enonic.xp.web.handler.WebHandlerChain;
 public final class AdminToolHandler
     extends BaseWebHandler
 {
-    private static final Pattern TOOL_CXT_PATTERN = Pattern.compile( "^/admin/([^/]+)/([^/]+)" );
-
     private AdminToolDescriptorService adminToolDescriptorService;
 
     private ControllerScriptFactory controllerScriptFactory;
@@ -39,31 +35,29 @@ public final class AdminToolHandler
     @Override
     protected boolean canHandle( final WebRequest webRequest )
     {
-        return !webRequest.getRawPath().startsWith( "/admin/site/" ) &&
-            ( webRequest.getRawPath().equals( AdminToolPortalHandler.ADMIN_TOOL_BASE ) ||
-                webRequest.getRawPath().startsWith( AdminToolPortalHandler.ADMIN_TOOL_PREFIX ) );
+        return webRequest instanceof PortalRequest portalRequest &&
+            ( AdminToolPortalHandler.ADMIN_TOOL_BASE.equals( portalRequest.getBaseUri() ) ||
+                portalRequest.getBaseUri().startsWith( AdminToolPortalHandler.ADMIN_TOOL_PREFIX ) );
     }
 
     @Override
     protected WebResponse doHandle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
         throws Exception
     {
-        final String rawPath = webRequest.getRawPath();
-        if ( !rawPath.equals( "/admin" ) && !TOOL_CXT_PATTERN.matcher( rawPath ).find() )
+        WebHandlerHelper.checkAdminLoginRole( webRequest );
+
+        final DescriptorKey descriptorKey = AdminToolPortalHandler.getDescriptorKey( webRequest.getBasePath() );
+        if ( descriptorKey == null )
         {
             throw WebException.notFound( "Invalid admin tool mount" );
         }
-
-        WebHandlerHelper.checkAdminAccess( webRequest );
-
         PortalRequest portalRequest = (PortalRequest) webRequest;
         portalRequest.setContextPath( portalRequest.getBaseUri() );
 
         final AdminToolHandlerWorker worker = new AdminToolHandlerWorker( portalRequest );
         worker.controllerScriptFactory = this.controllerScriptFactory;
         worker.adminToolDescriptorService = adminToolDescriptorService;
-        final DescriptorKey descriptorKey = AdminToolPortalHandler.getDescriptorKey( webRequest.getRawPath() );
-        worker.descriptorKey = descriptorKey == null ? AdminToolPortalHandler.DEFAULT_DESCRIPTOR_KEY : descriptorKey;
+        worker.descriptorKey = descriptorKey;
 
         final Trace trace = Tracer.newTrace( "portalRequest" );
         if ( trace == null )

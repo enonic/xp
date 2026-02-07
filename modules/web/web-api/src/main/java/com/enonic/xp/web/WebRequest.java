@@ -5,7 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
+
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
@@ -45,6 +49,8 @@ public class WebRequest
 
     private String endpointPath;
 
+    private String basePath;
+
     private String contentType;
 
     private Object body;
@@ -61,6 +67,7 @@ public class WebRequest
         this.headers = new TreeMap<>( String.CASE_INSENSITIVE_ORDER );
         this.cookies = new HashMap<>();
         this.locales = new ArrayList<>();
+        this.setRawPath( "/" );
     }
 
     public WebRequest( final WebRequest webRequest )
@@ -74,15 +81,14 @@ public class WebRequest
         this.remoteAddress = webRequest.remoteAddress;
         this.port = webRequest.port;
         this.path = webRequest.path;
-        this.rawPath = webRequest.rawPath;
         this.url = webRequest.url;
-        this.endpointPath = webRequest.endpointPath;
         this.contentType = webRequest.contentType;
         this.body = webRequest.body;
         this.rawRequest = webRequest.rawRequest;
         this.webSocketContext = webRequest.webSocketContext;
         this.idProvider = webRequest.idProvider;
         this.locales = webRequest.locales;
+        this.setRawPath( webRequest.rawPath );
     }
 
     public HttpMethod getMethod()
@@ -118,11 +124,6 @@ public class WebRequest
     public String getPath()
     {
         return path;
-    }
-
-    public String getRawPath()
-    {
-        return rawPath;
     }
 
     public String getUrl()
@@ -162,7 +163,18 @@ public class WebRequest
 
     public void setRawPath( final String rawPath )
     {
-        this.rawPath = rawPath;
+        this.rawPath = Objects.requireNonNull( rawPath );
+        final int endpointPathIndex = rawPath.indexOf( "/_/" );
+        if ( endpointPathIndex > -1 )
+        {
+            this.endpointPath = rawPath.substring( endpointPathIndex );
+            this.basePath = this.rawPath.substring( 0, this.rawPath.length() - this.endpointPath.length() );
+        }
+        else
+        {
+            this.endpointPath = null;
+            this.basePath = rawPath;
+        }
     }
 
     public void setUrl( final String url )
@@ -195,14 +207,45 @@ public class WebRequest
         return this.cookies;
     }
 
+    /**
+     * Returns the raw path of the request, URL decoded.
+     * Designed for resource lookup.
+     * NOT designed for url reconstruction, as it easy to introdue path traversal issues - use {@link #getUrl()} instead.
+     *
+     * @return path info of the request
+     */
+    @NonNull
+    public String getRawPath()
+    {
+        return rawPath;
+    }
+
+    /**
+     * The endpoint path from the {@link #getRawPath()} - everything staring from "/_/" prefix. May be null if "/_/" is not present in rawPath.
+
+     * @return the endpoint path in rawPath, starting from "/_/" prefix.
+     */
+    @Nullable
     public String getEndpointPath()
     {
         return this.endpointPath;
     }
 
+    @Deprecated
     public void setEndpointPath( final String endpointPath )
     {
         this.endpointPath = endpointPath;
+    }
+
+    /**
+     * The base path from the {@link #getRawPath()} - everything before "/_/" prefix. May be empty if "/_/" is at the very start of rawPath.
+     *
+     * @return base of the path in rawPath, before "/_/" prefix.
+     */
+    @NonNull
+    public String getBasePath()
+    {
+        return this.basePath;
     }
 
     public String getContentType()

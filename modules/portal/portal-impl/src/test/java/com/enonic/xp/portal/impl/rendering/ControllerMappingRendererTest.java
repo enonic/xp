@@ -8,6 +8,7 @@ import com.google.common.net.MediaType;
 
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.impl.postprocess.PostProcessorImpl;
@@ -52,6 +53,7 @@ class ControllerMappingRendererTest
         renderer = new ControllerMappingRenderer( postProcessor, portalScriptService, processorChainResolver );
 
         this.portalRequest = new PortalRequest();
+        this.portalRequest.setMode( RenderMode.LIVE );
         this.portalRequest.setControllerScript( makeControllerScript() );
 
         when( processorChainResolver.resolve( this.portalRequest ) ).thenReturn( ResponseProcessorDescriptors.empty() );
@@ -71,9 +73,9 @@ class ControllerMappingRendererTest
 
         // verify
         assertEquals( getComponentHtml(), portalResponse.getBody() );
-        Mockito.verify( processorChainResolver, Mockito.times( 0 ) ).resolve( Mockito.any( PortalRequest.class) );
+        Mockito.verify( processorChainResolver, Mockito.times( 0 ) ).resolve( Mockito.any( PortalRequest.class ) );
         Mockito.verify( postProcessor, Mockito.times( 0 ) )
-            .processResponseContributions( Mockito.any( PortalRequest.class), Mockito.any( PortalResponse.class ) );
+            .processResponseContributions( Mockito.any( PortalRequest.class ), Mockito.any( PortalResponse.class ) );
     }
 
     @Test
@@ -89,9 +91,9 @@ class ControllerMappingRendererTest
 
         // verify
         assertEquals( getComponentHtml(), portalResponse.getBody() );
-        Mockito.verify( processorChainResolver, Mockito.times( 1 ) ).resolve( Mockito.any( PortalRequest.class) );
+        Mockito.verify( processorChainResolver, Mockito.times( 1 ) ).resolve( Mockito.any( PortalRequest.class ) );
         Mockito.verify( postProcessor, Mockito.times( 1 ) )
-            .processResponseContributions( Mockito.any( PortalRequest.class), Mockito.any( PortalResponse.class ) );
+            .processResponseContributions( Mockito.any( PortalRequest.class ), Mockito.any( PortalResponse.class ) );
     }
 
     private ControllerScript makeControllerScript()
@@ -102,7 +104,7 @@ class ControllerMappingRendererTest
             public PortalResponse execute( final PortalRequest portalRequest )
             {
                 return PortalResponse.create()
-                    .body(getComponentHtml() )
+                    .body( getComponentHtml() )
                     .contentType( MediaType.HTML_UTF_8 )
                     .status( HttpStatus.OK )
                     .build();

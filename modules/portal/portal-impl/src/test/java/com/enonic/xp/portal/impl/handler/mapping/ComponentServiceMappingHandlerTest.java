@@ -9,12 +9,12 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.filter.FilterScript;
@@ -54,8 +54,6 @@ class ComponentServiceMappingHandlerTest
 {
     private ComponentServiceMappingHandler handler;
 
-    private ContentService contentService;
-
     private ResourceService resourceService;
 
     private SiteService siteService;
@@ -76,7 +74,7 @@ class ComponentServiceMappingHandlerTest
     final void setup()
     {
         this.request = new PortalRequest();
-        this.contentService = mock( ContentService.class );
+        this.request.setMode( RenderMode.LIVE );
         this.resourceService = mock( ResourceService.class );
         RendererDelegate rendererDelegate = mock( RendererDelegate.class );
         this.siteService = mock( SiteService.class );
@@ -104,7 +102,7 @@ class ComponentServiceMappingHandlerTest
         this.request.setRepositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) );
         this.request.setBranch( ContentConstants.BRANCH_MASTER );
         this.request.setBaseUri( "/site" );
-        this.request.setEndpointPath( "/_/component/123456/scale-100-100/image-name.jpg" );
+        this.request.setRawPath( "/_/component/123456/path/to/component" );
     }
 
     private void setupContentInsideSite( final SiteConfigs siteConfigs )
@@ -123,24 +121,30 @@ class ComponentServiceMappingHandlerTest
     @Test
     void canHandle()
     {
-        this.request.setEndpointPath( null );
+        this.request.setRawPath( "/site/_/other/123456/component" );
         assertFalse( this.handler.canHandle( this.request ) );
 
-        this.request.setEndpointPath( "/_/other/123456/component" );
+        this.request.setRawPath( "/component/123456/component" );
         assertFalse( this.handler.canHandle( this.request ) );
 
-        this.request.setEndpointPath( "/component/123456/component" );
-        assertFalse( this.handler.canHandle( this.request ) );
-
-        this.request.setEndpointPath( "/_/component/123456/component" );
+        this.request.setRawPath( "/_/component/123456/component" );
         assertTrue( this.handler.canHandle( this.request ) );
+    }
+
+    @Test
+    void canHandle_not_site()
+    {
+
+        this.request.setRawPath( "/other/_/component/123456/component" );
+        this.request.setBaseUri( "" );
+        this.request.setMode( null );
     }
 
     @Test
     void notValidUrlPattern()
         throws Exception
     {
-        this.request.setEndpointPath( "/_/component/" );
+        this.request.setRawPath( "/_/component/" );
 
         this.handler.handle( this.request, PortalResponse.create().build(), webHandlerChain );
         verify( webHandlerChain, times( 1 ) ).handle( eq( request ), isA( PortalResponse.class ) );
@@ -172,7 +176,7 @@ class ComponentServiceMappingHandlerTest
 
         setupContentInsideSite( SiteConfigs.from( SiteConfig.create().application( myapplication ).config( new PropertyTree() ).build() ) );
 
-        this.request.setEndpointPath( "/_/component/path/to/component" );
+        this.request.setRawPath( "/_/component/path/to/component" );
 
         final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), webHandlerChain );
 
@@ -198,7 +202,7 @@ class ComponentServiceMappingHandlerTest
 
         setupContentInsideSite( SiteConfigs.from( SiteConfig.create().application( myapplication ).config( new PropertyTree() ).build() ) );
 
-        this.request.setEndpointPath( "/_/component/path/to/component" );
+        this.request.setRawPath( "/_/component/path/to/component" );
 
         this.handler.handle( this.request, PortalResponse.create().build(), webHandlerChain );
 

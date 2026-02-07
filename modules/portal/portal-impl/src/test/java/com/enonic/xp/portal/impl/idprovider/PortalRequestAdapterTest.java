@@ -13,6 +13,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.web.HttpMethod;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,19 +31,20 @@ class PortalRequestAdapterTest
     {
         portalRequestAdapter = new PortalRequestAdapter();
         mockHttpServletRequest = Mockito.mock( HttpServletRequest.class );
+        when( mockHttpServletRequest.getMethod() ).thenReturn( "GET" );
+        when( mockHttpServletRequest.getLocales() ).thenReturn( Collections.enumeration( Collections.singleton( Locale.US ) ) );
     }
 
     @Test
     void adaptTest()
     {
-        when( mockHttpServletRequest.getMethod() ).thenReturn( "GET" );
         when( mockHttpServletRequest.getLocales() ).thenReturn( Collections.enumeration( Collections.singleton( Locale.US ) ) );
         when( mockHttpServletRequest.getContentType() ).thenReturn( "text/html" );
         when( mockHttpServletRequest.getScheme() ).thenReturn( "http" );
         when( mockHttpServletRequest.getServerName() ).thenReturn( "localhost" );
         when( mockHttpServletRequest.getRemoteAddr() ).thenReturn( "127.0.0.1" );
         when( mockHttpServletRequest.getServerPort() ).thenReturn( 8080 );
-        when( mockHttpServletRequest.getPathInfo() ).thenReturn( "/test/draft" );
+        when( mockHttpServletRequest.getPathInfo() ).thenReturn( "/site/test/draft" );
         when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/site/test/draft" );
         when( mockHttpServletRequest.getHeaderNames() ).thenReturn( Collections.emptyEnumeration() );
 
@@ -65,19 +67,18 @@ class PortalRequestAdapterTest
         assertThat( adaptedRequest.getHost() ).isEqualTo( "localhost" );
         assertThat( adaptedRequest.getRemoteAddress() ).isEqualTo( "127.0.0.1" );
         assertThat( adaptedRequest.getPort() ).isEqualTo( 8080 );
-        assertThat( adaptedRequest.getRawPath() ).isEqualTo( "/test/draft" );
+        assertThat( adaptedRequest.getRawPath() ).isEqualTo( "/site/test/draft" );
         assertThat( adaptedRequest.getBaseUri() ).isEqualTo( "/site" );
         assertThat( adaptedRequest.getParams().get( "param1" ) ).containsExactly( "value1", "value2" );
         assertThat( adaptedRequest.getCookies() ).containsAllEntriesOf( Map.of( "cookie1", "value1", "cookie2", "value2" ) );
-        assertThat( adaptedRequest.getHeaders() ).containsAllEntriesOf( Map.of("header1", "value1", "header2", "value2") );
+        assertThat( adaptedRequest.getHeaders() ).containsAllEntriesOf( Map.of( "header1", "value1", "header2", "value2" ) );
     }
 
     @Test
     void adaptSiteLogin()
     {
+        when( mockHttpServletRequest.getPathInfo() ).thenReturn( "/site/test/draft/_/idprovider/system/login" );
         when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/site/test/draft/_/idprovider/system/login" );
-        when( mockHttpServletRequest.getMethod() ).thenReturn( "GET" );
-        when( mockHttpServletRequest.getLocales() ).thenReturn( Collections.enumeration( Collections.singleton( Locale.US ) ) );
 
         PortalRequest adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
 
@@ -86,63 +87,99 @@ class PortalRequestAdapterTest
     }
 
     @Test
-    void adaptAdminUriTest()
+    void adaptSite_incomplete()
     {
+        when( mockHttpServletRequest.getPathInfo() ).thenReturn( "/site/test/_/idprovider/system/login" );
+        when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/site/test/_/idprovider/system/login" );
+
+        PortalRequest adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
+
+        assertThat( adaptedRequest ).isNotNull();
+        assertThat( adaptedRequest.getBaseUri() ).isNull();
+    }
+
+    @Test
+    void adaptAdminSiteTest()
+    {
+        when( mockHttpServletRequest.getPathInfo() ).thenReturn( "/admin/site/admin/test/draft" );
         when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/admin/site/admin/test/draft" );
-        when( mockHttpServletRequest.getMethod() ).thenReturn( "GET" );
-        when( mockHttpServletRequest.getLocales() ).thenReturn( Collections.enumeration( Collections.singleton( Locale.US ) ) );
 
         PortalRequest adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
 
         assertThat( adaptedRequest ).isNotNull();
         assertThat( adaptedRequest.getBaseUri() ).isEqualTo( "/admin/site/admin" );
+        assertThat( adaptedRequest.getMode() ).isEqualTo( RenderMode.ADMIN );
+    }
+
+    @Test
+    void adaptAdminSite_incomplete()
+    {
+        when( mockHttpServletRequest.getPathInfo() ).thenReturn( "/admin/site/admin/test" );
+        when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/admin/site/admin/test" );
+
+        PortalRequest adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
+
+        assertThat( adaptedRequest ).isNotNull();
+        assertThat( adaptedRequest.getBaseUri() ).isNull();
     }
 
     @Test
     void adaptAdminToolUriTest()
     {
+        when( mockHttpServletRequest.getPathInfo() ).thenReturn( "/admin" );
         when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/admin" );
-        when( mockHttpServletRequest.getMethod() ).thenReturn( "GET" );
-        when( mockHttpServletRequest.getLocales() ).thenReturn( Collections.enumeration( Collections.singleton( Locale.US ) ) );
 
         PortalRequest adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
 
         assertThat( adaptedRequest ).isNotNull();
         assertThat( adaptedRequest.getBaseUri() ).isEqualTo( "/admin" );
+        assertThat( adaptedRequest.getMode() ).isNull();
     }
 
     @Test
     void adaptAdminToolIdProviderUriTest()
     {
+        when( mockHttpServletRequest.getPathInfo() ).thenReturn( "/admin/_/idprovider/system/login" );
         when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/admin/_/idprovider/system/login" );
-        when( mockHttpServletRequest.getMethod() ).thenReturn( "GET" );
-        when( mockHttpServletRequest.getLocales() ).thenReturn( Collections.enumeration( Collections.singleton( Locale.US ) ) );
 
         PortalRequest adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
 
         assertThat( adaptedRequest ).isNotNull();
         assertThat( adaptedRequest.getBaseUri() ).isEqualTo( "/admin" );
+        assertThat( adaptedRequest.getMode() ).isNull();
+    }
+
+    @Test
+    void adaptAdminTool_incomplete()
+    {
+        when( mockHttpServletRequest.getPathInfo() ).thenReturn( "/admin/a/_/idprovider/system/login" );
+        when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/admin/a/_/idprovider/system/login" );
+
+        PortalRequest adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
+
+        assertThat( adaptedRequest ).isNotNull();
+        assertThat( adaptedRequest.getBaseUri() ).isEqualTo( "/admin" );
+        assertThat( adaptedRequest.getMode() ).isNull();
     }
 
     @Test
     void adaptAdminToolUriWithDescriptorTest()
     {
+        when( mockHttpServletRequest.getPathInfo() ).thenReturn( "/admin/app/tool" );
         when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/admin/app/tool" );
-        when( mockHttpServletRequest.getMethod() ).thenReturn( "GET" );
-        when( mockHttpServletRequest.getLocales() ).thenReturn( Collections.enumeration( Collections.singleton( Locale.US ) ) );
 
         PortalRequest adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
 
         assertThat( adaptedRequest ).isNotNull();
         assertThat( adaptedRequest.getBaseUri() ).isEqualTo( "/admin/app/tool" );
+        assertThat( adaptedRequest.getMode() ).isNull();
     }
 
     @Test
     void adaptWebAppUriTest()
     {
+        when( mockHttpServletRequest.getPathInfo() ).thenReturn( "/webapp/app/anything" );
         when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/webapp/app/anything" );
-        when( mockHttpServletRequest.getMethod() ).thenReturn( "GET" );
-        when( mockHttpServletRequest.getLocales() ).thenReturn( Collections.enumeration( Collections.singleton( Locale.US ) ) );
 
         PortalRequest adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
 
@@ -151,26 +188,35 @@ class PortalRequestAdapterTest
     }
 
     @Test
-    void adaptNonSiteTest()
+    void adaptWebApp_incomplete()
     {
-        when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/test" );
-        when( mockHttpServletRequest.getMethod() ).thenReturn( "GET" );
-        when( mockHttpServletRequest.getLocales() ).thenReturn( Collections.enumeration( Collections.singleton( Locale.US ) ) );
+        when( mockHttpServletRequest.getPathInfo() ).thenReturn( "/webapp/" );
+        when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/webapp/" );
 
         PortalRequest adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
 
         assertThat( adaptedRequest ).isNotNull();
-        assertThat( adaptedRequest.getBaseUri() ).isEqualTo( null );
+        assertThat( adaptedRequest.getBaseUri() ).isNull();
+    }
+
+    @Test
+    void adaptNonSiteTest()
+    {
+        when( mockHttpServletRequest.getPathInfo() ).thenReturn( "/test" );
+        when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/test" );
+
+        PortalRequest adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
+
+        assertThat( adaptedRequest ).isNotNull();
+        assertThat( adaptedRequest.getBaseUri() ).isNull();
     }
 
     @Test
     void adaptSlashApiTest()
     {
-        when( mockHttpServletRequest.getMethod() ).thenReturn( "GET" );
-        when( mockHttpServletRequest.getLocales() ).thenReturn( Collections.enumeration( Collections.singleton(Locale.US) ) );
-
         // use case 1
-        when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/api/app:api?k=v" );
+        when( mockHttpServletRequest.getPathInfo() ).thenReturn( "/api/app:api" );
+        when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/api/app:api" );
 
         PortalRequest adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
 
@@ -178,6 +224,7 @@ class PortalRequestAdapterTest
         assertThat( adaptedRequest.getBaseUri() ).isEqualTo( "/api/app:api" );
 
         // use case 2
+        when( mockHttpServletRequest.getPathInfo() ).thenReturn( "/api/app:api" );
         when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/api/app:api" );
 
         adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
@@ -186,11 +233,24 @@ class PortalRequestAdapterTest
         assertThat( adaptedRequest.getBaseUri() ).isEqualTo( "/api/app:api" );
 
         // use case 3
+        when( mockHttpServletRequest.getPathInfo() ).thenReturn( "/api/app:api/" );
         when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/api/app:api/" );
 
         adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
 
         assertThat( adaptedRequest ).isNotNull();
         assertThat( adaptedRequest.getBaseUri() ).isEqualTo( "/api/app:api" );
+    }
+
+    @Test
+    void adaptApi_incomplete()
+    {
+        when( mockHttpServletRequest.getPathInfo() ).thenReturn( "/api/" );
+        when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/api/" );
+
+        PortalRequest adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
+
+        assertThat( adaptedRequest ).isNotNull();
+        assertThat( adaptedRequest.getBaseUri() ).isNull();
     }
 }

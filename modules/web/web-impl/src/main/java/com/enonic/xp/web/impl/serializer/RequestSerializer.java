@@ -32,7 +32,6 @@ public final class RequestSerializer
         webRequest.setPath( ServletRequestUrlHelper.createUri( request, request.getRequestURI() ) );
         webRequest.setUrl( ServletRequestUrlHelper.getFullUrl( request ) );
         webRequest.setContentType( request.getContentType() );
-        webRequest.setEndpointPath( findEndpointPath( request.getPathInfo() ) );
         webRequest.getLocales().addAll( Collections.list( request.getLocales() ) );
         setParameters( request, webRequest );
         setHeaders( request, webRequest );
@@ -68,11 +67,4 @@ public final class RequestSerializer
             to.getParams().putAll( entry.getKey(), Arrays.asList( entry.getValue() ) );
         }
     }
-
-    private static String findEndpointPath( final String path )
-    {
-        final int endpointPathIndex = path.indexOf( "/_/" );
-        return endpointPathIndex > -1 ? path.substring( endpointPathIndex ) : null;
-    }
-
 }

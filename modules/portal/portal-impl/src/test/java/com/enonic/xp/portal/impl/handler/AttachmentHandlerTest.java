@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import com.google.common.io.ByteSource;
 import com.google.common.net.MediaType;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.content.ContentConstants;
@@ -20,6 +22,7 @@ import com.enonic.xp.content.Media;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
@@ -67,11 +70,12 @@ class AttachmentHandlerTest
         this.handler.activate( mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() ) );
 
         this.request = new PortalRequest();
+        this.request.setMode( RenderMode.LIVE );
         this.request.setMethod( HttpMethod.GET );
         this.request.setBranch( ContentConstants.BRANCH_MASTER );
         this.request.setBaseUri( "/site" );
         this.request.setContentPath( ContentPath.from( "/path/to/content" ) );
-        this.request.setEndpointPath( "/_/attachment/inline/123456/logo.png" );
+        this.request.setRawPath( "/_/attachment/inline/123456/logo.png" );
 
         setupMedia();
     }
@@ -118,7 +122,7 @@ class AttachmentHandlerTest
     void options()
         throws Exception
     {
-        this.request.setEndpointPath( "/_/attachment/download/123456/logo.png" );
+        this.request.setRawPath( "/_/attachment/download/123456/logo.png" );
         this.request.setMethod( HttpMethod.OPTIONS );
 
         final WebResponse res = this.handler.handle( this.request );
@@ -131,7 +135,7 @@ class AttachmentHandlerTest
     void notValidUrlPattern()
         throws Exception
     {
-        this.request.setEndpointPath( "/_/attachment/" );
+        this.request.setRawPath( "/_/attachment/" );
 
         try
         {
@@ -149,7 +153,7 @@ class AttachmentHandlerTest
     void inline()
         throws Exception
     {
-        this.request.setEndpointPath( "/_/attachment/inline/123456/logo.png" );
+        this.request.setRawPath( "/_/attachment/inline/123456/logo.png" );
 
         final PortalResponse res = this.handler.handle( this.request );
         assertNotNull( res );
@@ -163,7 +167,7 @@ class AttachmentHandlerTest
     void download()
         throws Exception
     {
-        this.request.setEndpointPath( "/_/attachment/download/123456/logo.png" );
+        this.request.setRawPath( "/_/attachment/download/123456/logo.png" );
 
         final PortalResponse res = this.handler.handle( this.request );
         assertNotNull( res );
@@ -179,7 +183,7 @@ class AttachmentHandlerTest
     {
         when( this.contentService.getById( any() ) ).thenThrow( ContentNotFoundException.class );
 
-        this.request.setEndpointPath( "/_/attachment/download/1/logo.png" );
+        this.request.setRawPath( "/_/attachment/download/1/logo.png" );
 
         try
         {
@@ -197,7 +201,7 @@ class AttachmentHandlerTest
     void nameNotFound()
         throws Exception
     {
-        this.request.setEndpointPath( "/_/attachment/download/123456/other.png" );
+        this.request.setRawPath( "/_/attachment/download/123456/other.png" );
 
         try
         {
@@ -215,7 +219,7 @@ class AttachmentHandlerTest
     void byteServing()
         throws Exception
     {
-        this.request.setEndpointPath( "/_/attachment/inline/123456/logo.png" );
+        this.request.setRawPath( "/_/attachment/inline/123456/logo.png" );
         this.request.getHeaders().put( "Range", "bytes=2-4" );
 
         final PortalResponse res = this.handler.handle( this.request );
@@ -236,7 +240,7 @@ class AttachmentHandlerTest
     void byteServingSuffixLength()
         throws Exception
     {
-        this.request.setEndpointPath( "/_/attachment/inline/123456/logo.png" );
+        this.request.setRawPath( "/_/attachment/inline/123456/logo.png" );
         this.request.getHeaders().put( "Range", "bytes=-3" );
 
         final PortalResponse res = this.handler.handle( this.request );
@@ -257,7 +261,7 @@ class AttachmentHandlerTest
     void byteServingSuffixFrom()
         throws Exception
     {
-        this.request.setEndpointPath( "/_/attachment/inline/123456/logo.png" );
+        this.request.setRawPath( "/_/attachment/inline/123456/logo.png" );
         this.request.getHeaders().put( "Range", "bytes=4-" );
 
         final PortalResponse res = this.handler.handle( this.request );
@@ -278,7 +282,7 @@ class AttachmentHandlerTest
     void byteServingLongerThanFile()
         throws Exception
     {
-        this.request.setEndpointPath( "/_/attachment/inline/123456/logo.png" );
+        this.request.setRawPath( "/_/attachment/inline/123456/logo.png" );
         this.request.getHeaders().put( "Range", "bytes=5-1000" );
 
         final PortalResponse res = this.handler.handle( this.request );
@@ -299,7 +303,7 @@ class AttachmentHandlerTest
     void byteServingMultipleRanges()
         throws Exception
     {
-        this.request.setEndpointPath( "/_/attachment/inline/123456/logo.png" );
+        this.request.setRawPath( "/_/attachment/inline/123456/logo.png" );
         this.request.getHeaders().put( "Range", "bytes=0-1,3-4,6-" );
 
         final PortalResponse res = this.handler.handle( this.request );
@@ -330,7 +334,7 @@ class AttachmentHandlerTest
     void byteServingInvalidRange()
         throws Exception
     {
-        this.request.setEndpointPath( "/_/attachment/inline/123456/logo.png" );
+        this.request.setRawPath( "/_/attachment/inline/123456/logo.png" );
         this.request.getHeaders().put( "Range", "bytes=many" );
 
         final PortalResponse res = this.handler.handle( this.request );
@@ -346,7 +350,7 @@ class AttachmentHandlerTest
     void cacheHeader()
         throws Exception
     {
-        this.request.setEndpointPath( "/_/attachment/inline/123456:98765/logo.png" );
+        this.request.setRawPath( "/_/attachment/inline/123456:98765/logo.png" );
 
         final PortalResponse res = this.handler.handle( this.request );
         assertEquals( "public, max-age=31536000, immutable", res.getHeaders().get( "Cache-Control" ) );
@@ -357,7 +361,7 @@ class AttachmentHandlerTest
         throws Exception
     {
         this.request.setBranch( ContentConstants.BRANCH_DRAFT );
-        this.request.setEndpointPath( "/_/attachment/inline/123456:98765/logo.png" );
+        this.request.setRawPath( "/_/attachment/inline/123456:98765/logo.png" );
 
         final PortalResponse res = this.handler.handle( this.request );
         assertEquals( "private, max-age=31536000, immutable", res.getHeaders().get( "Cache-Control" ) );
@@ -367,7 +371,7 @@ class AttachmentHandlerTest
     void cacheHeader_fingerprint_mismatch()
         throws Exception
     {
-        this.request.setEndpointPath( "/_/attachment/inline/123456:123456/logo.png" );
+        this.request.setRawPath( "/_/attachment/inline/123456:123456/logo.png" );
 
         final PortalResponse res = this.handler.handle( this.request );
 
@@ -378,7 +382,7 @@ class AttachmentHandlerTest
     void contentSecurityPolicy()
         throws Exception
     {
-        this.request.setEndpointPath( "/_/attachment/inline/123456:98765/logo.png" );
+        this.request.setRawPath( "/_/attachment/inline/123456:98765/logo.png" );
 
         final PortalResponse res = this.handler.handle( this.request );
         assertEquals( "default-src 'none'; base-uri 'none'; form-action 'none'", res.getHeaders().get( "Content-Security-Policy" ) );
@@ -401,7 +405,10 @@ class AttachmentHandlerTest
         portalRequest.setMethod( HttpMethod.GET );
         portalRequest.setBaseUri( "/unknown" );
         portalRequest.setRawPath( "path-to-content/_/attachment/mode/id:version/name" );
-        portalRequest.setEndpointPath( "/_/attachment/mode/id:version/name" );
+        portalRequest.setRawPath( "/_/attachment/mode/id:version/name" );
+        final HttpServletRequest rawRequest = mock( HttpServletRequest.class );
+        when( rawRequest.isUserInRole( RoleKeys.ADMIN_LOGIN_ID ) ).thenReturn( true );
+        portalRequest.setRawRequest( rawRequest );
 
         WebException ex = assertThrows( WebException.class, () -> this.handler.handle( portalRequest ) );
         assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );

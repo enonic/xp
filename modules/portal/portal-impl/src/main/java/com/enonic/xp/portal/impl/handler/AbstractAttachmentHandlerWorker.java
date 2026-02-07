@@ -60,7 +60,7 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
     }
 
     public PortalResponse execute()
-        throws Exception
+        throws IOException
     {
         final T content = cast( getContent( this.id ) );
         final Attachment attachment = resolveAttachment( content, this.name );
@@ -73,8 +73,8 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
 
         final MediaType contentType;
         final ByteSource body;
-        if ( attachmentMimeType.is( MediaType.GIF ) || attachmentMimeType.is( MediaType.AVIF ) ||
-            attachmentMimeType.is( MediaType.WEBP ) || attachmentMimeType.is( SVG_MEDIA_TYPE ) )
+        if ( attachmentMimeType.is( MediaType.GIF ) || attachmentMimeType.is( MediaType.AVIF ) || attachmentMimeType.is( MediaType.WEBP ) ||
+            attachmentMimeType.is( SVG_MEDIA_TYPE ) )
         {
             contentType = attachmentMimeType;
             body = binary;

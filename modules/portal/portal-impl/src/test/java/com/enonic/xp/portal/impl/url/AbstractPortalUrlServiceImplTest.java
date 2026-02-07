@@ -14,6 +14,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.impl.macro.MacroServiceImpl;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
 import com.enonic.xp.portal.url.PortalUrlGeneratorService;
 import com.enonic.xp.project.ProjectService;
@@ -59,6 +60,7 @@ public abstract class AbstractPortalUrlServiceImplTest
         req = mock( HttpServletRequest.class );
 
         this.portalRequest = new PortalRequest();
+        this.portalRequest.setMode( RenderMode.LIVE );
         this.portalRequest.setBranch( Branch.from( "draft" ) );
         this.portalRequest.setRepositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) );
         this.portalRequest.setApplicationKey( applicationKey );

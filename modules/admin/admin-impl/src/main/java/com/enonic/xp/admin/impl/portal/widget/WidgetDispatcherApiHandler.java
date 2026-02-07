@@ -1,7 +1,6 @@
 package com.enonic.xp.admin.impl.portal.widget;
 
 import java.util.Objects;
-import java.util.regex.Pattern;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -20,7 +19,7 @@ import com.enonic.xp.web.WebResponse;
 public class WidgetDispatcherApiHandler
     implements UniversalApiHandler
 {
-    private static final Pattern WIDGET_API_PATTERN = Pattern.compile( "^/_/admin:widget/?$" );
+    private static final String WIDGET_API_BASE = "/_/admin:widget";
 
     private final GetListAllowedWidgetsHandler listWidgetsHandler;
 
@@ -38,13 +37,12 @@ public class WidgetDispatcherApiHandler
         this.widgetApiHandler = widgetApiHandler;
     }
 
-
     @Override
     public WebResponse handle( final WebRequest webRequest )
     {
         final String path = Objects.requireNonNull( webRequest.getEndpointPath(), "Endpoint path cannot be null" );
 
-        if ( WIDGET_API_PATTERN.matcher( path ).matches() && HttpMethod.GET.equals( webRequest.getMethod() ) )
+        if ( HttpMethod.GET.equals( webRequest.getMethod() ) && path.equals( WIDGET_API_BASE ) )
         {
             final Multimap<String, String> params = webRequest.getParams();
 

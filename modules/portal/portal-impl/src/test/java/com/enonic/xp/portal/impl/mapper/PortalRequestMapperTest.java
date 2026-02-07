@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.impl.MapSerializableAssert;
 import com.enonic.xp.repository.RepositoryId;
@@ -26,6 +27,7 @@ class PortalRequestMapperTest
     void setup()
     {
         this.portalRequest = new PortalRequest();
+        this.portalRequest.setMode( RenderMode.LIVE );
         this.portalRequest.setMethod( HttpMethod.GET );
         this.portalRequest.setScheme( "http" );
         this.portalRequest.setHost( "localhost" );

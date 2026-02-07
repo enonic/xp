@@ -66,7 +66,7 @@ class ImageMediaHandlerTest
         this.contentService = mock( ContentService.class );
         this.imageService = mock( ImageService.class );
 
-        this.handler = new ImageMediaHandler( this.contentService, mock( ProjectService.class), this.imageService );
+        this.handler = new ImageMediaHandler( this.contentService, mock( ProjectService.class ), this.imageService );
         final PortalConfig portalConfig = mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         this.handler.activate( portalConfig );
 
@@ -82,7 +82,6 @@ class ImageMediaHandlerTest
     void testOptions()
     {
         this.request.setBaseUri( "" );
-        this.request.setEndpointPath( null );
         this.request.setRawPath( "/api/media:image/myproject:draft/123456/scale-100-100/logo.png" );
         this.request.setMethod( HttpMethod.OPTIONS );
 
@@ -97,7 +96,6 @@ class ImageMediaHandlerTest
     {
         this.request.setBaseUri( "" );
         this.request.setMethod( HttpMethod.DELETE );
-        this.request.setEndpointPath( null );
         this.request.setRawPath( "/api/media:image/myproject:draft/123456/scale-100-100/logo.png" );
 
         WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
@@ -110,7 +108,6 @@ class ImageMediaHandlerTest
     {
         this.request.setBaseUri( "" );
         this.request.setMethod( HttpMethod.DELETE );
-        this.request.setEndpointPath( null );
         this.request.setRawPath( "/api/media:image/myproject:draft/123456/logo.png" );
 
         WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
@@ -133,21 +130,18 @@ class ImageMediaHandlerTest
             .build()
             .runWith( () -> {
                 this.request.setBaseUri( "" );
-                this.request.setEndpointPath( null );
                 this.request.setRawPath( "/api/media:image/project/123456/scale-100-100/image-name.jpg" );
 
                 WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
                 assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
 
                 this.request.setBaseUri( "/site" );
-                this.request.setEndpointPath( "/_/media:image/project/123456/scale-100-100/image-name.jpg" );
                 this.request.setRawPath( "/site/project/branch/_/media:image/project/123456/scale-100-100/image-name.jpg" );
 
                 ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
                 assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
 
                 this.request.setBaseUri( "/site" );
-                this.request.setEndpointPath( "/_/media:image/project2:draft/123456/scale-100-100/image-name.jpg" );
                 this.request.setRawPath( "/site/project/branch/_/media:image/project2:draft/123456/scale-100-100/image-name.jpg" );
 
                 ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
@@ -171,7 +165,6 @@ class ImageMediaHandlerTest
                     WebRequest webRequest = new WebRequest();
 
                     webRequest.setMethod( HttpMethod.GET );
-                    webRequest.setEndpointPath( null );
                     webRequest.setRawPath( "/api/media:image/myproject/123456/scale-100-100/image-name.jpg" );
 
                     WebResponse webResponse = this.handler.handle( webRequest );
@@ -185,7 +178,6 @@ class ImageMediaHandlerTest
                     this.request.setBranch( ContentConstants.BRANCH_DRAFT );
 
                     this.request.setBaseUri( "/admin/site/preview" );
-                    this.request.setEndpointPath( "/_/media:image/myproject:draft/123456/scale-100-100/image-name.jpg" );
                     this.request.setRawPath(
                         "/admin/site/preview/myproject/draft/_/media:image/myproject:draft/123456/scale-100-100/image-name.jpg" );
                     webResponse = this.handler.handle( this.request );
@@ -195,7 +187,6 @@ class ImageMediaHandlerTest
                     this.request.setBranch( ContentConstants.BRANCH_DRAFT );
 
                     this.request.setBaseUri( "/admin/site/preview" );
-                    this.request.setEndpointPath( "/_/media:image/myproject:draft/123456/scale-100-100/image-name.jpg" );
                     this.request.setRawPath(
                         "/admin/site/preview/myproject/draft/_/media:image/myproject:draft/123456/scale-100-100/image-name.jpg" );
                     webResponse = this.handler.handle( this.request );
@@ -205,7 +196,6 @@ class ImageMediaHandlerTest
                     this.request.setBranch( ContentConstants.BRANCH_DRAFT );
 
                     this.request.setBaseUri( "/admin/site/preview" );
-                    this.request.setEndpointPath( "/_/media:image/myproject:draft/123456/scale-100-100/image-name.jpg" );
                     this.request.setRawPath(
                         "/admin/site/preview/myproject/draft/_/media:image/myproject2:draft/123456/scale-100-100/image-name.jpg" );
                     webResponse = this.handler.handle( this.request );
@@ -215,7 +205,6 @@ class ImageMediaHandlerTest
                     this.request.setBranch( ContentConstants.BRANCH_DRAFT );
 
                     this.request.setBaseUri( "/admin/site/preview" );
-                    this.request.setEndpointPath( "/_/media:image/unknown:draft/123456/scale-100-100/image-name.jpg" );
                     this.request.setRawPath(
                         "/admin/site/preview/myproject/draft/_/media:image/unknown:draft/123456/scale-100-100/image-name.jpg" );
                     WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
@@ -235,7 +224,6 @@ class ImageMediaHandlerTest
         setupContentSvgz();
 
         this.request.setBaseUri( "/admin/site/preview" );
-        this.request.setEndpointPath( "/_/media:image/myproject/123456/full/image-name.svgz" );
         this.request.setRawPath( "/admin/site/preview/myproject/master/_/media:image/myproject/123456/full/image-name.svgz" );
 
         final WebResponse res = this.handler.handle( this.request );
@@ -255,7 +243,6 @@ class ImageMediaHandlerTest
         setupContentGif();
 
         this.request.setBaseUri( "/site" );
-        this.request.setEndpointPath( "/_/media:image/myproject/123456/full/image-name.gif" );
         this.request.setRawPath( "/site/myproject/master/sitepath/_/media:image/myproject/123456/full/image-name.gif" );
 
         final WebResponse res = this.handler.handle( this.request );
