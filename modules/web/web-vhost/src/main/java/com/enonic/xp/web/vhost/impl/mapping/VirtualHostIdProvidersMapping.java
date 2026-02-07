@@ -1,21 +1,18 @@
 package com.enonic.xp.web.vhost.impl.mapping;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.IdProviderKeys;
 
 public class VirtualHostIdProvidersMapping
 {
-    private final IdProviderKey defaultIdProvider;
-
     private final IdProviderKeys idProviderKeys;
 
     public VirtualHostIdProvidersMapping( final Builder builder )
     {
-        this.defaultIdProvider = builder.defaultIdProvider;
-        this.idProviderKeys = IdProviderKeys.from( builder.idProviderKeys );
+        this.idProviderKeys = IdProviderKeys.from(
+            ImmutableSet.<IdProviderKey>builder().add( builder.defaultIdProvider ).addAll( builder.idProviderKeys.build() ).build() );
     }
 
     public static Builder create()
@@ -25,7 +22,7 @@ public class VirtualHostIdProvidersMapping
 
     public IdProviderKey getDefaultIdProvider()
     {
-        return defaultIdProvider;
+        return idProviderKeys.first();
     }
 
     public IdProviderKeys getIdProviderKeys()
@@ -37,28 +34,21 @@ public class VirtualHostIdProvidersMapping
     {
         private IdProviderKey defaultIdProvider;
 
-        private final List<IdProviderKey> idProviderKeys;
+        private final ImmutableSet.Builder<IdProviderKey> idProviderKeys = ImmutableSet.builder();
 
         private Builder()
         {
-            this.idProviderKeys = new ArrayList<>();
         }
 
         public Builder setDefaultIdProvider( final IdProviderKey defaultIdProvider )
         {
             this.defaultIdProvider = defaultIdProvider;
-            addIdProviderKey( defaultIdProvider );
-
             return this;
         }
 
         public Builder addIdProviderKey( final IdProviderKey idProviderKey )
         {
-            if ( !this.idProviderKeys.contains( idProviderKey ) )
-            {
-                this.idProviderKeys.add( idProviderKey );
-            }
-
+            this.idProviderKeys.add( idProviderKey );
             return this;
         }
 
