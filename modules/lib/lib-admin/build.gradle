@@ -4,5 +4,6 @@ dependencies {
     compileOnly project( ':script:script-api' )
     compileOnly project( ':portal:portal-api' )
 
+    testImplementation project( ':admin:admin-api' )
     testImplementation project( ':tools:testing' )
 }

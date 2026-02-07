@@ -45,6 +45,12 @@ interface WidgetUrlHandler {
     createUrl(): string;
 }
 
+interface GetAdminToolsHandler {
+    setLocales(locales: string[]): void;
+
+    execute(): AdminTool[];
+}
+
 /**
  * Returns the URL for an admin tool of specific application.
  * @param {string} application Full application name (f.ex, 'com.enonic.app')
@@ -72,6 +78,14 @@ export interface GetHomeToolUrlParams {
 }
 
 export type HomeToolUrlType = 'server' | 'absolute';
+
+export interface AdminTool {
+    key: string;
+    name: string;
+    description: string;
+    icon: string | null;
+    systemApp: boolean;
+}
 
 /**
  * Returns installation name.
@@ -121,4 +135,26 @@ export function widgetUrl(params: WidgetUrlParams): string {
     bean.addQueryParams(__.toScriptValue(params.params));
 
     return bean.createUrl();
+}
+
+export interface GetToolsParams {
+    locales?: string[];
+}
+
+/**
+ * Returns installed admin tools that are accessible to the current user.
+ *
+ * @param {object} [params] Parameter object
+ * @param {string[]} [params.locales] Optional list of locale codes for localization in order of preference, e.g. ['en', 'no']
+ *
+ * @returns {AdminTool[]} Array of admin tool objects with key, name, description, icon, and systemApp flag.
+ */
+export function getTools(params?: GetToolsParams): AdminTool[] {
+    const bean: GetAdminToolsHandler = __.newBean<GetAdminToolsHandler>('com.enonic.xp.lib.admin.GetAdminToolsHandler');
+
+    if (params?.locales) {
+        bean.setLocales(params.locales);
+    }
+
+    return __.toNativeObject(bean.execute());
 }
