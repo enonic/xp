@@ -8,7 +8,10 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
+import com.enonic.xp.admin.tool.AdminToolDescriptorService;
+import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.portal.url.ApiUrlParams;
 import com.enonic.xp.portal.url.GenerateUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
@@ -99,6 +102,46 @@ class LibAdminTest
         Iterator<String> k2 = queryParams.get( "k2" ).iterator();
         assertEquals( "v21", k2.next() );
         assertEquals( "v22", k2.next() );
+    }
+
+    @Test
+    void testGetTools()
+    {
+        mockAdminToolDescriptorService();
+        runFunction( "/test/admin-test.js", "testGetTools" );
+    }
+
+    @Test
+    void testGetToolsWithLocales()
+    {
+        mockAdminToolDescriptorService();
+        runFunction( "/test/admin-test.js", "testGetToolsWithLocales" );
+    }
+
+    private void mockAdminToolDescriptorService()
+    {
+        AdminToolDescriptorService adminToolDescriptorService = mock( AdminToolDescriptorService.class );
+        addService( AdminToolDescriptorService.class, adminToolDescriptorService );
+
+        ApplicationService applicationService = mock( ApplicationService.class );
+        addService( ApplicationService.class, applicationService );
+
+        LocaleService localeService = mock( LocaleService.class );
+        addService( LocaleService.class, localeService );
+
+        // Add Context binding with authentication info
+        final com.enonic.xp.security.User user = com.enonic.xp.security.User.create()
+            .key( com.enonic.xp.security.PrincipalKey.ofUser( com.enonic.xp.security.IdProviderKey.system(), "testuser" ) )
+            .login( "testuser" )
+            .build();
+        final com.enonic.xp.security.auth.AuthenticationInfo authInfo =
+            com.enonic.xp.security.auth.AuthenticationInfo.create().user( user ).principals( com.enonic.xp.security.RoleKeys.ADMIN ).build();
+        final com.enonic.xp.context.Context context = com.enonic.xp.context.ContextBuilder.create().authInfo( authInfo ).build();
+        addBinding( com.enonic.xp.context.Context.class, context );
+
+        com.enonic.xp.admin.tool.AdminToolDescriptors emptyDescriptors =
+            com.enonic.xp.admin.tool.AdminToolDescriptors.empty();
+        when( adminToolDescriptorService.getAllowedAdminToolDescriptors( any() ) ).thenReturn( emptyDescriptors );
     }
 
     @Test
