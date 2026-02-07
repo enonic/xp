@@ -78,6 +78,7 @@ class PortalRequestAdapterTest
     void adaptSiteLogin()
     {
         when( mockHttpServletRequest.getPathInfo() ).thenReturn( "/site/test/draft/_/idprovider/system/login" );
+        when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/site/test/draft/_/idprovider/system/login" );
 
         PortalRequest adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
 
@@ -89,6 +90,7 @@ class PortalRequestAdapterTest
     void adaptSite_incomplete()
     {
         when( mockHttpServletRequest.getPathInfo() ).thenReturn( "/site/test/_/idprovider/system/login" );
+        when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/site/test/_/idprovider/system/login" );
 
         PortalRequest adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
 
@@ -100,6 +102,7 @@ class PortalRequestAdapterTest
     void adaptAdminSiteTest()
     {
         when( mockHttpServletRequest.getPathInfo() ).thenReturn( "/admin/site/admin/test/draft" );
+        when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/admin/site/admin/test/draft" );
 
         PortalRequest adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
 
@@ -112,6 +115,7 @@ class PortalRequestAdapterTest
     void adaptAdminSite_incomplete()
     {
         when( mockHttpServletRequest.getPathInfo() ).thenReturn( "/admin/site/admin/test" );
+        when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/admin/site/admin/test" );
 
         PortalRequest adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
 
@@ -123,6 +127,7 @@ class PortalRequestAdapterTest
     void adaptAdminToolUriTest()
     {
         when( mockHttpServletRequest.getPathInfo() ).thenReturn( "/admin" );
+        when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/admin" );
 
         PortalRequest adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
 
@@ -135,6 +140,7 @@ class PortalRequestAdapterTest
     void adaptAdminToolIdProviderUriTest()
     {
         when( mockHttpServletRequest.getPathInfo() ).thenReturn( "/admin/_/idprovider/system/login" );
+        when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/admin/_/idprovider/system/login" );
 
         PortalRequest adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
 
@@ -147,6 +153,7 @@ class PortalRequestAdapterTest
     void adaptAdminTool_incomplete()
     {
         when( mockHttpServletRequest.getPathInfo() ).thenReturn( "/admin/a/_/idprovider/system/login" );
+        when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/admin/a/_/idprovider/system/login" );
 
         PortalRequest adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
 
@@ -159,6 +166,7 @@ class PortalRequestAdapterTest
     void adaptAdminToolUriWithDescriptorTest()
     {
         when( mockHttpServletRequest.getPathInfo() ).thenReturn( "/admin/app/tool" );
+        when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/admin/app/tool" );
 
         PortalRequest adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
 
@@ -171,6 +179,7 @@ class PortalRequestAdapterTest
     void adaptWebAppUriTest()
     {
         when( mockHttpServletRequest.getPathInfo() ).thenReturn( "/webapp/app/anything" );
+        when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/webapp/app/anything" );
 
         PortalRequest adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
 
@@ -182,6 +191,7 @@ class PortalRequestAdapterTest
     void adaptWebApp_incomplete()
     {
         when( mockHttpServletRequest.getPathInfo() ).thenReturn( "/webapp/" );
+        when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/webapp/" );
 
         PortalRequest adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
 
@@ -193,6 +203,7 @@ class PortalRequestAdapterTest
     void adaptNonSiteTest()
     {
         when( mockHttpServletRequest.getPathInfo() ).thenReturn( "/test" );
+        when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/test" );
 
         PortalRequest adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
 
@@ -205,7 +216,7 @@ class PortalRequestAdapterTest
     {
         // use case 1
         when( mockHttpServletRequest.getPathInfo() ).thenReturn( "/api/app:api" );
-        when( mockHttpServletRequest.getPathInfo() ).thenReturn( "/api/app:api" );
+        when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/api/app:api" );
 
         PortalRequest adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
 
@@ -214,6 +225,7 @@ class PortalRequestAdapterTest
 
         // use case 2
         when( mockHttpServletRequest.getPathInfo() ).thenReturn( "/api/app:api" );
+        when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/api/app:api" );
 
         adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
 
@@ -222,6 +234,7 @@ class PortalRequestAdapterTest
 
         // use case 3
         when( mockHttpServletRequest.getPathInfo() ).thenReturn( "/api/app:api/" );
+        when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/api/app:api/" );
 
         adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
 
@@ -233,6 +246,7 @@ class PortalRequestAdapterTest
     void adaptApi_incomplete()
     {
         when( mockHttpServletRequest.getPathInfo() ).thenReturn( "/api/" );
+        when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/api/" );
 
         PortalRequest adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
 
