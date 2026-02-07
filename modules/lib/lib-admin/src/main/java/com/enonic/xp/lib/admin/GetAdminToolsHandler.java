@@ -5,6 +5,9 @@ import java.util.Locale;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.enonic.xp.admin.tool.AdminToolDescriptor;
 import com.enonic.xp.admin.tool.AdminToolDescriptorService;
 import com.enonic.xp.admin.tool.AdminToolDescriptors;
@@ -21,6 +24,7 @@ import com.enonic.xp.security.PrincipalKeys;
 public final class GetAdminToolsHandler
     implements ScriptBean
 {
+    private static final Logger LOG = LoggerFactory.getLogger( GetAdminToolsHandler.class );
     private Supplier<AdminToolDescriptorService> adminToolDescriptorService;
 
     private Supplier<ApplicationService> applicationService;
@@ -45,11 +49,12 @@ public final class GetAdminToolsHandler
     {
         final Application application = applicationService.get().get( descriptor.getApplicationKey() );
         final String icon = adminToolDescriptorService.get().getIconByKey( descriptor.getKey() );
+        final String applicationKeyStr = descriptor.getApplicationKey().toString();
         
         final String localizedDisplayName = localizeProperty( descriptor.getDisplayNameI18nKey(), descriptor.getDisplayName(),
-                                                               descriptor.getApplicationKey().toString() );
+                                                               applicationKeyStr );
         final String localizedDescription =
-            localizeProperty( descriptor.getDescriptionI18nKey(), descriptor.getDescription(), descriptor.getApplicationKey().toString() );
+            localizeProperty( descriptor.getDescriptionI18nKey(), descriptor.getDescription(), applicationKeyStr );
 
         return new AdminToolMapper( descriptor, application != null && application.isSystem(), localizedDisplayName,
                                      localizedDescription, icon );
@@ -75,8 +80,9 @@ public final class GetAdminToolsHandler
             final String localized = bundle != null ? bundle.localize( i18nKey ) : null;
             return localized != null ? localized : defaultValue;
         }
-        catch ( Exception e )
+        catch ( final RuntimeException e )
         {
+            LOG.debug( "Failed to localize property '{}' for application '{}': {}", i18nKey, applicationKey, e.getMessage() );
             return defaultValue;
         }
     }
@@ -97,8 +103,9 @@ public final class GetAdminToolsHandler
                 .getSupportedLocale( preferredLocales, com.enonic.xp.app.ApplicationKey.from( applicationKey ) );
             return supportedLocale != null ? supportedLocale : Locale.ENGLISH;
         }
-        catch ( Exception e )
+        catch ( final RuntimeException e )
         {
+            LOG.debug( "Failed to resolve preferred locale for application '{}': {}", applicationKey, e.getMessage() );
             return Locale.ENGLISH;
         }
     }
