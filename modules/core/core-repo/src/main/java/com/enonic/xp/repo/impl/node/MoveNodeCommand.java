@@ -162,8 +162,10 @@ public class MoveNodeCommand
         }
 
         final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
-        final Node movedNode =
-            this.nodeStorageService.store( StoreNodeParams.newVersion( nodeToMoveBuilder.build(), params.getVersionAttributes() ), internalContext ).node();
+        final Node movedNode = this.nodeStorageService.store(
+            StoreNodeParams.newVersion( nodeToMoveBuilder.build(),
+                                        isTheOriginalMovedNode ? params.getVersionAttributes() : params.getChildVersionAttributes() ),
+            internalContext ).node();
         this.nodeStorageService.invalidatePath( persistedNode.path(), internalContext );
 
         this.result.addMovedNode( MoveNodeResult.MovedNode.create().previousPath( persistedNode.path() ).node( movedNode ).build() );

@@ -12,6 +12,7 @@ import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.Property;
+import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.CommitNodeParams;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.MoveNodeParams;
@@ -118,13 +119,15 @@ final class RestoreContentCommand
 
         final NodeName newNodeName = buildName( parentPathToRestore, originalSourceName );
 
+        final Attributes versionAttributes = layersSync
+            ? ContentAttributesHelper.layersSyncAttr()
+            : ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.RESTORE_ATTR );
         final MoveNodeParams.Builder moveParams = MoveNodeParams.create()
             .nodeId( nodeToRestore.id() )
             .newParentPath( parentPathToRestore )
             .newName( newNodeName )
-            .versionAttributes( layersSync
-                                    ? ContentAttributesHelper.layersSyncAttr()
-                                    : ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.RESTORE_ATTR ) )
+            .versionAttributes( versionAttributes )
+            .childVersionAttributes( versionAttributes )
             .refresh( RefreshMode.ALL );
 
         if ( params.getRestoreContentListener() != null )

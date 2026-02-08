@@ -117,12 +117,20 @@ final class MoveContentCommand
             .nodeId( sourceNodeId )
             .newName( newNodeName )
             .newParentPath( newParentPath )
-            .versionAttributes( layersSync
-                                    ? ContentAttributesHelper.layersSyncAttr()
-                                    : ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.MOVE_ATTR,
-                                                                                  modifiedFields.toArray( String[]::new ) ) )
             .processor( processors.build() )
             .refresh( RefreshMode.ALL );
+
+        if ( layersSync )
+        {
+            moveParams.versionAttributes( ContentAttributesHelper.layersSyncAttr() )
+                .childVersionAttributes( ContentAttributesHelper.layersSyncAttr() );
+        }
+        else
+        {
+            moveParams.versionAttributes(
+                    ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.MOVE_ATTR, modifiedFields.toArray( String[]::new ) ) )
+                .childVersionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.MOVE_ATTR, "parentPath" ) );
+        }
 
         if ( params.getMoveContentListener() != null )
         {

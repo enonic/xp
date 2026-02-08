@@ -21,6 +21,8 @@ public final class SortNodeParams
 
     private final Attributes versionAttributes;
 
+    private final Attributes childVersionAttributes;
+
     private final NodeDataProcessor processor;
 
     private final RefreshMode refresh;
@@ -32,6 +34,7 @@ public final class SortNodeParams
         this.manualOrderSeed = builder.manualOrderSeed;
         this.reorderChildNodes = builder.reorderChildNodes.build();
         this.versionAttributes = builder.versionAttributes;
+        this.childVersionAttributes = builder.childVersionAttributes;
         this.processor = Objects.requireNonNullElse( builder.processor, ( n, p ) -> n );
         this.refresh = builder.refresh;
     }
@@ -61,6 +64,11 @@ public final class SortNodeParams
         return versionAttributes;
     }
 
+    public Attributes getChildVersionAttributes()
+    {
+        return childVersionAttributes;
+    }
+
     public NodeDataProcessor getProcessor()
     {
         return processor;
@@ -87,6 +95,8 @@ public final class SortNodeParams
         private final ImmutableList.Builder<ReorderChildNodeParams> reorderChildNodes = ImmutableList.builder();
 
         private Attributes versionAttributes;
+
+        private Attributes childVersionAttributes;
 
         private NodeDataProcessor processor;
 
@@ -123,6 +133,12 @@ public final class SortNodeParams
         public Builder versionAttributes( final Attributes versionAttributes )
         {
             this.versionAttributes = versionAttributes;
+            return this;
+        }
+
+        public Builder childVersionAttributes( final Attributes childVersionAttributes )
+        {
+            this.childVersionAttributes = childVersionAttributes;
             return this;
         }
 

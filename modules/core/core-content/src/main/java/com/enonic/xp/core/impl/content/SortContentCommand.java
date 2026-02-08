@@ -52,14 +52,20 @@ class SortContentCommand
                                                   .build() );
             }
 
-            if ( !layersSync )
+            if ( layersSync )
+            {
+                paramsBuilder.versionAttributes( ContentAttributesHelper.layersSyncAttr() )
+                    .childVersionAttributes( ContentAttributesHelper.layersSyncAttr() );
+            }
+            else
             {
                 paramsBuilder.processor( InheritedContentDataProcessor.SORT );
+                paramsBuilder.versionAttributes(
+                        ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.SORT_ATTR, "childOrder" ) )
+                    .childVersionAttributes(
+                        ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.SORT_ATTR, "manualOrderValue" ) );
             }
 
-            paramsBuilder.versionAttributes( layersSync
-                                                 ? ContentAttributesHelper.layersSyncAttr()
-                                                 : ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.SORT_ATTR ) );
 
             final SortNodeResult sortNodeResult = nodeService.sort( paramsBuilder.build() );
 

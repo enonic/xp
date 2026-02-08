@@ -72,7 +72,7 @@ final class DuplicateContentCommand
             .nodeId( sourceNode.id() )
             .versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.DUPLICATE_ATTR ) )
             .dataProcessor( new DuplicateContentProcessor( params.getWorkflowInfo(), sourceNodeId ) )
-            .refresh( RefreshMode.SEARCH );
+            .refresh( RefreshMode.ALL );
 
         if ( params.getDuplicateContentListener() != null )
         {

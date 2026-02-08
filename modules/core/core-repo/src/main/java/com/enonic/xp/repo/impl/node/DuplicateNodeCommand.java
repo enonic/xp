@@ -190,6 +190,8 @@ public final class DuplicateNodeCommand
 
             attachBinaries( node, paramsBuilder );
 
+            paramsBuilder.versionAttributes( params.getVersionAttributes() );
+
             final CreateNodeParams originalParams = paramsBuilder.build();
 
             final CreateNodeParams processedParams = executeProcessors( originalParams );
