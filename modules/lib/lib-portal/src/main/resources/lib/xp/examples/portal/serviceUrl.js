@@ -11,4 +11,4 @@ var url = portalLib.serviceUrl({
 });
 // END
 
-assert.assertTrue(url.indexOf('/site/mocksite/_/service/myservice') === 0);
+assert.assertEquals('/site/mocksite/_/service/myservice', url);

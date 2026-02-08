@@ -27,7 +27,7 @@ const apiUrlWithBaseUrl = portalLib.apiUrl({
 
 // END
 
-assert.assertTrue(url.indexOf('/site/mocksite/_/api/') === 0);
-assert.assertTrue(apiUrlWithPathSegments.indexOf('/site/mocksite/_/api/') === 0);
-assert.assertTrue(apiUrl.indexOf('/site/mocksite/_/api/') === 0);
-assert.assertTrue(apiUrlWithBaseUrl.indexOf('/site/mocksite/_/api/') === 0);
+assert.assertEquals('/site/mocksite/_/api/com.enonic.app.myapp:myapi', url);
+assert.assertEquals('/site/mocksite/_/api/com.enonic.app.myapp:myapi', apiUrlWithPathSegments);
+assert.assertEquals('/site/mocksite/_/api/com.enonic.app.myapp:myapi', apiUrl);
+assert.assertEquals('/site/mocksite/_/api/myapplication:myapi', apiUrlWithBaseUrl);

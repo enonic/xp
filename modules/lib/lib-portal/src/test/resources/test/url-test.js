@@ -11,7 +11,7 @@ exports.assetUrlTest = function () {
     });
 
     // Verify the result is a proper mock URL
-    assert.assertTrue(result.indexOf('/site/mocksite/_/asset/styles/my.css') === 0);
+    assert.assertEquals('/site/mocksite/_/asset/styles/my.css', result);
     return true;
 };
 
@@ -25,7 +25,7 @@ exports.assetUrlTest_unknownProperty = function () {
         }
     });
 
-    assert.assertTrue(result.indexOf('/site/mocksite/_/asset/styles/my.css') === 0);
+    assert.assertEquals('/site/mocksite/_/asset/styles/my.css', result);
     return true;
 };
 
@@ -54,7 +54,7 @@ exports.attachmentUrlTest = function () {
     });
 
     // Verify the result is a proper mock URL
-    assert.assertTrue(result.indexOf('/site/mocksite/_/attachment/inline/mockid/myattachment.pdf') === 0);
+    assert.assertEquals('/site/mocksite/_/attachment/inline/mockid/myattachment.pdf', result);
     return true;
 };
 
@@ -68,7 +68,7 @@ exports.attachmentUrlTest_unknownProperty = function () {
         }
     });
 
-    assert.assertTrue(result.indexOf('/site/mocksite/_/attachment/inline/mockid/myattachment.pdf') === 0);
+    assert.assertEquals('/site/mocksite/_/attachment/inline/mockid/myattachment.pdf', result);
     return true;
 };
 
@@ -82,7 +82,7 @@ exports.componentUrlTest = function () {
     });
 
     // Verify the result is a proper mock URL
-    assert.assertTrue(result.indexOf('/site/mocksite/_/component/mycomp') === 0);
+    assert.assertEquals('/site/mocksite/_/component/mycomp', result);
     return true;
 };
 
@@ -96,7 +96,7 @@ exports.componentUrlTest_unknownProperty = function () {
         }
     });
 
-    assert.assertTrue(result.indexOf('/site/mocksite/_/component/mycomp') === 0);
+    assert.assertEquals('/site/mocksite/_/component/mycomp', result);
     return true;
 };
 
@@ -114,7 +114,7 @@ exports.imageUrlTest = function () {
     });
 
     // Verify the result is a proper mock URL
-    assert.assertTrue(result.indexOf('/site/mocksite/_/image/123') === 0);
+    assert.assertEquals('/site/mocksite/_/image/123', result);
     return true;
 };
 
@@ -132,7 +132,7 @@ exports.imageUrlTest_unknownProperty = function () {
         unknownProperty: 'value'
     });
 
-    assert.assertTrue(result.indexOf('/site/mocksite/_/image/123') === 0);
+    assert.assertEquals('/site/mocksite/_/image/123', result);
     return true;
 };
 
@@ -146,7 +146,7 @@ exports.pageUrlTest = function () {
     });
 
     // Verify the result is a proper mock URL
-    assert.assertTrue(result.indexOf('/site/mocksite/a/b') === 0);
+    assert.assertEquals('/site/mocksite/a/b', result);
     return true;
 };
 
@@ -160,7 +160,7 @@ exports.pageUrlTest_unknownProperty = function () {
         unknownProperty: 'value'
     });
 
-    assert.assertTrue(result.indexOf('/site/mocksite/a/b') === 0);
+    assert.assertEquals('/site/mocksite/a/b', result);
     return true;
 };
 
@@ -174,7 +174,7 @@ exports.serviceUrlTest = function () {
     });
 
     // Verify the result is a proper mock URL
-    assert.assertTrue(result.indexOf('/site/mocksite/_/service/myservice') === 0);
+    assert.assertEquals('/site/mocksite/_/service/myservice', result);
     return true;
 };
 
@@ -189,7 +189,7 @@ exports.serviceUrlWebSocketTest = function () {
     });
 
     // Verify the result is a proper mock URL
-    assert.assertTrue(result.indexOf('ws://myservice') === 0);
+    assert.assertEquals('ws://myservice', result);
     return true;
 };
 
@@ -203,7 +203,7 @@ exports.serviceUrlTest_unknownProperty = function () {
         }
     });
 
-    assert.assertTrue(result.indexOf('/site/mocksite/_/service/myservice') === 0);
+    assert.assertEquals('/site/mocksite/_/service/myservice', result);
     return true;
 };
 

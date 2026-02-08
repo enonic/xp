@@ -7,4 +7,4 @@ var url = portalLib.assetUrl({
 });
 // END
 
-assert.assertTrue(url.indexOf('/site/mocksite/_/asset/styles/main.css') === 0);
+assert.assertEquals('/site/mocksite/_/asset/styles/main.css', url);

@@ -13,4 +13,4 @@ var url = portalLib.pageUrl({
 });
 // END
 
-t.assertTrue(url.indexOf('/site/mocksite/') === 0);
+t.assertEquals('/site/mocksite//my/page', url);
