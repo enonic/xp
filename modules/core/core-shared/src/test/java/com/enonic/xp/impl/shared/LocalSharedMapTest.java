@@ -111,4 +111,30 @@ class LocalSharedMapTest
         assertEquals( "yellow", map.get( "banana" ) );
         assertNull( map.get( "avocado" ) );
     }
+
+    @Test
+    void removeAll_withExpiredEntries()
+    {
+        LocalSharedMap.clock = Clock.fixed( Instant.ofEpochSecond( 0 ), ZoneOffset.UTC );
+        final LocalSharedMap<String, Integer> map = new LocalSharedMap<>();
+        map.set( "key1", 1, 1 ); // Will expire at second 1
+        map.set( "key2", 10 );
+        map.set( "key3", 3 );
+
+        // Move time forward so key1 expires
+        LocalSharedMap.clock = Clock.fixed( Instant.ofEpochSecond( 2 ), ZoneOffset.UTC );
+
+        // Remove all entries with value > 5 - key1 is expired so it should not be considered
+        map.removeAll( entry -> entry.getValue() > 5 );
+
+        // key1 expired, so should be null
+        assertNull( map.get( "key1" ) );
+        // key2 matched predicate and was removed
+        assertNull( map.get( "key2" ) );
+        // key3 did not match predicate
+        assertEquals( 3, map.get( "key3" ) );
+
+        // Expired entries are cleaned up by removeAll, so cleanUp should return 0
+        assertEquals( 0, map.cleanUp() );
+    }
 }
