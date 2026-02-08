@@ -2,6 +2,7 @@ package com.enonic.xp.impl.shared;
 
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import com.hazelcast.map.IMap;
 
@@ -63,6 +64,12 @@ public final class HazelcastSharedMap<K, V>
         }
     }
 
+    @Override
+    public void removeAll( final Predicate<Entry<K, V>> predicate )
+    {
+        map.removeAll( (com.hazelcast.query.Predicate<K, V>) entry -> predicate.test( new EntryImpl<>( entry ) ) );
+    }
+
     private void setInternal( final K key, final V value, final int ttlSeconds )
     {
         if ( value != null )
@@ -72,6 +79,29 @@ public final class HazelcastSharedMap<K, V>
         else
         {
             map.delete( key );
+        }
+    }
+
+    private static class EntryImpl<K, V>
+        implements Entry<K, V>
+    {
+        private final java.util.Map.Entry<K, V> entry;
+
+        EntryImpl( final java.util.Map.Entry<K, V> entry )
+        {
+            this.entry = entry;
+        }
+
+        @Override
+        public K getKey()
+        {
+            return entry.getKey();
+        }
+
+        @Override
+        public V getValue()
+        {
+            return entry.getValue();
         }
     }
 }
