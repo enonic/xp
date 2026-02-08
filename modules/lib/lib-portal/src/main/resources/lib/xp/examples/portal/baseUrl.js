@@ -18,5 +18,5 @@ const urlByPath = portalLib.baseUrl({
 
 // END
 
-assert.assertTrue(urlById.indexOf('/site/mocksite') === 0);
-assert.assertTrue(urlByPath.indexOf('/site/mocksite') === 0);
+assert.assertEquals('/site/mocksite', urlById);
+assert.assertEquals('/site/mocksite', urlByPath);

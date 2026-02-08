@@ -3,7 +3,7 @@ var assert = require('/lib/xp/testing');
 
 // BEGIN
 var url = portalLib.attachmentUrl({
-    id: '1234',
+    name: '1234.pdf',
     project: 'myproject',
     branch: 'mybranch',
     baseUrl: 'mybaseUrl',
@@ -11,4 +11,4 @@ var url = portalLib.attachmentUrl({
 });
 // END
 
-assert.assertTrue(url.indexOf('/site/mocksite/_/attachment/') === 0);
+assert.assertEquals('/site/mocksite/_/attachment/inline/mockid/1234.pdf', url);
