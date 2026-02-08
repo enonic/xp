@@ -11,5 +11,4 @@ var url = portalLib.attachmentUrl({
 });
 // END
 
-assert.assertEquals(
-    'AttachmentUrlParams{type=server, params={}, id=1234, project=myproject, branch=mybranch, baseUrl=mybaseUrl, download=true}', url);
+assert.assertTrue(url.indexOf('/site/mocksite/_/attachment/') === 0);

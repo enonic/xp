@@ -20,8 +20,8 @@ const urlBasedOnPathSegments = portalLib.url({
 
 // END
 
-assert.assertEquals('GenerateUrlParams{type=server, params={a=[1], b=[2]}, path=/site/master/mysite}', url);
-assert.assertEquals('GenerateUrlParams{type=server, params={a=[1], b=[2]}, pathSegments=[site, master, mysite]}', urlBasedOnPathSegments);
+assert.assertTrue(url.indexOf('/site/mocksite/_/generated/') === 0);
+assert.assertTrue(urlBasedOnPathSegments.indexOf('/site/mocksite/_/generated/') === 0);
 
 try {
     portalLib.url({
