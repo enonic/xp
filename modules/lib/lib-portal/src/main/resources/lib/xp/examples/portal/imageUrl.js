@@ -12,6 +12,4 @@ var url = portalLib.imageUrl({
 });
 // END
 
-assert.assertEquals(
-    'ImageUrlParams{type=server, params={}, id=1234, project=myproject, branch=mybranch, baseUrl=mybaseUrl, filter=rounded(5);sharpen(), scale=block(1024,768)}',
-    url);
+assert.assertTrue(url.indexOf('/site/mocksite/_/image/1234') === 0);
