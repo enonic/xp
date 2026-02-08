@@ -322,9 +322,6 @@ class ContentServiceImplTest_versionAttributes
         final DuplicateContentsResult result =
             this.contentService.duplicate( DuplicateContentParams.create().contentId( parent.getId() ).build() );
 
-        // DuplicateContentCommand uses RefreshMode.SEARCH; refresh storage so versions are queryable
-        this.nodeService.refresh( RefreshMode.STORAGE );
-
         for ( final ContentId duplicatedId : result.getDuplicatedContents() )
         {
             final ContentVersion version = getLatestVersion( duplicatedId );
