@@ -16,7 +16,7 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.dump.RepoDumpResult;
 import com.enonic.xp.dump.SystemDumpResult;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.repo.impl.dump.FileUtils;
 import com.enonic.xp.repo.impl.dump.blobstore.DumpBlobRecord;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
@@ -128,7 +128,7 @@ public class RepositoryIdDumpUpgrader
 
         final NodeVersionDataJson sourceNodeVersion = getNodeVersion( dumpBlobRecord );
 
-        final NodeVersion updatedNodeVersion = NodeVersion.create( NodeVersionDataJson.fromJson( sourceNodeVersion ) )
+        final NodeStoreVersion updatedNodeVersion = NodeStoreVersion.create( NodeVersionDataJson.fromJson( sourceNodeVersion ) )
             .id( NodeId.from( upgradeString( sourceNodeVersion.getId() ) ) )
             .build();
         writeNodeVersion( updatedNodeVersion, dumpBlobRecord );
@@ -253,7 +253,7 @@ public class RepositoryIdDumpUpgrader
         }
     }
 
-    private void writeNodeVersion( final NodeVersion nodeVersion, final DumpBlobRecord dumpBlobRecord )
+    private void writeNodeVersion( final NodeStoreVersion nodeVersion, final DumpBlobRecord dumpBlobRecord )
     {
         try
         {

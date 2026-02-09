@@ -16,8 +16,8 @@ import com.enonic.xp.content.ContentVersion;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.DuplicateContentParams;
 import com.enonic.xp.content.DuplicateContentsResult;
-import com.enonic.xp.content.FindContentVersionsParams;
-import com.enonic.xp.content.FindContentVersionsResult;
+import com.enonic.xp.content.GetContentVersionsParams;
+import com.enonic.xp.content.GetContentVersionsResult;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.PatchContentParams;
 import com.enonic.xp.content.PushContentParams;
@@ -118,8 +118,8 @@ class ContentServiceImplTest_versionAttributes
                                                            .build() )
                                       .build() );
 
-        final FindContentVersionsResult child3Versions =
-            this.contentService.getVersions( FindContentVersionsParams.create().contentId( child3.getId() ).build() );
+        final GetContentVersionsResult child3Versions =
+            this.contentService.getVersions( GetContentVersionsParams.create().contentId( child3.getId() ).build() );
 
         assertThat( child3Versions.getContentVersions() ).hasSize( 3 );
 
@@ -458,8 +458,8 @@ class ContentServiceImplTest_versionAttributes
 
     private ContentVersion getLatestVersion( final ContentId contentId )
     {
-        final FindContentVersionsResult versions =
-            this.contentService.getVersions( FindContentVersionsParams.create().contentId( contentId ).build() );
+        final GetContentVersionsResult versions =
+            this.contentService.getVersions( GetContentVersionsParams.create().size( 1 ).contentId( contentId ).build() );
         return versions.getContentVersions().first();
     }
 

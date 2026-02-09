@@ -41,8 +41,8 @@ import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
-import com.enonic.xp.content.FindContentVersionsParams;
-import com.enonic.xp.content.FindContentVersionsResult;
+import com.enonic.xp.content.GetContentVersionsParams;
+import com.enonic.xp.content.GetContentVersionsResult;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -605,8 +605,8 @@ public abstract class AbstractContentServiceTest
 
     protected void assertVersions( final ContentId contentId, final int expected )
     {
-        FindContentVersionsResult versions =
-            this.contentService.getVersions( FindContentVersionsParams.create().contentId( contentId ).build() );
+        GetContentVersionsResult versions =
+            this.contentService.getVersions( GetContentVersionsParams.create().contentId( contentId ).build() );
 
         assertEquals( expected, versions.getContentVersions().getSize() );
 

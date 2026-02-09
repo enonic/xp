@@ -31,7 +31,7 @@ import com.enonic.xp.internal.blobstore.MemoryBlobRecord;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeType;
-import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
@@ -64,7 +64,7 @@ class NodeVersionServiceImplTest
         final PropertyTree data = new PropertyTree();
         data.addString( "myName", "myValue" );
 
-        final NodeVersion nodeVersion = NodeVersion.create().
+        final NodeStoreVersion nodeVersion = NodeStoreVersion.create().
             nodeType( NodeType.DEFAULT_NODE_COLLECTION ).
             id( new NodeId() ).
             childOrder( ChildOrder.defaultOrder() ).
@@ -99,7 +99,7 @@ class NodeVersionServiceImplTest
         set.addSet( "myNullSet", null );
         set.addString( "myNullString", null );
 
-        final NodeVersion nodeVersion = NodeVersion.create().
+        final NodeStoreVersion nodeVersion = NodeStoreVersion.create().
             nodeType( NodeType.DEFAULT_NODE_COLLECTION ).
             id( new NodeId() ).
             childOrder( ChildOrder.defaultOrder() ).
@@ -110,7 +110,7 @@ class NodeVersionServiceImplTest
 
         final NodeVersionKey nodeVersionKey = executeInContext( () -> nodeDao.store( nodeVersion, createInternalContext() ) );
 
-        final NodeVersion returnedNodeVersion = executeInContext( () -> nodeDao.get( nodeVersionKey, createInternalContext() ) );
+        final NodeStoreVersion returnedNodeVersion = executeInContext( () -> nodeDao.get( nodeVersionKey, createInternalContext() ) );
 
         assertEquals( returnedNodeVersion.getId(), nodeVersion.getId() );
         assertEquals( returnedNodeVersion.getData(), nodeVersion.getData() );
@@ -130,7 +130,7 @@ class NodeVersionServiceImplTest
 
         final PropertyTree data = PropertyTreeJson.fromJson( list );
 
-        final NodeVersion nodeVersion = NodeVersion.create().
+        final NodeStoreVersion nodeVersion = NodeStoreVersion.create().
             nodeType( NodeType.DEFAULT_NODE_COLLECTION ).
             id( new NodeId() ).
             childOrder( ChildOrder.defaultOrder() ).
@@ -140,7 +140,7 @@ class NodeVersionServiceImplTest
             build();
 
         final NodeVersionKey nodeVersionKey = executeInContext( () -> nodeDao.store( nodeVersion, createInternalContext() ) );
-        final NodeVersion returnedNodeVersion = executeInContext( () -> nodeDao.get( nodeVersionKey, createInternalContext() ) );
+        final NodeStoreVersion returnedNodeVersion = executeInContext( () -> nodeDao.get( nodeVersionKey, createInternalContext() ) );
 
         assertEquals( returnedNodeVersion.getId(), nodeVersion.getId() );
         assertEquals( returnedNodeVersion.getData(), nodeVersion.getData() );
@@ -152,7 +152,7 @@ class NodeVersionServiceImplTest
         final PropertyTree data1 = new PropertyTree();
         data1.addString( "myName", "myValue1" );
 
-        final NodeVersion nodeVersion1 = NodeVersion.create().
+        final NodeStoreVersion nodeVersion1 = NodeStoreVersion.create().
             nodeType( NodeType.DEFAULT_NODE_COLLECTION ).
             id( new NodeId() ).
             childOrder( ChildOrder.defaultOrder() ).
@@ -166,7 +166,7 @@ class NodeVersionServiceImplTest
         final PropertyTree data2 = new PropertyTree();
         data2.addString( "myName", "myValue2" );
 
-        final NodeVersion nodeVersion2 = NodeVersion.create().
+        final NodeStoreVersion nodeVersion2 = NodeStoreVersion.create().
             nodeType( NodeType.DEFAULT_NODE_COLLECTION ).
             id( new NodeId() ).
             childOrder( ChildOrder.defaultOrder() ).
@@ -177,7 +177,7 @@ class NodeVersionServiceImplTest
 
         final NodeVersionKey nodeVersionKey2 = executeInContext( () -> nodeDao.store( nodeVersion2, createInternalContext() ) );
 
-        List<NodeVersion> nodeVersions = new ArrayList<>();
+        List<NodeStoreVersion> nodeVersions = new ArrayList<>();
         List.of( nodeVersionKey1, nodeVersionKey2 )
             .forEach( nodeVersionKey -> nodeVersions.add( executeInContext( () -> nodeDao.get( nodeVersionKey, createInternalContext() ) ) ) );
 
@@ -196,7 +196,7 @@ class NodeVersionServiceImplTest
         final PropertyTree data = new PropertyTree();
         data.addString( "myName", "myValue" );
 
-        final NodeVersion nodeVersion = NodeVersion.create().
+        final NodeStoreVersion nodeVersion = NodeStoreVersion.create().
             nodeType( NodeType.DEFAULT_NODE_COLLECTION ).
             id( new NodeId() ).
             childOrder( ChildOrder.defaultOrder() ).
@@ -226,7 +226,7 @@ class NodeVersionServiceImplTest
         final PropertyTree data = new PropertyTree();
         data.addString( "myName", "myValue" );
 
-        final NodeVersion nodeVersion = NodeVersion.create().
+        final NodeStoreVersion nodeVersion = NodeStoreVersion.create().
             nodeType( NodeType.DEFAULT_NODE_COLLECTION ).
             id( new NodeId() ).
             childOrder( ChildOrder.defaultOrder() ).
@@ -251,7 +251,7 @@ class NodeVersionServiceImplTest
         // restore original blob in source blob store
         BLOB_STORE.addRecord( segment, blob );
 
-        final NodeVersion returnedNodeVersion = executeInContext( () -> nodeDao.get( nodeVersionKey, createInternalContext() ) );
+        final NodeStoreVersion returnedNodeVersion = executeInContext( () -> nodeDao.get( nodeVersionKey, createInternalContext() ) );
         assertNotNull( returnedNodeVersion );
     }
 

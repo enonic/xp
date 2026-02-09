@@ -146,7 +146,7 @@ public class NodeHandler
         return execute( FindVersionsHandler.create()
                             .nodeService( this.nodeService )
                             .key( NodeKey.from( params.getKey() ) )
-                            .from( params.getStart() )
+                            .cursor( params.getCursor() )
                             .size( params.getCount() )
                             .build() );
     }

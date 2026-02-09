@@ -7,7 +7,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.node.Attributes;
-import com.enonic.xp.node.NodeVersionMetadata;
+import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.repo.impl.StorageSource;
 import com.enonic.xp.repo.impl.storage.StaticStorageType;
 import com.enonic.xp.repo.impl.storage.StorageData;
@@ -17,7 +17,7 @@ import com.enonic.xp.repository.RepositoryId;
 
 public class VersionStorageDocFactory
 {
-    public static StoreRequest create( final NodeVersionMetadata nodeVersion, final RepositoryId repositoryId )
+    public static StoreRequest create( final NodeVersion nodeVersion, final RepositoryId repositoryId )
     {
         final StorageData.Builder data = StorageData.create()
             .add( VersionIndexPath.VERSION_ID, nodeVersion.getNodeVersionId().toString() )

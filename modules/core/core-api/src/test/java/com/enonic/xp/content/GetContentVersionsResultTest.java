@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class FindContentVersionsResultTest
+class GetContentVersionsResultTest
 {
     @Test
     void sameVersion()
@@ -12,8 +12,8 @@ class FindContentVersionsResultTest
         final ContentVersion version = ContentVersion.create().versionId( ContentVersionId.from( "a" ) ).build();
         final ContentVersions contentVersions = ContentVersions.from( version );
 
-        final FindContentVersionsResult result =
-            FindContentVersionsResult.create().contentVersions( contentVersions ).totalHits( 2 ).build();
+        final GetContentVersionsResult result =
+            GetContentVersionsResult.create().contentVersions( contentVersions ).totalHits( 2 ).build();
 
         assertEquals( contentVersions, result.getContentVersions() );
         assertEquals( 1, result.getContentVersions().getSize() );

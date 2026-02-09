@@ -82,7 +82,7 @@ public interface ContentService
 
     GetPublishStatusesResult getPublishStatuses( GetPublishStatusesParams params );
 
-    FindContentVersionsResult getVersions( FindContentVersionsParams params );
+    GetContentVersionsResult getVersions( GetContentVersionsParams params );
 
     ByteSource getBinary( ContentId contentId, BinaryReference binaryReference );
 

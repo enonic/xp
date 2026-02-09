@@ -10,7 +10,7 @@ import com.google.common.io.LineProcessor;
 
 import com.enonic.xp.node.LoadNodeParams;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.repo.impl.branch.storage.NodeFactory;
 import com.enonic.xp.repo.impl.dump.RepoLoadException;
 import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
@@ -47,7 +47,7 @@ public class BranchEntryProcessor
 
     private void addNode( final EntryLoadResult.Builder result, final VersionMeta meta )
     {
-        final NodeVersion nodeVersion = getVersion( meta );
+        final NodeStoreVersion nodeVersion = getVersion( meta );
 
         if ( nodeVersion == null )
         {
@@ -76,7 +76,7 @@ public class BranchEntryProcessor
         }
     }
 
-    private NodeVersion getVersion( final VersionMeta meta )
+    private NodeStoreVersion getVersion( final VersionMeta meta )
     {
         try
         {

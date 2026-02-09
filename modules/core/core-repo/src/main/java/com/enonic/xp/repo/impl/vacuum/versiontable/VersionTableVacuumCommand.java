@@ -21,8 +21,8 @@ import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersionId;
-import com.enonic.xp.node.NodeVersionMetadata;
-import com.enonic.xp.node.NodeVersionMetadatas;
+import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.node.NodeVersions;
 import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.query.expr.FieldOrderExpr;
@@ -118,7 +118,7 @@ public class VersionTableVacuumCommand
 
         NodeVersionQuery query = createQuery( lastVersionId, ageThreshold );
         NodeVersionQueryResult versionsResult = nodeService.findVersions( query );
-        int hits = versionsResult.getNodeVersionMetadatas().getSize();
+        int hits = versionsResult.getNodeVersions().getSize();
 
         final long totalHits = versionsResult.getTotalHits();
 
@@ -134,9 +134,9 @@ public class VersionTableVacuumCommand
             final Set<BlobKey> nodeBlobToCheckSet = new HashSet<>();
             final Set<BlobKey> binaryBlobToCheckSet = new HashSet<>();
 
-            final NodeVersionMetadatas versions = versionsResult.getNodeVersionMetadatas();
+            final NodeVersions versions = versionsResult.getNodeVersions();
 
-            for ( NodeVersionMetadata version : versions )
+            for ( NodeVersion version : versions )
             {
                 result.processed();
                 final boolean toDelete = canDeleteVersion( repository, version );
@@ -167,7 +167,7 @@ public class VersionTableVacuumCommand
 
             query = createQuery( lastVersionId, ageThreshold );
             versionsResult = nodeService.findVersions( query );
-            hits = versionsResult.getNodeVersionMetadatas().getSize();
+            hits = versionsResult.getNodeVersions().getSize();
         }
 
         if ( listener != null )
@@ -188,7 +188,7 @@ public class VersionTableVacuumCommand
         blobStore.removeRecord( segment, blobKey );
     }
 
-    private boolean canDeleteVersion( final Repository repository, final NodeVersionMetadata version )
+    private boolean canDeleteVersion( final Repository repository, final NodeVersion version )
     {
         final NodeId nodeId = version.getNodeId();
         final NodeVersionId versionId = version.getNodeVersionId();

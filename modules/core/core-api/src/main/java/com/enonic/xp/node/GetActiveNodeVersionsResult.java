@@ -10,7 +10,7 @@ import com.enonic.xp.branch.Branch;
 @PublicApi
 public final class GetActiveNodeVersionsResult
 {
-    private final ImmutableMap<Branch, NodeVersionMetadata> nodeVersions;
+    private final ImmutableMap<Branch, NodeVersion> nodeVersions;
 
     private GetActiveNodeVersionsResult( Builder builder )
     {
@@ -22,7 +22,7 @@ public final class GetActiveNodeVersionsResult
         return new Builder();
     }
 
-    public Map<Branch, NodeVersionMetadata> getNodeVersions()
+    public Map<Branch, NodeVersion> getNodeVersions()
     {
         return nodeVersions;
     }
@@ -30,15 +30,15 @@ public final class GetActiveNodeVersionsResult
 
     public static final class Builder
     {
-        private final ImmutableMap.Builder<Branch, NodeVersionMetadata> nodeVersions = ImmutableMap.builder();
+        private final ImmutableMap.Builder<Branch, NodeVersion> nodeVersions = ImmutableMap.builder();
 
         private Builder()
         {
         }
 
-        public Builder add( final Branch branch, final NodeVersionMetadata nodeVersionMetadata )
+        public Builder add( final Branch branch, final NodeVersion nodeVersion )
         {
-            this.nodeVersions.put( branch, nodeVersionMetadata );
+            this.nodeVersions.put( branch, nodeVersion );
             return this;
         }
 

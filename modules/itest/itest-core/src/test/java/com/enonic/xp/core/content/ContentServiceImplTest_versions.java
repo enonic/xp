@@ -9,8 +9,8 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentVersion;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.content.FindContentVersionsParams;
-import com.enonic.xp.content.FindContentVersionsResult;
+import com.enonic.xp.content.GetContentVersionsParams;
+import com.enonic.xp.content.GetContentVersionsResult;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
@@ -41,8 +41,8 @@ class ContentServiceImplTest_versions
 
         this.contentService.update( updateContentParams );
 
-        final FindContentVersionsResult result =
-            this.contentService.getVersions( FindContentVersionsParams.create().contentId( content.getId() ).build() );
+        final GetContentVersionsResult result =
+            this.contentService.getVersions( GetContentVersionsParams.create().contentId( content.getId() ).build() );
 
         assertEquals( 2, result.getContentVersions().getSize() );
         assertEquals( 2, result.getTotalHits() );
@@ -63,7 +63,7 @@ class ContentServiceImplTest_versions
             .branch( ContentConstants.BRANCH_DRAFT )
             .repositoryId( testprojectName.getRepoId() )
             .build()
-            .runWith( () -> this.contentService.getVersions( FindContentVersionsParams.create().contentId( content.getId() ).build() ) ) );
+            .runWith( () -> this.contentService.getVersions( GetContentVersionsParams.create().contentId( content.getId() ).build() ) ) );
     }
 
     @Test
@@ -81,8 +81,8 @@ class ContentServiceImplTest_versions
 
         this.contentService.restore( RestoreContentParams.create().contentId( content.getId() ).build() );
 
-        final FindContentVersionsResult result =
-            this.contentService.getVersions( FindContentVersionsParams.create().contentId( content.getId() ).build() );
+        final GetContentVersionsResult result =
+            this.contentService.getVersions( GetContentVersionsParams.create().contentId( content.getId() ).build() );
 
         assertEquals( 3, result.getContentVersions().getSize() );
         assertEquals( 3, result.getTotalHits() );

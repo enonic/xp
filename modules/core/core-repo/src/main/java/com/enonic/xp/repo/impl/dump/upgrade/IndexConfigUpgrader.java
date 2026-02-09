@@ -20,7 +20,7 @@ import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.index.AllTextIndexConfig;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
-import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.repo.impl.dump.blobstore.DumpBlobRecord;
 import com.enonic.xp.repo.impl.dump.serializer.json.BranchDumpEntryJson;
 import com.enonic.xp.repo.impl.dump.serializer.json.VersionDumpEntryJson;
@@ -120,7 +120,7 @@ public class IndexConfigUpgrader
 
         final NodeVersionDataJson nodeVersionDataJson = getNode( nodeBlobRecord );
 
-        final NodeVersion nodeVersion = NodeVersionDataJson.fromJson( nodeVersionDataJson );
+        final NodeStoreVersion nodeVersion = NodeVersionDataJson.fromJson( nodeVersionDataJson );
 
         if ( ContentConstants.CONTENT_NODE_COLLECTION.equals( nodeVersion.getNodeType() ) )
         {
@@ -160,7 +160,7 @@ public class IndexConfigUpgrader
         }
     }
 
-    private BlobKey upgradeIndexConfigDocument( final BlobKey blobKey, final NodeVersion nodeVersion )
+    private BlobKey upgradeIndexConfigDocument( final BlobKey blobKey, final NodeStoreVersion nodeVersion )
     {
         final DumpBlobRecord indexConfigBlobRecord = dumpReader.getRecord( INDEX_CONFIG_SEGMENT, blobKey );
 
@@ -173,7 +173,7 @@ public class IndexConfigUpgrader
     }
 
     private PatternIndexConfigDocument upgradeLanguageIndexConfig( final PatternIndexConfigDocument sourceDocument,
-                                                                   final NodeVersion nodeVersion )
+                                                                   final NodeStoreVersion nodeVersion )
     {
         final String language = nodeVersion.getData().getString( LANGUAGE );
 
@@ -194,7 +194,7 @@ public class IndexConfigUpgrader
     }
 
     private PatternIndexConfigDocument upgradePageIndexConfig( final PatternIndexConfigDocument sourceDocument,
-                                                               final NodeVersion nodeVersion )
+                                                               final NodeStoreVersion nodeVersion )
     {
         final List<PropertySet> components = Lists.newArrayList( nodeVersion.getData().getSets( "components" ) );
 

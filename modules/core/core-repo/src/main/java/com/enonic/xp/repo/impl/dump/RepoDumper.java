@@ -37,7 +37,7 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionKey;
-import com.enonic.xp.node.NodeVersionMetadata;
+import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.RefreshMode;
@@ -156,7 +156,7 @@ public class RepoDumper
                 final VersionsDumpEntry.Builder builder = VersionsDumpEntry.create( nodeId );
 
                 final NodeVersionQueryResult versions = getVersions( nodeId );
-                for ( final NodeVersionMetadata metaData : versions.getNodeVersionMetadatas() )
+                for ( final NodeVersion metaData : versions.getNodeVersions() )
                 {
                     builder.addVersion( VersionMetaFactory.create( metaData ) );
                     doStoreVersion( metaData, this.dumpResult );
@@ -201,7 +201,7 @@ public class RepoDumper
         }
     }
 
-    private void doStoreVersion( final NodeVersionMetadata metaData,
+    private void doStoreVersion( final NodeVersion metaData,
                                  final RepoDumpResult.Builder dumpResult )
     {
         try
@@ -286,7 +286,7 @@ public class RepoDumper
 
         final Node currentNode = this.nodeService.getById( nodeId );
 
-        final NodeVersionMetadata currentVersionMetaData = this.nodeService.getActiveVersions(
+        final NodeVersion currentVersionMetaData = this.nodeService.getActiveVersions(
                 GetActiveNodeVersionsParams.create().nodeId( nodeId ).branches( Branches.from( branch ) ).build() )
             .getNodeVersions()
             .get( branch );

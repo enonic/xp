@@ -16,11 +16,6 @@ public abstract class BaseContextHandler
 
     protected abstract Object doExecute();
 
-    protected <T> T valueOrDefault( final T value, final T defValue )
-    {
-        return value == null ? defValue : value;
-    }
-
     @Override
     public void initialize( final BeanContext context )
     {

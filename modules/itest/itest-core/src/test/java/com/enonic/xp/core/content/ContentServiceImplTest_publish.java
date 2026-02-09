@@ -21,8 +21,8 @@ import com.enonic.xp.content.ContentVersion;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.DeleteContentsResult;
-import com.enonic.xp.content.FindContentVersionsParams;
-import com.enonic.xp.content.FindContentVersionsResult;
+import com.enonic.xp.content.GetContentVersionsParams;
+import com.enonic.xp.content.GetContentVersionsResult;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentParams;
@@ -400,8 +400,8 @@ class ContentServiceImplTest_publish
         this.contentService.publish(
             PushContentParams.create().contentIds( ContentIds.from( content.getId() ) ).message( "My message" ).build() );
 
-        FindContentVersionsResult versions =
-            this.contentService.getVersions( FindContentVersionsParams.create().contentId( content.getId() ).build() );
+        GetContentVersionsResult versions =
+            this.contentService.getVersions( GetContentVersionsParams.create().contentId( content.getId() ).build() );
 
         Iterator<ContentVersion> iterator = versions.getContentVersions().iterator();
         assertTrue( iterator.hasNext() );
@@ -417,8 +417,8 @@ class ContentServiceImplTest_publish
 
         this.contentService.publish( PushContentParams.create().contentIds( ContentIds.from( content.getId() ) ).message( null ).build() );
 
-        FindContentVersionsResult versions =
-            this.contentService.getVersions( FindContentVersionsParams.create().contentId( content.getId() ).build() );
+        GetContentVersionsResult versions =
+            this.contentService.getVersions( GetContentVersionsParams.create().contentId( content.getId() ).build() );
 
         Iterator<ContentVersion> iterator = versions.getContentVersions().iterator();
         assertTrue( iterator.hasNext() );

@@ -6,7 +6,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 
@@ -25,7 +25,7 @@ public final class AccessControlJson
         permissions = builder.permissions;
     }
 
-    public static AccessControlJson toJson( final NodeVersion nodeVersion )
+    public static AccessControlJson toJson( final NodeStoreVersion nodeVersion )
     {
         return create().permissions( toJson( nodeVersion.getPermissions() ) ).build();
     }

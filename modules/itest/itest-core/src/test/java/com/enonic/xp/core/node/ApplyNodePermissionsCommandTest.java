@@ -21,7 +21,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeVersionMetadata;
+import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.UpdateNodeParams;
@@ -534,8 +534,8 @@ class ApplyNodePermissionsCommandTest
         final NodeVersionQueryResult versions =
             FindNodeVersionsCommand.create().query( query ).searchService( this.searchService ).build().execute();
 
-        assertEquals( 2, versions.getNodeVersionMetadatas().getSize() );
-        final Iterator<NodeVersionMetadata> iterator = versions.getNodeVersionMetadatas().iterator();
+        assertEquals( 2, versions.getNodeVersions().getSize() );
+        final Iterator<NodeVersion> iterator = versions.getNodeVersions().iterator();
         assertTrue( iterator.next().getTimestamp().isAfter( iterator.next().getTimestamp() ) );
     }
 

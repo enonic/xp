@@ -15,7 +15,7 @@ import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeType;
-import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.repo.impl.node.json.AccessControlEntryJson;
 import com.enonic.xp.repo.impl.node.json.AttachedBinaryJson;
 import com.enonic.xp.repo.impl.node.json.IndexConfigDocumentJson;
@@ -59,9 +59,9 @@ public final class Pre4NodeVersionJson
         return permissions;
     }
 
-    public NodeVersion fromJson()
+    public NodeStoreVersion fromJson()
     {
-        return NodeVersion.create()
+        return NodeStoreVersion.create()
             .id( NodeId.from( this.id ) )
             .data( PropertyTreeJson.fromJson( this.data ) )
             .indexConfigDocument( IndexConfigDocumentJson.fromJson( indexConfigDocument ) )
@@ -84,7 +84,7 @@ public final class Pre4NodeVersionJson
         return builder.build();
     }
 
-    public static Pre4NodeVersionJson toJson( final NodeVersion nodeVersion )
+    public static Pre4NodeVersionJson toJson( final NodeStoreVersion nodeVersion )
     {
         final Pre4NodeVersionJson json = new Pre4NodeVersionJson();
         json.id = nodeVersion.getId().toString();

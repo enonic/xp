@@ -14,7 +14,7 @@ import com.google.common.io.CharSource;
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.repo.impl.dump.RepoDumpException;
 import com.enonic.xp.repo.impl.dump.blobstore.DumpBlobRecord;
 import com.enonic.xp.repo.impl.dump.upgrade.AbstractDumpUpgrader;
@@ -108,7 +108,7 @@ public class FlattenedPageDumpUpgrader
         }
     }
 
-    private byte[] serializeValue( final NodeVersion nodeVersion )
+    private byte[] serializeValue( final NodeStoreVersion nodeVersion )
     {
         try
         {
@@ -125,7 +125,7 @@ public class FlattenedPageDumpUpgrader
                                                final TemplateControllerMappings templateControllerMapping )
     {
         final DumpBlobRecord dumpBlobRecord = dumpReader.getRecord( SEGMENT, BlobKey.from( version.getBlobKey() ) );
-        final NodeVersion nodeVersion = getNodeVersion( dumpBlobRecord );
+        final NodeStoreVersion nodeVersion = getNodeVersion( dumpBlobRecord );
         templateControllerMapping.handle( nodeVersion.getId(), nodeVersion.getData() );
     }
 
@@ -177,7 +177,7 @@ public class FlattenedPageDumpUpgrader
 
     private void upgradeBlobRecord( final DumpBlobRecord dumpBlobRecord, final FlattenedPageDataUpgrader dataUpgrader )
     {
-        final NodeVersion nodeVersion = getNodeVersion( dumpBlobRecord );
+        final NodeStoreVersion nodeVersion = getNodeVersion( dumpBlobRecord );
         final boolean upgraded = dataUpgrader.upgrade( nodeVersion.getData() );
         if ( upgraded )
         {
@@ -185,7 +185,7 @@ public class FlattenedPageDumpUpgrader
         }
     }
 
-    private NodeVersion getNodeVersion( final DumpBlobRecord dumpBlobRecord )
+    private NodeStoreVersion getNodeVersion( final DumpBlobRecord dumpBlobRecord )
     {
         final CharSource charSource = dumpBlobRecord.getBytes().asCharSource( StandardCharsets.UTF_8 );
         try
@@ -199,7 +199,7 @@ public class FlattenedPageDumpUpgrader
         }
     }
 
-    private void writeNodeVersion( final NodeVersion nodeVersion, final DumpBlobRecord dumpBlobRecord )
+    private void writeNodeVersion( final NodeStoreVersion nodeVersion, final DumpBlobRecord dumpBlobRecord )
     {
         final byte[] serializedUpgradedNodeVersion = serializeValue( nodeVersion );
         try

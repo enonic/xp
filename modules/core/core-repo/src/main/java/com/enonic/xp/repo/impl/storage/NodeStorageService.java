@@ -13,11 +13,11 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
-import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.node.NodeVersionKey;
-import com.enonic.xp.node.NodeVersionMetadata;
+import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeBranchEntries;
@@ -52,7 +52,7 @@ public interface NodeStorageService
 
     Node get( NodeVersionId nodeVersionId, InternalContext context );
 
-    NodeVersion getNodeVersion( NodeVersionKey nodeVersionKey, InternalContext context );
+    NodeStoreVersion getNodeVersion( NodeVersionKey nodeVersionKey, InternalContext context );
 
     AccessControlList getNodePermissions( NodeVersionKey nodeVersionKey, InternalContext context );
 
@@ -60,7 +60,7 @@ public interface NodeStorageService
 
     NodeBranchEntries getBranchNodeVersions( NodeIds nodeIds, InternalContext context );
 
-    NodeVersionMetadata getVersion( NodeVersionId nodeVersionId, InternalContext context );
+    NodeVersion getVersion( NodeVersionId nodeVersionId, InternalContext context );
 
     NodeCommitEntry getCommit( NodeCommitId nodeCommitId, InternalContext context );
 

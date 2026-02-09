@@ -13,6 +13,7 @@ import com.enonic.xp.blob.Segment;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.NodeVersions;
 import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.repo.impl.node.NodeConstants;
@@ -57,9 +58,9 @@ class SegmentVacuumTaskTest
         final Repository repository2 = Repository.create().id( repositoryId ).branches( branch ).build();
         Mockito.when( repositoryService.list() ).thenReturn( Repositories.from( repository, repository2 ) );
 
-
         this.nodeService = Mockito.mock( NodeService.class );
-        Mockito.when( nodeService.findVersions( Mockito.any( NodeVersionQuery.class ) ) ).thenReturn( NodeVersionQueryResult.create().build() );
+        Mockito.when( nodeService.findVersions( Mockito.any( NodeVersionQuery.class ) ) )
+            .thenReturn( NodeVersionQueryResult.create().entityVersions( NodeVersions.empty() ).build() );
     }
 
     @Test

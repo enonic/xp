@@ -11,13 +11,14 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.GetActiveNodeVersionsResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeVersionMetadata;
+import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.repo.impl.node.GetActiveNodeVersionsCommand;
 import com.enonic.xp.repo.impl.node.PatchNodeCommand;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class GetActiveNodeVersionsCommandTest
@@ -52,8 +53,8 @@ class GetActiveNodeVersionsCommandTest
             build().
             execute();
 
-        NodeVersionMetadata draft = result.getNodeVersions().get( WS_DEFAULT );
-        NodeVersionMetadata master = result.getNodeVersions().get( WS_OTHER );
+        NodeVersion draft = result.getNodeVersions().get( WS_DEFAULT );
+        NodeVersion master = result.getNodeVersions().get( WS_OTHER );
 
         assertEquals( draft, master );
 
@@ -72,7 +73,7 @@ class GetActiveNodeVersionsCommandTest
         draft = result2.getNodeVersions().get( WS_DEFAULT );
         master = result2.getNodeVersions().get( WS_OTHER );
 
-        assertFalse( draft.equals( master ) );
+        assertNotEquals( draft, master );
         assertTrue( draft.getTimestamp().isAfter( master.getTimestamp() ) );
     }
 

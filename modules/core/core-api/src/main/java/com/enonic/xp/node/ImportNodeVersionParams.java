@@ -1,18 +1,8 @@
 package com.enonic.xp.node;
 
-import java.time.Instant;
-
 public final class ImportNodeVersionParams
 {
-    private final NodeId nodeId;
-
-    private final NodePath nodePath;
-
-    private final Instant timestamp;
-
-    private final NodeVersion nodeVersion;
-
-    private final NodeVersionId nodeVersionId;
+    private final Node node;
 
     private final NodeCommitId nodeCommitId;
 
@@ -20,38 +10,14 @@ public final class ImportNodeVersionParams
 
     private ImportNodeVersionParams( final Builder builder )
     {
-        nodeId = builder.nodeId;
-        nodePath = builder.nodePath;
-        timestamp = builder.timestamp;
-        nodeVersion = builder.nodeVersion;
-        nodeVersionId = builder.nodeVersionId;
+        node = builder.node;
         nodeCommitId = builder.nodeCommitId;
         attributes = builder.attributes;
     }
 
-    public NodeId getNodeId()
+    public Node getNode()
     {
-        return nodeId;
-    }
-
-    public NodePath getNodePath()
-    {
-        return nodePath;
-    }
-
-    public Instant getTimestamp()
-    {
-        return timestamp;
-    }
-
-    public NodeVersion getNodeVersion()
-    {
-        return nodeVersion;
-    }
-
-    public NodeVersionId getNodeVersionId()
-    {
-        return nodeVersionId;
+        return node;
     }
 
     public NodeCommitId getNodeCommitId()
@@ -71,15 +37,7 @@ public final class ImportNodeVersionParams
 
     public static final class Builder
     {
-        private NodeId nodeId;
-
-        private NodePath nodePath;
-
-        private Instant timestamp;
-
-        private NodeVersion nodeVersion;
-
-        private NodeVersionId nodeVersionId;
+        private Node node;
 
         private NodeCommitId nodeCommitId;
 
@@ -89,33 +47,9 @@ public final class ImportNodeVersionParams
         {
         }
 
-        public Builder nodeId( final NodeId val )
+        public Builder node( final Node val )
         {
-            nodeId = val;
-            return this;
-        }
-
-        public Builder nodePath( final NodePath val )
-        {
-            nodePath = val;
-            return this;
-        }
-
-        public Builder timestamp( final Instant val )
-        {
-            timestamp = val;
-            return this;
-        }
-
-        public Builder nodeVersion( final NodeVersion val )
-        {
-            nodeVersion = val;
-            return this;
-        }
-
-        public Builder nodeVersionId( final NodeVersionId val )
-        {
-            nodeVersionId = val;
+            node = val;
             return this;
         }
 

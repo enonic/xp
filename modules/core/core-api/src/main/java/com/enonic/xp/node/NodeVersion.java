@@ -1,94 +1,40 @@
 package com.enonic.xp.node;
 
+import java.time.Instant;
+import java.util.Objects;
+
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.index.ChildOrder;
-import com.enonic.xp.index.IndexConfigDocument;
-import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.blob.BlobKeys;
 
 @PublicApi
-public class NodeVersion
+public final class NodeVersion
 {
-    private final NodeId id;
+    private final NodeVersionId nodeVersionId;
 
-    private final NodeType nodeType;
+    private final NodeVersionKey nodeVersionKey;
 
-    private final PropertyTree data;
+    private final BlobKeys binaryBlobKeys;
 
-    private final IndexConfigDocument indexConfigDocument;
+    private final NodeId nodeId;
 
-    private final ChildOrder childOrder;
+    private final NodePath nodePath;
 
-    private final Long manualOrderValue;
+    private final NodeCommitId nodeCommitId;
 
-    private final AccessControlList permissions;
+    private final Instant timestamp;
 
-    private final AttachedBinaries attachedBinaries;
+    private final Attributes attributes;
 
     private NodeVersion( Builder builder )
     {
-        this.id = builder.id;
-        this.nodeType = builder.nodeType;
-        this.data = builder.data;
-        this.indexConfigDocument = builder.indexConfigDocument;
-        this.childOrder = builder.childOrder;
-        this.manualOrderValue = builder.manualOrderValue;
-        this.permissions = builder.permissions;
-        this.attachedBinaries = builder.attachedBinaries;
-    }
-
-    public static NodeVersion from( final Node node )
-    {
-        return NodeVersion.create().
-            id( node.id() ).
-            nodeType( node.getNodeType() ).
-            data( node.data() ).
-            indexConfigDocument( node.getIndexConfigDocument() ).
-            childOrder( node.getChildOrder() ).
-            manualOrderValue( node.getManualOrderValue() ).
-            permissions( node.getPermissions() ).
-            attachedBinaries( node.getAttachedBinaries() ).
-            build();
-    }
-
-    public NodeId getId()
-    {
-        return id;
-    }
-
-    public NodeType getNodeType()
-    {
-        return nodeType;
-    }
-
-    public PropertyTree getData()
-    {
-        return data;
-    }
-
-    public IndexConfigDocument getIndexConfigDocument()
-    {
-        return indexConfigDocument;
-    }
-
-    public ChildOrder getChildOrder()
-    {
-        return childOrder;
-    }
-
-    public Long getManualOrderValue()
-    {
-        return manualOrderValue;
-    }
-
-    public AccessControlList getPermissions()
-    {
-        return permissions;
-    }
-
-    public AttachedBinaries getAttachedBinaries()
-    {
-        return attachedBinaries;
+        nodeVersionId = Objects.requireNonNull( builder.nodeVersionId );
+        nodeVersionKey = Objects.requireNonNull( builder.nodeVersionKey );
+        binaryBlobKeys = Objects.requireNonNull( builder.binaryBlobKeys );
+        nodeId = Objects.requireNonNull( builder.nodeId );
+        nodePath = Objects.requireNonNull( builder.nodePath );
+        nodeCommitId = builder.nodeCommitId;
+        timestamp = Objects.requireNonNull( builder.timestamp );
+        attributes = builder.attributes;
     }
 
     public static Builder create()
@@ -96,95 +42,113 @@ public class NodeVersion
         return new Builder();
     }
 
-    public static Builder create( NodeVersion source )
+    public NodeVersionId getNodeVersionId()
     {
-        return new Builder( source );
+        return nodeVersionId;
     }
 
+    public NodeVersionKey getNodeVersionKey()
+    {
+        return nodeVersionKey;
+    }
+
+    public BlobKeys getBinaryBlobKeys()
+    {
+        return binaryBlobKeys;
+    }
+
+    public NodeId getNodeId()
+    {
+        return nodeId;
+    }
+
+    public NodePath getNodePath()
+    {
+        return nodePath;
+    }
+
+    public NodeCommitId getNodeCommitId()
+    {
+        return nodeCommitId;
+    }
+
+    public Attributes getAttributes()
+    {
+        return attributes;
+    }
+
+    public Instant getTimestamp()
+    {
+        return timestamp;
+    }
 
     public static final class Builder
     {
-        private NodeId id;
+        private NodeVersionId nodeVersionId;
 
-        private NodeType nodeType;
+        private NodeVersionKey nodeVersionKey;
 
-        private PropertyTree data;
+        private BlobKeys binaryBlobKeys;
 
-        private IndexConfigDocument indexConfigDocument;
+        private NodeId nodeId;
 
-        private ChildOrder childOrder;
+        private NodePath nodePath;
 
-        private Long manualOrderValue;
+        private NodeCommitId nodeCommitId;
 
-        private AccessControlList permissions;
+        private Instant timestamp;
 
-        private AttachedBinaries attachedBinaries;
+        private Attributes attributes;
 
         private Builder()
         {
-            this.nodeType = NodeType.DEFAULT_NODE_COLLECTION;
-            this.data = new PropertyTree();
-            this.permissions = AccessControlList.empty();
-            this.attachedBinaries = AttachedBinaries.empty();
         }
 
-        private Builder( NodeVersion nodeVersion )
+        public Builder nodeVersionId( NodeVersionId nodeVersionId )
         {
-            this.id = nodeVersion.id;
-            this.nodeType = nodeVersion.nodeType;
-            this.data = nodeVersion.data.copy();
-            this.indexConfigDocument = nodeVersion.indexConfigDocument;
-            this.childOrder = nodeVersion.childOrder;
-            this.manualOrderValue = nodeVersion.manualOrderValue;
-            this.permissions = nodeVersion.permissions;
-            this.attachedBinaries = nodeVersion.attachedBinaries;
-        }
-
-        public Builder id( NodeId id )
-        {
-            this.id = id;
+            this.nodeVersionId = nodeVersionId;
             return this;
         }
 
-        public Builder nodeType( NodeType nodeType )
+        public Builder nodeVersionKey( NodeVersionKey nodeVersionKey )
         {
-            this.nodeType = nodeType;
+            this.nodeVersionKey = nodeVersionKey;
             return this;
         }
 
-        public Builder data( PropertyTree data )
+        public Builder binaryBlobKeys( BlobKeys binaryBlobKeys )
         {
-            this.data = data;
+            this.binaryBlobKeys = binaryBlobKeys;
             return this;
         }
 
-        public Builder indexConfigDocument( IndexConfigDocument indexConfigDocument )
+        public Builder nodeId( NodeId nodeId )
         {
-            this.indexConfigDocument = indexConfigDocument;
+            this.nodeId = nodeId;
             return this;
         }
 
-        public Builder childOrder( ChildOrder childOrder )
+        public Builder nodePath( NodePath nodePath )
         {
-            this.childOrder = childOrder;
+            this.nodePath = nodePath;
             return this;
         }
 
-        public Builder manualOrderValue( Long manualOrderValue )
+        public Builder nodeCommitId( NodeCommitId nodeCommitId )
         {
-            this.manualOrderValue = manualOrderValue;
+            this.nodeCommitId = nodeCommitId;
             return this;
         }
 
-        public Builder permissions( AccessControlList permissions )
+        public Builder timestamp( Instant timestamp )
         {
-            this.permissions = permissions;
+            this.timestamp = timestamp;
             return this;
         }
 
-        public Builder attachedBinaries( AttachedBinaries attachedBinaries )
+        public Builder attributes( Attributes attributes )
         {
-            this.attachedBinaries = attachedBinaries;
+            this.attributes = attributes;
             return this;
         }
 
@@ -194,79 +158,19 @@ public class NodeVersion
         }
     }
 
-
     @Override
     public boolean equals( final Object o )
     {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-
-        final NodeVersion that = (NodeVersion) o;
-
-        if ( id != null ? !id.equals( that.id ) : that.id != null )
-        {
-            return false;
-        }
-        if ( nodeType != null ? !nodeType.equals( that.nodeType ) : that.nodeType != null )
-        {
-            return false;
-        }
-        if ( data != null ? !data.equals( that.data ) : that.data != null )
-        {
-            return false;
-        }
-        if ( indexConfigDocument != null ? !indexConfigDocument.equals( that.indexConfigDocument ) : that.indexConfigDocument != null )
-        {
-            return false;
-        }
-        if ( childOrder != null ? !childOrder.equals( that.childOrder ) : that.childOrder != null )
-        {
-            return false;
-        }
-        if ( manualOrderValue != null ? !manualOrderValue.equals( that.manualOrderValue ) : that.manualOrderValue != null )
-        {
-            return false;
-        }
-        if ( permissions != null ? !permissions.equals( that.permissions ) : that.permissions != null )
-        {
-            return false;
-        }
-        return !( attachedBinaries != null ? !attachedBinaries.equals( that.attachedBinaries ) : that.attachedBinaries != null );
-
+        return o instanceof final NodeVersion that && Objects.equals( nodeVersionId, that.nodeVersionId ) &&
+            Objects.equals( nodeVersionKey, that.nodeVersionKey ) && Objects.equals( binaryBlobKeys, that.binaryBlobKeys ) &&
+            Objects.equals( nodeId, that.nodeId ) && Objects.equals( nodePath, that.nodePath ) &&
+            Objects.equals( nodeCommitId, that.nodeCommitId ) && Objects.equals( timestamp, that.timestamp ) &&
+            Objects.equals( attributes, that.attributes );
     }
 
     @Override
     public int hashCode()
     {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + ( nodeType != null ? nodeType.hashCode() : 0 );
-        result = 31 * result + ( data != null ? data.hashCode() : 0 );
-        result = 31 * result + ( indexConfigDocument != null ? indexConfigDocument.hashCode() : 0 );
-        result = 31 * result + ( childOrder != null ? childOrder.hashCode() : 0 );
-        result = 31 * result + ( manualOrderValue != null ? manualOrderValue.hashCode() : 0 );
-        result = 31 * result + ( permissions != null ? permissions.hashCode() : 0 );
-        result = 31 * result + ( attachedBinaries != null ? attachedBinaries.hashCode() : 0 );
-        return result;
-    }
-
-    @Override
-    public String toString()
-    {
-        return "NodeVersion{" +
-            "id=" + id +
-            ", nodeType=" + nodeType +
-            ", data=" + data +
-            ", indexConfigDocument=" + indexConfigDocument +
-            ", childOrder=" + childOrder +
-            ", manualOrderValue=" + manualOrderValue +
-            ", permissions=" + permissions +
-            ", attachedBinaries=" + attachedBinaries +
-            '}';
+        return Objects.hash( nodeVersionId, nodeVersionKey, binaryBlobKeys, nodeId, nodePath, nodeCommitId, timestamp, attributes );
     }
 }

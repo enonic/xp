@@ -1,20 +1,27 @@
 package com.enonic.xp.node;
 
+import java.util.Objects;
+
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
+@NullMarked
 public final class GetNodeVersionsParams
 {
     private final NodeId nodeId;
 
-    private final int from;
+    @Nullable
+    private final String cursor;
 
     private final int size;
 
     private GetNodeVersionsParams( Builder builder )
     {
-        nodeId = builder.nodeId;
-        from = builder.from;
+        nodeId = Objects.requireNonNull( builder.nodeId, "nodeId cannot be null" );
+        cursor = builder.cursor;
         size = builder.size;
     }
 
@@ -28,9 +35,10 @@ public final class GetNodeVersionsParams
         return nodeId;
     }
 
-    public int getFrom()
+    @Nullable
+    public String getCursor()
     {
-        return from;
+        return cursor;
     }
 
     public int getSize()
@@ -40,9 +48,11 @@ public final class GetNodeVersionsParams
 
     public static final class Builder
     {
+        @Nullable
         private NodeId nodeId;
 
-        private int from = 0;
+        @Nullable
+        private String cursor;
 
         private int size = 10;
 
@@ -56,9 +66,9 @@ public final class GetNodeVersionsParams
             return this;
         }
 
-        public Builder from( int from )
+        public Builder cursor( final @Nullable String cursor )
         {
-            this.from = from;
+            this.cursor = cursor;
             return this;
         }
 

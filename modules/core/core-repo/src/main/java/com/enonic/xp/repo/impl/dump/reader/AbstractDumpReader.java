@@ -29,7 +29,7 @@ import com.enonic.xp.dump.RepoDumpResult;
 import com.enonic.xp.dump.SystemDumpResult;
 import com.enonic.xp.dump.SystemLoadListener;
 import com.enonic.xp.dump.VersionsLoadResult;
-import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.repo.impl.dump.FilePaths;
 import com.enonic.xp.repo.impl.dump.PathRef;
 import com.enonic.xp.repo.impl.dump.RepoDumpException;
@@ -158,7 +158,7 @@ public abstract class AbstractDumpReader
     }
 
     @Override
-    public NodeVersion get( final RepositoryId repositoryId, final NodeVersionKey nodeVersionKey )
+    public NodeStoreVersion get( final RepositoryId repositoryId, final NodeVersionKey nodeVersionKey )
     {
         final ByteSource dataBytes = getBlobByteSource( repositoryId, NodeConstants.NODE_SEGMENT_LEVEL, nodeVersionKey.getNodeBlobKey() );
 

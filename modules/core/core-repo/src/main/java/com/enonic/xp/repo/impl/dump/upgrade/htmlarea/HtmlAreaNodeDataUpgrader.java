@@ -23,7 +23,7 @@ import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.index.IndexValueProcessor;
 import com.enonic.xp.index.PathIndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
-import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.util.Reference;
 
 public class HtmlAreaNodeDataUpgrader
@@ -60,11 +60,11 @@ public class HtmlAreaNodeDataUpgrader
 
     private Set<Reference> references;
 
-    private NodeVersion nodeVersion;
+    private NodeStoreVersion nodeVersion;
 
     private DumpUpgradeStepResult.Builder result;
 
-    public boolean upgrade( final NodeVersion nodeVersion, final PatternIndexConfigDocument indexConfigDocument,
+    public boolean upgrade( final NodeStoreVersion nodeVersion, final PatternIndexConfigDocument indexConfigDocument,
                             DumpUpgradeStepResult.Builder result )
     {
         references = new HashSet<>();
@@ -89,7 +89,7 @@ public class HtmlAreaNodeDataUpgrader
         return false;
     }
 
-    private boolean isContent( final NodeVersion nodeVersion )
+    private boolean isContent( final NodeStoreVersion nodeVersion )
     {
         return ContentConstants.CONTENT_NODE_COLLECTION.equals( nodeVersion.getNodeType() );
     }

@@ -8,7 +8,6 @@ var repo = nodeLib.connect({
 
 var result = repo.findVersions({
     key: 'nodeId',
-    start: 0,
     count: 2
 });
 

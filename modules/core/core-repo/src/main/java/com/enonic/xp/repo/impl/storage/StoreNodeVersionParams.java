@@ -5,7 +5,7 @@ import java.time.Instant;
 import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.Attributes;
 
@@ -17,7 +17,7 @@ public final class StoreNodeVersionParams
 
     private final Instant timestamp;
 
-    private final NodeVersion nodeVersion;
+    private final NodeStoreVersion nodeVersion;
 
     private final NodeVersionId nodeVersionId;
 
@@ -51,7 +51,7 @@ public final class StoreNodeVersionParams
         return timestamp;
     }
 
-    public NodeVersion getNodeVersion()
+    public NodeStoreVersion getNodeVersion()
     {
         return nodeVersion;
     }
@@ -81,7 +81,7 @@ public final class StoreNodeVersionParams
     {
         private Attributes attributes;
 
-        private NodeVersion nodeVersion;
+        private NodeStoreVersion nodeVersion;
 
         private Instant timestamp;
 
@@ -97,7 +97,7 @@ public final class StoreNodeVersionParams
         {
         }
 
-        public Builder nodeVersion( final NodeVersion val )
+        public Builder nodeVersion( final NodeStoreVersion val )
         {
             nodeVersion = val;
             return this;

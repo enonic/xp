@@ -50,8 +50,8 @@ import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeVersionIds;
-import com.enonic.xp.node.NodeVersionMetadata;
-import com.enonic.xp.node.NodeVersionMetadatas;
+import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.node.NodeVersions;
 import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.RefreshMode;
@@ -336,11 +336,11 @@ class NodeServiceImplTest
         nodeService.refresh( RefreshMode.STORAGE );
 
         //Check that the two versions have no commit ID by default
-        final NodeVersionMetadatas versionsMetadata = getVersionsMetadata( nodeId );
+        final NodeVersions versionsMetadata = getVersionsMetadata( nodeId );
         assertEquals( 2, versionsMetadata.getSize() );
-        final Iterator<NodeVersionMetadata> versionMetadataIterator = versionsMetadata.iterator();
-        final NodeVersionMetadata latestVersionMetadata = versionMetadataIterator.next();
-        final NodeVersionMetadata firstVersionMetadata = versionMetadataIterator.next();
+        final Iterator<NodeVersion> versionMetadataIterator = versionsMetadata.iterator();
+        final NodeVersion latestVersionMetadata = versionMetadataIterator.next();
+        final NodeVersion firstVersionMetadata = versionMetadataIterator.next();
         assertNull( latestVersionMetadata.getNodeCommitId() );
         assertNull( firstVersionMetadata.getNodeCommitId() );
 
@@ -357,11 +357,11 @@ class NodeServiceImplTest
         assertEquals( "user:system:test-user", returnedCommitEntry.getCommitter().toString() );
 
         //Check that only the latest version has a commit ID
-        final NodeVersionMetadatas versionsMetadata2 = getVersionsMetadata( nodeId );
+        final NodeVersions versionsMetadata2 = getVersionsMetadata( nodeId );
         assertEquals( 2, versionsMetadata2.getSize() );
-        final Iterator<NodeVersionMetadata> versionMetadataIterator2 = versionsMetadata2.iterator();
-        final NodeVersionMetadata latestVersionMetadata2 = versionMetadataIterator2.next();
-        final NodeVersionMetadata firstVersionMetadata2 = versionMetadataIterator2.next();
+        final Iterator<NodeVersion> versionMetadataIterator2 = versionsMetadata2.iterator();
+        final NodeVersion latestVersionMetadata2 = versionMetadataIterator2.next();
+        final NodeVersion firstVersionMetadata2 = versionMetadataIterator2.next();
         assertEquals( nodeCommitId, latestVersionMetadata2.getNodeCommitId() );
         assertNull( firstVersionMetadata2.getNodeCommitId() );
 
@@ -376,11 +376,11 @@ class NodeServiceImplTest
         nodeService.refresh( RefreshMode.STORAGE );
 
         //Check that only the first version has been impacted
-        final NodeVersionMetadatas versionsMetadata3 = getVersionsMetadata( nodeId );
+        final NodeVersions versionsMetadata3 = getVersionsMetadata( nodeId );
         assertEquals( 2, versionsMetadata3.getSize() );
-        final Iterator<NodeVersionMetadata> versionMetadataIterator3 = versionsMetadata3.iterator();
-        final NodeVersionMetadata latestVersionMetadata3 = versionMetadataIterator3.next();
-        final NodeVersionMetadata firstVersionMetadata3 = versionMetadataIterator3.next();
+        final Iterator<NodeVersion> versionMetadataIterator3 = versionsMetadata3.iterator();
+        final NodeVersion latestVersionMetadata3 = versionMetadataIterator3.next();
+        final NodeVersion firstVersionMetadata3 = versionMetadataIterator3.next();
         assertEquals( nodeCommitId, latestVersionMetadata3.getNodeCommitId() );
         assertEquals( returnedCommitEntry2.getNodeCommitId(), firstVersionMetadata3.getNodeCommitId() );
     }
@@ -675,9 +675,9 @@ class NodeServiceImplTest
         assertEquals( GenericValue.booleanValue( true ), updatedAttributes.get( "attr3" ) );
     }
 
-    private NodeVersionMetadatas getVersionsMetadata( NodeId nodeId )
+    private NodeVersions getVersionsMetadata( NodeId nodeId )
     {
         final GetNodeVersionsParams params = GetNodeVersionsParams.create().nodeId( nodeId ).build();
-        return nodeService.findVersions( params ).getNodeVersionMetadatas();
+        return nodeService.getVersions( params ).getNodeVersions();
     }
 }

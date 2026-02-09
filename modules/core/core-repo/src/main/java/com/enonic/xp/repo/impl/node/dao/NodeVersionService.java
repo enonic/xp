@@ -1,15 +1,15 @@
 package com.enonic.xp.repo.impl.node.dao;
 
 import com.enonic.xp.node.NodeVersionKey;
-import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.security.acl.AccessControlList;
 
 public interface NodeVersionService
 {
-    NodeVersionKey store( NodeVersion nodeVersion, InternalContext context );
+    NodeVersionKey store( NodeStoreVersion nodeVersion, InternalContext context );
 
-    NodeVersion get( NodeVersionKey nodeVersionKey, InternalContext context );
+    NodeStoreVersion get( NodeVersionKey nodeVersionKey, InternalContext context );
 
     AccessControlList getPermissions( NodeVersionKey nodeVersionKey, InternalContext context );
 }

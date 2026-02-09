@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.version.search;
 
-import com.enonic.xp.node.NodeVersionMetadatas;
+import com.enonic.xp.node.NodeVersions;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.repo.impl.search.result.SearchHit;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
@@ -16,7 +16,7 @@ public class NodeVersionQueryResultFactory
                                  .stream()
                                  .map( SearchHit::getReturnValues )
                                  .map( NodeVersionFactory::create )
-                                 .collect( NodeVersionMetadatas.collector() ) )
+                                 .collect( NodeVersions.collector() ) )
             .build();
     }
 }

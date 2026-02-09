@@ -428,16 +428,16 @@ interface QueryNodeHandlerParams {
 
 export interface FindVersionsParams {
     key: string;
-    start?: number | null;
-    count?: number | null;
+    cursor?: string | null;
+    count?: number;
 }
 
 interface FindVersionsHandlerParams {
     setKey(key: string): void;
 
-    setStart(start?: number | null): void;
+    setCursor(cursor?: string | null): void;
 
-    setCount(count?: number | null): void;
+    setCount(count?: number): void;
 }
 
 export interface NodeVersion {
@@ -451,6 +451,7 @@ export interface NodeVersion {
 export interface NodeVersionsQueryResult {
     total: number;
     count: number;
+    cursor?: string | null;
     hits: NodeVersion[];
 }
 
@@ -1018,26 +1019,30 @@ class RepoConnectionImpl
      * @example-ref examples/node/findVersions.js
      * @param {object} params JSON parameters.
      * @param {string} params.key Path or ID of the node.
-     * @param {number} [params.start=0] Start index (used for paging).
+     * @param {string} [params.cursor] Cursor for pagination.
      * @param {number} [params.count=10] Number of node versions to fetch.
      *
-     * @returns {object[]} Node versions.
+     * @returns {object} Node versions query result.
      */
     findVersions(params: FindVersionsParams): NodeVersionsQueryResult {
         checkRequired(params, 'key');
 
         const {
             key,
-            start = 0,
-            count = 10,
+            cursor,
+            count,
         } = params ?? {};
 
         const handlerParams: FindVersionsHandlerParams = __.newBean<FindVersionsHandlerParams>(
             'com.enonic.xp.lib.node.FindVersionsHandlerParams');
 
         handlerParams.setKey(key);
-        handlerParams.setStart(start);
-        handlerParams.setCount(count);
+        if (cursor) {
+            handlerParams.setCursor(cursor);
+        }
+        if (count) {
+            handlerParams.setCount(count);
+        }
 
         return __.toNativeObject(this.nodeHandler.findVersions(handlerParams));
     }

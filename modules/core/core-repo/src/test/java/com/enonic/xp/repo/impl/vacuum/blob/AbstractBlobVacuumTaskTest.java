@@ -13,7 +13,7 @@ import com.enonic.xp.blob.Segment;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.NodeVersionMetadatas;
+import com.enonic.xp.node.NodeVersions;
 import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.query.filter.ValueFilter;
@@ -45,12 +45,12 @@ public abstract class AbstractBlobVacuumTaskTest
                 if ( valueFilter.getValues().contains( ValueFactory.newString( BlobKey.from( ByteSource.wrap( "a-stuff".getBytes() ) ).toString() ) ) )
                 {
                     return NodeVersionQueryResult.create().
-                        entityVersions( NodeVersionMetadatas.empty() ).
+                        entityVersions( NodeVersions.empty() ).
                         totalHits( 1 ).
                         build();
                 }
             return NodeVersionQueryResult.create().
-                entityVersions( NodeVersionMetadatas.empty() ).
+                entityVersions( NodeVersions.empty() ).
                 totalHits( 0 ).
                 build();
             } );

@@ -22,7 +22,7 @@ import com.enonic.xp.blob.Segment;
 import com.enonic.xp.blob.SegmentLevel;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.PatternIndexConfigDocument;
-import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.node.NodeConstants;
@@ -61,7 +61,7 @@ public class NodeVersionServiceImpl
     }
 
     @Override
-    public NodeVersionKey store( final NodeVersion nodeVersion, final InternalContext context )
+    public NodeVersionKey store( final NodeStoreVersion nodeVersion, final InternalContext context )
     {
         final RepositoryId repositoryId = context.getRepositoryId();
 
@@ -80,8 +80,8 @@ public class NodeVersionServiceImpl
             .build();
     }
 
-    private BlobKey serializeAndAddBlobRecord( final NodeVersion nodeVersion, final RepositoryId repositoryId, final SegmentLevel segmentLevel,
-                                                   IOFunction<NodeVersion, byte[]> serializer )
+    private BlobKey serializeAndAddBlobRecord( final NodeStoreVersion nodeVersion, final RepositoryId repositoryId, final SegmentLevel segmentLevel,
+                                               IOFunction<NodeStoreVersion, byte[]> serializer )
     {
         final Segment nodeSegment = RepositorySegmentUtils.toSegment( repositoryId, segmentLevel );
         final byte[] nodeJson;
@@ -97,7 +97,7 @@ public class NodeVersionServiceImpl
     }
 
     @Override
-    public NodeVersion get( final NodeVersionKey nodeVersionKey, final InternalContext context )
+    public NodeStoreVersion get( final NodeVersionKey nodeVersionKey, final InternalContext context )
     {
         final RepositoryId repositoryId = context.getRepositoryId();
 
@@ -113,7 +113,7 @@ public class NodeVersionServiceImpl
             fetchAndDeserializeCached( repositoryId, NodeConstants.NODE_SEGMENT_LEVEL, nodeVersionKey.getNodeBlobKey(),
                                        ImmutableVersionData::deserialize, nodeDataCache );
 
-        return NodeVersion.create()
+        return NodeStoreVersion.create()
             .id( immutableNodeVersion.id )
             .nodeType( immutableNodeVersion.nodeType )
             .data( toPropertyTree( immutableNodeVersion.data ) )
@@ -185,6 +185,6 @@ public class NodeVersionServiceImpl
 
     @FunctionalInterface
     private interface IOFunction<T, R> {
-        R apply( T t) throws IOException;
+        R apply( T t ) throws IOException;
     }
 }

@@ -50,8 +50,6 @@ public final class QueryContentHandler
     @Override
     protected Object doExecute()
     {
-        final int start = valueOrDefault( this.start, 0 );
-        final int count = valueOrDefault( this.count, GetChildContentHandler.DEFAULT_COUNT );
         final ContentTypeNames contentTypeNames = getContentTypeNames();
 
         final QueryExpr queryExpr = QueryExpr.from( buildConstraintExpr(), buildOrderExpr() );
@@ -63,12 +61,19 @@ public final class QueryContentHandler
         final HighlightQuery highlight = new QueryHighlightParams().getHighlightQuery( this.highlight );
 
         final ContentQuery.Builder queryBuilder = ContentQuery.create()
-            .from( start )
-            .size( count )
             .aggregationQueries( aggregations )
             .highlight( highlight )
             .addContentTypeNames( contentTypeNames )
             .queryExpr( queryExpr );
+
+        if ( start != null )
+        {
+            queryBuilder.from( start );
+        }
+        if ( count != null )
+        {
+            queryBuilder.size( count );
+        }
 
         for ( final Filter filter : filters )
         {
