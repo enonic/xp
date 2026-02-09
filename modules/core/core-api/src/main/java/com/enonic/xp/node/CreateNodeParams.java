@@ -2,7 +2,6 @@ package com.enonic.xp.node;
 
 import java.util.Objects;
 
-import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -73,14 +72,13 @@ public final class CreateNodeParams
 
     public static Builder from( final Node node )
     {
-        return new Builder().
-            parent( node.parentPath() ).
-            name( node.name() ).
-            data( node.data() ).
-            indexConfigDocument( node.getIndexConfigDocument() ).
-            childOrder( node.getChildOrder() ).
-            permissions( node.getPermissions() ).
-            nodeType( node.getNodeType() );
+        return new Builder().parent( node.parentPath() )
+            .name( node.name() )
+            .data( node.data() )
+            .indexConfigDocument( node.getIndexConfigDocument() )
+            .childOrder( node.getChildOrder() )
+            .permissions( node.getPermissions() )
+            .nodeType( node.getNodeType() );
     }
 
     public NodeName getName()
@@ -308,7 +306,6 @@ public final class CreateNodeParams
         public CreateNodeParams build()
         {
             Objects.requireNonNull( parent, "parent is required" );
-            Preconditions.checkArgument( parent.isAbsolute(), "Path to parent Node must be absolute: %s", parent );
 
             return new CreateNodeParams( this );
         }

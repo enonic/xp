@@ -64,75 +64,69 @@ class NodeStorageServiceImplTest
 
         versionKey = mock( NodeVersionKey.class );
 
-        context = InternalContext.create().
-            repositoryId( RepositoryId.from( "repository-id" ) ).
-            principalsKeys( AuthenticationInfo.unAuthenticated().getPrincipals() ).
-            branch( Branch.from( "branch" ) ).
-            build();
+        context = InternalContext.create()
+            .repositoryId( RepositoryId.from( "repository-id" ) )
+            .principalsKeys( AuthenticationInfo.unAuthenticated().getPrincipals() )
+            .branch( Branch.from( "branch" ) )
+            .build();
     }
 
     @Test
     void testGetNode()
     {
-        final NodeVersionMetadata nodeVersionMetadata = NodeVersionMetadata.create().
-            nodeId( NodeId.from( "nodeId1" ) ).
-            nodeVersionKey( versionKey ).
-            binaryBlobKeys( BlobKeys.empty() ).
-            nodeVersionId( nodeVersionId ).
-            nodePath( NodePath.ROOT ).
-            timestamp( Instant.EPOCH ).
-            build();
+        final NodeVersionMetadata nodeVersionMetadata = NodeVersionMetadata.create()
+            .nodeId( NodeId.from( "nodeId1" ) )
+            .nodeVersionKey( versionKey )
+            .binaryBlobKeys( BlobKeys.empty() )
+            .nodeVersionId( nodeVersionId )
+            .nodePath( NodePath.create().addElement( "node1" ).build() )
+            .timestamp( Instant.EPOCH )
+            .build();
 
-        final NodeVersion nodeVersion = NodeVersion.create().
-            permissions( AccessControlList.create().
-                add( AccessControlEntry.create().
-                    principal( RoleKeys.EVERYONE ).
-                    allow( Permission.READ ).
-                    build() ).build() ).
-            build();
+        final NodeVersion nodeVersion = NodeVersion.create()
+            .id( NodeId.from( "nodeId1" ) )
+            .permissions( AccessControlList.create()
+                              .add( AccessControlEntry.create().principal( RoleKeys.EVERYONE ).allow( Permission.READ ).build() )
+                              .build() )
+            .build();
 
-        when( versionService.getVersion( any( NodeVersionId.class ), any( InternalContext.class ) ) ).
-            thenReturn( nodeVersionMetadata );
+        when( versionService.getVersion( any( NodeVersionId.class ), any( InternalContext.class ) ) ).thenReturn( nodeVersionMetadata );
         when( nodeVersionService.get( any( NodeVersionKey.class ), any( InternalContext.class ) ) ).thenReturn( nodeVersion );
 
         final Node result = instance.get( nodeVersionId, context );
 
         assertNotNull( result );
 
-        verify( versionService, times( 1 ) ).
-            getVersion( any( NodeVersionId.class ), any( InternalContext.class ) );
-        verify( nodeVersionService, times( 1 ) ).
-            get( any( NodeVersionKey.class ), any( InternalContext.class ) );
+        verify( versionService, times( 1 ) ).getVersion( any( NodeVersionId.class ), any( InternalContext.class ) );
+        verify( nodeVersionService, times( 1 ) ).get( any( NodeVersionKey.class ), any( InternalContext.class ) );
         verifyNoMoreInteractions( versionService, nodeVersionService );
     }
 
     @Test
     void testGetNode_NodeVersionMetadataNotFound()
     {
-        when( versionService.getVersion( any( NodeVersionId.class ), any( InternalContext.class ) ) ).
-            thenReturn( null );
+        when( versionService.getVersion( any( NodeVersionId.class ), any( InternalContext.class ) ) ).thenReturn( null );
 
         final Node result = instance.get( nodeVersionId, context );
 
         assertNull( result );
 
-        verify( versionService, times( 1 ) ).
-            getVersion( any( NodeVersionId.class ), any( InternalContext.class ) );
+        verify( versionService, times( 1 ) ).getVersion( any( NodeVersionId.class ), any( InternalContext.class ) );
         verifyNoMoreInteractions( versionService );
     }
 
     @Test
     void testGetNode_NodeVersionNotFound()
     {
-        when( versionService.getVersion( any( NodeVersionId.class ), any( InternalContext.class ) ) ).
-            thenReturn( NodeVersionMetadata.create().
-            nodeId( NodeId.from( "nodeId1" ) ).
-            nodeVersionKey( versionKey ).
-            binaryBlobKeys( BlobKeys.empty() ).
-            nodeVersionId( nodeVersionId ).
-            nodePath( NodePath.ROOT ).
-            timestamp( Instant.EPOCH ).
-            build() );
+        when( versionService.getVersion( any( NodeVersionId.class ), any( InternalContext.class ) ) ).thenReturn(
+            NodeVersionMetadata.create()
+                .nodeId( NodeId.from( "nodeId1" ) )
+                .nodeVersionKey( versionKey )
+                .binaryBlobKeys( BlobKeys.empty() )
+                .nodeVersionId( nodeVersionId )
+                .nodePath( NodePath.ROOT )
+                .timestamp( Instant.EPOCH )
+                .build() );
 
         when( nodeVersionService.get( any( NodeVersionKey.class ), any( InternalContext.class ) ) ).thenReturn( null );
 
@@ -140,10 +134,8 @@ class NodeStorageServiceImplTest
 
         assertNull( result );
 
-        verify( versionService, times( 1 ) ).
-            getVersion( any( NodeVersionId.class ), any( InternalContext.class ) );
-        verify( nodeVersionService, times( 1 ) ).
-            get( any( NodeVersionKey.class ), any( InternalContext.class ) );
+        verify( versionService, times( 1 ) ).getVersion( any( NodeVersionId.class ), any( InternalContext.class ) );
+        verify( nodeVersionService, times( 1 ) ).get( any( NodeVersionKey.class ), any( InternalContext.class ) );
 
         verifyNoMoreInteractions( versionService, nodeVersionService );
     }
