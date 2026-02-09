@@ -22,7 +22,7 @@ public class FormFragmentNameDeserializer
         final JsonNode node = mapper.readTree( jsonParser );
 
         final String rawValue = node.asText();
-        final ApplicationKey currentApplication = (ApplicationKey) ctxt.findInjectableValue( "currentApplication", null, null );
+        final ApplicationKey currentApplication = (ApplicationKey) ctxt.findInjectableValue( "currentApplication", null, null, null, null );
 
         if ( rawValue.contains( ":" ) )
         {

@@ -28,7 +28,8 @@ public final class ResourceKeyDeserializer
         }
         else
         {
-            final ApplicationKey currentApplication = (ApplicationKey) ctxt.findInjectableValue( "currentApplication", null, null );
+            final ApplicationKey currentApplication =
+                (ApplicationKey) ctxt.findInjectableValue( "currentApplication", null, null, null, null );
             return ResourceKey.from( currentApplication, rawValue );
         }
     }

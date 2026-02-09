@@ -116,7 +116,8 @@ public class YmlCmsDescriptorParser
             }
             else
             {
-                final ApplicationKey currentApplication = (ApplicationKey) ctxt.findInjectableValue( "currentApplication", null, null );
+                final ApplicationKey currentApplication =
+                    (ApplicationKey) ctxt.findInjectableValue( "currentApplication", null, null, null, null );
                 return MixinName.from( currentApplication, rawValue );
             }
         }

@@ -28,7 +28,8 @@ public class DescriptorKeyDeserializer
         }
         else
         {
-            final ApplicationKey currentApplication = (ApplicationKey) ctxt.findInjectableValue( "currentApplication", null, null );
+            final ApplicationKey currentApplication =
+                (ApplicationKey) ctxt.findInjectableValue( "currentApplication", null, null, null, null );
             return DescriptorKey.from( currentApplication, rawValue );
         }
     }
