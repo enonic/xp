@@ -112,8 +112,8 @@ class NodeVersionServiceImplTest
 
         final NodeStoreVersion returnedNodeVersion = executeInContext( () -> nodeDao.get( nodeVersionKey, createInternalContext() ) );
 
-        assertEquals( returnedNodeVersion.getId(), nodeVersion.getId() );
-        assertEquals( returnedNodeVersion.getData(), nodeVersion.getData() );
+        assertEquals( returnedNodeVersion.id(), nodeVersion.id() );
+        assertEquals( returnedNodeVersion.data(), nodeVersion.data() );
     }
 
     @Test
@@ -142,8 +142,8 @@ class NodeVersionServiceImplTest
         final NodeVersionKey nodeVersionKey = executeInContext( () -> nodeDao.store( nodeVersion, createInternalContext() ) );
         final NodeStoreVersion returnedNodeVersion = executeInContext( () -> nodeDao.get( nodeVersionKey, createInternalContext() ) );
 
-        assertEquals( returnedNodeVersion.getId(), nodeVersion.getId() );
-        assertEquals( returnedNodeVersion.getData(), nodeVersion.getData() );
+        assertEquals( returnedNodeVersion.id(), nodeVersion.id() );
+        assertEquals( returnedNodeVersion.data(), nodeVersion.data() );
     }
 
     @Test
@@ -183,10 +183,10 @@ class NodeVersionServiceImplTest
 
 
         assertEquals( 2, nodeVersions.size() );
-        assertEquals( nodeVersion1.getId(), nodeVersions.get( 0 ).getId() );
-        assertEquals( nodeVersion1.getData(), nodeVersions.get( 0 ).getData() );
-        assertEquals( nodeVersion2.getId(), nodeVersions.get( 1 ).getId() );
-        assertEquals( nodeVersion2.getData(), nodeVersions.get( 1 ).getData() );
+        assertEquals( nodeVersion1.id(), nodeVersions.get( 0 ).id() );
+        assertEquals( nodeVersion1.data(), nodeVersions.get( 0 ).data() );
+        assertEquals( nodeVersion2.id(), nodeVersions.get( 1 ).id() );
+        assertEquals( nodeVersion2.data(), nodeVersions.get( 1 ).data() );
     }
 
     @Test

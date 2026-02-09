@@ -77,7 +77,7 @@ public class HtmlAreaNodeDataUpgrader
             return false;
         }
 
-        final PropertyTree nodeData = nodeVersion.getData();
+        final PropertyTree nodeData = nodeVersion.data();
         upgradeNodeData( nodeData.getRoot(), indexConfigDocument );
 
         if ( !references.isEmpty() )
@@ -91,7 +91,7 @@ public class HtmlAreaNodeDataUpgrader
 
     private boolean isContent( final NodeStoreVersion nodeVersion )
     {
-        return ContentConstants.CONTENT_NODE_COLLECTION.equals( nodeVersion.getNodeType() );
+        return ContentConstants.CONTENT_NODE_COLLECTION.equals( nodeVersion.nodeType() );
     }
 
     private void upgradeNodeData( final PropertySet nodeData, final PatternIndexConfigDocument indexConfigDocument )
@@ -181,7 +181,7 @@ public class HtmlAreaNodeDataUpgrader
                 if ( containsHtmlLink && backwardCompatible )
                 {
                     LOG.info( "Property [{}] in node [{}] contains HTML Area links but is not indexed as an HTML Area input. Treating as an HTML Area",
-                              property.getPath(), nodeVersion.getId() );
+                              property.getPath(), nodeVersion.id() );
                 }
 
                 if ( containsHtmlAreaImage )

@@ -60,7 +60,7 @@ class HtmlAreaNodeDataUpgraderTest
         final boolean upgraded = htmlAreaNodeDataUpgrader.upgrade( nodeVersion, indexConfigDocument, result );
         assertTrue( upgraded );
 
-        final PropertyTree upgradedData = nodeVersion.getData();
+        final PropertyTree upgradedData = nodeVersion.data();
         final Collection<Reference> upgradedProcessedReferences =
             (Collection<Reference>) upgradedData.getReferences( "processedReferences" );
         assertEquals( 5, upgradedProcessedReferences.size() );

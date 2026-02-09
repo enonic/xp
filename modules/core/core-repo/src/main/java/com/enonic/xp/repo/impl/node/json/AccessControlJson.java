@@ -27,7 +27,7 @@ public final class AccessControlJson
 
     public static AccessControlJson toJson( final NodeStoreVersion nodeVersion )
     {
-        return create().permissions( toJson( nodeVersion.getPermissions() ) ).build();
+        return create().permissions( toJson( nodeVersion.permissions() ) ).build();
     }
 
     private static List<AccessControlEntryJson> toJson( final AccessControlList acl )

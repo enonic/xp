@@ -435,7 +435,7 @@ export interface FindVersionsParams {
 interface FindVersionsHandlerParams {
     setKey(key: string): void;
 
-    setCursor(cursor?: string | null): void;
+    setCursor(cursor?: string): void;
 
     setCount(count?: number): void;
 }
@@ -1040,7 +1040,7 @@ class RepoConnectionImpl
         if (cursor) {
             handlerParams.setCursor(cursor);
         }
-        if (count) {
+        if (count !== undefined && count !== null) {
             handlerParams.setCount(count);
         }
 

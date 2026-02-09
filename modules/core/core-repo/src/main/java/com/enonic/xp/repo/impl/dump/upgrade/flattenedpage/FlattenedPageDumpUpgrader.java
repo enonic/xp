@@ -126,7 +126,7 @@ public class FlattenedPageDumpUpgrader
     {
         final DumpBlobRecord dumpBlobRecord = dumpReader.getRecord( SEGMENT, BlobKey.from( version.getBlobKey() ) );
         final NodeStoreVersion nodeVersion = getNodeVersion( dumpBlobRecord );
-        templateControllerMapping.handle( nodeVersion.getId(), nodeVersion.getData() );
+        templateControllerMapping.handle( nodeVersion.id(), nodeVersion.data() );
     }
 
     private void upgradeBranch( final Branch branch )
@@ -178,7 +178,7 @@ public class FlattenedPageDumpUpgrader
     private void upgradeBlobRecord( final DumpBlobRecord dumpBlobRecord, final FlattenedPageDataUpgrader dataUpgrader )
     {
         final NodeStoreVersion nodeVersion = getNodeVersion( dumpBlobRecord );
-        final boolean upgraded = dataUpgrader.upgrade( nodeVersion.getData() );
+        final boolean upgraded = dataUpgrader.upgrade( nodeVersion.data() );
         if ( upgraded )
         {
             writeNodeVersion( nodeVersion, dumpBlobRecord );

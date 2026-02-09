@@ -336,13 +336,8 @@ class NodeServiceImplTest
         nodeService.refresh( RefreshMode.STORAGE );
 
         //Check that the two versions have no commit ID by default
-        final NodeVersions versionsMetadata = getVersionsMetadata( nodeId );
-        assertEquals( 2, versionsMetadata.getSize() );
-        final Iterator<NodeVersion> versionMetadataIterator = versionsMetadata.iterator();
-        final NodeVersion latestVersionMetadata = versionMetadataIterator.next();
-        final NodeVersion firstVersionMetadata = versionMetadataIterator.next();
-        assertNull( latestVersionMetadata.getNodeCommitId() );
-        assertNull( firstVersionMetadata.getNodeCommitId() );
+        final NodeVersions nodeVersions = getVersionsMetadata( nodeId );
+        assertThat( nodeVersions ).extracting( NodeVersion::getNodeCommitId ).containsExactly( null, null );
 
         //Call commit with node ID
         final NodeCommitEntry commitEntry = NodeCommitEntry.create().message( "Commit message" ).build();

@@ -1889,9 +1889,11 @@ export function getVersions(params: GetVersionsParams): ContentVersionsResult {
     const bean: GetVersionsHandler = __.newBean<GetVersionsHandler>('com.enonic.xp.lib.content.GetVersionsHandler');
 
     bean.setKey(key);
-    bean.setCount(count);
     if (cursor) {
         bean.setCursor(cursor);
+    }
+    if (count !== undefined && count !== null) {
+        bean.setCount(count);
     }
 
     return __.toNativeObject(bean.execute());

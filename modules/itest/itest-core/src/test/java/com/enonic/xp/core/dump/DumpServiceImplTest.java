@@ -731,14 +731,14 @@ class DumpServiceImplTest
         // Verify attributes were applied
         final GetNodeVersionsResult versionsWithAttrs = this.nodeService.getVersions(
             GetNodeVersionsParams.create().nodeId( node.id() ).build() );
-        final NodeVersion versionMetadata = versionsWithAttrs.getNodeVersions().stream()
+        final NodeVersion nodeVersion = versionsWithAttrs.getNodeVersions().stream()
             .filter( v -> v.getNodeVersionId().equals( firstVersionId ) )
             .findFirst()
             .orElseThrow();
         
-        assertEquals( "testValue1", versionMetadata.getAttributes().get( "testKey1" ).asString() );
-        assertEquals( 42, versionMetadata.getAttributes().get( "testKey2" ).asInteger() );
-        assertEquals( true, versionMetadata.getAttributes().get( "testKey3" ).asBoolean() );
+        assertEquals( "testValue1", nodeVersion.getAttributes().get( "testKey1" ).asString() );
+        assertEquals( 42, nodeVersion.getAttributes().get( "testKey2" ).asInteger() );
+        assertTrue( nodeVersion.getAttributes().get( "testKey3" ).asBoolean() );
 
         // Dump and load with versions included
         NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true ) );
@@ -750,16 +750,16 @@ class DumpServiceImplTest
             GetNodeVersionsParams.create().nodeId( node.id() ).build() );
         assertEquals( 2, versionsAfterLoad.getTotalHits() );
 
-        final NodeVersion restoredVersionMetadata = versionsAfterLoad.getNodeVersions().stream()
+        final NodeVersion restoredVersion = versionsAfterLoad.getNodeVersions().stream()
             .filter( v -> v.getNodeVersionId().equals( firstVersionId ) )
             .findFirst()
             .orElseThrow();
 
         // Verify all attributes were preserved
-        assertThat( restoredVersionMetadata.getAttributes() ).isNotNull();
-        assertEquals( "testValue1", restoredVersionMetadata.getAttributes().get( "testKey1" ).asString() );
-        assertEquals( 42, restoredVersionMetadata.getAttributes().get( "testKey2" ).asInteger() );
-        assertEquals( true, restoredVersionMetadata.getAttributes().get( "testKey3" ).asBoolean() );
+        assertThat( restoredVersion.getAttributes() ).isNotNull();
+        assertEquals( "testValue1", restoredVersion.getAttributes().get( "testKey1" ).asString() );
+        assertEquals( 42, restoredVersion.getAttributes().get( "testKey2" ).asInteger() );
+        assertEquals( true, restoredVersion.getAttributes().get( "testKey3" ).asBoolean() );
     }
 
     @Test
@@ -989,17 +989,17 @@ class DumpServiceImplTest
         final NodeStoreVersion
             storedNode = this.storageService.getNodeVersion( version.getNodeVersionKey(), InternalContext.from( ContextAccessor.current() ) );
 
-        storedNode.getAttachedBinaries()
+        storedNode.attachedBinaries()
             .forEach( entry -> assertNotNull(
                 this.nodeService.getBinary( version.getNodeId(), version.getNodeVersionId(), entry.getBinaryReference() ) ) );
 
         if ( version.getNodeVersionId().equals( node.getNodeVersionId() ) )
         {
-            assertEquals( node.getAttachedBinaries(), storedNode.getAttachedBinaries() );
+            assertEquals( node.getAttachedBinaries(), storedNode.attachedBinaries() );
         }
         else if ( version.getNodeVersionId().equals( updatedNode.getNodeVersionId() ) )
         {
-            assertEquals( updatedNode.getAttachedBinaries(), storedNode.getAttachedBinaries() );
+            assertEquals( updatedNode.getAttachedBinaries(), storedNode.attachedBinaries() );
         }
     }
 

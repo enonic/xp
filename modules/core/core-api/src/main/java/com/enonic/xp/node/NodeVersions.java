@@ -46,7 +46,7 @@ public final class NodeVersions
 
     public static final class Builder
     {
-        private final ImmutableList.Builder<NodeVersion> nodeVersionMetadata = ImmutableList.builder();
+        private final ImmutableList.Builder<NodeVersion> nodeVersions = ImmutableList.builder();
 
         private Builder()
         {
@@ -54,19 +54,19 @@ public final class NodeVersions
 
         public Builder add( final NodeVersion nodeVersion )
         {
-            this.nodeVersionMetadata.add( nodeVersion );
+            this.nodeVersions.add( nodeVersion );
             return this;
         }
 
-        public Builder addAll( final Iterable<NodeVersion> nodeVersionMetadata )
+        public Builder addAll( final Iterable<NodeVersion> nodeVersions )
         {
-            this.nodeVersionMetadata.addAll( nodeVersionMetadata );
+            this.nodeVersions.addAll( nodeVersions );
             return this;
         }
 
         public NodeVersions build()
         {
-            return fromInternal( nodeVersionMetadata.build() );
+            return fromInternal( nodeVersions.build() );
         }
     }
 }

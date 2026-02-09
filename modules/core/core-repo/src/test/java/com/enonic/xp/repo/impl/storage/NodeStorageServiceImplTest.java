@@ -74,7 +74,7 @@ class NodeStorageServiceImplTest
     @Test
     void testGetNode()
     {
-        final NodeVersion nodeVersionMetadata = NodeVersion.create()
+        final NodeVersion nodeVersion = NodeVersion.create()
             .nodeId( NodeId.from( "nodeId1" ) )
             .nodeVersionKey( versionKey )
             .binaryBlobKeys( BlobKeys.empty() )
@@ -83,15 +83,15 @@ class NodeStorageServiceImplTest
             .timestamp( Instant.EPOCH )
             .build();
 
-        final NodeStoreVersion nodeVersion = NodeStoreVersion.create()
+        final NodeStoreVersion nodeStoreVersion = NodeStoreVersion.create()
             .id( NodeId.from( "nodeId1" ) )
             .permissions( AccessControlList.create()
                               .add( AccessControlEntry.create().principal( RoleKeys.EVERYONE ).allow( Permission.READ ).build() )
                               .build() )
             .build();
 
-        when( versionService.getVersion( any( NodeVersionId.class ), any( InternalContext.class ) ) ).thenReturn( nodeVersionMetadata );
-        when( nodeVersionService.get( any( NodeVersionKey.class ), any( InternalContext.class ) ) ).thenReturn( nodeVersion );
+        when( versionService.getVersion( any( NodeVersionId.class ), any( InternalContext.class ) ) ).thenReturn( nodeVersion );
+        when( nodeVersionService.get( any( NodeVersionKey.class ), any( InternalContext.class ) ) ).thenReturn( nodeStoreVersion );
 
         final Node result = instance.get( nodeVersionId, context );
 
@@ -103,7 +103,7 @@ class NodeStorageServiceImplTest
     }
 
     @Test
-    void testGetNode_NodeVersionMetadataNotFound()
+    void testGetNode_NodeVersionNotFound()
     {
         when( versionService.getVersion( any( NodeVersionId.class ), any( InternalContext.class ) ) ).thenReturn( null );
 
@@ -116,7 +116,7 @@ class NodeStorageServiceImplTest
     }
 
     @Test
-    void testGetNode_NodeVersionNotFound()
+    void testGetNode_NodeStoreVersionNotFound()
     {
         when( versionService.getVersion( any( NodeVersionId.class ), any( InternalContext.class ) ) ).thenReturn(
             NodeVersion.create()

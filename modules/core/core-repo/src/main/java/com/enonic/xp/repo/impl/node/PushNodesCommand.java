@@ -201,8 +201,8 @@ public class PushNodesCommand
         }
         final NodeStoreVersion version = this.nodeStorageService.getNodeVersion( nbe.getNodeVersionKey(), internalContext );
 
-        final PropertyTree processedData = params.getProcessor().process( version.getData(), nbe.getNodePath() );
-        if ( processedData.equals( version.getData() ) )
+        final PropertyTree processedData = params.getProcessor().process( version.data(), nbe.getNodePath() );
+        if ( processedData.equals( version.data() ) )
         {
             return nbe;
         }
@@ -216,7 +216,7 @@ public class PushNodesCommand
 
         final NodeVersionData stored = this.nodeStorageService.store( StoreNodeParams.newVersion( changedNode ), internalContext );
 
-        return NodeBranchEntry.fromNodeVersionMetadata( stored.metadata() );
+        return NodeBranchEntry.fromNodeVersion( stored.metadata() );
     }
 
     private boolean targetAlreadyExists( final NodePath nodePath, final NodeComparisons comparisons )

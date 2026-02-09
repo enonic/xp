@@ -56,12 +56,12 @@ public final class NodeVersionDataJson
     public static NodeVersionDataJson toJson( final NodeStoreVersion nodeVersion )
     {
         final NodeVersionDataJson json = new NodeVersionDataJson();
-        json.id = nodeVersion.getId().toString();
-        json.data = PropertyTreeJson.toJson( nodeVersion.getData() );
-        json.childOrder = nodeVersion.getChildOrder().toString();
-        json.manualOrderValue = nodeVersion.getManualOrderValue();
-        json.nodeType = nodeVersion.getNodeType().getName();
-        json.attachedBinaries = toNodeAttachedBinaryJsonList( nodeVersion.getAttachedBinaries() );
+        json.id = nodeVersion.id().toString();
+        json.data = PropertyTreeJson.toJson( nodeVersion.data() );
+        json.childOrder = nodeVersion.childOrder().toString();
+        json.manualOrderValue = nodeVersion.manualOrderValue();
+        json.nodeType = nodeVersion.nodeType().getName();
+        json.attachedBinaries = toNodeAttachedBinaryJsonList( nodeVersion.attachedBinaries() );
         return json;
     }
 

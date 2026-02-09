@@ -87,14 +87,14 @@ public final class Pre4NodeVersionJson
     public static Pre4NodeVersionJson toJson( final NodeStoreVersion nodeVersion )
     {
         final Pre4NodeVersionJson json = new Pre4NodeVersionJson();
-        json.id = nodeVersion.getId().toString();
-        json.data = PropertyTreeJson.toJson( nodeVersion.getData() );
-        json.indexConfigDocument = createEntityIndexConfig( nodeVersion.getIndexConfigDocument() );
-        json.childOrder = nodeVersion.getChildOrder().toString();
-        json.manualOrderValue = nodeVersion.getManualOrderValue();
-        json.permissions = toJson( nodeVersion.getPermissions() );
-        json.nodeType = nodeVersion.getNodeType().getName();
-        json.attachedBinaries = toNodeAttachedBinaryJsonList( nodeVersion.getAttachedBinaries() );
+        json.id = nodeVersion.id().toString();
+        json.data = PropertyTreeJson.toJson( nodeVersion.data() );
+        json.indexConfigDocument = createEntityIndexConfig( nodeVersion.indexConfigDocument() );
+        json.childOrder = nodeVersion.childOrder().toString();
+        json.manualOrderValue = nodeVersion.manualOrderValue();
+        json.permissions = toJson( nodeVersion.permissions() );
+        json.nodeType = nodeVersion.nodeType().getName();
+        json.attachedBinaries = toNodeAttachedBinaryJsonList( nodeVersion.attachedBinaries() );
         return json;
     }
 

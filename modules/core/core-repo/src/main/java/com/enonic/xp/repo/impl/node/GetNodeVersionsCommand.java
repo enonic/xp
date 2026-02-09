@@ -66,7 +66,7 @@ public class GetNodeVersionsCommand
         final NodeVersions versions = queryResult.getNodeVersions();
 
         final String nextCursor;
-        if ( queryResult.getTotalHits() > versions.getSize() )
+        if ( versions.getSize() > 0 && queryResult.getTotalHits() > versions.getSize() )
         {
             final NodeVersion last = Objects.requireNonNull( versions.last() );
             nextCursor = VersionCursorHelper.encodeCursor( new VersionCursorHelper.CursorData( last.getTimestamp(), last.getNodeVersionId()) );

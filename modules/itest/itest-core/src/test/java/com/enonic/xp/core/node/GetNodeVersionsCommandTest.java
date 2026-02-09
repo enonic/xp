@@ -112,6 +112,20 @@ class GetNodeVersionsCommandTest
     }
 
     @Test
+    void size_zero()
+    {
+        final Node node = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
+        updateNode( node.id(), 2 );
+        refresh();
+
+        final GetNodeVersionsResult result = executeGetVersions( node.id(), 0 );
+
+        assertThat( result.getTotalHits() ).isEqualTo( 3 );
+        assertThat( result.getNodeVersions() ).isEmpty();
+        assertThat( result.getCursor() ).isNull();
+    }
+
+    @Test
     void cursor_pagination()
     {
         final Node node = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );

@@ -70,7 +70,7 @@ public class BranchEntryProcessor
         catch ( Exception e )
         {
             final String message =
-                String.format( "Cannot load node with id %s, path %s: %s", nodeVersion.getId(), meta.nodePath(), e.getMessage() );
+                String.format( "Cannot load node with id %s, path %s: %s", nodeVersion.id(), meta.nodePath(), e.getMessage() );
             result.error( EntryLoadError.error( message ) );
             LOG.error( message, e );
         }

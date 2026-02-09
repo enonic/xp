@@ -1,5 +1,7 @@
 package com.enonic.xp.repo.impl;
 
+import java.util.Objects;
+
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexConfigDocument;
@@ -9,36 +11,17 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeType;
 import com.enonic.xp.security.acl.AccessControlList;
 
-public class NodeStoreVersion
+public record NodeStoreVersion(NodeId id, NodeType nodeType, PropertyTree data, IndexConfigDocument indexConfigDocument,
+                                ChildOrder childOrder, Long manualOrderValue, AccessControlList permissions,
+                                AttachedBinaries attachedBinaries)
 {
-    private final NodeId id;
-
-    private final NodeType nodeType;
-
-    private final PropertyTree data;
-
-    private final IndexConfigDocument indexConfigDocument;
-
-    private final ChildOrder childOrder;
-
-    private final Long manualOrderValue;
-
-    private final AccessControlList permissions;
-
-    private final AttachedBinaries attachedBinaries;
-
-    private NodeStoreVersion( Builder builder )
+    public NodeStoreVersion
     {
-        this.id = builder.id;
-        this.nodeType = builder.nodeType;
-        this.data = builder.data;
-        this.indexConfigDocument = builder.indexConfigDocument;
-        this.childOrder = builder.childOrder;
-        this.manualOrderValue = builder.manualOrderValue;
-        this.permissions = builder.permissions;
-        this.attachedBinaries = builder.attachedBinaries;
+        data = Objects.requireNonNullElseGet( data, PropertyTree::new );
+        nodeType = Objects.requireNonNullElse( nodeType, NodeType.DEFAULT_NODE_COLLECTION );
+        permissions = Objects.requireNonNullElse( permissions, AccessControlList.empty() );
+        attachedBinaries = Objects.requireNonNullElse( attachedBinaries, AttachedBinaries.empty() );
     }
-
     public static NodeStoreVersion from( final Node node )
     {
         return NodeStoreVersion.create()
@@ -51,46 +34,6 @@ public class NodeStoreVersion
             .permissions( node.getPermissions() )
             .attachedBinaries( node.getAttachedBinaries() )
             .build();
-    }
-
-    public NodeId getId()
-    {
-        return id;
-    }
-
-    public NodeType getNodeType()
-    {
-        return nodeType;
-    }
-
-    public PropertyTree getData()
-    {
-        return data;
-    }
-
-    public IndexConfigDocument getIndexConfigDocument()
-    {
-        return indexConfigDocument;
-    }
-
-    public ChildOrder getChildOrder()
-    {
-        return childOrder;
-    }
-
-    public Long getManualOrderValue()
-    {
-        return manualOrderValue;
-    }
-
-    public AccessControlList getPermissions()
-    {
-        return permissions;
-    }
-
-    public AttachedBinaries getAttachedBinaries()
-    {
-        return attachedBinaries;
     }
 
     public static Builder create()
@@ -123,10 +66,6 @@ public class NodeStoreVersion
 
         private Builder()
         {
-            this.nodeType = NodeType.DEFAULT_NODE_COLLECTION;
-            this.data = new PropertyTree();
-            this.permissions = AccessControlList.empty();
-            this.attachedBinaries = AttachedBinaries.empty();
         }
 
         private Builder( NodeStoreVersion nodeVersion )
@@ -191,76 +130,8 @@ public class NodeStoreVersion
 
         public NodeStoreVersion build()
         {
-            return new NodeStoreVersion( this );
+            return new NodeStoreVersion( this.id, this.nodeType, this.data, this.indexConfigDocument, this.childOrder,
+                                         this.manualOrderValue, this.permissions, this.attachedBinaries );
         }
-    }
-
-
-    @Override
-    public boolean equals( final Object o )
-    {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-
-        final NodeStoreVersion that = (NodeStoreVersion) o;
-
-        if ( id != null ? !id.equals( that.id ) : that.id != null )
-        {
-            return false;
-        }
-        if ( nodeType != null ? !nodeType.equals( that.nodeType ) : that.nodeType != null )
-        {
-            return false;
-        }
-        if ( data != null ? !data.equals( that.data ) : that.data != null )
-        {
-            return false;
-        }
-        if ( indexConfigDocument != null ? !indexConfigDocument.equals( that.indexConfigDocument ) : that.indexConfigDocument != null )
-        {
-            return false;
-        }
-        if ( childOrder != null ? !childOrder.equals( that.childOrder ) : that.childOrder != null )
-        {
-            return false;
-        }
-        if ( manualOrderValue != null ? !manualOrderValue.equals( that.manualOrderValue ) : that.manualOrderValue != null )
-        {
-            return false;
-        }
-        if ( permissions != null ? !permissions.equals( that.permissions ) : that.permissions != null )
-        {
-            return false;
-        }
-        return !( attachedBinaries != null ? !attachedBinaries.equals( that.attachedBinaries ) : that.attachedBinaries != null );
-
-    }
-
-    @Override
-    public int hashCode()
-    {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + ( nodeType != null ? nodeType.hashCode() : 0 );
-        result = 31 * result + ( data != null ? data.hashCode() : 0 );
-        result = 31 * result + ( indexConfigDocument != null ? indexConfigDocument.hashCode() : 0 );
-        result = 31 * result + ( childOrder != null ? childOrder.hashCode() : 0 );
-        result = 31 * result + ( manualOrderValue != null ? manualOrderValue.hashCode() : 0 );
-        result = 31 * result + ( permissions != null ? permissions.hashCode() : 0 );
-        result = 31 * result + ( attachedBinaries != null ? attachedBinaries.hashCode() : 0 );
-        return result;
-    }
-
-    @Override
-    public String toString()
-    {
-        return "NodeVersion{" + "id=" + id + ", nodeType=" + nodeType + ", data=" + data + ", indexConfigDocument=" + indexConfigDocument +
-            ", childOrder=" + childOrder + ", manualOrderValue=" + manualOrderValue + ", permissions=" + permissions +
-            ", attachedBinaries=" + attachedBinaries + '}';
     }
 }

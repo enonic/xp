@@ -24,7 +24,7 @@ public final class NodeVersionJsonSerializer
     public static byte[] toIndexConfigDocumentBytes( final NodeStoreVersion nodeVersion ) throws IOException
     {
         final IndexConfigDocumentJson entityIndexConfig;
-        final IndexConfigDocument indexConfig = nodeVersion.getIndexConfigDocument();
+        final IndexConfigDocument indexConfig = nodeVersion.indexConfigDocument();
         if ( indexConfig instanceof PatternIndexConfigDocument )
         {
             entityIndexConfig = IndexConfigDocumentJson.toJson( (PatternIndexConfigDocument) indexConfig );

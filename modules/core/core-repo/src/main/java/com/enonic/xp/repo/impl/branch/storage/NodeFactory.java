@@ -4,47 +4,45 @@ import java.time.Instant;
 
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.repo.impl.NodeStoreVersion;
-import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repo.impl.NodeBranchEntry;
+import com.enonic.xp.repo.impl.NodeStoreVersion;
 
 
 public class NodeFactory
 {
-    public static Node create( final NodeStoreVersion nodeVersion, final NodeBranchEntry nodeBranchEntry )
+    public static Node create( final NodeStoreVersion nodeStoreVersion, final NodeBranchEntry nodeBranchEntry )
     {
-        return create( nodeVersion, nodeBranchEntry.getVersionId(), nodeBranchEntry.getNodePath(),
-                       nodeBranchEntry.getTimestamp() );
+        return create( nodeStoreVersion, nodeBranchEntry.getVersionId(), nodeBranchEntry.getNodePath(), nodeBranchEntry.getTimestamp() );
     }
 
-    public static Node create( final NodeStoreVersion nodeVersion, final NodeVersion nodeVersionMetadata )
+    public static Node create( final NodeStoreVersion nodeStoreVersion, final NodeVersion nodeVersion )
     {
-        return create( nodeVersion, nodeVersionMetadata.getNodeVersionId(), nodeVersionMetadata.getNodePath(),
-                       nodeVersionMetadata.getTimestamp() );
+        return create( nodeStoreVersion, nodeVersion.getNodeVersionId(), nodeVersion.getNodePath(), nodeVersion.getTimestamp() );
     }
 
-    public static Node create( final NodeStoreVersion nodeVersion, final NodeVersionId nodeVersionId, final NodePath nodePath,
+    public static Node create( final NodeStoreVersion nodeStoreVersion, final NodeVersionId nodeVersionId, final NodePath nodePath,
                                final Instant timestamp )
     {
-        final Node.Builder builder = create( nodeVersion ).nodeVersionId( nodeVersionId ).timestamp( timestamp );
-        if ( !Node.ROOT_UUID.equals( nodeVersion.getId() ) )
+        final Node.Builder builder = create( nodeStoreVersion ).nodeVersionId( nodeVersionId ).timestamp( timestamp );
+        if ( !Node.ROOT_UUID.equals( nodeStoreVersion.id() ) )
         {
             builder.parentPath( nodePath.getParentPath() ).name( nodePath.getName() );
         }
         return builder.build();
     }
 
-    public static Node.Builder create( final NodeStoreVersion nodeVersion )
+    public static Node.Builder create( final NodeStoreVersion nodeStoreVersion )
     {
-        return Node.create().
-            id( nodeVersion.getId() ).
-            nodeType( nodeVersion.getNodeType() ).
-            data( nodeVersion.getData() ).
-            indexConfigDocument( nodeVersion.getIndexConfigDocument() ).
-            childOrder( nodeVersion.getChildOrder() ).
-            manualOrderValue( nodeVersion.getManualOrderValue() ).
-            permissions( nodeVersion.getPermissions() ).
-            attachedBinaries( nodeVersion.getAttachedBinaries() );
+        return Node.create()
+            .id( nodeStoreVersion.id() )
+            .nodeType( nodeStoreVersion.nodeType() )
+            .data( nodeStoreVersion.data() )
+            .indexConfigDocument( nodeStoreVersion.indexConfigDocument() )
+            .childOrder( nodeStoreVersion.childOrder() )
+            .manualOrderValue( nodeStoreVersion.manualOrderValue() )
+            .permissions( nodeStoreVersion.permissions() )
+            .attachedBinaries( nodeStoreVersion.attachedBinaries() );
     }
 }

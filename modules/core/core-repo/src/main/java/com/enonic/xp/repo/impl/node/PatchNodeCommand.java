@@ -2,7 +2,6 @@ package com.enonic.xp.repo.impl.node;
 
 import java.time.Instant;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -162,7 +161,7 @@ public final class PatchNodeCommand
 
         if ( patchedNode != null )
         {
-            this.nodeStorageService.push( NodeBranchEntry.fromNodeVersionMetadata( patchedNode.metadata() ), this.branches.first(),
+            this.nodeStorageService.push( NodeBranchEntry.fromNodeVersion( patchedNode.metadata() ), this.branches.first(),
                                           internalContext );
 
             return patchedNode;

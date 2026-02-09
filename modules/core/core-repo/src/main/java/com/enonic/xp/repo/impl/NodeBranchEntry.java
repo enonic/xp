@@ -60,7 +60,7 @@ public final class NodeBranchEntry
         return nodeId;
     }
 
-    public static NodeBranchEntry fromNodeVersionMetadata( final NodeVersion nodeVersion ) {
+    public static NodeBranchEntry fromNodeVersion( final NodeVersion nodeVersion ) {
         return NodeBranchEntry.create()
             .nodeId( nodeVersion.getNodeId() )
             .nodeVersionId( nodeVersion.getNodeVersionId() )
