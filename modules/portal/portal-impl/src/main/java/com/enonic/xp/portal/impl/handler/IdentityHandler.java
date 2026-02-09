@@ -28,7 +28,7 @@ import com.enonic.xp.web.vhost.VirtualHostHelper;
 @Component(service = IdentityHandler.class, configurationPid = "com.enonic.xp.portal")
 public class IdentityHandler
 {
-    private static final Pattern PATTERN = Pattern.compile( "^(?<idp>[^/?]+)(?:/(?<fun>login|logout))?" );
+    private static final Pattern PATTERN = Pattern.compile( "^(?<idp>[^/]+)(?:/(?<fun>login|logout))?" );
 
     private final IdProviderControllerService idProviderControllerService;
 

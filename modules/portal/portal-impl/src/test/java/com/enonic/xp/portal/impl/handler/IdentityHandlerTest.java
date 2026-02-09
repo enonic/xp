@@ -68,7 +68,7 @@ class IdentityHandlerTest
         this.handler = new IdentityHandler( idProviderControllerService, redirectChecksumService );
 
         this.request.setMethod( HttpMethod.GET );
-        this.request.setRawPath( "/site/project/branch/_/idprovider/myidprovider?param1=value1" );
+        this.request.setRawPath( "/site/project/branch/_/idprovider/myidprovider" );
         this.request.setRawRequest( rawRequest );
 
         final VirtualHost virtualHost = mock( VirtualHost.class );
