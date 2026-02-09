@@ -1,6 +1,7 @@
 package com.enonic.xp.node;
 
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,12 +12,14 @@ import com.google.common.base.Splitter;
 
 import com.enonic.xp.annotation.PublicApi;
 
+import static com.google.common.base.Strings.emptyToNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 @PublicApi
 public final class NodePath
     implements Comparable<NodePath>, Serializable
 {
+    @Serial
     private static final long serialVersionUID = 0;
 
     private static final String ELEMENT_DIVIDER = "/";
@@ -32,19 +35,15 @@ public final class NodePath
 
     public NodePath( final String path )
     {
-        if ( path.isEmpty() )
-        {
-            this.path = "";
-        }
-        else if ( path.equals( ELEMENT_DIVIDER ) )
+        Objects.requireNonNull( emptyToNull( path ), "path not given" );
+        if ( path.equals( ELEMENT_DIVIDER ) )
         {
             this.path = ELEMENT_DIVIDER;
         }
         else
         {
-            this.path = toElements( path ).stream().map( NodeName::toString )
-                .collect( Collectors.joining( ELEMENT_DIVIDER, isAbsolute( path ) ? ELEMENT_DIVIDER : "",
-                                              hasTrailing( path ) ? ELEMENT_DIVIDER : "" ) );
+            this.path =
+                toElements( path ).stream().map( NodeName::toString ).collect( Collectors.joining( ELEMENT_DIVIDER, ELEMENT_DIVIDER, "" ) );
         }
     }
 
@@ -70,36 +69,24 @@ public final class NodePath
 
     public NodePath getParentPath()
     {
-        if ( this.path.isEmpty() || this.path.equals( ELEMENT_DIVIDER ) )
+        if ( this.path.equals( ELEMENT_DIVIDER ) )
         {
             return this;
         }
 
-        final boolean hasTrailing = hasTrailing( this.path );
-        final int endIndex = hasTrailing ? this.path.length() - 1 : this.path.length();
-        final String stringNoTrailing = this.path.substring( 0, endIndex );
-
-        final int lastDivider = stringNoTrailing.lastIndexOf( ELEMENT_DIVIDER );
-
-        if ( lastDivider == 0 )
+        final int endIndex = this.path.lastIndexOf( ELEMENT_DIVIDER );
+        if ( endIndex == 0 )
         {
-            return NodePath.ROOT;
+            return ROOT;
         }
-        else if ( lastDivider == -1 )
-        {
-            return new NodePath( "", false );
-        }
-        else
-        {
-            return new NodePath( stringNoTrailing.substring( 0, hasTrailing ? lastDivider + 1 : lastDivider ), false );
-        }
+        return new NodePath( this.path.substring( 0, endIndex ), false );
     }
 
     public List<NodePath> getParentPaths()
     {
         List<NodePath> parentPaths = new ArrayList<>();
 
-        if ( isEmpty() )
+        if ( isRoot() )
         {
             return parentPaths;
         }
@@ -112,56 +99,20 @@ public final class NodePath
             parentPaths.add( parent );
             nodePath = parent;
         }
-        while ( !nodePath.isEmpty() );
+        while ( !nodePath.isRoot() );
 
         return parentPaths;
     }
 
-    public boolean isEmpty()
-    {
-        return this.path.isEmpty() || this.path.equals( ELEMENT_DIVIDER );
-    }
-
-    public boolean isAbsolute()
-    {
-        return isAbsolute( this.path );
-    }
-
     public NodeName getName()
     {
-        if ( isEmpty() )
-        {
-            return null;
-        }
-        else
-        {
-            final int stringIndex = isAbsolute( this.path ) ? 1 : 0;
-            final int endIndex = hasTrailing( this.path ) ? this.path.length() - 1 : this.path.length();
-            final String stringNoTrailing = this.path.substring( stringIndex, endIndex );
-            final int beginIndex = stringNoTrailing.lastIndexOf( ELEMENT_DIVIDER );
-            return NodeName.fromInternal( stringNoTrailing.substring( beginIndex == -1 ? 0 : beginIndex + 1 ) );
-        }
+        return NodeName.fromInternal( path.substring( this.path.lastIndexOf( ELEMENT_DIVIDER ) + 1 ) );
     }
 
     @Override
     public boolean equals( final Object o )
     {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null )
-        {
-            return false;
-        }
-
-        if ( !( o instanceof NodePath ) )
-        {
-            return false;
-        }
-
-        final NodePath path = (NodePath) o;
-        return this.path.equalsIgnoreCase( path.path );
+        return this == o || o instanceof final NodePath that && this.path.equalsIgnoreCase( that.path );
     }
 
     @Override
@@ -202,30 +153,14 @@ public final class NodePath
             .collect( Collectors.toCollection( ArrayList::new ) );
     }
 
-    private static boolean isAbsolute( final String path )
-    {
-        return path.startsWith( ELEMENT_DIVIDER );
-    }
-
-    private static boolean hasTrailing( final String path )
-    {
-        return !path.equals( ELEMENT_DIVIDER ) && path.endsWith( ELEMENT_DIVIDER );
-    }
-
     public static final class Builder
     {
-        private boolean absolute;
-
-        private boolean trailingDivider;
-
         private final ArrayList<NodeName> elementListBuilder;
 
         private Builder( final NodePath source )
         {
             Objects.requireNonNull( source, "source to build copy from not given" );
-            this.absolute = isAbsolute( source.path );
-            this.trailingDivider = hasTrailing( source.path );
-            this.elementListBuilder = source.isEmpty() ? new ArrayList<>() : toElements( source.path );
+            this.elementListBuilder = source.isRoot() ? new ArrayList<>() : toElements( source.path );
         }
 
         public Builder addElement( final String value )
@@ -246,11 +181,9 @@ public final class NodePath
 
         public NodePath build()
         {
-            return new NodePath( this.elementListBuilder.stream().map( NodeName::toString )
-                                     .collect( Collectors.joining( ELEMENT_DIVIDER, this.absolute ? ELEMENT_DIVIDER : "",
-                                                                   this.trailingDivider && !this.elementListBuilder.isEmpty()
-                                                                       ? ELEMENT_DIVIDER
-                                                                       : "" ) ), false );
+            return new NodePath( this.elementListBuilder.stream()
+                                     .map( NodeName::toString )
+                                     .collect( Collectors.joining( ELEMENT_DIVIDER, ELEMENT_DIVIDER, "" ) ), false );
         }
     }
 }
