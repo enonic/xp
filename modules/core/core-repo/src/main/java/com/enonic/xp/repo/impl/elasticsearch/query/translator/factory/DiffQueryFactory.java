@@ -66,7 +66,7 @@ public class DiffQueryFactory
         {
             final String queryPath = nodePath.toString().toLowerCase();
 
-            final BoolQueryBuilder pathQuery = QueryBuilders.boolQuery()
+            final QueryBuilder pathQuery = QueryBuilders.boolQuery()
                 .should( QueryBuilders.termQuery( BranchIndexPath.PATH.getPath(), queryPath ) )
                 .should( new WildcardQueryBuilder( BranchIndexPath.PATH.getPath(), queryPath + "/*" ) );
             result.filter( new HasChildQueryBuilder( StaticStorageType.BRANCH.getName(), pathQuery ) );
@@ -74,10 +74,9 @@ public class DiffQueryFactory
 
         if ( !this.excludes.isEmpty() )
         {
-            final BoolQueryBuilder pathQuery = QueryBuilders.boolQuery()
-                .should( QueryBuilders.termsQuery( BranchIndexPath.PATH.getPath(), this.excludes.stream()
+            final QueryBuilder pathQuery = QueryBuilders.termsQuery( BranchIndexPath.PATH.getPath(), this.excludes.stream()
                     .map( excludeEntry -> excludeEntry.toString().toLowerCase() )
-                    .toList() ) );
+                    .toList() );
             result.mustNot( new HasChildQueryBuilder( StaticStorageType.BRANCH.getName(), pathQuery ) );
         }
 
