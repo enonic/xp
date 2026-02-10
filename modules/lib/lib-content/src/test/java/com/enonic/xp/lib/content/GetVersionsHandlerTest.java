@@ -12,6 +12,7 @@ import com.enonic.xp.content.ContentVersionId;
 import com.enonic.xp.content.ContentVersions;
 import com.enonic.xp.content.GetContentVersionsParams;
 import com.enonic.xp.content.GetContentVersionsResult;
+import com.enonic.xp.security.PrincipalKey;
 
 import static org.mockito.Mockito.when;
 
@@ -26,6 +27,8 @@ class GetVersionsHandlerTest
             .contentId( ContentId.from( "contentId" ) )
             .path( ContentPath.from( "/my-content" ) )
             .timestamp( Instant.parse( "2024-01-01T00:00:00Z" ) )
+            .addAction( new ContentVersion.Action( "publish", null, PrincipalKey.from( "user:system:admin" ),
+                                                   Instant.parse( "2024-01-01T00:00:00Z" ) ) )
             .build();
 
         final ContentVersion version2 = ContentVersion.create()
@@ -36,7 +39,8 @@ class GetVersionsHandlerTest
             .build();
 
         final GetContentVersionsResult result = GetContentVersionsResult.create()
-            .totalHits( 2 )
+            .totalHits( 5 )
+            .cursor( "eyJ0cyI6MTcwNDA2NzIwMDAwMCwiaWQiOiJ2ZXJzaW9uMiJ9" )
             .contentVersions( ContentVersions.create().add( version1 ).add( version2 ).build() )
             .build();
 

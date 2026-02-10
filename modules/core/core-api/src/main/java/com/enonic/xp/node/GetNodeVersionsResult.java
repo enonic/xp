@@ -31,7 +31,7 @@ public final class GetNodeVersionsResult
     }
 
     /**
-     * Retrieves the collection node versions.
+     * Retrieves the collection of node versions.
      *
      * @return the {@link  NodeVersions} instance containing version details
      */
