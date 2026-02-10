@@ -26,11 +26,11 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
-import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.node.NodeVersionKey;
-import com.enonic.xp.node.NodeVersionMetadata;
+import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeBranchEntries;
@@ -79,9 +79,9 @@ public class NodeStorageServiceImpl
 
         final Instant timestamp = node.getTimestamp() == null ? Instant.now( CLOCK ) : node.getTimestamp();
         final NodeVersionId nodeVersionId = params.isNewVersion() ? new NodeVersionId() : node.getNodeVersionId();
-        final NodeVersionKey nodeVersionKey = nodeVersionService.store( NodeVersion.from( node ), context );
+        final NodeVersionKey nodeVersionKey = nodeVersionService.store( NodeStoreVersion.from( node ), context );
 
-        final NodeVersionMetadata nodeVersionMetadata = NodeVersionMetadata.create()
+        final NodeVersion nodeVersion = NodeVersion.create()
             .nodeId( node.id() )
             .nodeVersionId( nodeVersionId )
             .nodeVersionKey( nodeVersionKey )
@@ -94,11 +94,11 @@ public class NodeStorageServiceImpl
 
         final Node newNode = Node.create( node ).timestamp( timestamp ).nodeVersionId( nodeVersionId ).build();
 
-        this.versionService.store( nodeVersionMetadata, context );
-        this.branchService.store( NodeBranchEntry.fromNodeVersionMetadata( nodeVersionMetadata ), context );
+        this.versionService.store( nodeVersion, context );
+        this.branchService.store( NodeBranchEntry.fromNodeVersion( nodeVersion ), context );
         this.indexDataService.store( newNode, context );
 
-        return new NodeVersionData( newNode, nodeVersionMetadata );
+        return new NodeVersionData( newNode, nodeVersion );
     }
 
     @Override
@@ -113,11 +113,11 @@ public class NodeStorageServiceImpl
     {
         final NodeVersionKey nodeVersionKey = this.nodeVersionService.store( params.getNodeVersion(), context );
 
-        this.versionService.store( NodeVersionMetadata.create()
+        this.versionService.store( NodeVersion.create()
                                        .nodeId( params.getNodeId() )
                                        .nodeVersionId( params.getNodeVersionId() )
                                        .nodeVersionKey( nodeVersionKey )
-                                       .binaryBlobKeys( getBinaryBlobKeys( params.getNodeVersion().getAttachedBinaries() ) )
+                                       .binaryBlobKeys( getBinaryBlobKeys( params.getNodeVersion().attachedBinaries() ) )
                                        .nodePath( params.getNodePath() )
                                        .nodeCommitId( params.getNodeCommitId() )
                                        .timestamp( params.getTimestamp() )
@@ -164,9 +164,9 @@ public class NodeStorageServiceImpl
 
         for ( final NodeVersionId versionId : versionIds )
         {
-            final NodeVersionMetadata existingVersion = this.versionService.getVersion( versionId, context );
+            final NodeVersion existingVersion = this.versionService.getVersion( versionId, context );
 
-            final NodeVersionMetadata updatedVersion = NodeVersionMetadata.create()
+            final NodeVersion updatedVersion = NodeVersion.create()
                 .nodeVersionId( existingVersion.getNodeVersionId() )
                 .nodeVersionKey( existingVersion.getNodeVersionKey() )
                 .binaryBlobKeys( existingVersion.getBinaryBlobKeys() )
@@ -184,7 +184,7 @@ public class NodeStorageServiceImpl
     @Override
     public Attributes changeAttributes( final NodeVersionId versionId, final Attributes addAttributes, final Set<String> removeAttributes, final InternalContext context )
     {
-        final NodeVersionMetadata existingVersion = this.versionService.getVersion( versionId, context );
+        final NodeVersion existingVersion = this.versionService.getVersion( versionId, context );
 
         final Attributes attributes = existingVersion.getAttributes();
         final Attributes.Builder builder = Attributes.create();
@@ -196,7 +196,7 @@ public class NodeStorageServiceImpl
                                 .toList() );
         }
         final Attributes newAttrs = builder.addAll( addAttributes.entrySet() ).buildKeepingLast();
-        final NodeVersionMetadata updatedVersion = NodeVersionMetadata.create()
+        final NodeVersion updatedVersion = NodeVersion.create()
             .nodeVersionId( existingVersion.getNodeVersionId() )
             .nodeVersionKey( existingVersion.getNodeVersionKey() )
             .binaryBlobKeys( existingVersion.getBinaryBlobKeys() )
@@ -220,9 +220,9 @@ public class NodeStorageServiceImpl
             return null;
         }
 
-        final NodeVersion nodeVersion = nodeVersionService.get( nodeBranchEntry.getNodeVersionKey(), context );
+        final NodeStoreVersion nodeVersion = nodeVersionService.get( nodeBranchEntry.getNodeVersionKey(), context );
 
-        return canRead( nodeVersion.getPermissions(), context ) ? NodeFactory.create( nodeVersion, nodeBranchEntry ) : null;
+        return canRead( nodeVersion.permissions(), context ) ? NodeFactory.create( nodeVersion, nodeBranchEntry ) : null;
     }
 
     @Override
@@ -235,9 +235,9 @@ public class NodeStorageServiceImpl
             return null;
         }
 
-        final NodeVersion nodeVersion = nodeVersionService.get( nodeBranchEntry.getNodeVersionKey(), context );
+        final NodeStoreVersion nodeVersion = nodeVersionService.get( nodeBranchEntry.getNodeVersionKey(), context );
 
-        return canRead( nodeVersion.getPermissions(), context ) ? NodeFactory.create( nodeVersion, nodeBranchEntry ) : null;
+        return canRead( nodeVersion.permissions(), context ) ? NodeFactory.create( nodeVersion, nodeBranchEntry ) : null;
     }
 
     @Override
@@ -262,25 +262,25 @@ public class NodeStorageServiceImpl
     @Override
     public Node get( final NodeVersionId nodeVersionId, final InternalContext context )
     {
-        final NodeVersionMetadata nodeVersionMetadata = versionService.getVersion( nodeVersionId, context );
+        final NodeVersion nodeVersion = versionService.getVersion( nodeVersionId, context );
 
-        if ( nodeVersionMetadata == null )
+        if ( nodeVersion == null )
         {
             return null;
         }
 
-        final NodeVersion nodeVersion = nodeVersionService.get( nodeVersionMetadata.getNodeVersionKey(), context );
+        final NodeStoreVersion nodeStoreVersion = nodeVersionService.get( nodeVersion.getNodeVersionKey(), context );
 
-        if ( nodeVersion == null || !canRead( nodeVersion.getPermissions(), context ) )
+        if ( nodeStoreVersion == null || !canRead( nodeStoreVersion.permissions(), context ) )
         {
             return null;
         }
 
-        return NodeFactory.create( nodeVersion, nodeVersionMetadata );
+        return NodeFactory.create( nodeStoreVersion, nodeVersion );
     }
 
     @Override
-    public NodeVersion getNodeVersion( final NodeVersionKey nodeVersionKey, final InternalContext context )
+    public NodeStoreVersion getNodeVersion( final NodeVersionKey nodeVersionKey, final InternalContext context )
     {
         return this.nodeVersionService.get( nodeVersionKey, context );
     }
@@ -304,7 +304,7 @@ public class NodeStorageServiceImpl
     }
 
     @Override
-    public NodeVersionMetadata getVersion( final NodeVersionId nodeVersionId, final InternalContext context )
+    public NodeVersion getVersion( final NodeVersionId nodeVersionId, final InternalContext context )
     {
         return this.versionService.getVersion( nodeVersionId, context );
     }
@@ -345,7 +345,7 @@ public class NodeStorageServiceImpl
     {
         return nodeBranchEntries.map(
                 nodeBranchEntry -> Map.entry( nodeBranchEntry, nodeVersionService.get( nodeBranchEntry.getNodeVersionKey(), context ) ) )
-            .filter( entry -> canRead( entry.getValue().getPermissions(), context ) )
+            .filter( entry -> canRead( entry.getValue().permissions(), context ) )
             .map( entry -> NodeFactory.create( entry.getValue(), entry.getKey() ) )
             .collect( Nodes.collector() );
     }

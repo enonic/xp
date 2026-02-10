@@ -12,7 +12,7 @@ import com.enonic.xp.branch.Branches;
 import com.enonic.xp.dump.BranchLoadResult;
 import com.enonic.xp.dump.CommitsLoadResult;
 import com.enonic.xp.dump.VersionsLoadResult;
-import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryIds;
@@ -30,7 +30,7 @@ public interface DumpReader
 
     CommitsLoadResult loadCommits( RepositoryId repositoryId, LineProcessor<EntryLoadResult> processor );
 
-    NodeVersion get( RepositoryId repositoryId, NodeVersionKey nodeVersionKey );
+    NodeStoreVersion get( RepositoryId repositoryId, NodeVersionKey nodeVersionKey );
 
     ByteSource getBinary( RepositoryId repositoryId, BlobKey blobKey );
 

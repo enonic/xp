@@ -47,7 +47,7 @@ public interface NodeService
 
     NodeComparisons compare( NodeIds ids, Branch target );
 
-    NodeVersionQueryResult findVersions( GetNodeVersionsParams params );
+    GetNodeVersionsResult getVersions( GetNodeVersionsParams params );
 
     NodeVersionQueryResult findVersions( NodeVersionQuery nodeVersionQuery );
 
@@ -56,8 +56,6 @@ public interface NodeService
     GetActiveNodeVersionsResult getActiveVersions( GetActiveNodeVersionsParams params );
 
     SortNodeResult sort( SortNodeParams params );
-
-    NodeVersion getByNodeVersionKey( NodeVersionKey nodeVersionKey );
 
     ResolveSyncWorkResult resolveSyncWork( SyncWorkResolverParams params );
 
@@ -77,7 +75,7 @@ public interface NodeService
 
     NodeCommitEntry commit( NodeCommitEntry nodeCommitEntry, NodeIds nodeIds );
 
-    NodeCommitEntry getCommit( NodeCommitId nodeCommitId );
+    @Nullable NodeCommitEntry getCommit( NodeCommitId nodeCommitId );
 
     boolean nodeExists( NodeId nodeId );
 

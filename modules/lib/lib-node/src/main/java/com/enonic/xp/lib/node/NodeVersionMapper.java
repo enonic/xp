@@ -1,15 +1,15 @@
 package com.enonic.xp.lib.node;
 
-import com.enonic.xp.node.NodeVersionMetadata;
+import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 
 public final class NodeVersionMapper
     implements MapSerializable
 {
-    private final NodeVersionMetadata value;
+    private final NodeVersion value;
 
-    public NodeVersionMapper( final NodeVersionMetadata value )
+    public NodeVersionMapper( final NodeVersion value )
     {
         this.value = value;
     }

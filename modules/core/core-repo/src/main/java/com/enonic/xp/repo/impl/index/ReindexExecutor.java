@@ -9,7 +9,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.index.ReindexListener;
 import com.enonic.xp.index.ReindexResult;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.FieldExpr;
 import com.enonic.xp.query.expr.QueryExpr;
@@ -96,7 +96,7 @@ public class ReindexExecutor
             build();
         for ( final NodeBranchEntry nodeBranchEntry : nodeBranchEntries )
         {
-            final NodeVersion nodeVersion = this.nodeVersionService.get( nodeBranchEntry.getNodeVersionKey(), context );
+            final NodeStoreVersion nodeVersion = this.nodeVersionService.get( nodeBranchEntry.getNodeVersionKey(), context );
 
             final Node node = NodeFactory.create( nodeVersion, nodeBranchEntry );
 

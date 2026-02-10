@@ -50,6 +50,7 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.GetActiveNodeVersionsParams;
 import com.enonic.xp.node.GetActiveNodeVersionsResult;
 import com.enonic.xp.node.GetNodeVersionsParams;
+import com.enonic.xp.node.GetNodeVersionsResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeCommitId;
@@ -58,10 +59,10 @@ import com.enonic.xp.node.NodeCommitQueryResult;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionIds;
-import com.enonic.xp.node.NodeVersionMetadata;
+import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.PushNodeParams;
@@ -385,15 +386,15 @@ class DumpServiceImplTest
         final Node currentNode = updateNode( updatedNode );
         refresh();
 
-        final NodeVersionQueryResult versionsBeforeDump =
-            this.nodeService.findVersions( GetNodeVersionsParams.create().nodeId( node.id() ).build() );
+        final GetNodeVersionsResult versionsBeforeDump =
+            this.nodeService.getVersions( GetNodeVersionsParams.create().nodeId( node.id() ).build() );
 
         NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad() );
 
         refresh();
 
-        final NodeVersionQueryResult versionsAfterLoad =
-            this.nodeService.findVersions( GetNodeVersionsParams.create().nodeId( node.id() ).build() );
+        final GetNodeVersionsResult versionsAfterLoad =
+            this.nodeService.getVersions( GetNodeVersionsParams.create().nodeId( node.id() ).build() );
         assertEquals( 3, versionsAfterLoad.getTotalHits() );
 
         final Node currentStoredNode = this.nodeService.getById( node.id() );
@@ -409,8 +410,8 @@ class DumpServiceImplTest
         this.nodeService.push( PushNodeParams.create().ids( ids ).target( WS_OTHER ).build() );
         refresh();
 
-        final NodeVersionQueryResult versionsBeforeDump =
-            this.nodeService.findVersions( GetNodeVersionsParams.create().nodeId( node.id() ).build() );
+        final GetNodeVersionsResult versionsBeforeDump =
+            this.nodeService.getVersions( GetNodeVersionsParams.create().nodeId( node.id() ).build() );
 
         assertEquals( 1, versionsBeforeDump.getTotalHits() );
 
@@ -418,10 +419,10 @@ class DumpServiceImplTest
 
         refresh();
 
-        final NodeVersionQueryResult versionsAfterLoad =
-            this.nodeService.findVersions( GetNodeVersionsParams.create().nodeId( node.id() ).build() );
+        final GetNodeVersionsResult versionsAfterLoad =
+            this.nodeService.getVersions( GetNodeVersionsParams.create().nodeId( node.id() ).build() );
 
-        versionsAfterLoad.getNodeVersionMetadatas()
+        versionsAfterLoad.getNodeVersions()
             .forEach( ( e ) -> System.out.println( e.getNodeVersionId() + " - " + e.getTimestamp() ) );
 
         assertEquals( 1, versionsAfterLoad.getTotalHits() );
@@ -438,14 +439,14 @@ class DumpServiceImplTest
         updateNode( node );
         refresh();
 
-        final NodeVersionQueryResult versionsBeforeDump =
-            this.nodeService.findVersions( GetNodeVersionsParams.create().nodeId( node.id() ).build() );
+        final GetNodeVersionsResult versionsBeforeDump =
+            this.nodeService.getVersions( GetNodeVersionsParams.create().nodeId( node.id() ).build() );
 
         NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad() );
         refresh();
 
-        final NodeVersionQueryResult versionsAfterLoad =
-            this.nodeService.findVersions( GetNodeVersionsParams.create().nodeId( node.id() ).build() );
+        final GetNodeVersionsResult versionsAfterLoad =
+            this.nodeService.getVersions( GetNodeVersionsParams.create().nodeId( node.id() ).build() );
 
         assertEquals( versionsBeforeDump.getTotalHits(), versionsAfterLoad.getTotalHits() );
     }
@@ -468,7 +469,7 @@ class DumpServiceImplTest
         final Node defaultBranchNode = ctxDefault().callWith( () -> this.nodeService.getById( node.id() ) );
         final Node otherBranchNode = ctxOther().callWith( () -> this.nodeService.getById( node.id() ) );
 
-        final Map<Branch, NodeVersionMetadata> activeVersionsMap = activeVersions.getNodeVersions();
+        final Map<Branch, NodeVersion> activeVersionsMap = activeVersions.getNodeVersions();
 
         assertEquals( 2, activeVersionsMap.size() );
         assertEquals( defaultBranchNode.getNodeVersionId(), activeVersionsMap.get( WS_DEFAULT ).getNodeVersionId() );
@@ -490,14 +491,14 @@ class DumpServiceImplTest
         final GetActiveNodeVersionsResult activeVersions = this.nodeService.getActiveVersions(
             GetActiveNodeVersionsParams.create().branches( Branches.from( WS_DEFAULT, WS_OTHER ) ).nodeId( node.id() ).build() );
 
-        final Map<Branch, NodeVersionMetadata> activeVersionsMap = activeVersions.getNodeVersions();
+        final Map<Branch, NodeVersion> activeVersionsMap = activeVersions.getNodeVersions();
 
-        final NodeVersionQueryResult versionsAfterLoad =
-            this.nodeService.findVersions( GetNodeVersionsParams.create().nodeId( node.id() ).build() );
+        final GetNodeVersionsResult versionsAfterLoad =
+            this.nodeService.getVersions( GetNodeVersionsParams.create().nodeId( node.id() ).build() );
 
         activeVersionsMap.values()
             .forEach(
-                key -> assertTrue( versionsAfterLoad.getNodeVersionMetadatas().getAllVersionIds().contains( key.getNodeVersionId() ) ) );
+                key -> assertTrue( versionsAfterLoad.getNodeVersions().getAllVersionIds().contains( key.getNodeVersionId() ) ) );
     }
 
     @Test
@@ -512,25 +513,25 @@ class DumpServiceImplTest
         updateNode( node );
         refresh();
 
-        final NodeVersionQueryResult versionsBeforeLoad =
-            this.nodeService.findVersions( GetNodeVersionsParams.create().nodeId( node.id() ).build() );
+        final GetNodeVersionsResult versionsBeforeLoad =
+            this.nodeService.getVersions( GetNodeVersionsParams.create().nodeId( node.id() ).build() );
 
         NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad() );
         refresh();
 
-        final NodeVersionQueryResult versionsAfterLoad =
-            this.nodeService.findVersions( GetNodeVersionsParams.create().nodeId( node.id() ).build() );
+        final GetNodeVersionsResult versionsAfterLoad =
+            this.nodeService.getVersions( GetNodeVersionsParams.create().nodeId( node.id() ).build() );
 
-        final NodeVersionIds versionIdsBeforeLoad = versionsBeforeLoad.getNodeVersionMetadatas().getAllVersionIds();
-        final NodeVersionIds versionIdsAfterLoad = versionsAfterLoad.getNodeVersionMetadatas().getAllVersionIds();
+        final NodeVersionIds versionIdsBeforeLoad = versionsBeforeLoad.getNodeVersions().getAllVersionIds();
+        final NodeVersionIds versionIdsAfterLoad = versionsAfterLoad.getNodeVersions().getAllVersionIds();
 
         assertEquals( versionIdsBeforeLoad, versionIdsAfterLoad );
     }
 
-    private TreeSet<Instant> getOrderedTimestamps( final NodeVersionQueryResult result )
+    private TreeSet<Instant> getOrderedTimestamps( final GetNodeVersionsResult result )
     {
         TreeSet<Instant> timestamps = new TreeSet<>();
-        result.getNodeVersionMetadatas().forEach( version -> timestamps.add( version.getTimestamp() ) );
+        result.getNodeVersions().forEach( version -> timestamps.add( version.getTimestamp() ) );
         return timestamps;
     }
 
@@ -567,10 +568,10 @@ class DumpServiceImplTest
         NodeHelper.runAsAdmin(
             () -> dumpDeleteAndLoad( SystemDumpParams.create().dumpName( "myTestDump" ).maxVersions( 5 ).build() ) );
 
-        final NodeVersionQueryResult versionsAfterLoad =
-            this.nodeService.findVersions( GetNodeVersionsParams.create().nodeId( node.id() ).size( -1 ).build() );
+        final GetNodeVersionsResult versionsAfterLoad =
+            this.nodeService.getVersions( GetNodeVersionsParams.create().nodeId( node.id() ).size( -1 ).build() );
 
-        assertEquals( 6, versionsAfterLoad.getNodeVersionMetadatas().getSize() );
+        assertEquals( 6, versionsAfterLoad.getNodeVersions().getSize() );
     }
 
     @Test
@@ -636,8 +637,8 @@ class DumpServiceImplTest
 
         NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad() );
 
-        final NodeVersionQueryResult versions = this.nodeService.findVersions( GetNodeVersionsParams.create().nodeId( node.id() ).build() );
-        assertEquals( 2, versions.getNodeVersionMetadatas().getSize() );
+        final GetNodeVersionsResult versions = this.nodeService.getVersions( GetNodeVersionsParams.create().nodeId( node.id() ).build() );
+        assertEquals( 2, versions.getNodeVersions().getSize() );
 
         verifyBinaries( node, updatedNode, versions );
     }
@@ -691,8 +692,8 @@ class DumpServiceImplTest
 
         refresh();
 
-        final NodeVersionQueryResult versionsAfterLoad =
-            this.nodeService.findVersions( GetNodeVersionsParams.create().nodeId( node.id() ).build() );
+        final GetNodeVersionsResult versionsAfterLoad =
+            this.nodeService.getVersions( GetNodeVersionsParams.create().nodeId( node.id() ).build() );
         assertEquals( 1, versionsAfterLoad.getTotalHits() );
 
         final Node currentStoredNode = this.nodeService.getById( node.id() );
@@ -708,12 +709,12 @@ class DumpServiceImplTest
         refresh();
 
         // Get the version IDs
-        final NodeVersionQueryResult versions = this.nodeService.findVersions(
+        final GetNodeVersionsResult versions = this.nodeService.getVersions(
             GetNodeVersionsParams.create().nodeId( node.id() ).build() );
         assertEquals( 2, versions.getTotalHits() );
 
         // Apply attributes to the first version
-        final NodeVersionId firstVersionId = versions.getNodeVersionMetadatas().get( 0 ).getNodeVersionId();
+        final NodeVersionId firstVersionId = versions.getNodeVersions().get( 0 ).getNodeVersionId();
         final Attributes testAttributes = Attributes.create()
             .attribute( "testKey1", GenericValue.stringValue( "testValue1" ) )
             .attribute( "testKey2", GenericValue.numberValue( 42 ) )
@@ -728,16 +729,16 @@ class DumpServiceImplTest
         refresh();
 
         // Verify attributes were applied
-        final NodeVersionQueryResult versionsWithAttrs = this.nodeService.findVersions(
+        final GetNodeVersionsResult versionsWithAttrs = this.nodeService.getVersions(
             GetNodeVersionsParams.create().nodeId( node.id() ).build() );
-        final NodeVersionMetadata versionMetadata = versionsWithAttrs.getNodeVersionMetadatas().stream()
+        final NodeVersion nodeVersion = versionsWithAttrs.getNodeVersions().stream()
             .filter( v -> v.getNodeVersionId().equals( firstVersionId ) )
             .findFirst()
             .orElseThrow();
         
-        assertEquals( "testValue1", versionMetadata.getAttributes().get( "testKey1" ).asString() );
-        assertEquals( 42, versionMetadata.getAttributes().get( "testKey2" ).asInteger() );
-        assertEquals( true, versionMetadata.getAttributes().get( "testKey3" ).asBoolean() );
+        assertEquals( "testValue1", nodeVersion.getAttributes().get( "testKey1" ).asString() );
+        assertEquals( 42, nodeVersion.getAttributes().get( "testKey2" ).asInteger() );
+        assertTrue( nodeVersion.getAttributes().get( "testKey3" ).asBoolean() );
 
         // Dump and load with versions included
         NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true ) );
@@ -745,20 +746,20 @@ class DumpServiceImplTest
         refresh();
 
         // Verify attributes are preserved after dump/restore
-        final NodeVersionQueryResult versionsAfterLoad = this.nodeService.findVersions(
+        final GetNodeVersionsResult versionsAfterLoad = this.nodeService.getVersions(
             GetNodeVersionsParams.create().nodeId( node.id() ).build() );
         assertEquals( 2, versionsAfterLoad.getTotalHits() );
 
-        final NodeVersionMetadata restoredVersionMetadata = versionsAfterLoad.getNodeVersionMetadatas().stream()
+        final NodeVersion restoredVersion = versionsAfterLoad.getNodeVersions().stream()
             .filter( v -> v.getNodeVersionId().equals( firstVersionId ) )
             .findFirst()
             .orElseThrow();
 
         // Verify all attributes were preserved
-        assertThat( restoredVersionMetadata.getAttributes() ).isNotNull();
-        assertEquals( "testValue1", restoredVersionMetadata.getAttributes().get( "testKey1" ).asString() );
-        assertEquals( 42, restoredVersionMetadata.getAttributes().get( "testKey2" ).asInteger() );
-        assertEquals( true, restoredVersionMetadata.getAttributes().get( "testKey3" ).asBoolean() );
+        assertThat( restoredVersion.getAttributes() ).isNotNull();
+        assertEquals( "testValue1", restoredVersion.getAttributes().get( "testKey1" ).asString() );
+        assertEquals( 42, restoredVersion.getAttributes().get( "testKey2" ).asInteger() );
+        assertEquals( true, restoredVersion.getAttributes().get( "testKey3" ).asBoolean() );
     }
 
     @Test
@@ -847,9 +848,9 @@ class DumpServiceImplTest
             .branch( Branch.from( "master" ) )
             .build()
             .callWith( () -> nodeService.getActiveVersions( activeNodeVersionsParams ) );
-        final NodeVersionMetadata draftNodeVersion = activeNodeVersionsResult.getNodeVersions().get( ContentConstants.BRANCH_DRAFT );
+        final NodeVersion draftNodeVersion = activeNodeVersionsResult.getNodeVersions().get( ContentConstants.BRANCH_DRAFT );
         assertNull( draftNodeVersion.getNodeCommitId() );
-        final NodeVersionMetadata masterNodeVersion = activeNodeVersionsResult.getNodeVersions().get( ContentConstants.BRANCH_MASTER );
+        final NodeVersion masterNodeVersion = activeNodeVersionsResult.getNodeVersions().get( ContentConstants.BRANCH_MASTER );
         assertEquals( nodeCommitId, masterNodeVersion.getNodeCommitId() );
 
         final NodeVersionQuery nodeVersionQuery = NodeVersionQuery.create().nodeId( nodeId ).build();
@@ -978,26 +979,27 @@ class DumpServiceImplTest
         return tmpDumpFile;
     }
 
-    private void verifyBinaries( final Node node, final Node updatedNode, final NodeVersionQueryResult versions )
+    private void verifyBinaries( final Node node, final Node updatedNode, final GetNodeVersionsResult versions )
     {
-        versions.getNodeVersionMetadatas().forEach( ( version ) -> verifyVersionBinaries( node, updatedNode, version ) );
+        versions.getNodeVersions().forEach( ( version ) -> verifyVersionBinaries( node, updatedNode, version ) );
     }
 
-    private void verifyVersionBinaries( final Node node, final Node updatedNode, final NodeVersionMetadata version )
+    private void verifyVersionBinaries( final Node node, final Node updatedNode, final NodeVersion version )
     {
-        final NodeVersion storedNode = nodeService.getByNodeVersionKey( version.getNodeVersionKey() );
+        final NodeStoreVersion
+            storedNode = this.storageService.getNodeVersion( version.getNodeVersionKey(), InternalContext.from( ContextAccessor.current() ) );
 
-        storedNode.getAttachedBinaries()
+        storedNode.attachedBinaries()
             .forEach( entry -> assertNotNull(
                 this.nodeService.getBinary( version.getNodeId(), version.getNodeVersionId(), entry.getBinaryReference() ) ) );
 
         if ( version.getNodeVersionId().equals( node.getNodeVersionId() ) )
         {
-            assertEquals( node.getAttachedBinaries(), storedNode.getAttachedBinaries() );
+            assertEquals( node.getAttachedBinaries(), storedNode.attachedBinaries() );
         }
         else if ( version.getNodeVersionId().equals( updatedNode.getNodeVersionId() ) )
         {
-            assertEquals( updatedNode.getAttachedBinaries(), storedNode.getAttachedBinaries() );
+            assertEquals( updatedNode.getAttachedBinaries(), storedNode.attachedBinaries() );
         }
     }
 

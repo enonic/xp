@@ -9,22 +9,22 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.core.internal.json.ObjectMapperHelper;
 import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.index.PatternIndexConfigDocument;
-import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.security.acl.AccessControlList;
 
 public final class NodeVersionJsonSerializer
 {
     private static final ObjectMapper MAPPER = ObjectMapperHelper.create();
 
-    public static byte[] toNodeVersionBytes( final NodeVersion nodeVersion ) throws IOException
+    public static byte[] toNodeVersionBytes( final NodeStoreVersion nodeVersion ) throws IOException
     {
         return writeValueAsBytes( NodeVersionDataJson.toJson( nodeVersion ) );
     }
 
-    public static byte[] toIndexConfigDocumentBytes( final NodeVersion nodeVersion ) throws IOException
+    public static byte[] toIndexConfigDocumentBytes( final NodeStoreVersion nodeVersion ) throws IOException
     {
         final IndexConfigDocumentJson entityIndexConfig;
-        final IndexConfigDocument indexConfig = nodeVersion.getIndexConfigDocument();
+        final IndexConfigDocument indexConfig = nodeVersion.indexConfigDocument();
         if ( indexConfig instanceof PatternIndexConfigDocument )
         {
             entityIndexConfig = IndexConfigDocumentJson.toJson( (PatternIndexConfigDocument) indexConfig );
@@ -36,27 +36,27 @@ public final class NodeVersionJsonSerializer
         return writeValueAsBytes( entityIndexConfig );
     }
 
-    public static byte[] toAccessControlBytes( final NodeVersion nodeVersion ) throws IOException
+    public static byte[] toAccessControlBytes( final NodeStoreVersion nodeVersion ) throws IOException
     {
         return writeValueAsBytes( AccessControlJson.toJson( nodeVersion ) );
     }
 
-    public static NodeVersion toNodeVersion( final ByteSource data, final ByteSource indexConfigDocumentData, ByteSource accessControlData )
+    public static NodeStoreVersion toNodeVersion( final ByteSource data, final ByteSource indexConfigDocumentData, ByteSource accessControlData )
         throws IOException
     {
-        final NodeVersion nodeVersion = toNodeVersionData( data );
+        final NodeStoreVersion nodeVersion = toNodeVersionData( data );
 
         final PatternIndexConfigDocument indexConfigDocument = toIndexConfigDocument( indexConfigDocumentData );
 
         final AccessControlList accessControl = toNodeVersionAccessControl( accessControlData );
 
-        return NodeVersion.create( nodeVersion )
+        return NodeStoreVersion.create( nodeVersion )
             .indexConfigDocument( indexConfigDocument )
             .permissions( accessControl )
             .build();
     }
 
-    public static NodeVersion toNodeVersionData( final ByteSource data )
+    public static NodeStoreVersion toNodeVersionData( final ByteSource data )
         throws IOException
     {
         return NodeVersionDataJson.fromJson( readValue( data, NodeVersionDataJson.class ) );

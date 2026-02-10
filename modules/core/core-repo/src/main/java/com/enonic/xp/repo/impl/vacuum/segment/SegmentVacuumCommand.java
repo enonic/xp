@@ -116,7 +116,6 @@ public class SegmentVacuumCommand
                                      .from( ValueFactory.newDateTime( since ) )
                                      .build() )
                 .size( 0 )
-                .addOrderBy( FieldOrderExpr.create( VersionIndexPath.TIMESTAMP, OrderExpr.Direction.DESC ) )
                 .build();
             final NodeVersionQueryResult result = systemContext.callWith( () -> nodeService.findVersions( findRecentVersionsQuery ) );
 

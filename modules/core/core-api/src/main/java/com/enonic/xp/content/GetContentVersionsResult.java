@@ -1,18 +1,27 @@
 package com.enonic.xp.content;
 
+import java.util.Objects;
+
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public final class FindContentVersionsResult
+@NullMarked
+public final class GetContentVersionsResult
 {
     private final ContentVersions contentVersions;
 
     private final long totalHits;
 
-    private FindContentVersionsResult( Builder builder )
+    private final @Nullable String cursor;
+
+    private GetContentVersionsResult( Builder builder )
     {
-        contentVersions = builder.contentVersions;
+        contentVersions = Objects.requireNonNull( builder.contentVersions );
         totalHits = builder.totalHits;
+        cursor = builder.cursor;
     }
 
     public static Builder create()
@@ -30,11 +39,20 @@ public final class FindContentVersionsResult
         return totalHits;
     }
 
+    public @Nullable String getCursor()
+    {
+        return cursor;
+    }
+
     public static final class Builder
     {
+        @Nullable
         private ContentVersions contentVersions;
 
         private long totalHits;
+
+        @Nullable
+        private String cursor;
 
         private Builder()
         {
@@ -52,9 +70,15 @@ public final class FindContentVersionsResult
             return this;
         }
 
-        public FindContentVersionsResult build()
+        public Builder cursor( final @Nullable String cursor )
         {
-            return new FindContentVersionsResult( this );
+            this.cursor = cursor;
+            return this;
+        }
+
+        public GetContentVersionsResult build()
+        {
+            return new GetContentVersionsResult( this );
         }
     }
 }

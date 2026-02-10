@@ -38,6 +38,7 @@ import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.GetActiveNodeVersionsParams;
 import com.enonic.xp.node.GetActiveNodeVersionsResult;
 import com.enonic.xp.node.GetNodeVersionsParams;
+import com.enonic.xp.node.GetNodeVersionsResult;
 import com.enonic.xp.node.ImportNodeCommitParams;
 import com.enonic.xp.node.ImportNodeParams;
 import com.enonic.xp.node.ImportNodeResult;
@@ -61,10 +62,8 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionIds;
-import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.Nodes;
@@ -79,8 +78,6 @@ import com.enonic.xp.node.SortNodeParams;
 import com.enonic.xp.node.SortNodeResult;
 import com.enonic.xp.node.SyncWorkResolverParams;
 import com.enonic.xp.node.UpdateNodeParams;
-import com.enonic.xp.query.expr.FieldOrderExpr;
-import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeBranchEntries;
 import com.enonic.xp.repo.impl.NodeBranchEntry;
@@ -90,7 +87,6 @@ import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
-import com.enonic.xp.repo.impl.version.VersionIndexPath;
 import com.enonic.xp.repository.BranchNotFoundException;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
@@ -558,25 +554,16 @@ public class NodeServiceImpl
     }
 
     @Override
-    public NodeVersionQueryResult findVersions( final GetNodeVersionsParams params )
+    public GetNodeVersionsResult getVersions( final GetNodeVersionsParams params )
     {
         verifyContext();
-
-        final NodeVersionQuery query = NodeVersionQuery.create()
-            .size( params.getSize() )
-            .from( params.getFrom() )
-            .nodeId( params.getNodeId() )
-            .addOrderBy( FieldOrderExpr.create( VersionIndexPath.TIMESTAMP, OrderExpr.Direction.DESC ) )
-            .build();
-
-        return FindNodeVersionsCommand.create().query( query ).searchService( this.nodeSearchService ).build().execute();
+        return GetNodeVersionsCommand.create().params( params ).searchService( this.nodeSearchService ).build().execute();
     }
 
     @Override
     public NodeVersionQueryResult findVersions( final NodeVersionQuery query )
     {
         verifyContext();
-
         return FindNodeVersionsCommand.create().query( query ).searchService( this.nodeSearchService ).build().execute();
     }
 
@@ -584,7 +571,6 @@ public class NodeServiceImpl
     public NodeCommitQueryResult findCommits( final NodeCommitQuery query )
     {
         verifyContext();
-
         return FindNodeCommitsCommand.create().query( query ).searchService( this.nodeSearchService ).build().execute();
     }
 
@@ -600,13 +586,6 @@ public class NodeServiceImpl
             .searchService( this.nodeSearchService )
             .build()
             .execute();
-    }
-
-    @Override
-    public NodeVersion getByNodeVersionKey( final NodeVersionKey nodeVersionKey )
-    {
-        verifyContext();
-        return this.nodeStorageService.getNodeVersion( nodeVersionKey, InternalContext.from( ContextAccessor.current() ) );
     }
 
     @Override
@@ -852,12 +831,8 @@ public class NodeServiceImpl
         verifyRepositoryExists();
 
         LoadNodeVersionCommand.create()
-            .nodeId( params.getNodeId() )
-            .nodePath( params.getNodePath() )
-            .nodeVersion( params.getNodeVersion() )
-            .nodeVersionId( params.getNodeVersionId() )
+            .node( params.getNode() )
             .nodeCommitId( params.getNodeCommitId() )
-            .timestamp( params.getTimestamp() )
             .attributes( params.getAttributes() )
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )

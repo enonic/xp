@@ -1,11 +1,11 @@
 package com.enonic.xp.lib.node;
 
 @SuppressWarnings("unused")
-public class FindVersionsHandlerParams
+public class GetNodeVersionsHandlerParams
 {
     private String key;
 
-    private Integer start;
+    private String cursor;
 
     private Integer count;
 
@@ -19,14 +19,14 @@ public class FindVersionsHandlerParams
         this.key = key;
     }
 
-    public Integer getStart()
+    public String getCursor()
     {
-        return start;
+        return cursor;
     }
 
-    public void setStart( final Integer start )
+    public void setCursor( final String cursor )
     {
-        this.start = start;
+        this.cursor = cursor;
     }
 
     public Integer getCount()

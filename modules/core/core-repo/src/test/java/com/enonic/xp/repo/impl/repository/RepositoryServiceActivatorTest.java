@@ -12,7 +12,7 @@ import org.osgi.framework.ServiceRegistration;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeVersionMetadata;
+import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
@@ -61,7 +61,7 @@ class RepositoryServiceActivatorTest
 
         final Node mockNode = Node.create().id( NodeId.from( "1" ) ).parentPath( NodePath.ROOT ).build();
         when( nodeStorageService.store( any(), any() ) ).thenReturn(
-            new NodeVersionData( mockNode, mock( NodeVersionMetadata.class ) ) );
+            new NodeVersionData( mockNode, mock( NodeVersion.class ) ) );
         when( repositoryEntryService.findRepositoryEntryIds() ).thenReturn( RepositoryIds.create().build() );
     }
 

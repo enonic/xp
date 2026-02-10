@@ -141,12 +141,12 @@ public class NodeHandler
     }
 
     @SuppressWarnings("unused")
-    public Object findVersions( final FindVersionsHandlerParams params )
+    public Object getVersions( final GetNodeVersionsHandlerParams params )
     {
-        return execute( FindVersionsHandler.create()
+        return execute( GetNodeVersionsHandler.create()
                             .nodeService( this.nodeService )
                             .key( NodeKey.from( params.getKey() ) )
-                            .from( params.getStart() )
+                            .cursor( params.getCursor() )
                             .size( params.getCount() )
                             .build() );
     }

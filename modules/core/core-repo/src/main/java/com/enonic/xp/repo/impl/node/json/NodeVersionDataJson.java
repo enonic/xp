@@ -13,7 +13,7 @@ import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeType;
-import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.repo.impl.NodeStoreVersion;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public final class NodeVersionDataJson
@@ -41,9 +41,9 @@ public final class NodeVersionDataJson
         return data;
     }
 
-    public static NodeVersion fromJson( final NodeVersionDataJson json )
+    public static NodeStoreVersion fromJson( final NodeVersionDataJson json )
     {
-        return NodeVersion.create()
+        return NodeStoreVersion.create()
             .id( NodeId.from( json.id ) )
             .data( PropertyTreeJson.fromJson( json.data ) )
             .childOrder( ChildOrder.from( json.childOrder ) )
@@ -53,15 +53,15 @@ public final class NodeVersionDataJson
             .build();
     }
 
-    public static NodeVersionDataJson toJson( final NodeVersion nodeVersion )
+    public static NodeVersionDataJson toJson( final NodeStoreVersion nodeVersion )
     {
         final NodeVersionDataJson json = new NodeVersionDataJson();
-        json.id = nodeVersion.getId().toString();
-        json.data = PropertyTreeJson.toJson( nodeVersion.getData() );
-        json.childOrder = nodeVersion.getChildOrder().toString();
-        json.manualOrderValue = nodeVersion.getManualOrderValue();
-        json.nodeType = nodeVersion.getNodeType().getName();
-        json.attachedBinaries = toNodeAttachedBinaryJsonList( nodeVersion.getAttachedBinaries() );
+        json.id = nodeVersion.id().toString();
+        json.data = PropertyTreeJson.toJson( nodeVersion.data() );
+        json.childOrder = nodeVersion.childOrder().toString();
+        json.manualOrderValue = nodeVersion.manualOrderValue();
+        json.nodeType = nodeVersion.nodeType().getName();
+        json.attachedBinaries = toNodeAttachedBinaryJsonList( nodeVersion.attachedBinaries() );
         return json;
     }
 

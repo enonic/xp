@@ -9,7 +9,8 @@ import org.slf4j.LoggerFactory;
 import com.google.common.io.LineProcessor;
 
 import com.enonic.xp.node.ImportNodeVersionParams;
-import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.repo.impl.NodeStoreVersion;
+import com.enonic.xp.repo.impl.branch.storage.NodeFactory;
 import com.enonic.xp.repo.impl.dump.RepoLoadException;
 import com.enonic.xp.repo.impl.dump.model.VersionMeta;
 import com.enonic.xp.repo.impl.dump.model.VersionsDumpEntry;
@@ -48,7 +49,7 @@ public class VersionEntryProcessor
     {
         for ( final VersionMeta version : versions )
         {
-            final NodeVersion nodeVersion = getVersion( version );
+            final NodeStoreVersion nodeVersion = getVersion( version );
 
             if ( nodeVersion == null )
             {
@@ -58,15 +59,16 @@ public class VersionEntryProcessor
 
             try
             {
-                this.nodeService.importNodeVersion( ImportNodeVersionParams.create().
-                    nodeId( versionsDumpEntry.getNodeId() ).
-                    timestamp( version.timestamp() ).
-                    nodePath( version.nodePath() ).
-                    nodeVersion( nodeVersion ).
-                    nodeVersionId( version.version() ).
-                    nodeCommitId( version.nodeCommitId() ).
-                    attributes( version.attributes() ).
-                    build() );
+                this.nodeService.importNodeVersion( ImportNodeVersionParams.create()
+                                                        .node( NodeFactory.create( nodeVersion )
+                                                                   .id( versionsDumpEntry.getNodeId() )
+                                                                   .timestamp( version.timestamp() )
+                                                                   .parentPath( version.nodePath().getParentPath() )
+                                                                   .name( version.nodePath().getName() )
+                                                                   .nodeVersionId( version.version() ).build() )
+                                                        .nodeCommitId( version.nodeCommitId() )
+                                                        .attributes( version.attributes() )
+                                                        .build() );
 
                 addBinary( nodeVersion, result );
                 result.successful();
@@ -82,7 +84,7 @@ public class VersionEntryProcessor
         }
     }
 
-    private NodeVersion getVersion( final VersionMeta meta )
+    private NodeStoreVersion getVersion( final VersionMeta meta )
     {
         try
         {

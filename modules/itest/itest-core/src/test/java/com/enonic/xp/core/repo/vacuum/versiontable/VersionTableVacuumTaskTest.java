@@ -13,13 +13,13 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.AbstractNodeTest;
+import com.enonic.xp.node.GetNodeVersionsParams;
+import com.enonic.xp.node.GetNodeVersionsResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionId;
-import com.enonic.xp.node.NodeVersionMetadata;
-import com.enonic.xp.node.NodeVersionQuery;
-import com.enonic.xp.node.NodeVersionQueryResult;
+import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.node.ApplyVersionAttributesParams;
 import com.enonic.xp.node.Attributes;
@@ -222,10 +222,7 @@ class VersionTableVacuumTaskTest
 
     private void assertVersions( final NodeId nodeId, final int versions )
     {
-        final NodeVersionQueryResult result = this.nodeService.findVersions( NodeVersionQuery.create().
-            nodeId( nodeId ).
-            size( 0 ).
-            build() );
+        final GetNodeVersionsResult result = this.nodeService.getVersions( GetNodeVersionsParams.create().nodeId( nodeId ).size( 0 ).build() );
 
         assertEquals( versions, result.getTotalHits(), "Wrong number of versions found" );
     }
@@ -250,11 +247,8 @@ class VersionTableVacuumTaskTest
         refresh();
         
         // Get the first version ID
-        final NodeVersionQueryResult versionsResult = this.nodeService.findVersions( NodeVersionQuery.create()
-            .nodeId( node1.id() )
-            .size( 1 )
-            .build() );
-        final NodeVersionId firstVersionId = versionsResult.getNodeVersionMetadatas().first().getNodeVersionId();
+        final GetNodeVersionsResult versionsResult = this.nodeService.getVersions( GetNodeVersionsParams.create().nodeId( node1.id() ).size( 1 ).build() );
+        final NodeVersionId firstVersionId = versionsResult.getNodeVersions().first().getNodeVersionId();
         
         // Mark the first version to prevent vacuum
         NodeHelper.runAsAdmin( () -> this.nodeService.applyVersionAttributes( ApplyVersionAttributesParams.create()
@@ -287,10 +281,7 @@ class VersionTableVacuumTaskTest
         assertVersions( node1.id(), 2 );
 
         // Verify it's the vacuum.skip version remains - event after it is not use in any branch
-        final NodeVersionQueryResult remainingVersions = this.nodeService.findVersions( NodeVersionQuery.create()
-            .nodeId( node1.id() )
-            .size( -1 )
-            .build() );
-        assertThat( remainingVersions.getNodeVersionMetadatas() ).map( NodeVersionMetadata::getNodeVersionId ).contains( firstVersionId );
+        final GetNodeVersionsResult remainingVersions = this.nodeService.getVersions( GetNodeVersionsParams.create().nodeId( node1.id() ).size( -1 ).build() );
+        assertThat( remainingVersions.getNodeVersions() ).map( NodeVersion::getNodeVersionId ).contains( firstVersionId );
     }
 }

@@ -52,8 +52,8 @@ import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.content.FindContentIdsByParentResult;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.content.FindContentPathsByQueryResult;
-import com.enonic.xp.content.FindContentVersionsParams;
-import com.enonic.xp.content.FindContentVersionsResult;
+import com.enonic.xp.content.GetContentVersionsParams;
+import com.enonic.xp.content.GetContentVersionsResult;
 import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.content.GetPublishStatusResult;
 import com.enonic.xp.content.GetPublishStatusesParams;
@@ -706,18 +706,16 @@ public class ContentServiceImpl
     }
 
     @Override
-    public FindContentVersionsResult getVersions( final FindContentVersionsParams params )
+    public GetContentVersionsResult getVersions( final GetContentVersionsParams params )
     {
-        requireAnyRole();
+        requireAnyProjectRole();
         verifyDraftBranch();
 
-        return FindContentVersionsCommand.create()
+        return GetContentVersionsCommand.create()
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
             .eventPublisher( this.eventPublisher )
-            .contentId( params.getContentId() )
-            .from( params.getFrom() )
-            .size( params.getSize() )
+            .params( params )
             .build()
             .execute();
     }
@@ -978,7 +976,7 @@ public class ContentServiceImpl
         }
     }
 
-    private static void requireAnyRole()
+    private static void requireAnyProjectRole()
     {
         final Context ctx = ContextAccessor.current();
 

@@ -10,7 +10,7 @@ import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.repo.impl.dump.RepoLoadException;
 import com.enonic.xp.repo.impl.dump.model.VersionMeta;
 import com.enonic.xp.repo.impl.dump.serializer.DumpSerializer;
@@ -42,10 +42,10 @@ class AbstractEntryProcessor
         repositoryId = builder.repositoryId;
     }
 
-    void addBinary( final NodeVersion nodeVersion, final EntryLoadResult.Builder result )
+    void addBinary( final NodeStoreVersion nodeVersion, final EntryLoadResult.Builder result )
     {
         final Segment segment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.BINARY_SEGMENT_LEVEL );
-        nodeVersion.getAttachedBinaries().forEach( binary -> {
+        nodeVersion.attachedBinaries().forEach( binary -> {
             try
             {
                 final ByteSource dumpBinary = this.dumpReader.getBinary( repositoryId, BlobKey.from( binary.getBlobKey() ) );
@@ -58,10 +58,10 @@ class AbstractEntryProcessor
         } );
     }
 
-    private void reportBinaryError( final NodeVersion nodeVersion, final EntryLoadResult.Builder result, final AttachedBinary binary,
+    private void reportBinaryError( final NodeStoreVersion nodeVersion, final EntryLoadResult.Builder result, final AttachedBinary binary,
                                     final RepoLoadException e )
     {
-        final String message = String.format( "Failed to load binary for nodeId %s, blobKey %s", nodeVersion.getId(), binary.getBlobKey() );
+        final String message = String.format( "Failed to load binary for nodeId %s, blobKey %s", nodeVersion.id(), binary.getBlobKey() );
         result.error( EntryLoadError.error( message ) );
         LOG.error( message, e );
     }

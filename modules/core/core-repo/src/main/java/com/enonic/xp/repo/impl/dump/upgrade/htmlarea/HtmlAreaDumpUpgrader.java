@@ -9,7 +9,7 @@ import com.google.common.io.CharSource;
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.index.PatternIndexConfigDocument;
-import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.repo.impl.dump.blobstore.DumpBlobRecord;
 import com.enonic.xp.repo.impl.dump.serializer.json.BranchDumpEntryJson;
 import com.enonic.xp.repo.impl.dump.serializer.json.VersionDumpEntryJson;
@@ -94,7 +94,7 @@ public class HtmlAreaDumpUpgrader
 
     private void upgradeBlobRecord( final DumpBlobRecord nodeDumpBlobRecord, final DumpBlobRecord indexDumpBlobRecord )
     {
-        final NodeVersion nodeVersion = getNodeVersion( nodeDumpBlobRecord );
+        final NodeStoreVersion nodeVersion = getNodeVersion( nodeDumpBlobRecord );
         final PatternIndexConfigDocument indexConfigDocument = getIndexConfigDocument( indexDumpBlobRecord );
         final boolean upgraded = upgradeNodeVersion( nodeVersion, indexConfigDocument );
         if ( upgraded )
@@ -103,7 +103,7 @@ public class HtmlAreaDumpUpgrader
         }
     }
 
-    private NodeVersion getNodeVersion( final DumpBlobRecord dumpBlobRecord )
+    private NodeStoreVersion getNodeVersion( final DumpBlobRecord dumpBlobRecord )
     {
         final CharSource charSource = dumpBlobRecord.getBytes().asCharSource( StandardCharsets.UTF_8 );
         try
@@ -130,7 +130,7 @@ public class HtmlAreaDumpUpgrader
         }
     }
 
-    private void writeNodeVersion( final NodeVersion nodeVersion, final DumpBlobRecord dumpBlobRecord )
+    private void writeNodeVersion( final NodeStoreVersion nodeVersion, final DumpBlobRecord dumpBlobRecord )
     {
         try
         {
@@ -143,7 +143,7 @@ public class HtmlAreaDumpUpgrader
         }
     }
 
-    private boolean upgradeNodeVersion( final NodeVersion nodeVersion, final PatternIndexConfigDocument indexConfigDocument )
+    private boolean upgradeNodeVersion( final NodeStoreVersion nodeVersion, final PatternIndexConfigDocument indexConfigDocument )
     {
         return nodeDataUpgrader.upgrade( nodeVersion, indexConfigDocument, result );
     }

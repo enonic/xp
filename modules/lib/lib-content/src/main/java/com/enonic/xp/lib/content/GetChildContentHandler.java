@@ -12,8 +12,6 @@ import com.enonic.xp.lib.content.mapper.ContentsResultMapper;
 public final class GetChildContentHandler
     extends BaseContextHandler
 {
-    static final int DEFAULT_COUNT = 10;
-
     private String key;
 
     private Integer start;
@@ -25,10 +23,6 @@ public final class GetChildContentHandler
     @Override
     protected Object doExecute()
     {
-        final int start = valueOrDefault( this.start, 0 );
-        final int count = valueOrDefault( this.count, DEFAULT_COUNT );
-        final String sortExpr = valueOrDefault( this.sort, "" );
-
         final FindContentByParentParams.Builder findContentByParent = FindContentByParentParams.create();
 
         if ( key.startsWith( "/" ) )
@@ -40,20 +34,26 @@ public final class GetChildContentHandler
             findContentByParent.parentId( ContentId.from( key ) );
         }
 
-        return getChildren( findContentByParent, start, count, sortExpr );
+        return getChildren( findContentByParent );
     }
 
-    private ContentsResultMapper getChildren( final FindContentByParentParams.Builder findContentByParent, final int start, final int count,
-                                              final String sortExpr )
+    private ContentsResultMapper getChildren( final FindContentByParentParams.Builder params )
     {
-        final ChildOrder childOrder = ChildOrder.from( sortExpr );
-
+        if ( sort != null )
+        {
+            params.childOrder( ChildOrder.from( sort ) );
+        }
+        if ( start != null )
+        {
+            params.from( start );
+        }
+        if ( count != null )
+        {
+            params.size( count );
+        }
         try
         {
-            final FindContentByParentResult result = this.contentService.findByParent( findContentByParent.
-                from( start ).
-                size( count ).
-                childOrder( childOrder ).build() );
+            final FindContentByParentResult result = this.contentService.findByParent( params.build() );
             return convert( result );
         }
         catch ( final ContentNotFoundException e )

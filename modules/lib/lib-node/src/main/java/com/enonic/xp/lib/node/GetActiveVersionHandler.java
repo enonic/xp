@@ -5,7 +5,7 @@ import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.GetActiveNodeVersionsParams;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeVersionMetadata;
+import com.enonic.xp.node.NodeVersion;
 
 public class GetActiveVersionHandler
     extends AbstractNodeHandler
@@ -32,15 +32,15 @@ public class GetActiveVersionHandler
             nodeId( nodeId ).
             branches( Branches.from( branch ) ).
             build();
-        final NodeVersionMetadata nodeVersionMetadata = nodeService.getActiveVersions( params ).
+        final NodeVersion nodeVersion = nodeService.getActiveVersions( params ).
             getNodeVersions().
             get( branch );
-        if ( nodeVersionMetadata == null )
+        if ( nodeVersion == null )
         {
             return null;
         }
 
-        return new NodeVersionMapper( nodeVersionMetadata );
+        return new NodeVersionMapper( nodeVersion );
     }
 
     public static Builder create()

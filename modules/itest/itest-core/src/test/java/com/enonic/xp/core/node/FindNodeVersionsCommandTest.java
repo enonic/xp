@@ -11,8 +11,8 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeVersionMetadata;
-import com.enonic.xp.node.NodeVersionMetadatas;
+import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.node.NodeVersions;
 import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.RefreshMode;
@@ -55,7 +55,7 @@ class FindNodeVersionsCommandTest
             build().
             execute();
 
-        assertEquals( 1, result.getNodeVersionMetadatas().getSize() );
+        assertEquals( 1, result.getNodeVersions().getSize() );
     }
 
     @Test
@@ -88,14 +88,14 @@ class FindNodeVersionsCommandTest
             build().
             execute();
 
-        assertEquals( updateCount + 1, result.getNodeVersionMetadatas().getSize() );
+        assertEquals( updateCount + 1, result.getNodeVersions().getSize() );
 
-        final NodeVersionMetadatas nodeVersionMetadatas = result.getNodeVersionMetadatas();
+        final NodeVersions nodeVersions = result.getNodeVersions();
         Instant previousTimestamp = null;
 
-        for ( final NodeVersionMetadata nodeVersionMetadata : nodeVersionMetadatas )
+        for ( final NodeVersion nodeVersion : nodeVersions )
         {
-            final Instant currentNodeTimestamp = nodeVersionMetadata.getTimestamp();
+            final Instant currentNodeTimestamp = nodeVersion.getTimestamp();
             if ( previousTimestamp != null )
             {
                 if ( currentNodeTimestamp.isAfter( previousTimestamp ) )

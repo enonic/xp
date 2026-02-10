@@ -6,7 +6,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.NodeCompareStatus;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeNotFoundException;
-import com.enonic.xp.node.NodeVersionMetadata;
+import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeBranchEntry;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
@@ -65,8 +65,8 @@ class CompareStatusResolver
 
     private NodeCompareStatus resolveFromVersion()
     {
-        final NodeVersionMetadata sourceVersion = getVersion( this.source );
-        final NodeVersionMetadata targetVersion = getVersion( this.target );
+        final NodeVersion sourceVersion = getVersion( this.source );
+        final NodeVersion targetVersion = getVersion( this.target );
 
         if ( sourceVersion.getTimestamp().isAfter( targetVersion.getTimestamp() ) )
         {
@@ -81,10 +81,10 @@ class CompareStatusResolver
         return NodeCompareStatus.EQUAL;
     }
 
-    private NodeVersionMetadata getVersion( final NodeBranchEntry nodeBranchEntry )
+    private NodeVersion getVersion( final NodeBranchEntry nodeBranchEntry )
     {
-        final NodeVersionMetadata version = nodeStorageService.getVersion( nodeBranchEntry.getVersionId(),
-                                                                           InternalContext.from( ContextAccessor.current() ) );
+        final NodeVersion version = nodeStorageService.getVersion( nodeBranchEntry.getVersionId(),
+                                                                   InternalContext.from( ContextAccessor.current() ) );
 
         if ( version == null )
         {

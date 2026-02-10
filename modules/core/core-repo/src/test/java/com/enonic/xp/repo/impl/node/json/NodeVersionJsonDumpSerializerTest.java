@@ -23,7 +23,7 @@ import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeType;
-import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.security.IdProviderKey;
@@ -89,7 +89,7 @@ class NodeVersionJsonDumpSerializerTest
             addIndexValueProcessor( indexValueProcessor ).
             build();
 
-        NodeVersion nodeVersion = NodeVersion.create().
+        NodeStoreVersion nodeVersion = NodeStoreVersion.create().
             id( NodeId.from( "myId" ) ).
             indexConfigDocument( PatternIndexConfigDocument.create().
                 analyzer( "myAnalyzer" ).
@@ -119,9 +119,10 @@ class NodeVersionJsonDumpSerializerTest
         assertEquals( expectedNodeStr, serializedNode );
         assertEquals( expectedIndexConfigStr, serializedIndexConfig );
         assertEquals( expectedAccessControlStr, serializedAccessControl );
-        final NodeVersion deSerializedNode = NodeVersionJsonSerializer.toNodeVersion( CharSource.wrap( expectedNodeStr ).asByteSource( StandardCharsets.UTF_8 ),
-                                                                                      CharSource.wrap(expectedIndexConfigStr).asByteSource( StandardCharsets.UTF_8 ),
-                                                                                      CharSource.wrap(expectedAccessControlStr).asByteSource( StandardCharsets.UTF_8 ) );
+        final NodeStoreVersion
+            deSerializedNode = NodeVersionJsonSerializer.toNodeVersion( CharSource.wrap( expectedNodeStr ).asByteSource( StandardCharsets.UTF_8 ),
+                                                                        CharSource.wrap(expectedIndexConfigStr).asByteSource( StandardCharsets.UTF_8 ),
+                                                                        CharSource.wrap(expectedAccessControlStr).asByteSource( StandardCharsets.UTF_8 ) );
         assertEquals( nodeVersion, deSerializedNode );
     }
 

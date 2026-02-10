@@ -18,8 +18,8 @@ import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentVersion;
 import com.enonic.xp.content.DeleteContentParams;
-import com.enonic.xp.content.FindContentVersionsParams;
-import com.enonic.xp.content.FindContentVersionsResult;
+import com.enonic.xp.content.GetContentVersionsParams;
+import com.enonic.xp.content.GetContentVersionsResult;
 import com.enonic.xp.content.ImportContentParams;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.PushContentParams;
@@ -267,8 +267,8 @@ class ContentServiceImplTest_archive
 
         this.contentService.archive( params );
 
-        FindContentVersionsResult versions =
-            this.contentService.getVersions( FindContentVersionsParams.create().contentId( parent.getId() ).build() );
+        GetContentVersionsResult versions =
+            this.contentService.getVersions( GetContentVersionsParams.create().contentId( parent.getId() ).build() );
 
         Iterator<ContentVersion> iterator = versions.getContentVersions().iterator();
         assertTrue( iterator.hasNext() );

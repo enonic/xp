@@ -18,7 +18,7 @@ import com.enonic.xp.dump.DumpUpgradeStepResult;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexValueProcessor;
 import com.enonic.xp.index.PatternIndexConfigDocument;
-import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.util.Reference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,7 +38,7 @@ class HtmlAreaNodeDataUpgraderTest
     @Test
     void testUpgrade_nonContent()
     {
-        final NodeVersion nodeVersion = NodeVersion.create().build();
+        final NodeStoreVersion nodeVersion = NodeStoreVersion.create().build();
         final DumpUpgradeStepResult.Builder result = DumpUpgradeStepResult.create();
         final boolean upgraded = htmlAreaNodeDataUpgrader.upgrade( nodeVersion, null, result );
         assertFalse( upgraded );
@@ -50,7 +50,7 @@ class HtmlAreaNodeDataUpgraderTest
     {
         final PropertyTree data = new PropertyTree();
         data.setString( "data.htmlarea", readTestResource( "htmlarea-source.xml" ) );
-        final NodeVersion nodeVersion = NodeVersion.create().
+        final NodeStoreVersion nodeVersion = NodeStoreVersion.create().
             nodeType( ContentConstants.CONTENT_NODE_COLLECTION ).
             data( data ).
             build();
@@ -60,7 +60,7 @@ class HtmlAreaNodeDataUpgraderTest
         final boolean upgraded = htmlAreaNodeDataUpgrader.upgrade( nodeVersion, indexConfigDocument, result );
         assertTrue( upgraded );
 
-        final PropertyTree upgradedData = nodeVersion.getData();
+        final PropertyTree upgradedData = nodeVersion.data();
         final Collection<Reference> upgradedProcessedReferences =
             (Collection<Reference>) upgradedData.getReferences( "processedReferences" );
         assertEquals( 5, upgradedProcessedReferences.size() );

@@ -162,19 +162,6 @@ public final class Node
         return new Builder();
     }
 
-    public static Builder create( final NodeVersion nodeVersion )
-    {
-        return new Builder().
-            id( nodeVersion.getId() ).
-            nodeType( nodeVersion.getNodeType() ).
-            data( nodeVersion.getData() ).
-            indexConfigDocument( nodeVersion.getIndexConfigDocument() ).
-            childOrder( nodeVersion.getChildOrder() ).
-            manualOrderValue( nodeVersion.getManualOrderValue() ).
-            permissions( nodeVersion.getPermissions() ).
-            attachedBinaries( nodeVersion.getAttachedBinaries() );
-    }
-
     public static Builder create( final NodeId id )
     {
         return new Builder( id );

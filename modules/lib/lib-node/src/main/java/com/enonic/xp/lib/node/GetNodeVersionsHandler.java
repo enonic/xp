@@ -1,49 +1,51 @@
 package com.enonic.xp.lib.node;
 
 import com.enonic.xp.node.GetNodeVersionsParams;
+import com.enonic.xp.node.GetNodeVersionsResult;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeVersionMetadatas;
-import com.enonic.xp.node.NodeVersionQueryResult;
+import com.enonic.xp.node.NodeVersions;
 
-public class FindVersionsHandler
+public class GetNodeVersionsHandler
     extends AbstractNodeHandler
 {
     private final NodeKey key;
 
-    private final int from;
+    private final String cursor;
 
-    private final int size;
+    private final Integer size;
 
-    private FindVersionsHandler( final Builder builder )
+    private GetNodeVersionsHandler( final Builder builder )
     {
         super( builder );
 
         key = builder.key;
-        from = builder.from == null ? 0 : builder.from;
-        size = builder.size == null ? 10 : builder.size;
+        cursor = builder.cursor;
+        size = builder.size;
     }
 
     @Override
     public Object execute()
     {
-        final NodeVersionQueryResult result;
+        final GetNodeVersionsResult result;
 
         NodeId nodeId = getNodeId( key );
         if ( nodeId == null )
         {
-            result = NodeVersionQueryResult.create().entityVersions( NodeVersionMetadatas.empty() ).build();
+            result = GetNodeVersionsResult.create().entityVersions( NodeVersions.empty() ).totalHits( 0 ).build();
         }
         else
         {
-            GetNodeVersionsParams params = GetNodeVersionsParams.create().
-                nodeId( nodeId ).
-                from( from ).
-                size( size ).
-                build();
-            result = nodeService.findVersions( params );
+            GetNodeVersionsParams.Builder params = GetNodeVersionsParams.create().nodeId( nodeId ).cursor( cursor );
+
+            if ( size != null )
+            {
+                params.size( size );
+            }
+
+            result = nodeService.getVersions( params.build() );
         }
 
-        return new NodeVersionsQueryResultMapper( result );
+        return new GetNodeVersionsResultMapper( result );
     }
 
     public static Builder create()
@@ -56,7 +58,7 @@ public class FindVersionsHandler
     {
         private NodeKey key;
 
-        private Integer from;
+        private String cursor;
 
         private Integer size;
 
@@ -70,9 +72,9 @@ public class FindVersionsHandler
             return this;
         }
 
-        public Builder from( final Integer from )
+        public Builder cursor( final String cursor )
         {
-            this.from = from;
+            this.cursor = cursor;
             return this;
         }
 
@@ -82,9 +84,9 @@ public class FindVersionsHandler
             return this;
         }
 
-        public FindVersionsHandler build()
+        public GetNodeVersionsHandler build()
         {
-            return new FindVersionsHandler( this );
+            return new GetNodeVersionsHandler( this );
         }
     }
 }

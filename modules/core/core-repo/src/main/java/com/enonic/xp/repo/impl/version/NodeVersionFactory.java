@@ -11,14 +11,14 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionKey;
-import com.enonic.xp.node.NodeVersionMetadata;
+import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.repo.impl.ReturnValue;
 import com.enonic.xp.repo.impl.ReturnValues;
 import com.enonic.xp.util.GenericValue;
 
 public class NodeVersionFactory
 {
-    public static NodeVersionMetadata create( final ReturnValues values )
+    public static NodeVersion create( final ReturnValues values )
     {
         final String versionId = values.getStringValue( VersionIndexPath.VERSION_ID );
         final String nodeBlobKey = values.getStringValue( VersionIndexPath.NODE_BLOB_KEY );
@@ -32,7 +32,7 @@ public class NodeVersionFactory
         final ReturnValue attributes = values.get( VersionIndexPath.ATTRIBUTES );
         final BlobKeys binaryBlobKeys = toBlobKeys( values.get( VersionIndexPath.BINARY_BLOB_KEYS ) );
 
-        return NodeVersionMetadata.create()
+        return NodeVersion.create()
             .nodeId( NodeId.from( id ) )
             .nodePath( new NodePath( path ) )
             .timestamp( timestamp )

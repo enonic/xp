@@ -164,7 +164,7 @@ public class ApplyNodePermissionsCommand
         {
             versionsToApply.stream()
                 .map( versionMap -> versionMap.get( branch ) )
-                .forEach( versionMetadata -> doApplyOnNode( versionMetadata, branch, permissions ) );
+                .forEach( node -> doApplyOnNode( node, branch, permissions ) );
         }
     }
 
@@ -205,7 +205,7 @@ public class ApplyNodePermissionsCommand
         return NodeHelper.runAsAdmin( () -> {
             if ( updatedVersionData != null )
             {
-                this.nodeStorageService.push( NodeBranchEntry.fromNodeVersionMetadata( updatedVersionData.metadata() ), this.branches.first(), targetContext );
+                this.nodeStorageService.push( NodeBranchEntry.fromNodeVersion( updatedVersionData.metadata() ), this.branches.first(), targetContext );
                 return updatedVersionData;
             }
             else

@@ -15,7 +15,7 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionKey;
-import com.enonic.xp.node.NodeVersionMetadata;
+import com.enonic.xp.node.NodeVersion;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -26,7 +26,7 @@ class GetActiveVersionHandlerTest
     @Test
     void testGetActiveVersionsHandler()
     {
-        final NodeVersionMetadata nodeVersionMeta = NodeVersionMetadata.create().
+        final NodeVersion nodeVersionMeta = NodeVersion.create().
             nodeId( NodeId.from( "nodeId1" ) ).
             nodeVersionKey( NodeVersionKey.create()
                                 .nodeBlobKey( BlobKey.from( "nodeBlobKey" ) )

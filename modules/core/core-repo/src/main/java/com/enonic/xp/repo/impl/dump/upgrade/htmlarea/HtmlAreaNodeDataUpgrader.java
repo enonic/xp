@@ -23,7 +23,7 @@ import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.index.IndexValueProcessor;
 import com.enonic.xp.index.PathIndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
-import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.util.Reference;
 
 public class HtmlAreaNodeDataUpgrader
@@ -60,11 +60,11 @@ public class HtmlAreaNodeDataUpgrader
 
     private Set<Reference> references;
 
-    private NodeVersion nodeVersion;
+    private NodeStoreVersion nodeVersion;
 
     private DumpUpgradeStepResult.Builder result;
 
-    public boolean upgrade( final NodeVersion nodeVersion, final PatternIndexConfigDocument indexConfigDocument,
+    public boolean upgrade( final NodeStoreVersion nodeVersion, final PatternIndexConfigDocument indexConfigDocument,
                             DumpUpgradeStepResult.Builder result )
     {
         references = new HashSet<>();
@@ -77,7 +77,7 @@ public class HtmlAreaNodeDataUpgrader
             return false;
         }
 
-        final PropertyTree nodeData = nodeVersion.getData();
+        final PropertyTree nodeData = nodeVersion.data();
         upgradeNodeData( nodeData.getRoot(), indexConfigDocument );
 
         if ( !references.isEmpty() )
@@ -89,9 +89,9 @@ public class HtmlAreaNodeDataUpgrader
         return false;
     }
 
-    private boolean isContent( final NodeVersion nodeVersion )
+    private boolean isContent( final NodeStoreVersion nodeVersion )
     {
-        return ContentConstants.CONTENT_NODE_COLLECTION.equals( nodeVersion.getNodeType() );
+        return ContentConstants.CONTENT_NODE_COLLECTION.equals( nodeVersion.nodeType() );
     }
 
     private void upgradeNodeData( final PropertySet nodeData, final PatternIndexConfigDocument indexConfigDocument )
@@ -181,7 +181,7 @@ public class HtmlAreaNodeDataUpgrader
                 if ( containsHtmlLink && backwardCompatible )
                 {
                     LOG.info( "Property [{}] in node [{}] contains HTML Area links but is not indexed as an HTML Area input. Treating as an HTML Area",
-                              property.getPath(), nodeVersion.getId() );
+                              property.getPath(), nodeVersion.id() );
                 }
 
                 if ( containsHtmlAreaImage )

@@ -253,7 +253,7 @@ interface NodeHandler {
 
     exist(key: string): boolean;
 
-    findVersions(params: FindVersionsHandlerParams): NodeVersionsQueryResult;
+    getVersions(params: GetNodeVersionsHandlerParams): GetNodeVersionsResult;
 
     getActiveVersion(key: string): NodeVersion | null;
 
@@ -426,18 +426,18 @@ interface QueryNodeHandlerParams {
     setExplain(value: boolean): void;
 }
 
-export interface FindVersionsParams {
+export interface GetVersionsParams {
     key: string;
-    start?: number | null;
-    count?: number | null;
+    cursor?: string | null;
+    count?: number;
 }
 
-interface FindVersionsHandlerParams {
+interface GetNodeVersionsHandlerParams {
     setKey(key: string): void;
 
-    setStart(start?: number | null): void;
+    setCursor(cursor?: string): void;
 
-    setCount(count?: number | null): void;
+    setCount(count?: number): void;
 }
 
 export interface NodeVersion {
@@ -448,9 +448,10 @@ export interface NodeVersion {
     commitId?: string;
 }
 
-export interface NodeVersionsQueryResult {
+export interface GetNodeVersionsResult {
     total: number;
     count: number;
+    cursor?: string | null;
     hits: NodeVersion[];
 }
 
@@ -677,7 +678,7 @@ export interface RepoConnection {
 
     exists(key: string): boolean;
 
-    findVersions(params: FindVersionsParams): NodeVersionsQueryResult;
+    getVersions(params: GetVersionsParams): GetNodeVersionsResult;
 
     getActiveVersion(params: GetActiveVersionParams): NodeVersion | null;
 
@@ -1015,31 +1016,35 @@ class RepoConnectionImpl
     /**
      * This function returns node versions.
      *
-     * @example-ref examples/node/findVersions.js
+     * @example-ref examples/node/getVersions.js
      * @param {object} params JSON parameters.
      * @param {string} params.key Path or ID of the node.
-     * @param {number} [params.start=0] Start index (used for paging).
+     * @param {string} [params.cursor] Cursor for pagination.
      * @param {number} [params.count=10] Number of node versions to fetch.
      *
-     * @returns {object[]} Node versions.
+     * @returns {object} Node versions query result.
      */
-    findVersions(params: FindVersionsParams): NodeVersionsQueryResult {
+    getVersions(params: GetVersionsParams): GetNodeVersionsResult {
         checkRequired(params, 'key');
 
         const {
             key,
-            start = 0,
-            count = 10,
+            cursor,
+            count,
         } = params ?? {};
 
-        const handlerParams: FindVersionsHandlerParams = __.newBean<FindVersionsHandlerParams>(
-            'com.enonic.xp.lib.node.FindVersionsHandlerParams');
+        const handlerParams: GetNodeVersionsHandlerParams = __.newBean<GetNodeVersionsHandlerParams>(
+            'com.enonic.xp.lib.node.GetNodeVersionsHandlerParams');
 
         handlerParams.setKey(key);
-        handlerParams.setStart(start);
-        handlerParams.setCount(count);
+        if (cursor) {
+            handlerParams.setCursor(cursor);
+        }
+        if (count !== undefined && count !== null) {
+            handlerParams.setCount(count);
+        }
 
-        return __.toNativeObject(this.nodeHandler.findVersions(handlerParams));
+        return __.toNativeObject(this.nodeHandler.getVersions(handlerParams));
     }
 
     /**

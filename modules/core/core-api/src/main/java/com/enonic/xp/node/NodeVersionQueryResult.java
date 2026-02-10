@@ -1,17 +1,23 @@
 package com.enonic.xp.node;
 
+import java.util.Objects;
+
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
+@NullMarked
 public final class NodeVersionQueryResult
 {
-    final NodeVersionMetadatas nodeVersionMetadatas;
+    private final NodeVersions nodeVersions;
 
     private final long totalHits;
 
     private NodeVersionQueryResult( Builder builder )
     {
-        nodeVersionMetadatas = builder.nodeVersionMetadatas;
+        nodeVersions = Objects.requireNonNull( builder.nodeVersions );
         totalHits = builder.totalHits;
     }
 
@@ -20,9 +26,9 @@ public final class NodeVersionQueryResult
         return new Builder();
     }
 
-    public NodeVersionMetadatas getNodeVersionMetadatas()
+    public NodeVersions getNodeVersions()
     {
-        return nodeVersionMetadatas;
+        return nodeVersions;
     }
 
     public long getTotalHits()
@@ -32,7 +38,7 @@ public final class NodeVersionQueryResult
 
     public static final class Builder
     {
-        private NodeVersionMetadatas nodeVersionMetadatas;
+        private @Nullable NodeVersions nodeVersions;
 
         private long totalHits;
 
@@ -40,13 +46,13 @@ public final class NodeVersionQueryResult
         {
         }
 
-        public Builder entityVersions( NodeVersionMetadatas nodeVersionMetadatas )
+        public Builder entityVersions( final NodeVersions nodeVersions )
         {
-            this.nodeVersionMetadatas = nodeVersionMetadatas;
+            this.nodeVersions = nodeVersions;
             return this;
         }
 
-        public Builder totalHits( long totalHits )
+        public Builder totalHits( final long totalHits )
         {
             this.totalHits = totalHits;
             return this;

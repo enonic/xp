@@ -37,7 +37,7 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionKey;
-import com.enonic.xp.node.NodeVersionMetadata;
+import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.RefreshMode;
@@ -156,10 +156,10 @@ public class RepoDumper
                 final VersionsDumpEntry.Builder builder = VersionsDumpEntry.create( nodeId );
 
                 final NodeVersionQueryResult versions = getVersions( nodeId );
-                for ( final NodeVersionMetadata metaData : versions.getNodeVersionMetadatas() )
+                for ( final NodeVersion nodeVersion : versions.getNodeVersions() )
                 {
-                    builder.addVersion( VersionMetaFactory.create( metaData ) );
-                    doStoreVersion( metaData, this.dumpResult );
+                    builder.addVersion( VersionMetaFactory.create( nodeVersion ) );
+                    doStoreVersion( nodeVersion, this.dumpResult );
                     this.dumpResult.addedVersion();
                 }
 
@@ -201,13 +201,13 @@ public class RepoDumper
         }
     }
 
-    private void doStoreVersion( final NodeVersionMetadata metaData,
+    private void doStoreVersion( final NodeVersion nodeVersion,
                                  final RepoDumpResult.Builder dumpResult )
     {
         try
         {
-            storeVersionBlob( metaData.getNodeVersionId(), metaData.getNodeVersionKey() );
-            storeVersionBinaries( metaData.getNodeVersionId(), metaData.getBinaryBlobKeys() );
+            storeVersionBlob( nodeVersion.getNodeVersionId(), nodeVersion.getNodeVersionKey() );
+            storeVersionBinaries( nodeVersion.getNodeVersionId(), nodeVersion.getBinaryBlobKeys() );
         }
         catch ( Exception e )
         {
@@ -286,12 +286,12 @@ public class RepoDumper
 
         final Node currentNode = this.nodeService.getById( nodeId );
 
-        final NodeVersionMetadata currentVersionMetaData = this.nodeService.getActiveVersions(
+        final NodeVersion currentVersion = this.nodeService.getActiveVersions(
                 GetActiveNodeVersionsParams.create().nodeId( nodeId ).branches( Branches.from( branch ) ).build() )
             .getNodeVersions()
             .get( branch );
 
-        builder.meta( VersionMetaFactory.create( currentVersionMetaData ) );
+        builder.meta( VersionMetaFactory.create( currentVersion ) );
 
         if ( this.includeBinaries )
         {

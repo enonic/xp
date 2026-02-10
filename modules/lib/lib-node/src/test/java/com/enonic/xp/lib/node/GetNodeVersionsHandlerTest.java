@@ -13,19 +13,22 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionKey;
-import com.enonic.xp.node.NodeVersionMetadata;
-import com.enonic.xp.node.NodeVersionMetadatas;
-import com.enonic.xp.node.NodeVersionQueryResult;
+import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.node.NodeVersions;
+import com.enonic.xp.node.GetNodeVersionsResult;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-class FindVersionsHandlerTest
+class GetNodeVersionsHandlerTest
     extends BaseNodeHandlerTest
 {
     @Test
     void testFindVersionsHandler()
     {
-        final NodeVersionMetadata newNodeVersionMeta = NodeVersionMetadata.create().
+        final NodeVersion newNodeVersionMeta = NodeVersion.create().
             nodeId( NodeId.from( "nodeId1" ) ).
             nodeVersionKey( NodeVersionKey.create()
                                 .nodeBlobKey( BlobKey.from( "nodeBlobKey" ) )
@@ -38,7 +41,7 @@ class FindVersionsHandlerTest
             timestamp( Instant.ofEpochSecond( 1000 ) ).
             build();
 
-        final NodeVersionMetadata oldNodeVersionMeta = NodeVersionMetadata.create().
+        final NodeVersion oldNodeVersionMeta = NodeVersion.create().
             nodeId( NodeId.from( "nodeId1" ) ).
             nodeVersionKey( NodeVersionKey.create()
                                 .nodeBlobKey( BlobKey.from( "nodeBlobKey" ) )
@@ -51,23 +54,32 @@ class FindVersionsHandlerTest
             timestamp( Instant.ofEpochSecond( 500 ) ).
             build();
 
-        final NodeVersionMetadatas nodeVersionMetadatas = NodeVersionMetadatas.create().
+        final NodeVersions nodeVersions = NodeVersions.create().
             add( newNodeVersionMeta ).
             add( oldNodeVersionMeta ).
             build();
 
-        final NodeVersionQueryResult result = NodeVersionQueryResult.create().
-            entityVersions( nodeVersionMetadatas ).
+        final GetNodeVersionsResult result = GetNodeVersionsResult.create().
+            entityVersions( nodeVersions ).
             totalHits( 40 ).
+            cursor( "eyJ0cyI6MTAwMDAwMCwiaWQiOiJub2RlVmVyc2lvbk9sZCJ9" ).
             build();
 
         final ArgumentCaptor<GetNodeVersionsParams> getNodeVersionsParamsCaptor = ArgumentCaptor.forClass( GetNodeVersionsParams.class );
-        Mockito.when( nodeService.findVersions( Mockito.any( GetNodeVersionsParams.class ) ) ).thenReturn( result );
-        runScript( "/lib/xp/examples/node/findVersions.js" );
-        Mockito.verify( nodeService ).findVersions( getNodeVersionsParamsCaptor.capture() );
+        Mockito.when( nodeService.getVersions( Mockito.any( GetNodeVersionsParams.class ) ) ).thenReturn( result );
+        runScript( "/lib/xp/examples/node/getVersions.js" );
+        Mockito.verify( nodeService, Mockito.times( 2 ) ).getVersions( getNodeVersionsParamsCaptor.capture() );
 
-        assertEquals( "nodeId", getNodeVersionsParamsCaptor.getValue().getNodeId().toString() );
-        assertEquals( 0, getNodeVersionsParamsCaptor.getValue().getFrom() );
-        assertEquals( 2, getNodeVersionsParamsCaptor.getValue().getSize() );
+        final List<GetNodeVersionsParams> allParams = getNodeVersionsParamsCaptor.getAllValues();
+
+        // First call: no cursor
+        assertEquals( "nodeId", allParams.get( 0 ).getNodeId().toString() );
+        assertNull( allParams.get( 0 ).getCursor() );
+        assertEquals( 2, allParams.get( 0 ).getSize() );
+
+        // Second call: with cursor
+        assertEquals( "nodeId", allParams.get( 1 ).getNodeId().toString() );
+        assertEquals( "eyJ0cyI6MTAwMDAwMCwiaWQiOiJub2RlVmVyc2lvbk9sZCJ9", allParams.get( 1 ).getCursor() );
+        assertEquals( 2, allParams.get( 1 ).getSize() );
     }
 }

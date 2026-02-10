@@ -1,29 +1,17 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.time.Instant;
-
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Attributes;
+import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeCommitId;
-import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeVersion;
-import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.storage.StoreNodeVersionParams;
 
 public class LoadNodeVersionCommand
     extends AbstractNodeCommand
 {
-    private final NodeId nodeId;
-
-    private final NodePath nodePath;
-
-    private final Instant timestamp;
-
-    private final NodeVersion nodeVersion;
-
-    private final NodeVersionId nodeVersionId;
+    private final Node node;
 
     private final NodeCommitId nodeCommitId;
 
@@ -32,11 +20,7 @@ public class LoadNodeVersionCommand
     private LoadNodeVersionCommand( final Builder builder )
     {
         super( builder );
-        nodeId = builder.nodeId;
-        nodePath = builder.nodePath;
-        timestamp = builder.timestamp;
-        nodeVersion = builder.nodeVersion;
-        nodeVersionId = builder.nodeVersionId;
+        node = builder.node;
         nodeCommitId = builder.nodeCommitId;
         attributes = builder.attributes;
     }
@@ -44,12 +28,12 @@ public class LoadNodeVersionCommand
     public void execute()
     {
         this.nodeStorageService.storeVersion( StoreNodeVersionParams.create().
-            nodeId( this.nodeId ).
-            nodePath( this.nodePath ).
-            nodeVersion( this.nodeVersion ).
-            nodeVersionId( this.nodeVersionId ).
+            nodeId( this.node.id() ).
+            nodePath( this.node.path() ).
+            nodeVersion( NodeStoreVersion.from( this.node ) ).
+            nodeVersionId( this.node.getNodeVersionId() ).
             nodeCommitId( this.nodeCommitId ).
-            timestamp( this.timestamp ).
+            timestamp( this.node.getTimestamp() ).
             attributes( this.attributes ).
             build(), InternalContext.from( ContextAccessor.current() ) );
     }
@@ -62,15 +46,7 @@ public class LoadNodeVersionCommand
     public static final class Builder
         extends AbstractNodeCommand.Builder<Builder>
     {
-        private NodeId nodeId;
-
-        private NodePath nodePath;
-
-        private Instant timestamp;
-
-        private NodeVersion nodeVersion;
-
-        private NodeVersionId nodeVersionId;
+        private Node node;
 
         private NodeCommitId nodeCommitId;
 
@@ -85,33 +61,9 @@ public class LoadNodeVersionCommand
             return new LoadNodeVersionCommand( this );
         }
 
-        public Builder nodeId( final NodeId val )
+        public Builder node( final Node val )
         {
-            nodeId = val;
-            return this;
-        }
-
-        public Builder nodePath( final NodePath val )
-        {
-            nodePath = val;
-            return this;
-        }
-
-        public Builder timestamp( final Instant val )
-        {
-            timestamp = val;
-            return this;
-        }
-
-        public Builder nodeVersion( final NodeVersion val )
-        {
-            nodeVersion = val;
-            return this;
-        }
-
-        public Builder nodeVersionId( final NodeVersionId val )
-        {
-            nodeVersionId = val;
+            node = val;
             return this;
         }
 

@@ -21,7 +21,7 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
-import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.node.PushNodeParams;
 import com.enonic.xp.node.PushNodeResult;
 import com.enonic.xp.node.PushNodesListener;
@@ -36,6 +36,7 @@ import com.enonic.xp.repo.impl.NodeBranchEntries;
 import com.enonic.xp.repo.impl.NodeBranchEntry;
 import com.enonic.xp.repo.impl.SearchPreference;
 import com.enonic.xp.repo.impl.SingleRepoSearchSource;
+import com.enonic.xp.repo.impl.branch.storage.NodeFactory;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.NodeVersionData;
 import com.enonic.xp.repo.impl.storage.StoreNodeParams;
@@ -198,15 +199,15 @@ public class PushNodesCommand
         {
             return nbe;
         }
-        final NodeVersion version = this.nodeStorageService.getNodeVersion( nbe.getNodeVersionKey(), internalContext );
+        final NodeStoreVersion version = this.nodeStorageService.getNodeVersion( nbe.getNodeVersionKey(), internalContext );
 
-        final PropertyTree processedData = params.getProcessor().process( version.getData(), nbe.getNodePath() );
-        if ( processedData.equals( version.getData() ) )
+        final PropertyTree processedData = params.getProcessor().process( version.data(), nbe.getNodePath() );
+        if ( processedData.equals( version.data() ) )
         {
             return nbe;
         }
 
-        final Node changedNode = Node.create( version )
+        final Node changedNode = NodeFactory.create( version )
             .name( nbe.getNodePath().getName() )
             .parentPath( nbe.getNodePath().getParentPath() )
             .data( processedData )
@@ -215,7 +216,7 @@ public class PushNodesCommand
 
         final NodeVersionData stored = this.nodeStorageService.store( StoreNodeParams.newVersion( changedNode ), internalContext );
 
-        return NodeBranchEntry.fromNodeVersionMetadata( stored.metadata() );
+        return NodeBranchEntry.fromNodeVersion( stored.metadata() );
     }
 
     private boolean targetAlreadyExists( final NodePath nodePath, final NodeComparisons comparisons )
