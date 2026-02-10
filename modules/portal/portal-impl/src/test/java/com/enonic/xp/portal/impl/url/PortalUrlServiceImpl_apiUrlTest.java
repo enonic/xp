@@ -15,6 +15,7 @@ import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.macro.MacroService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
 import com.enonic.xp.portal.url.ApiUrlParams;
 import com.enonic.xp.portal.url.PortalUrlGeneratorService;
@@ -34,7 +35,6 @@ import static org.mockito.Mockito.when;
 
 class PortalUrlServiceImpl_apiUrlTest
 {
-
     private PortalUrlService service;
 
     private PortalRequest portalRequest;
@@ -97,6 +97,7 @@ class PortalUrlServiceImpl_apiUrlTest
         final ContentPath contentPath = ContentPath.from( "sitePath" );
 
         portalRequest.setBaseUri( "/site" );
+        portalRequest.setMode( RenderMode.LIVE );
         portalRequest.setRepositoryId( RepositoryId.from( "com.enonic.cms.request-project" ) );
         portalRequest.setBranch( Branch.from( "request-branch" ) );
         portalRequest.setContentPath( contentPath );
@@ -123,6 +124,7 @@ class PortalUrlServiceImpl_apiUrlTest
         final ContentPath contentPath = ContentPath.from( "sitePath" );
 
         portalRequest.setBaseUri( "/site" );
+        portalRequest.setMode( RenderMode.LIVE );
         portalRequest.setRepositoryId( RepositoryId.from( "com.enonic.cms.request-project" ) );
         portalRequest.setBranch( Branch.from( "request-branch" ) );
         portalRequest.setContentPath( contentPath );
@@ -158,6 +160,7 @@ class PortalUrlServiceImpl_apiUrlTest
         final ContentPath contentPath = ContentPath.from( "sitePath" );
 
         portalRequest.setBaseUri( "/site" );
+        portalRequest.setMode( RenderMode.LIVE );
         portalRequest.setRepositoryId( RepositoryId.from( "com.enonic.cms.request-project" ) );
         portalRequest.setBranch( Branch.from( "request-branch" ) );
         portalRequest.setContentPath( contentPath );
@@ -188,6 +191,7 @@ class PortalUrlServiceImpl_apiUrlTest
         final ContentPath contentPath = ContentPath.from( "sitePath" );
 
         portalRequest.setBaseUri( "/site" );
+        portalRequest.setMode( RenderMode.LIVE );
         portalRequest.setRepositoryId( RepositoryId.from( "com.enonic.cms.request-project" ) );
         portalRequest.setBranch( Branch.from( "request-branch" ) );
         portalRequest.setContentPath( contentPath );

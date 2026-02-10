@@ -98,7 +98,6 @@ class AttachmentMediaHandlerTest
     void testInvalidUrl()
     {
         this.request.setBaseUri( "" );
-        this.request.setEndpointPath( null );
         // must be /api/media:attachment/...
         this.request.setRawPath( "/api/attachment/myproject/123456:ec25d6e4126c7064f82aaab8b34693fc/logo.png" );
 
@@ -110,7 +109,6 @@ class AttachmentMediaHandlerTest
     void testInvalidUrlWithoutIdAndFingerprint()
     {
         this.request.setBaseUri( "" );
-        this.request.setEndpointPath( null );
         // must be /api/media:attachment/myproject/<id>[:<fingerprint>]/logo.png
         this.request.setRawPath( "/api/media:attachment/myproject/logo.png" );
 
@@ -126,7 +124,6 @@ class AttachmentMediaHandlerTest
         WebRequest request = new WebRequest();
 
         request.setMethod( HttpMethod.GET );
-        request.setEndpointPath( null );
         request.setRawPath( "/api/media:attachment/myproject/123456:ec25d6e4126c7064f82aaab8b34693fc/logo.png" );
 
         final PortalResponse res = (PortalResponse) this.handler.handle( request );
@@ -144,7 +141,6 @@ class AttachmentMediaHandlerTest
         setupMedia();
 
         this.request.setBaseUri( "/admin" );
-        this.request.setEndpointPath( "/_/media:attachment/myproject/123456:ec25d6e4126c7064f82aaab8b34693fc/logo.png" );
         this.request.setRawPath( "/admin/app/toolName/_/media:attachment/myproject/123456:ec25d6e4126c7064f82aaab8b34693fc/logo.png" );
 
         WebResponse response = this.handler.handle( this.request );
@@ -157,7 +153,6 @@ class AttachmentMediaHandlerTest
         setupMedia();
 
         this.request.setBaseUri( "/webapp/com.enonic.app.mywebapp" );
-        this.request.setEndpointPath( "/_/media:attachment/myproject/123456/logo.png" );
         this.request.setRawPath( "/webapp/com.enonic.app.mywebapp/_/media:attachment/myproject/123456/logo.png" );
 
         WebResponse res = this.handler.handle( this.request );
@@ -173,7 +168,6 @@ class AttachmentMediaHandlerTest
         this.request.setRepositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) );
         this.request.setBranch( ContentConstants.BRANCH_MASTER );
         this.request.setContentPath( ContentPath.from( "/mysite" ) );
-        this.request.setEndpointPath( "/_/media:attachment/myproject/123456/logo.png" );
         this.request.setRawPath( "/site/myproject/master/mysite/_/media:attachment/myproject/123456/logo.png" );
 
         final Site site = mock( Site.class );
@@ -200,9 +194,7 @@ class AttachmentMediaHandlerTest
         this.request.setRepositoryId( RepositoryId.from( "com.enonic.cms.myproject1" ) );
         this.request.setBranch( ContentConstants.BRANCH_MASTER );
         this.request.setContentPath( ContentPath.from( "/mysite" ) );
-        this.request.setEndpointPath( "/_/media:attachment/myproject/123456/logo.png" );
         this.request.setRawPath( "/site/myproject1/master/mysite/_/media:attachment/myproject/123456/logo.png" );
-
 
         final Site site = mock( Site.class );
         when( site.getPath() ).thenReturn( ContentPath.from( "/mysite" ) );
@@ -268,7 +260,6 @@ class AttachmentMediaHandlerTest
     void testOptions()
     {
         this.request.setBaseUri( "" );
-        this.request.setEndpointPath( null );
         this.request.setRawPath( "/api/media:attachment/myproject:draft/123456/logo.png" );
         this.request.setMethod( HttpMethod.OPTIONS );
 
@@ -283,7 +274,6 @@ class AttachmentMediaHandlerTest
     {
         this.request.setBaseUri( "" );
         this.request.setMethod( HttpMethod.DELETE );
-        this.request.setEndpointPath( null );
         this.request.setRawPath( "/api/media:attachment/myproject:draft/123456/logo.png" );
 
         WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
@@ -297,7 +287,7 @@ class AttachmentMediaHandlerTest
         setupMedia();
 
         this.request.setBaseUri( "/admin/site/preview" );
-        this.request.setEndpointPath( "/_/media:attachment/myproject/123456:ec25d6e4126c7064f82aaab8b34693fc/logo.png" );
+        this.request.setRawPath( "/_/media:attachment/myproject/123456:ec25d6e4126c7064f82aaab8b34693fc/logo.png" );
         this.request.setRawPath(
             "/admin/site/preview/myproject/master/mysite/_/media:attachment/myproject/123456:ec25d6e4126c7064f82aaab8b34693fc/logo.png" );
 

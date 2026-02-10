@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.impl.MapSerializableAssert;
 import com.enonic.xp.portal.macro.MacroContext;
@@ -22,6 +23,7 @@ class MacroContextMapperTest
     void setup()
     {
         PortalRequest portalRequest = new PortalRequest();
+        portalRequest.setMode( RenderMode.LIVE );
         portalRequest.setMethod( HttpMethod.GET );
         portalRequest.setScheme( "http" );
         portalRequest.setHost( "localhost" );

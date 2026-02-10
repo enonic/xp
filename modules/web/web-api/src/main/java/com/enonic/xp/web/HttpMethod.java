@@ -17,4 +17,9 @@ public enum HttpMethod
     {
         return STANDARD_METHODS.clone();
     }
+
+    public static boolean isStandard( HttpMethod method )
+    {
+        return STANDARD_METHODS.contains( method );
+    }
 }

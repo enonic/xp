@@ -2,9 +2,6 @@ package com.enonic.xp.admin.impl.portal.widget;
 
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
@@ -27,38 +24,41 @@ class WidgetDispatcherApiHandlerTest
 
         WidgetDispatcherApiHandler handler = new WidgetDispatcherApiHandler( listWidgetsHandler, getWidgetIconHandler, widgetApiHandler );
 
-        WebRequest webRequest = mock( WebRequest.class );
-        when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin:widget" );
-        when( webRequest.getParams() ).thenReturn( HashMultimap.create() );
+        final WebRequest webRequest1 = new WebRequest();
+        webRequest1.setMethod( HttpMethod.GET );
+        webRequest1.setRawPath( "/path/_/admin:widget" );
 
-        WebException ex = assertThrows( WebException.class, () -> handler.handle( webRequest ) );
+        WebException ex = assertThrows( WebException.class, () -> handler.handle( webRequest1 ) );
         assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
 
         // get widget icon
-        Multimap<String, String> params = HashMultimap.create();
-        params.put( "app", "myapp" );
-        params.put( "widget", "mywidget" );
-        params.put( "icon", null );
+        final WebRequest webRequest2 = new WebRequest();
+        webRequest2.setMethod( HttpMethod.GET );
+        webRequest2.setRawPath( "/path/_/admin:widget" );
+        webRequest2.getParams().put( "app", "myapp" );
+        webRequest2.getParams().put( "widget", "mywidget" );
+        webRequest2.getParams().put( "icon", null );
 
         final WebResponse response = mock( WebResponse.class );
-        when( getWidgetIconHandler.handle( webRequest ) ).thenReturn( response );
+        when( getWidgetIconHandler.handle( webRequest2 ) ).thenReturn( response );
 
-        when( webRequest.getParams() ).thenReturn( params );
-        assertEquals( response, handler.handle( webRequest ) );
+        assertEquals( response, handler.handle( webRequest2 ) );
 
         // list widgets
-        params = HashMultimap.create();
-        params.put( "widgetInterface", "admin.dashboard" );
+        final WebRequest webRequest3 = new WebRequest();
+        webRequest3.setMethod( HttpMethod.GET );
+        webRequest3.setRawPath( "/path/_/admin:widget" );
+        webRequest3.getParams().put( "widgetInterface", "admin.dashboard" );
 
-        when( webRequest.getParams() ).thenReturn( params );
-        when( listWidgetsHandler.handle( webRequest ) ).thenReturn( response );
-        assertEquals( response, handler.handle( webRequest ) );
+        when( listWidgetsHandler.handle( webRequest3 ) ).thenReturn( response );
+        assertEquals( response, handler.handle( webRequest3 ) );
 
         // widget harmonized api
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin:widget/myapp/mywidget" );
-        when( webRequest.getParams() ).thenReturn( null );
-        when( widgetApiHandler.handle( webRequest ) ).thenReturn( response );
-        assertEquals( response, handler.handle( webRequest ) );
+        final WebRequest webRequest4 = new WebRequest();
+        webRequest4.setMethod( HttpMethod.GET );
+        webRequest4.setRawPath( "/path/_/admin:widget/myapp/mywidget" );
+
+        when( widgetApiHandler.handle( webRequest4 ) ).thenReturn( response );
+        assertEquals( response, handler.handle( webRequest4 ) );
     }
 }

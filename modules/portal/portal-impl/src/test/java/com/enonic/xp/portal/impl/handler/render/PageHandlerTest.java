@@ -60,7 +60,6 @@ class PageHandlerTest
         this.request.setBaseUri( "/site" );
         this.request.setRepositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) );
         this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );
-        this.request.setEndpointPath( null );
     }
 
     @Test

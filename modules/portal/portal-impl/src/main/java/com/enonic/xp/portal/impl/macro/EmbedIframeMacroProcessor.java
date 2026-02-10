@@ -30,7 +30,7 @@ public class EmbedIframeMacroProcessor
         }
         else
         {
-            body = RenderMode.LIVE.equals( macroContext.getRequest().getMode() ) ? "" : "Expected an &lt;iframe&gt; element in Embed macro";
+            body = macroContext.getRequest().getMode() == RenderMode.LIVE ? "" : "Expected an &lt;iframe&gt; element in Embed macro";
         }
         return PortalResponse.create().contentType( MediaType.HTML_UTF_8 ).body( body ).build();
     }

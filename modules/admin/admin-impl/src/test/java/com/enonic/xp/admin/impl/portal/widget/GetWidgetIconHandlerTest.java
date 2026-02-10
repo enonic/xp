@@ -3,8 +3,6 @@ package com.enonic.xp.admin.impl.portal.widget;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 import com.google.common.net.HttpHeaders;
 
 import com.enonic.xp.admin.widget.WidgetDescriptor;
@@ -40,13 +38,10 @@ class GetWidgetIconHandlerTest
     @Test
     void testResolve()
     {
-        final Multimap<String, String> params = HashMultimap.create();
-        params.put( "app", "myapp" );
-        params.put( "widget", "mywidget" );
-        params.put( "v", "z4PhNX7vuL3xVChQ1m2ABw" );
-
-        final WebRequest webRequest = mock( WebRequest.class );
-        when( webRequest.getParams() ).thenReturn( params );
+        final WebRequest webRequest = new WebRequest();
+        webRequest.getParams().put( "app", "myapp" );
+        webRequest.getParams().put( "widget", "mywidget" );
+        webRequest.getParams().put( "v", "z4PhNX7vuL3xVChQ1m2ABw" );
 
         final Icon icon = mock( Icon.class );
         when( icon.toByteArray() ).thenReturn( new byte[0] );
@@ -65,13 +60,10 @@ class GetWidgetIconHandlerTest
     @Test
     void testResolveInvalidArgument()
     {
-        final Multimap<String, String> params = HashMultimap.create();
-        params.put( "app", "<>" );
-        params.put( "widget", "mywidget" );
-        params.put( "v", "d41d8cd98f00b204e9800998ecf8427e" );
-
-        final WebRequest webRequest = mock( WebRequest.class );
-        when( webRequest.getParams() ).thenReturn( params );
+        final WebRequest webRequest = new WebRequest();
+        webRequest.getParams().put( "app", "<>" );
+        webRequest.getParams().put( "widget", "mywidget" );
+        webRequest.getParams().put( "v", "d41d8cd98f00b204e9800998ecf8427e" );
 
         final IllegalArgumentException ex = assertThrows( IllegalArgumentException.class, () -> instance.handle( webRequest ) );
         assertEquals( "Invalid application key: <>", ex.getMessage() );

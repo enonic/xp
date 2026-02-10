@@ -3,6 +3,8 @@ package com.enonic.xp.web.servlet;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import com.google.common.base.Splitter;
 
@@ -12,8 +14,6 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
-
 @PublicApi
 public final class ServletRequestUrlHelper
 {
@@ -22,10 +22,15 @@ public final class ServletRequestUrlHelper
 
     public static String createUri( final HttpServletRequest req, final String path )
     {
-        return rewriteUri( req, path ).getRewrittenUri();
+        return Objects.requireNonNullElse( rewriteUri( VirtualHostHelper.getVirtualHost( req ), path ), path );
     }
 
     public static String getServerUrl( final HttpServletRequest req )
+    {
+        return getOrigin( req ).toString();
+    }
+
+    private static StringBuilder getOrigin( final HttpServletRequest req )
     {
         final StringBuilder str = new StringBuilder();
 
@@ -43,18 +48,14 @@ public final class ServletRequestUrlHelper
             str.append( ":" ).append( port );
         }
 
-        return str.toString();
+        return str;
     }
 
     public static String getFullUrl( final HttpServletRequest req )
     {
-        //Appends the server part
-        StringBuilder fullUrl = new StringBuilder( getServerUrl( req ) );
+        final StringBuilder fullUrl = getOrigin( req );
+        fullUrl.append( createUri( req, req.getRequestURI() ) );
 
-        //Appends the path part
-        fullUrl.append( rewriteUri( req, req.getRequestURI() ).getRewrittenUri() );
-
-        //Appends the query string part
         final String queryString = req.getQueryString();
         if ( queryString != null )
         {
@@ -66,75 +67,74 @@ public final class ServletRequestUrlHelper
 
     private static boolean needPortNumber( final String scheme, final int port )
     {
-        final boolean isUndefined = port < 0;
-        final boolean isHttpOrWs = ( "http".equals( scheme ) || "ws".equals( scheme ) ) && 80 == port;
-        final boolean isHttpsOrWss = ( "https".equals( scheme ) || "wss".equals( scheme ) ) && 443 == port;
-        return !( isUndefined || isHttpOrWs || isHttpsOrWss );
+        return switch ( port )
+        {
+            case 80 -> !"http".equals( scheme ) && !"ws".equals( scheme );
+            case 443 -> !"https".equals( scheme ) && !"wss".equals( scheme );
+            default -> port > 0;
+        };
     }
 
     public static UriRewritingResult rewriteUri( final HttpServletRequest req, final String uri )
     {
-        UriRewritingResult.Builder resultBuilder = UriRewritingResult.create();
+        final UriRewritingResult.Builder resultBuilder = UriRewritingResult.create();
+
         final VirtualHost vhost = VirtualHostHelper.getVirtualHost( req );
         if ( vhost == null )
         {
             return resultBuilder.rewrittenUri( uri ).build();
         }
 
-        final String targetPath = vhost.getTarget();
-        if ( needRewrite( uri, targetPath ) )
-        {
-            final String result = uri.substring( targetPath.length() );
-            final String newUri = normalizePath( vhost.getSource() + ( "/".equals( targetPath ) ? "/" : "" ) + result );
-            return resultBuilder.rewrittenUri( newUri )
-                .deletedUriPrefix( targetPath )
-                .newUriPrefix( normalizePath( vhost.getSource() ) )
-                .build();
-        }
+        final String rewrittenUri = rewriteUri( vhost, uri );
 
-        return resultBuilder.rewrittenUri( normalizePath( uri ) ).outOfScope( true ).build();
+        final String source = vhost.getSource();
+        final String target = vhost.getTarget();
+
+        return resultBuilder.deletedUriPrefix( target )
+            .newUriPrefix( source )
+            .rewrittenUri( Objects.requireNonNullElse( rewrittenUri, uri ) )
+            .outOfScope( rewrittenUri == null )
+            .build();
     }
 
-    private static boolean needRewrite( final String uri, final String targetPath )
+    private static String rewriteUri( final VirtualHost vhost, final String uri )
     {
-        if ( targetPath.equals( "/" ) )
+        if ( vhost == null || !uri.startsWith( "/" ) )
         {
-            return uri.startsWith( "/" );
+            return uri;
         }
-        if ( uri.equals( targetPath ) )
+
+        final String source = vhost.getSource();
+        final String target = vhost.getTarget();
+
+        if ( target.equals( "/" ) )
         {
-            return true;
+            return normalizePath( "/".equals( source ) ? uri : source + uri );
         }
 
         final int queryPos = uri.indexOf( '?' );
+        final int pathLength = queryPos == -1 ? uri.length() : queryPos;
 
-        if ( queryPos == -1 )
+        final int targetLength = target.length();
+
+        if ( uri.startsWith( target ) &&
+            ( pathLength == targetLength || ( pathLength > targetLength && uri.charAt( targetLength ) == '/' ) ) )
         {
-            return uri.startsWith( targetPath + "/" );
-        }
-        else
-        {
-            final String uriWithoutQuery = uri.substring( 0, queryPos );
-            if ( uriWithoutQuery.equals( targetPath ) )
+            final StringBuilder sb = new StringBuilder();
+            if ( !"/".equals( source ) )
             {
-                return true;
+                sb.append( source );
             }
-            else
-            {
-                return uriWithoutQuery.startsWith( targetPath + "/" );
-            }
+            sb.append( uri, targetLength, uri.length() );
+            return normalizePath( sb.toString() );
         }
+
+        return null;
     }
 
-    private static String normalizePath( final String value )
+    private static String normalizePath( final String path )
     {
-        if ( isNullOrEmpty( value ) )
-        {
-            return "/";
-        }
-
-        final Iterable<String> parts = Splitter.on( '/' ).trimResults().omitEmptyStrings().split( value );
-        return "/" + String.join( "/", parts );
+        return Splitter.on( '/' ).omitEmptyStrings().trimResults().splitToStream( path ).collect( Collectors.joining( "/", "/", "" ) );
     }
 
     public static String contentDispositionAttachment( final String fileName )
@@ -149,7 +149,7 @@ public final class ServletRequestUrlHelper
 
     private static void appendQuoted( final StringBuilder builder, final String input )
     {
-        builder.append( "\"" );
+        builder.append( '"' );
         input.codePoints().forEachOrdered( value -> {
             if ( value == '"' )
             {
@@ -160,7 +160,7 @@ public final class ServletRequestUrlHelper
                 builder.appendCodePoint( value );
             }
         } );
-        builder.append( "\"" );
+        builder.append( '"' );
     }
 
     private static void appendRfc8187Encoded( final StringBuilder builder, final String input, final Charset charset )

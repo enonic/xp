@@ -1,10 +1,6 @@
 package com.enonic.xp.portal.impl.handler.mapping;
 
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import com.google.common.base.Strings;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
@@ -16,6 +12,7 @@ import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.filter.FilterScriptFactory;
 import com.enonic.xp.portal.handler.WebHandlerHelper;
 import com.enonic.xp.portal.impl.PortalRequestHelper;
+import com.enonic.xp.portal.impl.handler.HandlerHelper;
 import com.enonic.xp.portal.impl.handler.render.PageResolver;
 import com.enonic.xp.portal.impl.handler.render.PageResolverResult;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
@@ -23,7 +20,6 @@ import com.enonic.xp.repository.RepositoryUtils;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigs;
-import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
@@ -36,8 +32,6 @@ import com.enonic.xp.web.handler.WebHandlerChain;
 
 class MappingHandlerHelper
 {
-    private static final Pattern PATTERN = Pattern.compile( "^/_/([^/]+)/.*" );
-
     private final ResourceService resourceService;
 
     private final ControllerScriptFactory controllerScriptFactory;
@@ -49,13 +43,6 @@ class MappingHandlerHelper
     private final ControllerMappingsResolver controllerMappingsResolver;
 
     private final PageResolver pageResolver;
-
-    MappingHandlerHelper( final ResourceService resourceService, final ControllerScriptFactory controllerScriptFactory,
-                          final FilterScriptFactory filterScriptFactory, final RendererDelegate rendererDelegate,
-                          final ControllerMappingsResolver controllerMappingsResolver )
-    {
-        this( resourceService, controllerScriptFactory, filterScriptFactory, rendererDelegate, controllerMappingsResolver, null );
-    }
 
     MappingHandlerHelper( final ResourceService resourceService, final ControllerScriptFactory controllerScriptFactory,
                           final FilterScriptFactory filterScriptFactory, final RendererDelegate rendererDelegate,
@@ -86,15 +73,14 @@ class MappingHandlerHelper
 
         final HttpMethod method = webRequest.getMethod();
 
-        if ( !HttpMethod.standard().contains( method ) )
+        if ( !HttpMethod.isStandard( method ) )
         {
             throw new WebException( HttpStatus.METHOD_NOT_ALLOWED, String.format( "Method %s not allowed", method ) );
         }
 
         final Site site = request.getSite();
 
-        final SiteConfigs siteConfigs = site != null ? SiteConfigsDataSerializer.fromData( site.getData().getRoot() )
-            : request.getProject() != null ? request.getProject().getSiteConfigs() : SiteConfigs.empty();
+        final SiteConfigs siteConfigs = PortalRequestHelper.getSiteConfigs( request );
 
         if ( siteConfigs.isEmpty() )
         {
@@ -105,7 +91,7 @@ class MappingHandlerHelper
 
         final Optional<ControllerMappingDescriptor> optionalControllerMapping =
             controllerMappingsResolver.resolve( PortalRequestHelper.getSiteRelativePath( request ), request.getParams(), content,
-                                                siteConfigs, getServiceType( request ) );
+                                                siteConfigs, HandlerHelper.findEndpoint( request ) );
 
         if ( optionalControllerMapping.isPresent() )
         {
@@ -184,22 +170,4 @@ class MappingHandlerHelper
         return Tracer.traceEx( trace, worker::execute );
     }
 
-    private String getServiceType( final PortalRequest req )
-    {
-        final String endpointPath = req.getEndpointPath();
-
-        if ( Strings.isNullOrEmpty( endpointPath ) )
-        {
-            return null;
-        }
-
-        final Matcher matcher = PATTERN.matcher( endpointPath );
-
-        if ( matcher.find() )
-        {
-            return matcher.group( 1 );
-        }
-
-        return null;
-    }
 }

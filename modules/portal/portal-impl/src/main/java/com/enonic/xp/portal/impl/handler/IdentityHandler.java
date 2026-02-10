@@ -2,7 +2,6 @@ package com.enonic.xp.portal.impl.handler;
 
 import java.io.IOException;
 import java.util.Objects;
-import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,18 +22,13 @@ import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
-import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 @Component(service = IdentityHandler.class, configurationPid = "com.enonic.xp.portal")
 public class IdentityHandler
 {
-    private static final Predicate<WebRequest> IS_STANDARD_METHOD = req -> HttpMethod.standard().contains( req.getMethod() );
-
-    private static final int ID_PROVIDER_GROUP_INDEX = 1;
-
-    private static final Pattern PATTERN = Pattern.compile( "^([^/^?]+)(?:/(login|logout))?" );
+    private static final Pattern PATTERN = Pattern.compile( "^(?<idp>[^/]+)(?:/(?<fun>login|logout))?" );
 
     private final IdProviderControllerService idProviderControllerService;
 
@@ -48,8 +42,8 @@ public class IdentityHandler
         this.redirectChecksumService = redirectChecksumService;
     }
 
-    public PortalResponse handle( final WebRequest webRequest, final WebResponse webResponse )
-        throws Exception
+    public PortalResponse handle( final WebRequest webRequest )
+        throws IOException
     {
         final String restPath = HandlerHelper.findRestPath( webRequest, "idprovider" );
         final Matcher matcher = PATTERN.matcher( restPath );
@@ -59,7 +53,7 @@ public class IdentityHandler
             throw WebException.notFound( "Not a valid idprovider url pattern" );
         }
 
-        if ( !IS_STANDARD_METHOD.test( webRequest ) )
+        if ( !HttpMethod.isStandard( webRequest.getMethod() ) )
         {
             throw new WebException( HttpStatus.METHOD_NOT_ALLOWED, String.format( "Method %s not allowed", webRequest.getMethod() ) );
         }
@@ -69,7 +63,7 @@ public class IdentityHandler
             return HandlerHelper.handleDefaultOptions( HttpMethod.standard() );
         }
 
-        final IdProviderKey idProviderKey = IdProviderKey.from( matcher.group( ID_PROVIDER_GROUP_INDEX ) );
+        final IdProviderKey idProviderKey = IdProviderKey.from( matcher.group( "idp" ) );
 
         final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( webRequest.getRawRequest() );
 
@@ -84,9 +78,9 @@ public class IdentityHandler
             throw WebException.notFound( "Not a valid idprovider url pattern" );
         }
 
-        String idProviderFunction = matcher.group( 2 );
+        String idProviderFunction = matcher.group( "fun" );
 
-        final PortalRequest portalRequest = createPortalRequest( webRequest, matcher.group( ID_PROVIDER_GROUP_INDEX ), idProviderFunction );
+        final PortalRequest portalRequest = createPortalRequest( webRequest, idProviderKey, idProviderFunction );
 
         final Trace trace = Tracer.newTrace( "portalRequest" );
 
@@ -99,10 +93,9 @@ public class IdentityHandler
         trace.put( "method", webRequest.getMethod().toString() );
         trace.put( "host", webRequest.getHost() );
         trace.put( "httpRequest", webRequest );
-        trace.put( "httpResponse", webResponse );
         trace.put( "context", ContextAccessor.current() );
 
-        return Tracer.traceEx( trace, () -> {
+        return Tracer.traceIO( trace, () -> {
             final PortalResponse portalResponse = doHandle( idProviderKey, idProviderFunction, portalRequest );
             HandlerHelper.addTraceInfo( trace, portalResponse );
             return portalResponse;
@@ -129,12 +122,13 @@ public class IdentityHandler
         return portalResponse;
     }
 
-    private PortalRequest createPortalRequest( final WebRequest webRequest, final String idProviderName, final String idProviderFunction )
+    private PortalRequest createPortalRequest( final WebRequest webRequest, final IdProviderKey idProviderName,
+                                               final String idProviderFunction )
     {
         final PortalRequest portalRequest =
             webRequest instanceof PortalRequest ? (PortalRequest) webRequest : new PortalRequest( webRequest );
 
-        portalRequest.setContextPath( HandlerHelper.findPreRestPath( portalRequest, "idprovider" ) + "/" + idProviderName );
+        portalRequest.setContextPath( portalRequest.getBasePath() + "/_/idprovider/" + idProviderName );
 
         if ( idProviderFunction != null )
         {

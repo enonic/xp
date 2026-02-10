@@ -70,7 +70,7 @@ class AssetHandlerTest
 
         this.request.setBaseUri( "/site" );
         this.request.setMethod( HttpMethod.GET );
-        this.request.setEndpointPath( "/_/asset/demo/css/main.css" );
+        this.request.setRawPath( "/_/asset/demo/css/main.css" );
 
         req = mock( HttpServletRequest.class );
         this.request.setRawRequest( req );
@@ -153,7 +153,7 @@ class AssetHandlerTest
     void testNotValidUrlPattern()
         throws Exception
     {
-        this.request.setEndpointPath( "/_/asset/" );
+        this.request.setRawPath( "/_/asset/" );
 
         try
         {
@@ -172,7 +172,7 @@ class AssetHandlerTest
         throws Exception
     {
         addResource( "demo:/assets/css/main.css" );
-        this.request.setEndpointPath( "/_/asset/demo:123/css/main.css" );
+        this.request.setRawPath( "/_/asset/demo:123/css/main.css" );
 
         final ResourceKey resourceKey = ResourceKey.from( ApplicationKey.from( "demo" ), "META-INF/MANIFEST.MF" );
         when( this.resourceService.getResource( resourceKey ) ).thenReturn( MockResource.empty( resourceKey, 1 ) );
@@ -188,7 +188,7 @@ class AssetHandlerTest
         throws Exception
     {
         addResource( "demo:/assets/css/main.css" );
-        this.request.setEndpointPath( "/_/asset/demo:0000000000000001/css/main.css" );
+        this.request.setRawPath( "/_/asset/demo:0000000000000001/css/main.css" );
 
         final ResourceKey resourceKey = ResourceKey.from( ApplicationKey.from( "demo" ), "META-INF/MANIFEST.MF" );
         when( this.resourceService.getResource( resourceKey ) ).thenReturn( MockResource.empty( resourceKey, 1 ) );

@@ -58,7 +58,7 @@ class ComponentHandlerTest
         this.request.setRepositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) );
         this.request.setMethod( HttpMethod.GET );
         this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );
-        this.request.setEndpointPath( "/_/component/main" );
+        this.request.setRawPath( "/_/component/main" );
     }
 
     @Test
@@ -75,7 +75,7 @@ class ComponentHandlerTest
         Mockito.when( this.postProcessor.processResponseInstructions( Mockito.any(), Mockito.any() ) ).thenReturn( portalResponse );
 
         this.request.setMethod( HttpMethod.OPTIONS );
-        this.request.setEndpointPath( "/_/component/main-region/0" );
+        this.request.setRawPath( "/_/component/main-region/0" );
 
         final WebResponse res = this.handler.handle( this.request );
         assertNotNull( res );
@@ -99,7 +99,7 @@ class ComponentHandlerTest
 
         setRendererResult( portalResponse );
 
-        this.request.setEndpointPath( "/_/component/main-region/0" );
+        this.request.setRawPath( "/_/component/main-region/0" );
 
         final WebResponse res = this.handler.handle( this.request );
         assertNotNull( res );
@@ -118,7 +118,7 @@ class ComponentHandlerTest
         Mockito.when( this.pageTemplateService.getByKey( Mockito.eq( PageTemplateKey.from( "my-page" ) ) ) )
             .thenThrow( ContentNotFoundException.class );
 
-        this.request.setEndpointPath( "/_/component/main-region/0" );
+        this.request.setRawPath( "/_/component/main-region/0" );
 
         final WebException e = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
         assertAll( () -> assertEquals( HttpStatus.NOT_FOUND, e.getStatus() ),
@@ -132,7 +132,7 @@ class ComponentHandlerTest
         setupContent();
         setupTemplates();
 
-        this.request.setEndpointPath( "/_/component/main-region/666" );
+        this.request.setRawPath( "/_/component/main-region/666" );
 
         final WebException e = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
         assertEquals( HttpStatus.NOT_FOUND, e.getStatus() );
@@ -142,7 +142,7 @@ class ComponentHandlerTest
     @Test
     void getContentNotFound()
     {
-        this.request.setEndpointPath( "/_/component/main-region/666" );
+        this.request.setRawPath( "/_/component/main-region/666" );
 
         final ContentPath path = ContentPath.from( "/site/somepath/content" );
         Mockito.when( this.contentService.getByPath( path ) ).thenThrow( ContentNotFoundException.class );
@@ -157,7 +157,7 @@ class ComponentHandlerTest
     void getSiteNotFound()
     {
         setupContent();
-        this.request.setEndpointPath( "/_/component/main-region/666" );
+        this.request.setRawPath( "/_/component/main-region/666" );
 
         final ContentPath path = ContentPath.from( "/site/somepath/content" );
         Mockito.when( this.contentService.findNearestSiteByPath( path ) ).thenReturn( null );
@@ -187,7 +187,7 @@ class ComponentHandlerTest
         setRendererResult( portalResponse );
 
         this.request.setMode( RenderMode.EDIT );
-        this.request.setEndpointPath( "/_/component/main-region/0" );
+        this.request.setRawPath( "/_/component/main-region/0" );
 
         final WebResponse res = this.handler.handle( this.request );
         assertNotNull( res );
@@ -212,7 +212,7 @@ class ComponentHandlerTest
 
         setRendererResult( portalResponse );
 
-        this.request.setEndpointPath( "/_/component/main-region/0" );
+        this.request.setRawPath( "/_/component/main-region/0" );
 
         final WebResponse res = this.handler.handle( this.request );
         assertNotNull( res );
@@ -236,7 +236,7 @@ class ComponentHandlerTest
 
         setRendererResult( portalResponse );
         this.request.setMode( RenderMode.EDIT );
-        this.request.setEndpointPath( "/_/component/main-region/0" );
+        this.request.setRawPath( "/_/component/main-region/0" );
 
         final WebResponse res = this.handler.handle( this.request );
         assertNotNull( res );
@@ -259,7 +259,7 @@ class ComponentHandlerTest
 
         setRendererResult( portalResponse );
 
-        this.request.setEndpointPath( "/_/component/main-region/0" );
+        this.request.setRawPath( "/_/component/main-region/0" );
 
         final WebResponse res = this.handler.handle( this.request );
         assertResponseOK( res );
@@ -282,7 +282,7 @@ class ComponentHandlerTest
 
         setRendererResult( portalResponse );
 
-        this.request.setEndpointPath( "/_/component/main-region/0" );
+        this.request.setRawPath( "/_/component/main-region/0" );
 
         final WebResponse res = this.handler.handle( this.request );
         assertResponseOK( res );
@@ -306,7 +306,7 @@ class ComponentHandlerTest
 
         setRendererResult( portalResponse );
 
-        this.request.setEndpointPath( "/_/component/main-region/0" );
+        this.request.setRawPath( "/_/component/main-region/0" );
 
         final WebResponse res = this.handler.handle( this.request );
         assertResponseOK( res );
@@ -330,7 +330,7 @@ class ComponentHandlerTest
 
         setRendererResult( portalResponse );
 
-        this.request.setEndpointPath( "/_/component/main-region/0" );
+        this.request.setRawPath( "/_/component/main-region/0" );
 
         final WebResponse res = this.handler.handle( this.request );
         assertResponseOK( res );
@@ -376,7 +376,7 @@ class ComponentHandlerTest
         portalRequest.setMethod( HttpMethod.GET );
         portalRequest.setBaseUri( "/unknown" );
         portalRequest.setRawPath( "/site/project/branch/content/_/component/pathToComponent" );
-        portalRequest.setEndpointPath( "/_/component/pathToComponent" );
+        portalRequest.setRawPath( "/_/component/pathToComponent" );
 
         WebException ex = assertThrows( WebException.class, () -> this.handler.handle( portalRequest ) );
         assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
@@ -396,7 +396,7 @@ class ComponentHandlerTest
 
         setRendererResult( portalResponse );
 
-        this.request.setEndpointPath( endpointPath );
+        this.request.setRawPath( endpointPath );
 
         final WebResponse res = this.handler.handle( this.request );
         assertResponseOK( res );

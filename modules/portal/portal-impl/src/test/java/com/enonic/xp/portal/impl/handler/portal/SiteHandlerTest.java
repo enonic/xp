@@ -131,12 +131,10 @@ class SiteHandlerTest
     void testCreatePortalRequestForAssetAndIdproviderEndpoints()
     {
         this.request.setRawPath( "/site/myrepo/draft/mycontent/_/asset/demo/css/main.css" );
-        this.request.setEndpointPath( "/_/asset/demo/css/main.css" );
 
         assertNotNull( createRequestWithAuthenticatedUser() );
 
         this.request.setRawPath( "/site/default/draft/_/idprovider/system/login" );
-        this.request.setEndpointPath( "/_/idprovider/system/login" );
 
         assertNotNull( createRequestWithAuthenticatedUser() );
     }

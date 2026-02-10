@@ -3,6 +3,7 @@ package com.enonic.xp.portal.impl.handler.portal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.regex.MatchResult;
 import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Activate;
@@ -23,15 +24,16 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.handler.BasePortalHandler;
 import com.enonic.xp.portal.impl.PortalConfig;
+import com.enonic.xp.portal.impl.handler.PathMatchers;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.repository.RepositoryUtils;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.Site;
+import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
@@ -45,10 +47,6 @@ import static com.google.common.base.Strings.nullToEmpty;
 public class SiteHandler
     extends BasePortalHandler
 {
-    private static final String SITE_BASE = "/site";
-
-    private static final String SITE_PREFIX = SITE_BASE + "/";
-
     private final ContentService contentService;
 
     private final ProjectService projectService;
@@ -65,7 +63,6 @@ public class SiteHandler
         this.exceptionRenderer = exceptionRenderer;
     }
 
-
     @Activate
     @Modified
     public void activate( final PortalConfig config )
@@ -79,18 +76,41 @@ public class SiteHandler
     @Override
     protected boolean canHandle( final WebRequest webRequest )
     {
-        return webRequest.getRawPath().startsWith( SITE_PREFIX );
+        return webRequest.getBasePath().startsWith( PathMatchers.SITE_PREFIX );
     }
 
     @Override
     protected PortalRequest createPortalRequest( final WebRequest webRequest, final WebResponse webResponse )
     {
-        final String baseSubPath = webRequest.getRawPath().substring( ( SITE_PREFIX.length() ) );
-        final PortalRequest portalRequest = doCreatePortalRequest( webRequest, baseSubPath );
+        final MatchResult matcher = PathMatchers.site( webRequest );
+        if ( !matcher.hasMatch() )
+        {
+            throw WebException.notFound( "Invalid site URL" );
+        }
+        final PortalRequest portalRequest = new PortalRequest( webRequest );
 
-        final Project project = callInContext( portalRequest.getRepositoryId(), portalRequest.getBranch(), RoleKeys.ADMIN,
-                                               () -> projectService.get( ProjectName.from( portalRequest.getRepositoryId() ) ) );
+        final ProjectName projectName;
+        final Branch branch;
+        final ContentPath contentPath;
+        try
+        {
+            projectName = ProjectName.from( matcher.group( "project" ) );
+            branch = Branch.from( matcher.group( "branch" ) );
+            contentPath = ContentPath.from( matcher.group( "path" ) );
+        }
+        catch ( IllegalArgumentException e )
+        {
+            throw new WebException( HttpStatus.NOT_FOUND, "Invalid site URL", e );
+        }
+        final RepositoryId repositoryId = projectName.getRepoId();
 
+        portalRequest.setBaseUri( PathMatchers.SITE_BASE );
+        portalRequest.setRepositoryId( repositoryId );
+        portalRequest.setBranch( branch );
+        portalRequest.setMode( RenderMode.LIVE );
+        portalRequest.setContentPath( contentPath );
+
+        final Project project = callAsContentAdmin( repositoryId, branch, () -> projectService.get( projectName ) );
         portalRequest.setProject( project );
 
         if ( ContentConstants.BRANCH_DRAFT.equals( portalRequest.getBranch() ) )
@@ -107,14 +127,12 @@ public class SiteHandler
             }
         }
 
-        final ContentPath contentPath = portalRequest.getContentPath();
         if ( contentPath.isRoot() )
         {
             return portalRequest;
         }
 
-        final Content content =
-            callAsContentAdmin( portalRequest.getRepositoryId(), portalRequest.getBranch(), () -> getContentByPath( contentPath ) );
+        final Content content = callAsContentAdmin( repositoryId, branch, () -> getContentByPath( contentPath ) );
 
         if ( content != null )
         {
@@ -122,95 +140,9 @@ public class SiteHandler
             portalRequest.setContentPath( content.getPath() );
             portalRequest.setSite( content.isSite()
                                        ? (Site) content
-                                       : callAsContentAdmin( portalRequest.getRepositoryId(), portalRequest.getBranch(),
+                                       : callAsContentAdmin( repositoryId, branch,
                                                              () -> this.contentService.findNearestSiteByPath( contentPath ) ) );
         }
-
-        return portalRequest;
-    }
-
-    private static RepositoryId findRepository( final String baseSubPath )
-    {
-        final int index = baseSubPath.indexOf( '/' );
-        final String result = baseSubPath.substring( 0, index > 0 ? index : baseSubPath.length() );
-        if ( result.isEmpty() )
-        {
-            throw WebException.notFound( "Repository must be specified" );
-        }
-
-        try
-        {
-            return toRepositoryId( result );
-        }
-        catch ( IllegalArgumentException e )
-        {
-            throw WebException.notFound( String.format( "Repository name is invalid [%s]", result ) );
-        }
-    }
-
-    private static RepositoryId toRepositoryId( String result )
-    {
-        final RepositoryId repositoryId = RepositoryUtils.fromContentRepoName( result );
-        if ( repositoryId == null )
-        {
-            throw new IllegalArgumentException();
-        }
-        return repositoryId;
-    }
-
-    private static Branch findBranch( final String baseSubPath )
-    {
-        final String branchSubPath = findPathAfterRepository( baseSubPath );
-        final int index = branchSubPath.indexOf( '/' );
-        final String result = branchSubPath.substring( 0, index > 0 ? index : branchSubPath.length() );
-        if ( result.isEmpty() )
-        {
-            throw WebException.notFound( "Branch must be specified" );
-        }
-        try
-        {
-            return Branch.from( result );
-        }
-        catch ( IllegalArgumentException e )
-        {
-            throw WebException.notFound( String.format( "Branch name is invalid [%s]", result ) );
-        }
-    }
-
-    private static ContentPath findContentPath( final String baseSubPath )
-    {
-        final String branchSubPath = findPathAfterBranch( baseSubPath );
-        final int underscore = branchSubPath.indexOf( "/_/" );
-        final String result = branchSubPath.substring( 0, underscore > -1 ? underscore : branchSubPath.length() );
-        return ContentPath.from( result.startsWith( "/" ) ? result : ( "/" + result ) );
-    }
-
-    private static String findPathAfterRepository( final String baseSubPath )
-    {
-        final int index = baseSubPath.indexOf( '/' );
-        return baseSubPath.substring( index > 0 && index < baseSubPath.length() ? index + 1 : baseSubPath.length() );
-    }
-
-    private static String findPathAfterBranch( final String baseSubPath )
-    {
-        final String repoSubPath = findPathAfterRepository( baseSubPath );
-        final int index = repoSubPath.indexOf( '/' );
-
-        return index >= 0 ? repoSubPath.substring( index ) : "";
-    }
-
-    protected PortalRequest doCreatePortalRequest( final WebRequest webRequest, final String baseSubPath )
-    {
-        final RepositoryId repositoryId = findRepository( baseSubPath );
-        final Branch branch = findBranch( baseSubPath );
-        final ContentPath contentPath = findContentPath( baseSubPath );
-
-        final PortalRequest portalRequest = new PortalRequest( webRequest );
-        portalRequest.setBaseUri( SITE_BASE );
-        portalRequest.setRepositoryId( repositoryId );
-        portalRequest.setBranch( branch );
-        portalRequest.setContentPath( contentPath );
-        portalRequest.setMode( RenderMode.LIVE );
 
         return portalRequest;
     }
@@ -229,17 +161,11 @@ public class SiteHandler
 
     private static <T> T callAsContentAdmin( final RepositoryId repositoryId, final Branch branch, final Callable<T> callable )
     {
-        return callInContext( repositoryId, branch, RoleKeys.CONTENT_MANAGER_ADMIN, callable );
-    }
-
-    private static <T> T callInContext( final RepositoryId repositoryId, final Branch branch, final PrincipalKey principalKey,
-                                        final Callable<T> callable )
-    {
         final Context context = ContextAccessor.current();
         return ContextBuilder.from( context )
             .repositoryId( repositoryId )
             .branch( branch )
-            .authInfo( AuthenticationInfo.copyOf( context.getAuthInfo() ).principals( principalKey ).build() )
+            .authInfo( AuthenticationInfo.copyOf( context.getAuthInfo() ).principals( RoleKeys.CONTENT_MANAGER_ADMIN ).build() )
             .build()
             .callWith( callable );
     }

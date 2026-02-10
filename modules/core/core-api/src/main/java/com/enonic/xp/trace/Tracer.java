@@ -1,5 +1,6 @@
 package com.enonic.xp.trace;
 
+import java.io.IOException;
 import java.util.concurrent.Callable;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -64,6 +65,24 @@ public final class Tracer
 
     public static <T> T traceEx( final Trace trace, final Callable<T> callable )
         throws Exception
+    {
+        final Trace current = current();
+
+        try
+        {
+            setCurrent( trace );
+            startTrace( trace );
+            return callable.call();
+        }
+        finally
+        {
+            endTrace( trace );
+            setCurrent( current );
+        }
+    }
+
+    public static <T> T traceIO( final Trace trace, final TraceIO<T> callable )
+        throws IOException
     {
         final Trace current = current();
 

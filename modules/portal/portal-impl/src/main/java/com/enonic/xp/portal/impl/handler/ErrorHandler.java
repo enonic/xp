@@ -1,6 +1,6 @@
 package com.enonic.xp.portal.impl.handler;
 
-import java.util.function.Predicate;
+import java.io.IOException;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -13,12 +13,11 @@ import com.enonic.xp.web.WebRequest;
 @Component(service = ErrorHandler.class)
 public class ErrorHandler
 {
-    private static final Predicate<WebRequest> IS_STANDARD_METHOD = req -> HttpMethod.standard().contains( req.getMethod() );
 
     public PortalResponse handle( final WebRequest webRequest )
-        throws Exception
+        throws IOException
     {
-        if ( !IS_STANDARD_METHOD.test( webRequest ) )
+        if ( !HttpMethod.isStandard( webRequest.getMethod() ) )
         {
             throw new WebException( HttpStatus.METHOD_NOT_ALLOWED, String.format( "Method %s not allowed", webRequest.getMethod() ) );
         }

@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.handler;
 
+import java.io.IOException;
 import java.util.EnumSet;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
@@ -14,7 +15,6 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.image.ImageService;
 import com.enonic.xp.image.ScaleParamsParser;
-import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.WebHandlerHelper;
@@ -65,7 +65,7 @@ public class ImageHandler
     }
 
     public PortalResponse handle( final WebRequest webRequest )
-        throws Exception
+        throws IOException
     {
         WebHandlerHelper.checkAdminAccess( webRequest );
 
@@ -92,8 +92,7 @@ public class ImageHandler
             return HandlerHelper.handleDefaultOptions( ALLOWED_METHODS );
         }
 
-        final ImageHandlerWorker worker =
-            new ImageHandlerWorker( webRequest, this.contentService, this.imageService );
+        final ImageHandlerWorker worker = new ImageHandlerWorker( webRequest, this.contentService, this.imageService );
 
         worker.id = ContentId.from( matcher.group( 1 ) );
         worker.fingerprint = matcher.group( 2 );

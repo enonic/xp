@@ -20,6 +20,7 @@ import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
 import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.portal.url.PortalUrlService;
@@ -76,6 +77,7 @@ public abstract class RenderBaseHandlerTest
     void setupRenderBaseHandlerTest()
     {
         this.request = new PortalRequest();
+        this.request.setMode( RenderMode.LIVE );
         this.contentService = mock( ContentService.class );
         this.projectService = mock( ProjectService.class );
         this.pageTemplateService = mock( PageTemplateService.class );
@@ -201,7 +203,8 @@ public abstract class RenderBaseHandlerTest
 
         final PageTemplate.Builder builder = PageTemplate.newPageTemplate()
             .key( PageTemplateKey.from( "abc" ) )
-            .canRender( ContentTypeNames.from( "myapplication:article", "myapplication:banner", "myapplication:ctype" ) ).regions( regions )
+            .canRender( ContentTypeNames.from( "myapplication:article", "myapplication:banner", "myapplication:ctype" ) )
+            .regions( regions )
             .config( pageTemplateConfig );
 
         builder.controller( DescriptorKey.from( "mainapplication:landing-page" ) );

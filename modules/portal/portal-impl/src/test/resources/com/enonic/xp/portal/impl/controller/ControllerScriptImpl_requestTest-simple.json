@@ -1,11 +1,12 @@
 {
   "method": "GET",
   "port": 80,
+  "rawPath": "/",
   "mode": "live",
   "webSocket": false,
   "params": {},
   "headers": {},
-  "getHeader" : {},
+  "getHeader": {},
   "cookies": {},
-  "locales" : []
+  "locales": []
 }

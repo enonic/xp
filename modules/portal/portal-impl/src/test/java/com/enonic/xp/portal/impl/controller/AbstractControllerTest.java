@@ -19,6 +19,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.impl.postprocess.PostProcessorImpl;
 import com.enonic.xp.portal.impl.script.PortalScriptServiceImpl;
@@ -51,6 +52,7 @@ public abstract class AbstractControllerTest
     void setup()
     {
         this.portalRequest = new PortalRequest();
+        this.portalRequest.setMode( RenderMode.LIVE );
         this.portalResponse = PortalResponse.create().build();
 
         final Application application = Mockito.mock( Application.class );

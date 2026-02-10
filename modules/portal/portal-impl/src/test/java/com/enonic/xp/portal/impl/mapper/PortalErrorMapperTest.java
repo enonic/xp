@@ -7,6 +7,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.exception.NotFoundException;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.impl.MapSerializableAssert;
 import com.enonic.xp.portal.impl.error.PortalError;
@@ -26,6 +27,7 @@ class PortalErrorMapperTest
     void setup()
     {
         final PortalRequest portalRequest = new PortalRequest();
+        portalRequest.setMode( RenderMode.LIVE );
         portalRequest.setMethod( HttpMethod.GET );
         portalRequest.setScheme( "http" );
         portalRequest.setHost( "localhost" );
@@ -56,10 +58,7 @@ class PortalErrorMapperTest
         };
 
         final PortalError.Builder errorBuilder = PortalError.create();
-        errorBuilder.status( HttpStatus.NOT_FOUND ).
-            message( "Message: Not found." ).
-            exception( exception ).
-            request( portalRequest );
+        errorBuilder.status( HttpStatus.NOT_FOUND ).message( "Message: Not found." ).exception( exception ).request( portalRequest );
 
         this.error = errorBuilder.build();
     }
@@ -70,6 +69,6 @@ class PortalErrorMapperTest
         final PortalErrorMapper value = new PortalErrorMapper( this.error );
         assertHelper.assertJson( "error-simple.json", value );
         final Exception exception = MapSerializableAssert.serializeJs( value ).getMember( "exception" ).getValue( Exception.class );
-        assertThat(exception).isInstanceOf( NotFoundException.class ).message().isEqualTo( "Not found." );
+        assertThat( exception ).isInstanceOf( NotFoundException.class ).message().isEqualTo( "Not found." );
     }
 }

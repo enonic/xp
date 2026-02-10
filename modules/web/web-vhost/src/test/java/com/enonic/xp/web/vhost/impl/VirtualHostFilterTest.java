@@ -5,9 +5,9 @@ import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -17,6 +17,9 @@ import com.enonic.xp.web.vhost.VirtualHostService;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostIdProvidersMapping;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentCaptor.forClass;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.notNull;
 import static org.mockito.Mockito.mock;
@@ -61,7 +64,7 @@ class VirtualHostFilterTest
 
         filter.doFilter( this.req, this.res, this.chain );
 
-        verify( this.chain, times( 1 ) ).doFilter( this.req, this.res );
+        verify( this.chain, times( 1 ) ).doFilter( any(), eq( this.res ) );
     }
 
     @Test
@@ -75,7 +78,7 @@ class VirtualHostFilterTest
         VirtualHostFilter filter = new VirtualHostFilter( virtualHostService, new VirtualHostResolverImpl( virtualHostService ) );
         filter.doFilter( this.req, this.res, this.chain );
 
-        verify( this.chain, times( 1 ) ).doFilter( this.req, this.res );
+        verify( this.chain, times( 1 ) ).doFilter( any(), eq( this.res ) );
     }
 
     @Test
@@ -122,16 +125,15 @@ class VirtualHostFilterTest
         when( this.req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.XP_CONNECTOR );
         when( req.getServerName() ).thenReturn( "enonic.com" );
         when( req.getRequestURI() ).thenReturn( "/rest/status" );
-
-        final RequestDispatcher requestDispatcher = mock( RequestDispatcher.class );
-        when( req.getRequestDispatcher( "/admin/rest/status" ) ).thenReturn( requestDispatcher );
+        when( req.getPathInfo() ).thenReturn( "/rest/status" );
 
         VirtualHostFilter filter = new VirtualHostFilter( virtualHostService, new VirtualHostResolverImpl( virtualHostService ) );
         filter.doFilter( this.req, this.res, this.chain );
 
         verify( req ).setAttribute( eq( VirtualHost.class.getName() ), notNull() );
-        verify( this.chain, never() ).doFilter( this.req, this.res );
-        verify( requestDispatcher ).forward( this.req, this.res );
+        final ArgumentCaptor<HttpServletRequest> requestCaptor = forClass( HttpServletRequest.class );
+        verify( this.chain ).doFilter( requestCaptor.capture(), eq( this.res ) );
+        assertEquals( "/admin/rest/status", requestCaptor.getValue().getRequestURI() );
     }
 
     private void addMapping()

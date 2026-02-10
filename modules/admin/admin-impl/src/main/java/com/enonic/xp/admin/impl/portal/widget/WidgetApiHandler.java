@@ -8,6 +8,7 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.admin.impl.portal.AdminToolPortalHandler;
 import com.enonic.xp.admin.tool.AdminToolDescriptor;
 import com.enonic.xp.admin.tool.AdminToolDescriptorService;
 import com.enonic.xp.admin.widget.WidgetDescriptor;
@@ -27,8 +28,6 @@ import com.enonic.xp.web.WebResponse;
 public class WidgetApiHandler
 {
     private static final Pattern WIDGET_API_PATTERN = Pattern.compile( "^/_/admin:widget/(?<appKey>[^/]+)/(?<widgetKey>[^/]+)" );
-
-    private static final Pattern TOOL_PREFIX_PATTERN = Pattern.compile( "^/admin/(?<appKey>[^/]+)/(?<toolName>[^/]+)/_/admin:widget/" );
 
     private static final String GENERIC_WIDGET_INTERFACE = "generic";
 
@@ -91,11 +90,11 @@ public class WidgetApiHandler
             return;
         }
 
-        final Matcher toolMatcher = TOOL_PREFIX_PATTERN.matcher( webRequest.getRawPath() );
+        final Matcher toolMatcher = AdminToolPortalHandler.ADMIN_TOOL_PATH_PATTERN.matcher( webRequest.getBasePath() );
         if ( toolMatcher.find() )
         {
             final DescriptorKey toolDescriptorKey =
-                DescriptorKey.from( resolveApplicationKey( toolMatcher.group( "appKey" ) ), toolMatcher.group( "toolName" ) );
+                DescriptorKey.from( resolveApplicationKey( toolMatcher.group( "app" ) ), toolMatcher.group( "tool" ) );
             final AdminToolDescriptor adminToolDescriptor = adminToolDescriptorService.getByKey( toolDescriptorKey );
             if ( adminToolDescriptor == null || widgetDescriptor.getInterfaces().stream().noneMatch( adminToolDescriptor::hasInterface ) )
             {

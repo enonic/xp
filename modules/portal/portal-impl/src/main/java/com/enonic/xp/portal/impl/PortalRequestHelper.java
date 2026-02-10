@@ -7,6 +7,8 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.site.Site;
+import com.enonic.xp.site.SiteConfigs;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 
@@ -18,8 +20,7 @@ public final class PortalRequestHelper
 
     public static boolean isSiteBase( final WebRequest webRequest )
     {
-        return webRequest instanceof PortalRequest portalRequest && portalRequest.getBaseUri() != null &&
-            ( portalRequest.getBaseUri().equals( "/site" ) || portalRequest.getBaseUri().startsWith( "/admin/site/" ) );
+        return webRequest instanceof PortalRequest portalRequest && portalRequest.getMode() != null;
     }
 
     public static String getSiteRelativePath( final PortalRequest portalRequest )
@@ -79,6 +80,13 @@ public final class PortalRequestHelper
         {
             throw WebException.notFound( String.format( "Site for [%s] not found", portalRequest.getContentPath() ) );
         }
+    }
+
+    public static SiteConfigs getSiteConfigs( final PortalRequest portalRequest )
+    {
+        return portalRequest.getSite() != null
+            ? SiteConfigsDataSerializer.fromData( portalRequest.getSite().getData().getRoot() )
+            : portalRequest.getProject() != null ? portalRequest.getProject().getSiteConfigs() : SiteConfigs.empty();
     }
 
     private static String siteRelativePath( final Site site, final ContentPath contentPath )

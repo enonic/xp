@@ -10,6 +10,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.postprocess.PostProcessorImpl;
 import com.enonic.xp.portal.impl.script.PortalScriptServiceImpl;
 import com.enonic.xp.resource.ResourceKey;
@@ -43,6 +44,7 @@ public abstract class AbstractErrorHandlerTest
     void setup()
     {
         this.portalRequest = new PortalRequest();
+        this.portalRequest.setMode( RenderMode.LIVE );
         this.portalRequest.setMethod( HttpMethod.GET );
         this.portalResponse = PortalResponse.create().build();
 

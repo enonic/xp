@@ -369,7 +369,8 @@ class PortalUrlServiceImpl_componentUrlTest
     @Test
     void testWithNonSiteRequestInContextWithoutBaseUrl()
     {
-        portalRequest.setBaseUri( "/api" );
+        portalRequest.setMode( null );
+        portalRequest.setBaseUri( "/api/application:apikey" );
         portalRequest.setRepositoryId( null );
         portalRequest.setBranch( null );
         portalRequest.setRawPath( "/api/application:apikey" );
@@ -441,7 +442,8 @@ class PortalUrlServiceImpl_componentUrlTest
     @Test
     void testWithNonSiteRequestInContextWithBaseUrl()
     {
-        portalRequest.setBaseUri( "/api" );
+        portalRequest.setMode( null );
+        portalRequest.setBaseUri( "/api/application:apikey" );
         portalRequest.setRepositoryId( null );
         portalRequest.setBranch( null );
         portalRequest.setRawPath( "/api/application:apikey" );
@@ -476,7 +478,8 @@ class PortalUrlServiceImpl_componentUrlTest
     @Test
     void testWithNonSiteRequestWithExplicitContextWithBaseUrl()
     {
-        portalRequest.setBaseUri( "/api" );
+        portalRequest.setMode( null );
+        portalRequest.setBaseUri( "/api/application:apikey" );
         portalRequest.setRepositoryId( null );
         portalRequest.setBranch( null );
         portalRequest.setRawPath( "/api/application:apikey" );
@@ -543,7 +546,8 @@ class PortalUrlServiceImpl_componentUrlTest
     @Test
     void testWithNonSiteRequestWithExplicitContextWithoutBaseUrl()
     {
-        portalRequest.setBaseUri( "/api" );
+        portalRequest.setMode( null );
+        portalRequest.setBaseUri( "/api/application:apikey" );
         portalRequest.setRepositoryId( null );
         portalRequest.setBranch( null );
         portalRequest.setRawPath( "/api/application:apikey" );
