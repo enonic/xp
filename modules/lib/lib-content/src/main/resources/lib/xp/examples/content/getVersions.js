@@ -1,9 +1,9 @@
-var contentLib = require('/lib/xp/content');
-var assert = require('/lib/xp/testing');
+const contentLib = require('/lib/xp/content');
+const assert = require('/lib/xp/testing');
 
 // BEGIN
 // Fetch first page
-var result = contentLib.getVersions({
+let result = contentLib.getVersions({
     key: 'contentId',
     count: 2
 });
@@ -20,7 +20,7 @@ if (result.cursor) {
 }
 // END
 
-var expected = {
+let expected = {
     'total': 5,
     'count': 2,
     'cursor': 'eyJ0cyI6MTcwNDA2NzIwMDAwMCwiaWQiOiJ2ZXJzaW9uMiJ9',

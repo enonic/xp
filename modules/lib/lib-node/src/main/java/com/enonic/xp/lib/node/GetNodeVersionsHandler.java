@@ -5,7 +5,7 @@ import com.enonic.xp.node.GetNodeVersionsResult;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeVersions;
 
-public class FindVersionsHandler
+public class GetNodeVersionsHandler
     extends AbstractNodeHandler
 {
     private final NodeKey key;
@@ -14,7 +14,7 @@ public class FindVersionsHandler
 
     private final Integer size;
 
-    private FindVersionsHandler( final Builder builder )
+    private GetNodeVersionsHandler( final Builder builder )
     {
         super( builder );
 
@@ -45,7 +45,7 @@ public class FindVersionsHandler
             result = nodeService.getVersions( params.build() );
         }
 
-        return new NodeVersionsQueryResultMapper( result );
+        return new GetNodeVersionsResultMapper( result );
     }
 
     public static Builder create()
@@ -84,9 +84,9 @@ public class FindVersionsHandler
             return this;
         }
 
-        public FindVersionsHandler build()
+        public GetNodeVersionsHandler build()
         {
-            return new FindVersionsHandler( this );
+            return new GetNodeVersionsHandler( this );
         }
     }
 }

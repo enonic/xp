@@ -253,7 +253,7 @@ interface NodeHandler {
 
     exist(key: string): boolean;
 
-    findVersions(params: FindVersionsHandlerParams): NodeVersionsQueryResult;
+    getVersions(params: GetNodeVersionsHandlerParams): GetNodeVersionsResult;
 
     getActiveVersion(key: string): NodeVersion | null;
 
@@ -426,13 +426,13 @@ interface QueryNodeHandlerParams {
     setExplain(value: boolean): void;
 }
 
-export interface FindVersionsParams {
+export interface GetVersionsParams {
     key: string;
     cursor?: string | null;
     count?: number;
 }
 
-interface FindVersionsHandlerParams {
+interface GetNodeVersionsHandlerParams {
     setKey(key: string): void;
 
     setCursor(cursor?: string): void;
@@ -448,7 +448,7 @@ export interface NodeVersion {
     commitId?: string;
 }
 
-export interface NodeVersionsQueryResult {
+export interface GetNodeVersionsResult {
     total: number;
     count: number;
     cursor?: string | null;
@@ -678,7 +678,7 @@ export interface RepoConnection {
 
     exists(key: string): boolean;
 
-    findVersions(params: FindVersionsParams): NodeVersionsQueryResult;
+    getVersions(params: GetVersionsParams): GetNodeVersionsResult;
 
     getActiveVersion(params: GetActiveVersionParams): NodeVersion | null;
 
@@ -1016,7 +1016,7 @@ class RepoConnectionImpl
     /**
      * This function returns node versions.
      *
-     * @example-ref examples/node/findVersions.js
+     * @example-ref examples/node/getVersions.js
      * @param {object} params JSON parameters.
      * @param {string} params.key Path or ID of the node.
      * @param {string} [params.cursor] Cursor for pagination.
@@ -1024,7 +1024,7 @@ class RepoConnectionImpl
      *
      * @returns {object} Node versions query result.
      */
-    findVersions(params: FindVersionsParams): NodeVersionsQueryResult {
+    getVersions(params: GetVersionsParams): GetNodeVersionsResult {
         checkRequired(params, 'key');
 
         const {
@@ -1033,8 +1033,8 @@ class RepoConnectionImpl
             count,
         } = params ?? {};
 
-        const handlerParams: FindVersionsHandlerParams = __.newBean<FindVersionsHandlerParams>(
-            'com.enonic.xp.lib.node.FindVersionsHandlerParams');
+        const handlerParams: GetNodeVersionsHandlerParams = __.newBean<GetNodeVersionsHandlerParams>(
+            'com.enonic.xp.lib.node.GetNodeVersionsHandlerParams');
 
         handlerParams.setKey(key);
         if (cursor) {
@@ -1044,7 +1044,7 @@ class RepoConnectionImpl
             handlerParams.setCount(count);
         }
 
-        return __.toNativeObject(this.nodeHandler.findVersions(handlerParams));
+        return __.toNativeObject(this.nodeHandler.getVersions(handlerParams));
     }
 
     /**

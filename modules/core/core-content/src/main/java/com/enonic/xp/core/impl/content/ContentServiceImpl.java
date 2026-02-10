@@ -708,7 +708,7 @@ public class ContentServiceImpl
     @Override
     public GetContentVersionsResult getVersions( final GetContentVersionsParams params )
     {
-        requireAnyRole();
+        requireAnyProjectRole();
         verifyDraftBranch();
 
         return GetContentVersionsCommand.create()
@@ -976,7 +976,7 @@ public class ContentServiceImpl
         }
     }
 
-    private static void requireAnyRole()
+    private static void requireAnyProjectRole()
     {
         final Context ctx = ContextAccessor.current();
 

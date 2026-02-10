@@ -6,7 +6,7 @@ import com.enonic.xp.node.NodeVersions;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 
-public class NodeVersionsQueryResultMapper
+public class GetNodeVersionsResultMapper
     implements MapSerializable
 {
     private final NodeVersions nodeVersions;
@@ -17,7 +17,7 @@ public class NodeVersionsQueryResultMapper
 
     private final String cursor;
 
-    public NodeVersionsQueryResultMapper( final GetNodeVersionsResult result )
+    public GetNodeVersionsResultMapper( final GetNodeVersionsResult result )
     {
         this.nodeVersions = result.getNodeVersions();
         this.count = result.getNodeVersions().getSize();

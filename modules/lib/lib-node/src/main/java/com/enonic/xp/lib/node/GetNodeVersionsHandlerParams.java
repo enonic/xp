@@ -1,7 +1,7 @@
 package com.enonic.xp.lib.node;
 
 @SuppressWarnings("unused")
-public class FindVersionsHandlerParams
+public class GetNodeVersionsHandlerParams
 {
     private String key;
 
