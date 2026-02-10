@@ -2,6 +2,8 @@ package com.enonic.xp.repo.impl.node;
 
 import java.util.Objects;
 
+import org.jspecify.annotations.Nullable;
+
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
@@ -28,25 +30,19 @@ abstract class AbstractNodeCommand
         this.nodeSearchService = builder.nodeSearchService;
     }
 
-    Node doGetById( final NodeId id )
+    @Nullable Node doGetById( final NodeId id )
     {
-        return GetNodeByIdCommand.create( this ).
-            id( id ).
-            build().
-            execute();
+        return GetNodeByIdCommand.create( this ).id( id ).build().execute();
     }
 
-    Node doGetByPath( final NodePath path )
+    @Nullable Node doGetByPath( final NodePath path )
     {
-        return GetNodeByPathCommand.create( this ).
-            nodePath( path ).
-            build().
-            execute();
+        return GetNodeByPathCommand.create( this ).nodePath( path ).build().execute();
     }
 
     void refresh( final RefreshMode refreshMode )
     {
-        if (refreshMode != null)
+        if ( refreshMode != null )
         {
             RefreshCommand.create().refreshMode( refreshMode ).indexServiceInternal( this.indexServiceInternal ).build().execute();
         }

@@ -119,18 +119,12 @@ public abstract class AbstractNodeTest
     public static final User TEST_DEFAULT_USER =
         User.create().key( PrincipalKey.ofUser( IdProviderKey.system(), "test-user" ) ).login( "test-user" ).build();
 
-    private static final AuthenticationInfo TEST_DEFAULT_USER_AUTHINFO = AuthenticationInfo.create().
-        principals( RoleKeys.AUTHENTICATED, RoleKeys.EVERYONE ).
-        user( TEST_DEFAULT_USER ).
-        build();
+    private static final AuthenticationInfo TEST_DEFAULT_USER_AUTHINFO =
+        AuthenticationInfo.create().principals( RoleKeys.AUTHENTICATED, RoleKeys.EVERYONE ).user( TEST_DEFAULT_USER ).build();
 
-    protected static final Branch WS_DEFAULT = Branch.create().
-        value( "draft" ).
-        build();
+    protected static final Branch WS_DEFAULT = Branch.create().value( "draft" ).build();
 
-    protected static final Branch WS_OTHER = Branch.create().
-        value( "master" ).
-        build();
+    protected static final Branch WS_OTHER = Branch.create().value( "master" ).build();
 
     protected static final Branch AUDIT_LOG_BRANCH = AuditLogConstants.AUDIT_LOG_BRANCH;
 
@@ -179,11 +173,7 @@ public abstract class AbstractNodeTest
 
     protected Context ctxDefault()
     {
-        return ContextBuilder.create().
-            branch( WS_DEFAULT ).
-            repositoryId( testRepoId ).
-            authInfo( TEST_DEFAULT_USER_AUTHINFO ).
-            build();
+        return ContextBuilder.create().branch( WS_DEFAULT ).repositoryId( testRepoId ).authInfo( TEST_DEFAULT_USER_AUTHINFO ).build();
     }
 
     protected Context ctxOther()
@@ -253,8 +243,7 @@ public abstract class AbstractNodeTest
             new RepositoryEntryServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService );
 
         this.repositoryService =
-            new RepositoryServiceImpl( repositoryEntryService, indexServiceInternal, nodeRepositoryService, storageService,
-                                       searchService );
+            new RepositoryServiceImpl( repositoryEntryService, indexServiceInternal, nodeRepositoryService, storageService, searchService );
 
         this.nodeService =
             new NodeServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService, repositoryService );
@@ -296,54 +285,43 @@ public abstract class AbstractNodeTest
 
     private void createTestRepository()
     {
-        final AccessControlList rootPermissions = AccessControlList.of( AccessControlEntry.create().
-            principal( TEST_DEFAULT_USER.getKey() ).
-            allowAll().
-            build() );
+        final AccessControlList rootPermissions =
+            AccessControlList.of( AccessControlEntry.create().principal( TEST_DEFAULT_USER.getKey() ).allowAll().build() );
 
-        ctxDefaultAdmin().
-            callWith( () -> {
-                this.repositoryService.createRepository( CreateRepositoryParams.create().
-                    repositoryId( testRepoId ).
-                    rootPermissions( rootPermissions ).
-                    build() );
+        ctxDefaultAdmin().callWith( () -> {
+            this.repositoryService.createRepository(
+                CreateRepositoryParams.create().repositoryId( testRepoId ).rootPermissions( rootPermissions ).build() );
 
-                TEST_REPO_BRANCHES.
-                    stream().
-                    filter( branch -> !RepositoryConstants.MASTER_BRANCH.equals( branch ) ).
-                    forEach( branch -> {
-                        final CreateBranchParams createBranchParams = CreateBranchParams.from( branch.toString() );
-                        this.repositoryService.createBranch( createBranchParams );
-                    } );
-
-                refresh();
-                return null;
+            TEST_REPO_BRANCHES.stream().filter( branch -> !RepositoryConstants.MASTER_BRANCH.equals( branch ) ).forEach( branch -> {
+                final CreateBranchParams createBranchParams = CreateBranchParams.from( branch.toString() );
+                this.repositoryService.createBranch( createBranchParams );
             } );
+
+            refresh();
+            return null;
+        } );
     }
 
     protected Node createDefaultRootNode()
     {
-        final AccessControlList rootPermissions = AccessControlList.of( AccessControlEntry.create().
-            principal( TEST_DEFAULT_USER.getKey() ).
-            allowAll().
-            build() );
+        final AccessControlList rootPermissions =
+            AccessControlList.of( AccessControlEntry.create().principal( TEST_DEFAULT_USER.getKey() ).allowAll().build() );
 
-        final CreateRootNodeParams createRootParams = CreateRootNodeParams.create().
-            permissions( rootPermissions ).
-            build();
+        final CreateRootNodeParams createRootParams = CreateRootNodeParams.create().permissions( rootPermissions ).build();
 
-        return CreateRootNodeCommand.create().
-            params( createRootParams ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            build().
-            execute();
+        return CreateRootNodeCommand.create()
+            .params( createRootParams )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.storageService )
+            .searchService( this.searchService )
+            .build()
+            .execute();
     }
 
     protected Node updateNode( final UpdateNodeParams updateNodeParams )
     {
-        return PatchNodeCommand.create().params( convertUpdateParams( updateNodeParams ) )
+        return PatchNodeCommand.create()
+            .params( convertUpdateParams( updateNodeParams ) )
             .binaryService( this.binaryService )
             .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.storageService )
@@ -361,17 +339,13 @@ public abstract class AbstractNodeTest
             .editor( params.getEditor() )
             .setBinaryAttachments( params.getBinaryAttachments() )
             .refresh( params.getRefresh() )
-            .addBranches( Branches.from( ContextAccessor.current().getBranch() ) )
+            .branches( Branches.from( ContextAccessor.current().getBranch() ) )
             .build();
     }
 
     protected Node createNode( final NodePath parent, final String name )
     {
-        return createNode( CreateNodeParams.create().
-            parent( parent ).
-            name( name ).
-            setNodeId( NodeId.from( name ) ).
-            build() );
+        return createNode( CreateNodeParams.create().parent( parent ).name( name ).setNodeId( NodeId.from( name ) ).build() );
     }
 
     protected NodeCommitEntry commit( Node node )
@@ -392,8 +366,8 @@ public abstract class AbstractNodeTest
             .searchService( this.searchService )
             .params( createNodeParams )
             .skipVerification( true )
-            .build().
-            execute();
+            .build()
+            .execute();
     }
 
     protected Node createNode( final CreateNodeParams createNodeParams )
@@ -410,46 +384,46 @@ public abstract class AbstractNodeTest
 
     protected Node getNodeById( final NodeId nodeId )
     {
-        return GetNodeByIdCommand.create().
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            id( nodeId ).
-            build().
-            execute();
+        return GetNodeByIdCommand.create()
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.storageService )
+            .searchService( this.searchService )
+            .id( nodeId )
+            .build()
+            .execute();
     }
 
     protected Node getNodeByPath( final NodePath nodePath )
     {
-        return GetNodeByPathCommand.create().
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            nodePath( nodePath ).
-            build().
-            execute();
+        return GetNodeByPathCommand.create()
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.storageService )
+            .searchService( this.searchService )
+            .nodePath( nodePath )
+            .build()
+            .execute();
     }
 
     protected FindNodesByParentResult findByParent( final NodePath parentPath )
     {
-        return FindNodeIdsByParentCommand.create().
-            parentPath( parentPath ).
-            indexServiceInternal( indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            build().
-            execute();
+        return FindNodeIdsByParentCommand.create()
+            .parentPath( parentPath )
+            .indexServiceInternal( indexServiceInternal )
+            .storageService( this.storageService )
+            .searchService( this.searchService )
+            .build()
+            .execute();
     }
 
     public FindNodesByQueryResult doFindByQuery( final NodeQuery query )
     {
-        return FindNodesByQueryCommand.create().
-            query( query ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            build().
-            execute();
+        return FindNodesByQueryCommand.create()
+            .query( query )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.storageService )
+            .searchService( this.searchService )
+            .build()
+            .execute();
     }
 
     protected void printContentRepoIndex()
@@ -459,12 +433,13 @@ public abstract class AbstractNodeTest
 
     protected PushNodesResult pushNodes( final Branch target, final NodeId... nodeIds )
     {
-        return PushNodesCommand.create().params( PushNodeParams.create().ids( NodeIds.from( nodeIds ) ).target( target ).build() ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            build().
-            execute();
+        return PushNodesCommand.create()
+            .params( PushNodeParams.create().ids( NodeIds.from( nodeIds ) ).target( target ).build() )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.storageService )
+            .searchService( this.searchService )
+            .build()
+            .execute();
     }
 
     protected NodeIds doDeleteNode( final NodeId nodeId )
@@ -514,9 +489,7 @@ public abstract class AbstractNodeTest
 
     protected FindNodesByQueryResult doQuery( final String queryString )
     {
-        final NodeQuery query = NodeQuery.create().
-            query( QueryParser.parse( queryString ) ).
-            build();
+        final NodeQuery query = NodeQuery.create().query( QueryParser.parse( queryString ) ).build();
 
         return doFindByQuery( query );
     }
@@ -562,13 +535,13 @@ public abstract class AbstractNodeTest
 
     protected Node getNode( final NodeId nodeId )
     {
-        return GetNodeByIdCommand.create().
-            id( nodeId ).
-            indexServiceInternal( indexServiceInternal ).
-            storageService( storageService ).
-            searchService( searchService ).
-            build().
-            execute();
+        return GetNodeByIdCommand.create()
+            .id( nodeId )
+            .indexServiceInternal( indexServiceInternal )
+            .storageService( storageService )
+            .searchService( searchService )
+            .build()
+            .execute();
 
     }
 

@@ -30,16 +30,16 @@ public final class ContentVersionsMapper
         for ( ContentVersion version : result.getContentVersions() )
         {
             gen.map();
-            gen.value( "versionId", version.getVersionId() );
-            gen.value( "contentId", version.getContentId() );
-            gen.value( "path", version.getPath() );
-            gen.value( "timestamp", version.getTimestamp() );
-            gen.value( "comment", version.getComment() );
+            gen.value( "versionId", version.versionId() );
+            gen.value( "contentId", version.contentId() );
+            gen.value( "path", version.path() );
+            gen.value( "timestamp", version.timestamp() );
+            gen.value( "comment", version.comment() );
 
-            if ( !version.getActions().isEmpty() )
+            if ( !version.actions().isEmpty() )
             {
                 gen.array( "actions" );
-                for ( ContentVersion.Action action : version.getActions() )
+                for ( ContentVersion.Action action : version.actions() )
                 {
                     gen.map();
                     gen.value( "operation", action.operation() );

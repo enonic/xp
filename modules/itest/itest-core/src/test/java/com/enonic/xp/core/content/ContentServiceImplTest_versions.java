@@ -88,7 +88,7 @@ class ContentServiceImplTest_versions
         assertEquals( 3, result.getTotalHits() );
 
         assertThat( result.getContentVersions() ).elements( 0, 1 )
-            .extracting( ContentVersion::getActions )
+            .extracting( ContentVersion::actions )
             .map( cs -> cs.stream().map( ContentVersion.Action::operation ).findFirst().orElseThrow() )
             .containsExactly( "content.restore", "content.archive" );
     }

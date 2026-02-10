@@ -63,6 +63,8 @@ public final class ContentPropertyNames
 
     public static final String PUBLISH_FROM = "from";
 
+    public static final String PUBLISH_PUBLISHED = "published";
+
     public static final String PUBLISH_TO = "to";
 
     public static final String PUBLISH_FIRST = "first";

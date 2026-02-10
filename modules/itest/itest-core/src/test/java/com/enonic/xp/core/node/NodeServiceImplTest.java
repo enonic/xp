@@ -49,8 +49,8 @@ import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
-import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.node.NodeVersions;
 import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.node.PatchNodeParams;
@@ -362,11 +362,11 @@ class NodeServiceImplTest
 
         //Call commit with the node version ID of the first version
         final NodeCommitEntry commitEntry2 = NodeCommitEntry.create().message( "Commit message 2" ).build();
-        final NodeCommitEntry returnedCommitEntry2 =
-        nodeService.commit( CommitNodeParams.create()
-                                .nodeCommitEntry( commitEntry )
-                                .nodeVersionIds( NodeVersionIds.from( firstVersionMetadata2.getNodeVersionId() ) )
-                                .build() );
+        final NodeCommitEntry returnedCommitEntry2 = nodeService.commit( CommitNodeParams.create()
+                                                                             .nodeCommitEntry( commitEntry )
+                                                                             .nodeVersionIds( NodeVersionIds.from(
+                                                                                 firstVersionMetadata2.getNodeVersionId() ) )
+                                                                             .build() );
 
         nodeService.refresh( RefreshMode.STORAGE );
 
@@ -406,9 +406,18 @@ class NodeServiceImplTest
         final SortNodeParams params = SortNodeParams.create()
             .nodeId( parent.id() )
             .childOrder( ChildOrder.manualOrder() )
-            .addManualOrder( ReorderChildNodeParams.create().nodeId( child1.id() ).moveBefore( child2.id() ).build() ) // my-child-3 my-child-1 my-child-2
-            .addManualOrder( ReorderChildNodeParams.create().nodeId( child2.id() ).moveBefore( child3.id() ).build() ) // my-child-2 my-child-3 my-child-1
-            .addManualOrder( ReorderChildNodeParams.create().nodeId( child2.id() ).moveBefore( child3.id() ).build() ) // duplicate, does not change order
+            .addManualOrder( ReorderChildNodeParams.create()
+                                 .nodeId( child1.id() )
+                                 .moveBefore( child2.id() )
+                                 .build() ) // my-child-3 my-child-1 my-child-2
+            .addManualOrder( ReorderChildNodeParams.create()
+                                 .nodeId( child2.id() )
+                                 .moveBefore( child3.id() )
+                                 .build() ) // my-child-2 my-child-3 my-child-1
+            .addManualOrder( ReorderChildNodeParams.create()
+                                 .nodeId( child2.id() )
+                                 .moveBefore( child3.id() )
+                                 .build() ) // duplicate, does not change order
             .addManualOrder( ReorderChildNodeParams.create().nodeId( child3.id() ).moveBefore( child1.id() ).build() )
             // does not change order
             .processor( ( data, path ) -> {
@@ -450,9 +459,7 @@ class NodeServiceImplTest
         final Node child3 = createNode( CreateNodeParams.create().name( "my-child-3" ).parent( parent.path() ).build() );
 
         final DeleteNodeResult result = nodeService.delete( DeleteNodeParams.create().nodePath( parent.path() ).build() );
-        assertThat( result.getNodeIds() )
-            .containsExactlyInAnyOrder( child3.id(), child2.id(),
-                                        child1.id(), parent.id() );
+        assertThat( result.getNodeIds() ).containsExactlyInAnyOrder( child3.id(), child2.id(), child1.id(), parent.id() );
     }
 
     @Test
@@ -538,7 +545,7 @@ class NodeServiceImplTest
         nodeService.patch( PatchNodeParams.create()
                                .id( editedNodeToPatch.id() )
                                .editor( node -> node.data.addString( "test", "test2" ) )
-                               .addBranches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
+                               .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
                                .build() );
 
         ArgumentCaptor<Event> captor = ArgumentCaptor.forClass( Event.class );
@@ -555,7 +562,7 @@ class NodeServiceImplTest
         nodeService.patch( PatchNodeParams.create()
                                .id( nodeToPatch.id() )
                                .editor( node -> node.data.addString( "test", "test2" ) )
-                               .addBranches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
+                               .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
                                .build() );
 
         verify( eventPublisher, times( 2 ) ).publish( captor.capture() );
@@ -574,12 +581,13 @@ class NodeServiceImplTest
 
         Mockito.clearInvocations( eventPublisher );
 
-        ContextBuilder.from( ContextAccessor.current() ).attribute( "eventMetadata", Map.of( "key1", "value1", "key2", "value2" ) )
+        ContextBuilder.from( ContextAccessor.current() )
+            .attribute( "eventMetadata", Map.of( "key1", "value1", "key2", "value2" ) )
             .build()
             .callWith( () -> nodeService.patch( PatchNodeParams.create()
                                                     .id( nodeToPatch.id() )
                                                     .editor( node -> node.data.addString( "test", "test1" ) )
-                                                    .addBranches(
+                                                    .branches(
                                                         Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
                                                     .build() ) );
 
@@ -601,15 +609,14 @@ class NodeServiceImplTest
 
         nodeService.refresh( RefreshMode.SEARCH );
 
-        final NodeQuery nodeQuery =
-            NodeQuery.create().parent( NodePath.ROOT ).addQueryFilter( ValueFilter.create()
-                                                                           .fieldName( NodeIndexPath.PATH.getPath() )
-                                                                           .addValue( ValueFactory.newString(
-                                                                               NodePath.create( NodePath.ROOT )
-                                                                                   .addElement( "my-node" )
-                                                                                   .build()
-                                                                                   .toString() ) )
-                                                                           .build() ).build();
+        final NodeQuery nodeQuery = NodeQuery.create()
+            .parent( NodePath.ROOT )
+            .addQueryFilter( ValueFilter.create()
+                                 .fieldName( NodeIndexPath.PATH.getPath() )
+                                 .addValue(
+                                     ValueFactory.newString( NodePath.create( NodePath.ROOT ).addElement( "my-node" ).build().toString() ) )
+                                 .build() )
+            .build();
 
         final SearchTargets searchTargets = SearchTargets.create()
             .add( SearchTarget.create()
@@ -645,24 +652,22 @@ class NodeServiceImplTest
             .build();
 
         final Attributes appliedAttributes = nodeService.applyVersionAttributes( ApplyVersionAttributesParams.create()
-                                                                                      .nodeVersionId( createdNode.getNodeVersionId() )
-                                                                                      .addAttributes( initialAttributes )
-                                                                                      .build() );
+                                                                                     .nodeVersionId( createdNode.getNodeVersionId() )
+                                                                                     .addAttributes( initialAttributes )
+                                                                                     .build() );
 
         // Verify attributes were added
         assertEquals( GenericValue.stringValue( "value1" ), appliedAttributes.get( "attr1" ) );
         assertEquals( GenericValue.numberValue( 42 ), appliedAttributes.get( "attr2" ) );
 
         // Add more attributes and remove one
-        final Attributes moreAttributes = Attributes.create()
-            .attribute( "attr3", GenericValue.booleanValue( true ) )
-            .build();
+        final Attributes moreAttributes = Attributes.create().attribute( "attr3", GenericValue.booleanValue( true ) ).build();
 
         final Attributes updatedAttributes = nodeService.applyVersionAttributes( ApplyVersionAttributesParams.create()
-                                                                                      .nodeVersionId( createdNode.getNodeVersionId() )
-                                                                                      .addAttributes( moreAttributes )
-                                                                                      .removeAttributes( Set.of( "attr1" ) )
-                                                                                      .build() );
+                                                                                     .nodeVersionId( createdNode.getNodeVersionId() )
+                                                                                     .addAttributes( moreAttributes )
+                                                                                     .removeAttributes( Set.of( "attr1" ) )
+                                                                                     .build() );
 
         // Verify attr1 was removed, attr2 still exists, and attr3 was added
         assertNull( updatedAttributes.get( "attr1" ) );

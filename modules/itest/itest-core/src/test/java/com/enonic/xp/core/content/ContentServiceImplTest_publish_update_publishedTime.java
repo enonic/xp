@@ -2,19 +2,23 @@ package com.enonic.xp.core.content;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Locale;
 
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.DuplicateContentParams;
 import com.enonic.xp.content.DuplicateContentsResult;
+import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.UnpublishContentParams;
+import com.enonic.xp.content.UpdateContentMetadataParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateWorkflowParams;
 import com.enonic.xp.content.WorkflowInfo;
@@ -63,7 +67,7 @@ class ContentServiceImplTest_publish_update_publishedTime
         doPublishContent( content );
         assertVersions( content.getId(), 2 );
 
-        final ContentPublishInfo publishInfo = this.contentService.getById( content.getId() ).getPublishInfo();
+        final ContentPublishInfo publishInfo = getPublishInfo( content.getId() );
         assertNotNull( publishInfo );
         assertNotNull( publishInfo.getFirst() );
         assertNotNull( publishInfo.getFrom() );
@@ -72,14 +76,82 @@ class ContentServiceImplTest_publish_update_publishedTime
         updateContentParams.contentId( content.getId() ).editor( edit -> edit.displayName = "new display name" );
 
         this.contentService.update( updateContentParams );
+
         this.contentService.updateWorkflow(
             UpdateWorkflowParams.create().contentId( content.getId() ).editor( edit -> edit.workflow = WorkflowInfo.ready() ).build() );
 
         doPublishContent( content );
         assertVersions( content.getId(), 5 );
 
-        final ContentPublishInfo unUpdatedPublishInfo = this.contentService.getById( content.getId() ).getPublishInfo();
-        assertEquals( publishInfo, unUpdatedPublishInfo );
+        final ContentPublishInfo unUpdatedPublishInfo = getPublishInfo( content.getId() );
+        assertNotNull( unUpdatedPublishInfo );
+        assertEquals( publishInfo.getFrom(), unUpdatedPublishInfo.getFirst() );
+        assertEquals( publishInfo.getFrom(), unUpdatedPublishInfo.getFrom() );
+    }
+
+    @Test
+    void published_time_is_reset_on_any_change()
+    {
+        final Content content = doCreateContent();
+        final ContentId id = content.getId();
+        final ContentPublishInfo publishInfo = getPublishInfo( id );
+        assertNull( publishInfo );
+
+        doPublishContent( content );
+
+        final ContentPublishInfo updatedPublishInfo1 = getPublishInfo( id );
+        assertNotNull( updatedPublishInfo1 );
+        assertNotNull( updatedPublishInfo1.getFrom() );
+        assertEquals( updatedPublishInfo1.getFrom(), updatedPublishInfo1.getFirst() );
+        assertNotNull( updatedPublishInfo1.getPublished() );
+
+        final UpdateContentParams updateContentParams = new UpdateContentParams();
+        updateContentParams.contentId( content.getId() ).editor( edit -> edit.displayName = "new display name" );
+
+        this.contentService.update( updateContentParams );
+
+        final ContentPublishInfo updatedPublishInfo2 = getPublishInfo( id );
+
+        assertNull( updatedPublishInfo2.getPublished() );
+
+        this.contentService.updateWorkflow(
+            UpdateWorkflowParams.create().contentId( content.getId() ).editor( edit -> edit.workflow = WorkflowInfo.ready() ).build() );
+
+        doPublishContent( content );
+
+        final ContentPublishInfo updatedPublishInfo3 = getPublishInfo( id );
+
+        assertNotNull( updatedPublishInfo3.getPublished() );
+
+        this.contentService.updateWorkflow( UpdateWorkflowParams.create()
+                                                .contentId( content.getId() )
+                                                .editor( edit -> edit.workflow = WorkflowInfo.inProgress() )
+                                                .build() );
+
+        final ContentPublishInfo updatedPublishInfo4 = getPublishInfo( id );
+
+        assertNull( updatedPublishInfo4.getPublished() );
+
+        this.contentService.updateWorkflow(
+            UpdateWorkflowParams.create().contentId( content.getId() ).editor( edit -> edit.workflow = WorkflowInfo.ready() ).build() );
+
+        doPublishContent( content );
+
+        final ContentPublishInfo updatedPublishInfo5 = getPublishInfo( id );
+
+        assertNotNull( updatedPublishInfo5.getPublished() );
+
+        this.contentService.updateMetadata(
+            UpdateContentMetadataParams.create().contentId( id ).editor( edit -> edit.language = Locale.CANADA ).build() );
+
+        final ContentPublishInfo updatedPublishInfo6 = getPublishInfo( id );
+
+        assertNull( updatedPublishInfo6.getPublished() );
+    }
+
+    private ContentPublishInfo getPublishInfo( final ContentId id )
+    {
+        return this.contentService.getById( id ).getPublishInfo();
     }
 
     @Test
@@ -88,13 +160,13 @@ class ContentServiceImplTest_publish_update_publishedTime
         final Content content = doCreateContent();
         doPublishContent( content );
 
-        final ContentPublishInfo publishInfo = this.contentService.getById( content.getId() ).getPublishInfo();
+        final ContentPublishInfo publishInfo = getPublishInfo( content.getId() );
 
         doUnpublishContent( content );
 
         doPublishContent( content );
 
-        final ContentPublishInfo updatedPublishInfo = this.contentService.getById( content.getId() ).getPublishInfo();
+        final ContentPublishInfo updatedPublishInfo = getPublishInfo( content.getId() );
 
         assertThat( updatedPublishInfo.getFrom() ).isAfter( publishInfo.getFrom() );
     }
@@ -121,7 +193,7 @@ class ContentServiceImplTest_publish_update_publishedTime
                                          .publishTo( Instant.now().plus( 1, ChronoUnit.DAYS ) )
                                          .build() );
 
-        final ContentPublishInfo publishInfo = this.contentService.getById( content.getId() ).getPublishInfo();
+        final ContentPublishInfo publishInfo = getPublishInfo( content.getId() );
 
         assertNotNull( publishInfo.getTo() );
         assertThat( publishInfo.getTo() ).isAfter( publishInfo.getFrom() );
@@ -137,8 +209,9 @@ class ContentServiceImplTest_publish_update_publishedTime
 
     private void doPublishContent( final Content content )
     {
-        this.contentService.publish(
+        final PublishContentResult result = this.contentService.publish(
             PushContentParams.create().contentIds( ContentIds.from( content.getId() ) ).includeDependencies( false ).build() );
+        assertThat( result.getFailed() ).isEmpty();
     }
 
     private void doUnpublishContent( final Content content )

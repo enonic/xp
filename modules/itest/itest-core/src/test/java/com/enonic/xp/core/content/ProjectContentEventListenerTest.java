@@ -103,7 +103,7 @@ class ProjectContentEventListenerTest
         listener = new ProjectContentEventListener( this.projectService, synchronizer, Runnable::run );
 
         syncContentService =
-            new SyncContentServiceImpl( contentTypeService, nodeService, eventPublisher, projectService, contentService, synchronizer,
+            new SyncContentServiceImpl( contentTypeService, nodeService, eventPublisher, projectService, layersContentService, synchronizer,
                                         contentAuditLogSupport );
     }
 

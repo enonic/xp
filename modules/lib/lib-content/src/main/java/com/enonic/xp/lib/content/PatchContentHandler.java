@@ -200,6 +200,7 @@ public final class PatchContentHandler
             .from( getInstant( value, "from" ) )
             .to( getInstant( value, "to" ) )
             .first( getInstant( value, "first" ) )
+            .published( getInstant( value, "published" ) )
             .build();
     }
 

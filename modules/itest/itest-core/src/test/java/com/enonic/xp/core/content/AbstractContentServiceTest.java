@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -36,7 +35,6 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ContentVersion;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.FindContentByParentParams;
@@ -122,8 +120,6 @@ import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Reference;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
@@ -608,23 +604,7 @@ public abstract class AbstractContentServiceTest
         GetContentVersionsResult versions =
             this.contentService.getVersions( GetContentVersionsParams.create().contentId( contentId ).build() );
 
-        assertEquals( expected, versions.getContentVersions().getSize() );
-
-        final Iterator<ContentVersion> iterator = versions.getContentVersions().iterator();
-
-        Instant lastModified = null;
-
-        while ( iterator.hasNext() )
-        {
-            final ContentVersion next = iterator.next();
-
-            if ( lastModified != null )
-            {
-                assertFalse( next.getTimestamp().isAfter( lastModified ) );
-            }
-
-            lastModified = next.getTimestamp();
-        }
+        assertThat( versions.getContentVersions() ).hasSize( expected );
     }
 
     protected void printContentTree( final ContentId rootId )

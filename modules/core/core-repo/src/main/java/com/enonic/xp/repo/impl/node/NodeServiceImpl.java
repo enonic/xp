@@ -16,7 +16,6 @@ import org.osgi.service.component.annotations.Reference;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -961,7 +960,6 @@ public class NodeServiceImpl
             .setBinaryAttachments( params.getBinaryAttachments() )
             .versionAttributes( params.getVersionAttributes() )
             .refresh( params.getRefresh() )
-            .addBranches( Branches.from( ContextAccessor.current().getBranch() ) )
             .build();
     }
 }

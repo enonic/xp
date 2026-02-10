@@ -4,7 +4,6 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.ProjectSyncParams;
 import com.enonic.xp.content.ResetContentInheritParams;
 import com.enonic.xp.content.SyncContentService;
@@ -17,7 +16,7 @@ import com.enonic.xp.schema.content.ContentTypeService;
 public class SyncContentServiceImpl
     implements SyncContentService
 {
-    private final ContentService contentService;
+    private final LayersContentService contentService;
 
     private final ContentTypeService contentTypeService;
 
@@ -33,8 +32,8 @@ public class SyncContentServiceImpl
 
     @Activate
     public SyncContentServiceImpl( @Reference final ContentTypeService contentTypeService, @Reference final NodeService nodeService,
-                                   @Reference final EventPublisher eventPublisher,
-                                   @Reference final ProjectService projectService, @Reference final ContentService contentService,
+                                   @Reference final EventPublisher eventPublisher, @Reference final ProjectService projectService,
+                                   @Reference final LayersContentService contentService,
                                    @Reference final ContentSynchronizer contentSynchronizer,
                                    @Reference final ContentAuditLogSupport contentAuditLogSupport )
     {
@@ -50,15 +49,15 @@ public class SyncContentServiceImpl
     @Override
     public void resetInheritance( final ResetContentInheritParams params )
     {
-        ResetContentInheritanceCommand.create( params ).
-            contentService( contentService ).
-            projectService( projectService ).
-            nodeService( nodeService ).
-            contentTypeService( contentTypeService ).
-            eventPublisher( eventPublisher ).
-            contentSynchronizer( contentSynchronizer ).
-            build().
-            execute();
+        ResetContentInheritanceCommand.create( params )
+            .contentService( contentService )
+            .projectService( projectService )
+            .nodeService( nodeService )
+            .contentTypeService( contentTypeService )
+            .eventPublisher( eventPublisher )
+            .contentSynchronizer( contentSynchronizer )
+            .build()
+            .execute();
 
         contentAuditLogSupport.resetInheritance( params );
     }
@@ -66,11 +65,7 @@ public class SyncContentServiceImpl
     @Override
     public void syncProject( final ProjectSyncParams params )
     {
-        ProjectSyncCommand.create( params ).
-            contentSynchronizer( contentSynchronizer ).
-            projectService( projectService ).
-            build().
-            execute();
+        ProjectSyncCommand.create( params ).contentSynchronizer( contentSynchronizer ).projectService( projectService ).build().execute();
 
         contentAuditLogSupport.syncProject( params );
     }

@@ -1,13 +1,10 @@
 package com.enonic.xp.core.impl.content;
 
-import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.EditableContentWorkflow;
 import com.enonic.xp.content.UpdateWorkflowParams;
 import com.enonic.xp.content.UpdateWorkflowResult;
 import com.enonic.xp.content.WorkflowEditor;
-import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.PatchNodeResult;
 
@@ -39,19 +36,13 @@ public class UpdateWorkflowCommand
 
     private UpdateWorkflowResult doExecute()
     {
-        final Content contentBeforeChange = getContent( params.getContentId() );
-
-        final Content editedContent = editWorkflow( params.getEditor(), contentBeforeChange );
-
-        final String[] modifiedFields = ContentAttributesHelper.modifiedFields( contentBeforeChange, editedContent );
-
-        final Attributes updateWorkflowAttr =
-            ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.UPDATE_WORKFLOW_ATTR, modifiedFields );
-
         final PatchNodeParams patchNodeParams = PatchNodeParamsFactory.create()
-            .editedContent( editedContent )
-            .versionAttributes( updateWorkflowAttr )
-            .branches( Branches.from( ContentConstants.BRANCH_DRAFT ) )
+            .contentId( params.getContentId() )
+            .editor( content -> {
+                Content editedContent = editWorkflow( params.getEditor(), content );
+                return afterUpdate( editedContent );
+            } )
+            .versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.UPDATE_WORKFLOW_ATTR ) )
             .contentTypeService( this.contentTypeService )
             .xDataService( this.xDataService )
             .pageDescriptorService( this.pageDescriptorService )
@@ -74,7 +65,7 @@ public class UpdateWorkflowCommand
             editor.edit( editableWorkflow );
         }
 
-        return Content.create( editableWorkflow.build() ).setInherit( stopDataInherit( original.getInherit() ) ).build();
+        return editableWorkflow.build();
     }
 
     public static final class Builder

@@ -7,11 +7,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentInheritType;
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.PatchContentParams;
 import com.enonic.xp.content.ResetContentInheritParams;
 import com.enonic.xp.content.WorkflowInfo;
@@ -31,7 +29,7 @@ final class ResetContentInheritanceCommand
 {
     private final ResetContentInheritParams params;
 
-    private final ContentService contentService;
+    private final LayersContentService contentService;
 
     private final ProjectService projectService;
 
@@ -60,28 +58,25 @@ final class ResetContentInheritanceCommand
             .authInfo( createAdminAuthInfo() )
             .build();
 
-        targetContext.runWith( () -> {
-            if ( contentService.contentExists( params.getContentId() ) )
-            {
-                final Content targetContent = contentService.getById( params.getContentId() );
-                final Set<ContentInheritType> typesToReset = params.getInherit()
-                    .stream()
-                    .filter( contentInheritType -> !targetContent.getInherit().contains( contentInheritType ) )
-                    .collect( Collectors.toSet() );
+        targetContext.runWith( () -> contentService.getById( params.getContentId() ).ifPresent( targetContent -> {
+            final Set<ContentInheritType> typesToReset = params.getInherit()
+                .stream()
+                .filter( contentInheritType -> !targetContent.getInherit().contains( contentInheritType ) )
+                .collect( Collectors.toSet() );
 
-                if ( !typesToReset.isEmpty() )
-                {
-                    final PatchContentParams patchParams = PatchContentParams.create().skipSync( true ).contentId( targetContent.getId() ).patcher( edit -> {
+            if ( !typesToReset.isEmpty() )
+            {
+                final PatchContentParams patchParams =
+                    PatchContentParams.create().skipSync( true ).contentId( targetContent.getId() ).patcher( edit -> {
                         edit.inherit.setValue( processInherit( edit.inherit.originalValue, typesToReset ) );
                         edit.workflowInfo.setValue( WorkflowInfo.inProgress() );
                     } ).build();
 
-                    contentService.patch( patchParams );
+                contentService.patch( patchParams );
 
-                    syncContent( targetContent.getId(), params.getProjectName() );
-                }
+                syncContent( targetContent.getId(), params.getProjectName() );
             }
-        } );
+        } ) );
     }
 
     private EnumSet<ContentInheritType> processInherit( final Set<ContentInheritType> oldTypes, final Set<ContentInheritType> newTypes )
@@ -104,10 +99,10 @@ final class ResetContentInheritanceCommand
                 .branch( ContentConstants.BRANCH_DRAFT )
                 .authInfo( createAdminAuthInfo() )
                 .build() )
-            .filter( context -> context.callWith( () -> contentService.contentExists( params.getContentId() ) ) )
+            .filter( context -> context.callWith( () -> contentService.getById( params.getContentId() ).isPresent() ) )
             .map( context -> ProjectName.from( context.getRepositoryId() ) )
             .findFirst()
-            .orElseThrow( () -> new IllegalArgumentException( "No source content to inherit" ) );
+            .orElseThrow( () -> new IllegalStateException( "No source content to inherit" ) );
 
         contentSynchronizer.sync( ContentSyncParams.create()
                                       .addContentId( contentId )
@@ -132,7 +127,7 @@ final class ResetContentInheritanceCommand
 
         private ProjectService projectService;
 
-        private ContentService contentService;
+        private LayersContentService contentService;
 
         private ContentSynchronizer contentSynchronizer;
 
@@ -147,7 +142,7 @@ final class ResetContentInheritanceCommand
             return this;
         }
 
-        public Builder contentService( final ContentService value )
+        public Builder contentService( final LayersContentService value )
         {
             this.contentService = value;
             return this;

@@ -1,6 +1,7 @@
 package com.enonic.xp.lib.content;
 
 import java.time.Instant;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -27,7 +28,7 @@ class GetVersionsHandlerTest
             .contentId( ContentId.from( "contentId" ) )
             .path( ContentPath.from( "/my-content" ) )
             .timestamp( Instant.parse( "2024-01-01T00:00:00Z" ) )
-            .addAction( new ContentVersion.Action( "publish", null, PrincipalKey.from( "user:system:admin" ),
+            .addAction( new ContentVersion.Action( "publish", List.of(), PrincipalKey.from( "user:system:admin" ),
                                                    Instant.parse( "2024-01-01T00:00:00Z" ) ) )
             .build();
 

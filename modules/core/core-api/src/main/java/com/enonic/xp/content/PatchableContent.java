@@ -158,7 +158,7 @@ public class PatchableContent
             this.patcher = _ -> this.originalValue;
         }
 
-        public PatchableField<T> setPatcher( Function<PatchableContent, T> patcher )
+        public PatchableField<T> setPatcher( Function<PatchableContent, @Nullable T> patcher )
         {
             this.patcher = Objects.requireNonNull( patcher );
             return this;

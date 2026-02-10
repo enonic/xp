@@ -52,9 +52,9 @@ import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.content.FindContentIdsByParentResult;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.content.FindContentPathsByQueryResult;
+import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.content.GetContentVersionsParams;
 import com.enonic.xp.content.GetContentVersionsResult;
-import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.content.GetPublishStatusResult;
 import com.enonic.xp.content.GetPublishStatusesParams;
 import com.enonic.xp.content.GetPublishStatusesResult;
@@ -709,7 +709,6 @@ public class ContentServiceImpl
     public GetContentVersionsResult getVersions( final GetContentVersionsParams params )
     {
         requireAnyProjectRole();
-        verifyDraftBranch();
 
         return GetContentVersionsCommand.create()
             .nodeService( this.nodeService )
