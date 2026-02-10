@@ -35,7 +35,7 @@ public final class AdminToolHandler
     @Override
     protected boolean canHandle( final WebRequest webRequest )
     {
-        return webRequest instanceof PortalRequest portalRequest &&
+        return webRequest instanceof PortalRequest portalRequest && portalRequest.getMode() == null &&
             ( AdminToolPortalHandler.ADMIN_TOOL_BASE.equals( portalRequest.getBaseUri() ) ||
                 portalRequest.getBaseUri().startsWith( AdminToolPortalHandler.ADMIN_TOOL_PREFIX ) );
     }
