@@ -1,10 +1,14 @@
 package com.enonic.xp.core.impl.content;
 
+import java.time.Instant;
+
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentMetadataEditor;
+import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.EditableContentMetadata;
+import com.enonic.xp.content.PatchableContent;
 import com.enonic.xp.content.UpdateContentMetadataParams;
 import com.enonic.xp.content.UpdateContentMetadataResult;
 import com.enonic.xp.node.PatchNodeParams;
@@ -38,11 +42,13 @@ public class UpdateMetadataCommand
 
     private UpdateContentMetadataResult doExecute()
     {
+        final Instant now = Instant.now();
+
         final PatchNodeParams patchNodeParams = PatchNodeParamsFactory.create()
             .contentId( params.getContentId() )
             .editor( content -> {
                 Content editedContent = editMetadata( params.getEditor(), content );
-                return afterUpdate( editedContent );
+                return afterUpdate( editedContent, now );
             } )
             .versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.UPDATE_METADATA_ATTR ) )
             .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )

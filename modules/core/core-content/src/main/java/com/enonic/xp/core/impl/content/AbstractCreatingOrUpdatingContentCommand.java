@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.security.DigestInputStream;
+import java.time.Instant;
 import java.util.EnumSet;
 import java.util.HexFormat;
 import java.util.List;
@@ -381,12 +382,12 @@ class AbstractCreatingOrUpdatingContentCommand
             Objects.equals( c1.getVariantOf(), c2.getVariantOf() );
     }
 
-    protected static Content afterUpdate( final Content editedContent )
+    protected static Content afterUpdate( final Content editedContent, Instant published )
     {
         final PatchableContent patchableContent = new PatchableContent( editedContent );
         patchableContent.publishInfo.setPatcher( c -> c.publishInfo.originalValue == null
             ? null
-            : ContentPublishInfo.create( editedContent.getPublishInfo() ).published( null ).build() );
+            : ContentPublishInfo.create( editedContent.getPublishInfo() ).published( published).build() );
         patchableContent.inherit.setPatcher( c -> stopDataInherit( c.inherit.originalValue ) );
 
         return patchableContent.build();
