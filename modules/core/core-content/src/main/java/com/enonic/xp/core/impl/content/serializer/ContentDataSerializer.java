@@ -241,10 +241,10 @@ public final class ContentDataSerializer
         if ( data != null )
         {
             final PropertySet publishInfo = contentAsData.addSet( PUBLISH_INFO );
-            publishInfo.setInstant( PUBLISH_FIRST, data.getFirst() );
-            publishInfo.setInstant( PUBLISH_FROM, data.getFrom() );
-            publishInfo.setInstant( PUBLISH_TO, data.getTo() );
-            publishInfo.setInstant( PUBLISH_PUBLISHED, data.getPublished() );
+            publishInfo.setInstant( PUBLISH_FIRST, data.first() );
+            publishInfo.setInstant( PUBLISH_FROM, data.from() );
+            publishInfo.setInstant( PUBLISH_TO, data.to() );
+            publishInfo.setInstant( PUBLISH_PUBLISHED, data.published() );
         }
     }
 

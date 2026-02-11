@@ -95,9 +95,10 @@ public final class ContentMapper
         gen.map( "publish" );
         if ( info != null )
         {
-            gen.value( "from", info.getFrom() );
-            gen.value( "to", info.getTo() );
-            gen.value( "first", info.getFirst() );
+            gen.value( "from", info.from() );
+            gen.value( "to", info.to() );
+            gen.value( "first", info.first() );
+            gen.value( "published", info.published() );
         }
         gen.end();
     }

@@ -48,8 +48,8 @@ class ContentServiceImplTest_publish_update_publishedTime
 
         final Content storedContent = this.contentService.getById( content.getId() );
         assertNotNull( storedContent.getPublishInfo() );
-        assertNotNull( storedContent.getPublishInfo().getFirst() );
-        assertNotNull( storedContent.getPublishInfo().getFrom() );
+        assertNotNull( storedContent.getPublishInfo().first() );
+        assertNotNull( storedContent.getPublishInfo().from() );
 
         final Content publishedContent = ContextBuilder.from( ContextAccessor.current() )
             .branch( ContentConstants.BRANCH_MASTER )
@@ -69,8 +69,8 @@ class ContentServiceImplTest_publish_update_publishedTime
 
         final ContentPublishInfo publishInfo = getPublishInfo( content.getId() );
         assertNotNull( publishInfo );
-        assertNotNull( publishInfo.getFirst() );
-        assertNotNull( publishInfo.getFrom() );
+        assertNotNull( publishInfo.first() );
+        assertNotNull( publishInfo.from() );
 
         final UpdateContentParams updateContentParams = new UpdateContentParams();
         updateContentParams.contentId( content.getId() ).editor( edit -> edit.displayName = "new display name" );
@@ -85,8 +85,8 @@ class ContentServiceImplTest_publish_update_publishedTime
 
         final ContentPublishInfo unUpdatedPublishInfo = getPublishInfo( content.getId() );
         assertNotNull( unUpdatedPublishInfo );
-        assertEquals( publishInfo.getFrom(), unUpdatedPublishInfo.getFirst() );
-        assertEquals( publishInfo.getFrom(), unUpdatedPublishInfo.getFrom() );
+        assertEquals( publishInfo.from(), unUpdatedPublishInfo.first() );
+        assertEquals( publishInfo.from(), unUpdatedPublishInfo.from() );
     }
 
     @Test
@@ -101,9 +101,9 @@ class ContentServiceImplTest_publish_update_publishedTime
 
         final ContentPublishInfo updatedPublishInfo1 = getPublishInfo( id );
         assertNotNull( updatedPublishInfo1 );
-        assertNotNull( updatedPublishInfo1.getFrom() );
-        assertEquals( updatedPublishInfo1.getFrom(), updatedPublishInfo1.getFirst() );
-        assertNotNull( updatedPublishInfo1.getPublished() );
+        assertNotNull( updatedPublishInfo1.from() );
+        assertEquals( updatedPublishInfo1.from(), updatedPublishInfo1.first() );
+        assertNotNull( updatedPublishInfo1.published() );
 
         final UpdateContentParams updateContentParams = new UpdateContentParams();
         updateContentParams.contentId( content.getId() ).editor( edit -> edit.displayName = "new display name" );
@@ -112,7 +112,7 @@ class ContentServiceImplTest_publish_update_publishedTime
 
         final ContentPublishInfo updatedPublishInfo2 = getPublishInfo( id );
 
-        assertNull( updatedPublishInfo2.getPublished() );
+        assertNull( updatedPublishInfo2.published() );
 
         this.contentService.updateWorkflow(
             UpdateWorkflowParams.create().contentId( content.getId() ).editor( edit -> edit.workflow = WorkflowInfo.ready() ).build() );
@@ -121,7 +121,7 @@ class ContentServiceImplTest_publish_update_publishedTime
 
         final ContentPublishInfo updatedPublishInfo3 = getPublishInfo( id );
 
-        assertNotNull( updatedPublishInfo3.getPublished() );
+        assertNotNull( updatedPublishInfo3.published() );
 
         this.contentService.updateWorkflow( UpdateWorkflowParams.create()
                                                 .contentId( content.getId() )
@@ -130,7 +130,7 @@ class ContentServiceImplTest_publish_update_publishedTime
 
         final ContentPublishInfo updatedPublishInfo4 = getPublishInfo( id );
 
-        assertNull( updatedPublishInfo4.getPublished() );
+        assertNull( updatedPublishInfo4.published() );
 
         this.contentService.updateWorkflow(
             UpdateWorkflowParams.create().contentId( content.getId() ).editor( edit -> edit.workflow = WorkflowInfo.ready() ).build() );
@@ -139,14 +139,14 @@ class ContentServiceImplTest_publish_update_publishedTime
 
         final ContentPublishInfo updatedPublishInfo5 = getPublishInfo( id );
 
-        assertNotNull( updatedPublishInfo5.getPublished() );
+        assertNotNull( updatedPublishInfo5.published() );
 
         this.contentService.updateMetadata(
             UpdateContentMetadataParams.create().contentId( id ).editor( edit -> edit.language = Locale.CANADA ).build() );
 
         final ContentPublishInfo updatedPublishInfo6 = getPublishInfo( id );
 
-        assertNull( updatedPublishInfo6.getPublished() );
+        assertNull( updatedPublishInfo6.published() );
     }
 
     private ContentPublishInfo getPublishInfo( final ContentId id )
@@ -168,7 +168,7 @@ class ContentServiceImplTest_publish_update_publishedTime
 
         final ContentPublishInfo updatedPublishInfo = getPublishInfo( content.getId() );
 
-        assertThat( updatedPublishInfo.getFrom() ).isAfter( publishInfo.getFrom() );
+        assertThat( updatedPublishInfo.from() ).isAfter( publishInfo.from() );
     }
 
     @Test
@@ -195,8 +195,8 @@ class ContentServiceImplTest_publish_update_publishedTime
 
         final ContentPublishInfo publishInfo = getPublishInfo( content.getId() );
 
-        assertNotNull( publishInfo.getTo() );
-        assertThat( publishInfo.getTo() ).isAfter( publishInfo.getFrom() );
+        assertNotNull( publishInfo.to() );
+        assertThat( publishInfo.to() ).isAfter( publishInfo.from() );
     }
 
     private Content doDuplicateContent( final Content rootContent )

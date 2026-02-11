@@ -122,8 +122,8 @@ abstract class AbstractContentCommand
         if ( publishInfo != null )
         {
             //If publishTo is before the current time or publishFrom after the current time
-            return ( publishInfo.getTo() != null && publishInfo.getTo().compareTo( now ) < 0 ) ||
-                ( publishInfo.getFrom() != null && publishInfo.getFrom().compareTo( now ) > 0 );
+            return ( publishInfo.to() != null && publishInfo.to().compareTo( now ) < 0 ) ||
+                ( publishInfo.from() != null && publishInfo.from().compareTo( now ) > 0 );
         }
         return false;
     }

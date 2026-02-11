@@ -53,9 +53,9 @@ class ContentServiceImplTest_unpublish
         assertNotNull( contentService.contentExists( content.getId() ) );
         assertFalse( masterContext.callWith( () -> contentService.contentExists( content.getId() ) ) );
         final Content unpublishedContent = this.contentService.getById( content.getId() );
-        assertNull( unpublishedContent.getPublishInfo().getFrom() );
-        assertNull( unpublishedContent.getPublishInfo().getTo() );
-        assertNotNull( unpublishedContent.getPublishInfo().getFirst() );
+        assertNull( unpublishedContent.getPublishInfo().from() );
+        assertNull( unpublishedContent.getPublishInfo().to() );
+        assertNotNull( unpublishedContent.getPublishInfo().first() );
         assertEquals( WorkflowState.READY, unpublishedContent.getWorkflowInfo().getState() );
     }
 

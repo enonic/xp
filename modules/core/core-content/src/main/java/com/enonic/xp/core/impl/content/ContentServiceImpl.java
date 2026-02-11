@@ -689,12 +689,12 @@ public class ContentServiceImpl
             final ContentPublishInfo publishInfo = content.getPublishInfo();
             if ( publishInfo != null )
             {
-                if ( publishInfo.getTo() != null && publishInfo.getTo().compareTo( now ) < 0 )
+                if ( publishInfo.to() != null && publishInfo.to().compareTo( now ) < 0 )
                 {
                     return new GetPublishStatusResult( content.getId(), PublishStatus.EXPIRED );
                 }
 
-                if ( publishInfo.getFrom() != null && publishInfo.getFrom().compareTo( now ) > 0 )
+                if ( publishInfo.from() != null && publishInfo.from().compareTo( now ) > 0 )
                 {
                     return new GetPublishStatusResult( content.getId(), PublishStatus.PENDING );
                 }

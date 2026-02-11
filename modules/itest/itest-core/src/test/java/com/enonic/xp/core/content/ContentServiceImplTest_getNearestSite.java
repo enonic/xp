@@ -129,8 +129,8 @@ class ContentServiceImplTest_getNearestSite
         final Content publishedContent = ctxMaster().callWith( () -> this.contentService.getById( site.getId() ) );
         assertNotNull( publishedContent );
         assertNotNull( publishedContent.getPublishInfo() );
-        assertEquals( "2022-12-01T14:00:00.668Z", publishedContent.getPublishInfo().getFrom().toString() );
-        assertEquals( "2099-12-03T14:00:00.669Z", publishedContent.getPublishInfo().getTo().toString() );
+        assertEquals( "2022-12-01T14:00:00.668Z", publishedContent.getPublishInfo().from().toString() );
+        assertEquals( "2099-12-03T14:00:00.669Z", publishedContent.getPublishInfo().to().toString() );
     }
 
     @Test
