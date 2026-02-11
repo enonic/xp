@@ -209,7 +209,7 @@ public class ScheduleAuditLogSupportImpl
 
     private AuditLogUri createAuditLogUri( final ScheduledJobName name, final Context rootContext )
     {
-        return AuditLogUri.from( rootContext.getRepositoryId() + ":" + rootContext.getBranch() + ":" + name );
+        return AuditLogUri.from( name.getValue() );
     }
 
     private Context scheduleContext()

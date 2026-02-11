@@ -141,7 +141,7 @@ class ScheduleAuditLogSupportImplTest
         verify( auditLogService, times( 1 ) ).log( argumentCaptor.capture() );
 
         assertEquals( user.getKey(), argumentCaptor.getValue().getUser() );
-        assertEquals( "system.scheduler:master:job-name", argumentCaptor.getValue().getObjectUris().first().getValue() );
+        assertEquals( "job-name", argumentCaptor.getValue().getObjectUris().first().getValue() );
         assertEquals( "com.enonic.xp.core-scheduler", argumentCaptor.getValue().getSource() );
         assertEquals( userKey.toString(), argumentCaptor.getValue().getData().getSet( "result" ).getString( "user" ) );
         assertEquals( job.getCreator().toString(), argumentCaptor.getValue().getData().getSet( "result" ).getString( "creator" ) );
