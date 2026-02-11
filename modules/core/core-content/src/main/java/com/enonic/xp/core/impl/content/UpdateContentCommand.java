@@ -8,12 +8,10 @@ import java.util.Objects;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.attachment.CreateAttachment;
-import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.AttachmentValidationError;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentDataValidationException;
 import com.enonic.xp.content.ContentEditor;
-import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.content.PatchableContent;
@@ -26,9 +24,6 @@ import com.enonic.xp.core.impl.content.processor.ProcessUpdateParams;
 import com.enonic.xp.core.impl.content.processor.ProcessUpdateResult;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.node.NodeAccessException;
-import com.enonic.xp.node.NodeCommitEntry;
-import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.PatchNodeResult;
 import com.enonic.xp.site.Site;
@@ -71,38 +66,31 @@ final class UpdateContentCommand
 
     private Content doExecute()
     {
-        final Content contentBeforeChange = getContent( params.getContentId() );
-
-        Content editedContent;
-
-        editedContent = editContent( params.getEditor(), contentBeforeChange );
-        editedContent = processContent( editedContent );
-
-        final String[] modifiedFields = ContentAttributesHelper.modifiedFields( contentBeforeChange, editedContent );
-
-        editedContent = editContentMetadata( editedContent );
-
-        if ( isContentTheSame().test( contentBeforeChange, editedContent ) )
-        {
-            return contentBeforeChange;
-        }
-
-        editedContent = postEditContentMetadata( editedContent );
-
-        checkAccess( contentBeforeChange, editedContent );
-        validate( editedContent );
-
-        if ( contentBeforeChange.getInherit().contains( ContentInheritType.CONTENT ) )
-        {
-            nodeService.commit( NodeCommitEntry.create().message( "Base inherited version" ).build(),
-                                NodeIds.from( NodeId.from( params.getContentId() ) ) );
-        }
-
         final PatchNodeParams patchNodeParams = PatchNodeParamsFactory.create()
-            .editedContent( editedContent )
+            .contentId( params.getContentId() )
+            .editor( content -> {
+                Content editedContent;
+
+                editedContent = editContent( params.getEditor(), content );
+                editedContent = mergeExistingAndUpdatedAttachments( editedContent );
+                editedContent = processContent( editedContent );
+
+                if ( isContentTheSame( content, editedContent ) )
+                {
+                    return content;
+                }
+
+                checkAccess( content, editedContent );
+
+                editedContent = editContentMetadata( editedContent );
+                editedContent = afterUpdate( editedContent );
+
+                validate( editedContent );
+
+                return editedContent;
+            } )
             .createAttachments( params.getCreateAttachments() )
-            .versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.UPDATE_ATTR, modifiedFields ) )
-            .branches( Branches.from( ContextAccessor.current().getBranch() ) )
+            .versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.UPDATE_ATTR ) )
             .contentTypeService( this.contentTypeService )
             .xDataService( this.xDataService )
             .pageDescriptorService( this.pageDescriptorService )
@@ -120,19 +108,12 @@ final class UpdateContentCommand
     private Content editContentMetadata( Content content )
     {
         final PatchableContent patchableContent = new PatchableContent( content );
-        patchableContent.attachments.setPatcher( c -> mergeExistingAndUpdatedAttachments( c.attachments.originalValue ) );
+        patchableContent.workflowInfo.setValue( WorkflowInfo.inProgress() );
         patchableContent.validationErrors.setPatcher( c -> validateContent( c.source ) );
         patchableContent.valid.setPatcher( c -> !c.validationErrors.getProducedValue().hasErrors() );
-        return patchableContent.build();
-    }
-
-    private Content postEditContentMetadata( Content content )
-    {
-        final PatchableContent patchableContent = new PatchableContent( content );
-        patchableContent.inherit.setPatcher( c -> stopDataInherit( c.inherit.originalValue ) );
-        patchableContent.workflowInfo.setValue( WorkflowInfo.inProgress() );
         patchableContent.modifier.setValue( getCurrentUserKey() );
         patchableContent.modifiedTime.setValue( Instant.now() );
+
         return patchableContent.build();
     }
 
@@ -167,12 +148,14 @@ final class UpdateContentCommand
             .execute();
     }
 
-    private Attachments mergeExistingAndUpdatedAttachments( final Attachments originalAttachments )
+    private Content mergeExistingAndUpdatedAttachments( final Content content )
     {
         if ( params.getCreateAttachments().isEmpty() && params.getRemoveAttachments().isEmpty() && !params.isClearAttachments() )
         {
-            return originalAttachments;
+            return content;
         }
+
+        final Attachments originalAttachments = content.getAttachments();
 
         final Map<BinaryReference, Attachment> attachments = new LinkedHashMap<>();
         if ( !params.isClearAttachments() )
@@ -194,7 +177,7 @@ final class UpdateContentCommand
             final Attachment attachment = builder.build();
             attachments.put( attachment.getBinaryReference(), attachment );
         }
-        return Attachments.from( attachments.values() );
+        return Content.create( content ).attachments( Attachments.from( attachments.values() ) ).build();
     }
 
     private Content processContent( Content content )

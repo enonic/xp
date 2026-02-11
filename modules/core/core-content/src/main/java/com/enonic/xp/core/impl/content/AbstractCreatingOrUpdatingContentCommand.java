@@ -9,7 +9,6 @@ import java.util.HexFormat;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
@@ -26,9 +25,11 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ContentValidator;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.PatchableContent;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.content.processor.ContentProcessor;
@@ -362,9 +363,9 @@ class AbstractCreatingOrUpdatingContentCommand
             fileName.endsWith( ".sh" );
     }
 
-    protected BiPredicate<Content, Content> isContentTheSame()
+    protected boolean isContentTheSame( Content c1, Content c2 )
     {
-        return ( c1, c2 ) -> Objects.equals( c1.getId(), c2.getId() ) && Objects.equals( c1.getPath(), c2.getPath() ) &&
+        return Objects.equals( c1.getId(), c2.getId() ) && Objects.equals( c1.getPath(), c2.getPath() ) &&
             Objects.equals( c1.getDisplayName(), c2.getDisplayName() ) && Objects.equals( c1.getType(), c2.getType() ) &&
             Objects.equals( c1.getCreator(), c2.getCreator() ) && Objects.equals( c1.getOwner(), c2.getOwner() ) &&
             Objects.equals( c1.getCreatedTime(), c2.getCreatedTime() ) && Objects.equals( c1.getInherit(), c2.getInherit() ) &&
@@ -380,19 +381,28 @@ class AbstractCreatingOrUpdatingContentCommand
             Objects.equals( c1.getVariantOf(), c2.getVariantOf() );
     }
 
-    protected Set<ContentInheritType> stopDataInherit( final Set<ContentInheritType> currentInherit )
+    protected static Content afterUpdate( final Content editedContent )
     {
-        if ( currentInherit.contains( ContentInheritType.CONTENT ) || currentInherit.contains( ContentInheritType.NAME ) )
+        final PatchableContent patchableContent = new PatchableContent( editedContent );
+        patchableContent.publishInfo.setPatcher( c -> c.publishInfo.originalValue == null
+            ? null
+            : ContentPublishInfo.create( editedContent.getPublishInfo() ).published( null ).build() );
+        patchableContent.inherit.setPatcher( c -> stopDataInherit( c.inherit.originalValue ) );
+
+        return patchableContent.build();
+    }
+
+    private static Set<ContentInheritType> stopDataInherit( final Set<ContentInheritType> currentInherit )
+    {
+        if ( currentInherit.isEmpty() )
         {
-            final EnumSet<ContentInheritType> newInherit = EnumSet.copyOf( currentInherit );
-
-            newInherit.remove( ContentInheritType.CONTENT );
-            newInherit.remove( ContentInheritType.NAME );
-
-            return newInherit;
+            return currentInherit;
         }
 
-        return currentInherit;
+        final EnumSet<ContentInheritType> newInherit = EnumSet.copyOf( currentInherit );
+        newInherit.remove( ContentInheritType.CONTENT );
+        newInherit.remove( ContentInheritType.NAME );
+        return newInherit;
     }
 
     public static class Builder<B extends Builder<B>>

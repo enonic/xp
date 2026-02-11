@@ -55,7 +55,7 @@ class ContentServiceImplTest_versionAttributes
 
         final ContentVersion version = getLatestVersion( content );
 
-        assertThat( version.getActions() ).extracting( ContentVersion.Action::operation ).containsExactly( "content.create" );
+        assertThat( version.actions() ).extracting( ContentVersion.Action::operation ).containsExactly( "content.create" );
     }
 
     // --- Sort ---
@@ -71,9 +71,9 @@ class ContentServiceImplTest_versionAttributes
 
         final ContentVersion sortVersion = getLatestVersion( parent );
 
-        assertThat( sortVersion.getActions() ).extracting( ContentVersion.Action::operation ).containsExactly( "content.sort" );
+        assertThat( sortVersion.actions() ).extracting( ContentVersion.Action::operation ).containsExactly( "content.sort" );
 
-        assertThat( sortVersion.getActions() ).filteredOn( action -> "content.sort".equals( action.operation() ) )
+        assertThat( sortVersion.actions() ).filteredOn( action -> "content.sort".equals( action.operation() ) )
             .flatExtracting( ContentVersion.Action::fields )
             .containsExactly( "childOrder" );
     }
@@ -91,9 +91,9 @@ class ContentServiceImplTest_versionAttributes
         {
             final ContentVersion childSortVersion = getLatestVersion( child );
 
-            assertThat( childSortVersion.getActions() ).extracting( ContentVersion.Action::operation ).containsExactly( "content.sort" );
+            assertThat( childSortVersion.actions() ).extracting( ContentVersion.Action::operation ).containsExactly( "content.sort" );
 
-            assertThat( childSortVersion.getActions() ).filteredOn( action -> "content.sort".equals( action.operation() ) )
+            assertThat( childSortVersion.actions() ).filteredOn( action -> "content.sort".equals( action.operation() ) )
                 .flatExtracting( ContentVersion.Action::fields )
                 .containsExactly( "manualOrderValue" );
         }
@@ -125,9 +125,9 @@ class ContentServiceImplTest_versionAttributes
 
         final ContentVersion reorderVersion = child3Versions.getContentVersions().first();
 
-        assertThat( reorderVersion.getActions() ).extracting( ContentVersion.Action::operation ).containsExactly( "content.sort" );
+        assertThat( reorderVersion.actions() ).extracting( ContentVersion.Action::operation ).containsExactly( "content.sort" );
 
-        assertThat( reorderVersion.getActions() ).filteredOn( action -> "content.sort".equals( action.operation() ) )
+        assertThat( reorderVersion.actions() ).filteredOn( action -> "content.sort".equals( action.operation() ) )
             .flatExtracting( ContentVersion.Action::fields )
             .containsExactly( "manualOrderValue" );
     }
@@ -145,9 +145,9 @@ class ContentServiceImplTest_versionAttributes
 
         final ContentVersion moveVersion = getLatestVersion( child );
 
-        assertThat( moveVersion.getActions() ).extracting( ContentVersion.Action::operation ).containsExactly( "content.move" );
+        assertThat( moveVersion.actions() ).extracting( ContentVersion.Action::operation ).containsExactly( "content.move" );
 
-        assertThat( moveVersion.getActions() ).filteredOn( action -> "content.move".equals( action.operation() ) )
+        assertThat( moveVersion.actions() ).filteredOn( action -> "content.move".equals( action.operation() ) )
             .flatExtracting( ContentVersion.Action::fields )
             .containsExactly( "parentPath" );
     }
@@ -167,9 +167,9 @@ class ContentServiceImplTest_versionAttributes
 
         final ContentVersion moveVersion = getLatestVersion( child );
 
-        assertThat( moveVersion.getActions() ).extracting( ContentVersion.Action::operation ).containsExactly( "content.move" );
+        assertThat( moveVersion.actions() ).extracting( ContentVersion.Action::operation ).containsExactly( "content.move" );
 
-        assertThat( moveVersion.getActions() ).filteredOn( action -> "content.move".equals( action.operation() ) )
+        assertThat( moveVersion.actions() ).filteredOn( action -> "content.move".equals( action.operation() ) )
             .flatExtracting( ContentVersion.Action::fields )
             .containsExactlyInAnyOrder( "parentPath", "name" );
     }
@@ -187,8 +187,8 @@ class ContentServiceImplTest_versionAttributes
         this.contentService.move( MoveContentParams.create().contentId( parent.getId() ).parentContentPath( target.getPath() ).build() );
 
         final ContentVersion parentMoveVersion = getLatestVersion( parent );
-        assertThat( parentMoveVersion.getActions() ).extracting( ContentVersion.Action::operation ).containsExactly( "content.move" );
-        assertThat( parentMoveVersion.getActions() ).filteredOn( action -> "content.move".equals( action.operation() ) )
+        assertThat( parentMoveVersion.actions() ).extracting( ContentVersion.Action::operation ).containsExactly( "content.move" );
+        assertThat( parentMoveVersion.actions() ).filteredOn( action -> "content.move".equals( action.operation() ) )
             .flatExtracting( ContentVersion.Action::fields )
             .containsExactly( "parentPath" );
 
@@ -196,11 +196,11 @@ class ContentServiceImplTest_versionAttributes
         {
             final ContentVersion childMoveVersion = getLatestVersion( child );
 
-            assertThat( childMoveVersion.getActions() ).as( "child %s actions", child.getName() )
+            assertThat( childMoveVersion.actions() ).as( "child %s actions", child.getName() )
                 .extracting( ContentVersion.Action::operation )
                 .containsExactly( "content.move" );
 
-            assertThat( childMoveVersion.getActions() ).as( "child %s fields", child.getName() )
+            assertThat( childMoveVersion.actions() ).as( "child %s fields", child.getName() )
                 .filteredOn( action -> "content.move".equals( action.operation() ) )
                 .flatExtracting( ContentVersion.Action::fields )
                 .containsExactly( "parentPath" );
@@ -222,13 +222,13 @@ class ContentServiceImplTest_versionAttributes
                                       .build() );
 
         final ContentVersion parentMoveVersion = getLatestVersion( parent );
-        assertThat( parentMoveVersion.getActions() ).filteredOn( action -> "content.move".equals( action.operation() ) )
+        assertThat( parentMoveVersion.actions() ).filteredOn( action -> "content.move".equals( action.operation() ) )
             .flatExtracting( ContentVersion.Action::fields )
             .containsExactlyInAnyOrder( "parentPath", "name" );
 
         final ContentVersion childMoveVersion = getLatestVersion( child );
-        assertThat( childMoveVersion.getActions() ).extracting( ContentVersion.Action::operation ).containsExactly( "content.move" );
-        assertThat( childMoveVersion.getActions() ).filteredOn( action -> "content.move".equals( action.operation() ) )
+        assertThat( childMoveVersion.actions() ).extracting( ContentVersion.Action::operation ).containsExactly( "content.move" );
+        assertThat( childMoveVersion.actions() ).filteredOn( action -> "content.move".equals( action.operation() ) )
             .flatExtracting( ContentVersion.Action::fields )
             .containsExactly( "parentPath" );
     }
@@ -244,7 +244,7 @@ class ContentServiceImplTest_versionAttributes
 
         final ContentVersion archiveVersion = archiveContext().callWith( () -> getLatestVersion( content ) );
 
-        assertThat( archiveVersion.getActions() ).extracting( ContentVersion.Action::operation ).containsExactly( "content.archive" );
+        assertThat( archiveVersion.actions() ).extracting( ContentVersion.Action::operation ).containsExactly( "content.archive" );
     }
 
     @Test
@@ -257,7 +257,7 @@ class ContentServiceImplTest_versionAttributes
 
         final ContentVersion childVersion = archiveContext().callWith( () -> getLatestVersion( child ) );
 
-        assertThat( childVersion.getActions() ).extracting( ContentVersion.Action::operation ).containsExactly( "content.archive" );
+        assertThat( childVersion.actions() ).extracting( ContentVersion.Action::operation ).containsExactly( "content.archive" );
     }
 
     // --- Restore ---
@@ -272,7 +272,7 @@ class ContentServiceImplTest_versionAttributes
 
         final ContentVersion restoreVersion = getLatestVersion( content );
 
-        assertThat( restoreVersion.getActions() ).extracting( ContentVersion.Action::operation ).containsExactly( "content.restore" );
+        assertThat( restoreVersion.actions() ).extracting( ContentVersion.Action::operation ).containsExactly( "content.restore" );
     }
 
     @Test
@@ -286,7 +286,7 @@ class ContentServiceImplTest_versionAttributes
 
         final ContentVersion childVersion = getLatestVersion( child );
 
-        assertThat( childVersion.getActions() ).extracting( ContentVersion.Action::operation ).containsExactly( "content.restore" );
+        assertThat( childVersion.actions() ).extracting( ContentVersion.Action::operation ).containsExactly( "content.restore" );
     }
 
     // --- Apply permissions ---
@@ -306,7 +306,7 @@ class ContentServiceImplTest_versionAttributes
 
         final ContentVersion version = getLatestVersion( content );
 
-        assertThat( version.getActions() ).extracting( ContentVersion.Action::operation ).containsExactly( "content.permissions" );
+        assertThat( version.actions() ).extracting( ContentVersion.Action::operation ).containsExactly( "content.permissions" );
     }
 
     // --- Duplicate ---
@@ -325,7 +325,7 @@ class ContentServiceImplTest_versionAttributes
         {
             final ContentVersion version = getLatestVersion( duplicatedId );
 
-            assertThat( version.getActions() ).as( "actions for duplicated content %s", duplicatedId )
+            assertThat( version.actions() ).as( "actions for duplicated content %s", duplicatedId )
                 .extracting( ContentVersion.Action::operation )
                 .containsExactly( "content.duplicate" );
         }
@@ -343,7 +343,7 @@ class ContentServiceImplTest_versionAttributes
 
         final ContentVersion version = getLatestVersion( content );
 
-        assertThat( version.getActions() ).extracting( ContentVersion.Action::operation ).containsExactly( "content.patch" );
+        assertThat( version.actions() ).extracting( ContentVersion.Action::operation ).containsExactly( "content.patch" );
     }
 
     // --- Publish ---
@@ -358,7 +358,7 @@ class ContentServiceImplTest_versionAttributes
 
         final ContentVersion version = getLatestVersion( content );
 
-        assertThat( version.getActions() ).extracting( ContentVersion.Action::operation ).containsExactly( "content.publish" );
+        assertThat( version.actions() ).extracting( ContentVersion.Action::operation ).containsExactly( "content.publish" );
     }
 
     // --- Unpublish ---
@@ -374,7 +374,7 @@ class ContentServiceImplTest_versionAttributes
 
         final ContentVersion version = getLatestVersion( content );
 
-        assertThat( version.getActions() ).extracting( ContentVersion.Action::operation ).contains( "content.unpublish" );
+        assertThat( version.actions() ).extracting( ContentVersion.Action::operation ).contains( "content.unpublish" );
     }
 
     // --- Update ---
@@ -390,11 +390,7 @@ class ContentServiceImplTest_versionAttributes
 
         final ContentVersion version = getLatestVersion( content );
 
-        assertThat( version.getActions() ).extracting( ContentVersion.Action::operation ).containsExactly( "content.update" );
-
-        assertThat( version.getActions() ).filteredOn( action -> "content.update".equals( action.operation() ) )
-            .flatExtracting( ContentVersion.Action::fields )
-            .contains( "displayName" );
+        assertThat( version.actions() ).extracting( ContentVersion.Action::operation ).containsExactly( "content.update" );
     }
 
     // --- Update workflow ---
@@ -412,11 +408,7 @@ class ContentServiceImplTest_versionAttributes
 
         final ContentVersion version = getLatestVersion( content );
 
-        assertThat( version.getActions() ).extracting( ContentVersion.Action::operation ).containsExactly( "content.updateWorkflow" );
-
-        assertThat( version.getActions() ).filteredOn( action -> "content.updateWorkflow".equals( action.operation() ) )
-            .flatExtracting( ContentVersion.Action::fields )
-            .contains( "workflow" );
+        assertThat( version.actions() ).extracting( ContentVersion.Action::operation ).containsExactly( "content.updateWorkflow" );
     }
 
     // --- Update metadata ---
@@ -431,11 +423,7 @@ class ContentServiceImplTest_versionAttributes
 
         final ContentVersion version = getLatestVersion( content );
 
-        assertThat( version.getActions() ).extracting( ContentVersion.Action::operation ).containsExactly( "content.updateMetadata" );
-
-        assertThat( version.getActions() ).filteredOn( action -> "content.updateMetadata".equals( action.operation() ) )
-            .flatExtracting( ContentVersion.Action::fields )
-            .contains( "language" );
+        assertThat( version.actions() ).extracting( ContentVersion.Action::operation ).containsExactly( "content.updateMetadata" );
     }
 
     // --- Helpers ---

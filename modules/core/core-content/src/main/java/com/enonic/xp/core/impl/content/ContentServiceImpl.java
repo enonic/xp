@@ -52,9 +52,9 @@ import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.content.FindContentIdsByParentResult;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.content.FindContentPathsByQueryResult;
+import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.content.GetContentVersionsParams;
 import com.enonic.xp.content.GetContentVersionsResult;
-import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.content.GetPublishStatusResult;
 import com.enonic.xp.content.GetPublishStatusesParams;
 import com.enonic.xp.content.GetPublishStatusesResult;
@@ -689,12 +689,12 @@ public class ContentServiceImpl
             final ContentPublishInfo publishInfo = content.getPublishInfo();
             if ( publishInfo != null )
             {
-                if ( publishInfo.getTo() != null && publishInfo.getTo().compareTo( now ) < 0 )
+                if ( publishInfo.to() != null && publishInfo.to().compareTo( now ) < 0 )
                 {
                     return new GetPublishStatusResult( content.getId(), PublishStatus.EXPIRED );
                 }
 
-                if ( publishInfo.getFrom() != null && publishInfo.getFrom().compareTo( now ) > 0 )
+                if ( publishInfo.from() != null && publishInfo.from().compareTo( now ) > 0 )
                 {
                     return new GetPublishStatusResult( content.getId(), PublishStatus.PENDING );
                 }
@@ -709,7 +709,6 @@ public class ContentServiceImpl
     public GetContentVersionsResult getVersions( final GetContentVersionsParams params )
     {
         requireAnyProjectRole();
-        verifyDraftBranch();
 
         return GetContentVersionsCommand.create()
             .nodeService( this.nodeService )

@@ -1,82 +1,29 @@
 package com.enonic.xp.content;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
-import com.google.common.collect.ImmutableList;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.security.PrincipalKey;
 
+import static java.util.Objects.requireNonNull;
+
 @PublicApi
-public final class ContentVersion
+@NullMarked
+public record ContentVersion(ContentVersionId versionId, ContentId contentId, ContentPath path, Instant timestamp, @Nullable String comment,
+                             List<Action> actions)
 {
-    private final ContentVersionId versionId;
-
-    private final ContentId contentId;
-
-    private final ContentPath path;
-
-    private final Instant timestamp;
-
-    private final String comment;
-
-    private final List<Action> actions;
-
-    private ContentVersion( Builder builder )
+    public ContentVersion
     {
-        this.versionId = builder.versionId;
-        this.contentId = builder.contentId;
-        this.path = builder.path;
-        this.timestamp = builder.timestamp;
-        this.comment = builder.comment;
-        this.actions = builder.actions.build();
-    }
-
-    public ContentVersionId getVersionId()
-    {
-        return versionId;
-    }
-
-    public ContentId getContentId()
-    {
-        return contentId;
-    }
-
-    public Instant getTimestamp()
-    {
-        return timestamp;
-    }
-
-    public String getComment()
-    {
-        return comment;
-    }
-
-    public ContentPath getPath()
-    {
-        return path;
-    }
-
-    public List<Action> getActions()
-    {
-        return actions;
-    }
-
-    @Override
-    public boolean equals( final Object o )
-    {
-        return o instanceof final ContentVersion that && Objects.equals( versionId, that.versionId ) &&
-            Objects.equals( contentId, that.contentId ) && Objects.equals( path, that.path ) &&
-            Objects.equals( timestamp, that.timestamp ) && Objects.equals( comment, that.comment ) &&
-            Objects.equals( actions, that.actions );
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash( versionId, contentId, path, timestamp, comment, actions );
+        requireNonNull( versionId );
+        requireNonNull( contentId );
+        requireNonNull( path );
+        requireNonNull( timestamp );
+        actions = List.copyOf( actions );
     }
 
     public static Builder create()
@@ -86,17 +33,22 @@ public final class ContentVersion
 
     public static final class Builder
     {
+        @Nullable
         private ContentPath path;
 
+        @Nullable
         private Instant timestamp;
 
+        @Nullable
         private String comment;
 
+        @Nullable
         private ContentVersionId versionId;
 
+        @Nullable
         private ContentId contentId;
 
-        private final ImmutableList.Builder<Action> actions = ImmutableList.builder();
+        private final List<Action> actions = new ArrayList<>();
 
         private Builder()
         {
@@ -140,11 +92,19 @@ public final class ContentVersion
 
         public ContentVersion build()
         {
-            return new ContentVersion( this );
+            return new ContentVersion( requireNonNull( this.versionId ), requireNonNull( this.contentId ), requireNonNull( this.path ),
+                                       requireNonNull( this.timestamp ), this.comment, this.actions );
         }
     }
 
     public record Action(String operation, List<String> fields, PrincipalKey user, Instant opTime)
     {
+        public Action
+        {
+            requireNonNull( operation );
+            fields = List.copyOf( fields );
+            requireNonNull( user );
+            requireNonNull( opTime );
+        }
     }
 }

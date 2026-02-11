@@ -103,7 +103,7 @@ class ProjectContentEventListenerTest
         listener = new ProjectContentEventListener( this.projectService, synchronizer, Runnable::run );
 
         syncContentService =
-            new SyncContentServiceImpl( contentTypeService, nodeService, eventPublisher, projectService, contentService, synchronizer,
+            new SyncContentServiceImpl( contentTypeService, nodeService, eventPublisher, projectService, layersContentService, synchronizer,
                                         contentAuditLogSupport );
     }
 
@@ -818,9 +818,9 @@ class ProjectContentEventListenerTest
         final Content targetContent = layerContext.callWith( () -> contentService.getById( sourceContent.getId() ) );
         final ContentPublishInfo publishInfo = targetContent.getPublishInfo();
 
-        assertNotNull( publishInfo.getFirst() );
-        assertNull( publishInfo.getFrom() );
-        assertNull( publishInfo.getTo() );
+        assertNotNull( publishInfo.first() );
+        assertNull( publishInfo.from() );
+        assertNull( publishInfo.to() );
     }
 
     @Test

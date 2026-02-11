@@ -2,6 +2,8 @@ package com.enonic.xp.core.impl.content;
 
 import java.util.Objects;
 
+import org.osgi.util.function.Function;
+
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.attachment.CreateAttachment;
@@ -9,6 +11,7 @@ import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentId;
 import com.enonic.xp.core.impl.content.index.ContentIndexConfigFactory;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.data.PropertyTree;
@@ -27,7 +30,9 @@ import com.enonic.xp.site.SiteService;
 
 public class PatchNodeParamsFactory
 {
-    private final Content editedContent;
+    private final ContentId contentId;
+
+    private final Function<Content, Content> contentEditor;
 
     private final CreateAttachments createAttachments;
 
@@ -51,7 +56,8 @@ public class PatchNodeParamsFactory
 
     public PatchNodeParamsFactory( final Builder builder )
     {
-        this.editedContent = builder.editedContent;
+        this.contentId = builder.contentId;
+        this.contentEditor = builder.contentEditor;
         this.createAttachments = builder.createAttachments;
         this.contentTypeService = builder.contentTypeService;
         this.xDataService = builder.xDataService;
@@ -59,7 +65,7 @@ public class PatchNodeParamsFactory
         this.partDescriptorService = builder.partDescriptorService;
         this.layoutDescriptorService = builder.layoutDescriptorService;
         this.siteService = builder.siteService;
-        this.versionAttributes  = builder.versionAttributes;
+        this.versionAttributes = builder.versionAttributes;
         branches = Branches.from( builder.branches.build() );
     }
 
@@ -73,10 +79,10 @@ public class PatchNodeParamsFactory
         final NodeEditor nodeEditor = toNodeEditor();
 
         final PatchNodeParams.Builder builder = PatchNodeParams.create()
-            .id( NodeId.from( editedContent.getId() ) )
+            .id( NodeId.from( contentId ) )
             .editor( nodeEditor )
-            .addBranches( branches )
-            .versionAttributes(  versionAttributes )
+            .branches( branches )
+            .versionAttributes( versionAttributes )
             .refresh( RefreshMode.ALL );
 
         for ( final CreateAttachment createAttachment : createAttachments )
@@ -88,23 +94,25 @@ public class PatchNodeParamsFactory
 
     private NodeEditor toNodeEditor()
     {
-        final PropertyTree nodeData = contentDataSerializer.toNodeData( editedContent );
-
-        final ContentIndexConfigFactory indexConfigFactory = ContentIndexConfigFactory.create()
-            .contentTypeService( contentTypeService )
-            .pageDescriptorService( pageDescriptorService )
-            .partDescriptorService( partDescriptorService )
-            .layoutDescriptorService( layoutDescriptorService )
-            .siteService( this.siteService )
-            .xDataService( this.xDataService )
-            .contentTypeName( editedContent.getType() )
-            .page( editedContent.getPage() )
-            .siteConfigs( editedContent.isSite() ? SiteConfigsDataSerializer.fromData( editedContent.getData().getRoot() ) : null )
-            .extraDatas( editedContent.getAllExtraData() )
-            .language( editedContent.getLanguage() != null ? editedContent.getLanguage().getLanguage() : null )
-            .build();
-
         return editableNode -> {
+            final Content editedContent = contentEditor.apply( ContentNodeTranslator.fromNode( editableNode.source ) );
+
+            final PropertyTree nodeData = contentDataSerializer.toNodeData( editedContent );
+
+            final ContentIndexConfigFactory indexConfigFactory = ContentIndexConfigFactory.create()
+                .contentTypeService( contentTypeService )
+                .pageDescriptorService( pageDescriptorService )
+                .partDescriptorService( partDescriptorService )
+                .layoutDescriptorService( layoutDescriptorService )
+                .siteService( this.siteService )
+                .xDataService( this.xDataService )
+                .contentTypeName( editedContent.getType() )
+                .page( editedContent.getPage() )
+                .siteConfigs( editedContent.isSite() ? SiteConfigsDataSerializer.fromData( editedContent.getData().getRoot() ) : null )
+                .extraDatas( editedContent.getAllExtraData() )
+                .language( editedContent.getLanguage() != null ? editedContent.getLanguage().getLanguage() : null )
+                .build();
+
             editableNode.indexConfigDocument = indexConfigFactory.produce();
             editableNode.data = nodeData;
             editableNode.childOrder = editedContent.getChildOrder();
@@ -116,7 +124,9 @@ public class PatchNodeParamsFactory
     {
         private final ImmutableSet.Builder<Branch> branches = ImmutableSet.builder();
 
-        private Content editedContent;
+        private ContentId contentId;
+
+        private Function<Content, Content> contentEditor;
 
         private CreateAttachments createAttachments = CreateAttachments.empty();
 
@@ -134,9 +144,15 @@ public class PatchNodeParamsFactory
 
         private SiteService siteService;
 
-        Builder editedContent( final Content editedContent )
+        Builder contentId( final ContentId contentId )
         {
-            this.editedContent = editedContent;
+            this.contentId = contentId;
+            return this;
+        }
+
+        Builder editor( final Function<Content, Content> contentSupplier )
+        {
+            this.contentEditor = contentSupplier;
             return this;
         }
 
@@ -196,8 +212,7 @@ public class PatchNodeParamsFactory
 
         void validate()
         {
-            Objects.requireNonNull( editedContent, "editedContent cannot be null" );
-            Objects.requireNonNull( editedContent.getAttachments(), "attachments cannot be null" );
+            Objects.requireNonNull( contentEditor, "contentSupplier cannot be null" );
             Objects.requireNonNull( createAttachments, "createAttachments cannot be null" );
 
             Objects.requireNonNull( contentTypeService );

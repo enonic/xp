@@ -17,11 +17,12 @@ public class PublishInfoSerializer
             return null;
         }
 
-        return ContentPublishInfo.create().
-            first( publishInfo.getInstant( ContentPropertyNames.PUBLISH_FIRST ) ).
-            from( publishInfo.getInstant( ContentPropertyNames.PUBLISH_FROM ) ).
-            to( publishInfo.getInstant( ContentPropertyNames.PUBLISH_TO ) ).
-            build();
+        return ContentPublishInfo.create()
+            .first( publishInfo.getInstant( ContentPropertyNames.PUBLISH_FIRST ) )
+            .from( publishInfo.getInstant( ContentPropertyNames.PUBLISH_FROM ) )
+            .to( publishInfo.getInstant( ContentPropertyNames.PUBLISH_TO ) )
+            .published( publishInfo.getInstant( ContentPropertyNames.PUBLISH_PUBLISHED ) )
+            .build();
     }
 
 }

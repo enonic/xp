@@ -51,22 +51,22 @@ public class PatchContentCommand
 
     private PatchContentResult doExecute()
     {
-        final Content contentBeforeChange = getContent( params.getContentId() );
-
-        Content patchedContent = patchContent( params.getPatcher(), contentBeforeChange );
-        if ( !params.getCreateAttachments().isEmpty() )
-        {
-            patchedContent = Content.create( patchedContent )
-                .attachments( mergeExistingAndUpdatedAttachments( patchedContent.getAttachments() ) )
-                .build();
-        }
-
         final PatchNodeParams patchNodeParams = PatchNodeParamsFactory.create()
-            .editedContent( patchedContent )
-            .createAttachments( params.getCreateAttachments() )
+            .contentId( params.getContentId() )
+            .editor( content -> {
+                Content patchedContent = patchContent( params.getPatcher(), content );
+                if ( !params.getCreateAttachments().isEmpty() )
+                {
+                    patchedContent = Content.create( patchedContent )
+                        .attachments( mergeExistingAndUpdatedAttachments( patchedContent.getAttachments() ) )
+                        .build();
+                }
+                return patchedContent;
+            } )
             .versionAttributes( layersSync
                                     ? ContentAttributesHelper.layersSyncAttr()
                                     : ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.PATCH_ATTR ) )
+            .createAttachments( params.getCreateAttachments() )
             .branches( params.getBranches() )
             .contentTypeService( this.contentTypeService )
             .xDataService( this.xDataService )

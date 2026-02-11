@@ -2,11 +2,9 @@ package com.enonic.xp.node;
 
 import java.util.Objects;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.util.BinaryReference;
 
@@ -35,7 +33,7 @@ public final class PatchNodeParams
         this.binaryAttachments = builder.binaryAttachments.build();
         this.versionAttributes = builder.versionAttributes;
         this.refresh = builder.refresh;
-        this.branches = Branches.from( builder.branches.build() );
+        this.branches = Objects.requireNonNullElse( builder.branches, Branches.empty() );
     }
 
     public static Builder create()
@@ -80,7 +78,7 @@ public final class PatchNodeParams
 
     public static final class Builder
     {
-        private final ImmutableSet.Builder<Branch> branches = ImmutableSet.builder();
+        private Branches branches;
 
         private NodeId id;
 
@@ -144,9 +142,9 @@ public final class PatchNodeParams
             return this;
         }
 
-        public Builder addBranches( final Branches branches )
+        public Builder branches( final Branches branches )
         {
-            this.branches.addAll( branches );
+            this.branches = branches;
             return this;
         }
 

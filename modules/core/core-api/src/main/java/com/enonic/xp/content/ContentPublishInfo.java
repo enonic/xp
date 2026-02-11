@@ -2,21 +2,19 @@ package com.enonic.xp.content;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Objects;
 
-public final class ContentPublishInfo
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
+@NullMarked
+public record ContentPublishInfo(@Nullable Instant from, @Nullable Instant to, @Nullable Instant first, @Nullable Instant published)
 {
-    private final Instant from;
-
-    private final Instant to;
-
-    private final Instant first;
-
-    private ContentPublishInfo( final Builder builder )
+    public ContentPublishInfo
     {
-        from = builder.from != null ? builder.from.truncatedTo( ChronoUnit.MILLIS ) : null;
-        to = builder.to != null ? builder.to.truncatedTo( ChronoUnit.MILLIS ) : null;
-        first = builder.first != null ? builder.first.truncatedTo( ChronoUnit.MILLIS ) : null;
+        from = from != null ? from.truncatedTo( ChronoUnit.MILLIS ) : null;
+        to = to != null ? to.truncatedTo( ChronoUnit.MILLIS ) : null;
+        first = first != null ? first.truncatedTo( ChronoUnit.MILLIS ) : null;
+        published = published != null ? published.truncatedTo( ChronoUnit.MILLIS ) : null;
     }
 
     public static Builder create()
@@ -24,75 +22,56 @@ public final class ContentPublishInfo
         return new Builder();
     }
 
-    public Instant getFrom()
+    public static Builder create( final ContentPublishInfo info )
     {
-        return from;
-    }
-
-    public Instant getTo()
-    {
-        return to;
-    }
-
-    public Instant getFirst()
-    {
-        return first;
+        return new Builder().from( info.from() ).to( info.to() ).first( info.first() ).published( info.published() );
     }
 
     public static final class Builder
     {
+        @Nullable
         private Instant from;
 
+        @Nullable
         private Instant to;
 
+        @Nullable
         private Instant first;
+
+        @Nullable
+        private Instant published;
 
         private Builder()
         {
         }
 
-        public Builder from( final Instant val )
+        public Builder from( final @Nullable Instant val )
         {
             from = val;
             return this;
         }
 
-        public Builder to( final Instant val )
+        public Builder to( final @Nullable Instant val )
         {
             to = val;
             return this;
         }
 
-        public Builder first( final Instant val )
+        public Builder first( final @Nullable Instant val )
         {
             first = val;
             return this;
         }
 
+        public Builder published( final @Nullable Instant val )
+        {
+            published = val;
+            return this;
+        }
+
         public ContentPublishInfo build()
         {
-            return new ContentPublishInfo( this );
+            return new ContentPublishInfo( from, to, first, published );
         }
-    }
-
-    @Override
-    public boolean equals( final Object o )
-    {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( !( o instanceof ContentPublishInfo ) )
-        {
-            return false;
-        }
-        final ContentPublishInfo that = (ContentPublishInfo) o;
-        return Objects.equals( from, that.from ) && Objects.equals( to, that.to ) && Objects.equals( first, that.first );
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash( from, to, first );
     }
 }

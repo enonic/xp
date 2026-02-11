@@ -38,17 +38,13 @@ public class UpdateMetadataCommand
 
     private UpdateContentMetadataResult doExecute()
     {
-        final Content contentBeforeChange = getContent( params.getContentId() );
-
-        Content editedContent = editMetadata( params.getEditor(), contentBeforeChange );
-
-        editedContent = Content.create( editedContent ).setInherit( stopDataInherit( editedContent.getInherit() ) ).build();
-
-        final String[] modifiedFields = ContentAttributesHelper.modifiedFields( contentBeforeChange, editedContent );
-
         final PatchNodeParams patchNodeParams = PatchNodeParamsFactory.create()
-            .editedContent( editedContent )
-            .versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.UPDATE_METADATA_ATTR, modifiedFields ) )
+            .contentId( params.getContentId() )
+            .editor( content -> {
+                Content editedContent = editMetadata( params.getEditor(), content );
+                return afterUpdate( editedContent );
+            } )
+            .versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.UPDATE_METADATA_ATTR ) )
             .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
             .contentTypeService( this.contentTypeService )
             .xDataService( this.xDataService )

@@ -181,15 +181,20 @@ public class PublishContentCommand
 
     private NodeDataProcessor setPublishInfo()
     {
-        return ( PropertyTree data, NodePath nodePath ) -> {
+        return ( PropertyTree data, NodePath _ ) -> {
             var toBeEdited = data.copy();
+
             final PropertySet publishInfo = Objects.requireNonNullElseGet( toBeEdited.getSet( ContentPropertyNames.PUBLISH_INFO ),
                                                                            () -> toBeEdited.addSet( ContentPropertyNames.PUBLISH_INFO ) );
+
+            publishInfo.setInstant( ContentPropertyNames.PUBLISH_PUBLISHED, Instant.now().truncatedTo( ChronoUnit.MILLIS ) );
 
             if ( !publishInfo.hasProperty( ContentPropertyNames.PUBLISH_FROM ) )
             {
                 publishInfo.setInstant( ContentPropertyNames.PUBLISH_FROM, publishFrom );
             }
+
+            publishInfo.setInstant( ContentPropertyNames.PUBLISH_PUBLISHED, Instant.now().truncatedTo( ChronoUnit.MILLIS ) );
 
             if ( publishTo == null )
             {

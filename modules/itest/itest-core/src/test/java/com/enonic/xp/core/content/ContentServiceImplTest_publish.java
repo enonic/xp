@@ -50,8 +50,11 @@ class ContentServiceImplTest_publish
 {
 
     private Content content1;
+
     private Content content2;
+
     private Content content1_1;
+
     private Content content2_1;
 
     @Test
@@ -300,8 +303,7 @@ class ContentServiceImplTest_publish
 
         this.contentService.delete( DeleteContentParams.create().contentPath( content2.getPath() ).build() );
 
-        final Content movedContent =
-            this.contentService.getByPath( ContentPath.from( content1.getPath(), content2_1.getName() ) );
+        final Content movedContent = this.contentService.getByPath( ContentPath.from( content1.getPath(), content2_1.getName() ) );
 
         assertNotNull( movedContent );
     }
@@ -407,7 +409,7 @@ class ContentServiceImplTest_publish
         assertTrue( iterator.hasNext() );
 
         ContentVersion version = iterator.next();
-        assertEquals( "My message", version.getComment() );
+        assertEquals( "My message", version.comment() );
     }
 
     @Test
@@ -424,7 +426,7 @@ class ContentServiceImplTest_publish
         assertTrue( iterator.hasNext() );
 
         ContentVersion version = iterator.next();
-        assertNull( version.getComment() );
+        assertNull( version.comment() );
     }
 
     @Test
@@ -450,12 +452,12 @@ class ContentServiceImplTest_publish
         verify( auditLogService, atMostOnce() ).log( captor.capture() );
 
         final LogAuditLogParams log = captor.getValue();
-        assertThat( log ).extracting( LogAuditLogParams::getType).isEqualTo( "system.content.publish" ) ;
+        assertThat( log ).extracting( LogAuditLogParams::getType ).isEqualTo( "system.content.publish" );
 
         assertThat( log ).extracting( l -> l.getData().getSet( "result" ) )
             .extracting( result -> result.getString( "pushedContents" ), result -> result.getString( "deletedContents" ),
                          result -> result.getString( "pendingContents" ) )
-            .containsExactly(content.getId().toString(), null, null);
+            .containsExactly( content.getId().toString(), null, null );
     }
 
     @Test
@@ -480,8 +482,7 @@ class ContentServiceImplTest_publish
 
     private void renameContent( final ContentId contentId, final String newName )
     {
-        this.contentService.move(
-            MoveContentParams.create().contentId( contentId ).newName( ContentName.from( newName ) ).build() );
+        this.contentService.move( MoveContentParams.create().contentId( contentId ).newName( ContentName.from( newName ) ).build() );
     }
 
     private Content getInMaster( final ContentId contentId )

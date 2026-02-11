@@ -26,9 +26,9 @@ import com.enonic.xp.core.impl.content.SyncContentServiceImpl;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.project.ProjectName;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SyncContentServiceImplTest
@@ -44,7 +44,7 @@ class SyncContentServiceImplTest
         synchronizer = new ParentContentSynchronizer( layersContentService );
 
         syncContentService =
-            new SyncContentServiceImpl( contentTypeService, nodeService, eventPublisher, projectService, contentService, synchronizer,
+            new SyncContentServiceImpl( contentTypeService, nodeService, eventPublisher, projectService, layersContentService, synchronizer,
                                         contentAuditLogSupport );
     }
 
@@ -103,7 +103,7 @@ class SyncContentServiceImplTest
     }
 
     @Test
-    void resetWithRemovedSource()
+    void resetWithRemovedSource_throws_exception()
     {
         final Content source = projectContext.callWith( () -> createContent( ContentPath.ROOT ) );
 
@@ -114,12 +114,12 @@ class SyncContentServiceImplTest
 
         projectContext.runWith( () -> contentService.delete( DeleteContentParams.create().contentPath( source.getPath() ).build() ) );
 
-        assertThrows( IllegalArgumentException.class, () -> syncContentService.resetInheritance( ResetContentInheritParams.create()
-                                                                                                     .contentId( source.getId() )
-                                                                                                     .inherit( EnumSet.of(
-                                                                                                         ContentInheritType.CONTENT ) )
-                                                                                                     .projectName( layer.getName() )
-                                                                                                     .build() ) );
+        assertThatThrownBy( () -> syncContentService.resetInheritance( ResetContentInheritParams.create()
+                                                                           .contentId( source.getId() )
+                                                                           .inherit( EnumSet.of( ContentInheritType.CONTENT ) )
+                                                                           .projectName( layer.getName() )
+                                                                           .build() ) ).isInstanceOf( IllegalStateException.class )
+            .hasMessageContaining( "No source content to inherit" );
     }
 
     @Test

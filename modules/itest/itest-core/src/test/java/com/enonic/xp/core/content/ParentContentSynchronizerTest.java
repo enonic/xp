@@ -88,10 +88,10 @@ class ParentContentSynchronizerTest
     @BeforeEach
     void setUp()
     {
-        synchronizer = new ParentContentSynchronizer( this.layersContentService );
+        synchronizer = new ParentContentSynchronizer( layersContentService );
 
         syncContentService =
-            new SyncContentServiceImpl( contentTypeService, nodeService, eventPublisher, projectService, contentService, synchronizer,
+            new SyncContentServiceImpl( contentTypeService, nodeService, eventPublisher, projectService, layersContentService, synchronizer,
                                         contentAuditLogSupport );
     }
 

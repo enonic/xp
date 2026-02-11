@@ -6,6 +6,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
+import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
@@ -18,7 +19,6 @@ import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.node.Attributes;
 
 public class ImportNodeCommand
     extends AbstractNodeCommand
@@ -59,20 +59,17 @@ public class ImportNodeCommand
 
     public ImportNodeResult execute()
     {
-        final boolean exists = CheckNodeExistsCommand.create( this )
-            .nodePath( this.importNode.path() )
-            .mode( CheckNodeExistsCommand.Mode.SPEED )
-            .build()
-            .execute();
-
-        final Node node;
-        if ( !exists )
+        Node node = doGetByPath( this.importNode.path() );
+        final boolean exists;
+        if ( node == null )
         {
+            exists = false;
             node = createNode();
         }
         else
         {
-            node = updateNode( doGetByPath( this.importNode.path() ) );
+            exists = true;
+            node = updateNode( node );
         }
 
         return ImportNodeResult.create().node( node ).preExisting( exists ).build();
@@ -139,7 +136,8 @@ public class ImportNodeCommand
             .build();
 
         final Node updatedNode = PatchNodeCommand.create()
-            .params( updateNodeParams ).binaryService( this.binaryService )
+            .params( updateNodeParams )
+            .binaryService( this.binaryService )
             .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )
@@ -156,7 +154,8 @@ public class ImportNodeCommand
                                                                                               getParentPermissions( this.importNode ) ) )
                              .build() )
                 .build()
-                .execute().getResults()
+                .execute()
+                .getResults()
                 .get( existingNode.id() )
                 .stream()
                 .filter( branchResult -> ContextAccessor.current().getBranch().equals( branchResult.branch() ) )

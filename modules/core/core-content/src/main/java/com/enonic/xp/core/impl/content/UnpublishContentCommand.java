@@ -8,6 +8,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UnpublishContentsResult;
+import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -99,15 +100,23 @@ public class UnpublishContentCommand
         {
             final UpdateNodeParams updateParams =
                 UpdateNodeParams.create().id( deleted ).versionAttributes( unpublishInfoAttr ).editor( toBeEdited -> {
+                    PropertySet workflowInfo = toBeEdited.data.getSet( ContentPropertyNames.WORKFLOW_INFO );
+                    if ( workflowInfo != null )
+                    {
+                        workflowInfo.setString( ContentPropertyNames.WORKFLOW_INFO_STATE, WorkflowState.READY.toString() );
+                    }
+
                     PropertySet publishInfo = toBeEdited.data.getSet( ContentPropertyNames.PUBLISH_INFO );
                     if ( publishInfo != null )
                     {
                         publishInfo.removeProperties( ContentPropertyNames.PUBLISH_FROM );
                         publishInfo.removeProperties( ContentPropertyNames.PUBLISH_TO );
-                        if ( publishInfo.getInstant( ContentPropertyNames.PUBLISH_FIRST ).isAfter( now ) )
+                        final Instant publishFirst = publishInfo.getInstant( ContentPropertyNames.PUBLISH_FIRST );
+                        if ( publishFirst != null && publishFirst.isAfter( now ) )
                         {
                             publishInfo.removeProperties( ContentPropertyNames.PUBLISH_FIRST );
                         }
+                        publishInfo.removeProperties( ContentPropertyNames.PUBLISH_PUBLISHED );
                     }
                 } ).build();
             final Node updated = nodeService.update( updateParams );

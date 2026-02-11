@@ -48,6 +48,7 @@ import static com.enonic.xp.content.ContentPropertyNames.PROCESSED_REFERENCES;
 import static com.enonic.xp.content.ContentPropertyNames.PUBLISH_FIRST;
 import static com.enonic.xp.content.ContentPropertyNames.PUBLISH_FROM;
 import static com.enonic.xp.content.ContentPropertyNames.PUBLISH_INFO;
+import static com.enonic.xp.content.ContentPropertyNames.PUBLISH_PUBLISHED;
 import static com.enonic.xp.content.ContentPropertyNames.PUBLISH_TO;
 import static com.enonic.xp.content.ContentPropertyNames.TYPE;
 import static com.enonic.xp.content.ContentPropertyNames.VALID;
@@ -240,9 +241,10 @@ public final class ContentDataSerializer
         if ( data != null )
         {
             final PropertySet publishInfo = contentAsData.addSet( PUBLISH_INFO );
-            publishInfo.addInstant( PUBLISH_FIRST, data.getFirst() );
-            publishInfo.addInstant( PUBLISH_FROM, data.getFrom() );
-            publishInfo.addInstant( PUBLISH_TO, data.getTo() );
+            publishInfo.setInstant( PUBLISH_FIRST, data.first() );
+            publishInfo.setInstant( PUBLISH_FROM, data.from() );
+            publishInfo.setInstant( PUBLISH_TO, data.to() );
+            publishInfo.setInstant( PUBLISH_PUBLISHED, data.published() );
         }
     }
 

@@ -39,7 +39,7 @@ public final class PatchNodeHandler
 
         final PatchNodeParams params = PatchNodeParams.create()
             .id( getNodeId( this.nodeKey ) )
-            .addBranches( this.branches )
+            .branches( this.branches )
             .editor( editorInput.editor() )
             .setBinaryAttachments( editorInput.binaryAttachments() )
             .build();

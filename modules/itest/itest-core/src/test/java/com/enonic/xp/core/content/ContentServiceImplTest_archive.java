@@ -274,7 +274,7 @@ class ContentServiceImplTest_archive
         assertTrue( iterator.hasNext() );
 
         ContentVersion version = iterator.next();
-        assertEquals( "Archive test message", version.getComment() );
+        assertEquals( "Archive test message", version.comment() );
     }
 
     private static final class TestListener
