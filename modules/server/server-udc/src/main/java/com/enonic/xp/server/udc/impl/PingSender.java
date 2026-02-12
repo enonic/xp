@@ -3,7 +3,7 @@ package com.enonic.xp.server.udc.impl;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 
@@ -40,7 +40,7 @@ final class PingSender
         final int status;
         try
         {
-            conn = (HttpURLConnection) new URL( this.url ).openConnection();
+            conn = (HttpURLConnection) URI.create( this.url ).toURL().openConnection();
             try
             {
                 conn.setDoOutput( true );

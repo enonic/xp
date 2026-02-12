@@ -13,11 +13,7 @@ public final class ApplicationEvents
 
     public static final String APPLICATION_KEY_KEY = "applicationKey";
 
-    public static final String APPLICATION_URL_KEY = "applicationUrl";
-
     public static final String SYSTEM_APPLICATION = "systemApplication";
-
-    public static final String INSTALLATION_PROGRESS_KEY = "progress";
 
     public static final String EVENT_TYPE_KEY = "eventType";
 
@@ -28,8 +24,6 @@ public final class ApplicationEvents
     public static final String STOPPED = "STOPPED";
 
     public static final String UNINSTALLED = "UNINSTALLED";
-
-    public static final String INSTALLATION_PROGRESS = "PROGRESS";
 
     public static Event installed( ApplicationKey applicationKey )
     {
@@ -51,23 +45,14 @@ public final class ApplicationEvents
         return event( applicationKey, STOPPED );
     }
 
-    public static Event progress( final String url, final int progress )
-    {
-        return Event.create( EVENT_TYPE ).
-            distributed( false ).
-            value( EVENT_TYPE_KEY, INSTALLATION_PROGRESS ).
-            value( APPLICATION_URL_KEY, url ).
-            value( INSTALLATION_PROGRESS_KEY, progress ).
-            build();
-    }
 
     private static Event event( final ApplicationKey applicationKey, final String type )
     {
-        return Event.create( EVENT_TYPE ).
-            distributed( false ).
-            value( APPLICATION_KEY_KEY, applicationKey ).
-            value( SYSTEM_APPLICATION, false ).
-            value( EVENT_TYPE_KEY, type ).
-            build();
+        return Event.create( EVENT_TYPE )
+            .distributed( false )
+            .value( APPLICATION_KEY_KEY, applicationKey )
+            .value( SYSTEM_APPLICATION, false )
+            .value( EVENT_TYPE_KEY, type )
+            .build();
     }
 }

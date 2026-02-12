@@ -2,16 +2,16 @@ package com.enonic.xp.web.impl.multipart;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
-
-import jakarta.servlet.http.Part;
 
 import com.google.common.base.Optional;
 import com.google.common.io.ByteSource;
 import com.google.common.net.MediaType;
 
-import com.enonic.xp.util.Exceptions;
+import jakarta.servlet.http.Part;
+
 import com.enonic.xp.web.multipart.MultipartItem;
 
 final class MultipartItemImpl
@@ -57,9 +57,9 @@ final class MultipartItemImpl
         {
             return asCharSource( StandardCharsets.UTF_8 ).read();
         }
-        catch ( final Exception e )
+        catch ( final IOException e )
         {
-            throw Exceptions.unchecked( e );
+            throw new UncheckedIOException( e );
         }
     }
 

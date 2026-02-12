@@ -1,7 +1,5 @@
 package com.enonic.xp.app;
 
-import java.net.URL;
-
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -20,19 +18,15 @@ public interface ApplicationService
 
     boolean isLocalApplication( ApplicationKey key );
 
-    void startApplication( ApplicationKey key, boolean unused );
+    void startApplication( ApplicationKey key );
 
-    void stopApplication( ApplicationKey key, boolean unused );
+    void stopApplication( ApplicationKey key );
 
-    Application installGlobalApplication( URL url );
+    Application installGlobalApplication( ByteSource byteSource );
 
-    Application installGlobalApplication( URL url, byte[] sha512 );
+    Application installLocalApplication( ByteSource byteSource );
 
-    Application installGlobalApplication( ByteSource byteSource, String unused );
-
-    Application installLocalApplication( ByteSource byteSource, String unused );
-
-    void uninstallApplication( ApplicationKey key, boolean unused );
+    void uninstallApplication( ApplicationKey key );
 
     void installAllStoredApplications();
 

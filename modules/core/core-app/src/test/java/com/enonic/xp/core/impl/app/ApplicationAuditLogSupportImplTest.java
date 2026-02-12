@@ -1,7 +1,7 @@
 package com.enonic.xp.core.impl.app;
 
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import java.util.Objects;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -63,8 +63,8 @@ class ApplicationAuditLogSupportImplTest
     void installApplication_byURL()
         throws MalformedURLException
     {
-        instance.installApplication( ApplicationKey.from( "com.enonic.app.testApp" ), new URL(
-            "https://repo.enonic.com/snapshot/com/enonic/app/testApp/2.5.1-SNAPSHOT/testApp-2.5.1-20220301.200937-4.jar?p=v" ) );
+        instance.installApplication( ApplicationKey.from( "com.enonic.app.testApp" ), URI.create(
+            "https://repo.enonic.com/snapshot/com/enonic/app/testApp/2.5.1-SNAPSHOT/testApp-2.5.1-20220301.200937-4.jar?p=v" ).toURL() );
 
         final ArgumentCaptor<LogAuditLogParams> argumentCaptor = ArgumentCaptor.forClass( LogAuditLogParams.class );
 

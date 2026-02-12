@@ -1,6 +1,5 @@
 package com.enonic.xp.core.impl.app;
 
-import java.net.URL;
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -51,8 +50,6 @@ public final class ApplicationServiceImpl
 
     private final EventPublisher eventPublisher;
 
-    private final ApplicationLoader applicationLoader;
-
     private final AppFilterService appFilterService;
 
     private final VirtualAppService virtualAppService;
@@ -68,7 +65,6 @@ public final class ApplicationServiceImpl
         this.registry = applicationRegistry;
         this.repoService = repoService;
         this.eventPublisher = eventPublisher;
-        this.applicationLoader = new ApplicationLoader( eventPublisher::publish );
         this.appFilterService = appFilterService;
         this.virtualAppService = virtualAppService;
         this.applicationAuditLogSupport = applicationAuditLogSupport;
@@ -117,7 +113,7 @@ public final class ApplicationServiceImpl
     }
 
     @Override
-    public void startApplication( final ApplicationKey key, final boolean unused )
+    public void startApplication( final ApplicationKey key )
     {
         final boolean global = !localApplicationSet.contains( key );
         ApplicationHelper.runWithContext( () -> {
@@ -141,7 +137,7 @@ public final class ApplicationServiceImpl
     }
 
     @Override
-    public void stopApplication( final ApplicationKey key, final boolean unused )
+    public void stopApplication( final ApplicationKey key )
     {
         final boolean global = !localApplicationSet.contains( key );
         ApplicationHelper.runWithContext( () -> {
@@ -166,19 +162,7 @@ public final class ApplicationServiceImpl
     }
 
     @Override
-    public Application installGlobalApplication( final URL url )
-    {
-        return installGlobalApplication( url, null );
-    }
-
-    @Override
-    public Application installGlobalApplication( final URL url, final byte[] sha512 )
-    {
-        return installGlobalApplication( applicationLoader.load( url, sha512 ), null );
-    }
-
-    @Override
-    public Application installGlobalApplication( final ByteSource byteSource, final String unused )
+    public Application installGlobalApplication( final ByteSource byteSource )
     {
         return ApplicationHelper.callWithContext( () -> {
             final Application application = doInstallGlobalApplication( byteSource );
@@ -188,7 +172,7 @@ public final class ApplicationServiceImpl
     }
 
     @Override
-    public Application installLocalApplication( final ByteSource byteSource, final String unused )
+    public Application installLocalApplication( final ByteSource byteSource )
     {
         return ApplicationHelper.callWithContext( () -> doInstallLocalApplication( byteSource ) );
     }
@@ -200,7 +184,7 @@ public final class ApplicationServiceImpl
     }
 
     @Override
-    public void uninstallApplication( final ApplicationKey key, final boolean unused )
+    public void uninstallApplication( final ApplicationKey key )
     {
         final boolean global = !localApplicationSet.remove( key );
         ApplicationHelper.runWithContext( () -> {

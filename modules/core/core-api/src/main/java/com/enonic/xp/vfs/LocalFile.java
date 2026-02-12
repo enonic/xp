@@ -1,6 +1,7 @@
 package com.enonic.xp.vfs;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -13,8 +14,6 @@ import java.util.stream.Stream;
 import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
 import com.google.common.io.MoreFiles;
-
-import com.enonic.xp.util.Exceptions;
 
 final class LocalFile
     implements VirtualFile
@@ -50,7 +49,7 @@ final class LocalFile
         }
         catch ( MalformedURLException e )
         {
-            throw Exceptions.unchecked( e );
+            throw new UncheckedIOException( e );
         }
     }
 
@@ -82,7 +81,7 @@ final class LocalFile
         }
         catch ( final IOException e )
         {
-            throw Exceptions.unchecked( e );
+            throw new UncheckedIOException( e );
         }
 
         return virtualFiles;

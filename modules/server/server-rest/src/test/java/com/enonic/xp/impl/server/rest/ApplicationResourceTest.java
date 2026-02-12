@@ -1,6 +1,5 @@
 package com.enonic.xp.impl.server.rest;
 
-import java.net.URL;
 import java.time.Instant;
 
 import org.junit.jupiter.api.Test;
@@ -24,8 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -39,10 +36,10 @@ class ApplicationResourceTest
     {
         applicationService = mock( ApplicationService.class );
 
-        final ApplicationResource resource = new ApplicationResource();
-        resource.setApplicationService( applicationService );
-
-        return resource;
+        final ApplicationResource applicationResource = new ApplicationResource( applicationService, _ -> {
+        } );
+        applicationResource.applicationLoader = mock( ApplicationLoader.class );
+        return applicationResource;
     }
 
     @Test
@@ -61,7 +58,7 @@ class ApplicationResourceTest
 
         MultipartForm multipartForm = mock( MultipartForm.class );
 
-        when( this.applicationService.installGlobalApplication( any( ByteSource.class ), eq( fileName ) ) ).thenReturn( application );
+        when( this.applicationService.installGlobalApplication( any( ByteSource.class ) ) ).thenReturn( application );
 
         when( multipartForm.get( "file" ) ).thenReturn( multipartItem );
 
@@ -86,8 +83,7 @@ class ApplicationResourceTest
 
         MultipartForm multipartForm = mock( MultipartForm.class );
 
-        when( this.applicationService.installGlobalApplication( any( ByteSource.class ), eq( "app-name" ) ) ).thenThrow(
-            new RuntimeException() );
+        when( this.applicationService.installGlobalApplication( any( ByteSource.class ) ) ).thenThrow( new RuntimeException() );
 
         when( multipartForm.get( "file" ) ).thenReturn( multipartItem );
 
@@ -113,32 +109,14 @@ class ApplicationResourceTest
     {
         Application application = createApplication();
 
-        when( this.applicationService.installGlobalApplication( (URL) argThat( arg -> arg.toString().equals( application.getUrl() ) ),
-                                                                any() ) ).thenReturn( application );
+        when( this.applicationService.installGlobalApplication( any() ) ).thenReturn( application );
 
         String jsonString = request().path( "app/installUrl" )
-            .entity( "{\"URL\":\"http://enonic.net\"}", MediaType.APPLICATION_JSON_TYPE )
+            .entity( "{\"URL\":\"https://enonic.net\"}", MediaType.APPLICATION_JSON_TYPE )
             .post()
             .getAsString();
 
         assertJson( "install_url_result.json", jsonString );
-    }
-
-    @Test
-    void install_url_not_allowed_protocol()
-        throws Exception
-    {
-        Application application = createApplication( "ftp://enonic.jar" );
-
-        when( this.applicationService.installGlobalApplication(
-            argThat( arg -> arg.toString().equals( application.getUrl() ) ) ) ).thenReturn( application );
-
-        String jsonString = request().path( "app/installUrl" )
-            .entity( "{\"URL\":\"" + application.getUrl() + "\"}", MediaType.APPLICATION_JSON_TYPE )
-            .post()
-            .getAsString();
-
-        assertEquals( "{\"failure\":\"Illegal protocol: ftp\"}", jsonString );
     }
 
     @Test
@@ -147,15 +125,14 @@ class ApplicationResourceTest
     {
         Application application = createApplication();
 
-        when( this.applicationService.installGlobalApplication( eq( new URL( application.getUrl() ) ), any() ) ).thenThrow(
-            new RuntimeException() );
+        when( this.applicationService.installGlobalApplication( any() ) ).thenThrow( new RuntimeException() );
 
         String jsonString = request().path( "app/installUrl" )
             .entity( "{\"URL\":\"" + application.getUrl() + "\"}", MediaType.APPLICATION_JSON_TYPE )
             .post()
             .getAsString();
 
-        assertEquals( "{\"failure\":\"Failed to process application from http://enonic.net\"}", jsonString );
+        assertEquals( "{\"failure\":\"Failed to upload application from https://enonic.net\"}", jsonString );
     }
 
     @Test
@@ -181,7 +158,7 @@ class ApplicationResourceTest
         request().path( "app/start" ).entity( "{\"key\": \"" + application.getKey() + "\" }", MediaType.APPLICATION_JSON_TYPE ).post();
 
         final InOrder inOrder = Mockito.inOrder( applicationService );
-        inOrder.verify( this.applicationService ).startApplication( application.getKey(), true );
+        inOrder.verify( this.applicationService ).startApplication( application.getKey() );
         inOrder.verifyNoMoreInteractions();
     }
 
@@ -194,7 +171,7 @@ class ApplicationResourceTest
         request().path( "app/stop" ).entity( "{\"key\": \"" + application.getKey() + "\" }", MediaType.APPLICATION_JSON_TYPE ).post();
 
         final InOrder inOrder = Mockito.inOrder( applicationService );
-        inOrder.verify( this.applicationService ).stopApplication( application.getKey(), true );
+        inOrder.verify( this.applicationService ).stopApplication( application.getKey() );
         inOrder.verifyNoMoreInteractions();
     }
 
@@ -207,13 +184,13 @@ class ApplicationResourceTest
         request().path( "app/uninstall" ).entity( "{\"key\": \"" + application.getKey() + "\" }", MediaType.APPLICATION_JSON_TYPE ).post();
 
         final InOrder inOrder = Mockito.inOrder( applicationService );
-        inOrder.verify( this.applicationService ).uninstallApplication( application.getKey(), true );
+        inOrder.verify( this.applicationService ).uninstallApplication( application.getKey() );
         inOrder.verifyNoMoreInteractions();
     }
 
     private Application createApplication()
     {
-        return createApplication( "http://enonic.net" );
+        return createApplication( "https://enonic.net" );
     }
 
     private Application createApplication( final String url )

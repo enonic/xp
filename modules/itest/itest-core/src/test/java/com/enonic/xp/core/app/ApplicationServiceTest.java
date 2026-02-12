@@ -100,7 +100,7 @@ class ApplicationServiceTest
     {
         String applicationName = "appName";
         adminContext().callWith( () -> {
-            Application application = applicationService.installGlobalApplication( createByteSource( "7.8.0" ), applicationName );
+            Application application = applicationService.installGlobalApplication( createByteSource( "7.8.0" ) );
             assertEquals( "7.8.0", application.getVersion().toString() );
 
             systemRepoContext().callWith( () -> {
@@ -111,7 +111,7 @@ class ApplicationServiceTest
                 return null;
             } );
 
-            application = applicationService.installGlobalApplication( createByteSource( "7.8.1" ), applicationName );
+            application = applicationService.installGlobalApplication( createByteSource( "7.8.1" ) );
             assertEquals( "7.8.1", application.getVersion().toString() );
 
             systemRepoContext().callWith( () -> {
