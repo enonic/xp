@@ -39,7 +39,7 @@ class ApplicationApiHandlerTest
     {
         final WebRequest request = new WebRequest();
         request.setMethod( HttpMethod.GET );
-        request.setEndpointPath( "/installUrl" );
+        request.setRawPath( "/_/server:app/installUrl" );
 
         final WebResponse response = handler.handle( request );
 
@@ -51,7 +51,7 @@ class ApplicationApiHandlerTest
     {
         final WebRequest request = new WebRequest();
         request.setMethod( HttpMethod.POST );
-        request.setEndpointPath( "/unknown" );
+        request.setRawPath( "/_/server:app/unknown" );
 
         final WebResponse response = handler.handle( request );
 
@@ -68,7 +68,7 @@ class ApplicationApiHandlerTest
 
         final WebRequest request = new WebRequest();
         request.setMethod( HttpMethod.POST );
-        request.setEndpointPath( "/installUrl" );
+        request.setRawPath( "/_/server:app/installUrl" );
         request.setBody( "{\"URL\":\"https://enonic.net\"}" );
 
         final WebResponse response = handler.handle( request );
@@ -88,7 +88,7 @@ class ApplicationApiHandlerTest
 
         final WebRequest request = new WebRequest();
         request.setMethod( HttpMethod.POST );
-        request.setEndpointPath( "/installUrl" );
+        request.setRawPath( "/_/server:app/installUrl" );
         request.setBody( "{\"URL\":\"https://enonic.net\"}" );
 
         final WebResponse response = handler.handle( request );
@@ -103,7 +103,7 @@ class ApplicationApiHandlerTest
     {
         final WebRequest request = new WebRequest();
         request.setMethod( HttpMethod.POST );
-        request.setEndpointPath( "/installUrl" );
+        request.setRawPath( "/_/server:app/installUrl" );
         request.setBody( "not json" );
 
         final WebResponse response = handler.handle( request );
