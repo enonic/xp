@@ -407,14 +407,14 @@ public class ContentServiceImpl
     @Override
     public Content getById( final ContentId contentId )
     {
+        verifyDraftBranchAccess();
+        
         return Tracer.trace( "content.getById", trace -> trace.put( "id", contentId ), () -> doGetById( contentId ),
                              ( trace, content ) -> trace.put( "path", content.getPath().toString() ) );
     }
 
     private Content doGetById( final ContentId contentId )
     {
-        verifyDraftBranchAccess();
-        
         final Content content = GetContentByIdCommand.create( contentId )
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
@@ -495,14 +495,14 @@ public class ContentServiceImpl
     @Override
     public @NonNull Content getByPath( final ContentPath path )
     {
+        verifyDraftBranchAccess();
+        
         return Tracer.trace( "content.getByPath", trace -> trace.put( "path", path ), () -> doGetByPath( path ),
                              ( trace, content ) -> trace.put( "id", content.getId() ) );
     }
 
     private Content doGetByPath( final ContentPath path )
     {
-        verifyDraftBranchAccess();
-        
         final Content content = executeGetByPath( path );
         if ( content == null )
         {
