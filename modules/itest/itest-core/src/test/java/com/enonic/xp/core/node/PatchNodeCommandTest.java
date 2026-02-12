@@ -183,9 +183,7 @@ class PatchNodeCommandTest
                                                               .id( createdNode.id() )
                                                               .branches( Branches.from( ContextAccessor.current().getBranch(),
                                                                                         RepositoryConstants.MASTER_BRANCH ) )
-                                                              .editor( toBeEdited -> {
-                                                                  toBeEdited.data.addString( "another", "stuff" );
-                                                              } )
+                                                              .editor( toBeEdited -> toBeEdited.data.addString( "another", "stuff" ) )
                                                               .build() );
 
         assertNotNull( result.getResult( branch ) );
@@ -205,9 +203,7 @@ class PatchNodeCommandTest
         final PatchNodeResult result = nodeService.patch( PatchNodeParams.create()
                                                               .id( createdNode.id() )
                                                               .branches( Branches.from( branch, RepositoryConstants.MASTER_BRANCH ) )
-                                                              .editor( toBeEdited -> {
-                                                                  toBeEdited.data.addString( "another", "stuff" );
-                                                              } )
+                                                              .editor( toBeEdited -> toBeEdited.data.addString( "another", "stuff" ) )
                                                               .build() );
 
         assertEquals( result.getResult( branch ), result.getResult( RepositoryConstants.MASTER_BRANCH ) );
@@ -226,13 +222,14 @@ class PatchNodeCommandTest
 
         final Branch branch = ContextAccessor.current().getBranch();
 
-        final PatchNodeResult result = nodeService.patch( PatchNodeParams.create()
-                                                              .id( createdNode.id() )
-                                                              .branches( Branches.from( RepositoryConstants.MASTER_BRANCH ) )
-                                                              .editor( toBeEdited -> {
-                                                                  toBeEdited.data.addString( "another", "stuff2" );
-                                                              } )
-                                                              .build() );
+        final PatchNodeResult result = ContextBuilder.from( ContextAccessor.current() )
+            .branch( RepositoryConstants.MASTER_BRANCH )
+            .build()
+            .callWith( () -> nodeService.patch( PatchNodeParams.create()
+                                                   .id( createdNode.id() )
+                                                   .branches( Branches.from( RepositoryConstants.MASTER_BRANCH ) )
+                                                   .editor( toBeEdited -> toBeEdited.data.addString( "another", "stuff2" ) )
+                                                   .build() ) );
 
         assertNotEquals( result.getResult( branch ), result.getResult( RepositoryConstants.MASTER_BRANCH ) );
     }
@@ -245,9 +242,8 @@ class PatchNodeCommandTest
                                                                                 .branches(
                                                                                     Branches.from( ContextAccessor.current().getBranch(),
                                                                                                    RepositoryConstants.MASTER_BRANCH ) )
-                                                                                .editor( toBeEdited -> {
-                                                                                    toBeEdited.data.addString( "another", "stuff2" );
-                                                                                } )
+                                                                                .editor( toBeEdited -> toBeEdited.data.addString( "another",
+                                                                                                                                  "stuff2" ) )
                                                                                 .build() ) );
     }
 

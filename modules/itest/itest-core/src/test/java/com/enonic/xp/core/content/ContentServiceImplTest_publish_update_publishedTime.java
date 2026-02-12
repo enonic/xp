@@ -140,13 +140,21 @@ class ContentServiceImplTest_publish_update_publishedTime
         final ContentPublishInfo updatedPublishInfo5 = getPublishInfo( id );
 
         assertNotNull( updatedPublishInfo5.time() );
+    }
+
+    @Test
+    void published_time_is_not_reset_on_metadataUpdate() {
+        final Content content = doCreateContent();
+        final ContentId id = content.getId();
 
         this.contentService.updateMetadata(
             UpdateContentMetadataParams.create().contentId( id ).editor( edit -> edit.language = Locale.CANADA ).build() );
 
+        doPublishContent( content );
+
         final ContentPublishInfo updatedPublishInfo6 = getPublishInfo( id );
 
-        assertNull( updatedPublishInfo6.time() );
+        assertNotNull( updatedPublishInfo6.time() );
     }
 
     private ContentPublishInfo getPublishInfo( final ContentId id )
