@@ -83,7 +83,7 @@ final class UpdateContentCommand
                 checkAccess( content, editedContent );
 
                 editedContent = editContentMetadata( editedContent );
-                editedContent = afterUpdate( editedContent, null );
+                editedContent = afterUpdate( editedContent );
 
                 validate( editedContent );
 

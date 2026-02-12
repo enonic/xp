@@ -40,7 +40,7 @@ final class ApplyContentPermissionsCommand
             .addPermissions( params.getAddPermissions() )
             .removePermissions( params.getRemovePermissions() )
             .scope( Enum.valueOf( ApplyPermissionsScope.class, params.getScope().name() ) )
-            .addBranches( Branches.from( ContentConstants.BRANCH_MASTER, ContentConstants.BRANCH_DRAFT ) );
+            .branches( Branches.from( ContentConstants.BRANCH_MASTER, ContentConstants.BRANCH_DRAFT ) );
 
         if ( params.getListener() != null )
         {

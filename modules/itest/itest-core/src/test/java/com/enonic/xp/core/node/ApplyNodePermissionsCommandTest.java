@@ -86,7 +86,7 @@ class ApplyNodePermissionsCommandTest
         final ApplyNodePermissionsResult result = nodeService.applyPermissions( ApplyNodePermissionsParams.create()
                                                                                     .nodeId( createdNode.id() )
                                                                                     .scope( ApplyPermissionsScope.TREE )
-                                                                                    .addBranches( Branches.from( WS_DEFAULT, WS_OTHER ) )
+                                                                                    .branches( Branches.from( WS_DEFAULT, WS_OTHER ) )
                                                                                     .removePermissions( AccessControlList.create()
                                                                                                             .add(
                                                                                                                 AccessControlEntry.create()
@@ -123,7 +123,7 @@ class ApplyNodePermissionsCommandTest
         final ApplyNodePermissionsResult result = nodeService.applyPermissions( ApplyNodePermissionsParams.create()
                                                                                     .nodeId( createdNode.id() )
                                                                                     .scope( ApplyPermissionsScope.SUBTREE )
-                                                                                    .addBranches( Branches.from( WS_DEFAULT, WS_OTHER ) )
+                                                                                    .branches( Branches.from( WS_DEFAULT, WS_OTHER ) )
                                                                                     .permissions( AccessControlList.create()
                                                                                                       .add( AccessControlEntry.create()
                                                                                                                 .allowAll()
@@ -162,7 +162,7 @@ class ApplyNodePermissionsCommandTest
         final ApplyNodePermissionsResult result = nodeService.applyPermissions( ApplyNodePermissionsParams.create()
                                                                                     .nodeId( createdNode.id() )
                                                                                     .scope( ApplyPermissionsScope.TREE )
-                                                                                    .addBranches( Branches.from( WS_DEFAULT, WS_OTHER ) )
+                                                                                    .branches( Branches.from( WS_DEFAULT, WS_OTHER ) )
                                                                                     .addPermissions( AccessControlList.create()
                                                                                                          .add( AccessControlEntry.create()
                                                                                                                    .allowAll()
@@ -200,7 +200,7 @@ class ApplyNodePermissionsCommandTest
         final ApplyNodePermissionsResult result = nodeService.applyPermissions( ApplyNodePermissionsParams.create()
                                                                                     .nodeId( childNode.id() )
                                                                                     .scope( ApplyPermissionsScope.TREE )
-                                                                                    .addBranches( Branches.from( WS_DEFAULT, WS_OTHER ) )
+                                                                                    .branches( Branches.from( WS_DEFAULT, WS_OTHER ) )
                                                                                     .addPermissions( AccessControlList.create()
                                                                                                          .add( AccessControlEntry.create()
                                                                                                                    .allowAll()
@@ -236,7 +236,7 @@ class ApplyNodePermissionsCommandTest
             .callWith( () -> nodeService.applyPermissions( ApplyNodePermissionsParams.create()
                                                                .nodeId( createdNode.id() )
                                                                .scope( ApplyPermissionsScope.TREE )
-                                                               .addBranches( Branches.from( WS_OTHER, WS_DEFAULT ) )
+                                                               .branches( Branches.from( WS_OTHER, WS_DEFAULT ) )
                                                                .addPermissions( AccessControlList.create()
                                                                                     .add( AccessControlEntry.create()
                                                                                               .allowAll()
@@ -259,7 +259,7 @@ class ApplyNodePermissionsCommandTest
     {
         assertThrows( NodeNotFoundException.class, () -> nodeService.applyPermissions( ApplyNodePermissionsParams.create()
                                                                                            .nodeId( NodeId.from( "id12" ) )
-                                                                                           .addBranches(
+                                                                                           .branches(
                                                                                                Branches.from( WS_DEFAULT, WS_OTHER ) )
                                                                                            .addPermissions( AccessControlList.create()
                                                                                                                 .add(
@@ -324,7 +324,7 @@ class ApplyNodePermissionsCommandTest
         final ApplyNodePermissionsResult result = nodeService.applyPermissions( ApplyNodePermissionsParams.create()
                                                                                     .nodeId( createdNode.id() )
                                                                                     .scope( ApplyPermissionsScope.TREE )
-                                                                                    .addBranches( Branches.from( WS_DEFAULT, WS_OTHER ) )
+                                                                                    .branches( Branches.from( WS_DEFAULT, WS_OTHER ) )
                                                                                     .addPermissions( AccessControlList.create()
                                                                                                          .add( AccessControlEntry.create()
                                                                                                                    .allowAll()
@@ -374,7 +374,7 @@ class ApplyNodePermissionsCommandTest
         final ApplyNodePermissionsResult result = nodeService.applyPermissions( ApplyNodePermissionsParams.create()
                                                                                     .nodeId( createdNode.id() )
                                                                                     .scope( ApplyPermissionsScope.TREE )
-                                                                                    .addBranches( Branches.from( WS_DEFAULT, WS_OTHER ) )
+                                                                                    .branches( Branches.from( WS_DEFAULT, WS_OTHER ) )
                                                                                     .addPermissions( AccessControlList.create()
                                                                                                          .add( AccessControlEntry.create()
                                                                                                                    .allow( MODIFY )
@@ -404,7 +404,7 @@ class ApplyNodePermissionsCommandTest
         final ApplyNodePermissionsResult result = nodeService.applyPermissions( ApplyNodePermissionsParams.create()
                                                                                     .nodeId( createdNode.id() )
                                                                                     .scope( ApplyPermissionsScope.TREE )
-                                                                                    .addBranches( Branches.from(
+                                                                                    .branches( Branches.from(
                                                                                         ContextAccessor.current().getBranch() ) )
                                                                                     .addPermissions( AccessControlList.create()
                                                                                                          .add( AccessControlEntry.create()
@@ -435,7 +435,7 @@ class ApplyNodePermissionsCommandTest
         final ApplyNodePermissionsResult result = nodeService.applyPermissions( ApplyNodePermissionsParams.create()
                                                                                     .nodeId( createdNode.id() )
                                                                                     .scope( ApplyPermissionsScope.TREE )
-                                                                                    .addBranches( Branches.from(
+                                                                                    .branches( Branches.from(
                                                                                         ContextAccessor.current().getBranch() ) )
                                                                                     .permissions( AccessControlList.empty() )
                                                                                     .build() );

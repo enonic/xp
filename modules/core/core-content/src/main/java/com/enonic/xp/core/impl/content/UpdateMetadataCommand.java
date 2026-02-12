@@ -48,10 +48,10 @@ public class UpdateMetadataCommand
             .contentId( params.getContentId() )
             .editor( content -> {
                 Content editedContent = editMetadata( params.getEditor(), content );
-                return afterUpdate( editedContent, now );
+                return afterUpdate( editedContent );
             } )
             .versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.UPDATE_METADATA_ATTR ) )
-            .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
+            .branches( Branches.from( ContentConstants.BRANCH_MASTER, ContentConstants.BRANCH_DRAFT ) )
             .contentTypeService( this.contentTypeService )
             .xDataService( this.xDataService )
             .pageDescriptorService( this.pageDescriptorService )
@@ -66,6 +66,13 @@ public class UpdateMetadataCommand
         return UpdateContentMetadataResult.create()
             .content( ContentNodeTranslator.fromNode( result.getResults().getFirst().node() ) )
             .build();
+    }
+
+    protected static Content afterUpdate( final Content editedContent )
+    {
+        final PatchableContent patchableContent = new PatchableContent( editedContent );
+        patchableContent.inherit.setPatcher( c -> stopDataInherit( c.inherit.originalValue ) );
+        return patchableContent.build();
     }
 
     private Content editMetadata( final ContentMetadataEditor editor, final Content original )

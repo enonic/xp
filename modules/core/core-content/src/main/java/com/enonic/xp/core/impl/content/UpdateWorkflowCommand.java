@@ -40,7 +40,7 @@ public class UpdateWorkflowCommand
             .contentId( params.getContentId() )
             .editor( content -> {
                 Content editedContent = editWorkflow( params.getEditor(), content );
-                return afterUpdate( editedContent, null );
+                return afterUpdate( editedContent );
             } )
             .versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.UPDATE_WORKFLOW_ATTR ) )
             .contentTypeService( this.contentTypeService )

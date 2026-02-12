@@ -510,7 +510,7 @@ class NodeServiceImplTest
             .nodeId( parentNode.id() )
             .permissions( AccessControlList.of(
                 AccessControlEntry.create().allowAll().principal( PrincipalKey.from( "user:myidprovider:rmy" ) ).build() ) )
-            .addBranches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
+            .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
             .build();
 
         Mockito.clearInvocations( eventPublisher );

@@ -38,7 +38,7 @@ public final class ApplyNodePermissionsParams
         removePermissions = builder.removePermissions.build();
         versionAttributes = builder.versionAttributes;
         listener = builder.listener;
-        branches = Branches.from( builder.branches.build() );
+        branches = Objects.requireNonNull( builder.branches );
 
         Preconditions.checkArgument( permissions.isEmpty() || ( addPermissions.isEmpty() && removePermissions.isEmpty() ),
                                      "Permissions cannot be set together with addPermissions or removePermissions" );
@@ -105,7 +105,7 @@ public final class ApplyNodePermissionsParams
 
         private ApplyNodePermissionsListener listener;
 
-        private final ImmutableSet.Builder<Branch> branches = ImmutableSet.builder();
+        private Branches branches;
 
         private Builder()
         {
@@ -156,9 +156,9 @@ public final class ApplyNodePermissionsParams
             return this;
         }
 
-        public Builder addBranches( final Branches branches )
+        public Builder branches( final Branches branches )
         {
-            this.branches.addAll( branches );
+            this.branches = branches;
             return this;
         }
 

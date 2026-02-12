@@ -270,7 +270,7 @@ class PatchNodeCommandTest
 
         nodeService.applyPermissions( ApplyNodePermissionsParams.create()
                                           .nodeId( createdNode.id() )
-                                          .addBranches( Branches.from( RepositoryConstants.MASTER_BRANCH ) )
+                                          .branches( Branches.from( RepositoryConstants.MASTER_BRANCH ) )
                                           .addPermissions( AccessControlList.create()
                                                                .add( AccessControlEntry.create()
                                                                          .allow( Permission.READ )
