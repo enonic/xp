@@ -84,6 +84,8 @@ public interface ContentService
 
     GetContentVersionsResult getVersions( GetContentVersionsParams params );
 
+    GetActiveContentVersionsResult getActiveVersions( GetActiveContentVersionsParams params );
+
     ByteSource getBinary( ContentId contentId, BinaryReference binaryReference );
 
     ByteSource getBinary( ContentId contentId, ContentVersionId contentVersionId, BinaryReference binaryReference );

@@ -52,6 +52,8 @@ import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.content.FindContentIdsByParentResult;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.content.FindContentPathsByQueryResult;
+import com.enonic.xp.content.GetActiveContentVersionsParams;
+import com.enonic.xp.content.GetActiveContentVersionsResult;
 import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.content.GetContentVersionsParams;
 import com.enonic.xp.content.GetContentVersionsResult;
@@ -711,6 +713,20 @@ public class ContentServiceImpl
         requireAnyProjectRole();
 
         return GetContentVersionsCommand.create()
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .eventPublisher( this.eventPublisher )
+            .params( params )
+            .build()
+            .execute();
+    }
+
+    @Override
+    public GetActiveContentVersionsResult getActiveVersions( final GetActiveContentVersionsParams params )
+    {
+        requireAnyProjectRole();
+
+        return GetActiveContentVersionsCommand.create()
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
             .eventPublisher( this.eventPublisher )

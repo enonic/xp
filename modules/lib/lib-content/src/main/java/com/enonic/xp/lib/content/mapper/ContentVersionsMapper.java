@@ -30,26 +30,7 @@ public final class ContentVersionsMapper
         for ( ContentVersion version : result.getContentVersions() )
         {
             gen.map();
-            gen.value( "versionId", version.versionId() );
-            gen.value( "contentId", version.contentId() );
-            gen.value( "path", version.path() );
-            gen.value( "timestamp", version.timestamp() );
-            gen.value( "comment", version.comment() );
-
-            if ( !version.actions().isEmpty() )
-            {
-                gen.array( "actions" );
-                for ( ContentVersion.Action action : version.actions() )
-                {
-                    gen.map();
-                    gen.value( "operation", action.operation() );
-                    gen.value( "user", action.user() );
-                    gen.value( "opTime", action.opTime() );
-                    gen.end();
-                }
-                gen.end();
-            }
-
+            new ContentVersionMapper( version ).serialize( gen );
             gen.end();
         }
         gen.end();

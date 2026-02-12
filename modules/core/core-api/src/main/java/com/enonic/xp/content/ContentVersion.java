@@ -78,7 +78,7 @@ public record ContentVersion(ContentVersionId versionId, ContentId contentId, Co
             return this;
         }
 
-        public Builder comment( final String comment )
+        public Builder comment( final @Nullable String comment )
         {
             this.comment = comment;
             return this;
