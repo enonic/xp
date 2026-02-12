@@ -1,32 +1,50 @@
-package com.enonic.xp.core.impl.app;
+package com.enonic.xp.impl.server.rest;
 
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
+import java.util.HexFormat;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.core.impl.app.event.ApplicationEvents;
 import com.enonic.xp.core.internal.security.MessageDigests;
 import com.enonic.xp.event.Event;
 
 public class ApplicationLoader
 {
-    private final Consumer<Event> eventConsumer;
+    private static final Set<String> ALLOWED_PROTOCOLS = Set.of( "http", "https" );
 
-    public ApplicationLoader( final Consumer<Event> eventConsumer )
+    public ByteSource load( final String urlString, final String sha512Hex, final Consumer<Event> eventConsumer )
     {
-        this.eventConsumer = eventConsumer;
+        final byte[] sha512 = Optional.ofNullable( sha512Hex ).map( HexFormat.of()::parseHex ).orElse( null );
+        try
+        {
+            final URL url = URI.create( urlString ).toURL();
+            return load( url, sha512, eventConsumer );
+        }
+        catch ( MalformedURLException e )
+        {
+            throw new UncheckedIOException( e );
+        }
     }
 
-    public ByteSource load( final URL url, final byte[] sha512Checksum )
+    public ByteSource load( final URL url, final byte[] sha512Checksum, final Consumer<Event> eventConsumer )
     {
+        if ( !ALLOWED_PROTOCOLS.contains( url.getProtocol() ) )
+        {
+            throw new IllegalArgumentException( "Unsupported protocol: " + url.getProtocol() );
+        }
+
         try
         {
             final URLConnection connection = url.openConnection();
@@ -34,7 +52,7 @@ public class ApplicationLoader
             final InputStream inputStream = connection.getInputStream();
             final DigestInputStream digestInputStream = new DigestInputStream( inputStream, MessageDigests.sha512() );
             final ProgressInputStream progressInputStream =
-                new ProgressInputStream( digestInputStream, connection.getContentLengthLong(), url.toString() );
+                new ProgressInputStream( digestInputStream, connection.getContentLengthLong(), url.toString(), eventConsumer );
             try (inputStream; digestInputStream; progressInputStream)
             {
                 final byte[] bytes = progressInputStream.readAllBytes();
@@ -52,22 +70,25 @@ public class ApplicationLoader
         }
     }
 
-    private class ProgressInputStream
+    private static class ProgressInputStream
         extends FilterInputStream
     {
         private final long totalLength;
 
         private final String message;
 
+        private final Consumer<Event> eventConsumer;
+
         private long read;
 
         private int lastPct = -1;
 
-        ProgressInputStream( final InputStream in, final long totalLength, final String message )
+        ProgressInputStream( final InputStream in, final long totalLength, final String message, Consumer<Event> eventConsumer )
         {
             super( in );
             this.totalLength = totalLength;
             this.message = message;
+            this.eventConsumer = eventConsumer;
         }
 
         @Override
@@ -100,9 +121,19 @@ public class ApplicationLoader
             int currentPct = totalLength > 0 ? (int) Math.min( 100, Math.round( read * 100. / totalLength ) ) : 0;
             if ( lastPct != currentPct )
             {
-                eventConsumer.accept( ApplicationEvents.progress( message, currentPct ) );
+                eventConsumer.accept( progress( message, currentPct ) );
                 lastPct = currentPct;
             }
         }
+    }
+
+    public static Event progress( final String url, final int progress )
+    {
+        return Event.create( "application" )
+            .distributed( false )
+            .value( "eventType", "PROGRESS" )
+            .value( "applicationUrl", url )
+            .value( "progress", progress )
+            .build();
     }
 }

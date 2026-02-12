@@ -1,8 +1,8 @@
-package com.enonic.xp.core.impl.app;
+package com.enonic.xp.impl.server.rest;
 
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
-import java.net.URL;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.HexFormat;
 import java.util.function.Consumer;
@@ -63,7 +63,7 @@ class ApplicationLoaderTest
             exchange.close();
         } );
 
-        final ByteSource byteSource = new ApplicationLoader( eventListener ).load( new URL( appUrl ), null );
+        final ByteSource byteSource = new ApplicationLoader().load( URI.create( appUrl ).toURL(), null, eventListener );
 
         verify( eventListener ).accept( notNull() );
         assertTrue( byteSource.contentEquals( ByteSource.wrap( bytes ) ) );
@@ -86,7 +86,7 @@ class ApplicationLoaderTest
             exchange.close();
         } );
 
-        final ByteSource byteSource = new ApplicationLoader( eventListener ).load( new URL( appUrl ), sha512 );
+        final ByteSource byteSource = new ApplicationLoader().load( URI.create( appUrl ).toURL(), sha512, eventListener );
 
         verify( eventListener ).accept( notNull() );
         assertTrue( byteSource.contentEquals( ByteSource.wrap( bytes ) ) );
@@ -108,6 +108,7 @@ class ApplicationLoaderTest
             exchange.close();
         } );
 
-        assertThrows( IllegalArgumentException.class, () -> new ApplicationLoader( eventListener ).load( new URL( appUrl ), sha512 ) );
+        assertThrows( IllegalArgumentException.class,
+                      () -> new ApplicationLoader().load( URI.create( appUrl ).toURL(), sha512, eventListener ) );
     }
 }

@@ -73,7 +73,8 @@ public final class DeployDirectoryWatcher
         }
     }
 
-    private void bootstrap( FileAlterationObserver observer ) {
+    private void bootstrap( FileAlterationObserver observer )
+    {
         final File dir = observer.getDirectory();
         if ( !dir.exists() )
         {
@@ -146,8 +147,7 @@ public final class DeployDirectoryWatcher
     {
         //Installs the application
         final ByteSource byteSource = Files.asByteSource( file );
-        final Application application =
-            DeployHelper.runAsAdmin( () -> applicationService.installLocalApplication( byteSource, file.getName() ) );
+        final Application application = DeployHelper.runAsAdmin( () -> applicationService.installLocalApplication( byteSource ) );
         final ApplicationKey applicationKey = application.getKey();
         final String path = file.getPath();
 
@@ -182,7 +182,7 @@ public final class DeployDirectoryWatcher
             if ( path.equals( lastInstalledFile ) )
             {
                 //Uninstall the corresponding application
-                DeployHelper.runAsAdmin( () -> this.applicationService.uninstallApplication( applicationKey, false ) );
+                DeployHelper.runAsAdmin( () -> this.applicationService.uninstallApplication( applicationKey ) );
                 fileNameStack.pop();
 
                 // If there is a previous file with the same applicationKey
@@ -194,7 +194,7 @@ public final class DeployDirectoryWatcher
                     DeployHelper.runAsAdmin( () -> {
                         try
                         {
-                            applicationService.installLocalApplication( byteSource, previousInstalledFile );
+                            applicationService.installLocalApplication( byteSource );
                         }
                         catch ( Exception e )
                         {
