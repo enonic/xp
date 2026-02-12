@@ -12,8 +12,6 @@ public @interface PortalConfig
 
     String media_contentSecurityPolicy_svg() default "default-src 'none'; base-uri 'none'; form-action 'none'; style-src 'self' 'unsafe-inline'";
 
-    String draftBranchAllowedFor() default "role:system.admin.login";
-
     boolean legacy_attachmentService_enabled() default true;
 
     boolean legacy_imageService_enabled() default true;
