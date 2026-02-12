@@ -44,7 +44,7 @@ public class ScheduleAuditLogSupportImpl
                                         @Reference(service = ScheduleAuditLogExecutor.class) final Executor executor,
                                         final @Reference AuditLogService auditLogService )
     {
-        this.executor = config.auditlogEnabled() ? executor : c -> {
+        this.executor = config.auditlogEnabled() ? executor : _ -> {
         };
         this.auditLogService = auditLogService;
     }
@@ -204,10 +204,10 @@ public class ScheduleAuditLogSupportImpl
 
     private void log( final String type, final PropertyTree data, final ScheduledJobName name, final Context rootContext )
     {
-        log( type, data, AuditLogUris.from( createAuditLogUri( name, rootContext ) ), rootContext );
+        log( type, data, AuditLogUris.from( createAuditLogUri( name ) ), rootContext );
     }
 
-    private AuditLogUri createAuditLogUri( final ScheduledJobName name, final Context rootContext )
+    private AuditLogUri createAuditLogUri( final ScheduledJobName name )
     {
         return AuditLogUri.from( name.getValue() );
     }
