@@ -1,10 +1,5 @@
 package com.enonic.xp.impl.server.rest;
 
-import java.net.URI;
-import java.net.URL;
-import java.util.HexFormat;
-import java.util.Optional;
-
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -23,7 +18,6 @@ import jakarta.ws.rs.core.MediaType;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
-import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.impl.server.rest.model.ApplicationInstallParams;
 import com.enonic.xp.impl.server.rest.model.ApplicationInstallResultJson;
 import com.enonic.xp.impl.server.rest.model.ApplicationInstalledJson;
@@ -44,15 +38,14 @@ public final class ApplicationResource
 
     private final ApplicationService applicationService;
 
-    private final EventPublisher eventPublisher;
-
-    ApplicationLoader applicationLoader = new ApplicationLoader();
+    private final ApplicationResourceService applicationResourceService;
 
     @Activate
-    public ApplicationResource( final @Reference ApplicationService applicationService, final @Reference EventPublisher eventPublisher )
+    public ApplicationResource( final @Reference ApplicationService applicationService,
+                                final @Reference ApplicationResourceService applicationResourceService )
     {
         this.applicationService = applicationService;
-        this.eventPublisher = eventPublisher;
+        this.applicationResourceService = applicationResourceService;
     }
 
     @POST
@@ -77,27 +70,7 @@ public final class ApplicationResource
     @Consumes(MediaType.APPLICATION_JSON)
     public ApplicationInstallResultJson installUrl( final ApplicationInstallParams params )
     {
-        final String urlString = params.getUrl();
-        final byte[] sha512 = Optional.ofNullable( params.getSha512() ).map( HexFormat.of()::parseHex ).orElse( null );
-        final ApplicationInstallResultJson result = new ApplicationInstallResultJson();
-        String failure;
-        try
-        {
-            final URL url = URI.create( urlString ).toURL();
-
-            final ByteSource source = applicationLoader.load( url, sha512, eventPublisher::publish );
-            final Application application = this.applicationService.installGlobalApplication( source );
-
-            result.setApplicationInstalledJson( new ApplicationInstalledJson( application, false ) );
-            return result;
-        }
-        catch ( Exception e )
-        {
-            failure = "Failed to upload application from " + params.getUrl();
-            LOG.error( failure, e );
-            result.setFailure( failure );
-            return result;
-        }
+        return applicationResourceService.installUrl( params );
     }
 
     @POST

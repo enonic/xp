@@ -4,10 +4,14 @@ import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
+import java.util.HexFormat;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -20,6 +24,19 @@ public class ApplicationLoader
 {
     private static final Set<String> ALLOWED_PROTOCOLS = Set.of( "http", "https" );
 
+    public ByteSource load( final String urlString, final String sha512Hex, final Consumer<Event> eventConsumer )
+    {
+        final byte[] sha512 = Optional.ofNullable( sha512Hex ).map( HexFormat.of()::parseHex ).orElse( null );
+        try
+        {
+            final URL url = URI.create( urlString ).toURL();
+            return load( url, sha512, eventConsumer );
+        }
+        catch ( MalformedURLException e )
+        {
+            throw new UncheckedIOException( e );
+        }
+    }
 
     public ByteSource load( final URL url, final byte[] sha512Checksum, final Consumer<Event> eventConsumer )
     {

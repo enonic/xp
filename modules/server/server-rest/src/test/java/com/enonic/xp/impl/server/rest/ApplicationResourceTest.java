@@ -14,6 +14,7 @@ import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.impl.server.rest.model.ApplicationInstallResultJson;
+import com.enonic.xp.impl.server.rest.model.ApplicationInstalledJson;
 import com.enonic.xp.jaxrs.impl.JaxRsResourceTestSupport;
 import com.enonic.xp.util.Version;
 import com.enonic.xp.web.multipart.MultipartForm;
@@ -31,15 +32,15 @@ class ApplicationResourceTest
 {
     private ApplicationService applicationService;
 
+    private ApplicationResourceService applicationResourceService;
+
     @Override
     protected ApplicationResource getResourceInstance()
     {
         applicationService = mock( ApplicationService.class );
+        applicationResourceService = mock( ApplicationResourceService.class );
 
-        final ApplicationResource applicationResource = new ApplicationResource( applicationService, _ -> {
-        } );
-        applicationResource.applicationLoader = mock( ApplicationLoader.class );
-        return applicationResource;
+        return new ApplicationResource( applicationService, applicationResourceService );
     }
 
     @Test
@@ -107,9 +108,10 @@ class ApplicationResourceTest
     void install_url()
         throws Exception
     {
-        Application application = createApplication();
-
-        when( this.applicationService.installGlobalApplication( any() ) ).thenReturn( application );
+        final Application application = createApplication();
+        final ApplicationInstallResultJson resultJson = new ApplicationInstallResultJson();
+        resultJson.setApplicationInstalledJson( new ApplicationInstalledJson( application, false ) );
+        when( this.applicationResourceService.installUrl( any() ) ).thenReturn( resultJson );
 
         String jsonString = request().path( "app/installUrl" )
             .entity( "{\"URL\":\"https://enonic.net\"}", MediaType.APPLICATION_JSON_TYPE )
@@ -123,12 +125,12 @@ class ApplicationResourceTest
     void install_url_process_error()
         throws Exception
     {
-        Application application = createApplication();
-
-        when( this.applicationService.installGlobalApplication( any() ) ).thenThrow( new RuntimeException() );
+        final ApplicationInstallResultJson resultJson = new ApplicationInstallResultJson();
+        resultJson.setFailure( "Failed to upload application from https://enonic.net" );
+        when( this.applicationResourceService.installUrl( any() ) ).thenReturn( resultJson );
 
         String jsonString = request().path( "app/installUrl" )
-            .entity( "{\"URL\":\"" + application.getUrl() + "\"}", MediaType.APPLICATION_JSON_TYPE )
+            .entity( "{\"URL\":\"https://enonic.net\"}", MediaType.APPLICATION_JSON_TYPE )
             .post()
             .getAsString();
 
@@ -139,10 +141,12 @@ class ApplicationResourceTest
     void install_invalid_url()
         throws Exception
     {
-        Application application = createApplication( "invalid url" );
+        final ApplicationInstallResultJson resultJson = new ApplicationInstallResultJson();
+        resultJson.setFailure( "Failed to upload application from invalid url" );
+        when( this.applicationResourceService.installUrl( any() ) ).thenReturn( resultJson );
 
         String jsonString = request().path( "app/installUrl" )
-            .entity( "{\"URL\":\"" + application.getUrl() + "\"}", MediaType.APPLICATION_JSON_TYPE )
+            .entity( "{\"URL\":\"invalid url\"}", MediaType.APPLICATION_JSON_TYPE )
             .post()
             .getAsString();
 
