@@ -1,5 +1,7 @@
 package com.enonic.xp.impl.server.rest;
 
+import java.util.Objects;
+
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -34,8 +36,12 @@ public class ApplicationApiHandler
     @Override
     public WebResponse handle( final WebRequest request )
     {
-        final String subPath = request.getEndpointPath();
-        if ( "/installUrl".equals( subPath ) )
+        final String serverAppPrefix = "/server:app/";
+        final String path = Objects.requireNonNullElse( request.getEndpointPath(), request.getRawPath() );
+        final int startIndex = path.indexOf( serverAppPrefix );
+        final String subPath = path.substring( startIndex + serverAppPrefix.length() );
+
+        if ( "installUrl".equals( subPath ) )
         {
             if ( request.getMethod() != HttpMethod.POST )
             {
