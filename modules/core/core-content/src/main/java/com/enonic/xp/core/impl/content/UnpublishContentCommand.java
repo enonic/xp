@@ -116,7 +116,7 @@ public class UnpublishContentCommand
                         {
                             publishInfo.removeProperties( ContentPropertyNames.PUBLISH_FIRST );
                         }
-                        publishInfo.removeProperties( ContentPropertyNames.PUBLISH_PUBLISHED );
+                        publishInfo.removeProperties( ContentPropertyNames.PUBLISH_TIME );
                     }
                 } ).build();
             final Node updated = nodeService.update( updateParams );

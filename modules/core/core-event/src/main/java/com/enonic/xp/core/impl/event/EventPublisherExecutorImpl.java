@@ -27,7 +27,7 @@ public class EventPublisherExecutorImpl
     public void deactivate()
     {
         simpleExecutor.shutdownAndAwaitTermination( Duration.ofSeconds( 5 ),
-                                                    neverCommenced -> LOG.warn( "Not all events were published" ) );
+                                                    neverCommenced -> LOG.warn( "Not all events were time" ) );
     }
 
     @Override

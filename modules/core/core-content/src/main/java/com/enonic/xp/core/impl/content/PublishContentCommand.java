@@ -187,14 +187,14 @@ public class PublishContentCommand
             final PropertySet publishInfo = Objects.requireNonNullElseGet( toBeEdited.getSet( ContentPropertyNames.PUBLISH_INFO ),
                                                                            () -> toBeEdited.addSet( ContentPropertyNames.PUBLISH_INFO ) );
 
-            publishInfo.setInstant( ContentPropertyNames.PUBLISH_PUBLISHED, Instant.now().truncatedTo( ChronoUnit.MILLIS ) );
+            publishInfo.setInstant( ContentPropertyNames.PUBLISH_TIME, Instant.now().truncatedTo( ChronoUnit.MILLIS ) );
 
             if ( !publishInfo.hasProperty( ContentPropertyNames.PUBLISH_FROM ) )
             {
                 publishInfo.setInstant( ContentPropertyNames.PUBLISH_FROM, publishFrom );
             }
 
-            publishInfo.setInstant( ContentPropertyNames.PUBLISH_PUBLISHED, Instant.now().truncatedTo( ChronoUnit.MILLIS ) );
+            publishInfo.setInstant( ContentPropertyNames.PUBLISH_TIME, Instant.now().truncatedTo( ChronoUnit.MILLIS ) );
 
             if ( publishTo == null )
             {

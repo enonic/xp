@@ -11,7 +11,7 @@ public class PublishedDataProcessor
         if ( originalData.hasProperty( ContentPropertyNames.PUBLISH_INFO ) )
         {
             final PropertyTree data = originalData.copy();
-            data.getSet( ContentPropertyNames.PUBLISH_INFO ).removeProperties( ContentPropertyNames.PUBLISH_PUBLISHED );
+            data.getSet( ContentPropertyNames.PUBLISH_INFO ).removeProperties( ContentPropertyNames.PUBLISH_TIME );
             return data;
         }
         else

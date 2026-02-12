@@ -21,7 +21,7 @@ public class PublishInfoSerializer
             .first( publishInfo.getInstant( ContentPropertyNames.PUBLISH_FIRST ) )
             .from( publishInfo.getInstant( ContentPropertyNames.PUBLISH_FROM ) )
             .to( publishInfo.getInstant( ContentPropertyNames.PUBLISH_TO ) )
-            .published( publishInfo.getInstant( ContentPropertyNames.PUBLISH_PUBLISHED ) )
+            .time( publishInfo.getInstant( ContentPropertyNames.PUBLISH_TIME ) )
             .build();
     }
 

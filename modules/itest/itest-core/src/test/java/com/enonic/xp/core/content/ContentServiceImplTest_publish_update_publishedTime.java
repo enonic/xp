@@ -103,7 +103,7 @@ class ContentServiceImplTest_publish_update_publishedTime
         assertNotNull( updatedPublishInfo1 );
         assertNotNull( updatedPublishInfo1.from() );
         assertEquals( updatedPublishInfo1.from(), updatedPublishInfo1.first() );
-        assertNotNull( updatedPublishInfo1.published() );
+        assertNotNull( updatedPublishInfo1.time() );
 
         final UpdateContentParams updateContentParams = new UpdateContentParams();
         updateContentParams.contentId( content.getId() ).editor( edit -> edit.displayName = "new display name" );
@@ -112,7 +112,7 @@ class ContentServiceImplTest_publish_update_publishedTime
 
         final ContentPublishInfo updatedPublishInfo2 = getPublishInfo( id );
 
-        assertNull( updatedPublishInfo2.published() );
+        assertNull( updatedPublishInfo2.time() );
 
         this.contentService.updateWorkflow(
             UpdateWorkflowParams.create().contentId( content.getId() ).editor( edit -> edit.workflow = WorkflowInfo.ready() ).build() );
@@ -121,7 +121,7 @@ class ContentServiceImplTest_publish_update_publishedTime
 
         final ContentPublishInfo updatedPublishInfo3 = getPublishInfo( id );
 
-        assertNotNull( updatedPublishInfo3.published() );
+        assertNotNull( updatedPublishInfo3.time() );
 
         this.contentService.updateWorkflow( UpdateWorkflowParams.create()
                                                 .contentId( content.getId() )
@@ -130,7 +130,7 @@ class ContentServiceImplTest_publish_update_publishedTime
 
         final ContentPublishInfo updatedPublishInfo4 = getPublishInfo( id );
 
-        assertNull( updatedPublishInfo4.published() );
+        assertNull( updatedPublishInfo4.time() );
 
         this.contentService.updateWorkflow(
             UpdateWorkflowParams.create().contentId( content.getId() ).editor( edit -> edit.workflow = WorkflowInfo.ready() ).build() );
@@ -139,14 +139,14 @@ class ContentServiceImplTest_publish_update_publishedTime
 
         final ContentPublishInfo updatedPublishInfo5 = getPublishInfo( id );
 
-        assertNotNull( updatedPublishInfo5.published() );
+        assertNotNull( updatedPublishInfo5.time() );
 
         this.contentService.updateMetadata(
             UpdateContentMetadataParams.create().contentId( id ).editor( edit -> edit.language = Locale.CANADA ).build() );
 
         final ContentPublishInfo updatedPublishInfo6 = getPublishInfo( id );
 
-        assertNull( updatedPublishInfo6.published() );
+        assertNull( updatedPublishInfo6.time() );
     }
 
     private ContentPublishInfo getPublishInfo( final ContentId id )

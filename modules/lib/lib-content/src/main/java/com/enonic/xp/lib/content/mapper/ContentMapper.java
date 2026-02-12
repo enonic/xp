@@ -98,7 +98,7 @@ public final class ContentMapper
             gen.value( "from", info.from() );
             gen.value( "to", info.to() );
             gen.value( "first", info.first() );
-            gen.value( "published", info.published() );
+            gen.value( "time", info.time() );
         }
         gen.end();
     }
