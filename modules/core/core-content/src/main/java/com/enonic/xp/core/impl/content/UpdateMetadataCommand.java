@@ -5,9 +5,9 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentMetadataEditor;
 import com.enonic.xp.content.EditableContentMetadata;
-import com.enonic.xp.content.PatchableContent;
 import com.enonic.xp.content.UpdateContentMetadataParams;
 import com.enonic.xp.content.UpdateContentMetadataResult;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.PatchNodeResult;
 
@@ -55,15 +55,8 @@ public class UpdateMetadataCommand
         final PatchNodeResult result = nodeService.patch( patchNodeParams );
 
         return UpdateContentMetadataResult.create()
-            .content( ContentNodeTranslator.fromNode( result.getResults().getFirst().node() ) )
+            .content( ContentNodeTranslator.fromNode( result.getResult( ContextAccessor.current().getBranch() ) ) )
             .build();
-    }
-
-    protected static Content afterUpdate( final Content editedContent )
-    {
-        final PatchableContent patchableContent = new PatchableContent( editedContent );
-        patchableContent.inherit.setPatcher( c -> stopDataInherit( c.inherit.originalValue ) );
-        return patchableContent.build();
     }
 
     private Content editMetadata( final ContentMetadataEditor editor, final Content original )

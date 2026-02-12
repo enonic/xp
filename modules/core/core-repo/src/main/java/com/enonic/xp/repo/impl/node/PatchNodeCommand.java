@@ -11,6 +11,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
+import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.AttachedBinaries;
@@ -61,7 +62,7 @@ public final class PatchNodeCommand
                                   "Current(source) branch '%s' is not in the list of branches for patch: %s",
                                   ContextAccessor.current().getBranch(), this.branches );
 
-        ContextAccessor.current().runWith( this::verifyPermissions );
+        verifyPermissionsOnCurrentBrunch();
 
         ContextBuilder.from( ContextAccessor.current() ).branch( this.branches.first() ).build().runWith( this::doPatchNode );
 
@@ -70,35 +71,17 @@ public final class PatchNodeCommand
         return results.build();
     }
 
-    private void verifyPermissions()
+    private void verifyPermissionsOnCurrentBrunch()
     {
-        final InternalContext internalContext = InternalContext.create( ContextAccessor.current() ).build();
-        final Branch firstBranch = this.branches.first();
-        final Node persistedNode = getPersistedNode( ContextAccessor.current().getBranch() );
+        final Context context = ContextAccessor.current();
+        final Node persistedNode = getPersistedNode( context.getBranch() );
 
-        if ( this.branches.getSize() == 1 )
+        final InternalContext internalContext = InternalContext.create( context ).build();
+
+        requirePermission( internalContext, Permission.MODIFY, persistedNode );
+        if ( this.branches.getSize() > 1 )
         {
-            requirePermission( internalContext, Permission.MODIFY, persistedNode );
-            return;
-        }
-
-        final Map<Branch, NodeVersionId> activeNodeMap = getActiveNodes( this.branches );
-
-        for ( Branch branch : this.branches )
-        {
-            Permission requiredPermission;
-
-            if ( branch.equals( firstBranch ) ||
-                !activeNodeMap.get( firstBranch ).equals( persistedNode.getNodeVersionId() ) )
-            {
-                requiredPermission = Permission.MODIFY;
-            }
-            else
-            {
-                requiredPermission = Permission.PUBLISH;
-            }
-
-            requirePermission( internalContext, requiredPermission, persistedNode );
+            requirePermission( internalContext, Permission.PUBLISH, persistedNode );
         }
     }
 
@@ -181,7 +164,8 @@ public final class PatchNodeCommand
             final Node updatedNode =
                 Node.create( editedNode ).timestamp( Instant.now( CLOCK ) ).attachedBinaries( updatedBinaries ).build();
 
-            return this.nodeStorageService.store( StoreNodeParams.newVersion( updatedNode, params.getVersionAttributes() ), internalContext );
+            return this.nodeStorageService.store( StoreNodeParams.newVersion( updatedNode, params.getVersionAttributes() ),
+                                                  internalContext );
         }
     }
 
@@ -198,7 +182,8 @@ public final class PatchNodeCommand
             }
         }
 
-        if ( result.isEmpty() ) {
+        if ( result.isEmpty() )
+        {
             throw new NodeNotFoundException( "No active node found" );
         }
 
