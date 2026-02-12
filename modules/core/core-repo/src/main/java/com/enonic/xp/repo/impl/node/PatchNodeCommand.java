@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.node;
 
 import java.time.Instant;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -10,7 +11,6 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
-import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.AttachedBinaries;
@@ -57,33 +57,24 @@ public final class PatchNodeCommand
 
     public PatchNodeResult execute()
     {
-        final Context context = this.branches.getSize() == 1
-            ? ContextBuilder.from( ContextAccessor.current() ).branch( this.branches.first() ).build()
-            : ContextAccessor.current();
+        Preconditions.checkState( this.branches.contains( ContextAccessor.current().getBranch() ),
+                                  "Current(source) branch '%s' is not in the list of branches for patch: %s",
+                                  ContextAccessor.current().getBranch(), this.branches );
 
-        context.runWith( () -> {
-            verifyBranch();
-            verifyPermissions();
-            doPatchNode();
-        } );
+        ContextAccessor.current().runWith( this::verifyPermissions );
+
+        ContextBuilder.from( ContextAccessor.current() ).branch( this.branches.first() ).build().runWith( this::doPatchNode );
 
         refresh( params.getRefresh() );
 
         return results.build();
     }
 
-    private void verifyBranch()
-    {
-        Preconditions.checkState( this.branches.contains( ContextAccessor.current().getBranch() ),
-                                  "Current(source) branch '%s' is not in the list of branches for patch: %s",
-                                  ContextAccessor.current().getBranch(), this.branches );
-    }
-
     private void verifyPermissions()
     {
         final InternalContext internalContext = InternalContext.create( ContextAccessor.current() ).build();
         final Branch firstBranch = this.branches.first();
-        final Node persistedNode = getPersistedNode( firstBranch );
+        final Node persistedNode = getPersistedNode( ContextAccessor.current().getBranch() );
 
         if ( this.branches.getSize() == 1 )
         {
@@ -196,7 +187,7 @@ public final class PatchNodeCommand
 
     private Map<Branch, NodeVersionId> getActiveNodes( final Branches branches )
     {
-        final Map<Branch, NodeVersionId> result = new HashMap<>();
+        final Map<Branch, NodeVersionId> result = new LinkedHashMap<>();
 
         for ( Branch branch : branches )
         {

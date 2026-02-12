@@ -194,8 +194,6 @@ public class PublishContentCommand
                 publishInfo.setInstant( ContentPropertyNames.PUBLISH_FROM, publishFrom );
             }
 
-            publishInfo.setInstant( ContentPropertyNames.PUBLISH_TIME, Instant.now().truncatedTo( ChronoUnit.MILLIS ) );
-
             if ( publishTo == null )
             {
                 publishInfo.removeProperties( ContentPropertyNames.PUBLISH_TO );

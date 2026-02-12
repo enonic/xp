@@ -277,7 +277,16 @@ public final class ContentDataSerializer
 
     private void extractPublishInfo( final PropertySet contentAsSet, final Content.Builder<?> builder )
     {
-        builder.publishInfo( PublishInfoSerializer.serialize( contentAsSet.getSet( PUBLISH_INFO ) ) );
+        final PropertySet publishInfo = contentAsSet.getSet( PUBLISH_INFO );
+        if ( publishInfo != null )
+        {
+            builder.publishInfo( ContentPublishInfo.create()
+                                     .first( publishInfo.getInstant( PUBLISH_FIRST ) )
+                                     .from( publishInfo.getInstant( PUBLISH_FROM ) )
+                                     .to( publishInfo.getInstant( PUBLISH_TO ) )
+                                     .time( publishInfo.getInstant( PUBLISH_TIME ) )
+                                     .build() );
+        }
     }
 
     private void extractAttachments( final PropertySet contentAsSet, final Content.Builder<?> builder )

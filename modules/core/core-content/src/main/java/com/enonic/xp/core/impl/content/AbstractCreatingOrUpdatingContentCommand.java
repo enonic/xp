@@ -394,7 +394,7 @@ class AbstractCreatingOrUpdatingContentCommand
 
     protected static Set<ContentInheritType> stopDataInherit( final Set<ContentInheritType> currentInherit )
     {
-        if ( currentInherit.isEmpty() )
+        if ( currentInherit == null || currentInherit.isEmpty() )
         {
             return currentInherit;
         }
