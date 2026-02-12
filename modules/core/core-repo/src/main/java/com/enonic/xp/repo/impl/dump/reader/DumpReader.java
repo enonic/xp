@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.dump.reader;
 
 import java.io.Closeable;
+import java.util.List;
 
 import com.google.common.io.ByteSource;
 import com.google.common.io.LineProcessor;
@@ -37,5 +38,5 @@ public interface DumpReader
 
     DumpMeta getDumpMeta();
 
-    RepositoryEntry getRepositoryEntry( RepositoryId repositoryId );
+    List<RepositoryEntry> getRepositoryEntries( final RepositoryIds repositoryIds );
 }

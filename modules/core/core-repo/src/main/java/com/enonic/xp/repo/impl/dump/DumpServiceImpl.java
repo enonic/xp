@@ -425,9 +425,13 @@ public class DumpServiceImpl
 
         final boolean includeVersions = params.isIncludeVersions();
 
+        final Map<RepositoryId, RepositoryEntry> dumpEntries = dumpReader.getRepositoryEntries( RepositoryIds.from( reposToLoad ) )
+            .stream()
+            .collect( Collectors.toMap( RepositoryEntry::getId, Function.identity() ) );
+
         for ( final RepositoryId repositoryId : reposToLoad )
         {
-            final RepositoryEntry dumpEntry = dumpReader.getRepositoryEntry( repositoryId );
+            final RepositoryEntry dumpEntry = dumpEntries.get( repositoryId );
 
             if ( dumpEntry != null )
             {
