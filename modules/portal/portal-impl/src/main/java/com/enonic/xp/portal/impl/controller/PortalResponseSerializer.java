@@ -14,6 +14,7 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.postprocess.HtmlTag;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.sse.SseConfig;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 
 public final class PortalResponseSerializer
@@ -72,6 +73,7 @@ public final class PortalResponseSerializer
         setRedirect( builder, value.getMember( "redirect" ) );
         populatePostProcess( builder, value.getMember( "postProcess" ) );
         populateWebSocket( builder, value.getMember( "webSocket" ) );
+        populateSse( builder, value.getMember( "sse" ) );
 
         if ( this.forceApplyFilters != null )
         {
@@ -339,5 +341,36 @@ public final class PortalResponseSerializer
         {
             config.setSubProtocols( Collections.singletonList( value.getValue( String.class ) ) );
         }
+    }
+
+    private void populateSse( final PortalResponse.Builder builder, final ScriptValue value )
+    {
+        if ( value == null )
+        {
+            return;
+        }
+
+        final SseConfig config = new SseConfig();
+        populateSseData( config, value.getMember( "data" ) );
+
+        builder.sse( config );
+    }
+
+    private void populateSseData( final SseConfig config, final ScriptValue value )
+    {
+        if ( value == null )
+        {
+            return;
+        }
+
+        final Map<String, Object> map = value.getMap();
+        final Map<String, String> result = new HashMap<>();
+
+        for ( final Map.Entry<String, Object> entry : map.entrySet() )
+        {
+            result.put( entry.getKey(), entry.getValue().toString() );
+        }
+
+        config.setData( result );
     }
 }

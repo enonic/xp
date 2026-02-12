@@ -9,7 +9,9 @@ import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.impl.mapper.PortalRequestMapper;
+import com.enonic.xp.portal.impl.mapper.SseEventMapper;
 import com.enonic.xp.portal.impl.mapper.WebSocketEventMapper;
+import com.enonic.xp.portal.sse.SseEvent;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.HttpMethod;
@@ -67,5 +69,17 @@ final class ControllerScriptImpl
         }
 
         this.scriptExports.executeMethod( "webSocketEvent", new WebSocketEventMapper( event ) );
+    }
+
+    @Override
+    public void onSseEvent( final SseEvent event )
+    {
+        final boolean exists = this.scriptExports.hasMethod( "sseEvent" );
+        if ( !exists )
+        {
+            return;
+        }
+
+        this.scriptExports.executeMethod( "sseEvent", new SseEventMapper( event ) );
     }
 }

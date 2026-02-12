@@ -1,0 +1,6 @@
+dependencies {
+    compileOnly project( ':core:core-api' )
+    compileOnly project( ':portal:portal-api' )
+
+    testImplementation project( ':tools:testing' )
+}

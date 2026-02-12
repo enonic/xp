@@ -12,6 +12,7 @@ import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.portal.impl.handler.HandlerHelper;
 import com.enonic.xp.portal.impl.handler.render.PageResolver;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
+import com.enonic.xp.portal.sse.SseManager;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.site.SiteService;
@@ -35,14 +36,15 @@ public final class ComponentServiceMappingHandler
                                            @Reference final RendererDelegate rendererDelegate, @Reference final SiteService siteService,
                                            @Reference final PageTemplateService pageTemplateService,
                                            @Reference final PageDescriptorService pageDescriptorService,
-                                           @Reference final LayoutDescriptorService layoutDescriptorService )
+                                           @Reference final LayoutDescriptorService layoutDescriptorService,
+                                           @Reference final SseManager sseManager )
     {
         super( HttpMethod.standard() );
 
         this.mappingHandlerHelper =
             new MappingHandlerHelper( resourceService, controllerScriptFactory, filterScriptFactory, rendererDelegate,
                                       new ControllerMappingsResolver( siteService ),
-                                      new PageResolver( pageTemplateService, pageDescriptorService, layoutDescriptorService ) );
+                                      new PageResolver( pageTemplateService, pageDescriptorService, layoutDescriptorService ), sseManager );
     }
 
     @Override

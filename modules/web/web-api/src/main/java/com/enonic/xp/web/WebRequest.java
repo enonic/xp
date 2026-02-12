@@ -15,6 +15,7 @@ import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.security.IdProvider;
@@ -57,6 +58,8 @@ public class WebRequest
 
     private HttpServletRequest rawRequest;
 
+    private HttpServletResponse rawResponse;
+
     private WebSocketContext webSocketContext;
 
     private IdProvider idProvider;
@@ -85,6 +88,7 @@ public class WebRequest
         this.contentType = webRequest.contentType;
         this.body = webRequest.body;
         this.rawRequest = webRequest.rawRequest;
+        this.rawResponse = webRequest.rawResponse;
         this.webSocketContext = webRequest.webSocketContext;
         this.idProvider = webRequest.idProvider;
         this.locales = webRequest.locales;
@@ -281,6 +285,16 @@ public class WebRequest
     public void setRawRequest( final HttpServletRequest rawRequest )
     {
         this.rawRequest = rawRequest;
+    }
+
+    public HttpServletResponse getRawResponse()
+    {
+        return rawResponse;
+    }
+
+    public void setRawResponse( final HttpServletResponse rawResponse )
+    {
+        this.rawResponse = rawResponse;
     }
 
     public boolean isWebSocket()

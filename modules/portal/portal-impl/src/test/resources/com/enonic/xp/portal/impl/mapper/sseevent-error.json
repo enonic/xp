@@ -1,0 +1,7 @@
+{
+  "type": "error",
+  "session": {
+    "id": "abc123"
+  },
+  "error": "connection lost"
+}

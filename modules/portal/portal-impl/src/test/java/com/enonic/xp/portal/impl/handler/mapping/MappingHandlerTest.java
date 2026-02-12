@@ -31,6 +31,7 @@ import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.filter.FilterScript;
 import com.enonic.xp.portal.filter.FilterScriptFactory;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
+import com.enonic.xp.portal.sse.SseManager;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
@@ -130,7 +131,8 @@ class MappingHandlerTest
         this.layoutDescriptorService = mock( LayoutDescriptorService.class );
 
         this.handler = new MappingHandler( siteService, resourceService, controllerScriptFactory, filterScriptFactory, rendererDelegate,
-                                           pageTemplateService, pageDescriptorService, layoutDescriptorService );
+                                           pageTemplateService, pageDescriptorService, layoutDescriptorService,
+                                           mock( SseManager.class ) );
         this.request.setMethod( HttpMethod.GET );
     }
 

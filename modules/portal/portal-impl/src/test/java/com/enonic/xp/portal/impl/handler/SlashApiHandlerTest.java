@@ -28,6 +28,7 @@ import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.impl.api.DynamicUniversalApiHandlerRegistry;
+import com.enonic.xp.portal.sse.SseManager;
 import com.enonic.xp.portal.universalapi.UniversalApiHandler;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.repository.RepositoryId;
@@ -106,7 +107,8 @@ class SlashApiHandlerTest
 
         handler =
             new SlashApiHandler( controllerScriptFactory, apiDescriptorService, new ExceptionMapperImpl(), exceptionRenderer, siteService,
-                                 webappService, adminToolDescriptorService, universalApiHandlerRegistry );
+                                 webappService, adminToolDescriptorService, universalApiHandlerRegistry,
+                                 mock( SseManager.class ) );
 
         when( this.exceptionRenderer.render( any(), any() ) ).thenReturn(
             WebResponse.create().status( HttpStatus.INTERNAL_SERVER_ERROR ).build() );

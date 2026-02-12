@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.api;
 
 import com.enonic.xp.api.ApiDescriptor;
+import com.enonic.xp.portal.sse.SseEvent;
 import com.enonic.xp.portal.universalapi.UniversalApiHandler;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
@@ -29,6 +30,12 @@ public final class DynamicUniversalApiHandler
     public void onSocketEvent( final WebSocketEvent event )
     {
         apiHandler.onSocketEvent( event );
+    }
+
+    @Override
+    public void onSseEvent( final SseEvent event )
+    {
+        apiHandler.onSseEvent( event );
     }
 
     public ApiDescriptor getApiDescriptor()

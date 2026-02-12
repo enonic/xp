@@ -25,6 +25,7 @@ import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.impl.serializer.RequestBodyReader;
 import com.enonic.xp.web.impl.serializer.RequestSerializer;
 import com.enonic.xp.web.serializer.ResponseSerializationService;
+import com.enonic.xp.web.sse.SseConfig;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketContext;
 import com.enonic.xp.web.websocket.WebSocketContextFactory;
@@ -56,6 +57,7 @@ public final class WebDispatcherServlet
         throws ServletException, IOException
     {
         final WebRequest webRequest = newWebRequest( req );
+        webRequest.setRawResponse( res );
         final WebSocketContext webSocketContext = this.webSocketContextFactory.newContext( req, res );
         webRequest.setWebSocketContext( webSocketContext );
 
@@ -63,6 +65,12 @@ public final class WebDispatcherServlet
 
         final WebSocketConfig config = webResponse.getWebSocket();
         if ( ( webSocketContext != null ) && ( config != null ) )
+        {
+            return;
+        }
+
+        final SseConfig sseConfig = webResponse.getSse();
+        if ( sseConfig != null )
         {
             return;
         }

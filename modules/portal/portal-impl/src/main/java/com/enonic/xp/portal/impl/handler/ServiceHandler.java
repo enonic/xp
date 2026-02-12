@@ -16,7 +16,9 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.impl.PortalRequestHelper;
+import com.enonic.xp.portal.impl.sse.SseEndpointImpl;
 import com.enonic.xp.portal.impl.websocket.WebSocketEndpointImpl;
+import com.enonic.xp.portal.sse.SseManager;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.service.ServiceDescriptor;
@@ -29,6 +31,7 @@ import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
+import com.enonic.xp.web.sse.SseConfig;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketContext;
 import com.enonic.xp.web.websocket.WebSocketEndpoint;
@@ -42,12 +45,16 @@ public class ServiceHandler
 
     private final ControllerScriptFactory controllerScriptFactory;
 
+    private final SseManager sseManager;
+
     @Activate
     public ServiceHandler( @Reference final ServiceDescriptorService serviceDescriptorService,
-                           @Reference final ControllerScriptFactory controllerScriptFactory )
+                           @Reference final ControllerScriptFactory controllerScriptFactory,
+                           @Reference final SseManager sseManager )
     {
         this.serviceDescriptorService = serviceDescriptorService;
         this.controllerScriptFactory = controllerScriptFactory;
+        this.sseManager = sseManager;
     }
 
     public WebResponse handle( final WebRequest webRequest )
@@ -89,6 +96,13 @@ public class ServiceHandler
         {
             final WebSocketEndpoint webSocketEndpoint = newWebSocketEndpoint( webSocketConfig, controllerScript, applicationKey );
             webSocketContext.apply( webSocketEndpoint );
+        }
+
+        final SseConfig sseConfig = portalResponse.getSse();
+        if ( sseConfig != null )
+        {
+            final SseEndpointImpl sseEndpoint = new SseEndpointImpl( sseConfig, () -> controllerScript );
+            this.sseManager.setupSse( portalRequest.getRawRequest(), portalRequest.getRawResponse(), sseEndpoint );
         }
 
         return portalResponse;

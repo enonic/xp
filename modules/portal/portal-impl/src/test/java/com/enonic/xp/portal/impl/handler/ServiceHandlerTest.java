@@ -20,6 +20,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
+import com.enonic.xp.portal.sse.SseManager;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.region.Regions;
@@ -87,7 +88,7 @@ class ServiceHandlerTest
         final ServiceDescriptor serviceDescriptor = ServiceDescriptor.create().key( serviceDescriptorKey ).build();
         when( this.serviceDescriptorService.getByKey( serviceDescriptorKey ) ).thenReturn( serviceDescriptor );
 
-        this.handler = new ServiceHandler( serviceDescriptorService, controllerScriptFactory );
+        this.handler = new ServiceHandler( serviceDescriptorService, controllerScriptFactory, mock( SseManager.class ) );
 
         this.request.setMethod( HttpMethod.GET );
         this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );
