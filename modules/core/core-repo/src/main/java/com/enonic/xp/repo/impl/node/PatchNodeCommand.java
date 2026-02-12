@@ -2,7 +2,6 @@ package com.enonic.xp.repo.impl.node;
 
 import java.time.Instant;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -58,10 +57,6 @@ public final class PatchNodeCommand
 
     public PatchNodeResult execute()
     {
-        Preconditions.checkState( this.branches.contains( ContextAccessor.current().getBranch() ),
-                                  "Current(source) branch '%s' is not in the list of branches for patch: %s",
-                                  ContextAccessor.current().getBranch(), this.branches );
-
         verifyPermissionsOnCurrentBrunch();
 
         ContextBuilder.from( ContextAccessor.current() ).branch( this.branches.first() ).build().runWith( this::doPatchNode );
@@ -73,7 +68,12 @@ public final class PatchNodeCommand
 
     private void verifyPermissionsOnCurrentBrunch()
     {
+
         final Context context = ContextAccessor.current();
+        Preconditions.checkState( this.branches.contains( context.getBranch() ),
+                                  "Current(source) branch '%s' is not in the list of branches for patch: %s",
+                                  ContextAccessor.current().getBranch(), this.branches );
+
         final Node persistedNode = getPersistedNode( context.getBranch() );
 
         final InternalContext internalContext = InternalContext.create( context ).build();
@@ -99,7 +99,7 @@ public final class PatchNodeCommand
 
     private void doPatchNode()
     {
-        final Map<Branch, NodeVersionId> activeNodeMap = getActiveNodes( this.branches );
+        final Map<Branch, NodeVersionId> activeNodeMap = getActiveNodes();
 
         final Map<NodeVersionId, NodeVersionData> patchedVersions = new HashMap<>(); // old version id -> new version data
 
@@ -169,25 +169,25 @@ public final class PatchNodeCommand
         }
     }
 
-    private Map<Branch, NodeVersionId> getActiveNodes( final Branches branches )
+    private Map<Branch, NodeVersionId> getActiveNodes()
     {
-        final Map<Branch, NodeVersionId> result = new LinkedHashMap<>();
+        final Map<Branch, NodeVersionId> activeNodeMap = new HashMap<>();
 
-        for ( Branch branch : branches )
+        for ( Branch branch : this.branches )
         {
             final Node persistedNode = this.getPersistedNode( branch );
             if ( persistedNode != null )
             {
-                result.put( branch, persistedNode.getNodeVersionId() );
+                activeNodeMap.put( branch, persistedNode.getNodeVersionId() );
             }
         }
 
-        if ( result.isEmpty() )
+        if ( activeNodeMap.isEmpty() )
         {
             throw new NodeNotFoundException( "No active node found" );
         }
 
-        return result;
+        return activeNodeMap;
     }
 
     private Node getPersistedNode( final Branch branch )

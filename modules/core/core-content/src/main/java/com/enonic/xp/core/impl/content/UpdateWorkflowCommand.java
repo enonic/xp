@@ -5,6 +5,7 @@ import com.enonic.xp.content.EditableContentWorkflow;
 import com.enonic.xp.content.UpdateWorkflowParams;
 import com.enonic.xp.content.UpdateWorkflowResult;
 import com.enonic.xp.content.WorkflowEditor;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.PatchNodeResult;
 
@@ -54,7 +55,9 @@ public class UpdateWorkflowCommand
 
         final PatchNodeResult result = nodeService.patch( patchNodeParams );
 
-        return UpdateWorkflowResult.create().content( ContentNodeTranslator.fromNode( result.getResults().getFirst().node() ) ).build();
+        return UpdateWorkflowResult.create()
+            .content( ContentNodeTranslator.fromNode( result.getResult( ContextAccessor.current().getBranch() ) ) )
+            .build();
     }
 
     private Content editWorkflow( final WorkflowEditor editor, final Content original )

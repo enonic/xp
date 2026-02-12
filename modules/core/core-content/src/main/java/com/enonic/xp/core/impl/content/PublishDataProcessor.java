@@ -4,9 +4,9 @@ import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.NodePath;
 
-public class PublishedDataProcessor
+public class PublishDataProcessor
 {
-    public static PropertyTree removePublished( final PropertyTree originalData, final NodePath nodePath )
+    public static PropertyTree removePublishTime( final PropertyTree originalData, final NodePath nodePath )
     {
         if ( originalData.hasProperty( ContentPropertyNames.PUBLISH_INFO ) )
         {

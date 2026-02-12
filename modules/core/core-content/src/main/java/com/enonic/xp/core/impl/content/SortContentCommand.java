@@ -61,7 +61,7 @@ class SortContentCommand
             {
                 paramsBuilder.processor(
                     CompositeNodeDataProcessor.create().add( InheritedContentDataProcessor.SORT ).add(
-                        PublishedDataProcessor::removePublished ).build() );
+                        PublishDataProcessor::removePublishTime ).build() );
 
                 paramsBuilder.versionAttributes(
                         ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.SORT_ATTR, "childOrder" ) )
