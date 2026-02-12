@@ -413,6 +413,8 @@ public class ContentServiceImpl
 
     private Content doGetById( final ContentId contentId )
     {
+        verifyDraftBranchAccess();
+        
         final Content content = GetContentByIdCommand.create( contentId )
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
@@ -434,6 +436,8 @@ public class ContentServiceImpl
     @Override
     public Site getNearestSite( final ContentId contentId )
     {
+        verifyDraftBranchAccess();
+        
         final GetNearestSiteCommand command = GetNearestSiteCommand.create()
             .contentId( contentId )
             .nodeService( this.nodeService )
@@ -451,6 +455,8 @@ public class ContentServiceImpl
     @Override
     public Site findNearestSiteByPath( final ContentPath contentPath )
     {
+        verifyDraftBranchAccess();
+        
         return Tracer.trace( "content.findNearestSiteByPath", trace -> trace.put( "contentPath", contentPath ),
                              () -> (Site) doFindNearestByPath( contentPath, Content::isSite ), ( trace, site ) -> {
                 if ( site != null )
@@ -475,6 +481,8 @@ public class ContentServiceImpl
     @Override
     public Contents getByIds( final GetContentByIdsParams params )
     {
+        verifyDraftBranchAccess();
+        
         final GetContentByIdsCommand command = GetContentByIdsCommand.create( params )
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
@@ -493,6 +501,8 @@ public class ContentServiceImpl
 
     private Content doGetByPath( final ContentPath path )
     {
+        verifyDraftBranchAccess();
+        
         final Content content = executeGetByPath( path );
         if ( content == null )
         {
@@ -519,6 +529,8 @@ public class ContentServiceImpl
     @Override
     public Contents getByPaths( final ContentPaths paths )
     {
+        verifyDraftBranchAccess();
+        
         final GetContentByPathsCommand command = GetContentByPathsCommand.create( paths )
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
@@ -531,6 +543,8 @@ public class ContentServiceImpl
     @Override
     public FindContentByParentResult findByParent( final FindContentByParentParams params )
     {
+        verifyDraftBranchAccess();
+        
         final FindContentByParentCommand command = FindContentByParentCommand.create( params )
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
@@ -547,6 +561,8 @@ public class ContentServiceImpl
     @Override
     public FindContentIdsByParentResult findIdsByParent( final FindContentByParentParams params )
     {
+        verifyDraftBranchAccess();
+        
         final FindContentIdsByParentCommand command = FindContentIdsByParentCommand.create( params )
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
@@ -633,6 +649,8 @@ public class ContentServiceImpl
     @Override
     public FindContentIdsByQueryResult find( final ContentQuery query )
     {
+        verifyDraftBranchAccess();
+        
         final FindContentIdsByQueryCommand command = FindContentIdsByQueryCommand.create()
             .query( query )
             .nodeService( this.nodeService )
@@ -651,6 +669,8 @@ public class ContentServiceImpl
     @Override
     public FindContentPathsByQueryResult findPaths( ContentQuery query )
     {
+        verifyDraftBranchAccess();
+        
         return FindContentPathsByQueryCommand.create()
             .contentQuery( query )
             .nodeService( this.nodeService )
@@ -861,6 +881,8 @@ public class ContentServiceImpl
     @Override
     public Content getByIdAndVersionId( final ContentId contentId, final ContentVersionId versionId )
     {
+        verifyDraftBranchAccess();
+        
         final GetContentByIdAndVersionIdCommand command = GetContentByIdAndVersionIdCommand.create()
             .contentId( contentId )
             .versionId( versionId )
@@ -983,6 +1005,17 @@ public class ContentServiceImpl
         if ( !ProjectAccessHelper.hasAnyAccess( authInfo, ProjectName.from( ctx.getRepositoryId() ) ) )
         {
             throw new ForbiddenAccessException( authInfo.getUser() );
+        }
+    }
+
+    private static void verifyDraftBranchAccess()
+    {
+        final Context ctx = ContextAccessor.current();
+        final ProjectName projectName = ProjectName.from( ctx.getRepositoryId() );
+        
+        if ( projectName != null && ContentConstants.BRANCH_DRAFT.equals( ctx.getBranch() ) )
+        {
+            requireAnyProjectRole();
         }
     }
 
