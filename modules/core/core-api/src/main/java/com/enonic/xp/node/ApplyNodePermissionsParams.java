@@ -38,7 +38,7 @@ public final class ApplyNodePermissionsParams
         removePermissions = builder.removePermissions.build();
         versionAttributes = builder.versionAttributes;
         listener = builder.listener;
-        branches = Objects.requireNonNull( builder.branches );
+        branches = Objects.requireNonNullElse( builder.branches, Branches.empty() );
 
         Preconditions.checkArgument( permissions.isEmpty() || ( addPermissions.isEmpty() && removePermissions.isEmpty() ),
                                      "Permissions cannot be set together with addPermissions or removePermissions" );
