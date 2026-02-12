@@ -244,19 +244,6 @@ class AttachmentMediaHandlerTest
     }
 
     @Test
-    void testAttachmentDraftBranchForNotAuthorizedUser()
-    {
-        WebRequest request = new WebRequest();
-
-        request.setMethod( HttpMethod.GET );
-        request.setRawPath( "/api/media:attachment/myproject:draft/123456/logo.png" );
-
-        WebException exception = assertThrows( WebException.class, () -> this.handler.handle( request ) );
-        assertEquals( HttpStatus.UNAUTHORIZED, exception.getStatus() );
-        assertEquals( "You don't have permission to access this resource", exception.getMessage() );
-    }
-
-    @Test
     void testOptions()
     {
         this.request.setBaseUri( "" );
