@@ -386,15 +386,15 @@ class AbstractCreatingOrUpdatingContentCommand
         final PatchableContent patchableContent = new PatchableContent( editedContent );
         patchableContent.publishInfo.setPatcher( c -> c.publishInfo.originalValue == null
             ? null
-            : ContentPublishInfo.create( editedContent.getPublishInfo() ).published( null ).build() );
+            : ContentPublishInfo.create( editedContent.getPublishInfo() ).time( null ).build() );
         patchableContent.inherit.setPatcher( c -> stopDataInherit( c.inherit.originalValue ) );
 
         return patchableContent.build();
     }
 
-    private static Set<ContentInheritType> stopDataInherit( final Set<ContentInheritType> currentInherit )
+    protected static Set<ContentInheritType> stopDataInherit( final Set<ContentInheritType> currentInherit )
     {
-        if ( currentInherit.isEmpty() )
+        if ( currentInherit == null || currentInherit.isEmpty() )
         {
             return currentInherit;
         }

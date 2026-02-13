@@ -90,6 +90,7 @@ final class MoveContentCommand
             if ( !layersSync )
             {
                 processors.add( InheritedContentDataProcessor.PARENT );
+                processors.add( PublishDataProcessor::removePublishTime );
             }
             validateParentChildRelations( params.getParentContentPath(), sourceContent.getType() );
             newParentPath = ContentNodeHelper.translateContentPathToNodePath( params.getParentContentPath() );

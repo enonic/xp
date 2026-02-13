@@ -57,57 +57,31 @@ public final class PatchNodeCommand
 
     public PatchNodeResult execute()
     {
-        final Context context = this.branches.getSize() == 1
-            ? ContextBuilder.from( ContextAccessor.current() ).branch( this.branches.first() ).build()
-            : ContextAccessor.current();
+        verifyPermissionsOnCurrentBranch();
 
-        context.runWith( () -> {
-            verifyBranch();
-            verifyPermissions();
-            doPatchNode();
-        } );
+        ContextBuilder.from( ContextAccessor.current() ).branch( this.branches.first() ).build().runWith( this::doPatchNode );
 
         refresh( params.getRefresh() );
 
         return results.build();
     }
 
-    private void verifyBranch()
+    private void verifyPermissionsOnCurrentBranch()
     {
-        Preconditions.checkState( this.branches.contains( ContextAccessor.current().getBranch() ),
+
+        final Context context = ContextAccessor.current();
+        Preconditions.checkState( this.branches.contains( context.getBranch() ),
                                   "Current(source) branch '%s' is not in the list of branches for patch: %s",
                                   ContextAccessor.current().getBranch(), this.branches );
-    }
 
-    private void verifyPermissions()
-    {
-        final InternalContext internalContext = InternalContext.create( ContextAccessor.current() ).build();
-        final Branch firstBranch = this.branches.first();
-        final Node persistedNode = getPersistedNode( firstBranch );
+        final Node persistedNode = getPersistedNode( context.getBranch() );
 
-        if ( this.branches.getSize() == 1 )
+        final InternalContext internalContext = InternalContext.create( context ).build();
+
+        requirePermission( internalContext, Permission.MODIFY, persistedNode );
+        if ( this.branches.getSize() > 1 )
         {
-            requirePermission( internalContext, Permission.MODIFY, persistedNode );
-            return;
-        }
-
-        final Map<Branch, NodeVersionId> activeNodeMap = getActiveNodes( this.branches );
-
-        for ( Branch branch : this.branches )
-        {
-            Permission requiredPermission;
-
-            if ( branch.equals( firstBranch ) ||
-                !activeNodeMap.get( firstBranch ).equals( persistedNode.getNodeVersionId() ) )
-            {
-                requiredPermission = Permission.MODIFY;
-            }
-            else
-            {
-                requiredPermission = Permission.PUBLISH;
-            }
-
-            requirePermission( internalContext, requiredPermission, persistedNode );
+            requirePermission( internalContext, Permission.PUBLISH, persistedNode );
         }
     }
 
@@ -125,7 +99,7 @@ public final class PatchNodeCommand
 
     private void doPatchNode()
     {
-        final Map<Branch, NodeVersionId> activeNodeMap = getActiveNodes( this.branches );
+        final Map<Branch, NodeVersionId> activeNodeMap = getActiveNodes();
 
         final Map<NodeVersionId, NodeVersionData> patchedVersions = new HashMap<>(); // old version id -> new version data
 
@@ -190,28 +164,30 @@ public final class PatchNodeCommand
             final Node updatedNode =
                 Node.create( editedNode ).timestamp( Instant.now( CLOCK ) ).attachedBinaries( updatedBinaries ).build();
 
-            return this.nodeStorageService.store( StoreNodeParams.newVersion( updatedNode, params.getVersionAttributes() ), internalContext );
+            return this.nodeStorageService.store( StoreNodeParams.newVersion( updatedNode, params.getVersionAttributes() ),
+                                                  internalContext );
         }
     }
 
-    private Map<Branch, NodeVersionId> getActiveNodes( final Branches branches )
+    private Map<Branch, NodeVersionId> getActiveNodes()
     {
-        final Map<Branch, NodeVersionId> result = new HashMap<>();
+        final Map<Branch, NodeVersionId> activeNodeMap = new HashMap<>();
 
-        for ( Branch branch : branches )
+        for ( Branch branch : this.branches )
         {
             final Node persistedNode = this.getPersistedNode( branch );
             if ( persistedNode != null )
             {
-                result.put( branch, persistedNode.getNodeVersionId() );
+                activeNodeMap.put( branch, persistedNode.getNodeVersionId() );
             }
         }
 
-        if ( result.isEmpty() ) {
+        if ( activeNodeMap.isEmpty() )
+        {
             throw new NodeNotFoundException( "No active node found" );
         }
 
-        return result;
+        return activeNodeMap;
     }
 
     private Node getPersistedNode( final Branch branch )

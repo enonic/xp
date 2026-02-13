@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 
 import com.enonic.xp.archive.RestoreContentParams;
 import com.enonic.xp.archive.RestoreContentsResult;
-import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 
@@ -28,24 +27,9 @@ public final class RestoreContentHandler
     private List<String> executeRestore()
 
     {
-        final ContentId sourceId;
-        final ContentPath sourcePath;
-        if ( this.content.startsWith( "/" ) )
-        {
-            // source is path
-            sourcePath = ContentPath.from( this.content );
-            final Content sourceContent = contentService.getByPath( sourcePath );
-            sourceId = sourceContent.getId();
-        }
-        else
-        {
-            // source is key
-            sourceId = ContentId.from( this.content );
-        }
-
         final ContentPath pathToRestore = nullToEmpty( path ).isBlank() ? null : ContentPath.from( path );
 
-        return restore( sourceId, pathToRestore );
+        return restore( getContentId( this.content ), pathToRestore );
     }
 
     private List<String> restore( final ContentId sourceId, final ContentPath pathToRestore )

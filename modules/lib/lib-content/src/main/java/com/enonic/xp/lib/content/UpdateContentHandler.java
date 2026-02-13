@@ -4,9 +4,6 @@ import java.util.Map;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentEditor;
-import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.ContentNotFoundException;
-import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.convert.Converters;
@@ -27,52 +24,27 @@ public final class UpdateContentHandler
     @Override
     protected Object doExecute()
     {
-        final Content existingContent = getExistingContent( this.key );
-        if ( existingContent == null )
-        {
-            return null;
-        }
-
         final UpdateContentParams params = new UpdateContentParams();
-        params.contentId( existingContent.getId() );
-        params.editor( newContentEditor( existingContent ) );
+        params.contentId( getContentId( this.key ) );
+        params.editor( newContentEditor() );
         params.requireValid( this.requireValid );
 
         final Content result = this.contentService.update( params );
         return new ContentMapper( result );
     }
 
-    private Content getExistingContent( final String key )
-    {
-        try
-        {
-            if ( !key.startsWith( "/" ) )
-            {
-                return this.contentService.getById( ContentId.from( key ) );
-            }
-            else
-            {
-                return this.contentService.getByPath( ContentPath.from( key ) );
-            }
-        }
-        catch ( final ContentNotFoundException e )
-        {
-            return null;
-        }
-    }
-
-    private ContentEditor newContentEditor( final Content existingContent )
+    private ContentEditor newContentEditor()
     {
         return edit -> {
             final ScriptValue value = this.editor.call( new ContentMapper( edit.source ) );
             if ( value != null )
             {
-                updateContent( edit, value.getMap(), existingContent );
+                updateContent( edit, value.getMap() );
             }
         };
     }
 
-    private void updateContent( final EditableContent target, final Map<String, ?> map, final Content existingContent )
+    private void updateContent( final EditableContent target, final Map<String, ?> map )
     {
         edit( map, "displayName", String.class, val -> target.displayName = val.orElse( null ) );
         final String displayName = Converters.convert( map.get( "displayName" ), String.class );
@@ -84,13 +56,13 @@ public final class UpdateContentHandler
         final Object data = map.get( "data" );
         if ( data instanceof Map )
         {
-            target.data = createPropertyTree( (Map) data, existingContent.getType() );
+            target.data = createPropertyTree( (Map) data, target.source.getType() );
         }
 
         final Object extraData = map.get( "x" );
         if ( extraData instanceof Map )
         {
-            target.extraDatas = createExtraDatas( (Map) extraData, existingContent.getType() );
+            target.extraDatas = createExtraDatas( (Map) extraData, target.source.getType() );
         }
 
         updatePage( target, map );
@@ -108,7 +80,7 @@ public final class UpdateContentHandler
             else
             {
                 edit( pageMap, "descriptor", String.class,
-                       val -> target.page().descriptor = val.map( DescriptorKey::from ).orElse( null ) );
+                      val -> target.page().descriptor = val.map( DescriptorKey::from ).orElse( null ) );
                 edit( pageMap, "template", String.class, val -> target.page().template = val.map( PageTemplateKey::from ).orElse( null ) );
                 edit( pageMap, "regions", Map.class, val -> target.page().regions = val.map( this::createRegions ).orElse( null ) );
                 edit( pageMap, "fragment", Map.class, val -> target.page().fragment = val.map( this::createComponent ).orElse( null ) );

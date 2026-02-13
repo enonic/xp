@@ -49,7 +49,7 @@ public class ApplyPermissionsHandler
                                                                                         .addPermissions( addPermissions )
                                                                                         .removePermissions( removePermissions )
                                                                                         .scope( scope )
-                                                                                        .addBranches( branches )
+                                                                                        .branches( branches )
                                                                                         .build() ) );
     }
 

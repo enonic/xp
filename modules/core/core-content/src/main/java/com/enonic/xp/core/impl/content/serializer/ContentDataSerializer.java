@@ -48,7 +48,7 @@ import static com.enonic.xp.content.ContentPropertyNames.PROCESSED_REFERENCES;
 import static com.enonic.xp.content.ContentPropertyNames.PUBLISH_FIRST;
 import static com.enonic.xp.content.ContentPropertyNames.PUBLISH_FROM;
 import static com.enonic.xp.content.ContentPropertyNames.PUBLISH_INFO;
-import static com.enonic.xp.content.ContentPropertyNames.PUBLISH_PUBLISHED;
+import static com.enonic.xp.content.ContentPropertyNames.PUBLISH_TIME;
 import static com.enonic.xp.content.ContentPropertyNames.PUBLISH_TO;
 import static com.enonic.xp.content.ContentPropertyNames.TYPE;
 import static com.enonic.xp.content.ContentPropertyNames.VALID;
@@ -244,7 +244,7 @@ public final class ContentDataSerializer
             publishInfo.setInstant( PUBLISH_FIRST, data.first() );
             publishInfo.setInstant( PUBLISH_FROM, data.from() );
             publishInfo.setInstant( PUBLISH_TO, data.to() );
-            publishInfo.setInstant( PUBLISH_PUBLISHED, data.published() );
+            publishInfo.setInstant( PUBLISH_TIME, data.time() );
         }
     }
 
@@ -277,7 +277,16 @@ public final class ContentDataSerializer
 
     private void extractPublishInfo( final PropertySet contentAsSet, final Content.Builder<?> builder )
     {
-        builder.publishInfo( PublishInfoSerializer.serialize( contentAsSet.getSet( PUBLISH_INFO ) ) );
+        final PropertySet publishInfo = contentAsSet.getSet( PUBLISH_INFO );
+        if ( publishInfo != null )
+        {
+            builder.publishInfo( ContentPublishInfo.create()
+                                     .first( publishInfo.getInstant( PUBLISH_FIRST ) )
+                                     .from( publishInfo.getInstant( PUBLISH_FROM ) )
+                                     .to( publishInfo.getInstant( PUBLISH_TO ) )
+                                     .time( publishInfo.getInstant( PUBLISH_TIME ) )
+                                     .build() );
+        }
     }
 
     private void extractAttachments( final PropertySet contentAsSet, final Content.Builder<?> builder )

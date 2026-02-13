@@ -2,6 +2,8 @@ package com.enonic.xp.node;
 
 import java.util.List;
 
+import org.jspecify.annotations.Nullable;
+
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -36,7 +38,7 @@ public final class PatchNodeResult
         return results;
     }
 
-    public Node getResult( final Branch branch )
+    public @Nullable Node getResult( final Branch branch )
     {
         return results.stream().filter( br -> br.branch.equals( branch ) ).findAny().map( BranchResult::node ).orElse( null );
     }

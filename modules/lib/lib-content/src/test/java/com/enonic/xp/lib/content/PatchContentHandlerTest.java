@@ -13,6 +13,7 @@ import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPatcher;
 import com.enonic.xp.content.PatchContentParams;
 import com.enonic.xp.content.PatchContentResult;
@@ -164,7 +165,9 @@ public class PatchContentHandlerTest
     @Test
     void patchNotFound()
     {
-        runFunction( "/test/PatchContentHandlerTest.js", "patch_notFound" );
+        when( this.contentService.patch( Mockito.isA( PatchContentParams.class ) ) ).thenThrow( ContentNotFoundException.class );
+
+        assertThrowsExactly( RuntimeException.class, () -> runFunction( "/test/PatchContentHandlerTest.js", "patch_notFound" ) );
     }
 
     @Test
@@ -213,11 +216,6 @@ public class PatchContentHandlerTest
         mockXData();
 
         runFunction( "/test/PatchContentHandlerTest.js", "patchValidationErrors" );
-    }
-
-    public static ByteSource createByteSource( final String value )
-    {
-        return ByteSource.wrap( value.getBytes() );
     }
 
     @Test
@@ -365,5 +363,12 @@ public class PatchContentHandlerTest
             .contentId( params.getContentId() )
             .addResult( ContentConstants.BRANCH_DRAFT, patchable.build() )
             .build();
+    }
+
+    // used from js tests
+    @SuppressWarnings("unused")
+    public static ByteSource createByteSource( final String value )
+    {
+        return ByteSource.wrap( value.getBytes() );
     }
 }

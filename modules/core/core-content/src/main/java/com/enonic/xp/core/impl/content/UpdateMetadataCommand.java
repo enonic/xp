@@ -7,6 +7,7 @@ import com.enonic.xp.content.ContentMetadataEditor;
 import com.enonic.xp.content.EditableContentMetadata;
 import com.enonic.xp.content.UpdateContentMetadataParams;
 import com.enonic.xp.content.UpdateContentMetadataResult;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.PatchNodeResult;
 
@@ -33,19 +34,15 @@ public class UpdateMetadataCommand
 
     UpdateContentMetadataResult execute()
     {
-        return doExecute();
-    }
-
-    private UpdateContentMetadataResult doExecute()
-    {
         final PatchNodeParams patchNodeParams = PatchNodeParamsFactory.create()
             .contentId( params.getContentId() )
             .editor( content -> {
                 Content editedContent = editMetadata( params.getEditor(), content );
-                return afterUpdate( editedContent );
+                editedContent = Content.create( editedContent ).setInherit( stopDataInherit( editedContent.getInherit() ) ).build();
+                return editedContent;
             } )
             .versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.UPDATE_METADATA_ATTR ) )
-            .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
+            .branches( Branches.from( ContentConstants.BRANCH_MASTER, ContentConstants.BRANCH_DRAFT ) )
             .contentTypeService( this.contentTypeService )
             .xDataService( this.xDataService )
             .pageDescriptorService( this.pageDescriptorService )
@@ -58,7 +55,7 @@ public class UpdateMetadataCommand
         final PatchNodeResult result = nodeService.patch( patchNodeParams );
 
         return UpdateContentMetadataResult.create()
-            .content( ContentNodeTranslator.fromNode( result.getResults().getFirst().node() ) )
+            .content( ContentNodeTranslator.fromNode( result.getResult( ContextAccessor.current().getBranch() ) ) )
             .build();
     }
 

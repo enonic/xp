@@ -1593,8 +1593,6 @@ interface ModifyMediaHandler {
 
     setTags(value: string[]): void;
 
-    setWorkflow(value: ScriptValue): void;
-
     execute<Data, Type extends string>(): Content<Data, Type>;
 }
 
@@ -1618,8 +1616,6 @@ interface UpdateMediaHandler {
     setMimeType(value?: string | null): void;
 
     setTags(value: string[]): void;
-
-    setWorkflow(value: ScriptValue): void;
 
     execute<Data, Type extends string>(): Content<Data, Type>;
 }
@@ -1675,7 +1671,6 @@ export function modifyMedia<Data = Record<string, unknown>, Type extends string 
     bean.setCaption(__.nullOrValue(caption));
     bean.setCopyright(__.nullOrValue(copyright));
     bean.setMimeType(__.nullOrValue(mimeType));
-    bean.setWorkflow(__.toScriptValue(workflow));
     bean.setArtist(([] as string[]).concat(artist));
     bean.setTags(([] as string[]).concat(tags));
 
@@ -1740,7 +1735,6 @@ export function updateMedia<Data = Record<string, unknown>, Type extends string 
     bean.setCaption(__.nullOrValue(caption));
     bean.setCopyright(__.nullOrValue(copyright));
     bean.setMimeType(__.nullOrValue(mimeType));
-    bean.setWorkflow(__.toScriptValue(workflow));
     bean.setArtist(([] as string[]).concat(artist));
     bean.setTags(([] as string[]).concat(tags));
 
@@ -1895,6 +1889,49 @@ export function getVersions(params: GetVersionsParams): ContentVersionsResult {
     if (count !== undefined && count !== null) {
         bean.setCount(count);
     }
+
+    return __.toNativeObject(bean.execute());
+}
+
+export interface GetActiveVersionsParams {
+    key: string;
+    branches: string[];
+}
+
+export type ActiveContentVersions = Record<string, ContentVersion>;
+
+interface GetActiveVersionsHandler {
+    setKey(value: string): void;
+
+    setBranches(value: string[]): void;
+
+    execute(): ActiveContentVersions;
+}
+
+/**
+ * This function returns the active content version for each specified branch.
+ *
+ * @example-ref examples/content/getActiveVersions.js
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key Path or ID of the content.
+ * @param {string[]} params.branches Array of branch names to get active versions for.
+ *
+ * @returns {object} Object with branch names as keys and content versions as values.
+ */
+export function getActiveVersions(params: GetActiveVersionsParams): ActiveContentVersions {
+    checkRequired(params, 'key');
+    checkRequired(params, 'branches');
+
+    const {
+        key,
+        branches,
+    } = params ?? {};
+
+    const bean: GetActiveVersionsHandler = __.newBean<GetActiveVersionsHandler>('com.enonic.xp.lib.content.GetActiveVersionsHandler');
+
+    bean.setKey(key);
+    bean.setBranches(branches);
 
     return __.toNativeObject(bean.execute());
 }

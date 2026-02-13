@@ -20,6 +20,8 @@ import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentPublishInfo;
+import com.enonic.xp.content.ContentVersion;
+import com.enonic.xp.content.ContentVersionId;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -28,8 +30,11 @@ import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.event.EventPublisher;
+import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.query.filter.BooleanFilter;
 import com.enonic.xp.query.filter.Filters;
 import com.enonic.xp.query.filter.RangeFilter;
@@ -38,6 +43,7 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.util.GenericValue;
 
 abstract class AbstractContentCommand
 {
@@ -228,6 +234,60 @@ abstract class AbstractContentCommand
         {
             throw new IllegalArgumentException(
                 String.format( "A content with type '%s' cannot be a child of '%s' with path %s", typeName, parentTypeName, parentPath ) );
+        }
+    }
+
+    ContentVersion createVersion( final NodeVersion nodeVersion )
+    {
+        final Attributes attributes = nodeVersion.getAttributes();
+
+        final ContentVersion.Builder builder = ContentVersion.create()
+            .contentId( ContentId.from( nodeVersion.getNodeId() ) )
+            .versionId( ContentVersionId.from( nodeVersion.getNodeVersionId().toString() ) )
+            .path( ContentNodeHelper.translateNodePathToContentPath( nodeVersion.getNodePath() ) )
+            .timestamp( nodeVersion.getTimestamp() );
+
+        if ( attributes != null )
+        {
+            attributes.entrySet()
+                .stream()
+                .filter( v -> v.getKey().startsWith( "content." ) )
+                .map( v -> new ContentVersion.Action( v.getKey(), v.getValue()
+                    .optional( "fields" )
+                    .map( GenericValue::toStringList )
+                    .orElse( List.of() ), ContentAttributesHelper.getUser( v.getValue() ),
+                                                      ContentAttributesHelper.getOpTime( v.getValue() ) ) )
+                .forEach( builder::addAction );
+        }
+
+        if ( nodeVersion.getNodeCommitId() != null )
+        {
+            final NodeCommitEntry nodeCommitEntry = nodeService.getCommit( nodeVersion.getNodeCommitId() );
+            if ( nodeCommitEntry != null )
+            {
+                final String commitMessage = nodeCommitEntry.getMessage();
+                builder.comment( getCommentPart( commitMessage ) );
+            }
+        }
+
+        return builder.build();
+    }
+
+    private static String getCommentPart( final String message )
+    {
+        if ( message.startsWith( ContentConstants.PUBLISH_COMMIT_PREFIX + ContentConstants.PUBLISH_COMMIT_PREFIX_DELIMITER ) )
+        {
+            return message.substring(
+                ContentConstants.PUBLISH_COMMIT_PREFIX.length() + ContentConstants.PUBLISH_COMMIT_PREFIX_DELIMITER.length() );
+        }
+        else if ( message.startsWith( ContentConstants.ARCHIVE_COMMIT_PREFIX + ContentConstants.PUBLISH_COMMIT_PREFIX_DELIMITER ) )
+        {
+            return message.substring(
+                ContentConstants.ARCHIVE_COMMIT_PREFIX.length() + ContentConstants.PUBLISH_COMMIT_PREFIX_DELIMITER.length() );
+        }
+        else
+        {
+            return null;
         }
     }
 

@@ -16,12 +16,10 @@ import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
-import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentName;
-import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPatcher;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
@@ -51,14 +49,8 @@ public final class PatchContentHandler
     @Override
     protected Object doExecute()
     {
-        final Content existingContent = getExistingContent( this.key );
-        if ( existingContent == null )
-        {
-            return null;
-        }
-
         final PatchContentParams.Builder params = PatchContentParams.create()
-            .contentId( existingContent.getId() )
+            .contentId( getContentId( this.key ) )
             .patcher( newContentPatcher() )
             .createAttachments( parseCreateAttachments( (List) Optional.ofNullable( attachments )
                 .map( att -> att.getMember( "createAttachments" ) )
@@ -88,25 +80,6 @@ public final class PatchContentHandler
     protected boolean strictDataValidation()
     {
         return false;
-    }
-
-    private Content getExistingContent( final String key )
-    {
-        try
-        {
-            if ( !key.startsWith( "/" ) )
-            {
-                return this.contentService.getById( ContentId.from( key ) );
-            }
-            else
-            {
-                return this.contentService.getByPath( ContentPath.from( key ) );
-            }
-        }
-        catch ( final ContentNotFoundException e )
-        {
-            return null;
-        }
     }
 
     private CreateAttachments parseCreateAttachments( List<Map<String, Object>> createAttachments )
@@ -200,7 +173,7 @@ public final class PatchContentHandler
             .from( getInstant( value, "from" ) )
             .to( getInstant( value, "to" ) )
             .first( getInstant( value, "first" ) )
-            .published( getInstant( value, "published" ) )
+            .time( getInstant( value, "time" ) )
             .build();
     }
 

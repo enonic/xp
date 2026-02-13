@@ -1,0 +1,22 @@
+package com.enonic.xp.core.impl.content;
+
+import com.enonic.xp.content.ContentPropertyNames;
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.node.NodePath;
+
+public class PublishDataProcessor
+{
+    public static PropertyTree removePublishTime( final PropertyTree originalData, final NodePath nodePath )
+    {
+        if ( originalData.hasProperty( ContentPropertyNames.PUBLISH_INFO ) )
+        {
+            final PropertyTree data = originalData.copy();
+            data.getSet( ContentPropertyNames.PUBLISH_INFO ).removeProperties( ContentPropertyNames.PUBLISH_TIME );
+            return data;
+        }
+        else
+        {
+            return originalData;
+        }
+    }
+}

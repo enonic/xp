@@ -2,10 +2,6 @@ package com.enonic.xp.lib.content;
 
 import java.util.Map;
 
-import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.ContentNotFoundException;
-import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.EditableContentWorkflow;
 import com.enonic.xp.content.UpdateWorkflowParams;
 import com.enonic.xp.content.UpdateWorkflowResult;
@@ -25,18 +21,8 @@ public final class UpdateWorkflowHandler
     @Override
     protected Object doExecute()
     {
-        final Content existingContent;
-        try
-        {
-            existingContent = getExistingContent( this.key );
-        }
-        catch ( final ContentNotFoundException e )
-        {
-            return null;
-        }
-
         final UpdateWorkflowParams params =
-            UpdateWorkflowParams.create().contentId( existingContent.getId() ).editor( newWorkflowEditor() ).build();
+            UpdateWorkflowParams.create().contentId( getContentId( this.key ) ).editor( newWorkflowEditor() ).build();
 
         final UpdateWorkflowResult result = this.contentService.updateWorkflow( params );
 
@@ -47,18 +33,6 @@ public final class UpdateWorkflowHandler
     protected boolean strictDataValidation()
     {
         return false;
-    }
-
-    private Content getExistingContent( final String key )
-    {
-        if ( !key.startsWith( "/" ) )
-        {
-            return this.contentService.getById( ContentId.from( key ) );
-        }
-        else
-        {
-            return this.contentService.getByPath( ContentPath.from( key ) );
-        }
     }
 
     private WorkflowEditor newWorkflowEditor()
