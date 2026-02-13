@@ -10,9 +10,14 @@ import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.PushContentParams;
+import com.enonic.xp.content.UpdateWorkflowParams;
+import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.project.ProjectConstants;
+import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
@@ -146,9 +151,11 @@ class ContentServiceImplTest_getNearestSite
             .add( AccessControlEntry.create().principal( RoleKeys.EVERYONE ).allow( Permission.READ ).build() )
             .build() );
 
+        ProjectName projectName = ProjectName.from( ContextAccessor.current().getRepositoryId() );
         final Site fetchedSite = ContextBuilder.from( ContextAccessor.current() )
             .authInfo( AuthenticationInfo.create()
                            .principals( RoleKeys.EVERYONE )
+                           .principals( PrincipalKey.ofRole( ProjectConstants.PROJECT_NAME_PREFIX + projectName + "." + ProjectRole.VIEWER.name().toLowerCase() ) )
                            .user( User.create().key( PrincipalKey.ofAnonymous() ).login( "anonymous" ).build() )
                            .build() )
             .build()

@@ -16,8 +16,7 @@ public class ProjectAccessHelper
 
     public static PrincipalKey createRoleKey( final ProjectName projectName, final ProjectRole projectRole )
     {
-        final String roleName = ProjectConstants.PROJECT_NAME_PREFIX + projectName + "." + projectRole.name().toLowerCase();
-        return PrincipalKey.ofRole( roleName );
+        return PrincipalKey.ofRole( ProjectConstants.PROJECT_NAME_PREFIX + projectName + "." + projectRole.name().toLowerCase() );
     }
 
     public static boolean hasAdminAccess( final AuthenticationInfo authenticationInfo )

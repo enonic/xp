@@ -10,7 +10,12 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.User;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -23,8 +28,7 @@ class ContentServiceImplTest_getById
     void test_pending_publish_master()
     {
         assertThrows( ContentNotFoundException.class, () -> ctxMaster().callWith( () -> {
-            final Content content =
-                createAndPublishContent( ContentPath.ROOT, Instant.now().plus( Duration.ofDays( 1 ) ) );
+            final Content content = createAndPublishContent( ContentPath.ROOT, Instant.now().plus( Duration.ofDays( 1 ) ) );
 
             return this.contentService.getById( content.getId() );
         } ) );
@@ -33,7 +37,8 @@ class ContentServiceImplTest_getById
     @Test
     void test_publish_expired_master()
     {
-        final Content content = createAndPublishContent( ContentPath.ROOT, Instant.now().minus( Duration.ofDays( 2 ) ), Instant.now().minus( Duration.ofDays( 1 ) ) );
+        final Content content = createAndPublishContent( ContentPath.ROOT, Instant.now().minus( Duration.ofDays( 2 ) ),
+                                                         Instant.now().minus( Duration.ofDays( 1 ) ) );
 
         assertThrows( ContentNotFoundException.class, () -> ctxMaster().callWith( () -> {
 
@@ -44,7 +49,8 @@ class ContentServiceImplTest_getById
     @Test
     void test_published_draft()
     {
-        final Content content = createAndPublishContent( ContentPath.ROOT, Instant.now().minus( Duration.ofDays( 1 ) ), Instant.now().plus( Duration.ofDays( 1 ) ) );
+        final Content content = createAndPublishContent( ContentPath.ROOT, Instant.now().minus( Duration.ofDays( 1 ) ),
+                                                         Instant.now().plus( Duration.ofDays( 1 ) ) );
 
         assertNotNull( this.contentService.getById( content.getId() ) );
     }
@@ -53,7 +59,8 @@ class ContentServiceImplTest_getById
     void test_published_master()
     {
         ctxMaster().callWith( () -> {
-            final Content content = createAndPublishContent( ContentPath.ROOT, Instant.now().minus( Duration.ofDays( 1 ) ), Instant.now().plus( Duration.ofDays( 1 ) ));
+            final Content content = createAndPublishContent( ContentPath.ROOT, Instant.now().minus( Duration.ofDays( 1 ) ),
+                                                             Instant.now().plus( Duration.ofDays( 1 ) ) );
 
             assertNotNull( this.contentService.getById( content.getId() ) );
             return null;
@@ -67,6 +74,19 @@ class ContentServiceImplTest_getById
 
         assertThrows( ContentNotFoundException.class, () -> ContextBuilder.from( ctxMasterSu() )
             .attribute( ContentConstants.CONTENT_ROOT_PATH_ATTRIBUTE, new NodePath( "/archive" ) )
+            .build()
+            .callWith( () -> this.contentService.getById( content.getId() ) ) );
+    }
+
+    @Test
+    void get_in_draft_no_project_assess_fails()
+    {
+        final Content content = createContent( ContentPath.ROOT, "my-content" );
+        assertThrows( ForbiddenAccessException.class, () -> ContextBuilder.from( ctxDraft() )
+            .authInfo( AuthenticationInfo.create()
+                           .principals( RoleKeys.EVERYONE )
+                           .user( User.create().key( PrincipalKey.ofAnonymous() ).login( "anonymous" ).build() )
+                           .build() )
             .build()
             .callWith( () -> this.contentService.getById( content.getId() ) ) );
     }
