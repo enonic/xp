@@ -7,6 +7,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentEditor;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.form.Form;
@@ -21,6 +22,7 @@ import com.enonic.xp.site.SiteDescriptor;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
@@ -157,7 +159,9 @@ class UpdateContentHandlerTest
     @Test
     void updateNotFound()
     {
-        runFunction( "/test/UpdateContentHandlerTest.js", "update_notFound" );
+        when( this.contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenThrow( ContentNotFoundException.class );
+
+        assertThrows( ContentNotFoundException.class, () -> runFunction( "/test/UpdateContentHandlerTest.js", "update_notFound" ) );
     }
 
     @Test

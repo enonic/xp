@@ -4,8 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
-import com.google.common.io.ByteSource;
-
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
@@ -13,6 +11,7 @@ import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPatcher;
 import com.enonic.xp.content.PatchContentParams;
 import com.enonic.xp.content.PatchContentResult;
@@ -164,7 +163,9 @@ public class PatchContentHandlerTest
     @Test
     void patchNotFound()
     {
-        runFunction( "/test/PatchContentHandlerTest.js", "patch_notFound" );
+        when( this.contentService.patch( Mockito.isA( PatchContentParams.class ) ) ).thenThrow( ContentNotFoundException.class );
+
+        assertThrowsExactly( RuntimeException.class, () -> runFunction( "/test/PatchContentHandlerTest.js", "patch_notFound" ) );
     }
 
     @Test
@@ -213,11 +214,6 @@ public class PatchContentHandlerTest
         mockXData();
 
         runFunction( "/test/PatchContentHandlerTest.js", "patchValidationErrors" );
-    }
-
-    public static ByteSource createByteSource( final String value )
-    {
-        return ByteSource.wrap( value.getBytes() );
     }
 
     @Test

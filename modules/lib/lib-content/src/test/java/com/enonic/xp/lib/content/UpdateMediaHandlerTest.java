@@ -3,6 +3,7 @@ package com.enonic.xp.lib.content;
 import java.time.Instant;
 import java.util.stream.Collectors;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
@@ -60,21 +61,24 @@ class UpdateMediaHandlerTest
     @Test
     void testUpdateMediaContentNotFoundById()
     {
-        Mockito.when( this.contentService.getById( Mockito.any( ContentId.class ) ) ).thenReturn( null );
-        runFunction( "/test/UpdateMediaHandlerTest.js", "updateMediaContentNotFoundById" );
+        Mockito.when( this.contentService.update( Mockito.any( UpdateMediaParams.class ) ) ).thenThrow( ContentNotFoundException.class );
+        Assertions.assertThrows( ContentNotFoundException.class,
+                                 () -> runFunction( "/test/UpdateMediaHandlerTest.js", "updateMediaContentNotFoundById" ) );
     }
 
     @Test
     void testUpdateMediaContentNotFoundByPath()
     {
-        Mockito.when( this.contentService.getByPath( Mockito.any( ContentPath.class ) ) ).thenReturn( null );
-        runFunction( "/test/UpdateMediaHandlerTest.js", "updateMediaContentNotFoundByPath" );
+        Mockito.when( this.contentService.getByPath( Mockito.any( ContentPath.class ) ) ).thenThrow( ContentNotFoundException.class );
+        Assertions.assertThrows( ContentNotFoundException.class,
+                                 () -> runFunction( "/test/UpdateMediaHandlerTest.js", "updateMediaContentNotFoundByPath" ) );
     }
 
     @Test
     void testUpdateMediaThrowContentNotFound()
     {
         Mockito.when( this.contentService.getByPath( Mockito.any( ContentPath.class ) ) ).thenThrow( ContentNotFoundException.class );
-        runFunction( "/test/UpdateMediaHandlerTest.js", "updateMediaThrowContentNotFound" );
+        Assertions.assertThrows( ContentNotFoundException.class,
+                                 () -> runFunction( "/test/UpdateMediaHandlerTest.js", "updateMediaThrowContentNotFound" ) );
     }
 }
