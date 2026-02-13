@@ -18,8 +18,8 @@ public final class GetActiveContentVersionsParams
 
     private GetActiveContentVersionsParams( final Builder builder )
     {
-        contentId = Objects.requireNonNull( builder.contentId, "contentId cannot be null" );
-        branches = Objects.requireNonNull( builder.branches, "branches cannot be null" );
+        contentId = Objects.requireNonNull( builder.contentId, "contentId is required" );
+        branches = Objects.requireNonNull( builder.branches, "branches is required" );
     }
 
     public ContentId getContentId()

@@ -24,22 +24,7 @@ public final class ArchiveContentHandler
     private List<String> executeArchive()
 
     {
-        final ContentId sourceId;
-        final ContentPath sourcePath;
-        if ( this.content.startsWith( "/" ) )
-        {
-            // source is path
-            sourcePath = ContentPath.from( this.content );
-            final Content sourceContent = contentService.getByPath( sourcePath );
-            sourceId = sourceContent.getId();
-        }
-        else
-        {
-            // source is key
-            sourceId = ContentId.from( this.content );
-        }
-
-        return archive( sourceId );
+        return archive( getContentId( content ) );
     }
 
     private List<String> archive( final ContentId sourceId )
