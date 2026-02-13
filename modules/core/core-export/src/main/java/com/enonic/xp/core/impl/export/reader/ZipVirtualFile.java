@@ -127,7 +127,7 @@ public class ZipVirtualFile
     {
         try
         {
-            return URI.create( "jar:file:" + zipFilePath.toAbsolutePath().toUri() + "!/" + entryPath ).toURL();
+            return URI.create( "jar:" + zipFilePath.toAbsolutePath().toUri() + "!/" + entryPath ).toURL();
         }
         catch ( MalformedURLException e )
         {
