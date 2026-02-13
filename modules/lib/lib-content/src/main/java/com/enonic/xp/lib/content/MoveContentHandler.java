@@ -23,17 +23,7 @@ public final class MoveContentHandler
 
     private Content executeMove()
     {
-        final ContentId sourceId;
-        if ( this.source.startsWith( "/" ) )
-        {
-            // source is path
-            sourceId = contentService.getByPath( ContentPath.from( this.source ) ).getId();
-        }
-        else
-        {
-            // source is key
-            sourceId = ContentId.from( this.source );
-        }
+        final ContentId sourceId = getContentId( this.source );
 
         if ( target.endsWith( "/" ) )
         {

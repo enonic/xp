@@ -2,17 +2,12 @@ package com.enonic.xp.lib.content;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.ContentNotFoundException;
-import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.lib.content.mapper.ContentMapper;
-import com.enonic.xp.script.ScriptValue;
 
 public class UpdateMediaHandler
     extends BaseContextHandler
@@ -37,19 +32,11 @@ public class UpdateMediaHandler
 
     private List<String> tags;
 
-    private Map<String, Object> workflow;
-
     @Override
     protected ContentMapper doExecute()
     {
-        final Content existingContent = getExistingContent( this.key );
-        if ( existingContent == null )
-        {
-            return null;
-        }
-
         final UpdateMediaParams params = new UpdateMediaParams();
-        params.content( existingContent.getId() );
+        params.content( getContentId( this.key ) );
         params.name( name );
         params.mimeType( mimeType );
         params.byteSource( data );
@@ -62,25 +49,6 @@ public class UpdateMediaHandler
 
         final Content result = this.contentService.update( params );
         return new ContentMapper( result );
-    }
-
-    private Content getExistingContent( final String key )
-    {
-        try
-        {
-            if ( !key.startsWith( "/" ) )
-            {
-                return this.contentService.getById( ContentId.from( key ) );
-            }
-            else
-            {
-                return this.contentService.getByPath( ContentPath.from( key ) );
-            }
-        }
-        catch ( final ContentNotFoundException e )
-        {
-            return null;
-        }
     }
 
     public void setKey( final String key )
@@ -133,11 +101,4 @@ public class UpdateMediaHandler
         this.tags = tags != null ? Arrays.asList( tags ) : null;
     }
 
-    public void setWorkflow( final ScriptValue workflow )
-    {
-        if ( workflow != null )
-        {
-            this.workflow = workflow.getMap();
-        }
-    }
 }

@@ -1593,8 +1593,6 @@ interface ModifyMediaHandler {
 
     setTags(value: string[]): void;
 
-    setWorkflow(value: ScriptValue): void;
-
     execute<Data, Type extends string>(): Content<Data, Type>;
 }
 
@@ -1618,8 +1616,6 @@ interface UpdateMediaHandler {
     setMimeType(value?: string | null): void;
 
     setTags(value: string[]): void;
-
-    setWorkflow(value: ScriptValue): void;
 
     execute<Data, Type extends string>(): Content<Data, Type>;
 }
@@ -1675,7 +1671,6 @@ export function modifyMedia<Data = Record<string, unknown>, Type extends string 
     bean.setCaption(__.nullOrValue(caption));
     bean.setCopyright(__.nullOrValue(copyright));
     bean.setMimeType(__.nullOrValue(mimeType));
-    bean.setWorkflow(__.toScriptValue(workflow));
     bean.setArtist(([] as string[]).concat(artist));
     bean.setTags(([] as string[]).concat(tags));
 
@@ -1740,7 +1735,6 @@ export function updateMedia<Data = Record<string, unknown>, Type extends string 
     bean.setCaption(__.nullOrValue(caption));
     bean.setCopyright(__.nullOrValue(copyright));
     bean.setMimeType(__.nullOrValue(mimeType));
-    bean.setWorkflow(__.toScriptValue(workflow));
     bean.setArtist(([] as string[]).concat(artist));
     bean.setTags(([] as string[]).concat(tags));
 

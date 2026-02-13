@@ -24,7 +24,7 @@ public final class GetActiveVersionsHandler
         }
 
         final GetActiveContentVersionsParams params = GetActiveContentVersionsParams.create()
-            .contentId( getContentId( key ) )
+            .contentId( getContentId( this.key ) )
             .branches( Arrays.stream( branches ).map( Branch::from ).collect( Branches.collector() ) )
             .build();
 

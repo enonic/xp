@@ -5,10 +5,7 @@ import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentInheritType;
-import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ResetContentInheritParams;
 import com.enonic.xp.content.SyncContentService;
 import com.enonic.xp.project.ProjectName;
@@ -52,25 +49,12 @@ public class ResetInheritanceHandler
     {
         validate();
 
-        Content content;
-
-        if ( this.key.startsWith( "/" ) )
-        {
-            content = contentService.getByPath( ContentPath.from( this.key ) );
-        }
-        else
-        {
-            content = contentService.getById( ContentId.from( this.key ) );
-        }
-
-        syncContentService.get().
-            resetInheritance( ResetContentInheritParams.create().
-                contentId( content.getId() ).
-                projectName( ProjectName.from( projectName ) ).
-                inherit( inherit.stream().
-                    map( ContentInheritType::valueOf ).
-                    collect( Collectors.toSet() ) ).
-                build() );
+        syncContentService.get()
+            .resetInheritance( ResetContentInheritParams.create()
+                                   .contentId( getContentId( this.key ) )
+                                   .projectName( ProjectName.from( projectName ) )
+                                   .inherit( inherit.stream().map( ContentInheritType::valueOf ).collect( Collectors.toSet() ) )
+                                   .build() );
 
         return null;
     }

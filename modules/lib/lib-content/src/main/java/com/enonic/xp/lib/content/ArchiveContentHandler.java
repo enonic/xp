@@ -6,9 +6,7 @@ import java.util.stream.Collectors;
 
 import com.enonic.xp.archive.ArchiveContentParams;
 import com.enonic.xp.archive.ArchiveContentsResult;
-import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.ContentPath;
 
 public final class ArchiveContentHandler
     extends BaseContextHandler
@@ -22,9 +20,8 @@ public final class ArchiveContentHandler
     }
 
     private List<String> executeArchive()
-
     {
-        return archive( getContentId( content ) );
+        return archive( getContentId( this.content ) );
     }
 
     private List<String> archive( final ContentId sourceId )
