@@ -13,6 +13,9 @@ import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.project.ProjectConstants;
+import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
@@ -83,8 +86,7 @@ class ContentServiceImplTest_getNearestSite
     {
         final Content site = createSite();
 
-        final Content child =
-            createAndPublishContent( site.getPath(), Instant.now().plus( Duration.ofDays( 1 ) ) );
+        final Content child = createAndPublishContent( site.getPath(), Instant.now().plus( Duration.ofDays( 1 ) ) );
         this.contentService.publish( PushContentParams.create().contentIds( ContentIds.from( site.getId() ) ).build() );
 
         final Site fetchedSite = ctxMaster().callWith( () -> this.contentService.getNearestSite( child.getId() ) );
@@ -96,8 +98,7 @@ class ContentServiceImplTest_getNearestSite
     {
         final Content site = createSite();
         final Content childLevel1 = createContent( site.getPath() );
-        final Content childLevel2 =
-            createAndPublishContent( childLevel1.getPath(), Instant.now().plus( Duration.ofDays( 1 ) ) );
+        final Content childLevel2 = createAndPublishContent( childLevel1.getPath(), Instant.now().plus( Duration.ofDays( 1 ) ) );
         final Content childLevel3 = createContent( childLevel2.getPath() );
         this.contentService.publish( PushContentParams.create().contentIds( ContentIds.from( site.getId() ) ).build() );
 
@@ -109,7 +110,8 @@ class ContentServiceImplTest_getNearestSite
     void child_of_site_published_master()
     {
         final Content site = createSite();
-        final Content child = createAndPublishContent( site.getPath(), Instant.now().plus( Duration.ofDays( 1 ) ), Instant.now().plus( Duration.ofDays( 2 ) ) );
+        final Content child = createAndPublishContent( site.getPath(), Instant.now().plus( Duration.ofDays( 1 ) ),
+                                                       Instant.now().plus( Duration.ofDays( 2 ) ) );
         this.contentService.publish( PushContentParams.create().contentIds( ContentIds.from( site.getId() ) ).build() );
 
         final Site fetchedSite = ctxMaster().callWith( () -> this.contentService.getNearestSite( child.getId() ) );
@@ -146,9 +148,12 @@ class ContentServiceImplTest_getNearestSite
             .add( AccessControlEntry.create().principal( RoleKeys.EVERYONE ).allow( Permission.READ ).build() )
             .build() );
 
+        ProjectName projectName = ProjectName.from( ContextAccessor.current().getRepositoryId() );
         final Site fetchedSite = ContextBuilder.from( ContextAccessor.current() )
             .authInfo( AuthenticationInfo.create()
                            .principals( RoleKeys.EVERYONE )
+                           .principals( PrincipalKey.ofRole(
+                               ProjectConstants.PROJECT_NAME_PREFIX + projectName + "." + ProjectRole.VIEWER.name().toLowerCase() ) )
                            .user( User.create().key( PrincipalKey.ofAnonymous() ).login( "anonymous" ).build() )
                            .build() )
             .build()

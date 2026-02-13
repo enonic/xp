@@ -2,15 +2,11 @@ package com.enonic.xp.portal.impl.handler;
 
 import java.util.Arrays;
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.impl.PortalRequestHelper;
@@ -18,15 +14,10 @@ import com.enonic.xp.portal.impl.VirtualHostContextHelper;
 import com.enonic.xp.portal.universalapi.UniversalApiHandler;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
-
-import static com.google.common.base.Strings.nullToEmpty;
 
 public abstract class MediaHandlerBase
     implements UniversalApiHandler
@@ -45,8 +36,6 @@ public abstract class MediaHandlerBase
 
     protected volatile String contentSecurityPolicySvg;
 
-    protected volatile List<PrincipalKey> draftBranchAllowedFor;
-
     protected MediaHandlerBase( final ContentService contentService, final ProjectService projectService )
     {
         this.contentService = contentService;
@@ -59,10 +48,6 @@ public abstract class MediaHandlerBase
         this.publicCacheControlHeaderConfig = config.media_public_cacheControl();
         this.contentSecurityPolicy = config.media_contentSecurityPolicy();
         this.contentSecurityPolicySvg = config.media_contentSecurityPolicy_svg();
-        this.draftBranchAllowedFor = Arrays.stream( nullToEmpty( config.draftBranchAllowedFor() ).split( ",", -1 ) )
-            .map( String::trim )
-            .map( PrincipalKey::from )
-            .collect( Collectors.toList() );
     }
 
     protected void checkArguments( final WebRequest webRequest, final PathMetadata pathMetadata )
@@ -70,15 +55,6 @@ public abstract class MediaHandlerBase
         if ( !ALLOWED_METHODS.contains( webRequest.getMethod() ) )
         {
             throw new WebException( HttpStatus.METHOD_NOT_ALLOWED, String.format( "Method %s not allowed", webRequest.getMethod() ) );
-        }
-
-        if ( ContentConstants.BRANCH_DRAFT.equals( pathMetadata.branch ) )
-        {
-            final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-            if ( !authInfo.hasRole( RoleKeys.ADMIN ) && authInfo.getPrincipals().stream().noneMatch( draftBranchAllowedFor::contains ) )
-            {
-                throw WebException.forbidden( "You don't have permission to access this resource" );
-            }
         }
 
         final String mediaServiceScope = VirtualHostContextHelper.getMediaServiceScope();

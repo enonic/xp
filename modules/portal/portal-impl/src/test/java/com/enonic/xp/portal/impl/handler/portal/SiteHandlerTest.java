@@ -14,26 +14,19 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
-import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.Site;
-import com.enonic.xp.web.HttpStatus;
-import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.exception.ExceptionMapper;
@@ -67,7 +60,6 @@ class SiteHandlerTest
         this.projectService = mock( ProjectService.class );
 
         this.handler = new SiteHandler( contentService, projectService, mock( ExceptionMapper.class ), mock( ExceptionRenderer.class ) );
-        this.handler.activate( mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() ) );
 
         final HttpServletRequest rawRequest = mock( HttpServletRequest.class );
         this.request = new WebRequest();
@@ -84,59 +76,6 @@ class SiteHandlerTest
 
         request.setRawPath( "/admin/site/preview/mysite" );
         assertFalse( handler.canHandle( request ) );
-    }
-
-    @Test
-    void testCreateRequestForAnonymousDraft()
-    {
-        try
-        {
-            ContextBuilder.create()
-                .authInfo(
-                    AuthenticationInfo.copyOf( AuthenticationInfo.unAuthenticated() ).principals( PrincipalKey.ofAnonymous() ).build() )
-                .build()
-                .callWith( () -> handler.createPortalRequest( request, response ) );
-        }
-        catch ( WebException ex )
-        {
-            assertEquals( HttpStatus.UNAUTHORIZED, ex.getStatus() );
-            assertEquals( "You don't have permission to access this resource", ex.getMessage() );
-        }
-
-        PortalRequest result = ContextBuilder.create()
-            .authInfo( AuthenticationInfo.create()
-                           .principals( RoleKeys.ADMIN )
-                           .user( User.create().key( PrincipalKey.ofSuperUser() ).login( PrincipalKey.ofSuperUser().getId() ).build() )
-                           .build() )
-            .build()
-            .callWith( () -> handler.createPortalRequest( request, response ) );
-
-        assertNotNull( result );
-
-        result = ContextBuilder.create()
-            .authInfo( AuthenticationInfo.create()
-                           .principals( RoleKeys.ADMIN_LOGIN )
-                           .user( User.create()
-                                      .key( PrincipalKey.ofUser( IdProviderKey.from( "enonic" ), "user1" ) )
-                                      .login( "user1" )
-                                      .build() )
-                           .build() )
-            .build()
-            .callWith( () -> handler.createPortalRequest( request, response ) );
-
-        assertNotNull( result );
-    }
-
-    @Test
-    void testCreatePortalRequestForAssetAndIdproviderEndpoints()
-    {
-        this.request.setRawPath( "/site/myrepo/draft/mycontent/_/asset/demo/css/main.css" );
-
-        assertNotNull( createRequestWithAuthenticatedUser() );
-
-        this.request.setRawPath( "/site/default/draft/_/idprovider/system/login" );
-
-        assertNotNull( createRequestWithAuthenticatedUser() );
     }
 
     @Test
@@ -261,13 +200,5 @@ class SiteHandlerTest
                               .add( AccessControlEntry.create().allow( Permission.READ ).principal( RoleKeys.EVERYONE ).build() )
                               .build() );
         return site.build();
-    }
-
-    private PortalRequest createRequestWithAuthenticatedUser()
-    {
-        return ContextBuilder.create()
-            .authInfo( AuthenticationInfo.copyOf( AuthenticationInfo.unAuthenticated() ).principals( PrincipalKey.ofAnonymous() ).build() )
-            .build()
-            .callWith( () -> handler.createPortalRequest( request, response ) );
     }
 }
