@@ -38,5 +38,5 @@ public interface DumpReader
 
     DumpMeta getDumpMeta();
 
-    List<RepositoryEntry> getRepositoryEntries( final RepositoryIds repositoryIds );
+    List<RepositoryEntry> getRepositoryEntries( RepositoryIds repositoryIds );
 }
