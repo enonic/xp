@@ -16,7 +16,6 @@ import com.enonic.xp.content.GetActiveContentVersionsParams;
 import com.enonic.xp.content.GetActiveContentVersionsResult;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.UpdateContentParams;
-// Remove the unused import statement
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.exception.ForbiddenAccessException;
