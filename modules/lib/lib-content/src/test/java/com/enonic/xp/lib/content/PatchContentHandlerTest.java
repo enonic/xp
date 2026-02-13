@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import com.google.common.io.ByteSource;
+
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
@@ -361,5 +363,12 @@ public class PatchContentHandlerTest
             .contentId( params.getContentId() )
             .addResult( ContentConstants.BRANCH_DRAFT, patchable.build() )
             .build();
+    }
+
+    // used from js tests
+    @SuppressWarnings("unused")
+    public static ByteSource createByteSource( final String value )
+    {
+        return ByteSource.wrap( value.getBytes() );
     }
 }

@@ -57,7 +57,7 @@ public final class PatchNodeCommand
 
     public PatchNodeResult execute()
     {
-        verifyPermissionsOnCurrentBrunch();
+        verifyPermissionsOnCurrentBranch();
 
         ContextBuilder.from( ContextAccessor.current() ).branch( this.branches.first() ).build().runWith( this::doPatchNode );
 
@@ -66,7 +66,7 @@ public final class PatchNodeCommand
         return results.build();
     }
 
-    private void verifyPermissionsOnCurrentBrunch()
+    private void verifyPermissionsOnCurrentBranch()
     {
 
         final Context context = ContextAccessor.current();

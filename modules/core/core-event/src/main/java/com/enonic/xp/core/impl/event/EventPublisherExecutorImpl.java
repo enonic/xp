@@ -1,7 +1,6 @@
 package com.enonic.xp.core.impl.event;
 
 import java.time.Duration;
-import java.util.concurrent.Executors;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -27,7 +26,7 @@ public class EventPublisherExecutorImpl
     public void deactivate()
     {
         simpleExecutor.shutdownAndAwaitTermination( Duration.ofSeconds( 5 ),
-                                                    neverCommenced -> LOG.warn( "Not all events were time" ) );
+                                                    neverCommenced -> LOG.warn( "Not all events were published" ) );
     }
 
     @Override
