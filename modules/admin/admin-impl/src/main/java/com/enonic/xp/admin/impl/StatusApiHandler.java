@@ -43,7 +43,6 @@ public class StatusApiHandler
         json.put( "installation", this.info.getName() );
 
         json.set( "context", createContextJson() );
-        json.set( "readonly", JsonNodeFactory.instance.booleanNode( false ) ); // https://github.com/enonic/xp/issues/8150
 
         return PortalResponse.create().status( HttpStatus.OK ).body( json.toString() ).contentType( MediaType.JSON_UTF_8 ).build();
     }
