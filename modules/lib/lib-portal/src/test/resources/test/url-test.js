@@ -209,6 +209,34 @@ exports.serviceUrlTest_unknownProperty = function () {
     return true;
 };
 
+exports.serviceUrlTest_nestedObjects = function () {
+    var result = portal.serviceUrl({
+        service: 'myservice',
+        params: {
+            a: [{name: "a"}, {name: "b"}]
+        }
+    });
+
+    // NOTE: This is not the actual url. Only a mock representation.
+    // Nested objects should be JSON-serialized
+    assert.assertEquals('ServiceUrlParams{type=server, params={a=[{"name":"a"}, {"name":"b"}]}, service=myservice}', result);
+    return true;
+};
+
+exports.serviceUrlTest_complexNestedStructure = function () {
+    var result = portal.serviceUrl({
+        service: 'myservice',
+        params: {
+            simple: 'test',
+            nested: {key: 'value', num: 42}
+        }
+    });
+
+    // NOTE: This is not the actual url. Only a mock representation.
+    assert.assertEquals('ServiceUrlParams{type=server, params={simple=[test], nested=[{"key":"value","num":42}]}, service=myservice}', result);
+    return true;
+};
+
 exports.processHtmlTest = function () {
     var result = portal.processHtml({
         value: '<p><a title="Link tooltip" href="content://3e266eea-9875-4cb7-b259-41ad152f8532" target="_blank">link</a></p>'

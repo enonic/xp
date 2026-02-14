@@ -63,4 +63,13 @@ class PortalUrlServiceImpl_serviceUrlTest
         final String url = this.service.serviceUrl( params );
         assertEquals( "ws://localhost/site/myproject/draft/context/path/_/service/myapplication/myservice?a=3", url );
     }
+
+    @Test
+    void createUrl_withMultipleParams()
+    {
+        final ServiceUrlParams params = new ServiceUrlParams().service( "myservice" ).param( "a", 1 ).param( "a", 2 ).param( "b", "test" );
+
+        final String url = this.service.serviceUrl( params );
+        assertEquals( "/site/myproject/draft/context/path/_/service/myapplication/myservice?a=1&a=2&b=test", url );
+    }
 }

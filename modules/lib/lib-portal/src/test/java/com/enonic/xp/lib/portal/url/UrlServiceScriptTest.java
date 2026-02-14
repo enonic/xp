@@ -119,6 +119,18 @@ class UrlServiceScriptTest
     }
 
     @Test
+    void serviceUrlTest_nestedObjects()
+    {
+        assertTrue( execute( "serviceUrlTest_nestedObjects" ) );
+    }
+
+    @Test
+    void serviceUrlTest_complexNestedStructure()
+    {
+        assertTrue( execute( "serviceUrlTest_complexNestedStructure" ) );
+    }
+
+    @Test
     void processHtmlTest()
     {
         assertTrue( execute( "processHtmlTest" ) );
