@@ -26,7 +26,7 @@ public final class WebSocketServiceImpl
     implements WebSocketService
 {
     @Override
-    public boolean isUpgradeRequest( final HttpServletRequest req, final HttpServletResponse res )
+    public boolean isUpgradeRequest( final HttpServletRequest req )
     {
         return WebSocketMappings.getMappings( ServletContextHandler.getServletContextHandler( req.getServletContext() ) )
             .getHandshaker()

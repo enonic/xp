@@ -30,7 +30,7 @@ public final class WebSocketManagerImpl
     @Override
     public WebSocketContext newContext( final HttpServletRequest req, final HttpServletResponse res )
     {
-        if ( !this.webSocketService.isUpgradeRequest( req, res ) )
+        if ( !this.webSocketService.isUpgradeRequest( req ) )
         {
             return null;
         }

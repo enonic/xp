@@ -15,6 +15,7 @@ import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.impl.exception.ExceptionMapperImpl;
+import com.enonic.xp.web.impl.serializer.RequestSerializerServiceImpl;
 import com.enonic.xp.web.impl.serializer.ResponseSerializationServiceImpl;
 import com.enonic.xp.web.jetty.impl.JettyTestSupport;
 import com.enonic.xp.web.websocket.WebSocketContextFactory;
@@ -35,7 +36,7 @@ class WebDispatcherServletTest
     {
         this.handler = new TestWebHandler();
 
-        this.servlet = new WebDispatcherServlet( new WebDispatcherImpl() );
+        this.servlet = new WebDispatcherServlet( new WebDispatcherImpl(), new RequestSerializerServiceImpl() );
         this.servlet.addWebHandler( this.handler );
         this.servlet.setExceptionMapper( new ExceptionMapperImpl() );
         this.servlet.setExceptionRenderer( ( req, cause ) -> WebResponse.create().status( HttpStatus.NOT_FOUND ).build() );

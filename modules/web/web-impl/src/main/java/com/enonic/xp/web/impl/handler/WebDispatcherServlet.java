@@ -2,18 +2,18 @@ package com.enonic.xp.web.impl.handler;
 
 import java.io.IOException;
 
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
+
 import jakarta.servlet.Servlet;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
 
 import com.enonic.xp.annotation.Order;
 import com.enonic.xp.web.WebException;
@@ -23,7 +23,7 @@ import com.enonic.xp.web.exception.ExceptionMapper;
 import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.impl.serializer.RequestBodyReader;
-import com.enonic.xp.web.impl.serializer.RequestSerializer;
+import com.enonic.xp.web.serializer.RequestSerializerService;
 import com.enonic.xp.web.serializer.ResponseSerializationService;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketContext;
@@ -45,10 +45,14 @@ public final class WebDispatcherServlet
 
     private ResponseSerializationService responseSerializationService;
 
+    private final RequestSerializerService requestSerializerService;
+
     @Activate
-    public WebDispatcherServlet( @Reference final WebDispatcher webDispatcher )
+    public WebDispatcherServlet( @Reference final WebDispatcher webDispatcher,
+                                 @Reference final RequestSerializerService requestSerializerService )
     {
         this.webDispatcher = webDispatcher;
+        this.requestSerializerService = requestSerializerService;
     }
 
     @Override
@@ -73,8 +77,7 @@ public final class WebDispatcherServlet
     private WebRequest newWebRequest( final HttpServletRequest req )
         throws IOException
     {
-        final WebRequest result = new WebRequest();
-        new RequestSerializer( result ).serialize( req );
+        final WebRequest result = requestSerializerService.serialize( req );
         result.setBody( RequestBodyReader.readBody( req ) );
 
         return result;
