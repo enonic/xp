@@ -4,19 +4,20 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.core.impl.schema.JsonSchemaService;
 import com.enonic.xp.idprovider.IdProviderDescriptor;
 import com.enonic.xp.idprovider.IdProviderDescriptorService;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.xml.XmlException;
-import com.enonic.xp.xml.parser.XmlIdProviderDescriptorParser;
 
 @Component(immediate = true)
 public final class IdProviderDescriptorServiceImpl
     implements IdProviderDescriptorService
 {
     private ResourceService resourceService;
+
+    private JsonSchemaService jsonSchemaService;
 
     @Override
     public IdProviderDescriptor getDescriptor( final ApplicationKey key )
@@ -37,32 +38,21 @@ public final class IdProviderDescriptorServiceImpl
 
     private IdProviderDescriptor loadDescriptor( final ApplicationKey key, final Resource resource )
     {
-        final IdProviderDescriptor.Builder builder = IdProviderDescriptor.create();
-        parseXml( resource, builder );
-        builder.key( key );
+        final String yaml = resource.readString();
+        jsonSchemaService.validate( "https://json-schema.enonic.com/8.0.0/idprovider-descriptor.schema.json", yaml );
 
-        return builder.build();
-    }
-
-    private void parseXml( final Resource resource, final IdProviderDescriptor.Builder builder )
-    {
-        try
-        {
-            final XmlIdProviderDescriptorParser parser = new XmlIdProviderDescriptorParser();
-            parser.builder( builder );
-            parser.currentApplication( resource.getKey().getApplicationKey() );
-            parser.source( resource.readString() );
-            parser.parse();
-        }
-        catch ( final Exception e )
-        {
-            throw new XmlException( e, "Could not load auth descriptor [" + resource.getKey() + "]: " + e.getMessage() );
-        }
+        return YmlIdProviderDescriptorParser.parse( yaml, key ).build();
     }
 
     @Reference
     public void setResourceService( final ResourceService resourceService )
     {
         this.resourceService = resourceService;
+    }
+
+    @Reference
+    public void setJsonSchemaService( final JsonSchemaService jsonSchemaService )
+    {
+        this.jsonSchemaService = jsonSchemaService;
     }
 }

@@ -1,0 +1,27 @@
+superType: "base:structured"
+abstract: false
+final: true
+allowChildContent: true
+displayName: "Tag"
+form:
+  - type: "Tag"
+    name: "tag_unlimited"
+    label: "Tag, unlimited occurrences"
+    helpText: "Some help text"
+    occurrences:
+      min: 0
+      max: 0
+  - type: "Tag"
+    name: "tag_max5"
+    label: "Tag, max 5 occurrences"
+    helpText: "Some help text"
+    occurrences:
+      min: 0
+      max: 5
+  - type: "Tag"
+    name: "tag_min_2_max5"
+    label: "Tag, min 2 max 5 occurrences"
+    helpText: "Some help text"
+    occurrences:
+      min: 2
+      max: 5

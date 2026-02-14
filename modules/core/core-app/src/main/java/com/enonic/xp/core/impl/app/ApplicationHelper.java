@@ -33,13 +33,13 @@ public final class ApplicationHelper
 
     private static final String SYSTEM_BUNDLE_TYPE = "system";
 
-    private static final String SITE_XML = "site/site.xml";
+    private static final String CMS_YML = "cms/site.yml";
 
-    private static final String APPLICATION_XML = "application.xml";
+    private static final String APPLICATION_XML = "application.yml";
 
     static boolean isApplication( final JarFile jarFile )
     {
-        return hasApplicationHeader( jarFile ) || jarFile.getEntry( APPLICATION_XML ) != null || jarFile.getEntry( SITE_XML ) != null;
+        return hasApplicationHeader( jarFile ) || jarFile.getEntry( APPLICATION_XML ) != null || jarFile.getEntry( CMS_YML ) != null;
     }
 
     public static ApplicationKey getApplicationKey( final Bundle bundle )

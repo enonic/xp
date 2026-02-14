@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.attachment.CreateAttachments;
-import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.Mixins;
 import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.convert.Converters;
@@ -26,9 +26,9 @@ import com.enonic.xp.region.Component;
 import com.enonic.xp.region.Regions;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
-import com.enonic.xp.schema.xdata.XDataService;
+import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.script.bean.BeanContext;
-import com.enonic.xp.site.SiteService;
+import com.enonic.xp.site.CmsService;
 import com.enonic.xp.util.BinaryReferences;
 
 public abstract class BaseContentHandler
@@ -42,12 +42,12 @@ public abstract class BaseContentHandler
         super.initialize( context );
 
         final ContentTypeService contentTypeService = context.getService( ContentTypeService.class ).get();
-        final XDataService xDataService = context.getService( XDataService.class ).get();
-        final SiteService siteService = context.getService( SiteService.class ).get();
+        final MixinService mixinService = context.getService( MixinService.class ).get();
+        final CmsService cmsService = context.getService( CmsService.class ).get();
         final PropertyTreeMarshallerService propertyTreeMarshallerService = context.getService( PropertyTreeMarshallerService.class ).get();
 
         final PropertyTreeTranslator translator =
-            new PropertyTreeTranslator( contentTypeService, xDataService, siteService, propertyTreeMarshallerService,
+            new PropertyTreeTranslator( contentTypeService, mixinService, cmsService, propertyTreeMarshallerService,
                                         this::strictContentValidation );
 
         this.contentDataDeserializer =
@@ -61,9 +61,9 @@ public abstract class BaseContentHandler
         return contentDataDeserializer.toPropertyTree( data, contentTypeName );
     }
 
-    protected ExtraDatas createExtraDatas( final Map<String, Object> xData, final ContentTypeName contentTypeName )
+    protected Mixins createMixins( final Map<String, Object> mixin, final ContentTypeName contentTypeName )
     {
-        return contentDataDeserializer.toExtraDatas( xData, contentTypeName );
+        return contentDataDeserializer.toMixins( mixin, contentTypeName );
     }
 
     protected Page createPage( final Map<String, Object> pageMap )

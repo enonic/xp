@@ -33,18 +33,18 @@ import com.enonic.xp.core.impl.content.ContentAuditLogSupportImpl;
 import com.enonic.xp.core.impl.content.ContentConfig;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
 import com.enonic.xp.core.impl.content.LayersContentService;
+import com.enonic.xp.core.impl.content.MixinMappingServiceImpl;
 import com.enonic.xp.core.impl.content.SiteConfigServiceImpl;
-import com.enonic.xp.core.impl.content.XDataMappingServiceImpl;
+import com.enonic.xp.core.impl.content.schema.ContentTypeServiceImpl;
 import com.enonic.xp.core.impl.media.MediaInfoServiceImpl;
 import com.enonic.xp.core.impl.project.ProjectConfig;
 import com.enonic.xp.core.impl.project.ProjectServiceImpl;
-import com.enonic.xp.core.impl.schema.content.ContentTypeServiceImpl;
 import com.enonic.xp.core.impl.security.PasswordSecurityService;
 import com.enonic.xp.core.impl.security.SecurityAuditLogSupportImpl;
 import com.enonic.xp.core.impl.security.SecurityConfig;
 import com.enonic.xp.core.impl.security.SecurityInitializer;
 import com.enonic.xp.core.impl.security.SecurityServiceImpl;
-import com.enonic.xp.core.impl.site.SiteServiceImpl;
+import com.enonic.xp.core.impl.site.CmsServiceImpl;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
@@ -58,9 +58,9 @@ import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.schema.content.CmsFormFragmentService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinService;
-import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
@@ -106,7 +106,7 @@ public abstract class AbstractContentSynchronizerTest
 
     protected LayoutDescriptorService layoutDescriptorService;
 
-    protected XDataMappingServiceImpl xDataMappingService;
+    protected MixinMappingServiceImpl mixinMappingService;
 
     protected SiteConfigServiceImpl siteConfigService;
 
@@ -114,9 +114,9 @@ public abstract class AbstractContentSynchronizerTest
 
     protected ResourceService resourceService;
 
-    protected XDataService xDataService;
+    protected MixinService mixinService;
 
-    protected SiteServiceImpl siteService;
+    protected CmsServiceImpl cmsService;
 
     protected Context projectContext;
 
@@ -310,21 +310,19 @@ public abstract class AbstractContentSynchronizerTest
 
         mediaInfoService = new MediaInfoServiceImpl( extractor );
 
-        xDataService = mock( XDataService.class );
+        mixinService = mock( MixinService.class );
 
-        MixinService mixinService = mock( MixinService.class );
-        when( mixinService.inlineFormItems( any() ) ).then( returnsFirstArg() );
+        CmsFormFragmentService formFragmentService = mock( CmsFormFragmentService.class );
+        when( formFragmentService.inlineFormItems( any() ) ).then( returnsFirstArg() );
 
         pageDescriptorService = mock( PageDescriptorService.class );
         partDescriptorService = mock( PartDescriptorService.class );
         layoutDescriptorService = mock( LayoutDescriptorService.class );
 
-        contentTypeService = new ContentTypeServiceImpl( null, null, mixinService );
+        contentTypeService = new ContentTypeServiceImpl( null, null, formFragmentService );
 
         resourceService = mock( ResourceService.class );
-        siteService = new SiteServiceImpl();
-        siteService.setResourceService( resourceService );
-        siteService.setMixinService( mixinService );
+        cmsService = new CmsServiceImpl( resourceService, formFragmentService );
 
         final ContentAuditLogFilterService contentAuditLogFilterService = mock( ContentAuditLogFilterService.class, invocation -> true );
 
@@ -334,26 +332,23 @@ public abstract class AbstractContentSynchronizerTest
         contentAuditLogSupport =
             new ContentAuditLogSupportImpl( contentConfig, Runnable::run, auditLogService, contentAuditLogFilterService );
 
-        xDataMappingService = new XDataMappingServiceImpl( siteService, xDataService );
+        mixinMappingService = new MixinMappingServiceImpl( cmsService, this.mixinService );
         siteConfigService = new SiteConfigServiceImpl( nodeService, projectService, contentTypeService, eventPublisher );
 
         final ContentConfig config = mock( ContentConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         contentService =
             new ContentServiceImpl( nodeService, pageDescriptorService, partDescriptorService, layoutDescriptorService, siteConfigService,
-                                    ( form, data ) -> {
-                                    }, ( page ) -> {
-            }, ( extraDatas ) -> {
-            }, config );
+                                    config );
         contentService.setEventPublisher( eventPublisher );
         contentService.setMediaInfoService( mediaInfoService );
-        contentService.setSiteService( siteService );
+        contentService.setCmsService( cmsService );
         contentService.setContentTypeService( contentTypeService );
-        contentService.setxDataService( xDataService );
-        contentService.setXDataMappingService( xDataMappingService );
+        contentService.setMixinService( this.mixinService );
+        contentService.setMixinMappingService( mixinMappingService );
         contentService.setContentAuditLogSupport( contentAuditLogSupport );
 
         layersContentService =
-            new LayersContentService( nodeService, contentTypeService, eventPublisher, xDataService, siteService, pageDescriptorService,
+            new LayersContentService( nodeService, contentTypeService, eventPublisher, this.mixinService, cmsService, pageDescriptorService,
                                       partDescriptorService, layoutDescriptorService, config );
     }
 
@@ -410,7 +405,7 @@ public abstract class AbstractContentSynchronizerTest
         assertEquals( sourceContent.getDisplayName(), targetContent.getDisplayName() );
         assertEquals( sourceContent.getData(), targetContent.getData() );
         assertEquals( sourceContent.getPath(), targetContent.getPath() );
-        assertEquals( sourceContent.getAllExtraData(), targetContent.getAllExtraData() );
+        assertEquals( sourceContent.getMixins(), targetContent.getMixins() );
         assertEquals( sourceContent.getAttachments(), targetContent.getAttachments() );
         assertEquals( sourceContent.getOwner(), targetContent.getOwner() );
         assertEquals( sourceContent.getLanguage(), targetContent.getLanguage() );

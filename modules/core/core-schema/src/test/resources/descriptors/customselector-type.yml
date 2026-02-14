@@ -1,0 +1,13 @@
+type: "CustomSelector"
+name: "musicTrack"
+label: "Intro song"
+helpText: "Help Text"
+occurrences:
+  min: 0
+  max: 1
+default: "DefaultValue"
+service: "spotify-music-selector"
+params:
+  genre: "classic"
+  sortBy: "length"
+attributes: { }

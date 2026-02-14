@@ -31,8 +31,7 @@ class CreateContentParamsTest
             contentData( new PropertyTree() ).
             childOrder( ChildOrder.manualOrder() ).
             createAttachments( CreateAttachments.empty() ).
-            displayName( "displayName" ).
-            extraDatas( ExtraDatas.empty() ).
+            displayName( "displayName" ).mixins( Mixins.empty() ).
             permissions( permissions ).
             language( Locale.forLanguageTag( "en" ) ).
             name( "name" ).
@@ -46,7 +45,7 @@ class CreateContentParamsTest
         assertEquals( ChildOrder.manualOrder(), createContentParams.getChildOrder() );
         assertEquals( CreateAttachments.empty(), createContentParams.getCreateAttachments() );
         assertEquals( "displayName", createContentParams.getDisplayName() );
-        assertEquals( ExtraDatas.empty(), createContentParams.getExtraDatas() );
+        assertEquals( Mixins.empty(), createContentParams.getMixins() );
         assertEquals( permissions, createContentParams.getPermissions() );
         assertEquals( Locale.forLanguageTag( "en" ), createContentParams.getLanguage() );
         assertEquals( "name", createContentParams.getName().toString() );
@@ -66,8 +65,7 @@ class CreateContentParamsTest
             contentData( new PropertyTree() ).
             childOrder( ChildOrder.manualOrder() ).
             createAttachments( CreateAttachments.empty() ).
-            displayName( "displayName" ).
-            extraDatas( ExtraDatas.empty() ).
+            displayName( "displayName" ).mixins( Mixins.empty() ).
             permissions( permissions ).
             language( Locale.forLanguageTag( "en" ) ).
             name( ContentName.from( "name" ) ).
@@ -83,7 +81,7 @@ class CreateContentParamsTest
         assertEquals( ChildOrder.manualOrder(), createContentParams.getChildOrder() );
         assertEquals( CreateAttachments.empty(), createContentParams.getCreateAttachments() );
         assertEquals( "displayName", createContentParams.getDisplayName() );
-        assertEquals( ExtraDatas.empty(), createContentParams.getExtraDatas() );
+        assertEquals( Mixins.empty(), createContentParams.getMixins() );
         assertEquals( permissions, createContentParams.getPermissions() );
         assertEquals( Locale.forLanguageTag( "en" ), createContentParams.getLanguage() );
         assertEquals( "name", createContentParams.getName().toString() );

@@ -22,12 +22,12 @@ public final class PartDescriptor
     public ResourceKey getComponentPath()
     {
         final DescriptorKey key = this.getKey();
-        return ResourceKey.from( key.getApplicationKey(), "site/parts/" + key.getName() );
+        return ResourceKey.from( key.getApplicationKey(), "cms/parts/" + key.getName() );
     }
 
     public static ResourceKey toResourceKey( final DescriptorKey key, final String ext )
     {
-        return ResourceKey.from( key.getApplicationKey(), "site/parts/" + key.getName() + "/" + key.getName() + "." + ext );
+        return ResourceKey.from( key.getApplicationKey(), "cms/parts/" + key.getName() + "/" + key.getName() + "." + ext );
     }
 
     public Icon getIcon()

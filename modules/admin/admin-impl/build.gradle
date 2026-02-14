@@ -3,6 +3,7 @@ dependencies {
     implementation project( ':portal:portal-api' )
     implementation project( ':jaxrs:jaxrs-api' )
     implementation project( ':core:core-internal' )
+    implementation project( ':core:core-schema' )
 
     testImplementation( testFixtures( project(":core:core-api") ) )
     testImplementation( testFixtures( project(":core:core-app") ) )

@@ -13,6 +13,7 @@ import com.google.common.io.CharSource;
 import com.enonic.xp.core.impl.export.reader.ExportReader;
 import com.enonic.xp.core.impl.export.validator.ContentImportValidator;
 import com.enonic.xp.core.impl.export.validator.ImportValidator;
+import com.enonic.xp.core.impl.export.xml.XmlException;
 import com.enonic.xp.core.impl.export.xml.XmlNodeParser;
 import com.enonic.xp.core.impl.export.xml.XsltTransformer;
 import com.enonic.xp.data.Property;
@@ -35,7 +36,6 @@ import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.vfs.VirtualFile;
 import com.enonic.xp.vfs.VirtualFilePath;
 import com.enonic.xp.vfs.VirtualFilePaths;
-import com.enonic.xp.xml.XmlException;
 
 import static com.enonic.xp.core.impl.export.ExportConstants.BINARY_FOLDER;
 import static com.enonic.xp.core.impl.export.ExportConstants.NODE_XML_EXPORT_NAME;

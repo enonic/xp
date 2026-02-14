@@ -16,7 +16,6 @@ var expected = {
     'abstract': false,
     'final': true,
     'allowChildContent': true,
-    'displayNameExpression': '${name}',
     'modifiedTime': '2022-05-25T10:00:00Z',
     'icon': {
         'data': {},
@@ -28,87 +27,67 @@ var expected = {
             'formItemType': 'Input',
             'name': 'name',
             'label': 'Full name',
-            'maximize': true,
             'inputType': 'TextLine',
             'occurrences': {
                 'maximum': 1,
                 'minimum': 1
-            },
-            'config': {}
+            }
         },
         {
             'formItemType': 'Input',
             'name': 'title',
             'label': 'Photo',
             'helpText': 'Person photo',
-            'maximize': true,
             'inputType': 'ImageSelector',
             'occurrences': {
                 'maximum': 1,
                 'minimum': 1
-            },
-            'config': {}
+            }
         },
         {
             'formItemType': 'Input',
             'name': 'bio',
             'label': 'Bio',
-            'maximize': true,
             'inputType': 'HtmlArea',
             'occurrences': {
                 'maximum': 1,
                 'minimum': 1
-            },
-            'config': {}
+            }
         },
         {
             'formItemType': 'Input',
             'name': 'birthdate',
             'label': 'Birth date',
-            'maximize': true,
             'inputType': 'Date',
             'occurrences': {
                 'maximum': 1,
                 'minimum': 0
-            },
-            'config': {}
+            }
         },
         {
             'formItemType': 'Input',
             'name': 'email',
             'label': 'Email',
             'helpText': 'Email address',
-            'maximize': true,
             'inputType': 'TextLine',
             'occurrences': {
                 'maximum': 1,
                 'minimum': 1
             },
-            'config': {
-                'regexp': [
-                    {
-                        'value': '^[^@]+@[^@]+\\.[^@]+$'
-                    }
-                ]
-            }
+            'regexp': '^[^@]+@[^@]+\\.[^@]+$'
         },
         {
             'formItemType': 'Input',
             'name': 'nationality',
             'label': 'Nationality',
-            'maximize': true,
             'inputType': 'ContentSelector',
             'occurrences': {
                 'maximum': 1,
                 'minimum': 0
             },
-            'config': {
-                'allowContentType': [
-                    {
-                        'value': 'com.enonic.myapp:country'
-                    }
-                ]
-            }
+            'allowContentType': [
+                'com.enonic.myapp:country'
+            ]
         }
     ]
 };

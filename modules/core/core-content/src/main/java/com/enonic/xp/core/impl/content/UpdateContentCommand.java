@@ -92,11 +92,11 @@ final class UpdateContentCommand
             .createAttachments( params.getCreateAttachments() )
             .versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.UPDATE_ATTR ) )
             .contentTypeService( this.contentTypeService )
-            .xDataService( this.xDataService )
+            .mixinService( this.mixinService )
             .pageDescriptorService( this.pageDescriptorService )
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
-            .siteService( this.siteService )
+            .cmsService( this.cmsService )
             .build()
             .produce();
 
@@ -135,7 +135,7 @@ final class UpdateContentCommand
         return ValidateContentDataCommand.create()
             .contentId( editedContent.getId() )
             .data( editedContent.getData() )
-            .extraDatas( editedContent.getAllExtraData() )
+            .mixins( editedContent.getMixins() )
             .contentTypeName( editedContent.getType() )
             .contentName( editedContent.getName() )
             .displayName( editedContent.getDisplayName() )
@@ -203,9 +203,9 @@ final class UpdateContentCommand
             editor.edit( editableContent );
         }
 
-        editableContent.extraDatas = mergeExtraData( original.getType(), editableContent.data,
-                                                     original.getPath().isRoot() ? original.getPath() : original.getParentPath(),
-                                                     editableContent.extraDatas );
+        editableContent.mixins = mergeMixins( original.getType(), editableContent.data,
+                                              original.getPath().isRoot() ? original.getPath() : original.getParentPath(),
+                                              editableContent.mixins );
 
         return Content.create( editableContent.build() ).build();
     }
@@ -220,7 +220,7 @@ final class UpdateContentCommand
         }
 
         validateContentData( editedContent.getType(), editedContent.getData() );
-        validateMixins( editedContent.getAllExtraData() );
+        validateMixins( editedContent.getMixins() );
         validatePage( editedContent.getPage() );
         validateSiteConfigs( editedContent.getData() );
 

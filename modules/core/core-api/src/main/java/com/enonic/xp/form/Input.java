@@ -6,10 +6,9 @@ import java.util.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.inputtype.InputTypeConfig;
-import com.enonic.xp.inputtype.InputTypeDefault;
 import com.enonic.xp.inputtype.InputTypeName;
-import com.enonic.xp.inputtype.InputTypeProperty;
+import com.enonic.xp.schema.LocalizedText;
+import com.enonic.xp.util.GenericValue;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
@@ -25,25 +24,13 @@ public final class Input
 
     private final String labelI18nKey;
 
-    private final InputTypeDefault defaultValue;
-
-    private final boolean immutable;
-
     private final Occurrences occurrences;
-
-    private final boolean indexed;
-
-    private final String customText;
-
-    private final String validationRegexp;
 
     private final String helpText;
 
     private final String helpTextI18nKey;
 
-    private final InputTypeConfig inputTypeConfig;
-
-    private final boolean maximizeUIInputWidth;
+    private final GenericValue inputTypeConfig;
 
     private Input( Builder builder )
     {
@@ -57,17 +44,11 @@ public final class Input
         this.name = builder.name;
         this.type = builder.inputType;
         this.label = builder.label;
-        this.defaultValue = builder.defaultValue;
-        this.immutable = builder.immutable;
-        this.occurrences = builder.occurrences;
-        this.indexed = builder.indexed;
-        this.customText = builder.customText;
-        this.validationRegexp = builder.validationRegexp;
-        this.helpText = builder.helpText;
-        this.inputTypeConfig = builder.inputTypeConfig.build();
-        this.maximizeUIInputWidth = builder.maximizeUIInputWidth;
         this.labelI18nKey = builder.labelI18nKey;
+        this.occurrences = builder.occurrences;
+        this.helpText = builder.helpText;
         this.helpTextI18nKey = builder.helpTextI18nKey;
+        this.inputTypeConfig = builder.inputTypeConfig.build();
     }
 
     @Override
@@ -92,19 +73,9 @@ public final class Input
         return label;
     }
 
-    public InputTypeDefault getDefaultValue()
-    {
-        return defaultValue;
-    }
-
     public boolean isRequired()
     {
         return occurrences.impliesRequired();
-    }
-
-    public boolean isImmutable()
-    {
-        return immutable;
     }
 
     public boolean isMultiple()
@@ -117,32 +88,12 @@ public final class Input
         return occurrences;
     }
 
-    public boolean isMaximizeUIInputWidth()
-    {
-        return maximizeUIInputWidth;
-    }
-
-    public boolean isIndexed()
-    {
-        return indexed;
-    }
-
-    public String getCustomText()
-    {
-        return customText;
-    }
-
-    public String getValidationRegexp()
-    {
-        return validationRegexp;
-    }
-
     public String getHelpText()
     {
         return helpText;
     }
 
-    public InputTypeConfig getInputTypeConfig()
+    public GenericValue getInputTypeConfig()
     {
         return inputTypeConfig;
     }
@@ -177,10 +128,7 @@ public final class Input
 
         final Input that = (Input) o;
         return super.equals( o ) && Objects.equals( this.type, that.type ) && Objects.equals( this.label, that.label ) &&
-            Objects.equals( this.defaultValue, that.defaultValue ) && this.immutable == that.immutable &&
-            Objects.equals( this.occurrences, that.occurrences ) && this.indexed == that.indexed &&
-            this.maximizeUIInputWidth == that.maximizeUIInputWidth && Objects.equals( this.customText, that.customText ) &&
-            Objects.equals( this.helpText, that.helpText ) && Objects.equals( this.validationRegexp, that.validationRegexp ) &&
+            Objects.equals( this.occurrences, that.occurrences ) && Objects.equals( this.helpText, that.helpText ) &&
             Objects.equals( this.inputTypeConfig, that.inputTypeConfig ) && Objects.equals( this.helpTextI18nKey, that.helpTextI18nKey ) &&
             Objects.equals( this.labelI18nKey, that.labelI18nKey );
 
@@ -189,8 +137,7 @@ public final class Input
     @Override
     public int hashCode()
     {
-        return Objects.hash( super.hashCode(), this.type, this.label, this.defaultValue, this.immutable, this.occurrences, this.indexed,
-                             this.customText, this.helpText, this.validationRegexp, this.inputTypeConfig, this.maximizeUIInputWidth,
+        return Objects.hash( super.hashCode(), this.type, this.label, this.occurrences, this.helpText, this.inputTypeConfig,
                              this.labelI18nKey, this.helpTextI18nKey );
     }
 
@@ -214,25 +161,13 @@ public final class Input
 
         private String labelI18nKey;
 
-        private InputTypeDefault defaultValue;
-
-        private boolean immutable = false;
-
         private Occurrences occurrences = Occurrences.create( 0, 1 );
-
-        private boolean indexed = false;
-
-        private String customText;
-
-        private String validationRegexp;
 
         private String helpText;
 
         private String helpTextI18nKey;
 
-        private final InputTypeConfig.Builder inputTypeConfig = InputTypeConfig.create();
-
-        private boolean maximizeUIInputWidth = true;
+        private final GenericValue.ObjectBuilder inputTypeConfig = GenericValue.newObject();
 
         private Builder()
         {
@@ -243,19 +178,14 @@ public final class Input
             this.name = source.name;
             this.inputType = source.type;
             this.label = source.label;
-            this.defaultValue = source.defaultValue;
             this.occurrences = source.occurrences;
-            this.indexed = source.indexed;
-            this.customText = source.customText;
-            this.validationRegexp = source.validationRegexp;
             this.helpText = source.helpText;
-            this.maximizeUIInputWidth = source.maximizeUIInputWidth;
             this.labelI18nKey = source.labelI18nKey;
             this.helpTextI18nKey = source.helpTextI18nKey;
 
             if ( source.inputTypeConfig != null )
             {
-                this.inputTypeConfig.config( source.inputTypeConfig );
+                source.inputTypeConfig.properties().forEach( p -> this.inputTypeConfig.put( p.getKey(), p.getValue() ) );
             }
         }
 
@@ -277,21 +207,16 @@ public final class Input
             return this;
         }
 
+        public Builder label( LocalizedText value )
+        {
+            label = value.text();
+            labelI18nKey = value.i18n();
+            return this;
+        }
+
         public Builder labelI18nKey( String value )
         {
             labelI18nKey = value;
-            return this;
-        }
-
-        public Builder defaultValue( InputTypeDefault value )
-        {
-            defaultValue = value;
-            return this;
-        }
-
-        public Builder immutable( boolean value )
-        {
-            immutable = value;
             return this;
         }
 
@@ -332,12 +257,6 @@ public final class Input
             return this;
         }
 
-        public Builder maximizeUIInputWidth( boolean value )
-        {
-            this.maximizeUIInputWidth = value;
-            return this;
-        }
-
         public Builder multiple( boolean value )
         {
             if ( value )
@@ -348,24 +267,6 @@ public final class Input
             {
                 occurrences = Occurrences.create( occurrences.getMinimum(), 1 );
             }
-            return this;
-        }
-
-        public Builder indexed( boolean value )
-        {
-            indexed = value;
-            return this;
-        }
-
-        public Builder customText( String value )
-        {
-            customText = value;
-            return this;
-        }
-
-        public Builder validationRegexp( String value )
-        {
-            validationRegexp = value;
             return this;
         }
 
@@ -381,15 +282,28 @@ public final class Input
             return this;
         }
 
-        public Builder inputTypeProperty( final InputTypeProperty property )
+        public Builder helpText( LocalizedText value )
         {
-            this.inputTypeConfig.property( property );
+            helpText = value.text();
+            helpTextI18nKey = value.i18n();
             return this;
         }
 
-        public Builder inputTypeConfig( final InputTypeConfig config )
+        public Builder inputTypeProperty( String name, String value )
         {
-            this.inputTypeConfig.config( config );
+            this.inputTypeConfig.put( name, value );
+            return this;
+        }
+
+        public Builder inputTypeProperty( String name, GenericValue value )
+        {
+            this.inputTypeConfig.put( name, value );
+            return this;
+        }
+
+        public Builder inputTypeConfig( GenericValue config )
+        {
+            config.properties().forEach( p -> this.inputTypeConfig.put( p.getKey(), p.getValue() ) );
             return this;
         }
 

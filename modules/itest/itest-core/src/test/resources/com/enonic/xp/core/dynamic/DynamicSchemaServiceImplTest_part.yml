@@ -1,0 +1,24 @@
+displayName:
+  text: "Virtual Part"
+  i18n: "key.display-name"
+description:
+  text: "My Part Description"
+  i18n: "key.description"
+form:
+  - type: "Double"
+    name: "width"
+    label:
+      text: "Column width"
+      i18n: "key.label"
+    helpText:
+      text: "key.help-text"
+      i18n: "key.help-text"
+    occurrences:
+      min: 0
+      max: 1
+  - type: "FormFragment"
+    name: "link-urls"
+config:
+  properties:
+    - name: "property"
+      value: "value"

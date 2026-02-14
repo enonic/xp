@@ -20,7 +20,7 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.schema.xdata.XDataService;
+import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.site.Site;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -35,7 +35,7 @@ class MoveContentCommandTest
 
     EventPublisher eventPublisher = mock( EventPublisher.class );
 
-    XDataService xDataService = mock( XDataService.class );
+    MixinService mixinService = mock( MixinService.class );
 
     @Test
     void move_non_existing_content()
@@ -50,7 +50,7 @@ class MoveContentCommandTest
         MoveContentCommand command = MoveContentCommand.create( params )
             .contentTypeService( this.contentTypeService )
             .nodeService( this.nodeService )
-            .xDataService( this.xDataService )
+            .mixinService( this.mixinService )
             .eventPublisher( this.eventPublisher )
             .build();
 
@@ -64,8 +64,8 @@ class MoveContentCommandTest
     void move_fragment_to_the_same_site()
     {
         final Site parentSite = ContentFixture.mockSite();
-        final Content existingContent = ContentFixture.mockContent(parentSite.getPath(), "my-content" );
-        final Content existingFolder = ContentFixture.mockContent(parentSite.getPath(), "my-folder");
+        final Content existingContent = ContentFixture.mockContent( parentSite.getPath(), "my-content" );
+        final Content existingFolder = ContentFixture.mockContent( parentSite.getPath(), "my-folder" );
 
         MoveContentParams params =
             MoveContentParams.create().contentId( existingContent.getId() ).parentContentPath( existingFolder.getPath() ).build();
@@ -73,7 +73,7 @@ class MoveContentCommandTest
         final MoveContentCommand command = MoveContentCommand.create( params )
             .contentTypeService( this.contentTypeService )
             .nodeService( this.nodeService )
-            .xDataService( this.xDataService )
+            .mixinService( this.mixinService )
             .eventPublisher( this.eventPublisher )
             .build();
 

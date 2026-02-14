@@ -25,7 +25,7 @@ class ApplicationDescriptorServiceImplTest
 
     private static final String BUNDLE_SYMBOLIC_NAME = "bundle";
 
-    private static final String APP_DESCRIPTOR_FILENAME = "application.xml";
+    private static final String APP_DESCRIPTOR_FILENAME = "application.yml";
 
     private ResourceTestHelper resourceTestHelper;
 

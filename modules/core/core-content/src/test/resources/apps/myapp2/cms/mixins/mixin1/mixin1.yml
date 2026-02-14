@@ -1,0 +1,18 @@
+displayName: "display name"
+description: "description"
+form:
+- type: "ItemSet"
+  name: "mySet"
+  occurrences:
+    min: 0
+    max: 1
+  items:
+  - type: "FieldSet"
+    label: "My field set"
+    items:
+    - type: "TextLine"
+      name: "myTextLine"
+      label: "Textline"
+      occurrences:
+        min: 0
+        max: 1

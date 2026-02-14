@@ -358,7 +358,8 @@ class MappingHandlerTest
         when( pageDescriptorService.getByKey( pageTemplate.getController() ) ).thenReturn( createPageDescriptor() );
 
         final ControllerMappingDescriptors mappings = ControllerMappingDescriptors.from( mapping );
-        final SiteDescriptor siteDescriptor = SiteDescriptor.create().mappingDescriptors( mappings ).build();
+        final ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );
+        final SiteDescriptor siteDescriptor = SiteDescriptor.create().applicationKey( applicationKey ).mappingDescriptors( mappings ).build();
         when( this.siteService.getDescriptor( any( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
     }
 
@@ -380,6 +381,8 @@ class MappingHandlerTest
         when( this.contentService.getById( content.getId() ) ).thenReturn( content );
         when( this.pageTemplateService.getByKey( any( PageTemplateKey.class ) ) ).thenReturn( createPageTemplate() );
 
+        final ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );
+
         if ( siteMapping != null )
         {
             final Site site = createSite( "id", "mysite", "myapplication:contenttypename", "myapplication" );
@@ -387,14 +390,16 @@ class MappingHandlerTest
             this.request.setSite( site );
 
             final ControllerMappingDescriptors siteMappings = ControllerMappingDescriptors.from( siteMapping );
-            final SiteDescriptor siteDescriptor = SiteDescriptor.create().mappingDescriptors( siteMappings ).build();
-            when( this.siteService.getDescriptor( eq( ApplicationKey.from( "myapplication" ) ) ) ).thenReturn( siteDescriptor );
+            final SiteDescriptor siteDescriptor =
+                SiteDescriptor.create().applicationKey( applicationKey ).mappingDescriptors( siteMappings ).build();
+            when( this.siteService.getDescriptor( eq( applicationKey ) ) ).thenReturn( siteDescriptor );
         }
 
         if ( projectMapping != null )
         {
             final ControllerMappingDescriptors projectMappings = ControllerMappingDescriptors.from( projectMapping );
-            final SiteDescriptor projectDescriptor = SiteDescriptor.create().mappingDescriptors( projectMappings ).build();
+            final SiteDescriptor projectDescriptor =
+                SiteDescriptor.create().applicationKey( applicationKey ).mappingDescriptors( projectMappings ).build();
             when( this.siteService.getDescriptor( eq( ApplicationKey.from( "project-app1" ) ) ) ).thenReturn( projectDescriptor );
         }
     }

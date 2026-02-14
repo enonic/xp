@@ -572,21 +572,21 @@ const adminToolRequest = {
 };
 expectAssignable<Request>(adminToolRequest);
 
-// Scenario: Admin context panel widget request
-const contextpanelWidgetRequest = {
+// Scenario: Admin context panel extension request
+const contextpanelExtensionRequest = {
     method: 'GET',
     scheme: 'http',
     host: 'localhost',
     port: 8080,
-    path: '/admin/site/admin/my-project/draft/_/admin:widget/com.acme.example.tsup/contextPanel',
-    rawPath: '/admin/site/admin/my-project/draft/_/admin:widget/com.acme.example.tsup/contextPanel',
-    url: 'http://localhost:8080/admin/site/admin/my-project/draft/_/admin:widget/com.acme.example.tsup/contextPanel?repository=com.enonic.cms.my-project&branch=draft&t=1727866860019',
+    path: '/admin/site/admin/my-project/draft/_/admin:extension/com.acme.example.tsup/contextPanel',
+    rawPath: '/admin/site/admin/my-project/draft/_/admin:extension/com.acme.example.tsup/contextPanel',
+    url: 'http://localhost:8080/admin/site/admin/my-project/draft/_/admin:extension/com.acme.example.tsup/contextPanel?repository=com.enonic.cms.my-project&branch=draft&t=1727866860019',
     remoteAddress: '127.0.0.1',
     mode: 'admin',
     webSocket: false,
     repositoryId: 'com.enonic.cms.my-project',
     branch: 'draft',
-    contextPath: '/admin/site/admin/my-project/draft/_/admin:widget/com.acme.example.tsup/contextPanel',
+    contextPath: '/admin/site/admin/my-project/draft/_/admin:extension/com.acme.example.tsup/contextPanel',
     params: {
         repository: 'com.enonic.cms.my-project',
         branch: 'draft',
@@ -616,23 +616,23 @@ const contextpanelWidgetRequest = {
         JSESSIONID: '15hb7cb69ai5vrbg9msvtjmur0',
     },
 };
-expectAssignable<Request>(contextpanelWidgetRequest);
+expectAssignable<Request>(contextpanelExtensionRequest);
 
-// Scenario: Admin dashboard widget request
-const dashboardWidgetRequest = {
+// Scenario: Admin dashboard extension request
+const dashboardExtensionRequest = {
     method: 'GET',
     scheme: 'http',
     host: 'localhost',
     port: 8080,
-    path: '/admin/tool/_/admin:widget/com.acme.example.tsup/dashboard',
-    rawPath: '/admin/tool/_/admin:widget/com.acme.example.tsup/dashboard',
-    url: 'http://localhost:8080/admin/tool/_/admin:widget/com.acme.example.tsup/dashboard',
+    path: '/admin/tool/_/admin:extension/com.acme.example.tsup/dashboard',
+    rawPath: '/admin/tool/_/admin:extension/com.acme.example.tsup/dashboard',
+    url: 'http://localhost:8080/admin/tool/_/admin:extension/com.acme.example.tsup/dashboard',
     remoteAddress: '127.0.0.1',
     mode: 'admin',
     webSocket: false,
     repositoryId: 'com.enonic.cms.default',
     branch: 'draft',
-    contextPath: '/admin/tool/_/admin:widget/com.acme.example.tsup/dashboard',
+    contextPath: '/admin/tool/_/admin:extension/com.acme.example.tsup/dashboard',
     params: {},
     headers: {
         Accept: '*/*',
@@ -658,23 +658,23 @@ const dashboardWidgetRequest = {
         JSESSIONID: '15hb7cb69ai5vrbg9msvtjmur0',
     },
 };
-expectAssignable<Request>(dashboardWidgetRequest);
+expectAssignable<Request>(dashboardExtensionRequest);
 
-// Scenario: Admin menuitem widget request
-const menuitemWidgetRequest = {
+// Scenario: Admin menuitem extension request
+const menuitemExtensionRequest = {
     method: 'GET',
     scheme: 'http',
     host: 'localhost',
     port: 8080,
-    path: '/admin/site/admin/my-project/draft/_/admin:widget/com.acme.example.tsup/menuItem',
-    rawPath: '/admin/site/admin/my-project/draft/_/admin:widget/com.acme.example.tsup/menuItem',
-    url: 'http://localhost:8080/admin/site/admin/my-project/draft/_/admin:widget/com.acme.example.tsup/menuItem',
+    path: '/admin/site/admin/my-project/draft/_/admin:extension/com.acme.example.tsup/menuItem',
+    rawPath: '/admin/site/admin/my-project/draft/_/admin:extension/com.acme.example.tsup/menuItem',
+    url: 'http://localhost:8080/admin/site/admin/my-project/draft/_/admin:extension/com.acme.example.tsup/menuItem',
     remoteAddress: '127.0.0.1',
     mode: 'admin',
     webSocket: false,
     repositoryId: 'com.enonic.cms.my-project',
     branch: 'draft',
-    contextPath: '/admin/site/admin/my-project/draft/_/admin:widget/com.acme.example.tsup/menuItem',
+    contextPath: '/admin/site/admin/my-project/draft/_/admin:extension/com.acme.example.tsup/menuItem',
     params: {},
     headers: {
         Accept: '*/*',
@@ -700,7 +700,7 @@ const menuitemWidgetRequest = {
         JSESSIONID: '15hb7cb69ai5vrbg9msvtjmur0',
     },
 };
-expectAssignable<Request>(menuitemWidgetRequest);
+expectAssignable<Request>(menuitemExtensionRequest);
 
 // Scenario: Illegal values for properties
 const requiredProperties = {

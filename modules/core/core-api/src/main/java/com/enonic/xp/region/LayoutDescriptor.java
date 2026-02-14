@@ -27,7 +27,7 @@ public final class LayoutDescriptor
     public ResourceKey getComponentPath()
     {
         final DescriptorKey key = this.getKey();
-        return ResourceKey.from( key.getApplicationKey(), "site/layouts/" + key.getName() );
+        return ResourceKey.from( key.getApplicationKey(), "cms/layouts/" + key.getName() );
     }
 
     public static LayoutDescriptor.Builder create()
@@ -42,7 +42,7 @@ public final class LayoutDescriptor
 
     public static ResourceKey toResourceKey( final DescriptorKey key )
     {
-        return ResourceKey.from( key.getApplicationKey(), "site/layouts/" + key.getName() + "/" + key.getName() + ".xml" );
+        return ResourceKey.from( key.getApplicationKey(), "cms/layouts/" + key.getName() + "/" + key.getName() + ".yml" );
     }
 
     public static final class Builder

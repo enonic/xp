@@ -8,9 +8,9 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentValidatorParams;
-import com.enonic.xp.content.ExtraData;
-import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.Mixin;
 import com.enonic.xp.content.MixinConfigValidationError;
+import com.enonic.xp.content.Mixins;
 import com.enonic.xp.content.ValidationError;
 import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.data.PropertyTree;
@@ -22,9 +22,9 @@ import com.enonic.xp.form.Occurrences;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.xdata.XData;
-import com.enonic.xp.schema.xdata.XDataName;
-import com.enonic.xp.schema.xdata.XDataService;
+import com.enonic.xp.schema.mixin.MixinDescriptor;
+import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.mixin.MixinService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -32,30 +32,30 @@ class ExtraDataValidatorTest
 {
     private static final String MIN_OCCURRENCES_I18N = "system.cms.validation.minOccurrencesInvalid.mixin";
 
-    private XDataService xDataService;
+    private MixinService mixinService;
 
-    private ExtraDataValidator validator;
+    private MixinValidator validator;
 
     @BeforeEach
     void setUp()
     {
-        xDataService = Mockito.mock( XDataService.class );
-        validator = new ExtraDataValidator( xDataService );
+        mixinService = Mockito.mock( MixinService.class );
+        validator = new MixinValidator( mixinService );
     }
 
     @Test
     void extra_data_without_form_data_is_skipped()
     {
-        final XDataName mixinName = XDataName.from( ApplicationKey.from( "app1" ), "myMixin" );
-        final XData xData = Mockito.mock( XData.class );
-        Mockito.when( xData.getForm() ).thenReturn( Form.create().build() );
-        Mockito.when( xDataService.getByName( mixinName ) ).thenReturn( xData );
+        final MixinName mixinName = MixinName.from( ApplicationKey.from( "app1" ), "myMixin" );
+        final MixinDescriptor descriptor = Mockito.mock( MixinDescriptor.class );
+        Mockito.when( descriptor.getForm() ).thenReturn( Form.create().build() );
+        Mockito.when( mixinService.getByName( mixinName ) ).thenReturn( descriptor );
 
-        final ExtraData extraData = new ExtraData( mixinName, new PropertyTree() );
+        final Mixin mixin = new Mixin( mixinName, new PropertyTree() );
 
         final ContentValidatorParams params = ContentValidatorParams.create()
             .contentType( ContentType.create().superType( ContentTypeName.structured() ).name( "myapp:mytype" ).build() )
-            .extraDatas( ExtraDatas.from( List.of( extraData ) ) )
+            .mixins( Mixins.from( List.of( mixin ) ) )
             .build();
 
         final ValidationErrors.Builder builder = ValidationErrors.create();
@@ -65,24 +65,25 @@ class ExtraDataValidatorTest
         assertThat( builder.build().hasErrors() ).isFalse();
     }
 
+
     @Test
     void missing_required_field_in_mixin_produces_error()
     {
-        final XDataName mixinName = XDataName.from( ApplicationKey.from( "app1" ), "myMixin" );
+        final MixinName mixinName = MixinName.from( ApplicationKey.from( "app1" ), "myMixin" );
         final Form form = Form.create()
             .addFormItem(
                 Input.create().name( "headline" ).label( "Headline" ).inputType( InputTypeName.TEXT_LINE ).required( true ).build() )
             .build();
-        final XData xData = Mockito.mock( XData.class );
-        Mockito.when( xData.getForm() ).thenReturn( form );
-        Mockito.when( xDataService.getByName( mixinName ) ).thenReturn( xData );
+        final MixinDescriptor descriptor = Mockito.mock( MixinDescriptor.class );
+        Mockito.when( descriptor.getForm() ).thenReturn( form );
+        Mockito.when( mixinService.getByName( mixinName ) ).thenReturn( descriptor );
 
         final PropertyTree data = new PropertyTree();
-        final ExtraData extraData = new ExtraData( mixinName, data );
+        final Mixin mixin = new Mixin( mixinName, data );
 
         final ContentValidatorParams params = ContentValidatorParams.create()
             .contentType( ContentType.create().superType( ContentTypeName.structured() ).name( "myapp:mytype" ).build() )
-            .extraDatas( ExtraDatas.from( List.of( extraData ) ) )
+            .mixins( Mixins.from( List.of( mixin ) ) )
             .build();
 
         final ValidationErrors.Builder builder = ValidationErrors.create();
@@ -106,23 +107,23 @@ class ExtraDataValidatorTest
     @Test
     void exceeding_maximum_occurrence_in_mixin_produces_error()
     {
-        final XDataName mixinName = XDataName.from( ApplicationKey.from( "app1" ), "myMixin" );
+        final MixinName mixinName = MixinName.from( ApplicationKey.from( "app1" ), "myMixin" );
         final Form form = Form.create()
             .addFormItem(
                 Input.create().name( "summary" ).label( "Summary" ).inputType( InputTypeName.TEXT_LINE ).maximumOccurrences( 1 ).build() )
             .build();
-        final XData xData = Mockito.mock( XData.class );
+        final MixinDescriptor xData = Mockito.mock( MixinDescriptor.class );
         Mockito.when( xData.getForm() ).thenReturn( form );
-        Mockito.when( xDataService.getByName( mixinName ) ).thenReturn( xData );
+        Mockito.when( mixinService.getByName( mixinName ) ).thenReturn( xData );
 
         final PropertyTree data = new PropertyTree();
         data.setString( "summary[0]", "first" );
         data.setString( "summary[1]", "second" );
-        final ExtraData extraData = new ExtraData( mixinName, data );
+        final Mixin mixin = new Mixin( mixinName, data );
 
         final ContentValidatorParams params = ContentValidatorParams.create()
             .contentType( ContentType.create().superType( ContentTypeName.structured() ).name( "myapp:mytype" ).build() )
-            .extraDatas( ExtraDatas.from( List.of( extraData ) ) )
+            .mixins( Mixins.from( List.of( mixin ) ) )
             .build();
 
         final ValidationErrors.Builder builder = ValidationErrors.create();
@@ -138,7 +139,7 @@ class ExtraDataValidatorTest
     @Test
     void option_set_selection_violation_in_mixin_produces_error()
     {
-        final XDataName mixinName = XDataName.from( ApplicationKey.from( "app1" ), "myMixin" );
+        final MixinName mixinName = MixinName.from( ApplicationKey.from( "app1" ), "myMixin" );
         final Form form = Form.create()
             .addFormItem( FormOptionSet.create()
                               .name( "colors" )
@@ -147,18 +148,18 @@ class ExtraDataValidatorTest
                               .addOptionSetOption( FormOptionSetOption.create().name( "blue" ).build() )
                               .build() )
             .build();
-        final XData xData = Mockito.mock( XData.class );
-        Mockito.when( xData.getForm() ).thenReturn( form );
-        Mockito.when( xDataService.getByName( mixinName ) ).thenReturn( xData );
+        final MixinDescriptor descriptor = Mockito.mock( MixinDescriptor.class );
+        Mockito.when( descriptor.getForm() ).thenReturn( form );
+        Mockito.when( mixinService.getByName( mixinName ) ).thenReturn( descriptor );
 
         final PropertyTree data = new PropertyTree();
         data.getRoot().addSet( "colors" ).addString( "_selected", "red" );
         data.getRoot().getSet( "colors" ).addString( "_selected", "blue" );
-        final ExtraData extraData = new ExtraData( mixinName, data );
+        final Mixin mixin = new Mixin( mixinName, data );
 
         final ContentValidatorParams params = ContentValidatorParams.create()
             .contentType( ContentType.create().superType( ContentTypeName.structured() ).name( "myapp:mytype" ).build() )
-            .extraDatas( ExtraDatas.from( List.of( extraData ) ) )
+            .mixins( Mixins.from( List.of( mixin ) ) )
             .build();
 
         final ValidationErrors.Builder builder = ValidationErrors.create();
@@ -174,7 +175,7 @@ class ExtraDataValidatorTest
     @Test
     void extra_data_with_nested_itemset_missing_required_field_produces_error_with_correct_path()
     {
-        final XDataName mixinName = XDataName.from( ApplicationKey.from( "app1" ), "myMixin" );
+        final MixinName mixinName = MixinName.from( ApplicationKey.from( "app1" ), "myMixin" );
         final Form form = Form.create()
             .addFormItem( com.enonic.xp.form.FormItemSet.create()
                               .name( "settings" )
@@ -186,17 +187,17 @@ class ExtraDataValidatorTest
                                                 .build() )
                               .build() )
             .build();
-        final XData xData = Mockito.mock( XData.class );
-        Mockito.when( xData.getForm() ).thenReturn( form );
-        Mockito.when( xDataService.getByName( mixinName ) ).thenReturn( xData );
+        final MixinDescriptor descriptor = Mockito.mock( MixinDescriptor.class );
+        Mockito.when( descriptor.getForm() ).thenReturn( form );
+        Mockito.when( mixinService.getByName( mixinName ) ).thenReturn( descriptor );
 
         final PropertyTree data = new PropertyTree();
         data.addSet( "settings" );
-        final ExtraData extraData = new ExtraData( mixinName, data );
+        final Mixin mixin = new Mixin( mixinName, data );
 
         final ContentValidatorParams params = ContentValidatorParams.create()
             .contentType( ContentType.create().superType( ContentTypeName.structured() ).name( "myapp:mytype" ).build() )
-            .extraDatas( ExtraDatas.from( List.of( extraData ) ) )
+            .mixins( Mixins.from( List.of( mixin ) ) )
             .build();
 
         final ValidationErrors.Builder builder = ValidationErrors.create();
@@ -214,24 +215,24 @@ class ExtraDataValidatorTest
     @Test
     void extra_data_with_array_field_exceeding_max_produces_error()
     {
-        final XDataName mixinName = XDataName.from( ApplicationKey.from( "app1" ), "myMixin" );
+        final MixinName mixinName = MixinName.from( ApplicationKey.from( "app1" ), "myMixin" );
         final Form form = Form.create()
             .addFormItem(
                 Input.create().name( "items" ).label( "Items" ).inputType( InputTypeName.TEXT_LINE ).maximumOccurrences( 2 ).build() )
             .build();
-        final XData xData = Mockito.mock( XData.class );
+        final MixinDescriptor xData = Mockito.mock( MixinDescriptor.class );
         Mockito.when( xData.getForm() ).thenReturn( form );
-        Mockito.when( xDataService.getByName( mixinName ) ).thenReturn( xData );
+        Mockito.when( mixinService.getByName( mixinName ) ).thenReturn( xData );
 
         final PropertyTree data = new PropertyTree();
         data.setString( "items[0]", "first" );
         data.setString( "items[1]", "second" );
         data.setString( "items[2]", "third" );
-        final ExtraData extraData = new ExtraData( mixinName, data );
+        final Mixin mixin = new Mixin( mixinName, data );
 
         final ContentValidatorParams params = ContentValidatorParams.create()
             .contentType( ContentType.create().superType( ContentTypeName.structured() ).name( "myapp:mytype" ).build() )
-            .extraDatas( ExtraDatas.from( List.of( extraData ) ) )
+            .mixins( Mixins.from( List.of( mixin ) ) )
             .build();
 
         final ValidationErrors.Builder builder = ValidationErrors.create();
@@ -251,7 +252,7 @@ class ExtraDataValidatorTest
     @Test
     void extra_data_with_nested_array_in_itemset_produces_error_with_correct_path()
     {
-        final XDataName mixinName = XDataName.from( ApplicationKey.from( "app1" ), "myMixin" );
+        final MixinName mixinName = MixinName.from( ApplicationKey.from( "app1" ), "myMixin" );
         final Form form = Form.create()
             .addFormItem( com.enonic.xp.form.FormItemSet.create()
                               .name( "container" )
@@ -263,19 +264,19 @@ class ExtraDataValidatorTest
                                                 .build() )
                               .build() )
             .build();
-        final XData xData = Mockito.mock( XData.class );
+        final MixinDescriptor xData = Mockito.mock( MixinDescriptor.class );
         Mockito.when( xData.getForm() ).thenReturn( form );
-        Mockito.when( xDataService.getByName( mixinName ) ).thenReturn( xData );
+        Mockito.when( mixinService.getByName( mixinName ) ).thenReturn( xData );
 
         final PropertyTree data = new PropertyTree();
         data.setString( "container.tags[0]", "tag1" );
         data.setString( "container.tags[1]", "tag2" );
         data.setString( "container.tags[2]", "tag3" );
-        final ExtraData extraData = new ExtraData( mixinName, data );
+        final Mixin mixin = new Mixin( mixinName, data );
 
         final ContentValidatorParams params = ContentValidatorParams.create()
             .contentType( ContentType.create().superType( ContentTypeName.structured() ).name( "myapp:mytype" ).build() )
-            .extraDatas( ExtraDatas.from( List.of( extraData ) ) )
+            .mixins( Mixins.from( List.of( mixin ) ) )
             .build();
 
         final ValidationErrors.Builder builder = ValidationErrors.create();
@@ -291,7 +292,7 @@ class ExtraDataValidatorTest
     @Test
     void extra_data_with_deeply_nested_structure_produces_error_with_correct_path()
     {
-        final XDataName mixinName = XDataName.from( ApplicationKey.from( "app1" ), "myMixin" );
+        final MixinName mixinName = MixinName.from( ApplicationKey.from( "app1" ), "myMixin" );
         final Form form = Form.create()
             .addFormItem( com.enonic.xp.form.FormItemSet.create()
                               .name( "outer" )
@@ -306,17 +307,17 @@ class ExtraDataValidatorTest
                                                 .build() )
                               .build() )
             .build();
-        final XData xData = Mockito.mock( XData.class );
-        Mockito.when( xData.getForm() ).thenReturn( form );
-        Mockito.when( xDataService.getByName( mixinName ) ).thenReturn( xData );
+        final MixinDescriptor MixinDescriptor = Mockito.mock( MixinDescriptor.class );
+        Mockito.when( MixinDescriptor.getForm() ).thenReturn( form );
+        Mockito.when( mixinService.getByName( mixinName ) ).thenReturn( MixinDescriptor );
 
         final PropertyTree data = new PropertyTree();
         data.addSet( "outer" ).addSet( "inner" );
-        final ExtraData extraData = new ExtraData( mixinName, data );
+        final Mixin mixin = new Mixin( mixinName, data );
 
         final ContentValidatorParams params = ContentValidatorParams.create()
             .contentType( ContentType.create().superType( ContentTypeName.structured() ).name( "myapp:mytype" ).build() )
-            .extraDatas( ExtraDatas.from( List.of( extraData ) ) )
+            .mixins( Mixins.from( List.of( mixin ) ) )
             .build();
 
         final ValidationErrors.Builder builder = ValidationErrors.create();

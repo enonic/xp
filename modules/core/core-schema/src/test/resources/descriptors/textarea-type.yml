@@ -1,0 +1,11 @@
+type: "TextArea"
+name: "mytextarea"
+label: "My TextArea"
+helpText: "Help Text"
+occurrences:
+  min: 0
+  max: 1
+maxLength: 11
+default: "Default text goes here"
+showCounter: true
+attributes: { }

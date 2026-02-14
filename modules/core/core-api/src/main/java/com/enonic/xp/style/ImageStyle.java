@@ -5,6 +5,8 @@ import java.util.Objects;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.schema.LocalizedText;
+
 import static com.google.common.base.Strings.nullToEmpty;
 
 public final class ImageStyle
@@ -124,6 +126,13 @@ public final class ImageStyle
         public Builder displayNameI18nKey( final String displayNameI18nKey )
         {
             this.displayNameI18nKey = displayNameI18nKey;
+            return this;
+        }
+
+        public Builder displayName( final LocalizedText text )
+        {
+            this.displayName = text.text();
+            this.displayNameI18nKey = text.i18n();
             return this;
         }
 

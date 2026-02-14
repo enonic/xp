@@ -7,7 +7,6 @@ import java.time.LocalTime;
 
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.form.Input;
 import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Reference;
 
@@ -38,7 +37,7 @@ public abstract class BaseInputTypeTest
         return tree.addReference( "test", Reference.from( value ) );
     }
 
-    protected final Property dateTimeProperty()
+    protected final Property instantProperty()
     {
         final PropertyTree tree = new PropertyTree();
         return tree.addInstant( "test", Instant.MAX );
@@ -78,19 +77,5 @@ public abstract class BaseInputTypeTest
     {
         final PropertyTree tree = new PropertyTree();
         return tree.addLong( "test", value );
-    }
-
-    protected final Input.Builder getDefaultInputBuilder( final InputTypeName inputTypeName, final String defaultValue ) {
-
-        final InputTypeProperty defaultProperty = InputTypeProperty.create( "default", defaultValue ).build();
-
-        final InputTypeDefault inputTypeDefault = InputTypeDefault.create().property( defaultProperty ).build();
-
-        return Input.create().
-            name( "inputName" ).
-            label( "label" ).
-            inputType( inputTypeName ).
-            defaultValue( inputTypeDefault );
-
     }
 }

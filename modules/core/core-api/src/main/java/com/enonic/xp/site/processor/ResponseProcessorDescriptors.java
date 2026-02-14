@@ -32,9 +32,9 @@ public final class ResponseProcessorDescriptors
         return responseDescriptors instanceof ResponseProcessorDescriptors r ? r : fromInternal( ImmutableList.copyOf( responseDescriptors ) );
     }
 
-    private static ResponseProcessorDescriptors fromInternal( final ImmutableList<ResponseProcessorDescriptor> xDataMappings )
+    private static ResponseProcessorDescriptors fromInternal( final ImmutableList<ResponseProcessorDescriptor> processorDescriptors )
     {
-        return xDataMappings.isEmpty() ? EMPTY : new ResponseProcessorDescriptors( xDataMappings );
+        return processorDescriptors.isEmpty() ? EMPTY : new ResponseProcessorDescriptors( processorDescriptors );
     }
 
     public static Collector<ResponseProcessorDescriptor, ?, ResponseProcessorDescriptors> collector()

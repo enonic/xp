@@ -1,0 +1,17 @@
+displayName: "Landing page"
+description:
+  text: "Description of the Landing page"
+  i18n: "page.description.landingPage"
+form:
+  - type: "TextLine"
+    name: "width"
+    label: "Width"
+    default: "760"
+    occurrences:
+      min: 1
+      max: 1
+regions:
+  - "main"
+config:
+  p1: "v1"
+  p2: "v2"

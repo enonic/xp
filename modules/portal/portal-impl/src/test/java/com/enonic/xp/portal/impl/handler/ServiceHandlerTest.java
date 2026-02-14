@@ -29,6 +29,7 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -91,6 +92,7 @@ class ServiceHandlerTest
 
         this.request.setMethod( HttpMethod.GET );
         this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );
+        this.request.setEndpointPath( "/_/service/demo/myservice" );
         this.request.setRawPath( "/site/draft/site/somepath/content/_/service/demo/myservice" );
         this.request.setBaseUri( "/site" );
     }
@@ -102,7 +104,7 @@ class ServiceHandlerTest
         this.request.setMethod( HttpMethod.OPTIONS );
         final PortalResponse portalResponse = PortalResponse.create().status( HttpStatus.METHOD_NOT_ALLOWED ).build();
         when( this.controllerScript.execute( Mockito.any() ) ).thenReturn( portalResponse );
-        this.request.setRawPath( "/_/service/demo/test" );
+        this.request.setEndpointPath( "/_/service/demo/test" );
 
         final WebResponse res = this.handler.handle( this.request );
         assertNotNull( res );
@@ -114,7 +116,7 @@ class ServiceHandlerTest
     void testNotValidUrlPattern()
         throws Exception
     {
-        this.request.setRawPath( "/_/service/" );
+        this.request.setEndpointPath( "/_/service/" );
 
         try
         {
@@ -134,11 +136,13 @@ class ServiceHandlerTest
     {
         final DescriptorKey serviceDescriptorKey = DescriptorKey.from( "demo:test" );
         final Set<PrincipalKey> allowedPrincipals = Collections.singleton( PrincipalKey.from( "role:system.admin" ) );
-        final ServiceDescriptor serviceDescriptor =
-            ServiceDescriptor.create().key( serviceDescriptorKey ).setAllowedPrincipals( allowedPrincipals ).build();
+        final ServiceDescriptor serviceDescriptor = ServiceDescriptor.create()
+            .key( serviceDescriptorKey )
+            .allowedPrincipals( allowedPrincipals.stream().collect( PrincipalKeys.collector() ) )
+            .build();
         when( this.serviceDescriptorService.getByKey( serviceDescriptorKey ) ).thenReturn( serviceDescriptor );
 
-        this.request.setRawPath( "/_/service/demo/test" );
+        this.request.setEndpointPath( "/_/service/demo/test" );
 
         boolean forbiddenErrorThrown = false;
         try
@@ -180,7 +184,7 @@ class ServiceHandlerTest
         setupContentAndSite();
 
         this.request.setRepositoryId( RepositoryId.from( "com.enonic.cms.myrepo" ) );
-        this.request.setRawPath( "/site/draft/site/somepath/content/_/service/demo/test" );
+        this.request.setEndpointPath( "/_/service/demo/test" );
 
         final WebResponse response = this.handler.handle( this.request );
         assertEquals( HttpStatus.OK, response.getStatus() );
@@ -197,7 +201,7 @@ class ServiceHandlerTest
     void executeScript_invalidSite()
     {
         setupContentAndSite();
-        this.request.setRawPath( "/_/service/forbidden/test" );
+        this.request.setEndpointPath( "/_/service/forbidden/test" );
         assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
     }
 
@@ -291,8 +295,7 @@ class ServiceHandlerTest
         siteConfigAsSet.addString( "applicationKey", siteConfig.getApplicationKey().toString() );
         siteConfigAsSet.addSet( "config", siteConfig.getConfig().getRoot().copy( parentSet.getTree() ) );
 
-        return Site.create()
-            .data( siteData )
+        return Site.create().data( siteData )
             .id( ContentId.from( id ) )
             .path( ContentPath.from( path ) )
             .owner( PrincipalKey.from( "user:myStore:me" ) )

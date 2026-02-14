@@ -8,7 +8,6 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.ApplicationTestSupport;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.webapp.WebappDescriptor;
-import com.enonic.xp.xml.XmlException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -52,8 +51,8 @@ class WebappServiceImplTest
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "mywebapp2" );
 
-        final XmlException ex = assertThrows( XmlException.class, () -> this.service.getDescriptor( applicationKey ) );
-        assertTrue( ex.getMessage().contains( "Could not load webapp descriptor" ) );
+        final Exception ex = assertThrows( Exception.class, () -> this.service.getDescriptor( applicationKey ) );
+        assertTrue( ex.getMessage().contains( "Unrecognized field \"unsupported-apis\"" ) );
     }
 
     @Test

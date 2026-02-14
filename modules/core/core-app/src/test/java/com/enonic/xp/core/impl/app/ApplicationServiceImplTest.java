@@ -778,7 +778,7 @@ class ApplicationServiceImplTest
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
 
-        final List<String> appNodeNames = List.of( "site", "content-types", "mixins", "x-data", "parts", "layouts", "pages" );
+        final List<String> appNodeNames = List.of( "cms", "content-types", "form-fragments", "mixins", "parts", "layouts", "pages", "styles" );
 
         when( nodeService.create( isA( CreateNodeParams.class ) ) ).thenAnswer( params -> {
             final CreateNodeParams createNodeParams = params.getArgument( 0 );

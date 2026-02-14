@@ -1,0 +1,5 @@
+processors:
+  - name: "filter1"
+    order: 10
+  - name: "filter2"
+    order: 20

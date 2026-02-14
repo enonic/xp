@@ -14,15 +14,13 @@ import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.Mixins;
 import com.enonic.xp.content.ValidationErrors;
-import com.enonic.xp.content.XDataDefaultValuesProcessor;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.content.processor.ContentProcessor;
 import com.enonic.xp.core.impl.content.processor.ProcessCreateParams;
 import com.enonic.xp.core.impl.content.processor.ProcessCreateResult;
 import com.enonic.xp.data.Property;
-import com.enonic.xp.form.FormDefaultValuesProcessor;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.name.NamePrettyfier;
 import com.enonic.xp.node.CreateNodeParams;
@@ -30,7 +28,6 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.RefreshMode;
-import com.enonic.xp.page.PageDefaultValuesProcessor;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.security.PrincipalKey;
@@ -42,13 +39,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 final class CreateContentCommand
     extends AbstractCreatingOrUpdatingContentCommand
 {
-    private final XDataDefaultValuesProcessor xDataDefaultValuesProcessor;
-
     private final MediaInfo mediaInfo;
-
-    private final FormDefaultValuesProcessor formDefaultValuesProcessor;
-
-    private final PageDefaultValuesProcessor pageFormDefaultValuesProcessor;
 
     private CreateContentParams params;
 
@@ -57,9 +48,6 @@ final class CreateContentCommand
         super( builder );
         this.params = builder.params;
         this.mediaInfo = builder.mediaInfo;
-        this.formDefaultValuesProcessor = builder.formDefaultValuesProcessor;
-        this.pageFormDefaultValuesProcessor = builder.pageFormDefaultValuesProcessor;
-        this.xDataDefaultValuesProcessor = builder.xDataDefaultValuesProcessor;
     }
 
     static Builder create()
@@ -79,12 +67,8 @@ final class CreateContentCommand
         final ContentType contentType = contentTypeService.getByName( new GetContentTypeParams().contentTypeName( params.getType() ) );
         validateContentType( contentType );
 
-        formDefaultValuesProcessor.setDefaultValues( contentType.getForm(), params.getData() );
-        pageFormDefaultValuesProcessor.applyDefaultValues( params.getPage() );
-
-        final ExtraDatas mergedExtraData = mergeExtraData( params.getType(), params.getData(), params.getParent(), params.getExtraDatas() );
-        xDataDefaultValuesProcessor.applyDefaultValues( mergedExtraData );
-        params = CreateContentParams.create( this.params ).extraDatas( mergedExtraData ).build();
+        final Mixins mergedMixins = mergeMixins( params.getType(), params.getData(), params.getParent(), params.getMixins() );
+        params = CreateContentParams.create( this.params ).mixins( mergedMixins ).build();
 
         ProcessCreateResult processedParams = runContentProcessors( params );
 
@@ -95,10 +79,10 @@ final class CreateContentCommand
         final CreateNodeParams createNodeParams = CreateNodeParamsFactory.create( createContentTranslatorParams )
             .contentTypeService( this.contentTypeService )
             .pageDescriptorService( this.pageDescriptorService )
-            .xDataService( this.xDataService )
+            .mixinService( this.mixinService )
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
-            .siteService( this.siteService )
+            .cmsService( this.cmsService )
             .build()
             .produce()
             .versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.CREATE_ATTR ) )
@@ -130,7 +114,7 @@ final class CreateContentCommand
         validateContentData( params.getType(), params.getData() );
         validateSiteConfigs( params.getData() );
         validatePage( params.getPage() );
-        validateMixins( params.getExtraDatas() );
+        validateMixins( params.getMixins() );
         validateCreateAttachments( params.getCreateAttachments() );
         validateImageAttachment( params );
     }
@@ -278,7 +262,7 @@ final class CreateContentCommand
     {
         final ValidationErrors validationErrors = ValidateContentDataCommand.create()
             .data( builder.getData() )
-            .extraDatas( builder.getExtraDatas() )
+            .mixins( builder.getMixins() )
             .contentTypeName( builder.getType() )
             .contentName( builder.getName() )
             .displayName( builder.getDisplayName() )
@@ -307,12 +291,6 @@ final class CreateContentCommand
 
         private MediaInfo mediaInfo;
 
-        private FormDefaultValuesProcessor formDefaultValuesProcessor;
-
-        private PageDefaultValuesProcessor pageFormDefaultValuesProcessor;
-
-        private XDataDefaultValuesProcessor xDataDefaultValuesProcessor;
-
         private Builder()
         {
         }
@@ -329,32 +307,11 @@ final class CreateContentCommand
             return this;
         }
 
-        Builder formDefaultValuesProcessor( final FormDefaultValuesProcessor formDefaultValuesProcessor )
-        {
-            this.formDefaultValuesProcessor = formDefaultValuesProcessor;
-            return this;
-        }
-
-        Builder pageFormDefaultValuesProcessor( final PageDefaultValuesProcessor pageFormDefaultValuesProcessor )
-        {
-            this.pageFormDefaultValuesProcessor = pageFormDefaultValuesProcessor;
-            return this;
-        }
-
-        Builder xDataDefaultValuesProcessor( final XDataDefaultValuesProcessor xDataDefaultValuesProcessor )
-        {
-            this.xDataDefaultValuesProcessor = xDataDefaultValuesProcessor;
-            return this;
-        }
-
         @Override
         void validate()
         {
             super.validate();
             Objects.requireNonNull( params, "params cannot be null" );
-            Objects.requireNonNull( formDefaultValuesProcessor );
-            Objects.requireNonNull( pageFormDefaultValuesProcessor );
-            Objects.requireNonNull( xDataDefaultValuesProcessor );
         }
 
         public CreateContentCommand build()

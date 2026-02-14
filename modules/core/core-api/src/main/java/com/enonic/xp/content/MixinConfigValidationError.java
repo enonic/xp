@@ -4,21 +4,21 @@ import java.util.List;
 import java.util.Objects;
 
 import com.enonic.xp.data.PropertyPath;
-import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.schema.mixin.MixinName;
 
 public final class MixinConfigValidationError
     extends DataValidationError
 {
-    private final XDataName mixinName;
+    private final MixinName mixinName;
 
     MixinConfigValidationError( final PropertyPath propertyPath, final ValidationErrorCode errorCode, final String message,
-                                final String i18n, final XDataName mixinName, final List<Object> args )
+                                final String i18n, final MixinName mixinName, final List<Object> args )
     {
         super( propertyPath, errorCode, message, i18n, args );
         this.mixinName = Objects.requireNonNull( mixinName );
     }
 
-    public XDataName getMixinName()
+    public MixinName getMixinName()
     {
         return mixinName;
     }

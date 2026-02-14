@@ -36,11 +36,11 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.content.GetContentVersionsParams;
 import com.enonic.xp.content.GetContentVersionsResult;
+import com.enonic.xp.content.Mixins;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -51,24 +51,24 @@ import com.enonic.xp.core.impl.content.ContentAuditLogSupportImpl;
 import com.enonic.xp.core.impl.content.ContentConfig;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
 import com.enonic.xp.core.impl.content.LayersContentService;
+import com.enonic.xp.core.impl.content.MixinMappingServiceImpl;
 import com.enonic.xp.core.impl.content.SiteConfigServiceImpl;
-import com.enonic.xp.core.impl.content.XDataMappingServiceImpl;
+import com.enonic.xp.core.impl.content.schema.ContentTypeServiceImpl;
+import com.enonic.xp.core.impl.content.validate.CmsConfigsValidator;
 import com.enonic.xp.core.impl.content.validate.ContentNameValidator;
-import com.enonic.xp.core.impl.content.validate.ExtraDataValidator;
+import com.enonic.xp.core.impl.content.validate.MixinValidator;
 import com.enonic.xp.core.impl.content.validate.OccurrenceValidator;
-import com.enonic.xp.core.impl.content.validate.SiteConfigsValidator;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
 import com.enonic.xp.core.impl.media.MediaInfoServiceImpl;
 import com.enonic.xp.core.impl.project.ProjectConfig;
 import com.enonic.xp.core.impl.project.ProjectServiceImpl;
 import com.enonic.xp.core.impl.project.init.ContentInitializer;
-import com.enonic.xp.core.impl.schema.content.ContentTypeServiceImpl;
 import com.enonic.xp.core.impl.security.PasswordSecurityService;
 import com.enonic.xp.core.impl.security.SecurityAuditLogSupportImpl;
 import com.enonic.xp.core.impl.security.SecurityConfig;
 import com.enonic.xp.core.impl.security.SecurityInitializer;
 import com.enonic.xp.core.impl.security.SecurityServiceImpl;
-import com.enonic.xp.core.impl.site.SiteServiceImpl;
+import com.enonic.xp.core.impl.site.CmsServiceImpl;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
@@ -78,7 +78,6 @@ import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
-import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageTemplateService;
@@ -106,16 +105,18 @@ import com.enonic.xp.repo.impl.storage.IndexDataServiceImpl;
 import com.enonic.xp.repo.impl.storage.NodeStorageServiceImpl;
 import com.enonic.xp.repo.impl.version.VersionServiceImpl;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.schema.content.CmsFormFragmentService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinService;
-import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.site.CmsService;
+import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Reference;
 
@@ -154,19 +155,17 @@ public abstract class AbstractContentServiceTest
 
     protected ContentTypeServiceImpl contentTypeService;
 
+    protected CmsFormFragmentService formFragmentService;
+
     protected MixinService mixinService;
 
-    protected XDataService xDataService;
-
-    protected XDataMappingServiceImpl xDataMappingService;
+    protected MixinMappingServiceImpl mixinMappingService;
 
     protected SiteConfigServiceImpl siteConfigService;
 
     protected AuditLogService auditLogService;
 
     protected IndexServiceImpl indexService;
-
-    protected SiteServiceImpl siteService;
 
     protected ResourceService resourceService;
 
@@ -181,6 +180,8 @@ public abstract class AbstractContentServiceTest
     private ExecutorService executorService;
 
     private Context initialContext;
+
+    protected CmsService cmsService;
 
     protected Context ctxDraft()
     {
@@ -272,10 +273,10 @@ public abstract class AbstractContentServiceTest
         nodeService =
             new NodeServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService, repositoryService );
 
-        mixinService = mock( MixinService.class );
-        when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
+        formFragmentService = mock( CmsFormFragmentService.class );
+        when( formFragmentService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
 
-        xDataService = mock( XDataService.class );
+        mixinService = mock( MixinService.class );
 
         Map<String, List<String>> metadata = new HashMap<>();
         metadata.put( HttpHeaders.CONTENT_TYPE, List.of( "image/jpeg" ) );
@@ -289,11 +290,9 @@ public abstract class AbstractContentServiceTest
 
         resourceService = mock( ResourceService.class );
 
-        siteService = new SiteServiceImpl();
-        siteService.setResourceService( resourceService );
-        siteService.setMixinService( mixinService );
+        cmsService = new CmsServiceImpl( resourceService, formFragmentService );
 
-        contentTypeService = new ContentTypeServiceImpl( resourceService, null, mixinService );
+        contentTypeService = new ContentTypeServiceImpl( resourceService, null, formFragmentService );
 
         this.pageDescriptorService = mock( PageDescriptorService.class );
         this.pageTemplateService = mock( PageTemplateService.class );
@@ -335,31 +334,28 @@ public abstract class AbstractContentServiceTest
 
         projectService.create( CreateProjectParams.create().name( testprojectName ).displayName( "test" ).build() );
 
-        xDataMappingService = new XDataMappingServiceImpl( siteService, xDataService );
+        mixinMappingService = new MixinMappingServiceImpl( cmsService, mixinService );
         siteConfigService = new SiteConfigServiceImpl( nodeService, projectService, contentTypeService, eventPublisher );
 
         this.config = mock( ContentConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         contentService =
             new ContentServiceImpl( nodeService, pageDescriptorService, partDescriptorService, layoutDescriptorService, siteConfigService,
-                                    ( form, data ) -> {
-                                    }, ( page ) -> {
-            }, ( extraDatas ) -> {
-            }, config );
+                                    config );
         contentService.setEventPublisher( eventPublisher );
         contentService.setMediaInfoService( mediaInfoService );
-        contentService.setSiteService( siteService );
+        contentService.setCmsService( cmsService );
         contentService.setContentTypeService( contentTypeService );
-        contentService.setxDataService( xDataService );
-        contentService.setXDataMappingService( xDataMappingService );
+        contentService.setMixinService( mixinService );
+        contentService.setMixinMappingService( mixinMappingService );
         contentService.setContentAuditLogSupport( contentAuditLogSupport );
 
         contentService.addContentValidator( new ContentNameValidator() );
-        contentService.addContentValidator( new SiteConfigsValidator( siteService ) );
+        contentService.addContentValidator( new CmsConfigsValidator( cmsService ) );
         contentService.addContentValidator( new OccurrenceValidator() );
-        contentService.addContentValidator( new ExtraDataValidator( xDataService ) );
+        contentService.addContentValidator( new MixinValidator( mixinService ) );
 
         layersContentService =
-            new LayersContentService( nodeService, contentTypeService, eventPublisher, xDataService, siteService, pageDescriptorService,
+            new LayersContentService( nodeService, contentTypeService, eventPublisher, mixinService, cmsService, pageDescriptorService,
                                       partDescriptorService, layoutDescriptorService, config );
     }
 
@@ -392,13 +388,13 @@ public abstract class AbstractContentServiceTest
 
     protected Content createContent( ContentPath parentPath )
     {
-        return doCreateContent( parentPath, "This is my test content #" + UUID.randomUUID(), new PropertyTree(), ExtraDatas.empty(),
+        return doCreateContent( parentPath, "This is my test content #" + UUID.randomUUID(), new PropertyTree(), Mixins.empty(),
                                 ContentTypeName.folder() );
     }
 
     protected Content createContent( final ContentPath parentPath, final String displayName )
     {
-        return doCreateContent( parentPath, displayName, new PropertyTree(), ExtraDatas.empty(), ContentTypeName.folder() );
+        return doCreateContent( parentPath, displayName, new PropertyTree(), Mixins.empty(), ContentTypeName.folder() );
     }
 
     protected Content createAndPublishContent( final ContentPath parentPath, final Instant publishFrom )
@@ -409,7 +405,7 @@ public abstract class AbstractContentServiceTest
     protected Content createAndPublishContent( final ContentPath parentPath, final Instant publishFrom, final Instant publishTo )
     {
         final CreateContentParams params =
-            createContentBuilder( parentPath, "This is my test content #" + UUID.randomUUID(), new PropertyTree(), ExtraDatas.empty(),
+            createContentBuilder( parentPath, "This is my test content #" + UUID.randomUUID(), new PropertyTree(), Mixins.empty(),
                                   ContentTypeName.folder() ).build();
 
         return doCreateAndPublishContent( params, publishFrom, publishTo );
@@ -417,24 +413,23 @@ public abstract class AbstractContentServiceTest
 
     protected Content createContent( final ContentPath parentPath, final String displayName, final PropertyTree data )
     {
-        return doCreateContent( parentPath, displayName, data, ExtraDatas.empty(), ContentTypeName.folder() );
+        return doCreateContent( parentPath, displayName, data, Mixins.empty(), ContentTypeName.folder() );
     }
 
     protected Content createContent( final ContentPath parentPath, final String displayName, final PropertyTree data, ContentTypeName type )
     {
-        return doCreateContent( parentPath, displayName, data, ExtraDatas.empty(), type );
+        return doCreateContent( parentPath, displayName, data, Mixins.empty(), type );
     }
 
-    protected Content createContent( final ContentPath parentPath, final String displayName, final PropertyTree data,
-                                     final ExtraDatas extraDatas )
+    protected Content createContent( final ContentPath parentPath, final String displayName, final PropertyTree data, final Mixins mixins )
     {
-        return doCreateContent( parentPath, displayName, data, extraDatas, ContentTypeName.folder() );
+        return doCreateContent( parentPath, displayName, data, mixins, ContentTypeName.folder() );
     }
 
     protected Content createContent( final ContentPath parentPath, final String displayName, final AccessControlList permissions )
     {
         final CreateContentParams.Builder builder =
-            createContentBuilder( parentPath, displayName, new PropertyTree(), ExtraDatas.empty(), ContentTypeName.folder() );
+            createContentBuilder( parentPath, displayName, new PropertyTree(), Mixins.empty(), ContentTypeName.folder() );
 
         builder.permissions( permissions );
         builder.inheritPermissions( false );
@@ -443,9 +438,9 @@ public abstract class AbstractContentServiceTest
     }
 
     private Content doCreateContent( final ContentPath parentPath, final String displayName, final PropertyTree data,
-                                     final ExtraDatas extraDatas, ContentTypeName type )
+                                     final Mixins mixins, ContentTypeName type )
     {
-        final CreateContentParams.Builder builder = createContentBuilder( parentPath, displayName, data, extraDatas, type );
+        final CreateContentParams.Builder builder = createContentBuilder( parentPath, displayName, data, mixins, type );
         return doCreateContent( builder );
     }
 
@@ -479,13 +474,13 @@ public abstract class AbstractContentServiceTest
     }
 
     private CreateContentParams.Builder createContentBuilder( final ContentPath parentPath, final String displayName,
-                                                              final PropertyTree data, final ExtraDatas extraDatas, ContentTypeName type )
+                                                              final PropertyTree data, final Mixins mixins, ContentTypeName type )
     {
         return CreateContentParams.create()
             .displayName( displayName )
             .parent( parentPath )
             .contentData( data )
-            .extraDatas( extraDatas )
+            .mixins( mixins )
             .type( type );
     }
 
@@ -537,8 +532,16 @@ public abstract class AbstractContentServiceTest
     {
         final FormItemSet set = FormItemSet.create()
             .name( "set" )
-            .addFormItem( Input.create().label( "String" ).name( "setString" ).inputType( InputTypeName.TEXT_LINE ).build() )
-            .addFormItem( Input.create().label( "Double" ).name( "setDouble" ).inputType( InputTypeName.DOUBLE ).build() )
+            .addFormItem( Input.create().
+                label( "String" ).
+                name( "setString" ).
+                inputType( InputTypeName.TEXT_LINE ).
+                build() )
+            .addFormItem( Input.create().
+                label( "Double" ).
+                name( "setDouble" ).
+                inputType( InputTypeName.DOUBLE ).
+                build() )
             .build();
 
         return ContentType.create()
@@ -552,8 +555,18 @@ public abstract class AbstractContentServiceTest
                               .name( "comboBox" )
                               .label( "Combobox" )
                               .inputType( InputTypeName.COMBO_BOX )
-                              .inputTypeProperty( InputTypeProperty.create( "option", "label1" ).attribute( "value", "value1" ).build() )
-                              .inputTypeProperty( InputTypeProperty.create( "option", "label2" ).attribute( "value", "value2" ).build() )
+                              .inputTypeConfig( GenericValue.newObject()
+                                                    .put( "options", GenericValue.newList()
+                                                        .add( GenericValue.newObject()
+                                                                  .put( "value", "value1" )
+                                                                  .put( "label", GenericValue.newObject().put( "text", "label1" ).build() )
+                                                                  .build() )
+                                                        .add( GenericValue.newObject()
+                                                                  .put( "value", "value2" )
+                                                                  .put( "label", GenericValue.newObject().put( "text", "label2" ).build() )
+                                                                  .build() )
+                                                        .build() )
+                                                    .build() )
                               .build() )
             .addFormItem( Input.create().name( "checkbox" ).label( "Checkbox" ).inputType( InputTypeName.CHECK_BOX ).build() )
             .addFormItem( Input.create().name( "tag" ).label( "Tag" ).inputType( InputTypeName.TAG ).build() )
@@ -561,8 +574,7 @@ public abstract class AbstractContentServiceTest
                               .name( "contentSelector" )
                               .label( "Content selector" )
                               .inputType( InputTypeName.CONTENT_SELECTOR )
-                              .inputTypeProperty(
-                                  InputTypeProperty.create( "allowContentType", ContentTypeName.folder().toString() ).build() )
+                              .inputTypeProperty( "allowContentType", ContentTypeName.folder().toString() )
                               .build() )
             .addFormItem( Input.create()
                               .name( "contentTypeFilter" )
@@ -582,13 +594,11 @@ public abstract class AbstractContentServiceTest
                               .name( "localDateTime" )
                               .label( "Local datetime" )
                               .inputType( InputTypeName.DATE_TIME )
-                              .inputTypeProperty( InputTypeProperty.create( "timezone", "false" ).build() )
                               .build() )
             .addFormItem( Input.create()
                               .name( "dateTime" )
                               .label( "Datetime" )
-                              .inputType( InputTypeName.DATE_TIME )
-                              .inputTypeProperty( InputTypeProperty.create( "timezone", "true" ).build() )
+                              .inputType( InputTypeName.INSTANT )
                               .build() )
             .addFormItem( set )
             .build();

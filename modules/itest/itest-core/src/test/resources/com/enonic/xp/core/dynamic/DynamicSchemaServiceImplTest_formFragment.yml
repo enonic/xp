@@ -1,0 +1,11 @@
+displayName: "Virtual FormFragment"
+description: "FormFragment description"
+form:
+  - type: "TextLine"
+    name: "text2"
+    label: "Text 2"
+    occurrences:
+      min: 0
+      max: 1
+  - type: "FormFragment"
+    name: "inline"

@@ -157,8 +157,8 @@ class ApplicationServiceTest
                                                              .setHeader( Constants.BUNDLE_SYMBOLICNAME, "appName" )
                                                              .setHeader( Constants.BUNDLE_VERSION, appVersion )
                                                              .setHeader( "X-Bundle-Type", "application" )
-                                                             .addResource( "site/site.xml",
-                                                                           getClass().getResource( "/myapp/site/site.xml" ) )
+                                                             .addResource( "cms/site.yml",
+                                                                           getClass().getResource( "/myapp/cms/site.yml" ) )
                                                              .build() ) );
     }
 

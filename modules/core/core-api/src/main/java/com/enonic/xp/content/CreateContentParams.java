@@ -17,7 +17,7 @@ public final class CreateContentParams
 {
     private final PropertyTree data;
 
-    private final ExtraDatas extraDatas;
+    private final Mixins mixins;
 
     private final ContentTypeName type;
 
@@ -50,7 +50,7 @@ public final class CreateContentParams
     private CreateContentParams( Builder builder )
     {
         this.data = Objects.requireNonNull( builder.data, "data is required" );
-        this.extraDatas = Objects.requireNonNullElse( builder.extraDatas, ExtraDatas.empty() );
+        this.mixins = Objects.requireNonNullElse( builder.mixins, Mixins.empty() );
         this.type = Objects.requireNonNull( builder.type, "type is required" );
         this.owner = builder.owner;
         this.displayName = builder.displayName;
@@ -82,9 +82,9 @@ public final class CreateContentParams
         return data;
     }
 
-    public ExtraDatas getExtraDatas()
+    public Mixins getMixins()
     {
-        return extraDatas;
+        return mixins;
     }
 
     public ContentTypeName getType()
@@ -161,7 +161,7 @@ public final class CreateContentParams
     {
         private PropertyTree data;
 
-        private ExtraDatas extraDatas;
+        private Mixins mixins;
 
         private ContentTypeName type;
 
@@ -198,7 +198,7 @@ public final class CreateContentParams
         private Builder( final CreateContentParams source )
         {
             this.data = source.data;
-            this.extraDatas = source.extraDatas;
+            this.mixins = source.mixins;
             this.type = source.type;
             this.owner = source.owner;
             this.displayName = source.displayName;
@@ -220,9 +220,9 @@ public final class CreateContentParams
             return this;
         }
 
-        public Builder extraDatas( final ExtraDatas extraDatas )
+        public Builder mixins( final Mixins mixins )
         {
-            this.extraDatas = extraDatas;
+            this.mixins = mixins;
             return this;
         }
 

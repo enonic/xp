@@ -11,9 +11,9 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.content.ExtraData;
-import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.Media;
+import com.enonic.xp.content.Mixin;
+import com.enonic.xp.content.Mixins;
 import com.enonic.xp.core.impl.content.ContentConfig;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
@@ -43,13 +43,13 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.schema.xdata.XData;
-import com.enonic.xp.schema.xdata.XDataName;
-import com.enonic.xp.schema.xdata.XDataService;
+import com.enonic.xp.schema.mixin.MixinDescriptor;
+import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.site.CmsDescriptor;
+import com.enonic.xp.site.CmsService;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
-import com.enonic.xp.site.SiteDescriptor;
-import com.enonic.xp.site.SiteService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -65,9 +65,9 @@ class HtmlAreaContentProcessorTest
 
     private ContentTypeService contentTypeService;
 
-    private XDataService xDataService;
+    private MixinService mixinService;
 
-    private SiteService siteService;
+    private CmsService cmsService;
 
     private PageDescriptorService pageDescriptorService;
 
@@ -81,8 +81,8 @@ class HtmlAreaContentProcessorTest
     void setUp()
     {
 
-        this.siteService = Mockito.mock( SiteService.class );
-        this.xDataService = Mockito.mock( XDataService.class );
+        this.cmsService = Mockito.mock( CmsService.class );
+        this.mixinService = Mockito.mock( MixinService.class );
         this.contentTypeService = Mockito.mock( ContentTypeService.class );
         this.pageDescriptorService = Mockito.mock( PageDescriptorService.class );
         this.partDescriptorService = Mockito.mock( PartDescriptorService.class );
@@ -104,8 +104,8 @@ class HtmlAreaContentProcessorTest
 
         htmlAreaContentProcessor = new HtmlAreaContentProcessor( contentConfig );
         htmlAreaContentProcessor.setContentTypeService( contentTypeService );
-        htmlAreaContentProcessor.setSiteService( siteService );
-        htmlAreaContentProcessor.setXDataService( xDataService );
+        htmlAreaContentProcessor.setCmsService( cmsService );
+        htmlAreaContentProcessor.setMixinService( mixinService );
         htmlAreaContentProcessor.setPageDescriptorService( pageDescriptorService );
         htmlAreaContentProcessor.setPartDescriptorService( partDescriptorService );
         htmlAreaContentProcessor.setLayoutDescriptorService( layoutDescriptorService );
@@ -120,7 +120,7 @@ class HtmlAreaContentProcessorTest
 
         final ProcessUpdateResult result = htmlAreaContentProcessor.processUpdate( params );
 
-        assertThat(result.getContent().getProcessedReferences() ).isEmpty();
+        assertThat( result.getContent().getProcessedReferences() ).isEmpty();
     }
 
     @Test
@@ -189,24 +189,26 @@ class HtmlAreaContentProcessorTest
 
         final ProcessUpdateResult result = htmlAreaContentProcessor.processUpdate( params );
 
-        assertThat( result.getContent().getProcessedReferences() )
-            .containsExactly( ContentId.from( "image-id1" ), ContentId.from( "image-id2" ), ContentId.from( "image-id3" ),
-                       ContentId.from( "image-id4" ) );
+        assertThat( result.getContent().getProcessedReferences() ).containsExactly( ContentId.from( "image-id1" ),
+                                                                                    ContentId.from( "image-id2" ),
+                                                                                    ContentId.from( "image-id3" ),
+                                                                                    ContentId.from( "image-id4" ) );
     }
 
     @Test
     void site_config_data()
     {
-        when( siteService.getDescriptor( ApplicationKey.SYSTEM ) )
-            .thenReturn( SiteDescriptor.create()
-                             .form( Form.create()
-                                        .addFormItem( Input.create()
-                                                          .name( "htmlData" )
-                                                          .label( "htmlData" )
-                                                          .inputType( InputTypeName.HTML_AREA )
-                                                          .build() )
-                                        .build() )
-                             .build() );
+        when( cmsService.getDescriptor( ApplicationKey.SYSTEM ) ).thenReturn( CmsDescriptor.create()
+                                                                                  .applicationKey( ApplicationKey.SYSTEM )
+                                                                                  .form( Form.create()
+                                                                                             .addFormItem( Input.create()
+                                                                                                               .name( "htmlData" )
+                                                                                                               .label( "htmlData" )
+                                                                                                               .inputType(
+                                                                                                                   InputTypeName.HTML_AREA )
+                                                                                                               .build() )
+                                                                                             .build() )
+                                                                                  .build() );
 
         final PropertyTree data = new PropertyTree();
         data.addProperty( "htmlData", ValueFactory.newString(
@@ -222,9 +224,11 @@ class HtmlAreaContentProcessorTest
 
         final ProcessUpdateParams params = ProcessUpdateParams.create()
             .content( Site.create()
-                                .name( "myContentName" )
-                                .type( ContentTypeName.site() ).parentPath( ContentPath.ROOT ).data( siteData )
-                                .build() )
+                          .name( "myContentName" )
+                          .type( ContentTypeName.site() )
+                          .parentPath( ContentPath.ROOT )
+                          .data( siteData )
+                          .build() )
             .build();
 
         final ProcessUpdateResult result = htmlAreaContentProcessor.processUpdate( params );
@@ -233,16 +237,16 @@ class HtmlAreaContentProcessorTest
     }
 
     @Test
-    void extra_data()
+    void mixins()
     {
-        final XDataName xDataName = XDataName.from( "xDataName" );
+        final MixinName mixinName = MixinName.from( "mixinName" );
 
-        final XData xData = XData.create()
-            .name( xDataName )
+        final MixinDescriptor mixinDescriptor = MixinDescriptor.create()
+            .name( mixinName )
             .addFormItem( Input.create().name( "htmlData" ).label( "htmlData" ).inputType( InputTypeName.HTML_AREA ).build() )
             .build();
 
-        when( xDataService.getByName( xDataName ) ).thenReturn( xData );
+        when( mixinService.getByName( mixinName ) ).thenReturn( mixinDescriptor );
 
         final PropertyTree data = new PropertyTree();
         data.addProperty( "htmlData", ValueFactory.newString(
@@ -250,15 +254,15 @@ class HtmlAreaContentProcessorTest
 
         final ProcessUpdateParams params = ProcessUpdateParams.create()
             .content( Site.create()
-                                .name( "myContentName" )
-                                .type( ContentTypeName.site() )
-                                .parentPath( ContentPath.ROOT )
-                                .data( new PropertyTree() )
-                                .extraDatas( ExtraDatas.create()
-                                                 .add(
-                                                     new ExtraData( XDataName.from( "xDataName" ), data ) )
-                                                 .build() )
-                                .build() )
+                          .name( "myContentName" )
+                          .type( ContentTypeName.site() )
+                          .parentPath( ContentPath.ROOT )
+                          .data( new PropertyTree() )
+                          .mixins( Mixins.create()
+                                       .add(
+                                           new Mixin( MixinName.from( "mixinName" ), data ) )
+                                       .build() )
+                          .build() )
             .build();
 
         final ProcessUpdateResult result = htmlAreaContentProcessor.processUpdate( params );
@@ -287,12 +291,12 @@ class HtmlAreaContentProcessorTest
 
         final ProcessUpdateParams params = ProcessUpdateParams.create()
             .content( Media.create()
-                                .name( "myContentName" )
-                                .type( contentTypeName )
-                                .page( page )
-                                .parentPath( ContentPath.ROOT )
-                                .data( new PropertyTree() )
-                                .build() )
+                          .name( "myContentName" )
+                          .type( contentTypeName )
+                          .page( page )
+                          .parentPath( ContentPath.ROOT )
+                          .data( new PropertyTree() )
+                          .build() )
             .build();
 
         final ProcessUpdateResult result = htmlAreaContentProcessor.processUpdate( params );
@@ -331,12 +335,12 @@ class HtmlAreaContentProcessorTest
 
         final ProcessUpdateParams params = ProcessUpdateParams.create()
             .content( Media.create()
-                                .name( "myContentName" )
-                                .type( contentTypeName )
-                                .page( page )
-                                .parentPath( ContentPath.ROOT )
-                                .data( new PropertyTree() )
-                                .build() )
+                          .name( "myContentName" )
+                          .type( contentTypeName )
+                          .page( page )
+                          .parentPath( ContentPath.ROOT )
+                          .data( new PropertyTree() )
+                          .build() )
             .build();
 
         final ProcessUpdateResult result = htmlAreaContentProcessor.processUpdate( params );
@@ -394,17 +398,18 @@ class HtmlAreaContentProcessorTest
 
         final ProcessUpdateParams params = ProcessUpdateParams.create()
             .content( Media.create()
-                                .name( "myContentName" )
-                                .type( contentTypeName )
-                                .page( page )
-                                .parentPath( ContentPath.ROOT )
-                                .data( new PropertyTree() )
-                                .build() )
+                          .name( "myContentName" )
+                          .type( contentTypeName )
+                          .page( page )
+                          .parentPath( ContentPath.ROOT )
+                          .data( new PropertyTree() )
+                          .build() )
             .build();
 
         final ProcessUpdateResult result = htmlAreaContentProcessor.processUpdate( params );
 
-        assertThat( result.getContent().getProcessedReferences() ).containsExactly( ContentId.from( "image-id1"), ContentId.from("image-id2" ) );
+        assertThat( result.getContent().getProcessedReferences() ).containsExactly( ContentId.from( "image-id1" ),
+                                                                                    ContentId.from( "image-id2" ) );
     }
 
     @Test
@@ -422,7 +427,8 @@ class HtmlAreaContentProcessorTest
 
         final Page page = Page.create()
             .config( new PropertyTree() )
-            .descriptor( pageDescriptor.getKey() ).regions( Regions.create()
+            .descriptor( pageDescriptor.getKey() )
+            .regions( Regions.create()
                           .add( Region.create()
                                     .name( "region" )
                                     .add( PartComponent.create()
@@ -437,12 +443,12 @@ class HtmlAreaContentProcessorTest
 
         final ProcessUpdateParams params = ProcessUpdateParams.create()
             .content( Media.create()
-                                .name( "myContentName" )
-                                .type( contentTypeName )
-                                .page( page )
-                                .parentPath( ContentPath.ROOT )
-                                .data( new PropertyTree() )
-                                .build() )
+                          .name( "myContentName" )
+                          .type( contentTypeName )
+                          .page( page )
+                          .parentPath( ContentPath.ROOT )
+                          .data( new PropertyTree() )
+                          .build() )
             .build();
 
         final ProcessUpdateResult result = htmlAreaContentProcessor.processUpdate( params );
@@ -465,7 +471,8 @@ class HtmlAreaContentProcessorTest
 
         final Page page = Page.create()
             .config( new PropertyTree() )
-            .descriptor( pageDescriptor.getKey() ).regions( Regions.create()
+            .descriptor( pageDescriptor.getKey() )
+            .regions( Regions.create()
                           .add( Region.create()
                                     .name( "region" )
                                     .add( PartComponent.create()
@@ -485,9 +492,7 @@ class HtmlAreaContentProcessorTest
             .parentPath( ContentPath.ROOT )
             .data( new PropertyTree() )
             .build();
-        final ProcessUpdateParams params = ProcessUpdateParams.create()
-            .content( content )
-            .build();
+        final ProcessUpdateParams params = ProcessUpdateParams.create().content( content ).build();
 
         final ProcessUpdateResult result = htmlAreaContentProcessor.processUpdate( params );
 
@@ -539,8 +544,8 @@ class HtmlAreaContentProcessorTest
 
         htmlAreaContentProcessor = new HtmlAreaContentProcessor( contentConfig );
         htmlAreaContentProcessor.setContentTypeService( contentTypeService );
-        htmlAreaContentProcessor.setSiteService( siteService );
-        htmlAreaContentProcessor.setXDataService( xDataService );
+        htmlAreaContentProcessor.setCmsService( cmsService );
+        htmlAreaContentProcessor.setMixinService( mixinService );
         htmlAreaContentProcessor.setPageDescriptorService( pageDescriptorService );
         htmlAreaContentProcessor.setPartDescriptorService( partDescriptorService );
         htmlAreaContentProcessor.setLayoutDescriptorService( layoutDescriptorService );
@@ -553,7 +558,7 @@ class HtmlAreaContentProcessorTest
     @Test
     void supports()
     {
-        assertTrue( htmlAreaContentProcessor.supports( contentTypeName  ) );
+        assertTrue( htmlAreaContentProcessor.supports( contentTypeName ) );
     }
 
     @Test
@@ -563,23 +568,23 @@ class HtmlAreaContentProcessorTest
         data.addProperty( "htmlData", ValueFactory.newString(
             "<img alt=\"Dictyophorus_spumans01.jpg\" data-src=\"image://image-id1\" src=\"/admin/rest-v2/cs/cms/features/content/content/image/5a5fc786-a4e6-4a4d-a21a-19ac6fd4784b?ts=1438862613943&amp;size=679&amp;scaleWidth=true\"/>" ) );
 
-        final XDataName xDataName = XDataName.from( "xDataName" );
+        final MixinName mixinName = MixinName.from( "mixinName" );
 
-        final XData xData = XData.create()
-            .name( xDataName )
+        final MixinDescriptor mixinDescriptor = MixinDescriptor.create()
+            .name( mixinName )
             .addFormItem( Input.create().name( "htmlData" ).label( "htmlData" ).inputType( InputTypeName.HTML_AREA ).build() )
             .build();
 
-        final PropertyTree extraData = new PropertyTree();
-        extraData.addProperty( "htmlData", ValueFactory.newString(
+        final PropertyTree mixinData = new PropertyTree();
+        mixinData.addProperty( "htmlData", ValueFactory.newString(
             "<img alt=\"Dictyophorus_spumans02.jpg\" data-src=\"image://image-id2\" src=\"/admin/rest-v2/cs/cms/features/5a5fc786-a4e6-4a4d-a21a-19ac6fd4784b\"/>" ) );
 
-        when( xDataService.getByName( xDataName ) ).thenReturn( xData );
+        when( mixinService.getByName( mixinName ) ).thenReturn( mixinDescriptor );
 
         final CreateContentParams createContentParams = CreateContentParams.create()
             .parent( ContentPath.ROOT )
             .contentData( data )
-            .extraDatas( ExtraDatas.create().add( new ExtraData( XDataName.from( "xDataName" ), extraData ) ).build() )
+            .mixins( Mixins.create().add( new Mixin( MixinName.from( "mixinName" ), mixinData ) ).build() )
             .type( contentTypeName )
             .build();
         final ProcessCreateParams processCreateParams = new ProcessCreateParams( createContentParams, null, ContentIds.empty() );

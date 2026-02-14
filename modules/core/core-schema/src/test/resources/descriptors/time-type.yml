@@ -1,0 +1,9 @@
+type: "Time"
+name: "mytime"
+label: "My Time"
+helpText: "Help Text"
+occurrences:
+  min: 0
+  max: 1
+default: "13:22"
+attributes: { }

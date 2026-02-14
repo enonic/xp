@@ -52,7 +52,7 @@ public final class StyleDescriptor
 
     public static ResourceKey toResourceKey( final ApplicationKey key )
     {
-        return ResourceKey.from( key, "site/styles.xml" );
+        return ResourceKey.from( key, "cms/styles/image.yml" );
     }
 
     @Override
@@ -151,6 +151,12 @@ public final class StyleDescriptor
             }
             this.elementNames.add( element.getName() );
             this.elements.add( element );
+            return this;
+        }
+
+        public Builder addStyleElements( final Iterable<ImageStyle> elements )
+        {
+            elements.forEach( this::addStyleElement );
             return this;
         }
 

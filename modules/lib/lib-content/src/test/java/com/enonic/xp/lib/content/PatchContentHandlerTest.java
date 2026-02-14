@@ -25,9 +25,9 @@ import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.schema.xdata.XData;
-import com.enonic.xp.schema.xdata.XDataName;
-import com.enonic.xp.site.SiteDescriptor;
+import com.enonic.xp.schema.mixin.MixinDescriptor;
+import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.site.CmsDescriptor;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -72,19 +72,21 @@ public class PatchContentHandlerTest
 
         mockXData();
 
-        final SiteDescriptor siteDescriptor1 = SiteDescriptor.create()
+        final CmsDescriptor siteDescriptor1 = CmsDescriptor.create()
+            .applicationKey( ApplicationKey.from( "appKey1" ) )
             .form( Form.create()
                        .addFormItem( Input.create().label( "a" ).name( "a" ).inputType( InputTypeName.TEXT_LINE ).build() )
                        .addFormItem( Input.create().label( "b" ).name( "b" ).inputType( InputTypeName.CHECK_BOX ).build() )
                        .build() )
             .build();
 
-        final SiteDescriptor siteDescriptor2 = SiteDescriptor.create()
+        final CmsDescriptor siteDescriptor2 = CmsDescriptor.create()
+            .applicationKey( ApplicationKey.from( "appKey2" ) )
             .form( Form.create().addFormItem( Input.create().label( "c" ).name( "c" ).inputType( InputTypeName.LONG ).build() ).build() )
             .build();
 
-        when( this.siteService.getDescriptor( ApplicationKey.from( "appKey1" ) ) ).thenReturn( siteDescriptor1 );
-        when( this.siteService.getDescriptor( ApplicationKey.from( "appKey2" ) ) ).thenReturn( siteDescriptor2 );
+        when( this.cmsService.getDescriptor( ApplicationKey.from( "appKey1" ) ) ).thenReturn( siteDescriptor1 );
+        when( this.cmsService.getDescriptor( ApplicationKey.from( "appKey2" ) ) ).thenReturn( siteDescriptor2 );
 
         runFunction( "/test/PatchContentHandlerTest.js", "patchSiteConfig" );
     }
@@ -102,14 +104,15 @@ public class PatchContentHandlerTest
 
         mockXData();
 
-        final SiteDescriptor siteDescriptor1 = SiteDescriptor.create()
+        final CmsDescriptor siteDescriptor1 = CmsDescriptor.create()
+            .applicationKey( ApplicationKey.from( "appKey1" ) )
             .form( Form.create()
                        .addFormItem( Input.create().label( "a" ).name( "a" ).inputType( InputTypeName.TEXT_LINE ).build() )
                        .addFormItem( Input.create().label( "b" ).name( "b" ).inputType( InputTypeName.CHECK_BOX ).build() )
                        .build() )
             .build();
 
-        when( this.siteService.getDescriptor( ApplicationKey.from( "appKey1" ) ) ).thenReturn( siteDescriptor1 );
+        when( this.cmsService.getDescriptor( ApplicationKey.from( "appKey1" ) ) ).thenReturn( siteDescriptor1 );
         runFunction( "/test/PatchContentHandlerTest.js", "patchSiteSingleDescriptor" );
     }
 
@@ -333,19 +336,19 @@ public class PatchContentHandlerTest
         GetContentTypeParams getContentType = GetContentTypeParams.from( ContentTypeName.from( "test:myContentType" ) );
         when( this.contentTypeService.getByName( eq( getContentType ) ) ).thenReturn( contentType );
 
-        final XData xData1 = XData.create()
-            .name( XDataName.from( "com.enonic.myapplication:myschema" ) )
+        final MixinDescriptor descriptor1 = MixinDescriptor.create()
+            .name( MixinName.from( "com.enonic.myapplication:myschema" ) )
             .addFormItem( Input.create().label( "a" ).name( "a" ).inputType( InputTypeName.DOUBLE ).build() )
             .build();
-        when( this.xDataService.getByName( eq( xData1.getName() ) ) ).thenReturn( xData1 );
+        when( this.mixinService.getByName( eq( descriptor1.getName() ) ) ).thenReturn( descriptor1 );
 
-        final XData xData2 = XData.create()
-            .name( XDataName.from( "com.enonic.myapplication:other" ) )
+        final MixinDescriptor descriptor2 = MixinDescriptor.create()
+            .name( MixinName.from( "com.enonic.myapplication:other" ) )
             .addFormItem( Input.create().label( "name" ).name( "name" ).inputType( InputTypeName.TEXT_LINE ).build() )
             .build();
-        when( this.xDataService.getByName( eq( xData1.getName() ) ) ).thenReturn( xData1 );
-        when( this.xDataService.getByName( eq( xData2.getName() ) ) ).thenReturn( xData2 );
-        when( this.mixinService.inlineFormItems( any( Form.class ) ) ).then( returnsFirstArg() );
+        when( this.mixinService.getByName( eq( descriptor1.getName() ) ) ).thenReturn( descriptor1 );
+        when( this.mixinService.getByName( eq( descriptor2.getName() ) ) ).thenReturn( descriptor2 );
+        when( this.formFragmentService.inlineFormItems( any( Form.class ) ) ).then( returnsFirstArg() );
     }
 
     private PatchContentResult invokePatch( final PatchContentParams params, final Content content )

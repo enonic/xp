@@ -27,7 +27,6 @@ class InputTest
         assertEquals( "myInput", copy.getName() );
         assertSame( original.getName(), copy.getName() );
         assertSame( original.getLabel(), copy.getLabel() );
-        assertSame( original.getCustomText(), copy.getCustomText() );
         assertSame( original.getInputType(), copy.getInputType() );
     }
 

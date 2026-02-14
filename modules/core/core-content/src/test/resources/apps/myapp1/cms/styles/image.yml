@@ -1,0 +1,23 @@
+css: "assets/styles.css"
+image:
+  - name: "editor-align-justify"
+    displayName:
+      text: "Justify"
+      i18n: "style.editor.align.justify"
+  - name: "editor-width-auto"
+    displayName:
+      text: "Override ${width}"
+      i18n: "editor-width-auto-text"
+  - name: "editor-style-cinema"
+    displayName:
+      text: "Cinema"
+      i18n: "editor-style-cinema-text"
+    filter: "pixelate(10)"
+  - name: "editor-style-square"
+    displayName:
+      text: "Square"
+      i18n: "editor-style-square-text"
+  - name: "editor-style-tall"
+    displayName:
+      text: "Tall"
+      i18n: "editor-style-tall-text"

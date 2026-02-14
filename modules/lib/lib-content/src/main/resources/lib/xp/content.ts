@@ -93,7 +93,7 @@ export type {
     FieldSortDsl,
     Filter,
     FormItem,
-    FormItemInlineMixin,
+    FormItemFormFragment,
     FormItemInput,
     FormItemLayout,
     FormItemOptionSet,
@@ -158,7 +158,7 @@ export interface PatchableContent<
 > {
     displayName: string;
     data: Type extends 'portal:fragment' ? Record<string, never> : Data;
-    x: XpXData; // extraData
+    x: XpMixin;
     page: Type extends 'portal:fragment' ? never : _Component;
     valid: boolean;
     owner: UserKey;
@@ -571,7 +571,7 @@ export interface CreateContentParams<Data, Type extends string, _Component exten
     childOrder?: string;
     data: Data;
     page?: Type extends 'portal:fragment' ? never : _Component;
-    x?: XpXData;
+    x?: XpMixin;
     idGenerator?: IdGeneratorSupplier;
     workflow?: Workflow;
 }

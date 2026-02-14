@@ -49,12 +49,12 @@ final class DynamicResourceManager
 
             if ( resource != null )
             {
-                resourceData.setXml( SchemaNodePropertyNames.RESOURCE, resource );
+                resourceData.setString( SchemaNodePropertyNames.RESOURCE, resource );
             }
 
             final Node schemaNode = nodeService.create( CreateNodeParams.create()
                                                             .parent( resourceFolder.path() )
-                                                            .name( name + ".xml" )
+                                                            .name( name + ".yml" )
                                                             .data( resourceData )
                                                             .inheritPermissions( true )
                                                             .refresh( RefreshMode.ALL )
@@ -72,11 +72,11 @@ final class DynamicResourceManager
 
             if ( resource != null )
             {
-                resourceData.setXml( SchemaNodePropertyNames.RESOURCE, resource );
+                resourceData.setString( SchemaNodePropertyNames.RESOURCE, resource );
             }
 
             final Node schemaNode = nodeService.update( UpdateNodeParams.create()
-                                                            .path( new NodePath( folderPath, NodeName.from( name + ".xml" ) ) )
+                                                            .path( new NodePath( folderPath, NodeName.from( name + ".yml" ) ) )
                                                             .editor( toBeEdited -> toBeEdited.data = resourceData )
                                                             .refresh( RefreshMode.ALL )
                                                             .build() );
@@ -89,21 +89,21 @@ final class DynamicResourceManager
     boolean resourceNodeExists( final NodePath folderPath, final String name )
     {
         return VirtualAppContext.createContext()
-            .callWith( () -> nodeService.nodeExists( new NodePath( folderPath, NodeName.from( name + ".xml" ) ) ) );
+            .callWith( () -> nodeService.nodeExists( new NodePath( folderPath, NodeName.from( name + ".yml" ) ) ) );
     }
 
     Resource getResource( final NodePath folderPath, final String name )
     {
         return VirtualAppContext.createContext()
             .callWith( () -> resourceService.getResource(
-                ResourceKey.from( appKeyFromNodePath( folderPath ), resourcePathFromNodePath( folderPath ) + "/" + name + ".xml" ) ) );
+                ResourceKey.from( appKeyFromNodePath( folderPath ), resourcePathFromNodePath( folderPath ) + "/" + name + ".yml" ) ) );
     }
 
     List<Resource> listResources( final NodePath folderPath )
     {
         return VirtualAppContext.createContext()
             .callWith( () -> resourceService.findFiles( appKeyFromNodePath( folderPath ),
-                                                        resourcePathFromNodePath( folderPath ) + "/" + ".+/.+\\.xml" )
+                                                        resourcePathFromNodePath( folderPath ) + "/" + ".+/.+\\.yml" )
                 .stream()
                 .map( resourceService::getResource )
                 .collect( Collectors.toList() ) );
@@ -115,7 +115,7 @@ final class DynamicResourceManager
             .callWith( () -> nodeService.delete( DeleteNodeParams.create()
                                                      .nodePath( deleteFolder
                                                                     ? folderPath
-                                                                    : new NodePath( folderPath, NodeName.from( name + ".xml" ) ) )
+                                                                    : new NodePath( folderPath, NodeName.from( name + ".yml" ) ) )
                                                      .refresh( RefreshMode.ALL )
                                                      .build() ) )
             .getNodeIds()

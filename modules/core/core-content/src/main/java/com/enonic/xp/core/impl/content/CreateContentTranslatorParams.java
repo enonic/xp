@@ -9,7 +9,7 @@ import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.Mixins;
 import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.data.PropertyTree;
@@ -23,7 +23,7 @@ public class CreateContentTranslatorParams
 {
     private final PropertyTree data;
 
-    private final ExtraDatas extraDatas;
+    private final Mixins mixins;
 
     private final ContentTypeName type;
 
@@ -68,7 +68,7 @@ public class CreateContentTranslatorParams
         final Instant now = Instant.now();
 
         this.data = builder.data;
-        this.extraDatas = builder.extraDatas;
+        this.mixins = builder.mixins;
         this.type = builder.type;
         this.owner = builder.owner;
         this.creator = builder.creator;
@@ -105,9 +105,9 @@ public class CreateContentTranslatorParams
         return data;
     }
 
-    public ExtraDatas getExtraDatas()
+    public Mixins getMixins()
     {
-        return extraDatas;
+        return mixins;
     }
 
     public ContentTypeName getType()
@@ -209,7 +209,7 @@ public class CreateContentTranslatorParams
     {
         private PropertyTree data;
 
-        private ExtraDatas extraDatas;
+        private Mixins mixins;
 
         private ContentTypeName type;
 
@@ -250,7 +250,7 @@ public class CreateContentTranslatorParams
         private Builder( final CreateContentParams params )
         {
             this.data = params.getData();
-            this.extraDatas = params.getExtraDatas();
+            this.mixins = params.getMixins();
             this.type = params.getType();
             this.owner = params.getOwner();
             this.displayName = params.getDisplayName();
@@ -271,9 +271,9 @@ public class CreateContentTranslatorParams
             return this;
         }
 
-        public Builder extraDatas( final ExtraDatas extraDatas )
+        public Builder mixins( final Mixins mixins )
         {
-            this.extraDatas = extraDatas;
+            this.mixins = mixins;
             return this;
         }
 
@@ -399,12 +399,13 @@ public class CreateContentTranslatorParams
             return displayName;
         }
 
-        public ExtraDatas getExtraDatas()
+        public Mixins getMixins()
         {
-            return extraDatas;
+            return mixins;
         }
 
-        public CreateAttachments getCreateAttachments() {
+        public CreateAttachments getCreateAttachments()
+        {
             return createAttachments;
         }
 
