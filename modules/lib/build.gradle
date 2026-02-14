@@ -5,7 +5,7 @@ plugins {
 
 node {
     download = true
-    version = '18.16.0'
+    version = '24.13.1'
 }
 
 def coreDir = "$projectDir/core/"
