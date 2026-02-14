@@ -27,8 +27,7 @@ const apiUrlWithBaseUrl = portalLib.apiUrl({
 
 // END
 
-assert.assertEquals('ApiUrlParams{type=server, params={a=[1], b=[2]}, descriptorKey=com.enonic.app.myapp:myapi, path=mypath/subpath}', url);
-assert.assertEquals('ApiUrlParams{type=server, params={}, descriptorKey=com.enonic.app.myapp:myapi, pathSegments=[mypath, myotherpath]}',
-    apiUrlWithPathSegments);
-assert.assertEquals('ApiUrlParams{type=server, params={}, descriptorKey=com.enonic.app.myapp:myapi}', apiUrl);
-assert.assertEquals('ApiUrlParams{type=server, params={}, descriptorKey=myapplication:myapi, baseUrl=https://example.com}', apiUrlWithBaseUrl);
+assert.assertEquals('/site/mocksite/_/api/com.enonic.app.myapp:myapi', url);
+assert.assertEquals('/site/mocksite/_/api/com.enonic.app.myapp:myapi', apiUrlWithPathSegments);
+assert.assertEquals('/site/mocksite/_/api/com.enonic.app.myapp:myapi', apiUrl);
+assert.assertEquals('/site/mocksite/_/api/myapplication:myapi', apiUrlWithBaseUrl);

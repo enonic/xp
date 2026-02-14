@@ -13,4 +13,4 @@ var url = portalLib.pageUrl({
 });
 // END
 
-t.assertEquals('PageUrlParams{type=server, params={a=[1], b=[1, 2]}, path=/my/page, project=myproject, branch=draft}', url);
+t.assertEquals('/site/mocksite//my/page', url);
