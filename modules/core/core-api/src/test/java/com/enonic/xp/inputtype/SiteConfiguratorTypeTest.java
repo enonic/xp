@@ -7,6 +7,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
+import com.enonic.xp.util.GenericValue;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -36,13 +37,12 @@ class SiteConfiguratorTypeTest
     void testCreateProperty()
     {
         final PropertyTree tree = new PropertyTree();
-        final InputTypeConfig config = InputTypeConfig.create().build();
         final PropertySet siteConfig = tree.newSet();
         siteConfig.setString( "applicationKey", "com.enonic.app.myapp" );
         final PropertySet appConfig = tree.newSet();
         appConfig.setString( "param", "value" );
         siteConfig.setSet( "config", appConfig );
-        final Value value = this.type.createValue( ValueFactory.newPropertySet( siteConfig ), config );
+        final Value value = this.type.createValue( ValueFactory.newPropertySet( siteConfig ), GenericValue.newObject().build() );
 
         assertNotNull( value );
         assertSame( ValueTypes.PROPERTY_SET, value.getType() );
@@ -51,7 +51,6 @@ class SiteConfiguratorTypeTest
     @Test
     void testValidate()
     {
-        final InputTypeConfig config = InputTypeConfig.create().build();
-        this.type.validate( stringProperty( "test" ), config );
+        this.type.validate( stringProperty( "test" ), GenericValue.newObject().build() );
     }
 }

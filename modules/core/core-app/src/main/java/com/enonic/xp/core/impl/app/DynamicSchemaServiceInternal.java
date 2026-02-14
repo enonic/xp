@@ -2,11 +2,11 @@ package com.enonic.xp.core.impl.app;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.resource.DynamicSchemaResult;
-import com.enonic.xp.site.SiteDescriptor;
+import com.enonic.xp.site.CmsDescriptor;
 
 public interface DynamicSchemaServiceInternal
 {
-    DynamicSchemaResult<SiteDescriptor> createSite( CreateDynamicSiteParams params );
+    DynamicSchemaResult<CmsDescriptor> createCms( CreateDynamicCmsParams params );
 
-    boolean deleteSite( ApplicationKey applicationKey );
+    boolean deleteCms( ApplicationKey applicationKey );
 }

@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
-import com.enonic.xp.form.Input;
+import com.enonic.xp.util.GenericValue;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -35,48 +35,34 @@ class DoubleTypeTest
     @Test
     void testCreateProperty()
     {
-        final InputTypeConfig config = InputTypeConfig.create().build();
-        final Value value = this.type.createValue( ValueFactory.newDouble( 1.3 ), config );
+        final Value value = this.type.createValue( ValueFactory.newDouble( 1.3 ), GenericValue.newObject().build() );
         assertNotNull( value );
         assertSame( ValueTypes.DOUBLE, value.getType() );
     }
 
     @Test
-    void testCreateDefaultValue()
-    {
-        final Input input = getDefaultInputBuilder( InputTypeName.DOUBLE, "1.3" ).build();
-
-        final Value value = this.type.createDefaultValue( input );
-
-        assertNotNull( value );
-        assertEquals( 1.3D, value.asDouble(), Double.MIN_NORMAL );
-    }
-
-    @Test
     void testValidate()
     {
-        final InputTypeConfig config = InputTypeConfig.create().build();
-        this.type.validate( doubleProperty( 1.3 ), config );
+        this.type.validate( doubleProperty( 1.3 ), GenericValue.newObject().build() );
     }
 
     @Test
     void testValidate_invalidType()
     {
-        final InputTypeConfig config = InputTypeConfig.create().build();
-        assertThrows(InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), config ));
+        assertThrows( InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), GenericValue.newObject().build() ) );
     }
 
     @Test
     void testValidate_invalidMin()
     {
-        final InputTypeConfig config = InputTypeConfig.create().property( InputTypeProperty.create( "min", "5.0" ).build( )).build();
-        assertThrows(InputTypeValidationException.class, () -> this.type.validate( doubleProperty( 2.4 ), config ));
+        final GenericValue config = GenericValue.newObject().put( "min", 5.0 ).build();
+        assertThrows( InputTypeValidationException.class, () -> this.type.validate( doubleProperty( 2.4 ), config ) );
     }
 
     @Test
     void testValidate_invalidMax()
     {
-        final InputTypeConfig config = InputTypeConfig.create().property( InputTypeProperty.create( "max", "5.0" ).build( )).build();
-        assertThrows(InputTypeValidationException.class, () -> this.type.validate( doubleProperty( 7.3 ), config ));
+        final GenericValue config = GenericValue.newObject().put( "max", 5.0 ).build();
+        assertThrows( InputTypeValidationException.class, () -> this.type.validate( doubleProperty( 7.3 ), config ) );
     }
 }

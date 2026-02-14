@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
+import com.enonic.xp.util.GenericValue;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -34,8 +35,7 @@ class ContentTypeFilterTypeTest
     @Test
     void testCreateProperty()
     {
-        final InputTypeConfig config = InputTypeConfig.create().build();
-        final Value value = this.type.createValue( ValueFactory.newString( "name" ), config );
+        final Value value = this.type.createValue( ValueFactory.newString( "name" ), GenericValue.newObject().build() );
 
         assertNotNull( value );
         assertSame( ValueTypes.STRING, value.getType() );
@@ -44,14 +44,13 @@ class ContentTypeFilterTypeTest
     @Test
     void testValidate()
     {
-        final InputTypeConfig config = InputTypeConfig.create().build();
-        this.type.validate( stringProperty( "name" ), config );
+        this.type.validate( stringProperty( "name" ), GenericValue.newObject().build() );
     }
 
     @Test
     void testValidate_invalidType()
     {
-        final InputTypeConfig config = InputTypeConfig.create().build();
-        assertThrows(InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), config ));
+        assertThrows( InputTypeValidationException.class,
+                      () -> this.type.validate( booleanProperty( true ), GenericValue.newObject().build() ) );
     }
 }

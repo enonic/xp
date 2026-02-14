@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://json-schema.enonic.com/8.0.0/mediaselector.schema.json",
+  "allOf": [
+    {
+      "$ref": "https://json-schema.enonic.com/8.0.0/input.schema.json"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "MediaSelector"
+        },
+        "allowContentType": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "allowPath": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "treeMode": {
+          "type": "boolean"
+        },
+        "hideToggleIcon": {
+          "type": "boolean"
+        },
+        "default": {
+          "type": "string"
+        }
+      }
+    }
+  ],
+  "unevaluatedProperties": false
+}

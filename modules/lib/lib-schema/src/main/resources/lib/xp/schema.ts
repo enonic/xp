@@ -18,7 +18,7 @@ import type {ByteSource, FormItem, UserKey} from '@enonic-types/core';
 export type {
     ByteSource,
     FormItem,
-    FormItemInlineMixin,
+    FormItemFormFragment,
     FormItemInput,
     FormItemLayout,
     FormItemOptionSet,
@@ -56,10 +56,10 @@ interface CreateDynamicContentSchemaHandler {
 
     setResource(value: string): void;
 
-    execute(): ContentTypeSchema | MixinSchema | XDataSchema;
+    execute(): ContentTypeSchema | FormFragmentSchema | MixinSchema;
 }
 
-export type ContentSchemaType = 'CONTENT_TYPE' | 'MIXIN' | 'XDATA';
+export type ContentSchemaType = 'CONTENT_TYPE' | 'FORM_FRAGMENT' | 'MIXIN';
 
 export interface Schema {
     name: string;
@@ -80,18 +80,18 @@ export interface ContentTypeSchema
     extends Schema {
     form: FormItem[];
     config: Record<string, {
-            [attributeKey: string]: string;
-            value: string;
-        }[]>;
-    xDataNames?: string[];
+        [attributeKey: string]: string;
+        value: string;
+    }[]>;
+    mixinNames?: string[];
 }
 
-export interface MixinSchema
+export interface FormFragmentSchema
     extends Schema {
     form: FormItem[];
 }
 
-export interface XDataSchema
+export interface MixinSchema
     extends Schema {
     form: FormItem[];
 }
@@ -104,9 +104,9 @@ export interface XDataSchema
  * @param {string} params.type Schema type.
  * @param {string} [params.resource] Schema resource value.
  *
- * @returns {ContentTypeSchema | MixinSchema | XDataSchema} created resource.
+ * @returns {ContentTypeSchema | FormFragmentSchema | MixinSchema} created resource.
  */
-export function createSchema(params: CreateDynamicContentSchemaParams): ContentTypeSchema | MixinSchema | XDataSchema {
+export function createSchema(params: CreateDynamicContentSchemaParams): ContentTypeSchema | FormFragmentSchema | MixinSchema {
     checkRequired(params, 'name');
     checkRequired(params, 'type');
     checkRequired(params, 'resource');
@@ -150,9 +150,9 @@ export interface ComponentDescriptor {
     type: ComponentDescriptorType;
     form: FormItem[];
     config: Record<string, {
-            [attributeKey: string]: string;
-            value: string;
-        }[]>;
+        [attributeKey: string]: string;
+        value: string;
+    }[]>;
 }
 
 export interface LayoutDescriptor
@@ -247,7 +247,7 @@ interface GetDynamicContentSchemaHandler {
 
     setType(value: ContentSchemaType): void;
 
-    execute(): ContentTypeSchema | MixinSchema | XDataSchema;
+    execute(): ContentTypeSchema | FormFragmentSchema | MixinSchema;
 }
 
 /**
@@ -257,9 +257,9 @@ interface GetDynamicContentSchemaHandler {
  * @param {string} params.name Content schema resource name.
  * @param {string} params.type Content schema type.
  *
- * @returns {ContentTypeSchema | MixinSchema | XDataSchema} fetched resource.
+ * @returns {ContentTypeSchema | FormFragmentSchema | MixinSchema} fetched resource.
  */
-export function getSchema(params: GetDynamicContentSchemaParams): ContentTypeSchema | MixinSchema | XDataSchema {
+export function getSchema(params: GetDynamicContentSchemaParams): ContentTypeSchema | FormFragmentSchema | MixinSchema {
     checkRequired(params, 'name');
     checkRequired(params, 'type');
 
@@ -279,7 +279,7 @@ interface GetDynamicComponentHandler {
 
     setType(value: ComponentDescriptorType): void;
 
-    execute(): ContentTypeSchema | MixinSchema | XDataSchema;
+    execute(): ContentTypeSchema | FormFragmentSchema | MixinSchema;
 }
 
 /**
@@ -306,7 +306,7 @@ export interface SiteDescriptor {
     resource: string;
     modifiedTime: string;
     form: FormItem[];
-    xDataMappings?: {
+    mixinMappings?: {
         name: string;
         optional: boolean;
         allowContentTypes: string;
@@ -468,7 +468,7 @@ interface UpdateDynamicContentSchemaHandler {
 
     setResource(value: string): void;
 
-    execute(): ContentTypeSchema | MixinSchema | XDataSchema;
+    execute(): ContentTypeSchema | FormFragmentSchema | MixinSchema;
 }
 
 /**
@@ -479,9 +479,9 @@ interface UpdateDynamicContentSchemaHandler {
  * @param {string} params.type Content schema type.
  * @param {string} [params.resource] Schema resource value.
  *
- * @returns {ContentTypeSchema | MixinSchema | XDataSchema} created resource.
+ * @returns {ContentTypeSchema | FormFragmentSchema | MixinSchema} created resource.
  */
-export function updateSchema(params: UpdateDynamicContentSchemaParams): ContentTypeSchema | MixinSchema | XDataSchema {
+export function updateSchema(params: UpdateDynamicContentSchemaParams): ContentTypeSchema | FormFragmentSchema | MixinSchema {
     checkRequired(params, 'name');
     checkRequired(params, 'type');
     checkRequired(params, 'resource');
@@ -638,7 +638,7 @@ interface ListDynamicSchemasHandler {
 
     setType(value: ContentSchemaType): void;
 
-    execute(): ContentSchemaType[] | MixinSchema[] | XDataSchema[];
+    execute(): ContentSchemaType[] | FormFragmentSchema[] | MixinSchema[];
 }
 
 /**
@@ -648,9 +648,9 @@ interface ListDynamicSchemasHandler {
  * @param {string} params.application Application key.
  * @param {string} params.type Content schema type.
  *
- * @returns {ContentSchemaType[] | MixinSchema[] | XDataSchema[]} fetched resources.
+ * @returns {ContentSchemaType[] | FormFragmentSchema[] | MixinSchema[]} fetched resources.
  */
-export function listSchemas(params: ListDynamicSchemasParams): ContentSchemaType[] | MixinSchema[] | XDataSchema[] {
+export function listSchemas(params: ListDynamicSchemasParams): ContentSchemaType[] | FormFragmentSchema[] | MixinSchema[] {
     checkRequired(params, 'application');
     checkRequired(params, 'type');
 

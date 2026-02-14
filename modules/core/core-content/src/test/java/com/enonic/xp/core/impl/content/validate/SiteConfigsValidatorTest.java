@@ -18,11 +18,11 @@ import com.enonic.xp.form.Occurrences;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.site.CmsDescriptor;
+import com.enonic.xp.site.CmsService;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
-import com.enonic.xp.site.SiteDescriptor;
-import com.enonic.xp.site.SiteService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -30,15 +30,15 @@ class SiteConfigsValidatorTest
 {
     private static final String MIN_OCCURRENCES_I18N = "system.cms.validation.minOccurrencesInvalid.siteConfig";
 
-    private SiteService siteService;
+    private CmsService cmsService;
 
-    private SiteConfigsValidator validator;
+    private CmsConfigsValidator validator;
 
     @BeforeEach
     void setUp()
     {
-        siteService = Mockito.mock( SiteService.class );
-        validator = new SiteConfigsValidator( siteService );
+        cmsService = Mockito.mock( CmsService.class );
+        validator = new CmsConfigsValidator( cmsService );
     }
 
     @Test
@@ -48,8 +48,8 @@ class SiteConfigsValidatorTest
         final Form form = Form.create()
             .addFormItem( Input.create().name( "title" ).label( "Title" ).inputType( InputTypeName.TEXT_LINE ).required( true ).build() )
             .build();
-        final SiteDescriptor siteDescriptor = SiteDescriptor.create().applicationKey( appKey ).form( form ).build();
-        Mockito.when( siteService.getDescriptor( appKey ) ).thenReturn( siteDescriptor );
+        final CmsDescriptor siteDescriptor = CmsDescriptor.create().applicationKey( appKey ).form( form ).build();
+        Mockito.when( cmsService.getDescriptor( appKey ) ).thenReturn( siteDescriptor );
 
         final PropertyTree siteConfigTree = new PropertyTree();
         final SiteConfig siteConfig = SiteConfig.create().application( appKey ).config( siteConfigTree ).build();
@@ -88,8 +88,8 @@ class SiteConfigsValidatorTest
             .addFormItem(
                 Input.create().name( "tagline" ).label( "Tagline" ).inputType( InputTypeName.TEXT_LINE ).maximumOccurrences( 1 ).build() )
             .build();
-        final SiteDescriptor siteDescriptor = SiteDescriptor.create().applicationKey( appKey ).form( form ).build();
-        Mockito.when( siteService.getDescriptor( appKey ) ).thenReturn( siteDescriptor );
+        final CmsDescriptor siteDescriptor = CmsDescriptor.create().applicationKey( appKey ).form( form ).build();
+        Mockito.when( cmsService.getDescriptor( appKey ) ).thenReturn( siteDescriptor );
 
         final PropertyTree config = new PropertyTree();
         config.setString( "tagline[0]", "first" );
@@ -123,8 +123,8 @@ class SiteConfigsValidatorTest
                               .addOptionSetOption( FormOptionSetOption.create().name( "mobile" ).build() )
                               .build() )
             .build();
-        final SiteDescriptor siteDescriptor = SiteDescriptor.create().applicationKey( appKey ).form( form ).build();
-        Mockito.when( siteService.getDescriptor( appKey ) ).thenReturn( siteDescriptor );
+        final CmsDescriptor siteDescriptor = CmsDescriptor.create().applicationKey( appKey ).form( form ).build();
+        Mockito.when( cmsService.getDescriptor( appKey ) ).thenReturn( siteDescriptor );
 
         final PropertyTree config = new PropertyTree();
         config.getRoot().addSet( "channels" ).addString( "_selected", "web" );
@@ -161,8 +161,8 @@ class SiteConfigsValidatorTest
                                                 .build() )
                               .build() )
             .build();
-        final SiteDescriptor siteDescriptor = SiteDescriptor.create().applicationKey( appKey ).form( form ).build();
-        Mockito.when( siteService.getDescriptor( appKey ) ).thenReturn( siteDescriptor );
+        final CmsDescriptor siteDescriptor = CmsDescriptor.create().applicationKey( appKey ).form( form ).build();
+        Mockito.when( cmsService.getDescriptor( appKey ) ).thenReturn( siteDescriptor );
 
         final PropertyTree config = new PropertyTree();
         config.addSet( "settings" );
@@ -198,8 +198,8 @@ class SiteConfigsValidatorTest
             .addFormItem(
                 Input.create().name( "items" ).label( "Items" ).inputType( InputTypeName.TEXT_LINE ).maximumOccurrences( 2 ).build() )
             .build();
-        final SiteDescriptor siteDescriptor = SiteDescriptor.create().applicationKey( appKey ).form( form ).build();
-        Mockito.when( siteService.getDescriptor( appKey ) ).thenReturn( siteDescriptor );
+        final CmsDescriptor siteDescriptor = CmsDescriptor.create().applicationKey( appKey ).form( form ).build();
+        Mockito.when( cmsService.getDescriptor( appKey ) ).thenReturn( siteDescriptor );
 
         final PropertyTree config = new PropertyTree();
         config.setString( "items[0]", "first" );
@@ -241,8 +241,8 @@ class SiteConfigsValidatorTest
                                                 .build() )
                               .build() )
             .build();
-        final SiteDescriptor siteDescriptor = SiteDescriptor.create().applicationKey( appKey ).form( form ).build();
-        Mockito.when( siteService.getDescriptor( appKey ) ).thenReturn( siteDescriptor );
+        final CmsDescriptor siteDescriptor = CmsDescriptor.create().applicationKey( appKey ).form( form ).build();
+        Mockito.when( cmsService.getDescriptor( appKey ) ).thenReturn( siteDescriptor );
 
         final PropertyTree config = new PropertyTree();
         config.setString( "container.tags[0]", "tag1" );
@@ -286,8 +286,8 @@ class SiteConfigsValidatorTest
                                                 .build() )
                               .build() )
             .build();
-        final SiteDescriptor siteDescriptor = SiteDescriptor.create().applicationKey( appKey ).form( form ).build();
-        Mockito.when( siteService.getDescriptor( appKey ) ).thenReturn( siteDescriptor );
+        final CmsDescriptor siteDescriptor = CmsDescriptor.create().applicationKey( appKey ).form( form ).build();
+        Mockito.when( cmsService.getDescriptor( appKey ) ).thenReturn( siteDescriptor );
 
         final PropertyTree config = new PropertyTree();
         config.addSet( "outer" ).addSet( "inner" );

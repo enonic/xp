@@ -225,6 +225,6 @@ class MacroInstructionTest
 
     private Input.Builder createTextLineInput( final String name, final String label )
     {
-        return Input.create().inputType( InputTypeName.TEXT_LINE ).label( label ).name( name ).immutable( true );
+        return Input.create().inputType( InputTypeName.TEXT_LINE ).label( label ).name( name );
     }
 }

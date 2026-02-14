@@ -1,0 +1,10 @@
+css: "assets/styles3.css"
+image:
+  - name: "editor-align-justify"
+    displayName:
+      text: "Justify 1"
+      i18n: "style.editor.align.justify"
+  - name: "editor-align-justify"
+    displayName:
+      text: "Justify 2"
+      i18n: "style.editor.align.justify"

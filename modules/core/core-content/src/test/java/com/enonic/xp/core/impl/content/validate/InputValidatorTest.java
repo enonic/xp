@@ -13,8 +13,8 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
+import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.inputtype.InputTypeName;
-import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.inputtype.InputTypeValidationException;
 import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.node.NodeId;
@@ -33,11 +33,7 @@ class InputValidatorTest
     void before()
     {
         final ContentType contentType = createContentTypeForAllInputTypes( ContentTypeName.audioMedia() );
-        this.inputValidator = InputValidator.
-            create().
-            form( contentType.getForm() ).
-            inputTypeResolver( InputTypes.BUILTIN ).
-            build();
+        this.inputValidator = InputValidator.create().form( contentType.getForm() ).inputTypeResolver( InputTypes.BUILTIN ).build();
     }
 
     @Test
@@ -184,108 +180,66 @@ class InputValidatorTest
 
     protected ContentType createContentTypeForAllInputTypes( final ContentTypeName superType )
     {
-        final FormItemSet set = FormItemSet.create().
-            name( "set" ).
-            addFormItem( Input.create().
-                name( "setString" ).
-                label( "Set string" ).
-                inputType( InputTypeName.TEXT_LINE ).
-                build() ).
-            addFormItem( Input.create().
-                name( "setDouble" ).
-                label( "Set double" ).
-                inputType( InputTypeName.DOUBLE ).
-                build() ).
-            build();
-        return ContentType.create().
-            superType( superType ).
-            name( "myContentType" ).
-            addFormItem( Input.create().
-                name( "textLine" ).
-                label( "Textline" ).
-                inputType( InputTypeName.TEXT_LINE ).
-                build() ).
-            addFormItem( Input.create().
-                name( "stringArray" ).
-                label( "String array" ).
-                inputType( InputTypeName.TEXT_LINE ).
-                build() ).
-            addFormItem( Input.create().
-                name( "double" ).
-                label( "Double" ).
-                inputType( InputTypeName.DOUBLE ).
-                build() ).
-            addFormItem( Input.create().
-                name( "long" ).
-                label( "Long" ).
-                inputType( InputTypeName.LONG ).
-                build() ).
-            addFormItem( Input.create().
-                name( "comboBox" ).
-                label( "Combobox" ).
-                inputType( InputTypeName.COMBO_BOX ).
-                inputTypeProperty( InputTypeProperty.create( "option", "label1" ).attribute( "value", "value1" ).build() ).
-                inputTypeProperty( InputTypeProperty.create( "option", "label2" ).attribute( "value", "value2" ).build() ).
-                build() ).
-            addFormItem( Input.create().
-                name( "checkbox" ).
-                label( "Checkbox" ).
-                inputType( InputTypeName.CHECK_BOX ).
-                build() ).
-            addFormItem( Input.create().
-                name( "tag" ).
-                label( "Tag" ).
-                inputType( InputTypeName.TAG ).
-                build() ).
-            addFormItem( Input.create().
-                name( "contentSelector" ).
-                label( "Content selector" ).
-                inputType( InputTypeName.CONTENT_SELECTOR ).
-                inputTypeProperty( InputTypeProperty.create( "allowContentType", ContentTypeName.folder().toString() ).build() ).
-                build() ).
-            addFormItem( Input.create().
-                name( "contentTypeFilter" ).
-                label( "Contenttype filter" ).
-                inputType( InputTypeName.CONTENT_TYPE_FILTER ).
-                build() ).
-            addFormItem( Input.create().
-                name( "siteConfigurator" ).
-                inputType( InputTypeName.SITE_CONFIGURATOR ).
-                label( "Site configurator" ).
-                build() ).
-            addFormItem( Input.create().
-                name( "date" ).
-                label( "Date" ).
-                inputType( InputTypeName.DATE ).
-                build() ).
-            addFormItem( Input.create().
-                name( "time" ).
-                label( "Time" ).
-                inputType( InputTypeName.TIME ).
-                build() ).
-            addFormItem( Input.create().
-                name( "geoPoint" ).
-                label( "Geo point" ).
-                inputType( InputTypeName.GEO_POINT ).
-                build() ).
-            addFormItem( Input.create().
-                name( "htmlArea" ).
-                label( "Html area" ).
-                inputType( InputTypeName.HTML_AREA ).
-                build() ).
-            addFormItem( Input.create().
-                name( "localDateTime" ).
-                label( "Local datetime" ).
-                inputType( InputTypeName.DATE_TIME ).
-                inputTypeProperty( InputTypeProperty.create( "timezone", "false" ).build() ).
-                build() ).
-            addFormItem( Input.create().
-                name( "dateTime" ).
-                label( "Datetime" ).
-                inputType( InputTypeName.DATE_TIME ).
-                inputTypeProperty( InputTypeProperty.create( "timezone", "true" ).build() ).
-                build() ).
-            addFormItem( set ).
-            build();
+        final FormItemSet set = FormItemSet.create()
+            .name( "set" )
+            .addFormItem( Input.create().name( "setString" ).label( "Set string" ).inputType( InputTypeName.TEXT_LINE ).build() )
+            .addFormItem( Input.create().name( "setDouble" ).label( "Set double" ).inputType( InputTypeName.DOUBLE ).build() )
+            .build();
+        return ContentType.create()
+            .superType( superType )
+            .name( "myContentType" )
+            .addFormItem( Input.create().name( "textLine" ).label( "Textline" ).inputType( InputTypeName.TEXT_LINE ).build() )
+            .addFormItem( Input.create().name( "stringArray" ).label( "String array" ).inputType( InputTypeName.TEXT_LINE ).build() )
+            .addFormItem( Input.create().name( "double" ).label( "Double" ).inputType( InputTypeName.DOUBLE ).build() )
+            .addFormItem( Input.create().name( "long" ).label( "Long" ).inputType( InputTypeName.LONG ).build() )
+            .addFormItem( Input.create()
+                              .name( "comboBox" )
+                              .label( "Combobox" )
+                              .inputType( InputTypeName.COMBO_BOX )
+                              .inputTypeProperty( "options", GenericValue.newList()
+                                  .add( GenericValue.newObject()
+                                            .put( "value", "value1" )
+                                            .put( "label", GenericValue.newObject().put( "text", "label1" ).build() )
+                                            .build() )
+                                  .add( GenericValue.newObject()
+                                            .put( "value", "value2" )
+                                            .put( "label", GenericValue.newObject().put( "text", "label2" ).build() )
+                                            .build() )
+                                  .build() )
+                              .build() )
+            .addFormItem( Input.create().name( "checkbox" ).label( "Checkbox" ).inputType( InputTypeName.CHECK_BOX ).build() )
+            .addFormItem( Input.create().name( "tag" ).label( "Tag" ).inputType( InputTypeName.TAG ).build() )
+            .addFormItem( Input.create()
+                              .name( "contentSelector" )
+                              .label( "Content selector" )
+                              .inputType( InputTypeName.CONTENT_SELECTOR )
+                              .inputTypeProperty( "allowContentType", ContentTypeName.folder().toString() )
+                              .build() )
+            .addFormItem( Input.create()
+                              .name( "contentTypeFilter" )
+                              .label( "Contenttype filter" )
+                              .inputType( InputTypeName.CONTENT_TYPE_FILTER )
+                              .build() )
+            .addFormItem( Input.create()
+                              .name( "siteConfigurator" )
+                              .inputType( InputTypeName.SITE_CONFIGURATOR )
+                              .label( "Site configurator" )
+                              .build() )
+            .addFormItem( Input.create().name( "date" ).label( "Date" ).inputType( InputTypeName.DATE ).build() )
+            .addFormItem( Input.create().name( "time" ).label( "Time" ).inputType( InputTypeName.TIME ).build() )
+            .addFormItem( Input.create().name( "geoPoint" ).label( "Geo point" ).inputType( InputTypeName.GEO_POINT ).build() )
+            .addFormItem( Input.create().name( "htmlArea" ).label( "Html area" ).inputType( InputTypeName.HTML_AREA ).build() )
+            .addFormItem( Input.create()
+                              .name( "localDateTime" )
+                              .label( "Local datetime" )
+                              .inputType( InputTypeName.DATE_TIME )
+                              .build() )
+            .addFormItem( Input.create()
+                              .name( "dateTime" )
+                              .label( "Datetime" )
+                              .inputType( InputTypeName.INSTANT )
+                              .build() )
+            .addFormItem( set )
+            .build();
     }
 }

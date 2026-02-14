@@ -9,6 +9,7 @@ import java.util.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
+import com.enonic.xp.schema.LocalizedText;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
@@ -190,9 +191,9 @@ public final class FormItemSet
         return formItems.getInput( FormItemPath.from( path ) );
     }
 
-    public InlineMixin getInlineMixin( final String name )
+    public FormFragment getFormFragment( final String name )
     {
-        return formItems.getInlineMixin( FormItemPath.from( name ) );
+        return formItems.getFormFragment( FormItemPath.from( name ) );
     }
 
     public static Builder create()
@@ -264,6 +265,13 @@ public final class FormItemSet
             return this;
         }
 
+        public Builder setLabel( LocalizedText value )
+        {
+            this.label = value.text();
+            this.labelI18nKey = value.i18n();
+            return this;
+        }
+
         public Builder immutable( boolean value )
         {
             immutable = value;
@@ -323,6 +331,13 @@ public final class FormItemSet
         public Builder helpTextI18nKey( String value )
         {
             helpTextI18nKey = value;
+            return this;
+        }
+
+        public Builder setHelpText( LocalizedText value )
+        {
+            this.helpText = value.text();
+            this.helpTextI18nKey = value.i18n();
             return this;
         }
 

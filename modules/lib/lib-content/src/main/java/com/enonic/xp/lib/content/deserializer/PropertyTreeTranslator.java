@@ -11,30 +11,30 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.schema.xdata.XData;
-import com.enonic.xp.schema.xdata.XDataName;
-import com.enonic.xp.schema.xdata.XDataService;
-import com.enonic.xp.site.SiteDescriptor;
-import com.enonic.xp.site.SiteService;
+import com.enonic.xp.schema.mixin.MixinDescriptor;
+import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.site.CmsDescriptor;
+import com.enonic.xp.site.CmsService;
 
 public final class PropertyTreeTranslator
 {
     private final ContentTypeService contentTypeService;
 
-    private final XDataService xDataService;
+    private final MixinService mixinService;
 
-    private final SiteService siteService;
+    private final CmsService cmsService;
 
     private final PropertyTreeMarshallerService marshaller;
 
     private final Function<ContentTypeName, Boolean> strictValidationResolver;
 
-    public PropertyTreeTranslator( ContentTypeService contentTypeService, XDataService xDataService, SiteService siteService,
+    public PropertyTreeTranslator( ContentTypeService contentTypeService, MixinService mixinService, CmsService cmsService,
                                    PropertyTreeMarshallerService marshaller, Function<ContentTypeName, Boolean> strictValidationResolver )
     {
         this.contentTypeService = contentTypeService;
-        this.xDataService = xDataService;
-        this.siteService = siteService;
+        this.mixinService = mixinService;
+        this.cmsService = cmsService;
         this.marshaller = marshaller;
         this.strictValidationResolver = strictValidationResolver;
     }
@@ -54,19 +54,19 @@ public final class PropertyTreeTranslator
         return marshaller.marshal( map, contentType.getForm(), strictValidationResolver.apply( contentTypeName ) );
     }
 
-    public PropertyTree translate( Map<String, Object> map, XDataName xDataName, ContentTypeName contentTypeName )
+    public PropertyTree translate( Map<String, Object> map, MixinName mixinName, ContentTypeName contentTypeName )
     {
-        XData xData = xDataService.getByName( xDataName );
-        if ( xData == null )
+        MixinDescriptor mixinDescriptor = mixinService.getByName( mixinName );
+        if ( mixinDescriptor == null )
         {
-            throw new IllegalArgumentException( "Unknown xData: " + xDataName );
+            throw new IllegalArgumentException( "Unknown mixin: " + mixinName );
         }
-        return marshaller.marshal( map, xData.getForm(), strictValidationResolver.apply( contentTypeName ) );
+        return marshaller.marshal( map, mixinDescriptor.getForm(), strictValidationResolver.apply( contentTypeName ) );
     }
 
     public PropertyTree translate( Map<String, Object> map, ApplicationKey appKey, ContentTypeName contentTypeName )
     {
-        SiteDescriptor descriptor = siteService.getDescriptor( appKey );
+        CmsDescriptor descriptor = cmsService.getDescriptor( appKey );
         if ( descriptor == null )
         {
             throw new IllegalArgumentException( "Unknown site descriptor: " + appKey );

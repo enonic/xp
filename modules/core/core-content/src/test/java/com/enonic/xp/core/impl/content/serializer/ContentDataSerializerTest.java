@@ -12,8 +12,8 @@ import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
-import com.enonic.xp.content.ExtraData;
-import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.Mixin;
+import com.enonic.xp.content.Mixins;
 import com.enonic.xp.content.ValidationError;
 import com.enonic.xp.content.ValidationErrorCode;
 import com.enonic.xp.content.ValidationErrors;
@@ -33,7 +33,7 @@ import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.util.BinaryReference;
 
@@ -165,13 +165,13 @@ class ContentDataSerializerTest
     }
 
     @Test
-    void create_propertyTree_populated_with_extraData()
+    void create_propertyTree_populated_with_mixin()
     {
         final ContentDataSerializer contentDataSerializer = new ContentDataSerializer();
 
-        PropertyTree mixinData = new PropertyTree();
-        mixinData.setString( "myKey1", "myValue1" );
-        mixinData.setString( "myKey2", "myValue2" );
+        PropertyTree fragmentData = new PropertyTree();
+        fragmentData.setString( "myKey1", "myValue1" );
+        fragmentData.setString( "myKey2", "myValue2" );
 
         final PropertyTree data = contentDataSerializer.toCreateNodeData( CreateContentTranslatorParams.create()
                                                                               .parent( ContentPath.ROOT )
@@ -181,54 +181,54 @@ class ContentDataSerializerTest
                                                                               .type( ContentTypeName.codeMedia() )
                                                                               .creator( PrincipalKey.ofAnonymous() )
                                                                               .childOrder( ChildOrder.defaultOrder() )
-                                                                              .extraDatas( ExtraDatas.create()
-                                                                                               .add( new ExtraData(
-                                                                                                   XDataName.from( ApplicationKey.SYSTEM,
-                                                                                                                   "myMixin" ),
-                                                                                                   mixinData ) )
-                                                                                               .build() )
+                                                                              .mixins( Mixins.create()
+                                                                                           .add( new Mixin(
+                                                                                               MixinName.from( ApplicationKey.SYSTEM,
+                                                                                                               "myFragment" ),
+                                                                                               fragmentData ) )
+                                                                                           .build() )
                                                                               .build() );
 
-        final PropertySet extraData = data.getSet( ContentPropertyNames.EXTRA_DATA );
-        assertNotNull( extraData );
-        final PropertySet systemAppData = extraData.getSet( ApplicationKey.SYSTEM.getName() );
+        final PropertySet mixinsData = data.getSet( ContentPropertyNames.MIXINS );
+        assertNotNull( mixinsData );
+        final PropertySet systemAppData = mixinsData.getSet( ApplicationKey.SYSTEM.getName() );
         assertNotNull( systemAppData );
-        final PropertySet myMixinData = systemAppData.getSet( "myMixin" );
-        assertNotNull( myMixinData );
-        assertEquals( "myValue1", myMixinData.getString( "myKey1" ) );
-        assertEquals( "myValue1", myMixinData.getString( "myKey1" ) );
+        final PropertySet myFragmentData = systemAppData.getSet( "myFragment" );
+        assertNotNull( myFragmentData );
+        assertEquals( "myValue1", myFragmentData.getString( "myKey1" ) );
+        assertEquals( "myValue1", myFragmentData.getString( "myKey1" ) );
     }
 
 
     @Test
-    void update_propertyTree_populated_with_extraData()
+    void update_propertyTree_populated_with_mixins()
     {
         final ContentDataSerializer contentDataSerializer = new ContentDataSerializer();
 
-        PropertyTree mixinData = new PropertyTree();
-        mixinData.setString( "myKey1", "myValue1" );
-        mixinData.setString( "myKey2", "myValue2" );
+        PropertyTree fragmentData = new PropertyTree();
+        fragmentData.setString( "myKey1", "myValue1" );
+        fragmentData.setString( "myKey2", "myValue2" );
 
         final PropertyTree updatedProperties = contentDataSerializer.toNodeData( Content.create()
                                                                                      .name( "myContent" )
                                                                                      .parentPath( ContentPath.ROOT )
                                                                                      .creator( PrincipalKey.ofAnonymous() )
-                                                                                     .extraDatas( ExtraDatas.create()
-                                                                                                      .add( new ExtraData( XDataName.from(
-                                                                                                          ApplicationKey.SYSTEM,
-                                                                                                          "myMixin" ), mixinData ) )
-                                                                                                      .build() )
+                                                                                     .mixins( Mixins.create()
+                                                                                                  .add( new Mixin( MixinName.from(
+                                                                                                      ApplicationKey.SYSTEM,
+                                                                                                      "myFragment" ), fragmentData ) )
+                                                                                                  .build() )
                                                                                      .modifier( PrincipalKey.ofAnonymous() )
                                                                                      .build() );
 
-        final PropertySet extraData = updatedProperties.getSet( ContentPropertyNames.EXTRA_DATA );
-        assertNotNull( extraData );
-        final PropertySet systemAppData = extraData.getSet( ApplicationKey.SYSTEM.getName() );
+        final PropertySet mixinsData = updatedProperties.getSet( ContentPropertyNames.MIXINS );
+        assertNotNull( mixinsData );
+        final PropertySet systemAppData = mixinsData.getSet( ApplicationKey.SYSTEM.getName() );
         assertNotNull( systemAppData );
-        final PropertySet myMixinData = systemAppData.getSet( "myMixin" );
-        assertNotNull( myMixinData );
-        assertEquals( "myValue1", myMixinData.getString( "myKey1" ) );
-        assertEquals( "myValue1", myMixinData.getString( "myKey1" ) );
+        final PropertySet myFragmentData = systemAppData.getSet( "myFragment" );
+        assertNotNull( myFragmentData );
+        assertEquals( "myValue1", myFragmentData.getString( "myKey1" ) );
+        assertEquals( "myValue1", myFragmentData.getString( "myKey1" ) );
     }
 
 

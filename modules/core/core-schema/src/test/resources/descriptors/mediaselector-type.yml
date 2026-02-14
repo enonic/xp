@@ -1,0 +1,15 @@
+type: "MediaSelector"
+name: "myMediaSelector"
+label: "My MediaSelector"
+helpText: "Help Text"
+occurrences:
+  min: 0
+  max: 1
+allowContentType:
+  - "media:image"
+  - "media:video"
+allowPath:
+  - "${site}/*"
+treeMode: true
+hideToggleIcon: true
+attributes: { }

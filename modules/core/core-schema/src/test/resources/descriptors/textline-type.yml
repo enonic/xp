@@ -1,0 +1,10 @@
+type: "TextLine"
+name: "socialsecuritynumber"
+label: "My SSN"
+helpText: "Help Text"
+occurrences:
+  min: 1
+  max: 3
+maxLength: 11
+regexp: '\\b\\d{3}-\\d{2}-\\d{4}\\b'
+attributes: { }

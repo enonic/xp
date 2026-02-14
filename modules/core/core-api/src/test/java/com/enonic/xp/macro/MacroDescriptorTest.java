@@ -18,24 +18,24 @@ class MacroDescriptorTest
     void testToDescriptorResourceKey()
     {
         final MacroDescriptor macroDescriptor = MacroDescriptor.create().key( MacroKey.from( "my-app:macro1" ) ).build();
-        assertEquals( "my-app:/site/macros/macro1/macro1.xml", macroDescriptor.toDescriptorResourceKey().toString() );
+        assertEquals( "my-app:/cms/macros/macro1/macro1.yml", macroDescriptor.toDescriptorResourceKey().toString() );
     }
 
     @Test
     void testToControllerResourceKey()
     {
         final MacroDescriptor macroDescriptor = MacroDescriptor.create().key( MacroKey.from( "my-app:macro1" ) ).build();
-        assertEquals( "my-app:/site/macros/macro1/macro1.js", macroDescriptor.toControllerResourceKey().toString() );
+        assertEquals( "my-app:/cms/macros/macro1/macro1.js", macroDescriptor.toControllerResourceKey().toString() );
     }
 
     @Test
     void testCreateWithKey()
     {
         final MacroDescriptor macroDescriptor1 = MacroDescriptor.create().key( "my-app:macro1" ).build();
-        assertEquals( "my-app:/site/macros/macro1/macro1.js", macroDescriptor1.toControllerResourceKey().toString() );
+        assertEquals( "my-app:/cms/macros/macro1/macro1.js", macroDescriptor1.toControllerResourceKey().toString() );
 
         final MacroDescriptor macroDescriptor2 = MacroDescriptor.create().key( MacroKey.from( "my-app:macro2" ) ).build();
-        assertEquals( "my-app:/site/macros/macro2/macro2.js", macroDescriptor2.toControllerResourceKey().toString() );
+        assertEquals( "my-app:/cms/macros/macro2/macro2.js", macroDescriptor2.toControllerResourceKey().toString() );
     }
 
 

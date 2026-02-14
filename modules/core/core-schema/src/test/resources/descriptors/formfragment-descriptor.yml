@@ -1,0 +1,13 @@
+displayName: "DisplayName of the FormFragment"
+description: "Description of the FormFragment"
+form:
+  - type: "TextLine"
+    name: "myField"
+    label: "My Field"
+    maxLength: 12
+    regexp: "sdsdsds"
+    occurrences:
+      min: 0
+      max: 1
+    attributes:
+      a: 1

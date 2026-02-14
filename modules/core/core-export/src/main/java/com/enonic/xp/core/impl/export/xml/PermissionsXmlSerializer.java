@@ -3,7 +3,6 @@ package com.enonic.xp.core.impl.export.xml;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
-import com.enonic.xp.xml.DomBuilder;
 
 public class PermissionsXmlSerializer
 {

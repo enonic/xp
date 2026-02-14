@@ -30,7 +30,7 @@ public class PatchableContent
 
     public PatchableField<PropertyTree> data;
 
-    public PatchableField<ExtraDatas> extraDatas;
+    public PatchableField<Mixins> mixins;
 
     public PatchableField<Page> page;
 
@@ -83,7 +83,7 @@ public class PatchableContent
         this.source = source;
         this.displayName = new PatchableField<>( source.getDisplayName() );
         this.data = new PatchableField<>( source.getData().copy() );
-        this.extraDatas = new PatchableField<>( source.getAllExtraData().copy() );
+        this.mixins = new PatchableField<>( source.getMixins().copy() );
         this.page = new PatchableField<>( source.getPage() != null ? source.getPage().copy() : null );
         this.valid = new PatchableField<>( source.isValid() );
         this.owner = new PatchableField<>( source.getOwner() );
@@ -117,7 +117,7 @@ public class PatchableContent
         return Content.create( this.source )
             .displayName( displayName.produce() )
             .data( data.produce() )
-            .extraDatas( extraDatas.produce() )
+            .mixins( mixins.produce() )
             .page( page.produce() )
             .owner( owner.produce() )
             .language( language.produce() )

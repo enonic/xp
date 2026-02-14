@@ -3,23 +3,20 @@ var assert = require('/lib/xp/testing');
 
 /* global log*/
 
-let resource = `<?xml version='1.0' encoding='UTF-8'?>
-       <mixin xmlns='urn:enonic:xp:model:1.0'>
-          <display-name>Virtual Mixin</display-name>
-          <description>Mixin description</description>
-          <form>
-            <input type='TextLine' name='text2'>
-              <label>Text 2</label>
-            </input>
-        
-            <mixin name='myapplication:inline'/>
-          </form>
-        </mixin>`;
+let resource = `displayName: "Virtual Mixin"
+description: "Mixin description"
+form:
+- type: "TextLine"
+  name: "label"
+  label: "Label"
+  occurrences:
+    min: 0
+    max: 2`;
 
 // BEGIN
 // Create virtual mixin.
 var result = schemaLib.createSchema({
-    name: 'myapp:mytype',
+    name: 'myapp:mydata',
     type: 'MIXIN',
     resource
 
@@ -31,43 +28,32 @@ log.info('Created mixin: ' + result.name);
 
 
 assert.assertJsonEquals({
-    name: 'myapp:mytype',
+    name: 'myapp:mydata',
     displayName: 'Virtual Mixin',
-    displayNameI18nKey: '',
     description: 'Mixin description',
-    descriptionI18nKey: '',
     createdTime: '2021-09-25T10:00:00Z',
     modifiedTime: '2021-09-25T10:00:00Z',
-    resource: '<?xml version=\'1.0\' encoding=\'UTF-8\'?>\n' +
-              '       <mixin xmlns=\'urn:enonic:xp:model:1.0\'>\n ' +
-              '         <display-name>Virtual Mixin</display-name>\n' +
-              '          <description>Mixin description</description>\n' +
-              '          <form>\n' +
-              '            <input type=\'TextLine\' name=\'text2\'>\n' +
-              '              <label>Text 2</label>\n' +
-              '            </input>\n' +
-              '        \n' +
-              '            <mixin name=\'myapplication:inline\'/>\n' +
-              '          </form>\n' +
-              '        </mixin>',
+    resource: 'displayName: "Virtual Mixin"\n' +
+              'description: "Mixin description"\n' +
+              'form:\n' +
+              '- type: "TextLine"\n' +
+              '  name: "label"\n' +
+              '  label: "Label"\n' +
+              '  occurrences:\n' +
+              '    min: 0\n' +
+              '    max: 2',
     type: 'MIXIN',
     form: [
         {
             'formItemType': 'Input',
-            'name': 'text2',
-            'label': 'Text 2',
-            'maximize': true,
+            'name': 'label',
+            'label': 'Label',
             'inputType': 'TextLine',
             'occurrences': {
-                'maximum': 1,
+                'maximum': 2,
                 'minimum': 0
-            },
-            'config': {}
-        }, {
-            formItemType: 'InlineMixin',
-            name: 'myapplication:inline'
+            }
         }
-    ],
-
+    ]
 }, result);
 

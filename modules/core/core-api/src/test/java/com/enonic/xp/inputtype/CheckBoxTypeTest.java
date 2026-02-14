@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
-import com.enonic.xp.form.Input;
+import com.enonic.xp.util.GenericValue;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -35,36 +35,21 @@ class CheckBoxTypeTest
     @Test
     void testCreateProperty()
     {
-        final InputTypeConfig config = InputTypeConfig.create().build();
-        final Value value = this.type.createValue( ValueFactory.newString( "true" ), config );
+        final Value value = this.type.createValue( ValueFactory.newString( "true" ), GenericValue.newObject().build() );
 
         assertNotNull( value );
         assertSame( ValueTypes.BOOLEAN, value.getType() );
     }
 
     @Test
-    void testCreateDefaultValue()
-    {
-        final Input input = getDefaultInputBuilder( InputTypeName.CHECK_BOX, "checked" ).build();
-
-        final Value value = this.type.createDefaultValue( input );
-
-        assertNotNull( value );
-        assertEquals( "true", value.toString() );
-
-    }
-
-    @Test
     void testValidate()
     {
-        final InputTypeConfig config = InputTypeConfig.create().build();
-        this.type.validate( booleanProperty( true ), config );
+        this.type.validate( booleanProperty( true ), GenericValue.newObject().build() );
     }
 
     @Test
     void testValidate_invalidType()
     {
-        final InputTypeConfig config = InputTypeConfig.create().build();
-        assertThrows(InputTypeValidationException.class, () -> this.type.validate( stringProperty( "value" ), config ));
+        assertThrows(InputTypeValidationException.class, () -> this.type.validate( stringProperty( "value" ), GenericValue.newObject().build() ));
     }
 }

@@ -17,13 +17,13 @@ class ContentTypesTest
 {
     private static final Form PAGE_TEMPLATE = Form.create().
         addFormItem( Input.create().
-            name( "supports" ).
-            label( "Supports" ).
-            helpText( "Choose which content types this page template supports" ).
-            inputType( InputTypeName.CONTENT_TYPE_FILTER ).
-            required( true ).
-            multiple( true ).
-            build() ).
+        name( "supports" ).
+        label( "Supports" ).
+        helpText( "Choose which content types this page template supports" ).
+        inputType( InputTypeName.CONTENT_TYPE_FILTER ).
+        required( true ).
+        multiple( true ).
+        build() ).
         build();
 
     @Test
@@ -38,7 +38,6 @@ class ContentTypesTest
                 setFinal().
                 allowChildContent( true ).
                 setBuiltIn().
-                displayNameExpression( "displayNameExpression" ).
                 displayName( "displayName" ).
                 description( "description" ).
                 modifiedTime( Instant.now() ).

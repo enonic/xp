@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://json-schema.enonic.com/8.0.0/textline.schema.json",
+  "allOf": [
+    {
+      "$ref": "https://json-schema.enonic.com/8.0.0/input.schema.json"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "TextLine"
+        },
+        "maxLength": {
+          "type": "integer"
+        },
+        "regexp": {
+          "type": "string"
+        },
+        "showCounter": {
+          "type": "boolean"
+        },
+        "default": {
+          "type": "string"
+        }
+      }
+    }
+  ],
+  "unevaluatedProperties": false
+}

@@ -4,7 +4,7 @@
   "host": "enonic.com",
   "port": 80,
   "path": "/my/page",
-  "rawPath": "/my/page",
+  "rawPath" : "/my/page",
   "url": "http://enonic.com/my/page?debug=true",
   "mode": "edit",
   "webSocket": false,
@@ -17,10 +17,10 @@
     "Cookies": "mycookie=123; other=abc;",
     "Language": "en"
   },
-  "getHeader": {},
+  "getHeader" : {},
   "cookies": {
     "mycookie": "123",
     "other": "abc"
   },
-  "locales": []
+  "locales" : []
 }

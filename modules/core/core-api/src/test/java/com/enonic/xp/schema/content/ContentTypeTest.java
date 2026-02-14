@@ -19,8 +19,8 @@ class ContentTypeTest
 {
     private static final Form MEDIA_DEFAULT = Form.create().
         addFormItem( Input.create().name( ContentPropertyNames.MEDIA ).
-            label( "Media" ).
-            inputType( InputTypeName.MEDIA_UPLOADER ).build() ).
+        label( "Media" ).
+        inputType( InputTypeName.MEDIA_UPLOADER ).build() ).
         build();
 
     @Test
@@ -85,18 +85,18 @@ class ContentTypeTest
         FormItemSet formItemSet = FormItemSet.create().
             name( "top-set" ).
             addFormItem( Input.create().
-                name( "myInput" ).
-                label( "Input" ).
-                inputType( InputTypeName.TEXT_LINE ).
-                build() ).
+            name( "myInput" ).
+            label( "Input" ).
+            inputType( InputTypeName.TEXT_LINE ).
+            build() ).
             addFormItem( FormItemSet.create().
-                name( "inner-set" ).
-                addFormItem( Input.create().
-                    name( "myInnerInput" ).
-                    label( "Inner input" ).
-                    inputType( InputTypeName.TEXT_LINE ).
-                    build() ).
-                build() ).
+            name( "inner-set" ).
+            addFormItem( Input.create().
+            name( "myInnerInput" ).
+            label( "Inner input" ).
+            inputType( InputTypeName.TEXT_LINE ).
+            build() ).
+            build() ).
             build();
 
         ContentType contentType = ContentType.create().
@@ -124,10 +124,7 @@ class ContentTypeTest
                 setFinal().
                 allowChildContent( true ).
                 setBuiltIn().
-                displayNameExpression( "displayNameExpression" ).
                 displayName( "displayName" ).
-                displayNameLabel( "displayNameLabel" ).
-                displayNameLabelI18nKey( "displayNameLabelI18nKey" ).
                 description( "description" ).
                 modifiedTime( Instant.now() ).
                 createdTime( Instant.now() ).
@@ -141,10 +138,7 @@ class ContentTypeTest
         assertEquals( contentType1.isFinal(), contentType2.isFinal() );
         assertEquals( contentType1.allowChildContent(), contentType2.allowChildContent() );
         assertEquals( contentType1.isBuiltIn(), contentType2.isBuiltIn() );
-        assertEquals( contentType1.getDisplayNameExpression(), contentType2.getDisplayNameExpression() );
         assertEquals( contentType1.getDisplayName(), contentType2.getDisplayName() );
-        assertEquals( contentType1.getDisplayNameLabel(), contentType2.getDisplayNameLabel() );
-        assertEquals( contentType1.getDisplayNameLabelI18nKey(), contentType2.getDisplayNameLabelI18nKey() );
         assertEquals( contentType1.getDescription(), contentType2.getDescription() );
         assertEquals( contentType1.getModifiedTime(), contentType2.getModifiedTime() );
         assertEquals( contentType1.getCreatedTime(), contentType2.getCreatedTime() );

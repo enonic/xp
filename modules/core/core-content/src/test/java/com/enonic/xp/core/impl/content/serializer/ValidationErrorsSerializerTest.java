@@ -14,7 +14,7 @@ import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.region.ComponentPath;
-import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.util.BinaryReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -96,7 +96,7 @@ class ValidationErrorsSerializerTest
     @Test
     void roundTripMixinConfigValidationError()
     {
-        final XDataName mixinName = XDataName.from( ApplicationKey.from( "app3" ), "mixin" );
+        final MixinName mixinName = MixinName.from( ApplicationKey.from( "app3" ), "mixin" );
         final ValidationError error = ValidationError.mixinConfigError( ERROR_CODE, PropertyPath.from( "mixinPath" ), mixinName )
             .message( "message", true )
             .i18n( "i18n.mixin" )

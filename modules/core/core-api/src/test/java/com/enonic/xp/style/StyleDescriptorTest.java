@@ -49,19 +49,19 @@ class StyleDescriptorTest
             build();
 
         assertThrows(IllegalArgumentException.class, () ->
-        StyleDescriptor.create().
-            application( ApplicationKey.from( "myapp" ) ).
-            cssPath( "assets/styles.css" ).
-            addStyleElement( element ).
-            addStyleElement( element2 ).
-            build() );
+            StyleDescriptor.create().
+                application( ApplicationKey.from( "myapp" ) ).
+                cssPath( "assets/styles.css" ).
+                addStyleElement( element ).
+                addStyleElement( element2 ).
+                build() );
     }
 
     @Test
     void testToResourceKey()
     {
         final ResourceKey resourceKey = StyleDescriptor.toResourceKey( ApplicationKey.from( "myapp" ) );
-        assertEquals( "myapp:/site/styles.xml", resourceKey.toString() );
+        assertEquals( "myapp:/cms/styles/image.yml", resourceKey.toString() );
     }
 
     @Test

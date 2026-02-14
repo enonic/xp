@@ -8,7 +8,7 @@ import com.enonic.xp.core.impl.app.descriptor.DescriptorServiceImpl;
 import com.enonic.xp.core.impl.content.page.region.LayoutDescriptorLoader;
 import com.enonic.xp.core.impl.content.page.region.PartDescriptorLoader;
 import com.enonic.xp.descriptor.DescriptorService;
-import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.schema.content.CmsFormFragmentService;
 
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
@@ -17,7 +17,7 @@ import static org.mockito.Mockito.when;
 public abstract class AbstractDescriptorServiceTest
     extends ApplicationTestSupport
 {
-    protected MixinService mixinService;
+    protected CmsFormFragmentService formFragmentService;
 
     protected DescriptorService descriptorService;
 
@@ -25,15 +25,15 @@ public abstract class AbstractDescriptorServiceTest
     protected void initialize()
         throws Exception
     {
-        this.mixinService = Mockito.mock( MixinService.class );
-        when( this.mixinService.inlineFormItems( any() ) ).then( returnsFirstArg() );
+        this.formFragmentService = Mockito.mock( CmsFormFragmentService.class );
+        when( this.formFragmentService.inlineFormItems( any() ) ).then( returnsFirstArg() );
 
         final DescriptorFacetFactoryImpl facetFactory = new DescriptorFacetFactoryImpl( this.applicationService, this.resourceService );
 
         final DescriptorServiceImpl descriptorServiceImpl = new DescriptorServiceImpl( facetFactory );
-        descriptorServiceImpl.addLoader( new LayoutDescriptorLoader( this.resourceService, this.mixinService ) );
-        descriptorServiceImpl.addLoader( new PartDescriptorLoader( this.resourceService, this.mixinService ) );
-        descriptorServiceImpl.addLoader( new PageDescriptorLoader( this.resourceService, this.mixinService ) );
+        descriptorServiceImpl.addLoader( new LayoutDescriptorLoader( this.resourceService, this.formFragmentService ) );
+        descriptorServiceImpl.addLoader( new PartDescriptorLoader( this.resourceService, this.formFragmentService ) );
+        descriptorServiceImpl.addLoader( new PageDescriptorLoader( this.resourceService, this.formFragmentService ) );
         this.descriptorService = descriptorServiceImpl;
 
         addApplication( "myapp1", "/apps/myapp1" );

@@ -24,9 +24,9 @@ import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeService;
-import com.enonic.xp.schema.xdata.XDataService;
+import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.site.CmsService;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
-import com.enonic.xp.site.SiteService;
 
 public class PatchNodeParamsFactory
 {
@@ -40,7 +40,7 @@ public class PatchNodeParamsFactory
 
     private final ContentTypeService contentTypeService;
 
-    private final XDataService xDataService;
+    private final MixinService mixinService;
 
     private final PageDescriptorService pageDescriptorService;
 
@@ -48,7 +48,7 @@ public class PatchNodeParamsFactory
 
     private final LayoutDescriptorService layoutDescriptorService;
 
-    private final SiteService siteService;
+    private final CmsService cmsService;
 
     private final ContentDataSerializer contentDataSerializer = new ContentDataSerializer();
 
@@ -60,11 +60,11 @@ public class PatchNodeParamsFactory
         this.contentEditor = builder.contentEditor;
         this.createAttachments = builder.createAttachments;
         this.contentTypeService = builder.contentTypeService;
-        this.xDataService = builder.xDataService;
+        this.mixinService = builder.mixinService;
         this.pageDescriptorService = builder.pageDescriptorService;
         this.partDescriptorService = builder.partDescriptorService;
         this.layoutDescriptorService = builder.layoutDescriptorService;
-        this.siteService = builder.siteService;
+        this.cmsService = builder.cmsService;
         this.versionAttributes = builder.versionAttributes;
         branches = Branches.from( builder.branches.build() );
     }
@@ -104,12 +104,12 @@ public class PatchNodeParamsFactory
                 .pageDescriptorService( pageDescriptorService )
                 .partDescriptorService( partDescriptorService )
                 .layoutDescriptorService( layoutDescriptorService )
-                .siteService( this.siteService )
-                .xDataService( this.xDataService )
+                .cmsService( this.cmsService )
+                .mixinService( this.mixinService )
                 .contentTypeName( editedContent.getType() )
                 .page( editedContent.getPage() )
                 .siteConfigs( editedContent.isSite() ? SiteConfigsDataSerializer.fromData( editedContent.getData().getRoot() ) : null )
-                .extraDatas( editedContent.getAllExtraData() )
+                .mixins( editedContent.getMixins() )
                 .language( editedContent.getLanguage() != null ? editedContent.getLanguage().getLanguage() : null )
                 .build();
 
@@ -134,7 +134,7 @@ public class PatchNodeParamsFactory
 
         private ContentTypeService contentTypeService;
 
-        private XDataService xDataService;
+        private MixinService mixinService;
 
         private PageDescriptorService pageDescriptorService;
 
@@ -142,7 +142,7 @@ public class PatchNodeParamsFactory
 
         private LayoutDescriptorService layoutDescriptorService;
 
-        private SiteService siteService;
+        private CmsService cmsService;
 
         Builder contentId( final ContentId contentId )
         {
@@ -180,9 +180,9 @@ public class PatchNodeParamsFactory
             return this;
         }
 
-        Builder xDataService( final XDataService value )
+        Builder mixinService( final MixinService value )
         {
-            this.xDataService = value;
+            this.mixinService = value;
             return this;
         }
 
@@ -204,9 +204,9 @@ public class PatchNodeParamsFactory
             return this;
         }
 
-        Builder siteService( final SiteService value )
+        Builder cmsService( final CmsService value )
         {
-            this.siteService = value;
+            this.cmsService = value;
             return this;
         }
 
@@ -216,7 +216,7 @@ public class PatchNodeParamsFactory
             Objects.requireNonNull( createAttachments, "createAttachments cannot be null" );
 
             Objects.requireNonNull( contentTypeService );
-            Objects.requireNonNull( xDataService );
+            Objects.requireNonNull( mixinService );
             Objects.requireNonNull( pageDescriptorService );
             Objects.requireNonNull( partDescriptorService );
             Objects.requireNonNull( layoutDescriptorService );

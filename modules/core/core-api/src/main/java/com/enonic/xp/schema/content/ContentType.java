@@ -8,8 +8,9 @@ import com.google.common.base.MoreObjects;
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
-import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.schema.BaseSchema;
+import com.enonic.xp.schema.LocalizedText;
+import com.enonic.xp.util.GenericValue;
 
 @PublicApi
 public final class ContentType
@@ -27,13 +28,7 @@ public final class ContentType
 
     private final Form form;
 
-    private final String displayNameExpression;
-
-    private final String displayNameLabel;
-
-    private final String displayNameLabelI18nKey;
-
-    private final InputTypeConfig schemaConfig;
+    private final GenericValue schemaConfig;
 
     private final List<String> allowChildContentType;
 
@@ -54,9 +49,6 @@ public final class ContentType
         this.allowChildContent = builder.allowChildContent;
         this.isBuiltIn = builder.isBuiltIn;
         this.form = builder.formBuilder.build();
-        this.displayNameExpression = builder.displayNameExpression;
-        this.displayNameLabel = builder.displayNameLabel;
-        this.displayNameLabelI18nKey = builder.displayNameLabelI18nKey;
         this.schemaConfig = builder.schemaConfig.build();
         this.allowChildContentType = builder.allowChildContentType;
     }
@@ -106,22 +98,7 @@ public final class ContentType
         return this.form;
     }
 
-    public String getDisplayNameExpression()
-    {
-        return displayNameExpression;
-    }
-
-    public String getDisplayNameLabel()
-    {
-        return displayNameLabel;
-    }
-
-    public String getDisplayNameLabelI18nKey()
-    {
-        return displayNameLabelI18nKey;
-    }
-
-    public InputTypeConfig getSchemaConfig()
+    public GenericValue getSchemaConfig()
     {
         return schemaConfig;
     }
@@ -137,7 +114,6 @@ public final class ContentType
         final MoreObjects.ToStringHelper s = MoreObjects.toStringHelper( this );
         s.add( "name", getName() );
         s.add( "displayName", getDisplayName() );
-        s.add( "displayNameLabel", getDisplayNameLabel() );
         s.add( "description", getDescription() );
         s.add( "superType", superType );
         s.add( "isAbstract", isAbstract );
@@ -165,15 +141,9 @@ public final class ContentType
 
         private ContentTypeName superType;
 
-        private String displayNameExpression;
-
-        private String displayNameLabel;
-
-        private String displayNameLabelI18nKey;
-
         private List<String> allowChildContentType;
 
-        private final InputTypeConfig.Builder schemaConfig = InputTypeConfig.create();
+        private final GenericValue.ObjectBuilder schemaConfig = GenericValue.newObject();
 
         private Builder()
         {
@@ -195,14 +165,12 @@ public final class ContentType
             this.isBuiltIn = source.isBuiltIn();
             this.superType = source.getSuperType();
             this.formBuilder = Form.create( source.getForm() );
-            this.displayNameExpression = source.getDisplayNameExpression();
-            this.displayNameLabel = source.displayNameLabel;
-            this.displayNameLabelI18nKey = source.displayNameLabelI18nKey;
+            this.allowChildContentType = source.allowChildContentType;
+
             if ( source.schemaConfig != null )
             {
-                this.schemaConfig.config( source.schemaConfig );
+                source.schemaConfig.properties().forEach( p -> this.schemaConfig.put( p.getKey(), p.getValue() ) );
             }
-            this.allowChildContentType = source.allowChildContentType;
         }
 
         @Override
@@ -277,27 +245,23 @@ public final class ContentType
             return this;
         }
 
-        public Builder displayNameExpression( final String displayNameExpression )
+        public Builder setDisplayName( final LocalizedText source )
         {
-            this.displayNameExpression = displayNameExpression;
+            this.displayName( source.text() );
+            this.displayNameI18nKey( source.i18n() );
             return this;
         }
 
-        public Builder displayNameLabel( final String displayNameLabel )
+        public Builder setDescription( final LocalizedText source )
         {
-            this.displayNameLabel = displayNameLabel;
+            this.description( source.text() );
+            this.descriptionI18nKey( source.i18n() );
             return this;
         }
 
-        public Builder displayNameLabelI18nKey( final String displayNameLabelI18nKey )
+        public Builder schemaConfig( final GenericValue config )
         {
-            this.displayNameLabelI18nKey = displayNameLabelI18nKey;
-            return this;
-        }
-
-        public Builder schemaConfig( final InputTypeConfig config )
-        {
-            this.schemaConfig.config( config );
+            config.properties().forEach( e -> this.schemaConfig.put( e.getKey(), e.getValue() ) );
             return this;
         }
 

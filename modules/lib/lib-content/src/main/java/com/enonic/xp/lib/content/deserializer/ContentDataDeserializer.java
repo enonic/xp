@@ -8,8 +8,8 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.ContentPropertyNames;
-import com.enonic.xp.content.ExtraData;
-import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.Mixin;
+import com.enonic.xp.content.Mixins;
 import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.data.PropertyTree;
@@ -17,7 +17,7 @@ import com.enonic.xp.page.Page;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.Regions;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.util.BinaryReferences;
 
 public final class ContentDataDeserializer
@@ -69,25 +69,25 @@ public final class ContentDataDeserializer
         return tree;
     }
 
-    public ExtraDatas toExtraDatas( Map<String, Object> source, ContentTypeName contentTypeName )
+    public Mixins toMixins( Map<String, Object> source, ContentTypeName contentTypeName )
     {
         if ( source == null )
         {
             return null;
         }
 
-        final ExtraDatas.Builder builder = ExtraDatas.create();
+        final Mixins.Builder builder = Mixins.create();
         source.forEach( ( key, data ) -> {
-            ApplicationKey appKey = ExtraData.fromApplicationPrefix( key );
+            ApplicationKey appKey = Mixin.fromApplicationPrefix( key );
             if ( data instanceof Map )
             {
-                ( (Map<String, Object>) data ).forEach( ( xName, values ) -> {
+                ( (Map<String, Object>) data ).forEach( ( mixinName, values ) -> {
                     if ( values instanceof Map )
                     {
-                        final ExtraData extra = new ExtraData( XDataName.from( appKey, xName ),
-                                                               propertyTreeTranslator.translate( (Map<String, Object>) values,
-                                                                                                 XDataName.from( appKey, xName ),
-                                                                                                 contentTypeName ) );
+                        final Mixin extra = new Mixin( MixinName.from( appKey, mixinName ),
+                                                       propertyTreeTranslator.translate( (Map<String, Object>) values,
+                                                                                         MixinName.from( appKey, mixinName ),
+                                                                                         contentTypeName ) );
                         builder.add( extra );
                     }
                 } );

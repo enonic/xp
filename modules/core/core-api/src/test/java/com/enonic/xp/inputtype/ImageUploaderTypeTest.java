@@ -6,6 +6,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
+import com.enonic.xp.util.GenericValue;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -35,8 +36,7 @@ class ImageUploaderTypeTest
     void testCreateProperty()
     {
         final PropertyTree tree = new PropertyTree();
-        final InputTypeConfig config = InputTypeConfig.create().build();
-        final Value value = this.type.createValue( ValueFactory.newPropertySet( tree.newSet() ), config );
+        final Value value = this.type.createValue( ValueFactory.newPropertySet( tree.newSet() ), GenericValue.newObject().build() );
 
         assertNotNull( value );
         assertSame( ValueTypes.PROPERTY_SET, value.getType() );
@@ -45,7 +45,6 @@ class ImageUploaderTypeTest
     @Test
     void testValidate()
     {
-        final InputTypeConfig config = InputTypeConfig.create().build();
-        this.type.validate( stringProperty( "test" ), config );
+        this.type.validate( stringProperty( "test" ), GenericValue.newObject().build() );
     }
 }

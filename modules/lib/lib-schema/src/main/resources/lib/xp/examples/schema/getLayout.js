@@ -20,7 +20,7 @@ assert.assertJsonEquals({
     displayName: 'News layout',
     description: 'My news layout',
     descriptionI18nKey: 'key.description',
-    componentPath: 'myapp:/site/layouts/mylayout',
+    componentPath: 'myapp:/cms/layouts/mylayout',
     modifiedTime: '2021-02-25T10:44:33.170079900Z',
     resource: '<layout><some-data></some-data></layout>',
     type: 'LAYOUT',
@@ -29,13 +29,11 @@ assert.assertJsonEquals({
             'formItemType': 'Input',
             'name': 'width',
             'label': 'width',
-            'maximize': true,
             'inputType': 'Double',
             'occurrences': {
                 'maximum': 1,
                 'minimum': 0
-            },
-            'config': {}
+            }
         }
     ],
     config: {},

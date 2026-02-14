@@ -1,0 +1,16 @@
+type: "RadioButton"
+name: "type"
+label: "Policy type"
+helpText: "Help Text"
+occurrences:
+  min: 0
+  max: 1
+options:
+  - value: "cookie"
+    label:
+      text: "Cookie"
+      i18n: "i18n.rbg.cookie"
+  - value: "privacy"
+    label: "Privacy"
+default: "cookie"
+attributes: { }

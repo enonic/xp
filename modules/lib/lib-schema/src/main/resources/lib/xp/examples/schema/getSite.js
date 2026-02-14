@@ -23,16 +23,14 @@ assert.assertJsonEquals({
             'formItemType': 'Input',
             'name': 'input',
             'label': 'Input',
-            'maximize': true,
             'inputType': 'Double',
             'occurrences': {
                 'maximum': 1,
                 'minimum': 0
-            },
-            'config': {}
+            }
         }
     ],
-    xDataMappings: [
+    mixinMappings: [
         {
             'name': 'myapplication:my',
             'optional': false

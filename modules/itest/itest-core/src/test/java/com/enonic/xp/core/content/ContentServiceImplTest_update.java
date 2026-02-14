@@ -21,13 +21,13 @@ import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.content.ExtraData;
-import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.Mixin;
+import com.enonic.xp.content.Mixins;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.core.impl.content.XDataMappingServiceImpl;
-import com.enonic.xp.core.impl.schema.xdata.XDataServiceImpl;
+import com.enonic.xp.core.impl.content.MixinMappingServiceImpl;
+import com.enonic.xp.core.impl.content.schema.MixinServiceImpl;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
@@ -40,15 +40,15 @@ import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.schema.mixin.Mixin;
+import com.enonic.xp.schema.formfragment.FormFragmentDescriptor;
+import com.enonic.xp.schema.formfragment.FormFragmentName;
+import com.enonic.xp.schema.mixin.MixinDescriptor;
 import com.enonic.xp.schema.mixin.MixinName;
-import com.enonic.xp.schema.xdata.XData;
-import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.site.CmsDescriptor;
+import com.enonic.xp.site.MixinMapping;
+import com.enonic.xp.site.MixinMappings;
 import com.enonic.xp.site.SiteConfig;
-import com.enonic.xp.site.SiteDescriptor;
-import com.enonic.xp.site.XDataMapping;
-import com.enonic.xp.site.XDataMappings;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -97,10 +97,10 @@ class ContentServiceImplTest_update
     @Test
     void update_content_image()
     {
-        xDataService = new XDataServiceImpl( mock( ApplicationService.class ), resourceService );
-        xDataMappingService = new XDataMappingServiceImpl( siteService, xDataService );
-        contentService.setxDataService( xDataService );
-        contentService.setXDataMappingService( xDataMappingService );
+        mixinService = new MixinServiceImpl( mock( ApplicationService.class ), resourceService );
+        mixinMappingService = new MixinMappingServiceImpl( cmsService, mixinService );
+        contentService.setMixinService( mixinService );
+        contentService.setMixinMappingService( mixinMappingService );
 
         final ByteSource image = loadImage( "cat-small.jpg" );
 
@@ -306,14 +306,17 @@ class ContentServiceImplTest_update
             data.setString( "testString", "value" );
             data.setString( "testString2", "value" );
 
-            final Mixin mixin = Mixin.create()
-                .name( "myapplication:my_mixin" )
-                .addFormItem( Input.create().name( "inputToBeMixedIn" ).label( "Mixed in" ).inputType( InputTypeName.TEXT_LINE ).build() )
-                .build();
+            final FormFragmentDescriptor descriptor = FormFragmentDescriptor.create().name( "myapplication:my_fragment" ).
+                addFormItem( Input.create().
+                name( "inputToBeMixedIn" ).
+                label( "Mixed in" ).
+                inputType( InputTypeName.TEXT_LINE ).
+                build() ).
+                build();
 
-            when( this.mixinService.getByName( Mockito.isA( MixinName.class ) ) ).thenReturn( mixin );
+            when( this.formFragmentService.getByName( Mockito.isA( FormFragmentName.class ) ) ).thenReturn( descriptor );
 
-            final ExtraDatas extraDatas = createExtraDatas();
+            final Mixins mixins = createMixins();
 
             final CreateContentParams createContentParams = CreateContentParams.create()
                 .contentData( data )
@@ -321,12 +324,12 @@ class ContentServiceImplTest_update
                 .parent( ContentPath.ROOT )
                 .permissions( AccessControlList.empty() )
                 .type( ContentTypeName.folder() )
-                .extraDatas( extraDatas )
+                .mixins( mixins )
                 .build();
 
             final Content content = this.contentService.create( createContentParams );
 
-            assertTrue( content.hasExtraData() );
+            assertTrue( !content.getMixins().isEmpty() );
 
             final UpdateContentParams updateContentParams = new UpdateContentParams();
             updateContentParams.contentId( content.getId() ).editor( edit -> {
@@ -544,25 +547,25 @@ class ContentServiceImplTest_update
         Mockito.verifyNoMoreInteractions( auditLogService );
     }
 
-    private ExtraDatas createExtraDatas()
+    private Mixins createMixins()
     {
-        final XDataName xDataName = XDataName.from( "com.enonic.app.test:mixin" );
+        final MixinName mixinName = MixinName.from( "com.enonic.app.test:my_fragment" );
 
-        when( resourceService.processResource( isA( ResourceProcessor.class ) ) ).thenReturn( SiteDescriptor.create()
+        when( resourceService.processResource( isA( ResourceProcessor.class ) ) ).thenReturn( CmsDescriptor.create()
                                                                                                   .applicationKey( ApplicationKey.from(
                                                                                                       "com.enonic.app.test" ) )
-                                                                                                  .xDataMappings( XDataMappings.from(
-                                                                                                      XDataMapping.create()
-                                                                                                          .xDataName( xDataName )
+                                                                                                  .mixinMappings( MixinMappings.from(
+                                                                                                      MixinMapping.create()
+                                                                                                          .mixinName( mixinName )
                                                                                                           .allowContentTypes(
                                                                                                               "base:folder" )
                                                                                                           .optional( false )
                                                                                                           .build() ) )
                                                                                                   .build() );
 
-        final XData xData = XData.create().name( xDataName ).form( Form.create().build() ).build();
-        when( xDataService.getByName( xData.getName() ) ).thenReturn( xData );
+        final MixinDescriptor mixinDescriptor = MixinDescriptor.create().name( mixinName ).form( Form.create().build() ).build();
+        when( mixinService.getByName( mixinDescriptor.getName() ) ).thenReturn( mixinDescriptor );
 
-        return ExtraDatas.create().add( new ExtraData( xDataName, new PropertyTree() ) ).build();
+        return Mixins.create().add( new Mixin( mixinName, new PropertyTree() ) ).build();
     }
 }

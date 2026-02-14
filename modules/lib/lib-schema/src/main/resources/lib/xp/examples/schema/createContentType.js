@@ -3,35 +3,25 @@ var assert = require('/lib/xp/testing');
 
 /* global log*/
 
-let resource = `<?xml version='1.0' encoding='UTF-8'?>
-        <content-type xmlns='urn:enonic:xp:model:1.0'>
-            <display-name>My Tag</display-name>
-            <description>My description</description>
-            <super-type>base:structured</super-type>
-            <is-abstract>false</is-abstract>
-            <is-final>true</is-final>
-            <allow-child-content>true</allow-child-content>
-            
-            <x-data name='myapp:address'/>
-            
-            <form>
-                <input name='tag_unlimited' type='Tag'>
-                    <label>Tag, unlimited occurrences</label>
-                    <immutable>false</immutable>
-                    <indexed>true</indexed>
-                    <custom-text>Custom text</custom-text>
-                    <occurrences minimum='0' maximum='0'/>
-                    <help-text>Some help text</help-text>
-                     <config>
-                         <context>true</context>
-                     </config>
-                </input>
-            </form>
-            <config>
-                <alignment>bottom</alignment>
-            </config>
-            
-        </content-type>`;
+let resource = `superType: "base:structured"
+abstract: false
+final: true
+allowChildContent: true
+displayName: "My Tag"
+description: "My description"
+form:
+- type: "Tag"
+  name: "tag_unlimited"
+  label: "Tag, unlimited occurrences"
+  helpText: "Some help text"
+  occurrences:
+    min: 0
+    max: 0
+  attributes:
+    context: "true"
+config:
+  alignment: "bottom"
+`;
 
 // BEGIN
 // Create virtual content type.
@@ -49,13 +39,11 @@ log.info('Created content type: ' + result.name);
 assert.assertJsonEquals({
     name: 'myapp:mytype',
     displayName: 'My Tag',
-    displayNameI18nKey: '',
     description: 'My description',
-    descriptionI18nKey: '',
     createdTime: '2021-09-25T10:00:00Z',
     creator: 'user:system:anonymous',
     modifiedTime: '2021-09-25T10:00:00Z',
-    resource: '<?xml version=\'1.0\' encoding=\'UTF-8\'?>\n        <content-type xmlns=\'urn:enonic:xp:model:1.0\'>\n            <display-name>My Tag</display-name>\n            <description>My description</description>\n            <super-type>base:structured</super-type>\n            <is-abstract>false</is-abstract>\n            <is-final>true</is-final>\n            <allow-child-content>true</allow-child-content>\n            \n            <x-data name=\'myapp:address\'/>\n            \n            <form>\n                <input name=\'tag_unlimited\' type=\'Tag\'>\n                    <label>Tag, unlimited occurrences</label>\n                    <immutable>false</immutable>\n                    <indexed>true</indexed>\n                    <custom-text>Custom text</custom-text>\n                    <occurrences minimum=\'0\' maximum=\'0\'/>\n                    <help-text>Some help text</help-text>\n                     <config>\n                         <context>true</context>\n                     </config>\n                </input>\n            </form>\n            <config>\n                <alignment>bottom</alignment>\n            </config>\n            \n        </content-type>',
+    resource: 'superType: \"base:structured\"\nabstract: false\nfinal: true\nallowChildContent: true\ndisplayName: \"My Tag\"\ndescription: \"My description\"\nform:\n- type: \"Tag\"\n  name: \"tag_unlimited\"\n  label: \"Tag, unlimited occurrences\"\n  helpText: \"Some help text\"\n  occurrences:\n    min: 0\n    max: 0\n  attributes:\n    context: \"true\"\nconfig:\n  alignment: \"bottom\"\n',
     type: 'CONTENT_TYPE',
     icon: {
         'data': {},
@@ -67,29 +55,17 @@ assert.assertJsonEquals({
             'formItemType': 'Input',
             'name': 'tag_unlimited',
             'label': 'Tag, unlimited occurrences',
-            'customText': 'Custom text',
             'helpText': 'Some help text',
-            'maximize': true,
             'inputType': 'Tag',
             'occurrences': {
                 'maximum': 0,
                 'minimum': 0
             },
-            'config': {
-                'context': [
-                    {
-                        'value': 'true'
-                    }
-                ]
-            }
+            'context': 'true'
         }
     ],
     config: {
-        'alignment': [
-            {
-                'value': 'bottom'
-            }
-        ]
+        'alignment': 'bottom'
     }
 }, result);
 

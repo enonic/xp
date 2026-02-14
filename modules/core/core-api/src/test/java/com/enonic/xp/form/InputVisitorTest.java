@@ -34,22 +34,22 @@ class InputVisitorTest
         FieldSet myFieldSet = FieldSet.create().
             label( "My field set" ).
             addFormItem( Input.create().
-                name( "myLong" ).
-                inputType( InputTypeName.LONG ).
-                label( "My long" ).
-                required( false ).
-                build() ).
+            name( "myLong" ).
+            inputType( InputTypeName.LONG ).
+            label( "My long" ).
+            required( false ).
+            build() ).
             build();
 
         FormItemSet myFormItemSet = FormItemSet.create().
             name( "myFormItemSet" ).
             label( "My form item set" ).
             addFormItem( Input.create().
-                name( "myTextLine" ).
-                inputType( InputTypeName.TEXT_LINE ).
-                label( "My text line" ).
-                required( false ).
-                build() ).
+            name( "myTextLine" ).
+            inputType( InputTypeName.TEXT_LINE ).
+            label( "My text line" ).
+            required( false ).
+            build() ).
             build();
 
         FormOptionSet formOptionSet = FormOptionSet.create().
@@ -57,17 +57,16 @@ class InputVisitorTest
             label( "My option set" ).
             helpText( "Option set help text" ).
             addOptionSetOption(
-                FormOptionSetOption.create().name( "myOptionSetOption1" ).label( "option label1" ).helpText( "Option help text" ).
-                    addFormItem( Input.create().name( "myTextLine1" ).label( "myTextLine1" ).inputType(
-                        InputTypeName.TEXT_LINE ).build() ).build() ).
+            FormOptionSetOption.create().name( "myOptionSetOption1" ).label( "option label1" ).helpText( "Option help text" ).
+                addFormItem( Input.create().name( "myTextLine1" ).label( "myTextLine1" ).inputType(
+                InputTypeName.TEXT_LINE ).build() ).build() ).
             addOptionSetOption(
-                FormOptionSetOption.create().name( "myOptionSetOption2" ).label( "option label2" ).helpText( "Option help text" ).
-                    addFormItem( Input.create().name( "myTextLine2" ).label( "myTextLine2" ).inputType(
-                        InputTypeName.TEXT_LINE ).build() ).build() ).
+            FormOptionSetOption.create().name( "myOptionSetOption2" ).label( "option label2" ).helpText( "Option help text" ).
+                addFormItem( Input.create().name( "myTextLine2" ).label( "myTextLine2" ).inputType(
+                InputTypeName.TEXT_LINE ).build() ).build() ).
             build();
 
-        InlineMixin myInline = InlineMixin.create().
-            mixin( "myapplication:mymixin" ).
+        FormFragment myInline = FormFragment.create().formFragment( "myapplication:myFormFragment" ).
             build();
 
         Form form = Form.create().

@@ -93,7 +93,7 @@ export type {
     FieldSortDsl,
     Filter,
     FormItem,
-    FormItemInlineMixin,
+    FormItemFormFragment,
     FormItemInput,
     FormItemLayout,
     FormItemOptionSet,
@@ -158,7 +158,7 @@ export interface PatchableContent<
 > {
     displayName: string;
     data: Type extends 'portal:fragment' ? Record<string, never> : Data;
-    x: XpXData; // extraData
+    x: XpMixin;
     page: Type extends 'portal:fragment' ? never : _Component;
     valid: boolean;
     owner: UserKey;
@@ -571,7 +571,7 @@ export interface CreateContentParams<Data, Type extends string, _Component exten
     childOrder?: string;
     data: Data;
     page?: Type extends 'portal:fragment' ? never : _Component;
-    x?: XpXData;
+    x?: XpMixin;
     idGenerator?: IdGeneratorSupplier;
     workflow?: Workflow;
 }
@@ -1823,78 +1823,6 @@ export function duplicate(params: DuplicateContentParams): DuplicateContentsResu
     }
     bean.setIncludeChildren(includeChildren);
     bean.setVariant(variant);
-
-    return __.toNativeObject(bean.execute());
-}
-
-export interface GetVersionsParams {
-    key: string;
-    count?: number;
-    cursor?: string;
-}
-
-export interface ContentVersion {
-    versionId: string;
-    contentId: string;
-    path: string;
-    timestamp: string;
-    comment?: string;
-    actions?: ContentVersionAction[];
-}
-
-export interface ContentVersionAction {
-    operation: string;
-    user: string;
-    opTime: string;
-}
-
-export interface ContentVersionsResult {
-    total: number;
-    count: number;
-    cursor: string | null;
-    hits: ContentVersion[];
-}
-
-interface GetVersionsHandler {
-    setKey(value: string): void;
-
-    setCount(value?: number): void;
-
-    setCursor(value?: string): void;
-
-    execute(): ContentVersionsResult;
-}
-
-/**
- * This function returns content versions.
- *
- * @example-ref examples/content/getVersions.js
- *
- * @param {object} params JSON with the parameters.
- * @param {string} params.key Path or ID of the content.
- * @param {number} [params.count=10] Number of content versions to fetch.
- * @param {string} [params.cursor] Cursor for pagination.
- *
- * @returns {object} Content versions result.
- */
-export function getVersions(params: GetVersionsParams): ContentVersionsResult {
-    checkRequired(params, 'key');
-
-    const {
-        key,
-        count,
-        cursor,
-    } = params ?? {};
-
-    const bean: GetVersionsHandler = __.newBean<GetVersionsHandler>('com.enonic.xp.lib.content.GetVersionsHandler');
-
-    bean.setKey(key);
-    if (cursor) {
-        bean.setCursor(cursor);
-    }
-    if (count !== undefined && count !== null) {
-        bean.setCount(count);
-    }
 
     return __.toNativeObject(bean.execute());
 }

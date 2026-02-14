@@ -1,0 +1,12 @@
+mixin:
+  - name: "system:menu-item"
+    optional: false
+  - name: "myapplication:my-meta-fragment"
+    optional: false
+form:
+  - type: "TextLine"
+    name: "some-name"
+    label: "Textline"
+    occurrences:
+      min: 0
+      max: 1

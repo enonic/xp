@@ -9,12 +9,9 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.CreateMediaParams;
-import com.enonic.xp.content.XDataDefaultValuesProcessor;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.form.FormDefaultValuesProcessor;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.media.MediaInfoService;
-import com.enonic.xp.page.PageDefaultValuesProcessor;
 import com.enonic.xp.schema.content.ContentTypeFromMimeTypeResolver;
 import com.enonic.xp.schema.content.ContentTypeName;
 
@@ -25,20 +22,11 @@ final class CreateMediaCommand
 
     private final MediaInfoService mediaInfoService;
 
-    private final FormDefaultValuesProcessor formDefaultValuesProcessor;
-
-    private final PageDefaultValuesProcessor pageFormDefaultValuesProcessor;
-
-    private final XDataDefaultValuesProcessor xDataDefaultValuesProcessor;
-
     private CreateMediaCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
         this.mediaInfoService = builder.mediaInfoService;
-        this.formDefaultValuesProcessor = builder.formDefaultValuesProcessor;
-        this.pageFormDefaultValuesProcessor = builder.pageFormDefaultValuesProcessor;
-        this.xDataDefaultValuesProcessor = builder.xDataDefaultValuesProcessor;
     }
 
     Content execute()
@@ -101,14 +89,11 @@ final class CreateMediaCommand
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
             .eventPublisher( this.eventPublisher )
-            .siteService( this.siteService )
-            .xDataService( this.xDataService )
+            .cmsService( this.cmsService )
+            .mixinService( this.mixinService )
             .contentProcessors( this.contentProcessors )
             .contentValidators( this.contentValidators )
-            .formDefaultValuesProcessor( this.formDefaultValuesProcessor )
-            .pageFormDefaultValuesProcessor( this.pageFormDefaultValuesProcessor )
-            .xDataDefaultValuesProcessor( this.xDataDefaultValuesProcessor )
-            .xDataMappingService( this.xDataMappingService )
+            .mixinMappingService( this.mixinMappingService )
             .siteConfigService( this.siteConfigService )
             .pageDescriptorService( this.pageDescriptorService )
             .partDescriptorService( this.partDescriptorService )
@@ -140,12 +125,6 @@ final class CreateMediaCommand
 
         private MediaInfoService mediaInfoService;
 
-        private FormDefaultValuesProcessor formDefaultValuesProcessor;
-
-        private PageDefaultValuesProcessor pageFormDefaultValuesProcessor;
-
-        private XDataDefaultValuesProcessor xDataDefaultValuesProcessor;
-
         public Builder params( final CreateMediaParams params )
         {
             this.params = params;
@@ -158,31 +137,11 @@ final class CreateMediaCommand
             return this;
         }
 
-        public Builder formDefaultValuesProcessor( final FormDefaultValuesProcessor formDefaultValuesProcessor )
-        {
-            this.formDefaultValuesProcessor = formDefaultValuesProcessor;
-            return this;
-        }
-
-        public Builder pageFormDefaultValuesProcessor( final PageDefaultValuesProcessor pageFormDefaultValuesProcessor )
-        {
-            this.pageFormDefaultValuesProcessor = pageFormDefaultValuesProcessor;
-            return this;
-        }
-
-        public Builder xDataDefaultValuesProcessor( final XDataDefaultValuesProcessor xDataDefaultValuesProcessor )
-        {
-            this.xDataDefaultValuesProcessor = xDataDefaultValuesProcessor;
-            return this;
-        }
-
         @Override
         void validate()
         {
             super.validate();
             Objects.requireNonNull( params, "params cannot be null" );
-            Objects.requireNonNull( formDefaultValuesProcessor );
-            Objects.requireNonNull( xDataDefaultValuesProcessor );
         }
 
         public CreateMediaCommand build()

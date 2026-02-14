@@ -3,57 +3,61 @@ var assert = require('/lib/xp/testing');
 
 /* global log*/
 
-let resource = `<?xml version='1.0' encoding='UTF-8'?>
-                <layout xmlns='urn:enonic:xp:model:1.0'>
-                  <display-name i18n='key.display-name'>Virtual Layout</display-name>
-                  <description i18n='key.description'>My Layout Description</description>
-                  <form>
-                    <input type='Double' name='pause'>
-                      <label i18n='key1.label'>Pause parameter</label>
-                      <immutable>false</immutable>
-                      <indexed>false</indexed>
-                      <help-text i18n='key1.help-text'/>
-                      <occurrences minimum='0' maximum='1'/>
-                    </input>
-                    <item-set name='myFormItemSet'>
-                      <label>My form item set</label>
-                      <immutable>false</immutable>
-                      <occurrences minimum='0' maximum='1'/>
-                      <items>
-                        <input type='TextLine' name='myTextLine'>
-                          <label>My text line</label>
-                          <immutable>false</immutable>
-                          <indexed>false</indexed>
-                          <occurrences minimum='1' maximum='1'/>
-                        </input>
-                        <input type='TextLine' name='myCustomInput'>
-                          <label>My custom input</label>
-                          <immutable>false</immutable>
-                          <indexed>false</indexed>
-                          <occurrences minimum='0' maximum='1'/>
-                        </input>
-                        <field-set>
-                          <label>My field set</label>
-                          <items>
-                            <input type='TextLine' name='fieldSetItem'>
-                              <label i18n='key2.label'>Field set Item</label>
-                              <immutable>false</immutable>
-                              <indexed>false</indexed>
-                              <help-text i18n='key2.help-text'/>
-                              <occurrences minimum='0' maximum='1'/>
-                            </input>
-                          </items>
-                        </field-set>
-                      </items>
-                    </item-set>
-                  </form>
-                  <regions>
-                    <region name='header'/>
-                    <region name='main'/>
-                    <region name='footer'/>
-                  </regions>
-                </layout>
-                `;
+let resource = `displayName:
+  text: "Virtual Layout"
+  i18n: "key.display-name"
+description:
+  text: "My Layout Description"
+  i18n: "key.description"
+form:
+- type: "Double"
+  name: "pause"
+  label:
+    text: "Pause parameter"
+    i18n: "key1.label"
+  helpText:
+    text: "key1.help-text"
+    i18n: "key1.help-text"
+  occurrences:
+    min: 0
+    max: 1
+- type: "ItemSet"
+  name: "myFormItemSet"
+  label: "My form item set"
+  occurrences:
+    min: 0
+    max: 1
+  items:
+  - type: "TextLine"
+    name: "myTextLine"
+    label: "My text line"
+    occurrences:
+      min: 1
+      max: 1
+  - type: "TextLine"
+    name: "myCustomInput"
+    label: "My custom input"
+    occurrences:
+      min: 0
+      max: 1
+  - type: "FieldSet"
+    label: "My field set"
+    items:
+    - type: "TextLine"
+      name: "fieldSetItem"
+      label:
+        text: "Field set Item"
+        i18n: "key2.label"
+      helpText:
+        text: "key2.help-text"
+        i18n: "key2.help-text"
+      occurrences:
+        min: 0
+        max: 1
+regions:
+- "header"
+- "main"
+- "footer"`;
 
 // BEGIN
 // Create virtual layout.
@@ -75,56 +79,63 @@ assert.assertJsonEquals({
     displayNameI18nKey: 'key.display-name',
     description: 'My Layout Description',
     descriptionI18nKey: 'key.description',
-    componentPath: 'myapp:/site/layouts/mylayout',
+    componentPath: 'myapp:/cms/layouts/mylayout',
     modifiedTime: '2021-09-25T10:00:00Z',
-    resource: '<?xml version=\'1.0\' encoding=\'UTF-8\'?>\n' +
-              '                <layout xmlns=\'urn:enonic:xp:model:1.0\'>\n' +
-              '                  <display-name i18n=\'key.display-name\'>Virtual Layout</display-name>\n' +
-              '                  <description i18n=\'key.description\'>My Layout Description</description>\n' +
-              '                  <form>\n                    <input type=\'Double\' name=\'pause\'>\n' +
-              '                      <label i18n=\'key1.label\'>Pause parameter</label>\n' +
-              '                      <immutable>false</immutable>\n' +
-              '                      <indexed>false</indexed>\n' +
-              '                      <help-text i18n=\'key1.help-text\'/>\n' +
-              '                      <occurrences minimum=\'0\' maximum=\'1\'/>\n' +
-              '                    </input>\n' +
-              '                    <item-set name=\'myFormItemSet\'>\n' +
-              '                      <label>My form item set</label>\n' +
-              '                      <immutable>false</immutable>\n' +
-              '                      <occurrences minimum=\'0\' maximum=\'1\'/>\n' +
-              '                      <items>\n' +
-              '                        <input type=\'TextLine\' name=\'myTextLine\'>\n' +
-              '                          <label>My text line</label>\n' +
-              '                          <immutable>false</immutable>\n' +
-              '                          <indexed>false</indexed>\n' +
-              '                          <occurrences minimum=\'1\' maximum=\'1\'/>\n' +
-              '                        </input>\n' +
-              '                        <input type=\'TextLine\' name=\'myCustomInput\'>\n' +
-              '                          <label>My custom input</label>\n' +
-              '                          <immutable>false</immutable>\n' +
-              '                          <indexed>false</indexed>\n' +
-              '                          <occurrences minimum=\'0\' maximum=\'1\'/>\n' +
-              '                        </input>\n' +
-              '                        <field-set>\n' +
-              '                          <label>My field set</label>\n' +
-              '                          <items>\n' +
-              '                            <input type=\'TextLine\' name=\'fieldSetItem\'>\n' +
-              '                              <label i18n=\'key2.label\'>Field set Item</label>\n' +
-              '                              <immutable>false</immutable>\n' +
-              '                              <indexed>false</indexed>\n' +
-              '                              <help-text i18n=\'key2.help-text\'/>\n' +
-              '                              <occurrences minimum=\'0\' maximum=\'1\'/>\n' +
-              '                            </input>\n' +
-              '                          </items>\n' +
-              '                        </field-set>\n' +
-              '                      </items>\n                    </item-set>\n' +
-              '                  </form>\n                  <regions>\n' +
-              '                    <region name=\'header\'/>\n' +
-              '                    <region name=\'main\'/>\n' +
-              '                    <region name=\'footer\'/>\n' +
-              '                  </regions>\n' +
-              '                </layout>\n' +
-              '                ',
+    resource: 'displayName:\n' +
+              '  text: "Virtual Layout"\n' +
+              '  i18n: "key.display-name"\n' +
+              'description:\n' +
+              '  text: "My Layout Description"\n' +
+              '  i18n: "key.description"\n' +
+              'form:\n' +
+              '- type: "Double"\n' +
+              '  name: "pause"\n' +
+              '  label:\n' +
+              '    text: "Pause parameter"\n' +
+              '    i18n: "key1.label"\n' +
+              '  helpText:\n' +
+              '    text: "key1.help-text"\n' +
+              '    i18n: "key1.help-text"\n' +
+              '  occurrences:\n' +
+              '    min: 0\n' +
+              '    max: 1\n' +
+              '- type: "ItemSet"\n' +
+              '  name: "myFormItemSet"\n' +
+              '  label: "My form item set"\n' +
+              '  occurrences:\n' +
+              '    min: 0\n' +
+              '    max: 1\n' +
+              '  items:\n' +
+              '  - type: "TextLine"\n' +
+              '    name: "myTextLine"\n' +
+              '    label: "My text line"\n' +
+              '    occurrences:\n' +
+              '      min: 1\n' +
+              '      max: 1\n' +
+              '  - type: "TextLine"\n' +
+              '    name: "myCustomInput"\n' +
+              '    label: "My custom input"\n' +
+              '    occurrences:\n' +
+              '      min: 0\n' +
+              '      max: 1\n' +
+              '  - type: "FieldSet"\n' +
+              '    label: "My field set"\n' +
+              '    items:\n' +
+              '    - type: "TextLine"\n' +
+              '      name: "fieldSetItem"\n' +
+              '      label:\n' +
+              '        text: "Field set Item"\n' +
+              '        i18n: "key2.label"\n' +
+              '      helpText:\n' +
+              '        text: "key2.help-text"\n' +
+              '        i18n: "key2.help-text"\n' +
+              '      occurrences:\n' +
+              '        min: 0\n' +
+              '        max: 1\n' +
+              'regions:\n' +
+              '- "header"\n' +
+              '- "main"\n' +
+              '- "footer"',
     type: 'LAYOUT',
     form: [
         {
@@ -132,13 +143,11 @@ assert.assertJsonEquals({
             'name': 'pause',
             'label': 'Pause parameter',
             'helpText': 'key1.help-text',
-            'maximize': true,
             'inputType': 'Double',
             'occurrences': {
                 'maximum': 1,
                 'minimum': 0
-            },
-            'config': {}
+            }
         },
         {
             'formItemType': 'ItemSet',
@@ -153,25 +162,21 @@ assert.assertJsonEquals({
                     'formItemType': 'Input',
                     'name': 'myTextLine',
                     'label': 'My text line',
-                    'maximize': true,
                     'inputType': 'TextLine',
                     'occurrences': {
                         'maximum': 1,
                         'minimum': 1
-                    },
-                    'config': {}
+                    }
                 },
                 {
                     'formItemType': 'Input',
                     'name': 'myCustomInput',
                     'label': 'My custom input',
-                    'maximize': true,
                     'inputType': 'TextLine',
                     'occurrences': {
                         'maximum': 1,
                         'minimum': 0
-                    },
-                    'config': {}
+                    }
                 },
                 {
                     'formItemType': 'Layout',
@@ -182,13 +187,11 @@ assert.assertJsonEquals({
                             'name': 'fieldSetItem',
                             'label': 'Field set Item',
                             'helpText': 'key2.help-text',
-                            'maximize': true,
                             'inputType': 'TextLine',
                             'occurrences': {
                                 'maximum': 1,
                                 'minimum': 0
-                            },
-                            'config': {}
+                            }
                         }
                     ]
                 }

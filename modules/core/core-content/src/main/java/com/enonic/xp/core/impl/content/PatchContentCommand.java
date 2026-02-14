@@ -69,11 +69,11 @@ public class PatchContentCommand
             .createAttachments( params.getCreateAttachments() )
             .branches( params.getBranches() )
             .contentTypeService( this.contentTypeService )
-            .xDataService( this.xDataService )
+            .mixinService( this.mixinService )
             .pageDescriptorService( this.pageDescriptorService )
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
-            .siteService( this.siteService )
+            .cmsService( this.cmsService )
             .build()
             .produce();
 
