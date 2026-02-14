@@ -32,6 +32,38 @@ public final class WebHandlerHelper
         throw WebException.forbidden( "You don't have permission to access this resource" );
     }
 
+    public static String findApiPath( final WebRequest req, final String api )
+    {
+        final String endpointPath = req.getEndpointPath();
+        if ( endpointPath != null )
+        {
+            final int prefixLength = api.length() + 1;
+            if ( endpointPath.length() == prefixLength )
+            {
+                return "";
+            }
+            if ( endpointPath.charAt( prefixLength ) != '/' )
+            {
+                throw WebException.notFound( "Unexpected endpoint path: " + endpointPath );
+            }
+            return endpointPath.substring( prefixLength );
+        }
+        else
+        {
+            final String basePath = req.getBasePath();
+            final int prefixLength = api.length() + 5;
+            if ( basePath.length() == prefixLength )
+            {
+                return "";
+            }
+            if ( basePath.charAt( prefixLength ) != '/' )
+            {
+                throw WebException.notFound( "Unexpected API path: " + basePath );
+            }
+            return basePath.substring( prefixLength );
+        }
+    }
+
     private WebHandlerHelper()
     {
     }

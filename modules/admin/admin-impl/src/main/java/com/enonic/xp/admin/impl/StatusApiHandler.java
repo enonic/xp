@@ -11,6 +11,7 @@ import com.google.common.net.MediaType;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.handler.WebHandlerHelper;
 import com.enonic.xp.portal.universalapi.UniversalApiHandler;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -21,11 +22,13 @@ import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 
-@Component(immediate = true, service = UniversalApiHandler.class, property = {"applicationKey=admin", "apiKey=status",
+@Component(immediate = true, property = {"key=" + StatusApiHandler.STATUS_API,
     "displayName=Status API", "allowedPrincipals=role:system.everyone"})
 public class StatusApiHandler
     implements UniversalApiHandler
 {
+    static final String STATUS_API = "admin:status";
+
     private final ServerInfo info;
 
     @Activate
@@ -37,6 +40,12 @@ public class StatusApiHandler
     @Override
     public WebResponse handle( final WebRequest request )
     {
+        final String apiPath = WebHandlerHelper.findApiPath( request, STATUS_API );
+        if ( !apiPath.isEmpty() && !apiPath.equals( "/" ) )
+        {
+            return PortalResponse.create().status( HttpStatus.NOT_FOUND ).build();
+        }
+
         final ObjectNode json = JsonNodeFactory.instance.objectNode();
         json.put( "version", VersionInfo.get().getVersion() );
         json.set( "build", buildBuildInfo() );

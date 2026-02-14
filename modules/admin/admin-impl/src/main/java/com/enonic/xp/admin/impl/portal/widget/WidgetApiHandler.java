@@ -27,7 +27,7 @@ import com.enonic.xp.web.WebResponse;
 @Component(immediate = true, service = WidgetApiHandler.class)
 public class WidgetApiHandler
 {
-    private static final Pattern WIDGET_API_PATTERN = Pattern.compile( "^/_/admin:widget/(?<appKey>[^/]+)/(?<widgetKey>[^/]+)" );
+    private static final Pattern WIDGET_API_PATTERN = Pattern.compile( "^/admin:widget/(?<appKey>[^/]+)/(?<widgetKey>[^/]+)" );
 
     private static final String GENERIC_WIDGET_INTERFACE = "generic";
 

@@ -45,7 +45,7 @@ public class IdentityHandler
     public PortalResponse handle( final WebRequest webRequest )
         throws IOException
     {
-        final String restPath = HandlerHelper.findRestPath( webRequest, "idprovider" );
+        final String restPath = HandlerHelper.findEndpointPath( webRequest, "idprovider" );
         final Matcher matcher = PATTERN.matcher( restPath );
 
         if ( !matcher.find() )

@@ -64,7 +64,7 @@ public class AttachmentHandler
     {
         WebHandlerHelper.checkAdminAccess( webRequest );
 
-        final String restPath = HandlerHelper.findRestPath( webRequest, "attachment" );
+        final String restPath = HandlerHelper.findEndpointPath( webRequest, "attachment" );
         final Matcher matcher = PATTERN.matcher( restPath );
 
         if ( !matcher.find() )

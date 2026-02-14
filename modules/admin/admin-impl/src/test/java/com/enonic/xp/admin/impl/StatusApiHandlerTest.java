@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.core.internal.json.ObjectMapperHelper;
 import com.enonic.xp.server.VersionInfo;
+import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -18,7 +19,9 @@ class StatusApiHandlerTest
         throws Exception
     {
         final StatusApiHandler handler = new StatusApiHandler();
-        final WebResponse res = handler.handle( null );
+        final WebRequest request = new WebRequest();
+        request.setRawPath( "/_/admin:status" );
+        final WebResponse res = handler.handle( request );
 
         Map<String, Object> bodyAsMap = ObjectMapperHelper.create().readValue( res.getBody().toString(), Map.class );
 

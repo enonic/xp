@@ -59,7 +59,7 @@ public class AssetHandler
     public WebResponse handle( final WebRequest webRequest )
         throws IOException
     {
-        final String restPath = HandlerHelper.findRestPath( webRequest, "asset" );
+        final String restPath = HandlerHelper.findEndpointPath( webRequest, "asset" );
 
         final Matcher matcher = PATTERN.matcher( restPath );
 

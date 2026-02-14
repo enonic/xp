@@ -1,7 +1,5 @@
 package com.enonic.xp.impl.server.rest;
 
-import java.util.Objects;
-
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -13,17 +11,20 @@ import com.google.common.net.MediaType;
 import com.enonic.xp.core.internal.json.ObjectMapperHelper;
 import com.enonic.xp.impl.server.rest.model.ApplicationInstallParams;
 import com.enonic.xp.impl.server.rest.model.ApplicationInstallResultJson;
+import com.enonic.xp.portal.handler.WebHandlerHelper;
 import com.enonic.xp.portal.universalapi.UniversalApiHandler;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 
-@Component(property = {"applicationKey=server", "apiKey=app", "displayName=Applications API", "allowedPrincipals=role:system.admin"})
+@Component(property = {"key=server:app", "displayName=Applications API", "allowedPrincipals=role:system.admin"})
 public class ApplicationApiHandler
     implements UniversalApiHandler
 {
     private static final ObjectMapper OBJECT_MAPPER = ObjectMapperHelper.create();
+
+    private static final String APP_API = "server:app";
 
     private final ApplicationResourceService applicationResourceService;
 
@@ -36,12 +37,7 @@ public class ApplicationApiHandler
     @Override
     public WebResponse handle( final WebRequest request )
     {
-        final String serverAppPrefix = "/server:app/";
-        final String path = Objects.requireNonNullElse( request.getEndpointPath(), request.getRawPath() );
-        final int startIndex = path.indexOf( serverAppPrefix );
-        final String subPath = path.substring( startIndex + serverAppPrefix.length() );
-
-        if ( "installUrl".equals( subPath ) )
+        if ( "/installUrl".equals( WebHandlerHelper.findApiPath( request, APP_API ) ) )
         {
             if ( request.getMethod() != HttpMethod.POST )
             {

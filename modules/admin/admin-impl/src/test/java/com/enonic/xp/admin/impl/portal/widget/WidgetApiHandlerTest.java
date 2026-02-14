@@ -66,7 +66,7 @@ class WidgetApiHandlerTest
         webRequest2.setRawPath( "/path/_/somePath" );
 
         IllegalArgumentException ex = assertThrows( IllegalArgumentException.class, () -> this.handler.handle( webRequest2 ) );
-        assertEquals( "Invalid Widget API path: /_/somePath", ex.getMessage() );
+        assertEquals( "Invalid Widget API path: /somePath", ex.getMessage() );
     }
 
     @Test
