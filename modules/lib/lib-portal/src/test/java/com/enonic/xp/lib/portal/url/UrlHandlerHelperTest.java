@@ -10,6 +10,7 @@ import com.enonic.xp.script.ScriptValue;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -177,6 +178,6 @@ class UrlHandlerHelperTest
     void testResolveQueryParams_null()
     {
         final Map<String, Collection<String>> result = UrlHandlerHelper.resolveQueryParams( null );
-        assertEquals( null, result );
+        assertNull( result );
     }
 }
