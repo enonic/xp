@@ -10,7 +10,7 @@ import com.enonic.xp.web.WebResponse;
 
 public interface WebSerializerService
 {
-    WebRequest request( HttpServletRequest httpRequest, HttpServletResponse httpResponse );
+    WebRequest request( HttpServletRequest httpRequest );
 
     void response( WebRequest webRequest, WebResponse webResponse, HttpServletResponse httpResponse )
         throws IOException;

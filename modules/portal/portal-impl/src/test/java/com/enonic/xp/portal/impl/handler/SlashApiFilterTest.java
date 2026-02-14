@@ -14,10 +14,14 @@ import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.exception.ExceptionMapper;
 import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.serializer.WebSerializerService;
+import com.enonic.xp.web.websocket.WebSocketConfig;
+import com.enonic.xp.web.websocket.WebSocketContext;
+import com.enonic.xp.web.websocket.WebSocketContextFactory;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -34,6 +38,8 @@ class SlashApiFilterTest
 
     private WebSerializerService webSerializerService;
 
+    WebSocketContextFactory webSocketContextFactory;
+
     @BeforeEach
     void setUp()
     {
@@ -41,8 +47,9 @@ class SlashApiFilterTest
         exceptionMapper = mock( ExceptionMapper.class );
         exceptionRenderer = mock( ExceptionRenderer.class );
         webSerializerService = mock( WebSerializerService.class );
+        webSocketContextFactory = mock();
 
-        filter = new SlashApiServlet( slashApiHandler, exceptionMapper, exceptionRenderer, webSerializerService );
+        filter = new SlashApiServlet( slashApiHandler, exceptionMapper, exceptionRenderer, webSerializerService, webSocketContextFactory );
     }
 
     @Test
@@ -56,7 +63,7 @@ class SlashApiFilterTest
         when( req.getPathInfo() ).thenReturn( "/com.enonic.app.myapp:myapi" );
 
         final WebRequest webRequest = new WebRequest();
-        when( webSerializerService.request( req, res ) ).thenReturn( webRequest );
+        when( webSerializerService.request( req ) ).thenReturn( webRequest );
 
         final WebResponse expectedResponse = WebResponse.create().status( HttpStatus.OK ).body( "ok" ).build();
         when( slashApiHandler.handle( any( WebRequest.class ) ) ).thenReturn( expectedResponse );
@@ -79,7 +86,7 @@ class SlashApiFilterTest
         when( req.getPathInfo() ).thenReturn( "/com.enonic.app.myapp:myapi/some/path" );
 
         final WebRequest webRequest = new WebRequest();
-        when( webSerializerService.request( req, res ) ).thenReturn( webRequest );
+        when( webSerializerService.request( req ) ).thenReturn( webRequest );
 
         final WebResponse expectedResponse = WebResponse.create().status( HttpStatus.OK ).build();
         when( slashApiHandler.handle( any( WebRequest.class ) ) ).thenReturn( expectedResponse );
@@ -133,7 +140,7 @@ class SlashApiFilterTest
         when( req.getPathInfo() ).thenReturn( "/com.enonic.app.myapp:myapi" );
 
         final WebRequest webRequest = new WebRequest();
-        when( webSerializerService.request( req, res ) ).thenReturn( webRequest );
+        when( webSerializerService.request( req ) ).thenReturn( webRequest );
 
         final RuntimeException cause = new RuntimeException( "test error" );
         when( slashApiHandler.handle( any( WebRequest.class ) ) ).thenThrow( cause );
@@ -163,16 +170,17 @@ class SlashApiFilterTest
 
         final WebRequest webRequest = new WebRequest();
         webRequest.setWebSocketContext( mock() );
-        when( webSerializerService.request( req, res ) ).thenReturn( webRequest );
+        when( webSerializerService.request( req ) ).thenReturn( webRequest );
 
-        final com.enonic.xp.web.websocket.WebSocketConfig webSocketConfig = mock( com.enonic.xp.web.websocket.WebSocketConfig.class );
+        final WebSocketConfig webSocketConfig = mock( com.enonic.xp.web.websocket.WebSocketConfig.class );
         final WebResponse wsResponse = WebResponse.create().status( HttpStatus.OK ).webSocket( webSocketConfig ).build();
         when( slashApiHandler.handle( any( WebRequest.class ) ) ).thenReturn( wsResponse );
+        when( webSocketContextFactory.newContext( req, res ) ).thenReturn( mock( WebSocketContext.class ) );
 
         filter.doFilter( req, res, chain );
 
         verify( slashApiHandler ).handle( webRequest );
-        verify( webSerializerService ).request( req, res );
-        verify( webSerializerService, org.mockito.Mockito.never() ).response( any(), any(), any() );
+        verify( webSerializerService ).request( req );
+        verify( webSerializerService, never() ).response( any(), any(), any() );
     }
 }

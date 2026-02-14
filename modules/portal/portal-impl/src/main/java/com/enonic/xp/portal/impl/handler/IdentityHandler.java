@@ -1,7 +1,6 @@
 package com.enonic.xp.portal.impl.handler;
 
 import java.io.IOException;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -107,7 +106,7 @@ public class IdentityHandler
     {
         final IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create()
             .idProviderKey( idProviderKey )
-            .functionName( Objects.requireNonNullElse( idProviderFunction, portalRequest.getMethod().toString().toLowerCase() ) )
+            .functionName( idProviderFunction )
             .portalRequest( portalRequest )
             .build();
 

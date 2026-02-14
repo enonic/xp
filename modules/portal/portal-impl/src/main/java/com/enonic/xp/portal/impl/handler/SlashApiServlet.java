@@ -24,6 +24,8 @@ import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.exception.ExceptionMapper;
 import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.serializer.WebSerializerService;
+import com.enonic.xp.web.websocket.WebSocketContext;
+import com.enonic.xp.web.websocket.WebSocketContextFactory;
 
 @Component(immediate = true, service = Filter.class, property = {"connector=api"})
 @Order(100)
@@ -41,20 +43,19 @@ public final class SlashApiServlet
 
     private final WebSerializerService webSerializerService;
 
+    private final WebSocketContextFactory webSocketContextFactory;
+
     @Activate
     public SlashApiServlet( @Reference final SlashApiHandler slashApiHandler, @Reference final ExceptionMapper exceptionMapper,
                             @Reference final ExceptionRenderer exceptionRenderer,
-                            @Reference final WebSerializerService webSerializerService )
+                            @Reference final WebSerializerService webSerializerService,
+                            @Reference final WebSocketContextFactory webSocketContextFactory )
     {
         this.slashApiHandler = slashApiHandler;
         this.exceptionMapper = exceptionMapper;
         this.exceptionRenderer = exceptionRenderer;
         this.webSerializerService = webSerializerService;
-    }
-
-    @Override
-    public void init( final FilterConfig filterConfig )
-    {
+        this.webSocketContextFactory = webSocketContextFactory;
     }
 
     @Override
@@ -71,7 +72,9 @@ public final class SlashApiServlet
             return;
         }
 
-        final WebRequest webRequest = webSerializerService.request( req, res );
+        final WebRequest webRequest = webSerializerService.request( req );
+        final WebSocketContext webSocketContext = this.webSocketContextFactory.newContext( req, res );
+        webRequest.setWebSocketContext( webSocketContext );
 
         final WebResponse webResponse = doHandle( webRequest );
 
@@ -81,11 +84,6 @@ public final class SlashApiServlet
         }
 
         webSerializerService.response( webRequest, webResponse, res );
-    }
-
-    @Override
-    public void destroy()
-    {
     }
 
     private WebResponse doHandle( final WebRequest webRequest )
