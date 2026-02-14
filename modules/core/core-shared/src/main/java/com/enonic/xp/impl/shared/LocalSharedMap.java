@@ -11,6 +11,7 @@ import java.util.concurrent.DelayQueue;
 import java.util.concurrent.Delayed;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import com.enonic.xp.shared.SharedMap;
 
@@ -79,6 +80,20 @@ public final class LocalSharedMap<K, V>
         return computed != null ? computed.value : null;
     }
 
+    @Override
+    public void removeAll( final Predicate<SharedMap.Entry<K, V>> predicate )
+    {
+        map.entrySet().removeIf( entry -> {
+            final V value = Entry.extractValue( entry.getValue() );
+            if ( value != null )
+            {
+                return predicate.test( new EntryImpl<>( entry.getKey(), value ) );
+            }
+            return false;
+        } );
+        cleanUp();
+    }
+
     int cleanUp()
     {
         List<Entry<K, ?>> drainTo = new ArrayList<>();
@@ -143,6 +158,32 @@ public final class LocalSharedMap<K, V>
             {
                 return null;
             }
+        }
+    }
+
+    private static class EntryImpl<K, V>
+        implements SharedMap.Entry<K, V>
+    {
+        private final K key;
+
+        private final V value;
+
+        EntryImpl( final K key, final V value )
+        {
+            this.key = key;
+            this.value = value;
+        }
+
+        @Override
+        public K getKey()
+        {
+            return key;
+        }
+
+        @Override
+        public V getValue()
+        {
+            return value;
         }
     }
 }

@@ -7,6 +7,7 @@ import com.enonic.xp.shared.SharedMap;
 import com.enonic.xp.shared.SharedMapService;
 import com.enonic.xp.testing.ScriptTestSupport;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -137,5 +138,30 @@ class SharedMapHandlerTest
         runFunction( "/test/grid-test.js", "testModifyWithWrongArgumentFunc" );
 
         verify( sharedMapService, times( 1 ) ).getSharedMap( "mapId" );
+    }
+
+    @Test
+    void testRemoveAllWithoutPredicate()
+    {
+        runFunction( "/test/grid-test.js", "testRemoveAllWithoutPredicate" );
+
+        verify( sharedMapService, times( 1 ) ).getSharedMap( "mapId" );
+    }
+
+    @Test
+    void testRemoveAllWithWrongArgumentPredicate()
+    {
+        runFunction( "/test/grid-test.js", "testRemoveAllWithWrongArgumentPredicate" );
+
+        verify( sharedMapService, times( 1 ) ).getSharedMap( "mapId" );
+    }
+
+    @Test
+    void testRemoveAll()
+    {
+        runFunction( "/test/grid-test.js", "testRemoveAll" );
+
+        verify( sharedMapService, times( 1 ) ).getSharedMap( "mapId" );
+        verify( sharedMap, times( 1 ) ).removeAll( any() );
     }
 }
