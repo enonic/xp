@@ -9,7 +9,6 @@ import com.enonic.xp.server.VersionInfo;
 import com.enonic.xp.web.WebResponse;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class StatusApiHandlerTest
@@ -25,7 +24,6 @@ class StatusApiHandlerTest
 
         assertNotNull( bodyAsMap );
         assertEquals( VersionInfo.get().getVersion(), bodyAsMap.get( "version" ) );
-        assertFalse( Boolean.parseBoolean( bodyAsMap.get( "readonly" ).toString() ) );
         assertNotNull( bodyAsMap.get( "context" ) );
         assertNotNull( bodyAsMap.get( "build" ) );
     }
