@@ -38,11 +38,11 @@ class SlashApiServletTest
 
     private ExceptionRenderer exceptionRenderer;
 
-    private WebSocketContextFactory webSocketContextFactory;
-
     private ResponseSerializationService responseSerializationService;
 
     private RequestSerializerService requestSerializerService;
+
+    private WebSocketContextFactory webSocketContextFactory;
 
     @BeforeEach
     void setUp()
@@ -50,9 +50,9 @@ class SlashApiServletTest
         slashApiHandler = mock( SlashApiHandler.class );
         exceptionMapper = mock( ExceptionMapper.class );
         exceptionRenderer = mock( ExceptionRenderer.class );
-        webSocketContextFactory = mock( WebSocketContextFactory.class );
         responseSerializationService = mock( ResponseSerializationService.class );
         requestSerializerService = mock( RequestSerializerService.class );
+        webSocketContextFactory = mock( WebSocketContextFactory.class );
 
         filter = new SlashApiServlet( slashApiHandler, exceptionMapper, exceptionRenderer, webSocketContextFactory,
                                       responseSerializationService, requestSerializerService );
@@ -73,7 +73,6 @@ class SlashApiServletTest
 
         final WebResponse expectedResponse = WebResponse.create().status( HttpStatus.OK ).body( "ok" ).build();
         when( slashApiHandler.handle( any( WebRequest.class ) ) ).thenReturn( expectedResponse );
-        when( webSocketContextFactory.newContext( req, res ) ).thenReturn( null );
 
         filter.doFilter( req, res, chain );
 
@@ -97,7 +96,6 @@ class SlashApiServletTest
 
         final WebResponse expectedResponse = WebResponse.create().status( HttpStatus.OK ).build();
         when( slashApiHandler.handle( any( WebRequest.class ) ) ).thenReturn( expectedResponse );
-        when( webSocketContextFactory.newContext( req, res ) ).thenReturn( null );
 
         filter.doFilter( req, res, chain );
 
@@ -117,7 +115,7 @@ class SlashApiServletTest
 
         filter.doFilter( req, res, chain );
 
-        chain.doFilter( req, res );
+        verify( chain ).doFilter( req, res );
         verifyNoInteractions( slashApiHandler );
     }
 
@@ -133,7 +131,7 @@ class SlashApiServletTest
 
         filter.doFilter( req, res, chain );
 
-        chain.doFilter( req, res );
+        verify( chain ).doFilter( req, res );
         verifyNoInteractions( slashApiHandler );
     }
 
@@ -158,7 +156,6 @@ class SlashApiServletTest
 
         final WebResponse errorResponse = WebResponse.create().status( HttpStatus.INTERNAL_SERVER_ERROR ).build();
         when( exceptionRenderer.render( eq( webRequest ), eq( webException ) ) ).thenReturn( errorResponse );
-        when( webSocketContextFactory.newContext( req, res ) ).thenReturn( null );
 
         filter.doFilter( req, res, chain );
 

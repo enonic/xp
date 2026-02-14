@@ -47,12 +47,24 @@ class ApplicationApiHandlerTest
     void handleMethodNotAllowed()
     {
         final WebRequest request = new WebRequest();
-        request.setMethod( HttpMethod.GET );
+        request.setMethod( HttpMethod.PUT );
         request.setRawPath( "/_/server:app/installUrl" );
 
         final WebResponse response = handler.handle( request );
 
         assertEquals( HttpStatus.METHOD_NOT_ALLOWED, response.getStatus() );
+    }
+
+    @Test
+    void handleGetNotFound()
+    {
+        final WebRequest request = new WebRequest();
+        request.setMethod( HttpMethod.GET );
+        request.setRawPath( "/_/server:app/unknown" );
+
+        final WebResponse response = handler.handle( request );
+
+        assertEquals( HttpStatus.NOT_FOUND, response.getStatus() );
     }
 
     @Test

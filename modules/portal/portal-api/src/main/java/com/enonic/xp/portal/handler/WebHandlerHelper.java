@@ -5,6 +5,7 @@ import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
+import com.enonic.xp.web.dispatch.DispatchConstants;
 
 public final class WebHandlerHelper
 {
@@ -50,17 +51,37 @@ public final class WebHandlerHelper
         }
         else
         {
-            final String basePath = req.getBasePath();
-            final int prefixLength = api.length() + 5;
-            if ( basePath.length() == prefixLength )
+            final String rawPath = req.getRawPath();
+            final String connector =
+                req.getRawRequest() != null ? (String) req.getRawRequest().getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) : null;
+
+            if ( DispatchConstants.API_CONNECTOR.equals( connector ) )
             {
-                return "";
+                final int prefixLength = api.length() + 1;
+                if ( rawPath.length() == prefixLength )
+                {
+                    return "";
+                }
+                if ( rawPath.charAt( prefixLength ) != '/' )
+                {
+                    throw WebException.notFound( "Unexpected API path: " + rawPath );
+                }
+                return rawPath.substring( prefixLength );
             }
-            if ( basePath.charAt( prefixLength ) != '/' )
+            else
             {
-                throw WebException.notFound( "Unexpected API path: " + basePath );
+                final String basePath = req.getBasePath();
+                final int prefixLength = api.length() + 5;
+                if ( basePath.length() == prefixLength )
+                {
+                    return "";
+                }
+                if ( basePath.charAt( prefixLength ) != '/' )
+                {
+                    throw WebException.notFound( "Unexpected API path: " + basePath );
+                }
+                return basePath.substring( prefixLength );
             }
-            return basePath.substring( prefixLength );
         }
     }
 

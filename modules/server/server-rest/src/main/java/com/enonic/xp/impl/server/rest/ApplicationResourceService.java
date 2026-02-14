@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.io.ByteSource;
 
+import java.util.List;
+
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
@@ -94,5 +96,10 @@ public class ApplicationResourceService
     public void uninstall( final ApplicationParams params )
     {
         params.getKey().forEach( key -> this.applicationService.uninstallApplication( ApplicationKey.from( key ) ) );
+    }
+
+    public List<String> listKeys()
+    {
+        return applicationService.getInstalledApplications().getApplicationKeys().stream().map( ApplicationKey::toString ).toList();
     }
 }

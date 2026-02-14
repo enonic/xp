@@ -4,6 +4,8 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import java.util.List;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.net.MediaType;
@@ -20,7 +22,7 @@ import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.multipart.MultipartService;
 
-@Component(property = {"key=server:app", "displayName=Applications API", "allowedPrincipals=role:system.admin"})
+@Component(property = {"key=server:app", "mount=true","displayName=Applications API", "allowedPrincipals=role:system.admin"})
 public class ApplicationApiHandler
     implements UniversalApiHandler
 {
@@ -43,12 +45,21 @@ public class ApplicationApiHandler
     @Override
     public WebResponse handle( final WebRequest request )
     {
+        final String apiPath = WebHandlerHelper.findApiPath( request, APP_API );
+
+        if ( request.getMethod() == HttpMethod.GET )
+        {
+            return switch ( apiPath )
+            {
+                case "/listKeys" -> handleListKeys();
+                default -> WebResponse.create().status( HttpStatus.NOT_FOUND ).build();
+            };
+        }
+
         if ( request.getMethod() != HttpMethod.POST )
         {
             return WebResponse.create().status( HttpStatus.METHOD_NOT_ALLOWED ).build();
         }
-
-        final String apiPath = WebHandlerHelper.findApiPath( request, APP_API );
 
         try
         {
@@ -65,6 +76,24 @@ public class ApplicationApiHandler
         catch ( JsonProcessingException e )
         {
             return WebResponse.create().status( HttpStatus.BAD_REQUEST ).build();
+        }
+    }
+
+    private WebResponse handleListKeys()
+    {
+        final List<String> keys = applicationResourceService.listKeys();
+
+        try
+        {
+            return WebResponse.create()
+                .status( HttpStatus.OK )
+                .contentType( MediaType.JSON_UTF_8 )
+                .body( OBJECT_MAPPER.writeValueAsString( keys ) )
+                .build();
+        }
+        catch ( JsonProcessingException e )
+        {
+            return WebResponse.create().status( HttpStatus.INTERNAL_SERVER_ERROR ).build();
         }
     }
 
