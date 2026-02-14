@@ -686,8 +686,8 @@ class SlashApiHandlerTest
     {
         final MyUniversalApiHandler myUniversalApiHandler = new MyUniversalApiHandler();
         universalApiHandlerRegistry.addApiHandler( myUniversalApiHandler,
-                                                   Map.of( "applicationKey", "com.enonic.app.external.app", "apiKey", "myapi",
-                                                           "allowedPrincipals", RoleKeys.EVERYONE.toString() ) );
+                                                   Map.of( "key", "com.enonic.app.external.app:myapi", "allowedPrincipals",
+                                                           RoleKeys.EVERYONE.toString() ) );
 
         final ApplicationKey apiApplicationKey = ApplicationKey.from( "com.enonic.app.external.app" );
 
@@ -715,8 +715,8 @@ class SlashApiHandlerTest
     {
         final MyUniversalApiHandler myUniversalApiHandler = new MyUniversalApiHandler();
         universalApiHandlerRegistry.addApiHandler( myUniversalApiHandler,
-                                                   Map.of( "applicationKey", "com.enonic.app.external.app", "apiKey", "myapi",
-                                                           "allowedPrincipals", RoleKeys.EVERYONE.toString() ) );
+                                                   Map.of( "key", "com.enonic.app.external.app:myapi", "allowedPrincipals",
+                                                           RoleKeys.EVERYONE.toString() ) );
 
         final ApplicationKey applicationKey = ApplicationKey.from( "com.enonic.app.myapp" );
         final DescriptorKey descriptorKey = DescriptorKey.from( applicationKey, "mytool" );
@@ -740,8 +740,8 @@ class SlashApiHandlerTest
     {
         WSUniversalApiHandler wsUniversalApiHandler = new WSUniversalApiHandler();
         universalApiHandlerRegistry.addApiHandler( wsUniversalApiHandler,
-                                                   Map.of( "applicationKey", "myapp", "apiKey", "myapi", "allowedPrincipals",
-                                                           RoleKeys.EVERYONE.toString(), "mount", "true" ) );
+                                                   Map.of( "key", "myapp:myapi", "allowedPrincipals", RoleKeys.EVERYONE.toString(), "mount",
+                                                           "true" ) );
 
         final ApplicationKey apiApplicationKey = ApplicationKey.from( "myapp" );
 
