@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
@@ -33,13 +34,14 @@ import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.util.Version;
 import com.enonic.xp.web.HttpStatus;
-import com.enonic.xp.web.impl.serializer.ResponseSerializationServiceImpl;
+import com.enonic.xp.web.impl.serializer.WebSerializerServiceImpl;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class IdProviderControllerServiceImplTest
@@ -79,7 +81,7 @@ class IdProviderControllerServiceImplTest
         idProviderControllerService.setIdProviderControllerScriptFactory( idProviderControllerScriptFactory );
         idProviderControllerService.setIdProviderDescriptorService( idProviderDescriptorService );
         idProviderControllerService.setSecurityService( securityService );
-        idProviderControllerService.setResponseSerializationService( new ResponseSerializationServiceImpl() );
+        idProviderControllerService.setResponseSerializationService( new WebSerializerServiceImpl() );
     }
 
     private PortalScriptService setupPortalScriptService()
@@ -195,8 +197,13 @@ class IdProviderControllerServiceImplTest
 
         VirtualHostHelper.setVirtualHost( httpServletRequest, virtualHost );
 
-        final IdProviderControllerExecutionParams executionParams =
-            IdProviderControllerExecutionParams.create().servletRequest( httpServletRequest ).functionName( "myfunction" ).build();
+        final HttpServletResponse response = mock();
+        when( response.isCommitted() ).thenReturn( true );
+        final IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create()
+            .servletRequest( httpServletRequest )
+            .response( response )
+            .functionName( "myfunction" )
+            .build();
         final PortalResponse portalResponse = idProviderControllerService.execute( executionParams );
         assertNotNull( portalResponse );
         assertEquals( HttpStatus.OK, portalResponse.getStatus() );

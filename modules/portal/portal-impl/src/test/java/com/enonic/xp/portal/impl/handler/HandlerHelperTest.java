@@ -28,12 +28,12 @@ import static org.mockito.Mockito.when;
 class HandlerHelperTest
 {
     @Test
-    void testFindRestPath()
+    void testFindEndpointPath()
     {
         final WebRequest req = new WebRequest();
         req.setRawPath( "/prePath/_/app/path" );
 
-        assertEquals( "path", HandlerHelper.findRestPath( req, "app" ) );
+        assertEquals( "path", HandlerHelper.findEndpointPath( req, "app" ) );
     }
 
     @Test

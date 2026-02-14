@@ -69,7 +69,7 @@ public class ImageHandler
     {
         WebHandlerHelper.checkAdminAccess( webRequest );
 
-        final String restPath = HandlerHelper.findRestPath( webRequest, "image" );
+        final String restPath = HandlerHelper.findEndpointPath( webRequest, "image" );
         final Matcher matcher = PATTERN.matcher( restPath );
 
         if ( !matcher.find() )

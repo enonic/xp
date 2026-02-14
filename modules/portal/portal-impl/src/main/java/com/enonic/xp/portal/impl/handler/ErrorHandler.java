@@ -27,7 +27,7 @@ public class ErrorHandler
             return HandlerHelper.handleDefaultOptions( HttpMethod.standard() );
         }
 
-        final String restPath = HandlerHelper.findRestPath( webRequest, "error" );
+        final String restPath = HandlerHelper.findEndpointPath( webRequest, "error" );
 
         HttpStatus code = parseStatus( restPath );
 

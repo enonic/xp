@@ -1,7 +1,6 @@
 package com.enonic.xp.portal.impl.handler;
 
 import java.io.IOException;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,7 +44,7 @@ public class IdentityHandler
     public PortalResponse handle( final WebRequest webRequest )
         throws IOException
     {
-        final String restPath = HandlerHelper.findRestPath( webRequest, "idprovider" );
+        final String restPath = HandlerHelper.findEndpointPath( webRequest, "idprovider" );
         final Matcher matcher = PATTERN.matcher( restPath );
 
         if ( !matcher.find() )
@@ -107,7 +106,7 @@ public class IdentityHandler
     {
         final IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create()
             .idProviderKey( idProviderKey )
-            .functionName( Objects.requireNonNullElse( idProviderFunction, portalRequest.getMethod().toString().toLowerCase() ) )
+            .functionName( idProviderFunction )
             .portalRequest( portalRequest )
             .build();
 

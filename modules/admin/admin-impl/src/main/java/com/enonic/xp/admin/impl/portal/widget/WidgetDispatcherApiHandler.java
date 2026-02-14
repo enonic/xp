@@ -8,18 +8,19 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.collect.Multimap;
 
+import com.enonic.xp.portal.handler.WebHandlerHelper;
 import com.enonic.xp.portal.universalapi.UniversalApiHandler;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 
-@Component(immediate = true, service = UniversalApiHandler.class, property = {"applicationKey=admin", "apiKey=widget",
+@Component(immediate = true, property = {"key=" + WidgetDispatcherApiHandler.WIDGET_API,
     "allowedPrincipals=role:system.admin.login", "displayName=Widget API"})
 public class WidgetDispatcherApiHandler
     implements UniversalApiHandler
 {
-    private static final String WIDGET_API_BASE = "/_/admin:widget";
+    static final String WIDGET_API = "admin:widget";
 
     private final GetListAllowedWidgetsHandler listWidgetsHandler;
 
@@ -40,9 +41,9 @@ public class WidgetDispatcherApiHandler
     @Override
     public WebResponse handle( final WebRequest webRequest )
     {
-        final String path = Objects.requireNonNull( webRequest.getEndpointPath(), "Endpoint path cannot be null" );
+        Objects.requireNonNull( webRequest.getEndpointPath(), "Endpoint path cannot be null" );
 
-        if ( HttpMethod.GET.equals( webRequest.getMethod() ) && path.equals( WIDGET_API_BASE ) )
+        if ( HttpMethod.GET.equals( webRequest.getMethod() ) && WebHandlerHelper.findApiPath( webRequest, WIDGET_API ).isEmpty() )
         {
             final Multimap<String, String> params = webRequest.getParams();
 

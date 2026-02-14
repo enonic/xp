@@ -31,29 +31,31 @@ public final class HandlerHelper
     {
     }
 
-    public static String findRestPath( final WebRequest req, final String endpoint )
+    public static String findEndpointPath( final WebRequest req, final String endpoint )
     {
         final String endpointPath = req.getEndpointPath();
-        final String value = "/_/" + endpoint + "/";
-        return endpointPath.length() > value.length() ? endpointPath.substring( value.length() ) : "";
+        if ( endpointPath == null || !endpointPath.startsWith( "/" + endpoint + "/" ) )
+        {
+            throw new IllegalArgumentException( "Unexpected endpoint path: " + endpointPath );
+        }
+        return endpointPath.substring( endpoint.length() + 2 );
     }
 
     /**
      * Finds the endpoint name from the request's endpoint path.
-     * The endpoint path is expected to start with /_/ followed by the endpoint name and optionally more path segments.
+     * The endpoint path is expected to start with / followed by the endpoint name and optionally more path segments.
      *
      * @return the api name or null if the request does not have an endpoint path
      */
     public static String findEndpoint( final WebRequest request )
     {
         final String endpointPath = request.getEndpointPath();
-        if ( endpointPath == null || !endpointPath.startsWith( "/_/" ) )
+        if ( endpointPath == null || endpointPath.charAt( 0 ) != '/' )
         {
             return null;
         }
-        final String afterPrefix = endpointPath.substring( 3 );
-        final int slashIndex = afterPrefix.indexOf( '/' );
-        return slashIndex == -1 ? afterPrefix : afterPrefix.substring( 0, slashIndex );
+        final int end = endpointPath.indexOf( '/', 1 );
+        return endpointPath.substring( 1, end == -1 ? endpointPath.length() : end );
     }
 
     public static String getParameter( final WebRequest req, final String name )
