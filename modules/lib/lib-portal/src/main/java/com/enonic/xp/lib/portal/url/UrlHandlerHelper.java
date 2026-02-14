@@ -59,9 +59,9 @@ final class UrlHandlerHelper
             return serializeMap( (Map<?, ?>) value );
         }
 
-        if ( value instanceof List )
+        if ( value instanceof Iterable )
         {
-            return serializeList( (List<?>) value );
+            return serializeIterable( (Iterable<?>) value );
         }
 
         return value.toString();
@@ -88,12 +88,12 @@ final class UrlHandlerHelper
         return sb.toString();
     }
 
-    private static String serializeList( final List<?> list )
+    private static String serializeIterable( final Iterable<?> iterable )
     {
         final StringBuilder sb = new StringBuilder( "[" );
         boolean first = true;
 
-        for ( final Object item : list )
+        for ( final Object item : iterable )
         {
             if ( !first )
             {
@@ -130,9 +130,9 @@ final class UrlHandlerHelper
             return serializeMap( (Map<?, ?>) value );
         }
 
-        if ( value instanceof List )
+        if ( value instanceof Iterable )
         {
-            return serializeList( (List<?>) value );
+            return serializeIterable( (Iterable<?>) value );
         }
 
         return "\"" + escapeJson( value.toString() ) + "\"";

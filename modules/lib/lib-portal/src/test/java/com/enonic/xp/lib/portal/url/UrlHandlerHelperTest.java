@@ -66,7 +66,10 @@ class UrlHandlerHelperTest
     void testResolveQueryParams_complexNestedStructure()
     {
         final ScriptValue params = mock( ScriptValue.class );
-        final Map<String, Object> nestedObject = Map.of( "key1", "value1", "key2", 123, "key3", true );
+        final Map<String, Object> nestedObject = new java.util.LinkedHashMap<>();
+        nestedObject.put( "key1", "value1" );
+        nestedObject.put( "key2", 123 );
+        nestedObject.put( "key3", true );
 
         when( params.getMap() ).thenReturn( Map.of( "complex", nestedObject ) );
 
@@ -75,7 +78,7 @@ class UrlHandlerHelperTest
         assertNotNull( result );
         final String json = result.get( "complex" ).iterator().next();
 
-        // JSON should contain all the keys and values
+        // JSON should contain all the keys and values (order is preserved with LinkedHashMap)
         assertEquals( "{\"key1\":\"value1\",\"key2\":123,\"key3\":true}", json );
     }
 
@@ -115,6 +118,59 @@ class UrlHandlerHelperTest
 
         // JSON should have properly escaped characters
         assertEquals( "{\"key\":\"value with \\\"quotes\\\" and \\n newline\"}", json );
+    }
+
+    @Test
+    void testResolveQueryParams_allEscapeCharacters()
+    {
+        final ScriptValue params = mock( ScriptValue.class );
+        final Map<String, Object> nestedObject = Map.of( "key", "test\"\\\b\f\n\r\t" );
+
+        when( params.getMap() ).thenReturn( Map.of( "escaped", nestedObject ) );
+
+        final Map<String, Collection<String>> result = UrlHandlerHelper.resolveQueryParams( params );
+
+        assertNotNull( result );
+        final String json = result.get( "escaped" ).iterator().next();
+
+        // JSON should have all special characters properly escaped
+        assertEquals( "{\"key\":\"test\\\"\\\\\\b\\f\\n\\r\\t\"}", json );
+    }
+
+    @Test
+    void testResolveQueryParams_setCollection()
+    {
+        final ScriptValue params = mock( ScriptValue.class );
+        final java.util.Set<Integer> set = new java.util.LinkedHashSet<>( List.of( 1, 2, 3 ) );
+
+        when( params.getMap() ).thenReturn( Map.of( "set", set ) );
+
+        final Map<String, Collection<String>> result = UrlHandlerHelper.resolveQueryParams( params );
+
+        assertNotNull( result );
+        final Collection<String> values = result.get( "set" );
+        
+        // Sets are iterable, so each element becomes a separate value
+        assertEquals( 3, values.size() );
+        assertEquals( List.of( "1", "2", "3" ), List.copyOf( values ) );
+    }
+
+    @Test
+    void testResolveQueryParams_nestedSet()
+    {
+        final ScriptValue params = mock( ScriptValue.class );
+        final java.util.Set<String> nestedSet = new java.util.LinkedHashSet<>( List.of( "a", "b", "c" ) );
+        final Map<String, Object> obj = Map.of( "items", nestedSet );
+
+        when( params.getMap() ).thenReturn( Map.of( "data", obj ) );
+
+        final Map<String, Collection<String>> result = UrlHandlerHelper.resolveQueryParams( params );
+
+        assertNotNull( result );
+        final String json = result.get( "data" ).iterator().next();
+
+        // Nested sets should be serialized as JSON arrays
+        assertEquals( "{\"items\":[\"a\",\"b\",\"c\"]}", json );
     }
 
     @Test
