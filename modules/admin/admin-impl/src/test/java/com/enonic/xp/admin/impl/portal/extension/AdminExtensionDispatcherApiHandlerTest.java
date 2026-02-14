@@ -2,9 +2,6 @@ package com.enonic.xp.admin.impl.portal.extension;
 
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
@@ -25,41 +22,41 @@ class AdminExtensionDispatcherApiHandlerTest
         GetAdminExtensionIconHandler getExtensionIconHandler = mock( GetAdminExtensionIconHandler.class );
         AdminExtensionApiHandler extensionApiHandler = mock( AdminExtensionApiHandler.class );
 
-        AdminExtensionDispatcherApiHandler
-            handler = new AdminExtensionDispatcherApiHandler( listExtensionsHandler, getExtensionIconHandler, extensionApiHandler );
+        AdminExtensionDispatcherApiHandler handler =
+            new AdminExtensionDispatcherApiHandler( listExtensionsHandler, getExtensionIconHandler, extensionApiHandler );
 
-        WebRequest webRequest = mock( WebRequest.class );
-        when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin:extension" );
-        when( webRequest.getParams() ).thenReturn( HashMultimap.create() );
+        final WebRequest webRequest1 = new WebRequest();
+        webRequest1.setMethod( HttpMethod.GET );
+        webRequest1.setRawPath( "/path/_/admin:extension" );
 
-        WebException ex = assertThrows( WebException.class, () -> handler.handle( webRequest ) );
+        WebException ex = assertThrows( WebException.class, () -> handler.handle( webRequest1 ) );
         assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
 
-        // get extension icon
-        Multimap<String, String> params = HashMultimap.create();
-        params.put( "app", "myapp" );
-        params.put( "extension", "myextension" );
-        params.put( "icon", null );
+        // get widget icon
+        final WebRequest webRequest2 = new WebRequest();
+        webRequest2.setMethod( HttpMethod.GET );
+        webRequest2.setRawPath( "/path/_/admin:extension" );
+        webRequest2.getParams().put( "app", "myapp" );
+        webRequest2.getParams().put( "widget", "mywidget" );
+        webRequest2.getParams().put( "icon", null );
 
         final WebResponse response = mock( WebResponse.class );
-        when( getExtensionIconHandler.handle( webRequest ) ).thenReturn( response );
+        when( getExtensionIconHandler.handle( webRequest2 ) ).thenReturn( response );
 
-        when( webRequest.getParams() ).thenReturn( params );
-        assertEquals( response, handler.handle( webRequest ) );
+        assertEquals( response, handler.handle( webRequest2 ) );
 
-        // list extensions
-        params = HashMultimap.create();
-        params.put( "interface", "admin.dashboard" );
+        // list widgets
+        final WebRequest webRequest3 = new WebRequest();
+        webRequest3.setMethod( HttpMethod.GET );
+        webRequest3.setRawPath( "/path/_/admin:extension" );
+        webRequest3.getParams().put( "widgetInterface", "admin.dashboard" );
 
-        when( webRequest.getParams() ).thenReturn( params );
-        when( listExtensionsHandler.handle( webRequest ) ).thenReturn( response );
-        assertEquals( response, handler.handle( webRequest ) );
+        // widget harmonized api
+        final WebRequest webRequest4 = new WebRequest();
+        webRequest4.setMethod( HttpMethod.GET );
+        webRequest4.setRawPath( "/path/_/admin:extension/myapp:mywidget" );
 
-        // extension harmonized api
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin:extension/myapp:myextension" );
-        when( webRequest.getParams() ).thenReturn( null );
-        when( extensionApiHandler.handle( webRequest ) ).thenReturn( response );
-        assertEquals( response, handler.handle( webRequest ) );
+        when( extensionApiHandler.handle( webRequest4 ) ).thenReturn( response );
+        assertEquals( response, handler.handle( webRequest4 ) );
     }
 }

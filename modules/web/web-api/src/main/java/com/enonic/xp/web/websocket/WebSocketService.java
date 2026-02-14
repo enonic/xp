@@ -7,7 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public interface WebSocketService
 {
-    boolean isUpgradeRequest( HttpServletRequest req, HttpServletResponse res );
+    boolean isUpgradeRequest( HttpServletRequest req );
 
     boolean acceptWebSocket( HttpServletRequest req, HttpServletResponse res, EndpointFactory factory )
         throws IOException;

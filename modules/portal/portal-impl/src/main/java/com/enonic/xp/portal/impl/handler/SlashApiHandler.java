@@ -106,7 +106,10 @@ public class SlashApiHandler
         }
         else
         {
-            throw new IllegalStateException( "Cannot find api endpoint or api path in request" );
+            final String rawPath = webRequest.getRawPath();
+            final int secondSlash = rawPath.indexOf( '/', 1 );
+            final String descriptor = secondSlash == -1 ? rawPath.substring( 1 ) : rawPath.substring( 1, secondSlash );
+            descriptorKey = HandlerHelper.resolveDescriptorKey( descriptor );
         }
 
         if ( !HttpMethod.isStandard( webRequest.getMethod() ) )
@@ -168,6 +171,7 @@ public class SlashApiHandler
         final boolean result;
         if ( portalRequest.getEndpointPath() == null )
         {
+            // TODO mount should be possible on ap connector, too. mount should be an array [xp, api]
             result = apiDescriptor.isMount();
         }
         else if ( PortalRequestHelper.isSiteBase( portalRequest ) )

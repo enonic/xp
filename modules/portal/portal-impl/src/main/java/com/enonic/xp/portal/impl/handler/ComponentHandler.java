@@ -121,7 +121,7 @@ public class ComponentHandler
         final PageResolverResult resolvedPage = pageResolver.resolve( content, site.getPath() );
         Page effectivePage = resolvedPage.getEffectivePageOrElseThrow( portalRequest.getMode() );
         com.enonic.xp.region.Component component = null;
-        final ComponentPath componentPath = ComponentPath.from( HandlerHelper.findRestPath( portalRequest, "component" ) );
+        final ComponentPath componentPath = ComponentPath.from( HandlerHelper.findEndpointPath( portalRequest, "component" ) );
 
         if ( content.getType().isFragment() )
         {

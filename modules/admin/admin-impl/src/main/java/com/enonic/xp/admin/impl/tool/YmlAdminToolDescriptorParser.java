@@ -38,6 +38,6 @@ public final class YmlAdminToolDescriptorParser
         public abstract AdminToolDescriptor.Builder apiMounts( DescriptorKeys apiDescriptors );
 
         @JsonProperty("interfaces")
-        public abstract AdminToolDescriptor.Builder addInterfaces( Iterable<String> interfaceNames );
+        public abstract AdminToolDescriptor.Builder interfaces( String... interfaces );
     }
 }

@@ -148,9 +148,9 @@ class SlashApiHandlerTest
         webRequest.setMethod( HttpMethod.GET );
         webRequest.setRawPath( "/path/to/some/resource" );
 
-        // path must start with `/api/` or contains `/_/` as endpoint part
-        IllegalStateException ex = assertThrows( IllegalStateException.class, () -> this.handler.handle( webRequest ) );
-        assertEquals( "Cannot find api endpoint or api path in request", ex.getMessage() );
+        assertThatThrownBy( () -> this.handler.handle( webRequest ) ).asInstanceOf( type( WebException.class ) )
+            .extracting( WebException::getStatus )
+            .isEqualTo( HttpStatus.NOT_FOUND );
     }
 
     @Test
@@ -688,8 +688,8 @@ class SlashApiHandlerTest
     {
         final MyUniversalApiHandler myUniversalApiHandler = new MyUniversalApiHandler();
         universalApiHandlerRegistry.addApiHandler( myUniversalApiHandler,
-                                                   Map.of( "applicationKey", "com.enonic.app.external.app", "apiKey", "myapi",
-                                                           "allowedPrincipals", RoleKeys.EVERYONE.toString() ) );
+                                                   Map.of( "key", "com.enonic.app.external.app:myapi", "allowedPrincipals",
+                                                           RoleKeys.EVERYONE.toString() ) );
 
         final ApplicationKey apiApplicationKey = ApplicationKey.from( "com.enonic.app.external.app" );
 
@@ -717,8 +717,8 @@ class SlashApiHandlerTest
     {
         final MyUniversalApiHandler myUniversalApiHandler = new MyUniversalApiHandler();
         universalApiHandlerRegistry.addApiHandler( myUniversalApiHandler,
-                                                   Map.of( "applicationKey", "com.enonic.app.external.app", "apiKey", "myapi",
-                                                           "allowedPrincipals", RoleKeys.EVERYONE.toString() ) );
+                                                   Map.of( "key", "com.enonic.app.external.app:myapi", "allowedPrincipals",
+                                                           RoleKeys.EVERYONE.toString() ) );
 
         final ApplicationKey applicationKey = ApplicationKey.from( "com.enonic.app.myapp" );
         final DescriptorKey descriptorKey = DescriptorKey.from( applicationKey, "mytool" );
@@ -742,8 +742,8 @@ class SlashApiHandlerTest
     {
         WSUniversalApiHandler wsUniversalApiHandler = new WSUniversalApiHandler();
         universalApiHandlerRegistry.addApiHandler( wsUniversalApiHandler,
-                                                   Map.of( "applicationKey", "myapp", "apiKey", "myapi", "allowedPrincipals",
-                                                           RoleKeys.EVERYONE.toString(), "mount", "true" ) );
+                                                   Map.of( "key", "myapp:myapi", "allowedPrincipals", RoleKeys.EVERYONE.toString(), "mount",
+                                                           "true" ) );
 
         final ApplicationKey apiApplicationKey = ApplicationKey.from( "myapp" );
 

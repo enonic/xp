@@ -1,7 +1,5 @@
 package com.enonic.xp.portal.impl.handler;
 
-import java.util.Objects;
-
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
@@ -10,6 +8,7 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.portal.handler.WebHandlerHelper;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.impl.handler.attachment.AttachmentHandlerWorker;
 import com.enonic.xp.portal.universalapi.UniversalApiHandler;
@@ -18,11 +17,13 @@ import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 
-@Component(service = UniversalApiHandler.class, property = {"applicationKey=media", "apiKey=attachment", "displayName=Attachment Media API",
-    "allowedPrincipals=role:system.everyone", "mount=true"}, configurationPid = "com.enonic.xp.portal")
+@Component(service = UniversalApiHandler.class, property = {"key=" + AttachmentMediaHandler.ATTACHMENT_API,
+    "displayName=Attachment Media API", "allowedPrincipals=role:system.everyone", "mount=true"}, configurationPid = "com.enonic.xp.portal")
 public class AttachmentMediaHandler
     extends MediaHandlerBase
 {
+    static final String ATTACHMENT_API = "media:attachment";
+
     @Activate
     public AttachmentMediaHandler( @Reference final ContentService contentService, @Reference final ProjectService projectService )
     {
@@ -39,7 +40,7 @@ public class AttachmentMediaHandler
     @Override
     public WebResponse handle( final WebRequest webRequest )
     {
-        final String path = Objects.requireNonNullElse( webRequest.getEndpointPath(), webRequest.getRawPath() );
+        final String path = WebHandlerHelper.findApiPath( webRequest, ATTACHMENT_API );
         final AttachmentPathParser pathParser = new AttachmentPathParser( path );
         final PathMetadata pathMetadata = pathParser.parse();
 
@@ -75,9 +76,7 @@ public class AttachmentMediaHandler
     private static final class AttachmentPathParser
         extends PathParser<PathMetadata>
     {
-        // Attachment path is: "{project[:draft]}/{id[:fingerprint]}/{name}"
-
-        static final String FRAMED_API_HANDLER_KEY = "/media:attachment/";
+        // Attachment path is: "/{project[:draft]}/{id[:fingerprint]}/{name}"
 
         static final int NAME_INDEX = 2;
 
@@ -85,7 +84,7 @@ public class AttachmentMediaHandler
 
         AttachmentPathParser( final String path )
         {
-            super( path, FRAMED_API_HANDLER_KEY, PATH_VARIABLES_LIMIT );
+            super( path, PATH_VARIABLES_LIMIT );
         }
 
         PathMetadata parse()

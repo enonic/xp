@@ -206,15 +206,9 @@ public final class AdminToolDescriptor
             return this;
         }
 
-        public Builder addInterface( final String interfaceName )
+        public Builder interfaces( final String... interfaces )
         {
-            this.interfaces.add( interfaceName );
-            return this;
-        }
-
-        public Builder addInterfaces( final Iterable<String> interfaceNames )
-        {
-            this.interfaces.addAll( interfaceNames );
+            this.interfaces.add( interfaces );
             return this;
         }
 

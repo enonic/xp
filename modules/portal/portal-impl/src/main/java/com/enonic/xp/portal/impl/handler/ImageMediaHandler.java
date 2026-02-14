@@ -1,7 +1,5 @@
 package com.enonic.xp.portal.impl.handler;
 
-import java.util.Objects;
-
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
@@ -12,6 +10,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.image.ImageService;
 import com.enonic.xp.image.ScaleParamsParser;
+import com.enonic.xp.portal.handler.WebHandlerHelper;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.impl.handler.image.ImageHandlerWorker;
 import com.enonic.xp.portal.universalapi.UniversalApiHandler;
@@ -20,11 +19,13 @@ import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 
-@Component(service = UniversalApiHandler.class, property = {"applicationKey=media", "apiKey=image", "displayName=Image Media API",
+@Component(service = UniversalApiHandler.class, property = {"key=" + ImageMediaHandler.IMAGE_API, "displayName=Image Media API",
     "allowedPrincipals=role:system.everyone", "mount=true"}, configurationPid = "com.enonic.xp.portal")
 public class ImageMediaHandler
     extends MediaHandlerBase
 {
+    static final String IMAGE_API = "media:image";
+
     private final ImageService imageService;
 
     @Activate
@@ -45,7 +46,7 @@ public class ImageMediaHandler
     @Override
     public WebResponse handle( final WebRequest webRequest )
     {
-        final String path = Objects.requireNonNullElse( webRequest.getEndpointPath(), webRequest.getRawPath() );
+        final String path = WebHandlerHelper.findApiPath( webRequest, IMAGE_API );
         final ImagePathParser pathParser = new ImagePathParser( path );
         final ImagePathMetadata pathMetadata = pathParser.parse();
 
@@ -61,8 +62,7 @@ public class ImageMediaHandler
             .branch( pathMetadata.branch )
             .build()
             .callWith( () -> {
-                final ImageHandlerWorker worker =
-                    new ImageHandlerWorker( webRequest, this.contentService, this.imageService );
+                final ImageHandlerWorker worker = new ImageHandlerWorker( webRequest, this.contentService, this.imageService );
 
                 worker.id = pathMetadata.contentId;
                 worker.fingerprint = pathMetadata.fingerprint;
@@ -90,9 +90,7 @@ public class ImageMediaHandler
     private static final class ImagePathParser
         extends MediaHandlerBase.PathParser<ImagePathMetadata>
     {
-        // Image path is: "{project[:draft]}/{id[:fingerprint]}/{scaleFn}/{name}"
-
-        static final String FRAMED_API_HANDLER_KEY = "/media:image/";
+        // Image path is: "/{project[:draft]}/{id[:fingerprint]}/{scaleFn}/{name}"
 
         static final int PATH_VARIABLES_LIMIT = 5;
 
@@ -102,7 +100,7 @@ public class ImageMediaHandler
 
         ImagePathParser( final String path )
         {
-            super( path, FRAMED_API_HANDLER_KEY, PATH_VARIABLES_LIMIT );
+            super( path, PATH_VARIABLES_LIMIT );
         }
 
         ImagePathMetadata parse()

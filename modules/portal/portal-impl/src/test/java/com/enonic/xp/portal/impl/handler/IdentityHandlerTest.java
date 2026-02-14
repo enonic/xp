@@ -52,7 +52,7 @@ class IdentityHandlerTest
         when( idProviderControllerService.execute( Mockito.any() ) ).thenAnswer( invocation -> {
             Object[] args = invocation.getArguments();
             final IdProviderControllerExecutionParams arg = (IdProviderControllerExecutionParams) args[0];
-            if ( myIdProvider.equals( arg.getIdProviderKey() ) && "get".equals( arg.getFunctionName() ) )
+            if ( myIdProvider.equals( arg.getIdProviderKey() ) && arg.getFunctionName() == null )
             {
                 return PortalResponse.create().build();
             }

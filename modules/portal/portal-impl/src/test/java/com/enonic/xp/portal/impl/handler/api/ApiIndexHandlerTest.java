@@ -136,15 +136,14 @@ class ApiIndexHandlerTest
         when( this.apiDescriptorService.getByApplication( eq( applicationKey ) ) ).thenReturn( apiDescriptors );
 
         universalApiHandlerRegistry.addApiHandler( request -> WebResponse.create().build(),
-                                                   Map.of( "applicationKey", "admin", "apiKey", "widget", "displayName", "Display Name",
-                                                           "description", "Brief description", "documentationUrl",
-                                                           "https://docs.enonic.com", "mount", "true", "allowedPrincipals",
-                                                           RoleKeys.EVERYONE.toString() ) );
+                                                   Map.of( "key", "admin:widget", "displayName", "Display Name", "description",
+                                                           "Brief description", "documentationUrl", "https://docs.enonic.com", "mount",
+                                                           "true", "allowedPrincipals", RoleKeys.EVERYONE.toString() ) );
 
         universalApiHandlerRegistry.addApiHandler( request -> WebResponse.create().build(),
-                                                   Map.of( "applicationKey", "admin", "apiKey", "event", "displayName", "Event API",
-                                                           "description", "Event API", "documentationUrl", "https://docs.enonic.com",
-                                                           "allowedPrincipals", RoleKeys.ADMIN_LOGIN.toString() ) );
+                                                   Map.of( "key", "admin:event", "displayName", "Event API", "description", "Event API",
+                                                           "documentationUrl", "https://docs.enonic.com", "allowedPrincipals",
+                                                           RoleKeys.ADMIN_LOGIN.toString() ) );
 
         WebResponse webResponse = this.handler.doHandle( new WebRequest(), WebResponse.create().build(), mock( WebHandlerChain.class ) );
 

@@ -114,7 +114,7 @@ class ImageMediaHandlerTest
         assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
         assertEquals( "Not a valid media url pattern", ex.getMessage() );
 
-        this.request.setRawPath( "/api/media/image/myproject:draft/123456/scale-100-100/logo.png" );
+        this.request.setRawPath( "/api/media:image/myproject:draft/123456" );
 
         ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
         assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );

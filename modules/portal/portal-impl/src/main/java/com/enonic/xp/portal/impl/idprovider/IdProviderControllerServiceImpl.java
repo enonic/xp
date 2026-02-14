@@ -2,12 +2,12 @@ package com.enonic.xp.portal.impl.idprovider;
 
 
 import java.io.IOException;
+import java.util.Locale;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-
-import jakarta.servlet.http.HttpServletResponse;
 
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -24,7 +24,7 @@ import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.web.serializer.ResponseSerializationService;
+import com.enonic.xp.web.serializer.WebSerializerService;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 
@@ -38,7 +38,7 @@ public class IdProviderControllerServiceImpl
 
     private SecurityService securityService;
 
-    private ResponseSerializationService responseSerializationService;
+    private WebSerializerService webSerializerService;
 
     @Override
     public PortalResponse execute( final IdProviderControllerExecutionParams params )
@@ -52,31 +52,55 @@ public class IdProviderControllerServiceImpl
         {
             final IdProviderControllerScript idProviderControllerScript =
                 idProviderControllerScriptFactory.fromScript( idProviderDescriptor.getResourceKey() );
-            final String functionName = params.getFunctionName();
-            if ( idProviderControllerScript.hasMethod( functionName ) )
+            final String functionName =
+                resolveFunctionName( params.getFunctionName(), idProviderControllerScript, params.getPortalRequest() );
+            if ( functionName == null )
             {
-                PortalRequest portalRequest = params.getPortalRequest();
-                if ( portalRequest == null )
-                {
-                    portalRequest = new PortalRequestAdapter().adapt( params.getServletRequest() );
-                }
-                portalRequest.setApplicationKey( idProviderDescriptor.getKey() );
-                portalRequest.setIdProvider( idProvider );
-
-                final PortalResponse portalResponse = idProviderControllerScript.execute( functionName, portalRequest );
-
-                if ( portalResponse != null )
-                {
-                    final HttpServletResponse response = params.getResponse();
-                    if ( response != null )
-                    {
-                        responseSerializationService.serialize( portalRequest, portalResponse, response );
-                    }
-                }
-                return portalResponse;
+                return null;
             }
+            final PortalRequest portalRequest;
+
+            if ( params.getServletRequest() != null )
+            {
+                portalRequest = new PortalRequestAdapter().adapt( webSerializerService.request( params.getServletRequest() ) );
+            }
+            else
+            {
+                portalRequest = Objects.requireNonNull( params.getPortalRequest() );
+            }
+
+            portalRequest.setApplicationKey( idProviderDescriptor.getKey() );
+            portalRequest.setIdProvider( idProvider );
+
+            final PortalResponse portalResponse = idProviderControllerScript.execute( functionName, portalRequest );
+
+            if ( portalResponse != null && params.getResponse() != null )
+            {
+                webSerializerService.response( portalRequest, portalResponse, params.getResponse() );
+            }
+            return portalResponse;
         }
 
+        return null;
+    }
+
+    private static String resolveFunctionName( final String exact, final IdProviderControllerScript idProviderControllerScript,
+                                               final PortalRequest portalRequest )
+    {
+        if ( exact != null )
+        {
+            return idProviderControllerScript.hasMethod( exact ) ? exact : null;
+        }
+        final String method = portalRequest.getMethod().toString();
+        if ( idProviderControllerScript.hasMethod( method ) )
+        {
+            return method;
+        }
+        final String lowerCaseMethod = method.toLowerCase( Locale.ROOT );
+        if ( idProviderControllerScript.hasMethod( lowerCaseMethod ) )
+        {
+            return lowerCaseMethod;
+        }
         return null;
     }
 
@@ -120,13 +144,9 @@ public class IdProviderControllerServiceImpl
     private <T> T runWithAdminRole( final Callable<T> callable )
     {
         final Context context = ContextAccessor.current();
-        final AuthenticationInfo authenticationInfo = AuthenticationInfo.copyOf( context.getAuthInfo() ).
-            principals( RoleKeys.ADMIN ).
-            build();
-        return ContextBuilder.from( context ).
-            authInfo( authenticationInfo ).
-            build().
-            callWith( callable );
+        final AuthenticationInfo authenticationInfo =
+            AuthenticationInfo.copyOf( context.getAuthInfo() ).principals( RoleKeys.ADMIN ).build();
+        return ContextBuilder.from( context ).authInfo( authenticationInfo ).build().callWith( callable );
     }
 
     @Reference
@@ -148,8 +168,8 @@ public class IdProviderControllerServiceImpl
     }
 
     @Reference
-    public void setResponseSerializationService( final ResponseSerializationService responseSerializationService )
+    public void setResponseSerializationService( final WebSerializerService webSerializerService )
     {
-        this.responseSerializationService = responseSerializationService;
+        this.webSerializerService = webSerializerService;
     }
 }

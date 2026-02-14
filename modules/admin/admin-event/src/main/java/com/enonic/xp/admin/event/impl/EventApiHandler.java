@@ -9,6 +9,7 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.admin.event.impl.json.EventJsonSerializer;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
+import com.enonic.xp.portal.handler.WebHandlerHelper;
 import com.enonic.xp.portal.universalapi.UniversalApiHandler;
 import com.enonic.xp.portal.websocket.WebSocketManager;
 import com.enonic.xp.web.HttpStatus;
@@ -18,13 +19,15 @@ import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketEvent;
 import com.enonic.xp.web.websocket.WebSocketEventType;
 
-@Component(property = {"applicationKey=admin", "apiKey=event", "displayName=Event API", "allowedPrincipals=role:system.admin.login"})
+@Component(property = {"key=" + EventApiHandler.EVENT_API, "displayName=Event API", "allowedPrincipals=role:system.admin.login"})
 public class EventApiHandler
     implements UniversalApiHandler, EventListener
 {
     private static final String GROUP_NAME = "com.enonic.xp.admin.event";
 
     private static final EventJsonSerializer SERIALIZER = new EventJsonSerializer();
+
+    static final String EVENT_API = "admin:event";
 
     private final WebSocketManager webSocketManager;
 
@@ -39,6 +42,11 @@ public class EventApiHandler
     {
         final WebResponse.Builder<?> responseBuilder = WebResponse.create();
 
+        if ( !WebHandlerHelper.findApiPath( request, EVENT_API ).isEmpty() )
+        {
+            responseBuilder.status( HttpStatus.NOT_FOUND );
+            return responseBuilder.build();
+        }
         if ( !request.isWebSocket() )
         {
             responseBuilder.status( HttpStatus.BAD_REQUEST );
