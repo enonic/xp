@@ -1,12 +1,6 @@
 package com.enonic.xp.portal.impl.idprovider;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Map;
 import java.util.regex.MatchResult;
-
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.portal.PortalRequest;
@@ -14,65 +8,16 @@ import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.handler.PathMatchers;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryUtils;
-import com.enonic.xp.web.HttpMethod;
-import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
-
-import static java.util.Objects.requireNonNullElse;
+import com.enonic.xp.web.WebRequest;
 
 class PortalRequestAdapter
 {
-    public PortalRequest adapt( final HttpServletRequest req )
+    public PortalRequest adapt( final WebRequest req )
     {
-        final PortalRequest result = new PortalRequest();
-
-        result.setRawRequest( req );
-        result.setMethod( HttpMethod.valueOf( req.getMethod() ) );
-        result.setScheme( req.getScheme() );
-        result.setHost( req.getServerName() );
-        result.setPort( req.getServerPort() );
-        result.setRemoteAddress( req.getRemoteAddr() );
-        result.setRawPath( req.getPathInfo() );
-        result.setPath( ServletRequestUrlHelper.createUri( req, req.getRequestURI() ) );
-        result.setUrl( ServletRequestUrlHelper.getFullUrl( req ) );
-        result.setContentType( req.getContentType() );
-        result.getLocales().addAll( Collections.list( req.getLocales() ) );
-
-        setParameters( req, result );
-        setHeaders( req, result );
-        setCookies( req, result );
+        final PortalRequest result = new PortalRequest( req );
 
         baseUri( result );
         return result;
-    }
-
-    private static void setHeaders( final HttpServletRequest from, final PortalRequest to )
-    {
-        for ( final String key : Collections.list( requireNonNullElse( from.getHeaderNames(), Collections.emptyEnumeration() ) ) )
-        {
-            to.getHeaders().put( key, from.getHeader( key ) );
-        }
-    }
-
-    private static void setCookies( final HttpServletRequest from, final PortalRequest to )
-    {
-        final Cookie[] cookies = from.getCookies();
-        if ( cookies == null )
-        {
-            return;
-        }
-
-        for ( final Cookie cookie : cookies )
-        {
-            to.getCookies().put( cookie.getName(), cookie.getValue() );
-        }
-    }
-
-    private static void setParameters( final HttpServletRequest from, final PortalRequest to )
-    {
-        for ( final Map.Entry<String, String[]> entry : from.getParameterMap().entrySet() )
-        {
-            to.getParams().putAll( entry.getKey(), Arrays.asList( entry.getValue() ) );
-        }
     }
 
     private static void baseUri( PortalRequest result )

@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import com.google.common.net.MediaType;
 
@@ -15,14 +14,14 @@ import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.impl.exception.ExceptionMapperImpl;
-import com.enonic.xp.web.impl.serializer.RequestSerializerServiceImpl;
-import com.enonic.xp.web.impl.serializer.ResponseSerializationServiceImpl;
+import com.enonic.xp.web.impl.serializer.WebSerializerServiceImpl;
 import com.enonic.xp.web.jetty.impl.JettyTestSupport;
 import com.enonic.xp.web.websocket.WebSocketContextFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
 
 class WebDispatcherServletTest
     extends JettyTestSupport
@@ -36,16 +35,14 @@ class WebDispatcherServletTest
     {
         this.handler = new TestWebHandler();
 
-        this.servlet = new WebDispatcherServlet( new WebDispatcherImpl(), new RequestSerializerServiceImpl() );
+        this.servlet = new WebDispatcherServlet( new WebDispatcherImpl() );
         this.servlet.addWebHandler( this.handler );
         this.servlet.setExceptionMapper( new ExceptionMapperImpl() );
         this.servlet.setExceptionRenderer( ( req, cause ) -> WebResponse.create().status( HttpStatus.NOT_FOUND ).build() );
-        this.servlet.setWebSocketContextFactory( Mockito.mock( WebSocketContextFactory.class ) );
-        this.servlet.setResponseSerializationService( new ResponseSerializationServiceImpl() );
+        this.servlet.setWebSocketContextFactory( mock( WebSocketContextFactory.class ) );
+        this.servlet.setWebSerializerService( new WebSerializerServiceImpl( mock() ) );
 
-        this.handler.response = WebResponse.create().
-            status( HttpStatus.OK ).
-            build();
+        this.handler.response = WebResponse.create().status( HttpStatus.OK ).build();
 
         addServlet( this.servlet, "/site/*" );
     }
@@ -54,15 +51,10 @@ class WebDispatcherServletTest
     void testSimpleGet()
         throws Exception
     {
-        this.handler.response = WebResponse.create().
-            status( HttpStatus.OK ).
-            contentType( MediaType.PLAIN_TEXT_UTF_8 ).
-            body( "Hello World" ).
-            build();
+        this.handler.response =
+            WebResponse.create().status( HttpStatus.OK ).contentType( MediaType.PLAIN_TEXT_UTF_8 ).body( "Hello World" ).build();
 
-        final HttpRequest request = newRequest( "/site/master/a/b" ).
-            GET().
-            build();
+        final HttpRequest request = newRequest( "/site/master/a/b" ).GET().build();
 
         this.handler.verifier = req -> {
             assertEquals( this.server.getPort(), req.getPort() );
@@ -85,14 +77,9 @@ class WebDispatcherServletTest
     void testResponseHeaders()
         throws Exception
     {
-        this.handler.response = WebResponse.create().
-            status( HttpStatus.OK ).
-            header( "X-Header", "Value" ).
-            build();
+        this.handler.response = WebResponse.create().status( HttpStatus.OK ).header( "X-Header", "Value" ).build();
 
-        final HttpRequest request = newRequest( "/site/master/a/b" ).
-            GET().
-            build();
+        final HttpRequest request = newRequest( "/site/master/a/b" ).GET().build();
 
         final HttpResponse response = callRequest( request );
         assertEquals( 200, response.statusCode() );
@@ -103,10 +90,7 @@ class WebDispatcherServletTest
     void testRequestHeaders()
         throws Exception
     {
-        final HttpRequest request = newRequest( "/site/master/a/b" ).
-            GET().
-            header( "X-Header", "Value" ).
-            build();
+        final HttpRequest request = newRequest( "/site/master/a/b" ).GET().header( "X-Header", "Value" ).build();
 
         this.handler.verifier = req -> {
             assertEquals( "Value", req.getHeaders().get( "X-Header" ) );
@@ -120,10 +104,7 @@ class WebDispatcherServletTest
     void testReadCookies()
         throws Exception
     {
-        final HttpRequest request = newRequest( "/site/master/a/b" ).
-            GET().
-            header( "Cookie", "theme=light; sessionToken=abc123" ).
-            build();
+        final HttpRequest request = newRequest( "/site/master/a/b" ).GET().header( "Cookie", "theme=light; sessionToken=abc123" ).build();
 
         this.handler.verifier = req -> {
             assertEquals( "light", req.getCookies().get( "theme" ) );
@@ -138,9 +119,7 @@ class WebDispatcherServletTest
     void testParameters()
         throws Exception
     {
-        final HttpRequest request = newRequest( "/site/master/a/b?a=1&b=2&b=3&b=3" ).
-            GET().
-            build();
+        final HttpRequest request = newRequest( "/site/master/a/b?a=1&b=2&b=3&b=3" ).GET().build();
 
         this.handler.verifier = req -> {
             assertAll( () -> assertThat( req.getParams().get( "a" ) ).containsExactly( "1" ),
@@ -155,14 +134,13 @@ class WebDispatcherServletTest
     void testPost_formEncoded()
         throws Exception
     {
-        HttpRequest.BodyPublisher formBody = HttpRequest.BodyPublishers.ofString( Map.of( "search", "Jurassic Park", "expand", "true" ).
-            entrySet().
-            stream().
-            map( e -> e.getKey() + "=" + e.getValue() ).collect( Collectors.joining( "&" ) ) );
-        final HttpRequest request = newRequest( "/site/master/a/b" ).
-            header( "Content-Type", "application/x-www-form-urlencoded" ).
-            POST( formBody ).
-            build();
+        HttpRequest.BodyPublisher formBody = HttpRequest.BodyPublishers.ofString( Map.of( "search", "Jurassic Park", "expand", "true" )
+                                                                                      .entrySet()
+                                                                                      .stream()
+                                                                                      .map( e -> e.getKey() + "=" + e.getValue() )
+                                                                                      .collect( Collectors.joining( "&" ) ) );
+        final HttpRequest request =
+            newRequest( "/site/master/a/b" ).header( "Content-Type", "application/x-www-form-urlencoded" ).POST( formBody ).build();
 
         this.handler.verifier = req -> {
             assertEquals( HttpMethod.POST, req.getMethod() );
@@ -181,10 +159,8 @@ class WebDispatcherServletTest
     {
         HttpRequest.BodyPublisher formBody = HttpRequest.BodyPublishers.ofString( "Hello World" );
 
-        final HttpRequest request = newRequest( "/site/master/a/b" ).
-            header( "content-type", "text/plain; charset=utf-8" ).
-            POST( formBody ).
-            build();
+        final HttpRequest request =
+            newRequest( "/site/master/a/b" ).header( "content-type", "text/plain; charset=utf-8" ).POST( formBody ).build();
 
         this.handler.verifier = req -> {
             assertEquals( HttpMethod.POST, req.getMethod() );
@@ -202,10 +178,8 @@ class WebDispatcherServletTest
     {
         HttpRequest.BodyPublisher formBody = HttpRequest.BodyPublishers.ofString( "{}" );
 
-        final HttpRequest request = newRequest( "/site/master/a/b" ).
-            header( "content-type", "application/json; charset=utf-8" ).
-            POST( formBody ).
-            build();
+        final HttpRequest request =
+            newRequest( "/site/master/a/b" ).header( "content-type", "application/json; charset=utf-8" ).POST( formBody ).build();
 
         this.handler.verifier = req -> {
             assertEquals( HttpMethod.POST, req.getMethod() );
@@ -223,9 +197,7 @@ class WebDispatcherServletTest
     {
         this.servlet.removeWebHandler( this.handler );
 
-        final HttpRequest request = newRequest( "/site/master/a/b" ).
-            GET().
-            build();
+        final HttpRequest request = newRequest( "/site/master/a/b" ).GET().build();
 
         final HttpResponse response = callRequest( request );
         assertEquals( 404, response.statusCode() );

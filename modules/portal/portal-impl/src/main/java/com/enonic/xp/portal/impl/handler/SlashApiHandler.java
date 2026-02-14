@@ -171,6 +171,7 @@ public class SlashApiHandler
         final boolean result;
         if ( portalRequest.getEndpointPath() == null )
         {
+            // TODO mount should be possible on ap connector, too. mount should be an array [xp, api]
             result = apiDescriptor.isMount();
         }
         else if ( PortalRequestHelper.isSiteBase( portalRequest ) )

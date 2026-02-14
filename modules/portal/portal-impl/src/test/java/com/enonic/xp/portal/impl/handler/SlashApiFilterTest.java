@@ -1,12 +1,9 @@
 package com.enonic.xp.portal.impl.handler;
 
-import java.io.IOException;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -16,10 +13,7 @@ import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.exception.ExceptionMapper;
 import com.enonic.xp.web.exception.ExceptionRenderer;
-import com.enonic.xp.web.serializer.RequestSerializerService;
-import com.enonic.xp.web.serializer.ResponseSerializationService;
-import com.enonic.xp.web.websocket.WebSocketContext;
-import com.enonic.xp.web.websocket.WebSocketContextFactory;
+import com.enonic.xp.web.serializer.WebSerializerService;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -28,7 +22,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
-class SlashApiServletTest
+class SlashApiFilterTest
 {
     private SlashApiServlet filter;
 
@@ -38,11 +32,7 @@ class SlashApiServletTest
 
     private ExceptionRenderer exceptionRenderer;
 
-    private ResponseSerializationService responseSerializationService;
-
-    private RequestSerializerService requestSerializerService;
-
-    private WebSocketContextFactory webSocketContextFactory;
+    private WebSerializerService webSerializerService;
 
     @BeforeEach
     void setUp()
@@ -50,17 +40,14 @@ class SlashApiServletTest
         slashApiHandler = mock( SlashApiHandler.class );
         exceptionMapper = mock( ExceptionMapper.class );
         exceptionRenderer = mock( ExceptionRenderer.class );
-        responseSerializationService = mock( ResponseSerializationService.class );
-        requestSerializerService = mock( RequestSerializerService.class );
-        webSocketContextFactory = mock( WebSocketContextFactory.class );
+        webSerializerService = mock( WebSerializerService.class );
 
-        filter = new SlashApiServlet( slashApiHandler, exceptionMapper, exceptionRenderer, webSocketContextFactory,
-                                      responseSerializationService, requestSerializerService );
+        filter = new SlashApiServlet( slashApiHandler, exceptionMapper, exceptionRenderer, webSerializerService );
     }
 
     @Test
     void delegatesToSlashApiHandler()
-        throws ServletException, IOException, Exception
+        throws Exception
     {
         final HttpServletRequest req = mock( HttpServletRequest.class );
         final HttpServletResponse res = mock( HttpServletResponse.class );
@@ -69,7 +56,7 @@ class SlashApiServletTest
         when( req.getPathInfo() ).thenReturn( "/com.enonic.app.myapp:myapi" );
 
         final WebRequest webRequest = new WebRequest();
-        when( requestSerializerService.serialize( req ) ).thenReturn( webRequest );
+        when( webSerializerService.request( req, res ) ).thenReturn( webRequest );
 
         final WebResponse expectedResponse = WebResponse.create().status( HttpStatus.OK ).body( "ok" ).build();
         when( slashApiHandler.handle( any( WebRequest.class ) ) ).thenReturn( expectedResponse );
@@ -77,13 +64,13 @@ class SlashApiServletTest
         filter.doFilter( req, res, chain );
 
         verify( slashApiHandler ).handle( webRequest );
-        verify( responseSerializationService ).serialize( eq( webRequest ), eq( expectedResponse ), eq( res ) );
+        verify( webSerializerService ).response( eq( webRequest ), eq( expectedResponse ), eq( res ) );
         verifyNoInteractions( chain );
     }
 
     @Test
     void delegatesWithTrailingPath()
-        throws ServletException, IOException, Exception
+        throws Exception
     {
         final HttpServletRequest req = mock( HttpServletRequest.class );
         final HttpServletResponse res = mock( HttpServletResponse.class );
@@ -92,7 +79,7 @@ class SlashApiServletTest
         when( req.getPathInfo() ).thenReturn( "/com.enonic.app.myapp:myapi/some/path" );
 
         final WebRequest webRequest = new WebRequest();
-        when( requestSerializerService.serialize( req ) ).thenReturn( webRequest );
+        when( webSerializerService.request( req, res ) ).thenReturn( webRequest );
 
         final WebResponse expectedResponse = WebResponse.create().status( HttpStatus.OK ).build();
         when( slashApiHandler.handle( any( WebRequest.class ) ) ).thenReturn( expectedResponse );
@@ -105,7 +92,7 @@ class SlashApiServletTest
 
     @Test
     void passesThroughNonApiPath()
-        throws ServletException, IOException
+        throws Exception
     {
         final HttpServletRequest req = mock( HttpServletRequest.class );
         final HttpServletResponse res = mock( HttpServletResponse.class );
@@ -121,7 +108,7 @@ class SlashApiServletTest
 
     @Test
     void passesThroughNullPathInfo()
-        throws ServletException, IOException
+        throws Exception
     {
         final HttpServletRequest req = mock( HttpServletRequest.class );
         final HttpServletResponse res = mock( HttpServletResponse.class );
@@ -137,7 +124,7 @@ class SlashApiServletTest
 
     @Test
     void handlesExceptionFromHandler()
-        throws ServletException, IOException, Exception
+        throws Exception
     {
         final HttpServletRequest req = mock( HttpServletRequest.class );
         final HttpServletResponse res = mock( HttpServletResponse.class );
@@ -146,7 +133,7 @@ class SlashApiServletTest
         when( req.getPathInfo() ).thenReturn( "/com.enonic.app.myapp:myapi" );
 
         final WebRequest webRequest = new WebRequest();
-        when( requestSerializerService.serialize( req ) ).thenReturn( webRequest );
+        when( webSerializerService.request( req, res ) ).thenReturn( webRequest );
 
         final RuntimeException cause = new RuntimeException( "test error" );
         when( slashApiHandler.handle( any( WebRequest.class ) ) ).thenThrow( cause );
@@ -161,12 +148,12 @@ class SlashApiServletTest
 
         verify( exceptionMapper ).map( cause );
         verify( exceptionRenderer ).render( eq( webRequest ), eq( webException ) );
-        verify( responseSerializationService ).serialize( eq( webRequest ), eq( errorResponse ), eq( res ) );
+        verify( webSerializerService ).response( eq( webRequest ), eq( errorResponse ), eq( res ) );
     }
 
     @Test
     void webSocketResponseSkipsSerialization()
-        throws ServletException, IOException, Exception
+        throws Exception
     {
         final HttpServletRequest req = mock( HttpServletRequest.class );
         final HttpServletResponse res = mock( HttpServletResponse.class );
@@ -175,10 +162,8 @@ class SlashApiServletTest
         when( req.getPathInfo() ).thenReturn( "/com.enonic.app.myapp:myapi" );
 
         final WebRequest webRequest = new WebRequest();
-        when( requestSerializerService.serialize( req ) ).thenReturn( webRequest );
-
-        final WebSocketContext webSocketContext = mock( WebSocketContext.class );
-        when( webSocketContextFactory.newContext( req, res ) ).thenReturn( webSocketContext );
+        webRequest.setWebSocketContext( mock() );
+        when( webSerializerService.request( req, res ) ).thenReturn( webRequest );
 
         final com.enonic.xp.web.websocket.WebSocketConfig webSocketConfig = mock( com.enonic.xp.web.websocket.WebSocketConfig.class );
         final WebResponse wsResponse = WebResponse.create().status( HttpStatus.OK ).webSocket( webSocketConfig ).build();
@@ -187,6 +172,7 @@ class SlashApiServletTest
         filter.doFilter( req, res, chain );
 
         verify( slashApiHandler ).handle( webRequest );
-        verifyNoInteractions( responseSerializationService );
+        verify( webSerializerService ).request( req, res );
+        verify( webSerializerService, org.mockito.Mockito.never() ).response( any(), any(), any() );
     }
 }

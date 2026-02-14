@@ -23,8 +23,7 @@ import com.enonic.xp.web.exception.ExceptionMapper;
 import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.impl.serializer.RequestBodyReader;
-import com.enonic.xp.web.serializer.RequestSerializerService;
-import com.enonic.xp.web.serializer.ResponseSerializationService;
+import com.enonic.xp.web.serializer.WebSerializerService;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketContext;
 import com.enonic.xp.web.websocket.WebSocketContextFactory;
@@ -43,44 +42,29 @@ public final class WebDispatcherServlet
 
     private WebSocketContextFactory webSocketContextFactory;
 
-    private ResponseSerializationService responseSerializationService;
-
-    private final RequestSerializerService requestSerializerService;
+    private WebSerializerService webSerializerService;
 
     @Activate
-    public WebDispatcherServlet( @Reference final WebDispatcher webDispatcher,
-                                 @Reference final RequestSerializerService requestSerializerService )
+    public WebDispatcherServlet( @Reference final WebDispatcher webDispatcher )
     {
         this.webDispatcher = webDispatcher;
-        this.requestSerializerService = requestSerializerService;
     }
 
     @Override
     protected void service( final HttpServletRequest req, final HttpServletResponse res )
         throws ServletException, IOException
     {
-        final WebRequest webRequest = newWebRequest( req );
-        final WebSocketContext webSocketContext = this.webSocketContextFactory.newContext( req, res );
-        webRequest.setWebSocketContext( webSocketContext );
+        final WebRequest webRequest = webSerializerService.request( req, res );
+        webRequest.setBody( RequestBodyReader.readBody( req ) );
 
         final WebResponse webResponse = doHandle( webRequest );
 
-        final WebSocketConfig config = webResponse.getWebSocket();
-        if ( ( webSocketContext != null ) && ( config != null ) )
+        if ( webRequest.getWebSocketContext() != null && webResponse.getWebSocket() != null )
         {
             return;
         }
 
-        responseSerializationService.serialize( webRequest, webResponse, res );
-    }
-
-    private WebRequest newWebRequest( final HttpServletRequest req )
-        throws IOException
-    {
-        final WebRequest result = requestSerializerService.serialize( req );
-        result.setBody( RequestBodyReader.readBody( req ) );
-
-        return result;
+        webSerializerService.response( webRequest, webResponse, res );
     }
 
     private WebResponse doHandle( final WebRequest webRequest )
@@ -130,9 +114,9 @@ public final class WebDispatcherServlet
     }
 
     @Reference
-    public void setResponseSerializationService( final ResponseSerializationService responseSerializationService )
+    public void setWebSerializerService( final WebSerializerService webSerializerService )
     {
-        this.responseSerializationService = responseSerializationService;
+        this.webSerializerService = webSerializerService;
     }
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)

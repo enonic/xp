@@ -24,7 +24,7 @@ import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.web.serializer.ResponseSerializationService;
+import com.enonic.xp.web.serializer.WebSerializerService;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 
@@ -38,7 +38,7 @@ public class IdProviderControllerServiceImpl
 
     private SecurityService securityService;
 
-    private ResponseSerializationService responseSerializationService;
+    private WebSerializerService webSerializerService;
 
     @Override
     public PortalResponse execute( final IdProviderControllerExecutionParams params )
@@ -58,7 +58,7 @@ public class IdProviderControllerServiceImpl
                 PortalRequest portalRequest = params.getPortalRequest();
                 if ( portalRequest == null )
                 {
-                    portalRequest = new PortalRequestAdapter().adapt( params.getServletRequest() );
+                    portalRequest = new PortalRequestAdapter().adapt( webSerializerService.request( params.getServletRequest(), null ) );
                 }
                 portalRequest.setApplicationKey( idProviderDescriptor.getKey() );
                 portalRequest.setIdProvider( idProvider );
@@ -70,7 +70,7 @@ public class IdProviderControllerServiceImpl
                     final HttpServletResponse response = params.getResponse();
                     if ( response != null )
                     {
-                        responseSerializationService.serialize( portalRequest, portalResponse, response );
+                        webSerializerService.response( portalRequest, portalResponse, response );
                     }
                 }
                 return portalResponse;
@@ -148,8 +148,8 @@ public class IdProviderControllerServiceImpl
     }
 
     @Reference
-    public void setResponseSerializationService( final ResponseSerializationService responseSerializationService )
+    public void setResponseSerializationService( final WebSerializerService webSerializerService )
     {
-        this.responseSerializationService = responseSerializationService;
+        this.webSerializerService = webSerializerService;
     }
 }

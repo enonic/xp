@@ -97,9 +97,4 @@ public class ApplicationResourceService
     {
         params.getKey().forEach( key -> this.applicationService.uninstallApplication( ApplicationKey.from( key ) ) );
     }
-
-    public List<String> listKeys()
-    {
-        return applicationService.getInstalledApplications().getApplicationKeys().stream().map( ApplicationKey::toString ).toList();
-    }
 }

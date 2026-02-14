@@ -33,13 +33,14 @@ import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.util.Version;
 import com.enonic.xp.web.HttpStatus;
-import com.enonic.xp.web.impl.serializer.ResponseSerializationServiceImpl;
+import com.enonic.xp.web.impl.serializer.WebSerializerServiceImpl;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class IdProviderControllerServiceImplTest
@@ -79,7 +80,7 @@ class IdProviderControllerServiceImplTest
         idProviderControllerService.setIdProviderControllerScriptFactory( idProviderControllerScriptFactory );
         idProviderControllerService.setIdProviderDescriptorService( idProviderDescriptorService );
         idProviderControllerService.setSecurityService( securityService );
-        idProviderControllerService.setResponseSerializationService( new ResponseSerializationServiceImpl() );
+        idProviderControllerService.setResponseSerializationService( new WebSerializerServiceImpl(mock()) );
     }
 
     private PortalScriptService setupPortalScriptService()
