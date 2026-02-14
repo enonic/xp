@@ -3,6 +3,7 @@ package com.enonic.xp.impl.server.rest.task;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,6 +22,7 @@ import com.enonic.xp.dump.VersionsLoadResult;
 import com.enonic.xp.home.HomeDirSupport;
 import com.enonic.xp.impl.server.rest.model.SystemLoadRequestJson;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.repository.RepositoryIds;
 import com.enonic.xp.support.JsonTestHelper;
 import com.enonic.xp.task.ProgressReportParams;
 import com.enonic.xp.task.ProgressReporter;
@@ -28,6 +30,7 @@ import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskInfo;
 import com.enonic.xp.task.TaskService;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -62,12 +65,15 @@ class LoadRunnableTaskTest
 
     private LoadRunnableTask createTask( final SystemLoadRequestJson params )
     {
+        return createTask( params, null );
+    }
+
+    private LoadRunnableTask createTask( final SystemLoadRequestJson params, final RepositoryIds repositories )
+    {
         return LoadRunnableTask.create()
             .taskService( taskService )
             .dumpService( dumpService )
-            .name( params.getName() )
-            .upgrade( params.isUpgrade() )
-            .archive( params.isArchive() )
+            .name( params.getName() ).upgrade( params.isUpgrade() ).archive( params.isArchive() ).repositories( repositories )
             .build();
     }
 
@@ -97,7 +103,7 @@ class LoadRunnableTaskTest
         when( this.dumpService.load( any( SystemLoadParams.class ) ) ).thenReturn( systemLoadResult );
 
         final LoadRunnableTask task =
-            createTask( new SystemLoadRequestJson( params.getDumpName(), params.isUpgrade(), params.isArchive() ) );
+            createTask( new SystemLoadRequestJson( params.getDumpName(), params.isUpgrade(), params.isArchive(), null ) );
 
         ProgressReporter progressReporter = mock( ProgressReporter.class );
 
@@ -110,5 +116,37 @@ class LoadRunnableTaskTest
         jsonTestHelper.assertJsonEquals( jsonTestHelper.loadTestJson( "load_system_result.json" ),
                                          jsonTestHelper.stringToJson( result.getMessage() ) );
 
+    }
+
+    @Test
+    void load_with_specific_repositories()
+        throws Exception
+    {
+        Files.createDirectory( dumpDir.resolve( "name" ) );
+
+        final RepositoryIds repositories = RepositoryIds.from( RepositoryId.from( "my-repo" ) );
+
+        SystemLoadResult systemLoadResult = SystemLoadResult.create()
+            .add( RepoLoadResult.create( RepositoryId.from( "my-repo" ) )
+                      .add( BranchLoadResult.create( Branch.create().value( "master" ).build() ).successful( 1L ).build() )
+                      .versions( VersionsLoadResult.create().successful( 1L ).build() )
+                      .build() )
+            .build();
+
+        final TaskId taskId = TaskId.from( "taskId" );
+        when( taskService.getTaskInfo( taskId ) ).thenReturn(
+            TaskInfo.create().id( taskId ).name( "load" ).application( ApplicationKey.SYSTEM ).startTime( Instant.now() ).build() );
+
+        final ArgumentCaptor<SystemLoadParams> loadParamsCaptor = ArgumentCaptor.forClass( SystemLoadParams.class );
+        when( this.dumpService.load( loadParamsCaptor.capture() ) ).thenReturn( systemLoadResult );
+
+        final LoadRunnableTask task = createTask( new SystemLoadRequestJson( "name", false, true, List.of( "my-repo" ) ), repositories );
+
+        ProgressReporter progressReporter = mock( ProgressReporter.class );
+
+        task.run( taskId, progressReporter );
+
+        final SystemLoadParams capturedParams = loadParamsCaptor.getValue();
+        assertEquals( repositories, capturedParams.getRepositories() );
     }
 }
