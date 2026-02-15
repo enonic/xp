@@ -2,6 +2,7 @@ package com.enonic.xp.portal.impl.url;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -50,7 +51,7 @@ final class DefaultImageLinkProcessor
     void process()
     {
         final DefaultQueryParamsSupplier queryParamsStrategy = new DefaultQueryParamsSupplier();
-        queryParamsStrategy.putNotNull( "filter", imageStyle == null ? null : imageStyle.getFilter() );
+        Optional.ofNullable( imageStyle ).map( ImageStyle::getFilter ).ifPresent( filter -> queryParamsStrategy.param( "filter", filter ) );
 
         final Supplier<ProjectName> projectNameSupplier = Suppliers.memoize(
             () -> ContentProjectResolver.create().setPreferSiteRequest( params.getBaseUrl() == null ).build().resolve() );

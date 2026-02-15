@@ -845,7 +845,7 @@ export function imagePlaceholder(params: ImagePlaceholderParams): string {
 export interface ApiUrlParams {
     api: string;
     type?: 'server' | 'absolute' | 'websocket';
-    params?: object;
+    params?: Record<string, string | string[]>;
     path?: string | string[];
     baseUrl?: string;
 }
