@@ -83,7 +83,7 @@ public final class PortalUrlServiceImpl
         final AssetPathSupplier pathSupplier = new AssetPathSupplier( resourceService, params.getApplication(), params.getPath() );
 
         final DefaultQueryParamsSupplier queryParamsStrategy = new DefaultQueryParamsSupplier();
-        params.getParams().forEach( queryParamsStrategy::put );
+        queryParamsStrategy.params( params.getParams() );
 
         return portalUrlGeneratorService.generateUrl( UrlGeneratorParams.create()
                                                           .setBaseUrl( baseUrlSupplier )
@@ -114,7 +114,7 @@ public final class PortalUrlServiceImpl
         };
 
         final DefaultQueryParamsSupplier queryParamsStrategy = new DefaultQueryParamsSupplier();
-        params.getParams().forEach( queryParamsStrategy::put );
+        queryParamsStrategy.params( params.getParams() );
 
         return portalUrlGeneratorService.generateUrl( UrlGeneratorParams.create()
                                                           .setBaseUrl( baseUrlSupplier )
@@ -136,7 +136,7 @@ public final class PortalUrlServiceImpl
         final Supplier<String> baseUrlSupplier = new PageBaseUrlSupplier( contentService, projectService, params );
 
         final DefaultQueryParamsSupplier queryParamsStrategy = new DefaultQueryParamsSupplier();
-        params.getParams().forEach( queryParamsStrategy::put );
+        queryParamsStrategy.params( params.getParams() );
 
         return portalUrlGeneratorService.generateUrl(
             UrlGeneratorParams.create().setBaseUrl( baseUrlSupplier ).setQueryString( queryParamsStrategy ).build() );
@@ -153,7 +153,7 @@ public final class PortalUrlServiceImpl
         final Supplier<String> pathSupplier = new ComponentPathSupplier( componentPathSupplier );
 
         final DefaultQueryParamsSupplier queryParamsStrategy = new DefaultQueryParamsSupplier();
-        params.getParams().forEach( queryParamsStrategy::put );
+        queryParamsStrategy.params( params.getParams() );
 
         return portalUrlGeneratorService.generateUrl( UrlGeneratorParams.create()
                                                           .setBaseUrl( baseUrlSupplier )
@@ -207,7 +207,7 @@ public final class PortalUrlServiceImpl
             .setFilter( params.getFilter() )
             .setQuality( params.getQuality() )
             .setBackground( params.getBackground() )
-            .addQueryParams( params.getParams().asMap() )
+            .setQueryParams( params.getParams().asMap() )
             .build();
 
         return portalUrlGeneratorService.imageUrl( generatorParams );
@@ -258,7 +258,7 @@ public final class PortalUrlServiceImpl
             .setDownload( params.isDownload() )
             .setName( params.getName() )
             .setLabel( params.getLabel() )
-            .addQueryParams( params.getParams().asMap() )
+            .setQueryParams( params.getParams().asMap() )
             .build();
 
         return portalUrlGeneratorService.attachmentUrl( generatorParams );
@@ -272,13 +272,13 @@ public final class PortalUrlServiceImpl
         final Supplier<String> pathSupplier = new IdentityPathSupplier( params );
 
         final DefaultQueryParamsSupplier queryParamsStrategy = new DefaultQueryParamsSupplier();
-        params.getParams().forEach( queryParamsStrategy::put );
+        queryParamsStrategy.params( params.getParams() );
 
         final String redirectionUrl = params.getRedirectionUrl();
         if ( redirectionUrl != null )
         {
-            queryParamsStrategy.put( "redirect", redirectionUrl );
-            queryParamsStrategy.put( "_ticket", redirectChecksumService.generateChecksum( redirectionUrl ) );
+            queryParamsStrategy.param( "redirect", redirectionUrl );
+            queryParamsStrategy.param( "_ticket", redirectChecksumService.generateChecksum( redirectionUrl ) );
         }
 
         return portalUrlGeneratorService.generateUrl( UrlGeneratorParams.create()
@@ -304,7 +304,7 @@ public final class PortalUrlServiceImpl
         } );
 
         final DefaultQueryParamsSupplier queryParamsStrategy = new DefaultQueryParamsSupplier();
-        params.getParams().forEach( queryParamsStrategy::put );
+        queryParamsStrategy.params( params.getParams() );
 
         return portalUrlGeneratorService.generateUrl(
             UrlGeneratorParams.create().setBaseUrl( baseUrlSupplier ).setQueryString( queryParamsStrategy ).build() );
@@ -325,7 +325,7 @@ public final class PortalUrlServiceImpl
             .setUrlType( params.getType() )
             .setDescriptorKey( params.getDescriptorKey() )
             .setPath( new ApiUrlPathResolver( params.getPath(), params.getPathSegments() ) )
-            .addQueryParams( params.getQueryParams() )
+            .setQueryParams( params.getQueryParams() )
             .build();
 
         return portalUrlGeneratorService.apiUrl( generatorParams );

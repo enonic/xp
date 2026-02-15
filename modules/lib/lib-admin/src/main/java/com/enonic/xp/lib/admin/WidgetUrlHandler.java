@@ -26,7 +26,7 @@ public class WidgetUrlHandler
 
     private String urlType;
 
-    private Map<String, Collection<String>> queryParams;
+    private Map<String, List<String>> queryParams;
 
     @Override
     public void initialize( final BeanContext context )
@@ -85,7 +85,7 @@ public class WidgetUrlHandler
 
         if ( this.queryParams != null )
         {
-            builder.addQueryParams( this.queryParams );
+            builder.setQueryParams( this.queryParams );
         }
 
         return this.portalUrlServiceSupplier.get().apiUrl( builder.build() );

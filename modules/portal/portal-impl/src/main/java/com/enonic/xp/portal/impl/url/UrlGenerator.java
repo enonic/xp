@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.url;
 
 import java.math.BigInteger;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -24,8 +25,7 @@ final class UrlGenerator
         {
             final String baseUrl = removeTrailingSlash( params.getBaseUrl() != null ? params.getBaseUrl().get() : null );
             final String path = normalizePath( params.getPath() != null ? params.getPath().get() : null );
-            final String queryParams =
-                nullToEmpty( params.getQueryString() != null ? params.getQueryString().get() : null );
+            final String queryParams = nullToEmpty( params.getQueryString() != null ? params.getQueryString().get() : null );
 
             return baseUrl + path + queryParams;
         }
@@ -86,7 +86,7 @@ final class UrlGenerator
         UrlBuilderHelper.appendPart( result, "_" );
         UrlBuilderHelper.appendPart( result, "error" );
         UrlBuilderHelper.appendPart( result, String.valueOf( code ) );
-        UrlBuilderHelper.appendParams( result, Map.of( "message", message ).entrySet() );
+        UrlBuilderHelper.appendParams( result, Map.of( "message", List.of( message ) ) );
 
         return result.toString();
     }
