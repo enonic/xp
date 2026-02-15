@@ -1,6 +1,5 @@
 package com.enonic.xp.lib.admin;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -90,7 +89,7 @@ class LibAdminTest
         assertEquals( 1, pathSegments.size() );
         assertEquals( "myapp:mywidget", pathSegments.get( 0 ) );
 
-        Map<String, Collection<String>> queryParams = params.getQueryParams();
+        Map<String, List<String>> queryParams = params.getQueryParams();
 
         assertEquals( 2, queryParams.size() );
         assertEquals( "v1", queryParams.get( "k1" ).iterator().next() );
@@ -122,7 +121,7 @@ class LibAdminTest
         assertEquals( 1, pathSegments.size() );
         assertEquals( "myapp:myExtension", pathSegments.get( 0 ) );
 
-        Map<String, Collection<String>> queryParams = params.getQueryParams();
+        Map<String, List<String>> queryParams = params.getQueryParams();
 
         assertEquals( 2, queryParams.size() );
         assertEquals( "v1", queryParams.get( "k1" ).iterator().next() );
@@ -154,7 +153,7 @@ class LibAdminTest
         assertEquals( 1, pathSegments.size() );
         assertEquals( "myapp:mywidget", pathSegments.get( 0 ) );
 
-        Map<String, Collection<String>> queryParams = params.getQueryParams();
+        Map<String, List<String>> queryParams = params.getQueryParams();
 
         assertEquals( 0, queryParams.size() );
     }

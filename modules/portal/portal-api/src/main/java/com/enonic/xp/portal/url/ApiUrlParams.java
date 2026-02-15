@@ -6,8 +6,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.collect.LinkedListMultimap;
-import com.google.common.collect.Multimap;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.descriptor.DescriptorKey;
@@ -25,7 +23,7 @@ public final class ApiUrlParams
 
     private final String baseUrl;
 
-    private final Multimap<String, String> queryParams;
+    private final Map<String, List<String>> queryParams;
 
     private ApiUrlParams( final Builder builder )
     {
@@ -34,7 +32,7 @@ public final class ApiUrlParams
         this.path = builder.path;
         this.pathSegments = builder.pathSegments;
         this.baseUrl = builder.baseUrl;
-        this.queryParams = builder.queryParams;
+        this.queryParams = builder.queryParams.build();
 
         if ( this.path != null && this.pathSegments != null )
         {
@@ -67,9 +65,9 @@ public final class ApiUrlParams
         return baseUrl;
     }
 
-    public Map<String, Collection<String>> getQueryParams()
+    public Map<String, List<String>> getQueryParams()
     {
-        return queryParams.asMap();
+        return queryParams;
     }
 
     public static Builder create()
@@ -89,7 +87,7 @@ public final class ApiUrlParams
 
         private String baseUrl;
 
-        private final Multimap<String, String> queryParams = LinkedListMultimap.create();
+        private final QueryParamsBuilder queryParams = new QueryParamsBuilder();
 
         public Builder setType( final String type )
         {
@@ -121,15 +119,15 @@ public final class ApiUrlParams
             return this;
         }
 
-        public Builder addQueryParams( final Map<String, Collection<String>> queryParams )
+        public Builder setQueryParams( final Map<String, ? extends Collection<String>> queryParams )
         {
-            queryParams.forEach( this.queryParams::putAll );
+            this.queryParams.setQueryParams( queryParams );
             return this;
         }
 
-        public Builder addQueryParam( final String key, final String value )
+        public Builder setQueryParam( final String key, final String value )
         {
-            this.queryParams.put( key, value );
+            this.queryParams.setQueryParam( key, value );
             return this;
         }
 

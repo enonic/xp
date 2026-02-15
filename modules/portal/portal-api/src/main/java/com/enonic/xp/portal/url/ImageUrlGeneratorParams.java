@@ -1,12 +1,10 @@
 package com.enonic.xp.portal.url;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
-
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
@@ -36,7 +34,7 @@ public final class ImageUrlGeneratorParams
 
     private final String scale;
 
-    private final Multimap<String, String> queryParams;
+    private final Map<String, List<String>> queryParams;
 
     private ImageUrlGeneratorParams( final Builder builder )
     {
@@ -50,7 +48,7 @@ public final class ImageUrlGeneratorParams
         this.quality = builder.quality;
         this.filter = builder.filter;
         this.format = builder.format;
-        this.queryParams = builder.queryParams;
+        this.queryParams = builder.queryParams.build();
     }
 
     public String getBaseUrl()
@@ -103,9 +101,9 @@ public final class ImageUrlGeneratorParams
         return scale;
     }
 
-    public Map<String, Collection<String>> getQueryParams()
+    public Map<String, List<String>> getQueryParams()
     {
-        return queryParams.asMap();
+        return queryParams;
     }
 
     public static Builder create()
@@ -135,7 +133,7 @@ public final class ImageUrlGeneratorParams
 
         private String scale;
 
-        private final Multimap<String, String> queryParams = HashMultimap.create();
+        private final QueryParamsBuilder queryParams = new QueryParamsBuilder();
 
         public Builder setBaseUrl( final String baseUrl )
         {
@@ -197,15 +195,15 @@ public final class ImageUrlGeneratorParams
             return this;
         }
 
-        public Builder addQueryParams( final Map<String, Collection<String>> queryParams )
+        public Builder setQueryParams( final Map<String, ? extends Collection<String>> queryParams )
         {
-            queryParams.forEach( this.queryParams::putAll );
+            this.queryParams.setQueryParams( queryParams );
             return this;
         }
 
-        public Builder addQueryParam( final String key, final String value )
+        public Builder setQueryParam( final String key, final String value )
         {
-            this.queryParams.put( key, value );
+            this.queryParams.setQueryParam( key, value );
             return this;
         }
 

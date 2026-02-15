@@ -3,13 +3,13 @@ package com.enonic.xp.admin.impl.portal.extension;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -57,11 +57,8 @@ class GetListAllowedAdminExtensionsHandlerTest
     @Test
     void testHandle()
     {
-        final Multimap<String, String> params = HashMultimap.create();
-        params.put( "interface", "myInterface" );
-
         final PortalRequest webRequest = mock( PortalRequest.class );
-        when( webRequest.getParams() ).thenReturn( params );
+        when( webRequest.getParams() ).thenReturn( Multimaps.forMap( Map.of( "interface", "myInterface" ) ) );
 
         final Icon icon = mock( Icon.class );
         when( icon.toByteArray() ).thenReturn( new byte[0] );

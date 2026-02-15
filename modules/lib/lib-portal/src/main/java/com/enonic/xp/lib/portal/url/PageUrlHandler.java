@@ -1,6 +1,6 @@
 package com.enonic.xp.lib.portal.url;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -25,7 +25,7 @@ public final class PageUrlHandler
 
     private String branch;
 
-    private Map<String, Collection<String>> queryParams;
+    private Map<String, List<String>> queryParams;
 
     public void setId( final String id )
     {
@@ -52,7 +52,7 @@ public final class PageUrlHandler
         this.branch = branch;
     }
 
-    public void addQueryParams( final ScriptValue params )
+    public void setQueryParams( final ScriptValue params )
     {
         this.queryParams = UrlHandlerHelper.resolveQueryParams( params );
     }
@@ -64,7 +64,7 @@ public final class PageUrlHandler
 
         if ( this.queryParams != null )
         {
-            this.queryParams.forEach( ( key, values ) -> values.forEach( value -> params.param( key, value ) ) );
+            this.queryParams.forEach( params::param );
         }
 
         return urlServiceSupplier.get().pageUrl( params );

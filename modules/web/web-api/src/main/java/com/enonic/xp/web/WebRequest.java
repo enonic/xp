@@ -11,8 +11,9 @@ import java.util.TreeMap;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
-import com.google.common.collect.LinkedListMultimap;
+import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.MultimapBuilder;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -25,7 +26,7 @@ public class WebRequest
 {
     private HttpMethod method;
 
-    private final Multimap<String, String> params;
+    private final ListMultimap<String, String> params;
 
     private final Map<String, String> headers;
 
@@ -63,7 +64,7 @@ public class WebRequest
 
     public WebRequest()
     {
-        this.params = LinkedListMultimap.create();
+        this.params = MultimapBuilder.linkedHashKeys().arrayListValues().build();
         this.headers = new TreeMap<>( String.CASE_INSENSITIVE_ORDER );
         this.cookies = new HashMap<>();
         this.locales = new ArrayList<>();
@@ -221,8 +222,8 @@ public class WebRequest
     }
 
     /**
-     * The endpoint path from the {@link #getRawPath()} - everything staring from "/_/" prefix. May be null if "/_/" is not present in rawPath.
-
+     * The endpoint path from the {@link #getRawPath()} - everything starting from "/_/" prefix. May be null if "/_/" is not present in rawPath.
+     *
      * @return the endpoint path in rawPath, starting from "/_/" prefix.
      */
     @Nullable

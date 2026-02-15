@@ -40,7 +40,7 @@ interface AdminExtensionUrlHandler {
 
     setUrlType(value?: string | null): void;
 
-    addQueryParams(value?: ScriptValue | null): void;
+    setQueryParams(value?: ScriptValue | null): void;
 
     createUrl(): string;
 }
@@ -152,7 +152,7 @@ export function extensionUrl(params: ExtensionUrlParams): string {
     bean.setApplication(params.application);
     bean.setExtension(params.extension);
     bean.setUrlType(__.nullOrValue(params.type));
-    bean.addQueryParams(__.toScriptValue(params.params));
+    bean.setQueryParams(__.toScriptValue(params.params));
 
     return bean.createUrl();
 }

@@ -57,7 +57,7 @@ interface AssetUrlHandler {
 
     setUrlType(value?: string | null): void;
 
-    addQueryParams(value?: ScriptValue | null): void;
+    setQueryParams(value?: ScriptValue | null): void;
 
     setApplication(value?: string | null): void;
 
@@ -87,7 +87,7 @@ export function assetUrl(params: AssetUrlParams): string {
     bean.setPath(params.path);
     bean.setUrlType(__.nullOrValue(params.type));
     bean.setApplication(__.nullOrValue(params.application));
-    bean.addQueryParams(__.toScriptValue(params.params));
+    bean.setQueryParams(__.toScriptValue(params.params));
 
     return bean.createUrl();
 }
@@ -120,7 +120,7 @@ interface ImageUrlHandler {
 
     setUrlType(value?: string | null): void;
 
-    addQueryParams(value?: ScriptValue | null): void;
+    setQueryParams(value?: ScriptValue | null): void;
 
     setProjectName(value?: string | null): void;
 
@@ -170,7 +170,7 @@ export function imageUrl(params: ImageUrlParams): string {
     bean.setId(__.nullOrValue(params.id));
     bean.setPath(__.nullOrValue(params.path));
     bean.setUrlType(__.nullOrValue(params.type));
-    bean.addQueryParams(__.toScriptValue(params.params));
+    bean.setQueryParams(__.toScriptValue(params.params));
     bean.setBackground(__.nullOrValue(params.background));
     bean.setQuality(__.nullOrValue(params.quality));
     bean.setFilter(__.nullOrValue(params.filter));
@@ -198,7 +198,7 @@ interface ComponentUrlHandler {
 
     setUrlType(value?: string | null): void;
 
-    addQueryParams(value?: ScriptValue | null): void;
+    setQueryParams(value?: ScriptValue | null): void;
 
     setComponent(value?: string | null): void;
 
@@ -226,7 +226,7 @@ export function componentUrl(params: ComponentUrlParams): string {
     bean.setPath(__.nullOrValue(params?.path));
     bean.setUrlType(__.nullOrValue(params?.type));
     bean.setComponent(__.nullOrValue(params?.component));
-    bean.addQueryParams(__.toScriptValue(params?.params));
+    bean.setQueryParams(__.toScriptValue(params?.params));
 
     return bean.createUrl();
 }
@@ -251,7 +251,7 @@ interface AttachmentUrlHandler {
 
     setUrlType(value?: string | null): void;
 
-    addQueryParams(value?: ScriptValue | null): void;
+    setQueryParams(value?: ScriptValue | null): void;
 
     setName(value?: string | null): void;
 
@@ -298,7 +298,7 @@ export function attachmentUrl(params: AttachmentUrlParams): string {
     bean.setProjectName(__.nullOrValue(params.project));
     bean.setBranch(__.nullOrValue(params.branch));
     bean.setDownload(params.download || false);
-    bean.addQueryParams(__.toScriptValue(params.params));
+    bean.setQueryParams(__.toScriptValue(params.params));
     bean.setBaseUrl(__.nullOrValue(params.baseUrl));
 
     return bean.createUrl();
@@ -318,7 +318,7 @@ interface PageUrlHandler {
 
     setUrlType(value?: string | null): void;
 
-    addQueryParams(value?: ScriptValue | null): void;
+    setQueryParams(value?: ScriptValue | null): void;
 
     setProjectName(value?: string | null): void;
 
@@ -348,7 +348,7 @@ export function pageUrl(params: PageUrlParams): string {
     bean.setId(__.nullOrValue(params.id));
     bean.setPath(__.nullOrValue(params.path));
     bean.setUrlType(params.type || 'server');
-    bean.addQueryParams(__.toScriptValue(params.params));
+    bean.setQueryParams(__.toScriptValue(params.params));
     bean.setProjectName(__.nullOrValue(params.project));
     bean.setBranch(__.nullOrValue(params.branch));
 
@@ -369,7 +369,7 @@ interface ServiceUrlHandler {
 
     setUrlType(value?: string | null): void;
 
-    addQueryParams(value?: ScriptValue | null): void;
+    setQueryParams(value?: ScriptValue | null): void;
 
     createUrl(): string;
 }
@@ -395,7 +395,7 @@ export function serviceUrl(params: ServiceUrlParams): string {
     bean.setService(params.service);
     bean.setApplication(__.nullOrValue(params.application));
     bean.setUrlType(__.nullOrValue(params.type));
-    bean.addQueryParams(__.toScriptValue(params.params));
+    bean.setQueryParams(__.toScriptValue(params.params));
 
     return bean.createUrl();
 }
@@ -414,7 +414,7 @@ interface IdProviderUrlHandler {
 
     setContextPath(value?: string | null): void;
 
-    addQueryParams(value?: ScriptValue | null): void;
+    setQueryParams(value?: ScriptValue | null): void;
 
     createUrl(): string;
 }
@@ -438,7 +438,7 @@ export function idProviderUrl(params?: IdProviderUrlParams): string {
     bean.setIdProvider(__.nullOrValue(params?.idProvider));
     bean.setUrlType(__.nullOrValue(params?.type));
     bean.setContextPath(__.nullOrValue(params?.contextPath));
-    bean.addQueryParams(__.toScriptValue(params?.params));
+    bean.setQueryParams(__.toScriptValue(params?.params));
 
     return bean.createUrl();
 }
@@ -460,7 +460,7 @@ interface LoginUrlHandler {
 
     setRedirect(value?: string | null): void;
 
-    addQueryParams(value?: ScriptValue | null): void;
+    setQueryParams(value?: ScriptValue | null): void;
 
     createUrl(): string;
 }
@@ -504,7 +504,7 @@ interface LogoutUrlHandler {
 
     setUrlType(value?: string | null): void;
 
-    addQueryParams(value?: ScriptValue | null): void;
+    setQueryParams(value?: ScriptValue | null): void;
 
     createUrl(): string;
 }
@@ -527,7 +527,7 @@ export function logoutUrl(params?: LogoutUrlParams): string {
     bean.setRedirect(__.nullOrValue(params?.redirect));
     bean.setContextPath(__.nullOrValue(params?.contextPath));
     bean.setUrlType(__.nullOrValue(params?.type));
-    bean.addQueryParams(__.toScriptValue(params?.params));
+    bean.setQueryParams(__.toScriptValue(params?.params));
 
     return bean.createUrl();
 }
@@ -543,7 +543,7 @@ interface UrlHandler {
 
     setUrlType(value?: string | null): void;
 
-    addQueryParams(value?: ScriptValue | null): void;
+    setQueryParams(value?: ScriptValue | null): void;
 
     createUrl(): string;
 }
@@ -573,7 +573,7 @@ export function url(params: UrlParams): string {
         bean.setPath(params.path);
     }
     bean.setUrlType(__.nullOrValue(params.type));
-    bean.addQueryParams(__.toScriptValue(params.params));
+    bean.setQueryParams(__.toScriptValue(params.params));
 
     return bean.createUrl();
 }
@@ -845,7 +845,7 @@ export function imagePlaceholder(params: ImagePlaceholderParams): string {
 export interface ApiUrlParams {
     api: string;
     type?: 'server' | 'absolute' | 'websocket';
-    params?: object;
+    params?: Record<string, string | string[]>;
     path?: string | string[];
     baseUrl?: string;
 }
@@ -859,7 +859,7 @@ interface ApiUrlHandler {
 
     setBaseUrl(value?: string | null): void;
 
-    addQueryParams(value?: ScriptValue | null): void;
+    setQueryParams(value?: ScriptValue | null): void;
 
     createUrl(): string;
 }
@@ -893,7 +893,7 @@ export function apiUrl(params: ApiUrlParams): string {
 
     bean.setApi(api);
     bean.setUrlType(__.nullOrValue(type));
-    bean.addQueryParams(__.toScriptValue(queryParams));
+    bean.setQueryParams(__.toScriptValue(queryParams));
     bean.setBaseUrl(__.nullOrValue(baseUrl));
 
     if (path) {

@@ -1,12 +1,10 @@
 package com.enonic.xp.portal.url;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
-
-import com.google.common.collect.LinkedListMultimap;
-import com.google.common.collect.Multimap;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.descriptor.DescriptorKey;
@@ -24,7 +22,7 @@ public final class ApiUrlGeneratorParams
 
     private final Supplier<String> pathSupplier;
 
-    private final Multimap<String, String> queryParams;
+    private final Map<String, List<String>> queryParams;
 
     private ApiUrlGeneratorParams( final Builder builder )
     {
@@ -32,7 +30,7 @@ public final class ApiUrlGeneratorParams
         this.urlType = Objects.requireNonNullElse( builder.urlType, UrlTypeConstants.SERVER_RELATIVE );
         this.descriptorKey = Objects.requireNonNull( builder.descriptorKey );
         this.pathSupplier = builder.pathSupplier;
-        this.queryParams = builder.queryParams;
+        this.queryParams = builder.queryParams.build();
     }
 
     public String getBaseUrl()
@@ -55,9 +53,9 @@ public final class ApiUrlGeneratorParams
         return pathSupplier;
     }
 
-    public Map<String, Collection<String>> getQueryParams()
+    public Map<String, List<String>> getQueryParams()
     {
-        return queryParams.asMap();
+        return queryParams;
     }
 
     public static Builder create()
@@ -75,7 +73,7 @@ public final class ApiUrlGeneratorParams
 
         private Supplier<String> pathSupplier;
 
-        private final Multimap<String, String> queryParams = LinkedListMultimap.create();
+        private final QueryParamsBuilder queryParams = new QueryParamsBuilder();
 
         public Builder setUrlType( final String urlType )
         {
@@ -101,15 +99,15 @@ public final class ApiUrlGeneratorParams
             return this;
         }
 
-        public Builder addQueryParam( final String key, final String value )
+        public Builder setQueryParam( final String key, final String value )
         {
-            this.queryParams.put( key, value );
+            this.queryParams.setQueryParam( key, value );
             return this;
         }
 
-        public Builder addQueryParams( final Map<String, Collection<String>> queryParams )
+        public Builder setQueryParams( final Map<String, ? extends Collection<String>> queryParams )
         {
-            queryParams.forEach( this.queryParams::putAll );
+            this.queryParams.setQueryParams( queryParams );
             return this;
         }
 

@@ -1,5 +1,7 @@
 package com.enonic.xp.portal.impl.url;
 
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 
 import org.osgi.service.component.annotations.Component;
@@ -41,20 +43,20 @@ public class PortalUrlGeneratorServiceImpl
                           .setFormat( params.getFormat() )
                           .build() );
 
+        builder.setQueryParams( params.getQueryParams() );
+
         if ( params.getQuality() != null )
         {
-            builder.addQueryParam( "quality", params.getQuality().toString() );
+            builder.setQueryParam( "quality", params.getQuality().toString() );
         }
         if ( params.getBackground() != null )
         {
-            builder.addQueryParam( "background", params.getBackground() );
+            builder.setQueryParam( "background", params.getBackground() );
         }
         if ( params.getFilter() != null )
         {
-            builder.addQueryParam( "filter", params.getFilter() );
+            builder.setQueryParam( "filter", params.getFilter() );
         }
-
-        builder.addQueryParams( params.getQueryParams() );
 
         return apiUrl( builder.build() );
     }
@@ -75,11 +77,11 @@ public class PortalUrlGeneratorServiceImpl
             .setUrlType( params.getUrlType() )
             .setDescriptorKey( MEDIA_ATTACHMENT_API_DESCRIPTOR_KEY )
             .setPath( pathStrategy )
-            .addQueryParams( params.getQueryParams() );
+            .setQueryParams( params.getQueryParams() );
 
         if ( params.isDownload() )
         {
-            builder.addQueryParam( "download", null );
+            builder.setQueryParams( Map.of( "download", List.of() ) );
         }
 
         return apiUrl( builder.build() );
@@ -89,7 +91,7 @@ public class PortalUrlGeneratorServiceImpl
     public String apiUrl( final ApiUrlGeneratorParams params )
     {
         final DefaultQueryParamsSupplier queryParamsStrategy = new DefaultQueryParamsSupplier();
-        params.getQueryParams().forEach( queryParamsStrategy::putAll );
+        queryParamsStrategy.params( params.getQueryParams() );
 
         final UrlGeneratorParams generatorParams = UrlGeneratorParams.create()
             .setBaseUrl( ApiUrlBaseUrlResolver.create()

@@ -6,12 +6,10 @@ import com.google.common.net.HttpHeaders;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.url.IdentityUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.server.RunMode;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
@@ -108,11 +106,7 @@ final class ExceptionInfo
         node.put( "status", this.status.value() );
         node.put( "message", getDescription() );
 
-        return PortalResponse.create().
-            status( this.status ).
-            body( node.toString() ).
-            contentType( MediaType.JSON_UTF_8 ).
-            build();
+        return PortalResponse.create().status( this.status ).body( node.toString() ).contentType( MediaType.JSON_UTF_8 ).build();
     }
 
     public PortalResponse toHtmlResponse( final WebRequest req )
@@ -120,12 +114,11 @@ final class ExceptionInfo
         final ErrorPageBuilder builder;
         if ( withDebugInfo )
         {
-            builder = new ErrorPageRichBuilder().
-                cause( this.cause ).
-                description( getDescription() ).
-                resourceService( this.resourceService ).
-                status( this.status.value() ).
-                title( getReasonPhrase() );
+            builder = new ErrorPageRichBuilder().cause( this.cause )
+                .description( getDescription() )
+                .resourceService( this.resourceService )
+                .status( this.status.value() )
+                .title( getReasonPhrase() );
         }
         else
         {
@@ -139,22 +132,16 @@ final class ExceptionInfo
         }
 
         final String html = builder.build();
-        return PortalResponse.create().
-            status( this.status ).
-            body( html ).
-            contentType( MediaType.HTML_UTF_8 ).
-            build();
+        return PortalResponse.create().status( this.status ).body( html ).contentType( MediaType.HTML_UTF_8 ).build();
     }
 
     private String generateLogoutUrl( final WebRequest req )
     {
-        final PortalRequest portalRequest = req instanceof PortalRequest ? (PortalRequest) req : new PortalRequest( req );
-        final VirtualHost vhost = VirtualHostHelper.getVirtualHost( portalRequest.getRawRequest() );
-        return this.portalUrlService.identityUrl( new IdentityUrlParams().
-            portalRequest( portalRequest ).
-            idProviderFunction( "logout" ).
-            redirectionUrl( vhost.getSource() ).
-            idProviderKey( ContextAccessor.current().getAuthInfo().getUser().getKey().getIdProviderKey() ) );
+        final VirtualHost vhost = VirtualHostHelper.getVirtualHost( req.getRawRequest() );
+        return this.portalUrlService.identityUrl( new IdentityUrlParams().idProviderFunction( "logout" )
+                                                      .redirectionUrl( vhost.getSource() )
+                                                      .idProviderKey(
+                                                          ContextAccessor.current().getAuthInfo().getUser().getKey().getIdProviderKey() ) );
     }
 
     private String getDescription()
