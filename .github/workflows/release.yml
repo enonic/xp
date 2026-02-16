@@ -5,6 +5,10 @@ on:
     tags:
       - 'v*'
 
+permissions:
+  id-token: write  # Required for npm publishing
+  contents: write
+
 concurrency: release
 
 jobs:
@@ -67,6 +71,32 @@ jobs:
 
       - name: Publish
         run: ./gradlew publish -PrepoKey=${{ steps.publish_vars.outputs.repo }} -PrepoUser=ci -PrepoPassword=${{ secrets.ARTIFACTORY_PASSWORD }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Prepare npm packages
+        run: ./gradlew :lib:prepareAllToPublish
+
+      - name: Set npm tag
+        run: |
+          VERSION=${{ steps.publish_vars.outputs.version }}
+          if [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "NPM_TAG=latest" >> $GITHUB_ENV
+          else
+            echo "NPM_TAG=beta" >> $GITHUB_ENV
+          fi
+
+      - name: Publish to npm
+        run: |
+          for dir in modules/lib/build/npm modules/lib/core/build/npm modules/lib/lib-*/build/npm; do
+            if [ -d "$dir" ]; then
+              echo "Publishing $dir"
+              npm publish "$dir" --provenance --access public --tag $NPM_TAG
+            fi
+          done
 
       - name: Download changelog
         uses: actions/download-artifact@v6
