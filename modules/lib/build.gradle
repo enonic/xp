@@ -120,25 +120,13 @@ tasks.register( 'prepareToPublish' ) {
     dependsOn tasks.named( 'prepareCoreToPublish' )
 }
 
-tasks.register( 'publishGlobalToNpm', NpmTask ) {
-    dependsOn tasks.named( 'prepareGlobalToPublish' )
-    dependsOn tasks.named( 'npmInstall' )
-    onlyIf { !version.endsWith( '-SNAPSHOT' ) }
-    args = ['publish']
-    workingDir = tasks.named( 'prepareGlobalToPublish' ).get().destinationDir
-}
-
-tasks.register( 'publishCoreToNpm', NpmTask ) {
-    dependsOn tasks.named( 'prepareCoreToPublish' )
-    dependsOn tasks.named( 'npmInstall' )
-    onlyIf { !version.endsWith( '-SNAPSHOT' ) }
-    args = ['publish']
-    workingDir = tasks.named( 'prepareCoreToPublish' ).get().destinationDir
-}
-
-tasks.register( 'publish' ) {
-    dependsOn tasks.named( 'publishGlobalToNpm' )
-    dependsOn tasks.named( 'publishCoreToNpm' )
+tasks.register( 'prepareAllToPublish' ) {
+    dependsOn tasks.named( 'prepareToPublish' )
+    subprojects.each { sub ->
+        sub.afterEvaluate {
+            dependsOn sub.tasks.named( 'prepareToPublish' )
+        }
+    }
 }
 
 tasks.register( 'packageJsdoc', Jar ) {
@@ -209,17 +197,6 @@ subprojects { p ->
             rename '.+', 'package.json'
         }
     }
-
-    tasks.register( 'publishToNpm', NpmTask ) {
-        dependsOn tasks.named( 'prepareToPublish' )
-        onlyIf { !version.endsWith( '-SNAPSHOT' ) }
-        args = ['publish']
-        workingDir = tasks.named( 'prepareToPublish' ).get().destinationDir
-    }
-
-    publish.dependsOn tasks.named( 'publishToNpm' )
-
-    check.dependsOn parent.tasks.named( 'lint' )
 
     jar {
         exclude '**/*.ts'
