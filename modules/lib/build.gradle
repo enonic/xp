@@ -126,27 +126,17 @@ task prepareCoreToPublish( type: Copy ) {
 
 task prepareToPublish( dependsOn: [prepareGlobalToPublish, prepareCoreToPublish] ) {}
 
-task publishGlobalToNpm( type: NpmTask, dependsOn: [prepareGlobalToPublish, npmInstall] ) {
-    onlyIf { !version.endsWith( '-SNAPSHOT' ) }
-    args = ['publish']
-    workingDir = prepareGlobalToPublish.destinationDir
+task prepareAllToPublish( dependsOn: prepareToPublish ) {
+    subprojects.each { sub ->
+        sub.afterEvaluate {
+            dependsOn sub.tasks.named( 'prepareToPublish' )
+        }
+    }
 }
-
-task publishCoreToNpm( type: NpmTask, dependsOn: [prepareCoreToPublish, npmInstall] ) {
-    onlyIf { !version.endsWith( '-SNAPSHOT' ) }
-    args = ['publish']
-    workingDir = prepareCoreToPublish.destinationDir
-}
-
-task publishToNpm( dependsOn: [publishGlobalToNpm, publishCoreToNpm] ) {}
 
 task packageJsdoc( type: Jar, dependsOn: jsdoc ) {
     from "$buildDir/resources/main/jsdoc"
     archiveClassifier = 'jsdoc'
-}
-
-task publish {
-    dependsOn publishToNpm
 }
 
 artifacts {
@@ -212,14 +202,6 @@ subprojects {
             rename '.+', 'package.json'
         }
     }
-
-    task publishToNpm( type: NpmTask, dependsOn: prepareToPublish ) {
-        onlyIf { !version.endsWith( '-SNAPSHOT' ) }
-        args = ['publish']
-        workingDir = prepareToPublish.destinationDir
-    }
-
-    publish.dependsOn publishToNpm
 
     check.dependsOn parent.lint
 
