@@ -32,6 +32,8 @@ public class VacuumServiceImpl
 {
     private static final Logger LOG = LoggerFactory.getLogger( VacuumServiceImpl.class );
 
+    private static final Set<String> DEFAULT_VACUUM_TASKS = Set.of( "VersionTableVacuumTask" );
+
     private final AtomicSortedList<VacuumTask> allTasks = new AtomicSortedList<>( Comparator.comparingInt( VacuumTask::order ) );
 
     private final SnapshotService snapshotService;
@@ -115,10 +117,8 @@ public class VacuumServiceImpl
     private List<VacuumTask> getTasksToExecute( final VacuumParameters params )
     {
         final List<VacuumTask> allTasksSnapshot = this.allTasks.snapshot();
-        final Set<String> taskNames = params.getTaskNames();
-        return taskNames == null
-            ? allTasksSnapshot
-            : allTasksSnapshot.stream().filter( t -> taskNames.contains( t.name() ) ).collect( Collectors.toUnmodifiableList() );
+        final Set<String> taskNames = params.getTaskNames().isEmpty() ? DEFAULT_VACUUM_TASKS : params.getTaskNames();
+        return allTasksSnapshot.stream().filter( t -> taskNames.contains( t.name() ) ).collect( Collectors.toUnmodifiableList() );
     }
 
     @SuppressWarnings("WeakerAccess")
@@ -128,6 +128,7 @@ public class VacuumServiceImpl
         this.allTasks.add( task );
     }
 
+    @SuppressWarnings("unused")
     public void removeTask( final VacuumTask task )
     {
         this.allTasks.remove( task );

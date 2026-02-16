@@ -102,8 +102,7 @@ public class VacuumTaskHandlerTest
         verify( vacuumService, times( 1 ) ).vacuum( paramsCaptor.capture() );
 
         assertNull( paramsCaptor.getValue().getAgeThreshold() );
-        assertThat( paramsCaptor.getValue()
-                        .getTaskNames()).containsExactly( "VersionTableVacuumTask" );
+        assertThat( paramsCaptor.getValue().getTaskNames() ).isEmpty();
         assertNotNull( paramsCaptor.getValue().getVacuumListener() );
     }
 }
