@@ -23,7 +23,7 @@ public class VacuumTaskHandler
 {
     private static final ObjectMapper MAPPER = ObjectMapperHelper.create();
 
-    private static final List<String> DEFAULT_VACUUM_TASKS = List.of( "VersionTableVacuumTask", "SnapshotsVacuumTask" );
+    private static final List<String> DEFAULT_VACUUM_TASKS = List.of( "VersionTableVacuumTask" );
 
     private VacuumService vacuumService;
 

@@ -54,6 +54,12 @@ public class VacuumServiceImplTest
                 return "ATask";
             }
 
+            @Override
+            public boolean deletesBlobs()
+            {
+                return false;
+            }
+
         } );
 
         service.addTask( new VacuumTask()
@@ -74,6 +80,12 @@ public class VacuumServiceImplTest
             public String name()
             {
                 return "AnotherTask";
+            }
+
+            @Override
+            public boolean deletesBlobs()
+            {
+                return false;
             }
         } );
 

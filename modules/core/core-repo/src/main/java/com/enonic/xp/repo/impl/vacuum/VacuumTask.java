@@ -9,4 +9,6 @@ public interface VacuumTask
     int order();
 
     String name();
+
+    boolean deletesBlobs();
 }
