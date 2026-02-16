@@ -18,7 +18,7 @@ public final class VacuumParameters
     {
         this.vacuumListener = builder.vacuumListener;
         this.ageThreshold = builder.ageThreshold == null ? null : builder.ageThreshold;
-        this.taskNames = builder.taskNames == null ? null : ImmutableSet.copyOf( builder.taskNames );
+        this.taskNames = builder.taskNames == null ? ImmutableSet.of() : ImmutableSet.copyOf( builder.taskNames );
     }
 
     public static Builder create()

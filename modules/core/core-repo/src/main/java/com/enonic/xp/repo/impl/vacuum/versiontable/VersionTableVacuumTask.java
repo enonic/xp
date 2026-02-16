@@ -85,4 +85,10 @@ public class VersionTableVacuumTask
     {
         return NAME;
     }
+
+    @Override
+    public boolean deletesBlobs()
+    {
+        return false;
+    }
 }

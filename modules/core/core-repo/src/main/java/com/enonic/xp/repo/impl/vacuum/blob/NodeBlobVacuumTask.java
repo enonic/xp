@@ -57,4 +57,10 @@ public class NodeBlobVacuumTask
     {
         return NAME;
     }
+
+    @Override
+    public boolean deletesBlobs()
+    {
+        return true;
+    }
 }

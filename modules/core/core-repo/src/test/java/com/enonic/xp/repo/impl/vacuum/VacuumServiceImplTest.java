@@ -1,5 +1,7 @@
 package com.enonic.xp.repo.impl.vacuum;
 
+import java.util.Set;
+
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.blob.BlobStore;
@@ -17,16 +19,15 @@ import com.enonic.xp.vacuum.VacuumTaskResult;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class VacuumServiceImplTest
 {
-
     @Test
     void runTasks()
-        throws Exception
     {
         final SnapshotService snapshotService = mock( SnapshotService.class );
         when( snapshotService.delete( mock( DeleteSnapshotParams.class ) ) ).thenReturn( DeleteSnapshotsResult.create().build() );
@@ -34,54 +35,15 @@ class VacuumServiceImplTest
         final VacuumServiceImpl service = new VacuumServiceImpl( snapshotService );
         service.activate( mock( VacuumConfig.class, i -> i.getMethod().getDefaultValue() ) );
 
-        service.addTask( new VacuumTask()
-        {
-            @Override
-            public VacuumTaskResult execute( final VacuumTaskParams params )
-            {
-                return VacuumTaskResult.create().processed().build();
-            }
+        service.addTask( createTask( "ATask", 10, false ) );
+        service.addTask( createTask( "AnotherTask", 0, false ) );
 
-            @Override
-            public int order()
-            {
-                return 10;
-            }
-
-            @Override
-            public String name()
-            {
-                return "ATask";
-            }
-
-        } );
-
-        service.addTask( new VacuumTask()
-        {
-            @Override
-            public VacuumTaskResult execute( final VacuumTaskParams params )
-            {
-                return VacuumTaskResult.create().failed().build();
-            }
-
-            @Override
-            public int order()
-            {
-                return 0;
-            }
-
-            @Override
-            public String name()
-            {
-                return "AnotherTask";
-            }
-        } );
-
-        final VacuumResult result = NodeHelper.runAsAdmin( () -> service.vacuum( VacuumParameters.create().build() ) );
+        final VacuumResult result = NodeHelper.runAsAdmin(
+            () -> service.vacuum( VacuumParameters.create().taskNames( Set.of( "ATask", "AnotherTask" ) ).build() ) );
 
         assertEquals( 2, result.getResults().size() );
 
-        verify( snapshotService, times( 0 ) ).delete( any( DeleteSnapshotParams.class ) );
+        verify( snapshotService, never() ).delete( any( DeleteSnapshotParams.class ) );
     }
 
     @Test
@@ -99,11 +61,30 @@ class VacuumServiceImplTest
         service.addTask( new BinaryBlobVacuumTask( nodeService, blobStore ) );
         service.addTask( new NodeBlobVacuumTask( nodeService, blobStore ) );
 
-        final VacuumResult result = NodeHelper.runAsAdmin( () -> service.vacuum( VacuumParameters.create().build() ) );
+        final VacuumResult result = NodeHelper.runAsAdmin(
+            () -> service.vacuum( VacuumParameters.create().taskNames( Set.of( "BinaryBlobVacuumTask", "NodeBlobVacuumTask" ) ).build() ) );
 
         assertEquals( 2, result.getResults().size() );
 
         verify( snapshotService, times( 1 ) ).delete( any( DeleteSnapshotParams.class ) );
+    }
+
+    @Test
+    void defaultTaskNames_onlyVersionTableVacuumTask()
+    {
+        final SnapshotService snapshotService = mock( SnapshotService.class );
+
+        final VacuumServiceImpl service = new VacuumServiceImpl( snapshotService );
+        service.activate( mock( VacuumConfig.class, i -> i.getMethod().getDefaultValue() ) );
+
+        service.addTask( createTask( "VersionTableVacuumTask", 0, false ) );
+        service.addTask( createTask( "BinaryBlobVacuumTask", 10, true ) );
+
+        final VacuumResult result = NodeHelper.runAsAdmin( () -> service.vacuum( VacuumParameters.create().build() ) );
+
+        assertEquals( 1, result.getResults().size() );
+
+        verify( snapshotService, never() ).delete( any( DeleteSnapshotParams.class ) );
     }
 
     @Test
@@ -122,10 +103,41 @@ class VacuumServiceImplTest
         service.addTask( new BinaryBlobVacuumTask( nodeService, blobStore ) );
         service.addTask( new NodeBlobVacuumTask( nodeService, blobStore ) );
 
-        final VacuumResult result = NodeHelper.runAsAdmin( () -> service.vacuum( VacuumParameters.create().build() ) );
+        final VacuumResult result = NodeHelper.runAsAdmin(
+            () -> service.vacuum( VacuumParameters.create().taskNames( Set.of( "BinaryBlobVacuumTask", "NodeBlobVacuumTask" ) ).build() ) );
 
         assertEquals( 2, result.getResults().size() );
 
         verify( snapshotService, times( 1 ) ).delete( any( DeleteSnapshotParams.class ) );
+    }
+
+    private static VacuumTask createTask( final String name, final int order, final boolean deletesBlobs )
+    {
+        return new VacuumTask()
+        {
+            @Override
+            public VacuumTaskResult execute( final VacuumTaskParams params )
+            {
+                return VacuumTaskResult.create().processed().build();
+            }
+
+            @Override
+            public int order()
+            {
+                return order;
+            }
+
+            @Override
+            public String name()
+            {
+                return name;
+            }
+
+            @Override
+            public boolean deletesBlobs()
+            {
+                return deletesBlobs;
+            }
+        };
     }
 }

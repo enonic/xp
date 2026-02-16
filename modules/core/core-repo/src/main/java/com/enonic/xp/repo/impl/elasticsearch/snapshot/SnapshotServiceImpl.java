@@ -81,6 +81,8 @@ public class SnapshotServiceImpl
     @Override
     public SnapshotResult snapshot( final SnapshotParams snapshotParams )
     {
+        checkSnapshotRepository();
+
         return NodeHelper.runAsAdmin( () -> doSnapshot( snapshotParams ) );
     }
 
@@ -107,8 +109,6 @@ public class SnapshotServiceImpl
 
     private SnapshotResult doSnapshot( final SnapshotParams snapshotParams )
     {
-        checkSnapshotRepository();
-
         final RepositoryIds repositoriesToSnapshot = resolveRepositoriesIdsToSnapshot( snapshotParams.getRepositoryId() );
 
         LOG.debug( "Creating snapshot with name {}, Repositories to snapshot: {}", snapshotParams.getSnapshotName(),
@@ -130,13 +130,13 @@ public class SnapshotServiceImpl
     @Override
     public RestoreResult restore( final RestoreParams restoreParams )
     {
+        checkSnapshotRepository();
+
         return NodeHelper.runAsAdmin( () -> doRestore( restoreParams ) );
     }
 
     private RestoreResult doRestore( final RestoreParams restoreParams )
     {
-        checkSnapshotRepository();
-
         final String snapshotName = restoreParams.isLatest() ? determineNameOfLatestSnapshot() : restoreParams.getSnapshotName();
 
         validateSnapshot( snapshotName );
@@ -208,13 +208,13 @@ public class SnapshotServiceImpl
     @Override
     public SnapshotResults list()
     {
+        checkSnapshotRepository();
+
         return doListSnapshots();
     }
 
     private SnapshotResults doListSnapshots()
     {
-        checkSnapshotRepository();
-
         final GetSnapshotsRequest getSnapshotsRequest = new GetSnapshotsRequest( SNAPSHOT_REPOSITORY_NAME );
 
         final GetSnapshotsResponse getSnapshotsResponse = this.client.admin().cluster().getSnapshots( getSnapshotsRequest ).actionGet();
@@ -225,7 +225,9 @@ public class SnapshotServiceImpl
     @Override
     public DeleteSnapshotsResult delete( final DeleteSnapshotParams params )
     {
-        return NodeHelper.runAsAdmin( () -> doDelete( params ) );
+        checkSnapshotRepository();
+
+        return doDelete( params );
     }
 
     private void validateSnapshot( final String snapshotName )
@@ -359,21 +361,21 @@ public class SnapshotServiceImpl
 
     private void deleteByBefore( final DeleteSnapshotsResult.Builder builder, final Instant before )
     {
-        final SnapshotResults snapshotResults = doListSnapshots();
+        final SnapshotResults snapshots = doListSnapshots();
 
-        for ( final SnapshotResult snapshotResult : snapshotResults )
+        for ( final SnapshotResult snapshot : snapshots )
         {
-            if ( snapshotResult.getTimestamp().isBefore( before ) )
+            if ( !snapshot.getState().equals( SnapshotResult.State.IN_PROGRESS ) && snapshot.getTimestamp().isBefore( before ) )
             {
                 try
                 {
-                    doDeleteSnapshot( snapshotResult.getName() );
-                    builder.add( snapshotResult.getName() );
+                    doDeleteSnapshot( snapshot.getName() );
+                    builder.add( snapshot.getName() );
                 }
                 catch ( Exception e )
                 {
-                    LOG.error( "Snapshot delete failed: {}", snapshotResult.getName(), e );
-                    builder.addFailed( snapshotResult.getName() );
+                    LOG.error( "Snapshot delete failed: {}", snapshot.getName(), e );
+                    builder.addFailed( snapshot.getName() );
                 }
             }
         }
@@ -399,8 +401,6 @@ public class SnapshotServiceImpl
     private void doDeleteSnapshot( final String snapshotName )
     {
         LOG.debug( "Deleting snapshot: {}", snapshotName );
-
-        checkSnapshotRepository();
 
         final DeleteSnapshotRequest deleteSnapshotRequest = new DeleteSnapshotRequest( SNAPSHOT_REPOSITORY_NAME, snapshotName );
 

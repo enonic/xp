@@ -100,9 +100,7 @@ class VacuumTaskHandlerTest
         verify( vacuumService, times( 1 ) ).vacuum( paramsCaptor.capture() );
 
         assertNull( paramsCaptor.getValue().getAgeThreshold() );
-        assertEquals( 2, paramsCaptor.getValue().getTaskNames().size() );
-        assertThat( paramsCaptor.getValue()
-                        .getTaskNames()).containsExactlyInAnyOrder( "VersionTableVacuumTask", "SnapshotsVacuumTask" );
+        assertThat( paramsCaptor.getValue().getTaskNames() ).isEmpty();
         assertNotNull( paramsCaptor.getValue().getVacuumListener() );
     }
 }

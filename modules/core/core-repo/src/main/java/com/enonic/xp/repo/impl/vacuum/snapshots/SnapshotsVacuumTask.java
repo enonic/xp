@@ -57,4 +57,10 @@ public class SnapshotsVacuumTask
     {
         return NAME;
     }
+
+    @Override
+    public boolean deletesBlobs()
+    {
+        return false;
+    }
 }
