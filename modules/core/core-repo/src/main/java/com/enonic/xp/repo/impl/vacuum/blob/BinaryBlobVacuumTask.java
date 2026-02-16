@@ -58,4 +58,9 @@ public class BinaryBlobVacuumTask
         return NAME;
     }
 
+    @Override
+    public boolean deletesBlobs()
+    {
+        return true;
+    }
 }

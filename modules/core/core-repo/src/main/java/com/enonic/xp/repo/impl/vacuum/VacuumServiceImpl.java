@@ -2,16 +2,22 @@ package com.enonic.xp.repo.impl.vacuum;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.core.internal.concurrent.AtomicSortedList;
 import com.enonic.xp.node.DeleteSnapshotParams;
 import com.enonic.xp.repo.impl.SecurityHelper;
 import com.enonic.xp.snapshot.SnapshotService;
@@ -26,11 +32,13 @@ public class VacuumServiceImpl
 {
     private static final Logger LOG = LoggerFactory.getLogger( VacuumServiceImpl.class );
 
-    private final VacuumTasks tasks = new VacuumTasks();
+    private static final Set<String> DEFAULT_VACUUM_TASKS = Set.of( "VersionTableVacuumTask" );
+
+    private final AtomicSortedList<VacuumTask> allTasks = new AtomicSortedList<>( Comparator.comparingInt( VacuumTask::order ) );
 
     private final SnapshotService snapshotService;
 
-    private VacuumConfig config;
+    private volatile VacuumConfig config;
 
     @Activate
     public VacuumServiceImpl( @Reference final SnapshotService snapshotService )
@@ -39,6 +47,7 @@ public class VacuumServiceImpl
     }
 
     @Activate
+    @Modified
     public void activate( final VacuumConfig config )
     {
         this.config = config;
@@ -59,20 +68,21 @@ public class VacuumServiceImpl
     {
         final Instant vacuumStartedAt = Instant.now();
 
-        //Retrieves the tasks to execute
-        VacuumTasks tasks = getTasks( params );
-        LOG.info( "Starting vacuum. Running " + tasks.size() + " tasks..." );
+        final List<VacuumTask> tasks = getTasksToExecute( params );
+        LOG.info( "Starting vacuum. Running {} tasks...", tasks.stream().map( VacuumTask::name ).collect( Collectors.toList() ) );
+
         if ( params.getVacuumListener() != null )
         {
             params.getVacuumListener().vacuumBegin( tasks.size() );
         }
 
-        final long ageThreshold = getAgeThresholdMs( params );
+        final long ageThreshold =
+            Objects.requireNonNullElseGet( params.getAgeThreshold(), () -> Duration.parse( config.ageThreshold() ) ).toMillis();
 
         final VacuumResult.Builder taskResults = VacuumResult.create();
         for ( final VacuumTask task : tasks )
         {
-            LOG.info( "Running vacuum task [" + task.name() + "]..." );
+            LOG.info( "Running vacuum task [{}]...", task.name() );
 
             final VacuumTaskParams taskParams = VacuumTaskParams.create()
                 .listener( params.getVacuumListener() )
@@ -82,72 +92,45 @@ public class VacuumServiceImpl
                 .build();
             final VacuumTaskResult taskResult = task.execute( taskParams );
 
-            LOG.info( task.name() + " : " + taskResult.toString() );
+            LOG.info( "Vacuum task [{}] completed: {}", task.name(), taskResult );
             taskResults.add( taskResult );
-            LOG.info( "Vacuum task [" + task.name() + "] done" );
         }
 
-        deleteSnapshotsIfNecessary( vacuumStartedAt );
-
-        LOG.info( "Vacuum done" );
-
-        return taskResults.build();
-    }
-
-    private void deleteSnapshotsIfNecessary( final Instant startedAt )
-    {
-        if ( tasks.hasTaskByName( "SegmentVacuumTask" ) || tasks.hasTaskByName( "BinaryBlobVacuumTask" ) ||
-            tasks.hasTaskByName( "NodeBlobVacuumTask" ) )
+        if ( tasks.stream().anyMatch( VacuumTask::deletesBlobs ) )
         {
+            LOG.info( "Deleting all snapshots because they are obsolete" );
             try
             {
-                snapshotService.delete( DeleteSnapshotParams.create().before( startedAt ).build() );
+                snapshotService.delete( DeleteSnapshotParams.create().before( Instant.now() ).build() );
             }
             catch ( Exception e )
             {
                 LOG.error( "Failed to delete snapshots", e );
             }
         }
+
+        LOG.info( "Vacuum done" );
+
+        return taskResults.build();
     }
 
-    private VacuumTasks getTasks( final VacuumParameters params )
+    private List<VacuumTask> getTasksToExecute( final VacuumParameters params )
     {
-        final Set<String> taskNames = params.getTaskNames();
-        if ( taskNames == null )
-        {
-            return this.tasks;
-        }
-
-        final VacuumTasks filteredTasks = new VacuumTasks();
-        for ( VacuumTask task : this.tasks )
-        {
-            if ( taskNames.contains( task.name() ) )
-            {
-                filteredTasks.add( task );
-            }
-        }
-        return filteredTasks;
-    }
-
-    private long getAgeThresholdMs( final VacuumParameters params )
-    {
-        final Duration ageThreshold = params.getAgeThreshold();
-        if ( ageThreshold != null )
-        {
-            return ageThreshold.toMillis();
-        }
-        return Duration.parse( config.ageThreshold() ).toMillis();
+        final List<VacuumTask> allTasksSnapshot = this.allTasks.snapshot();
+        final Set<String> taskNames = params.getTaskNames().isEmpty() ? DEFAULT_VACUUM_TASKS : params.getTaskNames();
+        return allTasksSnapshot.stream().filter( t -> taskNames.contains( t.name() ) ).collect( Collectors.toUnmodifiableList() );
     }
 
     @SuppressWarnings("WeakerAccess")
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
     public void addTask( final VacuumTask task )
     {
-        this.tasks.add( task );
+        this.allTasks.add( task );
     }
 
+    @SuppressWarnings("unused")
     public void removeTask( final VacuumTask task )
     {
-        this.tasks.remove( task );
+        this.allTasks.remove( task );
     }
 }

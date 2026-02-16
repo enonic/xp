@@ -37,6 +37,12 @@ public class SegmentVacuumTask
     }
 
     @Override
+    public boolean deletesBlobs()
+    {
+        return true;
+    }
+
+    @Override
     public VacuumTaskResult execute( final VacuumTaskParams params )
     {
         if (params.hasListener()) {

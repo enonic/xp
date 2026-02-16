@@ -23,8 +23,6 @@ public class VacuumTaskHandler
 {
     private static final ObjectMapper MAPPER = ObjectMapperHelper.create();
 
-    private static final List<String> DEFAULT_VACUUM_TASKS = List.of( "VersionTableVacuumTask", "SnapshotsVacuumTask" );
-
     private VacuumService vacuumService;
 
     private TaskService taskService;
@@ -58,7 +56,7 @@ public class VacuumTaskHandler
 
         final VacuumResult result = vacuumService.vacuum( VacuumParameters.create().
             ageThreshold( ageThreshold != null ? Duration.parse( ageThreshold ) : null ).
-            taskNames( tasks == null || tasks.isEmpty() ? DEFAULT_VACUUM_TASKS : tasks ).
+            taskNames( tasks ).
             vacuumListener( new VacuumListenerImpl( progressReporter ) ).
             build() );
 
