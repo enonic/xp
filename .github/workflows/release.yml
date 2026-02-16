@@ -40,6 +40,10 @@ jobs:
 
     needs: release_notes
 
+    permissions:
+      contents: write
+      id-token: write
+
     steps:
       - uses: actions/checkout@v5
 
@@ -60,9 +64,6 @@ jobs:
       - name: Verify release version
         if: steps.publish_vars.outputs.release != 'true'
         run: exit 1
-
-      - name: Set NPM token
-        run: npm config set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }}
 
       - name: Publish
         run: ./gradlew publish -PrepoKey=${{ steps.publish_vars.outputs.repo }} -PrepoUser=ci -PrepoPassword=${{ secrets.ARTIFACTORY_PASSWORD }}
