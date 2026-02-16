@@ -122,8 +122,11 @@ tasks.register( 'prepareToPublish' ) {
 
 tasks.register( 'prepareAllToPublish' ) {
     dependsOn tasks.named( 'prepareToPublish' )
-    subprojects.each { sub ->
-        sub.afterEvaluate {
+}
+
+subprojects.each { sub ->
+    sub.afterEvaluate {
+        tasks.named( 'prepareAllToPublish' ) {
             dependsOn sub.tasks.named( 'prepareToPublish' )
         }
     }
