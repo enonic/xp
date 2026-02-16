@@ -10,6 +10,10 @@ node {
 
 def coreDir = "$projectDir/core/"
 
+def versionString = version.toString()
+def npmPublishTag = versionString.contains( '-' ) && !versionString.endsWith( '-SNAPSHOT' ) ? 'next' : 'latest'
+def npmPublishArgs = ['publish', '--tag', npmPublishTag]
+
 /* Clean */
 clean {
     delete "$coreDir/build"
@@ -128,13 +132,13 @@ task prepareToPublish( dependsOn: [prepareGlobalToPublish, prepareCoreToPublish]
 
 task publishGlobalToNpm( type: NpmTask, dependsOn: [prepareGlobalToPublish, npmInstall] ) {
     onlyIf { !version.endsWith( '-SNAPSHOT' ) }
-    args = ['publish']
+    args = npmPublishArgs
     workingDir = prepareGlobalToPublish.destinationDir
 }
 
 task publishCoreToNpm( type: NpmTask, dependsOn: [prepareCoreToPublish, npmInstall] ) {
     onlyIf { !version.endsWith( '-SNAPSHOT' ) }
-    args = ['publish']
+    args = npmPublishArgs
     workingDir = prepareCoreToPublish.destinationDir
 }
 
@@ -215,7 +219,7 @@ subprojects {
 
     task publishToNpm( type: NpmTask, dependsOn: prepareToPublish ) {
         onlyIf { !version.endsWith( '-SNAPSHOT' ) }
-        args = ['publish']
+        args = npmPublishArgs
         workingDir = prepareToPublish.destinationDir
     }
 
