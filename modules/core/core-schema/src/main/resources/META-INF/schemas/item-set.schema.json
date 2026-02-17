@@ -8,6 +8,9 @@
     {
       "type": "object",
       "properties": {
+        "name": {
+          "type": "string"
+        },
         "label": {
           "$ref": "https://json-schema.enonic.com/8.0.0/localized-text.schema.json"
         },
