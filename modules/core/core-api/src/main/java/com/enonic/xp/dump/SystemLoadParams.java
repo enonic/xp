@@ -23,7 +23,7 @@ public final class SystemLoadParams
         this.listener = builder.listener;
         this.upgrade = builder.upgrade;
         this.archive = builder.archive;
-        this.repositories = builder.repositories;
+        this.repositories = builder.repositories != null ? builder.repositories : RepositoryIds.empty();
     }
 
     public String getDumpName()

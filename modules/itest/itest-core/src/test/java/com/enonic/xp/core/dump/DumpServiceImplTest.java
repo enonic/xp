@@ -76,6 +76,7 @@ import com.enonic.xp.repo.impl.dump.DumpConstants;
 import com.enonic.xp.repo.impl.dump.DumpServiceImpl;
 import com.enonic.xp.repo.impl.dump.FileUtils;
 import com.enonic.xp.repo.impl.dump.RepoDumpException;
+import com.enonic.xp.repo.impl.dump.RepoLoadException;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.repo.impl.dump.reader.FileDumpReader;
 import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre5.Pre5ContentConstants;
@@ -1225,6 +1226,20 @@ class DumpServiceImplTest
 
         // Only repo-a branches should be counted (1 branch: master), not repo-b
         Mockito.verify( listener ).totalBranches( 1L );
+    }
+
+    @Test
+    void full_load_rejects_partial_dump()
+    {
+        NodeHelper.runAsAdmin( () -> doCreateRepository( RepositoryId.from( "my-repo" ), false ) );
+
+        NodeHelper.runAsAdmin( () -> doDump( SystemDumpParams.create()
+                                                 .dumpName( "partialDumpFullLoadTest" )
+                                                 .repositories( RepositoryIds.from( RepositoryId.from( "my-repo" ) ) )
+                                                 .build() ) );
+
+        assertThrows( RepoLoadException.class, () -> NodeHelper.runAsAdmin( () -> this.dumpService.load(
+            SystemLoadParams.create().dumpName( "partialDumpFullLoadTest" ).includeVersions( true ).build() ) ) );
     }
 
     @Test

@@ -1,5 +1,7 @@
 package com.enonic.xp.impl.server.rest.model;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class SystemDumpRequestJson
@@ -12,15 +14,19 @@ public class SystemDumpRequestJson
 
     private final Integer maxVersions;
 
+    private final List<String> repositories;
+
     public SystemDumpRequestJson( @JsonProperty("name") final String name, //
                                   @JsonProperty("includeVersions") final boolean includeVersions, //
                                   @JsonProperty("maxAge") final Integer maxAge, //
-                                  @JsonProperty("maxVersions") final Integer maxVersions )
+                                  @JsonProperty("maxVersions") final Integer maxVersions, //
+                                  @JsonProperty("repositories") final List<String> repositories )
     {
         this.name = name;
         this.maxAge = maxAge;
         this.maxVersions = maxVersions;
         this.includeVersions = includeVersions;
+        this.repositories = repositories;
     }
 
     public String getName()
@@ -41,5 +47,10 @@ public class SystemDumpRequestJson
     public Integer getMaxVersions()
     {
         return maxVersions;
+    }
+
+    public List<String> getRepositories()
+    {
+        return repositories;
     }
 }

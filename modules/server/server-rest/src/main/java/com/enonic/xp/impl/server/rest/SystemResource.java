@@ -50,11 +50,16 @@ public final class SystemResource
     @Path("dump")
     public TaskResultJson dump( final SystemDumpRequestJson params )
     {
+        final RepositoryIds repositories = params.getRepositories() != null ? params.getRepositories()
+            .stream()
+            .map( RepositoryId::from )
+            .collect( RepositoryIds.collector() ) : RepositoryIds.empty();
+
         TaskId taskId = DumpRunnableTask.create()
             .name( params.getName() )
             .includeVersions( params.isIncludeVersions() )
             .maxAge( params.getMaxAge() )
-            .maxVersions( params.getMaxVersions() )
+            .maxVersions( params.getMaxVersions() ).repositories( repositories )
             .taskService( taskService )
             .dumpService( dumpService )
             .build()
@@ -68,8 +73,7 @@ public final class SystemResource
     {
         final RepositoryIds repositories = params.getRepositories() != null ? params.getRepositories()
             .stream()
-            .map( RepositoryId::from )
-            .collect( RepositoryIds.collector() ) : null;
+            .map( RepositoryId::from ).collect( RepositoryIds.collector() ) : RepositoryIds.empty();
 
         final LoadRunnableTask task = LoadRunnableTask.create()
             .name( params.getName() )
