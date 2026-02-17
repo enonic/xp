@@ -18,7 +18,7 @@ final class FormItemsJsonSchemaGenerator
     private static final List<String> PREDEFINED_SCHEMA_NAMES =
         List.of( "field-set", "item-set", "form-fragment", "option-set", "textline", "time", "tag", "textarea", "radiobutton",
                  "mediaselector", "long", "instant", "imageselector", "htmlarea", "geopoint", "double", "datetime", "date",
-                 "customselector", "contenttypefilter", "contentselector", "combobox", "checkbox", "attachmentuploader" );
+                 "customselector", "contenttypefilter", "contentselector", "combobox", "checkbox", "attachmentuploader", "principalselector" );
 
     private final Set<String> inputTypeSchemaIds;
 

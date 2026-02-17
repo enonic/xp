@@ -6,3 +6,11 @@ form:
     occurrences:
       min: 0
       max: 1
+  - type: "PrincipalSelector"
+    name: "defaultPrincipals"
+    label: "Groups"
+    helpText: "Groups automatically associated to new users."
+    occurrences:
+      min: 0
+      max: 0
+    principalType: "GROUP"
