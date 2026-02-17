@@ -21,6 +21,8 @@ import com.enonic.xp.impl.server.rest.task.LoadRunnableTask;
 import com.enonic.xp.impl.server.rest.task.UpgradeRunnableTask;
 import com.enonic.xp.impl.server.rest.task.VacuumCommand;
 import com.enonic.xp.jaxrs.JaxRsComponent;
+import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.repository.RepositoryIds;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.task.SubmitLocalTaskParams;
 import com.enonic.xp.task.TaskId;
@@ -64,10 +66,14 @@ public final class SystemResource
     @Path("load")
     public TaskResultJson load( final SystemLoadRequestJson params )
     {
+        final RepositoryIds repositories = params.getRepositories() != null ? params.getRepositories()
+            .stream()
+            .map( RepositoryId::from )
+            .collect( RepositoryIds.collector() ) : null;
+
         final LoadRunnableTask task = LoadRunnableTask.create()
             .name( params.getName() )
-            .upgrade( params.isUpgrade() )
-            .archive( params.isArchive() )
+            .upgrade( params.isUpgrade() ).archive( params.isArchive() ).repositories( repositories )
             .taskService( taskService )
             .dumpService( dumpService )
             .build();

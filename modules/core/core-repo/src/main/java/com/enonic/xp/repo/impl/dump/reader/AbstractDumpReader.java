@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -17,7 +19,6 @@ import com.google.common.io.ByteSource;
 import com.google.common.io.LineProcessor;
 
 import com.enonic.xp.blob.BlobKey;
-import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.blob.SegmentLevel;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
@@ -29,19 +30,30 @@ import com.enonic.xp.dump.RepoDumpResult;
 import com.enonic.xp.dump.SystemDumpResult;
 import com.enonic.xp.dump.SystemLoadListener;
 import com.enonic.xp.dump.VersionsLoadResult;
+import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.repo.impl.dump.FilePaths;
 import com.enonic.xp.repo.impl.dump.PathRef;
 import com.enonic.xp.repo.impl.dump.RepoDumpException;
 import com.enonic.xp.repo.impl.dump.RepoLoadException;
 import com.enonic.xp.repo.impl.dump.blobstore.BlobReference;
+import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.repo.impl.dump.serializer.json.DumpMetaJsonSerializer;
+import com.enonic.xp.repo.impl.dump.serializer.json.JsonDumpSerializer;
 import com.enonic.xp.repo.impl.node.NodeConstants;
 import com.enonic.xp.repo.impl.node.json.NodeVersionJsonSerializer;
+import com.enonic.xp.repo.impl.repository.RepositoryEntry;
+import com.enonic.xp.repo.impl.repository.RepositoryNodeTranslator;
+import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryIds;
 import com.enonic.xp.repository.RepositorySegmentUtils;
+import com.enonic.xp.security.SystemConstants;
 
 public abstract class AbstractDumpReader
     implements DumpReader
@@ -193,6 +205,63 @@ public abstract class AbstractDumpReader
     public DumpMeta getDumpMeta()
     {
         return readDumpMetaData();
+    }
+
+    @Override
+    public List<RepositoryEntry> getRepositoryEntries( final RepositoryIds repositoryIds )
+    {
+        final PathRef tarFile = filePaths.branchMetaPath( SystemConstants.SYSTEM_REPO_ID, SystemConstants.BRANCH_SYSTEM );
+
+        if ( !exists( tarFile ) )
+        {
+            return List.of();
+        }
+
+        final JsonDumpSerializer serializer = new JsonDumpSerializer();
+        final NodeIds targetNodeIds =
+            repositoryIds.stream().map( repositoryId -> NodeId.from( repositoryId.toString() ) ).collect( NodeIds.collector() );
+
+        final List<RepositoryEntry> result = new ArrayList<>();
+
+        try (TarArchiveInputStream tarInputStream = openStream( tarFile ))
+        {
+            TarArchiveEntry entry = tarInputStream.getNextEntry();
+            while ( entry != null )
+            {
+                final String content = readEntry( tarInputStream );
+                final BranchDumpEntry branchDumpEntry = serializer.toBranchMetaEntry( content );
+
+                if ( targetNodeIds.contains( branchDumpEntry.getNodeId() ) )
+                {
+                    final NodeVersionKey nodeVersionKey = branchDumpEntry.getMeta().nodeVersionKey();
+                    final NodeStoreVersion nodeStoreVersion = get( SystemConstants.SYSTEM_REPO_ID, nodeVersionKey );
+
+                    final Node node = Node.create()
+                        .id( branchDumpEntry.getNodeId() )
+                        .childOrder( ChildOrder.defaultOrder() )
+                        .data( nodeStoreVersion.data() ).name( branchDumpEntry.getNodeId().toString() )
+                        .parentPath( RepositoryConstants.REPOSITORY_STORAGE_PARENT_PATH )
+                        .permissions( nodeStoreVersion.permissions() )
+                        .attachedBinaries( nodeStoreVersion.attachedBinaries() )
+                        .build();
+
+                    result.add( RepositoryNodeTranslator.toRepository( node ) );
+
+                    if ( result.size() == repositoryIds.getSize() )
+                    {
+                        break;
+                    }
+                }
+
+                entry = tarInputStream.getNextEntry();
+            }
+
+            return result;
+        }
+        catch ( IOException e )
+        {
+            throw new RepoDumpException( "Cannot read repository entry from dump", e );
+        }
     }
 
     @Override

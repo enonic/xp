@@ -305,92 +305,149 @@ public class DumpServiceImpl
                 throw new RepoLoadException( "Cannot load system-dump; dump does not contain system repository" );
             }
 
-            this.eventPublisher.publish( RepositoryEvents.restoreInitialized() );
-
-            if ( params.getListener() != null )
+            if ( params.getRepositories() != null )
             {
-                final long branchesCount = dumpRepositories.
-                    stream().
-                    flatMap( repositoryId -> dumpReader.getBranches( repositoryId ).stream() ).
-                    count();
-
-                params.getListener().totalBranches( branchesCount );
+                doPartialLoad( params, dumpReader, dumpRepositories, results );
             }
-
-            final boolean includeVersions = params.isIncludeVersions();
-
-            final RepositorySettings currentSystemSettings =
-                repositoryEntryService.getRepositoryEntry( SystemConstants.SYSTEM_REPO_ID ).getSettings();
-
-            final Map<RepositoryId, RepositorySettings> repoSettings = SYSTEM_REPO_IDS.stream()
-                .collect(
-                    Collectors.toMap( Function.identity(), repo -> repositoryEntryService.getRepositoryEntry( repo ).getSettings() ) );
-
-            repositoryEntryService.findRepositoryEntryIds().
-                stream().
-                filter( Predicate.isEqual( SystemConstants.SYSTEM_REPO_ID ).
-                    or( SYSTEM_REPO_IDS::contains ).
-                    negate() ).
-                forEach( this::doDeleteRepository );
-
-            SYSTEM_REPO_IDS.forEach( this::doDeleteRepository );
-
-            // system-repo must be deleted last
-            doDeleteRepository( SystemConstants.SYSTEM_REPO_ID );
-
-            // Load system-repo to be able to read repository settings and data
-            initAndLoad( includeVersions, results, dumpReader, SystemConstants.SYSTEM_REPO_ID, currentSystemSettings, null,
-                         AttachedBinaries.empty() );
-
-            // Transient repositories are not part of the dump. Clean them up.
-            final RepositoryIds repositoryEntryIds = repositoryEntryService.findRepositoryEntryIds();
-            for ( RepositoryId repositoryId : repositoryEntryIds )
+            else
             {
-                if ( repositoryEntryService.getRepositoryEntry( repositoryId ).isTransient() )
-                {
-                    repositoryEntryService.deleteRepositoryEntry( repositoryId );
-                }
+                doFullLoad( params, dumpReader, dumpRepositories, results );
             }
-
-            // Load other system repositories
-            SYSTEM_REPO_IDS.forEach( repositoryId -> {
-                if ( dumpRepositories.contains( repositoryId ) )
-                {
-                    // Dump contains repository. Do a normal load.
-                    initAndLoad( includeVersions, results, dumpReader, repositoryId, repoSettings.get( repositoryId ), new PropertyTree(),
-                                 AttachedBinaries.empty() );
-                }
-                else
-                {
-                    // If it is an old dump it does not contain repo. It should be recreated with current settings
-                    initializeRepo( repositoryId, repoSettings.get( repositoryId ), null, AttachedBinaries.empty() );
-                    createRootNode( repositoryId );
-                }
-
-            } );
-
-            // Load non-system repositories
-            dumpRepositories.
-                stream().
-                filter( Predicate.isEqual( SystemConstants.SYSTEM_REPO_ID ).
-                    or( SYSTEM_REPO_IDS::contains ).
-                    negate() ).
-                forEach( repositoryId -> {
-                    final RepositoryEntry repository = repositoryEntryService.getRepositoryEntry( repositoryId );
-                    final RepositorySettings settings = repository.getSettings();
-                    final PropertyTree data = repository.getData();
-                    final AttachedBinaries attachedBinaries = repository.getAttachments();
-                    initAndLoad( includeVersions, results, dumpReader, repositoryId, settings, data, attachedBinaries );
-                } );
-
-            this.eventPublisher.publish( RepositoryEvents.restored() );
-            LOG.info( "Dump Load completed" );
         }
         catch ( IOException e )
         {
             throw new UncheckedIOException( e );
         }
         return results.build();
+    }
+
+    private void doFullLoad( final SystemLoadParams params, final DumpReader dumpReader, final RepositoryIds dumpRepositories,
+                             final SystemLoadResult.Builder results )
+    {
+        this.eventPublisher.publish( RepositoryEvents.restoreInitialized() );
+
+        if ( params.getListener() != null )
+        {
+            final long branchesCount =
+                dumpRepositories.stream().flatMap( repositoryId -> dumpReader.getBranches( repositoryId ).stream() ).count();
+
+            params.getListener().totalBranches( branchesCount );
+        }
+
+        final boolean includeVersions = params.isIncludeVersions();
+
+        final RepositorySettings currentSystemSettings =
+            repositoryEntryService.getRepositoryEntry( SystemConstants.SYSTEM_REPO_ID ).getSettings();
+
+        final Map<RepositoryId, RepositorySettings> repoSettings = SYSTEM_REPO_IDS.stream()
+            .collect( Collectors.toMap( Function.identity(), repo -> repositoryEntryService.getRepositoryEntry( repo ).getSettings() ) );
+
+        repositoryEntryService.findRepositoryEntryIds()
+            .stream()
+            .filter( Predicate.isEqual( SystemConstants.SYSTEM_REPO_ID ).or( SYSTEM_REPO_IDS::contains ).negate() )
+            .forEach( this::doDeleteRepository );
+
+        SYSTEM_REPO_IDS.forEach( this::doDeleteRepository );
+
+        // system-repo must be deleted last
+        doDeleteRepository( SystemConstants.SYSTEM_REPO_ID );
+
+        // Load system-repo to be able to read repository settings and data
+        initAndLoad( includeVersions, results, dumpReader, SystemConstants.SYSTEM_REPO_ID, currentSystemSettings, null,
+                     AttachedBinaries.empty() );
+
+        // Transient repositories are not part of the dump. Clean them up.
+        final RepositoryIds repositoryEntryIds = repositoryEntryService.findRepositoryEntryIds();
+        for ( RepositoryId repositoryId : repositoryEntryIds )
+        {
+            if ( repositoryEntryService.getRepositoryEntry( repositoryId ).isTransient() )
+            {
+                repositoryEntryService.deleteRepositoryEntry( repositoryId );
+            }
+        }
+
+        // Load other system repositories
+        SYSTEM_REPO_IDS.forEach( repositoryId -> {
+            if ( dumpRepositories.contains( repositoryId ) )
+            {
+                // Dump contains repository. Do a normal load.
+                initAndLoad( includeVersions, results, dumpReader, repositoryId, repoSettings.get( repositoryId ), new PropertyTree(),
+                             AttachedBinaries.empty() );
+            }
+            else
+            {
+                // If it is an old dump it does not contain repo. It should be recreated with current settings
+                initializeRepo( repositoryId, repoSettings.get( repositoryId ), null, AttachedBinaries.empty() );
+                createRootNode( repositoryId );
+            }
+
+        } );
+
+        // Load non-system repositories
+        dumpRepositories.stream()
+            .filter( Predicate.isEqual( SystemConstants.SYSTEM_REPO_ID ).or( SYSTEM_REPO_IDS::contains ).negate() )
+            .forEach( repositoryId -> {
+                final RepositoryEntry repository = repositoryEntryService.getRepositoryEntry( repositoryId );
+                final RepositorySettings settings = repository.getSettings();
+                final PropertyTree data = repository.getData();
+                final AttachedBinaries attachedBinaries = repository.getAttachments();
+                initAndLoad( includeVersions, results, dumpReader, repositoryId, settings, data, attachedBinaries );
+            } );
+
+        this.eventPublisher.publish( RepositoryEvents.restored() );
+        LOG.info( "Dump Load completed" );
+    }
+
+    private void doPartialLoad( final SystemLoadParams params, final DumpReader dumpReader, final RepositoryIds dumpRepositories,
+                                final SystemLoadResult.Builder results )
+    {
+        final List<RepositoryId> systemRepos = params.getRepositories()
+            .stream()
+            .filter( Predicate.isEqual( SystemConstants.SYSTEM_REPO_ID ).or( SYSTEM_REPO_IDS::contains ) )
+            .toList();
+
+        if ( !systemRepos.isEmpty() )
+        {
+            throw new RepoLoadException( "System repositories " + systemRepos + " can be loaded only in full dump" );
+        }
+
+        final List<RepositoryId> reposToLoad = params.getRepositories().stream().filter( dumpRepositories::contains ).toList();
+
+        this.eventPublisher.publish( RepositoryEvents.restoreInitialized() );
+
+        if ( params.getListener() != null )
+        {
+            final long branchesCount =
+                reposToLoad.stream().flatMap( repositoryId -> dumpReader.getBranches( repositoryId ).stream() ).count();
+
+            params.getListener().totalBranches( branchesCount );
+        }
+
+        final boolean includeVersions = params.isIncludeVersions();
+
+        final Map<RepositoryId, RepositoryEntry> dumpEntries = dumpReader.getRepositoryEntries( RepositoryIds.from( reposToLoad ) )
+            .stream()
+            .collect( Collectors.toMap( RepositoryEntry::getId, Function.identity() ) );
+
+        for ( final RepositoryId repositoryId : reposToLoad )
+        {
+            final RepositoryEntry dumpEntry = dumpEntries.get( repositoryId );
+
+            if ( dumpEntry != null )
+            {
+                doDeleteRepository( repositoryId );
+
+                initAndLoad( includeVersions, results, dumpReader, repositoryId, dumpEntry.getSettings(), dumpEntry.getData(),
+                             dumpEntry.getAttachments() );
+            }
+            else
+            {
+                LOG.warn( "Repository entry not found in dump for repository [{}]", repositoryId );
+            }
+        }
+
+        this.eventPublisher.publish( RepositoryEvents.restored() );
+        LOG.info( "Partial Dump Load completed" );
     }
 
     void verifyOrUpdateDumpVersion( final Path basePath, final SystemLoadParams params, final DumpReader dumpReader )
