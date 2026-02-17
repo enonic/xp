@@ -3,17 +3,18 @@ var assert = require('/lib/xp/testing');
 
 /* global log*/
 
-let resource = '<?xml version="1.0" encoding="UTF-8"?>' +
-               '<styles css="assets/styles.css" xmlns="urn:enonic:xp:model:1.0">' +
-               '<image name="editor-width-auto">' +
-               '<display-name i18n="editor-width-auto-text">Override ${width}</display-name>' +
-               '</image>' +
-               '<image name="editor-style-cinema">' +
-               '<display-name i18n="editor-style-cinema-text">Cinema</display-name>' +
-               '<aspect-ratio>21:9</aspect-ratio>' +
-               '<filter>pixelate(10)</filter>' +
-               '</image>' +
-               '</styles>';
+let resource = 'css: "assets/styles.css"\n' +
+               'image:\n' +
+               '- name: "editor-width-auto"\n' +
+               '  displayName:\n' +
+               '    text: "Override ${width}"\n' +
+               '    i18n: "editor-width-auto-text"\n' +
+               '- name: "editor-style-cinema"\n' +
+               '  displayName:\n' +
+               '    text: "Cinema"\n' +
+               '    i18n: "editor-style-cinema-text"\n' +
+               '  aspectRatio: "21:9"\n' +
+               '  filter: "pixelate(10)"';
 
 
 // BEGIN
@@ -33,15 +34,18 @@ assert.assertJsonEquals({
     application: 'myapp',
     cssPath: 'assets/styles.css',
     modifiedTime: '2021-09-25T10:00:00Z',
-    resource: '<?xml version=\"1.0\" encoding=\"UTF-8\"?>' +
-              '<styles css=\"assets/styles.css\" xmlns=\"urn:enonic:xp:model:1.0\">' +
-              '<image name=\"editor-width-auto\">' +
-              '<display-name i18n=\"editor-width-auto-text\">Override ${width}</display-name>' +
-              '</image><image name=\"editor-style-cinema\">' +
-              '<display-name i18n=\"editor-style-cinema-text\">Cinema</display-name>' +
-              '<aspect-ratio>21:9</aspect-ratio><filter>pixelate(10)</filter>' +
-              '</image>' +
-              '</styles>',
+    resource: 'css: "assets/styles.css"\n' +
+              'image:\n' +
+              '- name: "editor-width-auto"\n' +
+              '  displayName:\n' +
+              '    text: "Override ${width}"\n' +
+              '    i18n: "editor-width-auto-text"\n' +
+              '- name: "editor-style-cinema"\n' +
+              '  displayName:\n' +
+              '    text: "Cinema"\n' +
+              '    i18n: "editor-style-cinema-text"\n' +
+              '  aspectRatio: "21:9"\n' +
+              '  filter: "pixelate(10)"',
     elements: [
         {
             displayName: 'Override ${width}',

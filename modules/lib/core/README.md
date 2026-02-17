@@ -23,16 +23,16 @@ import type {Content} from '@enonic-types/core';
 
 ### Content
 
-`Content` contains the `x` property, that has a very special `XpXData` type.
+`Content` contains the `x` property, that has a very special `XpMixin` type.
 
-`XpXData` is an interface, that is added to the global scope, so it can be
+`XpMixin` is an interface, that is added to the global scope, so it can be
 modified using the [declaration merging](https://www.typescriptlang.org/docs/handbook/declaration-merging.html#merging-interfaces).
-This allows you to set the shape of the XData in your project, simply by
-declaring the `XpXData` like this:
+This allows you to set the shape of the Mixin in your project, simply by
+declaring the `XpMixin` like this:
 
 ```ts
 declare global {
-    interface XpXData {
+    interface XpMixin {
         'com-mysite-app': {
             metadata: {
                 metaTagTitle: string;

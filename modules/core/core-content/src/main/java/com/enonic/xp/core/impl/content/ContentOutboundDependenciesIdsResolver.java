@@ -42,14 +42,12 @@ class ContentOutboundDependenciesIdsResolver
             contentDataSerializer.toPageData( content.getPage(), contentPageData );
         }
 
-        final Stream<Property> extraDataDependencies = content.hasExtraData() ? content.getAllExtraData().
-            stream().
-            flatMap( extraData -> extraData.getData().
-                getProperties( ValueTypes.REFERENCE ).
-                stream() ) : Stream.empty();
+        final Stream<Property> mixinDependencies = !content.getMixins().isEmpty() ? content.getMixins()
+            .stream()
+            .flatMap( mixin -> mixin.getData().getProperties( ValueTypes.REFERENCE ).stream() ) : Stream.empty();
 
         Stream.of( content.getData().getProperties( ValueTypes.REFERENCE ).stream(),
-                   contentPageData.getProperties( ValueTypes.REFERENCE ).stream(), extraDataDependencies ).
+                   contentPageData.getProperties( ValueTypes.REFERENCE ).stream(), mixinDependencies ).
             flatMap( s -> s ).
             forEach( property -> {
                 final String value = property.getValue().toString();

@@ -14,14 +14,12 @@ import com.enonic.xp.form.FormOptionSet;
 import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.icon.Icon;
-import com.enonic.xp.inputtype.InputTypeConfig;
-import com.enonic.xp.inputtype.InputTypeDefault;
 import com.enonic.xp.inputtype.InputTypeName;
-import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypes;
 import com.enonic.xp.schema.content.GetContentTypeParams;
+import com.enonic.xp.util.GenericValue;
 
 import static org.mockito.ArgumentMatchers.any;
 
@@ -33,7 +31,7 @@ class ContentTypeHandlerTest
     void testExampleGetType()
     {
         final Form form = getExampleForm();
-        Mockito.when( mixinService.inlineFormItems( Mockito.eq( form ) ) ).thenReturn( form );
+        Mockito.when( formFragmentService.inlineFormItems( Mockito.eq( form ) ) ).thenReturn( form );
 
         final ContentType contentType = exampleContentType();
         Mockito.when( contentTypeService.getByName( any() ) ).thenReturn( contentType );
@@ -45,7 +43,7 @@ class ContentTypeHandlerTest
     void testExampleGetTypes()
     {
         final Form form = getForm();
-        Mockito.when( mixinService.inlineFormItems( Mockito.eq( form ) ) ).thenReturn( form );
+        Mockito.when( formFragmentService.inlineFormItems( Mockito.eq( form ) ) ).thenReturn( form );
 
         final ContentTypes contentTypes = testContentTypes();
         Mockito.when( contentTypeService.getAll() ).thenReturn( contentTypes );
@@ -57,7 +55,7 @@ class ContentTypeHandlerTest
     void testGet()
     {
         final Form form = getForm();
-        Mockito.when( mixinService.inlineFormItems( Mockito.eq( form ) ) ).thenReturn( form );
+        Mockito.when( formFragmentService.inlineFormItems( Mockito.eq( form ) ) ).thenReturn( form );
 
         final ContentType contentType = testContentType();
         final GetContentTypeParams params = new GetContentTypeParams().contentTypeName( contentType.getName() );
@@ -82,7 +80,7 @@ class ContentTypeHandlerTest
     void testList()
     {
         final Form form = getForm();
-        Mockito.when( mixinService.inlineFormItems( Mockito.eq( form ) ) ).thenReturn( form );
+        Mockito.when( formFragmentService.inlineFormItems( Mockito.eq( form ) ) ).thenReturn( form );
 
         final ContentTypes contentTypes = testContentTypes();
         Mockito.when( contentTypeService.getAll() ).thenReturn( contentTypes );
@@ -101,7 +99,6 @@ class ContentTypeHandlerTest
             .displayName( "Person" )
             .description( "Person content type" )
             .superType( ContentTypeName.structured() )
-            .displayNameExpression( "${name}" )
             .icon( schemaIcon )
             .form( getExampleForm() )
             .modifiedTime( Instant.parse( "2022-05-25T10:00:00.00Z" ) )
@@ -119,7 +116,6 @@ class ContentTypeHandlerTest
             displayName( "Article" ).
             description( "Article content type" ).
             superType( ContentTypeName.structured() ).
-            displayNameExpression( "${title} ${author}" ).
             icon( schemaIcon ).
             form( getForm() ).
             build();
@@ -144,11 +140,9 @@ class ContentTypeHandlerTest
             name( "myTextLine" ).
             inputType( InputTypeName.TEXT_LINE ).
             label( "My text line" ).
-            customText( "Some custom text" ).
             helpText( "Some help text" ).
             required( true ).
-            inputTypeConfig( InputTypeConfig.create().property( InputTypeProperty.create( "regexp", "\\b\\d{3}-\\d{2}-\\d{4}\\b" ).
-                build() ).build() ).
+            inputTypeConfig( GenericValue.newObject().put( "regexp", "\\b\\d{3}-\\d{2}-\\d{4}\\b" ).build() ).
             build();
 
         Input myCustomInput = Input.create().
@@ -156,17 +150,29 @@ class ContentTypeHandlerTest
             inputType( InputTypeName.CHECK_BOX ).
             label( "My checkbox input" ).
             required( false ).
-            defaultValue( InputTypeDefault.create().property( InputTypeProperty.create( "default", "checked" ).build() ).build() ).
+            inputTypeProperty( "default", "checked" ).
             build();
 
-        final InputTypeProperty option1 = InputTypeProperty.create( "option", "Option One" ).attribute( "value", "one" ).build();
-        final InputTypeProperty option2 = InputTypeProperty.create( "option", "Option Two" ).attribute( "value", "two" ).build();
-        Input radioButtonInput = Input.create().
-            name( "myRadioButton" ).
-            inputType( InputTypeName.RADIO_BUTTON ).
-            label( "Radio button" ).
-            inputTypeConfig( InputTypeConfig.create().property( option1 ).property( option2 ).build() ).
-            build();
+        Input radioButtonInput = Input.create()
+            .name( "myRadioButton" )
+            .inputType( InputTypeName.RADIO_BUTTON )
+            .label( "Radio button" )
+            .inputTypeProperty( "options", GenericValue.newList()
+                .add( GenericValue.newObject()
+                          .put( "value", "one" )
+                          .put( "label", GenericValue.newObject().put( "text", "Value One" ).build() )
+                          .build() )
+                .add( GenericValue.newObject()
+                          .put( "value", "two" )
+                          .put( "label", GenericValue.newObject().put( "text", "Value Two" ).build() )
+                          .build() )
+                .build() )
+            .inputTypeProperty( "theme", GenericValue.newList()
+                .add( GenericValue.stringValue( "dark" ) )
+                .add( GenericValue.stringValue( "light" ) )
+                .build() )
+            .inputTypeProperty( "disabled", GenericValue.booleanValue( false ) )
+            .build();
 
         FieldSet myFieldSet = FieldSet.create().
             label( "My field set" ).
@@ -243,8 +249,7 @@ class ContentTypeHandlerTest
             label( "Email" ).
             helpText( "Email address" ).
             required( true ).
-            inputTypeConfig( InputTypeConfig.create().property( InputTypeProperty.create( "regexp", "^[^@]+@[^@]+\\.[^@]+$" ).
-                build() ).build() ).
+            inputTypeProperty( "regexp", "^[^@]+@[^@]+\\.[^@]+$" ).
             build();
 
         Input birthdate = Input.create().
@@ -257,7 +262,8 @@ class ContentTypeHandlerTest
         Input nationality = Input.create().
             name( "nationality" ).
             inputType( InputTypeName.CONTENT_SELECTOR ).
-            inputTypeProperty( InputTypeProperty.create( "allowContentType", "com.enonic.myapp:country" ).build() ).
+            inputTypeProperty( "allowContentType",
+                                GenericValue.newList().add( GenericValue.stringValue( "com.enonic.myapp:country" ) ).build() ).
             label( "Nationality" ).
             build();
 

@@ -7,34 +7,34 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.core.impl.content.parser.YmlLayoutDescriptorParser;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.descriptor.DescriptorKeyLocator;
 import com.enonic.xp.descriptor.DescriptorKeys;
 import com.enonic.xp.descriptor.DescriptorLoader;
 import com.enonic.xp.form.Form;
-import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.schema.mixin.MixinService;
-import com.enonic.xp.xml.XmlException;
-import com.enonic.xp.xml.parser.XmlLayoutDescriptorParser;
+import com.enonic.xp.schema.content.CmsFormFragmentService;
 
 @Component(immediate = true)
 public class LayoutDescriptorLoader
     implements DescriptorLoader<LayoutDescriptor>
 {
-    private static final String PATH = "/site/layouts";
+    private static final String PATH = "/cms/layouts";
 
-    private final MixinService mixinService;
+    private final CmsFormFragmentService formFragmentService;
 
     private final DescriptorKeyLocator descriptorKeyLocator;
 
     @Activate
-    public LayoutDescriptorLoader( @Reference final ResourceService resourceService, @Reference final MixinService mixinService )
+    public LayoutDescriptorLoader( @Reference final ResourceService resourceService,
+                                   @Reference final CmsFormFragmentService formFragmentService )
     {
-        this.mixinService = mixinService;
+        this.formFragmentService = formFragmentService;
         this.descriptorKeyLocator = new DescriptorKeyLocator( resourceService, PATH, false );
     }
 
@@ -53,49 +53,33 @@ public class LayoutDescriptorLoader
     @Override
     public ResourceKey toResource( final DescriptorKey key )
     {
-        return ResourceKey.from( key.getApplicationKey(), PATH + "/" + key.getName() + "/" + key.getName() + ".xml" );
+        return ResourceKey.from( key.getApplicationKey(), PATH + "/" + key.getName() + "/" + key.getName() + ".yml" );
     }
 
     @Override
     public LayoutDescriptor load( final DescriptorKey key, final Resource resource )
         throws Exception
     {
-        final LayoutDescriptor.Builder builder = LayoutDescriptor.create();
-        parseXml( resource, builder );
-        builder.key( key );
-        return builder.build();
+        return YmlLayoutDescriptorParser.parse( resource.readString(), key.getApplicationKey() )
+            .modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) )
+            .key( key )
+            .build();
     }
 
     @Override
     public LayoutDescriptor createDefault( final DescriptorKey key )
     {
-        return LayoutDescriptor.create().key( key ).displayName( key.getName() ).config( Form.empty() ).regions(
-            RegionDescriptors.create().build() ).build();
+        return LayoutDescriptor.create()
+            .key( key )
+            .displayName( key.getName() )
+            .config( Form.empty() )
+            .regions( RegionDescriptors.create().build() )
+            .build();
     }
 
     @Override
     public LayoutDescriptor postProcess( final LayoutDescriptor descriptor )
     {
-        return LayoutDescriptor.copyOf( descriptor ).config( this.mixinService.inlineFormItems( descriptor.getConfig() ) ).build();
-    }
-
-    private void parseXml( final Resource resource, final LayoutDescriptor.Builder builder )
-    {
-        try
-        {
-            final XmlLayoutDescriptorParser parser = new XmlLayoutDescriptorParser();
-            parser.builder( builder );
-            parser.currentApplication( resource.getKey().getApplicationKey() );
-            parser.source( resource.readString() );
-
-            final Instant modifiedTime = Instant.ofEpochMilli( resource.getTimestamp() );
-            builder.modifiedTime( modifiedTime );
-
-            parser.parse();
-        }
-        catch ( final Exception e )
-        {
-            throw new XmlException( e, "Could not load layout descriptor [" + resource.getKey() + "]: " + e.getMessage() );
-        }
+        return LayoutDescriptor.copyOf( descriptor ).config( this.formFragmentService.inlineFormItems( descriptor.getConfig() ) ).build();
     }
 }

@@ -17,6 +17,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ImportContentParams;
+import com.enonic.xp.content.Mixins;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.project.ProjectName;
@@ -45,6 +46,7 @@ class ImportContentFactoryTest
         Mockito.when( content.getModifier() ).thenReturn( PrincipalKey.from( "user:system:user" ) );
         Mockito.when( content.getCreator() ).thenReturn( PrincipalKey.from( "user:system:user" ) );
         Mockito.when( content.getData() ).thenReturn( new PropertyTree() );
+        Mockito.when( content.getMixins() ).thenReturn( Mixins.empty() );
         Mockito.when( content.getPermissions() ).thenReturn( AccessControlList.empty() );
         Mockito.when( content.getAttachments() ).thenReturn( Attachments.empty() );
         Mockito.when( content.getPublishInfo() )

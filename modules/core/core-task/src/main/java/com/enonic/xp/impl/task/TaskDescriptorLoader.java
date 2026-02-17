@@ -12,7 +12,7 @@ import com.enonic.xp.descriptor.DescriptorLoader;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.schema.content.CmsFormFragmentService;
 import com.enonic.xp.task.TaskDescriptor;
 
 @Component(immediate = true)
@@ -23,13 +23,13 @@ public final class TaskDescriptorLoader
 
     private final DescriptorKeyLocator descriptorKeyLocator;
 
-    private final MixinService mixinService;
+    private final CmsFormFragmentService cmsFormFragmentService;
 
     @Activate
-    public TaskDescriptorLoader( @Reference final ResourceService resourceService, @Reference final MixinService mixinService )
+    public TaskDescriptorLoader( @Reference final ResourceService resourceService, @Reference final CmsFormFragmentService cmsFormFragmentService )
     {
         this.descriptorKeyLocator = new DescriptorKeyLocator( resourceService, PATH, false );
-        this.mixinService = mixinService;
+        this.cmsFormFragmentService = cmsFormFragmentService;
     }
 
     @Override
@@ -47,18 +47,13 @@ public final class TaskDescriptorLoader
     @Override
     public ResourceKey toResource( final DescriptorKey key )
     {
-        return ResourceKey.from( key.getApplicationKey(), PATH + "/" + key.getName() + "/" + key.getName() + ".xml" );
+        return ResourceKey.from( key.getApplicationKey(), PATH + "/" + key.getName() + "/" + key.getName() + ".yml" );
     }
 
     @Override
     public TaskDescriptor load( final DescriptorKey key, final Resource resource )
     {
-        final TaskDescriptor.Builder builder = TaskDescriptor.create();
-        builder.key( key );
-
-        final String descriptorXml = resource.readString();
-        parseXml( key.getApplicationKey(), builder, descriptorXml );
-        return builder.build();
+        return YmlTaskDescriptorParser.parse( resource.readString(), key.getApplicationKey() ).key( key ).build();
     }
 
     @Override
@@ -73,16 +68,7 @@ public final class TaskDescriptorLoader
         return TaskDescriptor.create()
             .key( descriptor.getKey() )
             .description( descriptor.getDescription() )
-            .config( this.mixinService.inlineFormItems( descriptor.getConfig() ) )
+            .config( this.cmsFormFragmentService.inlineFormItems( descriptor.getConfig() ) )
             .build();
-    }
-
-    private void parseXml( final ApplicationKey applicationKey, final TaskDescriptor.Builder builder, final String xml )
-    {
-        final XmlTaskDescriptorParser parser = new XmlTaskDescriptorParser();
-        parser.builder( builder );
-        parser.currentApplication( applicationKey );
-        parser.source( xml );
-        parser.parse();
     }
 }

@@ -8,8 +8,8 @@ import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentPublishInfo;
-import com.enonic.xp.content.ExtraData;
-import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.Mixin;
+import com.enonic.xp.content.Mixins;
 import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.data.PropertyTree;
@@ -74,7 +74,7 @@ public final class ContentMapper
         }
 
         serializeData( gen, value.getData() );
-        serializeExtraData( gen, value.getAllExtraData() );
+        serializeMixins( gen, value.getMixins() );
         serializePage( gen, value.getPage() );
         serializeValidationErrors( gen, value.getValidationErrors() );
         serializeAttachments( gen, value.getAttachments() );
@@ -113,18 +113,18 @@ public final class ContentMapper
         gen.end();
     }
 
-    private void serializeExtraData( final MapGenerator gen, final ExtraDatas extraDatas )
+    private void serializeMixins( final MapGenerator gen, final Mixins mixins )
     {
         gen.map( "x" );
 
-        extraDatas.stream()
-            .collect( Collectors.groupingBy( ExtraData::getApplicationPrefix, LinkedHashMap::new, Collectors.toList() ) )
-            .forEach( ( appPrefix, appExtraDatas ) -> {
+        mixins.stream()
+            .collect( Collectors.groupingBy( this::getApplicationPrefix, LinkedHashMap::new, Collectors.toList() ) )
+            .forEach( ( appPrefix, appMixins ) -> {
                 gen.map( appPrefix );
-                for ( final ExtraData extraData : appExtraDatas )
+                for ( final Mixin mixin : appMixins )
                 {
-                    gen.map( extraData.getName().getLocalName() );
-                    new PropertyTreeMapper( extraData.getData() ).serialize( gen );
+                    gen.map( mixin.getName().getLocalName() );
+                    new PropertyTreeMapper( mixin.getData() ).serialize( gen );
                     gen.end();
                 }
                 gen.end();
@@ -171,6 +171,11 @@ public final class ContentMapper
             value.forEach( gen::value );
             gen.end();
         }
+    }
+
+    private String getApplicationPrefix( final Mixin mixin )
+    {
+        return mixin.getName().getApplicationKey().toString().replace( '.', '-' );
     }
 
     @Override

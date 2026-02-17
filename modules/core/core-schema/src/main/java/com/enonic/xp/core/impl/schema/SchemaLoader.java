@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.descriptor.DescriptorKeyLocator;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.resource.Resource;
@@ -39,17 +40,18 @@ public abstract class SchemaLoader<N extends BaseSchemaName, V extends BaseSchem
 
     private ResourceProcessor<N, V> newProcessor( final N key )
     {
-        return new ResourceProcessor.Builder<N, V>().
-            key( key ).
-            segment( key.getClass().getSimpleName() ).
-            keyTranslator( this::toXmlResourceKey ).
-            processor( resource -> load( key, resource ) ).
-            build();
+        return new ResourceProcessor.Builder<N, V>().key( key )
+            .segment( key.getClass().getSimpleName() )
+            .keyTranslator( this::toYmlResourceKey )
+            .processor( resource -> load( key, resource ) )
+            .build();
     }
 
-    protected final ResourceKey toXmlResourceKey( final N name )
+    protected final ResourceKey toYmlResourceKey( final N name )
     {
-        return toResourceKey( name, "xml" );
+        final ApplicationKey appKey = name.getApplicationKey();
+        final String localName = name.getLocalName();
+        return ResourceKey.from( appKey, this.path + "/" + localName + "/" + localName + ".yml" );
     }
 
     protected final ResourceKey toResourceKey( final N name, final String ext )
@@ -82,9 +84,8 @@ public abstract class SchemaLoader<N extends BaseSchemaName, V extends BaseSchem
 
     public final Set<N> findNames( final ApplicationKey key )
     {
-        return descriptorKeyLocator.findKeys( key ).stream().map( dk -> newName( dk.getApplicationKey(), dk.getName() ) ).collect(
-            Collectors.toCollection( LinkedHashSet::new ) );
+        return descriptorKeyLocator.findKeys( key ).stream().map( this::newName ).collect( Collectors.toCollection( LinkedHashSet::new ) );
     }
 
-    protected abstract N newName( ApplicationKey appKey, String name );
+    protected abstract N newName( DescriptorKey descriptorKey );
 }

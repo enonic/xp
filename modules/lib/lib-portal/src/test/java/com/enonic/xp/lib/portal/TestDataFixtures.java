@@ -9,8 +9,8 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ExtraData;
-import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.Mixin;
+import com.enonic.xp.content.Mixins;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
@@ -22,7 +22,7 @@ import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.region.Regions;
-import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.IdProvider;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
@@ -52,9 +52,9 @@ public final class TestDataFixtures
         builder.language( Locale.ENGLISH );
         builder.data( newPropertyTree() );
 
-        builder.extraDatas( ExtraDatas.create()
-                                .add( new ExtraData( XDataName.from( "com.enonic.myapplication:myschema" ), newTinyPropertyTree() ) )
-                                .build() );
+        builder.mixins( Mixins.create()
+                            .add( new Mixin( MixinName.from( "com.enonic.myapplication:myschema" ), newTinyPropertyTree() ) )
+                            .build() );
         builder.page( newPage() );
 
         return builder.build();

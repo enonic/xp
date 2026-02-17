@@ -4,7 +4,7 @@ import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
-import com.enonic.xp.form.Input;
+import com.enonic.xp.util.GenericValue;
 
 final class HtmlAreaType
     extends InputTypeBase
@@ -17,24 +17,13 @@ final class HtmlAreaType
     }
 
     @Override
-    public Value createDefaultValue( final Input input )
-    {
-        final String rootValue = input.getDefaultValue().getRootValue();
-        if ( rootValue != null )
-        {
-            return ValueFactory.newString( rootValue );
-        }
-        return super.createDefaultValue( input );
-    }
-
-    @Override
-    public Value createValue( final Value value, final InputTypeConfig config )
+    public Value createValue( final Value value, final GenericValue config )
     {
         return ValueFactory.newString( value.asString() );
     }
 
     @Override
-    public void validate( final Property property, final InputTypeConfig config )
+    public void validate( final Property property, final GenericValue config )
     {
         validateType( property, ValueTypes.STRING );
     }

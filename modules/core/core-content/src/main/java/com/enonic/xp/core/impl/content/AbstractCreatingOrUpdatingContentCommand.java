@@ -27,8 +27,8 @@ import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ContentValidator;
-import com.enonic.xp.content.ExtraData;
-import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.Mixin;
+import com.enonic.xp.content.Mixins;
 import com.enonic.xp.content.PatchableContent;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -59,19 +59,19 @@ import com.enonic.xp.region.Regions;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.schema.xdata.XData;
-import com.enonic.xp.schema.xdata.XDataName;
-import com.enonic.xp.schema.xdata.XDataService;
+import com.enonic.xp.schema.mixin.MixinDescriptor;
+import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.site.CmsDescriptor;
+import com.enonic.xp.site.CmsService;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigService;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
-import com.enonic.xp.site.SiteDescriptor;
-import com.enonic.xp.site.SiteService;
-import com.enonic.xp.site.XDataMappingService;
-import com.enonic.xp.site.XDataOption;
-import com.enonic.xp.site.XDataOptions;
+import com.enonic.xp.site.MixinMappingService;
+import com.enonic.xp.site.MixinOption;
+import com.enonic.xp.site.MixinOptions;
 
 class AbstractCreatingOrUpdatingContentCommand
     extends AbstractContentCommand
@@ -83,9 +83,9 @@ class AbstractCreatingOrUpdatingContentCommand
     private static final ImmutableList<MediaType> EXECUTABLE_CONTENT_TYPES =
         ImmutableList.of( MediaType.OCTET_STREAM, MediaType.create( "text", "plain" ), MediaType.create( "application", "x-bzip2" ) );
 
-    final XDataService xDataService;
+    final MixinService mixinService;
 
-    final SiteService siteService;
+    final CmsService cmsService;
 
     final List<ContentProcessor> contentProcessors;
 
@@ -97,7 +97,7 @@ class AbstractCreatingOrUpdatingContentCommand
 
     protected final LayoutDescriptorService layoutDescriptorService;
 
-    final XDataMappingService xDataMappingService;
+    final MixinMappingService mixinMappingService;
 
     final SiteConfigService siteConfigService;
 
@@ -109,21 +109,21 @@ class AbstractCreatingOrUpdatingContentCommand
     {
         super( builder );
         this.layersSync = builder.layersSync;
-        this.xDataService = builder.xDataService;
-        this.siteService = builder.siteService;
+        this.mixinService = builder.mixinService;
+        this.cmsService = builder.cmsService;
         this.contentProcessors = List.copyOf( builder.contentProcessors );
         this.contentValidators = List.copyOf( builder.contentValidators );
         this.allowUnsafeAttachmentNames = builder.allowUnsafeAttachmentNames;
         this.pageDescriptorService = builder.pageDescriptorService;
         this.partDescriptorService = builder.partDescriptorService;
         this.layoutDescriptorService = builder.layoutDescriptorService;
-        this.xDataMappingService = builder.xDataMappingService;
+        this.mixinMappingService = builder.mixinMappingService;
         this.siteConfigService = builder.siteConfigService;
     }
 
-    ExtraDatas mergeExtraData( final ContentTypeName type, final PropertyTree data, final ContentPath parent, final ExtraDatas extraDatas )
+    Mixins mergeMixins( final ContentTypeName type, final PropertyTree data, final ContentPath parent, final Mixins mixins )
     {
-        final ExtraDatas.Builder result = ExtraDatas.create();
+        final Mixins.Builder result = Mixins.create();
         final ApplicationKeys.Builder applicationKeys = ApplicationKeys.create().add( ApplicationKey.PORTAL );
 
         if ( type.isSite() )
@@ -138,35 +138,35 @@ class AbstractCreatingOrUpdatingContentCommand
             siteConfigService.getSiteConfigs( parent ).stream().map( SiteConfig::getApplicationKey ).forEach( applicationKeys::add );
         }
 
-        final XDataOptions allowedXData = xDataMappingService.getXDataMappingOptions( type, applicationKeys.build() );
+        final MixinOptions allowedMixins = mixinMappingService.getMixinMappingOptions( type, applicationKeys.build() );
 
-        final Set<XDataName> allowedXDataName =
-            allowedXData.stream().map( XDataOption::xdata ).map( XData::getName ).collect( Collectors.toSet() );
+        final Set<MixinName> allowedMixinName =
+            allowedMixins.stream().map( MixinOption::mixinDescriptor ).map( MixinDescriptor::getName ).collect( Collectors.toSet() );
 
-        for ( ExtraData extraData : extraDatas )
+        for ( Mixin mixin : mixins )
         {
-            if ( !allowedXDataName.contains( extraData.getName() ) )
+            if ( !allowedMixinName.contains( mixin.getName() ) )
             {
-                throw new IllegalArgumentException( "Not allowed extraData: " + extraData.getName() );
+                throw new IllegalArgumentException( "Not allowed mixinName: " + mixin.getName() );
             }
         }
 
-        for ( XDataOption xDataOption : allowedXData )
+        for ( MixinOption mixinOption : allowedMixins )
         {
-            final boolean isOptional = xDataOption.optional();
-            final XData xData = xDataOption.xdata();
-            final ExtraData extraData = extraDatas.getMetadata( xData.getName() );
+            final boolean isOptional = mixinOption.optional();
+            final MixinDescriptor mixinDescriptor = mixinOption.mixinDescriptor();
+            final Mixin mixin = mixins.getByName( mixinDescriptor.getName() );
 
-            if ( extraData == null )
+            if ( mixin == null )
             {
                 if ( !isOptional )
                 {
-                    result.add( new ExtraData( xData.getName(), new PropertyTree() ) );
+                    result.add( new Mixin( mixinDescriptor.getName(), new PropertyTree() ) );
                 }
             }
             else
             {
-                result.add( extraData );
+                result.add( mixin );
             }
         }
 
@@ -202,14 +202,14 @@ class AbstractCreatingOrUpdatingContentCommand
         }
     }
 
-    void validateMixins( final ExtraDatas extraDatas )
+    void validateMixins( final Mixins mixins )
     {
-        for ( ExtraData extraData : extraDatas )
+        for ( Mixin mixin : mixins )
         {
-            XData xData = xDataService.getByName( extraData.getName() );
-            if ( xData != null )
+            MixinDescriptor mixinDescriptor = mixinService.getByName( mixin.getName() );
+            if ( mixinDescriptor != null )
             {
-                validateForm( xData.getForm(), extraData.getData(), "Incorrect mixin property" );
+                validateForm( mixinDescriptor.getForm(), mixin.getData(), "Incorrect mixin property" );
             }
         }
     }
@@ -220,7 +220,7 @@ class AbstractCreatingOrUpdatingContentCommand
 
         for ( SiteConfig siteConfig : siteConfigs )
         {
-            SiteDescriptor descriptor = siteService.getDescriptor( siteConfig.getApplicationKey() );
+            CmsDescriptor descriptor = cmsService.getDescriptor( siteConfig.getApplicationKey() );
             if ( descriptor != null )
             {
                 validateForm( descriptor.getForm(), siteConfig.getConfig(), "Incorrect site config property" );
@@ -371,7 +371,7 @@ class AbstractCreatingOrUpdatingContentCommand
             Objects.equals( c1.getCreatedTime(), c2.getCreatedTime() ) && Objects.equals( c1.getInherit(), c2.getInherit() ) &&
             Objects.equals( c1.getOriginProject(), c2.getOriginProject() ) && Objects.equals( c1.getChildOrder(), c2.getChildOrder() ) &&
             Objects.equals( c1.getPermissions(), c2.getPermissions() ) && Objects.equals( c1.getAttachments(), c2.getAttachments() ) &&
-            Objects.equals( c1.getData(), c2.getData() ) && Objects.equals( c1.getAllExtraData(), c2.getAllExtraData() ) &&
+            Objects.equals( c1.getData(), c2.getData() ) && Objects.equals( c1.getMixins(), c2.getMixins() ) &&
             Objects.equals( c1.getPage(), c2.getPage() ) && Objects.equals( c1.getLanguage(), c2.getLanguage() ) &&
             Objects.equals( c1.getPublishInfo(), c2.getPublishInfo() ) && Objects.equals( c1.getWorkflowInfo(), c2.getWorkflowInfo() ) &&
             Objects.equals( c1.getManualOrderValue(), c2.getManualOrderValue() ) &&
@@ -408,9 +408,9 @@ class AbstractCreatingOrUpdatingContentCommand
     public static class Builder<B extends Builder<B>>
         extends AbstractContentCommand.Builder<B>
     {
-        private XDataService xDataService;
+        private MixinService mixinService;
 
-        private SiteService siteService;
+        private CmsService cmsService;
 
         private List<ContentProcessor> contentProcessors = List.of();
 
@@ -424,7 +424,7 @@ class AbstractCreatingOrUpdatingContentCommand
 
         private LayoutDescriptorService layoutDescriptorService;
 
-        private XDataMappingService xDataMappingService;
+        private MixinMappingService mixinMappingService;
 
         private SiteConfigService siteConfigService;
 
@@ -441,16 +441,16 @@ class AbstractCreatingOrUpdatingContentCommand
         }
 
         @SuppressWarnings("unchecked")
-        B xDataService( final XDataService xDataService )
+        B mixinService( final MixinService mixinService )
         {
-            this.xDataService = xDataService;
+            this.mixinService = mixinService;
             return (B) this;
         }
 
         @SuppressWarnings("unchecked")
-        B siteService( final SiteService siteService )
+        B cmsService( final CmsService siteService )
         {
-            this.siteService = siteService;
+            this.cmsService = siteService;
             return (B) this;
         }
 
@@ -493,9 +493,9 @@ class AbstractCreatingOrUpdatingContentCommand
             return (B) this;
         }
 
-        B xDataMappingService( final XDataMappingService xDataMappingService )
+        B mixinMappingService( final MixinMappingService mixinMappingService )
         {
-            this.xDataMappingService = xDataMappingService;
+            this.mixinMappingService = mixinMappingService;
             return (B) this;
         }
 

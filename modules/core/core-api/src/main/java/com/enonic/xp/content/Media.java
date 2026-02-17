@@ -64,7 +64,7 @@ public final class Media
 
     private ImageOrientation getOrientationFromMetaData()
     {
-        final ExtraData cameraInfo = getAllExtraData().getMetadata( MediaInfo.CAMERA_INFO_METADATA_NAME );
+        final Mixin cameraInfo = getMixins().getByName( MediaInfo.CAMERA_INFO_METADATA_NAME );
         if ( cameraInfo != null && cameraInfo.getData().hasProperty( ContentPropertyNames.ORIENTATION ) )
         {
             final String orientationValue = cameraInfo.getData().getString( ContentPropertyNames.ORIENTATION );

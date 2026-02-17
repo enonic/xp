@@ -1,7 +1,0 @@
-<?xml version="1.0"?>
-<tool xmlns="urn:enonic:xp:model:1.0">
-  <display-name>My admin tool2</display-name>
-  <allow>
-    <principal>role:system.admin</principal>
-  </allow>
-</tool>

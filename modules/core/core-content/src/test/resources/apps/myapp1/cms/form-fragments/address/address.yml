@@ -1,0 +1,27 @@
+displayName: "Address"
+form:
+- type: "ItemSet"
+  name: "address"
+  label: "Address"
+  occurrences:
+    min: 0
+    max: 0
+  items:
+  - type: "TextLine"
+    name: "street"
+    label: "Street"
+    occurrences:
+      min: 0
+      max: 2
+  - type: "TextLine"
+    name: "postalCode"
+    label: "Postal code"
+    occurrences:
+      min: 1
+      max: 1
+  - type: "TextLine"
+    name: "postalPlace"
+    label: "Postal place"
+    occurrences:
+      min: 0
+      max: 1

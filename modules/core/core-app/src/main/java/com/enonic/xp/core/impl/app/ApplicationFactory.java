@@ -9,11 +9,10 @@ import java.util.List;
 import org.osgi.framework.Bundle;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.config.Configuration;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.BundleApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.ClassLoaderApplicationUrlResolver;
-import com.enonic.xp.core.impl.app.resolver.FakeSiteXmlUrlResolver;
+import com.enonic.xp.core.impl.app.resolver.FakeCmsYmlUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.MultiApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.NodeResourceApplicationUrlResolver;
 import com.enonic.xp.node.NodeService;
@@ -48,7 +47,7 @@ public final class ApplicationFactory
         final NodeResourceApplicationUrlResolver nodeResourceApplicationResolver =
             new NodeResourceApplicationUrlResolver( appKey, nodeService );
         final ClassLoaderApplicationUrlResolver classLoaderUrlResolver = createClassLoaderUrlResolver( bundle );
-        final FakeSiteXmlUrlResolver fakeSiteXmlUrlResolver = new FakeSiteXmlUrlResolver( appKey, nodeService );
+        final FakeCmsYmlUrlResolver fakeSiteXmlUrlResolver = new FakeCmsYmlUrlResolver( appKey, nodeService );
 
         final boolean addCLR = RunMode.isDev() && classLoaderUrlResolver != null;
 

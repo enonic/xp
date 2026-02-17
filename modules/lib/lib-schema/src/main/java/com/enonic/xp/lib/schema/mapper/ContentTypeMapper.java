@@ -1,5 +1,6 @@
 package com.enonic.xp.lib.schema.mapper;
 
+import com.enonic.xp.resource.DynamicContentSchemaType;
 import com.enonic.xp.resource.DynamicSchemaResult;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.script.serializer.MapGenerator;
@@ -17,12 +18,12 @@ public final class ContentTypeMapper
     {
         super.serialize( gen );
         DynamicSchemaSerializer.serializeForm( gen, descriptor.getForm() );
-        DynamicSchemaSerializer.serializeConfig( gen, descriptor.getSchemaConfig() );
+        gen.value( "config", descriptor.getSchemaConfig().toRawJs() );
     }
 
     @Override
     protected String getType()
     {
-        return "CONTENT_TYPE";
+        return DynamicContentSchemaType.CONTENT_TYPE.name();
     }
 }

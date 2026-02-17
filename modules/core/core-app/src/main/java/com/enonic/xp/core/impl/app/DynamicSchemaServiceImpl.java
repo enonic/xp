@@ -35,21 +35,21 @@ import com.enonic.xp.resource.ListDynamicContentSchemasParams;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.resource.UpdateDynamicCmsParams;
 import com.enonic.xp.resource.UpdateDynamicComponentParams;
 import com.enonic.xp.resource.UpdateDynamicContentSchemaParams;
-import com.enonic.xp.resource.UpdateDynamicSiteParams;
 import com.enonic.xp.resource.UpdateDynamicStylesParams;
 import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.schema.BaseSchemaName;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.mixin.Mixin;
+import com.enonic.xp.schema.formfragment.FormFragmentDescriptor;
+import com.enonic.xp.schema.formfragment.FormFragmentName;
+import com.enonic.xp.schema.mixin.MixinDescriptor;
 import com.enonic.xp.schema.mixin.MixinName;
-import com.enonic.xp.schema.xdata.XData;
-import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.site.SiteDescriptor;
+import com.enonic.xp.site.CmsDescriptor;
 import com.enonic.xp.style.StyleDescriptor;
 
 @Component(immediate = true, service = {DynamicSchemaService.class, DynamicSchemaServiceInternal.class})
@@ -127,35 +127,35 @@ public class DynamicSchemaServiceImpl
     }
 
     @Override
-    public DynamicSchemaResult<SiteDescriptor> createSite( final CreateDynamicSiteParams params )
+    public DynamicSchemaResult<CmsDescriptor> createCms( final CreateDynamicCmsParams params )
     {
         requireAdminRole();
 
-        final SiteDescriptor site = dynamicResourceParser.parseSite( params.getKey(), params.getResource() );
+        final CmsDescriptor site = dynamicResourceParser.parseCms( params.getKey(), params.getResource() );
 
-        final NodePath resourceFolderPath = createSiteFolderPath( params.getKey() );
+        final NodePath resourceFolderPath = createCmsFolderPath( params.getKey() );
         final Resource createdResource =
-            dynamicResourceManager.createResource( resourceFolderPath, VirtualAppConstants.SITE_ROOT_NAME, params.getResource() );
+            dynamicResourceManager.createResource( resourceFolderPath, VirtualAppConstants.CMS_ROOT_NAME, params.getResource() );
 
         return new DynamicSchemaResult<>(
-            SiteDescriptor.copyOf( site ).modifiedTime( Instant.ofEpochMilli( createdResource.getTimestamp() ) ).build(), createdResource );
+            CmsDescriptor.copyOf( site ).modifiedTime( Instant.ofEpochMilli( createdResource.getTimestamp() ) ).build(), createdResource );
     }
 
     @Override
-    public DynamicSchemaResult<SiteDescriptor> updateSite( final UpdateDynamicSiteParams params )
+    public DynamicSchemaResult<CmsDescriptor> updateCms( final UpdateDynamicCmsParams params )
     {
         requireAdminRole();
 
-        final SiteDescriptor site = dynamicResourceParser.parseSite( params.getKey(), params.getResource() );
+        final CmsDescriptor cmsDescriptor = dynamicResourceParser.parseCms( params.getKey(), params.getResource() );
 
-        final NodePath resourceFolderPath = createSiteFolderPath( params.getKey() );
+        final NodePath resourceFolderPath = createCmsFolderPath( params.getKey() );
 
-        final Resource resource = dynamicResourceManager.resourceNodeExists( resourceFolderPath, VirtualAppConstants.SITE_ROOT_NAME )
-            ? dynamicResourceManager.updateResource( resourceFolderPath, VirtualAppConstants.SITE_ROOT_NAME, params.getResource() )
-            : dynamicResourceManager.createResource( resourceFolderPath, VirtualAppConstants.SITE_ROOT_NAME, params.getResource() );
+        final Resource resource = dynamicResourceManager.resourceNodeExists( resourceFolderPath, VirtualAppConstants.CMS_ROOT_NAME )
+            ? dynamicResourceManager.updateResource( resourceFolderPath, VirtualAppConstants.CMS_ROOT_NAME, params.getResource() )
+            : dynamicResourceManager.createResource( resourceFolderPath, VirtualAppConstants.CMS_ROOT_NAME, params.getResource() );
 
         return new DynamicSchemaResult<>(
-            SiteDescriptor.copyOf( site ).modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) ).build(), resource );
+            CmsDescriptor.copyOf( cmsDescriptor ).modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) ).build(), resource );
     }
 
     @Override
@@ -165,7 +165,7 @@ public class DynamicSchemaServiceImpl
 
         final StyleDescriptor styles = dynamicResourceParser.parseStyles( params.getKey(), params.getResource() );
 
-        final NodePath resourceFolderPath = createSiteFolderPath( params.getKey() );
+        final NodePath resourceFolderPath = NodePath.create( createCmsFolderPath( params.getKey() ) ).addElement( "styles" ).build();
         final Resource resource =
             dynamicResourceManager.createResource( resourceFolderPath, VirtualAppConstants.STYLES_NAME, params.getResource() );
 
@@ -180,7 +180,7 @@ public class DynamicSchemaServiceImpl
 
         final StyleDescriptor styles = dynamicResourceParser.parseStyles( params.getKey(), params.getResource() );
 
-        final NodePath resourceFolderPath = createSiteFolderPath( params.getKey() );
+        final NodePath resourceFolderPath = NodePath.create( createCmsFolderPath( params.getKey() ) ).addElement( "styles" ).build();
         final Resource resource =
             dynamicResourceManager.updateResource( resourceFolderPath, VirtualAppConstants.STYLES_NAME, params.getResource() );
 
@@ -241,19 +241,19 @@ public class DynamicSchemaServiceImpl
     }
 
     @Override
-    public DynamicSchemaResult<SiteDescriptor> getSite( final ApplicationKey key )
+    public DynamicSchemaResult<CmsDescriptor> getCmsDescriptor( final ApplicationKey key )
     {
         requireAdminRole();
 
-        final NodePath resourceFolderPath = createSiteFolderPath( key );
+        final NodePath resourceFolderPath = createCmsFolderPath( key );
 
-        final Resource resource = dynamicResourceManager.getResource( resourceFolderPath, VirtualAppConstants.SITE_ROOT_NAME );
+        final Resource resource = dynamicResourceManager.getResource( resourceFolderPath, VirtualAppConstants.CMS_ROOT_NAME );
 
         if ( resource.exists() && resource.getSize() > 0 )
         {
-            final SiteDescriptor siteDescriptor = dynamicResourceParser.parseSite( key, resource.readString() );
+            final CmsDescriptor siteDescriptor = dynamicResourceParser.parseCms( key, resource.readString() );
             return new DynamicSchemaResult<>(
-                SiteDescriptor.copyOf( siteDescriptor ).modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) ).build(), resource );
+                CmsDescriptor.copyOf( siteDescriptor ).modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) ).build(), resource );
         }
         return null;
     }
@@ -263,7 +263,7 @@ public class DynamicSchemaServiceImpl
     {
         requireAdminRole();
 
-        final NodePath resourceFolderPath = createSiteFolderPath( key );
+        final NodePath resourceFolderPath = NodePath.create( createCmsFolderPath( key ) ).addElement( "styles" ).build();
         final Resource resource = dynamicResourceManager.getResource( resourceFolderPath, VirtualAppConstants.STYLES_NAME );
 
         if ( resource.exists() && resource.getSize() > 0 )
@@ -311,12 +311,12 @@ public class DynamicSchemaServiceImpl
     }
 
     @Override
-    public boolean deleteSite( final ApplicationKey key )
+    public boolean deleteCms( final ApplicationKey key )
     {
         requireAdminRole();
 
-        final NodePath resourceFolderPath = createSiteFolderPath( key );
-        return dynamicResourceManager.deleteResource( resourceFolderPath, VirtualAppConstants.SITE_ROOT_NAME, false );
+        final NodePath resourceFolderPath = createCmsFolderPath( key );
+        return dynamicResourceManager.deleteResource( resourceFolderPath, VirtualAppConstants.CMS_ROOT_NAME, false );
     }
 
     @Override
@@ -324,7 +324,7 @@ public class DynamicSchemaServiceImpl
     {
         requireAdminRole();
 
-        final NodePath resourceFolderPath = createSiteFolderPath( key );
+        final NodePath resourceFolderPath = NodePath.create( createCmsFolderPath( key ) ).addElement( "styles" ).build();
         return dynamicResourceManager.deleteResource( resourceFolderPath, VirtualAppConstants.STYLES_NAME, false );
     }
 
@@ -334,10 +334,10 @@ public class DynamicSchemaServiceImpl
         {
             case CONTENT_TYPE:
                 return ContentTypeName.from( applicationKey, name );
+            case FORM_FRAGMENT:
+                return FormFragmentName.from( applicationKey, name );
             case MIXIN:
                 return MixinName.from( applicationKey, name );
-            case XDATA:
-                return XDataName.from( applicationKey, name );
             default:
                 throw new IllegalArgumentException( "invalid schema type: " + type );
         }
@@ -359,7 +359,7 @@ public class DynamicSchemaServiceImpl
         final String resourceRootName = getComponentRootName( dynamicType );
         return NodePath.create( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT )
             .addElement( key.toString() )
-            .addElement( VirtualAppConstants.SITE_ROOT_NAME )
+            .addElement( VirtualAppConstants.CMS_ROOT_NAME )
             .addElement( resourceRootName )
             .build();
     }
@@ -375,16 +375,16 @@ public class DynamicSchemaServiceImpl
         final String resourceRootName = getSchemaRootName( dynamicType );
         return NodePath.create( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT )
             .addElement( key.toString() )
-            .addElement( VirtualAppConstants.SITE_ROOT_NAME )
+            .addElement( VirtualAppConstants.CMS_ROOT_NAME )
             .addElement( resourceRootName )
             .build();
     }
 
-    private NodePath createSiteFolderPath( final ApplicationKey key )
+    private NodePath createCmsFolderPath( final ApplicationKey key )
     {
         return NodePath.create( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT )
             .addElement( key.toString() )
-            .addElement( VirtualAppConstants.SITE_ROOT_NAME )
+            .addElement( VirtualAppConstants.CMS_ROOT_NAME )
             .build();
     }
 
@@ -394,10 +394,10 @@ public class DynamicSchemaServiceImpl
         {
             case CONTENT_TYPE:
                 return VirtualAppConstants.CONTENT_TYPE_ROOT_NAME;
+            case FORM_FRAGMENT:
+                return VirtualAppConstants.FORM_FRAGMENTS_ROOT_NAME;
             case MIXIN:
-                return VirtualAppConstants.MIXIN_ROOT_NAME;
-            case XDATA:
-                return VirtualAppConstants.X_DATA_ROOT_NAME;
+                return VirtualAppConstants.MIXINS_ROOT_NAME;
             default:
                 throw new IllegalArgumentException( "invalid dynamic schema type: " + type );
         }
@@ -458,13 +458,15 @@ public class DynamicSchemaServiceImpl
         {
             return ContentType.create( (ContentType) baseSchema ).modifiedTime( Instant.ofEpochMilli( modifiedTime ) ).build();
         }
-        if ( baseSchema instanceof Mixin )
+        if ( baseSchema instanceof FormFragmentDescriptor )
         {
-            return Mixin.create( (Mixin) baseSchema ).modifiedTime( Instant.ofEpochMilli( modifiedTime ) ).build();
+            return FormFragmentDescriptor.create( (FormFragmentDescriptor) baseSchema )
+                .modifiedTime( Instant.ofEpochMilli( modifiedTime ) )
+                .build();
         }
-        if ( baseSchema instanceof XData )
+        if ( baseSchema instanceof MixinDescriptor )
         {
-            return XData.create( (XData) baseSchema ).modifiedTime( Instant.ofEpochMilli( modifiedTime ) ).build();
+            return MixinDescriptor.create( (MixinDescriptor) baseSchema ).modifiedTime( Instant.ofEpochMilli( modifiedTime ) ).build();
         }
 
         throw new IllegalArgumentException( "unknown type of BaseSchema: " + baseSchema.getName() );

@@ -27,7 +27,7 @@ import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.region.ComponentPath;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.schema.mixin.MixinName;
 
 import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -1080,7 +1080,7 @@ class OccurrenceValidatorTest
     {
         final Form form = createSingleFieldForm();
         final PropertyTree content = new PropertyTree();
-        final XDataName mixinName = XDataName.from( ApplicationKey.from( "app1" ), "myMixin" );
+        final MixinName mixinName = MixinName.from( ApplicationKey.from( "app1" ), "myMixin" );
         final ValidationErrors.Builder builder = ValidationErrors.create();
 
         OccurrenceValidator.validate( form, content.getRoot(),

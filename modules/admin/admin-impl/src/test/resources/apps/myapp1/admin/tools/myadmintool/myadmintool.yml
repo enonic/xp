@@ -1,0 +1,4 @@
+displayName: "My admin tool"
+description: "My admin tool description"
+allow:
+  - "role:system.user.admin"

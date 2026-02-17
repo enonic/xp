@@ -84,12 +84,45 @@ class LibAdminTest
 
         DescriptorKey descriptorKey = params.getDescriptorKey();
         assertEquals( "admin", descriptorKey.getApplicationKey().getName() );
-        assertEquals( "widget", descriptorKey.getName() );
+        assertEquals( "extension", descriptorKey.getName() );
 
         List<String> pathSegments = params.getPathSegments();
         assertEquals( 2, pathSegments.size() );
         assertEquals( "myapp", pathSegments.get( 0 ) );
         assertEquals( "mywidget", pathSegments.get( 1 ) );
+
+        Map<String, Collection<String>> queryParams = params.getQueryParams();
+
+        assertEquals( 2, queryParams.size() );
+        assertEquals( "v1", queryParams.get( "k1" ).iterator().next() );
+
+        Iterator<String> k2 = queryParams.get( "k2" ).iterator();
+        assertEquals( "v21", k2.next() );
+        assertEquals( "v22", k2.next() );
+    }
+
+    @Test
+    void testExtensionUrl()
+    {
+        when( portalUrlService.apiUrl( any( ApiUrlParams.class ) ) ).thenReturn( "generated_url" );
+
+        runFunction( "/test/admin-test.js", "testExtensionUrl" );
+
+        ArgumentCaptor<ApiUrlParams> captor = ArgumentCaptor.forClass( ApiUrlParams.class );
+        verify( portalUrlService ).apiUrl( captor.capture() );
+
+        ApiUrlParams params = captor.getValue();
+
+        assertEquals( "server", params.getType() );
+
+        DescriptorKey descriptorKey = params.getDescriptorKey();
+        assertEquals( "admin", descriptorKey.getApplicationKey().getName() );
+        assertEquals( "extension", descriptorKey.getName() );
+
+        List<String> pathSegments = params.getPathSegments();
+        assertEquals( 2, pathSegments.size() );
+        assertEquals( "myapp", pathSegments.get( 0 ) );
+        assertEquals( "myExtension", pathSegments.get( 1 ) );
 
         Map<String, Collection<String>> queryParams = params.getQueryParams();
 
@@ -117,7 +150,7 @@ class LibAdminTest
 
         DescriptorKey descriptorKey = params.getDescriptorKey();
         assertEquals( "admin", descriptorKey.getApplicationKey().getName() );
-        assertEquals( "widget", descriptorKey.getName() );
+        assertEquals( "extension", descriptorKey.getName() );
 
         List<String> pathSegments = params.getPathSegments();
         assertEquals( 2, pathSegments.size() );

@@ -21,7 +21,7 @@ import com.enonic.xp.core.internal.json.ObjectMapperHelper;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.region.ComponentPath;
-import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.util.BinaryReference;
 
 import static com.enonic.xp.content.ContentPropertyNames.VALIDATION_ERRORS;
@@ -119,7 +119,7 @@ public class ValidationErrorsSerializer
 
             if ( ve.hasProperty( "mixinName" ) )
             {
-                return ValidationError.mixinConfigError( errorCode, propertyPath, XDataName.from( ve.getString( "mixinName" ) ) )
+                return ValidationError.mixinConfigError( errorCode, propertyPath, MixinName.from( ve.getString( "mixinName" ) ) )
                     .message( ve.getString( "message" ), true )
                     .i18n( ve.getString( "i18n" ) )
                     .args( args )

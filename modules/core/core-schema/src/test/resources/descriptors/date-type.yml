@@ -1,0 +1,9 @@
+type: "Date"
+name: "mydate"
+label: "My Date"
+helpText: "Help Text"
+occurrences:
+  min: 0
+  max: 1
+default: "2025-08-29"
+attributes: { }

@@ -14,7 +14,7 @@ import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.EditableContentMetadata;
-import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.Mixins;
 import com.enonic.xp.content.UpdateContentMetadataParams;
 import com.enonic.xp.content.UpdateContentMetadataResult;
 import com.enonic.xp.data.PropertyTree;
@@ -57,7 +57,7 @@ public abstract class BaseProjectHandlerTest
                               .add( AccessControlEntry.create().principal( RoleKeys.EVERYONE ).allow( Permission.READ ).build() )
                               .build() )
             .data( new PropertyTree() )
-            .extraDatas( ExtraDatas.empty() );
+            .mixins( Mixins.empty() );
 
         when( contentService.getByPath( ContentPath.ROOT ) ).thenReturn( contentRoot.build() );
         when( contentService.updateMetadata( any() ) ).thenAnswer( invocation -> {

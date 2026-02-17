@@ -1,0 +1,16 @@
+type: "ComboBox"
+name: "mycombobox"
+label: "My Combobox"
+helpText: "Help Text"
+occurrences:
+  min: 1
+  max: 2
+options:
+  - value: "one"
+    label: "Option One"
+  - value: "two"
+    label:
+      text: "Option Two"
+      i18n: "combobox.option2"
+default: "one"
+attributes: { }

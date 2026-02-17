@@ -12,9 +12,8 @@ import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.FormOptionSet;
 import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.inputtype.InputTypeConfig;
+import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.inputtype.InputTypeName;
-import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.inputtype.InputTypeValidationException;
 import com.enonic.xp.inputtype.InputTypes;
 
@@ -176,10 +175,9 @@ class InputValidationVisitorTest
                               .inputType( InputTypeName.TEXT_LINE )
                               .label( "URL" )
                               .occurrences( 0, 0 )
-                              .inputTypeConfig( InputTypeConfig.create()
-                                                    .property( InputTypeProperty.create( "regexp",
-                                                                                         "^http(s)?:\\/\\/.?(www\\.)?[a-zA-Z0-9][-a-zA-Z0-9@:%._\\+~#=]{0,255}\\b([-a-zA-Z0-9@:%_\\+.~#?&amp;//=]*)" )
-                                                                   .build() )
+                              .inputTypeConfig( GenericValue.newObject()
+                                                    .put( "regexp",
+                                                          "^http(s)?:\\/\\/.?(www\\.)?[a-zA-Z0-9][-a-zA-Z0-9@:%._\\+~#=]{0,255}\\b([-a-zA-Z0-9@:%_\\+.~#?&amp;//=]*)" )
                                                     .build() )
                               .build() )
             .build();
@@ -215,11 +213,9 @@ class InputValidationVisitorTest
                                                                          .name( "htmlData" )
                                                                          .label( "htmlData" )
                                                                          .inputType( InputTypeName.TEXT_LINE )
-                                                                         .inputTypeConfig( InputTypeConfig.create()
-                                                                                               .property(
-                                                                                                   InputTypeProperty.create( "regexp",
-                                                                                                                             "^http(s)?:\\/\\/.?(www\\.)?[a-zA-Z0-9][-a-zA-Z0-9@:%._\\+~#=]{0,255}\\b([-a-zA-Z0-9@:%_\\+.~#?&amp;//=]*)" )
-                                                                                                       .build() )
+                                                                         .inputTypeConfig( GenericValue.newObject()
+                                                                                               .put( "regexp",
+                                                                                                     "^http(s)?:\\/\\/.?(www\\.)?[a-zA-Z0-9][-a-zA-Z0-9@:%._\\+~#=]{0,255}\\b([-a-zA-Z0-9@:%_\\+.~#?&amp;//=]*)" )
                                                                                                .build() )
                                                                          .build() )
                                                        .build() )

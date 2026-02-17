@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
-import com.enonic.xp.form.Input;
+import com.enonic.xp.util.GenericValue;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -35,40 +35,21 @@ class CustomSelectorTypeTest
     @Test
     void testCreateProperty()
     {
-        final InputTypeConfig config = InputTypeConfig.create().build();
-        final Value value = this.type.createValue( ValueFactory.newString( "name" ), config );
+        final Value value = this.type.createValue( ValueFactory.newString( "name" ), GenericValue.newObject().build() );
 
         assertNotNull( value );
         assertSame( ValueTypes.STRING, value.getType() );
     }
 
     @Test
-    void testCreateDefaultValue()
-    {
-        final Input input = getDefaultInputBuilder( InputTypeName.CUSTOM_SELECTOR, "testValue" ).build();
-        final Value value = this.type.createDefaultValue( input );
-
-        assertNotNull( value );
-        assertEquals( "testValue", value.toString() );
-
-    }
-
-    @Test
     void testValidate()
     {
-        final InputTypeConfig config = newEmptyConfig();
-        this.type.validate( stringProperty( "name" ), config );
+        this.type.validate( stringProperty( "name" ), GenericValue.newObject().build() );
     }
 
     @Test
     void testValidate_invalidType()
     {
-        final InputTypeConfig config = newEmptyConfig();
-        assertThrows(InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), config ));
-    }
-
-    private InputTypeConfig newEmptyConfig()
-    {
-        return InputTypeConfig.create().build();
+        assertThrows(InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), GenericValue.newObject().build() ));
     }
 }

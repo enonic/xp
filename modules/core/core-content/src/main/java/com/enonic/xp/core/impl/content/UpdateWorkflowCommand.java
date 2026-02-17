@@ -45,11 +45,11 @@ public class UpdateWorkflowCommand
             } )
             .versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.UPDATE_WORKFLOW_ATTR ) )
             .contentTypeService( this.contentTypeService )
-            .xDataService( this.xDataService )
+            .mixinService( this.mixinService )
             .pageDescriptorService( this.pageDescriptorService )
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
-            .siteService( this.siteService )
+            .cmsService( this.cmsService )
             .build()
             .produce();
 

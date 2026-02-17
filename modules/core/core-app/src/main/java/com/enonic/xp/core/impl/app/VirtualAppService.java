@@ -106,7 +106,7 @@ public class VirtualAppService
     {
         final Node siteRoot = nodeService.create( CreateNodeParams.create()
                                                       .data( new PropertyTree() )
-                                                      .name( VirtualAppConstants.SITE_ROOT_NAME )
+                                                      .name( VirtualAppConstants.CMS_ROOT_NAME )
                                                       .parent( parent )
                                                       .permissions( VirtualAppConstants.VIRTUAL_APP_REPO_DEFAULT_ACL )
                                                       .build() );
@@ -115,8 +115,8 @@ public class VirtualAppService
         final NodeId partNodeId = initPartNode( siteRoot.path() );
         final NodeId layoutNodeId = initLayoutNode( siteRoot.path() );
         final NodeId pageNodeId = initPageNode( siteRoot.path() );
-        final NodeId mixinNodeId = initMixinNode( siteRoot.path() );
-        final NodeId xDataNodeId = initXDataNode( siteRoot.path() );
+        final NodeId mixinNodeId = initCmsFormFragmentNode( siteRoot.path() );
+        final NodeId xDataNodeId = initMixinsNode( siteRoot.path() );
 
         return NodeIds.from( siteRoot.id(), contentTypeNodeId, partNodeId, layoutNodeId, pageNodeId, mixinNodeId, xDataNodeId );
     }
@@ -161,21 +161,21 @@ public class VirtualAppService
                                        .build() ).id();
     }
 
-    private NodeId initMixinNode( final NodePath parent )
+    private NodeId initCmsFormFragmentNode( final NodePath parent )
     {
         return nodeService.create( CreateNodeParams.create()
                                        .data( new PropertyTree() )
-                                       .name( VirtualAppConstants.MIXIN_ROOT_NAME )
+                                       .name( VirtualAppConstants.FORM_FRAGMENTS_ROOT_NAME )
                                        .parent( parent )
                                        .permissions( VirtualAppConstants.VIRTUAL_APP_REPO_DEFAULT_ACL )
                                        .build() ).id();
     }
 
-    private NodeId initXDataNode( final NodePath parent )
+    private NodeId initMixinsNode( final NodePath parent )
     {
         return nodeService.create( CreateNodeParams.create()
                                        .data( new PropertyTree() )
-                                       .name( VirtualAppConstants.X_DATA_ROOT_NAME )
+                                       .name( VirtualAppConstants.MIXINS_ROOT_NAME )
                                        .parent( parent )
                                        .permissions( VirtualAppConstants.VIRTUAL_APP_REPO_DEFAULT_ACL )
                                        .build() ).id();

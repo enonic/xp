@@ -8,9 +8,7 @@ import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
-import com.enonic.xp.form.Input;
-
-import static com.google.common.base.Strings.isNullOrEmpty;
+import com.enonic.xp.util.GenericValue;
 
 final class DoubleType
     extends InputTypeBase
@@ -25,35 +23,24 @@ final class DoubleType
     }
 
     @Override
-    public Value createValue( final Value value, final InputTypeConfig config )
+    public Value createValue( final Value value, final GenericValue config )
     {
         return ValueFactory.newDouble( value.asDouble() );
     }
 
     @Override
-    public Value createDefaultValue( final Input input )
-    {
-        final String defaultValue = input.getDefaultValue().getRootValue();
-        if ( !isNullOrEmpty( defaultValue ) )
-        {
-            return ValueFactory.newDouble( Double.valueOf( defaultValue ) );
-        }
-        return super.createDefaultValue( input );
-    }
-
-    @Override
-    public void validate( final Property property, final InputTypeConfig config )
+    public void validate( final Property property, final GenericValue config )
     {
         validateType( property, ValueTypes.DOUBLE );
         validateMin( property, config );
         validateMax( property, config );
     }
 
-    private void validateMin( final Property property, final InputTypeConfig config )
+    private void validateMin( final Property property, final GenericValue config )
     {
         try
         {
-            final Double min = config.getValue( "min", Double.class );
+            final Double min = getDoubleValueFromConfig( config, "min" );
             final Double value = property.getDouble();
 
             if ( min != null && value != null )
@@ -64,15 +51,15 @@ final class DoubleType
         }
         catch ( ConvertException e )
         {
-            LOG.warn("Cannot convert 'min' config to Double", e );
+            LOG.warn( "Cannot convert 'min' config to Double", e );
         }
     }
 
-    private void validateMax( final Property property, final InputTypeConfig config )
+    private void validateMax( final Property property, final GenericValue config )
     {
         try
         {
-            final Double max = config.getValue( "max", Double.class );
+            final Double max = getDoubleValueFromConfig( config, "max" );
             final Double value = property.getDouble();
 
             if ( max != null && value != null )
@@ -82,7 +69,12 @@ final class DoubleType
         }
         catch ( ConvertException e )
         {
-            LOG.warn("Cannot convert 'max' config to Double", e );
+            LOG.warn( "Cannot convert 'max' config to Double", e );
         }
+    }
+
+    private Double getDoubleValueFromConfig( final GenericValue config, final String key )
+    {
+        return config.optional( key ).map( GenericValue::asDouble ).orElse( null );
     }
 }

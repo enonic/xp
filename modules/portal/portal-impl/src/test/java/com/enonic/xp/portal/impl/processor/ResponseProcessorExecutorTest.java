@@ -88,7 +88,7 @@ class ResponseProcessorExecutorTest
     {
         var e = assertThrows( RenderException.class, () -> execute( "myapplication:/processor/missing-processor.js" ) );
         assertEquals(
-            "Missing exported function [responseProcessor] in response filter [myapplication:/site/processors/missing-processor.js]",
+            "Missing exported function [responseProcessor] in response filter [myapplication:/cms/processors/missing-processor.js]",
             e.getMessage() );
     }
 

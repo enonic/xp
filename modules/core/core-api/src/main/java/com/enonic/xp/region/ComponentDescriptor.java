@@ -7,8 +7,9 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.descriptor.Descriptor;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.form.Form;
-import com.enonic.xp.inputtype.InputTypeConfig;
+import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.schema.LocalizedText;
 
 @PublicApi
 public abstract class ComponentDescriptor
@@ -26,7 +27,7 @@ public abstract class ComponentDescriptor
 
     private final Form config;
 
-    private final InputTypeConfig schemaConfig;
+    private final GenericValue schemaConfig;
 
     protected ComponentDescriptor( final BaseBuilder builder )
     {
@@ -37,7 +38,7 @@ public abstract class ComponentDescriptor
         this.description = builder.description;
         this.descriptionI18nKey = builder.descriptionI18nKey;
         this.modifiedTime = builder.modifiedTime;
-        this.config = Objects.requireNonNull( builder.config, "config cannot be null" );
+        this.config = Objects.requireNonNullElse( builder.config, Form.empty() );
         this.schemaConfig = builder.schemaConfig.build();
     }
 
@@ -71,7 +72,7 @@ public abstract class ComponentDescriptor
         return config;
     }
 
-    public InputTypeConfig getSchemaConfig()
+    public GenericValue getSchemaConfig()
     {
         return schemaConfig;
     }
@@ -96,7 +97,7 @@ public abstract class ComponentDescriptor
 
         protected Form config;
 
-        private final InputTypeConfig.Builder schemaConfig = InputTypeConfig.create();
+        private final GenericValue.ObjectBuilder schemaConfig = GenericValue.newObject();
 
         protected BaseBuilder()
         {
@@ -112,9 +113,10 @@ public abstract class ComponentDescriptor
             this.descriptionI18nKey = descriptor.getDescriptionI18nKey();
             this.modifiedTime = descriptor.getModifiedTime();
             this.config = descriptor.getConfig();
+
             if ( descriptor.schemaConfig != null )
             {
-                this.schemaConfig.config( descriptor.schemaConfig );
+                descriptor.schemaConfig.properties().forEach( p -> this.schemaConfig.put( p.getKey(), p.getValue() ) );
             }
         }
 
@@ -136,6 +138,13 @@ public abstract class ComponentDescriptor
             return typecastToBuilder( this );
         }
 
+        public final T displayName( final LocalizedText text )
+        {
+            this.displayName = text.text();
+            this.displayNameI18nKey = text.i18n();
+            return typecastToBuilder( this );
+        }
+
         public final T description( String description )
         {
             this.description = description;
@@ -145,6 +154,13 @@ public abstract class ComponentDescriptor
         public final T descriptionI18nKey( final String descriptionI18nKey )
         {
             this.descriptionI18nKey = descriptionI18nKey;
+            return typecastToBuilder( this );
+        }
+
+        public final T description( final LocalizedText text )
+        {
+            this.description = text.text();
+            this.descriptionI18nKey = text.i18n();
             return typecastToBuilder( this );
         }
 
@@ -160,9 +176,9 @@ public abstract class ComponentDescriptor
             return typecastToBuilder( this );
         }
 
-        public final T schemaConfig( final InputTypeConfig value )
+        public final T schemaConfig( final GenericValue config )
         {
-            this.schemaConfig.config( value );
+            config.properties().forEach( e -> this.schemaConfig.put( e.getKey(), e.getValue() ) );
             return typecastToBuilder( this );
         }
 

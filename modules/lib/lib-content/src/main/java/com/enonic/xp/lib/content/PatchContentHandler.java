@@ -119,7 +119,7 @@ public final class PatchContentHandler
         edit( map, "modifier", String.class, PrincipalKey::from, target.modifier );
         edit( map, "modifiedTime", String.class, Instant::parse, target.modifiedTime );
         edit( map, "data", Map.class, v -> createPropertyTree( v, target.type.originalValue ), target.data );
-        edit( map, "x", Map.class, v -> createExtraDatas( v, target.type.originalValue ), target.extraDatas );
+        edit( map, "x", Map.class, v -> createMixins( v, target.type.originalValue ), target.mixins );
         edit( map, "publish", Map.class, this::createContentPublishInfo, target.publishInfo );
         edit( map, "workflow", Map.class, this::createWorkflowInfo, target.workflowInfo );
         edit( map, "page", Map.class, this::createPage, target.page );

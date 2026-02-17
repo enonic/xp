@@ -17,8 +17,8 @@ import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.Contents;
-import com.enonic.xp.content.ExtraData;
-import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.Mixin;
+import com.enonic.xp.content.Mixins;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
@@ -33,7 +33,7 @@ import com.enonic.xp.region.Region;
 import com.enonic.xp.region.Regions;
 import com.enonic.xp.region.TextComponent;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
@@ -60,13 +60,12 @@ public final class TestDataFixtures
         builder.createdTime( Instant.ofEpochSecond( 0 ) );
         builder.language( Locale.ENGLISH );
         builder.data( newPropertyTree() );
-        builder.publishInfo( ContentPublishInfo.create().
-            from( Instant.parse( "2016-11-03T10:00:00Z" ) ).
-            to( Instant.parse( "2016-11-23T10:00:00Z" ) ).
-            build() );
-        builder.extraDatas( ExtraDatas.create()
-                                .add( new ExtraData( XDataName.from( "com.enonic.myapplication:myschema" ), newTinyPropertyTree() ) )
-                                .build() );
+        builder.publishInfo( ContentPublishInfo.create()
+                                 .from( Instant.parse( "2016-11-03T10:00:00Z" ) )
+                                 .to( Instant.parse( "2016-11-23T10:00:00Z" ) )
+                                 .build() );
+        builder.mixins(
+            Mixins.create().add( new Mixin( MixinName.from( "com.enonic.myapplication:myschema" ), newTinyPropertyTree() ) ).build() );
         builder.page( newPage() );
         builder.attachments( newAttachments() );
 
@@ -75,9 +74,7 @@ public final class TestDataFixtures
 
     public static Content newContentWithPageAsFragment()
     {
-        return newExampleContentBuilder().page( Page.create().
-            fragment( createLayoutComponent() ).
-            build() ).build();
+        return newExampleContentBuilder().page( Page.create().fragment( createLayoutComponent() ).build() ).build();
     }
 
 
@@ -112,31 +109,31 @@ public final class TestDataFixtures
 
     public static Content.Builder newExampleLayerContentBuilder()
     {
-        return newExampleContentBuilder().
-            originProject( ProjectName.from( "origin" ) ).
-            setInherit( Set.of( ContentInheritType.NAME, ContentInheritType.CONTENT ) );
+        return newExampleContentBuilder().originProject( ProjectName.from( "origin" ) )
+            .setInherit( Set.of( ContentInheritType.NAME, ContentInheritType.CONTENT ) );
     }
 
     public static Content newSmallContent()
     {
-        final Content.Builder builder = Content.create().
-            id( ContentId.from( "123456" ) ).
-            name( "mycontent" ).
-            type( ContentTypeName.from( "test:myContentType" ) ).
-            displayName( "My Content" ).
-            language( Locale.ENGLISH ).
-            parentPath( ContentPath.from( "/a/b" ) ).
-            modifier( PrincipalKey.from( "user:system:admin" ) ).
-            modifiedTime( Instant.ofEpochSecond( 0 ) ).
-            creator( PrincipalKey.from( "user:system:admin" ) ).
-            createdTime( Instant.ofEpochSecond( 0 ) ).
-            data( newSmallPropertyTree() ).
-            publishInfo( ContentPublishInfo.create().
-                from( Instant.parse( "2016-11-02T10:36:00Z" ) ).
-                to( Instant.parse( "2016-11-22T10:36:00Z" ) ).
-                build() ).
-            extraDatas(  ExtraDatas.create().add( new ExtraData( XDataName.from( "com.enonic.myapplication:myschema" ), newTinyPropertyTree() ) ).build() ).
-            page( newPage() );
+        final Content.Builder builder = Content.create()
+            .id( ContentId.from( "123456" ) )
+            .name( "mycontent" )
+            .type( ContentTypeName.from( "test:myContentType" ) )
+            .displayName( "My Content" )
+            .language( Locale.ENGLISH )
+            .parentPath( ContentPath.from( "/a/b" ) )
+            .modifier( PrincipalKey.from( "user:system:admin" ) )
+            .modifiedTime( Instant.ofEpochSecond( 0 ) )
+            .creator( PrincipalKey.from( "user:system:admin" ) )
+            .createdTime( Instant.ofEpochSecond( 0 ) )
+            .data( newSmallPropertyTree() )
+            .publishInfo( ContentPublishInfo.create()
+                              .from( Instant.parse( "2016-11-02T10:36:00Z" ) )
+                              .to( Instant.parse( "2016-11-22T10:36:00Z" ) )
+                              .build() )
+            .mixins(
+                Mixins.create().add( new Mixin( MixinName.from( "com.enonic.myapplication:myschema" ), newTinyPropertyTree() ) ).build() )
+            .page( newPage() );
 
         return builder.build();
     }
@@ -146,16 +143,16 @@ public final class TestDataFixtures
         final List<Content> list = new ArrayList<>();
         for ( int i = 0; i < num; i++ )
         {
-            final Content content = Content.create().
-                id( ContentId.from( "id" + ( i + 1 ) ) ).
-                name( "name" + ( i + 1 ) ).
-                displayName( "My Content " + ( i + 1 ) ).
-                parentPath( ContentPath.from( "/a/b" ) ).
-                modifier( PrincipalKey.from( "user:system:admin" ) ).
-                modifiedTime( Instant.ofEpochSecond( 0 ) ).
-                creator( PrincipalKey.from( "user:system:admin" ) ).
-                createdTime( Instant.ofEpochSecond( 0 ) ).
-                build();
+            final Content content = Content.create()
+                .id( ContentId.from( "id" + ( i + 1 ) ) )
+                .name( "name" + ( i + 1 ) )
+                .displayName( "My Content " + ( i + 1 ) )
+                .parentPath( ContentPath.from( "/a/b" ) )
+                .modifier( PrincipalKey.from( "user:system:admin" ) )
+                .modifiedTime( Instant.ofEpochSecond( 0 ) )
+                .creator( PrincipalKey.from( "user:system:admin" ) )
+                .createdTime( Instant.ofEpochSecond( 0 ) )
+                .build();
 
             list.add( content );
         }
@@ -237,106 +234,67 @@ public final class TestDataFixtures
 
     public static Regions newPageRegions()
     {
-        return Regions.create().
-            add( newTopRegion() ).
-            add( newBottomRegion() ).
-            build();
+        return Regions.create().add( newTopRegion() ).add( newBottomRegion() ).build();
     }
 
     public static Region newTopRegion()
     {
-        return Region.create().
-            name( "top" ).
-            add( createPartComponent( "app-descriptor-x:name-x", newTinyPropertyTree() ) ).
-            add( createLayoutComponent() ).
-            add( LayoutComponent.create().build() ).
-            build();
+        return Region.create()
+            .name( "top" )
+            .add( createPartComponent( "app-descriptor-x:name-x", newTinyPropertyTree() ) )
+            .add( createLayoutComponent() )
+            .add( LayoutComponent.create().build() )
+            .build();
     }
 
     public static Region newBottomRegion()
     {
-        return Region.create().
-            name( "bottom" ).
-            add( createPartComponent( "app-descriptor-y:name-y", newTinyPropertyTree() ) ).
-            add( createImageComponent( "img-id-x", "Image Component", newImageComponentPropertyTree() ) ).
-            add( ImageComponent.create().build() ).
-            build();
+        return Region.create()
+            .name( "bottom" )
+            .add( createPartComponent( "app-descriptor-y:name-y", newTinyPropertyTree() ) )
+            .add( createImageComponent( "img-id-x", newImageComponentPropertyTree() ) )
+            .add( ImageComponent.create().build() )
+            .build();
     }
 
     public static Attachments newAttachments()
     {
-        final Attachment a1 = Attachment.create().
-            name( "logo.png" ).
-            mimeType( "image/png" ).
-            label( "small" ).
-            size( 6789 ).
-            build();
-        final Attachment a2 = Attachment.create().
-            name( "document.pdf" ).
-            mimeType( "application/pdf" ).
-            size( 12345 ).
-            build();
+        final Attachment a1 = Attachment.create().name( "logo.png" ).mimeType( "image/png" ).label( "small" ).size( 6789 ).build();
+        final Attachment a2 = Attachment.create().name( "document.pdf" ).mimeType( "application/pdf" ).size( 12345 ).build();
         return Attachments.from( a1, a2 );
     }
 
-    private static ImageComponent createImageComponent( final String imageId, final String imageDisplayName,
-                                                        final PropertyTree imageConfig )
+    private static ImageComponent createImageComponent( final String imageId,  final PropertyTree imageConfig )
     {
-        final ContentId id = ContentId.from( imageId );
-        final Content imageContent = Content.create().
-            name( "someimage" ).
-            displayName( imageDisplayName ).
-            parentPath( ContentPath.ROOT ).
-            build();
-
-        return ImageComponent.create().
-            image( id ).
-            config( imageConfig ).
-            build();
+        return ImageComponent.create().image( ContentId.from( imageId ) ).config( imageConfig ).build();
     }
 
-    private static FragmentComponent createFragmentComponent( final String fragmentId, final String fragmentDisplayName )
+    private static FragmentComponent createFragmentComponent( final String fragmentId )
     {
-        final ContentId id = ContentId.from( fragmentId );
-        final Content fragmentContent = Content.create().
-            name( "somefragment" ).
-            displayName( fragmentDisplayName ).
-            parentPath( ContentPath.ROOT ).
-            build();
-
-        return FragmentComponent.create().
-            fragment( id ).
-            build();
+        return FragmentComponent.create().fragment( ContentId.from( fragmentId ) ).build();
     }
 
     private static PartComponent createPartComponent( final String descriptorKey, final PropertyTree partConfig )
     {
         final DescriptorKey descriptor = DescriptorKey.from( descriptorKey );
 
-        return PartComponent.create().
-            descriptor( descriptor ).
-            config( partConfig ).
-            build();
+        return PartComponent.create().descriptor( descriptor ).config( partConfig ).build();
     }
 
     private static LayoutComponent createLayoutComponent()
     {
-        final Region region1 = Region.create().
-            name( "left" ).
-            add( PartComponent.create().
-                build() ).
-            add( TextComponent.create().
-                text( "text text text" ).
-                build() ).
-            add( TextComponent.create().
-                build() ).
-            build();
+        final Region region1 = Region.create()
+            .name( "left" )
+            .add( PartComponent.create().build() )
+            .add( TextComponent.create().text( "text text text" ).build() )
+            .add( TextComponent.create().build() )
+            .build();
 
-        final Region region2 = Region.create().
-            name( "right" ).
-            add( createImageComponent( "image-id", "Some Image", null ) ).
-            add( createFragmentComponent( "213sda-ss222", "My Fragment" ) ).
-            build();
+        final Region region2 = Region.create()
+            .name( "right" )
+            .add( createImageComponent( "image-id", null ) )
+            .add( createFragmentComponent( "213sda-ss222" ) )
+            .build();
 
         final Regions regions = Regions.create().add( region1 ).add( region2 ).build();
 

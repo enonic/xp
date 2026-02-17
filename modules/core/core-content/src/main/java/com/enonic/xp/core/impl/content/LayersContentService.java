@@ -45,8 +45,8 @@ import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeService;
-import com.enonic.xp.schema.xdata.XDataService;
-import com.enonic.xp.site.SiteService;
+import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.site.CmsService;
 import com.enonic.xp.util.BinaryReference;
 
 @Component(configurationPid = "com.enonic.xp.content", service = LayersContentService.class )
@@ -59,9 +59,9 @@ public class LayersContentService
 
     private final EventPublisher eventPublisher;
 
-    private final XDataService xDataService;
+    private final MixinService mixinService;
 
-    private final SiteService siteService;
+    private final CmsService cmsService;
 
     private final PageDescriptorService pageDescriptorService;
 
@@ -77,16 +77,16 @@ public class LayersContentService
 
     @Activate
     public LayersContentService( @Reference final NodeService nodeService, @Reference final ContentTypeService contentTypeService,
-                                 @Reference final EventPublisher eventPublisher, @Reference final XDataService xDataService,
-                                 @Reference final SiteService siteService, @Reference final PageDescriptorService pageDescriptorService,
+                                 @Reference final EventPublisher eventPublisher, @Reference final MixinService mixinService,
+                                 @Reference final CmsService cmsService, @Reference final PageDescriptorService pageDescriptorService,
                                  @Reference final PartDescriptorService partDescriptorService,
                                  @Reference final LayoutDescriptorService layoutDescriptorService, ContentConfig config )
     {
         this.nodeService = nodeService;
         this.contentTypeService = contentTypeService;
         this.eventPublisher = eventPublisher;
-        this.xDataService = xDataService;
-        this.siteService = siteService;
+        this.mixinService = mixinService;
+        this.cmsService = cmsService;
         this.pageDescriptorService = pageDescriptorService;
         this.partDescriptorService = partDescriptorService;
         this.layoutDescriptorService = layoutDescriptorService;
@@ -156,8 +156,8 @@ public class LayersContentService
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
             .eventPublisher( this.eventPublisher )
-            .siteService( this.siteService )
-            .xDataService( this.xDataService )
+            .cmsService( this.cmsService )
+            .mixinService( this.mixinService )
             .contentProcessors( this.contentProcessors )
             .contentValidators( this.contentValidators )
             .pageDescriptorService( this.pageDescriptorService )
@@ -175,7 +175,7 @@ public class LayersContentService
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
             .eventPublisher( this.eventPublisher )
-            .xDataService( this.xDataService )
+            .mixinService( this.mixinService )
             .contentValidators( this.contentValidators )
             .build()
             .execute();

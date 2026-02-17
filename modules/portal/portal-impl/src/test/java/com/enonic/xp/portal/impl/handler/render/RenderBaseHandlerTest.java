@@ -10,6 +10,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.core.impl.content.parser.YmlPageDescriptorParser;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.page.Page;
@@ -38,7 +39,6 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.web.handler.BaseHandlerTest;
-import com.enonic.xp.xml.parser.XmlPageDescriptorParser;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -222,22 +222,12 @@ public abstract class RenderBaseHandlerTest
         final String name = "mypage";
         final DescriptorKey key = DescriptorKey.from( applicationKey, name );
 
-        final String xml =
-            "<?xml version=\"1.0\"?>\n" + "<page>\n" + "  <display-name>Landing page</display-name>\n" + "  <config/>\n" + "</page>";
-        final PageDescriptor.Builder builder = PageDescriptor.create();
+        final String yml = """
+            displayName: "Landing page"
+            regions: [ ]
+            """;
 
-        parseXml( applicationKey, builder, xml );
-
-        return builder.key( key ).displayName( "Landing page" ).build();
-    }
-
-    private void parseXml( final ApplicationKey applicationKey, final PageDescriptor.Builder builder, final String xml )
-    {
-        final XmlPageDescriptorParser parser = new XmlPageDescriptorParser();
-        parser.builder( builder );
-        parser.currentApplication( applicationKey );
-        parser.source( xml );
-        parser.parse();
+        return YmlPageDescriptorParser.parse( yml, applicationKey ).key( key ).build();
     }
 
     protected final void setRendererResult( final PortalResponse response )

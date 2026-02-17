@@ -10,8 +10,8 @@ import com.enonic.xp.resource.GetDynamicContentSchemaParams;
 import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.schema.BaseSchemaName;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.formfragment.FormFragmentName;
 import com.enonic.xp.schema.mixin.MixinName;
-import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 
@@ -40,14 +40,14 @@ public class GetDynamicContentSchemaHandler
         BaseSchemaName schemaName;
         switch ( dynamicContentSchemaType )
         {
-            case MIXIN:
-                schemaName = MixinName.from( name );
+            case FORM_FRAGMENT:
+                schemaName = FormFragmentName.from( name );
                 break;
             case CONTENT_TYPE:
                 schemaName = ContentTypeName.from( name );
                 break;
-            case XDATA:
-                schemaName = XDataName.from( name );
+            case MIXIN:
+                schemaName = MixinName.from( name );
                 break;
             default:
                 throw new IllegalArgumentException( "illegal schema type: " + dynamicContentSchemaType );

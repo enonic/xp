@@ -16,7 +16,7 @@ import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentPublishInfo;
-import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.Mixins;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.core.impl.content.CreateContentTranslatorParams;
 import com.enonic.xp.data.PropertySet;
@@ -35,7 +35,7 @@ import static com.enonic.xp.content.ContentPropertyNames.CREATED_TIME;
 import static com.enonic.xp.content.ContentPropertyNames.CREATOR;
 import static com.enonic.xp.content.ContentPropertyNames.DATA;
 import static com.enonic.xp.content.ContentPropertyNames.DISPLAY_NAME;
-import static com.enonic.xp.content.ContentPropertyNames.EXTRA_DATA;
+import static com.enonic.xp.content.ContentPropertyNames.MIXINS;
 import static com.enonic.xp.content.ContentPropertyNames.INHERIT;
 import static com.enonic.xp.content.ContentPropertyNames.LANGUAGE;
 import static com.enonic.xp.content.ContentPropertyNames.MODIFIED_TIME;
@@ -63,7 +63,7 @@ public final class ContentDataSerializer
 {
     private final PageDataSerializer pageDataSerializer;
 
-    private final ExtraDataSerializer extraDataSerializer;
+    private final MixinDataSerializer mixinDataSerializer;
 
     private final WorkflowInfoSerializer workflowInfoSerializer;
 
@@ -77,7 +77,7 @@ public final class ContentDataSerializer
     private ContentDataSerializer( final PageDataSerializer pageDataSerializer )
     {
         this.pageDataSerializer = pageDataSerializer;
-        this.extraDataSerializer = new ExtraDataSerializer();
+        this.mixinDataSerializer = new MixinDataSerializer();
         this.workflowInfoSerializer = new WorkflowInfoSerializer();
         this.validationErrorsSerializer = new ValidationErrorsSerializer();
     }
@@ -112,11 +112,11 @@ public final class ContentDataSerializer
             toPageData( params.getPage(), contentAsData );
         }
 
-        final ExtraDatas extraData = params.getExtraDatas();
+        final Mixins mixins = params.getMixins();
 
-        if ( extraData != null && !extraData.isEmpty() )
+        if ( mixins != null && !mixins.isEmpty() )
         {
-            extraDataSerializer.toData( extraData, contentAsData );
+            mixinDataSerializer.toData( mixins, contentAsData );
         }
 
         AttachmentSerializer.create( contentAsData.getTree(), params.getCreateAttachments() );
@@ -134,9 +134,9 @@ public final class ContentDataSerializer
         addMetadata( contentAsData, content );
         contentAsData.addSet( DATA, content.getData().getRoot().copy( contentAsData.getTree() ) );
 
-        if ( content.hasExtraData() )
+        if ( !content.getMixins().isEmpty() )
         {
-            extraDataSerializer.toData( content.getAllExtraData(), contentAsData );
+            mixinDataSerializer.toData( content.getMixins(), contentAsData );
         }
 
         applyAttachmentsAsData( content, contentAsData );
@@ -161,9 +161,9 @@ public final class ContentDataSerializer
         return pageDataSerializer.fromData( asSet );
     }
 
-    public ExtraDatas fromExtraData( final PropertySet asSet )
+    public Mixins fromMixinData( final PropertySet asSet )
     {
-        return extraDataSerializer.fromData( asSet );
+        return mixinDataSerializer.fromData( asSet );
     }
 
     public Content.Builder<?> fromData( final PropertySet contentAsSet )
@@ -178,7 +178,7 @@ public final class ContentDataSerializer
         extractUserInfo( contentAsSet, builder );
         extractOwner( contentAsSet, builder );
         extractLanguage( contentAsSet, builder );
-        extractExtradata( contentAsSet, builder );
+        extractMixins( contentAsSet, builder );
         extractPage( contentAsSet, builder );
         extractAttachments( contentAsSet, builder );
         extractPublishInfo( contentAsSet, builder );
@@ -303,13 +303,13 @@ public final class ContentDataSerializer
         }
     }
 
-    private void extractExtradata( final PropertySet contentAsSet, final Content.Builder<?> builder )
+    private void extractMixins( final PropertySet contentAsSet, final Content.Builder<?> builder )
     {
-        final ExtraDatas extraData = extraDataSerializer.fromData( contentAsSet.getSet( EXTRA_DATA ) );
+        final Mixins mixins = mixinDataSerializer.fromData( contentAsSet.getSet( MIXINS ) );
 
-        if ( extraData != null && !extraData.isEmpty() )
+        if ( mixins != null && !mixins.isEmpty() )
         {
-            builder.extraDatas( extraData );
+            builder.mixins( mixins );
         }
     }
 

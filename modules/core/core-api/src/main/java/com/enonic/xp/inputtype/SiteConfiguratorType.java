@@ -3,6 +3,7 @@ package com.enonic.xp.inputtype;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
+import com.enonic.xp.util.GenericValue;
 
 final class SiteConfiguratorType
     extends InputTypeBase
@@ -15,13 +16,13 @@ final class SiteConfiguratorType
     }
 
     @Override
-    public Value createValue( final Value value, final InputTypeConfig config )
+    public Value createValue( final Value value, final GenericValue config )
     {
         return ValueFactory.newPropertySet( value.asData() );
     }
 
     @Override
-    public void validate( final Property property, final InputTypeConfig config )
+    public void validate( final Property property, final GenericValue config )
     {
     }
 }

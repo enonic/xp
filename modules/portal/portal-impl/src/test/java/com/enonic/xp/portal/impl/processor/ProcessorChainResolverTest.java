@@ -68,19 +68,26 @@ class ProcessorChainResolverTest
         ResponseProcessorDescriptor fd13 = ResponseProcessorDescriptor.create().application( ak1 ).name( "ak1-3" ).order( 3 ).build();
         ResponseProcessorDescriptor fd15 = ResponseProcessorDescriptor.create().application( ak1 ).name( "ak1-5" ).order( 5 ).build();
 
-        SiteDescriptor sd1 = SiteDescriptor.create().responseProcessors( ResponseProcessorDescriptors.from( fd13, fd15, fd12 ) ).build();
+        SiteDescriptor sd1 = SiteDescriptor.create()
+            .applicationKey( ak1 )
+            .responseProcessors( ResponseProcessorDescriptors.from( fd13, fd15, fd12 ) )
+            .build();
         Mockito.when( siteService.getDescriptor( Mockito.eq( ak1 ) ) ).thenReturn( sd1 );
 
         ResponseProcessorDescriptor fd21 = ResponseProcessorDescriptor.create().application( ak2 ).name( "ak2-1" ).order( 1 ).build();
         ResponseProcessorDescriptor fd22 = ResponseProcessorDescriptor.create().application( ak2 ).name( "ak1-2" ).order( 2 ).build();
         ResponseProcessorDescriptor fd23 = ResponseProcessorDescriptor.create().application( ak2 ).name( "ak2-3" ).order( 3 ).build();
 
-        SiteDescriptor sd2 = SiteDescriptor.create().responseProcessors( ResponseProcessorDescriptors.from( fd22, fd23, fd21 ) ).build();
+        SiteDescriptor sd2 = SiteDescriptor.create()
+            .applicationKey( ak2 )
+            .responseProcessors( ResponseProcessorDescriptors.from( fd22, fd23, fd21 ) )
+            .build();
         Mockito.when( siteService.getDescriptor( Mockito.eq( ak2 ) ) ).thenReturn( sd2 );
 
         ResponseProcessorDescriptor fd32 = ResponseProcessorDescriptor.create().application( ak3 ).name( "ak3-2" ).order( 2 ).build();
 
-        SiteDescriptor sd3 = SiteDescriptor.create().responseProcessors( ResponseProcessorDescriptors.from( fd32 ) ).build();
+        SiteDescriptor sd3 =
+            SiteDescriptor.create().applicationKey( ak3 ).responseProcessors( ResponseProcessorDescriptors.from( fd32 ) ).build();
         Mockito.when( siteService.getDescriptor( Mockito.eq( ak3 ) ) ).thenReturn( sd3 );
 
         ResponseProcessorDescriptors filters = resolver.resolve( portalRequest );

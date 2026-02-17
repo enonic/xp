@@ -420,7 +420,8 @@ class SlashApiHandlerTest
         final DescriptorKeys siteApiMountDescriptors =
             DescriptorKeys.from( DescriptorKey.from( applicationKey, "api-key-1" ), DescriptorKey.from( applicationKey, "api-key-2" ) );
 
-        final SiteDescriptor siteDescriptor = SiteDescriptor.create().apiMounts( siteApiMountDescriptors ).build();
+        final SiteDescriptor siteDescriptor =
+            SiteDescriptor.create().applicationKey( applicationKey ).apiMounts( siteApiMountDescriptors ).build();
         when( siteService.getDescriptor( eq( applicationKey ) ) ).thenReturn( siteDescriptor );
 
         WebException exception = assertThrows( WebException.class, () -> this.handler.handle( request ) );
@@ -460,7 +461,8 @@ class SlashApiHandlerTest
         final DescriptorKeys siteApiMountDescriptors =
             DescriptorKeys.from( DescriptorKey.from( applicationKey, "api-key-1" ), DescriptorKey.from( applicationKey, "api-key-2" ) );
 
-        final SiteDescriptor siteDescriptor = SiteDescriptor.create().apiMounts( siteApiMountDescriptors ).build();
+        final SiteDescriptor siteDescriptor =
+            SiteDescriptor.create().applicationKey( applicationKey ).apiMounts( siteApiMountDescriptors ).build();
         when( siteService.getDescriptor( eq( applicationKey ) ) ).thenReturn( siteDescriptor );
 
         WebResponse response = this.handler.handle( request );
@@ -833,7 +835,8 @@ class SlashApiHandlerTest
         final DescriptorKeys siteApiMountDescriptors =
             DescriptorKeys.from( DescriptorKey.from( applicationKey, "api-key-1" ), DescriptorKey.from( applicationKey, "api-key-2" ) );
 
-        final SiteDescriptor siteDescriptor = SiteDescriptor.create().apiMounts( siteApiMountDescriptors ).build();
+        final SiteDescriptor siteDescriptor =
+            SiteDescriptor.create().applicationKey( applicationKey ).apiMounts( siteApiMountDescriptors ).build();
         when( siteService.getDescriptor( eq( applicationKey ) ) ).thenReturn( siteDescriptor );
 
         WebResponse response = this.handler.handle( request );

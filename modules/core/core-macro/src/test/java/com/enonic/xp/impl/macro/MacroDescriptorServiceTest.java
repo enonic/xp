@@ -1,5 +1,6 @@
 package com.enonic.xp.impl.macro;
 
+import java.io.UncheckedIOException;
 import java.time.Instant;
 
 import org.junit.jupiter.api.Test;
@@ -10,7 +11,6 @@ import com.enonic.xp.core.impl.app.ApplicationTestSupport;
 import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.macro.MacroDescriptors;
 import com.enonic.xp.macro.MacroKey;
-import com.enonic.xp.xml.XmlException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -103,10 +103,8 @@ class MacroDescriptorServiceTest
         addApplication( "myapp3", "/apps/myapp3" );
 
         final MacroKey macroKey = MacroKey.from( ApplicationKey.from( "myapp3" ), "invalid" );
-        final XmlException ex = assertThrows( XmlException.class, () -> this.service.getByKey( macroKey ) );
+        final UncheckedIOException ex = assertThrows( UncheckedIOException.class, () -> this.service.getByKey( macroKey ) );
 
-        assertEquals(
-            "Could not load macro descriptor [system:/site/macros/invalid/invalid.xml]: cvc-complex-type.2.4.a: Invalid content was found starting with element " +
-                "'{\"urn:enonic:xp:model:1.0\":invalid-form}'. One of '{\"urn:enonic:xp:model:1.0\":form}' is expected.", ex.getMessage() );
+        assertTrue( ex.getMessage().contains( "Unrecognized field \"invalid-form\"" ) );
     }
 }

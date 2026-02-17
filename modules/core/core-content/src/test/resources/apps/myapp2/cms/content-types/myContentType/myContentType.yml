@@ -1,0 +1,24 @@
+superType: "com.enonic.app.myapplication:content"
+abstract: false
+final: true
+allowChildContent: true
+displayName: "All the Base Types"
+description: "description"
+form:
+  - type: "ItemSet"
+    name: "mySet"
+    occurrences:
+      min: 0
+      max: 1
+    items:
+      - type: "FieldSet"
+        label: "My field set"
+        items:
+          - type: "TextLine"
+            name: "myTextLine"
+            label: "Textline"
+            occurrences:
+              min: 0
+              max: 1
+config:
+  displayNameExpression: "${firstName} ${lastName}"

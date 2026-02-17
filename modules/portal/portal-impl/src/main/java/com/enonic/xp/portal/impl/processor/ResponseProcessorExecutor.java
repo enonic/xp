@@ -36,7 +36,7 @@ public final class ResponseProcessorExecutor
 
     public PortalResponse execute( final ResponseProcessorDescriptor filter, final PortalRequest request, final PortalResponse response )
     {
-        final ResourceKey script = ResourceKey.from( filter.getApplication(), "/site/processors/" + filter.getName() + ".js" );
+        final ResourceKey script = ResourceKey.from( filter.getApplication(), "/cms/processors/" + filter.getName() + ".js" );
         final ScriptExports filterExports;
         try
         {

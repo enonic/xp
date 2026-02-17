@@ -20,7 +20,7 @@ public final class EditableContent
 
     public PropertyTree data;
 
-    public ExtraDatas extraDatas;
+    public Mixins mixins;
 
     private EditablePage page;
 
@@ -64,7 +64,7 @@ public final class EditableContent
         this.source = Objects.requireNonNull( source );
         this.displayName = source.getDisplayName();
         this.data = source.getData().copy();
-        this.extraDatas = source.getAllExtraData().copy();
+        this.mixins = source.getMixins().copy();
         this.page = this.page( source.getPage() );
     }
 
@@ -73,7 +73,7 @@ public final class EditableContent
         return Content.create( this.source )
             .displayName( displayName )
             .data( data )
-            .extraDatas( extraDatas )
+            .mixins( mixins )
             .page( page != null ? page.build() : null )
             .build();
     }

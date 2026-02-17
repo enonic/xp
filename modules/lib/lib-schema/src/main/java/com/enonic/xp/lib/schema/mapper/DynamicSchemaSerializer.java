@@ -1,23 +1,18 @@
 package com.enonic.xp.lib.schema.mapper;
 
-import java.util.Map;
-
-import com.enonic.xp.data.Value;
 import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.Form;
+import com.enonic.xp.form.FormFragment;
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.FormOptionSet;
 import com.enonic.xp.form.FormOptionSetOption;
-import com.enonic.xp.form.InlineMixin;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.Occurrences;
 import com.enonic.xp.icon.Icon;
-import com.enonic.xp.inputtype.InputTypeConfig;
-import com.enonic.xp.inputtype.InputTypeProperty;
-import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.script.serializer.MapGenerator;
+import com.enonic.xp.util.GenericValue;
 
 public class DynamicSchemaSerializer
 {
@@ -44,19 +39,13 @@ public class DynamicSchemaSerializer
         gen.end();
     }
 
-    static void serializeConfig( final MapGenerator gen, final InputTypeConfig config )
+    static void serializeConfig( final MapGenerator gen, final GenericValue config )
     {
-        gen.map( "config" );
-        for ( String name : config.getNames() )
-        {
-            gen.array( name );
-            for ( final InputTypeProperty property : config.getProperties( name ) )
-            {
-                serializeConfigProperty( gen, property );
-            }
-            gen.end();
-        }
-        gen.end();
+        config.properties().forEach( e -> {
+            final String propertyName = e.getKey();
+            final GenericValue value = e.getValue();
+            gen.value( propertyName, value.toRawJs() );
+        });
     }
 
     static void serializeRegions( final MapGenerator gen, final RegionDescriptors regions )
@@ -85,9 +74,9 @@ public class DynamicSchemaSerializer
         {
             serializeInput( gen, (Input) item );
         }
-        else if ( item instanceof InlineMixin )
+        else if ( item instanceof FormFragment )
         {
-            serializeInlineMixin( gen, (InlineMixin) item );
+            serializeFormFragment( gen, (FormFragment) item );
         }
         else if ( item instanceof FormOptionSet )
         {
@@ -156,56 +145,19 @@ public class DynamicSchemaSerializer
         gen.value( "formItemType", "Input" );
         gen.value( "name", input.getName() );
         gen.value( "label", input.getLabel() );
-        gen.value( "customText", input.getCustomText() );
         gen.value( "helpText", input.getHelpText() );
-        gen.value( "validationRegexp", input.getValidationRegexp() );
-        gen.value( "maximize", input.isMaximizeUIInputWidth() );
         gen.value( "inputType", input.getInputType().toString() );
         serializeOccurrences( gen, input.getOccurrences() );
-        serializeDefaultValue( gen, input );
         serializeConfig( gen, input.getInputTypeConfig() );
         gen.end();
     }
 
-    private static void serializeInlineMixin( final MapGenerator gen, final InlineMixin inlineMixin )
+    private static void serializeFormFragment( final MapGenerator gen, final FormFragment formFragment )
     {
         gen.map();
-        gen.value( "formItemType", "InlineMixin" );
-        gen.value( "name", inlineMixin.getMixinName() );
+        gen.value( "formItemType", "FormFragment" );
+        gen.value( "name", formFragment.getFormFragmentName() );
         gen.end();
-    }
-
-    private static void serializeConfigProperty( final MapGenerator gen, final InputTypeProperty property )
-    {
-        gen.map();
-        gen.value( "value", property.getValue() );
-        for ( final Map.Entry<String, String> attribute : property.getAttributes().entrySet() )
-        {
-            gen.value( "@" + attribute.getKey(), attribute.getValue() );
-        }
-        gen.end();
-    }
-
-    private static void serializeDefaultValue( final MapGenerator gen, final Input input )
-    {
-        if ( input.getDefaultValue() != null )
-        {
-            try
-            {
-                final Value defaultValue = InputTypes.BUILTIN.resolve( input.getInputType() ).createDefaultValue( input );
-                if ( defaultValue != null )
-                {
-                    gen.map( "default" );
-                    gen.value( "value", defaultValue.getObject() );
-                    gen.value( "type", defaultValue.getType().getName() );
-                    gen.end();
-                }
-            }
-            catch ( IllegalArgumentException ex )
-            {
-                // DO NOTHING
-            }
-        }
     }
 
     private static void serializeLayout( final MapGenerator gen, final FieldSet fieldSet )

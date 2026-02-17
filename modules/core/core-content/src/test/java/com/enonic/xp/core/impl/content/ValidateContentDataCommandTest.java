@@ -9,10 +9,10 @@ import org.mockito.Mockito;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ValidationErrors;
+import com.enonic.xp.core.impl.content.validate.CmsConfigsValidator;
 import com.enonic.xp.core.impl.content.validate.ContentNameValidator;
-import com.enonic.xp.core.impl.content.validate.ExtraDataValidator;
+import com.enonic.xp.core.impl.content.validate.MixinValidator;
 import com.enonic.xp.core.impl.content.validate.OccurrenceValidator;
-import com.enonic.xp.core.impl.content.validate.SiteConfigsValidator;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.FormItemSet;
@@ -22,8 +22,8 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.schema.xdata.XDataService;
-import com.enonic.xp.site.SiteService;
+import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.site.CmsService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -33,16 +33,16 @@ class ValidateContentDataCommandTest
 {
     private ContentTypeService contentTypeService;
 
-    private XDataService xDataService;
+    private MixinService mixinService;
 
-    private SiteService siteService;
+    private CmsService cmsService;
 
     @BeforeEach
     void setUp()
     {
         this.contentTypeService = Mockito.mock( ContentTypeService.class );
-        this.xDataService = Mockito.mock( XDataService.class );
-        this.siteService = Mockito.mock( SiteService.class );
+        this.mixinService = Mockito.mock( MixinService.class );
+        this.cmsService = Mockito.mock( CmsService.class );
     }
 
     @Test
@@ -73,7 +73,7 @@ class ValidateContentDataCommandTest
         final ValidationErrors result = executeValidation( content.getData(), contentType.getName() );
         // test
         assertTrue( result.hasErrors() );
-        assertThat(result.stream()).hasSize( 1 );
+        assertThat( result.stream() ).hasSize( 1 );
     }
 
     @Test
@@ -103,7 +103,6 @@ class ValidateContentDataCommandTest
     }
 
 
-
     @Test
     void test_empty_displayName()
     {
@@ -128,7 +127,7 @@ class ValidateContentDataCommandTest
         final ValidationErrors result =
             executeValidation( content.getData(), contentType.getName(), content.getName(), content.getDisplayName() );
 
-        assertThat(result.stream()).hasSize( 1 );
+        assertThat( result.stream() ).hasSize( 1 );
     }
 
     @Test
@@ -160,9 +159,8 @@ class ValidateContentDataCommandTest
         final ValidationErrors result =
             executeValidation( content.getData(), contentType.getName(), content.getName(), content.getDisplayName() );
 
-        assertThat(result.stream()).hasSize( 1 );
+        assertThat( result.stream() ).hasSize( 1 );
     }
-
 
 
     private ValidationErrors executeValidation( final PropertyTree propertyTree, final ContentTypeName contentTypeName )
@@ -179,8 +177,8 @@ class ValidateContentDataCommandTest
             .contentName( name )
             .displayName( displayName )
             .contentTypeService( this.contentTypeService )
-            .contentValidators( List.of( new ContentNameValidator(), new SiteConfigsValidator( siteService ), new OccurrenceValidator(),
-                                         new ExtraDataValidator( xDataService ) ) )
+            .contentValidators( List.of( new ContentNameValidator(), new CmsConfigsValidator( cmsService ), new OccurrenceValidator(),
+                                         new MixinValidator( mixinService ) ) )
             .build()
             .execute();
     }
