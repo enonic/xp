@@ -60,7 +60,8 @@ public class DumpRunnableTask
             .includeBinaries( true )
             .includeVersions( includeVersions )
             .maxAge( maxAge )
-            .maxVersions( maxVersions ).repositories( repositories )
+            .maxVersions( maxVersions )
+            .repositories( repositories )
             .listener( new SystemDumpListenerImpl( progressReporter ) )
             .build();
 
