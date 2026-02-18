@@ -8,13 +8,16 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
+import com.enonic.xp.portal.impl.sse.SseEndpointImpl;
 import com.enonic.xp.portal.impl.websocket.WebSocketEndpointImpl;
+import com.enonic.xp.portal.sse.SseManager;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.WebException;
+import com.enonic.xp.web.sse.SseConfig;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketContext;
 import com.enonic.xp.web.websocket.WebSocketEndpoint;
@@ -30,6 +33,8 @@ final class MappingHandlerWorker
     ControllerMappingDescriptor mappingDescriptor;
 
     RendererDelegate rendererDelegate;
+
+    SseManager sseManager;
 
     MappingHandlerWorker( final PortalRequest request )
     {
@@ -60,6 +65,14 @@ final class MappingHandlerWorker
                 newWebSocketEndpoint( webSocketConfig, this::getScript, mappingDescriptor.getController().getApplicationKey() );
             webSocketContext.apply( webSocketEndpoint );
         }
+
+        final SseConfig sseConfig = portalResponse.getSse();
+        if ( sseConfig != null )
+        {
+            final SseEndpointImpl sseEndpoint = new SseEndpointImpl( sseConfig, this::getScript );
+            this.sseManager.setupSse( this.request.getRawRequest(), this.request.getRawResponse(), sseEndpoint );
+        }
+
         return portalResponse;
     }
 

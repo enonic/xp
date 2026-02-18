@@ -20,6 +20,7 @@ import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.filter.FilterScript;
 import com.enonic.xp.portal.filter.FilterScriptFactory;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
+import com.enonic.xp.portal.sse.SseManager;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.Resource;
@@ -96,7 +97,7 @@ class ComponentServiceMappingHandlerTest
 
         this.handler = new ComponentServiceMappingHandler( resourceService, controllerScriptFactory, filterScriptFactory, rendererDelegate,
                                                            siteService, pageTemplateService, pageDescriptorService,
-                                                           layoutDescriptorService );
+                                                           layoutDescriptorService, mock( SseManager.class ) );
 
         this.request.setMethod( HttpMethod.GET );
         this.request.setRepositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) );

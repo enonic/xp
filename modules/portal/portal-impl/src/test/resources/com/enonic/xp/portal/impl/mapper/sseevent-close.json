@@ -1,0 +1,6 @@
+{
+  "type": "close",
+  "session": {
+    "id": "abc123"
+  }
+}

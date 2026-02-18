@@ -11,7 +11,9 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.impl.handler.PathMatchers;
+import com.enonic.xp.portal.impl.sse.SseEndpointImpl;
 import com.enonic.xp.portal.impl.websocket.WebSocketEndpointImpl;
+import com.enonic.xp.portal.sse.SseManager;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
@@ -24,6 +26,7 @@ import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.handler.BaseWebHandler;
 import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.handler.WebHandlerChain;
+import com.enonic.xp.web.sse.SseConfig;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketContext;
 import com.enonic.xp.web.websocket.WebSocketEndpoint;
@@ -37,6 +40,8 @@ public final class WebAppHandler
     private ExceptionMapper exceptionMapper;
 
     private ExceptionRenderer exceptionRenderer;
+
+    private SseManager sseManager;
 
     public WebAppHandler()
     {
@@ -115,6 +120,13 @@ public final class WebAppHandler
             webSocketContext.apply( webSocketEndpoint );
         }
 
+        final SseConfig sseConfig = res.getSse();
+        if ( sseConfig != null )
+        {
+            final SseEndpointImpl sseEndpoint = new SseEndpointImpl( sseConfig, () -> script );
+            this.sseManager.setupSse( req.getRawRequest(), req.getRawResponse(), sseEndpoint );
+        }
+
         return res;
     }
 
@@ -167,6 +179,12 @@ public final class WebAppHandler
     public void setExceptionRenderer( final ExceptionRenderer exceptionRenderer )
     {
         this.exceptionRenderer = exceptionRenderer;
+    }
+
+    @Reference
+    public void setSseManager( final SseManager sseManager )
+    {
+        this.sseManager = sseManager;
     }
 
 }

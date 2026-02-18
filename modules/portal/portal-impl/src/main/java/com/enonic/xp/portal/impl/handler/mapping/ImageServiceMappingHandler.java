@@ -12,6 +12,7 @@ import com.enonic.xp.portal.filter.FilterScriptFactory;
 import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.portal.impl.handler.HandlerHelper;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
+import com.enonic.xp.portal.sse.SseManager;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.web.HttpMethod;
@@ -33,13 +34,14 @@ public final class ImageServiceMappingHandler
     public ImageServiceMappingHandler( @Reference final ResourceService resourceService,
                                        @Reference final ControllerScriptFactory controllerScriptFactory,
                                        @Reference final FilterScriptFactory filterScriptFactory,
-                                       @Reference final RendererDelegate rendererDelegate, @Reference final SiteService siteService )
+                                       @Reference final RendererDelegate rendererDelegate, @Reference final SiteService siteService,
+                                       @Reference final SseManager sseManager )
     {
         super( EnumSet.of( HttpMethod.GET, HttpMethod.HEAD, HttpMethod.OPTIONS ) );
 
         this.mappingHandlerHelper =
             new MappingHandlerHelper( resourceService, controllerScriptFactory, filterScriptFactory, rendererDelegate,
-                                      new ControllerMappingsResolver( siteService ), null );
+                                      new ControllerMappingsResolver( siteService ), null, sseManager );
     }
 
     @Override

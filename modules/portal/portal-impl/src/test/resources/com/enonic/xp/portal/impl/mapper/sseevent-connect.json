@@ -1,0 +1,9 @@
+{
+  "type": "connect",
+  "session": {
+    "id": "abc123"
+  },
+  "data": {
+    "userId": "user1"
+  }
+}
