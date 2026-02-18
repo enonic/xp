@@ -84,13 +84,6 @@ class LocaleServiceImplTest
     }
 
     @Test
-    void get_bundle_no_application()
-    {
-        final MessageBundle bundle = localeService.getBundle( null, Locale.ENGLISH );
-        assertNull( bundle );
-    }
-
-    @Test
     void get_bundle_no_locale()
     {
         final MessageBundle bundle = localeService.getBundle( ApplicationKey.from( "myapplication" ), null );

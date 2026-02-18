@@ -14,8 +14,9 @@ import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -35,6 +36,7 @@ import com.enonic.xp.resource.ResourceKeys;
 import com.enonic.xp.resource.ResourceService;
 
 @Component(immediate = true)
+@NullMarked
 public final class LocaleServiceImpl
     implements LocaleService, ApplicationListener
 {
@@ -63,19 +65,15 @@ public final class LocaleServiceImpl
     }
 
     @Override
-    public MessageBundle getBundle( final ApplicationKey applicationKey, final Locale locale )
+    public MessageBundle getBundle( final ApplicationKey applicationKey, final @Nullable Locale locale )
     {
         return getBundle( applicationKey, locale, DEFAULT_BASE_NAMES );
     }
 
     @Override
-    public MessageBundle getBundle( final ApplicationKey applicationKey, final Locale locale, final String... bundleNames )
+    public MessageBundle getBundle( final ApplicationKey applicationKey, final @Nullable Locale locale, final String... bundleNames )
     {
-        if ( applicationKey == null )
-        {
-            return null;
-        }
-        final String[] baseNames = ( bundleNames == null || bundleNames.length == 0 ) ? DEFAULT_BASE_NAMES : bundleNames;
+        final String[] baseNames = bundleNames.length == 0 ? DEFAULT_BASE_NAMES : bundleNames;
         final Locale nonNullLocale = Objects.requireNonNullElse( locale, Locale.ROOT );
 
         final String key = bundleCacheKey( applicationKey, nonNullLocale, baseNames );
@@ -85,19 +83,15 @@ public final class LocaleServiceImpl
     @Override
     public Set<Locale> getLocales( final ApplicationKey applicationKey, final String... bundleNames )
     {
-        if ( applicationKey == null )
-        {
-            return Collections.emptySet();
-        }
-        final String[] baseNames = ( bundleNames == null || bundleNames.length == 0 ) ? DEFAULT_BASE_NAMES : bundleNames;
+        final String[] baseNames = bundleNames.length == 0 ? DEFAULT_BASE_NAMES : bundleNames;
 
         final String key = appBundlesCacheKey( applicationKey, baseNames );
         return this.appLocalesCache.computeIfAbsent( key, k -> getAppLocales( applicationKey, baseNames ) );
     }
 
     @Override
-    public Locale getSupportedLocale( final List<Locale> preferredLocales, final ApplicationKey applicationKey,
-                                      final String... bundleNames )
+    public @Nullable Locale getSupportedLocale( final List<Locale> preferredLocales, final ApplicationKey applicationKey,
+                                                final String... bundleNames )
     {
         if ( preferredLocales.isEmpty() )
         {
@@ -109,7 +103,7 @@ public final class LocaleServiceImpl
             return null;
         }
         final List<Locale.LanguageRange> priorityList =
-            preferredLocales.stream().map( Locale::toLanguageTag ).map( Locale.LanguageRange::new ).collect( Collectors.toList() );
+            preferredLocales.stream().map( Locale::toLanguageTag ).map( Locale.LanguageRange::new ).toList();
         return Locale.lookup( priorityList, supportedLocales );
     }
 
@@ -225,7 +219,7 @@ public final class LocaleServiceImpl
             }
             catch ( final IOException e )
             {
-                throw new LocalizationException( "Not able to load resource for: " + applicationKey.toString(), e );
+                throw new LocalizationException( "Not able to load resource for: " + applicationKey, e );
             }
         }
 
@@ -249,7 +243,7 @@ public final class LocaleServiceImpl
     private void clearCache( ApplicationKey appKey )
     {
         LOG.debug( "Cleanup i18n caches for {}", appKey );
-        final String cacheKeyPrefix = appKey.toString() + KEY_SEPARATOR;
+        final String cacheKeyPrefix = appKey + KEY_SEPARATOR;
         bundleCache.keySet().removeIf( ( k ) -> k.startsWith( cacheKeyPrefix ) );
         appLocalesCache.keySet().removeIf( ( k ) -> k.startsWith( cacheKeyPrefix ) );
     }
