@@ -34,10 +34,11 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeCommitEntries;
 import com.enonic.xp.node.NodeCommitQuery;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionKey;
-import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.RefreshMode;
@@ -71,6 +72,8 @@ public class RepoDumper
 
     private final RepoDumpResult.Builder dumpResult;
 
+    private final NodeIds nodeIds;
+
     private final SystemDumpListener listener;
 
     private RepoDumper( final Builder builder )
@@ -83,6 +86,7 @@ public class RepoDumper
         this.dumpResult = RepoDumpResult.create( this.repository.getId() );
         this.maxAge = builder.maxAge;
         this.maxVersions = builder.maxVersions;
+        this.nodeIds = builder.nodeIds;
         this.listener = Objects.requireNonNullElse( builder.listener, NoopSystemDumpListener.INSTANCE );
     }
 
@@ -119,13 +123,17 @@ public class RepoDumper
                 final FindNodesByParentResult children = this.nodeService.findByParent(
                     FindNodesByParentParams.create().parentId( Node.ROOT_UUID ).recursive( true ).childOrder( ChildOrder.path() ).build() );
 
-                this.listener.dumpingBranch( repository.getId(), branch, children.getTotalHits() + 1 );
+                final NodeIds nodesToDump = nodeIds != null
+                    ? children.getNodeIds().stream().filter( nodeIds::contains ).collect( NodeIds.collector() )
+                    : children.getNodeIds();
+
+                this.listener.dumpingBranch( repository.getId(), branch, nodesToDump.getSize() + 1 );
                 LOG.info( "Dumping repository [{}], branch [{}]", repository.getId(), branch );
 
                 doDumpNode( Node.ROOT_UUID, branch, branchDumpResult );
                 nodeIdsAccumulator.accept( Node.ROOT_UUID );
 
-                for ( final NodeId child : children.getNodeIds() )
+                for ( final NodeId child : nodesToDump )
                 {
                     doDumpNode( child, branch, branchDumpResult );
                     nodeIdsAccumulator.accept( child );
@@ -337,6 +345,8 @@ public class RepoDumper
 
         private Integer maxVersions;
 
+        private NodeIds nodeIds;
+
         private SystemDumpListener listener;
 
         private Builder()
@@ -382,6 +392,12 @@ public class RepoDumper
         public Builder maxVersions( final Integer maxVersions )
         {
             this.maxVersions = maxVersions;
+            return this;
+        }
+
+        public Builder nodeIds( final NodeIds nodeIds )
+        {
+            this.nodeIds = nodeIds;
             return this;
         }
 

@@ -36,6 +36,8 @@ import com.enonic.xp.dump.SystemLoadResult;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.InternalContext;
@@ -225,49 +227,15 @@ public class DumpServiceImpl
         final DumpWriter writer = ZipDumpWriter.create( basePath, params.getDumpName(), blobStore );
         try (writer)
         {
-            final List<Repository> repositories = repositoryEntryService.findRepositoryEntryIds()
-                .stream()
-                .map( repositoryEntryService::getRepositoryEntry )
-                .filter( Objects::nonNull )
-                .map( RepositoryEntry::asRepository )
-                .filter( repository -> !repository.isTransient() )
-                .collect( Collectors.toList() );
+            final SystemDumpResult systemDumpResult =
+                !params.getRepositories().isEmpty() ? doPartialDump( params, writer ) : doFullDump( params, writer );
 
-            if ( params.getListener() != null )
-            {
-                final long branchesCount = repositories.
-                    stream().
-                    flatMap( repository -> repository.getBranches().stream() ).
-                    count();
-
-                params.getListener().totalBranches( branchesCount );
-            }
-
-            final SystemDumpResult.Builder dumpResults = SystemDumpResult.create();
-
-            for ( final Repository repository : repositories )
-            {
-                final RepoDumpResult result = RepoDumper.create().
-                    writer( writer ).
-                    includeVersions( params.isIncludeVersions() ).
-                    includeBinaries( params.isIncludeBinaries() ).
-                    nodeService( this.nodeService ).
-                    repository( repository ).
-                    maxVersions( params.getMaxVersions() ).
-                    maxAge( params.getMaxAge() ).
-                    listener( params.getListener() ).
-                    build().
-                    execute();
-
-                dumpResults.add( result );
-            }
-
-            final SystemDumpResult systemDumpResult = dumpResults.build();
-            writer.writeDumpMetaData( DumpMeta.create().
-                xpVersion( this.xpVersion ).
-                modelVersion( DumpConstants.MODEL_VERSION ).
-                timestamp( Instant.now() ).
-                systemDumpResult( systemDumpResult ).build() );
+            writer.writeDumpMetaData( DumpMeta.create()
+                                          .xpVersion( this.xpVersion )
+                                          .modelVersion( DumpConstants.MODEL_VERSION )
+                                          .timestamp( Instant.now() )
+                                          .systemDumpResult( systemDumpResult )
+                                          .build() );
 
             LOG.info( "Dump completed" );
             return systemDumpResult;
@@ -276,6 +244,130 @@ public class DumpServiceImpl
         {
             throw new UncheckedIOException( e );
         }
+    }
+
+    private SystemDumpResult doFullDump( final SystemDumpParams params, final DumpWriter writer )
+    {
+        final List<Repository> repositories = repositoryEntryService.findRepositoryEntryIds()
+            .stream()
+            .map( repositoryEntryService::getRepositoryEntry )
+            .filter( Objects::nonNull )
+            .map( RepositoryEntry::asRepository )
+            .filter( repository -> !repository.isTransient() )
+            .collect( Collectors.toList() );
+
+        if ( params.getListener() != null )
+        {
+            final long branchesCount = repositories.stream().flatMap( repository -> repository.getBranches().stream() ).count();
+
+            params.getListener().totalBranches( branchesCount );
+        }
+
+        final SystemDumpResult.Builder dumpResults = SystemDumpResult.create();
+
+        for ( final Repository repository : repositories )
+        {
+            final RepoDumpResult result = RepoDumper.create()
+                .writer( writer )
+                .includeVersions( params.isIncludeVersions() )
+                .includeBinaries( params.isIncludeBinaries() )
+                .nodeService( this.nodeService )
+                .repository( repository )
+                .maxVersions( params.getMaxVersions() )
+                .maxAge( params.getMaxAge() )
+                .listener( params.getListener() )
+                .build()
+                .execute();
+
+            dumpResults.add( result );
+        }
+
+        return dumpResults.build();
+    }
+
+    private SystemDumpResult doPartialDump( final SystemDumpParams params, final DumpWriter writer )
+    {
+        final List<RepositoryId> systemRepos = params.getRepositories()
+            .stream()
+            .filter( Predicate.isEqual( SystemConstants.SYSTEM_REPO_ID ).or( SYSTEM_REPO_IDS::contains ) )
+            .toList();
+
+        if ( !systemRepos.isEmpty() )
+        {
+            throw new RepoDumpException( "System repositories " + systemRepos + " cannot be dumped partially" );
+        }
+
+        final Map<RepositoryId, Repository> allRepositories = repositoryEntryService.findRepositoryEntryIds()
+            .stream()
+            .map( repositoryEntryService::getRepositoryEntry )
+            .filter( Objects::nonNull )
+            .map( RepositoryEntry::asRepository )
+            .collect( Collectors.toMap( Repository::getId, Function.identity() ) );
+
+        final List<RepositoryId> missingRepositories = params.getRepositories()
+            .stream()
+            .filter( repositoryId -> !allRepositories.containsKey( repositoryId ) )
+            .toList();
+
+        if ( !missingRepositories.isEmpty() )
+        {
+            LOG.warn( "Requested repositories not found and will be skipped during dump: {}", missingRepositories );
+        }
+
+        final List<Repository> reposToDump = params.getRepositories()
+            .stream()
+            .filter( allRepositories::containsKey )
+            .map( allRepositories::get )
+            .toList();
+        final Repository systemRepo = allRepositories.get( SystemConstants.SYSTEM_REPO_ID );
+
+        if ( params.getListener() != null )
+        {
+            final long branchesCount =
+                systemRepo.getBranches().getSize() + reposToDump.stream().flatMap( r -> r.getBranches().stream() ).count();
+
+            params.getListener().totalBranches( branchesCount );
+        }
+
+        final SystemDumpResult.Builder dumpResults = SystemDumpResult.create();
+
+        // Dump system-repo with only the RepositoryEntry nodes for selected repositories
+        final NodeIds systemRepoNodeIds = NodeIds.from( reposToDump.stream().map( r -> NodeId.from( r.getId().toString() ) ).toList() );
+
+        final RepoDumpResult systemRepoResult = RepoDumper.create()
+            .writer( writer )
+            .includeVersions( params.isIncludeVersions() )
+            .includeBinaries( params.isIncludeBinaries() )
+            .nodeService( this.nodeService )
+            .repository( systemRepo )
+            .maxVersions( params.getMaxVersions() )
+            .maxAge( params.getMaxAge() )
+            .nodeIds( systemRepoNodeIds )
+            .listener( params.getListener() )
+            .build()
+            .execute();
+
+        dumpResults.add( systemRepoResult );
+
+        // Dump each selected repository fully
+        for ( final Repository repository : reposToDump )
+        {
+            final RepoDumpResult result = RepoDumper.create()
+                .writer( writer )
+                .includeVersions( params.isIncludeVersions() )
+                .includeBinaries( params.isIncludeBinaries() )
+                .nodeService( this.nodeService )
+                .repository( repository )
+                .maxVersions( params.getMaxVersions() )
+                .maxAge( params.getMaxAge() )
+                .listener( params.getListener() )
+                .build()
+                .execute();
+
+            dumpResults.add( result );
+        }
+
+        return dumpResults.build();
     }
 
     @Override
@@ -305,12 +397,19 @@ public class DumpServiceImpl
                 throw new RepoLoadException( "Cannot load system-dump; dump does not contain system repository" );
             }
 
-            if ( params.getRepositories() != null )
+            if ( !params.getRepositories().isEmpty() )
             {
                 doPartialLoad( params, dumpReader, dumpRepositories, results );
             }
             else
             {
+                final boolean isPartialDump =
+                    dumpReader.getRepositoryEntries( RepositoryIds.from( SystemConstants.SYSTEM_REPO_ID ) ).isEmpty();
+                if ( isPartialDump )
+                {
+                    throw new RepoLoadException(
+                        "Cannot load partial dump as a full dump; specify repositories to load or use a full dump" );
+                }
                 doFullLoad( params, dumpReader, dumpRepositories, results );
             }
         }

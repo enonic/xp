@@ -1,5 +1,7 @@
 package com.enonic.xp.dump;
 
+import com.enonic.xp.repository.RepositoryIds;
+
 public final class SystemDumpParams
 {
     private final String dumpName;
@@ -14,6 +16,8 @@ public final class SystemDumpParams
 
     private final SystemDumpListener listener;
 
+    private final RepositoryIds repositories;
+
     private SystemDumpParams( final Builder builder )
     {
         dumpName = builder.dumpName;
@@ -22,6 +26,7 @@ public final class SystemDumpParams
         maxAge = builder.maxAge;
         maxVersions = builder.maxVersions;
         this.listener = builder.listener;
+        this.repositories = builder.repositories != null ? builder.repositories : RepositoryIds.empty();
     }
 
     public String getDumpName()
@@ -59,6 +64,11 @@ public final class SystemDumpParams
         return listener;
     }
 
+    public RepositoryIds getRepositories()
+    {
+        return repositories;
+    }
+
 
     public static final class Builder
     {
@@ -73,6 +83,8 @@ public final class SystemDumpParams
         private Integer maxVersions;
 
         private SystemDumpListener listener;
+
+        private RepositoryIds repositories;
 
 
         private Builder()
@@ -112,6 +124,12 @@ public final class SystemDumpParams
         public Builder listener( final SystemDumpListener listener )
         {
             this.listener = listener;
+            return this;
+        }
+
+        public Builder repositories( final RepositoryIds repositories )
+        {
+            this.repositories = repositories;
             return this;
         }
 

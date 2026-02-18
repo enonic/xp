@@ -76,6 +76,7 @@ import com.enonic.xp.repo.impl.dump.DumpConstants;
 import com.enonic.xp.repo.impl.dump.DumpServiceImpl;
 import com.enonic.xp.repo.impl.dump.FileUtils;
 import com.enonic.xp.repo.impl.dump.RepoDumpException;
+import com.enonic.xp.repo.impl.dump.RepoLoadException;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.repo.impl.dump.reader.FileDumpReader;
 import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre5.Pre5ContentConstants;
@@ -1225,6 +1226,111 @@ class DumpServiceImplTest
 
         // Only repo-a branches should be counted (1 branch: master), not repo-b
         Mockito.verify( listener ).totalBranches( 1L );
+    }
+
+    @Test
+    void partial_dump_rejects_system_repo()
+    {
+        assertThrows( RepoDumpException.class, () -> NodeHelper.runAsAdmin( () -> this.dumpService.dump( SystemDumpParams.create()
+                                                                                                             .dumpName(
+                                                                                                                 "partialDumpSystemRepo" )
+                                                                                                             .repositories(
+                                                                                                                 RepositoryIds.from(
+                                                                                                                     SystemConstants.SYSTEM_REPO_ID ) )
+                                                                                                             .build() ) ) );
+    }
+
+    @Test
+    void partial_dump_rejects_multiple_system_repositories()
+    {
+        assertThrows( RepoDumpException.class, () -> NodeHelper.runAsAdmin( () -> this.dumpService.dump( SystemDumpParams.create()
+                                                                                                             .dumpName(
+                                                                                                                 "partialDumpMultipleSysRepos" )
+                                                                                                             .repositories(
+                                                                                                                 RepositoryIds.from(
+                                                                                                                     SystemConstants.SYSTEM_REPO_ID,
+                                                                                                                     RepositoryId.from(
+                                                                                                                         "system.auditlog" ),
+                                                                                                                     RepositoryId.from(
+                                                                                                                         "system.scheduler" ) ) )
+                                                                                                             .build() ) ) );
+    }
+
+    @Test
+    void partial_dump_rejects_system_repo_mixed_with_regular()
+    {
+        NodeHelper.runAsAdmin( () -> doCreateRepository( RepositoryId.from( "regular-repo" ), false ) );
+        assertThrows( RepoDumpException.class, () -> NodeHelper.runAsAdmin( () -> this.dumpService.dump( SystemDumpParams.create()
+                                                                                                             .dumpName( "partialDumpMixed" )
+                                                                                                             .repositories(
+                                                                                                                 RepositoryIds.from(
+                                                                                                                     RepositoryId.from(
+                                                                                                                         "regular-repo" ),
+                                                                                                                     SystemConstants.SYSTEM_REPO_ID ) )
+                                                                                                             .build() ) ) );
+    }
+
+
+    @Test
+    void full_load_rejects_partial_dump()
+    {
+        NodeHelper.runAsAdmin( () -> doCreateRepository( RepositoryId.from( "my-repo" ), false ) );
+
+        NodeHelper.runAsAdmin( () -> doDump( SystemDumpParams.create()
+                                                 .dumpName( "partialDumpFullLoadTest" )
+                                                 .repositories( RepositoryIds.from( RepositoryId.from( "my-repo" ) ) )
+                                                 .build() ) );
+
+        assertThrows( RepoLoadException.class, () -> NodeHelper.runAsAdmin( () -> this.dumpService.load(
+            SystemLoadParams.create().dumpName( "partialDumpFullLoadTest" ).includeVersions( true ).build() ) ) );
+    }
+
+    @Test
+    void partial_dump_includes_transient_repository()
+    {
+        final RepositoryEntry transientRepo =
+            NodeHelper.runAsAdmin( () -> doCreateRepository( RepositoryId.from( "transient-repo" ), true ) );
+
+        final Context transientRepoContext = ContextBuilder.from( ContextAccessor.current() )
+            .repositoryId( transientRepo.getId() )
+            .branch( RepositoryConstants.MASTER_BRANCH )
+            .build();
+
+        final Node nodeInTransientRepo = transientRepoContext.callWith( () -> createNode( NodePath.ROOT, "transient-node" ) );
+
+        // Partial dump explicitly requesting the transient repo
+        final SystemDumpResult dumpResult = NodeHelper.runAsAdmin( () -> {
+            final SystemDumpParams params = SystemDumpParams.create()
+                .dumpName( "partialTransientDump" )
+                .repositories( RepositoryIds.from( transientRepo.getId() ) )
+                .includeVersions( true )
+                .includeBinaries( true )
+                .build();
+            return this.dumpService.dump( params );
+        } );
+
+        // Verify transient repo is included in the dump result
+        final RepoDumpResult transientRepoDumpResult = dumpResult.get( transientRepo.getId() );
+        assertNotNull( transientRepoDumpResult );
+
+        final BranchDumpResult branchResult = transientRepoDumpResult.get( RepositoryConstants.MASTER_BRANCH );
+        assertNotNull( branchResult );
+        assertEquals( 2, branchResult.getSuccessful() ); // root + transient-node
+
+        // Partial load and verify data is restored
+        transientRepoContext.runWith( () -> nodeService.delete( DeleteNodeParams.create().nodeId( nodeInTransientRepo.id() ).build() ) );
+        transientRepoContext.runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
+        assertNull( transientRepoContext.callWith( () -> getNode( nodeInTransientRepo.id() ) ) );
+
+        NodeHelper.runAsAdmin( () -> this.dumpService.load( SystemLoadParams.create()
+                                                                .dumpName( "partialTransientDump" )
+                                                                .includeVersions( true )
+                                                                .repositories( RepositoryIds.from( transientRepo.getId() ) )
+                                                                .build() ) );
+
+        final Node restoredNode = transientRepoContext.callWith( () -> getNode( nodeInTransientRepo.id() ) );
+        assertNotNull( restoredNode );
+        assertEquals( nodeInTransientRepo.id(), restoredNode.id() );
     }
 
     @Test

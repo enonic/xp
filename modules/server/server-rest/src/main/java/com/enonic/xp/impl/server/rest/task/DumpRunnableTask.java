@@ -5,6 +5,7 @@ import com.enonic.xp.dump.SystemDumpParams;
 import com.enonic.xp.dump.SystemDumpResult;
 import com.enonic.xp.impl.server.rest.model.SystemDumpResultJson;
 import com.enonic.xp.impl.server.rest.task.listener.SystemDumpListenerImpl;
+import com.enonic.xp.repository.RepositoryIds;
 import com.enonic.xp.task.ProgressReportParams;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.RunnableTask;
@@ -23,6 +24,8 @@ public class DumpRunnableTask
 
     private final Integer maxVersions;
 
+    private final RepositoryIds repositories;
+
     private final DumpService dumpService;
 
     private final TaskService taskService;
@@ -33,6 +36,7 @@ public class DumpRunnableTask
         this.includeVersions = builder.includeVersions;
         this.maxAge = builder.maxAge;
         this.maxVersions = builder.maxVersions;
+        this.repositories = builder.repositories;
         this.dumpService = builder.dumpService;
         this.taskService = builder.taskService;
     }
@@ -57,6 +61,7 @@ public class DumpRunnableTask
             .includeVersions( includeVersions )
             .maxAge( maxAge )
             .maxVersions( maxVersions )
+            .repositories( repositories )
             .listener( new SystemDumpListenerImpl( progressReporter ) )
             .build();
 
@@ -73,6 +78,8 @@ public class DumpRunnableTask
         private Integer maxAge;
 
         private Integer maxVersions;
+
+        private RepositoryIds repositories;
 
         private DumpService dumpService;
 
@@ -105,6 +112,12 @@ public class DumpRunnableTask
         public Builder maxVersions( final Integer maxVersions )
         {
             this.maxVersions = maxVersions;
+            return this;
+        }
+
+        public Builder repositories( final RepositoryIds repositories )
+        {
+            this.repositories = repositories;
             return this;
         }
 
