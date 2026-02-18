@@ -2,6 +2,8 @@ package com.enonic.xp.lib.i18n;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -32,30 +34,26 @@ public final class LocaleScriptBean
     {
         final String locale = getPreferredLocale( locales, bundles );
         final MessageBundle bundle = getMessageBundle( locale, bundles );
-
-        if ( bundle == null )
-        {
-            return NOT_TRANSLATED_MESSAGE;
-        }
-
         final String localizedMessage = bundle.localize( key, toArray( values ) );
-
-        return localizedMessage != null ? localizedMessage : NOT_TRANSLATED_MESSAGE;
+        return Objects.requireNonNullElse( localizedMessage, NOT_TRANSLATED_MESSAGE );
     }
 
     public MapSerializable getPhrases( final List<String> locales, final String... bundleNames )
     {
         final String locale = getPreferredLocale( locales, bundleNames );
-        return new MapMapper( getMessageBundle( locale, bundleNames ).asMap() );
+        final MessageBundle messageBundle = getMessageBundle( locale, bundleNames );
+        return new MapMapper( messageBundle.asMap() );
     }
 
     public List<String> getSupportedLocales( final String... bundleNames )
     {
         final ApplicationKey applicationKey = getApplication();
-        return this.localeService.get().getLocales( applicationKey, bundleNames ).stream().
-            map( Locale::toLanguageTag ).
-            sorted( String::compareTo ).
-            collect( toList() );
+        return this.localeService.get()
+            .getLocales( applicationKey, bundleNames )
+            .stream()
+            .map( Locale::toLanguageTag )
+            .sorted( String::compareTo )
+            .collect( toList() );
     }
 
     private String getPreferredLocale( final List<String> localeTags, final String[] bundleNames )
@@ -79,8 +77,7 @@ public final class LocaleScriptBean
 
     private ApplicationKey getApplication()
     {
-        final PortalRequest req = portalRequest.get();
-        return req != null ? req.getApplicationKey() : applicationKey;
+        return Optional.ofNullable( portalRequest.get() ).map( PortalRequest::getApplicationKey ).orElse( applicationKey );
     }
 
     private Locale resolveLocale( final String locale )
