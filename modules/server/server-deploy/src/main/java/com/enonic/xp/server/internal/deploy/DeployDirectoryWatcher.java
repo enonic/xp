@@ -63,6 +63,7 @@ public final class DeployDirectoryWatcher
         return file.getName().endsWith( ".jar" ) && file.isFile();
     }
 
+    @SuppressWarnings("unused")
     @Deactivate
     public void deactivate()
         throws Exception
@@ -89,14 +90,7 @@ public final class DeployDirectoryWatcher
 
         for ( final File file : files )
         {
-            try
-            {
-                installApplication( file );
-            }
-            catch ( Exception e )
-            {
-                LOGGER.error( "Failed to install local application [{}]", file.getName(), e );
-            }
+            installApplication( file );
         }
     }
 
@@ -106,109 +100,103 @@ public final class DeployDirectoryWatcher
         @Override
         public void onFileCreate( final File file )
         {
-            try
-            {
-                installApplication( file );
-            }
-            catch ( Exception e )
-            {
-                LOGGER.error( "Failed to install local application", e );
-            }
+            installApplication( file );
         }
 
         @Override
         public void onFileChange( final File file )
         {
-            try
-            {
-                installApplication( file );
-            }
-            catch ( Exception e )
-            {
-                LOGGER.error( "Failed to install local application", e );
-            }
+            installApplication( file );
         }
 
         @Override
         public void onFileDelete( final File file )
         {
-            try
-            {
                 uninstallApplication( file );
-            }
-            catch ( Exception e )
-            {
-                LOGGER.error( "Failed to uninstall local application", e );
-            }
         }
     }
 
+
     private void installApplication( final File file )
     {
-        //Installs the application
-        final ByteSource byteSource = Files.asByteSource( file );
-        final Application application = DeployHelper.runAsAdmin( () -> applicationService.installLocalApplication( byteSource ) );
-        final ApplicationKey applicationKey = application.getKey();
-        final String path = file.getPath();
+        try
+        {
+            //Installs the application
+            final ByteSource byteSource = Files.asByteSource( file );
+            final Application application = DeployHelper.runAsAdmin( () -> applicationService.installLocalApplication( byteSource ) );
+            final ApplicationKey applicationKey = application.getKey();
+            final String path = file.getPath();
 
-        //Stores a mapping fileName -> applicationKey. Needed for uninstallation
-        this.applicationKeyByPath.put( path, applicationKey );
+            //Stores a mapping fileName -> applicationKey. Needed for uninstallation
+            this.applicationKeyByPath.put( path, applicationKey );
 
-        //Updates the mapping applicationKey -> stack<fileName>. Needed in some particular case for uninstallation
-        this.pathsByApplicationKey.compute( applicationKey, ( applicationKeyParam, fileNameStack ) -> {
-            if ( fileNameStack == null )
-            {
-                fileNameStack = new Stack<>();
-            }
-            fileNameStack.remove( path );
-            fileNameStack.push( path );
+            //Updates the mapping applicationKey -> stack<fileName>. Needed in some particular case for uninstallation
+            this.pathsByApplicationKey.compute( applicationKey, ( _, fileNameStack ) -> {
+                if ( fileNameStack == null )
+                {
+                    fileNameStack = new Stack<>();
+                }
+                fileNameStack.remove( path );
+                fileNameStack.push( path );
 
-            return fileNameStack;
-        } );
+                return fileNameStack;
+            } );
+        }
+        catch ( Throwable e )
+        {
+            LOGGER.error( "Failed to install local application [{}]", file, e );
+        }
     }
 
     private void uninstallApplication( final File file )
     {
-        // Removes the mapping fileName -> applicationKey
-        final String path = file.getPath();
-        final ApplicationKey applicationKey = applicationKeyByPath.remove( path );
+        try
+        {
+            // Removes the mapping fileName -> applicationKey
+            final String path = file.getPath();
+            final ApplicationKey applicationKey = applicationKeyByPath.remove( path );
 
-        this.pathsByApplicationKey.computeIfPresent( applicationKey, ( applicationKeyParam, fileNameStack ) -> {
+            this.pathsByApplicationKey.computeIfPresent( applicationKey, ( a, fileNameStack ) -> {
 
-            //Retrieve the file name for the currently installed application
-            final String lastInstalledFile = fileNameStack.isEmpty() ? null : fileNameStack.peek();
+                //Retrieve the file name for the currently installed application
+                final String lastInstalledFile = fileNameStack.isEmpty() ? null : fileNameStack.peek();
 
-            //If the file removed is currently installed
-            if ( path.equals( lastInstalledFile ) )
-            {
-                //Uninstall the corresponding application
-                DeployHelper.runAsAdmin( () -> this.applicationService.uninstallApplication( applicationKey ) );
-                fileNameStack.pop();
-
-                // If there is a previous file with the same applicationKey
-                if ( !fileNameStack.isEmpty() )
+                //If the file removed is currently installed
+                if ( path.equals( lastInstalledFile ) )
                 {
-                    //Installs this previous application
-                    final String previousInstalledFile = fileNameStack.peek();
-                    final ByteSource byteSource = Files.asByteSource( new File( previousInstalledFile ) );
-                    DeployHelper.runAsAdmin( () -> {
-                        try
-                        {
-                            applicationService.installLocalApplication( byteSource );
-                        }
-                        catch ( Exception e )
-                        {
-                            LOGGER.warn( "Failed to reinstall local application [{}]", previousInstalledFile, e );
-                        }
-                    } );
-                }
-            }
-            else
-            {
-                fileNameStack.remove( path );
-            }
+                    //Uninstall the corresponding application
+                    DeployHelper.runAsAdmin( () -> this.applicationService.uninstallApplication( a ) );
+                    fileNameStack.pop();
 
-            return fileNameStack.isEmpty() ? null : fileNameStack;
-        } );
+                    // If there is a previous file with the same applicationKey
+                    if ( !fileNameStack.isEmpty() )
+                    {
+                        //Installs this previous application
+                        final String previousInstalledFile = fileNameStack.peek();
+                        final ByteSource byteSource = Files.asByteSource( new File( previousInstalledFile ) );
+                        DeployHelper.runAsAdmin( () -> {
+                            try
+                            {
+                                applicationService.installLocalApplication( byteSource );
+                            }
+                            catch ( Exception e )
+                            {
+                                LOGGER.warn( "Failed to reinstall local application [{}]", previousInstalledFile, e );
+                            }
+                        } );
+                    }
+                }
+                else
+                {
+                    fileNameStack.remove( path );
+                }
+
+                return fileNameStack.isEmpty() ? null : fileNameStack;
+            } );
+        }
+        catch ( Throwable e )
+        {
+            LOGGER.error( "Failed to uninstall local application [{}]", file, e );
+        }
     }
 }
