@@ -304,9 +304,21 @@ public class DumpServiceImpl
             .map( RepositoryEntry::asRepository )
             .collect( Collectors.toMap( Repository::getId, Function.identity() ) );
 
-        final List<Repository> reposToDump =
-            params.getRepositories().stream().filter( allRepositories::containsKey ).map( allRepositories::get ).toList();
+        final List<RepositoryId> missingRepositories = params.getRepositories()
+            .stream()
+            .filter( repositoryId -> !allRepositories.containsKey( repositoryId ) )
+            .toList();
 
+        if ( !missingRepositories.isEmpty() )
+        {
+            LOG.warn( "Requested repositories not found and will be skipped during dump: {}", missingRepositories );
+        }
+
+        final List<Repository> reposToDump = params.getRepositories()
+            .stream()
+            .filter( allRepositories::containsKey )
+            .map( allRepositories::get )
+            .toList();
         final Repository systemRepo = allRepositories.get( SystemConstants.SYSTEM_REPO_ID );
 
         if ( params.getListener() != null )
