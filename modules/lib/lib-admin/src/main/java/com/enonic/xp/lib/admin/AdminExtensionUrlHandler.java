@@ -81,7 +81,7 @@ public class AdminExtensionUrlHandler
         final ApiUrlParams.Builder builder = ApiUrlParams.create()
             .setDescriptorKey( DescriptorKey.from( ApplicationKey.from( "admin" ), "extension" ) )
             .setType( this.urlType )
-            .setPathSegments( List.of( this.application.getName(), this.extension ) );
+            .setPathSegments( List.of( this.application.getName() + ":" + this.extension ) );
 
         if ( this.queryParams != null )
         {

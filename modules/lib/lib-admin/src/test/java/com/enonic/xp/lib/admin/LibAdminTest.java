@@ -87,9 +87,8 @@ class LibAdminTest
         assertEquals( "extension", descriptorKey.getName() );
 
         List<String> pathSegments = params.getPathSegments();
-        assertEquals( 2, pathSegments.size() );
-        assertEquals( "myapp", pathSegments.get( 0 ) );
-        assertEquals( "mywidget", pathSegments.get( 1 ) );
+        assertEquals( 1, pathSegments.size() );
+        assertEquals( "myapp:mywidget", pathSegments.get( 0 ) );
 
         Map<String, Collection<String>> queryParams = params.getQueryParams();
 
@@ -120,9 +119,8 @@ class LibAdminTest
         assertEquals( "extension", descriptorKey.getName() );
 
         List<String> pathSegments = params.getPathSegments();
-        assertEquals( 2, pathSegments.size() );
-        assertEquals( "myapp", pathSegments.get( 0 ) );
-        assertEquals( "myExtension", pathSegments.get( 1 ) );
+        assertEquals( 1, pathSegments.size() );
+        assertEquals( "myapp:myExtension", pathSegments.get( 0 ) );
 
         Map<String, Collection<String>> queryParams = params.getQueryParams();
 
@@ -153,9 +151,8 @@ class LibAdminTest
         assertEquals( "extension", descriptorKey.getName() );
 
         List<String> pathSegments = params.getPathSegments();
-        assertEquals( 2, pathSegments.size() );
-        assertEquals( "myapp", pathSegments.get( 0 ) );
-        assertEquals( "mywidget", pathSegments.get( 1 ) );
+        assertEquals( 1, pathSegments.size() );
+        assertEquals( "myapp:mywidget", pathSegments.get( 0 ) );
 
         Map<String, Collection<String>> queryParams = params.getQueryParams();
 
