@@ -72,7 +72,7 @@ public class GetListAllowedAdminExtensionsHandler
         json.put( "description", descriptor.getDescription() );
         json.put( "iconUrl", resolveIconUrl( descriptor ) );
 
-        json.put( "url", descriptor.getApplicationKey() + "/" + descriptor.getName() );
+        json.put( "url", descriptor.getApplicationKey() + ":" + descriptor.getName() );
 
         if ( !isNullOrEmpty( descriptor.getDisplayNameI18nKey() ) || !isNullOrEmpty( descriptor.getDescriptionI18nKey() ) )
         {
