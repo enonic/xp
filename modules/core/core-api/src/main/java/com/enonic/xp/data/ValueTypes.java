@@ -74,6 +74,10 @@ public final class ValueTypes
 
     public static ValueType getByName( final String name )
     {
+        if ( "Instant".equals( name ) )
+        {
+            return DATE_TIME;
+        }
         return TYPES_BY_NAME.get( name );
     }
 }

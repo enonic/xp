@@ -74,7 +74,7 @@ public final class PropertyTreeJson
     {
         final PropertyArrayJson json = new PropertyArrayJson();
         json.name = propertyArray.getName();
-        json.type = propertyArray.getValueType().getName();
+        json.type = ValueTypes.DATE_TIME.equals( propertyArray.getValueType() ) ? "Instant" : propertyArray.getValueType().getName();
 
         json.values = new ArrayList<>( propertyArray.size() );
         for ( final Property property : propertyArray.getProperties() )
