@@ -57,7 +57,7 @@ class AdminExtensionDispatcherApiHandlerTest
         assertEquals( response, handler.handle( webRequest ) );
 
         // extension harmonized api
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin:extension/myapp/myextension" );
+        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin:extension/myapp:myextension" );
         when( webRequest.getParams() ).thenReturn( null );
         when( extensionApiHandler.handle( webRequest ) ).thenReturn( response );
         assertEquals( response, handler.handle( webRequest ) );

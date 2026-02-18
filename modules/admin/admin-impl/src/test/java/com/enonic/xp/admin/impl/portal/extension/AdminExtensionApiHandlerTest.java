@@ -76,11 +76,11 @@ class AdminExtensionApiHandlerTest
     {
         final WebRequest webRequest = mock( WebRequest.class );
         when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin:extension/<app>/extensionName" );
-        when( webRequest.getRawPath() ).thenReturn( "/path/_/admin:extension/<app>/extensionName" );
+        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin:extension/<app>:extensionName" );
+        when( webRequest.getRawPath() ).thenReturn( "/path/_/admin:extension/<app>:extensionName" );
 
         IllegalArgumentException ex = assertThrows( IllegalArgumentException.class, () -> this.handler.handle( webRequest ) );
-        assertEquals( "Invalid application key: <app>", ex.getMessage() );
+        assertEquals( "Invalid descriptor key: <app>:extensionName", ex.getMessage() );
     }
 
     @Test
@@ -91,8 +91,8 @@ class AdminExtensionApiHandlerTest
 
         final WebRequest webRequest = mock( WebRequest.class );
         when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin:extension/app/extensionName" );
-        when( webRequest.getRawPath() ).thenReturn( "/path/_/admin:extension/app/extensionName" );
+        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin:extension/app:extensionName" );
+        when( webRequest.getRawPath() ).thenReturn( "/path/_/admin:extension/app:extensionName" );
 
         WebException ex = assertThrows( WebException.class, () -> this.handler.handle( webRequest ) );
         assertEquals( "Extension [app:extensionName] not found", ex.getMessage() );
@@ -112,8 +112,8 @@ class AdminExtensionApiHandlerTest
 
         final WebRequest webRequest = mock( WebRequest.class );
         when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin:extension/app/extensionName" );
-        when( webRequest.getRawPath() ).thenReturn( "/path/_/admin:extension/app/extensionName" );
+        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin:extension/app:extensionName" );
+        when( webRequest.getRawPath() ).thenReturn( "/path/_/admin:extension/app:extensionName" );
 
         WebException ex = assertThrows( WebException.class, () -> this.handler.handle( webRequest ) );
         assertEquals( HttpStatus.UNAUTHORIZED, ex.getStatus() );
@@ -138,7 +138,7 @@ class AdminExtensionApiHandlerTest
 
         final WebRequest webRequest = new WebRequest();
         webRequest.setMethod( HttpMethod.GET );
-        webRequest.setRawPath( "/admin/myapp/toolName/_/admin:extension/app/extensionName" );
+        webRequest.setRawPath( "/admin/myapp/toolName/_/admin:extension/app:extensionName" );
 
         final ControllerScript controllerScript = mock( ControllerScript.class );
         when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn( PortalResponse.create().build() );
@@ -170,7 +170,7 @@ class AdminExtensionApiHandlerTest
 
         final WebRequest webRequest = new WebRequest();
         webRequest.setMethod( HttpMethod.GET );
-        webRequest.setRawPath( "/admin/myapp/toolName/_/admin:extension/app/extensionName" );
+        webRequest.setRawPath( "/admin/myapp/toolName/_/admin:extension/app:extensionName" );
 
         final ControllerScript controllerScript = mock( ControllerScript.class );
         when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn( PortalResponse.create().build() );
@@ -202,7 +202,7 @@ class AdminExtensionApiHandlerTest
 
         final WebRequest webRequest = new WebRequest();
         webRequest.setMethod( HttpMethod.GET );
-        webRequest.setRawPath( "/admin/myapp/toolName/_/admin:extension/app/extensionName" );
+        webRequest.setRawPath( "/admin/myapp/toolName/_/admin:extension/app:extensionName" );
 
         final ControllerScript controllerScript = mock( ControllerScript.class );
         when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn( PortalResponse.create().build() );
@@ -233,7 +233,7 @@ class AdminExtensionApiHandlerTest
 
         final WebRequest webRequest = new WebRequest();
         webRequest.setMethod( HttpMethod.GET );
-        webRequest.setRawPath( "/admin/myapp/toolName/_/admin:extension/app/extensionName" );
+        webRequest.setRawPath( "/admin/myapp/toolName/_/admin:extension/app:extensionName" );
 
         final ControllerScript controllerScript = mock( ControllerScript.class );
         when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn( PortalResponse.create().build() );
@@ -262,7 +262,7 @@ class AdminExtensionApiHandlerTest
 
         final WebRequest webRequest = new WebRequest();
         webRequest.setMethod( HttpMethod.GET );
-        webRequest.setRawPath( "/admin/myapp/toolName/_/admin:extension/app/extensionName" );
+        webRequest.setRawPath( "/admin/myapp/toolName/_/admin:extension/app:extensionName" );
 
         final ControllerScript controllerScript = mock( ControllerScript.class );
         when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn( PortalResponse.create().build() );
@@ -290,7 +290,7 @@ class AdminExtensionApiHandlerTest
 
         final WebRequest webRequest = new WebRequest();
         webRequest.setMethod( HttpMethod.GET );
-        webRequest.setRawPath( "/admin/myapp/toolName/_/admin:extension/app/extensionName" );
+        webRequest.setRawPath( "/admin/myapp/toolName/_/admin:extension/app:extensionName" );
 
         final ControllerScript controllerScript = mock( ControllerScript.class );
         when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn( PortalResponse.create().build() );
@@ -314,7 +314,7 @@ class AdminExtensionApiHandlerTest
 
         final WebRequest webRequest = new WebRequest();
         webRequest.setMethod( HttpMethod.GET );
-        webRequest.setRawPath( "/admin/app/_/admin:extension/app/extensionName" );
+        webRequest.setRawPath( "/admin/app/_/admin:extension/app:extensionName" );
 
         final ControllerScript controllerScript = mock( ControllerScript.class );
         when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn( PortalResponse.create().build() );
@@ -323,6 +323,6 @@ class AdminExtensionApiHandlerTest
 
         WebException ex = assertThrows( WebException.class, () -> this.handler.handle( webRequest ) );
         assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
-        assertEquals( "Invalid admin tool URL [/admin/app/_/admin:extension/app/extensionName]", ex.getMessage() );
+        assertEquals( "Invalid admin tool URL [/admin/app/_/admin:extension/app:extensionName]", ex.getMessage() );
     }
 }

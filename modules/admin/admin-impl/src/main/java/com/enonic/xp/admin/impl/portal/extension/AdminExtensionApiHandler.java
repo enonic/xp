@@ -27,7 +27,7 @@ import com.enonic.xp.web.WebResponse;
 @Component(immediate = true, service = AdminExtensionApiHandler.class)
 public class AdminExtensionApiHandler
 {
-    private static final Pattern EXTENSION_API_PATTERN = Pattern.compile( "^/_/admin:extension/(?<appKey>[^/]+)/(?<extensionKey>[^/]+)" );
+    private static final Pattern EXTENSION_API_PATTERN = Pattern.compile( "^/_/admin:extension/(?<descriptor>[^/]+:[^/]+)" );
 
     private static final String GENERIC_EXTENSION_INTERFACE = "generic";
 
@@ -58,8 +58,7 @@ public class AdminExtensionApiHandler
             throw new IllegalArgumentException( "Invalid Extension API path: " + path );
         }
 
-        final DescriptorKey descriptorKey =
-            DescriptorKey.from( resolveApplicationKey( matcher.group( "appKey" ) ), matcher.group( "extensionKey" ) );
+        final DescriptorKey descriptorKey = resolveDescriptorKey( matcher.group( "descriptor" ) );
 
         final AdminExtensionDescriptor descriptor = descriptorService.getByKey( descriptorKey );
         if ( descriptor == null )
@@ -78,7 +77,8 @@ public class AdminExtensionApiHandler
         final PortalRequest portalRequest = createPortalRequest( webRequest, descriptorKey );
 
         final ResourceKey script = ResourceKey.from( descriptorKey.getApplicationKey(),
-                                                     "admin/extensions/" + descriptorKey.getName() + "/" + descriptorKey.getName() + ".js" );
+                                                     "admin/extensions/" + descriptorKey.getName() + "/" + descriptorKey.getName() +
+                                                         ".js" );
 
         return controllerScriptFactory.fromScript( script ).execute( portalRequest );
     }
@@ -127,6 +127,18 @@ public class AdminExtensionApiHandler
         catch ( Exception e )
         {
             throw new IllegalArgumentException( "Invalid application key: " + value, e );
+        }
+    }
+
+    private DescriptorKey resolveDescriptorKey( final String value )
+    {
+        try
+        {
+            return DescriptorKey.from( value );
+        }
+        catch ( Exception e )
+        {
+            throw new IllegalArgumentException( "Invalid descriptor key: " + value, e );
         }
     }
 }
