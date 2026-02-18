@@ -47,11 +47,11 @@ public final class ExceptionRendererImpl
 
     private static final String DEFAULT_HANDLER = "handleError";
 
-    private static final String SITE_ERROR_SCRIPT_PATH = "site/error/error.js";
+    private static final String CMS_ERROR_SCRIPT_PATH = "cms/error/error.js";
 
     private static final String GENERIC_ERROR_SCRIPT_PATH = "error/error.js";
 
-    private static final List<String> SITE_ERROR_SCRIPT_PATHS = List.of( SITE_ERROR_SCRIPT_PATH, GENERIC_ERROR_SCRIPT_PATH );
+    private static final List<String> SITE_ERROR_SCRIPT_PATHS = List.of( CMS_ERROR_SCRIPT_PATH, GENERIC_ERROR_SCRIPT_PATH );
 
     private final ResourceService resourceService;
 

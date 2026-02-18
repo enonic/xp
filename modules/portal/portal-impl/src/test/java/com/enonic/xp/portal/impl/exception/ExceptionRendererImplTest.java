@@ -172,7 +172,7 @@ class ExceptionRendererImplTest
         final Site site = newSite();
         this.request.setBaseUri( "/site" );
         this.request.setSite( site );
-        final ResourceKey errorResource = ResourceKey.from( ApplicationKey.from( "myapplication" ), "site/error/error.js" );
+        final ResourceKey errorResource = ResourceKey.from( ApplicationKey.from( "myapplication" ), "cms/error/error.js" );
         final ErrorHandlerScript errorHandlerScript = ( portalError, handlerMethod ) -> PortalResponse.create()
             .body( "Custom message page" )
             .status( HttpStatus.BAD_REQUEST )
@@ -202,7 +202,7 @@ class ExceptionRendererImplTest
         final Site site = newSite();
         this.request.setSite( site );
 
-        final ResourceKey errorResource = ResourceKey.from( ApplicationKey.from( "myapplication" ), "site/error/error.js" );
+        final ResourceKey errorResource = ResourceKey.from( ApplicationKey.from( "myapplication" ), "cms/error/error.js" );
         final ErrorHandlerScript errorHandlerScript = ( portalError, handleMethod ) -> PortalResponse.create()
             .body( "Custom message page" )
             .status( HttpStatus.NOT_FOUND )
@@ -228,7 +228,7 @@ class ExceptionRendererImplTest
         this.request.getHeaders().put( HttpHeaders.ACCEPT, "text/html,text/*" );
         final Site site = newSite();
         this.request.setSite( site );
-        final ResourceKey errorResource = ResourceKey.from( ApplicationKey.from( "myapplication" ), "site/error/error.js" );
+        final ResourceKey errorResource = ResourceKey.from( ApplicationKey.from( "myapplication" ), "cms/error/error.js" );
         final ErrorHandlerScript errorHandlerScript = ( portalError, handleMethod ) -> {
             throw new RuntimeException( "Something went wrong in the handler script" );
         };
@@ -253,7 +253,7 @@ class ExceptionRendererImplTest
         final Site site = newSite();
         this.request.setBaseUri( "/site" );
         this.request.setSite( site );
-        final ResourceKey errorResource = ResourceKey.from( ApplicationKey.from( "myapplication" ), "site/error/error.js" );
+        final ResourceKey errorResource = ResourceKey.from( ApplicationKey.from( "myapplication" ), "cms/error/error.js" );
         final ErrorHandlerScript errorHandlerScript = ( portalError, handlerMethod ) -> PortalResponse.create()
             .body( "<h1>Custom message page</h1><!--#COMPONENT module:myPart -->" )
             .status( HttpStatus.BAD_REQUEST )
