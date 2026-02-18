@@ -302,7 +302,6 @@ public class DumpServiceImpl
             .map( repositoryEntryService::getRepositoryEntry )
             .filter( Objects::nonNull )
             .map( RepositoryEntry::asRepository )
-            .filter( repository -> !repository.isTransient() )
             .collect( Collectors.toMap( Repository::getId, Function.identity() ) );
 
         final List<Repository> reposToDump =
