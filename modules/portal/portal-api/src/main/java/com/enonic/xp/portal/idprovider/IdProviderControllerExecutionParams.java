@@ -41,7 +41,7 @@ public final class IdProviderControllerExecutionParams
 
     public HttpServletRequest getServletRequest()
     {
-        return portalRequest == null ? servletRequest : portalRequest.getRawRequest();
+        return servletRequest;
     }
 
     public PortalRequest getPortalRequest()
