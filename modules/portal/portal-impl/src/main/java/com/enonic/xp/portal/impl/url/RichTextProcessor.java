@@ -160,7 +160,7 @@ public class RichTextProcessor
         this.imageStylesSupplier = Suppliers.memoize( () -> {
             final StyleDescriptors styleDescriptors = params.getCustomStyleDescriptorsCallback() != null
                 ? params.getCustomStyleDescriptorsCallback().get()
-                : getStyleDescriptors( PortalRequestAccessor.get() );
+                : getStyleDescriptors();
             return getImageStyleMap( styleDescriptors );
         } );
 
@@ -300,14 +300,16 @@ public class RichTextProcessor
     {
         return styleDescriptors.stream()
             .flatMap( styleDescriptor -> styleDescriptor.getElements().stream() )
-            .collect( Collectors.toUnmodifiableMap( ImageStyle::getName, elementStyle -> elementStyle,
-                                                    ( existingKey, newKey ) -> existingKey ) );
+            .collect(
+                Collectors.toUnmodifiableMap( ImageStyle::getName, elementStyle -> elementStyle, ( existingKey, newKey ) -> existingKey ) );
     }
 
-    private StyleDescriptors getStyleDescriptors( final PortalRequest portalRequest )
+    private StyleDescriptors getStyleDescriptors()
     {
         final List<ApplicationKey> appKeys = new ArrayList<>();
         appKeys.add( SYSTEM_APPLICATION_KEY );
+
+        final PortalRequest portalRequest = PortalRequestAccessor.get();
         if ( portalRequest != null && portalRequest.getSite() != null )
         {
             SiteConfigsDataSerializer.fromData( portalRequest.getSite().getData().getRoot() )

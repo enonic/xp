@@ -49,7 +49,7 @@ class I18NScriptTest
 
         addService( LocaleService.class, localeService );
 
-        getPortalRequest().setSite( Site.create().
+        this.portalRequest.setSite( Site.create().
             name( ContentName.from( "test" ) ).
             parentPath( ContentPath.ROOT ).
             language( Locale.ENGLISH ).

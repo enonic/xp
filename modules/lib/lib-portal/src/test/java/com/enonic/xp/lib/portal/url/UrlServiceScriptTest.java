@@ -16,6 +16,7 @@ import com.enonic.xp.testing.ScriptTestSupport;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 
@@ -220,7 +221,7 @@ class UrlServiceScriptTest
         ArgumentCaptor<ApiUrlParams> captor = ArgumentCaptor.forClass( ApiUrlParams.class );
         verify( portalUrlService ).apiUrl( captor.capture() );
         final ApiUrlParams params = captor.getValue();
-        assertThat( params.getDescriptorKey() ).asString().isEqualTo( "com.enonic.app.myapp:myapi" );
+        assertEquals( "com.enonic.app.myapp:myapi", params.getApi() );
         assertThat( params.getPathSegments() ).containsExactly( "segment1", "segment2" );
         assertThat( params.getBaseUrl() ).isEqualTo( "https://example.com" );
         assertThat( params.getQueryParams() ).containsExactly( entry( "å", List.of( "a" ) ), entry( "ø", List.of( "o" ) ),

@@ -1,7 +1,5 @@
 package com.enonic.xp.portal.impl.url;
 
-import java.util.Objects;
-
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
@@ -19,7 +17,7 @@ final class ContentProjectResolver
     private ContentProjectResolver( final Builder builder )
     {
         this.projectName = builder.projectName;
-        this.preferSiteRequest = Objects.requireNonNullElse( builder.preferSiteRequest, true );
+        this.preferSiteRequest = builder.preferSiteRequest;
     }
 
     public ProjectName resolve()
@@ -29,10 +27,13 @@ final class ContentProjectResolver
             return ProjectName.from( projectName );
         }
 
-        final PortalRequest portalRequest = PortalRequestAccessor.get();
-        if ( preferSiteRequest && PortalRequestHelper.isSiteBase( portalRequest ) )
+        if ( preferSiteRequest )
         {
-            return ProjectName.from( portalRequest.getRepositoryId() );
+            final PortalRequest portalRequest = PortalRequestAccessor.get();
+            if ( PortalRequestHelper.isSiteBase( portalRequest ) )
+            {
+                return ProjectName.from( portalRequest.getRepositoryId() );
+            }
         }
 
         final RepositoryId repositoryId = ContextAccessor.current().getRepositoryId();
@@ -58,7 +59,7 @@ final class ContentProjectResolver
     {
         private String projectName;
 
-        private Boolean preferSiteRequest;
+        private boolean preferSiteRequest = true;
 
         Builder setProjectName( final String projectName )
         {
@@ -66,7 +67,7 @@ final class ContentProjectResolver
             return this;
         }
 
-        Builder setPreferSiteRequest( final Boolean preferSiteRequest )
+        Builder setPreferSiteRequest( final boolean preferSiteRequest )
         {
             this.preferSiteRequest = preferSiteRequest;
             return this;

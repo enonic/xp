@@ -6,7 +6,6 @@ import java.util.function.Supplier;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
@@ -31,12 +30,7 @@ final class AssetPathSupplier
     @Override
     public String get()
     {
-        final StringBuilder url = new StringBuilder();
-
-        UrlBuilderHelper.appendSubPath( url, "asset" );
-
-        final ApplicationKey applicationKey =
-            new ApplicationResolver().portalRequest( PortalRequestAccessor.get() ).application( application ).resolve();
+        final ApplicationKey applicationKey = AppKeyResolver.resolve( this.application );
 
         final Resource resource = this.resourceService.getResource( ResourceKey.from( applicationKey, "META-INF/MANIFEST.MF" ) );
         if ( !resource.exists() )
@@ -46,6 +40,8 @@ final class AssetPathSupplier
 
         final String fingerprint = RunMode.isDev() ? String.valueOf( stableTime() ) : HexFormat.of().toHexDigits( resource.getTimestamp() );
 
+        final StringBuilder url = new StringBuilder();
+        UrlBuilderHelper.appendSubPath( url, "asset" );
         UrlBuilderHelper.appendPart( url, applicationKey + ":" + fingerprint );
         UrlBuilderHelper.appendAndEncodePathParts( url, path );
 

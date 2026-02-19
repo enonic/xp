@@ -49,6 +49,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public abstract class ScriptTestSupport
 {
+    private boolean http;
+
     private ApplicationKey appKey;
 
     private String appVersion;
@@ -71,8 +73,14 @@ public abstract class ScriptTestSupport
 
     public ScriptTestSupport()
     {
+        this( true );
+    }
+
+    public ScriptTestSupport( boolean http )
+    {
         setAppKey( "myapplication" );
         setAppVersion( "1.0.0" );
+        this.http = http;
     }
 
     protected final void setAppKey( final String value )
@@ -150,11 +158,6 @@ public abstract class ScriptTestSupport
         this.scriptSettings.globalVariable( name, value );
     }
 
-    protected final PortalRequest getPortalRequest()
-    {
-        return this.portalRequest;
-    }
-
     protected final MockBeanContext newBeanContext( final ResourceKey key )
     {
         return new MockBeanContext( key, this.serviceRegistry );
@@ -162,6 +165,10 @@ public abstract class ScriptTestSupport
 
     protected PortalRequest createPortalRequest()
     {
+        if ( !this.http )
+        {
+            return null;
+        }
         final PortalRequest request = new PortalRequest();
 
         request.setMode( RenderMode.LIVE );

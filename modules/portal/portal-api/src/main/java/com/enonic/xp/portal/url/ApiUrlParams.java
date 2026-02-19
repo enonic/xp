@@ -8,14 +8,13 @@ import java.util.Objects;
 import com.google.common.base.MoreObjects;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.descriptor.DescriptorKey;
 
 @PublicApi
 public final class ApiUrlParams
 {
     private final String type;
 
-    private final DescriptorKey descriptorKey;
+    private final String api;
 
     private final String path;
 
@@ -28,7 +27,7 @@ public final class ApiUrlParams
     private ApiUrlParams( final Builder builder )
     {
         this.type = Objects.requireNonNullElse( builder.type, UrlTypeConstants.SERVER_RELATIVE );
-        this.descriptorKey = Objects.requireNonNull( builder.descriptorKey );
+        this.api = builder.api;
         this.path = builder.path;
         this.pathSegments = builder.pathSegments;
         this.baseUrl = builder.baseUrl;
@@ -45,9 +44,9 @@ public final class ApiUrlParams
         return type;
     }
 
-    public DescriptorKey getDescriptorKey()
+    public String getApi()
     {
-        return descriptorKey;
+        return api;
     }
 
     public String getPath()
@@ -79,13 +78,13 @@ public final class ApiUrlParams
     {
         private String type;
 
-        private DescriptorKey descriptorKey;
-
         private String path;
 
         private List<String> pathSegments;
 
         private String baseUrl;
+
+        private String api;
 
         private final QueryParamsBuilder queryParams = new QueryParamsBuilder();
 
@@ -95,9 +94,9 @@ public final class ApiUrlParams
             return this;
         }
 
-        public Builder setDescriptorKey( final DescriptorKey descriptorKey )
+        public Builder setApi( final String api )
         {
-            this.descriptorKey = descriptorKey;
+            this.api = api;
             return this;
         }
 
@@ -144,7 +143,7 @@ public final class ApiUrlParams
         helper.omitNullValues();
         helper.add( "type", this.type );
         helper.add( "params", this.queryParams );
-        helper.add( "descriptorKey", this.descriptorKey );
+        helper.add( "api", this.api );
         helper.add( "path", this.path );
         helper.add( "pathSegments", this.pathSegments );
         helper.add( "baseUrl", this.baseUrl );

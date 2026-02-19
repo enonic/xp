@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.url;
 
+import java.util.Objects;
 import java.util.function.Supplier;
 
 import com.enonic.xp.portal.PortalRequest;
@@ -20,7 +21,7 @@ final class IdentityBaseUrlSupplier
     @Override
     public String get()
     {
-        final PortalRequest portalRequest = PortalRequestAccessor.get();
+        final PortalRequest portalRequest = Objects.requireNonNull( PortalRequestAccessor.get(), "no request bound" );
 
         final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( portalRequest.getRawRequest() );
 

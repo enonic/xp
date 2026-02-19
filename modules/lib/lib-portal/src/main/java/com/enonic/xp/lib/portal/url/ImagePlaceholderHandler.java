@@ -1,5 +1,7 @@
 package com.enonic.xp.lib.portal.url;
 
+import java.util.Objects;
+
 import com.enonic.xp.image.ImageHelper;
 
 public final class ImagePlaceholderHandler
@@ -10,9 +12,7 @@ public final class ImagePlaceholderHandler
 
     public String createImagePlaceholder()
     {
-        width = width != null ? width : 0;
-        height = height != null ? height : 0;
-        return ImageHelper.createImagePlaceholder( width, height );
+        return ImageHelper.createImagePlaceholder( Objects.requireNonNullElse( width, 0 ), Objects.requireNonNullElse( height, 0 ) );
     }
 
     public void setWidth( final Integer width )

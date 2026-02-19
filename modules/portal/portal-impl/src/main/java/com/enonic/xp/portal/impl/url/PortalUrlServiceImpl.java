@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.url;
 
+import java.util.Objects;
 import java.util.function.Supplier;
 
 import org.osgi.service.component.annotations.Activate;
@@ -8,7 +9,6 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.base.Suppliers;
 
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
@@ -16,8 +16,8 @@ import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.macro.MacroService;
-import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
 import com.enonic.xp.portal.url.ApiUrlGeneratorParams;
@@ -95,23 +95,9 @@ public final class PortalUrlServiceImpl
     @Override
     public String serviceUrl( final ServiceUrlParams params )
     {
-        final PortalRequest portalRequest = PortalRequestAccessor.get();
+        final ServiceRequestBaseUrlSupplier baseUrlSupplier = ServiceRequestBaseUrlSupplier.create().setUrlType( params.getType() ).build();
 
-        final ServiceRequestBaseUrlSupplier baseUrlSupplier =
-            ServiceRequestBaseUrlSupplier.create().setPortalRequest( portalRequest ).setUrlType( params.getType() ).build();
-
-        final Supplier<String> pathStrategy = () -> {
-            final ApplicationKey applicationKey =
-                new ApplicationResolver().portalRequest( portalRequest ).application( params.getApplication() ).resolve();
-
-            final StringBuilder url = new StringBuilder();
-
-            UrlBuilderHelper.appendSubPath( url, "service" );
-            UrlBuilderHelper.appendPart( url, applicationKey.toString() );
-            UrlBuilderHelper.appendPart( url, params.getService() );
-
-            return url.toString();
-        };
+        final ServicePathSupplier pathStrategy = new ServicePathSupplier( params.getApplication(), params.getService() );
 
         final DefaultQueryParamsSupplier queryParamsStrategy = new DefaultQueryParamsSupplier();
         queryParamsStrategy.params( params.getParams() );
@@ -294,13 +280,14 @@ public final class PortalUrlServiceImpl
         final Supplier<String> baseUrlSupplier = ( () -> {
             if ( params.getPath() != null && params.getPathSegments() != null )
             {
-                throw new IllegalArgumentException( "Both path and pathSegments cannot be set" );
+                throw new IllegalArgumentException( "path and pathSegments cannot be set at the same time" );
             }
 
             final StringBuilder url = new StringBuilder();
             UrlBuilderHelper.appendAndEncodePathParts( url, params.getPath() );
             UrlBuilderHelper.appendPathSegments( url, params.getPathSegments() );
-            return UrlBuilderHelper.rewriteUri( PortalRequestAccessor.get().getRawRequest(), params.getType(), url.toString() );
+            return UrlBuilderHelper.rewriteUri( Objects.requireNonNull( PortalRequestAccessor.get(), "no request bound" ).getRawRequest(),
+                                                params.getType(), url.toString() );
         } );
 
         final DefaultQueryParamsSupplier queryParamsStrategy = new DefaultQueryParamsSupplier();
@@ -323,7 +310,7 @@ public final class PortalUrlServiceImpl
         final ApiUrlGeneratorParams generatorParams = ApiUrlGeneratorParams.create()
             .setBaseUrl( params.getBaseUrl() )
             .setUrlType( params.getType() )
-            .setDescriptorKey( params.getDescriptorKey() )
+            .setDescriptorKey( DescriptorKey.from( params.getApi() ) )
             .setPath( new ApiUrlPathResolver( params.getPath(), params.getPathSegments() ) )
             .setQueryParams( params.getQueryParams() )
             .build();

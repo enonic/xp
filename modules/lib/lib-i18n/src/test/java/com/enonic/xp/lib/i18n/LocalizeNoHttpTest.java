@@ -12,7 +12,6 @@ import org.mockito.invocation.InvocationOnMock;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.i18n.MessageBundle;
-import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.testing.ScriptRunnerSupport;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -21,6 +20,11 @@ import static org.mockito.ArgumentMatchers.eq;
 class LocalizeNoHttpTest
     extends ScriptRunnerSupport
 {
+    LocalizeNoHttpTest()
+    {
+        super( false );
+    }
+
     @Override
     public String getScriptTestFile()
     {
@@ -41,8 +45,7 @@ class LocalizeNoHttpTest
         Mockito.when( localeService.getLocales( eq( applicationKey ), any() ) ).thenReturn( locales );
 
         final MessageBundle bundle = Mockito.mock( MessageBundle.class, this::answer );
-        Mockito.when( localeService.getBundle( eq( applicationKey ), any(), any() ) ).
-            thenReturn( bundle );
+        Mockito.when( localeService.getBundle( eq( applicationKey ), any(), any() ) ).thenReturn( bundle );
 
         addService( LocaleService.class, localeService );
     }
@@ -58,11 +61,6 @@ class LocalizeNoHttpTest
             return map.get( invocation.getArgument( 0 ) );
         }
 
-        return null;
-    }
-
-    protected PortalRequest createPortalRequest()
-    {
         return null;
     }
 }
