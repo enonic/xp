@@ -47,7 +47,7 @@ public class AdminExtensionDispatcherApiHandler
         {
             final Multimap<String, String> params = webRequest.getParams();
 
-            if ( params.containsKey( "widgetInterface" ) )
+            if ( params.containsKey( "interface" ) )
             {
                 return listExtensionsHandler.handle( webRequest );
             }
@@ -57,7 +57,7 @@ public class AdminExtensionDispatcherApiHandler
             }
             else
             {
-                throw WebException.notFound( "Widget API not found" );
+                throw WebException.notFound( "Extension API not found" );
             }
         }
         else

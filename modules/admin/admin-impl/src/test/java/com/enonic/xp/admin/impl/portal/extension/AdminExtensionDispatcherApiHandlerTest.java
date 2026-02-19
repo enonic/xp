@@ -49,7 +49,7 @@ class AdminExtensionDispatcherApiHandlerTest
         final WebRequest webRequest3 = new WebRequest();
         webRequest3.setMethod( HttpMethod.GET );
         webRequest3.setRawPath( "/path/_/admin:extension" );
-        webRequest3.getParams().put( "widgetInterface", "admin.dashboard" );
+        webRequest3.getParams().put( "interface", "admin.dashboard" );
 
         // widget harmonized api
         final WebRequest webRequest4 = new WebRequest();
