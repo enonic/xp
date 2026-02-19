@@ -47,3 +47,17 @@ exports.getHomeToolUrl = function () {
     });
     t.assertEquals("generated_url", result);
 };
+
+exports.testGetTools = function () {
+    const result = adminLib.getTools();
+    t.assertNotNull(result);
+    t.assertTrue(Array.isArray(result));
+};
+
+exports.testGetToolsWithLocales = function () {
+    const result = adminLib.getTools({
+        locales: ['en', 'no']
+    });
+    t.assertNotNull(result);
+    t.assertTrue(Array.isArray(result));
+};
