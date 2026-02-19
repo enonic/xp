@@ -2,6 +2,7 @@ package com.enonic.xp.portal.impl.url;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -108,14 +109,15 @@ public final class UrlBuilderHelper
         return UrlEscapers.urlPathSegmentEscaper().escape( value );
     }
 
-    public static void appendParams( final StringBuilder str, final Collection<Map.Entry<String, String>> params )
+    public static void appendParams( final StringBuilder str, final Map<String, List<String>> params )
     {
         if ( params.isEmpty() )
         {
             return;
         }
+
         str.append( "?" );
-        final Iterator<Map.Entry<String, String>> it = params.iterator();
+        final Iterator<Map.Entry<String, List<String>>> it = params.entrySet().iterator();
         appendParam( str, it.next() );
         while ( it.hasNext() )
         {
@@ -124,13 +126,23 @@ public final class UrlBuilderHelper
         }
     }
 
-    public static void appendParam( final StringBuilder str, final Map.Entry<String, String> param )
+    private static void appendParam( final StringBuilder str, final Map.Entry<String, List<String>> param )
     {
-        final String value = param.getValue();
-        str.append( urlEncode( param.getKey() ) );
-        if ( value != null )
+        final List<String> values = param.getValue();
+        final String encodedKey = urlEncode( param.getKey() );
+
+        if ( values.isEmpty() )
         {
-            str.append( "=" ).append( urlEncode( value ) );
+            str.append( encodedKey );
+        }
+        else
+        {
+            final Iterator<String> it = values.iterator();
+            str.append( encodedKey ).append( "=" ).append( urlEncode( it.next() ) );
+            while ( it.hasNext() )
+            {
+                str.append( "&" ).append( encodedKey ).append( "=" ).append( urlEncode( it.next() ) );
+            }
         }
     }
 

@@ -109,8 +109,7 @@ public final class ImageRenderer
 
         private String buildUrl()
         {
-            final ImageUrlParams params =
-                new ImageUrlParams().portalRequest( portalRequest ).id( component.getImage().toString() ).scale( "width(768)" );
+            final ImageUrlParams params = new ImageUrlParams().id( component.getImage().toString() ).scale( "width(768)" );
 
             return urlService.imageUrl( params );
         }

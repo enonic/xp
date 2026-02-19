@@ -26,7 +26,7 @@ public class AdminExtensionUrlHandler
 
     private String urlType;
 
-    private Map<String, Collection<String>> queryParams;
+    private Map<String, List<String>> queryParams;
 
     @Override
     public void initialize( final BeanContext context )
@@ -49,7 +49,7 @@ public class AdminExtensionUrlHandler
         this.urlType = urlType;
     }
 
-    public void addQueryParams( final ScriptValue params )
+    public void setQueryParams( final ScriptValue params )
     {
         if ( params == null || !params.isObject() )
         {
@@ -85,7 +85,7 @@ public class AdminExtensionUrlHandler
 
         if ( this.queryParams != null )
         {
-            builder.addQueryParams( this.queryParams );
+            builder.setQueryParams( this.queryParams );
         }
 
         return this.portalUrlServiceSupplier.get().apiUrl( builder.build() );

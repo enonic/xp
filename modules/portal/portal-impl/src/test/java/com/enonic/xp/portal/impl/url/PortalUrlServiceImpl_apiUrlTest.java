@@ -1,5 +1,8 @@
 package com.enonic.xp.portal.impl.url;
 
+import java.util.List;
+import java.util.Map;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -109,9 +112,8 @@ class PortalUrlServiceImpl_apiUrlTest
 
         final ApiUrlParams params = ApiUrlParams.create()
             .setDescriptorKey( DescriptorKey.from( "com.enonic.app.myapp:myapi" ) )
-            .addQueryParam( "k1", "v10" )
-            .addQueryParam( "k1", "v11" )
-            .addQueryParam( "k2", "v2" )
+            .setQueryParams( Map.of( "k1", List.of( "v10", "v11" ) ) )
+            .setQueryParam( "k2", "v2" )
             .build();
 
         final String url = this.service.apiUrl( params );
@@ -145,9 +147,8 @@ class PortalUrlServiceImpl_apiUrlTest
         final ApiUrlParams params = ApiUrlParams.create()
             .setType( UrlTypeConstants.ABSOLUTE )
             .setDescriptorKey( DescriptorKey.from( "com.enonic.app.myapp:myapi" ) )
-            .addQueryParam( "k1", "v10" )
-            .addQueryParam( "k1", "v11" )
-            .addQueryParam( "k2", "v2" )
+            .setQueryParams( Map.of( "k1", List.of( "v10", "v11" ) ) )
+            .setQueryParam( "k2", "v2" )
             .build();
 
         final String url = this.service.apiUrl( params );
@@ -171,9 +172,8 @@ class PortalUrlServiceImpl_apiUrlTest
 
         final ApiUrlParams params = ApiUrlParams.create()
             .setDescriptorKey( DescriptorKey.from( "com.enonic.app.myapp:myapi" ) )
-            .addQueryParam( "k1", "v10" )
-            .addQueryParam( "k1", "v11" )
-            .addQueryParam( "k2", "v2" )
+            .setQueryParams( Map.of( "k1", List.of( "v10", "v11" ) ) )
+            .setQueryParam( "k2", "v2" )
             .build();
 
         final String url = ContextBuilder.create()
@@ -203,9 +203,8 @@ class PortalUrlServiceImpl_apiUrlTest
         final ApiUrlParams params = ApiUrlParams.create()
             .setDescriptorKey( DescriptorKey.from( "com.enonic.app.myapp:myapi" ) )
             .setBaseUrl( "baseUrl" )
-            .addQueryParam( "k1", "v10" )
-            .addQueryParam( "k1", "v11" )
-            .addQueryParam( "k2", "v2" )
+            .setQueryParams( Map.of( "k1", List.of( "v10", "v11" ) ) )
+            .setQueryParam( "k2", "v2" )
             .build();
 
         final String url = this.service.apiUrl( params );

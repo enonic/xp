@@ -1,6 +1,5 @@
 package com.enonic.xp.lib.portal.url;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -33,7 +32,7 @@ public final class ApiUrlHandler
 
     private List<String> pathSegments;
 
-    private Map<String, Collection<String>> queryParams;
+    private Map<String, List<String>> queryParams;
 
     @Override
     public void initialize( final BeanContext context )
@@ -55,7 +54,7 @@ public final class ApiUrlHandler
 
         if ( queryParams != null )
         {
-            builder.addQueryParams( this.queryParams );
+            builder.setQueryParams( this.queryParams );
         }
 
         final ApiUrlParams params = builder.build();
@@ -94,7 +93,7 @@ public final class ApiUrlHandler
         }
     }
 
-    public void addQueryParams( final ScriptValue params )
+    public void setQueryParams( final ScriptValue params )
     {
         this.queryParams = UrlHandlerHelper.resolveQueryParams( params );
     }

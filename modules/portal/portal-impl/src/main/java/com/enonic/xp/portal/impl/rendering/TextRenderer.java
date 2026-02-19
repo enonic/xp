@@ -56,12 +56,11 @@ public final class TextRenderer
             }
             else
             {
-                ProcessHtmlParams params =
-                    new ProcessHtmlParams().portalRequest( portalRequest ).value( text ).customHtmlProcessor( processor -> {
-                        processor.processDefault();
-                        processor.getDocument().select( "figcaption:empty" ).forEach( HtmlElement::remove );
-                        return processor.getDocument().getInnerHtml();
-                    } );
+                ProcessHtmlParams params = new ProcessHtmlParams().value( text ).customHtmlProcessor( processor -> {
+                    processor.processDefault();
+                    processor.getDocument().select( "figcaption:empty" ).forEach( HtmlElement::remove );
+                    return processor.getDocument().getInnerHtml();
+                } );
 
                 final String processedHtml = portalUrlService.processHtml( params );
                 portalResponseBuilder.body( renderHtml( textComponent, processedHtml ) );

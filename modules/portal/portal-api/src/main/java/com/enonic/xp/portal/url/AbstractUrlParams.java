@@ -1,10 +1,12 @@
 package com.enonic.xp.portal.url;
 
-import com.google.common.collect.LinkedListMultimap;
-import com.google.common.collect.Multimap;
+import java.util.Objects;
+import java.util.stream.StreamSupport;
+
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.MultimapBuilder;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.portal.PortalRequest;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
@@ -14,11 +16,11 @@ public abstract class AbstractUrlParams<T extends AbstractUrlParams>
 {
     private String type = UrlTypeConstants.SERVER_RELATIVE;
 
-    private final Multimap<String, String> params;
+    private final ListMultimap<String, String> params;
 
     public AbstractUrlParams()
     {
-        this.params = LinkedListMultimap.create();
+        this.params = MultimapBuilder.linkedHashKeys().arrayListValues().build();
     }
 
     public String getType()
@@ -26,7 +28,7 @@ public abstract class AbstractUrlParams<T extends AbstractUrlParams>
         return type;
     }
 
-    public final Multimap<String, String> getParams()
+    public final ListMultimap<String, String> getParams()
     {
         return this.params;
     }
@@ -46,14 +48,14 @@ public abstract class AbstractUrlParams<T extends AbstractUrlParams>
 
     public final T param( final String name, final Object value )
     {
-        final String strValue = value != null ? value.toString() : null;
-        this.params.put( name, strValue );
-        return typecastThis();
-    }
-
-    @Deprecated(since = "8")
-    public final T portalRequest( final PortalRequest portalRequest )
-    {
+        if ( value instanceof Iterable<?> values )
+        {
+            this.params.putAll( name, StreamSupport.stream( values.spliterator(), false ).map( Objects::toString ).toList() );
+        }
+        else
+        {
+            this.params.put( name, value.toString() );
+        }
         return typecastThis();
     }
 
