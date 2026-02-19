@@ -6,15 +6,15 @@ var url = portalLib.componentUrl({
     component: 'main/0'
 });
 
-assert.assertEquals('ComponentUrlParams{type=server, params={}, component=main/0}', url);
+assert.assertEquals('/site/mocksite/_/component/main/0', url);
 // END
 
 //check null params
 url = portalLib.componentUrl();
 
-assert.assertEquals('ComponentUrlParams{type=server, params={}}', url);
+assert.assertEquals('/site/mocksite/_/component/null', url);
 
 //check empty params
 url = portalLib.componentUrl({});
 
-assert.assertEquals('ComponentUrlParams{type=server, params={}}', url);
+assert.assertEquals('/site/mocksite/_/component/null', url);
