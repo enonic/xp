@@ -2,18 +2,18 @@ package com.enonic.xp.web.impl.handler;
 
 import java.io.IOException;
 
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
+
 import jakarta.servlet.Servlet;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
 
 import com.enonic.xp.annotation.Order;
 import com.enonic.xp.web.WebException;
@@ -23,9 +23,7 @@ import com.enonic.xp.web.exception.ExceptionMapper;
 import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.impl.serializer.RequestBodyReader;
-import com.enonic.xp.web.impl.serializer.RequestSerializer;
-import com.enonic.xp.web.serializer.ResponseSerializationService;
-import com.enonic.xp.web.websocket.WebSocketConfig;
+import com.enonic.xp.web.serializer.WebSerializerService;
 import com.enonic.xp.web.websocket.WebSocketContext;
 import com.enonic.xp.web.websocket.WebSocketContextFactory;
 
@@ -37,47 +35,44 @@ public final class WebDispatcherServlet
 {
     private final WebDispatcher webDispatcher;
 
-    private ExceptionMapper exceptionMapper;
+    private final ExceptionMapper exceptionMapper;
 
-    private ExceptionRenderer exceptionRenderer;
+    private final ExceptionRenderer exceptionRenderer;
 
-    private WebSocketContextFactory webSocketContextFactory;
+    private final WebSocketContextFactory webSocketContextFactory;
 
-    private ResponseSerializationService responseSerializationService;
+    private final WebSerializerService webSerializerService;
 
     @Activate
-    public WebDispatcherServlet( @Reference final WebDispatcher webDispatcher )
+    public WebDispatcherServlet( @Reference final WebDispatcher webDispatcher, @Reference final ExceptionMapper exceptionMapper,
+                                 @Reference final ExceptionRenderer exceptionRenderer,
+                                 @Reference final WebSocketContextFactory webSocketContextFactory,
+                                 @Reference final WebSerializerService webSerializerService )
     {
         this.webDispatcher = webDispatcher;
+        this.exceptionMapper = exceptionMapper;
+        this.exceptionRenderer = exceptionRenderer;
+        this.webSocketContextFactory = webSocketContextFactory;
+        this.webSerializerService = webSerializerService;
     }
 
     @Override
     protected void service( final HttpServletRequest req, final HttpServletResponse res )
         throws ServletException, IOException
     {
-        final WebRequest webRequest = newWebRequest( req );
+        final WebRequest webRequest = webSerializerService.request( req );
         final WebSocketContext webSocketContext = this.webSocketContextFactory.newContext( req, res );
         webRequest.setWebSocketContext( webSocketContext );
+        webRequest.setBody( RequestBodyReader.readBody( req ) );
 
         final WebResponse webResponse = doHandle( webRequest );
 
-        final WebSocketConfig config = webResponse.getWebSocket();
-        if ( ( webSocketContext != null ) && ( config != null ) )
+        if ( webRequest.getWebSocketContext() != null && webResponse.getWebSocket() != null )
         {
             return;
         }
 
-        responseSerializationService.serialize( webRequest, webResponse, res );
-    }
-
-    private WebRequest newWebRequest( final HttpServletRequest req )
-        throws IOException
-    {
-        final WebRequest result = new WebRequest();
-        new RequestSerializer( result ).serialize( req );
-        result.setBody( RequestBodyReader.readBody( req ) );
-
-        return result;
+        webSerializerService.response( webRequest, webResponse, res );
     }
 
     private WebResponse doHandle( final WebRequest webRequest )
@@ -106,30 +101,6 @@ public final class WebDispatcherServlet
             this.exceptionMapper.throwIfNeeded( webResponse );
         }
         return webResponse;
-    }
-
-    @Reference
-    public void setExceptionMapper( final ExceptionMapper exceptionMapper )
-    {
-        this.exceptionMapper = exceptionMapper;
-    }
-
-    @Reference
-    public void setExceptionRenderer( final ExceptionRenderer exceptionRenderer )
-    {
-        this.exceptionRenderer = exceptionRenderer;
-    }
-
-    @Reference
-    public void setWebSocketContextFactory( final WebSocketContextFactory webSocketContextFactory )
-    {
-        this.webSocketContextFactory = webSocketContextFactory;
-    }
-
-    @Reference
-    public void setResponseSerializationService( final ResponseSerializationService responseSerializationService )
-    {
-        this.responseSerializationService = responseSerializationService;
     }
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)

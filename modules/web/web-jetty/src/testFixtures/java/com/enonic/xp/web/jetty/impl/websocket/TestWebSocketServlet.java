@@ -20,7 +20,7 @@ public class TestWebSocketServlet
     protected void doGet( final HttpServletRequest req, final HttpServletResponse res )
         throws IOException
     {
-        if ( !this.service.isUpgradeRequest( req, res ) )
+        if ( !this.service.isUpgradeRequest( req ) )
         {
             res.sendError( HttpServletResponse.SC_NOT_FOUND );
             return;

@@ -98,8 +98,8 @@ class AttachmentMediaHandlerTest
     void testInvalidUrl()
     {
         this.request.setBaseUri( "" );
-        // must be /api/media:attachment/...
-        this.request.setRawPath( "/api/attachment/myproject/123456:ec25d6e4126c7064f82aaab8b34693fc/logo.png" );
+        // missing name segment — only project and id
+        this.request.setRawPath( "/api/media:attachment/myproject/123456" );
 
         WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
         assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );

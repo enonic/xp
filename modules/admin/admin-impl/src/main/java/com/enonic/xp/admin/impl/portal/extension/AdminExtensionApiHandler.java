@@ -27,7 +27,7 @@ import com.enonic.xp.web.WebResponse;
 @Component(immediate = true, service = AdminExtensionApiHandler.class)
 public class AdminExtensionApiHandler
 {
-    private static final Pattern EXTENSION_API_PATTERN = Pattern.compile( "^/_/admin:extension/(?<descriptor>[^/]+:[^/]+)" );
+    private static final Pattern EXTENSION_API_PATTERN = Pattern.compile( "^/admin:extension/(?<descriptor>[^/]+:[^/]+)" );
 
     private static final String GENERIC_EXTENSION_INTERFACE = "generic";
 
@@ -55,7 +55,7 @@ public class AdminExtensionApiHandler
 
         if ( !matcher.find() )
         {
-            throw new IllegalArgumentException( "Invalid Extension API path: " + path );
+            throw WebException.notFound( "Invalid Extension API path: " + path );
         }
 
         final DescriptorKey descriptorKey = resolveDescriptorKey( matcher.group( "descriptor" ) );

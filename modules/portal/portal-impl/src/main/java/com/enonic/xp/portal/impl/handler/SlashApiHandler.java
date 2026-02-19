@@ -41,6 +41,7 @@ import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
+import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.exception.ExceptionMapper;
 import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.websocket.WebSocketConfig;
@@ -106,7 +107,10 @@ public class SlashApiHandler
         }
         else
         {
-            throw new IllegalStateException( "Cannot find api endpoint or api path in request" );
+            final String rawPath = webRequest.getRawPath();
+            final int secondSlash = rawPath.indexOf( '/', 1 );
+            final String descriptor = secondSlash == -1 ? rawPath.substring( 1 ) : rawPath.substring( 1, secondSlash );
+            descriptorKey = HandlerHelper.resolveDescriptorKey( descriptor );
         }
 
         if ( !HttpMethod.isStandard( webRequest.getMethod() ) )
@@ -168,7 +172,21 @@ public class SlashApiHandler
         final boolean result;
         if ( portalRequest.getEndpointPath() == null )
         {
-            result = apiDescriptor.isMount();
+            final String connector = portalRequest.getRawRequest() != null ? (String) portalRequest.getRawRequest()
+                .getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) : null;
+
+            if ( DispatchConstants.API_CONNECTOR.equals( connector ) )
+            {
+                result = apiDescriptor.getMount().contains( "management" );
+            }
+            else if ( DispatchConstants.XP_CONNECTOR.equals( connector ) )
+            {
+                result = apiDescriptor.getMount().contains( "xp" );
+            }
+            else
+            {
+                result = false;
+            }
         }
         else if ( PortalRequestHelper.isSiteBase( portalRequest ) )
         {

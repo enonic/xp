@@ -181,7 +181,7 @@ public final class AdminExtensionDescriptor
 
         public Builder interfaces( final String... interfaceNames )
         {
-            this.interfaces = ImmutableSortedSet.copyOf( interfaceNames );
+            this.interfaces = ImmutableSet.copyOf( interfaceNames );
             return this;
         }
 

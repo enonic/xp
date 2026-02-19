@@ -8,18 +8,19 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.collect.Multimap;
 
+import com.enonic.xp.portal.handler.WebHandlerHelper;
 import com.enonic.xp.portal.universalapi.UniversalApiHandler;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 
-@Component(immediate = true, service = UniversalApiHandler.class, property = {"applicationKey=admin", "apiKey=extension",
+@Component(immediate = true, property = {"key=" + AdminExtensionDispatcherApiHandler.EXTENSIONS_API,
     "allowedPrincipals=role:system.admin.login", "displayName=Admin Extensions API"})
 public class AdminExtensionDispatcherApiHandler
     implements UniversalApiHandler
 {
-    private static final String EXTENSION_API_BASE = "/_/admin:extension";
+    static final String EXTENSIONS_API = "admin:extension";
 
     private final GetListAllowedAdminExtensionsHandler listExtensionsHandler;
 
@@ -40,9 +41,9 @@ public class AdminExtensionDispatcherApiHandler
     @Override
     public WebResponse handle( final WebRequest webRequest )
     {
-        final String path = Objects.requireNonNull( webRequest.getEndpointPath(), "Endpoint path cannot be null" );
+        Objects.requireNonNull( webRequest.getEndpointPath(), "Endpoint path cannot be null" );
 
-        if ( HttpMethod.GET.equals( webRequest.getMethod() ) && path.equals( EXTENSION_API_BASE ) )
+        if ( HttpMethod.GET.equals( webRequest.getMethod() ) && WebHandlerHelper.findApiPath( webRequest, EXTENSIONS_API ).isEmpty() )
         {
             final Multimap<String, String> params = webRequest.getParams();
 
@@ -64,5 +65,4 @@ public class AdminExtensionDispatcherApiHandler
             return extensionApiHandler.handle( webRequest );
         }
     }
-
 }

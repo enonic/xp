@@ -6,23 +6,17 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
 
-import com.google.common.io.ByteSource;
-
 import jakarta.ws.rs.core.MediaType;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.impl.server.rest.model.ApplicationInstallResultJson;
 import com.enonic.xp.impl.server.rest.model.ApplicationInstalledJson;
 import com.enonic.xp.jaxrs.impl.JaxRsResourceTestSupport;
 import com.enonic.xp.util.Version;
 import com.enonic.xp.web.multipart.MultipartForm;
-import com.enonic.xp.web.multipart.MultipartItem;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -30,17 +24,14 @@ import static org.mockito.Mockito.when;
 class ApplicationResourceTest
     extends JaxRsResourceTestSupport
 {
-    private ApplicationService applicationService;
-
     private ApplicationResourceService applicationResourceService;
 
     @Override
     protected ApplicationResource getResourceInstance()
     {
-        applicationService = mock( ApplicationService.class );
         applicationResourceService = mock( ApplicationResourceService.class );
 
-        return new ApplicationResource( applicationService, applicationResourceService );
+        return new ApplicationResource( applicationResourceService );
     }
 
     @Test
@@ -48,60 +39,13 @@ class ApplicationResourceTest
     {
         ApplicationResource resource = getResourceInstance();
 
-        ByteSource byteSource = ByteSource.wrap( "bytes".getBytes() );
-
-        Application application = createApplication();
-
-        MultipartItem multipartItem = mock( MultipartItem.class );
-        when( multipartItem.getBytes() ).thenReturn( byteSource );
-        String fileName = application.getDisplayName();
-        when( multipartItem.getFileName() ).thenReturn( fileName );
-
         MultipartForm multipartForm = mock( MultipartForm.class );
 
-        when( this.applicationService.installGlobalApplication( any( ByteSource.class ) ) ).thenReturn( application );
+        resource.install( multipartForm );
 
-        when( multipartForm.get( "file" ) ).thenReturn( multipartItem );
-
-        ApplicationInstallResultJson result = resource.install( multipartForm );
-
-        assertEquals( application.getKey().toString(), result.getApplicationInstalledJson().getApplication().getKey() );
-        assertFalse( result.getApplicationInstalledJson().getApplication().getLocal() );
-    }
-
-    @Test
-    void install_exception()
-    {
-        ApplicationResource resource = getResourceInstance();
-
-        MultipartItem multipartItem = mock( MultipartItem.class );
-
-        ByteSource byteSource = ByteSource.wrap( "bytes".getBytes() );
-        String fileName = "app-name";
-
-        when( multipartItem.getBytes() ).thenReturn( byteSource );
-        when( multipartItem.getFileName() ).thenReturn( fileName );
-
-        MultipartForm multipartForm = mock( MultipartForm.class );
-
-        when( this.applicationService.installGlobalApplication( any( ByteSource.class ) ) ).thenThrow( new RuntimeException() );
-
-        when( multipartForm.get( "file" ) ).thenReturn( multipartItem );
-
-        ApplicationInstallResultJson result = resource.install( multipartForm );
-
-        assertEquals( "Failed to process application app-name", result.getFailure() );
-    }
-
-    @Test
-    void install_missing_file_item()
-    {
-        ApplicationResource resource = getResourceInstance();
-
-        MultipartForm multipartForm = mock( MultipartForm.class );
-
-        final RuntimeException ex = assertThrows( RuntimeException.class, () -> resource.install( multipartForm ) );
-        assertEquals( "Missing file item", ex.getMessage() );
+        final InOrder inOrder = Mockito.inOrder( applicationResourceService );
+        inOrder.verify( applicationResourceService ).install( multipartForm );
+        inOrder.verifyNoMoreInteractions();
     }
 
     @Test
@@ -145,10 +89,8 @@ class ApplicationResourceTest
         resultJson.setFailure( "Failed to upload application from invalid url" );
         when( this.applicationResourceService.installUrl( any() ) ).thenReturn( resultJson );
 
-        String jsonString = request().path( "app/installUrl" )
-            .entity( "{\"URL\":\"invalid url\"}", MediaType.APPLICATION_JSON_TYPE )
-            .post()
-            .getAsString();
+        String jsonString =
+            request().path( "app/installUrl" ).entity( "{\"URL\":\"invalid url\"}", MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
 
         assertEquals( "{\"failure\":\"Failed to upload application from invalid url\"}", jsonString );
     }
@@ -161,8 +103,8 @@ class ApplicationResourceTest
 
         request().path( "app/start" ).entity( "{\"key\": \"" + application.getKey() + "\" }", MediaType.APPLICATION_JSON_TYPE ).post();
 
-        final InOrder inOrder = Mockito.inOrder( applicationService );
-        inOrder.verify( this.applicationService ).startApplication( application.getKey() );
+        final InOrder inOrder = Mockito.inOrder( applicationResourceService );
+        inOrder.verify( this.applicationResourceService ).start( any() );
         inOrder.verifyNoMoreInteractions();
     }
 
@@ -174,8 +116,8 @@ class ApplicationResourceTest
 
         request().path( "app/stop" ).entity( "{\"key\": \"" + application.getKey() + "\" }", MediaType.APPLICATION_JSON_TYPE ).post();
 
-        final InOrder inOrder = Mockito.inOrder( applicationService );
-        inOrder.verify( this.applicationService ).stopApplication( application.getKey() );
+        final InOrder inOrder = Mockito.inOrder( applicationResourceService );
+        inOrder.verify( this.applicationResourceService ).stop( any() );
         inOrder.verifyNoMoreInteractions();
     }
 
@@ -187,8 +129,8 @@ class ApplicationResourceTest
 
         request().path( "app/uninstall" ).entity( "{\"key\": \"" + application.getKey() + "\" }", MediaType.APPLICATION_JSON_TYPE ).post();
 
-        final InOrder inOrder = Mockito.inOrder( applicationService );
-        inOrder.verify( this.applicationService ).uninstallApplication( application.getKey() );
+        final InOrder inOrder = Mockito.inOrder( applicationResourceService );
+        inOrder.verify( this.applicationResourceService ).uninstall( any() );
         inOrder.verifyNoMoreInteractions();
     }
 

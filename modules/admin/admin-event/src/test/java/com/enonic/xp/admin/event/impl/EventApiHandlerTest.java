@@ -43,6 +43,7 @@ class EventApiHandlerTest
     {
         final WebRequest request = new WebRequest();
         request.setRawRequest( mock( HttpServletRequest.class ) );
+        request.setRawPath( "/path/_/admin:event" );
         request.setWebSocketContext( mock( com.enonic.xp.web.websocket.WebSocketContext.class ) );
 
         WebResponse response = instance.handle( request );
@@ -57,6 +58,7 @@ class EventApiHandlerTest
     void testHandleBadRequest()
     {
         final WebRequest request = new WebRequest();
+        request.setRawPath( "/path/_/admin:event" );
         request.setRawRequest( mock( HttpServletRequest.class ) );
 
         WebResponse response = instance.handle( request );

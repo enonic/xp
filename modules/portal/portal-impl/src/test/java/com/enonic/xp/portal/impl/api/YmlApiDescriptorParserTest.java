@@ -35,7 +35,7 @@ public class YmlApiDescriptorParserTest
         assertEquals( "GraphQL API", apiDescriptor.getDisplayName() );
         assertEquals( "Description of GraphQL API", apiDescriptor.getDescription() );
         assertEquals( "https://docs.mygraphqlapi.com", apiDescriptor.getDocumentationUrl() );
-        assertTrue( apiDescriptor.isMount() );
+        assertTrue( apiDescriptor.getMount().contains( "xp" ) );
 
         final PrincipalKeys principalKeys = apiDescriptor.getAllowedPrincipals();
         assertEquals( 2, principalKeys.getSize() );

@@ -53,7 +53,7 @@ public class ServiceHandler
     public WebResponse handle( final WebRequest webRequest )
         throws IOException
     {
-        final String restPath = HandlerHelper.findRestPath( webRequest, "service" );
+        final String restPath = HandlerHelper.findEndpointPath( webRequest, "service" );
         final Matcher matcher = PATTERN.matcher( restPath );
         if ( !matcher.find() )
         {

@@ -50,6 +50,7 @@ import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
+import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.impl.exception.ExceptionMapperImpl;
 import com.enonic.xp.web.websocket.WebSocketConfig;
@@ -127,6 +128,7 @@ class SlashApiHandlerTest
         request.setWebSocketContext( webSocketContext );
         request.setRawPath( "/api/com.enonic.app.myapp:api-key" );
         servletRequestMock = mock( HttpServletRequest.class );
+        when( servletRequestMock.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.XP_CONNECTOR );
         request.setRawRequest( servletRequestMock );
 
         final TraceManager manager = mock( TraceManager.class );
@@ -148,9 +150,9 @@ class SlashApiHandlerTest
         webRequest.setMethod( HttpMethod.GET );
         webRequest.setRawPath( "/path/to/some/resource" );
 
-        // path must start with `/api/` or contains `/_/` as endpoint part
-        IllegalStateException ex = assertThrows( IllegalStateException.class, () -> this.handler.handle( webRequest ) );
-        assertEquals( "Cannot find api endpoint or api path in request", ex.getMessage() );
+        assertThatThrownBy( () -> this.handler.handle( webRequest ) ).asInstanceOf( type( WebException.class ) )
+            .extracting( WebException::getStatus )
+            .isEqualTo( HttpStatus.NOT_FOUND );
     }
 
     @Test
@@ -218,7 +220,7 @@ class SlashApiHandlerTest
         ApiDescriptor apiDescriptor = ApiDescriptor.create()
             .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "api-key" ) )
             .allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) )
-            .mount( true )
+            .mount( "xp" )
             .build();
 
         when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
@@ -239,7 +241,6 @@ class SlashApiHandlerTest
         ApiDescriptor apiDescriptor = ApiDescriptor.create()
             .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "api-key" ) )
             .allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) )
-            .mount( false )
             .build();
 
         when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
@@ -279,12 +280,12 @@ class SlashApiHandlerTest
         final PortalRequest request = new PortalRequest();
         request.setMethod( HttpMethod.GET );
         request.setRawPath( "/api/com.enonic.app.myapp:api-key" );
-        request.setRawRequest( mock( HttpServletRequest.class ) );
+        request.setRawRequest( servletRequestMock );
 
         ApiDescriptor apiDescriptor = ApiDescriptor.create()
             .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "api-key" ) )
             .allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) )
-            .mount( true )
+            .mount( "xp" )
             .build();
 
         when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
@@ -688,8 +689,8 @@ class SlashApiHandlerTest
     {
         final MyUniversalApiHandler myUniversalApiHandler = new MyUniversalApiHandler();
         universalApiHandlerRegistry.addApiHandler( myUniversalApiHandler,
-                                                   Map.of( "applicationKey", "com.enonic.app.external.app", "apiKey", "myapi",
-                                                           "allowedPrincipals", RoleKeys.EVERYONE.toString() ) );
+                                                   Map.of( "key", "com.enonic.app.external.app:myapi", "allowedPrincipals",
+                                                           RoleKeys.EVERYONE.toString() ) );
 
         final ApplicationKey apiApplicationKey = ApplicationKey.from( "com.enonic.app.external.app" );
 
@@ -717,8 +718,8 @@ class SlashApiHandlerTest
     {
         final MyUniversalApiHandler myUniversalApiHandler = new MyUniversalApiHandler();
         universalApiHandlerRegistry.addApiHandler( myUniversalApiHandler,
-                                                   Map.of( "applicationKey", "com.enonic.app.external.app", "apiKey", "myapi",
-                                                           "allowedPrincipals", RoleKeys.EVERYONE.toString() ) );
+                                                   Map.of( "key", "com.enonic.app.external.app:myapi", "allowedPrincipals",
+                                                           RoleKeys.EVERYONE.toString() ) );
 
         final ApplicationKey applicationKey = ApplicationKey.from( "com.enonic.app.myapp" );
         final DescriptorKey descriptorKey = DescriptorKey.from( applicationKey, "mytool" );
@@ -742,8 +743,8 @@ class SlashApiHandlerTest
     {
         WSUniversalApiHandler wsUniversalApiHandler = new WSUniversalApiHandler();
         universalApiHandlerRegistry.addApiHandler( wsUniversalApiHandler,
-                                                   Map.of( "applicationKey", "myapp", "apiKey", "myapi", "allowedPrincipals",
-                                                           RoleKeys.EVERYONE.toString(), "mount", "true" ) );
+                                                   Map.of( "key", "myapp:myapi", "allowedPrincipals", RoleKeys.EVERYONE.toString(), "mount",
+                                                           "xp" ) );
 
         final ApplicationKey apiApplicationKey = ApplicationKey.from( "myapp" );
 

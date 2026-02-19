@@ -6,10 +6,12 @@ import java.util.Collections;
 import java.util.Locale;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
@@ -32,14 +34,18 @@ import com.enonic.xp.security.IdProviderConfig;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.util.Version;
+import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
-import com.enonic.xp.web.impl.serializer.ResponseSerializationServiceImpl;
+import com.enonic.xp.web.impl.serializer.WebSerializerServiceImpl;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class IdProviderControllerServiceImplTest
@@ -79,7 +85,7 @@ class IdProviderControllerServiceImplTest
         idProviderControllerService.setIdProviderControllerScriptFactory( idProviderControllerScriptFactory );
         idProviderControllerService.setIdProviderDescriptorService( idProviderDescriptorService );
         idProviderControllerService.setSecurityService( securityService );
-        idProviderControllerService.setResponseSerializationService( new ResponseSerializationServiceImpl() );
+        idProviderControllerService.setResponseSerializationService( new WebSerializerServiceImpl() );
     }
 
     private PortalScriptService setupPortalScriptService()
@@ -195,8 +201,13 @@ class IdProviderControllerServiceImplTest
 
         VirtualHostHelper.setVirtualHost( httpServletRequest, virtualHost );
 
-        final IdProviderControllerExecutionParams executionParams =
-            IdProviderControllerExecutionParams.create().servletRequest( httpServletRequest ).functionName( "myfunction" ).build();
+        final HttpServletResponse response = mock();
+        when( response.isCommitted() ).thenReturn( true );
+        final IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create()
+            .servletRequest( httpServletRequest )
+            .response( response )
+            .functionName( "myfunction" )
+            .build();
         final PortalResponse portalResponse = idProviderControllerService.execute( executionParams );
         assertNotNull( portalResponse );
         assertEquals( HttpStatus.OK, portalResponse.getStatus() );
@@ -215,5 +226,121 @@ class IdProviderControllerServiceImplTest
         when( httpServletRequest.getPathInfo() ).thenReturn( "/admin" );
         when( httpServletRequest.getHeaderNames() ).thenReturn( Collections.emptyEnumeration() );
         return httpServletRequest;
+    }
+
+    @Nested
+    class ResolveFunctionName
+    {
+        private static final ApplicationKey APP_KEY = ApplicationKey.from( "myapp" );
+
+        private static final IdProviderKey ID_PROVIDER_KEY = IdProviderKey.from( "myidprovider" );
+
+        private IdProviderControllerServiceImpl service;
+
+        private IdProviderControllerScript script;
+
+        @BeforeEach
+        void setup()
+        {
+            script = mock( IdProviderControllerScript.class );
+
+            final IdProviderControllerScriptFactory scriptFactory = mock( IdProviderControllerScriptFactory.class );
+            when( scriptFactory.fromScript( any() ) ).thenReturn( script );
+
+            final IdProviderDescriptorService descriptorService = mock( IdProviderDescriptorService.class );
+            when( descriptorService.getDescriptor( APP_KEY ) ).thenReturn(
+                IdProviderDescriptor.create().key( APP_KEY ).build() );
+
+            final IdProviderConfig idProviderConfig = IdProviderConfig.create().applicationKey( APP_KEY ).build();
+            final IdProvider idProvider = IdProvider.create().idProviderConfig( idProviderConfig ).build();
+
+            final SecurityService securityService = mock( SecurityService.class );
+            when( securityService.getIdProvider( ID_PROVIDER_KEY ) ).thenReturn( idProvider );
+
+            service = new IdProviderControllerServiceImpl();
+            service.setIdProviderControllerScriptFactory( scriptFactory );
+            service.setIdProviderDescriptorService( descriptorService );
+            service.setSecurityService( securityService );
+            service.setResponseSerializationService( new WebSerializerServiceImpl() );
+        }
+
+        @Test
+        void exact_name_found()
+            throws IOException
+        {
+            when( script.hasMethod( "login" ) ).thenReturn( true );
+            when( script.execute( eq( "login" ), any() ) ).thenReturn( PortalResponse.create().status( HttpStatus.OK ).build() );
+
+            final PortalResponse response = execute( "login" );
+            assertNotNull( response );
+            assertEquals( HttpStatus.OK, response.getStatus() );
+        }
+
+        @Test
+        void exact_name_not_found()
+            throws IOException
+        {
+            when( script.hasMethod( "login" ) ).thenReturn( false );
+
+            assertNull( execute( "login" ) );
+        }
+
+        @Test
+        void no_exact_name_resolves_uppercase_method()
+            throws IOException
+        {
+            when( script.hasMethod( "GET" ) ).thenReturn( true );
+            when( script.execute( eq( "GET" ), any() ) ).thenReturn( PortalResponse.create().status( HttpStatus.OK ).build() );
+
+            final PortalResponse response = executeWithMethod( HttpMethod.GET );
+            assertNotNull( response );
+            assertEquals( HttpStatus.OK, response.getStatus() );
+        }
+
+        @Test
+        void no_exact_name_resolves_lowercase_method()
+            throws IOException
+        {
+            when( script.hasMethod( "POST" ) ).thenReturn( false );
+            when( script.hasMethod( "post" ) ).thenReturn( true );
+            when( script.execute( eq( "post" ), any() ) ).thenReturn( PortalResponse.create().status( HttpStatus.OK ).build() );
+
+            final PortalResponse response = executeWithMethod( HttpMethod.POST );
+            assertNotNull( response );
+            assertEquals( HttpStatus.OK, response.getStatus() );
+        }
+
+        @Test
+        void no_exact_name_no_method_match()
+            throws IOException
+        {
+            when( script.hasMethod( "GET" ) ).thenReturn( false );
+            when( script.hasMethod( "get" ) ).thenReturn( false );
+
+            assertNull( executeWithMethod( HttpMethod.GET ) );
+        }
+
+        private PortalResponse execute( final String functionName )
+            throws IOException
+        {
+            final IdProviderControllerExecutionParams params = IdProviderControllerExecutionParams.create()
+                .portalRequest( new PortalRequest() )
+                .idProviderKey( ID_PROVIDER_KEY )
+                .functionName( functionName )
+                .build();
+            return service.execute( params );
+        }
+
+        private PortalResponse executeWithMethod( final HttpMethod method )
+            throws IOException
+        {
+            final PortalRequest request = new PortalRequest();
+            request.setMethod( method );
+            final IdProviderControllerExecutionParams params = IdProviderControllerExecutionParams.create()
+                .portalRequest( request )
+                .idProviderKey( ID_PROVIDER_KEY )
+                .build();
+            return service.execute( params );
+        }
     }
 }

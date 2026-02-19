@@ -74,13 +74,14 @@ public final class JettyActivator
         new ErrorHandlerConfigurator().configure( server );
 
         final ContextHandlerCollection contexts = new ContextHandlerCollection();
-        ServletContextHandler xpServletContextHandler = null;
         for ( DispatchServlet dispatchServlet : this.dispatchServlets )
         {
-            ServletContextHandler servletContextHandler = initServletContextHandler( dispatchServlet );
-            if ( DispatchConstants.XP_CONNECTOR.equals( dispatchServlet.getConnector() ) )
+            final ServletContextHandler servletContextHandler = initServletContextHandler( dispatchServlet );
+            if ( !DispatchConstants.STATUS_CONNECTOR.equals( dispatchServlet.getConnector() ) )
             {
-                xpServletContextHandler = servletContextHandler;
+                JakartaWebSocketServletContainerInitializer.configure( servletContextHandler,
+                                                                       ( context, configurator ) -> configurator.setDefaultMaxSessionIdleTimeout(
+                                                                           config.websocket_idleTimeout() ) );
             }
             contexts.addHandler( servletContextHandler );
         }
@@ -88,13 +89,6 @@ public final class JettyActivator
         server.setHandler( contexts );
 
         JettyConnectionMetrics.addToAllConnectors( server, Metrics.globalRegistry );
-
-        if ( xpServletContextHandler != null )
-        {
-            JakartaWebSocketServletContainerInitializer.configure( xpServletContextHandler,
-                                                                   ( context, configurator ) -> configurator.setDefaultMaxSessionIdleTimeout(
-                                                                       config.websocket_idleTimeout() ) );
-        }
 
         this.server = server;
 

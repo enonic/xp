@@ -5,10 +5,10 @@ import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.admin.extension.AdminExtensionDescriptor;
 import com.enonic.xp.admin.extension.AdminExtensionDescriptorService;
 import com.enonic.xp.admin.tool.AdminToolDescriptor;
 import com.enonic.xp.admin.tool.AdminToolDescriptorService;
-import com.enonic.xp.admin.extension.AdminExtensionDescriptor;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
@@ -55,32 +55,30 @@ class AdminExtensionApiHandlerTest
     @Test
     void testInvalidPattern()
     {
-        final WebRequest webRequest = mock( WebRequest.class );
-        when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
+        final WebRequest webRequest1 = new WebRequest();
+        webRequest1.setMethod( HttpMethod.GET );
+        webRequest1.setRawPath( "/path/to/some/resource" );
 
-        when( webRequest.getEndpointPath() ).thenReturn( null );
-        when( webRequest.getRawPath() ).thenReturn( "/path/to/some/resource" );
-
-        NullPointerException npe = assertThrows( NullPointerException.class, () -> this.handler.handle( webRequest ) );
+        NullPointerException npe = assertThrows( NullPointerException.class, () -> this.handler.handle( webRequest1 ) );
         assertEquals( "Endpoint path cannot be null", npe.getMessage() );
 
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/somePath" );
-        when( webRequest.getRawPath() ).thenReturn( "/path/_/somePath" );
+        final WebRequest webRequest2 = new WebRequest();
+        webRequest2.setMethod( HttpMethod.GET );
+        webRequest2.setRawPath( "/path/_/somePath" );
 
-        IllegalArgumentException ex = assertThrows( IllegalArgumentException.class, () -> this.handler.handle( webRequest ) );
-        assertEquals( "Invalid Extension API path: /_/somePath", ex.getMessage() );
+        WebException ex = assertThrows( WebException.class, () -> this.handler.handle( webRequest2 ) );
+        assertEquals( "Invalid Extension API path: /somePath", ex.getMessage() );
     }
 
     @Test
     void testInvalidApplicationKey()
     {
-        final WebRequest webRequest = mock( WebRequest.class );
-        when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin:extension/<app>:extensionName" );
-        when( webRequest.getRawPath() ).thenReturn( "/path/_/admin:extension/<app>:extensionName" );
+        final WebRequest webRequest = new WebRequest();
+        webRequest.setMethod( HttpMethod.GET );
+        webRequest.setRawPath( "/path/_/admin:widget/<app>:widgetName" );
 
-        IllegalArgumentException ex = assertThrows( IllegalArgumentException.class, () -> this.handler.handle( webRequest ) );
-        assertEquals( "Invalid descriptor key: <app>:extensionName", ex.getMessage() );
+        WebException ex = assertThrows( WebException.class, () -> this.handler.handle( webRequest ) );
+        assertEquals( "Invalid Extension API path: /admin:widget/<app>:widgetName", ex.getMessage() );
     }
 
     @Test
@@ -89,10 +87,9 @@ class AdminExtensionApiHandlerTest
         when( extensionDescriptorService.getByKey( eq( DescriptorKey.from( ApplicationKey.from( "app" ), "extensionName" ) ) ) ).thenReturn(
             null );
 
-        final WebRequest webRequest = mock( WebRequest.class );
-        when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin:extension/app:extensionName" );
-        when( webRequest.getRawPath() ).thenReturn( "/path/_/admin:extension/app:extensionName" );
+        final WebRequest webRequest = new WebRequest();
+        webRequest.setMethod( HttpMethod.GET );
+        webRequest.setRawPath( "/path/_/admin:extension/app:extensionName" );
 
         WebException ex = assertThrows( WebException.class, () -> this.handler.handle( webRequest ) );
         assertEquals( "Extension [app:extensionName] not found", ex.getMessage() );
@@ -102,18 +99,17 @@ class AdminExtensionApiHandlerTest
     @Test
     void testWidgetDescriptorAccessDenied()
     {
-        final DescriptorKey descriptorKey = DescriptorKey.from( ApplicationKey.from( "app" ), "extensionName" );
+        final DescriptorKey descriptorKey = DescriptorKey.from( ApplicationKey.from( "app" ), "widgetName" );
 
-        AdminExtensionDescriptor descriptor = mock( AdminExtensionDescriptor.class );
-        when( descriptor.isAccessAllowed( any( PrincipalKeys.class ) ) ).thenReturn( false );
-        when( descriptor.getKey() ).thenReturn( descriptorKey );
+        AdminExtensionDescriptor widgetDescriptor = mock( AdminExtensionDescriptor.class );
+        when( widgetDescriptor.isAccessAllowed( any( PrincipalKeys.class ) ) ).thenReturn( false );
+        when( widgetDescriptor.getKey() ).thenReturn( descriptorKey );
 
-        when( extensionDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( descriptor );
+        when( extensionDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( widgetDescriptor );
 
-        final WebRequest webRequest = mock( WebRequest.class );
-        when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
-        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin:extension/app:extensionName" );
-        when( webRequest.getRawPath() ).thenReturn( "/path/_/admin:extension/app:extensionName" );
+        final WebRequest webRequest = new WebRequest();
+        webRequest.setMethod( HttpMethod.GET );
+        webRequest.setRawPath( "/path/_/admin:extension/app:widgetName" );
 
         WebException ex = assertThrows( WebException.class, () -> this.handler.handle( webRequest ) );
         assertEquals( HttpStatus.UNAUTHORIZED, ex.getStatus() );
@@ -122,23 +118,23 @@ class AdminExtensionApiHandlerTest
     @Test
     void testHandle()
     {
-        final DescriptorKey descriptorKey = DescriptorKey.from( ApplicationKey.from( "app" ), "extensionName" );
+        final DescriptorKey descriptorKey = DescriptorKey.from( ApplicationKey.from( "app" ), "widgetName" );
 
-        final AdminExtensionDescriptor descriptor =
+        final AdminExtensionDescriptor widgetDescriptor =
             AdminExtensionDescriptor.create().key( descriptorKey ).interfaces( "myInterface" ).build();
 
-        when( extensionDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( descriptor );
+        when( extensionDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( widgetDescriptor );
 
         final DescriptorKey adminToolDescriptorKey = DescriptorKey.from( ApplicationKey.from( "myapp" ), "toolName" );
 
         final AdminToolDescriptor adminToolDescriptor =
-            AdminToolDescriptor.create().key( adminToolDescriptorKey ).addInterface( "myInterface" ).build();
+            AdminToolDescriptor.create().key( adminToolDescriptorKey ).interfaces( "myInterface" ).build();
 
         when( adminToolDescriptorService.getByKey( eq( adminToolDescriptorKey ) ) ).thenReturn( adminToolDescriptor );
 
         final WebRequest webRequest = new WebRequest();
         webRequest.setMethod( HttpMethod.GET );
-        webRequest.setRawPath( "/admin/myapp/toolName/_/admin:extension/app:extensionName" );
+        webRequest.setRawPath( "/admin/myapp/toolName/_/admin:extension/app:widgetName" );
 
         final ControllerScript controllerScript = mock( ControllerScript.class );
         when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn( PortalResponse.create().build() );
@@ -152,25 +148,25 @@ class AdminExtensionApiHandlerTest
     @Test
     void testVerifyMounts()
     {
-        final DescriptorKey descriptorKey = DescriptorKey.from( ApplicationKey.from( "app" ), "extensionName" );
+        final DescriptorKey widgetDescriptorKey = DescriptorKey.from( ApplicationKey.from( "app" ), "widgetName" );
 
         final AdminExtensionDescriptor widgetDescriptor = mock( AdminExtensionDescriptor.class );
         when( widgetDescriptor.isAccessAllowed( any( PrincipalKeys.class ) ) ).thenReturn( true );
-        when( widgetDescriptor.getKey() ).thenReturn( descriptorKey );
-        when( widgetDescriptor.getInterfaces() ).thenReturn( Set.of( "extensionInterface" ) );
+        when( widgetDescriptor.getKey() ).thenReturn( widgetDescriptorKey );
+        when( widgetDescriptor.getInterfaces() ).thenReturn( Set.of( "widgetInterface" ) );
 
-        when( extensionDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( widgetDescriptor );
+        when( extensionDescriptorService.getByKey( eq( widgetDescriptorKey ) ) ).thenReturn( widgetDescriptor );
 
         final DescriptorKey adminToolDescriptorKey = DescriptorKey.from( ApplicationKey.from( "myapp" ), "toolName" );
 
         final AdminToolDescriptor adminToolDescriptor =
-            AdminToolDescriptor.create().key( adminToolDescriptorKey ).addInterface( "extensionInterface" ).build();
+            AdminToolDescriptor.create().key( adminToolDescriptorKey ).interfaces( "widgetInterface" ).build();
 
         when( adminToolDescriptorService.getByKey( eq( adminToolDescriptorKey ) ) ).thenReturn( adminToolDescriptor );
 
         final WebRequest webRequest = new WebRequest();
         webRequest.setMethod( HttpMethod.GET );
-        webRequest.setRawPath( "/admin/myapp/toolName/_/admin:extension/app:extensionName" );
+        webRequest.setRawPath( "/admin/myapp/toolName/_/admin:extension/app:widgetName" );
 
         final ControllerScript controllerScript = mock( ControllerScript.class );
         when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn( PortalResponse.create().build() );
@@ -184,25 +180,25 @@ class AdminExtensionApiHandlerTest
     @Test
     void testWidgetDoesNotMountedToAdminTool()
     {
-        final DescriptorKey descriptorKey = DescriptorKey.from( ApplicationKey.from( "app" ), "extensionName" );
+        final DescriptorKey widgetDescriptorKey = DescriptorKey.from( ApplicationKey.from( "app" ), "widgetName" );
 
-        final AdminExtensionDescriptor descriptor = mock( AdminExtensionDescriptor.class );
-        when( descriptor.isAccessAllowed( any( PrincipalKeys.class ) ) ).thenReturn( true );
-        when( descriptor.getKey() ).thenReturn( descriptorKey );
-        when( descriptor.getInterfaces() ).thenReturn( Set.of( "extensionInterface" ) );
+        final AdminExtensionDescriptor widgetDescriptor = mock( AdminExtensionDescriptor.class );
+        when( widgetDescriptor.isAccessAllowed( any( PrincipalKeys.class ) ) ).thenReturn( true );
+        when( widgetDescriptor.getKey() ).thenReturn( widgetDescriptorKey );
+        when( widgetDescriptor.getInterfaces() ).thenReturn( Set.of( "widgetInterface" ) );
 
-        when( extensionDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( descriptor );
+        when( extensionDescriptorService.getByKey( eq( widgetDescriptorKey ) ) ).thenReturn( widgetDescriptor );
 
         final DescriptorKey adminToolDescriptorKey = DescriptorKey.from( ApplicationKey.from( "myapp" ), "toolName" );
 
         final AdminToolDescriptor adminToolDescriptor =
-            AdminToolDescriptor.create().key( adminToolDescriptorKey ).addInterface( "admin.dashboard" ).build();
+            AdminToolDescriptor.create().key( adminToolDescriptorKey ).interfaces( "admin.dashboard" ).build();
 
         when( adminToolDescriptorService.getByKey( eq( adminToolDescriptorKey ) ) ).thenReturn( adminToolDescriptor );
 
         final WebRequest webRequest = new WebRequest();
         webRequest.setMethod( HttpMethod.GET );
-        webRequest.setRawPath( "/admin/myapp/toolName/_/admin:extension/app:extensionName" );
+        webRequest.setRawPath( "/admin/myapp/toolName/_/admin:extension/app:widgetName" );
 
         final ControllerScript controllerScript = mock( ControllerScript.class );
         when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn( PortalResponse.create().build() );
@@ -211,29 +207,29 @@ class AdminExtensionApiHandlerTest
 
         WebException ex = assertThrows( WebException.class, () -> this.handler.handle( webRequest ) );
         assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
-        assertEquals( "Extension [app:extensionName] is not mounted to admin tool [myapp:toolName]", ex.getMessage() );
+        assertEquals( "Extension [app:widgetName] is not mounted to admin tool [myapp:toolName]", ex.getMessage() );
     }
 
     @Test
     void testGenericWidgetAvailableInAdminToolWhenWidgetNotInInterfaces()
     {
-        final DescriptorKey descriptorKey = DescriptorKey.from( ApplicationKey.from( "app" ), "extensionName" );
+        final DescriptorKey widgetDescriptorKey = DescriptorKey.from( ApplicationKey.from( "app" ), "widgetName" );
 
-        final AdminExtensionDescriptor descriptor =
-            AdminExtensionDescriptor.create().key( descriptorKey ).interfaces( "generic" ).build();
+        final AdminExtensionDescriptor widgetDescriptor =
+            AdminExtensionDescriptor.create().key( widgetDescriptorKey ).interfaces( "generic" ).build();
 
-        when( extensionDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( descriptor );
+        when( extensionDescriptorService.getByKey( eq( widgetDescriptorKey ) ) ).thenReturn( widgetDescriptor );
 
         final DescriptorKey adminToolDescriptorKey = DescriptorKey.from( ApplicationKey.from( "myapp" ), "toolName" );
 
         final AdminToolDescriptor adminToolDescriptor =
-            AdminToolDescriptor.create().key( adminToolDescriptorKey ).addInterface( "admin.dashboard" ).build();
+            AdminToolDescriptor.create().key( adminToolDescriptorKey ).interfaces( "admin.dashboard" ).build();
 
         when( adminToolDescriptorService.getByKey( eq( adminToolDescriptorKey ) ) ).thenReturn( adminToolDescriptor );
 
         final WebRequest webRequest = new WebRequest();
         webRequest.setMethod( HttpMethod.GET );
-        webRequest.setRawPath( "/admin/myapp/toolName/_/admin:extension/app:extensionName" );
+        webRequest.setRawPath( "/admin/myapp/toolName/_/admin:extension/app:widgetName" );
 
         final ControllerScript controllerScript = mock( ControllerScript.class );
         when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn( PortalResponse.create().build() );
@@ -247,12 +243,12 @@ class AdminExtensionApiHandlerTest
     @Test
     void testWidgetInWhenAdminToolDoesNotHaveInterfaces()
     {
-        final DescriptorKey descriptorKey = DescriptorKey.from( ApplicationKey.from( "app" ), "extensionName" );
+        final DescriptorKey widgetDescriptorKey = DescriptorKey.from( ApplicationKey.from( "app" ), "widgetName" );
 
-        final AdminExtensionDescriptor descriptor =
-            AdminExtensionDescriptor.create().key( descriptorKey ).interfaces( "myInterface" ).build();
+        final AdminExtensionDescriptor widgetDescriptor =
+            AdminExtensionDescriptor.create().key( widgetDescriptorKey ).interfaces( "myInterface" ).build();
 
-        when( extensionDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( descriptor );
+        when( extensionDescriptorService.getByKey( eq( widgetDescriptorKey ) ) ).thenReturn( widgetDescriptor );
 
         final DescriptorKey adminToolDescriptorKey = DescriptorKey.from( ApplicationKey.from( "myapp" ), "toolName" );
 
@@ -262,7 +258,7 @@ class AdminExtensionApiHandlerTest
 
         final WebRequest webRequest = new WebRequest();
         webRequest.setMethod( HttpMethod.GET );
-        webRequest.setRawPath( "/admin/myapp/toolName/_/admin:extension/app:extensionName" );
+        webRequest.setRawPath( "/admin/myapp/toolName/_/admin:extension/app:widgetName" );
 
         final ControllerScript controllerScript = mock( ControllerScript.class );
         when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn( PortalResponse.create().build() );
@@ -271,18 +267,18 @@ class AdminExtensionApiHandlerTest
 
         WebException ex = assertThrows( WebException.class, () -> this.handler.handle( webRequest ) );
         assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
-        assertEquals( "Extension [app:extensionName] is not mounted to admin tool [myapp:toolName]", ex.getMessage() );
+        assertEquals( "Extension [app:widgetName] is not mounted to admin tool [myapp:toolName]", ex.getMessage() );
     }
 
     @Test
     void testWidgetInWhenAdminToolDoesNotHaveDescriptor()
     {
-        final DescriptorKey descriptorKey = DescriptorKey.from( ApplicationKey.from( "app" ), "extensionName" );
+        final DescriptorKey widgetDescriptorKey = DescriptorKey.from( ApplicationKey.from( "app" ), "extensionName" );
 
-        final AdminExtensionDescriptor descriptor =
-            AdminExtensionDescriptor.create().key( descriptorKey ).interfaces( "myInterface" ).build();
+        final AdminExtensionDescriptor widgetDescriptor =
+            AdminExtensionDescriptor.create().key( widgetDescriptorKey ).interfaces( "myInterface" ).build();
 
-        when( extensionDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( descriptor );
+        when( extensionDescriptorService.getByKey( eq( widgetDescriptorKey ) ) ).thenReturn( widgetDescriptor );
 
         final DescriptorKey adminToolDescriptorKey = DescriptorKey.from( ApplicationKey.from( "myapp" ), "toolName" );
 
@@ -305,16 +301,16 @@ class AdminExtensionApiHandlerTest
     @Test
     void testWidgetOnInvalidAdminToolUrl()
     {
-        final DescriptorKey descriptorKey = DescriptorKey.from( ApplicationKey.from( "app" ), "extensionName" );
+        final DescriptorKey widgetDescriptorKey = DescriptorKey.from( ApplicationKey.from( "app" ), "widgetName" );
 
-        final AdminExtensionDescriptor descriptor =
-            AdminExtensionDescriptor.create().key( descriptorKey ).interfaces( "myInterface" ).build();
+        final AdminExtensionDescriptor widgetDescriptor =
+            AdminExtensionDescriptor.create().key( widgetDescriptorKey ).interfaces( "myInterface" ).build();
 
-        when( extensionDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( descriptor );
+        when( extensionDescriptorService.getByKey( eq( widgetDescriptorKey ) ) ).thenReturn( widgetDescriptor );
 
         final WebRequest webRequest = new WebRequest();
         webRequest.setMethod( HttpMethod.GET );
-        webRequest.setRawPath( "/admin/app/_/admin:extension/app:extensionName" );
+        webRequest.setRawPath( "/admin/app/_/admin:extension/app:widgetName" );
 
         final ControllerScript controllerScript = mock( ControllerScript.class );
         when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn( PortalResponse.create().build() );
@@ -323,6 +319,6 @@ class AdminExtensionApiHandlerTest
 
         WebException ex = assertThrows( WebException.class, () -> this.handler.handle( webRequest ) );
         assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
-        assertEquals( "Invalid admin tool URL [/admin/app/_/admin:extension/app:extensionName]", ex.getMessage() );
+        assertEquals( "Invalid admin tool URL [/admin/app/_/admin:extension/app:widgetName]", ex.getMessage() );
     }
 }

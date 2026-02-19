@@ -2,9 +2,7 @@ package com.enonic.xp.portal.impl.api;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -13,7 +11,6 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
 import com.enonic.xp.api.ApiDescriptor;
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.portal.universalapi.UniversalApiHandler;
 import com.enonic.xp.security.PrincipalKeys;
@@ -26,7 +23,6 @@ public class DynamicUniversalApiHandlerRegistry
     @Activate
     public DynamicUniversalApiHandlerRegistry()
     {
-
     }
 
     public DynamicUniversalApiHandler getApiHandler( final DescriptorKey descriptorKey )
@@ -39,7 +35,7 @@ public class DynamicUniversalApiHandlerRegistry
 
     public List<ApiDescriptor> getAllApiDescriptors()
     {
-        return dynamicApiHandlers.stream().map( DynamicUniversalApiHandler::getApiDescriptor ).collect( Collectors.toList() );
+        return dynamicApiHandlers.stream().map( DynamicUniversalApiHandler::getApiDescriptor ).toList();
     }
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
@@ -56,12 +52,10 @@ public class DynamicUniversalApiHandlerRegistry
 
     private ApiDescriptor createDynamicApiDescriptor( final Map<String, ?> properties )
     {
-        final ApplicationKey applicationKey = ApplicationKey.from( (String) properties.get( "applicationKey" ) );
-        final String apiKey = Objects.requireNonNull( (String) properties.get( "apiKey" ) );
+        final DescriptorKey apiKey = DescriptorKey.from( (String) properties.get( "key" ) );
         final PrincipalKeys allowedPrincipals = resolveDynamicPrincipalKeys( properties.get( "allowedPrincipals" ) );
 
-        final ApiDescriptor.Builder builder =
-            ApiDescriptor.create().key( DescriptorKey.from( applicationKey, apiKey ) ).allowedPrincipals( allowedPrincipals );
+        final ApiDescriptor.Builder builder = ApiDescriptor.create().key( apiKey ).allowedPrincipals( allowedPrincipals );
 
         if ( properties.get( "description" ) != null )
         {
@@ -77,7 +71,7 @@ public class DynamicUniversalApiHandlerRegistry
         }
         if ( properties.get( "mount" ) != null )
         {
-            builder.mount( Boolean.valueOf( properties.get( "mount" ).toString() ) );
+            builder.mount( resolveMount( properties.get( "mount" ) ) );
         }
 
         return builder.build();
@@ -91,6 +85,16 @@ public class DynamicUniversalApiHandlerRegistry
             case String s -> PrincipalKeys.from( s );
             case String[] strings -> PrincipalKeys.from( strings );
             default -> throw new IllegalArgumentException( "Invalid allowedPrincipals. Value must be string or string array." );
+        };
+    }
+
+    private String[] resolveMount( final Object mount )
+    {
+        return switch ( mount )
+        {
+            case String s -> new String[]{s};
+            case String[] strings -> strings;
+            default -> throw new IllegalArgumentException( "Invalid mount. Value must be string." );
         };
     }
 

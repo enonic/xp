@@ -168,8 +168,8 @@ public class WebRequest
         final int endpointPathIndex = rawPath.indexOf( "/_/" );
         if ( endpointPathIndex > -1 )
         {
-            this.endpointPath = rawPath.substring( endpointPathIndex );
-            this.basePath = this.rawPath.substring( 0, this.rawPath.length() - this.endpointPath.length() );
+            this.endpointPath = rawPath.substring( endpointPathIndex + 2 );
+            this.basePath = rawPath.substring( 0, endpointPathIndex );
         }
         else
         {
@@ -230,12 +230,6 @@ public class WebRequest
     public String getEndpointPath()
     {
         return this.endpointPath;
-    }
-
-    @Deprecated
-    public void setEndpointPath( final String endpointPath )
-    {
-        this.endpointPath = endpointPath;
     }
 
     /**

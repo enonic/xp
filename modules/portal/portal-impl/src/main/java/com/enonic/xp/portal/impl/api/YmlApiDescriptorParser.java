@@ -36,6 +36,6 @@ public final class YmlApiDescriptorParser
         public abstract ApiDescriptor.Builder description( String description );
 
         @JsonProperty("mount")
-        abstract ApiDescriptor.Builder mount( Boolean value );
+        abstract ApiDescriptor.Builder mount( String... value );
     }
 }

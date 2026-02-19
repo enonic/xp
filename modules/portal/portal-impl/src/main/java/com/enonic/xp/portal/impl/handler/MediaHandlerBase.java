@@ -2,7 +2,6 @@ package com.enonic.xp.portal.impl.handler;
 
 import java.util.Arrays;
 import java.util.EnumSet;
-import java.util.Objects;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentId;
@@ -107,17 +106,16 @@ public abstract class MediaHandlerBase
 
         protected final String[] pathVariables;
 
-        PathParser( final String path, final String framedHandlerKey, final int pathVariableLimit )
+        PathParser( final String path, final int pathVariableLimit )
         {
-            int pos = Objects.requireNonNull( path ).indexOf( framedHandlerKey );
-            if ( pos == -1 )
+            if ( path.isEmpty() || path.charAt( 0 ) != '/' )
             {
                 throw createNotFoundException();
             }
 
             // Limit is `pathVariableLimit` to handle the case when the path ends with a slash,
             // but we must have exactly `pathVariableLimit - 1` path variables to resolve the media
-            String[] pathVariables = path.substring( pos + framedHandlerKey.length() ).split( "/", pathVariableLimit );
+            String[] pathVariables = path.substring( 1 ).split( "/", pathVariableLimit );
 
             if ( pathVariables.length < pathVariableLimit - 1 )
             {

@@ -92,7 +92,6 @@ class ServiceHandlerTest
 
         this.request.setMethod( HttpMethod.GET );
         this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );
-        this.request.setEndpointPath( "/_/service/demo/myservice" );
         this.request.setRawPath( "/site/draft/site/somepath/content/_/service/demo/myservice" );
         this.request.setBaseUri( "/site" );
     }
@@ -104,7 +103,7 @@ class ServiceHandlerTest
         this.request.setMethod( HttpMethod.OPTIONS );
         final PortalResponse portalResponse = PortalResponse.create().status( HttpStatus.METHOD_NOT_ALLOWED ).build();
         when( this.controllerScript.execute( Mockito.any() ) ).thenReturn( portalResponse );
-        this.request.setEndpointPath( "/_/service/demo/test" );
+        this.request.setRawPath( "/_/service/demo/test" );
 
         final WebResponse res = this.handler.handle( this.request );
         assertNotNull( res );
@@ -116,7 +115,7 @@ class ServiceHandlerTest
     void testNotValidUrlPattern()
         throws Exception
     {
-        this.request.setEndpointPath( "/_/service/" );
+        this.request.setRawPath( "/_/service/" );
 
         try
         {
@@ -142,7 +141,7 @@ class ServiceHandlerTest
             .build();
         when( this.serviceDescriptorService.getByKey( serviceDescriptorKey ) ).thenReturn( serviceDescriptor );
 
-        this.request.setEndpointPath( "/_/service/demo/test" );
+        this.request.setRawPath( "/_/service/demo/test" );
 
         boolean forbiddenErrorThrown = false;
         try
@@ -184,7 +183,7 @@ class ServiceHandlerTest
         setupContentAndSite();
 
         this.request.setRepositoryId( RepositoryId.from( "com.enonic.cms.myrepo" ) );
-        this.request.setEndpointPath( "/_/service/demo/test" );
+        this.request.setRawPath( "/site/draft/site/somepath/content/_/service/demo/test" );
 
         final WebResponse response = this.handler.handle( this.request );
         assertEquals( HttpStatus.OK, response.getStatus() );
@@ -201,7 +200,7 @@ class ServiceHandlerTest
     void executeScript_invalidSite()
     {
         setupContentAndSite();
-        this.request.setEndpointPath( "/_/service/forbidden/test" );
+        this.request.setRawPath( "/_/service/forbidden/test" );
         assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
     }
 
