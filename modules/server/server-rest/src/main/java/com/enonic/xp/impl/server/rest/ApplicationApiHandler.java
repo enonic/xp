@@ -20,7 +20,7 @@ import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.multipart.MultipartService;
 
-@Component(property = {"key=server:app", "displayName=Applications API", "allowedPrincipals=role:system.admin"})
+@Component(property = {"key=server:app", "displayName=Applications API","mount=management", "allowedPrincipals=role:system.admin"})
 public class ApplicationApiHandler
     implements UniversalApiHandler
 {

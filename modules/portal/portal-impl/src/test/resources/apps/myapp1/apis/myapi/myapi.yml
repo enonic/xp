@@ -1,4 +1,4 @@
 allow:
   - "role:cms.admin"
   - "role:system.admin"
-mount: false
+mount: []

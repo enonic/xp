@@ -41,6 +41,7 @@ import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
+import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.exception.ExceptionMapper;
 import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.websocket.WebSocketConfig;
@@ -171,8 +172,21 @@ public class SlashApiHandler
         final boolean result;
         if ( portalRequest.getEndpointPath() == null )
         {
-            // TODO mount should be possible on ap connector, too. mount should be an array [xp, api]
-            result = apiDescriptor.isMount();
+            final String connector = portalRequest.getRawRequest() != null ? (String) portalRequest.getRawRequest()
+                .getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) : null;
+
+            if ( DispatchConstants.API_CONNECTOR.equals( connector ) )
+            {
+                result = apiDescriptor.getMount().contains( "management" );
+            }
+            else if ( DispatchConstants.XP_CONNECTOR.equals( connector ) )
+            {
+                result = apiDescriptor.getMount().contains( "xp" );
+            }
+            else
+            {
+                result = false;
+            }
         }
         else if ( PortalRequestHelper.isSiteBase( portalRequest ) )
         {

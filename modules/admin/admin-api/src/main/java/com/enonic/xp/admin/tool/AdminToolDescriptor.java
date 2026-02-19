@@ -43,7 +43,7 @@ public final class AdminToolDescriptor
         descriptionI18nKey = builder.descriptionI18nKey;
         allowedPrincipals = PrincipalKeys.from( builder.allowedPrincipals.build() );
         apiMounts = Objects.requireNonNullElse( builder.apiMounts, DescriptorKeys.empty() );
-        interfaces = builder.interfaces.build();
+        interfaces = builder.interfaces;
     }
 
     public DescriptorKey getKey()
@@ -138,7 +138,7 @@ public final class AdminToolDescriptor
 
         private final ImmutableSet.Builder<PrincipalKey> allowedPrincipals = ImmutableSet.builder();
 
-        private final ImmutableSet.Builder<String> interfaces = ImmutableSet.builder();
+        private ImmutableSet<String> interfaces = ImmutableSet.of();
 
         private Builder()
         {
@@ -208,7 +208,7 @@ public final class AdminToolDescriptor
 
         public Builder interfaces( final String... interfaces )
         {
-            this.interfaces.add( interfaces );
+            this.interfaces = ImmutableSet.copyOf( interfaces );
             return this;
         }
 

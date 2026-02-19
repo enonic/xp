@@ -1,8 +1,10 @@
 package com.enonic.xp.api;
 
 import java.util.Objects;
+import java.util.Set;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.descriptor.DescriptorKey;
@@ -23,7 +25,7 @@ public final class ApiDescriptor
 
     private final String documentationUrl;
 
-    private final boolean mount;
+    private final ImmutableSet<String> mount;
 
     private ApiDescriptor( final Builder builder )
     {
@@ -36,7 +38,7 @@ public final class ApiDescriptor
         this.displayName = builder.displayName;
         this.description = builder.description;
         this.documentationUrl = builder.documentationUrl;
-        this.mount = Objects.requireNonNullElse( builder.mount, false );
+        this.mount = builder.mount;
     }
 
     public DescriptorKey getKey()
@@ -64,7 +66,7 @@ public final class ApiDescriptor
         return documentationUrl;
     }
 
-    public boolean isMount()
+    public Set<String> getMount()
     {
         return mount;
     }
@@ -96,7 +98,7 @@ public final class ApiDescriptor
 
         private String documentationUrl;
 
-        private Boolean mount;
+        private ImmutableSet<String> mount = ImmutableSet.of();
 
         private Builder()
         {
@@ -132,9 +134,9 @@ public final class ApiDescriptor
             return this;
         }
 
-        public Builder mount( final Boolean mount )
+        public Builder mount( final String... mount )
         {
-            this.mount = mount;
+            this.mount = ImmutableSet.copyOf( mount );
             return this;
         }
 

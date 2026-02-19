@@ -2,6 +2,7 @@ package com.enonic.xp.portal.impl.handler.api;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -126,19 +127,19 @@ class ApiIndexHandlerTest
         final ApiDescriptors apiDescriptors = ApiDescriptors.from( ApiDescriptor.create()
                                                                        .key( DescriptorKey.from( applicationKey, "myapi" ) )
                                                                        .allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) )
-                                                                       .mount( false )
                                                                        .build(), ApiDescriptor.create()
                                                                        .key( DescriptorKey.from( applicationKey, "myapi2" ) )
                                                                        .allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) )
-                                                                       .mount( true )
+                                                                       .mount( "xp" )
                                                                        .build() );
 
         when( this.apiDescriptorService.getByApplication( eq( applicationKey ) ) ).thenReturn( apiDescriptors );
 
         universalApiHandlerRegistry.addApiHandler( request -> WebResponse.create().build(),
-                                                   Map.of( "key", "admin:widget", "displayName", "Display Name", "description",
+                                                   Map.of( "key", "admin:extension", "displayName", "Display Name", "description",
                                                            "Brief description", "documentationUrl", "https://docs.enonic.com", "mount",
-                                                           "true", "allowedPrincipals", RoleKeys.EVERYONE.toString() ) );
+                                                           new String[]{"xp", "management"}, "allowedPrincipals",
+                                                           RoleKeys.EVERYONE.toString() ) );
 
         universalApiHandlerRegistry.addApiHandler( request -> WebResponse.create().build(),
                                                    Map.of( "key", "admin:event", "displayName", "Event API", "description", "Event API",
@@ -159,13 +160,13 @@ class ApiIndexHandlerTest
 
         final Map<String, Object> dynamicApiResource = resources.get( 0 );
 
-        assertEquals( "admin:widget", dynamicApiResource.get( "descriptor" ) );
+        assertEquals( "admin:extension", dynamicApiResource.get( "descriptor" ) );
         assertEquals( "admin", dynamicApiResource.get( "application" ) );
-        assertEquals( "widget", dynamicApiResource.get( "name" ) );
+        assertEquals( "extension", dynamicApiResource.get( "name" ) );
         assertEquals( "Display Name", dynamicApiResource.get( "displayName" ) );
         assertEquals( "Brief description", dynamicApiResource.get( "description" ) );
         assertEquals( "https://docs.enonic.com", dynamicApiResource.get( "documentationUrl" ) );
-        assertTrue( (boolean) dynamicApiResource.get( "mount" ) );
+        assertEquals( Set.of( "management", "xp" ), dynamicApiResource.get( "mount" ) );
 
         final Map<String, Object> apiResource = resources.get( 1 );
 

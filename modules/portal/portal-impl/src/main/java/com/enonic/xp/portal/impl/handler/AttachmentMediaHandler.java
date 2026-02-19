@@ -18,7 +18,7 @@ import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 
 @Component(service = UniversalApiHandler.class, property = {"key=" + AttachmentMediaHandler.ATTACHMENT_API,
-    "displayName=Attachment Media API", "allowedPrincipals=role:system.everyone", "mount=true"}, configurationPid = "com.enonic.xp.portal")
+    "displayName=Attachment Media API", "allowedPrincipals=role:system.everyone", "mount=xp"}, configurationPid = "com.enonic.xp.portal")
 public class AttachmentMediaHandler
     extends MediaHandlerBase
 {

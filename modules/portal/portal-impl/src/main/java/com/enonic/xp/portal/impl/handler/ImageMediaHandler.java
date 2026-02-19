@@ -20,7 +20,7 @@ import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 
 @Component(service = UniversalApiHandler.class, property = {"key=" + ImageMediaHandler.IMAGE_API, "displayName=Image Media API",
-    "allowedPrincipals=role:system.everyone", "mount=true"}, configurationPid = "com.enonic.xp.portal")
+    "allowedPrincipals=role:system.everyone", "mount=xp"}, configurationPid = "com.enonic.xp.portal")
 public class ImageMediaHandler
     extends MediaHandlerBase
 {
