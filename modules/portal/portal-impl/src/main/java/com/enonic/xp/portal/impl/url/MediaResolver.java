@@ -40,14 +40,14 @@ final class MediaResolver
 
     public MediaResolverResult resolve()
     {
-        final PortalRequest portalRequest = PortalRequestAccessor.get();
-
         final String contentKey = Objects.requireNonNullElseGet( id, () -> {
-            if ( portalRequest == null || baseUrl != null )
+            if ( baseUrl != null )
             {
                 return Objects.requireNonNull( path );
             }
+
             return Objects.requireNonNullElseGet( path, () -> {
+                final PortalRequest portalRequest = PortalRequestAccessor.get();
                 if ( PortalRequestHelper.isSiteBase( portalRequest ) )
                 {
                     return portalRequest.getContentPath().toString();

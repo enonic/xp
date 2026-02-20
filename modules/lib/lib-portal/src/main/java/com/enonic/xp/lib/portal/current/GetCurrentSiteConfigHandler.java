@@ -1,5 +1,7 @@
 package com.enonic.xp.lib.portal.current;
 
+import java.util.Objects;
+
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.lib.common.PropertyTreeMapper;
 import com.enonic.xp.portal.PortalRequest;
@@ -35,6 +37,6 @@ public final class GetCurrentSiteConfigHandler
     @Override
     public void initialize( final BeanContext context )
     {
-        this.request = context.getBinding( PortalRequest.class ).get();
+        this.request = Objects.requireNonNull( context.getBinding( PortalRequest.class ).get(), "no request bound" );
     }
 }

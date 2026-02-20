@@ -1,5 +1,7 @@
 package com.enonic.xp.lib.portal.current;
 
+import java.util.Objects;
+
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
@@ -42,6 +44,6 @@ public final class GetCurrentIdProviderKeyHandler
     @Override
     public void initialize( final BeanContext context )
     {
-        this.request = context.getBinding( PortalRequest.class ).get();
+        this.request = Objects.requireNonNull( context.getBinding( PortalRequest.class ).get(), "no request bound" );
     }
 }

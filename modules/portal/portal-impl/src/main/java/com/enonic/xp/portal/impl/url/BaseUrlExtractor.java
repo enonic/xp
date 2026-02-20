@@ -42,11 +42,8 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
             .build()
             .resolve();
 
-        final Branch branch = ContentBranchResolver.create()
-            .setBranch( params.getBranch() )
-            .setPreferSiteRequest( noExplicitContext )
-            .build()
-            .resolve();
+        final Branch branch =
+            ContentBranchResolver.create().setBranch( params.getBranch() ).setPreferSiteRequest( noExplicitContext ).build().resolve();
 
         final BaseUrlMetadata.Builder builder = BaseUrlMetadata.create();
 
@@ -55,7 +52,7 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
 
         final PortalRequest portalRequest = PortalRequestAccessor.get();
 
-        if ( PortalRequestHelper.isSiteBase( portalRequest ) && noExplicitContext )
+        if ( noExplicitContext && PortalRequestHelper.isSiteBase( portalRequest ) )
         {
             final StringBuilder str = new StringBuilder( portalRequest.getBaseUri() );
 
@@ -83,7 +80,8 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
                 site = context.callWith( () -> contentService.getNearestSite( ContentId.from( content.getId() ) ) );
             }
 
-            final SiteConfigs siteConfigs = site != null ? SiteConfigsDataSerializer.fromData( site.getData().getRoot() )
+            final SiteConfigs siteConfigs = site != null
+                ? SiteConfigsDataSerializer.fromData( site.getData().getRoot() )
                 : Optional.ofNullable( projectService.get( projectName ) ).map( Project::getSiteConfigs ).orElse( SiteConfigs.empty() );
 
             if ( site != null )

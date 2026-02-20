@@ -2,6 +2,7 @@ package com.enonic.xp.lib.portal.multipart;
 
 
 import java.util.List;
+import java.util.Objects;
 
 import com.google.common.io.ByteSource;
 import com.google.common.net.MediaType;
@@ -56,7 +57,7 @@ public final class MultipartHandler
     @Override
     public void initialize( final BeanContext context )
     {
-        final PortalRequest request = context.getBinding( PortalRequest.class ).get();
+        final PortalRequest request = Objects.requireNonNull( context.getBinding( PortalRequest.class ).get(), "no request bound" );
         final MultipartService service = context.getService( MultipartService.class ).get();
         this.form = service.parse( request.getRawRequest() );
     }

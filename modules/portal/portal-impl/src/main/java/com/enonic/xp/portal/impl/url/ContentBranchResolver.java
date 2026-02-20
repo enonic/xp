@@ -1,7 +1,5 @@
 package com.enonic.xp.portal.impl.url;
 
-import java.util.Objects;
-
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.PortalRequest;
@@ -17,7 +15,7 @@ final class ContentBranchResolver
     ContentBranchResolver( final Builder builder )
     {
         this.branch = builder.branch;
-        this.preferSiteRequest = Objects.requireNonNullElse( builder.preferSiteRequest, true );
+        this.preferSiteRequest = builder.preferSiteRequest;
     }
 
     Branch resolve()
@@ -27,10 +25,13 @@ final class ContentBranchResolver
             return Branch.from( branch );
         }
 
-        final PortalRequest portalRequest = PortalRequestAccessor.get();
-        if ( preferSiteRequest && PortalRequestHelper.isSiteBase( portalRequest ) )
+        if ( preferSiteRequest )
         {
-            return portalRequest.getBranch();
+            final PortalRequest portalRequest = PortalRequestAccessor.get();
+            if ( PortalRequestHelper.isSiteBase( portalRequest ) )
+            {
+                return portalRequest.getBranch();
+            }
         }
 
         final Branch branch = ContextAccessor.current().getBranch();
@@ -51,7 +52,7 @@ final class ContentBranchResolver
     {
         private String branch;
 
-        private Boolean preferSiteRequest;
+        private boolean preferSiteRequest = true;
 
         public Builder setBranch( final String branch )
         {

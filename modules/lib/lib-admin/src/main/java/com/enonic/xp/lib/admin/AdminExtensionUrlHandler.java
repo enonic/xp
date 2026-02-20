@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.portal.url.ApiUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.script.ScriptValue;
@@ -79,7 +78,7 @@ public class AdminExtensionUrlHandler
     public String createUrl()
     {
         final ApiUrlParams.Builder builder = ApiUrlParams.create()
-            .setDescriptorKey( DescriptorKey.from( ApplicationKey.from( "admin" ), "extension" ) )
+            .setApi( "admin:extension" )
             .setType( this.urlType )
             .setPathSegments( List.of( this.application.getName() + ":" + this.extension ) );
 

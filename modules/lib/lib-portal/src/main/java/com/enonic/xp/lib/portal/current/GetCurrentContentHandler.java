@@ -1,5 +1,7 @@
 package com.enonic.xp.lib.portal.current;
 
+import java.util.Objects;
+
 import com.enonic.xp.content.Content;
 import com.enonic.xp.lib.content.mapper.ContentMapper;
 import com.enonic.xp.portal.PortalRequest;
@@ -20,6 +22,6 @@ public final class GetCurrentContentHandler
     @Override
     public void initialize( final BeanContext context )
     {
-        this.request = context.getBinding( PortalRequest.class ).get();
+        this.request = Objects.requireNonNull( context.getBinding( PortalRequest.class ).get(), "no request bound" );
     }
 }

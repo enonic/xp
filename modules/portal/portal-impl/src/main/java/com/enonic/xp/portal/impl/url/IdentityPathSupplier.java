@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.url;
 
+import java.util.Objects;
 import java.util.function.Supplier;
 
 import com.enonic.xp.portal.PortalRequest;
@@ -29,7 +30,7 @@ final class IdentityPathSupplier
         UrlBuilderHelper.appendSubPath( url, "idprovider" );
 
         final IdProviderKey idProviderKey = requireNonNullElseGet( this.params.getIdProviderKey(), () -> {
-            final PortalRequest portalRequest = PortalRequestAccessor.get();
+            final PortalRequest portalRequest = Objects.requireNonNull( PortalRequestAccessor.get(), "no request bound" );
             final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( portalRequest.getRawRequest() );
             return virtualHost.getDefaultIdProviderKey();
         } );

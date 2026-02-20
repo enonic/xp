@@ -15,18 +15,29 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 public abstract class ScriptRunnerSupport
     extends ScriptTestSupport
 {
+
+    public ScriptRunnerSupport()
+    {
+        super();
+    }
+
+    public ScriptRunnerSupport( final boolean http )
+    {
+        super( http );
+    }
+
     public abstract String getScriptTestFile();
 
     @TestFactory
-    List<DynamicTest> js() throws Exception
+    List<DynamicTest> js()
+        throws Exception
     {
         return findTestNames().stream().map( name -> dynamicTest( name, () -> {
-                ScriptExports exports = this.runScript( this.getScriptTestFile() );
-                executeFunction( exports, "before" );
-                executeFunction( exports, name );
-                executeFunction( exports, "after" );
-            } ) )
-            .collect( Collectors.toList() );
+            ScriptExports exports = this.runScript( this.getScriptTestFile() );
+            executeFunction( exports, "before" );
+            executeFunction( exports, name );
+            executeFunction( exports, "after" );
+        } ) ).collect( Collectors.toList() );
     }
 
     private Set<String> findTestNames()
@@ -35,9 +46,12 @@ public abstract class ScriptRunnerSupport
         this.initialize();
         try
         {
-            return this.runScript( this.getScriptTestFile() ).getValue()
-                .getKeys().stream()
-                .filter( name -> name.startsWith( "test" ) ).collect( Collectors.toSet());
+            return this.runScript( this.getScriptTestFile() )
+                .getValue()
+                .getKeys()
+                .stream()
+                .filter( name -> name.startsWith( "test" ) )
+                .collect( Collectors.toSet() );
         }
         finally
         {

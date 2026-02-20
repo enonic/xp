@@ -7,7 +7,6 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.portal.url.ApiUrlParams;
 import com.enonic.xp.portal.url.GenerateUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
@@ -81,9 +80,7 @@ class LibAdminTest
 
         assertEquals( "server", params.getType() );
 
-        DescriptorKey descriptorKey = params.getDescriptorKey();
-        assertEquals( "admin", descriptorKey.getApplicationKey().getName() );
-        assertEquals( "extension", descriptorKey.getName() );
+        assertEquals( "admin:extension", params.getApi() );
 
         List<String> pathSegments = params.getPathSegments();
         assertEquals( 1, pathSegments.size() );
@@ -113,9 +110,7 @@ class LibAdminTest
 
         assertEquals( "server", params.getType() );
 
-        DescriptorKey descriptorKey = params.getDescriptorKey();
-        assertEquals( "admin", descriptorKey.getApplicationKey().getName() );
-        assertEquals( "extension", descriptorKey.getName() );
+        assertEquals( "admin:extension", params.getApi() );
 
         List<String> pathSegments = params.getPathSegments();
         assertEquals( 1, pathSegments.size() );
@@ -145,9 +140,7 @@ class LibAdminTest
 
         assertEquals( "server", params.getType() );
 
-        DescriptorKey descriptorKey = params.getDescriptorKey();
-        assertEquals( "admin", descriptorKey.getApplicationKey().getName() );
-        assertEquals( "extension", descriptorKey.getName() );
+        assertEquals( "admin:extension", params.getApi() );
 
         List<String> pathSegments = params.getPathSegments();
         assertEquals( 1, pathSegments.size() );
