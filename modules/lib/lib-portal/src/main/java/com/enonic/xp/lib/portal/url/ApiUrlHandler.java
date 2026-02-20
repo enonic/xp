@@ -64,13 +64,24 @@ public final class ApiUrlHandler
         this.baseUrl = baseUrl;
     }
 
-    public void setPath( final Object value )
+    public void setPath( final ScriptValue value )
     {
-        switch ( value )
+        if ( value == null )
         {
-            case String s -> this.path = s;
-            case ScriptValue scriptValue when scriptValue.isArray() -> this.pathSegments = scriptValue.getArray( String.class );
-            case null, default -> throw new IllegalArgumentException( "Invalid path value" );
+            return;
+        }
+
+        if ( value.isArray() )
+        {
+            this.pathSegments = value.getArray( String.class );
+        }
+        else if ( value.isValue() )
+        {
+            this.path = value.getValue( String.class );
+        }
+        else
+        {
+            throw new IllegalArgumentException( "Invalid path value" );
         }
     }
 

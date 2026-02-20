@@ -855,7 +855,7 @@ interface ApiUrlHandler {
 
     setUrlType(value?: string | null): void;
 
-    setPath(value?: string | ScriptValue): void;
+    setPath(value?: ScriptValue | null): void;
 
     setBaseUrl(value?: string | null): void;
 
@@ -895,14 +895,7 @@ export function apiUrl(params: ApiUrlParams): string {
     bean.setUrlType(__.nullOrValue(type));
     bean.setQueryParams(__.toScriptValue(queryParams));
     bean.setBaseUrl(__.nullOrValue(baseUrl));
-
-    if (path) {
-        if (Array.isArray(path)) {
-            bean.setPath(__.toScriptValue(path));
-        } else {
-            bean.setPath(path);
-        }
-    }
+    bean.setPath(__.toScriptValue(path));
 
     return bean.createUrl();
 }
