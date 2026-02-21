@@ -55,7 +55,7 @@ public final class ApiUrlHandler
 
     public void setApi( final String value )
     {
-        this.api = value.indexOf( ':' ) == -1 ? applicationKey + value : value;
+        this.api = value.indexOf( ':' ) == -1 ? applicationKey + ":" + value : value;
     }
 
     public void setUrlType( final String value )
