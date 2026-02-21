@@ -2,40 +2,37 @@ package com.enonic.xp.schema;
 
 import java.util.Objects;
 
+import org.jspecify.annotations.NullMarked;
+
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 
 @PublicApi
+@NullMarked
 public abstract class BaseSchemaName
 {
-    private static final String SEPARATOR = ":";
-
-    private final ApplicationKey applicationKey;
-
-    private final String localName;
+    private final DescriptorKey descriptorKey;
 
     protected BaseSchemaName( final String name )
     {
         Objects.requireNonNull( name, "BaseSchemaName cannot be null" );
-        final int index = name.indexOf( SEPARATOR );
-        this.applicationKey = ApplicationKey.from( index == -1 ? name : name.substring( 0, index ) );
-        this.localName = index == -1 ? "" : name.substring( index + 1 );
+        this.descriptorKey = DescriptorKey.from( name );
     }
 
     protected BaseSchemaName( final ApplicationKey applicationKey, final String localName )
     {
-        this.applicationKey = applicationKey;
-        this.localName = localName;
+        this.descriptorKey = DescriptorKey.from( applicationKey, localName );
     }
 
     public String getLocalName()
     {
-        return localName;
+        return this.descriptorKey.getName();
     }
 
     public ApplicationKey getApplicationKey()
     {
-        return applicationKey;
+        return this.descriptorKey.getApplicationKey();
     }
 
     @Override
@@ -50,18 +47,18 @@ public abstract class BaseSchemaName
             return false;
         }
         final BaseSchemaName that = (BaseSchemaName) o;
-        return applicationKey.equals( that.applicationKey ) && localName.equals( that.localName );
+        return Objects.equals( descriptorKey, that.descriptorKey );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( applicationKey, localName );
+        return Objects.hashCode( descriptorKey );
     }
 
     @Override
     public String toString()
     {
-        return this.applicationKey + SEPARATOR + this.localName;
+        return descriptorKey.toString();
     }
 }

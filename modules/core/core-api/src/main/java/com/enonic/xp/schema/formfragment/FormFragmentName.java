@@ -1,10 +1,13 @@
 package com.enonic.xp.schema.formfragment;
 
+import org.jspecify.annotations.NullMarked;
+
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.schema.BaseSchemaName;
 
 @PublicApi
+@NullMarked
 public final class FormFragmentName
     extends BaseSchemaName
 {

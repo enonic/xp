@@ -50,7 +50,7 @@ class SubmitTaskHandlerTest
             .build();
         final TaskDescriptor desc1 = TaskDescriptor.create().key( DescriptorKey.from( "myapplication:job42" ) ).config( cfg1 ).build();
         final TaskDescriptor desc2 = TaskDescriptor.create().key( DescriptorKey.from( "myapplication:my-task" ) ).config( cfg2 ).build();
-        final TaskDescriptor desc3 = TaskDescriptor.create().key( DescriptorKey.from( "other-app:some-task" ) ).build();
+        final TaskDescriptor desc3 = TaskDescriptor.create().key( DescriptorKey.from( "other.app:some-task" ) ).build();
         when( taskDescriptorService.getTasks() ).thenReturn( Descriptors.from( desc1, desc2, desc3 ) );
 
         addService( PropertyTreeMarshallerService.class, PropertyTreeMarshallerServiceFactory.newInstance() );

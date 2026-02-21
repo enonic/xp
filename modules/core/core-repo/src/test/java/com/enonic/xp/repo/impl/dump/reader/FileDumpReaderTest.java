@@ -92,7 +92,7 @@ class FileDumpReaderTest
             hideTheFileWindowsWay( hiddenFolder );
         }
 
-        createFolder( repo1, "myBranch" );
+        createFolder( repo1, "my-branch" );
 
         final Branches branches = fileDumpReader.getBranches( RepositoryId.from( "repo1" ) );
         assertEquals( 1, branches.getSize() );

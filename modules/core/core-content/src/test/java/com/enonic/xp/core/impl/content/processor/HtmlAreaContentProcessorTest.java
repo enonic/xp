@@ -88,7 +88,7 @@ class HtmlAreaContentProcessorTest
         this.partDescriptorService = Mockito.mock( PartDescriptorService.class );
         this.layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
 
-        contentTypeName = ContentTypeName.from( "myContentType" );
+        contentTypeName = ContentTypeName.from( "my:contentType" );
 
         final ContentType contentType = ContentType.create()
             .name( contentTypeName )
@@ -142,7 +142,7 @@ class HtmlAreaContentProcessorTest
     void content_deep_data()
     {
 
-        final ContentTypeName deepTypeName = ContentTypeName.from( "deepContentType" );
+        final ContentTypeName deepTypeName = ContentTypeName.from( "deep:ContentType" );
 
         final ContentType deepContentType = ContentType.create()
             .name( deepTypeName )
@@ -239,7 +239,7 @@ class HtmlAreaContentProcessorTest
     @Test
     void mixins()
     {
-        final MixinName mixinName = MixinName.from( "mixinName" );
+        final MixinName mixinName = MixinName.from( "my:mixinName" );
 
         final MixinDescriptor mixinDescriptor = MixinDescriptor.create()
             .name( mixinName )
@@ -258,10 +258,7 @@ class HtmlAreaContentProcessorTest
                           .type( ContentTypeName.site() )
                           .parentPath( ContentPath.ROOT )
                           .data( new PropertyTree() )
-                          .mixins( Mixins.create()
-                                       .add(
-                                           new Mixin( MixinName.from( "mixinName" ), data ) )
-                                       .build() )
+                          .mixins( Mixins.create().add( new Mixin( MixinName.from( "my:mixinName" ), data ) ).build() )
                           .build() )
             .build();
 
@@ -568,7 +565,7 @@ class HtmlAreaContentProcessorTest
         data.addProperty( "htmlData", ValueFactory.newString(
             "<img alt=\"Dictyophorus_spumans01.jpg\" data-src=\"image://image-id1\" src=\"/admin/rest-v2/cs/cms/features/content/content/image/5a5fc786-a4e6-4a4d-a21a-19ac6fd4784b?ts=1438862613943&amp;size=679&amp;scaleWidth=true\"/>" ) );
 
-        final MixinName mixinName = MixinName.from( "mixinName" );
+        final MixinName mixinName = MixinName.from( "my:mixinName" );
 
         final MixinDescriptor mixinDescriptor = MixinDescriptor.create()
             .name( mixinName )
@@ -584,7 +581,7 @@ class HtmlAreaContentProcessorTest
         final CreateContentParams createContentParams = CreateContentParams.create()
             .parent( ContentPath.ROOT )
             .contentData( data )
-            .mixins( Mixins.create().add( new Mixin( MixinName.from( "mixinName" ), mixinData ) ).build() )
+            .mixins( Mixins.create().add( new Mixin( MixinName.from( "my:mixinName" ), mixinData ) ).build() )
             .type( contentTypeName )
             .build();
         final ProcessCreateParams processCreateParams = new ProcessCreateParams( createContentParams, null, ContentIds.empty() );
@@ -594,6 +591,6 @@ class HtmlAreaContentProcessorTest
 
         verify( contentTypeService ).getByName( captor.capture() );
         assertEquals( contentTypeName, captor.getValue().getContentTypeName() );
-        assertThat( result.getProcessedReferences() ).containsExactly( ContentId.from( "image-id1"), ContentId.from("image-id2" ) );
+        assertThat( result.getProcessedReferences() ).containsExactly( ContentId.from( "image-id1" ), ContentId.from( "image-id2" ) );
     }
 }

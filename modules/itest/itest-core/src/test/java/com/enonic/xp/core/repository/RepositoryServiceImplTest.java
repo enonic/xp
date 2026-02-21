@@ -194,7 +194,7 @@ class RepositoryServiceImplTest
     {
         doCreateRepo( "fisk" );
 
-        Branch branch = Branch.from( "myBranch" );
+        Branch branch = Branch.from( "mybranch" );
 
         Context mockCurrentContext =
             ContextBuilder.create().branch( "master" ).repositoryId( "fisk" ).authInfo( REPO_TEST_DEFAULT_USER_AUTHINFO ).build();
@@ -210,10 +210,10 @@ class RepositoryServiceImplTest
     {
         doCreateRepo( "fisk" );
 
-        Branch branch = Branch.from( "myBranch" );
+        Branch branch = Branch.from( "mybranch" );
 
         final var context =
-            ContextBuilder.create().branch( "myBranch" ).repositoryId( "fisk" ).authInfo( REPO_TEST_DEFAULT_USER_AUTHINFO ).build();
+            ContextBuilder.create().branch( "mybranch" ).repositoryId( "fisk" ).authInfo( REPO_TEST_DEFAULT_USER_AUTHINFO ).build();
 
         context.callWith( () -> repositoryService.createBranch( CreateBranchParams.from( branch ) ) );
 
@@ -227,7 +227,7 @@ class RepositoryServiceImplTest
     {
         doCreateRepo( "fisk" );
 
-        Branch branch = Branch.from( "myBranch" );
+        Branch branch = Branch.from( "mybranch" );
         NodeHelper.runAsAdmin( () -> repositoryService.createBranch( CreateBranchParams.from( branch ) ) );
         NodeHelper.runAsAdmin( () -> repositoryService.deleteBranch( DeleteBranchParams.from( branch ) ) );
 

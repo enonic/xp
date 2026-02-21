@@ -10,7 +10,7 @@ var repo = nodeLib.connect({
 // Rename content by id. Keeps same parent.
 var result = repo.push({
     key: 'a',
-    target: 'otherBranch',
+    target: 'other-branch',
     resolve: true,
     includeChildren: true
 });

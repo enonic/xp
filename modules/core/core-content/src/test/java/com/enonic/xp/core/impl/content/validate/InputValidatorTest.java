@@ -13,13 +13,13 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeValidationException;
 import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Reference;
 
@@ -187,7 +187,7 @@ class InputValidatorTest
             .build();
         return ContentType.create()
             .superType( superType )
-            .name( "myContentType" )
+            .name( "my:ContentType" )
             .addFormItem( Input.create().name( "textLine" ).label( "Textline" ).inputType( InputTypeName.TEXT_LINE ).build() )
             .addFormItem( Input.create().name( "stringArray" ).label( "String array" ).inputType( InputTypeName.TEXT_LINE ).build() )
             .addFormItem( Input.create().name( "double" ).label( "Double" ).inputType( InputTypeName.DOUBLE ).build() )
@@ -229,16 +229,8 @@ class InputValidatorTest
             .addFormItem( Input.create().name( "time" ).label( "Time" ).inputType( InputTypeName.TIME ).build() )
             .addFormItem( Input.create().name( "geoPoint" ).label( "Geo point" ).inputType( InputTypeName.GEO_POINT ).build() )
             .addFormItem( Input.create().name( "htmlArea" ).label( "Html area" ).inputType( InputTypeName.HTML_AREA ).build() )
-            .addFormItem( Input.create()
-                              .name( "localDateTime" )
-                              .label( "Local datetime" )
-                              .inputType( InputTypeName.DATE_TIME )
-                              .build() )
-            .addFormItem( Input.create()
-                              .name( "dateTime" )
-                              .label( "Datetime" )
-                              .inputType( InputTypeName.INSTANT )
-                              .build() )
+            .addFormItem( Input.create().name( "localDateTime" ).label( "Local datetime" ).inputType( InputTypeName.DATE_TIME ).build() )
+            .addFormItem( Input.create().name( "dateTime" ).label( "Datetime" ).inputType( InputTypeName.INSTANT ).build() )
             .addFormItem( set )
             .build();
     }

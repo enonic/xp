@@ -2,7 +2,6 @@ package com.enonic.xp.page;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.util.CharacterChecker;
 
 @PublicApi
 public final class PageTemplateKey
@@ -39,7 +38,7 @@ public final class PageTemplateKey
 
     public static PageTemplateKey from( final String value )
     {
-        return from( ContentId.from( CharacterChecker.check( value, "Not a valid value for PageTemplateKey [" + value + "]" ) ) );
+        return from( ContentId.from( value ) );
     }
 
     public static PageTemplateKey from( final ContentId value )

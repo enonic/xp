@@ -10,7 +10,7 @@ var repo = nodeLib.connect({
 // Push nodes from current branch
 var result = repo.push({
     keys: ['a'],
-    target: 'otherBranch',
+    target: 'other-branch',
     resolve: false
 });
 // END

@@ -14,23 +14,29 @@ import java.util.stream.IntStream;
  */
 public class FileNames
 {
+
     // From Windows File Naming Conventions: reserved characters <>:"/\|?*
     // Sorted for binary search
-    private static final int[] RESERVED_CHARACTERS = "<>:\"/\\|?*".chars().sorted().toArray();
+    private static final int[] RESERVED_CHARACTERS = NameValidator.FILENAME_ILLEGAL_CHARACTERS.chars().sorted().toArray();
 
     // From Windows File Naming Conventions, extended with COM0 and LPT0 (they are not acceptable either)
     public static final Set<String> RESERVED_NAME =
         Set.of( "con", "prn", "aux", "nul", "com0", "com1", "com2", "com3", "com4", "com5", "com6", "com7", "com8", "com9", "lpt0", "lpt1",
                 "lpt2", "lpt3", "lpt4", "lpt5", "lpt6", "lpt7", "lpt8", "lpt9" );
 
-    public static final Set<String> RESERVED_PREFIX = RESERVED_NAME.stream().map( reserved -> reserved + "." ).collect( Collectors.toUnmodifiableSet() );
+    public static final Set<String> RESERVED_PREFIX =
+        RESERVED_NAME.stream().map( reserved -> reserved + "." ).collect( Collectors.toUnmodifiableSet() );
 
     // All types of invisible characters, including surrogate to disallow non-BMP characters
-    // Unassigned characters are can't be printed and also considered invisible
+    // Unassigned characters can't be printed and also considered invisible
     // Sorted for binary search
     private static final int[] INVISIBLE_CHARACTER_TYPES =
         IntStream.of( Character.UNASSIGNED, Character.SPACE_SEPARATOR, Character.LINE_SEPARATOR, Character.PARAGRAPH_SEPARATOR,
                       Character.CONTROL, Character.FORMAT, Character.PRIVATE_USE, Character.SURROGATE ).sorted().toArray();
+
+    public static final int MAX_LENGTH = 255;
+
+    public static final int MAX_BYTE_LENGTH = 255;
 
     private FileNames()
     {
@@ -51,7 +57,13 @@ public class FileNames
         Objects.requireNonNull( fileName );
 
         final int length = fileName.length();
-        if ( length == 0 || length > 255 )
+        if ( length == 0 || length > MAX_LENGTH )
+        {
+            return false;
+        }
+
+        // Recommendation for file name encoding is UTF-8, and many filesystems can't accept more than 255 bytes
+        if ( fileName.getBytes( StandardCharsets.UTF_8 ).length > MAX_BYTE_LENGTH )
         {
             return false;
         }
@@ -83,15 +95,15 @@ public class FileNames
             return false;
         }
 
-        if ( fileName.chars().
-            anyMatch( cp -> Arrays.binarySearch( RESERVED_CHARACTERS, cp ) >= 0 || // Reserved Characters won't work on some filesystems
+        if ( fileName.chars()
+            .anyMatch( cp -> Arrays.binarySearch( RESERVED_CHARACTERS, cp ) >= 0 || // Reserved Characters won't work on some filesystems
                 ( cp != ' ' && charIsInvisible( cp ) ) // Allow normal space but no other invisible characters
             ) )
         {
             return false;
         }
 
-        // Problematic names on Windows, at lest
+        // Problematic names on Windows, even without extension, and on some other platforms as well
         if ( RESERVED_NAME.stream().anyMatch( fileName::equalsIgnoreCase ) )
         {
             return false;
@@ -104,8 +116,7 @@ public class FileNames
             return false;
         }
 
-        // Recommendation for file name encoding is UTF-8, and many filesystems can't accept more than 255 bytes
-        return fileName.getBytes( StandardCharsets.UTF_8 ).length <= 255;
+        return true;
     }
 
     private static boolean charIsInvisible( final int c )

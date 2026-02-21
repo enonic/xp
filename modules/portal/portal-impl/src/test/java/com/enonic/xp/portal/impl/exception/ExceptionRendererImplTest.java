@@ -267,7 +267,7 @@ class ExceptionRendererImplTest
     void testRender_RenderMode_Admin()
     {
         this.request.setMode( RenderMode.ADMIN );
-        this.request.setApplicationKey( ApplicationKey.from( "myapplication-key" ) );
+        this.request.setApplicationKey( ApplicationKey.from( "myapplication.key" ) );
 
         final PortalResponse result = renderer.render( this.request, new WebException( HttpStatus.NOT_FOUND, "Resource not found" ) );
 

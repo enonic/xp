@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -91,6 +92,31 @@ class PrincipalKeyTest
         assertEquals( "role:myrole", role.toString() );
         assertEquals( "group:myIdProvider:mygroup", group.toString() );
         assertEquals( "user:myIdProvider:myUser", user.toString() );
+    }
+
+    @Test
+    void testFromPredefinedRoles()
+    {
+        assertSame( PrincipalKey.from( "role:system.everyone" ), PrincipalKey.from( "role:system.everyone" ) );
+        assertSame( PrincipalKey.from( "role:system.authenticated" ), PrincipalKey.from( "role:system.authenticated" ) );
+        assertSame( PrincipalKey.from( "role:system.admin" ), PrincipalKey.from( "role:system.admin" ) );
+
+        assertEquals( "role:system.everyone", PrincipalKey.from( "role:system.everyone" ).toString() );
+        assertEquals( "role:system.authenticated", PrincipalKey.from( "role:system.authenticated" ).toString() );
+        assertEquals( "role:system.admin", PrincipalKey.from( "role:system.admin" ).toString() );
+    }
+
+    @Test
+    void testFromPredefinedUsers()
+    {
+        assertSame( PrincipalKey.from( "user:system:anonymous" ), PrincipalKey.ofAnonymous() );
+        assertSame( PrincipalKey.from( "user:system:su" ), PrincipalKey.ofSuperUser() );
+    }
+
+    @Test
+    void testRoleWithExtraSegmentsIsInvalid()
+    {
+        assertThrows( IllegalArgumentException.class, () -> PrincipalKey.from( "role:myrole:extra" ) );
     }
 
     @Test

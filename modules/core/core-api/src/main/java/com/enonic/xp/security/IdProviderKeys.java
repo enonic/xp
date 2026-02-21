@@ -37,7 +37,7 @@ public final class IdProviderKeys
 
     public static IdProviderKeys from( final String... idProviderKeys )
     {
-        return Arrays.stream( idProviderKeys ).map( IdProviderKey::new ).collect( collector() );
+        return Arrays.stream( idProviderKeys ).map( IdProviderKey::from ).collect( collector() );
     }
 
     public static Collector<IdProviderKey, ?, IdProviderKeys> collector()

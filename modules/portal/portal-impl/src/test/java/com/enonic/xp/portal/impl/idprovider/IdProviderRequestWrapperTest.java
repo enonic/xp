@@ -32,7 +32,7 @@ class IdProviderRequestWrapperTest
     @Test
     void getUserPrincipal()
     {
-        final User user = User.create().key( PrincipalKey.ofUser( IdProviderKey.createDefault(), "userId" ) ).login( "usr" ).build();
+        final User user = User.create().key( PrincipalKey.ofUser( IdProviderKey.system(), "userId" ) ).login( "usr" ).build();
         final AuthenticationInfo authenticationInfo = AuthenticationInfo.create().user( user ).build();
         final Context context = ContextBuilder.create().build();
         final Session session = new SessionMock();
@@ -47,7 +47,7 @@ class IdProviderRequestWrapperTest
     @Test
     void isUserInRole()
     {
-        final User user = User.create().key( PrincipalKey.ofUser( IdProviderKey.createDefault(), "userId" ) ).login( "usr" ).build();
+        final User user = User.create().key( PrincipalKey.ofUser( IdProviderKey.system(), "userId" ) ).login( "usr" ).build();
         final AuthenticationInfo authenticationInfo = AuthenticationInfo.create().user( user ).principals( RoleKeys.ADMIN ).build();
 
         final Context context = ContextBuilder.create().build();

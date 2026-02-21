@@ -29,6 +29,7 @@ public final class RepositoryConstants
 
     public static final Branch MASTER_BRANCH = Branch.from( "master" );
 
+    public static final int REPOSITORY_ID_MAX_LENGTH = 63;
 
     private RepositoryConstants()
     {

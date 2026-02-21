@@ -16,7 +16,7 @@ exports.submitTask = function () {
 exports.submitTaskFromApp = function () {
 
     var taskId = taskLib.submitTask({
-        descriptor: 'other-app:some-task'
+        descriptor: 'other.app:some-task'
     });
 
     t.assertEquals('123', taskId);

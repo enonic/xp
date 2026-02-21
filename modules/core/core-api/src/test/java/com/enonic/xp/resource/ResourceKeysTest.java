@@ -10,11 +10,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ResourceKeysTest
 {
-    private static final String RESOURCE_URI_1 = "myapplication-1.0.0:";
+    private static final String RESOURCE_URI_1 = "myapplication_1.0.0:";
 
-    private static final String RESOURCE_URI_2 = "myapplication-1.0.0:/a/b.txt";
+    private static final String RESOURCE_URI_2 = "myapplication_1.0.0:/a/b.txt";
 
-    private static final String RESOURCE_URI_3 = "myapplication-1.0.0:/a/c.txt";
+    private static final String RESOURCE_URI_3 = "myapplication_1.0.0:/a/c.txt";
 
 
     private static final ArrayList<ResourceKey> list = new ArrayList();

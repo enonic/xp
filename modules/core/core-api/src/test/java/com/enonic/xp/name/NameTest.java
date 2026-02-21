@@ -3,43 +3,17 @@ package com.enonic.xp.name;
 
 import org.junit.jupiter.api.Test;
 
-import com.enonic.xp.support.AbstractEqualsTest;
+import nl.jqno.equalsverifier.EqualsVerifier;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 class NameTest
 {
     @Test
     void equals()
     {
-        AbstractEqualsTest equalsTest = new AbstractEqualsTest()
-        {
-            @Override
-            public Object getObjectX()
-            {
-                return create( "name" );
-            }
-
-            @Override
-            public Object[] getObjectsThatNotEqualsX()
-            {
-                return new Object[]{create( "other" )};
-            }
-
-            @Override
-            public Object getObjectThatEqualsXButNotTheSame()
-            {
-                return create( "name" );
-            }
-
-            @Override
-            public Object getObjectThatEqualsXButNotTheSame2()
-            {
-                return create( "name" );
-            }
-        };
-        equalsTest.assertEqualsAndHashCodeContract();
+        EqualsVerifier.forClass( Name.class ).usingGetClass().verify();
     }
 
     @Test
@@ -63,13 +37,15 @@ class NameTest
     @Test
     void linebreak()
     {
-        assertThrows(IllegalArgumentException.class, () -> create( "Hepp\nHapp" ));
+        assertThatThrownBy( () -> create( "Hepp\nHapp" ) ).isInstanceOf( IllegalArgumentException.class )
+            .hasMessage( "Name must not contain 'U+000A'" );
     }
 
     @Test
     void tab()
     {
-        assertThrows(IllegalArgumentException.class, () -> create( "Hepp\tHapp" ));
+        assertThatThrownBy( () -> create( "Hepp\tHapp" ) ).isInstanceOf( IllegalArgumentException.class )
+            .hasMessage( "Name must not contain 'U+0009'" );
     }
 
     @Test
@@ -99,15 +75,8 @@ class NameTest
 
         for ( final char c : control )
         {
-            try
-            {
-                create( c + "" );
-                fail( "expected to throw illegal argument for unicode character: " + NameCharacterHelper.getUnicodeString( c ) );
-            }
-            catch ( Exception e )
-            {
-                // Expected
-            }
+            assertThatThrownBy( () -> create( c + "" ) ).isInstanceOf( IllegalArgumentException.class )
+                .hasMessageContaining( "Name must not contain" );
         }
     }
 
@@ -132,13 +101,41 @@ class NameTest
     @Test
     void slash_not_valid()
     {
-        assertThrows(IllegalArgumentException.class, () -> create( "test/me" ));
+        assertThatThrownBy( () -> create( "test/me" ) ).isInstanceOf( IllegalArgumentException.class )
+            .hasMessage( "Name must not contain '/'" );
     }
 
     @Test
     void backslash_not_valid()
     {
-        assertThrows(IllegalArgumentException.class, () -> create( "test\\me" ));
+        assertThatThrownBy( () -> create( "test\\me" ) ).isInstanceOf( IllegalArgumentException.class )
+            .hasMessage( "Name must not contain '\\'" );
+    }
+
+    @Test
+    void single_underscore_not_valid()
+    {
+        assertThatThrownBy( () -> create( "_" ) ).isInstanceOf( IllegalArgumentException.class ).hasMessage( "Name must not be _" );
+    }
+
+    @Test
+    void startWithSpace_not_valid()
+    {
+        assertThatThrownBy( () -> create( " test" ) ).isInstanceOf( IllegalArgumentException.class )
+            .hasMessage( "Name must not start with ' '" );
+    }
+
+    @Test
+    void endWithSpace_not_valid()
+    {
+        assertThatThrownBy( () -> create( "test " ) ).isInstanceOf( IllegalArgumentException.class )
+            .hasMessage( "Name must not end with ' '" );
+    }
+
+    @Test
+    void dash_is_valid()
+    {
+        assertDoesNotThrow( () -> create( "test-me" ) );
     }
 
     private Name create( final String name )

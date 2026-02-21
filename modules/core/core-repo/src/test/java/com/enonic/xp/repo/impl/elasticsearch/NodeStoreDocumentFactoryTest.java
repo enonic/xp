@@ -29,7 +29,7 @@ class NodeStoreDocumentFactoryTest
 
         final IndexDocument indexDocument = NodeStoreDocumentFactory.createBuilder()
             .node( node )
-            .branch( Branch.from( "myBranch" ) )
+            .branch( Branch.from( "my-branch" ) )
             .repositoryId( RepositoryId.from( "my-repo" ) )
             .build()
             .create();

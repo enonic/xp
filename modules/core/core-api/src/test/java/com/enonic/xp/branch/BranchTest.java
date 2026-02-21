@@ -25,13 +25,13 @@ class BranchTest
     @Test
     void allowed_characters()
     {
-        Branch.from( "my.branch-this:IS-my-branch" );
+        Branch.from( "my.branch-this-is-my-branch" );
     }
 
     @Test
     void underscore_not_allowed()
     {
-        assertThrows( IllegalArgumentException.class, () -> Branch.from( "my.branch-this:IS-my_branch" ) );
+        assertThrows( IllegalArgumentException.class, () -> Branch.from( "my.branch-this-is-my_branch" ) );
     }
 
     @Test

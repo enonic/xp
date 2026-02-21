@@ -2,33 +2,31 @@ package com.enonic.xp.macro;
 
 import java.util.Objects;
 
+import org.jspecify.annotations.NullMarked;
+
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.util.CharacterChecker;
+import com.enonic.xp.descriptor.DescriptorKey;
 
 @PublicApi
+@NullMarked
 public final class MacroKey
 {
-    private static final String SEPARATOR = ":";
+    private final DescriptorKey descriptorKey;
 
-    private final ApplicationKey applicationKey;
-
-    private final String name;
-
-    private MacroKey( final ApplicationKey applicationKey, final String name )
+    private MacroKey( final DescriptorKey descriptorKey )
     {
-        this.applicationKey = Objects.requireNonNull( applicationKey );
-        this.name = CharacterChecker.check( name, "Not a valid Macro name [" + name + "]" );
+        this.descriptorKey = descriptorKey;
     }
 
     public ApplicationKey getApplicationKey()
     {
-        return applicationKey;
+        return descriptorKey.getApplicationKey();
     }
 
     public String getName()
     {
-        return name;
+        return descriptorKey.getName();
     }
 
     @Override
@@ -43,31 +41,28 @@ public final class MacroKey
             return false;
         }
         final MacroKey that = (MacroKey) o;
-        return applicationKey.equals( that.applicationKey ) && name.equals( that.name );
+        return Objects.equals( this.descriptorKey, that.descriptorKey );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( applicationKey, name );
+        return Objects.hash( this.descriptorKey );
     }
+
     @Override
     public String toString()
     {
-        return applicationKey + SEPARATOR + name;
+        return descriptorKey.toString();
     }
 
     public static MacroKey from( final String key )
     {
-        Objects.requireNonNull( key, "MacroKey cannot be null" );
-        final int index = key.indexOf( SEPARATOR );
-        final String applicationKey = index == -1 ? key : key.substring( 0, index );
-        final String macroName = index == -1 ? "" : key.substring( index + 1 );
-        return new MacroKey( ApplicationKey.from( applicationKey ), macroName );
+        return new MacroKey( DescriptorKey.from( key ) );
     }
 
     public static MacroKey from( final ApplicationKey applicationKey, final String macroName )
     {
-        return new MacroKey( applicationKey, macroName );
+        return new MacroKey( DescriptorKey.from( applicationKey, macroName ) );
     }
 }

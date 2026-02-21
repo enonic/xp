@@ -12,7 +12,7 @@ exports.getInvalidContentSchemaType = function () {
 
 exports.getNullSchema = function () {
     assert.assertNull(schemaLib.getSchema({
-        name: 'non-existing-schema',
+        name: 'non.existing:schema',
         type: 'FORM_FRAGMENT'
     }));
 };

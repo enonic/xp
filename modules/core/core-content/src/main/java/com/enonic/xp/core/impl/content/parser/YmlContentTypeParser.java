@@ -26,7 +26,7 @@ public final class YmlContentTypeParser
     public static ContentType.Builder parse( final String resource, final ApplicationKey currentApplication )
     {
         final ContentType.Builder builder = PARSER.parse( resource, ContentType.Builder.class, currentApplication );
-        builder.name( "_TEMP_NAME_" );
+        builder.name( "_TEMP:NAME_" );
 
         final ContentType contentType = builder.build();
 

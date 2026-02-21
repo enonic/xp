@@ -55,8 +55,8 @@ class PageDataSerializerTest
         pageDataSerializer.toData( page, pageAsData.getRoot() );
 
         final PropertySet pageOnlyData = pageAsData.getRoot().getProperties( COMPONENTS ).get( 0 ).getSet();
-        assertTrue( pageOnlyData.hasProperty( "page.config.app-key.d-name" ) );
-        assertEquals( "42.0", pageOnlyData.getString( "page.config.app-key.d-name.aim" ) );
+        assertTrue( pageOnlyData.hasProperty( "page.config.app_key.d-name" ) );
+        assertEquals( "42.0", pageOnlyData.getString( "page.config.app_key.d-name.aim" ) );
     }
 
     @Test
@@ -98,7 +98,7 @@ class PageDataSerializerTest
     {
         final PropertyTree pageConfig = new PropertyTree();
         pageConfig.addString( "some", "config" );
-        final DescriptorKey pageDescriptorKey = DescriptorKey.from( "app-key:d-name" );
+        final DescriptorKey pageDescriptorKey = DescriptorKey.from( "app_key:d-name" );
 
         final Page page = Page.create().
             config( pageConfig ).
@@ -135,20 +135,20 @@ class PageDataSerializerTest
         myPartConfig.addString( "some", "somevalue" );
         final PropertyTree imageConfig = new PropertyTree();
         imageConfig.addString( "caption", "Caption" );
-        final DescriptorKey pageDescriptorKey = DescriptorKey.from( "app-key:d-name" );
+        final DescriptorKey pageDescriptorKey = DescriptorKey.from( "app_key:d-name" );
         final String regionName1 = "top";
         final String regionName2 = "bottom";
 
         final Region mainRegion1 = Region.create().
             name( regionName1 ).
-            add( createPartComponent( "MyPart1", "app-descriptor-x:name-x", myPartConfig ) ).
+            add( createPartComponent( "MyPart1", "app.descriptor.x:name-x", myPartConfig ) ).
             add( createLayoutComponent() ).
             add( LayoutComponent.create().build() ).
             build();
 
         final Region mainRegion2 = Region.create().
             name( regionName2 ).
-            add( createPartComponent( "MyPart2", "app-descriptor-y:name-y", myPartConfig ) ).
+            add( createPartComponent( "MyPart2", "app.descriptor.y:name-y", myPartConfig ) ).
             add( createImageComponent( "img-id-x", "Image Component", imageConfig ) ).
             add( ImageComponent.create().build() ).
             build();

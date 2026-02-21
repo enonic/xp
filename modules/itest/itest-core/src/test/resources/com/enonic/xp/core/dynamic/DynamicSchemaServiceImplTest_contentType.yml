@@ -1,4 +1,4 @@
-superType: "content"
+superType: "base:folder"
 abstract: false
 final: true
 allowChildContent: false

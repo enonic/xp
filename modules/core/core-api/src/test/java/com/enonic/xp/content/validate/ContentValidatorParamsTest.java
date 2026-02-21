@@ -25,25 +25,25 @@ class ContentValidatorParamsTest
     void builder()
     {
         final ContentValidatorParams params = ContentValidatorParams.create()
-            .contentType( ContentType.create().name( "ct" ).superType( ContentTypeName.unstructured() ).build() )
+            .contentType( ContentType.create().name( "c:t" ).superType( ContentTypeName.unstructured() ).build() )
             .contentId( ContentId.from( "ci" ) )
             .data( new PropertyTree() )
             .createAttachments(
                 CreateAttachments.create().add( CreateAttachment.create().name( "att" ).byteSource( ByteSource.empty() ).build() ).build() )
-            .mixins( Mixins.create().add( new Mixin( MixinName.from( "xd" ), new PropertyTree() ) ).build() )
+            .mixins( Mixins.create().add( new Mixin( MixinName.from( "x:d" ), new PropertyTree() ) ).build() )
             .build();
-        assertEquals( params.getContentType().getName(), ContentTypeName.from( "ct" ) );
+        assertEquals( params.getContentType().getName(), ContentTypeName.from( "c:t" ) );
         assertEquals( params.getContentId(), ContentId.from( "ci" ) );
         assertNotNull( params.getData() );
         assertThat( params.getCreateAttachments() ).extracting( "name" ).containsExactly( "att" );
-        assertThat( params.getMixins() ).extracting( "name" ).containsExactly( MixinName.from( "xd" ) );
+        assertThat( params.getMixins() ).extracting( "name" ).containsExactly( MixinName.from( "x:d" ) );
     }
 
     @Test
     void mixins_null_safe()
     {
         final ContentValidatorParams params = ContentValidatorParams.create()
-            .contentType( ContentType.create().name( "ct" ).superType( ContentTypeName.unstructured() ).build() )
+            .contentType( ContentType.create().name( "c:t" ).superType( ContentTypeName.unstructured() ).build() )
             .build();
         assertNotNull( params.getMixins() );
     }
@@ -52,7 +52,7 @@ class ContentValidatorParamsTest
     void createAttachments_null_safe()
     {
         final ContentValidatorParams params = ContentValidatorParams.create()
-            .contentType( ContentType.create().name( "ct" ).superType( ContentTypeName.unstructured() ).build() )
+            .contentType( ContentType.create().name( "c:t" ).superType( ContentTypeName.unstructured() ).build() )
             .build();
         assertNotNull( params.getCreateAttachments() );
     }

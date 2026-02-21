@@ -8,7 +8,7 @@ var searchConnection = nodeLib.multiRepoConnect({
     sources: [
         {
             repoId: 'my-repo',
-            branch: 'myBranch',
+            branch: 'my-branch',
             principals: ['role:system.admin']
         },
         {

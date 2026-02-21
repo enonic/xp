@@ -297,7 +297,7 @@ class ComponentHandlerTest
         setupTemplates();
 
         Mockito.when( this.contentService.getById( ContentId.from( "fragmentId" ) ) )
-            .thenReturn( createContentWithPage( null, ContentTypeName.from( "contentTypeName" ) ) );
+            .thenReturn( createContentWithPage( null, ContentTypeName.from( "my:contentTypeName" ) ) );
 
         final PortalResponse portalResponse =
             PortalResponse.create().body( "component rendered" ).header( "some-header", "some-value" ).status( HttpStatus.OK ).build();
@@ -435,7 +435,7 @@ class ComponentHandlerTest
 
         Page page = Page.create().template( PageTemplateKey.from( "my-page" ) ).regions( regions ).config( new PropertyTree() ).build();
 
-        return createContentWithPage( page, ContentTypeName.from( "contentTypeName" ) );
+        return createContentWithPage( page, ContentTypeName.from( "my:contentTypeName" ) );
     }
 
     final Content createContentWithPage( final Page page, final ContentTypeName contentTypeName )

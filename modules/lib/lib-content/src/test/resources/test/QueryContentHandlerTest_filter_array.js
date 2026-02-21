@@ -66,8 +66,8 @@ exports.query = function () {
                 }
             ],
             'contentTypes': [
-                'article',
-                'comment'
+                'app:article',
+                'app:comment'
             ]
         }
     );
