@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.url.ApiUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.script.ScriptValue;
@@ -14,6 +15,8 @@ public final class ApiUrlHandler
     implements ScriptBean
 {
     private Supplier<PortalUrlService> urlServiceSupplier;
+
+    private ApplicationKey applicationKey;
 
     private String api;
 
@@ -31,6 +34,7 @@ public final class ApiUrlHandler
     public void initialize( final BeanContext context )
     {
         this.urlServiceSupplier = context.getService( PortalUrlService.class );
+        this.applicationKey = context.getApplicationKey();
     }
 
     public String createUrl()
@@ -51,7 +55,7 @@ public final class ApiUrlHandler
 
     public void setApi( final String value )
     {
-        this.api = value;
+        this.api = value.indexOf( ':' ) == -1 ? applicationKey + value : value;
     }
 
     public void setUrlType( final String value )
