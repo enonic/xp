@@ -32,7 +32,7 @@ class LayoutComponentTest
                     build(), TextComponent.create().
                     text( "image" ).
                     build(), LayoutComponent.create().
-                    descriptor( DescriptorKey.from( "descriptor" ) ).
+                    descriptor( DescriptorKey.from( "a:descriptor" ) ).
                     regions( null ).
                     build(), new Object()};
             }
@@ -73,7 +73,7 @@ class LayoutComponentTest
 
         return LayoutComponent.create().
             config( config1 ).
-            descriptor( DescriptorKey.from( "descriptor" ) ).regions( Regions.create().add( Region.create().
+            descriptor( DescriptorKey.from( "a:descriptor" ) ).regions( Regions.create().add( Region.create().
                 name( "region" ).
                 add( TextComponent.create().
                     text( "text" ).

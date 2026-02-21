@@ -132,7 +132,7 @@ class LayoutRendererTest
         portalRequest.setMode( RenderMode.EDIT );
         layoutComponent = LayoutComponent.create()
             .descriptor( "myapp:myLayoutComponent" )
-            .descriptor( "descriptor-x" )
+            .descriptor( "x:descriptor" )
             .config( new PropertyTree() )
             .build();
 

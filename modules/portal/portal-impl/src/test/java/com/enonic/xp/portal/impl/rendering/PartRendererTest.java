@@ -124,7 +124,7 @@ class PartRendererTest
             .build();
         portalRequest.setMode( RenderMode.EDIT );
         partComponent =
-            PartComponent.create().descriptor( "myapp:myPartComponent" ).descriptor( "descriptor-x" ).config( new PropertyTree() ).build();
+            PartComponent.create().descriptor( "myapp:myPartComponent" ).descriptor( "x:descriptor" ).config( new PropertyTree() ).build();
 
         when( partDescriptorService.getByKey( any() ) ).thenReturn( partDescriptor );
         when( controllerScriptFactory.fromScript( any() ) ).thenThrow( new RuntimeException() );

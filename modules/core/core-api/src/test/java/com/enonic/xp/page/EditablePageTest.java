@@ -45,11 +45,11 @@ class EditablePageTest
         final Region region1 = Region.create().
             name( "main" ).
             add( PartComponent.create().
-                descriptor( "descriptor-x" ).
+                descriptor( "x:descriptor" ).
                 config( new PropertyTree() ).
                 build() ).
             add( PartComponent.create().
-                descriptor( "descriptor-y" ).
+                descriptor( "y:descriptor" ).
                 config( new PropertyTree() ).
                 build() ).
             build();

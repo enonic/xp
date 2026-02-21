@@ -140,7 +140,7 @@ class RendererDelegateImplTest
     {
         final ContentService contentService = mock( ContentService.class );
         final ContentId contentId = ContentId.from( "contentId" );
-        when( contentService.getById( contentId ) ).thenReturn( createFragmentContentWithLayoutComponent( DescriptorKey.from( "des" ) ) );
+        when( contentService.getById( contentId ) ).thenReturn( createFragmentContentWithLayoutComponent( DescriptorKey.from( "x:des" ) ) );
         RendererDelegateImpl factory = new RendererDelegateImpl( contentService, mock( LayoutDescriptorService.class ) );
         factory.addRenderer( createRenderer( LayoutComponent.class, PortalResponse.create().body( "LayoutRendered" ).build() ) );
         final PortalRequest portalRequest = new PortalRequest();
@@ -158,7 +158,7 @@ class RendererDelegateImplTest
         final ContentService contentService = mock( ContentService.class );
         final LayoutDescriptorService layoutDescriptorService = mock( LayoutDescriptorService.class );
         final ContentId contentId = ContentId.from( "contentId" );
-        final DescriptorKey descriptorKey = DescriptorKey.from( "descriptorKey" );
+        final DescriptorKey descriptorKey = DescriptorKey.from( "x:descriptorKey" );
         when( contentService.getById( contentId ) ).thenReturn( createFragmentContentWithLayoutComponent( descriptorKey ) );
         when( layoutDescriptorService.getByKey( descriptorKey ) ).thenReturn( createLayoutDescriptor(descriptorKey) );
         RendererDelegateImpl factory = new RendererDelegateImpl( contentService, layoutDescriptorService );

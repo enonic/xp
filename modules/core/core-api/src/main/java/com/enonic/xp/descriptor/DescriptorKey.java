@@ -1,7 +1,10 @@
 package com.enonic.xp.descriptor;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
+
+import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
@@ -11,6 +14,7 @@ import com.enonic.xp.util.CharacterChecker;
 public final class DescriptorKey
     implements Serializable
 {
+    @Serial
     private static final long serialVersionUID = 0;
 
     private static final String SEPARATOR = ":";
@@ -66,8 +70,14 @@ public final class DescriptorKey
     {
         Objects.requireNonNull( key, "DescriptorKey cannot be null" );
         final int index = key.indexOf( SEPARATOR );
-        final String applicationKey = index == -1 ? key : key.substring( 0, index );
-        final String descriptorName = index == -1 ? "" : key.substring( index + 1 );
+        if ( index == -1 )
+        {
+            throw new IllegalArgumentException( "DescriptorKey must contain application key and descriptor name" );
+        }
+        final String applicationKey = key.substring( 0, index );
+        final String descriptorName = key.substring( index + 1 );
+        Preconditions.checkArgument( !descriptorName.isBlank(), "Descriptor ApplicationKey cannot be blank" );
+        CharacterChecker.check( descriptorName, "Not a valid DescriptorKey [" + descriptorName + "]" );
         return new DescriptorKey( ApplicationKey.from( applicationKey ), descriptorName );
     }
 

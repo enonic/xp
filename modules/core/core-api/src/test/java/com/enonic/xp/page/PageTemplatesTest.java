@@ -77,7 +77,7 @@ class PageTemplatesTest
         return PageTemplate.newPageTemplate().
             key( PageTemplateKey.from( "testKey2" ) ).
             canRender( ContentTypeNames.from( ContentTypeName.dataMedia() ) ).
-            controller( DescriptorKey.from( "descriptor2" ) ).
+            controller( DescriptorKey.from( "app:descriptor" ) ).
             name( "testContentName2" ).
             parentPath( ContentPath.from( "path2" ) ).
             page( Page.create().
