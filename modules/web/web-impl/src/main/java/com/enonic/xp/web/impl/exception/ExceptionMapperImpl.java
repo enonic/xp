@@ -1,36 +1,26 @@
 package com.enonic.xp.web.impl.exception;
 
+import org.jspecify.annotations.NullMarked;
 import org.osgi.service.component.annotations.Component;
 
-import com.enonic.xp.exception.NotFoundException;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.exception.ExceptionMapper;
 
 @Component
+@NullMarked
 public final class ExceptionMapperImpl
     implements ExceptionMapper
 {
     @Override
     public WebException map( final Throwable cause )
     {
-        if ( cause instanceof WebException )
+        return switch ( cause )
         {
-            return (WebException) cause;
-        }
-
-        if ( cause instanceof NotFoundException )
-        {
-            return new WebException( HttpStatus.NOT_FOUND, cause );
-        }
-
-        if ( cause instanceof IllegalArgumentException )
-        {
-            return new WebException( HttpStatus.BAD_REQUEST, cause );
-        }
-
-        return new WebException( HttpStatus.INTERNAL_SERVER_ERROR, cause );
+            case WebException we -> we;
+            default -> new WebException( HttpStatus.INTERNAL_SERVER_ERROR, cause );
+        };
     }
 
     @Override
@@ -40,14 +30,9 @@ public final class ExceptionMapperImpl
         final HttpStatus status = res.getStatus();
         final Object body = res.getBody();
 
-        if ( isError( status ) && ( body == null ) )
+        if ( body == null && status != null && ( status.is4xxClientError() || status.is5xxServerError() ) )
         {
             throw new WebException( status, status.getReasonPhrase() );
         }
-    }
-
-    private boolean isError( final HttpStatus status )
-    {
-        return ( status != null ) && ( status.is4xxClientError() || status.is5xxServerError() );
     }
 }

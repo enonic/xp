@@ -39,7 +39,7 @@ class ExceptionMapperTest
         {
         } );
         assertNotNull( result );
-        assertEquals( HttpStatus.NOT_FOUND, result.getStatus() );
+        assertEquals( HttpStatus.INTERNAL_SERVER_ERROR, result.getStatus() );
         assertEquals( "Custom message", result.getMessage() );
     }
 
@@ -48,7 +48,7 @@ class ExceptionMapperTest
     {
         final WebException result = this.mapper.map( new IllegalArgumentException( "Custom message" ) );
         assertNotNull( result );
-        assertEquals( HttpStatus.BAD_REQUEST, result.getStatus() );
+        assertEquals( HttpStatus.INTERNAL_SERVER_ERROR, result.getStatus() );
         assertEquals( "Custom message", result.getMessage() );
     }
 

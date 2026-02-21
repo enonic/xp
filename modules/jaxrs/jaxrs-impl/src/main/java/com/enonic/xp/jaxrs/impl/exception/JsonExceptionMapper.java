@@ -1,5 +1,7 @@
 package com.enonic.xp.jaxrs.impl.exception;
 
+import java.util.Objects;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,12 +15,11 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 
-import com.enonic.xp.content.PushContentException;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.exception.NotFoundException;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.web.WebException;
 
 @Provider
 public final class JsonExceptionMapper
@@ -29,39 +30,17 @@ public final class JsonExceptionMapper
     @Override
     public Response toResponse( final Throwable cause )
     {
-        if ( cause instanceof WebApplicationException )
+        int status = switch ( cause )
         {
-            return toErrorInfo( (WebApplicationException) cause );
-        }
-
-        if ( cause instanceof NotFoundException )
+            case WebApplicationException wae -> wae.getResponse().getStatus();
+            case WebException we -> we.getStatus().value();
+            default -> Response.Status.INTERNAL_SERVER_ERROR.getStatusCode();
+        };
+        if ( status >= 500 )
         {
-            return toErrorInfo( cause, Response.Status.NOT_FOUND.getStatusCode() );
+            LOG.error( Objects.requireNonNullElseGet( cause.getMessage(), cause.getClass()::getSimpleName ), cause );
         }
-
-        if ( cause instanceof IllegalArgumentException )
-        {
-            return toErrorInfo( cause, Response.Status.BAD_REQUEST.getStatusCode() );
-        }
-
-        if ( cause instanceof PushContentException )
-        {
-            return toErrorInfo( cause, Response.Status.BAD_REQUEST.getStatusCode() );
-        }
-
-        return toErrorInfo( cause, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode() );
-    }
-
-    private Response toErrorInfo( final WebApplicationException cause )
-    {
-        return toErrorInfo( cause, cause.getResponse().getStatus() );
-    }
-
-    private Response toErrorInfo( final Throwable cause, final int status )
-    {
-        logErrorIfNeeded( cause, status );
-        final ObjectNode json = createErrorJson( cause, status );
-        return Response.status( status ).entity( json ).type( MediaType.APPLICATION_JSON_TYPE ).build();
+        return Response.status( status ).entity( createErrorJson( cause, status ) ).type( MediaType.APPLICATION_JSON_TYPE ).build();
     }
 
     static ObjectNode createErrorJson( final Throwable cause, final int status )
@@ -91,26 +70,5 @@ public final class JsonExceptionMapper
         }
 
         return node;
-    }
-
-    static void logErrorIfNeeded( final Throwable cause, final int status )
-    {
-        if ( !shouldLogAsError( status ) )
-        {
-            return;
-        }
-
-        final String message = cause.getMessage();
-        LOG.error( message != null ? message : cause.getClass().getSimpleName(), cause );
-    }
-
-    static boolean shouldLogAsError( final int status )
-    {
-        if ( ( status >= 500 ) && ( status < 600 ) )
-        {
-            return true;
-        }
-
-        return status == 400;
     }
 }

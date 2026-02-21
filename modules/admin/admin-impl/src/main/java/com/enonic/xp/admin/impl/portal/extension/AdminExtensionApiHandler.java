@@ -126,7 +126,7 @@ public class AdminExtensionApiHandler
         }
         catch ( Exception e )
         {
-            throw new IllegalArgumentException( "Invalid application key: " + value, e );
+            throw WebException.badRequest( "Invalid application key: " + value, e );
         }
     }
 
@@ -138,7 +138,7 @@ public class AdminExtensionApiHandler
         }
         catch ( Exception e )
         {
-            throw new IllegalArgumentException( "Invalid descriptor key: " + value, e );
+            throw WebException.badRequest( "Invalid descriptor key: " + value, e );
         }
     }
 }

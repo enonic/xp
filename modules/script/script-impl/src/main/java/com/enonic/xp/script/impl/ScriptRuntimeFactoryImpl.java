@@ -23,7 +23,6 @@ import com.enonic.xp.app.ApplicationInvalidationLevel;
 import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationListener;
-import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.script.graal.GraalJSContextFactory;
 import com.enonic.xp.script.graal.executor.GraalScriptExecutor;
@@ -36,7 +35,6 @@ import com.enonic.xp.script.impl.standard.ScriptRuntimeImpl;
 import com.enonic.xp.script.runtime.ScriptRuntime;
 import com.enonic.xp.script.runtime.ScriptRuntimeFactory;
 import com.enonic.xp.script.runtime.ScriptSettings;
-import com.enonic.xp.server.RunMode;
 
 @Component
 public class ScriptRuntimeFactoryImpl
@@ -211,7 +209,7 @@ public class ScriptRuntimeFactoryImpl
 
         if ( appRef == null )
         {
-            throw new ApplicationNotFoundException( applicationKey );
+            throw new AppNotRegisteredException();
         }
         final Bundle bundle = appRef.getBundle();
 
@@ -220,7 +218,7 @@ public class ScriptRuntimeFactoryImpl
         {
             if ( application == null || application.getConfig() == null || !application.isStarted() )
             {
-                throw new ApplicationNotFoundException( applicationKey );
+                throw new AppNotRegisteredException();
             }
 
             return new AppBundleData( bundle, application.getClassLoader(),
