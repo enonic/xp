@@ -248,7 +248,7 @@ class ContentServiceImplTest_create
             .addFormItem( Input.create().inputType( InputTypeName.TEXT_LINE ).name( "some" ).label( "label" ).build() )
             .build();
 
-        final ApplicationKey appKey = ApplicationKey.from( "abc:abc" );
+        final ApplicationKey appKey = ApplicationKey.from( "abc" );
 
         Mockito.when( resourceService.processResource( isA( ResourceProcessor.class ) ) )
             .thenReturn( CmsDescriptor.create().applicationKey( appKey ).form( siteForm ).build() );
