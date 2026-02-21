@@ -1,5 +1,6 @@
 package com.enonic.xp.security;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -9,7 +10,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.util.CharacterChecker;
+import com.enonic.xp.core.internal.CharacterChecker;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
@@ -17,6 +18,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 public final class PrincipalKey
     implements Serializable
 {
+    @Serial
     private static final long serialVersionUID = 0;
 
     private static final String SEPARATOR = ":";
@@ -47,7 +49,7 @@ public final class PrincipalKey
         this.idProviderKey = idProviderKey;
         this.type = Objects.requireNonNull( type, "Principal type cannot be null" );
         Preconditions.checkArgument( !isNullOrEmpty( principalId ), "Principal id cannot be null or empty" );
-        this.principalId = CharacterChecker.check( principalId, "Not a valid principal key [" + principalId + "]" );
+        this.principalId = CharacterChecker.check( principalId, "Not a valid principal key [%s]" );
     }
 
     public static PrincipalKey from( final String principalKey )

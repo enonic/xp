@@ -8,7 +8,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.util.CharacterChecker;
+import com.enonic.xp.core.internal.CharacterChecker;
 
 @PublicApi
 public final class DescriptorKey
@@ -26,7 +26,8 @@ public final class DescriptorKey
     private DescriptorKey( final ApplicationKey applicationKey, final String name )
     {
         this.applicationKey = Objects.requireNonNull( applicationKey );
-        this.name = CharacterChecker.check( name, "Not a valid name for DescriptorKey [" + name + "]" );
+        Preconditions.checkArgument( !name.isBlank(), "Descriptor name cannot be blank" );
+        this.name = CharacterChecker.check( name, "Invalid name for DescriptorKey [%s]" );
     }
 
     public ApplicationKey getApplicationKey()
@@ -76,8 +77,6 @@ public final class DescriptorKey
         }
         final String applicationKey = key.substring( 0, index );
         final String descriptorName = key.substring( index + 1 );
-        Preconditions.checkArgument( !descriptorName.isBlank(), "Descriptor ApplicationKey cannot be blank" );
-        CharacterChecker.check( descriptorName, "Not a valid DescriptorKey [" + descriptorName + "]" );
         return new DescriptorKey( ApplicationKey.from( applicationKey ), descriptorName );
     }
 

@@ -1,11 +1,12 @@
 package com.enonic.xp.security;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.util.CharacterChecker;
+import com.enonic.xp.core.internal.CharacterChecker;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
@@ -13,6 +14,7 @@ import static com.google.common.base.Strings.nullToEmpty;
 public final class IdProviderKey
     implements Serializable
 {
+    @Serial
     private static final long serialVersionUID = 0;
 
     private static final IdProviderKey SYSTEM = IdProviderKey.from( "system" );
@@ -28,7 +30,7 @@ public final class IdProviderKey
         Preconditions.checkArgument( !nullToEmpty( id ).isBlank(), "IdProviderKey cannot be blank: %s", id );
         Preconditions.checkArgument( !RESERVED_ID_PROVIDER_KEY.equalsIgnoreCase( id ),
                                      "IdProviderKey id is reserved and cannot be used: %s", id );
-        this.id = CharacterChecker.check( id, "Invalid IdProviderKey [" + id + "]" );
+        this.id = CharacterChecker.check( id, "Invalid IdProviderKey [%s]" );
     }
 
     @Override

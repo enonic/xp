@@ -4,7 +4,7 @@ import java.util.Objects;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.util.CharacterChecker;
+import com.enonic.xp.core.internal.CharacterChecker;
 
 @PublicApi
 public final class MacroKey
@@ -18,7 +18,7 @@ public final class MacroKey
     private MacroKey( final ApplicationKey applicationKey, final String name )
     {
         this.applicationKey = Objects.requireNonNull( applicationKey );
-        this.name = CharacterChecker.check( name, "Not a valid Macro name [" + name + "]" );
+        this.name = CharacterChecker.check( name, "Not a valid Macro name [%s]" );
     }
 
     public ApplicationKey getApplicationKey()
