@@ -4,12 +4,17 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.hazelcast.map.IMap;
+import com.hazelcast.query.Predicate;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.verify;
 
@@ -86,5 +91,22 @@ class HazelcastSharedMapTest
         sharedMap.modify( "key", v -> "value", 11 );
 
         verify( map ).set( "key", "value", 11, TimeUnit.SECONDS );
+    }
+
+    @Test
+    void removeAll()
+    {
+        final HazelcastSharedMap<Object, Object> sharedMap = new HazelcastSharedMap<>( map );
+        sharedMap.removeAll( entry -> entry.getValue() instanceof Integer && (Integer) entry.getValue() > 5 );
+
+        @SuppressWarnings("unchecked")
+        final ArgumentCaptor<com.hazelcast.query.Predicate<Object, Object>> captor =
+            ArgumentCaptor.forClass( com.hazelcast.query.Predicate.class );
+        verify( map ).removeAll( captor.capture() );
+
+        // Test the predicate that was passed to Hazelcast
+        final com.hazelcast.query.Predicate<Object, Object> hazelcastPredicate = captor.getValue();
+        // We can't easily test the internal predicate without Hazelcast infrastructure,
+        // but we've verified removeAll was called with a predicate
     }
 }

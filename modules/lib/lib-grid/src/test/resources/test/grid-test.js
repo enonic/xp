@@ -98,3 +98,32 @@ exports.testModifyWithWrongArgumentFunc = function () {
         assert.assertEquals('Parameter "func" is not a function', e.message);
     }
 };
+
+exports.testRemoveAllWithoutPredicate = function () {
+    var sharedMap = gridLib.getMap('mapId');
+    try {
+        sharedMap.removeAll({});
+    } catch (e) {
+        assert.assertEquals('Parameter "predicate" is required', e.message);
+    }
+};
+
+exports.testRemoveAllWithWrongArgumentPredicate = function () {
+    var sharedMap = gridLib.getMap('mapId');
+    try {
+        sharedMap.removeAll({
+            predicate: 'not a function'
+        });
+    } catch (e) {
+        assert.assertEquals('Parameter "predicate" is not a function', e.message);
+    }
+};
+
+exports.testRemoveAll = function () {
+    var sharedMap = gridLib.getMap('mapId');
+    sharedMap.removeAll({
+        predicate: function (entry) {
+            return entry.getValue() > 5;
+        }
+    });
+};

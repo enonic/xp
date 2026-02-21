@@ -20,6 +20,13 @@ export type GridMap = Record<string, SharedMapValueType>;
 
 export type SharedMapModifierFn<Map extends GridMap, Key extends keyof Map> = (value: Map[Key] | null) => ConvertedType;
 
+export type SharedMapPredicateFn<Map extends GridMap> = (entry: SharedMapEntry<Map>) => boolean;
+
+export interface SharedMapEntry<Map extends GridMap> {
+    getKey(): keyof Map;
+    getValue(): Map[keyof Map];
+}
+
 type ConvertedType = SharedMapValueType | Record<string, unknown> | object[];
 
 interface JavaSharedMap<Map extends GridMap> {
@@ -30,6 +37,8 @@ interface JavaSharedMap<Map extends GridMap> {
     set<Key extends keyof Map>(key: Key, value: ConvertedType, ttlSeconds?: number | null): void;
 
     modify<Key extends keyof Map>(key: Key, modifier: SharedMapModifierFn<Map, Key>, ttlSeconds?: number | null): Map[Key];
+
+    removeAll(predicate: SharedMapPredicateFn<Map>): void;
 }
 
 interface SharedMapHandler<Map extends GridMap> {
@@ -48,6 +57,10 @@ export interface ModifyParams<Map extends GridMap, Key extends keyof Map> {
     ttlSeconds?: number;
 }
 
+export interface RemoveAllParams<Map extends GridMap> {
+    predicate: SharedMapPredicateFn<Map>;
+}
+
 export interface SharedMap<Map extends GridMap> {
     get<Key extends keyof Map>(key: Key): Map[Key] | null;
 
@@ -56,6 +69,8 @@ export interface SharedMap<Map extends GridMap> {
     modify<Key extends keyof Map>(params: ModifyParams<Map, Key>): Map[Key];
 
     delete(key: keyof Map): void;
+
+    removeAll(params: RemoveAllParams<Map>): void;
 }
 
 /**
@@ -147,6 +162,31 @@ class SharedMapImpl<Map extends GridMap>
      */
     delete(key: keyof Map): void {
         this.map.delete(key);
+    }
+
+    /**
+     * Removes all entries from this map that match the given predicate.
+     * The predicate is evaluated for each entry in the map, and entries for which
+     * the predicate returns true are removed.
+     *
+     * @param {object} params JSON with the parameters.
+     * @param {function} params.predicate the predicate to apply to each entry. The predicate receives
+     *                                     an entry object with getKey() and getValue() methods and should return true for entries to be removed
+     */
+    removeAll(params: RemoveAllParams<Map>): void {
+        const predicate = requireNotNull(params.predicate, 'predicate');
+        if (typeof predicate !== 'function') {
+            throw Error('Parameter "predicate" is not a function');
+        }
+
+        const predicateFn = (entry: SharedMapEntry<Map>): boolean => {
+            return predicate.call(this, {
+                getKey: () => __.toNativeObject(entry.getKey()),
+                getValue: () => __.toNativeObject(entry.getValue())
+            });
+        };
+
+        this.map.removeAll(predicateFn);
     }
 }
 
