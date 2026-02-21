@@ -47,6 +47,10 @@ public class ScriptValueTranslator
 
     private void handleElement( final PropertySet parent, final String name, final Object value )
     {
+        if ( value == null )
+        {
+            return;
+        }
         if ( value instanceof Map )
         {
             final PropertySet set = parent.addSet( name );
