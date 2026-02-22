@@ -16,7 +16,6 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.HttpStatus;
-import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.exception.ExceptionMapper;
@@ -83,7 +82,7 @@ public final class WebAppHandler
         }
         catch ( Exception e )
         {
-            return handleError( req, e );
+            return exceptionRenderer.render( req, e );
         }
     }
 
@@ -132,14 +131,6 @@ public final class WebAppHandler
     {
         final ResourceKey script = ResourceKey.from( applicationKey, "/webapp/webapp.js" );
         return this.controllerScriptFactory.fromScript( script );
-    }
-
-    private WebResponse handleError( final WebRequest webRequest, final Exception e )
-    {
-        final WebException webException = exceptionMapper.map( e );
-        final WebResponse webResponse = exceptionRenderer.render( webRequest, webException );
-        webRequest.getRawRequest().setAttribute( "error.handled", Boolean.TRUE );
-        return webResponse;
     }
 
     private void addTraceInfo( final Trace trace, final ApplicationKey applicationKey, final String path )

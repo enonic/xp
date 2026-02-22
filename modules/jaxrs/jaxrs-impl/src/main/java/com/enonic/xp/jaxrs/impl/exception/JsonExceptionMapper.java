@@ -17,6 +17,7 @@ import jakarta.ws.rs.ext.Provider;
 
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.exception.NotFoundException;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.web.WebException;
@@ -34,11 +35,14 @@ public final class JsonExceptionMapper
         {
             case WebApplicationException wae -> wae.getResponse().getStatus();
             case WebException we -> we.getStatus().value();
+            case NotFoundException _ -> Response.Status.NOT_FOUND.getStatusCode();
             default -> Response.Status.INTERNAL_SERVER_ERROR.getStatusCode();
         };
         if ( status >= 500 )
         {
             LOG.error( Objects.requireNonNullElseGet( cause.getMessage(), cause.getClass()::getSimpleName ), cause );
+        } else {
+            LOG.debug( Objects.requireNonNullElseGet( cause.getMessage(), cause.getClass()::getSimpleName ), cause );
         }
         return Response.status( status ).entity( createErrorJson( cause, status ) ).type( MediaType.APPLICATION_JSON_TYPE ).build();
     }

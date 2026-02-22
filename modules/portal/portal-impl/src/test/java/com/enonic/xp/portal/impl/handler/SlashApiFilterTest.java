@@ -28,7 +28,7 @@ import static org.mockito.Mockito.when;
 
 class SlashApiFilterTest
 {
-    private SlashApiServlet filter;
+    private SlashApiFilter filter;
 
     private SlashApiHandler slashApiHandler;
 
@@ -49,7 +49,7 @@ class SlashApiFilterTest
         webSerializerService = mock( WebSerializerService.class );
         webSocketContextFactory = mock();
 
-        filter = new SlashApiServlet( slashApiHandler, exceptionMapper, exceptionRenderer, webSerializerService, webSocketContextFactory );
+        filter = new SlashApiFilter( slashApiHandler, exceptionMapper, exceptionRenderer, webSerializerService, webSocketContextFactory );
     }
 
     @Test

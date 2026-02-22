@@ -35,6 +35,7 @@ import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
+import com.enonic.xp.web.exception.ExceptionMapper;
 import com.enonic.xp.web.exception.ExceptionRenderer;
 
 import static com.enonic.xp.portal.RenderMode.EDIT;
@@ -63,62 +64,73 @@ public final class ExceptionRendererImpl
 
     private final PostProcessor postProcessor;
 
+    private final ExceptionMapper exceptionMapper;
+
     @Activate
     public ExceptionRendererImpl( @Reference final ResourceService resourceService, @Reference final PortalUrlService portalUrlService,
                                   @Reference final ErrorHandlerScriptFactory errorHandlerScriptFactory,
                                   @Reference final IdProviderControllerService idProviderControllerService,
-                                  @Reference final PostProcessor postProcessor )
+                                  @Reference final PostProcessor postProcessor, @Reference final ExceptionMapper exceptionMapper )
     {
         this.resourceService = resourceService;
         this.portalUrlService = portalUrlService;
         this.errorHandlerScriptFactory = errorHandlerScriptFactory;
         this.idProviderControllerService = idProviderControllerService;
         this.postProcessor = postProcessor;
+        this.exceptionMapper = exceptionMapper;
     }
 
     @Override
-    public PortalResponse render( final WebRequest webRequest, final WebException cause )
+    public PortalResponse render( final WebRequest webRequest, final Exception cause )
     {
+        PortalResponse response = doRender( webRequest, cause );
+        webRequest.getRawRequest().setAttribute( "error.handled", Boolean.TRUE );
+        return response;
+    }
+
+    public PortalResponse doRender( final WebRequest webRequest, final Exception cause )
+    {
+        final WebException webException = exceptionMapper.map( cause );
         String tip = null;
-        final ExceptionInfo info = toErrorInfo( cause );
+        final ExceptionInfo info = toErrorInfo( webException );
         logIfNeeded( info );
 
         if ( webRequest instanceof PortalRequest portalRequest )
         {
-            final HttpStatus httpStatus = cause.getStatus();
+            final HttpStatus httpStatus = webException.getStatus();
             if ( httpStatus != null )
             {
                 final String handlerMethod = "handle" + httpStatus.value();
-                final PortalResponse statusCustomError = renderCustomError( portalRequest, cause, handlerMethod );
+                final PortalResponse statusCustomError = renderCustomError( portalRequest, webException, handlerMethod );
                 if ( statusCustomError != null )
                 {
-                    logIfNeeded( toErrorInfo( cause ) );
+                    logIfNeeded( toErrorInfo( webException ) );
                     return statusCustomError;
                 }
             }
 
-            final PortalResponse idProviderError = renderIdProviderError( portalRequest, cause );
+            final PortalResponse idProviderError = renderIdProviderError( portalRequest, webException );
             if ( idProviderError != null )
             {
-                logIfNeeded( toErrorInfo( cause ) );
+                logIfNeeded( toErrorInfo( webException ) );
                 return idProviderError;
             }
 
-            final PortalResponse defaultCustomError = renderCustomError( portalRequest, cause, DEFAULT_HANDLER );
+            final PortalResponse defaultCustomError = renderCustomError( portalRequest, webException, DEFAULT_HANDLER );
             if ( defaultCustomError != null )
             {
-                logIfNeeded( toErrorInfo( cause ) );
+                logIfNeeded( toErrorInfo( webException ) );
                 return defaultCustomError;
             }
 
             if ( PortalRequestHelper.isSiteBase( portalRequest ) && ContentConstants.BRANCH_MASTER.equals( portalRequest.getBranch() ) &&
-                HttpStatus.NOT_FOUND.equals( cause.getStatus() ) )
+                HttpStatus.NOT_FOUND.equals( webException.getStatus() ) )
             {
                 tip = "Tip: Did you remember to publish the site?";
             }
         }
 
-        return renderInternalErrorPage( webRequest, tip, cause );
+        return renderInternalErrorPage( webRequest, tip, webException );
     }
 
     private PortalResponse renderCustomError( final PortalRequest req, final WebException cause, final String handlerMethod )

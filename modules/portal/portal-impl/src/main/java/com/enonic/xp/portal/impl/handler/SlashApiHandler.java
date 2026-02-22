@@ -289,7 +289,7 @@ public class SlashApiHandler
         }
         catch ( Exception e )
         {
-            return handleError( portalRequest, e );
+            return exceptionRenderer.render( portalRequest, e );
         }
         finally
         {
@@ -377,14 +377,6 @@ public class SlashApiHandler
     {
         final ResourceKey script = ApiDescriptor.toResourceKey( descriptorKey, "js" );
         return this.controllerScriptFactory.fromScript( script );
-    }
-
-    private WebResponse handleError( final WebRequest webRequest, final Exception e )
-    {
-        final WebException webException = exceptionMapper.map( e );
-        final WebResponse webResponse = exceptionRenderer.render( webRequest, webException );
-        webRequest.getRawRequest().setAttribute( "error.handled", Boolean.TRUE );
-        return webResponse;
     }
 
 }

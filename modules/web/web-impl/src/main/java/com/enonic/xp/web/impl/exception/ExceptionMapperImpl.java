@@ -3,6 +3,7 @@ package com.enonic.xp.web.impl.exception;
 import org.jspecify.annotations.NullMarked;
 import org.osgi.service.component.annotations.Component;
 
+import com.enonic.xp.exception.NotFoundException;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebResponse;
@@ -19,6 +20,7 @@ public final class ExceptionMapperImpl
         return switch ( cause )
         {
             case WebException we -> we;
+            case NotFoundException nfe -> new WebException( HttpStatus.NOT_FOUND, nfe );
             default -> new WebException( HttpStatus.INTERNAL_SERVER_ERROR, cause );
         };
     }
@@ -28,9 +30,8 @@ public final class ExceptionMapperImpl
         throws WebException
     {
         final HttpStatus status = res.getStatus();
-        final Object body = res.getBody();
 
-        if ( body == null && status != null && ( status.is4xxClientError() || status.is5xxServerError() ) )
+        if ( res.getBody() == null && status != null && ( status.is4xxClientError() || status.is5xxServerError() ) )
         {
             throw new WebException( status, status.getReasonPhrase() );
         }

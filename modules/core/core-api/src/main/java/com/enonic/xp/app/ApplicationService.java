@@ -7,8 +7,7 @@ import com.enonic.xp.annotation.PublicApi;
 @PublicApi
 public interface ApplicationService
 {
-    Application getInstalledApplication( ApplicationKey key )
-        throws ApplicationNotFoundException;
+    Application getInstalledApplication( ApplicationKey key );
 
     Application get( ApplicationKey key );
 

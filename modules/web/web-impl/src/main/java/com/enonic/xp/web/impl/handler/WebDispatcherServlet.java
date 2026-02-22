@@ -16,7 +16,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import com.enonic.xp.annotation.Order;
-import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.exception.ExceptionMapper;
@@ -80,27 +79,16 @@ public final class WebDispatcherServlet
         try
         {
             final WebResponse webResponse = webDispatcher.dispatch( webRequest, WebResponse.create().build() );
-            return filterResponse( webRequest, webResponse );
+            if ( !Boolean.TRUE.equals( webRequest.getRawRequest().getAttribute( "error.handled" ) ) )
+            {
+                this.exceptionMapper.throwIfNeeded( webResponse );
+            }
+            return webResponse;
         }
         catch ( Exception e )
         {
-            return handleError( webRequest, e );
+            return exceptionRenderer.render( webRequest, e );
         }
-    }
-
-    private WebResponse handleError( final WebRequest req, final Exception cause )
-    {
-        final WebException exception = this.exceptionMapper.map( cause );
-        return this.exceptionRenderer.render( req, exception );
-    }
-
-    private WebResponse filterResponse( final WebRequest webRequest, final WebResponse webResponse )
-    {
-        if ( !Boolean.TRUE.equals( webRequest.getRawRequest().getAttribute( "error.handled" ) ) )
-        {
-            this.exceptionMapper.throwIfNeeded( webResponse );
-        }
-        return webResponse;
     }
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)

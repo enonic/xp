@@ -5,7 +5,6 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.exception.ExceptionMapper;
@@ -59,18 +58,10 @@ public abstract class BasePortalHandler
         }
         catch ( Exception e )
         {
-            return handleError( portalRequest, e );
+            return exceptionRenderer.render( portalRequest, e );
         }
     }
 
     protected abstract PortalRequest createPortalRequest( WebRequest webRequest, WebResponse webResponse );
 
-    private WebResponse handleError( final WebRequest webRequest, final Exception e )
-    {
-        final WebException webException = exceptionMapper.map( e );
-        final WebResponse webResponse = exceptionRenderer.render( webRequest, webException );
-        webRequest.getRawRequest().setAttribute( "error.handled", Boolean.TRUE );
-
-        return webResponse;
-    }
 }
