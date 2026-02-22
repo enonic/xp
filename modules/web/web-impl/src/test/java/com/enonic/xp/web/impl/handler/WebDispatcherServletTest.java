@@ -13,14 +13,16 @@ import com.google.common.net.MediaType;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebResponse;
-import com.enonic.xp.web.impl.exception.ExceptionMapperImpl;
+import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.impl.serializer.WebSerializerServiceImpl;
 import com.enonic.xp.web.jetty.impl.JettyTestSupport;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class WebDispatcherServletTest
     extends JettyTestSupport
@@ -29,14 +31,16 @@ class WebDispatcherServletTest
 
     private TestWebHandler handler;
 
+    final ExceptionRenderer exceptionRenderer = mock();
+
     @Override
     protected void configure()
     {
         this.handler = new TestWebHandler();
 
-        this.servlet = new WebDispatcherServlet( new WebDispatcherImpl(), new ExceptionMapperImpl(),
-                                                 ( _, _ ) -> WebResponse.create().status( HttpStatus.NOT_FOUND ).build(), mock(),
-                                                 new WebSerializerServiceImpl() );
+        when( exceptionRenderer.maybeThrow( any(), any() ) ).thenAnswer( invocation -> invocation.getArgument( 1 ) );
+
+        this.servlet = new WebDispatcherServlet( new WebDispatcherImpl(), exceptionRenderer, mock(), new WebSerializerServiceImpl() );
         this.servlet.addWebHandler( this.handler );
 
         this.handler.response = WebResponse.create().status( HttpStatus.OK ).build();
@@ -189,6 +193,8 @@ class WebDispatcherServletTest
         throws Exception
     {
         this.servlet.removeWebHandler( this.handler );
+
+        when( exceptionRenderer.render( any(), any() ) ).thenReturn( WebResponse.create().status( HttpStatus.NOT_FOUND ).build() );
 
         final HttpRequest request = newRequest( "/site/master/a/b" ).GET().build();
 

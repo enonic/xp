@@ -7,7 +7,6 @@ import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
-import com.enonic.xp.web.exception.ExceptionMapper;
 import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.handler.BaseWebHandler;
 import com.enonic.xp.web.handler.WebHandlerChain;
@@ -15,8 +14,6 @@ import com.enonic.xp.web.handler.WebHandlerChain;
 public abstract class BasePortalHandler
     extends BaseWebHandler
 {
-    protected ExceptionMapper exceptionMapper;
-
     protected ExceptionRenderer exceptionRenderer;
 
     public BasePortalHandler()
@@ -51,12 +48,9 @@ public abstract class BasePortalHandler
             ContextAccessor.current().getLocalScope().setAttribute( branch );
         }
 
-        final WebResponse returnedWebResponse;
         try
         {
-            returnedWebResponse = webHandlerChain.handle( portalRequest, webResponse );
-            exceptionMapper.throwIfNeeded( returnedWebResponse );
-            return returnedWebResponse;
+            return exceptionRenderer.maybeThrow( portalRequest, webHandlerChain.handle( portalRequest, webResponse ) );
         }
         catch ( Exception e )
         {

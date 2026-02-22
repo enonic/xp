@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
+import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.handler.WebHandlerChain;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -31,7 +32,9 @@ class AdminToolPortalHandlerTest
     void setup()
         throws Exception
     {
-        this.handler = new AdminToolPortalHandler( mock(), mock() );
+        final ExceptionRenderer exceptionRenderer = mock();
+        when( exceptionRenderer.maybeThrow( any(), any() ) ).thenAnswer( invocation -> invocation.getArgument( 1 ) );
+        this.handler = new AdminToolPortalHandler( exceptionRenderer );
 
         final HttpServletRequest rawRequest = mock( HttpServletRequest.class );
 

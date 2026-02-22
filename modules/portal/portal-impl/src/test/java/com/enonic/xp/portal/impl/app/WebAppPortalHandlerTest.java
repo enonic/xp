@@ -22,7 +22,7 @@ class WebAppPortalHandlerTest
     @BeforeEach
     void setUp()
     {
-        webappPortalHandler = new WebAppPortalHandler( mock(), mock() );
+        webappPortalHandler = new WebAppPortalHandler( mock() );
     }
 
     @Test

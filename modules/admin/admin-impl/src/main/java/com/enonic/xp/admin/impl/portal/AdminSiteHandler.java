@@ -35,7 +35,6 @@ import com.enonic.xp.site.Site;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
-import com.enonic.xp.web.exception.ExceptionMapper;
 import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.handler.WebHandlerChain;
@@ -59,11 +58,10 @@ public class AdminSiteHandler
 
     @Activate
     public AdminSiteHandler( @Reference final ContentService contentService, @Reference final ProjectService projectService,
-                             @Reference final ExceptionMapper exceptionMapper, @Reference final ExceptionRenderer exceptionRenderer )
+                             @Reference final ExceptionRenderer exceptionRenderer )
     {
         this.contentService = contentService;
         this.projectService = projectService;
-        this.exceptionMapper = exceptionMapper;
         this.exceptionRenderer = exceptionRenderer;
     }
 

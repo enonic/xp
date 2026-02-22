@@ -35,6 +35,7 @@ import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
+import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.exception.ExceptionMapper;
 import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
@@ -82,39 +83,49 @@ public final class ExceptionRendererImpl
     @Override
     public PortalResponse render( final WebRequest webRequest, final Exception cause )
     {
-        PortalResponse response = doRender( webRequest, cause );
+        PortalResponse response = doRender( webRequest, exceptionMapper.map( cause ) );
         webRequest.getRawRequest().setAttribute( "error.handled", Boolean.TRUE );
         return response;
     }
 
-    public PortalResponse doRender( final WebRequest webRequest, final Exception cause )
+    @Override
+    public WebResponse maybeThrow( WebRequest webRequest, WebResponse webResponse )
     {
-        final WebException webException = exceptionMapper.map( cause );
-        final ExceptionInfo errorInfo = toErrorInfo( webException );
+        if ( !Boolean.TRUE.equals( webRequest.getRawRequest().getAttribute( "error.handled" ) ) )
+        {
+            this.exceptionMapper.throwIfNeeded( webResponse );
+        }
+        return webResponse;
+    }
+
+    public PortalResponse doRender( final WebRequest webRequest, final WebException cause )
+    {
+        final ExceptionInfo errorInfo = ExceptionInfo.create( cause.getStatus() ).withDebugInfo( RunMode.isDev() ).cause( cause );
+
         logIfNeeded( errorInfo );
 
         if ( webRequest instanceof PortalRequest portalRequest )
         {
-            final PortalResponse statusCustomError = renderCustomError( portalRequest, webException, false );
+            final PortalResponse statusCustomError = renderCustomError( portalRequest, cause, false );
             if ( statusCustomError != null )
             {
                 return statusCustomError;
             }
 
-            final PortalResponse idProviderError = renderIdProviderError( portalRequest, webException );
+            final PortalResponse idProviderError = renderIdProviderError( portalRequest, cause );
             if ( idProviderError != null )
             {
                 return idProviderError;
             }
 
-            final PortalResponse defaultCustomError = renderCustomError( portalRequest, webException, true );
+            final PortalResponse defaultCustomError = renderCustomError( portalRequest, cause, true );
             if ( defaultCustomError != null )
             {
                 return defaultCustomError;
             }
 
             if ( PortalRequestHelper.isSiteBase( portalRequest ) && ContentConstants.BRANCH_MASTER.equals( portalRequest.getBranch() ) &&
-                HttpStatus.NOT_FOUND.equals( webException.getStatus() ) )
+                HttpStatus.NOT_FOUND.equals( cause.getStatus() ) )
             {
                 errorInfo.tip( "Tip: Did you remember to publish the site?" );
             }
@@ -230,11 +241,6 @@ public final class ExceptionRendererImpl
         return null;
     }
 
-    private ExceptionInfo toErrorInfo( final WebException cause )
-    {
-        return ExceptionInfo.create( cause.getStatus() ).withDebugInfo( RunMode.isDev() ).cause( cause );
-    }
-
     private void logIfNeeded( final ExceptionInfo info )
     {
         if ( info.shouldLogAsError() )
@@ -266,11 +272,10 @@ public final class ExceptionRendererImpl
 
     private PortalResponse toJsonResponse( final ExceptionInfo info )
     {
-        final ObjectNode node = JsonNodeFactory.instance.objectNode();
-        node.put( "status", info.status.value() );
-        node.put( "message", info.getDescription() );
+        final ObjectNode node =
+            JsonNodeFactory.instance.objectNode().put( "status", info.status.value() ).put( "message", info.getDescription() );
 
-        return PortalResponse.create().status( info.getStatus() ).body( node.toString() ).contentType( MediaType.JSON_UTF_8 ).build();
+        return PortalResponse.create().status( info.getStatus() ).body( node ).contentType( MediaType.JSON_UTF_8 ).build();
     }
 
     private PortalResponse toHtmlResponse( ExceptionInfo info, final WebRequest req )

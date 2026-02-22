@@ -26,8 +26,6 @@ import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
 import com.enonic.xp.portal.impl.error.ErrorHandlerScript;
 import com.enonic.xp.portal.impl.error.ErrorHandlerScriptFactory;
-import com.enonic.xp.portal.url.IdentityUrlParams;
-import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
@@ -45,10 +43,6 @@ import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -61,8 +55,6 @@ class ExceptionRendererImplTest
 
     private ResourceService resourceService;
 
-    private PortalUrlService portalUrlService;
-
     private IdProviderControllerService idProviderControllerService;
 
     private ErrorHandlerScriptFactory errorHandlerScriptFactory;
@@ -73,7 +65,6 @@ class ExceptionRendererImplTest
     void setup()
     {
         this.resourceService = mock( ResourceService.class );
-        this.portalUrlService = mock( PortalUrlService.class );
         this.idProviderControllerService = mock( IdProviderControllerService.class );
         this.errorHandlerScriptFactory = mock( ErrorHandlerScriptFactory.class );
         this.postProcessor = new MockPostProcessor();
@@ -92,11 +83,9 @@ class ExceptionRendererImplTest
     void render_json()
     {
         final PortalResponse res = this.renderer.render( this.request, new WebException( HttpStatus.NOT_FOUND, "Custom message" ) );
-        assertEquals( HttpStatus.NOT_FOUND, res.getStatus() );
-        assertEquals( MediaType.JSON_UTF_8, res.getContentType() );
-
-        final String body = res.getBody().toString();
-        assertEquals( "{\"status\":404,\"message\":\"Custom message\"}", body );
+        assertThat( res.getStatus() ).isEqualTo( HttpStatus.NOT_FOUND );
+        assertThat( res.getContentType() ).isEqualTo( MediaType.JSON_UTF_8 );
+        assertThat( res.getBody().toString() ).isEqualTo( "{\"status\":404,\"message\":\"Custom message\"}" );
     }
 
     @Test
@@ -105,15 +94,15 @@ class ExceptionRendererImplTest
         this.request.getHeaders().put( HttpHeaders.ACCEPT, "text/html,text/*" );
 
         final PortalResponse res = this.renderer.render( this.request, new WebException( HttpStatus.NOT_FOUND, "Custom message" ) );
-        assertEquals( HttpStatus.NOT_FOUND, res.getStatus() );
-        assertEquals( MediaType.HTML_UTF_8, res.getContentType() );
+        assertThat( res.getStatus() ).isEqualTo( HttpStatus.NOT_FOUND );
+        assertThat( res.getContentType() ).isEqualTo( MediaType.HTML_UTF_8 );
 
         final String body = res.getBody().toString();
-        assertTrue( body.contains( "404 Not Found" ) );
-        assertTrue( body.contains( "Custom message" ) );
+        assertThat( body ).contains( "404 Not Found" );
+        assertThat( body ).contains( "Custom message" );
 
-        // Should not show exception
-        assertTrue( body.contains( ExceptionRendererImplTest.class.getName() ) );
+        // Should show exception info in dev mode
+        assertThat( body ).contains( ExceptionRendererImplTest.class.getName() );
     }
 
     @Test
@@ -129,8 +118,8 @@ class ExceptionRendererImplTest
 
         final PortalResponse res = this.renderer.render( this.request, new WebException( HttpStatus.NOT_FOUND, "Custom message" ) );
 
-        assertEquals( HttpStatus.NOT_FOUND, res.getStatus() );
-        assertEquals( MediaType.HTML_UTF_8, res.getContentType() );
+        assertThat( res.getStatus() ).isEqualTo( HttpStatus.NOT_FOUND );
+        assertThat( res.getContentType() ).isEqualTo( MediaType.HTML_UTF_8 );
 
         final String body = res.getBody().toString();
         assertThat( body ).contains( "404 - Not Found" );
@@ -143,11 +132,9 @@ class ExceptionRendererImplTest
     {
         final RuntimeException cause = new RuntimeException( "Custom message" );
         final PortalResponse res = this.renderer.render( this.request, new WebException( HttpStatus.BAD_REQUEST, cause ) );
-        assertEquals( HttpStatus.BAD_REQUEST, res.getStatus() );
-        assertEquals( MediaType.JSON_UTF_8, res.getContentType() );
-
-        final String body = res.getBody().toString();
-        assertEquals( "{\"status\":400,\"message\":\"Custom message (java.lang.RuntimeException)\"}", body );
+        assertThat( res.getStatus() ).isEqualTo( HttpStatus.BAD_REQUEST );
+        assertThat( res.getContentType() ).isEqualTo( MediaType.JSON_UTF_8 );
+        assertThat( res.getBody().toString() ).isEqualTo( "{\"status\":400,\"message\":\"Custom message (java.lang.RuntimeException)\"}" );
     }
 
     @Test
@@ -157,15 +144,15 @@ class ExceptionRendererImplTest
 
         final RuntimeException cause = new RuntimeException( "Custom message" );
         final PortalResponse res = this.renderer.render( this.request, new WebException( HttpStatus.BAD_REQUEST, cause ) );
-        assertEquals( HttpStatus.BAD_REQUEST, res.getStatus() );
-        assertEquals( MediaType.HTML_UTF_8, res.getContentType() );
+        assertThat( res.getStatus() ).isEqualTo( HttpStatus.BAD_REQUEST );
+        assertThat( res.getContentType() ).isEqualTo( MediaType.HTML_UTF_8 );
 
         final String body = res.getBody().toString();
-        assertTrue( body.contains( "400 Bad Request" ) );
-        assertTrue( body.contains( "Custom message" ) );
+        assertThat( body ).contains( "400 Bad Request" );
+        assertThat( body ).contains( "Custom message" );
 
         // Should show exception
-        assertTrue( body.contains( RuntimeException.class.getName() ) );
+        assertThat( body ).contains( RuntimeException.class.getName() );
     }
 
     @Test
@@ -190,9 +177,9 @@ class ExceptionRendererImplTest
         final RuntimeException cause = new RuntimeException( "Custom message" );
         final PortalResponse res = this.renderer.render( this.request, new WebException( HttpStatus.BAD_REQUEST, cause ) );
 
-        assertEquals( HttpStatus.BAD_REQUEST, res.getStatus() );
-        assertEquals( "Custom message page", res.getBody().toString() );
-        assertFalse( postProcessor.isExecuted() );
+        assertThat( res.getStatus() ).isEqualTo( HttpStatus.BAD_REQUEST );
+        assertThat( res.getBody().toString() ).isEqualTo( "Custom message page" );
+        assertThat( postProcessor.isExecuted() ).isFalse();
     }
 
     @Test
@@ -220,9 +207,9 @@ class ExceptionRendererImplTest
         final RuntimeException cause = new RuntimeException( "Custom message" );
         final PortalResponse res = this.renderer.render( this.request, new WebException( HttpStatus.NOT_FOUND, cause ) );
 
-        assertEquals( HttpStatus.NOT_FOUND, res.getStatus() );
-        assertEquals( "Custom message page", res.getBody().toString() );
-        assertFalse( postProcessor.isExecuted() );
+        assertThat( res.getStatus() ).isEqualTo( HttpStatus.NOT_FOUND );
+        assertThat( res.getBody().toString() ).isEqualTo( "Custom message page" );
+        assertThat( postProcessor.isExecuted() ).isFalse();
     }
 
     @Test
@@ -245,8 +232,8 @@ class ExceptionRendererImplTest
         final PortalResponse res = this.renderer.render( this.request, new WebException( HttpStatus.BAD_REQUEST, cause ) );
 
         final String body = res.getBody().toString();
-        assertTrue( body.contains( "400 Bad Request" ) );
-        assertTrue( body.contains( "Custom message" ) );
+        assertThat( body ).contains( "400 Bad Request" );
+        assertThat( body ).contains( "Custom message" );
     }
 
     @Test
@@ -271,9 +258,9 @@ class ExceptionRendererImplTest
         final RuntimeException cause = new RuntimeException( "Custom message" );
         final PortalResponse res = this.renderer.render( this.request, new WebException( HttpStatus.BAD_REQUEST, cause ) );
 
-        assertEquals( HttpStatus.BAD_REQUEST, res.getStatus() );
-        assertEquals( "<h1>Custom message page</h1><h3>My Part</h3>", res.getBody().toString() );
-        assertTrue( postProcessor.isExecuted() );
+        assertThat( res.getStatus() ).isEqualTo( HttpStatus.BAD_REQUEST );
+        assertThat( res.getBody().toString() ).isEqualTo( "<h1>Custom message page</h1><h3>My Part</h3>" );
+        assertThat( postProcessor.isExecuted() ).isTrue();
     }
 
     @Test
@@ -284,8 +271,8 @@ class ExceptionRendererImplTest
 
         final PortalResponse result = renderer.render( this.request, new WebException( HttpStatus.NOT_FOUND, "Resource not found" ) );
 
-        assertNotNull( result );
-        assertEquals( "{\"status\":404,\"message\":\"Resource not found\"}", result.getBody().toString() );
+        assertThat( result ).isNotNull();
+        assertThat( result.getBody().toString() ).isEqualTo( "{\"status\":404,\"message\":\"Resource not found\"}" );
     }
 
     @Test
@@ -295,15 +282,15 @@ class ExceptionRendererImplTest
 
         final PortalResponse res =
             this.renderer.render( this.request, new WebException( HttpStatus.INTERNAL_SERVER_ERROR, "Custom message" ) );
-        assertEquals( HttpStatus.INTERNAL_SERVER_ERROR, res.getStatus() );
-        assertEquals( MediaType.HTML_UTF_8, res.getContentType() );
+        assertThat( res.getStatus() ).isEqualTo( HttpStatus.INTERNAL_SERVER_ERROR );
+        assertThat( res.getContentType() ).isEqualTo( MediaType.HTML_UTF_8 );
 
         final String body = res.getBody().toString();
-        assertTrue( body.contains( "500 Internal Server Error" ) );
-        assertTrue( body.contains( "Custom message" ) );
+        assertThat( body ).contains( "500 Internal Server Error" );
+        assertThat( body ).contains( "Custom message" );
 
-        // Should not show exception
-        assertTrue( body.contains( ExceptionRendererImplTest.class.getName() ) );
+        // Should show exception info in dev mode
+        assertThat( body ).contains( ExceptionRendererImplTest.class.getName() );
     }
 
     @Test
@@ -315,7 +302,6 @@ class ExceptionRendererImplTest
                                                    new ExceptionMapperImpl() );
 
         when( idProviderControllerService.execute( any( IdProviderControllerExecutionParams.class ) ) ).thenReturn( null );
-        when( portalUrlService.identityUrl( any( IdentityUrlParams.class ) ) ).thenReturn( "logoutUrl" );
         this.request.getHeaders().put( HttpHeaders.ACCEPT, "text/html,text/*" );
 
         VirtualHost virtualHost = mock( VirtualHost.class );
@@ -328,11 +314,11 @@ class ExceptionRendererImplTest
         final RuntimeException cause = new RuntimeException( "Custom message" );
 
         final PortalResponse res = this.renderer.render( this.request, new WebException( HttpStatus.FORBIDDEN, cause ) );
-        assertEquals( HttpStatus.FORBIDDEN, res.getStatus() );
-        assertEquals( MediaType.HTML_UTF_8, res.getContentType() );
+        assertThat( res.getStatus() ).isEqualTo( HttpStatus.FORBIDDEN );
+        assertThat( res.getContentType() ).isEqualTo( MediaType.HTML_UTF_8 );
 
         final String body = res.getBody().toString();
-        assertTrue( body.contains( "<h3>403 - Forbidden</h3>" ) );
+        assertThat( body ).contains( "<h3>403 - Forbidden</h3>" );
 
         // test with already authenticated user
         final AuthenticationInfo authenticationInfo = AuthenticationInfo.create().user( User.anonymous() ).build();
@@ -341,11 +327,11 @@ class ExceptionRendererImplTest
         final PortalResponse response =
             context.callWith( () -> this.renderer.render( this.request, new WebException( HttpStatus.FORBIDDEN, cause ) ) );
 
-        assertEquals( HttpStatus.FORBIDDEN, response.getStatus() );
+        assertThat( response.getStatus() ).isEqualTo( HttpStatus.FORBIDDEN );
 
         final String responseBody = response.getBody().toString();
-        assertTrue( responseBody.contains( "<h3>403 - Forbidden</h3>" ) );
-        assertTrue( responseBody.contains( "<a href=\"logoutUrl\" class=\"logout\">Logout</a>" ) );
+        assertThat( responseBody ).contains( "<h3>403 - Forbidden</h3>" );
+        assertThat( responseBody ).contains( "class=\"logout\"" ).contains( "/_/idprovider/system/logout" );
     }
 
     private Site newSite()

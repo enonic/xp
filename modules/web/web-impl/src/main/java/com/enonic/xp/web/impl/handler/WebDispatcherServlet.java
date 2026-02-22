@@ -18,7 +18,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import com.enonic.xp.annotation.Order;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
-import com.enonic.xp.web.exception.ExceptionMapper;
 import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.impl.serializer.RequestBodyReader;
@@ -34,8 +33,6 @@ public final class WebDispatcherServlet
 {
     private final WebDispatcher webDispatcher;
 
-    private final ExceptionMapper exceptionMapper;
-
     private final ExceptionRenderer exceptionRenderer;
 
     private final WebSocketContextFactory webSocketContextFactory;
@@ -43,13 +40,11 @@ public final class WebDispatcherServlet
     private final WebSerializerService webSerializerService;
 
     @Activate
-    public WebDispatcherServlet( @Reference final WebDispatcher webDispatcher, @Reference final ExceptionMapper exceptionMapper,
-                                 @Reference final ExceptionRenderer exceptionRenderer,
+    public WebDispatcherServlet( @Reference final WebDispatcher webDispatcher, @Reference final ExceptionRenderer exceptionRenderer,
                                  @Reference final WebSocketContextFactory webSocketContextFactory,
                                  @Reference final WebSerializerService webSerializerService )
     {
         this.webDispatcher = webDispatcher;
-        this.exceptionMapper = exceptionMapper;
         this.exceptionRenderer = exceptionRenderer;
         this.webSocketContextFactory = webSocketContextFactory;
         this.webSerializerService = webSerializerService;
@@ -78,12 +73,7 @@ public final class WebDispatcherServlet
     {
         try
         {
-            final WebResponse webResponse = webDispatcher.dispatch( webRequest, WebResponse.create().build() );
-            if ( !Boolean.TRUE.equals( webRequest.getRawRequest().getAttribute( "error.handled" ) ) )
-            {
-                this.exceptionMapper.throwIfNeeded( webResponse );
-            }
-            return webResponse;
+            return exceptionRenderer.maybeThrow( webRequest, webDispatcher.dispatch( webRequest, WebResponse.create().build() ) );
         }
         catch ( Exception e )
         {

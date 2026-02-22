@@ -13,7 +13,6 @@ import com.enonic.xp.portal.impl.handler.PathMatchers;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
-import com.enonic.xp.web.exception.ExceptionMapper;
 import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.handler.WebHandler;
 
@@ -22,9 +21,8 @@ public class WebAppPortalHandler
     extends BasePortalHandler
 {
     @Activate
-    public WebAppPortalHandler( @Reference final ExceptionMapper exceptionMapper, @Reference final ExceptionRenderer exceptionRenderer )
+    public WebAppPortalHandler( @Reference final ExceptionRenderer exceptionRenderer )
     {
-        this.exceptionMapper = exceptionMapper;
         this.exceptionRenderer = exceptionRenderer;
     }
 

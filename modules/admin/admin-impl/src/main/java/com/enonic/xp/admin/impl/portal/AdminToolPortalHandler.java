@@ -13,7 +13,6 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.handler.BasePortalHandler;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
-import com.enonic.xp.web.exception.ExceptionMapper;
 import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.handler.WebHandler;
 
@@ -30,9 +29,8 @@ public class AdminToolPortalHandler
     public static final Pattern ADMIN_TOOL_PATH_PATTERN = Pattern.compile( "^/admin/(?<app>[^/]+)/(?<tool>[^/]+)" );
 
     @Activate
-    public AdminToolPortalHandler( @Reference final ExceptionMapper exceptionMapper, @Reference final ExceptionRenderer exceptionRenderer )
+    public AdminToolPortalHandler( @Reference final ExceptionRenderer exceptionRenderer )
     {
-        this.exceptionMapper = exceptionMapper;
         this.exceptionRenderer = exceptionRenderer;
     }
 

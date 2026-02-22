@@ -29,12 +29,9 @@ import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
-import com.enonic.xp.web.exception.ExceptionMapper;
-import com.enonic.xp.web.exception.ExceptionRenderer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
@@ -59,7 +56,7 @@ class SiteHandlerTest
         this.contentService = mock( ContentService.class );
         this.projectService = mock( ProjectService.class );
 
-        this.handler = new SiteHandler( contentService, projectService, mock( ExceptionMapper.class ), mock( ExceptionRenderer.class ) );
+        this.handler = new SiteHandler( contentService, projectService, mock() );
 
         final HttpServletRequest rawRequest = mock( HttpServletRequest.class );
         this.request = new WebRequest();

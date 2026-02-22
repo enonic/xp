@@ -39,10 +39,10 @@ final class ExceptionInfo
     public String getDescription()
     {
         String str = this.getMessage();
-        final Throwable cause = this.cause != null ? this.cause : null;
-        if ( cause != null )
+        final Throwable innerCause = this.cause != null ? this.cause.getCause() : null;
+        if ( innerCause != null )
         {
-            str += " (" + cause.getClass().getName() + ")";
+            str += " (" + innerCause.getClass().getName() + ")";
         }
 
         return str;

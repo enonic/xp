@@ -102,18 +102,6 @@ class WebAppHandlerTest
     }
 
     @Test
-    void handle_executeController_error()
-        throws Exception
-    {
-        this.request.setApplicationKey( ApplicationKey.from( "myapp" ) );
-        this.request.setRawPath( "/webapp/myapp/a.txt" );
-        this.request.setBaseUri( "/webapp/myapp" );
-
-        final WebResponse response = this.handler.doHandle( this.request, null, this.chain );
-        assertEquals( HttpStatus.INTERNAL_SERVER_ERROR, response.getStatus() );
-    }
-
-    @Test
     void handle_noRedirectWhenHasTrailingSlash()
         throws Exception
     {

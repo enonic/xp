@@ -10,7 +10,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
-import com.enonic.xp.web.impl.exception.ExceptionMapperImpl;
 import com.enonic.xp.web.serializer.WebSerializerService;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketContext;
@@ -41,7 +40,7 @@ class SlashApiFilterTest
         webSerializerService = mock( WebSerializerService.class );
         webSocketContextFactory = mock();
 
-        filter = new SlashApiFilter( slashApiHandler, webSerializerService, webSocketContextFactory, new ExceptionMapperImpl() );
+        filter = new SlashApiFilter( slashApiHandler, webSerializerService, webSocketContextFactory, mock() );
     }
 
     @Test
