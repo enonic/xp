@@ -32,7 +32,6 @@ import com.enonic.xp.site.Site;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
-import com.enonic.xp.web.exception.ExceptionMapper;
 import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.handler.BaseHandlerTest;
 
@@ -64,8 +63,7 @@ class AdminSiteHandlerTest
         this.contentService = mock( ContentService.class );
         this.projectService = mock( ProjectService.class );
 
-        this.handler =
-            new AdminSiteHandler( contentService, projectService, mock( ExceptionMapper.class ), mock( ExceptionRenderer.class ) );
+        this.handler = new AdminSiteHandler( contentService, projectService, mock( ExceptionRenderer.class ) );
         this.handler.activate( mock( AdminConfig.class, invocation -> invocation.getMethod().getDefaultValue() ) );
 
         final HttpServletRequest rawRequest = Mockito.mock( HttpServletRequest.class );

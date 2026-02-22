@@ -26,11 +26,9 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.Site;
-import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
-import com.enonic.xp.web.exception.ExceptionMapper;
 import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.handler.WebHandler;
 
@@ -45,11 +43,10 @@ public class SiteHandler
 
     @Activate
     public SiteHandler( @Reference final ContentService contentService, @Reference final ProjectService projectService,
-                        @Reference final ExceptionMapper exceptionMapper, @Reference final ExceptionRenderer exceptionRenderer )
+                        @Reference final ExceptionRenderer exceptionRenderer )
     {
         this.contentService = contentService;
         this.projectService = projectService;
-        this.exceptionMapper = exceptionMapper;
         this.exceptionRenderer = exceptionRenderer;
     }
 
@@ -80,7 +77,7 @@ public class SiteHandler
         }
         catch ( IllegalArgumentException e )
         {
-            throw new WebException( HttpStatus.NOT_FOUND, "Invalid site URL", e );
+            throw WebException.badRequest( "Invalid site URL", e );
         }
         final RepositoryId repositoryId = projectName.getRepoId();
 

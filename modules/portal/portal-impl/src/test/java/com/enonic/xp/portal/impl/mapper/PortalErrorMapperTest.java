@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.exception.NotFoundException;
+import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.ContentFixtures;
@@ -53,9 +54,7 @@ class PortalErrorMapperTest
         portalRequest.setSite( ContentFixtures.newSite() );
         portalRequest.setPageDescriptor( ContentFixtures.newPageDescriptor() );
 
-        final NotFoundException exception = new NotFoundException( "Not found." )
-        {
-        };
+        final NotFoundException exception = new NodeNotFoundException( "Not found." );
 
         final PortalError.Builder errorBuilder = PortalError.create();
         errorBuilder.status( HttpStatus.NOT_FOUND ).message( "Message: Not found." ).exception( exception ).request( portalRequest );

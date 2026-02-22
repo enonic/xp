@@ -16,6 +16,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 
@@ -66,7 +67,7 @@ public class GetAdminExtensionIconHandler
         }
         catch ( Exception e )
         {
-            throw new IllegalArgumentException( String.format( "Invalid application key: %s", value ), e );
+            throw WebException.badRequest( String.format( "Invalid application key: %s", value ), e );
         }
     }
 }

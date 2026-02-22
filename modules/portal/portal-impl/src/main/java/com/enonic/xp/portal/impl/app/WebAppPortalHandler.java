@@ -2,6 +2,7 @@ package com.enonic.xp.portal.impl.app;
 
 import java.util.regex.MatchResult;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -12,7 +13,6 @@ import com.enonic.xp.portal.impl.handler.PathMatchers;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
-import com.enonic.xp.web.exception.ExceptionMapper;
 import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.handler.WebHandler;
 
@@ -20,6 +20,12 @@ import com.enonic.xp.web.handler.WebHandler;
 public class WebAppPortalHandler
     extends BasePortalHandler
 {
+    @Activate
+    public WebAppPortalHandler( @Reference final ExceptionRenderer exceptionRenderer )
+    {
+        this.exceptionRenderer = exceptionRenderer;
+    }
+
     @Override
     protected boolean canHandle( final WebRequest webRequest )
     {
@@ -39,17 +45,5 @@ public class WebAppPortalHandler
         portalRequest.setBaseUri( matcher.group( "base" ) );
         portalRequest.setApplicationKey( ApplicationKey.from( matcher.group( "app" ) ) );
         return portalRequest;
-    }
-
-    @Reference
-    public void setWebExceptionMapper( final ExceptionMapper exceptionMapper )
-    {
-        this.exceptionMapper = exceptionMapper;
-    }
-
-    @Reference
-    public void setExceptionRenderer( final ExceptionRenderer exceptionRenderer )
-    {
-        this.exceptionRenderer = exceptionRenderer;
     }
 }

@@ -2,9 +2,6 @@ package com.enonic.xp.portal.impl.processor;
 
 import java.text.MessageFormat;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
@@ -15,7 +12,6 @@ import com.enonic.xp.portal.impl.mapper.PortalResponseMapper;
 import com.enonic.xp.portal.impl.rendering.RenderException;
 import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.resource.ResourceNotFoundException;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.site.processor.ResponseProcessorDescriptor;
@@ -23,8 +19,6 @@ import com.enonic.xp.trace.Tracer;
 
 public final class ResponseProcessorExecutor
 {
-    private static final Logger LOG = LoggerFactory.getLogger( ResponseProcessorExecutor.class );
-
     private static final String RESPONSE_PROCESSOR_METHOD = "responseProcessor";
 
     private final PortalScriptService scriptService;
@@ -37,16 +31,7 @@ public final class ResponseProcessorExecutor
     public PortalResponse execute( final ResponseProcessorDescriptor filter, final PortalRequest request, final PortalResponse response )
     {
         final ResourceKey script = ResourceKey.from( filter.getApplication(), "/cms/processors/" + filter.getName() + ".js" );
-        final ScriptExports filterExports;
-        try
-        {
-            filterExports = this.scriptService.execute( script );
-        }
-        catch ( ResourceNotFoundException e )
-        {
-            LOG.warn( "Filter execution failed: {}", e.getMessage() );
-            throw e;
-        }
+        final ScriptExports filterExports = this.scriptService.execute( script );
 
         final boolean exists = filterExports.hasMethod( RESPONSE_PROCESSOR_METHOD );
         if ( !exists )

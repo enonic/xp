@@ -94,7 +94,7 @@ public class DynamicUniversalApiHandlerRegistry
         {
             case String s -> new String[]{s};
             case String[] strings -> strings;
-            default -> throw new IllegalArgumentException( "Invalid mount. Value must be string." );
+            default -> throw new IllegalArgumentException( "Invalid mount. Value must be string or string array." );
         };
     }
 

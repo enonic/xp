@@ -2,7 +2,6 @@ package com.enonic.xp.portal.impl.exception;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -10,11 +9,14 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.net.HttpHeaders;
+import com.google.common.net.MediaType;
+
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentConstants;
-import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
@@ -24,10 +26,8 @@ import com.enonic.xp.portal.impl.error.ErrorHandlerScript;
 import com.enonic.xp.portal.impl.error.ErrorHandlerScriptFactory;
 import com.enonic.xp.portal.impl.error.PortalError;
 import com.enonic.xp.portal.postprocess.PostProcessor;
-import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.server.RunMode;
 import com.enonic.xp.site.SiteConfig;
@@ -35,9 +35,13 @@ import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
+import com.enonic.xp.web.WebResponse;
+import com.enonic.xp.web.exception.ExceptionMapper;
 import com.enonic.xp.web.exception.ExceptionRenderer;
+import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 import static com.enonic.xp.portal.RenderMode.EDIT;
+import static com.google.common.base.Strings.nullToEmpty;
 
 @Component
 public final class ExceptionRendererImpl
@@ -55,79 +59,89 @@ public final class ExceptionRendererImpl
 
     private final ResourceService resourceService;
 
-    private final PortalUrlService portalUrlService;
-
     private final ErrorHandlerScriptFactory errorHandlerScriptFactory;
 
     private final IdProviderControllerService idProviderControllerService;
 
     private final PostProcessor postProcessor;
 
+    private final ExceptionMapper exceptionMapper;
+
     @Activate
-    public ExceptionRendererImpl( @Reference final ResourceService resourceService, @Reference final PortalUrlService portalUrlService,
+    public ExceptionRendererImpl( @Reference final ResourceService resourceService,
                                   @Reference final ErrorHandlerScriptFactory errorHandlerScriptFactory,
                                   @Reference final IdProviderControllerService idProviderControllerService,
-                                  @Reference final PostProcessor postProcessor )
+                                  @Reference final PostProcessor postProcessor, @Reference final ExceptionMapper exceptionMapper )
     {
         this.resourceService = resourceService;
-        this.portalUrlService = portalUrlService;
         this.errorHandlerScriptFactory = errorHandlerScriptFactory;
         this.idProviderControllerService = idProviderControllerService;
         this.postProcessor = postProcessor;
+        this.exceptionMapper = exceptionMapper;
     }
 
     @Override
-    public PortalResponse render( final WebRequest webRequest, final WebException cause )
+    public PortalResponse render( final WebRequest webRequest, final Exception cause )
     {
-        String tip = null;
-        final ExceptionInfo info = toErrorInfo( cause );
-        logIfNeeded( info );
+        PortalResponse response = doRender( webRequest, exceptionMapper.map( cause ) );
+        webRequest.getRawRequest().setAttribute( "error.handled", Boolean.TRUE );
+        return response;
+    }
+
+    @Override
+    public WebResponse maybeThrow( WebRequest webRequest, WebResponse webResponse )
+    {
+        if ( !Boolean.TRUE.equals( webRequest.getRawRequest().getAttribute( "error.handled" ) ) )
+        {
+            this.exceptionMapper.throwIfNeeded( webResponse );
+        }
+        return webResponse;
+    }
+
+    public PortalResponse doRender( final WebRequest webRequest, final WebException cause )
+    {
+        final ExceptionInfo errorInfo = ExceptionInfo.create( cause.getStatus() ).withDebugInfo( RunMode.isDev() ).cause( cause );
+
+        logIfNeeded( errorInfo );
 
         if ( webRequest instanceof PortalRequest portalRequest )
         {
-            final HttpStatus httpStatus = cause.getStatus();
-            if ( httpStatus != null )
+            final PortalResponse statusCustomError = renderCustomError( portalRequest, cause, false );
+            if ( statusCustomError != null )
             {
-                final String handlerMethod = "handle" + httpStatus.value();
-                final PortalResponse statusCustomError = renderCustomError( portalRequest, cause, handlerMethod );
-                if ( statusCustomError != null )
-                {
-                    logIfNeeded( toErrorInfo( cause ) );
-                    return statusCustomError;
-                }
+                return statusCustomError;
             }
 
             final PortalResponse idProviderError = renderIdProviderError( portalRequest, cause );
             if ( idProviderError != null )
             {
-                logIfNeeded( toErrorInfo( cause ) );
                 return idProviderError;
             }
 
-            final PortalResponse defaultCustomError = renderCustomError( portalRequest, cause, DEFAULT_HANDLER );
+            final PortalResponse defaultCustomError = renderCustomError( portalRequest, cause, true );
             if ( defaultCustomError != null )
             {
-                logIfNeeded( toErrorInfo( cause ) );
                 return defaultCustomError;
             }
 
             if ( PortalRequestHelper.isSiteBase( portalRequest ) && ContentConstants.BRANCH_MASTER.equals( portalRequest.getBranch() ) &&
                 HttpStatus.NOT_FOUND.equals( cause.getStatus() ) )
             {
-                tip = "Tip: Did you remember to publish the site?";
+                errorInfo.tip( "Tip: Did you remember to publish the site?" );
             }
         }
 
-        return renderInternalErrorPage( webRequest, tip, cause );
+        return toResponse( errorInfo, webRequest );
     }
 
-    private PortalResponse renderCustomError( final PortalRequest req, final WebException cause, final String handlerMethod )
+    private PortalResponse renderCustomError( final PortalRequest req, final WebException cause, boolean defaultHandler )
     {
         if ( EDIT != req.getMode() )
         {
             try
             {
-                PortalResponse portalResponse = doRenderCustomError( req, cause, handlerMethod );
+                PortalResponse portalResponse =
+                    doRenderCustomError( req, cause, defaultHandler ? DEFAULT_HANDLER : "handle" + cause.getStatus().value() );
                 if ( portalResponse != null && portalResponse.isPostProcess() )
                 {
                     portalResponse = this.postProcessor.processResponse( req, portalResponse );
@@ -141,7 +155,6 @@ public final class ExceptionRendererImpl
         }
         return null;
     }
-
 
     private PortalResponse doRenderCustomError( final PortalRequest req, final WebException cause, final String handlerMethod )
     {
@@ -228,28 +241,15 @@ public final class ExceptionRendererImpl
         return null;
     }
 
-    private PortalResponse renderInternalErrorPage( final WebRequest req, String tip, final WebException cause )
-    {
-        final ExceptionInfo info = toErrorInfo( cause ).tip( tip );
-
-        logIfNeeded( info );
-        return info.toResponse( req );
-    }
-
-    private ExceptionInfo toErrorInfo( final WebException cause )
-    {
-        return ExceptionInfo.create( cause.getStatus() )
-            .withDebugInfo( RunMode.isDev() )
-            .cause( cause )
-            .resourceService( resourceService )
-            .portalUrlService( portalUrlService );
-    }
-
     private void logIfNeeded( final ExceptionInfo info )
     {
         if ( info.shouldLogAsError() )
         {
             LOG.error( info.getMessage(), info.getCause() );
+        }
+        else if ( LOG.isDebugEnabled() )
+        {
+            LOG.debug( info.getMessage(), info.getCause() );
         }
     }
 
@@ -264,12 +264,44 @@ public final class ExceptionRendererImpl
         return authInfo.isAuthenticated();
     }
 
-    private <T> T callAsContentAdmin( final Callable<T> callable )
+    private PortalResponse toResponse( final ExceptionInfo info, final WebRequest req )
     {
-        final Context context = ContextAccessor.current();
-        return ContextBuilder.from( context )
-            .authInfo( AuthenticationInfo.copyOf( context.getAuthInfo() ).principals( RoleKeys.CONTENT_MANAGER_ADMIN ).build() )
-            .build()
-            .callWith( callable );
+        final boolean isHtml = nullToEmpty( req.getHeaders().get( HttpHeaders.ACCEPT ) ).contains( "text/html" );
+        return isHtml ? toHtmlResponse( info, req ) : toJsonResponse( info );
+    }
+
+    private PortalResponse toJsonResponse( final ExceptionInfo info )
+    {
+        final ObjectNode node =
+            JsonNodeFactory.instance.objectNode().put( "status", info.status.value() ).put( "message", info.getDescription() );
+
+        return PortalResponse.create().status( info.getStatus() ).body( node ).contentType( MediaType.JSON_UTF_8 ).build();
+    }
+
+    private PortalResponse toHtmlResponse( ExceptionInfo info, final WebRequest req )
+    {
+        final ErrorPageBuilder builder;
+        if ( info.withDebugInfo )
+        {
+            builder = new ErrorPageRichBuilder().cause( info.cause )
+                .description( info.getDescription() )
+                .resourceService( this.resourceService )
+                .status( info.status.value() )
+                .title( info.status.getReasonPhrase() );
+        }
+        else
+        {
+            ErrorPageSimpleBuilder errorBuilder =
+                new ErrorPageSimpleBuilder().status( info.status.value() ).tip( info.tip ).title( info.status.getReasonPhrase() );
+            if ( info.status == HttpStatus.FORBIDDEN && ContextAccessor.current().getAuthInfo().isAuthenticated() )
+            {
+                errorBuilder.logoutUrl( ServletRequestUrlHelper.createUri( req.getRawRequest(), "/_/idprovider/" +
+                    ContextAccessor.current().getAuthInfo().getUser().getKey().getIdProviderKey() + "/logout" ) );
+            }
+            builder = errorBuilder;
+        }
+
+        final String html = builder.build();
+        return PortalResponse.create().status( info.status ).body( html ).contentType( MediaType.HTML_UTF_8 ).build();
     }
 }
