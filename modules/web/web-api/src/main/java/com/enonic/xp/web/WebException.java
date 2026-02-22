@@ -1,5 +1,7 @@
 package com.enonic.xp.web;
 
+import java.util.Objects;
+
 import org.jspecify.annotations.NonNull;
 
 import com.enonic.xp.context.ContextAccessor;
@@ -8,39 +10,39 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 public final class WebException
     extends RuntimeException
 {
-    private final HttpStatus status;
+    private final @NonNull HttpStatus status;
 
     private final boolean loggable;
 
     public WebException( final @NonNull HttpStatus status, final String message )
     {
         super( message );
-        this.status = status;
+        this.status = Objects.requireNonNull( status );
         this.loggable = this.status.is5xxServerError();
     }
 
-    public WebException( final HttpStatus status, final String message, final boolean loggable )
+    public WebException( final @NonNull HttpStatus status, final String message, final boolean loggable )
     {
         super( message );
-        this.status = status;
+        this.status = Objects.requireNonNull( status );
         this.loggable = loggable;
     }
 
-    public WebException( final HttpStatus status, final Throwable cause )
+    public WebException( final @NonNull HttpStatus status, final Throwable cause )
     {
         super( cause.getMessage(), cause );
-        this.status = status;
+        this.status = Objects.requireNonNull( status );
         this.loggable = this.status.is5xxServerError();
     }
 
-    public WebException( final HttpStatus status, final String message, final Throwable cause )
+    public WebException( final @NonNull HttpStatus status, final String message, final Throwable cause )
     {
         super( message, cause );
-        this.status = status;
+        this.status = Objects.requireNonNull( status );
         this.loggable = this.status.is5xxServerError();
     }
 
-    public HttpStatus getStatus()
+    public @NonNull HttpStatus getStatus()
     {
         return this.status;
     }

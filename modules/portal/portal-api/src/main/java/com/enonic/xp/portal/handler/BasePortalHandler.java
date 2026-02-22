@@ -26,6 +26,7 @@ public abstract class BasePortalHandler
 
     @Override
     protected WebResponse doHandle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
+        throws Exception
     {
         final PortalRequest portalRequest;
         if ( webRequest instanceof PortalRequest )
@@ -37,22 +38,23 @@ public abstract class BasePortalHandler
             portalRequest = createPortalRequest( webRequest, webResponse );
         }
 
+        PortalRequestAccessor.set( portalRequest.getRawRequest(), portalRequest );
+
+        final RepositoryId repositoryId = portalRequest.getRepositoryId();
+        if ( repositoryId != null )
+        {
+            ContextAccessor.current().getLocalScope().setAttribute( repositoryId );
+        }
+        final Branch branch = portalRequest.getBranch();
+        if ( branch != null )
+        {
+            ContextAccessor.current().getLocalScope().setAttribute( branch );
+        }
+
+        final WebResponse returnedWebResponse;
         try
         {
-            PortalRequestAccessor.set( portalRequest.getRawRequest(), portalRequest );
-
-            final RepositoryId repositoryId = portalRequest.getRepositoryId();
-            if ( repositoryId != null )
-            {
-                ContextAccessor.current().getLocalScope().setAttribute( repositoryId );
-            }
-            final Branch branch = portalRequest.getBranch();
-            if ( branch != null )
-            {
-                ContextAccessor.current().getLocalScope().setAttribute( branch );
-            }
-
-            final WebResponse returnedWebResponse = webHandlerChain.handle( portalRequest, webResponse );
+            returnedWebResponse = webHandlerChain.handle( portalRequest, webResponse );
             exceptionMapper.throwIfNeeded( returnedWebResponse );
             return returnedWebResponse;
         }
@@ -63,5 +65,4 @@ public abstract class BasePortalHandler
     }
 
     protected abstract PortalRequest createPortalRequest( WebRequest webRequest, WebResponse webResponse );
-
 }

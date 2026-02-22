@@ -161,6 +161,7 @@ public class AdminSiteHandler
 
     @Override
     protected WebResponse doHandle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
+        throws Exception
     {
         final WebResponse response = super.doHandle( webRequest, webResponse, webHandlerChain );
         final PortalRequest request = PortalRequestAccessor.get( webRequest.getRawRequest() );

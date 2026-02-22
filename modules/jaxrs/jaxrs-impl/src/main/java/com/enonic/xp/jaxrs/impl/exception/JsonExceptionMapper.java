@@ -41,7 +41,9 @@ public final class JsonExceptionMapper
         if ( status >= 500 )
         {
             LOG.error( Objects.requireNonNullElseGet( cause.getMessage(), cause.getClass()::getSimpleName ), cause );
-        } else {
+        }
+        else if ( LOG.isDebugEnabled() )
+        {
             LOG.debug( Objects.requireNonNullElseGet( cause.getMessage(), cause.getClass()::getSimpleName ), cause );
         }
         return Response.status( status ).entity( createErrorJson( cause, status ) ).type( MediaType.APPLICATION_JSON_TYPE ).build();

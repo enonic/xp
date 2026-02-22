@@ -40,6 +40,7 @@ import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
+import com.enonic.xp.web.impl.exception.ExceptionMapperImpl;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 
@@ -77,7 +78,8 @@ class ExceptionRendererImplTest
         this.errorHandlerScriptFactory = mock( ErrorHandlerScriptFactory.class );
         this.postProcessor = new MockPostProcessor();
         RunModeSupport.set( RunMode.DEV );
-        this.renderer = new ExceptionRendererImpl( resourceService, portalUrlService, errorHandlerScriptFactory, null, postProcessor );
+        this.renderer =
+            new ExceptionRendererImpl( resourceService, errorHandlerScriptFactory, null, postProcessor, new ExceptionMapperImpl() );
         this.request = new PortalRequest();
         this.request.setMode( RenderMode.LIVE );
 
@@ -118,7 +120,8 @@ class ExceptionRendererImplTest
     void render_with_tip()
     {
         RunModeSupport.set( RunMode.PROD );
-        this.renderer = new ExceptionRendererImpl( resourceService, portalUrlService, errorHandlerScriptFactory, null, postProcessor );
+        this.renderer =
+            new ExceptionRendererImpl( resourceService, errorHandlerScriptFactory, null, postProcessor, new ExceptionMapperImpl() );
 
         this.request.getHeaders().put( HttpHeaders.ACCEPT, "text/html,text/*" );
         this.request.setBaseUri( "/site" );
@@ -308,9 +311,8 @@ class ExceptionRendererImplTest
         throws IOException
     {
         RunModeSupport.set( RunMode.PROD );
-        this.renderer =
-            new ExceptionRendererImpl( resourceService, portalUrlService, errorHandlerScriptFactory, idProviderControllerService,
-                                       postProcessor );
+        this.renderer = new ExceptionRendererImpl( resourceService, errorHandlerScriptFactory, idProviderControllerService, postProcessor,
+                                                   new ExceptionMapperImpl() );
 
         when( idProviderControllerService.execute( any( IdProviderControllerExecutionParams.class ) ) ).thenReturn( null );
         when( portalUrlService.identityUrl( any( IdentityUrlParams.class ) ) ).thenReturn( "logoutUrl" );

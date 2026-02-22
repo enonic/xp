@@ -19,7 +19,6 @@ import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.handler.WebHandlerChain;
-import com.enonic.xp.web.impl.exception.ExceptionMapperImpl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -48,8 +47,6 @@ class WebAppHandlerTest
 
         this.handler = new WebAppHandler();
         this.handler.setControllerScriptFactory( this.controllerScriptFactory );
-        this.handler.setExceptionMapper( new ExceptionMapperImpl() );
-        this.handler.setExceptionRenderer( exceptionRenderer );
 
         this.request = new PortalRequest();
         this.request.setRawRequest( mock( HttpServletRequest.class ) );

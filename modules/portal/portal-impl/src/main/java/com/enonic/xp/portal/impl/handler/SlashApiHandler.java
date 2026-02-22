@@ -42,8 +42,6 @@ import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.dispatch.DispatchConstants;
-import com.enonic.xp.web.exception.ExceptionMapper;
-import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketContext;
 import com.enonic.xp.web.websocket.WebSocketEndpoint;
@@ -57,10 +55,6 @@ public class SlashApiHandler
 
     private final ApiDescriptorService apiDescriptorService;
 
-    private final ExceptionMapper exceptionMapper;
-
-    private final ExceptionRenderer exceptionRenderer;
-
     private final SiteService siteService;
 
     private final WebappService webappService;
@@ -71,16 +65,13 @@ public class SlashApiHandler
 
     @Activate
     public SlashApiHandler( @Reference final ControllerScriptFactory controllerScriptFactory,
-                            @Reference final ApiDescriptorService apiDescriptorService, @Reference final ExceptionMapper exceptionMapper,
-                            @Reference final ExceptionRenderer exceptionRenderer, @Reference final SiteService siteService,
+                            @Reference final ApiDescriptorService apiDescriptorService, @Reference final SiteService siteService,
                             @Reference final WebappService webappService,
                             @Reference final AdminToolDescriptorService adminToolDescriptorService,
                             @Reference final DynamicUniversalApiHandlerRegistry universalApiHandlerRegistry )
     {
         this.controllerScriptFactory = controllerScriptFactory;
         this.apiDescriptorService = apiDescriptorService;
-        this.exceptionMapper = exceptionMapper;
-        this.exceptionRenderer = exceptionRenderer;
         this.siteService = siteService;
         this.webappService = webappService;
         this.adminToolDescriptorService = adminToolDescriptorService;
@@ -88,7 +79,6 @@ public class SlashApiHandler
     }
 
     public WebResponse handle( final WebRequest webRequest )
-        throws Exception
     {
         final String endpoint = HandlerHelper.findEndpoint( webRequest );
         final DescriptorKey descriptorKey;
@@ -149,14 +139,13 @@ public class SlashApiHandler
 
     private WebResponse execute( final PortalRequest portalRequest, final DescriptorKey descriptorKey,
                                  final Supplier<WebResponse> supplier )
-        throws Exception
     {
         final Trace trace = Tracer.newTrace( "universalAPI" );
         if ( trace == null )
         {
             return handleAPIRequest( portalRequest, supplier );
         }
-        return Tracer.traceEx( trace, () -> {
+        return Tracer.trace( trace, () -> {
             final WebResponse response = handleAPIRequest( portalRequest, supplier );
             addTranceInfo( trace, descriptorKey, response );
             return response;
@@ -283,13 +272,7 @@ public class SlashApiHandler
         PortalRequestAccessor.set( portalRequest );
         try
         {
-            final WebResponse returnedWebResponse = supplier.get();
-            exceptionMapper.throwIfNeeded( returnedWebResponse );
-            return returnedWebResponse;
-        }
-        catch ( Exception e )
-        {
-            return exceptionRenderer.render( portalRequest, e );
+            return supplier.get();
         }
         finally
         {
