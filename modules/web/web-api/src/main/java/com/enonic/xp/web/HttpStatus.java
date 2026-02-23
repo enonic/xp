@@ -93,32 +93,27 @@ public enum HttpStatus
 
     public boolean is1xxInformational()
     {
-        final int code = this.value / 100;
-        return code == 1;
+        return familyOf( 1 );
     }
 
     public boolean is2xxSuccessful()
     {
-        final int code = this.value / 100;
-        return code == 2;
+        return familyOf( 2 );
     }
 
     public boolean is3xxRedirection()
     {
-        final int code = this.value / 100;
-        return code == 3;
+        return familyOf( 3 );
     }
 
     public boolean is4xxClientError()
     {
-        final int code = this.value / 100;
-        return code == 4;
+        return familyOf( 4 );
     }
 
     public boolean is5xxServerError()
     {
-        final int code = this.value / 100;
-        return code == 5;
+        return familyOf( 5 );
     }
 
     @Override
@@ -138,5 +133,10 @@ public enum HttpStatus
         }
 
         return null;
+    }
+
+    boolean familyOf( final int family )
+    {
+        return this.value / 100 == family;
     }
 }

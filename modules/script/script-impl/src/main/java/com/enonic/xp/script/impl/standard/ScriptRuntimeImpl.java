@@ -11,10 +11,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.script.impl.AppNotRegisteredException;
 import com.enonic.xp.script.impl.executor.ScriptExecutor;
 import com.enonic.xp.script.runtime.ScriptRuntime;
 
@@ -40,7 +40,7 @@ public class ScriptRuntimeImpl
         {
             executor = getExecutor( script.getApplicationKey() );
         }
-        catch ( ApplicationNotFoundException e )
+        catch ( AppNotRegisteredException e )
         {
             return false;
         }

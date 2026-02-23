@@ -17,10 +17,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import com.enonic.xp.annotation.Order;
-import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
-import com.enonic.xp.web.exception.ExceptionMapper;
 import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.serializer.WebSerializerService;
 import com.enonic.xp.web.websocket.WebSocketContext;
@@ -29,14 +27,12 @@ import com.enonic.xp.web.websocket.WebSocketContextFactory;
 @Component(immediate = true, service = Filter.class, property = {"connector=api"})
 @Order(100)
 @WebFilter("/*")
-public final class SlashApiServlet
+public final class SlashApiFilter
     implements Filter
 {
     private static final Pattern API_PATTERN = Pattern.compile( "^/[^/]+:[^/?]+" );
 
     private final SlashApiHandler slashApiHandler;
-
-    private final ExceptionMapper exceptionMapper;
 
     private final ExceptionRenderer exceptionRenderer;
 
@@ -45,16 +41,14 @@ public final class SlashApiServlet
     private final WebSocketContextFactory webSocketContextFactory;
 
     @Activate
-    public SlashApiServlet( @Reference final SlashApiHandler slashApiHandler, @Reference final ExceptionMapper exceptionMapper,
-                            @Reference final ExceptionRenderer exceptionRenderer,
-                            @Reference final WebSerializerService webSerializerService,
-                            @Reference final WebSocketContextFactory webSocketContextFactory )
+    public SlashApiFilter( @Reference final SlashApiHandler slashApiHandler, @Reference final WebSerializerService webSerializerService,
+                           @Reference final WebSocketContextFactory webSocketContextFactory,
+                           @Reference final ExceptionRenderer exceptionRenderer )
     {
         this.slashApiHandler = slashApiHandler;
-        this.exceptionMapper = exceptionMapper;
-        this.exceptionRenderer = exceptionRenderer;
         this.webSerializerService = webSerializerService;
         this.webSocketContextFactory = webSocketContextFactory;
+        this.exceptionRenderer = exceptionRenderer;
     }
 
     @Override
@@ -75,7 +69,15 @@ public final class SlashApiServlet
         final WebSocketContext webSocketContext = this.webSocketContextFactory.newContext( req, res );
         webRequest.setWebSocketContext( webSocketContext );
 
-        final WebResponse webResponse = doHandle( webRequest );
+        WebResponse webResponse;
+        try
+        {
+            webResponse = slashApiHandler.handle( webRequest );
+        }
+        catch ( Exception e )
+        {
+            webResponse = exceptionRenderer.render( webRequest, e );
+        }
 
         if ( webRequest.getWebSocketContext() != null && webResponse.getWebSocket() != null )
         {
@@ -83,23 +85,5 @@ public final class SlashApiServlet
         }
 
         webSerializerService.response( webRequest, webResponse, res );
-    }
-
-    private WebResponse doHandle( final WebRequest webRequest )
-    {
-        try
-        {
-            return slashApiHandler.handle( webRequest );
-        }
-        catch ( Exception e )
-        {
-            return handleError( webRequest, e );
-        }
-    }
-
-    private WebResponse handleError( final WebRequest webRequest, final Exception cause )
-    {
-        final WebException exception = this.exceptionMapper.map( cause );
-        return this.exceptionRenderer.render( webRequest, exception );
     }
 }

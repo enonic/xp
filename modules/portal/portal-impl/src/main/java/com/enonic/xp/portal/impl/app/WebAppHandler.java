@@ -16,11 +16,8 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.HttpStatus;
-import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
-import com.enonic.xp.web.exception.ExceptionMapper;
-import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.handler.BaseWebHandler;
 import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.handler.WebHandlerChain;
@@ -33,10 +30,6 @@ public final class WebAppHandler
     extends BaseWebHandler
 {
     private ControllerScriptFactory controllerScriptFactory;
-
-    private ExceptionMapper exceptionMapper;
-
-    private ExceptionRenderer exceptionRenderer;
 
     public WebAppHandler()
     {
@@ -64,27 +57,13 @@ public final class WebAppHandler
         final Trace trace = Tracer.newTrace( "renderApp" );
         if ( trace == null )
         {
-            return handleRequest( portalRequest );
+            return executeController( portalRequest );
         }
-        return Tracer.trace( trace, () -> {
-            final WebResponse resp = handleRequest( portalRequest );
+        return Tracer.traceEx( trace, () -> {
+            final WebResponse resp = executeController( portalRequest );
             addTraceInfo( trace, portalRequest.getApplicationKey(), restPath );
             return resp;
         } );
-    }
-
-    private WebResponse handleRequest( final PortalRequest req )
-    {
-        try
-        {
-            final WebResponse returnedWebResponse = executeController( req );
-            exceptionMapper.throwIfNeeded( returnedWebResponse );
-            return returnedWebResponse;
-        }
-        catch ( Exception e )
-        {
-            return handleError( req, e );
-        }
     }
 
     private WebResponse handleRedirect( WebRequest webRequest )
@@ -134,14 +113,6 @@ public final class WebAppHandler
         return this.controllerScriptFactory.fromScript( script );
     }
 
-    private WebResponse handleError( final WebRequest webRequest, final Exception e )
-    {
-        final WebException webException = exceptionMapper.map( e );
-        final WebResponse webResponse = exceptionRenderer.render( webRequest, webException );
-        webRequest.getRawRequest().setAttribute( "error.handled", Boolean.TRUE );
-        return webResponse;
-    }
-
     private void addTraceInfo( final Trace trace, final ApplicationKey applicationKey, final String path )
     {
         if ( trace != null )
@@ -156,17 +127,4 @@ public final class WebAppHandler
     {
         this.controllerScriptFactory = controllerScriptFactory;
     }
-
-    @Reference
-    public void setExceptionMapper( final ExceptionMapper exceptionMapper )
-    {
-        this.exceptionMapper = exceptionMapper;
-    }
-
-    @Reference
-    public void setExceptionRenderer( final ExceptionRenderer exceptionRenderer )
-    {
-        this.exceptionRenderer = exceptionRenderer;
-    }
-
 }

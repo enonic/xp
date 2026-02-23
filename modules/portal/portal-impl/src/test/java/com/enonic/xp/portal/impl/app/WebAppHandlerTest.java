@@ -19,7 +19,6 @@ import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.handler.WebHandlerChain;
-import com.enonic.xp.web.impl.exception.ExceptionMapperImpl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -48,8 +47,6 @@ class WebAppHandlerTest
 
         this.handler = new WebAppHandler();
         this.handler.setControllerScriptFactory( this.controllerScriptFactory );
-        this.handler.setExceptionMapper( new ExceptionMapperImpl() );
-        this.handler.setExceptionRenderer( exceptionRenderer );
 
         this.request = new PortalRequest();
         this.request.setRawRequest( mock( HttpServletRequest.class ) );
@@ -102,18 +99,6 @@ class WebAppHandlerTest
 
         assertSame( response, this.handler.doHandle( this.request, null, this.chain ) );
         assertEquals( "/webapp/myapp", this.request.getContextPath() );
-    }
-
-    @Test
-    void handle_executeController_error()
-        throws Exception
-    {
-        this.request.setApplicationKey( ApplicationKey.from( "myapp" ) );
-        this.request.setRawPath( "/webapp/myapp/a.txt" );
-        this.request.setBaseUri( "/webapp/myapp" );
-
-        final WebResponse response = this.handler.doHandle( this.request, null, this.chain );
-        assertEquals( HttpStatus.INTERNAL_SERVER_ERROR, response.getStatus() );
     }
 
     @Test

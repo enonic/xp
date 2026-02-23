@@ -51,8 +51,8 @@ final class FilterScriptImpl
         catch ( Throwable t )
         {
             final ResourceKey script = scriptExports.getScript();
-            throw new WebException( HttpStatus.INTERNAL_SERVER_ERROR,
-                                    "Error executing filter script: " + script.getApplicationKey() + ":" + script.getPath(), t );
+            throw WebException.internalServerError( "Error executing filter script: " + script.getApplicationKey() + ":" + script.getPath(),
+                                                    t );
         }
         finally
         {

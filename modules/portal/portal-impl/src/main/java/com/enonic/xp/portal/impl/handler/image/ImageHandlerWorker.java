@@ -16,7 +16,6 @@ import com.enonic.xp.image.ImageService;
 import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.image.ScaleParams;
 import com.enonic.xp.media.ImageOrientation;
-import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.MediaHashResolver;
 import com.enonic.xp.portal.impl.handler.AbstractAttachmentHandlerWorker;
@@ -129,7 +128,7 @@ public final class ImageHandlerWorker
         }
         catch ( IllegalArgumentException e )
         {
-            throw new WebException( HttpStatus.BAD_REQUEST, "Invalid parameters", e );
+            throw WebException.badRequest( "Invalid parameters", e );
         }
         catch ( ThrottlingException e )
         {

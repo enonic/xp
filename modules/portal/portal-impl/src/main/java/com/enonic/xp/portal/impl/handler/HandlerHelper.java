@@ -36,7 +36,7 @@ public final class HandlerHelper
         final String endpointPath = req.getEndpointPath();
         if ( endpointPath == null || !endpointPath.startsWith( "/" + endpoint + "/" ) )
         {
-            throw new IllegalArgumentException( "Unexpected endpoint path: " + endpointPath );
+            throw WebException.badRequest( "Unexpected endpoint path: " + endpointPath );
         }
         return endpointPath.substring( endpoint.length() + 2 );
     }

@@ -51,8 +51,6 @@ import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.dispatch.DispatchConstants;
-import com.enonic.xp.web.exception.ExceptionRenderer;
-import com.enonic.xp.web.impl.exception.ExceptionMapperImpl;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketContext;
 import com.enonic.xp.web.websocket.WebSocketEndpoint;
@@ -79,8 +77,6 @@ class SlashApiHandlerTest
 
     private ApiDescriptorService apiDescriptorService;
 
-    private ExceptionRenderer exceptionRenderer;
-
     private SiteService siteService;
 
     private WebappService webappService;
@@ -99,18 +95,14 @@ class SlashApiHandlerTest
     {
         controllerScriptFactory = mock( ControllerScriptFactory.class );
         apiDescriptorService = mock( ApiDescriptorService.class );
-        exceptionRenderer = mock( ExceptionRenderer.class );
         siteService = mock( SiteService.class );
         webappService = mock( WebappService.class );
         adminToolDescriptorService = mock( AdminToolDescriptorService.class );
         universalApiHandlerRegistry = new DynamicUniversalApiHandlerRegistry();
 
         handler =
-            new SlashApiHandler( controllerScriptFactory, apiDescriptorService, new ExceptionMapperImpl(), exceptionRenderer, siteService,
-                                 webappService, adminToolDescriptorService, universalApiHandlerRegistry );
-
-        when( this.exceptionRenderer.render( any(), any() ) ).thenReturn(
-            WebResponse.create().status( HttpStatus.INTERNAL_SERVER_ERROR ).build() );
+            new SlashApiHandler( controllerScriptFactory, apiDescriptorService, siteService, webappService, adminToolDescriptorService,
+                                 universalApiHandlerRegistry );
 
         final WebSocketConfig webSocketConfig = mock( WebSocketConfig.class );
 
@@ -266,32 +258,6 @@ class SlashApiHandlerTest
     {
         Tracer.setManager( null );
         testHandleApi();
-    }
-
-    @Test
-    void testHandleApiError()
-        throws Exception
-    {
-        when( this.exceptionRenderer.render( any(), any() ) ).thenReturn(
-            WebResponse.create().status( HttpStatus.INTERNAL_SERVER_ERROR ).build() );
-
-        when( controllerScriptFactory.fromScript( any( ResourceKey.class ) ) ).thenThrow( new NullPointerException() );
-
-        final PortalRequest request = new PortalRequest();
-        request.setMethod( HttpMethod.GET );
-        request.setRawPath( "/api/com.enonic.app.myapp:api-key" );
-        request.setRawRequest( servletRequestMock );
-
-        ApiDescriptor apiDescriptor = ApiDescriptor.create()
-            .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "api-key" ) )
-            .allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) )
-            .mount( "xp" )
-            .build();
-
-        when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
-
-        WebResponse webResponse = this.handler.handle( request );
-        assertEquals( HttpStatus.INTERNAL_SERVER_ERROR, webResponse.getStatus() );
     }
 
     @Test

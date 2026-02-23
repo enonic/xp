@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
-import com.enonic.xp.web.exception.ExceptionMapper;
 import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.handler.WebHandlerChain;
 
@@ -33,12 +32,9 @@ class AdminToolPortalHandlerTest
     void setup()
         throws Exception
     {
-        final ExceptionMapper exceptionMapper = mock( ExceptionMapper.class );
-        final ExceptionRenderer exceptionRenderer = mock( ExceptionRenderer.class );
-
-        this.handler = new AdminToolPortalHandler();
-        this.handler.setWebExceptionMapper( exceptionMapper );
-        this.handler.setExceptionRenderer( exceptionRenderer );
+        final ExceptionRenderer exceptionRenderer = mock();
+        when( exceptionRenderer.maybeThrow( any(), any() ) ).thenAnswer( invocation -> invocation.getArgument( 1 ) );
+        this.handler = new AdminToolPortalHandler( exceptionRenderer );
 
         final HttpServletRequest rawRequest = mock( HttpServletRequest.class );
 

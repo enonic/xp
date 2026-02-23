@@ -8,6 +8,7 @@ import com.google.common.net.HttpHeaders;
 import com.enonic.xp.admin.extension.AdminExtensionDescriptor;
 import com.enonic.xp.admin.extension.AdminExtensionDescriptorService;
 import com.enonic.xp.icon.Icon;
+import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 
@@ -65,7 +66,7 @@ class GetAdminExtensionIconHandlerTest
         webRequest.getParams().put( "extension", "myextension" );
         webRequest.getParams().put( "v", "d41d8cd98f00b204e9800998ecf8427e" );
 
-        final IllegalArgumentException ex = assertThrows( IllegalArgumentException.class, () -> instance.handle( webRequest ) );
+        final WebException ex = assertThrows( WebException.class, () -> instance.handle( webRequest ) );
         assertEquals( "Invalid application key: <>", ex.getMessage() );
     }
 }
