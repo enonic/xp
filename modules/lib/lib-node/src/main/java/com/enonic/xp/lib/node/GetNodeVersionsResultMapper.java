@@ -11,7 +11,7 @@ public class GetNodeVersionsResultMapper
 {
     private final NodeVersions nodeVersions;
 
-    private final long count;
+    private final int count;
 
     private final long total;
 

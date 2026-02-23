@@ -7,6 +7,7 @@ var res1 = ioLib.getResource('/lib/xp/examples/io/sample.txt');
 var exists = res1.exists();
 var size = res1.getSize();
 var stream = res1.getStream();
+var timestamp = res1.getTimestamp();
 // END
 
 // BEGIN
@@ -20,6 +21,7 @@ if (res2.exists()) {
 assert.assertEquals(true, exists);
 assert.assertEquals(11, size);
 assert.assertNotNull(stream);
+assert.assertTrue(typeof timestamp === 'number');
 assert.assertEquals(true, res2.exists());
 assert.assertEquals(11, res2.getSize());
 assert.assertNotNull(res2.getStream());

@@ -25,16 +25,6 @@ export type {
     ResourceKey,
 } from '@enonic-types/core';
 
-interface JavaResource {
-    getSize(): number;
-
-    getTimestamp(): number;
-
-    getBytes(): ByteSource;
-
-    exists(): boolean;
-}
-
 interface IOHandlerBean {
     readText(value: ByteSource): string;
 
@@ -48,62 +38,10 @@ interface IOHandlerBean {
 
     newStream(text: string): ByteSource;
 
-    getResource(key: string | ResourceKey): JavaResource;
+    getResource(key: string | ResourceKey): Resource;
 }
 
 const bean: IOHandlerBean = __.newBean<IOHandlerBean>('com.enonic.xp.lib.io.IOHandlerBean');
-
-/**
- * Looks up a resource.
- *
- * @constructor
- * @hideconstructor
- * @alias Resource
- */
-class ResourceImpl
-    implements Resource {
-    private res: JavaResource;
-
-    constructor(key: string | ResourceKey) {
-        this.res = bean.getResource(key);
-    }
-
-    /**
-     * Returns the resource size.
-     *
-     * @returns {number} Size of resource in bytes.
-     */
-    getSize(): number {
-        return this.res.getSize();
-    }
-
-    /**
-     * Returns the resource timestamp.
-     *
-     * @returns {number} Timestamp of resource creation in milliseconds.
-     */
-    getTimestamp(): number {
-        return this.res.getTimestamp();
-    }
-
-    /**
-     * Returns the resource stream.
-     *
-     * @returns Stream of resource.
-     */
-    getStream(): ByteSource {
-        return this.res.getBytes();
-    }
-
-    /**
-     * Returns true if the resource exists.
-     *
-     * @returns {boolean} True if resource exists.
-     */
-    exists(): boolean {
-        return this.res.exists();
-    }
-}
 
 /**
  * Read text from a stream.
@@ -186,5 +124,5 @@ export function newStream(text: string): ByteSource {
  * @returns {Resource} Resource reference.
  */
 export function getResource(key: string | ResourceKey): Resource {
-    return new ResourceImpl(key);
+    return __.toNativeObject(bean.getResource(key));
 }

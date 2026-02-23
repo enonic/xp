@@ -4,10 +4,10 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.testing.ScriptTestSupport;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class IOHandlerBeanTest
@@ -64,8 +64,8 @@ class IOHandlerBeanTest
     void getSize()
         throws Exception
     {
-        final long size = this.bean.getSize( bean.newStream( "value" ) );
-        assertEquals( 5, size );
+        final double size = this.bean.getSize( bean.newStream( "value" ) );
+        assertThat( size ).isEqualTo( 5 );
     }
 
     @Test
@@ -76,18 +76,5 @@ class IOHandlerBeanTest
 
         final String type2 = this.bean.getMimeType( "test.txt" );
         assertEquals( "text/plain", type2 );
-    }
-
-    @Test
-    void getResource()
-    {
-        final Resource res1 = this.bean.getResource( "/unknown.txt" );
-        assertEquals( false, res1.exists() );
-
-        final Resource res2 = this.bean.getResource( "./sample.txt" );
-        assertEquals( true, res2.exists() );
-
-        final Resource res3 = this.bean.getResource( ResourceKey.from( "myapp:/test/sample.txt" ) );
-        assertEquals( true, res3.exists() );
     }
 }

@@ -60,9 +60,9 @@ public final class WebSocketManagerImpl
     }
 
     @Override
-    public long getGroupSize( final String group )
+    public int getGroupSize( final String group )
     {
-        return this.registry.getByGroup( group ).count();
+        return Math.toIntExact( this.registry.getByGroup( group ).count() );
     }
 
     @Override

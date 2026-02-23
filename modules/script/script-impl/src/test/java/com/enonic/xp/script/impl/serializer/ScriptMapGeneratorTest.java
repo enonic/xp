@@ -1,5 +1,7 @@
 package com.enonic.xp.script.impl.serializer;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +30,26 @@ class ScriptMapGeneratorTest
 
         final ScriptExports exports = runTestScript( "serializer/serializer-test.js" );
         exports.executeMethod( "testObject", obj );
+    }
+
+    @Test
+    void testNumber()
+    {
+        final Object obj = (MapSerializable) gen -> {
+            gen.value( "maxLong", Long.MAX_VALUE );
+            gen.value( "longEnough", Integer.MAX_VALUE + 1L );
+            gen.value( "longAsInt", 42L );
+            gen.value( "integer", Integer.MAX_VALUE );
+            gen.value( "float", Float.MAX_VALUE );
+            gen.value( "double", Double.MAX_VALUE );
+            gen.value( "short", Short.MAX_VALUE );
+            gen.value( "byte", Byte.MAX_VALUE );
+            gen.value( "bigInteger", BigInteger.valueOf( Long.MAX_VALUE ) );
+            gen.value( "bigDecimal", BigDecimal.valueOf( Double.MAX_VALUE ) );
+        };
+
+        final ScriptExports exports = runTestScript( "serializer/serializer-test.js" );
+        exports.executeMethod( "testNumber", obj );
     }
 
     @Test
