@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.dispatch.DispatchConstants;
 
@@ -51,7 +52,7 @@ class WebHandlerHelperTest
     {
         final WebRequest req = new WebRequest();
         req.setRawPath( "/site/draft/_/com.enonic.app:myapiextra" );
-        assertThrows( IllegalArgumentException.class, () -> WebHandlerHelper.findApiPath( req, "com.enonic.app:myapi" ) );
+        assertThrows( WebException.class, () -> WebHandlerHelper.findApiPath( req, "com.enonic.app:myapi" ) );
     }
 
     @Test
@@ -59,7 +60,7 @@ class WebHandlerHelperTest
     {
         final WebRequest req = new WebRequest();
         req.setRawPath( "/api/com.enonic.app:myapiextra" );
-        assertThrows( IllegalArgumentException.class, () -> WebHandlerHelper.findApiPath( req, "com.enonic.app:myapi" ) );
+        assertThrows( WebException.class, () -> WebHandlerHelper.findApiPath( req, "com.enonic.app:myapi" ) );
     }
 
     @Test
@@ -67,7 +68,7 @@ class WebHandlerHelperTest
     {
         final WebRequest req = new WebRequest();
         req.setRawPath( "/api/myapi" );
-        assertThrows( IllegalArgumentException.class, () -> WebHandlerHelper.findApiPath( req, "com.enonic.app:myapi" ) );
+        assertThrows( WebException.class, () -> WebHandlerHelper.findApiPath( req, "com.enonic.app:myapi" ) );
     }
 
     @Test
@@ -88,7 +89,7 @@ class WebHandlerHelperTest
     void testFindApiPath_apiConnector_invalid()
     {
         final WebRequest req = createApiConnectorRequest( "/com.enonic.app:myapiextra" );
-        assertThrows( IllegalArgumentException.class, () -> WebHandlerHelper.findApiPath( req, "com.enonic.app:myapi" ) );
+        assertThrows( WebException.class, () -> WebHandlerHelper.findApiPath( req, "com.enonic.app:myapi" ) );
     }
 
     @Test
@@ -96,7 +97,7 @@ class WebHandlerHelperTest
     {
         final WebRequest req = new WebRequest();
         req.setRawPath( "/other/com.enonic.app:myapi" );
-        assertThrows( IllegalArgumentException.class, () -> WebHandlerHelper.findApiPath( req, "com.enonic.app:myapi" ) );
+        assertThrows( WebException.class, () -> WebHandlerHelper.findApiPath( req, "com.enonic.app:myapi" ) );
     }
 
     @Test
@@ -104,14 +105,14 @@ class WebHandlerHelperTest
     {
         final WebRequest req = new WebRequest();
         req.setRawPath( "/site/draft/_/other:api" );
-        assertThrows( IllegalArgumentException.class, () -> WebHandlerHelper.findApiPath( req, "com.enonic.app:myapi" ) );
+        assertThrows( WebException.class, () -> WebHandlerHelper.findApiPath( req, "com.enonic.app:myapi" ) );
     }
 
     @Test
     void testFindApiPath_apiConnector_wrongPrefix()
     {
         final WebRequest req = createApiConnectorRequest( "com.enonic.app:myapi" );
-        assertThrows( IllegalArgumentException.class, () -> WebHandlerHelper.findApiPath( req, "com.enonic.app:myapi" ) );
+        assertThrows( WebException.class, () -> WebHandlerHelper.findApiPath( req, "com.enonic.app:myapi" ) );
     }
 
     private static WebRequest createApiConnectorRequest( final String rawPath )

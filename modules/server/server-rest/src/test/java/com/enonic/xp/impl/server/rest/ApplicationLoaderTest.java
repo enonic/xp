@@ -18,6 +18,7 @@ import com.google.common.io.ByteSource;
 import com.sun.net.httpserver.HttpServer;
 
 import com.enonic.xp.event.Event;
+import com.enonic.xp.web.WebException;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -108,7 +109,6 @@ class ApplicationLoaderTest
             exchange.close();
         } );
 
-        assertThrows( IllegalArgumentException.class,
-                      () -> new ApplicationLoader().load( URI.create( appUrl ).toURL(), sha512, eventListener ) );
+        assertThrows( WebException.class, () -> new ApplicationLoader().load( URI.create( appUrl ).toURL(), sha512, eventListener ) );
     }
 }

@@ -3,7 +3,7 @@ package com.enonic.xp.portal.impl.exception;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.enonic.xp.exception.NotFoundException;
+import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
@@ -35,9 +35,7 @@ class ExceptionMapperTest
     @Test
     void map_notFoundException()
     {
-        final WebException result = this.mapper.map( new NotFoundException( "Custom message" )
-        {
-        } );
+        final WebException result = this.mapper.map( new NodeNotFoundException( "Custom message" ) );
         assertNotNull( result );
         assertEquals( HttpStatus.NOT_FOUND, result.getStatus() );
         assertEquals( "Custom message", result.getMessage() );
@@ -48,7 +46,7 @@ class ExceptionMapperTest
     {
         final WebException result = this.mapper.map( new IllegalArgumentException( "Custom message" ) );
         assertNotNull( result );
-        assertEquals( HttpStatus.BAD_REQUEST, result.getStatus() );
+        assertEquals( HttpStatus.INTERNAL_SERVER_ERROR, result.getStatus() );
         assertEquals( "Custom message", result.getMessage() );
     }
 
@@ -70,9 +68,7 @@ class ExceptionMapperTest
 
     private void assertThrowIfNeeded( final HttpStatus status )
     {
-        final PortalResponse response = PortalResponse.create().
-            status( status ).
-            build();
+        final PortalResponse response = PortalResponse.create().status( status ).build();
 
         try
         {
@@ -88,9 +84,7 @@ class ExceptionMapperTest
     @Test
     void throwIfNeeded_notNeeded()
     {
-        final PortalResponse response = PortalResponse.create().
-            status( HttpStatus.OK ).
-            build();
+        final PortalResponse response = PortalResponse.create().status( HttpStatus.OK ).build();
 
         this.mapper.throwIfNeeded( response );
     }

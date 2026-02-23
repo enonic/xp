@@ -19,6 +19,7 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.xp.core.internal.security.MessageDigests;
 import com.enonic.xp.event.Event;
+import com.enonic.xp.web.WebException;
 
 public class ApplicationLoader
 {
@@ -42,7 +43,7 @@ public class ApplicationLoader
     {
         if ( !ALLOWED_PROTOCOLS.contains( url.getProtocol() ) )
         {
-            throw new IllegalArgumentException( "Unsupported protocol: " + url.getProtocol() );
+            throw WebException.badRequest( "Unsupported protocol: " + url.getProtocol() );
         }
 
         try
@@ -59,7 +60,7 @@ public class ApplicationLoader
 
                 if ( sha512Checksum != null && !MessageDigest.isEqual( sha512Checksum, digestInputStream.getMessageDigest().digest() ) )
                 {
-                    throw new IllegalArgumentException( "Checksum validation failed" );
+                    throw WebException.badRequest( "Checksum validation failed" );
                 }
                 return ByteSource.wrap( bytes );
             }

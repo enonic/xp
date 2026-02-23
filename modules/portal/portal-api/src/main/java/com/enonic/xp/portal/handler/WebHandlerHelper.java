@@ -68,7 +68,7 @@ public final class WebHandlerHelper
     {
         if ( !basePath.startsWith( prefix ) || !basePath.regionMatches( prefix.length(), api, 0, api.length() ) )
         {
-            throw new IllegalArgumentException( "Unexpected API path: " + basePath );
+            throw WebException.badRequest( "Unexpected API path: " + basePath );
         }
 
         final int prefixLength = api.length() + prefix.length();
@@ -78,7 +78,7 @@ public final class WebHandlerHelper
         }
         if ( basePath.charAt( prefixLength ) != '/' )
         {
-            throw new IllegalArgumentException( "Unexpected API path: " + basePath );
+            throw WebException.badRequest( "Unexpected API path: " + basePath );
         }
         return basePath.substring( prefixLength );
     }

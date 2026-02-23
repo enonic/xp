@@ -16,6 +16,7 @@ import com.enonic.xp.impl.server.rest.model.ApplicationInstallParams;
 import com.enonic.xp.impl.server.rest.model.ApplicationInstallResultJson;
 import com.enonic.xp.impl.server.rest.model.ApplicationInstalledJson;
 import com.enonic.xp.impl.server.rest.model.ApplicationParams;
+import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
 
@@ -43,7 +44,7 @@ public class ApplicationResourceService
         final MultipartItem appFile = form.get( "file" );
         if ( appFile == null )
         {
-            throw new IllegalArgumentException( "Missing file item" );
+            throw WebException.badRequest( "Missing file item" );
         }
 
         final ApplicationInstallResultJson result = new ApplicationInstallResultJson();

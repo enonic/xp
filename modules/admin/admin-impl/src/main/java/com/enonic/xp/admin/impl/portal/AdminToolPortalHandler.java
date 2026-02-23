@@ -3,6 +3,7 @@ package com.enonic.xp.admin.impl.portal;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -12,7 +13,6 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.handler.BasePortalHandler;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
-import com.enonic.xp.web.exception.ExceptionMapper;
 import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.handler.WebHandler;
 
@@ -27,6 +27,12 @@ public class AdminToolPortalHandler
     public static final DescriptorKey DEFAULT_DESCRIPTOR_KEY = DescriptorKey.from( "com.enonic.xp.app.main:home" );
 
     public static final Pattern ADMIN_TOOL_PATH_PATTERN = Pattern.compile( "^/admin/(?<app>[^/]+)/(?<tool>[^/]+)" );
+
+    @Activate
+    public AdminToolPortalHandler( @Reference final ExceptionRenderer exceptionRenderer )
+    {
+        this.exceptionRenderer = exceptionRenderer;
+    }
 
     @Override
     protected boolean canHandle( final WebRequest webRequest )
@@ -71,17 +77,5 @@ public class AdminToolPortalHandler
             }
         }
         return null;
-    }
-
-    @Reference
-    public void setWebExceptionMapper( final ExceptionMapper exceptionMapper )
-    {
-        this.exceptionMapper = exceptionMapper;
-    }
-
-    @Reference
-    public void setExceptionRenderer( final ExceptionRenderer exceptionRenderer )
-    {
-        this.exceptionRenderer = exceptionRenderer;
     }
 }
