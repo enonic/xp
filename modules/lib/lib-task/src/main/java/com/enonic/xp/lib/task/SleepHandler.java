@@ -4,9 +4,9 @@ import java.util.concurrent.TimeUnit;
 
 public final class SleepHandler
 {
-    private Long timeMillis;
+    private Double timeMillis;
 
-    public void setTimeMillis( final Long timeMillis )
+    public void setTimeMillis( final Double timeMillis )
     {
         this.timeMillis = timeMillis;
     }
@@ -18,6 +18,6 @@ public final class SleepHandler
         {
             return;
         }
-        TimeUnit.MILLISECONDS.sleep( timeMillis );
+        TimeUnit.MILLISECONDS.sleep( timeMillis.longValue() );
     }
 }

@@ -10,7 +10,6 @@ import com.google.common.io.CharSource;
 import com.google.common.io.LineProcessor;
 import com.google.common.net.MediaType;
 
-import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.script.bean.BeanContext;
@@ -60,7 +59,7 @@ public final class IOHandlerBean
         } );
     }
 
-    public long getSize( final Object value )
+    public double getSize( final Object value )
         throws Exception
     {
         return toByteSource( value ).size();
@@ -82,11 +81,11 @@ public final class IOHandlerBean
         return type.toString();
     }
 
-    public Resource getResource( final Object key )
+    public ResourceMapper getResource( final Object key )
     {
         final ResourceKey resourceKey = toResourceKey( key );
         final ResourceService service = this.context.getService( ResourceService.class ).get();
-        return service.getResource( resourceKey );
+        return new ResourceMapper( service.getResource( resourceKey ) );
     }
 
     private CharSource toCharSource( final Object value )

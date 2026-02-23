@@ -22,3 +22,26 @@ exports.testMultimapValue = function (o) {
     assert.assertEquals('{"multimap":{"value2":[false,true],"value1":[1,2,3],"value4":{"children":[5,6,7]},"value3":"string1"}}',
         JSON.stringify(o));
 };
+
+exports.testNumber = function (o) {
+    assert.assertTrue(typeof o['longEnough'] === 'number');
+    assert.assertTrue(typeof o['longAsInt'] === 'number');
+    assert.assertTrue(typeof o['integer'] === 'number');
+    assert.assertTrue(typeof o['float'] === 'number');
+    assert.assertTrue(typeof o['double'] === 'number');
+    assert.assertTrue(typeof o['short'] === 'number');
+    assert.assertTrue(typeof o['byte'] === 'number');
+
+    assert.assertTrue(o['longAsInt'] === 42);
+    assert.assertTrue(o['longEnough'] === 2147483648);
+
+    // Exact values for standard types
+    assert.assertTrue(o['integer'] === 2147483647);
+    assert.assertTrue(o['short'] === 32767);
+    assert.assertTrue(o['byte'] === 127);
+
+    // BigInteger and BigDecimal and not JS safe integer pass through as-is (not converted)
+    assert.assertTrue(typeof o['maxLong'] === 'object');
+    assert.assertTrue(typeof o['bigInteger'] === 'object');
+    assert.assertTrue(typeof o['bigDecimal'] === 'object');
+};

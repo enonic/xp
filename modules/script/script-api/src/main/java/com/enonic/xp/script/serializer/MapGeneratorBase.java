@@ -16,6 +16,9 @@ import com.enonic.xp.annotation.PublicApi;
 public abstract class MapGeneratorBase
     implements MapGenerator
 {
+    private static final long JS_MAX_SAFE_INTEGER = (1L << 53) - 1;
+    private static final long JS_MIN_SAFE_INTEGER = -JS_MAX_SAFE_INTEGER;
+
     private Object root;
 
     private final Deque<Object> stack = new ArrayDeque<>();
@@ -37,7 +40,7 @@ public abstract class MapGeneratorBase
 
     protected abstract Object newArray();
 
-    protected abstract Object newFunction(Function<?, ?> function);
+    protected abstract Object newFunction( Function<?, ?> function );
 
     protected abstract boolean isMap( Object value );
 
@@ -259,14 +262,17 @@ public abstract class MapGeneratorBase
         return value.toString();
     }
 
-    private Object convertNumber( final Number value )
+    private Number convertNumber( final Number value )
     {
-        if ( value instanceof Long )
+        if ( value instanceof Long l )
         {
-            Long l = (Long) value;
             if ( l >= Integer.MIN_VALUE && l <= Integer.MAX_VALUE )
             {
                 return l.intValue();
+            }
+            if ( l >= JS_MIN_SAFE_INTEGER && l <= JS_MAX_SAFE_INTEGER )
+            {
+                return l.doubleValue();
             }
         }
         return value;

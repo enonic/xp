@@ -18,7 +18,7 @@ public final class WebSocketManagerBean
         this.webSocketManager.sendToGroup( group, message );
     }
 
-    public long getGroupSize( final String group )
+    public int getGroupSize( final String group )
     {
         return this.webSocketManager.getGroupSize( group );
     }
