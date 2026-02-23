@@ -149,3 +149,30 @@ exports.map = function () {
         }
     };
 };
+
+exports.nullValues = function () {
+    return {
+        nullProp: null,
+        nonNull: 'hello',
+        alsoNull: null
+    };
+};
+
+exports.undefinedValues = function () {
+    return {
+        undefProp: undefined,
+        nonNull: 'hello',
+        alsoUndef: undefined
+    };
+};
+
+exports.deletedValues = function () {
+    var obj = {
+        deletedProp: 'will be deleted',
+        nonNull: 'hello',
+        alsoDeleted: 'will be deleted too'
+    };
+    delete obj.deletedProp;
+    delete obj.alsoDeleted;
+    return obj;
+};

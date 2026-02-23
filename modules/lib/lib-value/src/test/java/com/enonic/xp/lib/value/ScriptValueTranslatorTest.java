@@ -212,6 +212,30 @@ public class ScriptValueTranslatorTest
         validateType( properties, "myMap.a.b", ValueTypes.LONG );
     }
 
+    @Test
+    void nullValues()
+    {
+        final PropertyTree properties = getPropertyTree( "nullValues" );
+        assertEquals( "hello", properties.getString( "nonNull" ) );
+        assertEquals( 1, properties.getTotalSize() );
+    }
+
+    @Test
+    void undefinedValues()
+    {
+        final PropertyTree properties = getPropertyTree( "undefinedValues" );
+        assertEquals( "hello", properties.getString( "nonNull" ) );
+        assertEquals( 1, properties.getTotalSize() );
+    }
+
+    @Test
+    void deletedValues()
+    {
+        final PropertyTree properties = getPropertyTree( "deletedValues" );
+        assertEquals( "hello", properties.getString( "nonNull" ) );
+        assertEquals( 1, properties.getTotalSize() );
+    }
+
     private void validateType( final PropertyTree properties, final String propertyName, final ValueType valueType )
     {
         final Property prop = properties.getProperty( propertyName );

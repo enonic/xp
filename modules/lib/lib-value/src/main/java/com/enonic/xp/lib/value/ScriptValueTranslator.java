@@ -39,22 +39,22 @@ public class ScriptValueTranslator
     public ScriptValueTranslatorResult create( final ScriptValue value )
     {
         final Map<String, Object> map = value.getMap();
-
-        handleMap( this.propertyTree.getRoot(), map );
+        final PropertySet root = this.propertyTree.getRoot();
+        map.forEach( ( k, v ) -> handleElement( root, k, v ) );
 
         return new ScriptValueTranslatorResult( this.propertyTree, this.binaryAttachmentsBuilder.build() );
     }
 
     private void handleElement( final PropertySet parent, final String name, final Object value )
     {
-        if ( value instanceof Map )
+        if ( value instanceof Map<?, ?> map )
         {
-            final PropertySet set = parent.addSet( name );
-            handleMap( set, (Map) value );
+            final PropertySet innerSet = parent.addSet( name );
+            map.forEach( ( k, v ) -> handleElement( innerSet, k.toString(), v ) );
         }
-        else if ( value instanceof Collection )
+        else if ( value instanceof Collection<?> coll )
         {
-            handleArray( parent, name, (Collection) value );
+            coll.forEach( v -> handleElement( parent, name, v ) );
         }
         else
         {
@@ -62,101 +62,40 @@ public class ScriptValueTranslator
         }
     }
 
-    private void handleMap( final PropertySet parent, final Map map )
-    {
-        map.forEach( ( key, value ) -> handleElement( parent, key.toString(), value ) );
-    }
-
-    private void handleArray( final PropertySet parent, final String name, final Collection values )
-    {
-        for ( final Object value : values )
-        {
-            handleElement( parent, name, value );
-        }
-    }
-
     private void handleValue( final PropertySet parent, final String name, final Object value )
     {
-        if ( value instanceof Instant )
+        switch ( value )
         {
-            parent.addInstant( name, (Instant) value );
-        }
-        else if ( value instanceof GeoPoint )
-        {
-            parent.addGeoPoint( name, (GeoPoint) value );
-        }
-        else if ( value instanceof Double )
-        {
-            parent.addDouble( name, (Double) value );
-        }
-        else if ( value instanceof Float )
-        {
-            parent.addDouble( name, ( (Float) value ).doubleValue() );
-        }
-        else if ( value instanceof Integer )
-        {
-            parent.addLong( name, ( (Integer) value ).longValue() );
-        }
-        else if ( value instanceof Byte )
-        {
-            parent.addLong( name, ( (Byte) value ).longValue() );
-        }
-        else if ( value instanceof Long )
-        {
-            parent.addLong( name, ( (Long) value ) );
-        }
-        else if ( value instanceof Number )
-        {
-            parent.addDouble( name, ( (Number) value ).doubleValue() );
-        }
-        else if ( value instanceof Boolean )
-        {
-            parent.addBoolean( name, (Boolean) value );
-        }
-        else if ( value instanceof LocalDateTime )
-        {
-            parent.addLocalDateTime( name, (LocalDateTime) value );
-        }
-        else if ( value instanceof LocalDate )
-        {
-            parent.addLocalDate( name, (LocalDate) value );
-        }
-        else if ( value instanceof LocalTime )
-        {
-            parent.addLocalTime( name, (LocalTime) value );
-        }
-        else if ( value instanceof Date )
-        {
-            parent.addInstant( name, ( (Date) value ).toInstant() );
-        }
-        else if ( value instanceof Reference )
-        {
-            parent.addReference( name, (Reference) value );
-        }
-        else if ( value instanceof BinaryReference )
-        {
-            parent.addBinaryReference( name, (BinaryReference) value );
-        }
-        else if ( value instanceof Link )
-        {
-            parent.addLink( name, (Link) value );
-        }
-
-        else if ( value instanceof BinaryAttachment )
-        {
-            final BinaryAttachment binaryAttachment = (BinaryAttachment) value;
-            parent.addBinaryReference( name, binaryAttachment.getReference() );
-
-            if ( includeBinaryAttachments )
+            case null ->
             {
-                this.binaryAttachmentsBuilder.add(
-                    new BinaryAttachment( binaryAttachment.getReference(), binaryAttachment.getByteSource() ) );
             }
-        }
+            case Double v -> parent.addDouble( name, v );
+            case Float v -> parent.addDouble( name, v.doubleValue() );
+            case Integer i -> parent.addLong( name, i.longValue() );
+            case Byte b -> parent.addLong( name, b.longValue() );
+            case Long l -> parent.addLong( name, l );
+            case Number number -> parent.addDouble( name, number.doubleValue() );
+            case Boolean b -> parent.addBoolean( name, b );
+            case LocalDateTime localDateTime -> parent.addLocalDateTime( name, localDateTime );
+            case LocalDate localDate -> parent.addLocalDate( name, localDate );
+            case LocalTime localTime -> parent.addLocalTime( name, localTime );
+            case Date date -> parent.addInstant( name, date.toInstant() );
+            case Instant instant -> parent.addInstant( name, instant );
+            case Reference reference -> parent.addReference( name, reference );
+            case BinaryReference binaryReference -> parent.addBinaryReference( name, binaryReference );
+            case Link link -> parent.addLink( name, link );
+            case GeoPoint geoPoint -> parent.addGeoPoint( name, geoPoint );
+            case BinaryAttachment binaryAttachment ->
+            {
+                parent.addBinaryReference( name, binaryAttachment.getReference() );
 
-        else
-        {
-            parent.addString( name, value.toString() );
+                if ( includeBinaryAttachments )
+                {
+                    this.binaryAttachmentsBuilder.add(
+                        new BinaryAttachment( binaryAttachment.getReference(), binaryAttachment.getByteSource() ) );
+                }
+            }
+            default -> parent.addString( name, value.toString() );
         }
     }
 
