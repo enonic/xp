@@ -26,6 +26,8 @@ exports.testMultimapValue = function (o) {
 exports.testNumber = function (o) {
     assert.assertTrue(typeof o['longEnough'] === 'number');
     assert.assertTrue(typeof o['longAsInt'] === 'number');
+    assert.assertTrue(typeof o['maxSafe'] === 'number');
+    assert.assertTrue(typeof o['minSafe'] === 'number');
     assert.assertTrue(typeof o['integer'] === 'number');
     assert.assertTrue(typeof o['float'] === 'number');
     assert.assertTrue(typeof o['double'] === 'number');
@@ -34,6 +36,8 @@ exports.testNumber = function (o) {
 
     assert.assertTrue(o['longAsInt'] === 42);
     assert.assertTrue(o['longEnough'] === 2147483648);
+    assert.assertTrue(o['maxSafe'] === 9007199254740991);
+    assert.assertTrue(o['minSafe'] === -9007199254740991);
 
     // Exact values for standard types
     assert.assertTrue(o['integer'] === 2147483647);

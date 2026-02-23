@@ -38,6 +38,8 @@ class ScriptMapGeneratorTest
         final Object obj = (MapSerializable) gen -> {
             gen.value( "maxLong", Long.MAX_VALUE );
             gen.value( "longEnough", Integer.MAX_VALUE + 1L );
+            gen.value( "maxSafe", (1L << 53) - 1 );
+            gen.value( "minSafe", - ((1L << 53) -1) );
             gen.value( "longAsInt", 42L );
             gen.value( "integer", Integer.MAX_VALUE );
             gen.value( "float", Float.MAX_VALUE );
