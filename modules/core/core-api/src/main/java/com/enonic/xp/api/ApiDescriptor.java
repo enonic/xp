@@ -8,7 +8,6 @@ import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.descriptor.DescriptorKey;
-import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
 
@@ -74,11 +73,6 @@ public final class ApiDescriptor
     public boolean isAccessAllowed( final PrincipalKeys principalKeys )
     {
         return principalKeys.contains( RoleKeys.ADMIN ) || allowedPrincipals.stream().anyMatch( principalKeys::contains );
-    }
-
-    public static ResourceKey toResourceKey( final DescriptorKey key, final String extension )
-    {
-        return ResourceKey.from( key.getApplicationKey(), "apis/" + key.getName() + "/" + key.getName() + "." + extension );
     }
 
     public static Builder create()

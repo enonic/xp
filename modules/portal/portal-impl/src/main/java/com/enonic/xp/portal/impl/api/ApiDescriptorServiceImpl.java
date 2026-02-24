@@ -13,6 +13,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.descriptor.DescriptorKeyLocator;
 import com.enonic.xp.resource.Resource;
+import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
 
@@ -20,6 +21,8 @@ import com.enonic.xp.resource.ResourceService;
 public final class ApiDescriptorServiceImpl
     implements ApiDescriptorService
 {
+    private static final String ROOT_PATH = "/apis";
+
     private final ResourceService resourceService;
 
     private final DescriptorKeyLocator descriptorKeyLocator;
@@ -28,7 +31,7 @@ public final class ApiDescriptorServiceImpl
     public ApiDescriptorServiceImpl( @Reference final ResourceService resourceService )
     {
         this.resourceService = resourceService;
-        this.descriptorKeyLocator = new DescriptorKeyLocator( this.resourceService, "/apis", true );
+        this.descriptorKeyLocator = new DescriptorKeyLocator( this.resourceService, ROOT_PATH, true );
     }
 
     @Override
@@ -52,7 +55,7 @@ public final class ApiDescriptorServiceImpl
     {
         return new ResourceProcessor.Builder<DescriptorKey, ApiDescriptor>().key( key )
             .segment( "rootApiDescriptor" )
-            .keyTranslator( descriptorKey -> ApiDescriptor.toResourceKey( descriptorKey, "yml" ) )
+            .keyTranslator( this::toResourceKey )
             .processor( resource -> loadDescriptor( key, resource ) )
             .build();
     }
@@ -60,5 +63,10 @@ public final class ApiDescriptorServiceImpl
     private ApiDescriptor loadDescriptor( final DescriptorKey key, final Resource resource )
     {
         return YmlApiDescriptorParser.parse( resource.readString(), key.getApplicationKey() ).key( key ).build();
+    }
+
+    private ResourceKey toResourceKey( final DescriptorKey key )
+    {
+        return ResourceKey.from( key.getApplicationKey(), ROOT_PATH + "/" + key.getName() + "/" + key.getName() + ".yml" );
     }
 }

@@ -356,9 +356,9 @@ public class SlashApiHandler
         }
     }
 
-    private ControllerScript getScript( final DescriptorKey descriptorKey )
+    private ControllerScript getScript( final DescriptorKey key )
     {
-        final ResourceKey script = ApiDescriptor.toResourceKey( descriptorKey, "js" );
+        final ResourceKey script = ResourceKey.from( key.getApplicationKey(), "apis/" + key.getName() + "/" + key.getName() + ".js" );
         return this.controllerScriptFactory.fromScript( script );
     }
 

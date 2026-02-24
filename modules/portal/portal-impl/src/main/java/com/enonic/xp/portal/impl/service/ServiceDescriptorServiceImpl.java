@@ -2,6 +2,7 @@ package com.enonic.xp.portal.impl.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -13,6 +14,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.descriptor.DescriptorKeyLocator;
 import com.enonic.xp.resource.Resource;
+import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.service.ServiceDescriptor;
@@ -44,12 +46,7 @@ public final class ServiceDescriptorServiceImpl
         final ResourceProcessor<DescriptorKey, ServiceDescriptor> processor = newRootProcessor( descriptorKey );
         final ServiceDescriptor descriptor = this.resourceService.processResource( processor );
 
-        if ( descriptor != null )
-        {
-            return descriptor;
-        }
-
-        return createDefaultDescriptor( descriptorKey );
+        return Objects.requireNonNullElseGet( descriptor, () -> createDefaultDescriptor( descriptorKey ) );
     }
 
     @Override
@@ -68,7 +65,7 @@ public final class ServiceDescriptorServiceImpl
             }
             catch ( final IllegalArgumentException e )
             {
-                LOG.error( "Error in page descriptor: " + descriptorKey.toString(), e );
+                LOG.error( "Error in page descriptor: {}", descriptorKey.toString(), e );
             }
         }
 
@@ -79,7 +76,7 @@ public final class ServiceDescriptorServiceImpl
     {
         return new ResourceProcessor.Builder<DescriptorKey, ServiceDescriptor>().key( key )
             .segment( "rootServiceDescriptor" )
-            .keyTranslator( ServiceDescriptor::toRootResourceKey )
+            .keyTranslator( this::toResourceKey )
             .processor( resource -> loadDescriptor( key, resource ) )
             .build();
     }
@@ -94,4 +91,8 @@ public final class ServiceDescriptorServiceImpl
         return ServiceDescriptor.create().key( descriptorKey ).build();
     }
 
+    private ResourceKey toResourceKey( final DescriptorKey key )
+    {
+        return ResourceKey.from( key.getApplicationKey(), ROOT_PATH + "/" + key.getName() + "/" + key.getName() + ".yml" );
+    }
 }

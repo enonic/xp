@@ -12,6 +12,7 @@ import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.descriptor.DescriptorKeyLocator;
 import com.enonic.xp.resource.Resource;
+import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.security.PrincipalKeys;
@@ -70,7 +71,7 @@ public final class AdminToolDescriptorServiceImpl
     {
         return new ResourceProcessor.Builder<DescriptorKey, String>().key( key )
             .segment( "adminToolIcon" )
-            .keyTranslator( AdminToolDescriptor::toIconResourceKey )
+            .keyTranslator( this::toIconResourceKey )
             .processor( Resource::readString )
             .build();
     }
@@ -79,9 +80,24 @@ public final class AdminToolDescriptorServiceImpl
     {
         return new ResourceProcessor.Builder<DescriptorKey, AdminToolDescriptor>().key( key )
             .segment( "adminToolDescriptor" )
-            .keyTranslator( AdminToolDescriptor::toResourceKey )
+            .keyTranslator( this::toYmlResourceKey )
             .processor( resource -> loadDescriptor( key, resource ) )
             .build();
+    }
+
+    private ResourceKey toResourceKey( final DescriptorKey key, final String extension )
+    {
+        return ResourceKey.from( key.getApplicationKey(), "admin/tools/" + key.getName() + "/" + key.getName() + "." + extension );
+    }
+
+    private ResourceKey toYmlResourceKey( final DescriptorKey key )
+    {
+        return toResourceKey( key, "yml" );
+    }
+
+    private ResourceKey toIconResourceKey( final DescriptorKey key )
+    {
+        return toResourceKey( key, "svg" );
     }
 
     private AdminToolDescriptor loadDescriptor( final DescriptorKey key, final Resource resource )

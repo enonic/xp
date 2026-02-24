@@ -7,7 +7,6 @@ import java.util.Objects;
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.descriptor.DescriptorKeys;
-import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptors;
 import com.enonic.xp.site.processor.ResponseProcessorDescriptors;
 
@@ -16,8 +15,6 @@ import static java.util.Objects.requireNonNullElse;
 @PublicApi
 public final class SiteDescriptor
 {
-    private static final String SITE_DESCRIPTOR_PATH = "cms/site.yml";
-
     private final ApplicationKey applicationKey;
 
     private final ResponseProcessorDescriptors responseProcessors;
@@ -60,11 +57,6 @@ public final class SiteDescriptor
     public DescriptorKeys getApiMounts()
     {
         return apiMounts;
-    }
-
-    public static ResourceKey toResourceKey( final ApplicationKey applicationKey )
-    {
-        return ResourceKey.from( applicationKey, SITE_DESCRIPTOR_PATH );
     }
 
     public static Builder create()

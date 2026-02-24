@@ -14,6 +14,7 @@ import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.core.impl.content.parser.YmlStyleDescriptorParser;
 import com.enonic.xp.resource.Resource;
+import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.style.StyleDescriptor;
@@ -58,7 +59,7 @@ public class StyleDescriptorServiceImpl
     {
         return new ResourceProcessor.Builder<ApplicationKey, StyleDescriptor>().key( applicationKey )
             .segment( "styleDescriptor" )
-            .keyTranslator( StyleDescriptor::toResourceKey )
+            .keyTranslator( this::toResourceKey )
             .processor( resource -> loadDescriptor( applicationKey, resource ) )
             .build();
     }
@@ -68,6 +69,11 @@ public class StyleDescriptorServiceImpl
         return YmlStyleDescriptorParser.parse( resource.readString(), key )
             .modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) )
             .build();
+    }
+
+    private ResourceKey toResourceKey( final ApplicationKey key )
+    {
+        return ResourceKey.from( key, "cms/styles/image.yml" );
     }
 
     @Reference

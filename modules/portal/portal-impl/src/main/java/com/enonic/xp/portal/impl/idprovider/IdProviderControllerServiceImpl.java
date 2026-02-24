@@ -11,6 +11,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -20,6 +21,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
+import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.IdProvider;
 import com.enonic.xp.security.IdProviderConfig;
 import com.enonic.xp.security.IdProviderKey;
@@ -53,7 +55,7 @@ public class IdProviderControllerServiceImpl
         if ( idProviderDescriptor != null )
         {
             final IdProviderControllerScript idProviderControllerScript =
-                idProviderControllerScriptFactory.fromScript( idProviderDescriptor.getResourceKey() );
+                idProviderControllerScriptFactory.fromScript( getScriptResourceKey( idProviderDescriptor.getKey() ) );
             final String functionName =
                 resolveFunctionName( params.getFunctionName(), idProviderControllerScript, params.getPortalRequest() );
             if ( functionName == null )
@@ -152,6 +154,11 @@ public class IdProviderControllerServiceImpl
         final AuthenticationInfo authenticationInfo =
             AuthenticationInfo.copyOf( context.getAuthInfo() ).principals( RoleKeys.ADMIN ).build();
         return ContextBuilder.from( context ).authInfo( authenticationInfo ).build().callWith( callable );
+    }
+
+    public ResourceKey getScriptResourceKey( final ApplicationKey key )
+    {
+        return ResourceKey.from( key, "idprovider/idprovider.js" );
     }
 
     @Reference

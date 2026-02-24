@@ -5,14 +5,11 @@ import java.util.Objects;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.Form;
-import com.enonic.xp.resource.ResourceKey;
 
 import static java.util.Objects.requireNonNullElse;
 
 public final class CmsDescriptor
 {
-    private static final String CMS_DESCRIPTOR_PATH = "cms/cms.yml";
-
     private final ApplicationKey applicationKey;
 
     private final Form form;
@@ -47,11 +44,6 @@ public final class CmsDescriptor
     public Instant getModifiedTime()
     {
         return modifiedTime;
-    }
-
-    public static ResourceKey toResourceKey( final ApplicationKey applicationKey )
-    {
-        return ResourceKey.from( applicationKey, CMS_DESCRIPTOR_PATH );
     }
 
     public static Builder create()

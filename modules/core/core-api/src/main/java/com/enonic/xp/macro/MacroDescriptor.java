@@ -5,14 +5,11 @@ import java.time.Instant;
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.icon.Icon;
-import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.schema.LocalizedText;
 
 @PublicApi
 public final class MacroDescriptor
 {
-    private static final String CMS_MACROS_PREFIX = "cms/macros/";
-
     private final MacroKey key;
 
     private final String displayName;
@@ -84,26 +81,6 @@ public final class MacroDescriptor
     public Instant getModifiedTime()
     {
         return modifiedTime;
-    }
-
-    public ResourceKey toDescriptorResourceKey()
-    {
-        return ResourceKey.from( key.getApplicationKey(), CMS_MACROS_PREFIX + key.getName() + "/" + key.getName() + ".yml" );
-    }
-
-    public ResourceKey toControllerResourceKey()
-    {
-        return ResourceKey.from( key.getApplicationKey(), CMS_MACROS_PREFIX + key.getName() + "/" + key.getName() + ".js" );
-    }
-
-    public static ResourceKey toDescriptorResourceKey( final MacroKey key )
-    {
-        return ResourceKey.from( key.getApplicationKey(), CMS_MACROS_PREFIX + key.getName() + "/" + key.getName() + ".yml" );
-    }
-
-    public static ResourceKey toControllerResourceKey( final MacroKey key )
-    {
-        return ResourceKey.from( key.getApplicationKey(), CMS_MACROS_PREFIX + key.getName() + "/" + key.getName() + ".js" );
     }
 
     public static Builder create()
