@@ -9,10 +9,14 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TimeZone;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import com.google.common.collect.Maps;
 
 import com.enonic.xp.i18n.MessageBundle;
 
+@NullMarked
 final class MessageBundleImpl
     implements MessageBundle
 {
@@ -33,25 +37,25 @@ final class MessageBundleImpl
     }
 
     @Override
-    public String localize( final String key, final Object... args )
+    public @Nullable String localize( final String key, final @Nullable Object... args )
     {
         final String message = this.properties.getProperty( key, "" );
         return message.isEmpty() ? null : format( message, args );
     }
 
     @Override
-    public String getMessage( final String key )
+    public @Nullable String getMessage( final String key )
     {
         return this.properties.getProperty( key );
     }
 
-    private String format( final String message, final Object[] args )
+    private String format( final String message, final @Nullable Object[] args )
     {
-        if ( args == null || args.length == 0 )
+        if ( args.length == 0 )
         {
             return message;
         }
-        final MessageFormat mf = locale == null ? new MessageFormat( message ) : new MessageFormat( message, locale );
+        final MessageFormat mf = new MessageFormat( message, locale );
         final Object[] formats = mf.getFormats();
         for ( final Object format : formats )
         {

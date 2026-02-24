@@ -27,7 +27,7 @@ exports.testLocalizeWithMultipleLocale = function () {
     t.assertEquals('[myKey]', result);
 };
 
-exports.testLcalizeWithPlaceholders = function () {
+exports.testLocalizeWithPlaceholders = function () {
     var result = i18n.localize({
         key: 'myKey',
         values: ['a', 1, 'b']
@@ -36,13 +36,30 @@ exports.testLcalizeWithPlaceholders = function () {
     t.assertEquals('[myKey, a, 1, b]', result);
 };
 
+exports.testLocalizeNotLocalized = function () {
+    var result = i18n.localize({
+        key: 'notLocalized',
+    });
+
+    t.assertEquals('NOT_TRANSLATED', result);
+}
+
+exports.testLocalizeNotLocalizedCustom = function () {
+    var result = i18n.localize({
+        key: 'notLocalized',
+        fallbackMessage: 'fallback'
+    });
+
+    t.assertEquals('fallback', result);
+}
+
 exports.testGetPhrases = function () {
     var actual = {
         'a': '1',
         'b': '2'
     };
 
-    var result = i18n.getPhrases('en', null);
+    var result = i18n.getPhrases('en');
     t.assertJsonEquals(actual, result);
 };
 

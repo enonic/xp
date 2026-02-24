@@ -1,8 +1,9 @@
 package com.enonic.xp.lib.i18n;
 
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Locale;
-import java.util.Set;
+import java.util.SequencedSet;
 
 import org.mockito.Mockito;
 
@@ -32,19 +33,14 @@ class GetSupportedLocalesScriptTest
 
         final LocaleService localeService = Mockito.mock( LocaleService.class );
 
-        final Set<Locale> locales = new LinkedHashSet<>();
-        locales.add( new Locale( "en" ) );
-        locales.add( new Locale( "es" ) );
-        locales.add( new Locale( "ca" ) );
-        Mockito.when( localeService.getLocales( any( ApplicationKey.class ), any() ) ).thenReturn( locales );
+        final SequencedSet<Locale> locales =
+            new LinkedHashSet<>( List.of( Locale.forLanguageTag( "en" ), Locale.forLanguageTag( "es" ), Locale.forLanguageTag( "ca" ) ) );
+
+        Mockito.when( localeService.getLocales( any( ApplicationKey.class ), any( String[].class ) ) ).thenReturn( locales );
 
         addService( LocaleService.class, localeService );
 
-        this.portalRequest.setSite( Site.create().
-            name( ContentName.from( "test" ) ).
-            parentPath( ContentPath.ROOT ).
-            language( Locale.ENGLISH ).
-            build() );
+        this.portalRequest.setSite(
+            Site.create().name( ContentName.from( "test" ) ).parentPath( ContentPath.ROOT ).language( Locale.ENGLISH ).build() );
     }
-
 }

@@ -65,12 +65,6 @@ public final class LocaleServiceImpl
     }
 
     @Override
-    public MessageBundle getBundle( final ApplicationKey applicationKey, final @Nullable Locale locale )
-    {
-        return getBundle( applicationKey, locale, DEFAULT_BASE_NAMES );
-    }
-
-    @Override
     public MessageBundle getBundle( final ApplicationKey applicationKey, final @Nullable Locale locale, final String... bundleNames )
     {
         final String[] baseNames = bundleNames.length == 0 ? DEFAULT_BASE_NAMES : bundleNames;
