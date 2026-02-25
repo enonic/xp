@@ -52,12 +52,6 @@ public final class ApiDescriptorServiceImpl
     }
 
     @Override
-    public ResourceKey getDescriptorResourceKey( final DescriptorKey key )
-    {
-        return toResourceKey( key, "yml" );
-    }
-
-    @Override
     public ResourceKey getControllerResourceKey( final DescriptorKey key )
     {
         return toResourceKey( key, "js" );
@@ -75,6 +69,11 @@ public final class ApiDescriptorServiceImpl
     private ApiDescriptor loadDescriptor( final DescriptorKey key, final Resource resource )
     {
         return YmlApiDescriptorParser.parse( resource.readString(), key.getApplicationKey() ).key( key ).build();
+    }
+
+    private ResourceKey getDescriptorResourceKey( final DescriptorKey key )
+    {
+        return toResourceKey( key, "yml" );
     }
 
     private ResourceKey toResourceKey( final DescriptorKey key, final String extension )

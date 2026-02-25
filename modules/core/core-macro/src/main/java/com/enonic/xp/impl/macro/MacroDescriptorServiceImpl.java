@@ -104,8 +104,7 @@ public final class MacroDescriptorServiceImpl
         return toResourceKey( key, "js" );
     }
 
-    @Override
-    public ResourceKey getDescriptorResourceKey( final MacroKey key )
+    private ResourceKey getDescriptorResourceKey( final MacroKey key )
     {
         return toResourceKey( key, "yml" );
     }

@@ -12,7 +12,5 @@ public interface ApiDescriptorService
 
     ApiDescriptors getByApplication( ApplicationKey applicationKey );
 
-    ResourceKey getDescriptorResourceKey( DescriptorKey key );
-
     ResourceKey getControllerResourceKey( DescriptorKey key );
 }
