@@ -98,6 +98,18 @@ public final class MacroDescriptorServiceImpl
             .flatMap( a -> getByApplication( a.getKey() ).stream() ) ).collect( MacroDescriptors.collector() );
     }
 
+    @Override
+    public ResourceKey getControllerResourceKey( final MacroKey key )
+    {
+        return toResourceKey( key, "js" );
+    }
+
+    @Override
+    public ResourceKey getDescriptorResourceKey( final MacroKey key )
+    {
+        return toResourceKey( key, "yml" );
+    }
+
     private boolean isSystem( ApplicationKey applicationKey )
     {
         return ApplicationKey.SYSTEM.equals( applicationKey );
@@ -107,7 +119,7 @@ public final class MacroDescriptorServiceImpl
     {
         return new ResourceProcessor.Builder<MacroKey, MacroDescriptor>().key( key )
             .segment( "macroDescriptor" )
-            .keyTranslator( this::toDescriptorResourceKey )
+            .keyTranslator( this::getDescriptorResourceKey )
             .processor( resource -> loadDescriptor( key, resource ) )
             .build();
     }
@@ -116,19 +128,9 @@ public final class MacroDescriptorServiceImpl
     {
         return new ResourceProcessor.Builder<MacroKey, MacroDescriptor>().key( key )
             .segment( "macroDescriptor" )
-            .keyTranslator( this::toControllerResourceKey )
+            .keyTranslator( this::getControllerResourceKey )
             .processor( resource -> createDefaultDescriptor( key ) )
             .build();
-    }
-
-    private ResourceKey toControllerResourceKey( final MacroKey key )
-    {
-        return toResourceKey( key, "js" );
-    }
-
-    private ResourceKey toDescriptorResourceKey( final MacroKey key )
-    {
-        return toResourceKey( key, "yml" );
     }
 
     private ResourceKey toResourceKey( final MacroKey key, final String extension )

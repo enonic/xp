@@ -24,7 +24,6 @@ import com.enonic.xp.portal.macro.MacroContext;
 import com.enonic.xp.portal.macro.MacroProcessor;
 import com.enonic.xp.portal.macro.MacroProcessorFactory;
 import com.enonic.xp.portal.postprocess.PostProcessInstruction;
-import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
@@ -34,8 +33,6 @@ import com.enonic.xp.site.SiteConfigsDataSerializer;
 public final class MacroInstruction
     implements PostProcessInstruction
 {
-    private static final String PATH = "cms/macros/";
-
     private static final String MACRO_BODY = "_body";
 
     private static final String MACRO_NAME = "_name";
@@ -144,14 +141,9 @@ public final class MacroInstruction
     {
         if ( macroDescriptor != null )
         {
-            return macroProcessorFactory.fromScript( toControllerResourceKey( macroDescriptor.getKey() ) );
+            return macroProcessorFactory.fromScript( macroDescriptorService.getControllerResourceKey( macroDescriptor.getKey() ) );
         }
         return null;
-    }
-
-    private ResourceKey toControllerResourceKey( final MacroKey key )
-    {
-        return ResourceKey.from( key.getApplicationKey(), PATH + key.getName() + "/" + key.getName() + ".js" );
     }
 
     private MacroContext createContext( final Instruction macroInstruction, final MacroDescriptor macroDescriptor,
