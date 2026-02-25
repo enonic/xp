@@ -7,6 +7,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.resource.Resource;
+import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.webapp.WebappDescriptor;
@@ -16,6 +17,8 @@ import com.enonic.xp.webapp.WebappService;
 public class WebappServiceImpl
     implements WebappService
 {
+    private static final String WEBAPP_DESCRIPTOR_PATH = "webapp/webapp.yml";
+
     private final ResourceService resourceService;
 
     @Activate
@@ -35,7 +38,7 @@ public class WebappServiceImpl
     {
         return new ResourceProcessor.Builder<ApplicationKey, WebappDescriptor>().key( applicationKey )
             .segment( "webappDescriptor" )
-            .keyTranslator( WebappDescriptor::toResourceKey )
+            .keyTranslator( this::toResourceKey )
             .processor( this::loadDescriptor )
             .build();
     }
@@ -43,5 +46,10 @@ public class WebappServiceImpl
     private WebappDescriptor loadDescriptor( final Resource resource )
     {
         return YmlWebappDescriptorParser.parse( resource.readString(), resource.getKey().getApplicationKey() ).build();
+    }
+
+    private ResourceKey toResourceKey( final ApplicationKey applicationKey )
+    {
+        return ResourceKey.from( applicationKey, WEBAPP_DESCRIPTOR_PATH );
     }
 }

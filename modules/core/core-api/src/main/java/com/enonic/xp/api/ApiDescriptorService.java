@@ -3,6 +3,7 @@ package com.enonic.xp.api;
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.resource.ResourceKey;
 
 @PublicApi
 public interface ApiDescriptorService
@@ -10,4 +11,8 @@ public interface ApiDescriptorService
     ApiDescriptor getByKey( DescriptorKey descriptorKey );
 
     ApiDescriptors getByApplication( ApplicationKey applicationKey );
+
+    ResourceKey getDescriptorResourceKey( DescriptorKey key );
+
+    ResourceKey getControllerResourceKey( DescriptorKey key );
 }

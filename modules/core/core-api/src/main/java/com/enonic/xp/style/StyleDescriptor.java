@@ -10,7 +10,6 @@ import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.resource.ResourceKey;
 
 public final class StyleDescriptor
 {
@@ -48,11 +47,6 @@ public final class StyleDescriptor
     public Instant getModifiedTime()
     {
         return modifiedTime;
-    }
-
-    public static ResourceKey toResourceKey( final ApplicationKey key )
-    {
-        return ResourceKey.from( key, "cms/styles/image.yml" );
     }
 
     @Override

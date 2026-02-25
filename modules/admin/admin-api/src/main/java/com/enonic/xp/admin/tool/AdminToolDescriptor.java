@@ -9,7 +9,6 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.descriptor.DescriptorKeys;
-import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.schema.LocalizedText;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
@@ -104,16 +103,6 @@ public final class AdminToolDescriptor
     public DescriptorKeys getApiMounts()
     {
         return apiMounts;
-    }
-
-    public static ResourceKey toResourceKey( final DescriptorKey key )
-    {
-        return ResourceKey.from( key.getApplicationKey(), "admin/tools/" + key.getName() + "/" + key.getName() + ".yml" );
-    }
-
-    public static ResourceKey toIconResourceKey( final DescriptorKey key )
-    {
-        return ResourceKey.from( key.getApplicationKey(), "admin/tools/" + key.getName() + "/" + key.getName() + ".svg" );
     }
 
     public static Builder create()

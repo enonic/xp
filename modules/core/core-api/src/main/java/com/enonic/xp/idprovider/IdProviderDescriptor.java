@@ -2,7 +2,6 @@ package com.enonic.xp.idprovider;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.Form;
-import com.enonic.xp.resource.ResourceKey;
 
 public final class IdProviderDescriptor
 {
@@ -32,16 +31,6 @@ public final class IdProviderDescriptor
     public Form getConfig()
     {
         return config;
-    }
-
-    public ResourceKey getResourceKey()
-    {
-        return ResourceKey.from( key, "idprovider/idprovider.js" );
-    }
-
-    public static ResourceKey toResourceKey( final ApplicationKey key )
-    {
-        return ResourceKey.from( key, "idprovider/idprovider.yml" );
     }
 
     public static Builder create()

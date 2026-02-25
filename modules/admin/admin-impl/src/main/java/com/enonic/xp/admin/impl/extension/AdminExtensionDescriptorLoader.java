@@ -49,7 +49,7 @@ public final class AdminExtensionDescriptorLoader
     @Override
     public ResourceKey toResource( final DescriptorKey key )
     {
-        return ResourceKey.from( key.getApplicationKey(), PATH + "/" + key.getName() + "/" + key.getName() + ".yml" );
+        return toResource( key, "yml" );
     }
 
     @Override
@@ -75,9 +75,7 @@ public final class AdminExtensionDescriptorLoader
 
     private Icon loadIcon( final DescriptorKey key )
     {
-        final String iconPath = PATH + "/" + key.getName() + "/" + key.getName() + ".svg";
-
-        final ResourceKey resourceKey = ResourceKey.from( key.getApplicationKey(), iconPath );
+        final ResourceKey resourceKey = toResource( key, "svg" );
         final Resource resource = this.resourceService.getResource( resourceKey );
 
         if ( !resource.exists() )
@@ -87,5 +85,10 @@ public final class AdminExtensionDescriptorLoader
 
         final Instant modifiedTime = Instant.ofEpochMilli( resource.getTimestamp() );
         return Icon.from( resource.readBytes(), "image/svg+xml", modifiedTime );
+    }
+
+    private ResourceKey toResource( final DescriptorKey key, final String extension )
+    {
+        return ResourceKey.from( key.getApplicationKey(), PATH + "/" + key.getName() + "/" + key.getName() + "." + extension );
     }
 }

@@ -8,6 +8,7 @@ import com.enonic.xp.core.impl.schema.JsonSchemaService;
 import com.enonic.xp.idprovider.IdProviderDescriptor;
 import com.enonic.xp.idprovider.IdProviderDescriptorService;
 import com.enonic.xp.resource.Resource;
+import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
 
@@ -31,7 +32,7 @@ public final class IdProviderDescriptorServiceImpl
         return new ResourceProcessor.Builder<ApplicationKey, IdProviderDescriptor>().
             key( key ).
             segment( "authDescriptor" ).
-            keyTranslator( IdProviderDescriptor::toResourceKey ).
+            keyTranslator( this::toResourceKey ).
             processor( resource -> loadDescriptor( key, resource ) ).
             build();
     }
@@ -42,6 +43,11 @@ public final class IdProviderDescriptorServiceImpl
         jsonSchemaService.validate( "https://json-schema.enonic.com/8.0.0/idprovider-descriptor.schema.json", yaml );
 
         return YmlIdProviderDescriptorParser.parse( yaml, key ).build();
+    }
+
+    private ResourceKey toResourceKey( final ApplicationKey key )
+    {
+        return ResourceKey.from( key, "idprovider/idprovider.yml" );
     }
 
     @Reference

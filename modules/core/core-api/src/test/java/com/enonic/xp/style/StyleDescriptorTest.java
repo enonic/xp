@@ -3,7 +3,6 @@ package com.enonic.xp.style;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.resource.ResourceKey;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -55,13 +54,6 @@ class StyleDescriptorTest
                 addStyleElement( element ).
                 addStyleElement( element2 ).
                 build() );
-    }
-
-    @Test
-    void testToResourceKey()
-    {
-        final ResourceKey resourceKey = StyleDescriptor.toResourceKey( ApplicationKey.from( "myapp" ) );
-        assertEquals( "myapp:/cms/styles/image.yml", resourceKey.toString() );
     }
 
     @Test

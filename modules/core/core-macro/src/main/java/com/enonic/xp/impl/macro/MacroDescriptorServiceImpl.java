@@ -18,6 +18,7 @@ import com.enonic.xp.macro.MacroDescriptorService;
 import com.enonic.xp.macro.MacroDescriptors;
 import com.enonic.xp.macro.MacroKey;
 import com.enonic.xp.resource.Resource;
+import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
 
@@ -97,6 +98,18 @@ public final class MacroDescriptorServiceImpl
             .flatMap( a -> getByApplication( a.getKey() ).stream() ) ).collect( MacroDescriptors.collector() );
     }
 
+    @Override
+    public ResourceKey getControllerResourceKey( final MacroKey key )
+    {
+        return toResourceKey( key, "js" );
+    }
+
+    @Override
+    public ResourceKey getDescriptorResourceKey( final MacroKey key )
+    {
+        return toResourceKey( key, "yml" );
+    }
+
     private boolean isSystem( ApplicationKey applicationKey )
     {
         return ApplicationKey.SYSTEM.equals( applicationKey );
@@ -106,7 +119,7 @@ public final class MacroDescriptorServiceImpl
     {
         return new ResourceProcessor.Builder<MacroKey, MacroDescriptor>().key( key )
             .segment( "macroDescriptor" )
-            .keyTranslator( MacroDescriptor::toDescriptorResourceKey )
+            .keyTranslator( this::getDescriptorResourceKey )
             .processor( resource -> loadDescriptor( key, resource ) )
             .build();
     }
@@ -115,9 +128,14 @@ public final class MacroDescriptorServiceImpl
     {
         return new ResourceProcessor.Builder<MacroKey, MacroDescriptor>().key( key )
             .segment( "macroDescriptor" )
-            .keyTranslator( MacroDescriptor::toControllerResourceKey )
+            .keyTranslator( this::getControllerResourceKey )
             .processor( resource -> createDefaultDescriptor( key ) )
             .build();
+    }
+
+    private ResourceKey toResourceKey( final MacroKey key, final String extension )
+    {
+        return ResourceKey.from( key.getApplicationKey(), PATH + "/" + key.getName() + "/" + key.getName() + "." + extension );
     }
 
     private MacroDescriptor loadDescriptor( final MacroKey key, final Resource resource )

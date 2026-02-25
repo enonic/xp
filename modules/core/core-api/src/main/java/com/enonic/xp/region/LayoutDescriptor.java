@@ -40,11 +40,6 @@ public final class LayoutDescriptor
         return new Builder( layoutDescriptor );
     }
 
-    public static ResourceKey toResourceKey( final DescriptorKey key )
-    {
-        return ResourceKey.from( key.getApplicationKey(), "cms/layouts/" + key.getName() + "/" + key.getName() + ".yml" );
-    }
-
     public static final class Builder
         extends BaseBuilder<Builder>
     {

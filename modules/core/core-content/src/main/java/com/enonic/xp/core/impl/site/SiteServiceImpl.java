@@ -9,6 +9,7 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.content.parser.YmlSiteDescriptorParser;
 import com.enonic.xp.resource.Resource;
+import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.site.SiteDescriptor;
@@ -18,6 +19,8 @@ import com.enonic.xp.site.SiteService;
 public class SiteServiceImpl
     implements SiteService
 {
+    private static final String SITE_DESCRIPTOR_PATH = "cms/site.yml";
+
     private final ResourceService resourceService;
 
     @Activate
@@ -44,7 +47,7 @@ public class SiteServiceImpl
     {
         return new ResourceProcessor.Builder<ApplicationKey, SiteDescriptor>().key( applicationKey )
             .segment( "siteDescriptor" )
-            .keyTranslator( SiteDescriptor::toResourceKey )
+            .keyTranslator( this::toResourceKey )
             .processor( this::loadDescriptor )
             .build();
     }
@@ -54,5 +57,10 @@ public class SiteServiceImpl
         return YmlSiteDescriptorParser.parse( resource.readString(), resource.getKey().getApplicationKey() )
             .modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) )
             .build();
+    }
+
+    private ResourceKey toResourceKey( final ApplicationKey applicationKey )
+    {
+        return ResourceKey.from( applicationKey, SITE_DESCRIPTOR_PATH );
     }
 }

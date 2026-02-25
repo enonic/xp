@@ -5,13 +5,10 @@ import java.util.Objects;
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.descriptor.DescriptorKeys;
-import com.enonic.xp.resource.ResourceKey;
 
 @PublicApi
 public final class WebappDescriptor
 {
-    private static final String WEBAPP_DESCRIPTOR_PATH = "webapp/webapp.yml";
-
     private final ApplicationKey applicationKey;
 
     private final DescriptorKeys apiMounts;
@@ -30,11 +27,6 @@ public final class WebappDescriptor
     public DescriptorKeys getApiMounts()
     {
         return apiMounts;
-    }
-
-    public static ResourceKey toResourceKey( final ApplicationKey applicationKey )
-    {
-        return ResourceKey.from( applicationKey, WEBAPP_DESCRIPTOR_PATH );
     }
 
     public static Builder create()

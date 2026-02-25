@@ -12,6 +12,7 @@ import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.resource.Resource;
+import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.content.CmsFormFragmentService;
@@ -28,6 +29,8 @@ import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_METADATA_NAME;
 public class CmsServiceImpl
     implements CmsService
 {
+    private static final String CMS_DESCRIPTOR_PATH = "cms/cms.yml";
+
     private static final CmsDescriptor PORTAL_CMS_DESCRIPTOR = CmsDescriptor.create()
         .applicationKey( ApplicationKey.PORTAL )
         .mixinMappings( MixinMappings.create()
@@ -82,7 +85,7 @@ public class CmsServiceImpl
     {
         return new ResourceProcessor.Builder<ApplicationKey, CmsDescriptor>().key( applicationKey )
             .segment( "cmsDescriptor" )
-            .keyTranslator( CmsDescriptor::toResourceKey )
+            .keyTranslator( this::toResourceKey )
             .processor( this::loadDescriptor )
             .build();
     }
@@ -92,5 +95,10 @@ public class CmsServiceImpl
         return YmlCmsDescriptorParser.parse( resource.readString(), resource.getKey().getApplicationKey() )
             .modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) )
             .build();
+    }
+
+    private ResourceKey toResourceKey( final ApplicationKey applicationKey )
+    {
+        return ResourceKey.from( applicationKey, CMS_DESCRIPTOR_PATH );
     }
 }

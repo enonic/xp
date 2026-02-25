@@ -33,7 +33,6 @@ import com.enonic.xp.site.SiteConfigsDataSerializer;
 public final class MacroInstruction
     implements PostProcessInstruction
 {
-
     private static final String MACRO_BODY = "_body";
 
     private static final String MACRO_NAME = "_name";
@@ -142,7 +141,7 @@ public final class MacroInstruction
     {
         if ( macroDescriptor != null )
         {
-            return macroProcessorFactory.fromScript( macroDescriptor.toControllerResourceKey() );
+            return macroProcessorFactory.fromScript( macroDescriptorService.getControllerResourceKey( macroDescriptor.getKey() ) );
         }
         return null;
     }
