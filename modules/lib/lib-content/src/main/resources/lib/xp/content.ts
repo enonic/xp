@@ -66,6 +66,13 @@ function checkOptionalNumber<T extends object>(obj: T, name: keyof T): void {
     }
 }
 
+function checkRequiredArg<T>(value: T, name: string): NonNullable<T> {
+    if (value == null) {
+        throw new Error(`Parameter '${String(name)}' is required`);
+    }
+    return value as NonNullable<T>;
+}
+
 export type {
     Aggregation,
     Aggregations,
@@ -255,6 +262,7 @@ export function get<Hit extends Content<unknown> = Content>(params: GetContentPa
  * @returns {object} An object with all the attachments that belong to the content, where the key is the attachment name. Or null if the content cannot be found.
  */
 export function getAttachments(key: string): Attachments | null {
+    checkRequiredArg(key, 'key');
     const bean: GetAttachmentsHandler = __.newBean<GetAttachmentsHandler>('com.enonic.xp.lib.content.GetAttachmentsHandler');
     bean.setKey(key);
     return __.toNativeObject(bean.execute());
