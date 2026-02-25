@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.portal.url.ApiUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.script.ScriptValue;
@@ -18,7 +19,7 @@ public final class ApiUrlHandler
 
     private ApplicationKey applicationKey;
 
-    private String api;
+    private DescriptorKey api;
 
     private String type;
 
@@ -55,7 +56,7 @@ public final class ApiUrlHandler
 
     public void setApi( final String value )
     {
-        this.api = value.indexOf( ':' ) == -1 ? applicationKey + ":" + value : value;
+        this.api = value.indexOf( ':' ) == -1 ? DescriptorKey.from( this.applicationKey, value ) : DescriptorKey.from( value );
     }
 
     public void setUrlType( final String value )

@@ -17,10 +17,14 @@ import type {ScriptValue} from '@enonic-types/core';
 
 export type {ScriptValue} from '@enonic-types/core';
 
-function checkRequired<T extends object>(obj: T, name: keyof T): void {
-    if (obj == null || obj[name] === undefined) {
-        throw Error(`Parameter '${String(name)}' is required`);
+function checkRequired<T extends object, K extends keyof T>(
+    obj: T,
+    name: K
+): NonNullable<T[K]> {
+    if (obj == null || obj[name] == null) {
+        throw new Error(`Parameter '${String(name)}' is required`);
     }
+    return obj[name] as NonNullable<T[K]>;
 }
 
 export type ProjectRole = 'owner' | 'editor' | 'author' | 'contributor' | 'viewer';
@@ -69,19 +73,19 @@ interface CreateProjectHandler<Config extends Record<string, unknown>> {
 
     setDisplayName(value: string): void;
 
-    setDescription(value?: string | null): void;
+    setDescription(value: string | null): void;
 
-    setLanguage(value?: string | null): void;
+    setLanguage(value: string | null): void;
 
-    setPermissions(value?: ScriptValue): void;
+    setPermissions(value: ScriptValue | null): void;
 
-    setReadAccess(value?: ScriptValue): void;
+    setReadAccess(value: ScriptValue | null): void;
 
-    setParent(value?: string | null): void;
+    setParent(value: string | null): void;
 
-    setParents(value?: string[] | null): void;
+    setParents(value: string[] | null): void;
 
-    setSiteConfig(value?: ScriptValue): void;
+    setSiteConfig(value: ScriptValue | null): void;
 
     execute(): Project<Config>;
 }
@@ -108,12 +112,12 @@ interface CreateProjectHandler<Config extends Record<string, unknown>> {
  * @returns {Object} Created project.
  */
 export function create<Config extends Record<string, unknown> = Record<string, unknown>>(params: CreateProjectParams<Config>): Project<Config> {
-    checkRequired(params, 'id');
-    checkRequired(params, 'displayName');
+    const id = checkRequired(params, 'id');
+    const displayName = checkRequired(params, 'displayName');
 
     const bean: CreateProjectHandler<Config> = __.newBean<CreateProjectHandler<Config>>('com.enonic.xp.lib.project.CreateProjectHandler');
-    bean.setId(params.id);
-    bean.setDisplayName(params.displayName);
+    bean.setId(id);
+    bean.setDisplayName(displayName);
     bean.setDescription(__.nullOrValue(params.description));
     bean.setLanguage(__.nullOrValue(params.language));
     bean.setPermissions(__.toScriptValue(params.permissions));
@@ -140,13 +144,13 @@ export interface ModifyProjectParams<Config extends Record<string, unknown>> {
 interface ModifyProjectHandler<Config extends Record<string, unknown>> {
     setId(value: string): void;
 
-    setDisplayName(value?: string | null): void;
+    setDisplayName(value: string | null): void;
 
-    setDescription(value?: string | null): void;
+    setDescription(value: string | null): void;
 
-    setLanguage(value?: string | null): void;
+    setLanguage(value: string | null): void;
 
-    setSiteConfig(value?: ScriptValue): void;
+    setSiteConfig(value: ScriptValue | null): void;
 
     execute(): Project<Config>;
 }
@@ -167,10 +171,10 @@ interface ModifyProjectHandler<Config extends Record<string, unknown>> {
  * @returns {Object} Modified project.
  */
 export function modify<Config extends Record<string, unknown> = Record<string, unknown>>(params: ModifyProjectParams<Config>): Project<Config> {
-    checkRequired(params, 'id');
+    const id = checkRequired(params, 'id');
 
     const bean: ModifyProjectHandler<Config> = __.newBean<ModifyProjectHandler<Config>>('com.enonic.xp.lib.project.ModifyProjectHandler');
-    bean.setId(params.id);
+    bean.setId(id);
     bean.setDisplayName(__.nullOrValue(params.displayName));
     bean.setDescription(__.nullOrValue(params.description));
     bean.setLanguage(__.nullOrValue(params.language));
@@ -201,11 +205,11 @@ interface DeleteProjectHandler {
  * @returns {boolean} `true` if the project was successfully deleted.
  */
 export function deleteProject(params: DeleteProjectParams): boolean {
-    checkRequired(params, 'id');
+    const id = checkRequired(params, 'id');
 
     const bean: DeleteProjectHandler = __.newBean<DeleteProjectHandler>('com.enonic.xp.lib.project.DeleteProjectHandler');
 
-    bean.setId(params.id);
+    bean.setId(id);
 
     return __.toNativeObject(bean.execute());
 }
@@ -236,10 +240,10 @@ interface GetProjectHandler {
  * @returns {Project} Content Project object or `null` if not found.
  */
 export function get(params: GetProjectParams): Project | null {
-    checkRequired(params, 'id');
+    const id = checkRequired(params, 'id');
 
     const bean: GetProjectHandler = __.newBean<GetProjectHandler>('com.enonic.xp.lib.project.GetProjectHandler');
-    bean.setId(params.id);
+    bean.setId(id);
     return __.toNativeObject(bean.execute());
 }
 
@@ -266,10 +270,10 @@ interface GetAvailableApplicationsHandler {
  * @returns {string[]} Keys of the available applications.
  */
 export function getAvailableApplications(params: GetAvailableApplicationsParams): string[] {
-    checkRequired(params, 'id');
+    const id = checkRequired(params, 'id');
 
     const bean: GetAvailableApplicationsHandler = __.newBean<GetAvailableApplicationsHandler>('com.enonic.xp.lib.project.GetAvailableApplicationsHandler');
-    bean.setId(params.id);
+    bean.setId(id);
     return __.toNativeObject(bean.execute());
 }
 
@@ -299,7 +303,7 @@ export interface AddProjectPermissionsParams {
 interface AddProjectPermissionsHandler {
     setId(value: string): void;
 
-    setPermissions(value?: ScriptValue): void;
+    setPermissions(value: ScriptValue | null): void;
 
     execute(): ProjectPermissions | null;
 }
@@ -321,10 +325,10 @@ interface AddProjectPermissionsHandler {
  * @returns {Object} All current project permissions.
  */
 export function addPermissions(params: AddProjectPermissionsParams): ProjectPermissions | null {
-    checkRequired(params, 'id');
+    const id = checkRequired(params, 'id');
 
     const bean: AddProjectPermissionsHandler = __.newBean<AddProjectPermissionsHandler>('com.enonic.xp.lib.project.AddProjectPermissionsHandler');
-    bean.setId(params.id);
+    bean.setId(id);
     bean.setPermissions(__.toScriptValue(params.permissions));
     return __.toNativeObject(bean.execute());
 }
@@ -337,7 +341,7 @@ export interface RemoveProjectPermissionsParams {
 interface RemoveProjectPermissionsHandler {
     setId(value: string): void;
 
-    setPermissions(value?: ScriptValue): void;
+    setPermissions(value: ScriptValue | null): void;
 
     execute(): ProjectPermissions | null;
 }
@@ -357,10 +361,10 @@ interface RemoveProjectPermissionsHandler {
  * @returns {Object} All current project permissions.
  */
 export function removePermissions(params: RemoveProjectPermissionsParams): ProjectPermissions | null {
-    checkRequired(params, 'id');
+    const id = checkRequired(params, 'id');
 
     const bean: RemoveProjectPermissionsHandler = __.newBean<RemoveProjectPermissionsHandler>('com.enonic.xp.lib.project.RemoveProjectPermissionsHandler');
-    bean.setId(params.id);
+    bean.setId(id);
     bean.setPermissions(__.toScriptValue(params.permissions));
 
     return __.toNativeObject(bean.execute());
@@ -374,7 +378,7 @@ export interface ModifyProjectReadAccessParams {
 interface ModifyProjectReadAccessHandler {
     setId(value: string): void;
 
-    setReadAccess(value?: ScriptValue): void;
+    setReadAccess(value: ScriptValue | null): void;
 
     execute(): ProjectReadAccess | null;
 }
@@ -394,10 +398,10 @@ interface ModifyProjectReadAccessHandler {
  * @returns {Object<string, boolean>} Current state of READ access.
  */
 export function modifyReadAccess(params: ModifyProjectReadAccessParams): ProjectReadAccess | null {
-    checkRequired(params, 'id');
+    const id = checkRequired(params, 'id');
 
     const bean: ModifyProjectReadAccessHandler = __.newBean<ModifyProjectReadAccessHandler>('com.enonic.xp.lib.project.ModifyProjectReadAccessHandler');
-    bean.setId(params.id);
+    bean.setId(id);
     bean.setReadAccess(__.toScriptValue(params.readAccess));
     return __.toNativeObject(bean.execute());
 }

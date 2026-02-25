@@ -31,10 +31,14 @@ export type {
     ValueType,
 } from '@enonic-types/core';
 
-function checkRequired<T extends object>(obj: T, name: keyof T): void {
-    if (obj == null || obj[name] === undefined) {
-        throw Error(`Parameter '${String(name)}' is required`);
+function checkRequired<T extends object, K extends keyof T>(
+    obj: T,
+    name: K
+): NonNullable<T[K]> {
+    if (obj == null || obj[name] == null) {
+        throw new Error(`Parameter '${String(name)}' is required`);
     }
+    return obj[name] as NonNullable<T[K]>;
 }
 
 export interface Icon {
@@ -107,15 +111,15 @@ export interface MixinSchema
  * @returns {ContentTypeSchema | FormFragmentSchema | MixinSchema} created resource.
  */
 export function createSchema(params: CreateDynamicContentSchemaParams): ContentTypeSchema | FormFragmentSchema | MixinSchema {
-    checkRequired(params, 'name');
-    checkRequired(params, 'type');
-    checkRequired(params, 'resource');
+    const name = checkRequired(params, 'name');
+    const type = checkRequired(params, 'type');
+    const resource = checkRequired(params, 'resource');
 
     const bean: CreateDynamicContentSchemaHandler = __.newBean<CreateDynamicContentSchemaHandler>('com.enonic.xp.lib.schema.CreateDynamicContentSchemaHandler');
-    bean.setName(params.name);
-    bean.setType(params.type);
-    if (params.resource != null) {
-        bean.setResource(params.resource);
+    bean.setName(name);
+    bean.setType(type);
+    if (resource != null) {
+        bean.setResource(resource);
     }
     return __.toNativeObject(bean.execute());
 }
@@ -133,7 +137,7 @@ interface CreateDynamicComponentHandler {
 
     setType(value: string): void;
 
-    setResource(value?: string | null): void;
+    setResource(value: string | null): void;
 
     execute(): LayoutDescriptor | PageDescriptor | PartDescriptor;
 }
@@ -181,15 +185,15 @@ export interface PartDescriptor
  * @returns {string} created resource.
  */
 export function createComponent(params: CreateDynamicComponentParams): LayoutDescriptor | PageDescriptor | PartDescriptor {
-    checkRequired(params, 'key');
-    checkRequired(params, 'type');
-    checkRequired(params, 'resource');
+    const key = checkRequired(params, 'key');
+    const type = checkRequired(params, 'type');
+    const resource = checkRequired(params, 'resource');
 
     const bean: CreateDynamicComponentHandler = __.newBean<CreateDynamicComponentHandler>('com.enonic.xp.lib.schema.CreateDynamicComponentHandler');
 
-    bean.setKey(params.key);
-    bean.setType(params.type);
-    bean.setResource(params.resource);
+    bean.setKey(key);
+    bean.setType(type);
+    bean.setResource(resource);
     return __.toNativeObject(bean.execute());
 }
 
@@ -228,12 +232,12 @@ export interface StyleDescriptor {
  * @returns {StyleDescriptor} created resource.
  */
 export function createStyles(params: CreateDynamicStylesParams): StyleDescriptor {
-    checkRequired(params, 'application');
-    checkRequired(params, 'resource');
+    const application = checkRequired(params, 'application');
+    const resource = checkRequired(params, 'resource');
 
     const bean: CreateDynamicStylesHandler = __.newBean<CreateDynamicStylesHandler>('com.enonic.xp.lib.schema.CreateDynamicStylesHandler');
-    bean.setApplication(params.application);
-    bean.setResource(params.resource);
+    bean.setApplication(application);
+    bean.setResource(resource);
     return __.toNativeObject(bean.execute());
 }
 
@@ -260,12 +264,12 @@ interface GetDynamicContentSchemaHandler {
  * @returns {ContentTypeSchema | FormFragmentSchema | MixinSchema} fetched resource.
  */
 export function getSchema(params: GetDynamicContentSchemaParams): ContentTypeSchema | FormFragmentSchema | MixinSchema {
-    checkRequired(params, 'name');
-    checkRequired(params, 'type');
+    const name = checkRequired(params, 'name');
+    const type = checkRequired(params, 'type');
 
     const bean: GetDynamicContentSchemaHandler = __.newBean<GetDynamicContentSchemaHandler>('com.enonic.xp.lib.schema.GetDynamicContentSchemaHandler');
-    bean.setName(params.name);
-    bean.setType(params.type);
+    bean.setName(name);
+    bean.setType(type);
     return __.toNativeObject(bean.execute());
 }
 
@@ -292,12 +296,12 @@ interface GetDynamicComponentHandler {
  * @returns {string} fetched resource.
  */
 export function getComponent(params: GetDynamicComponentParams): unknown {
-    checkRequired(params, 'key');
-    checkRequired(params, 'type');
+    const key = checkRequired(params, 'key');
+    const type = checkRequired(params, 'type');
 
     const bean: GetDynamicComponentHandler = __.newBean<GetDynamicComponentHandler>('com.enonic.xp.lib.schema.GetDynamicComponentHandler');
-    bean.setKey(params.key);
-    bean.setType(params.type);
+    bean.setKey(key);
+    bean.setType(type);
     return __.toNativeObject(bean.execute());
 }
 
@@ -332,10 +336,10 @@ interface GetDynamicSiteHandler {
  * @returns {SiteDescriptor} fetched resource.
  */
 export function getSite(params: GetDynamicSiteParams): SiteDescriptor | null {
-    checkRequired(params, 'application');
+    const application = checkRequired(params, 'application');
 
     const bean: GetDynamicSiteHandler = __.newBean<GetDynamicSiteHandler>('com.enonic.xp.lib.schema.GetDynamicSiteHandler');
-    bean.setApplication(params.application);
+    bean.setApplication(application);
     return __.toNativeObject(bean.execute());
 }
 
@@ -358,10 +362,10 @@ interface GetDynamicStylesHandler {
  * @returns {StyleDescriptor} fetched resource.
  */
 export function getStyles(params: GetDynamicStylesParams): StyleDescriptor | null {
-    checkRequired(params, 'application');
+    const application = checkRequired(params, 'application');
 
     const bean: GetDynamicStylesHandler = __.newBean<GetDynamicStylesHandler>('com.enonic.xp.lib.schema.GetDynamicStylesHandler');
-    bean.setApplication(params.application);
+    bean.setApplication(application);
     return __.toNativeObject(bean.execute());
 }
 
@@ -388,12 +392,12 @@ interface DeleteDynamicContentSchemaHandler {
  * @returns {boolean} true if succeeded, false otherwise.
  */
 export function deleteSchema(params: DeleteDynamicContentSchemaParams): boolean {
-    checkRequired(params, 'name');
-    checkRequired(params, 'type');
+    const name = checkRequired(params, 'name');
+    const type = checkRequired(params, 'type');
 
     const bean: DeleteDynamicContentSchemaHandler = __.newBean<DeleteDynamicContentSchemaHandler>('com.enonic.xp.lib.schema.DeleteDynamicContentSchemaHandler');
-    bean.setName(params.name);
-    bean.setType(params.type);
+    bean.setName(name);
+    bean.setType(type);
     return __.toNativeObject(bean.execute());
 }
 
@@ -420,12 +424,12 @@ interface DeleteDynamicComponentHandler {
  * @returns {boolean} true if succeeded, false otherwise.
  */
 export function deleteComponent(params: DeleteDynamicComponentParams): boolean {
-    checkRequired(params, 'key');
-    checkRequired(params, 'type');
+    const key = checkRequired(params, 'key');
+    const type = checkRequired(params, 'type');
 
     const bean: DeleteDynamicComponentHandler = __.newBean<DeleteDynamicComponentHandler>('com.enonic.xp.lib.schema.DeleteDynamicComponentHandler');
-    bean.setKey(params.key);
-    bean.setType(params.type);
+    bean.setKey(key);
+    bean.setType(type);
     return __.toNativeObject(bean.execute());
 }
 
@@ -448,10 +452,10 @@ interface DeleteDynamicStylesHandler {
  * @returns {boolean} true if succeeded, false otherwise.
  */
 export function deleteStyles(params: DeleteDynamicStylesParams): boolean {
-    checkRequired(params, 'application');
+    const application = checkRequired(params, 'application');
 
     const bean: DeleteDynamicStylesHandler = __.newBean<DeleteDynamicStylesHandler>('com.enonic.xp.lib.schema.DeleteDynamicStylesHandler');
-    bean.setApplication(params.application);
+    bean.setApplication(application);
     return __.toNativeObject(bean.execute());
 }
 
@@ -482,14 +486,14 @@ interface UpdateDynamicContentSchemaHandler {
  * @returns {ContentTypeSchema | FormFragmentSchema | MixinSchema} created resource.
  */
 export function updateSchema(params: UpdateDynamicContentSchemaParams): ContentTypeSchema | FormFragmentSchema | MixinSchema {
-    checkRequired(params, 'name');
-    checkRequired(params, 'type');
-    checkRequired(params, 'resource');
+    const name = checkRequired(params, 'name');
+    const type = checkRequired(params, 'type');
+    const resource = checkRequired(params, 'resource');
 
     const bean: UpdateDynamicContentSchemaHandler = __.newBean<UpdateDynamicContentSchemaHandler>('com.enonic.xp.lib.schema.UpdateDynamicContentSchemaHandler');
-    bean.setName(params.name);
-    bean.setType(params.type);
-    bean.setResource(params.resource);
+    bean.setName(name);
+    bean.setType(type);
+    bean.setResource(resource);
     return __.toNativeObject(bean.execute());
 }
 
@@ -520,14 +524,14 @@ interface UpdateDynamicComponentHandler {
  * @returns {LayoutDescriptor | PageDescriptor | PartDescriptor} created resource.
  */
 export function updateComponent(params: UpdateDynamicComponentParams): LayoutDescriptor | PageDescriptor | PartDescriptor {
-    checkRequired(params, 'key');
-    checkRequired(params, 'type');
-    checkRequired(params, 'resource');
+    const key = checkRequired(params, 'key');
+    const type = checkRequired(params, 'type');
+    const resource = checkRequired(params, 'resource');
 
     const bean: UpdateDynamicComponentHandler = __.newBean<UpdateDynamicComponentHandler>('com.enonic.xp.lib.schema.UpdateDynamicComponentHandler');
-    bean.setKey(params.key);
-    bean.setType(params.type);
-    bean.setResource(params.resource);
+    bean.setKey(key);
+    bean.setType(type);
+    bean.setResource(resource);
 
     return __.toNativeObject(bean.execute());
 }
@@ -555,12 +559,12 @@ interface UpdateDynamicSiteHandler {
  * @returns {string} created resource.
  */
 export function updateSite(params: UpdateDynamicSiteParams): SiteDescriptor {
-    checkRequired(params, 'application');
-    checkRequired(params, 'resource');
+    const application = checkRequired(params, 'application');
+    const resource = checkRequired(params, 'resource');
 
     const bean: UpdateDynamicSiteHandler = __.newBean<UpdateDynamicSiteHandler>('com.enonic.xp.lib.schema.UpdateDynamicSiteHandler');
-    bean.setApplication(params.application);
-    bean.setResource(params.resource);
+    bean.setApplication(application);
+    bean.setResource(resource);
     return __.toNativeObject(bean.execute());
 }
 
@@ -587,12 +591,12 @@ interface UpdateDynamicStylesHandler {
  * @returns {string} created resource.
  */
 export function updateStyles(params: UpdateDynamicStylesParams): StyleDescriptor {
-    checkRequired(params, 'application');
-    checkRequired(params, 'resource');
+    const application = checkRequired(params, 'application');
+    const resource = checkRequired(params, 'resource');
 
     const bean: UpdateDynamicStylesHandler = __.newBean<UpdateDynamicStylesHandler>('com.enonic.xp.lib.schema.UpdateDynamicStylesHandler');
-    bean.setApplication(params.application);
-    bean.setResource(params.resource);
+    bean.setApplication(application);
+    bean.setResource(resource);
     return __.toNativeObject(bean.execute());
 }
 
@@ -619,12 +623,12 @@ interface ListDynamicComponentsHandler {
  * @returns {PartDescriptor[] | LayoutDescriptor[] | PageDescriptor[]} fetched resources.
  */
 export function listComponents(params: ListDynamicComponentsParams): PartDescriptor[] | LayoutDescriptor[] | PageDescriptor[] {
-    checkRequired(params, 'application');
-    checkRequired(params, 'type');
+    const application = checkRequired(params, 'application');
+    const type = checkRequired(params, 'type');
 
     const bean: ListDynamicComponentsHandler = __.newBean<ListDynamicComponentsHandler>('com.enonic.xp.lib.schema.ListDynamicComponentsHandler');
-    bean.setApplication(params.application);
-    bean.setType(params.type);
+    bean.setApplication(application);
+    bean.setType(type);
     return __.toNativeObject(bean.execute());
 }
 
@@ -651,11 +655,11 @@ interface ListDynamicSchemasHandler {
  * @returns {ContentSchemaType[] | FormFragmentSchema[] | MixinSchema[]} fetched resources.
  */
 export function listSchemas(params: ListDynamicSchemasParams): ContentSchemaType[] | FormFragmentSchema[] | MixinSchema[] {
-    checkRequired(params, 'application');
-    checkRequired(params, 'type');
+    const application = checkRequired(params, 'application');
+    const type = checkRequired(params, 'type');
 
     const bean: ListDynamicSchemasHandler = __.newBean<ListDynamicSchemasHandler>('com.enonic.xp.lib.schema.ListDynamicSchemasHandler');
-    bean.setApplication(params.application);
-    bean.setType(params.type);
+    bean.setApplication(application);
+    bean.setType(type);
     return __.toNativeObject(bean.execute());
 }

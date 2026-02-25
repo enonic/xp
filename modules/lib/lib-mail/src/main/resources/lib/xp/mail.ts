@@ -17,14 +17,18 @@ export type {ByteSource} from '@enonic-types/core';
  * @module mail
  */
 
-function checkRequired<T extends object>(obj: T, name: keyof T): void {
+function checkRequired<T extends object, K extends keyof T>(
+    obj: T,
+    name: K
+): NonNullable<T[K]> {
     if (obj == null || obj[name] == null) {
-        throw Error(`Parameter '${String(name)}' is required`);
+        throw new Error(`Parameter '${String(name)}' is required`);
     }
+    return obj[name] as NonNullable<T[K]>;
 }
 
 interface SendMailHandler {
-    setSubject(value?: string | null): void;
+    setSubject(value: string | null): void;
 
     setFrom(value: string[]): void;
 
@@ -36,7 +40,7 @@ interface SendMailHandler {
 
     setReplyTo(value: string[]): void;
 
-    setBody(value?: string | null): void;
+    setBody(value: string | null): void;
 
     setContentType(contentType?: string | null): void;
 
@@ -102,14 +106,12 @@ export interface SendMessageParams {
 export function send(params: SendMessageParams): boolean {
     const bean: SendMailHandler = __.newBean<SendMailHandler>('com.enonic.xp.lib.mail.SendMailHandler');
 
-    checkRequired(params, 'from');
-    checkRequired(params, 'to');
+    const from = checkRequired(params, 'from');
+    const to = checkRequired(params, 'to');
 
     const {
         subject,
         body,
-        from = [],
-        to = [],
         cc = [],
         bcc = [],
         replyTo = [],

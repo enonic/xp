@@ -17,10 +17,14 @@ import type {ScriptValue, UserKey} from '@enonic-types/core';
 
 export type {PrincipalKey, UserKey, GroupKey, RoleKey, ScriptValue} from '@enonic-types/core';
 
-function checkRequired<T extends object>(obj: T, name: keyof T): void {
-    if (obj == null || obj[name] === undefined) {
-        throw Error(`Parameter '${String(name)}' is required`);
+function checkRequired<T extends object, K extends keyof T>(
+    obj: T,
+    name: K
+): NonNullable<T[K]> {
+    if (obj == null || obj[name] == null) {
+        throw new Error(`Parameter '${String(name)}' is required`);
     }
+    return obj[name] as NonNullable<T[K]>;
 }
 
 export type EditorFn<T> = (value: T) => T;
@@ -71,11 +75,11 @@ interface CreateScheduledJobHandler<Config extends Record<string, unknown>> {
 
     setEnabled(value: boolean): void;
 
-    setDescription(value?: string | null): void;
+    setDescription(value: string | null): void;
 
-    setConfig(value?: object | null): void;
+    setConfig(value: ScriptValue | null): void;
 
-    setUser(value?: UserKey | null): void;
+    setUser(value: UserKey | null): void;
 
     execute(): ScheduledJob<Config>;
 }
@@ -98,18 +102,18 @@ interface CreateScheduledJobHandler<Config extends Record<string, unknown>> {
  * @param {boolean} params.enabled job is active or not.
  */
 export function create<Config extends Record<string, unknown> = Record<string, unknown>>(params: CreateScheduledJobParams<Config>): ScheduledJob<Config> {
-    checkRequired(params, 'name');
-    checkRequired(params, 'schedule');
-    checkRequired(params, 'descriptor');
-    checkRequired(params, 'enabled');
+    const name = checkRequired(params, 'name');
+    const schedule = checkRequired(params, 'schedule');
+    const descriptor = checkRequired(params, 'descriptor');
+    const enabled = checkRequired(params, 'enabled');
 
     const bean: CreateScheduledJobHandler<Config> = __.newBean<CreateScheduledJobHandler<Config>>(
         'com.enonic.xp.lib.scheduler.CreateScheduledJobHandler');
 
-    bean.setName(params.name);
-    bean.setSchedule(params.schedule);
-    bean.setDescriptor(params.descriptor);
-    bean.setEnabled(params.enabled);
+    bean.setName(name);
+    bean.setSchedule(schedule);
+    bean.setDescriptor(descriptor);
+    bean.setEnabled(enabled);
     bean.setDescription(__.nullOrValue(params.description));
     bean.setConfig(__.toScriptValue(params.config));
     bean.setUser(__.nullOrValue(params.user));
@@ -140,14 +144,14 @@ interface ModifyScheduledJobHandler<Config extends Record<string, unknown>> {
  * @param {function} params.editor editor callback function, has editable existing job as a param.
  */
 export function modify<Config extends Record<string, unknown> = Record<string, unknown>>(params: ModifyScheduledJobParams<Config>): ScheduledJob<Config> {
-    checkRequired(params, 'name');
-    checkRequired(params, 'editor');
+    const name = checkRequired(params, 'name');
+    const editor = checkRequired(params, 'editor');
 
     const bean: ModifyScheduledJobHandler<Config> = __.newBean<ModifyScheduledJobHandler<Config>>(
         'com.enonic.xp.lib.scheduler.ModifyScheduledJobHandler');
 
-    bean.setName(params.name);
-    bean.setEditor(__.toScriptValue(params.editor));
+    bean.setName(name);
+    bean.setEditor(__.toScriptValue(editor));
 
     return __.toNativeObject(bean.execute());
 }
@@ -171,11 +175,11 @@ interface DeleteScheduledJobHandler {
  * @param {string} params.name job to be deleted name.
  */
 export function deleteJob(params: DeleteScheduledJobParams): boolean {
-    checkRequired(params, 'name');
+    const name = checkRequired(params, 'name');
 
     const bean: DeleteScheduledJobHandler = __.newBean<DeleteScheduledJobHandler>('com.enonic.xp.lib.scheduler.DeleteScheduledJobHandler');
 
-    bean.setName(params.name);
+    bean.setName(name);
 
     return __.toNativeObject(bean.execute());
 }
@@ -203,12 +207,12 @@ interface GetScheduledJobHandler<Config extends Record<string, unknown>> {
  * @param {string} params.name job to be fetched name.
  */
 export function get<Config extends Record<string, unknown> = Record<string, unknown>>(params: GetScheduledJobParams): ScheduledJob<Config> | null {
-    checkRequired(params, 'name');
+    const name = checkRequired(params, 'name');
 
     const bean: GetScheduledJobHandler<Config> = __.newBean<GetScheduledJobHandler<Config>>(
         'com.enonic.xp.lib.scheduler.GetScheduledJobHandler');
 
-    bean.setName(params.name);
+    bean.setName(name);
 
     return __.toNativeObject(bean.execute());
 }

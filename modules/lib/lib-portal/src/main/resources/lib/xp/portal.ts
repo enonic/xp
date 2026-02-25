@@ -24,10 +24,14 @@ export type {
     ScriptValue,
 } from '@enonic-types/core';
 
-function checkRequired<T extends object>(obj: T, name: keyof T): void {
+function checkRequired<T extends object, K extends keyof T>(
+    obj: T,
+    name: K
+): NonNullable<T[K]> {
     if (obj == null || obj[name] == null) {
-        throw Error(`Parameter '${String(name)}' is required`);
+        throw new Error(`Parameter '${String(name)}' is required`);
     }
+    return obj[name] as NonNullable<T[K]>;
 }
 
 export type Site<Config> = Content<{
@@ -55,11 +59,11 @@ export interface AssetUrlParams {
 interface AssetUrlHandler {
     setPath(value: string): void;
 
-    setUrlType(value?: string | null): void;
+    setUrlType(value: string | null): void;
 
-    setQueryParams(value?: ScriptValue | null): void;
+    setQueryParams(value: ScriptValue | null): void;
 
-    setApplication(value?: string | null): void;
+    setApplication(value: string | null): void;
 
     createUrl(): string;
 }
@@ -82,9 +86,9 @@ interface AssetUrlHandler {
 export function assetUrl(params: AssetUrlParams): string {
     const bean: AssetUrlHandler = __.newBean<AssetUrlHandler>('com.enonic.xp.lib.portal.url.AssetUrlHandler');
 
-    checkRequired(params, 'path');
+    const path = checkRequired(params, 'path');
 
-    bean.setPath(params.path);
+    bean.setPath(path);
     bean.setUrlType(__.nullOrValue(params.type));
     bean.setApplication(__.nullOrValue(params.application));
     bean.setQueryParams(__.toScriptValue(params.params));
@@ -114,27 +118,27 @@ export type ImageUrlParams = IdXorPath & {
 };
 
 interface ImageUrlHandler {
-    setId(value?: string | null): void;
+    setId(value: string | null): void;
 
-    setPath(value?: string | null): void;
+    setPath(value: string | null): void;
 
-    setUrlType(value?: string | null): void;
+    setUrlType(value: string | null): void;
 
-    setQueryParams(value?: ScriptValue | null): void;
+    setQueryParams(value: ScriptValue | null): void;
 
-    setProjectName(value?: string | null): void;
+    setProjectName(value: string | null): void;
 
-    setBranch(value?: string | null): void;
+    setBranch(value: string | null): void;
 
-    setBaseUrl(value?: string | null): void;
+    setBaseUrl(value: string | null): void;
 
-    setBackground(value?: string | null): void;
+    setBackground(value: string | null): void;
 
-    setQuality(value?: number | null): void;
+    setQuality(value: number | null): void;
 
-    setFilter(value?: string | null): void;
+    setFilter(value: string | null): void;
 
-    setFormat(value?: string | null): void;
+    setFormat(value: string | null): void;
 
     setScale(value: string): void;
 
@@ -165,7 +169,7 @@ interface ImageUrlHandler {
 export function imageUrl(params: ImageUrlParams): string {
     const bean: ImageUrlHandler = __.newBean<ImageUrlHandler>('com.enonic.xp.lib.portal.url.ImageUrlHandler');
 
-    checkRequired(params, 'scale');
+    const scale = checkRequired(params, 'scale');
 
     bean.setId(__.nullOrValue(params.id));
     bean.setPath(__.nullOrValue(params.path));
@@ -175,7 +179,7 @@ export function imageUrl(params: ImageUrlParams): string {
     bean.setQuality(__.nullOrValue(params.quality));
     bean.setFilter(__.nullOrValue(params.filter));
     bean.setFormat(__.nullOrValue(params.format));
-    bean.setScale(params.scale);
+    bean.setScale(scale);
     bean.setProjectName(__.nullOrValue(params.project));
     bean.setBranch(__.nullOrValue(params.branch));
     bean.setBaseUrl(__.nullOrValue(params.baseUrl));
@@ -192,15 +196,15 @@ export interface ComponentUrlParams {
 }
 
 interface ComponentUrlHandler {
-    setId(value?: string | null): void;
+    setId(value: string | null): void;
 
-    setPath(value?: string | null): void;
+    setPath(value: string | null): void;
 
-    setUrlType(value?: string | null): void;
+    setUrlType(value: string | null): void;
 
-    setQueryParams(value?: ScriptValue | null): void;
+    setQueryParams(value: ScriptValue | null): void;
 
-    setComponent(value?: string | null): void;
+    setComponent(value: string | null): void;
 
     createUrl(): string;
 }
@@ -245,23 +249,23 @@ export interface AttachmentUrlParams {
 }
 
 interface AttachmentUrlHandler {
-    setId(value?: string | null): void;
+    setId(value: string | null): void;
 
-    setPath(value?: string | null): void;
+    setPath(value: string | null): void;
 
-    setUrlType(value?: string | null): void;
+    setUrlType(value: string | null): void;
 
-    setQueryParams(value?: ScriptValue | null): void;
+    setQueryParams(value: ScriptValue | null): void;
 
-    setName(value?: string | null): void;
+    setName(value: string | null): void;
 
-    setLabel(value?: string | null): void;
+    setLabel(value: string | null): void;
 
-    setProjectName(value?: string | null): void;
+    setProjectName(value: string | null): void;
 
-    setBranch(value?: string | null): void;
+    setBranch(value: string | null): void;
 
-    setBaseUrl(value?: string | null): void;
+    setBaseUrl(value: string | null): void;
 
     setDownload(value: boolean): void;
 
@@ -312,17 +316,17 @@ export type PageUrlParams = IdXorPath & {
 };
 
 interface PageUrlHandler {
-    setId(value?: string | null): void;
+    setId(value: string | null): void;
 
-    setPath(value?: string | null): void;
+    setPath(value: string | null): void;
 
-    setUrlType(value?: string | null): void;
+    setUrlType(value: string | null): void;
 
-    setQueryParams(value?: ScriptValue | null): void;
+    setQueryParams(value: ScriptValue | null): void;
 
-    setProjectName(value?: string | null): void;
+    setProjectName(value: string | null): void;
 
-    setBranch(value?: string | null): void;
+    setBranch(value: string | null): void;
 
     createUrl(): string;
 }
@@ -365,11 +369,11 @@ export interface ServiceUrlParams {
 interface ServiceUrlHandler {
     setService(value: string): void;
 
-    setApplication(value?: string | null): void;
+    setApplication(value: string | null): void;
 
-    setUrlType(value?: string | null): void;
+    setUrlType(value: string | null): void;
 
-    setQueryParams(value?: ScriptValue | null): void;
+    setQueryParams(value: ScriptValue | null): void;
 
     createUrl(): string;
 }
@@ -390,9 +394,9 @@ interface ServiceUrlHandler {
 export function serviceUrl(params: ServiceUrlParams): string {
     const bean: ServiceUrlHandler = __.newBean<ServiceUrlHandler>('com.enonic.xp.lib.portal.url.ServiceUrlHandler');
 
-    checkRequired(params, 'service');
+    const service = checkRequired(params, 'service');
 
-    bean.setService(params.service);
+    bean.setService(service);
     bean.setApplication(__.nullOrValue(params.application));
     bean.setUrlType(__.nullOrValue(params.type));
     bean.setQueryParams(__.toScriptValue(params.params));
@@ -402,19 +406,16 @@ export function serviceUrl(params: ServiceUrlParams): string {
 
 export interface IdProviderUrlParams {
     idProvider?: string;
-    contextPath?: string;
     type?: 'server' | 'absolute';
     params?: object;
 }
 
 interface IdProviderUrlHandler {
-    setIdProvider(value?: string | null): void;
+    setIdProvider(value: string | null): void;
 
-    setUrlType(value?: string | null): void;
+    setUrlType(value: string | null): void;
 
-    setContextPath(value?: string | null): void;
-
-    setQueryParams(value?: ScriptValue | null): void;
+    setQueryParams(value: ScriptValue | null): void;
 
     createUrl(): string;
 }
@@ -426,7 +427,6 @@ interface IdProviderUrlHandler {
  * @param {object} [params] Input parameters as JSON.
  * @param {string} [params.idProvider] Key of an ID provider.
  * If idProvider is not set, then the id provider corresponding to the current execution context will be used.
- * @param {string} [params.contextPath=vhost] Context path. Either `vhost` (using vhost target path) or `relative` to the current path.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
  * @param {object} [params.params] Custom query parameters to append to the URL.
  *
@@ -437,7 +437,6 @@ export function idProviderUrl(params?: IdProviderUrlParams): string {
 
     bean.setIdProvider(__.nullOrValue(params?.idProvider));
     bean.setUrlType(__.nullOrValue(params?.type));
-    bean.setContextPath(__.nullOrValue(params?.contextPath));
     bean.setQueryParams(__.toScriptValue(params?.params));
 
     return bean.createUrl();
@@ -446,21 +445,18 @@ export function idProviderUrl(params?: IdProviderUrlParams): string {
 export interface LoginUrlParams {
     idProvider?: string;
     redirect?: string;
-    contextPath?: string;
     type?: 'server' | 'absolute';
     params?: object;
 }
 
 interface LoginUrlHandler {
-    setIdProvider(value?: string | null): void;
+    setIdProvider(value: string | null): void;
 
-    setUrlType(value?: string | null): void;
+    setUrlType(value: string | null): void;
 
-    setContextPath(value?: string | null): void;
+    setRedirect(value: string | null): void;
 
-    setRedirect(value?: string | null): void;
-
-    setQueryParams(value?: ScriptValue | null): void;
+    setQueryParams(value: ScriptValue | null): void;
 
     createUrl(): string;
 }
@@ -473,7 +469,6 @@ interface LoginUrlHandler {
  * @param {string} [params.idProvider] Key of the id provider using an application.
  * If idProvider is not set, then the id provider corresponding to the current execution context will be used.
  * @param {string} [params.redirect] The URL to redirect to after the login.
- * @param {string} [params.contextPath=vhost] Context path. Either `vhost` (using vhost target path) or `relative` to the current path.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
  * @param {object} [params.params] Custom query parameters to append to the URL.
  *
@@ -484,7 +479,6 @@ export function loginUrl(params?: LoginUrlParams): string {
 
     bean.setIdProvider(__.nullOrValue(params?.idProvider));
     bean.setRedirect(__.nullOrValue(params?.redirect));
-    bean.setContextPath(__.nullOrValue(params?.contextPath));
     bean.setUrlType(__.nullOrValue(params?.type));
 
     return bean.createUrl();
@@ -492,19 +486,16 @@ export function loginUrl(params?: LoginUrlParams): string {
 
 export interface LogoutUrlParams {
     redirect?: string;
-    contextPath?: string;
     type?: 'server' | 'absolute';
     params?: object;
 }
 
 interface LogoutUrlHandler {
-    setRedirect(value?: string | null): void;
+    setRedirect(value: string | null): void;
 
-    setContextPath(value?: string | null): void;
+    setUrlType(value: string | null): void;
 
-    setUrlType(value?: string | null): void;
-
-    setQueryParams(value?: ScriptValue | null): void;
+    setQueryParams(value: ScriptValue | null): void;
 
     createUrl(): string;
 }
@@ -515,7 +506,6 @@ interface LogoutUrlHandler {
  *
  * @param {object} [params] Input parameters as JSON.
  * @param {string} [params.redirect] The URL to redirect to after the logout.
- * @param {string} [params.contextPath=vhost] Context path. Either `vhost` (using vhost target path) or `relative` to the current path.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
  * @param {object} [params.params] Custom query parameters to append to the URL.
  *
@@ -525,7 +515,6 @@ export function logoutUrl(params?: LogoutUrlParams): string {
     const bean: LogoutUrlHandler = __.newBean<LogoutUrlHandler>('com.enonic.xp.lib.portal.url.LogoutUrlHandler');
 
     bean.setRedirect(__.nullOrValue(params?.redirect));
-    bean.setContextPath(__.nullOrValue(params?.contextPath));
     bean.setUrlType(__.nullOrValue(params?.type));
     bean.setQueryParams(__.toScriptValue(params?.params));
 
@@ -541,9 +530,9 @@ export interface UrlParams {
 interface UrlHandler {
     setPath(value: string | ScriptValue): void;
 
-    setUrlType(value?: string | null): void;
+    setUrlType(value: string | null): void;
 
-    setQueryParams(value?: ScriptValue | null): void;
+    setQueryParams(value: ScriptValue | null): void;
 
     createUrl(): string;
 }
@@ -565,12 +554,12 @@ interface UrlHandler {
 export function url(params: UrlParams): string {
     const bean: UrlHandler = __.newBean<UrlHandler>('com.enonic.xp.lib.portal.url.UrlHandler');
 
-    checkRequired(params, 'path');
+    const path = checkRequired(params, 'path');
 
-    if (Array.isArray(params.path)) {
-        bean.setPath(__.toScriptValue(params.path));
+    if (Array.isArray(path)) {
+        bean.setPath(__.toScriptValue(path));
     } else {
-        bean.setPath(params.path);
+        bean.setPath(path);
     }
     bean.setUrlType(__.nullOrValue(params.type));
     bean.setQueryParams(__.toScriptValue(params.params));
@@ -588,11 +577,11 @@ export interface ProcessHtmlParams {
 interface ProcessHtmlHandler {
     setValue(value: string): void;
 
-    setUrlType(value?: string | null): void;
+    setUrlType(value: string | null): void;
 
-    setImageWidths(value?: number[] | null): void;
+    setImageWidths(value: number[] | null): void;
 
-    setImageSizes(value?: string | null): void;
+    setImageSizes(value: string | null): void;
 
     createUrl(): string;
 }
@@ -615,9 +604,9 @@ interface ProcessHtmlHandler {
 export function processHtml(params: ProcessHtmlParams): string {
     const bean: ProcessHtmlHandler = __.newBean<ProcessHtmlHandler>('com.enonic.xp.lib.portal.url.ProcessHtmlHandler');
 
-    checkRequired(params, 'value');
+    const value = checkRequired(params, 'value');
 
-    bean.setValue(params.value);
+    bean.setValue(value);
     bean.setUrlType(__.nullOrValue(params.type));
     bean.setImageWidths(__.nullOrValue(params.imageWidths));
     bean.setImageSizes(__.nullOrValue(params.imageSizes));
@@ -817,9 +806,9 @@ export interface ImagePlaceholderParams {
 }
 
 interface ImagePlaceholderHandler {
-    setWidth(value?: number): void;
+    setWidth(value: number): void;
 
-    setHeight(value?: number): void;
+    setHeight(value: number): void;
 
     createImagePlaceholder(): string;
 }
@@ -853,13 +842,13 @@ export interface ApiUrlParams {
 interface ApiUrlHandler {
     setApi(value: string): void;
 
-    setUrlType(value?: string | null): void;
+    setUrlType(value: string | null): void;
 
-    setPath(value?: ScriptValue | null): void;
+    setPath(value: ScriptValue | null): void;
 
-    setBaseUrl(value?: string | null): void;
+    setBaseUrl(value: string | null): void;
 
-    setQueryParams(value?: ScriptValue | null): void;
+    setQueryParams(value: ScriptValue | null): void;
 
     createUrl(): string;
 }
@@ -879,10 +868,9 @@ interface ApiUrlHandler {
  * @returns {string} The generated URL.
  */
 export function apiUrl(params: ApiUrlParams): string {
-    checkRequired(params, 'api');
+    const api = checkRequired(params, 'api');
 
     const {
-        api,
         type,
         path,
         params: queryParams,
@@ -909,15 +897,15 @@ export interface BaseUrlParams {
 }
 
 interface BaseUrlHandler {
-    setUrlType(value?: string | null): void;
+    setUrlType(value: string | null): void;
 
-    setProjectName(value?: string | null): void;
+    setProjectName(value: string | null): void;
 
-    setBranch(value?: string | null): void;
+    setBranch(value: string | null): void;
 
-    setId(value?: string | null): void;
+    setId(value: string | null): void;
 
-    setPath(value?: string | null): void;
+    setPath(value: string | null): void;
 
     createUrl(): string;
 }

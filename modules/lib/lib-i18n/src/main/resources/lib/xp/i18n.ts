@@ -8,6 +8,16 @@ import type {ScriptValue} from '@enonic-types/core';
 
 export type {ScriptValue} from '@enonic-types/core';
 
+function checkRequired<T extends object, K extends keyof T>(
+    obj: T,
+    name: K
+): NonNullable<T[K]> {
+    if (obj == null || obj[name] == null) {
+        throw new Error(`Parameter '${String(name)}' is required`);
+    }
+    return obj[name] as NonNullable<T[K]>;
+}
+
 export interface LocalizeParams {
     key: string;
     locale?: string | string[];
@@ -48,10 +58,11 @@ interface LocaleScriptBean {
  * @returns {string} The localized string, or a fallback message if the phrase is not found.
  */
 export function localize(params: LocalizeParams): string {
+    const key = checkRequired(params, 'key');
+
     const bean: LocaleScriptBean = __.newBean<LocaleScriptBean>('com.enonic.xp.lib.i18n.LocaleScriptBean');
 
     const {
-        key,
         locale = [],
         values = [],
         bundles = [],

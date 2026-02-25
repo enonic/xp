@@ -17,18 +17,22 @@ import type {ScriptValue} from '@enonic-types/core';
 
 export type {ScriptValue} from '@enonic-types/core';
 
-function checkRequiredValue(value: unknown, name: string): void {
+function checkRequiredArg<T>(value: T, name: string): NonNullable<T> {
     if (value == null) {
         throw Error(`Parameter '${String(name)}' is required`);
     }
+    return value as NonNullable<T>;
 }
 
-function checkRequired<T extends object>(obj: T, name: keyof T): void {
-    if (obj == null || obj[name] === undefined) {
-        throw Error(`Parameter '${String(name)}' is required`);
+function checkRequired<T extends object, K extends keyof T>(
+    obj: T,
+    name: K
+): NonNullable<T[K]> {
+    if (obj == null || obj[name] == null) {
+        throw new Error(`Parameter '${String(name)}' is required`);
     }
+    return obj[name] as NonNullable<T[K]>;
 }
-
 
 export interface Repository {
     id: string;
@@ -46,11 +50,11 @@ export interface RefreshParams {
 }
 
 interface RefreshHandler {
-    setMode(value?: RepoRefreshType | null): void;
+    setMode(value: RepoRefreshType | null): void;
 
-    setRepoId(value?: string | null): void;
+    setRepoId(value: string | null): void;
 
-    setBranch(value?: string | null): void;
+    setBranch(value: string | null): void;
 
     refresh(): void;
 }
@@ -100,9 +104,9 @@ export interface CreateRepositoryParams {
 interface CreateRepositoryHandler {
     setRepositoryId(value: string): void;
 
-    setRootPermissions(value: ScriptValue): void;
+    setRootPermissions(value: ScriptValue | null): void;
 
-    setRootChildOrder(value?: string | null): void;
+    setRootChildOrder(value: string | null): void;
 
     setTransient(value: boolean): void;
 
@@ -125,11 +129,11 @@ interface CreateRepositoryHandler {
  *
  */
 export function create(params: CreateRepositoryParams): Repository {
-    checkRequired(params, 'id');
+    const id = checkRequired(params, 'id');
 
     const bean: CreateRepositoryHandler = __.newBean<CreateRepositoryHandler>('com.enonic.xp.lib.repo.CreateRepositoryHandler');
 
-    bean.setRepositoryId(params.id);
+    bean.setRepositoryId(id);
     bean.setRootChildOrder(__.nullOrValue(params.rootChildOrder));
     if (params.rootPermissions) {
         bean.setRootPermissions(__.toScriptValue(params.rootPermissions));
@@ -157,9 +161,9 @@ interface DeleteRepositoryHandler {
  *
  */
 export function deleteRepo(id: string): boolean {
-    checkRequiredValue(id, 'id');
+    const idValue = checkRequiredArg(id, 'id');
     const bean: DeleteRepositoryHandler = __.newBean<DeleteRepositoryHandler>('com.enonic.xp.lib.repo.DeleteRepositoryHandler');
-    bean.setRepositoryId(id);
+    bean.setRepositoryId(idValue);
     return bean.execute();
 }
 
@@ -199,10 +203,10 @@ interface GetRepositoryHandler {
  *
  */
 export function get(id: string): Repository | null {
-    checkRequiredValue(id, 'id');
+    const idValue = checkRequiredArg(id, 'id');
 
     const bean: GetRepositoryHandler = __.newBean<GetRepositoryHandler>('com.enonic.xp.lib.repo.GetRepositoryHandler');
-    bean.setRepositoryId(id);
+    bean.setRepositoryId(idValue);
     return __.toNativeObject(bean.execute());
 }
 
@@ -235,13 +239,13 @@ interface CreateBranchHandler {
  *
  */
 export function createBranch(params: CreateBranchParams): BranchResult {
-    checkRequired(params, 'repoId');
-    checkRequired(params, 'branchId');
+    const repoId = checkRequired(params, 'repoId');
+    const branchId = checkRequired(params, 'branchId');
 
     const bean: CreateBranchHandler = __.newBean<CreateBranchHandler>('com.enonic.xp.lib.repo.CreateBranchHandler');
 
-    bean.setBranchId(params.branchId);
-    bean.setRepoId(params.repoId);
+    bean.setBranchId(branchId);
+    bean.setRepoId(repoId);
 
     return __.toNativeObject(bean.execute());
 }
@@ -271,12 +275,12 @@ interface DeleteBranchHandler {
  *
  */
 export function deleteBranch(params: DeleteBranchParams): BranchResult {
-    checkRequired(params, 'repoId');
-    checkRequired(params, 'branchId');
+    const repoId = checkRequired(params, 'repoId');
+    const branchId = checkRequired(params, 'branchId');
 
     const bean: DeleteBranchHandler = __.newBean<DeleteBranchHandler>('com.enonic.xp.lib.repo.DeleteBranchHandler');
-    bean.setBranchId(params.branchId);
-    bean.setRepoId(params.repoId);
+    bean.setBranchId(branchId);
+    bean.setRepoId(repoId);
     return __.toNativeObject(bean.execute());
 }
 
@@ -315,13 +319,13 @@ export function modify(params: ModifyRepositoryParams): Repository {
         throw Error('The parameter \'scope\' is not supported');
     }
 
-    checkRequired(params, 'id');
-    checkRequired(params, 'editor');
+    const id = checkRequired(params, 'id');
+    const editor = checkRequired(params, 'editor');
 
     const bean: ModifyRepositoryHandler = __.newBean<ModifyRepositoryHandler>('com.enonic.xp.lib.repo.ModifyRepositoryHandler');
 
-    bean.setId(params.id);
-    bean.setEditor(__.toScriptValue(params.editor));
+    bean.setId(id);
+    bean.setEditor(__.toScriptValue(editor));
 
     return __.toNativeObject(bean.execute());
 }
@@ -351,13 +355,13 @@ interface GetRepositoryBinaryHandler {
  * @returns {*} Stream of the attachment data.
  */
 export function getBinary(params: GetRepositoryBinaryParams): object {
-    checkRequired(params, 'repoId');
-    checkRequired(params, 'binaryReference');
+    const repoId = checkRequired(params, 'repoId');
+    const binaryReference = checkRequired(params, 'binaryReference');
 
     const bean: GetRepositoryBinaryHandler = __.newBean<GetRepositoryBinaryHandler>('com.enonic.xp.lib.repo.GetRepositoryBinaryHandler');
 
-    bean.setRepositoryId(params.repoId);
-    bean.setBinaryReference(params.binaryReference);
+    bean.setRepositoryId(repoId);
+    bean.setBinaryReference(binaryReference);
 
     return bean.execute();
 }

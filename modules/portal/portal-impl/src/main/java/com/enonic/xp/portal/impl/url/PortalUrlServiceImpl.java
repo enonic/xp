@@ -16,7 +16,6 @@ import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
-import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.macro.MacroService;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
@@ -310,7 +309,7 @@ public final class PortalUrlServiceImpl
         final ApiUrlGeneratorParams generatorParams = ApiUrlGeneratorParams.create()
             .setBaseUrl( params.getBaseUrl() )
             .setUrlType( params.getType() )
-            .setDescriptorKey( DescriptorKey.from( params.getApi() ) )
+            .setDescriptorKey( params.getApi() )
             .setPath( new ApiUrlPathResolver( params.getPath(), params.getPathSegments() ) )
             .setQueryParams( params.getQueryParams() )
             .build();
