@@ -51,8 +51,7 @@ public final class ApiDescriptorServiceImpl
             .collect( ApiDescriptors.collector() );
     }
 
-    @Override
-    public ResourceKey getDescriptorResourceKey( final DescriptorKey key )
+    private ResourceKey getDescriptorResourceKey( final DescriptorKey key )
     {
         return toResourceKey( key, "yml" );
     }

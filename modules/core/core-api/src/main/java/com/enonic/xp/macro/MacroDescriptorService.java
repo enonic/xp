@@ -17,6 +17,4 @@ public interface MacroDescriptorService
     MacroDescriptors getAll();
 
     ResourceKey getControllerResourceKey( MacroKey key );
-
-    ResourceKey getDescriptorResourceKey( MacroKey key );
 }
