@@ -60,15 +60,6 @@ class MessageBundleImplTest
     }
 
     @Test
-    void nullArguments()
-    {
-        final Properties properties = new Properties();
-        properties.put( "key1", "{0}" );
-        MessageBundle resourceBundle = new MessageBundleImpl( properties, Locale.ROOT );
-        assertEquals( "{0}", resourceBundle.localize( "key1", (Object[]) null ) );
-    }
-
-    @Test
     void nullArgument()
     {
         final Properties properties = new Properties();

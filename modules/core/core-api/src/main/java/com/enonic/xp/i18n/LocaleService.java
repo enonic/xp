@@ -12,8 +12,6 @@ import com.enonic.xp.app.ApplicationKey;
 @NullMarked
 public interface LocaleService
 {
-    MessageBundle getBundle( ApplicationKey applicationKey, @Nullable Locale locale );
-
     MessageBundle getBundle( ApplicationKey applicationKey, @Nullable Locale locale, String... bundleNames );
 
     Set<Locale> getLocales( ApplicationKey applicationKey, String... bundleNames );

@@ -3,9 +3,10 @@ package com.enonic.xp.lib.i18n;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
+import java.util.SequencedSet;
 
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -37,28 +38,28 @@ class I18NScriptTest
 
         final LocaleService localeService = Mockito.mock( LocaleService.class );
 
-        final Set<Locale> locales = new LinkedHashSet<>();
-        locales.add( new Locale( "en" ) );
-        locales.add( new Locale( "es" ) );
-        locales.add( new Locale( "ca" ) );
-        Mockito.when( localeService.getLocales( any( ApplicationKey.class ), any() ) ).thenReturn( locales );
+        final SequencedSet<Locale> locales =
+            new LinkedHashSet<>( List.of( Locale.forLanguageTag( "en" ), Locale.forLanguageTag( "es" ), Locale.forLanguageTag( "ca" ) ) );
+
+        Mockito.when( localeService.getLocales( any( ApplicationKey.class ), any( String[].class ) ) ).thenReturn( locales );
 
         final MessageBundle bundle = Mockito.mock( MessageBundle.class, this::answer );
-        Mockito.when( localeService.getBundle( any( ApplicationKey.class ), any( Locale.class ), any() ) ).
-            thenReturn( bundle );
+        Mockito.when( localeService.getBundle( any( ApplicationKey.class ), any( Locale.class ), any( String[].class ) ) )
+            .thenReturn( bundle );
 
         addService( LocaleService.class, localeService );
 
-        this.portalRequest.setSite( Site.create().
-            name( ContentName.from( "test" ) ).
-            parentPath( ContentPath.ROOT ).
-            language( Locale.ENGLISH ).
-            build() );
+        this.portalRequest.setSite(
+            Site.create().name( ContentName.from( "test" ) ).parentPath( ContentPath.ROOT ).language( Locale.ENGLISH ).build() );
     }
 
     private Object answer( final InvocationOnMock invocation )
     {
         final Object[] arguments = invocation.getArguments();
+        if ( invocation.getMethod().getName().equals( "localize" ) )
+        {
+            return arguments[0].equals( "notLocalized" ) ? null : Arrays.toString( arguments );
+        }
         if ( invocation.getMethod().getName().equals( "asMap" ) )
         {
             final Map<String, String> map = new HashMap<>();

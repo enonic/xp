@@ -42,10 +42,10 @@ class LocalizeNoHttpTest
 
         final Set<Locale> locales = new LinkedHashSet<>();
         locales.add( Locale.of( "en" ) );
-        Mockito.when( localeService.getLocales( eq( applicationKey ), any() ) ).thenReturn( locales );
+        Mockito.when( localeService.getLocales( eq( applicationKey ), any( String[].class ) ) ).thenReturn( locales );
 
         final MessageBundle bundle = Mockito.mock( MessageBundle.class, this::answer );
-        Mockito.when( localeService.getBundle( eq( applicationKey ), any(), any() ) ).thenReturn( bundle );
+        Mockito.when( localeService.getBundle( eq( applicationKey ), any(), any( String[].class ) ) ).thenReturn( bundle );
 
         addService( LocaleService.class, localeService );
     }

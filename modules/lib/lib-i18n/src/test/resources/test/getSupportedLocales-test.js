@@ -1,8 +1,14 @@
-var t = require('/lib/xp/testing');
-var i18n = require('/lib/xp/i18n');
+const t = require('/lib/xp/testing');
+const i18n = require('/lib/xp/i18n');
 
-exports.testgetLocales = function () {
+exports.testGetLocales = function () {
     var result = i18n.getSupportedLocales();
+
+    t.assertJsonEquals(['ca', 'en', 'es'], result);
+};
+
+exports.testGetLocalesBundle = function () {
+    let result = i18n.getSupportedLocales(['bundle']);
 
     t.assertJsonEquals(['ca', 'en', 'es'], result);
 };
