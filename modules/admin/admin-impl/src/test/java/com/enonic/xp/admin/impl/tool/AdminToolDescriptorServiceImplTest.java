@@ -1,84 +1,81 @@
 package com.enonic.xp.admin.impl.tool;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.admin.tool.AdminToolDescriptor;
 import com.enonic.xp.admin.tool.AdminToolDescriptors;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.core.impl.app.ApplicationTestSupport;
+import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.descriptor.DescriptorKey;
-import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.descriptor.DescriptorService;
+import com.enonic.xp.descriptor.Descriptors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class AdminToolDescriptorServiceImplTest
-    extends ApplicationTestSupport
 {
-    protected AdminToolDescriptorServiceImpl service;
+    private DescriptorService descriptorService;
 
-    @Override
-    protected void initialize()
+    private AdminToolDescriptorServiceImpl service;
+
+    @BeforeEach
+    void setUp()
     {
-        this.service = new AdminToolDescriptorServiceImpl( this.resourceService, this.applicationService );
-
-        addApplication( "myapp1", "/apps/myapp1" );
-        addApplication( "myapp2", "/apps/myapp2" );
-    }
-
-    @Test
-    void getAllowedAdminToolDescriptors()
-    {
-        final PrincipalKeys principalKeys = PrincipalKeys.from( PrincipalKey.from( "role:system.user.admin" ) );
-        AdminToolDescriptors result = this.service.getAllowedAdminToolDescriptors( principalKeys );
-        assertNotNull( result );
-        assertEquals( 1, result.getSize() );
-
-        result = this.service.getAllowedAdminToolDescriptors( PrincipalKeys.empty() );
-        assertNotNull( result );
-        assertEquals( 0, result.getSize() );
+        this.descriptorService = mock( DescriptorService.class );
+        this.service = new AdminToolDescriptorServiceImpl( this.descriptorService );
     }
 
     @Test
     void getByApplication()
     {
-        final AdminToolDescriptors result = this.service.getByApplication( ApplicationKey.from( "myapp1" ) );
+        final ApplicationKey appKey = ApplicationKey.from( "myapp1" );
+        final AdminToolDescriptor descriptor =
+            AdminToolDescriptor.create().key( DescriptorKey.from( appKey, "myadmintool" ) ).displayName( "My admin tool" ).build();
+
+        when( this.descriptorService.get( AdminToolDescriptor.class, ApplicationKeys.from( appKey ) ) ).thenReturn(
+            Descriptors.from( descriptor ) );
+
+        final AdminToolDescriptors result = this.service.getByApplication( appKey );
 
         assertEquals( 1, result.getSize() );
-
-        final AdminToolDescriptor adminToolDescriptor = result.get( 0 );
-
-        assertEquals( "My admin tool", adminToolDescriptor.getDisplayName() );
-        assertEquals( "My admin tool description", adminToolDescriptor.getDescription() );
-        assertEquals( 1, adminToolDescriptor.getAllowedPrincipals().getSize() );
+        assertSame( descriptor, result.get( 0 ) );
     }
-
 
     @Test
     void getByKey()
     {
         final DescriptorKey descriptorKey = DescriptorKey.from( ApplicationKey.from( "myapp1" ), "myadmintool" );
+        final AdminToolDescriptor descriptor =
+            AdminToolDescriptor.create().key( descriptorKey ).displayName( "My admin tool" ).build();
+
+        when( this.descriptorService.get( AdminToolDescriptor.class, descriptorKey ) ).thenReturn( descriptor );
+
         final AdminToolDescriptor result = this.service.getByKey( descriptorKey );
 
         assertNotNull( result );
-        assertEquals( "My admin tool", result.getDisplayName() );
-        assertEquals( "My admin tool description", result.getDescription() );
-        assertEquals( 1, result.getAllowedPrincipals().getSize() );
+        assertSame( descriptor, result );
     }
 
     @Test
-    void getIconByKey()
+    void getAll()
     {
-        final DescriptorKey descriptorKey = DescriptorKey.from( ApplicationKey.from( "myapp1" ), "myadmintool" );
-        final String icon = this.service.getIconByKey( descriptorKey );
+        final AdminToolDescriptor descriptor1 =
+            AdminToolDescriptor.create().key( DescriptorKey.from( "myapp1:tool1" ) ).displayName( "Tool 1" ).build();
+        final AdminToolDescriptor descriptor2 =
+            AdminToolDescriptor.create().key( DescriptorKey.from( "myapp2:tool2" ) ).displayName( "Tool 2" ).build();
 
-        assertNull( icon );
+        when( this.descriptorService.getAll( AdminToolDescriptor.class ) ).thenReturn(
+            Descriptors.from( descriptor1, descriptor2 ) );
 
-        final DescriptorKey descriptorKey2 = DescriptorKey.from( ApplicationKey.from( "myapp2" ), "myadmintool" );
-        final String icon2 = this.service.getIconByKey( descriptorKey2 );
+        final AdminToolDescriptors result = this.service.getAll();
 
-        assertEquals( "<svg>SVG content</svg>", icon2 );
+        assertEquals( 2, result.getSize() );
+        assertSame( descriptor1, result.get( 0 ) );
+        assertSame( descriptor2, result.get( 1 ) );
     }
 }

@@ -6,9 +6,10 @@ import java.util.Set;
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.descriptor.Descriptor;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.descriptor.DescriptorKeys;
+import com.enonic.xp.icon.Icon;
 import com.enonic.xp.schema.LocalizedText;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
@@ -16,9 +17,8 @@ import com.enonic.xp.security.RoleKeys;
 
 @PublicApi
 public final class AdminToolDescriptor
+    extends Descriptor
 {
-    private final DescriptorKey key;
-
     private final String displayName;
 
     private final String displayNameI18nKey;
@@ -33,9 +33,11 @@ public final class AdminToolDescriptor
 
     private final ImmutableSet<String> interfaces;
 
+    private final Icon icon;
+
     private AdminToolDescriptor( final Builder builder )
     {
-        key = builder.key;
+        super( builder.key );
         displayName = builder.displayName;
         displayNameI18nKey = builder.displayNameI18nKey;
         description = builder.description;
@@ -43,26 +45,12 @@ public final class AdminToolDescriptor
         allowedPrincipals = PrincipalKeys.from( builder.allowedPrincipals.build() );
         apiMounts = Objects.requireNonNullElse( builder.apiMounts, DescriptorKeys.empty() );
         interfaces = builder.interfaces;
-    }
-
-    public DescriptorKey getKey()
-    {
-        return key;
+        icon = builder.icon;
     }
 
     public String getDisplayName()
     {
         return displayName;
-    }
-
-    public String getName()
-    {
-        return this.key.getName();
-    }
-
-    public ApplicationKey getApplicationKey()
-    {
-        return this.key.getApplicationKey();
     }
 
     public String getDescription()
@@ -100,6 +88,11 @@ public final class AdminToolDescriptor
         return interfaces.contains( interfaceName );
     }
 
+    public Icon getIcon()
+    {
+        return icon;
+    }
+
     public DescriptorKeys getApiMounts()
     {
         return apiMounts;
@@ -128,6 +121,8 @@ public final class AdminToolDescriptor
         private final ImmutableSet.Builder<PrincipalKey> allowedPrincipals = ImmutableSet.builder();
 
         private ImmutableSet<String> interfaces = ImmutableSet.of();
+
+        private Icon icon;
 
         private Builder()
         {
@@ -198,6 +193,12 @@ public final class AdminToolDescriptor
         public Builder interfaces( final String... interfaces )
         {
             this.interfaces = ImmutableSet.copyOf( interfaces );
+            return this;
+        }
+
+        public Builder setIcon( final Icon icon )
+        {
+            this.icon = icon;
             return this;
         }
 
