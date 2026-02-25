@@ -20,8 +20,6 @@ public final class LogoutUrlHandler
 
     private String redirect;
 
-    private String contextPath;
-
     private String urlType;
 
     private Map<String, List<String>> queryParams;
@@ -35,12 +33,6 @@ public final class LogoutUrlHandler
     public LogoutUrlHandler setRedirect( final String redirect )
     {
         this.redirect = redirect;
-        return this;
-    }
-
-    public LogoutUrlHandler setContextPath( final String contextPath )
-    {
-        this.contextPath = contextPath;
         return this;
     }
 
@@ -59,7 +51,6 @@ public final class LogoutUrlHandler
     {
         final IdentityUrlParams params = new IdentityUrlParams().idProviderFunction( "logout" )
             .redirectionUrl( this.redirect )
-            .contextPathType( this.contextPath )
             .type( this.urlType )
             .idProviderKey( retrieveIdProviderKey() );
 

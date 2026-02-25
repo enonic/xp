@@ -53,7 +53,7 @@ export interface DoubleUnderscore {
      * Converts JSON to a Java Map structure that can be used as parameters to a Java method on a bean created with newBean.
      * @param value Value to convert
      */
-    toScriptValue: <T = object>(value: T) => ScriptValue;
+    toScriptValue: <T = unknown>(value: T) => T extends null | undefined ? null : ScriptValue;
     /**
      * Add a disposer that is called when the app is stopped.
      * @param callback Function to call
@@ -64,7 +64,7 @@ export interface DoubleUnderscore {
      * If the JavaScript variable is defined, it is returned as is.
      * @param value Value to convert
      */
-    nullOrValue: <T = unknown>(value: T) => Exclude<T, undefined> | null;
+    nullOrValue: <T = unknown>(value: T) => T extends null | undefined ? null : T;
     /**
      * Doc registerMock.
      *

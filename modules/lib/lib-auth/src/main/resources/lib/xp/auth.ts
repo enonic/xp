@@ -17,16 +17,21 @@ import type {Group, GroupKey, Principal, PrincipalKey, Role, RoleKey, ScriptValu
 
 export type {PrincipalKey, UserKey, GroupKey, RoleKey, Principal, ScriptValue, User, Group, Role} from '@enonic-types/core';
 
-function checkRequired<T extends object>(obj: T, name: keyof T): void {
+function checkRequired<T extends object, K extends keyof T>(
+    obj: T,
+    name: K
+): NonNullable<T[K]> {
     if (obj == null || obj[name] == null) {
-        throw Error(`Parameter '${String(name)}' is required`);
+        throw new Error(`Parameter '${String(name)}' is required`);
     }
+    return obj[name] as NonNullable<T[K]>;
 }
 
-function checkRequiredValue(value: unknown, name: string): void {
-    if (typeof value === 'undefined' || value === null) {
-        throw Error(`Parameter '${String(name)}' is required`);
+function checkRequiredArg<T>(value: T, name: string): NonNullable<T> {
+    if (value == null) {
+        throw new Error(`Parameter '${String(name)}' is required`);
     }
+    return value as NonNullable<T>;
 }
 
 export type LoginScopeType = 'SESSION' | 'REQUEST' | 'NONE';
@@ -61,15 +66,15 @@ export interface LoginResult {
 interface LoginHandler {
     setUser(value: string): void;
 
-    setSkipAuth(value?: boolean): void;
+    setSkipAuth(value: boolean): void;
 
-    setPassword(value?: string): void;
+    setPassword(value: string): void;
 
-    setIdProvider(value?: string | null): void;
+    setIdProvider(value: string | null): void;
 
-    setScope(value?: LoginScopeType): void;
+    setScope(value: LoginScopeType): void;
 
-    setSessionTimeout(value?: number | null): void;
+    setSessionTimeout(value: number | null): void;
 
     login(): LoginResult;
 }
@@ -95,10 +100,9 @@ const isLoginParams = (params: unknown): params is LoginParams =>
  * @returns {LoginResult} Information for logged-in user.
  */
 export function login(params: LoginParams | LoginWithoutPasswordParams): LoginResult {
-    checkRequired(params, 'user');
+    const user = checkRequired(params, 'user');
 
     const {
-        user,
         idProvider,
         scope = 'SESSION' as LoginScopeType,
         sessionTimeout,
@@ -112,13 +116,12 @@ export function login(params: LoginParams | LoginWithoutPasswordParams): LoginRe
 
     if (isLoginParams(params)) {
         const skipAuth = params.skipAuth ?? false;
-        const password = params.password;
 
         if (skipAuth) {
             bean.setSkipAuth(true);
         } else {
-            checkRequiredValue(password, 'password');
-            bean.setPassword(password);
+
+            bean.setPassword(checkRequired(params, 'password'));
         }
     }
     bean.setIdProvider(__.nullOrValue(idProvider));
@@ -179,7 +182,7 @@ export function getUser(params?: GetUserParams): User | null {
 }
 
 interface HasRoleHandler {
-    setRole(value?: string | null): void;
+    setRole(value: string): void;
 
     hasRole(): boolean;
 }
@@ -193,9 +196,10 @@ interface HasRoleHandler {
  * @returns {boolean} True if the user has specified role, false otherwise.
  */
 export function hasRole(role: string): boolean {
+    checkRequiredArg(role, 'role');
     const bean: HasRoleHandler = __.newBean<HasRoleHandler>('com.enonic.xp.lib.auth.HasRoleHandler');
 
-    bean.setRole(__.nullOrValue(role));
+    bean.setRole(role);
 
     return bean.hasRole();
 }
@@ -225,7 +229,7 @@ export interface ChangePasswordParams {
 interface ChangePasswordHandler {
     setUserKey(value: string): void;
 
-    setPassword(value?: string | null): void;
+    setPassword(value: string | null): void;
 
     changePassword(): void;
 }
@@ -242,9 +246,9 @@ interface ChangePasswordHandler {
 export function changePassword(params: ChangePasswordParams): void {
     const bean: ChangePasswordHandler = __.newBean<ChangePasswordHandler>('com.enonic.xp.lib.auth.ChangePasswordHandler');
 
-    checkRequired(params, 'userKey');
+    const userKey = checkRequired(params, 'userKey');
 
-    const {userKey, password} = params ?? {};
+    const {password} = params ?? {};
 
     bean.setUserKey(userKey);
     bean.setPassword(__.nullOrValue(password));
@@ -270,7 +274,7 @@ export function getPrincipal(roleKey: RoleKey): Role | null;
  * @returns {User | Group | Role} the principal specified, or null if it doesn't exist.
  */
 export function getPrincipal(principalKey: PrincipalKey): Principal | null {
-    checkRequiredValue(principalKey, 'principalKey');
+    checkRequiredArg(principalKey, 'principalKey');
 
     const bean: GetPrincipalHandler = __.newBean<GetPrincipalHandler>('com.enonic.xp.lib.auth.GetPrincipalHandler');
 
@@ -297,7 +301,7 @@ interface GetMembershipsHandler {
  * @returns {Array<Group | Role>} Returns the list of groups and roles.
  */
 export function getMemberships(principalKey: UserKey | GroupKey, transitive = false): (Group | Role)[] {
-    checkRequiredValue(principalKey, 'principalKey');
+    checkRequiredArg(principalKey, 'principalKey');
 
     const bean: GetMembershipsHandler = __.newBean<GetMembershipsHandler>('com.enonic.xp.lib.auth.GetMembershipsHandler');
 
@@ -322,7 +326,7 @@ interface GetMembersHandler {
  * @returns {Array<User | Group>} Returns the list of users and groups.
  */
 export function getMembers(principalKey: GroupKey | RoleKey): (User | Group)[] {
-    checkRequiredValue(principalKey, 'principalKey');
+    checkRequiredArg(principalKey, 'principalKey');
 
     const bean: GetMembersHandler = __.newBean<GetMembersHandler>('com.enonic.xp.lib.auth.GetMembersHandler');
 
@@ -343,9 +347,9 @@ interface CreateUserHandler {
 
     setName(value: string): void;
 
-    setDisplayName(value?: string | null): void;
+    setDisplayName(value: string | null): void;
 
-    setEmail(value?: string | null): void;
+    setEmail(value: string | null): void;
 
     createUser(): User;
 }
@@ -362,13 +366,13 @@ interface CreateUserHandler {
  * @param {string} [params.email] User email.
  */
 export function createUser(params: CreateUserParams): User {
-    checkRequired(params, 'name');
-    checkRequired(params, 'idProvider');
+    const name = checkRequired(params, 'name');
+    const idProvider = checkRequired(params, 'idProvider');
 
     const bean: CreateUserHandler = __.newBean<CreateUserHandler>('com.enonic.xp.lib.auth.CreateUserHandler');
 
-    bean.setIdProvider(params.idProvider);
-    bean.setName(params.name);
+    bean.setIdProvider(idProvider);
+    bean.setName(name);
     bean.setDisplayName(__.nullOrValue(params.displayName));
     bean.setEmail(__.nullOrValue(params.email));
 
@@ -399,13 +403,13 @@ interface ModifyUserHandler {
  * @returns {User} the updated user or null if a  user not found.
  */
 export function modifyUser(params: ModifyUserParams): User | null {
-    checkRequired(params, 'key');
-    checkRequired(params, 'editor');
+    const key = checkRequired(params, 'key');
+    const editor = checkRequired(params, 'editor');
 
     const bean: ModifyUserHandler = __.newBean<ModifyUserHandler>('com.enonic.xp.lib.auth.ModifyUserHandler');
 
-    bean.setPrincipalKey(params.key);
-    bean.setEditor(__.toScriptValue(params.editor));
+    bean.setPrincipalKey(key);
+    bean.setEditor(__.toScriptValue(editor));
 
     return __.toNativeObject(bean.modifyUser());
 }
@@ -422,9 +426,9 @@ interface CreateGroupHandler {
 
     setName(value: string): void;
 
-    setDisplayName(value?: string | null): void;
+    setDisplayName(value: string | null): void;
 
-    setDescription(value?: string | null): void;
+    setDescription(value: string | null): void;
 
     createGroup(): Group;
 }
@@ -441,13 +445,13 @@ interface CreateGroupHandler {
  * @param {string} [params.description] as principal description .
  */
 export function createGroup(params: CreateGroupParams): Group {
-    checkRequired(params, 'idProvider');
-    checkRequired(params, 'name');
+    const idProvider = checkRequired(params, 'idProvider');
+    const name = checkRequired(params, 'name');
 
     const bean: CreateGroupHandler = __.newBean<CreateGroupHandler>('com.enonic.xp.lib.auth.CreateGroupHandler');
 
-    bean.setIdProvider(params.idProvider);
-    bean.setName(params.name);
+    bean.setIdProvider(idProvider);
+    bean.setName(name);
     bean.setDisplayName(__.nullOrValue(params.displayName));
     bean.setDescription(__.nullOrValue(params.description));
 
@@ -478,13 +482,13 @@ interface ModifyGroupHandler {
  * @returns {Group} the updated group or null if a group not found.
  */
 export function modifyGroup(params: ModifyGroupParams): Group | null {
-    checkRequired(params, 'key');
-    checkRequired(params, 'editor');
+    const key = checkRequired(params, 'key');
+    const editor = checkRequired(params, 'editor');
 
     const bean: ModifyGroupHandler = __.newBean<ModifyGroupHandler>('com.enonic.xp.lib.auth.ModifyGroupHandler');
 
-    bean.setPrincipalKey(params.key);
-    bean.setEditor(__.toScriptValue(params.editor));
+    bean.setPrincipalKey(key);
+    bean.setEditor(__.toScriptValue(editor));
 
     return __.toNativeObject(bean.modifyGroup());
 }
@@ -506,7 +510,7 @@ interface AddMembersHandler {
  * @param {Array<string>} members Keys of users and groups to add.
  */
 export function addMembers(principalKey: GroupKey | RoleKey, members: (UserKey | GroupKey)[]): void {
-    checkRequiredValue(principalKey, 'principalKey');
+    checkRequiredArg(principalKey, 'principalKey');
 
     const bean: AddMembersHandler = __.newBean<AddMembersHandler>('com.enonic.xp.lib.auth.AddMembersHandler');
 
@@ -533,7 +537,7 @@ interface RemoveMembersHandler {
  * @param {string} members Keys of the principals to remove.
  */
 export function removeMembers(principalKey: GroupKey | RoleKey, members: (UserKey | GroupKey)[]): void {
-    checkRequiredValue(principalKey, 'principalKey');
+    checkRequiredArg(principalKey, 'principalKey');
 
     const bean: RemoveMembersHandler = __.newBean<RemoveMembersHandler>('com.enonic.xp.lib.auth.RemoveMembersHandler');
 
@@ -559,17 +563,17 @@ export interface FindPrincipalsResult<P extends Principal = Principal> {
 }
 
 interface FindPrincipalsHandler {
-    setType(value?: string | null): void;
+    setType(value: string | null): void;
 
-    setIdProvider(value?: string | null): void;
+    setIdProvider(value: string | null): void;
 
-    setStart(value?: number | null): void;
+    setStart(value: number | null): void;
 
-    setCount(value?: number | null): void;
+    setCount(value: number | null): void;
 
-    setName(value?: string | null): void;
+    setName(value: string | null): void;
 
-    setSearchText(value?: string | null): void;
+    setSearchText(value: string | null): void;
 
     findPrincipals(): FindPrincipalsResult;
 }
@@ -625,7 +629,7 @@ interface DeletePrincipalHandler {
  * @returns {boolean} True if deleted, false otherwise.
  */
 export function deletePrincipal(principalKey: PrincipalKey): boolean {
-    checkRequiredValue(principalKey, 'principalKey');
+    checkRequiredArg(principalKey, 'principalKey');
 
     const bean: DeletePrincipalHandler = __.newBean<DeletePrincipalHandler>('com.enonic.xp.lib.auth.DeletePrincipalHandler');
     bean.setPrincipalKey(principalKey);
@@ -658,7 +662,7 @@ export interface GetProfileParams {
 interface GetProfileHandler<Profile extends Record<string, unknown>> {
     setKey(value: UserKey): void;
 
-    setScope(value?: string | null): void;
+    setScope(value: string | null): void;
 
     execute(): Profile | null;
 }
@@ -674,11 +678,11 @@ interface GetProfileHandler<Profile extends Record<string, unknown>> {
  * @returns {object} The extra data as JSON
  */
 export function getProfile<Profile extends Record<string, unknown> = Record<string, unknown>>(params: GetProfileParams): Profile | null {
-    checkRequired(params, 'key');
+    const key = checkRequired(params, 'key');
 
     const bean: GetProfileHandler<Profile> = __.newBean<GetProfileHandler<Profile>>('com.enonic.xp.lib.auth.GetProfileHandler');
 
-    bean.setKey(params.key);
+    bean.setKey(key);
     bean.setScope(__.nullOrValue(params.scope));
 
     return __.toNativeObject(bean.execute());
@@ -693,7 +697,7 @@ export interface ModifyProfileParams<Profile extends Record<string, unknown>> {
 interface ModifyProfileHandler<Profile extends Record<string, unknown>> {
     setKey(value: UserKey): void;
 
-    setScope(value?: string | null): void;
+    setScope(value: string | null): void;
 
     setEditor(value: ScriptValue): void;
 
@@ -712,14 +716,14 @@ interface ModifyProfileHandler<Profile extends Record<string, unknown>> {
  * @returns {object} The extra data as JSON
  */
 export function modifyProfile<Profile extends Record<string, unknown> = Record<string, unknown>>(params: ModifyProfileParams<Profile>): Profile | null {
-    checkRequired(params, 'key');
-    checkRequired(params, 'editor');
+    const key = checkRequired(params, 'key');
+    const editor = checkRequired(params, 'editor');
 
     const bean: ModifyProfileHandler<Profile> = __.newBean<ModifyProfileHandler<Profile>>('com.enonic.xp.lib.auth.ModifyProfileHandler');
 
-    bean.setKey(params.key);
+    bean.setKey(key);
     bean.setScope(__.nullOrValue(params.scope));
-    bean.setEditor(__.toScriptValue(params.editor));
+    bean.setEditor(__.toScriptValue(editor));
 
     return __.toNativeObject(bean.execute());
 }
@@ -737,9 +741,9 @@ interface FindUsersHandler {
 
     setCount(value: number): void;
 
-    setQuery(value?: string | null): void;
+    setQuery(value: string | null): void;
 
-    setSort(value?: string | null): void;
+    setSort(value: string | null): void;
 
     setIncludeProfile(value: boolean): void;
 
@@ -792,9 +796,9 @@ export interface CreateRoleParams {
 interface CreateRoleHandler {
     setName(value: string): void;
 
-    setDisplayName(value?: string | null): void;
+    setDisplayName(value: string | null): void;
 
-    setDescription(value?: string | null): void;
+    setDescription(value: string | null): void;
 
     createRole(): Role;
 }
@@ -809,11 +813,11 @@ interface CreateRoleHandler {
  * @param {string} [params.description] as principal description .
  */
 export function createRole(params: CreateRoleParams): Role {
-    checkRequired(params, 'name');
+    const name = checkRequired(params, 'name');
 
     const bean: CreateRoleHandler = __.newBean<CreateRoleHandler>('com.enonic.xp.lib.auth.CreateRoleHandler');
 
-    bean.setName(params.name);
+    bean.setName(name);
     bean.setDisplayName(__.nullOrValue(params.displayName));
     bean.setDescription(__.nullOrValue(params.description));
 
@@ -844,13 +848,13 @@ interface ModifyRoleHandler {
  * @returns {Role} the updated role or null if a role not found.
  */
 export function modifyRole(params: ModifyRoleParams): Role | null {
-    checkRequired(params, 'key');
-    checkRequired(params, 'editor');
+    const key = checkRequired(params, 'key');
+    const editor = checkRequired(params, 'editor');
 
     const bean: ModifyRoleHandler = __.newBean<ModifyRoleHandler>('com.enonic.xp.lib.auth.ModifyRoleHandler');
 
-    bean.setPrincipalKey(params.key);
-    bean.setEditor(__.toScriptValue(params.editor));
+    bean.setPrincipalKey(key);
+    bean.setEditor(__.toScriptValue(editor));
 
     return __.toNativeObject(bean.modifyRole());
 }

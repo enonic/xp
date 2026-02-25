@@ -221,7 +221,7 @@ class UrlServiceScriptTest
         ArgumentCaptor<ApiUrlParams> captor = ArgumentCaptor.forClass( ApiUrlParams.class );
         verify( portalUrlService ).apiUrl( captor.capture() );
         final ApiUrlParams params = captor.getValue();
-        assertEquals( "com.enonic.app.myapp:myapi", params.getApi() );
+        assertEquals( "com.enonic.app.myapp:myapi", params.getApi().toString() );
         assertThat( params.getPathSegments() ).containsExactly( "segment1", "segment2" );
         assertThat( params.getBaseUrl() ).isEqualTo( "https://example.com" );
         assertThat( params.getQueryParams() ).containsExactly( entry( "å", List.of( "a" ) ), entry( "ø", List.of( "o" ) ),

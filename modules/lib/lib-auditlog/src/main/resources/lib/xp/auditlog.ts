@@ -17,10 +17,14 @@ import type {ScriptValue, UserKey} from '@enonic-types/core';
 
 export type {ScriptValue, UserKey} from '@enonic-types/core';
 
-function checkRequired<T extends object>(obj: T, name: keyof T): void {
+function checkRequired<T extends object, K extends keyof T>(
+    obj: T,
+    name: K
+): NonNullable<T[K]> {
     if (obj == null || obj[name] == null) {
-        throw Error(`Parameter '${String(name)}' is required`);
+        throw new Error(`Parameter '${String(name)}' is required`);
     }
+    return obj[name] as NonNullable<T[K]>;
 }
 
 export interface AuditLogParams<Data extends Record<string, unknown>> {
@@ -45,15 +49,15 @@ export interface AuditLog<Data extends Record<string, unknown> = Record<string, 
 interface CreateAuditLogHandler<Data extends Record<string, unknown>> {
     setType(type: string): void;
 
-    setTime(type?: string | null): void;
+    setTime(type: string | null): void;
 
     setSource(source: string): void;
 
-    setUser(user?: string | null): void;
+    setUser(user: string | null): void;
 
-    setObjectUris(objectUris?: ScriptValue): void;
+    setObjectUris(objectUris: ScriptValue | null): void;
 
-    setData(data?: ScriptValue): void;
+    setData(data: ScriptValue | null): void;
 
     execute(): AuditLog<Data>;
 }
@@ -76,10 +80,10 @@ interface CreateAuditLogHandler<Data extends Record<string, unknown>> {
  * @returns {object} Audit log created as JSON.
  */
 export function log<Data extends Record<string, unknown> = Record<string, unknown>>(params: AuditLogParams<Data>): AuditLog<Data> {
-    checkRequired(params, 'type');
+    const type = checkRequired(params, 'type');
 
     const bean: CreateAuditLogHandler<Data> = __.newBean<CreateAuditLogHandler<Data>>('com.enonic.xp.lib.audit.CreateAuditLogHandler');
-    bean.setType(params.type);
+    bean.setType(type);
     bean.setTime(__.nullOrValue(params.time));
     bean.setSource(params.source ?? app.name);
     bean.setUser(__.nullOrValue(params.user));
@@ -110,10 +114,10 @@ interface GetAuditLogHandler {
  * @returns {object} Audit log as JSON.
  */
 export function get(params: GetAuditLogParams): AuditLog | null {
-    checkRequired(params, 'id');
+    const id = checkRequired(params, 'id');
 
     const bean: GetAuditLogHandler = __.newBean<GetAuditLogHandler>('com.enonic.xp.lib.audit.GetAuditLogHandler');
-    bean.setId(params.id);
+    bean.setId(id);
     return __.toNativeObject(bean.execute());
 }
 
@@ -140,19 +144,19 @@ interface FindAuditLogHandler {
 
     setCount(count: number): void;
 
-    setIds(ids?: ScriptValue): void;
+    setIds(ids: ScriptValue | null): void;
 
-    setFrom(from?: string | null): void;
+    setFrom(from: string | null): void;
 
-    setTo(to?: string | null): void;
+    setTo(to: string | null): void;
 
-    setType(type?: string | null): void;
+    setType(type: string | null): void;
 
-    setSource(source?: string | null): void;
+    setSource(source: string | null): void;
 
-    setUsers(users?: ScriptValue): void;
+    setUsers(users: ScriptValue | null): void;
 
-    setObjectUris(objectUris?: ScriptValue): void;
+    setObjectUris(objectUris: ScriptValue | null): void;
 
     execute(): AuditLogs;
 }

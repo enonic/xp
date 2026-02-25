@@ -7,7 +7,6 @@ import java.util.function.Supplier;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
-import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
@@ -20,9 +19,7 @@ public final class SubmitTaskHandler
 {
     private Supplier<TaskService> taskServiceSupplier;
 
-    private Supplier<PortalRequest> requestSupplier;
-
-    private String descriptor;
+    private DescriptorKey descriptorKey;
 
     private String name;
 
@@ -30,9 +27,16 @@ public final class SubmitTaskHandler
 
     private ApplicationKey applicationKey;
 
-    public void setDescriptor( final String descriptor )
+    @Override
+    public void initialize( final BeanContext context )
     {
-        this.descriptor = descriptor;
+        this.applicationKey = context.getApplicationKey();
+        this.taskServiceSupplier = context.getService( TaskService.class );
+    }
+
+    public void setDescriptor( final String value )
+    {
+        this.descriptorKey = value.indexOf( ':' ) == -1 ? DescriptorKey.from( applicationKey, value ) : DescriptorKey.from( value );
     }
 
     public void setName( final String name )
@@ -47,44 +51,13 @@ public final class SubmitTaskHandler
 
     public String submitTask()
     {
-        descriptor = descriptor == null ? "" : descriptor;
-
-        final DescriptorKey taskKey;
-        if ( descriptor.contains( ":" ) )
-        {
-            taskKey = DescriptorKey.from( descriptor );
-        }
-        else
-        {
-            final ApplicationKey app = getApplication();
-            if ( app == null )
-            {
-                throw new RuntimeException( "Could not resolve current application for task descriptor: '" + descriptor + "'" );
-            }
-            taskKey = DescriptorKey.from( app, descriptor );
-        }
-
         final TaskService taskService = taskServiceSupplier.get();
 
         PropertyTree data = PropertyTree.fromMap( Optional.ofNullable( config ).map( ScriptValue::getMap ).orElse( Map.of() ) );
 
-        final SubmitTaskParams params = SubmitTaskParams.create().descriptorKey( taskKey ).name( name ).data( data ).build();
+        final SubmitTaskParams params = SubmitTaskParams.create().descriptorKey( descriptorKey ).name( name ).data( data ).build();
         final TaskId taskId = taskService.submitTask( params );
 
         return taskId.toString();
-    }
-
-    private ApplicationKey getApplication()
-    {
-        final PortalRequest portalRequest = requestSupplier.get();
-        return portalRequest != null ? portalRequest.getApplicationKey() : applicationKey;
-    }
-
-    @Override
-    public void initialize( final BeanContext context )
-    {
-        applicationKey = context.getApplicationKey();
-        requestSupplier = context.getBinding( PortalRequest.class );
-        taskServiceSupplier = context.getService( TaskService.class );
     }
 }

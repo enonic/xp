@@ -15,10 +15,14 @@ declare global {
  * @module admin
  */
 
-function checkRequired<T extends object>(obj: T, name: keyof T): void {
+function checkRequired<T extends object, K extends keyof T>(
+    obj: T,
+    name: K
+): NonNullable<T[K]> {
     if (obj == null || obj[name] == null) {
-        throw Error(`Parameter '${String(name)}' is required`);
+        throw new Error(`Parameter '${String(name)}' is required`);
     }
+    return obj[name] as NonNullable<T[K]>;
 }
 
 const helper: AdminLibHelper = __.newBean<AdminLibHelper>('com.enonic.xp.lib.admin.AdminLibHelper');
@@ -30,7 +34,7 @@ interface AdminLibHelper {
 
     getToolUrl(application: string, tool: string): string;
 
-    getHomeToolUrl(type?: string): string;
+    getHomeToolUrl(type: string | null): string;
 }
 
 interface AdminExtensionUrlHandler {
@@ -38,9 +42,9 @@ interface AdminExtensionUrlHandler {
 
     setExtension(value: string): void;
 
-    setUrlType(value?: string | null): void;
+    setUrlType(value: string | null): void;
 
-    setQueryParams(value?: ScriptValue | null): void;
+    setQueryParams(value: ScriptValue | null): void;
 
     createUrl(): string;
 }
@@ -64,7 +68,7 @@ export function getToolUrl(application: string, tool: string): string {
  * @returns {string} URL.
  */
 export function getHomeToolUrl(params?: GetHomeToolUrlParams): string {
-    return helper.getHomeToolUrl(params?.type);
+    return helper.getHomeToolUrl(__.nullOrValue(params?.type));
 }
 
 export interface GetHomeToolUrlParams {
@@ -112,12 +116,12 @@ export interface WidgetUrlParams {
  * @returns {string} URL.
  */
 export function widgetUrl(params: WidgetUrlParams): string {
-    checkRequired(params, 'application');
-    checkRequired(params, 'widget');
+    const application = checkRequired(params, 'application');
+    const widget = checkRequired(params, 'widget');
 
     const extensionParams: ExtensionUrlParams = {
-        application: params.application,
-        extension: params.widget,
+        application,
+        extension: widget,
         type: params.type,
         params: params.params,
     };
@@ -144,13 +148,13 @@ export interface ExtensionUrlParams {
  * @returns {string} URL.
  */
 export function extensionUrl(params: ExtensionUrlParams): string {
-    checkRequired(params, 'application');
-    checkRequired(params, 'extension');
+    const application = checkRequired(params, 'application');
+    const extension = checkRequired(params, 'extension');
 
     const bean: AdminExtensionUrlHandler = __.newBean<AdminExtensionUrlHandler>('com.enonic.xp.lib.admin.AdminExtensionUrlHandler');
 
-    bean.setApplication(params.application);
-    bean.setExtension(params.extension);
+    bean.setApplication(application);
+    bean.setExtension(extension);
     bean.setUrlType(__.nullOrValue(params.type));
     bean.setQueryParams(__.toScriptValue(params.params));
 

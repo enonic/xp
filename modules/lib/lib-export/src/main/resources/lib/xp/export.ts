@@ -13,14 +13,18 @@ declare global {
     }
 }
 
-import type {ResourceKey} from '@enonic-types/core';
+import type {ResourceKey, ScriptValue} from '@enonic-types/core';
 
 export type {ResourceKey} from '@enonic-types/core';
 
-function checkRequired<T extends object>(obj: T, name: keyof T): void {
+function checkRequired<T extends object, K extends keyof T>(
+    obj: T,
+    name: K
+): NonNullable<T[K]> {
     if (obj == null || obj[name] == null) {
-        throw Error(`Parameter '${String(name)}' is required`);
+        throw new Error(`Parameter '${String(name)}' is required`);
     }
+    return obj[name] as NonNullable<T[K]>;
 }
 
 export interface ImportNodesParams {
@@ -53,9 +57,9 @@ interface ImportHandler {
 
     setTargetNodePath(value: string): void;
 
-    setXslt(value?: string | ResourceKey | null): void;
+    setXslt(value: string | ResourceKey | null): void;
 
-    setXsltParams(value?: unknown | null): void;
+    setXsltParams(value: ScriptValue | null): void;
 
     setIncludeNodeIds(value: boolean): void;
 
@@ -91,12 +95,10 @@ interface ImportHandler {
  * @returns {ImportNodesResult} Node import results.
  */
 export function importNodes(params: ImportNodesParams): ImportNodesResult {
-    checkRequired(params, 'source');
-    checkRequired(params, 'targetNodePath');
+    const source = checkRequired(params, 'source');
+    const targetNodePath = checkRequired(params, 'targetNodePath');
 
     const {
-        source,
-        targetNodePath,
         xslt,
         xsltParams,
         includeNodeIds = false,
@@ -144,7 +146,7 @@ interface ExportHandler {
 
     setExportName(value: string): void;
 
-    setBatchSize(value?: number | null): void;
+    setBatchSize(value: number | null): void;
 
     setNodeExported(fn?: ((i: number) => void) | null): void;
 
@@ -169,12 +171,10 @@ interface ExportHandler {
  * @returns {ExportNodesResult} Node export results.
  */
 export function exportNodes(params: ExportNodesParams): ExportNodesResult {
-    checkRequired(params, 'sourceNodePath');
-    checkRequired(params, 'exportName');
+    const sourceNodePath = checkRequired(params, 'sourceNodePath');
+    const exportName = checkRequired(params, 'exportName');
 
     const {
-        sourceNodePath,
-        exportName,
         nodeResolved,
         batchSize,
         nodeExported,

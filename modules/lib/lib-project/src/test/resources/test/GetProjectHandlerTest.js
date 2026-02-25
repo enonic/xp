@@ -74,7 +74,7 @@ exports.getProjectNull = function () {
         throw new Error('IllegalArgumentException should be thrown.');
 
     } catch (e) {
-        assert.assertEquals('Project name is required', e.getMessage());
+        assert.assertEquals('Parameter \'id\' is required', e.message);
     }
 };
 

@@ -18,8 +18,6 @@ public final class ContentTypeHandler
 {
     private Supplier<ContentTypeService> contentTypeService;
 
-    private Supplier<MixinService> mixinService;
-
     private String name;
 
     public ContentTypeMapper getContentType()
@@ -47,7 +45,5 @@ public final class ContentTypeHandler
     public void initialize( final BeanContext context )
     {
         contentTypeService = context.getService( ContentTypeService.class );
-        mixinService = context.getService( MixinService.class );
     }
-
 }

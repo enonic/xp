@@ -29,8 +29,8 @@ exports.deleteProjectNull = function () {
         });
         throw new Error('IllegalArgumentException should be thrown.');
 
-    } catch (e) {
-        assert.assertEquals('Project name is required', e.getMessage());
+    } catch (e ) {
+        assert.assertEquals('Parameter \'id\' is required', e.message);
 
     }
 };

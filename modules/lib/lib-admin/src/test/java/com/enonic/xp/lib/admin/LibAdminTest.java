@@ -80,7 +80,7 @@ class LibAdminTest
 
         assertEquals( "server", params.getType() );
 
-        assertEquals( "admin:extension", params.getApi() );
+        assertEquals( "admin:extension", params.getApi().toString() );
 
         List<String> pathSegments = params.getPathSegments();
         assertEquals( 1, pathSegments.size() );
@@ -110,7 +110,7 @@ class LibAdminTest
 
         assertEquals( "server", params.getType() );
 
-        assertEquals( "admin:extension", params.getApi() );
+        assertEquals( "admin:extension", params.getApi().toString() );
 
         List<String> pathSegments = params.getPathSegments();
         assertEquals( 1, pathSegments.size() );
@@ -140,7 +140,7 @@ class LibAdminTest
 
         assertEquals( "server", params.getType() );
 
-        assertEquals( "admin:extension", params.getApi() );
+        assertEquals( "admin:extension", params.getApi().toString() );
 
         List<String> pathSegments = params.getPathSegments();
         assertEquals( 1, pathSegments.size() );

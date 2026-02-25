@@ -8,13 +8,14 @@ import java.util.Objects;
 import com.google.common.base.MoreObjects;
 
 import com.enonic.xp.annotation.PublicApi;
+import com.enonic.xp.descriptor.DescriptorKey;
 
 @PublicApi
 public final class ApiUrlParams
 {
     private final String type;
 
-    private final String api;
+    private final DescriptorKey api;
 
     private final String path;
 
@@ -44,7 +45,7 @@ public final class ApiUrlParams
         return type;
     }
 
-    public String getApi()
+    public DescriptorKey getApi()
     {
         return api;
     }
@@ -84,7 +85,7 @@ public final class ApiUrlParams
 
         private String baseUrl;
 
-        private String api;
+        private DescriptorKey api;
 
         private final QueryParamsBuilder queryParams = new QueryParamsBuilder();
 
@@ -94,9 +95,16 @@ public final class ApiUrlParams
             return this;
         }
 
+        @Deprecated
         public Builder setApi( final String api )
         {
-            this.api = api;
+            this.api = DescriptorKey.from( api );
+            return this;
+        }
+
+        public Builder setApi( final DescriptorKey descriptorKey )
+        {
+            this.api = descriptorKey;
             return this;
         }
 
@@ -143,7 +151,7 @@ public final class ApiUrlParams
         helper.omitNullValues();
         helper.add( "type", this.type );
         helper.add( "params", this.queryParams );
-        helper.add( "api", this.api );
+        helper.add( "descriptorKey", this.api );
         helper.add( "path", this.path );
         helper.add( "pathSegments", this.pathSegments );
         helper.add( "baseUrl", this.baseUrl );

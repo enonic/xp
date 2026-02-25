@@ -21,8 +21,6 @@ public final class LoginUrlHandler
 
     private String redirect;
 
-    private String contextPath;
-
     private String urlType;
 
     private Map<String, List<String>> queryParams;
@@ -45,12 +43,6 @@ public final class LoginUrlHandler
         return this;
     }
 
-    public LoginUrlHandler setContextPath( final String contextPath )
-    {
-        this.contextPath = contextPath;
-        return this;
-    }
-
     public LoginUrlHandler setUrlType( final String urlType )
     {
         this.urlType = urlType;
@@ -66,7 +58,6 @@ public final class LoginUrlHandler
     {
         final IdentityUrlParams params = new IdentityUrlParams().idProviderFunction( "login" )
             .redirectionUrl( this.redirect )
-            .contextPathType( this.contextPath )
             .type( this.urlType )
             .idProviderKey( Optional.ofNullable( this.idProvider ).map( IdProviderKey::from ).orElse( null ) );
 

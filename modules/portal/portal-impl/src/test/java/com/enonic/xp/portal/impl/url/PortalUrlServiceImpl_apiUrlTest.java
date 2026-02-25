@@ -14,6 +14,7 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.macro.MacroService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
@@ -71,7 +72,8 @@ class PortalUrlServiceImpl_apiUrlTest
     {
         PortalRequestAccessor.set( null );
 
-        final ApiUrlParams params = ApiUrlParams.create().setApi( "com.enonic.app.myapp:myapi" ).setPath( "path" ).build();
+        final ApiUrlParams params =
+            ApiUrlParams.create().setApi( DescriptorKey.from( "com.enonic.app.myapp:myapi" ) ).setPath( "path" ).build();
 
         final String url = this.service.apiUrl( params );
         assertEquals( "/api/com.enonic.app.myapp:myapi/path", url );
@@ -82,8 +84,11 @@ class PortalUrlServiceImpl_apiUrlTest
     {
         PortalRequestAccessor.set( null );
 
-        final ApiUrlParams params =
-            ApiUrlParams.create().setApi( "com.enonic.app.myapp:myapi" ).setPath( "path" ).setBaseUrl( "baseUrl" ).build();
+        final ApiUrlParams params = ApiUrlParams.create()
+            .setApi( DescriptorKey.from( "com.enonic.app.myapp:myapi" ) )
+            .setPath( "path" )
+            .setBaseUrl( "baseUrl" )
+            .build();
 
         final String url = this.service.apiUrl( params );
         assertEquals( "baseUrl/_/com.enonic.app.myapp:myapi/path", url );
@@ -106,7 +111,7 @@ class PortalUrlServiceImpl_apiUrlTest
         portalRequest.setSite( site );
 
         final ApiUrlParams params = ApiUrlParams.create()
-            .setApi( "com.enonic.app.myapp:myapi" )
+            .setApi( DescriptorKey.from( "com.enonic.app.myapp:myapi" ) )
             .setQueryParams( Map.of( "k1", List.of( "v10", "v11" ) ) )
             .setQueryParam( "k2", "v2" )
             .build();
@@ -141,7 +146,7 @@ class PortalUrlServiceImpl_apiUrlTest
 
         final ApiUrlParams params = ApiUrlParams.create()
             .setType( UrlTypeConstants.ABSOLUTE )
-            .setApi( "com.enonic.app.myapp:myapi" )
+            .setApi( DescriptorKey.from( "com.enonic.app.myapp:myapi" ) )
             .setQueryParams( Map.of( "k1", List.of( "v10", "v11" ) ) )
             .setQueryParam( "k2", "v2" )
             .build();
@@ -166,7 +171,7 @@ class PortalUrlServiceImpl_apiUrlTest
         portalRequest.setSite( site );
 
         final ApiUrlParams params = ApiUrlParams.create()
-            .setApi( "com.enonic.app.myapp:myapi" )
+            .setApi( DescriptorKey.from( "com.enonic.app.myapp:myapi" ) )
             .setQueryParams( Map.of( "k1", List.of( "v10", "v11" ) ) )
             .setQueryParam( "k2", "v2" )
             .build();
@@ -196,7 +201,7 @@ class PortalUrlServiceImpl_apiUrlTest
         portalRequest.setSite( site );
 
         final ApiUrlParams params = ApiUrlParams.create()
-            .setApi( "com.enonic.app.myapp:myapi" )
+            .setApi( DescriptorKey.from( "com.enonic.app.myapp:myapi" ) )
             .setBaseUrl( "baseUrl" )
             .setQueryParams( Map.of( "k1", List.of( "v10", "v11" ) ) )
             .setQueryParam( "k2", "v2" )
@@ -212,7 +217,7 @@ class PortalUrlServiceImpl_apiUrlTest
         portalRequest.setBaseUri( "" );
         portalRequest.setRawPath( "/path/sub-path" );
 
-        final ApiUrlParams params = ApiUrlParams.create().setApi( "com.enonic.app.myapp:myapi" ).build();
+        final ApiUrlParams params = ApiUrlParams.create().setApi( DescriptorKey.from( "com.enonic.app.myapp:myapi" ) ).build();
 
         final String url = this.service.apiUrl( params );
         assertEquals( "/api/com.enonic.app.myapp:myapi", url );
@@ -224,7 +229,8 @@ class PortalUrlServiceImpl_apiUrlTest
         portalRequest.setBaseUri( "" );
         portalRequest.setRawPath( "/path/sub-path" );
 
-        final ApiUrlParams params = ApiUrlParams.create().setApi( "com.enonic.app.myapp:myapi" ).setBaseUrl( "baseUrl" ).build();
+        final ApiUrlParams params =
+            ApiUrlParams.create().setApi( DescriptorKey.from( "com.enonic.app.myapp:myapi" ) ).setBaseUrl( "baseUrl" ).build();
 
         final String url = this.service.apiUrl( params );
         assertEquals( "baseUrl/_/com.enonic.app.myapp:myapi", url );
@@ -236,7 +242,7 @@ class PortalUrlServiceImpl_apiUrlTest
         portalRequest.setBaseUri( "/admin" );
         portalRequest.setRawPath( "/admin" );
 
-        final ApiUrlParams params = ApiUrlParams.create().setApi( "com.enonic.app.myapp:myapi" ).build();
+        final ApiUrlParams params = ApiUrlParams.create().setApi( DescriptorKey.from( "com.enonic.app.myapp:myapi" ) ).build();
 
         final String url = this.service.apiUrl( params );
         assertEquals( "/admin/com.enonic.xp.app.main/home/_/com.enonic.app.myapp:myapi", url );
@@ -248,7 +254,8 @@ class PortalUrlServiceImpl_apiUrlTest
         portalRequest.setBaseUri( "/admin" );
         portalRequest.setRawPath( "/admin" );
 
-        final ApiUrlParams params = ApiUrlParams.create().setApi( "com.enonic.app.myapp:myapi" ).setBaseUrl( "baseUrl" ).build();
+        final ApiUrlParams params =
+            ApiUrlParams.create().setApi( DescriptorKey.from( "com.enonic.app.myapp:myapi" ) ).setBaseUrl( "baseUrl" ).build();
 
         final String url = this.service.apiUrl( params );
         assertEquals( "baseUrl/_/com.enonic.app.myapp:myapi", url );
@@ -260,7 +267,7 @@ class PortalUrlServiceImpl_apiUrlTest
         portalRequest.setBaseUri( "/api/app1:api1" );
         portalRequest.setRawPath( "/api/app1:api1" );
 
-        final ApiUrlParams params = ApiUrlParams.create().setApi( "app2:api2" ).build();
+        final ApiUrlParams params = ApiUrlParams.create().setApi( DescriptorKey.from( "app2:api2" ) ).build();
 
         final String url = this.service.apiUrl( params );
         assertEquals( "/api/app2:api2", url );
@@ -272,7 +279,7 @@ class PortalUrlServiceImpl_apiUrlTest
         portalRequest.setBaseUri( "/api/app1:api1" );
         portalRequest.setRawPath( "/api/app1:api1" );
 
-        final ApiUrlParams params = ApiUrlParams.create().setApi( "app2:api2" ).setBaseUrl( "baseUrl" ).build();
+        final ApiUrlParams params = ApiUrlParams.create().setApi( DescriptorKey.from( "app2:api2" ) ).setBaseUrl( "baseUrl" ).build();
 
         final String url = this.service.apiUrl( params );
         assertEquals( "baseUrl/_/app2:api2", url );
@@ -290,7 +297,7 @@ class PortalUrlServiceImpl_apiUrlTest
         when( virtualHost.getTarget() ).thenReturn( "/webapp/app" );
         when( portalRequest.getRawRequest().getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
 
-        final ApiUrlParams params = ApiUrlParams.create().setApi( "app:api" ).build();
+        final ApiUrlParams params = ApiUrlParams.create().setApi( DescriptorKey.from( "app:api" ) ).build();
 
         final String url = this.service.apiUrl( params );
         assertThat( url ).startsWith( "/_/error/400?message=Out+of+scope." );
@@ -303,7 +310,7 @@ class PortalUrlServiceImpl_apiUrlTest
         portalRequest.setRawPath( "/webapp/app" );
         portalRequest.setApplicationKey( ApplicationKey.from( "app" ) );
 
-        final ApiUrlParams params = ApiUrlParams.create().setApi( "app:api" ).build();
+        final ApiUrlParams params = ApiUrlParams.create().setApi( DescriptorKey.from( "app:api" ) ).build();
 
         final String url = this.service.apiUrl( params );
         assertEquals( "/webapp/app/_/app:api", url );
@@ -325,7 +332,8 @@ class PortalUrlServiceImpl_apiUrlTest
         when( req.getScheme() ).thenReturn( "http" );
         when( req.getServerPort() ).thenReturn( 80 );
 
-        final ApiUrlParams params = ApiUrlParams.create().setType( UrlTypeConstants.ABSOLUTE ).setApi( "app:api" ).build();
+        final ApiUrlParams params =
+            ApiUrlParams.create().setType( UrlTypeConstants.ABSOLUTE ).setApi( DescriptorKey.from( "app:api" ) ).build();
 
         final String url = this.service.apiUrl( params );
         assertEquals( "http://localhost/source/_/app:api", url );
@@ -347,7 +355,7 @@ class PortalUrlServiceImpl_apiUrlTest
         when( req.getScheme() ).thenReturn( "http" );
         when( req.getServerPort() ).thenReturn( 80 );
 
-        final ApiUrlParams params = ApiUrlParams.create().setApi( "app:api" ).setBaseUrl( "baseUrl" ).build();
+        final ApiUrlParams params = ApiUrlParams.create().setApi( DescriptorKey.from( "app:api" ) ).setBaseUrl( "baseUrl" ).build();
 
         final String url = this.service.apiUrl( params );
         assertEquals( "baseUrl/_/app:api", url );

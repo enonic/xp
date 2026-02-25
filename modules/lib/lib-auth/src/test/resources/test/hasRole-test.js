@@ -19,8 +19,7 @@ exports.hasRoleByKey = function () {
 
 exports.doesNotHaveRole = function () {
 
-    //var result = auth.hasRole('my-role');
-    var result = auth.hasRole();
+    var result = auth.hasRole('not-my-role');
 
     t.assertEquals(false, result);
 

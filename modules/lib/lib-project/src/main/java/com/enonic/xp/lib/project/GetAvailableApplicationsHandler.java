@@ -24,6 +24,6 @@ public final class GetAvailableApplicationsHandler
 
     public void setId( final String value )
     {
-        this.id = ProjectName.from( Objects.requireNonNull( value, "Project name is required" ) );
+        this.id = ProjectName.from( value );
     }
 }

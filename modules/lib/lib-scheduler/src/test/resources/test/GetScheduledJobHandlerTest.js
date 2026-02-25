@@ -78,6 +78,6 @@ exports.getNull = function () {
             name: null
         });
     } catch (e) {
-        assert.assertEquals('name cannot be null', e.getMessage());
+        assert.assertEquals('Parameter \'name\' is required', e.message);
     }
 };

@@ -17,10 +17,14 @@ import type {ByteSource} from '@enonic-types/core';
 
 export type {ByteSource} from '@enonic-types/core';
 
-function checkRequired<T extends object>(obj: T, name: keyof T): void {
-    if (obj == null || obj[name] === null) {
-        throw Error(`Parameter '${String(name)}' is required`);
+function checkRequired<T extends object, K extends keyof T>(
+    obj: T,
+    name: K
+): NonNullable<T[K]> {
+    if (obj == null || obj[name] == null) {
+        throw new Error(`Parameter '${String(name)}' is required`);
     }
+    return obj[name] as NonNullable<T[K]>;
 }
 
 export interface CreateVirtualApplicationParams {
@@ -57,10 +61,10 @@ interface CreateVirtualApplicationHandler {
  * @returns {object} created application.
  */
 export function createVirtualApplication(params: CreateVirtualApplicationParams): Application {
-    checkRequired(params, 'key');
+    const key = checkRequired(params, 'key');
 
     const bean: CreateVirtualApplicationHandler = __.newBean<CreateVirtualApplicationHandler>('com.enonic.xp.lib.app.CreateVirtualApplicationHandler');
-    bean.setKey(params.key);
+    bean.setKey(key);
     return __.toNativeObject(bean.execute());
 }
 
@@ -83,10 +87,10 @@ interface DeleteVirtualApplicationHandler {
  * @returns {boolean} deletion result.
  */
 export function deleteVirtualApplication(params: DeleteVirtualApplicationParams): boolean {
-    checkRequired(params, 'key');
+    const key = checkRequired(params, 'key');
 
     const bean: DeleteVirtualApplicationHandler = __.newBean<DeleteVirtualApplicationHandler>('com.enonic.xp.lib.app.DeleteVirtualApplicationHandler');
-    bean.setKey(params.key);
+    bean.setKey(key);
     return __.toNativeObject(bean.execute());
 }
 
@@ -109,10 +113,10 @@ interface GetApplicationHandler {
  * @returns {Application} fetched application.
  */
 export function get(params: GetApplicationParams): Application {
-    checkRequired(params, 'key');
+    const key = checkRequired(params, 'key');
 
     const bean: GetApplicationHandler = __.newBean<GetApplicationHandler>('com.enonic.xp.lib.app.GetApplicationHandler');
-    bean.setKey(params.key);
+    bean.setKey(key);
     return __.toNativeObject(bean.execute());
 }
 
@@ -185,10 +189,10 @@ interface HasVirtualApplicationHandler {
  * @returns {boolean} result.
  */
 export function hasVirtual(params: HasVirtualApplicationParams): boolean {
-    checkRequired(params, 'key');
+    const key = checkRequired(params, 'key');
 
     const bean: HasVirtualApplicationHandler = __.newBean<HasVirtualApplicationHandler>('com.enonic.xp.lib.app.HasVirtualApplicationHandler');
-    bean.setKey(params.key);
+    bean.setKey(key);
     return __.toNativeObject(bean.execute());
 }
 
@@ -211,9 +215,9 @@ interface GetApplicationModeHandler {
  * @returns {string} application mode.
  */
 export function getApplicationMode(params: GetApplicationModeParams): string | null {
-    checkRequired(params, 'key');
+    const key = checkRequired(params, 'key');
 
     const bean: GetApplicationModeHandler = __.newBean<GetApplicationModeHandler>('com.enonic.xp.lib.app.GetApplicationModeHandler');
-    bean.setKey(params.key);
+    bean.setKey(key);
     return __.toNativeObject(bean.execute());
 }

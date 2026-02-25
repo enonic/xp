@@ -17,11 +17,7 @@ public final class HasRoleHandler
 
     public void setRole( final String roleKey )
     {
-        if ( roleKey == null )
-        {
-            this.roleKey = null;
-        }
-        else if ( roleKey.startsWith( "role:" ) )
+        if ( roleKey.startsWith( "role:" ) )
         {
             this.roleKey = PrincipalKey.from( roleKey );
         }
@@ -33,10 +29,6 @@ public final class HasRoleHandler
 
     public boolean hasRole()
     {
-        if ( this.roleKey == null )
-        {
-            return false;
-        }
         final AuthenticationInfo authInfo = this.context.get().getAuthInfo();
         return authInfo.getPrincipals().contains( this.roleKey );
     }

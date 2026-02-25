@@ -90,10 +90,14 @@ export type {
 
 type WithRequiredProperty<T, K extends keyof T> = T & { [P in K]-?: T[P] };
 
-function checkRequired<T extends object>(obj: T, name: keyof T): void {
+function checkRequired<T extends object, K extends keyof T>(
+    obj: T,
+    name: K
+): NonNullable<T[K]> {
     if (obj == null || obj[name] == null) {
-        throw Error(`Parameter '${String(name)}' is required`);
+        throw new Error(`Parameter '${String(name)}' is required`);
     }
+    return obj[name] as NonNullable<T[K]>;
 }
 
 function assertStringArray(value: unknown, name: string): asserts value is string[] {
@@ -214,8 +218,8 @@ function prepareGetParams(params: (string | GetNodeParams | (string | GetNodePar
         } else if (Array.isArray(param)) {
             prepareGetParams(param, bean);
         } else if (isObject(param)) {
-            checkRequired(param, 'key');
-            bean.add(param.key, __.nullOrValue(param.versionId));
+            const key = checkRequired(param, 'key');
+            bean.add(key, __.nullOrValue(param.versionId));
         } else {
             throw Error('Unsupported type');
         }
@@ -263,7 +267,7 @@ interface NodeHandler {
 
     getCommit(commitId: string): NodeCommit | null;
 
-    applyPermissions(key: string, permissions: ScriptValue, addPermissions: ScriptValue, removePermissions: ScriptValue, branches: string[],
+    applyPermissions(key: string, permissions: ScriptValue  | null, addPermissions: ScriptValue  | null, removePermissions: ScriptValue  | null, branches: string[],
                      scope: string): ApplyPermissionsResult;
 
     getBinary(key: string, binaryReference?: string | null): ByteSource;
@@ -318,15 +322,15 @@ export interface PushNodesResult {
 }
 
 interface PushNodeHandlerParams {
-    setKey(value?: string | null): void;
+    setKey(value: string | null): void;
 
-    setKeys(value?: string[] | null): void;
+    setKeys(value: string[] | null): void;
 
     setTargetBranch(value: string): void;
 
     setIncludeChildren(value: boolean): void;
 
-    setExclude(value?: string[] | null): void;
+    setExclude(value: string[] | null): void;
 
     setResolve(value: boolean): void;
 }
@@ -346,9 +350,9 @@ export interface PatchNodeResult {
 }
 
 interface PatchNodeHandlerParams {
-    setKey(value?: string | null): void;
+    setKey(value: string): void;
 
-    setBranches(value: string[] | null): void;
+    setBranches(value: string[]): void;
 
     setEditor(value: ScriptValue): void;
 }
@@ -407,21 +411,21 @@ export interface QueryNodeParams<AggregationInput extends Aggregations = never> 
 }
 
 interface QueryNodeHandlerParams {
-    setStart(value?: number | null): void;
+    setStart(value: number | null): void;
 
-    setCount(value?: number | null): void;
+    setCount(value: number | null): void;
 
-    setQuery(value: ScriptValue): void;
+    setQuery(value: ScriptValue | null): void;
 
-    setSort(value: ScriptValue): void;
+    setSort(value: ScriptValue | null): void;
 
-    setAggregations(value: ScriptValue): void;
+    setAggregations(value: ScriptValue | null): void;
 
-    setSuggestions(value: ScriptValue): void;
+    setSuggestions(value: ScriptValue | null): void;
 
-    setHighlight(value: ScriptValue): void;
+    setHighlight(value: ScriptValue | null): void;
 
-    setFilters(value: ScriptValue): void;
+    setFilters(value: ScriptValue | null): void;
 
     setExplain(value: boolean): void;
 }
@@ -435,9 +439,9 @@ export interface GetVersionsParams {
 interface GetNodeVersionsHandlerParams {
     setKey(key: string): void;
 
-    setCursor(cursor?: string): void;
+    setCursor(cursor: string | null): void;
 
-    setCount(count?: number): void;
+    setCount(count?: number | null): void;
 }
 
 export interface NodeVersion {
@@ -471,11 +475,11 @@ export interface FindChildrenParams {
 interface FindChildrenHandlerParams {
     setParentKey(parentKey: string): void;
 
-    setStart(start?: number | null): void;
+    setStart(start: number | null): void;
 
-    setCount(count?: number | null): void;
+    setCount(count: number | null): void;
 
-    setChildOrder(childOrder: string): void;
+    setChildOrder(childOrder: string | null): void;
 
     setCountOnly(countOnly: boolean): void;
 
@@ -494,15 +498,15 @@ export interface DuplicateParams<NodeData = Record<string, unknown>> {
 interface DuplicateNodeHandlerParams {
     setNodeId(value: string): void;
 
-    setName(value?: string): void;
+    setName(value: string): void;
 
-    setParent(value?: string): void;
+    setParent(value: string): void;
 
     setIncludeChildren(value: boolean): void;
 
-    setDataProcessor(value?: ScriptValue): void;
+    setDataProcessor(value: ScriptValue | null): void;
 
-    setRefresh(value?: string): void;
+    setRefresh(value: string): void;
 }
 
 export interface FindNodesByParentResult {
@@ -744,9 +748,9 @@ class RepoConnectionImpl
      * @returns {object} Modified node as JSON.
      */
     modify<NodeData = Record<string, unknown>>(params: ModifyNodeParams<NodeData>): Node<NodeData> {
-        checkRequired(params, 'key');
+        const key = checkRequired(params, 'key');
 
-        return __.toNativeObject(this.nodeHandler.update(__.toScriptValue(params.editor), params.key));
+        return __.toNativeObject(this.nodeHandler.update(__.toScriptValue(params.editor), key));
     }
 
     /**
@@ -761,18 +765,16 @@ class RepoConnectionImpl
      * @returns {PatchNodeResult} patch result.
      */
     patch(params: PatchNodeParams): PatchNodeResult {
-        checkRequired(params, 'key');
-        checkRequired(params, 'editor');
+        const key = checkRequired(params, 'key');
+        const editor = checkRequired(params, 'editor');
 
         const {
-            key,
-            editor = () => ({}),
             branches = [],
         } = params ?? {};
 
         const handlerParams: PatchNodeHandlerParams = __.newBean<PatchNodeHandlerParams>('com.enonic.xp.lib.node.PatchNodeHandlerParams');
 
-        handlerParams.setKey(__.nullOrValue(key));
+        handlerParams.setKey(key);
         handlerParams.setBranches(branches);
         handlerParams.setEditor(__.toScriptValue(editor));
 
@@ -791,9 +793,9 @@ class RepoConnectionImpl
      * @returns {object} Updated node as JSON.
      */
     update<NodeData = Record<string, unknown>>(params: UpdateNodeParams<NodeData>): Node<NodeData> {
-        checkRequired(params, 'key');
+        const key = checkRequired(params, 'key');
 
-        return __.toNativeObject(this.nodeHandler.update(__.toScriptValue(params.editor), params.key));
+        return __.toNativeObject(this.nodeHandler.update(__.toScriptValue(params.editor), key));
     }
 
     get<NodeData = Record<string, unknown>>(keys: string | GetNodeParams): Node<NodeData> | null;
@@ -847,12 +849,11 @@ class RepoConnectionImpl
      * @returns {object} PushNodesResult
      */
     push(params: PushNodeParams): PushNodesResult {
-        checkRequired(params, 'target');
+        const target = checkRequired(params, 'target');
 
         const {
             key,
             keys,
-            target,
             includeChildren = false,
             resolve = true,
             exclude,
@@ -913,8 +914,8 @@ class RepoConnectionImpl
      * @returns {*} Stream of the binary.
      */
     getBinary(params: GetBinaryParams): ByteSource {
-        checkRequired(params, 'key');
-        return this.nodeHandler.getBinary(params.key, params.binaryReference);
+        const key = checkRequired(params, 'key');
+        return this.nodeHandler.getBinary(key, params.binaryReference);
     }
 
     /**
@@ -931,10 +932,10 @@ class RepoConnectionImpl
      * @returns {boolean} True if the node was successfully moved or renamed, false otherwise.
      */
     move(params: MoveNodeParams): boolean {
-        checkRequired(params, 'source');
-        checkRequired(params, 'target');
+        const source = checkRequired(params, 'source');
+        const target = checkRequired(params, 'target');
 
-        return __.toNativeObject(this.nodeHandler.move(params.source, params.target));
+        return __.toNativeObject(this.nodeHandler.move(source, target));
     }
 
     /**
@@ -948,10 +949,10 @@ class RepoConnectionImpl
      * @returns {object} result with updated nodes
      */
     sort<NodeData = Record<string, unknown>>(params: SortNodeParams): SortNodeResult<NodeData> {
-        checkRequired(params, 'key');
-        checkRequired(params, 'childOrder');
+        const key = checkRequired(params, 'key');
+        const childOrder = checkRequired(params, 'childOrder');
 
-        return __.toNativeObject(this.nodeHandler.sort(params.key, params.childOrder));
+        return __.toNativeObject(this.nodeHandler.sort(key, childOrder));
     }
 
     /**
@@ -1025,10 +1026,9 @@ class RepoConnectionImpl
      * @returns {object} Node versions query result.
      */
     getVersions(params: GetVersionsParams): GetNodeVersionsResult {
-        checkRequired(params, 'key');
+        const key = checkRequired(params, 'key');
 
         const {
-            key,
             cursor,
             count,
         } = params ?? {};
@@ -1037,12 +1037,8 @@ class RepoConnectionImpl
             'com.enonic.xp.lib.node.GetNodeVersionsHandlerParams');
 
         handlerParams.setKey(key);
-        if (cursor) {
-            handlerParams.setCursor(cursor);
-        }
-        if (count !== undefined && count !== null) {
-            handlerParams.setCount(count);
-        }
+        handlerParams.setCursor(__.nullOrValue(cursor));
+        handlerParams.setCount(__.nullOrValue(count));
 
         return __.toNativeObject(this.nodeHandler.getVersions(handlerParams));
     }
@@ -1057,9 +1053,9 @@ class RepoConnectionImpl
      * @returns {object} Active content versions per branch.
      */
     getActiveVersion(params: GetActiveVersionParams): NodeVersion | null {
-        checkRequired(params, 'key');
+        const key = checkRequired(params, 'key');
 
-        return __.toNativeObject(this.nodeHandler.getActiveVersion(params.key));
+        return __.toNativeObject(this.nodeHandler.getActiveVersion(key));
     }
 
     /**
@@ -1077,10 +1073,9 @@ class RepoConnectionImpl
      * @returns {object} Result of getChildren.
      */
     findChildren(params: FindChildrenParams): FindNodesByParentResult {
-        checkRequired(params, 'parentKey');
+        const parentKey = checkRequired(params, 'parentKey');
 
         const {
-            parentKey,
             start = 0,
             count = 10,
             childOrder,
@@ -1094,9 +1089,7 @@ class RepoConnectionImpl
         handlerParams.setParentKey(parentKey);
         handlerParams.setStart(start);
         handlerParams.setCount(count);
-        if (childOrder != null) {
-            handlerParams.setChildOrder(childOrder);
-        }
+        handlerParams.setChildOrder(__.nullOrValue(childOrder));
         handlerParams.setCountOnly(countOnly);
         handlerParams.setRecursive(recursive);
 
@@ -1131,12 +1124,12 @@ class RepoConnectionImpl
      */
 
     applyPermissions(params: ApplyPermissionsParams): ApplyPermissionsResult {
-        checkRequired(params, 'key');
+        const key = checkRequired(params, 'key');
 
         const branches = params.branches != null ? params.branches : [];
         const scope = params.scope != null ? params.scope : 'SINGLE';
 
-        return __.toNativeObject(this.nodeHandler.applyPermissions(params.key, __.toScriptValue(params.permissions),
+        return __.toNativeObject(this.nodeHandler.applyPermissions(key, __.toScriptValue(params.permissions),
             __.toScriptValue(params.addPermissions), __.toScriptValue(params.removePermissions), branches, scope));
     }
 
@@ -1166,8 +1159,8 @@ class RepoConnectionImpl
      * @returns {object} Commit object.
      */
     getCommit(params: GetCommitParams): NodeCommit | null {
-        checkRequired(params, 'id');
-        return __.toNativeObject(this.nodeHandler.getCommit(params.id));
+        const id = checkRequired(params, 'id');
+        return __.toNativeObject(this.nodeHandler.getCommit(id));
     }
 
     /**
@@ -1186,10 +1179,9 @@ class RepoConnectionImpl
      * @returns {object} Duplicated node.
      */
     duplicate<NodeData = Record<string, unknown>>(params: DuplicateParams<NodeData>): Node<NodeData> {
-        checkRequired(params, 'nodeId');
+        const nodeId = checkRequired(params, 'nodeId');
 
         const {
-            nodeId,
             name,
             includeChildren = true,
             parent,
@@ -1320,12 +1312,12 @@ interface NodeHandleContext {
  * @returns {RepoConnection} Returns a new repo-connection.
  */
 export function connect(params: ConnectParams): RepoConnection {
-    checkRequired(params, 'repoId');
-    checkRequired(params, 'branch');
+    const repoId = checkRequired(params, 'repoId');
+    const branch = checkRequired(params, 'branch');
 
     const nodeHandleContext: NodeHandleContext = __.newBean<NodeHandleContext>('com.enonic.xp.lib.node.NodeHandleContext');
-    nodeHandleContext.setRepoId(params.repoId);
-    nodeHandleContext.setBranch(params.branch);
+    nodeHandleContext.setRepoId(repoId);
+    nodeHandleContext.setBranch(branch);
 
     if (params.user) {
         if (params.user.login) {
@@ -1366,11 +1358,11 @@ export function multiRepoConnect(params: MultiRepoConnectParams): MultiRepoConne
         'com.enonic.xp.lib.node.MultiRepoNodeHandleContext');
 
     params.sources.forEach((source: ConnectParams) => {
-        checkRequired(source, 'repoId');
-        checkRequired(source, 'branch');
-        checkRequired(source, 'principals');
-        assertStringArray(source.principals, 'principals');
-        multiRepoNodeHandleContext.addSource(source.repoId, source.branch, source.principals);
+        const repoId = checkRequired(source, 'repoId');
+        const branch = checkRequired(source, 'branch');
+        const principals = checkRequired(source, 'principals');
+        assertStringArray(principals, 'principals');
+        multiRepoNodeHandleContext.addSource(repoId, branch, principals);
     });
 
     return new MultiRepoConnectionImpl(multiRepoConnectFactory.create(multiRepoNodeHandleContext));

@@ -17,10 +17,14 @@ import type {ScriptValue, UserKey} from '@enonic-types/core';
 
 export type {ScriptValue, UserKey} from '@enonic-types/core';
 
-function checkRequired<T extends object>(obj: T, name: keyof T): void {
+function checkRequired<T extends object, K extends keyof T>(
+    obj: T,
+    name: K
+): NonNullable<T[K]> {
     if (obj == null || obj[name] == null) {
-        throw Error(`Parameter '${String(name)}' is required`);
+        throw new Error(`Parameter '${String(name)}' is required`);
     }
+    return obj[name] as NonNullable<T[K]>;
 }
 
 export type CallbackFn = () => void;
@@ -31,7 +35,7 @@ export interface ExecuteFunctionParams {
 }
 
 interface ExecuteFunctionHandler {
-    setDescription(value?: string | null): void;
+    setDescription(value: string | null): void;
 
     setFunc(callbackFn?: CallbackFn | null): void;
 
@@ -71,21 +75,21 @@ interface ExecuteFunctionHandler {
 export function executeFunction(params: ExecuteFunctionParams): string {
     const bean: ExecuteFunctionHandler = __.newBean<ExecuteFunctionHandler>('com.enonic.xp.lib.task.ExecuteFunctionHandler');
 
-    checkRequired(params, 'description');
-    checkRequired(params, 'func');
+    const description = checkRequired(params, 'description');
+    const func = checkRequired(params, 'func');
 
-    bean.setDescription(__.nullOrValue(params.description));
-    bean.setFunc(__.nullOrValue(params.func));
+    bean.setDescription(description);
+    bean.setFunc(func);
 
     return bean.executeFunction();
 }
 
 interface SubmitTaskHandler {
-    setDescriptor(value?: string | null): void;
+    setDescriptor(value: string | null): void;
 
-    setName(value?: string | null): void;
+    setName(value: string | null): void;
 
-    setConfig(value?: ScriptValue): void;
+    setConfig(value: ScriptValue | null): void;
 
     submitTask(): string;
 }
@@ -112,11 +116,11 @@ export interface SubmitTaskParams<Config extends Record<string, unknown>> {
  * @returns {string} Id of the task that will be executed.
  */
 export function submitTask<Config extends Record<string, unknown> = Record<string, unknown>>(params: SubmitTaskParams<Config>): string {
-    checkRequired(params, 'descriptor');
+    const descriptor = checkRequired(params, 'descriptor');
 
     const bean: SubmitTaskHandler = __.newBean<SubmitTaskHandler>('com.enonic.xp.lib.task.SubmitTaskHandler');
 
-    bean.setDescriptor(__.nullOrValue(params.descriptor));
+    bean.setDescriptor(descriptor);
     bean.setName(__.nullOrValue(params.name));
     bean.setConfig(__.toScriptValue(params.config));
 
@@ -131,9 +135,9 @@ export interface ListTasksParams {
 }
 
 interface ListTasksHandler {
-    setName(value?: string | null): void;
+    setName(value: string | null): void;
 
-    setState(value?: TaskStateType | null): void;
+    setState(value: TaskStateType | null): void;
 
     list(): TaskInfo[];
 }
@@ -179,7 +183,7 @@ export function list(params?: ListTasksParams): TaskInfo[] {
 }
 
 interface GetTaskHandler {
-    setTaskId(value?: string | null): void;
+    setTaskId(value: string | null): void;
 
     getTask(): TaskInfo | null;
 }
@@ -231,11 +235,11 @@ export interface TaskProgressParams {
 }
 
 interface TaskProgressHandler {
-    setCurrent(value?: number | null): void;
+    setCurrent(value: number | null): void;
 
-    setTotal(value?: number | null): void;
+    setTotal(value: number | null): void;
 
-    setInfo(value?: string | null): void;
+    setInfo(value: string | null): void;
 
     reportProgress(): void;
 }

@@ -5,7 +5,6 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.portal.url.ContextPathType;
 import com.enonic.xp.portal.url.IdentityUrlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.resource.MockResource;
@@ -39,17 +38,6 @@ class PortalUrlServiceImpl_identityUrlTest
 
         final String url = this.service.identityUrl( params );
         assertEquals( "/_/idprovider/system/login?redirect=https%3A%2F%2Fexample.com&_ticket=some-great-checksum", url );
-    }
-
-    @Test
-    void createUrl_withContentPath()
-    {
-        final IdentityUrlParams params = new IdentityUrlParams().contextPathType( ContextPathType.RELATIVE.getValue() )
-            .idProviderKey( IdProviderKey.system() )
-            .idProviderFunction( "login" );
-
-        final String url = this.service.identityUrl( params );
-        assertEquals( "/_/idprovider/system/login", url );
     }
 
     @Test

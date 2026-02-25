@@ -55,7 +55,7 @@ interface ContextRunParams {
 
     setPrincipals(value: PrincipalKey[]): void;
 
-    setAttributes(value: ScriptValue): void;
+    setAttributes(value: ScriptValue | null): void;
 
     setCallback<T>(fn: () => T): void;
 }
