@@ -33,11 +33,6 @@ public final class PageDescriptor
         return regions;
     }
 
-    public static ResourceKey toResourceKey( final DescriptorKey key )
-    {
-        return ResourceKey.from( key.getApplicationKey(), "cms/pages/" + key.getName() + "/" + key.getName() + ".yml" );
-    }
-
     public static PageDescriptor.Builder create()
     {
         return new Builder();

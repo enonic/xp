@@ -73,8 +73,6 @@ class SlashApiHandlerTest
 {
     private SlashApiHandler handler;
 
-    private ControllerScriptFactory controllerScriptFactory;
-
     private ApiDescriptorService apiDescriptorService;
 
     private SiteService siteService;
@@ -93,7 +91,7 @@ class SlashApiHandlerTest
     void setUp()
         throws IOException
     {
-        controllerScriptFactory = mock( ControllerScriptFactory.class );
+        final ControllerScriptFactory controllerScriptFactory = mock( ControllerScriptFactory.class );
         apiDescriptorService = mock( ApiDescriptorService.class );
         siteService = mock( SiteService.class );
         webappService = mock( WebappService.class );
@@ -114,6 +112,8 @@ class SlashApiHandlerTest
 
         final WebSocketContext webSocketContext = mock( WebSocketContext.class );
         when( webSocketContext.apply( any( WebSocketEndpoint.class ) ) ).thenReturn( true );
+
+        when( apiDescriptorService.getControllerResourceKey( any( DescriptorKey.class ) ) ).thenReturn( mock( ResourceKey.class ) );
 
         request = new PortalRequest();
         request.setMethod( HttpMethod.GET );

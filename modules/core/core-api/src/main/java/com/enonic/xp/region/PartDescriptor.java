@@ -25,11 +25,6 @@ public final class PartDescriptor
         return ResourceKey.from( key.getApplicationKey(), "cms/parts/" + key.getName() );
     }
 
-    public static ResourceKey toResourceKey( final DescriptorKey key, final String ext )
-    {
-        return ResourceKey.from( key.getApplicationKey(), "cms/parts/" + key.getName() + "/" + key.getName() + "." + ext );
-    }
-
     public Icon getIcon()
     {
         return icon;

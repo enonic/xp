@@ -51,11 +51,23 @@ public final class ApiDescriptorServiceImpl
             .collect( ApiDescriptors.collector() );
     }
 
+    @Override
+    public ResourceKey getDescriptorResourceKey( final DescriptorKey key )
+    {
+        return toResourceKey( key, "yml" );
+    }
+
+    @Override
+    public ResourceKey getControllerResourceKey( final DescriptorKey key )
+    {
+        return toResourceKey( key, "js" );
+    }
+
     private ResourceProcessor<DescriptorKey, ApiDescriptor> newRootProcessor( final DescriptorKey key )
     {
         return new ResourceProcessor.Builder<DescriptorKey, ApiDescriptor>().key( key )
             .segment( "rootApiDescriptor" )
-            .keyTranslator( this::toResourceKey )
+            .keyTranslator( this::getDescriptorResourceKey )
             .processor( resource -> loadDescriptor( key, resource ) )
             .build();
     }
@@ -65,8 +77,8 @@ public final class ApiDescriptorServiceImpl
         return YmlApiDescriptorParser.parse( resource.readString(), key.getApplicationKey() ).key( key ).build();
     }
 
-    private ResourceKey toResourceKey( final DescriptorKey key )
+    private ResourceKey toResourceKey( final DescriptorKey key, final String extension )
     {
-        return ResourceKey.from( key.getApplicationKey(), ROOT_PATH + "/" + key.getName() + "/" + key.getName() + ".yml" );
+        return ResourceKey.from( key.getApplicationKey(), ROOT_PATH + "/" + key.getName() + "/" + key.getName() + "." + extension );
     }
 }

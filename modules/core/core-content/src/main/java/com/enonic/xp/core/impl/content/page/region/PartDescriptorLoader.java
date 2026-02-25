@@ -57,7 +57,7 @@ public class PartDescriptorLoader
     @Override
     public ResourceKey toResource( final DescriptorKey key )
     {
-        return ResourceKey.from( key.getApplicationKey(), PATH + "/" + key.getName() + "/" + key.getName() + ".yml" );
+        return toResourceKey( key, "yml" );
     }
 
     @Override
@@ -99,7 +99,7 @@ public class PartDescriptorLoader
 
     private Icon loadIcon( final DescriptorKey key, final String mimeType, final String ext )
     {
-        final ResourceKey resourceKey = PartDescriptor.toResourceKey( key, ext );
+        final ResourceKey resourceKey = toResourceKey( key, ext );
         final Resource resource = this.resourceService.getResource( resourceKey );
 
         if ( !resource.exists() )
@@ -109,5 +109,10 @@ public class PartDescriptorLoader
 
         final Instant modifiedTime = Instant.ofEpochMilli( resource.getTimestamp() );
         return Icon.from( resource.readBytes(), mimeType, modifiedTime );
+    }
+
+    private ResourceKey toResourceKey( final DescriptorKey key, final String ext )
+    {
+        return ResourceKey.from( key.getApplicationKey(), PATH + "/" + key.getName() + "/" + key.getName() + "." + ext );
     }
 }

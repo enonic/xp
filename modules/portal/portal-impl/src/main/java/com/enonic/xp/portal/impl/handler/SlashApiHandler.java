@@ -28,7 +28,6 @@ import com.enonic.xp.portal.impl.api.DynamicUniversalApiHandler;
 import com.enonic.xp.portal.impl.api.DynamicUniversalApiHandlerRegistry;
 import com.enonic.xp.portal.impl.websocket.WebSocketApiEndpointImpl;
 import com.enonic.xp.portal.impl.websocket.WebSocketEndpointImpl;
-import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
@@ -358,8 +357,7 @@ public class SlashApiHandler
 
     private ControllerScript getScript( final DescriptorKey key )
     {
-        final ResourceKey script = ResourceKey.from( key.getApplicationKey(), "apis/" + key.getName() + "/" + key.getName() + ".js" );
-        return this.controllerScriptFactory.fromScript( script );
+        return this.controllerScriptFactory.fromScript( apiDescriptorService.getControllerResourceKey( key ) );
     }
 
 }
