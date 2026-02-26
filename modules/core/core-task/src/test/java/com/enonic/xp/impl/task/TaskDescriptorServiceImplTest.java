@@ -8,9 +8,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.descriptor.DescriptorService;
 import com.enonic.xp.descriptor.Descriptors;
-import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.task.TaskDescriptor;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -28,8 +28,7 @@ class TaskDescriptorServiceImplTest
     @BeforeEach
     void setup()
     {
-        this.service = new TaskDescriptorServiceImpl();
-        this.service.setDescriptorService( this.descriptorService );
+        this.service = new TaskDescriptorServiceImpl( this.descriptorService );
     }
 
     @Test

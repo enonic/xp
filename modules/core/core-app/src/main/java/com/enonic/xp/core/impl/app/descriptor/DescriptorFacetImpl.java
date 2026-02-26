@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.app.descriptor;
 
 import java.util.Objects;
 
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +38,7 @@ final class DescriptorFacetImpl<T extends Descriptor>
     }
 
     @Override
-    public T get( final DescriptorKey key )
+    public @Nullable T get( final DescriptorKey key )
     {
         final ResourceProcessor<DescriptorKey, T> processor = newProcessor( key );
         final T descriptor = this.resourceService.processResource( processor );
@@ -89,12 +90,11 @@ final class DescriptorFacetImpl<T extends Descriptor>
 
     private ResourceProcessor<DescriptorKey, T> newProcessor( final DescriptorKey key )
     {
-        return new ResourceProcessor.Builder<DescriptorKey, T>().
-            key( key ).
-            segment( this.type.getName() ).
-            keyTranslator( this.loader::toResource ).
-            processor( resource -> doLoad( key, resource ) ).
-            build();
+        return new ResourceProcessor.Builder<DescriptorKey, T>().key( key )
+            .segment( this.type.getName() )
+            .keyTranslator( this.loader::toResource )
+            .processor( resource -> doLoad( key, resource ) )
+            .build();
     }
 
     private T doLoad( final DescriptorKey key, final Resource resource )

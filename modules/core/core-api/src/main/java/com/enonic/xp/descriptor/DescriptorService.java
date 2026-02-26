@@ -1,10 +1,12 @@
 package com.enonic.xp.descriptor;
 
+import org.jspecify.annotations.Nullable;
+
 import com.enonic.xp.app.ApplicationKeys;
 
 public interface DescriptorService
 {
-    <T extends Descriptor> T get( Class<T> type, DescriptorKey key );
+    <T extends Descriptor> @Nullable T get( Class<T> type, DescriptorKey key );
 
     <T extends Descriptor> Descriptors<T> get( Class<T> type, DescriptorKeys keys );
 

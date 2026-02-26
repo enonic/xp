@@ -12,7 +12,6 @@ import com.enonic.xp.descriptor.DescriptorLoader;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.schema.content.CmsFormFragmentService;
 import com.enonic.xp.task.TaskDescriptor;
 
 @Component(immediate = true)
@@ -23,13 +22,10 @@ public final class TaskDescriptorLoader
 
     private final DescriptorKeyLocator descriptorKeyLocator;
 
-    private final CmsFormFragmentService cmsFormFragmentService;
-
     @Activate
-    public TaskDescriptorLoader( @Reference final ResourceService resourceService, @Reference final CmsFormFragmentService cmsFormFragmentService )
+    public TaskDescriptorLoader( @Reference final ResourceService resourceService )
     {
         this.descriptorKeyLocator = new DescriptorKeyLocator( resourceService, PATH, false );
-        this.cmsFormFragmentService = cmsFormFragmentService;
     }
 
     @Override
@@ -54,21 +50,5 @@ public final class TaskDescriptorLoader
     public TaskDescriptor load( final DescriptorKey key, final Resource resource )
     {
         return YmlTaskDescriptorParser.parse( resource.readString(), key.getApplicationKey() ).key( key ).build();
-    }
-
-    @Override
-    public TaskDescriptor createDefault( final DescriptorKey key )
-    {
-        return TaskDescriptor.create().key( key ).description( key.getName() ).build();
-    }
-
-    @Override
-    public TaskDescriptor postProcess( final TaskDescriptor descriptor )
-    {
-        return TaskDescriptor.create()
-            .key( descriptor.getKey() )
-            .description( descriptor.getDescription() )
-            .config( this.cmsFormFragmentService.inlineFormItems( descriptor.getConfig() ) )
-            .build();
     }
 }

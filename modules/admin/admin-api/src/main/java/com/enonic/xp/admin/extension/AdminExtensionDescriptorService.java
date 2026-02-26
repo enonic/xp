@@ -1,16 +1,20 @@
 package com.enonic.xp.admin.extension;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.descriptor.Descriptors;
 
 @PublicApi
+@NullMarked
 public interface AdminExtensionDescriptorService
 {
     Descriptors<AdminExtensionDescriptor> getByInterfaces( String... interfaceName );
 
     Descriptors<AdminExtensionDescriptor> getByApplication( ApplicationKey applicationKey );
 
-    AdminExtensionDescriptor getByKey( DescriptorKey descriptorKey );
+    @Nullable AdminExtensionDescriptor getByKey( DescriptorKey descriptorKey );
 }

@@ -61,18 +61,6 @@ public final class AdminExtensionDescriptorLoader
             .build();
     }
 
-    @Override
-    public AdminExtensionDescriptor createDefault( final DescriptorKey key )
-    {
-        return AdminExtensionDescriptor.create().key( key ).displayName( key.getName() ).build();
-    }
-
-    @Override
-    public AdminExtensionDescriptor postProcess( final AdminExtensionDescriptor descriptor )
-    {
-        return descriptor;
-    }
-
     private Icon loadIcon( final DescriptorKey key )
     {
         final ResourceKey resourceKey = toResource( key, "svg" );

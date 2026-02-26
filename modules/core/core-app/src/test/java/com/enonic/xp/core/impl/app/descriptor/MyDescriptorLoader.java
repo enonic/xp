@@ -3,10 +3,10 @@ package com.enonic.xp.core.impl.app.descriptor;
 import java.io.IOException;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.descriptor.DescriptorKeyLocator;
 import com.enonic.xp.descriptor.DescriptorKeys;
 import com.enonic.xp.descriptor.DescriptorLoader;
-import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
@@ -54,11 +54,5 @@ public class MyDescriptorLoader
     public MyDescriptor createDefault( final DescriptorKey key )
     {
         return new MyDescriptor( key.toString() );
-    }
-
-    @Override
-    public MyDescriptor postProcess( final MyDescriptor descriptor )
-    {
-        return descriptor;
     }
 }

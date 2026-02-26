@@ -42,19 +42,8 @@ class AdminToolDescriptorLoaderTest
     @Test
     void testPostProcess()
     {
-        final AdminToolDescriptor descriptor =
-            AdminToolDescriptor.create().key( DescriptorKey.from( "myapp1:myadmintool" ) ).build();
+        final AdminToolDescriptor descriptor = AdminToolDescriptor.create().key( DescriptorKey.from( "myapp1:myadmintool" ) ).build();
         assertSame( descriptor, this.loader.postProcess( descriptor ) );
-    }
-
-    @Test
-    void testCreateDefault()
-    {
-        final DescriptorKey key = DescriptorKey.from( "myapp1:myadmintool" );
-        final AdminToolDescriptor descriptor = this.loader.createDefault( key );
-
-        assertEquals( key, descriptor.getKey() );
-        assertEquals( "myadmintool", descriptor.getDisplayName() );
     }
 
     @Test

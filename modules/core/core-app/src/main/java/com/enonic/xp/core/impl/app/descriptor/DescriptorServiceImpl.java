@@ -3,6 +3,7 @@ package com.enonic.xp.core.impl.app.descriptor;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.jspecify.annotations.Nullable;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -11,11 +12,11 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.descriptor.Descriptor;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.descriptor.DescriptorKeys;
 import com.enonic.xp.descriptor.DescriptorLoader;
 import com.enonic.xp.descriptor.DescriptorService;
 import com.enonic.xp.descriptor.Descriptors;
-import com.enonic.xp.descriptor.DescriptorKey;
 
 @Component
 public final class DescriptorServiceImpl
@@ -32,7 +33,7 @@ public final class DescriptorServiceImpl
     }
 
     @Override
-    public <T extends Descriptor> T get( final Class<T> type, final DescriptorKey key )
+    public <T extends Descriptor> @Nullable T get( final Class<T> type, final DescriptorKey key )
     {
         return getFacet( type ).get( key );
     }

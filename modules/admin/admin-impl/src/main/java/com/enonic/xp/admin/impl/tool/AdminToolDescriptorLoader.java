@@ -61,18 +61,6 @@ public final class AdminToolDescriptorLoader
             .build();
     }
 
-    @Override
-    public AdminToolDescriptor createDefault( final DescriptorKey key )
-    {
-        return AdminToolDescriptor.create().key( key ).displayName( key.getName() ).build();
-    }
-
-    @Override
-    public AdminToolDescriptor postProcess( final AdminToolDescriptor descriptor )
-    {
-        return descriptor;
-    }
-
     private Icon loadIcon( final DescriptorKey key )
     {
         final ResourceKey resourceKey = toResource( key, "svg" );

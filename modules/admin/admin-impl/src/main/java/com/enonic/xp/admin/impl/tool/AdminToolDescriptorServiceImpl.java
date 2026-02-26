@@ -1,5 +1,7 @@
 package com.enonic.xp.admin.impl.tool;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -13,6 +15,7 @@ import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.descriptor.DescriptorService;
 
 @Component(immediate = true)
+@NullMarked
 public final class AdminToolDescriptorServiceImpl
     implements AdminToolDescriptorService
 {
@@ -33,7 +36,7 @@ public final class AdminToolDescriptorServiceImpl
     }
 
     @Override
-    public AdminToolDescriptor getByKey( final DescriptorKey descriptorKey )
+    public @Nullable AdminToolDescriptor getByKey( final DescriptorKey descriptorKey )
     {
         return this.descriptorService.get( AdminToolDescriptor.class, descriptorKey );
     }
