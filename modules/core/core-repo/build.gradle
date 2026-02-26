@@ -8,6 +8,8 @@ dependencies {
         exclude group: 'org.yaml', module: 'snakeyaml'
         exclude group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-smile'
     }
+    implementation libs.elasticsearch.icu
+    implementation libs.icu4j
     runtimeOnly libs.jackson.dataformat.smile
     runtimeOnly libs.jackson.dataformat.cbor
     runtimeOnly libs.jackson.dataformat.yaml

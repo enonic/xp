@@ -5,14 +5,17 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
 
+import org.elasticsearch.Version;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.env.Environment;
 import org.elasticsearch.node.Node;
+import org.elasticsearch.node.internal.InternalSettingsPreparer;
+import org.elasticsearch.plugin.analysis.icu.AnalysisICUPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 
 public class EmbeddedElasticsearchServer
 {
@@ -64,10 +67,12 @@ public class EmbeddedElasticsearchServer
             .put( "index.search.slowlog.threshold.fetch.trace", "0s")
             .put( "discovery.zen.ping.multicast.enabled", false );
 
-        node = nodeBuilder().
-            local( true ).
-            settings( testServerSetup.build() ).
-            node();
+        final Environment environment = InternalSettingsPreparer.prepareEnvironment( testServerSetup.build(), null );
+        this.node = new Node( environment, Version.CURRENT, Collections.singletonList( AnalysisICUPlugin.class ) )
+        {
+        };
+
+        node.start();
     }
 
     public Client getClient()

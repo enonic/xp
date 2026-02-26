@@ -916,6 +916,7 @@ export type DistanceUnit =
 export interface FieldSortDsl {
     field: string;
     direction?: SortDirection;
+    language?: string;
 }
 
 export interface GeoDistanceSortDsl

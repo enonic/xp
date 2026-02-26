@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.elasticsearch.action.admin.cluster.node.info.NodesInfoResponse;
 import org.elasticsearch.client.AdminClient;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.ClusterAdminClient;
@@ -19,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Answers;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -28,6 +30,7 @@ import org.osgi.framework.ServiceRegistration;
 import com.enonic.xp.cluster.ClusterConfig;
 import com.enonic.xp.cluster.ClusterNodeId;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 @Tag("elasticsearch")
@@ -62,8 +65,8 @@ class ElasticsearchActivatorTest
         throws Exception
     {
         when( clusterConfig.isEnabled() ).thenReturn( true );
-        when( clusterConfig.discovery().get() ).
-            thenReturn( List.of( InetAddress.getByName( "localhost" ), InetAddress.getByName( "127.1.0.1" ) ) );
+        when( clusterConfig.discovery().get() ).thenReturn(
+            List.of( InetAddress.getByName( "localhost" ), InetAddress.getByName( "127.1.0.1" ) ) );
         when( clusterConfig.name() ).thenReturn( ClusterNodeId.from( "local-node" ) );
         when( clusterConfig.networkHost() ).thenReturn( "127.0.0.1" );
         when( clusterConfig.networkPublishHost() ).thenReturn( "127.0.0.1" );
@@ -79,6 +82,21 @@ class ElasticsearchActivatorTest
         this.clusterServiceReg = mockRegisterService( ClusterService.class );
         this.transportServiceReg = mockRegisterService( TransportService.class );
         this.clientServiceRegistration = mockRegisterService( Client.class );
+    }
+
+    @Test
+    void icuPluginIsLoaded()
+    {
+        this.activator.activate( this.context, new HashMap<>() );
+
+        final ArgumentCaptor<Client> clientCaptor = ArgumentCaptor.forClass( Client.class );
+        Mockito.verify( this.context ).registerService( Mockito.eq( Client.class ), clientCaptor.capture(), Mockito.any() );
+
+        final NodesInfoResponse info = clientCaptor.getValue().admin().cluster().prepareNodesInfo().all().execute().actionGet();
+
+        assertTrue( info.getNodes()[0].getPlugins().getPluginInfos().stream().anyMatch( p -> p.getName().equals( "analysis-icu" ) ) );
+
+        this.activator.deactivate();
     }
 
     @Test

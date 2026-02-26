@@ -35,7 +35,8 @@ public class DslSortBuilderFactory
         {
             final String field = orderExpr.getField();
 
-            final FieldSortBuilder fieldSortBuilder = new FieldSortBuilder( fieldNameResolver.resolveOrderByFieldName( field ) );
+            final FieldSortBuilder fieldSortBuilder =
+                new FieldSortBuilder( fieldNameResolver.resolveOrderByFieldName( field, orderExpr.getLanguage() ) );
 
             if ( orderExpr.getDirection() != null )
             {

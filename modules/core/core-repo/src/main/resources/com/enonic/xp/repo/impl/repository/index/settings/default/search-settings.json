@@ -14,6 +14,196 @@
       "nynorsk_stemmer": {
         "type": "stemmer",
         "language": "light_nynorsk"
+      },
+      "icu_collation_ar": {
+        "type": "icu_collation",
+        "language": "ar",
+        "country": "SA"
+      },
+      "icu_collation_hy": {
+        "type": "icu_collation",
+        "language": "hy",
+        "country": "AM"
+      },
+      "icu_collation_eu": {
+        "type": "icu_collation",
+        "language": "eu",
+        "country": "ES"
+      },
+      "icu_collation_bn": {
+        "type": "icu_collation",
+        "language": "bn",
+        "country": "BD"
+      },
+      "icu_collation_pt-br": {
+        "type": "icu_collation",
+        "language": "pt",
+        "country": "BR"
+      },
+      "icu_collation_bg": {
+        "type": "icu_collation",
+        "language": "bg",
+        "country": "BG"
+      },
+      "icu_collation_ca": {
+        "type": "icu_collation",
+        "language": "ca",
+        "country": "ES"
+      },
+      "icu_collation_zh": {
+        "type": "icu_collation",
+        "language": "zh",
+        "country": "CN"
+      },
+      "icu_collation_ja": {
+        "type": "icu_collation",
+        "language": "ja",
+        "country": "JP"
+      },
+      "icu_collation_ko": {
+        "type": "icu_collation",
+        "language": "ko",
+        "country": "KR"
+      },
+      "icu_collation_cs": {
+        "type": "icu_collation",
+        "language": "cs",
+        "country": "CZ"
+      },
+      "icu_collation_da": {
+        "type": "icu_collation",
+        "language": "da",
+        "country": "DK"
+      },
+      "icu_collation_nl": {
+        "type": "icu_collation",
+        "language": "nl",
+        "country": "NL"
+      },
+      "icu_collation_en": {
+        "type": "icu_collation",
+        "language": "en",
+        "country": "GB"
+      },
+      "icu_collation_fi": {
+        "type": "icu_collation",
+        "language": "fi",
+        "country": "FI"
+      },
+      "icu_collation_fr": {
+        "type": "icu_collation",
+        "language": "fr",
+        "country": "FR"
+      },
+      "icu_collation_gl": {
+        "type": "icu_collation",
+        "language": "gl",
+        "country": "ES"
+      },
+      "icu_collation_de": {
+        "type": "icu_collation",
+        "language": "de",
+        "country": "DE"
+      },
+      "icu_collation_el": {
+        "type": "icu_collation",
+        "language": "el",
+        "country": "GR"
+      },
+      "icu_collation_hi": {
+        "type": "icu_collation",
+        "language": "hi",
+        "country": "IN"
+      },
+      "icu_collation_hu": {
+        "type": "icu_collation",
+        "language": "hu",
+        "country": "HU"
+      },
+      "icu_collation_id": {
+        "type": "icu_collation",
+        "language": "id",
+        "country": "ID"
+      },
+      "icu_collation_ga": {
+        "type": "icu_collation",
+        "language": "ga",
+        "country": "IE"
+      },
+      "icu_collation_it": {
+        "type": "icu_collation",
+        "language": "it",
+        "country": "IT"
+      },
+      "icu_collation_lv": {
+        "type": "icu_collation",
+        "language": "lv",
+        "country": "LV"
+      },
+      "icu_collation_lt": {
+        "type": "icu_collation",
+        "language": "lt",
+        "country": "LT"
+      },
+      "icu_collation_no": {
+        "type": "icu_collation",
+        "language": "no",
+        "country": "NO"
+      },
+      "icu_collation_nb": {
+        "type": "icu_collation",
+        "language": "nb",
+        "country": "NO"
+      },
+      "icu_collation_nn": {
+        "type": "icu_collation",
+        "language": "nn",
+        "country": "NO"
+      },
+      "icu_collation_fa": {
+        "type": "icu_collation",
+        "language": "fa",
+        "country": "IR"
+      },
+      "icu_collation_pt": {
+        "type": "icu_collation",
+        "language": "pt",
+        "country": "PT"
+      },
+      "icu_collation_ro": {
+        "type": "icu_collation",
+        "language": "ro",
+        "country": "RO"
+      },
+      "icu_collation_ru": {
+        "type": "icu_collation",
+        "language": "ru",
+        "country": "RU"
+      },
+      "icu_collation_ku": {
+        "type": "icu_collation",
+        "language": "ku",
+        "country": "IQ"
+      },
+      "icu_collation_es": {
+        "type": "icu_collation",
+        "language": "es",
+        "country": "ES"
+      },
+      "icu_collation_sv": {
+        "type": "icu_collation",
+        "language": "sv",
+        "country": "SE"
+      },
+      "icu_collation_tr": {
+        "type": "icu_collation",
+        "language": "tr",
+        "country": "TR"
+      },
+      "icu_collation_th": {
+        "type": "icu_collation",
+        "language": "th",
+        "country": "TH"
       }
     },
     "tokenizer": {
@@ -110,6 +300,272 @@
         "filter": [
           "lowercase",
           "nynorsk_stemmer"
+        ]
+      },
+      "icu_sort_ar": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_ar"
+        ]
+      },
+      "icu_sort_hy": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_hy"
+        ]
+      },
+      "icu_sort_eu": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_eu"
+        ]
+      },
+      "icu_sort_bn": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_bn"
+        ]
+      },
+      "icu_sort_pt-br": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_pt-br"
+        ]
+      },
+      "icu_sort_bg": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_bg"
+        ]
+      },
+      "icu_sort_ca": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_ca"
+        ]
+      },
+      "icu_sort_zh": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_zh"
+        ]
+      },
+      "icu_sort_ja": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_ja"
+        ]
+      },
+      "icu_sort_ko": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_ko"
+        ]
+      },
+      "icu_sort_cs": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_cs"
+        ]
+      },
+      "icu_sort_da": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_da"
+        ]
+      },
+      "icu_sort_nl": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_nl"
+        ]
+      },
+      "icu_sort_en": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_en"
+        ]
+      },
+      "icu_sort_fi": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_fi"
+        ]
+      },
+      "icu_sort_fr": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_fr"
+        ]
+      },
+      "icu_sort_gl": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_gl"
+        ]
+      },
+      "icu_sort_de": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_de"
+        ]
+      },
+      "icu_sort_el": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_el"
+        ]
+      },
+      "icu_sort_hi": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_hi"
+        ]
+      },
+      "icu_sort_hu": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_hu"
+        ]
+      },
+      "icu_sort_id": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_id"
+        ]
+      },
+      "icu_sort_ga": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_ga"
+        ]
+      },
+      "icu_sort_it": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_it"
+        ]
+      },
+      "icu_sort_lv": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_lv"
+        ]
+      },
+      "icu_sort_lt": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_lt"
+        ]
+      },
+      "icu_sort_no": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_no"
+        ]
+      },
+      "icu_sort_nb": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_nb"
+        ]
+      },
+      "icu_sort_nn": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_nn"
+        ]
+      },
+      "icu_sort_fa": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_fa"
+        ]
+      },
+      "icu_sort_pt": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_pt"
+        ]
+      },
+      "icu_sort_ro": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_ro"
+        ]
+      },
+      "icu_sort_ru": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_ru"
+        ]
+      },
+      "icu_sort_ku": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_ku"
+        ]
+      },
+      "icu_sort_es": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_es"
+        ]
+      },
+      "icu_sort_sv": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_sv"
+        ]
+      },
+      "icu_sort_tr": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_tr"
+        ]
+      },
+      "icu_sort_th": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_th"
         ]
       }
     }
