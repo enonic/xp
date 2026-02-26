@@ -135,7 +135,7 @@ public final class PatchNodeCommand
 
         if ( patchedNode != null )
         {
-            this.nodeStorageService.push( NodeBranchEntry.fromNodeVersion( patchedNode.metadata() ), this.branches.first(),
+            this.nodeStorageService.push( NodeBranchEntry.fromNodeVersion( patchedNode.version() ), this.branches.first(),
                                           internalContext );
 
             return patchedNode;

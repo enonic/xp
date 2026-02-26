@@ -216,7 +216,7 @@ public class PushNodesCommand
 
         final NodeVersionData stored = this.nodeStorageService.store( StoreNodeParams.newVersion( changedNode ), internalContext );
 
-        return NodeBranchEntry.fromNodeVersion( stored.metadata() );
+        return NodeBranchEntry.fromNodeVersion( stored.version() );
     }
 
     private boolean targetAlreadyExists( final NodePath nodePath, final NodeComparisons comparisons )

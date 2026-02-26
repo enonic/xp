@@ -17,7 +17,6 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.ApplyNodePermissionsListener;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
-import com.enonic.xp.node.ApplyNodePermissionsResult;
 import com.enonic.xp.node.ApplyPermissionsScope;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
@@ -45,7 +44,7 @@ public class ApplyNodePermissionsCommand
 {
     private final ApplyNodePermissionsParams params;
 
-    private final ApplyNodePermissionsResult.Builder results;
+    private final ApplyPermissionsResult.Builder results;
 
     private final ApplyNodePermissionsListener listener;
 
@@ -57,7 +56,7 @@ public class ApplyNodePermissionsCommand
     {
         super( builder );
         this.params = builder.params;
-        this.results = ApplyNodePermissionsResult.create();
+        this.results = ApplyPermissionsResult.create();
         this.appliedVersions = new HashMap<>();
         this.listener = Objects.requireNonNullElse( params.getListener(), NoopApplyNodePermissionsListener.INSTANCE );
         this.branches = params.getBranches().isEmpty() ? Branches.from( ContextAccessor.current().getBranch() ) : params.getBranches();
@@ -80,7 +79,7 @@ public class ApplyNodePermissionsCommand
                                   ContextAccessor.current().getBranch(), this.branches );
     }
 
-    public ApplyNodePermissionsResult execute()
+    public ApplyPermissionsResult execute()
     {
         final Context context = this.branches.getSize() == 1
             ? ContextBuilder.from( ContextAccessor.current() ).branch( this.branches.first() ).build()
@@ -183,7 +182,7 @@ public class ApplyNodePermissionsCommand
             appliedVersions.put( node.getNodeVersionId(), updatedSourceNode );
         }
 
-        results.addResult( node.id(), branch, updatedSourceNode != null ? updatedSourceNode.metadata().getNodeVersionId() : null,
+        results.addResult( node.id(), branch, updatedSourceNode != null ? updatedSourceNode.version() : null,
                            updatedSourceNode != null ? updatedSourceNode.node().getPermissions() : null );
     }
 
@@ -205,7 +204,7 @@ public class ApplyNodePermissionsCommand
         return NodeHelper.runAsAdmin( () -> {
             if ( updatedVersionData != null )
             {
-                this.nodeStorageService.push( NodeBranchEntry.fromNodeVersion( updatedVersionData.metadata() ), this.branches.first(), targetContext );
+                this.nodeStorageService.push( NodeBranchEntry.fromNodeVersion( updatedVersionData.version() ), this.branches.first(), targetContext );
                 return updatedVersionData;
             }
             else
