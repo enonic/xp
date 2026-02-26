@@ -1,4 +1,4 @@
-package com.enonic.xp.admin.impl.extension;
+package com.enonic.xp.admin.impl.tool;
 
 import java.time.Instant;
 
@@ -6,7 +6,7 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.admin.extension.AdminExtensionDescriptor;
+import com.enonic.xp.admin.tool.AdminToolDescriptor;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.descriptor.DescriptorKeyLocator;
@@ -18,26 +18,26 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 
 @Component(immediate = true)
-public final class AdminExtensionDescriptorLoader
-    implements DescriptorLoader<AdminExtensionDescriptor>
+public final class AdminToolDescriptorLoader
+    implements DescriptorLoader<AdminToolDescriptor>
 {
-    private static final String PATH = "/admin/extensions";
+    private static final String PATH = "/admin/tools";
 
     private final ResourceService resourceService;
 
     private final DescriptorKeyLocator descriptorKeyLocator;
 
     @Activate
-    public AdminExtensionDescriptorLoader( @Reference final ResourceService resourceService )
+    public AdminToolDescriptorLoader( @Reference final ResourceService resourceService )
     {
         this.resourceService = resourceService;
         this.descriptorKeyLocator = new DescriptorKeyLocator( this.resourceService, PATH, false );
     }
 
     @Override
-    public Class<AdminExtensionDescriptor> getType()
+    public Class<AdminToolDescriptor> getType()
     {
-        return AdminExtensionDescriptor.class;
+        return AdminToolDescriptor.class;
     }
 
     @Override
@@ -53,9 +53,9 @@ public final class AdminExtensionDescriptorLoader
     }
 
     @Override
-    public AdminExtensionDescriptor load( final DescriptorKey key, final Resource resource )
+    public AdminToolDescriptor load( final DescriptorKey key, final Resource resource )
     {
-        return YmlAdminExtensionDescriptorParser.parse( resource.readString(), key.getApplicationKey() )
+        return YmlAdminToolDescriptorParser.parse( resource.readString(), key.getApplicationKey() )
             .key( key )
             .setIcon( loadIcon( key ) )
             .build();

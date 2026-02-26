@@ -50,16 +50,6 @@ class AdminExtensionDescriptorLoaderTest
     }
 
     @Test
-    void testCreateDefault()
-    {
-        final DescriptorKey key = DescriptorKey.from( "myapp1:extension1" );
-        final AdminExtensionDescriptor descriptor = this.loader.createDefault( key );
-
-        assertEquals( key, descriptor.getKey() );
-        assertEquals( "extension1", descriptor.getName() );
-    }
-
-    @Test
     void testFind()
     {
         final DescriptorKeys keys = this.loader.find( ApplicationKey.from( "myapp1" ) );

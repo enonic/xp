@@ -9,15 +9,10 @@ import com.enonic.xp.descriptor.DescriptorKeys;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.schema.content.CmsFormFragmentService;
 import com.enonic.xp.task.TaskDescriptor;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.AdditionalAnswers.returnsFirstArg;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class TaskDescriptorLoaderTest
     extends ApplicationTestSupport
@@ -28,10 +23,7 @@ class TaskDescriptorLoaderTest
     @Override
     protected void initialize()
     {
-        CmsFormFragmentService cmsFormFragmentService = mock( CmsFormFragmentService.class );
-        when( cmsFormFragmentService.inlineFormItems( any() ) ).then( returnsFirstArg() );
-
-        this.loader = new TaskDescriptorLoader( this.resourceService, cmsFormFragmentService );
+        this.loader = new TaskDescriptorLoader( this.resourceService );
         addApplication( "myapp1", "/apps/myapp1" );
     }
 
@@ -46,16 +38,6 @@ class TaskDescriptorLoaderTest
     {
         final TaskDescriptor descriptor = TaskDescriptor.create().key( DescriptorKey.from( "myapp:a" ) ).build();
         assertEquals( descriptor.getKey(), this.loader.postProcess( descriptor ).getKey() );
-    }
-
-    @Test
-    void testCreateDefault()
-    {
-        final DescriptorKey key = DescriptorKey.from( "myapp1:task1" );
-        final TaskDescriptor descriptor = this.loader.createDefault( key );
-
-        assertEquals( key, descriptor.getKey() );
-        assertEquals( "task1", descriptor.getName() );
     }
 
     @Test

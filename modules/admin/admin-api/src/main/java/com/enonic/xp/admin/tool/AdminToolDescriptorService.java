@@ -1,18 +1,19 @@
 package com.enonic.xp.admin.tool;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.descriptor.DescriptorKey;
-import com.enonic.xp.security.PrincipalKeys;
 
 @PublicApi
+@NullMarked
 public interface AdminToolDescriptorService
 {
-    AdminToolDescriptors getAllowedAdminToolDescriptors( PrincipalKeys principalKeys );
-
     AdminToolDescriptors getByApplication( ApplicationKey applicationKey );
 
-    AdminToolDescriptor getByKey( DescriptorKey descriptorKey );
+    @Nullable AdminToolDescriptor getByKey( DescriptorKey descriptorKey );
 
-    String getIconByKey( DescriptorKey descriptorKey );
+    AdminToolDescriptors getAll();
 }

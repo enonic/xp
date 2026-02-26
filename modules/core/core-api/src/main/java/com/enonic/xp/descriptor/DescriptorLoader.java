@@ -15,7 +15,13 @@ public interface DescriptorLoader<T>
     T load( DescriptorKey key, Resource resource )
         throws Exception;
 
-    T createDefault( DescriptorKey key );
+    default T createDefault( DescriptorKey key )
+    {
+        return null;
+    }
 
-    T postProcess( T descriptor );
+    default T postProcess( T descriptor )
+    {
+        return descriptor;
+    }
 }

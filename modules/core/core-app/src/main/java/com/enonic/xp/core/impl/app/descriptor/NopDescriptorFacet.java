@@ -1,16 +1,20 @@
 package com.enonic.xp.core.impl.app.descriptor;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.descriptor.Descriptor;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.descriptor.DescriptorKeys;
 import com.enonic.xp.descriptor.Descriptors;
-import com.enonic.xp.descriptor.DescriptorKey;
 
+@NullMarked
 final class NopDescriptorFacet<T extends Descriptor>
     implements DescriptorFacet<T>
 {
     @Override
-    public T get( final DescriptorKey key )
+    public @Nullable T get( final DescriptorKey key )
     {
         return null;
     }
