@@ -160,7 +160,8 @@ public class ImportNodeCommand
                 .stream()
                 .filter( branchResult -> ContextAccessor.current().getBranch().equals( branchResult.branch() ) )
                 .findAny()
-                .map( br -> br.permissions() != null ? Node.create( updatedNode ).permissions( br.permissions() ).build() : updatedNode )
+                .filter( br -> br.permissions() != null )
+                .map( br -> Node.create( updatedNode ).permissions( br.permissions() ).build() )
                 .orElse( updatedNode );
         }
 

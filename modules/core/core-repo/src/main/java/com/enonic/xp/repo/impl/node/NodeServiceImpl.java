@@ -649,7 +649,7 @@ public class NodeServiceImpl
     public ApplyNodePermissionsResult applyPermissions( final ApplyNodePermissionsParams params )
     {
         verifyContext();
-        final ApplyNodePermissionsResult result = ApplyNodePermissionsCommand.create()
+        final ApplyPermissionsResult internalResult = ApplyNodePermissionsCommand.create()
             .params( params )
             .indexServiceInternal( this.indexServiceInternal )
             .searchService( this.nodeSearchService )
@@ -658,36 +658,25 @@ public class NodeServiceImpl
             .build()
             .execute();
 
-        final Map<NodeId, List<ApplyNodePermissionsResult.BranchResult>> resultsByNodeId = result.getResults()
-            .entrySet()
-            .stream()
-            .flatMap( entry -> entry.getValue()
-                .stream()
-                .filter( br -> br.nodeVersionId() != null )
-                .collect( Collectors.groupingBy( br -> entry.getKey() ) )
-                .entrySet()
-                .stream() )
-            .collect( Collectors.toMap( Map.Entry::getKey, Map.Entry::getValue ) );
+        final ApplyNodePermissionsResult.Builder result = ApplyNodePermissionsResult.create();
 
-        for ( final Map.Entry<NodeId, List<ApplyNodePermissionsResult.BranchResult>> entry : resultsByNodeId.entrySet() )
+        for ( final Map.Entry<NodeId, List<ApplyPermissionsResult.BranchResult>> entry : internalResult.getResults().entrySet() )
         {
-            final List<ApplyNodePermissionsResult.BranchResult> branchResults = entry.getValue();
-
-            for ( final ApplyNodePermissionsResult.BranchResult br : branchResults )
+            for ( final ApplyPermissionsResult.BranchResult br : entry.getValue() )
             {
-                if ( br.nodeVersionId() == null )
+                result.addResult( entry.getKey(), br.branch(), br.nodeVersion() != null ? br.nodeVersion().getNodeVersionId() : null,
+                                  br.permissions() );
+
+                if ( br.nodeVersion() != null )
                 {
-                    continue;
+                    final InternalContext internalContext =
+                        InternalContext.create( ContextAccessor.current() ).branch( br.branch() ).build();
+                    eventPublisher.publish( NodeEvents.permissionsUpdated( br.nodeVersion(), internalContext ) );
                 }
-
-                final Context context = ContextBuilder.from( ContextAccessor.current() ).branch( br.branch() ).build();
-
-                context.runWith( () -> eventPublisher.publish(
-                    NodeEvents.permissionsUpdated( entry.getKey(), InternalContext.from( ContextAccessor.current() ) ) ) );
             }
         }
 
-        return result;
+        return result.build();
     }
 
     @Override

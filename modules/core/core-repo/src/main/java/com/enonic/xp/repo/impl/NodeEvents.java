@@ -10,7 +10,7 @@ import com.google.common.collect.ImmutableMap;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.PushNodeResult;
 
 import static com.enonic.xp.event.EventConstants.NODES_FIELD;
@@ -68,14 +68,17 @@ public final class NodeEvents
         return event( NODE_UPDATED_EVENT, patchedNode, internalContext );
     }
 
-    public static Event permissionsUpdated( final NodeId nodeId, final InternalContext internalContext )
+    public static Event permissionsUpdated( final NodeVersion nodeVersion, final InternalContext internalContext )
     {
         final Event.Builder builder = Event.create( NODE_PERMISSIONS_UPDATED ).distributed( true );
         if ( internalContext.getEventMetadata() != null )
         {
             internalContext.getEventMetadata().forEach( builder::value );
         }
-        builder.value( "id", nodeId );
+        builder.value( "id", nodeVersion.getNodeId().toString() );
+        builder.value( "path", nodeVersion.getNodePath().toString() );
+        builder.value( "branch", internalContext.getBranch().getValue() );
+        builder.value( "repo", internalContext.getRepositoryId().toString() );
 
         return builder.build();
     }
