@@ -20,7 +20,7 @@ public class LanguageConfigProcessor
     @Override
     public PatternIndexConfigDocument processDocument( final PatternIndexConfigDocument config )
     {
-        final PatternIndexConfigDocument.Builder configBuilder = PatternIndexConfigDocument.create( config );
+        final PatternIndexConfigDocument.Builder builder = PatternIndexConfigDocument.create( config );
 
         final AllTextIndexConfig.Builder allTextBuilder = AllTextIndexConfig.create( config.getAllTextConfig() );
 
@@ -32,6 +32,6 @@ public class LanguageConfigProcessor
                          IndexConfig.create( IndexConfig.FULLTEXT ).addLanguage( this.language ).build() );
         }
 
-        return configBuilder.build();
+        return builder.build();
     }
 }
