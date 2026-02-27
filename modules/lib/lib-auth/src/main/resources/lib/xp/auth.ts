@@ -19,19 +19,19 @@ export type {PrincipalKey, UserKey, GroupKey, RoleKey, Principal, ScriptValue, U
 
 function checkRequired<T extends object, K extends keyof T>(
     obj: T,
-    name: K
+    name: K,
 ): NonNullable<T[K]> {
     if (obj == null || obj[name] == null) {
         throw new Error(`Parameter '${String(name)}' is required`);
     }
-    return obj[name] as NonNullable<T[K]>;
+    return obj[name];
 }
 
 function checkRequiredArg<T>(value: T, name: string): NonNullable<T> {
     if (value == null) {
         throw new Error(`Parameter '${String(name)}' is required`);
     }
-    return value as NonNullable<T>;
+    return value;
 }
 
 export type LoginScopeType = 'SESSION' | 'REQUEST' | 'NONE';
