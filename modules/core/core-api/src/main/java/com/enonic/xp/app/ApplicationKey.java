@@ -4,25 +4,26 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
-import com.google.common.base.Preconditions;
+import org.jspecify.annotations.NullMarked;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.core.internal.CharacterChecker;
+import com.enonic.xp.core.internal.NameValidator;
 
 @PublicApi
+@NullMarked
 public final class ApplicationKey
     implements Serializable
 {
     @Serial
     private static final long serialVersionUID = 0;
 
-    public static final ApplicationKey SYSTEM = ApplicationKey.from( "system" );
+    public static final ApplicationKey SYSTEM = new ApplicationKey( "system" );
 
-    public static final ApplicationKey MEDIA_MOD = ApplicationKey.from( "media" );
+    public static final ApplicationKey MEDIA_MOD = new ApplicationKey( "media" );
 
-    public static final ApplicationKey PORTAL = ApplicationKey.from( "portal" );
+    public static final ApplicationKey PORTAL = new ApplicationKey( "portal" );
 
-    public static final ApplicationKey BASE = ApplicationKey.from( "base" );
+    public static final ApplicationKey BASE = new ApplicationKey( "base" );
 
     public static final ApplicationKeys SYSTEM_RESERVED_APPLICATION_KEYS = ApplicationKeys.from( SYSTEM, MEDIA_MOD, PORTAL, BASE );
 
@@ -30,9 +31,7 @@ public final class ApplicationKey
 
     private ApplicationKey( final String name )
     {
-        Objects.requireNonNull( name, "ApplicationKey cannot be null" );
-        Preconditions.checkArgument( !name.isBlank(), "ApplicationKey cannot be blank" );
-        this.name = CharacterChecker.check( name, "Invalid ApplicationKey [%s]" );
+        this.name = Objects.requireNonNull( name );
     }
 
     public String getName()
@@ -60,6 +59,14 @@ public final class ApplicationKey
 
     public static ApplicationKey from( final String name )
     {
-        return new ApplicationKey( name );
+        return switch ( name )
+        {
+            case null -> throw new NullPointerException( "ApplicationKey cannot be null" );
+            case "system" -> SYSTEM;
+            case "media" -> MEDIA_MOD;
+            case "portal" -> PORTAL;
+            case "base" -> BASE;
+            default -> new ApplicationKey( NameValidator.requireValidApplicationKey( name ) );
+        };
     }
 }

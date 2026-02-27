@@ -19,9 +19,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class ApplicationDescriptorServiceImplTest
 {
 
-    private static final String EXISTING_APP_BUNDLE_SYMBOLIC_NAME = "existing-site-bundle";
+    private static final String EXISTING_APP_BUNDLE_SYMBOLIC_NAME = "existing_site_bundle";
 
-    private static final String EXISTING_NON_APP_BUNDLE_SYMBOLIC_NAME = "existing-non-site-bundle";
+    private static final String EXISTING_NON_APP_BUNDLE_SYMBOLIC_NAME = "existing_non_site_bundle";
 
     private static final String BUNDLE_SYMBOLIC_NAME = "bundle";
 

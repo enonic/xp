@@ -1,29 +1,27 @@
 package com.enonic.xp.repository;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.regex.Pattern;
 
-import com.google.common.base.Preconditions;
+import org.jspecify.annotations.NullMarked;
 
 import com.enonic.xp.annotation.PublicApi;
+import com.enonic.xp.core.internal.NameValidator;
 
 @PublicApi
+@NullMarked
 public final class RepositoryId
     implements Serializable
 {
+    @Serial
     private static final long serialVersionUID = 0;
-
-    public static final Pattern VALID_REPOSITORY_ID_REGEX = Pattern.compile( "([a-z0-9\\-:])([a-z0-9_\\-\\.:])*" );
 
     private final String value;
 
     private RepositoryId( final String value )
     {
-        Objects.requireNonNull( value, "RepositoryId cannot be null" );
-        Preconditions.checkArgument( !value.isBlank(), "RepositoryId cannot be blank" );
-        Preconditions.checkArgument( VALID_REPOSITORY_ID_REGEX.matcher( value ).matches(), "RepositoryId format incorrect: %s", value );
-        this.value = value;
+        this.value = Objects.requireNonNull( value );
     }
 
     @Override
@@ -46,6 +44,6 @@ public final class RepositoryId
 
     public static RepositoryId from( final String value )
     {
-        return new RepositoryId( value );
+        return new RepositoryId( NameValidator.requireValidRepositoryId( value ) );
     }
 }

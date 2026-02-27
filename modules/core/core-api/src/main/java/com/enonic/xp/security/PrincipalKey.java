@@ -9,8 +9,8 @@ import java.util.regex.Pattern;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
+import com.enonic.xp.core.internal.NameValidator;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.core.internal.CharacterChecker;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
@@ -48,8 +48,7 @@ public final class PrincipalKey
         Preconditions.checkArgument( type == PrincipalType.ROLE || idProviderKey != null, "Principal id provider cannot be null" );
         this.idProviderKey = idProviderKey;
         this.type = Objects.requireNonNull( type, "Principal type cannot be null" );
-        Preconditions.checkArgument( !isNullOrEmpty( principalId ), "Principal id cannot be null or empty" );
-        this.principalId = CharacterChecker.check( principalId, "Not a valid principal key [%s]" );
+        this.principalId = NameValidator.requireValidPrincipalId( principalId );
     }
 
     public static PrincipalKey from( final String principalKey )

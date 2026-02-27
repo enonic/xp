@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.annotation.PublicApi;
+import com.enonic.xp.core.internal.NameValidator;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
@@ -168,7 +169,7 @@ public final class NamePrettyfier
         final StringBuilder str = new StringBuilder();
         for ( char ch : chars )
         {
-            if ( isValidChar( ch ) && !NameCharacterHelper.isInvisible( ch ) )
+            if ( isValidChar( ch ) && !NameValidator.isInvisible( ch ) )
             {
                 str.append( ch );
             }

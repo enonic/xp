@@ -6,7 +6,7 @@ var assert = require('/lib/xp/testing');
 // BEGIN
 // Create virtual app.
 var result = appLib.createVirtualApplication({
-    key: 'my-app',
+    key: 'my_app',
 });
 
 log.info('Created app: ' + result.key);
@@ -15,7 +15,7 @@ log.info('Created app: ' + result.key);
 
 
 assert.assertJsonEquals({
-    key: 'my-app',
+    key: 'my_app',
     displayName: 'app display name',
     vendorName: 'vendor name',
     vendorUrl: 'https://vendor.url',

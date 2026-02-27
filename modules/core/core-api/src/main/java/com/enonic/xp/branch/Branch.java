@@ -1,25 +1,22 @@
 package com.enonic.xp.branch;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.xp.annotation.PublicApi;
-
-import static com.google.common.base.Strings.isNullOrEmpty;
+import com.enonic.xp.core.internal.NameValidator;
 
 @PublicApi
 public final class Branch
     implements Serializable
 {
+    @Serial
     private static final long serialVersionUID = 0;
 
     private static final Branch MASTER = new Branch( "master" );
 
     private static final Branch DRAFT = new Branch( "draft" );
-
-    private static final String VALID_BRANCH_ID_REGEX = "^([a-zA-Z0-9\\-:])([a-zA-Z0-9\\-.:])*$";
 
     private final String value;
 
@@ -30,19 +27,13 @@ public final class Branch
 
     public static Branch from( final String name )
     {
-        switch ( name )
+        return switch ( name )
         {
-            case "master":
-                return MASTER;
-            case "draft":
-                return DRAFT;
-            default:
-            {
-                Preconditions.checkArgument( !isNullOrEmpty( name ), "Branch name cannot be null or empty" );
-                Preconditions.checkArgument( name.matches( VALID_BRANCH_ID_REGEX ), "Branch name format incorrect: %s", name );
-                return new Branch( name );
-            }
-        }
+            case null -> throw new NullPointerException( "Branch cannot be null" );
+            case "master" -> MASTER;
+            case "draft" -> DRAFT;
+            default -> new Branch( NameValidator.requireValidBranch( name ) );
+        };
     }
 
     public String getValue()

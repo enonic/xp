@@ -102,7 +102,7 @@ class NameTest
             try
             {
                 create( c + "" );
-                fail( "expected to throw illegal argument for unicode character: " + NameCharacterHelper.getUnicodeString( c ) );
+                fail( "expected to throw illegal argument for unicode character: U+" + Integer.toHexString( c | 0x10000 ).substring( 1 ) );
             }
             catch ( Exception e )
             {

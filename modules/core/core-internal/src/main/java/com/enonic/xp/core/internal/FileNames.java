@@ -1,6 +1,8 @@
 package com.enonic.xp.core.internal;
 
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.Locale;
@@ -14,6 +16,7 @@ import java.util.stream.IntStream;
  */
 public class FileNames
 {
+
     // From Windows File Naming Conventions: reserved characters <>:"/\|?*
     // Sorted for binary search
     private static final int[] RESERVED_CHARACTERS = "<>:\"/\\|?*".chars().sorted().toArray();
@@ -23,7 +26,8 @@ public class FileNames
         Set.of( "con", "prn", "aux", "nul", "com0", "com1", "com2", "com3", "com4", "com5", "com6", "com7", "com8", "com9", "lpt0", "lpt1",
                 "lpt2", "lpt3", "lpt4", "lpt5", "lpt6", "lpt7", "lpt8", "lpt9" );
 
-    public static final Set<String> RESERVED_PREFIX = RESERVED_NAME.stream().map( reserved -> reserved + "." ).collect( Collectors.toUnmodifiableSet() );
+    public static final Set<String> RESERVED_PREFIX =
+        RESERVED_NAME.stream().map( reserved -> reserved + "." ).collect( Collectors.toUnmodifiableSet() );
 
     // All types of invisible characters, including surrogate to disallow non-BMP characters
     // Unassigned characters are can't be printed and also considered invisible
@@ -31,6 +35,10 @@ public class FileNames
     private static final int[] INVISIBLE_CHARACTER_TYPES =
         IntStream.of( Character.UNASSIGNED, Character.SPACE_SEPARATOR, Character.LINE_SEPARATOR, Character.PARAGRAPH_SEPARATOR,
                       Character.CONTROL, Character.FORMAT, Character.PRIVATE_USE, Character.SURROGATE ).sorted().toArray();
+
+    public static final int MAX_LENGTH = 255;
+
+    public static final int MAX_BYTE_LENGTH = 255;
 
     private FileNames()
     {
@@ -51,7 +59,13 @@ public class FileNames
         Objects.requireNonNull( fileName );
 
         final int length = fileName.length();
-        if ( length == 0 || length > 255 )
+        if ( length == 0 || length > MAX_LENGTH )
+        {
+            return false;
+        }
+
+        // Recommendation for file name encoding is UTF-8, and many filesystems can't accept more than 255 bytes
+        if ( fileName.getBytes( StandardCharsets.UTF_8 ).length > MAX_BYTE_LENGTH )
         {
             return false;
         }
@@ -83,8 +97,8 @@ public class FileNames
             return false;
         }
 
-        if ( fileName.chars().
-            anyMatch( cp -> Arrays.binarySearch( RESERVED_CHARACTERS, cp ) >= 0 || // Reserved Characters won't work on some filesystems
+        if ( fileName.chars()
+            .anyMatch( cp -> Arrays.binarySearch( RESERVED_CHARACTERS, cp ) >= 0 || // Reserved Characters won't work on some filesystems
                 ( cp != ' ' && charIsInvisible( cp ) ) // Allow normal space but no other invisible characters
             ) )
         {
@@ -104,12 +118,62 @@ public class FileNames
             return false;
         }
 
-        // Recommendation for file name encoding is UTF-8, and many filesystems can't accept more than 255 bytes
-        return fileName.getBytes( StandardCharsets.UTF_8 ).length <= 255;
+        return true;
     }
 
     private static boolean charIsInvisible( final int c )
     {
         return Character.isWhitespace( c ) || Arrays.binarySearch( INVISIBLE_CHARACTER_TYPES, Character.getType( c ) ) >= 0;
     }
+
+    static void main()
+        throws Exception
+    {
+        final Path dir = Path.of( System.getenv( "HOME" ), "test" );
+
+        exists( "ë" );
+        exists( "é" );
+        exists( "å" );
+        exists( "моё" );
+        exists( "моё" ); // copied
+
+        System.out.println( "Listing files");
+
+        try (var list = Files.list( dir ))
+        {
+            list.forEach( path -> System.out.println( path.getFileName() + " -> " + escapeNonAscii( path.getFileName().toString() ) ) );
+        }
+    }
+
+    static void exists( String name )
+    {
+        final Path dir = Path.of( System.getenv( "HOME" ), "test" );
+        final Path resolve = dir.resolve( name );
+        System.out.println( name + " -> " + escapeNonAscii( name ) + " exists: " + Files.exists( resolve ) );
+    }
+
+    public static String escapeNonAscii( String s )
+    {
+        StringBuilder out = new StringBuilder();
+        for ( int i = 0; i < s.length(); )
+        {
+            int cp = s.codePointAt( i );
+            if ( cp >= 0x20 && cp <= 0x7E )
+            { // printable ASCII
+                out.append( (char) cp );
+            }
+            else if ( cp <= 0xFFFF )
+            {
+                out.append( String.format( "\\u%04X", cp ) );
+            }
+            else
+            {
+                char[] sur = Character.toChars( cp );
+                out.append( String.format( "\\u%04X\\u%04X", (int) sur[0], (int) sur[1] ) );
+            }
+            i += Character.charCount( cp );
+        }
+        return out.toString();
+    }
+
 }

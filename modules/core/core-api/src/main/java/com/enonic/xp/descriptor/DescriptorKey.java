@@ -4,11 +4,9 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.core.internal.CharacterChecker;
+import com.enonic.xp.core.internal.NameValidator;
 
 @PublicApi
 public final class DescriptorKey
@@ -26,8 +24,7 @@ public final class DescriptorKey
     private DescriptorKey( final ApplicationKey applicationKey, final String name )
     {
         this.applicationKey = Objects.requireNonNull( applicationKey );
-        Preconditions.checkArgument( !name.isBlank(), "Descriptor name cannot be blank" );
-        this.name = CharacterChecker.check( name, "Invalid name for DescriptorKey [%s]" );
+        this.name = NameValidator.requireValidDescriptorName( name );
     }
 
     public ApplicationKey getApplicationKey()

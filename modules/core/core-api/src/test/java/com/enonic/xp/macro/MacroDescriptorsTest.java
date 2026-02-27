@@ -17,7 +17,7 @@ class MacroDescriptorsTest
     @Test
     void testFrom()
     {
-        final MacroDescriptors macroDescriptors1 = MacroDescriptors.from( MacroDescriptor.create().key( "my-app:macro1" ).build() );
+        final MacroDescriptors macroDescriptors1 = MacroDescriptors.from( MacroDescriptor.create().key( "my_app:macro1" ).build() );
         assertEquals( 1, macroDescriptors1.getSize() );
     }
 

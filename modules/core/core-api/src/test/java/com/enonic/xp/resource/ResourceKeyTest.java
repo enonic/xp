@@ -15,14 +15,14 @@ class ResourceKeyTest
     @Test
     void fromUri()
     {
-        fromUri( "myapplication-1.0.0:", "myapplication-1.0.0:/", "myapplication-1.0.0", "/", "", null, true );
-        fromUri( "myapplication-1.0.0:/", "myapplication-1.0.0:/", "myapplication-1.0.0", "/", "", null, true );
-        fromUri( "myapplication-1.0.0:a/b.txt", "myapplication-1.0.0:/a/b.txt", "myapplication-1.0.0", "/a/b.txt", "b.txt", "txt", false );
-        fromUri( "myapplication-1.0.0:/a/b.txt", "myapplication-1.0.0:/a/b.txt", "myapplication-1.0.0", "/a/b.txt", "b.txt", "txt", false );
-        fromUri( "myapplication-1.0.0://a//b.txt", "myapplication-1.0.0:/a/b.txt", "myapplication-1.0.0", "/a/b.txt", "b.txt", "txt",
+        fromUri( "myapplication_1.0.0:", "myapplication_1.0.0:/", "myapplication_1.0.0", "/", "", null, true );
+        fromUri( "myapplication_1.0.0:/", "myapplication_1.0.0:/", "myapplication_1.0.0", "/", "", null, true );
+        fromUri( "myapplication_1.0.0:a/b.txt", "myapplication_1.0.0:/a/b.txt", "myapplication_1.0.0", "/a/b.txt", "b.txt", "txt", false );
+        fromUri( "myapplication_1.0.0:/a/b.txt", "myapplication_1.0.0:/a/b.txt", "myapplication_1.0.0", "/a/b.txt", "b.txt", "txt", false );
+        fromUri( "myapplication_1.0.0://a//b.txt", "myapplication_1.0.0:/a/b.txt", "myapplication_1.0.0", "/a/b.txt", "b.txt", "txt",
                  false );
-        fromUri( "myapplication-1.0.0://a/..", "myapplication-1.0.0:/", "myapplication-1.0.0", "/", "", null, true );
-        fromUri( "myapplication-1.0.0://a/./b/..", "myapplication-1.0.0:/a", "myapplication-1.0.0", "/a", "a", null, false );
+        fromUri( "myapplication_1.0.0://a/..", "myapplication_1.0.0:/", "myapplication_1.0.0", "/", "", null, true );
+        fromUri( "myapplication_1.0.0://a/./b/..", "myapplication_1.0.0:/a", "myapplication_1.0.0", "/a", "a", null, false );
     }
 
     private void fromUri( final String input, final String uri, final String application, final String path, final String name,
@@ -43,18 +43,18 @@ class ResourceKeyTest
     @Test
     void fromApplicationAndPath()
     {
-        fromApplicationAndPath( "", "myapplication-1.0.0:/", "/", null, true );
-        fromApplicationAndPath( "/", "myapplication-1.0.0:/", "/", null, true );
-        fromApplicationAndPath( "a/b.txt", "myapplication-1.0.0:/a/b.txt", "/a/b.txt", "txt", false );
-        fromApplicationAndPath( "/a/b.txt", "myapplication-1.0.0:/a/b.txt", "/a/b.txt", "txt", false );
-        fromApplicationAndPath( "//a//b.txt", "myapplication-1.0.0:/a/b.txt", "/a/b.txt", "txt", false );
-        fromApplicationAndPath( "//a/..", "myapplication-1.0.0:/", "/", null, true );
-        fromApplicationAndPath( "//a/./b/..", "myapplication-1.0.0:/a", "/a", null, false );
+        fromApplicationAndPath( "", "myapplication_1.0.0:/", "/", null, true );
+        fromApplicationAndPath( "/", "myapplication_1.0.0:/", "/", null, true );
+        fromApplicationAndPath( "a/b.txt", "myapplication_1.0.0:/a/b.txt", "/a/b.txt", "txt", false );
+        fromApplicationAndPath( "/a/b.txt", "myapplication_1.0.0:/a/b.txt", "/a/b.txt", "txt", false );
+        fromApplicationAndPath( "//a//b.txt", "myapplication_1.0.0:/a/b.txt", "/a/b.txt", "txt", false );
+        fromApplicationAndPath( "//a/..", "myapplication_1.0.0:/", "/", null, true );
+        fromApplicationAndPath( "//a/./b/..", "myapplication_1.0.0:/a", "/a", null, false );
     }
 
     private void fromApplicationAndPath( final String input, final String uri, final String path, final String ext, final boolean root )
     {
-        final ApplicationKey applicationKey = ApplicationKey.from( "myapplication-1.0.0" );
+        final ApplicationKey applicationKey = ApplicationKey.from( "myapplication_1.0.0" );
         final ResourceKey key = ResourceKey.from( applicationKey, input );
 
         assertNotNull( key );
@@ -75,11 +75,11 @@ class ResourceKeyTest
     @Test
     void testResolve()
     {
-        testResolve( "myapplication-1.0.0:/", "", "myapplication-1.0.0:/" );
-        testResolve( "myapplication-1.0.0:/", ".", "myapplication-1.0.0:/" );
-        testResolve( "myapplication-1.0.0:/", "/", "myapplication-1.0.0:/" );
-        testResolve( "myapplication-1.0.0:/a/b", "../c", "myapplication-1.0.0:/a/c" );
-        testResolve( "myapplication-1.0.0:/a", "b/c", "myapplication-1.0.0:/a/b/c" );
+        testResolve( "myapplication_1.0.0:/", "", "myapplication_1.0.0:/" );
+        testResolve( "myapplication_1.0.0:/", ".", "myapplication_1.0.0:/" );
+        testResolve( "myapplication_1.0.0:/", "/", "myapplication_1.0.0:/" );
+        testResolve( "myapplication_1.0.0:/a/b", "../c", "myapplication_1.0.0:/a/c" );
+        testResolve( "myapplication_1.0.0:/a", "b/c", "myapplication_1.0.0:/a/b/c" );
     }
 
     private void testResolve( final String uri, final String path, final String resolved )

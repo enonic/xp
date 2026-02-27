@@ -72,7 +72,7 @@ var expectedJson = {
     'page': {
         'type': 'page',
         'path': '/',
-        'descriptor': 'my-app-key:mycontroller',
+        'descriptor': 'my_app_key:mycontroller',
         'config': {
             'a': '1'
         },
@@ -82,7 +82,7 @@ var expectedJson = {
                     {
                         'path': '/top/0',
                         'type': 'part',
-                        'descriptor': 'app-descriptor-x:name-x',
+                        'descriptor': 'app.descriptor.x:name-x',
                         'config': {
                             'a': '1'
                         }
@@ -145,7 +145,7 @@ var expectedJson = {
                     {
                         'path': '/bottom/0',
                         'type': 'part',
-                        'descriptor': 'app-descriptor-y:name-y',
+                        'descriptor': 'app.descriptor.y:name-y',
                         'config': {
                             'a': '1'
                         }

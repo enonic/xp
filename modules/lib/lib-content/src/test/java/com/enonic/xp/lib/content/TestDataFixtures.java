@@ -226,7 +226,7 @@ public final class TestDataFixtures
         final Page.Builder builder = Page.create();
 
         builder.config( newTinyPropertyTree() );
-        builder.descriptor( DescriptorKey.from( "my-app-key:mycontroller" ) );
+        builder.descriptor( DescriptorKey.from( "my_app_key:mycontroller" ) );
         builder.regions( newPageRegions() );
 
         return builder.build();
@@ -241,7 +241,7 @@ public final class TestDataFixtures
     {
         return Region.create()
             .name( "top" )
-            .add( createPartComponent( "app-descriptor-x:name-x", newTinyPropertyTree() ) )
+            .add( createPartComponent( "app.descriptor.x:name-x", newTinyPropertyTree() ) )
             .add( createLayoutComponent() )
             .add( LayoutComponent.create().build() )
             .build();
@@ -251,7 +251,7 @@ public final class TestDataFixtures
     {
         return Region.create()
             .name( "bottom" )
-            .add( createPartComponent( "app-descriptor-y:name-y", newTinyPropertyTree() ) )
+            .add( createPartComponent( "app.descriptor.y:name-y", newTinyPropertyTree() ) )
             .add( createImageComponent( "img-id-x", newImageComponentPropertyTree() ) )
             .add( ImageComponent.create().build() )
             .build();
