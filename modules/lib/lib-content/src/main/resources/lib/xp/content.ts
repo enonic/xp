@@ -70,7 +70,7 @@ function checkRequiredArg<T>(value: T, name: string): NonNullable<T> {
     if (value == null) {
         throw new Error(`Parameter '${String(name)}' is required`);
     }
-    return value as NonNullable<T>;
+    return value;
 }
 
 export type {
@@ -203,12 +203,12 @@ export const CONTENT_ROOT_PATH = Java.type('com.enonic.xp.content.ContentConstan
 
 function checkRequired<T extends object, K extends keyof T>(
     obj: T,
-    name: K
+    name: K,
 ): NonNullable<T[K]> {
     if (obj == null || obj[name] == null) {
         throw new Error(`Parameter '${String(name)}' is required`);
     }
-    return obj[name] as NonNullable<T[K]>;
+    return obj[name];
 }
 
 export interface GetContentParams {
