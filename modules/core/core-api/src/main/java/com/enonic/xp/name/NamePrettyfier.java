@@ -5,10 +5,10 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.google.common.base.CharMatcher;
 import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.core.internal.NameValidator;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
@@ -169,7 +169,7 @@ public final class NamePrettyfier
         final StringBuilder str = new StringBuilder();
         for ( char ch : chars )
         {
-            if ( isValidChar( ch ) && !NameValidator.isInvisible( ch ) )
+            if ( isValidChar( ch ) && !CharMatcher.invisible().matches( ch ) )
             {
                 str.append( ch );
             }

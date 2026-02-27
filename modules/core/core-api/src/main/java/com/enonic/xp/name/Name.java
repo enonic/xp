@@ -1,9 +1,14 @@
 package com.enonic.xp.name;
 
+import java.util.Objects;
+
+import org.jspecify.annotations.NullMarked;
+
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.core.internal.NameValidator;
 
 @PublicApi
+@NullMarked
 public abstract class Name
 {
     protected final String value;
@@ -15,7 +20,7 @@ public abstract class Name
 
     protected Name( final String name, final boolean validate )
     {
-        this.value = validate ? NameValidator.requireValidName( name ) : name;
+        this.value = Objects.requireNonNull( validate ? NameValidator.requireValidName( name ) : name );
     }
 
     @Override

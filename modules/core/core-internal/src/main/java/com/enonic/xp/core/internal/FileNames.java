@@ -19,7 +19,7 @@ public class FileNames
 
     // From Windows File Naming Conventions: reserved characters <>:"/\|?*
     // Sorted for binary search
-    private static final int[] RESERVED_CHARACTERS = "<>:\"/\\|?*".chars().sorted().toArray();
+    private static final int[] RESERVED_CHARACTERS = NameValidator.FILENAME_FORBITTEN_CHARS.chars().sorted().toArray();
 
     // From Windows File Naming Conventions, extended with COM0 and LPT0 (they are not acceptable either)
     public static final Set<String> RESERVED_NAME =
@@ -30,7 +30,7 @@ public class FileNames
         RESERVED_NAME.stream().map( reserved -> reserved + "." ).collect( Collectors.toUnmodifiableSet() );
 
     // All types of invisible characters, including surrogate to disallow non-BMP characters
-    // Unassigned characters are can't be printed and also considered invisible
+    // Unassigned characters can't be printed and also considered invisible
     // Sorted for binary search
     private static final int[] INVISIBLE_CHARACTER_TYPES =
         IntStream.of( Character.UNASSIGNED, Character.SPACE_SEPARATOR, Character.LINE_SEPARATOR, Character.PARAGRAPH_SEPARATOR,
@@ -105,7 +105,7 @@ public class FileNames
             return false;
         }
 
-        // Problematic names on Windows, at lest
+        // Problematic names on Windows, even without extension, and on some other platforms as well
         if ( RESERVED_NAME.stream().anyMatch( fileName::equalsIgnoreCase ) )
         {
             return false;
@@ -125,55 +125,4 @@ public class FileNames
     {
         return Character.isWhitespace( c ) || Arrays.binarySearch( INVISIBLE_CHARACTER_TYPES, Character.getType( c ) ) >= 0;
     }
-
-    static void main()
-        throws Exception
-    {
-        final Path dir = Path.of( System.getenv( "HOME" ), "test" );
-
-        exists( "ë" );
-        exists( "é" );
-        exists( "å" );
-        exists( "моё" );
-        exists( "моё" ); // copied
-
-        System.out.println( "Listing files");
-
-        try (var list = Files.list( dir ))
-        {
-            list.forEach( path -> System.out.println( path.getFileName() + " -> " + escapeNonAscii( path.getFileName().toString() ) ) );
-        }
-    }
-
-    static void exists( String name )
-    {
-        final Path dir = Path.of( System.getenv( "HOME" ), "test" );
-        final Path resolve = dir.resolve( name );
-        System.out.println( name + " -> " + escapeNonAscii( name ) + " exists: " + Files.exists( resolve ) );
-    }
-
-    public static String escapeNonAscii( String s )
-    {
-        StringBuilder out = new StringBuilder();
-        for ( int i = 0; i < s.length(); )
-        {
-            int cp = s.codePointAt( i );
-            if ( cp >= 0x20 && cp <= 0x7E )
-            { // printable ASCII
-                out.append( (char) cp );
-            }
-            else if ( cp <= 0xFFFF )
-            {
-                out.append( String.format( "\\u%04X", cp ) );
-            }
-            else
-            {
-                char[] sur = Character.toChars( cp );
-                out.append( String.format( "\\u%04X\\u%04X", (int) sur[0], (int) sur[1] ) );
-            }
-            i += Character.charCount( cp );
-        }
-        return out.toString();
-    }
-
 }

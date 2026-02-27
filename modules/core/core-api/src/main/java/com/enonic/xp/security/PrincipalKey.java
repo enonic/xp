@@ -21,6 +21,11 @@ public final class PrincipalKey
     @Serial
     private static final long serialVersionUID = 0;
 
+    private static final NameValidator PRINCIPAL_ID_VALIDATOR = NameValidator.builder( "PrincipalId", NameValidator.NAME )
+        .maxLength( 63 )
+        .invalidChars( NameValidator.HTML_FORBITTEN_CHARS + NameValidator.FILENAME_FORBITTEN_CHARS )
+        .build();
+
     private static final String SEPARATOR = ":";
 
     private static final Pattern REF_PATTERN = Pattern.compile( "^(role):([^:]+)|(user|group):([^:]+):([^:]+)$" );
@@ -48,7 +53,7 @@ public final class PrincipalKey
         Preconditions.checkArgument( type == PrincipalType.ROLE || idProviderKey != null, "Principal id provider cannot be null" );
         this.idProviderKey = idProviderKey;
         this.type = Objects.requireNonNull( type, "Principal type cannot be null" );
-        this.principalId = NameValidator.requireValidPrincipalId( principalId );
+        this.principalId = PRINCIPAL_ID_VALIDATOR.validate( principalId );
     }
 
     public static PrincipalKey from( final String principalKey )

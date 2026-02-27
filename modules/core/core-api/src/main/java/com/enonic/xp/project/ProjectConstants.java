@@ -1,5 +1,7 @@
 package com.enonic.xp.project;
 
+import com.enonic.xp.repository.RepositoryConstants;
+
 public final class ProjectConstants
 {
     public static final String PROJECT_REPO_ID_PREFIX = "com.enonic.cms.";
@@ -15,6 +17,8 @@ public final class ProjectConstants
     public static final String PROJECT_ICON_PROPERTY = "icon";
 
     public static final String PROJECT_PARENTS_PROPERTY = "parents";
+
+    public static final int PROJECT_NAME_MAX_LENGTH = RepositoryConstants.REPOSITORY_ID_MAX_LENGTH - PROJECT_REPO_ID_PREFIX.length();
 
     private ProjectConstants()
     {

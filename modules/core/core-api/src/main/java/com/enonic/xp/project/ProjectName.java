@@ -1,6 +1,9 @@
 package com.enonic.xp.project;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.core.internal.NameValidator;
@@ -8,7 +11,16 @@ import com.enonic.xp.repository.RepositoryId;
 
 @PublicApi
 public final class ProjectName
+    implements Serializable
 {
+    @Serial
+    private static final long serialVersionUID = 0;
+
+    private static final NameValidator PROJECT_NAME_VALIDATOR = NameValidator.builder( ProjectName.class )
+        .maxLength( ProjectConstants.PROJECT_NAME_MAX_LENGTH )
+        .regex( Pattern.compile( "^[a-z0-9][a-z0-9_\\-]*$" ) )
+        .build();
+
     private final String value;
 
     private ProjectName( final String value )
@@ -18,7 +30,7 @@ public final class ProjectName
 
     public static ProjectName from( final String projectName )
     {
-        return new ProjectName( NameValidator.requireValidProjectName( projectName ) );
+        return new ProjectName( PROJECT_NAME_VALIDATOR.validate( projectName ) );
     }
 
     public static ProjectName from( final RepositoryId repositoryId )

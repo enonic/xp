@@ -3,6 +3,7 @@ package com.enonic.xp.branch;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.core.internal.NameValidator;
@@ -13,6 +14,9 @@ public final class Branch
 {
     @Serial
     private static final long serialVersionUID = 0;
+
+    private static final NameValidator BRANCH_VALIDATOR =
+        NameValidator.builder( Branch.class ).maxLength( 63 ).regex( Pattern.compile( "^[a-zA-Z0-9\\-][a-zA-Z0-9\\-.]*$" ) ).build();
 
     private static final Branch MASTER = new Branch( "master" );
 
@@ -27,12 +31,11 @@ public final class Branch
 
     public static Branch from( final String name )
     {
-        return switch ( name )
+        return switch ( Objects.requireNonNull( name,  "Branch cannot be null") )
         {
-            case null -> throw new NullPointerException( "Branch cannot be null" );
             case "master" -> MASTER;
             case "draft" -> DRAFT;
-            default -> new Branch( NameValidator.requireValidBranch( name ) );
+            default -> new Branch( BRANCH_VALIDATOR.validate( name ) );
         };
     }
 

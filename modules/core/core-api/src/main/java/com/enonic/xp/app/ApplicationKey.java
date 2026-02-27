@@ -3,6 +3,7 @@ package com.enonic.xp.app;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 import org.jspecify.annotations.NullMarked;
 
@@ -16,6 +17,9 @@ public final class ApplicationKey
 {
     @Serial
     private static final long serialVersionUID = 0;
+
+    private static final NameValidator APPLICATION_KEY_VALIDATOR =
+        NameValidator.builder( ApplicationKey.class ).maxLength( 63 ).regex( Pattern.compile( "^\\w+(?:\\.\\w+)*$" ) ).build();
 
     public static final ApplicationKey SYSTEM = new ApplicationKey( "system" );
 
@@ -59,14 +63,13 @@ public final class ApplicationKey
 
     public static ApplicationKey from( final String name )
     {
-        return switch ( name )
+        return switch ( Objects.requireNonNull( name, "ApplicationKey cannot be null" ) )
         {
-            case null -> throw new NullPointerException( "ApplicationKey cannot be null" );
             case "system" -> SYSTEM;
             case "media" -> MEDIA_MOD;
             case "portal" -> PORTAL;
             case "base" -> BASE;
-            default -> new ApplicationKey( NameValidator.requireValidApplicationKey( name ) );
+            default -> new ApplicationKey( APPLICATION_KEY_VALIDATOR.validate( name ) );
         };
     }
 }

@@ -15,6 +15,11 @@ public final class DescriptorKey
     @Serial
     private static final long serialVersionUID = 0;
 
+    private static final NameValidator DESCRIPTOR_NAME = NameValidator.builder( "Descriptor name" )
+        .maxLength( 63 )
+        .invalidChars( NameValidator.HTML_FORBITTEN_CHARS + NameValidator.FILENAME_FORBITTEN_CHARS )
+        .build();
+
     private static final String SEPARATOR = ":";
 
     private final ApplicationKey applicationKey;
@@ -24,7 +29,7 @@ public final class DescriptorKey
     private DescriptorKey( final ApplicationKey applicationKey, final String name )
     {
         this.applicationKey = Objects.requireNonNull( applicationKey );
-        this.name = NameValidator.requireValidDescriptorName( name );
+        this.name = Objects.requireNonNull( name );
     }
 
     public ApplicationKey getApplicationKey()
@@ -61,7 +66,7 @@ public final class DescriptorKey
     @Override
     public String toString()
     {
-        return applicationKey.toString() + SEPARATOR + name;
+        return applicationKey + SEPARATOR + name;
     }
 
     public static DescriptorKey from( final String key )
@@ -74,11 +79,11 @@ public final class DescriptorKey
         }
         final String applicationKey = key.substring( 0, index );
         final String descriptorName = key.substring( index + 1 );
-        return new DescriptorKey( ApplicationKey.from( applicationKey ), descriptorName );
+        return from( ApplicationKey.from( applicationKey ), descriptorName );
     }
 
-    public static DescriptorKey from( final ApplicationKey applicationKey, final String descriptorName )
+    public static DescriptorKey from( final ApplicationKey applicationKey, final String name )
     {
-        return new DescriptorKey( applicationKey, descriptorName );
+        return new DescriptorKey( applicationKey, DESCRIPTOR_NAME.validate( name ) );
     }
 }

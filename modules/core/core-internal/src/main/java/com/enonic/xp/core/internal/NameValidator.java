@@ -1,75 +1,61 @@
 package com.enonic.xp.core.internal;
 
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.IntStream;
 
-import com.google.common.base.CharMatcher;
+import org.jspecify.annotations.NonNull;
 
 public final class NameValidator
 {
-    private static final Pattern APP_NAME_PATTERN = Pattern.compile( "^\\w+(?:\\.\\w+)*$" );
+    public static String HTML_FORBITTEN_CHARS = "<>&\"'";
 
-    private static final Pattern VALID_BRANCH_ID_REGEX = Pattern.compile( "^[a-zA-Z0-9\\-][a-zA-Z0-9\\-.]*$" );
+    public static String FILENAME_FORBITTEN_CHARS = "<>:\"/\\|?*";
 
-    private static final Pattern VALID_REPOSITORY_ID_REGEX = Pattern.compile( "^[a-z0-9\\-][a-z0-9_\\-.]*$" );
-
-    private static final Pattern VALID_PROJECT_NAME_REGEX = Pattern.compile( "^[a-z0-9][a-z0-9_\\-]*$" );
-
-    private static final Pattern VALID_DESCRIPTOR_NAME_REGEX = Pattern.compile( "^[^<>:\"'/\\\\]+$" );
-
-    private static final String EXPLICITLY_ILLEGAL_NAME_CHARACTERS = "/\\*?|";
-
-    private static final CharMatcher EXPLICITLY_ILLEGAL_NAME_CHAR_MATCHER = CharMatcher.anyOf( EXPLICITLY_ILLEGAL_NAME_CHARACTERS );
-
-    private static final NameValidator APPLICATION_KEY =
-        builder( "ApplicationKey" ).rejectNull().maxLength( 63 ).regex( APP_NAME_PATTERN ).build();
-
-    private static final NameValidator BRANCH = builder( "Branch" ).maxLength( 63 ).regex( VALID_BRANCH_ID_REGEX ).build();
-
-    private static final NameValidator REPOSITORY_ID = builder( "Repository" ).maxLength( 63 ).regex( VALID_REPOSITORY_ID_REGEX ).build();
-
-    private static final NameValidator PROJECT_NAME = builder( "ProjectName" ).maxLength( 48 ).regex( VALID_PROJECT_NAME_REGEX ).build();
-
-    private static final NameValidator DESCRIPTOR_NAME = builder( "Descriptor name" ).regex( VALID_DESCRIPTOR_NAME_REGEX ).build();
-
-    private static final NameValidator ID_PROVIDER_KEY = builder( "IdProviderKey" ).rejectNull().regex( VALID_DESCRIPTOR_NAME_REGEX ).build();
-
-    private static final NameValidator PRINCIPAL_ID = builder( "Principal id" ).rejectNull().regex( VALID_DESCRIPTOR_NAME_REGEX ).build();
-
-    private static final NameValidator MACRO_NAME = builder( "Macro name" ).regex( VALID_DESCRIPTOR_NAME_REGEX ).build();
-
-    private static final NameValidator NAME = builder( "name" ).build();
+    public static final NameValidator NAME = builder( "Name" ).invalidChars( FILENAME_FORBITTEN_CHARS )
+        .validCharTypes( Character.LOWERCASE_LETTER, Character.MODIFIER_LETTER, Character.UPPERCASE_LETTER, Character.TITLECASE_LETTER,
+                         Character.OTHER_LETTER, Character.DECIMAL_DIGIT_NUMBER, Character.START_PUNCTUATION, Character.END_PUNCTUATION,
+                         Character.INITIAL_QUOTE_PUNCTUATION, Character.FINAL_QUOTE_PUNCTUATION, Character.DASH_PUNCTUATION,
+                         Character.CONNECTOR_PUNCTUATION, Character.OTHER_PUNCTUATION, Character.CURRENCY_SYMBOL, Character.MODIFIER_SYMBOL,
+                         Character.MATH_SYMBOL, Character.OTHER_SYMBOL )
+        .build();
 
     private final String type;
-
-    private final boolean rejectNull;
 
     private final int maxLength;
 
     private final Pattern regex;
 
+    private final int[] invalidChars;
+
+    private final int[] validCharTypes;
+
+    private final Set<String> reservedNames;
+
     private NameValidator( final Builder builder )
     {
         this.type = builder.type;
-        this.rejectNull = builder.rejectNull;
         this.maxLength = builder.maxLength;
         this.regex = builder.regex;
+        this.invalidChars = builder.invalidChars;
+        this.validCharTypes = builder.validCharTypes;
+        this.reservedNames = Set.of( "_" );
     }
 
     public String validate( final String name )
     {
-        if ( rejectNull && name == null )
+        Objects.requireNonNull( name, () -> type + " must not be null" );
+
+        if ( name.isEmpty() )
         {
-            throw new IllegalArgumentException( type + " must not be null" );
+            throw new IllegalArgumentException( type + " must not be empty" );
         }
 
-        if ( name.isBlank() )
+        if ( reservedNames.contains( name ) )
         {
-            throw new IllegalArgumentException( type + " must not be blank" );
-        }
-
-        if ( name.equals( "_" ) )
-        {
-            throw new IllegalArgumentException( type + " must not be '_'" );
+            throw new IllegalArgumentException( type + " must not be " + name );
         }
 
         if ( name.charAt( 0 ) == '.' )
@@ -87,6 +73,10 @@ public final class NameValidator
             throw new IllegalArgumentException( type + " must not be longer than " + maxLength + " characters" );
         }
 
+        name.chars().filter( this::isInvalidChar ).findFirst().ifPresent( cp -> {
+            throw new IllegalArgumentException( type + " must not contain '" + toUCode( cp ) + "'" );
+        } );
+
         if ( regex != null && !regex.matcher( name ).matches() )
         {
             throw new IllegalArgumentException( type + " is invalid: " + name );
@@ -95,147 +85,123 @@ public final class NameValidator
         return name;
     }
 
-    public static String requireValidApplicationKey( final String name )
+    private static @NonNull String toUCode( final int cp )
     {
-        return APPLICATION_KEY.validate( name );
-    }
-
-    public static String requireValidBranch( final String name )
-    {
-        return BRANCH.validate( name );
-    }
-
-    public static String requireValidRepositoryId( final String name )
-    {
-        return REPOSITORY_ID.validate( name );
-    }
-
-    public static String requireValidProjectName( final String name )
-    {
-        return PROJECT_NAME.validate( name );
-    }
-
-    public static String requireValidDescriptorName( final String name )
-    {
-        return DESCRIPTOR_NAME.validate( name );
-    }
-
-    public static String requireValidIdProviderKey( final String name )
-    {
-        ID_PROVIDER_KEY.validate( name );
-
-        // "roles" is reserved as it is used as a node name for roles storage
-        if ( "roles".equalsIgnoreCase( name ) )
+        if ( cp >= 0x20 && cp <= 0x7E )
         {
-            throw new IllegalArgumentException( "IdProviderKey is reserved and cannot be used: " + name );
+            return String.valueOf( (char) cp );
         }
-
-        return name;
+        return String.format( "U+%04X", cp );
     }
 
-    public static String requireValidPrincipalId( final String name )
+    private boolean isInvalidChar( final int cp )
     {
-        return PRINCIPAL_ID.validate( name );
-    }
-
-    public static String requireValidMacroName( final String name )
-    {
-        return MACRO_NAME.validate( name );
-    }
-
-    public static String requireValidName( final String name )
-    {
-        if ( name == null )
-        {
-            throw new NullPointerException( "name cannot be null" );
-        }
-
-        NAME.validate( name );
-
-        if ( EXPLICITLY_ILLEGAL_NAME_CHAR_MATCHER.matchesAnyOf( name ) )
-        {
-            throw new IllegalArgumentException( "Invalid name: '" + name + "'. Cannot contain " + EXPLICITLY_ILLEGAL_NAME_CHARACTERS );
-        }
-
-        for ( int i = 0; i < name.length(); i++ )
-        {
-            final char c = name.charAt( i );
-            if ( !isValidNameCharacter( c ) )
-            {
-                final String unicodeChar = c > 255 ? " (U+" + Integer.toHexString( c | 0x10000 ).substring( 1 ) + ")" : "";
-                throw new IllegalArgumentException( "Invalid character in name: '" + c + "'" + unicodeChar );
-            }
-        }
-        return name;
-    }
-
-    public static boolean isInvisible( final char c )
-    {
-        return CharMatcher.invisible().matches( c );
-    }
-
-    private static boolean isValidNameCharacter( final char c )
-    {
-        if ( c == ' ' || c == '-' )
+        if ( invalidChars != null && Arrays.binarySearch( invalidChars, cp ) >= 0 )
         {
             return true;
         }
 
-        if ( CharMatcher.invisible().matches( c ) )
+        if ( cp == ' ' )
         {
             return false;
         }
 
-        final int type = Character.getType( c );
-        return type == Character.LOWERCASE_LETTER || type == Character.MODIFIER_LETTER || type == Character.UPPERCASE_LETTER ||
-            type == Character.DECIMAL_DIGIT_NUMBER || type == Character.END_PUNCTUATION || type == Character.START_PUNCTUATION ||
-            type == Character.FINAL_QUOTE_PUNCTUATION || type == Character.INITIAL_QUOTE_PUNCTUATION ||
-            type == Character.OTHER_PUNCTUATION || type == Character.CURRENCY_SYMBOL || type == Character.MODIFIER_SYMBOL ||
-            type == Character.MATH_SYMBOL || type == Character.OTHER_SYMBOL || type == Character.DASH_PUNCTUATION ||
-            Character.isJavaIdentifierPart( c );
+        if ( Character.isWhitespace( cp ) )
+        {
+            return true;
+        }
+
+        if (validCharTypes != null && Arrays.binarySearch( validCharTypes, Character.getType( cp ) ) < 0 ) {
+            return true;
+        }
+
+        return  false;
     }
 
-    private static Builder builder( final String type )
+    public static String requireValidName( final String name )
+    {
+        return NAME.validate( name );
+    }
+
+    public static Builder builder( final Class<?> type )
+    {
+        return new Builder( type.getSimpleName() );
+    }
+
+    public static Builder builder( final String type )
     {
         return new Builder( type );
     }
 
-    private static final class Builder
+    public static Builder builder( final String type, final NameValidator base )
+    {
+        return new Builder( type ).validCharTypes( base.validCharTypes )
+            .invalidChars( base.invalidChars )
+            .maxLength( base.maxLength )
+            .regex( base.regex );
+    }
+
+    public static final class Builder
     {
         private final String type;
-
-        private boolean rejectNull;
 
         private int maxLength;
 
         private Pattern regex;
+
+        private int[] invalidChars;
+
+        private int[] validCharTypes;
 
         private Builder( final String type )
         {
             this.type = type;
         }
 
-        Builder rejectNull()
-        {
-            this.rejectNull = true;
-            return this;
-        }
-
-        Builder maxLength( final int maxLength )
+        public Builder maxLength( final int maxLength )
         {
             this.maxLength = maxLength;
             return this;
         }
 
-        Builder regex( final Pattern regex )
+        public Builder regex( final Pattern regex )
         {
             this.regex = regex;
             return this;
         }
 
-        NameValidator build()
+        public Builder invalidChars( final String invalidChars )
+        {
+            this.invalidChars = invalidChars.chars().sorted().distinct().toArray();
+            return this;
+        }
+
+        Builder invalidChars( final int[] invalidChars )
+        {
+            this.invalidChars = Arrays.copyOf( invalidChars, invalidChars.length );
+            return this;
+        }
+
+        public Builder validCharTypes( final int... validCharTypes )
+        {
+            this.validCharTypes = IntStream.of( validCharTypes ).distinct().sorted().toArray();
+            return this;
+        }
+
+        public NameValidator build()
         {
             return new NameValidator( this );
+        }
+    }
+
+    static void main()
+    {
+        for ( int cp = Character.MIN_CODE_POINT; cp <= Character.MAX_CODE_POINT; cp++ )
+        {
+            if ( Character.getType( cp ) == Character.CURRENCY_SYMBOL )
+            {
+                System.out.printf( "U+%04X %s %s%n", cp, toUCode( cp ), Character.isJavaIdentifierStart( cp ) );
+            }
         }
     }
 }
