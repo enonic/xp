@@ -5,7 +5,7 @@
     "description": "Root package for libs development.",
     "scripts": {
         "build": "tsc --declaration --project tsconfig.build.json",
-        "lint": "eslint . --quiet --cache",
+        "lint": "eslint . --quiet --cache --cache-location build/.eslintcache",
         "fix": "eslint . --fix --cache",
         "jsdoc": "jsdoc --configure jsdoc/conf.json",
         "test:types": "tsd -t build/npm/global.d.ts -f test/**/*.test-d.ts"

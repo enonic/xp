@@ -20,8 +20,13 @@ tasks.register( 'lint', NpmTask ) {
     dependsOn tasks.named( 'npmInstall' )
     description = 'Lint TS, JS, and JSON'
     args = ['run', 'lint']
-
-    outputs.upToDateWhen { false }
+    inputs.file 'global.d.ts'
+    inputs.file coreDir.file( 'index.d.ts' )
+    inputs.files( subprojects.collect {
+        it.layout.projectDirectory.dir( 'src/main/resources/lib/xp' )
+            .asFileTree.matching { include '**/*.ts', '**/*.js', '**/*.json' }
+    } )
+    outputs.file( layout.buildDirectory.file( '.eslintcache' ) )
 }
 
 check.dependsOn tasks.named( 'lint' )
@@ -34,12 +39,11 @@ tasks.register( 'typescript', NpmTask ) {
     args = ['run', 'build']
 
     inputs.file "global.d.ts"
-    inputs.files( fileTree( coreDir ) { include "**/*.ts" } )
+    inputs.file coreDir.file( "index.d.ts" )
     inputs.file "tsconfig.build.json"
     inputs.file "tsconfig.json"
     outputs.files( subprojects.collect {
-        it.layout.buildDirectory.dir('typescript/lib/xp').map { d ->
-            d.asFileTree.matching { include '**/*.js' }
+        it.layout.buildDirectory.dir( 'typescript/lib/xp' ).map { d -> d.asFileTree.matching { include '**/*.js' }
         }
     } )
 }
@@ -47,8 +51,7 @@ tasks.register( 'typescript', NpmTask ) {
 tasks.register( 'prepareToJsdoc', Copy ) {
     dependsOn tasks.named( 'typescript' )
     into layout.buildDirectory.dir( "js" )
-    into( "" ) {
-        from layout.projectDirectory
+    from( layout.projectDirectory ) {
         include "lib-*/build/typescript/lib/xp/*.js"
         eachFile { fcd -> fcd.relativePath = new RelativePath( true, fcd.relativePath.segments.drop( 3 ) ) }
     }
@@ -61,15 +64,17 @@ tasks.register( 'prepareToJsdoc', Copy ) {
 }
 
 tasks.register( 'jsdoc', NpmTask ) {
-    dependsOn tasks.named( 'prepareToJsdoc' )
     description = 'Build JSDoc for libraries.'
     args = ['run', 'jsdoc']
-    doFirst {
+    doLast {
         copy {
             from 'jsdoc/template/jsdoc-main.css'
             into layout.buildDirectory.dir( "resources/main/jsdoc/styles" )
         }
     }
+    inputs.file( 'jsdoc/template/jsdoc-main.css' )
+    inputs.dir( tasks.named( 'prepareToJsdoc', Copy ).map { it.destinationDir } )
+    outputs.dirs( layout.buildDirectory.dir( "resources/main/jsdoc" ) )
 }
 
 /* Publish */
@@ -152,7 +157,7 @@ publishing {
     }
 }
 
-subprojects {p ->
+subprojects { p ->
     apply plugin: 'com.github.node-gradle.node'
 
     tasks.register( 'prepareToTypescript', Copy ) {
@@ -179,8 +184,8 @@ subprojects {p ->
 
         def fullName = p.name
         def shortName = p.name.substring( 4 )
-        def ts = p.file("src/main/resources/lib/xp/${shortName}.ts")
-        def hasCore = ts.exists() && ts.getText('UTF-8').contains('@enonic-types/core')
+        def ts = p.file( "src/main/resources/lib/xp/${shortName}.ts" )
+        def hasCore = ts.exists() && ts.getText( 'UTF-8' ).contains( '@enonic-types/core' )
         def dependencies = hasCore ? ['@enonic-types/core'] : []
         def depString = dependencies.collect { "        \"$it\": \"$p.version\"" }.join( ',\n' )
         into layout.buildDirectory.dir( "npm" )
@@ -188,7 +193,7 @@ subprojects {p ->
         from( layout.buildDirectory.dir( "typescript/lib/xp" ) ) {
             include '*.d.ts'
         }
-        from( project(':lib').file('package.template.json') ) {
+        from( project( ':lib' ).file( 'package.template.json' ) ) {
             filter { line ->
                 def newLine = line
                     .replaceAll( '%VERSION%', p.version )
