@@ -16,7 +16,6 @@ import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
-import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
@@ -69,15 +68,9 @@ public final class OccurrenceValidator
 
         for ( PropertySet propertySet : propertySets )
         {
-            boolean hasSelectionArray =
-                propertySet.getPropertyArrays().stream().anyMatch( array -> array.getValueType().equals( ValueTypes.STRING ) );
-
             final List<Property> selectedItems = propertySet.getProperties( OPTION_SET_SELECTION_ARRAY_NAME );
 
-            int numberOfOptions = hasSelectionArray
-                ? selectedItems.size()
-                : Math.toIntExact(
-                    StreamSupport.stream( formOptionSet.spliterator(), false ).filter( FormOptionSetOption::isDefaultOption ).count() );
+            final int numberOfOptions = selectedItems.size();
 
             final Occurrences occurrences = formOptionSet.getMultiselection();
 
@@ -91,12 +84,16 @@ public final class OccurrenceValidator
                         .build() );
             }
 
+            if ( selectedItems.isEmpty() )
+            {
+                return;
+            }
+
             for ( final FormOptionSetOption option : formOptionSet )
             {
-                if ( hasSelectionArray && optionIsSelected( option, selectedItems ) )
+                if ( optionIsSelected( option, selectedItems ) )
                 {
-                    validate( option,
-                              Optional.ofNullable( propertySet.getSet( option.getName() ) ).map( List::of ).orElse( List.of() ),
+                    validate( option, Optional.ofNullable( propertySet.getSet( option.getName() ) ).map( List::of ).orElse( List.of() ),
                               errorFactory, validationErrorsBuilder );
                 }
             }

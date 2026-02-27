@@ -819,7 +819,7 @@ class OccurrenceValidatorTest
     }
 
     @Test
-    void given_optionset_with_default_selection_passes_multiselection_check()
+    void given_optionset_without_selected_option_fails_multiselection_check()
     {
         final ContentType contentType = ContentType.create()
             .name( "myapplication:my_type" )
@@ -829,7 +829,7 @@ class OccurrenceValidatorTest
         final PropertyTree content = new PropertyTree();
         content.setString( "myOptionSet.option1.myUnrequiredData", "1" );
         final ValidationErrors validationResults = validate( content, contentType );
-        assertFalse( validationResults.hasErrors() );
+        assertTrue( validationResults.hasErrors() );
     }
 
     @Test
@@ -905,7 +905,7 @@ class OccurrenceValidatorTest
         assertThat( validationResults.stream().findFirst() ).containsInstanceOf( DataValidationError.class )
             .get()
             .extracting( ValidationError::getArgs, LIST )
-            .containsExactly( "myOptionSet", 1, 1, 2 );
+            .containsExactly( "myOptionSet", 1, 1, 0 );
     }
 
     @Test
@@ -950,7 +950,7 @@ class OccurrenceValidatorTest
     }
 
     @Test
-    void testOptionSetWithDefaultValue()
+    void testOptionSetWithDefaultValueAndWithoutSelectedOption()
     {
         final ContentType contentType = ContentType.create()
             .name( "myapplication:my_type" )
@@ -988,9 +988,8 @@ class OccurrenceValidatorTest
                               .build() )
             .build();
         final PropertyTree content = new PropertyTree();
-        content.setSet( "checkOptionSet.option_3", content.newSet() );
         final ValidationErrors validationResults = validate( content, contentType );
-        assertFalse( validationResults.hasErrors() );
+        assertTrue( validationResults.hasErrors() );
     }
 
     @Test
