@@ -18,8 +18,10 @@ public final class RepositoryId
     @Serial
     private static final long serialVersionUID = 0;
 
-    private static final NameValidator REPOSITORY_ID_VALIDATOR =
-        NameValidator.builder( RepositoryId.class ).maxLength( 63 ).regex( Pattern.compile( "^[a-z0-9\\-][a-z0-9_\\-.]*$" ) ).build();
+    private static final NameValidator REPOSITORY_ID_VALIDATOR = NameValidator.builder( RepositoryId.class )
+        .maxLength( RepositoryConstants.REPOSITORY_ID_MAX_LENGTH )
+        .regex( Pattern.compile( "^[a-z0-9\\-][a-z0-9_\\-.]*$" ) )
+        .build();
 
     private final String value;
 

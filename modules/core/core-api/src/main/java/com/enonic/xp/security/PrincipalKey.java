@@ -12,8 +12,6 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.core.internal.NameValidator;
 import com.enonic.xp.node.NodePath;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
-
 @PublicApi
 public final class PrincipalKey
     implements Serializable
@@ -21,8 +19,8 @@ public final class PrincipalKey
     @Serial
     private static final long serialVersionUID = 0;
 
-    private static final NameValidator PRINCIPAL_ID_VALIDATOR = NameValidator.builder( "PrincipalId", NameValidator.NAME )
-        .maxLength( 63 )
+    private static final NameValidator PRINCIPAL_ID_VALIDATOR = NameValidator.builder( "PrincipalKey principalId", NameValidator.NAME )
+        .maxLength( SecurityConstants.MAX_PRINCIPAL_ID_LENGTH )
         .invalidChars( NameValidator.HTML_FORBITTEN_CHARS + NameValidator.FILENAME_FORBITTEN_CHARS )
         .build();
 
@@ -58,8 +56,7 @@ public final class PrincipalKey
 
     public static PrincipalKey from( final String principalKey )
     {
-        Preconditions.checkArgument( !isNullOrEmpty( principalKey ), "Principal key cannot be null or empty" );
-        switch ( principalKey )
+        switch ( Objects.requireNonNull( principalKey, "PrincipalKey cannot be null" ) )
         {
             case "user:system:anonymous":
                 return ANONYMOUS_PRINCIPAL;
@@ -127,18 +124,12 @@ public final class PrincipalKey
 
     private static PrincipalKey from( final IdProviderKey idProviderKey, final PrincipalType type, final String id )
     {
-        switch ( type )
+        return switch ( type )
         {
-            case USER:
-                return PrincipalKey.ofUser( idProviderKey, id );
-            case GROUP:
-                return PrincipalKey.ofGroup( idProviderKey, id );
-            case ROLE:
-                return PrincipalKey.ofRole( id );
-
-            default:
-                throw new IllegalArgumentException( "Not a valid principal type [" + type + "]" );
-        }
+            case USER -> PrincipalKey.ofUser( idProviderKey, id );
+            case GROUP -> PrincipalKey.ofGroup( idProviderKey, id );
+            case ROLE -> PrincipalKey.ofRole( id );
+        };
     }
 
     @Override

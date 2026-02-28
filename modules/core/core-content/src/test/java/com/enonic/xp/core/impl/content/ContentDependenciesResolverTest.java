@@ -56,19 +56,19 @@ class ContentDependenciesResolverTest
 
     private Content createContent( final String id, final PropertyTree data, final ContentTypeName contentTypeName )
     {
-        return Content.create().
-            id( ContentId.from( id ) ).
-            data( data ).
-            parentPath( ContentPath.ROOT ).
-            name( id ).
-            valid( true ).
-            creator( PrincipalKey.from( "user:system:admin" ) ).
-            owner( PrincipalKey.from( "user:myStore:me" ) ).
-            language( Locale.ENGLISH ).
-            displayName( "My Content" ).
-            modifier( PrincipalKey.from( "user:system:admin" ) ).
-            type( contentTypeName ).
-            build();
+        return Content.create()
+            .id( ContentId.from( id ) )
+            .data( data )
+            .parentPath( ContentPath.ROOT )
+            .name( id )
+            .valid( true )
+            .creator( PrincipalKey.from( "user:system:admin" ) )
+            .owner( PrincipalKey.from( "user:myStore:me" ) )
+            .language( Locale.ENGLISH )
+            .displayName( "My Content" )
+            .modifier( PrincipalKey.from( "user:system:admin" ) )
+            .type( contentTypeName )
+            .build();
     }
 
     @Test
@@ -76,21 +76,27 @@ class ContentDependenciesResolverTest
     {
         final Content content = createContent( "folderRefContent1", new PropertyTree(), ContentTypeName.folder() );
 
-        final FindContentIdsByQueryResult findContentByQueryResult =
-            FindContentIdsByQueryResult.create().contents( ContentIds.empty() ).aggregations( Aggregations.from( BucketAggregation.bucketAggregation( "type" ).
-                buckets( Buckets.create().
-                    add( Bucket.create().key( "portal:site" ).docCount( 2 ).build() ).
-                    add( Bucket.create().key( "base:folder" ).docCount( 1 ).build() ).
-                    build() ).build() ) ).build();
+        final FindContentIdsByQueryResult findContentByQueryResult = FindContentIdsByQueryResult.create()
+            .contents( ContentIds.empty() )
+            .aggregations( Aggregations.from( BucketAggregation.bucketAggregation( "type" )
+                                                  .buckets( Buckets.create()
+                                                                .add( Bucket.create().key( "portal:site" ).docCount( 2 ).build() )
+                                                                .add( Bucket.create().key( "base:folder" ).docCount( 1 ).build() )
+                                                                .build() )
+                                                  .build() ) )
+            .build();
 
         Mockito.when( contentService.getById( content.getId() ) ).thenReturn( content );
         Mockito.when( contentService.getOutboundDependencies( Mockito.any() ) ).thenReturn( ContentIds.from( "folderRefContent1" ) );
         Mockito.when( contentService.getByIds( Mockito.any() ) ).thenReturn( Contents.empty() );
         Mockito.when( contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn( findContentByQueryResult );
 
-        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn(
-            ContentType.create().name( "mycontenttype" ).icon( Icon.from( new byte[]{1}, "mime", Instant.now() ) ).setBuiltIn(
-                true ).build() );
+        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) )
+            .thenReturn( ContentType.create()
+                             .name( "my:contenttype" )
+                             .icon( Icon.from( new byte[]{1}, "mime", Instant.now() ) )
+                             .setBuiltIn( true )
+                             .build() );
 
         final ContentDependencies result = resolver.resolve( content.getId() );
 
@@ -124,21 +130,25 @@ class ContentDependenciesResolverTest
 
         final Content content = createContent( "contentId", data, ContentTypeName.site() );
 
-        final FindContentIdsByQueryResult findContentByQueryResult =
-            FindContentIdsByQueryResult.create().contents( ContentIds.empty() ).aggregations( Aggregations.from( BucketAggregation.bucketAggregation( "type" ).
-                buckets( Buckets.create().
-                    build() ).build() ) ).build();
+        final FindContentIdsByQueryResult findContentByQueryResult = FindContentIdsByQueryResult.create()
+            .contents( ContentIds.empty() )
+            .aggregations( Aggregations.from( BucketAggregation.bucketAggregation( "type" ).buckets( Buckets.create().build() ).build() ) )
+            .build();
 
-        Mockito.when( contentService.getOutboundDependencies( Mockito.any() ) ).thenReturn( ContentIds.from( "folderRefContent1", "folderRefContent2", "siteRefContent1" ) );
-        Mockito.when( contentService.getByIds( Mockito.any() ) ).thenReturn(
-            Contents.from( folderRefContent1, folderRefContent2, siteRefContent1 ) );
+        Mockito.when( contentService.getOutboundDependencies( Mockito.any() ) )
+            .thenReturn( ContentIds.from( "folderRefContent1", "folderRefContent2", "siteRefContent1" ) );
+        Mockito.when( contentService.getByIds( Mockito.any() ) )
+            .thenReturn( Contents.from( folderRefContent1, folderRefContent2, siteRefContent1 ) );
         Mockito.when( contentService.getById( content.getId() ) ).thenReturn( content );
 
         Mockito.when( contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn( findContentByQueryResult );
 
-        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn(
-            ContentType.create().name( "mycontenttype" ).icon( Icon.from( new byte[]{1}, "mime", Instant.now() ) ).setBuiltIn(
-                true ).build() );
+        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) )
+            .thenReturn( ContentType.create()
+                             .name( "my:contenttype" )
+                             .icon( Icon.from( new byte[]{1}, "mime", Instant.now() ) )
+                             .setBuiltIn( true )
+                             .build() );
 
         final ContentDependencies result = resolver.resolve( content.getId() );
 
@@ -159,18 +169,22 @@ class ContentDependenciesResolverTest
 
         final Content content = createContent( "content", data, ContentTypeName.site() );
 
-        final FindContentIdsByQueryResult findContentByQueryResult =
-            FindContentIdsByQueryResult.create().contents( ContentIds.empty() ).aggregations( Aggregations.from( BucketAggregation.bucketAggregation( "type" ).
-                buckets( Buckets.create().
-                    build() ).build() ) ).build();
+        final FindContentIdsByQueryResult findContentByQueryResult = FindContentIdsByQueryResult.create()
+            .contents( ContentIds.empty() )
+            .aggregations( Aggregations.from( BucketAggregation.bucketAggregation( "type" ).buckets( Buckets.create().build() ).build() ) )
+            .build();
 
-        Mockito.when( contentService.getOutboundDependencies( Mockito.any() ) ).thenReturn( ContentIds.from( "folderRefContent1", "folderRefContent2" ) );
+        Mockito.when( contentService.getOutboundDependencies( Mockito.any() ) )
+            .thenReturn( ContentIds.from( "folderRefContent1", "folderRefContent2" ) );
         Mockito.when( contentService.getByIds( Mockito.any() ) ).thenReturn( Contents.from( folderRefContent1, folderRefContent2 ) );
         Mockito.when( contentService.getById( content.getId() ) ).thenReturn( content );
         Mockito.when( contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn( findContentByQueryResult );
-        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn(
-            ContentType.create().name( "mycontenttype" ).icon( Icon.from( new byte[]{1}, "mime", Instant.now() ) ).setBuiltIn(
-                true ).build() );
+        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) )
+            .thenReturn( ContentType.create()
+                             .name( "my:contenttype" )
+                             .icon( Icon.from( new byte[]{1}, "mime", Instant.now() ) )
+                             .setBuiltIn( true )
+                             .build() );
 
         final ContentDependencies result = resolver.resolve( content.getId() );
 

@@ -72,7 +72,7 @@ class MixinDescriptorConfigProcessorTest
 
         final MixinDescriptors descriptors = builder.build();
 
-        final ContentType contentType = ContentType.create().superType( ContentTypeName.folder() ).name( "contentType" ).build();
+        final ContentType contentType = ContentType.create().superType( ContentTypeName.folder() ).name( "my:contentType" ).build();
 
         Mockito.when( contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ) ) )
             .thenReturn( contentType );

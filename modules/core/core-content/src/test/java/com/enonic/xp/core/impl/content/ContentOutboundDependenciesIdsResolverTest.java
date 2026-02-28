@@ -42,23 +42,22 @@ class ContentOutboundDependenciesIdsResolverTest
         return this.createContent( id, data, contentTypeName, Mixins.empty() );
     }
 
-    private Content createContent( final String id, final PropertyTree data, final ContentTypeName contentTypeName,
-                                   final Mixins mixins )
+    private Content createContent( final String id, final PropertyTree data, final ContentTypeName contentTypeName, final Mixins mixins )
     {
-        return Content.create().
-            id( ContentId.from( id ) ).
-            data( data ).
-            parentPath( ContentPath.ROOT ).
-            name( id ).
-            valid( true ).
-            creator( PrincipalKey.from( "user:system:admin" ) ).
-            owner( PrincipalKey.from( "user:myStore:me" ) ).
-            language( Locale.ENGLISH ).
-            mixins( mixins ).
-            displayName( "My Content" ).
-            modifier( PrincipalKey.from( "user:system:admin" ) ).
-            type( contentTypeName ).
-            build();
+        return Content.create()
+            .id( ContentId.from( id ) )
+            .data( data )
+            .parentPath( ContentPath.ROOT )
+            .name( id )
+            .valid( true )
+            .creator( PrincipalKey.from( "user:system:admin" ) )
+            .owner( PrincipalKey.from( "user:myStore:me" ) )
+            .language( Locale.ENGLISH )
+            .mixins( mixins )
+            .displayName( "My Content" )
+            .modifier( PrincipalKey.from( "user:system:admin" ) )
+            .type( contentTypeName )
+            .build();
     }
 
     @Test
@@ -79,8 +78,8 @@ class ContentOutboundDependenciesIdsResolverTest
 
         final Content content = createContent( "contentId", data, ContentTypeName.site() );
 
-        Mockito.when( contentService.getByIds( Mockito.any() ) ).thenReturn(
-            Contents.from( folderRefContent1, folderRefContent2, siteRefContent1 ) );
+        Mockito.when( contentService.getByIds( Mockito.any() ) )
+            .thenReturn( Contents.from( folderRefContent1, folderRefContent2, siteRefContent1 ) );
         Mockito.when( contentService.getById( content.getId() ) ).thenReturn( content );
 
         final ContentIds result = resolver.resolve( content.getId() );
@@ -131,10 +130,10 @@ class ContentOutboundDependenciesIdsResolverTest
         data.addReference( "refToMyself", Reference.from( "contentId" ) );
 
         final Content content = createContent( "contentId", new PropertyTree(), ContentTypeName.site(),
-                                               Mixins.create().add( new Mixin( MixinName.from( "mixinName" ), data ) ).build() );
+                                               Mixins.create().add( new Mixin( MixinName.from( "my:mixinName" ), data ) ).build() );
 
-        Mockito.when( contentService.getByIds( Mockito.any() ) ).thenReturn(
-            Contents.from( folderRefContent1, folderRefContent2, siteRefContent1 ) );
+        Mockito.when( contentService.getByIds( Mockito.any() ) )
+            .thenReturn( Contents.from( folderRefContent1, folderRefContent2, siteRefContent1 ) );
         Mockito.when( contentService.getById( content.getId() ) ).thenReturn( content );
 
         final ContentIds result = resolver.resolve( content.getId() );
@@ -149,9 +148,9 @@ class ContentOutboundDependenciesIdsResolverTest
     void resolve_content_processed_ids()
     {
         final ContentId ref = ContentId.from( "ref1" );
-        final Content content =
-            Content.create( createContent( "folderRefContent1", new PropertyTree(), ContentTypeName.folder() ) ).addProcessedReference(
-                ref ).build();
+        final Content content = Content.create( createContent( "folderRefContent1", new PropertyTree(), ContentTypeName.folder() ) )
+            .addProcessedReference( ref )
+            .build();
 
         Mockito.when( contentService.getById( content.getId() ) ).thenReturn( content );
 

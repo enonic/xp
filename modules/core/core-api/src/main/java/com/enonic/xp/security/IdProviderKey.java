@@ -14,7 +14,7 @@ public final class IdProviderKey
     @Serial
     private static final long serialVersionUID = 0;
 
-    private static final NameValidator ID_PROVIDER_KEY_VALIDATOR = NameValidator.builder( "IdProviderKey", NameValidator.NAME )
+    private static final NameValidator ID_PROVIDER_KEY_VALIDATOR = NameValidator.builder( IdProviderKey.class, NameValidator.NAME )
         .maxLength( SecurityConstants.ID_PROVIDER_KEY_MAX_LENGTH )
         .invalidChars( NameValidator.HTML_FORBITTEN_CHARS + NameValidator.FILENAME_FORBITTEN_CHARS )
         .build();

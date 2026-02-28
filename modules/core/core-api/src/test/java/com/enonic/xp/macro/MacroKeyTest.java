@@ -30,6 +30,6 @@ class MacroKeyTest
     @Test
     void equalsContract()
     {
-        EqualsVerifier.forClass( MacroKey.class ).withNonnullFields( "applicationKey", "name" ).verify();
+        EqualsVerifier.forClass( MacroKey.class ).verify();
     }
 }

@@ -9,6 +9,6 @@ public class FormFragmentNameTest
     @Test
     public void equalsContract()
     {
-        EqualsVerifier.forClass( FormFragmentName.class ).usingGetClass().withNonnullFields( "applicationKey", "localName" ).verify();
+        EqualsVerifier.forClass( FormFragmentName.class ).usingGetClass().verify();
     }
 }

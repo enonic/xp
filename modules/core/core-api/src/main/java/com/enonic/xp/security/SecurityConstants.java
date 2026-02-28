@@ -8,6 +8,8 @@ public final class SecurityConstants
 
     public static final int ID_PROVIDER_KEY_MAX_LENGTH = 63;
 
+    public static final int MAX_PRINCIPAL_ID_LENGTH = 63;
+
     private SecurityConstants()
     {
     }

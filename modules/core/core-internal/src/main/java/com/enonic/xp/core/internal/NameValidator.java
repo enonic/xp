@@ -111,11 +111,12 @@ public final class NameValidator
             return true;
         }
 
-        if (validCharTypes != null && Arrays.binarySearch( validCharTypes, Character.getType( cp ) ) < 0 ) {
+        if ( validCharTypes != null && Arrays.binarySearch( validCharTypes, Character.getType( cp ) ) < 0 )
+        {
             return true;
         }
 
-        return  false;
+        return false;
     }
 
     public static String requireValidName( final String name )
@@ -125,7 +126,12 @@ public final class NameValidator
 
     public static Builder builder( final Class<?> type )
     {
-        return new Builder( type.getSimpleName() );
+        return builder( type.getSimpleName() );
+    }
+
+    public static Builder builder( final Class<?> type, final NameValidator base )
+    {
+        return builder( type.getSimpleName(), base );
     }
 
     public static Builder builder( final String type )

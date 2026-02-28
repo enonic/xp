@@ -2,11 +2,14 @@ package com.enonic.xp.macro;
 
 import java.util.Objects;
 
+import org.jspecify.annotations.NullMarked;
+
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.descriptor.DescriptorKey;
 
 @PublicApi
+@NullMarked
 public final class MacroKey
 {
     private final DescriptorKey descriptorKey;

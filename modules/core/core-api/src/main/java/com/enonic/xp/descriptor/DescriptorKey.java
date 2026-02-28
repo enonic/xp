@@ -15,6 +15,12 @@ public final class DescriptorKey
     @Serial
     private static final long serialVersionUID = 0;
 
+    /**
+     * Descriptor name validator.
+     * Must be a valid file because name-descriptors are usually a file on a file system.
+     * HTML illegal characters historically prohibited.
+     * Length is limited to 63 to align with other system limits: Database identifiers, etc...
+     */
     private static final NameValidator DESCRIPTOR_NAME = NameValidator.builder( "Descriptor name" )
         .maxLength( 63 )
         .invalidChars( NameValidator.HTML_FORBITTEN_CHARS + NameValidator.FILENAME_FORBITTEN_CHARS )

@@ -159,8 +159,8 @@ exports.query = function () {
             'sort': '_modifiedTime DESC, geodistance(\'p1\', \'p2\')',
             'query': 'type = \'article\' AND fulltext(\'myField\', \'searching for cheese\', \'AND\') ',
             'contentTypes': [
-                'article',
-                'comment'
+                'app:article',
+                'app:comment'
             ],
             'aggregations': {
                 'genders': {
