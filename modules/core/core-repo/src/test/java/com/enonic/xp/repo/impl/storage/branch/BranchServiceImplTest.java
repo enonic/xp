@@ -57,7 +57,7 @@ class BranchServiceImplTest
 
         final NodePath path = new NodePath( "/fisk" );
 
-        Mockito.when( this.storageDao.store( Mockito.isA( StoreRequest.class ) ) ).thenReturn( "123_myBranch" );
+        Mockito.when( this.storageDao.store( Mockito.isA( StoreRequest.class ) ) ).thenReturn( "123_my-branch" );
 
         this.branchService.store( NodeBranchEntry.create()
                                       .nodeId( NodeId.from( "123" ) )
@@ -73,7 +73,7 @@ class BranchServiceImplTest
 
         Mockito.when( this.storageDao.getById( Mockito.isA( GetByIdRequest.class ) ) )
             .thenReturn( GetResult.create()
-                             .id( "123_myBranch" )
+                             .id( "123_my-branch" )
                              .resultFieldValues( ReturnValues.create()
                                                      .add( BranchIndexPath.PATH.getPath(), "/fisk" )
                                                      .add( BranchIndexPath.STATE.getPath(), "default" )

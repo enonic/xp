@@ -12,14 +12,14 @@ public final class NameValidator
 {
     /**
      * Legacy illegal characters for node names.
-     * Note that they are similar to what filesystems usually prohibit, but allow &lt; &gt; &colon; &quot;
+     * Note that they are similar to what filesystems usually prohibit, but allow {@code <>:"}
      */
     public static final String NAME_ILLEGAL_CHARACTERS = "/\\|?*";
 
     /**
-     * Names that are likely filenames the following gives a fists safequird from illegal names.
+     * Additional illegal characters for names that are likely filenames.
      * <p>
-     * From Windows File Naming Conventions: reserved characters <>:"/\|?*
+     * From Windows File Naming Conventions: reserved characters {@code <>:"/\|?*}
      */
     public static final String FILENAME_ILLEGAL_CHARACTERS = "<>:\"/\\|?*";
 
@@ -28,7 +28,7 @@ public final class NameValidator
      */
     public static final String HTML_SPECIAL_CHARACTERS = "<>&\"'";
 
-    public static final NameValidator NAME = builder( "Name" ).invalidChars( NAME_ILLEGAL_CHARACTERS )
+    public static final NameValidator NAME = builder( NameValidator.class ).invalidChars( NAME_ILLEGAL_CHARACTERS )
         .invalidStartChars( " " )
         .invalidEndChars( " " )
         .validCharTypes( Character.LOWERCASE_LETTER, Character.MODIFIER_LETTER, Character.UPPERCASE_LETTER, Character.TITLECASE_LETTER,
@@ -38,7 +38,7 @@ public final class NameValidator
                          Character.MATH_SYMBOL, Character.OTHER_SYMBOL )
         .build();
 
-    private final String type;
+    private final Class<?> type;
 
     private final int maxLength;
 
@@ -54,6 +54,15 @@ public final class NameValidator
 
     private final Set<String> reservedNames;
 
+    private final ClassValue<NameValidator> extendCache = new ClassValue<>()
+    {
+        @Override
+        protected NameValidator computeValue( final @NonNull Class<?> type )
+        {
+            return extend( type ).build();
+        }
+    };
+
     private NameValidator( final Builder builder )
     {
         this.type = builder.type;
@@ -66,18 +75,18 @@ public final class NameValidator
         this.reservedNames = Set.of( "_", ".", ".." );
     }
 
-    public String validate( final String name )
+    public String validate( final String name, String typeOverride )
     {
-        Objects.requireNonNull( name, () -> type + " must not be null" );
+        Objects.requireNonNull( name, () -> typeOverride + " must not be null" );
 
         if ( name.isEmpty() )
         {
-            throw new IllegalArgumentException( type + " must not be empty" );
+            throw new IllegalArgumentException( typeOverride + " must not be empty" );
         }
 
         if ( reservedNames.contains( name ) )
         {
-            throw new IllegalArgumentException( type + " must not be " + name );
+            throw new IllegalArgumentException( typeOverride + " must not be " + name );
         }
 
         if ( invalidStartChars != null )
@@ -85,7 +94,7 @@ public final class NameValidator
             final char firstChar = name.charAt( 0 );
             if ( Arrays.binarySearch( invalidStartChars, firstChar ) >= 0 )
             {
-                throw new IllegalArgumentException( type + " must not start with '" + toUCode( firstChar ) + "'" );
+                throw new IllegalArgumentException( typeOverride + " must not start with '" + toUCode( firstChar ) + "'" );
             }
         }
 
@@ -94,25 +103,36 @@ public final class NameValidator
             final char lastChar = name.charAt( name.length() - 1 );
             if ( Arrays.binarySearch( invalidEndChars, lastChar ) >= 0 )
             {
-                throw new IllegalArgumentException( type + " must not end with '" + toUCode( lastChar ) + "'" );
+                throw new IllegalArgumentException( typeOverride + " must not end with '" + toUCode( lastChar ) + "'" );
             }
         }
 
         if ( maxLength > 0 && name.length() > maxLength )
         {
-            throw new IllegalArgumentException( type + " must not be longer than " + maxLength + " characters" );
+            throw new IllegalArgumentException( typeOverride + " must not be longer than " + maxLength + " characters" );
         }
 
         name.chars().filter( this::isInvalidChar ).findFirst().ifPresent( cp -> {
-            throw new IllegalArgumentException( type + " must not contain '" + toUCode( cp ) + "'" );
+            throw new IllegalArgumentException( typeOverride + " must not contain '" + toUCode( cp ) + "'" );
         } );
 
         if ( regex != null && !regex.matcher( name ).matches() )
         {
-            throw new IllegalArgumentException( type + " is invalid: " + name );
+            throw new IllegalArgumentException( typeOverride + " is invalid: " + name );
         }
 
         return name;
+    }
+
+    public String validate( final String name )
+    {
+        final String simpleName = type.getSimpleName();
+        return validate( name, simpleName.isEmpty() ? "Name" : simpleName );
+    }
+
+    public Validator withSubject( final String subject )
+    {
+        return name -> validate( name, subject );
     }
 
     private static @NonNull String toUCode( final int cp )
@@ -149,19 +169,14 @@ public final class NameValidator
         return false;
     }
 
-    public static Builder builder( final Class<?> type )
+    public NameValidator cachedExtend( final Class<?> type )
     {
-        return builder( type.getSimpleName() );
+        return extendCache.get( type );
     }
 
-    public Builder asBaseFor( final Class<?> type )
+    public Builder extend( final Class<?> type )
     {
-        return asBaseFor( type.getSimpleName() );
-    }
-
-    public Builder asBaseFor( final String name )
-    {
-        final Builder b = builder( name );
+        final Builder b = builder( type );
         b.maxLength = maxLength;
         b.regex = regex;
         b.invalidChars = invalidChars;
@@ -171,19 +186,15 @@ public final class NameValidator
         return b;
     }
 
-    public NameValidator forType( final String name )
+    public static Builder builder( final Class<?> type )
     {
-        return asBaseFor( name ).build();
-    }
-
-    public static Builder builder( final String type )
-    {
-        return new Builder( type.isEmpty() ? "Name" : type );
+        return new Builder( type );
     }
 
     public static final class Builder
     {
-        private final String type;
+
+        private final Class<?> type;
 
         private int maxLength;
 
@@ -197,7 +208,7 @@ public final class NameValidator
 
         private int[] invalidEndChars;
 
-        private Builder( final String type )
+        private Builder( final Class<?> type )
         {
             this.type = type;
         }
@@ -242,5 +253,11 @@ public final class NameValidator
         {
             return new NameValidator( this );
         }
+    }
+
+    @FunctionalInterface
+    public interface Validator
+    {
+        String validate( String value );
     }
 }

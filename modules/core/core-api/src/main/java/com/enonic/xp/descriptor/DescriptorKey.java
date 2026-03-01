@@ -21,7 +21,7 @@ public final class DescriptorKey
      * HTML illegal characters historically prohibited.
      * Length is limited to 63 to align with other systems limits: Database identifiers, etc...
      */
-    private static final NameValidator DESCRIPTOR_NAME = NameValidator.builder( "DescriptorKey name" )
+    private static final NameValidator DESCRIPTOR_NAME = NameValidator.builder( DescriptorKey.class )
         .maxLength( 63 )
         .invalidChars( NameValidator.HTML_SPECIAL_CHARACTERS + NameValidator.FILENAME_ILLEGAL_CHARACTERS )
         .build();
@@ -90,6 +90,6 @@ public final class DescriptorKey
 
     public static DescriptorKey from( final ApplicationKey applicationKey, final String name )
     {
-        return new DescriptorKey( applicationKey, DESCRIPTOR_NAME.validate( name ) );
+        return new DescriptorKey( applicationKey, DESCRIPTOR_NAME.withSubject( "DescriptorKey name" ).validate( name  ) );
     }
 }

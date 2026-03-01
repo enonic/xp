@@ -14,7 +14,7 @@ public final class IdProviderKey
     @Serial
     private static final long serialVersionUID = 0;
 
-    private static final NameValidator ID_VALIDATOR = NameValidator.NAME.asBaseFor( IdProviderKey.class )
+    private static final NameValidator ID_VALIDATOR = NameValidator.NAME.extend( IdProviderKey.class )
         .invalidChars(
             NameValidator.NAME_ILLEGAL_CHARACTERS + NameValidator.HTML_SPECIAL_CHARACTERS + SecurityConstants.PRINCIPAL_KEY_SEPARATOR )
         .build();
@@ -23,7 +23,7 @@ public final class IdProviderKey
 
     private final String id;
 
-    public IdProviderKey( final String id )
+    private IdProviderKey( final String id )
     {
         this.id = Objects.requireNonNull( id );
     }

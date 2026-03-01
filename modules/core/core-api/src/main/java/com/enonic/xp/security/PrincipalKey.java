@@ -17,12 +17,12 @@ public final class PrincipalKey
     @Serial
     private static final long serialVersionUID = 0;
 
-    private static final NameValidator ID_VALIDATOR = NameValidator.NAME.asBaseFor( PrincipalKey.class )
+    private static final NameValidator ID_VALIDATOR = NameValidator.NAME.extend( PrincipalKey.class )
         .invalidChars(
             NameValidator.NAME_ILLEGAL_CHARACTERS + NameValidator.HTML_SPECIAL_CHARACTERS + SecurityConstants.PRINCIPAL_KEY_SEPARATOR )
         .build();
 
-    private static final Pattern REF_PATTERN = Pattern.compile( "^(role):([^:]+)|(user|group):([^:]+):([^:]+)$" );
+    private static final Pattern REF_PATTERN = Pattern.compile( "(role):([^:]+)|(user|group):([^:]+):([^:]+)" );
 
     private static final PrincipalKey ANONYMOUS_PRINCIPAL = new PrincipalKey( IdProviderKey.system(), PrincipalType.USER, "anonymous" );
 
@@ -63,17 +63,17 @@ public final class PrincipalKey
                 return ANONYMOUS_PRINCIPAL;
             case "user:system:su":
                 return SUPER_USER_PRINCIPAL;
-            case "role:system:everyone":
+            case "role:system.everyone":
                 return EVERYONE_ROLE;
-            case "role:system:authenticated":
+            case "role:system.authenticated":
                 return AUTHENTICATED_ROLE;
-            case "role:system:admin":
+            case "role:system.admin":
                 return ADMIN_ROLE;
             default: // no predefined key found. Let's parse
         }
 
         final Matcher matcher = REF_PATTERN.matcher( principalKey );
-        if ( !matcher.find() )
+        if ( !matcher.matches() )
         {
             throw new IllegalArgumentException( "Not a valid principal key [" + principalKey + "]" );
         }
@@ -155,12 +155,10 @@ public final class PrincipalKey
             return true;
         }
 
-        if ( !( o instanceof PrincipalKey ) )
+        if ( !( o instanceof final PrincipalKey that ) )
         {
             return false;
         }
-
-        final PrincipalKey that = (PrincipalKey) o;
 
         return Objects.equals( type, that.type ) && Objects.equals( idProviderKey, that.idProviderKey ) && Objects.equals( id, that.id );
     }
@@ -174,18 +172,18 @@ public final class PrincipalKey
     public static PrincipalKey ofUser( final IdProviderKey idProvider, final String userId )
     {
         return new PrincipalKey( Objects.requireNonNull( idProvider, "User idProvider cannot be null" ), PrincipalType.USER,
-                                 ID_VALIDATOR.forType( "User id" ).validate( userId ) );
+                                 ID_VALIDATOR.withSubject( "User id" ).validate( userId ) );
     }
 
     public static PrincipalKey ofGroup( final IdProviderKey idProvider, final String groupId )
     {
         return new PrincipalKey( Objects.requireNonNull( idProvider, "Group idProvider cannot be null" ), PrincipalType.GROUP,
-                                 ID_VALIDATOR.forType( "Group id" ).validate( groupId ) );
+                                 ID_VALIDATOR.withSubject( "Group id" ).validate( groupId ) );
     }
 
     public static PrincipalKey ofRole( final String roleId )
     {
-        return new PrincipalKey( null, PrincipalType.ROLE, ID_VALIDATOR.forType( "Role id" ).validate( roleId ) );
+        return new PrincipalKey( null, PrincipalType.ROLE, ID_VALIDATOR.withSubject( "Role id" ).validate( roleId ) );
     }
 
     public static PrincipalKey ofAnonymous()
