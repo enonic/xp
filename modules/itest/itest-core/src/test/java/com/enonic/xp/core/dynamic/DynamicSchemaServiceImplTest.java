@@ -274,7 +274,7 @@ class DynamicSchemaServiceImplTest
             CreateVirtualApplicationParams.create().key( ApplicationKey.from( "myapp" ) ).build() ) );
 
         createAdminContext().runWith( () -> applicationService.createVirtualApplication(
-            CreateVirtualApplicationParams.create().key( ApplicationKey.from( "my-other-app" ) ).build() ) );
+            CreateVirtualApplicationParams.create().key( ApplicationKey.from( "my_other_app" ) ).build() ) );
 
         projectService = new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService, eventPublisher,
                                                  mock( ProjectConfig.class ) );
@@ -999,7 +999,7 @@ class DynamicSchemaServiceImplTest
     @Test
     void getSiteNonExistedApp()
     {
-        final ApplicationKey applicationKey = ApplicationKey.from( "non-app" );
+        final ApplicationKey applicationKey = ApplicationKey.from( "nonapp" );
 
         assertThat( createAdminContext().callWith( () -> dynamicSchemaService.getCmsDescriptor( applicationKey ) ) ).isNull();
     }
@@ -1191,7 +1191,7 @@ class DynamicSchemaServiceImplTest
                 .build() ) );
         DynamicSchemaResult<PartDescriptor> part3 = createAdminContext().callWith( () -> dynamicSchemaService.createComponent(
             CreateDynamicComponentParams.create()
-                .descriptorKey( DescriptorKey.from( "my-other-app:mypart" ) )
+                .descriptorKey( DescriptorKey.from( "my_other_app:mypart" ) )
                 .resource( readResource( "_part.yml" ) )
                 .type( DynamicComponentType.PART )
                 .build() ) );
@@ -1203,7 +1203,7 @@ class DynamicSchemaServiceImplTest
 
         results = createAdminContext().callWith( () -> dynamicSchemaService.listComponents( ListDynamicComponentsParams.create()
                                                                                                 .applicationKey(
-                                                                                                    ApplicationKey.from( "my-other-app" ) )
+                                                                                                    ApplicationKey.from( "my_other_app" ) )
                                                                                                 .type( DynamicComponentType.PART )
                                                                                                 .build() ) );
 
@@ -1238,7 +1238,7 @@ class DynamicSchemaServiceImplTest
                 .build() ) );
         DynamicSchemaResult<ContentType> contentType3 = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
             CreateDynamicContentSchemaParams.create()
-                .name( ContentTypeName.from( "my-other-app:mytype" ) )
+                .name( ContentTypeName.from( "my_other_app:mytype" ) )
                 .resource( readResource( "_contentType.yml" ) )
                 .type( DynamicContentSchemaType.CONTENT_TYPE )
                 .build() ) );
@@ -1253,7 +1253,7 @@ class DynamicSchemaServiceImplTest
 
         results = createAdminContext().callWith( () -> dynamicSchemaService.listContentSchemas( ListDynamicContentSchemasParams.create()
                                                                                                     .applicationKey( ApplicationKey.from(
-                                                                                                        "my-other-app" ) )
+                                                                                                        "my_other_app" ) )
                                                                                                     .type(
                                                                                                         DynamicContentSchemaType.CONTENT_TYPE )
                                                                                                     .build() ) );
@@ -1286,7 +1286,7 @@ class DynamicSchemaServiceImplTest
                 .build() ) );
         DynamicSchemaResult<FormFragmentDescriptor> fragment3 = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
             CreateDynamicContentSchemaParams.create()
-                .name( FormFragmentName.from( "my-other-app:mytype" ) )
+                .name( FormFragmentName.from( "my_other_app:mytype" ) )
                 .resource( readResource( "_formFragment.yml" ) )
                 .type( DynamicContentSchemaType.FORM_FRAGMENT )
                 .build() ) );
@@ -1298,7 +1298,7 @@ class DynamicSchemaServiceImplTest
 
         results = createAdminContext().callWith( () -> dynamicSchemaService.listContentSchemas( ListDynamicContentSchemasParams.create()
                                                                                                     .applicationKey( ApplicationKey.from(
-                                                                                                        "my-other-app" ) )
+                                                                                                        "my_other_app" ) )
                                                                                                     .type( DynamicContentSchemaType.FORM_FRAGMENT )
                                                                                                     .build() ) );
 
@@ -1333,7 +1333,7 @@ class DynamicSchemaServiceImplTest
                 .build() ) );
         DynamicSchemaResult<FormFragmentDescriptor> fragment3 = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
             CreateDynamicContentSchemaParams.create()
-                .name( FormFragmentName.from( "my-other-app:mytype" ) )
+                .name( FormFragmentName.from( "my_other_app:mytype" ) )
                 .resource( readResource( "_formFragment.yml" ) )
                 .type( DynamicContentSchemaType.FORM_FRAGMENT )
                 .build() ) );
@@ -1345,7 +1345,7 @@ class DynamicSchemaServiceImplTest
 
         results = createAdminContext().callWith( () -> dynamicSchemaService.listContentSchemas( ListDynamicContentSchemasParams.create()
                                                                                                     .applicationKey( ApplicationKey.from(
-                                                                                                        "my-other-app" ) )
+                                                                                                        "my_other_app" ) )
                                                                                                     .type( DynamicContentSchemaType.FORM_FRAGMENT )
                                                                                                     .build() ) );
 
@@ -1377,7 +1377,7 @@ class DynamicSchemaServiceImplTest
                                                                                            .type( DynamicContentSchemaType.FORM_FRAGMENT )
                                                                                            .build() ) );
         createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema( CreateDynamicContentSchemaParams.create()
-                                                                                           .name( FormFragmentName.from( "my-other-app:mytype" ) )
+                                                                                           .name( FormFragmentName.from( "my_other_app:mytype" ) )
                                                                                            .resource( readResource( "_formFragment.yml" ) )
                                                                                            .type( DynamicContentSchemaType.FORM_FRAGMENT )
                                                                                            .build() ) );
@@ -1413,7 +1413,7 @@ class DynamicSchemaServiceImplTest
                 .build() ) );
         DynamicSchemaResult<MixinDescriptor> mixin3 = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
             CreateDynamicContentSchemaParams.create()
-                .name( MixinName.from( "my-other-app:mytype" ) )
+                .name( MixinName.from( "my_other_app:mytype" ) )
                 .resource( readResource( "_mixin.yml" ) )
                 .type( DynamicContentSchemaType.MIXIN )
                 .build() ) );
@@ -1425,7 +1425,7 @@ class DynamicSchemaServiceImplTest
 
         results = createAdminContext().callWith( () -> dynamicSchemaService.listContentSchemas( ListDynamicContentSchemasParams.create()
                                                                                                     .applicationKey( ApplicationKey.from(
-                                                                                                        "my-other-app" ) )
+                                                                                                        "my_other_app" ) )
                                                                                                     .type( DynamicContentSchemaType.MIXIN )
                                                                                                     .build() ) );
 
