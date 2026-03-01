@@ -1,8 +1,6 @@
 package com.enonic.xp.core.internal;
 
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.Locale;
@@ -19,7 +17,7 @@ public class FileNames
 
     // From Windows File Naming Conventions: reserved characters <>:"/\|?*
     // Sorted for binary search
-    private static final int[] RESERVED_CHARACTERS = NameValidator.FILENAME_FORBITTEN_CHARS.chars().sorted().toArray();
+    private static final int[] RESERVED_CHARACTERS = NameValidator.FILENAME_ILLEGAL_CHARACTERS.chars().sorted().toArray();
 
     // From Windows File Naming Conventions, extended with COM0 and LPT0 (they are not acceptable either)
     public static final Set<String> RESERVED_NAME =

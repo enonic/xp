@@ -16,7 +16,7 @@ public final class Branch
     private static final long serialVersionUID = 0;
 
     private static final NameValidator BRANCH_VALIDATOR =
-        NameValidator.builder( Branch.class ).maxLength( 63 ).regex( Pattern.compile( "^[a-zA-Z0-9\\-][a-zA-Z0-9\\-.]*$" ) ).build();
+        NameValidator.builder( Branch.class ).maxLength( 63 ).regex( Pattern.compile( "^[a-z0-9][a-z0-9.-]*$" ) ).build();
 
     private static final Branch MASTER = new Branch( "master" );
 
@@ -31,7 +31,7 @@ public final class Branch
 
     public static Branch from( final String name )
     {
-        return switch ( Objects.requireNonNull( name,  "Branch cannot be null") )
+        return switch ( Objects.requireNonNull( name, "Branch cannot be null" ) )
         {
             case "master" -> MASTER;
             case "draft" -> DRAFT;

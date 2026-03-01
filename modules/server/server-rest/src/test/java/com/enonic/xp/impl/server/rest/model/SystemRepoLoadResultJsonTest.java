@@ -17,27 +17,20 @@ class SystemRepoLoadResultJsonTest
     @Test
     void create()
     {
-        final SystemLoadResult results = SystemLoadResult.create().
-            add( RepoLoadResult.create( RepositoryId.from( "my-repo" ) ).
-                add( BranchLoadResult.create( Branch.from( "myBranch" ) ).
-                    successful( 100L ).
-                    build() ).
-                add( BranchLoadResult.create( Branch.from( "myOtherBranch" ) ).
-                    successful( 100L ).
-                    build() ).
-                build() ).
-            add( RepoLoadResult.create( RepositoryId.from( "my-other-repo" ) ).
-                add( BranchLoadResult.create( Branch.from( "myBranch2" ) ).
-                    successful( 100L ).
-                    error( LoadError.error( "this is an error" ) ).
-                    error( LoadError.error( "this is another error" ) ).
-                    build() ).
-                versions( VersionsLoadResult.create().
-                    successful( 10L ).
-                    error( LoadError.error( "fisk" ) ).
-                    build() ).
-                build() ).
-            build();
+        final SystemLoadResult results = SystemLoadResult.create()
+            .add( RepoLoadResult.create( RepositoryId.from( "my-repo" ) )
+                      .add( BranchLoadResult.create( Branch.from( "my-branch" ) ).successful( 100L ).build() )
+                      .add( BranchLoadResult.create( Branch.from( "my-other-branch" ) ).successful( 100L ).build() )
+                      .build() )
+            .add( RepoLoadResult.create( RepositoryId.from( "my-other-repo" ) )
+                      .add( BranchLoadResult.create( Branch.from( "my-branch2" ) )
+                                .successful( 100L )
+                                .error( LoadError.error( "this is an error" ) )
+                                .error( LoadError.error( "this is another error" ) )
+                                .build() )
+                      .versions( VersionsLoadResult.create().successful( 10L ).error( LoadError.error( "fisk" ) ).build() )
+                      .build() )
+            .build();
 
         final SystemLoadResultJson json = SystemLoadResultJson.from( results );
 

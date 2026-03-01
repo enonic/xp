@@ -6,8 +6,6 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.core.internal.NameValidator;
 import com.enonic.xp.node.NodePath;
@@ -19,12 +17,10 @@ public final class PrincipalKey
     @Serial
     private static final long serialVersionUID = 0;
 
-    private static final NameValidator PRINCIPAL_ID_VALIDATOR = NameValidator.builder( "PrincipalKey principalId", NameValidator.NAME )
-        .maxLength( SecurityConstants.MAX_PRINCIPAL_ID_LENGTH )
-        .invalidChars( NameValidator.HTML_FORBITTEN_CHARS + NameValidator.FILENAME_FORBITTEN_CHARS )
+    private static final NameValidator ID_VALIDATOR = NameValidator.NAME.asBaseFor( PrincipalKey.class )
+        .invalidChars(
+            NameValidator.NAME_ILLEGAL_CHARACTERS + NameValidator.HTML_SPECIAL_CHARACTERS + SecurityConstants.PRINCIPAL_KEY_SEPARATOR )
         .build();
-
-    private static final String SEPARATOR = ":";
 
     private static final Pattern REF_PATTERN = Pattern.compile( "^(role):([^:]+)|(user|group):([^:]+):([^:]+)$" );
 
@@ -32,9 +28,15 @@ public final class PrincipalKey
 
     private static final PrincipalKey SUPER_USER_PRINCIPAL = new PrincipalKey( IdProviderKey.system(), PrincipalType.USER, "su" );
 
+    static final PrincipalKey EVERYONE_ROLE = new PrincipalKey( null, PrincipalType.ROLE, "system.everyone" );
+
+    static final PrincipalKey AUTHENTICATED_ROLE = new PrincipalKey( null, PrincipalType.ROLE, "system.authenticated" );
+
+    static final PrincipalKey ADMIN_ROLE = new PrincipalKey( null, PrincipalType.ROLE, "system.admin" );
+
     public static final String IDENTITY_NODE_NAME = "identity";
 
-    public static final String ROLES_NODE_NAME = "roles";
+    public static final String ROLES_NODE_NAME = SecurityConstants.ROLES_NODE_NAME;
 
     public static final String GROUPS_NODE_NAME = "groups";
 
@@ -44,14 +46,13 @@ public final class PrincipalKey
 
     private final PrincipalType type;
 
-    private final String principalId;
+    private final String id;
 
-    private PrincipalKey( final IdProviderKey idProviderKey, final PrincipalType type, final String principalId )
+    private PrincipalKey( final IdProviderKey idProviderKey, final PrincipalType type, final String id )
     {
-        Preconditions.checkArgument( type == PrincipalType.ROLE || idProviderKey != null, "Principal id provider cannot be null" );
         this.idProviderKey = idProviderKey;
-        this.type = Objects.requireNonNull( type, "Principal type cannot be null" );
-        this.principalId = PRINCIPAL_ID_VALIDATOR.validate( principalId );
+        this.type = Objects.requireNonNull( type );
+        this.id = Objects.requireNonNull( id );
     }
 
     public static PrincipalKey from( final String principalKey )
@@ -62,6 +63,12 @@ public final class PrincipalKey
                 return ANONYMOUS_PRINCIPAL;
             case "user:system:su":
                 return SUPER_USER_PRINCIPAL;
+            case "role:system:everyone":
+                return EVERYONE_ROLE;
+            case "role:system:authenticated":
+                return AUTHENTICATED_ROLE;
+            case "role:system:admin":
+                return ADMIN_ROLE;
             default: // no predefined key found. Let's parse
         }
 
@@ -99,7 +106,7 @@ public final class PrincipalKey
 
     public String getId()
     {
-        return principalId;
+        return id;
     }
 
     public boolean isUser()
@@ -135,14 +142,9 @@ public final class PrincipalKey
     @Override
     public String toString()
     {
-        if ( type == PrincipalType.ROLE )
-        {
-            return String.join( SEPARATOR, type.toString().toLowerCase(), principalId );
-        }
-        else
-        {
-            return String.join( SEPARATOR, type.toString().toLowerCase(), idProviderKey.toString(), principalId );
-        }
+        return type == PrincipalType.ROLE
+            ? String.join( SecurityConstants.PRINCIPAL_KEY_SEPARATOR, type.toString().toLowerCase(), id )
+            : String.join( SecurityConstants.PRINCIPAL_KEY_SEPARATOR, type.toString().toLowerCase(), idProviderKey.toString(), id );
     }
 
     @Override
@@ -160,29 +162,30 @@ public final class PrincipalKey
 
         final PrincipalKey that = (PrincipalKey) o;
 
-        return Objects.equals( type, that.type ) && Objects.equals( idProviderKey, that.idProviderKey ) &&
-            Objects.equals( principalId, that.principalId );
+        return Objects.equals( type, that.type ) && Objects.equals( idProviderKey, that.idProviderKey ) && Objects.equals( id, that.id );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( type, idProviderKey, principalId );
+        return Objects.hash( type, idProviderKey, id );
     }
 
     public static PrincipalKey ofUser( final IdProviderKey idProvider, final String userId )
     {
-        return new PrincipalKey( idProvider, PrincipalType.USER, userId );
+        return new PrincipalKey( Objects.requireNonNull( idProvider, "User idProvider cannot be null" ), PrincipalType.USER,
+                                 ID_VALIDATOR.forType( "User id" ).validate( userId ) );
     }
 
     public static PrincipalKey ofGroup( final IdProviderKey idProvider, final String groupId )
     {
-        return new PrincipalKey( idProvider, PrincipalType.GROUP, groupId );
+        return new PrincipalKey( Objects.requireNonNull( idProvider, "Group idProvider cannot be null" ), PrincipalType.GROUP,
+                                 ID_VALIDATOR.forType( "Group id" ).validate( groupId ) );
     }
 
     public static PrincipalKey ofRole( final String roleId )
     {
-        return new PrincipalKey( null, PrincipalType.ROLE, roleId );
+        return new PrincipalKey( null, PrincipalType.ROLE, ID_VALIDATOR.forType( "Role id" ).validate( roleId ) );
     }
 
     public static PrincipalKey ofAnonymous()
@@ -215,7 +218,7 @@ public final class PrincipalKey
             final String folderName = this.isGroup() ? GROUPS_NODE_NAME : USERS_NODE_NAME;
             return NodePath.create( NodePath.ROOT )
                 .addElement( IDENTITY_NODE_NAME )
-                .addElement( getIdProviderKey().toString() )
+                .addElement( idProviderKey.toString() )
                 .addElement( folderName )
                 .addElement( getId() )
                 .build();

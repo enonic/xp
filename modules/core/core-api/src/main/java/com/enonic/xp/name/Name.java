@@ -20,7 +20,7 @@ public abstract class Name
 
     protected Name( final String name, final boolean validate )
     {
-        this.value = Objects.requireNonNull( validate ? NameValidator.requireValidName( name ) : name );
+        this.value = Objects.requireNonNull( validate ? NameValidator.NAME.asBaseFor( getClass() ).build().validate( name ) : name );
     }
 
     @Override

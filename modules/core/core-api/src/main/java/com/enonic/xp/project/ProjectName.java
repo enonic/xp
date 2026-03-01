@@ -16,9 +16,14 @@ public final class ProjectName
     @Serial
     private static final long serialVersionUID = 0;
 
+    /**
+     * ProjectName validator.
+     * The Project name is a suffix of RepositoryId identifier, hence the length is even more constrained.
+     *
+     */
     private static final NameValidator PROJECT_NAME_VALIDATOR = NameValidator.builder( ProjectName.class )
         .maxLength( ProjectConstants.PROJECT_NAME_MAX_LENGTH )
-        .regex( Pattern.compile( "^[a-z0-9][a-z0-9_\\-]*$" ) )
+        .regex( Pattern.compile( "^[a-z0-9][a-z0-9_-]*$" ) )
         .build();
 
     private final String value;

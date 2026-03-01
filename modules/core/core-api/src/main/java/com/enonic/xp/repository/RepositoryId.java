@@ -18,9 +18,14 @@ public final class RepositoryId
     @Serial
     private static final long serialVersionUID = 0;
 
+    /**
+     * RepositoryId validator.
+     * This is translated into the Elasticsearch index name and needs to be limited accordingly.
+     * Length is limited to 63 characters. This magic number can be found in many other systems: DNS, MySQL, Kubernetes.
+     */
     private static final NameValidator REPOSITORY_ID_VALIDATOR = NameValidator.builder( RepositoryId.class )
         .maxLength( RepositoryConstants.REPOSITORY_ID_MAX_LENGTH )
-        .regex( Pattern.compile( "^[a-z0-9\\-][a-z0-9_\\-.]*$" ) )
+        .regex( Pattern.compile( "^[a-z0-9][a-z0-9._-]*$" ) )
         .build();
 
     private final String value;

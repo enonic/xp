@@ -16,14 +16,14 @@ public final class DescriptorKey
     private static final long serialVersionUID = 0;
 
     /**
-     * Descriptor name validator.
+     * DescriptorKey name validator.
      * Must be a valid file because name-descriptors are usually a file on a file system.
      * HTML illegal characters historically prohibited.
-     * Length is limited to 63 to align with other system limits: Database identifiers, etc...
+     * Length is limited to 63 to align with other systems limits: Database identifiers, etc...
      */
-    private static final NameValidator DESCRIPTOR_NAME = NameValidator.builder( "Descriptor name" )
+    private static final NameValidator DESCRIPTOR_NAME = NameValidator.builder( "DescriptorKey name" )
         .maxLength( 63 )
-        .invalidChars( NameValidator.HTML_FORBITTEN_CHARS + NameValidator.FILENAME_FORBITTEN_CHARS )
+        .invalidChars( NameValidator.HTML_SPECIAL_CHARACTERS + NameValidator.FILENAME_ILLEGAL_CHARACTERS )
         .build();
 
     private static final String SEPARATOR = ":";

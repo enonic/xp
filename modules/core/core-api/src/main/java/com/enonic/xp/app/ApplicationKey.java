@@ -19,9 +19,9 @@ public final class ApplicationKey
     private static final long serialVersionUID = 0;
 
     /**
-     * ApplicationKey AKA Application name validator.
+     * ApplicationKey AKA Application Name validator.
      * Must be a valid OSGi bundle name.
-     * Must not contain dashes, because dots converted to dashes when the application name is persisted as a field (for instance, in SiteConfig).
+     * Must not contain dashes (-), because dots (.) converted to dashes when the application name is persisted as a field (for instance, in SiteConfig).
      * Length is limited to 63 to align with other system limits: Database identifiers, DNS labels, Kubernetes labels.
      * Other general limitations applied. See {@link NameValidator}
      */

@@ -10,11 +10,27 @@ import org.jspecify.annotations.NonNull;
 
 public final class NameValidator
 {
-    public static String HTML_FORBITTEN_CHARS = "<>&\"'";
+    /**
+     * Legacy illegal characters for node names.
+     * Note that they are similar to what filesystems usually prohibit, but allow &lt; &gt; &colon; &quot;
+     */
+    public static final String NAME_ILLEGAL_CHARACTERS = "/\\|?*";
 
-    public static String FILENAME_FORBITTEN_CHARS = "<>:\"/\\|?*";
+    /**
+     * Names that are likely filenames the following gives a fists safequird from illegal names.
+     * <p>
+     * From Windows File Naming Conventions: reserved characters <>:"/\|?*
+     */
+    public static final String FILENAME_ILLEGAL_CHARACTERS = "<>:\"/\\|?*";
 
-    public static final NameValidator NAME = builder( "Name" ).invalidChars( FILENAME_FORBITTEN_CHARS )
+    /**
+     * For names that are likely to appear on HTML unescaped.
+     */
+    public static final String HTML_SPECIAL_CHARACTERS = "<>&\"'";
+
+    public static final NameValidator NAME = builder( "Name" ).invalidChars( NAME_ILLEGAL_CHARACTERS )
+        .invalidStartChars( " " )
+        .invalidEndChars( " " )
         .validCharTypes( Character.LOWERCASE_LETTER, Character.MODIFIER_LETTER, Character.UPPERCASE_LETTER, Character.TITLECASE_LETTER,
                          Character.OTHER_LETTER, Character.DECIMAL_DIGIT_NUMBER, Character.START_PUNCTUATION, Character.END_PUNCTUATION,
                          Character.INITIAL_QUOTE_PUNCTUATION, Character.FINAL_QUOTE_PUNCTUATION, Character.DASH_PUNCTUATION,
@@ -32,6 +48,10 @@ public final class NameValidator
 
     private final int[] validCharTypes;
 
+    private final int[] invalidStartChars;
+
+    private final int[] invalidEndChars;
+
     private final Set<String> reservedNames;
 
     private NameValidator( final Builder builder )
@@ -41,7 +61,9 @@ public final class NameValidator
         this.regex = builder.regex;
         this.invalidChars = builder.invalidChars;
         this.validCharTypes = builder.validCharTypes;
-        this.reservedNames = Set.of( "_" );
+        this.invalidStartChars = builder.invalidStartChars;
+        this.invalidEndChars = builder.invalidEndChars;
+        this.reservedNames = Set.of( "_", ".", ".." );
     }
 
     public String validate( final String name )
@@ -58,14 +80,22 @@ public final class NameValidator
             throw new IllegalArgumentException( type + " must not be " + name );
         }
 
-        if ( name.charAt( 0 ) == '.' )
+        if ( invalidStartChars != null )
         {
-            throw new IllegalArgumentException( type + " must not start with '.'" );
+            final char firstChar = name.charAt( 0 );
+            if ( Arrays.binarySearch( invalidStartChars, firstChar ) >= 0 )
+            {
+                throw new IllegalArgumentException( type + " must not start with '" + toUCode( firstChar ) + "'" );
+            }
         }
 
-        if ( name.charAt( 0 ) == ' ' )
+        if ( invalidEndChars != null )
         {
-            throw new IllegalArgumentException( type + " must not start with ' '" );
+            final char lastChar = name.charAt( name.length() - 1 );
+            if ( Arrays.binarySearch( invalidEndChars, lastChar ) >= 0 )
+            {
+                throw new IllegalArgumentException( type + " must not end with '" + toUCode( lastChar ) + "'" );
+            }
         }
 
         if ( maxLength > 0 && name.length() > maxLength )
@@ -119,32 +149,36 @@ public final class NameValidator
         return false;
     }
 
-    public static String requireValidName( final String name )
-    {
-        return NAME.validate( name );
-    }
-
     public static Builder builder( final Class<?> type )
     {
         return builder( type.getSimpleName() );
     }
 
-    public static Builder builder( final Class<?> type, final NameValidator base )
+    public Builder asBaseFor( final Class<?> type )
     {
-        return builder( type.getSimpleName(), base );
+        return asBaseFor( type.getSimpleName() );
+    }
+
+    public Builder asBaseFor( final String name )
+    {
+        final Builder b = builder( name );
+        b.maxLength = maxLength;
+        b.regex = regex;
+        b.invalidChars = invalidChars;
+        b.invalidStartChars = invalidStartChars;
+        b.invalidEndChars = invalidEndChars;
+        b.validCharTypes = validCharTypes;
+        return b;
+    }
+
+    public NameValidator forType( final String name )
+    {
+        return asBaseFor( name ).build();
     }
 
     public static Builder builder( final String type )
     {
-        return new Builder( type );
-    }
-
-    public static Builder builder( final String type, final NameValidator base )
-    {
-        return new Builder( type ).validCharTypes( base.validCharTypes )
-            .invalidChars( base.invalidChars )
-            .maxLength( base.maxLength )
-            .regex( base.regex );
+        return new Builder( type.isEmpty() ? "Name" : type );
     }
 
     public static final class Builder
@@ -158,6 +192,10 @@ public final class NameValidator
         private int[] invalidChars;
 
         private int[] validCharTypes;
+
+        private int[] invalidStartChars;
+
+        private int[] invalidEndChars;
 
         private Builder( final String type )
         {
@@ -182,32 +220,27 @@ public final class NameValidator
             return this;
         }
 
-        Builder invalidChars( final int[] invalidChars )
-        {
-            this.invalidChars = Arrays.copyOf( invalidChars, invalidChars.length );
-            return this;
-        }
-
         public Builder validCharTypes( final int... validCharTypes )
         {
             this.validCharTypes = IntStream.of( validCharTypes ).distinct().sorted().toArray();
             return this;
         }
 
+        public Builder invalidStartChars( final String invalidStartChars )
+        {
+            this.invalidStartChars = invalidStartChars.chars().sorted().distinct().toArray();
+            return this;
+        }
+
+        public Builder invalidEndChars( final String invalidEndChars )
+        {
+            this.invalidEndChars = invalidEndChars.chars().sorted().distinct().toArray();
+            return this;
+        }
+
         public NameValidator build()
         {
             return new NameValidator( this );
-        }
-    }
-
-    static void main()
-    {
-        for ( int cp = Character.MIN_CODE_POINT; cp <= Character.MAX_CODE_POINT; cp++ )
-        {
-            if ( Character.getType( cp ) == Character.CURRENCY_SYMBOL )
-            {
-                System.out.printf( "U+%04X %s %s%n", cp, toUCode( cp ), Character.isJavaIdentifierStart( cp ) );
-            }
         }
     }
 }

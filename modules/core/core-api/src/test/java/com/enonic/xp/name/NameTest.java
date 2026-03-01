@@ -87,16 +87,15 @@ class NameTest
     }
 
     @Test
-    void colon_not_valid()
+    void colon_is_valid()
     {
-        assertThatThrownBy( () -> create( "test:tast" ) ).isInstanceOf( IllegalArgumentException.class )
-            .hasMessage( "Name must not contain ':'" );
+        create( "test:tast" );
     }
 
     @Test
     void additional_allowed_is_valid()
     {
-        create( "^;#$%&(),@[]!{}=_.-" );
+        create( "^:;#$%&(),@[]!{}=_.-" );
     }
 
     @Test
@@ -117,6 +116,20 @@ class NameTest
     void single_underscore_not_valid()
     {
         assertThatThrownBy( () -> create( "_" ) ).isInstanceOf( IllegalArgumentException.class ).hasMessage( "Name must not be _" );
+    }
+
+    @Test
+    void startWithSpace_not_valid()
+    {
+        assertThatThrownBy( () -> create( " test" ) ).isInstanceOf( IllegalArgumentException.class )
+            .hasMessage( "Name must not start with ' '" );
+    }
+
+    @Test
+    void endWithSpace_not_valid()
+    {
+        assertThatThrownBy( () -> create( "test " ) ).isInstanceOf( IllegalArgumentException.class )
+            .hasMessage( "Name must not end with ' '" );
     }
 
     @Test

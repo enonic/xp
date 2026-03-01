@@ -6,9 +6,9 @@ public final class SecurityConstants
 {
     public static final Branch BRANCH_SECURITY = SystemConstants.BRANCH_SYSTEM;
 
-    public static final int ID_PROVIDER_KEY_MAX_LENGTH = 63;
+    static final String ROLES_NODE_NAME = "roles";
 
-    public static final int MAX_PRINCIPAL_ID_LENGTH = 63;
+    static final String PRINCIPAL_KEY_SEPARATOR = ":";
 
     private SecurityConstants()
     {

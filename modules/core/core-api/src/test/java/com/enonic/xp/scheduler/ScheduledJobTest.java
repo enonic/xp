@@ -27,30 +27,30 @@ class ScheduledJobTest
         assertThrows( NullPointerException.class, () -> ScheduledJob.create().build() );
 
         final ScheduledJobName name = ScheduledJobName.from( "name" );
-        assertEquals( name, ScheduledJob.create().
-            name( name ).
-            descriptor( DescriptorKey.from( "app:key" ) ).
-            calendar( mock( ScheduleCalendar.class ) ).
-            creator( PrincipalKey.from( "user:system:creator" ) ).
-            modifier( PrincipalKey.from( "user:system:creator" ) ).
-            createdTime( Instant.parse( "2016-11-02T10:36:00Z" ) ).
-            modifiedTime( Instant.parse( "2016-11-02T10:36:00Z" ) ).
-            build().
-            getName() );
+        assertEquals( name, ScheduledJob.create()
+            .name( name )
+            .descriptor( DescriptorKey.from( "app:key" ) )
+            .calendar( mock( ScheduleCalendar.class ) )
+            .creator( PrincipalKey.from( "user:system:creator" ) )
+            .modifier( PrincipalKey.from( "user:system:creator" ) )
+            .createdTime( Instant.parse( "2016-11-02T10:36:00Z" ) )
+            .modifiedTime( Instant.parse( "2016-11-02T10:36:00Z" ) )
+            .build()
+            .getName() );
     }
 
     @Test
     void testEmptyBuilder()
     {
-        final ScheduledJob job = ScheduledJob.create().
-            name( ScheduledJobName.from( "name" ) ).
-            descriptor( DescriptorKey.from( "appKey:descriptorName" ) ).
-            calendar( mock( ScheduleCalendar.class ) ).
-            creator( PrincipalKey.from( "user:system:creator" ) ).
-            modifier( PrincipalKey.from( "user:system:creator" ) ).
-            createdTime( Instant.parse( "2016-11-02T10:36:00Z" ) ).
-            modifiedTime( Instant.parse( "2016-11-02T10:36:00Z" ) ).
-            build();
+        final ScheduledJob job = ScheduledJob.create()
+            .name( ScheduledJobName.from( "name" ) )
+            .descriptor( DescriptorKey.from( "appKey:descriptorName" ) )
+            .calendar( mock( ScheduleCalendar.class ) )
+            .creator( PrincipalKey.from( "user:system:creator" ) )
+            .modifier( PrincipalKey.from( "user:system:creator" ) )
+            .createdTime( Instant.parse( "2016-11-02T10:36:00Z" ) )
+            .modifiedTime( Instant.parse( "2016-11-02T10:36:00Z" ) )
+            .build();
 
         assertNull( job.getUser() );
         assertNull( job.getDescription() );
@@ -67,9 +67,9 @@ class ScheduledJobTest
     @Test
     void testBuilder()
     {
-        final PrincipalKey user = PrincipalKey.ofUser( IdProviderKey.createDefault(), "user" );
-        final PrincipalKey creator = PrincipalKey.ofUser( IdProviderKey.createDefault(), "creator" );
-        final PrincipalKey modifier = PrincipalKey.ofUser( IdProviderKey.createDefault(), "modifier" );
+        final PrincipalKey user = PrincipalKey.ofUser( IdProviderKey.system(), "user" );
+        final PrincipalKey creator = PrincipalKey.ofUser( IdProviderKey.system(), "creator" );
+        final PrincipalKey modifier = PrincipalKey.ofUser( IdProviderKey.system(), "modifier" );
 
         final Instant createdTime = Instant.parse( "2016-11-02T10:36:00Z" );
         final Instant modifiedTime = Instant.parse( "2020-11-02T10:36:00Z" );
@@ -81,18 +81,19 @@ class ScheduledJobTest
 
         final String description = "description";
 
-        final ScheduledJob job = ScheduledJob.create().
-            name( ScheduledJobName.from( "name" ) ).
-            config( config ).
-            user( user ).
-            descriptor( descriptor ).
-            description( description ).
-            calendar( mock( ScheduleCalendar.class ) ).
-            enabled( true ).
-            creator( creator ).modifier( modifier ).
-            createdTime( createdTime ).
-            modifiedTime( modifiedTime ).
-            build();
+        final ScheduledJob job = ScheduledJob.create()
+            .name( ScheduledJobName.from( "name" ) )
+            .config( config )
+            .user( user )
+            .descriptor( descriptor )
+            .description( description )
+            .calendar( mock( ScheduleCalendar.class ) )
+            .enabled( true )
+            .creator( creator )
+            .modifier( modifier )
+            .createdTime( createdTime )
+            .modifiedTime( modifiedTime )
+            .build();
 
         assertEquals( config, job.getConfig() );
         assertEquals( user, job.getUser() );

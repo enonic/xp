@@ -25,24 +25,24 @@ class CreateScheduledJobParamsTest
         assertThrows( NullPointerException.class, () -> CreateScheduledJobParams.create().build() );
 
         final ScheduledJobName name = ScheduledJobName.from( "scheduledJobName" );
-        assertEquals( name, CreateScheduledJobParams.create().
-            name( name ).
-            descriptor( DescriptorKey.from( "appKey:descriptorName" ) ).
-            calendar( mock( ScheduleCalendar.class ) ).
-            config( new PropertyTree() ).
-            build().
-            getName() );
+        assertEquals( name, CreateScheduledJobParams.create()
+            .name( name )
+            .descriptor( DescriptorKey.from( "appKey:descriptorName" ) )
+            .calendar( mock( ScheduleCalendar.class ) )
+            .config( new PropertyTree() )
+            .build()
+            .getName() );
     }
 
     @Test
     void testEmptyBuilder()
     {
-        final CreateScheduledJobParams params = CreateScheduledJobParams.create().
-            name( ScheduledJobName.from( "name" ) ).
-            descriptor( DescriptorKey.from( "appKey:descriptorName" ) ).
-            calendar( mock( ScheduleCalendar.class ) ).
-            config( new PropertyTree() ).
-            build();
+        final CreateScheduledJobParams params = CreateScheduledJobParams.create()
+            .name( ScheduledJobName.from( "name" ) )
+            .descriptor( DescriptorKey.from( "appKey:descriptorName" ) )
+            .calendar( mock( ScheduleCalendar.class ) )
+            .config( new PropertyTree() )
+            .build();
 
         assertNull( params.getUser() );
         assertNull( params.getDescription() );
@@ -55,7 +55,7 @@ class CreateScheduledJobParamsTest
     @Test
     void testBuilder()
     {
-        final PrincipalKey user = PrincipalKey.ofUser( IdProviderKey.createDefault(), "user" );
+        final PrincipalKey user = PrincipalKey.ofUser( IdProviderKey.system(), "user" );
 
         final DescriptorKey descriptor = DescriptorKey.from( ApplicationKey.BASE, "descriptor" );
 
@@ -66,15 +66,15 @@ class CreateScheduledJobParamsTest
 
         final ScheduleCalendar calendar = mock( ScheduleCalendar.class );
 
-        final CreateScheduledJobParams params = CreateScheduledJobParams.create().
-            name( ScheduledJobName.from( "name" ) ).
-            config( config ).
-            user( user ).
-            descriptor( descriptor ).
-            description( description ).
-            calendar( calendar ).
-            enabled( true ).
-            build();
+        final CreateScheduledJobParams params = CreateScheduledJobParams.create()
+            .name( ScheduledJobName.from( "name" ) )
+            .config( config )
+            .user( user )
+            .descriptor( descriptor )
+            .description( description )
+            .calendar( calendar )
+            .enabled( true )
+            .build();
 
         assertEquals( config, params.getConfig() );
         assertEquals( user, params.getUser() );

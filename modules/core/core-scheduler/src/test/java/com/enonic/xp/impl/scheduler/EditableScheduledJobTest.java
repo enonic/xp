@@ -34,15 +34,15 @@ class EditableScheduledJobTest
     void testEmpty()
     {
         final ScheduledJobName name = ScheduledJobName.from( "scheduledJobName" );
-        final ScheduledJob source = ScheduledJob.create().
-            name( name ).
-            calendar( mock( ScheduleCalendar.class ) ).
-            descriptor( DescriptorKey.from( "app:key" ) ).
-            creator( PrincipalKey.from( "user:system:creator" ) ).
-            modifier( PrincipalKey.from( "user:system:creator" ) ).
-            createdTime( Instant.parse( "2016-11-02T10:36:00Z" ) ).
-            modifiedTime( Instant.parse( "2016-11-02T10:36:00Z" ) ).
-            build();
+        final ScheduledJob source = ScheduledJob.create()
+            .name( name )
+            .calendar( mock( ScheduleCalendar.class ) )
+            .descriptor( DescriptorKey.from( "app:key" ) )
+            .creator( PrincipalKey.from( "user:system:creator" ) )
+            .modifier( PrincipalKey.from( "user:system:creator" ) )
+            .createdTime( Instant.parse( "2016-11-02T10:36:00Z" ) )
+            .modifiedTime( Instant.parse( "2016-11-02T10:36:00Z" ) )
+            .build();
 
         final ScheduledJob target = new EditableScheduledJob( source ).build();
 
@@ -59,10 +59,10 @@ class EditableScheduledJobTest
     @Test
     void testNotChanged()
     {
-        final PrincipalKey user = PrincipalKey.ofUser( IdProviderKey.createDefault(), "user" );
+        final PrincipalKey user = PrincipalKey.ofUser( IdProviderKey.system(), "user" );
 
-        final PrincipalKey creator = PrincipalKey.ofUser( IdProviderKey.createDefault(), "creator" );
-        final PrincipalKey modifier = PrincipalKey.ofUser( IdProviderKey.createDefault(), "modifier" );
+        final PrincipalKey creator = PrincipalKey.ofUser( IdProviderKey.system(), "creator" );
+        final PrincipalKey modifier = PrincipalKey.ofUser( IdProviderKey.system(), "modifier" );
         final Instant createdTime = Instant.parse( "2021-02-25T10:44:33.170079900Z" );
         final Instant modifiedTime = Instant.parse( "2021-03-25T10:44:33.170079900Z" );
 
@@ -73,19 +73,19 @@ class EditableScheduledJobTest
 
         final String description = "description";
 
-        final ScheduledJob source = ScheduledJob.create().
-            name( ScheduledJobName.from( "name" ) ).
-            config( config ).
-            user( user ).
-            descriptor( descriptor ).
-            description( description ).
-            calendar( mock( ScheduleCalendar.class ) ).
-            enabled( true ).
-            creator( creator ).
-            modifier( modifier ).
-            createdTime( createdTime ).
-            modifiedTime( modifiedTime ).
-            build();
+        final ScheduledJob source = ScheduledJob.create()
+            .name( ScheduledJobName.from( "name" ) )
+            .config( config )
+            .user( user )
+            .descriptor( descriptor )
+            .description( description )
+            .calendar( mock( ScheduleCalendar.class ) )
+            .enabled( true )
+            .creator( creator )
+            .modifier( modifier )
+            .createdTime( createdTime )
+            .modifiedTime( modifiedTime )
+            .build();
 
         final ScheduledJob target = new EditableScheduledJob( source ).build();
 
@@ -102,17 +102,17 @@ class EditableScheduledJobTest
     @Test
     void testChanged()
     {
-        final ScheduledJob source = ScheduledJob.create().
-            name( ScheduledJobName.from( "name" ) ).
-            descriptor( DescriptorKey.from( "app:key" ) ).
-            calendar( mock( ScheduleCalendar.class ) ).
-            creator( PrincipalKey.from( "user:system:creator" ) ).
-            modifier( PrincipalKey.from( "user:system:creator" ) ).
-            createdTime( Instant.parse( "2016-11-02T10:36:00Z" ) ).
-            modifiedTime( Instant.parse( "2016-11-02T10:36:00Z" ) ).
-            build();
+        final ScheduledJob source = ScheduledJob.create()
+            .name( ScheduledJobName.from( "name" ) )
+            .descriptor( DescriptorKey.from( "app:key" ) )
+            .calendar( mock( ScheduleCalendar.class ) )
+            .creator( PrincipalKey.from( "user:system:creator" ) )
+            .modifier( PrincipalKey.from( "user:system:creator" ) )
+            .createdTime( Instant.parse( "2016-11-02T10:36:00Z" ) )
+            .modifiedTime( Instant.parse( "2016-11-02T10:36:00Z" ) )
+            .build();
 
-        final PrincipalKey user = PrincipalKey.ofUser( IdProviderKey.createDefault(), "user" );
+        final PrincipalKey user = PrincipalKey.ofUser( IdProviderKey.system(), "user" );
 
         final DescriptorKey descriptor = DescriptorKey.from( ApplicationKey.BASE, "descriptor" );
 
