@@ -1,20 +1,21 @@
 package com.enonic.xp.content;
 
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
+
+import com.enonic.xp.core.internal.Millis;
 
 @NullMarked
 public record ContentPublishInfo(@Nullable Instant from, @Nullable Instant to, @Nullable Instant first, @Nullable Instant time)
 {
     public ContentPublishInfo
     {
-        from = from != null ? from.truncatedTo( ChronoUnit.MILLIS ) : null;
-        to = to != null ? to.truncatedTo( ChronoUnit.MILLIS ) : null;
-        first = first != null ? first.truncatedTo( ChronoUnit.MILLIS ) : null;
-        time = time != null ? time.truncatedTo( ChronoUnit.MILLIS ) : null;
+        from = Millis.from( from );
+        to = Millis.from( to );
+        first = Millis.from( first );
+        time = Millis.from( time );
     }
 
     public static Builder create()

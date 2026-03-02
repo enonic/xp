@@ -1,10 +1,10 @@
 package com.enonic.xp.core.impl.issue;
 
-import java.time.Instant;
 import java.util.Objects;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.issue.serializer.IssueDataSerializer;
+import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.issue.EditableIssue;
 import com.enonic.xp.issue.EditablePublishRequestIssue;
 import com.enonic.xp.issue.Issue;
@@ -60,7 +60,7 @@ public class UpdateIssueCommand
             editor.edit( editableIssue );
         }
 
-        return editableIssue.builder().modifiedTime( Instant.now() ).modifier( getCurrentUser().getKey() ).build();
+        return editableIssue.builder().modifiedTime( Millis.now() ).modifier( getCurrentUser().getKey() ).build();
     }
 
     private Issue getIssue( final IssueId issueId )

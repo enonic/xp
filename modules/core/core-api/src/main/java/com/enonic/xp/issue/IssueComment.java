@@ -2,6 +2,7 @@ package com.enonic.xp.issue;
 
 import java.time.Instant;
 
+import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.security.PrincipalKey;
 
@@ -22,7 +23,7 @@ public final class IssueComment
         this.id = builder.id;
         this.creator = builder.creator;
         this.creatorDisplayName = builder.creatorDisplayName;
-        this.created = builder.created;
+        this.created = Millis.fromOrElseNow( builder.created );
         this.text = builder.text;
     }
 
@@ -70,7 +71,6 @@ public final class IssueComment
 
         private Builder()
         {
-            this.created = Instant.now();
         }
 
         public Builder id( final NodeId id )

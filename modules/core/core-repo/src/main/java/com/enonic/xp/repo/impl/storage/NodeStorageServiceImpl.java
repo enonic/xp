@@ -16,6 +16,7 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobKeys;
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.Attributes;
@@ -26,15 +27,15 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
-import com.enonic.xp.repo.impl.NodeStoreVersion;
+import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.node.NodeVersionKey;
-import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeBranchEntries;
 import com.enonic.xp.repo.impl.NodeBranchEntry;
+import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.repo.impl.branch.BranchService;
 import com.enonic.xp.repo.impl.branch.storage.NodeFactory;
 import com.enonic.xp.repo.impl.commit.CommitService;
@@ -43,8 +44,6 @@ import com.enonic.xp.repo.impl.node.dao.NodeVersionService;
 import com.enonic.xp.repo.impl.version.VersionService;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
-
-import static com.enonic.xp.repo.impl.node.NodeConstants.CLOCK;
 
 @Component
 public class NodeStorageServiceImpl
@@ -77,7 +76,7 @@ public class NodeStorageServiceImpl
     {
         final Node node = params.getNode();
 
-        final Instant timestamp = node.getTimestamp() == null ? Instant.now( CLOCK ) : node.getTimestamp();
+        final Instant timestamp = Millis.fromOrElseNow( node.getTimestamp() );
         final NodeVersionId nodeVersionId = params.isNewVersion() ? new NodeVersionId() : node.getNodeVersionId();
         final NodeVersionKey nodeVersionKey = nodeVersionService.store( NodeStoreVersion.from( node ), context );
 
@@ -102,8 +101,8 @@ public class NodeStorageServiceImpl
     }
 
     @Override
-    public void push( final NodeBranchEntry entry, final Branch origin,
-                      final InternalContext context ) {
+    public void push( final NodeBranchEntry entry, final Branch origin, final InternalContext context )
+    {
         this.branchService.push( entry, context );
         this.indexDataService.push( entry.getNodeId(), origin, context );
     }
@@ -182,7 +181,8 @@ public class NodeStorageServiceImpl
     }
 
     @Override
-    public Attributes changeAttributes( final NodeVersionId versionId, final Attributes addAttributes, final Set<String> removeAttributes, final InternalContext context )
+    public Attributes changeAttributes( final NodeVersionId versionId, final Attributes addAttributes, final Set<String> removeAttributes,
+                                        final InternalContext context )
     {
         final NodeVersion existingVersion = this.versionService.getVersion( versionId, context );
 
@@ -190,10 +190,7 @@ public class NodeStorageServiceImpl
         final Attributes.Builder builder = Attributes.create();
         if ( attributes != null )
         {
-            builder.addAll( attributes.entrySet()
-                                .stream()
-                                .filter( entry -> !removeAttributes.contains( entry.getKey() ) )
-                                .toList() );
+            builder.addAll( attributes.entrySet().stream().filter( entry -> !removeAttributes.contains( entry.getKey() ) ).toList() );
         }
         final Attributes newAttrs = builder.addAll( addAttributes.entrySet() ).buildKeepingLast();
         final NodeVersion updatedVersion = NodeVersion.create()

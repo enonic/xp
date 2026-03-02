@@ -1,6 +1,5 @@
 package com.enonic.xp.core.impl.project.init;
 
-import java.time.Instant;
 import java.util.Objects;
 
 import org.slf4j.Logger;
@@ -9,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexPath;
@@ -99,7 +99,7 @@ public final class ContentInitializer
             data.addSet( ContentPropertyNames.DATA );
             data.addSet( ContentPropertyNames.FORM );
             data.setString( ContentPropertyNames.CREATOR, ContextAccessor.current().getAuthInfo().getUser().getKey().toString() );
-            data.setInstant( ContentPropertyNames.CREATED_TIME, Instant.now() );
+            data.setInstant( ContentPropertyNames.CREATED_TIME, Millis.now() );
 
             final Node contentRoot = nodeService.create( CreateNodeParams.create()
                                                              .data( data )

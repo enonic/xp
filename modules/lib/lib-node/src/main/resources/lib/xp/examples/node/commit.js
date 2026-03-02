@@ -19,7 +19,7 @@ var expected1 = {
     'id': 'aa1f76bf-4bb9-41be-b166-03561c1555b2',
     'message': '',
     'committer': 'user:system:anonymous',
-    'timestamp': '2019-01-24T15:16:36.260799Z'
+    'timestamp': '2019-01-24T15:16:36.260Z'
 };
 // END
 
@@ -39,7 +39,7 @@ var expected2 = {
     'id': 'aa1f76bf-4bb9-41be-b166-03561c1555b2',
     'message': 'Commit message',
     'committer': 'user:system:anonymous',
-    'timestamp': '2019-01-24T15:16:36.260799Z'
+    'timestamp': '2019-01-24T15:16:36.260Z'
 };
 // END
 

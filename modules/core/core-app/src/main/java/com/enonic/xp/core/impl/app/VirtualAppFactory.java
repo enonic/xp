@@ -14,6 +14,7 @@ import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.FakeCmsYmlUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.MultiApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.NodeResourceApplicationUrlResolver;
+import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.server.VersionInfo;
 import com.enonic.xp.util.Version;
@@ -106,7 +107,7 @@ public class VirtualAppFactory
             @Override
             public Instant getModifiedTime()
             {
-                return Instant.now();
+                return Millis.now();
             }
 
             @Override

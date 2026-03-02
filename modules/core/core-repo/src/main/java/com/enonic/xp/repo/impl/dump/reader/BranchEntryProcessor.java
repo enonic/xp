@@ -1,7 +1,6 @@
 package com.enonic.xp.repo.impl.dump.reader;
 
 import java.io.IOException;
-import java.time.temporal.ChronoUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,8 +56,7 @@ public class BranchEntryProcessor
 
         try
         {
-            final Node node = NodeFactory.create( nodeVersion, meta.version(), meta.nodePath(),
-                                                  meta.timestamp().truncatedTo( ChronoUnit.MILLIS ) );
+            final Node node = NodeFactory.create( nodeVersion, meta.version(), meta.nodePath(), meta.timestamp() );
 
             this.nodeService.loadNode(
                 LoadNodeParams.create().node( node ).nodeCommitId( meta.nodeCommitId() ).attributes( meta.attributes() ).build() );

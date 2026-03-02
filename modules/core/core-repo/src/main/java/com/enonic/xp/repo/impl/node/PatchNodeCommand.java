@@ -1,6 +1,5 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -13,6 +12,7 @@ import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.EditableNode;
 import com.enonic.xp.node.Node;
@@ -27,8 +27,6 @@ import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.repo.impl.storage.NodeVersionData;
 import com.enonic.xp.repo.impl.storage.StoreNodeParams;
 import com.enonic.xp.security.acl.Permission;
-
-import static com.enonic.xp.repo.impl.node.NodeConstants.CLOCK;
 
 public final class PatchNodeCommand
     extends AbstractNodeCommand
@@ -161,8 +159,7 @@ public final class PatchNodeCommand
                                             this.nodeStorageService.getVersion( persistedNode.getNodeVersionId(), internalContext ) );
             }
 
-            final Node updatedNode =
-                Node.create( editedNode ).timestamp( Instant.now( CLOCK ) ).attachedBinaries( updatedBinaries ).build();
+            final Node updatedNode = Node.create( editedNode ).timestamp( Millis.now() ).attachedBinaries( updatedBinaries ).build();
 
             return this.nodeStorageService.store( StoreNodeParams.newVersion( updatedNode, params.getVersionAttributes() ),
                                                   internalContext );

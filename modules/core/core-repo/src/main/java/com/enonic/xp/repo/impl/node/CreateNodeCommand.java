@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
@@ -27,8 +28,6 @@ import com.enonic.xp.repo.impl.storage.StoreNodeParams;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
-
-import static com.enonic.xp.repo.impl.node.NodeConstants.CLOCK;
 
 public final class CreateNodeCommand
     extends AbstractNodeCommand
@@ -87,7 +86,7 @@ public final class CreateNodeCommand
             .permissions( permissions )
             .nodeType( params.getNodeType() != null ? params.getNodeType() : NodeType.DEFAULT_NODE_COLLECTION )
             .attachedBinaries( attachedBinaries )
-            .timestamp( this.timestamp != null ? this.timestamp : Instant.now( CLOCK ) );
+            .timestamp( Millis.fromOrElseNow( this.timestamp ) );
 
         final Node newNode =
             this.nodeStorageService.store( StoreNodeParams.newVersion( nodeBuilder.build(), params.getVersionAttributes() ),

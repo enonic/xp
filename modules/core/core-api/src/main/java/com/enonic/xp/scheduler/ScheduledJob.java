@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.util.Objects;
 
 import com.enonic.xp.annotation.PublicApi;
+import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.security.PrincipalKey;
@@ -55,8 +56,8 @@ public final class ScheduledJob
         this.modifier = builder.modifier;
         this.lastRun = builder.lastRun;
         this.lastTaskId = builder.lastTaskId;
-        this.createdTime = builder.createdTime;
-        this.modifiedTime = builder.modifiedTime;
+        this.createdTime = Millis.from( builder.createdTime );
+        this.modifiedTime = Millis.from( builder.modifiedTime );
     }
 
     public static Builder create()

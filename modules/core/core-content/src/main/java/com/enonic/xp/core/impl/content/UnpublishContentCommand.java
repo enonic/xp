@@ -12,6 +12,7 @@ import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.node.ApplyVersionAttributesParams;
 import com.enonic.xp.node.Attributes;
@@ -47,7 +48,7 @@ public class UnpublishContentCommand
     {
         final Context masterContext = ContextBuilder.from( ContextAccessor.current() ).branch( ContentConstants.BRANCH_MASTER ).build();
 
-        final Instant now = Instant.now();
+        final Instant now = Millis.now();
 
         final NodeIds.Builder allDeletedBuilder = NodeIds.create();
         masterContext.runWith( () -> {

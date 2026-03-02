@@ -3,6 +3,7 @@ package com.enonic.xp.audit;
 import java.time.Instant;
 import java.util.Objects;
 
+import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.security.PrincipalKey;
 
@@ -23,7 +24,7 @@ public final class LogAuditLogParams
     private LogAuditLogParams( final Builder builder )
     {
         type = Objects.requireNonNull( builder.type, "LogAuditLogParams type cannot be null" );
-        time = Objects.requireNonNullElseGet( builder.time, Instant::now );
+        time = Millis.fromOrElseNow( builder.time );
         source = Objects.requireNonNullElse( builder.source, "" );
         user = builder.user;
         objectUris = Objects.requireNonNullElse( builder.objectUris, AuditLogUris.empty() );

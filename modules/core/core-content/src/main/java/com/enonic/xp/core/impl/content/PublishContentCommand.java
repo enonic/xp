@@ -1,7 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Objects;
 
@@ -15,6 +14,7 @@ import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentValidityResult;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentListener;
+import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.ApplyVersionAttributesParams;
@@ -56,8 +56,8 @@ public class PublishContentCommand
         super( builder );
         this.contentIds = builder.contentIds;
         this.excludedContentIds = builder.excludedContentIds;
-        this.publishFrom = Objects.requireNonNullElseGet( builder.publishFrom, Instant::now ).truncatedTo( ChronoUnit.MILLIS );
-        this.publishTo = builder.publishTo != null ? builder.publishTo.truncatedTo( ChronoUnit.MILLIS ) : null;
+        this.publishFrom = Millis.fromOrElseNow( builder.publishFrom );
+        this.publishTo = Millis.from( builder.publishTo );
         Preconditions.checkArgument( publishTo == null || publishTo.isAfter( publishFrom ), "publishTo must be after publishFrom" );
         this.includeDependencies = builder.includeDependencies;
         this.excludeDescendantsOf = builder.excludeDescendantsOf;
@@ -187,7 +187,7 @@ public class PublishContentCommand
             final PropertySet publishInfo = Objects.requireNonNullElseGet( toBeEdited.getSet( ContentPropertyNames.PUBLISH_INFO ),
                                                                            () -> toBeEdited.addSet( ContentPropertyNames.PUBLISH_INFO ) );
 
-            publishInfo.setInstant( ContentPropertyNames.PUBLISH_TIME, Instant.now().truncatedTo( ChronoUnit.MILLIS ) );
+            publishInfo.setInstant( ContentPropertyNames.PUBLISH_TIME, Millis.now() );
 
             if ( !publishInfo.hasProperty( ContentPropertyNames.PUBLISH_FROM ) )
             {

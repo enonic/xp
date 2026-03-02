@@ -1,5 +1,7 @@
 package com.enonic.xp.audit;
 
+import java.time.temporal.ChronoUnit;
+
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -44,7 +46,7 @@ class AuditLogParamsTest
             build();
 
         assertEquals( AuditLogTestBuilder.type, params.getType() );
-        assertEquals( AuditLogTestBuilder.time, params.getTime() );
+        assertEquals( AuditLogTestBuilder.time.truncatedTo( ChronoUnit.MILLIS ), params.getTime() );
         assertEquals( AuditLogTestBuilder.source, params.getSource() );
         assertEquals( AuditLogTestBuilder.user, params.getUser() );
         assertEquals( AuditLogTestBuilder.objectUris, params.getObjectUris() );

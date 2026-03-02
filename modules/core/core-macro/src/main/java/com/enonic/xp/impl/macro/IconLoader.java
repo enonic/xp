@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.time.Instant;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.macro.MacroKey;
 import com.enonic.xp.resource.Resource;
@@ -36,7 +37,7 @@ public class IconLoader
             {
                 return null;
             }
-            return Icon.from( stream, mimeType, Instant.now() );
+            return Icon.from( stream, mimeType, Millis.now() );
         }
         catch ( Exception e )
         {

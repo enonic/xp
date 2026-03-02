@@ -1,7 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Callable;
@@ -26,6 +25,7 @@ import com.enonic.xp.content.Contents;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
@@ -104,13 +104,13 @@ abstract class AbstractContentCommand
 
     protected Contents filterScheduledPublished( Contents contents )
     {
-        final Instant now = Instant.now();
+        final Instant now = Millis.now();
         return contents.stream().filter( content -> !this.contentPendingOrExpired( content, now ) ).collect( Contents.collector() );
     }
 
     protected Content filterScheduledPublished( Content content )
     {
-        final Instant now = Instant.now();
+        final Instant now = Millis.now();
         return contentPendingOrExpired( content, now ) ? null : content;
     }
 
@@ -153,7 +153,7 @@ abstract class AbstractContentCommand
     {
         if ( shouldFilterScheduledPublished() )
         {
-            final Instant now = Instant.now().truncatedTo( ChronoUnit.MILLIS );
+            final Instant now = Millis.now();
             final BooleanFilter notPendingFilter = BooleanFilter.create()
                 .mustNot( RangeFilter.create()
                               .fieldName( ContentIndexPath.PUBLISH_FROM.getPath() )
@@ -161,10 +161,8 @@ abstract class AbstractContentCommand
                               .build() )
                 .build();
             final BooleanFilter notExpiredFilter = BooleanFilter.create()
-                .mustNot( RangeFilter.create()
-                              .fieldName( ContentIndexPath.PUBLISH_TO.getPath() )
-                              .to( ValueFactory.newDateTime( now ) )
-                              .build() )
+                .mustNot(
+                    RangeFilter.create().fieldName( ContentIndexPath.PUBLISH_TO.getPath() ).to( ValueFactory.newDateTime( now ) ).build() )
                 .build();
             return Filters.from( notPendingFilter, notExpiredFilter );
         }
@@ -200,7 +198,7 @@ abstract class AbstractContentCommand
         }
 
         final Content parent = GetContentByPathCommand.create( parentPath, this ).build().execute();
-        if (parent == null)
+        if ( parent == null )
         {
             throw new IllegalStateException( String.format( "Cannot read parent type with path %s", parentPath ) );
         }

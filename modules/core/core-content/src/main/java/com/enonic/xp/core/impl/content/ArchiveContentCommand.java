@@ -14,6 +14,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.UnpublishContentParams;
+import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.CommitNodeParams;
 import com.enonic.xp.node.FindNodesByParentParams;
@@ -116,7 +117,7 @@ final class ArchiveContentCommand
 
     private NodeDataProcessor updateProperties( final ContentPath originalPath )
     {
-        final Instant now = Instant.now();
+        final Instant now = Millis.now();
         final String archivedBy = getCurrentUserKey().toString();
 
         return ( data, nodePath ) -> {

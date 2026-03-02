@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.security;
 
 import java.time.Clock;
 import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
@@ -19,6 +20,7 @@ import com.google.common.util.concurrent.Striped;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.index.IndexPath;
@@ -96,8 +98,6 @@ public final class SecurityServiceImpl
     private static final Set<PrincipalKey> FORBIDDEN_FROM_RELATIONSHIP = Set.of( RoleKeys.EVERYONE, RoleKeys.AUTHENTICATED );
 
     private static final List<PrincipalKey> NON_REMOVABLE_PRINCIPLES = List.of( PrincipalKey.ofSuperUser(), RoleKeys.ADMIN );
-
-    static Clock clock = Clock.systemUTC();
 
     private final PasswordSecurityService passwordSecurityService;
 
@@ -440,7 +440,7 @@ public final class SecurityServiceImpl
             .login( createUser.getLogin() )
             .email( createUser.getEmail() )
             .displayName( createUser.getDisplayName() )
-            .modifiedTime( Instant.now( clock ) )
+            .modifiedTime( Millis.now() )
             .build();
 
         final CreateNodeParams createNodeParams = PrincipalNodeTranslator.toCreateNodeParams( user );
@@ -566,7 +566,7 @@ public final class SecurityServiceImpl
         final Group group = Group.create()
             .key( createGroup.getKey() )
             .displayName( createGroup.getDisplayName() )
-            .modifiedTime( Instant.now( clock ) )
+            .modifiedTime( Millis.now() )
             .description( createGroup.getDescription() )
             .build();
 
@@ -623,7 +623,7 @@ public final class SecurityServiceImpl
         final Role role = Role.create()
             .key( createRole.getKey() )
             .displayName( createRole.getDisplayName() )
-            .modifiedTime( Instant.now( clock ) )
+            .modifiedTime( Millis.now() )
             .description( createRole.getDescription() )
             .build();
 

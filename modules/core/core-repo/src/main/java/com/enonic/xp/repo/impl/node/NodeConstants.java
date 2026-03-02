@@ -1,8 +1,5 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.time.Clock;
-import java.time.Duration;
-
 import com.enonic.xp.blob.SegmentLevel;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
@@ -30,10 +27,6 @@ public final class NodeConstants
 
     public static final SegmentLevel BINARY_SEGMENT_LEVEL = SegmentLevel.from( "binary" );
 
-    public static final AuthenticationInfo NODE_SU_AUTH_INFO = AuthenticationInfo.create().
-        principals( NODE_SUPER_USER_KEY, RoleKeys.ADMIN ).
-        user( NODE_SUPER_USER ).
-        build();
-
-    public static final Clock CLOCK = Clock.tick( Clock.systemUTC(), Duration.ofMillis( 1 ) );
+    public static final AuthenticationInfo NODE_SU_AUTH_INFO =
+        AuthenticationInfo.create().principals( NODE_SUPER_USER_KEY, RoleKeys.ADMIN ).user( NODE_SUPER_USER ).build();
 }

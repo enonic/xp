@@ -37,7 +37,7 @@ class IssueCommentNodeTranslatorTest
         assertEquals( "title", comment.getText() );
         assertEquals( PrincipalKey.from( "user:myStore:me" ), comment.getCreator() );
         assertEquals( "Me Myself", comment.getCreatorDisplayName() );
-        assertEquals( created, comment.getCreated() );
+        assertEquals( created.truncatedTo( ChronoUnit.MILLIS ), comment.getCreated() );
     }
 
     public static Node createNode( Instant created )

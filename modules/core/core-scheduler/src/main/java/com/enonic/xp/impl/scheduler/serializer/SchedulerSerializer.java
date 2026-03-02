@@ -7,6 +7,7 @@ import java.util.function.Supplier;
 
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
@@ -57,7 +58,7 @@ public class SchedulerSerializer
             data.setString( ScheduledJobPropertyNames.USER, params.getUser().toString() );
         }
 
-        final Instant now = Instant.now();
+        final Instant now = Millis.now();
         final PrincipalKey contextUser = getCurrentUserKey();
 
         data.setString( ScheduledJobPropertyNames.CREATOR, contextUser.toString() );
@@ -102,7 +103,7 @@ public class SchedulerSerializer
         }
 
         data.setString( ScheduledJobPropertyNames.MODIFIER, getCurrentUserKey().toString() );
-        data.setInstant( ScheduledJobPropertyNames.MODIFIED_TIME, Instant.now() );
+        data.setInstant( ScheduledJobPropertyNames.MODIFIED_TIME, Millis.now() );
 
         return tree;
     }

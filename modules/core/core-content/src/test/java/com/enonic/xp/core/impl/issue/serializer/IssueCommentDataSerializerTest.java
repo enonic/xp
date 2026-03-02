@@ -54,7 +54,7 @@ class IssueCommentDataSerializerTest
         assertEquals( "Comment text...", data.getString( TEXT ) );
         assertEquals( "Creator One", data.getString( CREATOR_DISPLAY_NAME ) );
         assertEquals( creator.toString(), data.getString( CREATOR ) );
-        assertEquals( createdTime, data.getInstant( CREATED_TIME ) );
+        assertEquals( createdTime.truncatedTo( ChronoUnit.MILLIS ), data.getInstant( CREATED_TIME ) );
     }
 
     @Test
@@ -83,6 +83,6 @@ class IssueCommentDataSerializerTest
         assertEquals( "Comment text...", comment.getText() );
         assertEquals( "Creator One", comment.getCreatorDisplayName() );
         assertEquals( creator, comment.getCreator() );
-        assertEquals( createdTime, comment.getCreated() );
+        assertEquals( createdTime.truncatedTo( ChronoUnit.MILLIS ), comment.getCreated() );
     }
 }
