@@ -26,11 +26,7 @@ public final class FormItemSet
 
     private final FormItems formItems;
 
-    private final boolean immutable;
-
     private final Occurrences occurrences;
-
-    private final String customText;
 
     private final String helpText;
 
@@ -45,9 +41,7 @@ public final class FormItemSet
 
         this.name = builder.name;
         this.label = builder.label;
-        this.immutable = builder.immutable;
         this.occurrences = builder.occurrences;
-        this.customText = builder.customText;
         this.helpText = builder.helpText;
         this.formItems = new FormItems( this, builder.formItems );
         this.labelI18nKey = builder.labelI18nKey;
@@ -76,11 +70,6 @@ public final class FormItemSet
         return occurrences.impliesRequired();
     }
 
-    public boolean isImmutable()
-    {
-        return immutable;
-    }
-
     public boolean isMultiple()
     {
         return occurrences.isMultiple();
@@ -89,11 +78,6 @@ public final class FormItemSet
     public Occurrences getOccurrences()
     {
         return occurrences;
-    }
-
-    public String getCustomText()
-    {
-        return customText;
     }
 
     public String getHelpText()
@@ -131,21 +115,15 @@ public final class FormItemSet
         }
 
         final FormItemSet that = (FormItemSet) o;
-        return super.equals( o ) &&
-            Objects.equals( this.label, that.label ) &&
-            this.immutable == that.immutable &&
-            Objects.equals( this.customText, that.customText ) &&
-            Objects.equals( this.helpText, that.helpText ) &&
+        return super.equals( o ) && Objects.equals( this.label, that.label ) && Objects.equals( this.helpText, that.helpText ) &&
             Objects.equals( this.occurrences, that.occurrences ) && Objects.equals( this.labelI18nKey, that.labelI18nKey ) &&
-            Objects.equals( this.helpTextI18nKey, that.helpTextI18nKey ) &&
-            Objects.equals( this.formItems, that.formItems );
+            Objects.equals( this.helpTextI18nKey, that.helpTextI18nKey ) && Objects.equals( this.formItems, that.formItems );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( super.hashCode(), this.label, this.immutable, this.customText, this.helpText, this.occurrences,
-                             this.helpTextI18nKey, this.labelI18nKey,
+        return Objects.hash( super.hashCode(), this.label, this.helpText, this.occurrences, this.helpTextI18nKey, this.labelI18nKey,
                              this.formItems );
     }
 
@@ -214,11 +192,7 @@ public final class FormItemSet
 
         private String labelI18nKey;
 
-        private boolean immutable;
-
         private Occurrences occurrences = Occurrences.create( 0, 1 );
-
-        private String customText;
 
         private String helpText;
 
@@ -234,9 +208,7 @@ public final class FormItemSet
         {
             this.name = source.name;
             this.label = source.label;
-            this.immutable = source.immutable;
             this.occurrences = source.occurrences;
-            this.customText = source.customText;
             this.helpText = source.helpText;
             this.labelI18nKey = source.labelI18nKey;
             this.helpTextI18nKey = source.helpTextI18nKey;
@@ -269,12 +241,6 @@ public final class FormItemSet
         {
             this.label = value.text();
             this.labelI18nKey = value.i18n();
-            return this;
-        }
-
-        public Builder immutable( boolean value )
-        {
-            immutable = value;
             return this;
         }
 
@@ -313,12 +279,6 @@ public final class FormItemSet
             {
                 occurrences = Occurrences.create( occurrences.getMinimum(), 1 );
             }
-            return this;
-        }
-
-        public Builder customText( String value )
-        {
-            customText = value;
             return this;
         }
 

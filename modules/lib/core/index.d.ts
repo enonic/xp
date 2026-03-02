@@ -1191,7 +1191,6 @@ export interface FormItemSet {
     formItemType: 'ItemSet';
     name: string;
     label: string;
-    customText: string;
     helpText: string;
     maximize: boolean;
     inputType: InputType;
@@ -1229,7 +1228,6 @@ export interface FormItemInput {
     formItemType: 'Input';
     name: string;
     label: string;
-    customText: string;
     helpText: string;
     validationRegexp: string;
     maximize: boolean;

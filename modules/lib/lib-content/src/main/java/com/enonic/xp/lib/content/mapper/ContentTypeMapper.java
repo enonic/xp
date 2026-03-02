@@ -184,7 +184,6 @@ public final class ContentTypeMapper
         gen.value( "formItemType", "ItemSet" );
         gen.value( "name", itemSet.getName() );
         gen.value( "label", itemSet.getLabel() );
-        gen.value( "customText", itemSet.getCustomText() );
         gen.value( "helpText", itemSet.getHelpText() );
         serializeOccurrences( gen, itemSet.getOccurrences() );
 
