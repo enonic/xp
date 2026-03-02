@@ -2,11 +2,13 @@ package com.enonic.xp.name;
 
 import java.util.Objects;
 
-import com.google.common.base.Preconditions;
+import org.jspecify.annotations.NullMarked;
 
 import com.enonic.xp.annotation.PublicApi;
+import com.enonic.xp.core.internal.NameValidator;
 
 @PublicApi
+@NullMarked
 public abstract class Name
 {
     protected final String value;
@@ -18,34 +20,7 @@ public abstract class Name
 
     protected Name( final String name, final boolean validate )
     {
-        if ( validate )
-        {
-            validateName( name );
-        }
-
-        this.value = name;
-    }
-
-    private static void validateName( final String name )
-    {
-        Objects.requireNonNull( name, "name cannot be null" );
-        Preconditions.checkArgument( !name.isBlank(), "name cannot be blank" );
-        Preconditions.checkArgument( NameCharacterHelper.hasNoExplicitIllegal( name ), "Invalid name: '%s'. Cannot contain %s", name,
-                                     NameCharacterHelper.EXPLICITLY_ILLEGAL_CHARACTERS );
-        checkValidName( name );
-    }
-
-    private static void checkValidName( final String value )
-    {
-        for ( int i = 0; i < value.length(); i++ )
-        {
-            final char c = value.charAt( i );
-            if ( !NameCharacterHelper.isValidCharacter( c ) )
-            {
-                final String unicodeChar = c > 255 ? " (" + NameCharacterHelper.getUnicodeString( c ) + ")" : "";
-                throw new IllegalArgumentException( "Invalid character in name: '" + c + "'" + unicodeChar );
-            }
-        }
+        this.value = Objects.requireNonNull( validate ? NameValidator.NAME.cachedExtend( getClass() ).validate( name ) : name );
     }
 
     @Override

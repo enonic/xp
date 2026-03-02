@@ -363,9 +363,9 @@ class ApplicationServiceImplTest
     @Test
     void install_global()
     {
-        final Node node = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "my-bundle" ).build();
+        final Node node = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "my.bundle" ).build();
 
-        final String bundleName = "my-bundle";
+        final String bundleName = "my.bundle";
 
         mockRepoCreateNode( node );
         mockRepoGetNode( node, bundleName );
@@ -379,8 +379,8 @@ class ApplicationServiceImplTest
         assertFalse( this.service.isLocalApplication( application.getKey() ) );
         assertEquals( application, this.service.getInstalledApplication( application.getKey() ) );
 
-        verifyInstallEvents( ApplicationKey.from( "my-bundle" ), node.id(), times( 1 ) );
-        verifyInstalledEvents( ApplicationKey.from( "my-bundle" ), node.id(), times( 1 ) );
+        verifyInstallEvents( ApplicationKey.from( "my.bundle" ), node.id(), times( 1 ) );
+        verifyInstalledEvents( ApplicationKey.from( "my.bundle" ), node.id(), times( 1 ) );
         verifyStartedEvent( application.getKey(), times( 1 ) );
     }
 
@@ -389,7 +389,7 @@ class ApplicationServiceImplTest
     {
         final Node applicationNode = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "myNode" ).build();
 
-        final String bundleName = "my-bundle";
+        final String bundleName = "my.bundle";
 
         mockRepoCreateNode( applicationNode );
         mockRepoGetNode( applicationNode, bundleName );
@@ -406,7 +406,7 @@ class ApplicationServiceImplTest
 
         final Node applicationNode = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "myNode" ).build();
 
-        final String bundleName = "my-bundle";
+        final String bundleName = "my.bundle";
 
         mockRepoCreateNode( applicationNode );
         mockRepoGetNode( applicationNode, bundleName );
@@ -419,9 +419,9 @@ class ApplicationServiceImplTest
     @Test
     void install_local()
     {
-        final Node node = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "my-bundle" ).build();
+        final Node node = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "my.bundle" ).build();
 
-        final String bundleName = "my-bundle";
+        final String bundleName = "my.bundle";
 
         mockRepoCreateNode( node );
         mockRepoGetNode( node, bundleName );
@@ -434,16 +434,16 @@ class ApplicationServiceImplTest
         assertTrue( this.service.isLocalApplication( application.getKey() ) );
         assertEquals( application, this.service.getInstalledApplication( application.getKey() ) );
 
-        verifyInstalledEvents( ApplicationKey.from( "my-bundle" ), node.id(), never() );
+        verifyInstalledEvents( ApplicationKey.from( "my.bundle" ), node.id(), never() );
         verifyStartedEvent( application.getKey(), never() );
     }
 
     @Test
     void install_local_invalid()
     {
-        final Node applicationNode = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "my-bundle" ).build();
+        final Node applicationNode = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "my.bundle" ).build();
 
-        final String bundleName = "my-bundle";
+        final String bundleName = "my.bundle";
 
         mockRepoCreateNode( applicationNode );
         mockRepoGetNode( applicationNode, bundleName );
@@ -457,9 +457,9 @@ class ApplicationServiceImplTest
     void update_installed_application()
         throws Exception
     {
-        final Node node = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "my-bundle" ).build();
+        final Node node = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "my.bundle" ).build();
 
-        final String bundleName = "my-bundle";
+        final String bundleName = "my.bundle";
 
         mockRepoCreateNode( node );
 
@@ -484,9 +484,9 @@ class ApplicationServiceImplTest
     void update_installed_local_application()
         throws Exception
     {
-        final Node node = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "my-bundle" ).build();
+        final Node node = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "my.bundle" ).build();
 
-        final String bundleName = "my-bundle";
+        final String bundleName = "my.bundle";
 
         mockRepoCreateNode( node );
 
@@ -505,15 +505,15 @@ class ApplicationServiceImplTest
         assertTrue( this.service.isLocalApplication( updatedApplication.getKey() ) );
         assertEquals( updatedApplication, this.service.getInstalledApplication( updatedApplication.getKey() ) );
 
-        verifyInstalledEvents( ApplicationKey.from( "my-bundle" ), node.id(), never() );
+        verifyInstalledEvents( ApplicationKey.from( "my.bundle" ), node.id(), never() );
         verifyStartedEvent( updatedApplication.getKey(), never() );
     }
 
     @Test
     void install_stored_applications()
     {
-        final String bundleName1 = "my-bundle1";
-        final String bundleName2 = "my-bundle2";
+        final String bundleName1 = "my.bundle1";
+        final String bundleName2 = "my.bundle2";
 
         ApplicationKey applicationKey1 = ApplicationKey.from( bundleName1 );
         ApplicationKey applicationKey2 = ApplicationKey.from( bundleName2 );
@@ -568,7 +568,7 @@ class ApplicationServiceImplTest
     {
         final Node applicationNode = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "myNode" ).build();
 
-        final String bundleName = "my-bundle";
+        final String bundleName = "my.bundle";
 
         mockRepoCreateNode( applicationNode );
 
@@ -591,7 +591,7 @@ class ApplicationServiceImplTest
     {
         final Node node = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "myNode" ).build();
 
-        final String bundleName = "my-bundle";
+        final String bundleName = "my.bundle";
 
         mockRepoCreateNode( node );
 
@@ -625,7 +625,7 @@ class ApplicationServiceImplTest
 
         final Node node = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "myNode" ).data( data ).build();
 
-        final String bundleName = "my-bundle";
+        final String bundleName = "my.bundle";
 
         mockRepoCreateNode( node );
 
@@ -651,7 +651,7 @@ class ApplicationServiceImplTest
         assertTrue( this.service.isLocalApplication( applicationKey ) );
 
         when( this.repoService.getApplicationSource( node.id() ) ).thenReturn(
-            ByteSource.wrap( ByteStreams.toByteArray( newBundle( "my-bundle", true, "1.0.0" ).build() ) ) );
+            ByteSource.wrap( ByteStreams.toByteArray( newBundle( "my.bundle", true, "1.0.0" ).build() ) ) );
 
         this.service.uninstallApplication( updatedApplication.getKey() );
 
@@ -664,7 +664,7 @@ class ApplicationServiceImplTest
     {
         final Node node = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "myNode" ).build();
 
-        final String bundleName = "my-bundle";
+        final String bundleName = "my.bundle";
 
         mockRepoCreateNode( node );
 

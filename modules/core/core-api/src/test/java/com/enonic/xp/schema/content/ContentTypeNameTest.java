@@ -13,7 +13,7 @@ class ContentTypeNameTest
     @Test
     void equalsContract()
     {
-        EqualsVerifier.forClass( ContentTypeName.class ).usingGetClass().withNonnullFields( "applicationKey", "localName" ).verify();
+        EqualsVerifier.forClass( ContentTypeName.class ).usingGetClass().verify();
     }
 
     @Test

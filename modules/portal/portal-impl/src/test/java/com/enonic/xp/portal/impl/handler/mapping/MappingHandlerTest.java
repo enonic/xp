@@ -251,7 +251,7 @@ class MappingHandlerTest
 
         when( rendererDelegate.render( eq( projectMapping ), same( request ) ) ).thenReturn(
             PortalResponse.create().body( "Project body" ).build() );
-        final Site site = createSite( "id", "mysite", "myapplication:contenttypename", "project-app1" );
+        final Site site = createSite( "id", "mysite", "myapplication:contenttypename", "project.app1" );
         when( this.contentService.findNearestSiteByPath( any( ContentPath.class ) ) ).thenReturn( site );
 
         final WebResponse response = this.handler.handle( this.request, PortalResponse.create().build(), null );
@@ -368,8 +368,8 @@ class MappingHandlerTest
     {
         final Content content = createPage( "id", contentPath, "app1:ctype", true );
 
-        final Project project = createProject( "my-project", ApplicationKeys.from( ApplicationKey.from( "project-app1" ),
-                                                                                   ApplicationKey.from( "project-app2" ) ) );
+        final Project project = createProject( "my-project", ApplicationKeys.from( ApplicationKey.from( "project.app1" ),
+                                                                                   ApplicationKey.from( "project.app2" ) ) );
 
         this.request.setContent( content );
         this.request.setProject( project );
@@ -400,7 +400,7 @@ class MappingHandlerTest
             final ControllerMappingDescriptors projectMappings = ControllerMappingDescriptors.from( projectMapping );
             final SiteDescriptor projectDescriptor =
                 SiteDescriptor.create().applicationKey( applicationKey ).mappingDescriptors( projectMappings ).build();
-            when( this.siteService.getDescriptor( eq( ApplicationKey.from( "project-app1" ) ) ) ).thenReturn( projectDescriptor );
+            when( this.siteService.getDescriptor( eq( ApplicationKey.from( "project.app1" ) ) ) ).thenReturn( projectDescriptor );
         }
     }
 

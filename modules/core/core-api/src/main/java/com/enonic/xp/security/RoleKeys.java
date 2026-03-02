@@ -11,11 +11,11 @@ public final class RoleKeys
 
     public static final String ADMIN_ID = "system.admin";
 
-    public static final PrincipalKey ADMIN = PrincipalKey.ofRole( ADMIN_ID );
+    public static final PrincipalKey ADMIN = PrincipalKey.ADMIN_ROLE;
 
-    public static final PrincipalKey EVERYONE = PrincipalKey.ofRole( "system.everyone" );
+    public static final PrincipalKey EVERYONE = PrincipalKey.EVERYONE_ROLE;
 
-    public static final PrincipalKey AUTHENTICATED = PrincipalKey.ofRole( "system.authenticated" );
+    public static final PrincipalKey AUTHENTICATED = PrincipalKey.AUTHENTICATED_ROLE;
 
     public static final String ADMIN_LOGIN_ID = "system.admin.login";
 

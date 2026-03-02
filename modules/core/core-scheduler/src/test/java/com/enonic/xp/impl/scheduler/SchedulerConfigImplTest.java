@@ -45,7 +45,7 @@ class SchedulerConfigImplTest
         properties.put( "init-job.landing1.enabled", "true" );
         properties.put( "init-job.landing1.description", "landing1 description" );
         properties.put( "init-job.landing1.descriptor", "com.enonic.app.features:landing" );
-        properties.put( "init-job.landing1.user", "user:system:user" );
+        properties.put( "init-job.landing1.user", "system:user" );
         properties.put( "init-job.landing1.config", "{\"a\":\"valueA\"}" );
         properties.put( "init-job.landing1.cron", "* * * * *" );
         properties.put( "init-job.landing1.timezone", "GMT+5:30" );

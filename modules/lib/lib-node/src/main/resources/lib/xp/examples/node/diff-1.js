@@ -10,7 +10,7 @@ var repo = nodeLib.connect({
 // Diff the given node in the current branch and the targetBranch
 var result = repo.diff({
     key: 'a',
-    target: 'otherBranch',
+    target: 'other-branch',
     includeChildren: true
 });
 // END

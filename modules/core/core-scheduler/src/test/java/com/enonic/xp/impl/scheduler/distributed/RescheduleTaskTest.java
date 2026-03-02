@@ -248,7 +248,7 @@ class RescheduleTaskTest
     void submitJobAsUser()
     {
         final Instant now = Instant.now();
-        final PrincipalKey user = PrincipalKey.ofUser( IdProviderKey.createDefault(), "my-user" );
+        final PrincipalKey user = PrincipalKey.ofUser( IdProviderKey.system(), "my-user" );
 
         ScheduledJob job1 = mockOneTimeJob( "job1", now.minus( 1, ChronoUnit.SECONDS ), user );
 
@@ -262,7 +262,7 @@ class RescheduleTaskTest
 
         createAndRunTask();
 
-        assertEquals( "default", tokenCaptor.getValue().getIdProvider().toString() );
+        assertEquals( "system", tokenCaptor.getValue().getIdProvider().toString() );
         verify( taskService, times( 1 ) ).submitTask( taskCaptor.capture() );
     }
 

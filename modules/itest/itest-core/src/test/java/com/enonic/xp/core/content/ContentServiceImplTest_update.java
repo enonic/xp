@@ -172,7 +172,7 @@ class ContentServiceImplTest_update
         PropertyTree data = createPropertyTreeForAllInputTypes();
 
         final Content content = this.contentService.create( CreateContentParams.create()
-                                                                .type( ContentTypeName.from( "myContentType" ) )
+                                                                .type( ContentTypeName.from( "myapp:myContentType" ) )
                                                                 .contentData( data )
                                                                 .name( "myContent" )
                                                                 .parent( ContentPath.ROOT )

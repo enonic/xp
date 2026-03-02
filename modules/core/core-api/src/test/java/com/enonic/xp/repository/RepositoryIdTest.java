@@ -19,7 +19,7 @@ class RepositoryIdTest
     @Test
     void validNodeIdNodeName()
     {
-        final String allowedCharacters = "az09-:_.";
+        final String allowedCharacters = "az09-_.";
         NodeId.from( allowedCharacters );
         NodeName.from( allowedCharacters );
         RepositoryId.from( allowedCharacters );

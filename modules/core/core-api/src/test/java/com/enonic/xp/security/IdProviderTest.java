@@ -6,6 +6,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertyTree;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -34,10 +35,10 @@ class IdProviderTest
             idProviderConfig ).build();
         final IdProvider idProvider = IdProvider.create( source ).build();
 
-        assertTrue( idProvider.getKey().equals( key ) );
+        assertEquals( idProvider.getKey(), key );
         assertEquals( displayName, idProvider.getDisplayName() );
         assertEquals( description, idProvider.getDescription() );
-        assertTrue( idProvider.getIdProviderConfig().equals( idProviderConfig ) );
+        assertEquals( idProvider.getIdProviderConfig(), idProviderConfig );
     }
 
     @Test
@@ -74,4 +75,28 @@ class IdProviderTest
         assertThrows(IllegalArgumentException.class, () -> IdProviderKey.from( "myUserSt'ore" ));
     }
 
+    @Test
+    void testReservedIdProviderKey()
+    {
+        assertThrows( IllegalArgumentException.class, () -> IdProviderKey.from( "roles" ) );
+        assertThrows( IllegalArgumentException.class, () -> IdProviderKey.from( "ROLES" ) );
+    }
+
+    @Test
+    void testNullIdProviderKey()
+    {
+        assertThrows( NullPointerException.class, () -> IdProviderKey.from( null ) );
+    }
+
+    @Test
+    void testBlankIdProviderKey()
+    {
+        assertThrows( IllegalArgumentException.class, () -> IdProviderKey.from( "" ) );
+    }
+
+    @Test
+    void testSystemIdProviderKey()
+    {
+        assertSame( IdProviderKey.system(), IdProviderKey.from( "system" ) );
+    }
 }

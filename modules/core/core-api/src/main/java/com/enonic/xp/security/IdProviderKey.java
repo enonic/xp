@@ -1,34 +1,31 @@
 package com.enonic.xp.security;
 
+import java.io.Serial;
 import java.io.Serializable;
-
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.util.CharacterChecker;
-
-import static com.google.common.base.Strings.nullToEmpty;
+import com.enonic.xp.core.internal.NameValidator;
 
 @PublicApi
 public final class IdProviderKey
     implements Serializable
 {
+    @Serial
     private static final long serialVersionUID = 0;
 
-    private static final IdProviderKey SYSTEM = IdProviderKey.from( "system" );
+    private static final NameValidator ID_VALIDATOR = NameValidator.NAME.extend( IdProviderKey.class )
+        .invalidChars(
+            NameValidator.NAME_ILLEGAL_CHARACTERS + NameValidator.HTML_SPECIAL_CHARACTERS + SecurityConstants.PRINCIPAL_KEY_SEPARATOR )
+        .build();
 
-    private static final IdProviderKey DEFAULT = IdProviderKey.from( "default" );
-
-    private static final String RESERVED_ID_PROVIDER_KEY = PrincipalKey.ROLES_NODE_NAME;
+    private static final IdProviderKey SYSTEM = new IdProviderKey( "system" );
 
     private final String id;
 
-    public IdProviderKey( final String id )
+    private IdProviderKey( final String id )
     {
-        Preconditions.checkArgument( !nullToEmpty( id ).isBlank(), "IdProviderKey cannot be blank: %s", id );
-        Preconditions.checkArgument( !RESERVED_ID_PROVIDER_KEY.equalsIgnoreCase( id ),
-                                     "IdProviderKey id is reserved and cannot be used: %s", id );
-        this.id = CharacterChecker.check( id, "Invalid IdProviderKey [" + id + "]" );
+        this.id = Objects.requireNonNull( id );
     }
 
     @Override
@@ -51,16 +48,23 @@ public final class IdProviderKey
 
     public static IdProviderKey from( final String id )
     {
-        return new IdProviderKey( id );
+        return switch ( Objects.requireNonNull( id, "IdProviderKey cannot be null" ) )
+        {
+            case "system" -> SYSTEM;
+            default ->
+            {
+                if ( SecurityConstants.ROLES_NODE_NAME.equalsIgnoreCase( id ) )
+                {
+                    throw new IllegalArgumentException(
+                        "IdProviderKey is reserved and cannot be used: " + SecurityConstants.ROLES_NODE_NAME );
+                }
+                yield new IdProviderKey( ID_VALIDATOR.validate( id ) );
+            }
+        };
     }
 
     public static IdProviderKey system()
     {
         return SYSTEM;
-    }
-
-    public static IdProviderKey createDefault()
-    {
-        return DEFAULT;
     }
 }

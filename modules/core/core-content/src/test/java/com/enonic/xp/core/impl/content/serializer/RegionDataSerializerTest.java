@@ -34,11 +34,11 @@ class RegionDataSerializerTest
     {
         final PropertyTree myPartConfig = new PropertyTree();
         myPartConfig.addString( "some", "config" );
-        final DescriptorKey layoutDescriptorKey = DescriptorKey.from( "app-descr:layout-name" );
+        final DescriptorKey layoutDescriptorKey = DescriptorKey.from( "app.descr:layout-name" );
 
         final Region region = Region.create().
             name( "main" ).
-            add( createPartComponent( "MyPart", "app-descr:part-name", myPartConfig ) ).
+            add( createPartComponent( "MyPart", "app.descr:part-name", myPartConfig ) ).
             add( ImageComponent.create().build() ).
             add( LayoutComponent.create().descriptor( layoutDescriptorKey ).build() ).
             build();

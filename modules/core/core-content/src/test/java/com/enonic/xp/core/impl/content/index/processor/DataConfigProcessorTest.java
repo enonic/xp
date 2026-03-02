@@ -45,23 +45,15 @@ class DataConfigProcessorTest
     @Test
     void test_data_form_with_html_area()
     {
-        Input myTextLine = Input.create().
-            name( "htmlArea" ).
-            inputType( InputTypeName.HTML_AREA ).
-            label( "htmlArea" ).
-            required( true ).
-            build();
-        Form form = Form.create().
-            addFormItem( myTextLine ).
-            build();
+        Input myTextLine =
+            Input.create().name( "htmlArea" ).inputType( InputTypeName.HTML_AREA ).label( "htmlArea" ).required( true ).build();
+        Form form = Form.create().addFormItem( myTextLine ).build();
 
-        final PatternIndexConfigDocument result = processForm(form);
-
+        final PatternIndexConfigDocument result = processForm( form );
 
         assertEquals( 2, result.getPathIndexConfigs().size() );
         assertEquals( "htmlStripper",
-                      result.getConfigForPath( IndexPath.from( DATA + ".htmlArea" ) ).getIndexValueProcessors().get(
-                          0 ).getName() );
+                      result.getConfigForPath( IndexPath.from( DATA + ".htmlArea" ) ).getIndexValueProcessors().get( 0 ).getName() );
 
     }
 
@@ -72,12 +64,11 @@ class DataConfigProcessorTest
 
     private PatternIndexConfigDocument processForm( final Form form )
     {
-        final ContentType contentType = ContentType.create().superType( ContentTypeName.folder() ).name( "typeName" ).form( form ).build();
+        final ContentType contentType = ContentType.create().superType( ContentTypeName.folder() ).name( "type:name" ).form( form ).build();
 
         Mockito.when( contentTypeService.getByName( any() ) ).thenReturn( contentType );
 
-        final DataConfigProcessor configProcessor =
-            new DataConfigProcessor( getDataForm( contentTypeService, contentTypeName) );
+        final DataConfigProcessor configProcessor = new DataConfigProcessor( getDataForm( contentTypeService, contentTypeName ) );
 
         return configProcessor.processDocument( PatternIndexConfigDocument.empty() );
     }

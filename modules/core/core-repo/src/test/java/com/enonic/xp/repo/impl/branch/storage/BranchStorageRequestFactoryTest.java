@@ -22,19 +22,23 @@ class BranchStorageRequestFactoryTest
     @Test
     void create()
     {
-        final StoreRequest storeRequest = BranchStorageRequestFactory.create( NodeBranchEntry.create().
-            nodeId( NodeId.from( "nodeId" ) ).
-            nodePath( new NodePath( "/nodePath" ) ).
-            nodeVersionId( NodeVersionId.from( "nodeVersionId" ) ).
-            nodeVersionKey( NodeVersionKey.create()
-                                .nodeBlobKey( BlobKey.from( "nodeBlobKey" ) )
-                                .indexConfigBlobKey( BlobKey.from( "indexConfigBlobKey" ) )
-                                .accessControlBlobKey( BlobKey.from( "accessControlBlobKey" ) )
-                                .build() ).
-            timestamp( Instant.EPOCH ).
-            build(), RepositoryId.from( "my-repo-id" ), Branch.from( "myBranch" ) );
+        final StoreRequest storeRequest = BranchStorageRequestFactory.create( NodeBranchEntry.create()
+                                                                                  .nodeId( NodeId.from( "nodeId" ) )
+                                                                                  .nodePath( new NodePath( "/nodePath" ) )
+                                                                                  .nodeVersionId( NodeVersionId.from( "nodeVersionId" ) )
+                                                                                  .nodeVersionKey( NodeVersionKey.create()
+                                                                                                       .nodeBlobKey(
+                                                                                                           BlobKey.from( "nodeBlobKey" ) )
+                                                                                                       .indexConfigBlobKey( BlobKey.from(
+                                                                                                           "indexConfigBlobKey" ) )
+                                                                                                       .accessControlBlobKey( BlobKey.from(
+                                                                                                           "accessControlBlobKey" ) )
+                                                                                                       .build() )
+                                                                                  .timestamp( Instant.EPOCH )
+                                                                                  .build(), RepositoryId.from( "my-repo-id" ),
+                                                                              Branch.from( "my-branch" ) );
 
-        assertEquals( "nodeId_myBranch", storeRequest.getId() );
+        assertEquals( "nodeId_my-branch", storeRequest.getId() );
         assertEquals( "nodeVersionId", storeRequest.getParent() );
     }
 }

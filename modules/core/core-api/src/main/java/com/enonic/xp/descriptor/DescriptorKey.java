@@ -4,11 +4,9 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.util.CharacterChecker;
+import com.enonic.xp.core.internal.NameValidator;
 
 @PublicApi
 public final class DescriptorKey
@@ -16,6 +14,17 @@ public final class DescriptorKey
 {
     @Serial
     private static final long serialVersionUID = 0;
+
+    /**
+     * DescriptorKey name validator.
+     * Must be a valid file because name-descriptors are usually a file on a file system.
+     * HTML illegal characters historically prohibited.
+     * Length is limited to 63 to align with other systems limits: Database identifiers, etc...
+     */
+    private static final NameValidator DESCRIPTOR_NAME = NameValidator.NAME.extend( DescriptorKey.class )
+        .maxLength( 63 )
+        .invalidChars( NameValidator.HTML_SPECIAL_CHARACTERS + NameValidator.FILENAME_ILLEGAL_CHARACTERS )
+        .build();
 
     private static final String SEPARATOR = ":";
 
@@ -26,7 +35,7 @@ public final class DescriptorKey
     private DescriptorKey( final ApplicationKey applicationKey, final String name )
     {
         this.applicationKey = Objects.requireNonNull( applicationKey );
-        this.name = CharacterChecker.check( name, "Not a valid name for DescriptorKey [" + name + "]" );
+        this.name = Objects.requireNonNull( name );
     }
 
     public ApplicationKey getApplicationKey()
@@ -63,7 +72,7 @@ public final class DescriptorKey
     @Override
     public String toString()
     {
-        return applicationKey.toString() + SEPARATOR + name;
+        return applicationKey + SEPARATOR + name;
     }
 
     public static DescriptorKey from( final String key )
@@ -76,13 +85,11 @@ public final class DescriptorKey
         }
         final String applicationKey = key.substring( 0, index );
         final String descriptorName = key.substring( index + 1 );
-        Preconditions.checkArgument( !descriptorName.isBlank(), "Descriptor ApplicationKey cannot be blank" );
-        CharacterChecker.check( descriptorName, "Not a valid DescriptorKey [" + descriptorName + "]" );
-        return new DescriptorKey( ApplicationKey.from( applicationKey ), descriptorName );
+        return from( ApplicationKey.from( applicationKey ), descriptorName );
     }
 
-    public static DescriptorKey from( final ApplicationKey applicationKey, final String descriptorName )
+    public static DescriptorKey from( final ApplicationKey applicationKey, final String name )
     {
-        return new DescriptorKey( applicationKey, descriptorName );
+        return new DescriptorKey( applicationKey, DESCRIPTOR_NAME.withSubject( "DescriptorKey name" ).validate( name  ) );
     }
 }

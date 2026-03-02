@@ -1,7 +1,10 @@
 package com.enonic.xp.issue;
 
+import org.jspecify.annotations.NullMarked;
+
 import com.enonic.xp.name.Name;
 
+@NullMarked
 public final class IssueName
     extends Name
 {

@@ -546,7 +546,7 @@ public abstract class AbstractContentServiceTest
 
         return ContentType.create()
             .superType( ContentTypeName.documentMedia() )
-            .name( "myContentType" )
+            .name( "myapp:myContentType" )
             .addFormItem( Input.create().label( "Textline" ).name( "textLine" ).inputType( InputTypeName.TEXT_LINE ).build() )
             .addFormItem( Input.create().name( "stringArray" ).label( "String array" ).inputType( InputTypeName.TEXT_LINE ).build() )
             .addFormItem( Input.create().name( "double" ).label( "Double" ).inputType( InputTypeName.DOUBLE ).build() )

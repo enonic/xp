@@ -95,7 +95,7 @@ class FindNodesByMultiRepoQueryCommandTest
         final Repository repo2 = createRepo( REPO_USER_2, "repo2" );
 
         // Create new branch in repo1
-        final Branch otherBranch = callInContext( REPO_USER_1, repo1.getId(), MASTER_BRANCH, () -> createBranch( "otherBranch" ) );
+        final Branch otherBranch = callInContext( REPO_USER_1, repo1.getId(), MASTER_BRANCH, () -> createBranch( "other-branch" ) );
 
         final Node repo1MasterNode1 =
             callInContext( REPO_USER_1, repo1.getId(), MASTER_BRANCH, () -> createNode( NodePath.ROOT, "repo1Node" ) );
@@ -129,7 +129,7 @@ class FindNodesByMultiRepoQueryCommandTest
         final Repository repo2 = createRepo( REPO_USER_2, "repo2" );
 
         // Create new branch in repo1
-        final Branch otherBranch = callInContext( REPO_USER_1, repo1.getId(), MASTER_BRANCH, () -> createBranch( "otherBranch" ) );
+        final Branch otherBranch = callInContext( REPO_USER_1, repo1.getId(), MASTER_BRANCH, () -> createBranch( "other-branch" ) );
 
         final Node repo1MasterNode1 =
             callInContext( REPO_USER_1, repo1.getId(), MASTER_BRANCH, () -> createNode( NodePath.ROOT, "repo1Node" ) );

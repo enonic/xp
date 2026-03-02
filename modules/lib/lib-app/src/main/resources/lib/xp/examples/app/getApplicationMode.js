@@ -6,7 +6,7 @@ var assert = require('/lib/xp/testing');
 // BEGIN
 // Get Application mode.
 var result = appLib.getApplicationMode({
-    key: 'my-app',
+    key: 'my_app',
 });
 
 log.info('Application mode: ' + result);
