@@ -2,8 +2,8 @@ package com.enonic.xp.core.impl.content.index.processor;
 
 import org.junit.jupiter.api.Test;
 
-import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.index.IndexConfig;
+import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 
 import static com.enonic.xp.content.ContentPropertyNames.DISPLAY_NAME;
@@ -15,11 +15,10 @@ public class LanguageConfigProcessorTest
     @Test
     public void test_language_set_adds_display_name_config()
     {
-        final PatternIndexConfigDocument.Builder builder = PatternIndexConfigDocument.create();
+        final PatternIndexConfigDocument result =
+            new LanguageConfigProcessor( "en" ).processDocument( PatternIndexConfigDocument.create().build() );
 
-        new LanguageConfigProcessor( "en" ).processDocument( builder );
-
-        final IndexConfig config = builder.build().getConfigForPath( PropertyPath.from( DISPLAY_NAME ) );
+        final IndexConfig config = result.getConfigForPath( IndexPath.from( DISPLAY_NAME ) );
 
         assertTrue( config.getLanguages().contains( "en" ) );
     }
@@ -27,35 +26,32 @@ public class LanguageConfigProcessorTest
     @Test
     public void test_language_set_adds_alltext_language()
     {
-        final PatternIndexConfigDocument.Builder builder = PatternIndexConfigDocument.create();
+        final PatternIndexConfigDocument result =
+            new LanguageConfigProcessor( "en" ).processDocument( PatternIndexConfigDocument.create().build() );
 
-        new LanguageConfigProcessor( "en" ).processDocument( builder );
-
-        assertTrue( builder.build().getAllTextConfig().getLanguages().contains( "en" ) );
+        assertTrue( result.getAllTextConfig().getLanguages().contains( "en" ) );
     }
 
     @Test
     public void test_null_language_skips_display_name_config()
     {
-        final PatternIndexConfigDocument.Builder builder = PatternIndexConfigDocument.create();
+        final PatternIndexConfigDocument input = PatternIndexConfigDocument.create().build();
+        final PatternIndexConfigDocument result = new LanguageConfigProcessor( null ).processDocument( input );
 
-        new LanguageConfigProcessor( null ).processDocument( builder );
+        final IndexConfig config = result.getConfigForPath( IndexPath.from( DISPLAY_NAME ) );
 
-        final IndexConfig config = builder.build().getConfigForPath( PropertyPath.from( DISPLAY_NAME ) );
-
-        assertEquals( builder.build().getDefaultConfig(), config );
+        assertEquals( result.getDefaultConfig(), config );
     }
 
     @Test
     public void test_blank_language_skips_display_name_config()
     {
-        final PatternIndexConfigDocument.Builder builder = PatternIndexConfigDocument.create();
+        final PatternIndexConfigDocument input = PatternIndexConfigDocument.create().build();
+        final PatternIndexConfigDocument result = new LanguageConfigProcessor( "" ).processDocument( input );
 
-        new LanguageConfigProcessor( "" ).processDocument( builder );
+        final IndexConfig config = result.getConfigForPath( IndexPath.from( DISPLAY_NAME ) );
 
-        final IndexConfig config = builder.build().getConfigForPath( PropertyPath.from( DISPLAY_NAME ) );
-
-        assertEquals( builder.build().getDefaultConfig(), config );
-        assertTrue( builder.build().getAllTextConfig().getLanguages().isEmpty() );
+        assertEquals( result.getDefaultConfig(), config );
+        assertTrue( result.getAllTextConfig().getLanguages().isEmpty() );
     }
 }
