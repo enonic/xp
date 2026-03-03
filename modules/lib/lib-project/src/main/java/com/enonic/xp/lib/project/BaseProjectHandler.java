@@ -84,10 +84,10 @@ public abstract class BaseProjectHandler
 
             final ApplicationKey applicationKey = ApplicationKey.from( configValue.getMember( "applicationKey" ).getValue().toString() );
 
-            final Map<String, Object> config =
-                Optional.ofNullable( configValue.getMember( "config" ) ).map( ScriptValue::getMap ).orElse( null );
-
-            final PropertyTree siteConfig = PropertyTree.fromMap( config );
+            final PropertyTree siteConfig = Optional.ofNullable( configValue.getMember( "config" ) )
+                .map( ScriptValue::getMap )
+                .map( PropertyTree::fromMap )
+                .orElseGet( PropertyTree::new );
 
             return SiteConfig.create().config( siteConfig ).application( applicationKey ).build();
 
