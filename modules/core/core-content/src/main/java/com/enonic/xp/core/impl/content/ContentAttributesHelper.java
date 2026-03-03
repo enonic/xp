@@ -1,7 +1,5 @@
 package com.enonic.xp.core.impl.content;
 
-import java.time.Clock;
-import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +9,7 @@ import java.util.function.Function;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.node.Attributes;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.util.GenericValue;
@@ -52,8 +51,6 @@ public class ContentAttributesHelper
 
     public static final String UNPUBLISH_ATTR = "content.unpublish";
 
-    private static final Clock MILLIS_CLOCK = Clock.tick( Clock.systemUTC(), Duration.ofMillis( 1 ) );
-
     private static final Map<String, Function<Content, ?>> FIELD_GETTERS =
         Map.of( "displayName", Content::getDisplayName, "data", Content::getData, "x", Content::getMixins, "page", Content::getPage,
                 "owner", Content::getOwner, "language", Content::getLanguage, "publish", Content::getPublishInfo, "workflow",
@@ -74,7 +71,7 @@ public class ContentAttributesHelper
         return Attributes.create()
             .attribute( key, GenericValue.newObject()
                 .put( USER_PROPERTY, getCurrentUserKey().toString() )
-                .put( OPTIME_PROPERTY, Instant.now( MILLIS_CLOCK ).toString() )
+                .put( OPTIME_PROPERTY, Millis.now().toString() )
                 .build() )
             .attribute( VacuumConstants.VACUUM_SKIP_ATTRIBUTE, GenericValue.newObject().build() )
             .build();
@@ -85,7 +82,7 @@ public class ContentAttributesHelper
         return Attributes.create()
             .attribute( SYNC_ATTR, GenericValue.newObject()
                 .put( USER_PROPERTY, getCurrentUserKey().toString() )
-                .put( OPTIME_PROPERTY, Instant.now( MILLIS_CLOCK ).toString() )
+                .put( OPTIME_PROPERTY, Millis.now().toString() )
                 .build() )
             .build();
     }
@@ -96,7 +93,7 @@ public class ContentAttributesHelper
             .attribute( key, GenericValue.newObject()
                 .put( FIELDS_PROPERTY, GenericValue.fromRawJava( List.of( modifiedFields ) ) )
                 .put( USER_PROPERTY, getCurrentUserKey().toString() )
-                .put( OPTIME_PROPERTY, Instant.now( MILLIS_CLOCK ).toString() )
+                .put( OPTIME_PROPERTY, Millis.now().toString() )
                 .build() )
             .attribute( VacuumConstants.VACUUM_SKIP_ATTRIBUTE, GenericValue.newObject().build() )
             .build();

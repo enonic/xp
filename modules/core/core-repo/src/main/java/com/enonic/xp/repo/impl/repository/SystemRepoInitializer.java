@@ -1,12 +1,12 @@
 package com.enonic.xp.repo.impl.repository;
 
-import java.time.Instant;
 import java.util.Objects;
 import java.util.Optional;
 
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.init.Initializer;
@@ -25,8 +25,6 @@ import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.Version;
-
-import static com.enonic.xp.repo.impl.node.NodeConstants.CLOCK;
 
 public class SystemRepoInitializer
     extends Initializer
@@ -50,12 +48,13 @@ public class SystemRepoInitializer
     public void doInitialize()
     {
         createAdminContext().runWith( () -> {
-            if (!this.repositoryService.isInitialized( SystemConstants.SYSTEM_REPO_ID )) {
-                this.repositoryService.createRepository( CreateRepositoryParams.create().
-                    repositoryId( SystemConstants.SYSTEM_REPO_ID ).
-                    rootChildOrder( ChildOrder.name() ).
-                    rootPermissions( SystemConstants.SYSTEM_REPO_DEFAULT_ACL ).
-                    build() );
+            if ( !this.repositoryService.isInitialized( SystemConstants.SYSTEM_REPO_ID ) )
+            {
+                this.repositoryService.createRepository( CreateRepositoryParams.create()
+                                                             .repositoryId( SystemConstants.SYSTEM_REPO_ID )
+                                                             .rootChildOrder( ChildOrder.name() )
+                                                             .rootPermissions( SystemConstants.SYSTEM_REPO_DEFAULT_ACL )
+                                                             .build() );
             }
 
             Node repoFolder = initRepositoryFolder();
@@ -66,10 +65,10 @@ public class SystemRepoInitializer
                 final PropertyTree data = new PropertyTree();
                 data.addString( "version", Version.valueOf( "8.0.0.pre1" ).toString() );
 
-                final Node updatedRepoFolder =
-                    Node.create( repoFolder ).data( data ).timestamp( Instant.now( CLOCK ) ).build();
+                final Node updatedRepoFolder = Node.create( repoFolder ).data( data ).timestamp( Millis.now() ).build();
 
-                this.nodeStorageService.store( StoreNodeParams.newVersion( updatedRepoFolder ), InternalContext.from( ContextAccessor.current() ) );
+                this.nodeStorageService.store( StoreNodeParams.newVersion( updatedRepoFolder ),
+                                               InternalContext.from( ContextAccessor.current() ) );
             }
         } );
     }
@@ -77,8 +76,7 @@ public class SystemRepoInitializer
     @Override
     public boolean isInitialized()
     {
-        return createAdminContext().
-            callWith( () -> {
+        return createAdminContext().callWith( () -> {
             if ( this.repositoryService.isInitialized( SystemConstants.SYSTEM_REPO_ID ) )
             {
                 final Node node = this.nodeStorageService.get( RepositoryConstants.REPOSITORY_STORAGE_PARENT_PATH,
@@ -147,10 +145,11 @@ public class SystemRepoInitializer
     {
         final User admin = User.create().key( PrincipalKey.ofSuperUser() ).login( PrincipalKey.ofSuperUser().getId() ).build();
         final AuthenticationInfo authInfo = AuthenticationInfo.create().principals( RoleKeys.ADMIN ).user( admin ).build();
-        return ContextBuilder.create().
-            branch( SystemConstants.BRANCH_SYSTEM ).
-            repositoryId( SystemConstants.SYSTEM_REPO_ID ).
-            authInfo( authInfo ).build();
+        return ContextBuilder.create()
+            .branch( SystemConstants.BRANCH_SYSTEM )
+            .repositoryId( SystemConstants.SYSTEM_REPO_ID )
+            .authInfo( authInfo )
+            .build();
     }
 
     public static Builder create()

@@ -13,7 +13,7 @@ var resultExpected = {
     'creator': 'user:system:creator',
     'modifier': 'user:system:modifier',
     'createdTime': '2016-11-02T10:36:00Z',
-    'modifiedTime': '2021-02-25T10:44:33.170079900Z',
+    'modifiedTime': '2021-02-25T10:44:33.170Z',
     'schedule': {
         'value': '* * * * *',
         'timeZone': 'GMT+05:30',
@@ -83,7 +83,7 @@ var modifyJobWithNullResultExpected = {
     'creator': 'user:system:creator',
     'modifier': 'user:system:modifier',
     'createdTime': '2016-11-02T10:36:00Z',
-    'modifiedTime': '2021-02-25T10:44:33.170079900Z',
+    'modifiedTime': '2021-02-25T10:44:33.170Z',
     'schedule': {
         'value': '2012-01-01T00:00:00Z',
         'type': 'ONE_TIME'

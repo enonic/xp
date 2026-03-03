@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.dump.model;
 
 import java.time.Instant;
 
+import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.security.PrincipalKey;
 
@@ -19,7 +20,7 @@ public class CommitDumpEntry
     {
         nodeCommitId = builder.nodeCommitId;
         message = builder.message == null ? "" : builder.message;
-        timestamp = builder.timestamp == null ? Instant.now() : builder.timestamp;
+        timestamp = Millis.fromOrElseNow( builder.timestamp );
         committer = builder.committer == null ? PrincipalKey.ofAnonymous() : builder.committer;
     }
 

@@ -1,11 +1,11 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.time.Instant;
 import java.util.Objects;
 
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.MoveNodeListener;
 import com.enonic.xp.node.MoveNodeParams;
@@ -30,8 +30,6 @@ import com.enonic.xp.repo.impl.storage.StoreNodeParams;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-
-import static com.enonic.xp.repo.impl.node.NodeConstants.CLOCK;
 
 public class MoveNodeCommand
     extends AbstractNodeCommand
@@ -142,7 +140,7 @@ public class MoveNodeCommand
                 params.getProcessor().process( persistedNode.data(), NodePath.create( newParentPath ).addElement( newNodeName ).build() ) )
             .parentPath( newParentPath )
             .indexConfigDocument( persistedNode.getIndexConfigDocument() )
-            .timestamp( Instant.now( CLOCK ) );
+            .timestamp( Millis.now() );
 
         final boolean isTheOriginalMovedNode = persistedNode.id().equals( params.getNodeId() );
         if ( isTheOriginalMovedNode )
@@ -162,10 +160,9 @@ public class MoveNodeCommand
         }
 
         final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
-        final Node movedNode = this.nodeStorageService.store(
-            StoreNodeParams.newVersion( nodeToMoveBuilder.build(),
-                                        isTheOriginalMovedNode ? params.getVersionAttributes() : params.getChildVersionAttributes() ),
-            internalContext ).node();
+        final Node movedNode = this.nodeStorageService.store( StoreNodeParams.newVersion( nodeToMoveBuilder.build(), isTheOriginalMovedNode
+            ? params.getVersionAttributes()
+            : params.getChildVersionAttributes() ), internalContext ).node();
         this.nodeStorageService.invalidatePath( persistedNode.path(), internalContext );
 
         this.result.addMovedNode( MoveNodeResult.MovedNode.create().previousPath( persistedNode.path() ).node( movedNode ).build() );
@@ -180,8 +177,7 @@ public class MoveNodeCommand
 
         for ( final SearchHit nodeBranchEntry : children.getHits() )
         {
-            doMoveNode( movedNode.path(),
-                        NodeName.from( nodeBranchEntry.getReturnValues().getStringValue( NodeIndexPath.NAME ) ),
+            doMoveNode( movedNode.path(), NodeName.from( nodeBranchEntry.getReturnValues().getStringValue( NodeIndexPath.NAME ) ),
                         NodeId.from( nodeBranchEntry.getId() ) );
         }
 

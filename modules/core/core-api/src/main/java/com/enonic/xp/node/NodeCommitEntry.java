@@ -4,6 +4,7 @@ import java.time.Instant;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -23,7 +24,7 @@ public final class NodeCommitEntry
     {
         nodeCommitId = builder.nodeCommitId;
         message = builder.message == null ? "" : builder.message;
-        timestamp = builder.timestamp == null ? Instant.now() : builder.timestamp;
+        timestamp = Millis.fromOrElseNow( builder.timestamp );
         committer = builder.committer == null ? getCurrentUserKey() : builder.committer;
     }
 

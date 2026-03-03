@@ -1,6 +1,5 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +14,7 @@ import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.node.ApplyNodePermissionsListener;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.ApplyPermissionsScope;
@@ -36,8 +36,6 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
-
-import static com.enonic.xp.repo.impl.node.NodeConstants.CLOCK;
 
 public class ApplyNodePermissionsCommand
     extends AbstractNodeCommand
@@ -146,7 +144,7 @@ public class ApplyNodePermissionsCommand
 
         final NodeIds childrenIds = NodeIds.from(
             this.nodeSearchService.query( NodeQuery.create().size( NodeSearchService.GET_ALL_SIZE_FLAG ).parent( node.path() ).build(),
-                                          SingleRepoSearchSource.from(  internalContext ) ).getIds() );
+                                          SingleRepoSearchSource.from( internalContext ) ).getIds() );
 
         final Nodes children = this.nodeStorageService.get( childrenIds, internalContext );
 
@@ -186,8 +184,8 @@ public class ApplyNodePermissionsCommand
                            updatedSourceNode != null ? updatedSourceNode.node().getPermissions() : null );
     }
 
-    private NodeVersionData updatePermissionsInBranch( final NodeId nodeId, final NodeVersionData updatedVersionData,
-                                                       final Branch branch, final AccessControlList permissions )
+    private NodeVersionData updatePermissionsInBranch( final NodeId nodeId, final NodeVersionData updatedVersionData, final Branch branch,
+                                                       final AccessControlList permissions )
     {
         final InternalContext targetContext = InternalContext.create( ContextAccessor.current() ).branch( branch ).build();
 
@@ -204,14 +202,15 @@ public class ApplyNodePermissionsCommand
         return NodeHelper.runAsAdmin( () -> {
             if ( updatedVersionData != null )
             {
-                this.nodeStorageService.push( NodeBranchEntry.fromNodeVersion( updatedVersionData.version() ), this.branches.first(), targetContext );
+                this.nodeStorageService.push( NodeBranchEntry.fromNodeVersion( updatedVersionData.version() ), this.branches.first(),
+                                              targetContext );
                 return updatedVersionData;
             }
             else
             {
-                final Node editedNode = Node.create( persistedNode ).timestamp( Instant.now( CLOCK ) ).permissions( permissions )
-                    .build();
-                final NodeVersionData result = this.nodeStorageService.store( StoreNodeParams.newVersion( editedNode, params.getVersionAttributes() ), targetContext );
+                final Node editedNode = Node.create( persistedNode ).timestamp( Millis.now() ).permissions( permissions ).build();
+                final NodeVersionData result =
+                    this.nodeStorageService.store( StoreNodeParams.newVersion( editedNode, params.getVersionAttributes() ), targetContext );
 
                 listener.permissionsApplied( 1 );
                 return result;

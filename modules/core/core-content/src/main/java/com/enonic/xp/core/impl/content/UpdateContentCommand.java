@@ -1,6 +1,5 @@
 package com.enonic.xp.core.impl.content;
 
-import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -22,6 +21,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.content.processor.ContentProcessor;
 import com.enonic.xp.core.impl.content.processor.ProcessUpdateParams;
 import com.enonic.xp.core.impl.content.processor.ProcessUpdateResult;
+import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.PatchNodeParams;
@@ -112,7 +112,7 @@ final class UpdateContentCommand
         patchableContent.validationErrors.setPatcher( c -> validateContent( c.source ) );
         patchableContent.valid.setPatcher( c -> !c.validationErrors.getProducedValue().hasErrors() );
         patchableContent.modifier.setValue( getCurrentUserKey() );
-        patchableContent.modifiedTime.setValue( Instant.now() );
+        patchableContent.modifiedTime.setValue( Millis.now() );
 
         return patchableContent.build();
     }

@@ -6,6 +6,7 @@ import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
+import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.NodeDataProcessor;
 import com.enonic.xp.node.NodeId;
@@ -33,7 +34,7 @@ public class DuplicateContentProcessor
 
         final PropertyTree data = originalData.copy();
 
-        final Instant now = Instant.now();
+        final Instant now = Millis.now();
         data.setInstant( ContentPropertyNames.CREATED_TIME, now );
         data.setInstant( ContentPropertyNames.MODIFIED_TIME, now );
         data.setString( ContentPropertyNames.OWNER, user.getKey().toString() );

@@ -1,6 +1,5 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -11,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.Node;
@@ -27,8 +27,6 @@ import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.StoreNodeParams;
 import com.enonic.xp.security.acl.Permission;
-
-import static com.enonic.xp.repo.impl.node.NodeConstants.CLOCK;
 
 public class SortNodeCommand
     extends AbstractNodeCommand
@@ -76,10 +74,9 @@ public class SortNodeCommand
         if ( !processedData.equals( node.data() ) || !Objects.equals( params.getChildOrder(), node.getChildOrder() ) )
         {
             final Node editedNode =
-                Node.create( node ).childOrder( params.getChildOrder() ).data( processedData ).timestamp( Instant.now( CLOCK ) ).build();
-            Node updatedNode =
-                this.nodeStorageService.store( StoreNodeParams.newVersion( editedNode, params.getVersionAttributes() ), InternalContext.from( ContextAccessor.current() ) )
-                    .node();
+                Node.create( node ).childOrder( params.getChildOrder() ).data( processedData ).timestamp( Millis.now() ).build();
+            Node updatedNode = this.nodeStorageService.store( StoreNodeParams.newVersion( editedNode, params.getVersionAttributes() ),
+                                                              InternalContext.from( ContextAccessor.current() ) ).node();
             result.node( updatedNode );
         }
         else
@@ -146,7 +143,7 @@ public class SortNodeCommand
         for ( final NodeId nodeId : childNodeIds )
         {
             final Node node = doGetById( nodeId );
-            final Node updatedNode = Node.create( node ).manualOrderValue( resolver.getAsLong() ).timestamp( Instant.now( CLOCK ) ).build();
+            final Node updatedNode = Node.create( node ).manualOrderValue( resolver.getAsLong() ).timestamp( Millis.now() ).build();
             final Node storedNode =
                 this.nodeStorageService.store( StoreNodeParams.newVersion( updatedNode, params.getChildVersionAttributes() ),
                                                internalContext ).node();
@@ -198,7 +195,7 @@ public class SortNodeCommand
                 LOG.debug( "manualOrderValue not changed {}", node.id() );
                 continue;
             }
-            final Node updatedNode = Node.create( node ).timestamp( Instant.now( CLOCK ) ).manualOrderValue( newOrderValue ).build();
+            final Node updatedNode = Node.create( node ).timestamp( Millis.now() ).manualOrderValue( newOrderValue ).build();
             final Node storedNode =
                 this.nodeStorageService.store( StoreNodeParams.newVersion( updatedNode, params.getChildVersionAttributes() ),
                                                internalContext ).node();

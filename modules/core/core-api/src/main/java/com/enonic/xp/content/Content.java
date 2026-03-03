@@ -13,6 +13,7 @@ import com.google.common.collect.Sets;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.attachment.Attachments;
+import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.page.Page;
@@ -97,8 +98,8 @@ public class Content
         this.data = builder.data;
         this.attachments = requireNonNullElse( builder.attachments, Attachments.empty() );
         this.mixins = Objects.requireNonNull( builder.mixins );
-        this.createdTime = builder.createdTime;
-        this.modifiedTime = builder.modifiedTime;
+        this.createdTime = Millis.from( builder.createdTime );
+        this.modifiedTime = Millis.from( builder.modifiedTime );
         this.publishInfo = builder.publishInfo;
         this.creator = builder.creator;
         this.modifier = builder.modifier;
@@ -114,7 +115,7 @@ public class Content
         this.manualOrderValue = builder.manualOrderValue;
         this.originalName = builder.originalName;
         this.originalParentPath = builder.originalParentPath;
-        this.archivedTime = builder.archivedTime;
+        this.archivedTime = Millis.from( builder.archivedTime );
         this.archivedBy = builder.archivedBy;
         this.variantOf = builder.variantOf;
     }

@@ -48,7 +48,7 @@ class IssueServiceImplTest_updateComment
         assertEquals( "updated text", updatedComment.getText() );
         assertEquals( creator, updatedComment.getCreator() );
         assertEquals( creatorDisplayName, updatedComment.getCreatorDisplayName() );
-        assertEquals( created, updatedComment.getCreated() );
+        assertEquals( created.truncatedTo( ChronoUnit.MILLIS ), updatedComment.getCreated() );
     }
 
     @Test

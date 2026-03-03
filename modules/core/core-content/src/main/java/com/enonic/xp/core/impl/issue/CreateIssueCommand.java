@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.issue.serializer.IssueDataSerializer;
+import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.issue.CreateIssueParams;
@@ -131,7 +132,7 @@ public class CreateIssueCommand
         public static CreateNodeParams create( final CreateIssueParams params, final User creator, final long index,
                                                final IssueName issueName )
         {
-            final Instant now = Instant.now();
+            final Instant now = Millis.now();
             final PropertyTree contentAsData = ISSUE_DATA_SERIALIZER.toCreateNodeData( params );
 
             contentAsData.getRoot().ifNotNull().addInstant( CREATED_TIME, now );

@@ -1,10 +1,10 @@
 package com.enonic.xp.node;
 
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
 import com.enonic.xp.annotation.PublicApi;
+import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexConfig;
@@ -56,7 +56,7 @@ public final class Node
         this.manualOrderValue = builder.manualOrderValue;
         this.permissions = builder.permissions;
         this.attachedBinaries = builder.attachedBinaries;
-        this.timestamp = builder.timestamp;
+        this.timestamp = Millis.from( builder.timestamp );
         this.nodeVersionId = builder.nodeVersionId;
 
         if ( ROOT_UUID.equals( this.id ) )
@@ -304,10 +304,6 @@ public final class Node
         public Builder timestamp( final Instant timestamp )
         {
             this.timestamp = timestamp;
-            if ( timestamp != null )
-            {
-                this.timestamp = timestamp.truncatedTo( ChronoUnit.MILLIS );
-            }
             return this;
         }
 
@@ -348,23 +344,17 @@ public final class Node
 
         final Node node = (Node) o;
 
-        return Objects.equals( id, node.id ) &&
-            Objects.equals( name, node.name ) &&
-            Objects.equals( nodeType, node.nodeType ) &&
-            Objects.equals( parentPath, node.parentPath ) &&
-            Objects.equals( manualOrderValue, node.manualOrderValue ) &&
-            Objects.equals( childOrder, node.childOrder ) &&
-            Objects.equals( permissions, node.permissions ) &&
-            Objects.equals( data, node.data ) &&
-            Objects.equals( attachedBinaries, node.attachedBinaries ) &&
-            Objects.equals( nodeVersionId, node.nodeVersionId ) &&
-            Objects.equals( indexConfigDocument, node.indexConfigDocument );
+        return Objects.equals( id, node.id ) && Objects.equals( name, node.name ) && Objects.equals( nodeType, node.nodeType ) &&
+            Objects.equals( parentPath, node.parentPath ) && Objects.equals( manualOrderValue, node.manualOrderValue ) &&
+            Objects.equals( childOrder, node.childOrder ) && Objects.equals( permissions, node.permissions ) &&
+            Objects.equals( data, node.data ) && Objects.equals( attachedBinaries, node.attachedBinaries ) &&
+            Objects.equals( nodeVersionId, node.nodeVersionId ) && Objects.equals( indexConfigDocument, node.indexConfigDocument );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( id, name, parentPath, nodeType, manualOrderValue, childOrder, permissions, data,
-                             indexConfigDocument, attachedBinaries, nodeVersionId );
+        return Objects.hash( id, name, parentPath, nodeType, manualOrderValue, childOrder, permissions, data, indexConfigDocument,
+                             attachedBinaries, nodeVersionId );
     }
 }

@@ -1,10 +1,8 @@
 package com.enonic.xp.core.impl.app;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.NodeName;
@@ -39,7 +37,7 @@ class ApplicationNodeTransformer
         data.setString( ApplicationPropertyNames.MIN_SYSTEM_VERSION, app.minSystemVersion );
         data.setString( ApplicationPropertyNames.VERSION, app.version );
         data.setString( ApplicationPropertyNames.VENDOR_NAME, app.vendorName );
-        data.setInstant( ApplicationPropertyNames.MODIFIED_TIME, Instant.now().truncatedTo( ChronoUnit.MILLIS ) );
+        data.setInstant( ApplicationPropertyNames.MODIFIED_TIME, Millis.now() );
         data.setBinaryReference( APPLICATION_BINARY_REF, BinaryReference.from( APPLICATION_BINARY_REF ) );
         return data;
     }

@@ -8,6 +8,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.content.parser.YmlPageDescriptorParser;
+import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.descriptor.DescriptorKeyLocator;
 import com.enonic.xp.descriptor.DescriptorKeys;
@@ -73,7 +74,7 @@ public class PageDescriptorLoader
             .displayName( key.getName() )
             .config( Form.empty() )
             .regions( RegionDescriptors.create().build() )
-            .modifiedTime( Instant.now() )
+            .modifiedTime( Millis.now() )
             .build();
     }
 

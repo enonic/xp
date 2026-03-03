@@ -1,7 +1,6 @@
 package com.enonic.xp.repo.impl.dump;
 
 import java.time.Duration;
-import java.time.Instant;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
@@ -19,6 +18,7 @@ import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.dump.BranchDumpResult;
@@ -209,8 +209,7 @@ public class RepoDumper
         }
     }
 
-    private void doStoreVersion( final NodeVersion nodeVersion,
-                                 final RepoDumpResult.Builder dumpResult )
+    private void doStoreVersion( final NodeVersion nodeVersion, final RepoDumpResult.Builder dumpResult )
     {
         try
         {
@@ -317,7 +316,7 @@ public class RepoDumper
 
         if ( this.maxAge != null )
         {
-            final Value ageValue = ValueFactory.newDateTime( Instant.now().minus( Duration.ofDays( this.maxAge ) ) );
+            final Value ageValue = ValueFactory.newDateTime( Millis.now().minus( Duration.ofDays( this.maxAge ) ) );
             queryBuilder.addQueryFilter( RangeFilter.create().fieldName( VersionIndexPath.TIMESTAMP.getPath() ).from( ageValue ).build() );
         }
 

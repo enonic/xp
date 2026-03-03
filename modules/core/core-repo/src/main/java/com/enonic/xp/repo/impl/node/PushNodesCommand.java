@@ -1,6 +1,5 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -12,6 +11,7 @@ import java.util.stream.Collectors;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeCompareStatus;
@@ -21,7 +21,6 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
-import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.node.PushNodeParams;
 import com.enonic.xp.node.PushNodeResult;
 import com.enonic.xp.node.PushNodesListener;
@@ -34,6 +33,7 @@ import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeBranchEntries;
 import com.enonic.xp.repo.impl.NodeBranchEntry;
+import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.repo.impl.SearchPreference;
 import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.branch.storage.NodeFactory;
@@ -44,8 +44,6 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-
-import static com.enonic.xp.repo.impl.node.NodeConstants.CLOCK;
 
 public class PushNodesCommand
     extends AbstractNodeCommand
@@ -166,8 +164,7 @@ public class PushNodesCommand
 
         final PushNodesResult result = builder.build();
 
-        final InternalContext targetContext =
-            InternalContext.create( internalContext ).branch( params.getTarget() ).build();
+        final InternalContext targetContext = InternalContext.create( internalContext ).branch( params.getTarget() ).build();
 
         for ( SuccessfulPush toPush : toPushEntries )
         {
@@ -211,7 +208,7 @@ public class PushNodesCommand
             .name( nbe.getNodePath().getName() )
             .parentPath( nbe.getNodePath().getParentPath() )
             .data( processedData )
-            .timestamp( Instant.now( CLOCK ) )
+            .timestamp( Millis.now() )
             .build();
 
         final NodeVersionData stored = this.nodeStorageService.store( StoreNodeParams.newVersion( changedNode ), internalContext );

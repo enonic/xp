@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -23,6 +22,7 @@ import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.dump.DumpService;
 import com.enonic.xp.dump.DumpUpgradeResult;
@@ -105,8 +105,9 @@ public class DumpServiceImpl
 
     @Activate
     public DumpServiceImpl( @Reference EventPublisher eventPublisher, @Reference BlobStore blobStore, @Reference NodeService nodeService,
-                            @Reference RepositoryEntryService repositoryEntryService, @Reference NodeRepositoryService nodeRepositoryService,
-                            @Reference NodeStorageService nodeStorageService, @Reference RepoConfigurationDynamic repoConfiguration )
+                            @Reference RepositoryEntryService repositoryEntryService,
+                            @Reference NodeRepositoryService nodeRepositoryService, @Reference NodeStorageService nodeStorageService,
+                            @Reference RepoConfigurationDynamic repoConfiguration )
     {
         this.xpVersion = VersionInfo.get().getVersion();
         this.blobStore = blobStore;
@@ -150,10 +151,7 @@ public class DumpServiceImpl
 
             if ( params.getUpgradeListener() != null )
             {
-                final long total = dumpUpgraders.stream().
-                    map( DumpUpgrader::getModelVersion ).
-                    filter( modelVersion::lessThan ).
-                    count();
+                final long total = dumpUpgraders.stream().map( DumpUpgrader::getModelVersion ).filter( modelVersion::lessThan ).count();
 
                 params.getUpgradeListener().total( total );
             }
@@ -182,7 +180,7 @@ public class DumpServiceImpl
         return result.build();
     }
 
-    private List<DumpUpgrader> createDumpUpgraders(final Path basePath)
+    private List<DumpUpgrader> createDumpUpgraders( final Path basePath )
     {
         return List.of( new MissingModelVersionDumpUpgrader(), new VersionIdDumpUpgrader( basePath ),
                         new FlattenedPageDumpUpgrader( basePath ), new IndexAccessSegmentsDumpUpgrader( basePath ),
@@ -193,9 +191,7 @@ public class DumpServiceImpl
     private void updateDumpModelVersion( final Path basePath, final String dumpName, final Version modelVersion )
     {
         final DumpMeta dumpMeta = getDumpMeta( basePath, dumpName );
-        final DumpMeta updatedDumpMeta = DumpMeta.create( dumpMeta ).
-            modelVersion( modelVersion ).
-            build();
+        final DumpMeta updatedDumpMeta = DumpMeta.create( dumpMeta ).modelVersion( modelVersion ).build();
 
         final FileDumpWriter fileDumpWriter = FileDumpWriter.create( ensureBasePath(), dumpName, blobStore );
         try (fileDumpWriter)
@@ -233,7 +229,7 @@ public class DumpServiceImpl
             writer.writeDumpMetaData( DumpMeta.create()
                                           .xpVersion( this.xpVersion )
                                           .modelVersion( DumpConstants.MODEL_VERSION )
-                                          .timestamp( Instant.now() )
+                                          .timestamp( Millis.now() )
                                           .systemDumpResult( systemDumpResult )
                                           .build() );
 
@@ -304,21 +300,16 @@ public class DumpServiceImpl
             .map( RepositoryEntry::asRepository )
             .collect( Collectors.toMap( Repository::getId, Function.identity() ) );
 
-        final List<RepositoryId> missingRepositories = params.getRepositories()
-            .stream()
-            .filter( repositoryId -> !allRepositories.containsKey( repositoryId ) )
-            .toList();
+        final List<RepositoryId> missingRepositories =
+            params.getRepositories().stream().filter( repositoryId -> !allRepositories.containsKey( repositoryId ) ).toList();
 
         if ( !missingRepositories.isEmpty() )
         {
             LOG.warn( "Requested repositories not found and will be skipped during dump: {}", missingRepositories );
         }
 
-        final List<Repository> reposToDump = params.getRepositories()
-            .stream()
-            .filter( allRepositories::containsKey )
-            .map( allRepositories::get )
-            .toList();
+        final List<Repository> reposToDump =
+            params.getRepositories().stream().filter( allRepositories::containsKey ).map( allRepositories::get ).toList();
         final Repository systemRepo = allRepositories.get( SystemConstants.SYSTEM_REPO_ID );
 
         if ( params.getListener() != null )
@@ -562,9 +553,7 @@ public class DumpServiceImpl
                     throw new RepoLoadException(
                         "Cannot load system-dump; upgrade is not possible on archived dump; unarchive and upgrade the system-dump" );
                 }
-                final SystemDumpUpgradeParams dumpUpgradeParams = SystemDumpUpgradeParams.create().
-                    dumpName( params.getDumpName() ).
-                    build();
+                final SystemDumpUpgradeParams dumpUpgradeParams = SystemDumpUpgradeParams.create().dumpName( params.getDumpName() ).build();
                 doUpgrade( basePath, dumpUpgradeParams );
             }
             else
@@ -576,15 +565,17 @@ public class DumpServiceImpl
     }
 
     private void initAndLoad( final boolean includeVersions, final SystemLoadResult.Builder results, final DumpReader dumpReader,
-                      final RepositoryId repository, RepositorySettings settings, PropertyTree data, AttachedBinaries attachedBinaries )
+                              final RepositoryId repository, RepositorySettings settings, PropertyTree data,
+                              AttachedBinaries attachedBinaries )
     {
         initializeRepo( repository, settings, data, attachedBinaries );
         doLoadRepository( repository, includeVersions, dumpReader, results );
 
-        ContextBuilder.from( ContextAccessor.current() ).
-            repositoryId( repository ).
-            branch( RepositoryConstants.MASTER_BRANCH ).
-            build().runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
+        ContextBuilder.from( ContextAccessor.current() )
+            .repositoryId( repository )
+            .branch( RepositoryConstants.MASTER_BRANCH )
+            .build()
+            .runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
     }
 
     private void doDeleteRepository( final RepositoryId repositoryId )
@@ -600,20 +591,18 @@ public class DumpServiceImpl
     private void initializeRepo( final RepositoryId repositoryId, RepositorySettings settings, PropertyTree data,
                                  AttachedBinaries attachedBinaries )
     {
-        final CreateRepositoryIndexParams params = CreateRepositoryIndexParams.create().
-            repositoryId( repositoryId ).
-            repositorySettings( settings ).
-            build();
+        final CreateRepositoryIndexParams params =
+            CreateRepositoryIndexParams.create().repositoryId( repositoryId ).repositorySettings( settings ).build();
 
         this.nodeRepositoryService.create( params );
 
-        final RepositoryEntry createRepositoryParams = RepositoryEntry.create().
-            id( repositoryId ).
-            settings( settings ).
-            data( data ).
-            branches( Branches.from( RepositoryConstants.MASTER_BRANCH ) ).
-            attachments( attachedBinaries ).
-            build();
+        final RepositoryEntry createRepositoryParams = RepositoryEntry.create()
+            .id( repositoryId )
+            .settings( settings )
+            .data( data )
+            .branches( Branches.from( RepositoryConstants.MASTER_BRANCH ) )
+            .attachments( attachedBinaries )
+            .build();
 
         this.repositoryEntryService.createRepositoryEntry( createRepositoryParams );
     }
@@ -639,15 +628,15 @@ public class DumpServiceImpl
     {
         LOG.info( "Loading repository [" + repositoryId + "]" );
 
-        builder.add( RepoLoader.create().
-            reader( dumpReader ).
-            nodeService( this.nodeService ).
-            blobStore( this.blobStore ).
-            includeVersions( includeVersions ).
-            repositoryEntryService( this.repositoryEntryService ).
-            repositoryId( repositoryId ).
-            build().
-            execute() );
+        builder.add( RepoLoader.create()
+                         .reader( dumpReader )
+                         .nodeService( this.nodeService )
+                         .blobStore( this.blobStore )
+                         .includeVersions( includeVersions )
+                         .repositoryEntryService( this.repositoryEntryService )
+                         .repositoryId( repositoryId )
+                         .build()
+                         .execute() );
     }
 
     private Path ensureBasePath()

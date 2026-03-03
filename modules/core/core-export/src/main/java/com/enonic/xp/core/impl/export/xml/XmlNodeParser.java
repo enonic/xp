@@ -4,7 +4,6 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -55,7 +54,7 @@ public final class XmlNodeParser
         }
 
         final String timestampString = root.getChildValue( "timestamp" );
-        this.builder.timestamp( nullToEmpty( timestampString ).isBlank() ? null : Instant.parse( timestampString ).truncatedTo( ChronoUnit.MILLIS ) );
+        this.builder.timestamp( nullToEmpty( timestampString ).isBlank() ? null : Instant.parse( timestampString ) );
 
         this.builder.childOrder( ChildOrder.from( root.getChildValue( "childOrder" ) ) );
         this.builder.nodeType( NodeType.from( root.getChildValue( "nodeType" ) ) );
@@ -273,12 +272,12 @@ public final class XmlNodeParser
 
     private IndexConfig parseIndexConfig( final DomElement root )
     {
-        final IndexConfig.Builder builder = IndexConfig.create().
-            decideByType( root.getChildValueAs( "decideByType", Boolean.class, false ) ).
-            enabled( root.getChildValueAs( "enabled", Boolean.class, false ) ).
-            fulltext( root.getChildValueAs( "fulltext", Boolean.class, false ) ).
-            nGram( root.getChildValueAs( "nGram", Boolean.class, false ) ).
-            includeInAllText( root.getChildValueAs( "includeInAllText", Boolean.class, false ) );
+        final IndexConfig.Builder builder = IndexConfig.create()
+            .decideByType( root.getChildValueAs( "decideByType", Boolean.class, false ) )
+            .enabled( root.getChildValueAs( "enabled", Boolean.class, false ) )
+            .fulltext( root.getChildValueAs( "fulltext", Boolean.class, false ) )
+            .nGram( root.getChildValueAs( "nGram", Boolean.class, false ) )
+            .includeInAllText( root.getChildValueAs( "includeInAllText", Boolean.class, false ) );
 
         final DomElement indexValueProcessors = root.getChild( "indexValueProcessors" );
         if ( indexValueProcessors != null )
@@ -358,10 +357,7 @@ public final class XmlNodeParser
     {
         if ( languages != null )
         {
-            return languages.getChildren().
-                stream().
-                map( DomElement::getValue ).
-                collect( Collectors.toList() );
+            return languages.getChildren().stream().map( DomElement::getValue ).collect( Collectors.toList() );
         }
 
         return Collections.emptyList();

@@ -12,6 +12,7 @@ import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.Mixins;
 import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.content.WorkflowInfo;
+import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.page.Page;
@@ -65,7 +66,7 @@ public class CreateContentTranslatorParams
 
     private CreateContentTranslatorParams( Builder builder )
     {
-        final Instant now = Instant.now();
+        final Instant now = Millis.now();
 
         this.data = builder.data;
         this.mixins = builder.mixins;
