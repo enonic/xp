@@ -3,9 +3,11 @@ package com.enonic.xp.repository;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.BinaryAttachment;
 
+@PublicApi
 public final class EditableRepository
 {
     public final Repository source;

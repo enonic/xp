@@ -5,6 +5,9 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public abstract class SuggestionEntry<OPTION extends SuggestionOption>
 {
     private final String text;

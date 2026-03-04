@@ -8,6 +8,9 @@ import java.util.Properties;
 
 import com.google.common.collect.Maps;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class ConfigBuilder
 {
     private final Map<String, String> map;

@@ -2,6 +2,9 @@ package com.enonic.xp.content;
 
 import java.util.Objects;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class ContentValidityParams
 {
     private final ContentIds contentIds;

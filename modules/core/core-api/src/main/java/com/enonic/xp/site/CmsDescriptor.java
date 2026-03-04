@@ -3,11 +3,13 @@ package com.enonic.xp.site;
 import java.time.Instant;
 import java.util.Objects;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.Form;
 
 import static java.util.Objects.requireNonNullElse;
 
+@PublicApi
 public final class CmsDescriptor
 {
     private final ApplicationKey applicationKey;

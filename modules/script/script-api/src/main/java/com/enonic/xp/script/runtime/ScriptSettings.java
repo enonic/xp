@@ -5,6 +5,9 @@ import java.util.function.Supplier;
 
 import com.google.common.collect.ImmutableMap;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class ScriptSettings
 {
     private final ImmutableMap<Class, Supplier> bindings;

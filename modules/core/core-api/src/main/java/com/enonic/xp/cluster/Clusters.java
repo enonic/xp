@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class Clusters
     implements Iterable<Cluster>
 {

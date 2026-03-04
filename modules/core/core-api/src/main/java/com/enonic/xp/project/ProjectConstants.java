@@ -1,7 +1,9 @@
 package com.enonic.xp.project;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.repository.RepositoryConstants;
 
+@PublicApi
 public final class ProjectConstants
 {
     public static final String PROJECT_REPO_ID_PREFIX = "com.enonic.cms.";

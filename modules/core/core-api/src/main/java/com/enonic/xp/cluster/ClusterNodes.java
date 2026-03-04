@@ -5,8 +5,10 @@ import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableSet;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
+@PublicApi
 public final class  ClusterNodes
     extends AbstractImmutableEntitySet<ClusterNode>
 {

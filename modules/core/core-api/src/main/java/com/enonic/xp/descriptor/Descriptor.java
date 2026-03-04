@@ -2,8 +2,10 @@ package com.enonic.xp.descriptor;
 
 import java.util.Objects;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 
+@PublicApi
 public abstract class Descriptor
 {
     private final DescriptorKey key;

@@ -2,6 +2,9 @@ package com.enonic.xp.cluster;
 
 import java.util.Objects;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class ClusterHealth
 {
     private final ClusterHealthStatus status;

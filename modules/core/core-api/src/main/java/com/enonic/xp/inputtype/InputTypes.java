@@ -5,6 +5,9 @@ import java.util.Iterator;
 
 import com.google.common.collect.ImmutableMap;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class InputTypes
     implements Iterable<InputType>, InputTypeResolver
 {

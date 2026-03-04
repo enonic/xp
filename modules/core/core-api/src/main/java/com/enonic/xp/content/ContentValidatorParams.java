@@ -4,11 +4,13 @@ import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.schema.content.ContentType;
 
+@PublicApi
 public final class ContentValidatorParams
 {
     private final ContentId contentId;

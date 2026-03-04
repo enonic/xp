@@ -3,9 +3,11 @@ package com.enonic.xp.content;
 import java.util.List;
 import java.util.Objects;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.schema.mixin.MixinName;
 
+@PublicApi
 public final class MixinConfigValidationError
     extends DataValidationError
 {

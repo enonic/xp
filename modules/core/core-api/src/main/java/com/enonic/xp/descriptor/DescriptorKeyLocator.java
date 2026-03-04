@@ -1,8 +1,10 @@
 package com.enonic.xp.descriptor;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.resource.ResourceService;
 
+@PublicApi
 public final class DescriptorKeyLocator
 {
     private final ResourceService service;

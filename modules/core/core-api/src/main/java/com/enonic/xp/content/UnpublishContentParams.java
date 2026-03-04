@@ -2,6 +2,9 @@ package com.enonic.xp.content;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class UnpublishContentParams
 {
     private final ContentIds contentIds;

@@ -2,6 +2,9 @@ package com.enonic.xp.portal.url;
 
 import java.util.Arrays;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public enum ContextPathType
 {
     VHOST( "vhost" ), RELATIVE( "relative" );

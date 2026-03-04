@@ -5,8 +5,10 @@ import java.util.Objects;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.util.DoubleHelper;
 
+@PublicApi
 public final class Cropping
 {
 

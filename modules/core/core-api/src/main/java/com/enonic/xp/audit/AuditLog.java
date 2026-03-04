@@ -3,11 +3,13 @@ package com.enonic.xp.audit;
 import java.time.Instant;
 import java.util.Objects;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.security.PrincipalKey;
 
 import static java.util.Objects.requireNonNull;
 
+@PublicApi
 public final class AuditLog
 {
     private final AuditLogId id;

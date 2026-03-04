@@ -5,8 +5,11 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.enonic.xp.annotation.PublicApi;
+
 // Image orientation values from EXIF metadata
 // See http://www.impulseadventure.com/photo/exif-orientation.html
+@PublicApi
 public enum ImageOrientation
 {
     TopLeft( 1 ), // 0th row at top, 0th column at left

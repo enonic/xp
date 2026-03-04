@@ -2,9 +2,11 @@ package com.enonic.xp.issue;
 
 import java.time.Instant;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 
+@PublicApi
 public class Issue
 {
     private final IssueId id;

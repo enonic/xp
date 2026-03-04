@@ -5,6 +5,9 @@ import java.util.Map;
 import jakarta.websocket.CloseReason;
 import jakarta.websocket.Session;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class WebSocketEvent
 {
     private final WebSocketEventType type;

@@ -2,8 +2,10 @@ package com.enonic.xp.issue;
 
 import java.util.Objects;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.content.ContentId;
 
+@PublicApi
 public final class PublishRequestItem
 {
     private final ContentId id;

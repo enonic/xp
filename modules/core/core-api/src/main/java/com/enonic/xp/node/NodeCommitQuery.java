@@ -1,7 +1,9 @@
 package com.enonic.xp.node;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.query.expr.OrderExpressions;
 
+@PublicApi
 public final class NodeCommitQuery
     extends AbstractQuery
 {

@@ -2,8 +2,10 @@ package com.enonic.xp.node;
 
 import java.time.Instant;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.security.PrincipalKey;
 
+@PublicApi
 public final class ImportNodeCommitParams
 {
     private final NodeCommitId nodeCommitId;

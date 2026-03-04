@@ -1,5 +1,8 @@
 package com.enonic.xp.trace;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class TraceEvent
 {
     public enum Type

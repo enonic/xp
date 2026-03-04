@@ -2,6 +2,9 @@ package com.enonic.xp.query.suggester;
 
 import java.util.Objects;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public abstract class SuggestionQuery
 {
     private final String name;

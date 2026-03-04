@@ -22,6 +22,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.math.DoubleMath;
 
+import com.enonic.xp.annotation.PublicApi;
+
 /**
  * A generic value wrapper that can hold different types of values such as String, Number, Boolean, List, and Map, similar to JSON values.
  * It provides methods to access and convert the underlying value in a type-safe manner.
@@ -29,6 +31,7 @@ import com.google.common.math.DoubleMath;
  * Null values are not supported.
  */
 @NullMarked
+@PublicApi
 public final class GenericValue
     implements Serializable
 {

@@ -4,9 +4,11 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Objects;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.project.ProjectName;
 
+@PublicApi
 public final class ImportContentParams
 {
     private final CreateAttachments attachments;

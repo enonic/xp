@@ -1,5 +1,8 @@
 package com.enonic.xp.form;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public abstract class InputVisitor
 {
     public final void traverse( final Iterable<? extends FormItem> items )

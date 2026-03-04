@@ -2,6 +2,9 @@ package com.enonic.xp.web;
 
 import java.util.EnumSet;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public enum HttpMethod
 {
     GET, POST, HEAD, OPTIONS, PUT, DELETE, TRACE, CONNECT, PATCH, PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, LOCK, UNLOCK;

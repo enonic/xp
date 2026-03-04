@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class Segment
 {
     public static final int SEGMENT_LEVEL_DEPTH = 2;

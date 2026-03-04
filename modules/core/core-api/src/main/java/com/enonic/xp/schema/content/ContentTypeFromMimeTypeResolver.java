@@ -5,6 +5,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class ContentTypeFromMimeTypeResolver
 {
     private static final Map<String, ContentTypeName> MAP = new HashMap<>();

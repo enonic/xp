@@ -2,6 +2,9 @@ package com.enonic.xp.node;
 
 import com.google.common.collect.ImmutableMap;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class SortNodeResult
 {
     private final Node node;

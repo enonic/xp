@@ -5,6 +5,9 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public enum HtmlTag
 {
     HEAD_BEGIN( "headBegin" ),

@@ -1,5 +1,8 @@
 package com.enonic.xp.suggester;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class TermSuggestionEntry
     extends SuggestionEntry<TermSuggestionOption>
 {

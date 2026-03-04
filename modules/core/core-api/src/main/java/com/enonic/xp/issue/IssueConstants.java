@@ -1,5 +1,6 @@
 package com.enonic.xp.issue;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.content.ContentIndexPath;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.NodeName;
@@ -8,6 +9,7 @@ import com.enonic.xp.node.NodeType;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 
+@PublicApi
 public final class IssueConstants
 {
     public static final String ISSUE_ROOT_NAME = "issues";

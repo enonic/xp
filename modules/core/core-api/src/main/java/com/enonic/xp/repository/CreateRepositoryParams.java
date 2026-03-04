@@ -2,10 +2,12 @@ package com.enonic.xp.repository;
 
 import java.util.Objects;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.security.acl.AccessControlList;
 
+@PublicApi
 public final class CreateRepositoryParams
 {
     private final RepositoryId repositoryId;

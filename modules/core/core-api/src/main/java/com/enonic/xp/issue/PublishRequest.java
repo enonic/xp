@@ -1,8 +1,10 @@
 package com.enonic.xp.issue;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 
+@PublicApi
 public final class PublishRequest
 {
     private final ContentIds excludeIds;

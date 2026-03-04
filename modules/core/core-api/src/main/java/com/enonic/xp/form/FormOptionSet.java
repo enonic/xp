@@ -8,10 +8,12 @@ import java.util.stream.StreamSupport;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.schema.LocalizedText;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
+@PublicApi
 public final class FormOptionSet
     extends FormItem
     implements Iterable<FormOptionSetOption>

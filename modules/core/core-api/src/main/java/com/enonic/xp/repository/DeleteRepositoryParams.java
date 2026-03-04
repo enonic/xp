@@ -1,5 +1,8 @@
 package com.enonic.xp.repository;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class DeleteRepositoryParams
 {
     private final RepositoryId repositoryId;

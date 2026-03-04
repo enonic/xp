@@ -3,6 +3,9 @@ package com.enonic.xp.resource;
 import java.util.Objects;
 import java.util.function.Function;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class ResourceProcessor<K, V>
 {
     private final K key;

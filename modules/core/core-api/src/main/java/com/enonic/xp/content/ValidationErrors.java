@@ -8,6 +8,9 @@ import java.util.stream.Stream;
 
 import com.google.common.collect.ImmutableList;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class ValidationErrors
 {
     private final ImmutableList<ValidationError> errors;

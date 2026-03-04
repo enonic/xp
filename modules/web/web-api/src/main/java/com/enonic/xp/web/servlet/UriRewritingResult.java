@@ -1,5 +1,8 @@
 package com.enonic.xp.web.servlet;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class UriRewritingResult
 {
     private final String rewrittenUri;

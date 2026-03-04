@@ -9,6 +9,9 @@ import com.google.common.collect.ImmutableMap;
 import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletContext;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class FilterConfigInitParametersOverride
     implements FilterConfig
 {

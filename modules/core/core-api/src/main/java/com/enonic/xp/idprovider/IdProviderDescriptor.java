@@ -1,8 +1,10 @@
 package com.enonic.xp.idprovider;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.Form;
 
+@PublicApi
 public final class IdProviderDescriptor
 {
     private final ApplicationKey key;

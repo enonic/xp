@@ -6,6 +6,9 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class Tracer
 {
     private static final Tracer INSTANCE = new Tracer();

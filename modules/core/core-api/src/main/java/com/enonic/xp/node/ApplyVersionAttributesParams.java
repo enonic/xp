@@ -8,6 +8,8 @@ import org.jspecify.annotations.Nullable;
 
 import com.google.common.collect.ImmutableSet;
 
+import com.enonic.xp.annotation.PublicApi;
+
 /**
  * Represents the parameters used to apply attributes to a specific node version.
  * This class encapsulates details about the node version and the attributes
@@ -15,6 +17,7 @@ import com.google.common.collect.ImmutableSet;
  * See {@link NodeService#applyVersionAttributes(ApplyVersionAttributesParams)} for more details.
  */
 @NullMarked
+@PublicApi
 public final class ApplyVersionAttributesParams
 {
     private final NodeVersionId nodeVersionId;

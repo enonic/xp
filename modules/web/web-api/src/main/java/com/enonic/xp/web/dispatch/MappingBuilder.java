@@ -16,6 +16,9 @@ import jakarta.servlet.Servlet;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class MappingBuilder
 {
     private final List<String> connectors;

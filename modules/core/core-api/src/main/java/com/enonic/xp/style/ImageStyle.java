@@ -5,10 +5,12 @@ import java.util.Objects;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.schema.LocalizedText;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
+@PublicApi
 public final class ImageStyle
 {
     private final String name;

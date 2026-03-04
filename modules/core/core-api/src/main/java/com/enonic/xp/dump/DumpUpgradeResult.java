@@ -4,8 +4,10 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.util.Version;
 
+@PublicApi
 public final class DumpUpgradeResult
 {
     private final Version initialVersion;

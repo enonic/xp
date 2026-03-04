@@ -3,10 +3,12 @@ package com.enonic.xp.audit;
 import java.time.Instant;
 import java.util.Objects;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.security.PrincipalKey;
 
+@PublicApi
 public final class LogAuditLogParams
 {
     private final String type;

@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class WebSocketConfig
 {
     private List<String> subProtocols = List.of();

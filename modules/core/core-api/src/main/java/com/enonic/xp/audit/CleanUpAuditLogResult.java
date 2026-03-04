@@ -1,5 +1,8 @@
 package com.enonic.xp.audit;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class CleanUpAuditLogResult
 {
     private final long deleted;

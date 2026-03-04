@@ -1,5 +1,8 @@
 package com.enonic.xp.inputtype;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class InputTypeNotFoundException
     extends RuntimeException
 {

@@ -2,6 +2,7 @@ package com.enonic.xp.portal.handler;
 
 import org.jspecify.annotations.NullMarked;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.security.RoleKeys;
@@ -9,6 +10,7 @@ import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.dispatch.DispatchConstants;
 
+@PublicApi
 public final class WebHandlerHelper
 {
     public static void checkAdminAccess( final WebRequest webRequest )

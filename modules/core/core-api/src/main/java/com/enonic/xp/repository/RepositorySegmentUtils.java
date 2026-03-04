@@ -1,8 +1,10 @@
 package com.enonic.xp.repository;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.blob.SegmentLevel;
 
+@PublicApi
 public final class RepositorySegmentUtils
 {
     private RepositorySegmentUtils()

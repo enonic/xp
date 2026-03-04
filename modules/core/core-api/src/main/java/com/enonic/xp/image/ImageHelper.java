@@ -16,6 +16,9 @@ import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageOutputStream;
 import javax.imageio.stream.MemoryCacheImageOutputStream;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class ImageHelper
 {
     private ImageHelper()

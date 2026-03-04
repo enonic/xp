@@ -4,6 +4,9 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class VacuumResult
 {
     private final List<VacuumTaskResult> results;

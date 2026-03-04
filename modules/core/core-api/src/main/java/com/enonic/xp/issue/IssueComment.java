@@ -2,10 +2,12 @@ package com.enonic.xp.issue;
 
 import java.time.Instant;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.security.PrincipalKey;
 
+@PublicApi
 public final class IssueComment
 {
     private final NodeId id;

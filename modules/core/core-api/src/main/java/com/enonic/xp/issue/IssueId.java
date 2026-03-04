@@ -2,6 +2,9 @@ package com.enonic.xp.issue;
 
 import java.util.UUID;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class IssueId
 {
     private final UUID id;

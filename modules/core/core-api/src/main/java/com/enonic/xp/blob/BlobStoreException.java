@@ -1,5 +1,8 @@
 package com.enonic.xp.blob;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class BlobStoreException
     extends RuntimeException
 {

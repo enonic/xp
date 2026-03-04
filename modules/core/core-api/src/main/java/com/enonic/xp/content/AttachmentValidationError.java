@@ -3,8 +3,10 @@ package com.enonic.xp.content;
 import java.util.List;
 import java.util.Objects;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.util.BinaryReference;
 
+@PublicApi
 public final class AttachmentValidationError
     extends ValidationError
 {

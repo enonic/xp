@@ -2,9 +2,11 @@ package com.enonic.xp.query.highlight;
 
 import java.util.Objects;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.query.highlight.constants.Encoder;
 import com.enonic.xp.query.highlight.constants.TagsSchema;
 
+@PublicApi
 public final class HighlightQuerySettings
     extends HighlightPropertySettings
 {

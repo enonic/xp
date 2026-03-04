@@ -2,8 +2,10 @@ package com.enonic.xp.site.processor;
 
 import java.util.Objects;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 
+@PublicApi
 public final class ResponseProcessorDescriptor
 {
     private final String name;

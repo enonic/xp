@@ -9,11 +9,13 @@ import java.util.HexFormat;
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.core.internal.security.MessageDigests;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 
+@PublicApi
 public final class AttachmentSerializer
 {
     private AttachmentSerializer()

@@ -9,8 +9,10 @@ import java.util.Optional;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableMap;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.convert.Converters;
 
+@PublicApi
 public final class Event
     implements Serializable
 {

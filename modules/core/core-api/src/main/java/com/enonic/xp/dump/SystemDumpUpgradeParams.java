@@ -1,7 +1,9 @@
 package com.enonic.xp.dump;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.upgrade.UpgradeListener;
 
+@PublicApi
 public final class SystemDumpUpgradeParams
 {
     private final String dumpName;

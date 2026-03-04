@@ -3,6 +3,9 @@ package com.enonic.xp.image;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class FocalPoint
 {
     public static final FocalPoint DEFAULT = new FocalPoint( 0.5, 0.5 );

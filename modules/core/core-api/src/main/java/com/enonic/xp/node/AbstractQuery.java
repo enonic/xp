@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.query.Query;
 import com.enonic.xp.query.aggregation.AggregationQueries;
 import com.enonic.xp.query.aggregation.AggregationQuery;
@@ -17,6 +18,7 @@ import com.enonic.xp.query.highlight.HighlightQuery;
 import com.enonic.xp.query.suggester.SuggestionQueries;
 import com.enonic.xp.query.suggester.SuggestionQuery;
 
+@PublicApi
 public class AbstractQuery
     implements Query
 {

@@ -1,5 +1,8 @@
 package com.enonic.xp.util;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class ByteSizeParser
 {
 

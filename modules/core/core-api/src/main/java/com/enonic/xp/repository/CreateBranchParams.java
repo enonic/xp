@@ -1,7 +1,9 @@
 package com.enonic.xp.repository;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 
+@PublicApi
 public final class CreateBranchParams
 {
     private final Branch branch;

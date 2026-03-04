@@ -2,10 +2,12 @@ package com.enonic.xp.schema.mixin;
 
 import java.util.Objects;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.schema.BaseSchema;
 
+@PublicApi
 public final class MixinDescriptor
     extends BaseSchema<MixinName>
 {

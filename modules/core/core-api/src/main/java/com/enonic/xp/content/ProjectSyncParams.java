@@ -2,8 +2,10 @@ package com.enonic.xp.content;
 
 import java.util.Objects;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.project.ProjectName;
 
+@PublicApi
 public final class ProjectSyncParams
 {
     private final ProjectName targetProject;

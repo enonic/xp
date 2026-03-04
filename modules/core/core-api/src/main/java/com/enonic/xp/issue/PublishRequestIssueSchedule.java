@@ -2,6 +2,9 @@ package com.enonic.xp.issue;
 
 import java.time.Instant;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class PublishRequestIssueSchedule
 {
     private final Instant from;

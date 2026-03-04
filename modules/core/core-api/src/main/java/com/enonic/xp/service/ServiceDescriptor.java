@@ -1,9 +1,11 @@
 package com.enonic.xp.service;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
 
+@PublicApi
 public final class ServiceDescriptor
 {
     private final DescriptorKey key;

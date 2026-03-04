@@ -4,10 +4,12 @@ import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.util.BinaryReference;
 
+@PublicApi
 public final class ReadImageParams
 {
     private static final int DEFAULT_BACKGROUND_COLOR = 0xFFFFFF;

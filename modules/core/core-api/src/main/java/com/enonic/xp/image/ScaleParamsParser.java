@@ -4,6 +4,9 @@ import java.util.Arrays;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class ScaleParamsParser
 {
     public ScaleParams parse( final String value )

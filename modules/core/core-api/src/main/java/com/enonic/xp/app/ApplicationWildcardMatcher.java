@@ -5,6 +5,9 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class ApplicationWildcardMatcher<T>
 {
     private static final String APP_WILDCARD = "${app}";

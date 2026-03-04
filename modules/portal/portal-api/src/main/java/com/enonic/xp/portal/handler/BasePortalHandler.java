@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.handler;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.PortalRequest;
@@ -11,6 +12,7 @@ import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.handler.BaseWebHandler;
 import com.enonic.xp.web.handler.WebHandlerChain;
 
+@PublicApi
 public abstract class BasePortalHandler
     extends BaseWebHandler
 {

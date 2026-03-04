@@ -4,9 +4,11 @@ import java.util.Objects;
 
 import org.jspecify.annotations.NonNull;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
+@PublicApi
 public final class WebException
     extends RuntimeException
 {

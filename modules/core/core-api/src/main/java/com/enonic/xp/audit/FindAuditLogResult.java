@@ -2,6 +2,9 @@ package com.enonic.xp.audit;
 
 import java.util.Objects;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class FindAuditLogResult
 {
     private final long total;

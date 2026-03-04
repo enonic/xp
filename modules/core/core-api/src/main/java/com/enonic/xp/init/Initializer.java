@@ -5,8 +5,10 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.exception.InitializationException;
 
+@PublicApi
 public abstract class Initializer
 {
     private static final Logger LOG = LoggerFactory.getLogger( Initializer.class );

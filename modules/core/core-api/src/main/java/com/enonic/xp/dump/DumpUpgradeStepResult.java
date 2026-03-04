@@ -2,8 +2,10 @@ package com.enonic.xp.dump;
 
 import java.util.Objects;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.util.Version;
 
+@PublicApi
 public final class DumpUpgradeStepResult
 {
     private final Version initialVersion;

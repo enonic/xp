@@ -5,9 +5,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repository.RepositoryId;
 
+@PublicApi
 public final class RepoDumpResult
     implements Iterable<BranchDumpResult>
 {

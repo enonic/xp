@@ -1,9 +1,11 @@
 package com.enonic.xp.issue;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 
+@PublicApi
 public final class IssueQuery
 {
     private static final int DEFAULT_FETCH_SIZE = 10;

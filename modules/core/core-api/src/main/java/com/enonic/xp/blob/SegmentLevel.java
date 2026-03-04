@@ -2,6 +2,9 @@ package com.enonic.xp.blob;
 
 import java.util.Objects;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class SegmentLevel
 {
     private final String value;

@@ -2,6 +2,9 @@ package com.enonic.xp.query;
 
 import java.util.ArrayList;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class QueryExplanation
 {
     private final float value;

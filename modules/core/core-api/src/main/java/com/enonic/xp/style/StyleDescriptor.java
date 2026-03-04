@@ -9,8 +9,10 @@ import java.util.Set;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 
+@PublicApi
 public final class StyleDescriptor
 {
     private final ApplicationKey applicationKey;

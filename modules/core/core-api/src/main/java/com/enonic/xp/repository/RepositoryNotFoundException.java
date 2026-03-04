@@ -1,7 +1,9 @@
 package com.enonic.xp.repository;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.exception.NotFoundException;
 
+@PublicApi
 public class RepositoryNotFoundException
     extends NotFoundException
 {

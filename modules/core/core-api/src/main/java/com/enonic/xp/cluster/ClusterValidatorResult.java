@@ -3,6 +3,9 @@ package com.enonic.xp.cluster;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class ClusterValidatorResult
 {
     private final List<ClusterValidationError> errors;

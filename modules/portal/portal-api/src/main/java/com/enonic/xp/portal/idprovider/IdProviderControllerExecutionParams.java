@@ -5,9 +5,11 @@ import com.google.common.base.Preconditions;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.security.IdProviderKey;
 
+@PublicApi
 public final class IdProviderControllerExecutionParams
 {
     private final IdProviderKey idProviderKey;

@@ -6,8 +6,10 @@ import java.util.Set;
 
 import com.google.common.collect.ImmutableMap;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.util.GenericValue;
 
+@PublicApi
 public final class Attributes
 {
     private final ImmutableMap<String, GenericValue> attrs;

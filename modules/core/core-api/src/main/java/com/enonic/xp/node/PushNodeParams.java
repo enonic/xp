@@ -2,8 +2,10 @@ package com.enonic.xp.node;
 
 import java.util.Objects;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 
+@PublicApi
 public final class PushNodeParams
 {
     private final NodeIds ids;

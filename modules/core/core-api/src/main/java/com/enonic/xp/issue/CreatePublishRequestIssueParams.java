@@ -1,5 +1,8 @@
 package com.enonic.xp.issue;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class CreatePublishRequestIssueParams
     extends CreateIssueParams
 {

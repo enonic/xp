@@ -2,8 +2,10 @@ package com.enonic.xp.init;
 
 import java.util.Objects;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.index.IndexService;
 
+@PublicApi
 public abstract class ExternalInitializer
     extends Initializer
 {

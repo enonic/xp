@@ -1,5 +1,8 @@
 package com.enonic.xp.query.suggester;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class TermSuggestionQuery
     extends SuggestionQuery
 {

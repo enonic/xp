@@ -3,8 +3,10 @@ package com.enonic.xp.script.event;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 
+@PublicApi
 public final class ScriptEventListenerBuilder
 {
     private ApplicationKey application;

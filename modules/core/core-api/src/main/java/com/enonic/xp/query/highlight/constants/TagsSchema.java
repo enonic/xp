@@ -1,5 +1,8 @@
 package com.enonic.xp.query.highlight.constants;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public enum TagsSchema
 {
     STYLED( "styled" );

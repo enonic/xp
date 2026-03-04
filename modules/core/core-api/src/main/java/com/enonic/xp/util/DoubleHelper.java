@@ -3,6 +3,9 @@ package com.enonic.xp.util;
 
 import com.google.common.math.DoubleMath;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class DoubleHelper
 {
     private static final Double EPSILON = 1.11e-16;

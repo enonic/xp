@@ -2,6 +2,9 @@ package com.enonic.xp.server;
 
 import org.jspecify.annotations.NonNull;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public enum RunMode
 {
     DEV, PROD;

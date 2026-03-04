@@ -1,5 +1,8 @@
 package com.enonic.xp.node;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class ImportNodeVersionParams
 {
     private final Node node;

@@ -3,6 +3,9 @@ package com.enonic.xp.node;
 import java.util.Collection;
 import java.util.Iterator;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class ResolveSyncWorkResult
     implements Iterable<NodeComparison>
 {

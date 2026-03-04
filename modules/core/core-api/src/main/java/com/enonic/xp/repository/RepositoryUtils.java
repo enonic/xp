@@ -3,10 +3,12 @@ package com.enonic.xp.repository;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.content.ContentConstants;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
+@PublicApi
 public final class RepositoryUtils
 {
     private static final String CONTENT_NAME_REGEX = "([a-z0-9\\-]+)";

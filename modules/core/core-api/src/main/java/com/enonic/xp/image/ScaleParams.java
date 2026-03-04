@@ -4,6 +4,9 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.joining;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class ScaleParams
 {
     private final String name;

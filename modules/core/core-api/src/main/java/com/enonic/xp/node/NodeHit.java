@@ -1,9 +1,11 @@
 package com.enonic.xp.node;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.highlight.HighlightedProperties;
 import com.enonic.xp.query.QueryExplanation;
 import com.enonic.xp.sortvalues.SortValuesProperty;
 
+@PublicApi
 public final class NodeHit
 {
     private final NodeId nodeId;

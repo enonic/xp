@@ -1,5 +1,8 @@
 package com.enonic.xp.vacuum;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class VacuumTaskResult
 {
     private final long processed;

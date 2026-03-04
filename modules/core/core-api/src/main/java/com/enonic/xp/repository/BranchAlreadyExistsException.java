@@ -3,9 +3,11 @@ package com.enonic.xp.repository;
 
 import java.text.MessageFormat;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.exception.DuplicateElementException;
 
+@PublicApi
 public final class BranchAlreadyExistsException
     extends DuplicateElementException
 {

@@ -4,6 +4,9 @@ import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class AuditLogUri
 {
     private final String value;

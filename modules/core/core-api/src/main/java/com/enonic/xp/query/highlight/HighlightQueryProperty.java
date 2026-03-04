@@ -3,9 +3,11 @@ package com.enonic.xp.query.highlight;
 import java.util.List;
 import java.util.Objects;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.query.highlight.constants.Fragmenter;
 import com.enonic.xp.query.highlight.constants.Order;
 
+@PublicApi
 public final class HighlightQueryProperty
 {
     private final String name;

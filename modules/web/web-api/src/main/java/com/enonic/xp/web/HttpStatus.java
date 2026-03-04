@@ -1,5 +1,8 @@
 package com.enonic.xp.web;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public enum HttpStatus
 {
     // Informational

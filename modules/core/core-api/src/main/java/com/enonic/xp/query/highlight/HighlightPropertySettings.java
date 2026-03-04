@@ -5,9 +5,11 @@ import java.util.Objects;
 
 import com.google.common.collect.ImmutableList;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.query.highlight.constants.Fragmenter;
 import com.enonic.xp.query.highlight.constants.Order;
 
+@PublicApi
 public class HighlightPropertySettings
 {
     private final Fragmenter fragmenter;

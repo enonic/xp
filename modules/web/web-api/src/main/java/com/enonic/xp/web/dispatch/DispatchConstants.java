@@ -2,6 +2,9 @@ package com.enonic.xp.web.dispatch;
 
 import java.util.List;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class DispatchConstants
 {
     public static final String VIRTUAL_HOST_PREFIX = "@";

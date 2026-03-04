@@ -1,5 +1,8 @@
 package com.enonic.xp.suggester;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public abstract class SuggestionOption
 {
     private final String text;

@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class ExtractedData
 {
     private final Map<String, List<String>> metadata;

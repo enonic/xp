@@ -7,8 +7,10 @@ import java.util.Properties;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.core.internal.Interpolator;
 
+@PublicApi
 public final class ConfigInterpolator
 {
     private static final String ENV_PREFIX = "env.";

@@ -4,10 +4,12 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.ValueType;
 
+@PublicApi
 public final class InputTypeValidationException
     extends RuntimeException
 {

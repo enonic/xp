@@ -3,6 +3,9 @@ package com.enonic.xp.util;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class Version
     implements Comparable<Version>
 {

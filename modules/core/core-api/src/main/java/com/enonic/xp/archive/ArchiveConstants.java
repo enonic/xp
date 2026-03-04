@@ -1,5 +1,6 @@
 package com.enonic.xp.archive;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.content.ContentIndexPath;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.NodeName;
@@ -11,6 +12,7 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
+@PublicApi
 public final class ArchiveConstants
 {
     public static final String ARCHIVE_ROOT_NAME = "archive";

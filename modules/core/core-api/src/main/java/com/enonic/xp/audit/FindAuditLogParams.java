@@ -3,8 +3,10 @@ package com.enonic.xp.audit;
 import java.time.Instant;
 import java.util.Objects;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.security.PrincipalKeys;
 
+@PublicApi
 public class FindAuditLogParams
 {
     public static final int DEFAULT_FETCH_SIZE = 10;

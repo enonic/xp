@@ -6,11 +6,13 @@ import java.util.List;
 
 import com.google.common.base.MoreObjects;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.UUID;
 
+@PublicApi
 public final class IdFilter
     extends FieldFilter
 {

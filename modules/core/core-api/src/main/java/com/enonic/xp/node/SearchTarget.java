@@ -2,10 +2,12 @@ package com.enonic.xp.node;
 
 import java.util.Objects;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.PrincipalKeys;
 
+@PublicApi
 public final class SearchTarget
 {
     private final RepositoryId repositoryId;

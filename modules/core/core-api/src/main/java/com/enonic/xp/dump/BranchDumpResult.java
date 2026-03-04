@@ -4,8 +4,10 @@ package com.enonic.xp.dump;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 
+@PublicApi
 public final class BranchDumpResult
 {
     private final Branch branch;
