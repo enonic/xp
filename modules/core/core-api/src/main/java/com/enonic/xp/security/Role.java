@@ -2,9 +2,7 @@ package com.enonic.xp.security;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class Role
     extends Principal
 {

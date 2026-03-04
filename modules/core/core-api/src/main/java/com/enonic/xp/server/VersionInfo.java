@@ -1,10 +1,8 @@
 package com.enonic.xp.server;
 
-import com.enonic.xp.annotation.PublicApi;
-
 import static com.google.common.base.Strings.isNullOrEmpty;
 
-@PublicApi
+
 public final class VersionInfo
 {
     private static VersionInfo INSTANCE;

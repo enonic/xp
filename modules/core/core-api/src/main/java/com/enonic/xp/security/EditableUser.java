@@ -2,10 +2,9 @@ package com.enonic.xp.security;
 
 import java.time.Instant;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.PropertyTree;
 
-@PublicApi
+
 public final class EditableUser
 {
     public final User source;
@@ -38,13 +37,13 @@ public final class EditableUser
 
     public User build()
     {
-        return User.create( this.source ).
-            displayName( displayName ).
-            email( email ).
-            login( login ).
-            key( key ).
-            modifiedTime( modifiedTime ).
-            profile( profile ).
-            build();
+        return User.create( this.source )
+            .displayName( displayName )
+            .email( email )
+            .login( login )
+            .key( key )
+            .modifiedTime( modifiedTime )
+            .profile( profile )
+            .build();
     }
 }

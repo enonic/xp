@@ -6,12 +6,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.project.ProjectName;
 
-@PublicApi
+
 public final class AttachmentUrlGeneratorParams
 {
     private final String baseUrl;

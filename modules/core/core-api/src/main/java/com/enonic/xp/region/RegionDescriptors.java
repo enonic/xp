@@ -5,9 +5,7 @@ import java.util.Iterator;
 
 import com.google.common.collect.ImmutableSet;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class RegionDescriptors
     implements Iterable<RegionDescriptor>
 {

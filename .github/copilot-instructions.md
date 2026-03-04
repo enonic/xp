@@ -89,10 +89,9 @@ Enonic XP is a Java-based web operating system and application platform. This re
 - Use `compileOnlyApi` for compile-time only dependencies like OSGi annotations
 
 ## Public API Guidelines
-- Mark public APIs with `@PublicApi` annotation
-- Public API exceptions should extend `BaseException`
 - Maintain backward compatibility for public APIs
 - Public API modules typically end with `-api`
+- Inside Public API is is possible to have `internal` subpackage to identify internal API, not intended for public use
 
 ## Documentation
 - Use JavaDoc for public APIs

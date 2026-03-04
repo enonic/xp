@@ -2,10 +2,9 @@ package com.enonic.xp.project;
 
 import java.util.Objects;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.attachment.CreateAttachment;
 
-@PublicApi
+
 public final class ModifyProjectIconParams
 {
     private final ProjectName name;

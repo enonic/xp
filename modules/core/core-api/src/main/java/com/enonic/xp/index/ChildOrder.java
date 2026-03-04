@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.content.ContentIndexPath;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.query.expr.FieldOrderExpr;
@@ -15,7 +14,7 @@ import com.enonic.xp.query.parser.QueryParser;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
-@PublicApi
+
 public final class ChildOrder
 {
     private static final OrderExpr DEFAULT_ORDER = FieldOrderExpr.create( NodeIndexPath.TIMESTAMP, OrderExpr.Direction.DESC );
@@ -46,25 +45,17 @@ public final class ChildOrder
 
     public static ChildOrder manualOrder()
     {
-        return ChildOrder.create().
-            add( MANUAL_ORDER ).
-            add( DEFAULT_ORDER ).
-            build();
+        return ChildOrder.create().add( MANUAL_ORDER ).add( DEFAULT_ORDER ).build();
     }
 
     public static ChildOrder reverseManualOrder()
     {
-        return ChildOrder.create().
-            add( MANUAL_ORDER_REVERSE ).
-            add( REVERSE_DEFAULT_ORDER ).
-            build();
+        return ChildOrder.create().add( MANUAL_ORDER_REVERSE ).add( REVERSE_DEFAULT_ORDER ).build();
     }
 
     public static ChildOrder defaultOrder()
     {
-        return ChildOrder.create().
-            add( DEFAULT_ORDER ).
-            build();
+        return ChildOrder.create().add( DEFAULT_ORDER ).build();
     }
 
     public static ChildOrder path()
@@ -89,9 +80,7 @@ public final class ChildOrder
 
     public static ChildOrder reversePublish()
     {
-        return ChildOrder.create().
-            add( PUBLISH_DESC ).
-            build();
+        return ChildOrder.create().add( PUBLISH_DESC ).build();
     }
 
     public static ChildOrder from( final String orderExpression )
@@ -165,9 +154,7 @@ public final class ChildOrder
     @Override
     public String toString()
     {
-        return this.orderExpressions.stream().
-            map( OrderExpr::toString ).
-            collect( Collectors.joining( ", " ) );
+        return this.orderExpressions.stream().map( OrderExpr::toString ).collect( Collectors.joining( ", " ) );
     }
 
     @Override

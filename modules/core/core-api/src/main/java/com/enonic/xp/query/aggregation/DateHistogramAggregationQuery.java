@@ -2,9 +2,7 @@ package com.enonic.xp.query.aggregation;
 
 import com.google.common.base.MoreObjects;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class DateHistogramAggregationQuery
     extends AbstractHistogramAggregationQuery<String>
 {
@@ -19,11 +17,12 @@ public final class DateHistogramAggregationQuery
     @Override
     public String toString()
     {
-        return MoreObjects.toStringHelper( this ).omitNullValues().
-            add( "name", getName() ).
-            add( "fieldName", getFieldName() ).
-            add( "format", format ).
-            toString();
+        return MoreObjects.toStringHelper( this )
+            .omitNullValues()
+            .add( "name", getName() )
+            .add( "fieldName", getFieldName() )
+            .add( "format", format )
+            .toString();
     }
 
     public String getFormat()

@@ -2,9 +2,7 @@ package com.enonic.xp.content;
 
 import java.util.Objects;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class MoveContentParams
 {
     private final ContentId contentId;

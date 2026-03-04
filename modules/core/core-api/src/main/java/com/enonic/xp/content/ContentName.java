@@ -4,10 +4,9 @@ import java.util.UUID;
 
 import org.jspecify.annotations.NullMarked;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.name.Name;
 
-@PublicApi
+
 @NullMarked
 public final class ContentName
     extends Name

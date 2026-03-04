@@ -5,13 +5,12 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.exception.NotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repository.RepositoryId;
 
-@PublicApi
+
 public final class ContentNotFoundException
     extends NotFoundException
 {

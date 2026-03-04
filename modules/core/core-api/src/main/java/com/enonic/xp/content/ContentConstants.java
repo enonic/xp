@@ -1,6 +1,5 @@
 package com.enonic.xp.content;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.NodeName;
@@ -18,7 +17,7 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
-@PublicApi
+
 public final class ContentConstants
 {
     public static final String DOCUMENT_INDEX_DEFAULT_ANALYZER = "document_index_default";

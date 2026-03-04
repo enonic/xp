@@ -10,13 +10,12 @@ import java.util.function.Function;
 import com.google.common.collect.Multimap;
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public abstract class MapGeneratorBase
     implements MapGenerator
 {
-    private static final long JS_MAX_SAFE_INTEGER = (1L << 53) - 1;
+    private static final long JS_MAX_SAFE_INTEGER = ( 1L << 53 ) - 1;
+
     private static final long JS_MIN_SAFE_INTEGER = -JS_MAX_SAFE_INTEGER;
 
     private Object root;

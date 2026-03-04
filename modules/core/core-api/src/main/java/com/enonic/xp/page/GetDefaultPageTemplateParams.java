@@ -1,12 +1,11 @@
 package com.enonic.xp.page;
 
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.schema.content.ContentTypeName;
 
-@PublicApi
+
 public final class GetDefaultPageTemplateParams
 {
     private final ContentId site;

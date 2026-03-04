@@ -5,12 +5,11 @@ import java.util.Objects;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.FormItemName;
 import com.enonic.xp.schema.mixin.MixinName;
 
-@PublicApi
+
 public final class MediaInfo
 {
     private final String mediaType;

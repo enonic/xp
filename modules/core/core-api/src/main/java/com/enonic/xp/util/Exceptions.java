@@ -2,9 +2,7 @@ package com.enonic.xp.util;
 
 import java.text.MessageFormat;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public abstract class Exceptions
 {
     public static final class Builder<T extends Throwable>
@@ -42,7 +40,7 @@ public abstract class Exceptions
      * Rethrows a checked exception as unchecked exception. This method tricks the compiler into
      * thinking the exception is unchecked, rather than wrapping the given exception in a new
      * {@code RuntimeException}.
-     *
+     * <p>
      * This method never returns. Nevertheless, it specifies a return type so it can be invoked as
      * {@code throw unchecked(e)} in contexts where an exception type is syntactically required
      * (e.g. when the enclosing method is non-void).

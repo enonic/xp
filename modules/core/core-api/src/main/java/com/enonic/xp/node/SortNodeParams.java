@@ -5,10 +5,9 @@ import java.util.Objects;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.index.ChildOrder;
 
-@PublicApi
+
 public final class SortNodeParams
 {
     private final NodeId nodeId;
@@ -156,8 +155,8 @@ public final class SortNodeParams
 
         public SortNodeParams build()
         {
-            Objects.requireNonNull( nodeId,  "nodeId is required" );
-            Objects.requireNonNull( childOrder,  "childOrder is required" );
+            Objects.requireNonNull( nodeId, "nodeId is required" );
+            Objects.requireNonNull( childOrder, "childOrder is required" );
             return new SortNodeParams( this );
         }
     }

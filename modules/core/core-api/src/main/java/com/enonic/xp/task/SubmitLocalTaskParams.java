@@ -2,9 +2,7 @@ package com.enonic.xp.task;
 
 import java.util.Objects;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class SubmitLocalTaskParams
 {
     private final RunnableTask runnableTask;

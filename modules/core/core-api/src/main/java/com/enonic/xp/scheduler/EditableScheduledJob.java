@@ -2,12 +2,11 @@ package com.enonic.xp.scheduler;
 
 import java.time.Instant;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.security.PrincipalKey;
 
-@PublicApi
+
 public final class EditableScheduledJob
 {
     private final ScheduledJobName name;
@@ -43,16 +42,16 @@ public final class EditableScheduledJob
 
     public ScheduledJob build()
     {
-        return ScheduledJob.create().
-            name( name ).
-            description( description ).
-            calendar( calendar ).
-            enabled( enabled ).
-            descriptor( descriptor ).
-            config( config ).
-            user( user ).
-            creator( creator ).
-            createdTime( createdTime ).
-            build();
+        return ScheduledJob.create()
+            .name( name )
+            .description( description )
+            .calendar( calendar )
+            .enabled( enabled )
+            .descriptor( descriptor )
+            .config( config )
+            .user( user )
+            .creator( creator )
+            .createdTime( createdTime )
+            .build();
     }
 }

@@ -4,9 +4,7 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class DeleteNodeResult
 {
     private final ImmutableList<Result> results;
@@ -39,7 +37,8 @@ public final class DeleteNodeResult
         {
         }
 
-        public Builder add( final Result result ) {
+        public Builder add( final Result result )
+        {
             this.builder.add( result );
             return this;
         }
@@ -50,6 +49,7 @@ public final class DeleteNodeResult
         }
     }
 
-    public record Result(NodeId nodeId, NodeVersionId nodeVersionId) {
+    public record Result(NodeId nodeId, NodeVersionId nodeVersionId)
+    {
     }
 }

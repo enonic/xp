@@ -6,10 +6,9 @@ import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableSet;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
-@PublicApi
+
 public final class ApplicationKeys
     extends AbstractImmutableEntitySet<ApplicationKey>
 {
@@ -41,7 +40,7 @@ public final class ApplicationKeys
     }
 
 
-    public static Collector <ApplicationKey, ?, ApplicationKeys> collector()
+    public static Collector<ApplicationKey, ?, ApplicationKeys> collector()
     {
         return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), ApplicationKeys::fromInternal );
     }

@@ -5,11 +5,10 @@ import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableSet;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 import com.enonic.xp.util.BinaryReference;
 
-@PublicApi
+
 public final class AttachedBinaries
     extends AbstractImmutableEntitySet<AttachedBinary>
 {
@@ -27,10 +26,7 @@ public final class AttachedBinaries
 
     public AttachedBinary getByBinaryReference( final BinaryReference reference )
     {
-        return this.stream()
-            .filter( attachedBinary -> reference.equals( attachedBinary.getBinaryReference() ) )
-            .findAny()
-            .orElse( null );
+        return this.stream().filter( attachedBinary -> reference.equals( attachedBinary.getBinaryReference() ) ).findAny().orElse( null );
     }
 
     public static AttachedBinaries from( final Iterable<AttachedBinary> attachedBinaries )

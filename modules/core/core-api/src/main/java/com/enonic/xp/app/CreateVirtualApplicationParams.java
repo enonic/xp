@@ -2,9 +2,7 @@ package com.enonic.xp.app;
 
 import java.util.Objects;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class CreateVirtualApplicationParams
 {
     private final ApplicationKey key;

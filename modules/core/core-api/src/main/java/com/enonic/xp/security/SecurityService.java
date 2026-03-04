@@ -2,12 +2,11 @@ package com.enonic.xp.security;
 
 import java.util.Optional;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.security.acl.IdProviderAccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.auth.AuthenticationToken;
 
-@PublicApi
+
 public interface SecurityService
 {
     IdProviders getIdProviders();

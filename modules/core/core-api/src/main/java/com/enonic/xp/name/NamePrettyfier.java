@@ -8,12 +8,10 @@ import java.util.regex.Pattern;
 import com.google.common.base.CharMatcher;
 import com.google.common.collect.ImmutableMap;
 
-import com.enonic.xp.annotation.PublicApi;
-
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
 
-@PublicApi
+
 public final class NamePrettyfier
 {
     private static final String NOT_ASCII = "[^\\p{ASCII}]";

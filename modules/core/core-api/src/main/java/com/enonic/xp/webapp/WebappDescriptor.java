@@ -2,11 +2,10 @@ package com.enonic.xp.webapp;
 
 import java.util.Objects;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.descriptor.DescriptorKeys;
 
-@PublicApi
+
 public final class WebappDescriptor
 {
     private final ApplicationKey applicationKey;

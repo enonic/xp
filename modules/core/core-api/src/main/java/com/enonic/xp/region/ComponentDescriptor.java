@@ -3,15 +3,14 @@ package com.enonic.xp.region;
 import java.time.Instant;
 import java.util.Objects;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.descriptor.Descriptor;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.form.Form;
-import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.schema.LocalizedText;
+import com.enonic.xp.util.GenericValue;
 
-@PublicApi
+
 public abstract class ComponentDescriptor
     extends Descriptor
 {

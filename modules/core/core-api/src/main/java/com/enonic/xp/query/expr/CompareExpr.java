@@ -6,9 +6,7 @@ import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class CompareExpr
     implements ConstraintExpr
 {

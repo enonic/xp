@@ -7,10 +7,9 @@ import java.util.regex.Pattern;
 
 import org.jspecify.annotations.NullMarked;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.core.internal.NameValidator;
 
-@PublicApi
+
 @NullMarked
 public final class ApplicationKey
     implements Serializable

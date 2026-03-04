@@ -3,11 +3,9 @@ package com.enonic.xp.node;
 import java.util.Set;
 import java.util.function.Function;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.content.CompareStatus;
 
-@PublicApi
+
 public final class SyncWorkResolverParams
 {
     private final Branch branch;

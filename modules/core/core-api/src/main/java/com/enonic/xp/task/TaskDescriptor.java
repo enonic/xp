@@ -2,12 +2,11 @@ package com.enonic.xp.task;
 
 import java.util.Objects;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.descriptor.Descriptor;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.form.Form;
 
-@PublicApi
+
 public final class TaskDescriptor
     extends Descriptor
 {

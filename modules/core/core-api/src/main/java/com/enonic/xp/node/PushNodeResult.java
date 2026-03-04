@@ -2,9 +2,7 @@ package com.enonic.xp.node;
 
 import java.util.Objects;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class PushNodeResult
 {
     private final NodeId nodeId;
@@ -18,7 +16,7 @@ public final class PushNodeResult
     private final Reason failureReason;
 
     private PushNodeResult( final NodeId nodeId, final NodePath nodePath, final NodeVersionId nodeVersionId, final NodePath targetPath,
-                           final Reason failureReason )
+                            final Reason failureReason )
     {
         this.nodeId = nodeId;
         this.nodeVersionId = nodeVersionId;

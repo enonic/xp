@@ -8,10 +8,9 @@ import java.util.function.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedSet;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.util.GlobPatternMatcher;
 
-@PublicApi
+
 public final class PatternIndexConfigDocument
     extends AbstractIndexConfigDocument
 {
@@ -34,8 +33,8 @@ public final class PatternIndexConfigDocument
     {
         super( builder );
         this.pathIndexConfigs = ImmutableSortedSet.copyOf( builder.pathIndexConfigs );
-        this.pathIndexConfigMap = builder.pathIndexConfigs.stream()
-            .collect( ImmutableMap.toImmutableMap( pic -> pic.getIndexPath(), Function.identity() ) );
+        this.pathIndexConfigMap =
+            builder.pathIndexConfigs.stream().collect( ImmutableMap.toImmutableMap( pic -> pic.getIndexPath(), Function.identity() ) );
         this.defaultConfig = builder.defaultConfig;
         this.allTextConfig = builder.allTextIndexConfig.build();
     }
@@ -109,8 +108,8 @@ public final class PatternIndexConfigDocument
             return false;
         }
         final PatternIndexConfigDocument that = (PatternIndexConfigDocument) o;
-        return Objects.equals( pathIndexConfigs, that.pathIndexConfigs ) &&
-            Objects.equals( defaultConfig, that.defaultConfig ) && Objects.equals( allTextConfig, that.allTextConfig );
+        return Objects.equals( pathIndexConfigs, that.pathIndexConfigs ) && Objects.equals( defaultConfig, that.defaultConfig ) &&
+            Objects.equals( allTextConfig, that.allTextConfig );
     }
 
     @Override
@@ -141,19 +140,14 @@ public final class PatternIndexConfigDocument
 
         public Builder add( final String path, final IndexConfig indexConfig )
         {
-            add( PathIndexConfig.create().path( IndexPath.from( path ) ).
-                indexConfig( indexConfig ).
-                build() );
+            add( PathIndexConfig.create().path( IndexPath.from( path ) ).indexConfig( indexConfig ).build() );
 
             return this;
         }
 
         public Builder add( final IndexPath path, final IndexConfig indexConfig )
         {
-            add( PathIndexConfig.create().
-                path( path ).
-                indexConfig( indexConfig ).
-                build() );
+            add( PathIndexConfig.create().path( path ).indexConfig( indexConfig ).build() );
 
             return this;
         }

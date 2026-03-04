@@ -7,10 +7,9 @@ import java.util.function.Supplier;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.style.StyleDescriptors;
 
-@PublicApi
+
 public final class ProcessHtmlParams
     extends AbstractUrlParams<ProcessHtmlParams>
 {

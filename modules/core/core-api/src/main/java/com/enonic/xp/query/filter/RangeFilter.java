@@ -2,10 +2,9 @@ package com.enonic.xp.query.filter;
 
 import com.google.common.base.MoreObjects;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.Value;
 
-@PublicApi
+
 public final class RangeFilter
     extends FieldFilter
 {
@@ -49,14 +48,14 @@ public final class RangeFilter
     @Override
     public String toString()
     {
-        return MoreObjects.toStringHelper( this ).
-            omitNullValues().
-            add( "fieldName", fieldName ).
-            add( "from", from ).
-            add( "to", to ).
-            add( "includeLower", includeLower ).
-            add( "includeUpper", includeUpper ).
-            toString();
+        return MoreObjects.toStringHelper( this )
+            .omitNullValues()
+            .add( "fieldName", fieldName )
+            .add( "from", from )
+            .add( "to", to )
+            .add( "includeLower", includeLower )
+            .add( "includeUpper", includeUpper )
+            .toString();
     }
 
     public static Builder create()

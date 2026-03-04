@@ -5,9 +5,7 @@ import java.util.stream.Stream;
 
 import com.google.common.collect.ImmutableMap;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class CompareContentResults
     implements Iterable<CompareContentResult>
 {

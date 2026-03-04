@@ -4,10 +4,9 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.index.ChildOrder;
 
-@PublicApi
+
 public final class SortContentParams
 {
     private final ContentId contentId;

@@ -11,9 +11,7 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteStreams;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class Icon
 {
     private final byte[] iconData;
@@ -84,12 +82,12 @@ public final class Icon
     @Override
     public String toString()
     {
-        return MoreObjects.toStringHelper( this ).
-            add( "mimeType", mimeType ).
-            add( "iconData", iconData ).
-            add( "size", getSize() ).
-            add( "modifiedTime", modifiedTime ).
-            toString();
+        return MoreObjects.toStringHelper( this )
+            .add( "mimeType", mimeType )
+            .add( "iconData", iconData )
+            .add( "size", getSize() )
+            .add( "modifiedTime", modifiedTime )
+            .toString();
     }
 
     public static Icon from( final byte[] iconData, final String mimeType, final Instant modifiedTime )

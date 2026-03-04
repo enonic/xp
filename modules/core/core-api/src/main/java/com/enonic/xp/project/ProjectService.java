@@ -2,10 +2,9 @@ package com.enonic.xp.project;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKeys;
 
-@PublicApi
+
 public interface ProjectService
 {
     Project create( CreateProjectParams params );

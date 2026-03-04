@@ -5,9 +5,7 @@ import java.util.Objects;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class UpdateMediaParams
 {
     private ContentId content;

@@ -4,10 +4,9 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.repository.RepositoryId;
 
-@PublicApi
+
 public final class RestoreResult
 {
     final Set<String> indices;

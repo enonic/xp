@@ -2,11 +2,10 @@ package com.enonic.xp.repository;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.util.BinaryReference;
 
-@PublicApi
+
 public interface RepositoryService
 {
     Repository createRepository( CreateRepositoryParams params );

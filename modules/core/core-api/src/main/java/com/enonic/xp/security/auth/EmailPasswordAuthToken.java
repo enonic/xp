@@ -6,11 +6,10 @@ import org.jspecify.annotations.NullMarked;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.mail.EmailValidator;
 import com.enonic.xp.security.IdProviderKey;
 
-@PublicApi
+
 @NullMarked
 public final class EmailPasswordAuthToken
     extends PasswordAuthToken

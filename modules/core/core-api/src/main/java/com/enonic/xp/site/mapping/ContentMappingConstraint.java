@@ -4,7 +4,6 @@ import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.Mixin;
@@ -17,7 +16,7 @@ import com.enonic.xp.data.ValueType;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.schema.mixin.MixinName;
 
-@PublicApi
+
 public final class ContentMappingConstraint
 {
     private static final String SEPARATOR = ":";

@@ -7,14 +7,13 @@ import java.time.Instant;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.resource.ResourceBase;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.schema.SchemaNodePropertyNames;
 
-@PublicApi
+
 public final class NodeValueResource
     extends ResourceBase
 {

@@ -6,12 +6,11 @@ import java.util.Objects;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.NullUnmarked;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.EditablePage;
 import com.enonic.xp.page.Page;
 
-@PublicApi
+
 public final class EditableContent
 {
     public final @NonNull Content source;

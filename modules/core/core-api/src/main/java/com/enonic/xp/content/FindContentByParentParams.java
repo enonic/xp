@@ -2,12 +2,11 @@ package com.enonic.xp.content;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.query.filter.Filter;
 import com.enonic.xp.query.filter.Filters;
 
-@PublicApi
+
 public final class FindContentByParentParams
 {
     private final ContentPath parentPath;

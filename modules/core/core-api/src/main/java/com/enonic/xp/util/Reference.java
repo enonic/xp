@@ -2,10 +2,9 @@ package com.enonic.xp.util;
 
 import java.util.Objects;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.node.NodeId;
 
-@PublicApi
+
 public final class Reference
 {
     private final NodeId nodeId;

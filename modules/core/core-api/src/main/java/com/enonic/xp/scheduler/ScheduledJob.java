@@ -4,14 +4,13 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.task.TaskId;
 
-@PublicApi
+
 public final class ScheduledJob
     implements Serializable
 {

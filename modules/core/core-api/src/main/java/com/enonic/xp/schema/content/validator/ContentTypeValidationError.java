@@ -1,9 +1,8 @@
 package com.enonic.xp.schema.content.validator;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.schema.content.ContentTypeName;
 
-@PublicApi
+
 public final class ContentTypeValidationError
 {
     private final String validationMessage;

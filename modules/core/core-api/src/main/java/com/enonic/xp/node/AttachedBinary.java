@@ -1,9 +1,8 @@
 package com.enonic.xp.node;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.util.BinaryReference;
 
-@PublicApi
+
 public final class AttachedBinary
 {
     private final BinaryReference binaryReference;

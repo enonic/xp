@@ -1,10 +1,9 @@
 package com.enonic.xp.node;
 
 import com.enonic.xp.aggregation.Aggregations;
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.suggester.Suggestions;
 
-@PublicApi
+
 public final class FindNodesByQueryResult
 {
     private final NodeHits nodeHits;

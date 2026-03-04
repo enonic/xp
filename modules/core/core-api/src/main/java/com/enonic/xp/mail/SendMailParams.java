@@ -5,9 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class SendMailParams
 {
     private final List<String> to;

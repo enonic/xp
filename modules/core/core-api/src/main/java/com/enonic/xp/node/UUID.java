@@ -6,9 +6,7 @@ import java.util.regex.Pattern;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public class UUID
 {
     protected final String value;

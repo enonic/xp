@@ -3,10 +3,9 @@ package com.enonic.xp.content;
 import java.util.Collection;
 import java.util.EnumSet;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.project.ProjectName;
 
-@PublicApi
+
 public final class ResetContentInheritParams
 {
     private final ContentId contentId;

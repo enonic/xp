@@ -6,9 +6,7 @@ import java.util.Objects;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ListMultimap;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class Macro
 {
     private final String name;

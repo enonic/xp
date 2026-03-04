@@ -5,9 +5,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class SnapshotResult
 {
     private final Set<String> indices;
@@ -22,10 +20,7 @@ public final class SnapshotResult
 
     public enum State
     {
-        SUCCESS,
-        FAILED,
-        PARTIAL,
-        IN_PROGRESS
+        SUCCESS, FAILED, PARTIAL, IN_PROGRESS
     }
 
     private SnapshotResult( Builder builder )

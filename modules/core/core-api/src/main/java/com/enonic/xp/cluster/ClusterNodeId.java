@@ -3,9 +3,7 @@ package com.enonic.xp.cluster;
 import java.io.Serializable;
 import java.util.Objects;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class ClusterNodeId
     implements Serializable
 {

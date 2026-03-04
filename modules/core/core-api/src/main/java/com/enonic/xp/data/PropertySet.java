@@ -16,13 +16,12 @@ import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Link;
 import com.enonic.xp.util.Reference;
 
-@PublicApi
+
 public final class PropertySet
 {
     private PropertyTree tree;

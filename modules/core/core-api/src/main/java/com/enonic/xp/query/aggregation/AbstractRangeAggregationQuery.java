@@ -6,9 +6,7 @@ import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public abstract class AbstractRangeAggregationQuery<R extends Range>
     extends BucketAggregationQuery
 {

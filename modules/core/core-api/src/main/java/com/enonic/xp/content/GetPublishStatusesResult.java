@@ -6,9 +6,7 @@ import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class GetPublishStatusesResult
     implements Iterable<GetPublishStatusResult>
 {

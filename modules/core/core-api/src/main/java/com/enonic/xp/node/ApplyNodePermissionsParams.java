@@ -3,14 +3,11 @@ package com.enonic.xp.node;
 import java.util.Objects;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableSet;
 
-import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.security.acl.AccessControlList;
 
-@PublicApi
+
 public final class ApplyNodePermissionsParams
 {
     private final NodeId nodeId;

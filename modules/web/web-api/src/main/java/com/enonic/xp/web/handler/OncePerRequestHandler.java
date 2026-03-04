@@ -3,11 +3,10 @@ package com.enonic.xp.web.handler;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 
-@PublicApi
+
 public abstract class OncePerRequestHandler
     extends BaseWebHandler
 {

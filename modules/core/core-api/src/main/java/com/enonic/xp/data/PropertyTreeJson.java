@@ -3,9 +3,7 @@ package com.enonic.xp.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class PropertyTreeJson
 {
     public static PropertyTree fromJson( final List<PropertyArrayJson> list )
@@ -85,7 +83,8 @@ public final class PropertyTreeJson
         return json;
     }
 
-    private static PropertyValueJson propertyToJson( final Property property) {
+    private static PropertyValueJson propertyToJson( final Property property )
+    {
         final PropertyValueJson json = new PropertyValueJson();
         if ( property.getType().equals( ValueTypes.PROPERTY_SET ) )
         {

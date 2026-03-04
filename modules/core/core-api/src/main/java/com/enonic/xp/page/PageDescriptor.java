@@ -2,13 +2,12 @@ package com.enonic.xp.page;
 
 import java.util.Objects;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.region.ComponentDescriptor;
 import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.resource.ResourceKey;
 
-@PublicApi
+
 public final class PageDescriptor
     extends ComponentDescriptor
 {

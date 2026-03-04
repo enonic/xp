@@ -3,11 +3,10 @@ package com.enonic.xp.index;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryIds;
 
-@PublicApi
+
 public final class UpdateIndexSettingsParams
 {
     private final RepositoryIds repositoryIds;

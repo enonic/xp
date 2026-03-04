@@ -7,11 +7,10 @@ import org.jspecify.annotations.Nullable;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
-@PublicApi
+
 public final class SiteConfigs
     extends AbstractImmutableEntityList<SiteConfig>
 {

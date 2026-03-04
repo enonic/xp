@@ -3,10 +3,9 @@ package com.enonic.xp.scheduler;
 import java.io.Serializable;
 import java.util.Objects;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.node.NodeName;
 
-@PublicApi
+
 public final class ScheduledJobName
     implements Serializable
 {

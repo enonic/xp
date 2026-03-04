@@ -9,11 +9,10 @@ import java.util.stream.Collectors;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 
-@PublicApi
+
 public final class ValueFilter
     extends FieldFilter
 {
@@ -28,10 +27,7 @@ public final class ValueFilter
     @Override
     public String toString()
     {
-        return MoreObjects.toStringHelper( this ).omitNullValues().
-            add( "fieldName", fieldName ).
-            add( "values", values ).
-            toString();
+        return MoreObjects.toStringHelper( this ).omitNullValues().add( "fieldName", fieldName ).add( "values", values ).toString();
     }
 
     public static Builder create()

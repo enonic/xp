@@ -2,11 +2,10 @@ package com.enonic.xp.archive;
 
 import java.util.Objects;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 
-@PublicApi
+
 public final class RestoreContentParams
 {
     private final ContentId contentId;

@@ -3,12 +3,10 @@ package com.enonic.xp.app;
 import java.time.Instant;
 import java.util.Set;
 
-
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.config.Configuration;
 import com.enonic.xp.util.Version;
 
-@PublicApi
+
 public interface Application
 {
     ApplicationKey getKey();

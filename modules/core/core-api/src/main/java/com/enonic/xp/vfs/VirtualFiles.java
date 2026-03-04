@@ -3,9 +3,7 @@ package com.enonic.xp.vfs;
 import java.io.File;
 import java.nio.file.Path;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class VirtualFiles
 {
     private VirtualFiles()

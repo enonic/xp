@@ -6,9 +6,7 @@ import java.util.stream.Collectors;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class ContentPath
     implements Iterable<ContentName>
 {
@@ -108,8 +106,7 @@ public final class ContentPath
     @Override
     public String toString()
     {
-        return ELEMENT_DIVIDER +
-            elements.stream().map( ContentName::toString ).collect( Collectors.joining( ELEMENT_DIVIDER ) );
+        return ELEMENT_DIVIDER + elements.stream().map( ContentName::toString ).collect( Collectors.joining( ELEMENT_DIVIDER ) );
     }
 
     public static ContentPath from( final String path )
@@ -142,7 +139,8 @@ public final class ContentPath
         {
             return ROOT;
         }
-        else {
+        else
+        {
             return new ContentPath( elements );
         }
     }

@@ -6,11 +6,10 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.core.internal.NameValidator;
 import com.enonic.xp.node.NodePath;
 
-@PublicApi
+
 public final class PrincipalKey
     implements Serializable
 {
@@ -19,7 +18,8 @@ public final class PrincipalKey
 
     private static final NameValidator ID_VALIDATOR = NameValidator.NAME.extend( PrincipalKey.class )
         .invalidChars(
-            NameValidator.NAME_ILLEGAL_CHARACTERS + NameValidator.HTML_SPECIAL_CHARACTERS + SecurityConstants.PRINCIPAL_KEY_SEPARATOR + " " )
+            NameValidator.NAME_ILLEGAL_CHARACTERS + NameValidator.HTML_SPECIAL_CHARACTERS + SecurityConstants.PRINCIPAL_KEY_SEPARATOR +
+                " " )
         .build();
 
     private static final Pattern REF_PATTERN = Pattern.compile( "(role):([^:]+)|(user|group):([^:]+):([^:]+)" );

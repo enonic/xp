@@ -10,15 +10,13 @@ import java.util.stream.Collectors;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.annotation.PublicApi;
-
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 
 /**
  * Immutable
  */
-@PublicApi
+
 public final class PropertyPath
     implements Iterable<PropertyPath.Element>
 {
@@ -253,7 +251,7 @@ public final class PropertyPath
                 {
                     this.name = element.substring( 0, indexStart );
                     final int index = Integer.parseInt( element.substring( indexStart + 1, indexStop ) );
-                    if (index < 0)
+                    if ( index < 0 )
                     {
                         throw new IllegalArgumentException( "Invalid DataPath element: " + element );
                     }

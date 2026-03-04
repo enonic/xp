@@ -2,12 +2,11 @@ package com.enonic.xp.region;
 
 import java.util.Objects;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.data.PropertyTree;
 
-@PublicApi
+
 public final class CreateFragmentParams
 {
     private final ContentPath parentPath;
@@ -58,8 +57,7 @@ public final class CreateFragmentParams
             return false;
         }
         final CreateFragmentParams that = (CreateFragmentParams) o;
-        return Objects.equals( parentPath, that.parentPath ) &&
-            Objects.equals( component, that.component ) &&
+        return Objects.equals( parentPath, that.parentPath ) && Objects.equals( component, that.component ) &&
             Objects.equals( config, that.config );
     }
 

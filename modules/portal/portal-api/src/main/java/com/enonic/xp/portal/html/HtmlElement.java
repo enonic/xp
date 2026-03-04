@@ -1,8 +1,5 @@
 package com.enonic.xp.portal.html;
 
-import com.enonic.xp.annotation.PublicApi;
-
-@PublicApi
 public interface HtmlElement
 {
     String getTagName();

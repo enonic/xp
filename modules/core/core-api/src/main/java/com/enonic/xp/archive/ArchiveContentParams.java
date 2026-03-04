@@ -2,10 +2,9 @@ package com.enonic.xp.archive;
 
 import java.util.Objects;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.content.ContentId;
 
-@PublicApi
+
 public final class ArchiveContentParams
 {
     private final ContentId contentId;

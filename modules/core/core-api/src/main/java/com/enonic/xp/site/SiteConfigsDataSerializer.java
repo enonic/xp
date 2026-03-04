@@ -1,12 +1,11 @@
 package com.enonic.xp.site;
 
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
 
-@PublicApi
+
 public final class SiteConfigsDataSerializer
 {
     private SiteConfigsDataSerializer()

@@ -2,9 +2,7 @@ package com.enonic.xp.query.aggregation;
 
 import com.google.common.base.MoreObjects;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class TermsAggregationQuery
     extends BucketAggregationQuery
 {
@@ -58,14 +56,15 @@ public final class TermsAggregationQuery
     @Override
     public String toString()
     {
-        return MoreObjects.toStringHelper( this ).omitNullValues().
-            add( "name", getName() ).
-            add( "fieldName", fieldName ).
-            add( "size", size ).
-            add( "orderDirection", orderDirection ).
-            add( "orderType", orderType ).
-            add( "minDocCount", minDocCount ).
-            toString();
+        return MoreObjects.toStringHelper( this )
+            .omitNullValues()
+            .add( "name", getName() )
+            .add( "fieldName", fieldName )
+            .add( "size", size )
+            .add( "orderDirection", orderDirection )
+            .add( "orderType", orderType )
+            .add( "minDocCount", minDocCount )
+            .toString();
     }
 
     public static Builder create( final String name )

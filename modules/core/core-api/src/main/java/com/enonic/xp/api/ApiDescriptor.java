@@ -6,12 +6,11 @@ import java.util.Set;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
 
-@PublicApi
+
 public final class ApiDescriptor
 {
     private final DescriptorKey key;

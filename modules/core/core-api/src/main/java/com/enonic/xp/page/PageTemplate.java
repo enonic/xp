@@ -1,7 +1,6 @@
 package com.enonic.xp.page;
 
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
@@ -10,7 +9,7 @@ import com.enonic.xp.region.Regions;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
 
-@PublicApi
+
 public final class PageTemplate
     extends Content
 {
@@ -35,8 +34,12 @@ public final class PageTemplate
 
     public ContentTypeNames getCanRender()
     {
-        return this.getData().getProperties( "supports" ).stream().filter( property -> !property.hasNullValue() ).map(
-                property -> ContentTypeName.from( property.getString() ) ).collect( ContentTypeNames.collector() );
+        return this.getData()
+            .getProperties( "supports" )
+            .stream()
+            .filter( property -> !property.hasNullValue() )
+            .map( property -> ContentTypeName.from( property.getString() ) )
+            .collect( ContentTypeNames.collector() );
     }
 
     public boolean canRender( ContentTypeName name )
@@ -78,15 +81,11 @@ public final class PageTemplate
         {
             if ( this.page == null )
             {
-                this.page = Page.create().
-                    descriptor( descriptorKey ).
-                    build();
+                this.page = Page.create().descriptor( descriptorKey ).build();
             }
             else
             {
-                this.page = Page.create( this.page ).
-                    descriptor( descriptorKey ).
-                    build();
+                this.page = Page.create( this.page ).descriptor( descriptorKey ).build();
             }
             return this;
         }
@@ -104,15 +103,11 @@ public final class PageTemplate
         {
             if ( this.page == null )
             {
-                this.page = Page.create().
-                    regions( value ).
-                    build();
+                this.page = Page.create().regions( value ).build();
             }
             else
             {
-                this.page = Page.create( this.page ).
-                    regions( value ).
-                    build();
+                this.page = Page.create( this.page ).regions( value ).build();
             }
 
             return this;
@@ -122,15 +117,11 @@ public final class PageTemplate
         {
             if ( this.page == null )
             {
-                this.page = Page.create().
-                    config( config ).
-                    build();
+                this.page = Page.create().config( config ).build();
             }
             else
             {
-                this.page = Page.create( this.page ).
-                    config( config ).
-                    build();
+                this.page = Page.create( this.page ).config( config ).build();
             }
 
             return this;

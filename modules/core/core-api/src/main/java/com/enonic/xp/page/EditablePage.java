@@ -3,13 +3,12 @@ package com.enonic.xp.page;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.Regions;
 
-@PublicApi
+
 public final class EditablePage
 {
     public final @NonNull Page source;

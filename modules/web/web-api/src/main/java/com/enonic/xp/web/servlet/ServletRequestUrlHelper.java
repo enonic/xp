@@ -10,11 +10,10 @@ import com.google.common.base.Splitter;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 
-@PublicApi
+
 public final class ServletRequestUrlHelper
 {
     private static final int[] RFC_8187_ATTR_CHAR =

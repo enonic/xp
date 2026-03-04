@@ -1,8 +1,5 @@
 package com.enonic.xp.data;
 
-import com.enonic.xp.annotation.PublicApi;
-
-@PublicApi
 public abstract class PropertyVisitor
 {
     private ValueType valueType;

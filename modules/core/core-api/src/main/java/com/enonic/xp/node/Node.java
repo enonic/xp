@@ -3,7 +3,6 @@ package com.enonic.xp.node;
 import java.time.Instant;
 import java.util.Objects;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
@@ -12,7 +11,7 @@ import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.security.acl.AccessControlList;
 
-@PublicApi
+
 public final class Node
 {
     public static final NodeId ROOT_UUID = NodeId.from( "000-000-000-000" );

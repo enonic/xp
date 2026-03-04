@@ -2,10 +2,9 @@ package com.enonic.xp.content;
 
 import java.util.Objects;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 
-@PublicApi
+
 public final class ResolveRequiredDependenciesParams
 {
     private final ContentIds contentIds;

@@ -1,11 +1,10 @@
 package com.enonic.xp.site;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentTypeName;
 
-@PublicApi
+
 public final class Site
     extends Content
 {

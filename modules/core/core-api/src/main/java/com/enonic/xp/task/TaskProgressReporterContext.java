@@ -1,8 +1,5 @@
 package com.enonic.xp.task;
 
-import com.enonic.xp.annotation.PublicApi;
-
-@PublicApi
 public final class TaskProgressReporterContext
 {
     private static final ThreadLocal<ProgressReporter> CURRENT = new ThreadLocal<>();
@@ -26,8 +23,7 @@ public final class TaskProgressReporterContext
 
     public static RunnableTask withContext( final RunnableTask runnableTask )
     {
-        return ( id, progressReporter ) ->
-        {
+        return ( id, progressReporter ) -> {
             final ProgressReporter old = current();
             set( progressReporter );
 

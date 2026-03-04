@@ -1,15 +1,15 @@
 package com.enonic.xp.content;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.node.UUID;
 import com.enonic.xp.util.Reference;
 
-@PublicApi
-public final class ContentId extends UUID
+
+public final class ContentId
+    extends UUID
 {
     private ContentId( final String id )
     {
-        super(id);
+        super( id );
     }
 
     private ContentId( final Object id )

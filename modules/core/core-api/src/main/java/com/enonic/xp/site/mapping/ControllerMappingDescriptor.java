@@ -7,11 +7,10 @@ import java.util.regex.Pattern;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.resource.ResourceKey;
 
-@PublicApi
+
 public final class ControllerMappingDescriptor
     implements Comparable<ControllerMappingDescriptor>
 {

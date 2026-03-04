@@ -3,10 +3,9 @@ package com.enonic.xp.query.aggregation.metric;
 
 import com.google.common.base.MoreObjects;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.query.aggregation.MetricAggregationQuery;
 
-@PublicApi
+
 public final class MaxAggregationQuery
     extends MetricAggregationQuery
 {
@@ -18,10 +17,7 @@ public final class MaxAggregationQuery
     @Override
     public String toString()
     {
-        return MoreObjects.toStringHelper( this ).omitNullValues().
-            add( "name", getName() ).
-            add( "fieldName", getFieldName() ).
-            toString();
+        return MoreObjects.toStringHelper( this ).omitNullValues().add( "name", getName() ).add( "fieldName", getFieldName() ).toString();
     }
 
     public static Builder create( final String name )

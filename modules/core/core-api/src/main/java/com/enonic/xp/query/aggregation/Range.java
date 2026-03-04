@@ -1,8 +1,5 @@
 package com.enonic.xp.query.aggregation;
 
-import com.enonic.xp.annotation.PublicApi;
-
-@PublicApi
 public abstract class Range
 {
     private final String key;

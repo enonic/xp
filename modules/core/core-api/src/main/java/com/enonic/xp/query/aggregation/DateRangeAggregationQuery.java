@@ -2,9 +2,7 @@ package com.enonic.xp.query.aggregation;
 
 import com.google.common.base.MoreObjects;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class DateRangeAggregationQuery
     extends AbstractRangeAggregationQuery<DateRange>
 {
@@ -24,11 +22,12 @@ public final class DateRangeAggregationQuery
     @Override
     public String toString()
     {
-        return MoreObjects.toStringHelper( this ).
-            omitNullValues().
-            add( "fieldName", getFieldName() ).
-            add( "ranges", getRanges() ).
-            add( "format", format ).toString();
+        return MoreObjects.toStringHelper( this )
+            .omitNullValues()
+            .add( "fieldName", getFieldName() )
+            .add( "ranges", getRanges() )
+            .add( "format", format )
+            .toString();
     }
 
     public static Builder create( final String name )

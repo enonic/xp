@@ -5,11 +5,10 @@ import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntityList;
 import com.enonic.xp.util.BinaryReference;
 
-@PublicApi
+
 public final class BinaryAttachments
     extends AbstractImmutableEntityList<BinaryAttachment>
 {

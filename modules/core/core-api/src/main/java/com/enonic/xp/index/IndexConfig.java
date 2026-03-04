@@ -7,73 +7,71 @@ import java.util.Objects;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class IndexConfig
     implements Comparable<IndexConfig>
 {
-    public static final IndexConfig NONE = IndexConfig.create().
-        enabled( false ).
-        fulltext( false ).
-        nGram( false ).
-        decideByType( false ).
-        includeInAllText( false ).
-        path( false ).
-        build();
+    public static final IndexConfig NONE = IndexConfig.create()
+        .enabled( false )
+        .fulltext( false )
+        .nGram( false )
+        .decideByType( false )
+        .includeInAllText( false )
+        .path( false )
+        .build();
 
-    public static final IndexConfig FULLTEXT = IndexConfig.create().
-        enabled( true ).
-        fulltext( true ).
-        nGram( true ).
-        decideByType( false ).
-        includeInAllText( true ).
-        path( false ).
-        build();
+    public static final IndexConfig FULLTEXT = IndexConfig.create()
+        .enabled( true )
+        .fulltext( true )
+        .nGram( true )
+        .decideByType( false )
+        .includeInAllText( true )
+        .path( false )
+        .build();
 
-    public static final IndexConfig PATH = IndexConfig.create().
-        enabled( true ).
-        fulltext( false ).
-        nGram( false ).
-        decideByType( false ).
-        includeInAllText( false ).
-        path( true ).
-        build();
+    public static final IndexConfig PATH = IndexConfig.create()
+        .enabled( true )
+        .fulltext( false )
+        .nGram( false )
+        .decideByType( false )
+        .includeInAllText( false )
+        .path( true )
+        .build();
 
-    public static final IndexConfig MINIMAL = IndexConfig.create().
-        enabled( true ).
-        fulltext( false ).
-        nGram( false ).
-        decideByType( false ).
-        includeInAllText( false ).
-        path( false ).
-        build();
+    public static final IndexConfig MINIMAL = IndexConfig.create()
+        .enabled( true )
+        .fulltext( false )
+        .nGram( false )
+        .decideByType( false )
+        .includeInAllText( false )
+        .path( false )
+        .build();
 
-    public static final IndexConfig BY_TYPE = IndexConfig.create().
-        enabled( true ).
-        fulltext( false ).
-        nGram( false ).
-        decideByType( true ).
-        includeInAllText( false ).
-        path( false ).
-        build();
+    public static final IndexConfig BY_TYPE = IndexConfig.create()
+        .enabled( true )
+        .fulltext( false )
+        .nGram( false )
+        .decideByType( true )
+        .includeInAllText( false )
+        .path( false )
+        .build();
 
-    public static final IndexConfig NGRAM = IndexConfig.create().
-        enabled( true ).
-        nGram( true ).
-        fulltext( false ).
-        decideByType( false ).
-        includeInAllText( false ).
-        path( false ).
-        build();
+    public static final IndexConfig NGRAM = IndexConfig.create()
+        .enabled( true )
+        .nGram( true )
+        .fulltext( false )
+        .decideByType( false )
+        .includeInAllText( false )
+        .path( false )
+        .build();
 
     public static final Comparator<IndexConfig> COMPARATOR =
-        Comparator.comparingInt( ( IndexConfig indexConfig ) -> indexConfig.decideByType ? 1 : 0 ).
-            thenComparingInt( indexConfig -> indexConfig.enabled ? 1 : 0 ).
-            thenComparingInt( indexConfig -> indexConfig.nGram ? 1 : 0 ).
-            thenComparingInt( indexConfig -> indexConfig.fulltext ? 1 : 0 ).
-            thenComparingInt( indexConfig -> indexConfig.includeInAllText ? 1 : 0 ).
-            thenComparingInt( indexConfig -> indexConfig.path ? 1 : 0 );
+        Comparator.comparingInt( ( IndexConfig indexConfig ) -> indexConfig.decideByType ? 1 : 0 )
+            .thenComparingInt( indexConfig -> indexConfig.enabled ? 1 : 0 )
+            .thenComparingInt( indexConfig -> indexConfig.nGram ? 1 : 0 )
+            .thenComparingInt( indexConfig -> indexConfig.fulltext ? 1 : 0 )
+            .thenComparingInt( indexConfig -> indexConfig.includeInAllText ? 1 : 0 )
+            .thenComparingInt( indexConfig -> indexConfig.path ? 1 : 0 );
 
     private final boolean decideByType;
 
@@ -208,8 +206,7 @@ public final class IndexConfig
     @Override
     public int compareTo( final IndexConfig o )
     {
-        return COMPARATOR.
-            compare( this, o );
+        return COMPARATOR.compare( this, o );
     }
 
     public static final class Builder

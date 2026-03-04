@@ -17,11 +17,10 @@ import com.google.common.collect.MultimapBuilder;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.security.IdProvider;
 import com.enonic.xp.web.websocket.WebSocketContext;
 
-@PublicApi
+
 public class WebRequest
 {
     private HttpMethod method;

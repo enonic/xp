@@ -5,10 +5,9 @@ import java.util.Objects;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branches;
 
-@PublicApi
+
 @NullMarked
 public final class GetActiveNodeVersionsParams
 {

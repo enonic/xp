@@ -2,10 +2,9 @@ package com.enonic.xp.app;
 
 import java.util.Objects;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.icon.Icon;
 
-@PublicApi
+
 public final class ApplicationDescriptor
 {
     private final ApplicationKey key;

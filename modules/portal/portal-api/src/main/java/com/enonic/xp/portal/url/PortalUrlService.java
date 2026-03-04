@@ -1,8 +1,5 @@
 package com.enonic.xp.portal.url;
 
-import com.enonic.xp.annotation.PublicApi;
-
-@PublicApi
 public interface PortalUrlService
 {
     String assetUrl( AssetUrlParams params );

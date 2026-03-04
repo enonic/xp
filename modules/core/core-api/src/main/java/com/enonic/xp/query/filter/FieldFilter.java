@@ -2,9 +2,7 @@ package com.enonic.xp.query.filter;
 
 import java.util.Objects;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public abstract class FieldFilter
     extends Filter
 {

@@ -3,9 +3,7 @@ package com.enonic.xp.inputtype;
 import java.util.Locale;
 import java.util.Objects;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class InputTypeName
 {
     public static final InputTypeName CHECK_BOX = InputTypeName.from( "CheckBox" );

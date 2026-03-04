@@ -2,9 +2,7 @@ package com.enonic.xp.schema.content;
 
 import java.util.Objects;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class GetChildContentTypesParams
 {
     private ContentTypeName parentName;

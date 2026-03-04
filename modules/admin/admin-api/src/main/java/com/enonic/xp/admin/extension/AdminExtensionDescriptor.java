@@ -6,9 +6,7 @@ import java.util.Set;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSortedSet;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.descriptor.Descriptor;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.icon.Icon;
@@ -16,7 +14,7 @@ import com.enonic.xp.schema.LocalizedText;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
 
-@PublicApi
+
 public final class AdminExtensionDescriptor
     extends Descriptor
 {

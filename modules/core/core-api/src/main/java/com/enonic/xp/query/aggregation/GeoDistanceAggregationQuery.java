@@ -2,10 +2,9 @@ package com.enonic.xp.query.aggregation;
 
 import com.google.common.base.MoreObjects;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.util.GeoPoint;
 
-@PublicApi
+
 public final class GeoDistanceAggregationQuery
     extends AbstractRangeAggregationQuery<DistanceRange>
 {
@@ -33,13 +32,13 @@ public final class GeoDistanceAggregationQuery
     @Override
     public String toString()
     {
-        return MoreObjects.toStringHelper( this ).
-            omitNullValues().
-            add( "fieldName", getFieldName() ).
-            add( "ranges", getRanges() ).
-            add( "origin", origin ).
-            add( "unit", unit ).
-            toString();
+        return MoreObjects.toStringHelper( this )
+            .omitNullValues()
+            .add( "fieldName", getFieldName() )
+            .add( "ranges", getRanges() )
+            .add( "origin", origin )
+            .add( "unit", unit )
+            .toString();
     }
 
     public static Builder create( final String name )

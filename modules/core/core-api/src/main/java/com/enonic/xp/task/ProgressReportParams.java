@@ -1,9 +1,5 @@
 package com.enonic.xp.task;
 
-import com.enonic.xp.annotation.PublicApi;
-
-
-@PublicApi
 public final class ProgressReportParams
 {
     private final Integer current;

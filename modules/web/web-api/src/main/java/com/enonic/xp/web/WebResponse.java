@@ -13,10 +13,9 @@ import com.google.common.net.MediaType;
 
 import jakarta.servlet.http.Cookie;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 
-@PublicApi
+
 public class WebResponse
 {
     private final HttpStatus status;

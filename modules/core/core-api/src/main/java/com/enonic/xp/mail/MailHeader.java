@@ -1,8 +1,5 @@
 package com.enonic.xp.mail;
 
-import com.enonic.xp.annotation.PublicApi;
-
-@PublicApi
 public final class MailHeader
 {
     private final String key;

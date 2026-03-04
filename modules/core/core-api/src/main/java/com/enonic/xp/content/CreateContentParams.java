@@ -3,7 +3,6 @@ package com.enonic.xp.content;
 import java.util.Locale;
 import java.util.Objects;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
@@ -12,7 +11,7 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlList;
 
-@PublicApi
+
 public final class CreateContentParams
 {
     private final PropertyTree data;

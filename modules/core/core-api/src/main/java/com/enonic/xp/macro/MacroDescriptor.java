@@ -2,12 +2,11 @@ package com.enonic.xp.macro;
 
 import java.time.Instant;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.schema.LocalizedText;
 
-@PublicApi
+
 public final class MacroDescriptor
 {
     private final MacroKey key;

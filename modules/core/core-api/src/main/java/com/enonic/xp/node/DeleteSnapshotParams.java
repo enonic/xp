@@ -5,9 +5,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class DeleteSnapshotParams
 {
     private final Set<String> snapshotNames;

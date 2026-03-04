@@ -2,10 +2,9 @@ package com.enonic.xp.resource;
 
 import java.util.Objects;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 
-@PublicApi
+
 public final class UpdateDynamicCmsParams
 {
     private final ApplicationKey key;

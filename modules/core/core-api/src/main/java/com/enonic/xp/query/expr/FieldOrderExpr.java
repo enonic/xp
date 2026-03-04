@@ -2,10 +2,9 @@ package com.enonic.xp.query.expr;
 
 import java.util.Objects;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.index.IndexPath;
 
-@PublicApi
+
 public final class FieldOrderExpr
     extends OrderExpr
 {

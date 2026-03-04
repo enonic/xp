@@ -3,10 +3,9 @@ package com.enonic.xp.index;
 
 import java.util.stream.Collectors;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.PropertyPath;
 
-@PublicApi
+
 public final class IndexPath
 {
     private static final String DELIMITER = ".";
