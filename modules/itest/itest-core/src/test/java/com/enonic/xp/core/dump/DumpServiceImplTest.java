@@ -773,7 +773,7 @@ class DumpServiceImplTest
         createIncompatibleDump( dumpName );
 
         NodeHelper.runAsAdmin( () -> {
-            this.dumpService.load( SystemLoadParams.create().dumpName( dumpName ).upgrade( true ).archive( false ).includeVersions( true ).build() );
+            this.dumpService.load( SystemLoadParams.create().dumpName( dumpName ).upgrade( true ).includeVersions( true ).build() );
 
             FileDumpReader reader = FileDumpReader.create( null, temporaryFolder, dumpName );
             final DumpMeta updatedMeta = reader.getDumpMeta();
