@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://json-schema.enonic.com/8.0.0/form/inputs.schema.json",
+  "oneOf": [
+    {
+      "$ref": "./inputs/textline.schema.json"
+    },
+    {
+      "$ref": "./inputs/time.schema.json"
+    },
+    {
+      "$ref": "./inputs/tag.schema.json"
+    },
+    {
+      "$ref": "./inputs/textarea.schema.json"
+    },
+    {
+      "$ref": "./inputs/radiobutton.schema.json"
+    },
+    {
+      "$ref": "./inputs/mediaselector.schema.json"
+    },
+    {
+      "$ref": "./inputs/long.schema.json"
+    },
+    {
+      "$ref": "./inputs/instant.schema.json"
+    },
+    {
+      "$ref": "./inputs/imageselector.schema.json"
+    },
+    {
+      "$ref": "./inputs/htmlarea.schema.json"
+    },
+    {
+      "$ref": "./inputs/geopoint.schema.json"
+    },
+    {
+      "$ref": "./inputs/double.schema.json"
+    },
+    {
+      "$ref": "./inputs/datetime.schema.json"
+    },
+    {
+      "$ref": "./inputs/date.schema.json"
+    },
+    {
+      "$ref": "./inputs/customselector.schema.json"
+    },
+    {
+      "$ref": "./inputs/contenttypefilter.schema.json"
+    },
+    {
+      "$ref": "./inputs/contentselector.schema.json"
+    },
+    {
+      "$ref": "./inputs/combobox.schema.json"
+    },
+    {
+      "$ref": "./inputs/checkbox.schema.json"
+    },
+    {
+      "$ref": "./inputs/attachmentuploader.schema.json"
+    },
+    {
+      "$ref": "./inputs/principalselector.schema.json"
+    }
+  ]
+}

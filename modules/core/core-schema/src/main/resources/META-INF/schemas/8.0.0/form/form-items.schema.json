@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://json-schema.enonic.com/8.0.0/form/form-items.schema.json",
+  "oneOf": [
+    {
+      "$ref": "https://json-schema.enonic.com/8.0.0/form/field-set.schema.json"
+    },
+    {
+      "$ref": "https://json-schema.enonic.com/8.0.0/form/item-set.schema.json"
+    },
+    {
+      "$ref": "https://json-schema.enonic.com/8.0.0/form/form-fragment.schema.json"
+    },
+    {
+      "$ref": "https://json-schema.enonic.com/8.0.0/form/option-set.schema.json"
+    },
+    {
+      "$ref": "https://json-schema.enonic.com/8.0.0/form/inputs.schema.json"
+    }
+  ],
+  "unevaluatedProperties": false
+}

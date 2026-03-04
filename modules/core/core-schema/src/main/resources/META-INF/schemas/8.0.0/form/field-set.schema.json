@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://json-schema.enonic.com/8.0.0/form/field-set.schema.json",
+  "$defs": {
+    "default": {
+      "$dynamicAnchor": "form-items",
+      "$ref": "https://json-schema.enonic.com/8.0.0/form/form-items.schema.json"
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "https://json-schema.enonic.com/8.0.0/form/form-item.schema.json"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "label": {
+          "$ref": "https://json-schema.enonic.com/8.0.0/core/localized-text.schema.json"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$dynamicRef": "#form-items"
+          }
+        },
+        "type": {
+          "const": "FieldSet"
+        }
+      },
+      "additionalProperties": false
+    }
+  ]
+}

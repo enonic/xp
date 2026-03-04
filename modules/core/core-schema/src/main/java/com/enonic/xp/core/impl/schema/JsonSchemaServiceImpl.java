@@ -13,8 +13,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.stream.Collectors;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -45,13 +43,11 @@ public class JsonSchemaServiceImpl
 
     private static final ObjectMapper MAPPER = ObjectMapperHelper.create();
 
-    private final ConcurrentMap<String, JsonSchemaDefinitionWrapper> schemasMap = new ConcurrentHashMap<>();
-
-    private final ReentrantLock lock = new ReentrantLock();
+    private final ConcurrentMap<String, String> schemasMap = new ConcurrentHashMap<>();
 
     private final BundleContext bundleContext;
 
-    private SchemaRegistry schemaRegistry;
+    private volatile SchemaRegistry schemaRegistry;
 
     @Activate
     public JsonSchemaServiceImpl( final BundleContext bundleContext )
@@ -64,9 +60,9 @@ public class JsonSchemaServiceImpl
     {
         bundleContext.addBundleListener( this );
 
-        final FormItemsJsonSchemaGenerator formItemsJsonSchemaGenerator = new FormItemsJsonSchemaGenerator( Set.of() );
-        final String formItemsSchema = formItemsJsonSchemaGenerator.generate();
-        register( formItemsSchema );
+//        final FormItemsJsonSchemaGenerator formItemsJsonSchemaGenerator = new FormItemsJsonSchemaGenerator( Set.of() );
+//        final String formItemsSchema = formItemsJsonSchemaGenerator.generate();
+//        register( formItemsSchema );
 
         final Bundle currentBundle = bundleContext.getBundle();
         loadJsonSchema( currentBundle );
@@ -113,9 +109,9 @@ public class JsonSchemaServiceImpl
                     shouldBeUpdated = true;
                 }
             }
-            catch ( Exception e )
+            catch ( IOException e )
             {
-                throw new RuntimeException( e );
+                throw new UncheckedIOException( e );
             }
         }
 
@@ -125,16 +121,7 @@ public class JsonSchemaServiceImpl
     @Override
     public void validate( final String schemaId, final String yml )
     {
-        lock.lock();
-        Schema schema;
-        try
-        {
-            schema = schemaRegistry.getSchema( SchemaLocation.of( schemaId ) );
-        }
-        finally
-        {
-            lock.unlock();
-        }
+        final Schema schema = schemaRegistry.getSchema( SchemaLocation.of( schemaId ) );
 
         final List<Error> errors = schema.validate( yml, InputFormat.YAML );
 
@@ -150,28 +137,15 @@ public class JsonSchemaServiceImpl
 
     public void refreshSchemaRegistry()
     {
-        lock.lock();
-        try
-        {
-            this.schemaRegistry = SchemaRegistry.withDialect( Dialects.getDraft202012(), builder -> builder.schemas( getAllSchema() ) );
-        }
-        finally
-        {
-            lock.unlock();
-        }
+        this.schemaRegistry = SchemaRegistry.withDialect( Dialects.getDraft202012(), builder -> builder.schemas( getAllSchema() ) );
     }
 
     @Override
     public void bundleChanged( final BundleEvent event )
     {
-        switch ( event.getType() )
+        if ( event.getType() == BundleEvent.INSTALLED || event.getType() == BundleEvent.UPDATED )
         {
-            case BundleEvent.INSTALLED:
-            case BundleEvent.UPDATED:
-                addBundle( event.getBundle() );
-                break;
-            default:
-                break;
+            addBundle( event.getBundle() );
         }
     }
 
@@ -182,16 +156,18 @@ public class JsonSchemaServiceImpl
             final JsonNode schemaNode = MAPPER.readTree( schemaDefinition );
             final String schemaId = Objects.requireNonNull( schemaNode.get( "$id" ), "$id must be set" ).asText();
 
-            final JsonSchemaDefinitionWrapper persistedSchema = schemasMap.get( schemaId );
+            final boolean[] changed = {false};
+            schemasMap.compute( schemaId, ( key, existing ) -> {
+                if ( existing == null || !existing.equals( schemaDefinition ) )
+                {
+                    changed[0] = true;
+                    LOG.debug( "JSON Schema Definition: {} is registered", schemaId );
+                    return schemaDefinition;
+                }
+                return existing;
+            } );
 
-            final boolean changed = persistedSchema == null || !persistedSchema.schema().equals( schemaDefinition );
-            if ( changed )
-            {
-                schemasMap.put( schemaId, new JsonSchemaDefinitionWrapper( schemaDefinition ) );
-                LOG.debug( "JSON Schema Definition: {} is registered", schemaId );
-            }
-
-            return changed;
+            return changed[0];
         }
         catch ( IOException e )
         {
@@ -201,9 +177,7 @@ public class JsonSchemaServiceImpl
 
     private Map<String, String> getAllSchema()
     {
-        return schemasMap.entrySet()
-            .stream()
-            .collect( Collectors.toUnmodifiableMap( Map.Entry::getKey, entry -> entry.getValue().schema() ) );
+        return Map.copyOf( schemasMap );
     }
 
     protected void addBundle( Bundle bundle )
@@ -221,7 +195,7 @@ public class JsonSchemaServiceImpl
 
     protected List<URL> loadJsonSchemasFromBundle( final Bundle bundle )
     {
-        final Enumeration<URL> schemaURLs = bundle.findEntries( "/META-INF/schemas", "*.json", true );
+        final Enumeration<URL> schemaURLs = bundle.findEntries( "/META-INF/schemas/8.0.0", "*.json", true );
         return schemaURLs != null ? Collections.list( schemaURLs ) : Collections.emptyList();
     }
 }
