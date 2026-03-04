@@ -7,7 +7,7 @@ import com.google.common.collect.ImmutableList;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexPath;
-import com.enonic.xp.repo.impl.index.IndexStemmedController;
+import com.enonic.xp.repo.impl.index.IndexLanguageController;
 
 class StemmedTypeFactory
 {
@@ -17,8 +17,13 @@ class StemmedTypeFactory
 
         if ( indexConfig.isStemmed() )
         {
-            indexConfig.getLanguages().stream().filter( language -> IndexStemmedController.resolveIndexValueType( language ) != null )
-                .forEach( language -> stemmedItems.add( new IndexItemStemmed( indexPath, value.asString(), language ) ) );
+            indexConfig.getLanguages().forEach( language -> {
+                if ( !IndexLanguageController.isSupported( language ) )
+                {
+                    throw new IllegalArgumentException( "Unsupported language for stemmed indexing: " + language );
+                }
+                stemmedItems.add( new IndexItemStemmed( indexPath, value.asString(), language ) );
+            } );
         }
 
         return stemmedItems.build();

@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.SearchQueryFieldNameResolver;
-import com.enonic.xp.repo.impl.index.IndexStemmedController;
+import com.enonic.xp.repo.impl.index.IndexLanguageController;
 import com.enonic.xp.repo.impl.index.IndexValueTypeInterface;
 
 public class StemmedFunctionArguments
@@ -21,7 +21,7 @@ public class StemmedFunctionArguments
     protected String resolveAnalyzer( final String language )
     {
         this.language = language;
-        return IndexStemmedController.resolveAnalyzer( this.language );
+        return IndexLanguageController.resolveAnalyzer( this.language );
     }
 
     @Override
@@ -33,7 +33,7 @@ public class StemmedFunctionArguments
     @Override
     public String resolveQueryFieldName( final String baseFieldName )
     {
-        final IndexValueTypeInterface type = IndexStemmedController.resolveIndexValueType( this.language );
+        final IndexValueTypeInterface type = IndexLanguageController.resolveStemmedIndexValueType( this.language );
 
         return type != null ? SearchQueryFieldNameResolver.INSTANCE.resolve( baseFieldName, type ) : "";
     }
