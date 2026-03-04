@@ -73,7 +73,9 @@ class LoadRunnableTaskTest
         return LoadRunnableTask.create()
             .taskService( taskService )
             .dumpService( dumpService )
-            .name( params.getName() ).upgrade( params.isUpgrade() ).archive( params.isArchive() ).repositories( repositories )
+            .name( params.getName() )
+            .upgrade( params.isUpgrade() )
+            .repositories( repositories )
             .build();
     }
 
@@ -102,8 +104,7 @@ class LoadRunnableTaskTest
 
         when( this.dumpService.load( any( SystemLoadParams.class ) ) ).thenReturn( systemLoadResult );
 
-        final LoadRunnableTask task =
-            createTask( new SystemLoadRequestJson( params.getDumpName(), params.isUpgrade(), params.isArchive(), null ) );
+        final LoadRunnableTask task = createTask( new SystemLoadRequestJson( params.getDumpName(), params.isUpgrade(), null ) );
 
         ProgressReporter progressReporter = mock( ProgressReporter.class );
 
@@ -140,7 +141,7 @@ class LoadRunnableTaskTest
         final ArgumentCaptor<SystemLoadParams> loadParamsCaptor = ArgumentCaptor.forClass( SystemLoadParams.class );
         when( this.dumpService.load( loadParamsCaptor.capture() ) ).thenReturn( systemLoadResult );
 
-        final LoadRunnableTask task = createTask( new SystemLoadRequestJson( "name", false, true, List.of( "my-repo" ) ), repositories );
+        final LoadRunnableTask task = createTask( new SystemLoadRequestJson( "name", false, List.of( "my-repo" ) ), repositories );
 
         ProgressReporter progressReporter = mock( ProgressReporter.class );
 

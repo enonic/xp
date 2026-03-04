@@ -77,7 +77,8 @@ public final class SystemResource
 
         final LoadRunnableTask task = LoadRunnableTask.create()
             .name( params.getName() )
-            .upgrade( params.isUpgrade() ).archive( params.isArchive() ).repositories( repositories )
+            .upgrade( params.isUpgrade() )
+            .repositories( repositories )
             .taskService( taskService )
             .dumpService( dumpService )
             .build();

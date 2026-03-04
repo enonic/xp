@@ -373,7 +373,7 @@ public class DumpServiceImpl
 
         final SystemLoadResult.Builder results = SystemLoadResult.create();
 
-        final DumpReader dumpReader = params.isArchive()
+        final DumpReader dumpReader = !params.isUpgrade()
             ? ZipDumpReader.create( params.getListener(), basePath, params.getDumpName() )
             : FileDumpReader.create( params.getListener(), basePath, params.getDumpName() );
 
@@ -548,11 +548,6 @@ public class DumpServiceImpl
         {
             if ( params.isUpgrade() )
             {
-                if ( params.isArchive() )
-                {
-                    throw new RepoLoadException(
-                        "Cannot load system-dump; upgrade is not possible on archived dump; unarchive and upgrade the system-dump" );
-                }
                 final SystemDumpUpgradeParams dumpUpgradeParams = SystemDumpUpgradeParams.create().dumpName( params.getDumpName() ).build();
                 doUpgrade( basePath, dumpUpgradeParams );
             }
