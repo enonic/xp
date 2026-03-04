@@ -19,7 +19,7 @@ public final class PrincipalKey
 
     private static final NameValidator ID_VALIDATOR = NameValidator.NAME.extend( PrincipalKey.class )
         .invalidChars(
-            NameValidator.NAME_ILLEGAL_CHARACTERS + NameValidator.HTML_SPECIAL_CHARACTERS + SecurityConstants.PRINCIPAL_KEY_SEPARATOR )
+            NameValidator.NAME_ILLEGAL_CHARACTERS + NameValidator.HTML_SPECIAL_CHARACTERS + SecurityConstants.PRINCIPAL_KEY_SEPARATOR + " " )
         .build();
 
     private static final Pattern REF_PATTERN = Pattern.compile( "(role):([^:]+)|(user|group):([^:]+):([^:]+)" );

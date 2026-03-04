@@ -52,14 +52,14 @@ class PrincipalsResultMapperTest
     {
 
         final Principal role1 = Role.create().
-            key( PrincipalKey.ofRole( "Role 1" ) ).
+            key( PrincipalKey.ofRole( "Role-1" ) ).
             displayName( "Role 1 Display Name" ).
             modifiedTime( Instant.ofEpochSecond( 0 ) ).
             description( "description1" ).
             build();
 
         final Principal role2 = Role.create().
-            key( PrincipalKey.ofRole( "Role 2" ) ).
+            key( PrincipalKey.ofRole( "Role-2" ) ).
             displayName( "Role 2 Display Name" ).
             modifiedTime( Instant.ofEpochSecond( 0 ) ).
             description( "description2" ).

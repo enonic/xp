@@ -170,6 +170,12 @@ class PrincipalKeyTest
     }
 
     @Test
+    void testInvalidSpace()
+    {
+        assertThrows( IllegalArgumentException.class, () -> PrincipalKey.from( "user:my User" ) );
+    }
+
+    @Test
     void equalsContract()
     {
         EqualsVerifier.forClass( PrincipalKey.class ).verify();
