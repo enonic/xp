@@ -2,10 +2,8 @@ package com.enonic.xp.repo.impl.node;
 
 import java.util.Objects;
 
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.repo.impl.InternalContext;
 
 public class GetNodeByIdCommand
     extends AbstractNodeCommand
@@ -20,17 +18,12 @@ public class GetNodeByIdCommand
 
     public Node execute()
     {
-        return this.nodeStorageService.get( id, InternalContext.from( ContextAccessor.current() ) );
+        return doGetById( id );
     }
 
     public static Builder create()
     {
         return new Builder();
-    }
-
-    static Builder create( final AbstractNodeCommand source )
-    {
-        return new Builder( source );
     }
 
     public static final class Builder
@@ -41,11 +34,6 @@ public class GetNodeByIdCommand
         private Builder()
         {
             super();
-        }
-
-        private Builder( final AbstractNodeCommand source )
-        {
-            super( source );
         }
 
         public Builder id( NodeId id )

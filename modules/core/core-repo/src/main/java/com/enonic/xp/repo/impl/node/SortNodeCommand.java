@@ -142,7 +142,7 @@ public class SortNodeCommand
         final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
         for ( final NodeId nodeId : childNodeIds )
         {
-            final Node node = doGetById( nodeId );
+            final Node node = doGetById( nodeId, internalContext );
             final Node updatedNode = Node.create( node ).manualOrderValue( resolver.getAsLong() ).timestamp( Millis.now() ).build();
             final Node storedNode =
                 this.nodeStorageService.store( StoreNodeParams.newVersion( updatedNode, params.getChildVersionAttributes() ),

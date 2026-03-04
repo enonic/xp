@@ -52,14 +52,14 @@ public class InternalContext
         return branch;
     }
 
-    public PrincipalKeys getPrincipalsKeys()
+    public PrincipalKeys getPrincipalKeys()
     {
         return principalsKeys;
     }
 
     public static Builder create( final InternalContext context )
     {
-        return create().principalsKeys( context.getPrincipalsKeys() )
+        return create().principalsKeys( context.getPrincipalKeys() )
             .branch( context.getBranch() )
             .repositoryId( context.getRepositoryId() )
             .searchPreference( context.searchPreference )
@@ -68,10 +68,10 @@ public class InternalContext
 
     public static Builder create( final Context context )
     {
-        return create()
-            .principalsKeys( context.getAuthInfo() != null ? context.getAuthInfo().getPrincipals() : PrincipalKeys.empty() )
+        return create().principalsKeys( context.getAuthInfo() != null ? context.getAuthInfo().getPrincipals() : PrincipalKeys.empty() )
             .branch( context.getBranch() )
-            .repositoryId( context.getRepositoryId() ).eventMetadata( (Map) context.getAttribute( "eventMetadata" ) );
+            .repositoryId( context.getRepositoryId() )
+            .eventMetadata( (Map) context.getAttribute( "eventMetadata" ) );
     }
 
     public static Builder create()
@@ -101,9 +101,9 @@ public class InternalContext
             return false;
         }
         final InternalContext that = (InternalContext) o;
-        return Objects.equals( repositoryId, that.repositoryId ) &&
-            Objects.equals( branch, that.branch ) && Objects.equals( principalsKeys, that.principalsKeys ) &&
-            Objects.equals( searchPreference, that.searchPreference ) && Objects.equals( eventMetadata, that.eventMetadata );
+        return Objects.equals( repositoryId, that.repositoryId ) && Objects.equals( branch, that.branch ) &&
+            Objects.equals( principalsKeys, that.principalsKeys ) && Objects.equals( searchPreference, that.searchPreference ) &&
+            Objects.equals( eventMetadata, that.eventMetadata );
     }
 
     @Override

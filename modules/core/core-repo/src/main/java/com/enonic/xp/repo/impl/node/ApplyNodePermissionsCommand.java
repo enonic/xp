@@ -192,7 +192,7 @@ public class ApplyNodePermissionsCommand
         final Node persistedNode = nodeStorageService.get( nodeId, targetContext );
 
         if ( persistedNode == null ||
-            !NodePermissionsResolver.hasPermission( targetContext.getPrincipalsKeys(), Permission.WRITE_PERMISSIONS,
+            !NodePermissionsResolver.hasPermission( targetContext.getPrincipalKeys(), Permission.WRITE_PERMISSIONS,
                                                     persistedNode.getPermissions() ) )
         {
             listener.notEnoughRights( 1 );
