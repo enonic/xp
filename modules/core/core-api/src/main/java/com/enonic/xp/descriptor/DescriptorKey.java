@@ -4,11 +4,14 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
+import org.jspecify.annotations.NullMarked;
+
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.internal.NameValidator;
 
 @PublicApi
+@NullMarked
 public final class DescriptorKey
     implements Serializable
 {
@@ -23,7 +26,7 @@ public final class DescriptorKey
      */
     private static final NameValidator DESCRIPTOR_NAME = NameValidator.NAME.extend( DescriptorKey.class )
         .maxLength( 63 )
-        .invalidChars( NameValidator.HTML_SPECIAL_CHARACTERS + NameValidator.FILENAME_ILLEGAL_CHARACTERS )
+        .invalidChars( NameValidator.HTML_SPECIAL_CHARACTERS + NameValidator.FILENAME_ILLEGAL_CHARACTERS  + " " )
         .build();
 
     private static final String SEPARATOR = ":";

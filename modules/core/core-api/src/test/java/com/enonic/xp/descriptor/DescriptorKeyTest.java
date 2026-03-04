@@ -2,41 +2,24 @@ package com.enonic.xp.descriptor;
 
 import org.junit.jupiter.api.Test;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.support.AbstractEqualsTest;
+
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class DescriptorKeyTest
 {
     @Test
     void equals()
     {
-        AbstractEqualsTest equalsTest = new AbstractEqualsTest()
-        {
-            @Override
-            public Object getObjectX()
-            {
-                return DescriptorKey.from( "mainmodule:partTemplateName" );
-            }
+        EqualsVerifier.forClass( DescriptorKey.class ).verify();
+    }
 
-            @Override
-            public Object[] getObjectsThatNotEqualsX()
-            {
-                return new Object[]{DescriptorKey.from( "xeon:partTemplateName" ), DescriptorKey.from( "mainmodule:partTemplateName2" ),
-                    new Object()};
-            }
-
-            @Override
-            public Object getObjectThatEqualsXButNotTheSame()
-            {
-                return DescriptorKey.from( ApplicationKey.from( "mainmodule" ), "partTemplateName" );
-            }
-
-            @Override
-            public Object getObjectThatEqualsXButNotTheSame2()
-            {
-                return DescriptorKey.from( "mainmodule:partTemplateName" );
-            }
-        };
-        equalsTest.assertEqualsAndHashCodeContract();
+    @Test
+    void space_in_name_not_allowed()
+    {
+        assertThatThrownBy( () -> DescriptorKey.from( ApplicationKey.from( "myapp" ), "my descriptor" ) ).isInstanceOf(
+            IllegalArgumentException.class );
     }
 }
