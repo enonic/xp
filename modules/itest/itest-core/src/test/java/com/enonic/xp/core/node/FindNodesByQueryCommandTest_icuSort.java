@@ -161,7 +161,7 @@ class FindNodesByQueryCommandTest_icuSort
      * Creating a node with an unsupported language code must throw {@link IllegalArgumentException} at node creation time.
      */
     @Test
-    void sort_with_unsupported_language_throws_at_node_creation()
+    void unsupported_language_throws_at_node_creation()
     {
         final PropertyTree data = new PropertyTree();
         data.addString( FIELD_STRING, "alfa" );
