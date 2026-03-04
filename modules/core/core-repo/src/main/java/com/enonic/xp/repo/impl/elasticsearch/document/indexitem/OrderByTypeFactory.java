@@ -7,6 +7,7 @@ import com.enonic.xp.data.Value;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.repo.impl.elasticsearch.OrderbyValueResolver;
+import com.enonic.xp.repo.impl.index.IndexLanguageController;
 
 class OrderByTypeFactory
 {
@@ -20,8 +21,13 @@ class OrderByTypeFactory
         if ( !indexConfig.getLanguages().isEmpty() )
         {
             final String orderByValue = OrderbyValueResolver.getOrderbyValue( propertyValue );
-            indexConfig.getLanguages()
-                .forEach( language -> items.add( new IndexItemOrderByLanguage( indexPath, orderByValue, language ) ) );
+            indexConfig.getLanguages().forEach( language -> {
+                if ( !IndexLanguageController.isSupported( language ) )
+                {
+                    throw new IllegalArgumentException( "Unsupported language for sort indexing: " + language );
+                }
+                items.add( new IndexItemOrderByLanguage( indexPath, orderByValue, language ) );
+            } );
         }
         return items;
     }

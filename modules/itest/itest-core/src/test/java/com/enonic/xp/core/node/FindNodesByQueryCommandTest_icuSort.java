@@ -30,7 +30,7 @@ import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.parser.QueryParser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Verifies ICU collation sorting.
@@ -158,20 +158,25 @@ class FindNodesByQueryCommandTest_icuSort
     }
 
     /**
-     * Sorting with a language code that has no icu_collation_XX filter (e.g. "xyz") must not throw
-     * and must return all indexed nodes — falling back to default string sort order.
+     * Creating a node with an unsupported language code must throw {@link IllegalArgumentException} at node creation time.
      */
     @Test
-    void sort_with_unsupported_language_falls_back_gracefully()
+    void sort_with_unsupported_language_throws_at_node_creation()
     {
-        final List<String> words = List.of( "alfa", "beta", "gamma" );
-        words.forEach( word -> createStringNodeWithLanguage( "node-" + word, word, "xyz" ) );
-        nodeService.refresh( RefreshMode.ALL );
+        final PropertyTree data = new PropertyTree();
+        data.addString( FIELD_STRING, "alfa" );
 
-        final FindNodesByQueryResult result = sortByStringWithLanguage( "ASC", "xyz" );
+        final IndexConfig fieldIndexConfig = IndexConfig.create().enabled( true ).addLanguage( "xyz" ).build();
 
-        assertNotNull( result );
-        assertEquals( 3, result.getTotalHits() );
+        final PatternIndexConfigDocument indexConfigDocument =
+            PatternIndexConfigDocument.create().defaultConfig( IndexConfig.BY_TYPE ).add( FIELD_STRING, fieldIndexConfig ).build();
+
+        assertThrows( IllegalArgumentException.class, () -> createNode( CreateNodeParams.create()
+                                                                            .parent( NodePath.ROOT )
+                                                                            .name( "node-alfa" )
+                                                                            .data( data )
+                                                                            .indexConfigDocument( indexConfigDocument )
+                                                                            .build() ) );
     }
 
     private void createStringNodeWithLanguage( final String name, final String fieldValue, final String language )

@@ -5,7 +5,7 @@ import java.util.Optional;
 import org.elasticsearch.index.query.QueryBuilder;
 
 import com.enonic.xp.data.PropertySet;
-import com.enonic.xp.repo.impl.index.IndexStemmedController;
+import com.enonic.xp.repo.impl.index.IndexLanguageController;
 import com.enonic.xp.repo.impl.index.IndexValueTypeInterface;
 
 class StemmedQueryBuilder
@@ -29,7 +29,7 @@ class StemmedQueryBuilder
             ( (org.elasticsearch.index.query.SimpleQueryStringBuilder) super.create() ).analyzeWildcard( true );
 
         final IndexValueTypeInterface languageIndexType =
-            Optional.ofNullable( IndexStemmedController.resolveIndexValueType( this.language ) )
+            Optional.ofNullable( IndexLanguageController.resolveStemmedIndexValueType( this.language ) )
                 .orElseThrow( () -> new IllegalArgumentException( "Invalid language: " + language ) );
 
         fields.getWeightedQueryFieldNames().forEach( field -> {
@@ -45,7 +45,7 @@ class StemmedQueryBuilder
             }
         } );
 
-        builder.analyzer( IndexStemmedController.resolveAnalyzer( this.language ) );
+        builder.analyzer( IndexLanguageController.resolveAnalyzer( this.language ) );
 
         return builder;
     }
