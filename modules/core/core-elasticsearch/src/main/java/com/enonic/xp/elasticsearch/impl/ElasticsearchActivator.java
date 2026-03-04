@@ -1,7 +1,9 @@
 package com.enonic.xp.elasticsearch.impl;
 
+import java.util.Collections;
 import java.util.Map;
 
+import org.elasticsearch.Version;
 import org.elasticsearch.client.AdminClient;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.ClusterAdminClient;
@@ -10,8 +12,10 @@ import org.elasticsearch.common.inject.Injector;
 import org.elasticsearch.common.logging.ESLoggerFactory;
 import org.elasticsearch.common.logging.slf4j.Slf4jESLoggerFactory;
 import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.env.Environment;
 import org.elasticsearch.node.Node;
-import org.elasticsearch.node.NodeBuilder;
+import org.elasticsearch.node.internal.InternalSettingsPreparer;
+import org.elasticsearch.plugin.analysis.icu.AnalysisICUPlugin;
 import org.elasticsearch.transport.TransportService;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
@@ -60,7 +64,10 @@ public final class ElasticsearchActivator
         final Settings settings = new NodeSettingsBuilder( context, this.clusterConfig ).
             buildSettings( map );
 
-        this.node = NodeBuilder.nodeBuilder().settings( settings ).build();
+        final Environment environment = InternalSettingsPreparer.prepareEnvironment( settings, null );
+        this.node = new Node( environment, Version.CURRENT, Collections.singletonList( AnalysisICUPlugin.class ) )
+        {
+        };
         this.node.start();
 
         final Injector injector = this.node.injector();

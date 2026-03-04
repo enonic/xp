@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableList;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexPath;
+import com.enonic.xp.repo.impl.index.IndexStemmedController;
 
 class StemmedTypeFactory
 {
@@ -16,7 +17,7 @@ class StemmedTypeFactory
 
         if ( indexConfig.isStemmed() )
         {
-            indexConfig.getLanguages()
+            indexConfig.getLanguages().stream().filter( language -> IndexStemmedController.resolveIndexValueType( language ) != null )
                 .forEach( language -> stemmedItems.add( new IndexItemStemmed( indexPath, value.asString(), language ) ) );
         }
 

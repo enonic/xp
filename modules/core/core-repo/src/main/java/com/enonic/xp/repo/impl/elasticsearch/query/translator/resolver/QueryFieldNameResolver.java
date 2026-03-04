@@ -17,5 +17,5 @@ public interface QueryFieldNameResolver
 
     String resolve( String queryFieldName, Value value );
 
-    String resolveOrderByFieldName( String queryFieldName );
+    String resolveOrderByFieldName( String queryFieldName, String language );
 }

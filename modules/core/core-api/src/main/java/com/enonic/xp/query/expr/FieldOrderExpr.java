@@ -11,15 +11,28 @@ public final class FieldOrderExpr
 {
     private final FieldExpr field;
 
+    private final String language;
+
     public FieldOrderExpr( final FieldExpr field, final Direction direction )
+    {
+        this( field, direction, null );
+    }
+
+    public FieldOrderExpr( final FieldExpr field, final Direction direction, final String language )
     {
         super( direction );
         this.field = Objects.requireNonNull( field );
+        this.language = language;
     }
 
     public FieldExpr getField()
     {
         return this.field;
+    }
+
+    public static FieldOrderExpr create( final IndexPath indexPath, Direction direction, final String language )
+    {
+        return new FieldOrderExpr( FieldExpr.from( indexPath ), direction, language );
     }
 
     public static FieldOrderExpr create( final IndexPath indexPath, Direction direction )
@@ -30,6 +43,16 @@ public final class FieldOrderExpr
     public static FieldOrderExpr create( final String indexPath, Direction direction )
     {
         return new FieldOrderExpr( FieldExpr.from( indexPath ), direction );
+    }
+
+    public static FieldOrderExpr create( final String indexPath, Direction direction, final String language )
+    {
+        return new FieldOrderExpr( FieldExpr.from( indexPath ), direction, language );
+    }
+
+    public String getLanguage()
+    {
+        return language;
     }
 
     @Override
@@ -54,12 +77,12 @@ public final class FieldOrderExpr
             return false;
         }
         final FieldOrderExpr that = (FieldOrderExpr) o;
-        return field.equals( that.field );
+        return field.equals( that.field ) && Objects.equals( language, that.language );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( super.hashCode(), field );
+        return Objects.hash( super.hashCode(), field, language );
     }
 }

@@ -504,6 +504,500 @@
         }
       },
       {
+        "template_orderby_ar": {
+          "match": "*._orderby_ar",
+          "mapping": {
+            "type": "string",
+            "store": false,
+            "index": "analyzed",
+            "analyzer": "icu_sort_ar",
+            "ignore_above": 3072,
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_orderby_hy": {
+          "match": "*._orderby_hy",
+          "mapping": {
+            "type": "string",
+            "store": false,
+            "index": "analyzed",
+            "analyzer": "icu_sort_hy",
+            "ignore_above": 3072,
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_orderby_eu": {
+          "match": "*._orderby_eu",
+          "mapping": {
+            "type": "string",
+            "store": false,
+            "index": "analyzed",
+            "analyzer": "icu_sort_eu",
+            "ignore_above": 3072,
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_orderby_bn": {
+          "match": "*._orderby_bn",
+          "mapping": {
+            "type": "string",
+            "store": false,
+            "index": "analyzed",
+            "analyzer": "icu_sort_bn",
+            "ignore_above": 3072,
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_orderby_pt-br": {
+          "match": "*._orderby_pt-br",
+          "mapping": {
+            "type": "string",
+            "store": false,
+            "index": "analyzed",
+            "analyzer": "icu_sort_pt-br",
+            "ignore_above": 3072,
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_orderby_bg": {
+          "match": "*._orderby_bg",
+          "mapping": {
+            "type": "string",
+            "store": false,
+            "index": "analyzed",
+            "analyzer": "icu_sort_bg",
+            "ignore_above": 3072,
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_orderby_ca": {
+          "match": "*._orderby_ca",
+          "mapping": {
+            "type": "string",
+            "store": false,
+            "index": "analyzed",
+            "analyzer": "icu_sort_ca",
+            "ignore_above": 3072,
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_orderby_zh": {
+          "match": "*._orderby_zh",
+          "mapping": {
+            "type": "string",
+            "store": false,
+            "index": "analyzed",
+            "analyzer": "icu_sort_zh",
+            "ignore_above": 3072,
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_orderby_ja": {
+          "match": "*._orderby_ja",
+          "mapping": {
+            "type": "string",
+            "store": false,
+            "index": "analyzed",
+            "analyzer": "icu_sort_ja",
+            "ignore_above": 3072,
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_orderby_ko": {
+          "match": "*._orderby_ko",
+          "mapping": {
+            "type": "string",
+            "store": false,
+            "index": "analyzed",
+            "analyzer": "icu_sort_ko",
+            "ignore_above": 3072,
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_orderby_cs": {
+          "match": "*._orderby_cs",
+          "mapping": {
+            "type": "string",
+            "store": false,
+            "index": "analyzed",
+            "analyzer": "icu_sort_cs",
+            "ignore_above": 3072,
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_orderby_da": {
+          "match": "*._orderby_da",
+          "mapping": {
+            "type": "string",
+            "store": false,
+            "index": "analyzed",
+            "analyzer": "icu_sort_da",
+            "ignore_above": 3072,
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_orderby_nl": {
+          "match": "*._orderby_nl",
+          "mapping": {
+            "type": "string",
+            "store": false,
+            "index": "analyzed",
+            "analyzer": "icu_sort_nl",
+            "ignore_above": 3072,
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_orderby_en": {
+          "match": "*._orderby_en",
+          "mapping": {
+            "type": "string",
+            "store": false,
+            "index": "analyzed",
+            "analyzer": "icu_sort_en",
+            "ignore_above": 3072,
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_orderby_fi": {
+          "match": "*._orderby_fi",
+          "mapping": {
+            "type": "string",
+            "store": false,
+            "index": "analyzed",
+            "analyzer": "icu_sort_fi",
+            "ignore_above": 3072,
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_orderby_fr": {
+          "match": "*._orderby_fr",
+          "mapping": {
+            "type": "string",
+            "store": false,
+            "index": "analyzed",
+            "analyzer": "icu_sort_fr",
+            "ignore_above": 3072,
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_orderby_gl": {
+          "match": "*._orderby_gl",
+          "mapping": {
+            "type": "string",
+            "store": false,
+            "index": "analyzed",
+            "analyzer": "icu_sort_gl",
+            "ignore_above": 3072,
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_orderby_de": {
+          "match": "*._orderby_de",
+          "mapping": {
+            "type": "string",
+            "store": false,
+            "index": "analyzed",
+            "analyzer": "icu_sort_de",
+            "ignore_above": 3072,
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_orderby_el": {
+          "match": "*._orderby_el",
+          "mapping": {
+            "type": "string",
+            "store": false,
+            "index": "analyzed",
+            "analyzer": "icu_sort_el",
+            "ignore_above": 3072,
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_orderby_hi": {
+          "match": "*._orderby_hi",
+          "mapping": {
+            "type": "string",
+            "store": false,
+            "index": "analyzed",
+            "analyzer": "icu_sort_hi",
+            "ignore_above": 3072,
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_orderby_hu": {
+          "match": "*._orderby_hu",
+          "mapping": {
+            "type": "string",
+            "store": false,
+            "index": "analyzed",
+            "analyzer": "icu_sort_hu",
+            "ignore_above": 3072,
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_orderby_id": {
+          "match": "*._orderby_id",
+          "mapping": {
+            "type": "string",
+            "store": false,
+            "index": "analyzed",
+            "analyzer": "icu_sort_id",
+            "ignore_above": 3072,
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_orderby_ga": {
+          "match": "*._orderby_ga",
+          "mapping": {
+            "type": "string",
+            "store": false,
+            "index": "analyzed",
+            "analyzer": "icu_sort_ga",
+            "ignore_above": 3072,
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_orderby_it": {
+          "match": "*._orderby_it",
+          "mapping": {
+            "type": "string",
+            "store": false,
+            "index": "analyzed",
+            "analyzer": "icu_sort_it",
+            "ignore_above": 3072,
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_orderby_lv": {
+          "match": "*._orderby_lv",
+          "mapping": {
+            "type": "string",
+            "store": false,
+            "index": "analyzed",
+            "analyzer": "icu_sort_lv",
+            "ignore_above": 3072,
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_orderby_lt": {
+          "match": "*._orderby_lt",
+          "mapping": {
+            "type": "string",
+            "store": false,
+            "index": "analyzed",
+            "analyzer": "icu_sort_lt",
+            "ignore_above": 3072,
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_orderby_no": {
+          "match": "*._orderby_no",
+          "mapping": {
+            "type": "string",
+            "store": false,
+            "index": "analyzed",
+            "analyzer": "icu_sort_no",
+            "ignore_above": 3072,
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_orderby_nb": {
+          "match": "*._orderby_nb",
+          "mapping": {
+            "type": "string",
+            "store": false,
+            "index": "analyzed",
+            "analyzer": "icu_sort_nb",
+            "ignore_above": 3072,
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_orderby_nn": {
+          "match": "*._orderby_nn",
+          "mapping": {
+            "type": "string",
+            "store": false,
+            "index": "analyzed",
+            "analyzer": "icu_sort_nn",
+            "ignore_above": 3072,
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_orderby_fa": {
+          "match": "*._orderby_fa",
+          "mapping": {
+            "type": "string",
+            "store": false,
+            "index": "analyzed",
+            "analyzer": "icu_sort_fa",
+            "ignore_above": 3072,
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_orderby_pt": {
+          "match": "*._orderby_pt",
+          "mapping": {
+            "type": "string",
+            "store": false,
+            "index": "analyzed",
+            "analyzer": "icu_sort_pt",
+            "ignore_above": 3072,
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_orderby_ro": {
+          "match": "*._orderby_ro",
+          "mapping": {
+            "type": "string",
+            "store": false,
+            "index": "analyzed",
+            "analyzer": "icu_sort_ro",
+            "ignore_above": 3072,
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_orderby_ru": {
+          "match": "*._orderby_ru",
+          "mapping": {
+            "type": "string",
+            "store": false,
+            "index": "analyzed",
+            "analyzer": "icu_sort_ru",
+            "ignore_above": 3072,
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_orderby_ku": {
+          "match": "*._orderby_ku",
+          "mapping": {
+            "type": "string",
+            "store": false,
+            "index": "analyzed",
+            "analyzer": "icu_sort_ku",
+            "ignore_above": 3072,
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_orderby_es": {
+          "match": "*._orderby_es",
+          "mapping": {
+            "type": "string",
+            "store": false,
+            "index": "analyzed",
+            "analyzer": "icu_sort_es",
+            "ignore_above": 3072,
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_orderby_sv": {
+          "match": "*._orderby_sv",
+          "mapping": {
+            "type": "string",
+            "store": false,
+            "index": "analyzed",
+            "analyzer": "icu_sort_sv",
+            "ignore_above": 3072,
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_orderby_tr": {
+          "match": "*._orderby_tr",
+          "mapping": {
+            "type": "string",
+            "store": false,
+            "index": "analyzed",
+            "analyzer": "icu_sort_tr",
+            "ignore_above": 3072,
+            "include_in_all": false
+          }
+        }
+      },
+      {
+        "template_orderby_th": {
+          "match": "*._orderby_th",
+          "mapping": {
+            "type": "string",
+            "store": false,
+            "index": "analyzed",
+            "analyzer": "icu_sort_th",
+            "ignore_above": 3072,
+            "include_in_all": false
+          }
+        }
+      },
+      {
         "template_node_properties": {
           "match": "_*",
           "mapping": {

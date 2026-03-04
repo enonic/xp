@@ -41,7 +41,7 @@ class IndexItemFactory
         {
             items.addAll( BaseTypeFactory.create( indexPath, processedPropertyValue ) );
             items.addAll( FulltextTypeFactory.create( indexPath, processedPropertyValue, indexConfig ) );
-            items.add( OrderByTypeFactory.create( indexPath, processedPropertyValue ) );
+            items.addAll( OrderByTypeFactory.create( indexPath, processedPropertyValue, indexConfig ) );
             items.addAll( AllTextTypeFactory.create( processedPropertyValue, indexConfig, indexConfigDocument.getAllTextConfig() ) );
             items.addAll( StemmedTypeFactory.create( indexPath, processedPropertyValue, indexConfig ) );
 

@@ -8,7 +8,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 public class OrderbyValueResolver
 {
 
-    private static final int ORDER_BY_STRING_MAX_LENGHT = 1024;
+    private static final int ORDER_BY_STRING_MAX_LENGTH = 1024;
 
     public static String getOrderbyValue( Value value )
     {
@@ -58,7 +58,7 @@ public class OrderbyValueResolver
             return "";
         }
 
-        return value.substring( 0, Math.min( value.length(), ORDER_BY_STRING_MAX_LENGHT ) ).toLowerCase();
+        return value.substring( 0, Math.min( value.length(), ORDER_BY_STRING_MAX_LENGTH ) ).toLowerCase();
     }
 
 

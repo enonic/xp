@@ -19,6 +19,8 @@ public final class DslOrderExpr
 
     private final String unit;
 
+    private final String language;
+
     private final Double lat;
 
     private final Double lon;
@@ -29,6 +31,7 @@ public final class DslOrderExpr
         this.field = expression.getString( "field" );
         this.type = expression.getString( "type" );
         this.unit = expression.getString( "unit" );
+        this.language = expression.getString( "language" );
 
         final PropertySet location = expression.getSet( "location" );
         this.lat = location != null ? Objects.requireNonNull( location.getDouble( "lat" ) ) : null;
@@ -61,6 +64,11 @@ public final class DslOrderExpr
     public String getUnit()
     {
         return unit;
+    }
+
+    public String getLanguage()
+    {
+        return language;
     }
 
     public Double getLat()
@@ -96,12 +104,13 @@ public final class DslOrderExpr
         }
         final DslOrderExpr orderExpr = (DslOrderExpr) o;
         return Objects.equals( field, orderExpr.field ) && Objects.equals( type, orderExpr.type ) &&
-            Objects.equals( unit, orderExpr.unit ) && Objects.equals( lat, orderExpr.lat ) && Objects.equals( lon, orderExpr.lon );
+            Objects.equals( unit, orderExpr.unit ) && Objects.equals( language, orderExpr.language ) &&
+            Objects.equals( lat, orderExpr.lat ) && Objects.equals( lon, orderExpr.lon );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( super.hashCode(), field, type, unit, lat, lon );
+        return Objects.hash( super.hashCode(), field, type, unit, language, lat, lon );
     }
 }

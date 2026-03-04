@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver;
 
+import java.util.Locale;
 import java.util.Set;
 
 import com.enonic.xp.data.Value;
@@ -10,6 +11,7 @@ import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.index.IndexFieldNameNormalizer;
 import com.enonic.xp.repo.impl.index.IndexValueType;
 import com.enonic.xp.repo.impl.index.IndexValueTypeInterface;
+import com.enonic.xp.repo.impl.index.OrderByIndexValueType;
 
 abstract class AbstractQueryFieldNameResolver
     implements QueryFieldNameResolver
@@ -68,13 +70,18 @@ abstract class AbstractQueryFieldNameResolver
     }
 
     @Override
-    public String resolveOrderByFieldName( final String queryFieldName )
+    public String resolveOrderByFieldName( final String queryFieldName, final String language )
     {
         final String normalizedFieldName = IndexFieldNameNormalizer.normalize( queryFieldName );
 
         if ( builtInFields.contains( normalizedFieldName ) )
         {
             return normalizedFieldName;
+        }
+
+        if ( language != null && !language.isBlank() )
+        {
+            return appendIndexValueType( normalizedFieldName, new OrderByIndexValueType( language.toLowerCase( Locale.ROOT ) ) );
         }
 
         return appendIndexValueType( normalizedFieldName, IndexValueType.ORDERBY );
