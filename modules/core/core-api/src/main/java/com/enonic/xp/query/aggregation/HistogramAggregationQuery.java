@@ -2,9 +2,7 @@ package com.enonic.xp.query.aggregation;
 
 import com.google.common.base.MoreObjects;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class HistogramAggregationQuery
     extends AbstractHistogramAggregationQuery<Long>
 {
@@ -45,13 +43,14 @@ public final class HistogramAggregationQuery
     @Override
     public String toString()
     {
-        return MoreObjects.toStringHelper( this ).omitNullValues().
-            add( "name", getName() ).
-            add( "fieldName", getFieldName() ).
-            add( "extendedBoundMin", extendedBoundMin ).
-            add( "extendedBoundMax", extendedBoundMax ).
-            add( "order", order ).
-            toString();
+        return MoreObjects.toStringHelper( this )
+            .omitNullValues()
+            .add( "name", getName() )
+            .add( "fieldName", getFieldName() )
+            .add( "extendedBoundMin", extendedBoundMin )
+            .add( "extendedBoundMax", extendedBoundMax )
+            .add( "order", order )
+            .toString();
     }
 
     public static Builder create( final String name )

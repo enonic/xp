@@ -6,10 +6,9 @@ import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableSet;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
-@PublicApi
+
 public final class NodePaths
     extends AbstractImmutableEntitySet<NodePath>
 {
@@ -32,8 +31,7 @@ public final class NodePaths
 
     public static NodePaths from( final String... paths )
     {
-        return fromInternal(
-            Arrays.stream( paths ).map( NodePath::new ).collect( ImmutableSet.toImmutableSet() ) );
+        return fromInternal( Arrays.stream( paths ).map( NodePath::new ).collect( ImmutableSet.toImmutableSet() ) );
     }
 
     public static NodePaths from( final Iterable<NodePath> paths )

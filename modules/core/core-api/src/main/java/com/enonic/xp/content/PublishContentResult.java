@@ -5,9 +5,7 @@ import java.util.Objects;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class PublishContentResult
 {
     private final ImmutableList<Result> publishedContents;

@@ -8,9 +8,7 @@ import java.net.URLConnection;
 import com.google.common.base.Optional;
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class UrlResource
     extends ResourceBase
 {

@@ -6,9 +6,7 @@ import java.util.Objects;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class MailAttachment
 {
     private final String fileName;

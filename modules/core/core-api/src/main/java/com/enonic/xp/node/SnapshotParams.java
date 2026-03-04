@@ -2,12 +2,11 @@ package com.enonic.xp.node;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.repository.RepositoryId;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
-@PublicApi
+
 public final class SnapshotParams
 {
     final String snapshotName;

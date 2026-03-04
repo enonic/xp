@@ -4,10 +4,9 @@ import java.util.Objects;
 
 import org.jspecify.annotations.NullMarked;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.core.internal.NameValidator;
 
-@PublicApi
+
 @NullMarked
 public abstract class Name
 {

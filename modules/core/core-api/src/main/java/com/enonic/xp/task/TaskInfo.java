@@ -6,12 +6,11 @@ import java.util.Objects;
 
 import com.google.common.base.MoreObjects;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.cluster.ClusterNodeId;
 import com.enonic.xp.security.PrincipalKey;
 
-@PublicApi
+
 public final class TaskInfo
     implements Serializable
 {
@@ -127,17 +126,17 @@ public final class TaskInfo
     @Override
     public String toString()
     {
-        return MoreObjects.toStringHelper( this ).
-            add( "id", id ).
-            add( "name", name ).
-            add( "description", description ).
-            add( "state", state ).
-            add( "progress", progress ).
-            add( "application", application ).
-            add( "user", user ).
-            add( "startTime", startTime ).
-            add( "node", node ).
-            toString();
+        return MoreObjects.toStringHelper( this )
+            .add( "id", id )
+            .add( "name", name )
+            .add( "description", description )
+            .add( "state", state )
+            .add( "progress", progress )
+            .add( "application", application )
+            .add( "user", user )
+            .add( "startTime", startTime )
+            .add( "node", node )
+            .toString();
     }
 
     public Builder copy()

@@ -8,10 +8,9 @@ import java.util.Objects;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.security.PrincipalKey;
 
-@PublicApi
+
 public final class AccessControlEntry
 {
     private final PrincipalKey principal;

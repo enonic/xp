@@ -7,12 +7,11 @@ import java.util.List;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.security.PrincipalKey;
 
 import static java.util.Objects.requireNonNull;
 
-@PublicApi
+
 @NullMarked
 public record ContentVersion(ContentVersionId versionId, ContentId contentId, ContentPath path, Instant timestamp, @Nullable String comment,
                              List<Action> actions)

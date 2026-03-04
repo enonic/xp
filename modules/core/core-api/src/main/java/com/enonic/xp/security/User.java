@@ -5,13 +5,12 @@ import java.util.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.mail.EmailValidator;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
-@PublicApi
+
 public final class User
     extends Principal
 {

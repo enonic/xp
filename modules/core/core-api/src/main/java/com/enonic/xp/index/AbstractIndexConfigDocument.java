@@ -2,9 +2,7 @@ package com.enonic.xp.index;
 
 import java.util.Objects;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public abstract class AbstractIndexConfigDocument
     implements IndexConfigDocument
 {

@@ -1,8 +1,5 @@
 package com.enonic.xp.content;
 
-import com.enonic.xp.annotation.PublicApi;
-
-@PublicApi
 public final class DeleteContentsResult
 {
     private final ContentIds deletedContents;

@@ -3,10 +3,9 @@ package com.enonic.xp.node;
 import java.time.Instant;
 import java.util.Objects;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.blob.BlobKeys;
 
-@PublicApi
+
 public final class NodeVersion
 {
     private final NodeVersionId nodeVersionId;

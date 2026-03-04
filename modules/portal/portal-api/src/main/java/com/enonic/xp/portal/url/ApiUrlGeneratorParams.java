@@ -6,12 +6,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.descriptor.DescriptorKey;
 
 import static com.google.common.base.Strings.emptyToNull;
 
-@PublicApi
+
 public final class ApiUrlGeneratorParams
 {
     private final String baseUrl;

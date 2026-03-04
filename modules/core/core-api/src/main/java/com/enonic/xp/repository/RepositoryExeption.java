@@ -1,8 +1,5 @@
 package com.enonic.xp.repository;
 
-import com.enonic.xp.annotation.PublicApi;
-
-@PublicApi
 public class RepositoryExeption
     extends RuntimeException
 {

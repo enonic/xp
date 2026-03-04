@@ -1,9 +1,8 @@
 package com.enonic.xp.archive;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.content.ContentPath;
 
-@PublicApi
+
 public final class ArchiveContentException
     extends RuntimeException
 {

@@ -2,10 +2,9 @@ package com.enonic.xp.security;
 
 import java.util.Objects;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.query.expr.QueryExpr;
 
-@PublicApi
+
 public final class UserQuery
 {
     private static final int DEFAULT_SIZE = 10;
@@ -52,9 +51,7 @@ public final class UserQuery
             return false;
         }
         final UserQuery that = (UserQuery) o;
-        return from == that.from &&
-            size == that.size &&
-            Objects.equals( queryExpr, that.queryExpr );
+        return from == that.from && size == that.size && Objects.equals( queryExpr, that.queryExpr );
     }
 
     @Override

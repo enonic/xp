@@ -1,9 +1,8 @@
 package com.enonic.xp.security.auth;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.exception.BaseException;
 
-@PublicApi
+
 public class AuthenticationException
     extends BaseException
 {

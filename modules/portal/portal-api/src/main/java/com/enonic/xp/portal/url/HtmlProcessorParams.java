@@ -4,11 +4,10 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.portal.html.HtmlDocument;
 import com.enonic.xp.portal.html.HtmlElement;
 
-@PublicApi
+
 public final class HtmlProcessorParams
 {
     private final HtmlDocument htmlDocument;

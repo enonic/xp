@@ -1,10 +1,9 @@
 package com.enonic.xp.archive;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 
-@PublicApi
+
 public final class ArchiveContentsResult
 {
     private final ContentIds archivedContents;

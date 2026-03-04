@@ -3,13 +3,12 @@ package com.enonic.xp.index;
 import java.time.Duration;
 import java.time.Instant;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.repository.RepositoryId;
 
-@PublicApi
+
 public final class ReindexResult
 {
     private final Duration duration;

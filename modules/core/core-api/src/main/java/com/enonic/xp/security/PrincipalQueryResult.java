@@ -2,9 +2,7 @@ package com.enonic.xp.security;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class PrincipalQueryResult
 {
     private final int totalSize;

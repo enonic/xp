@@ -4,10 +4,9 @@ import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.mail.EmailValidator;
 
-@PublicApi
+
 public final class UpdateUserParams
 {
     private final PrincipalKey key;

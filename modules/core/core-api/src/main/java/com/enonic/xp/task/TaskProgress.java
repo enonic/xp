@@ -5,9 +5,7 @@ import java.util.Objects;
 
 import com.google.common.base.MoreObjects;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class TaskProgress
     implements Serializable
 {

@@ -5,9 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class NodeComparisons
     implements Iterable<NodeComparison>
 {
@@ -30,10 +28,7 @@ public final class NodeComparisons
 
     public NodeComparison getBySourcePath( final NodePath nodePath )
     {
-        return this.comparisonMap.values().stream().
-            filter( comparison -> comparison.getSourcePath().equals( nodePath ) ).
-            findFirst().
-            get();
+        return this.comparisonMap.values().stream().filter( comparison -> comparison.getSourcePath().equals( nodePath ) ).findFirst().get();
     }
 
     @Override
@@ -49,9 +44,7 @@ public final class NodeComparisons
 
     public NodeIds getNodeIds()
     {
-        return this.comparisonMap.values().stream().
-            map( NodeComparison::getNodeId ).
-            collect( NodeIds.collector() );
+        return this.comparisonMap.values().stream().map( NodeComparison::getNodeId ).collect( NodeIds.collector() );
     }
 
     public NodePaths getSourcePaths()
@@ -80,8 +73,7 @@ public final class NodeComparisons
 
         public Builder addAll( final Collection<NodeComparison> nodeComparisons )
         {
-            nodeComparisons.
-                forEach( comparison -> this.nodeIdNodeComparisonMap.put( comparison.getNodeId(), comparison ) );
+            nodeComparisons.forEach( comparison -> this.nodeIdNodeComparisonMap.put( comparison.getNodeId(), comparison ) );
 
             return this;
         }

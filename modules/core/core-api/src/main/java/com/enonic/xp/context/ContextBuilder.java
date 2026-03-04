@@ -7,13 +7,12 @@ import java.util.stream.Stream;
 
 import com.google.common.collect.ImmutableMap;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.session.Session;
 
-@PublicApi
+
 public final class ContextBuilder
 {
     private final Map<String, Object> attributes;
@@ -89,8 +88,8 @@ public final class ContextBuilder
         final Session session = localScope.getSession();
         final Map<String, Object> sessionAttributes = session == null ? Map.of() : session.getAttributes();
 
-        return Stream.of( localAttributes, sessionAttributes ).
-            flatMap( map -> map.entrySet().stream() ).
-            collect( Collectors.toMap( Map.Entry::getKey, Map.Entry::getValue, ( v1, v2 ) -> v1, HashMap::new ) );
+        return Stream.of( localAttributes, sessionAttributes )
+            .flatMap( map -> map.entrySet().stream() )
+            .collect( Collectors.toMap( Map.Entry::getKey, Map.Entry::getValue, ( v1, v2 ) -> v1, HashMap::new ) );
     }
 }

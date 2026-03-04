@@ -5,9 +5,7 @@ import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class UpdateIndexSettingsResult
 {
     private final ImmutableSet<String> updatedIndexes;

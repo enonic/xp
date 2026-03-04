@@ -2,10 +2,9 @@ package com.enonic.xp.node;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.util.BinaryReference;
 
-@PublicApi
+
 public final class BinaryAttachment
 {
     private final BinaryReference reference;

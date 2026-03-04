@@ -11,7 +11,6 @@ import java.util.function.Function;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
@@ -20,7 +19,7 @@ import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 
-@PublicApi
+
 @NullMarked
 public class PatchableContent
 {

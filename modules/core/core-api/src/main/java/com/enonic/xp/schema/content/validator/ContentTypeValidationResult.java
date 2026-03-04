@@ -4,9 +4,7 @@ import java.util.Iterator;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class ContentTypeValidationResult
     implements Iterable<ContentTypeValidationError>
 {

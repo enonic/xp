@@ -2,9 +2,7 @@ package com.enonic.xp.web.vhost;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class VirtualHostHelper
 {
     private static final String KEY = VirtualHost.class.getName();

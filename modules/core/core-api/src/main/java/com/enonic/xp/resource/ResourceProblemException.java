@@ -6,10 +6,9 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.exception.BaseException;
 
-@PublicApi
+
 public final class ResourceProblemException
     extends BaseException
 {

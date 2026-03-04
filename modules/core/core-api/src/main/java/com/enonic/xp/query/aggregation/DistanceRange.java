@@ -2,9 +2,7 @@ package com.enonic.xp.query.aggregation;
 
 import com.google.common.base.MoreObjects;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class DistanceRange
     extends Range
 {
@@ -32,11 +30,7 @@ public final class DistanceRange
     @Override
     public String toString()
     {
-        return MoreObjects.toStringHelper( this ).omitNullValues().
-            add( "key", getKey() ).
-            add( "from", from ).
-            add( "to", to ).
-            toString();
+        return MoreObjects.toStringHelper( this ).omitNullValues().add( "key", getKey() ).add( "from", from ).add( "to", to ).toString();
     }
 
     public static Builder create()

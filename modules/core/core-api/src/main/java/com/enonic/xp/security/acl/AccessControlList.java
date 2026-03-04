@@ -6,14 +6,11 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 
 
-@PublicApi
 public final class AccessControlList
     implements Iterable<AccessControlEntry>
 {
@@ -92,10 +89,10 @@ public final class AccessControlList
     public PrincipalKeys getPrincipalsWithPermission( final Permission permission )
     {
         return this.entries.values()
-                                       .stream()
-                                       .filter( ( entry ) -> entry.isAllowed( permission ) )
-                                       .map( AccessControlEntry::getPrincipal )
-                                       .collect( PrincipalKeys.collector() );
+            .stream()
+            .filter( ( entry ) -> entry.isAllowed( permission ) )
+            .map( AccessControlEntry::getPrincipal )
+            .collect( PrincipalKeys.collector() );
     }
 
     public AccessControlEntry getEntry( final PrincipalKey principalKey )

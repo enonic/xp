@@ -3,13 +3,12 @@ package com.enonic.xp.project;
 import java.util.Collection;
 import java.util.Map;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 
 import static java.util.Objects.requireNonNullElse;
 
-@PublicApi
+
 public final class ProjectPermissions
 {
     private final Map<ProjectRole, PrincipalKeys> permissions;

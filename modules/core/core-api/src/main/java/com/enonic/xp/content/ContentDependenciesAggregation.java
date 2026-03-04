@@ -1,10 +1,9 @@
 package com.enonic.xp.content;
 
 import com.enonic.xp.aggregation.Bucket;
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.schema.content.ContentTypeName;
 
-@PublicApi
+
 public final class ContentDependenciesAggregation
 {
     private final ContentTypeName type;

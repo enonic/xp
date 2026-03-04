@@ -3,9 +3,7 @@ package com.enonic.xp.convert;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class Converters
 {
     private static final Converters INSTANCE = new Converters();

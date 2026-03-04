@@ -2,9 +2,7 @@ package com.enonic.xp.node;
 
 import java.util.Objects;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class NodeType
 {
     public static final NodeType DEFAULT_NODE_COLLECTION = new NodeType( "default" );

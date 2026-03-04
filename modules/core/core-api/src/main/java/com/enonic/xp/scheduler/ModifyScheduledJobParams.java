@@ -2,9 +2,7 @@ package com.enonic.xp.scheduler;
 
 import java.util.Objects;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class ModifyScheduledJobParams
 {
     private final ScheduledJobName name;

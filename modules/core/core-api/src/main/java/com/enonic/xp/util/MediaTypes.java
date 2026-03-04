@@ -9,11 +9,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import com.google.common.io.Files;
 import com.google.common.net.MediaType;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.media.MediaTypeProvider;
 import com.enonic.xp.media.MediaTypeService;
 
-@PublicApi
+
 public final class MediaTypes
     implements MediaTypeService
 {

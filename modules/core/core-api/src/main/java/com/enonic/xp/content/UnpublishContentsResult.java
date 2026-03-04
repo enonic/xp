@@ -1,8 +1,5 @@
 package com.enonic.xp.content;
 
-import com.enonic.xp.annotation.PublicApi;
-
-@PublicApi
 public final class UnpublishContentsResult
 {
     private final ContentIds unpublishedContents;
@@ -30,12 +27,14 @@ public final class UnpublishContentsResult
         {
         }
 
-        public Builder addUnpublished(final ContentId contentId) {
+        public Builder addUnpublished( final ContentId contentId )
+        {
             this.unpublishedContents.add( contentId );
             return this;
         }
 
-        public Builder addUnpublished(final ContentIds contentIds) {
+        public Builder addUnpublished( final ContentIds contentIds )
+        {
             this.unpublishedContents.addAll( contentIds );
             return this;
         }

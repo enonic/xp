@@ -2,9 +2,7 @@ package com.enonic.xp.session;
 
 import java.util.Objects;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class SessionKey
 {
     private final String value;

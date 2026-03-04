@@ -1,15 +1,14 @@
 package com.enonic.xp.util;
 
+import java.util.Arrays;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
-import java.util.Arrays;
 
 import com.google.common.collect.ImmutableSet;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
-@PublicApi
+
 public final class BinaryReferences
     extends AbstractImmutableEntitySet<BinaryReference>
 {

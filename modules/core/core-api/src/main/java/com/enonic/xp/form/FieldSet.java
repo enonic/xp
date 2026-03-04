@@ -5,11 +5,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.schema.LocalizedText;
 
 
-@PublicApi
 public final class FieldSet
     extends FormItem
     implements Iterable<FormItem>
@@ -102,7 +100,7 @@ public final class FieldSet
 
     FormItem getFormItem( final String path )
     {
-        return formItems.getFormItem( FormItemPath.from(  path ) );
+        return formItems.getFormItem( FormItemPath.from( path ) );
     }
 
     public static final class Builder

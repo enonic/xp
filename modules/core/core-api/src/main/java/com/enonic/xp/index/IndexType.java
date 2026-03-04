@@ -2,9 +2,7 @@ package com.enonic.xp.index;
 
 import java.util.Locale;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public enum IndexType
 {
     SEARCH( true ), VERSION( false ), BRANCH( false ), COMMIT( false );

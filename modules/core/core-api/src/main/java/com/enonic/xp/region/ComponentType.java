@@ -1,8 +1,5 @@
 package com.enonic.xp.region;
 
-import com.enonic.xp.annotation.PublicApi;
-
-@PublicApi
 public abstract class ComponentType
 {
     private final String shortName;

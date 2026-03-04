@@ -2,9 +2,7 @@ package com.enonic.xp.task;
 
 import java.util.List;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public interface TaskService
 {
     TaskId submitLocalTask( SubmitLocalTaskParams params );

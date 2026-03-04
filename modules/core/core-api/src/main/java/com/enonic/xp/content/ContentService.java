@@ -4,7 +4,6 @@ import org.jspecify.annotations.NullMarked;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.archive.ArchiveContentParams;
 import com.enonic.xp.archive.ArchiveContentsResult;
 import com.enonic.xp.archive.RestoreContentParams;
@@ -13,7 +12,7 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.util.BinaryReference;
 
-@PublicApi
+
 public interface ContentService
 {
     Content create( CreateContentParams params );

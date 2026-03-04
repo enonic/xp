@@ -2,10 +2,9 @@ package com.enonic.xp.security;
 
 import java.text.MessageFormat;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.exception.DuplicateElementException;
 
-@PublicApi
+
 public class IdProviderAlreadyExistsException
     extends DuplicateElementException
 {

@@ -3,11 +3,10 @@ package com.enonic.xp.security;
 
 import java.util.Objects;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertyTree;
 
-@PublicApi
+
 public final class IdProviderConfig
 {
     private final ApplicationKey applicationKey;

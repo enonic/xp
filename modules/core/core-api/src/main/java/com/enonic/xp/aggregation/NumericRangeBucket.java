@@ -1,8 +1,5 @@
 package com.enonic.xp.aggregation;
 
-import com.enonic.xp.annotation.PublicApi;
-
-@PublicApi
 public final class NumericRangeBucket
     extends Bucket
 {

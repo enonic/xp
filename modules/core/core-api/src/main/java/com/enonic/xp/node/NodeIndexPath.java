@@ -1,9 +1,8 @@
 package com.enonic.xp.node;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.index.IndexPath;
 
-@PublicApi
+
 public final class NodeIndexPath
 {
     private static final String DIVIDER = ".";

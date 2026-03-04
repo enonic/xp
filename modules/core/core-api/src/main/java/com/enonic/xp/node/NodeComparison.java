@@ -1,8 +1,5 @@
 package com.enonic.xp.node;
 
-import com.enonic.xp.annotation.PublicApi;
-
-@PublicApi
 public final class NodeComparison
 {
     private final NodePath sourcePath;
@@ -15,7 +12,8 @@ public final class NodeComparison
 
     private final NodeCompareStatus compareStatus;
 
-    public NodeComparison( final NodeId sourceId, final NodePath sourcePath, NodeId targetId, NodePath targetPath, final NodeCompareStatus compareStatus )
+    public NodeComparison( final NodeId sourceId, final NodePath sourcePath, NodeId targetId, NodePath targetPath,
+                           final NodeCompareStatus compareStatus )
     {
         this.sourceId = sourceId;
         this.targetId = targetId;

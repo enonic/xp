@@ -5,12 +5,11 @@ import java.util.Objects;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 
-@PublicApi
+
 public final class Project
 {
     private final ProjectName name;

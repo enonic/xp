@@ -1,8 +1,5 @@
 package com.enonic.xp.exception;
 
-import com.enonic.xp.annotation.PublicApi;
-
-@PublicApi
 public abstract class NotFoundException
     extends BaseException
 {

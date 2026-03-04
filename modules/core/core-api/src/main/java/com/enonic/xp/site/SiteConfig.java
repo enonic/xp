@@ -3,11 +3,10 @@ package com.enonic.xp.site;
 
 import java.util.Objects;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertyTree;
 
-@PublicApi
+
 public final class SiteConfig
 {
     private final ApplicationKey applicationKey;

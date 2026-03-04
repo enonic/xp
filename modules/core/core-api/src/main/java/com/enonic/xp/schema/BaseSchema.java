@@ -4,11 +4,10 @@ package com.enonic.xp.schema;
 import java.time.Instant;
 import java.util.Objects;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.security.PrincipalKey;
 
-@PublicApi
+
 public abstract class BaseSchema<T extends BaseSchemaName>
 {
     final T name;

@@ -5,10 +5,9 @@ import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
-@PublicApi
+
 public final class ControllerMappingDescriptors
     extends AbstractImmutableEntityList<ControllerMappingDescriptor>
 {
@@ -31,7 +30,9 @@ public final class ControllerMappingDescriptors
 
     public static ControllerMappingDescriptors from( final Iterable<ControllerMappingDescriptor> controllerMappingDescriptors )
     {
-        return controllerMappingDescriptors instanceof ControllerMappingDescriptors c ? c : fromInternal( ImmutableList.copyOf( controllerMappingDescriptors ) );
+        return controllerMappingDescriptors instanceof ControllerMappingDescriptors c
+            ? c
+            : fromInternal( ImmutableList.copyOf( controllerMappingDescriptors ) );
     }
 
     private static ControllerMappingDescriptors fromInternal( final ImmutableList<ControllerMappingDescriptor> list )

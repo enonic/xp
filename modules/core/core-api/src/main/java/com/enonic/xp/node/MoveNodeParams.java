@@ -4,9 +4,7 @@ import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class MoveNodeParams
 {
     private final NodeId nodeId;
@@ -33,7 +31,7 @@ public final class MoveNodeParams
         this.versionAttributes = builder.versionAttributes;
         this.childVersionAttributes = builder.childVersionAttributes;
         this.moveListener = builder.moveListener;
-        this.processor = Objects.requireNonNullElse( builder.processor, ( n, p ) -> n);
+        this.processor = Objects.requireNonNullElse( builder.processor, ( n, p ) -> n );
         this.refresh = builder.refresh;
     }
 
@@ -154,7 +152,7 @@ public final class MoveNodeParams
 
         public MoveNodeParams build()
         {
-            Preconditions.checkArgument( this.newName != null || this.newParentPath != null , "nodeName or parentPath is required" );
+            Preconditions.checkArgument( this.newName != null || this.newParentPath != null, "nodeName or parentPath is required" );
             return new MoveNodeParams( this );
         }
     }

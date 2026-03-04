@@ -1,15 +1,11 @@
 package com.enonic.xp.query.expr;
 
-import com.enonic.xp.annotation.PublicApi;
-
-@PublicApi
 public final class LogicalExpr
     implements ConstraintExpr
 {
     public enum Operator
     {
-        AND,
-        OR
+        AND, OR
     }
 
     private final ConstraintExpr left;

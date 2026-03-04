@@ -7,10 +7,9 @@ import java.util.stream.Collectors;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
-@PublicApi
+
 public final class CreateAttachments
     extends AbstractImmutableEntityList<CreateAttachment>
 {
@@ -66,7 +65,7 @@ public final class CreateAttachments
 
         public Builder add( CreateAttachment value )
         {
-            map.put(  value.getName(), value );
+            map.put( value.getName(), value );
             return this;
         }
 

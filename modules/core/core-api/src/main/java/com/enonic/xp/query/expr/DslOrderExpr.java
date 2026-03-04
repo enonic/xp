@@ -5,11 +5,10 @@ import java.util.Optional;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 
-@PublicApi
+
 public final class DslOrderExpr
     extends OrderExpr
 {

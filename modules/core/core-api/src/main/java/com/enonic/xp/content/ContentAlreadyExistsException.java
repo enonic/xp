@@ -5,12 +5,11 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.exception.DuplicateElementException;
 import com.enonic.xp.repository.RepositoryId;
 
-@PublicApi
+
 public final class ContentAlreadyExistsException
     extends DuplicateElementException
 {
@@ -51,10 +50,10 @@ public final class ContentAlreadyExistsException
 
     private static String buildMessage( final ContentPath path, final RepositoryId repositoryId, final Branch branch )
     {
-        return Stream.of( MessageFormat.format( "Content at path [{0}]", path ), repositoryId != null ? MessageFormat.format(
-                              "in repository [{0}]", repositoryId ) : "",
-                          branch != null ? MessageFormat.format( "in branch [{0}]", branch ) : "", "already exists" ).
-            filter( Predicate.not( String::isEmpty ) ).
-            collect( Collectors.joining( " " ) );
+        return Stream.of( MessageFormat.format( "Content at path [{0}]", path ),
+                          repositoryId != null ? MessageFormat.format( "in repository [{0}]", repositoryId ) : "",
+                          branch != null ? MessageFormat.format( "in branch [{0}]", branch ) : "", "already exists" )
+            .filter( Predicate.not( String::isEmpty ) )
+            .collect( Collectors.joining( " " ) );
     }
 }

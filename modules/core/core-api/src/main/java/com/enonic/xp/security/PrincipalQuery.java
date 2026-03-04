@@ -9,9 +9,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class PrincipalQuery
 {
     public static final int DEFAULT_SIZE = 10;
@@ -107,13 +105,9 @@ public final class PrincipalQuery
             return false;
         }
         final PrincipalQuery that = (PrincipalQuery) o;
-        return from == that.from &&
-            size == that.size &&
-            Objects.equals( principalTypes, that.principalTypes ) && Objects.equals( idProviders, that.idProviders ) &&
-            Objects.equals( searchText, that.searchText ) &&
-            Objects.equals( email, that.email ) &&
-            Objects.equals( name, that.name ) &&
-            Objects.equals( displayName, that.displayName );
+        return from == that.from && size == that.size && Objects.equals( principalTypes, that.principalTypes ) &&
+            Objects.equals( idProviders, that.idProviders ) && Objects.equals( searchText, that.searchText ) &&
+            Objects.equals( email, that.email ) && Objects.equals( name, that.name ) && Objects.equals( displayName, that.displayName );
     }
 
     @Override

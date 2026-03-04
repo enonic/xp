@@ -2,9 +2,7 @@ package com.enonic.xp.server;
 
 import java.util.Properties;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class BuildInfo
 {
     private static final String NA = "N/A";

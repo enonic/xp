@@ -1,6 +1,5 @@
 package com.enonic.xp.portal;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
@@ -13,7 +12,7 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.web.WebRequest;
 
-@PublicApi
+
 public final class PortalRequest
     extends WebRequest
 {

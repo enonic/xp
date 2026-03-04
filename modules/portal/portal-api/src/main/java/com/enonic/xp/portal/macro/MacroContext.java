@@ -8,10 +8,9 @@ import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ListMultimap;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.portal.PortalRequest;
 
-@PublicApi
+
 public final class MacroContext
 {
     private final String name;
@@ -88,13 +87,13 @@ public final class MacroContext
     @Override
     public String toString()
     {
-        return MoreObjects.toStringHelper( this ).
-            add( "name", name ).
-            add( "body", body ).
-            add( "params", params ).
-            add( "request", request ).
-            add( "document", Ascii.truncate( document, 20, "..." ) ).
-            toString();
+        return MoreObjects.toStringHelper( this )
+            .add( "name", name )
+            .add( "body", body )
+            .add( "params", params )
+            .add( "request", request )
+            .add( "document", Ascii.truncate( document, 20, "..." ) )
+            .toString();
     }
 
     public static Builder create()

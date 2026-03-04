@@ -6,11 +6,10 @@ import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
-@PublicApi
+
 public final class PageTemplates
     extends AbstractImmutableEntityList<PageTemplate>
 {

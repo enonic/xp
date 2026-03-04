@@ -2,10 +2,9 @@ package com.enonic.xp.resource;
 
 import java.util.Objects;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.descriptor.DescriptorKey;
 
-@PublicApi
+
 public final class DeleteDynamicComponentParams
 {
     private final DescriptorKey key;

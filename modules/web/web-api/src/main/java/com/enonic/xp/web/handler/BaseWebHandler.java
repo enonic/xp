@@ -9,7 +9,6 @@ import com.google.common.io.ByteSource;
 import com.google.common.net.HttpHeaders;
 import com.google.common.primitives.Longs;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.web.HttpMethod;
@@ -18,7 +17,7 @@ import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 
-@PublicApi
+
 public abstract class BaseWebHandler
     implements WebHandler
 {
@@ -93,10 +92,10 @@ public abstract class BaseWebHandler
 
     private WebResponse handleDefaultOptions()
     {
-        return WebResponse.create().
-            status( HttpStatus.OK ).
-            header( HttpHeaders.ALLOW, methodsAllowed.stream().map( Object::toString ).collect( Collectors.joining( "," ) ) ).
-            build();
+        return WebResponse.create()
+            .status( HttpStatus.OK )
+            .header( HttpHeaders.ALLOW, methodsAllowed.stream().map( Object::toString ).collect( Collectors.joining( "," ) ) )
+            .build();
     }
 
     protected Long getSize( final WebResponse webResponse )

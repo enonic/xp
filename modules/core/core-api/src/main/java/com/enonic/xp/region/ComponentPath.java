@@ -9,9 +9,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class ComponentPath
     implements Iterable<ComponentPath.RegionAndComponent>
 {

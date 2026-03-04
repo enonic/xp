@@ -1,11 +1,9 @@
 package com.enonic.xp.vacuum;
 
-import com.enonic.xp.annotation.PublicApi;
-
 /**
  * Constants related to the vacuum process.
  */
-@PublicApi
+
 public final class VacuumConstants
 {
     /**

@@ -3,9 +3,7 @@ package com.enonic.xp.security;
 import java.time.Instant;
 import java.util.Objects;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public abstract class Principal
     implements java.security.Principal
 {

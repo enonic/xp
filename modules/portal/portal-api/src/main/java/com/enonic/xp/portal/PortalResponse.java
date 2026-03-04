@@ -4,11 +4,10 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableListMultimap;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.portal.postprocess.HtmlTag;
 import com.enonic.xp.web.WebResponse;
 
-@PublicApi
+
 public final class PortalResponse
     extends WebResponse
 {

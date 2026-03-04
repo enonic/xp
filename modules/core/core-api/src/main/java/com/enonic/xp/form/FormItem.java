@@ -3,9 +3,7 @@ package com.enonic.xp.form;
 
 import java.util.Objects;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public abstract class FormItem
 {
     private FormItems parent;

@@ -3,9 +3,7 @@ package com.enonic.xp.index;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class IndexValueProcessors
 {
     public static final IndexValueProcessor HTML_STRIPPER = new HtmlStripper();

@@ -4,9 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public interface ScriptValue
 {
     boolean isArray();

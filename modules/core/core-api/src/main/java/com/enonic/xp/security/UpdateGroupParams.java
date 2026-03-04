@@ -4,9 +4,7 @@ import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class UpdateGroupParams
 {
     private final PrincipalKey key;

@@ -1,7 +1,6 @@
 package com.enonic.xp.content;
 
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
@@ -14,7 +13,7 @@ import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.schema.content.ContentTypeName;
 
-@PublicApi
+
 public final class Media
     extends Content
 {
@@ -91,13 +90,14 @@ public final class Media
             return null;
         }
 
-        final PropertySet mediaData = mediaProperty.getSet( );
+        final PropertySet mediaData = mediaProperty.getSet();
         if ( mediaData == null )
         {
             return null;
         }
 
-        if ( !mediaData.hasProperty( ContentPropertyNames.ORIENTATION ) ) {
+        if ( !mediaData.hasProperty( ContentPropertyNames.ORIENTATION ) )
+        {
             return null;
         }
 
@@ -112,10 +112,12 @@ public final class Media
     }
 
 
-    public ImageOrientation getOrientation() {
+    public ImageOrientation getOrientation()
+    {
         final ImageOrientation fromPropertySet = getOrientationFromPropertySet();
 
-        if ( fromPropertySet != null ) {
+        if ( fromPropertySet != null )
+        {
             return fromPropertySet;
         }
 
@@ -194,13 +196,7 @@ public final class Media
         final double fixedBottom = bottom / zoom;
         final double fixedRight = right / zoom;
 
-        return Cropping.create().
-            zoom( zoom ).
-            top( fixedTop ).
-            left( fixedLeft ).
-            bottom( fixedBottom ).
-            right( fixedRight ).
-            build();
+        return Cropping.create().zoom( zoom ).top( fixedTop ).left( fixedLeft ).bottom( fixedBottom ).right( fixedRight ).build();
     }
 
     public Attachment getSourceAttachment()

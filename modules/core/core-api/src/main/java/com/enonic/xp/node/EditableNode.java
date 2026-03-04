@@ -1,12 +1,11 @@
 package com.enonic.xp.node;
 
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexConfigDocument;
 
-@PublicApi
+
 public final class EditableNode
 {
     public Node source;
@@ -33,12 +32,12 @@ public final class EditableNode
 
     public Node build()
     {
-        return Node.create( source ).
-            data( data ).
-            indexConfigDocument( indexConfigDocument ).
-            manualOrderValue( manualOrderValue ).
-            childOrder( childOrder ).
-            nodeType( nodeType ).
-            build();
+        return Node.create( source )
+            .data( data )
+            .indexConfigDocument( indexConfigDocument )
+            .manualOrderValue( manualOrderValue )
+            .childOrder( childOrder )
+            .nodeType( nodeType )
+            .build();
     }
 }

@@ -3,9 +3,7 @@ package com.enonic.xp.region;
 
 import java.util.Objects;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class RegionDescriptor
 {
     private final String name;

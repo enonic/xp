@@ -2,11 +2,10 @@ package com.enonic.xp.project;
 
 import java.util.Objects;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 
-@PublicApi
+
 public final class ModifyProjectParams
 {
     private final ProjectName name;

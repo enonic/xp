@@ -6,9 +6,7 @@ import java.util.Objects;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class PropertyArray
 {
     private final PropertySet parent;
@@ -64,9 +62,7 @@ public final class PropertyArray
 
         final PropertyArray that = (PropertyArray) o;
 
-        return Objects.equals( name, that.name ) &&
-            Objects.equals( valueType, that.valueType ) &&
-            Objects.equals( array, that.array );
+        return Objects.equals( name, that.name ) && Objects.equals( valueType, that.valueType ) && Objects.equals( array, that.array );
     }
 
     @Override
@@ -203,8 +199,7 @@ public final class PropertyArray
         if ( !valueType.equals( this.valueType ) )
         {
             throw new IllegalArgumentException(
-                "This PropertyArray expects only properties with value of type '" + this.valueType + "', got: " +
-                    valueType );
+                "This PropertyArray expects only properties with value of type '" + this.valueType + "', got: " + valueType );
         }
     }
 

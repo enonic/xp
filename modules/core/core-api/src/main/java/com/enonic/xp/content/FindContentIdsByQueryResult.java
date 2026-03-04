@@ -6,11 +6,10 @@ import java.util.Objects;
 import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.aggregation.Aggregations;
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.highlight.HighlightedProperties;
 import com.enonic.xp.sortvalues.SortValuesProperty;
 
-@PublicApi
+
 public final class FindContentIdsByQueryResult
 {
     private final Aggregations aggregations;

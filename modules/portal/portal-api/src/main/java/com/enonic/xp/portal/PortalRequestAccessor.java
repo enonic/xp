@@ -2,9 +2,7 @@ package com.enonic.xp.portal;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class PortalRequestAccessor
 {
     private static final ThreadLocal<PortalRequest> CURRENT = new ThreadLocal<>();

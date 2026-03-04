@@ -2,9 +2,7 @@ package com.enonic.xp.app;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public interface ApplicationService
 {
     Application getInstalledApplication( ApplicationKey key );

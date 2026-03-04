@@ -5,10 +5,9 @@ import java.util.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.io.Files;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 
-@PublicApi
+
 public final class ResourceKey
 {
     private final ApplicationKey applicationKey;

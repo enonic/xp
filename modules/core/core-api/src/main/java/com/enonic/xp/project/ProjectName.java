@@ -5,11 +5,10 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.core.internal.NameValidator;
 import com.enonic.xp.repository.RepositoryId;
 
-@PublicApi
+
 public final class ProjectName
     implements Serializable
 {

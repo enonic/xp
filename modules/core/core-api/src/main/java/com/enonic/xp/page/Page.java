@@ -5,7 +5,6 @@ import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.region.Component;
@@ -13,7 +12,7 @@ import com.enonic.xp.region.ComponentPath;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.region.Regions;
 
-@PublicApi
+
 public final class Page
 {
     private final DescriptorKey descriptor;
@@ -121,8 +120,7 @@ public final class Page
         final Page other = (Page) o;
 
         return Objects.equals( template, other.template ) && Objects.equals( descriptor, other.descriptor ) &&
-            Objects.equals( config, other.config ) &&
-            Objects.equals( regions, other.regions ) &&
+            Objects.equals( config, other.config ) && Objects.equals( regions, other.regions ) &&
             Objects.equals( fragment, other.fragment );
     }
 

@@ -2,10 +2,9 @@ package com.enonic.xp.content;
 
 import java.util.Locale;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.security.PrincipalKey;
 
-@PublicApi
+
 public final class EditableContentMetadata
 {
     public final Content source;
@@ -26,10 +25,6 @@ public final class EditableContentMetadata
 
     public Content build()
     {
-        return Content.create( this.source )
-            .owner( owner )
-            .language( language )
-            .variantOf( variantOf )
-            .build();
+        return Content.create( this.source ).owner( owner ).language( language ).variantOf( variantOf ).build();
     }
 }

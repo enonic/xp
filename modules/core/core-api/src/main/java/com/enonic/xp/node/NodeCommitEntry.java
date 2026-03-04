@@ -2,14 +2,13 @@ package com.enonic.xp.node;
 
 import java.time.Instant;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
-@PublicApi
+
 public final class NodeCommitEntry
 {
     private final NodeCommitId nodeCommitId;

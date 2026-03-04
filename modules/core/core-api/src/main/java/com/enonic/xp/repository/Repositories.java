@@ -6,10 +6,9 @@ import java.util.stream.Collectors;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
-@PublicApi
+
 public final class Repositories
     extends AbstractImmutableEntityList<Repository>
 {

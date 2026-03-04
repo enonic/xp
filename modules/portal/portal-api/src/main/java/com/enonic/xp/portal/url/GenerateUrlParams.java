@@ -5,9 +5,7 @@ import java.util.List;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class GenerateUrlParams
     extends AbstractUrlParams<GenerateUrlParams>
 {

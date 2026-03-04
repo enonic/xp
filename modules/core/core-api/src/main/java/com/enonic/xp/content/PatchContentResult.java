@@ -4,10 +4,9 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 
-@PublicApi
+
 public final class PatchContentResult
 {
     private final ContentId contentId;

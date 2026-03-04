@@ -6,11 +6,10 @@ import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 
-@PublicApi
+
 public final class IdProviderAccessControlList
     implements Iterable<IdProviderAccessControlEntry>
 {

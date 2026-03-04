@@ -8,9 +8,7 @@ import java.util.Objects;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class Region
 {
     private final String name;
@@ -126,11 +124,11 @@ public final class Region
     @Override
     public String toString()
     {
-        return MoreObjects.toStringHelper( this ).
-            add( "name", name ).
-            add( "parent", parent == null ? null : parent.getDescriptor() ).
-            add( "components", components ).
-            toString();
+        return MoreObjects.toStringHelper( this )
+            .add( "name", name )
+            .add( "parent", parent == null ? null : parent.getDescriptor() )
+            .add( "components", components )
+            .toString();
     }
 
     public static final class Builder

@@ -2,9 +2,7 @@ package com.enonic.xp.aggregation;
 
 import java.time.Instant;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class DateHistogramBucket
     extends Bucket
 {

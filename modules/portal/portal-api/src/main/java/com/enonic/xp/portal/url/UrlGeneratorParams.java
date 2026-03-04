@@ -2,9 +2,7 @@ package com.enonic.xp.portal.url;
 
 import java.util.function.Supplier;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class UrlGeneratorParams
 {
     private final Supplier<String> baseUrlSupplier;

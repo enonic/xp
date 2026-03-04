@@ -4,10 +4,9 @@ import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 
-@PublicApi
+
 public final class GetActiveNodeVersionsResult
 {
     private final ImmutableMap<Branch, NodeVersion> nodeVersions;

@@ -6,9 +6,7 @@ import java.util.List;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class BooleanFilter
     extends Filter
 {
@@ -44,12 +42,12 @@ public final class BooleanFilter
     @Override
     public String toString()
     {
-        return MoreObjects.toStringHelper( this ).
-            omitNullValues().
-            add( "must", must ).
-            add( "mustNot", mustNot ).
-            add( "should", should ).
-            toString();
+        return MoreObjects.toStringHelper( this )
+            .omitNullValues()
+            .add( "must", must )
+            .add( "mustNot", mustNot )
+            .add( "should", should )
+            .toString();
     }
 
     public static Builder create()

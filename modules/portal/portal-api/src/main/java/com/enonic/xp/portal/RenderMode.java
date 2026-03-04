@@ -1,9 +1,6 @@
 package com.enonic.xp.portal;
 
 
-import com.enonic.xp.annotation.PublicApi;
-
-@PublicApi
 public enum RenderMode
 {
     EDIT( "edit" ), PREVIEW( "preview" ), LIVE( "live" ), ADMIN( "admin" ), INLINE( "inline" );

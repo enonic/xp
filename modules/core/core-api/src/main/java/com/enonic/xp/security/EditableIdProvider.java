@@ -1,8 +1,5 @@
 package com.enonic.xp.security;
 
-import com.enonic.xp.annotation.PublicApi;
-
-@PublicApi
 public final class EditableIdProvider
 {
     public final IdProvider source;
@@ -26,11 +23,11 @@ public final class EditableIdProvider
 
     public IdProvider build()
     {
-        return IdProvider.create( this.source ).
-            key( key ).
-            displayName( displayName ).
-            description( description ).
-            idProviderConfig( idProviderConfig ).
-            build();
+        return IdProvider.create( this.source )
+            .key( key )
+            .displayName( displayName )
+            .description( description )
+            .idProviderConfig( idProviderConfig )
+            .build();
     }
 }

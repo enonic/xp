@@ -4,9 +4,7 @@ import java.util.Objects;
 
 import com.google.common.base.MoreObjects;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public abstract class Component
 {
     private Region region = null;
@@ -55,10 +53,7 @@ public abstract class Component
     @Override
     public String toString()
     {
-        return MoreObjects.toStringHelper( this ).
-            add( "type", getType() ).
-            add( "path", getPath() ).
-            toString();
+        return MoreObjects.toStringHelper( this ).add( "type", getType() ).add( "path", getPath() ).toString();
     }
 
     public static class Builder

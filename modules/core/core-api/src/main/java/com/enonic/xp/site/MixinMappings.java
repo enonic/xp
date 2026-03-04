@@ -5,11 +5,10 @@ import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.schema.mixin.MixinNames;
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
-@PublicApi
+
 public final class MixinMappings
     extends AbstractImmutableEntityList<MixinMapping>
 {

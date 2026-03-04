@@ -10,12 +10,10 @@ import java.util.stream.Collectors;
 
 import com.google.common.base.Splitter;
 
-import com.enonic.xp.annotation.PublicApi;
-
 import static com.google.common.base.Strings.emptyToNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
-@PublicApi
+
 public final class NodePath
     implements Comparable<NodePath>, Serializable
 {

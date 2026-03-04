@@ -1,17 +1,9 @@
 package com.enonic.xp.form;
 
 
-import com.enonic.xp.annotation.PublicApi;
-
-@PublicApi
 public enum FormItemType
 {
-    INPUT,
-    FORM_ITEM_SET,
-    LAYOUT,
-    FORM_FRAGMENT,
-    FORM_OPTION_SET,
-    FORM_OPTION_SET_OPTION;
+    INPUT, FORM_ITEM_SET, LAYOUT, FORM_FRAGMENT, FORM_OPTION_SET, FORM_OPTION_SET_OPTION;
 
     public static FormItemType parse( final String value )
     {

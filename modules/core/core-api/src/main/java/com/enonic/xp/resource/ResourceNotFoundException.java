@@ -2,10 +2,9 @@ package com.enonic.xp.resource;
 
 import java.text.MessageFormat;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.exception.BaseException;
 
-@PublicApi
+
 public final class ResourceNotFoundException
     extends BaseException
 {

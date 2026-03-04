@@ -4,9 +4,7 @@ import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class PrincipalRelationship
 {
     private final PrincipalKey from;
@@ -17,9 +15,12 @@ public final class PrincipalRelationship
     {
         Objects.requireNonNull( builder.from, "Principal relationship 'from' cannot be null" );
         Objects.requireNonNull( builder.to, "Principal relationship 'to' cannot be null" );
-        Preconditions.checkArgument( !builder.from.equals( builder.to ), "Principal relationship 'from' and 'to' cannot refer to the same principal" );
-        Preconditions.checkArgument( !( builder.from.isRole() && builder.to.isRole() ), "Principal relationship from Role to Role is not allowed" );
-        Preconditions.checkArgument( !( builder.from.isGroup() && builder.to.isRole() ), "Principal relationship from Group to Role is not allowed" );
+        Preconditions.checkArgument( !builder.from.equals( builder.to ),
+                                     "Principal relationship 'from' and 'to' cannot refer to the same principal" );
+        Preconditions.checkArgument( !( builder.from.isRole() && builder.to.isRole() ),
+                                     "Principal relationship from Role to Role is not allowed" );
+        Preconditions.checkArgument( !( builder.from.isGroup() && builder.to.isRole() ),
+                                     "Principal relationship from Group to Role is not allowed" );
         Preconditions.checkArgument( !builder.from.isUser(), "Principal relationship from User to another Principal is not allowed" );
 
         this.from = builder.from;

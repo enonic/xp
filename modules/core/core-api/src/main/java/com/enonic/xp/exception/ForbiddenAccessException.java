@@ -2,10 +2,9 @@ package com.enonic.xp.exception;
 
 import java.text.MessageFormat;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.security.User;
 
-@PublicApi
+
 public final class ForbiddenAccessException
     extends BaseException
 {

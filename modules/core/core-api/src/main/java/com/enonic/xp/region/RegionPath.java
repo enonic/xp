@@ -2,9 +2,7 @@ package com.enonic.xp.region;
 
 import java.util.Objects;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class RegionPath
 {
     private static final String DIVIDER = "/";

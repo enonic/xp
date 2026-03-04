@@ -6,12 +6,9 @@ import java.util.stream.StreamSupport;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.MultimapBuilder;
 
-import com.enonic.xp.annotation.PublicApi;
-
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 
-@PublicApi
 public abstract class AbstractUrlParams<T extends AbstractUrlParams>
 {
     private String type = UrlTypeConstants.SERVER_RELATIVE;

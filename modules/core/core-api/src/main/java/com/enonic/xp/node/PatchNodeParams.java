@@ -4,11 +4,10 @@ import java.util.Objects;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.util.BinaryReference;
 
-@PublicApi
+
 public final class PatchNodeParams
 {
     private final NodeId id;

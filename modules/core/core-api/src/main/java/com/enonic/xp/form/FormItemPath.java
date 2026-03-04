@@ -7,11 +7,9 @@ import java.util.regex.Pattern;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.PropertyPath;
 
 
-@PublicApi
 public final class FormItemPath
     implements Iterable<String>
 {
@@ -45,7 +43,7 @@ public final class FormItemPath
     {
         Objects.requireNonNull( path, "path cannot be null" );
 
-        return fromInternal( ImmutableList.copyOf( path.split( Pattern.quote( ELEMENT_DIVIDER ), -1 ) ));
+        return fromInternal( ImmutableList.copyOf( path.split( Pattern.quote( ELEMENT_DIVIDER ), -1 ) ) );
     }
 
     public static FormItemPath from( final PropertyPath path )

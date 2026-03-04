@@ -4,12 +4,11 @@ import java.util.Objects;
 
 import com.google.common.collect.ImmutableSet;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 
-@PublicApi
+
 public final class PatchContentParams
 {
     private final ContentId id;

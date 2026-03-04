@@ -6,9 +6,7 @@ import java.util.stream.Stream;
 
 import com.google.common.collect.ImmutableSet;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public abstract class AbstractImmutableEntitySet<T>
     implements Iterable<T>
 {

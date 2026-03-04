@@ -4,11 +4,10 @@ import java.util.Objects;
 
 import com.google.common.base.MoreObjects;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
 
-@PublicApi
+
 @SuppressWarnings("UnusedDeclaration")
 public final class LayoutComponent
     extends DescriptorBasedComponent
@@ -105,11 +104,11 @@ public final class LayoutComponent
     @Override
     public String toString()
     {
-        return MoreObjects.toStringHelper( this ).
-            add( "type", getType() ).
-            add( "path", getPath() ).
-            add( "regions", getRegions() ).
-            toString();
+        return MoreObjects.toStringHelper( this )
+            .add( "type", getType() )
+            .add( "path", getPath() )
+            .add( "regions", getRegions() )
+            .toString();
     }
 
     public static final class Builder

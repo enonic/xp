@@ -5,10 +5,9 @@ import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
-@PublicApi
+
 public final class PrincipalRelationships
     extends AbstractImmutableEntityList<PrincipalRelationship>
 {
@@ -31,7 +30,9 @@ public final class PrincipalRelationships
 
     public static PrincipalRelationships from( final Iterable<PrincipalRelationship> principalRelationships )
     {
-        return principalRelationships instanceof PrincipalRelationships p ? p : fromInternal( ImmutableList.copyOf( principalRelationships ) );
+        return principalRelationships instanceof PrincipalRelationships p
+            ? p
+            : fromInternal( ImmutableList.copyOf( principalRelationships ) );
     }
 
     public static Collector<PrincipalRelationship, ?, PrincipalRelationships> collector()

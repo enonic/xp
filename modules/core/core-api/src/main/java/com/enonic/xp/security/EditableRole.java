@@ -2,9 +2,7 @@ package com.enonic.xp.security;
 
 import java.time.Instant;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class EditableRole
 {
     public final Role source;
@@ -28,11 +26,11 @@ public final class EditableRole
 
     public Role build()
     {
-        return Role.create( this.source ).
-            displayName( displayName ).
-            key( key ).
-            modifiedTime( modifiedTime ).
-            description( description ).
-            build();
+        return Role.create( this.source )
+            .displayName( displayName )
+            .key( key )
+            .modifiedTime( modifiedTime )
+            .description( description )
+            .build();
     }
 }

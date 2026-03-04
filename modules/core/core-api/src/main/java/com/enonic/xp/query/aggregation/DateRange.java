@@ -4,9 +4,7 @@ import java.time.Instant;
 
 import com.google.common.base.MoreObjects;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class DateRange
     extends Range
 {
@@ -34,11 +32,7 @@ public final class DateRange
     @Override
     public String toString()
     {
-        return MoreObjects.toStringHelper( this ).omitNullValues().
-            add( "key", getKey() ).
-            add( "from", from ).
-            add( "to", to ).
-            toString();
+        return MoreObjects.toStringHelper( this ).omitNullValues().add( "key", getKey() ).add( "from", from ).add( "to", to ).toString();
     }
 
     public static Builder create()

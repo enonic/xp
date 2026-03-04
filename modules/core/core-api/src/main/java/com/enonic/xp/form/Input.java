@@ -5,14 +5,13 @@ import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.schema.LocalizedText;
 import com.enonic.xp.util.GenericValue;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
-@PublicApi
+
 public final class Input
     extends FormItem
 {

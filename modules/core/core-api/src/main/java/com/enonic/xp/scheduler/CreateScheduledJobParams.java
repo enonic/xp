@@ -2,12 +2,11 @@ package com.enonic.xp.scheduler;
 
 import java.util.Objects;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.security.PrincipalKey;
 
-@PublicApi
+
 public final class CreateScheduledJobParams
 {
     private final ScheduledJobName name;

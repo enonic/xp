@@ -3,9 +3,7 @@ package com.enonic.xp.repository;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class UpdateRepositoryParams
 {
     private final RepositoryId repositoryId;

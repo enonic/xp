@@ -2,9 +2,7 @@ package com.enonic.xp.query.aggregation;
 
 import com.google.common.collect.ImmutableSet;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public abstract class BucketAggregationQuery
     extends AggregationQuery
 {

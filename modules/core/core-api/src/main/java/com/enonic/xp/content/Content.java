@@ -11,7 +11,6 @@ import org.jspecify.annotations.NonNull;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.data.PropertyTree;
@@ -26,7 +25,7 @@ import com.enonic.xp.site.Site;
 
 import static java.util.Objects.requireNonNullElse;
 
-@PublicApi
+
 public class Content
 {
     private final boolean valid;

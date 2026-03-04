@@ -2,15 +2,14 @@ package com.enonic.xp.content;
 
 import java.util.Objects;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
 public final class GetContentByIdsParams
 {
     private final ContentIds ids;
 
     @Deprecated
-    public GetContentByIdsParams( final ContentIds ids ) {
+    public GetContentByIdsParams( final ContentIds ids )
+    {
         this.ids = Objects.requireNonNull( ids, "ids must be specified" );
     }
 

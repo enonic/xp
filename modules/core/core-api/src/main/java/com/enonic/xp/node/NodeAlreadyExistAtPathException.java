@@ -6,12 +6,11 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.exception.DuplicateElementException;
 import com.enonic.xp.repository.RepositoryId;
 
-@PublicApi
+
 public class NodeAlreadyExistAtPathException
     extends DuplicateElementException
 {
@@ -48,8 +47,8 @@ public class NodeAlreadyExistAtPathException
     {
         return Stream.of( MessageFormat.format( "Node already exists at {0}", nodePath ),
                           repositoryId != null ? MessageFormat.format( "repository: {0}", repositoryId ) : "",
-                          branch != null ? MessageFormat.format( "branch: {0}", branch ) : "" ).
-            filter( Predicate.not( String::isEmpty ) ).
-            collect( Collectors.joining( " " ) );
+                          branch != null ? MessageFormat.format( "branch: {0}", branch ) : "" )
+            .filter( Predicate.not( String::isEmpty ) )
+            .collect( Collectors.joining( " " ) );
     }
 }
