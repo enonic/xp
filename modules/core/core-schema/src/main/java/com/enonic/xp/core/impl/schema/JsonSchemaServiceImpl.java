@@ -10,7 +10,6 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -127,11 +126,7 @@ public class JsonSchemaServiceImpl
 
         if ( !errors.isEmpty() )
         {
-            final StringBuilder builder = new StringBuilder( "Validation errors for schema \"" );
-            builder.append( schemaId );
-            builder.append( "\":" );
-            errors.forEach( err -> builder.append( "\n - " ).append( err.getMessage() ) );
-            throw new IllegalArgumentException( builder.toString() );
+            throw new JsonSchemaValidationException( schemaId, errors );
         }
     }
 
