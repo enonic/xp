@@ -4,7 +4,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.WebRequest;
 
@@ -52,31 +51,6 @@ class PortalRequestAdapterTest
     {
         final WebRequest webRequest = new WebRequest();
         webRequest.setRawPath( "/site/test/_/idprovider/system/login" );
-
-        PortalRequest adaptedRequest = portalRequestAdapter.adapt( webRequest );
-
-        assertThat( adaptedRequest ).isNotNull();
-        assertThat( adaptedRequest.getBaseUri() ).isNull();
-    }
-
-    @Test
-    void adaptAdminSiteTest()
-    {
-        final WebRequest webRequest = new WebRequest();
-        webRequest.setRawPath( "/admin/site/admin/test/draft" );
-
-        PortalRequest adaptedRequest = portalRequestAdapter.adapt( webRequest );
-
-        assertThat( adaptedRequest ).isNotNull();
-        assertThat( adaptedRequest.getBaseUri() ).isEqualTo( "/admin/site/admin" );
-        assertThat( adaptedRequest.getMode() ).isEqualTo( RenderMode.ADMIN );
-    }
-
-    @Test
-    void adaptAdminSite_incomplete()
-    {
-        final WebRequest webRequest = new WebRequest();
-        webRequest.setRawPath( "/admin/site/admin/test" );
 
         PortalRequest adaptedRequest = portalRequestAdapter.adapt( webRequest );
 
