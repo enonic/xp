@@ -1,6 +1,5 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -39,12 +38,14 @@ public final class PatchNodeCommand
 
     private final PatchNodeResult.Builder results;
 
+    private final NodePatchCache<Node> patchedVersionsCache = new NodePatchCache<>();
+
     private PatchNodeCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
         this.binaryService = builder.binaryService;
-        this.results = PatchNodeResult.create().nodeId( params.getId() );
+        this.results = PatchNodeResult.create();
         this.branches = params.getBranches().isEmpty() ? Branches.from( ContextAccessor.current().getBranch() ) : params.getBranches();
     }
 
@@ -66,6 +67,7 @@ public final class PatchNodeCommand
             throw new NodeNotFoundException( "Node not found: " + Objects.requireNonNullElse( params.getId(), params.getPath() ) );
         }
 
+        this.results.nodeId( persistedNode.id() );
         NodePermissionsResolver.requireContextUserPermissionOrAdmin( Permission.MODIFY, persistedNode );
         if ( this.branches.getSize() > 1 )
         {
@@ -85,17 +87,14 @@ public final class PatchNodeCommand
     {
         final Map<Branch, NodeVersion> activeNodeMap = getActiveNodes( nodeId );
 
-        final Map<NodeVersionId, CachedNodeVersionData> patchedVersionsCache = new HashMap<>(); // old version id -> new version data
-
         for ( Map.Entry<Branch, NodeVersion> versionEntry : activeNodeMap.entrySet() )
         {
             patchInBranch( versionEntry.getValue(),
-                           InternalContext.create( internalContext ).branch( versionEntry.getKey() ).build(), patchedVersionsCache );
+                           InternalContext.create( internalContext ).branch( versionEntry.getKey() ).build() );
         }
     }
 
-    private void patchInBranch( final NodeVersion activeNodeVersion, final InternalContext internalContext,
-                                final Map<NodeVersionId, CachedNodeVersionData> patchedVersionsCache )
+    private void patchInBranch( final NodeVersion activeNodeVersion, final InternalContext internalContext )
     {
         final NodeVersionId nodeVersionId = activeNodeVersion.getNodeVersionId();
         final NodeStoreVersion nodeStoreVersion =
@@ -108,14 +107,14 @@ public final class PatchNodeCommand
             return;
         }
 
-        final CachedNodeVersionData cachedNewVersion = patchedVersionsCache.get( nodeVersionId );
+        final NodePatchCache.Entry<Node> cachedNewVersion = patchedVersionsCache.get( nodeVersionId );
 
         if ( cachedNewVersion != null )
         {
-            this.nodeStorageService.push( NodeBranchEntry.fromNodeVersion( cachedNewVersion.data().version() ), cachedNewVersion.branch(),
-                                          internalContext );
+            this.nodeStorageService.push( NodeBranchEntry.fromNodeVersion( cachedNewVersion.version() ),
+                                          cachedNewVersion.originBranch(), internalContext );
 
-            results.addResult( internalContext.getBranch(), Node.create( cachedNewVersion.data().node() ).build() );
+            results.addResult( internalContext.getBranch(), Node.create( cachedNewVersion.data() ).build() );
         }
         else
         {
@@ -136,9 +135,8 @@ public final class PatchNodeCommand
             {
                 final NodeVersion existingVersion = this.nodeStorageService.getVersion( persistedNode.getNodeVersionId(), internalContext );
                 results.addResult( internalContext.getBranch(), persistedNode );
-                patchedVersionsCache.put( nodeVersionId,
-                                          new CachedNodeVersionData( new NodeVersionData( persistedNode, existingVersion ),
-                                                                     internalContext.getBranch() ) );
+                final NodeVersionData data = new NodeVersionData( persistedNode, existingVersion );
+                patchedVersionsCache.put( nodeVersionId, internalContext.getBranch(), data.version(), data.node() );
             }
             else
             {
@@ -147,13 +145,9 @@ public final class PatchNodeCommand
                     this.nodeStorageService.store( StoreNodeParams.newVersion( updatedNode, params.getVersionAttributes() ),
                                                    internalContext );
                 results.addResult( internalContext.getBranch(), storedData.node() );
-                patchedVersionsCache.put( nodeVersionId, new CachedNodeVersionData( storedData, internalContext.getBranch() ) );
+                patchedVersionsCache.put( nodeVersionId, internalContext.getBranch(), storedData.version(), storedData.node() );
             }
         }
-    }
-
-    record CachedNodeVersionData(NodeVersionData data, Branch branch)
-    {
     }
 
     private Map<Branch, NodeVersion> getActiveNodes( NodeId nodeId )

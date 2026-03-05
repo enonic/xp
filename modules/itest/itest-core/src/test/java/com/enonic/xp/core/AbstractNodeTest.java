@@ -114,8 +114,6 @@ public abstract class AbstractNodeTest
         this.clearBeforeEach = clearBeforeEach;
     }
 
-    protected static final Branches TEST_REPO_BRANCHES = Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER );
-
     public static final User TEST_DEFAULT_USER =
         User.create().key( PrincipalKey.ofUser( IdProviderKey.system(), "test-user" ) ).login( "test-user" ).build();
 
@@ -124,7 +122,9 @@ public abstract class AbstractNodeTest
 
     protected static final Branch WS_DEFAULT = Branch.create().value( "draft" ).build();
 
-    protected static final Branch WS_OTHER = Branch.create().value( "master" ).build();
+    protected static final Branch WS_OTHER = RepositoryConstants.MASTER_BRANCH;
+
+    protected static final Branches TEST_REPO_BRANCHES = Branches.from( WS_DEFAULT, WS_OTHER );
 
     protected static final Branch AUDIT_LOG_BRANCH = AuditLogConstants.AUDIT_LOG_BRANCH;
 
@@ -179,6 +179,17 @@ public abstract class AbstractNodeTest
     protected Context ctxOther()
     {
         return ContextBuilder.create().branch( WS_OTHER ).repositoryId( testRepoId ).authInfo( TEST_DEFAULT_USER_AUTHINFO ).build();
+    }
+
+    protected Context ctxOtherAdmin() {
+        return ContextBuilder.create()
+            .branch( WS_OTHER )
+            .repositoryId( testRepoId )
+            .authInfo( AuthenticationInfo.create()
+                           .principals( RoleKeys.ADMIN )
+                           .user( User.create().key( PrincipalKey.ofSuperUser() ).login( PrincipalKey.ofSuperUser().getId() ).build() )
+                           .build() )
+            .build();
     }
 
     protected Context ctxDefaultAdmin()

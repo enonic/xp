@@ -252,7 +252,7 @@ class PatchNodeCommandTest
     {
         final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
 
-        pushNodes( RepositoryConstants.MASTER_BRANCH, createdNode.id() );
+        pushNodes( WS_OTHER, createdNode.id() );
 
         nodeService.applyPermissions( ApplyNodePermissionsParams.create()
                                           .nodeId( createdNode.id() )
@@ -264,16 +264,17 @@ class PatchNodeCommandTest
                                                                .build() )
                                           .build() );
 
+        ctxOtherAdmin().runWith( () ->
         nodeService.applyPermissions( ApplyNodePermissionsParams.create()
                                           .nodeId( createdNode.id() )
-                                          .branches( Branches.from( RepositoryConstants.MASTER_BRANCH ) )
+                                          .branches( Branches.from( WS_OTHER ) )
                                           .addPermissions( AccessControlList.create()
                                                                .add( AccessControlEntry.create()
                                                                          .allow( Permission.READ )
                                                                          .principal( PrincipalKey.ofAnonymous() )
                                                                          .build() )
                                                                .build() )
-                                          .build() );
+                                          .build() ));
 
         nodeService.refresh( RefreshMode.ALL );
 
