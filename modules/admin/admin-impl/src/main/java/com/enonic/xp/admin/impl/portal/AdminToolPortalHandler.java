@@ -37,8 +37,7 @@ public class AdminToolPortalHandler
     @Override
     protected boolean canHandle( final WebRequest webRequest )
     {
-        return !webRequest.getBasePath().startsWith( AdminSiteHandler.ADMIN_SITE_PREFIX ) &&
-            ( webRequest.getBasePath().equals( ADMIN_TOOL_BASE ) || webRequest.getBasePath().startsWith( ADMIN_TOOL_PREFIX ) );
+        return webRequest.getBasePath().equals( ADMIN_TOOL_BASE ) || webRequest.getBasePath().startsWith( ADMIN_TOOL_PREFIX );
     }
 
     @Override

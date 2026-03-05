@@ -18,8 +18,6 @@ public class PathMatchers
 
     public static final String SITE_PREFIX = SITE_BASE + "/";
 
-    public static final String ADMIN_SITE_PREFIX = "/admin/site/";
-
     public static final String ADMIN_TOOL_BASE = "/admin";
 
     public static final String ADMIN_TOOL_PREFIX = ADMIN_TOOL_BASE + "/";
@@ -29,9 +27,6 @@ public class PathMatchers
     private static final Pattern WEBAPP_PATH_PATTERN = Pattern.compile( "^(?<base>/webapp/(?<app>[^/]+))(?<path>.*)" );
 
     private static final Pattern SITE_PATH_PATTERN = Pattern.compile( "^(?<base>/site)/(?<project>[^/]+)/(?<branch>[^/]+)(?<path>.*)" );
-
-    private static final Pattern ADMIN_SITE_PATH_PATTERN =
-        Pattern.compile( "^(?<base>/admin/site/(?<mode>edit|preview|admin|inline))/(?<project>[^/]+)/(?<branch>[^/]+)(?<path>.*)" );
 
     private static final Pattern API_PATH_PATTERN =
         Pattern.compile( "^(?<base>/api/(?<descriptor>(?<app>[^/]+):(?<api>[^/?]+)))(?<path>.*)" );
@@ -53,13 +48,6 @@ public class PathMatchers
     public static MatchResult site( final WebRequest request )
     {
         final Matcher matcher = SITE_PATH_PATTERN.matcher( request.getBasePath() );
-        matcher.matches();
-        return matcher.toMatchResult();
-    }
-
-    public static MatchResult adminSite( final WebRequest request )
-    {
-        final Matcher matcher = ADMIN_SITE_PATH_PATTERN.matcher( request.getBasePath() );
         matcher.matches();
         return matcher.toMatchResult();
     }
