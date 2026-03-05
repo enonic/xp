@@ -1,29 +1,28 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
-import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.EditableNode;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeAccessException;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
+import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.PatchNodeResult;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeBranchEntry;
+import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.repo.impl.binary.BinaryService;
+import com.enonic.xp.repo.impl.branch.storage.NodeFactory;
 import com.enonic.xp.repo.impl.storage.NodeVersionData;
 import com.enonic.xp.repo.impl.storage.StoreNodeParams;
 import com.enonic.xp.security.acl.Permission;
@@ -39,12 +38,14 @@ public final class PatchNodeCommand
 
     private final PatchNodeResult.Builder results;
 
+    private final NodePatchCache<Node> patchedVersionsCache = new NodePatchCache<>();
+
     private PatchNodeCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
         this.binaryService = builder.binaryService;
-        this.results = PatchNodeResult.create().nodeId( params.getId() );
+        this.results = PatchNodeResult.create();
         this.branches = params.getBranches().isEmpty() ? Branches.from( ContextAccessor.current().getBranch() ) : params.getBranches();
     }
 
@@ -55,88 +56,65 @@ public final class PatchNodeCommand
 
     public PatchNodeResult execute()
     {
-        verifyPermissionsOnCurrentBranch();
+        final Branch contextBranch = ContextAccessor.current().getBranch();
+        Preconditions.checkState( this.branches.contains( contextBranch ),
+                                  "Current (source) branch '%s' is not in the list of branches for patch: %s", contextBranch,
+                                  this.branches );
 
-        ContextBuilder.from( ContextAccessor.current() ).branch( this.branches.first() ).build().runWith( this::doPatchNode );
+        final Node persistedNode = params.getId() != null ? doGetById( params.getId() ) : doGetByPath( params.getPath() );
+        if ( persistedNode == null )
+        {
+            throw new NodeNotFoundException( "Node not found: " + Objects.requireNonNullElse( params.getId(), params.getPath() ) );
+        }
+
+        this.results.nodeId( persistedNode.id() );
+        NodePermissionsResolver.requireContextUserPermissionOrAdmin( Permission.MODIFY, persistedNode );
+        if ( this.branches.getSize() > 1 )
+        {
+            NodePermissionsResolver.requireContextUserPermissionOrAdmin( Permission.PUBLISH, persistedNode );
+        }
+
+        final InternalContext internalContext = InternalContext.create( ContextAccessor.current() ).build();
+
+        doPatchNode( persistedNode.id(), internalContext );
 
         refresh( params.getRefresh() );
 
         return results.build();
     }
 
-    private void verifyPermissionsOnCurrentBranch()
+    private void doPatchNode( NodeId nodeId, InternalContext internalContext )
     {
+        final Map<Branch, NodeVersion> activeNodeMap = getActiveNodes( nodeId );
 
-        final Context context = ContextAccessor.current();
-        Preconditions.checkState( this.branches.contains( context.getBranch() ),
-                                  "Current(source) branch '%s' is not in the list of branches for patch: %s",
-                                  ContextAccessor.current().getBranch(), this.branches );
-
-        final Node persistedNode = getPersistedNode( context.getBranch() );
-
-        final InternalContext internalContext = InternalContext.create( context ).build();
-
-        requirePermission( internalContext, Permission.MODIFY, persistedNode );
-        if ( this.branches.getSize() > 1 )
+        for ( Map.Entry<Branch, NodeVersion> versionEntry : activeNodeMap.entrySet() )
         {
-            requirePermission( internalContext, Permission.PUBLISH, persistedNode );
+            patchInBranch( versionEntry.getValue(),
+                           InternalContext.create( internalContext ).branch( versionEntry.getKey() ).build() );
         }
     }
 
-    private void requirePermission( final InternalContext internalContext, final Permission permission, final Node node )
+    private void patchInBranch( final NodeVersion activeNodeVersion, final InternalContext internalContext )
     {
-        if ( node == null )
-        {
-            throw new NodeNotFoundException( "Node not found." );
-        }
-        if ( !NodePermissionsResolver.hasPermission( internalContext.getPrincipalsKeys(), permission, node.getPermissions() ) )
-        {
-            throw new NodeAccessException( ContextAccessor.current().getAuthInfo().getUser(), node.path(), permission );
-        }
-    }
+        final NodeVersionId nodeVersionId = activeNodeVersion.getNodeVersionId();
+        final NodeStoreVersion nodeStoreVersion =
+            this.nodeStorageService.getNodeVersion( activeNodeVersion.getNodeVersionKey(), internalContext );
 
-    private void doPatchNode()
-    {
-        final Map<Branch, NodeVersionId> activeNodeMap = getActiveNodes();
-
-        final Map<NodeVersionId, NodeVersionData> patchedVersions = new HashMap<>(); // old version id -> new version data
-
-        for ( Branch targetBranch : this.branches )
-        {
-            final NodeVersionData nodeVersionData =
-                Optional.ofNullable( activeNodeMap.get( targetBranch ) ).map( patchedVersions::get ).orElse( null );
-
-            final NodeVersionData updatedTargetNode = patchNodeInBranch( nodeVersionData, targetBranch );
-
-            if ( updatedTargetNode != null )
-            {
-                patchedVersions.put( activeNodeMap.get( targetBranch ), updatedTargetNode );
-                results.nodeId( updatedTargetNode.node().id() );
-            }
-
-            results.addResult( targetBranch, updatedTargetNode != null ? updatedTargetNode.node() : null );
-        }
-
-    }
-
-    private NodeVersionData patchNodeInBranch( final NodeVersionData patchedNode, final Branch branch )
-    {
-        final Node persistedNode = getPersistedNode( branch );
-
-        final InternalContext internalContext = InternalContext.create( ContextAccessor.current() ).branch( branch ).build();
-
-        if ( persistedNode == null || !NodePermissionsResolver.hasPermission( internalContext.getPrincipalsKeys(), Permission.MODIFY,
+        final Node persistedNode = NodeFactory.create( nodeStoreVersion, activeNodeVersion );
+        if ( !NodePermissionsResolver.hasPermission( internalContext.getPrincipalKeys(), Permission.MODIFY,
                                                                               persistedNode.getPermissions() ) )
         {
-            return null;
+            return;
         }
 
-        if ( patchedNode != null )
-        {
-            this.nodeStorageService.push( NodeBranchEntry.fromNodeVersion( patchedNode.version() ), this.branches.first(),
-                                          internalContext );
+        final NodePatchCache.Entry<Node> cachedNewVersion = patchedVersionsCache.get( nodeVersionId );
 
-            return patchedNode;
+        if ( cachedNewVersion != null )
+        {
+            this.nodeStorageService.push( NodeBranchEntry.fromNodeVersion( cachedNewVersion.version() ),
+                                          cachedNewVersion.originBranch(), internalContext );
+
+            results.addResult( internalContext.getBranch(), Node.create( cachedNewVersion.data() ).build() );
         }
         else
         {
@@ -155,52 +133,34 @@ public final class PatchNodeCommand
 
             if ( editedNode.equals( persistedNode ) && updatedBinaries.equals( persistedNode.getAttachedBinaries() ) )
             {
-                return new NodeVersionData( persistedNode,
-                                            this.nodeStorageService.getVersion( persistedNode.getNodeVersionId(), internalContext ) );
-            }
-
-            final Node updatedNode = Node.create( editedNode ).timestamp( Millis.now() ).attachedBinaries( updatedBinaries ).build();
-
-            return this.nodeStorageService.store( StoreNodeParams.newVersion( updatedNode, params.getVersionAttributes() ),
-                                                  internalContext );
-        }
-    }
-
-    private Map<Branch, NodeVersionId> getActiveNodes()
-    {
-        final Map<Branch, NodeVersionId> activeNodeMap = new HashMap<>();
-
-        for ( Branch branch : this.branches )
-        {
-            final Node persistedNode = this.getPersistedNode( branch );
-            if ( persistedNode != null )
-            {
-                activeNodeMap.put( branch, persistedNode.getNodeVersionId() );
-            }
-        }
-
-        if ( activeNodeMap.isEmpty() )
-        {
-            throw new NodeNotFoundException( "No active node found" );
-        }
-
-        return activeNodeMap;
-    }
-
-    private Node getPersistedNode( final Branch branch )
-    {
-        return ContextBuilder.from( ContextAccessor.current() ).branch( branch ).build().callWith( () -> {
-            final Node persistedNode;
-            if ( params.getId() != null )
-            {
-                persistedNode = doGetById( params.getId() );
+                final NodeVersion existingVersion = this.nodeStorageService.getVersion( persistedNode.getNodeVersionId(), internalContext );
+                results.addResult( internalContext.getBranch(), persistedNode );
+                final NodeVersionData data = new NodeVersionData( persistedNode, existingVersion );
+                patchedVersionsCache.put( nodeVersionId, internalContext.getBranch(), data.version(), data.node() );
             }
             else
             {
-                persistedNode = doGetByPath( params.getPath() );
+                final Node updatedNode = Node.create( editedNode ).timestamp( Millis.now() ).attachedBinaries( updatedBinaries ).build();
+                final NodeVersionData storedData =
+                    this.nodeStorageService.store( StoreNodeParams.newVersion( updatedNode, params.getVersionAttributes() ),
+                                                   internalContext );
+                results.addResult( internalContext.getBranch(), storedData.node() );
+                patchedVersionsCache.put( nodeVersionId, internalContext.getBranch(), storedData.version(), storedData.node() );
             }
-            return persistedNode;
-        } );
+        }
+    }
+
+    private Map<Branch, NodeVersion> getActiveNodes( NodeId nodeId )
+    {
+        return GetActiveNodeVersionsCommand.create()
+            .nodeId( nodeId )
+            .branches( this.branches )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.nodeStorageService )
+            .searchService( this.nodeSearchService )
+            .build()
+            .execute()
+            .getNodeVersions();
     }
 
     public static class Builder

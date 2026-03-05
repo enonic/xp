@@ -349,6 +349,6 @@ public class NodeStorageServiceImpl
 
     private boolean canRead( final AccessControlList permissions, final InternalContext context )
     {
-        return NodePermissionsResolver.hasPermission( context.getPrincipalsKeys(), Permission.READ, permissions );
+        return NodePermissionsResolver.hasPermission( context.getPrincipalKeys(), Permission.READ, permissions );
     }
 }

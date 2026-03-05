@@ -3,6 +3,8 @@ package com.enonic.xp.context;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
+import org.jspecify.annotations.NonNull;
+
 import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.branch.Branch;
@@ -36,7 +38,7 @@ final class ContextImpl
     }
 
     @Override
-    public AuthenticationInfo getAuthInfo()
+    public @NonNull AuthenticationInfo getAuthInfo()
     {
         final AuthenticationInfo attribute = getAttribute( AuthenticationInfo.class );
         return attribute == null ? AuthenticationInfo.unAuthenticated() : attribute;

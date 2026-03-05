@@ -107,7 +107,7 @@ public class DeleteNodeCommand
                 final AccessControlList nodePermissions =
                     this.nodeStorageService.getNodePermissions( branchEntry.getNodeVersionKey(), internalContext );
 
-                if ( !NodePermissionsResolver.hasPermission( internalContext.getPrincipalsKeys(), Permission.DELETE, nodePermissions ) )
+                if ( !NodePermissionsResolver.hasPermission( internalContext.getPrincipalKeys(), Permission.DELETE, nodePermissions ) )
                 {
                     throw new NodeAccessException( authInfo.getUser(), effectiveNodePath, Permission.DELETE );
                 }

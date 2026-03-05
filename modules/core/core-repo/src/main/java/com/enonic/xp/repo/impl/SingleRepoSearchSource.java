@@ -55,18 +55,14 @@ public class SingleRepoSearchSource
 
     private static Builder create( final InternalContext context )
     {
-        return create().
-            repositoryId( context.getRepositoryId() ).
-            branch( context.getBranch() ).
-            acl( context.getPrincipalsKeys() );
+        return create().repositoryId( context.getRepositoryId() ).branch( context.getBranch() ).acl( context.getPrincipalKeys() );
     }
 
     private static Builder create( final Context context )
     {
-        return create().
-            repositoryId( context.getRepositoryId() ).
-            branch( context.getBranch() ).
-            acl( context.getAuthInfo().getPrincipals() );
+        return create().repositoryId( context.getRepositoryId() )
+            .branch( context.getBranch() )
+            .acl( context.getAuthInfo().getPrincipals() );
     }
 
     public static final class Builder

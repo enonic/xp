@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.node;
 
 import java.util.Objects;
 
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import com.enonic.xp.context.ContextAccessor;
@@ -9,6 +10,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
+import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
@@ -30,9 +32,14 @@ abstract class AbstractNodeCommand
         this.nodeSearchService = builder.nodeSearchService;
     }
 
-    @Nullable Node doGetById( final NodeId id )
+    @Nullable Node doGetById( final @NonNull NodeId id )
     {
-        return GetNodeByIdCommand.create( this ).id( id ).build().execute();
+        return doGetById( id, InternalContext.from( ContextAccessor.current() ) );
+    }
+
+    @Nullable Node doGetById( final @NonNull NodeId id, final @NonNull InternalContext context )
+    {
+        return this.nodeStorageService.get( id, context );
     }
 
     @Nullable Node doGetByPath( final NodePath path )
