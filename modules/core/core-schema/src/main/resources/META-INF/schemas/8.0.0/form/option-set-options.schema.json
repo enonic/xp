@@ -14,7 +14,8 @@
     },
     "maximum": {
       "type": "integer"
-    }
+    },
+    "additionalProperties": false
   },
   "required": [
     "minimum",

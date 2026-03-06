@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://json-schema.enonic.com/8.0.0/form-fragment-descriptor.schema.json",
+  "$id": "https://json-schema.enonic.com/8.0.0/mixin.schema.json",
   "type": "object",
   "properties": {
     "displayName": {
@@ -11,6 +11,7 @@
     },
     "form": {
       "$ref": "https://json-schema.enonic.com/8.0.0/form/form.schema.json"
-    }
+    },
+    "additionalProperties": false
   }
 }

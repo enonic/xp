@@ -258,7 +258,7 @@ class JsonSchemaServiceImplTest
         URL url = mock( URL.class );
         Vector<URL> urls = new Vector<>();
         urls.add( url );
-        when( bundle.findEntries( "/META-INF/schemas", "*.json", true ) ).thenReturn( urls.elements() );
+        when( bundle.findEntries( "/META-INF/schemas/8.0.0", "*.json", true ) ).thenReturn( urls.elements() );
         List<URL> result = service.loadJsonSchemasFromBundle( bundle );
         assertEquals( 1, result.size() );
         assertEquals( url, result.get( 0 ) );

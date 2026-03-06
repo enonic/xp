@@ -17,8 +17,11 @@
   },
   "type": "object",
   "properties": {
-    "mode": {
-      "type": "string"
+    "displayName": {
+      "$ref": "https://json-schema.enonic.com/8.0.0/core/localized-text.schema.json"
+    },
+    "description": {
+      "$ref": "https://json-schema.enonic.com/8.0.0/core/localized-text.schema.json"
     },
     "form": {
       "$ref": "https://json-schema.enonic.com/8.0.0/form/form.schema.json"
