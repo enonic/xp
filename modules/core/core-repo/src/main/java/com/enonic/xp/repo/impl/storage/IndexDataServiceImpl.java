@@ -1,22 +1,19 @@
 package com.enonic.xp.repo.impl.storage;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.branch.Branch;
-import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.ReturnValues;
 import com.enonic.xp.repo.impl.StorageSource;
-import com.enonic.xp.repo.impl.elasticsearch.NodeStoreDocumentFactory;
 import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
+import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.repo.impl.search.SearchStorageName;
 import com.enonic.xp.repo.impl.search.SearchStorageType;
 
@@ -56,40 +53,21 @@ public class IndexDataServiceImpl
     @Override
     public void delete( final Collection<NodeId> nodeIds, final InternalContext context )
     {
-        this.storageDao.delete( DeleteRequests.create().
-            settings( StorageSource.create().
-                storageType( SearchStorageType.from( context.getBranch() ) ).
-                storageName( SearchStorageName.from( context.getRepositoryId() ) ).
-                build() ).
-            ids( nodeIds.stream().map( NodeId::toString ).map( RoutableId::new ).collect( Collectors.toList() ) ).
-            build() );
+        this.storageDao.delete( DeleteRequests.create()
+                                    .settings( StorageSource.create()
+                                                   .storageType( SearchStorageType.from( context.getBranch() ) )
+                                                   .storageName( SearchStorageName.from( context.getRepositoryId() ) )
+                                                   .build() )
+                                    .ids( nodeIds.stream().map( NodeId::toString ).map( RoutableId::new ).collect( Collectors.toList() ) )
+                                    .build() );
     }
+
 
     @Override
-    public void store( final Node node, final InternalContext context )
+    public void store( final IndexDocument indexDocument, final InternalContext context )
     {
-        final IndexDocument indexDocument = NodeStoreDocumentFactory.createBuilder()
-            .node( node )
-            .branch( context.getBranch() )
-            .repositoryId( context.getRepositoryId() )
-            .build()
-            .create();
-
-        this.storageDao.store( indexDocument );
+        this.storageDao.store( new IndexStoreRequest( indexDocument, context.getBranch().getValue(),
+                                                      IndexNameResolver.resolveSearchIndexName( context.getRepositoryId() ) ) );
     }
 
-    @Override
-    public void push( final NodeId nodeId, Branch origin, final InternalContext context )
-    {
-        this.storageDao.refresh( SearchStorageName.from( context.getRepositoryId() ) );
-        this.storageDao.copy( CopyRequest.create()
-                                  .storageSettings( StorageSource.create()
-                                                        .storageName( SearchStorageName.from( context.getRepositoryId() ) )
-                                                        .storageType( SearchStorageType.from( origin ) )
-                                                        .build() )
-                                  .nodeIds( List.of( nodeId ) )
-                                  .targetBranch( context.getBranch() )
-                                  .targetRepo( context.getRepositoryId() )
-                                  .build() );
-    }
 }

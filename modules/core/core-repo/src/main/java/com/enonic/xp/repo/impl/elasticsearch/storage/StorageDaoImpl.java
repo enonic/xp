@@ -25,14 +25,12 @@ import com.enonic.xp.node.NodeStorageException;
 import com.enonic.xp.repo.impl.SearchPreference;
 import com.enonic.xp.repo.impl.StorageName;
 import com.enonic.xp.repo.impl.StorageSource;
-import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
-import com.enonic.xp.repo.impl.elasticsearch.executor.CopyExecutor;
 import com.enonic.xp.repo.impl.elasticsearch.result.GetResultFactory;
-import com.enonic.xp.repo.impl.storage.CopyRequest;
 import com.enonic.xp.repo.impl.storage.DeleteRequests;
 import com.enonic.xp.repo.impl.storage.GetByIdRequest;
 import com.enonic.xp.repo.impl.storage.GetByIdsRequest;
 import com.enonic.xp.repo.impl.storage.GetResult;
+import com.enonic.xp.repo.impl.storage.IndexStoreRequest;
 import com.enonic.xp.repo.impl.storage.RoutableId;
 import com.enonic.xp.repo.impl.storage.StorageDao;
 import com.enonic.xp.repo.impl.storage.StoreRequest;
@@ -84,17 +82,16 @@ public class StorageDaoImpl
     }
 
     @Override
-    public void store( final IndexDocument indexDocument )
+    public void store( final IndexStoreRequest request )
     {
-        final String id = indexDocument.getId();
+        final String id = request.doc().id();
         try
         {
             final IndexRequest req = Requests.indexRequest()
                 .id( id )
-                .index( indexDocument.getIndexName() )
-                .type( indexDocument.getIndexTypeName() )
-                .source( XContentBuilderFactory.create( indexDocument ) )
-                .refresh( indexDocument.isRefreshAfterOperation() );
+                .index( request.indexName() )
+                .type( request.indexTypeName() )
+                .source( XContentBuilderFactory.create( request.doc() ) );
             this.client.index( req ).actionGet( DEFAULT_STORE_TIMEOUT_SECONDS, TimeUnit.SECONDS );
         }
         catch ( ClusterBlockException e )
@@ -103,8 +100,8 @@ public class StorageDaoImpl
         }
         catch ( Exception e )
         {
-            final String msg = "Failed to store document with id [" + id + "] in index [" + indexDocument.getIndexName() + "] branch " +
-                indexDocument.getIndexTypeName();
+            final String msg =
+                "Failed to store document with id [" + id + "] in index [" + request.indexName() + "] branch " + request.indexTypeName();
 
             throw new IndexException( msg, e );
         }
@@ -188,17 +185,6 @@ public class StorageDaoImpl
             result.add( GetResultFactory.create( multiGetItemResponse.getResponse(), requests.getRequests().get( i ).getReturnFields() ) );
         }
         return result;
-    }
-
-    @Override
-    public void copy( final CopyRequest request )
-    {
-        if ( request.getNodeIds().isEmpty() )
-        {
-            return;
-        }
-
-        CopyExecutor.create( this.client ).request( request ).build().execute();
     }
 
     @Override

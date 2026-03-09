@@ -5,9 +5,9 @@ import java.util.Objects;
 
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionKey;
-import com.enonic.xp.node.NodeVersion;
 
 public final class NodeBranchEntry
 {
@@ -60,7 +60,8 @@ public final class NodeBranchEntry
         return nodeId;
     }
 
-    public static NodeBranchEntry fromNodeVersion( final NodeVersion nodeVersion ) {
+    public static NodeBranchEntry fromNodeVersion( final NodeVersion nodeVersion )
+    {
         return NodeBranchEntry.create()
             .nodeId( nodeVersion.getNodeId() )
             .nodeVersionId( nodeVersion.getNodeVersionId() )

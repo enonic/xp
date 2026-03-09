@@ -60,6 +60,7 @@ import com.enonic.xp.core.impl.security.SecurityServiceImpl;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
+import com.enonic.xp.itest.AbstractElasticsearchIntegrationTest;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.page.PageDescriptor;
@@ -72,7 +73,6 @@ import com.enonic.xp.repo.impl.binary.BinaryServiceImpl;
 import com.enonic.xp.repo.impl.branch.storage.BranchServiceImpl;
 import com.enonic.xp.repo.impl.commit.CommitServiceImpl;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
-import com.enonic.xp.repo.impl.elasticsearch.AbstractElasticsearchIntegrationTest;
 import com.enonic.xp.repo.impl.elasticsearch.IndexServiceInternalImpl;
 import com.enonic.xp.repo.impl.elasticsearch.search.SearchDaoImpl;
 import com.enonic.xp.repo.impl.elasticsearch.storage.StorageDaoImpl;
@@ -1268,38 +1268,45 @@ class DynamicSchemaServiceImplTest
         final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
 
         List<DynamicSchemaResult<BaseSchema<?>>> results = createAdminContext().callWith( () -> dynamicSchemaService.listContentSchemas(
-            ListDynamicContentSchemasParams.create().applicationKey( applicationKey ).type( DynamicContentSchemaType.FORM_FRAGMENT ).build() ) );
+            ListDynamicContentSchemasParams.create()
+                .applicationKey( applicationKey )
+                .type( DynamicContentSchemaType.FORM_FRAGMENT )
+                .build() ) );
 
         assertTrue( results.isEmpty() );
 
-        DynamicSchemaResult<FormFragmentDescriptor> fragment1 = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
-            CreateDynamicContentSchemaParams.create()
-                .name( FormFragmentName.from( "myapp:mytype1" ) )
-                .resource( readResource( "_formFragment.yml" ) )
-                .type( DynamicContentSchemaType.FORM_FRAGMENT )
-                .build() ) );
-        DynamicSchemaResult<FormFragmentDescriptor> fragment2 = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
-            CreateDynamicContentSchemaParams.create()
-                .name( FormFragmentName.from( "myapp:mytype2" ) )
-                .resource( readResource( "_formFragment.yml" ) )
-                .type( DynamicContentSchemaType.FORM_FRAGMENT )
-                .build() ) );
-        DynamicSchemaResult<FormFragmentDescriptor> fragment3 = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
-            CreateDynamicContentSchemaParams.create()
-                .name( FormFragmentName.from( "my_other_app:mytype" ) )
-                .resource( readResource( "_formFragment.yml" ) )
-                .type( DynamicContentSchemaType.FORM_FRAGMENT )
-                .build() ) );
+        DynamicSchemaResult<FormFragmentDescriptor> fragment1 = createAdminContext().callWith(
+            () -> dynamicSchemaService.createContentSchema( CreateDynamicContentSchemaParams.create()
+                                                                .name( FormFragmentName.from( "myapp:mytype1" ) )
+                                                                .resource( readResource( "_formFragment.yml" ) )
+                                                                .type( DynamicContentSchemaType.FORM_FRAGMENT )
+                                                                .build() ) );
+        DynamicSchemaResult<FormFragmentDescriptor> fragment2 = createAdminContext().callWith(
+            () -> dynamicSchemaService.createContentSchema( CreateDynamicContentSchemaParams.create()
+                                                                .name( FormFragmentName.from( "myapp:mytype2" ) )
+                                                                .resource( readResource( "_formFragment.yml" ) )
+                                                                .type( DynamicContentSchemaType.FORM_FRAGMENT )
+                                                                .build() ) );
+        DynamicSchemaResult<FormFragmentDescriptor> fragment3 = createAdminContext().callWith(
+            () -> dynamicSchemaService.createContentSchema( CreateDynamicContentSchemaParams.create()
+                                                                .name( FormFragmentName.from( "my_other_app:mytype" ) )
+                                                                .resource( readResource( "_formFragment.yml" ) )
+                                                                .type( DynamicContentSchemaType.FORM_FRAGMENT )
+                                                                .build() ) );
 
-        results = createAdminContext().callWith( () -> dynamicSchemaService.listContentSchemas(
-            ListDynamicContentSchemasParams.create().applicationKey( applicationKey ).type( DynamicContentSchemaType.FORM_FRAGMENT ).build() ) );
+        results = createAdminContext().callWith( () -> dynamicSchemaService.listContentSchemas( ListDynamicContentSchemasParams.create()
+                                                                                                    .applicationKey( applicationKey )
+                                                                                                    .type(
+                                                                                                        DynamicContentSchemaType.FORM_FRAGMENT )
+                                                                                                    .build() ) );
 
         assertThat( results ).usingRecursiveComparison().isEqualTo( List.of( fragment1, fragment2 ) );
 
         results = createAdminContext().callWith( () -> dynamicSchemaService.listContentSchemas( ListDynamicContentSchemasParams.create()
                                                                                                     .applicationKey( ApplicationKey.from(
                                                                                                         "my_other_app" ) )
-                                                                                                    .type( DynamicContentSchemaType.FORM_FRAGMENT )
+                                                                                                    .type(
+                                                                                                        DynamicContentSchemaType.FORM_FRAGMENT )
                                                                                                     .build() ) );
 
         assertThat( results ).usingRecursiveComparison().isEqualTo( List.of( fragment3 ) );
@@ -1319,34 +1326,38 @@ class DynamicSchemaServiceImplTest
 
         assertTrue( results.isEmpty() );
 
-        DynamicSchemaResult<FormFragmentDescriptor> fragment1 = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
-            CreateDynamicContentSchemaParams.create()
-                .name( FormFragmentName.from( "myapp:mytype1" ) )
-                .resource( readResource( "_formFragment.yml" ) )
-                .type( DynamicContentSchemaType.FORM_FRAGMENT )
-                .build() ) );
-        DynamicSchemaResult<FormFragmentDescriptor> fragment2 = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
-            CreateDynamicContentSchemaParams.create()
-                .name( FormFragmentName.from( "myapp:mytype2" ) )
-                .resource( readResource( "_formFragment.yml" ) )
-                .type( DynamicContentSchemaType.FORM_FRAGMENT )
-                .build() ) );
-        DynamicSchemaResult<FormFragmentDescriptor> fragment3 = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
-            CreateDynamicContentSchemaParams.create()
-                .name( FormFragmentName.from( "my_other_app:mytype" ) )
-                .resource( readResource( "_formFragment.yml" ) )
-                .type( DynamicContentSchemaType.FORM_FRAGMENT )
-                .build() ) );
+        DynamicSchemaResult<FormFragmentDescriptor> fragment1 = createAdminContext().callWith(
+            () -> dynamicSchemaService.createContentSchema( CreateDynamicContentSchemaParams.create()
+                                                                .name( FormFragmentName.from( "myapp:mytype1" ) )
+                                                                .resource( readResource( "_formFragment.yml" ) )
+                                                                .type( DynamicContentSchemaType.FORM_FRAGMENT )
+                                                                .build() ) );
+        DynamicSchemaResult<FormFragmentDescriptor> fragment2 = createAdminContext().callWith(
+            () -> dynamicSchemaService.createContentSchema( CreateDynamicContentSchemaParams.create()
+                                                                .name( FormFragmentName.from( "myapp:mytype2" ) )
+                                                                .resource( readResource( "_formFragment.yml" ) )
+                                                                .type( DynamicContentSchemaType.FORM_FRAGMENT )
+                                                                .build() ) );
+        DynamicSchemaResult<FormFragmentDescriptor> fragment3 = createAdminContext().callWith(
+            () -> dynamicSchemaService.createContentSchema( CreateDynamicContentSchemaParams.create()
+                                                                .name( FormFragmentName.from( "my_other_app:mytype" ) )
+                                                                .resource( readResource( "_formFragment.yml" ) )
+                                                                .type( DynamicContentSchemaType.FORM_FRAGMENT )
+                                                                .build() ) );
 
-        results = createAdminContext().callWith( () -> dynamicSchemaService.listContentSchemas(
-            ListDynamicContentSchemasParams.create().applicationKey( applicationKey ).type( DynamicContentSchemaType.FORM_FRAGMENT ).build() ) );
+        results = createAdminContext().callWith( () -> dynamicSchemaService.listContentSchemas( ListDynamicContentSchemasParams.create()
+                                                                                                    .applicationKey( applicationKey )
+                                                                                                    .type(
+                                                                                                        DynamicContentSchemaType.FORM_FRAGMENT )
+                                                                                                    .build() ) );
 
         assertThat( results ).usingRecursiveComparison().isEqualTo( List.of( fragment1, fragment2 ) );
 
         results = createAdminContext().callWith( () -> dynamicSchemaService.listContentSchemas( ListDynamicContentSchemasParams.create()
                                                                                                     .applicationKey( ApplicationKey.from(
                                                                                                         "my_other_app" ) )
-                                                                                                    .type( DynamicContentSchemaType.FORM_FRAGMENT )
+                                                                                                    .type(
+                                                                                                        DynamicContentSchemaType.FORM_FRAGMENT )
                                                                                                     .build() ) );
 
         assertThat( results ).usingRecursiveComparison().isEqualTo( List.of( fragment3 ) );
@@ -1377,7 +1388,8 @@ class DynamicSchemaServiceImplTest
                                                                                            .type( DynamicContentSchemaType.FORM_FRAGMENT )
                                                                                            .build() ) );
         createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema( CreateDynamicContentSchemaParams.create()
-                                                                                           .name( FormFragmentName.from( "my_other_app:mytype" ) )
+                                                                                           .name( FormFragmentName.from(
+                                                                                               "my_other_app:mytype" ) )
                                                                                            .resource( readResource( "_formFragment.yml" ) )
                                                                                            .type( DynamicContentSchemaType.FORM_FRAGMENT )
                                                                                            .build() ) );

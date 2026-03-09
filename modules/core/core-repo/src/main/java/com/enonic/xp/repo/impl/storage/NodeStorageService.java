@@ -4,7 +4,6 @@ package com.enonic.xp.repo.impl.storage;
 import java.util.Collection;
 import java.util.Set;
 
-import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeCommitEntry;
@@ -13,15 +12,15 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
-import com.enonic.xp.repo.impl.NodeStoreVersion;
+import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.node.NodeVersionKey;
-import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeBranchEntries;
 import com.enonic.xp.repo.impl.NodeBranchEntry;
+import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.security.acl.AccessControlList;
 
 public interface NodeStorageService
@@ -36,11 +35,12 @@ public interface NodeStorageService
 
     void deleteFromIndex( NodeId nodeId, InternalContext internalContext );
 
-    void push( NodeBranchEntry entry, Branch origin, InternalContext context );
+    void push( NodeBranchEntry entry, InternalContext context );
 
     NodeCommitEntry commit( NodeCommitEntry entry, NodeVersionIds versionIds, InternalContext context );
 
-    Attributes changeAttributes( NodeVersionId versionId, Attributes attributes, final Set<String> removeAttributes, InternalContext context );
+    Attributes changeAttributes( NodeVersionId versionId, Attributes attributes, Set<String> removeAttributes,
+                                 InternalContext context );
 
     Node get( NodeId nodeId, InternalContext context );
 

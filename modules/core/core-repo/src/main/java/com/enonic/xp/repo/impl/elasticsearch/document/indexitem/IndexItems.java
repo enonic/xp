@@ -3,15 +3,11 @@ package com.enonic.xp.repo.impl.elasticsearch.document.indexitem;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 
-import com.enonic.xp.data.Value;
-import com.enonic.xp.index.IndexConfigDocument;
-import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.repo.impl.index.IndexValueType;
 
 public class IndexItems
@@ -41,30 +37,13 @@ public class IndexItems
         {
         }
 
-        public Builder add( final IndexPath indexPath, final Value value, final IndexConfigDocument indexConfigDocument )
-        {
-            Objects.requireNonNull( indexPath );
-            Objects.requireNonNull( value );
-
-            add( IndexItemFactory.create( indexPath, value, indexConfigDocument ) );
-
-            return this;
-        }
-
-        public Builder add( final List<IndexItem> indexItems )
+        public Builder add( final List<? extends IndexItem<?>> indexItems )
         {
             indexItems.stream()
-                .filter( this::singleOrderByValueOnlyFilter )
-                .forEach( ( item ) -> this.values.put( item.getPath(), item.getValue().getValue() ) );
+                .filter( item -> !( item.valueType().equals( IndexValueType.ORDERBY ) && this.values.containsKey( item.getPath() ) ) )
+                .forEach( item -> this.values.put( item.getPath(), item.getValue() ) );
 
             return this;
-        }
-
-        private boolean singleOrderByValueOnlyFilter( final IndexItem item )
-        {
-            final boolean isOrderByItem = item.valueType().equals( IndexValueType.ORDERBY );
-
-            return !isOrderByItem || !this.values.containsKey( item.getPath() );
         }
 
         public IndexItems build()

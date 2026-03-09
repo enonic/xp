@@ -1,4 +1,4 @@
-package com.enonic.xp.repo.impl.elasticsearch;
+package com.enonic.xp.itest;
 
 
 import java.io.IOException;
@@ -61,10 +61,12 @@ public class EmbeddedElasticsearchServer
             .put( "path.repo", this.snaphotsDir.toString() )
             .put( "cluster.name", "repo-test-cluster-" + now )
             .put( "http.enabled", false )
+            .put( "indices.store.throttle.type", "none" )
             .put( "index.translog.durability", "async" )
             .put( "index.translog.sync_interval", "15m" )
-            .put( "index.search.slowlog.threshold.query.trace", "0s")
-            .put( "index.search.slowlog.threshold.fetch.trace", "0s")
+            .put( "index.refresh_interval", -1 )
+            .put( "index.search.slowlog.threshold.query.trace", "0s" )
+            .put( "index.search.slowlog.threshold.fetch.trace", "0s" )
             .put( "discovery.zen.ping.multicast.enabled", false );
 
         final Environment environment = InternalSettingsPreparer.prepareEnvironment( testServerSetup.build(), null );

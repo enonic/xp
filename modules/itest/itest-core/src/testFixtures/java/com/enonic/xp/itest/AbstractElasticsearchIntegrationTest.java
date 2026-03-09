@@ -1,4 +1,4 @@
-package com.enonic.xp.repo.impl.elasticsearch;
+package com.enonic.xp.itest;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -36,12 +36,11 @@ public abstract class AbstractElasticsearchIntegrationTest
     {
         String termQuery = "{\n" + "  \"query\": { \"match_all\": {} }\n" + "}";
 
-        SearchRequestBuilder searchRequest = new SearchRequestBuilder( client, SearchAction.INSTANCE ).
-            setSize( 100 ).
-            setIndices( indexName ).
-            setTypes( indexType ).
-            setSource( termQuery ).
-            addFields( "_source" );
+        SearchRequestBuilder searchRequest = new SearchRequestBuilder( client, SearchAction.INSTANCE ).setSize( 100 )
+            .setIndices( indexName )
+            .setTypes( indexType )
+            .setSource( termQuery )
+            .addFields( "_source" );
 
         final SearchResponse searchResponse = client.search( searchRequest.request() ).actionGet();
 
@@ -57,15 +56,16 @@ public abstract class AbstractElasticsearchIntegrationTest
 
     protected static void deleteAllIndices()
     {
-        client.admin().indices().prepareDelete( "_all").execute().actionGet();
+        client.admin().indices().prepareDelete( "_all" ).execute().actionGet();
     }
 
-    static class EmbeddedElasticsearchExtension implements BeforeAllCallback
+    static class EmbeddedElasticsearchExtension
+        implements BeforeAllCallback
     {
         @Override
-        public void beforeAll(ExtensionContext context)
+        public void beforeAll( ExtensionContext context )
         {
-            context.getRoot().getStore(ExtensionContext.Namespace.GLOBAL).getOrComputeIfAbsent(ElasticsearchFixture.class);
+            context.getRoot().getStore( ExtensionContext.Namespace.GLOBAL ).getOrComputeIfAbsent( ElasticsearchFixture.class );
         }
     }
 
@@ -93,10 +93,12 @@ public abstract class AbstractElasticsearchIntegrationTest
             throws IOException
         {
             LOG.info( "Shutting down Elasticsearch" );
-            if (client != null) {
+            if ( client != null )
+            {
                 client.close();
             }
-            if (server != null) {
+            if ( server != null )
+            {
                 server.shutdown();
             }
             MoreFiles.deleteRecursively( elasticsearchTemporaryFolder, RecursiveDeleteOption.ALLOW_INSECURE );

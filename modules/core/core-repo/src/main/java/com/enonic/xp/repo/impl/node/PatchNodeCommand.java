@@ -89,8 +89,7 @@ public final class PatchNodeCommand
 
         for ( Map.Entry<Branch, NodeVersion> versionEntry : activeNodeMap.entrySet() )
         {
-            patchInBranch( versionEntry.getValue(),
-                           InternalContext.create( internalContext ).branch( versionEntry.getKey() ).build() );
+            patchInBranch( versionEntry.getValue(), InternalContext.create( internalContext ).branch( versionEntry.getKey() ).build() );
         }
     }
 
@@ -102,7 +101,7 @@ public final class PatchNodeCommand
 
         final Node persistedNode = NodeFactory.create( nodeStoreVersion, activeNodeVersion );
         if ( !NodePermissionsResolver.hasPermission( internalContext.getPrincipalKeys(), Permission.MODIFY,
-                                                                              persistedNode.getPermissions() ) )
+                                                     persistedNode.getPermissions() ) )
         {
             return;
         }
@@ -111,9 +110,7 @@ public final class PatchNodeCommand
 
         if ( cachedNewVersion != null )
         {
-            this.nodeStorageService.push( NodeBranchEntry.fromNodeVersion( cachedNewVersion.version() ),
-                                          cachedNewVersion.originBranch(), internalContext );
-
+            this.nodeStorageService.push( NodeBranchEntry.fromNodeVersion( cachedNewVersion.version() ), internalContext );
             results.addResult( internalContext.getBranch(), Node.create( cachedNewVersion.data() ).build() );
         }
         else
@@ -135,8 +132,7 @@ public final class PatchNodeCommand
             {
                 final NodeVersion existingVersion = this.nodeStorageService.getVersion( persistedNode.getNodeVersionId(), internalContext );
                 results.addResult( internalContext.getBranch(), persistedNode );
-                final NodeVersionData data = new NodeVersionData( persistedNode, existingVersion );
-                patchedVersionsCache.put( nodeVersionId, internalContext.getBranch(), data.version(), data.node() );
+                patchedVersionsCache.put( nodeVersionId, internalContext.getBranch(), existingVersion, persistedNode );
             }
             else
             {
