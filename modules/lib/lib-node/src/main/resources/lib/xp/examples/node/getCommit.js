@@ -11,7 +11,7 @@ var repo = nodeLib.connect({
 // BEGIN
 // Commits a node.
 var commit = repo.commit({
-    keys: ['nodeId'],
+    keys: ['nodeid'],
     message: 'Commit message'
 });
 // END

@@ -15,6 +15,7 @@ dependencies {
     runtimeOnly libs.jackson.dataformat.yaml
 
     implementation libs.commons.compress
+    runtimeOnly libs.slf4j.simple
 
 
     testImplementation( testFixtures( project( ":core:core-api" ) ) )

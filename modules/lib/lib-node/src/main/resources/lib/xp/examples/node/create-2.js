@@ -74,22 +74,22 @@ log.info('Node created with id ' + result1._id);
 // BEGIN
 // Node created.
 var expected = {
-    '_id': 'nodeId',
-    '_name': 'my-name',
-    '_path': '/my-name',
-    '_childOrder': '_ts DESC',
-    '_indexConfig': {
-        'default': {
-            'decideByType': false,
-            'enabled': true,
-            'nGram': false,
-            'fulltext': false,
-            'includeInAllText': false,
-            'path': false,
-            'indexValueProcessors': [],
-            'languages': []
+        '_id': 'nodeid',
+        '_name': 'my-name',
+        '_path': '/my-name',
+        '_childOrder': '_ts DESC',
+        '_indexConfig': {
+            'default': {
+                'decideByType': false,
+                'enabled': true,
+                'nGram': false,
+                'fulltext': false,
+                'includeInAllText': false,
+                'path': false,
+                'indexValueProcessors': [],
+                'languages': []
             },
-        'configs': [
+            'configs': [
                 {
                     'path': 'displayname',
                     'config': {
@@ -104,14 +104,14 @@ var expected = {
                     }
                 }
             ],
-        'allText': {
-            'enabled': true,
-            'nGram': true,
-            'fulltext': true,
-            'languages': []
-        }
+            'allText': {
+                'enabled': true,
+                'nGram': true,
+                'fulltext': true,
+                'languages': []
+            }
         },
-    '_permissions': [
+        '_permissions': [
             {
                 'principal': 'role:admin',
                 'allow': [
@@ -126,17 +126,17 @@ var expected = {
                 'deny': []
             }
         ],
-    '_nodeType': 'default',
-    '_versionKey': 'versionKey',
-    '_ts': '2010-10-10T10:10:10.100Z',
-    'displayName': 'This is brand new node',
-    'someData': {
-        'cars': [
-            'skoda',
-            'tesla model x'
+        '_nodeType': 'default',
+        '_versionKey': 'versionkey',
+        '_ts': '2010-10-10T10:10:10.100Z',
+        'displayName': 'This is brand new node',
+        'someData': {
+            'cars': [
+                'skoda',
+                'tesla model x'
             ],
-        'likes': 'plywood',
-        'numberOfUselessGadgets': 123
+            'likes': 'plywood',
+            'numberOfUselessGadgets': 123
         }
     }
 ;

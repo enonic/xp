@@ -25,7 +25,7 @@ class StoreDocumentXContentBuilderFactoryTest
                                            createDefaultDocument( IndexConfig.MINIMAL ) ) )
             .build();
 
-        final IndexDocument indexDocument = new IndexDocument( NodeId.from( "myNodeId" ).toString(), indexItems, "myAnalyzer" );
+        final IndexDocument indexDocument = new IndexDocument( NodeId.from( "mynodeid" ).toString(), indexItems, "myAnalyzer" );
 
         final XContentBuilder xContentBuilder = XContentBuilderFactory.create( indexDocument );
 

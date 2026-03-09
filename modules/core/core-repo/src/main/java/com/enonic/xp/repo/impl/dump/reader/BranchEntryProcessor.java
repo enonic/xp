@@ -36,7 +36,7 @@ public class BranchEntryProcessor
 
         final BranchDumpEntry branchDumpEntry = this.serializer.toBranchMetaEntry( line );
 
-        final VersionMeta meta = branchDumpEntry.getMeta();
+        final VersionMeta meta = branchDumpEntry.meta();
 
         addNode( result, meta );
 

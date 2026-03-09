@@ -36,7 +36,7 @@ class LoadNodeCommandTest
             childOrder( ChildOrder.manualOrder() ).
             nodeType( NodeType.from( "myNodes" ) ).
             timestamp( Instant.now() ).
-            nodeVersionId( NodeVersionId.from( "nodeVersionId" ) ).
+            nodeVersionId( NodeVersionId.from( "nodeversionid" ) ).
             build();
 
         final LoadNodeParams loadParams = LoadNodeParams.create().
@@ -71,7 +71,7 @@ class LoadNodeCommandTest
             parentPath( NodePath.ROOT ).
             name( "fisk" ).
             timestamp( Instant.now() ).
-            nodeVersionId( NodeVersionId.from( "nodeVersionId" ) ).
+            nodeVersionId( NodeVersionId.from( "nodeversionid" ) ).
             build();
 
         final LoadNodeParams loadParams = LoadNodeParams.create().
@@ -96,7 +96,7 @@ class LoadNodeCommandTest
                 parentPath( new NodePath( "/ost" ) ).
                 name( "fisk" ).
                 timestamp( Instant.now() ).
-                nodeVersionId( NodeVersionId.from( "nodeVersionId" ) ).
+                nodeVersionId( NodeVersionId.from( "nodeversionid" ) ).
                 build() ).
             build();
 

@@ -27,7 +27,7 @@ class ApplyPermissionsHandlerTest
             AccessControlList.create().add( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ).build();
 
         final ApplyNodePermissionsParams applyNodePermissionsParams =
-            ApplyNodePermissionsParams.create().nodeId( NodeId.from( "nodeId1" ) ).permissions( acl ).build();
+            ApplyNodePermissionsParams.create().nodeId( NodeId.from( "node-id-1" ) ).permissions( acl ).build();
 
         Mockito.when( this.repositoryService.get( RepositoryId.from( "com.enonic.cms.default" ) ) )
             .thenReturn( Repository.create()
@@ -41,7 +41,7 @@ class ApplyPermissionsHandlerTest
                                          NodeVersionId.from( 1 ), AccessControlList.empty() )
                              .addResult( applyNodePermissionsParams.getNodeId(), ContentConstants.BRANCH_MASTER, NodeVersionId.from( 2 ),
                                          AccessControlList.empty() )
-                             .addResult( NodeId.from( "nodeId2" ), ContextAccessor.current().getBranch(), NodeVersionId.from( 3 ),
+                             .addResult( NodeId.from( "node-id-2" ), ContextAccessor.current().getBranch(), NodeVersionId.from( 3 ),
                                          AccessControlList.empty() )
                              .build() );
 

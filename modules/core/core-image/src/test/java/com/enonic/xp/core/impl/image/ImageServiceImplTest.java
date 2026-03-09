@@ -49,7 +49,7 @@ class ImageServiceImplTest
     {
         System.setProperty( "xp.home", temporaryFolder.toFile().getPath() );
 
-        contentId = ContentId.from( "contentId" );
+        contentId = ContentId.from( "contentid" );
         binaryReference = BinaryReference.from( "binaryRef" );
         contentService = mock( ContentService.class );
 

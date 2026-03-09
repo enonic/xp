@@ -109,10 +109,18 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
                 ContentConstants.BRANCH_MASTER.equals( branch );
             final String cacheControlHeaderConfig = isPublic ? publicCacheControlHeaderConfig : privateCacheControlHeaderConfig;
 
-            if ( !nullToEmpty( cacheControlHeaderConfig ).isBlank() &&
-                this.fingerprint.equals( resolveHash( content, attachment, binaryReference ) ) )
+            if ( !nullToEmpty( cacheControlHeaderConfig ).isBlank() )
             {
-                portalResponse.header( HttpHeaders.CACHE_CONTROL, cacheControlHeaderConfig );
+                final String hash = resolveHash( content, attachment, binaryReference );
+                // fallback to private cache control header if hash is not known
+                if ( hash == null && !nullToEmpty( privateCacheControlHeaderConfig ).isBlank() )
+                {
+                    portalResponse.header( HttpHeaders.CACHE_CONTROL, privateCacheControlHeaderConfig );
+                }
+                if ( this.fingerprint.equals( hash ) )
+                {
+                    portalResponse.header( HttpHeaders.CACHE_CONTROL, cacheControlHeaderConfig );
+                }
             }
         }
 

@@ -8,22 +8,24 @@ import com.google.common.io.ByteSource;
 import com.google.common.io.MoreFiles;
 
 import com.enonic.xp.blob.BlobKey;
-import com.enonic.xp.blob.BlobRecord;
-import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.repo.impl.dump.PathRef;
 import com.enonic.xp.repo.impl.dump.RepoDumpException;
+import com.enonic.xp.repo.impl.dump.upgrade.DumpUpgradeException;
+import com.enonic.xp.repository.RepositoryId;
 
 public class FileDumpBlobStore
 {
     private final Path baseDir;
 
-    private final BlobStore sourceBlobStore;
-
-    public FileDumpBlobStore( final Path baseDir, final BlobStore sourceBlobStore )
+    public FileDumpBlobStore( final Path baseDir )
     {
         this.baseDir = baseDir;
-        this.sourceBlobStore = sourceBlobStore;
+    }
+
+    public Path getBasePath()
+    {
+        return baseDir;
     }
 
     public ByteSource getBytes( final BlobReference reference )
@@ -31,33 +33,12 @@ public class FileDumpBlobStore
         return MoreFiles.asByteSource( toPath( reference ) );
     }
 
-    public void addRecord( final BlobReference reference )
-    {
-        final BlobRecord record = sourceBlobStore.getRecord( reference.getSegment(), reference.getKey() );
-        if ( record == null )
-        {
-            throw new RepoDumpException( "Blob not found: " + reference );
-        }
-        writeBlob( reference, record.getBytes() );
-    }
-
     public BlobKey addRecord( final Segment segment, final ByteSource data )
     {
-        final BlobReference reference = new BlobReference( segment, BlobKey.from( data ) );
+        final BlobReference reference = new BlobReference( segment, BlobKey.sha256( data ) );
 
         writeBlob( reference, data );
         return reference.getKey();
-    }
-
-    public DumpBlobRecord getRecord( final Segment segment, final BlobKey key )
-    {
-        return new DumpBlobRecord( segment, key, this );
-    }
-
-    void overrideBlob( final BlobReference reference, byte[] bytes )
-        throws IOException
-    {
-        Files.write( toPath( reference ), bytes );
     }
 
     private void writeBlob( final BlobReference reference, final ByteSource data )
@@ -81,8 +62,23 @@ public class FileDumpBlobStore
         }
     }
 
+    public void writeMetaEntry( final RepositoryId repositoryId, final String subFolder, final String entryName, final byte[] data )
+    {
+        final Path metaPath = baseDir.resolve( "meta" ).resolve( repositoryId.toString() ).resolve( subFolder );
+        try
+        {
+            Files.createDirectories( metaPath );
+            Files.write( metaPath.resolve( entryName ), data );
+        }
+        catch ( IOException e )
+        {
+            throw new DumpUpgradeException( "Cannot write meta entry [" + entryName + "] for repository [" + repositoryId + "]", e );
+        }
+    }
+
     private Path toPath( final BlobReference reference )
     {
         return DumpBlobStoreUtils.getBlobPathRef( PathRef.of(), reference ).asPath( baseDir );
     }
+
 }

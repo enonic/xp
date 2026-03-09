@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class ZipDumpReaderTest
+class ZipDumpReaderV7Test
     extends BaseDumpReaderTest
 {
 
@@ -41,9 +41,9 @@ class ZipDumpReaderTest
 
         createZipArchive( dumpFolder, dumpFolder.getParent().resolve( "archive.zip" ) );
 
-        try (ZipDumpReader zipDumpReader = ZipDumpReader.create( null, dumpFolder.getParent(), "archive" ))
+        try (ZipDumpReaderV7 zipDumpReaderV7 = ZipDumpReaderV7.create( null, dumpFolder.getParent(), "archive" ))
         {
-            assertNotNull( zipDumpReader.getDumpMeta() );
+            assertNotNull( zipDumpReaderV7.getDumpMeta() );
         }
     }
 
@@ -59,7 +59,7 @@ class ZipDumpReaderTest
         createZipArchive( dumpFolder, dumpFolder.getParent().resolve( "archive.zip" ) );
 
         final RepoLoadException exception = assertThrows( RepoLoadException.class, () -> {
-            try (ZipDumpReader zipDumpReader = ZipDumpReader.create( null, dumpFolder.getParent(), "archive" ))
+            try (ZipDumpReaderV7 zipDumpReader = ZipDumpReaderV7.create( null, dumpFolder.getParent(), "archive" ))
             {
                 // do nothing
             }
@@ -77,9 +77,9 @@ class ZipDumpReaderTest
 
         createZipArchive( dumpFolder, dumpFolder.getParent().resolve( "archive.zip" ) );
 
-        try (ZipDumpReader zipDumpReader = ZipDumpReader.create( null, dumpFolder.getParent(), "archive" ))
+        try (ZipDumpReaderV7 zipDumpReaderV7 = ZipDumpReaderV7.create( null, dumpFolder.getParent(), "archive" ))
         {
-            assertNotNull( zipDumpReader.getDumpMeta() );
+            assertNotNull( zipDumpReaderV7.getDumpMeta() );
         }
     }
 
@@ -92,9 +92,9 @@ class ZipDumpReaderTest
 
         createZipArchive( dumpFolder, dumpFolder.getParent().resolve( "archive.zip" ) );
 
-        try (ZipDumpReader zipDumpReader = ZipDumpReader.create( null, dumpFolder.getParent(), "archive" ))
+        try (ZipDumpReaderV7 zipDumpReaderV7 = ZipDumpReaderV7.create( null, dumpFolder.getParent(), "archive" ))
         {
-            assertNotNull( zipDumpReader.getDumpMeta() );
+            assertNotNull( zipDumpReaderV7.getDumpMeta() );
         }
     }
 

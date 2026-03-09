@@ -22,7 +22,7 @@ class DuplicateContentsResultMapperTest
                                                                                       .setContentName( "contentName" )
                                                                                       .setSourceContentPath(
                                                                                           ContentPath.from( "contentPath" ) )
-                                                                                      .addDuplicated( ContentId.from( "contentId" ) )
+                                                                                      .addDuplicated( ContentId.from( "contentid" ) )
                                                                                       .build() );
         mapper.serialize( jsonGenerator );
 
@@ -31,6 +31,6 @@ class DuplicateContentsResultMapperTest
         assertEquals( "contentName", actualJson.get( "contentName" ).asText() );
         assertEquals( "/contentPath", actualJson.get( "sourceContentPath" ).asText() );
         assertEquals( 1, actualJson.get( "duplicatedContents" ).size() );
-        assertEquals( "contentId", actualJson.get( "duplicatedContents" ).get( 0 ).asText() );
+        assertEquals( "contentid", actualJson.get( "duplicatedContents" ).get( 0 ).asText() );
     }
 }

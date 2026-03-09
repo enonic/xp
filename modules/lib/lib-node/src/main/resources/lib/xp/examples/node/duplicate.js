@@ -44,7 +44,7 @@ var expectedJson = {
 // BEGIN
 // Duplicates node
 var result = repo.duplicate({
-    nodeId: 'nodeId',
+    nodeId: 'nodeid',
     name: 'duplicated-node',
     includeChildren: false,
     dataProcessor: function (data) {

@@ -23,9 +23,9 @@ class BranchStorageRequestFactoryTest
     void create()
     {
         final StoreRequest storeRequest = BranchStorageRequestFactory.create( NodeBranchEntry.create()
-                                                                                  .nodeId( NodeId.from( "nodeId" ) )
+                                                                                  .nodeId( NodeId.from( "nodeid" ) )
                                                                                   .nodePath( new NodePath( "/nodePath" ) )
-                                                                                  .nodeVersionId( NodeVersionId.from( "nodeVersionId" ) )
+                                                                                  .nodeVersionId( NodeVersionId.from( "nodeversionid" ) )
                                                                                   .nodeVersionKey( NodeVersionKey.create()
                                                                                                        .nodeBlobKey(
                                                                                                            BlobKey.from( "nodeBlobKey" ) )
@@ -38,7 +38,7 @@ class BranchStorageRequestFactoryTest
                                                                                   .build(), RepositoryId.from( "my-repo-id" ),
                                                                               Branch.from( "my-branch" ) );
 
-        assertEquals( "nodeId_my-branch", storeRequest.getId() );
-        assertEquals( "nodeVersionId", storeRequest.getParent() );
+        assertEquals( "nodeid_my-branch", storeRequest.getId() );
+        assertEquals( "nodeversionid", storeRequest.getParent() );
     }
 }

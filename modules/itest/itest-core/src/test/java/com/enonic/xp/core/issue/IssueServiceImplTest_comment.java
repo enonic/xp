@@ -34,7 +34,6 @@ class IssueServiceImplTest_comment
             issue( issue.getId() ).
             creator( creator ).
             creatorDisplayName( creatorDisplayName ).
-            created( created ).
             build();
 
         final IssueComment comment = this.issueService.createComment( params );
@@ -58,7 +57,6 @@ class IssueServiceImplTest_comment
             issue( IssueId.create() ).
             creator( creator ).
             creatorDisplayName( creatorDisplayName ).
-            created( created ).
             build();
 
         assertThrows(NodeNotFoundException.class, () -> this.issueService.createComment( params ));

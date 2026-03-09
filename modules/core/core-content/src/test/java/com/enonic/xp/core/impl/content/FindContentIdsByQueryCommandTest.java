@@ -45,7 +45,7 @@ class FindContentIdsByQueryCommandTest
     {
         FindNodesByQueryResult nodesByQueryResult = FindNodesByQueryResult.create().
             addNodeHit( NodeHit.create().
-                nodeId( NodeId.from( "nodeId" ) ).
+                nodeId( NodeId.from( "nodeid" ) ).
                 score( 1.0f ).
                 sort( SortValuesProperty.create().
                     values( 84 ).

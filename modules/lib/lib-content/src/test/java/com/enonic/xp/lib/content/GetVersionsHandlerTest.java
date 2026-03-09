@@ -25,7 +25,7 @@ class GetVersionsHandlerTest
     {
         final ContentVersion version1 = ContentVersion.create()
             .versionId( ContentVersionId.from( "version1" ) )
-            .contentId( ContentId.from( "contentId" ) )
+            .contentId( ContentId.from( "contentid" ) )
             .path( ContentPath.from( "/my-content" ) )
             .timestamp( Instant.parse( "2024-01-01T00:00:00Z" ) )
             .addAction( new ContentVersion.Action( "publish", List.of(), PrincipalKey.from( "user:system:admin" ),
@@ -34,7 +34,7 @@ class GetVersionsHandlerTest
 
         final ContentVersion version2 = ContentVersion.create()
             .versionId( ContentVersionId.from( "version2" ) )
-            .contentId( ContentId.from( "contentId" ) )
+            .contentId( ContentId.from( "contentid" ) )
             .path( ContentPath.from( "/my-content" ) )
             .timestamp( Instant.parse( "2023-12-01T00:00:00Z" ) )
             .build();

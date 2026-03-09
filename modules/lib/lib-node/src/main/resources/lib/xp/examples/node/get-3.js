@@ -10,8 +10,8 @@ var repo = nodeLib.connect({
 // BEGIN
 // Fetches a node.
 var result1 = repo.get({
-    key: 'nodeId',
-    versionId: 'versionKey'
+    key: 'nodeid',
+    versionId: 'versionkey'
 });
 
 log.info(`Node with _id="${result1._id}" found.`);
@@ -20,15 +20,15 @@ log.info(`Node with _id="${result1._id}" found.`);
 // BEGIN
 // Fetches nodes.
 var result2 = repo.get([{
-    key: 'nodeId',
-    versionId: 'versionKey'
-}, 'nodeId']);
+    key: 'nodeid',
+    versionId: 'versionkey'
+}, 'nodeid']);
 log.info(result2.length + ' nodes found.');
 // END
 
 // Node fetched.
 var expected = {
-    '_id': 'nodeId',
+    '_id': 'nodeid',
     '_name': 'my-name',
     '_path': '/my-name',
     '_childOrder': '_ts DESC',
@@ -81,7 +81,7 @@ var expected = {
         }
     ],
     '_nodeType': 'default',
-    '_versionKey': 'versionKey',
+    '_versionKey': 'versionkey',
     '_ts': '2010-10-10T10:10:10.100Z',
     'displayName': 'This is brand new node',
     'someData': {

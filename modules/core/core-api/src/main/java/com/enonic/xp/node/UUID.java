@@ -11,7 +11,7 @@ public class UUID
 {
     protected final String value;
 
-    private static final Pattern VALID_NODE_ID_PATTERN = Pattern.compile( "[\\w\\-.:]+" );
+    private static final Pattern VALID_NODE_ID_PATTERN = Pattern.compile( "[a-z0-9_.:-]+" );
 
     public UUID()
     {

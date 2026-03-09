@@ -2,7 +2,10 @@ package com.enonic.xp.repo.impl.dump.writer;
 
 import java.io.Closeable;
 
+import com.google.common.io.ByteSource;
+
 import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.blob.Segment;
 import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
@@ -30,7 +33,11 @@ public interface DumpWriter
 
     void writeCommitEntry( CommitDumpEntry commitDumpEntry );
 
+    void writeRawMetaEntry( byte[] data, String entryName );
+
     void writeNodeVersionBlobs( RepositoryId repositoryId, NodeVersionKey nodeVersionKey );
 
     void writeBinaryBlob( RepositoryId repositoryId, BlobKey key );
+
+    BlobKey addBlobRecord( Segment segment, ByteSource data );
 }

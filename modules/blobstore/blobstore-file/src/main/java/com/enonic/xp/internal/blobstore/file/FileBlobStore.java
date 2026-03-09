@@ -188,10 +188,21 @@ public final class FileBlobStore
     private Path resolveBlobPath( final Segment segment, final BlobKey key )
     {
         final String id = key.toString();
-        return resolveSegmentPath( segment ).resolve( id.substring( 0, 2 ) )
-            .resolve( id.substring( 2, 4 ) )
-            .resolve( id.substring( 4, 6 ) )
-            .resolve( id );
+        if ( id.startsWith( "sha256:" ) )
+        {
+            return resolveSegmentPath( segment ).resolve( "sha256" )
+                .resolve( id.substring( 7, 9 ) )
+                .resolve( id.substring( 9, 11 ) )
+                .resolve( id.substring( 11, 13 ) )
+                .resolve( id.substring( 13 ) );
+        }
+        else
+        {
+            return resolveSegmentPath( segment ).resolve( id.substring( 0, 2 ) )
+                .resolve( id.substring( 2, 4 ) )
+                .resolve( id.substring( 4, 6 ) )
+                .resolve( id );
+        }
     }
 
     private Path resolveSegmentPath( final Segment segment )
