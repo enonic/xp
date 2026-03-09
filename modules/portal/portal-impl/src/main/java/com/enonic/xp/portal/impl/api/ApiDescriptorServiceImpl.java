@@ -10,6 +10,7 @@ import com.enonic.xp.api.ApiDescriptor;
 import com.enonic.xp.api.ApiDescriptorService;
 import com.enonic.xp.api.ApiDescriptors;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.core.impl.schema.JsonSchemaService;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.descriptor.DescriptorKeyLocator;
 import com.enonic.xp.resource.Resource;
@@ -27,10 +28,13 @@ public final class ApiDescriptorServiceImpl
 
     private final DescriptorKeyLocator descriptorKeyLocator;
 
+    private final JsonSchemaService jsonSchemaService;
+
     @Activate
-    public ApiDescriptorServiceImpl( @Reference final ResourceService resourceService )
+    public ApiDescriptorServiceImpl( @Reference final ResourceService resourceService, @Reference final JsonSchemaService jsonSchemaService )
     {
         this.resourceService = resourceService;
+        this.jsonSchemaService = jsonSchemaService;
         this.descriptorKeyLocator = new DescriptorKeyLocator( this.resourceService, ROOT_PATH, true );
     }
 
@@ -73,7 +77,9 @@ public final class ApiDescriptorServiceImpl
 
     private ApiDescriptor loadDescriptor( final DescriptorKey key, final Resource resource )
     {
-        return YmlApiDescriptorParser.parse( resource.readString(), key.getApplicationKey() ).key( key ).build();
+        final String yaml = resource.readString();
+        jsonSchemaService.validate( "https://json-schema.enonic.com/8.0.0/api.schema.json", yaml );
+        return YmlApiDescriptorParser.parse( yaml, key.getApplicationKey() ).key( key ).build();
     }
 
     private ResourceKey toResourceKey( final DescriptorKey key, final String extension )

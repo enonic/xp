@@ -1,0 +1,8 @@
+mode: "MIXED"
+form:
+  - type: "UnknownInputType"
+    name: "field"
+    label: "Field"
+    occurrences:
+      min: 0
+      max: 1
