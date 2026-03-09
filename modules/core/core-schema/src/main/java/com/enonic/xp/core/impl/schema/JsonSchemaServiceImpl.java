@@ -59,10 +59,6 @@ public class JsonSchemaServiceImpl
     {
         bundleContext.addBundleListener( this );
 
-//        final FormItemsJsonSchemaGenerator formItemsJsonSchemaGenerator = new FormItemsJsonSchemaGenerator( Set.of() );
-//        final String formItemsSchema = formItemsJsonSchemaGenerator.generate();
-//        register( formItemsSchema );
-
         final Bundle currentBundle = bundleContext.getBundle();
         loadJsonSchema( currentBundle );
 
