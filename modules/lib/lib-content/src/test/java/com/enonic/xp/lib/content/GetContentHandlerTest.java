@@ -80,7 +80,7 @@ class GetContentHandlerTest
     {
         final Content content = TestDataFixtures.newExampleContent();
 
-        final ContentId contentId = ContentId.from( "mycontentId" );
+        final ContentId contentId = ContentId.from( "mycontentid" );
         final ContentVersionId versionId = ContentVersionId.from( "versionId" );
         Mockito.when( this.contentService.getByIdAndVersionId( contentId, versionId ) ).thenReturn( content );
 
@@ -90,7 +90,7 @@ class GetContentHandlerTest
     @Test
     void getByIdAndVersionId_NotFound()
     {
-        final ContentId contentId = ContentId.from( "mycontentId" );
+        final ContentId contentId = ContentId.from( "mycontentid" );
         final ContentVersionId versionId = ContentVersionId.from( "versionId" );
         Mockito.when( this.contentService.getByIdAndVersionId( contentId, versionId ) ).thenThrow(
             ContentNotFoundException.class );
@@ -103,7 +103,7 @@ class GetContentHandlerTest
     {
         final Content content = TestDataFixtures.newExampleLayerContentBuilder().build();
 
-        final ContentId contentId = ContentId.from( "mycontentId" );
+        final ContentId contentId = ContentId.from( "mycontentid" );
         Mockito.when( this.contentService.getById( contentId ) ).thenReturn( content );
 
         final ScriptValue result = runFunction( "/test/GetContentHandlerTest.js", "getByIdInLayer" );

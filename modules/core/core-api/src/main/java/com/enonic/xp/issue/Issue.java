@@ -2,6 +2,7 @@ package com.enonic.xp.issue;
 
 import java.time.Instant;
 
+import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 
@@ -40,8 +41,8 @@ public class Issue
         this.title = builder.title;
         this.name = builder.name == null ? IssueName.from( this.id.toString() ) : builder.name;
         this.description = builder.description;
-        this.createdTime = builder.createdTime;
-        this.modifiedTime = builder.modifiedTime;
+        this.createdTime = Millis.from( builder.createdTime );
+        this.modifiedTime = Millis.from( builder.modifiedTime );
         this.issueStatus = builder.issueStatus;
         this.creator = builder.creator;
         this.modifier = builder.modifier;

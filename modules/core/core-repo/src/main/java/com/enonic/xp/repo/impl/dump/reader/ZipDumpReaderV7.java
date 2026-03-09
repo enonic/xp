@@ -29,7 +29,7 @@ import com.enonic.xp.repo.impl.dump.PathRef;
 import com.enonic.xp.repo.impl.dump.RepoLoadException;
 import com.enonic.xp.repo.impl.dump.blobstore.DumpBlobStoreUtils;
 
-public class ZipDumpReader
+public class ZipDumpReaderV7
     extends AbstractDumpReader
 {
 
@@ -37,14 +37,14 @@ public class ZipDumpReader
 
     private final ZipFile zipFile;
 
-    private ZipDumpReader( final SystemLoadListener listener, final PathRef basePathInZip, final ZipFile zipFile )
+    private ZipDumpReaderV7( final SystemLoadListener listener, final PathRef basePathInZip, final ZipFile zipFile )
     {
         super( listener, new DefaultFilePaths( basePathInZip ),
                reference -> new ZipEntryByteSource( zipFile, DumpBlobStoreUtils.getBlobPathRef( basePathInZip, reference ).asString() ) );
         this.zipFile = zipFile;
     }
 
-    public static ZipDumpReader create( SystemLoadListener listener, final Path basePath, final String dumpName )
+    public static ZipDumpReaderV7 create( SystemLoadListener listener, final Path basePath, final String dumpName )
     {
         Preconditions.checkArgument( FileNames.isSafeFileName( dumpName ) );
         try
@@ -61,15 +61,15 @@ public class ZipDumpReader
         }
     }
 
-    private static ZipDumpReader create( final SystemLoadListener listener, final String dumpName, final ZipFile zipFile )
+    private static ZipDumpReaderV7 create( final SystemLoadListener listener, final String dumpName, final ZipFile zipFile )
     {
         if ( zipFile.getEntry( "dump.json" ) != null )
         {
-            return new ZipDumpReader( listener, PathRef.of(), zipFile );
+            return new ZipDumpReaderV7( listener, PathRef.of(), zipFile );
         }
         else if ( zipFile.getEntry( dumpName + "/dump.json" ) != null )
         {
-            return new ZipDumpReader( listener, PathRef.of( dumpName ), zipFile );
+            return new ZipDumpReaderV7( listener, PathRef.of( dumpName ), zipFile );
         }
         else
         {
@@ -83,7 +83,7 @@ public class ZipDumpReader
 
                 if ( matcher.matches() )
                 {
-                    return new ZipDumpReader( listener, PathRef.of( matcher.group( 1 ) ), zipFile );
+                    return new ZipDumpReaderV7( listener, PathRef.of( matcher.group( 1 ) ), zipFile );
                 }
             }
 

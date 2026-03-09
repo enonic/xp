@@ -7,7 +7,6 @@ import java.nio.file.Path;
 import java.util.stream.Stream;
 
 import com.google.common.base.Preconditions;
-import com.google.common.io.ByteSource;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.Segment;
@@ -18,31 +17,31 @@ import com.enonic.xp.repo.impl.dump.DefaultFilePaths;
 import com.enonic.xp.repo.impl.dump.FilePaths;
 import com.enonic.xp.repo.impl.dump.PathRef;
 import com.enonic.xp.repo.impl.dump.RepoLoadException;
-import com.enonic.xp.repo.impl.dump.blobstore.DumpBlobRecord;
+import com.enonic.xp.repo.impl.dump.blobstore.FileDumpBlobRecord;
 import com.enonic.xp.repo.impl.dump.blobstore.FileDumpBlobStore;
 import com.enonic.xp.repository.RepositoryId;
 
-public class FileDumpReader
+public class FileDumpReaderV7
     extends AbstractDumpReader
 {
     private final Path dumpPath;
 
     private final FileDumpBlobStore dumpBlobStore;
 
-    private FileDumpReader( final SystemLoadListener listener, final FilePaths filePaths, final Path dumpPath,
-                            final FileDumpBlobStore dumpBlobStore )
+    private FileDumpReaderV7( final SystemLoadListener listener, final FilePaths filePaths, final Path dumpPath,
+                              final FileDumpBlobStore dumpBlobStore )
     {
         super( listener, filePaths, dumpBlobStore::getBytes );
         this.dumpPath = dumpPath;
         this.dumpBlobStore = dumpBlobStore;
     }
 
-    public static FileDumpReader create( final SystemLoadListener listener, Path basePath, final String dumpName )
+    public static FileDumpReaderV7 create( final SystemLoadListener listener, Path basePath, final String dumpName )
     {
         return create( listener, basePath, dumpName, new DefaultFilePaths() );
     }
 
-    public static FileDumpReader create( final SystemLoadListener listener, Path basePath, final String dumpName, FilePaths filePaths )
+    public static FileDumpReaderV7 create( final SystemLoadListener listener, Path basePath, final String dumpName, FilePaths filePaths )
     {
         Preconditions.checkArgument( FileNames.isSafeFileName( dumpName ) );
 
@@ -51,7 +50,7 @@ public class FileDumpReader
         {
             throw new RepoLoadException( "Directory is not a valid dump directory: [" + dumpPath + "]" );
         }
-        return new FileDumpReader( listener, filePaths, dumpPath, new FileDumpBlobStore( dumpPath, null ) );
+        return new FileDumpReaderV7( listener, filePaths, dumpPath, new FileDumpBlobStore( dumpPath ) );
     }
 
     @Override
@@ -76,14 +75,9 @@ public class FileDumpReader
         return Files.exists( file.asPath( dumpPath ) );
     }
 
-    public DumpBlobRecord getRecord( final Segment segment, final BlobKey key )
+    public FileDumpBlobRecord getRecord( final Segment segment, final BlobKey key )
     {
-        return dumpBlobStore.getRecord( segment, key );
-    }
-
-    public BlobKey addRecord( final Segment segment, final byte[] data )
-    {
-        return dumpBlobStore.addRecord( segment, ByteSource.wrap( data ) );
+        return new FileDumpBlobRecord( segment, key, dumpBlobStore );
     }
 
     public Path getBranchEntriesFile( final RepositoryId repositoryId, final Branch branch )
@@ -94,6 +88,11 @@ public class FileDumpReader
     public Path getVersionsFile( final RepositoryId repositoryId )
     {
         return filePaths.versionMetaPath( repositoryId ).asPath( dumpPath );
+    }
+
+    public Path getCommitsFile( final RepositoryId repositoryId )
+    {
+        return filePaths.commitMetaPath( repositoryId ).asPath( dumpPath );
     }
 
     public Path getRepositoryDir( final RepositoryId repositoryId )

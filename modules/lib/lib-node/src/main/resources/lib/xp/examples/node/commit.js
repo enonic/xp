@@ -8,7 +8,7 @@ var repo = nodeLib.connect({
 
 // BEGIN
 // Commits a node.
-var result1 = repo.commit({keys: 'nodeId'});
+var result1 = repo.commit({keys: 'nodeid'});
 
 log.info('Commit created with id ' + result1._id);
 // END
@@ -26,7 +26,7 @@ var expected1 = {
 // BEGIN
 // Commits nodes.
 var result2 = repo.commit({
-    keys: ['nodeId', 'nodeId2'],
+    keys: ['nodeid', 'nodeid2'],
     message: 'Commit message'
 });
 

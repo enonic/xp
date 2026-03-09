@@ -1,7 +1,7 @@
 package com.enonic.xp.repo.impl.dump.reader;
 
 import java.io.IOException;
-import java.util.Set;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,16 +36,14 @@ public class VersionEntryProcessor
 
         final VersionsDumpEntry nodeVersionsEntry = this.serializer.toNodeVersionsEntry( line );
 
-        final Set<VersionMeta> versions = nodeVersionsEntry.getVersions();
-
-        addVersions( result, nodeVersionsEntry, versions );
+        addVersions( result, nodeVersionsEntry, nodeVersionsEntry.versions() );
 
         this.result = result.build();
         return true;
     }
 
     private void addVersions( final EntryLoadResult.Builder result, final VersionsDumpEntry versionsDumpEntry,
-                              final Set<VersionMeta> versions )
+                              final List<VersionMeta> versions )
     {
         for ( final VersionMeta version : versions )
         {
@@ -61,11 +59,12 @@ public class VersionEntryProcessor
             {
                 this.nodeService.importNodeVersion( ImportNodeVersionParams.create()
                                                         .node( NodeFactory.create( nodeVersion )
-                                                                   .id( versionsDumpEntry.getNodeId() )
+                                                                   .id( versionsDumpEntry.nodeId() )
                                                                    .timestamp( version.timestamp() )
                                                                    .parentPath( version.nodePath().getParentPath() )
                                                                    .name( version.nodePath().getName() )
-                                                                   .nodeVersionId( version.version() ).build() )
+                                                                   .nodeVersionId( version.version() )
+                                                                   .build() )
                                                         .nodeCommitId( version.nodeCommitId() )
                                                         .attributes( version.attributes() )
                                                         .build() );
@@ -76,7 +75,7 @@ public class VersionEntryProcessor
             catch ( Exception e )
             {
                 final String message =
-                    String.format( "Cannot load version with id %s, path %s: %s", versionsDumpEntry.getNodeId(), version.nodePath(),
+                    String.format( "Cannot load version with id %s, path %s: %s", versionsDumpEntry.nodeId(), version.nodePath(),
                                    e.getMessage() );
                 result.error( EntryLoadError.error( message ) );
                 LOG.error( message, e );

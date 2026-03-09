@@ -279,14 +279,14 @@ exports.getByPath_notFound = function () {
 
 exports.getByIdAndVersionId = function () {
     var result = content.get({
-        key: 'mycontentId',
+        key: 'mycontentid',
         versionId: 'versionId'
     });
 };
 
 exports.getByIdAndVersionId_notFound = function () {
     var result = content.get({
-        key: 'mycontentId',
+        key: 'mycontentid',
         versionId: 'versionId'
     });
 
@@ -295,6 +295,6 @@ exports.getByIdAndVersionId_notFound = function () {
 
 exports.getByIdInLayer = function () {
     return content.get({
-        key: 'mycontentId'
+        key: 'mycontentid'
     });
 };

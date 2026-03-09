@@ -23,7 +23,7 @@ public final class NodeCommitEntry
     {
         nodeCommitId = builder.nodeCommitId;
         message = builder.message == null ? "" : builder.message;
-        timestamp = Millis.fromOrElseNow( builder.timestamp );
+        timestamp = Millis.from( builder.timestamp );
         committer = builder.committer == null ? getCurrentUserKey() : builder.committer;
     }
 

@@ -407,7 +407,7 @@ class ImageHandlerTest
     }
 
     @Test
-    void cacheHeader()
+    void cacheHeader_always_private()
         throws Exception
     {
         mockCachableContent();
@@ -416,7 +416,7 @@ class ImageHandlerTest
 
         final WebResponse res = this.handler.handle( this.request );
 
-        assertEquals( "public, max-age=31536000, immutable", res.getHeaders().get( "Cache-Control" ) );
+        assertEquals( "private, max-age=31536000, immutable", res.getHeaders().get( "Cache-Control" ) );
     }
 
     @Test
@@ -430,19 +430,6 @@ class ImageHandlerTest
         this.request.setBranch( ContentConstants.BRANCH_DRAFT );
         final WebResponse resDraft = this.handler.handle( this.request );
         assertEquals( "private, max-age=31536000, immutable", resDraft.getHeaders().get( "Cache-Control" ) );
-    }
-
-    @Test
-    void cacheHeader_fingerprint_missmatch()
-        throws Exception
-    {
-        mockCachableContent();
-
-        this.request.setRawPath( "/_/image/123456:654321/scale-100-100/image-name.jpg.png" );
-
-        final WebResponse res = this.handler.handle( this.request );
-
-        assertThat( res.getHeaders() ).doesNotContainKey( "Cache-Control" );
     }
 
     @Test

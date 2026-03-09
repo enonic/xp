@@ -3,6 +3,7 @@ package com.enonic.xp.audit;
 import java.time.Instant;
 import java.util.Objects;
 
+import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.security.PrincipalKey;
 
@@ -28,7 +29,7 @@ public final class AuditLog
     {
         id = requireNonNull( builder.id, "id is required for AuditLog" );
         type = requireNonNull( builder.type, "type is required for AuditLog" );
-        time = requireNonNull( builder.time, "time is required for AuditLog" );
+        time = requireNonNull( Millis.from( builder.time ), "time is required for AuditLog" );
         source = requireNonNull( builder.source, "source is required for AuditLog" );
         user = requireNonNull( builder.user, "user is required for AuditLog" );
         objectUris = requireNonNull( builder.objectUris, "objectUris is required for AuditLog" );

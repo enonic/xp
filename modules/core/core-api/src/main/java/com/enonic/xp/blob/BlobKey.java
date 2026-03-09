@@ -1,11 +1,17 @@
 package com.enonic.xp.blob;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
 import java.util.HexFormat;
 import java.util.Objects;
 
 import com.google.common.hash.Hashing;
 import com.google.common.io.ByteSource;
+
+import com.enonic.xp.core.internal.security.MessageDigests;
 
 public final class BlobKey
 {
@@ -39,11 +45,29 @@ public final class BlobKey
         return new BlobKey( key );
     }
 
+    @Deprecated
     public static BlobKey from( final ByteSource in )
     {
         try
         {
             return from( HexFormat.of().formatHex( in.hash( Hashing.sha1() ).asBytes() ) );
+        }
+        catch ( final IOException e )
+        {
+            throw new BlobStoreException( "Failed to create blobKey", e );
+        }
+    }
+
+    public static BlobKey sha256( final ByteSource in )
+    {
+        try
+        {
+            final MessageDigest digest = MessageDigests.sha256();
+            try (InputStream is = in.openStream(); DigestInputStream dis = new DigestInputStream( is, digest ))
+            {
+                dis.transferTo( OutputStream.nullOutputStream() );
+            }
+            return from( "sha256:" + HexFormat.of().formatHex( digest.digest() ) );
         }
         catch ( final IOException e )
         {

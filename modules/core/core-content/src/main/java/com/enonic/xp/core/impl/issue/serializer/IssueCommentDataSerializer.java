@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.issue.serializer;
 
+import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.issue.CreateIssueCommentParams;
@@ -19,7 +20,7 @@ public class IssueCommentDataSerializer
         final PropertyTree propertyTree = new PropertyTree();
         final PropertySet commentAsData = propertyTree.getRoot();
 
-        commentAsData.ifNotNull().addInstant( CREATED_TIME, params.getCreated() );
+        commentAsData.ifNotNull().addInstant( CREATED_TIME, Millis.now() );
         commentAsData.ifNotNull().addString( CREATOR, params.getCreator().toString() );
         commentAsData.ifNotNull().addString( CREATOR_DISPLAY_NAME, params.getCreatorDisplayName() );
         commentAsData.ifNotNull().addString( TEXT, params.getText() );

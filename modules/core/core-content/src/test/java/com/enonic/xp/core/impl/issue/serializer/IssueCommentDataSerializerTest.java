@@ -22,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class IssueCommentDataSerializerTest
 {
-
     private IssueCommentDataSerializer serializer;
 
     private PrincipalKey creator;
@@ -45,7 +44,6 @@ class IssueCommentDataSerializerTest
             creator( creator ).
             creatorDisplayName( "Creator One" ).
             text( "Comment text..." ).
-            created( createdTime ).
             build();
 
         final PropertyTree data = serializer.toCreateNodeData( params );
@@ -54,7 +52,6 @@ class IssueCommentDataSerializerTest
         assertEquals( "Comment text...", data.getString( TEXT ) );
         assertEquals( "Creator One", data.getString( CREATOR_DISPLAY_NAME ) );
         assertEquals( creator.toString(), data.getString( CREATOR ) );
-        assertEquals( createdTime.truncatedTo( ChronoUnit.MILLIS ), data.getInstant( CREATED_TIME ) );
     }
 
     @Test

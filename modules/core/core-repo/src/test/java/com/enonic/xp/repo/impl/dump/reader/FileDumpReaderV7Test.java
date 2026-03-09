@@ -12,11 +12,11 @@ import com.enonic.xp.repository.RepositoryIds;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class FileDumpReaderTest
+class FileDumpReaderV7Test
     extends BaseDumpReaderTest
 {
 
-    private FileDumpReader fileDumpReader;
+    private FileDumpReaderV7 fileDumpReaderV7;
 
     @BeforeEach
     void setUp()
@@ -24,7 +24,7 @@ class FileDumpReaderTest
     {
         this.dumpFolder = Files.createDirectory( temporaryFolder.resolve( "myDump" ) );
         createMetaDataFile( dumpFolder );
-        this.fileDumpReader = FileDumpReader.create( null, temporaryFolder, "myDump" );
+        this.fileDumpReaderV7 = FileDumpReaderV7.create( null, temporaryFolder, "myDump" );
     }
 
     @Test
@@ -35,7 +35,7 @@ class FileDumpReaderTest
         createFolder( meta, "repo1" );
         createFolder( meta, "repo2" );
 
-        final RepositoryIds repositories = fileDumpReader.getRepositories();
+        final RepositoryIds repositories = fileDumpReaderV7.getRepositories();
         assertEquals( 2, repositories.getSize() );
     }
 
@@ -48,7 +48,7 @@ class FileDumpReaderTest
         createFolder( meta, "repo2" );
         createFile( meta, "fisk" );
 
-        final RepositoryIds repositories = fileDumpReader.getRepositories();
+        final RepositoryIds repositories = fileDumpReaderV7.getRepositories();
         assertEquals( 2, repositories.getSize() );
     }
 
@@ -61,7 +61,7 @@ class FileDumpReaderTest
         createFolder( repo1, "master" );
         createFolder( repo1, "draft" );
 
-        final Branches branches = fileDumpReader.getBranches( RepositoryId.from( "repo1" ) );
+        final Branches branches = fileDumpReaderV7.getBranches( RepositoryId.from( "repo1" ) );
         assertEquals( 2, branches.getSize() );
     }
 
@@ -75,7 +75,7 @@ class FileDumpReaderTest
         createFolder( repo1, "draft" );
         createFile( meta, "fisk" );
 
-        final Branches branches = fileDumpReader.getBranches( RepositoryId.from( "repo1" ) );
+        final Branches branches = fileDumpReaderV7.getBranches( RepositoryId.from( "repo1" ) );
         assertEquals( 2, branches.getSize() );
     }
 
@@ -94,7 +94,7 @@ class FileDumpReaderTest
 
         createFolder( repo1, "my-branch" );
 
-        final Branches branches = fileDumpReader.getBranches( RepositoryId.from( "repo1" ) );
+        final Branches branches = fileDumpReaderV7.getBranches( RepositoryId.from( "repo1" ) );
         assertEquals( 1, branches.getSize() );
     }
 

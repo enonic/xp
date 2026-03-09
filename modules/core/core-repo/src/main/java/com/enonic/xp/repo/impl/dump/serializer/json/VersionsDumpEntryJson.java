@@ -3,13 +3,14 @@ package com.enonic.xp.repo.impl.dump.serializer.json;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repo.impl.dump.model.VersionsDumpEntry;
 
+@JsonPropertyOrder(value = {"nodeId", "versions"})
 public class VersionsDumpEntryJson
 {
     @JsonProperty("nodeId")
@@ -37,16 +38,14 @@ public class VersionsDumpEntryJson
 
     public static VersionsDumpEntry fromJson( final VersionsDumpEntryJson json )
     {
-        return VersionsDumpEntry.create( NodeId.from( json.getNodeId() ) ).
-            versions( json.getVersions().stream().map( VersionDumpEntryJson::fromJson ).collect( Collectors.toSet() ) ).
-            build();
+        return new VersionsDumpEntry( NodeId.from( json.getNodeId() ),
+                                      json.getVersions().stream().map( VersionDumpEntryJson::fromJson ).toList() );
     }
 
     public static VersionsDumpEntryJson from( final VersionsDumpEntry entry )
     {
-        String nodeId = entry.getNodeId().toString();
-        List<VersionDumpEntryJson> versions =
-            entry.getVersions().stream().map( VersionDumpEntryJson::from ).collect( Collectors.toList() );
+        String nodeId = entry.nodeId().toString();
+        List<VersionDumpEntryJson> versions = entry.versions().stream().map( VersionDumpEntryJson::from ).toList();
         return new VersionsDumpEntryJson( nodeId, versions );
     }
 

@@ -179,7 +179,7 @@ class ApplicationServiceImplTest
         final ApplicationKey appKey = ApplicationKey.from( "app1" );
 
         final DeleteNodeResult result = DeleteNodeResult.create()
-            .add( new DeleteNodeResult.Result( NodeId.from( "nodeId" ), NodeVersionId.from( "nodeVersionId" ) ) )
+            .add( new DeleteNodeResult.Result( NodeId.from( "nodeid" ), NodeVersionId.from( "nodeversionid" ) ) )
             .build();
         when( nodeService.delete( argThat( argument -> new NodePath( "/app1" ).equals( argument.getNodePath() ) ) ) ).thenReturn( result );
 
@@ -192,7 +192,7 @@ class ApplicationServiceImplTest
         final ApplicationKey appKey = ApplicationKey.from( "app1" );
 
         final DeleteNodeResult result = DeleteNodeResult.create()
-            .add( new DeleteNodeResult.Result( NodeId.from( "nodeId" ), NodeVersionId.from( "nodeVersionId" ) ) )
+            .add( new DeleteNodeResult.Result( NodeId.from( "nodeid" ), NodeVersionId.from( "nodeversionid" ) ) )
             .build();
         when( nodeService.delete( argThat( argument -> new NodePath( "/app1" ).equals( argument.getNodePath() ) ) ) ).thenReturn( result );
 
@@ -363,7 +363,7 @@ class ApplicationServiceImplTest
     @Test
     void install_global()
     {
-        final Node node = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "my.bundle" ).build();
+        final Node node = Node.create().id( NodeId.from( "mynode" ) ).parentPath( NodePath.ROOT ).name( "my.bundle" ).build();
 
         final String bundleName = "my.bundle";
 
@@ -387,7 +387,7 @@ class ApplicationServiceImplTest
     @Test
     void install_global_invalid()
     {
-        final Node applicationNode = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "myNode" ).build();
+        final Node applicationNode = Node.create().id( NodeId.from( "mynode" ) ).parentPath( NodePath.ROOT ).name( "myNode" ).build();
 
         final String bundleName = "my.bundle";
 
@@ -404,7 +404,7 @@ class ApplicationServiceImplTest
     {
         when( appFilterService.accept( any( ApplicationKey.class ) ) ).thenReturn( false );
 
-        final Node applicationNode = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "myNode" ).build();
+        final Node applicationNode = Node.create().id( NodeId.from( "mynode" ) ).parentPath( NodePath.ROOT ).name( "myNode" ).build();
 
         final String bundleName = "my.bundle";
 
@@ -419,7 +419,7 @@ class ApplicationServiceImplTest
     @Test
     void install_local()
     {
-        final Node node = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "my.bundle" ).build();
+        final Node node = Node.create().id( NodeId.from( "mynode" ) ).parentPath( NodePath.ROOT ).name( "my.bundle" ).build();
 
         final String bundleName = "my.bundle";
 
@@ -441,7 +441,7 @@ class ApplicationServiceImplTest
     @Test
     void install_local_invalid()
     {
-        final Node applicationNode = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "my.bundle" ).build();
+        final Node applicationNode = Node.create().id( NodeId.from( "mynode" ) ).parentPath( NodePath.ROOT ).name( "my.bundle" ).build();
 
         final String bundleName = "my.bundle";
 
@@ -457,7 +457,7 @@ class ApplicationServiceImplTest
     void update_installed_application()
         throws Exception
     {
-        final Node node = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "my.bundle" ).build();
+        final Node node = Node.create().id( NodeId.from( "mynode" ) ).parentPath( NodePath.ROOT ).name( "my.bundle" ).build();
 
         final String bundleName = "my.bundle";
 
@@ -484,7 +484,7 @@ class ApplicationServiceImplTest
     void update_installed_local_application()
         throws Exception
     {
-        final Node node = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "my.bundle" ).build();
+        final Node node = Node.create().id( NodeId.from( "mynode" ) ).parentPath( NodePath.ROOT ).name( "my.bundle" ).build();
 
         final String bundleName = "my.bundle";
 
@@ -521,13 +521,13 @@ class ApplicationServiceImplTest
         when( appFilterService.accept( applicationKey2 ) ).thenReturn( false );
 
         final Node node1 = Node.create()
-            .id( NodeId.from( "myNodeId1" ) )
+            .id( NodeId.from( "mynodeid1" ) )
             .name( bundleName1 )
             .parentPath( ApplicationRepoServiceImpl.APPLICATION_PATH )
             .build();
 
         final Node node2 = Node.create()
-            .id( NodeId.from( "myNodeId2" ) )
+            .id( NodeId.from( "mynodeid2" ) )
             .name( bundleName2 )
             .parentPath( ApplicationRepoServiceImpl.APPLICATION_PATH )
             .build();
@@ -566,7 +566,7 @@ class ApplicationServiceImplTest
     @Test
     void uninstall_local_application()
     {
-        final Node applicationNode = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "myNode" ).build();
+        final Node applicationNode = Node.create().id( NodeId.from( "mynode" ) ).parentPath( NodePath.ROOT ).name( "myNode" ).build();
 
         final String bundleName = "my.bundle";
 
@@ -589,7 +589,7 @@ class ApplicationServiceImplTest
     void install_local_overriding_global()
         throws Exception
     {
-        final Node node = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "myNode" ).build();
+        final Node node = Node.create().id( NodeId.from( "mynode" ) ).parentPath( NodePath.ROOT ).name( "myNode" ).build();
 
         final String bundleName = "my.bundle";
 
@@ -623,7 +623,7 @@ class ApplicationServiceImplTest
         PropertyTree data = new PropertyTree();
         data.setBoolean( ApplicationPropertyNames.STARTED, true );
 
-        final Node node = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "myNode" ).data( data ).build();
+        final Node node = Node.create().id( NodeId.from( "mynode" ) ).parentPath( NodePath.ROOT ).name( "myNode" ).data( data ).build();
 
         final String bundleName = "my.bundle";
 
@@ -662,7 +662,7 @@ class ApplicationServiceImplTest
     @Test
     void install_global_when_local_installed()
     {
-        final Node node = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "myNode" ).build();
+        final Node node = Node.create().id( NodeId.from( "mynode" ) ).parentPath( NodePath.ROOT ).name( "myNode" ).build();
 
         final String bundleName = "my.bundle";
 

@@ -75,7 +75,7 @@ class NodeStorageServiceImplTest
     void testGetNode()
     {
         final NodeVersion nodeVersion = NodeVersion.create()
-            .nodeId( NodeId.from( "nodeId1" ) )
+            .nodeId( NodeId.from( "nodeid1" ) )
             .nodeVersionKey( versionKey )
             .binaryBlobKeys( BlobKeys.empty() )
             .nodeVersionId( nodeVersionId )
@@ -84,7 +84,7 @@ class NodeStorageServiceImplTest
             .build();
 
         final NodeStoreVersion nodeStoreVersion = NodeStoreVersion.create()
-            .id( NodeId.from( "nodeId1" ) )
+            .id( NodeId.from( "nodeid1" ) )
             .permissions( AccessControlList.create()
                               .add( AccessControlEntry.create().principal( RoleKeys.EVERYONE ).allow( Permission.READ ).build() )
                               .build() )
@@ -120,7 +120,7 @@ class NodeStorageServiceImplTest
     {
         when( versionService.getVersion( any( NodeVersionId.class ), any( InternalContext.class ) ) ).thenReturn(
             NodeVersion.create()
-                .nodeId( NodeId.from( "nodeId1" ) )
+                .nodeId( NodeId.from( "nodeid1" ) )
                 .nodeVersionKey( versionKey )
                 .binaryBlobKeys( BlobKeys.empty() )
                 .nodeVersionId( nodeVersionId )

@@ -21,7 +21,7 @@ import com.enonic.xp.repo.impl.dump.FilePaths;
 import com.enonic.xp.repo.impl.dump.PathRef;
 import com.enonic.xp.repo.impl.dump.blobstore.ZipDumpBlobStore;
 
-public class ZipDumpWriter
+public class ZipDumpWriterV7
     extends AbstractDumpWriter
 {
     private static final String ZIP_FILE_EXTENSION = ".zip";
@@ -31,15 +31,15 @@ public class ZipDumpWriter
 
     private final ZipDumpBlobStore store;
 
-    private ZipDumpWriter( final FilePaths filePaths, final ZipArchiveOutputStream zipArchiveOutputStream,
-                           final ZipDumpBlobStore store )
+    private ZipDumpWriterV7( final FilePaths filePaths, final ZipArchiveOutputStream zipArchiveOutputStream,
+                             final ZipDumpBlobStore store )
     {
         super( filePaths, store::add );
         this.zipArchiveOutputStream = zipArchiveOutputStream;
         this.store = store;
     }
 
-    public static ZipDumpWriter create( final Path basePath, final String dumpName, final BlobStore sourceBlobStore )
+    public static ZipDumpWriterV7 create( final Path basePath, final String dumpName, final BlobStore sourceBlobStore )
     {
         Preconditions.checkArgument( FileNames.isSafeFileName( dumpName ) );
         try
@@ -49,8 +49,8 @@ public class ZipDumpWriter
                                       StandardOpenOption.WRITE, StandardOpenOption.READ, StandardOpenOption.TRUNCATE_EXISTING ) );
 
             final PathRef basePathInZip = PathRef.of( dumpName );
-            return new ZipDumpWriter( new DefaultFilePaths( basePathInZip ), zipArchiveOutputStream,
-                                      new ZipDumpBlobStore( basePathInZip, sourceBlobStore, zipArchiveOutputStream ) );
+            return new ZipDumpWriterV7( new DefaultFilePaths( basePathInZip ), zipArchiveOutputStream,
+                                        new ZipDumpBlobStore( basePathInZip, sourceBlobStore, zipArchiveOutputStream ) );
         }
         catch ( IOException e )
         {

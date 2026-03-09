@@ -25,7 +25,7 @@ class SortNodeHandlerTest
         runScript( "/lib/xp/examples/node/sort.js" );
         Mockito.verify( nodeService ).sort( argumentCaptor.capture() );
 
-        assertEquals( "nodeId", argumentCaptor.getValue().getNodeId().toString() );
+        assertEquals( "nodeid", argumentCaptor.getValue().getNodeId().toString() );
         assertEquals( "field DESC", argumentCaptor.getValue().getChildOrder().toString() );
     }
 }

@@ -2,15 +2,20 @@ package com.enonic.xp.repo.impl.dump.model;
 
 import java.time.Instant;
 
+import com.enonic.xp.core.internal.Millis;
+import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionKey;
-import com.enonic.xp.node.Attributes;
 
 public record VersionMeta(NodeVersionId version, NodeVersionKey nodeVersionKey, NodePath nodePath, Instant timestamp,
                           NodeCommitId nodeCommitId, Attributes attributes)
 {
+    public VersionMeta
+    {
+        timestamp = Millis.from( timestamp );
+    }
 
     public static Builder create()
     {

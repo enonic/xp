@@ -62,26 +62,21 @@ public class BaseNodeHandlerTest
         someData.setString( "likes", "plywood" );
         someData.setLong( "numberOfUselessGadgets", 123L );
 
-        final PatternIndexConfigDocument indexConfig = PatternIndexConfigDocument.create().
-            defaultConfig( IndexConfig.MINIMAL ).
-            add( "displayName", IndexConfig.FULLTEXT ).
-            build();
+        final PatternIndexConfigDocument indexConfig =
+            PatternIndexConfigDocument.create().defaultConfig( IndexConfig.MINIMAL ).add( "displayName", IndexConfig.FULLTEXT ).build();
 
-        return Node.create().
-            id( NodeId.from( "nodeId" ) ).
-            parentPath( parentPath ).
-            name( name ).
-            data( data ).
-            indexConfigDocument( indexConfig ).
-            permissions( AccessControlList.create().
-                add( AccessControlEntry.create().
-                    principal( PrincipalKey.ofRole( "admin" ) ).
-                    allowAll().
-                    build() ).
-                build() ).
-            nodeVersionId( NodeVersionId.from( "versionKey" ) ).
-            timestamp( Instant.parse( "2010-10-10T10:10:10.10Z" ) ).
-            build();
+        return Node.create()
+            .id( NodeId.from( "nodeid" ) )
+            .parentPath( parentPath )
+            .name( name )
+            .data( data )
+            .indexConfigDocument( indexConfig )
+            .permissions( AccessControlList.create()
+                              .add( AccessControlEntry.create().principal( PrincipalKey.ofRole( "admin" ) ).allowAll().build() )
+                              .build() )
+            .nodeVersionId( NodeVersionId.from( "versionkey" ) )
+            .timestamp( Instant.parse( "2010-10-10T10:10:10.10Z" ) )
+            .build();
     }
 
     @SuppressWarnings("unused")

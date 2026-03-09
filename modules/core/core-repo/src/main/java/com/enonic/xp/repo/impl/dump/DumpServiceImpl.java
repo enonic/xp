@@ -26,7 +26,6 @@ import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.dump.DumpService;
 import com.enonic.xp.dump.DumpUpgradeResult;
-import com.enonic.xp.dump.DumpUpgradeStepResult;
 import com.enonic.xp.dump.RepoDumpResult;
 import com.enonic.xp.dump.SystemDumpParams;
 import com.enonic.xp.dump.SystemDumpResult;
@@ -46,20 +45,10 @@ import com.enonic.xp.repo.impl.SecurityHelper;
 import com.enonic.xp.repo.impl.config.RepoConfigurationDynamic;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.repo.impl.dump.reader.DumpReader;
-import com.enonic.xp.repo.impl.dump.reader.FileDumpReader;
-import com.enonic.xp.repo.impl.dump.reader.ZipDumpReader;
-import com.enonic.xp.repo.impl.dump.upgrade.DumpUpgrader;
-import com.enonic.xp.repo.impl.dump.upgrade.IndexConfigUpgrader;
-import com.enonic.xp.repo.impl.dump.upgrade.MissingModelVersionDumpUpgrader;
-import com.enonic.xp.repo.impl.dump.upgrade.RepositoryIdDumpUpgrader;
-import com.enonic.xp.repo.impl.dump.upgrade.VersionIdDumpUpgrader;
-import com.enonic.xp.repo.impl.dump.upgrade.commit.CommitDumpUpgrader;
-import com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageDumpUpgrader;
-import com.enonic.xp.repo.impl.dump.upgrade.htmlarea.HtmlAreaDumpUpgrader;
-import com.enonic.xp.repo.impl.dump.upgrade.indexaccesssegments.IndexAccessSegmentsDumpUpgrader;
+import com.enonic.xp.repo.impl.dump.reader.ZipDumpReaderV8;
+import com.enonic.xp.repo.impl.dump.upgrade.DumpUpgraderImpl;
 import com.enonic.xp.repo.impl.dump.writer.DumpWriter;
-import com.enonic.xp.repo.impl.dump.writer.FileDumpWriter;
-import com.enonic.xp.repo.impl.dump.writer.ZipDumpWriter;
+import com.enonic.xp.repo.impl.dump.writer.ZipDumpWriterV8;
 import com.enonic.xp.repo.impl.repository.CreateRepositoryIndexParams;
 import com.enonic.xp.repo.impl.repository.NodeRepositoryService;
 import com.enonic.xp.repo.impl.repository.RepositoryEntry;
@@ -135,79 +124,7 @@ public class DumpServiceImpl
 
         final Path basePath = ensureBasePath();
 
-        return doUpgrade( basePath, params );
-    }
-
-    private DumpUpgradeResult doUpgrade( final Path basePath, final SystemDumpUpgradeParams params )
-    {
-        final DumpUpgradeResult.Builder result = DumpUpgradeResult.create();
-
-        final String dumpName = params.getDumpName();
-        Version modelVersion = Objects.requireNonNullElse( getDumpMeta( basePath, dumpName ).getModelVersion(), Version.emptyVersion );
-        result.initialVersion( modelVersion );
-        if ( modelVersion.lessThan( DumpConstants.MODEL_VERSION ) )
-        {
-            final List<DumpUpgrader> dumpUpgraders = createDumpUpgraders( basePath );
-
-            if ( params.getUpgradeListener() != null )
-            {
-                final long total = dumpUpgraders.stream().map( DumpUpgrader::getModelVersion ).filter( modelVersion::lessThan ).count();
-
-                params.getUpgradeListener().total( total );
-            }
-
-            for ( DumpUpgrader dumpUpgrader : dumpUpgraders )
-            {
-                final Version targetModelVersion = dumpUpgrader.getModelVersion();
-                if ( modelVersion.lessThan( targetModelVersion ) )
-                {
-                    LOG.info( "Running upgrade step [{}]...", dumpUpgrader.getName() );
-                    final DumpUpgradeStepResult stepResult = dumpUpgrader.upgrade( dumpName );
-                    modelVersion = targetModelVersion;
-                    updateDumpModelVersion( basePath, dumpName, modelVersion );
-                    LOG.info( "Finished upgrade step [{}]: processed: {}, errors: {}, warnings: {}", dumpUpgrader.getName(),
-                              stepResult.getProcessed(), stepResult.getErrors(), stepResult.getWarnings() );
-                    result.stepResult( stepResult );
-
-                    if ( params.getUpgradeListener() != null )
-                    {
-                        params.getUpgradeListener().upgraded();
-                    }
-                }
-            }
-        }
-        result.upgradedVersion( modelVersion );
-        return result.build();
-    }
-
-    private List<DumpUpgrader> createDumpUpgraders( final Path basePath )
-    {
-        return List.of( new MissingModelVersionDumpUpgrader(), new VersionIdDumpUpgrader( basePath ),
-                        new FlattenedPageDumpUpgrader( basePath ), new IndexAccessSegmentsDumpUpgrader( basePath ),
-                        new RepositoryIdDumpUpgrader( basePath ), new CommitDumpUpgrader( basePath ), new IndexConfigUpgrader( basePath ),
-                        new HtmlAreaDumpUpgrader( basePath ) );
-    }
-
-    private void updateDumpModelVersion( final Path basePath, final String dumpName, final Version modelVersion )
-    {
-        final DumpMeta dumpMeta = getDumpMeta( basePath, dumpName );
-        final DumpMeta updatedDumpMeta = DumpMeta.create( dumpMeta ).modelVersion( modelVersion ).build();
-
-        final FileDumpWriter fileDumpWriter = FileDumpWriter.create( ensureBasePath(), dumpName, blobStore );
-        try (fileDumpWriter)
-        {
-            fileDumpWriter.writeDumpMetaData( updatedDumpMeta );
-        }
-        catch ( IOException e )
-        {
-            throw new UncheckedIOException( e );
-        }
-    }
-
-    private DumpMeta getDumpMeta( final Path basePath, final String dumpName )
-    {
-        final DumpReader dumpReader = FileDumpReader.create( null, basePath, dumpName );
-        return dumpReader.getDumpMeta();
+        return new DumpUpgraderImpl().upgrade( basePath, dumpName, params.getUpgradeListener() );
     }
 
     @Override
@@ -220,7 +137,7 @@ public class DumpServiceImpl
 
         final Path basePath = ensureBasePath();
 
-        final DumpWriter writer = ZipDumpWriter.create( basePath, params.getDumpName(), blobStore );
+        final DumpWriter writer = ZipDumpWriterV8.create( basePath, params.getDumpName(), blobStore );
         try (writer)
         {
             final SystemDumpResult systemDumpResult =
@@ -371,14 +288,10 @@ public class DumpServiceImpl
 
         final SystemLoadResult.Builder results = SystemLoadResult.create();
 
-        final DumpReader dumpReader = !params.isUpgrade()
-            ? ZipDumpReader.create( params.getListener(), basePath, params.getDumpName() )
-            : FileDumpReader.create( params.getListener(), basePath, params.getDumpName() );
+        final String dumpName = params.isUpgrade() ? verifyOrUpgradeDump( basePath, params ) : params.getDumpName();
 
-        try (dumpReader)
+        try (DumpReader dumpReader = ZipDumpReaderV8.create( params.getListener(), basePath, dumpName ))
         {
-            verifyOrUpdateDumpVersion( basePath, params, dumpReader );
-
             final RepositoryIds dumpRepositories = dumpReader.getRepositories();
 
             if ( !dumpRepositories.contains( SystemConstants.SYSTEM_REPO_ID ) )
@@ -538,23 +451,9 @@ public class DumpServiceImpl
         LOG.info( "Partial Dump Load completed" );
     }
 
-    void verifyOrUpdateDumpVersion( final Path basePath, final SystemLoadParams params, final DumpReader dumpReader )
+    String verifyOrUpgradeDump( final Path basePath, final SystemLoadParams params )
     {
-        final Version modelVersion = Objects.requireNonNullElse( dumpReader.getDumpMeta().getModelVersion(), Version.emptyVersion );
-
-        if ( modelVersion.getMajor() < DumpConstants.MODEL_VERSION.getMajor() )
-        {
-            if ( params.isUpgrade() )
-            {
-                final SystemDumpUpgradeParams dumpUpgradeParams = SystemDumpUpgradeParams.create().dumpName( params.getDumpName() ).build();
-                doUpgrade( basePath, dumpUpgradeParams );
-            }
-            else
-            {
-                throw new RepoLoadException(
-                    "Cannot load system-dump; major model version previous to the current version; upgrade the system-dump" );
-            }
-        }
+        return new DumpUpgraderImpl().upgrade( basePath, params.getDumpName(), null ).getDumpName();
     }
 
     private void initAndLoad( final boolean includeVersions, final SystemLoadResult.Builder results, final DumpReader dumpReader,

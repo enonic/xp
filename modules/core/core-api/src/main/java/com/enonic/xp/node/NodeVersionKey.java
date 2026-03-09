@@ -56,6 +56,13 @@ public final class NodeVersionKey
         return Objects.hash( nodeBlobKey, indexConfigBlobKey, accessControlBlobKey );
     }
 
+    @Override
+    public String toString()
+    {
+        return "NodeVersionKey[nodeBlobKey=" + nodeBlobKey + ", indexConfigBlobKey=" + indexConfigBlobKey + ", accessControlBlobKey=" +
+            accessControlBlobKey + "]";
+    }
+
     public static Builder create()
     {
         return new Builder();

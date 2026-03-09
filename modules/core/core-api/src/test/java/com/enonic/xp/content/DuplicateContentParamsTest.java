@@ -11,14 +11,14 @@ class DuplicateContentParamsTest
     void testValidateDuplicateContentParams()
     {
         DuplicateContentParams.create()
-            .contentId( ContentId.from( "contentId" ) )
+            .contentId( ContentId.from( "contentid" ) )
             .includeChildren( true )
             .variant( false )
             .name( "name" )
             .parent( ContentPath.ROOT )
             .build();
         DuplicateContentParams.create()
-            .contentId( ContentId.from( "contentId" ) )
+            .contentId( ContentId.from( "contentid" ) )
             .includeChildren( false )
             .variant( true )
             .name( "name" )

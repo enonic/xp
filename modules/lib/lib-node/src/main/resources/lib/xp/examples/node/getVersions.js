@@ -9,7 +9,7 @@ const repo = nodeLib.connect({
 // BEGIN
 // Fetch first page
 let result = repo.getVersions({
-    key: 'nodeId',
+    key: 'nodeid',
     count: 2
 });
 
@@ -18,7 +18,7 @@ log.info('Total versions: %s', result.total);
 // Fetch next page using cursor
 if (result.cursor) {
     let nextPage = repo.getVersions({
-        key: 'nodeId',
+        key: 'nodeid',
         count: 2,
         cursor: result.cursor
     });
@@ -31,14 +31,14 @@ let expected = {
     'cursor': 'eyJ0cyI6MTAwMDAwMCwiaWQiOiJub2RlVmVyc2lvbk9sZCJ9',
     'hits': [
         {
-            'versionId': 'nodeVersionNew',
-            'nodeId': 'nodeId1',
+            'versionId': 'nodeversionnew',
+            'nodeId': 'nodeid1',
             'nodePath': '/',
             'timestamp': '1970-01-01T00:16:40Z'
         },
         {
-            'versionId': 'nodeVersionOld',
-            'nodeId': 'nodeId1',
+            'versionId': 'nodeversionold',
+            'nodeId': 'nodeid1',
             'nodePath': '/',
             'timestamp': '1970-01-01T00:08:20Z'
         }

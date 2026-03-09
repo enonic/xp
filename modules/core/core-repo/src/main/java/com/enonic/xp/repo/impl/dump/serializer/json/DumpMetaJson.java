@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import com.enonic.xp.dump.SystemDumpResult;
 import com.enonic.xp.repo.impl.dump.DumpConstants;
@@ -13,6 +14,7 @@ import com.enonic.xp.util.Version;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
+@JsonPropertyOrder(value = {"modelVersion", "xpVersion", "timestamp", "result"})
 public class DumpMetaJson
 {
     @JsonProperty("xpVersion")
@@ -49,25 +51,23 @@ public class DumpMetaJson
             result.put( repoDumpResult.getRepositoryId().toString(), repoDumpResultJson );
         } );
 
-        return DumpMetaJson.create().
-            xpVersion( dumpMeta.getXpVersion() ).
-            modelVersion(dumpMeta.getModelVersion()).
-            timestamp( dumpMeta.getTimestamp().toString() ).
-            result(result ).
-            build();
+        return DumpMetaJson.create()
+            .xpVersion( dumpMeta.getXpVersion() )
+            .modelVersion( dumpMeta.getModelVersion() )
+            .timestamp( dumpMeta.getTimestamp().toString() )
+            .result( result )
+            .build();
     }
 
     public static DumpMeta fromJson( final DumpMetaJson dumpMetaJson )
     {
-        final DumpMeta.Builder dumpMeta = DumpMeta.create().
-            xpVersion( dumpMetaJson.getXpVersion() ).
-            timestamp( Instant.parse( dumpMetaJson.getTimestamp() ) );
+        final DumpMeta.Builder dumpMeta =
+            DumpMeta.create().xpVersion( dumpMetaJson.getXpVersion() ).timestamp( Instant.parse( dumpMetaJson.getTimestamp() ) );
 
         if ( dumpMetaJson.getResult() != null )
         {
             SystemDumpResult.Builder systemDumpResult = SystemDumpResult.create();
-            dumpMetaJson.getResult().
-                forEach( ( key, value ) -> systemDumpResult.add( RepoDumpResultJson.fromJson( key, value ) ) );
+            dumpMetaJson.getResult().forEach( ( key, value ) -> systemDumpResult.add( RepoDumpResultJson.fromJson( key, value ) ) );
             dumpMeta.systemDumpResult( systemDumpResult.build() );
         }
         if ( !isNullOrEmpty( dumpMetaJson.getModelVersion() ) )

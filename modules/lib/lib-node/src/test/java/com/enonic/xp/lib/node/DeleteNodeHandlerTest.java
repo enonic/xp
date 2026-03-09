@@ -24,11 +24,11 @@ class DeleteNodeHandlerTest
         when( this.nodeService.delete( any() ) ).thenReturn( DeleteNodeResult.create().build() );
 
         final DeleteNodeResult result = DeleteNodeResult.create()
-            .add( new DeleteNodeResult.Result( NodeId.from( "nodeId" ), NodeVersionId.from( "nodeVersionId" )  ) )
-            .add( new DeleteNodeResult.Result( NodeId.from( "aSubNodeId" ), NodeVersionId.from( "aSubNodeVersionId" )  ) )
+            .add( new DeleteNodeResult.Result( NodeId.from( "nodeid" ), NodeVersionId.from( "nodeversionid" ) ) )
+            .add( new DeleteNodeResult.Result( NodeId.from( "asubnodeid" ), NodeVersionId.from( "asubnodeversionid" ) ) )
             .build();
         doReturn( result ).when( this.nodeService )
-            .delete( ArgumentMatchers.argThat( argument -> NodeId.from( "nodeId" ).equals( argument.getNodeId() ) ) );
+            .delete( ArgumentMatchers.argThat( argument -> NodeId.from( "nodeid" ).equals( argument.getNodeId() ) ) );
         doReturn( result ).when( this.nodeService )
             .delete( ArgumentMatchers.argThat( argument -> new NodePath( "/node2-path" ).equals( argument.getNodePath() ) ) );
     }
@@ -38,11 +38,13 @@ class DeleteNodeHandlerTest
     {
         mockGetNode();
 
-        when( this.repositoryService.get( RepositoryId.from( "com.enonic.cms.default" ) ) ).
-            thenReturn( Repository.create().
-                id( RepositoryId.from( "com.enonic.cms.default" ) ).
-                branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
-                build() );
+        when( this.repositoryService.get( RepositoryId.from( "com.enonic.cms.default" ) ) ).thenReturn( Repository.create()
+                                                                                                            .id( RepositoryId.from(
+                                                                                                                "com.enonic.cms.default" ) )
+                                                                                                            .branches( Branches.from(
+                                                                                                                ContentConstants.BRANCH_DRAFT,
+                                                                                                                ContentConstants.BRANCH_MASTER ) )
+                                                                                                            .build() );
 
         runScript( "/lib/xp/examples/node/delete.js" );
     }

@@ -31,13 +31,13 @@ class PageTemplatesTest
     void getTemplate()
     {
         final PageTemplates pageTemplates = PageTemplates.from( PageTemplate.newPageTemplate().
-            key( PageTemplateKey.from( "testKey" ) ).
+            key( PageTemplateKey.from( "testkey" ) ).
             name( "testContentName" ).
             parentPath( ContentPath.from( "path" ) ).
             build() );
 
-        assertNotNull( pageTemplates.getTemplate( PageTemplateKey.from( ContentId.from( "testKey" ) ) ) );
-        assertNull( pageTemplates.getTemplate( PageTemplateKey.from( ContentId.from( "nonExistingKey" ) ) ) );
+        assertNotNull( pageTemplates.getTemplate( PageTemplateKey.from( ContentId.from( "testkey" ) ) ) );
+        assertNull( pageTemplates.getTemplate( PageTemplateKey.from( ContentId.from( "nonexistingkey" ) ) ) );
         assertNotNull( pageTemplates.getTemplate( ContentName.from( "testContentName" ) ) );
         assertNull( pageTemplates.getTemplate( ContentName.from( "nonExistingContentName" ) ) );
     }
@@ -60,7 +60,7 @@ class PageTemplatesTest
     private PageTemplate generatePageTemplate1()
     {
         return PageTemplate.newPageTemplate().
-            key( PageTemplateKey.from( "testKey" ) ).
+            key( PageTemplateKey.from( "testkey" ) ).
             canRender( ContentTypeNames.from( ContentTypeName.archiveMedia(), ContentTypeName.imageMedia() ) ).regions(
             Regions.create().build() ).
             name( "testContentName" ).
@@ -75,7 +75,7 @@ class PageTemplatesTest
     private PageTemplate generatePageTemplate2()
     {
         return PageTemplate.newPageTemplate().
-            key( PageTemplateKey.from( "testKey2" ) ).
+            key( PageTemplateKey.from( "testkey2" ) ).
             canRender( ContentTypeNames.from( ContentTypeName.dataMedia() ) ).
             controller( DescriptorKey.from( "app:descriptor" ) ).
             name( "testContentName2" ).
@@ -89,7 +89,7 @@ class PageTemplatesTest
     private PageTemplate generatePageTemplate3()
     {
         return PageTemplate.newPageTemplate().
-            key( PageTemplateKey.from( "testKey3" ) ).
+            key( PageTemplateKey.from( "testkey3" ) ).
             canRender( ContentTypeNames.from( ContentTypeName.audioMedia(), ContentTypeName.imageMedia() ) ).
             config( new PropertyTree() ).
             name( "testContentName3" ).

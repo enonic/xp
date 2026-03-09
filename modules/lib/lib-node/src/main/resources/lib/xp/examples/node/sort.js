@@ -9,7 +9,7 @@ var repo = nodeLib.connect({
 // BEGIN
 // Sort node
 var result = repo.sort({
-    key: 'nodeId',
+    key: 'nodeid',
     childOrder: 'field DESC'
 });
 // END
@@ -17,8 +17,8 @@ var result = repo.sort({
 // BEGIN
 // Node sorted
 var expected = {
-    node : {
-        '_id': 'nodeId',
+    node: {
+        '_id': 'nodeid',
         '_name': 'my-name',
         '_path': '/my-name',
         '_childOrder': 'field DESC',

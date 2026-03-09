@@ -138,7 +138,7 @@ class RenameContentCommandTest
     private Content createContent( final boolean valid )
     {
         return Content.create()
-            .id( ContentId.from( "testId" ) )
+            .id( ContentId.from( "testid" ) )
             .path( "/mycontent" )
             .creator( PrincipalKey.from( "user:system:anonymous" ) )
             .modifier( PrincipalKey.from( "user:system:anonymous" ) )

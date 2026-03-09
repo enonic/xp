@@ -46,12 +46,12 @@ class QueryContentHandlerTest
     void testExecute()
     {
         FindContentIdsByQueryResult queryResult = FindContentIdsByQueryResult.create()
-            .contents( ContentIds.from( "contentId" ) )
-            .sort( Collections.singletonMap( ContentId.from( "contentId" ), SortValuesProperty.create().values( 10 ).build() ) )
+            .contents( ContentIds.from( "contentid" ) )
+            .sort( Collections.singletonMap( ContentId.from( "contentid" ), SortValuesProperty.create().values( 10 ).build() ) )
             .build();
 
         Contents contents = Contents.create()
-            .add( Content.create().id( ContentId.from( "contentId" ) ).name( "name" ).parentPath( ContentPath.ROOT ).build() )
+            .add( Content.create().id( ContentId.from( "contentid" ) ).name( "name" ).parentPath( ContentPath.ROOT ).build() )
             .build();
 
         Mockito.when( contentService.find( Mockito.any( ContentQuery.class ) ) ).thenReturn( queryResult );

@@ -2,6 +2,7 @@ package com.enonic.xp.audit;
 
 import java.time.Instant;
 
+import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.security.PrincipalKey;
 
@@ -11,7 +12,7 @@ public class AuditLogTestBuilder
 
     static String type = "testType";
 
-    static Instant time = Instant.now();
+    static Instant time = Millis.now();
 
     static String source = "testSource";
 

@@ -6,9 +6,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.node.NodeCommitId;
@@ -17,6 +20,7 @@ import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repo.impl.dump.model.VersionMeta;
 import com.enonic.xp.util.GenericValue;
 
+@JsonPropertyOrder(value = {"version", "timestamp", "nodePath", "nodeBlobKey", "indexConfigBlobKey", "accessControlBlobKey", "commitId", "attributes"})
 public class VersionDumpEntryJson
 {
     @JsonProperty("nodePath")
@@ -37,13 +41,15 @@ public class VersionDumpEntryJson
     @JsonProperty("accessControlBlobKey")
     private String accessControlBlobKey;
 
-    @JsonProperty("nodeState")
+    @JsonProperty(value = "nodeState", access = JsonProperty.Access.WRITE_ONLY)
     private String nodeState;
 
     @JsonProperty("commitId")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String commitId;
 
     @JsonProperty("attributes")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Map<String, Object> attributes;
 
     @SuppressWarnings("unused")
@@ -80,7 +86,7 @@ public class VersionDumpEntryJson
 
         return VersionMeta.create()
             .nodePath( new NodePath( json.nodePath ) )
-            .timestamp( json.getTimestamp() != null ? Instant.parse( json.getTimestamp() ) : null )
+            .timestamp( Millis.from( json.getTimestamp() != null ? Instant.parse( json.getTimestamp() ) : null ) )
             .version( json.getVersion() != null ? NodeVersionId.from( json.getVersion() ) : null )
             .nodeVersionKey( NodeVersionKey.create()
                                  .nodeBlobKey( BlobKey.from( json.getNodeBlobKey() ) )

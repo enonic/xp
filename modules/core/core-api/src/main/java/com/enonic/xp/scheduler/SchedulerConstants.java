@@ -17,7 +17,7 @@ public final class SchedulerConstants
     public static final AccessControlList SCHEDULER_REPO_DEFAULT_ACL =
         AccessControlList.create().add( AccessControlEntry.create().allowAll().principal( RoleKeys.ADMIN ).build() ).build();
 
-    public static final NodeType NODE_TYPE = NodeType.from( "scheduler" );
+    public static final NodeType NODE_TYPE = NodeType.from( "job" );
 
     private SchedulerConstants()
     {

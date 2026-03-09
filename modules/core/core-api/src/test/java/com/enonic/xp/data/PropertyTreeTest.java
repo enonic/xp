@@ -541,22 +541,22 @@ class PropertyTreeTest
     {
         PropertyTree tree = new PropertyTree();
 
-        Reference reference1 = Reference.from( "myRef1" );
+        Reference reference1 = Reference.from( "myref1" );
         tree.setReference( "ref1", reference1 );
         assertEquals( 1, tree.getTotalSize() );
         assertEquals( reference1, tree.getReference( "ref1" ) );
 
-        Reference reference2 = Reference.from( "myRef2" );
+        Reference reference2 = Reference.from( "myfef2" );
         tree.setReference( PropertyPath.from( "ref2" ), reference2 );
         assertEquals( 2, tree.getTotalSize() );
         assertEquals( reference2, tree.getReference( PropertyPath.from( "ref2" ) ) );
 
-        Reference reference3 = Reference.from( "myRef3" );
+        Reference reference3 = Reference.from( "myref3" );
         tree.setReference( "ref3", 0, reference3 );
         assertEquals( 3, tree.getTotalSize() );
         assertEquals( reference3, tree.getReference( "ref3", 0 ) );
 
-        assertEquals( "myRef3", tree.getReferences( "ref3" ).iterator().next().toString() );
+        assertEquals( "myref3", tree.getReferences( "ref3" ).iterator().next().toString() );
     }
 
     @Test
@@ -842,10 +842,10 @@ class PropertyTreeTest
         map.put( "myLocalDate", LocalDate.parse( "2018-01-01" ) );
         map.put( "myLocalDateTime", LocalDate.parse( "2018-01-01" ).atStartOfDay() );
         map.put( "myLocalTime", LocalDate.parse( "2018-01-01" ).atStartOfDay().toLocalTime() );
-        map.put( "myReference", Reference.from( "nodeId" ) );
+        map.put( "myReference", Reference.from( "nodeid" ) );
         map.put( "myBinaryReference", BinaryReference.from( "binaryReference" ) );
         map.put( "myLink", Link.from( "/link" ) );
-        map.put( "myObject", NodeId.from( "becomeString") );
+        map.put( "myObject", NodeId.from( "becomestring") );
 
         final PropertyTree result = PropertyTree.fromMap( map );
 
@@ -871,10 +871,10 @@ class PropertyTreeTest
         assertEquals( LocalDate.parse( "2018-01-01" ), result.getLocalDate( "myLocalDate" ) );
         assertEquals( LocalDate.parse( "2018-01-01" ).atStartOfDay(), result.getLocalDateTime( "myLocalDateTime" ) );
         assertEquals( LocalDate.parse( "2018-01-01" ).atStartOfDay().toLocalTime(), result.getLocalTime( "myLocalTime" ) );
-        assertEquals( Reference.from( "nodeId" ), result.getReference( "myReference" ) );
+        assertEquals( Reference.from( "nodeid" ), result.getReference( "myReference" ) );
         assertEquals( BinaryReference.from( "binaryReference" ), result.getBinaryReference( "myBinaryReference" ) );
         assertEquals( Link.from( "/link" ), result.getLink( "myLink" ) );
-        assertEquals( "becomeString", result.getString( "myObject" ) );
+        assertEquals( "becomestring", result.getString( "myObject" ) );
     }
 
 }

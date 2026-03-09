@@ -10,10 +10,12 @@ import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.io.ByteSource;
+
 import com.enonic.xp.blob.BlobKey;
-import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.repo.impl.dump.FilePaths;
 import com.enonic.xp.repo.impl.dump.PathRef;
 import com.enonic.xp.repo.impl.dump.RepoDumpException;
@@ -32,7 +34,7 @@ import com.enonic.xp.repository.RepositorySegmentUtils;
 public abstract class AbstractDumpWriter
     implements DumpWriter
 {
-    private static final Logger LOG = LoggerFactory.getLogger( FileDumpWriter.class );
+    private static final Logger LOG = LoggerFactory.getLogger( AbstractDumpWriter.class );
 
     private final Consumer<BlobReference> dumpBlobStore;
 
@@ -103,7 +105,7 @@ public abstract class AbstractDumpWriter
     public void writeBranchEntry( final BranchDumpEntry branchDumpEntry )
     {
         final byte[] serializedEntry = serializer.serialize( branchDumpEntry );
-        final String entryName = branchDumpEntry.getNodeId() + ".json";
+        final String entryName = branchDumpEntry.nodeId() + ".json";
         storeTarEntry( serializedEntry, entryName );
     }
 
@@ -111,7 +113,7 @@ public abstract class AbstractDumpWriter
     public void writeVersionsEntry( final VersionsDumpEntry versionsDumpEntry )
     {
         final byte[] serializedEntry = serializer.serialize( versionsDumpEntry );
-        final String entryName = versionsDumpEntry.getNodeId() + ".json";
+        final String entryName = versionsDumpEntry.nodeId() + ".json";
         storeTarEntry( serializedEntry, entryName );
     }
 
@@ -119,22 +121,38 @@ public abstract class AbstractDumpWriter
     public void writeCommitEntry( final CommitDumpEntry commitDumpEntry )
     {
         final byte[] serializedEntry = serializer.serialize( commitDumpEntry );
-        final String entryName = commitDumpEntry.getNodeCommitId() + ".json";
+        final String entryName = commitDumpEntry.nodeCommitId() + ".json";
         storeTarEntry( serializedEntry, entryName );
+    }
+
+    @Override
+    public void writeRawMetaEntry( final byte[] data, final String entryName )
+    {
+        storeTarEntry( data, entryName );
     }
 
     @Override
     public void writeNodeVersionBlobs( final RepositoryId repositoryId, final NodeVersionKey nodeVersionKey )
     {
         addBlob( RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.NODE_SEGMENT_LEVEL ), nodeVersionKey.getNodeBlobKey() );
-        addBlob( RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.INDEX_CONFIG_SEGMENT_LEVEL ), nodeVersionKey.getIndexConfigBlobKey() );
-        addBlob( RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.ACCESS_CONTROL_SEGMENT_LEVEL ), nodeVersionKey.getAccessControlBlobKey() );
+        addBlob( RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.INDEX_CONFIG_SEGMENT_LEVEL ),
+                 nodeVersionKey.getIndexConfigBlobKey() );
+        addBlob( RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.ACCESS_CONTROL_SEGMENT_LEVEL ),
+                 nodeVersionKey.getAccessControlBlobKey() );
     }
 
     @Override
     public void writeBinaryBlob( final RepositoryId repositoryId, final BlobKey blobKey )
     {
         addBlob( RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.BINARY_SEGMENT_LEVEL ), blobKey );
+    }
+
+    @Override
+    public BlobKey addBlobRecord( final Segment segment, final ByteSource data )
+    {
+        final BlobKey key = BlobKey.sha256( data );
+        dumpBlobStore.accept( new BlobReference( segment, key ) );
+        return key;
     }
 
     private void addBlob( final Segment segment, final BlobKey blobKey )

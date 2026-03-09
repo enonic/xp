@@ -1,8 +1,10 @@
 package com.enonic.xp.repo.impl.dump;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -45,6 +47,7 @@ import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.filter.RangeFilter;
 import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
 import com.enonic.xp.repo.impl.dump.model.CommitDumpEntry;
+import com.enonic.xp.repo.impl.dump.model.VersionMeta;
 import com.enonic.xp.repo.impl.dump.model.VersionsDumpEntry;
 import com.enonic.xp.repo.impl.dump.writer.DumpWriter;
 import com.enonic.xp.repo.impl.version.VersionIndexPath;
@@ -161,17 +164,17 @@ public class RepoDumper
         {
             for ( NodeId nodeId : dumpedNodes )
             {
-                final VersionsDumpEntry.Builder builder = VersionsDumpEntry.create( nodeId );
+                final List<VersionMeta> versionMetas = new ArrayList<>();
 
                 final NodeVersionQueryResult versions = getVersions( nodeId );
                 for ( final NodeVersion nodeVersion : versions.getNodeVersions() )
                 {
-                    builder.addVersion( VersionMetaFactory.create( nodeVersion ) );
+                    versionMetas.add( VersionMetaFactory.create( nodeVersion ) );
                     doStoreVersion( nodeVersion, this.dumpResult );
                     this.dumpResult.addedVersion();
                 }
 
-                writer.writeVersionsEntry( builder.build() );
+                writer.writeVersionsEntry( new VersionsDumpEntry( nodeId, versionMetas ) );
             }
         }
         catch ( Exception e )
@@ -195,12 +198,8 @@ public class RepoDumper
             final NodeCommitEntries nodeCommitEntries = this.nodeService.findCommits( nodeCommitQuery ).getNodeCommitEntries();
 
             nodeCommitEntries.stream()
-                .map( nodeCommitEntry -> CommitDumpEntry.create()
-                    .nodeCommitId( nodeCommitEntry.getNodeCommitId() )
-                    .message( nodeCommitEntry.getMessage() )
-                    .committer( nodeCommitEntry.getCommitter() )
-                    .timestamp( nodeCommitEntry.getTimestamp() )
-                    .build() )
+                .map( nodeCommitEntry -> new CommitDumpEntry( nodeCommitEntry.getNodeCommitId(), nodeCommitEntry.getMessage(),
+                                                              nodeCommitEntry.getTimestamp(), nodeCommitEntry.getCommitter() ) )
                 .forEach( writer::writeCommitEntry );
         }
         finally
@@ -261,8 +260,8 @@ public class RepoDumper
         {
             final BranchDumpEntry branchDumpEntry = createDumpEntry( nodeId, branch );
             writer.writeBranchEntry( branchDumpEntry );
-            writer.writeNodeVersionBlobs( repository.getId(), branchDumpEntry.getMeta().nodeVersionKey() );
-            writeBinaries( dumpResult, branchDumpEntry.getBinaryReferences() );
+            writer.writeNodeVersionBlobs( repository.getId(), branchDumpEntry.meta().nodeVersionKey() );
+            writeBinaries( dumpResult, branchDumpEntry.binaryReferences() );
             dumpResult.addedNode();
             this.listener.nodeDumped();
         }
@@ -289,8 +288,6 @@ public class RepoDumper
 
     private BranchDumpEntry createDumpEntry( final NodeId nodeId, final Branch branch )
     {
-        final BranchDumpEntry.Builder builder = BranchDumpEntry.create().nodeId( nodeId );
-
         final Node currentNode = this.nodeService.getById( nodeId );
 
         final NodeVersion currentVersion = this.nodeService.getActiveVersions(
@@ -298,15 +295,14 @@ public class RepoDumper
             .getNodeVersions()
             .get( branch );
 
-        builder.meta( VersionMetaFactory.create( currentVersion ) );
+        final VersionMeta meta = VersionMetaFactory.create( currentVersion );
 
-        if ( this.includeBinaries )
-        {
-            builder.setBinaryReferences(
-                currentNode.getAttachedBinaries().stream().map( AttachedBinary::getBlobKey ).collect( Collectors.toList() ) );
-        }
+        final Collection<String> binaryReferences = this.includeBinaries ? currentNode.getAttachedBinaries()
+            .stream()
+            .map( AttachedBinary::getBlobKey )
+            .collect( Collectors.toList() ) : List.of();
 
-        return builder.build();
+        return new BranchDumpEntry( nodeId, meta, binaryReferences );
     }
 
     private NodeVersionQueryResult getVersions( final NodeId nodeId )
