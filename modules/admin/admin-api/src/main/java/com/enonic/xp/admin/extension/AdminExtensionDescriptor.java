@@ -1,10 +1,7 @@
 package com.enonic.xp.admin.extension;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.descriptor.Descriptor;
@@ -13,6 +10,7 @@ import com.enonic.xp.icon.Icon;
 import com.enonic.xp.schema.LocalizedText;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.util.GenericValue;
 
 
 public final class AdminExtensionDescriptor
@@ -32,7 +30,7 @@ public final class AdminExtensionDescriptor
 
     private final PrincipalKeys allowedPrincipals;
 
-    private final ImmutableMap<String, String> config;
+    private final GenericValue config;
 
     private AdminExtensionDescriptor( final Builder builder )
     {
@@ -44,7 +42,7 @@ public final class AdminExtensionDescriptor
         this.icon = builder.icon;
         this.interfaces = builder.interfaces;
         this.allowedPrincipals = builder.allowedPrincipals;
-        this.config = ImmutableMap.copyOf( builder.config );
+        this.config = builder.config.build();
     }
 
     public String getDisplayName()
@@ -93,7 +91,7 @@ public final class AdminExtensionDescriptor
             principalKeys.stream().anyMatch( allowedPrincipals::contains );
     }
 
-    public Map<String, String> getConfig()
+    public GenericValue getConfig()
     {
         return config;
     }
@@ -121,7 +119,7 @@ public final class AdminExtensionDescriptor
 
         private PrincipalKeys allowedPrincipals;
 
-        public final Map<String, String> config = new HashMap<>();
+        public final GenericValue.ObjectBuilder config = GenericValue.newObject();
 
         private Builder()
         {
@@ -189,9 +187,9 @@ public final class AdminExtensionDescriptor
             return this;
         }
 
-        public Builder addProperty( final String key, final String value )
+        public Builder config( final GenericValue value )
         {
-            this.config.put( key, value );
+            value.properties().forEach( e -> this.config.put( e.getKey(), e.getValue() ) );
             return this;
         }
 
