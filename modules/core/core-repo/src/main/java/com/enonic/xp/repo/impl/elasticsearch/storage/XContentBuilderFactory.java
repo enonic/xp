@@ -25,17 +25,17 @@ class XContentBuilderFactory
         return builder.endObject();
     }
 
-    static XContentBuilder create( final IndexDocument indexDocument )
+    static XContentBuilder create( final IndexDocument doc )
         throws IOException
     {
         final XContentBuilder builder = XContentFactory.jsonBuilder().startObject();
-        final String analyzer = indexDocument.getAnalyzer();
+        final String analyzer = doc.analyzer();
         if ( !isNullOrEmpty( analyzer ) )
         {
             addField( builder, IndexConstants.ANALYZER_VALUE_FIELD, analyzer );
         }
 
-        for ( final var entry : indexDocument.getIndexItems().asValuesMap().entrySet() )
+        for ( final var entry : doc.data().asValuesMap().entrySet() )
         {
             addField( builder, entry.getKey(), entry.getValue() );
         }

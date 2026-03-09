@@ -2,12 +2,11 @@ package com.enonic.xp.repo.impl.storage;
 
 import java.util.Collection;
 
-import com.enonic.xp.branch.Branch;
-import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.ReturnValues;
+import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
 
 public interface IndexDataService
 {
@@ -15,7 +14,5 @@ public interface IndexDataService
 
     void delete( Collection<NodeId> nodeIds, InternalContext context );
 
-    void store( Node node, InternalContext context );
-
-    void push( NodeId nodeId, Branch origin, InternalContext context );
+    void store( final IndexDocument indexDocument, InternalContext context );
 }

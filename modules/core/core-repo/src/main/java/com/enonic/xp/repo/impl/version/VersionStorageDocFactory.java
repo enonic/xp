@@ -40,7 +40,6 @@ public class VersionStorageDocFactory
         }
 
         return StoreRequest.create()
-            .nodePath( nodeVersion.getNodePath() )
             .id( nodeVersion.getNodeVersionId().toString() )
             .storage( StorageSource.create()
                           .storageName( StoreStorageName.from( repositoryId ) )

@@ -50,11 +50,19 @@ public class IndexLanguageController
 
     private static final ImmutableMap<String, StemmedIndexValueType> STEMMED_VALUE_TYPES;
 
+    private static final ImmutableMap<String, OrderByIndexValueType> ORDERBY_VALUE_TYPES;
+
     static
     {
-        final ImmutableMap.Builder<String, StemmedIndexValueType> builder = ImmutableMap.builder();
-        LANGUAGE_TO_ANALYZER.keySet().forEach( k -> builder.put( k, new StemmedIndexValueType( k ) ) );
-        STEMMED_VALUE_TYPES = builder.build();
+        final ImmutableMap.Builder<String, StemmedIndexValueType> stemmedBuilder = ImmutableMap.builder();
+        final ImmutableMap.Builder<String, OrderByIndexValueType> orderbyBuilder = ImmutableMap.builder();
+        LANGUAGE_TO_ANALYZER.keySet().forEach( k -> {
+            stemmedBuilder.put( k, new StemmedIndexValueType( k ) );
+            orderbyBuilder.put( k, new OrderByIndexValueType( k ) );
+
+        } );
+        STEMMED_VALUE_TYPES = stemmedBuilder.build();
+        ORDERBY_VALUE_TYPES = orderbyBuilder.build();
     }
 
     private static String normalize( final String language )
@@ -72,8 +80,23 @@ public class IndexLanguageController
         return LANGUAGE_TO_ANALYZER.get( normalize( language ) );
     }
 
-    public static IndexValueTypeInterface resolveStemmedIndexValueType( final String language )
+    public static StemmedIndexValueType resolveStemmedIndexValueType( final String language )
     {
-        return STEMMED_VALUE_TYPES.get( normalize( language ) );
+        final StemmedIndexValueType type = STEMMED_VALUE_TYPES.get( normalize( language ) );
+        if ( type == null )
+        {
+            throw new IllegalArgumentException( "Unsupported language for stemmed indexing: " + language );
+        }
+        return type;
+    }
+
+    public static OrderByIndexValueType resolveOrderByIndexValueType( final String language )
+    {
+        final OrderByIndexValueType type = ORDERBY_VALUE_TYPES.get( normalize( language ) );
+        if ( type == null )
+        {
+            throw new IllegalArgumentException( "Unsupported language for sort indexing: " + language );
+        }
+        return type;
     }
 }

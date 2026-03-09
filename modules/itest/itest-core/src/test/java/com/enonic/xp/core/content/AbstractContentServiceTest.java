@@ -79,6 +79,7 @@ import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
+import com.enonic.xp.itest.AbstractElasticsearchIntegrationTest;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.project.CreateProjectParams;
@@ -89,7 +90,6 @@ import com.enonic.xp.repo.impl.binary.BinaryServiceImpl;
 import com.enonic.xp.repo.impl.branch.storage.BranchServiceImpl;
 import com.enonic.xp.repo.impl.commit.CommitServiceImpl;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
-import com.enonic.xp.repo.impl.elasticsearch.AbstractElasticsearchIntegrationTest;
 import com.enonic.xp.repo.impl.elasticsearch.IndexServiceInternalImpl;
 import com.enonic.xp.repo.impl.elasticsearch.search.SearchDaoImpl;
 import com.enonic.xp.repo.impl.elasticsearch.storage.StorageDaoImpl;
@@ -437,8 +437,8 @@ public abstract class AbstractContentServiceTest
         return doCreateContent( builder );
     }
 
-    private Content doCreateContent( final ContentPath parentPath, final String displayName, final PropertyTree data,
-                                     final Mixins mixins, ContentTypeName type )
+    private Content doCreateContent( final ContentPath parentPath, final String displayName, final PropertyTree data, final Mixins mixins,
+                                     ContentTypeName type )
     {
         final CreateContentParams.Builder builder = createContentBuilder( parentPath, displayName, data, mixins, type );
         return doCreateContent( builder );
@@ -532,16 +532,8 @@ public abstract class AbstractContentServiceTest
     {
         final FormItemSet set = FormItemSet.create()
             .name( "set" )
-            .addFormItem( Input.create().
-                label( "String" ).
-                name( "setString" ).
-                inputType( InputTypeName.TEXT_LINE ).
-                build() )
-            .addFormItem( Input.create().
-                label( "Double" ).
-                name( "setDouble" ).
-                inputType( InputTypeName.DOUBLE ).
-                build() )
+            .addFormItem( Input.create().label( "String" ).name( "setString" ).inputType( InputTypeName.TEXT_LINE ).build() )
+            .addFormItem( Input.create().label( "Double" ).name( "setDouble" ).inputType( InputTypeName.DOUBLE ).build() )
             .build();
 
         return ContentType.create()
@@ -590,16 +582,8 @@ public abstract class AbstractContentServiceTest
             .addFormItem( Input.create().name( "time" ).label( "Time" ).inputType( InputTypeName.TIME ).build() )
             .addFormItem( Input.create().name( "geoPoint" ).label( "Geopoint" ).inputType( InputTypeName.GEO_POINT ).build() )
             .addFormItem( Input.create().name( "htmlArea" ).label( "Htmlarea" ).inputType( InputTypeName.HTML_AREA ).build() )
-            .addFormItem( Input.create()
-                              .name( "localDateTime" )
-                              .label( "Local datetime" )
-                              .inputType( InputTypeName.DATE_TIME )
-                              .build() )
-            .addFormItem( Input.create()
-                              .name( "dateTime" )
-                              .label( "Datetime" )
-                              .inputType( InputTypeName.INSTANT )
-                              .build() )
+            .addFormItem( Input.create().name( "localDateTime" ).label( "Local datetime" ).inputType( InputTypeName.DATE_TIME ).build() )
+            .addFormItem( Input.create().name( "dateTime" ).label( "Datetime" ).inputType( InputTypeName.INSTANT ).build() )
             .addFormItem( set )
             .build();
     }

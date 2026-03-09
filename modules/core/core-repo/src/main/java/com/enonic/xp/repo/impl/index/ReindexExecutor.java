@@ -8,8 +8,6 @@ import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.index.ReindexListener;
 import com.enonic.xp.index.ReindexResult;
-import com.enonic.xp.node.Node;
-import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.FieldExpr;
 import com.enonic.xp.query.expr.QueryExpr;
@@ -17,10 +15,11 @@ import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeBranchEntries;
 import com.enonic.xp.repo.impl.NodeBranchEntry;
+import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQuery;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQueryResultFactory;
 import com.enonic.xp.repo.impl.branch.storage.BranchIndexPath;
-import com.enonic.xp.repo.impl.branch.storage.NodeFactory;
+import com.enonic.xp.repo.impl.elasticsearch.NodeStoreDocumentFactory;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionService;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.IndexDataService;
@@ -70,7 +69,7 @@ public class ReindexExecutor
 
         final long stop = System.currentTimeMillis();
         builder.endTime( Instant.ofEpochMilli( stop ) );
-        builder.duration( Duration.ofMillis( stop - start  ) );
+        builder.duration( Duration.ofMillis( stop - start ) );
 
         return builder.build();
     }
@@ -90,19 +89,15 @@ public class ReindexExecutor
             listener.branch( repositoryId, branch, nodeBranchEntries.getSize() );
         }
 
-        final InternalContext context = InternalContext.create( ContextAccessor.current() ).
-            repositoryId( repositoryId ).
-            branch( branch ).
-            build();
+        final InternalContext context =
+            InternalContext.create( ContextAccessor.current() ).repositoryId( repositoryId ).branch( branch ).build();
         for ( final NodeBranchEntry nodeBranchEntry : nodeBranchEntries )
         {
             final NodeStoreVersion nodeVersion = this.nodeVersionService.get( nodeBranchEntry.getNodeVersionKey(), context );
 
-            final Node node = NodeFactory.create( nodeVersion, nodeBranchEntry );
+            this.indexDataService.store( NodeStoreDocumentFactory.from( nodeVersion, nodeBranchEntry ), context );
 
-            this.indexDataService.store( node, context );
-
-            builder.add( node.id() );
+            builder.add( nodeBranchEntry.getNodeId() );
 
             if ( listener != null )
             {

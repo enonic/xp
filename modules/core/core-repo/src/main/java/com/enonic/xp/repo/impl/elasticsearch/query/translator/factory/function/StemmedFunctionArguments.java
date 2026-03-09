@@ -5,7 +5,6 @@ import java.util.List;
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.SearchQueryFieldNameResolver;
 import com.enonic.xp.repo.impl.index.IndexLanguageController;
-import com.enonic.xp.repo.impl.index.IndexValueTypeInterface;
 
 public class StemmedFunctionArguments
     extends AbstractSimpleQueryStringFunctionArguments
@@ -33,8 +32,9 @@ public class StemmedFunctionArguments
     @Override
     public String resolveQueryFieldName( final String baseFieldName )
     {
-        final IndexValueTypeInterface type = IndexLanguageController.resolveStemmedIndexValueType( this.language );
-
-        return type != null ? SearchQueryFieldNameResolver.INSTANCE.resolve( baseFieldName, type ) : "";
+        return IndexLanguageController.isSupported( this.language )
+            ? SearchQueryFieldNameResolver.INSTANCE.resolve( baseFieldName, IndexLanguageController.resolveStemmedIndexValueType(
+            this.language ) )
+            : "";
     }
 }

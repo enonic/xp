@@ -13,7 +13,6 @@ import org.junit.jupiter.api.io.TempDir;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextAccessorSupport;
@@ -26,6 +25,7 @@ import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.home.HomeDirSupport;
 import com.enonic.xp.impl.scheduler.SchedulerRepoInitializer;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
+import com.enonic.xp.itest.AbstractElasticsearchIntegrationTest;
 import com.enonic.xp.node.CommitNodeParams;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
@@ -52,7 +52,6 @@ import com.enonic.xp.repo.impl.binary.BinaryServiceImpl;
 import com.enonic.xp.repo.impl.branch.storage.BranchServiceImpl;
 import com.enonic.xp.repo.impl.commit.CommitServiceImpl;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
-import com.enonic.xp.repo.impl.elasticsearch.AbstractElasticsearchIntegrationTest;
 import com.enonic.xp.repo.impl.elasticsearch.IndexServiceInternalImpl;
 import com.enonic.xp.repo.impl.elasticsearch.search.SearchDaoImpl;
 import com.enonic.xp.repo.impl.elasticsearch.storage.StorageDaoImpl;
@@ -181,7 +180,8 @@ public abstract class AbstractNodeTest
         return ContextBuilder.create().branch( WS_OTHER ).repositoryId( testRepoId ).authInfo( TEST_DEFAULT_USER_AUTHINFO ).build();
     }
 
-    protected Context ctxOtherAdmin() {
+    protected Context ctxOtherAdmin()
+    {
         return ContextBuilder.create()
             .branch( WS_OTHER )
             .repositoryId( testRepoId )
@@ -588,7 +588,7 @@ public abstract class AbstractNodeTest
 
     private void doPrintChildren( int ident, final Node root )
     {
-        System.out.println( " ".repeat( ident ) + "'--" + Objects.requireNonNullElse( root.name(), "" ) + " (" + root.id() + ")" );
+        System.out.println( " " .repeat( ident ) + "'--" + Objects.requireNonNullElse( root.name(), "" ) + " (" + root.id() + ")" );
 
         ident += 3;
 

@@ -1,7 +1,5 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.dsl;
 
-import java.util.Optional;
-
 import org.elasticsearch.index.query.QueryBuilder;
 
 import com.enonic.xp.data.PropertySet;
@@ -28,9 +26,7 @@ class StemmedQueryBuilder
         final org.elasticsearch.index.query.SimpleQueryStringBuilder builder =
             ( (org.elasticsearch.index.query.SimpleQueryStringBuilder) super.create() ).analyzeWildcard( true );
 
-        final IndexValueTypeInterface languageIndexType =
-            Optional.ofNullable( IndexLanguageController.resolveStemmedIndexValueType( this.language ) )
-                .orElseThrow( () -> new IllegalArgumentException( "Invalid language: " + language ) );
+        final IndexValueTypeInterface languageIndexType = IndexLanguageController.resolveStemmedIndexValueType( this.language );
 
         fields.getWeightedQueryFieldNames().forEach( field -> {
             final String resolvedName = NAME_RESOLVER.resolve( field.getBaseFieldName(), languageIndexType );

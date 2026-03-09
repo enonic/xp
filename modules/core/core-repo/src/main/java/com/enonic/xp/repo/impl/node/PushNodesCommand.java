@@ -168,7 +168,7 @@ public class PushNodesCommand
 
         for ( SuccessfulPush toPush : toPushEntries )
         {
-            this.nodeStorageService.push( toPush.entry, internalContext.getBranch(), targetContext );
+            this.nodeStorageService.push( toPush.entry, targetContext );
             if ( toPush.originalPath != null && !toPush.originalPath.equals( toPush.entry.getNodePath() ) )
             {
                 this.nodeStorageService.invalidatePath( toPush.originalPath, targetContext );

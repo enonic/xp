@@ -19,7 +19,8 @@ class IndexItemsTest
     void single_string()
     {
         final IndexItems indexItems = IndexItems.create()
-            .add( IndexPath.from( "myItem" ), ValueFactory.newString( "ost" ), createDefaultDocument( IndexConfig.MINIMAL ) )
+            .add( IndexItemFactory.create( IndexPath.from( "myItem" ), ValueFactory.newString( "ost" ),
+                                           createDefaultDocument( IndexConfig.MINIMAL ) ) )
             .build();
 
         final Collection<Object> values = indexItems.asValuesMap().get( "myitem" );
@@ -31,8 +32,10 @@ class IndexItemsTest
     void multiple_strings()
     {
         final IndexItems indexItems = IndexItems.create()
-            .add( IndexPath.from( "myItem" ), ValueFactory.newString( "ost" ), createDefaultDocument( IndexConfig.MINIMAL ) )
-            .add( IndexPath.from( "myItem" ), ValueFactory.newString( "fisk" ), createDefaultDocument( IndexConfig.MINIMAL ) )
+            .add( IndexItemFactory.create( IndexPath.from( "myItem" ), ValueFactory.newString( "ost" ),
+                                           createDefaultDocument( IndexConfig.MINIMAL ) ) )
+            .add( IndexItemFactory.create( IndexPath.from( "myItem" ), ValueFactory.newString( "fisk" ),
+                                           createDefaultDocument( IndexConfig.MINIMAL ) ) )
             .build();
 
         final Collection<Object> values = indexItems.asValuesMap().get( "myitem" );
@@ -45,8 +48,10 @@ class IndexItemsTest
     void single_orderby_value()
     {
         final IndexItems indexItems = IndexItems.create()
-            .add( IndexPath.from( "myItem" ), ValueFactory.newString( "ost" ), createDefaultDocument( IndexConfig.MINIMAL ) )
-            .add( IndexPath.from( "myItem" ), ValueFactory.newString( "fisk" ), createDefaultDocument( IndexConfig.MINIMAL ) )
+            .add( IndexItemFactory.create( IndexPath.from( "myItem" ), ValueFactory.newString( "ost" ),
+                                           createDefaultDocument( IndexConfig.MINIMAL ) ) )
+            .add( IndexItemFactory.create( IndexPath.from( "myItem" ), ValueFactory.newString( "fisk" ),
+                                           createDefaultDocument( IndexConfig.MINIMAL ) ) )
             .build();
 
         final Collection<Object> values =

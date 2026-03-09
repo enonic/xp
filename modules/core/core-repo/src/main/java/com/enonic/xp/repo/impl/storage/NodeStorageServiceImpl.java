@@ -15,7 +15,6 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobKeys;
-import com.enonic.xp.branch.Branch;
 import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;
@@ -39,6 +38,8 @@ import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.repo.impl.branch.BranchService;
 import com.enonic.xp.repo.impl.branch.storage.NodeFactory;
 import com.enonic.xp.repo.impl.commit.CommitService;
+import com.enonic.xp.repo.impl.elasticsearch.NodeStoreDocumentFactory;
+import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
 import com.enonic.xp.repo.impl.node.NodePermissionsResolver;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionService;
 import com.enonic.xp.repo.impl.version.VersionService;
@@ -78,7 +79,8 @@ public class NodeStorageServiceImpl
 
         final Instant timestamp = Millis.fromOrElseNow( node.getTimestamp() );
         final NodeVersionId nodeVersionId = params.isNewVersion() ? new NodeVersionId() : node.getNodeVersionId();
-        final NodeVersionKey nodeVersionKey = nodeVersionService.store( NodeStoreVersion.from( node ), context );
+        final NodeStoreVersion nodeStoreVersion = NodeStoreVersion.from( node );
+        final NodeVersionKey nodeVersionKey = nodeVersionService.store( nodeStoreVersion, context );
 
         final NodeVersion nodeVersion = NodeVersion.create()
             .nodeId( node.id() )
@@ -91,20 +93,22 @@ public class NodeStorageServiceImpl
             .timestamp( timestamp )
             .build();
 
-        final Node newNode = Node.create( node ).timestamp( timestamp ).nodeVersionId( nodeVersionId ).build();
-
         this.versionService.store( nodeVersion, context );
-        this.branchService.store( NodeBranchEntry.fromNodeVersion( nodeVersion ), context );
-        this.indexDataService.store( newNode, context );
 
-        return new NodeVersionData( newNode, nodeVersion );
+        final NodeBranchEntry nodeBranchEntry = NodeBranchEntry.fromNodeVersion( nodeVersion );
+        this.branchService.store( nodeBranchEntry, context );
+        this.indexDataService.store( NodeStoreDocumentFactory.from( nodeStoreVersion, nodeBranchEntry ), context );
+
+        return new NodeVersionData( Node.create( node ).timestamp( timestamp ).nodeVersionId( nodeVersionId ).build(), nodeVersion );
     }
 
     @Override
-    public void push( final NodeBranchEntry entry, final Branch origin, final InternalContext context )
+    public void push( final NodeBranchEntry nodeBranchEntry, final InternalContext context )
     {
-        this.branchService.push( entry, context );
-        this.indexDataService.push( entry.getNodeId(), origin, context );
+        final IndexDocument document =
+            NodeStoreDocumentFactory.from( this.nodeVersionService.get( nodeBranchEntry.getNodeVersionKey(), context ), nodeBranchEntry );
+        this.branchService.push( nodeBranchEntry, context );
+        this.indexDataService.store( document, context );
     }
 
     @Override

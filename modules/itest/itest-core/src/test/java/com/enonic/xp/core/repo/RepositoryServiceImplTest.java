@@ -1,4 +1,4 @@
-package com.enonic.xp.core.repository;
+package com.enonic.xp.core.repo;
 
 import org.junit.jupiter.api.Test;
 
@@ -50,11 +50,11 @@ class RepositoryServiceImplTest
     private static final User REPO_TEST_DEFAULT_USER =
         User.create().key( PrincipalKey.ofUser( IdProviderKey.system(), "repo-test-user" ) ).login( "repo-test-user" ).build();
 
-    private static final AuthenticationInfo REPO_TEST_DEFAULT_USER_AUTHINFO = AuthenticationInfo.create().
-        principals( RoleKeys.AUTHENTICATED ).
-        principals( RoleKeys.ADMIN ).
-        user( REPO_TEST_DEFAULT_USER ).
-        build();
+    private static final AuthenticationInfo REPO_TEST_DEFAULT_USER_AUTHINFO = AuthenticationInfo.create()
+        .principals( RoleKeys.AUTHENTICATED )
+        .principals( RoleKeys.ADMIN )
+        .user( REPO_TEST_DEFAULT_USER )
+        .build();
 
     RepositoryServiceImplTest()
     {
@@ -63,11 +63,11 @@ class RepositoryServiceImplTest
 
     private static Context createAdminContext()
     {
-        return ContextBuilder.create().
-            branch( "master" ).
-            repositoryId( SystemConstants.SYSTEM_REPO_ID ).
-            authInfo( REPO_TEST_DEFAULT_USER_AUTHINFO ).
-            build();
+        return ContextBuilder.create()
+            .branch( "master" )
+            .repositoryId( SystemConstants.SYSTEM_REPO_ID )
+            .authInfo( REPO_TEST_DEFAULT_USER_AUTHINFO )
+            .build();
     }
 
     private static Context createAdminContext( final RepositoryId repositoryId, final Branch branch )
@@ -100,19 +100,14 @@ class RepositoryServiceImplTest
 
         doCreateRepo( repoId );
 
-        Context mockCurrentContext = ContextBuilder.create().
-            branch( "master" ).
-            repositoryId( repoId ).
-            authInfo( REPO_TEST_DEFAULT_USER_AUTHINFO ).
-            build();
+        Context mockCurrentContext =
+            ContextBuilder.create().branch( "master" ).repositoryId( repoId ).authInfo( REPO_TEST_DEFAULT_USER_AUTHINFO ).build();
 
         PropertyTree data = new PropertyTree();
         data.setString( "myProp", "b" );
 
-        mockCurrentContext.callWith( () -> repositoryService.updateRepository( UpdateRepositoryParams.create().
-            repositoryId( RepositoryId.from( repoId ) ).
-            editor( edit -> edit.data = data ).
-            build() ) );
+        mockCurrentContext.callWith( () -> repositoryService.updateRepository(
+            UpdateRepositoryParams.create().repositoryId( RepositoryId.from( repoId ) ).editor( edit -> edit.data = data ).build() ) );
 
         final Repository persistedRepo = getPersistedRepoWithoutCache( repoId );
 
@@ -128,25 +123,19 @@ class RepositoryServiceImplTest
         doCreateRepo( repoId );
 
         final BinaryReference binaryRef = BinaryReference.from( "image1.jpg" );
-        ByteSource binarySource = ByteSource.wrap( "this-is-the-binary-data-for-image1".getBytes() );
+        ByteSource binarySource = ByteSource.wrap( "this-is-the-binary-data-for-image1" .getBytes() );
 
-        Context mockCurrentContext = ContextBuilder.create().
-            branch( "master" ).
-            repositoryId( repoId ).
-            authInfo( REPO_TEST_DEFAULT_USER_AUTHINFO ).
-            build();
+        Context mockCurrentContext =
+            ContextBuilder.create().branch( "master" ).repositoryId( repoId ).authInfo( REPO_TEST_DEFAULT_USER_AUTHINFO ).build();
 
         PropertyTree data = new PropertyTree();
         data.setBinaryReference( "someIcon", binaryRef );
 
-        mockCurrentContext.runWith( () -> repositoryService.updateRepository( UpdateRepositoryParams.create().
-            repositoryId( RepositoryId.from( repoId ) ).
-            editor( edit -> {
+        mockCurrentContext.runWith( () -> repositoryService.updateRepository(
+            UpdateRepositoryParams.create().repositoryId( RepositoryId.from( repoId ) ).editor( edit -> {
                 edit.data = data;
                 edit.binaryAttachments = ImmutableList.of( new BinaryAttachment( binaryRef, binarySource ) );
-            } ).
-            build() ) );
-
+            } ).build() ) );
 
         ByteSource persistedAttachment = mockCurrentContext.callWith(
             () -> repositoryService.getBinary( RepositoryId.from( repoId ), BinaryReference.from( "image1.jpg" ) ) );
@@ -240,21 +229,21 @@ class RepositoryServiceImplTest
     {
         final Repository repo = doCreateRepo( "fisk" );
 
-        ContextBuilder.from( ContextAccessor.current() ).
-            repositoryId( repo.getId() ).
-            branch( Branch.from( "master" ) ).
-            build().
-            runWith( () -> createNode( NodePath.ROOT, "fisk" ) );
+        ContextBuilder.from( ContextAccessor.current() )
+            .repositoryId( repo.getId() )
+            .branch( Branch.from( "master" ) )
+            .build()
+            .runWith( () -> createNode( NodePath.ROOT, "fisk" ) );
 
         createAdminContext().callWith( () -> this.repositoryService.deleteRepository( DeleteRepositoryParams.from( repo.getId() ) ) );
 
         final Repository repoRecreated = doCreateRepo( "fisk" );
 
-        ContextBuilder.from( ContextAccessor.current() ).
-            repositoryId( repoRecreated.getId() ).
-            branch( Branch.from( "master" ) ).
-            build().
-            runWith( () -> createNode( NodePath.ROOT, "fisk" ) );
+        ContextBuilder.from( ContextAccessor.current() )
+            .repositoryId( repoRecreated.getId() )
+            .branch( Branch.from( "master" ) )
+            .build()
+            .runWith( () -> createNode( NodePath.ROOT, "fisk" ) );
     }
 
     @Test
@@ -293,16 +282,18 @@ class RepositoryServiceImplTest
 
     private Repository doCreateRepo( final String id, final PropertyTree data )
     {
-        return createAdminContext().callWith( () -> this.repositoryService.createRepository( CreateRepositoryParams.create().
-            repositoryId( RepositoryId.from( id ) ).
-            rootPermissions( AccessControlList.create().
-                add( AccessControlEntry.create().
-                    principal( TEST_DEFAULT_USER.getKey() ).
-                    allowAll().
-                    build() ).
-                build() ).
-            data( data ).
-            build() ) );
+        return createAdminContext().callWith( () -> this.repositoryService.createRepository( CreateRepositoryParams.create()
+                                                                                                 .repositoryId( RepositoryId.from( id ) )
+                                                                                                 .rootPermissions(
+                                                                                                     AccessControlList.create()
+                                                                                                         .add( AccessControlEntry.create()
+                                                                                                                   .principal(
+                                                                                                                       TEST_DEFAULT_USER.getKey() )
+                                                                                                                   .allowAll()
+                                                                                                                   .build() )
+                                                                                                         .build() )
+                                                                                                 .data( data )
+                                                                                                 .build() ) );
     }
 
     private Repository getPersistedRepoWithoutCache( String id )

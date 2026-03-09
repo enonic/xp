@@ -1,18 +1,19 @@
 package com.enonic.xp.repo.impl.elasticsearch;
 
+import java.time.Instant;
 import java.util.Collection;
 
 import org.junit.jupiter.api.Test;
 
-import com.enonic.xp.branch.Branch;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.node.Node;
+import com.enonic.xp.index.IndexConfig;
+import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
 import com.enonic.xp.repo.impl.elasticsearch.document.indexitem.IndexItems;
-import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.util.Reference;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,16 +26,18 @@ class NodeStoreDocumentFactoryTest
         final PropertyTree data = new PropertyTree();
         data.addReference( "myRef", new Reference( NodeId.from( "otherNode" ) ) );
 
-        final Node node = Node.create().id( NodeId.from( "myNodeId" ) ).parentPath( NodePath.ROOT ).name( "myNode" ).data( data ).build();
-
         final IndexDocument indexDocument = NodeStoreDocumentFactory.createBuilder()
-            .node( node )
-            .branch( Branch.from( "my-branch" ) )
-            .repositoryId( RepositoryId.from( "my-repo" ) )
+            .nodeId( NodeId.from( "myNodeId" ) )
+            .data( data )
+            .indexConfigDocument( PatternIndexConfigDocument.create().defaultConfig( IndexConfig.MINIMAL ).build() )
+            .manualOrderValue( 0L )
+            .nodePath( new NodePath( "/myNode" ) )
+            .versionId( NodeVersionId.from( "versionId" ) )
+            .timestamp( Instant.now() )
             .build()
             .create();
 
-        final IndexItems indexItems = indexDocument.getIndexItems();
+        final IndexItems indexItems = indexDocument.data();
         final Collection<Object> referenceValues = indexItems.asValuesMap().get( NodeIndexPath.REFERENCE.getPath() );
         assertThat( referenceValues ).containsExactly( "otherNode" );
     }

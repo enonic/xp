@@ -10,6 +10,7 @@ import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
+import com.enonic.xp.repo.impl.elasticsearch.document.indexitem.IndexItemFactory;
 import com.enonic.xp.repo.impl.elasticsearch.document.indexitem.IndexItems;
 
 class StoreDocumentXContentBuilderFactoryTest
@@ -19,17 +20,12 @@ class StoreDocumentXContentBuilderFactoryTest
     void testName()
         throws Exception
     {
-        final IndexItems indexItems = IndexItems.create().
-            add( IndexPath.from( "myProperty" ), ValueFactory.newString( "myValue" ), createDefaultDocument( IndexConfig.MINIMAL ) ).
-            build();
+        final IndexItems indexItems = IndexItems.create()
+            .add( IndexItemFactory.create( IndexPath.from( "myProperty" ), ValueFactory.newString( "myValue" ),
+                                           createDefaultDocument( IndexConfig.MINIMAL ) ) )
+            .build();
 
-        final IndexDocument indexDocument = IndexDocument.create().
-            analyzer( "myAnalyzer" ).
-            id( NodeId.from( "myNodeId" ).toString() ).
-            indexName( "myIndex" ).
-            indexTypeName( "myIndexType" ).
-            indexItems( indexItems ).
-            build();
+        final IndexDocument indexDocument = new IndexDocument( NodeId.from( "myNodeId" ).toString(), indexItems, "myAnalyzer" );
 
         final XContentBuilder xContentBuilder = XContentBuilderFactory.create( indexDocument );
 
