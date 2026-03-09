@@ -29,7 +29,6 @@ class BranchStorageRequestFactory
 
         return StoreRequest.create()
             .id( BranchDocumentId.asString( nodeId, branch ) )
-            .nodePath( nodeBranchEntry.getNodePath() )
             .storage( StorageSource.create()
                           .storageName( StoreStorageName.from( repositoryId ) )
                           .storageType( StaticStorageType.BRANCH )

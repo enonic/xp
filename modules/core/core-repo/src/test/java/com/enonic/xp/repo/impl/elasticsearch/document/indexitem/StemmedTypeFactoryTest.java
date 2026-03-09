@@ -19,7 +19,8 @@ class StemmedTypeFactoryTest
     {
         // isStemmed() returns false when no languages configured
         final IndexConfig config = IndexConfig.create().enabled( true ).build();
-        final List<IndexItem> items = StemmedTypeFactory.create( IndexPath.from( "myProp" ), ValueFactory.newString( "hello" ), config );
+        final List<IndexItem<?>> items =
+            IndexItemFactory.createStemmed( IndexPath.from( "myProp" ), ValueFactory.newString( "hello" ), config );
         assertTrue( items.isEmpty() );
     }
 
@@ -27,7 +28,8 @@ class StemmedTypeFactoryTest
     void create_returns_stemmed_item_for_supported_language()
     {
         final IndexConfig config = IndexConfig.create().enabled( true ).addLanguage( "en" ).build();
-        final List<IndexItem> items = StemmedTypeFactory.create( IndexPath.from( "myProp" ), ValueFactory.newString( "hello" ), config );
+        final List<IndexItem<?>> items =
+            IndexItemFactory.createStemmed( IndexPath.from( "myProp" ), ValueFactory.newString( "hello" ), config );
         assertEquals( 1, items.size() );
     }
 
@@ -36,14 +38,15 @@ class StemmedTypeFactoryTest
     {
         final IndexConfig config = IndexConfig.create().enabled( true ).addLanguage( "xyz" ).build();
         assertThrows( IllegalArgumentException.class,
-                      () -> StemmedTypeFactory.create( IndexPath.from( "myProp" ), ValueFactory.newString( "hello" ), config ) );
+                      () -> IndexItemFactory.createStemmed( IndexPath.from( "myProp" ), ValueFactory.newString( "hello" ), config ) );
     }
 
     @Test
     void create_accepts_pt_BR_case_insensitive()
     {
         final IndexConfig config = IndexConfig.create().enabled( true ).addLanguage( "pt-BR" ).build();
-        final List<IndexItem> items = StemmedTypeFactory.create( IndexPath.from( "myProp" ), ValueFactory.newString( "hello" ), config );
+        final List<IndexItem<?>> items =
+            IndexItemFactory.createStemmed( IndexPath.from( "myProp" ), ValueFactory.newString( "hello" ), config );
         assertEquals( 1, items.size() );
     }
 }

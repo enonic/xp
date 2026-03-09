@@ -169,11 +169,9 @@ public class ApplyNodePermissionsCommand
 
             if ( cachedVersionData != null )
             {
-                this.nodeStorageService.push( NodeBranchEntry.fromNodeVersion( cachedVersionData.version() ),
-                                              cachedVersionData.originBranch(), targetContext );
+                this.nodeStorageService.push( NodeBranchEntry.fromNodeVersion( cachedVersionData.version() ), targetContext );
 
-                results.addResult( nodeVersion.getNodeId(), branch, cachedVersionData.version(),
-                                   cachedVersionData.data() );
+                results.addResult( nodeVersion.getNodeId(), branch, cachedVersionData.version(), cachedVersionData.data() );
             }
             else
             {
