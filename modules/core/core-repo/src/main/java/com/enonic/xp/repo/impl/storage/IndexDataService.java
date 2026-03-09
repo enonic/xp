@@ -14,5 +14,5 @@ public interface IndexDataService
 
     void delete( Collection<NodeId> nodeIds, InternalContext context );
 
-    void store( final IndexDocument indexDocument, InternalContext context );
+    void store( IndexDocument indexDocument, InternalContext context );
 }

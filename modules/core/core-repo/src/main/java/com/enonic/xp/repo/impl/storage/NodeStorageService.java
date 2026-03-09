@@ -39,7 +39,7 @@ public interface NodeStorageService
 
     NodeCommitEntry commit( NodeCommitEntry entry, NodeVersionIds versionIds, InternalContext context );
 
-    Attributes changeAttributes( NodeVersionId versionId, Attributes attributes, final Set<String> removeAttributes,
+    Attributes changeAttributes( NodeVersionId versionId, Attributes attributes, Set<String> removeAttributes,
                                  InternalContext context );
 
     Node get( NodeId nodeId, InternalContext context );

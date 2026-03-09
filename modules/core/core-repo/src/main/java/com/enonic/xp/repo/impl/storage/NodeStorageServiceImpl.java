@@ -93,9 +93,9 @@ public class NodeStorageServiceImpl
             .timestamp( timestamp )
             .build();
 
-        this.versionService.store( nodeVersion, context );
-
         final NodeBranchEntry nodeBranchEntry = NodeBranchEntry.fromNodeVersion( nodeVersion );
+
+        this.versionService.store( nodeVersion, context );
         this.branchService.store( nodeBranchEntry, context );
         this.indexDataService.store( NodeStoreDocumentFactory.from( nodeStoreVersion, nodeBranchEntry ), context );
 
