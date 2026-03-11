@@ -1,0 +1,100 @@
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
+
+def schemaVersion = "8.0.0"
+def genResourcesDir = layout.buildDirectory.dir( "generated/resources/schema" )
+
+def fillDefinitions( Object currentElement, Map allFragments, JsonSlurper slurper )
+{
+    if ( currentElement instanceof Map )
+    {
+        if ( currentElement.'$defs' instanceof Map )
+        {
+            // Iterate over a snapshot of the keys — inner $defs may add new keys during the process
+            currentElement.'$defs'.keySet().toList().each { key ->
+                def fragment = allFragments.find { it.key.equalsIgnoreCase( key ) }?.value
+                if ( fragment )
+                {
+                    // Clone via JSON round-trip to avoid mutating the original in allFragments
+                    def cloned = slurper.parseText( JsonOutput.toJson( fragment ) )
+                    // first process the fragment itself (it may also contain $defs)
+                    def processedFragment = fillDefinitions( cloned, allFragments, slurper )
+                    // Promote inner $defs to the current level (they have already been populated by the recursive call),
+                    // then remove them from the fragment — in the final schema all definitions are at the root level
+                    if ( processedFragment.'$defs' instanceof Map )
+                    {
+                        processedFragment.'$defs'.each { innerKey, innerVal ->
+                            if ( !currentElement.'$defs'.containsKey( innerKey ) )
+                            {
+                                currentElement.'$defs'[innerKey] = innerVal
+                            }
+                        }
+                        processedFragment.remove( '$defs' )
+                    }
+                    currentElement.'$defs'."${key}" = processedFragment
+                }
+            }
+        }
+        // Continue searching through all nested objects (Map)
+        currentElement.values().each { fillDefinitions( it, allFragments, slurper ) }
+    }
+    else if ( currentElement instanceof List )
+    {
+        // Iterate through lists (for example, inside oneOf or allOf)
+        currentElement.each { fillDefinitions( it, allFragments, slurper ) }
+    }
+    return currentElement
+}
+
+def generateTask = tasks.register( 'generateJsonSchema' ) {
+    group = 'build'
+
+    def fragmentsDir = file( "src/main/schema/fragments" )
+    def templatesDir = file( "src/main/schema/templates" )
+    def outputDir = genResourcesDir.get().asFile
+
+    inputs.dir( fragmentsDir )
+    inputs.dir( templatesDir )
+    outputs.dir( outputDir )
+
+    doLast {
+        def slurper = new JsonSlurper()
+        def allFragments = [:]
+
+        fragmentsDir.listFiles().each { file ->
+            if ( file.name.endsWith( ".json" ) )
+            {
+                allFragments[file.name.replace( ".json", "" )] = slurper.parse( file )
+            }
+        }
+
+        templatesDir.listFiles().each { templateFile ->
+            if ( templateFile.name.endsWith( ".json" ) )
+            {
+                def template = slurper.parse( templateFile )
+
+                def finalSchema = fillDefinitions( template, allFragments, slurper )
+
+                def finalFile = new File( outputDir, "META-INF/schemas/${schemaVersion}/${templateFile.name}" )
+                finalFile.parentFile.mkdirs()
+                finalFile.text = JsonOutput.prettyPrint( JsonOutput.toJson( finalSchema ) )
+            }
+        }
+    }
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDir( generateTask )
+        }
+    }
+}
+
+tasks.withType( Jar ).configureEach {
+    dependsOn( generateTask )
+}
+
+tasks.withType( Test ).configureEach {
+    dependsOn( generateJsonSchema )
+}

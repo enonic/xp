@@ -1,0 +1,16 @@
+{
+  "type": "object",
+  "properties": {
+    "min": {
+      "type": "integer"
+    },
+    "max": {
+      "type": "integer"
+    }
+  },
+  "required": [
+    "min",
+    "max"
+  ],
+  "additionalProperties": false
+}

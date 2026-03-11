@@ -1,0 +1,43 @@
+{
+  "allOf": [
+    {
+      "$ref": "#/$defs/formItemDef"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "label": {
+          "$ref": "#/$defs/localizedTextDef"
+        },
+        "helpText": {
+          "$ref": "#/$defs/localizedTextDef"
+        },
+        "occurrences": {
+          "$ref": "#/$defs/occurrencesDef"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/formItemsDef"
+          }
+        },
+        "type": {
+          "const": "ItemSet"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "additionalProperties": false
+    }
+  ],
+  "$defs": {
+    "formItemDef": {},
+    "localizedTextDef": {},
+    "formItemsDef": {},
+    "occurrencesDef": {}
+  }
+}

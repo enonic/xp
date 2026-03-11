@@ -1,0 +1,29 @@
+{
+  "allOf": [
+    {
+      "$ref": "#/$defs/formItemDef"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "label": {
+          "$ref": "#/$defs/localizedTextDef"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/formItemsDef"
+          }
+        },
+        "type": {
+          "const": "FieldSet"
+        }
+      },
+      "additionalProperties": false
+    }
+  ],
+  "$defs": {
+    "localizedTextDef": {},
+    "formItemsDef": {}
+  }
+}

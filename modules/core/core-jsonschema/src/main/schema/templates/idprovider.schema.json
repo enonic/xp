@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://json-schema.enonic.com/8.0.0/idprovider.schema.json",
+  "type": "object",
+  "properties": {
+    "mode": {
+      "type": "string"
+    },
+    "form": {
+      "$ref": "#/$defs/formDef"
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "localizedTextDef": {},
+    "inputsDef": {},
+    "fieldSetDef": {},
+    "itemSetDef": {},
+    "optionSetDef": {},
+    "formItemsDef": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/inputsDef"
+        },
+        {
+          "$ref": "#/$defs/fieldSetDef"
+        },
+        {
+          "$ref": "#/$defs/itemSetDef"
+        },
+        {
+          "$ref": "#/$defs/optionSetDef"
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "formDef": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/formItemsDef"
+      },
+      "additionalProperties": false
+    }
+  }
+}

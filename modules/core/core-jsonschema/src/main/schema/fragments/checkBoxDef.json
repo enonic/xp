@@ -1,0 +1,29 @@
+{
+  "allOf": [
+    {
+      "$ref": "#/$defs/inputDef"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "CheckBox"
+        },
+        "alignment": {
+          "type": "string"
+        },
+        "default": {
+          "type": "string",
+          "enum": [
+            "checked",
+            "unchecked"
+          ]
+        }
+      }
+    }
+  ],
+  "unevaluatedProperties": false,
+  "$defs": {
+    "inputDef": {}
+  }
+}

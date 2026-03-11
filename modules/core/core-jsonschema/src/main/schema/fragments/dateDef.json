@@ -1,0 +1,22 @@
+{
+  "allOf": [
+    {
+      "$ref": "#/$defs/inputDef"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "Date"
+        },
+        "default": {
+          "type": "string"
+        }
+      }
+    }
+  ],
+  "unevaluatedProperties": false,
+  "$defs": {
+    "inputDef": {}
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "allOf": [
+    {
+      "$ref": "#/$defs/formItemDef"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "label": {
+          "$ref": "#/$defs/localizedTextDef"
+        },
+        "helpText": {
+          "$ref": "#/$defs/localizedTextDef"
+        },
+        "occurrences": {
+          "$ref": "#/$defs/occurrencesDef"
+        },
+        "attributes": {
+          "$ref": "#/$defs/genericValueDef"
+        }
+      },
+      "required": [
+        "name",
+        "label"
+      ]
+    }
+  ],
+  "$defs": {
+    "formItemDef": {},
+    "localizedTextDef": {},
+    "occurrencesDef": {},
+    "genericValueDef": {}
+  }
+}

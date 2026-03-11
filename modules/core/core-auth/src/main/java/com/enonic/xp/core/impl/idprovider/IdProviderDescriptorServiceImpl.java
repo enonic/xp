@@ -40,7 +40,7 @@ public final class IdProviderDescriptorServiceImpl
     private IdProviderDescriptor loadDescriptor( final ApplicationKey key, final Resource resource )
     {
         final String yaml = resource.readString();
-        jsonSchemaService.validate( "https://json-schema.enonic.com/8.0.0/idprovider-descriptor.schema.json", yaml );
+        jsonSchemaService.validate( "https://json-schema.enonic.com/8.0.0/idprovider.schema.json", yaml );
 
         return YmlIdProviderDescriptorParser.parse( yaml, key ).build();
     }

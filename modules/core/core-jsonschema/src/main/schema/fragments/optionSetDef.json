@@ -1,0 +1,94 @@
+{
+  "allOf": [
+    {
+      "$ref": "#/$defs/formItemDef"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "label": {
+          "$ref": "#/$defs/localizedTextDef"
+        },
+        "expanded": {
+          "type": "boolean"
+        },
+        "helpText": {
+          "$ref": "#/$defs/localizedTextDef"
+        },
+        "occurrences": {
+          "$ref": "#/$defs/occurrencesDef"
+        },
+        "options": {
+          "$ref": "#/$defs/optionSetOptionsDef"
+        },
+        "type": {
+          "const": "OptionSet"
+        }
+      },
+      "required": [
+        "name",
+        "options"
+      ],
+      "additionalProperties": false
+    }
+  ],
+  "$defs": {
+    "localizedTextDef": {},
+    "formItemsDef": {},
+    "occurrencesDef": {},
+    "optionSetOptionsDef": {
+      "type": "object",
+      "properties": {
+        "option": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/optionSetOptionDef"
+          }
+        },
+        "minimum": {
+          "type": "integer"
+        },
+        "maximum": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "minimum",
+        "maximum",
+        "option"
+      ]
+    },
+    "optionSetOptionDef": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "default": {
+          "type": "boolean"
+        },
+        "label": {
+          "$ref": "#/$defs/localizedTextDef"
+        },
+        "helpText": {
+          "$ref": "#/$defs/localizedTextDef"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/formItemsDef"
+          }
+        }
+      },
+      "required": [
+        "name",
+        "label"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

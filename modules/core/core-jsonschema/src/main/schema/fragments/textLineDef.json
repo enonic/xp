@@ -1,0 +1,31 @@
+{
+  "allOf": [
+    {
+      "$ref": "#/$defs/inputDef"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "TextLine"
+        },
+        "maxLength": {
+          "type": "integer"
+        },
+        "regexp": {
+          "type": "string"
+        },
+        "showCounter": {
+          "type": "boolean"
+        },
+        "default": {
+          "type": "string"
+        }
+      }
+    }
+  ],
+  "unevaluatedProperties": false,
+  "$defs": {
+    "inputDef": {}
+  }
+}

@@ -91,7 +91,7 @@ class IdProviderDescriptorServiceTest
         this.service.getDescriptor( ApplicationKey.from( "myapp1" ) );
 
         verify( this.jsonSchemaService ).validate(
-            eq( "https://json-schema.enonic.com/8.0.0/idprovider-descriptor.schema.json" ), anyString() );
+            eq( "https://json-schema.enonic.com/8.0.0/idprovider.schema.json" ), anyString() );
     }
 
     @Test
@@ -133,7 +133,7 @@ class IdProviderDescriptorServiceTest
         serviceWithRealSchema.setResourceService( this.resourceService );
         serviceWithRealSchema.setJsonSchemaService( createRealJsonSchemaService() );
 
-        assertThrows( JsonSchemaValidationException.class,
+        JsonSchemaValidationException ex = assertThrows( JsonSchemaValidationException.class,
                       () -> serviceWithRealSchema.getDescriptor( ApplicationKey.from( "myapp4" ) ) );
     }
 
