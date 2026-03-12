@@ -1,7 +1,7 @@
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 
-def schemaVersion = "8.0.0"
+def schemaVersion = project.version.toString().split( '-' )[0]
 def genResourcesDir = layout.buildDirectory.dir( "generated/resources/schema" )
 
 def fillDefinitions( Object currentElement, Map allFragments, JsonSlurper slurper )
@@ -71,7 +71,7 @@ def generateTask = tasks.register( 'generateJsonSchema' ) {
         templatesDir.listFiles().each { templateFile ->
             if ( templateFile.name.endsWith( ".json" ) )
             {
-                def template = slurper.parse( templateFile )
+                def template = slurper.parseText( templateFile.text.replace( '@schemaVersion@', schemaVersion ) )
 
                 def finalSchema = fillDefinitions( template, allFragments, slurper )
 
@@ -97,4 +97,10 @@ tasks.withType( Jar ).configureEach {
 
 tasks.withType( Test ).configureEach {
     dependsOn( generateJsonSchema )
+}
+
+jar {
+    bundle {
+        bnd( 'Bundle-Name': 'Enonic XP Core - JSON Schemas' )
+    }
 }

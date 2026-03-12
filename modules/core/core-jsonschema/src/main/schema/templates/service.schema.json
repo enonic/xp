@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://json-schema.enonic.com/8.0.0/service.schema.json",
+  "$id": "https://json-schema.enonic.com/@schemaVersion@/service.schema.json",
   "type": "object",
   "properties": {
     "allow": {

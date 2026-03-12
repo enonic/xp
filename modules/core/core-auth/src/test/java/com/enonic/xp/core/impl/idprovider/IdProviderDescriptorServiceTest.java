@@ -133,8 +133,7 @@ class IdProviderDescriptorServiceTest
         serviceWithRealSchema.setResourceService( this.resourceService );
         serviceWithRealSchema.setJsonSchemaService( createRealJsonSchemaService() );
 
-        JsonSchemaValidationException ex = assertThrows( JsonSchemaValidationException.class,
-                      () -> serviceWithRealSchema.getDescriptor( ApplicationKey.from( "myapp4" ) ) );
+        assertThrows( JsonSchemaValidationException.class, () -> serviceWithRealSchema.getDescriptor( ApplicationKey.from( "myapp4" ) ) );
     }
 
     private static JsonSchemaServiceImpl createRealJsonSchemaService()
