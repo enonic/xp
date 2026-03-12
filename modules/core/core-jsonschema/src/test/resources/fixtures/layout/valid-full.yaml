@@ -1,0 +1,9 @@
+displayName: "My Layout"
+description: "Layout description"
+regions:
+  - "main"
+  - "aside"
+form:
+  - type: "TextLine"
+    name: "config"
+    label: "Config"

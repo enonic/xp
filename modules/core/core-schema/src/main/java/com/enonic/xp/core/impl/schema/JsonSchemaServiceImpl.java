@@ -33,6 +33,7 @@ import com.networknt.schema.SchemaRegistry;
 import com.networknt.schema.dialect.Dialects;
 
 import com.enonic.xp.core.internal.json.ObjectMapperHelper;
+import com.enonic.xp.server.VersionInfo;
 
 @Component(immediate = true)
 public class JsonSchemaServiceImpl
@@ -186,7 +187,8 @@ public class JsonSchemaServiceImpl
 
     protected List<URL> loadJsonSchemasFromBundle( final Bundle bundle )
     {
-        final Enumeration<URL> schemaURLs = bundle.findEntries( "/META-INF/schemas/8.0.0", "*.json", true );
+        final String xpVersion = VersionInfo.get().toString().split( "-" )[0];
+        final Enumeration<URL> schemaURLs = bundle.findEntries( "/META-INF/schemas/" + xpVersion, "*.json", true );
         return schemaURLs != null ? Collections.list( schemaURLs ) : Collections.emptyList();
     }
 }

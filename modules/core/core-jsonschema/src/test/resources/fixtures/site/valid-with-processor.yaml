@@ -1,0 +1,3 @@
+processors:
+  - name: "myapp:myprocessor"
+    order: 10

@@ -1,0 +1,3 @@
+apis:
+  - "myapp:api1"
+  - "myapp:api2"

@@ -1,0 +1,8 @@
+displayName: "My Part"
+description: "Part description"
+form:
+  - type: "TextLine"
+    name: "myField"
+    label: "My Field"
+config:
+  key: "value"

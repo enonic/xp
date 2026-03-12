@@ -1,0 +1,306 @@
+displayName: "All Inputs"
+form:
+  - type: "TextLine"
+    name: "textLine"
+    label: "Text Line"
+    helpText:
+      text: "Enter a single line of text"
+      i18n: "form.textLine.helpText"
+    occurrences:
+      min: 0
+      max: 1
+    maxLength: 255
+    regexp: "^[a-z]+$"
+    showCounter: true
+    default: "default value"
+    attributes:
+      placeholder: "Type here"
+
+  - type: "TextArea"
+    name: "textArea"
+    label:
+      text: "Text Area"
+      i18n: "form.textArea.label"
+    helpText: "Enter multiple lines of text"
+    occurrences:
+      min: 1
+      max: 1
+    maxLength: 2000
+    showCounter: false
+    default: "default text"
+    attributes: { }
+
+  - type: "RadioButton"
+    name: "radioButton"
+    label: "Radio Button"
+    helpText:
+      text: "Select one option"
+      i18n: "form.radioButton.helpText"
+    occurrences:
+      min: 1
+      max: 1
+    options:
+      - value: "a"
+        label: "Option A"
+      - value: "b"
+        label:
+          text: "Option B"
+          i18n: "form.radioButton.optionB"
+    default: "a"
+    attributes: { }
+
+  - type: "CheckBox"
+    name: "checkBox"
+    label:
+      text: "Check Box"
+      i18n: "form.checkBox.label"
+    helpText: "Check to enable"
+    occurrences:
+      min: 0
+      max: 1
+    alignment: "left"
+    default: "checked"
+    attributes: { }
+
+  - type: "AttachmentUploader"
+    name: "attachmentUploader"
+    label: "Attachment Uploader"
+    helpText:
+      text: "Upload a file"
+      i18n: "form.attachmentUploader.helpText"
+    occurrences:
+      min: 0
+      max: 5
+    default: "file.pdf"
+    attributes: { }
+
+  - type: "ComboBox"
+    name: "comboBox"
+    label:
+      text: "Combo Box"
+      i18n: "form.comboBox.label"
+    helpText: "Select or type a value"
+    occurrences:
+      min: 0
+      max: 1
+    options:
+      - value: "x"
+        label: "Option X"
+      - value: "y"
+        label:
+          text: "Option Y"
+          i18n: "form.comboBox.optionY"
+    default: "x"
+    attributes: { }
+
+  - type: "ContentSelector"
+    name: "contentSelector"
+    label: "Content Selector"
+    helpText:
+      text: "Select a content item"
+      i18n: "form.contentSelector.helpText"
+    occurrences:
+      min: 0
+      max: 3
+    allowContentType:
+      - "myapp:article"
+      - "myapp:blog"
+    allowPath:
+      - "/articles/*"
+    treeMode: true
+    hideToggleIcon: false
+    default: "/articles/default"
+    attributes: { }
+
+  - type: "ContentTypeFilter"
+    name: "contentTypeFilter"
+    label:
+      text: "Content Type Filter"
+      i18n: "form.contentTypeFilter.label"
+    helpText: "Filter by content type"
+    occurrences:
+      min: 0
+      max: 1
+    context: true
+    default: "myapp:article"
+    attributes: { }
+
+  - type: "CustomSelector"
+    name: "customSelector"
+    label: "Custom Selector"
+    helpText:
+      text: "Select a custom item"
+      i18n: "form.customSelector.helpText"
+    occurrences:
+      min: 0
+      max: 1
+    service: "myapp:myservice"
+    params:
+      category: "news"
+      lang: "en"
+    galleryMode: true
+    default: "item-1"
+    attributes: { }
+
+  - type: "Date"
+    name: "date"
+    label:
+      text: "Date"
+      i18n: "form.date.label"
+    helpText: "Pick a date"
+    occurrences:
+      min: 0
+      max: 1
+    default: "2024-01-01"
+    attributes: { }
+
+  - type: "DateTime"
+    name: "dateTime"
+    label: "Date Time"
+    helpText:
+      text: "Pick a date and time"
+      i18n: "form.dateTime.helpText"
+    occurrences:
+      min: 0
+      max: 1
+    default: "2024-01-01T12:00:00"
+    attributes: { }
+
+  - type: "Double"
+    name: "double"
+    label:
+      text: "Double"
+      i18n: "form.double.label"
+    helpText: "Enter a decimal number"
+    occurrences:
+      min: 0
+      max: 1
+    min: 0.0
+    max: 100.0
+    default: 42.5
+    attributes: { }
+
+  - type: "GeoPoint"
+    name: "geoPoint"
+    label: "Geo Point"
+    helpText:
+      text: "Enter coordinates"
+      i18n: "form.geoPoint.helpText"
+    occurrences:
+      min: 0
+      max: 1
+    default: "59.9139,10.7522"
+    attributes: { }
+
+  - type: "HtmlArea"
+    name: "htmlArea"
+    label:
+      text: "Html Area"
+      i18n: "form.htmlArea.label"
+    helpText: "Enter rich text content"
+    occurrences:
+      min: 0
+      max: 1
+    exclude: "Code"
+    include: "Bold Italic"
+    allowHeadings: "h2 h3"
+    default: "<p>Default content</p>"
+    attributes: { }
+
+  - type: "ImageSelector"
+    name: "imageSelector"
+    label: "Image Selector"
+    helpText:
+      text: "Select an image"
+      i18n: "form.imageSelector.helpText"
+    occurrences:
+      min: 0
+      max: 1
+    allowPath:
+      - "/images/*"
+    treeMode: false
+    hideToggleIcon: true
+    default: "/images/default.jpg"
+    attributes: { }
+
+  - type: "Instant"
+    name: "instant"
+    label:
+      text: "Instant"
+      i18n: "form.instant.label"
+    helpText: "Enter an instant in time"
+    occurrences:
+      min: 0
+      max: 1
+    default: "2024-01-01T12:00:00Z"
+    attributes: { }
+
+  - type: "Long"
+    name: "long"
+    label: "Long"
+    helpText:
+      text: "Enter a whole number"
+      i18n: "form.long.helpText"
+    occurrences:
+      min: 0
+      max: 1
+    min: 0
+    max: 1000
+    default: 42
+    attributes: { }
+
+  - type: "MediaSelector"
+    name: "mediaSelector"
+    label:
+      text: "Media Selector"
+      i18n: "form.mediaSelector.label"
+    helpText: "Select a media file"
+    occurrences:
+      min: 0
+      max: 1
+    allowContentType:
+      - "media:image"
+      - "media:video"
+    allowPath:
+      - "/media/*"
+    treeMode: true
+    hideToggleIcon: false
+    default: "/media/default.mp4"
+    attributes: { }
+
+  - type: "PrincipalSelector"
+    name: "principalSelector"
+    label: "Principal Selector"
+    helpText:
+      text: "Select a user or group"
+      i18n: "form.principalSelector.helpText"
+    occurrences:
+      min: 0
+      max: 1
+    principalType: "USER"
+    default: "user:system:admin"
+    attributes: { }
+
+  - type: "Tag"
+    name: "tag"
+    label:
+      text: "Tag"
+      i18n: "form.tag.label"
+    helpText: "Add tags"
+    occurrences:
+      min: 0
+      max: 0
+    attributes:
+      allowSpaces: "false"
+
+  - type: "Time"
+    name: "time"
+    label: "Time"
+    helpText:
+      text: "Enter a time"
+      i18n: "form.time.helpText"
+    occurrences:
+      min: 0
+      max: 1
+    default: "12:00"
+    attributes: { }

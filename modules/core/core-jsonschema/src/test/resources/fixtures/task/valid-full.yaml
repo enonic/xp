@@ -1,0 +1,5 @@
+description: "My Task"
+form:
+  - type: "TextLine"
+    name: "param"
+    label: "Parameter"

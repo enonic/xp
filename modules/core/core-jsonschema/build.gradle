@@ -12,7 +12,7 @@ def fillDefinitions( Object currentElement, Map allFragments, JsonSlurper slurpe
         {
             // Iterate over a snapshot of the keys — inner $defs may add new keys during the process
             currentElement.'$defs'.keySet().toList().each { key ->
-                def fragment = allFragments.find { it.key.equalsIgnoreCase( key ) }?.value
+                def fragment = allFragments.find { it.key == key  }?.value
                 if ( fragment )
                 {
                     // Clone via JSON round-trip to avoid mutating the original in allFragments
@@ -97,6 +97,12 @@ tasks.withType( Jar ).configureEach {
 
 tasks.withType( Test ).configureEach {
     dependsOn( generateJsonSchema )
+}
+
+dependencies {
+    testImplementation libs.networknt.jsv
+    testImplementation libs.jackson.dataformat.yaml
+    testImplementation libs.jackson.databind
 }
 
 jar {
