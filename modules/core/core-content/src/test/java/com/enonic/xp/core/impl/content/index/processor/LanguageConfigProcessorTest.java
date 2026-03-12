@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.content.index.processor;
 
+import java.util.Locale;
+
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.index.IndexConfig;
@@ -16,20 +18,20 @@ public class LanguageConfigProcessorTest
     public void test_language_set_adds_display_name_config()
     {
         final PatternIndexConfigDocument result =
-            new LanguageConfigProcessor( "en" ).processDocument( PatternIndexConfigDocument.create().build() );
+            new LanguageConfigProcessor( Locale.ENGLISH ).processDocument( PatternIndexConfigDocument.create().build() );
 
         final IndexConfig config = result.getConfigForPath( IndexPath.from( DISPLAY_NAME ) );
 
-        assertTrue( config.getLanguages().contains( "en" ) );
+        assertTrue( config.getLanguages().contains( Locale.ENGLISH ) );
     }
 
     @Test
     public void test_language_set_adds_alltext_language()
     {
         final PatternIndexConfigDocument result =
-            new LanguageConfigProcessor( "en" ).processDocument( PatternIndexConfigDocument.create().build() );
+            new LanguageConfigProcessor( Locale.ENGLISH ).processDocument( PatternIndexConfigDocument.create().build() );
 
-        assertTrue( result.getAllTextConfig().getLanguages().contains( "en" ) );
+        assertTrue( result.getAllTextConfig().getLanguages().contains( Locale.ENGLISH ) );
     }
 
     @Test
@@ -41,17 +43,5 @@ public class LanguageConfigProcessorTest
         final IndexConfig config = result.getConfigForPath( IndexPath.from( DISPLAY_NAME ) );
 
         assertEquals( result.getDefaultConfig(), config );
-    }
-
-    @Test
-    public void test_blank_language_skips_display_name_config()
-    {
-        final PatternIndexConfigDocument input = PatternIndexConfigDocument.create().build();
-        final PatternIndexConfigDocument result = new LanguageConfigProcessor( "" ).processDocument( input );
-
-        final IndexConfig config = result.getConfigForPath( IndexPath.from( DISPLAY_NAME ) );
-
-        assertEquals( result.getDefaultConfig(), config );
-        assertTrue( result.getAllTextConfig().getLanguages().isEmpty() );
     }
 }

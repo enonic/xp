@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.node.json;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -55,7 +56,7 @@ public final class IndexConfigJson
         }
         if ( !config.getLanguages().isEmpty() )
         {
-            json.languages = new ArrayList<>( config.getLanguages() );
+            json.languages = config.getLanguages().stream().map( Locale::toLanguageTag ).collect( toList() );
         }
         return json;
     }
@@ -82,7 +83,7 @@ public final class IndexConfigJson
         {
             for ( final String language : this.languages )
             {
-                builder.addLanguage( language );
+                builder.addLanguage( Locale.forLanguageTag( language ) );
             }
         }
 

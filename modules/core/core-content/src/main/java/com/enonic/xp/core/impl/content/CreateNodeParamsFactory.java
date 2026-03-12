@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.Locale;
 import java.util.Objects;
 
 import com.enonic.xp.attachment.CreateAttachment;
@@ -94,7 +95,7 @@ public class CreateNodeParamsFactory
 
         if ( !nullToEmpty( language ).isBlank() )
         {
-            indexConfigFactoryBuilder.language( language );
+            indexConfigFactoryBuilder.language( Locale.forLanguageTag( language ) );
         }
 
         final IndexConfigDocument indexConfigDocument = indexConfigFactoryBuilder.build().produce();

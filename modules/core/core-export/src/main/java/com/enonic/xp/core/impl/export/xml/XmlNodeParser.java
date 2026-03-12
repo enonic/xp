@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import com.enonic.xp.core.impl.export.xml.parser.XmlObjectParser;
@@ -293,7 +294,7 @@ public final class XmlNodeParser
         {
             for ( DomElement language : languages.getChildren() )
             {
-                builder.addLanguage( language.getValue() );
+                builder.addLanguage( Locale.forLanguageTag( language.getValue() ) );
             }
         }
 
@@ -330,7 +331,9 @@ public final class XmlNodeParser
 
         final AllTextIndexConfig.Builder allTextBuilder = AllTextIndexConfig.create();
 
-        parseAllTextIndexConfigLanguages( root.getChild( "languages" ) ).forEach( allTextBuilder::addLanguage );
+        parseAllTextIndexConfigLanguages( root.getChild( "languages" ) ).stream()
+            .map( Locale::forLanguageTag )
+            .forEach( allTextBuilder::addLanguage );
 
         final Boolean enabled = root.getChildValueAs( "enabled", Boolean.class, null );
         if ( enabled != null )

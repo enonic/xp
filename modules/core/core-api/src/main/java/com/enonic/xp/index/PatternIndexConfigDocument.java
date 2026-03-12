@@ -12,9 +12,11 @@ import com.enonic.xp.util.GlobPatternMatcher;
 
 
 public final class PatternIndexConfigDocument
-    extends AbstractIndexConfigDocument
+    implements IndexConfigDocument
 {
     private static final PatternIndexConfigDocument EMPTY = PatternIndexConfigDocument.create().build();
+
+    private final String analyzer;
 
     private final ImmutableSortedSet<PathIndexConfig> pathIndexConfigs;
 
@@ -31,10 +33,10 @@ public final class PatternIndexConfigDocument
 
     private PatternIndexConfigDocument( final Builder builder )
     {
-        super( builder );
+        this.analyzer = builder.analyzer;
         this.pathIndexConfigs = ImmutableSortedSet.copyOf( builder.pathIndexConfigs );
         this.pathIndexConfigMap =
-            builder.pathIndexConfigs.stream().collect( ImmutableMap.toImmutableMap( pic -> pic.getIndexPath(), Function.identity() ) );
+            builder.pathIndexConfigs.stream().collect( ImmutableMap.toImmutableMap( PathIndexConfig::getIndexPath, Function.identity() ) );
         this.defaultConfig = builder.defaultConfig;
         this.allTextConfig = builder.allTextIndexConfig.build();
     }
@@ -52,6 +54,12 @@ public final class PatternIndexConfigDocument
     public static PatternIndexConfigDocument empty()
     {
         return EMPTY;
+    }
+
+    @Override
+    public String getAnalyzer()
+    {
+        return this.analyzer;
     }
 
     public SortedSet<PathIndexConfig> getPathIndexConfigs()
@@ -119,8 +127,9 @@ public final class PatternIndexConfigDocument
     }
 
     public static final class Builder
-        extends AbstractIndexConfigDocument.Builder<Builder>
     {
+        private String analyzer;
+
         private SortedSet<PathIndexConfig> pathIndexConfigs = new TreeSet<>();
 
         private IndexConfig defaultConfig = IndexConfig.BY_TYPE;
@@ -136,6 +145,12 @@ public final class PatternIndexConfigDocument
             this.pathIndexConfigs = new TreeSet<>( source.pathIndexConfigs );
             this.defaultConfig = IndexConfig.create( source.defaultConfig ).build();
             this.allTextIndexConfig = AllTextIndexConfig.create( source.allTextConfig );
+        }
+
+        public Builder analyzer( final String analyzer )
+        {
+            this.analyzer = analyzer;
+            return this;
         }
 
         public Builder add( final String path, final IndexConfig indexConfig )
