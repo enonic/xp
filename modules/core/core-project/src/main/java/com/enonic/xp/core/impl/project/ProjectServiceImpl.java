@@ -39,7 +39,6 @@ import com.enonic.xp.core.impl.project.init.ArchiveInitializer;
 import com.enonic.xp.core.impl.project.init.ContentInitializer;
 import com.enonic.xp.core.impl.project.init.ContentRepoInitializer;
 import com.enonic.xp.core.impl.project.init.IssueInitializer;
-import com.enonic.xp.core.impl.project.init.Xp8DefaultProjectMigrator;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
@@ -124,12 +123,6 @@ public class ProjectServiceImpl
                                              .description( projectData.getString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY ) )
                                              .build(), null );
             } );
-
-            if ( repositories.stream()
-                .anyMatch( repository -> repository.getId().equals( Xp8DefaultProjectMigrator.DEFAULT_PROJECT_NAME.getRepoId() ) ) )
-            {
-                new Xp8DefaultProjectMigrator( nodeService, securityService, indexService ).migrate();
-            }
         } );
     }
 
