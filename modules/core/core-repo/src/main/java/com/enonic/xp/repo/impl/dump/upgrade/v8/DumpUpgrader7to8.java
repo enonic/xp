@@ -3,11 +3,13 @@ package com.enonic.xp.repo.impl.dump.upgrade.v8;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.zip.GZIPInputStream;
 
@@ -47,6 +49,7 @@ import com.enonic.xp.repo.impl.node.NodeConstants;
 import com.enonic.xp.repo.impl.node.json.NodeVersionJsonSerializer;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositorySegmentUtils;
+import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.server.VersionInfo;
 import com.enonic.xp.util.Version;
 
@@ -65,7 +68,7 @@ public class DumpUpgrader7to8
 
     private final Map<String, String> blobKeyMapping = new HashMap<>();
 
-    public DumpUpgrader7to8(final FileDumpReaderV7 dumpReader)
+    public DumpUpgrader7to8( final FileDumpReaderV7 dumpReader )
     {
         this.dumpReader = dumpReader;
     }
@@ -82,7 +85,8 @@ public class DumpUpgrader7to8
             .upgradedVersion( getModelVersion() )
             .stepName( getName() );
 
-        dumpWriter.writeDumpMetaData( DumpMeta.create( sourceDumpMeta ).xpVersion( VersionInfo.get().getVersion() ).modelVersion( getModelVersion() ).build() );
+        dumpWriter.writeDumpMetaData(
+            DumpMeta.create( sourceDumpMeta ).xpVersion( VersionInfo.get().getVersion() ).modelVersion( getModelVersion() ).build() );
 
         this.dumpReader.getRepositories().forEach( this::upgradeRepository );
         return result.build();
@@ -102,9 +106,15 @@ public class DumpUpgrader7to8
         {
             upgradeCommitEntries( repositoryId, commitsFile );
         }
+
+        final List<AdditionalDumpEntry> additionalEntries = createAdditionalNodes( repositoryId );
+
         for ( Branch branch : dumpReader.getBranches( repositoryId ) )
         {
-            upgradeBranch( repositoryId, branch );
+            final List<BranchDumpEntryJson> additionalBranchEntries =
+                additionalEntries.stream().filter( e -> e.branches().contains( branch ) ).map( AdditionalDumpEntry::branchEntry ).toList();
+
+            upgradeBranch( repositoryId, branch, additionalBranchEntries );
         }
     }
 
@@ -150,12 +160,13 @@ public class DumpUpgrader7to8
         }
     }
 
-    protected void upgradeBranch( final RepositoryId repositoryId, final Branch branch )
+    protected void upgradeBranch( final RepositoryId repositoryId, final Branch branch,
+                                  final List<BranchDumpEntryJson> additionalBranchEntries )
     {
         final Path entriesFile = dumpReader.getBranchEntriesFile( repositoryId, branch );
         if ( Files.exists( entriesFile ) )
         {
-            upgradeBranchEntries( repositoryId, branch, entriesFile );
+            upgradeBranchEntries( repositoryId, branch, entriesFile, additionalBranchEntries );
         }
         else
         {
@@ -220,7 +231,8 @@ public class DumpUpgrader7to8
         return result;
     }
 
-    protected void upgradeBranchEntries( final RepositoryId repositoryId, final Branch branch, final Path entriesFile )
+    protected void upgradeBranchEntries( final RepositoryId repositoryId, final Branch branch, final Path entriesFile,
+                                         final List<BranchDumpEntryJson> additionalBranchEntries )
     {
         dumpWriter.openBranchMeta( repositoryId, branch );
         try
@@ -240,6 +252,11 @@ public class DumpUpgrader7to8
                     LOG.error( "Error while upgrading branch entry [{}]", entryName, e );
                 }
             }, entriesFile );
+
+            for ( BranchDumpEntryJson additionalEntry : additionalBranchEntries )
+            {
+                dumpWriter.writeRawMetaEntry( serialize( additionalEntry ), additionalEntry.getNodeId() + ".json" );
+            }
         }
         finally
         {
@@ -370,6 +387,63 @@ public class DumpUpgrader7to8
         }
     }
 
+    private List<AdditionalDumpEntry> createAdditionalNodes( final RepositoryId repositoryId )
+    {
+        final List<NewDumpNode> additionalNodes =
+            SystemConstants.SYSTEM_REPO_ID.equals( repositoryId ) ? new DefaultProjectRolesCreator().createRoleNodes() : List.of();
+        if ( additionalNodes.isEmpty() )
+        {
+            return List.of();
+        }
+
+        final Segment nodeSegment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.NODE_SEGMENT_LEVEL );
+        final Segment indexConfigSegment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.INDEX_CONFIG_SEGMENT_LEVEL );
+        final Segment accessControlSegment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.ACCESS_CONTROL_SEGMENT_LEVEL );
+
+        final List<AdditionalDumpEntry> additionalEntries = new ArrayList<>();
+
+        dumpWriter.openVersionsMeta( repositoryId );
+        try
+        {
+            for ( NewDumpNode newNode : additionalNodes )
+            {
+                final BlobKey nodeBlobKey =
+                    writeNodeStoreVersionBlob( newNode.nodeVersion(), nodeSegment, NodeVersionJsonSerializer::toNodeVersionBytes );
+                final BlobKey indexConfigBlobKey = writeNodeStoreVersionBlob( newNode.nodeVersion(), indexConfigSegment,
+                                                                              NodeVersionJsonSerializer::toIndexConfigDocumentBytes );
+                final BlobKey accessControlBlobKey = writeNodeStoreVersionBlob( newNode.nodeVersion(), accessControlSegment,
+                                                                                NodeVersionJsonSerializer::toAccessControlBytes );
+
+                final VersionDumpEntryJson versionEntry = VersionDumpEntryJson.create()
+                    .nodePath( newNode.nodePath() )
+                    .timestamp( Instant.now().toString() )
+                    .version( UUID.randomUUID().toString() )
+                    .nodeBlobKey( nodeBlobKey.toString() )
+                    .indexConfigBlobKey( indexConfigBlobKey.toString() )
+                    .accessControlBlobKey( accessControlBlobKey.toString() )
+                    .build();
+
+                final VersionsDumpEntryJson versionsEntry =
+                    VersionsDumpEntryJson.create().nodeId( newNode.nodeId() ).version( versionEntry ).build();
+
+                dumpWriter.writeRawMetaEntry( serialize( versionsEntry ), newNode.nodeId() + ".json" );
+
+                final BranchDumpEntryJson branchEntry =
+                    BranchDumpEntryJson.create().nodeId( newNode.nodeId() ).meta( versionEntry ).build();
+
+                additionalEntries.add( new AdditionalDumpEntry( branchEntry, newNode.branches() ) );
+
+                LOG.info( "Created additional node [{}] at [{}] in repository [{}]", newNode.nodeId(), newNode.nodePath(), repositoryId );
+            }
+        }
+        finally
+        {
+            dumpWriter.closeMeta();
+        }
+
+        return additionalEntries;
+    }
+
     @FunctionalInterface
     private interface NodeStoreVersionSerializer
     {
@@ -381,8 +455,8 @@ public class DumpUpgrader7to8
     protected @Nullable NodeStoreVersion upgradeNodeVersion( RepositoryId repositoryId, final NodeStoreVersion nodeVersion )
     {
         NodeStoreVersion result = nodeVersion;
-        for ( NodeVersionUpgrader upgrader : List.of( new ContentUpgrader(), new AuditLogMillisUpgrader(),
-                                                      new SchedulerUpgrader(), new ReferenceLowercaseUpgrader() ) )
+        for ( NodeVersionUpgrader upgrader : List.of( new ContentUpgrader(), new AuditLogMillisUpgrader(), new SchedulerUpgrader(),
+                                                      new ReferenceLowercaseUpgrader(), new DefaultProjectPermissionsUpgrader() ) )
         {
             final NodeStoreVersion upgraded = upgrader.upgradeNodeVersion( repositoryId, nodeVersion );
             if ( upgraded != null )
