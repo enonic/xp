@@ -1,5 +1,7 @@
 package com.enonic.xp.core.node;
 
+import java.util.Locale;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -40,7 +42,7 @@ class FindNodesByQueryCommandTest_func_stemmed
             data( data ).
             indexConfigDocument( PatternIndexConfigDocument.create().
                 analyzer( NodeConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER ).
-                defaultConfig( IndexConfig.BY_TYPE ).allTextConfig( AllTextIndexConfig.create().addLanguage( "no" ).build() ).
+                defaultConfig( IndexConfig.BY_TYPE ).allTextConfig( AllTextIndexConfig.create().addLanguage( Locale.forLanguageTag( "no" ) ).build() ).
                 build() ).
             build() );
 

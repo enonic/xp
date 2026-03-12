@@ -12,7 +12,7 @@ public class IndexLanguageController
         .put( "hy", "armenian" )
         .put( "eu", "basque" )
         .put( "bn", "bengali" )
-        .put( "pt-br", "brazilian" )
+        .put( "pt-BR", "brazilian" )
         .put( "bg", "bulgarian" )
         .put( "ca", "catalan" )
         .put( "zh", "cjk" )
@@ -65,22 +65,22 @@ public class IndexLanguageController
         ORDERBY_VALUE_TYPES = orderbyBuilder.build();
     }
 
-    private static String normalize( final String language )
+    private static String normalize( final Locale language )
     {
-        return language == null ? null : language.toLowerCase( Locale.ROOT );
+        return language == null ? null : language.toLanguageTag();
     }
 
-    public static boolean isSupported( final String language )
+    public static boolean isSupported( final Locale language )
     {
         return LANGUAGE_TO_ANALYZER.containsKey( normalize( language ) );
     }
 
-    public static String resolveAnalyzer( final String language )
+    public static String resolveAnalyzer( final Locale language )
     {
         return LANGUAGE_TO_ANALYZER.get( normalize( language ) );
     }
 
-    public static StemmedIndexValueType resolveStemmedIndexValueType( final String language )
+    public static StemmedIndexValueType resolveStemmedIndexValueType( final Locale language )
     {
         final StemmedIndexValueType type = STEMMED_VALUE_TYPES.get( normalize( language ) );
         if ( type == null )
@@ -90,7 +90,7 @@ public class IndexLanguageController
         return type;
     }
 
-    public static OrderByIndexValueType resolveOrderByIndexValueType( final String language )
+    public static OrderByIndexValueType resolveOrderByIndexValueType( final Locale language )
     {
         final OrderByIndexValueType type = ORDERBY_VALUE_TYPES.get( normalize( language ) );
         if ( type == null )

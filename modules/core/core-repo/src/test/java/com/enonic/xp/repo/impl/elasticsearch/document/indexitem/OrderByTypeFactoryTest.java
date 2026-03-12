@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.elasticsearch.document.indexitem;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.junit.jupiter.api.Test;
 
@@ -25,7 +26,7 @@ class OrderByTypeFactoryTest
     @Test
     void create_returns_orderby_plus_language_item_for_supported_language()
     {
-        final IndexConfig config = IndexConfig.create().enabled( true ).addLanguage( "en" ).build();
+        final IndexConfig config = IndexConfig.create().enabled( true ).addLanguage( Locale.ENGLISH ).build();
         final List<IndexItem<?>> items =
             IndexItemFactory.createOrderBy( IndexPath.from( "myProp" ), ValueFactory.newString( "hello" ), config );
         // base _orderby item + one language-specific item
@@ -35,7 +36,7 @@ class OrderByTypeFactoryTest
     @Test
     void create_throws_for_unsupported_language()
     {
-        final IndexConfig config = IndexConfig.create().enabled( true ).addLanguage( "xyz" ).build();
+        final IndexConfig config = IndexConfig.create().enabled( true ).addLanguage(Locale.forLanguageTag( "xyz") ).build();
         assertThrows( IllegalArgumentException.class,
                       () -> IndexItemFactory.createOrderBy( IndexPath.from( "myProp" ), ValueFactory.newString( "hello" ), config ) );
     }
@@ -43,7 +44,7 @@ class OrderByTypeFactoryTest
     @Test
     void create_accepts_pt_BR_case_insensitive()
     {
-        final IndexConfig config = IndexConfig.create().enabled( true ).addLanguage( "pt-BR" ).build();
+        final IndexConfig config = IndexConfig.create().enabled( true ).addLanguage( Locale.forLanguageTag( "pt-BR") ).build();
         final List<IndexItem<?>> items =
             IndexItemFactory.createOrderBy( IndexPath.from( "myProp" ), ValueFactory.newString( "hello" ), config );
         assertEquals( 2, items.size() );

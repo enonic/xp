@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeSet;
@@ -935,12 +936,11 @@ class DumpServiceImplTest
     private void checkLanguageUpgrade( final Node draftNode )
     {
         final IndexConfig indexConfigBefore = draftNode.getIndexConfigDocument().getConfigForPath( IndexPath.from( "language" ) );
-        final List<String> languages = draftNode.getIndexConfigDocument().getAllTextConfig().getLanguages();
+        final List<Locale> languages = draftNode.getIndexConfigDocument().getAllTextConfig().getLanguages();
 
         assertEquals( IndexConfig.NGRAM, indexConfigBefore );
 
-        assertEquals( 1, languages.size() );
-        assertEquals( "no", languages.get( 0 ) );
+        assertThat( languages ).containsExactly( Locale.forLanguageTag( "no" ) );
     }
 
     private Path createIncompatibleDump( final String dumpName )

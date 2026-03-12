@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.function;
 
 import java.util.List;
+import java.util.Locale;
 
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.SearchQueryFieldNameResolver;
@@ -9,7 +10,7 @@ import com.enonic.xp.repo.impl.index.IndexLanguageController;
 public class StemmedFunctionArguments
     extends AbstractSimpleQueryStringFunctionArguments
 {
-    private String language;
+    private Locale language;
 
     StemmedFunctionArguments( final List<ValueExpr> arguments )
     {
@@ -19,7 +20,7 @@ public class StemmedFunctionArguments
     @Override
     protected String resolveAnalyzer( final String language )
     {
-        this.language = language;
+        this.language = Locale.forLanguageTag( language );
         return IndexLanguageController.resolveAnalyzer( this.language );
     }
 

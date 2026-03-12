@@ -1,5 +1,7 @@
 package com.enonic.xp.lib.node;
 
+import java.util.Locale;
+
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.ValueTypes;
@@ -133,7 +135,7 @@ public class IndexConfigFactory
 
         for ( final String language : languages )
         {
-            builder.addLanguage( language );
+            builder.addLanguage( Locale.forLanguageTag( language ) );
         }
 
         return builder.build();
@@ -184,7 +186,7 @@ public class IndexConfigFactory
 
         for ( final String language : languages )
         {
-            allTextBuilder.addLanguage( language );
+            allTextBuilder.addLanguage( Locale.forLanguageTag( language ) );
         }
 
         builder.allTextConfig( allTextBuilder.build() );

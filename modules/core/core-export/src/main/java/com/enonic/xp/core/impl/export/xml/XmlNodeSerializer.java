@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Locale;
 
 import com.enonic.xp.core.impl.export.xml.schema.SchemaNamespaces;
 import com.enonic.xp.data.Property;
@@ -84,11 +85,7 @@ public final class XmlNodeSerializer
 
     private void serialize( final AccessControlList value )
     {
-        PermissionsXmlSerializer.create().
-            domBuilder( this.builder ).
-            accessControlList( value ).
-            build().
-            serialize();
+        PermissionsXmlSerializer.create().domBuilder( this.builder ).accessControlList( value ).build().serialize();
     }
 
 
@@ -142,10 +139,7 @@ public final class XmlNodeSerializer
         if ( !value.getLanguages().isEmpty() )
         {
             this.builder.start( "languages" );
-            for ( String language : value.getLanguages() )
-            {
-                serializeValueElement( "language", language );
-            }
+            value.getLanguages().stream().map( Locale::toLanguageTag ).forEach( language -> serializeValueElement( "language", language ) );
             this.builder.end();
         }
     }

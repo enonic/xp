@@ -1,5 +1,7 @@
 package com.enonic.xp.lib.node.mapper;
 
+import java.util.Locale;
+
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.index.AllTextIndexConfig;
@@ -24,7 +26,7 @@ class IndexConfigDocMapperTest
             add( "property1.*", IndexConfig.BY_TYPE ).
             add( "property1.x", IndexConfig.BY_TYPE ).
             add( "property1.property2", IndexConfig.BY_TYPE ).
-            add( "property1.*.property3", IndexConfig.create( IndexConfig.BY_TYPE ).addLanguage( "en" ).build() ).
+            add( "property1.*.property3", IndexConfig.create( IndexConfig.BY_TYPE ).addLanguage( Locale.ENGLISH ).build() ).
             build();
 
         JsonAssert.assertMapper( getClass(), "index_config_full.json", new IndexConfigDocMapper( doc ) );
@@ -39,8 +41,8 @@ class IndexConfigDocMapperTest
                                 .enabled( false )
                                 .nGram( false )
                                 .fulltext( true )
-                                .addLanguage( "en" )
-                                .addLanguage( "no" )
+                                .addLanguage( Locale.ENGLISH )
+                                .addLanguage( Locale.forLanguageTag( "no" ) )
                                 .build() )
             .build();
 
