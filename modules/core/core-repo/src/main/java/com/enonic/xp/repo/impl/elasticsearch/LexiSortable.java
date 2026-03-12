@@ -1,7 +1,14 @@
 package com.enonic.xp.repo.impl.elasticsearch;
 
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+
 final class LexiSortable
 {
+    private static final DateTimeFormatter FULL_DATE_FORMAT =
+        DateTimeFormatter.ofPattern( "yyyy-MM-dd'T'HH:mm:ss.SSSSSSX" ).withZone( ZoneOffset.UTC );
+
     private static final char[] HEX_DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
     private static final int LEXI_STRING_LEN = 17;
@@ -34,5 +41,10 @@ final class LexiSortable
     {
         long tmp = Double.doubleToRawLongBits( d );
         return toHexString( 'd', ( tmp < 0 ) ? ~tmp : ( tmp ^ SIGN_MASK ) );
+    }
+
+    static String toLexiSortable( final Instant instant )
+    {
+        return FULL_DATE_FORMAT.format( instant );
     }
 }

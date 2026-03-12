@@ -13,7 +13,7 @@ import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.index.IndexValueProcessor;
 import com.enonic.xp.node.NodeIndexPath;
-import com.enonic.xp.repo.impl.elasticsearch.OrderbyValueResolver;
+import com.enonic.xp.repo.impl.elasticsearch.OrderByValueResolver;
 import com.enonic.xp.repo.impl.index.IndexLanguageController;
 import com.enonic.xp.repo.impl.index.IndexValueType;
 
@@ -130,7 +130,7 @@ public class IndexItemFactory
     {
         final List<IndexItem<?>> items = new ArrayList<>();
 
-        final var orderByValue = OrderbyValueResolver.getOrderbyValue( propertyValue );
+        final var orderByValue = OrderByValueResolver.getOrderByValue( propertyValue );
 
         items.add( new IndexItem<>( indexPath, orderByValue, IndexValueType.ORDERBY ) );
 
