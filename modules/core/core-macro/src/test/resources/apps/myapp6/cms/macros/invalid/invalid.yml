@@ -1,0 +1,23 @@
+form:
+  - type: "OptionSet"
+    name: "radioOptionSet"
+    label:
+      text: "Single selection"
+    helpText:
+      text: "Help Text"
+    expanded: false
+    selected:
+      min: 1
+      max: 1
+    options:
+      - name: "option_1"
+        label: "Option 1"
+        defaultOption: false
+        items:
+          - type: "TextLine"
+            name: "text-input"
+            label: "Name"
+      - name: "option_2"
+        label:
+          text: "Option 2"
+        defaultOption: true

@@ -12,7 +12,9 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.descriptor.DescriptorKeyLocator;
+import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.Form;
+import com.enonic.xp.form.FormItem;
 import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.macro.MacroDescriptorService;
 import com.enonic.xp.macro.MacroDescriptors;
@@ -147,7 +149,26 @@ public final class MacroDescriptorServiceImpl
         final Instant modifiedTime = Instant.ofEpochMilli( resource.getTimestamp() );
         builder.modifiedTime( modifiedTime );
 
-        return builder.build();
+        final MacroDescriptor macroDescriptor = builder.build();
+        validateFormItems( macroDescriptor.getForm() );
+        return macroDescriptor;
+    }
+
+    private static void validateFormItems( final Iterable<FormItem> formItems )
+    {
+        for ( FormItem item : formItems )
+        {
+            switch ( item.getType() )
+            {
+                case FORM_FRAGMENT, FORM_OPTION_SET, FORM_ITEM_SET:
+                    throw new IllegalArgumentException(
+                        "MacroDescriptor form cannot contain FormFragment, OptionSet and ItemSet: " + item.getName() );
+                case LAYOUT:
+                    validateFormItems( (FieldSet) item );
+                default:
+                    break;
+            }
+        }
     }
 
     private MacroDescriptor createDefaultDescriptor( final MacroKey key )

@@ -1,0 +1,4 @@
+mode: "LOCAL"
+form:
+  - type: "FormFragment"
+    name: "my-fragment"
