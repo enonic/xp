@@ -1,6 +1,8 @@
 package com.enonic.xp.portal.impl.handler.mapping;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
@@ -21,6 +23,7 @@ import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
+import com.enonic.xp.site.mapping.FilterMode;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.HttpMethod;
@@ -158,16 +161,48 @@ class MappingHandlerHelper
                                          final ControllerMappingDescriptor mapping )
         throws Exception
     {
-        final MappingFilterHandlerWorker worker = new MappingFilterHandlerWorker( request, response, webHandlerChain );
-        worker.mappingDescriptor = mapping;
-        worker.resourceService = this.resourceService;
-        worker.filterScriptFactory = this.filterScriptFactory;
-        final Trace trace = Tracer.newTrace( "filter" );
-        if ( trace == null )
+        // Check if this filter should execute in CHAIN mode
+        if ( FilterMode.CHAIN.equals( mapping.getFilterMode() ) )
         {
-            return worker.execute();
+            // Get all matching filters (includes current one)
+            final List<ControllerMappingDescriptor> allMatchingFilters =
+                controllerMappingsResolver.resolveAll( PortalRequestHelper.getSiteRelativePath( request ), request.getParams(),
+                                                       request.getContent(), PortalRequestHelper.getSiteConfigs( request ),
+                                                       HandlerHelper.findEndpoint( request ) );
+
+            // Filter to only include filters (not controllers) with CHAIN mode
+            final List<ControllerMappingDescriptor> chainFilters = allMatchingFilters.stream()
+                .filter( ControllerMappingDescriptor::isFilter )
+                .filter( f -> FilterMode.CHAIN.equals( f.getFilterMode() ) )
+                .collect( Collectors.toList() );
+
+            // Create a filter chain worker
+            final MappingFilterChainHandlerWorker worker =
+                new MappingFilterChainHandlerWorker( request, response, webHandlerChain, chainFilters );
+            worker.resourceService = this.resourceService;
+            worker.filterScriptFactory = this.filterScriptFactory;
+
+            final Trace trace = Tracer.newTrace( "filterChain" );
+            if ( trace == null )
+            {
+                return worker.execute();
+            }
+            return Tracer.traceEx( trace, worker::execute );
         }
-        return Tracer.traceEx( trace, worker::execute );
+        else
+        {
+            // RENDER mode - execute single filter
+            final MappingFilterHandlerWorker worker = new MappingFilterHandlerWorker( request, response, webHandlerChain );
+            worker.mappingDescriptor = mapping;
+            worker.resourceService = this.resourceService;
+            worker.filterScriptFactory = this.filterScriptFactory;
+            final Trace trace = Tracer.newTrace( "filter" );
+            if ( trace == null )
+            {
+                return worker.execute();
+            }
+            return Tracer.traceEx( trace, worker::execute );
+        }
     }
 
 }

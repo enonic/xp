@@ -123,6 +123,9 @@ public final class YmlSiteDescriptorParser
 
                 @JsonProperty("match")
                 abstract ControllerMappingDescriptor.Builder contentConstraint( String contentConstraint );
+
+                @JsonProperty("mode")
+                abstract ControllerMappingDescriptor.Builder filterMode( String filterMode );
             }
         }
 
