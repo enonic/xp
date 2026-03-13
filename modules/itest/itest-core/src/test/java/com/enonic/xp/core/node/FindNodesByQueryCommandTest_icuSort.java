@@ -109,7 +109,7 @@ class FindNodesByQueryCommandTest_icuSort
     private FindNodesByQueryResult sortByStringWithLanguage( final String direction, final String language )
     {
         final OrderExpr.Direction dir = OrderExpr.Direction.valueOf( direction );
-        final FieldOrderExpr orderExpr = FieldOrderExpr.create( FIELD_STRING, dir, language );
+        final FieldOrderExpr orderExpr = FieldOrderExpr.create( FIELD_STRING, dir, Locale.forLanguageTag( language ) );
         final ConstraintExpr constraintExpr = QueryParser.parseCostraintExpression( "_parentPath=\"/\"" );
         final QueryExpr queryExpr = QueryExpr.from( constraintExpr, orderExpr );
         return doFindByQuery( NodeQuery.create().query( queryExpr ).build() );

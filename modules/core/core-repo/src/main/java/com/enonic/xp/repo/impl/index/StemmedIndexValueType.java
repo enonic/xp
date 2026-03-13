@@ -2,6 +2,9 @@ package com.enonic.xp.repo.impl.index;
 
 import java.util.Objects;
 
+import org.jspecify.annotations.NullMarked;
+
+@NullMarked
 public class StemmedIndexValueType
     implements IndexValueTypeInterface
 {
@@ -12,7 +15,7 @@ public class StemmedIndexValueType
 
     public StemmedIndexValueType( final String value )
     {
-        this.value = value.startsWith( STEMMED_INDEX_PREFIX ) ? value : STEMMED_INDEX_PREFIX + value;
+        this.value = STEMMED_INDEX_PREFIX + value;
     }
 
     @Override

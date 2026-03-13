@@ -1,5 +1,8 @@
 package com.enonic.xp.repo.impl.index;
 
+import org.jspecify.annotations.NullMarked;
+
+@NullMarked
 public enum IndexValueType
     implements IndexValueTypeInterface
 {

@@ -51,22 +51,22 @@ public class IndexLanguageController
         .build();
 
     private static final List<String> SORT_LANGUAGES =
-        List.of( "ar", "hy", "bn", "bg", "ca", "zh", "ja", "ko", "cs", "da", "nl", "en", "fi", "fr", "gl", "de", "el", "hi", "hu", "id",
-                 "ga", "it", "lv", "lt", "nb", "nn", "fa", "pt", "ro", "ru", "es", "sv", "tr", "th" );
+        List.of( "ar", "hy", "bn", "bg", "zh", "ja", "ko", "cs", "da", "fi", "gl", "el", "hi", "hu", "id", "lv", "lt", "no", "nb", "nn",
+                 "fa", "ro", "ru", "es", "sv", "tr", "th" );
 
     private static final ImmutableMap<String, StemmedIndexValueType> STEMMED_VALUE_TYPES;
 
-    private static final ImmutableMap<String, OrderByIndexValueType> ORDERBY_VALUE_TYPES;
+    private static final ImmutableMap<String, OrderByIndexValueType> ORDER_BY_VALUE_TYPES;
 
     static
     {
         final ImmutableMap.Builder<String, StemmedIndexValueType> stemmedBuilder = ImmutableMap.builder();
-        LANGUAGE_TO_ANALYZER.keySet().forEach( k -> stemmedBuilder.put( k, new StemmedIndexValueType( k ) ) );
+        LANGUAGE_TO_ANALYZER.keySet().forEach( k -> stemmedBuilder.put( k, new StemmedIndexValueType( k.toLowerCase( Locale.ROOT ) ) ) );
         STEMMED_VALUE_TYPES = stemmedBuilder.build();
 
         final ImmutableMap.Builder<String, OrderByIndexValueType> orderbyBuilder = ImmutableMap.builder();
         SORT_LANGUAGES.forEach( k -> orderbyBuilder.put( k, new OrderByIndexValueType( k ) ) );
-        ORDERBY_VALUE_TYPES = orderbyBuilder.build();
+        ORDER_BY_VALUE_TYPES = orderbyBuilder.build();
     }
 
     private static String normalize( final Locale language )
@@ -74,7 +74,7 @@ public class IndexLanguageController
         return language == null ? null : language.toLanguageTag();
     }
 
-    public static boolean isSupported( final Locale language )
+    public static boolean stemmingSupported( final Locale language )
     {
         return LANGUAGE_TO_ANALYZER.containsKey( normalize( language ) );
     }
@@ -94,35 +94,32 @@ public class IndexLanguageController
         return type;
     }
 
-    public static OrderByIndexValueType resolveOrderByIndexValueType( final Locale language )
+    public static IndexValueTypeInterface resolveOrderByIndexValueType( final Locale language )
     {
-        final OrderByIndexValueType type = ORDERBY_VALUE_TYPES.get( normalize( language ) );
+        final OrderByIndexValueType type = ORDER_BY_VALUE_TYPES.get( normalize( language ) );
         if ( type == null )
         {
-            throw new IllegalArgumentException( "Unsupported language for sort indexing: " + language );
+            return IndexValueType.ORDERBY;
         }
         return type;
     }
 
     static void main()
     {
-        boolean[] available = new boolean[1];
-        for ( String s : LANGUAGE_TO_ANALYZER.keySet() )
+        for ( String s : SORT_LANGUAGES )
         {
-            ULocale l = new ULocale(s);
-            ULocale eql = Collator.getFunctionalEquivalent("collation", l, available);
-            System.out.printf("%s = %s → %s (available: %b)%n", s, l, eql, available[0] );
+            boolean[] available = new boolean[1];
+            ULocale l = new ULocale( s );
+            ULocale eql = Collator.getFunctionalEquivalent( "collation", l, available );
+            System.out.printf( "%s = %s → %s (available: %b)%n", s, l, eql, available[0] );
         }
-        ULocale l1 = new ULocale("pt-BR");
-        ULocale l2 = new ULocale("en-GB");
 
-
-        ULocale eq1 = Collator.getFunctionalEquivalent("collation", l1, available);
-        ULocale eq2 = Collator.getFunctionalEquivalent( "collation", l2, available);
-
-        System.out.println(eq1);  // often "en"
-        System.out.println(eq2);  // often "en"
-
-        System.out.println(eq1.equals(eq2)); // true → same collation behavior
+        System.out.println();
+        for ( ULocale base : Collator.getAvailableULocales() )
+        {
+            boolean[] available = new boolean[1];
+            ULocale eql = Collator.getFunctionalEquivalent( "collation", base, available );
+            System.out.printf( "%s → %s (available: %b)%n", base, eql, available[0] );
+        }
     }
 }
