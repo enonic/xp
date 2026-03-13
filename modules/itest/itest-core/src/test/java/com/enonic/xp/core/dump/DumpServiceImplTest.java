@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeSet;
@@ -78,8 +79,7 @@ import com.enonic.xp.repo.impl.dump.FileUtils;
 import com.enonic.xp.repo.impl.dump.RepoDumpException;
 import com.enonic.xp.repo.impl.dump.RepoLoadException;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
-import com.enonic.xp.repo.impl.dump.reader.FileDumpReader;
-import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre5.Pre5ContentConstants;
+import com.enonic.xp.repo.impl.dump.reader.FileDumpReaderV7;
 import com.enonic.xp.repo.impl.node.NodeHelper;
 import com.enonic.xp.repo.impl.repository.CreateRepositoryIndexParams;
 import com.enonic.xp.repo.impl.repository.RepositoryEntry;
@@ -775,12 +775,11 @@ class DumpServiceImplTest
         NodeHelper.runAsAdmin( () -> {
             this.dumpService.load( SystemLoadParams.create().dumpName( dumpName ).upgrade( true ).includeVersions( true ).build() );
 
-            FileDumpReader reader = FileDumpReader.create( null, temporaryFolder, dumpName );
+            FileDumpReaderV7 reader = FileDumpReaderV7.create( null, temporaryFolder, dumpName );
             final DumpMeta updatedMeta = reader.getDumpMeta();
             assertEquals( DumpConstants.MODEL_VERSION, updatedMeta.getModelVersion() );
 
             final NodeId nodeId = NodeId.from( "f0fb822c-092d-41f9-a961-f3811d81e55a" );
-            final NodeId fragmentNodeId = NodeId.from( "7ee16649-85c6-4a76-8788-74be03be6c7a" );
             final NodeId postNodeId = NodeId.from( "1f798176-5868-411b-8093-242820c20620" );
             final NodePath nodePath = new NodePath( "/content/mysite" );
             final NodeVersionId draftNodeVersionId = NodeVersionId.from( "f3765655d5f0c7c723887071b517808dae00556c" );
@@ -805,11 +804,6 @@ class DumpServiceImplTest
                 checkCommitUpgrade( nodeId );
                 checkPageFlatteningUpgradePage( draftNode );
 
-                final Node fragmentNode = nodeService.getById( fragmentNodeId );
-                checkPageFlatteningUpgradeFragment( fragmentNode );
-
-                checkRepositoryUpgrade( updatedMeta );
-
                 final Node postNode = nodeService.getById( postNodeId );
                 checkHtmlAreaUpgrade( draftNode, postNode );
 
@@ -819,13 +813,6 @@ class DumpServiceImplTest
         } );
     }
 
-    private void checkRepositoryUpgrade( final DumpMeta updatedMeta )
-    {
-        final RepoDumpResult repoDumpResult = updatedMeta.getSystemDumpResult().get( RepositoryId.from( "com.enonic.cms.default" ) );
-        assertNotNull( repoDumpResult );
-
-        assertNull( repositoryEntryService.getRepositoryEntry( Pre5ContentConstants.CONTENT_REPO_ID ) );
-    }
 
     private void checkCommitUpgrade( final NodeId nodeId )
     {
@@ -949,27 +936,11 @@ class DumpServiceImplTest
     private void checkLanguageUpgrade( final Node draftNode )
     {
         final IndexConfig indexConfigBefore = draftNode.getIndexConfigDocument().getConfigForPath( IndexPath.from( "language" ) );
-        final List<String> languages = draftNode.getIndexConfigDocument().getAllTextConfig().getLanguages();
+        final List<Locale> languages = draftNode.getIndexConfigDocument().getAllTextConfig().getLanguages();
 
         assertEquals( IndexConfig.NGRAM, indexConfigBefore );
 
-        assertEquals( 1, languages.size() );
-        assertEquals( "no", languages.get( 0 ) );
-    }
-
-    private void checkPageFlatteningUpgradeFragment( final Node node )
-    {
-        final PropertyTree nodeData = node.data();
-        assertTrue( nodeData.hasProperty( "components" ) );
-        assertFalse( nodeData.hasProperty( "fragment" ) );
-
-        final Iterable<PropertySet> components = nodeData.getSets( "components" );
-        final PropertySet partComponent = components.iterator().next();
-        assertEquals( "part", partComponent.getString( "type" ) );
-        assertEquals( "/", partComponent.getString( "path" ) );
-        final PropertySet partComponentData = partComponent.getSet( "part" );
-        assertEquals( "com.enonic.app.superhero:meta", partComponentData.getString( "descriptor" ) );
-        assertNotNull( partComponentData.getSet( "config" ).getSet( "com-enonic-app-superhero" ).getSet( "meta" ) );
+        assertThat( languages ).containsExactly( Locale.forLanguageTag( "no" ) );
     }
 
     private Path createIncompatibleDump( final String dumpName )

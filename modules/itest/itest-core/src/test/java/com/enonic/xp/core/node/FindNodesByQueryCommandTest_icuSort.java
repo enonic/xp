@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -108,7 +109,7 @@ class FindNodesByQueryCommandTest_icuSort
     private FindNodesByQueryResult sortByStringWithLanguage( final String direction, final String language )
     {
         final OrderExpr.Direction dir = OrderExpr.Direction.valueOf( direction );
-        final FieldOrderExpr orderExpr = FieldOrderExpr.create( FIELD_STRING, dir, language );
+        final FieldOrderExpr orderExpr = FieldOrderExpr.create( FIELD_STRING, dir, Locale.forLanguageTag( language ) );
         final ConstraintExpr constraintExpr = QueryParser.parseCostraintExpression( "_parentPath=\"/\"" );
         final QueryExpr queryExpr = QueryExpr.from( constraintExpr, orderExpr );
         return doFindByQuery( NodeQuery.create().query( queryExpr ).build() );
@@ -166,7 +167,7 @@ class FindNodesByQueryCommandTest_icuSort
         final PropertyTree data = new PropertyTree();
         data.addString( FIELD_STRING, "alfa" );
 
-        final IndexConfig fieldIndexConfig = IndexConfig.create().enabled( true ).addLanguage( "xyz" ).build();
+        final IndexConfig fieldIndexConfig = IndexConfig.create().enabled( true ).addLanguage( Locale.forLanguageTag( "xyz" ) ).build();
 
         final PatternIndexConfigDocument indexConfigDocument =
             PatternIndexConfigDocument.create().defaultConfig( IndexConfig.BY_TYPE ).add( FIELD_STRING, fieldIndexConfig ).build();
@@ -184,7 +185,7 @@ class FindNodesByQueryCommandTest_icuSort
         final PropertyTree data = new PropertyTree();
         data.addString( FIELD_STRING, fieldValue );
 
-        final IndexConfig fieldIndexConfig = IndexConfig.create().enabled( true ).addLanguage( language ).build();
+        final IndexConfig fieldIndexConfig = IndexConfig.create().enabled( true ).addLanguage( Locale.forLanguageTag( language ) ).build();
 
         final PatternIndexConfigDocument indexConfigDocument =
             PatternIndexConfigDocument.create().defaultConfig( IndexConfig.BY_TYPE ).add( FIELD_STRING, fieldIndexConfig ).build();

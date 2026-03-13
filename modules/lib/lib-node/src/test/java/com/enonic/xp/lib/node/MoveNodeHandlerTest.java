@@ -31,7 +31,7 @@ class MoveNodeHandlerTest
 
     private void mockGetNode()
     {
-        Mockito.when( this.nodeService.getById( NodeId.from( "nodeId" ) ) ).thenReturn( createNode() );
+        Mockito.when( this.nodeService.getById( NodeId.from( "nodeid" ) ) ).thenReturn( createNode() );
         Mockito.when( this.nodeService.getByPath( new NodePath( "/my-name" ) ) ).thenReturn( createNode() );
 
         Mockito.when( this.nodeService.move( Mockito.any() ) ).thenAnswer( invocation -> {

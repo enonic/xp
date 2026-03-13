@@ -5,7 +5,7 @@ var expectedJson = ["d898972d-f1eb-40a8-a7f2-16abd4c105da", "9efadb7b-bb14-4c74-
 
 exports.getById = function () {
     var result = content.getOutboundDependencies({
-        key: 'contentId'
+        key: 'contentid'
     });
 
     assert.assertJsonEquals(expectedJson, result);

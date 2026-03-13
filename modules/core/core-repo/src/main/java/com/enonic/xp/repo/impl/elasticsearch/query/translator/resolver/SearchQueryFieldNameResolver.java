@@ -6,8 +6,6 @@ import com.enonic.xp.repo.impl.index.IndexFieldNameNormalizer;
 import com.enonic.xp.repo.impl.index.IndexValueType;
 import com.enonic.xp.repo.impl.index.IndexValueTypeInterface;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
-
 public final class SearchQueryFieldNameResolver
     extends AbstractQueryFieldNameResolver
 {
@@ -23,9 +21,10 @@ public final class SearchQueryFieldNameResolver
     @Override
     protected String appendIndexValueType( final String baseFieldName, final IndexValueTypeInterface indexValueType )
     {
-        return IndexFieldNameNormalizer.normalize( baseFieldName + ( isNullOrEmpty( indexValueType.getPostfix() )
-            ? ""
-            : IndexValueType.INDEX_VALUE_TYPE_SEPARATOR + indexValueType.getPostfix() ) );
+        return IndexFieldNameNormalizer.normalize( indexValueType.getPostfix().isEmpty()
+                                                       ? baseFieldName
+                                                       : baseFieldName + IndexValueType.INDEX_VALUE_TYPE_SEPARATOR +
+                                                           indexValueType.getPostfix() );
     }
 
 }

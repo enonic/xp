@@ -530,19 +530,6 @@
         }
       },
       {
-        "template_orderby_eu": {
-          "match": "*._orderby_eu",
-          "mapping": {
-            "type": "string",
-            "store": false,
-            "index": "analyzed",
-            "analyzer": "icu_sort_eu",
-            "ignore_above": 3072,
-            "include_in_all": false
-          }
-        }
-      },
-      {
         "template_orderby_bn": {
           "match": "*._orderby_bn",
           "mapping": {
@@ -550,19 +537,6 @@
             "store": false,
             "index": "analyzed",
             "analyzer": "icu_sort_bn",
-            "ignore_above": 3072,
-            "include_in_all": false
-          }
-        }
-      },
-      {
-        "template_orderby_pt-br": {
-          "match": "*._orderby_pt-br",
-          "mapping": {
-            "type": "string",
-            "store": false,
-            "index": "analyzed",
-            "analyzer": "icu_sort_pt-br",
             "ignore_above": 3072,
             "include_in_all": false
           }
@@ -842,19 +816,6 @@
         }
       },
       {
-        "template_orderby_no": {
-          "match": "*._orderby_no",
-          "mapping": {
-            "type": "string",
-            "store": false,
-            "index": "analyzed",
-            "analyzer": "icu_sort_no",
-            "ignore_above": 3072,
-            "include_in_all": false
-          }
-        }
-      },
-      {
         "template_orderby_nb": {
           "match": "*._orderby_nb",
           "mapping": {
@@ -927,19 +888,6 @@
             "store": false,
             "index": "analyzed",
             "analyzer": "icu_sort_ru",
-            "ignore_above": 3072,
-            "include_in_all": false
-          }
-        }
-      },
-      {
-        "template_orderby_ku": {
-          "match": "*._orderby_ku",
-          "mapping": {
-            "type": "string",
-            "store": false,
-            "index": "analyzed",
-            "analyzer": "icu_sort_ku",
             "ignore_above": 3072,
             "include_in_all": false
           }

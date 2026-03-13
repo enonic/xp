@@ -16,7 +16,7 @@ class ReadImageParamsTest
     void test()
     {
         final ReadImageParams readImageParams = ReadImageParams.newImageParams().
-            contentId( ContentId.from( "contentId" ) ).
+            contentId( ContentId.from( "contentid" ) ).
             binaryReference( BinaryReference.from( "binaryReference" ) ).
             cropping( Cropping.create().build() ).
             scaleParams( new ScaleParams( "scaleParams", null ) ).
@@ -31,7 +31,7 @@ class ReadImageParamsTest
             orientation( ImageOrientation.BottomRight ).
             build();
 
-        assertEquals( ContentId.from( "contentId" ), readImageParams.getContentId() );
+        assertEquals( ContentId.from( "contentid" ), readImageParams.getContentId() );
         assertEquals( BinaryReference.from( "binaryReference" ), readImageParams.getBinaryReference() );
         assertEquals( BinaryReference.from( "binaryReference" ), readImageParams.getBinaryReference() );
         assertEquals( Cropping.create().build(), readImageParams.getCropping() );

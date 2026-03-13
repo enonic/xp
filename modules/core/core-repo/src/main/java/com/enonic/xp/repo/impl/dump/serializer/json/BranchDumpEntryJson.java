@@ -4,11 +4,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
 
+@JsonPropertyOrder(value = {"nodeId", "meta", "nodePath", "binaries"})
 public class BranchDumpEntryJson
 {
     @JsonProperty("nodeId")
@@ -18,6 +21,7 @@ public class BranchDumpEntryJson
     private VersionDumpEntryJson meta;
 
     @JsonProperty("binaries")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Collection<String> binaries;
 
     @SuppressWarnings("unused")
@@ -41,18 +45,14 @@ public class BranchDumpEntryJson
 
     public static BranchDumpEntry fromJson( final BranchDumpEntryJson json )
     {
-        return BranchDumpEntry.create().
-            nodeId( NodeId.from( json.getNodeId() ) ).
-            meta( VersionDumpEntryJson.fromJson( json.getMeta() ) ).setBinaryReferences(
-            Objects.requireNonNullElse( json.getBinaries(), Collections.emptyList() ) ).
-            build();
+        return new BranchDumpEntry( NodeId.from( json.getNodeId() ), VersionDumpEntryJson.fromJson( json.getMeta() ),
+                                    Objects.requireNonNullElse( json.getBinaries(), Collections.emptyList() ) );
     }
 
     public static BranchDumpEntryJson from( final BranchDumpEntry branchDumpEntry )
     {
-        String nodeId = branchDumpEntry.getNodeId().toString();
-        return new BranchDumpEntryJson( nodeId, branchDumpEntry.getBinaryReferences(),
-                                        VersionDumpEntryJson.from( branchDumpEntry.getMeta() ) );
+        String nodeId = branchDumpEntry.nodeId().toString();
+        return new BranchDumpEntryJson( nodeId, branchDumpEntry.binaryReferences(), VersionDumpEntryJson.from( branchDumpEntry.meta() ) );
     }
 
     public static Builder create( final BranchDumpEntryJson source )
@@ -60,7 +60,7 @@ public class BranchDumpEntryJson
         return new Builder( source );
     }
 
-    private Collection<String> getBinaries()
+    public Collection<String> getBinaries()
     {
         return binaries;
     }

@@ -18,12 +18,10 @@ class GetNodeHandlerTest
     private void mockGetNode()
     {
         final Node node = createNode();
-        Mockito.when( this.nodeService.getById( NodeId.from( "nodeId" ) ) ).
-            thenReturn( node );
-        Mockito.when( this.nodeService.getByPath( new NodePath( "/node2-path" ) ) ).
-            thenReturn( node );
-        Mockito.when( this.nodeService.getByIdAndVersionId( NodeId.from( "nodeId" ), NodeVersionId.from( "versionKey" ) ) ).
-            thenReturn( createNode() );
+        Mockito.when( this.nodeService.getById( NodeId.from( "nodeid" ) ) ).thenReturn( node );
+        Mockito.when( this.nodeService.getByPath( new NodePath( "/node2-path" ) ) ).thenReturn( node );
+        Mockito.when( this.nodeService.getByIdAndVersionId( NodeId.from( "nodeid" ), NodeVersionId.from( "versionkey" ) ) )
+            .thenReturn( createNode() );
     }
 
     @Test
@@ -31,11 +29,11 @@ class GetNodeHandlerTest
     {
         mockGetNode();
 
-        Mockito.when( this.repositoryService.get( RepositoryId.from( "com.enonic.cms.default" ) ) ).
-            thenReturn( Repository.create().
-                id( RepositoryId.from( "com.enonic.cms.default" ) ).
-                branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
-                build() );
+        Mockito.when( this.repositoryService.get( RepositoryId.from( "com.enonic.cms.default" ) ) )
+            .thenReturn( Repository.create()
+                             .id( RepositoryId.from( "com.enonic.cms.default" ) )
+                             .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
+                             .build() );
 
         runScript( "/lib/xp/examples/node/get-1.js" );
     }
@@ -43,27 +41,27 @@ class GetNodeHandlerTest
     @Test
     void testExample2()
     {
-        Mockito.when( this.nodeService.getById( Mockito.isA( NodeId.class ) ) ).
-            thenReturn( createNode() );
+        Mockito.when( this.nodeService.getById( Mockito.isA( NodeId.class ) ) ).thenReturn( createNode() );
 
-        Mockito.when( this.repositoryService.get( RepositoryId.from( "com.enonic.cms.default" ) ) ).
-            thenReturn( Repository.create().
-                id( RepositoryId.from( "com.enonic.cms.default" ) ).
-                branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
-                build() );
+        Mockito.when( this.repositoryService.get( RepositoryId.from( "com.enonic.cms.default" ) ) )
+            .thenReturn( Repository.create()
+                             .id( RepositoryId.from( "com.enonic.cms.default" ) )
+                             .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
+                             .build() );
 
         runScript( "/lib/xp/examples/node/get-2.js" );
     }
 
     @Test
-    void testExample3() {
+    void testExample3()
+    {
         mockGetNode();
 
-        Mockito.when( this.repositoryService.get( RepositoryId.from( "com.enonic.cms.default" ) ) ).
-            thenReturn( Repository.create().
-                id( RepositoryId.from( "com.enonic.cms.default" ) ).
-                branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
-                build() );
+        Mockito.when( this.repositoryService.get( RepositoryId.from( "com.enonic.cms.default" ) ) )
+            .thenReturn( Repository.create()
+                             .id( RepositoryId.from( "com.enonic.cms.default" ) )
+                             .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
+                             .build() );
 
         runScript( "/lib/xp/examples/node/get-3.js" );
     }

@@ -31,7 +31,7 @@ var expected = {
     'untouchedBinaryRef': 'abcd',
     'untouchedGeoPoint': '30.0,-30.0',
     'untouchedLocalDate': '2017-03-24',
-    'untouchedReference': 'myReference',
+    'untouchedReference': 'myreference',
     'newField': 'New field'
 };
 // END

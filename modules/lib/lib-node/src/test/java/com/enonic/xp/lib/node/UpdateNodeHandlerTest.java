@@ -137,7 +137,7 @@ public class UpdateNodeHandlerTest
         data.setBinaryReference( "untouchedBinaryRef", BinaryReference.from( "abcd" ) );
         data.setGeoPoint( "untouchedGeoPoint", GeoPoint.from( "30,-30" ) );
         data.setLocalDate( "untouchedLocalDate", LocalDate.parse( "2017-03-24" ) );
-        data.setReference( "untouchedReference", Reference.from( "myReference" ) );
+        data.setReference( "untouchedReference", Reference.from( "myreference" ) );
 
         final Node node = Node.create().id( NodeId.from( "abc" ) ).parentPath( NodePath.ROOT ).data( data ).name( "myNode" ).build();
 

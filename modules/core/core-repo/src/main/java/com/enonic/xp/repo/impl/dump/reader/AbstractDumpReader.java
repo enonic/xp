@@ -119,10 +119,9 @@ public abstract class AbstractDumpReader
 
         final EntriesLoadResult result = doLoadEntries( processor, tarFile );
 
-        return builder.
-            successful( result.getSuccessful() ).
-            errors( result.getErrors().stream().map( error -> LoadError.error( error.getMessage() ) ).collect( Collectors.toList() ) ).
-            build();
+        return builder.successful( result.getSuccessful() )
+            .errors( result.getErrors().stream().map( error -> LoadError.error( error.getMessage() ) ).collect( Collectors.toList() ) )
+            .build();
     }
 
     @Override
@@ -141,10 +140,9 @@ public abstract class AbstractDumpReader
 
         final EntriesLoadResult result = doLoadEntries( processor, tarFile );
 
-        return builder.
-            successful( result.getSuccessful() ).
-            errors( result.getErrors().stream().map( error -> LoadError.error( error.getMessage() ) ).collect( Collectors.toList() ) ).
-            build();
+        return builder.successful( result.getSuccessful() )
+            .errors( result.getErrors().stream().map( error -> LoadError.error( error.getMessage() ) ).collect( Collectors.toList() ) )
+            .build();
     }
 
     @Override
@@ -163,10 +161,9 @@ public abstract class AbstractDumpReader
 
         final EntriesLoadResult result = doLoadEntries( processor, tarFile );
 
-        return builder.
-            successful( result.getSuccessful() ).
-            errors( result.getErrors().stream().map( error -> LoadError.error( error.getMessage() ) ).collect( Collectors.toList() ) ).
-            build();
+        return builder.successful( result.getSuccessful() )
+            .errors( result.getErrors().stream().map( error -> LoadError.error( error.getMessage() ) ).collect( Collectors.toList() ) )
+            .build();
     }
 
     @Override
@@ -198,7 +195,8 @@ public abstract class AbstractDumpReader
 
     private ByteSource getBlobByteSource( RepositoryId repositoryId, SegmentLevel segmentLevel, BlobKey blobKey )
     {
-        return this.blobByteSourceProvider.apply( new BlobReference( RepositorySegmentUtils.toSegment( repositoryId, segmentLevel ), blobKey ) );
+        return this.blobByteSourceProvider.apply(
+            new BlobReference( RepositorySegmentUtils.toSegment( repositoryId, segmentLevel ), blobKey ) );
     }
 
     @Override
@@ -231,15 +229,16 @@ public abstract class AbstractDumpReader
                 final String content = readEntry( tarInputStream );
                 final BranchDumpEntry branchDumpEntry = serializer.toBranchMetaEntry( content );
 
-                if ( targetNodeIds.contains( branchDumpEntry.getNodeId() ) )
+                if ( targetNodeIds.contains( branchDumpEntry.nodeId() ) )
                 {
-                    final NodeVersionKey nodeVersionKey = branchDumpEntry.getMeta().nodeVersionKey();
+                    final NodeVersionKey nodeVersionKey = branchDumpEntry.meta().nodeVersionKey();
                     final NodeStoreVersion nodeStoreVersion = get( SystemConstants.SYSTEM_REPO_ID, nodeVersionKey );
 
                     final Node node = Node.create()
-                        .id( branchDumpEntry.getNodeId() )
+                        .id( branchDumpEntry.nodeId() )
                         .childOrder( ChildOrder.defaultOrder() )
-                        .data( nodeStoreVersion.data() ).name( branchDumpEntry.getNodeId().toString() )
+                        .data( nodeStoreVersion.data() )
+                        .name( branchDumpEntry.nodeId().toString() )
                         .parentPath( RepositoryConstants.REPOSITORY_STORAGE_PARENT_PATH )
                         .permissions( nodeStoreVersion.permissions() )
                         .attachedBinaries( nodeStoreVersion.attachedBinaries() )

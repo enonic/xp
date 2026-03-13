@@ -27,7 +27,6 @@ class IssueServiceImplTest_updateComment
     {
         Issue issue = this.createIssue( CreateIssueParams.create().title( "issue-1" ) );
 
-        final Instant created = Instant.now().minus( 1, ChronoUnit.MINUTES );
         final PrincipalKey creator = PrincipalKey.from( "user:store:me" );
         final String creatorDisplayName = "Me Myself";
 
@@ -36,7 +35,6 @@ class IssueServiceImplTest_updateComment
             issue( issue.getId() ).
             creator( creator ).
             creatorDisplayName( creatorDisplayName ).
-            created( created ).
             build();
 
         final IssueComment comment = this.issueService.createComment( params );
@@ -48,7 +46,6 @@ class IssueServiceImplTest_updateComment
         assertEquals( "updated text", updatedComment.getText() );
         assertEquals( creator, updatedComment.getCreator() );
         assertEquals( creatorDisplayName, updatedComment.getCreatorDisplayName() );
-        assertEquals( created.truncatedTo( ChronoUnit.MILLIS ), updatedComment.getCreated() );
     }
 
     @Test

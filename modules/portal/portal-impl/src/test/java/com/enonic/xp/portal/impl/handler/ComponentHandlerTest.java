@@ -273,7 +273,7 @@ class ComponentHandlerTest
         setupContent( createPageWithFragment() );
         setupTemplates();
 
-        Mockito.when( this.contentService.getById( ContentId.from( "fragmentId" ) ) ).thenThrow( ContentNotFoundException.class );
+        Mockito.when( this.contentService.getById( ContentId.from( "fragmentid" ) ) ).thenThrow( ContentNotFoundException.class );
 
         final PortalResponse portalResponse =
             PortalResponse.create().body( "component rendered" ).header( "some-header", "some-value" ).status( HttpStatus.OK ).build();
@@ -296,7 +296,7 @@ class ComponentHandlerTest
         setupContent( createPageWithFragment() );
         setupTemplates();
 
-        Mockito.when( this.contentService.getById( ContentId.from( "fragmentId" ) ) )
+        Mockito.when( this.contentService.getById( ContentId.from( "fragmentid" ) ) )
             .thenReturn( createContentWithPage( null, ContentTypeName.from( "my:contentTypeName" ) ) );
 
         final PortalResponse portalResponse =
@@ -320,7 +320,7 @@ class ComponentHandlerTest
         setupContent( createPageWithFragment() );
         setupTemplates();
 
-        Mockito.when( this.contentService.getById( ContentId.from( "fragmentId" ) ) )
+        Mockito.when( this.contentService.getById( ContentId.from( "fragmentid" ) ) )
             .thenReturn( createPageThatIsFragment( TextComponent.create().build() ) );
 
         final PortalResponse portalResponse =
@@ -424,7 +424,7 @@ class ComponentHandlerTest
 
     private Content createPageWithFragment()
     {
-        return createPageWithFragment( ContentId.from( "fragmentId" ) );
+        return createPageWithFragment( ContentId.from( "fragmentid" ) );
     }
 
     private Content createPageWithFragment( final ContentId fragmentId )

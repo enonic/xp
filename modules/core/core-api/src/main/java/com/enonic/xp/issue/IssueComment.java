@@ -23,7 +23,7 @@ public final class IssueComment
         this.id = builder.id;
         this.creator = builder.creator;
         this.creatorDisplayName = builder.creatorDisplayName;
-        this.created = Millis.fromOrElseNow( builder.created );
+        this.created = Millis.from( builder.created );
         this.text = builder.text;
     }
 

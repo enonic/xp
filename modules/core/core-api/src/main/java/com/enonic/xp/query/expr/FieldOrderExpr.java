@@ -1,5 +1,6 @@
 package com.enonic.xp.query.expr;
 
+import java.util.Locale;
 import java.util.Objects;
 
 import com.enonic.xp.index.IndexPath;
@@ -10,14 +11,14 @@ public final class FieldOrderExpr
 {
     private final FieldExpr field;
 
-    private final String language;
+    private final Locale language;
 
     public FieldOrderExpr( final FieldExpr field, final Direction direction )
     {
         this( field, direction, null );
     }
 
-    public FieldOrderExpr( final FieldExpr field, final Direction direction, final String language )
+    private FieldOrderExpr( final FieldExpr field, final Direction direction, final Locale language )
     {
         super( direction );
         this.field = Objects.requireNonNull( field );
@@ -29,7 +30,7 @@ public final class FieldOrderExpr
         return this.field;
     }
 
-    public static FieldOrderExpr create( final IndexPath indexPath, Direction direction, final String language )
+    public static FieldOrderExpr create( final IndexPath indexPath, Direction direction, final Locale language )
     {
         return new FieldOrderExpr( FieldExpr.from( indexPath ), direction, language );
     }
@@ -44,12 +45,12 @@ public final class FieldOrderExpr
         return new FieldOrderExpr( FieldExpr.from( indexPath ), direction );
     }
 
-    public static FieldOrderExpr create( final String indexPath, Direction direction, final String language )
+    public static FieldOrderExpr create( final String indexPath, Direction direction, final Locale language )
     {
         return new FieldOrderExpr( FieldExpr.from( indexPath ), direction, language );
     }
 
-    public String getLanguage()
+    public Locale getLanguage()
     {
         return language;
     }

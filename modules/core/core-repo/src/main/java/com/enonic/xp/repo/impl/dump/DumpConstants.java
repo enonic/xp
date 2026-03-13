@@ -8,5 +8,5 @@ public final class DumpConstants
     {
     }
 
-    public static final Version MODEL_VERSION = new Version( 8, 0, 0 );
+    public static final Version MODEL_VERSION = new Version( 8, 0, 1 );
 }

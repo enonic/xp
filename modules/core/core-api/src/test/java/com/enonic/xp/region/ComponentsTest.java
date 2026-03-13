@@ -18,11 +18,11 @@ class ComponentsTest
         pageConfig.addLong( "pause", 200L );
 
         Page page = Page.create().
-            template( PageTemplateKey.from( "pageTemplateName" ) ).
+            template( PageTemplateKey.from( "pagetemplatename" ) ).
             config( pageConfig ).regions( Regions.create().build() ).
             build();
 
-        assertEquals( "pageTemplateName", page.getTemplate().toString() );
+        assertEquals( "pagetemplatename", page.getTemplate().toString() );
     }
 
     @Test

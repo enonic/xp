@@ -24,8 +24,8 @@ class GetActiveVersionsHandlerTest
     void testExample()
     {
         final ContentVersion draftVersion = ContentVersion.create()
-            .versionId( ContentVersionId.from( "draftVersion" ) )
-            .contentId( ContentId.from( "contentId" ) )
+            .versionId( ContentVersionId.from( "draftversion" ) )
+            .contentId( ContentId.from( "contentid" ) )
             .path( ContentPath.from( "/my-content" ) )
             .timestamp( Instant.parse( "2024-01-01T00:00:00Z" ) )
             .addAction( new ContentVersion.Action( "publish", List.of(), PrincipalKey.from( "user:system:admin" ),
@@ -33,8 +33,8 @@ class GetActiveVersionsHandlerTest
             .build();
 
         final ContentVersion masterVersion = ContentVersion.create()
-            .versionId( ContentVersionId.from( "masterVersion" ) )
-            .contentId( ContentId.from( "contentId" ) )
+            .versionId( ContentVersionId.from( "masterversion" ) )
+            .contentId( ContentId.from( "contentid" ) )
             .path( ContentPath.from( "/my-content" ) )
             .timestamp( Instant.parse( "2023-12-01T00:00:00Z" ) )
             .build();

@@ -76,7 +76,7 @@ public class IndexItemFactory
 
         if ( indexConfig.isDecideByType() && propertyValue.isText() || indexConfig.isIncludeInAllText() )
         {
-            final var text = propertyValue.asString();
+            final String text = propertyValue.asString();
             if ( allTextIndexConfig.isFulltext() )
             {
                 allTextItems.add( new IndexItem<>( NodeIndexPath.ALL_TEXT, text, IndexValueType.ANALYZED ) );
@@ -105,7 +105,7 @@ public class IndexItemFactory
         {
             if ( value.isText() )
             {
-                final var text = value.asString();
+                final String text = value.asString();
                 fulltextItems.add( new IndexItem<>( indexPath, text, IndexValueType.ANALYZED ) );
                 fulltextItems.add( new IndexItem<>( indexPath, text, IndexValueType.NGRAM ) );
             }
@@ -130,7 +130,7 @@ public class IndexItemFactory
     {
         final List<IndexItem<?>> items = new ArrayList<>();
 
-        final var orderByValue = OrderByValueResolver.getOrderByValue( propertyValue );
+        final String orderByValue = OrderByValueResolver.getOrderByValue( propertyValue );
 
         items.add( new IndexItem<>( indexPath, orderByValue, IndexValueType.ORDERBY ) );
 
@@ -151,7 +151,7 @@ public class IndexItemFactory
 
         if ( indexConfig.isStemmed() )
         {
-            final var indexValue = value.asString();
+            final String indexValue = value.asString();
             indexConfig.getLanguages()
                 .forEach( language -> stemmedItems.add(
                     new IndexItem<>( indexPath, indexValue, IndexLanguageController.resolveStemmedIndexValueType( language ) ) ) );

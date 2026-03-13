@@ -141,8 +141,7 @@ public final class ImageHandlerWorker
     {
         if ( legacyMode )
         {
-            final String hash = this.contentService.getBinaryKey( content.getId(), binaryReference );
-            return MediaHashResolver.resolveLegacyImageHash( content, hash );
+            return null;
         }
         else
         {

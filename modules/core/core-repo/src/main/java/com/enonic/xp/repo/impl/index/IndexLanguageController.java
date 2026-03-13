@@ -1,18 +1,20 @@
 package com.enonic.xp.repo.impl.index;
 
+import java.util.List;
 import java.util.Locale;
 
 import com.google.common.collect.ImmutableMap;
+import com.ibm.icu.text.Collator;
+import com.ibm.icu.util.ULocale;
 
 public class IndexLanguageController
 {
-    // Normalized to lowercase keys. Same 38 languages as search-settings.json ICU filters.
     private static final ImmutableMap<String, String> LANGUAGE_TO_ANALYZER = ImmutableMap.<String, String>builder()
         .put( "ar", "arabic" )
         .put( "hy", "armenian" )
         .put( "eu", "basque" )
         .put( "bn", "bengali" )
-        .put( "pt-br", "brazilian" )
+        .put( "pt-BR", "brazilian" )
         .put( "bg", "bulgarian" )
         .put( "ca", "catalan" )
         .put( "zh", "cjk" )
@@ -48,39 +50,41 @@ public class IndexLanguageController
         .put( "th", "thai" )
         .build();
 
+    private static final List<String> SORT_LANGUAGES =
+        List.of( "ar", "hy", "bn", "bg", "zh", "ja", "ko", "cs", "da", "fi", "gl", "el", "hi", "hu", "id", "lv", "lt", "no", "nb", "nn",
+                 "fa", "ro", "ru", "es", "sv", "tr", "th" );
+
     private static final ImmutableMap<String, StemmedIndexValueType> STEMMED_VALUE_TYPES;
 
-    private static final ImmutableMap<String, OrderByIndexValueType> ORDERBY_VALUE_TYPES;
+    private static final ImmutableMap<String, OrderByIndexValueType> ORDER_BY_VALUE_TYPES;
 
     static
     {
         final ImmutableMap.Builder<String, StemmedIndexValueType> stemmedBuilder = ImmutableMap.builder();
-        final ImmutableMap.Builder<String, OrderByIndexValueType> orderbyBuilder = ImmutableMap.builder();
-        LANGUAGE_TO_ANALYZER.keySet().forEach( k -> {
-            stemmedBuilder.put( k, new StemmedIndexValueType( k ) );
-            orderbyBuilder.put( k, new OrderByIndexValueType( k ) );
-
-        } );
+        LANGUAGE_TO_ANALYZER.keySet().forEach( k -> stemmedBuilder.put( k, new StemmedIndexValueType( k.toLowerCase( Locale.ROOT ) ) ) );
         STEMMED_VALUE_TYPES = stemmedBuilder.build();
-        ORDERBY_VALUE_TYPES = orderbyBuilder.build();
+
+        final ImmutableMap.Builder<String, OrderByIndexValueType> orderbyBuilder = ImmutableMap.builder();
+        SORT_LANGUAGES.forEach( k -> orderbyBuilder.put( k, new OrderByIndexValueType( k ) ) );
+        ORDER_BY_VALUE_TYPES = orderbyBuilder.build();
     }
 
-    private static String normalize( final String language )
+    private static String normalize( final Locale language )
     {
-        return language == null ? null : language.toLowerCase( Locale.ROOT );
+        return language == null ? null : language.toLanguageTag();
     }
 
-    public static boolean isSupported( final String language )
+    public static boolean stemmingSupported( final Locale language )
     {
         return LANGUAGE_TO_ANALYZER.containsKey( normalize( language ) );
     }
 
-    public static String resolveAnalyzer( final String language )
+    public static String resolveAnalyzer( final Locale language )
     {
         return LANGUAGE_TO_ANALYZER.get( normalize( language ) );
     }
 
-    public static StemmedIndexValueType resolveStemmedIndexValueType( final String language )
+    public static StemmedIndexValueType resolveStemmedIndexValueType( final Locale language )
     {
         final StemmedIndexValueType type = STEMMED_VALUE_TYPES.get( normalize( language ) );
         if ( type == null )
@@ -90,13 +94,32 @@ public class IndexLanguageController
         return type;
     }
 
-    public static OrderByIndexValueType resolveOrderByIndexValueType( final String language )
+    public static IndexValueTypeInterface resolveOrderByIndexValueType( final Locale language )
     {
-        final OrderByIndexValueType type = ORDERBY_VALUE_TYPES.get( normalize( language ) );
+        final OrderByIndexValueType type = ORDER_BY_VALUE_TYPES.get( normalize( language ) );
         if ( type == null )
         {
-            throw new IllegalArgumentException( "Unsupported language for sort indexing: " + language );
+            return IndexValueType.ORDERBY;
         }
         return type;
+    }
+
+    static void main()
+    {
+        for ( String s : SORT_LANGUAGES )
+        {
+            boolean[] available = new boolean[1];
+            ULocale l = new ULocale( s );
+            ULocale eql = Collator.getFunctionalEquivalent( "collation", l, available );
+            System.out.printf( "%s = %s → %s (available: %b)%n", s, l, eql, available[0] );
+        }
+
+        System.out.println();
+        for ( ULocale base : Collator.getAvailableULocales() )
+        {
+            boolean[] available = new boolean[1];
+            ULocale eql = Collator.getFunctionalEquivalent( "collation", base, available );
+            System.out.printf( "%s → %s (available: %b)%n", base, eql, available[0] );
+        }
     }
 }

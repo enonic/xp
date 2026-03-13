@@ -135,7 +135,7 @@ public class NodeStorageServiceImpl
             .nodeCommitId( params.getNodeCommitId() )
             .message( params.getMessage() )
             .committer( params.getCommitter() )
-            .timestamp( params.getTimestamp() )
+            .timestamp( Millis.fromOrElseNow( params.getTimestamp() ) )
             .build();
         this.commitService.store( nodeCommitEntry, context );
     }
@@ -162,7 +162,10 @@ public class NodeStorageServiceImpl
     public NodeCommitEntry commit( final NodeCommitEntry nodeCommitEntry, final NodeVersionIds versionIds, final InternalContext context )
     {
         final NodeCommitId nodeCommitId = new NodeCommitId();
-        final NodeCommitEntry updatedCommitEntry = NodeCommitEntry.create( nodeCommitEntry ).nodeCommitId( nodeCommitId ).build();
+        final NodeCommitEntry updatedCommitEntry = NodeCommitEntry.create( nodeCommitEntry )
+            .timestamp( Millis.fromOrElseNow( nodeCommitEntry.getTimestamp() ) )
+            .nodeCommitId( nodeCommitId )
+            .build();
         this.commitService.store( updatedCommitEntry, context );
 
         for ( final NodeVersionId versionId : versionIds )

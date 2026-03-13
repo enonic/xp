@@ -1,5 +1,7 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver;
 
+import java.util.Locale;
+
 import com.enonic.xp.data.Value;
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.filter.ValueFilter;
@@ -17,5 +19,5 @@ public interface QueryFieldNameResolver
 
     String resolve( String queryFieldName, Value value );
 
-    String resolveOrderByFieldName( String queryFieldName, String language );
+    String resolveOrderByFieldName( String queryFieldName, Locale language );
 }

@@ -24,21 +24,21 @@ class NodeStoreDocumentFactoryTest
     void references()
     {
         final PropertyTree data = new PropertyTree();
-        data.addReference( "myRef", new Reference( NodeId.from( "otherNode" ) ) );
+        data.addReference( "myRef", new Reference( NodeId.from( "othernode" ) ) );
 
         final IndexDocument indexDocument = NodeStoreDocumentFactory.createBuilder()
-            .nodeId( NodeId.from( "myNodeId" ) )
+            .nodeId( NodeId.from( "mynodeid" ) )
             .data( data )
             .indexConfigDocument( PatternIndexConfigDocument.create().defaultConfig( IndexConfig.MINIMAL ).build() )
             .manualOrderValue( 0L )
             .nodePath( new NodePath( "/myNode" ) )
-            .versionId( NodeVersionId.from( "versionId" ) )
+            .versionId( NodeVersionId.from( "versionid" ) )
             .timestamp( Instant.now() )
             .build()
             .create();
 
         final IndexItems indexItems = indexDocument.data();
         final Collection<Object> referenceValues = indexItems.asValuesMap().get( NodeIndexPath.REFERENCE.getPath() );
-        assertThat( referenceValues ).containsExactly( "otherNode" );
+        assertThat( referenceValues ).containsExactly( "othernode" );
     }
 }

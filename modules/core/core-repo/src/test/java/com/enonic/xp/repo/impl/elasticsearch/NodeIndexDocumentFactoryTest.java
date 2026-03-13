@@ -25,7 +25,7 @@ class NodeIndexDocumentFactoryTest
             .indexConfigDocument( PatternIndexConfigDocument.create().defaultConfig( IndexConfig.MINIMAL ).build() )
             .manualOrderValue( 0L )
             .nodePath( NodePath.ROOT )
-            .versionId( NodeVersionId.from( "versionId" ) )
+            .versionId( NodeVersionId.from( "versionid" ) )
             .timestamp( Instant.now() )
             .build()
             .create() );
@@ -39,7 +39,7 @@ class NodeIndexDocumentFactoryTest
             .indexConfigDocument( PatternIndexConfigDocument.create().defaultConfig( IndexConfig.MINIMAL ).build() )
             .manualOrderValue( 0L )
             .nodePath( NodePath.ROOT )
-            .versionId( NodeVersionId.from( "versionId" ) )
+            .versionId( NodeVersionId.from( "versionid" ) )
             .timestamp( Instant.now() )
             .build()
             .create();
@@ -55,7 +55,7 @@ class NodeIndexDocumentFactoryTest
             .indexConfigDocument( PatternIndexConfigDocument.create().defaultConfig( IndexConfig.MINIMAL ).build() )
             .manualOrderValue( 0L )
             .nodePath( NodePath.ROOT )
-            .versionId( NodeVersionId.from( "versionId" ) )
+            .versionId( NodeVersionId.from( "versionid" ) )
             .timestamp( Instant.now() )
             .build()
             .create();
@@ -74,7 +74,7 @@ class NodeIndexDocumentFactoryTest
                 PatternIndexConfigDocument.create().analyzer( myAnalyzerName ).defaultConfig( IndexConfig.MINIMAL ).build() )
             .manualOrderValue( 0L )
             .nodePath( NodePath.ROOT )
-            .versionId( NodeVersionId.from( "versionId" ) )
+            .versionId( NodeVersionId.from( "versionid" ) )
             .timestamp( Instant.now() )
             .build()
             .create();
@@ -88,12 +88,12 @@ class NodeIndexDocumentFactoryTest
         final String myAnalyzerName = "myAnalyzer";
 
         final IndexDocument indexDocument = NodeStoreDocumentFactory.createBuilder()
-            .nodeId( NodeId.from( "myId" ) )
+            .nodeId( NodeId.from( "myid" ) )
             .indexConfigDocument(
                 PatternIndexConfigDocument.create().analyzer( myAnalyzerName ).defaultConfig( IndexConfig.MINIMAL ).build() )
             .manualOrderValue( 0L )
             .nodePath( new NodePath( "/my-name" ) )
-            .versionId( NodeVersionId.from( "versionId" ) )
+            .versionId( NodeVersionId.from( "versionid" ) )
             .timestamp( Instant.now() )
             .build()
             .create();

@@ -41,7 +41,7 @@ class PortalUrlServiceImpl_pageUrlTest
         ContextBuilder.create().build().runWith( () -> {
             PortalRequestAccessor.set( null );
 
-            final PageUrlParams params = new PageUrlParams().id( "contentId" );
+            final PageUrlParams params = new PageUrlParams().id( "contentid" );
 
             final String url = this.service.pageUrl( params );
             // Not possible to resolve project
@@ -59,7 +59,7 @@ class PortalUrlServiceImpl_pageUrlTest
             .runWith( () -> {
                 PortalRequestAccessor.set( null );
 
-                final PageUrlParams params = new PageUrlParams().id( "contentId" );
+                final PageUrlParams params = new PageUrlParams().id( "contentid" );
 
                 final String url = this.service.pageUrl( params );
                 // Not possible to resolve branch
@@ -73,7 +73,7 @@ class PortalUrlServiceImpl_pageUrlTest
         ContextBuilder.create().repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) ).build().runWith( () -> {
             PortalRequestAccessor.set( null );
 
-            final PageUrlParams params = new PageUrlParams().id( "contentId" );
+            final PageUrlParams params = new PageUrlParams().id( "contentid" );
 
             final String url = this.service.pageUrl( params );
             // Not possible to resolve branch

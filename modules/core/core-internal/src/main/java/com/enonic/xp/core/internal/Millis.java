@@ -39,7 +39,7 @@ public final class Millis
      */
     public static @NonNull Instant fromOrElseNow( final @Nullable Instant instant )
     {
-        return instant != null ? instant.truncatedTo( ChronoUnit.MILLIS ) : now();
+        return instant != null ? truncateToMillis( instant ) : now();
     }
 
     /**
@@ -54,7 +54,12 @@ public final class Millis
      */
     public static @Nullable Instant from( final @Nullable Instant instant )
     {
-        return instant != null ? instant.truncatedTo( ChronoUnit.MILLIS ) : null;
+        return instant != null ? truncateToMillis( instant ) : null;
+    }
+
+    private static Instant truncateToMillis( final @NonNull Instant instant )
+    {
+        return instant.getNano() == 0 ? instant : instant.truncatedTo( ChronoUnit.MILLIS );
     }
 
     private Millis()

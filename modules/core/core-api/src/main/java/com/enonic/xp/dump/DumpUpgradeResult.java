@@ -8,6 +8,8 @@ import com.enonic.xp.util.Version;
 
 public final class DumpUpgradeResult
 {
+    private final String dumpName;
+
     private final Version initialVersion;
 
     private final Version upgradedVersion;
@@ -16,9 +18,15 @@ public final class DumpUpgradeResult
 
     private DumpUpgradeResult( final Builder builder )
     {
+        this.dumpName = builder.dumpName;
         this.initialVersion = builder.initialVersion;
         this.upgradedVersion = builder.upgradedVersion;
         this.stepResults = builder.stepResults.build();
+    }
+
+    public String getDumpName()
+    {
+        return dumpName;
     }
 
     public Version getInitialVersion()
@@ -43,6 +51,8 @@ public final class DumpUpgradeResult
 
     public static final class Builder
     {
+        private String dumpName;
+
         private Version initialVersion;
 
         private Version upgradedVersion;
@@ -51,6 +61,12 @@ public final class DumpUpgradeResult
 
         private Builder()
         {
+        }
+
+        public Builder dumpName( final String dumpName )
+        {
+            this.dumpName = dumpName;
+            return this;
         }
 
         public Builder initialVersion( final Version initialVersion )

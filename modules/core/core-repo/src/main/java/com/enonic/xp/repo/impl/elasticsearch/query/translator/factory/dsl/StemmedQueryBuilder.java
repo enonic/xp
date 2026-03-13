@@ -1,5 +1,7 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.dsl;
 
+import java.util.Locale;
+
 import org.elasticsearch.index.query.QueryBuilder;
 
 import com.enonic.xp.data.PropertySet;
@@ -11,13 +13,13 @@ class StemmedQueryBuilder
 {
     public static final String NAME = "stemmed";
 
-    private final String language;
+    private final Locale language;
 
     StemmedQueryBuilder( final PropertySet expression )
     {
         super( expression );
 
-        language = getString( "language" );
+        language = Locale.forLanguageTag( getString( "language" ) );
     }
 
     @Override

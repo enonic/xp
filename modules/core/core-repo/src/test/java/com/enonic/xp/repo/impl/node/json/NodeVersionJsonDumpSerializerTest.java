@@ -90,7 +90,7 @@ class NodeVersionJsonDumpSerializerTest
             build();
 
         NodeStoreVersion nodeVersion = NodeStoreVersion.create().
-            id( NodeId.from( "myId" ) ).
+            id( NodeId.from( "myid" ) ).
             indexConfigDocument( PatternIndexConfigDocument.create().
                 analyzer( "myAnalyzer" ).
                 defaultConfig( IndexConfig.MINIMAL ).

@@ -3,6 +3,7 @@ package com.enonic.xp.index;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 import com.google.common.collect.ImmutableList;
@@ -85,7 +86,7 @@ public final class IndexConfig
 
     private final boolean path;
 
-    private final ImmutableList<String> languages;
+    private final ImmutableList<Locale> languages;
 
     private final ImmutableList<IndexValueProcessor> indexValueProcessors;
 
@@ -146,7 +147,7 @@ public final class IndexConfig
         return !languages.isEmpty();
     }
 
-    public List<String> getLanguages()
+    public List<Locale> getLanguages()
     {
         return languages;
     }
@@ -223,7 +224,7 @@ public final class IndexConfig
 
         private boolean path = false;
 
-        private final List<String> languages = new ArrayList<>();
+        private final List<Locale> languages = new ArrayList<>();
 
         private final List<IndexValueProcessor> indexValueProcessors = new ArrayList<>();
 
@@ -288,7 +289,7 @@ public final class IndexConfig
             return this;
         }
 
-        public Builder addLanguage( final String language )
+        public Builder addLanguage( final Locale language )
         {
             if ( language != null )
             {

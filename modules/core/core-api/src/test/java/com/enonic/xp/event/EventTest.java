@@ -76,7 +76,7 @@ class EventTest
         final Event testEvent = Event.create( "type" ).
             value( "int1", 1 ).
             value( "long1", 10L ).
-            value( "obj1", ContentId.from( "testId" ) ).
+            value( "obj1", ContentId.from( "testid" ) ).
             build();
 
         assertTrue( testEvent.getValueAs( Double.class, "int1" ).get() != null );

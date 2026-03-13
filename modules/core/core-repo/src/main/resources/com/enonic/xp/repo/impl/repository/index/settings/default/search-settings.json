@@ -17,193 +17,139 @@
       },
       "icu_collation_ar": {
         "type": "icu_collation",
-        "language": "ar",
-        "country": "SA"
+        "language": "ar"
       },
       "icu_collation_hy": {
         "type": "icu_collation",
-        "language": "hy",
-        "country": "AM"
-      },
-      "icu_collation_eu": {
-        "type": "icu_collation",
-        "language": "eu",
-        "country": "ES"
+        "language": "hy"
       },
       "icu_collation_bn": {
         "type": "icu_collation",
-        "language": "bn",
-        "country": "BD"
-      },
-      "icu_collation_pt-br": {
-        "type": "icu_collation",
-        "language": "pt",
-        "country": "BR"
+        "language": "bn"
       },
       "icu_collation_bg": {
         "type": "icu_collation",
-        "language": "bg",
-        "country": "BG"
+        "language": "bg"
       },
       "icu_collation_ca": {
         "type": "icu_collation",
-        "language": "ca",
-        "country": "ES"
+        "language": "ca"
       },
       "icu_collation_zh": {
         "type": "icu_collation",
-        "language": "zh",
-        "country": "CN"
+        "language": "zh"
       },
       "icu_collation_ja": {
         "type": "icu_collation",
-        "language": "ja",
-        "country": "JP"
+        "language": "ja"
       },
       "icu_collation_ko": {
         "type": "icu_collation",
-        "language": "ko",
-        "country": "KR"
+        "language": "ko"
       },
       "icu_collation_cs": {
         "type": "icu_collation",
-        "language": "cs",
-        "country": "CZ"
+        "language": "cs"
       },
       "icu_collation_da": {
         "type": "icu_collation",
-        "language": "da",
-        "country": "DK"
+        "language": "da"
       },
       "icu_collation_nl": {
         "type": "icu_collation",
-        "language": "nl",
-        "country": "NL"
+        "language": "nl"
       },
       "icu_collation_en": {
         "type": "icu_collation",
-        "language": "en",
-        "country": "GB"
+        "language": "en"
       },
       "icu_collation_fi": {
         "type": "icu_collation",
-        "language": "fi",
-        "country": "FI"
+        "language": "fi"
       },
       "icu_collation_fr": {
         "type": "icu_collation",
-        "language": "fr",
-        "country": "FR"
+        "language": "fr"
       },
       "icu_collation_gl": {
         "type": "icu_collation",
-        "language": "gl",
-        "country": "ES"
+        "language": "gl"
       },
       "icu_collation_de": {
         "type": "icu_collation",
-        "language": "de",
-        "country": "DE"
+        "language": "de"
       },
       "icu_collation_el": {
         "type": "icu_collation",
-        "language": "el",
-        "country": "GR"
+        "language": "el"
       },
       "icu_collation_hi": {
         "type": "icu_collation",
-        "language": "hi",
-        "country": "IN"
+        "language": "hi"
       },
       "icu_collation_hu": {
         "type": "icu_collation",
-        "language": "hu",
-        "country": "HU"
+        "language": "hu"
       },
       "icu_collation_id": {
         "type": "icu_collation",
-        "language": "id",
-        "country": "ID"
+        "language": "id"
       },
       "icu_collation_ga": {
         "type": "icu_collation",
-        "language": "ga",
-        "country": "IE"
+        "language": "ga"
       },
       "icu_collation_it": {
         "type": "icu_collation",
-        "language": "it",
-        "country": "IT"
+        "language": "it"
       },
       "icu_collation_lv": {
         "type": "icu_collation",
-        "language": "lv",
-        "country": "LV"
+        "language": "lv"
       },
       "icu_collation_lt": {
         "type": "icu_collation",
-        "language": "lt",
-        "country": "LT"
-      },
-      "icu_collation_no": {
-        "type": "icu_collation",
-        "language": "no",
-        "country": "NO"
+        "language": "lt"
       },
       "icu_collation_nb": {
         "type": "icu_collation",
-        "language": "nb",
-        "country": "NO"
+        "language": "nb"
       },
       "icu_collation_nn": {
         "type": "icu_collation",
-        "language": "nn",
-        "country": "NO"
+        "language": "nn"
       },
       "icu_collation_fa": {
         "type": "icu_collation",
-        "language": "fa",
-        "country": "IR"
+        "language": "fa"
       },
       "icu_collation_pt": {
         "type": "icu_collation",
-        "language": "pt",
-        "country": "PT"
+        "language": "pt"
       },
       "icu_collation_ro": {
         "type": "icu_collation",
-        "language": "ro",
-        "country": "RO"
+        "language": "ro"
       },
       "icu_collation_ru": {
         "type": "icu_collation",
-        "language": "ru",
-        "country": "RU"
-      },
-      "icu_collation_ku": {
-        "type": "icu_collation",
-        "language": "ku",
-        "country": "IQ"
+        "language": "ru"
       },
       "icu_collation_es": {
         "type": "icu_collation",
-        "language": "es",
-        "country": "ES"
+        "language": "es"
       },
       "icu_collation_sv": {
         "type": "icu_collation",
-        "language": "sv",
-        "country": "SE"
+        "language": "sv"
       },
       "icu_collation_tr": {
         "type": "icu_collation",
-        "language": "tr",
-        "country": "TR"
+        "language": "tr"
       },
       "icu_collation_th": {
         "type": "icu_collation",
-        "language": "th",
-        "country": "TH"
+        "language": "th"
       }
     },
     "tokenizer": {
@@ -316,25 +262,11 @@
           "icu_collation_hy"
         ]
       },
-      "icu_sort_eu": {
-        "type": "custom",
-        "tokenizer": "keyword",
-        "filter": [
-          "icu_collation_eu"
-        ]
-      },
       "icu_sort_bn": {
         "type": "custom",
         "tokenizer": "keyword",
         "filter": [
           "icu_collation_bn"
-        ]
-      },
-      "icu_sort_pt-br": {
-        "type": "custom",
-        "tokenizer": "keyword",
-        "filter": [
-          "icu_collation_pt-br"
         ]
       },
       "icu_sort_bg": {
@@ -484,13 +416,6 @@
           "icu_collation_lt"
         ]
       },
-      "icu_sort_no": {
-        "type": "custom",
-        "tokenizer": "keyword",
-        "filter": [
-          "icu_collation_no"
-        ]
-      },
       "icu_sort_nb": {
         "type": "custom",
         "tokenizer": "keyword",
@@ -531,13 +456,6 @@
         "tokenizer": "keyword",
         "filter": [
           "icu_collation_ru"
-        ]
-      },
-      "icu_sort_ku": {
-        "type": "custom",
-        "tokenizer": "keyword",
-        "filter": [
-          "icu_collation_ku"
         ]
       },
       "icu_sort_es": {
