@@ -101,29 +101,17 @@ public final class PatternIndexConfigDocument
     }
 
     @Override
-    public boolean equals( final Object o )
+    public boolean equals( final Object object )
     {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-        if ( !super.equals( o ) )
-        {
-            return false;
-        }
-        final PatternIndexConfigDocument that = (PatternIndexConfigDocument) o;
-        return Objects.equals( pathIndexConfigs, that.pathIndexConfigs ) && Objects.equals( defaultConfig, that.defaultConfig ) &&
+        return object == this || object instanceof PatternIndexConfigDocument that && Objects.equals( analyzer, that.analyzer ) &&
+            Objects.equals( pathIndexConfigs, that.pathIndexConfigs ) && Objects.equals( defaultConfig, that.defaultConfig ) &&
             Objects.equals( allTextConfig, that.allTextConfig );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( super.hashCode(), pathIndexConfigs, defaultConfig, allTextConfig );
+        return Objects.hash( analyzer, pathIndexConfigs, defaultConfig, allTextConfig );
     }
 
     public static final class Builder

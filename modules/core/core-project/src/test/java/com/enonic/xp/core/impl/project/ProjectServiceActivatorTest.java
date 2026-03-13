@@ -56,9 +56,8 @@ class ProjectServiceActivatorTest
     @BeforeEach
     void setUp()
     {
-        when( indexService.isMaster() ).thenReturn( true );
         when( repositoryService.list() ).thenReturn( Repositories.from( Repository.create()
-                                                                            .id( RepositoryId.from( "com.enonic.cms.default" ) )
+                                                                            .id( RepositoryId.from( "com.enonic.cms.test" ) )
                                                                             .branches( Branches.from( ContentConstants.BRANCH_DRAFT,
                                                                                                       ContentConstants.BRANCH_MASTER ) )
                                                                             .build() ) );
