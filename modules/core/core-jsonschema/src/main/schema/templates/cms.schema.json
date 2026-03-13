@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://json-schema.enonic.com/@schemaVersion@/cms.schema.json",
+  "$id": "@schemaBaseUrl@/@schemaVersion@/cms.schema.json",
   "type": "object",
   "properties": {
     "mixin": {
