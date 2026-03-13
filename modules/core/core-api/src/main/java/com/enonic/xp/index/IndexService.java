@@ -10,6 +10,9 @@ public interface IndexService
     // Check if node is master
     boolean isMaster();
 
+    // Check if node is leader (Hazelcast-based)
+    boolean isLeader();
+
     UpdateIndexSettingsResult updateIndexSettings( UpdateIndexSettingsParams params );
 
     Map<String, String> getIndexSettings( RepositoryId repositoryId, IndexType indexType );

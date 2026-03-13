@@ -135,6 +135,12 @@ public class IndexServiceImpl
     }
 
     @Override
+    public boolean isLeader()
+    {
+        return indexServiceInternal.isLeader();
+    }
+
+    @Override
     public boolean waitForYellowStatus()
     {
         return indexServiceInternal.waitForYellowStatus();
