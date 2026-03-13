@@ -3,8 +3,6 @@ package com.enonic.xp.repo.impl.elasticsearch.document.indexitem;
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.repo.impl.index.IndexValueTypeInterface;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
-
 public final class IndexItem<T>
 {
     public static final String INDEX_VALUE_TYPE_SEPARATOR = ".";
@@ -39,6 +37,6 @@ public final class IndexItem<T>
 
     private String getTypeContextPostfix()
     {
-        return isNullOrEmpty( valueType().getPostfix() ) ? "" : INDEX_VALUE_TYPE_SEPARATOR + valueType().getPostfix();
+        return valueType().getPostfix().isEmpty() ? "" : INDEX_VALUE_TYPE_SEPARATOR + valueType().getPostfix();
     }
 }

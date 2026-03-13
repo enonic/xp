@@ -1,8 +1,10 @@
 package com.enonic.xp.repo.impl.index;
 
-import java.util.Locale;
 import java.util.Objects;
 
+import org.jspecify.annotations.NullMarked;
+
+@NullMarked
 public class OrderByIndexValueType
     implements IndexValueTypeInterface
 {
@@ -12,7 +14,7 @@ public class OrderByIndexValueType
 
     public OrderByIndexValueType( final String language )
     {
-        this.value = ORDER_BY_INDEX_PREFIX + language.toLowerCase( Locale.ROOT );
+        this.value = ORDER_BY_INDEX_PREFIX + language;
     }
 
     @Override

@@ -33,7 +33,7 @@ public class StemmedFunctionArguments
     @Override
     public String resolveQueryFieldName( final String baseFieldName )
     {
-        return IndexLanguageController.isSupported( this.language )
+        return IndexLanguageController.stemmingSupported( this.language )
             ? SearchQueryFieldNameResolver.INSTANCE.resolve( baseFieldName, IndexLanguageController.resolveStemmedIndexValueType(
             this.language ) )
             : "";

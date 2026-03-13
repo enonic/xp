@@ -14,34 +14,25 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class IndexLanguageControllerTest
 {
     @Test
-    void isSupported_returns_true_for_all_known_languages()
+    void stemmingSupported_returns_true_for_all_known_languages()
     {
         final String[] knownLanguages =
             {"ar", "hy", "eu", "bn", "pt-br", "bg", "ca", "zh", "ja", "ko", "cs", "da", "nl", "en", "fi", "fr", "gl", "de", "el", "hi",
                 "hu", "id", "ga", "it", "lv", "lt", "no", "nb", "nn", "fa", "pt", "ro", "ru", "ku", "es", "sv", "tr", "th"};
         for ( final String lang : knownLanguages )
         {
-            assertTrue( IndexLanguageController.isSupported( Locale.forLanguageTag(lang) ), "Expected isSupported=true for: " + lang );
+            assertTrue( IndexLanguageController.stemmingSupported( Locale.forLanguageTag( lang ) ),
+                        "Expected isSupported=true for: " + lang );
         }
     }
 
     @Test
-    void isSupported_returns_false_for_unknown_languages()
+    void stemmingSupported_returns_false_for_unknown_languages()
     {
-        assertFalse( IndexLanguageController.isSupported( Locale.forLanguageTag("xyz") ) );
-        assertFalse( IndexLanguageController.isSupported( Locale.forLanguageTag("rr") ) );
-        assertFalse( IndexLanguageController.isSupported( Locale.forLanguageTag("") ) );
-        assertFalse( IndexLanguageController.isSupported( null ) );
-    }
-
-    @Test
-    void isSupported_is_case_insensitive()
-    {
-        assertTrue( IndexLanguageController.isSupported( Locale.forLanguageTag( "pt-BR" ) ) );
-        assertTrue( IndexLanguageController.isSupported( Locale.forLanguageTag( "pt-br" ) ) );
-        assertTrue( IndexLanguageController.isSupported( Locale.forLanguageTag( "EN" ) ) );
-        assertTrue( IndexLanguageController.isSupported( Locale.forLanguageTag( "en" ) ) );
-        assertTrue( IndexLanguageController.isSupported( Locale.forLanguageTag( "De" ) ) );
+        assertFalse( IndexLanguageController.stemmingSupported( Locale.forLanguageTag( "xyz" ) ) );
+        assertFalse( IndexLanguageController.stemmingSupported( Locale.forLanguageTag( "rr" ) ) );
+        assertFalse( IndexLanguageController.stemmingSupported( Locale.forLanguageTag( "" ) ) );
+        assertFalse( IndexLanguageController.stemmingSupported( null ) );
     }
 
     @Test
@@ -51,6 +42,7 @@ public class IndexLanguageControllerTest
         assertEquals( "german", IndexLanguageController.resolveAnalyzer( Locale.forLanguageTag( "de" ) ) );
         assertEquals( "norwegian", IndexLanguageController.resolveAnalyzer( Locale.forLanguageTag( "no" ) ) );
         assertEquals( "norwegian", IndexLanguageController.resolveAnalyzer( Locale.forLanguageTag( "nb" ) ) );
+        assertEquals( "language_analyzer_nn", IndexLanguageController.resolveAnalyzer( Locale.forLanguageTag( "nn" ) ) );
         assertEquals( "swedish", IndexLanguageController.resolveAnalyzer( Locale.forLanguageTag( "sv" ) ) );
     }
 
