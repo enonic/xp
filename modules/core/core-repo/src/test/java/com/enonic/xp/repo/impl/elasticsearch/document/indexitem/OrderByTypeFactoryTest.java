@@ -42,11 +42,10 @@ class OrderByTypeFactoryTest
     }
 
     @Test
-    void create_accepts_pt_BR_case_insensitive()
+    void create_throws_for_unsupported_sort_language()
     {
-        final IndexConfig config = IndexConfig.create().enabled( true ).addLanguage( Locale.forLanguageTag( "pt-BR") ).build();
-        final List<IndexItem<?>> items =
-            IndexItemFactory.createOrderBy( IndexPath.from( "myProp" ), ValueFactory.newString( "hello" ), config );
-        assertEquals( 2, items.size() );
+        final IndexConfig config = IndexConfig.create().enabled( true ).addLanguage( Locale.forLanguageTag( "pt-BR" ) ).build();
+        assertThrows( IllegalArgumentException.class,
+                      () -> IndexItemFactory.createOrderBy( IndexPath.from( "myProp" ), ValueFactory.newString( "hello" ), config ) );
     }
 }
