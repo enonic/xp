@@ -1,0 +1,20 @@
+{
+  "$base": "inputBaseDef",
+  "properties": {
+    "type": {
+      "const": "HtmlArea"
+    },
+    "exclude": {
+      "type": "string"
+    },
+    "include": {
+      "type": "string"
+    },
+    "allowHeadings": {
+      "type": "string"
+    },
+    "default": {
+      "type": "string"
+    }
+  }
+}

@@ -1,0 +1,4 @@
+mixin:
+  - name: "myapp:mymixin"
+    optional: true
+    allowContentTypes: "myapp:.*"

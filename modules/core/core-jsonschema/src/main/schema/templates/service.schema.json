@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "@schemaBaseUrl@/@schemaVersion@/service.schema.json",
+  "type": "object",
+  "properties": {
+    "allow": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "displayName": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

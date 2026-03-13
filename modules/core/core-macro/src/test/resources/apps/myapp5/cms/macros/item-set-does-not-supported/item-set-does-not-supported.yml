@@ -1,0 +1,7 @@
+form:
+  - type: "ItemSet"
+    name: "mySet"
+    label: "My Set"
+    items:
+      - type: "FormFragment"
+        name: "invalid"

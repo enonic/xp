@@ -1,0 +1,28 @@
+{
+  "$base": "inputBaseDef",
+  "properties": {
+    "type": {
+      "const": "RadioButton"
+    },
+    "options": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          },
+          "label": {
+            "$ref": "#/$defs/localizedTextDef"
+          }
+        }
+      }
+    },
+    "default": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "options"
+  ]
+}

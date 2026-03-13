@@ -4,7 +4,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Iterator;
-import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
@@ -13,6 +12,7 @@ import com.enonic.xp.admin.impl.tool.YmlAdminToolDescriptorParserTest;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.util.GenericValue;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -45,11 +45,13 @@ public class YmlAdminExtensionDescriptorParserTest
         assertEquals( "interface_1", interfacesIterator.next() );
         assertEquals( "interface_2", interfacesIterator.next() );
 
-        final Map<String, String> config = descriptor.getConfig();
+        final GenericValue config = descriptor.getConfig();
 
-        assertEquals( 2, config.size() );
-        assertEquals( "value_1", config.get( "property_1" ) );
-        assertEquals( "value_2", config.get( "property_2" ) );
+        assertEquals( 3, config.properties().size() );
+        assertEquals( "value_1", config.property( "property_1" ).asString() );
+        assertEquals( "value_2", config.property( "property_2" ).asString() );
+        assertEquals( "string", config.property( "property_3" ).property( "p1" ).asString() );
+        assertEquals( 123, config.property( "property_3" ).property( "p2" ).asInteger() );
     }
 
     private String readAsString( final String name )

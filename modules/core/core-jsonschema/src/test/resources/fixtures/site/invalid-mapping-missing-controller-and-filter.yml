@@ -1,0 +1,3 @@
+mappings:
+  - pattern: "/path/*"
+    match: "_path like '/path/*'"

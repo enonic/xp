@@ -4,7 +4,11 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.core.impl.schema.JsonSchemaService;
+import com.enonic.xp.form.FieldSet;
+import com.enonic.xp.form.FormItem;
+import com.enonic.xp.form.FormItemSet;
+import com.enonic.xp.form.FormOptionSet;
+import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.idprovider.IdProviderDescriptor;
 import com.enonic.xp.idprovider.IdProviderDescriptorService;
 import com.enonic.xp.resource.Resource;
@@ -18,8 +22,6 @@ public final class IdProviderDescriptorServiceImpl
 {
     private ResourceService resourceService;
 
-    private JsonSchemaService jsonSchemaService;
-
     @Override
     public IdProviderDescriptor getDescriptor( final ApplicationKey key )
     {
@@ -29,20 +31,45 @@ public final class IdProviderDescriptorServiceImpl
 
     private ResourceProcessor<ApplicationKey, IdProviderDescriptor> newProcessor( final ApplicationKey key )
     {
-        return new ResourceProcessor.Builder<ApplicationKey, IdProviderDescriptor>().
-            key( key ).
-            segment( "authDescriptor" ).
-            keyTranslator( this::toResourceKey ).
-            processor( resource -> loadDescriptor( key, resource ) ).
-            build();
+        return new ResourceProcessor.Builder<ApplicationKey, IdProviderDescriptor>().key( key )
+            .segment( "authDescriptor" )
+            .keyTranslator( this::toResourceKey )
+            .processor( resource -> loadDescriptor( key, resource ) )
+            .build();
     }
 
     private IdProviderDescriptor loadDescriptor( final ApplicationKey key, final Resource resource )
     {
         final String yaml = resource.readString();
-        jsonSchemaService.validate( "https://json-schema.enonic.com/8.0.0/idprovider-descriptor.schema.json", yaml );
+        final IdProviderDescriptor descriptor = YmlIdProviderDescriptorParser.parse( yaml, key ).build();
+        validateNoFormFragments( descriptor.getConfig() );
+        return descriptor;
+    }
 
-        return YmlIdProviderDescriptorParser.parse( yaml, key ).build();
+    private static void validateNoFormFragments( final Iterable<FormItem> formItems )
+    {
+        for ( FormItem item : formItems )
+        {
+            switch ( item.getType() )
+            {
+                case FORM_FRAGMENT:
+                    throw new IllegalArgumentException( "IdProviderDescriptor form cannot contain FormFragment: " + item.getName() );
+                case FORM_ITEM_SET:
+                    validateNoFormFragments( (FormItemSet) item );
+                    break;
+                case LAYOUT:
+                    validateNoFormFragments( (FieldSet) item );
+                    break;
+                case FORM_OPTION_SET:
+                    for ( FormOptionSetOption option : (FormOptionSet) item )
+                    {
+                        validateNoFormFragments( option );
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     private ResourceKey toResourceKey( final ApplicationKey key )
@@ -54,11 +81,5 @@ public final class IdProviderDescriptorServiceImpl
     public void setResourceService( final ResourceService resourceService )
     {
         this.resourceService = resourceService;
-    }
-
-    @Reference
-    public void setJsonSchemaService( final JsonSchemaService jsonSchemaService )
-    {
-        this.jsonSchemaService = jsonSchemaService;
     }
 }

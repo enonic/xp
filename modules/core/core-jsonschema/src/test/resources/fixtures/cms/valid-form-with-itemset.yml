@@ -1,0 +1,8 @@
+form:
+  - type: "ItemSet"
+    name: "mySet"
+    label: "My Set"
+    items:
+      - type: "TextLine"
+        name: "myField"
+        label: "My Field"

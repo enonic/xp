@@ -36,5 +36,8 @@ public abstract class FormOptionSetMapper
 
         @JsonProperty("selected")
         abstract FormOptionSet.Builder multiselection( Occurrences value );
+
+        @JsonProperty("expanded")
+        abstract FormOptionSet.Builder expanded( boolean value );
     }
 }

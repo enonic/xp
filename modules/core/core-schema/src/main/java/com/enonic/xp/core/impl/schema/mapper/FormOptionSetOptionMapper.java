@@ -26,6 +26,12 @@ public abstract class FormOptionSetOptionMapper
         @JsonProperty("items")
         abstract FormOptionSetOption.Builder addFormItems( Iterable<FormItem> formItems );
 
+        @JsonProperty("name")
+        abstract FormOptionSetOption.Builder name( String value );
+
+        @JsonProperty("defaultOption")
+        abstract FormOptionSetOption.Builder defaultOption( boolean value );
+
         @JsonProperty("label")
         abstract FormOptionSetOption.Builder setLabel( LocalizedText value );
 

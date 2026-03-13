@@ -1,0 +1,29 @@
+{
+  "$base": "inputBaseDef",
+  "properties": {
+    "type": {
+      "const": "ComboBox"
+    },
+    "options": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          },
+          "label": {
+            "$ref": "#/$defs/localizedTextDef"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "default": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "options"
+  ]
+}

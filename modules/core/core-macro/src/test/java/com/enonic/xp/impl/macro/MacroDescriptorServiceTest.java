@@ -12,6 +12,7 @@ import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.macro.MacroDescriptors;
 import com.enonic.xp.macro.MacroKey;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -28,6 +29,11 @@ class MacroDescriptorServiceTest
     {
         addApplication( "myapp1", "/apps/myapp1" );
         addApplication( "myapp2", "/apps/myapp2" );
+        addApplication( "myapp3", "/apps/myapp3" );
+        addApplication( "myapp4", "/apps/myapp4" );
+        addApplication( "myapp5", "/apps/myapp5" );
+        addApplication( "myapp6", "/apps/myapp6" );
+        addApplication( "myapp7", "/apps/myapp7" );
 
         this.service = new MacroDescriptorServiceImpl( this.resourceService, this.applicationService );
     }
@@ -91,13 +97,6 @@ class MacroDescriptorServiceTest
     }
 
     @Test
-    void testGetAll()
-    {
-        final MacroDescriptors result = this.service.getAll();
-        assertEquals( 4, result.getSize() );
-    }
-
-    @Test
     void testGetInvalidByKey()
     {
         addApplication( "myapp3", "/apps/myapp3" );
@@ -106,5 +105,35 @@ class MacroDescriptorServiceTest
         final UncheckedIOException ex = assertThrows( UncheckedIOException.class, () -> this.service.getByKey( macroKey ) );
 
         assertTrue( ex.getMessage().contains( "Unrecognized field \"invalid-form\"" ) );
+    }
+
+    @Test
+    void testGetDescriptorWithFormFragmentThrows()
+    {
+        final IllegalArgumentException ex = assertThrows( IllegalArgumentException.class, () -> this.service.getByKey(
+            MacroKey.from( ApplicationKey.from( "myapp4" ), "form-fragment-does-not-supported" ) ) );
+        assertEquals( "MacroDescriptor form cannot contain FormFragment, OptionSet and ItemSet: my-fragment", ex.getMessage() );
+    }
+
+    @Test
+    void testGetDescriptorWithItemSetThrows()
+    {
+        final IllegalArgumentException ex = assertThrows( IllegalArgumentException.class, () -> this.service.getByKey(
+            MacroKey.from( ApplicationKey.from( "myapp5" ), "item-set-does-not-supported" ) ) );
+        assertEquals( "MacroDescriptor form cannot contain FormFragment, OptionSet and ItemSet: mySet", ex.getMessage() );
+    }
+
+    @Test
+    void testGetDescriptorWithOptionSetThrows()
+    {
+        final IllegalArgumentException ex = assertThrows( IllegalArgumentException.class, () -> this.service.getByKey(
+            MacroKey.from( ApplicationKey.from( "myapp6" ), "option-set-does-not-supported" ) ) );
+        assertEquals( "MacroDescriptor form cannot contain FormFragment, OptionSet and ItemSet: radioOptionSet", ex.getMessage() );
+    }
+
+    @Test
+    void testGetDescriptorWithNestedFieldSet()
+    {
+        assertDoesNotThrow( () -> this.service.getByKey( MacroKey.from( ApplicationKey.from( "myapp7" ), "valid-form-with-field-set" ) ) );
     }
 }

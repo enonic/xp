@@ -1,0 +1,22 @@
+{
+  "oneOf": [
+    {
+      "type": "string"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "i18n": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "additionalProperties": false
+    }
+  ]
+}

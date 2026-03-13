@@ -1,0 +1,12 @@
+form:
+  - type: "OptionSet"
+    name: "myOptions"
+    label: "My Options"
+    selected:
+      max: 1
+      min: 1
+    options:
+      - name: "optionA"
+        label: "Option A"
+      - name: "optionB"
+        label: "Option B"

@@ -1,0 +1,11 @@
+{
+  "$base": "inputBaseDef",
+  "properties": {
+    "type": {
+      "const": "Time"
+    },
+    "default": {
+      "type": "string"
+    }
+  }
+}

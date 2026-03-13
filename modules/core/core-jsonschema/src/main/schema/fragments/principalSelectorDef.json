@@ -1,0 +1,14 @@
+{
+  "$base": "inputBaseDef",
+  "properties": {
+    "type": {
+      "const": "PrincipalSelector"
+    },
+    "principalType": {
+      "type": "string"
+    },
+    "default": {
+      "type": "string"
+    }
+  }
+}

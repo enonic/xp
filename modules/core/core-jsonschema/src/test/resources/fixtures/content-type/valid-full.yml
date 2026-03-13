@@ -1,0 +1,15 @@
+superType: "base:structured"
+abstract: false
+final: false
+allowChildContent: true
+displayName: "My Content Type"
+description: "Content type description"
+allowChildContentType:
+  - "myapp:article"
+form:
+  - type: "TextLine"
+    name: "title"
+    label: "Title"
+  - type: "HtmlArea"
+    name: "body"
+    label: "Body"
