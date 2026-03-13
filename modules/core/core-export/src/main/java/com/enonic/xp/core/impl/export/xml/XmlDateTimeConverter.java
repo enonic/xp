@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.export.xml;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -12,15 +13,14 @@ import java.time.format.DateTimeFormatter;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import com.enonic.xp.util.Exceptions;
-
 final class XmlDateTimeConverter
 {
-    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern( "yyyy-MM-ddX" );
+    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern( "yyyy-MM-ddX" ).withZone( ZoneOffset.UTC );
 
-    private static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern( "HH:mm:ss.SSSX" );
+    private static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern( "HH:mm:ss.SSSX" ).withZone( ZoneOffset.UTC );
 
-    private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern( "yyyy-MM-dd'T'HH:mm:ss.SSSX" );
+    private static final DateTimeFormatter DATE_TIME_FORMAT =
+        DateTimeFormatter.ofPattern( "yyyy-MM-dd'T'HH:mm:ss.SSSX" ).withZone( ZoneOffset.UTC );
 
     public static Instant parseInstant( final String value )
     {
@@ -29,7 +29,7 @@ final class XmlDateTimeConverter
 
     public static String format( final Instant value )
     {
-        return value.atZone( ZoneOffset.UTC ).format( DATE_TIME_FORMAT );
+        return DateTimeFormatter.ISO_INSTANT.format( value );
     }
 
     public static LocalDateTime parseLocalDateTime( final String value )
@@ -49,7 +49,7 @@ final class XmlDateTimeConverter
 
     public static String format( final LocalDate value )
     {
-        return ZonedDateTime.of( value, LocalTime.now(), ZoneOffset.UTC ).format( DATE_FORMAT.withZone( ZoneOffset.UTC ) );
+        return ZonedDateTime.of( value, LocalTime.MIN, ZoneOffset.UTC ).format( DATE_FORMAT );
     }
 
     public static LocalTime parseLocalTime( final String value )
@@ -59,12 +59,22 @@ final class XmlDateTimeConverter
 
     public static String format( final LocalTime value )
     {
-        return ZonedDateTime.of( LocalDate.now(), value, ZoneOffset.UTC ).format( TIME_FORMAT.withZone( ZoneOffset.UTC ) );
+        return ZonedDateTime.of( LocalDate.MIN, value, ZoneOffset.UTC ).format( TIME_FORMAT );
     }
 
     private static Instant toInstant( final XMLGregorianCalendar calendar )
     {
-        return calendar.toGregorianCalendar().toInstant();
+        BigDecimal fractional = calendar.getFractionalSecond();
+
+        if ( fractional != null )
+        {
+            long nanos = fractional.movePointRight( 9 ).longValue();
+            return Instant.ofEpochSecond( calendar.toGregorianCalendar().toInstant().getEpochSecond(), nanos );
+        }
+        else
+        {
+            return calendar.toGregorianCalendar().toInstant();
+        }
     }
 
     private static LocalDateTime toLocalDateTime( final XMLGregorianCalendar calendar )
@@ -112,7 +122,7 @@ final class XmlDateTimeConverter
         }
         catch ( final Exception e )
         {
-            throw Exceptions.unchecked( e );
+            throw new XmlException( e );
         }
     }
 }
