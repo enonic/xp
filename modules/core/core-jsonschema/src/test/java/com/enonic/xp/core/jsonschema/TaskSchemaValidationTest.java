@@ -66,3 +66,4 @@ class TaskSchemaValidationTest
         assertThat( validateYaml( schema, "fixtures/task/invalid-form-fragment-not-supported.yaml" ) ).isNotEmpty();
     }
 }
+
