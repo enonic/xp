@@ -1,40 +1,29 @@
 {
-  "allOf": [
-    {
-      "$ref": "#/$defs/inputDef"
+  "$base": "inputBaseDef",
+  "properties": {
+    "type": {
+      "const": "MediaSelector"
     },
-    {
-      "type": "object",
-      "properties": {
-        "type": {
-          "const": "MediaSelector"
-        },
-        "allowContentType": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "allowPath": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "treeMode": {
-          "type": "boolean"
-        },
-        "hideToggleIcon": {
-          "type": "boolean"
-        },
-        "default": {
-          "type": "string"
-        }
+    "allowContentType": {
+      "type": "array",
+      "items": {
+        "type": "string"
       }
+    },
+    "allowPath": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "treeMode": {
+      "type": "boolean"
+    },
+    "hideToggleIcon": {
+      "type": "boolean"
+    },
+    "default": {
+      "type": "string"
     }
-  ],
-  "unevaluatedProperties": false,
-  "$defs": {
-    "inputDef": {}
   }
 }

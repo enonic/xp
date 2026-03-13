@@ -1,31 +1,20 @@
 {
-  "allOf": [
-    {
-      "$ref": "#/$defs/inputDef"
+  "$base": "inputBaseDef",
+  "properties": {
+    "type": {
+      "const": "HtmlArea"
     },
-    {
-      "type": "object",
-      "properties": {
-        "type": {
-          "const": "HtmlArea"
-        },
-        "exclude": {
-          "type": "string"
-        },
-        "include": {
-          "type": "string"
-        },
-        "allowHeadings": {
-          "type": "string"
-        },
-        "default": {
-          "type": "string"
-        }
-      }
+    "exclude": {
+      "type": "string"
+    },
+    "include": {
+      "type": "string"
+    },
+    "allowHeadings": {
+      "type": "string"
+    },
+    "default": {
+      "type": "string"
     }
-  ],
-  "unevaluatedProperties": false,
-  "$defs": {
-    "inputDef": {}
   }
 }

@@ -1,25 +1,14 @@
 {
-  "allOf": [
-    {
-      "$ref": "#/$defs/inputDef"
+  "$base": "inputBaseDef",
+  "properties": {
+    "type": {
+      "const": "PrincipalSelector"
     },
-    {
-      "type": "object",
-      "properties": {
-        "type": {
-          "const": "PrincipalSelector"
-        },
-        "principalType": {
-          "type": "string"
-        },
-        "default": {
-          "type": "string"
-        }
-      }
+    "principalType": {
+      "type": "string"
+    },
+    "default": {
+      "type": "string"
     }
-  ],
-  "unevaluatedProperties": false,
-  "$defs": {
-    "inputDef": {}
   }
 }

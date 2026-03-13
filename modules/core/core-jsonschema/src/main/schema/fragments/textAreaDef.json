@@ -1,28 +1,17 @@
 {
-  "allOf": [
-    {
-      "$ref": "#/$defs/inputDef"
+  "$base": "inputBaseDef",
+  "properties": {
+    "type": {
+      "const": "TextArea"
     },
-    {
-      "type": "object",
-      "properties": {
-        "type": {
-          "const": "TextArea"
-        },
-        "maxLength": {
-          "type": "integer"
-        },
-        "showCounter": {
-          "type": "boolean"
-        },
-        "default": {
-          "type": "string"
-        }
-      }
+    "maxLength": {
+      "type": "integer"
+    },
+    "showCounter": {
+      "type": "boolean"
+    },
+    "default": {
+      "type": "string"
     }
-  ],
-  "unevaluatedProperties": false,
-  "$defs": {
-    "inputDef": {}
   }
 }

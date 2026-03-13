@@ -36,6 +36,7 @@
     }
   ],
   "$defs": {
+    "formItemDef": {},
     "localizedTextDef": {},
     "formItemsDef": {},
     "occurrencesDef": {},

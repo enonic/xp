@@ -1,19 +1,8 @@
 {
-  "allOf": [
-    {
-      "$ref": "#/$defs/inputDef"
-    },
-    {
-      "type": "object",
-      "properties": {
-        "type": {
-          "const": "Tag"
-        }
-      }
+  "$base": "inputBaseDef",
+  "properties": {
+    "type": {
+      "const": "Tag"
     }
-  ],
-  "unevaluatedProperties": false,
-  "$defs": {
-    "inputDef": {}
   }
 }

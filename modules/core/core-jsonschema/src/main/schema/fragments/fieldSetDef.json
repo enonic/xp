@@ -23,6 +23,7 @@
     }
   ],
   "$defs": {
+    "formItemDef": {},
     "localizedTextDef": {},
     "formItemsDef": {}
   }

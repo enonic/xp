@@ -1,40 +1,28 @@
 {
-  "allOf": [
-    {
-      "$ref": "#/$defs/inputDef"
+  "$base": "inputBaseDef",
+  "properties": {
+    "type": {
+      "const": "RadioButton"
     },
-    {
-      "type": "object",
-      "properties": {
-        "type": {
-          "const": "RadioButton"
-        },
-        "options": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "value": {
-                "type": "string"
-              },
-              "label": {
-                "$ref": "#/$defs/localizedTextDef"
-              }
-            }
+    "options": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          },
+          "label": {
+            "$ref": "#/$defs/localizedTextDef"
           }
-        },
-        "default": {
-          "type": "string"
         }
-      },
-      "required": [
-        "options"
-      ]
+      }
+    },
+    "default": {
+      "type": "string"
     }
-  ],
-  "unevaluatedProperties": false,
-  "$defs": {
-    "inputDef": {},
-    "localizedTextDef": {}
-  }
+  },
+  "required": [
+    "options"
+  ]
 }

@@ -1,25 +1,14 @@
 {
-  "allOf": [
-    {
-      "$ref": "#/$defs/inputDef"
+  "$base": "inputBaseDef",
+  "properties": {
+    "type": {
+      "const": "ContentTypeFilter"
     },
-    {
-      "type": "object",
-      "properties": {
-        "type": {
-          "const": "ContentTypeFilter"
-        },
-        "context": {
-          "type": "boolean"
-        },
-        "default": {
-          "type": "string"
-        }
-      }
+    "context": {
+      "type": "boolean"
+    },
+    "default": {
+      "type": "string"
     }
-  ],
-  "unevaluatedProperties": false,
-  "$defs": {
-    "inputDef": {}
   }
 }

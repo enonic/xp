@@ -42,8 +42,7 @@
         {
           "$ref": "#/$defs/optionSetDef"
         }
-      ],
-      "unevaluatedProperties": false
+      ]
     },
     "formDef": {
       "type": "array",

@@ -4,15 +4,68 @@ import groovy.json.JsonSlurper
 def schemaVersion = project.version.toString().split( '-' )[0]
 def genResourcesDir = layout.buildDirectory.dir( "generated/resources/schema" )
 
+def applyBase( Map element, Map allFragments, JsonSlurper slurper )
+{
+    if ( !( element.'$base' instanceof String ) )
+    {
+        return element
+    }
+    def baseName = element.remove( '$base' ) as String
+    def baseFragment = allFragments.find { it.key == baseName }?.value
+    if ( !baseFragment )
+    {
+        return element
+    }
+
+    def clonedBase = slurper.parseText( JsonOutput.toJson( baseFragment ) )
+
+    // Merge properties: base first, type-specific overrides
+    if ( clonedBase.properties instanceof Map )
+    {
+        element.properties = ( clonedBase.properties as Map ) + ( element.properties ?: [:] as Map )
+    }
+
+    // Union required arrays
+    if ( clonedBase.required instanceof List )
+    {
+        def merged = ( ( clonedBase.required as List ) + ( element.required ?: [] as List ) ).unique()
+        element.required = merged
+    }
+
+    // Inherit additionalProperties if not set
+    if ( clonedBase.additionalProperties != null && element.additionalProperties == null )
+    {
+        element.additionalProperties = clonedBase.additionalProperties
+    }
+
+    // Merge $defs so base dependencies get inlined later
+    if ( clonedBase.'$defs' instanceof Map )
+    {
+        if ( !( element.'$defs' instanceof Map ) )
+        {
+            element.'$defs' = [:]
+        }
+        clonedBase.'$defs'.each { k, v ->
+            if ( !element.'$defs'.containsKey( k ) )
+            {
+                element.'$defs'[k] = v
+            }
+        }
+    }
+
+    return element
+}
+
 def fillDefinitions( Object currentElement, Map allFragments, JsonSlurper slurper )
 {
     if ( currentElement instanceof Map )
     {
+        currentElement = applyBase( currentElement, allFragments, slurper )
         if ( currentElement.'$defs' instanceof Map )
         {
             // Iterate over a snapshot of the keys — inner $defs may add new keys during the process
             currentElement.'$defs'.keySet().toList().each { key ->
-                def fragment = allFragments.find { it.key == key  }?.value
+                def fragment = allFragments.find { it.key == key }?.value
                 if ( fragment )
                 {
                     // Clone via JSON round-trip to avoid mutating the original in allFragments

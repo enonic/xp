@@ -1,28 +1,17 @@
 {
-  "allOf": [
-    {
-      "$ref": "#/$defs/inputDef"
+  "$base": "inputBaseDef",
+  "properties": {
+    "type": {
+      "const": "Double"
     },
-    {
-      "type": "object",
-      "properties": {
-        "type": {
-          "const": "Double"
-        },
-        "max": {
-          "type": "number"
-        },
-        "min": {
-          "type": "number"
-        },
-        "default": {
-          "type": "number"
-        }
-      }
+    "max": {
+      "type": "number"
+    },
+    "min": {
+      "type": "number"
+    },
+    "default": {
+      "type": "number"
     }
-  ],
-  "unevaluatedProperties": false,
-  "$defs": {
-    "inputDef": {}
   }
 }

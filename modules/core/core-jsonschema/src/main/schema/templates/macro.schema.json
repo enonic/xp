@@ -26,8 +26,7 @@
         {
           "$ref": "#/$defs/fieldSetDef"
         }
-      ],
-      "unevaluatedProperties": false
+      ]
     },
     "formDef": {
       "type": "array",

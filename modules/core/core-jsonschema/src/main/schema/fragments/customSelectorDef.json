@@ -1,34 +1,23 @@
 {
-  "allOf": [
-    {
-      "$ref": "#/$defs/inputDef"
+  "$base": "inputBaseDef",
+  "properties": {
+    "type": {
+      "const": "CustomSelector"
     },
-    {
+    "service": {
+      "type": "string"
+    },
+    "params": {
       "type": "object",
-      "properties": {
-        "type": {
-          "const": "CustomSelector"
-        },
-        "service": {
-          "type": "string"
-        },
-        "params": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "galleryMode": {
-          "type": "boolean"
-        },
-        "default": {
-          "type": "string"
-        }
+      "additionalProperties": {
+        "type": "string"
       }
+    },
+    "galleryMode": {
+      "type": "boolean"
+    },
+    "default": {
+      "type": "string"
     }
-  ],
-  "unevaluatedProperties": false,
-  "$defs": {
-    "inputDef": {}
   }
 }

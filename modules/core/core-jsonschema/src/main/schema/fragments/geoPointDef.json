@@ -1,22 +1,11 @@
 {
-  "allOf": [
-    {
-      "$ref": "#/$defs/inputDef"
+  "$base": "inputBaseDef",
+  "properties": {
+    "type": {
+      "const": "GeoPoint"
     },
-    {
-      "type": "object",
-      "properties": {
-        "type": {
-          "const": "GeoPoint"
-        },
-        "default": {
-          "type": "string"
-        }
-      }
+    "default": {
+      "type": "string"
     }
-  ],
-  "unevaluatedProperties": false,
-  "$defs": {
-    "inputDef": {}
   }
 }

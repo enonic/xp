@@ -1,40 +1,29 @@
 {
-  "allOf": [
-    {
-      "$ref": "#/$defs/inputDef"
+  "$base": "inputBaseDef",
+  "properties": {
+    "type": {
+      "const": "ComboBox"
     },
-    {
-      "type": "object",
-      "properties": {
-        "type": {
-          "const": "ComboBox"
-        },
-        "options": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "value": {
-                "type": "string"
-              },
-              "label": {
-                "$ref": "#/$defs/localizedTextDef"
-              }
-            }
+    "options": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          },
+          "label": {
+            "$ref": "#/$defs/localizedTextDef"
           }
         },
-        "default": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "options"
-      ]
+        "additionalProperties": false
+      }
+    },
+    "default": {
+      "type": "string"
     }
-  ],
-  "unevaluatedProperties": false,
-  "$defs": {
-    "inputDef": {},
-    "localizedTextDef": {}
-  }
+  },
+  "required": [
+    "options"
+  ]
 }
