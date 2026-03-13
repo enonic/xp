@@ -8,6 +8,6 @@ dependencies {
 jar {
     bundle {
         bnd( 'Bundle-Name': 'Enonic XP Web - Websession',
-             'Export-Package' : 'org.eclipse.jetty.hazelcast.session' )
+             'Export-Package' : 'org.eclipse.jetty.hazelcast.session,org.eclipse.jetty.session' )
     }
 }
