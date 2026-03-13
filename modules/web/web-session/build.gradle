@@ -2,6 +2,7 @@ dependencies {
     implementation project( ':web:web-api' )
     implementation libs.jetty.hazelcast
     implementation libs.hazelcast.hazelcast
+    implementation libs.jetty.session
 }
 
 jar {

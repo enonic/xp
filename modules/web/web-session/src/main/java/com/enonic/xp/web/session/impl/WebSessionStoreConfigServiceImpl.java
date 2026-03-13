@@ -20,6 +20,8 @@ public class WebSessionStoreConfigServiceImpl
 
     public static final String NON_PERSISTENT_STORE_MODE = "non-persistent";
 
+    public static final String FILE_STORE_MODE = "file";
+
     private final ClusterConfig clusterConfig;
 
     private final WebSessionStoreConfig webSessionstoreConfig;
@@ -42,6 +44,10 @@ public class WebSessionStoreConfigServiceImpl
         if ( clusterConfig.isEnabled() && REPLICATED_STORE_MODE.equals( storeMode ) )
         {
             enableComponent = HazelcastSessionStoreFactoryActivator.class.getName();
+        }
+        else if ( FILE_STORE_MODE.equals( storeMode ) )
+        {
+            enableComponent = FileSessionStoreFactoryActivator.class.getName();
         }
         else
         {
@@ -84,5 +90,11 @@ public class WebSessionStoreConfigServiceImpl
     public boolean isFlushOnResponseCommit()
     {
         return webSessionstoreConfig.flushOnResponseCommit();
+    }
+
+    @Override
+    public String getStoreDir()
+    {
+        return webSessionstoreConfig.storeDir();
     }
 }

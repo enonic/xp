@@ -9,4 +9,6 @@ public interface WebSessionStoreConfigService
     boolean isSaveOnCreate();
 
     boolean isFlushOnResponseCommit();
+
+    String getStoreDir();
 }

@@ -30,11 +30,13 @@ class WebSessionStoreConfigServiceImplTest
 
         when( webSessionstoreConfig.savePeriodSeconds() ).thenReturn( 10 );
         when( webSessionstoreConfig.gracePeriodSeconds() ).thenReturn( 20 );
+        when( webSessionstoreConfig.storeDir() ).thenReturn( "/tmp/sessions" );
 
         final WebSessionStoreConfigServiceImpl webSessionStoreConfigServiceImpl =
             new WebSessionStoreConfigServiceImpl( webSessionstoreConfig, clusterConfig );
         assertEquals( 10, webSessionStoreConfigServiceImpl.getSavePeriodSeconds() );
         assertEquals( 20, webSessionStoreConfigServiceImpl.getGracePeriodSeconds() );
+        assertEquals( "/tmp/sessions", webSessionStoreConfigServiceImpl.getStoreDir() );
     }
 
     @Test
@@ -86,5 +88,22 @@ class WebSessionStoreConfigServiceImplTest
         webSessionStoreConfigServiceImpl.deactivate( componentContext );
 
         verify( componentContext ).disableComponent( NullSessionStoreFactoryActivator.class.getName() );
+    }
+
+    @Test
+    void activate_file()
+    {
+        when( clusterConfig.isEnabled() ).thenReturn( false );
+        when( webSessionstoreConfig.storeMode() ).thenReturn( "file" );
+
+        final WebSessionStoreConfigServiceImpl webSessionStoreConfigServiceImpl =
+            new WebSessionStoreConfigServiceImpl( webSessionstoreConfig, clusterConfig );
+        webSessionStoreConfigServiceImpl.activate( componentContext );
+
+        verify( componentContext ).enableComponent( FileSessionStoreFactoryActivator.class.getName() );
+
+        webSessionStoreConfigServiceImpl.deactivate( componentContext );
+
+        verify( componentContext ).disableComponent( FileSessionStoreFactoryActivator.class.getName() );
     }
 }
