@@ -3,10 +3,7 @@ form:
     name: "myOptions"
     label: "My Options"
     options:
-      minimum: 1
-      maximum: 1
-      option:
-        - name: "optionA"
-          label: "Option A"
-        - name: "optionB"
-          label: "Option B"
+      - name: "optionA"
+        label: "Option A"
+      - name: "optionB"
+        label: "Option B"

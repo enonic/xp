@@ -6,6 +6,9 @@
     {
       "type": "object",
       "properties": {
+        "type": {
+          "const": "OptionSet"
+        },
         "name": {
           "type": "string"
         },
@@ -24,8 +27,8 @@
         "options": {
           "$ref": "#/$defs/optionSetOptionsDef"
         },
-        "type": {
-          "const": "OptionSet"
+        "selected": {
+          "$ref": "#/$defs/occurrencesDef"
         }
       },
       "required": [
@@ -41,27 +44,10 @@
     "formItemsDef": {},
     "occurrencesDef": {},
     "optionSetOptionsDef": {
-      "type": "object",
-      "properties": {
-        "option": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/optionSetOptionDef"
-          }
-        },
-        "minimum": {
-          "type": "integer"
-        },
-        "maximum": {
-          "type": "integer"
-        }
-      },
-      "additionalProperties": false,
-      "required": [
-        "minimum",
-        "maximum",
-        "option"
-      ]
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/optionSetOptionDef"
+      }
     },
     "optionSetOptionDef": {
       "type": "object",
@@ -69,14 +55,14 @@
         "name": {
           "type": "string"
         },
-        "default": {
-          "type": "boolean"
-        },
         "label": {
           "$ref": "#/$defs/localizedTextDef"
         },
         "helpText": {
           "$ref": "#/$defs/localizedTextDef"
+        },
+        "defaultOption": {
+          "type": "boolean"
         },
         "items": {
           "type": "array",
