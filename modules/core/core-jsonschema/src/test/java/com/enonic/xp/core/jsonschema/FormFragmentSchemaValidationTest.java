@@ -21,18 +21,18 @@ class FormFragmentSchemaValidationTest
     @Test
     void emptyDocumentIsValid()
     {
-        assertThat( validateYaml( schema, "fixtures/form-fragment/valid-minimal.yaml" ) ).isEmpty();
+        assertThat( validateYaml( schema, "fixtures/form-fragment/valid-minimal.yml" ) ).isEmpty();
     }
 
     @Test
     void documentWithFormIsValid()
     {
-        assertThat( validateYaml( schema, "fixtures/form-fragment/valid-with-form.yaml" ) ).isEmpty();
+        assertThat( validateYaml( schema, "fixtures/form-fragment/valid-with-form.yml" ) ).isEmpty();
     }
 
     @Test
     void additionalPropertiesAreNotAllowed()
     {
-        assertThat( validateYaml( schema, "fixtures/form-fragment/invalid-unknown-property.yaml" ) ).isNotEmpty();
+        assertThat( validateYaml( schema, "fixtures/form-fragment/invalid-unknown-property.yml" ) ).isNotEmpty();
     }
 }

@@ -21,42 +21,42 @@ class MacroSchemaValidationTest
     @Test
     void emptyDocumentIsValid()
     {
-        assertThat( validateYaml( schema, "fixtures/macro/valid-minimal.yaml" ) ).isEmpty();
+        assertThat( validateYaml( schema, "fixtures/macro/valid-minimal.yml" ) ).isEmpty();
     }
 
     @Test
     void documentWithFormIsValid()
     {
-        assertThat( validateYaml( schema, "fixtures/macro/valid-with-form.yaml" ) ).isEmpty();
+        assertThat( validateYaml( schema, "fixtures/macro/valid-with-form.yml" ) ).isEmpty();
     }
 
     @Test
     void additionalPropertiesAreNotAllowed()
     {
-        assertThat( validateYaml( schema, "fixtures/macro/invalid-unknown-property.yaml" ) ).isNotEmpty();
+        assertThat( validateYaml( schema, "fixtures/macro/invalid-unknown-property.yml" ) ).isNotEmpty();
     }
 
     @Test
     void formSupportsFieldSet()
     {
-        assertThat( validateYaml( schema, "fixtures/macro/valid-form-with-fieldset.yaml" ) ).isEmpty();
+        assertThat( validateYaml( schema, "fixtures/macro/valid-form-with-fieldset.yml" ) ).isEmpty();
     }
 
     @Test
     void formDoesNotSupportItemSet()
     {
-        assertThat( validateYaml( schema, "fixtures/macro/invalid-form-itemset-not-supported.yaml" ) ).isNotEmpty();
+        assertThat( validateYaml( schema, "fixtures/macro/invalid-form-itemset-not-supported.yml" ) ).isNotEmpty();
     }
 
     @Test
     void formDoesNotSupportOptionSet()
     {
-        assertThat( validateYaml( schema, "fixtures/macro/invalid-form-optionset-not-supported.yaml" ) ).isNotEmpty();
+        assertThat( validateYaml( schema, "fixtures/macro/invalid-form-optionset-not-supported.yml" ) ).isNotEmpty();
     }
 
     @Test
     void formDoesNotSupportFormFragment()
     {
-        assertThat( validateYaml( schema, "fixtures/macro/invalid-form-fragment-not-supported.yaml" ) ).isNotEmpty();
+        assertThat( validateYaml( schema, "fixtures/macro/invalid-form-fragment-not-supported.yml" ) ).isNotEmpty();
     }
 }

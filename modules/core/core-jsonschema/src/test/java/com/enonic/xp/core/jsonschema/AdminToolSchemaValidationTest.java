@@ -21,18 +21,18 @@ class AdminToolSchemaValidationTest
     @Test
     void emptyDocumentIsValid()
     {
-        assertThat( validateYaml( schema, "fixtures/admin-tool/valid-minimal.yaml" ) ).isEmpty();
+        assertThat( validateYaml( schema, "fixtures/admin-tool/valid-minimal.yml" ) ).isEmpty();
     }
 
     @Test
     void fullDocumentIsValid()
     {
-        assertThat( validateYaml( schema, "fixtures/admin-tool/valid-full.yaml" ) ).isEmpty();
+        assertThat( validateYaml( schema, "fixtures/admin-tool/valid-full.yml" ) ).isEmpty();
     }
 
     @Test
     void additionalPropertiesAreNotAllowed()
     {
-        assertThat( validateYaml( schema, "fixtures/admin-tool/invalid-unknown-property.yaml" ) ).isNotEmpty();
+        assertThat( validateYaml( schema, "fixtures/admin-tool/invalid-unknown-property.yml" ) ).isNotEmpty();
     }
 }

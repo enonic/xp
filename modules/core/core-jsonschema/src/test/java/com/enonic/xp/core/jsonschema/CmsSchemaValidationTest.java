@@ -21,24 +21,24 @@ class CmsSchemaValidationTest
     @Test
     void emptyDocumentIsValid()
     {
-        assertThat( validateYaml( schema, "fixtures/cms/valid-minimal.yaml" ) ).isEmpty();
+        assertThat( validateYaml( schema, "fixtures/cms/valid-minimal.yml" ) ).isEmpty();
     }
 
     @Test
     void mixinWithNameIsValid()
     {
-        assertThat( validateYaml( schema, "fixtures/cms/valid-with-mixin.yaml" ) ).isEmpty();
+        assertThat( validateYaml( schema, "fixtures/cms/valid-with-mixin.yml" ) ).isEmpty();
     }
 
     @Test
     void mixinMissingNameIsInvalid()
     {
-        assertThat( validateYaml( schema, "fixtures/cms/invalid-mixin-missing-name.yaml" ) ).isNotEmpty();
+        assertThat( validateYaml( schema, "fixtures/cms/invalid-mixin-missing-name.yml" ) ).isNotEmpty();
     }
 
     @Test
     void additionalPropertiesAreNotAllowed()
     {
-        assertThat( validateYaml( schema, "fixtures/cms/invalid-unknown-property.yaml" ) ).isNotEmpty();
+        assertThat( validateYaml( schema, "fixtures/cms/invalid-unknown-property.yml" ) ).isNotEmpty();
     }
 }

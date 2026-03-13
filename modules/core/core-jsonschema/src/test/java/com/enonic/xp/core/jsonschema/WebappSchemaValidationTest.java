@@ -21,24 +21,24 @@ class WebappSchemaValidationTest
     @Test
     void emptyDocumentIsValid()
     {
-        assertThat( validateYaml( schema, "fixtures/webapp/valid-minimal.yaml" ) ).isEmpty();
+        assertThat( validateYaml( schema, "fixtures/webapp/valid-minimal.yml" ) ).isEmpty();
     }
 
     @Test
     void documentWithApisIsValid()
     {
-        assertThat( validateYaml( schema, "fixtures/webapp/valid-with-apis.yaml" ) ).isEmpty();
+        assertThat( validateYaml( schema, "fixtures/webapp/valid-with-apis.yml" ) ).isEmpty();
     }
 
     @Test
     void apisItemMustBeString()
     {
-        assertThat( validateYaml( schema, "fixtures/webapp/invalid-apis-item-not-string.yaml" ) ).isNotEmpty();
+        assertThat( validateYaml( schema, "fixtures/webapp/invalid-apis-item-not-string.yml" ) ).isNotEmpty();
     }
 
     @Test
     void additionalPropertiesAreNotAllowed()
     {
-        assertThat( validateYaml( schema, "fixtures/webapp/invalid-unknown-property.yaml" ) ).isNotEmpty();
+        assertThat( validateYaml( schema, "fixtures/webapp/invalid-unknown-property.yml" ) ).isNotEmpty();
     }
 }

@@ -21,24 +21,24 @@ class ServiceSchemaValidationTest
     @Test
     void emptyDocumentIsValid()
     {
-        assertThat( validateYaml( schema, "fixtures/service/valid-minimal.yaml" ) ).isEmpty();
+        assertThat( validateYaml( schema, "fixtures/service/valid-minimal.yml" ) ).isEmpty();
     }
 
     @Test
     void fullDocumentIsValid()
     {
-        assertThat( validateYaml( schema, "fixtures/service/valid-full.yaml" ) ).isEmpty();
+        assertThat( validateYaml( schema, "fixtures/service/valid-full.yml" ) ).isEmpty();
     }
 
     @Test
     void allowItemMustBeString()
     {
-        assertThat( validateYaml( schema, "fixtures/service/invalid-allow-item-not-string.yaml" ) ).isNotEmpty();
+        assertThat( validateYaml( schema, "fixtures/service/invalid-allow-item-not-string.yml" ) ).isNotEmpty();
     }
 
     @Test
     void additionalPropertiesAreNotAllowed()
     {
-        assertThat( validateYaml( schema, "fixtures/service/invalid-unknown-property.yaml" ) ).isNotEmpty();
+        assertThat( validateYaml( schema, "fixtures/service/invalid-unknown-property.yml" ) ).isNotEmpty();
     }
 }

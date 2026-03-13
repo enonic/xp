@@ -21,24 +21,24 @@ class MixinSchemaValidationTest
     @Test
     void emptyDocumentIsValid()
     {
-        assertThat( validateYaml( schema, "fixtures/mixin/valid-minimal.yaml" ) ).isEmpty();
+        assertThat( validateYaml( schema, "fixtures/mixin/valid-minimal.yml" ) ).isEmpty();
     }
 
     @Test
     void documentWithFormIsValid()
     {
-        assertThat( validateYaml( schema, "fixtures/mixin/valid-with-form.yaml" ) ).isEmpty();
+        assertThat( validateYaml( schema, "fixtures/mixin/valid-with-form.yml" ) ).isEmpty();
     }
 
     @Test
     void formInputMissingLabelIsInvalid()
     {
-        assertThat( validateYaml( schema, "fixtures/mixin/invalid-form-input-missing-label.yaml" ) ).isNotEmpty();
+        assertThat( validateYaml( schema, "fixtures/mixin/invalid-form-input-missing-label.yml" ) ).isNotEmpty();
     }
 
     @Test
     void additionalPropertiesAreNotAllowed()
     {
-        assertThat( validateYaml( schema, "fixtures/mixin/invalid-unknown-property.yaml" ) ).isNotEmpty();
+        assertThat( validateYaml( schema, "fixtures/mixin/invalid-unknown-property.yml" ) ).isNotEmpty();
     }
 }

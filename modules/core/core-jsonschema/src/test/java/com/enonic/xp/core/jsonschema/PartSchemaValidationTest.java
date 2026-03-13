@@ -21,18 +21,18 @@ class PartSchemaValidationTest
     @Test
     void emptyDocumentIsValid()
     {
-        assertThat( validateYaml( schema, "fixtures/part/valid-minimal.yaml" ) ).isEmpty();
+        assertThat( validateYaml( schema, "fixtures/part/valid-minimal.yml" ) ).isEmpty();
     }
 
     @Test
     void documentWithFormIsValid()
     {
-        assertThat( validateYaml( schema, "fixtures/part/valid-with-form.yaml" ) ).isEmpty();
+        assertThat( validateYaml( schema, "fixtures/part/valid-with-form.yml" ) ).isEmpty();
     }
 
     @Test
     void additionalPropertiesAreNotAllowed()
     {
-        assertThat( validateYaml( schema, "fixtures/part/invalid-unknown-property.yaml" ) ).isNotEmpty();
+        assertThat( validateYaml( schema, "fixtures/part/invalid-unknown-property.yml" ) ).isNotEmpty();
     }
 }

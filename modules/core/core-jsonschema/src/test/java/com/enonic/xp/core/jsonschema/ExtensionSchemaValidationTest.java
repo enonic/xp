@@ -21,18 +21,18 @@ class ExtensionSchemaValidationTest
     @Test
     void emptyDocumentIsValid()
     {
-        assertThat( validateYaml( schema, "fixtures/extension/valid-minimal.yaml" ) ).isEmpty();
+        assertThat( validateYaml( schema, "fixtures/extension/valid-minimal.yml" ) ).isEmpty();
     }
 
     @Test
     void fullDocumentIsValid()
     {
-        assertThat( validateYaml( schema, "fixtures/extension/valid-full.yaml" ) ).isEmpty();
+        assertThat( validateYaml( schema, "fixtures/extension/valid-full.yml" ) ).isEmpty();
     }
 
     @Test
     void additionalPropertiesAreNotAllowed()
     {
-        assertThat( validateYaml( schema, "fixtures/extension/invalid-unknown-property.yaml" ) ).isNotEmpty();
+        assertThat( validateYaml( schema, "fixtures/extension/invalid-unknown-property.yml" ) ).isNotEmpty();
     }
 }

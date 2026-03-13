@@ -21,24 +21,24 @@ class StyleSchemaValidationTest
     @Test
     void emptyDocumentIsValid()
     {
-        assertThat( validateYaml( schema, "fixtures/style/valid-minimal.yaml" ) ).isEmpty();
+        assertThat( validateYaml( schema, "fixtures/style/valid-minimal.yml" ) ).isEmpty();
     }
 
     @Test
     void documentWithCssAndImageIsValid()
     {
-        assertThat( validateYaml( schema, "fixtures/style/valid-with-image.yaml" ) ).isEmpty();
+        assertThat( validateYaml( schema, "fixtures/style/valid-with-image.yml" ) ).isEmpty();
     }
 
     @Test
     void cssMustBeString()
     {
-        assertThat( validateYaml( schema, "fixtures/style/invalid-css-not-string.yaml" ) ).isNotEmpty();
+        assertThat( validateYaml( schema, "fixtures/style/invalid-css-not-string.yml" ) ).isNotEmpty();
     }
 
     @Test
     void additionalPropertiesAreNotAllowed()
     {
-        assertThat( validateYaml( schema, "fixtures/style/invalid-unknown-property.yaml" ) ).isNotEmpty();
+        assertThat( validateYaml( schema, "fixtures/style/invalid-unknown-property.yml" ) ).isNotEmpty();
     }
 }

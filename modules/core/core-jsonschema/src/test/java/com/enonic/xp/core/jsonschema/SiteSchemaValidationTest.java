@@ -21,48 +21,48 @@ class SiteSchemaValidationTest
     @Test
     void emptyDocumentIsValid()
     {
-        assertThat( validateYaml( schema, "fixtures/site/valid-minimal.yaml" ) ).isEmpty();
+        assertThat( validateYaml( schema, "fixtures/site/valid-minimal.yml" ) ).isEmpty();
     }
 
     @Test
     void processorWithNameIsValid()
     {
-        assertThat( validateYaml( schema, "fixtures/site/valid-with-processor.yaml" ) ).isEmpty();
+        assertThat( validateYaml( schema, "fixtures/site/valid-with-processor.yml" ) ).isEmpty();
     }
 
     @Test
     void mappingWithControllerIsValid()
     {
-        assertThat( validateYaml( schema, "fixtures/site/valid-mapping-with-controller.yaml" ) ).isEmpty();
+        assertThat( validateYaml( schema, "fixtures/site/valid-mapping-with-controller.yml" ) ).isEmpty();
     }
 
     @Test
     void mappingWithFilterIsValid()
     {
-        assertThat( validateYaml( schema, "fixtures/site/valid-mapping-with-filter.yaml" ) ).isEmpty();
+        assertThat( validateYaml( schema, "fixtures/site/valid-mapping-with-filter.yml" ) ).isEmpty();
     }
 
     @Test
     void processorMissingNameIsInvalid()
     {
-        assertThat( validateYaml( schema, "fixtures/site/invalid-processor-missing-name.yaml" ) ).isNotEmpty();
+        assertThat( validateYaml( schema, "fixtures/site/invalid-processor-missing-name.yml" ) ).isNotEmpty();
     }
 
     @Test
     void mappingWithoutControllerOrFilterIsInvalid()
     {
-        assertThat( validateYaml( schema, "fixtures/site/invalid-mapping-missing-controller-and-filter.yaml" ) ).isNotEmpty();
+        assertThat( validateYaml( schema, "fixtures/site/invalid-mapping-missing-controller-and-filter.yml" ) ).isNotEmpty();
     }
 
     @Test
     void mappingWithServiceAndPatternIsInvalid()
     {
-        assertThat( validateYaml( schema, "fixtures/site/invalid-mapping-service-with-pattern.yaml" ) ).isNotEmpty();
+        assertThat( validateYaml( schema, "fixtures/site/invalid-mapping-service-with-pattern.yml" ) ).isNotEmpty();
     }
 
     @Test
     void additionalPropertiesAreNotAllowed()
     {
-        assertThat( validateYaml( schema, "fixtures/site/invalid-unknown-property.yaml" ) ).isNotEmpty();
+        assertThat( validateYaml( schema, "fixtures/site/invalid-unknown-property.yml" ) ).isNotEmpty();
     }
 }

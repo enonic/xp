@@ -21,49 +21,49 @@ class TaskSchemaValidationTest
     @Test
     void emptyDocumentIsValid()
     {
-        assertThat( validateYaml( schema, "fixtures/task/valid-minimal.yaml" ) ).isEmpty();
+        assertThat( validateYaml( schema, "fixtures/task/valid-minimal.yml" ) ).isEmpty();
     }
 
     @Test
     void fullDocumentIsValid()
     {
-        assertThat( validateYaml( schema, "fixtures/task/valid-full.yaml" ) ).isEmpty();
+        assertThat( validateYaml( schema, "fixtures/task/valid-full.yml" ) ).isEmpty();
     }
 
     @Test
     void descriptionMustBeString()
     {
-        assertThat( validateYaml( schema, "fixtures/task/invalid-description-not-string.yaml" ) ).isNotEmpty();
+        assertThat( validateYaml( schema, "fixtures/task/invalid-description-not-string.yml" ) ).isNotEmpty();
     }
 
     @Test
     void additionalPropertiesAreNotAllowed()
     {
-        assertThat( validateYaml( schema, "fixtures/task/invalid-unknown-property.yaml" ) ).isNotEmpty();
+        assertThat( validateYaml( schema, "fixtures/task/invalid-unknown-property.yml" ) ).isNotEmpty();
     }
 
     @Test
     void formSupportsFieldSet()
     {
-        assertThat( validateYaml( schema, "fixtures/task/valid-form-with-fieldset.yaml" ) ).isEmpty();
+        assertThat( validateYaml( schema, "fixtures/task/valid-form-with-fieldset.yml" ) ).isEmpty();
     }
 
     @Test
     void formSupportsItemSet()
     {
-        assertThat( validateYaml( schema, "fixtures/task/valid-form-with-itemset.yaml" ) ).isEmpty();
+        assertThat( validateYaml( schema, "fixtures/task/valid-form-with-itemset.yml" ) ).isEmpty();
     }
 
     @Test
     void formSupportsOptionSet()
     {
-        assertThat( validateYaml( schema, "fixtures/task/valid-form-with-optionset.yaml" ) ).isEmpty();
+        assertThat( validateYaml( schema, "fixtures/task/valid-form-with-optionset.yml" ) ).isEmpty();
     }
 
     @Test
     void formDoesNotSupportFormFragment()
     {
-        assertThat( validateYaml( schema, "fixtures/task/invalid-form-fragment-not-supported.yaml" ) ).isNotEmpty();
+        assertThat( validateYaml( schema, "fixtures/task/invalid-form-fragment-not-supported.yml" ) ).isNotEmpty();
     }
 }
 

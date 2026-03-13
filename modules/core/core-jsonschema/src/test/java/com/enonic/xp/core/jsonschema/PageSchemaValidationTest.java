@@ -21,18 +21,18 @@ class PageSchemaValidationTest
     @Test
     void documentWithRegionsIsValid()
     {
-        assertThat( validateYaml( schema, "fixtures/page/valid-with-regions.yaml" ) ).isEmpty();
+        assertThat( validateYaml( schema, "fixtures/page/valid-with-regions.yml" ) ).isEmpty();
     }
 
     @Test
     void regionsIsRequired()
     {
-        assertThat( validateYaml( schema, "fixtures/page/invalid-missing-regions.yaml" ) ).isNotEmpty();
+        assertThat( validateYaml( schema, "fixtures/page/invalid-missing-regions.yml" ) ).isNotEmpty();
     }
 
     @Test
     void additionalPropertiesAreNotAllowed()
     {
-        assertThat( validateYaml( schema, "fixtures/page/invalid-unknown-property.yaml" ) ).isNotEmpty();
+        assertThat( validateYaml( schema, "fixtures/page/invalid-unknown-property.yml" ) ).isNotEmpty();
     }
 }

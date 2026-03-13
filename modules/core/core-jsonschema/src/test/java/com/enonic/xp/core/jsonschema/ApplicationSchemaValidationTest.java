@@ -21,30 +21,30 @@ class ApplicationSchemaValidationTest
     @Test
     void emptyDocumentIsValid()
     {
-        assertThat( validateYaml( schema, "fixtures/application/valid-minimal.yaml" ) ).isEmpty();
+        assertThat( validateYaml( schema, "fixtures/application/valid-minimal.yml" ) ).isEmpty();
     }
 
     @Test
     void documentWithDescriptionIsValid()
     {
-        assertThat( validateYaml( schema, "fixtures/application/valid-with-description.yaml" ) ).isEmpty();
+        assertThat( validateYaml( schema, "fixtures/application/valid-with-description.yml" ) ).isEmpty();
     }
 
     @Test
     void descriptionMustBeString()
     {
-        assertThat( validateYaml( schema, "fixtures/application/invalid-description-not-string.yaml" ) ).isNotEmpty();
+        assertThat( validateYaml( schema, "fixtures/application/invalid-description-not-string.yml" ) ).isNotEmpty();
     }
 
     @Test
     void additionalPropertiesAreNotAllowed()
     {
-        assertThat( validateYaml( schema, "fixtures/application/invalid-unknown-property.yaml" ) ).isNotEmpty();
+        assertThat( validateYaml( schema, "fixtures/application/invalid-unknown-property.yml" ) ).isNotEmpty();
     }
 
     @Test
     void additionalUnknownPropertyAlongsideValid()
     {
-        assertThat( validateYaml( schema, "fixtures/application/invalid-unknown-property-alongside-valid.yaml" ) ).isNotEmpty();
+        assertThat( validateYaml( schema, "fixtures/application/invalid-unknown-property-alongside-valid.yml" ) ).isNotEmpty();
     }
 }

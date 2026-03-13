@@ -21,24 +21,24 @@ class ApiSchemaValidationTest
     @Test
     void emptyDocumentIsValid()
     {
-        assertThat( validateYaml( schema, "fixtures/api/valid-minimal.yaml" ) ).isEmpty();
+        assertThat( validateYaml( schema, "fixtures/api/valid-minimal.yml" ) ).isEmpty();
     }
 
     @Test
     void fullDocumentIsValid()
     {
-        assertThat( validateYaml( schema, "fixtures/api/valid-full.yaml" ) ).isEmpty();
+        assertThat( validateYaml( schema, "fixtures/api/valid-full.yml" ) ).isEmpty();
     }
 
     @Test
     void mountMustBeKnownValue()
     {
-        assertThat( validateYaml( schema, "fixtures/api/invalid-mount-unknown-value.yaml" ) ).isNotEmpty();
+        assertThat( validateYaml( schema, "fixtures/api/invalid-mount-unknown-value.yml" ) ).isNotEmpty();
     }
 
     @Test
     void additionalPropertiesAreNotAllowed()
     {
-        assertThat( validateYaml( schema, "fixtures/api/invalid-unknown-property.yaml" ) ).isNotEmpty();
+        assertThat( validateYaml( schema, "fixtures/api/invalid-unknown-property.yml" ) ).isNotEmpty();
     }
 }

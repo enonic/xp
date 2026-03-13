@@ -21,24 +21,24 @@ class LayoutSchemaValidationTest
     @Test
     void documentWithRegionsIsValid()
     {
-        assertThat( validateYaml( schema, "fixtures/layout/valid-with-regions.yaml" ) ).isEmpty();
+        assertThat( validateYaml( schema, "fixtures/layout/valid-with-regions.yml" ) ).isEmpty();
     }
 
     @Test
     void fullDocumentIsValid()
     {
-        assertThat( validateYaml( schema, "fixtures/layout/valid-full.yaml" ) ).isEmpty();
+        assertThat( validateYaml( schema, "fixtures/layout/valid-full.yml" ) ).isEmpty();
     }
 
     @Test
     void regionsIsRequired()
     {
-        assertThat( validateYaml( schema, "fixtures/layout/invalid-missing-regions.yaml" ) ).isNotEmpty();
+        assertThat( validateYaml( schema, "fixtures/layout/invalid-missing-regions.yml" ) ).isNotEmpty();
     }
 
     @Test
     void additionalPropertiesAreNotAllowed()
     {
-        assertThat( validateYaml( schema, "fixtures/layout/invalid-unknown-property.yaml" ) ).isNotEmpty();
+        assertThat( validateYaml( schema, "fixtures/layout/invalid-unknown-property.yml" ) ).isNotEmpty();
     }
 }
