@@ -1,8 +1,0 @@
-mode: "LOCAL"
-form:
-  - type: "TextLine"
-    name: "domain"
-    label: "Domain"
-    occurrences:
-      min: 1
-      max: 1

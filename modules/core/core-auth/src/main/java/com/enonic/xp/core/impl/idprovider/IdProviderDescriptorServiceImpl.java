@@ -4,7 +4,6 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.core.impl.schema.JsonSchemaService;
 import com.enonic.xp.idprovider.IdProviderDescriptor;
 import com.enonic.xp.idprovider.IdProviderDescriptorService;
 import com.enonic.xp.resource.Resource;
@@ -18,8 +17,6 @@ public final class IdProviderDescriptorServiceImpl
 {
     private ResourceService resourceService;
 
-    private JsonSchemaService jsonSchemaService;
-
     @Override
     public IdProviderDescriptor getDescriptor( final ApplicationKey key )
     {
@@ -29,19 +26,16 @@ public final class IdProviderDescriptorServiceImpl
 
     private ResourceProcessor<ApplicationKey, IdProviderDescriptor> newProcessor( final ApplicationKey key )
     {
-        return new ResourceProcessor.Builder<ApplicationKey, IdProviderDescriptor>().
-            key( key ).
-            segment( "authDescriptor" ).
-            keyTranslator( this::toResourceKey ).
-            processor( resource -> loadDescriptor( key, resource ) ).
-            build();
+        return new ResourceProcessor.Builder<ApplicationKey, IdProviderDescriptor>().key( key )
+            .segment( "authDescriptor" )
+            .keyTranslator( this::toResourceKey )
+            .processor( resource -> loadDescriptor( key, resource ) )
+            .build();
     }
 
     private IdProviderDescriptor loadDescriptor( final ApplicationKey key, final Resource resource )
     {
         final String yaml = resource.readString();
-        jsonSchemaService.validate( "https://json-schema.enonic.com/8.0.0/idprovider.schema.json", yaml );
-
         return YmlIdProviderDescriptorParser.parse( yaml, key ).build();
     }
 
@@ -54,11 +48,5 @@ public final class IdProviderDescriptorServiceImpl
     public void setResourceService( final ResourceService resourceService )
     {
         this.resourceService = resourceService;
-    }
-
-    @Reference
-    public void setJsonSchemaService( final JsonSchemaService jsonSchemaService )
-    {
-        this.jsonSchemaService = jsonSchemaService;
     }
 }

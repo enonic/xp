@@ -1,13 +1,11 @@
 package com.enonic.xp.portal.impl.api;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import com.enonic.xp.api.ApiDescriptor;
 import com.enonic.xp.api.ApiDescriptors;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.content.page.AbstractDescriptorServiceTest;
-import com.enonic.xp.core.impl.schema.JsonSchemaService;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.PrincipalKey;
@@ -16,18 +14,11 @@ import com.enonic.xp.security.PrincipalKeys;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.verify;
 
 class ApiDescriptorServiceImplTest
     extends AbstractDescriptorServiceTest
 {
     private ApiDescriptorServiceImpl service;
-
-    private JsonSchemaService jsonSchemaService;
 
     @Override
     protected void initialize()
@@ -35,8 +26,7 @@ class ApiDescriptorServiceImplTest
     {
         super.initialize();
 
-        this.jsonSchemaService = Mockito.mock( JsonSchemaService.class );
-        this.service = new ApiDescriptorServiceImpl( this.resourceService, this.jsonSchemaService );
+        this.service = new ApiDescriptorServiceImpl( this.resourceService );
     }
 
     @Test
@@ -129,23 +119,5 @@ class ApiDescriptorServiceImplTest
 
         assertEquals( ApplicationKey.from( "myapp1" ), controllerKey.getApplicationKey() );
         assertEquals( "/apis/myapi/myapi.js", controllerKey.getPath() );
-    }
-
-    @Test
-    void testValidationCalledOnGetByKey()
-    {
-        final DescriptorKey key = DescriptorKey.from( ApplicationKey.from( "myapp1" ), "api" );
-        this.service.getByKey( key );
-
-        verify( this.jsonSchemaService ).validate( eq( "https://json-schema.enonic.com/8.0.0/api.schema.json" ), anyString() );
-    }
-
-    @Test
-    void testValidationFailureOnGetByKey()
-    {
-        doThrow( new RuntimeException( "Validation failed" ) ).when( this.jsonSchemaService ).validate( anyString(), anyString() );
-
-        final DescriptorKey key = DescriptorKey.from( ApplicationKey.from( "myapp1" ), "api" );
-        assertThrows( RuntimeException.class, () -> this.service.getByKey( key ) );
     }
 }
