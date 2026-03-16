@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.cluster.ClusterConfig;
+import com.enonic.xp.config.ConfigInterpolator;
 
 @Component(immediate = true, configurationPid = "com.enonic.xp.web.sessionstore")
 public class WebSessionStoreConfigServiceImpl
@@ -26,7 +27,9 @@ public class WebSessionStoreConfigServiceImpl
 
     private final WebSessionStoreConfig webSessionstoreConfig;
 
-    private String enabledComponent;
+    private volatile String storeDir;
+
+    private volatile String enabledComponent;
 
     @Activate
     public WebSessionStoreConfigServiceImpl( final WebSessionStoreConfig webSessionstoreConfig,
@@ -48,6 +51,7 @@ public class WebSessionStoreConfigServiceImpl
         else if ( FILE_STORE_MODE.equals( storeMode ) )
         {
             enableComponent = FileSessionStoreFactoryActivator.class.getName();
+            this.storeDir = new ConfigInterpolator().interpolate( webSessionstoreConfig.storeDir() );
         }
         else
         {
@@ -95,6 +99,6 @@ public class WebSessionStoreConfigServiceImpl
     @Override
     public String getStoreDir()
     {
-        return webSessionstoreConfig.storeDir();
+        return storeDir;
     }
 }

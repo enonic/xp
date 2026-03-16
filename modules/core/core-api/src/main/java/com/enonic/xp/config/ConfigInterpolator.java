@@ -52,6 +52,11 @@ public final class ConfigInterpolator
         return ConfigurationImpl.create( target );
     }
 
+    public String interpolate( final String value )
+    {
+        return Interpolator.classic().interpolate( value, this::lookupExternalValue ).trim();
+    }
+
     private String lookupValue( final String key, final Map<String, String> map )
     {
         final String value1 = map.get( key );
@@ -60,6 +65,11 @@ public final class ConfigInterpolator
             return value1;
         }
 
+        return lookupExternalValue( key );
+    }
+
+    private String lookupExternalValue( final String key )
+    {
         for ( Function<String, String> additionalLookup : additionalLookups )
         {
             final String value = additionalLookup.apply( key );
