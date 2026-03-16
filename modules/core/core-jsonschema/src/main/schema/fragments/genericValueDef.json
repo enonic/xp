@@ -1,0 +1,8 @@
+{
+  "type": "object",
+  "additionalProperties": {
+    "not": {
+      "type": "null"
+    }
+  }
+}

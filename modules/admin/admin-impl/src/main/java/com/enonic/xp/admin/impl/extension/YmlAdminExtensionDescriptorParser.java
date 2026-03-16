@@ -7,6 +7,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.schema.YmlParserBase;
 import com.enonic.xp.schema.LocalizedText;
 import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.util.GenericValue;
 
 public final class YmlAdminExtensionDescriptorParser
 {
@@ -37,6 +38,6 @@ public final class YmlAdminExtensionDescriptorParser
         public abstract AdminExtensionDescriptor.Builder interfaces( String... interfaceNames );
 
         @JsonProperty("config")
-        public abstract AdminExtensionDescriptor.Builder addProperty( String key, String value );
+        public abstract AdminExtensionDescriptor.Builder config( GenericValue value );
     }
 }

@@ -1,0 +1,7 @@
+form:
+  - type: "FieldSet"
+    label: "My Group"
+    items:
+      - type: "TextLine"
+        name: "myField"
+        label: "My Field"

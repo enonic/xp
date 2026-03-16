@@ -1,0 +1,17 @@
+{
+  "$base": "inputBaseDef",
+  "properties": {
+    "type": {
+      "const": "Double"
+    },
+    "max": {
+      "type": "number"
+    },
+    "min": {
+      "type": "number"
+    },
+    "default": {
+      "type": "number"
+    }
+  }
+}

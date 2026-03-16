@@ -1,0 +1,10 @@
+displayName: "My Admin Tool"
+description:
+  text: "Admin Tool Description"
+  i18n: "admin.description"
+allow:
+  - "role:system.admin"
+apis:
+  - "myapp:api"
+interfaces:
+  - "com.example.Interface"

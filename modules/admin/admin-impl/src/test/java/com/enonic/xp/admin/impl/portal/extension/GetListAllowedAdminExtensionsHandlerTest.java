@@ -8,6 +8,7 @@ import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Multimaps;
 
@@ -22,11 +23,13 @@ import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.i18n.MessageBundle;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.web.WebResponse;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -70,8 +73,16 @@ class GetListAllowedAdminExtensionsHandlerTest
             .descriptionI18nKey( "descriptionI18nKey" )
             .displayName( "displayName" )
             .setIcon( icon )
-            .addProperty( "k", "v" )
             .interfaces( "myInterface" )
+            .config( GenericValue.newObject()
+                         .put( "k1", "v1" )
+                         .put( "k2", GenericValue.newObject().put( "k21", "v21" ).build() )
+                         .put( "k3", GenericValue.newList().add( GenericValue.stringValue( "string" ) ).build() )
+                         .put( "k4", GenericValue.booleanValue( true ) )
+                         .put( "k5", GenericValue.numberValue( 1.5 ) )
+                         .put( "k6", GenericValue.numberValue( 1L ) )
+                         .put( "k7", GenericValue.numberValue( 1 ) )
+                         .build() )
             .build();
 
         when( descriptorService.getByInterfaces( anyString() ) ).thenReturn( Descriptors.from( descriptor ) );
@@ -103,6 +114,14 @@ class GetListAllowedAdminExtensionsHandlerTest
         assertEquals( "myapp:myextension", objectNode.get( "url" ).asText() );
         assertEquals( "localizedDescription", objectNode.get( "description" ).asText() );
         assertEquals( "myInterface", objectNode.get( "interfaces" ).get( 0 ).asText() );
-        assertEquals( "v", objectNode.get( "config" ).get( "k" ).asText() );
+
+        final JsonNode config = objectNode.get( "config" );
+        assertEquals( "v1", config.get( "k1" ).asText() );
+        assertEquals( "v21", config.get( "k2" ).get( "k21" ).asText() );
+        assertEquals( "string", config.get( "k3" ).get( 0 ).asText() );
+        assertTrue( config.get( "k4" ).booleanValue() );
+        assertEquals( 1.5, config.get( "k5" ).doubleValue() );
+        assertEquals( 1L, config.get( "k6" ).longValue() );
+        assertEquals( 1, config.get( "k7" ).intValue() );
     }
 }

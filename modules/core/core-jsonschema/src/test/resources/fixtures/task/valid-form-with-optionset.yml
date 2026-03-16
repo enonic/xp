@@ -1,0 +1,9 @@
+form:
+  - type: "OptionSet"
+    name: "myOptions"
+    label: "My Options"
+    options:
+      - name: "optionA"
+        label: "Option A"
+      - name: "optionB"
+        label: "Option B"
