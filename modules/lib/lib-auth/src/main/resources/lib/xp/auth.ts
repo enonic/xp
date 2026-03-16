@@ -13,9 +13,9 @@ declare global {
     }
 }
 
-import type {Group, GroupKey, Principal, PrincipalKey, Role, RoleKey, ScriptValue, User, UserKey} from '@enonic-types/core';
+import type {Group, GroupKey, Principal, PrincipalKey, PrincipalType, Role, RoleKey, ScriptValue, User, UserKey} from '@enonic-types/core';
 
-export type {PrincipalKey, UserKey, GroupKey, RoleKey, Principal, ScriptValue, User, Group, Role} from '@enonic-types/core';
+export type {PrincipalKey, PrincipalType, UserKey, GroupKey, RoleKey, Principal, ScriptValue, User, Group, Role} from '@enonic-types/core';
 
 function checkRequired<T extends object, K extends keyof T>(
     obj: T,
@@ -265,6 +265,7 @@ interface GetPrincipalHandler {
 export function getPrincipal(userKey: UserKey): User | null;
 export function getPrincipal(groupKey: GroupKey): Group | null;
 export function getPrincipal(roleKey: RoleKey): Role | null;
+export function getPrincipal(principalKey: PrincipalKey): Principal | null;
 /**
  * Returns the principal with the specified key.
  *
@@ -548,7 +549,7 @@ export function removeMembers(principalKey: GroupKey | RoleKey, members: (UserKe
 }
 
 export interface FindPrincipalsParams {
-    type?: Principal['type'];
+    type?: PrincipalType;
     idProvider?: string;
     start?: number;
     count?: number;
@@ -563,7 +564,7 @@ export interface FindPrincipalsResult<P extends Principal = Principal> {
 }
 
 interface FindPrincipalsHandler {
-    setType(value: string | null): void;
+    setType(value: PrincipalType | null): void;
 
     setIdProvider(value: string | null): void;
 
@@ -754,6 +755,7 @@ export function findUsers(params: FindUsersParams & { includeProfile?: false }):
 export function findUsers<Profile extends Record<string, unknown> = Record<string, unknown>>(params: FindUsersParams & {
     includeProfile: true
 }): FindPrincipalsResult<UserWithProfile<Profile>>;
+export function findUsers(params: FindUsersParams): FindPrincipalsResult<User | UserWithProfile>;
 /**
  * Search for users matching the specified query.
  *

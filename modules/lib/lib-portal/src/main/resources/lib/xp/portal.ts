@@ -13,7 +13,7 @@ declare global {
     }
 }
 
-import type {ByteSource, Component, Content, Region, ScriptValue} from '@enonic-types/core';
+import type {ByteSource, Component, Content, Region, Request, ScriptValue} from '@enonic-types/core';
 
 export type {
     Attachment,
@@ -21,6 +21,7 @@ export type {
     Content,
     Component,
     Region,
+    Request,
     ScriptValue,
 } from '@enonic-types/core';
 
@@ -934,4 +935,10 @@ export function baseUrl(params: BaseUrlParams): string {
     bean.setPath(__.nullOrValue(params.path));
 
     return bean.createUrl();
+}
+
+export interface MacroContext {
+    body: string;
+    params: Record<string, string | undefined>;
+    request: Request;
 }
