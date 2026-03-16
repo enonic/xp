@@ -18,7 +18,7 @@ public final class TaskDescriptor
     {
         super( builder.key );
         this.description = builder.description;
-        this.config = builder.config == null ? Form.empty() : builder.config;
+        this.config = Objects.requireNonNullElse( builder.config, Form.empty() );
     }
 
     public String getDescription()

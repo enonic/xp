@@ -1,6 +1,7 @@
 package com.enonic.xp.macro;
 
 import java.time.Instant;
+import java.util.Objects;
 
 import com.enonic.xp.form.Form;
 import com.enonic.xp.icon.Icon;
@@ -32,7 +33,7 @@ public final class MacroDescriptor
         this.displayNameI18nKey = builder.displayNameI18nKey;
         this.description = builder.description;
         this.descriptionI18nKey = builder.descriptionI18nKey;
-        this.form = builder.form == null ? Form.empty() : builder.form;
+        this.form = Objects.requireNonNullElse( builder.form, Form.empty() );
         this.icon = builder.icon;
         this.modifiedTime = builder.modifiedTime;
     }
