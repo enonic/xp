@@ -15,7 +15,7 @@ public final class IdProviderDescriptor
     {
         key = builder.key;
         mode = builder.mode;
-        config = builder.config;
+        config = builder.config == null ? Form.empty() : builder.config;
     }
 
     public ApplicationKey getKey()
