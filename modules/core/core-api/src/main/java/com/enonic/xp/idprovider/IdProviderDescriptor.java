@@ -1,5 +1,7 @@
 package com.enonic.xp.idprovider;
 
+import java.util.Objects;
+
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.Form;
 
@@ -15,7 +17,7 @@ public final class IdProviderDescriptor
     {
         key = builder.key;
         mode = builder.mode;
-        config = builder.config == null ? Form.empty() : builder.config;
+        config = Objects.requireNonNullElse( builder.config, Form.empty() );
     }
 
     public ApplicationKey getKey()
