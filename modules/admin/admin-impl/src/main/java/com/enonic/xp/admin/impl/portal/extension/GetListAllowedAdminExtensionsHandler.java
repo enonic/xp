@@ -11,6 +11,7 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -24,6 +25,7 @@ import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.i18n.MessageBundle;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 
@@ -86,9 +88,7 @@ public class GetListAllowedAdminExtensionsHandler
 
         if ( descriptor.getConfig() != null )
         {
-            final ObjectNode config = JsonNodeFactory.instance.objectNode();
-            descriptor.getConfig().forEach( config::put );
-
+            final ObjectNode config = toObjectNode( descriptor.getConfig() );
             json.set( "config", config );
         }
 
@@ -101,6 +101,45 @@ public class GetListAllowedAdminExtensionsHandler
 
         return json;
     }
+
+    private JsonNode toJsonNode( final GenericValue value )
+    {
+        final JsonNodeFactory f = JsonNodeFactory.instance;
+        return switch ( value.getType() )
+        {
+            case STRING -> f.textNode( value.asString() );
+            case BOOLEAN -> f.booleanNode( value.asBoolean() );
+            case NUMBER -> switch ( value.toRawJava() )
+            {
+                case Integer i -> f.numberNode( i );
+                case Long l -> f.numberNode( l );
+                case Double d -> f.numberNode( d );
+                default -> throw new AssertionError( "Unsupported type" );
+            };
+            case LIST ->
+            {
+                final ArrayNode array = f.arrayNode();
+                value.values().forEach( el -> array.add( toJsonNode( el ) ) );
+                yield array;
+            }
+            case OBJECT ->
+            {
+                final ObjectNode object = f.objectNode();
+                value.properties().forEach( e -> object.set( e.getKey(), toJsonNode( e.getValue() ) ) );
+                yield object;
+            }
+        };
+    }
+
+    private ObjectNode toObjectNode( final GenericValue value )
+    {
+        if ( value.getType() != GenericValue.Type.OBJECT )
+        {
+            throw new IllegalArgumentException( "Expected OBJECT, got: " + value.getType() );
+        }
+        return (ObjectNode) toJsonNode( value );
+    }
+
 
     private void addLocalizedJson( ObjectNode json, MessageBundle bundle, String fieldName, String i18nKey, String value )
     {

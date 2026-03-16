@@ -1,0 +1,5 @@
+mode: "MIXED"
+form:
+  - type: "TextLine"
+    name: "domain"
+    label: "Domain"

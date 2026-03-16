@@ -12,6 +12,7 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.task.TaskDescriptor;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TaskDescriptorLoaderTest
@@ -25,6 +26,7 @@ class TaskDescriptorLoaderTest
     {
         this.loader = new TaskDescriptorLoader( this.resourceService );
         addApplication( "myapp1", "/apps/myapp1" );
+        addApplication( "myapp2", "/apps/myapp2" );
     }
 
     @Test
@@ -64,5 +66,27 @@ class TaskDescriptorLoaderTest
 
         Input formItem = descriptor.getConfig().getInput( "param1" );
         assertTrue( formItem.getInputTypeConfig().optional( "default" ).isPresent() );
+    }
+
+    @Test
+    void testGetDescriptorWithFormFragmentThrows()
+    {
+        final DescriptorKey descriptorKey = DescriptorKey.from( "myapp2:form-does-not-supported-form-fragment" );
+        final ResourceKey resourceKey = this.loader.toResource( descriptorKey );
+        final Resource resource = this.resourceService.getResource( resourceKey );
+        final IllegalArgumentException ex =
+            assertThrows( IllegalArgumentException.class, () -> this.loader.load( descriptorKey, resource ) );
+        assertEquals( "TaskDescriptor form cannot contain FormFragment: my-fragment", ex.getMessage() );
+    }
+
+    @Test
+    void testGetDescriptorWithNestedFormFragmentThrows()
+    {
+        final DescriptorKey descriptorKey = DescriptorKey.from( "myapp2:form-does-not-supported-nested-form-fragment" );
+        final ResourceKey resourceKey = this.loader.toResource( descriptorKey );
+        final Resource resource = this.resourceService.getResource( resourceKey );
+        final IllegalArgumentException ex =
+            assertThrows( IllegalArgumentException.class, () -> this.loader.load( descriptorKey, resource ) );
+        assertEquals( "TaskDescriptor form cannot contain FormFragment: my-fragment", ex.getMessage() );
     }
 }

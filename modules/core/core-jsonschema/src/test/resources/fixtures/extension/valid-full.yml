@@ -1,0 +1,8 @@
+displayName: "My Extension"
+description: "Extension description"
+allow:
+  - "role:system.admin"
+interfaces:
+  - "com.example.MyInterface"
+config:
+  key: "value"

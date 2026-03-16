@@ -1,0 +1,5 @@
+form:
+  - type: "TextLine"
+    name: "myField"
+    label: "My Field"
+    unknownProp: "value"

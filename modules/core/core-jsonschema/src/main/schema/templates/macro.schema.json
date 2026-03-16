@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "@schemaBaseUrl@/@schemaVersion@/macro.schema.json",
+  "type": "object",
+  "properties": {
+    "displayName": {
+      "$ref": "#/$defs/localizedTextDef"
+    },
+    "description": {
+      "$ref": "#/$defs/localizedTextDef"
+    },
+    "form": {
+      "$ref": "#/$defs/formDef"
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "localizedTextDef": {},
+    "inputsDef": {},
+    "fieldSetDef": {},
+    "formItemsDef": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/inputsDef"
+        },
+        {
+          "$ref": "#/$defs/fieldSetDef"
+        }
+      ]
+    },
+    "formDef": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/formItemsDef"
+      },
+      "additionalProperties": false
+    }
+  }
+}

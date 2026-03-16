@@ -1,0 +1,81 @@
+{
+  "allOf": [
+    {
+      "$ref": "#/$defs/formItemDef"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "OptionSet"
+        },
+        "name": {
+          "type": "string"
+        },
+        "label": {
+          "$ref": "#/$defs/localizedTextDef"
+        },
+        "expanded": {
+          "type": "boolean"
+        },
+        "helpText": {
+          "$ref": "#/$defs/localizedTextDef"
+        },
+        "occurrences": {
+          "$ref": "#/$defs/occurrencesDef"
+        },
+        "options": {
+          "$ref": "#/$defs/optionSetOptionsDef"
+        },
+        "selected": {
+          "$ref": "#/$defs/occurrencesDef"
+        }
+      },
+      "required": [
+        "name",
+        "options"
+      ],
+      "additionalProperties": false
+    }
+  ],
+  "$defs": {
+    "formItemDef": {},
+    "localizedTextDef": {},
+    "formItemsDef": {},
+    "occurrencesDef": {},
+    "optionSetOptionsDef": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/optionSetOptionDef"
+      }
+    },
+    "optionSetOptionDef": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "label": {
+          "$ref": "#/$defs/localizedTextDef"
+        },
+        "helpText": {
+          "$ref": "#/$defs/localizedTextDef"
+        },
+        "defaultOption": {
+          "type": "boolean"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/formItemsDef"
+          }
+        }
+      },
+      "required": [
+        "name",
+        "label"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

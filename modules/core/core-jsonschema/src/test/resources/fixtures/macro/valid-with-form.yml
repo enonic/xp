@@ -1,0 +1,6 @@
+displayName: "My Macro"
+description: "Macro description"
+form:
+  - type: "TextLine"
+    name: "body"
+    label: "Body"

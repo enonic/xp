@@ -1,0 +1,11 @@
+{
+  "$base": "inputBaseDef",
+  "properties": {
+    "type": {
+      "const": "AttachmentUploader"
+    },
+    "default": {
+      "type": "string"
+    }
+  }
+}

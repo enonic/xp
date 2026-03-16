@@ -4,6 +4,7 @@ dependencies {
     implementation project( ':core:core-schema' )
 
     testImplementation( testFixtures( project(":core:core-app") ) )
+    testImplementation( project(":core:core-jsonschema" ) )
 }
 
 jar {

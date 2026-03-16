@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "@schemaBaseUrl@/@schemaVersion@/webapp.schema.json",
+  "type": "object",
+  "properties": {
+    "apis": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}

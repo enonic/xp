@@ -1,0 +1,3 @@
+form:
+  - type: "FormFragment"
+    name: "my-fragment"

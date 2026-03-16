@@ -73,7 +73,8 @@ public final class ApiDescriptorServiceImpl
 
     private ApiDescriptor loadDescriptor( final DescriptorKey key, final Resource resource )
     {
-        return YmlApiDescriptorParser.parse( resource.readString(), key.getApplicationKey() ).key( key ).build();
+        final String yaml = resource.readString();
+        return YmlApiDescriptorParser.parse( yaml, key.getApplicationKey() ).key( key ).build();
     }
 
     private ResourceKey toResourceKey( final DescriptorKey key, final String extension )

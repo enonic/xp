@@ -9,6 +9,11 @@ import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.descriptor.DescriptorKeyLocator;
 import com.enonic.xp.descriptor.DescriptorKeys;
 import com.enonic.xp.descriptor.DescriptorLoader;
+import com.enonic.xp.form.FieldSet;
+import com.enonic.xp.form.FormItem;
+import com.enonic.xp.form.FormItemSet;
+import com.enonic.xp.form.FormOptionSet;
+import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
@@ -49,6 +54,35 @@ public final class TaskDescriptorLoader
     @Override
     public TaskDescriptor load( final DescriptorKey key, final Resource resource )
     {
-        return YmlTaskDescriptorParser.parse( resource.readString(), key.getApplicationKey() ).key( key ).build();
+        final TaskDescriptor taskDescriptor =
+            YmlTaskDescriptorParser.parse( resource.readString(), key.getApplicationKey() ).key( key ).build();
+        validateFormItems( taskDescriptor.getConfig() );
+        return taskDescriptor;
+    }
+
+    private static void validateFormItems( final Iterable<FormItem> formItems )
+    {
+        for ( FormItem item : formItems )
+        {
+            switch ( item.getType() )
+            {
+                case FORM_FRAGMENT:
+                    throw new IllegalArgumentException( "TaskDescriptor form cannot contain FormFragment: " + item.getName() );
+                case FORM_ITEM_SET:
+                    validateFormItems( (FormItemSet) item );
+                    break;
+                case LAYOUT:
+                    validateFormItems( (FieldSet) item );
+                    break;
+                case FORM_OPTION_SET:
+                    for ( FormOptionSetOption option : (FormOptionSet) item )
+                    {
+                        validateFormItems( option );
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 }

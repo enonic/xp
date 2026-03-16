@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "@schemaBaseUrl@/@schemaVersion@/style.schema.json",
+  "type": "object",
+  "properties": {
+    "css": {
+      "type": "string"
+    },
+    "image": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "displayName": {
+            "$ref": "#/$defs/localizedTextDef"
+          },
+          "aspectRatio": {
+            "type": "string"
+          },
+          "filter": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "localizedTextDef": {}
+  }
+}

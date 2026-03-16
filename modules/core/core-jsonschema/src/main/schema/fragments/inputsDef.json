@@ -1,0 +1,90 @@
+{
+  "oneOf": [
+    {
+      "$ref": "#/$defs/textLineDef"
+    },
+    {
+      "$ref": "#/$defs/textAreaDef"
+    },
+    {
+      "$ref": "#/$defs/radioButtonDef"
+    },
+    {
+      "$ref": "#/$defs/checkBoxDef"
+    },
+    {
+      "$ref": "#/$defs/attachmentUploaderDef"
+    },
+    {
+      "$ref": "#/$defs/comboBoxDef"
+    },
+    {
+      "$ref": "#/$defs/contentSelectorDef"
+    },
+    {
+      "$ref": "#/$defs/contentTypeFilterDef"
+    },
+    {
+      "$ref": "#/$defs/customSelectorDef"
+    },
+    {
+      "$ref": "#/$defs/dateDef"
+    },
+    {
+      "$ref": "#/$defs/dateTimeDef"
+    },
+    {
+      "$ref": "#/$defs/doubleDef"
+    },
+    {
+      "$ref": "#/$defs/geoPointDef"
+    },
+    {
+      "$ref": "#/$defs/htmlAreaDef"
+    },
+    {
+      "$ref": "#/$defs/imageSelectorDef"
+    },
+    {
+      "$ref": "#/$defs/instantDef"
+    },
+    {
+      "$ref": "#/$defs/longDef"
+    },
+    {
+      "$ref": "#/$defs/mediaSelectorDef"
+    },
+    {
+      "$ref": "#/$defs/principalSelectorDef"
+    },
+    {
+      "$ref": "#/$defs/tagDef"
+    },
+    {
+      "$ref": "#/$defs/timeDef"
+    }
+  ],
+  "$defs": {
+    "textLineDef": {},
+    "textAreaDef": {},
+    "radioButtonDef": {},
+    "checkBoxDef": {},
+    "attachmentUploaderDef": {},
+    "comboBoxDef": {},
+    "contentSelectorDef": {},
+    "contentTypeFilterDef": {},
+    "customSelectorDef": {},
+    "dateDef": {},
+    "dateTimeDef": {},
+    "doubleDef": {},
+    "geoPointDef": {},
+    "htmlAreaDef": {},
+    "imageSelectorDef": {},
+    "instantDef": {},
+    "longDef": {},
+    "mediaSelectorDef": {},
+    "principalSelectorDef": {},
+    "tagDef": {},
+    "timeDef": {}
+  }
+}

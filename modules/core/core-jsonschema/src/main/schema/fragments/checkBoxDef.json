@@ -1,0 +1,18 @@
+{
+  "$base": "inputBaseDef",
+  "properties": {
+    "type": {
+      "const": "CheckBox"
+    },
+    "alignment": {
+      "type": "string"
+    },
+    "default": {
+      "type": "string",
+      "enum": [
+        "checked",
+        "unchecked"
+      ]
+    }
+  }
+}

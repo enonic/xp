@@ -1,0 +1,23 @@
+{
+  "$base": "inputBaseDef",
+  "properties": {
+    "type": {
+      "const": "ImageSelector"
+    },
+    "allowPath": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "treeMode": {
+      "type": "boolean"
+    },
+    "hideToggleIcon": {
+      "type": "boolean"
+    },
+    "default": {
+      "type": "string"
+    }
+  }
+}

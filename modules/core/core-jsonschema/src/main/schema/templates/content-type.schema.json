@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "@schemaBaseUrl@/@schemaVersion@/content-type.schema.json",
+  "type": "object",
+  "properties": {
+    "superType": {
+      "type": "string"
+    },
+    "abstract": {
+      "type": "boolean"
+    },
+    "final": {
+      "type": "boolean"
+    },
+    "allowChildContent": {
+      "type": "boolean"
+    },
+    "displayName": {
+      "$ref": "#/$defs/localizedTextDef"
+    },
+    "description": {
+      "$ref": "#/$defs/localizedTextDef"
+    },
+    "form": {
+      "$ref": "#/$defs/formDef"
+    },
+    "allowChildContentType": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "config": {
+      "$ref": "#/$defs/genericValueDef"
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "localizedTextDef": {},
+    "genericValueDef": {},
+    "inputsDef": {},
+    "fieldSetDef": {},
+    "formFragmentDef": {},
+    "itemSetDef": {},
+    "optionSetDef": {},
+    "formItemsDef": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/inputsDef"
+        },
+        {
+          "$ref": "#/$defs/fieldSetDef"
+        },
+        {
+          "$ref": "#/$defs/formFragmentDef"
+        },
+        {
+          "$ref": "#/$defs/itemSetDef"
+        },
+        {
+          "$ref": "#/$defs/optionSetDef"
+        }
+      ]
+    },
+    "formDef": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/formItemsDef"
+      },
+      "additionalProperties": false
+    }
+  }
+}

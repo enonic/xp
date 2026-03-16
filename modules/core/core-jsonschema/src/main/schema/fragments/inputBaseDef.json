@@ -1,0 +1,31 @@
+{
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "label": {
+      "$ref": "#/$defs/localizedTextDef"
+    },
+    "helpText": {
+      "$ref": "#/$defs/localizedTextDef"
+    },
+    "occurrences": {
+      "$ref": "#/$defs/occurrencesDef"
+    },
+    "attributes": {
+      "$ref": "#/$defs/genericValueDef"
+    }
+  },
+  "required": [
+    "type",
+    "name",
+    "label"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "localizedTextDef": {},
+    "occurrencesDef": {},
+    "genericValueDef": {}
+  }
+}

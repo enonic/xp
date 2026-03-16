@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "@schemaBaseUrl@/@schemaVersion@/part.schema.json",
+  "type": "object",
+  "properties": {
+    "displayName": {
+      "$ref": "#/$defs/localizedTextDef"
+    },
+    "description": {
+      "$ref": "#/$defs/localizedTextDef"
+    },
+    "form": {
+      "$ref": "#/$defs/formDef"
+    },
+    "config": {
+      "$ref": "#/$defs/genericValueDef"
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "localizedTextDef": {},
+    "genericValueDef": {},
+    "inputsDef": {},
+    "fieldSetDef": {},
+    "formFragmentDef": {},
+    "itemSetDef": {},
+    "optionSetDef": {},
+    "formItemsDef": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/inputsDef"
+        },
+        {
+          "$ref": "#/$defs/fieldSetDef"
+        },
+        {
+          "$ref": "#/$defs/formFragmentDef"
+        },
+        {
+          "$ref": "#/$defs/itemSetDef"
+        },
+        {
+          "$ref": "#/$defs/optionSetDef"
+        }
+      ]
+    },
+    "formDef": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/formItemsDef"
+      },
+      "additionalProperties": false
+    }
+  }
+}
