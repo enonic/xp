@@ -1,7 +1,6 @@
 package com.enonic.xp.schema.content;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -28,12 +27,7 @@ public final class ContentTypeNames
 
     public static ContentTypeNames from( final String... contentTypeNames )
     {
-        return from( Arrays.asList( contentTypeNames ) );
-    }
-
-    public static ContentTypeNames from( final Collection<String> contentTypeNames )
-    {
-        return contentTypeNames.stream().map( ContentTypeName::from ).collect( collector() );
+        return Arrays.asList( contentTypeNames ).stream().map( ContentTypeName::from ).collect( collector() );
     }
 
     public static ContentTypeNames from( final ContentTypeName... contentTypeNames )

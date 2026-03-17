@@ -70,7 +70,7 @@ public class FindNodeIdsByParentCommand
             this.nodeSearchService.query( createFindChildrenQuery( parentPath ), SingleRepoSearchSource.from( ContextAccessor.current() ) );
 
         return FindNodesByParentResult.create()
-            .nodeIds( NodeIds.from( result.getIds() ) )
+            .nodeIds( result.getIds().stream().map( NodeId::from ).collect( NodeIds.collector() ) )
             .totalHits( result.getTotalHits() )
             .build();
     }

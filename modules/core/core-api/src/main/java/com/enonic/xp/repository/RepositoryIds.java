@@ -1,6 +1,5 @@
 package com.enonic.xp.repository;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -28,11 +27,6 @@ public final class RepositoryIds
     public static RepositoryIds from( final RepositoryId... ids )
     {
         return fromInternal( ImmutableSet.copyOf( ids ) );
-    }
-
-    public static RepositoryIds from( final String... ids )
-    {
-        return from( Arrays.asList( ids ) );
     }
 
     public static RepositoryIds from( final Collection<String> ids )
