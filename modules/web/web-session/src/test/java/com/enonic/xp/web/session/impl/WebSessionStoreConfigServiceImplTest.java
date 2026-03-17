@@ -87,4 +87,23 @@ class WebSessionStoreConfigServiceImplTest
 
         verify( componentContext ).disableComponent( NullSessionStoreFactoryActivator.class.getName() );
     }
+
+    @Test
+    void activate_file()
+    {
+        when( clusterConfig.isEnabled() ).thenReturn( false );
+        when( webSessionstoreConfig.storeMode() ).thenReturn( "file" );
+        when( webSessionstoreConfig.storeDir() ).thenReturn( "/tmp/sessions" );
+
+        final WebSessionStoreConfigServiceImpl webSessionStoreConfigServiceImpl =
+            new WebSessionStoreConfigServiceImpl( webSessionstoreConfig, clusterConfig );
+        webSessionStoreConfigServiceImpl.activate( componentContext );
+
+        verify( componentContext ).enableComponent( FileSessionStoreFactoryActivator.class.getName() );
+        assertEquals( "/tmp/sessions", webSessionStoreConfigServiceImpl.getStoreDir() );
+
+        webSessionStoreConfigServiceImpl.deactivate( componentContext );
+
+        verify( componentContext ).disableComponent( FileSessionStoreFactoryActivator.class.getName() );
+    }
 }

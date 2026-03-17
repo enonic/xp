@@ -97,6 +97,27 @@ class ConfigInterpolatorTest
     }
 
     @Test
+    void interpolate_string()
+    {
+        final ConfigInterpolator interpolator = new ConfigInterpolator().systemProperties( newSystemProperties() );
+        assertEquals( "fromSystem", interpolator.interpolate( "${systemProp}" ) );
+    }
+
+    @Test
+    void interpolate_string_no_placeholder()
+    {
+        final ConfigInterpolator interpolator = new ConfigInterpolator();
+        assertEquals( "/tmp/sessions", interpolator.interpolate( "/tmp/sessions" ) );
+    }
+
+    @Test
+    void interpolate_string_unresolved()
+    {
+        final ConfigInterpolator interpolator = new ConfigInterpolator().systemProperties( new Properties() );
+        assertEquals( "${unknown}", interpolator.interpolate( "${unknown}" ) );
+    }
+
+    @Test
     void addLookup()
     {
         final ConfigInterpolator interpolator = new ConfigInterpolator();

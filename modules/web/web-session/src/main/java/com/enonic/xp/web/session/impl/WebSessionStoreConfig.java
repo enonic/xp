@@ -11,4 +11,6 @@ public @interface WebSessionStoreConfig
     boolean saveOnCreate() default false;
 
     boolean flushOnResponseCommit() default false;
+
+    String storeDir() default "${xp.home}/work/sessions";
 }
