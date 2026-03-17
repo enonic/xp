@@ -1272,6 +1272,33 @@ class DumpServiceImplTest
 
 
     @Test
+    void partial_dump_excludes_system_repo_from_result()
+    {
+        NodeHelper.runAsAdmin( () -> doCreateRepository( RepositoryId.from( "my-repo" ), false ) );
+
+        final SystemDumpResult dumpResult = NodeHelper.runAsAdmin( () -> this.dumpService.dump( SystemDumpParams.create()
+                                                                                                    .dumpName(
+                                                                                                        "partialDumpExcludesSystemRepo" )
+                                                                                                    .repositories( RepositoryIds.from(
+                                                                                                        RepositoryId.from( "my-repo" ) ) )
+                                                                                                    .build() ) );
+
+        assertNull( dumpResult.get( SystemConstants.SYSTEM_REPO_ID ) );
+        assertNotNull( dumpResult.get( RepositoryId.from( "my-repo" ) ) );
+
+        // Verify load without specifying repositories detects it as partial dump and rejects it
+        assertThrows( RepoLoadException.class, () -> NodeHelper.runAsAdmin( () -> this.dumpService.load(
+            SystemLoadParams.create().dumpName( "partialDumpExcludesSystemRepo" ).includeVersions( true ).build() ) ) );
+
+        // Verify partial load with specific repositories works
+        NodeHelper.runAsAdmin( () -> this.dumpService.load( SystemLoadParams.create()
+                                                                .dumpName( "partialDumpExcludesSystemRepo" )
+                                                                .includeVersions( true )
+                                                                .repositories( RepositoryIds.from( RepositoryId.from( "my-repo" ) ) )
+                                                                .build() ) );
+    }
+
+    @Test
     void full_load_rejects_partial_dump()
     {
         NodeHelper.runAsAdmin( () -> doCreateRepository( RepositoryId.from( "my-repo" ), false ) );
