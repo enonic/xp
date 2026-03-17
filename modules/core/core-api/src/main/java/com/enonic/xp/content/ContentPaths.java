@@ -1,7 +1,6 @@
 package com.enonic.xp.content;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -27,12 +26,7 @@ public final class ContentPaths
 
     public static ContentPaths from( final String... paths )
     {
-        return from( Arrays.asList( paths ) );
-    }
-
-    public static ContentPaths from( final Collection<String> contentPaths )
-    {
-        return contentPaths.stream().map( ContentPath::from ).collect( collector() );
+        return Arrays.asList( paths ).stream().map( ContentPath::from ).collect( collector() );
     }
 
     public static ContentPaths from( final ContentPath... paths )

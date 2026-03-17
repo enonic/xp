@@ -59,7 +59,7 @@ class ContentPathsTest
     void from_strings()
     {
         final ContentPaths contentPaths = ContentPaths.from(
-            Arrays.asList( STRING_PATH1, STRING_PATH2, STRING_PATH3 ) );
+            STRING_PATH1, STRING_PATH2, STRING_PATH3 );
 
         assertEquals( Set.of( ContentPath.from( STRING_PATH1 ),
             ContentPath.from( STRING_PATH2 ),

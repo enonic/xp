@@ -17,7 +17,6 @@ import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.ApplyPermissionsScope;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
@@ -127,7 +126,7 @@ public class ApplyNodePermissionsCommand
             NodeQuery.create().size( NodeSearchService.GET_ALL_SIZE_FLAG ).withPath( true ).parent( node ).build(),
             SingleRepoSearchSource.from( internalContext ) );
 
-        NodeIds.from( queryResult.getIds() ).stream().map( this::getActiveNodes ).forEach( result::add );
+        queryResult.getIds().stream().map( NodeId::from ).map( this::getActiveNodes ).forEach( result::add );
 
         queryResult.getHits()
             .stream()

@@ -17,6 +17,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeCompareStatus;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeComparisons;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
@@ -81,14 +82,18 @@ public class PushNodesCommand
         {
             if ( comparison.getCompareStatus() == NodeCompareStatus.MOVED )
             {
-                final NodeIds childrenIds = NodeIds.from( this.nodeSearchService.query( NodeQuery.create()
-                                                                                            .query( QueryExpr.from( CompareExpr.like(
-                                                                                                FieldExpr.from( NodeIndexPath.PATH ),
-                                                                                                ValueExpr.string(
-                                                                                                    comparison.getTargetPath() +
-                                                                                                        "/*" ) ) ) )
-                                                                                            .size( NodeSearchService.GET_ALL_SIZE_FLAG )
-                                                                                            .build(), targetSearchSource ).getIds() );
+                final NodeIds childrenIds = this.nodeSearchService.query( NodeQuery.create()
+                                                                              .query( QueryExpr.from(
+                                                                                  CompareExpr.like( FieldExpr.from( NodeIndexPath.PATH ),
+                                                                                                    ValueExpr.string(
+                                                                                                        comparison.getTargetPath() +
+                                                                                                            "/*" ) ) ) )
+                                                                              .size( NodeSearchService.GET_ALL_SIZE_FLAG )
+                                                                              .build(), targetSearchSource )
+                    .getIds()
+                    .stream()
+                    .map( NodeId::from )
+                    .collect( NodeIds.collector() );
                 allIdsBuilder.addAll( childrenIds );
             }
         }
