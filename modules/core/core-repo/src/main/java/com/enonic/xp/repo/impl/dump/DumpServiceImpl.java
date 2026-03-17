@@ -323,9 +323,9 @@ public class DumpServiceImpl
         final SystemDumpResult.Builder dumpResults = SystemDumpResult.create();
 
         // Dump system-repo with only the RepositoryEntry nodes for selected repositories
-        final NodeIds systemRepoNodeIds = NodeIds.from( reposToDump.stream().map( r -> NodeId.from( r.getId().toString() ) ).toList() );
+        final NodeIds systemRepoNodeIds = reposToDump.stream().map( r -> NodeId.from( r.getId().toString() ) ).collect( NodeIds.collector() );
 
-        final RepoDumpResult systemRepoResult = RepoDumper.create()
+        RepoDumper.create()
             .writer( writer )
             .includeVersions( params.isIncludeVersions() )
             .includeBinaries( params.isIncludeBinaries() )
@@ -337,8 +337,6 @@ public class DumpServiceImpl
             .listener( params.getListener() )
             .build()
             .execute();
-
-        dumpResults.add( systemRepoResult );
 
         // Dump each selected repository fully
         for ( final Repository repository : reposToDump )
