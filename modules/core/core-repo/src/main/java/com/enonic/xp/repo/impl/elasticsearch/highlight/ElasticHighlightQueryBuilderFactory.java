@@ -11,6 +11,7 @@ import com.enonic.xp.query.highlight.constants.Order;
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticHighlightQuery;
 import com.enonic.xp.repo.impl.index.IndexFieldNameNormalizer;
 import com.enonic.xp.repo.impl.index.IndexValueType;
+import com.enonic.xp.repo.impl.index.StaticIndexValueType;
 
 public class ElasticHighlightQueryBuilderFactory
 {

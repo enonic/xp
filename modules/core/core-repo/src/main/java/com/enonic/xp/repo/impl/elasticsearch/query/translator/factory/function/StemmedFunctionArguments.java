@@ -6,6 +6,7 @@ import java.util.Locale;
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.SearchQueryFieldNameResolver;
 import com.enonic.xp.repo.impl.index.IndexLanguageController;
+import com.enonic.xp.repo.impl.index.IndexValueType;
 
 public class StemmedFunctionArguments
     extends AbstractSimpleQueryStringFunctionArguments
@@ -33,9 +34,11 @@ public class StemmedFunctionArguments
     @Override
     public String resolveQueryFieldName( final String baseFieldName )
     {
-        return IndexLanguageController.stemmingSupported( this.language )
-            ? SearchQueryFieldNameResolver.INSTANCE.resolve( baseFieldName, IndexLanguageController.resolveStemmedIndexValueType(
-            this.language ) )
-            : "";
+        final IndexValueType indexValueType = IndexLanguageController.resolveStemmedIndexValueType( this.language );
+        if ( indexValueType == null )
+        {
+            throw new IllegalArgumentException( "Unsupported language for stemmed function: " + language );
+        }
+        return SearchQueryFieldNameResolver.INSTANCE.resolve( baseFieldName, indexValueType );
     }
 }

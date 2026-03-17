@@ -7,7 +7,7 @@ import org.elasticsearch.search.aggregations.bucket.terms.TermsBuilder;
 import com.enonic.xp.query.aggregation.TermsAggregationQuery;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.AbstractBuilderFactory;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFieldNameResolver;
-import com.enonic.xp.repo.impl.index.IndexValueType;
+import com.enonic.xp.repo.impl.index.StaticIndexValueType;
 
 class TermsAggregationQueryBuilderFactory
     extends AbstractBuilderFactory
@@ -19,7 +19,7 @@ class TermsAggregationQueryBuilderFactory
 
     AggregationBuilder create( final TermsAggregationQuery aggregationQuery )
     {
-        final String fieldName = fieldNameResolver.resolve( aggregationQuery.getFieldName(), IndexValueType.STRING );
+        final String fieldName = fieldNameResolver.resolve( aggregationQuery.getFieldName(), StaticIndexValueType.STRING );
 
         final TermsBuilder termsBuilder = new TermsBuilder( aggregationQuery.getName() ).
             minDocCount( aggregationQuery.getMinDocCount() ).

@@ -1,7 +1,7 @@
 package com.enonic.xp.repo.impl.elasticsearch.document.indexitem;
 
 import com.enonic.xp.index.IndexPath;
-import com.enonic.xp.repo.impl.index.IndexValueTypeInterface;
+import com.enonic.xp.repo.impl.index.IndexValueType;
 
 public final class IndexItem<T>
 {
@@ -11,16 +11,16 @@ public final class IndexItem<T>
 
     private final T value;
 
-    private final IndexValueTypeInterface valueType;
+    private final IndexValueType valueType;
 
-    public IndexItem( final IndexPath indexPath, final T value, final IndexValueTypeInterface valueType )
+    public IndexItem( final IndexPath indexPath, final T value, final IndexValueType valueType )
     {
         this.indexPath = indexPath;
         this.value = value;
         this.valueType = valueType;
     }
 
-    public IndexValueTypeInterface valueType()
+    public IndexValueType valueType()
     {
         return valueType;
     }

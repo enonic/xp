@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -64,7 +65,7 @@ public class IcuSortConfigConsistencyTest
             }
         } );
 
-        assertTrue( languageCodes.size() >= 33, "Expected at least 33 ICU language filters, found: " + languageCodes.size() );
+        assertThat( languageCodes.size()).isEqualTo( 25 );
 
         // Build lookup for template analyzer references
         final java.util.Map<String, String> templateAnalyzerByLang = new java.util.HashMap<>();

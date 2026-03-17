@@ -10,7 +10,7 @@ import org.elasticsearch.index.query.TermQueryBuilder;
 
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.SearchQueryFieldNameResolver;
-import com.enonic.xp.repo.impl.index.IndexValueType;
+import com.enonic.xp.repo.impl.index.StaticIndexValueType;
 
 class PathMatchQueryBuilder
     extends DslQueryBuilder
@@ -51,6 +51,6 @@ class PathMatchQueryBuilder
 
     private String getFieldName()
     {
-        return SearchQueryFieldNameResolver.INSTANCE.resolve( field, IndexValueType.PATH );
+        return SearchQueryFieldNameResolver.INSTANCE.resolve( field, StaticIndexValueType.PATH );
     }
 }

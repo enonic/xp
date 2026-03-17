@@ -9,7 +9,9 @@ import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexPath;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -35,11 +37,10 @@ class StemmedTypeFactoryTest
     }
 
     @Test
-    void create_throws_for_unsupported_language()
+    void create_empty_for_unsupported_language()
     {
         final IndexConfig config = IndexConfig.create().enabled( true ).addLanguage( Locale.forLanguageTag( "xyz" ) ).build();
-        assertThrows( IllegalArgumentException.class,
-                      () -> IndexItemFactory.createStemmed( IndexPath.from( "myProp" ), ValueFactory.newString( "hello" ), config ) );
+        assertThat( IndexItemFactory.createStemmed( IndexPath.from( "myProp" ), ValueFactory.newString( "hello" ), config ) ).isEmpty();
     }
 
     @Test

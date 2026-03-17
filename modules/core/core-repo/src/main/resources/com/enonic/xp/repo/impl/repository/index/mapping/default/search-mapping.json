@@ -556,19 +556,6 @@
         }
       },
       {
-        "template_orderby_ca": {
-          "match": "*._orderby_ca",
-          "mapping": {
-            "type": "string",
-            "store": false,
-            "index": "analyzed",
-            "analyzer": "icu_sort_ca",
-            "ignore_above": 3072,
-            "include_in_all": false
-          }
-        }
-      },
-      {
         "template_orderby_zh": {
           "match": "*._orderby_zh",
           "mapping": {
@@ -634,32 +621,6 @@
         }
       },
       {
-        "template_orderby_nl": {
-          "match": "*._orderby_nl",
-          "mapping": {
-            "type": "string",
-            "store": false,
-            "index": "analyzed",
-            "analyzer": "icu_sort_nl",
-            "ignore_above": 3072,
-            "include_in_all": false
-          }
-        }
-      },
-      {
-        "template_orderby_en": {
-          "match": "*._orderby_en",
-          "mapping": {
-            "type": "string",
-            "store": false,
-            "index": "analyzed",
-            "analyzer": "icu_sort_en",
-            "ignore_above": 3072,
-            "include_in_all": false
-          }
-        }
-      },
-      {
         "template_orderby_fi": {
           "match": "*._orderby_fi",
           "mapping": {
@@ -673,19 +634,6 @@
         }
       },
       {
-        "template_orderby_fr": {
-          "match": "*._orderby_fr",
-          "mapping": {
-            "type": "string",
-            "store": false,
-            "index": "analyzed",
-            "analyzer": "icu_sort_fr",
-            "ignore_above": 3072,
-            "include_in_all": false
-          }
-        }
-      },
-      {
         "template_orderby_gl": {
           "match": "*._orderby_gl",
           "mapping": {
@@ -693,19 +641,6 @@
             "store": false,
             "index": "analyzed",
             "analyzer": "icu_sort_gl",
-            "ignore_above": 3072,
-            "include_in_all": false
-          }
-        }
-      },
-      {
-        "template_orderby_de": {
-          "match": "*._orderby_de",
-          "mapping": {
-            "type": "string",
-            "store": false,
-            "index": "analyzed",
-            "analyzer": "icu_sort_de",
             "ignore_above": 3072,
             "include_in_all": false
           }
@@ -745,45 +680,6 @@
             "store": false,
             "index": "analyzed",
             "analyzer": "icu_sort_hu",
-            "ignore_above": 3072,
-            "include_in_all": false
-          }
-        }
-      },
-      {
-        "template_orderby_id": {
-          "match": "*._orderby_id",
-          "mapping": {
-            "type": "string",
-            "store": false,
-            "index": "analyzed",
-            "analyzer": "icu_sort_id",
-            "ignore_above": 3072,
-            "include_in_all": false
-          }
-        }
-      },
-      {
-        "template_orderby_ga": {
-          "match": "*._orderby_ga",
-          "mapping": {
-            "type": "string",
-            "store": false,
-            "index": "analyzed",
-            "analyzer": "icu_sort_ga",
-            "ignore_above": 3072,
-            "include_in_all": false
-          }
-        }
-      },
-      {
-        "template_orderby_it": {
-          "match": "*._orderby_it",
-          "mapping": {
-            "type": "string",
-            "store": false,
-            "index": "analyzed",
-            "analyzer": "icu_sort_it",
             "ignore_above": 3072,
             "include_in_all": false
           }
@@ -849,19 +745,6 @@
             "store": false,
             "index": "analyzed",
             "analyzer": "icu_sort_fa",
-            "ignore_above": 3072,
-            "include_in_all": false
-          }
-        }
-      },
-      {
-        "template_orderby_pt": {
-          "match": "*._orderby_pt",
-          "mapping": {
-            "type": "string",
-            "store": false,
-            "index": "analyzed",
-            "analyzer": "icu_sort_pt",
             "ignore_above": 3072,
             "include_in_all": false
           }

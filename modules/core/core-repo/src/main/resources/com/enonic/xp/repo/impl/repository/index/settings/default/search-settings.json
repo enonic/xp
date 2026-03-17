@@ -31,10 +31,6 @@
         "type": "icu_collation",
         "language": "bg"
       },
-      "icu_collation_ca": {
-        "type": "icu_collation",
-        "language": "ca"
-      },
       "icu_collation_zh": {
         "type": "icu_collation",
         "language": "zh"
@@ -55,29 +51,13 @@
         "type": "icu_collation",
         "language": "da"
       },
-      "icu_collation_nl": {
-        "type": "icu_collation",
-        "language": "nl"
-      },
-      "icu_collation_en": {
-        "type": "icu_collation",
-        "language": "en"
-      },
       "icu_collation_fi": {
         "type": "icu_collation",
         "language": "fi"
       },
-      "icu_collation_fr": {
-        "type": "icu_collation",
-        "language": "fr"
-      },
       "icu_collation_gl": {
         "type": "icu_collation",
         "language": "gl"
-      },
-      "icu_collation_de": {
-        "type": "icu_collation",
-        "language": "de"
       },
       "icu_collation_el": {
         "type": "icu_collation",
@@ -90,18 +70,6 @@
       "icu_collation_hu": {
         "type": "icu_collation",
         "language": "hu"
-      },
-      "icu_collation_id": {
-        "type": "icu_collation",
-        "language": "id"
-      },
-      "icu_collation_ga": {
-        "type": "icu_collation",
-        "language": "ga"
-      },
-      "icu_collation_it": {
-        "type": "icu_collation",
-        "language": "it"
       },
       "icu_collation_lv": {
         "type": "icu_collation",
@@ -122,10 +90,6 @@
       "icu_collation_fa": {
         "type": "icu_collation",
         "language": "fa"
-      },
-      "icu_collation_pt": {
-        "type": "icu_collation",
-        "language": "pt"
       },
       "icu_collation_ro": {
         "type": "icu_collation",
@@ -276,13 +240,6 @@
           "icu_collation_bg"
         ]
       },
-      "icu_sort_ca": {
-        "type": "custom",
-        "tokenizer": "keyword",
-        "filter": [
-          "icu_collation_ca"
-        ]
-      },
       "icu_sort_zh": {
         "type": "custom",
         "tokenizer": "keyword",
@@ -318,20 +275,6 @@
           "icu_collation_da"
         ]
       },
-      "icu_sort_nl": {
-        "type": "custom",
-        "tokenizer": "keyword",
-        "filter": [
-          "icu_collation_nl"
-        ]
-      },
-      "icu_sort_en": {
-        "type": "custom",
-        "tokenizer": "keyword",
-        "filter": [
-          "icu_collation_en"
-        ]
-      },
       "icu_sort_fi": {
         "type": "custom",
         "tokenizer": "keyword",
@@ -339,25 +282,11 @@
           "icu_collation_fi"
         ]
       },
-      "icu_sort_fr": {
-        "type": "custom",
-        "tokenizer": "keyword",
-        "filter": [
-          "icu_collation_fr"
-        ]
-      },
       "icu_sort_gl": {
         "type": "custom",
         "tokenizer": "keyword",
         "filter": [
           "icu_collation_gl"
-        ]
-      },
-      "icu_sort_de": {
-        "type": "custom",
-        "tokenizer": "keyword",
-        "filter": [
-          "icu_collation_de"
         ]
       },
       "icu_sort_el": {
@@ -379,27 +308,6 @@
         "tokenizer": "keyword",
         "filter": [
           "icu_collation_hu"
-        ]
-      },
-      "icu_sort_id": {
-        "type": "custom",
-        "tokenizer": "keyword",
-        "filter": [
-          "icu_collation_id"
-        ]
-      },
-      "icu_sort_ga": {
-        "type": "custom",
-        "tokenizer": "keyword",
-        "filter": [
-          "icu_collation_ga"
-        ]
-      },
-      "icu_sort_it": {
-        "type": "custom",
-        "tokenizer": "keyword",
-        "filter": [
-          "icu_collation_it"
         ]
       },
       "icu_sort_lv": {
@@ -435,13 +343,6 @@
         "tokenizer": "keyword",
         "filter": [
           "icu_collation_fa"
-        ]
-      },
-      "icu_sort_pt": {
-        "type": "custom",
-        "tokenizer": "keyword",
-        "filter": [
-          "icu_collation_pt"
         ]
       },
       "icu_sort_ro": {

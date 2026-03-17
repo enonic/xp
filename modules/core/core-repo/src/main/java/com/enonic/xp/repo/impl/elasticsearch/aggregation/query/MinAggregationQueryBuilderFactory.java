@@ -6,7 +6,7 @@ import org.elasticsearch.search.aggregations.metrics.min.MinBuilder;
 import com.enonic.xp.query.aggregation.metric.MinAggregationQuery;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.AbstractBuilderFactory;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFieldNameResolver;
-import com.enonic.xp.repo.impl.index.IndexValueType;
+import com.enonic.xp.repo.impl.index.StaticIndexValueType;
 
 class MinAggregationQueryBuilderFactory
     extends AbstractBuilderFactory
@@ -19,6 +19,6 @@ class MinAggregationQueryBuilderFactory
     AbstractAggregationBuilder create( final MinAggregationQuery aggregationQuery )
     {
         return new MinBuilder( aggregationQuery.getName() ).
-            field( fieldNameResolver.resolve( aggregationQuery.getFieldName(), IndexValueType.NUMBER ) );
+            field( fieldNameResolver.resolve( aggregationQuery.getFieldName(), StaticIndexValueType.NUMBER ) );
     }
 }

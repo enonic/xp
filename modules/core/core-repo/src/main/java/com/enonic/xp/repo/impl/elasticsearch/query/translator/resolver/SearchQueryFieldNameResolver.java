@@ -3,8 +3,8 @@ package com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver;
 import java.util.Set;
 
 import com.enonic.xp.repo.impl.index.IndexFieldNameNormalizer;
+import com.enonic.xp.repo.impl.index.StaticIndexValueType;
 import com.enonic.xp.repo.impl.index.IndexValueType;
-import com.enonic.xp.repo.impl.index.IndexValueTypeInterface;
 
 public final class SearchQueryFieldNameResolver
     extends AbstractQueryFieldNameResolver
@@ -19,13 +19,12 @@ public final class SearchQueryFieldNameResolver
     }
 
     @Override
-    protected String appendIndexValueType( final String baseFieldName, final IndexValueTypeInterface indexValueType )
+    protected String appendIndexValueType( final String baseFieldName, final IndexValueType indexValueType )
     {
         return IndexFieldNameNormalizer.normalize( indexValueType.getPostfix().isEmpty()
                                                        ? baseFieldName
                                                        : baseFieldName + IndexValueType.INDEX_VALUE_TYPE_SEPARATOR +
                                                            indexValueType.getPostfix() );
     }
-
 }
 

@@ -5,11 +5,8 @@ import java.util.Locale;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class IndexLanguageControllerTest
 {
@@ -21,18 +18,9 @@ public class IndexLanguageControllerTest
                 "hu", "id", "ga", "it", "lv", "lt", "no", "nb", "nn", "fa", "pt", "ro", "ru", "ku", "es", "sv", "tr", "th"};
         for ( final String lang : knownLanguages )
         {
-            assertTrue( IndexLanguageController.stemmingSupported( Locale.forLanguageTag( lang ) ),
-                        "Expected isSupported=true for: " + lang );
+            assertNotNull( IndexLanguageController.resolveStemmedIndexValueType( Locale.forLanguageTag( lang ) ),
+                           "Expected isSupported=true for: " + lang );
         }
-    }
-
-    @Test
-    void stemmingSupported_returns_false_for_unknown_languages()
-    {
-        assertFalse( IndexLanguageController.stemmingSupported( Locale.forLanguageTag( "xyz" ) ) );
-        assertFalse( IndexLanguageController.stemmingSupported( Locale.forLanguageTag( "rr" ) ) );
-        assertFalse( IndexLanguageController.stemmingSupported( Locale.forLanguageTag( "" ) ) );
-        assertFalse( IndexLanguageController.stemmingSupported( null ) );
     }
 
     @Test
@@ -71,8 +59,7 @@ public class IndexLanguageControllerTest
     @Test
     void resolveStemmedIndexValueType_returns_null_for_unknown()
     {
-        assertThrows( IllegalArgumentException.class,
-                      () -> IndexLanguageController.resolveStemmedIndexValueType( Locale.forLanguageTag( "xyz" ) ) );
-        assertThrows( IllegalArgumentException.class, () -> IndexLanguageController.resolveStemmedIndexValueType( null ) );
+        assertNull( IndexLanguageController.resolveStemmedIndexValueType( Locale.forLanguageTag( "xyz" ) ) );
+        assertNull( IndexLanguageController.resolveStemmedIndexValueType( null ) );
     }
 }

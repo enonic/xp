@@ -9,7 +9,7 @@ import com.enonic.xp.query.expr.DslOrderExpr;
 import com.enonic.xp.query.expr.DynamicOrderExpr;
 import com.enonic.xp.query.expr.FunctionExpr;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.SearchQueryFieldNameResolver;
-import com.enonic.xp.repo.impl.index.IndexValueType;
+import com.enonic.xp.repo.impl.index.StaticIndexValueType;
 
 class GeoDistanceSortFunction
 {
@@ -21,7 +21,7 @@ class GeoDistanceSortFunction
 
         final String baseFieldName = arguments.getFieldName();
 
-        final String queryFieldName = SearchQueryFieldNameResolver.INSTANCE.resolve( baseFieldName, IndexValueType.GEO_POINT );
+        final String queryFieldName = SearchQueryFieldNameResolver.INSTANCE.resolve( baseFieldName, StaticIndexValueType.GEO_POINT );
 
         GeoDistanceSortBuilder builder =
             new GeoDistanceSortBuilder( queryFieldName ).point( arguments.getLatitude(), arguments.getLongitude() );
@@ -40,7 +40,7 @@ class GeoDistanceSortFunction
 
     public static SortBuilder create( final DslOrderExpr orderExpr )
     {
-        final String queryFieldName = SearchQueryFieldNameResolver.INSTANCE.resolve( orderExpr.getField(), IndexValueType.GEO_POINT );
+        final String queryFieldName = SearchQueryFieldNameResolver.INSTANCE.resolve( orderExpr.getField(), StaticIndexValueType.GEO_POINT );
 
         final GeoDistanceSortBuilder builder = new GeoDistanceSortBuilder( queryFieldName ).point( orderExpr.getLat(), orderExpr.getLon() );
 

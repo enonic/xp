@@ -25,7 +25,7 @@ class OrderByTypeFactoryTest
     @Test
     void create_returns_orderby_plus_language_item_for_supported_language()
     {
-        final IndexConfig config = IndexConfig.create().enabled( true ).addLanguage( Locale.ENGLISH ).build();
+        final IndexConfig config = IndexConfig.create().enabled( true ).addLanguage( Locale.JAPANESE ).build();
         final List<IndexItem<?>> items =
             IndexItemFactory.createOrderBy( IndexPath.from( "myProp" ), ValueFactory.newString( "hello" ), config );
         // base _orderby item + one language-specific item
@@ -45,6 +45,15 @@ class OrderByTypeFactoryTest
     void create_returns_correct_orderby_item_for_excess_language()
     {
         final IndexConfig config = IndexConfig.create().enabled( true ).addLanguage( Locale.forLanguageTag( "pt-BR" ) ).build();
+        final List<IndexItem<?>> items =
+            IndexItemFactory.createOrderBy( IndexPath.from( "myProp" ), ValueFactory.newString( "hello" ), config );
+        assertEquals( 1, items.size() );
+    }
+
+    @Test
+    void create_deduplicates_language_that_falls_back_to_orderby()
+    {
+        final IndexConfig config = IndexConfig.create().enabled( true ).addLanguage( Locale.ENGLISH ).build();
         final List<IndexItem<?>> items =
             IndexItemFactory.createOrderBy( IndexPath.from( "myProp" ), ValueFactory.newString( "hello" ), config );
         assertEquals( 1, items.size() );

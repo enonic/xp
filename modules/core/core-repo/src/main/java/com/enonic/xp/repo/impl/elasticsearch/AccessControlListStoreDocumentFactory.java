@@ -7,7 +7,7 @@ import com.google.common.collect.ImmutableList;
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.repo.impl.elasticsearch.document.indexitem.IndexItem;
-import com.enonic.xp.repo.impl.index.IndexValueType;
+import com.enonic.xp.repo.impl.index.StaticIndexValueType;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
@@ -25,7 +25,7 @@ class AccessControlListStoreDocumentFactory
             for ( final Permission permission : entry.getAllowedPermissions() )
             {
                 aclStoreDocumentItems.add(
-                    new IndexItem<>( getPathForPermission( permission ), principalKeyString, IndexValueType.STRING ) );
+                    new IndexItem<>( getPathForPermission( permission ), principalKeyString, StaticIndexValueType.STRING ) );
             }
         }
 

@@ -9,14 +9,14 @@ import org.elasticsearch.search.highlight.HighlightField;
 
 import com.enonic.xp.highlight.HighlightedProperties;
 import com.enonic.xp.highlight.HighlightedProperty;
-import com.enonic.xp.repo.impl.index.IndexValueType;
+import com.enonic.xp.repo.impl.index.StaticIndexValueType;
 
 public class HighlightedPropertiesFactory
 {
     private static final Pattern POSTFIX_PATTERN = Pattern.compile(
-        "\\.(?:" + IndexValueType.DATETIME.getPostfix() + "|" + IndexValueType.NUMBER.getPostfix() + "|" +
-            IndexValueType.NGRAM.getPostfix() + "|" + IndexValueType.ANALYZED.getPostfix() + "|" + IndexValueType.ORDERBY.getPostfix() +
-            "|" + IndexValueType.GEO_POINT.getPostfix() + "|" + IndexValueType.PATH.getPostfix() + ")$" );
+        "\\.(?:" + StaticIndexValueType.DATETIME.getPostfix() + "|" + StaticIndexValueType.NUMBER.getPostfix() + "|" +
+            StaticIndexValueType.NGRAM.getPostfix() + "|" + StaticIndexValueType.ANALYZED.getPostfix() + "|" + StaticIndexValueType.ORDERBY.getPostfix() +
+            "|" + StaticIndexValueType.GEO_POINT.getPostfix() + "|" + StaticIndexValueType.PATH.getPostfix() + ")$" );
 
     public static HighlightedProperties create( final Map<String, HighlightField> highlightPropertyMap )
     {

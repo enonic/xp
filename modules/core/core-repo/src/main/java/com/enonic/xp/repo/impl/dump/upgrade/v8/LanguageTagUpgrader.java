@@ -33,12 +33,16 @@ public class LanguageTagUpgrader
 
         final PropertyTree data = nodeVersion.data();
         final String language = data.getString( ContentPropertyNames.LANGUAGE );
-        if ( language == null || !language.contains( "_" ) )
+        if ( language == null )
         {
             return null;
         }
 
-        final String languageTag = Locale.forLanguageTag( language.replace( '_', '-' ) ).toLanguageTag();
+        final String languageTag = new Locale( language.replace( '_', '-' ) ).toLanguageTag();
+        if ( languageTag.equals( language ) )
+        {
+            return null;
+        }
         data.setString( ContentPropertyNames.LANGUAGE, languageTag );
 
         LOG.info( "Upgraded language [{}] to [{}] for node [{}] in repository [{}]", language, languageTag, nodeVersion.id(),

@@ -2,6 +2,9 @@ package com.enonic.xp.repo.impl.index;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableMap;
 import com.ibm.icu.text.Collator;
@@ -36,7 +39,6 @@ public class IndexLanguageController
         .put( "it", "italian" )
         .put( "lv", "latvian" )
         .put( "lt", "lithuanian" )
-        .put( "no", "norwegian" )
         .put( "nb", "norwegian" )
         .put( "nn", "language_analyzer_nn" )
         .put( "fa", "persian" )
@@ -50,33 +52,30 @@ public class IndexLanguageController
         .put( "th", "thai" )
         .build();
 
-    private static final List<String> SORT_LANGUAGES =
-        List.of( "ar", "hy", "bn", "bg", "zh", "ja", "ko", "cs", "da", "fi", "gl", "el", "hi", "hu", "id", "lv", "lt", "no", "nb", "nn",
-                 "fa", "ro", "ru", "es", "sv", "tr", "th" );
+    private static final Map<String, IndexValueType> STEMMED_VALUE_TYPES = LANGUAGE_TO_ANALYZER.keySet()
+        .stream()
+        .collect( Collectors.toUnmodifiableMap( k -> k, k -> IndexValueType.stemmed( k.toLowerCase( Locale.ROOT ) ) ) );
 
-    private static final ImmutableMap<String, StemmedIndexValueType> STEMMED_VALUE_TYPES;
+    private static final Map<String, IndexValueType> ORDER_BY_VALUE_TYPES =
+        List.of( "ar", "hy", "bn", "bg", "zh", "ja", "ko", "cs", "da", "fi", "gl", "el", "hi", "hu", "lv", "lt", "nb", "nn",
+                 "fa", "ro", "ru", "es", "sv", "tr", "th" )
+            .stream()
+            .collect( Collectors.toUnmodifiableMap( k -> k, k -> IndexValueType.orderBy( k.toLowerCase( Locale.ROOT ) ) ) );
 
-    private static final ImmutableMap<String, OrderByIndexValueType> ORDER_BY_VALUE_TYPES;
-
-    static
+    private static String normalizeBase( final Locale language )
     {
-        final ImmutableMap.Builder<String, StemmedIndexValueType> stemmedBuilder = ImmutableMap.builder();
-        LANGUAGE_TO_ANALYZER.keySet().forEach( k -> stemmedBuilder.put( k, new StemmedIndexValueType( k.toLowerCase( Locale.ROOT ) ) ) );
-        STEMMED_VALUE_TYPES = stemmedBuilder.build();
-
-        final ImmutableMap.Builder<String, OrderByIndexValueType> orderbyBuilder = ImmutableMap.builder();
-        SORT_LANGUAGES.forEach( k -> orderbyBuilder.put( k, new OrderByIndexValueType( k ) ) );
-        ORDER_BY_VALUE_TYPES = orderbyBuilder.build();
+        final String base = Objects.requireNonNullElse( language, Locale.ROOT ).getLanguage();
+        return "no".equals( base ) ? "nb" : base;
     }
 
     private static String normalize( final Locale language )
     {
-        return language == null ? null : language.toLanguageTag();
-    }
-
-    public static boolean stemmingSupported( final Locale language )
-    {
-        return LANGUAGE_TO_ANALYZER.containsKey( normalize( language ) );
+        final Locale locale = Objects.requireNonNullElse( language, Locale.ROOT );
+        if ( "pt-BR".equals( locale.toLanguageTag() ) )
+        {
+            return "pt-BR";
+        }
+        return normalizeBase( language );
     }
 
     public static String resolveAnalyzer( final Locale language )
@@ -84,29 +83,24 @@ public class IndexLanguageController
         return LANGUAGE_TO_ANALYZER.get( normalize( language ) );
     }
 
-    public static StemmedIndexValueType resolveStemmedIndexValueType( final Locale language )
+    public static IndexValueType resolveStemmedIndexValueType( final Locale language )
     {
-        final StemmedIndexValueType type = STEMMED_VALUE_TYPES.get( normalize( language ) );
-        if ( type == null )
-        {
-            throw new IllegalArgumentException( "Unsupported language for stemmed indexing: " + language );
-        }
-        return type;
+        return STEMMED_VALUE_TYPES.get( normalize( language ) );
     }
 
-    public static IndexValueTypeInterface resolveOrderByIndexValueType( final Locale language )
+    public static IndexValueType resolveOrderByIndexValueType( final Locale language )
     {
-        final OrderByIndexValueType type = ORDER_BY_VALUE_TYPES.get( normalize( language ) );
+        final IndexValueType type = ORDER_BY_VALUE_TYPES.get( normalizeBase( language ) );
         if ( type == null )
         {
-            return IndexValueType.ORDERBY;
+            return StaticIndexValueType.ORDERBY;
         }
         return type;
     }
 
     static void main()
     {
-        for ( String s : SORT_LANGUAGES )
+        for ( String s : LANGUAGE_TO_ANALYZER.keySet() )
         {
             boolean[] available = new boolean[1];
             ULocale l = new ULocale( s );
