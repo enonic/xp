@@ -1,7 +1,6 @@
 package com.enonic.xp.audit;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -32,12 +31,7 @@ public final class AuditLogUris
 
     public static AuditLogUris from( final String... uris )
     {
-        return from( Arrays.asList( uris ) );
-    }
-
-    public static AuditLogUris from( final Collection<String> uris )
-    {
-        return uris.stream().map( AuditLogUri::from ).collect( collector() );
+        return Arrays.asList( uris ).stream().map( AuditLogUri::from ).collect( collector() );
     }
 
     public static AuditLogUris from( final Iterable<AuditLogUri> uris )

@@ -1,7 +1,6 @@
 package com.enonic.xp.content;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -32,12 +31,7 @@ public final class ContentIds
 
     public static ContentIds from( final String... ids )
     {
-        return from( Arrays.asList( ids ) );
-    }
-
-    public static ContentIds from( final Collection<String> ids )
-    {
-        return ids.stream().map( ContentId::from ).collect( collector() );
+        return Arrays.asList( ids ).stream().map( ContentId::from ).collect( collector() );
     }
 
     public static ContentIds from( final Iterable<ContentId> ids )

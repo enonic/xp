@@ -1,7 +1,6 @@
 package com.enonic.xp.node;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -32,12 +31,7 @@ public final class NodeIds
 
     public static NodeIds from( final String... ids )
     {
-        return from( Arrays.asList( ids ) );
-    }
-
-    public static NodeIds from( final Collection<String> ids )
-    {
-        return ids.stream().map( NodeId::from ).collect( collector() );
+        return Arrays.asList( ids ).stream().map( NodeId::from ).collect( collector() );
     }
 
     public static Builder create()

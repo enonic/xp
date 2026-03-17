@@ -24,6 +24,7 @@ import com.enonic.xp.query.filter.Filter;
 import com.enonic.xp.query.filter.Filters;
 import com.enonic.xp.query.highlight.HighlightQuery;
 import com.enonic.xp.query.parser.QueryParser;
+import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
 import com.enonic.xp.script.ScriptValue;
 
@@ -136,7 +137,7 @@ public final class QueryContentHandler
         {
             return ContentTypeNames.empty();
         }
-        return ContentTypeNames.from( this.contentTypes );
+        return this.contentTypes.stream().map( ContentTypeName::from ).collect( ContentTypeNames.collector() );
     }
 
     private ContentsResultMapper convert( final FindContentIdsByQueryResult findQueryResult )

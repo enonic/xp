@@ -3,8 +3,7 @@ package com.enonic.xp.core.impl.issue.serializer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
-
-import com.google.common.collect.Lists;
+import java.util.stream.StreamSupport;
 
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
@@ -52,8 +51,8 @@ public class IssueDataSerializer
 
         if ( !params.getApproverIds().isEmpty() )
         {
-            issueAsData.addStrings( APPROVERS, params.getApproverIds().
-                stream().map( PrincipalKey::toString ).collect( Collectors.toList() ) );
+            issueAsData.addStrings( APPROVERS,
+                                    params.getApproverIds().stream().map( PrincipalKey::toString ).collect( Collectors.toList() ) );
         }
 
         if ( params.getPublishRequest() != null )
@@ -85,8 +84,8 @@ public class IssueDataSerializer
         issueAsData.ifNotNull().addString( STATUS, editedIssue.getStatus().toString() );
         issueAsData.addString( DESCRIPTION, editedIssue.getDescription() );
 
-        issueAsData.addStrings( APPROVERS, editedIssue.getApproverIds().
-            stream().map( PrincipalKey::toString ).collect( Collectors.toList() ) );
+        issueAsData.addStrings( APPROVERS,
+                                editedIssue.getApproverIds().stream().map( PrincipalKey::toString ).collect( Collectors.toList() ) );
 
         if ( editedIssue.getPublishRequest() != null )
         {
@@ -166,16 +165,18 @@ public class IssueDataSerializer
         final PublishRequest.Builder publishRequestBuilder = PublishRequest.create();
 
         publishRequestBuilder.addExcludeIds(
-            ContentIds.from( Lists.newArrayList( publishRequestSet.getStrings( PublishRequestPropertyNames.EXCLUDE_IDS ) ) ) );
+            StreamSupport.stream( publishRequestSet.getStrings( PublishRequestPropertyNames.EXCLUDE_IDS ).spliterator(), false )
+                .map( ContentId::from )
+                .collect( ContentIds.collector() ) );
 
         final Iterable<PropertySet> itemSets = publishRequestSet.getSets( PublishRequestPropertyNames.ITEMS );
 
         for ( final PropertySet itemSet : itemSets )
         {
-            publishRequestBuilder.addItem( PublishRequestItem.create().
-                id( ContentId.from( itemSet.getReference( PublishRequestPropertyNames.ITEM_ID ) ) ).
-                includeChildren( itemSet.getBoolean( PublishRequestPropertyNames.ITEM_RECURSIVE ) ).
-                build() );
+            publishRequestBuilder.addItem( PublishRequestItem.create()
+                                               .id( ContentId.from( itemSet.getReference( PublishRequestPropertyNames.ITEM_ID ) ) )
+                                               .includeChildren( itemSet.getBoolean( PublishRequestPropertyNames.ITEM_RECURSIVE ) )
+                                               .build() );
         }
 
         builder.setPublishRequest( publishRequestBuilder.build() );

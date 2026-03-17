@@ -1,7 +1,6 @@
 package com.enonic.xp.schema.formfragment;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -27,12 +26,7 @@ public final class FormFragmentNames
 
     public static FormFragmentNames from( final String... names )
     {
-        return from( Arrays.asList( names ) );
-    }
-
-    public static FormFragmentNames from( final Collection<String> names )
-    {
-        return names.stream().map( FormFragmentName::from ).collect( collector() );
+        return Arrays.asList( names ).stream().map( FormFragmentName::from ).collect( collector() );
     }
 
     public static FormFragmentNames from( final FormFragmentName... names )

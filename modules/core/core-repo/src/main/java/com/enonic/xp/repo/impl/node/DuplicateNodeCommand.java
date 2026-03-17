@@ -17,6 +17,7 @@ import com.enonic.xp.node.DuplicateNodeResult;
 import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodeQuery;
@@ -66,8 +67,8 @@ public final class DuplicateNodeCommand
         result.node( duplicatedNode );
         listener.nodesDuplicated( 1 );
 
-        final NodeReferenceUpdatesHolder.Builder builder = NodeReferenceUpdatesHolder.create().
-            add( existingNode.id(), duplicatedNode.id() );
+        final NodeReferenceUpdatesHolder.Builder builder =
+            NodeReferenceUpdatesHolder.create().add( existingNode.id(), duplicatedNode.id() );
 
         if ( params.getIncludeChildren() )
         {
@@ -171,14 +172,16 @@ public final class DuplicateNodeCommand
         refresh( RefreshMode.SEARCH );
 
         final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
-        final NodeIds childrenIds = NodeIds.from( this.nodeSearchService.query( NodeQuery.create()
-                                                                                    .size( NodeSearchService.GET_ALL_SIZE_FLAG )
-                                                                                    .parent( originalParent.path() )
-                                                                                    .setOrderExpressions( originalParent.getChildOrder()
-                                                                                                              .getOrderExpressions() )
-                                                                                    .build(),
-                                                                                SingleRepoSearchSource.from( internalContext ) )
-                                                      .getIds() );
+        final NodeIds childrenIds = this.nodeSearchService.query( NodeQuery.create()
+                                                                      .size( NodeSearchService.GET_ALL_SIZE_FLAG )
+                                                                      .parent( originalParent.path() )
+                                                                      .setOrderExpressions(
+                                                                          originalParent.getChildOrder().getOrderExpressions() )
+                                                                      .build(), SingleRepoSearchSource.from( internalContext ) )
+            .getIds()
+            .stream()
+            .map( NodeId::from )
+            .collect( NodeIds.collector() );
 
         final Nodes children = this.nodeStorageService.get( childrenIds, internalContext );
 
@@ -212,8 +215,7 @@ public final class DuplicateNodeCommand
     {
         if ( originalParent.getChildOrder().isManualOrder() )
         {
-            paramsBuilder.manualOrderValue( node.getManualOrderValue() ).
-                insertManualStrategy( InsertManualStrategy.MANUAL );
+            paramsBuilder.manualOrderValue( node.getManualOrderValue() ).insertManualStrategy( InsertManualStrategy.MANUAL );
         }
     }
 
@@ -229,9 +231,9 @@ public final class DuplicateNodeCommand
     private void updateChildReferences( final Node duplicatedParent, final NodeReferenceUpdatesHolder nodeReferenceUpdatesHolder )
     {
         final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
-        final NodeIds childrenIds = NodeIds.from( this.nodeSearchService.query(
+        final NodeIds childrenIds = this.nodeSearchService.query(
             NodeQuery.create().size( NodeSearchService.GET_ALL_SIZE_FLAG ).parent( duplicatedParent.path() ).build(),
-            SingleRepoSearchSource.from( internalContext ) ).getIds() );
+            SingleRepoSearchSource.from( internalContext ) ).getIds().stream().map( NodeId::from ).collect( NodeIds.collector() );
 
         final Nodes children = this.nodeStorageService.get( childrenIds, internalContext );
 
@@ -312,7 +314,8 @@ public final class DuplicateNodeCommand
         }
     }
 
-    private enum NoopDuplicateNodeListener implements DuplicateNodeListener
+    private enum NoopDuplicateNodeListener
+        implements DuplicateNodeListener
     {
         INSTANCE;
 
