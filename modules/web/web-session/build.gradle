@@ -2,11 +2,12 @@ dependencies {
     implementation project( ':web:web-api' )
     implementation libs.jetty.hazelcast
     implementation libs.hazelcast.hazelcast
+    implementation libs.jetty.session
 }
 
 jar {
     bundle {
         bnd( 'Bundle-Name': 'Enonic XP Web - Websession',
-             'Export-Package' : 'org.eclipse.jetty.hazelcast.session' )
+             'Export-Package' : 'org.eclipse.jetty.hazelcast.session,org.eclipse.jetty.session' )
     }
 }
