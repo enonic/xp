@@ -21,16 +21,11 @@ public final class ClusterIsLeaderHandler
 
     public boolean isLeader()
     {
-        final ClusterService service = this.clusterService.get();
-        if ( service == null )
-        {
-            return true;
-        }
         if ( this.applicationKey == null )
         {
-            return service.isLeader();
+            return this.clusterService.get().isLeader();
         }
-        return service.isLeader( ApplicationKey.from( this.applicationKey ) );
+        return this.clusterService.get().isLeader( ApplicationKey.from( this.applicationKey ) );
     }
 
     @Override
