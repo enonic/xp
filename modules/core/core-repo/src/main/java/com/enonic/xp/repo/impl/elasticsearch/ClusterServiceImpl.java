@@ -6,9 +6,9 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
 
 import com.hazelcast.cluster.Member;
 import com.hazelcast.core.HazelcastInstance;
@@ -27,27 +27,17 @@ public class ClusterServiceImpl
 
     private static final String TASKS_ENABLED_ATTRIBUTE_PREFIX = TASKS_ENABLED_ATTRIBUTE_KEY + "-";
 
-    private volatile HazelcastInstance hazelcastInstance;
+    private final HazelcastInstance hazelcastInstance;
 
-    @Reference(cardinality = ReferenceCardinality.OPTIONAL)
-    public void setHazelcastInstance( final HazelcastInstance hazelcastInstance )
+    @Activate
+    public ClusterServiceImpl( @Reference final HazelcastInstance hazelcastInstance )
     {
         this.hazelcastInstance = hazelcastInstance;
-    }
-
-    public void unsetHazelcastInstance( final HazelcastInstance hazelcastInstance )
-    {
-        this.hazelcastInstance = null;
     }
 
     @Override
     public boolean isLeader()
     {
-        if ( hazelcastInstance == null )
-        {
-            return true;
-        }
-
         final UUID localMemberUuid = hazelcastInstance.getCluster().getLocalMember().getUuid();
 
         final Optional<UUID> leaderUuid = hazelcastInstance.getCluster()
@@ -65,11 +55,6 @@ public class ClusterServiceImpl
         if ( applicationKey == null )
         {
             return isLeader();
-        }
-
-        if ( hazelcastInstance == null )
-        {
-            return true;
         }
 
         final UUID localMemberUuid = hazelcastInstance.getCluster().getLocalMember().getUuid();
