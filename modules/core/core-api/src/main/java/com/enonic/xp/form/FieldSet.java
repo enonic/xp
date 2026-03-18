@@ -34,7 +34,7 @@ public final class FieldSet
     @Override
     public FormItemType getType()
     {
-        return FormItemType.LAYOUT;
+        return FormItemType.FIELD_SET;
     }
 
     public String getLabel()

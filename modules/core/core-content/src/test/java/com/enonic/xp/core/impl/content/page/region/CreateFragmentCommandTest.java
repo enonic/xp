@@ -70,14 +70,14 @@ class CreateFragmentCommandTest
     @Test
     void layoutComponentName_emptyDisplayName()
     {
-        assertEquals( "Layout", testLayoutComponentName( "" ) );
+        assertEquals( "FieldSet", testLayoutComponentName( "" ) );
 
     }
 
     @Test
     void layoutComponentName_nullDisplayName()
     {
-        assertEquals( "Layout", testLayoutComponentName( null ) );
+        assertEquals( "FieldSet", testLayoutComponentName( null ) );
     }
 
     @Test

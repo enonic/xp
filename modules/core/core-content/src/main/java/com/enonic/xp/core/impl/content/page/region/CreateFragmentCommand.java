@@ -135,7 +135,7 @@ final class CreateFragmentCommand
     private String doGenerateDisplayName( final LayoutComponent layoutComponent )
     {
         return doGenerateDisplayName(
-            layoutComponent.hasDescriptor() ? this.layoutDescriptorService.getByKey( layoutComponent.getDescriptor() ) : null, "Layout" );
+            layoutComponent.hasDescriptor() ? this.layoutDescriptorService.getByKey( layoutComponent.getDescriptor() ) : null, "FieldSet" );
     }
 
     private String doGenerateDisplayName( final ComponentDescriptor componentDescriptor, final String defaultName )
