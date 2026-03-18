@@ -48,7 +48,7 @@ final class FormValidator
                     validateFormItems( (FormItemSet) item, items );
                     break;
 
-                case LAYOUT:
+                case FIELD_SET:
                     validateFormItems( (FieldSet) item, items );
                     break;
             }

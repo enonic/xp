@@ -163,7 +163,7 @@ public final class MacroDescriptorServiceImpl
                 case FORM_FRAGMENT, FORM_OPTION_SET, FORM_ITEM_SET:
                     throw new IllegalArgumentException(
                         "MacroDescriptor form cannot contain FormFragment, OptionSet and ItemSet: " + item.getName() );
-                case LAYOUT:
+                case FIELD_SET:
                     validateFormItems( (FieldSet) item );
                 default:
                     break;
