@@ -57,7 +57,7 @@ public final class IdProviderDescriptorServiceImpl
                 case FORM_ITEM_SET:
                     validateNoFormFragments( (FormItemSet) item );
                     break;
-                case LAYOUT:
+                case FIELD_SET:
                     validateNoFormFragments( (FieldSet) item );
                     break;
                 case FORM_OPTION_SET:

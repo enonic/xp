@@ -3,7 +3,7 @@ package com.enonic.xp.form;
 
 public enum FormItemType
 {
-    INPUT, FORM_ITEM_SET, LAYOUT, FORM_FRAGMENT, FORM_OPTION_SET, FORM_OPTION_SET_OPTION;
+    INPUT, FORM_ITEM_SET, FIELD_SET, FORM_FRAGMENT, FORM_OPTION_SET, FORM_OPTION_SET_OPTION;
 
     public static FormItemType parse( final String value )
     {
@@ -17,7 +17,7 @@ public enum FormItemType
         }
         else if ( FieldSet.class.getSimpleName().equals( value ) )
         {
-            return LAYOUT;
+            return FIELD_SET;
         }
         else if ( FormFragment.class.getSimpleName().equals( value ) )
         {

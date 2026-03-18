@@ -71,7 +71,7 @@ public final class TaskDescriptorLoader
                 case FORM_ITEM_SET:
                     validateFormItems( (FormItemSet) item );
                     break;
-                case LAYOUT:
+                case FIELD_SET:
                     validateFormItems( (FieldSet) item );
                     break;
                 case FORM_OPTION_SET:
