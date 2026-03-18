@@ -1,6 +1,5 @@
 package com.enonic.xp.portal.impl.handler.mapping;
 
-import java.util.Iterator;
 import java.util.List;
 
 import com.enonic.xp.portal.PortalRequest;
@@ -43,10 +42,7 @@ final class MappingFilterChainHandlerWorker
     public PortalResponse execute()
         throws Exception
     {
-        // Build a chain from the filter descriptors
-        final FilterChain filterChain = new FilterChain( filterDescriptors.iterator(), webHandlerChain );
-
-        // Execute the chain starting with the first filter
+        final FilterChain filterChain = new FilterChain( filterDescriptors, webHandlerChain );
         return (PortalResponse) filterChain.handle( request, response );
     }
 
@@ -63,13 +59,15 @@ final class MappingFilterChainHandlerWorker
     private final class FilterChain
         implements WebHandlerChain
     {
-        private final Iterator<ControllerMappingDescriptor> filterIterator;
+        private final List<ControllerMappingDescriptor> filters;
 
         private final WebHandlerChain originalChain;
 
-        FilterChain( final Iterator<ControllerMappingDescriptor> filterIterator, final WebHandlerChain originalChain )
+        private int index;
+
+        FilterChain( final List<ControllerMappingDescriptor> filters, final WebHandlerChain originalChain )
         {
-            this.filterIterator = filterIterator;
+            this.filters = filters;
             this.originalChain = originalChain;
         }
 
@@ -77,9 +75,9 @@ final class MappingFilterChainHandlerWorker
         public WebResponse handle( final WebRequest webRequest, final WebResponse webResponse )
             throws Exception
         {
-            if ( filterIterator.hasNext() )
+            if ( index < filters.size() )
             {
-                final ControllerMappingDescriptor nextFilter = filterIterator.next();
+                final ControllerMappingDescriptor nextFilter = filters.get( index++ );
                 final Trace trace = Tracer.current();
                 if ( trace != null )
                 {
@@ -94,7 +92,6 @@ final class MappingFilterChainHandlerWorker
             }
             else
             {
-                // No more filters in the chain, proceed to the original chain (rendering)
                 return originalChain.handle( webRequest, webResponse );
             }
         }

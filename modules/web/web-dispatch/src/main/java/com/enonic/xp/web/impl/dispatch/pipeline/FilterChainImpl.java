@@ -1,7 +1,6 @@
 package com.enonic.xp.web.impl.dispatch.pipeline;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
 
 import jakarta.servlet.FilterChain;
@@ -16,13 +15,15 @@ import com.enonic.xp.web.impl.dispatch.mapping.FilterDefinition;
 final class FilterChainImpl
     implements FilterChain
 {
-    private final Iterator<FilterDefinition> filters;
+    private final List<FilterDefinition> filters;
 
     private final ServletPipeline servletPipeline;
 
+    private int index;
+
     FilterChainImpl( final List<FilterDefinition> filters, final ServletPipeline servletPipeline )
     {
-        this.filters = filters.iterator();
+        this.filters = filters;
         this.servletPipeline = servletPipeline;
     }
 
@@ -36,9 +37,9 @@ final class FilterChainImpl
     private void doFilter( final HttpServletRequest req, final HttpServletResponse res )
         throws IOException, ServletException
     {
-        if ( this.filters.hasNext() )
+        if ( this.index < this.filters.size() )
         {
-            final FilterDefinition def = this.filters.next();
+            final FilterDefinition def = this.filters.get( this.index++ );
             final boolean handled = def.doFilter( req, res, this );
 
             if ( !handled )
