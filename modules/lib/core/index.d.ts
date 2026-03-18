@@ -206,7 +206,7 @@ export type RequestBranch = 'draft' | 'master';
 export type RequestGetHeaderFunction = (headerName: string) => string | null;
 export type RequestMethod = 'GET' | 'POST' | ' HEAD' | 'OPTIONS' | ' PUT' | 'DELETE' | 'PATCH' | 'TRACE' | 'CONNECT';
 export type RequestMode = 'edit' | 'inline' | 'live' | 'preview' | 'admin';
-export type RequestParams = Record<string, string | string[]>;
+export type RequestParams = Record<string, string | string[] | undefined>;
 export type RequestScheme = 'http' | 'https';
 
 export type RequestCookies = Record<string, string | undefined>;
@@ -341,7 +341,7 @@ export interface PageContributions {
     bodyEnd?: string[];
 }
 
-export type ResponseBody = unknown[] | Record<string, unknown> | boolean | number | string | null | ByteSource;
+export type ResponseBody = unknown[] | object | boolean | number | string | null | ByteSource;
 
 export interface MappedResponse {
     applyFilters: boolean;
@@ -511,6 +511,8 @@ export type GroupKey = `group:${string}:${string}`;
 export type RoleKey = `role:${string}`;
 
 export type PrincipalKey = UserKey | GroupKey | RoleKey;
+
+export type PrincipalType = 'user' | 'group' | 'role';
 
 export interface User {
     type: 'user';

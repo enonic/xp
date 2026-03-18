@@ -29,9 +29,9 @@ function checkRequired<T extends object, K extends keyof T>(
 
 export interface AuditLogParams<Data extends Record<string, unknown>> {
     type: string;
-    time?: string;
-    source?: string;
-    user?: UserKey;
+    time?: string | null;
+    source?: string | null;
+    user?: UserKey | null;
     objects?: string[];
     data?: Data;
 }
