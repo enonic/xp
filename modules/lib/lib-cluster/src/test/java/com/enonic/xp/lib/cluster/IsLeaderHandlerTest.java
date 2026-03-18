@@ -3,23 +3,23 @@ package com.enonic.xp.lib.cluster;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import com.enonic.xp.cluster.ClusterService;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.index.IndexService;
 import com.enonic.xp.session.SessionMock;
 import com.enonic.xp.testing.ScriptTestSupport;
 
 class IsLeaderHandlerTest
     extends ScriptTestSupport
 {
-    private IndexService indexService;
+    private ClusterService clusterService;
 
     @Override
     public void initialize()
         throws Exception
     {
         super.initialize();
-        this.indexService = Mockito.mock( IndexService.class );
-        addService( IndexService.class, this.indexService );
+        this.clusterService = Mockito.mock( ClusterService.class );
+        addService( ClusterService.class, this.clusterService );
 
         ContextAccessor.current().getLocalScope().setSession( new SessionMock() );
     }
@@ -27,7 +27,7 @@ class IsLeaderHandlerTest
     @Test
     void testExamples()
     {
-        Mockito.when( this.indexService.isLeader() ).thenReturn( true );
+        Mockito.when( this.clusterService.isLeader() ).thenReturn( true );
 
         runScript( "/lib/xp/examples/cluster/isLeader.js" );
     }

@@ -1,9 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch;
 
-import java.util.Comparator;
 import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
 
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
@@ -34,13 +31,10 @@ import org.elasticsearch.index.IndexNotFoundException;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Stopwatch;
-import com.hazelcast.cluster.Member;
-import com.hazelcast.core.HazelcastInstance;
 
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.repo.impl.index.IndexMapping;
@@ -76,23 +70,10 @@ public class IndexServiceInternalImpl
 
     private final Client client;
 
-    private volatile HazelcastInstance hazelcastInstance;
-
     @Activate
     public IndexServiceInternalImpl( @Reference final Client client )
     {
         this.client = client;
-    }
-
-    @Reference(cardinality = ReferenceCardinality.OPTIONAL)
-    public void setHazelcastInstance( final HazelcastInstance hazelcastInstance )
-    {
-        this.hazelcastInstance = hazelcastInstance;
-    }
-
-    public void unsetHazelcastInstance( final HazelcastInstance hazelcastInstance )
-    {
-        this.hazelcastInstance = null;
     }
 
     @Override
@@ -116,26 +97,6 @@ public class IndexServiceInternalImpl
             client.admin().cluster().state( requestBuilder.request() ).actionGet( CLUSTER_STATE_TIMEOUT );
 
         return clusterStateResponse.getState().nodes().localNodeMaster();
-    }
-
-    @Override
-    public boolean isLeader()
-    {
-        if ( hazelcastInstance == null )
-        {
-            LOG.warn( "Hazelcast instance not available, falling back to isMaster" );
-            return isMaster();
-        }
-
-        final UUID localMemberUuid = hazelcastInstance.getCluster().getLocalMember().getUuid();
-
-        final Optional<UUID> leaderUuid = hazelcastInstance.getCluster()
-            .getMembers()
-            .stream()
-            .map( Member::getUuid )
-            .min( Comparator.naturalOrder() );
-
-        return leaderUuid.map( uuid -> uuid.equals( localMemberUuid ) ).orElse( true );
     }
 
     @Override

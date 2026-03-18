@@ -28,7 +28,5 @@ public interface IndexServiceInternal
     void refresh( String... indexNames );
 
     boolean isMaster();
-
-    boolean isLeader();
 }
 
