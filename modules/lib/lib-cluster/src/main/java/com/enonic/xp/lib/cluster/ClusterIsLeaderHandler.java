@@ -2,6 +2,7 @@ package com.enonic.xp.lib.cluster;
 
 import java.util.function.Supplier;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.cluster.ClusterService;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
@@ -11,9 +12,20 @@ public final class ClusterIsLeaderHandler
 {
     private Supplier<ClusterService> clusterService;
 
+    private String applicationKey;
+
+    public void setApplicationKey( final String applicationKey )
+    {
+        this.applicationKey = applicationKey;
+    }
+
     public boolean isLeader()
     {
-        return this.clusterService.get().isLeader();
+        if ( this.applicationKey == null )
+        {
+            return this.clusterService.get().isLeader();
+        }
+        return this.clusterService.get().isLeader( ApplicationKey.from( this.applicationKey ) );
     }
 
     @Override

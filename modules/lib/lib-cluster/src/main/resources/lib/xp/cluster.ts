@@ -9,6 +9,7 @@ interface ClusterIsMasterHandler {
 }
 
 interface ClusterIsLeaderHandler {
+    setApplicationKey(applicationKey: string | null): void;
     isLeader(): boolean;
 }
 
@@ -38,9 +39,11 @@ export function isMaster(): boolean {
  *
  * @example-ref examples/cluster/isLeader.js
  *
+ * @param {string} [applicationKey] - Optional application key to scope leadership to members running the application.
  * @returns {boolean} true if the current node is leader; false otherwise.
  */
-export function isLeader(): boolean {
+export function isLeader(applicationKey?: string): boolean {
     const bean: ClusterIsLeaderHandler = __.newBean<ClusterIsLeaderHandler>('com.enonic.xp.lib.cluster.ClusterIsLeaderHandler');
+    bean.setApplicationKey(applicationKey ?? null);
     return __.toNativeObject(bean.isLeader());
 }

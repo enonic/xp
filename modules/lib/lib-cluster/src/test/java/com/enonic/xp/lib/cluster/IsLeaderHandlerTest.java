@@ -3,6 +3,7 @@ package com.enonic.xp.lib.cluster;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.cluster.ClusterService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.session.SessionMock;
