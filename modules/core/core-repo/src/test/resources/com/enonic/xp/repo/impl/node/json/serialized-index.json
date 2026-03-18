@@ -19,8 +19,7 @@
         "fulltext": true,
         "includeInAllText": true,
         "indexValueProcessors": [
-          "indexValueProcessor",
-          "indexValueProcessor"
+          "htmlStripper"
         ],
         "nGram": true,
         "path": true

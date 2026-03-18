@@ -23,9 +23,9 @@ class BlobKeyTest
     {
         final ByteSource source = ByteSource.wrap( new byte[]{(byte) 1, (byte) 2, (byte) 3} );
 
-        final BlobKey key = BlobKey.from( source );
+        final BlobKey key = BlobKey.sha256( source );
         assertNotNull( key );
-        assertEquals( "7037807198c22a7d2b0807371d763779a84fdfcf", key.toString() );
+        assertEquals( "sha256:039058c6f2c0cb492c533b0a4d14ef77cc0f78abccced5287d84a1a2011cfb81", key.toString() );
     }
 
     @Test

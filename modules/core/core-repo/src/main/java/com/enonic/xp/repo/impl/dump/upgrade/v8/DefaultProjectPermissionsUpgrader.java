@@ -25,29 +25,22 @@ public class DefaultProjectPermissionsUpgrader
 
     private static final RepositoryId DEFAULT_PROJECT_REPO_ID = RepositoryId.from( "com.enonic.cms.default" );
 
-    private static final PrincipalKey OWNER =
-        PrincipalKey.ofRole( ProjectConstants.PROJECT_NAME_PREFIX + "default.owner" );
+    private static final PrincipalKey OWNER = PrincipalKey.ofRole( ProjectConstants.PROJECT_NAME_PREFIX + "default.owner" );
 
-    private static final PrincipalKey EDITOR =
-        PrincipalKey.ofRole( ProjectConstants.PROJECT_NAME_PREFIX + "default.editor" );
+    private static final PrincipalKey EDITOR = PrincipalKey.ofRole( ProjectConstants.PROJECT_NAME_PREFIX + "default.editor" );
 
-    private static final PrincipalKey AUTHOR =
-        PrincipalKey.ofRole( ProjectConstants.PROJECT_NAME_PREFIX + "default.author" );
+    private static final PrincipalKey AUTHOR = PrincipalKey.ofRole( ProjectConstants.PROJECT_NAME_PREFIX + "default.author" );
 
-    private static final PrincipalKey CONTRIBUTOR =
-        PrincipalKey.ofRole( ProjectConstants.PROJECT_NAME_PREFIX + "default.contributor" );
+    private static final PrincipalKey CONTRIBUTOR = PrincipalKey.ofRole( ProjectConstants.PROJECT_NAME_PREFIX + "default.contributor" );
 
-    private static final PrincipalKey VIEWER =
-        PrincipalKey.ofRole( ProjectConstants.PROJECT_NAME_PREFIX + "default.viewer" );
+    private static final PrincipalKey VIEWER = PrincipalKey.ofRole( ProjectConstants.PROJECT_NAME_PREFIX + "default.viewer" );
 
     private static final List<AccessControlEntry> EXTRA_CONTENT_PERMISSIONS =
         List.of( AccessControlEntry.create().allowAll().principal( OWNER ).build(),
-                 AccessControlEntry.create().allowAll().principal( EDITOR ).build(),
-                 AccessControlEntry.create()
+                 AccessControlEntry.create().allowAll().principal( EDITOR ).build(), AccessControlEntry.create()
                      .allow( Permission.READ, Permission.CREATE, Permission.MODIFY, Permission.DELETE )
                      .principal( AUTHOR )
-                     .build(),
-                 AccessControlEntry.create().allow( Permission.READ ).principal( CONTRIBUTOR ).build(),
+                     .build(), AccessControlEntry.create().allow( Permission.READ ).principal( CONTRIBUTOR ).build(),
                  AccessControlEntry.create().allow( Permission.READ ).principal( VIEWER ).build() );
 
     public static final List<AccessControlEntry> EXTRA_ISSUES_PERMISSIONS = List.of( AccessControlEntry.create()

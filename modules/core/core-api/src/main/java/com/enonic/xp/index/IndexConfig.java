@@ -1,6 +1,5 @@
 package com.enonic.xp.index;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -97,8 +96,8 @@ public final class IndexConfig
         nGram = builder.nGram;
         fulltext = builder.fulltext;
         includeInAllText = builder.includeInAllText;
-        indexValueProcessors = ImmutableList.copyOf( builder.indexValueProcessors );
-        languages = ImmutableList.copyOf( builder.languages );
+        indexValueProcessors = builder.indexValueProcessors.build();
+        languages = builder.languages.build();
         path = builder.path;
     }
 
@@ -158,50 +157,17 @@ public final class IndexConfig
     }
 
     @Override
-    public boolean equals( final Object o )
+    public boolean equals( final Object object )
     {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-
-        final IndexConfig that = (IndexConfig) o;
-
-        if ( decideByType != that.decideByType )
-        {
-            return false;
-        }
-        if ( enabled != that.enabled )
-        {
-            return false;
-        }
-        if ( nGram != that.nGram )
-        {
-            return false;
-        }
-        if ( fulltext != that.fulltext )
-        {
-            return false;
-        }
-        if ( includeInAllText != that.includeInAllText )
-        {
-            return false;
-        }
-        if ( path != that.path )
-        {
-            return false;
-        }
-        return Objects.equals( languages, that.languages );
+        return this == object || object instanceof final IndexConfig that && decideByType == that.decideByType && enabled == that.enabled &&
+            nGram == that.nGram && fulltext == that.fulltext && includeInAllText == that.includeInAllText && path == that.path &&
+            Objects.equals( languages, that.languages ) && Objects.equals( indexValueProcessors, that.indexValueProcessors );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( decideByType, enabled, nGram, fulltext, includeInAllText, path, languages );
+        return Objects.hash( decideByType, enabled, nGram, fulltext, includeInAllText, path, languages, indexValueProcessors );
     }
 
     @Override
@@ -224,9 +190,9 @@ public final class IndexConfig
 
         private boolean path = false;
 
-        private final List<Locale> languages = new ArrayList<>();
+        private final ImmutableList.Builder<Locale> languages = ImmutableList.builder();
 
-        private final List<IndexValueProcessor> indexValueProcessors = new ArrayList<>();
+        private final ImmutableList.Builder<IndexValueProcessor> indexValueProcessors = ImmutableList.builder();
 
         private Builder()
         {
@@ -282,19 +248,17 @@ public final class IndexConfig
 
         public Builder addIndexValueProcessor( final IndexValueProcessor indexValueProcessor )
         {
-            if ( indexValueProcessor != null )
-            {
-                this.indexValueProcessors.add( indexValueProcessor );
-            }
+            this.indexValueProcessors.add( indexValueProcessor );
             return this;
         }
 
         public Builder addLanguage( final Locale language )
         {
-            if ( language != null )
+            if ( language.getLanguage().isEmpty() )
             {
-                this.languages.add( language );
+                throw new IllegalArgumentException( "Language must have a valid language tag" );
             }
+            this.languages.add( language );
             return this;
         }
 

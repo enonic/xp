@@ -10,19 +10,19 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.enonic.xp.index.AllTextIndexConfig;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-final class AllTextIndexConfigJson
+public final class AllTextIndexConfigJson
 {
     @JsonProperty("languages")
-    private List<String> languages = new ArrayList<>();
+    public List<String> languages = new ArrayList<>();
 
     @JsonProperty("enabled")
-    private Boolean enabled;
+    public Boolean enabled;
 
     @JsonProperty("nGram")
-    private Boolean nGram;
+    public Boolean nGram;
 
     @JsonProperty("fulltext")
-    private Boolean fulltext;
+    public Boolean fulltext;
 
     public static AllTextIndexConfigJson toJson( final AllTextIndexConfig config )
     {

@@ -23,18 +23,15 @@ class BlobStoreFactoryTest
         final MemoryBlobStoreProvider memoryBlobStoreProvider =
             new MemoryBlobStoreProvider( "memory", blobStore, createProviderConfig( "none", false ) );
 
-        final BlobStore finalBlobStore = BlobStoreFactory.create().
-            provider( memoryBlobStoreProvider ).
-            config( createBlobstoreConfig( false ) ).
-            build().
-            execute();
+        final BlobStore finalBlobStore =
+            BlobStoreFactory.create().provider( memoryBlobStoreProvider ).config( createBlobstoreConfig( false ) ).build().execute();
 
         assertNotNull( finalBlobStore );
 
         final Segment segment = Segment.from( "test", "blob" );
         final BlobRecord record = finalBlobStore.addRecord( segment, ByteSource.wrap( "hei".getBytes() ) );
 
-        assertEquals( finalBlobStore.getRecord( segment, record.getKey() ), blobStore.getRecord( segment, record.getKey() ) );
+        assertEquals( finalBlobStore.getRecord( segment, record.key() ), blobStore.getRecord( segment, record.key() ) );
     }
 
     @Test
@@ -61,20 +58,20 @@ class BlobStoreFactoryTest
         final BlobStoreProviders blobStoreProviders = new BlobStoreProviders();
         blobStoreProviders.add( provider2 );
 
-        final BlobStore finalBlobStore = BlobStoreFactory.create().
-            provider( provider1 ).
-            config( createBlobstoreConfig( cache ) ).
-            providers( blobStoreProviders ).
-            build().
-            execute();
+        final BlobStore finalBlobStore = BlobStoreFactory.create()
+            .provider( provider1 )
+            .config( createBlobstoreConfig( cache ) )
+            .providers( blobStoreProviders )
+            .build()
+            .execute();
 
         assertNotNull( finalBlobStore );
 
         final Segment segment = Segment.from( "test", "blob" );
         final BlobRecord record = finalBlobStore.addRecord( segment, ByteSource.wrap( "hei".getBytes() ) );
 
-        assertEquals( finalBlobStore.getRecord( segment, record.getKey() ), memory1.getRecord( segment, record.getKey() ) );
-        assertEquals( finalBlobStore.getRecord( segment, record.getKey() ), memory2.getRecord( segment, record.getKey() ) );
+        assertEquals( finalBlobStore.getRecord( segment, record.key() ), memory1.getRecord( segment, record.key() ) );
+        assertEquals( finalBlobStore.getRecord( segment, record.key() ), memory2.getRecord( segment, record.key() ) );
     }
 
 

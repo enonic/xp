@@ -39,7 +39,7 @@ class FileBlobStoreTest
     @Test
     void getRecord()
     {
-        final BlobKey key = createRecord( "hello" ).getKey();
+        final BlobKey key = createRecord( "hello" ).key();
         final BlobRecord record = this.blobStore.getRecord( this.segment, key );
         assertNotNull( record );
     }
@@ -57,8 +57,8 @@ class FileBlobStoreTest
     {
         final BlobRecord record = this.blobStore.addRecord( this.segment, ByteSource.wrap( "hello".getBytes() ) );
         assertNotNull( record );
-        assertNotNull( record.getKey() );
-        assertEquals( "aaf4c61ddcc5e8a2dabede0f3b482cd9aea9434d", record.getKey().toString() );
+        assertNotNull( record.key() );
+        assertEquals( "sha256:2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824", record.key().toString() );
         assertEquals( 5, record.getLength() );
         assertEquals( "hello", new String( record.getBytes().read() ) );
     }
@@ -67,12 +67,12 @@ class FileBlobStoreTest
     void removeRecord()
     {
         final BlobRecord createdRecord = createRecord( "bye" );
-        final BlobRecord retrievedRecord = this.blobStore.getRecord( this.segment, createdRecord.getKey() );
+        final BlobRecord retrievedRecord = this.blobStore.getRecord( this.segment, createdRecord.key() );
         assertNotNull( retrievedRecord );
-        assertEquals( createdRecord.getKey(), retrievedRecord.getKey() );
+        assertEquals( createdRecord.key(), retrievedRecord.key() );
 
-        this.blobStore.removeRecord( this.segment, createdRecord.getKey() );
-        final BlobRecord removedRecord = this.blobStore.getRecord( this.segment, createdRecord.getKey() );
+        this.blobStore.removeRecord( this.segment, createdRecord.key() );
+        final BlobRecord removedRecord = this.blobStore.getRecord( this.segment, createdRecord.key() );
         assertNull( removedRecord );
     }
 
@@ -87,8 +87,9 @@ class FileBlobStoreTest
         stored.add( createRecord( "f5" ) );
         stored.add( createRecord( "f6" ) );
         stored.add( createRecord( "f7" ) );
-        try (Stream<BlobRecord> stream = this.blobStore.list( this.segment )) {
-            assertThat(stream).containsAll( stored );
+        try (Stream<BlobRecord> stream = this.blobStore.list( this.segment ))
+        {
+            assertThat( stream ).containsAll( stored );
         }
     }
 
@@ -98,11 +99,11 @@ class FileBlobStoreTest
         final Segment secondSegment = Segment.from( "test", "blob2" );
         assertEquals( 0, blobStore.listSegments().count() );
 
-        createRecord( "hello" ).getKey();
+        createRecord( "hello" ).key();
         assertEquals( 1, blobStore.listSegments().count() );
         assertEquals( segment, blobStore.listSegments().findFirst().get() );
 
-        createRecord( secondSegment, "hello" ).getKey();
+        createRecord( secondSegment, "hello" ).key();
         assertEquals( 2, blobStore.listSegments().count() );
     }
 
@@ -110,8 +111,8 @@ class FileBlobStoreTest
     void deleteSegment()
     {
         final Segment secondSegment = Segment.from( "test", "blob2" );
-        createRecord( "hello" ).getKey();
-        createRecord( secondSegment, "hello" ).getKey();
+        createRecord( "hello" ).key();
+        createRecord( secondSegment, "hello" ).key();
         blobStore.deleteSegment( secondSegment );
         assertEquals( 1, blobStore.listSegments().count() );
         assertEquals( segment, blobStore.listSegments().findFirst().get() );

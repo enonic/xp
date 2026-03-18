@@ -25,7 +25,7 @@ class FileBlobRecordTest
         final Path file = Files.createFile( this.temporaryFolder.resolve( "test" ) );
 
         final FileBlobRecord record = new FileBlobRecord( key, file );
-        assertSame( key, record.getKey() );
+        assertSame( key, record.key() );
         assertNotNull( record.getBytes() );
         assertEquals( 0, record.getLength() );
     }

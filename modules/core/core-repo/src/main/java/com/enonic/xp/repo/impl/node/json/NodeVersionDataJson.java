@@ -19,22 +19,22 @@ import com.enonic.xp.repo.impl.NodeStoreVersion;
 public final class NodeVersionDataJson
 {
     @JsonProperty("id")
-    private String id;
+    public String id;
 
     @JsonProperty("data")
-    private List<PropertyArrayJson> data;
+    public List<PropertyArrayJson> data;
 
     @JsonProperty("childOrder")
-    private String childOrder;
+    public String childOrder;
 
     @JsonProperty("manualOrderValue")
-    private Long manualOrderValue;
+    public Long manualOrderValue;
 
     @JsonProperty("nodeType")
-    private String nodeType;
+    public String nodeType;
 
     @JsonProperty("attachedBinaries")
-    private List<AttachedBinaryJson> attachedBinaries;
+    public List<AttachedBinaryJson> attachedBinaries;
 
     public List<PropertyArrayJson> getData()
     {

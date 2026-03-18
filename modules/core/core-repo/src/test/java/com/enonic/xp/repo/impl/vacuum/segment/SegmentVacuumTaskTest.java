@@ -13,9 +13,9 @@ import com.enonic.xp.blob.Segment;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.NodeVersions;
 import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
+import com.enonic.xp.node.NodeVersions;
 import com.enonic.xp.repo.impl.node.NodeConstants;
 import com.enonic.xp.repo.impl.vacuum.VacuumTaskParams;
 import com.enonic.xp.repository.Repositories;
@@ -70,7 +70,7 @@ class SegmentVacuumTaskTest
         final BlobRecord record2 = blobStore.addRecord( segment2, ByteSource.wrap( "hello".getBytes() ) );
         assertEquals( 2, blobStore.listSegments().count() );
 
-        blobStore.removeRecord( segment, record2.getKey() );
+        blobStore.removeRecord( segment, record2.key() );
         assertEquals( 2, blobStore.listSegments().count() );
 
         final SegmentVacuumTask task = new SegmentVacuumTask();

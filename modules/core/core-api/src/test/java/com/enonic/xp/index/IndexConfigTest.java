@@ -8,19 +8,18 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-
-class AllTextIndexConfigTest
+public class IndexConfigTest
 {
     @Test
     void equalsContract()
     {
-        EqualsVerifier.forClass( AllTextIndexConfig.class ).withNonnullFields( "languages" ).verify();
+        EqualsVerifier.forClass( IndexConfig.class ).withNonnullFields( "languages", "indexValueProcessors" ).verify();
     }
 
     @Test
     void unsupported_language_throws_at_node_creation()
     {
         assertThrows( IllegalArgumentException.class,
-                      () -> AllTextIndexConfig.create().addLanguage( Locale.forLanguageTag( "en_US" ) ).build() );
+                      () -> IndexConfig.create().enabled( true ).addLanguage( Locale.forLanguageTag( "en_US" ) ).build() );
     }
 }

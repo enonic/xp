@@ -38,7 +38,7 @@ public class MemoryBlobStore
     {
         final MemoryBlobRecord record = new MemoryBlobRecord( in );
 
-        return doStoreRecord( segment, record.getKey(), record );
+        return doStoreRecord( segment, record.key(), record );
     }
 
     private BlobRecord doStoreRecord( final Segment segment, final BlobKey key, final BlobRecord record )
@@ -52,7 +52,7 @@ public class MemoryBlobStore
     public BlobRecord addRecord( final Segment segment, final BlobRecord record )
         throws BlobStoreException
     {
-        return doStoreRecord( segment, record.getKey(), record );
+        return doStoreRecord( segment, record.key(), record );
     }
 
     @Override

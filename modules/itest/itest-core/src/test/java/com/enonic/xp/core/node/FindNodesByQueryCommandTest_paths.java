@@ -22,7 +22,7 @@ class FindNodesByQueryCommandTest_paths
     void path_equals()
     {
 
-        final Node rootNode = createNode( NodePath.ROOT, "rootNode" );
+        final Node rootNode = createNode( NodePath.ROOT, "root-node" );
         final Node node1 = createNode( rootNode.path(), "node1" );
         final Node node2 = createNode( rootNode.path(), "node2" );
         final Node node3 = createNode( rootNode.path(), "node3" );
@@ -32,20 +32,20 @@ class FindNodesByQueryCommandTest_paths
 
         nodeService.refresh( RefreshMode.ALL );
 
-        queryAndAssert( "_path = '/rootNode'", 1 );
-        queryAndAssert( "_path = '/rootNode/node1'", 1 );
-        queryAndAssert( "_path = '/rootNode/node2'", 1 );
-        queryAndAssert( "_path = '/rootNode/node3'", 1 );
-        queryAndAssert( "_path = '/rootNode/node1/node1_1'", 1 );
-        queryAndAssert( "_path = '/rootNode/node2/node2_1'", 1 );
-        queryAndAssert( "_path = '/rootNode/node3/node3_1'", 1 );
+        queryAndAssert( "_path = '/root-node'", 1 );
+        queryAndAssert( "_path = '/root-node/node1'", 1 );
+        queryAndAssert( "_path = '/root-node/node2'", 1 );
+        queryAndAssert( "_path = '/root-node/node3'", 1 );
+        queryAndAssert( "_path = '/root-node/node1/node1_1'", 1 );
+        queryAndAssert( "_path = '/root-node/node2/node2_1'", 1 );
+        queryAndAssert( "_path = '/root-node/node3/node3_1'", 1 );
     }
 
     @Test
     void path_wildcard()
     {
 
-        final Node rootNode = createNode( NodePath.ROOT, "rootNode" );
+        final Node rootNode = createNode( NodePath.ROOT, "root-node" );
         final Node node1 = createNode( rootNode.path(), "node1" );
         final Node node2 = createNode( rootNode.path(), "node2" );
         final Node node3 = createNode( rootNode.path(), "node3" );
@@ -55,12 +55,12 @@ class FindNodesByQueryCommandTest_paths
 
         nodeService.refresh( RefreshMode.ALL );
 
-        queryAndAssert( "_path LIKE '/rootNode*'", 7 );
-        queryAndAssert( "_path LIKE '/rootNode/*'", 6 );
-        queryAndAssert( "_path LIKE '/rootNode/node1/*'", 1 );
-        queryAndAssert( "_path LIKE '/rootNode/node2/*'", 1 );
-        queryAndAssert( "_path LIKE '/rootNode/node3/*'", 1 );
-        queryAndAssert( "_path LIKE '/rootNode/node1/node1_1'", 1 );
+        queryAndAssert( "_path LIKE '/root-node*'", 7 );
+        queryAndAssert( "_path LIKE '/root-node/*'", 6 );
+        queryAndAssert( "_path LIKE '/root-node/node1/*'", 1 );
+        queryAndAssert( "_path LIKE '/root-node/node2/*'", 1 );
+        queryAndAssert( "_path LIKE '/root-node/node3/*'", 1 );
+        queryAndAssert( "_path LIKE '/root-node/node1/node1_1'", 1 );
     }
 
 }

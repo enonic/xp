@@ -19,14 +19,11 @@ import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.core.internal.json.ObjectMapperHelper;
 import com.enonic.xp.dump.DumpUpgradeStepResult;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;
@@ -37,6 +34,7 @@ import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.repo.impl.dump.reader.FileDumpReaderV7;
 import com.enonic.xp.repo.impl.dump.serializer.json.BranchDumpEntryJson;
 import com.enonic.xp.repo.impl.dump.serializer.json.CommitDumpEntryJson;
+import com.enonic.xp.repo.impl.dump.serializer.json.JsonDumpSerializer;
 import com.enonic.xp.repo.impl.dump.serializer.json.VersionDumpEntryJson;
 import com.enonic.xp.repo.impl.dump.serializer.json.VersionsDumpEntryJson;
 import com.enonic.xp.repo.impl.dump.upgrade.BranchEntryUpgrader;
@@ -57,8 +55,6 @@ public class DumpUpgrader7to8
     implements DumpUpgrader
 {
     private static final Logger LOG = LoggerFactory.getLogger( DumpUpgrader7to8.class );
-
-    private static final ObjectMapper MAPPER = ObjectMapperHelper.create();
 
     private final FileDumpReaderV7 dumpReader;
 
@@ -149,9 +145,9 @@ public class DumpUpgrader7to8
         try
         {
             processEntries( ( entryContent, entryName ) -> {
-                final CommitDumpEntryJson commitEntry = deserializeValue( entryContent, CommitDumpEntryJson.class );
+                final CommitDumpEntryJson commitEntry = JsonDumpSerializer.readValue( entryContent, CommitDumpEntryJson.class );
                 final CommitDumpEntryJson upgraded = CommitDumpEntryJson.from( CommitDumpEntryJson.fromJson( commitEntry ) );
-                dumpWriter.writeRawMetaEntry( serialize( upgraded ), entryName );
+                dumpWriter.writeRawMetaEntry( JsonDumpSerializer.serialize( upgraded ), entryName );
             }, entriesFile );
         }
         finally
@@ -177,7 +173,7 @@ public class DumpUpgrader7to8
 
     private byte[] processVersionEntry( final RepositoryId repositoryId, final byte[] entryContent )
     {
-        final VersionsDumpEntryJson versionsDumpEntryJson = deserializeValue( entryContent, VersionsDumpEntryJson.class );
+        final VersionsDumpEntryJson versionsDumpEntryJson = JsonDumpSerializer.readValue( entryContent, VersionsDumpEntryJson.class );
 
         final VersionsDumpEntryJson.Builder resultBuilder = VersionsDumpEntryJson.create().nodeId( versionsDumpEntryJson.getNodeId() );
 
@@ -186,7 +182,7 @@ public class DumpUpgrader7to8
             resultBuilder.version( processVersionMeta( versionDumpEntryJson, repositoryId ) );
         }
 
-        return serialize( resultBuilder.build() );
+        return JsonDumpSerializer.serialize( resultBuilder.build() );
     }
 
     private VersionDumpEntryJson processVersionMeta( final VersionDumpEntryJson versionDumpEntryJson, final RepositoryId repositoryId )
@@ -195,14 +191,13 @@ public class DumpUpgrader7to8
         final Segment indexConfigSegment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.INDEX_CONFIG_SEGMENT_LEVEL );
         final Segment accessControlSegment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.ACCESS_CONTROL_SEGMENT_LEVEL );
 
-        final NodeStoreVersion nodeVersion = readNodeVersion( versionDumpEntryJson, nodeSegment, indexConfigSegment, accessControlSegment );
+        final NodeStoreVersion dumpEntry = readNodeVersion( versionDumpEntryJson, nodeSegment, indexConfigSegment, accessControlSegment );
 
-        final NodeStoreVersion upgraded = upgradeNodeVersion( repositoryId, nodeVersion );
+        final NodeStoreVersion upgraded = upgradeNodeVersion( repositoryId, dumpEntry );
 
-        final NodeStoreVersion withUpgradedBinaries = copyBinaryBlobs( upgraded != null ? upgraded : nodeVersion, repositoryId );
+        final NodeStoreVersion withUpgradedBinaries = copyBinaryBlobs( upgraded != null ? upgraded : dumpEntry, repositoryId );
 
-        final NodeStoreVersion toWrite =
-            withUpgradedBinaries != null ? withUpgradedBinaries : ( upgraded != null ? upgraded : nodeVersion );
+        final NodeStoreVersion toWrite = withUpgradedBinaries != null ? withUpgradedBinaries : ( upgraded != null ? upgraded : dumpEntry );
 
         final BlobKey newNodeBlobKey = writeNodeStoreVersionBlob( toWrite, nodeSegment, NodeVersionJsonSerializer::toNodeVersionBytes );
         final BlobKey newIndexConfigBlobKey =
@@ -241,10 +236,10 @@ public class DumpUpgrader7to8
                 result.processed();
                 try
                 {
-                    final BranchDumpEntryJson branchEntry = deserializeValue( entryContent, BranchDumpEntryJson.class );
+                    final BranchDumpEntryJson branchEntry = JsonDumpSerializer.readValue( entryContent, BranchDumpEntryJson.class );
 
                     final BranchDumpEntryJson updatedBranchEntry = upgradeBranchEntry( branchEntry );
-                    dumpWriter.writeRawMetaEntry( serialize( updatedBranchEntry ), entryName );
+                    dumpWriter.writeRawMetaEntry( JsonDumpSerializer.serialize( updatedBranchEntry ), entryName );
                 }
                 catch ( Exception e )
                 {
@@ -255,7 +250,7 @@ public class DumpUpgrader7to8
 
             for ( BranchDumpEntryJson additionalEntry : additionalBranchEntries )
             {
-                dumpWriter.writeRawMetaEntry( serialize( additionalEntry ), additionalEntry.getNodeId() + ".json" );
+                dumpWriter.writeRawMetaEntry( JsonDumpSerializer.serialize( additionalEntry ), additionalEntry.getNodeId() + ".json" );
             }
         }
         finally
@@ -327,14 +322,14 @@ public class DumpUpgrader7to8
         return remapped;
     }
 
-    private @Nullable NodeStoreVersion copyBinaryBlobs( final NodeStoreVersion nodeVersion, final RepositoryId repositoryId )
+    private @Nullable NodeStoreVersion copyBinaryBlobs( final NodeStoreVersion dumpEntry, final RepositoryId repositoryId )
     {
         final Segment binarySegment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.BINARY_SEGMENT_LEVEL );
 
         boolean keysChanged = false;
         final AttachedBinaries.Builder updatedBinaries = AttachedBinaries.create();
 
-        for ( AttachedBinary binary : nodeVersion.attachedBinaries() )
+        for ( AttachedBinary binary : dumpEntry.attachedBinaries() )
         {
             final FileDumpBlobRecord binaryRecord = dumpReader.getRecord( binarySegment, BlobKey.from( binary.getBlobKey() ) );
             final BlobKey newBlobKey = dumpWriter.addBlobRecord( binarySegment, binaryRecord.getBytes() );
@@ -349,7 +344,7 @@ public class DumpUpgrader7to8
 
         if ( keysChanged )
         {
-            return NodeStoreVersion.create( nodeVersion ).attachedBinaries( updatedBinaries.build() ).build();
+            return NodeStoreVersion.create( dumpEntry ).attachedBinaries( updatedBinaries.build() ).build();
         }
         return null;
     }
@@ -365,8 +360,8 @@ public class DumpUpgrader7to8
 
         try
         {
-            return NodeVersionJsonSerializer.toNodeVersion( nodeRecord.getBytes(), indexConfigRecord.getBytes(),
-                                                            accessControlRecord.getBytes() );
+            return JsonDumpSerializer.toNodeStoreVersion( nodeRecord.getBytes(), indexConfigRecord.getBytes(),
+                                                          accessControlRecord.getBytes() );
         }
         catch ( IOException e )
         {
@@ -426,7 +421,7 @@ public class DumpUpgrader7to8
                 final VersionsDumpEntryJson versionsEntry =
                     VersionsDumpEntryJson.create().nodeId( newNode.nodeId() ).version( versionEntry ).build();
 
-                dumpWriter.writeRawMetaEntry( serialize( versionsEntry ), newNode.nodeId() + ".json" );
+                dumpWriter.writeRawMetaEntry( JsonDumpSerializer.serialize( versionsEntry ), newNode.nodeId() + ".json" );
 
                 final BranchDumpEntryJson branchEntry =
                     BranchDumpEntryJson.create().nodeId( newNode.nodeId() ).meta( versionEntry ).build();
@@ -452,14 +447,14 @@ public class DumpUpgrader7to8
     }
 
 
-    protected @Nullable NodeStoreVersion upgradeNodeVersion( RepositoryId repositoryId, final NodeStoreVersion nodeVersion )
+    protected @Nullable NodeStoreVersion upgradeNodeVersion( RepositoryId repositoryId, final NodeStoreVersion dumpEntry )
     {
-        NodeStoreVersion result = nodeVersion;
+        NodeStoreVersion result = dumpEntry;
         for ( NodeVersionUpgrader upgrader : List.of( new ContentUpgrader(), new AuditLogMillisUpgrader(), new SchedulerUpgrader(),
                                                       new ReferenceLowercaseUpgrader(), new DefaultProjectPermissionsUpgrader(),
-                                                      new LanguageTagUpgrader() ) )
+                                                      new LanguageTagUpgrader(), new IndexConfigLanguageUpgrader() ) )
         {
-            final NodeStoreVersion upgraded = upgrader.upgradeNodeVersion( repositoryId, nodeVersion );
+            final NodeStoreVersion upgraded = upgrader.upgradeNodeVersion( repositoryId, dumpEntry );
             if ( upgraded != null )
             {
                 result = upgraded;
@@ -472,30 +467,6 @@ public class DumpUpgrader7to8
     public Version getModelVersion()
     {
         return Version.parseVersion( "8.0.1" );
-    }
-
-    protected <T> T deserializeValue( final byte[] value, final Class<T> clazz )
-    {
-        try
-        {
-            return MAPPER.readValue( value, clazz );
-        }
-        catch ( IOException e )
-        {
-            throw new RepoDumpException( "Cannot deserialize value", e );
-        }
-    }
-
-    public byte[] serialize( final Object value )
-    {
-        try
-        {
-            return MAPPER.writeValueAsBytes( value );
-        }
-        catch ( JsonProcessingException e )
-        {
-            throw new RepoDumpException( "Cannot serialize value", e );
-        }
     }
 
     public void processEntries( final BiConsumer<byte[], String> processor, final Path tarFile )

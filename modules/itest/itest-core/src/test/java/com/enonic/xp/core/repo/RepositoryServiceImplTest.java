@@ -123,7 +123,7 @@ class RepositoryServiceImplTest
         doCreateRepo( repoId );
 
         final BinaryReference binaryRef = BinaryReference.from( "image1.jpg" );
-        ByteSource binarySource = ByteSource.wrap( "this-is-the-binary-data-for-image1" .getBytes() );
+        ByteSource binarySource = ByteSource.wrap( "this-is-the-binary-data-for-image1".getBytes() );
 
         Context mockCurrentContext =
             ContextBuilder.create().branch( "master" ).repositoryId( repoId ).authInfo( REPO_TEST_DEFAULT_USER_AUTHINFO ).build();
@@ -171,7 +171,7 @@ class RepositoryServiceImplTest
         final Node node = createAdminContext( RepositoryId.from( "fisk" ), Branch.from( "my-branch" ) ).callWith( () -> {
             doCreateRepo( "fisk" );
             this.repositoryService.createBranch( CreateBranchParams.from( "my-branch" ) );
-            final Node myNode = createNode( NodePath.ROOT, "myNode" );
+            final Node myNode = createNode( NodePath.ROOT, "my-node" );
             this.repositoryService.deleteBranch( DeleteBranchParams.from( Branch.from( "my-branch" ) ) );
             return getNode( myNode.id() );
         } );

@@ -48,8 +48,9 @@ class DefaultProjectPermissionsUpgraderTest
         final NodeStoreVersion result = upgrader.upgradeNodeVersion( DEFAULT_REPO, nodeVersion );
 
         final PrincipalKey owner = PrincipalKey.ofRole( "cms.project.default.owner" );
-        assertThat( result.permissions().isAllowedFor( owner, Permission.READ, Permission.CREATE, Permission.MODIFY, Permission.DELETE,
-                                                       Permission.PUBLISH ) ).isTrue();
+        assertThat( result.permissions()
+                        .isAllowedFor( owner, Permission.READ, Permission.CREATE, Permission.MODIFY, Permission.DELETE,
+                                       Permission.PUBLISH ) ).isTrue();
     }
 
     @Test
@@ -90,8 +91,8 @@ class DefaultProjectPermissionsUpgraderTest
     @Test
     void skips_node_without_content_manager_app()
     {
-        final NodeStoreVersion nodeVersion = createNodeVersion(
-            AccessControlList.of( AccessControlEntry.create().allowAll().principal( RoleKeys.ADMIN ).build() ) );
+        final NodeStoreVersion nodeVersion =
+            createNodeVersion( AccessControlList.of( AccessControlEntry.create().allowAll().principal( RoleKeys.ADMIN ).build() ) );
 
         final NodeStoreVersion result = upgrader.upgradeNodeVersion( DEFAULT_REPO, nodeVersion );
 
@@ -104,8 +105,7 @@ class DefaultProjectPermissionsUpgraderTest
         final NodeStoreVersion nodeVersion = NodeStoreVersion.create()
             .id( NodeId.from( "test-node" ) )
             .nodeType( NodeType.from( "issue" ) )
-            .permissions(
-                AccessControlList.of( AccessControlEntry.create().allowAll().principal( RoleKeys.CONTENT_MANAGER_APP ).build() ) )
+            .permissions( AccessControlList.of( AccessControlEntry.create().allowAll().principal( RoleKeys.CONTENT_MANAGER_APP ).build() ) )
             .build();
 
         final NodeStoreVersion result = upgrader.upgradeNodeVersion( DEFAULT_REPO, nodeVersion );
@@ -114,8 +114,8 @@ class DefaultProjectPermissionsUpgraderTest
         assertThat( result.permissions().contains( RoleKeys.CONTENT_MANAGER_APP ) ).isFalse();
 
         final PrincipalKey contributor = PrincipalKey.ofRole( "cms.project.default.contributor" );
-        assertThat( result.permissions().isAllowedFor( contributor, Permission.READ, Permission.CREATE, Permission.MODIFY,
-                                                       Permission.DELETE ) ).isTrue();
+        assertThat( result.permissions()
+                        .isAllowedFor( contributor, Permission.READ, Permission.CREATE, Permission.MODIFY, Permission.DELETE ) ).isTrue();
         assertThat( result.permissions().isAllowedFor( contributor, Permission.PUBLISH ) ).isFalse();
     }
 
@@ -129,8 +129,7 @@ class DefaultProjectPermissionsUpgraderTest
             .id( NodeId.from( "test-node" ) )
             .nodeType( NodeType.DEFAULT_NODE_COLLECTION )
             .data( data )
-            .permissions(
-                AccessControlList.of( AccessControlEntry.create().allowAll().principal( RoleKeys.CONTENT_MANAGER_APP ).build() ) )
+            .permissions( AccessControlList.of( AccessControlEntry.create().allowAll().principal( RoleKeys.CONTENT_MANAGER_APP ).build() ) )
             .build();
 
         final NodeStoreVersion result = upgrader.upgradeNodeVersion( DEFAULT_REPO, nodeVersion );
@@ -138,8 +137,8 @@ class DefaultProjectPermissionsUpgraderTest
         assertThat( result ).isNotNull();
 
         final PrincipalKey contributor = PrincipalKey.ofRole( "cms.project.default.contributor" );
-        assertThat( result.permissions().isAllowedFor( contributor, Permission.READ, Permission.CREATE, Permission.MODIFY,
-                                                       Permission.DELETE ) ).isTrue();
+        assertThat( result.permissions()
+                        .isAllowedFor( contributor, Permission.READ, Permission.CREATE, Permission.MODIFY, Permission.DELETE ) ).isTrue();
     }
 
     @Test
@@ -160,9 +159,9 @@ class DefaultProjectPermissionsUpgraderTest
     @Test
     void preserves_existing_permissions()
     {
-        final NodeStoreVersion nodeVersion = createNodeVersion( AccessControlList.of(
-            AccessControlEntry.create().allowAll().principal( RoleKeys.CONTENT_MANAGER_APP ).build(),
-            AccessControlEntry.create().allowAll().principal( RoleKeys.ADMIN ).build() ) );
+        final NodeStoreVersion nodeVersion = createNodeVersion(
+            AccessControlList.of( AccessControlEntry.create().allowAll().principal( RoleKeys.CONTENT_MANAGER_APP ).build(),
+                                  AccessControlEntry.create().allowAll().principal( RoleKeys.ADMIN ).build() ) );
 
         final NodeStoreVersion result = upgrader.upgradeNodeVersion( DEFAULT_REPO, nodeVersion );
 

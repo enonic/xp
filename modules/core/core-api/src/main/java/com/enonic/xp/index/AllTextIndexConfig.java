@@ -66,8 +66,7 @@ public final class AllTextIndexConfig
             return false;
         }
         final AllTextIndexConfig that = (AllTextIndexConfig) o;
-        return enabled == that.enabled && nGram == that.nGram && fulltext == that.fulltext &&
-            Objects.equals( languages, that.languages );
+        return enabled == that.enabled && nGram == that.nGram && fulltext == that.fulltext && Objects.equals( languages, that.languages );
     }
 
     @Override
@@ -101,6 +100,10 @@ public final class AllTextIndexConfig
 
         public Builder addLanguage( final Locale language )
         {
+            if ( language.getLanguage().isEmpty() )
+            {
+                throw new IllegalArgumentException( "Language must have a valid language tag" );
+            }
             this.languages.add( language );
             return this;
         }

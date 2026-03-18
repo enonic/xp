@@ -31,10 +31,7 @@ class CachedBlobStoreTest
     void setup()
     {
         this.blobStore = Mockito.mock( BlobStore.class );
-        this.cachedBlobStore = CachedBlobStore.create().
-            blobStore( this.blobStore ).
-            memoryCapacity( 100 ).sizeThreshold( 10 ).
-            build();
+        this.cachedBlobStore = CachedBlobStore.create().blobStore( this.blobStore ).memoryCapacity( 100 ).sizeThreshold( 10 ).build();
     }
 
     private BlobRecord newRecord()
@@ -51,17 +48,17 @@ class CachedBlobStoreTest
     void getSmallRecord()
     {
         final BlobRecord record = newRecord();
-        assertNull( this.cachedBlobStore.getRecord( segment, record.getKey() ) );
+        assertNull( this.cachedBlobStore.getRecord( segment, record.key() ) );
 
-        Mockito.when( this.blobStore.getRecord( segment, record.getKey() ) ).thenReturn( record );
+        Mockito.when( this.blobStore.getRecord( segment, record.key() ) ).thenReturn( record );
 
-        final BlobRecord record1 = this.cachedBlobStore.getRecord( segment, record.getKey() );
+        final BlobRecord record1 = this.cachedBlobStore.getRecord( segment, record.key() );
         assertNotNull( record1 );
 
-        final BlobRecord result2 = this.cachedBlobStore.getRecord( segment, record.getKey() );
+        final BlobRecord result2 = this.cachedBlobStore.getRecord( segment, record.key() );
         assertNotNull( result2 );
 
-        Mockito.verify( this.blobStore, Mockito.times( 2 ) ).getRecord( segment, record.getKey() );
+        Mockito.verify( this.blobStore, Mockito.times( 2 ) ).getRecord( segment, record.key() );
     }
 
     @Test
@@ -69,16 +66,16 @@ class CachedBlobStoreTest
     {
         final BlobRecord record = newRecord();
         final ByteSource byteSource = ByteSource.wrap( "0123".getBytes() );
-        Mockito.when( this.blobStore.getRecord( segment, record.getKey() ) ).thenReturn( record );
+        Mockito.when( this.blobStore.getRecord( segment, record.key() ) ).thenReturn( record );
         Mockito.when( this.blobStore.addRecord( segment, byteSource ) ).thenReturn( record );
 
         final BlobRecord result1 = this.cachedBlobStore.addRecord( segment, byteSource );
         assertNotNull( result1 );
 
-        final BlobRecord result2 = this.cachedBlobStore.getRecord( segment, record.getKey() );
+        final BlobRecord result2 = this.cachedBlobStore.getRecord( segment, record.key() );
         assertNotNull( result2 );
 
-        Mockito.verify( this.blobStore, Mockito.times( 0 ) ).getRecord( segment, record.getKey() );
+        Mockito.verify( this.blobStore, Mockito.times( 0 ) ).getRecord( segment, record.key() );
     }
 
     @Test
@@ -87,16 +84,16 @@ class CachedBlobStoreTest
     {
         final BlobRecord record = newLargeRecord();
         final ByteSource byteSource = ByteSource.wrap( record.getBytes().read() );
-        Mockito.when( this.blobStore.getRecord( segment, record.getKey() ) ).thenReturn( record );
+        Mockito.when( this.blobStore.getRecord( segment, record.key() ) ).thenReturn( record );
         Mockito.when( this.blobStore.addRecord( segment, byteSource ) ).thenReturn( record );
 
         final BlobRecord result1 = this.cachedBlobStore.addRecord( segment, byteSource );
         assertSame( record, result1 );
 
-        final BlobRecord result2 = this.cachedBlobStore.getRecord( segment, record.getKey() );
+        final BlobRecord result2 = this.cachedBlobStore.getRecord( segment, record.key() );
         assertSame( record, result2 );
 
-        Mockito.verify( this.blobStore, Mockito.times( 1 ) ).getRecord( segment, record.getKey() );
+        Mockito.verify( this.blobStore, Mockito.times( 1 ) ).getRecord( segment, record.key() );
     }
 
     @Test
@@ -106,42 +103,42 @@ class CachedBlobStoreTest
         final ByteSource byteSource = ByteSource.wrap( "0123".getBytes() );
         Mockito.when( this.blobStore.addRecord( segment, byteSource ) ).thenReturn( record );
 
-        this.cachedBlobStore.removeRecord( this.segment, record.getKey() );
+        this.cachedBlobStore.removeRecord( this.segment, record.key() );
 
-        Mockito.verify( this.blobStore, Mockito.times( 1 ) ).removeRecord( segment, record.getKey() );
+        Mockito.verify( this.blobStore, Mockito.times( 1 ) ).removeRecord( segment, record.key() );
 
-        Mockito.when( this.blobStore.getRecord( segment, record.getKey() ) ).thenReturn( null );
-        assertNull( this.cachedBlobStore.getRecord( segment, record.getKey() ) );
+        Mockito.when( this.blobStore.getRecord( segment, record.key() ) ).thenReturn( null );
+        assertNull( this.cachedBlobStore.getRecord( segment, record.key() ) );
     }
 
     @Test
     void invalidate()
     {
         final BlobRecord record = newRecord();
-        Mockito.when( this.blobStore.getRecord( segment, record.getKey() ) ).thenReturn( record );
+        Mockito.when( this.blobStore.getRecord( segment, record.key() ) ).thenReturn( record );
 
-        this.cachedBlobStore.getRecord( this.segment, record.getKey() );
-        this.cachedBlobStore.getRecord( this.segment, record.getKey() );
-        this.cachedBlobStore.getRecord( this.segment, record.getKey() );
-        Mockito.verify( this.blobStore, Mockito.times( 1 ) ).getRecord( segment, record.getKey() );
+        this.cachedBlobStore.getRecord( this.segment, record.key() );
+        this.cachedBlobStore.getRecord( this.segment, record.key() );
+        this.cachedBlobStore.getRecord( this.segment, record.key() );
+        Mockito.verify( this.blobStore, Mockito.times( 1 ) ).getRecord( segment, record.key() );
 
-        this.cachedBlobStore.invalidate( this.segment, record.getKey() );
+        this.cachedBlobStore.invalidate( this.segment, record.key() );
 
-        this.cachedBlobStore.getRecord( this.segment, record.getKey() );
-        Mockito.verify( this.blobStore, Mockito.times( 2 ) ).getRecord( segment, record.getKey() );
+        this.cachedBlobStore.getRecord( this.segment, record.key() );
+        Mockito.verify( this.blobStore, Mockito.times( 2 ) ).getRecord( segment, record.key() );
     }
 
     @Test
     void lastModified()
     {
         final BlobRecord record = newRecord();
-        Mockito.when( this.blobStore.getRecord( segment, record.getKey() ) ).thenReturn( record );
+        Mockito.when( this.blobStore.getRecord( segment, record.key() ) ).thenReturn( record );
 
-        final BlobRecord firstRetrieval = this.cachedBlobStore.getRecord( this.segment, record.getKey() );
+        final BlobRecord firstRetrieval = this.cachedBlobStore.getRecord( this.segment, record.key() );
         assertNotNull( firstRetrieval );
         assertEquals( firstRetrieval.lastModified(), record.lastModified() );
 
-        final BlobRecord secondRetrieval = this.cachedBlobStore.getRecord( this.segment, record.getKey() );
+        final BlobRecord secondRetrieval = this.cachedBlobStore.getRecord( this.segment, record.key() );
         assertNotNull( secondRetrieval );
         assertEquals( secondRetrieval.lastModified(), record.lastModified() );
     }
@@ -158,23 +155,25 @@ class CachedBlobStoreTest
     void deleteSegment()
     {
         final BlobRecord record = newRecord();
-        assertNull( this.cachedBlobStore.getRecord( segment, record.getKey() ) );
-        Mockito.when( this.blobStore.getRecord( segment, record.getKey() ) ).thenReturn( record );
-        assertNotNull( cachedBlobStore.getRecord( segment, record.getKey() ) );
-        Mockito.when( this.blobStore.getRecord( segment, record.getKey() ) ).thenReturn( null );
-        assertNotNull( cachedBlobStore.getRecord( segment, record.getKey() ) );
+        assertNull( this.cachedBlobStore.getRecord( segment, record.key() ) );
+        Mockito.when( this.blobStore.getRecord( segment, record.key() ) ).thenReturn( record );
+        assertNotNull( cachedBlobStore.getRecord( segment, record.key() ) );
+        Mockito.when( this.blobStore.getRecord( segment, record.key() ) ).thenReturn( null );
+        assertNotNull( cachedBlobStore.getRecord( segment, record.key() ) );
 
         cachedBlobStore.deleteSegment( segment );
         Mockito.verify( blobStore ).deleteSegment( segment );
-        assertNull( cachedBlobStore.getRecord( segment, record.getKey() ) );
+        assertNull( cachedBlobStore.getRecord( segment, record.key() ) );
     }
 
     @Test
-    void dontCacheCorrupted() {
-        final BlobRecord corruptedRecord  = new BlobRecord() {
+    void dontCacheCorrupted()
+    {
+        final BlobRecord corruptedRecord = new BlobRecord()
+        {
 
             @Override
-            public BlobKey getKey()
+            public BlobKey key()
             {
                 return BlobKey.from( "invalidKey" );
             }

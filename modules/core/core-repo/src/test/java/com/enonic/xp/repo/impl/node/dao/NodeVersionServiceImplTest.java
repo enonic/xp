@@ -31,9 +31,9 @@ import com.enonic.xp.internal.blobstore.MemoryBlobRecord;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeType;
-import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositorySegmentUtils;
@@ -64,15 +64,14 @@ class NodeVersionServiceImplTest
         final PropertyTree data = new PropertyTree();
         data.addString( "myName", "myValue" );
 
-        final NodeStoreVersion nodeVersion = NodeStoreVersion.create().
-            nodeType( NodeType.DEFAULT_NODE_COLLECTION ).
-            id( new NodeId() ).
-            childOrder( ChildOrder.defaultOrder() ).
-            data( data ).
-            permissions( AccessControlList.empty() ).
-            indexConfigDocument( PatternIndexConfigDocument.create()
-                                     .defaultConfig( IndexConfig.BY_TYPE ).build() ).
-            build();
+        final NodeStoreVersion nodeVersion = NodeStoreVersion.create()
+            .nodeType( NodeType.DEFAULT_NODE_COLLECTION )
+            .id( new NodeId() )
+            .childOrder( ChildOrder.defaultOrder() )
+            .data( data )
+            .permissions( AccessControlList.empty() )
+            .indexConfigDocument( PatternIndexConfigDocument.create().defaultConfig( IndexConfig.BY_TYPE ).build() )
+            .build();
         final NodeVersionKey nodeVersionKey = executeInContext( () -> nodeDao.store( nodeVersion, createInternalContext() ) );
 
         assertNotNull( nodeVersionKey );
@@ -99,14 +98,13 @@ class NodeVersionServiceImplTest
         set.addSet( "myNullSet", null );
         set.addString( "myNullString", null );
 
-        final NodeStoreVersion nodeVersion = NodeStoreVersion.create().
-            nodeType( NodeType.DEFAULT_NODE_COLLECTION ).
-            id( new NodeId() ).
-            childOrder( ChildOrder.defaultOrder() ).
-            data( data ).
-            indexConfigDocument( PatternIndexConfigDocument.create()
-                                     .defaultConfig( IndexConfig.BY_TYPE ).build() ).
-            build();
+        final NodeStoreVersion nodeVersion = NodeStoreVersion.create()
+            .nodeType( NodeType.DEFAULT_NODE_COLLECTION )
+            .id( new NodeId() )
+            .childOrder( ChildOrder.defaultOrder() )
+            .data( data )
+            .indexConfigDocument( PatternIndexConfigDocument.create().defaultConfig( IndexConfig.BY_TYPE ).build() )
+            .build();
 
         final NodeVersionKey nodeVersionKey = executeInContext( () -> nodeDao.store( nodeVersion, createInternalContext() ) );
 
@@ -117,27 +115,26 @@ class NodeVersionServiceImplTest
     }
 
     @Test
-    void getVersion_issue_10558() throws Exception
+    void getVersion_issue_10558()
+        throws Exception
     {
-        final List<PropertyArrayJson> list =
-            ObjectMapperHelper.create().readValue( "[\n" + "    {\n" + "        \"name\": \"target\",\n" +
-                                                          "        \"type\": \"Reference\",\n" + "        \"values\": [\n" +
-                                                          "            \n" + "        ]\n" + "    },\n" + "    {\n" +
-                                                          "        \"name\": \"parameters\",\n" + "        \"type\": \"PropertySet\",\n" +
-                                                          "        \"values\": []\n" + "    }\n" + "]", new TypeReference<>()
-            {
-            } );
+        final List<PropertyArrayJson> list = ObjectMapperHelper.create()
+            .readValue(
+                "[\n" + "    {\n" + "        \"name\": \"target\",\n" + "        \"type\": \"Reference\",\n" + "        \"values\": [\n" +
+                    "            \n" + "        ]\n" + "    },\n" + "    {\n" + "        \"name\": \"parameters\",\n" +
+                    "        \"type\": \"PropertySet\",\n" + "        \"values\": []\n" + "    }\n" + "]", new TypeReference<>()
+                {
+                } );
 
         final PropertyTree data = PropertyTreeJson.fromJson( list );
 
-        final NodeStoreVersion nodeVersion = NodeStoreVersion.create().
-            nodeType( NodeType.DEFAULT_NODE_COLLECTION ).
-            id( new NodeId() ).
-            childOrder( ChildOrder.defaultOrder() ).
-            data( data ).
-            indexConfigDocument( PatternIndexConfigDocument.create()
-                                     .defaultConfig( IndexConfig.BY_TYPE ).build() ).
-            build();
+        final NodeStoreVersion nodeVersion = NodeStoreVersion.create()
+            .nodeType( NodeType.DEFAULT_NODE_COLLECTION )
+            .id( new NodeId() )
+            .childOrder( ChildOrder.defaultOrder() )
+            .data( data )
+            .indexConfigDocument( PatternIndexConfigDocument.create().defaultConfig( IndexConfig.BY_TYPE ).build() )
+            .build();
 
         final NodeVersionKey nodeVersionKey = executeInContext( () -> nodeDao.store( nodeVersion, createInternalContext() ) );
         final NodeStoreVersion returnedNodeVersion = executeInContext( () -> nodeDao.get( nodeVersionKey, createInternalContext() ) );
@@ -152,35 +149,33 @@ class NodeVersionServiceImplTest
         final PropertyTree data1 = new PropertyTree();
         data1.addString( "myName", "myValue1" );
 
-        final NodeStoreVersion nodeVersion1 = NodeStoreVersion.create().
-            nodeType( NodeType.DEFAULT_NODE_COLLECTION ).
-            id( new NodeId() ).
-            childOrder( ChildOrder.defaultOrder() ).
-            data( data1 ).
-            indexConfigDocument( PatternIndexConfigDocument.create()
-                                     .defaultConfig( IndexConfig.BY_TYPE ).build() ).
-            build();
+        final NodeStoreVersion nodeVersion1 = NodeStoreVersion.create()
+            .nodeType( NodeType.DEFAULT_NODE_COLLECTION )
+            .id( new NodeId() )
+            .childOrder( ChildOrder.defaultOrder() )
+            .data( data1 )
+            .indexConfigDocument( PatternIndexConfigDocument.create().defaultConfig( IndexConfig.BY_TYPE ).build() )
+            .build();
 
         final NodeVersionKey nodeVersionKey1 = executeInContext( () -> nodeDao.store( nodeVersion1, createInternalContext() ) );
 
         final PropertyTree data2 = new PropertyTree();
         data2.addString( "myName", "myValue2" );
 
-        final NodeStoreVersion nodeVersion2 = NodeStoreVersion.create().
-            nodeType( NodeType.DEFAULT_NODE_COLLECTION ).
-            id( new NodeId() ).
-            childOrder( ChildOrder.defaultOrder() ).
-            data( data2 ).
-            indexConfigDocument( PatternIndexConfigDocument.create()
-                                     .defaultConfig( IndexConfig.BY_TYPE ).build() ).
-            build();
+        final NodeStoreVersion nodeVersion2 = NodeStoreVersion.create()
+            .nodeType( NodeType.DEFAULT_NODE_COLLECTION )
+            .id( new NodeId() )
+            .childOrder( ChildOrder.defaultOrder() )
+            .data( data2 )
+            .indexConfigDocument( PatternIndexConfigDocument.create().defaultConfig( IndexConfig.BY_TYPE ).build() )
+            .build();
 
         final NodeVersionKey nodeVersionKey2 = executeInContext( () -> nodeDao.store( nodeVersion2, createInternalContext() ) );
 
         List<NodeStoreVersion> nodeVersions = new ArrayList<>();
         List.of( nodeVersionKey1, nodeVersionKey2 )
-            .forEach( nodeVersionKey -> nodeVersions.add( executeInContext( () -> nodeDao.get( nodeVersionKey, createInternalContext() ) ) ) );
-
+            .forEach(
+                nodeVersionKey -> nodeVersions.add( executeInContext( () -> nodeDao.get( nodeVersionKey, createInternalContext() ) ) ) );
 
         assertEquals( 2, nodeVersions.size() );
         assertEquals( nodeVersion1.id(), nodeVersions.get( 0 ).id() );
@@ -196,14 +191,13 @@ class NodeVersionServiceImplTest
         final PropertyTree data = new PropertyTree();
         data.addString( "myName", "myValue" );
 
-        final NodeStoreVersion nodeVersion = NodeStoreVersion.create().
-            nodeType( NodeType.DEFAULT_NODE_COLLECTION ).
-            id( new NodeId() ).
-            childOrder( ChildOrder.defaultOrder() ).
-            data( data ).
-            indexConfigDocument( PatternIndexConfigDocument.create()
-                                     .defaultConfig( IndexConfig.BY_TYPE ).build() ).
-            build();
+        final NodeStoreVersion nodeVersion = NodeStoreVersion.create()
+            .nodeType( NodeType.DEFAULT_NODE_COLLECTION )
+            .id( new NodeId() )
+            .childOrder( ChildOrder.defaultOrder() )
+            .data( data )
+            .indexConfigDocument( PatternIndexConfigDocument.create().defaultConfig( IndexConfig.BY_TYPE ).build() )
+            .build();
 
         final NodeVersionKey nodeVersionKey = executeInContext( () -> nodeDao.store( nodeVersion, createInternalContext() ) );
 
@@ -211,7 +205,7 @@ class NodeVersionServiceImplTest
         final BlobRecord blob = BLOB_STORE.getRecord( segment, nodeVersionKey.getNodeBlobKey() );
         byte[] blobData = blob.getBytes().read();
         blobData = Arrays.copyOf( blobData, blobData.length / 2 );
-        final MemoryBlobRecord corruptedBlob = new MemoryBlobRecord( blob.getKey(), ByteSource.wrap( blobData ) );
+        final MemoryBlobRecord corruptedBlob = new MemoryBlobRecord( blob.key(), ByteSource.wrap( blobData ) );
         BLOB_STORE.addRecord( segment, corruptedBlob );
 
         RuntimeException e =
@@ -226,14 +220,13 @@ class NodeVersionServiceImplTest
         final PropertyTree data = new PropertyTree();
         data.addString( "myName", "myValue" );
 
-        final NodeStoreVersion nodeVersion = NodeStoreVersion.create().
-            nodeType( NodeType.DEFAULT_NODE_COLLECTION ).
-            id( new NodeId() ).
-            childOrder( ChildOrder.defaultOrder() ).
-            data( data ).
-            indexConfigDocument( PatternIndexConfigDocument.create()
-                                     .defaultConfig( IndexConfig.BY_TYPE ).build() ).
-            build();
+        final NodeStoreVersion nodeVersion = NodeStoreVersion.create()
+            .nodeType( NodeType.DEFAULT_NODE_COLLECTION )
+            .id( new NodeId() )
+            .childOrder( ChildOrder.defaultOrder() )
+            .data( data )
+            .indexConfigDocument( PatternIndexConfigDocument.create().defaultConfig( IndexConfig.BY_TYPE ).build() )
+            .build();
 
         final NodeVersionKey nodeVersionKey = executeInContext( () -> nodeDao.store( nodeVersion, createInternalContext() ) );
 
@@ -241,7 +234,7 @@ class NodeVersionServiceImplTest
         final BlobRecord blob = BLOB_STORE.getRecord( segment, nodeVersionKey.getNodeBlobKey() );
         final byte[] blobData = blob.getBytes().read();
         final byte[] blobDataTruncated = Arrays.copyOf( blobData, blobData.length / 2 );
-        final MemoryBlobRecord corruptedBlob = new MemoryBlobRecord( blob.getKey(), ByteSource.wrap( blobDataTruncated ) );
+        final MemoryBlobRecord corruptedBlob = new MemoryBlobRecord( blob.key(), ByteSource.wrap( blobDataTruncated ) );
         BLOB_STORE.addRecord( segment, corruptedBlob );
 
         RuntimeException e =

@@ -91,11 +91,8 @@ class LanguageTagUpgraderTest
         final PropertyTree data = new PropertyTree();
         data.setString( ContentPropertyNames.LANGUAGE, "en_US" );
 
-        final NodeStoreVersion nodeVersion = NodeStoreVersion.create()
-            .id( NodeId.from( "test-node" ) )
-            .nodeType( NodeType.from( "issue" ) )
-            .data( data )
-            .build();
+        final NodeStoreVersion nodeVersion =
+            NodeStoreVersion.create().id( NodeId.from( "test-node" ) ).nodeType( NodeType.from( "issue" ) ).data( data ).build();
 
         final NodeStoreVersion result = upgrader.upgradeNodeVersion( DEFAULT_REPO, nodeVersion );
 

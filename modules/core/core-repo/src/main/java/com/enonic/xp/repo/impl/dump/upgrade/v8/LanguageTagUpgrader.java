@@ -38,7 +38,7 @@ public class LanguageTagUpgrader
             return null;
         }
 
-        final String languageTag = new Locale( language.replace( '_', '-' ) ).toLanguageTag();
+        final String languageTag = Locale.forLanguageTag( language.replace( '_', '-' ) ).toLanguageTag();
         if ( languageTag.equals( language ) )
         {
             return null;

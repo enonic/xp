@@ -13,19 +13,18 @@ import com.google.common.io.CharSource;
 
 import com.enonic.xp.core.internal.json.ObjectMapperHelper;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.data.Value;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexPath;
-import com.enonic.xp.index.IndexValueProcessor;
+import com.enonic.xp.index.IndexValueProcessors;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeType;
-import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
+import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
@@ -51,63 +50,44 @@ class NodeVersionJsonDumpSerializerTest
         nodeData.setBinaryReference( "e", BinaryReference.from( "myImage1" ) );
         nodeData.setBinaryReference( "f", BinaryReference.from( "myImage2" ) );
 
-        final AccessControlEntry entry1 = AccessControlEntry.create().
-            principal( PrincipalKey.ofAnonymous() ).
-            allow( Permission.READ ).
-            deny( Permission.DELETE ).
-            build();
-        final AccessControlEntry entry2 = AccessControlEntry.create().
-            principal( PrincipalKey.ofUser( IdProviderKey.system(), "user1" ) ).
-            allow( Permission.MODIFY ).
-            deny( Permission.PUBLISH ).
-            build();
+        final AccessControlEntry entry1 =
+            AccessControlEntry.create().principal( PrincipalKey.ofAnonymous() ).allow( Permission.READ ).deny( Permission.DELETE ).build();
+        final AccessControlEntry entry2 = AccessControlEntry.create()
+            .principal( PrincipalKey.ofUser( IdProviderKey.system(), "user1" ) )
+            .allow( Permission.MODIFY )
+            .deny( Permission.PUBLISH )
+            .build();
         AccessControlList acl = AccessControlList.create().add( entry1 ).add( entry2 ).build();
 
-        IndexValueProcessor indexValueProcessor = new IndexValueProcessor()
-        {
-            @Override
-            public Value process( final Value value )
-            {
-                return value;
-            }
+        IndexConfig indexConfig = IndexConfig.create()
+            .enabled( true )
+            .fulltext( true )
+            .nGram( true )
+            .decideByType( false )
+            .includeInAllText( true )
+            .path( true )
+            .addIndexValueProcessor( IndexValueProcessors.HTML_STRIPPER )
+            .build();
 
-            @Override
-            public String getName()
-            {
-                return "indexValueProcessor";
-            }
-        };
-
-        IndexConfig indexConfig = IndexConfig.create().
-            enabled( true ).
-            fulltext( true ).
-            nGram( true ).
-            decideByType( false ).
-            includeInAllText( true ).
-            path( true ).
-            addIndexValueProcessor( indexValueProcessor ).
-            addIndexValueProcessor( indexValueProcessor ).
-            build();
-
-        NodeStoreVersion nodeVersion = NodeStoreVersion.create().
-            id( NodeId.from( "myid" ) ).
-            indexConfigDocument( PatternIndexConfigDocument.create().
-                analyzer( "myAnalyzer" ).
-                defaultConfig( IndexConfig.MINIMAL ).
-                add( "myPath", indexConfig ).
-                build() ).
-            data( nodeData ).
-            childOrder( ChildOrder.create().
-                add( FieldOrderExpr.create( IndexPath.from( "modifiedTime" ), OrderExpr.Direction.ASC ) ).
-                add( FieldOrderExpr.create( IndexPath.from( "displayName" ), OrderExpr.Direction.DESC ) ).
-                build() ).
-            permissions( acl ).
-            nodeType( NodeType.from( "myNodeType" ) ).
-            attachedBinaries( AttachedBinaries.create().
-                add( new AttachedBinary( BinaryReference.from( "myImage1" ), "a" ) ).
-                add( new AttachedBinary( BinaryReference.from( "myImage2" ), "b" ) ).
-                build() ).
-            build();
+        NodeStoreVersion nodeVersion = NodeStoreVersion.create()
+            .id( NodeId.from( "myid" ) )
+            .indexConfigDocument( PatternIndexConfigDocument.create()
+                                      .analyzer( "myAnalyzer" )
+                                      .defaultConfig( IndexConfig.MINIMAL )
+                                      .add( "myPath", indexConfig )
+                                      .build() )
+            .data( nodeData )
+            .childOrder( ChildOrder.create()
+                             .add( FieldOrderExpr.create( IndexPath.from( "modifiedTime" ), OrderExpr.Direction.ASC ) )
+                             .add( FieldOrderExpr.create( IndexPath.from( "displayName" ), OrderExpr.Direction.DESC ) )
+                             .build() )
+            .permissions( acl )
+            .nodeType( NodeType.from( "myNodeType" ) )
+            .attachedBinaries( AttachedBinaries.create()
+                                   .add( new AttachedBinary( BinaryReference.from( "myImage1" ), "a" ) )
+                                   .add( new AttachedBinary( BinaryReference.from( "myImage2" ), "b" ) )
+                                   .build() )
+            .build();
 
         final String expectedNodeStr = readJson( "serialized-node.json" );
         final String expectedIndexConfigStr = readJson( "serialized-index.json" );
@@ -115,14 +95,15 @@ class NodeVersionJsonDumpSerializerTest
         final String serializedNode = new String( NodeVersionJsonSerializer.toNodeVersionBytes( nodeVersion ), StandardCharsets.UTF_8 );
         final String serializedIndexConfig =
             new String( NodeVersionJsonSerializer.toIndexConfigDocumentBytes( nodeVersion ), StandardCharsets.UTF_8 );
-        final String serializedAccessControl = new String( NodeVersionJsonSerializer.toAccessControlBytes( nodeVersion ), StandardCharsets.UTF_8 );
+        final String serializedAccessControl =
+            new String( NodeVersionJsonSerializer.toAccessControlBytes( nodeVersion ), StandardCharsets.UTF_8 );
         assertEquals( expectedNodeStr, serializedNode );
         assertEquals( expectedIndexConfigStr, serializedIndexConfig );
         assertEquals( expectedAccessControlStr, serializedAccessControl );
-        final NodeStoreVersion
-            deSerializedNode = NodeVersionJsonSerializer.toNodeVersion( CharSource.wrap( expectedNodeStr ).asByteSource( StandardCharsets.UTF_8 ),
-                                                                        CharSource.wrap(expectedIndexConfigStr).asByteSource( StandardCharsets.UTF_8 ),
-                                                                        CharSource.wrap(expectedAccessControlStr).asByteSource( StandardCharsets.UTF_8 ) );
+        final NodeStoreVersion deSerializedNode =
+            NodeVersionJsonSerializer.toNodeVersion( CharSource.wrap( expectedNodeStr ).asByteSource( StandardCharsets.UTF_8 ),
+                                                     CharSource.wrap( expectedIndexConfigStr ).asByteSource( StandardCharsets.UTF_8 ),
+                                                     CharSource.wrap( expectedAccessControlStr ).asByteSource( StandardCharsets.UTF_8 ) );
         assertEquals( nodeVersion, deSerializedNode );
     }
 
