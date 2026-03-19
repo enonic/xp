@@ -8,11 +8,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
 import java.util.HexFormat;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -28,8 +30,6 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.hash.HashCode;
-import com.google.common.hash.Hashing;
 import com.google.common.io.ByteSink;
 import com.google.common.io.ByteSource;
 
@@ -37,11 +37,14 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.core.impl.image.effect.ImageScaleFunction;
 import com.enonic.xp.core.internal.MemoryLimitParser;
 import com.enonic.xp.core.internal.SimpleCsvParser;
+import com.enonic.xp.core.internal.security.MessageDigests;
 import com.enonic.xp.home.HomeDir;
 import com.enonic.xp.image.Cropping;
+import com.enonic.xp.image.FocalPoint;
 import com.enonic.xp.image.ImageHelper;
 import com.enonic.xp.image.ImageService;
 import com.enonic.xp.image.ReadImageParams;
+import com.enonic.xp.image.ScaleParams;
 import com.enonic.xp.media.ImageOrientation;
 
 @Component
@@ -51,6 +54,8 @@ public class ImageServiceImpl
     private static final Logger LOG = LoggerFactory.getLogger( ImageServiceImpl.class );
 
     private final Path cacheFolder = HomeDir.get().toPath().resolve( "work" ).resolve( "cache" ).resolve( "img" );
+
+    private final ImmutableFilesHelper immutableFilesHelper = new ImmutableFilesHelper( cacheFolder.resolve( "tmp" ) );
 
     private final ContentService contentService;
 
@@ -85,22 +90,47 @@ public class ImageServiceImpl
     public ByteSource readImage( final ReadImageParams readImageParams )
         throws IOException
     {
-        NormalizedImageParams normalizedImageParams = new NormalizedImageParams( readImageParams );
-        final Path cachedImagePath = getCachedImagePath( normalizedImageParams );
-        return ImmutableFilesHelper.computeIfAbsent( cachedImagePath, sink -> writeImage( normalizedImageParams, sink ) );
+        final NormalizedImageParams normalizedImageParams = new NormalizedImageParams( readImageParams );
+
+        final String attachmentSha512 = Objects.requireNonNullElseGet( normalizedImageParams.getAttachmentSha512(),
+                                                                       () -> contentService.getById( normalizedImageParams.getContentId() )
+                                                                           .getAttachments()
+                                                                           .byName( normalizedImageParams.getBinaryReference().toString() )
+                                                                           .getSha512() );
+
+        return immutableFilesHelper.computeIfAbsent( getCachedImagePath( normalizedImageParams, attachmentSha512 ),
+                                                     sink -> writeImage( normalizedImageParams, attachmentSha512, sink ) );
     }
 
-    private boolean writeImage( final NormalizedImageParams readImageParams, final ByteSink sink )
+
+    private void writeImage( final NormalizedImageParams readImageParams, String expectedSha512, final ByteSink sink )
     {
         try
         {
             final ByteSource blob = contentService.getBinary( readImageParams.getContentId(), readImageParams.getBinaryReference() );
 
-            if ( blob != null )
+            if ( blob == null )
             {
-                return createImage( blob, readImageParams, sink );
+                throw new IllegalArgumentException(
+                    "No binary found for content [" + readImageParams.getContentId() + "] and binary reference [" +
+                        readImageParams.getBinaryReference() + "]" );
             }
-            return false;
+
+            final MessageDigest sha512Digest = MessageDigests.sha512();
+            try (InputStream is = blob.openStream(); DigestInputStream dis = new DigestInputStream( is, sha512Digest ))
+            {
+                dis.transferTo( OutputStream.nullOutputStream() );
+            }
+            final String resultingSha512 = HexFormat.of().formatHex( sha512Digest.digest() );
+
+            if ( !expectedSha512.equals( resultingSha512 ) )
+            {
+                throw new IllegalStateException(
+                    "Attachment checksum mismatch for content [" + readImageParams.getContentId() + "] and binary reference" +
+                        readImageParams.getBinaryReference() + "]" );
+            }
+
+            createImage( blob, readImageParams, sink );
         }
         catch ( IOException e )
         {
@@ -108,168 +138,155 @@ public class ImageServiceImpl
         }
     }
 
-    private Path getCachedImagePath( final NormalizedImageParams readImageParams )
+    private Path getCachedImagePath( final NormalizedImageParams readImageParams, final String attachmentSha512 )
     {
-        //Cropping string value
-        final String cropping = readImageParams.getCropping() == null ? "no-cropping" : readImageParams.getCropping().toString();
+        final MessageDigest digest = MessageDigests.sha256();
 
-        //Scale string value
-        final String scale = readImageParams.getScaleParams() == null
-            ? "no-scale"
-            : "scale-" + readImageParams.getScaleParams() + "-" + readImageParams.getFocalPoint();
+        digest.update( HexFormat.of().parseHex( attachmentSha512 ) );
 
-        //Filter string value
-        final String filter = readImageParams.getFilterParam().isEmpty() ? "no-filter" : readImageParams.getFilterParam().toString();
+        final FocalPoint focalPoint = readImageParams.getFocalPoint();
+        MessageDigests.updateWithDoubleLE( digest, focalPoint.xOffset() );
+        MessageDigests.updateWithDoubleLE( digest, focalPoint.yOffset() );
 
-        final String format = readImageParams.getFormat();
-        //Background string value
-        final String background = "background-" + readImageParams.getBackgroundColor();
+        final Cropping cropping = readImageParams.getCropping();
+        MessageDigests.updateWithDoubleLE( digest, cropping.top() );
+        MessageDigests.updateWithDoubleLE( digest, cropping.left() );
+        MessageDigests.updateWithDoubleLE( digest, cropping.bottom() );
+        MessageDigests.updateWithDoubleLE( digest, cropping.right() );
+        MessageDigests.updateWithDoubleLE( digest, cropping.zoom() );
 
-        //Orientating string value
-        final String orientation = "orientation-" + readImageParams.getOrientation();
+        MessageDigests.updateWithIntLE( digest, readImageParams.getOrientation().ordinal() );
 
-        //Serialization string value
-        final String quality = "quality-" + readImageParams.getQuality();
-        //Source binary key
-        final String binaryKey = contentService.getBinaryKey( readImageParams.getContentId(), readImageParams.getBinaryReference() );
+        MessageDigests.updateWithIntLE( digest, readImageParams.getBackgroundColor() );
+        MessageDigests.updateWithIntLE( digest, readImageParams.getQuality() );
+        MessageDigests.updateWithString( digest, readImageParams.getFormat() );
+        MessageDigests.updateWithString( digest, readImageParams.getScaleParams().toString() );
+        MessageDigests.updateWithString( digest, readImageParams.getFilterParam().toString() );
 
-        final String key = String.join( "/", binaryKey, cropping, scale, filter, format, background, orientation, quality,
-                                        readImageParams.getBinaryReference().toString() );
-        final HashCode hashCode = Hashing.sha1().hashString( key, StandardCharsets.UTF_8 );
-        final String hash = HexFormat.of().formatHex( hashCode.asBytes() );
-        return cacheFolder.resolve( hash.substring( 0, 2 ) )
+        final String hash = HexFormat.of().formatHex( digest.digest() );
+        return cacheFolder.resolve( "sha256" )
+            .resolve( hash.substring( 0, 2 ) )
             .resolve( hash.substring( 2, 4 ) )
             .resolve( hash.substring( 4, 6 ) )
-            .resolve( hash );
+            .resolve( hash.substring( 6 ) );
     }
 
-    private boolean createImage( final ByteSource blob, final NormalizedImageParams readImageParams, ByteSink sink )
+    private void createImage( final ByteSource blob, final NormalizedImageParams readImageParams, ByteSink sink )
         throws IOException
     {
         try (InputStream inputStream = blob.openStream(); ImageInputStream stream = ImageIO.createImageInputStream( inputStream ))
         {
             final ImageReader imageReader = getImageReader( stream );
 
-            if ( imageReader != null )
+            try
             {
+                final int width = imageReader.getWidth( 0 );
+                final int height = imageReader.getHeight( 0 );
+
+                final ImageTypeSpecifier rawImageType = imageReader.getRawImageType( 0 );
+                final int pixelSize;
+                final boolean mayHaveAlpha;
+                if ( rawImageType != null )
+                {
+                    final ColorModel originalColorModel = rawImageType.getColorModel();
+                    pixelSize = originalColorModel.getPixelSize() / Byte.SIZE;
+                    mayHaveAlpha = originalColorModel.hasAlpha();
+                }
+                else
+                {
+                    // Fallback to 4 bytes per pixel and assume alpha channel
+                    pixelSize = 4;
+                    mayHaveAlpha = true;
+                }
+
+                final boolean toRotate = readImageParams.getOrientation() != ImageOrientation.TopLeft;
+                final boolean toApplyFilters = !readImageParams.getFilterParam().isEmpty();
+                final boolean toAddBackground = !"png".equals( readImageParams.getFormat() ) && ( mayHaveAlpha || toApplyFilters );
+                final boolean toScale = !ScaleParams.NO_SCALE.getName().equals( readImageParams.getScaleParams().getName() );
+                final boolean toCrop = !readImageParams.getCropping().isUnmodified();
+
+                final int originalMultiplier = 1 + ( toRotate || ( !toScale && ( toApplyFilters || toAddBackground ) ) ? 1 : 0 );
+
+                final int originalMemoryRequirements = Math.max( toMegaBytes( (long) width * height * pixelSize * originalMultiplier ), 1 );
+
+                final ImageScaleFunction imageScaleFunction;
+                final int scaledMemoryRequirements;
+                if ( toScale )
+                {
+                    imageScaleFunction =
+                        imageScaleFunctionBuilder.build( readImageParams.getScaleParams(), readImageParams.getFocalPoint() );
+                    final int scaledMultiplier = 1 + ( ( toApplyFilters || toAddBackground ) ? 1 : 0 );
+                    scaledMemoryRequirements = Math.max(
+                        toMegaBytes( (long) imageScaleFunction.estimateResolution( width, height ) * pixelSize * scaledMultiplier ), 1 );
+                }
+                else
+                {
+                    imageScaleFunction = null;
+                    scaledMemoryRequirements = 0;
+                }
+
+                final int totalMemoryRequirementsEstimate = originalMemoryRequirements + scaledMemoryRequirements;
+
+                LOG.debug( "Estimated original {} scaled {} total {} requirements. With pixelSize {}", originalMemoryRequirements,
+                           scaledMemoryRequirements, totalMemoryRequirementsEstimate, pixelSize );
+
+                final int permitted = circuitBreaker.softTryAcquire( totalMemoryRequirementsEstimate );
                 try
                 {
-                    final int width = imageReader.getWidth( 0 );
-                    final int height = imageReader.getHeight( 0 );
-
-                    final ImageTypeSpecifier rawImageType = imageReader.getRawImageType( 0 );
-                    final int pixelSize;
-                    final boolean mayHaveAlpha;
-                    if ( rawImageType != null )
+                    BufferedImage bufferedImage = imageReader.read( 0, imageReader.getDefaultReadParam() );
+                    imageReader.dispose();
+                    Objects.requireNonNull( bufferedImage, "BufferedImage is null" );
+                    if ( toRotate )
                     {
-                        final ColorModel originalColorModel = rawImageType.getColorModel();
-                        pixelSize = originalColorModel.getPixelSize() / Byte.SIZE;
-                        mayHaveAlpha = originalColorModel.hasAlpha();
-                    }
-                    else
-                    {
-                        // Fallback to 4 bytes per pixel and assume alpha channel
-                        pixelSize = 4;
-                        mayHaveAlpha = true;
+                        bufferedImage = applyRotation( bufferedImage, readImageParams.getOrientation() );
                     }
 
-                    final boolean toRotate = readImageParams.getOrientation() != ImageOrientation.TopLeft;
-                    final boolean toApplyFilters = !readImageParams.getFilterParam().isEmpty();
-                    final boolean toAddBackground =
-                        !"png".equals( readImageParams.getFormat() ) && ( mayHaveAlpha || toApplyFilters );
-                    final boolean toScale = readImageParams.getScaleParams() != null;
-                    final boolean toCrop = readImageParams.getCropping() != null;
+                    if ( toCrop )
+                    {
+                        bufferedImage = applyCropping( bufferedImage, readImageParams.getCropping() );
+                    }
 
-                    final int originalMultiplier = 1 + ( toRotate || ( !toScale && ( toApplyFilters || toAddBackground ) ) ? 1 : 0 );
-
-                    final int originalMemoryRequirements =
-                        Math.max( toMegaBytes( (long) width * height * pixelSize * originalMultiplier ), 1 );
-
-                    final ImageScaleFunction imageScaleFunction;
-                    final int scaledMemoryRequirements;
                     if ( toScale )
                     {
-                        imageScaleFunction =
-                            imageScaleFunctionBuilder.build( readImageParams.getScaleParams(), readImageParams.getFocalPoint() );
-                        final int scaledMultiplier = 1 + ( ( toApplyFilters || toAddBackground ) ? 1 : 0 );
-                        scaledMemoryRequirements = Math.max(
-                            toMegaBytes( (long) imageScaleFunction.estimateResolution( width, height ) * pixelSize * scaledMultiplier ),
-                            1 );
+                        bufferedImage = imageScaleFunction.apply( bufferedImage );
                     }
-                    else
+
+                    if ( toApplyFilters )
                     {
-                        imageScaleFunction = null;
-                        scaledMemoryRequirements = 0;
+                        bufferedImage = imageFilterBuilder.build( readImageParams.getFilterParam() ).apply( bufferedImage );
                     }
 
-                    final int totalMemoryRequirementsEstimate = originalMemoryRequirements + scaledMemoryRequirements;
-
-                    LOG.debug( "Estimated original {} scaled {} total {} requirements. With pixelSize {}", originalMemoryRequirements,
-                               scaledMemoryRequirements, totalMemoryRequirementsEstimate, pixelSize );
-
-                    final int permitted = circuitBreaker.softTryAcquire( totalMemoryRequirementsEstimate );
-                    try
+                    if ( toAddBackground )
                     {
-                        BufferedImage bufferedImage = imageReader.read( 0, imageReader.getDefaultReadParam() );
-                        imageReader.dispose();
-                        if ( bufferedImage != null )
-                        {
-                            if ( toRotate )
-                            {
-                                bufferedImage = applyRotation( bufferedImage, readImageParams.getOrientation() );
-                            }
-
-                            if ( toCrop )
-                            {
-                                bufferedImage = applyCropping( bufferedImage, readImageParams.getCropping() );
-                            }
-
-                            if ( toScale )
-                            {
-                                bufferedImage = imageScaleFunction.apply( bufferedImage );
-                            }
-
-                            if ( toApplyFilters )
-                            {
-                                bufferedImage = imageFilterBuilder.build( readImageParams.getFilterParam() ).apply( bufferedImage );
-                            }
-
-                            if ( toAddBackground )
-                            {
-                                bufferedImage = ImageHelper.removeAlphaChannel( bufferedImage, readImageParams.getBackgroundColor() );
-                            }
-
-                            // Previous ImageHelper implementation interpreted 0 as system default quality explicitly,
-                            // and anything below 0 as system default due to Exception swallow
-                            // New implementation supports 0 value (it means "best compression" for PNG),
-                            // but 0 quality in image service need to be retrofitted to "system default", otherwise JPEG with 0 quality
-                            // is over-compressed and looks way different from system default compressed image.
-                            final int writeImageQuality = readImageParams.getQuality() == 0 ? -1 : readImageParams.getQuality();
-
-                            final boolean progressive =
-                                progressiveOnFormats.stream().anyMatch( format -> format.equalsIgnoreCase( readImageParams.getFormat() ) );
-
-                            try (OutputStream outputStream = sink.openBufferedStream())
-                            {
-                                ImageHelper.writeImage( outputStream, bufferedImage, readImageParams.getFormat(), writeImageQuality, progressive );
-                            }
-                            LOG.debug( "Finish writing" );
-                            return true;
-                        }
+                        bufferedImage = ImageHelper.removeAlphaChannel( bufferedImage, readImageParams.getBackgroundColor() );
                     }
-                    finally
+
+                    // Previous ImageHelper implementation interpreted 0 as system default quality explicitly,
+                    // and anything below 0 as system default due to Exception swallow
+                    // New implementation supports 0 value (it means "best compression" for PNG),
+                    // but 0 quality in image service need to be retrofitted to "system default", otherwise JPEG with 0 quality
+                    // is over-compressed and looks way different from system default compressed image.
+                    final int writeImageQuality = readImageParams.getQuality() == 0 ? -1 : readImageParams.getQuality();
+
+                    final boolean progressive =
+                        progressiveOnFormats.stream().anyMatch( format -> format.equalsIgnoreCase( readImageParams.getFormat() ) );
+
+                    try (OutputStream outputStream = sink.openBufferedStream())
                     {
-                        circuitBreaker.release( permitted );
+                        ImageHelper.writeImage( outputStream, bufferedImage, readImageParams.getFormat(), writeImageQuality, progressive );
                     }
+                    LOG.debug( "Finish writing" );
                 }
                 finally
                 {
-                    imageReader.dispose();
+                    circuitBreaker.release( permitted );
                 }
-
+            }
+            finally
+            {
+                imageReader.dispose();
             }
         }
-        return false;
     }
 
     private static int toMegaBytes( long bytesValue )
@@ -345,7 +362,7 @@ public class ImageServiceImpl
     {
         if ( stream == null )
         {
-            return null;
+            throw new IllegalArgumentException( "No suitable ImageInputStream" );
         }
         final Iterator<ImageReader> imageReaders = ImageIO.getImageReaders( stream );
         if ( imageReaders.hasNext() )
@@ -357,7 +374,7 @@ public class ImageServiceImpl
         }
         else
         {
-            return null;
+            throw new IllegalArgumentException( "No suitable ImageReader" );
         }
     }
 }

@@ -38,6 +38,8 @@ public final class ReadImageParams
 
     private final ImageOrientation orientation;
 
+    private final String attachmentSha512;
+
     private ReadImageParams( final Builder builder )
     {
         this.contentId = builder.contentId;
@@ -53,6 +55,7 @@ public final class ReadImageParams
         this.quality = builder.quality;
         this.mimeType = builder.mimeType;
         this.orientation = builder.orientation != null ? builder.orientation : ImageOrientation.TopLeft;
+        this.attachmentSha512 = builder.attachmentSha512;
     }
 
     public ContentId getContentId()
@@ -120,6 +123,11 @@ public final class ReadImageParams
         return orientation;
     }
 
+    public String getAttachmentSha512()
+    {
+        return attachmentSha512;
+    }
+
     public static Builder newImageParams()
     {
         return new Builder();
@@ -152,6 +160,8 @@ public final class ReadImageParams
         private ImageOrientation orientation;
 
         public int quality;
+
+        private String attachmentSha512;
 
         private Builder()
         {
@@ -232,6 +242,12 @@ public final class ReadImageParams
         public Builder orientation( ImageOrientation orientation )
         {
             this.orientation = orientation;
+            return this;
+        }
+
+        public Builder attachmentSha512( String attachmentSha512 )
+        {
+            this.attachmentSha512 = attachmentSha512;
             return this;
         }
 

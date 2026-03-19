@@ -111,11 +111,15 @@ public final class ImageHandlerWorker
             : Integer.parseInt( this.backgroundParam.startsWith( "0x" ) ? this.backgroundParam.substring( 2 ) : this.backgroundParam, 16 );
         try
         {
+            Objects.requireNonNull( content.getMediaAttachment(), "Media content must have an attachment" );
+            Objects.requireNonNull( content.getMediaAttachment().getSha512(), "Media attachment must have a sha512 hash" );
+
             final ReadImageParams readImageParams = ReadImageParams.newImageParams()
                 .contentId( content.getId() )
                 .binaryReference( binaryReference )
                 .cropping( content.getCropping() )
                 .focalPoint( content.getFocalPoint() )
+                .attachmentSha512( content.getMediaAttachment().getSha512() )
                 .orientation( imageOrientation )
                 .scaleParams( this.scaleParams )
                 .filterParam( this.filterParam )

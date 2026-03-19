@@ -452,7 +452,8 @@ public class DumpUpgrader7to8
         NodeStoreVersion result = dumpEntry;
         for ( NodeVersionUpgrader upgrader : List.of( new ContentUpgrader(), new AuditLogMillisUpgrader(), new SchedulerUpgrader(),
                                                       new ReferenceLowercaseUpgrader(), new DefaultProjectPermissionsUpgrader(),
-                                                      new LanguageTagUpgrader(), new IndexConfigLanguageUpgrader() ) )
+                                                      new LanguageTagUpgrader(), new IndexConfigLanguageUpgrader(),
+                                                      new AttachmentSha512Upgrader( dumpReader ) ) )
         {
             final NodeStoreVersion upgraded = upgrader.upgradeNodeVersion( repositoryId, dumpEntry );
             if ( upgraded != null )
@@ -466,7 +467,7 @@ public class DumpUpgrader7to8
     @Override
     public Version getModelVersion()
     {
-        return Version.parseVersion( "8.0.1" );
+        return Version.parseVersion( "9" );
     }
 
     public void processEntries( final BiConsumer<byte[], String> processor, final Path tarFile )

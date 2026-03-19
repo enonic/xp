@@ -1,10 +1,39 @@
 package com.enonic.xp.core.internal.security;
 
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class MessageDigests
 {
+    public static void updateWithIntLE( final MessageDigest digest, final int value )
+    {
+        digest.update( (byte) value );
+        digest.update( (byte) ( value >>> 8 ) );
+        digest.update( (byte) ( value >>> 16 ) );
+        digest.update( (byte) ( value >>> 24 ) );
+    }
+
+    public static void updateWithDoubleLE( final MessageDigest digest, final double value )
+    {
+        final long bits = Double.doubleToRawLongBits( value );
+        digest.update( (byte) bits );
+        digest.update( (byte) ( bits >>> 8 ) );
+        digest.update( (byte) ( bits >>> 16 ) );
+        digest.update( (byte) ( bits >>> 24 ) );
+        digest.update( (byte) ( bits >>> 32 ) );
+        digest.update( (byte) ( bits >>> 40 ) );
+        digest.update( (byte) ( bits >>> 48 ) );
+        digest.update( (byte) ( bits >>> 56 ) );
+    }
+
+    public static void updateWithString( final MessageDigest digest, final String string )
+    {
+        final byte[] bytes = string.getBytes( StandardCharsets.UTF_8 );
+        MessageDigests.updateWithIntLE( digest, bytes.length );
+        digest.update( bytes );
+    }
+
     public static MessageDigest sha512()
     {
         return getInstance( "SHA-512" );

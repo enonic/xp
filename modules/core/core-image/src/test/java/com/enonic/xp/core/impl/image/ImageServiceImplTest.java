@@ -3,6 +3,7 @@ package com.enonic.xp.core.impl.image;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.HexFormat;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -12,8 +13,12 @@ import org.junit.jupiter.api.io.TempDir;
 
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.attachment.Attachment;
+import com.enonic.xp.attachment.Attachments;
+import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.core.internal.security.MessageDigests;
 import com.enonic.xp.image.Cropping;
 import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.media.ImageOrientation;
@@ -86,7 +91,14 @@ class ImageServiceImplTest
     {
         imageDataOriginal = readImage( path );
         when( contentService.getBinary( contentId, binaryReference ) ).thenReturn( ByteSource.wrap( imageDataOriginal ) );
-        when( contentService.getBinaryKey( contentId, binaryReference ) ).thenReturn( "binaryKey" );
+
+        final String sha512 = HexFormat.of().formatHex( MessageDigests.sha512().digest( imageDataOriginal ) );
+
+        final Content content = mock( Content.class );
+        final Attachment attachment =
+            Attachment.create().name( binaryReference.toString() ).mimeType( "image/png" ).sha512( sha512 ).build();
+        when( content.getAttachments() ).thenReturn( Attachments.from( attachment ) );
+        when( contentService.getById( contentId ) ).thenReturn( content );
     }
 
     @Test
@@ -108,11 +120,8 @@ class ImageServiceImplTest
     {
         mockOriginalImage( "original.png" );
 
-        final ReadImageParams readImageParams = ReadImageParams.newImageParams()
-            .contentId( contentId )
-            .binaryReference( binaryReference )
-            .mimeType( "image/jpeg" )
-            .build();
+        final ReadImageParams readImageParams =
+            ReadImageParams.newImageParams().contentId( contentId ).binaryReference( binaryReference ).mimeType( "image/jpeg" ).build();
 
         ByteSource imageData = imageService.readImage( readImageParams );
         assertArrayEquals( readImage( "progressive.jpg" ), imageData.read() );
@@ -125,11 +134,8 @@ class ImageServiceImplTest
     {
         mockOriginalImage( "original.png" );
 
-        final ReadImageParams readImageParams = ReadImageParams.newImageParams()
-            .contentId( contentId )
-            .binaryReference( binaryReference )
-            .mimeType( "image/jpeg" )
-            .build();
+        final ReadImageParams readImageParams =
+            ReadImageParams.newImageParams().contentId( contentId ).binaryReference( binaryReference ).mimeType( "image/jpeg" ).build();
 
         ByteSource imageData = imageService.readImage( readImageParams );
         assertArrayEquals( readImage( "not_progressive.jpg" ), imageData.read() );
@@ -162,7 +168,7 @@ class ImageServiceImplTest
         imageData = imageService.readImage( readImageParams );
         assertArrayEquals( readImage( "processed.jpg" ), imageData.read() );
 
-        verify( contentService, times( 2 ) ).getBinaryKey( contentId, binaryReference );
+        verify( contentService, times( 2 ) ).getById( contentId );
         verify( contentService ).getBinary( contentId, binaryReference );
         verifyNoMoreInteractions( contentService );
     }

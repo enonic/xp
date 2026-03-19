@@ -35,6 +35,8 @@ class NormalizedImageParams
 
     private final ImageOrientation orientation;
 
+    private final String attachmentSha512;
+
     NormalizedImageParams( ReadImageParams readImageParams )
     {
         this.contentId = readImageParams.getContentId();
@@ -47,6 +49,7 @@ class NormalizedImageParams
         this.backgroundColor = normalizeBackgroundColor( this.format, readImageParams );
         this.quality = readImageParams.getQuality();
         this.orientation = readImageParams.getOrientation();
+        this.attachmentSha512 = readImageParams.getAttachmentSha512();
     }
 
     public ContentId getContentId()
@@ -99,9 +102,14 @@ class NormalizedImageParams
         return orientation;
     }
 
+    public String getAttachmentSha512()
+    {
+        return attachmentSha512;
+    }
+
     private static Cropping normalizeCropping( final Cropping cropping )
     {
-        return cropping == null || cropping.isUnmodified() ? null : cropping;
+        return cropping == null || cropping.isUnmodified() ? Cropping.DEFAULT : cropping;
     }
 
     private static String normalizeFormat( final ReadImageParams readImageParams )
@@ -110,18 +118,13 @@ class NormalizedImageParams
         // Tip: WEBP is not supported by ImageService implementation yet. Throw IllegalArgumentException here.
         final String mimeType = readImageParams.getMimeType();
 
-        switch ( mimeType )
+        return switch ( mimeType )
         {
-            case "image/png":
-                return "png";
-            case "image/jpeg":
-                // Because most existing cache hashes made with uppercase "JPEG" format.
-                return "JPEG";
-            case "image/gif":
-                return "gif";
-            default:
-                throw new IllegalArgumentException( "Unsupported type " + mimeType );
-        }
+            case "image/png" -> "png";
+            case "image/jpeg" -> "jpeg";
+            case "image/gif" -> "gif";
+            default -> throw new IllegalArgumentException( "Unsupported type " + mimeType );
+        };
     }
 
     private static ScaleParams normalizeScaleParams( final ReadImageParams readImageParams )
@@ -129,15 +132,14 @@ class NormalizedImageParams
         final ScaleParams scaleParams = readImageParams.getScaleParams();
         if ( scaleParams != null )
         {
-            if ( "full".equals( scaleParams.getName() ) )
+            if ( ScaleParams.NO_SCALE.getName().equals( scaleParams.getName() ) )
             {
                 // full scale with arguments is not supported
                 if ( scaleParams.getArguments().length > 0 )
                 {
                     throw new IllegalArgumentException( "Full scale cant have arguments" );
                 }
-                // Full same as no scale at all, in order to save cache space normalize to null
-                return null;
+                return ScaleParams.NO_SCALE;
             }
             else
             {
@@ -165,7 +167,7 @@ class NormalizedImageParams
             }
             else
             {
-                return null;
+                return ScaleParams.NO_SCALE;
             }
         }
     }

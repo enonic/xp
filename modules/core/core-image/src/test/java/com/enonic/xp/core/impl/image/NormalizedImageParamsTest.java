@@ -10,7 +10,6 @@ import com.enonic.xp.util.BinaryReference;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class NormalizedImageParamsTest
@@ -18,7 +17,7 @@ class NormalizedImageParamsTest
     @Test
     void normalizeFormat()
     {
-        assertEquals( "JPEG", new NormalizedImageParams( noFormatTemplate().mimeType( "image/jpeg" ).build() ).getFormat() );
+        assertEquals( "jpeg", new NormalizedImageParams( noFormatTemplate().mimeType( "image/jpeg" ).build() ).getFormat() );
         assertEquals( "png", new NormalizedImageParams( noFormatTemplate().mimeType( "image/png" ).build() ).getFormat() );
         assertEquals( "gif", new NormalizedImageParams( noFormatTemplate().mimeType( "image/gif" ).build() ).getFormat() );
         assertThrows( IllegalArgumentException.class,
@@ -30,15 +29,15 @@ class NormalizedImageParamsTest
     void normalizeNoScaleParams()
     {
         final ScaleParams scaleParams = new NormalizedImageParams( someFormatTemplate().build() ).getScaleParams();
-        assertNull( scaleParams );
+        assertEquals( "full()", scaleParams.toString() );
     }
 
     @Test
     void normalizeInsignificantCropping()
     {
-        final ScaleParams scaleParams = new NormalizedImageParams(
-            someFormatTemplate().cropping( Cropping.create().build() ).build() ).getScaleParams();
-        assertNull( scaleParams );
+        final ScaleParams scaleParams =
+            new NormalizedImageParams( someFormatTemplate().cropping( Cropping.create().build() ).build() ).getScaleParams();
+        assertEquals( "full()", scaleParams.toString() );
     }
 
     @Test

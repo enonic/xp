@@ -87,9 +87,6 @@ class AttachmentHandlerTest
 
         when( this.contentService.getById( eq( content.getId() ) ) ).thenReturn( content );
         when( this.contentService.getByPath( eq( content.getPath() ) ) ).thenReturn( content );
-        when(
-            this.contentService.getBinaryKey( eq( content.getId() ), eq( content.getMediaAttachment().getBinaryReference() ) ) ).thenReturn(
-            "98765" );
 
         this.mediaBytes = ByteSource.wrap( new byte[]{'0', '1', '2', '3', '4', '5', '6'} );
         when( this.contentService.getBinary( isA( ContentId.class ), isA( BinaryReference.class ) ) ).thenReturn( this.mediaBytes );
