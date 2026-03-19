@@ -15,6 +15,9 @@
         "type": "stemmer",
         "language": "light_nynorsk"
       },
+      "icu_collation_ducet": {
+        "type": "icu_collation"
+      },
       "icu_collation_ar": {
         "type": "icu_collation",
         "language": "ar"
@@ -114,6 +117,82 @@
       "icu_collation_th": {
         "type": "icu_collation",
         "language": "th"
+      },
+      "icu_collation_af": {
+        "type": "icu_collation",
+        "language": "af"
+      },
+      "icu_collation_az": {
+        "type": "icu_collation",
+        "language": "az"
+      },
+      "icu_collation_be": {
+        "type": "icu_collation",
+        "language": "be"
+      },
+      "icu_collation_bs": {
+        "type": "icu_collation",
+        "language": "bs"
+      },
+      "icu_collation_et": {
+        "type": "icu_collation",
+        "language": "et"
+      },
+      "icu_collation_fo": {
+        "type": "icu_collation",
+        "language": "fo"
+      },
+      "icu_collation_he": {
+        "type": "icu_collation",
+        "language": "he"
+      },
+      "icu_collation_hr": {
+        "type": "icu_collation",
+        "language": "hr"
+      },
+      "icu_collation_is": {
+        "type": "icu_collation",
+        "language": "is"
+      },
+      "icu_collation_kk": {
+        "type": "icu_collation",
+        "language": "kk"
+      },
+      "icu_collation_mk": {
+        "type": "icu_collation",
+        "language": "mk"
+      },
+      "icu_collation_pl": {
+        "type": "icu_collation",
+        "language": "pl"
+      },
+      "icu_collation_sk": {
+        "type": "icu_collation",
+        "language": "sk"
+      },
+      "icu_collation_sl": {
+        "type": "icu_collation",
+        "language": "sl"
+      },
+      "icu_collation_sq": {
+        "type": "icu_collation",
+        "language": "sq"
+      },
+      "icu_collation_sr": {
+        "type": "icu_collation",
+        "language": "sr"
+      },
+      "icu_collation_uk": {
+        "type": "icu_collation",
+        "language": "uk"
+      },
+      "icu_collation_ur": {
+        "type": "icu_collation",
+        "language": "ur"
+      },
+      "icu_collation_vi": {
+        "type": "icu_collation",
+        "language": "vi"
       }
     },
     "tokenizer": {
@@ -210,6 +289,13 @@
         "filter": [
           "lowercase",
           "nynorsk_stemmer"
+        ]
+      },
+      "icu_sort_ducet": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_ducet"
         ]
       },
       "icu_sort_ar": {
@@ -385,6 +471,139 @@
         "tokenizer": "keyword",
         "filter": [
           "icu_collation_th"
+        ]
+      },
+      "icu_sort_af": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_af"
+        ]
+      },
+      "icu_sort_az": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_az"
+        ]
+      },
+      "icu_sort_be": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_be"
+        ]
+      },
+      "icu_sort_bs": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_bs"
+        ]
+      },
+      "icu_sort_et": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_et"
+        ]
+      },
+      "icu_sort_fo": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_fo"
+        ]
+      },
+      "icu_sort_he": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_he"
+        ]
+      },
+      "icu_sort_hr": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_hr"
+        ]
+      },
+      "icu_sort_is": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_is"
+        ]
+      },
+      "icu_sort_kk": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_kk"
+        ]
+      },
+      "icu_sort_mk": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_mk"
+        ]
+      },
+      "icu_sort_pl": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_pl"
+        ]
+      },
+      "icu_sort_sk": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_sk"
+        ]
+      },
+      "icu_sort_sl": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_sl"
+        ]
+      },
+      "icu_sort_sq": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_sq"
+        ]
+      },
+      "icu_sort_sr": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_sr"
+        ]
+      },
+      "icu_sort_uk": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_uk"
+        ]
+      },
+      "icu_sort_ur": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_ur"
+        ]
+      },
+      "icu_sort_vi": {
+        "type": "custom",
+        "tokenizer": "keyword",
+        "filter": [
+          "icu_collation_vi"
         ]
       }
     }

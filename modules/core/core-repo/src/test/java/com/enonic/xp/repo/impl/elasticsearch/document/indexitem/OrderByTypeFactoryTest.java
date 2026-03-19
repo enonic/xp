@@ -44,18 +44,18 @@ class OrderByTypeFactoryTest
     @Test
     void create_returns_correct_orderby_item_for_excess_language()
     {
-        final IndexConfig config = IndexConfig.create().enabled( true ).addLanguage( Locale.forLanguageTag( "pt-BR" ) ).build();
+        final IndexConfig config = IndexConfig.create().enabled( true ).addLanguage( Locale.forLanguageTag( "pt-BR" ) ).addLanguage( Locale.forLanguageTag( "pt" ) ).build();
         final List<IndexItem<?>> items =
             IndexItemFactory.createOrderBy( IndexPath.from( "myProp" ), ValueFactory.newString( "hello" ), config );
-        assertEquals( 1, items.size() );
+        assertEquals( 2, items.size() );
     }
 
     @Test
     void create_deduplicates_language_that_falls_back_to_orderby()
     {
-        final IndexConfig config = IndexConfig.create().enabled( true ).addLanguage( Locale.ENGLISH ).build();
+        final IndexConfig config = IndexConfig.create().enabled( true ).addLanguage( Locale.ENGLISH ).addLanguage( Locale.forLanguageTag( "en-GB" ) ).build();
         final List<IndexItem<?>> items =
             IndexItemFactory.createOrderBy( IndexPath.from( "myProp" ), ValueFactory.newString( "hello" ), config );
-        assertEquals( 1, items.size() );
+        assertEquals( 2, items.size() );
     }
 }

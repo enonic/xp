@@ -65,7 +65,7 @@ public class IcuSortConfigConsistencyTest
             }
         } );
 
-        assertThat( languageCodes.size()).isEqualTo( 25 );
+        assertThat( languageCodes.size()).isEqualTo( 45 );
 
         // Build lookup for template analyzer references
         final java.util.Map<String, String> templateAnalyzerByLang = new java.util.HashMap<>();
