@@ -1,3 +1,4 @@
+kind: "AdminExtension"
 displayName: "MyExtension2"
 description: "MyExtension2 description"
 interfaces:

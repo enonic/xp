@@ -1,3 +1,4 @@
+kind: "Layout"
 displayName: "3 columns"
 description:
   text: "Layout with 3 columns"

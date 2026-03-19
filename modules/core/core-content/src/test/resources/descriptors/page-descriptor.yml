@@ -1,3 +1,4 @@
+kind: "Page"
 displayName: "Landing page"
 description:
   text: "Description of the Landing page"

@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.api;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.api.ApiDescriptor;
@@ -18,9 +19,10 @@ public final class YmlApiDescriptorParser
 
     public static ApiDescriptor.Builder parse( final String resource, final ApplicationKey currentApplication )
     {
-        return PARSER.parse( resource, ApiDescriptor.Builder.class, currentApplication );
+        return PARSER.parse( "API", resource, ApiDescriptor.Builder.class, currentApplication );
     }
 
+    @JsonIgnoreProperties("kind")
     private abstract static class ApiDescriptorBuilderMapper
     {
         @JsonProperty("allow")

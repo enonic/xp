@@ -3,9 +3,16 @@
   "$id": "@schemaBaseUrl@/@schemaVersion@/application.schema.json",
   "type": "object",
   "properties": {
+    "kind": {
+      "type": "string",
+      "const": "Application"
+    },
     "description": {
       "type": "string"
     }
   },
+  "required": [
+    "kind"
+  ],
   "additionalProperties": false
 }

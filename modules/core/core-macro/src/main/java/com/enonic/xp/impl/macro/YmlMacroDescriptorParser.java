@@ -1,6 +1,7 @@
 package com.enonic.xp.impl.macro;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -20,9 +21,10 @@ final class YmlMacroDescriptorParser
 
     static MacroDescriptor.Builder parse( final String resource, final ApplicationKey currentApplication )
     {
-        return PARSER.parse( resource, MacroDescriptor.Builder.class, currentApplication );
+        return PARSER.parse( "Macro", resource, MacroDescriptor.Builder.class, currentApplication );
     }
 
+    @JsonIgnoreProperties("kind")
     private abstract static class MacroDescriptorBuilderMixIn
     {
         @JsonCreator

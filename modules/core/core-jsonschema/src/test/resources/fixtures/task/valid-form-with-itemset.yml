@@ -1,3 +1,4 @@
+kind: "Task"
 form:
   - type: "ItemSet"
     name: "mySet"

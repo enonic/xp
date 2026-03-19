@@ -1,3 +1,4 @@
+kind: "Layout"
 displayName: "My Layout"
 description: "Layout description"
 regions:

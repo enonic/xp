@@ -3,6 +3,10 @@
   "$id": "@schemaBaseUrl@/@schemaVersion@/api.schema.json",
   "type": "object",
   "properties": {
+    "kind": {
+      "type": "string",
+      "const": "API"
+    },
     "allow": {
       "type": "array",
       "items": {
@@ -30,5 +34,8 @@
       }
     }
   },
+  "required": [
+    "kind"
+  ],
   "additionalProperties": false
 }

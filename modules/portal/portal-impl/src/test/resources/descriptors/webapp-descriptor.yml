@@ -1,3 +1,4 @@
+kind: "WebApp"
 apis:
   - "admin:extension"
   - "content"

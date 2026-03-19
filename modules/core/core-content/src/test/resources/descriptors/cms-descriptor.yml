@@ -1,3 +1,5 @@
+kind: "CMS"
+
 mixin:
   - name: "all-except-folders"
     allowContentTypes: "^(?!base:folder$).*"

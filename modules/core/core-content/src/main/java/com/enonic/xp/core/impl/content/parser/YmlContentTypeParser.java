@@ -3,6 +3,7 @@ package com.enonic.xp.core.impl.content.parser;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -25,7 +26,7 @@ public final class YmlContentTypeParser
 
     public static ContentType.Builder parse( final String resource, final ApplicationKey currentApplication )
     {
-        final ContentType.Builder builder = PARSER.parse( resource, ContentType.Builder.class, currentApplication );
+        final ContentType.Builder builder = PARSER.parse( "ContentType", resource, ContentType.Builder.class, currentApplication );
         builder.name( "_TEMP:NAME_" );
 
         final ContentType contentType = builder.build();
@@ -59,6 +60,7 @@ public final class YmlContentTypeParser
         }
     }
 
+    @JsonIgnoreProperties("kind")
     private abstract static class ContentTypeBuilderMixIn
     {
         @JsonProperty("name")

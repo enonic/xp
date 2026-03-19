@@ -1,3 +1,4 @@
+kind: "ContentType"
 superType: "base:structured"
 abstract: false
 final: false

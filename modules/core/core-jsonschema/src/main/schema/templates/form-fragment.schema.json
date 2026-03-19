@@ -3,6 +3,10 @@
   "$id": "@schemaBaseUrl@/@schemaVersion@/form-fragment.schema.json",
   "type": "object",
   "properties": {
+    "kind": {
+      "type": "string",
+      "const": "FormFragment"
+    },
     "displayName": {
       "$ref": "#/$defs/localizedTextDef"
     },
@@ -13,6 +17,9 @@
       "$ref": "#/$defs/formDef"
     }
   },
+  "required": [
+    "kind"
+  ],
   "additionalProperties": false,
   "$defs": {
     "localizedTextDef": {},

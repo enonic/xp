@@ -3,6 +3,10 @@
   "$id": "@schemaBaseUrl@/@schemaVersion@/cms.schema.json",
   "type": "object",
   "properties": {
+    "kind": {
+      "type": "string",
+      "const": "CMS"
+    },
     "mixin": {
       "type": "array",
       "items": {
@@ -13,6 +17,9 @@
       "$ref": "#/$defs/formDef"
     }
   },
+  "required": [
+    "kind"
+  ],
   "additionalProperties": false,
   "$defs": {
     "mixinMapping": {

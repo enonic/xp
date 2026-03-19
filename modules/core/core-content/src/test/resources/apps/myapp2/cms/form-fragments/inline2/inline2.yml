@@ -1,3 +1,4 @@
+kind: "FormFragment"
 displayName: "FormFragment 2"
 form:
 - type: "TextLine"

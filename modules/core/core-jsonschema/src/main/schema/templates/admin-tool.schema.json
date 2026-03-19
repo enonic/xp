@@ -3,6 +3,10 @@
   "$id": "@schemaBaseUrl@/@schemaVersion@/admin-tool.schema.json",
   "type": "object",
   "properties": {
+    "kind": {
+      "type": "string",
+      "const": "AdminTool"
+    },
     "displayName": {
       "$ref": "#/$defs/localizedTextDef"
     },
@@ -28,6 +32,9 @@
       }
     }
   },
+  "required": [
+    "kind"
+  ],
   "additionalProperties": false,
   "$defs": {
     "localizedTextDef": {}

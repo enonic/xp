@@ -1,5 +1,6 @@
 package com.enonic.xp.admin.impl.tool;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.admin.tool.AdminToolDescriptor;
@@ -20,9 +21,10 @@ public final class YmlAdminToolDescriptorParser
 
     public static AdminToolDescriptor.Builder parse( final String resource, final ApplicationKey currentApplication )
     {
-        return PARSER.parse( resource, AdminToolDescriptor.Builder.class, currentApplication );
+        return PARSER.parse( "AdminTool", resource, AdminToolDescriptor.Builder.class, currentApplication );
     }
 
+    @JsonIgnoreProperties("kind")
     private abstract static class AdminToolDescriptorBuilderMapper
     {
         @JsonProperty("displayName")

@@ -1,3 +1,4 @@
+kind: "API"
 displayName: "GraphQL API"
 description: "Description of GraphQL API"
 mount: ["xp"]
