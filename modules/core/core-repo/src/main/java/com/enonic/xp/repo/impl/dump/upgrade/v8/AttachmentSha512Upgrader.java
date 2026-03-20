@@ -3,9 +3,6 @@ package com.enonic.xp.repo.impl.dump.upgrade.v8;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.DigestInputStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.HexFormat;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +13,7 @@ import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPropertyNames;
+import com.enonic.xp.core.internal.security.MessageDigests;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.AttachedBinary;
@@ -104,14 +102,13 @@ public class AttachmentSha512Upgrader
         {
             final FileDumpBlobRecord record = dumpReader.getRecord( binarySegment, BlobKey.from( blobKey ) );
             try (InputStream is = record.getBytes().openStream(); DigestInputStream dis = new DigestInputStream( is,
-                                                                                                                 MessageDigest.getInstance(
-                                                                                                                     "SHA-512" ) ))
+                                                                                                                 MessageDigests.sha512() ))
             {
                 ByteStreams.exhaust( dis );
-                return HexFormat.of().formatHex( dis.getMessageDigest().digest() );
+                return MessageDigests.formatHex( dis.getMessageDigest() );
             }
         }
-        catch ( IOException | NoSuchAlgorithmException e )
+        catch ( IOException e )
         {
             LOG.warn( "Failed to compute sha512 for blob [{}]", blobKey, e );
             return null;

@@ -55,7 +55,7 @@ public class ImageServiceImpl
 
     private final Path cacheFolder = HomeDir.get().toPath().resolve( "work" ).resolve( "cache" ).resolve( "img" );
 
-    private final ImmutableFilesHelper immutableFilesHelper = new ImmutableFilesHelper( cacheFolder.resolve( "tmp" ) );
+    private final ImmutableFilesHelper immutableFilesHelper = new ImmutableFilesHelper( cacheFolder.resolve( "ingest" ) );
 
     private final ContentService contentService;
 
@@ -116,12 +116,12 @@ public class ImageServiceImpl
                         readImageParams.getBinaryReference() + "]" );
             }
 
-            final MessageDigest sha512Digest = MessageDigests.sha512();
-            try (InputStream is = blob.openStream(); DigestInputStream dis = new DigestInputStream( is, sha512Digest ))
+            final String resultingSha512;
+            try (InputStream is = blob.openStream(); DigestInputStream dis = new DigestInputStream( is, MessageDigests.sha512() ))
             {
                 dis.transferTo( OutputStream.nullOutputStream() );
+                resultingSha512 = MessageDigests.formatHex( dis.getMessageDigest() );
             }
-            final String resultingSha512 = HexFormat.of().formatHex( sha512Digest.digest() );
 
             if ( !expectedSha512.equals( resultingSha512 ) )
             {
@@ -163,7 +163,7 @@ public class ImageServiceImpl
         MessageDigests.updateWithString( digest, readImageParams.getScaleParams().toString() );
         MessageDigests.updateWithString( digest, readImageParams.getFilterParam().toString() );
 
-        final String hash = HexFormat.of().formatHex( digest.digest() );
+        final String hash = MessageDigests.formatHex( digest );
         return cacheFolder.resolve( "sha256" )
             .resolve( hash.substring( 0, 2 ) )
             .resolve( hash.substring( 2, 4 ) )

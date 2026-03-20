@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
-import java.util.HexFormat;
 import java.util.Objects;
 
 import com.google.common.io.ByteSource;
@@ -53,7 +52,7 @@ public final class BlobKey
             {
                 dis.transferTo( OutputStream.nullOutputStream() );
             }
-            return from( "sha256:" + HexFormat.of().formatHex( digest.digest() ) );
+            return from( "sha256:" + MessageDigests.formatHex( digest ) );
         }
         catch ( final IOException e )
         {

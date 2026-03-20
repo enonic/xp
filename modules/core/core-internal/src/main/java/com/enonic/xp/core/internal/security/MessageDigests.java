@@ -3,6 +3,7 @@ package com.enonic.xp.core.internal.security;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.HexFormat;
 
 public class MessageDigests
 {
@@ -32,6 +33,11 @@ public class MessageDigests
         final byte[] bytes = string.getBytes( StandardCharsets.UTF_8 );
         MessageDigests.updateWithIntLE( digest, bytes.length );
         digest.update( bytes );
+    }
+
+    public static String formatHex( final MessageDigest digest )
+    {
+        return HexFormat.of().formatHex( digest.digest() );
     }
 
     public static MessageDigest sha512()

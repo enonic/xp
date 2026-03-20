@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.security.DigestInputStream;
-import java.util.HexFormat;
 
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
@@ -46,8 +45,7 @@ public final class AttachmentSerializer
         {
             long size = ByteStreams.exhaust( digestInputStream );
             attachmentSet.addLong( ContentPropertyNames.ATTACHMENT_SIZE, size );
-            attachmentSet.addString( ContentPropertyNames.ATTACHMENT_SHA512, HexFormat.of().formatHex(
-                digestInputStream.getMessageDigest().digest() ) );
+            attachmentSet.addString( ContentPropertyNames.ATTACHMENT_SHA512, MessageDigests.formatHex( digestInputStream.getMessageDigest() ) );
 
         }
         catch ( IOException e )
