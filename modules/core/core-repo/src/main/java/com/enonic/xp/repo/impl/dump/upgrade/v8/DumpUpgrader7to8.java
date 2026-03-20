@@ -205,12 +205,9 @@ public class DumpUpgrader7to8
         final BlobKey newAccessControlBlobKey =
             writeNodeStoreVersionBlob( toWrite, accessControlSegment, NodeVersionJsonSerializer::toAccessControlBytes );
 
-        if ( upgraded != null )
-        {
-            blobKeyMapping.put( versionDumpEntryJson.getNodeBlobKey(), newNodeBlobKey.toString() );
-            blobKeyMapping.put( versionDumpEntryJson.getIndexConfigBlobKey(), newIndexConfigBlobKey.toString() );
-            blobKeyMapping.put( versionDumpEntryJson.getAccessControlBlobKey(), newAccessControlBlobKey.toString() );
-        }
+        blobKeyMapping.put( versionDumpEntryJson.getNodeBlobKey(), newNodeBlobKey.toString() );
+        blobKeyMapping.put( versionDumpEntryJson.getIndexConfigBlobKey(), newIndexConfigBlobKey.toString() );
+        blobKeyMapping.put( versionDumpEntryJson.getAccessControlBlobKey(), newAccessControlBlobKey.toString() );
 
         VersionDumpEntryJson result = VersionDumpEntryJson.create( versionDumpEntryJson )
             .nodeBlobKey( newNodeBlobKey.toString() )
