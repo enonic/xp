@@ -85,12 +85,6 @@ public final class CreateIssueCommentParams
             return this;
         }
 
-        @Deprecated
-        public Builder created( final Instant created )
-        {
-            return this;
-        }
-
         public CreateIssueCommentParams build()
         {
             return new CreateIssueCommentParams( this );
