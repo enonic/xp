@@ -1,3 +1,4 @@
+kind: "AdminTool"
 displayName: "My Admin Tool"
 description:
   text: "Admin Tool Description"

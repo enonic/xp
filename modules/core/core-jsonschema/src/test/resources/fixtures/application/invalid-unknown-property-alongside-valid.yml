@@ -1,2 +1,3 @@
+kind: "Application"
 description: "My Application"
 unknownField: "someValue"

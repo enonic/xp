@@ -1,5 +1,6 @@
 package com.enonic.xp.admin.impl.extension;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.admin.extension.AdminExtensionDescriptor;
@@ -20,9 +21,10 @@ public final class YmlAdminExtensionDescriptorParser
 
     public static AdminExtensionDescriptor.Builder parse( final String resource, final ApplicationKey currentApplication )
     {
-        return PARSER.parse( resource, AdminExtensionDescriptor.Builder.class, currentApplication );
+        return PARSER.parse( "AdminExtension", resource, AdminExtensionDescriptor.Builder.class, currentApplication );
     }
 
+    @JsonIgnoreProperties("kind")
     private abstract static class AdminExtensionDescriptorBuilderMapper
     {
         @JsonProperty("displayName")

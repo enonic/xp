@@ -1,3 +1,4 @@
+kind: "Site"
 mappings:
   - filter: "myapp:myfilter"
     pattern: "/path/*"

@@ -1,3 +1,4 @@
+kind: "AdminExtension"
 displayName: "My Extension"
 description: "Extension description"
 allow:

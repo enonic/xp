@@ -1,3 +1,4 @@
+kind: "ContentType"
 displayName: "All Inputs"
 form:
   - type: "TextLine"

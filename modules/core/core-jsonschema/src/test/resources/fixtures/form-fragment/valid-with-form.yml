@@ -1,3 +1,4 @@
+kind: "FormFragment"
 displayName: "My Form Fragment"
 description: "Fragment description"
 form:

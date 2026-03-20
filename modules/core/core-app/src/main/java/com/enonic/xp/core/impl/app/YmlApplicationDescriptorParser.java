@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.app;
 
 import com.fasterxml.jackson.annotation.JacksonInject;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.app.ApplicationDescriptor;
@@ -18,9 +19,10 @@ final class YmlApplicationDescriptorParser
 
     static ApplicationDescriptor.Builder parse( final String resource, final ApplicationKey currentApplication )
     {
-        return PARSER.parse( resource, ApplicationDescriptor.Builder.class, currentApplication );
+        return PARSER.parse( "Application", resource, ApplicationDescriptor.Builder.class, currentApplication );
     }
 
+    @JsonIgnoreProperties("kind")
     private abstract static class ApplicationDescriptorBuilderMapper
     {
         @JsonProperty("description")

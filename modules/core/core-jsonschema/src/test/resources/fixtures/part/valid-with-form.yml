@@ -1,3 +1,4 @@
+kind: "Part"
 displayName: "My Part"
 description: "Part description"
 form:

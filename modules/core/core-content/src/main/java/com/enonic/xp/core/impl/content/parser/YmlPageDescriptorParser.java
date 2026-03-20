@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.content.parser;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -22,9 +23,10 @@ public final class YmlPageDescriptorParser
 
     public static PageDescriptor.Builder parse( final String resource, final ApplicationKey currentApplication )
     {
-        return PARSER.parse( resource, PageDescriptor.Builder.class, currentApplication );
+        return PARSER.parse( "Page", resource, PageDescriptor.Builder.class, currentApplication );
     }
 
+    @JsonIgnoreProperties("kind")
     private abstract static class PageDescriptorBuilderMixIn
     {
         @JsonProperty("displayName")

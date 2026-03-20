@@ -3,6 +3,10 @@
   "$id": "@schemaBaseUrl@/@schemaVersion@/service.schema.json",
   "type": "object",
   "properties": {
+    "kind": {
+      "type": "string",
+      "const": "Service"
+    },
     "allow": {
       "type": "array",
       "items": {
@@ -13,5 +17,8 @@
       "type": "string"
     }
   },
+  "required": [
+    "kind"
+  ],
   "additionalProperties": false
 }

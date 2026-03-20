@@ -1,3 +1,4 @@
+kind: "Service"
 allow:
   - "role:system.roleId_1"
   - "role:system.roleId_2"

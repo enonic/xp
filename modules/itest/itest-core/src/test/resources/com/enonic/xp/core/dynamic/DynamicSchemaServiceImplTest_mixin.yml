@@ -1,3 +1,4 @@
+kind: "Mixin"
 displayName: "Virtual Mixin"
 description: "Mixin description"
 form:

@@ -1,3 +1,4 @@
+kind: "ContentType"
 superType: "com.enonic.app.myapplication:content"
 abstract: false
 final: true

@@ -1,3 +1,4 @@
+kind: "ContentType"
 form:
   - type: "TextLine"
     label: "Title"

@@ -1,3 +1,4 @@
+kind: "Page"
 displayName: "My Page"
 regions:
   - "main"

@@ -1,3 +1,4 @@
+kind: "Mixin"
 displayName: "Mixin Full Name"
 form:
 - type: "ItemSet"

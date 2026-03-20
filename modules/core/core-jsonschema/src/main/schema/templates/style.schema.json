@@ -3,6 +3,10 @@
   "$id": "@schemaBaseUrl@/@schemaVersion@/style.schema.json",
   "type": "object",
   "properties": {
+    "kind": {
+      "type": "string",
+      "const": "Style"
+    },
     "css": {
       "type": "string"
     },
@@ -26,6 +30,9 @@
     }
   },
   "additionalProperties": false,
+  "required": [
+    "kind"
+  ],
   "$defs": {
     "localizedTextDef": {}
   }

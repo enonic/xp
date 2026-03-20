@@ -1,3 +1,4 @@
+kind: "FormFragment"
 displayName: "Address"
 form:
 - type: "ItemSet"

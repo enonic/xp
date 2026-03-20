@@ -1,3 +1,4 @@
+kind: "AdminTool"
 displayName: "Content Studio"
 description: "Manage content and sites"
 allow:

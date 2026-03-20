@@ -3,6 +3,10 @@
   "$id": "@schemaBaseUrl@/@schemaVersion@/layout.schema.json",
   "type": "object",
   "properties": {
+    "kind": {
+      "type": "string",
+      "const": "Layout"
+    },
     "displayName": {
       "$ref": "#/$defs/localizedTextDef"
     },
@@ -23,7 +27,8 @@
     }
   },
   "required": [
-    "regions"
+    "regions",
+    "kind"
   ],
   "additionalProperties": false,
   "$defs": {

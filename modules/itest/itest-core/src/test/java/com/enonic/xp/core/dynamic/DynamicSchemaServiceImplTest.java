@@ -335,8 +335,10 @@ class DynamicSchemaServiceImplTest
         throws Exception
     {
         final CreateDynamicContentSchemaParams createParams = CreateDynamicContentSchemaParams.create()
-            .name( ContentTypeName.from( "myapp:mytype" ) )
-            .resource( "superType: \"base:unstructured\"" )
+            .name( ContentTypeName.from( "myapp:mytype" ) ).resource( """
+                                                                          kind: "ContentType"
+                                                                          superType: "base:unstructured"
+                                                                          """ )
             .type( DynamicContentSchemaType.CONTENT_TYPE )
             .build();
 
@@ -465,6 +467,7 @@ class DynamicSchemaServiceImplTest
             CreateDynamicContentSchemaParams.create()
                 .name( FormFragmentName.from( "myapp:my-fragment" ) )
                 .resource( """
+                               kind: "FormFragment"
                                displayName: "MyFormFragment"
                                """ )
                 .type( DynamicContentSchemaType.FORM_FRAGMENT )
@@ -518,6 +521,7 @@ class DynamicSchemaServiceImplTest
             CreateDynamicContentSchemaParams.create()
                 .name( FormFragmentName.from( "myapp:my-fragment" ) )
                 .resource( """
+                               kind: "FormFragment"
                                displayName: "FormFragment"
                                """ )
                 .type( DynamicContentSchemaType.FORM_FRAGMENT )
@@ -547,6 +551,7 @@ class DynamicSchemaServiceImplTest
             CreateDynamicContentSchemaParams.create()
                 .name( FormFragmentName.from( "myapp:my-fragment" ) )
                 .resource( """
+                               kind: "FormFragment"
                                displayName: "FormFragment"
                                """ )
                 .type( DynamicContentSchemaType.FORM_FRAGMENT )
@@ -615,6 +620,7 @@ class DynamicSchemaServiceImplTest
             CreateDynamicContentSchemaParams.create()
                 .name( MixinName.from( "myapp:mymixin" ) )
                 .resource( """
+                               kind: "Mixin"
                                displayName: "Virtual MIXIN"
                                form: [ ]
                                """ )
@@ -714,6 +720,7 @@ class DynamicSchemaServiceImplTest
             CreateDynamicComponentParams.create()
                 .descriptorKey( DescriptorKey.from( "myapp:mypart" ) )
                 .resource( """
+                               kind: "Part"
                                displayName: "MyPart"
                                form: [ ]
                                """ )
@@ -815,6 +822,7 @@ class DynamicSchemaServiceImplTest
             CreateDynamicComponentParams.create()
                 .descriptorKey( DescriptorKey.from( "myapp:mylayout" ) )
                 .resource( """
+                               kind: "Layout"
                                displayName: MyLayout
                                regions: [ ]
                                
@@ -916,6 +924,7 @@ class DynamicSchemaServiceImplTest
             CreateDynamicComponentParams.create()
                 .descriptorKey( DescriptorKey.from( "myapp:mypage" ) )
                 .resource( """
+                               kind: "Page"
                                displayName: "MyPage"
                                regions:
                                  - "main"
@@ -1127,7 +1136,7 @@ class DynamicSchemaServiceImplTest
         final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
 
         createAdminContext().callWith( () -> dynamicSchemaService.createStyles(
-            CreateDynamicStylesParams.create().key( applicationKey ).resource( "css: \"assets/styles.css\"" ).build() ) );
+            CreateDynamicStylesParams.create().key( applicationKey ).resource( "kind: \"Style\"\ncss: \"assets/styles.css\"" ).build() ) );
 
         final DynamicSchemaResult<StyleDescriptor> result = createAdminContext().callWith( () -> dynamicSchemaService.updateStyles(
             UpdateDynamicStylesParams.create().key( applicationKey ).resource( resource ).build() ) );
@@ -1564,7 +1573,10 @@ class DynamicSchemaServiceImplTest
     @Test
     public void createFormFragmentSchemaInvalid()
     {
-        final String resource = "unsupportedField: [ ]";
+        final String resource = """
+            kind: "FormFragment"
+            unsupportedField: [ ]
+            """;
 
         CreateDynamicContentSchemaParams params = CreateDynamicContentSchemaParams.create()
             .name( FormFragmentName.from( "myapp:mytype" ) )
@@ -1579,7 +1591,10 @@ class DynamicSchemaServiceImplTest
     @Test
     void createMixinSchemaInvalid()
     {
-        final String resource = "unsupportedField: [ ]";
+        final String resource = """
+            kind: "Mixin"
+            unsupportedField: [ ]
+            """;
 
         CreateDynamicContentSchemaParams params = CreateDynamicContentSchemaParams.create()
             .name( MixinName.from( "myapp:mytype" ) )
@@ -1594,7 +1609,10 @@ class DynamicSchemaServiceImplTest
     @Test
     void createPartInvalid()
     {
-        final String resource = "unsupportedField: [ ]";
+        final String resource = """
+            kind: "Part"        
+            unsupportedField: [ ]
+            """;
 
         final CreateDynamicComponentParams params = CreateDynamicComponentParams.create()
             .descriptorKey( DescriptorKey.from( "myapp:mytype" ) )
@@ -1609,7 +1627,10 @@ class DynamicSchemaServiceImplTest
     @Test
     void createLayoutInvalid()
     {
-        final String resource = "unsupportedField: [ ]";
+        final String resource = """
+            kind: "Layout"
+            unsupportedField: [ ]
+            """;
 
         final CreateDynamicComponentParams params = CreateDynamicComponentParams.create()
             .descriptorKey( DescriptorKey.from( "myapp:mytype" ) )
@@ -1624,7 +1645,10 @@ class DynamicSchemaServiceImplTest
     @Test
     void createPageInvalid()
     {
-        final String resource = "unsupportedField: [ ]";
+        final String resource = """
+            kind: "Page"
+            unsupportedField: [ ]
+            """;
 
         final CreateDynamicComponentParams params = CreateDynamicComponentParams.create()
             .descriptorKey( DescriptorKey.from( "myapp:mytype" ) )
@@ -1639,7 +1663,10 @@ class DynamicSchemaServiceImplTest
     @Test
     void createStylesInvalid()
     {
-        final String resource = "unsupportedField: [ ]";
+        final String resource = """
+            kind: "Style"
+            unsupportedField: [ ]
+            """;
 
         final CreateDynamicStylesParams params =
             CreateDynamicStylesParams.create().key( ApplicationKey.from( "myapp" ) ).resource( resource ).build();
@@ -1650,7 +1677,10 @@ class DynamicSchemaServiceImplTest
     @Test
     void createSiteInvalid()
     {
-        final String resource = "unsupportedField: [ ]";
+        final String resource = """
+            kind: "CMS"
+            unsupportedField: [ ]
+            """;
 
         final CreateDynamicCmsParams params =
             CreateDynamicCmsParams.create().key( ApplicationKey.from( "myapp" ) ).resource( resource ).build();

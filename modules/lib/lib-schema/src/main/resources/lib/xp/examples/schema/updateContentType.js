@@ -3,7 +3,8 @@ var assert = require('/lib/xp/testing');
 
 /* global log*/
 
-let resource = `superType: "base:structured"
+let resource = `kind: "ContentType"
+superType: "base:structured"
 abstract: false
 final: true
 allowChildContent: true
@@ -38,7 +39,8 @@ assert.assertJsonEquals({
     description: 'My description',
     createdTime: '2021-09-25T10:00:00Z',
     modifiedTime: '2021-09-25T10:00:00Z',
-    resource: 'superType: "base:structured"\n' +
+    resource: 'kind: "ContentType"\n' +
+              'superType: "base:structured"\n' +
               'abstract: false\n' +
               'final: true\n' +
               'allowChildContent: true\n' +

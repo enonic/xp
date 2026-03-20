@@ -1,3 +1,4 @@
+kind: "ContentType"
 superType: "base:folder"
 abstract: false
 final: true
