@@ -21,6 +21,11 @@ record FileBlobRecord(BlobKey key, Path file)
         this.file = Objects.requireNonNull( file );
     }
 
+    public BlobKey getKey()
+    {
+        return key;
+    }
+
     @Override
     public long getLength()
     {
@@ -52,18 +57,4 @@ record FileBlobRecord(BlobKey key, Path file)
             return 0;
         }
     }
-
-    @Override
-    public boolean equals( final Object o )
-    {
-        if ( !( o instanceof FileBlobRecord ) )
-        {
-            return false;
-        }
-
-        final FileBlobRecord that = (FileBlobRecord) o;
-
-        return key.equals( that.key ) && file.equals( that.file );
-    }
-
 }

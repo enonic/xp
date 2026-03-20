@@ -205,7 +205,7 @@ class NodeVersionServiceImplTest
         final BlobRecord blob = BLOB_STORE.getRecord( segment, nodeVersionKey.getNodeBlobKey() );
         byte[] blobData = blob.getBytes().read();
         blobData = Arrays.copyOf( blobData, blobData.length / 2 );
-        final MemoryBlobRecord corruptedBlob = new MemoryBlobRecord( blob.key(), ByteSource.wrap( blobData ) );
+        final MemoryBlobRecord corruptedBlob = new MemoryBlobRecord( blob.getKey(), ByteSource.wrap( blobData ) );
         BLOB_STORE.addRecord( segment, corruptedBlob );
 
         RuntimeException e =
@@ -234,7 +234,7 @@ class NodeVersionServiceImplTest
         final BlobRecord blob = BLOB_STORE.getRecord( segment, nodeVersionKey.getNodeBlobKey() );
         final byte[] blobData = blob.getBytes().read();
         final byte[] blobDataTruncated = Arrays.copyOf( blobData, blobData.length / 2 );
-        final MemoryBlobRecord corruptedBlob = new MemoryBlobRecord( blob.key(), ByteSource.wrap( blobDataTruncated ) );
+        final MemoryBlobRecord corruptedBlob = new MemoryBlobRecord( blob.getKey(), ByteSource.wrap( blobDataTruncated ) );
         BLOB_STORE.addRecord( segment, corruptedBlob );
 
         RuntimeException e =

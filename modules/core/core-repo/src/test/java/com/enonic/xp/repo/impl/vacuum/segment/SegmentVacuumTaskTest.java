@@ -70,7 +70,7 @@ class SegmentVacuumTaskTest
         final BlobRecord record2 = blobStore.addRecord( segment2, ByteSource.wrap( "hello".getBytes() ) );
         assertEquals( 2, blobStore.listSegments().count() );
 
-        blobStore.removeRecord( segment, record2.key() );
+        blobStore.removeRecord( segment, record2.getKey() );
         assertEquals( 2, blobStore.listSegments().count() );
 
         final SegmentVacuumTask task = new SegmentVacuumTask();

@@ -77,7 +77,7 @@ public final class FileBlobStore
     {
         try
         {
-            return addRecord( segment, record.key(), record.getBytes() );
+            return addRecord( segment, record.getKey(), record.getBytes() );
         }
         catch ( IOException e )
         {

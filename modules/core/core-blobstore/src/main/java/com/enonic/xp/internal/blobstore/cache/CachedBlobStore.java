@@ -95,7 +95,7 @@ public final class CachedBlobStore
         }
 
         // Don't do heavy lifting if the blob is already in the cache
-        final BlobKey key = record.key();
+        final BlobKey key = record.getKey();
         final CacheBlobRecord present = this.cache.getIfPresent( key );
         if ( present != null )
         {
@@ -198,16 +198,16 @@ public final class CachedBlobStore
         {
             this.content = ByteSource.wrap( blobRecord.getBytes().read() );
             this.blobKey = BlobKey.sha256( this.content );
-            if ( !blobRecord.key().equals( this.blobKey ) )
+            if ( !blobRecord.getKey().equals( this.blobKey ) )
             {
                 throw new IOException( String.format( "Cache BlobKey must be the same as the key of the BlobRecord: %s != %s", this.blobKey,
-                                                      blobRecord.key() ) );
+                                                      blobRecord.getKey() ) );
             }
             this.lastModified = blobRecord.lastModified();
         }
 
         @Override
-        public BlobKey key()
+        public BlobKey getKey()
         {
             return this.blobKey;
         }

@@ -67,7 +67,7 @@ public abstract class AbstractBlobVacuumCommand
         try (Stream<BlobRecord> list = blobStore.list( segment ))
         {
             blobToDelete =
-                list.filter( blobRecord -> shouldDelete( segment, blobRecord ) ).map( BlobRecord::key ).collect( Collectors.toList() );
+                list.filter( blobRecord -> shouldDelete( segment, blobRecord ) ).map( BlobRecord::getKey ).collect( Collectors.toList() );
         }
         blobToDelete.forEach( blobKey -> blobStore.removeRecord( segment, blobKey ) );
     }
@@ -82,7 +82,7 @@ public abstract class AbstractBlobVacuumCommand
                 params.getListener().processed( 1L );
             }
 
-            final BlobKey blobKey = blobRecord.key();
+            final BlobKey blobKey = blobRecord.getKey();
             if ( !isUsedByVersion( segment, blobKey ) )
             {
                 LOG.debug( "No version found for {} [{}]", getFieldIndexPath(), blobKey );

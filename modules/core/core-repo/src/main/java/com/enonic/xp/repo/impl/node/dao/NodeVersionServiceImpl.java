@@ -93,7 +93,7 @@ public class NodeVersionServiceImpl
         {
             throw new UncheckedIOException( e );
         }
-        return blobStore.addRecord( nodeSegment, ByteSource.wrap( nodeJson ) ).key();
+        return blobStore.addRecord( nodeSegment, ByteSource.wrap( nodeJson ) ).getKey();
     }
 
     @Override

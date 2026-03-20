@@ -31,7 +31,7 @@ class BlobStoreFactoryTest
         final Segment segment = Segment.from( "test", "blob" );
         final BlobRecord record = finalBlobStore.addRecord( segment, ByteSource.wrap( "hei".getBytes() ) );
 
-        assertEquals( finalBlobStore.getRecord( segment, record.key() ), blobStore.getRecord( segment, record.key() ) );
+        assertEquals( finalBlobStore.getRecord( segment, record.getKey() ), blobStore.getRecord( segment, record.getKey() ) );
     }
 
     @Test
@@ -70,8 +70,8 @@ class BlobStoreFactoryTest
         final Segment segment = Segment.from( "test", "blob" );
         final BlobRecord record = finalBlobStore.addRecord( segment, ByteSource.wrap( "hei".getBytes() ) );
 
-        assertEquals( finalBlobStore.getRecord( segment, record.key() ), memory1.getRecord( segment, record.key() ) );
-        assertEquals( finalBlobStore.getRecord( segment, record.key() ), memory2.getRecord( segment, record.key() ) );
+        assertEquals( finalBlobStore.getRecord( segment, record.getKey() ), memory1.getRecord( segment, record.getKey() ) );
+        assertEquals( finalBlobStore.getRecord( segment, record.getKey() ), memory2.getRecord( segment, record.getKey() ) );
     }
 
 

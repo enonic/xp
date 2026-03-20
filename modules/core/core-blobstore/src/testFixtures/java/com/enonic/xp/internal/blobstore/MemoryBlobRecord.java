@@ -38,7 +38,7 @@ public class MemoryBlobRecord
     }
 
     @Override
-    public BlobKey key()
+    public BlobKey getKey()
     {
         return blobKey;
     }

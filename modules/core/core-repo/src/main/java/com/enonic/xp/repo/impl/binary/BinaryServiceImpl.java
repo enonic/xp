@@ -34,7 +34,7 @@ public class BinaryServiceImpl
     {
         final Segment segment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.BINARY_SEGMENT_LEVEL );
         final BlobRecord blob = this.blobStore.addRecord( segment, binaryAttachment.getByteSource() );
-        return new AttachedBinary( binaryAttachment.getReference(), blob.key().toString() );
+        return new AttachedBinary( binaryAttachment.getReference(), blob.getKey().toString() );
     }
 
     @Override

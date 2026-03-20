@@ -4,7 +4,7 @@ import com.google.common.io.ByteSource;
 
 public interface BlobRecord
 {
-    BlobKey key();
+    BlobKey getKey();
 
     long getLength();
 
