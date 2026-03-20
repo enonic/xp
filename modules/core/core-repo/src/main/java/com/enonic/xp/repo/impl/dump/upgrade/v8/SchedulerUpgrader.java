@@ -32,6 +32,7 @@ public class SchedulerUpgrader
 
         if ( data.getInstant( "createdTime" ) == null )
         {
+            // this can't be a scheduler node, so we skip it
             return null;
         }
 
@@ -51,16 +52,26 @@ public class SchedulerUpgrader
             }
         }
 
-        if ( !SchedulerConstants.NODE_TYPE.equals( nodeVersion.nodeType() ) )
+        final boolean nodeTypeChanged = !SchedulerConstants.NODE_TYPE.equals( nodeVersion.nodeType() );
+
+        if ( nodeTypeChanged && modified )
         {
             LOG.info( "Changed nodeType to [{}] and truncated time properties for node [{}] in repository [{}]",
                       SchedulerConstants.NODE_TYPE, nodeVersion.id(), repositoryId );
-            return NodeStoreVersion.create( nodeVersion ).nodeType( SchedulerConstants.NODE_TYPE ).build();
         }
-
-        if ( modified )
+        else if ( nodeTypeChanged )
+        {
+            LOG.info( "Changed nodeType to [{}] for node [{}] in repository [{}]", SchedulerConstants.NODE_TYPE, nodeVersion.id(),
+                      repositoryId );
+        }
+        else if ( modified )
         {
             LOG.info( "Truncated time properties to millis for node [{}] in repository [{}]", nodeVersion.id(), repositoryId );
+        }
+
+        if ( nodeTypeChanged )
+        {
+            return NodeStoreVersion.create( nodeVersion ).nodeType( SchedulerConstants.NODE_TYPE ).build();
         }
         return modified ? nodeVersion : null;
     }
