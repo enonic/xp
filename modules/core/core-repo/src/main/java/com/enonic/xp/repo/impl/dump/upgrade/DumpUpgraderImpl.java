@@ -69,8 +69,8 @@ public class DumpUpgraderImpl
         return result.build();
     }
 
-    static void main()
+    static void main( final String[] args )
     {
-        new DumpUpgraderImpl().upgrade( Path.of( "/Users/rymsha/IdeaProjects/xp/build" ), "dump-2026-03-09T16-00-44", null );
+        new DumpUpgraderImpl().upgrade( Path.of( args[0] ), args[1], null );
     }
 }
