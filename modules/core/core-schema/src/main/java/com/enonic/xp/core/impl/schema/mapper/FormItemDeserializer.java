@@ -6,6 +6,7 @@ import java.util.Map;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -17,6 +18,7 @@ import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.FormOptionSet;
 import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.inputtype.InputTypeName;
+import com.enonic.xp.schema.formfragment.FormFragmentName;
 import com.enonic.xp.util.GenericValue;
 
 public class FormItemDeserializer
@@ -29,6 +31,16 @@ public class FormItemDeserializer
         final ObjectMapper mapper = (ObjectMapper) jsonParser.getCodec();
 
         final JsonNode node = mapper.readTree( jsonParser );
+
+        final String include = node.path( "include" ).asText( null );
+
+        if ( include != null && node.size() == 1 )
+        {
+            final FormFragmentName fragmentName = include.contains( ":" )
+                ? FormFragmentName.from( include )
+                : FormFragmentName.from( resolveApplicationKey( ctxt ), include );
+            return FormFragment.create().formFragment( fragmentName ).build();
+        }
 
         final String type = node.get( "type" ).asText();
 
@@ -48,17 +60,20 @@ public class FormItemDeserializer
                     final Map<String, GenericValue> topLevelAttributes = inputYml.getTopLevelAttributes();
                     if ( topLevelAttributes.containsKey( "service" ) )
                     {
-                        final ApplicationKey currentApplication =
-                            (ApplicationKey) ctxt.findInjectableValue( "currentApplication", null, null, null, null );
-
                         topLevelAttributes.put( "service", GenericValue.stringValue(
-                            toServiceUrl( topLevelAttributes.get( "service" ).asString(), currentApplication ) ) );
+                            toServiceUrl( topLevelAttributes.get( "service" ).asString(), resolveApplicationKey( ctxt ) ) ) );
                     }
                 }
 
                 yield inputYml.convertToInput();
             }
         };
+    }
+
+    private ApplicationKey resolveApplicationKey( final DeserializationContext ctxt )
+        throws JsonMappingException
+    {
+        return (ApplicationKey) ctxt.findInjectableValue( "currentApplication", null, null, null, null );
     }
 
     private static String toServiceUrl( final String serviceName, final ApplicationKey currentApplication )
