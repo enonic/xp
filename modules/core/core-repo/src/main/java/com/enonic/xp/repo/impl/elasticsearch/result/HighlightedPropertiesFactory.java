@@ -1,23 +1,16 @@
 package com.enonic.xp.repo.impl.elasticsearch.result;
 
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.elasticsearch.common.text.Text;
 import org.elasticsearch.search.highlight.HighlightField;
 
 import com.enonic.xp.highlight.HighlightedProperties;
 import com.enonic.xp.highlight.HighlightedProperty;
-import com.enonic.xp.repo.impl.index.StaticIndexValueType;
+import com.enonic.xp.repo.impl.elasticsearch.highlight.ElasticHighlightQueryBuilderFactory;
 
 public class HighlightedPropertiesFactory
 {
-    private static final Pattern POSTFIX_PATTERN = Pattern.compile(
-        "\\.(?:" + StaticIndexValueType.DATETIME.getPostfix() + "|" + StaticIndexValueType.NUMBER.getPostfix() + "|" +
-            StaticIndexValueType.NGRAM.getPostfix() + "|" + StaticIndexValueType.ANALYZED.getPostfix() + "|" + StaticIndexValueType.ORDERBY.getPostfix() +
-            "|" + StaticIndexValueType.GEO_POINT.getPostfix() + "|" + StaticIndexValueType.PATH.getPostfix() + ")$" );
-
     public static HighlightedProperties create( final Map<String, HighlightField> highlightPropertyMap )
     {
         if ( highlightPropertyMap == null )
@@ -30,8 +23,7 @@ public class HighlightedPropertiesFactory
         for ( final Map.Entry<String, HighlightField> propertyEntry : highlightPropertyMap.entrySet() )
         {
             final String propertyName = removePostfix( propertyEntry.getKey() );
-            final HighlightedProperty.Builder builder = HighlightedProperty.create().
-                name( propertyName );
+            final HighlightedProperty.Builder builder = HighlightedProperty.create().name( propertyName );
             for ( Text fragment : propertyEntry.getValue().fragments() )
             {
                 builder.addFragment( fragment.string() );
@@ -44,10 +36,12 @@ public class HighlightedPropertiesFactory
 
     private static String removePostfix( final String propertyName )
     {
-        final Matcher matcher = POSTFIX_PATTERN.matcher( propertyName );
-        if ( matcher.find() )
+        for ( final String postfix : ElasticHighlightQueryBuilderFactory.POSTFIXES )
         {
-            return propertyName.substring( 0, matcher.start() );
+            if ( propertyName.endsWith( postfix ) )
+            {
+                return propertyName.substring( 0, propertyName.length() - postfix.length() );
+            }
         }
         return propertyName;
     }

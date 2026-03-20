@@ -40,11 +40,12 @@ class ElasticHighlightQueryBuilderFactoryTest
         final ElasticHighlightQuery elasticHighlightQuery = highlightQueryBuilderFactory.create( query );
 
         assertNotNull( elasticHighlightQuery );
-        assertEquals( 2, elasticHighlightQuery.getFields().size() );
+        assertEquals( 3, elasticHighlightQuery.getFields().size() );
 
         final List<String> names =
             elasticHighlightQuery.getFields().stream().map( HighlightBuilder.Field::name ).collect( Collectors.toList() );
-        assertTrue( names.containsAll( List.of( "propertytohighlight._*", "propertytohighlight" ) ) );
+        assertTrue( names.containsAll(
+            List.of( "propertytohighlight", "propertytohighlight._analyzed", "propertytohighlight._ngram" ) ) );
     }
 
     @Test
@@ -69,7 +70,7 @@ class ElasticHighlightQueryBuilderFactoryTest
         final ElasticHighlightQuery elasticHighlightQuery = highlightQueryBuilderFactory.create( query );
 
         assertNotNull( elasticHighlightQuery );
-        assertEquals( 2, elasticHighlightQuery.getFields().size() );
+        assertEquals( 3, elasticHighlightQuery.getFields().size() );
         assertEquals( Encoder.HTML, elasticHighlightQuery.getEncoder() );
         assertEquals( 1, (int) elasticHighlightQuery.getFragmentSize() );
         assertEquals( 2, (int) elasticHighlightQuery.getNoMatchSize() );

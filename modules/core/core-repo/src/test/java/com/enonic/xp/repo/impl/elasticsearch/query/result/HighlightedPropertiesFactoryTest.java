@@ -47,4 +47,36 @@ class HighlightedPropertiesFactoryTest
         final HighlightedProperties highlightedProperties = HighlightedPropertiesFactory.create( null );
         assertNull( highlightedProperties );
     }
+
+    @Test
+    void analyzed_postfix_stripped()
+    {
+        final HighlightField highlightField =
+            new HighlightField( "name1._analyzed", new Text[]{new Text( "fragment1" )} );
+
+        final Map<String, HighlightField> paramsMap = Map.of( "name1._analyzed", highlightField );
+
+        final HighlightedProperties highlightedProperties = HighlightedPropertiesFactory.create( paramsMap );
+
+        assertNotNull( highlightedProperties );
+        assertEquals( 1, highlightedProperties.size() );
+        assertNotNull( highlightedProperties.get( "name1" ) );
+        assertTrue( highlightedProperties.get( "name1" ).getFragments().contains( "fragment1" ) );
+    }
+
+    @Test
+    void ngram_postfix_stripped()
+    {
+        final HighlightField highlightField =
+            new HighlightField( "name1._ngram", new Text[]{new Text( "fragment1" )} );
+
+        final Map<String, HighlightField> paramsMap = Map.of( "name1._ngram", highlightField );
+
+        final HighlightedProperties highlightedProperties = HighlightedPropertiesFactory.create( paramsMap );
+
+        assertNotNull( highlightedProperties );
+        assertEquals( 1, highlightedProperties.size() );
+        assertNotNull( highlightedProperties.get( "name1" ) );
+        assertTrue( highlightedProperties.get( "name1" ).getFragments().contains( "fragment1" ) );
+    }
 }

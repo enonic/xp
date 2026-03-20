@@ -3,7 +3,6 @@ package com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver;
 import java.util.Set;
 
 import com.enonic.xp.repo.impl.index.IndexFieldNameNormalizer;
-import com.enonic.xp.repo.impl.index.StaticIndexValueType;
 import com.enonic.xp.repo.impl.index.IndexValueType;
 
 public final class SearchQueryFieldNameResolver
