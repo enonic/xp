@@ -10,8 +10,8 @@ import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.index.IndexFieldNameNormalizer;
 import com.enonic.xp.repo.impl.index.IndexLanguageController;
-import com.enonic.xp.repo.impl.index.StaticIndexValueType;
 import com.enonic.xp.repo.impl.index.IndexValueType;
+import com.enonic.xp.repo.impl.index.StaticIndexValueType;
 
 abstract class AbstractQueryFieldNameResolver
     implements QueryFieldNameResolver
@@ -79,7 +79,9 @@ abstract class AbstractQueryFieldNameResolver
             return normalizedFieldName;
         }
 
-        return appendIndexValueType( normalizedFieldName, IndexLanguageController.resolveOrderByIndexValueType( language ) );
+        return appendIndexValueType( normalizedFieldName, language == null
+            ? StaticIndexValueType.ORDERBY
+            : IndexLanguageController.resolveOrderByIndexValueType( language ) );
     }
 
     private String createValueTypeAwareFieldName( final String baseFieldName, final Value value )

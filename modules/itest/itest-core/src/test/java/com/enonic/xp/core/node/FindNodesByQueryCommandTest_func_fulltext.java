@@ -23,6 +23,7 @@ import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.repo.impl.node.NodeConstants;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -38,21 +39,21 @@ class FindNodesByQueryCommandTest_func_fulltext
     @Test
     void fulltext()
     {
-        final Node node = createNode( CreateNodeParams.create().
-            name( "my-node-1" ).
-            parent( NodePath.ROOT ).
-            indexConfigDocument( PatternIndexConfigDocument.create().
-                analyzer( NodeConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER ).
-                defaultConfig( IndexConfig.BY_TYPE ).
-                build() ).
-            build() );
+        final Node node = createNode( CreateNodeParams.create()
+                                          .name( "my-node-1" )
+                                          .parent( NodePath.ROOT )
+                                          .indexConfigDocument( PatternIndexConfigDocument.create()
+                                                                    .analyzer( NodeConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER )
+                                                                    .defaultConfig( IndexConfig.BY_TYPE )
+                                                                    .build() )
+                                          .build() );
         nodeService.refresh( RefreshMode.ALL );
 
-        final NodeQuery query = NodeQuery.create().
-            query( QueryExpr.from( new DynamicConstraintExpr(
+        final NodeQuery query = NodeQuery.create()
+            .query( QueryExpr.from( new DynamicConstraintExpr(
                 FunctionExpr.from( "fulltext", ValueExpr.string( NodeIndexPath.NAME.getPath() ),
-                                   ValueExpr.string( "My node name is my-node-1" ), ValueExpr.string( "OR" ) ) ) ) ).
-            build();
+                                   ValueExpr.string( "My node name is my-node-1" ), ValueExpr.string( "OR" ) ) ) ) )
+            .build();
 
         final FindNodesByQueryResult result = doFindByQuery( query );
 
@@ -68,36 +69,36 @@ class FindNodesByQueryCommandTest_func_fulltext
         final PropertySet userdata = data.addSet( "data" );
         userdata.addString( "displayName", "ø å" );
 
-        final Node node = createNode( CreateNodeParams.create().
-            name( "my-node-1" ).
-            parent( NodePath.ROOT ).
-            data( data ).
-            indexConfigDocument( PatternIndexConfigDocument.create().
-                analyzer( NodeConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER ).
-                defaultConfig( IndexConfig.BY_TYPE ).
-                build() ).
-            build() );
+        final Node node = createNode( CreateNodeParams.create()
+                                          .name( "my-node-1" )
+                                          .parent( NodePath.ROOT )
+                                          .data( data )
+                                          .indexConfigDocument( PatternIndexConfigDocument.create()
+                                                                    .analyzer( NodeConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER )
+                                                                    .defaultConfig( IndexConfig.BY_TYPE )
+                                                                    .build() )
+                                          .build() );
 
         nodeService.refresh( RefreshMode.ALL );
 
         printContentRepoIndex();
 
-        final NodeQuery query = NodeQuery.create().
-            query( QueryExpr.from( new DynamicConstraintExpr(
+        final NodeQuery query = NodeQuery.create()
+            .query( QueryExpr.from( new DynamicConstraintExpr(
                 FunctionExpr.from( "fulltext", ValueExpr.string( NodeIndexPath.ALL_TEXT.getPath() ), ValueExpr.string( "æ" ),
-                                   ValueExpr.string( "OR" ) ) ) ) ).
-            build();
+                                   ValueExpr.string( "OR" ) ) ) ) )
+            .build();
 
         final FindNodesByQueryResult result = doFindByQuery( query );
 
         assertEquals( 1, result.getNodeIds().getSize() );
         assertTrue( result.getNodeIds().contains( node.id() ) );
 
-        final NodeQuery query2 = NodeQuery.create().
-            query( QueryExpr.from( new DynamicConstraintExpr(
+        final NodeQuery query2 = NodeQuery.create()
+            .query( QueryExpr.from( new DynamicConstraintExpr(
                 FunctionExpr.from( "fulltext", ValueExpr.string( "data.displayName" ), ValueExpr.string( "ø å" ),
-                                   ValueExpr.string( "OR" ) ) ) ) ).
-            build();
+                                   ValueExpr.string( "OR" ) ) ) ) )
+            .build();
 
         final FindNodesByQueryResult result2 = doFindByQuery( query2 );
 
@@ -113,36 +114,36 @@ class FindNodesByQueryCommandTest_func_fulltext
         final PropertySet userdata = data.addSet( "data" );
         userdata.addString( "displayName", "ø å" );
 
-        final Node node = createNode( CreateNodeParams.create().
-            name( "my-node-1" ).
-            parent( NodePath.ROOT ).
-            data( data ).
-            indexConfigDocument( PatternIndexConfigDocument.create().
-                analyzer( NodeConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER ).
-                defaultConfig( IndexConfig.BY_TYPE ).
-                build() ).
-            build() );
+        final Node node = createNode( CreateNodeParams.create()
+                                          .name( "my-node-1" )
+                                          .parent( NodePath.ROOT )
+                                          .data( data )
+                                          .indexConfigDocument( PatternIndexConfigDocument.create()
+                                                                    .analyzer( NodeConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER )
+                                                                    .defaultConfig( IndexConfig.BY_TYPE )
+                                                                    .build() )
+                                          .build() );
 
         nodeService.refresh( RefreshMode.ALL );
 
         printContentRepoIndex();
 
-        final NodeQuery query = NodeQuery.create().
-            query( QueryExpr.from( new DynamicConstraintExpr(
+        final NodeQuery query = NodeQuery.create()
+            .query( QueryExpr.from( new DynamicConstraintExpr(
                 FunctionExpr.from( "fulltext", ValueExpr.string( NodeIndexPath.ALL_TEXT.getPath() ), ValueExpr.string( "ae" ),
-                                   ValueExpr.string( "OR" ) ) ) ) ).
-            build();
+                                   ValueExpr.string( "OR" ) ) ) ) )
+            .build();
 
         final FindNodesByQueryResult result = doFindByQuery( query );
 
         assertEquals( 1, result.getNodeIds().getSize() );
         assertTrue( result.getNodeIds().contains( node.id() ) );
 
-        final NodeQuery query2 = NodeQuery.create().
-            query( QueryExpr.from( new DynamicConstraintExpr(
+        final NodeQuery query2 = NodeQuery.create()
+            .query( QueryExpr.from( new DynamicConstraintExpr(
                 FunctionExpr.from( "fulltext", ValueExpr.string( "data.displayName" ), ValueExpr.string( "o a" ),
-                                   ValueExpr.string( "OR" ) ) ) ) ).
-            build();
+                                   ValueExpr.string( "OR" ) ) ) ) )
+            .build();
 
         final FindNodesByQueryResult result2 = doFindByQuery( query2 );
 
@@ -167,11 +168,11 @@ class FindNodesByQueryCommandTest_func_fulltext
                                           .build() );
         nodeService.refresh( RefreshMode.ALL );
 
-        final NodeQuery query = NodeQuery.create().
-            query( QueryExpr.from( new DynamicConstraintExpr(
+        final NodeQuery query = NodeQuery.create()
+            .query( QueryExpr.from( new DynamicConstraintExpr(
                 FunctionExpr.from( "fulltext", ValueExpr.string( NodeIndexPath.ALL_TEXT.getPath() ), ValueExpr.string( "grønns*" ),
-                                   ValueExpr.string( "AND" ) ) ) ) ).
-            build();
+                                   ValueExpr.string( "AND" ) ) ) ) )
+            .build();
 
         final FindNodesByQueryResult result = doFindByQuery( query );
 
@@ -193,22 +194,22 @@ class FindNodesByQueryCommandTest_func_fulltext
         final String value2 = "vif rbk lsk sif";
         data.setString( path2, value2 );
 
-        final Node node = createNode( CreateNodeParams.create().
-            name( "fisk ost" ).
-            parent( NodePath.ROOT ).
-            data( data ).
-            indexConfigDocument( PatternIndexConfigDocument.create().
-                analyzer( NodeConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER ).
-                defaultConfig( IndexConfig.BY_TYPE ).
-                build() ).
-            build() );
+        final Node node = createNode( CreateNodeParams.create()
+                                          .name( "fisk ost" )
+                                          .parent( NodePath.ROOT )
+                                          .data( data )
+                                          .indexConfigDocument( PatternIndexConfigDocument.create()
+                                                                    .analyzer( NodeConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER )
+                                                                    .defaultConfig( IndexConfig.BY_TYPE )
+                                                                    .build() )
+                                          .build() );
         nodeService.refresh( RefreshMode.ALL );
 
-        final NodeQuery query = NodeQuery.create().
-            query( QueryExpr.from( new DynamicConstraintExpr(
+        final NodeQuery query = NodeQuery.create()
+            .query( QueryExpr.from( new DynamicConstraintExpr(
                 FunctionExpr.from( "fulltext", ValueExpr.string( path1 ), ValueExpr.string( "leter etter fisk" ),
-                                   ValueExpr.string( "OR" ) ) ) ) ).
-            build();
+                                   ValueExpr.string( "OR" ) ) ) ) )
+            .build();
 
         final FindNodesByQueryResult result = doFindByQuery( query );
 
@@ -222,23 +223,23 @@ class FindNodesByQueryCommandTest_func_fulltext
         final PropertyTree data = new PropertyTree();
         data.addString( "title", "Levenshtein" );
 
-        final Node node = createNode( CreateNodeParams.create().
-            name( "my-node-1" ).
-            parent( NodePath.ROOT ).
-            data( data ).
-            indexConfigDocument( PatternIndexConfigDocument.create().
-                analyzer( NodeConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER ).
-                defaultConfig( IndexConfig.BY_TYPE ).
-                build() ).
-            build() );
+        final Node node = createNode( CreateNodeParams.create()
+                                          .name( "my-node-1" )
+                                          .parent( NodePath.ROOT )
+                                          .data( data )
+                                          .indexConfigDocument( PatternIndexConfigDocument.create()
+                                                                    .analyzer( NodeConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER )
+                                                                    .defaultConfig( IndexConfig.BY_TYPE )
+                                                                    .build() )
+                                          .build() );
 
         nodeService.refresh( RefreshMode.ALL );
 
-        final NodeQuery query = NodeQuery.create().
-            query( QueryExpr.from( new DynamicConstraintExpr(
+        final NodeQuery query = NodeQuery.create()
+            .query( QueryExpr.from( new DynamicConstraintExpr(
                 FunctionExpr.from( "fulltext", ValueExpr.string( "title" ), ValueExpr.string( "levvenstein~2" ),
-                                   ValueExpr.string( "AND" ) ) ) ) ).
-            build();
+                                   ValueExpr.string( "AND" ) ) ) ) )
+            .build();
 
         final FindNodesByQueryResult result = doFindByQuery( query );
 
@@ -253,36 +254,36 @@ class FindNodesByQueryCommandTest_func_fulltext
         final PropertyTree data = new PropertyTree();
         data.addString( "title", "Levenshtein" );
 
-        final Node node = createNode( CreateNodeParams.create().
-            name( "my-node-1" ).
-            parent( NodePath.ROOT ).
-            data( data ).
-            indexConfigDocument( PatternIndexConfigDocument.create().
-                analyzer( NodeConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER ).
-                defaultConfig( IndexConfig.BY_TYPE ).
-                build() ).
-            build() );
+        final Node node = createNode( CreateNodeParams.create()
+                                          .name( "my-node-1" )
+                                          .parent( NodePath.ROOT )
+                                          .data( data )
+                                          .indexConfigDocument( PatternIndexConfigDocument.create()
+                                                                    .analyzer( NodeConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER )
+                                                                    .defaultConfig( IndexConfig.BY_TYPE )
+                                                                    .build() )
+                                          .build() );
 
         final PropertyTree data2 = new PropertyTree();
         data2.addString( "title", "fisk" );
 
-        final Node node2 = createNode( CreateNodeParams.create().
-            name( "my-node-2" ).
-            parent( NodePath.ROOT ).
-            data( data2 ).
-            indexConfigDocument( PatternIndexConfigDocument.create().
-                analyzer( NodeConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER ).
-                defaultConfig( IndexConfig.BY_TYPE ).
-                build() ).
-            build() );
+        final Node node2 = createNode( CreateNodeParams.create()
+                                           .name( "my-node-2" )
+                                           .parent( NodePath.ROOT )
+                                           .data( data2 )
+                                           .indexConfigDocument( PatternIndexConfigDocument.create()
+                                                                     .analyzer( NodeConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER )
+                                                                     .defaultConfig( IndexConfig.BY_TYPE )
+                                                                     .build() )
+                                           .build() );
 
         nodeService.refresh( RefreshMode.ALL );
 
-        final NodeQuery query = NodeQuery.create().
-            query( QueryExpr.from( new DynamicConstraintExpr(
+        final NodeQuery query = NodeQuery.create()
+            .query( QueryExpr.from( new DynamicConstraintExpr(
                 FunctionExpr.from( "fulltext", ValueExpr.string( "title" ), ValueExpr.string( "levvenstein~2 fsik~2" ),
-                                   ValueExpr.string( "OR" ) ) ) ) ).
-            build();
+                                   ValueExpr.string( "OR" ) ) ) ) )
+            .build();
 
         final FindNodesByQueryResult result = doFindByQuery( query );
 
@@ -298,35 +299,35 @@ class FindNodesByQueryCommandTest_func_fulltext
         final PropertyTree data = new PropertyTree();
         data.addString( "title", "fisk kake" );
 
-        final Node node = createNode( CreateNodeParams.create().
-            name( "my-node-1" ).
-            parent( NodePath.ROOT ).
-            data( data ).
-            indexConfigDocument( PatternIndexConfigDocument.create().
-                analyzer( NodeConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER ).
-                defaultConfig( IndexConfig.BY_TYPE ).
-                build() ).
-            build() );
+        final Node node = createNode( CreateNodeParams.create()
+                                          .name( "my-node-1" )
+                                          .parent( NodePath.ROOT )
+                                          .data( data )
+                                          .indexConfigDocument( PatternIndexConfigDocument.create()
+                                                                    .analyzer( NodeConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER )
+                                                                    .defaultConfig( IndexConfig.BY_TYPE )
+                                                                    .build() )
+                                          .build() );
 
         final PropertyTree data2 = new PropertyTree();
         data2.addString( "title", "fisk båt" );
 
-        createNode( CreateNodeParams.create().
-            name( "my-node-2" ).
-            parent( NodePath.ROOT ).
-            data( data2 ).
-            indexConfigDocument( PatternIndexConfigDocument.create().
-                analyzer( NodeConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER ).
-                defaultConfig( IndexConfig.BY_TYPE ).
-                build() ).
-            build() );
+        createNode( CreateNodeParams.create()
+                        .name( "my-node-2" )
+                        .parent( NodePath.ROOT )
+                        .data( data2 )
+                        .indexConfigDocument( PatternIndexConfigDocument.create()
+                                                  .analyzer( NodeConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER )
+                                                  .defaultConfig( IndexConfig.BY_TYPE )
+                                                  .build() )
+                        .build() );
         nodeService.refresh( RefreshMode.ALL );
 
-        final NodeQuery query = NodeQuery.create().
-            query( QueryExpr.from( new DynamicConstraintExpr(
+        final NodeQuery query = NodeQuery.create()
+            .query( QueryExpr.from( new DynamicConstraintExpr(
                 FunctionExpr.from( "fulltext", ValueExpr.string( "title" ), ValueExpr.string( "fisk -båt" ),
-                                   ValueExpr.string( "AND" ) ) ) ) ).
-            build();
+                                   ValueExpr.string( "AND" ) ) ) ) )
+            .build();
 
         final FindNodesByQueryResult result = doFindByQuery( query );
 
@@ -343,10 +344,12 @@ class FindNodesByQueryCommandTest_func_fulltext
         createWithTitleAndDescription( "3", "fash", "fish" );
         nodeService.refresh( RefreshMode.ALL );
 
-        assertOrder( doQuery( "fulltext('title, description^5', 'fish', 'AND')" ), NodeId.from( "3" ), NodeId.from( "1" ),
-                     NodeId.from( "2" ) );
-        assertOrder( doQuery( "fulltext('title^5, description', 'fish', 'AND')" ), NodeId.from( "1" ), NodeId.from( "3" ),
-                     NodeId.from( "2" ) );
+        assertThat( doQuery( "fulltext('title, description^5', 'fish', 'AND')" ).getNodeIds() ).containsExactly( NodeId.from( "3" ),
+                                                                                                                 NodeId.from( "1" ),
+                                                                                                                 NodeId.from( "2" ) );
+        assertThat( doQuery( "fulltext('title^5, description', 'fish', 'AND')" ).getNodeIds() ).containsExactly( NodeId.from( "1" ),
+                                                                                                                 NodeId.from( "3" ),
+                                                                                                                 NodeId.from( "2" ) );
     }
 
     @Test
@@ -370,30 +373,30 @@ class FindNodesByQueryCommandTest_func_fulltext
         final String value1 = "fisk ost pølse løk";
         data.setString( path1, value1 );
 
-        createNode( CreateNodeParams.create().
-            name( "node1" ).
-            parent( NodePath.ROOT ).
-            data( data ).
-            indexConfigDocument( PatternIndexConfigDocument.create().
-                analyzer( NodeConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER ).
-                defaultConfig( IndexConfig.BY_TYPE ).
-                build() ).
-            build() );
+        createNode( CreateNodeParams.create()
+                        .name( "node1" )
+                        .parent( NodePath.ROOT )
+                        .data( data )
+                        .indexConfigDocument( PatternIndexConfigDocument.create()
+                                                  .analyzer( NodeConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER )
+                                                  .defaultConfig( IndexConfig.BY_TYPE )
+                                                  .build() )
+                        .build() );
 
         final PropertyTree data2 = new PropertyTree();
         final String path2 = "test.of.string-2.with.path-2";
         final String value2 = "fisk ost pølse løk";
         data2.setString( path2, value2 );
 
-        createNode( CreateNodeParams.create().
-            name( "node2" ).
-            parent( NodePath.ROOT ).
-            data( data2 ).
-            indexConfigDocument( PatternIndexConfigDocument.create().
-                analyzer( NodeConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER ).
-                defaultConfig( IndexConfig.BY_TYPE ).
-                build() ).
-            build() );
+        createNode( CreateNodeParams.create()
+                        .name( "node2" )
+                        .parent( NodePath.ROOT )
+                        .data( data2 )
+                        .indexConfigDocument( PatternIndexConfigDocument.create()
+                                                  .analyzer( NodeConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER )
+                                                  .defaultConfig( IndexConfig.BY_TYPE )
+                                                  .build() )
+                        .build() );
         nodeService.refresh( RefreshMode.ALL );
 
         queryAndAssert( "fulltext('test*', 'leter etter fisk', 'OR')", 2 );
@@ -422,16 +425,16 @@ class FindNodesByQueryCommandTest_func_fulltext
             data.addString( "description", description );
         }
 
-        createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( id ) ).
-            name( title ).
-            parent( NodePath.ROOT ).
-            data( data ).
-            indexConfigDocument( PatternIndexConfigDocument.create().
-                analyzer( NodeConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER ).
-                defaultConfig( IndexConfig.BY_TYPE ).
-                build() ).
-            build() );
+        createNode( CreateNodeParams.create()
+                        .setNodeId( NodeId.from( id ) )
+                        .name( title )
+                        .parent( NodePath.ROOT )
+                        .data( data )
+                        .indexConfigDocument( PatternIndexConfigDocument.create()
+                                                  .analyzer( NodeConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER )
+                                                  .defaultConfig( IndexConfig.BY_TYPE )
+                                                  .build() )
+                        .build() );
     }
 
     @Test
@@ -440,15 +443,15 @@ class FindNodesByQueryCommandTest_func_fulltext
         final PropertyTree data = new PropertyTree();
         data.addString( "title", "Levenshteins-algorithm" );
 
-        createNode( CreateNodeParams.create().
-            name( "my-node-1" ).
-            parent( NodePath.ROOT ).
-            data( data ).
-            indexConfigDocument( PatternIndexConfigDocument.create().
-                analyzer( NodeConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER ).
-                defaultConfig( IndexConfig.BY_TYPE ).
-                build() ).
-            build() );
+        createNode( CreateNodeParams.create()
+                        .name( "my-node-1" )
+                        .parent( NodePath.ROOT )
+                        .data( data )
+                        .indexConfigDocument( PatternIndexConfigDocument.create()
+                                                  .analyzer( NodeConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER )
+                                                  .defaultConfig( IndexConfig.BY_TYPE )
+                                                  .build() )
+                        .build() );
         nodeService.refresh( RefreshMode.ALL );
 
         queryAndAssert( "fulltext('title', 'levenshteins algorithm', 'AND')", 1 );
@@ -462,15 +465,15 @@ class FindNodesByQueryCommandTest_func_fulltext
         final PropertyTree data = new PropertyTree();
         data.addString( "title", "testing_delimiter" );
 
-        createNode( CreateNodeParams.create().
-            name( "my-node-1" ).
-            parent( NodePath.ROOT ).
-            data( data ).
-            indexConfigDocument( PatternIndexConfigDocument.create().
-                analyzer( NodeConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER ).
-                defaultConfig( IndexConfig.BY_TYPE ).
-                build() ).
-            build() );
+        createNode( CreateNodeParams.create()
+                        .name( "my-node-1" )
+                        .parent( NodePath.ROOT )
+                        .data( data )
+                        .indexConfigDocument( PatternIndexConfigDocument.create()
+                                                  .analyzer( NodeConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER )
+                                                  .defaultConfig( IndexConfig.BY_TYPE )
+                                                  .build() )
+                        .build() );
         nodeService.refresh( RefreshMode.ALL );
 
         queryAndAssert( "fulltext('title', 'testing', 'AND')", 1 );
@@ -483,15 +486,15 @@ class FindNodesByQueryCommandTest_func_fulltext
         final PropertyTree data = new PropertyTree();
         data.addString( "title", "testing.delimiter" );
 
-        createNode( CreateNodeParams.create().
-            name( "my-node-1" ).
-            parent( NodePath.ROOT ).
-            data( data ).
-            indexConfigDocument( PatternIndexConfigDocument.create().
-                analyzer( NodeConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER ).
-                defaultConfig( IndexConfig.BY_TYPE ).
-                build() ).
-            build() );
+        createNode( CreateNodeParams.create()
+                        .name( "my-node-1" )
+                        .parent( NodePath.ROOT )
+                        .data( data )
+                        .indexConfigDocument( PatternIndexConfigDocument.create()
+                                                  .analyzer( NodeConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER )
+                                                  .defaultConfig( IndexConfig.BY_TYPE )
+                                                  .build() )
+                        .build() );
         nodeService.refresh( RefreshMode.ALL );
 
         queryAndAssert( "fulltext('title', 'testing', 'AND')", 1 );

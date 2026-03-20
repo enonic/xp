@@ -5,6 +5,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 public class IndexLanguageController
@@ -89,7 +90,7 @@ public class IndexLanguageController
 
     private static String normalizeBase( final Locale language )
     {
-        final String lang = Objects.requireNonNullElse( language, Locale.ROOT ).getLanguage();
+        final String lang = Objects.requireNonNull( language ).getLanguage();
         if ( "no".equals( lang ) )
         {
             return "nb";
@@ -99,7 +100,7 @@ public class IndexLanguageController
 
     private static String normalize( final Locale language )
     {
-        final Locale locale = Objects.requireNonNullElse( language, Locale.ROOT );
+        final Locale locale = Objects.requireNonNull( language );
         if ( "pt".equals( locale.getLanguage() ) && "BR".equals( language.getCountry() ) )
         {
             return "pt-BR";
@@ -107,19 +108,19 @@ public class IndexLanguageController
         return normalizeBase( language );
     }
 
-    public static String resolveAnalyzer( final Locale language )
+    public static String resolveAnalyzer( final @NonNull Locale language )
     {
         final Data data = LANGUAGE_DATA.get( normalize( language ) );
         return data != null ? data.analyzer() : null;
     }
 
-    public static IndexValueType resolveStemmedIndexValueType( final Locale language )
+    public static IndexValueType resolveStemmedIndexValueType( final @NonNull Locale language )
     {
         final Data data = LANGUAGE_DATA.get( normalize( language ) );
         return data != null ? data.stemmedType() : null;
     }
 
-    public static IndexValueType resolveOrderByIndexValueType( final Locale language )
+    public static IndexValueType resolveOrderByIndexValueType( final @NonNull Locale language )
     {
         final Data data = LANGUAGE_DATA.get( normalizeBase( language ) );
         return data != null ? data.orderByType() : DUCET;

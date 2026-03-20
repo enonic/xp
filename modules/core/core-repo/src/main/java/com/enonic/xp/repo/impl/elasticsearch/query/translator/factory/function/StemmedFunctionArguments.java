@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.function;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.SearchQueryFieldNameResolver;
@@ -21,7 +22,7 @@ public class StemmedFunctionArguments
     @Override
     protected String resolveAnalyzer( final String language )
     {
-        this.language = Locale.forLanguageTag( language );
+        this.language = Locale.forLanguageTag( Objects.requireNonNull( language, "language is required" ) );
         return IndexLanguageController.resolveAnalyzer( this.language );
     }
 

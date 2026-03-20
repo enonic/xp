@@ -1,8 +1,9 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+
+import org.elasticsearch.index.IndexNotFoundException;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.RefreshMode;
@@ -29,27 +30,21 @@ public class RefreshCommand
         final RepositoryId repositoryId =
             Objects.requireNonNullElse( ContextAccessor.current().getRepositoryId(), SystemConstants.SYSTEM_REPO_ID );
 
-        if ( !indexServiceInternal.indicesExists( IndexNameResolver.resolveStorageIndexName( repositoryId ) ) )
+        final Set<String> indices = switch ( refreshMode )
         {
-            throw new IndexException( "Cannot refresh index, index for repository [" + repositoryId + "] does not exist" );
-        }
+            case ALL -> IndexNameResolver.resolveIndexNames( repositoryId );
+            case SEARCH -> Set.of( IndexNameResolver.resolveSearchIndexName( repositoryId ) );
+            case STORAGE -> Set.of( IndexNameResolver.resolveStorageIndexName( repositoryId ) );
+        };
 
-        final List<String> indices = new ArrayList<>();
-
-        if ( refreshMode.equals( RefreshMode.ALL ) )
+        try
         {
-            indices.addAll( IndexNameResolver.resolveIndexNames( repositoryId ) );
+            this.indexServiceInternal.refresh( indices.toArray( String[]::new ) );
         }
-        else if ( refreshMode.equals( RefreshMode.SEARCH ) )
+        catch ( IndexNotFoundException e )
         {
-            indices.add( IndexNameResolver.resolveSearchIndexName( repositoryId ) );
+            throw new IndexException( "Cannot refresh index, index for repository [" + repositoryId + "] does not exist", e );
         }
-        else
-        {
-            indices.add( IndexNameResolver.resolveStorageIndexName( repositoryId ) );
-        }
-
-        this.indexServiceInternal.refresh( indices.toArray( new String[0] ) );
     }
 
     public static Builder create()

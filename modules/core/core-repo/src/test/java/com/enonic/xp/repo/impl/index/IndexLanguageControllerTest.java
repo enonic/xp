@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class IndexLanguageControllerTest
 {
@@ -45,7 +46,12 @@ public class IndexLanguageControllerTest
     void resolveAnalyzer_returns_null_for_unknown()
     {
         assertNull( IndexLanguageController.resolveAnalyzer( Locale.forLanguageTag( "xyz" ) ) );
-        assertNull( IndexLanguageController.resolveAnalyzer( null ) );
+    }
+
+    @Test
+    void resolveAnalyzer_null_throws_NPE()
+    {
+        assertThrows( NullPointerException.class, () -> IndexLanguageController.resolveAnalyzer( null ) );
     }
 
     @Test
@@ -60,6 +66,11 @@ public class IndexLanguageControllerTest
     void resolveStemmedIndexValueType_returns_null_for_unknown()
     {
         assertNull( IndexLanguageController.resolveStemmedIndexValueType( Locale.forLanguageTag( "xyz" ) ) );
-        assertNull( IndexLanguageController.resolveStemmedIndexValueType( null ) );
+    }
+
+    @Test
+    void resolveStemmedIndexValueType_null_throws_NPE()
+    {
+        assertThrows( NullPointerException.class, () -> IndexLanguageController.resolveStemmedIndexValueType( null ) );
     }
 }

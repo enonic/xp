@@ -1,7 +1,6 @@
 package com.enonic.xp.core;
 
 import java.nio.file.Path;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -505,18 +504,6 @@ public abstract class AbstractNodeTest
         return doFindByQuery( query );
     }
 
-    protected void assertOrder( final FindNodesByQueryResult result, NodeId... ids )
-    {
-        assertEquals( ids.length, result.getNodeHits().getSize() );
-
-        final Iterator<Node> iterator = getNodes( result.getNodeIds() ).iterator();
-
-        for ( final NodeId id : ids )
-        {
-            assertEquals( id, iterator.next().id() );
-        }
-    }
-
     protected final void createNodes( final Node parent, final int numberOfNodes, final int maxLevels, final int level )
     {
         this.createNodes( parent, numberOfNodes, maxLevels, level, ( child ) -> {
@@ -588,7 +575,7 @@ public abstract class AbstractNodeTest
 
     private void doPrintChildren( int ident, final Node root )
     {
-        System.out.println( " " .repeat( ident ) + "'--" + Objects.requireNonNullElse( root.name(), "" ) + " (" + root.id() + ")" );
+        System.out.println( " ".repeat( ident ) + "'--" + Objects.requireNonNullElse( root.name(), "" ) + " (" + root.id() + ")" );
 
         ident += 3;
 

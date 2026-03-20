@@ -11,6 +11,7 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class FindNodesByQueryCommandTest_func_pathMatch
@@ -25,10 +26,7 @@ class FindNodesByQueryCommandTest_func_pathMatch
     @Test
     void matches_subPath()
     {
-        createNode( CreateNodeParams.create().
-            name( "node1" ).
-            parent( NodePath.ROOT ).
-            build() );
+        createNode( CreateNodeParams.create().name( "node1" ).parent( NodePath.ROOT ).build() );
         nodeService.refresh( RefreshMode.ALL );
 
         final FindNodesByQueryResult result = doQuery( "pathMatch('_path', '/node1/node1_1/node1_1_1')" );
@@ -40,54 +38,36 @@ class FindNodesByQueryCommandTest_func_pathMatch
     @Test
     void matches_subPath_minimum_match()
     {
-        final Node node1 = createNode( CreateNodeParams.create().
-            name( "node1" ).
-            setNodeId( NodeId.from( "node1" ) ).
-            parent( NodePath.ROOT ).
-            build() );
+        final Node node1 =
+            createNode( CreateNodeParams.create().name( "node1" ).setNodeId( NodeId.from( "node1" ) ).parent( NodePath.ROOT ).build() );
 
-        final Node node1_1 = createNode( CreateNodeParams.create().
-            name( "node1_1" ).
-            setNodeId( NodeId.from( "node1_1" ) ).
-            parent( node1.path() ).
-            build() );
+        final Node node1_1 =
+            createNode( CreateNodeParams.create().name( "node1_1" ).setNodeId( NodeId.from( "node1_1" ) ).parent( node1.path() ).build() );
 
-        final Node node1_1_1 = createNode( CreateNodeParams.create().
-            name( "node1_1_1" ).
-            setNodeId( NodeId.from( "node1_1_1" ) ).
-            parent( node1_1.path() ).
-            build() );
+        final Node node1_1_1 = createNode(
+            CreateNodeParams.create().name( "node1_1_1" ).setNodeId( NodeId.from( "node1_1_1" ) ).parent( node1_1.path() ).build() );
         nodeService.refresh( RefreshMode.ALL );
 
         final FindNodesByQueryResult result = doQuery( "pathMatch('_path', '/node1/node1_1/node1_1_1', 2)" );
 
-        assertOrder( result, node1_1_1.id(), node1_1.id() );
+        assertThat( result.getNodeIds() ).containsExactly( node1_1_1.id(), node1_1.id() );
     }
 
     @Test
     void score_order_most_matching_first()
     {
-        final Node node1 = createNode( CreateNodeParams.create().
-            name( "node1" ).
-            setNodeId( NodeId.from( "node1" ) ).
-            parent( NodePath.ROOT ).
-            build() );
+        final Node node1 =
+            createNode( CreateNodeParams.create().name( "node1" ).setNodeId( NodeId.from( "node1" ) ).parent( NodePath.ROOT ).build() );
 
-        final Node node1_1 = createNode( CreateNodeParams.create().
-            name( "node1_1" ).
-            setNodeId( NodeId.from( "node1_1" ) ).
-            parent( node1.path() ).
-            build() );
+        final Node node1_1 =
+            createNode( CreateNodeParams.create().name( "node1_1" ).setNodeId( NodeId.from( "node1_1" ) ).parent( node1.path() ).build() );
 
-        final Node node1_1_1 = createNode( CreateNodeParams.create().
-            name( "node1_1_1" ).
-            setNodeId( NodeId.from( "node1_1_1" ) ).
-            parent( node1_1.path() ).
-            build() );
+        final Node node1_1_1 = createNode(
+            CreateNodeParams.create().name( "node1_1_1" ).setNodeId( NodeId.from( "node1_1_1" ) ).parent( node1_1.path() ).build() );
         nodeService.refresh( RefreshMode.ALL );
 
         final FindNodesByQueryResult result = doQuery( "pathMatch('_path', '/node1/node1_1/node1_1_1')" );
 
-        assertOrder( result, node1_1_1.id(), node1_1.id(), node1.id() );
+        assertThat( result.getNodeIds() ).containsExactly( node1_1_1.id(), node1_1.id(), node1.id() );
     }
 }

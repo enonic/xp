@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.dsl;
 
 import java.util.Locale;
+import java.util.Objects;
 
 import org.elasticsearch.index.query.QueryBuilder;
 
@@ -19,7 +20,7 @@ class StemmedQueryBuilder
     {
         super( expression );
 
-        language = Locale.forLanguageTag( getString( "language" ) );
+        language = Locale.forLanguageTag( Objects.requireNonNull( getString( "language" ), "language is required" ) );
     }
 
     @Override
