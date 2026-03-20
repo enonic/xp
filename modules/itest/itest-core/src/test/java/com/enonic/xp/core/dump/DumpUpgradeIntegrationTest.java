@@ -6,6 +6,7 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -184,20 +185,11 @@ class DumpUpgradeIntegrationTest
     {
         try (InputStream is = DumpUpgradeIntegrationTest.class.getClassLoader().getResourceAsStream( resourceName ))
         {
-            if ( is == null )
-            {
-                throw new IllegalStateException( "Resource not found: " + resourceName );
-            }
-            try (ZipInputStream zis = new ZipInputStream( is ))
+            try (ZipInputStream zis = new ZipInputStream( Objects.requireNonNull( is ) ))
             {
                 ZipEntry entry;
                 while ( ( entry = zis.getNextEntry() ) != null )
                 {
-                    // Skip macOS metadata
-                    if ( entry.getName().startsWith( "__MACOSX" ) )
-                    {
-                        continue;
-                    }
                     final Path entryPath = targetDir.resolve( entry.getName() );
                     if ( entry.isDirectory() )
                     {
