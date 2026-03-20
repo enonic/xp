@@ -36,7 +36,7 @@ public class SchedulerUpgrader
             return null;
         }
 
-        boolean modified = false;
+        boolean dataModified = false;
 
         for ( String propertyName : TIME_PROPERTIES )
         {
@@ -47,32 +47,28 @@ public class SchedulerUpgrader
                 if ( !truncated.equals( value ) )
                 {
                     data.setInstant( propertyName, truncated );
-                    modified = true;
+                    dataModified = true;
                 }
             }
         }
 
-        final boolean nodeTypeChanged = !SchedulerConstants.NODE_TYPE.equals( nodeVersion.nodeType() );
-
-        if ( nodeTypeChanged && modified )
-        {
-            LOG.info( "Changed nodeType to [{}] and truncated time properties for node [{}] in repository [{}]",
-                      SchedulerConstants.NODE_TYPE, nodeVersion.id(), repositoryId );
-        }
-        else if ( nodeTypeChanged )
-        {
-            LOG.info( "Changed nodeType to [{}] for node [{}] in repository [{}]", SchedulerConstants.NODE_TYPE, nodeVersion.id(),
-                      repositoryId );
-        }
-        else if ( modified )
+        if ( dataModified )
         {
             LOG.info( "Truncated time properties to millis for node [{}] in repository [{}]", nodeVersion.id(), repositoryId );
         }
 
+        final boolean nodeTypeChanged = !SchedulerConstants.NODE_TYPE.equals( nodeVersion.nodeType() );
+
         if ( nodeTypeChanged )
         {
-            return NodeStoreVersion.create( nodeVersion ).nodeType( SchedulerConstants.NODE_TYPE ).build();
+            LOG.info( "Changed nodeType to [{}] for node [{}] in repository [{}]", SchedulerConstants.NODE_TYPE, nodeVersion.id(),
+                      repositoryId );
         }
-        return modified ? nodeVersion : null;
+
+        if ( !dataModified && !nodeTypeChanged )
+        {
+            return null;
+        }
+        return NodeStoreVersion.create( nodeVersion ).nodeType( SchedulerConstants.NODE_TYPE ).build();
     }
 }

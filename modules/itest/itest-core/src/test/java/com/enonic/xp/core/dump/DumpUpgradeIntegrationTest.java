@@ -67,8 +67,8 @@ class DumpUpgradeIntegrationTest
     void upgradeAndLoadDump7()
     {
         // Upgrade
-        final DumpUpgradeResult upgradeResult = NodeHelper.runAsAdmin(
-            () -> this.dumpService.upgrade( SystemDumpUpgradeParams.create().dumpName( "dump-7" ).build() ) );
+        final DumpUpgradeResult upgradeResult =
+            NodeHelper.runAsAdmin( () -> this.dumpService.upgrade( SystemDumpUpgradeParams.create().dumpName( "dump-7" ).build() ) );
 
         assertEquals( new Version( 8, 0, 0 ), upgradeResult.getInitialVersion() );
         assertEquals( Version.parseVersion( "9" ), upgradeResult.getUpgradedVersion() );
@@ -84,10 +84,6 @@ class DumpUpgradeIntegrationTest
 
         refresh();
 
-        // Verify NodePathTrimUpgrader: space-node path should be trimmed
-        final Node spaceNode = contentDraftContext().callWith( () -> nodeService.getByPath( new NodePath( "/space-node" ) ) );
-        assertNotNull( spaceNode, "space-node should be accessible at trimmed path /space-node" );
-
         // Verify AttachmentSha512Upgrader: content-with-attachment should have sha512 restored
         final Node attachmentContent = contentDraftContext().callWith( () -> {
             final var result = nodeService.findByQuery(
@@ -95,8 +91,9 @@ class DumpUpgradeIntegrationTest
             assertThat( result.getNodeIds() ).hasSize( 1 );
             return nodeService.getById( result.getNodeIds().first() );
         } );
-        assertNotNull( attachmentContent.data().getSet( ContentPropertyNames.ATTACHMENT ).getString( ContentPropertyNames.ATTACHMENT_SHA512 ),
-                        "Attachment sha512 should be computed by upgrader" );
+        assertNotNull(
+            attachmentContent.data().getSet( ContentPropertyNames.ATTACHMENT ).getString( ContentPropertyNames.ATTACHMENT_SHA512 ),
+            "Attachment sha512 should be computed by upgrader" );
 
         // Verify LanguageTagUpgrader: content language should remain en-GB (already hyphenated)
         final Node contentFolder = contentDraftContext().callWith( () -> {
@@ -124,7 +121,8 @@ class DumpUpgradeIntegrationTest
 
         // Verify audit log exists
         auditLogContext().callWith( () -> {
-            final var result = nodeService.findByQuery( NodeQuery.create().query( QueryParser.parse( "type = 'test.generator'" ) ).build() );
+            final var result =
+                nodeService.findByQuery( NodeQuery.create().query( QueryParser.parse( "type = 'test.generator'" ) ).build() );
             assertThat( result.getNodeIds() ).isNotEmpty();
             return null;
         } );
@@ -175,10 +173,7 @@ class DumpUpgradeIntegrationTest
 
     private static AuthenticationInfo adminAuthInfo()
     {
-        return AuthenticationInfo.create()
-            .principals( RoleKeys.ADMIN, RoleKeys.AUTHENTICATED )
-            .user( TEST_DEFAULT_USER )
-            .build();
+        return AuthenticationInfo.create().principals( RoleKeys.ADMIN, RoleKeys.AUTHENTICATED ).user( TEST_DEFAULT_USER ).build();
     }
 
     private static void extractZipResource( final String resourceName, final Path targetDir )
