@@ -1,3 +1,4 @@
+kind: "Layout"
 regions:
   - "main"
   - "aside"

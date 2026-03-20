@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.content.parser;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -19,9 +20,10 @@ public final class YmlMixinDescriptorParser
 
     public static MixinDescriptor.Builder parse( final String resource, final ApplicationKey currentApplication )
     {
-        return PARSER.parse( resource, MixinDescriptor.Builder.class, currentApplication );
+        return PARSER.parse( "Mixin", resource, MixinDescriptor.Builder.class, currentApplication );
     }
 
+    @JsonIgnoreProperties("kind")
     private abstract static class MixinDescriptorBuilderMixIn
     {
         @JsonProperty("form")

@@ -1,3 +1,4 @@
+kind: "IdProvider"
 form:
   - type: "FormFragment"
     name: "myFragment"

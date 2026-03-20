@@ -1,3 +1,4 @@
+kind: "Macro"
 displayName: "Macro 1"
 description: "Macro 1 description"
 invalid-form:

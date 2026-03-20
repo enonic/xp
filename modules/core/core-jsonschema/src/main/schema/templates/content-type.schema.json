@@ -3,6 +3,10 @@
   "$id": "@schemaBaseUrl@/@schemaVersion@/content-type.schema.json",
   "type": "object",
   "properties": {
+    "kind": {
+      "type": "string",
+      "const": "ContentType"
+    },
     "superType": {
       "type": "string"
     },
@@ -35,6 +39,9 @@
     }
   },
   "additionalProperties": false,
+  "required": [
+    "kind"
+  ],
   "$defs": {
     "localizedTextDef": {},
     "genericValueDef": {},

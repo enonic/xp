@@ -1,3 +1,4 @@
+kind: "CMS"
 form:
   - type: "ItemSet"
     name: "mySet"

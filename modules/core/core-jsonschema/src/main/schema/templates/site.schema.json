@@ -3,6 +3,10 @@
   "$id": "@schemaBaseUrl@/@schemaVersion@/site.schema.json",
   "type": "object",
   "properties": {
+    "kind": {
+      "type": "string",
+      "const": "Site"
+    },
     "processors": {
       "type": "array",
       "items": {
@@ -22,6 +26,9 @@
       }
     }
   },
+  "required": [
+    "kind"
+  ],
   "additionalProperties": false,
   "$defs": {
     "processor": {

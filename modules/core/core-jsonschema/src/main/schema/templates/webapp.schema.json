@@ -3,6 +3,10 @@
   "$id": "@schemaBaseUrl@/@schemaVersion@/webapp.schema.json",
   "type": "object",
   "properties": {
+    "kind": {
+      "type": "string",
+      "const": "WebApp"
+    },
     "apis": {
       "type": "array",
       "items": {
@@ -10,5 +14,8 @@
       }
     }
   },
+  "required": [
+    "kind"
+  ],
   "additionalProperties": false
 }

@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.idprovider;
 
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -22,9 +23,10 @@ class YmlIdProviderDescriptorParser
 
     public static IdProviderDescriptor.Builder parse( final String resource, final ApplicationKey currentApplication )
     {
-        return PARSER.parse( resource, IdProviderDescriptor.Builder.class, currentApplication );
+        return PARSER.parse( "IdProvider", resource, IdProviderDescriptor.Builder.class, currentApplication );
     }
 
+    @JsonIgnoreProperties("kind")
     private abstract static class IdProviderDescriptorBuilderMapper
     {
         @JsonProperty("mode")

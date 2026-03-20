@@ -3,6 +3,10 @@
   "$id": "@schemaBaseUrl@/@schemaVersion@/task.schema.json",
   "type": "object",
   "properties": {
+    "kind": {
+      "type": "string",
+      "const": "Task"
+    },
     "description": {
       "type": "string"
     },
@@ -11,6 +15,9 @@
     }
   },
   "additionalProperties": false,
+  "required": [
+    "kind"
+  ],
   "$defs": {
     "inputsDef": {},
     "fieldSetDef": {},

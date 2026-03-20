@@ -1,3 +1,4 @@
+kind: "Style"
 css: "assets/styles.css"
 image:
   - name: "editor-align-justify"

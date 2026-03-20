@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.service;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -18,9 +19,10 @@ final class YmlServiceDescriptorParser
 
     static ServiceDescriptor.Builder parse( final String resource, final ApplicationKey currentApplication )
     {
-        return PARSER.parse( resource, ServiceDescriptor.Builder.class, currentApplication );
+        return PARSER.parse( "Service", resource, ServiceDescriptor.Builder.class, currentApplication );
     }
 
+    @JsonIgnoreProperties("kind")
     private abstract static class ServiceDescriptorBuilderMapper
     {
         @JsonProperty("allow")

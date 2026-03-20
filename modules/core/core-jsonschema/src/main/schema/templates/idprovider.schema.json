@@ -3,6 +3,10 @@
   "$id": "@schemaBaseUrl@/@schemaVersion@/idprovider.schema.json",
   "type": "object",
   "properties": {
+    "kind": {
+      "type": "string",
+      "const": "IdProvider"
+    },
     "mode": {
       "type": "string"
     },
@@ -11,6 +15,9 @@
     }
   },
   "additionalProperties": false,
+  "required": [
+    "kind"
+  ],
   "$defs": {
     "localizedTextDef": {},
     "inputsDef": {},

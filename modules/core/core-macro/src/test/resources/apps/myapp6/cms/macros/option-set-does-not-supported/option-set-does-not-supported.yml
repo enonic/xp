@@ -1,3 +1,4 @@
+kind: "Macro"
 form:
   - type: "OptionSet"
     name: "radioOptionSet"

@@ -3,6 +3,10 @@
   "$id": "@schemaBaseUrl@/@schemaVersion@/part.schema.json",
   "type": "object",
   "properties": {
+    "kind": {
+      "type": "string",
+      "const": "Part"
+    },
     "displayName": {
       "$ref": "#/$defs/localizedTextDef"
     },
@@ -16,6 +20,9 @@
       "$ref": "#/$defs/genericValueDef"
     }
   },
+  "required": [
+    "kind"
+  ],
   "additionalProperties": false,
   "$defs": {
     "localizedTextDef": {},

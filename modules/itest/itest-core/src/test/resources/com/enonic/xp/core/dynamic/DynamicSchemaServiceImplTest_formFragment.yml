@@ -1,3 +1,4 @@
+kind: "FormFragment"
 displayName: "Virtual FormFragment"
 description: "FormFragment description"
 form:

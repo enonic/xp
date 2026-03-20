@@ -1,3 +1,4 @@
+kind: "API"
 displayName: "My API"
 description: "My API description"
 documentationUrl: "https://docs.example.com"

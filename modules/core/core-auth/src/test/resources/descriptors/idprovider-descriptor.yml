@@ -1,3 +1,4 @@
+kind: "IdProvider"
 mode: "MIXED"
 form:
   - type: "TextLine"

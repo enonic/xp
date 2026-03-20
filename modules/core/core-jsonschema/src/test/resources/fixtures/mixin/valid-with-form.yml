@@ -1,3 +1,4 @@
+kind: "Mixin"
 displayName: "My Mixin"
 description: "Mixin description"
 form:

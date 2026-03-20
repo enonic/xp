@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.schema;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -19,9 +20,10 @@ public final class YmlFormFragmentParser
 
     public static FormFragmentDescriptor.Builder parse( final String resource, final ApplicationKey currentApplication )
     {
-        return PARSER.parse( resource, FormFragmentDescriptor.Builder.class, currentApplication );
+        return PARSER.parse( "FormFragment", resource, FormFragmentDescriptor.Builder.class, currentApplication );
     }
 
+    @JsonIgnoreProperties("kind")
     private abstract static class FormFragmentBuilderMixIn
     {
         @JsonCreator

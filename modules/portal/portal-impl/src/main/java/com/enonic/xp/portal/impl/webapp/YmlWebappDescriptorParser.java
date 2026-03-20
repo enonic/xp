@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.webapp;
 
 import com.fasterxml.jackson.annotation.JacksonInject;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -19,9 +20,10 @@ public class YmlWebappDescriptorParser
 
     static WebappDescriptor.Builder parse( final String resource, final ApplicationKey currentApplication )
     {
-        return PARSER.parse( resource, WebappDescriptor.Builder.class, currentApplication );
+        return PARSER.parse( "WebApp", resource, WebappDescriptor.Builder.class, currentApplication );
     }
 
+    @JsonIgnoreProperties("kind")
     private abstract static class WebappDescriptorMapper
     {
         @JsonProperty("apis")

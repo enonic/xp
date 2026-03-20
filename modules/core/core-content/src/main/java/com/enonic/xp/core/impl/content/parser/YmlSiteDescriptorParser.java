@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -43,9 +44,10 @@ public final class YmlSiteDescriptorParser
 
     public static SiteDescriptor.Builder parse( final String resource, final ApplicationKey currentApplication )
     {
-        return PARSER.parse( resource, SiteDescriptor.Builder.class, currentApplication );
+        return PARSER.parse( "Site", resource, SiteDescriptor.Builder.class, currentApplication );
     }
 
+    @JsonIgnoreProperties("kind")
     abstract static class SiteDescriptorBuilderMixIn
     {
         @JsonCreator

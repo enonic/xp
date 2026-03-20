@@ -1,3 +1,4 @@
+kind: "Mixin"
 form:
   - type: "TextLine"
     name: "myField"

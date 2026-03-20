@@ -1,3 +1,5 @@
+kind: "Site"
+
 processors:
   - name: "background-color-filter"
     order: 10

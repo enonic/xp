@@ -1,3 +1,4 @@
+kind: "Part"
 displayName: "My Part"
 description:
   text: "Description of My Part"
