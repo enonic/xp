@@ -92,7 +92,7 @@ public class ZipDumpWriterV8
         }
     }
 
-    private static DedupZipArchiveOutputStream newZipOutputStream( final Path basePath, final String dumpName )
+    public static DedupZipArchiveOutputStream newZipOutputStream( final Path basePath, final String dumpName )
         throws IOException
     {
         return new DedupZipArchiveOutputStream( new ZipArchiveOutputStream(

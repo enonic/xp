@@ -1,7 +1,6 @@
 package com.enonic.xp.repo.impl.dump.upgrade;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 
@@ -14,7 +13,6 @@ import com.enonic.xp.dump.DumpUpgradeResult;
 import com.enonic.xp.repo.impl.dump.RepoDumpException;
 import com.enonic.xp.repo.impl.dump.RepoLoadException;
 import com.enonic.xp.repo.impl.dump.reader.DumpReaderV7;
-import com.enonic.xp.repo.impl.dump.reader.FileDumpReaderV7;
 import com.enonic.xp.repo.impl.dump.reader.ZipDumpReaderV7;
 import com.enonic.xp.repo.impl.dump.upgrade.v8.DumpUpgrader7to8;
 import com.enonic.xp.repo.impl.dump.writer.DumpWriter;
@@ -22,9 +20,9 @@ import com.enonic.xp.repo.impl.dump.writer.ZipDumpWriterV8;
 import com.enonic.xp.upgrade.UpgradeListener;
 import com.enonic.xp.util.Version;
 
-public class DumpUpgraderImpl
+public class DumpUpgraderExecutor
 {
-    private static final Logger LOG = LoggerFactory.getLogger( DumpUpgraderImpl.class );
+    private static final Logger LOG = LoggerFactory.getLogger( DumpUpgraderExecutor.class );
 
     private static final Version SUPPORTED_MODEL_VERSION = new Version( 8, 0, 0 );
 
@@ -32,7 +30,7 @@ public class DumpUpgraderImpl
     {
         final DumpUpgradeResult.Builder result = DumpUpgradeResult.create().dumpName( dumpName );
 
-        try (DumpReaderV7 dumpReader = openDumpReader( basePath, dumpName ))
+        try (DumpReaderV7 dumpReader = ZipDumpReaderV7.create( basePath, dumpName ))
         {
             final Version modelVersion = Objects.requireNonNullElse( dumpReader.getDumpMeta().getModelVersion(), Version.emptyVersion );
 
@@ -71,21 +69,10 @@ public class DumpUpgraderImpl
             result.dumpName( targetDumpName );
             return result.build();
         }
+
         catch ( IOException e )
         {
             throw new RepoDumpException( "Failed to close dump reader/writer", e );
-        }
-    }
-
-    private static DumpReaderV7 openDumpReader( final Path basePath, final String dumpName )
-    {
-        if ( Files.isDirectory( basePath.resolve( dumpName ) ) )
-        {
-            return FileDumpReaderV7.create( basePath, dumpName );
-        }
-        else
-        {
-            return ZipDumpReaderV7.create( basePath, dumpName );
         }
     }
 
@@ -94,6 +81,6 @@ public class DumpUpgraderImpl
         final Path zipPath = Path.of( args[0] );
         final String fileName = zipPath.getFileName().toString();
         Preconditions.checkArgument( fileName.endsWith( ".zip" ), "Argument must end with .zip" );
-        new DumpUpgraderImpl().upgrade( zipPath.getParent(), fileName.substring( 0, fileName.length() - 4 ), null );
+        new DumpUpgraderExecutor().upgrade( zipPath.getParent(), fileName.substring( 0, fileName.length() - 4 ), null );
     }
 }
