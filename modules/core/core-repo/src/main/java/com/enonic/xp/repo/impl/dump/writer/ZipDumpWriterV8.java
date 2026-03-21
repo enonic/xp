@@ -7,7 +7,6 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Objects;
 
-import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.jspecify.annotations.Nullable;
 
@@ -41,7 +40,7 @@ public class ZipDumpWriterV8
 {
     private static final String ZIP_FILE_EXTENSION = ".zip";
 
-    private final ZipArchiveOutputStream zipArchiveOutputStream;
+    private final DedupZipArchiveOutputStream zipArchiveOutputStream;
 
     private final @Nullable ZipDumpBlobStore store;
 
@@ -51,7 +50,7 @@ public class ZipDumpWriterV8
 
     private PathRef currentMetaPath;
 
-    private ZipDumpWriterV8( final PathRef basePath, final ZipArchiveOutputStream zipArchiveOutputStream,
+    private ZipDumpWriterV8( final PathRef basePath, final DedupZipArchiveOutputStream zipArchiveOutputStream,
                              final @Nullable ZipDumpBlobStore store )
     {
         this.basePath = basePath;
@@ -65,11 +64,11 @@ public class ZipDumpWriterV8
         Preconditions.checkArgument( FileNames.isSafeFileName( dumpName ) );
         try
         {
-            final ZipArchiveOutputStream zipArchiveOutputStream = newZipOutputStream( basePath, dumpName );
+            final DedupZipArchiveOutputStream zipArchiveOutputStream = newZipOutputStream( basePath, dumpName );
 
             final PathRef basePathInZip = PathRef.of( dumpName );
             return new ZipDumpWriterV8( basePathInZip, zipArchiveOutputStream,
-                                        new ZipDumpBlobStore( basePathInZip, sourceBlobStore, zipArchiveOutputStream ) );
+                                        new ZipDumpBlobStore( basePathInZip, sourceBlobStore::getRecord, zipArchiveOutputStream ) );
         }
         catch ( IOException e )
         {
@@ -82,7 +81,7 @@ public class ZipDumpWriterV8
         Preconditions.checkArgument( FileNames.isSafeFileName( dumpName ) );
         try
         {
-            final ZipArchiveOutputStream zipArchiveOutputStream = newZipOutputStream( basePath, dumpName );
+            final DedupZipArchiveOutputStream zipArchiveOutputStream = newZipOutputStream( basePath, dumpName );
 
             final PathRef basePathInZip = PathRef.of( dumpName );
             return new ZipDumpWriterV8( basePathInZip, zipArchiveOutputStream, null );
@@ -93,20 +92,12 @@ public class ZipDumpWriterV8
         }
     }
 
-    private static ZipArchiveOutputStream newZipOutputStream( final Path basePath, final String dumpName )
+    private static DedupZipArchiveOutputStream newZipOutputStream( final Path basePath, final String dumpName )
         throws IOException
     {
-        return new ZipArchiveOutputStream(
+        return new DedupZipArchiveOutputStream( new ZipArchiveOutputStream(
             Files.newByteChannel( basePath.resolve( dumpName + ZIP_FILE_EXTENSION ), StandardOpenOption.CREATE, StandardOpenOption.WRITE,
-                                  StandardOpenOption.READ, StandardOpenOption.TRUNCATE_EXISTING ) );
-    }
-
-    @Override
-    public void writeDumpMetaData( final DumpMeta dumpMeta )
-    {
-        final PathRef dumpMetaFile = basePath.resolve( "dump.json" );
-        final byte[] data = new DumpMetaJsonSerializer().serialize( dumpMeta );
-        writeZipEntry( dumpMetaFile.asString(), data );
+                                  StandardOpenOption.READ, StandardOpenOption.TRUNCATE_EXISTING ) ) );
     }
 
     @Override
@@ -145,33 +136,36 @@ public class ZipDumpWriterV8
     }
 
     @Override
+    public void writeDumpMetaData( final DumpMeta dumpMeta )
+    {
+        writeZipEntry( basePath.resolve( "dump.json" ).asString(), ByteSource.wrap( new DumpMetaJsonSerializer().serialize( dumpMeta ) ) );
+    }
+
+    @Override
     public void writeBranchEntry( final BranchDumpEntry branchDumpEntry )
     {
-        final byte[] serializedEntry = serializer.serialize( branchDumpEntry );
-        final String entryName = branchDumpEntry.nodeId() + ".json";
-        writeZipEntry( currentMetaPath.resolve( entryName ).asString(), serializedEntry );
+        writeZipEntry( currentMetaPath.resolve( branchDumpEntry.nodeId() + ".json" ).asString(),
+                       ByteSource.wrap( serializer.serialize( branchDumpEntry ) ) );
     }
 
     @Override
     public void writeVersionsEntry( final VersionsDumpEntry versionsDumpEntry )
     {
-        final byte[] serializedEntry = serializer.serialize( versionsDumpEntry );
-        final String entryName = versionsDumpEntry.nodeId() + ".json";
-        writeZipEntry( currentMetaPath.resolve( entryName ).asString(), serializedEntry );
+        writeZipEntry( currentMetaPath.resolve( versionsDumpEntry.nodeId() + ".json" ).asString(),
+                       ByteSource.wrap( serializer.serialize( versionsDumpEntry ) ) );
     }
 
     @Override
     public void writeCommitEntry( final CommitDumpEntry commitDumpEntry )
     {
-        final byte[] serializedEntry = serializer.serialize( commitDumpEntry );
-        final String entryName = commitDumpEntry.nodeCommitId() + ".json";
-        writeZipEntry( currentMetaPath.resolve( entryName ).asString(), serializedEntry );
+        writeZipEntry( currentMetaPath.resolve( commitDumpEntry.nodeCommitId() + ".json" ).asString(),
+                       ByteSource.wrap( serializer.serialize( commitDumpEntry ) ) );
     }
 
     @Override
-    public void writeRawMetaEntry( final byte[] data, final String entryName )
+    public void writeRawEntry( final String entryName, final byte[] data )
     {
-        writeZipEntry( currentMetaPath.resolve( entryName ).asString(), data );
+        writeZipEntry( currentMetaPath.resolve( entryName ).asString(), ByteSource.wrap( data ) );
     }
 
     @Override
@@ -180,14 +174,9 @@ public class ZipDumpWriterV8
         final BlobKey key = BlobKey.sha256( data );
         final BlobReference reference = new BlobReference( segment, key );
         final PathRef blobPath = DumpBlobStoreUtils.getBlobPathRef( basePath, reference );
-        try
-        {
-            writeZipEntry( blobPath.asString(), data.read() );
-        }
-        catch ( IOException e )
-        {
-            throw new RepoDumpException( "Failed to write blob record", e );
-        }
+
+        writeZipEntry( blobPath.asString(), data );
+
         return key;
     }
 
@@ -220,15 +209,15 @@ public class ZipDumpWriterV8
             .add( new BlobReference( segment, blobKey ) );
     }
 
-    private void writeZipEntry( final String entryPath, final byte[] data )
+    private void writeZipEntry( final String entryPath, final ByteSource data )
     {
+        if ( zipArchiveOutputStream.deduplication.contains( entryPath ) )
+        {
+            return;
+        }
         try
         {
-            final ZipArchiveEntry zipEntry = new ZipArchiveEntry( entryPath );
-            zipEntry.setSize( data.length );
-            zipArchiveOutputStream.putArchiveEntry( zipEntry );
-            zipArchiveOutputStream.write( data );
-            zipArchiveOutputStream.closeArchiveEntry();
+            zipArchiveOutputStream.put( entryPath, data );
         }
         catch ( IOException e )
         {

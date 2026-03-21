@@ -96,9 +96,7 @@ public class ProjectServiceImpl
     private final ProjectConfig config;
 
     public ProjectServiceImpl( final RepositoryService repositoryService, final IndexService indexService, final NodeService nodeService,
-                               final SecurityService securityService,
-                               final EventPublisher eventPublisher,
-                               final ProjectConfig config )
+                               final SecurityService securityService, final EventPublisher eventPublisher, final ProjectConfig config )
     {
         this.repositoryService = repositoryService;
         this.indexService = indexService;
@@ -118,10 +116,10 @@ public class ProjectServiceImpl
                 final PropertySet projectData = repository.getData().getSet( ProjectConstants.PROJECT_DATA_SET_NAME );
 
                 doInitRootNodes( CreateProjectParams.create()
-                                             .name( ProjectName.from( repository.getId() ) )
-                                             .displayName( projectData.getString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY ) )
-                                             .description( projectData.getString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY ) )
-                                             .build(), null );
+                                     .name( ProjectName.from( repository.getId() ) )
+                                     .displayName( projectData.getString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY ) )
+                                     .description( projectData.getString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY ) )
+                                     .build(), null );
             } );
         } );
     }
@@ -172,6 +170,7 @@ public class ProjectServiceImpl
                               .label( iconData.getString( ContentPropertyNames.ATTACHMENT_LABEL ) )
                               .mimeType( iconData.getString( ContentPropertyNames.ATTACHMENT_MIMETYPE ) )
                               .size( iconData.getLong( ContentPropertyNames.ATTACHMENT_SIZE ) )
+                              .sha512( iconData.getString( ContentPropertyNames.ATTACHMENT_SHA512 ) )
                               .textContent( iconData.getString( ContentPropertyNames.ATTACHMENT_TEXT ) )
                               .build() );
         }
@@ -350,10 +349,10 @@ public class ProjectServiceImpl
         }
 
         return callWithListContext( () -> Stream.concat( Stream.of( project ), doGetParents( project ).stream() )
-                                                                    .map( Project::getSiteConfigs )
-                                                                    .flatMap( SiteConfigs::stream )
-                                                                    .map( SiteConfig::getApplicationKey )
-                                                                    .collect( ApplicationKeys.collector() ) );
+            .map( Project::getSiteConfigs )
+            .flatMap( SiteConfigs::stream )
+            .map( SiteConfig::getApplicationKey )
+            .collect( ApplicationKeys.collector() ) );
     }
 
     @Override
@@ -675,7 +674,8 @@ public class ProjectServiceImpl
 
     private SiteConfigs getProjectSiteConfigs( final PropertyTree contentRootData )
     {
-        return Optional.ofNullable( contentRootData.getSet( ContentPropertyNames.DATA ) ).map( SiteConfigsDataSerializer::fromData )
+        return Optional.ofNullable( contentRootData.getSet( ContentPropertyNames.DATA ) )
+            .map( SiteConfigsDataSerializer::fromData )
             .orElse( SiteConfigs.empty() );
     }
 

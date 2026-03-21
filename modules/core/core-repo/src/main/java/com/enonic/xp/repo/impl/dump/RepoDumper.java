@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -297,10 +296,8 @@ public class RepoDumper
 
         final VersionMeta meta = VersionMetaFactory.create( currentVersion );
 
-        final Collection<String> binaryReferences = this.includeBinaries ? currentNode.getAttachedBinaries()
-            .stream()
-            .map( AttachedBinary::getBlobKey )
-            .collect( Collectors.toList() ) : List.of();
+        final List<String> binaryReferences =
+            this.includeBinaries ? currentNode.getAttachedBinaries().stream().map( AttachedBinary::getBlobKey ).toList() : List.of();
 
         return new BranchDumpEntry( nodeId, meta, binaryReferences );
     }

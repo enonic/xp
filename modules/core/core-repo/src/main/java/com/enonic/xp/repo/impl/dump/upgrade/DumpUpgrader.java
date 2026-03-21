@@ -1,7 +1,5 @@
 package com.enonic.xp.repo.impl.dump.upgrade;
 
-import java.nio.file.Path;
-
 import com.enonic.xp.dump.DumpUpgradeStepResult;
 import com.enonic.xp.repo.impl.dump.writer.DumpWriter;
 import com.enonic.xp.util.Version;
@@ -10,9 +8,10 @@ public interface DumpUpgrader
 {
     Version getModelVersion();
 
-    default String getName() {
+    default String getName()
+    {
         return getClass().getSimpleName();
     }
 
-    DumpUpgradeStepResult upgrade( Path basePath, String dumpName, DumpWriter dumpWriter );
+    DumpUpgradeStepResult upgrade( DumpWriter dumpWriter );
 }

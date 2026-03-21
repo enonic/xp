@@ -13,7 +13,6 @@ import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.regex.Matcher;
@@ -34,12 +33,9 @@ import com.enonic.xp.blob.SegmentLevel;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.core.internal.FileNames;
-import com.enonic.xp.dump.BranchDumpResult;
 import com.enonic.xp.dump.BranchLoadResult;
 import com.enonic.xp.dump.CommitsLoadResult;
 import com.enonic.xp.dump.LoadError;
-import com.enonic.xp.dump.RepoDumpResult;
-import com.enonic.xp.dump.SystemDumpResult;
 import com.enonic.xp.dump.SystemLoadListener;
 import com.enonic.xp.dump.VersionsLoadResult;
 import com.enonic.xp.index.ChildOrder;
@@ -71,8 +67,6 @@ public class ZipDumpReaderV8
     implements DumpReader
 {
     private static final Pattern ROOT_DUMP_DIR_PATTERN = Pattern.compile( "^([^/]+)/dump\\.json$" );
-
-    private static final Set<String> RESERVED_DIRS = Set.of( "_versions", "_commits" );
 
     private final SystemLoadListener listener;
 
@@ -147,9 +141,7 @@ public class ZipDumpReaderV8
     {
         final PathRef repoPath = basePath.resolve( "meta" ).resolve( repositoryId.toString() );
 
-        return listDirectories( repoPath ).filter( name -> !RESERVED_DIRS.contains( name ) )
-            .map( Branch::from )
-            .collect( Branches.collector() );
+        return listDirectories( repoPath ).filter( name -> !name.startsWith( "_" ) ).map( Branch::from ).collect( Branches.collector() );
     }
 
     @Override
@@ -158,7 +150,7 @@ public class ZipDumpReaderV8
     {
         final PathRef dirPath = basePath.resolve( "meta" ).resolve( repositoryId.toString() ).resolve( branch.toString() );
 
-        listener.loadingBranch( repositoryId, branch, getBranchSuccessfulCountFromMeta( repositoryId, branch ) );
+        listener.loadingBranch( repositoryId, branch, getDumpMeta().getBranchSuccessfulCountFromMeta( repositoryId, branch ) );
 
         final BranchLoadResult.Builder builder = BranchLoadResult.create( branch );
 
@@ -232,7 +224,7 @@ public class ZipDumpReaderV8
         final PathRef dumpMetaFile = basePath.resolve( "dump.json" );
         try (InputStream stream = openZipEntryStream( dumpMetaFile ))
         {
-            return new DumpMetaJsonSerializer().toDumpMeta( new String( stream.readAllBytes(), StandardCharsets.UTF_8 ) );
+            return new DumpMetaJsonSerializer().toDumpMeta( stream );
         }
         catch ( IOException e )
         {
@@ -309,8 +301,7 @@ public class ZipDumpReaderV8
         listZipEntries( prefix ).forEach( zipEntry -> {
             try (InputStream stream = zipFile.getInputStream( zipEntry ))
             {
-                final String content = new String( stream.readAllBytes(), StandardCharsets.UTF_8 );
-                processor.processLine( content );
+                processor.processLine( new String( stream.readAllBytes(), StandardCharsets.UTF_8 ) );
                 listener.entryLoaded();
                 result.add( processor.getResult() );
             }
@@ -358,24 +349,6 @@ public class ZipDumpReaderV8
             throw new IOException( "Zip entry not found: " + path.asString() );
         }
         return zipFile.getInputStream( entry );
-    }
-
-    private Long getBranchSuccessfulCountFromMeta( final RepositoryId repositoryId, final Branch branch )
-    {
-        final SystemDumpResult systemDumpResult = getDumpMeta().getSystemDumpResult();
-        if ( systemDumpResult != null )
-        {
-            final RepoDumpResult repoDumpResult = systemDumpResult.get( repositoryId );
-            if ( repoDumpResult != null )
-            {
-                final BranchDumpResult branchDumpResult = repoDumpResult.get( branch );
-                if ( branchDumpResult != null )
-                {
-                    return branchDumpResult.getSuccessful();
-                }
-            }
-        }
-        return null;
     }
 
     private static class ZipEntryByteSource

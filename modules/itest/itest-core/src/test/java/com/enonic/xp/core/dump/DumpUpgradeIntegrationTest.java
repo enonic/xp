@@ -7,8 +7,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.Objects;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -60,7 +58,7 @@ class DumpUpgradeIntegrationTest
             new DumpServiceImpl( eventPublisher, BLOB_STORE, this.nodeService, this.repositoryEntryService, this.nodeRepositoryService,
                                  this.storageService, repoConfiguration );
 
-        extractZipResource( "dump-7.zip", temporaryFolder );
+        copyClasspathResource( "dump-7.zip", temporaryFolder );
     }
 
     @Test
@@ -176,27 +174,11 @@ class DumpUpgradeIntegrationTest
         return AuthenticationInfo.create().principals( RoleKeys.ADMIN, RoleKeys.AUTHENTICATED ).user( TEST_DEFAULT_USER ).build();
     }
 
-    private static void extractZipResource( final String resourceName, final Path targetDir )
+    private static void copyClasspathResource( final String resourceName, final Path targetDir )
     {
         try (InputStream is = DumpUpgradeIntegrationTest.class.getClassLoader().getResourceAsStream( resourceName ))
         {
-            try (ZipInputStream zis = new ZipInputStream( Objects.requireNonNull( is ) ))
-            {
-                ZipEntry entry;
-                while ( ( entry = zis.getNextEntry() ) != null )
-                {
-                    final Path entryPath = targetDir.resolve( entry.getName() );
-                    if ( entry.isDirectory() )
-                    {
-                        Files.createDirectories( entryPath );
-                    }
-                    else
-                    {
-                        Files.createDirectories( entryPath.getParent() );
-                        Files.copy( zis, entryPath );
-                    }
-                }
-            }
+            Files.copy( Objects.requireNonNull( is ), targetDir.resolve( resourceName ) );
         }
         catch ( IOException e )
         {

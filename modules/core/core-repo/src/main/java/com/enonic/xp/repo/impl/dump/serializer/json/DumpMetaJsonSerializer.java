@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.dump.serializer.json;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,7 +25,7 @@ public class DumpMetaJsonSerializer
         }
     }
 
-    public DumpMeta toDumpMeta( final String value )
+    public DumpMeta toDumpMeta( final InputStream value )
     {
         try
         {

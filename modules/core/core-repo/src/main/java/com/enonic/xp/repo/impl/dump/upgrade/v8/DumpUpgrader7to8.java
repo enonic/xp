@@ -1,17 +1,13 @@
 package com.enonic.xp.repo.impl.dump.upgrade.v8;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.BiConsumer;
-import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
@@ -22,16 +18,17 @@ import org.slf4j.LoggerFactory;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.dump.DumpUpgradeStepResult;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.repo.impl.NodeStoreVersion;
+import com.enonic.xp.repo.impl.dump.PathRef;
 import com.enonic.xp.repo.impl.dump.RepoDumpException;
-import com.enonic.xp.repo.impl.dump.blobstore.FileDumpBlobRecord;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
-import com.enonic.xp.repo.impl.dump.reader.FileDumpReaderV7;
+import com.enonic.xp.repo.impl.dump.reader.DumpReaderV7;
 import com.enonic.xp.repo.impl.dump.serializer.json.BranchDumpEntryJson;
 import com.enonic.xp.repo.impl.dump.serializer.json.CommitDumpEntryJson;
 import com.enonic.xp.repo.impl.dump.serializer.json.JsonDumpSerializer;
@@ -56,7 +53,7 @@ public class DumpUpgrader7to8
 {
     private static final Logger LOG = LoggerFactory.getLogger( DumpUpgrader7to8.class );
 
-    private final FileDumpReaderV7 dumpReader;
+    private final DumpReaderV7 dumpReader;
 
     private DumpWriter dumpWriter;
 
@@ -64,13 +61,13 @@ public class DumpUpgrader7to8
 
     private final Map<String, String> blobKeyMapping = new HashMap<>();
 
-    public DumpUpgrader7to8( final FileDumpReaderV7 dumpReader )
+    public DumpUpgrader7to8( final DumpReaderV7 dumpReader )
     {
         this.dumpReader = dumpReader;
     }
 
     @Override
-    public DumpUpgradeStepResult upgrade( final Path basePath, final String dumpName, final DumpWriter dumpWriter )
+    public DumpUpgradeStepResult upgrade( final DumpWriter dumpWriter )
     {
         this.dumpWriter = dumpWriter;
 
@@ -81,9 +78,8 @@ public class DumpUpgrader7to8
             .upgradedVersion( getModelVersion() )
             .stepName( getName() );
 
-        dumpWriter.writeDumpMetaData(
+        this.dumpWriter.writeDumpMetaData(
             DumpMeta.create( sourceDumpMeta ).xpVersion( VersionInfo.get().getVersion() ).modelVersion( getModelVersion() ).build() );
-
         this.dumpReader.getRepositories().forEach( this::upgradeRepository );
         return result.build();
     }
@@ -92,16 +88,8 @@ public class DumpUpgrader7to8
     {
         blobKeyMapping.clear();
 
-        final Path versionsFile = dumpReader.getVersionsFile( repositoryId );
-        if ( Files.exists( versionsFile ) )
-        {
-            upgradeVersionEntries( repositoryId, versionsFile );
-        }
-        final Path commitsFile = dumpReader.getCommitsFile( repositoryId );
-        if ( Files.exists( commitsFile ) )
-        {
-            upgradeCommitEntries( repositoryId, commitsFile );
-        }
+        dumpReader.getVersions( repositoryId ).ifPresent( ref -> upgradeVersionEntries( repositoryId, ref ) );
+        dumpReader.getCommits( repositoryId ).ifPresent( ref -> upgradeCommitEntries( repositoryId, ref ) );
 
         final List<AdditionalDumpEntry> additionalEntries = createAdditionalNodes( repositoryId );
 
@@ -110,11 +98,14 @@ public class DumpUpgrader7to8
             final List<BranchDumpEntryJson> additionalBranchEntries =
                 additionalEntries.stream().filter( e -> e.branches().contains( branch ) ).map( AdditionalDumpEntry::branchEntry ).toList();
 
-            upgradeBranch( repositoryId, branch, additionalBranchEntries );
+            final PathRef entriesFile = dumpReader.getBranchEntries( repositoryId, branch )
+                .orElseThrow( () -> new DumpUpgradeException(
+                    "Branch entries file missing for repository [" + repositoryId + "] and branch [" + branch + "]" ) );
+            upgradeBranchEntries( repositoryId, branch, entriesFile, additionalBranchEntries );
         }
     }
 
-    protected void upgradeVersionEntries( final RepositoryId repositoryId, final Path entriesFile )
+    protected void upgradeVersionEntries( final RepositoryId repositoryId, final PathRef entriesFile )
     {
         dumpWriter.openVersionsMeta( repositoryId );
         try
@@ -124,7 +115,7 @@ public class DumpUpgrader7to8
                 try
                 {
                     final byte[] upgradedEntryContent = processVersionEntry( repositoryId, entryContent );
-                    dumpWriter.writeRawMetaEntry( upgradedEntryContent, entryName );
+                    dumpWriter.writeRawEntry( entryName, upgradedEntryContent );
                 }
                 catch ( Exception e )
                 {
@@ -139,7 +130,7 @@ public class DumpUpgrader7to8
         }
     }
 
-    private void upgradeCommitEntries( final RepositoryId repositoryId, final Path entriesFile )
+    private void upgradeCommitEntries( final RepositoryId repositoryId, final PathRef entriesFile )
     {
         dumpWriter.openCommitsMeta( repositoryId );
         try
@@ -147,27 +138,12 @@ public class DumpUpgrader7to8
             processEntries( ( entryContent, entryName ) -> {
                 final CommitDumpEntryJson commitEntry = JsonDumpSerializer.readValue( entryContent, CommitDumpEntryJson.class );
                 final CommitDumpEntryJson upgraded = CommitDumpEntryJson.from( CommitDumpEntryJson.fromJson( commitEntry ) );
-                dumpWriter.writeRawMetaEntry( JsonDumpSerializer.serialize( upgraded ), entryName );
+                dumpWriter.writeRawEntry( entryName, JsonDumpSerializer.serialize( upgraded ) );
             }, entriesFile );
         }
         finally
         {
             dumpWriter.closeMeta();
-        }
-    }
-
-    protected void upgradeBranch( final RepositoryId repositoryId, final Branch branch,
-                                  final List<BranchDumpEntryJson> additionalBranchEntries )
-    {
-        final Path entriesFile = dumpReader.getBranchEntriesFile( repositoryId, branch );
-        if ( Files.exists( entriesFile ) )
-        {
-            upgradeBranchEntries( repositoryId, branch, entriesFile, additionalBranchEntries );
-        }
-        else
-        {
-            throw new DumpUpgradeException(
-                "Branch entries file missing for repository [" + repositoryId + "] and branch [" + branch + "]" );
         }
     }
 
@@ -223,7 +199,7 @@ public class DumpUpgrader7to8
         return result;
     }
 
-    protected void upgradeBranchEntries( final RepositoryId repositoryId, final Branch branch, final Path entriesFile,
+    protected void upgradeBranchEntries( final RepositoryId repositoryId, final Branch branch, final PathRef entriesFile,
                                          final List<BranchDumpEntryJson> additionalBranchEntries )
     {
         dumpWriter.openBranchMeta( repositoryId, branch );
@@ -236,7 +212,7 @@ public class DumpUpgrader7to8
                     final BranchDumpEntryJson branchEntry = JsonDumpSerializer.readValue( entryContent, BranchDumpEntryJson.class );
 
                     final BranchDumpEntryJson updatedBranchEntry = upgradeBranchEntry( branchEntry );
-                    dumpWriter.writeRawMetaEntry( JsonDumpSerializer.serialize( updatedBranchEntry ), entryName );
+                    dumpWriter.writeRawEntry( entryName, JsonDumpSerializer.serialize( updatedBranchEntry ) );
                 }
                 catch ( Exception e )
                 {
@@ -247,7 +223,7 @@ public class DumpUpgrader7to8
 
             for ( BranchDumpEntryJson additionalEntry : additionalBranchEntries )
             {
-                dumpWriter.writeRawMetaEntry( JsonDumpSerializer.serialize( additionalEntry ), additionalEntry.getNodeId() + ".json" );
+                dumpWriter.writeRawEntry( additionalEntry.getNodeId() + ".json", JsonDumpSerializer.serialize( additionalEntry ) );
             }
         }
         finally
@@ -281,7 +257,7 @@ public class DumpUpgrader7to8
         }
         final BranchDumpEntryJson.Builder builder = BranchDumpEntryJson.create( branchEntry ).meta( metaBuilder.build() );
 
-        final Collection<String> remappedBinaries = remapBinaries( branchEntry.getBinaries() );
+        final List<String> remappedBinaries = remapBinaries( branchEntry.getBinaries() );
         builder.binaries( remappedBinaries );
 
         BranchDumpEntryJson result = builder.build();
@@ -292,10 +268,9 @@ public class DumpUpgrader7to8
         }
 
         return result;
-
     }
 
-    private @Nullable Collection<String> remapBinaries( final Collection<String> binaries )
+    private @Nullable List<String> remapBinaries( final List<String> binaries )
     {
         if ( binaries == null || binaries.isEmpty() )
         {
@@ -312,7 +287,6 @@ public class DumpUpgrader7to8
             }
             else
             {
-                //remapped.add( binaryKey );
                 LOG.warn( "Cannot remap binary key [{}] for branch entry. Skipping", binaryKey );
             }
         }
@@ -328,7 +302,7 @@ public class DumpUpgrader7to8
 
         for ( AttachedBinary binary : dumpEntry.attachedBinaries() )
         {
-            final FileDumpBlobRecord binaryRecord = dumpReader.getRecord( binarySegment, BlobKey.from( binary.getBlobKey() ) );
+            final BlobRecord binaryRecord = dumpReader.getRecord( binarySegment, BlobKey.from( binary.getBlobKey() ) );
             final BlobKey newBlobKey = dumpWriter.addBlobRecord( binarySegment, binaryRecord.getBytes() );
 
             if ( !newBlobKey.toString().equals( binary.getBlobKey() ) )
@@ -349,10 +323,10 @@ public class DumpUpgrader7to8
     private NodeStoreVersion readNodeVersion( final VersionDumpEntryJson versionDumpEntryJson, final Segment nodeSegment,
                                               final Segment indexConfigSegment, final Segment accessControlSegment )
     {
-        final FileDumpBlobRecord nodeRecord = dumpReader.getRecord( nodeSegment, BlobKey.from( versionDumpEntryJson.getNodeBlobKey() ) );
-        final FileDumpBlobRecord indexConfigRecord =
+        final BlobRecord nodeRecord = dumpReader.getRecord( nodeSegment, BlobKey.from( versionDumpEntryJson.getNodeBlobKey() ) );
+        final BlobRecord indexConfigRecord =
             dumpReader.getRecord( indexConfigSegment, BlobKey.from( versionDumpEntryJson.getIndexConfigBlobKey() ) );
-        final FileDumpBlobRecord accessControlRecord =
+        final BlobRecord accessControlRecord =
             dumpReader.getRecord( accessControlSegment, BlobKey.from( versionDumpEntryJson.getAccessControlBlobKey() ) );
 
         try
@@ -418,7 +392,7 @@ public class DumpUpgrader7to8
                 final VersionsDumpEntryJson versionsEntry =
                     VersionsDumpEntryJson.create().nodeId( newNode.nodeId() ).version( versionEntry ).build();
 
-                dumpWriter.writeRawMetaEntry( JsonDumpSerializer.serialize( versionsEntry ), newNode.nodeId() + ".json" );
+                dumpWriter.writeRawEntry( newNode.nodeId() + ".json", JsonDumpSerializer.serialize( versionsEntry ) );
 
                 final BranchDumpEntryJson branchEntry =
                     BranchDumpEntryJson.create().nodeId( newNode.nodeId() ).meta( versionEntry ).build();
@@ -443,7 +417,6 @@ public class DumpUpgrader7to8
             throws IOException;
     }
 
-
     protected @Nullable NodeStoreVersion upgradeNodeVersion( RepositoryId repositoryId, final NodeStoreVersion dumpEntry )
     {
         NodeStoreVersion result = dumpEntry;
@@ -467,9 +440,9 @@ public class DumpUpgrader7to8
         return Version.parseVersion( "9" );
     }
 
-    public void processEntries( final BiConsumer<byte[], String> processor, final Path tarFile )
+    public void processEntries( final BiConsumer<byte[], String> processor, final PathRef tarFile )
     {
-        try (TarArchiveInputStream tarInputStream = openStream( tarFile ))
+        try (TarArchiveInputStream tarInputStream = dumpReader.openTarStream( tarFile ))
         {
             TarArchiveEntry entry = tarInputStream.getNextEntry();
             while ( entry != null )
@@ -482,11 +455,5 @@ public class DumpUpgrader7to8
         {
             throw new RepoDumpException( "Cannot read meta-data", e );
         }
-    }
-
-    private TarArchiveInputStream openStream( final Path metaFile )
-        throws IOException
-    {
-        return new TarArchiveInputStream( new GZIPInputStream( Files.newInputStream( metaFile ) ) );
     }
 }

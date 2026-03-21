@@ -8,13 +8,12 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
-
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.Segment;
-import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
 import com.enonic.xp.repo.impl.dump.model.CommitDumpEntry;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
@@ -100,7 +99,7 @@ class TestDumpWriter
 
 
     @Override
-    public void writeRawMetaEntry( final byte[] data, final String entryName )
+    public void writeRawEntry( final String entryName, final byte[] data )
     {
         // Do nothing
     }

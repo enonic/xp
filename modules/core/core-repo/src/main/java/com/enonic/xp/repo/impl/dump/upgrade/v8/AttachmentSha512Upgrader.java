@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.io.ByteStreams;
 
 import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPropertyNames;
@@ -19,8 +20,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.repo.impl.NodeStoreVersion;
-import com.enonic.xp.repo.impl.dump.blobstore.FileDumpBlobRecord;
-import com.enonic.xp.repo.impl.dump.reader.FileDumpReaderV7;
+import com.enonic.xp.repo.impl.dump.reader.BlobStoreAccess;
 import com.enonic.xp.repo.impl.dump.upgrade.NodeVersionUpgrader;
 import com.enonic.xp.repo.impl.node.NodeConstants;
 import com.enonic.xp.repository.RepositoryId;
@@ -32,11 +32,11 @@ public class AttachmentSha512Upgrader
 {
     private static final Logger LOG = LoggerFactory.getLogger( AttachmentSha512Upgrader.class );
 
-    private final FileDumpReaderV7 dumpReader;
+    private final BlobStoreAccess blobStoreAccess;
 
-    public AttachmentSha512Upgrader( final FileDumpReaderV7 dumpReader )
+    public AttachmentSha512Upgrader( final BlobStoreAccess blobStoreAccess )
     {
-        this.dumpReader = dumpReader;
+        this.blobStoreAccess = blobStoreAccess;
     }
 
     @Override
@@ -81,7 +81,7 @@ public class AttachmentSha512Upgrader
                 continue;
             }
 
-            final String sha512 = computeSha512( binarySegment, attachedBinary.getBlobKey() );
+            final String sha512 = computeSha512( binarySegment, BlobKey.from( attachedBinary.getBlobKey() ) );
             if ( sha512 != null )
             {
                 attachmentSet.addString( ContentPropertyNames.ATTACHMENT_SHA512, sha512 );
@@ -96,11 +96,11 @@ public class AttachmentSha512Upgrader
         return modified ? nodeVersion : null;
     }
 
-    private String computeSha512( final Segment binarySegment, final String blobKey )
+    private String computeSha512( final Segment binarySegment, final BlobKey blobKey )
     {
         try
         {
-            final FileDumpBlobRecord record = dumpReader.getRecord( binarySegment, BlobKey.from( blobKey ) );
+            final BlobRecord record = blobStoreAccess.getRecord( binarySegment, blobKey );
             try (InputStream is = record.getBytes().openStream(); DigestInputStream dis = new DigestInputStream( is,
                                                                                                                  MessageDigests.sha512() ))
             {

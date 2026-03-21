@@ -24,7 +24,7 @@ class FileDumpReaderV7Test
     {
         this.dumpFolder = Files.createDirectory( temporaryFolder.resolve( "myDump" ) );
         createMetaDataFile( dumpFolder );
-        this.fileDumpReaderV7 = FileDumpReaderV7.create( null, temporaryFolder, "myDump" );
+        this.fileDumpReaderV7 = FileDumpReaderV7.create( temporaryFolder, "myDump" );
     }
 
     @Test

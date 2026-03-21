@@ -1,7 +1,6 @@
 package com.enonic.xp.repo.impl.dump.serializer.json;
 
-import java.util.Collection;
-import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -22,14 +21,14 @@ public class BranchDumpEntryJson
 
     @JsonProperty("binaries")
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Collection<String> binaries;
+    private List<String> binaries;
 
     @SuppressWarnings("unused")
     public BranchDumpEntryJson()
     {
     }
 
-    private BranchDumpEntryJson( final String nodeId, final Collection<String> binaries, final VersionDumpEntryJson meta )
+    private BranchDumpEntryJson( final String nodeId, final List<String> binaries, final VersionDumpEntryJson meta )
     {
         this.nodeId = nodeId;
         this.binaries = binaries;
@@ -46,7 +45,7 @@ public class BranchDumpEntryJson
     public static BranchDumpEntry fromJson( final BranchDumpEntryJson json )
     {
         return new BranchDumpEntry( NodeId.from( json.getNodeId() ), VersionDumpEntryJson.fromJson( json.getMeta() ),
-                                    Objects.requireNonNullElse( json.getBinaries(), Collections.emptyList() ) );
+                                    Objects.requireNonNullElse( json.getBinaries(), List.of() ) );
     }
 
     public static BranchDumpEntryJson from( final BranchDumpEntry branchDumpEntry )
@@ -60,7 +59,7 @@ public class BranchDumpEntryJson
         return new Builder( source );
     }
 
-    public Collection<String> getBinaries()
+    public List<String> getBinaries()
     {
         return binaries;
     }
@@ -86,7 +85,7 @@ public class BranchDumpEntryJson
 
         private VersionDumpEntryJson meta;
 
-        private Collection<String> binaries;
+        private List<String> binaries;
 
         private Builder()
         {
@@ -111,7 +110,7 @@ public class BranchDumpEntryJson
             return this;
         }
 
-        public Builder binaries( final Collection<String> binaries )
+        public Builder binaries( final List<String> binaries )
         {
             this.binaries = binaries;
             return this;

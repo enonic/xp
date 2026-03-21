@@ -6,8 +6,8 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.Segment;
-import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
 import com.enonic.xp.repo.impl.dump.model.CommitDumpEntry;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
@@ -33,7 +33,7 @@ public interface DumpWriter
 
     void writeCommitEntry( CommitDumpEntry commitDumpEntry );
 
-    void writeRawMetaEntry( byte[] data, String entryName );
+    void writeRawEntry( String entryName, byte[] data );
 
     void writeNodeVersionBlobs( RepositoryId repositoryId, NodeVersionKey nodeVersionKey );
 
