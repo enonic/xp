@@ -68,7 +68,6 @@ class RepositoryServiceActivatorTest
         final Node mockNode = Node.create().id( NodeId.from( "1" ) ).parentPath( NodePath.ROOT ).build();
         when( nodeStorageService.store( any(), any() ) ).thenReturn( new NodeVersionData( mockNode, mock( NodeVersion.class ) ) );
         when( repositoryEntryService.findRepositoryEntryIds() ).thenReturn( RepositoryIds.create().build() );
-        when( branchService.getBranches( eq( NodeId.ROOT ), any() ) ).thenReturn( Branches.from( Branch.from( "master" ) ) );
     }
 
     @Test
