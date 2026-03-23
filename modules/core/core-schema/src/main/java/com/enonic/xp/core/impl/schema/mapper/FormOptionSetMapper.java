@@ -34,7 +34,7 @@ public abstract class FormOptionSetMapper
         @JsonProperty("helpText")
         abstract FormOptionSet.Builder setHelpText( LocalizedText value );
 
-        @JsonProperty("selected")
+        @JsonProperty("selection")
         abstract FormOptionSet.Builder multiselection( Occurrences value );
 
         @JsonProperty("expanded")
