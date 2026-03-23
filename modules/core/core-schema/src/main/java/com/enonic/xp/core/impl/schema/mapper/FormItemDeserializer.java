@@ -2,7 +2,6 @@ package com.enonic.xp.core.impl.schema.mapper;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Objects;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -35,9 +34,11 @@ public class FormItemDeserializer
 
         final String include = node.path( "include" ).asText( null );
 
+        final ApplicationKey currentApplication =  resolveApplicationKey( ctxt );
+
         if ( include != null && node.size() == 1 )
         {
-            final FormFragmentName fragmentName = resolveFormFragmentName( include, ctxt );
+            final FormFragmentName fragmentName = FormFragmentNameResolver.resolve( include, currentApplication);
             return FormFragment.create().formFragment( fragmentName ).build();
         }
 
@@ -67,23 +68,6 @@ public class FormItemDeserializer
                 yield inputYml.convertToInput();
             }
         };
-    }
-
-    private FormFragmentName resolveFormFragmentName( final String value, final DeserializationContext ctxt )
-        throws JsonMappingException
-    {
-        final ApplicationKey applicationKey = resolveApplicationKey( ctxt );
-
-        final FormFragmentName fragmentName = value.contains( ":" )
-            ? FormFragmentName.from( value )
-            : FormFragmentName.from( applicationKey, value );
-
-        if ( !applicationKey.equals( fragmentName.getApplicationKey() ) )
-        {
-            throw new IllegalArgumentException( "Form fragments from other applications are prohibited" );
-        }
-
-        return fragmentName;
     }
 
     private ApplicationKey resolveApplicationKey( final DeserializationContext ctxt )

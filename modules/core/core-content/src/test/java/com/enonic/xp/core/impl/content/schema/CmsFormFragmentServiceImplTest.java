@@ -69,6 +69,6 @@ class CmsFormFragmentServiceImplTest
             .build();
 
         final UncheckedIOException ex = assertThrows( UncheckedIOException.class, () -> service.inlineFormItems( form ) );
-        assertTrue( ex.getMessage().contains( "Form fragments from other applications are prohibited" ) );
+        assertTrue( ex.getMessage().contains( "Form fragment name must not contain ':'" ) );
     }
 }
