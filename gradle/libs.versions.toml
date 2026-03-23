@@ -63,7 +63,7 @@ bcprov-jdk18on = { module = "org.bouncycastle:bcprov-jdk18on", version = "1.83" 
 
 elasticsearch = { module = "org.elasticsearch:elasticsearch", version = "2.4.6" }
 elasticsearch-icu = { module = "org.elasticsearch.plugin:analysis-icu", version = "2.4.6" }
-icu4j = { module = "com.ibm.icu:icu4j", version = "54.1" }
+icu4j = { module = "com.ibm.icu:icu4j", version = "78.3" }
 
 jna = { module = "net.java.dev.jna:jna", version = "4.1.0" }
 
