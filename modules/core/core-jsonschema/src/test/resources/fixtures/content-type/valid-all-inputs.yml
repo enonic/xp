@@ -110,7 +110,6 @@ form:
       - "/articles/*"
     treeMode: true
     hideToggleIcon: false
-    default: "/articles/default"
     attributes: { }
 
   - type: "ContentTypeFilter"
@@ -221,7 +220,6 @@ form:
       - "/images/*"
     treeMode: false
     hideToggleIcon: true
-    default: "/images/default.jpg"
     attributes: { }
 
   - type: "Instant"
@@ -266,7 +264,6 @@ form:
       - "/media/*"
     treeMode: true
     hideToggleIcon: false
-    default: "/media/default.mp4"
     attributes: { }
 
   - type: "PrincipalSelector"
