@@ -39,6 +39,9 @@ public class YmlContentTypeParserTest
         assertNotNull( contentType.getForm() );
         assertEquals( now, contentType.getCreatedTime() );
 
+        assertNotNull( contentType.getForm().getFormFragment( "myFragment" ) );
+        assertNotNull( contentType.getForm().getFormFragment( "myFragment2" ) );
+
         final GenericValue schemaConfig = contentType.getSchemaConfig();
 
         assertNotNull( schemaConfig );

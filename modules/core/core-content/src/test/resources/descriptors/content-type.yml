@@ -35,8 +35,10 @@ form:
         label:
           text: "Description"
 
+  - include: "myFragment"
+
   - type: "FormFragment"
-    name: "myFragment"
+    name: "myFragment2"
 
   - type: "ItemSet"
     name: "Panel"

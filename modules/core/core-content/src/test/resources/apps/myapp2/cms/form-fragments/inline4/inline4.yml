@@ -1,0 +1,9 @@
+kind: "FormFragment"
+displayName: "FormFragment 4"
+form:
+  - type: "TextLine"
+    name: "text4"
+    label: "Text 4"
+    occurrences:
+      min: 0
+      max: 1

@@ -1,23 +1,47 @@
 {
-  "allOf": [
+  "type": "object",
+  "properties": {
+    "include": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "type": {
+      "const": "FormFragment"
+    }
+  },
+  "oneOf": [
     {
-      "$ref": "#/$defs/formItemDef"
+      "required": [
+        "include"
+      ],
+      "not": {
+        "anyOf": [
+          {
+            "required": [
+              "name"
+            ]
+          },
+          {
+            "required": [
+              "type"
+            ]
+          }
+        ]
+      }
     },
     {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "type": {
-          "const": "FormFragment"
-        }
+      "required": [
+        "type",
+        "name"
+      ],
+      "not": {
+        "required": [
+          "include"
+        ]
       }
     }
   ],
-  "unevaluatedProperties": false,
-  "$defs": {
-    "formItemDef": {},
-    "formItemsDef": {}
-  }
+  "unevaluatedProperties": false
 }
