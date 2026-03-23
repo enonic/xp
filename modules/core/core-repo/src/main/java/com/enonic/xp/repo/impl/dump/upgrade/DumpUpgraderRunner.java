@@ -20,9 +20,9 @@ import com.enonic.xp.repo.impl.dump.writer.ZipDumpWriterV8;
 import com.enonic.xp.upgrade.UpgradeListener;
 import com.enonic.xp.util.Version;
 
-public class DumpUpgraderExecutor
+public class DumpUpgraderRunner
 {
-    private static final Logger LOG = LoggerFactory.getLogger( DumpUpgraderExecutor.class );
+    private static final Logger LOG = LoggerFactory.getLogger( DumpUpgraderRunner.class );
 
     private static final Version SUPPORTED_MODEL_VERSION = new Version( 8, 0, 0 );
 
@@ -81,6 +81,6 @@ public class DumpUpgraderExecutor
         final Path zipPath = Path.of( args[0] );
         final String fileName = zipPath.getFileName().toString();
         Preconditions.checkArgument( fileName.endsWith( ".zip" ), "Argument must end with .zip" );
-        new DumpUpgraderExecutor().upgrade( zipPath.getParent(), fileName.substring( 0, fileName.length() - 4 ), null );
+        new DumpUpgraderRunner().upgrade( zipPath.getParent(), fileName.substring( 0, fileName.length() - 4 ), null );
     }
 }

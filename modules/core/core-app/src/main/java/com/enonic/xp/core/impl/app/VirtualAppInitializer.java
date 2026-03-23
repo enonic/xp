@@ -53,7 +53,7 @@ public class VirtualAppInitializer
 
     private void initializeRepository()
     {
-        if ( repositoryService.get( VirtualAppConstants.VIRTUAL_APP_REPO_ID ) == null )
+        if ( !repositoryService.isInitialized( VirtualAppConstants.VIRTUAL_APP_REPO_ID ) )
         {
             final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create()
                 .repositoryId( VirtualAppConstants.VIRTUAL_APP_REPO_ID )

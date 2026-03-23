@@ -91,6 +91,7 @@ import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.repository.BranchNotFoundException;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryNotFoundException;
+import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
 
@@ -108,6 +109,10 @@ public class NodeServiceImpl
     private final EventPublisher eventPublisher;
 
     private final BinaryService binaryService;
+
+    @SuppressWarnings("unused")
+    @Reference
+    private @Nullable RepositoryService repositoryService;
 
     @Activate
     public NodeServiceImpl( @Reference final IndexServiceInternal indexServiceInternal,

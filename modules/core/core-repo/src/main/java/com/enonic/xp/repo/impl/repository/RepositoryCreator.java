@@ -1,6 +1,5 @@
 package com.enonic.xp.repo.impl.repository;
 
-import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,9 +13,10 @@ import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 
-@Component(service = RepositoryCreator.class)
 public class RepositoryCreator
 {
+    private static final Logger LOG = LoggerFactory.getLogger( RepositoryCreator.class );
+
     private final NodeRepositoryService nodeRepositoryService;
 
     private final NodeStorageService nodeStorageService;
@@ -30,8 +30,6 @@ public class RepositoryCreator
         this.nodeStorageService = nodeStorageService;
         this.repositoryEntryService = repositoryEntryService;
     }
-
-    private static final Logger LOG = LoggerFactory.getLogger( RepositoryCreator.class );
 
     public RepositoryEntry createRepository( final CreateRepositoryParams params, RepositorySettings settings,
                                              final AttachedBinaries attachedBinaries )

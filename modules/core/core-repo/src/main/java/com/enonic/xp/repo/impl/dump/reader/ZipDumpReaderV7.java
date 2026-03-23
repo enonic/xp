@@ -53,7 +53,7 @@ import com.enonic.xp.repository.RepositorySegmentUtils;
 public class ZipDumpReaderV7
     implements DumpReaderV7
 {
-    private static final Pattern ROOT_DUMP_DIR_PATTERN = Pattern.compile( "^([^/]+)\\/dump\\.json$" );
+    private static final Pattern ROOT_DUMP_DIR_PATTERN = Pattern.compile( "^([^/]+)/dump\\.json$" );
 
     private final ZipFile zipFile;
 
@@ -270,7 +270,7 @@ public class ZipDumpReaderV7
 
         private final ZipEntryByteSource zipEntryByteSource;
 
-        public ZipDumpBlobRecord( final Segment segment, final BlobKey key )
+        ZipDumpBlobRecord( final Segment segment, final BlobKey key )
         {
             this.reference = new BlobReference( segment, key );
             this.zipEntryByteSource =

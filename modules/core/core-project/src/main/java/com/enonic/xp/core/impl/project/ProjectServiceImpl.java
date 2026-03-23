@@ -251,7 +251,7 @@ public class ProjectServiceImpl
                 throw new ProjectMultipleParentsException( params.getName(), params.getParents() );
             }
 
-            final PropertyTree contentRootData = createContentRootData( params );
+            final PropertyTree contentRootData = toContentRootData( params );
 
             doInitRootNodes( params, contentRootData );
 
@@ -644,7 +644,7 @@ public class ProjectServiceImpl
         return toProject( this.repositoryService.get( projectName.getRepoId() ), getProjectSiteConfigs( projectName ) );
     }
 
-    private PropertyTree createContentRootData( final CreateProjectParams params )
+    private PropertyTree toContentRootData( final CreateProjectParams params )
     {
         PropertyTree data = new PropertyTree();
 
@@ -708,11 +708,6 @@ public class ProjectServiceImpl
         }
 
         final PropertyTree repositoryData = repository.getData();
-
-        if ( repositoryData == null )
-        {
-            return null;
-        }
 
         final PropertySet projectData = repositoryData.getSet( ProjectConstants.PROJECT_DATA_SET_NAME );
 

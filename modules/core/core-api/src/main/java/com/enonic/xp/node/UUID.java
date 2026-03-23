@@ -40,7 +40,7 @@ public class UUID
     {
         Objects.requireNonNull( value, "UUID cannot be null" );
         Preconditions.checkArgument( !value.isBlank(), "UUID cannot be blank" );
-        Preconditions.checkArgument( value.length() <= 256, "UUID cannot exceed 256 bytes: %s", value );
+        Preconditions.checkArgument( value.length() <= 256, "UUID cannot exceed 256 characters: %s", value );
         Preconditions.checkArgument( VALID_NODE_ID_PATTERN.matcher( value ).matches(), "UUID format incorrect: %s", value );
         return value;
     }

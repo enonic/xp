@@ -66,7 +66,7 @@ public class ZipDumpWriterV8
         {
             final DedupZipArchiveOutputStream zipArchiveOutputStream = newZipOutputStream( basePath, dumpName );
 
-            final PathRef basePathInZip = PathRef.of( dumpName );
+            final PathRef basePathInZip = PathRef.of();
             return new ZipDumpWriterV8( basePathInZip, zipArchiveOutputStream,
                                         new ZipDumpBlobStore( basePathInZip, sourceBlobStore::getRecord, zipArchiveOutputStream ) );
         }
@@ -83,7 +83,7 @@ public class ZipDumpWriterV8
         {
             final DedupZipArchiveOutputStream zipArchiveOutputStream = newZipOutputStream( basePath, dumpName );
 
-            final PathRef basePathInZip = PathRef.of( dumpName );
+            final PathRef basePathInZip = PathRef.of();
             return new ZipDumpWriterV8( basePathInZip, zipArchiveOutputStream, null );
         }
         catch ( IOException e )

@@ -44,10 +44,9 @@ import com.enonic.xp.repo.impl.config.RepoConfigurationDynamic;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.repo.impl.dump.reader.DumpReader;
 import com.enonic.xp.repo.impl.dump.reader.ZipDumpReaderV8;
-import com.enonic.xp.repo.impl.dump.upgrade.DumpUpgraderExecutor;
+import com.enonic.xp.repo.impl.dump.upgrade.DumpUpgraderRunner;
 import com.enonic.xp.repo.impl.dump.writer.DumpWriter;
 import com.enonic.xp.repo.impl.dump.writer.ZipDumpWriterV8;
-import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.repository.NodeRepositoryService;
 import com.enonic.xp.repo.impl.repository.RepositoryCreator;
 import com.enonic.xp.repo.impl.repository.RepositoryEntry;
@@ -162,7 +161,7 @@ public class DumpServiceImpl
 
         final Path basePath = ensureBasePath();
 
-        return new DumpUpgraderExecutor().upgrade( basePath, dumpName, params.getUpgradeListener() );
+        return new DumpUpgraderRunner().upgrade( basePath, dumpName, params.getUpgradeListener() );
     }
 
     @Override
@@ -465,7 +464,7 @@ public class DumpServiceImpl
 
     String verifyOrUpgradeDump( final Path basePath, final SystemLoadParams params )
     {
-        return new DumpUpgraderExecutor().upgrade( basePath, params.getDumpName(), null ).getDumpName();
+        return new DumpUpgraderRunner().upgrade( basePath, params.getDumpName(), null ).getDumpName();
     }
 
     private void initAndLoad( final boolean includeVersions, final SystemLoadResult.Builder results, final DumpReader dumpReader,
