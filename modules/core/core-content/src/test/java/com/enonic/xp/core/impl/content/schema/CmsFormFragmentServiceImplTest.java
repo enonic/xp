@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.content.schema;
 
+import java.io.UncheckedIOException;
+
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.core.impl.app.ApplicationTestSupport;
@@ -9,6 +11,7 @@ import com.enonic.xp.schema.formfragment.FormFragmentName;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CmsFormFragmentServiceImplTest
     extends ApplicationTestSupport
@@ -56,5 +59,16 @@ class CmsFormFragmentServiceImplTest
 
         assertNotNull( inlinedForm.getInput( "text3" ) );
         assertNotNull( inlinedForm.getInput( "text4" ) );
+    }
+
+    @Test
+    void invalidInlineFormItems()
+    {
+        final Form form = Form.create()
+            .addFormItem( FormFragment.create().formFragment( FormFragmentName.from( "myapp2:invalid-fragment" ) ).build() )
+            .build();
+
+        final UncheckedIOException ex = assertThrows( UncheckedIOException.class, () -> service.inlineFormItems( form ) );
+        assertTrue( ex.getMessage().contains( "Form fragments from other applications are prohibited" ) );
     }
 }
