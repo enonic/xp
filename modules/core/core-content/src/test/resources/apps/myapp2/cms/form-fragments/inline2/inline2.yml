@@ -8,4 +8,4 @@ form:
     min: 0
     max: 1
 - type: "FormFragment"
-  name: "myapp2:inline1"
+  name: "inline1"
