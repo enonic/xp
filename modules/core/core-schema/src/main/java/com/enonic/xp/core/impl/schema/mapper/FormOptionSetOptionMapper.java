@@ -29,7 +29,7 @@ public abstract class FormOptionSetOptionMapper
         @JsonProperty("name")
         abstract FormOptionSetOption.Builder name( String value );
 
-        @JsonProperty("defaultOption")
+        @JsonProperty("selected")
         abstract FormOptionSetOption.Builder defaultOption( boolean value );
 
         @JsonProperty("label")

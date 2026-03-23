@@ -21,9 +21,6 @@
     },
     "hideToggleIcon": {
       "type": "boolean"
-    },
-    "default": {
-      "type": "string"
     }
   }
 }
