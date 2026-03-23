@@ -9,10 +9,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 
+import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.Branches;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.repo.impl.branch.BranchService;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
@@ -22,6 +25,7 @@ import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.repository.internal.InternalRepositoryService;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -52,6 +56,9 @@ class RepositoryServiceActivatorTest
     @Mock(stubOnly = true)
     private NodeSearchService nodeSearchService;
 
+    @Mock(stubOnly = true)
+    private BranchService branchService;
+
     @BeforeEach
     void setUp()
     {
@@ -59,9 +66,9 @@ class RepositoryServiceActivatorTest
         when( indexServiceInternal.waitForYellowStatus() ).thenReturn( true );
 
         final Node mockNode = Node.create().id( NodeId.from( "1" ) ).parentPath( NodePath.ROOT ).build();
-        when( nodeStorageService.store( any(), any() ) ).thenReturn(
-            new NodeVersionData( mockNode, mock( NodeVersion.class ) ) );
+        when( nodeStorageService.store( any(), any() ) ).thenReturn( new NodeVersionData( mockNode, mock( NodeVersion.class ) ) );
         when( repositoryEntryService.findRepositoryEntryIds() ).thenReturn( RepositoryIds.create().build() );
+        when( branchService.getBranches( eq( NodeId.ROOT ), any() ) ).thenReturn( Branches.from( Branch.from( "master" ) ) );
     }
 
     @Test
@@ -69,11 +76,12 @@ class RepositoryServiceActivatorTest
     {
         final RepositoryServiceActivator activator =
             new RepositoryServiceActivator( repositoryEntryService, indexServiceInternal, nodeRepositoryService, nodeStorageService,
-                                            nodeSearchService );
+                                            nodeSearchService, branchService );
 
-        doReturn( service ).when( bundleContext ).registerService(
-            AdditionalMatchers.aryEq( new String[]{RepositoryService.class.getName(), InternalRepositoryService.class.getName()} ),
-            any( RepositoryService.class ), isNull() );
+        doReturn( service ).when( bundleContext )
+            .registerService(
+                AdditionalMatchers.aryEq( new String[]{RepositoryService.class.getName(), InternalRepositoryService.class.getName()} ),
+                any( RepositoryService.class ), isNull() );
 
         activator.activate( bundleContext );
 

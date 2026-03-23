@@ -159,7 +159,8 @@ class RepoDumperTest
             .writer( writer )
             .includeBinaries( true )
             .includeVersions( true )
-            .repository( this.repositoryService.get( testRepoId ) )
+            .repositoryId( testRepoId )
+            .branches( this.repositoryService.get( testRepoId ).getBranches() )
             .maxAge( maxAge )
             .build()
             .execute() );

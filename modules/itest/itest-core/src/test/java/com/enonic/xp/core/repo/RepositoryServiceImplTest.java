@@ -14,6 +14,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.BinaryAttachment;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.repo.impl.node.NodeHelper;
@@ -150,7 +151,7 @@ class RepositoryServiceImplTest
         assertNotNull( repo );
         assertEquals( RepositoryId.from( "fisk" ), repo.getId() );
 
-        final Node rootNode = createAdminContext().callWith( () -> getNodeById( Node.ROOT_UUID ) );
+        final Node rootNode = createAdminContext().callWith( () -> getNodeById( NodeId.ROOT ) );
         final AccessControlList acl = rootNode.getPermissions();
 
         System.out.println( acl.toString() );

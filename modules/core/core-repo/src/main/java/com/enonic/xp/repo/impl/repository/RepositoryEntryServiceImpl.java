@@ -6,7 +6,6 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -28,7 +27,6 @@ import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.node.DeleteNodeCommand;
 import com.enonic.xp.repo.impl.node.PatchNodeCommand;
-import com.enonic.xp.repo.impl.node.RefreshCommand;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
@@ -53,7 +51,8 @@ public class RepositoryEntryServiceImpl
     private final BinaryService binaryService;
 
     @Activate
-    public RepositoryEntryServiceImpl( @Reference final IndexServiceInternal indexServiceInternal, @Reference final NodeStorageService nodeStorageService,
+    public RepositoryEntryServiceImpl( @Reference final IndexServiceInternal indexServiceInternal,
+                                       @Reference final NodeStorageService nodeStorageService,
                                        @Reference final NodeSearchService nodeSearchService, @Reference final EventPublisher eventPublisher,
                                        @Reference final BinaryService binaryService )
     {
@@ -71,9 +70,9 @@ public class RepositoryEntryServiceImpl
         final InternalContext internalContext = createInternalContext();
         final Node createdNode = nodeStorageService.store( StoreNodeParams.newVersion( node ), internalContext ).node();
 
-        refresh();
-        eventPublisher.publish( NodeEvents.created( createdNode, internalContext ) );
-        eventPublisher.publish( RepositoryEvents.created( repository.getId() ) );
+        this.indexServiceInternal.refresh( IndexNameResolver.resolveIndexNames( SystemConstants.SYSTEM_REPO_ID ).toArray( String[]::new ) );
+        this.eventPublisher.publish( NodeEvents.created( createdNode, internalContext ) );
+        this.eventPublisher.publish( RepositoryEvents.created( repository.getId() ) );
     }
 
     @Override
@@ -99,51 +98,27 @@ public class RepositoryEntryServiceImpl
     }
 
     @Override
-    public RepositoryEntry addBranchToRepositoryEntry( final RepositoryId repositoryId, final Branch branch )
-    {
-        final PatchNodeParams updateNodeParams = PatchNodeParams.create().
-            id( NodeId.from( repositoryId ) ).
-            editor( RepositoryNodeTranslator.toCreateBranchNodeEditor( branch ) ).
-            refresh( RefreshMode.ALL ).
-            build();
-
-        return updateRepositoryNode( updateNodeParams );
-    }
-
-    @Override
-    public RepositoryEntry removeBranchFromRepositoryEntry( final RepositoryId repositoryId, final Branch branch )
-    {
-        final PatchNodeParams updateNodeParams = PatchNodeParams.create().
-            id( NodeId.from( repositoryId ) ).
-            editor( RepositoryNodeTranslator.toDeleteBranchNodeEditor( branch ) ).
-            refresh( RefreshMode.ALL ).
-            build();
-
-        return updateRepositoryNode( updateNodeParams );
-    }
-
-    @Override
     public RepositoryEntry updateRepositoryEntry( UpdateRepositoryEntryParams params )
     {
-        final PatchNodeParams updateNodeParams = PatchNodeParams.create().
-            id( NodeId.from( params.getRepositoryId() ) ).
-            editor( RepositoryNodeTranslator.toUpdateRepositoryNodeEditor( params ) ).
-            setBinaryAttachments( params.getAttachments() ).
-            refresh( RefreshMode.ALL ).
-            build();
+        final PatchNodeParams updateNodeParams = PatchNodeParams.create()
+            .id( NodeId.from( params.getRepositoryId() ) )
+            .editor( RepositoryNodeTranslator.toUpdateRepositoryNodeEditor( params ) )
+            .setBinaryAttachments( params.getAttachments() )
+            .refresh( RefreshMode.ALL )
+            .build();
         return updateRepositoryNode( updateNodeParams );
     }
 
     @Override
     public void deleteRepositoryEntry( final RepositoryId repositoryId )
     {
-        final NodeBranchEntries deletedNodes = createContext().callWith( () -> DeleteNodeCommand.create().
-            nodeId( NodeId.from( repositoryId ) ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.nodeStorageService ).
-            searchService( this.nodeSearchService ).
-            build().
-            execute() );
+        final NodeBranchEntries deletedNodes = createContext().callWith( () -> DeleteNodeCommand.create()
+            .nodeId( NodeId.from( repositoryId ) )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.nodeStorageService )
+            .searchService( this.nodeSearchService )
+            .build()
+            .execute() );
 
         if ( deletedNodes.isNotEmpty() )
         {
@@ -158,26 +133,17 @@ public class RepositoryEntryServiceImpl
         return binaryService.get( SystemConstants.SYSTEM_REPO_ID, attachedBinary );
     }
 
-    private void refresh()
-    {
-        createContext().callWith( () -> {
-            RefreshCommand.create().
-                indexServiceInternal( this.indexServiceInternal ).
-                refreshMode( RefreshMode.ALL ).
-                build().
-                execute();
-            return null;
-        } );
-    }
-
     private RepositoryEntry updateRepositoryNode( final PatchNodeParams updateNodeParams )
     {
-        final Node updatedNode = createContext().callWith(
-            () -> PatchNodeCommand.create().params(  updateNodeParams ).binaryService( this.binaryService ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.nodeStorageService ).
-            searchService( this.nodeSearchService ).
-            build().execute().getResult( ContextAccessor.current().getBranch() ) );
+        final Node updatedNode = createContext().callWith( () -> PatchNodeCommand.create()
+            .params( updateNodeParams )
+            .binaryService( this.binaryService )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.nodeStorageService )
+            .searchService( this.nodeSearchService )
+            .build()
+            .execute()
+            .getResult( ContextAccessor.current().getBranch() ) );
 
         eventPublisher.publish( NodeEvents.updated( updatedNode, createInternalContext() ) );
 
@@ -190,18 +156,18 @@ public class RepositoryEntryServiceImpl
 
     private Context createContext()
     {
-        return ContextBuilder.from( ContextAccessor.current() ).
-            repositoryId( SystemConstants.SYSTEM_REPO_ID ).
-            branch( SystemConstants.BRANCH_SYSTEM ).
-            build();
+        return ContextBuilder.from( ContextAccessor.current() )
+            .repositoryId( SystemConstants.SYSTEM_REPO_ID )
+            .branch( SystemConstants.BRANCH_SYSTEM )
+            .build();
     }
 
     private InternalContext createInternalContext()
     {
-        return InternalContext.create( ContextAccessor.current() ).
-            repositoryId( SystemConstants.SYSTEM_REPO_ID ).
-            branch( SystemConstants.BRANCH_SYSTEM ).
-            searchPreference( SearchPreference.PRIMARY ).
-            build();
+        return InternalContext.create( ContextAccessor.current() )
+            .repositoryId( SystemConstants.SYSTEM_REPO_ID )
+            .branch( SystemConstants.BRANCH_SYSTEM )
+            .searchPreference( SearchPreference.PRIMARY )
+            .build();
     }
 }

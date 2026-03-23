@@ -8,6 +8,7 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.OperationNotPermittedException;
@@ -161,7 +162,7 @@ class RenameNodeCommandTest
     void cannot_rename_root_node()
     {
         assertThrows( OperationNotPermittedException.class, () -> MoveNodeCommand.create()
-            .params( MoveNodeParams.create().nodeId( Node.ROOT_UUID ).newName( NodeName.from( "my-node-edited" ) ).build() )
+            .params( MoveNodeParams.create().nodeId( NodeId.ROOT ).newName( NodeName.from( "my-node-edited" ) ).build() )
             .indexServiceInternal( this.indexServiceInternal )
             .searchService( this.searchService )
             .storageService( this.storageService )

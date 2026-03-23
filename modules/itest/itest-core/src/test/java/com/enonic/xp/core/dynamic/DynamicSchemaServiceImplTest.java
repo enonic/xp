@@ -204,7 +204,7 @@ class DynamicSchemaServiceImplTest
         final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl( indexServiceInternal );
 
         RepositoryServiceImpl repositoryService =
-            new RepositoryServiceImpl( repositoryEntryService, indexServiceInternal, nodeRepositoryService, storageService, searchService );
+            new RepositoryServiceImpl( repositoryEntryService, nodeRepositoryService, storageService, searchService, branchService );
         SystemRepoInitializer.create()
             .setIndexServiceInternal( indexServiceInternal )
             .setRepositoryService( repositoryService )
@@ -212,8 +212,7 @@ class DynamicSchemaServiceImplTest
             .build()
             .initialize();
 
-        nodeService =
-            new NodeServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService, repositoryService );
+        nodeService = new NodeServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService );
 
         Path cacheDir = Files.createDirectory( this.felixTempFolder.resolve( "cache" ) ).toAbsolutePath();
 

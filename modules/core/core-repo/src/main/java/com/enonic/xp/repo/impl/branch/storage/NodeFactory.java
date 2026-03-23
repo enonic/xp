@@ -3,6 +3,7 @@ package com.enonic.xp.repo.impl.branch.storage;
 import java.time.Instant;
 
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
@@ -26,7 +27,7 @@ public class NodeFactory
                                final Instant timestamp )
     {
         final Node.Builder builder = create( nodeStoreVersion ).nodeVersionId( nodeVersionId ).timestamp( timestamp );
-        if ( !Node.ROOT_UUID.equals( nodeStoreVersion.id() ) )
+        if ( !NodeId.ROOT.equals( nodeStoreVersion.id() ) )
         {
             builder.parentPath( nodePath.getParentPath() ).name( nodePath.getName() );
         }

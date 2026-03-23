@@ -20,6 +20,7 @@ import com.enonic.xp.dump.SystemDumpUpgradeParams;
 import com.enonic.xp.dump.SystemLoadParams;
 import com.enonic.xp.dump.SystemLoadResult;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.query.parser.QueryParser;
@@ -35,6 +36,7 @@ import com.enonic.xp.util.Version;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class DumpUpgradeIntegrationTest
@@ -55,8 +57,8 @@ class DumpUpgradeIntegrationTest
         repoConfiguration.activate( Map.of( "dumps.dir", temporaryFolder.toString() ) );
 
         this.dumpService =
-            new DumpServiceImpl( eventPublisher, BLOB_STORE, this.nodeService, this.repositoryEntryService, this.nodeRepositoryService,
-                                 this.storageService, repoConfiguration );
+            new DumpServiceImpl( eventPublisher, BLOB_STORE, this.nodeService, this.repositoryEntryService,
+                                 this.nodeRepositoryService, this.storageService, this.branchService, repoConfiguration );
 
         copyClasspathResource( "dump-7.zip", temporaryFolder );
     }
@@ -129,6 +131,14 @@ class DumpUpgradeIntegrationTest
         schedulerContext().callWith( () -> {
             final Node jobNode = nodeService.getByPath( new NodePath( "/one-time-job" ) );
             assertNotNull( jobNode, "Scheduled job should be loaded" );
+            return null;
+        } );
+
+        // Verify RepositoryBranchesRemovalUpgrader: repository nodes should no longer have "branches" property
+        systemRepoContext().callWith( () -> {
+            final Node repoNode = nodeService.getById( NodeId.from( "com.enonic.cms.default" ) );
+            assertNotNull( repoNode, "Repository node should exist" );
+            assertFalse( repoNode.data().hasProperty( "branches" ), "branches property should be removed by upgrader" );
             return null;
         } );
     }

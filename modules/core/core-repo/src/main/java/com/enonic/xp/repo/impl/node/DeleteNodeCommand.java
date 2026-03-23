@@ -9,7 +9,6 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.DeleteNodeListener;
-import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
@@ -59,7 +58,7 @@ public class DeleteNodeCommand
 
     public NodeBranchEntries execute()
     {
-        if ( Node.ROOT_UUID.equals( this.nodeId ) || NodePath.ROOT.equals( this.nodePath ) )
+        if ( NodeId.ROOT.equals( this.nodeId ) || NodePath.ROOT.equals( this.nodePath ) )
         {
             throw new OperationNotPermittedException( "Not allowed to delete root-node" );
         }

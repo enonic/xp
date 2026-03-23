@@ -302,6 +302,12 @@ public class NodeStorageServiceImpl
     }
 
     @Override
+    public boolean existsBranchNodeVersion( final NodeId nodeId, final InternalContext context )
+    {
+        return this.branchService.exists( nodeId, context );
+    }
+
+    @Override
     public NodeBranchEntries getBranchNodeVersions( final NodeIds nodeIds, final InternalContext context )
     {
         return this.branchService.get( nodeIds, context );

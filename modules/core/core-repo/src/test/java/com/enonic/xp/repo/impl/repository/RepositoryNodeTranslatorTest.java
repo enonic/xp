@@ -2,7 +2,6 @@ package com.enonic.xp.repo.impl.repository;
 
 import org.junit.jupiter.api.Test;
 
-import com.enonic.xp.branch.Branch;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.node.Node;
@@ -24,26 +23,25 @@ class RepositoryNodeTranslatorTest
         final PropertyTree indexSettings = new PropertyTree();
         indexSettings.addString( "mySetting", "mySettingValue" );
 
-        final RepositoryEntry repo = RepositoryEntry.create().
-            branches( Branch.from( "master" ) ).
-            id( RepositoryId.from( "myrepoid" ) ).
-            settings( RepositorySettings.create().
-                indexDefinitions( IndexDefinitions.create().
-                    add( IndexType.VERSION, IndexDefinition.create().
-                        mapping( IndexMapping.from( indexMapping.toMap() ) ).
-                        settings( IndexSettings.from( indexSettings.toMap() ) ).
-                        build() ).
-                    add( IndexType.BRANCH, IndexDefinition.create().
-                        mapping( IndexMapping.from( indexMapping.toMap() ) ).
-                        settings( IndexSettings.from( indexSettings.toMap() ) ).
-                        build() ).
-                    add( IndexType.COMMIT, IndexDefinition.create().
-                        mapping( IndexMapping.from( indexMapping.toMap() ) ).
-                        settings( IndexSettings.from( indexSettings.toMap() ) ).
-                        build() ).
-                    build() ).
-                build() ).
-            build();
+        final RepositoryEntry repo = RepositoryEntry.create()
+            .id( RepositoryId.from( "myrepoid" ) )
+            .settings( RepositorySettings.create()
+                           .indexDefinitions( IndexDefinitions.create()
+                                                  .add( IndexType.VERSION, IndexDefinition.create()
+                                                      .mapping( IndexMapping.from( indexMapping.toMap() ) )
+                                                      .settings( IndexSettings.from( indexSettings.toMap() ) )
+                                                      .build() )
+                                                  .add( IndexType.BRANCH, IndexDefinition.create()
+                                                      .mapping( IndexMapping.from( indexMapping.toMap() ) )
+                                                      .settings( IndexSettings.from( indexSettings.toMap() ) )
+                                                      .build() )
+                                                  .add( IndexType.COMMIT, IndexDefinition.create()
+                                                      .mapping( IndexMapping.from( indexMapping.toMap() ) )
+                                                      .settings( IndexSettings.from( indexSettings.toMap() ) )
+                                                      .build() )
+                                                  .build() )
+                           .build() )
+            .build();
 
         final Node node = RepositoryNodeTranslator.toNode( repo );
 

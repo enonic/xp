@@ -288,7 +288,7 @@ class DuplicateNodeCommandTest
     @Test
     void cannot_duplicate_root_node()
     {
-        assertThrows( OperationNotPermittedException.class, () -> duplicateNode( getNode( Node.ROOT_UUID ) ) );
+        assertThrows( OperationNotPermittedException.class, () -> duplicateNode( getNode( NodeId.ROOT ) ) );
     }
 
     @Test

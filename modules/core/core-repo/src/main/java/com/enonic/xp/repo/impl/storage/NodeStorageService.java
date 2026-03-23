@@ -39,8 +39,7 @@ public interface NodeStorageService
 
     NodeCommitEntry commit( NodeCommitEntry entry, NodeVersionIds versionIds, InternalContext context );
 
-    Attributes changeAttributes( NodeVersionId versionId, Attributes attributes, Set<String> removeAttributes,
-                                 InternalContext context );
+    Attributes changeAttributes( NodeVersionId versionId, Attributes attributes, Set<String> removeAttributes, InternalContext context );
 
     Node get( NodeId nodeId, InternalContext context );
 
@@ -57,6 +56,8 @@ public interface NodeStorageService
     AccessControlList getNodePermissions( NodeVersionKey nodeVersionKey, InternalContext context );
 
     NodeBranchEntry getBranchNodeVersion( NodeId nodeId, InternalContext context );
+
+    boolean existsBranchNodeVersion( NodeId nodeId, InternalContext context );
 
     NodeBranchEntries getBranchNodeVersions( NodeIds nodeIds, InternalContext context );
 

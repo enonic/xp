@@ -19,7 +19,6 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.branch.Branches;
-import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.internal.Millis;
@@ -34,14 +33,13 @@ import com.enonic.xp.dump.SystemLoadParams;
 import com.enonic.xp.dump.SystemLoadResult;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.AttachedBinaries;
-import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.RefreshMode;
-import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.RepositoryEvents;
 import com.enonic.xp.repo.impl.SecurityHelper;
+import com.enonic.xp.repo.impl.branch.BranchService;
 import com.enonic.xp.repo.impl.config.RepoConfigurationDynamic;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.repo.impl.dump.reader.DumpReader;
@@ -49,18 +47,22 @@ import com.enonic.xp.repo.impl.dump.reader.ZipDumpReaderV8;
 import com.enonic.xp.repo.impl.dump.upgrade.DumpUpgraderExecutor;
 import com.enonic.xp.repo.impl.dump.writer.DumpWriter;
 import com.enonic.xp.repo.impl.dump.writer.ZipDumpWriterV8;
-import com.enonic.xp.repo.impl.repository.CreateRepositoryIndexParams;
+import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.repository.NodeRepositoryService;
+import com.enonic.xp.repo.impl.repository.RepositoryCreator;
 import com.enonic.xp.repo.impl.repository.RepositoryEntry;
 import com.enonic.xp.repo.impl.repository.RepositoryEntryService;
 import com.enonic.xp.repo.impl.repository.RepositorySettings;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
-import com.enonic.xp.repo.impl.storage.StoreNodeParams;
-import com.enonic.xp.repository.Repository;
+import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryIds;
+import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SystemConstants;
+import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.server.VersionInfo;
 
 import static com.google.common.base.Strings.nullToEmpty;
@@ -72,8 +74,42 @@ public class DumpServiceImpl
 {
     private static final Logger LOG = LoggerFactory.getLogger( DumpServiceImpl.class );
 
-    private static final List<RepositoryId> SYSTEM_REPO_IDS =
-        List.of( RepositoryId.from( "system.auditlog" ), RepositoryId.from( "system.scheduler" ), RepositoryId.from( "system.app" ) );
+    private static final Map<RepositoryId, AccessControlList> SYSTEM_REPO_DEFAULTS = Map.of( RepositoryId.from( "system.auditlog" ),
+                                                                                             AccessControlList.create()
+                                                                                                 .add( AccessControlEntry.create()
+                                                                                                           .allowAll()
+                                                                                                           .principal( RoleKeys.ADMIN )
+                                                                                                           .build() )
+                                                                                                 .add( AccessControlEntry.create()
+                                                                                                           .allowAll()
+                                                                                                           .principal( RoleKeys.AUDIT_LOG )
+                                                                                                           .build() )
+                                                                                                 .build(),
+                                                                                             RepositoryId.from( "system.scheduler" ),
+                                                                                             AccessControlList.create()
+                                                                                                 .add( AccessControlEntry.create()
+                                                                                                           .allowAll()
+                                                                                                           .principal( RoleKeys.ADMIN )
+                                                                                                           .build() )
+                                                                                                 .build(),
+                                                                                             RepositoryId.from( "system.app" ),
+                                                                                             AccessControlList.create()
+                                                                                                 .add( AccessControlEntry.create()
+                                                                                                           .allowAll()
+                                                                                                           .principal( RoleKeys.ADMIN )
+                                                                                                           .build() )
+                                                                                                 .add( AccessControlEntry.create()
+                                                                                                           .principal(
+                                                                                                               RoleKeys.SCHEMA_ADMIN )
+                                                                                                           .allow( Permission.READ,
+                                                                                                                   Permission.CREATE,
+                                                                                                                   Permission.MODIFY,
+                                                                                                                   Permission.DELETE )
+                                                                                                           .build() )
+                                                                                                 .build() );
+
+    public static final Predicate<RepositoryId> ANY_SYSTEM_REPO_PREDICATE =
+        Predicate.<RepositoryId>isEqual( SystemConstants.SYSTEM_REPO_ID ).or( SYSTEM_REPO_DEFAULTS::containsKey );
 
     private final BlobStore blobStore;
 
@@ -85,6 +121,8 @@ public class DumpServiceImpl
 
     private final NodeStorageService nodeStorageService;
 
+    private final BranchService branchService;
+
     private final EventPublisher eventPublisher;
 
     private final String xpVersion;
@@ -95,7 +133,7 @@ public class DumpServiceImpl
     public DumpServiceImpl( @Reference EventPublisher eventPublisher, @Reference BlobStore blobStore, @Reference NodeService nodeService,
                             @Reference RepositoryEntryService repositoryEntryService,
                             @Reference NodeRepositoryService nodeRepositoryService, @Reference NodeStorageService nodeStorageService,
-                            @Reference RepoConfigurationDynamic repoConfiguration )
+                            @Reference BranchService branchService, @Reference RepoConfigurationDynamic repoConfiguration )
     {
         this.xpVersion = VersionInfo.get().getVersion();
         this.blobStore = blobStore;
@@ -103,6 +141,7 @@ public class DumpServiceImpl
         this.repositoryEntryService = repositoryEntryService;
         this.nodeRepositoryService = nodeRepositoryService;
         this.nodeStorageService = nodeStorageService;
+        this.branchService = branchService;
         this.eventPublisher = eventPublisher;
         this.repoConfiguration = repoConfiguration;
     }
@@ -160,109 +199,88 @@ public class DumpServiceImpl
 
     private SystemDumpResult doFullDump( final SystemDumpParams params, final DumpWriter writer )
     {
-        final List<Repository> repositories = repositoryEntryService.findRepositoryEntryIds()
+        final Map<RepositoryId, Branches> repositoryBranches = repositoryEntryService.findRepositoryEntryIds()
             .stream()
             .map( repositoryEntryService::getRepositoryEntry )
             .filter( Objects::nonNull )
-            .map( RepositoryEntry::asRepository )
-            .filter( repository -> !repository.isTransient() )
-            .collect( Collectors.toList() );
+            .filter( entry -> !entry.isTransient() )
+            .map( RepositoryEntry::getId )
+            .collect( Collectors.toMap( Function.identity(), this::resolveBranches ) );
 
         if ( params.getListener() != null )
         {
-            final long branchesCount = repositories.stream().flatMap( repository -> repository.getBranches().stream() ).count();
+            final long branchesCount = repositoryBranches.values().stream().mapToLong( Branches::getSize ).sum();
 
             params.getListener().totalBranches( branchesCount );
         }
 
         final SystemDumpResult.Builder dumpResults = SystemDumpResult.create();
 
-        for ( final Repository repository : repositories )
-        {
-            final RepoDumpResult result = RepoDumper.create()
-                .writer( writer )
-                .includeVersions( params.isIncludeVersions() )
-                .includeBinaries( params.isIncludeBinaries() )
-                .nodeService( this.nodeService )
-                .repository( repository )
-                .maxVersions( params.getMaxVersions() )
-                .maxAge( params.getMaxAge() )
-                .listener( params.getListener() )
-                .build()
-                .execute();
-
-            dumpResults.add( result );
-        }
-
-        return dumpResults.build();
+        return dumpRepositories( params, writer, repositoryBranches, dumpResults );
     }
 
     private SystemDumpResult doPartialDump( final SystemDumpParams params, final DumpWriter writer )
     {
-        final List<RepositoryId> systemRepos = params.getRepositories()
-            .stream()
-            .filter( Predicate.isEqual( SystemConstants.SYSTEM_REPO_ID ).or( SYSTEM_REPO_IDS::contains ) )
-            .toList();
+        final List<RepositoryId> systemRepos = params.getRepositories().stream().filter( ANY_SYSTEM_REPO_PREDICATE ).toList();
 
         if ( !systemRepos.isEmpty() )
         {
             throw new RepoDumpException( "System repositories " + systemRepos + " cannot be dumped partially" );
         }
 
-        final Map<RepositoryId, Repository> allRepositories = repositoryEntryService.findRepositoryEntryIds()
-            .stream()
-            .map( repositoryEntryService::getRepositoryEntry )
-            .filter( Objects::nonNull )
-            .map( RepositoryEntry::asRepository )
-            .collect( Collectors.toMap( Repository::getId, Function.identity() ) );
+        final RepositoryIds allRepositoryIds = repositoryEntryService.findRepositoryEntryIds();
 
         final List<RepositoryId> missingRepositories =
-            params.getRepositories().stream().filter( repositoryId -> !allRepositories.containsKey( repositoryId ) ).toList();
+            params.getRepositories().stream().filter( id -> !allRepositoryIds.contains( id ) ).toList();
 
         if ( !missingRepositories.isEmpty() )
         {
             LOG.warn( "Requested repositories not found and will be skipped during dump: {}", missingRepositories );
         }
 
-        final List<Repository> reposToDump =
-            params.getRepositories().stream().filter( allRepositories::containsKey ).map( allRepositories::get ).toList();
-        final Repository systemRepo = allRepositories.get( SystemConstants.SYSTEM_REPO_ID );
+        final List<RepositoryId> reposToDump = params.getRepositories().stream().filter( allRepositoryIds::contains ).toList();
+
+        final Map<RepositoryId, Branches> repoBranches =
+            reposToDump.stream().collect( Collectors.toMap( Function.identity(), this::resolveBranches ) );
 
         if ( params.getListener() != null )
         {
-            final long branchesCount =
-                systemRepo.getBranches().getSize() + reposToDump.stream().flatMap( r -> r.getBranches().stream() ).count();
-
-            params.getListener().totalBranches( branchesCount );
+            params.getListener().totalBranches( repoBranches.values().stream().mapToLong( Branches::getSize ).sum() );
         }
 
         final SystemDumpResult.Builder dumpResults = SystemDumpResult.create();
 
         // Dump system-repo with only the RepositoryEntry nodes for selected repositories
-        final NodeIds systemRepoNodeIds = reposToDump.stream().map( r -> NodeId.from( r.getId().toString() ) ).collect( NodeIds.collector() );
+        final NodeIds systemRepoNodeIds = reposToDump.stream().map( NodeId::from ).collect( NodeIds.collector() );
 
         RepoDumper.create()
             .writer( writer )
-            .includeVersions( params.isIncludeVersions() )
+            .includeVersions( false )
             .includeBinaries( params.isIncludeBinaries() )
             .nodeService( this.nodeService )
-            .repository( systemRepo )
-            .maxVersions( params.getMaxVersions() )
-            .maxAge( params.getMaxAge() )
+            .repositoryId( SystemConstants.SYSTEM_REPO_ID )
+            .branches( Branches.from( SystemConstants.BRANCH_SYSTEM ) )
             .nodeIds( systemRepoNodeIds )
-            .listener( params.getListener() )
             .build()
             .execute();
 
         // Dump each selected repository fully
-        for ( final Repository repository : reposToDump )
+        return dumpRepositories( params, writer, repoBranches, dumpResults );
+    }
+
+    private SystemDumpResult dumpRepositories( final SystemDumpParams params, final DumpWriter writer,
+                                               final Map<RepositoryId, Branches> repositoryBranches,
+                                               final SystemDumpResult.Builder dumpResults )
+    {
+        for ( final var entry : repositoryBranches.entrySet() )
         {
             final RepoDumpResult result = RepoDumper.create()
                 .writer( writer )
                 .includeVersions( params.isIncludeVersions() )
                 .includeBinaries( params.isIncludeBinaries() )
                 .nodeService( this.nodeService )
-                .repository( repository )
+                .repositoryId( entry.getKey() )
+                .branches( entry.getValue() )
                 .maxVersions( params.getMaxVersions() )
                 .maxAge( params.getMaxAge() )
                 .listener( params.getListener() )
@@ -339,15 +357,16 @@ public class DumpServiceImpl
         final RepositorySettings currentSystemSettings =
             repositoryEntryService.getRepositoryEntry( SystemConstants.SYSTEM_REPO_ID ).getSettings();
 
-        final Map<RepositoryId, RepositorySettings> repoSettings = SYSTEM_REPO_IDS.stream()
+        final Map<RepositoryId, RepositorySettings> repoSettings = SYSTEM_REPO_DEFAULTS.keySet()
+            .stream()
             .collect( Collectors.toMap( Function.identity(), repo -> repositoryEntryService.getRepositoryEntry( repo ).getSettings() ) );
 
         repositoryEntryService.findRepositoryEntryIds()
             .stream()
-            .filter( Predicate.isEqual( SystemConstants.SYSTEM_REPO_ID ).or( SYSTEM_REPO_IDS::contains ).negate() )
+            .filter( ANY_SYSTEM_REPO_PREDICATE.negate() )
             .forEach( this::doDeleteRepository );
 
-        SYSTEM_REPO_IDS.forEach( this::doDeleteRepository );
+        SYSTEM_REPO_DEFAULTS.keySet().forEach( this::doDeleteRepository );
 
         // system-repo must be deleted last
         doDeleteRepository( SystemConstants.SYSTEM_REPO_ID );
@@ -367,32 +386,29 @@ public class DumpServiceImpl
         }
 
         // Load other system repositories
-        SYSTEM_REPO_IDS.forEach( repositoryId -> {
+        SYSTEM_REPO_DEFAULTS.keySet().forEach( repositoryId -> {
             if ( dumpRepositories.contains( repositoryId ) )
             {
-                // Dump contains repository. Do a normal load.
+                // Dump contains system.X repository. Do a normal load.
                 initAndLoad( includeVersions, results, dumpReader, repositoryId, repoSettings.get( repositoryId ), new PropertyTree(),
                              AttachedBinaries.empty() );
             }
             else
             {
-                // If it is an old dump it does not contain repo. It should be recreated with current settings
+                // If it is an old dump it does not contain system.X repository. It should be recreated with current settings
                 initializeRepo( repositoryId, repoSettings.get( repositoryId ), null, AttachedBinaries.empty() );
-                createRootNode( repositoryId );
             }
 
         } );
 
         // Load non-system repositories
-        dumpRepositories.stream()
-            .filter( Predicate.isEqual( SystemConstants.SYSTEM_REPO_ID ).or( SYSTEM_REPO_IDS::contains ).negate() )
-            .forEach( repositoryId -> {
-                final RepositoryEntry repository = repositoryEntryService.getRepositoryEntry( repositoryId );
-                final RepositorySettings settings = repository.getSettings();
-                final PropertyTree data = repository.getData();
-                final AttachedBinaries attachedBinaries = repository.getAttachments();
-                initAndLoad( includeVersions, results, dumpReader, repositoryId, settings, data, attachedBinaries );
-            } );
+        dumpRepositories.stream().filter( ANY_SYSTEM_REPO_PREDICATE.negate() ).forEach( repositoryId -> {
+            final RepositoryEntry repository = repositoryEntryService.getRepositoryEntry( repositoryId );
+            final RepositorySettings settings = repository.getSettings();
+            final PropertyTree data = repository.getData();
+            final AttachedBinaries attachedBinaries = repository.getAttachments();
+            initAndLoad( includeVersions, results, dumpReader, repositoryId, settings, data, attachedBinaries );
+        } );
 
         this.eventPublisher.publish( RepositoryEvents.restored() );
         LOG.info( "Dump Load completed" );
@@ -401,10 +417,7 @@ public class DumpServiceImpl
     private void doPartialLoad( final SystemLoadParams params, final DumpReader dumpReader, final RepositoryIds dumpRepositories,
                                 final SystemLoadResult.Builder results )
     {
-        final List<RepositoryId> systemRepos = params.getRepositories()
-            .stream()
-            .filter( Predicate.isEqual( SystemConstants.SYSTEM_REPO_ID ).or( SYSTEM_REPO_IDS::contains ) )
-            .toList();
+        final List<RepositoryId> systemRepos = params.getRepositories().stream().filter( ANY_SYSTEM_REPO_PREDICATE ).toList();
 
         if ( !systemRepos.isEmpty() )
         {
@@ -471,7 +484,7 @@ public class DumpServiceImpl
 
     private void doDeleteRepository( final RepositoryId repositoryId )
     {
-        LOG.info( "Deleting repository [" + repositoryId + "]" );
+        LOG.info( "Deleting repository [{}]", repositoryId );
 
         this.repositoryEntryService.deleteRepositoryEntry( repositoryId );
         this.nodeRepositoryService.delete( repositoryId );
@@ -482,52 +495,33 @@ public class DumpServiceImpl
     private void initializeRepo( final RepositoryId repositoryId, RepositorySettings settings, PropertyTree data,
                                  AttachedBinaries attachedBinaries )
     {
-        final CreateRepositoryIndexParams params =
-            CreateRepositoryIndexParams.create().repositoryId( repositoryId ).repositorySettings( settings ).build();
-
-        this.nodeRepositoryService.create( params );
-
-        final RepositoryEntry createRepositoryParams = RepositoryEntry.create()
-            .id( repositoryId )
-            .settings( settings )
-            .data( data )
-            .branches( Branches.from( RepositoryConstants.MASTER_BRANCH ) )
-            .attachments( attachedBinaries )
-            .build();
-
-        this.repositoryEntryService.createRepositoryEntry( createRepositoryParams );
-    }
-
-    private void createRootNode( final RepositoryId repositoryId )
-    {
-        final Context rootNodeContext = ContextBuilder.from( ContextAccessor.current() )
-            .repositoryId( repositoryId )
-            .branch( RepositoryConstants.MASTER_BRANCH )
-            .build();
-
-        final Node node = Node.createRoot()
-            .permissions( RepositoryConstants.DEFAULT_REPO_PERMISSIONS )
-            .childOrder( RepositoryConstants.DEFAULT_CHILD_ORDER )
-            .build();
-        this.nodeStorageService.store( StoreNodeParams.newVersion( node ), InternalContext.from( rootNodeContext ) );
-
-        rootNodeContext.runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
+        new RepositoryCreator( nodeRepositoryService, nodeStorageService, repositoryEntryService ).createRepository(
+            CreateRepositoryParams.create()
+                .repositoryId( repositoryId )
+                .rootPermissions( SYSTEM_REPO_DEFAULTS.getOrDefault( repositoryId, RepositoryConstants.DEFAULT_REPO_PERMISSIONS ) )
+                .rootChildOrder( RepositoryConstants.DEFAULT_CHILD_ORDER )
+                .data( data )
+                .build(), settings, attachedBinaries );
     }
 
     private void doLoadRepository( final RepositoryId repositoryId, final boolean includeVersions, final DumpReader dumpReader,
                                    final SystemLoadResult.Builder builder )
     {
-        LOG.info( "Loading repository [" + repositoryId + "]" );
+        LOG.info( "Loading repository [{}]", repositoryId );
 
         builder.add( RepoLoader.create()
                          .reader( dumpReader )
                          .nodeService( this.nodeService )
                          .blobStore( this.blobStore )
                          .includeVersions( includeVersions )
-                         .repositoryEntryService( this.repositoryEntryService )
                          .repositoryId( repositoryId )
                          .build()
                          .execute() );
+    }
+
+    private Branches resolveBranches( final RepositoryId repositoryId )
+    {
+        return this.branchService.getBranches( NodeId.ROOT, repositoryId );
     }
 
     private Path ensureBasePath()

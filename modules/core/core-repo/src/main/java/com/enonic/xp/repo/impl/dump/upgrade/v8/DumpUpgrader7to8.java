@@ -423,7 +423,8 @@ public class DumpUpgrader7to8
         for ( NodeVersionUpgrader upgrader : List.of( new ContentUpgrader(), new AuditLogMillisUpgrader(), new SchedulerUpgrader(),
                                                       new ReferenceLowercaseUpgrader(), new DefaultProjectPermissionsUpgrader(),
                                                       new LanguageTagUpgrader(), new IndexConfigLanguageUpgrader(),
-                                                      new AttachmentSha512Upgrader( dumpReader ) ) )
+                                                      new AttachmentSha512Upgrader( dumpReader ),
+                                                      new RepositoryBranchesRemovalUpgrader() ) )
         {
             final NodeStoreVersion upgraded = upgrader.upgradeNodeVersion( repositoryId, dumpEntry );
             if ( upgraded != null )

@@ -50,7 +50,6 @@ import com.enonic.xp.repo.impl.dump.model.VersionMeta;
 import com.enonic.xp.repo.impl.dump.model.VersionsDumpEntry;
 import com.enonic.xp.repo.impl.dump.writer.DumpWriter;
 import com.enonic.xp.repo.impl.version.VersionIndexPath;
-import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 
@@ -58,7 +57,9 @@ public class RepoDumper
 {
     private static final Logger LOG = LoggerFactory.getLogger( RepoDumper.class );
 
-    private final Repository repository;
+    private final RepositoryId repositoryId;
+
+    private final Branches branches;
 
     private final boolean includeVersions;
 
@@ -80,12 +81,13 @@ public class RepoDumper
 
     private RepoDumper( final Builder builder )
     {
-        this.repository = builder.repository;
+        this.repositoryId = builder.repositoryId;
+        this.branches = builder.branches;
         this.includeVersions = builder.includeVersions;
         this.includeBinaries = builder.includeBinaries;
         this.nodeService = builder.nodeService;
         this.writer = builder.writer;
-        this.dumpResult = RepoDumpResult.create( this.repository.getId() );
+        this.dumpResult = RepoDumpResult.create( this.repositoryId );
         this.maxAge = builder.maxAge;
         this.maxVersions = builder.maxVersions;
         this.nodeIds = builder.nodeIds;
@@ -101,7 +103,7 @@ public class RepoDumper
 
         setContext( RepositoryConstants.MASTER_BRANCH ).runWith( () -> {
             this.nodeService.refresh( RefreshMode.ALL );
-            for ( Branch branch : this.repository.getBranches() )
+            for ( Branch branch : this.branches )
             {
                 dumpBranch( branch, nodeIdsAccumulator );
             }
@@ -119,21 +121,21 @@ public class RepoDumper
     {
         setContext( branch ).runWith( () -> {
             final BranchDumpResult.Builder branchDumpResult = BranchDumpResult.create( branch );
-            writer.openBranchMeta( repository.getId(), branch );
+            writer.openBranchMeta( repositoryId, branch );
             try
             {
                 final FindNodesByParentResult children = this.nodeService.findByParent(
-                    FindNodesByParentParams.create().parentId( Node.ROOT_UUID ).recursive( true ).childOrder( ChildOrder.path() ).build() );
+                    FindNodesByParentParams.create().parentId( NodeId.ROOT ).recursive( true ).childOrder( ChildOrder.path() ).build() );
 
                 final NodeIds nodesToDump = nodeIds != null
                     ? children.getNodeIds().stream().filter( nodeIds::contains ).collect( NodeIds.collector() )
                     : children.getNodeIds();
 
-                this.listener.dumpingBranch( repository.getId(), branch, nodesToDump.getSize() + 1 );
-                LOG.info( "Dumping repository [{}], branch [{}]", repository.getId(), branch );
+                this.listener.dumpingBranch( repositoryId, branch, nodesToDump.getSize() + 1 );
+                LOG.info( "Dumping repository [{}], branch [{}]", repositoryId, branch );
 
-                doDumpNode( Node.ROOT_UUID, branch, branchDumpResult );
-                nodeIdsAccumulator.accept( Node.ROOT_UUID );
+                doDumpNode( NodeId.ROOT, branch, branchDumpResult );
+                nodeIdsAccumulator.accept( NodeId.ROOT );
 
                 for ( final NodeId child : nodesToDump )
                 {
@@ -143,9 +145,9 @@ public class RepoDumper
             }
             catch ( Exception e )
             {
-                LOG.error( "Cannot fully dump repository [{}] branch [{}]", repository.getId(), branch, e );
-                branchDumpResult.error( DumpError.error(
-                    "Cannot fully dump repository [" + repository.getId() + "] branch [" + branch + "]: " + e.getMessage() ) );
+                LOG.error( "Cannot fully dump repository [{}] branch [{}]", repositoryId, branch, e );
+                branchDumpResult.error(
+                    DumpError.error( "Cannot fully dump repository [" + repositoryId + "] branch [" + branch + "]: " + e.getMessage() ) );
             }
             finally
             {
@@ -158,7 +160,7 @@ public class RepoDumper
 
     private void dumpVersions( final Collection<NodeId> dumpedNodes )
     {
-        writer.openVersionsMeta( repository.getId() );
+        writer.openVersionsMeta( repositoryId );
         try
         {
             for ( NodeId nodeId : dumpedNodes )
@@ -178,8 +180,8 @@ public class RepoDumper
         }
         catch ( Exception e )
         {
-            LOG.error( "Cannot fully dump repository [{}] versions", repository.getId(), e );
-            dumpResult.error( DumpError.error( "Cannot fully dump repository [" + repository.getId() + "] versions: " + e.getMessage() ) );
+            LOG.error( "Cannot fully dump repository [{}] versions", repositoryId, e );
+            dumpResult.error( DumpError.error( "Cannot fully dump repository [" + repositoryId + "] versions: " + e.getMessage() ) );
         }
         finally
         {
@@ -189,7 +191,7 @@ public class RepoDumper
 
     private void dumpCommits()
     {
-        writer.openCommitsMeta( repository.getId() );
+        writer.openCommitsMeta( repositoryId );
         try
         {
             final NodeCommitQuery nodeCommitQuery = NodeCommitQuery.create().size( -1 ).build();
@@ -224,7 +226,7 @@ public class RepoDumper
     {
         try
         {
-            writer.writeNodeVersionBlobs( repository.getId(), nodeVersionKey );
+            writer.writeNodeVersionBlobs( repositoryId, nodeVersionKey );
         }
         catch ( Exception e )
         {
@@ -238,7 +240,7 @@ public class RepoDumper
         attachedBinaries.forEach( ( attachedBinary ) -> {
             try
             {
-                this.writer.writeBinaryBlob( repository.getId(), attachedBinary );
+                this.writer.writeBinaryBlob( repositoryId, attachedBinary );
             }
             catch ( Exception e )
             {
@@ -250,7 +252,7 @@ public class RepoDumper
 
     private Context setContext( final Branch branch )
     {
-        return ContextBuilder.from( ContextAccessor.current() ).repositoryId( repository.getId() ).branch( branch ).build();
+        return ContextBuilder.from( ContextAccessor.current() ).repositoryId( repositoryId ).branch( branch ).build();
     }
 
     private void doDumpNode( final NodeId nodeId, final Branch branch, final BranchDumpResult.Builder dumpResult )
@@ -259,7 +261,7 @@ public class RepoDumper
         {
             final BranchDumpEntry branchDumpEntry = createDumpEntry( nodeId, branch );
             writer.writeBranchEntry( branchDumpEntry );
-            writer.writeNodeVersionBlobs( repository.getId(), branchDumpEntry.meta().nodeVersionKey() );
+            writer.writeNodeVersionBlobs( repositoryId, branchDumpEntry.meta().nodeVersionKey() );
             writeBinaries( dumpResult, branchDumpEntry.binaryReferences() );
             dumpResult.addedNode();
             this.listener.nodeDumped();
@@ -275,7 +277,7 @@ public class RepoDumper
         binaryReferences.forEach( ref -> {
             try
             {
-                writer.writeBinaryBlob( repository.getId(), BlobKey.from( ref ) );
+                writer.writeBinaryBlob( repositoryId, BlobKey.from( ref ) );
             }
             catch ( RepoDumpException e )
             {
@@ -323,7 +325,9 @@ public class RepoDumper
 
     public static final class Builder
     {
-        private Repository repository;
+        private RepositoryId repositoryId;
+
+        private Branches branches;
 
         private boolean includeVersions;
 
@@ -345,9 +349,15 @@ public class RepoDumper
         {
         }
 
-        public Builder repository( final Repository val )
+        public Builder repositoryId( final RepositoryId val )
         {
-            repository = val;
+            repositoryId = val;
+            return this;
+        }
+
+        public Builder branches( final Branches val )
+        {
+            branches = val;
             return this;
         }
 

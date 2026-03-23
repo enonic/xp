@@ -36,9 +36,4 @@ public class ReturnFields
     {
         return this.indexPaths.toArray( String[]::new );
     }
-
-    public boolean isNotEmpty()
-    {
-        return !indexPaths.isEmpty();
-    }
 }

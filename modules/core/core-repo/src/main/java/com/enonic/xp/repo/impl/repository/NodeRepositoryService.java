@@ -9,4 +9,6 @@ public interface NodeRepositoryService
     void delete( RepositoryId repositoryId );
 
     boolean isInitialized( RepositoryId repositoryId );
+
+    void refresh( RepositoryId repositoryId );
 }

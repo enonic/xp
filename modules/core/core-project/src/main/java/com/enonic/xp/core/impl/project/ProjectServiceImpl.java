@@ -20,6 +20,7 @@ import java.util.stream.Stream;
 
 import javax.imageio.ImageIO;
 
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -142,11 +143,6 @@ public class ProjectServiceImpl
             }
             final PropertyTree repositoryData = repository.getData();
 
-            if ( repositoryData == null )
-            {
-                return null;
-            }
-
             final PropertySet projectData = repositoryData.getSet( ProjectConstants.PROJECT_DATA_SET_NAME );
 
             if ( projectData == null )
@@ -156,7 +152,7 @@ public class ProjectServiceImpl
 
             return repository;
 
-        } ).filter( Objects::nonNull ).collect( Collectors.<Repository>toList() );
+        } ).filter( Objects::nonNull ).toList();
     }
 
     private static void buildIcon( final Project.Builder project, final PropertySet projectData )
@@ -270,7 +266,7 @@ public class ProjectServiceImpl
 
             LOG.debug( "Project created: {}", params.getName() );
 
-            return initProject( repositoryService.get( params.getName().getRepoId() ), getProjectSiteConfigs( contentRootData ) );
+            return toProject( repositoryService.get( params.getName().getRepoId() ), toProjectSiteConfigs( contentRootData ) );
         } );
     }
 
@@ -279,7 +275,7 @@ public class ProjectServiceImpl
     {
         callWithUpdateContext( () -> {
             doModifyIcon( params );
-            LOG.debug( "Icon for project updated: " + params.getName() );
+            LOG.debug( "Icon for project updated: {}", params.getName() );
 
             return true;
         }, params.getName() );
@@ -606,36 +602,46 @@ public class ProjectServiceImpl
 
     private Project doModify( final ModifyProjectParams params )
     {
-        final UpdateRepositoryParams updateParams =
-            UpdateRepositoryParams.create().repositoryId( params.getName().getRepoId() ).editor( editableRepository -> {
-                modifyProjectData( params, editableRepository.data );
-            } ).build();
+        final ProjectName projectName = params.getName();
 
-        final Repository updatedRepository = repositoryService.updateRepository( updateParams );
+        final UpdateRepositoryParams updateParams = UpdateRepositoryParams.create()
+            .repositoryId( projectName.getRepoId() )
+            .editor( editableRepository -> modifyProjectData( params, editableRepository.data ) )
+            .build();
+
+        final Repository updatedRepository;
+        try
+        {
+            updatedRepository = repositoryService.updateRepository( updateParams );
+        }
+        catch ( RepositoryNotFoundException e )
+        {
+            throw new ProjectNotFoundException( projectName );
+        }
 
         UpdateProjectRoleNamesCommand.create()
             .securityService( securityService )
-            .projectName( params.getName() )
+            .projectName( projectName )
             .projectDisplayName( params.getDisplayName() )
             .build()
             .execute();
 
-        final Node updatedContentRootNode = updateProjectSiteConfigs( params.getName(), params.getSiteConfigs() );
+        final Node updatedContentRootNode = updateProjectSiteConfigs( projectName, params.getSiteConfigs() );
 
-        return initProject( updatedRepository, getProjectSiteConfigs( updatedContentRootNode.data() ) );
+        return toProject( updatedRepository, toProjectSiteConfigs( updatedContentRootNode.data() ) );
     }
 
     private Projects doList()
     {
         return this.repositoryService.list().stream().map( repository -> {
             final ProjectName projectName = ProjectName.from( repository.getId() );
-            return projectName != null ? initProject( repository, getProjectSiteConfigs( projectName ) ) : null;
+            return projectName != null ? toProject( repository, getProjectSiteConfigs( projectName ) ) : null;
         } ).filter( Objects::nonNull ).collect( Projects.collector() );
     }
 
     private Project doGet( final ProjectName projectName )
     {
-        return initProject( this.repositoryService.get( projectName.getRepoId() ), getProjectSiteConfigs( projectName ) );
+        return toProject( this.repositoryService.get( projectName.getRepoId() ), getProjectSiteConfigs( projectName ) );
     }
 
     private PropertyTree createContentRootData( final CreateProjectParams params )
@@ -652,7 +658,7 @@ public class ProjectServiceImpl
         return data;
     }
 
-    private SiteConfigs getProjectSiteConfigs( final ProjectName projectName )
+    private @Nullable SiteConfigs getProjectSiteConfigs( final ProjectName projectName )
     {
         final Node contentRoot;
         try
@@ -669,10 +675,10 @@ public class ProjectServiceImpl
             return null;
         }
 
-        return getProjectSiteConfigs( contentRoot.data() );
+        return toProjectSiteConfigs( contentRoot.data() );
     }
 
-    private SiteConfigs getProjectSiteConfigs( final PropertyTree contentRootData )
+    private SiteConfigs toProjectSiteConfigs( final PropertyTree contentRootData )
     {
         return Optional.ofNullable( contentRootData.getSet( ContentPropertyNames.DATA ) )
             .map( SiteConfigsDataSerializer::fromData )
@@ -694,7 +700,7 @@ public class ProjectServiceImpl
         return contentRootDataContext( projectName ).callWith( () -> nodeService.update( build ) );
     }
 
-    private Project initProject( final Repository repository, final SiteConfigs siteConfigs )
+    private Project toProject( final Repository repository, final SiteConfigs siteConfigs )
     {
         if ( repository == null || siteConfigs == null )
         {

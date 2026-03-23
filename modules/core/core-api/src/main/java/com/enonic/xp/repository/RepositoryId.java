@@ -24,7 +24,7 @@ public final class RepositoryId
      */
     private static final NameValidator REPOSITORY_ID_VALIDATOR = NameValidator.builder( RepositoryId.class )
         .maxLength( RepositoryConstants.REPOSITORY_ID_MAX_LENGTH )
-        .regex( Pattern.compile( "^[a-z0-9][a-z0-9._-]*$" ) )
+        .regex( Pattern.compile( "^[a-z0-9][a-z0-9_.-]*$" ) )
         .build();
 
     private final String value;

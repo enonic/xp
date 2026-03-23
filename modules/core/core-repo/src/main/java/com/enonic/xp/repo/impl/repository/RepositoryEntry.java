@@ -2,18 +2,13 @@ package com.enonic.xp.repo.impl.repository;
 
 import java.util.Objects;
 
-import com.enonic.xp.branch.Branch;
-import com.enonic.xp.branch.Branches;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.AttachedBinaries;
-import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 
 public final class RepositoryEntry
 {
     private final RepositoryId id;
-
-    private final Branches branches;
 
     private final RepositorySettings settings;
 
@@ -26,7 +21,6 @@ public final class RepositoryEntry
     private RepositoryEntry( RepositoryEntry.Builder builder )
     {
         this.id = builder.id;
-        this.branches = builder.branches;
         this.settings = builder.settings == null ? RepositorySettings.create().build() : builder.settings;
         this.data = Objects.requireNonNullElseGet( builder.data, PropertyTree::new );
         this.attachments = Objects.requireNonNullElseGet( builder.attachments, AttachedBinaries::empty );
@@ -41,11 +35,6 @@ public final class RepositoryEntry
     public RepositorySettings getSettings()
     {
         return settings;
-    }
-
-    public Branches getBranches()
-    {
-        return branches;
     }
 
     public PropertyTree getData()
@@ -68,24 +57,11 @@ public final class RepositoryEntry
         return new RepositoryEntry.Builder();
     }
 
-    public Repository asRepository()
-    {
-        return Repository.create()
-            .id( this.id )
-            .branches( this.branches )
-            .data( this.data.copy() )
-            .attachments( this.attachments )
-            .transientFlag( this.transientFlag )
-            .build();
-    }
-
     public static final class Builder
     {
         private RepositoryId id;
 
         private RepositorySettings settings;
-
-        private Branches branches;
 
         private PropertyTree data;
 
@@ -100,19 +76,6 @@ public final class RepositoryEntry
         public RepositoryEntry.Builder id( final RepositoryId id )
         {
             this.id = id;
-            return this;
-        }
-
-        public RepositoryEntry.Builder branches( final Branches branches )
-        {
-            this.branches = branches;
-            return this;
-        }
-
-
-        public RepositoryEntry.Builder branches( final Branch... branches )
-        {
-            this.branches = Branches.from( branches );
             return this;
         }
 

@@ -1,13 +1,8 @@
 package com.enonic.xp.repo.impl.repository;
 
-import java.util.Iterator;
 import java.util.Objects;
 import java.util.Optional;
 
-import com.google.common.collect.ImmutableSet;
-
-import com.enonic.xp.branch.Branch;
-import com.enonic.xp.branch.Branches;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
@@ -23,8 +18,6 @@ import com.enonic.xp.security.SystemConstants;
 
 public class RepositoryNodeTranslator
 {
-    private static final String BRANCHES_KEY = "branches";
-
     private static final String INDEX_CONFIG_KEY = "indexConfigs";
 
     private static final String MAPPING_KEY = "mapping";
@@ -38,7 +31,6 @@ public class RepositoryNodeTranslator
     public static Node toNode( final RepositoryEntry repository )
     {
         final PropertyTree repositoryNodeData = new PropertyTree();
-        toNodeData( repository.getBranches(), repositoryNodeData );
         final RepositorySettings repositorySettings = repository.getSettings();
         toNodeData( repositorySettings.getIndexDefinitions(), repositoryNodeData );
         toNodeData( repository.getData(), repositoryNodeData );
@@ -47,20 +39,15 @@ public class RepositoryNodeTranslator
             repositoryNodeData.setBoolean( TRANSIENT_KEY, true );
         }
 
-        return Node.create().
-            id( NodeId.from( repository.getId() ) ).
-            childOrder( ChildOrder.defaultOrder() ).
-            data( repositoryNodeData ).
-            name( repository.getId().toString() ).
-            parentPath( RepositoryConstants.REPOSITORY_STORAGE_PARENT_PATH ).
-            permissions( SystemConstants.SYSTEM_REPO_DEFAULT_ACL ).
-            attachedBinaries( repository.getAttachments() ).
-            build();
-    }
-
-    public static NodeEditor toCreateBranchNodeEditor( final Branch branch )
-    {
-        return toBeEdited -> toBeEdited.data.addString( BRANCHES_KEY, branch.getValue() );
+        return Node.create()
+            .id( NodeId.from( repository.getId() ) )
+            .childOrder( ChildOrder.defaultOrder() )
+            .data( repositoryNodeData )
+            .name( repository.getId().toString() )
+            .parentPath( RepositoryConstants.REPOSITORY_STORAGE_PARENT_PATH )
+            .permissions( SystemConstants.SYSTEM_REPO_DEFAULT_ACL )
+            .attachedBinaries( repository.getAttachments() )
+            .build();
     }
 
     public static NodeEditor toUpdateRepositoryNodeEditor( UpdateRepositoryEntryParams params )
@@ -81,82 +68,19 @@ public class RepositoryNodeTranslator
         };
     }
 
-    public static NodeEditor toDeleteBranchNodeEditor( final Branch branch )
-    {
-        return toBeEdited -> {
-            final Iterable<String> branches = toBeEdited.data.getStrings( BRANCHES_KEY );
-
-            toBeEdited.data.removeProperties( BRANCHES_KEY );
-            for ( Iterator<String> branchIterator = branches.iterator(); branchIterator.hasNext(); )
-            {
-                final String currentBranch = branchIterator.next();
-                if ( !branch.getValue().equals( currentBranch ) )
-                {
-                    toBeEdited.data.addString( BRANCHES_KEY, currentBranch );
-                }
-            }
-        };
-    }
-
-    private static void toNodeData( final Branches branches, final PropertyTree data )
-    {
-        branches.forEach( branch -> data.addString( BRANCHES_KEY, branch.getValue() ) );
-    }
-
-    private static void toNodeData( final PropertyTree repositoryData, final PropertyTree data )
-    {
-        data.addSet( DATA_KEY, repositoryData.getRoot().copy( data.getRoot().getTree() ) );
-    }
-
-    private static void toNodeData( final IndexDefinitions indexDefinitions, final PropertyTree data )
-    {
-        if ( indexDefinitions != null )
-        {
-            final PropertySet indexConfigsPropertySet = data.addSet( INDEX_CONFIG_KEY );
-            for ( IndexType indexType : IndexType.values() )
-            {
-                final IndexDefinition indexDefinition = indexDefinitions.get( indexType );
-                if ( indexDefinition != null )
-                {
-                    final PropertySet indexConfigPropertySet = indexConfigsPropertySet.addSet( indexType.getName() );
-                    final IndexMapping indexMapping = indexDefinition.getMapping();
-                    if ( indexMapping != null )
-                    {
-                        indexConfigPropertySet.setSet( MAPPING_KEY, PropertyTree.fromMap( indexMapping.getData() ).getRoot().copy( data ) );
-                    }
-
-                    final IndexSettings indexSettings = indexDefinition.getSettings();
-                    if ( indexSettings != null )
-                    {
-                        indexConfigPropertySet.setSet( SETTINGS_KEY, PropertyTree.fromMap( indexSettings.getData() ).getRoot().copy( data ) );
-                    }
-                }
-            }
-        }
-    }
-
     public static RepositoryEntry toRepository( final Node node )
     {
         final PropertyTree nodeData = node.data();
 
         final PropertyTree repositoryData = toRepositoryData( nodeData );
 
-        return RepositoryEntry.create().
-            id( RepositoryId.from( node.id().toString() ) ).
-            branches( toBranches( nodeData ) ).
-            settings( toRepositorySettings( nodeData ) ).
-            data( repositoryData ).
-            attachments( node.getAttachedBinaries() ).
-            transientFlag( Objects.requireNonNullElse( nodeData.getBoolean( TRANSIENT_KEY ), false ) ).
-            build();
-    }
-
-    private static Branches toBranches( final PropertyTree nodeData )
-    {
-        final ImmutableSet.Builder<Branch> branches = ImmutableSet.builder();
-        nodeData.getStrings( BRANCHES_KEY ).
-            forEach( branchValue -> branches.add( Branch.from( branchValue ) ) );
-        return Branches.from( branches.build() );
+        return RepositoryEntry.create()
+            .id( RepositoryId.from( node.id().toString() ) )
+            .settings( toRepositorySettings( nodeData ) )
+            .data( repositoryData )
+            .attachments( node.getAttachedBinaries() )
+            .transientFlag( Objects.requireNonNullElse( nodeData.getBoolean( TRANSIENT_KEY ), false ) )
+            .build();
     }
 
     public static RepositorySettings toRepositorySettings( final PropertyTree nodeData )
@@ -184,6 +108,39 @@ public class RepositoryNodeTranslator
             return RepositorySettings.create().indexDefinitions( indexConfigs.build() ).build();
         }
         return null;
+    }
+
+    private static void toNodeData( final PropertyTree repositoryData, final PropertyTree data )
+    {
+        data.addSet( DATA_KEY, repositoryData.getRoot().copy( data.getRoot().getTree() ) );
+    }
+
+    private static void toNodeData( final IndexDefinitions indexDefinitions, final PropertyTree data )
+    {
+        if ( indexDefinitions != null )
+        {
+            final PropertySet indexConfigsPropertySet = data.addSet( INDEX_CONFIG_KEY );
+            for ( IndexType indexType : IndexType.values() )
+            {
+                final IndexDefinition indexDefinition = indexDefinitions.get( indexType );
+                if ( indexDefinition != null )
+                {
+                    final PropertySet indexConfigPropertySet = indexConfigsPropertySet.addSet( indexType.getName() );
+                    final IndexMapping indexMapping = indexDefinition.getMapping();
+                    if ( indexMapping != null )
+                    {
+                        indexConfigPropertySet.setSet( MAPPING_KEY, PropertyTree.fromMap( indexMapping.getData() ).getRoot().copy( data ) );
+                    }
+
+                    final IndexSettings indexSettings = indexDefinition.getSettings();
+                    if ( indexSettings != null )
+                    {
+                        indexConfigPropertySet.setSet( SETTINGS_KEY,
+                                                       PropertyTree.fromMap( indexSettings.getData() ).getRoot().copy( data ) );
+                    }
+                }
+            }
+        }
     }
 
     private static PropertyTree toRepositoryData( final PropertyTree nodeData )

@@ -77,8 +77,8 @@ class SnapshotServiceImplTest
         final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl( this.indexServiceInternal );
 
         this.repositoryService =
-            new RepositoryServiceImpl( this.repositoryEntryService, this.indexServiceInternal, nodeRepositoryService, this.storageService,
-                                       this.searchService );
+            new RepositoryServiceImpl( this.repositoryEntryService, nodeRepositoryService, this.storageService, this.searchService,
+                                       this.branchService );
 
         final RepoConfiguration configuration = Mockito.mock( RepoConfiguration.class );
         Mockito.when( configuration.getSnapshotsDir() ).thenReturn( getSnapshotsDir() );
@@ -252,9 +252,10 @@ class SnapshotServiceImplTest
             assertAll( () -> assertNull( this.repositoryEntryService.getRepositoryEntry( newRepoId ) ),
                        () -> assertFalse( indexServiceInternal.indicesExists( IndexNameResolver.resolveStorageIndexName( newRepoId ) ) ),
                        () -> assertFalse( indexServiceInternal.indicesExists( IndexNameResolver.resolveSearchIndexName( newRepoId ) ) ) );
-            assertAll( () -> assertFalse( this.repositoryService.isInitialized( newRepoAfterSnapshotId ) ),
-                       () -> assertFalse( indexServiceInternal.indicesExists( IndexNameResolver.resolveStorageIndexName( newRepoAfterSnapshotId ) ) ),
-                       () -> assertFalse( indexServiceInternal.indicesExists( IndexNameResolver.resolveSearchIndexName( newRepoAfterSnapshotId ) ) ) );
+            assertAll( () -> assertFalse( this.repositoryService.isInitialized( newRepoAfterSnapshotId ) ), () -> assertFalse(
+                           indexServiceInternal.indicesExists( IndexNameResolver.resolveStorageIndexName( newRepoAfterSnapshotId ) ) ),
+                       () -> assertFalse(
+                           indexServiceInternal.indicesExists( IndexNameResolver.resolveSearchIndexName( newRepoAfterSnapshotId ) ) ) );
         } );
     }
 

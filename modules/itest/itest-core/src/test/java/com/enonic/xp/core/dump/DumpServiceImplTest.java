@@ -34,7 +34,6 @@ import com.enonic.xp.dump.SystemLoadListener;
 import com.enonic.xp.dump.SystemLoadParams;
 import com.enonic.xp.dump.SystemLoadResult;
 import com.enonic.xp.dump.VersionsLoadResult;
-import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.ApplyVersionAttributesParams;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.Attributes;
@@ -46,6 +45,7 @@ import com.enonic.xp.node.GetActiveNodeVersionsResult;
 import com.enonic.xp.node.GetNodeVersionsParams;
 import com.enonic.xp.node.GetNodeVersionsResult;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersion;
@@ -61,10 +61,11 @@ import com.enonic.xp.repo.impl.dump.DumpServiceImpl;
 import com.enonic.xp.repo.impl.dump.RepoDumpException;
 import com.enonic.xp.repo.impl.dump.RepoLoadException;
 import com.enonic.xp.repo.impl.node.NodeHelper;
-import com.enonic.xp.repo.impl.repository.CreateRepositoryIndexParams;
+import com.enonic.xp.repo.impl.repository.RepositoryCreator;
 import com.enonic.xp.repo.impl.repository.RepositoryEntry;
+import com.enonic.xp.repo.impl.repository.RepositorySettings;
 import com.enonic.xp.repo.impl.repository.UpdateRepositoryEntryParams;
-import com.enonic.xp.repo.impl.storage.StoreNodeParams;
+import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.Repositories;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
@@ -80,7 +81,6 @@ import com.enonic.xp.util.GenericValue;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -105,8 +105,8 @@ class DumpServiceImplTest
         final RepoConfigurationDynamic repoConfiguration = new RepoConfigurationDynamic();
         repoConfiguration.activate( Map.of( "dumps.dir", temporaryFolder.toString() ) );
         this.dumpService =
-            new DumpServiceImpl( eventPublisher, BLOB_STORE, this.nodeService, this.repositoryEntryService, this.nodeRepositoryService,
-                                 this.storageService, repoConfiguration );
+            new DumpServiceImpl( eventPublisher, BLOB_STORE, this.nodeService, this.repositoryEntryService,
+                                 this.nodeRepositoryService, this.storageService, this.branchService, repoConfiguration );
     }
 
     @Test
@@ -331,7 +331,7 @@ class DumpServiceImplTest
 
         NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad() );
 
-        final Node loadedRootNode = newContext.callWith( () -> getNodeById( Node.ROOT_UUID ) );
+        final Node loadedRootNode = newContext.callWith( () -> getNodeById( NodeId.ROOT ) );
 
         assertEquals( newRepoACL, loadedRootNode.getPermissions() );
     }
@@ -340,19 +340,12 @@ class DumpServiceImplTest
     void branch_created_if_missing()
     {
         final Node node = createNode( NodePath.ROOT, "my-node" );
-        final Branch branch = WS_DEFAULT;
-        final RepositoryId currentRepoId = testRepoId;
 
         NodeHelper.runAsAdmin( () -> {
             doDump( SystemDumpParams.create().dumpName( "testDump" ).build() );
 
-            this.repositoryEntryService.removeBranchFromRepositoryEntry( currentRepoId, branch );
-
-            assertFalse( this.repositoryEntryService.getRepositoryEntry( currentRepoId ).getBranches().contains( branch ) );
-
             this.dumpService.load( SystemLoadParams.create().dumpName( "testDump" ).build() );
 
-            assertTrue( this.repositoryEntryService.getRepositoryEntry( currentRepoId ).getBranches().contains( branch ) );
             assertNotNull( this.nodeService.getById( node.id() ) );
         } );
     }
@@ -802,41 +795,15 @@ class DumpServiceImplTest
 
     private RepositoryEntry doCreateRepository( final RepositoryId repositoryId, boolean transientFlag )
     {
-        final CreateRepositoryIndexParams params = CreateRepositoryIndexParams.create().repositoryId( repositoryId ).build();
-
-        this.nodeRepositoryService.create( params );
-
-        final RepositoryEntry createRepositoryParams = RepositoryEntry.create()
-            .id( repositoryId )
-            .branches( Branches.from( RepositoryConstants.MASTER_BRANCH ) )
-            .transientFlag( transientFlag )
-            .build();
-
-        this.repositoryEntryService.createRepositoryEntry( createRepositoryParams );
-
-        final RepositoryEntry repo = this.repositoryEntryService.getRepositoryEntry( repositoryId );
         final AccessControlList permissions =
             AccessControlList.create().add( AccessControlEntry.create().principal( RoleKeys.EVERYONE ).allowAll().build() ).build();
 
-        createRootNode( repositoryId, permissions, null );
-
-        return repo;
-    }
-
-    private void createRootNode( final RepositoryId repositoryId, final AccessControlList permissions, final ChildOrder childOrder )
-    {
-        final Context rootNodeContext = ContextBuilder.from( ContextAccessor.current() )
-            .repositoryId( repositoryId )
-            .branch( RepositoryConstants.MASTER_BRANCH )
-            .build();
-
-        Node node = Node.createRoot()
-            .permissions( permissions != null ? permissions : RepositoryConstants.DEFAULT_REPO_PERMISSIONS )
-            .childOrder( childOrder != null ? childOrder : RepositoryConstants.DEFAULT_CHILD_ORDER )
-            .build();
-        this.storageService.store( StoreNodeParams.newVersion( node ), InternalContext.from( rootNodeContext ) );
-
-        rootNodeContext.runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
+        return new RepositoryCreator( nodeRepositoryService, storageService, repositoryEntryService ).createRepository(
+            CreateRepositoryParams.create()
+                .repositoryId( repositoryId )
+                .transientFlag( transientFlag )
+                .rootPermissions( permissions )
+                .build(), RepositorySettings.create().build(), AttachedBinaries.empty() );
     }
 
     private void doDeleteRepository( final RepositoryId repositoryId )
@@ -855,7 +822,13 @@ class DumpServiceImplTest
             .stream()
             .map( repositoryEntryService::getRepositoryEntry )
             .filter( Objects::nonNull )
-            .map( RepositoryEntry::asRepository )
+            .map( entry -> Repository.create()
+                .id( entry.getId() )
+                .branches( Branches.from( RepositoryConstants.MASTER_BRANCH ) )
+                .data( entry.getData().copy() )
+                .attachments( entry.getAttachments() )
+                .transientFlag( entry.isTransient() )
+                .build() )
             .forEach( repositories::add );
 
         return repositories.build();

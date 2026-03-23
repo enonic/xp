@@ -253,10 +253,9 @@ public abstract class AbstractNodeTest
             new RepositoryEntryServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService );
 
         this.repositoryService =
-            new RepositoryServiceImpl( repositoryEntryService, indexServiceInternal, nodeRepositoryService, storageService, searchService );
+            new RepositoryServiceImpl( repositoryEntryService, nodeRepositoryService, storageService, searchService, branchService );
 
-        this.nodeService =
-            new NodeServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService, repositoryService );
+        this.nodeService = new NodeServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService );
 
         this.indexService =
             new IndexServiceImpl( indexServiceInternal, indexedDataService, searchService, nodeDao, repositoryEntryService );

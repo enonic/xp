@@ -9,10 +9,10 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.repo.impl.branch.BranchService;
+import com.enonic.xp.repo.impl.repository.RepositoryEntryService;
 import com.enonic.xp.repo.impl.vacuum.VacuumTask;
 import com.enonic.xp.repo.impl.vacuum.VacuumTaskParams;
 import com.enonic.xp.repo.impl.version.VersionService;
-import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.vacuum.VacuumTaskResult;
 
 @Component(immediate = true)
@@ -25,7 +25,7 @@ public class VersionTableVacuumTask
 
     private final NodeService nodeService;
 
-    private final RepositoryService repositoryService;
+    private final RepositoryEntryService repositoryEntryService;
 
     private final VersionService versionService;
 
@@ -36,12 +36,12 @@ public class VersionTableVacuumTask
     private Clock clock;
 
     @Activate
-    public VersionTableVacuumTask( @Reference final NodeService nodeService, @Reference final RepositoryService repositoryService,
+    public VersionTableVacuumTask( @Reference final NodeService nodeService, @Reference final RepositoryEntryService repositoryEntryService,
                                    @Reference final VersionService versionService, @Reference final BranchService branchService,
                                    @Reference final BlobStore blobStore )
     {
         this.nodeService = nodeService;
-        this.repositoryService = repositoryService;
+        this.repositoryEntryService = repositoryEntryService;
         this.versionService = versionService;
         this.blobStore = blobStore;
         this.branchService = branchService;
@@ -61,7 +61,7 @@ public class VersionTableVacuumTask
             params.getListener().taskBegin( NAME, null );
         }
         return VersionTableVacuumCommand.create()
-            .repositoryService( repositoryService )
+            .repositoryEntryService( repositoryEntryService )
             .nodeService( nodeService )
             .versionService( versionService )
             .branchService( branchService )

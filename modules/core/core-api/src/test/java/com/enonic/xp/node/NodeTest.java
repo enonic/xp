@@ -22,17 +22,13 @@ class NodeTest
     @Test
     void createRoot()
     {
-        final Node rootNode = Node.createRoot().
-            childOrder( ChildOrder.create().
-                add( FieldOrderExpr.create( NodeIndexPath.NAME, OrderExpr.Direction.ASC ) ).
-                build() ).
-            permissions( AccessControlList.of( AccessControlEntry.create().
-                allowAll().
-                principal( RoleKeys.CONTENT_MANAGER_ADMIN ).
-                build() ) ).
-            build();
+        final Node rootNode = Node.createRoot()
+            .childOrder( ChildOrder.create().add( FieldOrderExpr.create( NodeIndexPath.NAME, OrderExpr.Direction.ASC ) ).build() )
+            .permissions(
+                AccessControlList.of( AccessControlEntry.create().allowAll().principal( RoleKeys.CONTENT_MANAGER_ADMIN ).build() ) )
+            .build();
 
-        assertEquals( Node.ROOT_UUID.toString(), rootNode.id().toString() );
+        assertEquals( NodeId.ROOT.toString(), rootNode.id().toString() );
         assertEquals( "", rootNode.name().toString() );
         assertNull( rootNode.parentPath() );
         assertEquals( NodePath.ROOT, rootNode.path() );
@@ -56,33 +52,17 @@ class NodeTest
             @Override
             public Object getObjectX()
             {
-                return Node.create().
-                    name( name1 ).
-                    data( data1 ).
-                    childOrder( childOrder1 ).
-                    build();
+                return Node.create().name( name1 ).data( data1 ).childOrder( childOrder1 ).build();
             }
 
             @Override
             public Object[] getObjectsThatNotEqualsX()
             {
-                Node notX1 = Node.create().
-                    name( name2 ).
-                    data( data1 ).
-                    childOrder( childOrder1 ).
-                    build();
+                Node notX1 = Node.create().name( name2 ).data( data1 ).childOrder( childOrder1 ).build();
 
-                Node notX2 = Node.create().
-                    name( name1 ).
-                    data( data2 ).
-                    childOrder( childOrder1 ).
-                    build();
+                Node notX2 = Node.create().name( name1 ).data( data2 ).childOrder( childOrder1 ).build();
 
-                Node notX3 = Node.create().
-                    name( name1 ).
-                    data( data1 ).
-                    childOrder( childOrder2 ).
-                    build();
+                Node notX3 = Node.create().name( name1 ).data( data1 ).childOrder( childOrder2 ).build();
 
                 return new Object[]{notX1, notX2, notX3};
             }
@@ -90,21 +70,13 @@ class NodeTest
             @Override
             public Object getObjectThatEqualsXButNotTheSame()
             {
-                return Node.create().
-                    name( name1 ).
-                    data( data1 ).
-                    childOrder( childOrder1 ).
-                    build();
+                return Node.create().name( name1 ).data( data1 ).childOrder( childOrder1 ).build();
             }
 
             @Override
             public Object getObjectThatEqualsXButNotTheSame2()
             {
-                return Node.create().
-                    name( name1 ).
-                    data( data1 ).
-                    childOrder( childOrder1 ).
-                    build();
+                return Node.create().name( name1 ).data( data1 ).childOrder( childOrder1 ).build();
             }
         };
         equalsTest.assertEqualsAndHashCodeContract();
@@ -115,11 +87,7 @@ class NodeTest
     {
         Instant timestamp = Instant.parse( "2017-10-01T09:00:00.123456789Z" );
         PropertyTree data1 = new PropertyTree();
-        Node node = Node.create().
-            name( "name1" ).
-            data( data1 ).
-            timestamp( timestamp ).
-            build();
+        Node node = Node.create().name( "name1" ).data( data1 ).timestamp( timestamp ).build();
 
         assertEquals( Instant.parse( "2017-10-01T09:00:00.123Z" ), node.getTimestamp() );
     }
@@ -129,11 +97,7 @@ class NodeTest
     {
         Instant timestamp = Instant.parse( "2017-10-01T09:00:00.123Z" );
         PropertyTree data1 = new PropertyTree();
-        Node node = Node.create().
-            name( "name1" ).
-            data( data1 ).
-            timestamp( timestamp ).
-            build();
+        Node node = Node.create().name( "name1" ).data( data1 ).timestamp( timestamp ).build();
 
         assertEquals( Instant.parse( "2017-10-01T09:00:00.123Z" ), node.getTimestamp() );
     }

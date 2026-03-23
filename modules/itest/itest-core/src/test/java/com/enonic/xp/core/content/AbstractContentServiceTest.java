@@ -262,7 +262,7 @@ public abstract class AbstractContentServiceTest
         final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl( indexServiceInternal );
 
         RepositoryServiceImpl repositoryService =
-            new RepositoryServiceImpl( repositoryEntryService, indexServiceInternal, nodeRepositoryService, storageService, searchService );
+            new RepositoryServiceImpl( repositoryEntryService, nodeRepositoryService, storageService, searchService, branchService );
         SystemRepoInitializer.create()
             .setIndexServiceInternal( indexServiceInternal )
             .setRepositoryService( repositoryService )
@@ -270,8 +270,7 @@ public abstract class AbstractContentServiceTest
             .build()
             .initialize();
 
-        nodeService =
-            new NodeServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService, repositoryService );
+        nodeService = new NodeServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService );
 
         formFragmentService = mock( CmsFormFragmentService.class );
         when( formFragmentService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );

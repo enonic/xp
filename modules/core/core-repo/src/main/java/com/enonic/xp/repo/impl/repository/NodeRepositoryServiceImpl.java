@@ -23,7 +23,7 @@ public class NodeRepositoryServiceImpl
 {
     private static final Logger LOG = LoggerFactory.getLogger( NodeRepositoryServiceImpl.class );
 
-    private static final IndexResourceProvider DEFAULT_INDEX_RESOURCE_PROVIDER =  new DefaultIndexResourceProvider();
+    private static final IndexResourceProvider DEFAULT_INDEX_RESOURCE_PROVIDER = new DefaultIndexResourceProvider();
 
     private final IndexServiceInternal indexServiceInternal;
 
@@ -60,6 +60,12 @@ public class NodeRepositoryServiceImpl
     public boolean isInitialized( final RepositoryId repositoryId )
     {
         return indexServiceInternal.indicesExists( resolveIndexNames( repositoryId ) );
+    }
+
+    @Override
+    public void refresh( final RepositoryId repositoryId )
+    {
+        indexServiceInternal.refresh( resolveIndexNames( repositoryId ) );
     }
 
     private void createIndex( final RepositoryId repositoryId, final RepositorySettings settings, final IndexType indexType,

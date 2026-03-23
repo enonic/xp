@@ -422,7 +422,7 @@ class MoveNodeCommandTest
     @Test
     void cannot_move_root_node()
     {
-        assertThrows( OperationNotPermittedException.class, () -> doMoveNode( new NodePath( "/fisk" ), Node.ROOT_UUID ) );
+        assertThrows( OperationNotPermittedException.class, () -> doMoveNode( new NodePath( "/fisk" ), NodeId.ROOT ) );
     }
 
     private void doMoveNode( final NodePath newParent, final NodeId nodeId )
