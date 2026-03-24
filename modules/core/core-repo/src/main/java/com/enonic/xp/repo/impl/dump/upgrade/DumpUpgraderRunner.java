@@ -51,7 +51,7 @@ public class DumpUpgraderRunner
             }
 
             final Version targetModelVersion = dumpUpgrader.getModelVersion();
-            final String targetDumpName = dumpName + "-upgraded-to-" + targetModelVersion;
+            final String targetDumpName = dumpName + "-upgraded-to-" + targetModelVersion.toShortestString();
 
             try (DumpWriter dumpWriter = ZipDumpWriterV8.create( basePath, targetDumpName ))
             {

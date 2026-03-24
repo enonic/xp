@@ -43,7 +43,7 @@ public final class BlobKey
     {
         try
         {
-            return from( "sha256:" + MessageDigests.formatHex( MessageDigests.digest( MessageDigests.sha256(), in::openStream ) ) );
+            return from( "sha256:" + MessageDigests.formatHex( MessageDigests.updateWithStream( MessageDigests.sha256(), in::openStream ) ) );
         }
         catch ( final IOException e )
         {

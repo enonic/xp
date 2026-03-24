@@ -39,7 +39,7 @@ public class MessageDigests
         digest.update( bytes );
     }
 
-    public static MessageDigest digest( final MessageDigest digest, final IOSupplier<InputStream> inputStreamOpener )
+    public static MessageDigest updateWithStream( final MessageDigest digest, final IOSupplier<InputStream> inputStreamOpener )
         throws IOException
     {
         try (InputStream is = inputStreamOpener.get(); DigestInputStream dis = new DigestInputStream( is, digest ))

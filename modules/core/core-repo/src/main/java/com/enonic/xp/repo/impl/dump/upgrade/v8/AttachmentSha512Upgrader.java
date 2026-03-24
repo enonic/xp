@@ -1,13 +1,9 @@
 package com.enonic.xp.repo.impl.dump.upgrade.v8;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.security.DigestInputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.io.ByteStreams;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
@@ -19,6 +15,7 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.project.ProjectConstants;
+import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.repo.impl.dump.reader.BlobStoreAccess;
 import com.enonic.xp.repo.impl.dump.upgrade.NodeVersionUpgrader;
@@ -42,16 +39,22 @@ public class AttachmentSha512Upgrader
     @Override
     public NodeStoreVersion upgradeNodeVersion( final RepositoryId repositoryId, final NodeStoreVersion nodeVersion )
     {
-        if ( !repositoryId.toString().startsWith( ProjectConstants.PROJECT_REPO_ID_PREFIX ) )
+        if ( repositoryId.toString().startsWith( ProjectConstants.PROJECT_REPO_ID_PREFIX ) &&
+            ContentConstants.CONTENT_NODE_COLLECTION.equals( nodeVersion.nodeType() ) )
         {
-            return null;
+            return upgradeContentAttachments( repositoryId, nodeVersion );
         }
 
-        if ( !ContentConstants.CONTENT_NODE_COLLECTION.equals( nodeVersion.nodeType() ) )
+        if ( SystemConstants.SYSTEM_REPO_ID.equals( repositoryId ) )
         {
-            return null;
+            return upgradeProjectIcon( repositoryId, nodeVersion );
         }
 
+        return null;
+    }
+
+    private NodeStoreVersion upgradeContentAttachments( final RepositoryId repositoryId, final NodeStoreVersion nodeVersion )
+    {
         final PropertyTree data = nodeVersion.data();
         final Iterable<PropertySet> attachments = data.getSets( ContentPropertyNames.ATTACHMENT );
         if ( attachments == null )
@@ -64,27 +67,8 @@ public class AttachmentSha512Upgrader
 
         for ( PropertySet attachmentSet : attachments )
         {
-            if ( attachmentSet.getString( ContentPropertyNames.ATTACHMENT_SHA512 ) != null )
+            if ( computeAndSetSha512( attachmentSet, nodeVersion, binarySegment ) )
             {
-                continue;
-            }
-
-            final BinaryReference binaryRef = attachmentSet.getBinaryReference( ContentPropertyNames.ATTACHMENT_BINARY_REF );
-            if ( binaryRef == null )
-            {
-                continue;
-            }
-
-            final AttachedBinary attachedBinary = nodeVersion.attachedBinaries().getByBinaryReference( binaryRef );
-            if ( attachedBinary == null )
-            {
-                continue;
-            }
-
-            final String sha512 = computeSha512( binarySegment, BlobKey.from( attachedBinary.getBlobKey() ) );
-            if ( sha512 != null )
-            {
-                attachmentSet.addString( ContentPropertyNames.ATTACHMENT_SHA512, sha512 );
                 modified = true;
             }
         }
@@ -96,17 +80,64 @@ public class AttachmentSha512Upgrader
         return modified ? nodeVersion : null;
     }
 
+    private NodeStoreVersion upgradeProjectIcon( final RepositoryId repositoryId, final NodeStoreVersion nodeVersion )
+    {
+        final PropertySet projectData = nodeVersion.data().getSet( ProjectConstants.PROJECT_DATA_SET_NAME );
+        if ( projectData == null )
+        {
+            return null;
+        }
+
+        final PropertySet iconData = projectData.getSet( ProjectConstants.PROJECT_ICON_PROPERTY );
+        if ( iconData == null )
+        {
+            return null;
+        }
+
+        final Segment binarySegment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.BINARY_SEGMENT_LEVEL );
+
+        if ( computeAndSetSha512( iconData, nodeVersion, binarySegment ) )
+        {
+            LOG.info( "Added sha512 to project icon for node [{}] in repository [{}]", nodeVersion.id(), repositoryId );
+            return nodeVersion;
+        }
+        return null;
+    }
+
+    private boolean computeAndSetSha512( final PropertySet attachmentSet, final NodeStoreVersion nodeVersion, final Segment binarySegment )
+    {
+        if ( attachmentSet.getString( ContentPropertyNames.ATTACHMENT_SHA512 ) != null )
+        {
+            return false;
+        }
+
+        final BinaryReference binaryRef = attachmentSet.getBinaryReference( ContentPropertyNames.ATTACHMENT_BINARY_REF );
+        if ( binaryRef == null )
+        {
+            return false;
+        }
+
+        final AttachedBinary attachedBinary = nodeVersion.attachedBinaries().getByBinaryReference( binaryRef );
+        if ( attachedBinary == null )
+        {
+            return false;
+        }
+
+        final String sha512 = computeSha512( binarySegment, BlobKey.from( attachedBinary.getBlobKey() ) );
+        if ( sha512 != null )
+        {
+            attachmentSet.addString( ContentPropertyNames.ATTACHMENT_SHA512, sha512 );
+            return true;
+        }
+        return false;
+    }
+
     private String computeSha512( final Segment binarySegment, final BlobKey blobKey )
     {
         try
         {
             final BlobRecord record = blobStoreAccess.getRecord( binarySegment, blobKey );
-            try (InputStream is = record.getBytes().openStream(); DigestInputStream dis = new DigestInputStream( is,
-                                                                                                                 MessageDigests.sha512() ))
-            {
-                ByteStreams.exhaust( dis );
-                return MessageDigests.formatHex( dis.getMessageDigest() );
-            }
+            return MessageDigests.formatHex( MessageDigests.updateWithStream( MessageDigests.sha256(), record.getBytes()::openStream ) );
         }
         catch ( IOException e )
         {

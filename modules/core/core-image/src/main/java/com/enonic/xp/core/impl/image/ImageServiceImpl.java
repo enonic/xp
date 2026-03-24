@@ -112,7 +112,7 @@ public class ImageServiceImpl
         }
         if ( attachmentSha512 == null )
         {
-            attachmentSha512 = MessageDigests.formatHex( MessageDigests.digest( MessageDigests.sha512(), contentService.getBinary(
+            attachmentSha512 = MessageDigests.formatHex( MessageDigests.updateWithStream( MessageDigests.sha512(), contentService.getBinary(
                 normalizedImageParams.getContentId(), normalizedImageParams.getBinaryReference() )::openStream ) );
         }
         return attachmentSha512;
@@ -131,7 +131,7 @@ public class ImageServiceImpl
                         readImageParams.getBinaryReference() + "]" );
             }
 
-            final String resultingSha512 = MessageDigests.formatHex( MessageDigests.digest( MessageDigests.sha512(), blob::openStream ) );
+            final String resultingSha512 = MessageDigests.formatHex( MessageDigests.updateWithStream( MessageDigests.sha512(), blob::openStream ) );
 
             if ( !expectedSha512.equals( resultingSha512 ) )
             {

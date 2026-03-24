@@ -46,7 +46,6 @@ public final class AttachmentSerializer
             long size = ByteStreams.exhaust( digestInputStream );
             attachmentSet.addLong( ContentPropertyNames.ATTACHMENT_SIZE, size );
             attachmentSet.addString( ContentPropertyNames.ATTACHMENT_SHA512, MessageDigests.formatHex( digestInputStream.getMessageDigest() ) );
-
         }
         catch ( IOException e )
         {

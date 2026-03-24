@@ -10,19 +10,18 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Objects;
 import java.util.Spliterator;
 import java.util.Spliterators;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
+import org.jspecify.annotations.NonNull;
 
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
@@ -66,8 +65,6 @@ import com.enonic.xp.security.SystemConstants;
 public class ZipDumpReaderV8
     implements DumpReader
 {
-    private static final Pattern ROOT_DUMP_DIR_PATTERN = Pattern.compile( "^([^/]+)/dump\\.json$" );
-
     private final SystemLoadListener listener;
 
     private final PathRef basePath;
@@ -110,20 +107,6 @@ public class ZipDumpReaderV8
         }
         else
         {
-            final Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
-
-            while ( entries.hasMoreElements() )
-            {
-                final ZipArchiveEntry entry = entries.nextElement();
-
-                final Matcher matcher = ROOT_DUMP_DIR_PATTERN.matcher( entry.getName() );
-
-                if ( matcher.matches() )
-                {
-                    return new ZipDumpReaderV8( listener, PathRef.of( matcher.group( 1 ) ), zipFile );
-                }
-            }
-
             throw new RepoLoadException( "Archive is not a valid dump archive: [" + dumpName + "]" );
         }
     }
@@ -365,10 +348,24 @@ public class ZipDumpReaderV8
         }
 
         @Override
-        public InputStream openStream()
+        public @NonNull InputStream openStream()
             throws IOException
         {
             return zipFile.getInputStream( zipFile.getEntry( zipEntryName ) );
+        }
+
+        @Override
+        public com.google.common.base.Optional<Long> sizeIfKnown()
+        {
+            final long size = zipFile.getEntry( zipEntryName ).getSize();
+            if ( size == ArchiveEntry.SIZE_UNKNOWN )
+            {
+                return com.google.common.base.Optional.absent();
+            }
+            else
+            {
+                return com.google.common.base.Optional.of( size );
+            }
         }
     }
 
