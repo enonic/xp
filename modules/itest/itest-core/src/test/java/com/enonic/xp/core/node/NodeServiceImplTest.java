@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -71,6 +72,7 @@ import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.NodeEvents;
 import com.enonic.xp.repository.BranchNotFoundException;
+import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryNotFoundException;
@@ -669,6 +671,74 @@ class NodeServiceImplTest
         assertEquals( node.id(), multiRepoNodeHit.getNodeId() );
         assertEquals( ContextAccessor.current().getRepositoryId(), multiRepoNodeHit.getRepositoryId() );
         assertEquals( ContextAccessor.current().getBranch(), multiRepoNodeHit.getBranch() );
+    }
+
+    @Test
+    void testFindByQuery_multipleRepositories()
+    {
+        final Node node1 = this.nodeService.create(
+            CreateNodeParams.create().name( "node-in-default-repo" ).parent( NodePath.ROOT ).data( new PropertyTree() ).build() );
+
+        final RepositoryId secondRepoId = RepositoryId.from( "second-repo" );
+        ctxDefaultAdmin().callWith( () -> {
+            this.repositoryService.createRepository( CreateRepositoryParams.create()
+                                                         .repositoryId( secondRepoId )
+                                                         .rootPermissions( AccessControlList.of(
+                                                             AccessControlEntry.create().principal( TEST_DEFAULT_USER.getKey() ).allowAll().build() ) )
+                                                         .build() );
+            return null;
+        } );
+
+        final Context secondRepoCtx = ContextBuilder.from( ContextAccessor.current() )
+            .repositoryId( secondRepoId )
+            .branch( RepositoryConstants.MASTER_BRANCH )
+            .build();
+
+        final Node node2 = secondRepoCtx.callWith( () -> {
+            createDefaultRootNode();
+            return this.nodeService.create(
+                CreateNodeParams.create().name( "node-in-second-repo" ).parent( NodePath.ROOT ).data( new PropertyTree() ).build() );
+        } );
+
+        refresh();
+
+        final SearchTargets searchTargets = SearchTargets.create()
+            .add( SearchTarget.create()
+                      .repositoryId( ContextAccessor.current().getRepositoryId() )
+                      .branch( ContextAccessor.current().getBranch() )
+                      .principalKeys( ContextAccessor.current().getAuthInfo().getPrincipals() )
+                      .build() )
+            .add( SearchTarget.create()
+                      .repositoryId( secondRepoId )
+                      .branch( RepositoryConstants.MASTER_BRANCH )
+                      .principalKeys( ContextAccessor.current().getAuthInfo().getPrincipals() )
+                      .build() )
+            .build();
+
+        final NodeQuery nodeQuery = NodeQuery.create()
+            .addQueryFilter( ValueFilter.create()
+                                 .fieldName( NodeIndexPath.PATH.getPath() )
+                                 .addValues( ValueFactory.newString( "/node-in-default-repo" ),
+                                             ValueFactory.newString( "/node-in-second-repo" ) )
+                                 .build() )
+            .build();
+        final MultiRepoNodeQuery multiRepoNodeQuery = new MultiRepoNodeQuery( searchTargets, nodeQuery );
+
+        final FindNodesByMultiRepoQueryResult result = ContextBuilder.create().build().callWith( () -> this.nodeService.findByQuery( multiRepoNodeQuery ) );
+
+        assertEquals( 2L, result.getTotalHits() );
+
+        final MultiRepoNodeHits nodeHits = result.getNodeHits();
+        assertEquals( 2, nodeHits.getSize() );
+
+        final Set<NodeId> nodeIds = nodeHits.stream().map( MultiRepoNodeHit::getNodeId ).collect( Collectors.toSet() );
+        assertTrue( nodeIds.contains( node1.id() ) );
+        assertTrue( nodeIds.contains( node2.id() ) );
+
+        final Set<RepositoryId> repoIds =
+            nodeHits.stream().map( MultiRepoNodeHit::getRepositoryId ).collect( Collectors.toSet() );
+        assertTrue( repoIds.contains( ContextAccessor.current().getRepositoryId() ) );
+        assertTrue( repoIds.contains( secondRepoId ) );
     }
 
     @Test

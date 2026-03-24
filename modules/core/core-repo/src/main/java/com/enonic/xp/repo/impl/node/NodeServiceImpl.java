@@ -2,7 +2,6 @@ package com.enonic.xp.repo.impl.node;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Spliterator;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -326,7 +325,7 @@ public class NodeServiceImpl
     public FindNodesByMultiRepoQueryResult findByQuery( final MultiRepoNodeQuery multiNodeQuery )
     {
         multiNodeQuery.getSearchTargets()
-            .forEach( searchTarget -> verifyBranchExists( searchTarget.getBranch(), searchTarget.getRepositoryId() ) );
+            .forEach( searchTarget -> verifyBranchExists( searchTarget.getRepositoryId(), searchTarget.getBranch() ) );
 
         return Tracer.trace( "node.findByQueryMulti", trace -> {
             trace.put( "query", multiNodeQuery.getNodeQuery().getQuery() );
@@ -495,8 +494,7 @@ public class NodeServiceImpl
     @Override
     public PushNodesResult push( final PushNodeParams params )
     {
-        verifyContext();
-        verifyBranchExists( params.getTarget(), ContextAccessor.current().getRepositoryId() );
+        verifyBranches( ContextAccessor.current().getBranch(), params.getTarget() );
 
         final PushNodesResult pushNodesResult = PushNodesCommand.create()
             .indexServiceInternal( this.indexServiceInternal )
@@ -933,18 +931,27 @@ public class NodeServiceImpl
     private void verifyContext()
     {
         final Context currentContext = ContextAccessor.current();
-        verifyBranchExists( currentContext.getBranch(), currentContext.getRepositoryId() );
+        verifyBranches( currentContext.getBranch() );
     }
 
-    private void verifyBranchExists( final Branch branch, final RepositoryId repositoryId )
+    private void verifyBranches( final Branch... branches )
     {
-        Objects.requireNonNull( branch, "Branch cannot be null" );
-        Objects.requireNonNull( repositoryId, "RepositoryId cannot be null" );
+        final Context currentContext = ContextAccessor.current();
+        for ( Branch branch : branches )
+        {
+            verifyBranchExists( currentContext.getRepositoryId(), branch );
+        }
+    }
 
+    private void verifyBranchExists( final RepositoryId repositoryId, final Branch branch )
+    {
         final boolean rootExists;
         try
         {
-            rootExists = this.nodeStorageService.existsBranchNodeVersion( NodeId.ROOT, InternalContext.from( ContextAccessor.current() ) );
+            rootExists = this.nodeStorageService.existsBranchNodeVersion( NodeId.ROOT, InternalContext.create( ContextAccessor.current() )
+                .repositoryId( repositoryId )
+                .branch( branch )
+                .build() );
         }
         catch ( IndexNotFoundException e )
         {
