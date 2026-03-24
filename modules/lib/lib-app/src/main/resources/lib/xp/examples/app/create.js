@@ -16,7 +16,7 @@ log.info('Created app: ' + result.key);
 
 assert.assertJsonEquals({
     key: 'my_app',
-    displayName: 'app display name',
+    title: 'app display name',
     vendorName: 'vendor name',
     vendorUrl: 'https://vendor.url',
     url: 'https://myapp.url',

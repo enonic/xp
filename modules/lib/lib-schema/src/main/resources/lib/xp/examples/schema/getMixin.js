@@ -17,8 +17,8 @@ log.info('Fetched mixin: ' + result.name);
 
 assert.assertJsonEquals({
     name: 'media:cameraInfo',
-    displayName: 'Photo Info',
-    displayNameI18nKey: 'media.cameraInfo.displayName',
+    title: 'Photo Info',
+    titleI18nKey: 'media.cameraInfo.displayName',
     modifiedTime: '1970-01-06T03:07:14.242Z',
     resource: '<x-data><some-data></some-data></x-data>',
     type: 'MIXIN',

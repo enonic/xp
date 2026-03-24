@@ -23,8 +23,8 @@ public abstract class SchemaMapper<T extends BaseSchema<? extends BaseSchemaName
     public void serialize( final MapGenerator gen )
     {
         gen.value( "name", descriptor.getName() );
-        gen.value( "displayName", descriptor.getDisplayName() );
-        gen.value( "displayNameI18nKey", descriptor.getDisplayNameI18nKey() );
+        gen.value( "title", descriptor.getDisplayName() );
+        gen.value( "titleI18nKey", descriptor.getDisplayNameI18nKey() );
         gen.value( "description", descriptor.getDescription() );
         gen.value( "descriptionI18nKey", descriptor.getDescriptionI18nKey() );
         gen.value( "createdTime", descriptor.getCreatedTime() );

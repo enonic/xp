@@ -224,7 +224,7 @@ public abstract class RenderBaseHandlerTest
 
         final String yml = """
             kind: "Page"
-            displayName: "Landing page"
+            title: "Landing page"
             regions: [ ]
             """;
 

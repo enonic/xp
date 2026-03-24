@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.schema.YmlParserBase;
 import com.enonic.xp.descriptor.DescriptorKeys;
+import com.enonic.xp.schema.LocalizedText;
 import com.enonic.xp.webapp.WebappDescriptor;
 
 public class YmlWebappDescriptorParser
@@ -28,6 +29,9 @@ public class YmlWebappDescriptorParser
     {
         @JsonProperty("apis")
         abstract WebappDescriptor.Builder apiMounts( DescriptorKeys apiMounts );
+
+        @JsonProperty("description")
+        abstract WebappDescriptor.Builder description( LocalizedText text );
 
         @JacksonInject("currentApplication")
         abstract WebappDescriptor.Builder applicationKey( ApplicationKey applicationKey );

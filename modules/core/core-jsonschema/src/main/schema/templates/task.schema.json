@@ -8,7 +8,7 @@
       "const": "Task"
     },
     "description": {
-      "type": "string"
+      "$ref": "#/$defs/localizedTextDef"
     },
     "form": {
       "$ref": "#/$defs/formDef"

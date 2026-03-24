@@ -7,6 +7,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.schema.LocalizedText;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
 
@@ -19,7 +20,11 @@ public final class ApiDescriptor
 
     private final String displayName;
 
+    private final String displayNameI18nKey;
+
     private final String description;
+
+    private final String descriptionI18nKey;
 
     private final String documentationUrl;
 
@@ -34,7 +39,9 @@ public final class ApiDescriptor
         this.key = builder.key;
         this.allowedPrincipals = builder.allowedPrincipals;
         this.displayName = builder.displayName;
+        this.displayNameI18nKey = builder.displayNameI18nKey;
         this.description = builder.description;
+        this.descriptionI18nKey = builder.descriptionI18nKey;
         this.documentationUrl = builder.documentationUrl;
         this.mount = builder.mount;
     }
@@ -57,6 +64,16 @@ public final class ApiDescriptor
     public String getDescription()
     {
         return description;
+    }
+
+    public String getDescriptionI18nKey()
+    {
+        return descriptionI18nKey;
+    }
+
+    public String getDisplayNameI18nKey()
+    {
+        return displayNameI18nKey;
     }
 
     public String getDocumentationUrl()
@@ -87,7 +104,11 @@ public final class ApiDescriptor
 
         private String displayName;
 
+        private String displayNameI18nKey;
+
         private String description;
+
+        private String descriptionI18nKey;
 
         private String documentationUrl;
 
@@ -115,9 +136,35 @@ public final class ApiDescriptor
             return this;
         }
 
+        public Builder displayNameI18nKey( final String displayNameI18nKey )
+        {
+            this.displayNameI18nKey = displayNameI18nKey;
+            return this;
+        }
+
+        public Builder displayName( final LocalizedText text )
+        {
+            this.displayName = text.text();
+            this.displayNameI18nKey = text.i18n();
+            return this;
+        }
+
         public Builder description( final String description )
         {
             this.description = description;
+            return this;
+        }
+
+        public Builder descriptionI18nKey( final String descriptionI18nKey )
+        {
+            this.descriptionI18nKey = descriptionI18nKey;
+            return this;
+        }
+
+        public Builder description( final LocalizedText text )
+        {
+            this.description = text.text();
+            this.descriptionI18nKey = text.i18n();
             return this;
         }
 

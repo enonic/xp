@@ -468,7 +468,7 @@ class DynamicSchemaServiceImplTest
                 .name( FormFragmentName.from( "myapp:my-fragment" ) )
                 .resource( """
                                kind: "FormFragment"
-                               displayName: "MyFormFragment"
+                               title: "MyFormFragment"
                                """ )
                 .type( DynamicContentSchemaType.FORM_FRAGMENT )
                 .build();
@@ -522,7 +522,7 @@ class DynamicSchemaServiceImplTest
                 .name( FormFragmentName.from( "myapp:my-fragment" ) )
                 .resource( """
                                kind: "FormFragment"
-                               displayName: "FormFragment"
+                               title: "FormFragment"
                                """ )
                 .type( DynamicContentSchemaType.FORM_FRAGMENT )
                 .build();
@@ -552,7 +552,7 @@ class DynamicSchemaServiceImplTest
                 .name( FormFragmentName.from( "myapp:my-fragment" ) )
                 .resource( """
                                kind: "FormFragment"
-                               displayName: "FormFragment"
+                               title: "FormFragment"
                                """ )
                 .type( DynamicContentSchemaType.FORM_FRAGMENT )
                 .build();
@@ -621,7 +621,7 @@ class DynamicSchemaServiceImplTest
                 .name( MixinName.from( "myapp:mymixin" ) )
                 .resource( """
                                kind: "Mixin"
-                               displayName: "Virtual MIXIN"
+                               title: "Virtual MIXIN"
                                form: [ ]
                                """ )
                 .type( DynamicContentSchemaType.MIXIN )
@@ -721,7 +721,7 @@ class DynamicSchemaServiceImplTest
                 .descriptorKey( DescriptorKey.from( "myapp:mypart" ) )
                 .resource( """
                                kind: "Part"
-                               displayName: "MyPart"
+                               title: "MyPart"
                                form: [ ]
                                """ )
                 .type( DynamicComponentType.PART )
@@ -823,7 +823,7 @@ class DynamicSchemaServiceImplTest
                 .descriptorKey( DescriptorKey.from( "myapp:mylayout" ) )
                 .resource( """
                                kind: "Layout"
-                               displayName: MyLayout
+                               title: MyLayout
                                regions: [ ]
                                
                                """ )
@@ -925,7 +925,7 @@ class DynamicSchemaServiceImplTest
                 .descriptorKey( DescriptorKey.from( "myapp:mypage" ) )
                 .resource( """
                                kind: "Page"
-                               displayName: "MyPage"
+                               title: "MyPage"
                                regions:
                                  - "main"
                                """ )

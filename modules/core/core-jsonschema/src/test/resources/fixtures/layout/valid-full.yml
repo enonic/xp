@@ -1,5 +1,5 @@
 kind: "Layout"
-displayName: "My Layout"
+title: "My Layout"
 description: "Layout description"
 regions:
   - "main"

@@ -29,7 +29,7 @@ public final class YmlLayoutDescriptorParser
     @JsonIgnoreProperties("kind")
     private abstract static class LayoutDescriptorBuilderMixIn
     {
-        @JsonProperty("displayName")
+        @JsonProperty("title")
         abstract LayoutDescriptor.Builder displayName( LocalizedText text );
 
         @JsonProperty("description")

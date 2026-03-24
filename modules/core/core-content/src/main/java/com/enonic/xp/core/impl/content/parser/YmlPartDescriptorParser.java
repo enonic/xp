@@ -27,7 +27,7 @@ public final class YmlPartDescriptorParser
     @JsonIgnoreProperties("kind")
     private abstract static class PartDescriptorBuilderMixIn
     {
-        @JsonProperty("displayName")
+        @JsonProperty("title")
         abstract PartDescriptor.Builder displayName( LocalizedText text );
 
         @JsonProperty("description")

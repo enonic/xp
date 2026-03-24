@@ -13,11 +13,11 @@
         "type": "string"
       }
     },
-    "displayName": {
-      "type": "string"
+    "title": {
+      "$ref": "#/$defs/localizedTextDef"
     },
     "description": {
-      "type": "string"
+      "$ref": "#/$defs/localizedTextDef"
     },
     "documentationUrl": {
       "type": "string"
@@ -28,14 +28,18 @@
       "items": {
         "type": "string",
         "enum": [
-          "xp",
+          "web",
           "management"
         ]
       }
     }
   },
   "required": [
-    "kind"
+    "kind",
+    "title"
   ],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "$defs": {
+    "localizedTextDef": {}
+  }
 }

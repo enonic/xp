@@ -33,7 +33,7 @@ final class YmlMacroDescriptorParser
             return MacroDescriptor.create();
         }
 
-        @JsonProperty("displayName")
+        @JsonProperty("title")
         abstract MacroDescriptor.Builder displayName( LocalizedText text );
 
         @JsonProperty("description")

@@ -1,5 +1,5 @@
 kind: "API"
-displayName: "GraphQL API"
+title: "GraphQL API"
 description: "Description of GraphQL API"
 mount: ["xp"]
 allow:

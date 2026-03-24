@@ -1,5 +1,5 @@
 kind: "AdminExtension"
-displayName: "My Extension"
+title: "My Extension"
 description: "MyExtension description"
 allow:
   - "role:system.user.admin"

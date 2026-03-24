@@ -1,5 +1,5 @@
 kind: "FormFragment"
-displayName: "My Form Fragment"
+title: "My Form Fragment"
 description: "Fragment description"
 form:
   - type: "TextLine"

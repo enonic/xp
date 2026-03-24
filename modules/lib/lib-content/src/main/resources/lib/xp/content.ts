@@ -1401,7 +1401,7 @@ export interface Icon {
  * @typedef ContentType
  * @type Object
  * @property {string} name Name of the content type.
- * @property {string} displayName Display name of the content type.
+ * @property {string} title Title of the content type.
  * @property {string} description Description of the content type.
  * @property {string} superType Name of the super type, or null if it has no super type.
  * @property {boolean} abstract Whether or not content of this type may be instantiated.
@@ -1416,13 +1416,12 @@ export interface Icon {
  */
 export interface ContentType {
     name: string;
-    displayName: string;
+    title: string;
     description: string;
     superType: string;
     abstract: boolean;
     final: boolean;
     allowChildContent: boolean;
-    displayNameExpression: string;
     modifiedTime: string;
     icon?: Icon;
     form: FormItem[];

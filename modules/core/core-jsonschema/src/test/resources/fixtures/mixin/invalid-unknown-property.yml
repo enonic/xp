@@ -1,2 +1,3 @@
 kind: "Mixin"
+title: "My Mixin"
 unknownProp: "value"

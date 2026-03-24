@@ -4,7 +4,7 @@ var assert = require('/lib/xp/testing');
 /* global log*/
 
 let resource = `kind: "Part"
-displayName:
+title:
   text: "Virtual Part"
   i18n: "key.display-name"
 description:
@@ -57,7 +57,7 @@ assert.assertJsonEquals({
     descriptionI18nKey: 'key.description',
     componentPath: 'myapp:/cms/parts/mypart',
     modifiedTime: '2021-09-25T10:00:00Z',
-    resource: 'kind: "Part"\ndisplayName:\n  text: \"Virtual Part\"\n  i18n: \"key.display-name\"\ndescription:\n  text: \"My Part Description\"\n  i18n: \"key.description\"\nform:\n- type: \"Double\"\n  name: \"width\"\n  label:\n    text: \"Column width\"\n    i18n: \"key.label\"\n  helpText:\n    text: \"key.help-text\"\n    i18n: \"key.help-text\"\n  occurrences:\n    min: 0\n    max: 1\n- type: \"FormFragment\"\n  name: \"link-urls\"\nconfig:\n  input:\n    type: \"Double\"\n    name: \"width\"\n    label:\n      text: \"Column width\"\n      i18n: \"key.label\"\n    helpText:\n      i18n: \"key.help-text\"\n                ',
+    resource: 'kind: "Part"\ntitle:\n  text: \"Virtual Part\"\n  i18n: \"key.display-name\"\ndescription:\n  text: \"My Part Description\"\n  i18n: \"key.description\"\nform:\n- type: \"Double\"\n  name: \"width\"\n  label:\n    text: \"Column width\"\n    i18n: \"key.label\"\n  helpText:\n    text: \"key.help-text\"\n    i18n: \"key.help-text\"\n  occurrences:\n    min: 0\n    max: 1\n- type: \"FormFragment\"\n  name: \"link-urls\"\nconfig:\n  input:\n    type: \"Double\"\n    name: \"width\"\n    label:\n      text: \"Column width\"\n      i18n: \"key.label\"\n    helpText:\n      i18n: \"key.help-text\"\n                ',
     type: 'PART',
     form: [
         {

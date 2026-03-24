@@ -1,2 +1,3 @@
 kind: "Service"
+title: "My Service"
 unknownProp: "value"

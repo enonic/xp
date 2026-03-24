@@ -6,7 +6,7 @@ allowChildContent: true
 description:
   text: "Brief description"
   i18n: "article.description"
-displayName:
+title:
   text: "Article"
   i18n: "i18n.article.displayName"
 allowChildContentType:

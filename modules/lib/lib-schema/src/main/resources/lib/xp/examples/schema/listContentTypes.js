@@ -18,7 +18,7 @@ log.info('Fetched content types: ' + result.map((type) => type.key).join(','));
 assert.assertJsonEquals([
     {
         name: 'myapp:type1',
-        displayName: 'My type display name',
+        title: 'My type display name',
         description: 'My type description',
         modifiedTime: '2010-01-01T10:00:00Z',
         resource: '<content-type><some-data></some-data></content-type>',
@@ -55,7 +55,7 @@ assert.assertJsonEquals([
     },
     {
         name: 'myapp:type2',
-        displayName: 'My type display name 2',
+        title: 'My type display name 2',
         description: 'My type description 2',
         modifiedTime: '2012-01-01T10:00:00Z',
         resource: '<content-type><some-other-data></some-other-data></content-type>',

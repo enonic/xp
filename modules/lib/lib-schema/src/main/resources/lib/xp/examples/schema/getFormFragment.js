@@ -17,7 +17,7 @@ log.info('Fetched form fragment: ' + result.name);
 
 assert.assertJsonEquals({
     name: 'myapp:myFormFragment',
-    displayName: 'My FormFragment display name',
+    title: 'My FormFragment display name',
     description: 'My FormFragment description',
     createdTime: '2009-01-01T10:00:00Z',
     creator: 'user:system:anonymous',

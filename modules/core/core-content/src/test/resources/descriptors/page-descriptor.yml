@@ -1,5 +1,5 @@
 kind: "Page"
-displayName: "Landing page"
+title: "Landing page"
 description:
   text: "Description of the Landing page"
   i18n: "page.description.landingPage"

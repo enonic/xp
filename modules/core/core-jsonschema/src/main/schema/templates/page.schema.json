@@ -7,7 +7,7 @@
       "type": "string",
       "const": "Page"
     },
-    "displayName": {
+    "title": {
       "$ref": "#/$defs/localizedTextDef"
     },
     "description": {
@@ -28,6 +28,7 @@
   },
   "required": [
     "kind",
+    "title",
     "regions"
   ],
   "additionalProperties": false,

@@ -7,7 +7,7 @@
       "type": "string",
       "const": "Part"
     },
-    "displayName": {
+    "title": {
       "$ref": "#/$defs/localizedTextDef"
     },
     "description": {
@@ -21,7 +21,8 @@
     }
   },
   "required": [
-    "kind"
+    "kind",
+    "title"
   ],
   "additionalProperties": false,
   "$defs": {

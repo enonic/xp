@@ -1,4 +1,5 @@
 kind: "Service"
+title: "My Service"
 allow:
   - "role:system.roleId_1"
   - "role:system.roleId_2"

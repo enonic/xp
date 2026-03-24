@@ -27,7 +27,7 @@ public final class YmlAdminToolDescriptorParser
     @JsonIgnoreProperties("kind")
     private abstract static class AdminToolDescriptorBuilderMapper
     {
-        @JsonProperty("displayName")
+        @JsonProperty("title")
         public abstract AdminToolDescriptor.Builder displayName( LocalizedText text );
 
         @JsonProperty("description")
