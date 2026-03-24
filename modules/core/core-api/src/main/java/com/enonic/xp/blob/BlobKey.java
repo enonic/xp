@@ -1,10 +1,6 @@
 package com.enonic.xp.blob;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.security.DigestInputStream;
-import java.security.MessageDigest;
 import java.util.Objects;
 
 import com.google.common.io.ByteSource;
@@ -47,12 +43,7 @@ public final class BlobKey
     {
         try
         {
-            final MessageDigest digest = MessageDigests.sha256();
-            try (InputStream is = in.openStream(); DigestInputStream dis = new DigestInputStream( is, digest ))
-            {
-                dis.transferTo( OutputStream.nullOutputStream() );
-            }
-            return from( "sha256:" + MessageDigests.formatHex( digest ) );
+            return from( "sha256:" + MessageDigests.formatHex( MessageDigests.digest( MessageDigests.sha256(), in::openStream ) ) );
         }
         catch ( final IOException e )
         {

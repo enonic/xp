@@ -112,7 +112,6 @@ public final class ImageHandlerWorker
         try
         {
             Objects.requireNonNull( content.getMediaAttachment(), "Media content must have an attachment" );
-            Objects.requireNonNull( content.getMediaAttachment().getSha512(), "Media attachment must have a sha512 hash" );
 
             final ReadImageParams readImageParams = ReadImageParams.newImageParams()
                 .contentId( content.getId() )

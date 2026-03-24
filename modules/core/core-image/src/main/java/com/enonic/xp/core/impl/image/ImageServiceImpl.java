@@ -9,7 +9,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
-import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.util.HexFormat;
 import java.util.Iterator;
@@ -24,6 +23,7 @@ import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.stream.ImageInputStream;
 
+import org.jspecify.annotations.NonNull;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -92,16 +92,31 @@ public class ImageServiceImpl
     {
         final NormalizedImageParams normalizedImageParams = new NormalizedImageParams( readImageParams );
 
-        final String attachmentSha512 = Objects.requireNonNullElseGet( normalizedImageParams.getAttachmentSha512(),
-                                                                       () -> contentService.getById( normalizedImageParams.getContentId() )
-                                                                           .getAttachments()
-                                                                           .byName( normalizedImageParams.getBinaryReference().toString() )
-                                                                           .getSha512() );
+        final String resolvedSha512 = resolveAttachmentSha512( normalizedImageParams );
 
-        return immutableFilesHelper.computeIfAbsent( getCachedImagePath( normalizedImageParams, attachmentSha512 ),
-                                                     sink -> writeImage( normalizedImageParams, attachmentSha512, sink ) );
+        return immutableFilesHelper.computeIfAbsent( getCachedImagePath( normalizedImageParams, resolvedSha512 ),
+                                                     sink -> writeImage( normalizedImageParams, resolvedSha512, sink ) );
     }
 
+
+    private @NonNull String resolveAttachmentSha512( final NormalizedImageParams normalizedImageParams )
+        throws IOException
+    {
+        String attachmentSha512 = normalizedImageParams.getAttachmentSha512();
+        if ( attachmentSha512 == null )
+        {
+            attachmentSha512 = contentService.getById( normalizedImageParams.getContentId() )
+                .getAttachments()
+                .byName( normalizedImageParams.getBinaryReference().toString() )
+                .getSha512();
+        }
+        if ( attachmentSha512 == null )
+        {
+            attachmentSha512 = MessageDigests.formatHex( MessageDigests.digest( MessageDigests.sha512(), contentService.getBinary(
+                normalizedImageParams.getContentId(), normalizedImageParams.getBinaryReference() )::openStream ) );
+        }
+        return attachmentSha512;
+    }
 
     private void writeImage( final NormalizedImageParams readImageParams, String expectedSha512, final ByteSink sink )
     {
@@ -116,12 +131,7 @@ public class ImageServiceImpl
                         readImageParams.getBinaryReference() + "]" );
             }
 
-            final String resultingSha512;
-            try (InputStream is = blob.openStream(); DigestInputStream dis = new DigestInputStream( is, MessageDigests.sha512() ))
-            {
-                dis.transferTo( OutputStream.nullOutputStream() );
-                resultingSha512 = MessageDigests.formatHex( dis.getMessageDigest() );
-            }
+            final String resultingSha512 = MessageDigests.formatHex( MessageDigests.digest( MessageDigests.sha512(), blob::openStream ) );
 
             if ( !expectedSha512.equals( resultingSha512 ) )
             {

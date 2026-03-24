@@ -1,6 +1,10 @@
 package com.enonic.xp.core.internal.security;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HexFormat;
@@ -35,6 +39,16 @@ public class MessageDigests
         digest.update( bytes );
     }
 
+    public static MessageDigest digest( final MessageDigest digest, final IOSupplier<InputStream> inputStreamOpener )
+        throws IOException
+    {
+        try (InputStream is = inputStreamOpener.get(); DigestInputStream dis = new DigestInputStream( is, digest ))
+        {
+            dis.transferTo( OutputStream.nullOutputStream() );
+            return digest;
+        }
+    }
+
     public static String formatHex( final MessageDigest digest )
     {
         return HexFormat.of().formatHex( digest.digest() );
@@ -48,6 +62,13 @@ public class MessageDigests
     public static MessageDigest sha256()
     {
         return getInstance( "SHA-256" );
+    }
+
+    @FunctionalInterface
+    public interface IOSupplier<T>
+    {
+        T get()
+            throws IOException;
     }
 
     private static MessageDigest getInstance( final String algorithmName )
