@@ -11,7 +11,7 @@ import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.NodeIndexPath;
-import com.enonic.xp.repo.impl.index.IndexValueType;
+import com.enonic.xp.repo.impl.index.StaticIndexValueType;
 import com.enonic.xp.util.GeoPoint;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -27,7 +27,7 @@ class IndexItemFactoryTest
                                      createDefaultDocument( IndexConfig.MINIMAL ) );
 
         assertEquals( 3, indexItems.size() );
-        assertTypes( indexItems, IndexValueType.DATETIME, IndexValueType.STRING, IndexValueType.ORDERBY );
+        assertTypes( indexItems, StaticIndexValueType.DATETIME, StaticIndexValueType.STRING, StaticIndexValueType.ORDERBY );
     }
 
     @Test
@@ -38,7 +38,7 @@ class IndexItemFactoryTest
                                      createDefaultDocument( IndexConfig.BY_TYPE ) );
 
         assertEquals( 3, indexItems.size() );
-        assertTypes( indexItems, IndexValueType.DATETIME, IndexValueType.STRING, IndexValueType.ORDERBY );
+        assertTypes( indexItems, StaticIndexValueType.DATETIME, StaticIndexValueType.STRING, StaticIndexValueType.ORDERBY );
     }
 
     @Test
@@ -48,7 +48,7 @@ class IndexItemFactoryTest
                                                                        createDefaultDocument( IndexConfig.MINIMAL ) );
 
         assertEquals( 2, indexItems.size() );
-        assertTypes( indexItems, IndexValueType.STRING, IndexValueType.ORDERBY );
+        assertTypes( indexItems, StaticIndexValueType.STRING, StaticIndexValueType.ORDERBY );
     }
 
     @Test
@@ -58,7 +58,7 @@ class IndexItemFactoryTest
                                                                        createDefaultDocument( IndexConfig.BY_TYPE ) );
 
         assertEquals( 6, indexItems.size() );
-        assertTypes( indexItems, IndexValueType.ANALYZED, IndexValueType.STRING, IndexValueType.NGRAM, IndexValueType.ORDERBY );
+        assertTypes( indexItems, StaticIndexValueType.ANALYZED, StaticIndexValueType.STRING, StaticIndexValueType.NGRAM, StaticIndexValueType.ORDERBY );
     }
 
     @Test
@@ -67,7 +67,7 @@ class IndexItemFactoryTest
         final List<IndexItem<?>> indexItems = IndexItemFactory.create( IndexPath.from( "myProperty" ), ValueFactory.newDouble( 12.3 ),
                                                                        createDefaultDocument( IndexConfig.MINIMAL ) );
         assertEquals( 3, indexItems.size() );
-        assertTypes( indexItems, IndexValueType.NUMBER, IndexValueType.STRING, IndexValueType.ORDERBY );
+        assertTypes( indexItems, StaticIndexValueType.NUMBER, StaticIndexValueType.STRING, StaticIndexValueType.ORDERBY );
     }
 
     @Test
@@ -77,7 +77,7 @@ class IndexItemFactoryTest
             IndexItemFactory.create( IndexPath.from( "myProperty" ), ValueFactory.newGeoPoint( new GeoPoint( 80, 80 ) ),
                                      createDefaultDocument( IndexConfig.MINIMAL ) );
         assertEquals( 3, indexItems.size() );
-        assertTypes( indexItems, IndexValueType.GEO_POINT, IndexValueType.STRING, IndexValueType.ORDERBY );
+        assertTypes( indexItems, StaticIndexValueType.GEO_POINT, StaticIndexValueType.STRING, StaticIndexValueType.ORDERBY );
     }
 
 
@@ -88,13 +88,13 @@ class IndexItemFactoryTest
         for ( final IndexItem item : items )
         {
             if ( item.getPath()
-                .equals( NodeIndexPath.ALL_TEXT + IndexItem.INDEX_VALUE_TYPE_SEPARATOR + IndexValueType.ANALYZED.getPostfix() ) )
+                .equals( NodeIndexPath.ALL_TEXT + IndexItem.INDEX_VALUE_TYPE_SEPARATOR + StaticIndexValueType.ANALYZED.getPostfix() ) )
             {
                 hasAllTextAnalyzed = true;
             }
 
             if ( item.getPath()
-                .equals( NodeIndexPath.ALL_TEXT + IndexItem.INDEX_VALUE_TYPE_SEPARATOR + IndexValueType.ANALYZED.getPostfix() ) )
+                .equals( NodeIndexPath.ALL_TEXT + IndexItem.INDEX_VALUE_TYPE_SEPARATOR + StaticIndexValueType.ANALYZED.getPostfix() ) )
             {
                 hasAllTextNgram = true;
             }
@@ -108,9 +108,9 @@ class IndexItemFactoryTest
         fail( "Should have both alltext ngram and analyzed. ngram: " + hasAllTextNgram + ", fulltext: " + hasAllTextAnalyzed );
     }
 
-    private void assertTypes( final List<IndexItem<?>> items, IndexValueType... types )
+    private void assertTypes( final List<IndexItem<?>> items, StaticIndexValueType... types )
     {
-        for ( final IndexValueType type : types )
+        for ( final StaticIndexValueType type : types )
         {
             if ( !hasValueType( items, type ) )
             {
@@ -119,7 +119,7 @@ class IndexItemFactoryTest
         }
     }
 
-    private boolean hasValueType( final List<IndexItem<?>> items, final IndexValueType type )
+    private boolean hasValueType( final List<IndexItem<?>> items, final StaticIndexValueType type )
     {
         for ( final IndexItem<?> item : items )
         {

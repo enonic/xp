@@ -3,7 +3,6 @@ package com.enonic.xp.core.impl.security;
 import java.nio.CharBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.util.HexFormat;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -133,6 +132,6 @@ class SecurityServiceImplTest_suPassword
     {
         final MessageDigest digest = MessageDigests.sha256();
         digest.update( StandardCharsets.UTF_8.encode( CharBuffer.wrap( password ) ) );
-        return HexFormat.of().formatHex( digest.digest() );
+        return MessageDigests.formatHex( digest );
     }
 }

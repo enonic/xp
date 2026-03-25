@@ -8,7 +8,7 @@ import com.enonic.xp.audit.AuditLog;
 import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.core.impl.audit.config.AuditLogConfig;
 import com.enonic.xp.index.IndexService;
-import com.enonic.xp.repository.RepositoryService;
+import com.enonic.xp.repository.internal.InternalRepositoryService;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -25,14 +25,10 @@ class AuditLogServiceImplDisabledTest
         IndexService indexService = Mockito.mock( IndexService.class );
         Mockito.when( indexService.waitForYellowStatus() ).thenReturn( true );
         Mockito.when( indexService.isMaster() ).thenReturn( true );
-        RepositoryService repositoryService = Mockito.mock( RepositoryService.class );
+        InternalRepositoryService repositoryService = Mockito.mock( InternalRepositoryService.class );
 
         auditLogService = new AuditLogServiceImpl( config, null );
-        AuditLogRepoInitializer.create().
-            setIndexService( indexService ).
-            setRepositoryService( repositoryService ).
-            build().
-            initialize();
+        AuditLogRepoInitializer.create().setIndexService( indexService ).setRepositoryService( repositoryService ).build().initialize();
     }
 
     @Test

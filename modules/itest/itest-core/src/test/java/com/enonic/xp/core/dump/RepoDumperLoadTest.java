@@ -30,10 +30,7 @@ class RepoDumperLoadTest
 
         for ( int i = 0; i < amountOfNodesToLoad; i++ )
         {
-            final Node node = createNodeSkipVerification( CreateNodeParams.create().
-                name( "node" + i ).
-                parent( NodePath.ROOT ).
-                build() );
+            final Node node = createNodeSkipVerification( CreateNodeParams.create().name( "node" + i ).parent( NodePath.ROOT ).build() );
             // commit every node, so number of commits is also greater than elasticsearch can return in a single query
             commit( node );
         }
@@ -50,13 +47,14 @@ class RepoDumperLoadTest
 
     private void doDump( final TestDumpWriter writer )
     {
-        NodeHelper.runAsAdmin( () -> RepoDumper.create().
-            nodeService( this.nodeService ).
-            writer( writer ).
-            includeBinaries( true ).
-            includeVersions( true ).
-            repository( this.repositoryService.get( testRepoId ) ).
-            build().
-            execute() );
+        NodeHelper.runAsAdmin( () -> RepoDumper.create()
+            .nodeService( this.nodeService )
+            .writer( writer )
+            .includeBinaries( true )
+            .includeVersions( true )
+            .repositoryId( testRepoId )
+            .branches( this.repositoryService.get( testRepoId ).getBranches() )
+            .build()
+            .execute() );
     }
 }

@@ -20,6 +20,7 @@ import java.util.stream.Stream;
 
 import javax.imageio.ImageIO;
 
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +40,6 @@ import com.enonic.xp.core.impl.project.init.ArchiveInitializer;
 import com.enonic.xp.core.impl.project.init.ContentInitializer;
 import com.enonic.xp.core.impl.project.init.ContentRepoInitializer;
 import com.enonic.xp.core.impl.project.init.IssueInitializer;
-import com.enonic.xp.core.impl.project.init.Xp8DefaultProjectMigrator;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
@@ -71,6 +71,7 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryNotFoundException;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.repository.UpdateRepositoryParams;
+import com.enonic.xp.repository.internal.InternalRepositoryService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -86,6 +87,8 @@ public class ProjectServiceImpl
 
     private final RepositoryService repositoryService;
 
+    private final InternalRepositoryService internalRepositoryService;
+
     private final IndexService indexService;
 
     private final NodeService nodeService;
@@ -96,12 +99,12 @@ public class ProjectServiceImpl
 
     private final ProjectConfig config;
 
-    public ProjectServiceImpl( final RepositoryService repositoryService, final IndexService indexService, final NodeService nodeService,
-                               final SecurityService securityService,
-                               final EventPublisher eventPublisher,
-                               final ProjectConfig config )
+    public ProjectServiceImpl( final RepositoryService repositoryService, final InternalRepositoryService internalRepositoryService,
+                               final IndexService indexService, final NodeService nodeService, final SecurityService securityService,
+                               final EventPublisher eventPublisher, final ProjectConfig config )
     {
         this.repositoryService = repositoryService;
+        this.internalRepositoryService = internalRepositoryService;
         this.indexService = indexService;
         this.nodeService = nodeService;
         this.securityService = securityService;
@@ -119,17 +122,11 @@ public class ProjectServiceImpl
                 final PropertySet projectData = repository.getData().getSet( ProjectConstants.PROJECT_DATA_SET_NAME );
 
                 doInitRootNodes( CreateProjectParams.create()
-                                             .name( ProjectName.from( repository.getId() ) )
-                                             .displayName( projectData.getString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY ) )
-                                             .description( projectData.getString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY ) )
-                                             .build(), null );
+                                     .name( ProjectName.from( repository.getId() ) )
+                                     .displayName( projectData.getString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY ) )
+                                     .description( projectData.getString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY ) )
+                                     .build(), null );
             } );
-
-            if ( repositories.stream()
-                .anyMatch( repository -> repository.getId().equals( Xp8DefaultProjectMigrator.DEFAULT_PROJECT_NAME.getRepoId() ) ) )
-            {
-                new Xp8DefaultProjectMigrator( nodeService, securityService, indexService ).migrate();
-            }
         } );
     }
 
@@ -151,11 +148,6 @@ public class ProjectServiceImpl
             }
             final PropertyTree repositoryData = repository.getData();
 
-            if ( repositoryData == null )
-            {
-                return null;
-            }
-
             final PropertySet projectData = repositoryData.getSet( ProjectConstants.PROJECT_DATA_SET_NAME );
 
             if ( projectData == null )
@@ -165,7 +157,7 @@ public class ProjectServiceImpl
 
             return repository;
 
-        } ).filter( Objects::nonNull ).collect( Collectors.<Repository>toList() );
+        } ).filter( Objects::nonNull ).toList();
     }
 
     private static void buildIcon( final Project.Builder project, final PropertySet projectData )
@@ -179,6 +171,7 @@ public class ProjectServiceImpl
                               .label( iconData.getString( ContentPropertyNames.ATTACHMENT_LABEL ) )
                               .mimeType( iconData.getString( ContentPropertyNames.ATTACHMENT_MIMETYPE ) )
                               .size( iconData.getLong( ContentPropertyNames.ATTACHMENT_SIZE ) )
+                              .sha512( iconData.getString( ContentPropertyNames.ATTACHMENT_SHA512 ) )
                               .textContent( iconData.getString( ContentPropertyNames.ATTACHMENT_TEXT ) )
                               .build() );
         }
@@ -189,6 +182,7 @@ public class ProjectServiceImpl
         ContentRepoInitializer.create()
             .setIndexService( indexService )
             .repositoryService( repositoryService )
+            .internalRepositoryService( internalRepositoryService )
             .repositoryId( params.getName().getRepoId() )
             .repositoryData( createProjectData( params ) )
             .forceInitialization( params.isForceInitialization() )
@@ -248,7 +242,7 @@ public class ProjectServiceImpl
     public Project create( CreateProjectParams params )
     {
         return callWithCreateContext( () -> {
-            if ( repositoryService.isInitialized( params.getName().getRepoId() ) )
+            if ( repositoryService.get( params.getName().getRepoId() ) != null )
             {
                 throw new ProjectAlreadyExistsException( params.getName() );
             }
@@ -263,7 +257,7 @@ public class ProjectServiceImpl
                 throw new ProjectMultipleParentsException( params.getName(), params.getParents() );
             }
 
-            final PropertyTree contentRootData = createContentRootData( params );
+            final PropertyTree contentRootData = toContentRootData( params );
 
             doInitRootNodes( params, contentRootData );
 
@@ -278,7 +272,7 @@ public class ProjectServiceImpl
 
             LOG.debug( "Project created: {}", params.getName() );
 
-            return initProject( repositoryService.get( params.getName().getRepoId() ), getProjectSiteConfigs( contentRootData ) );
+            return toProject( repositoryService.get( params.getName().getRepoId() ), toProjectSiteConfigs( contentRootData ) );
         } );
     }
 
@@ -287,7 +281,7 @@ public class ProjectServiceImpl
     {
         callWithUpdateContext( () -> {
             doModifyIcon( params );
-            LOG.debug( "Icon for project updated: " + params.getName() );
+            LOG.debug( "Icon for project updated: {}", params.getName() );
 
             return true;
         }, params.getName() );
@@ -357,10 +351,10 @@ public class ProjectServiceImpl
         }
 
         return callWithListContext( () -> Stream.concat( Stream.of( project ), doGetParents( project ).stream() )
-                                                                    .map( Project::getSiteConfigs )
-                                                                    .flatMap( SiteConfigs::stream )
-                                                                    .map( SiteConfig::getApplicationKey )
-                                                                    .collect( ApplicationKeys.collector() ) );
+            .map( Project::getSiteConfigs )
+            .flatMap( SiteConfigs::stream )
+            .map( SiteConfig::getApplicationKey )
+            .collect( ApplicationKeys.collector() ) );
     }
 
     @Override
@@ -614,39 +608,49 @@ public class ProjectServiceImpl
 
     private Project doModify( final ModifyProjectParams params )
     {
-        final UpdateRepositoryParams updateParams =
-            UpdateRepositoryParams.create().repositoryId( params.getName().getRepoId() ).editor( editableRepository -> {
-                modifyProjectData( params, editableRepository.data );
-            } ).build();
+        final ProjectName projectName = params.getName();
 
-        final Repository updatedRepository = repositoryService.updateRepository( updateParams );
+        final UpdateRepositoryParams updateParams = UpdateRepositoryParams.create()
+            .repositoryId( projectName.getRepoId() )
+            .editor( editableRepository -> modifyProjectData( params, editableRepository.data ) )
+            .build();
+
+        final Repository updatedRepository;
+        try
+        {
+            updatedRepository = repositoryService.updateRepository( updateParams );
+        }
+        catch ( RepositoryNotFoundException e )
+        {
+            throw new ProjectNotFoundException( projectName );
+        }
 
         UpdateProjectRoleNamesCommand.create()
             .securityService( securityService )
-            .projectName( params.getName() )
+            .projectName( projectName )
             .projectDisplayName( params.getDisplayName() )
             .build()
             .execute();
 
-        final Node updatedContentRootNode = updateProjectSiteConfigs( params.getName(), params.getSiteConfigs() );
+        final Node updatedContentRootNode = updateProjectSiteConfigs( projectName, params.getSiteConfigs() );
 
-        return initProject( updatedRepository, getProjectSiteConfigs( updatedContentRootNode.data() ) );
+        return toProject( updatedRepository, toProjectSiteConfigs( updatedContentRootNode.data() ) );
     }
 
     private Projects doList()
     {
         return this.repositoryService.list().stream().map( repository -> {
             final ProjectName projectName = ProjectName.from( repository.getId() );
-            return projectName != null ? initProject( repository, getProjectSiteConfigs( projectName ) ) : null;
+            return projectName != null ? toProject( repository, getProjectSiteConfigs( projectName ) ) : null;
         } ).filter( Objects::nonNull ).collect( Projects.collector() );
     }
 
     private Project doGet( final ProjectName projectName )
     {
-        return initProject( this.repositoryService.get( projectName.getRepoId() ), getProjectSiteConfigs( projectName ) );
+        return toProject( this.repositoryService.get( projectName.getRepoId() ), getProjectSiteConfigs( projectName ) );
     }
 
-    private PropertyTree createContentRootData( final CreateProjectParams params )
+    private PropertyTree toContentRootData( final CreateProjectParams params )
     {
         PropertyTree data = new PropertyTree();
 
@@ -660,7 +664,7 @@ public class ProjectServiceImpl
         return data;
     }
 
-    private SiteConfigs getProjectSiteConfigs( final ProjectName projectName )
+    private @Nullable SiteConfigs getProjectSiteConfigs( final ProjectName projectName )
     {
         final Node contentRoot;
         try
@@ -677,12 +681,13 @@ public class ProjectServiceImpl
             return null;
         }
 
-        return getProjectSiteConfigs( contentRoot.data() );
+        return toProjectSiteConfigs( contentRoot.data() );
     }
 
-    private SiteConfigs getProjectSiteConfigs( final PropertyTree contentRootData )
+    private SiteConfigs toProjectSiteConfigs( final PropertyTree contentRootData )
     {
-        return Optional.ofNullable( contentRootData.getSet( ContentPropertyNames.DATA ) ).map( SiteConfigsDataSerializer::fromData )
+        return Optional.ofNullable( contentRootData.getSet( ContentPropertyNames.DATA ) )
+            .map( SiteConfigsDataSerializer::fromData )
             .orElse( SiteConfigs.empty() );
     }
 
@@ -701,7 +706,7 @@ public class ProjectServiceImpl
         return contentRootDataContext( projectName ).callWith( () -> nodeService.update( build ) );
     }
 
-    private Project initProject( final Repository repository, final SiteConfigs siteConfigs )
+    private Project toProject( final Repository repository, final SiteConfigs siteConfigs )
     {
         if ( repository == null || siteConfigs == null )
         {
@@ -709,11 +714,6 @@ public class ProjectServiceImpl
         }
 
         final PropertyTree repositoryData = repository.getData();
-
-        if ( repositoryData == null )
-        {
-            return null;
-        }
 
         final PropertySet projectData = repositoryData.getSet( ProjectConstants.PROJECT_DATA_SET_NAME );
 

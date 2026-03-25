@@ -31,10 +31,8 @@ class CompareNodeCommandTest
     {
         ctxDefault().callWith( this::createDefaultRootNode );
 
-        final Node createdNode = ctxDefault().callWith( () -> createNode( CreateNodeParams.create().
-            parent( NodePath.ROOT ).
-            name( "my-node" ).
-            build() ) );
+        final Node createdNode =
+            ctxDefault().callWith( () -> createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "my-node" ).build() ) );
 
         final NodeComparison comparison = ctxDefault().callWith( () -> doCompare( WS_OTHER, createdNode ) );
 
@@ -46,10 +44,8 @@ class CompareNodeCommandTest
     {
         ctxOther().callWith( this::createDefaultRootNode );
 
-        final Node createdNode = ctxOther().callWith( () -> createNode( CreateNodeParams.create().
-            parent( NodePath.ROOT ).
-            name( "my-node" ).
-            build() ) );
+        final Node createdNode =
+            ctxOther().callWith( () -> createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "my-node" ).build() ) );
 
         final NodeComparison comparison = ctxDefault().callWith( () -> doCompare( WS_OTHER, createdNode ) );
 
@@ -61,11 +57,8 @@ class CompareNodeCommandTest
     {
         ctxOther().callWith( this::createDefaultRootNode );
 
-        final Node createdNode = ctxOther().callWith( () -> createNode( CreateNodeParams.create().
-            parent( NodePath.ROOT ).
-            name( "my-node" ).
-            setNodeId( NodeId.from( "MyNodeId" ) ).
-            build() ) );
+        final Node createdNode = ctxOther().callWith( () -> createNode(
+            CreateNodeParams.create().parent( NodePath.ROOT ).name( "my-node" ).setNodeId( NodeId.from( "my-node-id" ) ).build() ) );
 
         final NodeComparison comparison = ctxDefault().callWith( () -> doCompare( WS_OTHER, createdNode ) );
 
@@ -77,10 +70,8 @@ class CompareNodeCommandTest
     {
         ctxOther().callWith( this::createDefaultRootNode );
 
-        final Node createdNode = ctxOther().callWith( () -> createNode( CreateNodeParams.create().
-            parent( NodePath.ROOT ).
-            name( "my-node" ).
-            build() ) );
+        final Node createdNode =
+            ctxOther().callWith( () -> createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "my-node" ).build() ) );
 
         assertNotNull( ctxOther().callWith( () -> getNodeById( createdNode.id() ) ) );
 
@@ -88,13 +79,13 @@ class CompareNodeCommandTest
 
         assertNotNull( ctxDefault().callWith( () -> getNodeById( createdNode.id() ) ) );
 
-        DeleteNodeCommand.create().
-            nodeId( createdNode.id() ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            build().
-            execute();
+        DeleteNodeCommand.create()
+            .nodeId( createdNode.id() )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.storageService )
+            .searchService( this.searchService )
+            .build()
+            .execute();
 
         final NodeComparison comparison = ctxDefault().callWith( () -> doCompare( WS_OTHER, createdNode ) );
 
@@ -107,10 +98,8 @@ class CompareNodeCommandTest
     {
         ctxDefault().callWith( this::createDefaultRootNode );
 
-        final Node createdNode = ctxDefault().callWith( () -> createNode( CreateNodeParams.create().
-            parent( NodePath.ROOT ).
-            name( "my-node" ).
-            build() ) );
+        final Node createdNode =
+            ctxDefault().callWith( () -> createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "my-node" ).build() ) );
 
         ctxDefault().runWith( () -> doPushNode( WS_OTHER, createdNode ) );
 
@@ -124,10 +113,8 @@ class CompareNodeCommandTest
     {
         ctxDefault().callWith( this::createDefaultRootNode );
 
-        final Node createdNode = ctxDefault().callWith( () -> createNode( CreateNodeParams.create().
-            parent( NodePath.ROOT ).
-            name( "my-node" ).
-            build() ) );
+        final Node createdNode =
+            ctxDefault().callWith( () -> createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "my-node" ).build() ) );
 
         ctxDefault().runWith( () -> doPushNode( WS_OTHER, createdNode ) );
         refresh();
@@ -145,10 +132,8 @@ class CompareNodeCommandTest
     {
         ctxDefault().callWith( this::createDefaultRootNode );
 
-        final Node createdNode = ctxDefault().callWith( () -> createNode( CreateNodeParams.create().
-            parent( NodePath.ROOT ).
-            name( "my-node" ).
-            build() ) );
+        final Node createdNode =
+            ctxDefault().callWith( () -> createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "my-node" ).build() ) );
 
         ctxDefault().runWith( () -> doPushNode( WS_OTHER, createdNode ) );
         refresh();
@@ -167,15 +152,11 @@ class CompareNodeCommandTest
     {
         ctxDefault().callWith( this::createDefaultRootNode );
 
-        final Node createdNode = ctxDefault().callWith( () -> createNode( CreateNodeParams.create().
-            parent( NodePath.ROOT ).
-            name( "my-node" ).
-            build() ) );
+        final Node createdNode =
+            ctxDefault().callWith( () -> createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "my-node" ).build() ) );
 
-        final Node mySecondNode = ctxDefault().callWith( () -> createNode( CreateNodeParams.create().
-            parent( NodePath.ROOT ).
-            name( "my-second-node" ).
-            build() ) );
+        final Node mySecondNode =
+            ctxDefault().callWith( () -> createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "my-second-node" ).build() ) );
 
         ctxDefault().runWith( () -> doPushNode( WS_OTHER, createdNode ) );
         refresh();
@@ -190,36 +171,39 @@ class CompareNodeCommandTest
 
     private NodeComparison doCompare( final Branch branch, final Node createdNode )
     {
-        return CompareNodeCommand.create().
-            storageService( this.storageService ).
-            nodeId( createdNode.id() ).
-            target( branch ).
-            build().
-            execute();
+        return CompareNodeCommand.create()
+            .storageService( this.storageService )
+            .nodeId( createdNode.id() )
+            .target( branch )
+            .build()
+            .execute();
     }
 
     private Node doUpdateNode( final Node createdNode )
     {
-        final PatchNodeParams updateNodeParams = PatchNodeParams.create().
-            id( createdNode.id() ).
-            editor( editableNode -> editableNode.manualOrderValue = 10L ).
-            build();
+        final PatchNodeParams updateNodeParams =
+            PatchNodeParams.create().id( createdNode.id() ).editor( editableNode -> editableNode.manualOrderValue = 10L ).build();
 
-        return PatchNodeCommand.create().
-            params( updateNodeParams ).binaryService( this.binaryService ).indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            build().execute().getResult( ContextAccessor.current().getBranch() );
+        return PatchNodeCommand.create()
+            .params( updateNodeParams )
+            .binaryService( this.binaryService )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.storageService )
+            .searchService( this.searchService )
+            .build()
+            .execute()
+            .getResult( ContextAccessor.current().getBranch() );
     }
 
     private PushNodesResult doPushNode( final Branch branch, final Node createdNode )
     {
-        return PushNodesCommand.create().params( PushNodeParams.create().ids( NodeIds.from( createdNode.id() ) ).target( branch ).build() ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            build().
-            execute();
+        return PushNodesCommand.create()
+            .params( PushNodeParams.create().ids( NodeIds.from( createdNode.id() ) ).target( branch ).build() )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.storageService )
+            .searchService( this.searchService )
+            .build()
+            .execute();
     }
 
 }

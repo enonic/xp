@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.security.DigestInputStream;
 import java.util.EnumSet;
-import java.util.HexFormat;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -180,7 +179,7 @@ class AbstractCreatingOrUpdatingContentCommand
         {
             long size = ByteStreams.exhaust( digestInputStream );
             builder.size( size );
-            builder.sha512( HexFormat.of().formatHex( digestInputStream.getMessageDigest().digest() ) );
+            builder.sha512( MessageDigests.formatHex( digestInputStream.getMessageDigest() ) );
         }
         catch ( IOException e )
         {

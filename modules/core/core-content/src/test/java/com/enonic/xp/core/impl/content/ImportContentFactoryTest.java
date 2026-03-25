@@ -42,7 +42,7 @@ class ImportContentFactoryTest
     void setUp()
     {
         Mockito.when( content.getType() ).thenReturn( ContentTypeName.from( "base:folder" ) );
-        Mockito.when( content.getId() ).thenReturn( ContentId.from( "contentId" ) );
+        Mockito.when( content.getId() ).thenReturn( ContentId.from( "contentid" ) );
         Mockito.when( content.getModifier() ).thenReturn( PrincipalKey.from( "user:system:user" ) );
         Mockito.when( content.getCreator() ).thenReturn( PrincipalKey.from( "user:system:user" ) );
         Mockito.when( content.getData() ).thenReturn( new PropertyTree() );

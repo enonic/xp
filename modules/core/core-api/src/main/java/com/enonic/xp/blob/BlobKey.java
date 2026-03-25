@@ -1,11 +1,11 @@
 package com.enonic.xp.blob;
 
 import java.io.IOException;
-import java.util.HexFormat;
 import java.util.Objects;
 
-import com.google.common.hash.Hashing;
 import com.google.common.io.ByteSource;
+
+import com.enonic.xp.core.internal.security.MessageDigests;
 
 public final class BlobKey
 {
@@ -39,11 +39,11 @@ public final class BlobKey
         return new BlobKey( key );
     }
 
-    public static BlobKey from( final ByteSource in )
+    public static BlobKey sha256( final ByteSource in )
     {
         try
         {
-            return from( HexFormat.of().formatHex( in.hash( Hashing.sha1() ).asBytes() ) );
+            return from( "sha256:" + MessageDigests.formatHex( MessageDigests.updateWithStream( MessageDigests.sha256(), in::openStream ) ) );
         }
         catch ( final IOException e )
         {

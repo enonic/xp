@@ -45,7 +45,7 @@ class CompressedExportImportIntegrationTest
         throws IOException
     {
         // Create a node
-        final Node myNode = createNode( NodePath.ROOT, "myNode" );
+        final Node myNode = createNode( NodePath.ROOT, "my-node" );
 
         // Export to zip
         final Path exportDir = temporaryFolder.resolve( "exports" );
@@ -76,7 +76,7 @@ class CompressedExportImportIntegrationTest
         assertEquals( 1, importResult.getSkippedNodes().getSize() ); // root
 
         // Verify node was recreated
-        final Node importedNode = getNodeByPath( new NodePath( "/myNode" ) );
+        final Node importedNode = getNodeByPath( new NodePath( "/my-node" ) );
         assertNotNull( importedNode );
         assertEquals( myNode.name(), importedNode.name() );
     }
@@ -151,22 +151,22 @@ class CompressedExportImportIntegrationTest
         data1.addString( "title", "Node with image" );
 
         final Node nodeWithBinary1 = createNode( CreateNodeParams.create()
-            .parent( NodePath.ROOT )
-            .name( "node-with-binary-1" )
-            .data( data1 )
-            .attachBinary( binaryRef1, ByteSource.wrap( "fake image data".getBytes() ) )
-            .build() );
+                                                     .parent( NodePath.ROOT )
+                                                     .name( "node-with-binary-1" )
+                                                     .data( data1 )
+                                                     .attachBinary( binaryRef1, ByteSource.wrap( "fake image data".getBytes() ) )
+                                                     .build() );
 
         final PropertyTree data2 = new PropertyTree();
         data2.addBinaryReference( "myDoc", binaryRef2 );
         data2.addString( "title", "Node with document" );
 
         final Node nodeWithBinary2 = createNode( CreateNodeParams.create()
-            .parent( NodePath.ROOT )
-            .name( "node-with-binary-2" )
-            .data( data2 )
-            .attachBinary( binaryRef2, ByteSource.wrap( "fake pdf data".getBytes() ) )
-            .build() );
+                                                     .parent( NodePath.ROOT )
+                                                     .name( "node-with-binary-2" )
+                                                     .data( data2 )
+                                                     .attachBinary( binaryRef2, ByteSource.wrap( "fake pdf data".getBytes() ) )
+                                                     .build() );
 
         refresh();
 
@@ -210,11 +210,8 @@ class CompressedExportImportIntegrationTest
         throws IOException
     {
         // Create parent with manual child order
-        final Node parent = createNode( CreateNodeParams.create()
-            .parent( NodePath.ROOT )
-            .name( "ordered-parent" )
-            .childOrder( ChildOrder.manualOrder() )
-            .build() );
+        final Node parent = createNode(
+            CreateNodeParams.create().parent( NodePath.ROOT ).name( "ordered-parent" ).childOrder( ChildOrder.manualOrder() ).build() );
 
         // Create children
         createNode( parent.path(), "child1" );
@@ -303,19 +300,12 @@ class CompressedExportImportIntegrationTest
         final PropertyTree data = new PropertyTree();
         data.addString( "title", "Initial Title" );
 
-        final Node node = createNode( CreateNodeParams.create()
-            .parent( NodePath.ROOT )
-            .name( "versioned-node" )
-            .data( data )
-            .build() );
+        final Node node = createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "versioned-node" ).data( data ).build() );
 
         // Update the node to create a version
-        final Node updatedNode = updateNode( UpdateNodeParams.create()
-            .id( node.id() )
-            .editor( ( n ) -> {
-                n.data.setString( "title", "Updated Title" );
-            } )
-            .build() );
+        final Node updatedNode = updateNode( UpdateNodeParams.create().id( node.id() ).editor( ( n ) -> {
+            n.data.setString( "title", "Updated Title" );
+        } ).build() );
 
         refresh();
 
@@ -323,12 +313,15 @@ class CompressedExportImportIntegrationTest
         final Path exportDir = temporaryFolder.resolve( "exports" );
         Files.createDirectories( exportDir );
 
-        try ( final ZipExportWriter writer = ZipExportWriter.create( exportDir, "version-export" ) )
+        try (final ZipExportWriter writer = ZipExportWriter.create( exportDir, "version-export" ))
         {
             final NodeExportResult exportResult = NodeExporter.create()
                 .nodeService( this.nodeService )
                 .nodeExportWriter( writer )
-                .sourceNodePath( NodePath.ROOT ).targetDirectory( exportDir.resolve( "version-export" ) ).xpVersion( "1.0.0" ).build()
+                .sourceNodePath( NodePath.ROOT )
+                .targetDirectory( exportDir.resolve( "version-export" ) )
+                .xpVersion( "1.0.0" )
+                .build()
                 .execute();
 
             assertEquals( 2, exportResult.size() ); // root + node
@@ -385,13 +378,14 @@ class CompressedExportImportIntegrationTest
     private NodeExportResult exportToZip( final String exportName, final NodePath sourcePath, final Path exportDir )
         throws IOException
     {
-        try ( final ZipExportWriter writer = ZipExportWriter.create( exportDir, exportName ) )
+        try (final ZipExportWriter writer = ZipExportWriter.create( exportDir, exportName ))
         {
             return NodeExporter.create()
                 .nodeService( this.nodeService )
                 .nodeExportWriter( writer )
                 .sourceNodePath( sourcePath )
-                .targetDirectory( exportDir.resolve( exportName ) ).xpVersion( "1.1.0" )
+                .targetDirectory( exportDir.resolve( exportName ) )
+                .xpVersion( "1.1.0" )
                 .build()
                 .execute();
         }

@@ -2,11 +2,11 @@ package com.enonic.xp.repo.impl.node;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Spliterator;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import org.elasticsearch.index.IndexNotFoundException;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.osgi.service.component.annotations.Activate;
@@ -61,6 +61,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.NodeStorageException;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.node.NodeVersionQuery;
@@ -87,7 +88,6 @@ import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.repository.BranchNotFoundException;
-import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryNotFoundException;
 import com.enonic.xp.repository.RepositoryService;
@@ -109,22 +109,21 @@ public class NodeServiceImpl
 
     private final BinaryService binaryService;
 
-    private final RepositoryService repositoryService;
+    @SuppressWarnings("unused")
+    @Reference
+    private @Nullable RepositoryService repositoryService;
 
     @Activate
     public NodeServiceImpl( @Reference final IndexServiceInternal indexServiceInternal,
                             @Reference final NodeStorageService nodeStorageService, @Reference final NodeSearchService nodeSearchService,
-                            @Reference final EventPublisher eventPublisher, @Reference final BinaryService binaryService,
-                            @Reference final RepositoryService repositoryService )
+                            @Reference final EventPublisher eventPublisher, @Reference final BinaryService binaryService )
     {
         this.indexServiceInternal = indexServiceInternal;
         this.nodeStorageService = nodeStorageService;
         this.nodeSearchService = nodeSearchService;
         this.eventPublisher = eventPublisher;
         this.binaryService = binaryService;
-        this.repositoryService = repositoryService;
     }
-
 
     @Override
     public Node getById( final NodeId id )
@@ -326,7 +325,7 @@ public class NodeServiceImpl
     public FindNodesByMultiRepoQueryResult findByQuery( final MultiRepoNodeQuery multiNodeQuery )
     {
         multiNodeQuery.getSearchTargets()
-            .forEach( searchTarget -> verifyBranchExists( searchTarget.getBranch(), searchTarget.getRepositoryId() ) );
+            .forEach( searchTarget -> verifyBranchExists( searchTarget.getRepositoryId(), searchTarget.getBranch() ) );
 
         return Tracer.trace( "node.findByQueryMulti", trace -> {
             trace.put( "query", multiNodeQuery.getNodeQuery().getQuery() );
@@ -495,8 +494,7 @@ public class NodeServiceImpl
     @Override
     public PushNodesResult push( final PushNodeParams params )
     {
-        verifyContext();
-        verifyBranchExists( params.getTarget(), ContextAccessor.current().getRepositoryId() );
+        verifyBranches( ContextAccessor.current().getBranch(), params.getTarget() );
 
         final PushNodesResult pushNodesResult = PushNodesCommand.create()
             .indexServiceInternal( this.indexServiceInternal )
@@ -816,34 +814,59 @@ public class NodeServiceImpl
     @Override
     public void importNodeVersion( final ImportNodeVersionParams params )
     {
-        verifyRepositoryExists();
-
-        LoadNodeVersionCommand.create()
-            .node( params.getNode() )
-            .nodeCommitId( params.getNodeCommitId() )
-            .attributes( params.getAttributes() )
-            .storageService( this.nodeStorageService )
-            .searchService( this.nodeSearchService )
-            .indexServiceInternal( this.indexServiceInternal )
-            .build()
-            .execute();
+        try
+        {
+            LoadNodeVersionCommand.create()
+                .node( params.getNode() )
+                .nodeCommitId( params.getNodeCommitId() )
+                .attributes( params.getAttributes() )
+                .storageService( this.nodeStorageService )
+                .searchService( this.nodeSearchService )
+                .indexServiceInternal( this.indexServiceInternal )
+                .build()
+                .execute();
+        }
+        catch ( NodeStorageException e )
+        {
+            if ( e.getCause() instanceof IndexNotFoundException )
+            {
+                throw new RepositoryNotFoundException( ContextAccessor.current().getRepositoryId() );
+            }
+            else
+            {
+                throw e;
+            }
+        }
     }
 
     @Override
     public void importNodeCommit( final ImportNodeCommitParams params )
     {
-        verifyRepositoryExists();
+        try
+        {
 
-        LoadNodeCommitCommand.create()
-            .nodeCommitId( params.getNodeCommitId() )
-            .message( params.getMessage() )
-            .committer( params.getCommitter() )
-            .timestamp( params.getTimestamp() )
-            .storageService( this.nodeStorageService )
-            .searchService( this.nodeSearchService )
-            .indexServiceInternal( this.indexServiceInternal )
-            .build()
-            .execute();
+            LoadNodeCommitCommand.create()
+                .nodeCommitId( params.getNodeCommitId() )
+                .message( params.getMessage() )
+                .committer( params.getCommitter() )
+                .timestamp( params.getTimestamp() )
+                .storageService( this.nodeStorageService )
+                .searchService( this.nodeSearchService )
+                .indexServiceInternal( this.indexServiceInternal )
+                .build()
+                .execute();
+        }
+        catch ( NodeStorageException e )
+        {
+            if ( e.getCause() instanceof IndexNotFoundException )
+            {
+                throw new RepositoryNotFoundException( ContextAccessor.current().getRepositoryId() );
+            }
+            else
+            {
+                throw e;
+            }
+        }
     }
 
     @Override
@@ -861,7 +884,7 @@ public class NodeServiceImpl
         final InternalContext context =
             InternalContext.create( ContextAccessor.current() ).searchPreference( SearchPreference.PRIMARY ).build();
 
-        final NodeVersionIds nodeVersionIds = nodeStorageService.getBranchNodeVersions( nodeIds, context )
+        final NodeVersionIds nodeVersionIds = nodeStorageService.getNodeBranchEntries( nodeIds, context )
             .stream()
             .map( NodeBranchEntry::getVersionId )
             .collect( NodeVersionIds.collector() );
@@ -908,36 +931,36 @@ public class NodeServiceImpl
     private void verifyContext()
     {
         final Context currentContext = ContextAccessor.current();
-        verifyBranchExists( currentContext.getBranch(), currentContext.getRepositoryId() );
+        verifyBranches( currentContext.getBranch() );
     }
 
-    private void verifyRepositoryExists()
+    private void verifyBranches( final Branch... branches )
     {
-        NodeHelper.runAsAdmin( () -> {
-            final RepositoryId repoId = ContextAccessor.current().getRepositoryId();
-            final Repository repository = this.repositoryService.get( repoId );
-            if ( repository == null )
-            {
-                throw new RepositoryNotFoundException( repoId );
-            }
-        } );
+        final Context currentContext = ContextAccessor.current();
+        for ( Branch branch : branches )
+        {
+            verifyBranchExists( currentContext.getRepositoryId(), branch );
+        }
     }
 
-    private void verifyBranchExists( final Branch branch, final RepositoryId repositoryId )
+    private void verifyBranchExists( final RepositoryId repositoryId, final Branch branch )
     {
-        Objects.requireNonNull( branch, "Branch cannot be null" );
-        NodeHelper.runAsAdmin( () -> {
-            final Repository repository = this.repositoryService.get( repositoryId );
-            if ( repository == null )
-            {
-                throw new RepositoryNotFoundException( repositoryId );
-            }
-
-            if ( !repository.getBranches().contains( branch ) )
-            {
-                throw new BranchNotFoundException( branch );
-            }
-        } );
+        final boolean rootExists;
+        try
+        {
+            rootExists = this.nodeStorageService.exists( NodeId.ROOT, InternalContext.create( ContextAccessor.current() )
+                .repositoryId( repositoryId )
+                .branch( branch )
+                .build() );
+        }
+        catch ( IndexNotFoundException e )
+        {
+            throw new RepositoryNotFoundException( repositoryId );
+        }
+        if ( !rootExists )
+        {
+            throw new BranchNotFoundException( branch );
+        }
     }
 
     private PatchNodeParams convertUpdateParams( final UpdateNodeParams params )

@@ -11,7 +11,7 @@ import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.core.impl.audit.config.AuditLogConfig;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.repository.RepositoryService;
+import com.enonic.xp.repository.internal.InternalRepositoryService;
 
 @Component(immediate = true)
 public class AuditLogServiceActivator
@@ -20,7 +20,7 @@ public class AuditLogServiceActivator
 
     private final IndexService indexService;
 
-    private final RepositoryService repositoryService;
+    private final InternalRepositoryService repositoryService;
 
     private final NodeService nodeService;
 
@@ -28,7 +28,8 @@ public class AuditLogServiceActivator
 
     @Activate
     public AuditLogServiceActivator( @Reference final AuditLogConfig config, @Reference final IndexService indexService,
-                                     @Reference final RepositoryService repositoryService, @Reference final NodeService nodeService )
+                                     @Reference final InternalRepositoryService repositoryService,
+                                     @Reference final NodeService nodeService )
     {
         this.config = config;
         this.indexService = indexService;
@@ -40,11 +41,7 @@ public class AuditLogServiceActivator
     public void activate( final BundleContext context )
     {
         final AuditLogServiceImpl auditLogService = new AuditLogServiceImpl( config, nodeService );
-        AuditLogRepoInitializer.create().
-            setIndexService( indexService ).
-            setRepositoryService( repositoryService ).
-            build().
-            initialize();
+        AuditLogRepoInitializer.create().setIndexService( indexService ).setRepositoryService( repositoryService ).build().initialize();
         service = context.registerService( AuditLogService.class, auditLogService, null );
     }
 

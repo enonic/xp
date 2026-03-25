@@ -1,10 +1,12 @@
 package com.enonic.xp.core.node;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +18,7 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.AbstractNodeTest;
@@ -34,6 +37,8 @@ import com.enonic.xp.node.DuplicateNodeParams;
 import com.enonic.xp.node.FindNodesByMultiRepoQueryResult;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.GetNodeVersionsParams;
+import com.enonic.xp.node.ImportNodeCommitParams;
+import com.enonic.xp.node.ImportNodeVersionParams;
 import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.MultiRepoNodeHit;
 import com.enonic.xp.node.MultiRepoNodeHits;
@@ -50,6 +55,7 @@ import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.node.NodeVersions;
 import com.enonic.xp.node.OperationNotPermittedException;
@@ -66,11 +72,16 @@ import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.NodeEvents;
 import com.enonic.xp.repository.BranchNotFoundException;
+import com.enonic.xp.repository.CreateRepositoryParams;
+import com.enonic.xp.repository.RepositoryConstants;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryNotFoundException;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.TraceManager;
 import com.enonic.xp.trace.Tracer;
@@ -80,10 +91,12 @@ import com.enonic.xp.util.GenericValue;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -143,6 +156,27 @@ class NodeServiceImplTest
             .build()
             .callWith( () -> this.nodeService.getById( NodeId.from( "a" ) ) ) );
     }
+
+    @Test
+    void exists_by_id()
+    {
+        final Node node = createNode( NodePath.ROOT, "my-node" );
+
+        assertTrue( this.nodeService.nodeExists( node.id() ) );
+    }
+
+    @Test
+    void not_exists_by_id()
+    {
+        assertFalse( this.nodeService.nodeExists( NodeId.from( "non-existing-id" ) ) );
+    }
+
+    @Test
+    void root_exists_by_id()
+    {
+        assertTrue( this.nodeService.nodeExists( NodeId.ROOT ) );
+    }
+
 
     @Test
     void move()
@@ -491,7 +525,7 @@ class NodeServiceImplTest
     {
 
         assertThrows( OperationNotPermittedException.class,
-                      () -> nodeService.delete( DeleteNodeParams.create().nodeId( Node.ROOT_UUID ).build() ) );
+                      () -> nodeService.delete( DeleteNodeParams.create().nodeId( NodeId.ROOT ).build() ) );
     }
 
     @Test
@@ -640,6 +674,74 @@ class NodeServiceImplTest
     }
 
     @Test
+    void testFindByQuery_multipleRepositories()
+    {
+        final Node node1 = this.nodeService.create(
+            CreateNodeParams.create().name( "node-in-default-repo" ).parent( NodePath.ROOT ).data( new PropertyTree() ).build() );
+
+        final RepositoryId secondRepoId = RepositoryId.from( "second-repo" );
+        ctxDefaultAdmin().callWith( () -> {
+            this.repositoryService.createRepository( CreateRepositoryParams.create()
+                                                         .repositoryId( secondRepoId )
+                                                         .rootPermissions( AccessControlList.of(
+                                                             AccessControlEntry.create().principal( TEST_DEFAULT_USER.getKey() ).allowAll().build() ) )
+                                                         .build() );
+            return null;
+        } );
+
+        final Context secondRepoCtx = ContextBuilder.from( ContextAccessor.current() )
+            .repositoryId( secondRepoId )
+            .branch( RepositoryConstants.MASTER_BRANCH )
+            .build();
+
+        final Node node2 = secondRepoCtx.callWith( () -> {
+            createDefaultRootNode();
+            return this.nodeService.create(
+                CreateNodeParams.create().name( "node-in-second-repo" ).parent( NodePath.ROOT ).data( new PropertyTree() ).build() );
+        } );
+
+        refresh();
+
+        final SearchTargets searchTargets = SearchTargets.create()
+            .add( SearchTarget.create()
+                      .repositoryId( ContextAccessor.current().getRepositoryId() )
+                      .branch( ContextAccessor.current().getBranch() )
+                      .principalKeys( ContextAccessor.current().getAuthInfo().getPrincipals() )
+                      .build() )
+            .add( SearchTarget.create()
+                      .repositoryId( secondRepoId )
+                      .branch( RepositoryConstants.MASTER_BRANCH )
+                      .principalKeys( ContextAccessor.current().getAuthInfo().getPrincipals() )
+                      .build() )
+            .build();
+
+        final NodeQuery nodeQuery = NodeQuery.create()
+            .addQueryFilter( ValueFilter.create()
+                                 .fieldName( NodeIndexPath.PATH.getPath() )
+                                 .addValues( ValueFactory.newString( "/node-in-default-repo" ),
+                                             ValueFactory.newString( "/node-in-second-repo" ) )
+                                 .build() )
+            .build();
+        final MultiRepoNodeQuery multiRepoNodeQuery = new MultiRepoNodeQuery( searchTargets, nodeQuery );
+
+        final FindNodesByMultiRepoQueryResult result = ContextBuilder.create().build().callWith( () -> this.nodeService.findByQuery( multiRepoNodeQuery ) );
+
+        assertEquals( 2L, result.getTotalHits() );
+
+        final MultiRepoNodeHits nodeHits = result.getNodeHits();
+        assertEquals( 2, nodeHits.getSize() );
+
+        final Set<NodeId> nodeIds = nodeHits.stream().map( MultiRepoNodeHit::getNodeId ).collect( Collectors.toSet() );
+        assertTrue( nodeIds.contains( node1.id() ) );
+        assertTrue( nodeIds.contains( node2.id() ) );
+
+        final Set<RepositoryId> repoIds =
+            nodeHits.stream().map( MultiRepoNodeHit::getRepositoryId ).collect( Collectors.toSet() );
+        assertTrue( repoIds.contains( ContextAccessor.current().getRepositoryId() ) );
+        assertTrue( repoIds.contains( secondRepoId ) );
+    }
+
+    @Test
     void applyVersionAttributes()
     {
         // Create a node
@@ -675,9 +777,45 @@ class NodeServiceImplTest
         assertEquals( GenericValue.booleanValue( true ), updatedAttributes.get( "attr3" ) );
     }
 
+    @Test
+    void importNodeVersion_throws_when_repository_missing()
+    {
+        final ImportNodeVersionParams params = ImportNodeVersionParams.create()
+            .node( Node.createRoot().nodeVersionId( NodeVersionId.from( "a-b-c" ) ).timestamp( Instant.EPOCH ).build() )
+            .build();
+
+        assertThrows( RepositoryNotFoundException.class,
+                      () -> missingRepoContext().runWith( () -> this.nodeService.importNodeVersion( params ) ) );
+    }
+
+    @Test
+    void importNodeCommit_throws_when_repository_missing()
+    {
+        final ImportNodeCommitParams params = ImportNodeCommitParams.create()
+            .nodeCommitId( NodeCommitId.from( "commit-id" ) )
+            .message( "test" )
+            .committer( PrincipalKey.ofAnonymous() )
+            .timestamp( Instant.now() )
+            .build();
+
+        assertThrows( RepositoryNotFoundException.class,
+                      () -> missingRepoContext().runWith( () -> this.nodeService.importNodeCommit( params ) ) );
+    }
+
+
     private NodeVersions getVersionsMetadata( NodeId nodeId )
     {
         final GetNodeVersionsParams params = GetNodeVersionsParams.create().nodeId( nodeId ).build();
         return nodeService.getVersions( params ).getNodeVersions();
+    }
+
+    private static Context missingRepoContext()
+    {
+        return ContextBuilder.create()
+            .repositoryId( RepositoryId.from( "non-existing-repo" ) )
+            .branch( RepositoryConstants.MASTER_BRANCH )
+            .authInfo(
+                AuthenticationInfo.create().principals( RoleKeys.AUTHENTICATED, RoleKeys.EVERYONE ).user( TEST_DEFAULT_USER ).build() )
+            .build();
     }
 }

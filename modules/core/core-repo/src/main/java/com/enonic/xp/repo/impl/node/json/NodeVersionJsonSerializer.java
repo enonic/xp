@@ -65,7 +65,8 @@ public final class NodeVersionJsonSerializer
     public static PatternIndexConfigDocument toIndexConfigDocument( final ByteSource data )
         throws IOException
     {
-        return IndexConfigDocumentJson.fromJson( readValue( data, IndexConfigDocumentJson.class ) );
+        final IndexConfigDocumentJson json = readValue( data, IndexConfigDocumentJson.class );
+        return json != null ? IndexConfigDocumentJson.fromJson( json ) : null;
     }
 
     public static AccessControlList toNodeVersionAccessControl( final ByteSource data )

@@ -18,8 +18,8 @@ class BlobReferenceTest
         final Segment segment = Segment.from( "a", "b" );
         final BlobKey key = BlobKey.from( "k" );
         final BlobReference blobReference = new BlobReference( segment, key );
-        assertSame( segment, blobReference.getSegment() );
-        assertSame( key, blobReference.getKey() );
+        assertSame( segment, blobReference.segment() );
+        assertSame( key, blobReference.key() );
         assertEquals( "[a, b]:k", blobReference.toString() );
     }
 

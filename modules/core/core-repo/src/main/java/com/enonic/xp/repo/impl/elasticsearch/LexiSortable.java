@@ -7,7 +7,7 @@ import java.time.format.DateTimeFormatter;
 final class LexiSortable
 {
     private static final DateTimeFormatter FULL_DATE_FORMAT =
-        DateTimeFormatter.ofPattern( "yyyy-MM-dd'T'HH:mm:ss.SSSSSSX" ).withZone( ZoneOffset.UTC );
+        DateTimeFormatter.ofPattern( "yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSSX" ).withZone( ZoneOffset.UTC );
 
     private static final char[] HEX_DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 

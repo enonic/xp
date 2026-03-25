@@ -8,10 +8,10 @@ import com.enonic.xp.index.PathIndexConfig;
 public final class PatternConfigJson
 {
     @JsonProperty("path")
-    private String path;
+    public String path;
 
     @JsonProperty("indexConfig")
-    private IndexConfigJson indexConfig;
+    public IndexConfigJson indexConfig;
 
     public static PatternConfigJson toJson( final PathIndexConfig config )
     {
@@ -23,8 +23,6 @@ public final class PatternConfigJson
 
     public PathIndexConfig fromJson()
     {
-        return PathIndexConfig.create().path( IndexPath.from( this.path ) ).
-            indexConfig( this.indexConfig.fromJson() ).
-            build();
+        return PathIndexConfig.create().path( IndexPath.from( this.path ) ).indexConfig( this.indexConfig.fromJson() ).build();
     }
 }

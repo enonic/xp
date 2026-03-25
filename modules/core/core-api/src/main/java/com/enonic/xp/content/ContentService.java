@@ -89,8 +89,6 @@ public interface ContentService
 
     ByteSource getBinary( ContentId contentId, ContentVersionId contentVersionId, BinaryReference binaryReference );
 
-    String getBinaryKey( ContentId contentId, BinaryReference binaryReference );
-
     AccessControlList getRootPermissions();
 
     ContentDependencies getDependencies( ContentId id );

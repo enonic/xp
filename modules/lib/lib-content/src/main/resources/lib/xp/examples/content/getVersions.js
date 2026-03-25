@@ -4,7 +4,7 @@ const assert = require('/lib/xp/testing');
 // BEGIN
 // Fetch first page
 let result = contentLib.getVersions({
-    key: 'contentId',
+    key: 'contentid',
     count: 2
 });
 
@@ -13,7 +13,7 @@ log.info('Total versions: %s', result.total);
 // Fetch next page using cursor
 if (result.cursor) {
     var nextPage = contentLib.getVersions({
-        key: 'contentId',
+        key: 'contentid',
         count: 2,
         cursor: result.cursor
     });
@@ -27,7 +27,7 @@ let expected = {
     'hits': [
         {
             'versionId': 'version1',
-            'contentId': 'contentId',
+            'contentId': 'contentid',
             'path': '/my-content',
             'timestamp': '2024-01-01T00:00:00Z',
             'actions': [
@@ -40,7 +40,7 @@ let expected = {
         },
         {
             'versionId': 'version2',
-            'contentId': 'contentId',
+            'contentId': 'contentid',
             'path': '/my-content',
             'timestamp': '2023-12-01T00:00:00Z'
         }

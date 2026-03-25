@@ -197,7 +197,7 @@ public final class CachedBlobStore
             throws IOException
         {
             this.content = ByteSource.wrap( blobRecord.getBytes().read() );
-            this.blobKey = BlobKey.from( this.content );
+            this.blobKey = BlobKey.sha256( this.content );
             if ( !blobRecord.getKey().equals( this.blobKey ) )
             {
                 throw new IOException( String.format( "Cache BlobKey must be the same as the key of the BlobRecord: %s != %s", this.blobKey,

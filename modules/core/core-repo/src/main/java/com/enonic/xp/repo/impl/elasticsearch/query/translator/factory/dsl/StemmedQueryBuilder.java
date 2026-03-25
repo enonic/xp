@@ -1,23 +1,26 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.dsl;
 
+import java.util.Locale;
+import java.util.Objects;
+
 import org.elasticsearch.index.query.QueryBuilder;
 
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.repo.impl.index.IndexLanguageController;
-import com.enonic.xp.repo.impl.index.IndexValueTypeInterface;
+import com.enonic.xp.repo.impl.index.IndexValueType;
 
 class StemmedQueryBuilder
     extends SimpleQueryStringBuilder
 {
     public static final String NAME = "stemmed";
 
-    private final String language;
+    private final Locale language;
 
     StemmedQueryBuilder( final PropertySet expression )
     {
         super( expression );
 
-        language = getString( "language" );
+        language = Locale.forLanguageTag( Objects.requireNonNull( getString( "language" ), "language is required" ) );
     }
 
     @Override
@@ -26,8 +29,11 @@ class StemmedQueryBuilder
         final org.elasticsearch.index.query.SimpleQueryStringBuilder builder =
             ( (org.elasticsearch.index.query.SimpleQueryStringBuilder) super.create() ).analyzeWildcard( true );
 
-        final IndexValueTypeInterface languageIndexType = IndexLanguageController.resolveStemmedIndexValueType( this.language );
-
+        final IndexValueType languageIndexType = IndexLanguageController.resolveStemmedIndexValueType( this.language );
+        if ( languageIndexType == null )
+        {
+            throw new IllegalArgumentException( "Unsupported language for stemmed function: " + language );
+        }
         fields.getWeightedQueryFieldNames().forEach( field -> {
             final String resolvedName = NAME_RESOLVER.resolve( field.getBaseFieldName(), languageIndexType );
 

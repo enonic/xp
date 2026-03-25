@@ -11,6 +11,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.scheduler.CreateScheduledJobParams;
 import com.enonic.xp.scheduler.ScheduledJob;
+import com.enonic.xp.scheduler.SchedulerConstants;
 
 public class CreateScheduledJobCommand
     extends AbstractSchedulerCommand
@@ -37,12 +38,14 @@ public class CreateScheduledJobCommand
     {
         final PropertyTree data = SchedulerSerializer.toCreateNodeData( params );
 
-        final CreateNodeParams createNodeParams = CreateNodeParams.create().setNodeId( NodeId.from( params.getName().getValue() ) ).
-            name( params.getName().getValue() ).
-            data( data ).
-            parent( NodePath.ROOT ).
-            refresh( RefreshMode.ALL ).
-            build();
+        final CreateNodeParams createNodeParams = CreateNodeParams.create()
+            .setNodeId( NodeId.from( params.getName().getValue() ) )
+            .nodeType( SchedulerConstants.NODE_TYPE )
+            .name( params.getName().getValue() )
+            .data( data )
+            .parent( NodePath.ROOT )
+            .refresh( RefreshMode.ALL )
+            .build();
 
         final Node node = nodeService.create( createNodeParams );
 

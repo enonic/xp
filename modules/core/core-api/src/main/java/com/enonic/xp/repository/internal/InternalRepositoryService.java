@@ -1,5 +1,6 @@
 package com.enonic.xp.repository.internal;
 
+import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.RepositoryId;
 
 public interface InternalRepositoryService
@@ -8,5 +9,7 @@ public interface InternalRepositoryService
 
     void invalidate( RepositoryId repositoryId );
 
-    void recreateMissing();
+    void initializeRepository( CreateRepositoryParams params );
+
+    boolean isInitialized( RepositoryId id );
 }

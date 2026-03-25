@@ -5,7 +5,7 @@ import com.enonic.xp.scheduler.ModifyScheduledJobParams;
 import com.enonic.xp.scheduler.ScheduledJob;
 import com.enonic.xp.scheduler.ScheduledJobName;
 
-interface ScheduleAuditLogSupport
+public interface ScheduleAuditLogSupport
 {
     void create( CreateScheduledJobParams params, ScheduledJob job );
 

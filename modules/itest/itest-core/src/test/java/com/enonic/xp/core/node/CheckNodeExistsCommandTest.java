@@ -27,38 +27,34 @@ class CheckNodeExistsCommandTest
     @Test
     void exists()
     {
-        final Node node = CreateNodeCommand.create().
-            indexServiceInternal( this.indexServiceInternal ).
-            searchService( this.searchService ).
-            storageService( this.storageService ).
-            params( CreateNodeParams.create().
-                name( "myNode" ).
-                setNodeId( NodeId.from( "myNode" ) ).
-                parent( NodePath.ROOT ).
-                build() ).
-            build().
-            execute();
+        final Node node = CreateNodeCommand.create()
+            .indexServiceInternal( this.indexServiceInternal )
+            .searchService( this.searchService )
+            .storageService( this.storageService )
+            .params( CreateNodeParams.create().name( "myNode" ).setNodeId( NodeId.from( "my-node" ) ).parent( NodePath.ROOT ).build() )
+            .build()
+            .execute();
 
-        Assertions.assertTrue( CheckNodeExistsCommand.create().
-            indexServiceInternal( this.indexServiceInternal ).
-            searchService( this.searchService ).
-            storageService( this.storageService ).
-            nodePath( node.path() ).
-            build().
-            execute() );
+        Assertions.assertTrue( CheckNodeExistsCommand.create()
+                                   .indexServiceInternal( this.indexServiceInternal )
+                                   .searchService( this.searchService )
+                                   .storageService( this.storageService )
+                                   .nodePath( node.path() )
+                                   .build()
+                                   .execute() );
 
     }
 
     @Test
     void not_exists()
     {
-        assertFalse( CheckNodeExistsCommand.create().
-            indexServiceInternal( this.indexServiceInternal ).
-            searchService( this.searchService ).
-            storageService( this.storageService ).
-            nodePath( new NodePath( "/notExists" ) ).
-            build().
-            execute() );
+        assertFalse( CheckNodeExistsCommand.create()
+                         .indexServiceInternal( this.indexServiceInternal )
+                         .searchService( this.searchService )
+                         .storageService( this.storageService )
+                         .nodePath( new NodePath( "/notExists" ) )
+                         .build()
+                         .execute() );
 
     }
 }

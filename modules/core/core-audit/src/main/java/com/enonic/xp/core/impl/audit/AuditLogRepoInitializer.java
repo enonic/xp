@@ -5,12 +5,12 @@ import java.util.Objects;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.init.ExternalInitializer;
 import com.enonic.xp.repository.CreateRepositoryParams;
-import com.enonic.xp.repository.RepositoryService;
+import com.enonic.xp.repository.internal.InternalRepositoryService;
 
 public class AuditLogRepoInitializer
     extends ExternalInitializer
 {
-    private final RepositoryService repositoryService;
+    private final InternalRepositoryService repositoryService;
 
     private final Context adminContext;
 
@@ -35,12 +35,12 @@ public class AuditLogRepoInitializer
 
     private void initializeRepository()
     {
-        final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create().
-            repositoryId( AuditLogConstants.AUDIT_LOG_REPO_ID ).
-            rootPermissions( AuditLogConstants.AUDIT_LOG_REPO_DEFAULT_ACL ).
-            build();
+        final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create()
+            .repositoryId( AuditLogConstants.AUDIT_LOG_REPO_ID )
+            .rootPermissions( AuditLogConstants.AUDIT_LOG_REPO_DEFAULT_ACL )
+            .build();
 
-        this.repositoryService.createRepository( createRepositoryParams );
+        this.repositoryService.initializeRepository( createRepositoryParams );
     }
 
     @Override
@@ -57,9 +57,9 @@ public class AuditLogRepoInitializer
     public static class Builder
         extends ExternalInitializer.Builder<Builder>
     {
-        private RepositoryService repositoryService;
+        private InternalRepositoryService repositoryService;
 
-        public Builder setRepositoryService( final RepositoryService repositoryService )
+        public Builder setRepositoryService( final InternalRepositoryService repositoryService )
         {
             this.repositoryService = repositoryService;
             return this;

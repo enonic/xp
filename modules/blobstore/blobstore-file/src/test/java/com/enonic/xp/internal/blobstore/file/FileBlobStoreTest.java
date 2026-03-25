@@ -58,7 +58,7 @@ class FileBlobStoreTest
         final BlobRecord record = this.blobStore.addRecord( this.segment, ByteSource.wrap( "hello".getBytes() ) );
         assertNotNull( record );
         assertNotNull( record.getKey() );
-        assertEquals( "aaf4c61ddcc5e8a2dabede0f3b482cd9aea9434d", record.getKey().toString() );
+        assertEquals( "sha256:2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824", record.getKey().toString() );
         assertEquals( 5, record.getLength() );
         assertEquals( "hello", new String( record.getBytes().read() ) );
     }
@@ -87,8 +87,9 @@ class FileBlobStoreTest
         stored.add( createRecord( "f5" ) );
         stored.add( createRecord( "f6" ) );
         stored.add( createRecord( "f7" ) );
-        try (Stream<BlobRecord> stream = this.blobStore.list( this.segment )) {
-            assertThat(stream).containsAll( stored );
+        try (Stream<BlobRecord> stream = this.blobStore.list( this.segment ))
+        {
+            assertThat( stream ).containsAll( stored );
         }
     }
 

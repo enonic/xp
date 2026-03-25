@@ -3,6 +3,8 @@ package com.enonic.xp.security;
 import java.time.Instant;
 import java.util.Objects;
 
+import com.enonic.xp.core.internal.Millis;
+
 
 public abstract class Principal
     implements java.security.Principal
@@ -19,7 +21,7 @@ public abstract class Principal
     {
         key = builder.key;
         displayName = builder.displayName;
-        modifiedTime = builder.modifiedTime;
+        modifiedTime = Millis.from( builder.modifiedTime );
         description = builder.description;
     }
 

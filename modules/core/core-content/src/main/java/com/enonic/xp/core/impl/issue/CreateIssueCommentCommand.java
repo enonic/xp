@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.issue;
 
+import java.time.Instant;
+
 import com.enonic.xp.core.impl.issue.serializer.IssueCommentDataSerializer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.issue.CreateIssueCommentParams;
@@ -36,7 +38,7 @@ public class CreateIssueCommentCommand
         validateBlockingChecks();
         final Node issueNode = nodeService.getById( NodeId.from( params.getIssue() ) );
 
-        final String commentName = IssueCommentNameFactory.create( params.getCreated() );
+        final String commentName = IssueCommentNameFactory.create( Instant.now() );
 
         final CreateNodeParams createNodeParams = CreateNodeParamsFactory.create( this.params, issueNode.name(), commentName );
 

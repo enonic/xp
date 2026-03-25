@@ -6,6 +6,8 @@ import static java.util.stream.Collectors.joining;
 
 public final class ScaleParams
 {
+    public static final ScaleParams NO_SCALE = new ScaleParams( "full", null );
+
     private final String name;
 
     private final Object[] args;
@@ -29,9 +31,7 @@ public final class ScaleParams
     @Override
     public String toString()
     {
-        return this.name + Stream.of( this.args ).
-            map( this::encode ).
-            collect( joining( ",", "(", ")" ) );
+        return this.name + Stream.of( this.args ).map( this::encode ).collect( joining( ",", "(", ")" ) );
     }
 
     private String encode( Object arg )

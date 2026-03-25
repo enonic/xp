@@ -36,12 +36,9 @@ public class CompareNodesCommand
 
         final NodeComparisons.Builder builder = NodeComparisons.create();
 
-        final NodeBranchEntries sourceVersions =
-            nodeStorageService.getBranchNodeVersions( nodeIds, InternalContext.from( context ) );
+        final NodeBranchEntries sourceVersions = nodeStorageService.getNodeBranchEntries( nodeIds, InternalContext.from( context ) );
         final NodeBranchEntries targetVersions =
-            nodeStorageService.getBranchNodeVersions( nodeIds, InternalContext.create( context ).
-                branch( this.target ).
-                build() );
+            nodeStorageService.getNodeBranchEntries( nodeIds, InternalContext.create( context ).branch( this.target ).build() );
 
         for ( final NodeId id : Sets.union( sourceVersions.getKeys(), targetVersions.getKeys() ) )
         {

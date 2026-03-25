@@ -23,7 +23,7 @@ public final class AttachmentHandlerWorker
     {
         if ( legacyMode )
         {
-            return contentService.getBinaryKey( content.getId(), binaryReference );
+            return null;
         }
         else
         {

@@ -110,7 +110,7 @@ public class PatchNodeParamsFactory
                 .page( editedContent.getPage() )
                 .siteConfigs( editedContent.isSite() ? SiteConfigsDataSerializer.fromData( editedContent.getData().getRoot() ) : null )
                 .mixins( editedContent.getMixins() )
-                .language( editedContent.getLanguage() != null ? editedContent.getLanguage().getLanguage() : null )
+                .language( editedContent.getLanguage() )
                 .build();
 
             editableNode.indexConfigDocument = indexConfigFactory.produce();

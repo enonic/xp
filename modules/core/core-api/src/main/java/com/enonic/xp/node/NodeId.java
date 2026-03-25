@@ -4,6 +4,8 @@ package com.enonic.xp.node;
 public final class NodeId
     extends UUID
 {
+    public static final NodeId ROOT = NodeId.from( "000-000-000-000" );
+
     public NodeId()
     {
         super();

@@ -4,9 +4,13 @@ import com.enonic.xp.repository.RepositoryId;
 
 public interface NodeRepositoryService
 {
-    void create( CreateRepositoryIndexParams params );
+    void create( RepositoryId repositoryId, RepositorySettings repositorySettings );
+
+    void updateMappings( RepositoryId repositoryId, RepositorySettings repositorySettings );
 
     void delete( RepositoryId repositoryId );
 
     boolean isInitialized( RepositoryId repositoryId );
+
+    void refresh( RepositoryId repositoryId );
 }

@@ -1,7 +1,7 @@
 package com.enonic.xp.repo.impl.node.json;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -17,28 +17,28 @@ import static java.util.stream.StreamSupport.stream;
 public final class IndexConfigJson
 {
     @JsonProperty("decideByType")
-    private boolean decideByType;
+    public boolean decideByType;
 
     @JsonProperty("enabled")
-    private boolean enabled;
+    public boolean enabled;
 
     @JsonProperty("nGram")
-    private boolean nGram;
+    public boolean nGram;
 
     @JsonProperty("fulltext")
-    private boolean fulltext;
+    public boolean fulltext;
 
     @JsonProperty("includeInAllText")
-    private boolean includeInAllText;
+    public boolean includeInAllText;
 
     @JsonProperty("path")
-    private boolean path;
+    public boolean path;
 
     @JsonProperty("indexValueProcessors")
-    private List<String> indexValueProcessors;
+    public List<String> indexValueProcessors;
 
     @JsonProperty("languages")
-    private List<String> languages;
+    public List<String> languages;
 
     public static IndexConfigJson toJson( final IndexConfig config )
     {
@@ -55,20 +55,20 @@ public final class IndexConfigJson
         }
         if ( !config.getLanguages().isEmpty() )
         {
-            json.languages = new ArrayList<>( config.getLanguages() );
+            json.languages = config.getLanguages().stream().map( Locale::toLanguageTag ).collect( toList() );
         }
         return json;
     }
 
     public IndexConfig fromJson()
     {
-        final IndexConfig.Builder builder = IndexConfig.create().
-            decideByType( this.decideByType ).
-            enabled( this.enabled ).
-            nGram( this.nGram ).
-            fulltext( this.fulltext ).
-            includeInAllText( this.includeInAllText ).
-            path( this.path );
+        final IndexConfig.Builder builder = IndexConfig.create()
+            .decideByType( this.decideByType )
+            .enabled( this.enabled )
+            .nGram( this.nGram )
+            .fulltext( this.fulltext )
+            .includeInAllText( this.includeInAllText )
+            .path( this.path );
 
         if ( this.indexValueProcessors != null )
         {
@@ -82,17 +82,16 @@ public final class IndexConfigJson
         {
             for ( final String language : this.languages )
             {
-                builder.addLanguage( language );
+                builder.addLanguage( Locale.forLanguageTag( language ) );
             }
         }
 
         return builder.build();
     }
 
+
     private static List<String> toStringList( final Iterable<IndexValueProcessor> indexValueProcessors )
     {
-        return stream( indexValueProcessors.spliterator(), false ).
-            map( IndexValueProcessor::getName ).
-            collect( toList() );
+        return stream( indexValueProcessors.spliterator(), false ).map( IndexValueProcessor::getName ).collect( toList() );
     }
 }

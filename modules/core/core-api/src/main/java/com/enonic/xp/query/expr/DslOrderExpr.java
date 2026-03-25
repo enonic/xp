@@ -1,5 +1,6 @@
 package com.enonic.xp.query.expr;
 
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -7,6 +8,8 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 
 public final class DslOrderExpr
@@ -18,7 +21,7 @@ public final class DslOrderExpr
 
     private final String unit;
 
-    private final String language;
+    private final Locale language;
 
     private final Double lat;
 
@@ -30,7 +33,8 @@ public final class DslOrderExpr
         this.field = expression.getString( "field" );
         this.type = expression.getString( "type" );
         this.unit = expression.getString( "unit" );
-        this.language = expression.getString( "language" );
+        final String langString = expression.getString( "language" );
+        this.language = isNullOrEmpty( langString ) ? null : Locale.forLanguageTag( langString );
 
         final PropertySet location = expression.getSet( "location" );
         this.lat = location != null ? Objects.requireNonNull( location.getDouble( "lat" ) ) : null;
@@ -65,7 +69,7 @@ public final class DslOrderExpr
         return unit;
     }
 
-    public String getLanguage()
+    public Locale getLanguage()
     {
         return language;
     }

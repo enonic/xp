@@ -57,7 +57,7 @@ public class PushNodesCommand
     {
         super( builder );
         this.params = builder.params;
-        this.pushListener = Objects.requireNonNullElse( params.getPushListener(), c -> {
+        this.pushListener = Objects.requireNonNullElse( params.getPushListener(), _ -> {
         } );
     }
 
@@ -101,7 +101,7 @@ public class PushNodesCommand
         final NodeIds allIds = allIdsBuilder.build();
         final NodeComparisons allComparisons = getNodeComparisons( allIds );
 
-        final NodeBranchEntries nodeBranchEntries = this.nodeStorageService.getBranchNodeVersions( allIds, internalContext );
+        final NodeBranchEntries nodeBranchEntries = this.nodeStorageService.getNodeBranchEntries( allIds, internalContext );
 
         final PushNodesResult.Builder builder = PushNodesResult.create();
         List<SuccessfulPush> toPushEntries = new ArrayList<>();
@@ -225,7 +225,7 @@ public class PushNodesCommand
     {
         //Checks if a node exist
         final NodeBranchEntry parentNodeBranchEntry = targetContext().callWith(
-            () -> this.nodeStorageService.getBranchNodeVersion( nodePath, InternalContext.from( ContextAccessor.current() ) ) );
+            () -> this.nodeStorageService.getNodeBranchEntry( nodePath, InternalContext.from( ContextAccessor.current() ) ) );
 
         //If the node does not exist, returns false
         if ( parentNodeBranchEntry == null )

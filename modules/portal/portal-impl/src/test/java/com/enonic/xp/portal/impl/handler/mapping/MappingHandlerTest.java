@@ -477,7 +477,7 @@ class MappingHandlerTest
         final PageTemplate.Builder pageTemplate = PageTemplate.newPageTemplate()
             .key( PageTemplateKey.from( "my-page-tempalte" ) )
             .controller( descriptorKey )
-            .id( ContentId.from( "pageTemplateId" ) )
+            .id( ContentId.from( "pagetemplateid" ) )
             .path( ContentPath.from( "site/somesite/template" ) )
             .type( ContentTypeName.pageTemplate() );
         return pageTemplate.build();

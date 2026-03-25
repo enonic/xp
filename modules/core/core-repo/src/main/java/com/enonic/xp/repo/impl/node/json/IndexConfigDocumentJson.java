@@ -10,16 +10,16 @@ import com.enonic.xp.index.PatternIndexConfigDocument;
 public final class IndexConfigDocumentJson
 {
     @JsonProperty("analyzer")
-    private String analyzer;
+    public String analyzer;
 
     @JsonProperty("patternConfigs")
-    private List<PatternConfigJson> patternConfigs;
+    public List<PatternConfigJson> patternConfigs;
 
     @JsonProperty("defaultConfig")
-    private IndexConfigJson defaultConfig;
+    public IndexConfigJson defaultConfig;
 
     @JsonProperty("allTextConfig")
-    private AllTextIndexConfigJson allTextConfig;
+    public AllTextIndexConfigJson allTextConfig;
 
     public static IndexConfigDocumentJson toJson( final PatternIndexConfigDocument config )
     {
@@ -33,9 +33,8 @@ public final class IndexConfigDocumentJson
 
     public static PatternIndexConfigDocument fromJson( final IndexConfigDocumentJson json )
     {
-        final PatternIndexConfigDocument.Builder builder = PatternIndexConfigDocument.create().
-            analyzer( json.analyzer ).
-            defaultConfig( json.defaultConfig.fromJson() );
+        final PatternIndexConfigDocument.Builder builder =
+            PatternIndexConfigDocument.create().analyzer( json.analyzer ).defaultConfig( json.defaultConfig.fromJson() );
 
         for ( final PatternConfigJson patternConfigJson : json.patternConfigs )
         {
@@ -48,4 +47,6 @@ public final class IndexConfigDocumentJson
         }
         return builder.build();
     }
+
+
 }

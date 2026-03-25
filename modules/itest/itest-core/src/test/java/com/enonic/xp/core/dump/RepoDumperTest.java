@@ -39,10 +39,10 @@ class RepoDumperTest
     @Test
     void children()
     {
-        final Node node1 = createNode( NodePath.ROOT, "myNode" );
-        createNode( node1.path(), "myChild" );
-        createNode( node1.path(), "myChild2" );
-        createNode( node1.path(), "myChild3" );
+        final Node node1 = createNode( NodePath.ROOT, "my-node" );
+        createNode( node1.path(), "my-child" );
+        createNode( node1.path(), "my-child2" );
+        createNode( node1.path(), "my-child3" );
 
         final TestDumpWriter writer = new TestDumpWriter();
 
@@ -56,7 +56,7 @@ class RepoDumperTest
     @Test
     void node_versions_stored()
     {
-        final Node node1 = createNode( NodePath.ROOT, "myNode" );
+        final Node node1 = createNode( NodePath.ROOT, "my-node" );
 
         updateNode( UpdateNodeParams.create().id( node1.id() ).editor( ( node ) -> node.data.setString( "fisk", "Ost" ) ).build() );
 
@@ -130,10 +130,10 @@ class RepoDumperTest
     @Test
     void versions_max_age_filter()
     {
-        final Node node1 = createNode( NodePath.ROOT, "myNode" );
-        createNode( node1.path(), "myChild" );
-        final Node node2 = createNode( node1.path(), "myChild2" );
-        createNode( node1.path(), "myChild3" );
+        final Node node1 = createNode( NodePath.ROOT, "my-node" );
+        createNode( node1.path(), "my-child" );
+        final Node node2 = createNode( node1.path(), "my-child-2" );
+        createNode( node1.path(), "my-child-3" );
 
         nodeService.patch( PatchNodeParams.create().id( node1.id() ).editor( e -> e.data.addBoolean( "bool", true ) ).build() );
         nodeService.patch( PatchNodeParams.create().id( node2.id() ).editor( e -> e.data.addBoolean( "bool", true ) ).build() );
@@ -159,7 +159,8 @@ class RepoDumperTest
             .writer( writer )
             .includeBinaries( true )
             .includeVersions( true )
-            .repository( this.repositoryService.get( testRepoId ) )
+            .repositoryId( testRepoId )
+            .branches( this.repositoryService.get( testRepoId ).getBranches() )
             .maxAge( maxAge )
             .build()
             .execute() );

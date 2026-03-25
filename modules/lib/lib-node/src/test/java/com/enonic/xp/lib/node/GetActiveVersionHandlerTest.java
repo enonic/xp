@@ -13,9 +13,9 @@ import com.enonic.xp.node.GetActiveNodeVersionsParams;
 import com.enonic.xp.node.GetActiveNodeVersionsResult;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionKey;
-import com.enonic.xp.node.NodeVersion;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -26,22 +26,21 @@ class GetActiveVersionHandlerTest
     @Test
     void testGetActiveVersionsHandler()
     {
-        final NodeVersion nodeVersionMeta = NodeVersion.create().
-            nodeId( NodeId.from( "nodeId1" ) ).
-            nodeVersionKey( NodeVersionKey.create()
-                                .nodeBlobKey( BlobKey.from( "nodeBlobKey" ) )
-                                .indexConfigBlobKey( BlobKey.from( "indexConfigBlobKey" ) )
-                                .accessControlBlobKey( BlobKey.from( "accessControlBlobKey" ) )
-                                .build() ).
-            nodeVersionId( NodeVersionId.from( "nodeVersionId1" ) ).
-            binaryBlobKeys( BlobKeys.empty() ).
-            nodePath( NodePath.ROOT ).
-            timestamp( Instant.ofEpochSecond( 1000 ) ).
-            build();
+        final NodeVersion nodeVersionMeta = NodeVersion.create()
+            .nodeId( NodeId.from( "nodeid1" ) )
+            .nodeVersionKey( NodeVersionKey.create()
+                                 .nodeBlobKey( BlobKey.from( "nodeBlobKey" ) )
+                                 .indexConfigBlobKey( BlobKey.from( "indexConfigBlobKey" ) )
+                                 .accessControlBlobKey( BlobKey.from( "accessControlBlobKey" ) )
+                                 .build() )
+            .nodeVersionId( NodeVersionId.from( "nodeversionid1" ) )
+            .binaryBlobKeys( BlobKeys.empty() )
+            .nodePath( NodePath.ROOT )
+            .timestamp( Instant.ofEpochSecond( 1000 ) )
+            .build();
 
-        final GetActiveNodeVersionsResult getActiveNodeVersionsResult = GetActiveNodeVersionsResult.create().
-            add( Branch.from( "master" ), nodeVersionMeta ).
-            build();
+        final GetActiveNodeVersionsResult getActiveNodeVersionsResult =
+            GetActiveNodeVersionsResult.create().add( Branch.from( "master" ), nodeVersionMeta ).build();
         final ArgumentCaptor<GetActiveNodeVersionsParams> getActiveNodeVersionsParamsCaptor =
             ArgumentCaptor.forClass( GetActiveNodeVersionsParams.class );
         Mockito.when( nodeService.getActiveVersions( Mockito.any() ) ).thenReturn( getActiveNodeVersionsResult );
@@ -49,7 +48,7 @@ class GetActiveVersionHandlerTest
         Mockito.verify( nodeService ).getActiveVersions( getActiveNodeVersionsParamsCaptor.capture() );
 
         final GetActiveNodeVersionsParams params = getActiveNodeVersionsParamsCaptor.getValue();
-        assertEquals( "nodeId", params.getNodeId().toString() );
+        assertEquals( "nodeid", params.getNodeId().toString() );
         assertTrue( params.getBranches().contains( Branch.from( "master" ) ) );
     }
 }

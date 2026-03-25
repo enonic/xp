@@ -2,6 +2,7 @@ package com.enonic.xp.portal.impl.handler;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.util.HexFormat;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,7 @@ import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
+import com.enonic.xp.core.internal.security.MessageDigests;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.image.ImageService;
 import com.enonic.xp.image.ReadImageParams;
@@ -83,14 +85,19 @@ class ImageHandlerTest
     private void setupContent()
         throws Exception
     {
-        final Attachment attachment = Attachment.create().name( "enonic-logo.png" ).mimeType( "image/png" ).label( "source" ).build();
+        final ByteSource imageBytes = ByteSource.wrap( new byte[0] );
+
+        final Attachment attachment = Attachment.create()
+            .name( "enonic-logo.png" )
+            .mimeType( "image/png" )
+            .label( "source" )
+            .sha512( HexFormat.of().formatHex( MessageDigests.sha512().digest( imageBytes.read() ) ) )
+            .build();
 
         final Content content = createContent( "123456", "path/to/image-name.jpg", attachment );
 
         when( this.contentService.getById( eq( content.getId() ) ) ).thenReturn( content );
         when( this.contentService.getByPath( eq( content.getPath() ) ) ).thenReturn( content );
-
-        final ByteSource imageBytes = ByteSource.wrap( new byte[0] );
 
         when( this.contentService.getBinary( isA( ContentId.class ), isA( BinaryReference.class ) ) ).thenReturn( imageBytes );
 
@@ -174,14 +181,19 @@ class ImageHandlerTest
     private void mockCachableContent()
         throws IOException
     {
-        final Attachment attachment = Attachment.create().name( "image-name.jpg" ).mimeType( "image/jpeg" ).label( "source" ).build();
+        final ByteSource imageBytes = ByteSource.wrap( new byte[0] );
+
+        final Attachment attachment = Attachment.create()
+            .name( "image-name.jpg" )
+            .mimeType( "image/jpeg" )
+            .label( "source" )
+            .sha512( HexFormat.of().formatHex( MessageDigests.sha512().digest( imageBytes.read() ) ) )
+            .build();
 
         final Content content = createContent( "123456", "path/to/image-name.jpg", attachment );
 
         when( this.contentService.getById( eq( content.getId() ) ) ).thenReturn( content );
         when( this.contentService.getByPath( eq( content.getPath() ) ) ).thenReturn( content );
-
-        final ByteSource imageBytes = ByteSource.wrap( new byte[0] );
 
         when( this.contentService.getBinary( isA( ContentId.class ), isA( BinaryReference.class ) ) ).thenReturn( imageBytes );
 
@@ -407,7 +419,7 @@ class ImageHandlerTest
     }
 
     @Test
-    void cacheHeader()
+    void cacheHeader_always_private()
         throws Exception
     {
         mockCachableContent();
@@ -416,7 +428,7 @@ class ImageHandlerTest
 
         final WebResponse res = this.handler.handle( this.request );
 
-        assertEquals( "public, max-age=31536000, immutable", res.getHeaders().get( "Cache-Control" ) );
+        assertEquals( "private, max-age=31536000, immutable", res.getHeaders().get( "Cache-Control" ) );
     }
 
     @Test
@@ -430,19 +442,6 @@ class ImageHandlerTest
         this.request.setBranch( ContentConstants.BRANCH_DRAFT );
         final WebResponse resDraft = this.handler.handle( this.request );
         assertEquals( "private, max-age=31536000, immutable", resDraft.getHeaders().get( "Cache-Control" ) );
-    }
-
-    @Test
-    void cacheHeader_fingerprint_missmatch()
-        throws Exception
-    {
-        mockCachableContent();
-
-        this.request.setRawPath( "/_/image/123456:654321/scale-100-100/image-name.jpg.png" );
-
-        final WebResponse res = this.handler.handle( this.request );
-
-        assertThat( res.getHeaders() ).doesNotContainKey( "Cache-Control" );
     }
 
     @Test

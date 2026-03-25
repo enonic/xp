@@ -17,16 +17,18 @@ public class GetResultFactory
             return GetResult.empty();
         }
 
-        final Map<String, Object> hitFieldMap = getResponse.getSourceAsMap();
-
         final ReturnValues.Builder builder = ReturnValues.create();
-
-        for ( String returnFieldName : returnFields.getReturnFieldNames() )
+        if ( returnFields != null )
         {
-            final Object o = hitFieldMap.get( returnFieldName );
-            if (  o != null )
+            final Map<String, Object> hitFieldMap = getResponse.getSourceAsMap();
+
+            for ( String returnFieldName : returnFields.getReturnFieldNames() )
             {
-                builder.add( returnFieldName, o );
+                final Object o = hitFieldMap.get( returnFieldName );
+                if ( o != null )
+                {
+                    builder.add( returnFieldName, o );
+                }
             }
         }
 

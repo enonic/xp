@@ -1,10 +1,12 @@
 package com.enonic.xp.repo.impl.repository;
 
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Stream;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import com.google.common.io.ByteSource;
 
@@ -12,25 +14,24 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.exception.ForbiddenAccessException;
+import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;
-import com.enonic.xp.node.Node;
+import com.enonic.xp.node.BinaryAttachments;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
-import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeBranchEntries;
+import com.enonic.xp.repo.impl.NodeBranchEntry;
+import com.enonic.xp.repo.impl.branch.BranchService;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQuery;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQueryResultFactory;
 import com.enonic.xp.repo.impl.branch.storage.BranchIndexPath;
-import com.enonic.xp.repo.impl.index.IndexServiceInternal;
-import com.enonic.xp.repo.impl.node.RefreshCommand;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
-import com.enonic.xp.repo.impl.storage.StoreNodeParams;
 import com.enonic.xp.repository.BranchAlreadyExistsException;
 import com.enonic.xp.repository.BranchNotFoundException;
 import com.enonic.xp.repository.CreateBranchParams;
@@ -38,9 +39,9 @@ import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.DeleteBranchParams;
 import com.enonic.xp.repository.DeleteRepositoryParams;
 import com.enonic.xp.repository.EditableRepository;
+import com.enonic.xp.repository.IndexException;
 import com.enonic.xp.repository.Repositories;
 import com.enonic.xp.repository.Repository;
-import com.enonic.xp.repository.RepositoryAlreadyExistsException;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryExeption;
 import com.enonic.xp.repository.RepositoryId;
@@ -49,20 +50,15 @@ import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.repository.UpdateRepositoryParams;
 import com.enonic.xp.repository.internal.InternalRepositoryService;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.BinaryReference;
 
 public class RepositoryServiceImpl
     implements RepositoryService, InternalRepositoryService
 {
-    private static final Logger LOG = LoggerFactory.getLogger( RepositoryServiceImpl.class );
-
-    private final ConcurrentMap<RepositoryId, RepositoryEntry> repositoryMap = new ConcurrentHashMap<>();
+    private final ConcurrentMap<RepositoryId, Repository> repositoryMap = new ConcurrentHashMap<>();
 
     private final RepositoryEntryService repositoryEntryService;
-
-    private final IndexServiceInternal indexServiceInternal;
 
     private final NodeRepositoryService nodeRepositoryService;
 
@@ -70,15 +66,36 @@ public class RepositoryServiceImpl
 
     private final NodeSearchService nodeSearchService;
 
-    public RepositoryServiceImpl( final RepositoryEntryService repositoryEntryService, final IndexServiceInternal indexServiceInternal,
-                                  final NodeRepositoryService nodeRepositoryService, final NodeStorageService nodeStorageService,
-                                  final NodeSearchService nodeSearchService )
+    private final BranchService branchService;
+
+    private final RepositoryCreator repositoryCreator;
+
+    public RepositoryServiceImpl( final RepositoryEntryService repositoryEntryService, final NodeRepositoryService nodeRepositoryService,
+                                  final NodeStorageService nodeStorageService, final NodeSearchService nodeSearchService,
+                                  final BranchService branchService )
     {
         this.repositoryEntryService = repositoryEntryService;
-        this.indexServiceInternal = indexServiceInternal;
         this.nodeRepositoryService = nodeRepositoryService;
         this.nodeStorageService = nodeStorageService;
         this.nodeSearchService = nodeSearchService;
+        this.branchService = branchService;
+        this.repositoryCreator = new RepositoryCreator( nodeRepositoryService, nodeStorageService, repositoryEntryService );
+    }
+
+    @Override
+    public boolean isInitialized( final RepositoryId repositoryId )
+    {
+        requireAdminRole();
+
+        return this.repositoryCreator.isInitialized( repositoryId );
+    }
+
+    @Override
+    public void initializeRepository( final CreateRepositoryParams params )
+    {
+        requireAdminRole();
+
+        repositoryCreator.createRepository( params, RepositorySettings.create().build(), AttachedBinaries.empty(), true );
     }
 
     @Override
@@ -86,34 +103,15 @@ public class RepositoryServiceImpl
     {
         requireAdminRole();
 
-        return repositoryMap.compute( params.getRepositoryId(), ( repositoryId, previousRepository ) -> doCreateRepo( params ) )
-            .asRepository();
+        return copyRepository( repositoryMap.compute( params.getRepositoryId(), ( _, _ ) -> doCreateRepo( params ) ) );
     }
 
-    private RepositoryEntry doCreateRepo( final CreateRepositoryParams params )
+    private Repository doCreateRepo( final CreateRepositoryParams params )
     {
-        final RepositoryId repositoryId = params.getRepositoryId();
-        final boolean repoAlreadyInitialized = this.nodeRepositoryService.isInitialized( repositoryId );
+        final RepositoryEntry entry =
+            repositoryCreator.createRepository( params, RepositorySettings.create().build(), AttachedBinaries.empty(), false );
 
-        if ( repoAlreadyInitialized )
-        {
-            throw new RepositoryAlreadyExistsException( repositoryId );
-        }
-
-        this.nodeRepositoryService.create( CreateRepositoryIndexParams.create()
-                                               .repositoryId( params.getRepositoryId() )
-                                               .build() );
-
-        createRootNode( params );
-
-        final RepositoryEntry repository = RepositoryEntry.create()
-            .id( params.getRepositoryId() )
-            .branches( Branches.from( RepositoryConstants.MASTER_BRANCH ) )
-            .data( params.getData() )
-            .transientFlag( params.isTransient() )
-            .build();
-        repositoryEntryService.createRepositoryEntry( repository );
-        return repository;
+        return asRepository( entry, Branches.from( RepositoryConstants.MASTER_BRANCH ) );
     }
 
     @Override
@@ -121,34 +119,30 @@ public class RepositoryServiceImpl
     {
         requireAdminRole();
 
-        RepositoryEntry repository = repositoryMap.compute( params.getRepositoryId(),
-                                                       ( key, previousRepository ) -> doUpdateRepository( params, previousRepository ) );
-        return repository.asRepository();
+        return copyRepository( repositoryMap.compute( params.getRepositoryId(), ( _, _ ) -> doUpdateRepository( params ) ) );
     }
 
-    private RepositoryEntry doUpdateRepository( final UpdateRepositoryParams updateRepositoryParams, RepositoryEntry previousRepository )
+    private Repository doUpdateRepository( final UpdateRepositoryParams updateRepositoryParams )
     {
-        RepositoryId repositoryId = updateRepositoryParams.getRepositoryId();
+        final RepositoryId repositoryId = updateRepositoryParams.getRepositoryId();
+        final RepositoryEntry entry = getRequitededRepositoryEntry( repositoryId );
+        final Branches branches = getRequiredBranches( repositoryId );
 
-        previousRepository = previousRepository == null ? repositoryEntryService.getRepositoryEntry( repositoryId ) : previousRepository;
-
-        if ( previousRepository == null )
-        {
-            throw new RepositoryNotFoundException( repositoryId );
-        }
-
-        final EditableRepository editableRepository = new EditableRepository( previousRepository.asRepository() );
+        final EditableRepository editableRepository = new EditableRepository( asRepository( entry, branches ) );
 
         updateRepositoryParams.getEditor().accept( editableRepository );
 
-        UpdateRepositoryEntryParams params = UpdateRepositoryEntryParams.create().
-            repositoryId( repositoryId ).
-            repositoryData( editableRepository.data ).
-            attachments( editableRepository.binaryAttachments ).
-            transientFlag( editableRepository.transientFlag ).
-            build();
+        final RepositoryEntry entryToUpdate = RepositoryEntry.create( entry )
+            .id( repositoryId )
+            .data( editableRepository.data )
+            .transientFlag( editableRepository.transientFlag )
+            .build();
 
-        return repositoryEntryService.updateRepositoryEntry( params );
+        final BinaryAttachments.Builder binaryAttachments = BinaryAttachments.create();
+        editableRepository.binaryAttachments.forEach( binaryAttachments::add );
+
+        final RepositoryEntry updatedEntry = repositoryEntryService.updateRepositoryEntry( entryToUpdate, binaryAttachments.build() );
+        return asRepository( updatedEntry, branches );
     }
 
     @Override
@@ -157,64 +151,51 @@ public class RepositoryServiceImpl
         requireAdminRole();
 
         repositoryMap.compute( ContextAccessor.current().getRepositoryId(),
-                               ( repositoryId, previousRepository ) -> doCreateBranch( createBranchParams, repositoryId, previousRepository ) );
+                               ( repositoryId, _ ) -> doCreateBranch( createBranchParams, repositoryId ) );
 
         return createBranchParams.getBranch();
     }
 
-    private RepositoryEntry doCreateBranch( final CreateBranchParams createBranchParams, final RepositoryId repositoryId,
-                                            RepositoryEntry previousRepository )
+    private Repository doCreateBranch( final CreateBranchParams createBranchParams, final RepositoryId repositoryId )
     {
-        //If the repository entry does not exist, throws an exception
-        previousRepository = previousRepository == null ? repositoryEntryService.getRepositoryEntry( repositoryId ) : previousRepository;
-        if ( previousRepository == null )
-        {
-            throw new RepositoryNotFoundException( repositoryId );
-        }
+        final RepositoryEntry entry = getRequitededRepositoryEntry( repositoryId );
 
-        //If the branch already exists, throws an exception
         final Branch newBranch = createBranchParams.getBranch();
-        if ( previousRepository.getBranches().contains( newBranch ) )
+        final InternalContext newBranchContext =
+            InternalContext.create( ContextAccessor.current() ).repositoryId( repositoryId ).branch( newBranch ).build();
+
+        final Branches branches = getRequiredBranches( repositoryId );
+        if ( branches.contains( newBranch ) )
         {
             throw new BranchAlreadyExistsException( newBranch );
         }
 
-        //If the root node does not exist, creates it
-        if ( getRootNode( previousRepository.getId(), newBranch ) == null )
+        final NodeBranchEntry masterRootNode = this.nodeStorageService.getNodeBranchEntry( NodeId.ROOT,
+                                                                                           InternalContext.create( newBranchContext )
+                                                                                               .branch( RepositoryConstants.MASTER_BRANCH )
+                                                                                               .build() );
+
+        if ( masterRootNode == null )
         {
-            final Node rootNode = this.nodeStorageService.get( Node.ROOT_UUID, InternalContext.create(
-                ContextAccessor.current() ).branch( RepositoryConstants.MASTER_BRANCH ).build() );
-
-            if ( rootNode == null )
-            {
-                throw new NodeNotFoundException( "Cannot find root-node in repository [" + previousRepository.getId() + "]" );
-            }
-
-            this.nodeStorageService.store( StoreNodeParams.overrideVersion( rootNode, null, null ),
-                                           InternalContext.create( ContextAccessor.current() ).branch( newBranch ).build() );
-
-            doRefresh();
+            throw new NodeNotFoundException( "Cannot find root-node in repository [" + repositoryId + "]" );
         }
 
-        //Updates the repository entry
-        return repositoryEntryService.addBranchToRepositoryEntry( repositoryId, newBranch );
+        this.nodeStorageService.push( masterRootNode, newBranchContext );
+
+        this.nodeRepositoryService.refresh( repositoryId );
+
+        return asRepository( entry, Stream.concat( branches.stream(), Stream.of( newBranch ) ).collect( Branches.collector() ) );
     }
 
     @Override
     public Repositories list()
     {
         requireAdminRole();
-        return repositoryEntryService.findRepositoryEntryIds().stream().
-            map( this::doGet ).
-            collect( Repositories.collector() );
-    }
-
-    @Override
-    public boolean isInitialized( final RepositoryId repositoryId )
-    {
-        requireAdminRole();
-        return this.nodeRepositoryService.isInitialized( repositoryId ) &&
-            this.repositoryEntryService.getRepositoryEntry( repositoryId ) != null;
+        return repositoryEntryService.findRepositoryEntryIds()
+            .stream()
+            .map( this::doGet )
+            .filter( Objects::nonNull )
+            .collect( Repositories.collector() );
     }
 
     @Override
@@ -224,11 +205,21 @@ public class RepositoryServiceImpl
         return doGet( repositoryId );
     }
 
-    private Repository doGet( final RepositoryId repositoryId )
+    private @Nullable Repository doGet( final RepositoryId repositoryId )
     {
-        final RepositoryEntry repositoryEntry =
-            repositoryMap.computeIfAbsent( repositoryId, key -> repositoryEntryService.getRepositoryEntry( repositoryId ) );
-        return repositoryEntry == null ? null : repositoryEntry.asRepository();
+        final Repository cached = repositoryMap.computeIfAbsent( repositoryId, this::loadRepository );
+        return cached == null ? null : copyRepository( cached );
+    }
+
+    private Repository loadRepository( final RepositoryId repositoryId )
+    {
+        final RepositoryEntry entry = repositoryEntryService.getRepositoryEntry( repositoryId );
+        if ( entry == null )
+        {
+            return null;
+        }
+        final Branches branches = getBranches( repositoryId );
+        return branches.isEmpty() ? null : asRepository( entry, branches );
     }
 
     @Override
@@ -236,7 +227,7 @@ public class RepositoryServiceImpl
     {
         requireAdminRole();
         final RepositoryId repositoryId = params.getRepositoryId();
-        repositoryMap.compute( repositoryId, ( key, previousRepository ) -> {
+        repositoryMap.compute( repositoryId, ( _, _ ) -> {
             repositoryEntryService.deleteRepositoryEntry( repositoryId );
             nodeRepositoryService.delete( repositoryId );
             return null;
@@ -256,49 +247,51 @@ public class RepositoryServiceImpl
         final Branch branch = params.getBranch();
         checkProtectedBranch( repositoryId, branch );
 
-        repositoryMap.compute( repositoryId,
-                               ( repo, previousRepository ) -> doDeleteBranch( params, repo, previousRepository ) );
+        repositoryMap.compute( repositoryId, ( _, _ ) -> doDeleteBranch( params, repositoryId ) );
 
         return params.getBranch();
     }
 
     private static void checkProtectedBranch( final RepositoryId repositoryId, final Branch branchId )
     {
-        if ( ( SystemConstants.SYSTEM_REPO_ID.equals( repositoryId ) && SystemConstants.BRANCH_SYSTEM.equals( branchId ) ) ||
+        if ( RepositoryConstants.MASTER_BRANCH.equals( branchId ) ||
             ( repositoryId.toString().startsWith( ProjectConstants.PROJECT_REPO_ID_PREFIX ) &&
-                ( ContentConstants.BRANCH_DRAFT.equals( branchId ) || ContentConstants.BRANCH_MASTER.equals( branchId ) ) ) )
+                ( ContentConstants.BRANCH_DRAFT.equals( branchId ) ) ) )
         {
             throw new RepositoryExeption( "No allowed to delete branch [" + branchId + "] in repository [" + repositoryId + "]" );
         }
     }
 
-    private RepositoryEntry doDeleteBranch( final DeleteBranchParams params, final RepositoryId repositoryId, RepositoryEntry previousRepository )
+    private Repository doDeleteBranch( final DeleteBranchParams params, final RepositoryId repositoryId )
     {
-        //If the repository entry does not exist, throws an exception
-        previousRepository = previousRepository == null ? repositoryEntryService.getRepositoryEntry( repositoryId ) : previousRepository;
-        if ( previousRepository == null )
-        {
-            throw new RepositoryNotFoundException( repositoryId );
-        }
-
-        //If the branch does not exist, throws an exception
+        final RepositoryEntry entry = getRequitededRepositoryEntry( repositoryId );
         final Branch branch = params.getBranch();
-        if ( !previousRepository.getBranches().contains( branch ) )
+        final InternalContext branchContext =
+            InternalContext.create( ContextAccessor.current() ).repositoryId( repositoryId ).branch( branch ).build();
+
+        final Branches branches = getRequiredBranches( repositoryId );
+        if ( !branches.contains( branch ) )
         {
             throw new BranchNotFoundException( branch );
         }
 
-        //If the root node exists, deletes it
-        if ( getRootNode( previousRepository.getId(), branch ) != null )
-        {
-            ContextBuilder.from( ContextAccessor.current() ).
-                branch( branch ).
-                build().
-                runWith( this::deleteAllNodes );
-        }
+        //Deletes all nodes in the branch
+        this.nodeRepositoryService.refresh( repositoryId );
+        final NodeBranchQuery queryAll = NodeBranchQuery.create()
+            .size( NodeSearchService.GET_ALL_SIZE_FLAG )
+            .addQueryFilter( ValueFilter.create()
+                                 .fieldName( BranchIndexPath.BRANCH_NAME.getPath() )
+                                 .addValue( ValueFactory.newString( branch.getValue() ) )
+                                 .build() )
+            .build();
 
-        //Updates the repository entry
-        return repositoryEntryService.removeBranchFromRepositoryEntry( repositoryId, branch );
+        final NodeBranchEntries nodeBranchEntries =
+            NodeBranchQueryResultFactory.create( this.nodeSearchService.query( queryAll, repositoryId ) );
+
+        this.nodeStorageService.delete( nodeBranchEntries.getSet(), branchContext );
+        this.nodeRepositoryService.refresh( repositoryId );
+
+        return asRepository( entry, Branches.from( branches.stream().filter( b -> !b.equals( branch ) ).toList() ) );
     }
 
     @Override
@@ -316,34 +309,68 @@ public class RepositoryServiceImpl
     }
 
     @Override
-    public void recreateMissing()
-    {
-        for ( RepositoryId repositoryId : repositoryEntryService.findRepositoryEntryIds() )
-        {
-            if ( !this.nodeRepositoryService.isInitialized( repositoryId ) )
-            {
-                final CreateRepositoryIndexParams createRepositoryParams = CreateRepositoryIndexParams.create()
-                    .repositorySettings( repositoryEntryService.getRepositoryEntry( repositoryId ).getSettings() )
-                    .repositoryId( repositoryId )
-                    .build();
-                this.nodeRepositoryService.create( createRepositoryParams );
-            }
-        }
-    }
-
-    @Override
     public ByteSource getBinary( final RepositoryId repositoryId, final BinaryReference binaryReference )
     {
         requireAdminRole();
 
-        RepositoryEntry repository = repositoryEntryService.getRepositoryEntry( repositoryId );
+        RepositoryEntry repository = getRequitededRepositoryEntry( repositoryId );
+
+        final AttachedBinary attachedBinary = repository.getAttachments().getByBinaryReference( binaryReference );
+        return attachedBinary == null ? null : repositoryEntryService.getBinary( attachedBinary );
+    }
+
+    private @NonNull RepositoryEntry getRequitededRepositoryEntry( final RepositoryId repositoryId )
+    {
+        final RepositoryEntry repository = repositoryEntryService.getRepositoryEntry( repositoryId );
         if ( repository == null )
         {
             throw new RepositoryNotFoundException( repositoryId );
         }
+        return repository;
+    }
 
-        final AttachedBinary attachedBinary = repository.getAttachments().getByBinaryReference( binaryReference );
-        return attachedBinary == null ? null : repositoryEntryService.getBinary( attachedBinary );
+    private static Repository copyRepository( final Repository repository )
+    {
+        return Repository.create()
+            .id( repository.getId() )
+            .branches( repository.getBranches() )
+            .data( repository.getData().copy() )
+            .attachments( repository.getAttachments() )
+            .transientFlag( repository.isTransient() )
+            .build();
+    }
+
+    private Repository asRepository( final RepositoryEntry entry, final Branches branches )
+    {
+        return Repository.create()
+            .id( entry.getId() )
+            .branches( branches )
+            .data( entry.getData().copy() )
+            .attachments( entry.getAttachments() )
+            .transientFlag( entry.isTransient() )
+            .build();
+    }
+
+    private @NonNull Branches getBranches( final RepositoryId repositoryId )
+    {
+        try
+        {
+            return branchService.getBranches( NodeId.ROOT, repositoryId );
+        }
+        catch ( IndexException e )
+        {
+            return Branches.empty();
+        }
+    }
+
+    private @NonNull Branches getRequiredBranches( final RepositoryId repositoryId )
+    {
+        final Branches branches = getBranches( repositoryId );
+        if ( branches.isEmpty() )
+        {
+            throw new RepositoryNotFoundException( repositoryId );
+        }
+        return branches;
     }
 
     private static void requireAdminRole()
@@ -354,57 +381,5 @@ public class RepositoryServiceImpl
         {
             throw new ForbiddenAccessException( authInfo.getUser() );
         }
-    }
-
-    private Node getRootNode( final RepositoryId repositoryId, final Branch branch )
-    {
-        final InternalContext rootNodeInternalContext =
-            InternalContext.create( ContextAccessor.current() ).repositoryId( repositoryId ).branch( branch ).build();
-
-        return this.nodeStorageService.get( Node.ROOT_UUID, rootNodeInternalContext );
-    }
-
-    private void createRootNode( final CreateRepositoryParams params )
-    {
-        final InternalContext rootNodeContext = InternalContext.create( ContextAccessor.current() ).
-            repositoryId( params.getRepositoryId() ).
-            branch( RepositoryConstants.MASTER_BRANCH ).build();
-
-        Node node = Node.createRoot().permissions( params.getRootPermissions() ).childOrder( params.getRootChildOrder() ).build();
-        final Node rootNode = this.nodeStorageService.store( StoreNodeParams.newVersion( node ), rootNodeContext ).node();
-
-        doRefresh();
-
-        LOG.info( "Created root node with id [{}] in repository [{}]", rootNode.id(), params.getRepositoryId() );
-    }
-
-    private void deleteAllNodes()
-    {
-        doRefresh();
-
-        final InternalContext context = InternalContext.from( ContextAccessor.current() );
-        final NodeBranchQuery queryAll = NodeBranchQuery.create()
-            .size( NodeSearchService.GET_ALL_SIZE_FLAG )
-            .addQueryFilter( ValueFilter.create()
-                                 .fieldName( BranchIndexPath.BRANCH_NAME.getPath() )
-                                 .addValue( ValueFactory.newString( context.getBranch().getValue() ) )
-                                 .build() )
-            .build();
-
-        final NodeBranchEntries nodeBranchEntries =
-            NodeBranchQueryResultFactory.create( this.nodeSearchService.query( queryAll, context.getRepositoryId() ) );
-
-        this.nodeStorageService.delete( nodeBranchEntries.getSet(), context );
-
-        doRefresh();
-    }
-
-    private void doRefresh()
-    {
-        RefreshCommand.create().
-            refreshMode( RefreshMode.ALL ).
-            indexServiceInternal( this.indexServiceInternal ).
-            build().
-            execute();
     }
 }

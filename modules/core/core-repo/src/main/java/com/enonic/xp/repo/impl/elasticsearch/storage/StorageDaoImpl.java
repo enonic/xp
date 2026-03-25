@@ -17,6 +17,7 @@ import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Requests;
 import org.elasticsearch.cluster.block.ClusterBlockException;
+import org.elasticsearch.search.fetch.source.FetchSourceContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -143,6 +144,8 @@ public class StorageDaoImpl
         final StorageSource storageSource = request.getStorageSource();
         final GetRequest getRequest =
             new GetRequest( storageSource.getStorageName().getName() ).type( storageSource.getStorageType().getName() )
+                .fetchSourceContext(
+                    request.getReturnFields() == null ? FetchSourceContext.DO_NOT_FETCH_SOURCE : FetchSourceContext.FETCH_SOURCE )
                 .preference( Objects.requireNonNullElse( request.getSearchPreference(), SearchPreference.LOCAL ).getName() )
                 .id( request.getId() )
                 .routing( request.getRouting() );

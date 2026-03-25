@@ -2,18 +2,14 @@ package com.enonic.xp.repo.impl.repository;
 
 import java.util.Objects;
 
-import com.enonic.xp.branch.Branch;
-import com.enonic.xp.branch.Branches;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.AttachedBinaries;
-import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.util.Version;
 
 public final class RepositoryEntry
 {
     private final RepositoryId id;
-
-    private final Branches branches;
 
     private final RepositorySettings settings;
 
@@ -23,14 +19,16 @@ public final class RepositoryEntry
 
     private final boolean transientFlag;
 
+    private final Version modelVersion;
+
     private RepositoryEntry( RepositoryEntry.Builder builder )
     {
         this.id = builder.id;
-        this.branches = builder.branches;
         this.settings = builder.settings == null ? RepositorySettings.create().build() : builder.settings;
         this.data = Objects.requireNonNullElseGet( builder.data, PropertyTree::new );
         this.attachments = Objects.requireNonNullElseGet( builder.attachments, AttachedBinaries::empty );
         this.transientFlag = builder.transientFlag;
+        this.modelVersion = builder.modelVersion;
     }
 
     public RepositoryId getId()
@@ -41,11 +39,6 @@ public final class RepositoryEntry
     public RepositorySettings getSettings()
     {
         return settings;
-    }
-
-    public Branches getBranches()
-    {
-        return branches;
     }
 
     public PropertyTree getData()
@@ -63,20 +56,19 @@ public final class RepositoryEntry
         return transientFlag;
     }
 
+    public Version getModelVersion()
+    {
+        return modelVersion;
+    }
+
     public static RepositoryEntry.Builder create()
     {
         return new RepositoryEntry.Builder();
     }
 
-    public Repository asRepository()
+    public static RepositoryEntry.Builder create( final RepositoryEntry source )
     {
-        return Repository.create()
-            .id( this.id )
-            .branches( this.branches )
-            .data( this.data.copy() )
-            .attachments( this.attachments )
-            .transientFlag( this.transientFlag )
-            .build();
+        return new RepositoryEntry.Builder( source );
     }
 
     public static final class Builder
@@ -85,34 +77,31 @@ public final class RepositoryEntry
 
         private RepositorySettings settings;
 
-        private Branches branches;
-
         private PropertyTree data;
 
         private AttachedBinaries attachments;
 
         private boolean transientFlag;
 
+        private Version modelVersion;
+
         private Builder()
         {
+        }
+
+        private Builder( final RepositoryEntry source )
+        {
+            this.id = source.id;
+            this.settings = source.settings;
+            this.data = source.data;
+            this.attachments = source.attachments;
+            this.transientFlag = source.transientFlag;
+            this.modelVersion = source.modelVersion;
         }
 
         public RepositoryEntry.Builder id( final RepositoryId id )
         {
             this.id = id;
-            return this;
-        }
-
-        public RepositoryEntry.Builder branches( final Branches branches )
-        {
-            this.branches = branches;
-            return this;
-        }
-
-
-        public RepositoryEntry.Builder branches( final Branch... branches )
-        {
-            this.branches = Branches.from( branches );
             return this;
         }
 
@@ -137,6 +126,12 @@ public final class RepositoryEntry
         public RepositoryEntry.Builder attachments( final AttachedBinaries attachments )
         {
             this.attachments = attachments;
+            return this;
+        }
+
+        public RepositoryEntry.Builder modelVersion( final Version modelVersion )
+        {
+            this.modelVersion = modelVersion;
             return this;
         }
 

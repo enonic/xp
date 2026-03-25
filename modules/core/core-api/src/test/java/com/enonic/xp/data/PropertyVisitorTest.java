@@ -126,12 +126,12 @@ class PropertyVisitorTest
         PropertyTree propertyTree = new PropertyTree();
         propertyTree.addString( "myText", "abc" );
         propertyTree.addLocalDate( "myDate", LocalDate.now() );
-        propertyTree.addReference( "myRef", Reference.from( "nodeId-1" ) );
+        propertyTree.addReference( "myRef", Reference.from( "nodeid-1" ) );
 
         PropertySet mySet = propertyTree.addSet( "mySet" );
         mySet.addString( "myText", "abc" );
         mySet.addLocalDate( "myDate", LocalDate.now() );
-        mySet.addReference( "myRef", Reference.from( "nodeId-2" ) );
+        mySet.addReference( "myRef", Reference.from( "nodeid-2" ) );
 
         // exercise
         propertyVisitor.traverse( propertyTree );

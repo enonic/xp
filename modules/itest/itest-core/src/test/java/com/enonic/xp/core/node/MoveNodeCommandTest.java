@@ -158,10 +158,7 @@ class MoveNodeCommandTest
             .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.storageService )
             .searchService( this.searchService )
-            .params( MoveNodeParams.create()
-                         .nodeId( node.id() )
-                         .newParentPath( newParent.path() )
-                         .build() )
+            .params( MoveNodeParams.create().nodeId( node.id() ).newParentPath( newParent.path() ).build() )
             .build()
             .execute();
 
@@ -195,7 +192,7 @@ class MoveNodeCommandTest
             CreateNodeParams.create().name( "child1_1_1" ).parent( child1_1.path() ).setNodeId( NodeId.from( "child1_1_1" ) ).build() );
 
         final Node newParent = createNode(
-            CreateNodeParams.create().name( "newParent" ).parent( NodePath.ROOT ).setNodeId( NodeId.from( "newParent" ) ).build() );
+            CreateNodeParams.create().name( "newParent" ).parent( NodePath.ROOT ).setNodeId( NodeId.from( "new-parent" ) ).build() );
 
         final Node movedNode = MoveNodeCommand.create()
             .indexServiceInternal( this.indexServiceInternal )
@@ -251,7 +248,7 @@ class MoveNodeCommandTest
             CreateNodeParams.create().name( "child1_1_1" ).parent( child1_1.path() ).setNodeId( NodeId.from( "child1_1_1" ) ).build() );
 
         final Node newParent = createNode(
-            CreateNodeParams.create().name( "newParent" ).parent( NodePath.ROOT ).setNodeId( NodeId.from( "newParent" ) ).build() );
+            CreateNodeParams.create().name( "newParent" ).parent( NodePath.ROOT ).setNodeId( NodeId.from( "new-parent" ) ).build() );
 
         final Node movedNode = MoveNodeCommand.create()
             .indexServiceInternal( this.indexServiceInternal )
@@ -425,7 +422,7 @@ class MoveNodeCommandTest
     @Test
     void cannot_move_root_node()
     {
-        assertThrows( OperationNotPermittedException.class, () -> doMoveNode( new NodePath( "/fisk" ), Node.ROOT_UUID ) );
+        assertThrows( OperationNotPermittedException.class, () -> doMoveNode( new NodePath( "/fisk" ), NodeId.ROOT ) );
     }
 
     private void doMoveNode( final NodePath newParent, final NodeId nodeId )

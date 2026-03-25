@@ -14,7 +14,8 @@ import com.enonic.xp.security.acl.AccessControlList;
 
 public final class Node
 {
-    public static final NodeId ROOT_UUID = NodeId.from( "000-000-000-000" );
+    @Deprecated
+    public static final NodeId ROOT_UUID = NodeId.ROOT;
 
     private static final PatternIndexConfigDocument DEFAULT_INDEX_CONFIG =
         PatternIndexConfigDocument.create().defaultConfig( IndexConfig.BY_TYPE ).build();
@@ -58,7 +59,7 @@ public final class Node
         this.timestamp = Millis.from( builder.timestamp );
         this.nodeVersionId = builder.nodeVersionId;
 
-        if ( ROOT_UUID.equals( this.id ) )
+        if ( NodeId.ROOT.equals( this.id ) )
         {
             this.parentPath = null;
             this.path = NodePath.ROOT;
@@ -82,7 +83,7 @@ public final class Node
 
     public boolean isRoot()
     {
-        return ROOT_UUID.equals( this.id );
+        return NodeId.ROOT.equals( this.id );
     }
 
     public NodeName name()
@@ -173,7 +174,7 @@ public final class Node
 
     public static Builder createRoot()
     {
-        return new Builder( ROOT_UUID );
+        return new Builder( NodeId.ROOT );
     }
 
     public static final class Builder
@@ -316,7 +317,7 @@ public final class Node
         {
             Objects.requireNonNull( this.permissions, "permissions is required" );
             Objects.requireNonNull( this.data, "data is required" );
-            if ( ROOT_UUID.equals( this.id ) )
+            if ( NodeId.ROOT.equals( this.id ) )
             {
                 Objects.requireNonNull( this.childOrder, "childOrder is required" );
             }

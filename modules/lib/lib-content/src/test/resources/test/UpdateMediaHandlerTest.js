@@ -60,7 +60,7 @@ exports.updateMediaContentNotFoundByPath = function () {
 exports.updateMediaContentNotFoundById = function () {
     assert.assertNull(contentLib.updateMedia({
         data: stream,
-        key: 'contentId',
+        key: 'contentid',
         name: 'media',
     }));
 };

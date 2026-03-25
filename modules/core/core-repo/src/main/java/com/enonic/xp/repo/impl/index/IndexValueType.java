@@ -1,34 +1,34 @@
 package com.enonic.xp.repo.impl.index;
 
-public enum IndexValueType
-    implements IndexValueTypeInterface
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.NullMarked;
+
+import static java.util.Objects.requireNonNull;
+
+public interface IndexValueType
 {
-    DATETIME( "_datetime" ),
+    String INDEX_VALUE_TYPE_SEPARATOR = ".";
 
-    NUMBER( "_number" ),
+    @NonNull String getPostfix();
 
-    NGRAM( "_ngram" ),
-
-    ANALYZED( "_analyzed" ),
-
-    ORDERBY( "_orderby" ),
-
-    GEO_POINT( "_geopoint" ),
-
-    PATH( "_path" ),
-
-    STRING( "" );
-
-    private final String postfix;
-
-    IndexValueType( final String postfix )
+    static IndexValueType orderBy( @NonNull String value )
     {
-        this.postfix = postfix;
+        return new CustomIndexValueType( "_orderby_" + requireNonNull( value ) );
     }
 
-    @Override
-    public String getPostfix()
+    static IndexValueType stemmed( @NonNull String value )
     {
-        return postfix;
+        return new CustomIndexValueType( "_stemmed_" + requireNonNull( value ) );
+    }
+
+    @NullMarked
+    record CustomIndexValueType(String value)
+        implements IndexValueType
+    {
+        @Override
+        public String getPostfix()
+        {
+            return value;
+        }
     }
 }

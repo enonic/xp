@@ -1,8 +1,6 @@
 package com.enonic.xp.issue;
 
-import java.time.Instant;
 
-import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.security.PrincipalKey;
 
 public final class CreateIssueCommentParams
@@ -15,15 +13,12 @@ public final class CreateIssueCommentParams
 
     private final String creatorDisplayName;
 
-    private final Instant created;
-
     private CreateIssueCommentParams( Builder builder )
     {
         this.issue = builder.issue;
         this.text = builder.text;
         this.creator = builder.creator;
         this.creatorDisplayName = builder.creatorDisplayName;
-        this.created = Millis.fromOrElseNow( builder.created );
     }
 
     public IssueId getIssue()
@@ -46,11 +41,6 @@ public final class CreateIssueCommentParams
         return creatorDisplayName;
     }
 
-    public Instant getCreated()
-    {
-        return created;
-    }
-
     public static Builder create()
     {
         return new Builder();
@@ -65,8 +55,6 @@ public final class CreateIssueCommentParams
         private PrincipalKey creator;
 
         private String creatorDisplayName;
-
-        private Instant created;
 
         private Builder()
         {
@@ -93,12 +81,6 @@ public final class CreateIssueCommentParams
         public Builder creatorDisplayName( final String creatorDisplayName )
         {
             this.creatorDisplayName = creatorDisplayName;
-            return this;
-        }
-
-        public Builder created( final Instant created )
-        {
-            this.created = created;
             return this;
         }
 

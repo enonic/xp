@@ -21,6 +21,7 @@ import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DuplicateNodeListener;
 import com.enonic.xp.node.DuplicateNodeParams;
+import com.enonic.xp.node.DuplicateNodeResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
@@ -31,7 +32,6 @@ import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.node.ReorderChildNodeParams;
 import com.enonic.xp.node.SortNodeParams;
 import com.enonic.xp.repo.impl.node.DuplicateNodeCommand;
-import com.enonic.xp.node.DuplicateNodeResult;
 import com.enonic.xp.repo.impl.node.SortNodeCommand;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.Reference;
@@ -240,16 +240,13 @@ class DuplicateNodeCommandTest
     @Test
     void manual_order_kept()
     {
-        final Node parentNode =
-            createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "my-node" ).build() );
+        final Node parentNode = createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "my-node" ).build() );
 
-        final Node childNode1 = createNode(
-            CreateNodeParams.create().parent( parentNode.path() ).name( "child1" ).build() );
+        final Node childNode1 = createNode( CreateNodeParams.create().parent( parentNode.path() ).name( "child1" ).build() );
 
         createNode( CreateNodeParams.create().parent( parentNode.path() ).name( "child2" ).build() );
 
-        final Node childNode3 = createNode(
-            CreateNodeParams.create().parent( parentNode.path() ).name( "child3" ).build() );
+        final Node childNode3 = createNode( CreateNodeParams.create().parent( parentNode.path() ).name( "child3" ).build() );
 
         SortNodeCommand.create()
             .params( SortNodeParams.create()
@@ -278,10 +275,10 @@ class DuplicateNodeCommandTest
     void duplicate_with_capital_node_id()
     {
         final String nodeName = "my-node";
-        final Node a =
-            createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( nodeName ).setNodeId( NodeId.from( "MyNodeId" ) ).build() );
+        final Node a = createNode(
+            CreateNodeParams.create().parent( NodePath.ROOT ).name( nodeName ).setNodeId( NodeId.from( "my-node-id" ) ).build() );
 
-        createNode( CreateNodeParams.create().parent( a.path() ).name( "my-child" ).setNodeId( NodeId.from( "MyChildId" ) ).build() );
+        createNode( CreateNodeParams.create().parent( a.path() ).name( "my-child" ).setNodeId( NodeId.from( "my-child-id" ) ).build() );
 
         final Node duplicatedNode = duplicateNode( a ).getNode();
 
@@ -291,7 +288,7 @@ class DuplicateNodeCommandTest
     @Test
     void cannot_duplicate_root_node()
     {
-        assertThrows( OperationNotPermittedException.class, () -> duplicateNode( getNode( Node.ROOT_UUID ) ) );
+        assertThrows( OperationNotPermittedException.class, () -> duplicateNode( getNode( NodeId.ROOT ) ) );
     }
 
     @Test
@@ -356,7 +353,8 @@ class DuplicateNodeCommandTest
         return foundNode;
     }
 
-    private void assertReferenceIntegrity( final NodePath duplicatedRootPath, final List<Property> originalReferences, final List<Property> duplicateReferences )
+    private void assertReferenceIntegrity( final NodePath duplicatedRootPath, final List<Property> originalReferences,
+                                           final List<Property> duplicateReferences )
     {
         assertEquals( originalReferences.size(), duplicateReferences.size() );
 
@@ -387,7 +385,8 @@ class DuplicateNodeCommandTest
         }
     }
 
-    private void assertReferencesInTreeMovedToDuplicatedNode( final List<Property> duplicateReferences, final Set<Property> referencesWithinSameTree )
+    private void assertReferencesInTreeMovedToDuplicatedNode( final List<Property> duplicateReferences,
+                                                              final Set<Property> referencesWithinSameTree )
     {
         for ( final Property ref : referencesWithinSameTree )
         {

@@ -1,8 +1,9 @@
 package com.enonic.xp.repo.impl.elasticsearch.document.indexitem;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.google.common.collect.ImmutableList;
 
@@ -16,6 +17,7 @@ import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.repo.impl.elasticsearch.OrderByValueResolver;
 import com.enonic.xp.repo.impl.index.IndexLanguageController;
 import com.enonic.xp.repo.impl.index.IndexValueType;
+import com.enonic.xp.repo.impl.index.StaticIndexValueType;
 
 public class IndexItemFactory
 {
@@ -76,20 +78,22 @@ public class IndexItemFactory
 
         if ( indexConfig.isDecideByType() && propertyValue.isText() || indexConfig.isIncludeInAllText() )
         {
-            final var text = propertyValue.asString();
+            final String text = propertyValue.asString();
             if ( allTextIndexConfig.isFulltext() )
             {
-                allTextItems.add( new IndexItem<>( NodeIndexPath.ALL_TEXT, text, IndexValueType.ANALYZED ) );
+                allTextItems.add( new IndexItem<>( NodeIndexPath.ALL_TEXT, text, StaticIndexValueType.ANALYZED ) );
             }
 
             if ( allTextIndexConfig.isnGram() )
             {
-                allTextItems.add( new IndexItem<>( NodeIndexPath.ALL_TEXT, text, IndexValueType.NGRAM ) );
+                allTextItems.add( new IndexItem<>( NodeIndexPath.ALL_TEXT, text, StaticIndexValueType.NGRAM ) );
             }
 
             allTextIndexConfig.getLanguages()
                 .stream()
                 .map( IndexLanguageController::resolveStemmedIndexValueType )
+                .filter( Objects::nonNull )
+                .distinct()
                 .map( type -> new IndexItem<>( NodeIndexPath.ALL_TEXT, text, type ) )
                 .forEach( allTextItems::add );
         }
@@ -105,21 +109,21 @@ public class IndexItemFactory
         {
             if ( value.isText() )
             {
-                final var text = value.asString();
-                fulltextItems.add( new IndexItem<>( indexPath, text, IndexValueType.ANALYZED ) );
-                fulltextItems.add( new IndexItem<>( indexPath, text, IndexValueType.NGRAM ) );
+                final String text = value.asString();
+                fulltextItems.add( new IndexItem<>( indexPath, text, StaticIndexValueType.ANALYZED ) );
+                fulltextItems.add( new IndexItem<>( indexPath, text, StaticIndexValueType.NGRAM ) );
             }
         }
         else
         {
             if ( indexConfig.isFulltext() )
             {
-                fulltextItems.add( new IndexItem<>( indexPath, value.asString(), IndexValueType.ANALYZED ) );
+                fulltextItems.add( new IndexItem<>( indexPath, value.asString(), StaticIndexValueType.ANALYZED ) );
             }
 
             if ( indexConfig.isnGram() )
             {
-                fulltextItems.add( new IndexItem<>( indexPath, value.asString(), IndexValueType.NGRAM ) );
+                fulltextItems.add( new IndexItem<>( indexPath, value.asString(), StaticIndexValueType.NGRAM ) );
             }
         }
 
@@ -128,21 +132,21 @@ public class IndexItemFactory
 
     static List<IndexItem<?>> createOrderBy( final IndexPath indexPath, final Value propertyValue, final IndexConfig indexConfig )
     {
-        final List<IndexItem<?>> items = new ArrayList<>();
+        final String orderByValue = OrderByValueResolver.getOrderByValue( propertyValue );
 
-        final var orderByValue = OrderByValueResolver.getOrderByValue( propertyValue );
+        final Stream<IndexValueType> languageTypes = propertyValue.isString()
+            ? indexConfig.getLanguages().stream().map( IndexLanguageController::resolveOrderByIndexValueType )
+            : Stream.empty();
 
-        items.add( new IndexItem<>( indexPath, orderByValue, IndexValueType.ORDERBY ) );
-
-        indexConfig.getLanguages()
-            .forEach( language -> items.add(
-                new IndexItem<>( indexPath, orderByValue, IndexLanguageController.resolveOrderByIndexValueType( language ) ) ) );
-        return items;
+        return Stream.concat( Stream.<IndexValueType>of( StaticIndexValueType.ORDERBY ), languageTypes )
+            .distinct()
+            .map( type -> new IndexItem<>( indexPath, orderByValue, type ) )
+            .collect( Collectors.toList() );
     }
 
     static IndexItem<String> createPath( final IndexPath indexPath, final Value propertyValue )
     {
-        return new IndexItem<>( indexPath, propertyValue.asString(), IndexValueType.PATH );
+        return new IndexItem<>( indexPath, propertyValue.asString(), StaticIndexValueType.PATH );
     }
 
     static List<IndexItem<?>> createStemmed( final IndexPath indexPath, final Value value, final IndexConfig indexConfig )
@@ -151,10 +155,13 @@ public class IndexItemFactory
 
         if ( indexConfig.isStemmed() )
         {
-            final var indexValue = value.asString();
+            final String indexValue = value.asString();
             indexConfig.getLanguages()
-                .forEach( language -> stemmedItems.add(
-                    new IndexItem<>( indexPath, indexValue, IndexLanguageController.resolveStemmedIndexValueType( language ) ) ) );
+                .stream()
+                .map( IndexLanguageController::resolveStemmedIndexValueType )
+                .filter( Objects::nonNull )
+                .distinct()
+                .forEach( indexValueType -> stemmedItems.add( new IndexItem<>( indexPath, indexValue, indexValueType ) ) );
         }
 
         return stemmedItems.build();
@@ -166,18 +173,18 @@ public class IndexItemFactory
 
         if ( value.isDateType() )
         {
-            baseTypes.add( new IndexItem<>( indexPath, value.asInstant(), IndexValueType.DATETIME ) );
+            baseTypes.add( new IndexItem<>( indexPath, value.asInstant(), StaticIndexValueType.DATETIME ) );
         }
         else if ( value.isNumericType() )
         {
-            baseTypes.add( new IndexItem<>( indexPath, value.asDouble(), IndexValueType.NUMBER ) );
+            baseTypes.add( new IndexItem<>( indexPath, value.asDouble(), StaticIndexValueType.NUMBER ) );
         }
         else if ( value.isGeoPoint() )
         {
-            baseTypes.add( new IndexItem<>( indexPath, value.asString(), IndexValueType.GEO_POINT ) );
+            baseTypes.add( new IndexItem<>( indexPath, value.asString(), StaticIndexValueType.GEO_POINT ) );
         }
 
-        baseTypes.add( new IndexItem<>( indexPath, value.asString(), IndexValueType.STRING ) );
+        baseTypes.add( new IndexItem<>( indexPath, value.asString(), StaticIndexValueType.STRING ) );
 
         return baseTypes.build();
     }

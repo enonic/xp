@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -86,30 +87,25 @@ public class SnapshotServiceImpl
         return NodeHelper.runAsAdmin( () -> doSnapshot( snapshotParams ) );
     }
 
-    private RepositoryIds resolveRepositoriesIdsToSnapshot( final RepositoryId repositoryId )
+    private RepositoryIds resolveRepositoriesIdsToSnapshot()
     {
-        if ( repositoryId != null )
-        {
-            return RepositoryIds.from( repositoryId );
-        }
-        else
-        {
-            final RepositoryIds.Builder result = RepositoryIds.create();
+        final RepositoryIds.Builder result = RepositoryIds.create();
 
-            repositoryEntryService.findRepositoryEntryIds()
-                .stream()
-                .map( repositoryEntryService::getRepositoryEntry )
-                .filter( Objects::nonNull )
-                .filter( repository -> !repository.isTransient() )
-                .forEach( repository -> result.add( repository.getId() ) );
+        repositoryEntryService.findRepositoryEntryIds()
+            .stream()
+            .map( repositoryEntryService::getRepositoryEntry )
+            .filter( Objects::nonNull )
+            .filter( repository -> !repository.isTransient() )
+            .forEach( repository -> result.add( repository.getId() ) );
 
-            return result.build();
-        }
+        return result.build();
     }
 
     private SnapshotResult doSnapshot( final SnapshotParams snapshotParams )
     {
-        final RepositoryIds repositoriesToSnapshot = resolveRepositoriesIdsToSnapshot( snapshotParams.getRepositoryId() );
+        final RepositoryIds repositoriesToSnapshot = Optional.ofNullable( snapshotParams.getRepositoryId() )
+            .map( RepositoryIds::from )
+            .orElseGet( this::resolveRepositoriesIdsToSnapshot );
 
         LOG.debug( "Creating snapshot with name {}, Repositories to snapshot: {}", snapshotParams.getSnapshotName(),
                    repositoriesToSnapshot );
@@ -309,7 +305,8 @@ public class SnapshotServiceImpl
         final PutRepositoryRequestBuilder requestBuilder =
             new PutRepositoryRequestBuilder( this.client.admin().cluster(), PutRepositoryAction.INSTANCE ).setName(
                     SNAPSHOT_REPOSITORY_NAME )
-                .setType( "fs" ).setSettings( Settings.settingsBuilder().put( "compress", true ).put( "location", snapshotsDir ).build() );
+                .setType( "fs" )
+                .setSettings( Settings.settingsBuilder().put( "compress", true ).put( "location", snapshotsDir ).build() );
 
         this.client.admin().cluster().putRepository( requestBuilder.request() ).actionGet();
 
@@ -418,8 +415,7 @@ public class SnapshotServiceImpl
             throw new SnapshotException( "No snapshots found" );
         }
 
-        final SnapshotResult snapshotResult = snapshotResults
-            .stream()
+        final SnapshotResult snapshotResult = snapshotResults.stream()
             .skip( snapshotResults.getSize() - 1 )
             .findFirst()
             .orElseThrow( () -> new SnapshotException( "No snapshots found" ) );

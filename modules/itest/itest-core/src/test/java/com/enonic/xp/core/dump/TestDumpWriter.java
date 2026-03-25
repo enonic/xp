@@ -8,10 +8,12 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
+import com.google.common.io.ByteSource;
 
 import com.enonic.xp.blob.BlobKey;
-import com.enonic.xp.node.NodeVersionKey;
+import com.enonic.xp.blob.Segment;
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
 import com.enonic.xp.repo.impl.dump.model.CommitDumpEntry;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
@@ -95,6 +97,18 @@ class TestDumpWriter
         commitCount.incrementAndGet();
     }
 
+
+    @Override
+    public void writeRawEntry( final String entryName, final byte[] data )
+    {
+        // Do nothing
+    }
+
+    @Override
+    public BlobKey addBlobRecord( final Segment segment, final ByteSource data )
+    {
+        return BlobKey.sha256( data );
+    }
 
     @Override
     public void writeNodeVersionBlobs( final RepositoryId repositoryId, final NodeVersionKey nodeVersionKey )

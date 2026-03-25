@@ -12,8 +12,8 @@ import com.enonic.xp.node.NodeType;
 import com.enonic.xp.security.acl.AccessControlList;
 
 public record NodeStoreVersion(NodeId id, NodeType nodeType, PropertyTree data, IndexConfigDocument indexConfigDocument,
-                                ChildOrder childOrder, Long manualOrderValue, AccessControlList permissions,
-                                AttachedBinaries attachedBinaries)
+                               ChildOrder childOrder, Long manualOrderValue, AccessControlList permissions,
+                               AttachedBinaries attachedBinaries)
 {
     public NodeStoreVersion
     {
@@ -22,6 +22,7 @@ public record NodeStoreVersion(NodeId id, NodeType nodeType, PropertyTree data, 
         permissions = Objects.requireNonNullElse( permissions, AccessControlList.empty() );
         attachedBinaries = Objects.requireNonNullElse( attachedBinaries, AttachedBinaries.empty() );
     }
+
     public static NodeStoreVersion from( final Node node )
     {
         return NodeStoreVersion.create()

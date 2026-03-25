@@ -9,9 +9,9 @@ import com.enonic.xp.query.expr.FieldExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.index.IndexFieldNameNormalizer;
+import com.enonic.xp.repo.impl.index.IndexLanguageController;
 import com.enonic.xp.repo.impl.index.IndexValueType;
-import com.enonic.xp.repo.impl.index.IndexValueTypeInterface;
-import com.enonic.xp.repo.impl.index.OrderByIndexValueType;
+import com.enonic.xp.repo.impl.index.StaticIndexValueType;
 
 abstract class AbstractQueryFieldNameResolver
     implements QueryFieldNameResolver
@@ -53,12 +53,12 @@ abstract class AbstractQueryFieldNameResolver
     @Override
     public String resolve( final String queryFieldName )
     {
-        return appendIndexValueType( queryFieldName, IndexValueType.STRING );
+        return appendIndexValueType( queryFieldName, StaticIndexValueType.STRING );
     }
 
 
     @Override
-    public String resolve( final String queryFieldName, final IndexValueTypeInterface indexValueType )
+    public String resolve( final String queryFieldName, final IndexValueType indexValueType )
     {
         return appendIndexValueType( queryFieldName, indexValueType );
     }
@@ -70,7 +70,7 @@ abstract class AbstractQueryFieldNameResolver
     }
 
     @Override
-    public String resolveOrderByFieldName( final String queryFieldName, final String language )
+    public String resolveOrderByFieldName( final String queryFieldName, final Locale language )
     {
         final String normalizedFieldName = IndexFieldNameNormalizer.normalize( queryFieldName );
 
@@ -79,33 +79,30 @@ abstract class AbstractQueryFieldNameResolver
             return normalizedFieldName;
         }
 
-        if ( language != null && !language.isBlank() )
-        {
-            return appendIndexValueType( normalizedFieldName, new OrderByIndexValueType( language.toLowerCase( Locale.ROOT ) ) );
-        }
-
-        return appendIndexValueType( normalizedFieldName, IndexValueType.ORDERBY );
+        return appendIndexValueType( normalizedFieldName, language == null
+            ? StaticIndexValueType.ORDERBY
+            : IndexLanguageController.resolveOrderByIndexValueType( language ) );
     }
 
     private String createValueTypeAwareFieldName( final String baseFieldName, final Value value )
     {
         if ( value.isDateType() )
         {
-            return appendIndexValueType( baseFieldName, IndexValueType.DATETIME );
+            return appendIndexValueType( baseFieldName, StaticIndexValueType.DATETIME );
         }
 
         if ( value.isNumericType() )
         {
-            return appendIndexValueType( baseFieldName, IndexValueType.NUMBER );
+            return appendIndexValueType( baseFieldName, StaticIndexValueType.NUMBER );
         }
 
         if ( value.isGeoPoint() )
         {
-            return appendIndexValueType( baseFieldName, IndexValueType.GEO_POINT );
+            return appendIndexValueType( baseFieldName, StaticIndexValueType.GEO_POINT );
         }
 
         return IndexFieldNameNormalizer.normalize( baseFieldName );
     }
 
-    protected abstract String appendIndexValueType( String baseFieldName, IndexValueTypeInterface indexValueType );
+    protected abstract String appendIndexValueType( String baseFieldName, IndexValueType indexValueType );
 }

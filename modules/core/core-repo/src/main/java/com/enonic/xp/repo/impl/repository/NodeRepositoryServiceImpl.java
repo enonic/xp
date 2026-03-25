@@ -23,7 +23,7 @@ public class NodeRepositoryServiceImpl
 {
     private static final Logger LOG = LoggerFactory.getLogger( NodeRepositoryServiceImpl.class );
 
-    private static final IndexResourceProvider DEFAULT_INDEX_RESOURCE_PROVIDER =  new DefaultIndexResourceProvider();
+    private static final IndexResourceProvider DEFAULT_INDEX_RESOURCE_PROVIDER = new DefaultIndexResourceProvider();
 
     private final IndexServiceInternal indexServiceInternal;
 
@@ -34,17 +34,28 @@ public class NodeRepositoryServiceImpl
     }
 
     @Override
-    public void create( final CreateRepositoryIndexParams params )
+    public void create( final RepositoryId repositoryId, final RepositorySettings repositorySettings )
     {
-        final RepositoryId repositoryId = params.getRepositoryId();
-        final RepositorySettings repositorySettings = params.getRepositorySettings();
-
         createIndex( repositoryId, repositorySettings, IndexType.VERSION,
                      Map.of( IndexType.VERSION, DEFAULT_INDEX_RESOURCE_PROVIDER.getMapping( IndexType.VERSION ), IndexType.BRANCH,
                              DEFAULT_INDEX_RESOURCE_PROVIDER.getMapping( IndexType.BRANCH ), IndexType.COMMIT,
                              DEFAULT_INDEX_RESOURCE_PROVIDER.getMapping( IndexType.COMMIT ) ) );
 
         createIndex( repositoryId, repositorySettings, IndexType.SEARCH, Map.of( IndexType.SEARCH, IndexSettingsMerger.merge(
+            DEFAULT_INDEX_RESOURCE_PROVIDER.getMapping( IndexType.SEARCH ), repositorySettings.getIndexMappings( IndexType.SEARCH ) ) ) );
+
+        indexServiceInternal.waitForYellowStatus( resolveIndexNames( repositoryId ) );
+    }
+
+    @Override
+    public void updateMappings( final RepositoryId repositoryId, final RepositorySettings repositorySettings )
+    {
+        updateIndexMappings( repositoryId,
+                             Map.of( IndexType.VERSION, DEFAULT_INDEX_RESOURCE_PROVIDER.getMapping( IndexType.VERSION ), IndexType.BRANCH,
+                                     DEFAULT_INDEX_RESOURCE_PROVIDER.getMapping( IndexType.BRANCH ), IndexType.COMMIT,
+                                     DEFAULT_INDEX_RESOURCE_PROVIDER.getMapping( IndexType.COMMIT ) ) );
+
+        updateIndexMappings( repositoryId, Map.of( IndexType.SEARCH, IndexSettingsMerger.merge(
             DEFAULT_INDEX_RESOURCE_PROVIDER.getMapping( IndexType.SEARCH ), repositorySettings.getIndexMappings( IndexType.SEARCH ) ) ) );
 
         indexServiceInternal.waitForYellowStatus( resolveIndexNames( repositoryId ) );
@@ -62,6 +73,12 @@ public class NodeRepositoryServiceImpl
         return indexServiceInternal.indicesExists( resolveIndexNames( repositoryId ) );
     }
 
+    @Override
+    public void refresh( final RepositoryId repositoryId )
+    {
+        indexServiceInternal.refresh( resolveIndexNames( repositoryId ) );
+    }
+
     private void createIndex( final RepositoryId repositoryId, final RepositorySettings settings, final IndexType indexType,
                               final Map<IndexType, IndexMapping> mappings )
     {
@@ -74,6 +91,14 @@ public class NodeRepositoryServiceImpl
                                               .build() );
     }
 
+
+    private void updateIndexMappings( final RepositoryId repositoryId, final Map<IndexType, IndexMapping> mappings )
+    {
+        for ( Map.Entry<IndexType, IndexMapping> entry : mappings.entrySet() )
+        {
+            indexServiceInternal.putIndexMapping( repositoryId, entry.getKey(), entry.getValue().getData() );
+        }
+    }
 
     private IndexSettings mergeWithDefaultSettings( final RepositoryId repositoryId, final IndexSettings indexSettings,
                                                     final IndexType indexType )
@@ -114,16 +139,10 @@ public class NodeRepositoryServiceImpl
 
     private static String resolveIndexName( final RepositoryId repositoryId, final IndexType indexType )
     {
-        switch ( indexType )
+        return switch ( indexType )
         {
-            case SEARCH:
-                return IndexNameResolver.resolveSearchIndexName( repositoryId );
-            case VERSION:
-            case BRANCH:
-            case COMMIT:
-                return IndexNameResolver.resolveStorageIndexName( repositoryId );
-            default:
-                throw new IllegalArgumentException( "Cannot resolve index name for indexType [" + indexType.getName() + "]" );
-        }
+            case SEARCH -> IndexNameResolver.resolveSearchIndexName( repositoryId );
+            case VERSION, BRANCH, COMMIT -> IndexNameResolver.resolveStorageIndexName( repositoryId );
+        };
     }
 }

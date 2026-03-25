@@ -13,6 +13,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.repo.impl.branch.BranchService;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
@@ -29,6 +30,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
+@org.mockito.junit.jupiter.MockitoSettings(strictness = org.mockito.quality.Strictness.LENIENT)
 class RepositoryServiceActivatorTest
 {
     @Mock
@@ -52,17 +54,28 @@ class RepositoryServiceActivatorTest
     @Mock(stubOnly = true)
     private NodeSearchService nodeSearchService;
 
+    @Mock(stubOnly = true)
+    private BranchService branchService;
+
     @BeforeEach
     void setUp()
     {
         when( indexServiceInternal.isMaster() ).thenReturn( true );
         when( indexServiceInternal.waitForYellowStatus() ).thenReturn( true );
-        when( indexServiceInternal.indicesExists( any() ) ).thenReturn( true );
+        when( nodeRepositoryService.isInitialized( any() ) ).thenReturn( true );
 
-        final Node mockNode = Node.create().id( NodeId.from( "1" ) ).parentPath( NodePath.ROOT ).build();
-        when( nodeStorageService.store( any(), any() ) ).thenReturn(
-            new NodeVersionData( mockNode, mock( NodeVersion.class ) ) );
+        final com.enonic.xp.data.PropertyTree data = new com.enonic.xp.data.PropertyTree();
+        data.addString( "version", "8.0.0.pre1" );
+        final Node mockNode = Node.create().id( NodeId.from( "1" ) ).parentPath( NodePath.ROOT ).data( data ).build();
+        when( nodeStorageService.store( any(), any() ) ).thenReturn( new NodeVersionData( mockNode, mock( NodeVersion.class ) ) );
+        when( nodeStorageService.get( any( NodePath.class ), any() ) ).thenReturn( mockNode );
         when( repositoryEntryService.findRepositoryEntryIds() ).thenReturn( RepositoryIds.create().build() );
+        when( repositoryEntryService.getRepositoryEntry( any() ) ).thenReturn( RepositoryEntry.create()
+                                                                                   .id(
+                                                                                       com.enonic.xp.security.SystemConstants.SYSTEM_REPO_ID )
+                                                                                   .modelVersion(
+                                                                                       com.enonic.xp.repo.impl.Model.MODEL_VERSION )
+                                                                                   .build() );
     }
 
     @Test
@@ -70,11 +83,12 @@ class RepositoryServiceActivatorTest
     {
         final RepositoryServiceActivator activator =
             new RepositoryServiceActivator( repositoryEntryService, indexServiceInternal, nodeRepositoryService, nodeStorageService,
-                                            nodeSearchService );
+                                            nodeSearchService, branchService );
 
-        doReturn( service ).when( bundleContext ).registerService(
-            AdditionalMatchers.aryEq( new String[]{RepositoryService.class.getName(), InternalRepositoryService.class.getName()} ),
-            any( RepositoryService.class ), isNull() );
+        doReturn( service ).when( bundleContext )
+            .registerService(
+                AdditionalMatchers.aryEq( new String[]{RepositoryService.class.getName(), InternalRepositoryService.class.getName()} ),
+                any( RepositoryService.class ), isNull() );
 
         activator.activate( bundleContext );
 

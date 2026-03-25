@@ -9,29 +9,26 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.repository.RepositoryService;
-import com.enonic.xp.security.SecurityService;
+import com.enonic.xp.repository.internal.InternalRepositoryService;
 
 @Component(immediate = true)
 public class VirtualAppServiceActivator
 {
     private final IndexService indexService;
 
-    private final RepositoryService repositoryService;
-
-    private final SecurityService securityService;
+    private final InternalRepositoryService repositoryService;
 
     private final NodeService nodeService;
 
     private ServiceRegistration<VirtualAppService> service;
 
     @Activate
-    public VirtualAppServiceActivator( @Reference final IndexService indexService, @Reference final RepositoryService repositoryService,
-                                       @Reference final SecurityService securityService, @Reference final NodeService nodeService )
+    public VirtualAppServiceActivator( @Reference final IndexService indexService,
+                                       @Reference final InternalRepositoryService repositoryService,
+                                       @Reference final NodeService nodeService )
     {
         this.indexService = indexService;
         this.repositoryService = repositoryService;
-        this.securityService = securityService;
         this.nodeService = nodeService;
     }
 
@@ -39,12 +36,7 @@ public class VirtualAppServiceActivator
     public void activate( final BundleContext context )
     {
         final VirtualAppService virtualAppService = new VirtualAppService( nodeService );
-        VirtualAppInitializer.create()
-            .setIndexService( indexService )
-            .setRepositoryService( repositoryService )
-            .setSecurityService( securityService )
-            .build()
-            .initialize();
+        VirtualAppInitializer.create().setIndexService( indexService ).setRepositoryService( repositoryService ).build().initialize();
         service = context.registerService( VirtualAppService.class, virtualAppService, null );
     }
 

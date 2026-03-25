@@ -29,19 +29,17 @@ class LoadNodeCommandTest
     @Test
     void load_node()
     {
-        final Node node = Node.create().
-            id( NodeId.from( "myNodeId" ) ).
-            parentPath( NodePath.ROOT ).
-            name( "fisk" ).
-            childOrder( ChildOrder.manualOrder() ).
-            nodeType( NodeType.from( "myNodes" ) ).
-            timestamp( Instant.now() ).
-            nodeVersionId( NodeVersionId.from( "nodeVersionId" ) ).
-            build();
+        final Node node = Node.create()
+            .id( NodeId.from( "my-node-id" ) )
+            .parentPath( NodePath.ROOT )
+            .name( "fisk" )
+            .childOrder( ChildOrder.manualOrder() )
+            .nodeType( NodeType.from( "myNodes" ) )
+            .timestamp( Instant.now() )
+            .nodeVersionId( NodeVersionId.from( "nodeversionid" ) )
+            .build();
 
-        final LoadNodeParams loadParams = LoadNodeParams.create().
-            node( node ).
-            build();
+        final LoadNodeParams loadParams = LoadNodeParams.create().node( node ).build();
 
         doLoadNode( loadParams );
 
@@ -66,17 +64,15 @@ class LoadNodeCommandTest
         final Node originalNode = createNode( NodePath.ROOT, "fisk" );
         nodeService.refresh( RefreshMode.ALL );
 
-        final Node nodeToLoad = Node.create( originalNode ).
-            id( new NodeId() ).
-            parentPath( NodePath.ROOT ).
-            name( "fisk" ).
-            timestamp( Instant.now() ).
-            nodeVersionId( NodeVersionId.from( "nodeVersionId" ) ).
-            build();
+        final Node nodeToLoad = Node.create( originalNode )
+            .id( new NodeId() )
+            .parentPath( NodePath.ROOT )
+            .name( "fisk" )
+            .timestamp( Instant.now() )
+            .nodeVersionId( NodeVersionId.from( "nodeversionid" ) )
+            .build();
 
-        final LoadNodeParams loadParams = LoadNodeParams.create().
-            node( nodeToLoad ).
-            build();
+        final LoadNodeParams loadParams = LoadNodeParams.create().node( nodeToLoad ).build();
 
         doLoadNode( loadParams );
 
@@ -90,27 +86,27 @@ class LoadNodeCommandTest
     @Test
     void parent_does_not_exist()
     {
-        final LoadNodeParams loadParams = LoadNodeParams.create().
-            node( Node.create().
-                id( new NodeId() ).
-                parentPath( new NodePath( "/ost" ) ).
-                name( "fisk" ).
-                timestamp( Instant.now() ).
-                nodeVersionId( NodeVersionId.from( "nodeVersionId" ) ).
-                build() ).
-            build();
+        final LoadNodeParams loadParams = LoadNodeParams.create()
+            .node( Node.create()
+                       .id( new NodeId() )
+                       .parentPath( new NodePath( "/ost" ) )
+                       .name( "fisk" )
+                       .timestamp( Instant.now() )
+                       .nodeVersionId( NodeVersionId.from( "nodeversionid" ) )
+                       .build() )
+            .build();
 
-        assertThrows(NodeLoadException.class, () -> doLoadNode( loadParams ));
+        assertThrows( NodeLoadException.class, () -> doLoadNode( loadParams ) );
     }
 
     private LoadNodeResult doLoadNode( final LoadNodeParams loadParams )
     {
-        return LoadNodeCommand.create().
-            indexServiceInternal( this.indexServiceInternal ).
-            searchService( this.searchService ).
-            storageService( this.storageService ).
-            params( loadParams ).
-            build().
-            execute();
+        return LoadNodeCommand.create()
+            .indexServiceInternal( this.indexServiceInternal )
+            .searchService( this.searchService )
+            .storageService( this.storageService )
+            .params( loadParams )
+            .build()
+            .execute();
     }
 }

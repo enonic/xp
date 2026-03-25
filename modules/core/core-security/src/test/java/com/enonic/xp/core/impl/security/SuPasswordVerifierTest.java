@@ -3,7 +3,6 @@ package com.enonic.xp.core.impl.security;
 import java.nio.CharBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.util.HexFormat;
 
 import org.junit.jupiter.api.Test;
 
@@ -91,13 +90,13 @@ class SuPasswordVerifierTest
     {
         final MessageDigest digest = MessageDigests.sha256();
         digest.update( StandardCharsets.UTF_8.encode( CharBuffer.wrap( password ) ) );
-        return HexFormat.of().formatHex( digest.digest() );
+        return MessageDigests.formatHex( digest );
     }
 
     private static String computeSha512Hash( final char[] password )
     {
         final MessageDigest digest = MessageDigests.sha512();
         digest.update( StandardCharsets.UTF_8.encode( CharBuffer.wrap( password ) ) );
-        return HexFormat.of().formatHex( digest.digest() );
+        return MessageDigests.formatHex( digest );
     }
 }

@@ -18,6 +18,7 @@ import com.enonic.xp.repository.Repositories;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
+import com.enonic.xp.repository.internal.InternalRepositoryService;
 import com.enonic.xp.security.SecurityService;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -45,6 +46,9 @@ class ProjectServiceActivatorTest
     private RepositoryService repositoryService;
 
     @Mock(stubOnly = true)
+    private InternalRepositoryService internalRepositoryService;
+
+    @Mock(stubOnly = true)
     SecurityService securityService;
 
     @Mock(stubOnly = true)
@@ -56,9 +60,8 @@ class ProjectServiceActivatorTest
     @BeforeEach
     void setUp()
     {
-        when( indexService.isMaster() ).thenReturn( true );
         when( repositoryService.list() ).thenReturn( Repositories.from( Repository.create()
-                                                                            .id( RepositoryId.from( "com.enonic.cms.default" ) )
+                                                                            .id( RepositoryId.from( "com.enonic.cms.test" ) )
                                                                             .branches( Branches.from( ContentConstants.BRANCH_DRAFT,
                                                                                                       ContentConstants.BRANCH_MASTER ) )
                                                                             .build() ) );
@@ -68,11 +71,10 @@ class ProjectServiceActivatorTest
     void lifecycle()
     {
         final ProjectServiceActivator activator =
-            new ProjectServiceActivator( repositoryService, indexService, nodeService, securityService,
+            new ProjectServiceActivator( repositoryService, internalRepositoryService, indexService, nodeService, securityService,
                                          eventPublisher, config );
 
-        when( bundleContext.registerService( same( ProjectService.class ), any( ProjectService.class ), isNull() ) ).
-            thenReturn( service );
+        when( bundleContext.registerService( same( ProjectService.class ), any( ProjectService.class ), isNull() ) ).thenReturn( service );
 
         activator.activate( bundleContext );
 

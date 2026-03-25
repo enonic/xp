@@ -14,10 +14,10 @@ import com.enonic.xp.init.ExternalInitializer;
 import com.enonic.xp.repository.BranchAlreadyExistsException;
 import com.enonic.xp.repository.CreateBranchParams;
 import com.enonic.xp.repository.CreateRepositoryParams;
-import com.enonic.xp.repository.RepositoryAlreadyExistsException;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
+import com.enonic.xp.repository.internal.InternalRepositoryService;
 
 public class ContentRepoInitializer
     extends ExternalInitializer
@@ -25,6 +25,8 @@ public class ContentRepoInitializer
     private static final Logger LOG = LoggerFactory.getLogger( ContentRepoInitializer.class );
 
     private final RepositoryService repositoryService;
+
+    private final InternalRepositoryService internalRepositoryService;
 
     private final PropertyTree repositoryData;
 
@@ -34,6 +36,7 @@ public class ContentRepoInitializer
     {
         super( builder );
         this.repositoryService = Objects.requireNonNull( builder.repositoryService );
+        this.internalRepositoryService = Objects.requireNonNull( builder.internalRepositoryService );
         this.repositoryData = Objects.requireNonNull( builder.repositoryData );
         this.repositoryId = Objects.requireNonNull( builder.repositoryId );
     }
@@ -55,7 +58,7 @@ public class ContentRepoInitializer
     @Override
     protected boolean isInitialized()
     {
-        return createAdminContext().callWith( () -> repositoryService.isInitialized( repositoryId ) &&
+        return createAdminContext().callWith( () -> internalRepositoryService.isInitialized( repositoryId ) &&
             repositoryService.get( repositoryId ).getBranches().contains( ContentConstants.BRANCH_DRAFT ) );
     }
 
@@ -79,19 +82,12 @@ public class ContentRepoInitializer
 
     private void initializeRepository()
     {
-        try
-        {
-            this.repositoryService.createRepository( CreateRepositoryParams.create()
-                                                         .repositoryId( repositoryId )
-                                                         .data( repositoryData )
-                                                         .rootPermissions( ContentConstants.CONTENT_REPO_DEFAULT_ACL )
-                                                         .rootChildOrder( ContentConstants.DEFAULT_CONTENT_REPO_ROOT_ORDER )
-                                                         .build() );
-        }
-        catch ( RepositoryAlreadyExistsException e )
-        {
-            LOG.debug( "Skip content repository init as it already exists", e );
-        }
+        this.internalRepositoryService.initializeRepository( CreateRepositoryParams.create()
+                                                                 .repositoryId( repositoryId )
+                                                                 .data( repositoryData )
+                                                                 .rootPermissions( ContentConstants.CONTENT_REPO_DEFAULT_ACL )
+                                                                 .rootChildOrder( ContentConstants.DEFAULT_CONTENT_REPO_ROOT_ORDER )
+                                                                 .build() );
     }
 
     private Context createAdminContext()
@@ -108,6 +104,8 @@ public class ContentRepoInitializer
     {
         private RepositoryService repositoryService;
 
+        private InternalRepositoryService internalRepositoryService;
+
         private PropertyTree repositoryData;
 
         private RepositoryId repositoryId;
@@ -115,6 +113,12 @@ public class ContentRepoInitializer
         public Builder repositoryService( final RepositoryService repositoryService )
         {
             this.repositoryService = repositoryService;
+            return this;
+        }
+
+        public Builder internalRepositoryService( final InternalRepositoryService internalRepositoryService )
+        {
+            this.internalRepositoryService = internalRepositoryService;
             return this;
         }
 

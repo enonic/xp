@@ -1,83 +1,76 @@
 package com.enonic.xp.repo.impl.index;
 
+import java.util.Locale;
+
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class IndexLanguageControllerTest
 {
     @Test
-    void isSupported_returns_true_for_all_known_languages()
+    void stemmingSupported_returns_true_for_all_known_languages()
     {
         final String[] knownLanguages =
             {"ar", "hy", "eu", "bn", "pt-br", "bg", "ca", "zh", "ja", "ko", "cs", "da", "nl", "en", "fi", "fr", "gl", "de", "el", "hi",
                 "hu", "id", "ga", "it", "lv", "lt", "no", "nb", "nn", "fa", "pt", "ro", "ru", "ku", "es", "sv", "tr", "th"};
         for ( final String lang : knownLanguages )
         {
-            assertTrue( IndexLanguageController.isSupported( lang ), "Expected isSupported=true for: " + lang );
+            assertNotNull( IndexLanguageController.resolveStemmedIndexValueType( Locale.forLanguageTag( lang ) ),
+                           "Expected isSupported=true for: " + lang );
         }
-    }
-
-    @Test
-    void isSupported_returns_false_for_unknown_languages()
-    {
-        assertFalse( IndexLanguageController.isSupported( "xyz" ) );
-        assertFalse( IndexLanguageController.isSupported( "rr" ) );
-        assertFalse( IndexLanguageController.isSupported( "" ) );
-        assertFalse( IndexLanguageController.isSupported( null ) );
-    }
-
-    @Test
-    void isSupported_is_case_insensitive()
-    {
-        assertTrue( IndexLanguageController.isSupported( "pt-BR" ) );
-        assertTrue( IndexLanguageController.isSupported( "pt-br" ) );
-        assertTrue( IndexLanguageController.isSupported( "EN" ) );
-        assertTrue( IndexLanguageController.isSupported( "en" ) );
-        assertTrue( IndexLanguageController.isSupported( "De" ) );
     }
 
     @Test
     void resolveAnalyzer_returns_correct_analyzer()
     {
-        assertEquals( "english", IndexLanguageController.resolveAnalyzer( "en" ) );
-        assertEquals( "german", IndexLanguageController.resolveAnalyzer( "de" ) );
-        assertEquals( "norwegian", IndexLanguageController.resolveAnalyzer( "no" ) );
-        assertEquals( "norwegian", IndexLanguageController.resolveAnalyzer( "nb" ) );
-        assertEquals( "swedish", IndexLanguageController.resolveAnalyzer( "sv" ) );
+        assertEquals( "english", IndexLanguageController.resolveAnalyzer( Locale.forLanguageTag( "en" ) ) );
+        assertEquals( "german", IndexLanguageController.resolveAnalyzer( Locale.forLanguageTag( "de" ) ) );
+        assertEquals( "norwegian", IndexLanguageController.resolveAnalyzer( Locale.forLanguageTag( "no" ) ) );
+        assertEquals( "norwegian", IndexLanguageController.resolveAnalyzer( Locale.forLanguageTag( "nb" ) ) );
+        assertEquals( "language_analyzer_nn", IndexLanguageController.resolveAnalyzer( Locale.forLanguageTag( "nn" ) ) );
+        assertEquals( "swedish", IndexLanguageController.resolveAnalyzer( Locale.forLanguageTag( "sv" ) ) );
     }
 
     @Test
     void resolveAnalyzer_normalizes_pt_BR()
     {
-        assertEquals( "brazilian", IndexLanguageController.resolveAnalyzer( "pt-BR" ) );
-        assertEquals( "brazilian", IndexLanguageController.resolveAnalyzer( "pt-br" ) );
+        assertEquals( "brazilian", IndexLanguageController.resolveAnalyzer( Locale.forLanguageTag( "pt-BR" ) ) );
+        assertEquals( "brazilian", IndexLanguageController.resolveAnalyzer( Locale.forLanguageTag( "pt-br" ) ) );
     }
 
     @Test
     void resolveAnalyzer_returns_null_for_unknown()
     {
-        assertNull( IndexLanguageController.resolveAnalyzer( "xyz" ) );
-        assertNull( IndexLanguageController.resolveAnalyzer( null ) );
+        assertNull( IndexLanguageController.resolveAnalyzer( Locale.forLanguageTag( "xyz" ) ) );
+    }
+
+    @Test
+    void resolveAnalyzer_null_throws_NPE()
+    {
+        assertThrows( NullPointerException.class, () -> IndexLanguageController.resolveAnalyzer( null ) );
     }
 
     @Test
     void resolveStemmedIndexValueType_returns_value_type_for_known_language()
     {
-        assertNotNull( IndexLanguageController.resolveStemmedIndexValueType( "en" ) );
-        assertNotNull( IndexLanguageController.resolveStemmedIndexValueType( "pt-br" ) );
-        assertNotNull( IndexLanguageController.resolveStemmedIndexValueType( "pt-BR" ) );
+        assertNotNull( IndexLanguageController.resolveStemmedIndexValueType( Locale.forLanguageTag( "en" ) ) );
+        assertNotNull( IndexLanguageController.resolveStemmedIndexValueType( Locale.forLanguageTag( "pt-br" ) ) );
+        assertNotNull( IndexLanguageController.resolveStemmedIndexValueType( Locale.forLanguageTag( "pt-BR" ) ) );
     }
 
     @Test
     void resolveStemmedIndexValueType_returns_null_for_unknown()
     {
-        assertThrows( IllegalArgumentException.class, () -> IndexLanguageController.resolveStemmedIndexValueType( "xyz" ) );
-        assertThrows( IllegalArgumentException.class, () -> IndexLanguageController.resolveStemmedIndexValueType( null ) );
+        assertNull( IndexLanguageController.resolveStemmedIndexValueType( Locale.forLanguageTag( "xyz" ) ) );
+    }
+
+    @Test
+    void resolveStemmedIndexValueType_null_throws_NPE()
+    {
+        assertThrows( NullPointerException.class, () -> IndexLanguageController.resolveStemmedIndexValueType( null ) );
     }
 }

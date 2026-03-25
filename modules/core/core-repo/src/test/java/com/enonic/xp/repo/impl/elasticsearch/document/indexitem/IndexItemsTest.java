@@ -9,7 +9,7 @@ import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.index.PatternIndexConfigDocument;
-import com.enonic.xp.repo.impl.index.IndexValueType;
+import com.enonic.xp.repo.impl.index.StaticIndexValueType;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -55,7 +55,7 @@ class IndexItemsTest
             .build();
 
         final Collection<Object> values =
-            indexItems.asValuesMap().get( "myitem" + IndexItem.INDEX_VALUE_TYPE_SEPARATOR + IndexValueType.ORDERBY.getPostfix() );
+            indexItems.asValuesMap().get( "myitem" + IndexItem.INDEX_VALUE_TYPE_SEPARATOR + StaticIndexValueType.ORDERBY.getPostfix() );
 
         assertThat( values ).containsExactly( "ost" );
     }

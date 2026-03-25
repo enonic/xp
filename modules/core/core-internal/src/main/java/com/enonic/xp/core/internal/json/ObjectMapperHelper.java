@@ -1,6 +1,7 @@
 package com.enonic.xp.core.internal.json;
 
 import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.MapperFeature;
@@ -17,8 +18,11 @@ public final class ObjectMapperHelper
 
     public static ObjectMapper create()
     {
+        final SimpleDateFormat isoDateFormat = new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ss.SSSXXX" );
+        isoDateFormat.setTimeZone( TimeZone.getTimeZone( "UTC" ) );
+
         return JsonMapper.builder()
-            .defaultDateFormat( new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ) )
+            .defaultDateFormat( isoDateFormat )
             .disable( SerializationFeature.WRITE_DATES_AS_TIMESTAMPS )
             .disable( SerializationFeature.FAIL_ON_EMPTY_BEANS )
             .enable( MapperFeature.SORT_PROPERTIES_ALPHABETICALLY )
