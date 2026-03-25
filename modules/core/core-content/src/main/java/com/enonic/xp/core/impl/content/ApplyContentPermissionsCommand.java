@@ -47,8 +47,8 @@ final class ApplyContentPermissionsCommand
             applyNodePermissionsBuilder.applyPermissionsListener( new ListenerDelegate( params.getListener() ) );
         }
 
-        applyNodePermissionsBuilder.versionAttributes(
-            ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.PERMISSIONS_ATTR ) );
+        applyNodePermissionsBuilder.versionAttributesResolver(
+            ContentAttributesHelper.versionHistoryResolver( ContentAttributesHelper.PERMISSIONS_ATTR ) );
 
         final ApplyNodePermissionsResult result = nodeService.applyPermissions( applyNodePermissionsBuilder.build() );
 

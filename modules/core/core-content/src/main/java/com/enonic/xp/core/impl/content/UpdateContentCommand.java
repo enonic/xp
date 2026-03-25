@@ -25,6 +25,7 @@ import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.PatchNodeParams;
+import com.enonic.xp.node.VersionAttributesResolver;
 import com.enonic.xp.node.PatchNodeResult;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
@@ -90,7 +91,8 @@ final class UpdateContentCommand
                 return editedContent;
             } )
             .createAttachments( params.getCreateAttachments() )
-            .versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.UPDATE_ATTR ) )
+            .versionAttributesResolver( VersionAttributesResolver.of(
+                ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.UPDATE_ATTR ) ) )
             .contentTypeService( this.contentTypeService )
             .mixinService( this.mixinService )
             .pageDescriptorService( this.pageDescriptorService )

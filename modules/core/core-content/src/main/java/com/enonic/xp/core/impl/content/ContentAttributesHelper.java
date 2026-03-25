@@ -11,6 +11,8 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.node.Attributes;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.VersionAttributesResolver;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.vacuum.VacuumConstants;
@@ -52,9 +54,14 @@ public class ContentAttributesHelper
     public static final String UNPUBLISH_ATTR = "content.unpublish";
 
     private static final Map<String, Function<Content, ?>> FIELD_GETTERS =
-        Map.of( "displayName", Content::getDisplayName, "data", Content::getData, "x", Content::getMixins, "page", Content::getPage,
-                "owner", Content::getOwner, "language", Content::getLanguage, "publish", Content::getPublishInfo, "workflow",
-                Content::getWorkflowInfo, "variantOf", Content::getVariantOf, "attachments", Content::getAttachments );
+        Map.ofEntries( Map.entry( "displayName", Content::getDisplayName ), Map.entry( "data", Content::getData ),
+                       Map.entry( "x", Content::getMixins ), Map.entry( "page", Content::getPage ),
+                       Map.entry( "owner", Content::getOwner ), Map.entry( "language", Content::getLanguage ),
+                       Map.entry( "publish", Content::getPublishInfo ), Map.entry( "workflow", Content::getWorkflowInfo ),
+                       Map.entry( "variantOf", Content::getVariantOf ), Map.entry( "attachments", Content::getAttachments ),
+                       Map.entry( "inherit", Content::getInherit ), Map.entry( "manualOrderValue", Content::getManualOrderValue ),
+                       Map.entry( "childOrder", Content::getChildOrder ), Map.entry( "parentPath", Content::getParentPath ),
+                       Map.entry( "name", Content::getName ) );
 
     public static String[] modifiedFields( Content existingContent, Content updatedContent )
     {
@@ -77,10 +84,11 @@ public class ContentAttributesHelper
             .build();
     }
 
-    public static Attributes layersSyncAttr()
+    public static Attributes layersSyncAttr( final String... modifiedFields )
     {
         return Attributes.create()
             .attribute( SYNC_ATTR, GenericValue.newObject()
+                .put( FIELDS_PROPERTY, GenericValue.fromRawJava( List.of( modifiedFields ) ) )
                 .put( USER_PROPERTY, getCurrentUserKey().toString() )
                 .put( OPTIME_PROPERTY, Millis.now().toString() )
                 .build() )
@@ -107,6 +115,36 @@ public class ContentAttributesHelper
     public static PrincipalKey getUser( final GenericValue attribute )
     {
         return PrincipalKey.from( attribute.property( ContentAttributesHelper.USER_PROPERTY ).asString() );
+    }
+
+    public static VersionAttributesResolver layersSyncResolver()
+    {
+        return ( originalNode, editedNode, branch ) -> {
+            final String[] fields = resolveModifiedFields( originalNode, editedNode );
+            return layersSyncAttr( fields );
+        };
+    }
+
+    public static VersionAttributesResolver versionHistoryResolver( final String key )
+    {
+        return ( originalNode, editedNode, branch ) -> {
+            final String[] fields = resolveModifiedFields( originalNode, editedNode );
+            return versionHistoryAttr( key, fields );
+        };
+    }
+
+    private static String[] resolveModifiedFields( final Node originalNode, final Node editedNode )
+    {
+        try
+        {
+            final Content existingContent = ContentNodeTranslator.fromNode( originalNode );
+            final Content updatedContent = ContentNodeTranslator.fromNode( editedNode );
+            return modifiedFields( existingContent, updatedContent );
+        }
+        catch ( Exception e )
+        {
+            return new String[0];
+        }
     }
 
     static PrincipalKey getCurrentUserKey()

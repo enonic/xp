@@ -20,7 +20,7 @@ public final class ApplyNodePermissionsParams
 
     private final ApplyPermissionsScope scope;
 
-    private final Attributes versionAttributes;
+    private final VersionAttributesResolver versionAttributesResolver;
 
     private final ApplyNodePermissionsListener listener;
 
@@ -33,7 +33,7 @@ public final class ApplyNodePermissionsParams
         permissions = builder.permissions.build();
         addPermissions = builder.addPermissions.build();
         removePermissions = builder.removePermissions.build();
-        versionAttributes = builder.versionAttributes;
+        versionAttributesResolver = builder.versionAttributesResolver;
         listener = builder.listener;
         branches = Objects.requireNonNullElse( builder.branches, Branches.empty() );
 
@@ -71,9 +71,9 @@ public final class ApplyNodePermissionsParams
         return scope;
     }
 
-    public Attributes getVersionAttributes()
+    public VersionAttributesResolver getVersionAttributesResolver()
     {
-        return versionAttributes;
+        return versionAttributesResolver;
     }
 
     public ApplyNodePermissionsListener getListener()
@@ -98,7 +98,7 @@ public final class ApplyNodePermissionsParams
 
         private ApplyPermissionsScope scope;
 
-        private Attributes versionAttributes;
+        private VersionAttributesResolver versionAttributesResolver;
 
         private ApplyNodePermissionsListener listener;
 
@@ -159,9 +159,9 @@ public final class ApplyNodePermissionsParams
             return this;
         }
 
-        public Builder versionAttributes( final Attributes versionAttributes )
+        public Builder versionAttributesResolver( final VersionAttributesResolver versionAttributesResolver )
         {
-            this.versionAttributes = versionAttributes;
+            this.versionAttributesResolver = versionAttributesResolver;
             return this;
         }
 

@@ -10,6 +10,7 @@ import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.BinaryAttachment;
@@ -88,8 +89,11 @@ public final class CreateNodeCommand
             .attachedBinaries( attachedBinaries )
             .timestamp( Millis.fromOrElseNow( this.timestamp ) );
 
+        final Node builtNode = nodeBuilder.build();
+        final Attributes resolvedAttributes =
+            resolveVersionAttributes( params.getVersionAttributesResolver(), builtNode, builtNode, ContextAccessor.current().getBranch() );
         final Node newNode =
-            this.nodeStorageService.store( StoreNodeParams.newVersion( nodeBuilder.build(), params.getVersionAttributes() ),
+            this.nodeStorageService.store( StoreNodeParams.newVersion( builtNode, resolvedAttributes ),
                                            InternalContext.from( ContextAccessor.current() ) ).node();
 
         refresh( params.getRefresh() );

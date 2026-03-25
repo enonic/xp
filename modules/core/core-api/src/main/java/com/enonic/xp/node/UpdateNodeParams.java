@@ -20,7 +20,7 @@ public final class UpdateNodeParams
 
     private final RefreshMode refresh;
 
-    private final Attributes versionAttributes;
+    private final VersionAttributesResolver versionAttributesResolver;
 
     private UpdateNodeParams( final Builder builder )
     {
@@ -28,7 +28,7 @@ public final class UpdateNodeParams
         this.path = builder.path;
         this.editor = builder.editor;
         this.binaryAttachments = builder.binaryAttachments.build();
-        this.versionAttributes = builder.versionAttributes;
+        this.versionAttributesResolver = builder.versionAttributesResolver;
         this.refresh = builder.refresh;
     }
 
@@ -37,9 +37,9 @@ public final class UpdateNodeParams
         return binaryAttachments;
     }
 
-    public Attributes getVersionAttributes()
+    public VersionAttributesResolver getVersionAttributesResolver()
     {
-        return versionAttributes;
+        return versionAttributesResolver;
     }
 
     public static Builder create()
@@ -77,7 +77,7 @@ public final class UpdateNodeParams
 
         private BinaryAttachments.Builder binaryAttachments = BinaryAttachments.create();
 
-        public Attributes versionAttributes;
+        public VersionAttributesResolver versionAttributesResolver;
 
         private RefreshMode refresh;
 
@@ -119,9 +119,9 @@ public final class UpdateNodeParams
             return this;
         }
 
-        public Builder versionAttributes( final Attributes versionAttributes )
+        public Builder versionAttributesResolver( final VersionAttributesResolver versionAttributesResolver )
         {
-            this.versionAttributes = versionAttributes;
+            this.versionAttributesResolver = versionAttributesResolver;
             return this;
         }
 

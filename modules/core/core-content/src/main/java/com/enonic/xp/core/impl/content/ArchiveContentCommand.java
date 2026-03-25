@@ -15,7 +15,6 @@ import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.core.internal.Millis;
-import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.CommitNodeParams;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.MoveNodeException;
@@ -171,10 +170,9 @@ final class ArchiveContentCommand
         }
         moveParams.processor( processors.build() );
 
-        final Attributes versionAttributes = layersSync
-            ? ContentAttributesHelper.layersSyncAttr()
-            : ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.ARCHIVE_ATTR );
-        moveParams.versionAttributes( versionAttributes ).childVersionAttributes( versionAttributes );
+        moveParams.versionAttributesResolver( layersSync
+            ? ContentAttributesHelper.layersSyncResolver()
+            : ContentAttributesHelper.versionHistoryResolver( ContentAttributesHelper.ARCHIVE_ATTR ) );
 
         return nodeService.move( moveParams.build() );
     }

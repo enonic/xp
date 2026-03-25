@@ -116,7 +116,7 @@ public final class DuplicateNodeCommand
             paramsBuilder.parent( params.getParent() );
         }
 
-        paramsBuilder.versionAttributes( params.getVersionAttributes() );
+        paramsBuilder.versionAttributesResolver( params.getVersionAttributesResolver() );
 
         if ( params.getName() != null || params.getParent() != null )
         {
@@ -193,7 +193,7 @@ public final class DuplicateNodeCommand
 
             attachBinaries( node, paramsBuilder );
 
-            paramsBuilder.versionAttributes( params.getVersionAttributes() );
+            paramsBuilder.versionAttributesResolver( params.getVersionAttributesResolver() );
 
             final CreateNodeParams originalParams = paramsBuilder.build();
 

@@ -741,7 +741,7 @@ public class NodeServiceImpl
             .refresh( params.getRefresh() )
             .importPermissions( params.isImportPermissions() )
             .importPermissionsOnCreate( params.isImportPermissionsOnCreate() )
-            .versionAttributes( params.getVersionAttributes() )
+            .versionAttributesResolver( params.getVersionAttributesResolver() )
             .binaryBlobStore( this.binaryService )
             .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.nodeStorageService )
@@ -900,7 +900,7 @@ public class NodeServiceImpl
             .path( params.getPath() )
             .editor( params.getEditor() )
             .setBinaryAttachments( params.getBinaryAttachments() )
-            .versionAttributes( params.getVersionAttributes() )
+            .versionAttributesResolver( params.getVersionAttributesResolver() )
             .refresh( params.getRefresh() )
             .build();
     }

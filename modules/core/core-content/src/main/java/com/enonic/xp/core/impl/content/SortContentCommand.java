@@ -15,6 +15,7 @@ import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.ReorderChildNodeParams;
 import com.enonic.xp.node.SortNodeParams;
 import com.enonic.xp.node.SortNodeResult;
+import com.enonic.xp.node.VersionAttributesResolver;
 
 class SortContentCommand
     extends AbstractCreatingOrUpdatingContentCommand
@@ -52,10 +53,11 @@ class SortContentCommand
                                                   .build() );
             }
 
+            final NodeId sortNodeId = NodeId.from( params.getContentId() );
+
             if ( layersSync )
             {
-                paramsBuilder.versionAttributes( ContentAttributesHelper.layersSyncAttr() )
-                    .childVersionAttributes( ContentAttributesHelper.layersSyncAttr() );
+                paramsBuilder.versionAttributesResolver( ContentAttributesHelper.layersSyncResolver() );
             }
             else
             {
@@ -63,10 +65,9 @@ class SortContentCommand
                     CompositeNodeDataProcessor.create().add( InheritedContentDataProcessor.SORT ).add(
                         PublishDataProcessor::removePublishTime ).build() );
 
-                paramsBuilder.versionAttributes(
-                        ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.SORT_ATTR, "childOrder" ) )
-                    .childVersionAttributes(
-                        ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.SORT_ATTR, "manualOrderValue" ) );
+                paramsBuilder.versionAttributesResolver( ( originalNode, editedNode, branch ) -> sortNodeId.equals( editedNode.id() )
+                    ? ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.SORT_ATTR, "childOrder" )
+                    : ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.SORT_ATTR, "manualOrderValue" ) );
             }
 
 
