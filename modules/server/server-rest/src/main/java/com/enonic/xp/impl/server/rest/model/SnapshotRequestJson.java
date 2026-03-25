@@ -7,25 +7,25 @@ import com.enonic.xp.repository.RepositoryId;
 
 public class SnapshotRequestJson
 {
+    private final String snapshotName;
+
     private final RepositoryId repositoryId;
 
-    private final boolean skipIndexedData;
-
     @JsonCreator
-    public SnapshotRequestJson( @JsonProperty("repositoryId") final String repository,
-                                @JsonProperty("skipIndexedData") final boolean skipIndexedData )
+    public SnapshotRequestJson( @JsonProperty("snapshotName") final String snapshotName,
+                                @JsonProperty("repositoryId") final String repository )
     {
+        this.snapshotName = snapshotName;
         this.repositoryId = repository == null ? null : RepositoryId.from( repository );
-        this.skipIndexedData = skipIndexedData;
+    }
+
+    public String getSnapshotName()
+    {
+        return snapshotName;
     }
 
     public RepositoryId getRepositoryId()
     {
         return repositoryId;
-    }
-
-    public boolean isSkipIndexedData()
-    {
-        return skipIndexedData;
     }
 }

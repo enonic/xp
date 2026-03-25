@@ -1,0 +1,14 @@
+description: "Snapshot task"
+form:
+  - type: "TextLine"
+    name: "snapshotName"
+    label: "Snapshot name"
+    occurrences:
+      min: 0
+      max: 1
+  - type: "TextLine"
+    name: "repositoryId"
+    label: "Repository ID"
+    occurrences:
+      min: 0
+      max: 1
