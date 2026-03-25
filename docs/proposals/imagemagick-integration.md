@@ -2,7 +2,7 @@
 
 ## Summary
 
-Replace the current pure-Java image processing pipeline (`javax.imageio` + JHLabs filters) in `core-image` with ImageMagick native libraries to improve performance and add WebP/AVIF output format support. The existing Image Service API (`ImageService.readImage(ReadImageParams)`) must remain fully backward-compatible.
+Add ImageMagick as the primary image processing engine in `core-image` for improved performance and WebP/AVIF output format support, while retaining the current pure-Java pipeline (`javax.imageio` + JHLabs filters) as an automatic fallback when ImageMagick is unavailable. Support both bundled and shared/remote ImageMagick deployments. The existing Image Service API (`ImageService.readImage(ReadImageParams)`) must remain fully backward-compatible.
 
 ## Motivation
 
@@ -85,21 +85,74 @@ Use the [`im4java`](https://github.com/Waxolunist/im4java) library as a Java bri
 
 ### High-Level Architecture
 
+#### Dual-Engine Design
+
+The implementation uses a **strategy pattern** with two interchangeable processing engines behind a common `ImageProcessor` interface. `ImageServiceImpl` selects the engine at startup based on ImageMagick availability and configuration:
+
 ```
 ImageServiceImpl.readImage(ReadImageParams)
   → NormalizedImageParams (updated to accept webp/avif output formats)
   → Cache lookup (unchanged)
   → If cache miss:
-    → ContentService.getBinary() → write to temp file or pipe
-    → Build ImageMagick command via im4java IMOperation:
-      → Auto-orient (replaces manual EXIF rotation)
-      → Crop (replaces BufferedImage.getSubimage)
-      → Scale/Resize (replaces custom ScaleCalculator + AffineTransform)
-      → Filter chain (replaces JHLabs BufferedImageOp)
-      → Format conversion + quality settings
-    → Execute magick command → output to cache file
+    → Delegate to active ImageProcessor engine:
+
+    Engine A — ImageMagick (primary, when available):
+      → ContentService.getBinary() → pipe stdin
+      → Build magick command via im4java IMOperation:
+        → Auto-orient, crop, scale, filter chain, format conversion
+      → Execute magick command → pipe stdout → cache file
+
+    Engine B — Java AWT (fallback, always available):
+      → ContentService.getBinary() → InputStream
+      → ImageIO.read() → BufferedImage
+      → AffineTransform, getSubimage, ScaleCalculator, JHLabs filters
+      → ImageHelper.writeImage() → cache file
+      (Current implementation, unchanged — WebP/AVIF not supported in this path)
+
   → Return ByteSource from cache
 ```
+
+On startup, `ImageServiceImpl` probes for ImageMagick (runs `magick -version`). If found and enabled via config, it uses Engine A. Otherwise it falls back to Engine B and logs a warning. The engine selection can also be forced via configuration (`imageMagick.mode=disabled|local|remote|auto`).
+
+**Note:** WebP and AVIF output formats are only available when the ImageMagick engine is active. The Java fallback engine continues to support PNG, JPEG, and GIF only. Requests for unsupported formats in fallback mode return an error (or could auto-downgrade to JPEG with a warning).
+
+#### Shared ImageMagick Service (Container Deployments)
+
+In containerized/clustered environments, bundling ImageMagick in every XP container increases image size and resource usage. An alternative is a **shared ImageMagick service** accessible to multiple XP instances:
+
+```
+┌─────────────┐     ┌─────────────┐
+│  XP Node 1  │────▶│             │
+└─────────────┘     │ ImageMagick │
+┌─────────────┐     │  Service    │
+│  XP Node 2  │────▶│  (sidecar/  │
+└─────────────┘     │  shared)    │
+┌─────────────┐     │             │
+│  XP Node 3  │────▶│             │
+└─────────────┘     └─────────────┘
+```
+
+**Deployment options:**
+
+1. **Sidecar container** — An ImageMagick service container runs alongside XP in the same pod (Kubernetes) or task (ECS). XP communicates via a Unix socket or localhost TCP. Low latency, simple networking.
+
+2. **Shared service** — A standalone ImageMagick microservice (e.g., [`imaginary`](https://github.com/h2non/imaginary), [`thumbor`](https://github.com/thumbor/thumbor), or a custom thin HTTP wrapper around `magick`) shared across multiple XP nodes. XP sends image data + operation spec via HTTP, receives processed image back.
+
+3. **Remote CLI via SSH/exec** — XP uses `im4java`'s remote execution support to invoke `magick` on a remote host or container. No HTTP service needed, but requires SSH or container exec access.
+
+**Configuration for shared service:**
+
+```java
+@interface ImageConfig {
+    // ... existing properties ...
+    String imageMagick_mode() default "auto";     // "auto", "local", "remote", "disabled"
+    String imageMagick_remoteUrl() default "";     // URL for shared service (e.g., "http://imagemagick-service:8080")
+}
+```
+
+When `imageMagick.mode=remote`, the `ImageProcessor` implementation sends HTTP requests to the shared service instead of invoking a local `magick` binary. When `imageMagick.mode=disabled`, the Java fallback is used unconditionally. When `auto` (default), it probes for a local `magick` binary first, then checks for a configured remote URL, then falls back to Java.
+
+This is a future enhancement — Phase 1 focuses on local ImageMagick integration with Java fallback. The shared service architecture can be added in a later phase once the local integration is stable.
 
 ### Implementation Plan
 
@@ -117,8 +170,8 @@ Add to `modules/core/core-image/build.gradle`:
 dependencies {
     implementation project(':core:core-api')
     implementation project(':core:core-internal')
-    implementation libs.im4java
-    // Remove: implementation libs.jhlabs.filters
+    implementation libs.jhlabs.filters     // Retained for Java AWT fallback engine
+    implementation libs.im4java            // New: ImageMagick bridge
 }
 ```
 
@@ -233,13 +286,21 @@ Add ImageMagick-specific configuration:
     int filters_maxTotal() default 25;
     String memoryLimit() default "10%";
     String progressive() default "jpeg";
-    String imageMagick_path() default "";         // Auto-detect if empty
-    int imageMagick_timeout() default 30;         // Seconds, per operation
-    int imageMagick_maxConcurrent() default 4;    // Max concurrent ImageMagick processes
+    String imageMagick_mode() default "auto";     // "auto", "local", "remote", "disabled"
+    String imageMagick_path() default "";          // Auto-detect if empty
+    int imageMagick_timeout() default 30;          // Seconds, per operation
+    int imageMagick_maxConcurrent() default 4;     // Max concurrent ImageMagick processes
+    String imageMagick_remoteUrl() default "";     // URL for shared service (mode=remote)
 }
 ```
 
 Note: The underscore naming convention (e.g., `imageMagick_path`) follows the existing OSGi config annotation pattern used throughout the project. Underscores map to dots in `.cfg` files (e.g., `imageMagick.path=`).
+
+**Mode behavior:**
+- `auto` (default): Probe for local `magick` binary → check `imageMagick.remoteUrl` → fall back to Java AWT
+- `local`: Use local `magick` binary only, fail startup if not found
+- `remote`: Use shared ImageMagick service at `imageMagick.remoteUrl`, fail startup if unreachable
+- `disabled`: Use Java AWT engine unconditionally (no ImageMagick)
 
 **2.2 Bundle ImageMagick binaries per platform**
 
@@ -281,50 +342,74 @@ public void activate(ImageConfig config) {
 }
 ```
 
-#### Phase 3: Backward Compatibility & Cleanup
+#### Phase 3: Dual-Engine Integration & Fallback
 
-**3.1 Remove JHLabs dependency**
+**3.1 Introduce `ImageProcessor` strategy interface**
 
-Remove from `build.gradle`:
-```gradle
-// Remove: implementation libs.jhlabs.filters
-```
-
-Remove from `jar.bundle.bnd`:
-```gradle
-// Remove: 'Private-Package': 'com.jhlabs.*'
-```
-
-Delete custom filter classes that directly extend AWT classes:
-- `ColorizeFilter.java`
-- `HSBColorizeFilter.java`
-- `SepiaFilter.java`
-
-**3.2 Simplify memory management**
-
-The `MemoryCircuitBreaker` semaphore approach can be simplified since ImageMagick processes use OS-level memory, not JVM heap. Replace with a simple concurrency limiter (max concurrent ImageMagick processes) to prevent system overload:
+Extract a common internal interface for image processing engines:
 
 ```java
-// Instead of megabyte-based semaphore, use process count semaphore
-private final Semaphore processSemaphore = new Semaphore(config.imageMagick_maxConcurrent());
+// Internal interface — not part of public API
+interface ImageProcessor {
+    void processImage(ByteSource blob, NormalizedImageParams params, ByteSink sink) throws IOException;
+    boolean supportsFormat(String format);
+}
 ```
 
-ImageMagick itself has built-in resource limits (`-limit memory`, `-limit map`, `-limit disk`) that can be set via the command line.
+Create two implementations:
+- `JavaAwtImageProcessor` — wraps the existing `ImageServiceImpl.createImage()` logic (unchanged)
+- `ImageMagickImageProcessor` — delegates to im4java/magick subprocess
 
-**3.3 Update `ImageHelper.java` in core-api**
+**3.2 Keep JHLabs dependency for fallback engine**
 
-The `ImageHelper` utility class in `core-api` has public static methods (`writeImage`, `removeAlphaChannel`, `getScaledInstance`, `scaleSquare`) that may be used by external code. These should be preserved but deprecated:
+The JHLabs filters library and all existing Java AWT filter/scale classes are **retained** as-is for the fallback engine. No existing code is removed:
+
+```gradle
+dependencies {
+    implementation project(':core:core-api')
+    implementation project(':core:core-internal')
+    implementation libs.jhlabs.filters     // Retained for Java fallback engine
+    implementation libs.im4java            // New: ImageMagick bridge
+}
+```
+
+**3.3 Engine selection in `ImageServiceImpl`**
 
 ```java
-@Deprecated(since = "8.x", forRemoval = true)
-public static void writeImage(OutputStream out, BufferedImage image, String format, int quality) { ... }
+@Activate
+public ImageServiceImpl(..., final ImageConfig config) {
+    // ... existing initialization ...
+    
+    final String mode = config.imageMagick_mode(); // "auto", "local", "remote", "disabled"
+    
+    if ("disabled".equals(mode)) {
+        this.imageProcessor = new JavaAwtImageProcessor(/* existing deps */);
+        LOG.info("Image processing: Java AWT engine (ImageMagick disabled by configuration)");
+    } else {
+        ImageProcessor magickProcessor = tryInitImageMagick(config, mode);
+        if (magickProcessor != null) {
+            this.imageProcessor = magickProcessor;
+            LOG.info("Image processing: ImageMagick engine active");
+        } else {
+            this.imageProcessor = new JavaAwtImageProcessor(/* existing deps */);
+            LOG.warn("Image processing: ImageMagick not available, falling back to Java AWT engine. "
+                   + "WebP/AVIF output formats will not be available.");
+        }
+    }
+}
 ```
 
-**3.4 Preserve the public API contract**
+**3.4 Memory management per engine**
 
-The `ImageService` interface and `ReadImageParams` class in `core-api` remain unchanged. The only public API addition is accepting `image/webp` and `image/avif` MIME types in `ReadImageParams.mimeType`.
+Each engine uses its own resource limiting strategy:
+- **Java AWT engine**: Retains the existing `MemoryCircuitBreaker` (MB-based semaphore on JVM heap)
+- **ImageMagick engine**: Uses process count semaphore (`imageMagick.maxConcurrent`) + ImageMagick's built-in `-limit` flags
 
-**3.5 Visual regression testing**
+**3.5 Preserve the public API contract**
+
+The `ImageService` interface and `ReadImageParams` class in `core-api` remain unchanged. The only public API addition is accepting `image/webp` and `image/avif` MIME types in `ReadImageParams.mimeType` (when ImageMagick engine is active).
+
+**3.6 Visual regression testing**
 
 Create regression tests that:
 1. Process a set of reference images through all 21 filters + 6 scale modes
@@ -332,25 +417,17 @@ Create regression tests that:
 3. Allow a configurable pixel-difference tolerance (ImageMagick may produce slightly different results)
 4. Verify EXIF orientation handling for all 8 orientations
 5. Test WebP and AVIF output format support
+6. Verify Java fallback engine still works correctly when ImageMagick is absent
 
 ### Files to Modify
 
 | File | Change |
 |------|--------|
-| `gradle/libs.versions.toml` | Add `im4java` dependency, remove `jhlabs-filters` |
-| `modules/core/core-image/build.gradle` | Update dependencies |
-| `modules/core/core-image/.../ImageServiceImpl.java` | Replace AWT pipeline with im4java commands |
-| `modules/core/core-image/.../NormalizedImageParams.java` | Add webp/avif format support |
-| `modules/core/core-image/.../ImageConfig.java` | Add ImageMagick config properties |
-| `modules/core/core-image/.../MemoryCircuitBreaker.java` | Simplify to concurrency limiter |
-| `modules/core/core-image/.../effect/ImageFilters.java` | Rewrite as ImageMagick command builders |
-| `modules/core/core-image/.../effect/ImageScales.java` | Rewrite as ImageMagick resize commands |
-| `modules/core/core-image/.../effect/ScaledFunction.java` | Remove (logic moves to command builder) |
-| `modules/core/core-image/.../effect/ScaleCalculator.java` | Simplify or remove |
-| `modules/core/core-image/.../effect/ColorizeFilter.java` | Remove |
-| `modules/core/core-image/.../effect/HSBColorizeFilter.java` | Remove |
-| `modules/core/core-image/.../effect/SepiaFilter.java` | Remove |
-| `modules/core/core-api/.../image/ImageHelper.java` | Deprecate AWT-based methods |
+| `gradle/libs.versions.toml` | Add `im4java` dependency (keep `jhlabs-filters` for fallback engine) |
+| `modules/core/core-image/build.gradle` | Add `im4java` dependency alongside existing deps |
+| `modules/core/core-image/.../ImageServiceImpl.java` | Add engine selection logic, delegate to `ImageProcessor` |
+| `modules/core/core-image/.../NormalizedImageParams.java` | Add webp/avif format support (when IM engine active) |
+| `modules/core/core-image/.../ImageConfig.java` | Add ImageMagick config properties (mode, path, timeout, maxConcurrent) |
 | `modules/runtime/build.gradle` | Add ImageMagick binary packaging |
 | `modules/runtime/src/home/config/com.enonic.xp.image.cfg` | Add ImageMagick config defaults |
 
@@ -358,10 +435,27 @@ Create regression tests that:
 
 | File | Purpose |
 |------|---------|
+| `modules/core/core-image/.../ImageProcessor.java` | Internal strategy interface for processing engines |
+| `modules/core/core-image/.../JavaAwtImageProcessor.java` | Wraps existing Java AWT pipeline (extracted from ImageServiceImpl) |
+| `modules/core/core-image/.../ImageMagickImageProcessor.java` | ImageMagick engine implementation |
 | `modules/core/core-image/.../ImageMagickCommandBuilder.java` | Translates params to IM commands |
-| `modules/core/core-image/.../ImageMagickProcessRunner.java` | Executes IM with timeout/error handling |
 | `modules/core/core-image/src/test/.../ImageMagickCommandBuilderTest.java` | Unit tests for command generation |
 | `modules/core/core-image/src/test/.../VisualRegressionTest.java` | Pixel-comparison regression tests |
+| `modules/core/core-image/src/test/.../JavaAwtImageProcessorTest.java` | Tests for fallback engine isolation |
+
+### Files Unchanged (retained for fallback engine)
+
+| File | Reason |
+|------|--------|
+| `modules/core/core-image/.../effect/ImageFilters.java` | Used by Java AWT fallback engine |
+| `modules/core/core-image/.../effect/ImageScales.java` | Used by Java AWT fallback engine |
+| `modules/core/core-image/.../effect/ScaledFunction.java` | Used by Java AWT fallback engine |
+| `modules/core/core-image/.../effect/ScaleCalculator.java` | Used by Java AWT fallback engine |
+| `modules/core/core-image/.../effect/ColorizeFilter.java` | Used by Java AWT fallback engine |
+| `modules/core/core-image/.../effect/HSBColorizeFilter.java` | Used by Java AWT fallback engine |
+| `modules/core/core-image/.../effect/SepiaFilter.java` | Used by Java AWT fallback engine |
+| `modules/core/core-image/.../MemoryCircuitBreaker.java` | Used by Java AWT fallback engine |
+| `modules/core/core-api/.../image/ImageHelper.java` | Public API, used by Java AWT fallback engine |
 
 ## Risks & Considerations
 
@@ -385,27 +479,31 @@ ImageMagick has had CVEs related to processing malicious images. Mitigations:
 The `rounded` filter (rounded corners with optional border) creates a composited image with a mask. This requires a multi-step ImageMagick command using `-compose`, mask generation, and alpha compositing. It's the most complex filter to port.
 
 ### 5. Fallback strategy
-Consider keeping the Java implementation as a fallback if ImageMagick is not available (e.g., in development environments without ImageMagick installed), controlled by configuration.
+The Java AWT implementation is retained as a full fallback engine (not removed). This ensures:
+- **Development environments** work without installing ImageMagick
+- **Gradual rollout** — teams can test ImageMagick in staging while production uses the Java engine
+- **Fault tolerance** — if the ImageMagick binary is corrupted or missing after an update, XP continues to serve images
+- **WebP/AVIF limitation** — the Java fallback does not support WebP/AVIF output. Requests for these formats when the fallback is active should either return an error or auto-downgrade to JPEG (configurable behavior)
 
 ### 6. Docker/container deployments
-Container images need to include ImageMagick. Either:
-- Bundle it in the XP base Docker image
-- Provide installation instructions
-- Use the static binary approach
+Container images need to include ImageMagick. Options:
+- **Bundle in XP Docker image** — simplest approach, adds ~30-50MB to image size
+- **Shared ImageMagick service** (recommended for large deployments) — run a single ImageMagick service container (sidecar or standalone) shared across multiple XP nodes. This avoids duplicating the ImageMagick binary in every XP container, reduces total resource usage, and allows independent scaling of image processing capacity. See "Shared ImageMagick Service" section above for architecture details.
+- **System-installed ImageMagick** — for bare-metal or VM deployments, use the OS package manager (`apt install imagemagick`, `brew install imagemagick`, etc.) and point XP to the system binary via `imageMagick.path` config
 
 ## Acceptance Criteria
 
 - [ ] All 6 scale modes produce equivalent output to the current Java implementation
 - [ ] All 21 filters produce visually equivalent output (within tolerance)
 - [ ] All 8 EXIF orientations are handled correctly
-- [ ] WebP output format is supported with configurable quality
-- [ ] AVIF output format is supported with configurable quality
+- [ ] WebP output format is supported with configurable quality (ImageMagick engine)
+- [ ] AVIF output format is supported with configurable quality (ImageMagick engine)
 - [ ] PNG, JPEG, GIF output continues to work identically
 - [ ] Focal point-aware scaling works correctly for block, square, and wide modes
 - [ ] Cropping with zoom works correctly
 - [ ] Progressive JPEG output is supported
 - [ ] Image cache (SHA256-based) continues to work
-- [ ] Memory/concurrency protection is in place
+- [ ] Memory/concurrency protection is in place (per-engine)
 - [ ] `ImageService` interface is unchanged
 - [ ] `ReadImageParams` API is unchanged (only new `mimeType` values accepted)
 - [ ] Configuration is backward-compatible (existing `com.enonic.xp.image.cfg` works without changes)
@@ -415,3 +513,8 @@ Container images need to include ImageMagick. Either:
 - [ ] All existing image service tests pass
 - [ ] Visual regression tests verify output quality
 - [ ] Performance benchmarks show improvement over Java AWT
+- [ ] **Java AWT fallback engine works when ImageMagick is not available**
+- [ ] **Automatic fallback on startup when ImageMagick binary is missing or misconfigured**
+- [ ] **`imageMagick.mode=disabled` forces Java fallback unconditionally**
+- [ ] **WebP/AVIF requests in fallback mode return clear error or auto-downgrade to JPEG**
+- [ ] **Shared ImageMagick service architecture is documented and configurable via `imageMagick.mode=remote`**
