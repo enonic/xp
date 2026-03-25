@@ -68,49 +68,49 @@ class NodeEventsTest
     @Test
     void testDeleted()
     {
-        final Node deleted = createNode( "deleted", new NodePath( "/mynode1/child1" ), "myId" );
+        final Node deleted = createNode( "deleted", new NodePath( "/mynode1/child1" ), "myid" );
 
         Event event = NodeEvents.created( deleted, InternalContext.from( createContext( "draft" ) ) );
 
         assertNotNull( event );
         assertTrue( event.isDistributed() );
-        assertEquals( "[{id=myId, path=/mynode1/child1/deleted, branch=draft, repo=com.enonic.cms.myproject}]",
+        assertEquals( "[{id=myid, path=/mynode1/child1/deleted, branch=draft, repo=com.enonic.cms.myproject}]",
                       event.getValue( EventConstants.NODES_FIELD ).get().toString() );
     }
 
     @Test
     void testDuplicated()
     {
-        final Node duplicated = createNode( "duplicated", new NodePath( "/mynode1/child1" ), "myId" );
+        final Node duplicated = createNode( "duplicated", new NodePath( "/mynode1/child1" ), "myid" );
 
         Event event = NodeEvents.duplicated( duplicated, InternalContext.from( createContext( "draft" ) ) );
 
         assertNotNull( event );
         assertTrue( event.isDistributed() );
         assertEquals( NodeEvents.NODE_DUPLICATED_EVENT, event.getType() );
-        assertEquals( "[{id=myId, path=/mynode1/child1/duplicated, branch=draft, repo=com.enonic.cms.myproject}]",
+        assertEquals( "[{id=myid, path=/mynode1/child1/duplicated, branch=draft, repo=com.enonic.cms.myproject}]",
                       event.getValue( EventConstants.NODES_FIELD ).get().toString() );
     }
 
     @Test
     void testUpdated()
     {
-        final Node updated = createNode( "updated", new NodePath( "/mynode1/child1" ), "myId" );
+        final Node updated = createNode( "updated", new NodePath( "/mynode1/child1" ), "myid" );
 
         Event event = NodeEvents.updated( updated, InternalContext.from( createContext( "draft" ) ) );
 
         assertNotNull( event );
         assertTrue( event.isDistributed() );
         assertEquals( NodeEvents.NODE_UPDATED_EVENT, event.getType() );
-        assertEquals( "[{id=myId, path=/mynode1/child1/updated, branch=draft, repo=com.enonic.cms.myproject}]",
+        assertEquals( "[{id=myid, path=/mynode1/child1/updated, branch=draft, repo=com.enonic.cms.myproject}]",
                       event.getValue( EventConstants.NODES_FIELD ).get().toString() );
     }
 
     @Test
     void testMoved()
     {
-        final Node sourceNode = createNode( "before", new NodePath( "/mynode1/child1" ), "myId" );
-        final Node targetNode = createNode( "after", new NodePath( "/mynode1" ), "myId" );
+        final Node sourceNode = createNode( "before", new NodePath( "/mynode1/child1" ), "myid" );
+        final Node targetNode = createNode( "after", new NodePath( "/mynode1" ), "myid" );
 
         Event event =
             NodeEvents.moved( List.of( MoveNodeResult.MovedNode.create().node( targetNode ).previousPath( sourceNode.path() ).build() ),
@@ -119,21 +119,21 @@ class NodeEventsTest
         assertNotNull( event );
         assertTrue( event.isDistributed() );
         assertEquals( NodeEvents.NODE_MOVED_EVENT, event.getType() );
-        assertEquals( "[{id=myId, path=/mynode1/child1/before, branch=draft, repo=com.enonic.cms.myproject, newPath=/mynode1/after}]",
+        assertEquals( "[{id=myid, path=/mynode1/child1/before, branch=draft, repo=com.enonic.cms.myproject, newPath=/mynode1/after}]",
                       event.getValue( EventConstants.NODES_FIELD ).get().toString() );
     }
 
     @Test
     void testSorted()
     {
-        final Node sorted = createNode( "sorted", new NodePath( "/mynode1/child1" ), "myId" );
+        final Node sorted = createNode( "sorted", new NodePath( "/mynode1/child1" ), "myid" );
 
         Event event = NodeEvents.sorted( sorted, InternalContext.from( createContext( "draft" ) ) );
 
         assertNotNull( event );
         assertTrue( event.isDistributed() );
         assertEquals( NodeEvents.NODE_SORTED_EVENT, event.getType() );
-        assertEquals( "[{id=myId, path=/mynode1/child1/sorted, branch=draft, repo=com.enonic.cms.myproject}]",
+        assertEquals( "[{id=myid, path=/mynode1/child1/sorted, branch=draft, repo=com.enonic.cms.myproject}]",
                       event.getValue( EventConstants.NODES_FIELD ).get().toString() );
     }
 

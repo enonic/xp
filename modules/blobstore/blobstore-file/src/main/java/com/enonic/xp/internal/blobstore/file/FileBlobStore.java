@@ -63,7 +63,7 @@ public final class FileBlobStore
     {
         try
         {
-            return addRecord( segment, BlobKey.from( in ), in );
+            return addRecord( segment, BlobKey.sha256( in ), in );
         }
         catch ( final IOException e )
         {
@@ -106,12 +106,29 @@ public final class FileBlobStore
         final Path segmentPath = resolveSegmentPath( segment );
         try
         {
-            return Files.find( segmentPath, 4, ( path, attr ) -> attr.isRegularFile() && path.getFileName().toString().length() >= 6 )
-                .map( path -> new FileBlobRecord( BlobKey.from( path.getFileName().toString() ), path ) );
+            return Files.find( segmentPath, 5, ( path, attr ) -> attr.isRegularFile() && path.getFileName().toString().length() >= 6 )
+                .map( path -> {
+                    final BlobKey key = toBlobKey( segmentPath, path );
+                    return new FileBlobRecord( key, path );
+                } );
         }
         catch ( IOException e )
         {
             throw new BlobStoreException( "Failed to list files", e );
+        }
+    }
+
+    private static BlobKey toBlobKey( final Path segmentPath, final Path filePath )
+    {
+        final Path relativePath = segmentPath.relativize( filePath );
+        if ( relativePath.getName( 0 ).toString().equals( "sha256" ) )
+        {
+            return BlobKey.from(
+                "sha256:" + relativePath.getName( 1 ) + relativePath.getName( 2 ) + relativePath.getName( 3 ) + filePath.getFileName() );
+        }
+        else
+        {
+            return BlobKey.from( filePath.getFileName().toString() );
         }
     }
 
@@ -188,10 +205,21 @@ public final class FileBlobStore
     private Path resolveBlobPath( final Segment segment, final BlobKey key )
     {
         final String id = key.toString();
-        return resolveSegmentPath( segment ).resolve( id.substring( 0, 2 ) )
-            .resolve( id.substring( 2, 4 ) )
-            .resolve( id.substring( 4, 6 ) )
-            .resolve( id );
+        if ( id.startsWith( "sha256:" ) )
+        {
+            return resolveSegmentPath( segment ).resolve( "sha256" )
+                .resolve( id.substring( 7, 9 ) )
+                .resolve( id.substring( 9, 11 ) )
+                .resolve( id.substring( 11, 13 ) )
+                .resolve( id.substring( 13 ) );
+        }
+        else
+        {
+            return resolveSegmentPath( segment ).resolve( id.substring( 0, 2 ) )
+                .resolve( id.substring( 2, 4 ) )
+                .resolve( id.substring( 4, 6 ) )
+                .resolve( id );
+        }
     }
 
     private Path resolveSegmentPath( final Segment segment )

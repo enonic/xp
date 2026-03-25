@@ -25,17 +25,15 @@ class IssueServiceImplTest_comment
     {
         Issue issue = this.createIssue( CreateIssueParams.create().title( "issue-1" ) );
 
-        final Instant created = Instant.now().minus( 1, ChronoUnit.MINUTES );
         final PrincipalKey creator = PrincipalKey.from( "user:store:me" );
         final String creatorDisplayName = "Me Myself";
 
-        final CreateIssueCommentParams params = CreateIssueCommentParams.create().
-            text( "text" ).
-            issue( issue.getId() ).
-            creator( creator ).
-            creatorDisplayName( creatorDisplayName ).
-            created( created ).
-            build();
+        final CreateIssueCommentParams params = CreateIssueCommentParams.create()
+            .text( "text" )
+            .issue( issue.getId() )
+            .creator( creator )
+            .creatorDisplayName( creatorDisplayName )
+            .build();
 
         final IssueComment comment = this.issueService.createComment( params );
 
@@ -43,7 +41,7 @@ class IssueServiceImplTest_comment
         assertEquals( "text", comment.getText() );
         assertEquals( creator, comment.getCreator() );
         assertEquals( creatorDisplayName, comment.getCreatorDisplayName() );
-        assertEquals( created.truncatedTo( ChronoUnit.MILLIS ), comment.getCreated() );
+        assertNotNull( comment.getCreated() );
     }
 
     @Test
@@ -53,14 +51,13 @@ class IssueServiceImplTest_comment
         final PrincipalKey creator = PrincipalKey.from( "user:store:me" );
         final String creatorDisplayName = "Me Myself";
 
-        final CreateIssueCommentParams params = CreateIssueCommentParams.create().
-            text( "text" ).
-            issue( IssueId.create() ).
-            creator( creator ).
-            creatorDisplayName( creatorDisplayName ).
-            created( created ).
-            build();
+        final CreateIssueCommentParams params = CreateIssueCommentParams.create()
+            .text( "text" )
+            .issue( IssueId.create() )
+            .creator( creator )
+            .creatorDisplayName( creatorDisplayName )
+            .build();
 
-        assertThrows(NodeNotFoundException.class, () -> this.issueService.createComment( params ));
+        assertThrows( NodeNotFoundException.class, () -> this.issueService.createComment( params ) );
     }
 }

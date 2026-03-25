@@ -2,6 +2,8 @@ package com.enonic.xp.issue;
 
 import java.time.Instant;
 
+import com.enonic.xp.core.internal.Millis;
+
 public final class PublishRequestIssueSchedule
 {
     private final Instant from;
@@ -10,8 +12,8 @@ public final class PublishRequestIssueSchedule
 
     private PublishRequestIssueSchedule( Builder builder )
     {
-        from = builder.from;
-        to = builder.to;
+        from = Millis.from( builder.from );
+        to = Millis.from( builder.to );
     }
 
     public Instant getFrom()

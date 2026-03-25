@@ -11,9 +11,13 @@ import com.enonic.xp.query.highlight.constants.Order;
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticHighlightQuery;
 import com.enonic.xp.repo.impl.index.IndexFieldNameNormalizer;
 import com.enonic.xp.repo.impl.index.IndexValueType;
+import com.enonic.xp.repo.impl.index.StaticIndexValueType;
 
 public class ElasticHighlightQueryBuilderFactory
 {
+    public static final List<String> POSTFIXES =
+        List.of( IndexValueType.INDEX_VALUE_TYPE_SEPARATOR + StaticIndexValueType.NGRAM.getPostfix(),
+                 IndexValueType.INDEX_VALUE_TYPE_SEPARATOR + StaticIndexValueType.ANALYZED.getPostfix() );
 
     public ElasticHighlightQuery create( final HighlightQuery highlightQuery )
     {
@@ -22,18 +26,19 @@ public class ElasticHighlightQueryBuilderFactory
             return ElasticHighlightQuery.empty();
         }
 
-        ElasticHighlightQuery.Builder result = ElasticHighlightQuery.create().
-            settings( highlightQuery.getSettings() );
+        ElasticHighlightQuery.Builder result = ElasticHighlightQuery.create().settings( highlightQuery.getSettings() );
 
         for ( HighlightQueryProperty highlightQueryProperty : highlightQuery.getProperties() )
         {
             final String normalizedFieldName = IndexFieldNameNormalizer.normalize( highlightQueryProperty.getName() );
-            final String normalizedFieldNameWithPostFix = normalizedFieldName + IndexValueType.INDEX_VALUE_TYPE_SEPARATOR + "_*";
-            final HighlightBuilder.Field rawHighlightField = createField( normalizedFieldName, highlightQueryProperty );
-            final HighlightBuilder.Field analyzedHighlightField = createField( normalizedFieldNameWithPostFix, highlightQueryProperty );
 
-            result.addField( rawHighlightField );
-            result.addField( analyzedHighlightField );
+            result.addField( createField( normalizedFieldName, highlightQueryProperty ) );
+            result.addField(
+                createField( normalizedFieldName + IndexValueType.INDEX_VALUE_TYPE_SEPARATOR + StaticIndexValueType.ANALYZED.getPostfix(),
+                             highlightQueryProperty ) );
+            result.addField(
+                createField( normalizedFieldName + IndexValueType.INDEX_VALUE_TYPE_SEPARATOR + StaticIndexValueType.NGRAM.getPostfix(),
+                             highlightQueryProperty ) );
         }
 
         return result.build();
@@ -52,28 +57,36 @@ public class ElasticHighlightQueryBuilderFactory
         final List<String> postTags = property.getPostTags();
         final Boolean requireFieldMatch = property.getRequireFieldMatch();
 
-        if (fragmenter != null) {
+        if ( fragmenter != null )
+        {
             builder.fragmenter( fragmenter.value() );
         }
-        if (fragmentSize != null) {
+        if ( fragmentSize != null )
+        {
             builder.fragmentSize( fragmentSize );
         }
-        if (noMatchSize != null) {
+        if ( noMatchSize != null )
+        {
             builder.noMatchSize( noMatchSize );
         }
-        if (numOfFragments != null) {
+        if ( numOfFragments != null )
+        {
             builder.numOfFragments( numOfFragments );
         }
-        if (order != null) {
+        if ( order != null )
+        {
             builder.order( order.value() );
         }
-        if (preTags != null && !preTags.isEmpty()) {
+        if ( preTags != null && !preTags.isEmpty() )
+        {
             builder.preTags( preTags.toArray( new String[0] ) );
         }
-        if (postTags != null && !postTags.isEmpty()) {
+        if ( postTags != null && !postTags.isEmpty() )
+        {
             builder.postTags( postTags.toArray( new String[0] ) );
         }
-        if (requireFieldMatch != null) {
+        if ( requireFieldMatch != null )
+        {
             builder.requireFieldMatch( requireFieldMatch );
         }
 

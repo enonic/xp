@@ -20,11 +20,11 @@ import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersion;
-import com.enonic.xp.node.NodeVersions;
+import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
+import com.enonic.xp.node.NodeVersions;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.filter.RangeFilter;
@@ -32,15 +32,15 @@ import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeBranchEntry;
 import com.enonic.xp.repo.impl.branch.BranchService;
 import com.enonic.xp.repo.impl.node.NodeConstants;
+import com.enonic.xp.repo.impl.repository.RepositoryEntry;
+import com.enonic.xp.repo.impl.repository.RepositoryEntryService;
 import com.enonic.xp.repo.impl.vacuum.VacuumTaskParams;
 import com.enonic.xp.repo.impl.vacuum.blob.IsBlobUsedByVersionCommand;
 import com.enonic.xp.repo.impl.version.VersionIndexPath;
 import com.enonic.xp.repo.impl.version.VersionService;
-import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositorySegmentUtils;
-import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.vacuum.VacuumConstants;
 import com.enonic.xp.vacuum.VacuumListener;
 import com.enonic.xp.vacuum.VacuumTaskResult;
@@ -53,7 +53,7 @@ public class VersionTableVacuumCommand
 
     private final BranchService branchService;
 
-    private final RepositoryService repositoryService;
+    private final RepositoryEntryService repositoryEntryService;
 
     private final VersionService versionService;
 
@@ -72,7 +72,7 @@ public class VersionTableVacuumCommand
     private VersionTableVacuumCommand( final Builder builder )
     {
         nodeService = builder.nodeService;
-        repositoryService = builder.repositoryService;
+        repositoryEntryService = builder.repositoryEntryService;
         versionService = builder.versionService;
         blobStore = builder.blobStore;
         branchService = builder.branchService;
@@ -93,11 +93,14 @@ public class VersionTableVacuumCommand
     {
         this.result = VacuumTaskResult.create();
 
-        this.repositoryService.list().forEach( this::processRepository );
+        this.repositoryEntryService.findRepositoryEntryIds()
+            .stream()
+            .map( this.repositoryEntryService::getRepositoryEntry )
+            .forEach( this::processRepository );
         return result;
     }
 
-    private void processRepository( final Repository repository )
+    private void processRepository( final RepositoryEntry repository )
     {
         ContextBuilder.from( ContextAccessor.current() )
             .repositoryId( repository.getId() )
@@ -106,7 +109,7 @@ public class VersionTableVacuumCommand
             .runWith( () -> doProcessRepository( repository ) );
     }
 
-    private void doProcessRepository( final Repository repository )
+    private void doProcessRepository( final RepositoryEntry repository )
     {
         int counter = 0;
 
@@ -142,8 +145,8 @@ public class VersionTableVacuumCommand
                 final boolean toDelete = canDeleteVersion( repository, version );
                 if ( toDelete )
                 {
-                    LOG.debug( "Delete version timestamp = '{}', nodeId = '{}', versionId = '{}'", version.getTimestamp(), version.getNodeId(),
-                               version.getNodeVersionId() );
+                    LOG.debug( "Delete version timestamp = '{}', nodeId = '{}', versionId = '{}'", version.getTimestamp(),
+                               version.getNodeId(), version.getNodeVersionId() );
                     result.deleted();
                     versionService.delete( version.getNodeVersionId(), context );
                     if ( repository.isTransient() )
@@ -188,13 +191,13 @@ public class VersionTableVacuumCommand
         blobStore.removeRecord( segment, blobKey );
     }
 
-    private boolean canDeleteVersion( final Repository repository, final NodeVersion version )
+    private boolean canDeleteVersion( final RepositoryEntry repository, final NodeVersion version )
     {
         final NodeId nodeId = version.getNodeId();
         final NodeVersionId versionId = version.getNodeVersionId();
 
         boolean nodeFound = false;
-        for ( final Branch branch : repository.getBranches() )
+        for ( final Branch branch : this.branchService.getBranches( nodeId, repository.getId() ) )
         {
             final InternalContext context =
                 InternalContext.create( ContextAccessor.current() ).branch( branch ).repositoryId( repository.getId() ).build();
@@ -259,7 +262,7 @@ public class VersionTableVacuumCommand
 
         private NodeService nodeService;
 
-        private RepositoryService repositoryService;
+        private RepositoryEntryService repositoryEntryService;
 
         private VersionService versionService;
 
@@ -279,9 +282,9 @@ public class VersionTableVacuumCommand
             return this;
         }
 
-        public Builder repositoryService( final RepositoryService repositoryService )
+        public Builder repositoryEntryService( final RepositoryEntryService repositoryEntryService )
         {
-            this.repositoryService = repositoryService;
+            this.repositoryEntryService = repositoryEntryService;
             return this;
         }
 

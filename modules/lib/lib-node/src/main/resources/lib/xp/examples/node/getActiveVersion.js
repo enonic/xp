@@ -6,12 +6,12 @@ var repo = nodeLib.connect({
     branch: 'master'
 });
 var result = repo.getActiveVersion({
-    key: 'nodeId'
+    key: 'nodeid'
 });
 
 var expected = {
-    'versionId': 'nodeVersionId1',
-    'nodeId': 'nodeId1',
+    'versionId': 'nodeversionid1',
+    'nodeId': 'nodeid1',
     'nodePath': '/',
     'timestamp': '1970-01-01T00:16:40Z'
 };

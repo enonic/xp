@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.dump.BranchDumpResult;
@@ -17,6 +18,7 @@ import com.enonic.xp.repository.RepositoryId;
 
 import static java.util.Optional.ofNullable;
 
+@JsonPropertyOrder(value = {"versions", "branchResults", "versionsErrors"})
 public class RepoDumpResultJson
 {
     @JsonProperty

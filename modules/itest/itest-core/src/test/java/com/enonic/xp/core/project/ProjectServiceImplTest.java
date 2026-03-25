@@ -35,6 +35,7 @@ import com.enonic.xp.core.impl.security.SecurityServiceImpl;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.project.CreateProjectParams;
 import com.enonic.xp.project.ModifyProjectIconParams;
@@ -199,7 +200,8 @@ class ProjectServiceImplTest
                 .initialize();
 
             projectService =
-                new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService, eventPublisher, projectConfig );
+                new ProjectServiceImpl( repositoryService, repositoryService, indexService, nodeService, securityService, eventPublisher,
+                                        projectConfig );
 
             projectService.initialize();
         } );
@@ -229,7 +231,7 @@ class ProjectServiceImplTest
         assertEquals( "test-project", project.getName().toString() );
 
         final NodeBranchEntry nodeBranchEntry =
-            this.branchService.get( Node.ROOT_UUID, InternalContext.create( adminContext() ).repositoryId( projectRepoId ).build() );
+            this.branchService.get( NodeId.ROOT, InternalContext.create( adminContext() ).repositoryId( projectRepoId ).build() );
         assertNotNull( nodeBranchEntry );
 
         adminContext().runWith( () -> {
@@ -275,7 +277,7 @@ class ProjectServiceImplTest
         assertEquals( "test-project", project.getName().toString() );
 
         final NodeBranchEntry nodeBranchEntry =
-            this.branchService.get( Node.ROOT_UUID, InternalContext.create( adminContext() ).repositoryId( projectRepoId ).build() );
+            this.branchService.get( NodeId.ROOT, InternalContext.create( adminContext() ).repositoryId( projectRepoId ).build() );
         assertNotNull( nodeBranchEntry );
 
         adminContext().runWith( () -> {

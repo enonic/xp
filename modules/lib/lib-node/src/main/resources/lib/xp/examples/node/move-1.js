@@ -9,7 +9,7 @@ var repo = nodeLib.connect({
 // BEGIN
 // Rename content by id. Keeps same parent.
 var content1 = repo.move({
-    source: 'nodeId',
+    source: 'nodeid',
     target: 'new-name'
 });
 

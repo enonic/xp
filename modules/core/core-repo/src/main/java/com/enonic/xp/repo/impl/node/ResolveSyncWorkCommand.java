@@ -196,7 +196,7 @@ public class ResolveSyncWorkCommand
         final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
         for ( final NodePath parent : parentPaths )
         {
-            final NodeBranchEntry parentNodeBranchEntry = this.nodeStorageService.getBranchNodeVersion( parent, internalContext );
+            final NodeBranchEntry parentNodeBranchEntry = this.nodeStorageService.getNodeBranchEntry( parent, internalContext );
 
             if ( parentNodeBranchEntry == null )
             {

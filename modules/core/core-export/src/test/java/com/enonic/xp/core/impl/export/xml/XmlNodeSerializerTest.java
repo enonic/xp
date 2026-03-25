@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Locale;
 
 import org.junit.jupiter.api.Test;
 
@@ -111,13 +112,13 @@ class XmlNodeSerializerTest
             decideByType( false ).
             includeInAllText( true ).
             addIndexValueProcessor( IndexValueProcessors.HTML_STRIPPER ).
-            addLanguage( "en" ).
+            addLanguage( Locale.ENGLISH ).
             build();
         final PatternIndexConfigDocument.Builder indexConfigDocumentBuilder = PatternIndexConfigDocument.create();
         indexConfigDocumentBuilder.analyzer( "no" );
         indexConfigDocumentBuilder.add( "mydata", indexConfig );
 
-        indexConfigDocumentBuilder.allTextConfig( AllTextIndexConfig.create().addLanguage( "en" ).build() );
+        indexConfigDocumentBuilder.allTextConfig( AllTextIndexConfig.create().addLanguage(Locale.ENGLISH ).build() );
 
         // Permissions
         final Permission createPermission = Permission.CREATE;

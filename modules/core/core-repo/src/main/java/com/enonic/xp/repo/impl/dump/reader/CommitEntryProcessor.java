@@ -42,10 +42,10 @@ public class CommitEntryProcessor
         try
         {
             ImportNodeCommitParams params = ImportNodeCommitParams.create().
-                nodeCommitId( commitDumpEntry.getNodeCommitId() ).
-                message( commitDumpEntry.getMessage() ).
-                committer( commitDumpEntry.getCommitter() ).
-                timestamp( commitDumpEntry.getTimestamp() ).
+                nodeCommitId( commitDumpEntry.nodeCommitId() ).
+                message( commitDumpEntry.message() ).
+                committer( commitDumpEntry.committer() ).
+                timestamp( commitDumpEntry.timestamp() ).
                 build();
 
             this.nodeService.importNodeCommit( params );
@@ -53,7 +53,7 @@ public class CommitEntryProcessor
         }
         catch ( Exception e )
         {
-            final String message = String.format( "Cannot load commit with id %s: %s", commitDumpEntry.getNodeCommitId(), e.getMessage() );
+            final String message = String.format( "Cannot load commit with id %s: %s", commitDumpEntry.nodeCommitId(), e.getMessage() );
             result.error( EntryLoadError.error( message ) );
             LOG.error( message, e );
         }

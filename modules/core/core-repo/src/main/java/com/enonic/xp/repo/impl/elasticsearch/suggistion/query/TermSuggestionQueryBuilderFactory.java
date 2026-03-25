@@ -5,7 +5,7 @@ import org.elasticsearch.search.suggest.term.TermSuggestionBuilder;
 import com.enonic.xp.query.suggester.TermSuggestionQuery;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.AbstractBuilderFactory;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFieldNameResolver;
-import com.enonic.xp.repo.impl.index.IndexValueType;
+import com.enonic.xp.repo.impl.index.StaticIndexValueType;
 
 public class TermSuggestionQueryBuilderFactory
     extends AbstractBuilderFactory
@@ -17,7 +17,7 @@ public class TermSuggestionQueryBuilderFactory
 
     public TermSuggestionBuilder create( final TermSuggestionQuery suggestionQuery )
     {
-        final String field = fieldNameResolver.resolve( suggestionQuery.getField(), IndexValueType.ANALYZED );
+        final String field = fieldNameResolver.resolve( suggestionQuery.getField(), StaticIndexValueType.ANALYZED );
 
         final TermSuggestionBuilder builder = new TermSuggestionBuilder( suggestionQuery.getName() ).
             field( field ).

@@ -48,7 +48,7 @@ class NodeExportIntegrationTest
     void single_node()
         throws IOException
     {
-        final Node myNode = createNode( NodePath.ROOT, "myNode" );
+        final Node myNode = createNode( NodePath.ROOT, "my-node" );
 
         final NodeExportResult result = doExportRoot();
 
@@ -64,12 +64,12 @@ class NodeExportIntegrationTest
         final PropertyTree data = new PropertyTree();
         data.addBinaryReference( "myBinary", binaryRef );
 
-        final Node myNode = createNode( CreateNodeParams.create().
-            parent( NodePath.ROOT ).
-            name( "myNode" ).
-            data( data ).
-            attachBinary( binaryRef, ByteSource.wrap( "this is a binary file".getBytes() ) ).
-            build() );
+        final Node myNode = createNode( CreateNodeParams.create()
+                                            .parent( NodePath.ROOT )
+                                            .name( "myNode" )
+                                            .data( data )
+                                            .attachBinary( binaryRef, ByteSource.wrap( "this is a binary file".getBytes() ) )
+                                            .build() );
 
         final NodeExportResult result = doExportRoot();
 
@@ -83,11 +83,9 @@ class NodeExportIntegrationTest
     void single_node_multiple_versions()
         throws IOException
     {
-        final Node node = createNode( NodePath.ROOT, "myNode" );
-        final Node updatedNode = updateNode( UpdateNodeParams.create().
-            id( node.id() ).
-            editor( ( n ) -> n.data.addInstant( "myInstant", Instant.now() ) ).
-            build() );
+        final Node node = createNode( NodePath.ROOT, "my-node" );
+        final Node updatedNode = updateNode(
+            UpdateNodeParams.create().id( node.id() ).editor( ( n ) -> n.data.addInstant( "myInstant", Instant.now() ) ).build() );
 
         final NodeExportResult result = doExportRoot();
 
@@ -128,18 +126,19 @@ class NodeExportIntegrationTest
         final PropertyTree data = new PropertyTree();
         data.addBinaryReference( "myBinary", binaryRef );
 
-        final Node myNode = createNode( CreateNodeParams.create().
-            parent( NodePath.ROOT ).
-            name( "myNode" ).
-            data( data ).
-            attachBinary( binaryRef, ByteSource.wrap( "this is a binary file".getBytes() ) ).
-            build() );
+        final Node myNode = createNode( CreateNodeParams.create()
+                                            .parent( NodePath.ROOT )
+                                            .name( "myNode" )
+                                            .data( data )
+                                            .attachBinary( binaryRef, ByteSource.wrap( "this is a binary file".getBytes() ) )
+                                            .build() );
 
-        final Node updatedNode = updateNode( UpdateNodeParams.create().
-            id( myNode.id() ).
-            editor( ( n ) -> n.data.setBinaryReference( "myBinary", binaryRefUpdated ) ).
-            attachBinary( binaryRefUpdated, ByteSource.wrap( "this is another binary file".getBytes() ) ).
-            build() );
+        final Node updatedNode = updateNode( UpdateNodeParams.create()
+                                                 .id( myNode.id() )
+                                                 .editor( ( n ) -> n.data.setBinaryReference( "myBinary", binaryRefUpdated ) )
+                                                 .attachBinary( binaryRefUpdated,
+                                                                ByteSource.wrap( "this is another binary file".getBytes() ) )
+                                                 .build() );
 
         final NodeExportResult result = doExportRoot();
 
@@ -328,13 +327,13 @@ class NodeExportIntegrationTest
         data.addBinaryReference( "my-image-1", binaryRef1 );
         data.addBinaryReference( "my-image-2", binaryRef2 );
 
-        this.nodeService.create( CreateNodeParams.create().
-            name( "my-node" ).
-            parent( NodePath.ROOT ).
-            data( data ).
-            attachBinary( binaryRef1, ByteSource.wrap( "this-is-the-binary-data-for-image1".getBytes() ) ).
-            attachBinary( binaryRef2, ByteSource.wrap( "this-is-the-binary-data-for-image2".getBytes() ) ).
-            build() );
+        this.nodeService.create( CreateNodeParams.create()
+                                     .name( "my-node" )
+                                     .parent( NodePath.ROOT )
+                                     .data( data )
+                                     .attachBinary( binaryRef1, ByteSource.wrap( "this-is-the-binary-data-for-image1".getBytes() ) )
+                                     .attachBinary( binaryRef2, ByteSource.wrap( "this-is-the-binary-data-for-image2".getBytes() ) )
+                                     .build() );
 
         final NodeExportResult result;
         try (ZipExportWriter exportWriter = ZipExportWriter.create( this.temporaryFolder, EXPORT_NAME ))
@@ -395,7 +394,8 @@ class NodeExportIntegrationTest
             throw new RuntimeException( "exception message" );
         } ).when( exportWriter ).writeElement( Mockito.isA( Path.class ), Mockito.anyString() );
 
-        final NodeExportResult result = NodeExporter.create().nodeService( this.nodeService )
+        final NodeExportResult result = NodeExporter.create()
+            .nodeService( this.nodeService )
             .nodeExportWriter( exportWriter )
             .sourceNodePath( NodePath.ROOT )
             .targetDirectory( this.temporaryFolder.resolve( EXPORT_NAME ) )
@@ -424,7 +424,8 @@ class NodeExportIntegrationTest
         }
 
         assertEquals( 0, result.size() );
-        assertEquals( "Node with path '/unknown' not found in branch 'draft', nothing to export", result.getExportErrors().getFirst().toString() );
+        assertEquals( "Node with path '/unknown' not found in branch 'draft', nothing to export",
+                      result.getExportErrors().getFirst().toString() );
     }
 
     // Asserts and Utils

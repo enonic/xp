@@ -1,6 +1,7 @@
 package com.enonic.xp.lib.node;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.SortedSet;
 
 import org.junit.jupiter.api.Test;
@@ -14,7 +15,9 @@ import com.enonic.xp.index.IndexValueProcessor;
 import com.enonic.xp.index.PathIndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -76,10 +79,8 @@ class IndexConfigFactoryTest
     @Test
     void languages()
     {
-        final List<String> languages = createFullConfig().getConfigForPath( IndexPath.from( "myHtmlField" ) ).getLanguages();
-        assertEquals( 2, languages.size() );
-        assertEquals( "en", languages.get( 0 ) );
-        assertEquals( "no", languages.get( 1 ) );
+        final List<Locale> languages = createFullConfig().getConfigForPath( IndexPath.from( "myHtmlField" ) ).getLanguages();
+        assertThat(languages).containsExactly( Locale.forLanguageTag("en"), Locale.forLanguageTag("no") );
     }
 
     @Test
@@ -99,9 +100,9 @@ class IndexConfigFactoryTest
     void allText_default()
     {
         IndexConfigDocument config = create( "{}" );
-        assertEquals( true, config.getAllTextConfig().isEnabled() );
-        assertEquals( true, config.getAllTextConfig().isnGram() );
-        assertEquals( true, config.getAllTextConfig().isFulltext() );
+        assertTrue( config.getAllTextConfig().isEnabled() );
+        assertTrue( config.getAllTextConfig().isnGram() );
+        assertTrue( config.getAllTextConfig().isFulltext() );
         assertEquals( 0, config.getAllTextConfig().getLanguages().size() );
     }
 
@@ -118,12 +119,10 @@ class IndexConfigFactoryTest
                 "  }\n" +
                 "}" );
 
-        assertEquals( false, config.getAllTextConfig().isEnabled() );
-        assertEquals( false, config.getAllTextConfig().isnGram() );
-        assertEquals( true, config.getAllTextConfig().isFulltext() );
-        assertEquals( 2, config.getAllTextConfig().getLanguages().size() );
-        assertEquals( "en", config.getAllTextConfig().getLanguages().get( 0 ) );
-        assertEquals( "no", config.getAllTextConfig().getLanguages().get( 1 ) );
+        assertFalse( config.getAllTextConfig().isEnabled() );
+        assertFalse( config.getAllTextConfig().isnGram() );
+        assertTrue( config.getAllTextConfig().isFulltext() );
+        assertThat( config.getAllTextConfig().getLanguages() ).containsExactly( Locale.forLanguageTag( "en" ), Locale.forLanguageTag( "no" ) );
     }
 
     @Test
@@ -136,9 +135,9 @@ class IndexConfigFactoryTest
                 "  }\n" +
                 "}" );
 
-        assertEquals( false, config.getAllTextConfig().isEnabled() );
-        assertEquals( true, config.getAllTextConfig().isnGram() ); // should be default
-        assertEquals( true, config.getAllTextConfig().isFulltext() ); // should be default
+        assertFalse( config.getAllTextConfig().isEnabled() );
+        assertTrue( config.getAllTextConfig().isnGram() ); // should be default
+        assertTrue( config.getAllTextConfig().isFulltext() ); // should be default
         assertEquals( 0, config.getAllTextConfig().getLanguages().size() );
     }
 

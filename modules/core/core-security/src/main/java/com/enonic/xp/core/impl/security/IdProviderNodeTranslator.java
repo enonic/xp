@@ -258,12 +258,6 @@ abstract class IdProviderNodeTranslator
                 IdProviderConfig.create().applicationKey( ApplicationKey.from( applicationKey ) ).config( config.toTree() ).build();
             idProvider.idProviderConfig( idProviderConfig );
         }
-        else if ( IdProviderKey.system().equals( idProviderKey ) )
-        {
-            //TODO Remove after next dump upgrade
-            final IdProviderConfig idProviderConfig = IdProviderConfig.create().applicationKey( SYSTEM_ID_PROVIDER_KEY ).build();
-            idProvider.idProviderConfig( idProviderConfig );
-        }
 
         return idProvider.build();
     }

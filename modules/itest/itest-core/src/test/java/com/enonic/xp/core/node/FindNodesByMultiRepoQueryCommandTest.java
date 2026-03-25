@@ -68,18 +68,16 @@ class FindNodesByMultiRepoQueryCommandTest
         final Repository repo1 = createRepo( REPO_USER_1, "repo1" );
         final Repository repo2 = createRepo( REPO_USER_2, "repo2" );
 
-        runInContext( REPO_USER_1, repo1.getId(), () -> createNode( NodePath.ROOT, "repo1Node" ) );
-        runInContext( REPO_USER_2, repo2.getId(), () -> createNode( NodePath.ROOT, "repo2Node" ) );
+        runInContext( REPO_USER_1, repo1.getId(), () -> createNode( NodePath.ROOT, "repo1-node" ) );
+        runInContext( REPO_USER_2, repo2.getId(), () -> createNode( NodePath.ROOT, "repo2-node" ) );
         refresh();
 
-        final SearchTargets targets = SearchTargets.create().
-            add( createTarget( MASTER_BRANCH, REPO_USER_1, repo1.getId() ) ).
-            add( createTarget( MASTER_BRANCH, REPO_USER_2, repo2.getId() ) ).
-            build();
+        final SearchTargets targets = SearchTargets.create()
+            .add( createTarget( MASTER_BRANCH, REPO_USER_1, repo1.getId() ) )
+            .add( createTarget( MASTER_BRANCH, REPO_USER_2, repo2.getId() ) )
+            .build();
 
-        final NodeQuery query = NodeQuery.create().
-            parent( NodePath.ROOT ).
-            build();
+        final NodeQuery query = NodeQuery.create().parent( NodePath.ROOT ).build();
 
         final FindNodesByMultiRepoQueryResult result = doQuery( query, targets );
 
@@ -98,21 +96,19 @@ class FindNodesByMultiRepoQueryCommandTest
         final Branch otherBranch = callInContext( REPO_USER_1, repo1.getId(), MASTER_BRANCH, () -> createBranch( "other-branch" ) );
 
         final Node repo1MasterNode1 =
-            callInContext( REPO_USER_1, repo1.getId(), MASTER_BRANCH, () -> createNode( NodePath.ROOT, "repo1Node" ) );
+            callInContext( REPO_USER_1, repo1.getId(), MASTER_BRANCH, () -> createNode( NodePath.ROOT, "repo1-node" ) );
         final Node repo1OtherNode1 =
-            callInContext( REPO_USER_1, repo1.getId(), otherBranch, () -> createNode( NodePath.ROOT, "repo1Node" ) );
+            callInContext( REPO_USER_1, repo1.getId(), otherBranch, () -> createNode( NodePath.ROOT, "repo1-node" ) );
         final Node repo2MasterNode1 =
-            callInContext( REPO_USER_2, repo2.getId(), MASTER_BRANCH, () -> createNode( NodePath.ROOT, "repo2Node" ) );
+            callInContext( REPO_USER_2, repo2.getId(), MASTER_BRANCH, () -> createNode( NodePath.ROOT, "repo2-node" ) );
         refresh();
 
-        final SearchTargets targets = SearchTargets.create().
-            add( createTarget( otherBranch, REPO_USER_1, repo1.getId() ) ).
-            add( createTarget( MASTER_BRANCH, REPO_USER_2, repo2.getId() ) ).
-            build();
+        final SearchTargets targets = SearchTargets.create()
+            .add( createTarget( otherBranch, REPO_USER_1, repo1.getId() ) )
+            .add( createTarget( MASTER_BRANCH, REPO_USER_2, repo2.getId() ) )
+            .build();
 
-        final NodeQuery query = NodeQuery.create().
-            parent( NodePath.ROOT ).
-            build();
+        final NodeQuery query = NodeQuery.create().parent( NodePath.ROOT ).build();
 
         final FindNodesByMultiRepoQueryResult result = doQuery( query, targets );
 
@@ -132,22 +128,20 @@ class FindNodesByMultiRepoQueryCommandTest
         final Branch otherBranch = callInContext( REPO_USER_1, repo1.getId(), MASTER_BRANCH, () -> createBranch( "other-branch" ) );
 
         final Node repo1MasterNode1 =
-            callInContext( REPO_USER_1, repo1.getId(), MASTER_BRANCH, () -> createNode( NodePath.ROOT, "repo1Node" ) );
+            callInContext( REPO_USER_1, repo1.getId(), MASTER_BRANCH, () -> createNode( NodePath.ROOT, "repo1-node" ) );
         final Node repo1OtherNode1 =
-            callInContext( REPO_USER_1, repo1.getId(), otherBranch, () -> createNode( NodePath.ROOT, "repo1Node" ) );
+            callInContext( REPO_USER_1, repo1.getId(), otherBranch, () -> createNode( NodePath.ROOT, "repo1-node" ) );
         final Node repo2MasterNode1 =
-            callInContext( REPO_USER_2, repo2.getId(), MASTER_BRANCH, () -> createNode( NodePath.ROOT, "repo2Node" ) );
+            callInContext( REPO_USER_2, repo2.getId(), MASTER_BRANCH, () -> createNode( NodePath.ROOT, "repo2-node" ) );
         refresh();
 
-        final SearchTargets targets = SearchTargets.create().
-            add( createTarget( otherBranch, REPO_USER_1, repo1.getId() ) ).
-            add( createTarget( MASTER_BRANCH, REPO_USER_1, repo1.getId() ) ).
-            add( createTarget( MASTER_BRANCH, REPO_USER_2, repo2.getId() ) ).
-            build();
+        final SearchTargets targets = SearchTargets.create()
+            .add( createTarget( otherBranch, REPO_USER_1, repo1.getId() ) )
+            .add( createTarget( MASTER_BRANCH, REPO_USER_1, repo1.getId() ) )
+            .add( createTarget( MASTER_BRANCH, REPO_USER_2, repo2.getId() ) )
+            .build();
 
-        final NodeQuery query = NodeQuery.create().
-            parent( NodePath.ROOT ).
-            build();
+        final NodeQuery query = NodeQuery.create().parent( NodePath.ROOT ).build();
 
         final FindNodesByMultiRepoQueryResult result = doQuery( query, targets );
 
@@ -163,18 +157,16 @@ class FindNodesByMultiRepoQueryCommandTest
         final Repository repo1 = createRepo( REPO_USER_1, "repo1" );
         final Repository repo2 = createRepo( REPO_USER_2, "repo2" );
 
-        runInContext( REPO_USER_1, repo1.getId(), () -> createNode( NodePath.ROOT, "repo1Node" ) );
-        runInContext( REPO_USER_2, repo2.getId(), () -> createNode( NodePath.ROOT, "repo2Node" ) );
+        runInContext( REPO_USER_1, repo1.getId(), () -> createNode( NodePath.ROOT, "repo1-node" ) );
+        runInContext( REPO_USER_2, repo2.getId(), () -> createNode( NodePath.ROOT, "repo2-node" ) );
         refresh();
 
-        final SearchTargets targets = SearchTargets.create().
-            add( createTarget( MASTER_BRANCH, REPO_USER_1, repo1.getId() ) ).
-            add( createTarget( MASTER_BRANCH, REPO_USER_1, repo2.getId() ) ). // repoUser2 has no access
-            build();
+        final SearchTargets targets = SearchTargets.create()
+            .add( createTarget( MASTER_BRANCH, REPO_USER_1, repo1.getId() ) )
+            .add( createTarget( MASTER_BRANCH, REPO_USER_1, repo2.getId() ) ). // repoUser2 has no access
+                build();
 
-        final NodeQuery query = NodeQuery.create().
-            parent( NodePath.ROOT ).
-            build();
+        final NodeQuery query = NodeQuery.create().parent( NodePath.ROOT ).build();
 
         final FindNodesByMultiRepoQueryResult result = doQuery( query, targets );
 
@@ -190,20 +182,18 @@ class FindNodesByMultiRepoQueryCommandTest
         final Repository repo2 = createRepo( REPO_USER_2, "repo2" );
         final Repository repo3 = createRepo( REPO_USER_3, "repo3" );
 
-        runInContext( REPO_USER_1, repo1.getId(), () -> createNode( NodePath.ROOT, "repo1Node" ) );
-        runInContext( REPO_USER_2, repo2.getId(), () -> createNode( NodePath.ROOT, "repo2Node" ) );
-        runInContext( REPO_USER_3, repo3.getId(), () -> createNode( NodePath.ROOT, "repo2Node" ) );
+        runInContext( REPO_USER_1, repo1.getId(), () -> createNode( NodePath.ROOT, "repo1-node" ) );
+        runInContext( REPO_USER_2, repo2.getId(), () -> createNode( NodePath.ROOT, "repo2-node" ) );
+        runInContext( REPO_USER_3, repo3.getId(), () -> createNode( NodePath.ROOT, "repo2-node" ) );
         refresh();
 
-        final SearchTargets targets = SearchTargets.create().
-            add( createTarget( MASTER_BRANCH, REPO_USER_1, repo1.getId() ) ).
-            add( createTarget( MASTER_BRANCH, REPO_USER_2, repo2.getId() ) ).
-            add( createTarget( MASTER_BRANCH, REPO_USER_1, repo3.getId() ) ). // repoUser1 has no access
-            build();
+        final SearchTargets targets = SearchTargets.create()
+            .add( createTarget( MASTER_BRANCH, REPO_USER_1, repo1.getId() ) )
+            .add( createTarget( MASTER_BRANCH, REPO_USER_2, repo2.getId() ) )
+            .add( createTarget( MASTER_BRANCH, REPO_USER_1, repo3.getId() ) ). // repoUser1 has no access
+                build();
 
-        final NodeQuery query = NodeQuery.create().
-            parent( NodePath.ROOT ).
-            build();
+        final NodeQuery query = NodeQuery.create().parent( NodePath.ROOT ).build();
 
         final FindNodesByMultiRepoQueryResult result = doQuery( query, targets );
 
@@ -230,7 +220,7 @@ class FindNodesByMultiRepoQueryCommandTest
         assertEquals( branches.length, resultBranches.size(), "Wrong number of branches in result" );
         for ( final Branch branch : resultBranches )
         {
-            assertTrue( resultBranches.contains( branch ) , "missing repo '" + branch + "' in result set");
+            assertTrue( resultBranches.contains( branch ), "missing repo '" + branch + "' in result set" );
         }
     }
 
@@ -259,22 +249,18 @@ class FindNodesByMultiRepoQueryCommandTest
 
     private FindNodesByMultiRepoQueryResult doQuery( final NodeQuery query, final SearchTargets targets )
     {
-        return FindNodesByMultiRepoQueryCommand.create().
-            query( new MultiRepoNodeQuery( targets, query ) ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            build().
-            execute();
+        return FindNodesByMultiRepoQueryCommand.create()
+            .query( new MultiRepoNodeQuery( targets, query ) )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.storageService )
+            .searchService( this.searchService )
+            .build()
+            .execute();
     }
 
     private SearchTarget createTarget( final Branch branch, final User user, final RepositoryId repoId )
     {
-        return SearchTarget.create().
-            repositoryId( repoId ).
-            branch( branch ).
-            principalKeys( PrincipalKeys.from( user.getKey() ) ).
-            build();
+        return SearchTarget.create().repositoryId( repoId ).branch( branch ).principalKeys( PrincipalKeys.from( user.getKey() ) ).build();
     }
 
     private void runInContext( final User runUser, final RepositoryId repoId, final Runnable runnable )
@@ -284,33 +270,37 @@ class FindNodesByMultiRepoQueryCommandTest
 
     private void runInContext( final User runUser, final RepositoryId repoId, final Branch branch, final Runnable runnable )
     {
-        ContextBuilder.create().
-            repositoryId( repoId ).
-            branch( branch ).
-            authInfo( AuthenticationInfo.create().user( runUser ).build() ).
-            build().runWith( runnable );
+        ContextBuilder.create()
+            .repositoryId( repoId )
+            .branch( branch )
+            .authInfo( AuthenticationInfo.create().user( runUser ).build() )
+            .build()
+            .runWith( runnable );
     }
 
     private <T> T callInContext( final User runUser, final RepositoryId repoId, final Branch branch, final Callable<T> callable )
     {
-        return ContextBuilder.create().
-            repositoryId( repoId ).
-            branch( branch ).
-            authInfo( AuthenticationInfo.create().user( runUser ).build() ).
-            build().callWith( callable );
+        return ContextBuilder.create()
+            .repositoryId( repoId )
+            .branch( branch )
+            .authInfo( AuthenticationInfo.create().user( runUser ).build() )
+            .build()
+            .callWith( callable );
     }
 
     private Repository createRepo( final User adminUser, final String repoName )
     {
-        return NodeHelper.runAsAdmin( () -> this.repositoryService.createRepository( CreateRepositoryParams.create().
-            repositoryId( RepositoryId.from( repoName ) ).
-            rootPermissions( AccessControlList.create().
-                add( AccessControlEntry.create().
-                    principal( adminUser.getKey() ).
-                    allowAll().
-                    build() ).
-                build() ).
-            build() ) );
+        return NodeHelper.runAsAdmin( () -> this.repositoryService.createRepository( CreateRepositoryParams.create()
+                                                                                         .repositoryId( RepositoryId.from( repoName ) )
+                                                                                         .rootPermissions( AccessControlList.create()
+                                                                                                               .add(
+                                                                                                                   AccessControlEntry.create()
+                                                                                                                       .principal(
+                                                                                                                           adminUser.getKey() )
+                                                                                                                       .allowAll()
+                                                                                                                       .build() )
+                                                                                                               .build() )
+                                                                                         .build() ) );
     }
 
     private Branch createBranch( final String branchName )

@@ -67,7 +67,7 @@ class DeleteIssueCommentCommandTest
     {
         return DeleteNodeResult.create()
             .add( new DeleteNodeResult.Result( answer.getArgument( 0, DeleteNodeParams.class ).getNodeId(),
-                                               NodeVersionId.from( "nodeVersionId" ) ) )
+                                               NodeVersionId.from( "nodeversionid" ) ) )
             .build();
     }
 }

@@ -1,13 +1,14 @@
 package com.enonic.xp.index;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 import com.google.common.collect.ImmutableList;
 
 public final class AllTextIndexConfig
 {
-    private final ImmutableList<String> languages;
+    private final ImmutableList<Locale> languages;
 
     private final boolean enabled;
 
@@ -33,7 +34,7 @@ public final class AllTextIndexConfig
         return new Builder( source );
     }
 
-    public List<String> getLanguages()
+    public List<Locale> getLanguages()
     {
         return languages;
     }
@@ -65,8 +66,7 @@ public final class AllTextIndexConfig
             return false;
         }
         final AllTextIndexConfig that = (AllTextIndexConfig) o;
-        return enabled == that.enabled && nGram == that.nGram && fulltext == that.fulltext &&
-            Objects.equals( languages, that.languages );
+        return enabled == that.enabled && nGram == that.nGram && fulltext == that.fulltext && Objects.equals( languages, that.languages );
     }
 
     @Override
@@ -77,7 +77,7 @@ public final class AllTextIndexConfig
 
     public static final class Builder
     {
-        private final ImmutableList.Builder<String> languages;
+        private final ImmutableList.Builder<Locale> languages;
 
         private boolean enabled = true;
 
@@ -92,14 +92,18 @@ public final class AllTextIndexConfig
 
         private Builder( final AllTextIndexConfig source )
         {
-            this.languages = ImmutableList.<String>builder().addAll( source.languages );
+            this.languages = ImmutableList.<Locale>builder().addAll( source.languages );
             this.enabled = source.enabled;
             this.nGram = source.nGram;
             this.fulltext = source.fulltext;
         }
 
-        public Builder addLanguage( final String language )
+        public Builder addLanguage( final Locale language )
         {
+            if ( language.getLanguage().isEmpty() )
+            {
+                throw new IllegalArgumentException( "Language must have a valid language tag" );
+            }
             this.languages.add( language );
             return this;
         }

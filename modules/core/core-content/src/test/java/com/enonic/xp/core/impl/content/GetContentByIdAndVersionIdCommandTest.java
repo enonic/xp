@@ -25,9 +25,9 @@ import static org.mockito.Mockito.when;
 
 class GetContentByIdAndVersionIdCommandTest
 {
-    private final ContentId contentId = ContentId.from( "contentId" );
+    private final ContentId contentId = ContentId.from( "contentid" );
 
-    private final ContentVersionId versionId = ContentVersionId.from( "versionId" );
+    private final ContentVersionId versionId = ContentVersionId.from( "versionid" );
 
     private NodeService nodeService;
 

@@ -8,14 +8,14 @@ var repo = nodeLib.connect({
 
 // BEGIN
 // Deletes a node.
-var result1 = repo.delete('nodeId');
+var result1 = repo.delete('nodeid');
 
 log.info(result1.length + ' nodes deleted.');
 // END
 
 // BEGIN
 // Deletes nodes.
-var result2 = repo.delete('nodeId', '/node2-path', 'anotherNodeId');
+var result2 = repo.delete('nodeid', '/node2-path', 'anothernodeid');
 
 log.info(result2.length + ' nodes deleted.');
 // END
@@ -23,7 +23,7 @@ log.info(result2.length + ' nodes deleted.');
 
 // BEGIN
 // Deletes nodes.
-var nodeIds = ['nodeId', '/node2-path'];
+var nodeIds = ['nodeid', '/node2-path'];
 var result3 = repo.delete(nodeIds);
 
 log.info(result3.length + ' nodes deleted.');

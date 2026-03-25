@@ -12,7 +12,7 @@ import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.core.impl.audit.config.AuditLogConfig;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.repository.RepositoryService;
+import com.enonic.xp.repository.internal.InternalRepositoryService;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isNull;
@@ -36,7 +36,7 @@ class AuditLogServiceActivatorTest
     private IndexService indexService;
 
     @Mock(stubOnly = true)
-    private RepositoryService repositoryService;
+    private InternalRepositoryService repositoryService;
 
     @Mock(stubOnly = true)
     private AuditLogConfig auditLogConfig;
@@ -54,8 +54,8 @@ class AuditLogServiceActivatorTest
         final AuditLogServiceActivator activator =
             new AuditLogServiceActivator( auditLogConfig, indexService, repositoryService, nodeService );
 
-        when( bundleContext.registerService( same( AuditLogService.class ), any( AuditLogService.class ), isNull() ) ).
-            thenReturn( service );
+        when( bundleContext.registerService( same( AuditLogService.class ), any( AuditLogService.class ), isNull() ) ).thenReturn(
+            service );
 
         activator.activate( bundleContext );
 

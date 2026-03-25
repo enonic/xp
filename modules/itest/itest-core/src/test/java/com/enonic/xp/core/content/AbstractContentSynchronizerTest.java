@@ -209,7 +209,8 @@ public abstract class AbstractContentSynchronizerTest
                 .initialize();
 
             projectService =
-                new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService, eventPublisher, projectConfig );
+                new ProjectServiceImpl( repositoryService, repositoryService, indexService, nodeService, securityService, eventPublisher,
+                                        projectConfig );
 
             project = projectService.create( CreateProjectParams.create()
                                                  .name( ProjectName.from( "source_project" ) )

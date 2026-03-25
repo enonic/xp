@@ -59,6 +59,6 @@ class PatternIndexConfigDocumentTest
     @Test
     void equalsContract()
     {
-        EqualsVerifier.forClass( PatternIndexConfigDocument.class ).withRedefinedSuperclass().withIgnoredFields( "pathIndexConfigMap" ).verify();
+        EqualsVerifier.forClass( PatternIndexConfigDocument.class ).withIgnoredFields( "pathIndexConfigMap" ).verify();
     }
 }

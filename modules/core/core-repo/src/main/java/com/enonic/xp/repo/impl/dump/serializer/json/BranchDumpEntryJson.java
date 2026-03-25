@@ -1,14 +1,16 @@
 package com.enonic.xp.repo.impl.dump.serializer.json;
 
-import java.util.Collection;
-import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
 
+@JsonPropertyOrder(value = {"nodeId", "meta", "nodePath", "binaries"})
 public class BranchDumpEntryJson
 {
     @JsonProperty("nodeId")
@@ -18,14 +20,15 @@ public class BranchDumpEntryJson
     private VersionDumpEntryJson meta;
 
     @JsonProperty("binaries")
-    private Collection<String> binaries;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<String> binaries;
 
     @SuppressWarnings("unused")
     public BranchDumpEntryJson()
     {
     }
 
-    private BranchDumpEntryJson( final String nodeId, final Collection<String> binaries, final VersionDumpEntryJson meta )
+    private BranchDumpEntryJson( final String nodeId, final List<String> binaries, final VersionDumpEntryJson meta )
     {
         this.nodeId = nodeId;
         this.binaries = binaries;
@@ -41,18 +44,14 @@ public class BranchDumpEntryJson
 
     public static BranchDumpEntry fromJson( final BranchDumpEntryJson json )
     {
-        return BranchDumpEntry.create().
-            nodeId( NodeId.from( json.getNodeId() ) ).
-            meta( VersionDumpEntryJson.fromJson( json.getMeta() ) ).setBinaryReferences(
-            Objects.requireNonNullElse( json.getBinaries(), Collections.emptyList() ) ).
-            build();
+        return new BranchDumpEntry( NodeId.from( json.getNodeId() ), VersionDumpEntryJson.fromJson( json.getMeta() ),
+                                    Objects.requireNonNullElse( json.getBinaries(), List.of() ) );
     }
 
     public static BranchDumpEntryJson from( final BranchDumpEntry branchDumpEntry )
     {
-        String nodeId = branchDumpEntry.getNodeId().toString();
-        return new BranchDumpEntryJson( nodeId, branchDumpEntry.getBinaryReferences(),
-                                        VersionDumpEntryJson.from( branchDumpEntry.getMeta() ) );
+        String nodeId = branchDumpEntry.nodeId().toString();
+        return new BranchDumpEntryJson( nodeId, branchDumpEntry.binaryReferences(), VersionDumpEntryJson.from( branchDumpEntry.meta() ) );
     }
 
     public static Builder create( final BranchDumpEntryJson source )
@@ -60,7 +59,7 @@ public class BranchDumpEntryJson
         return new Builder( source );
     }
 
-    private Collection<String> getBinaries()
+    public List<String> getBinaries()
     {
         return binaries;
     }
@@ -86,7 +85,7 @@ public class BranchDumpEntryJson
 
         private VersionDumpEntryJson meta;
 
-        private Collection<String> binaries;
+        private List<String> binaries;
 
         private Builder()
         {
@@ -111,7 +110,7 @@ public class BranchDumpEntryJson
             return this;
         }
 
-        public Builder binaries( final Collection<String> binaries )
+        public Builder binaries( final List<String> binaries )
         {
             this.binaries = binaries;
             return this;

@@ -3,7 +3,7 @@ package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.function;
 import java.time.Instant;
 
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.SearchQueryFieldNameResolver;
-import com.enonic.xp.repo.impl.index.IndexValueType;
+import com.enonic.xp.repo.impl.index.StaticIndexValueType;
 
 public class InstantRangeFunctionArg
     extends AbstractRangeFunctionArg<Instant>
@@ -11,6 +11,6 @@ public class InstantRangeFunctionArg
     @Override
     public String getFieldName()
     {
-        return SearchQueryFieldNameResolver.INSTANCE.resolve( this.fieldName, IndexValueType.DATETIME );
+        return SearchQueryFieldNameResolver.INSTANCE.resolve( this.fieldName, StaticIndexValueType.DATETIME );
     }
 }

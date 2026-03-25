@@ -4,7 +4,7 @@ var assert = require('/lib/xp/testing');
 // BEGIN
 // Gets outbound dependencies of content by Content ID.
 var resultById = contentLib.getOutboundDependencies({
-    key: 'contentId'
+    key: 'contentid'
 });
 
 if (resultById) {

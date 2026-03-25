@@ -23,11 +23,8 @@ class BlobStoreFactoryTest
         final MemoryBlobStoreProvider memoryBlobStoreProvider =
             new MemoryBlobStoreProvider( "memory", blobStore, createProviderConfig( "none", false ) );
 
-        final BlobStore finalBlobStore = BlobStoreFactory.create().
-            provider( memoryBlobStoreProvider ).
-            config( createBlobstoreConfig( false ) ).
-            build().
-            execute();
+        final BlobStore finalBlobStore =
+            BlobStoreFactory.create().provider( memoryBlobStoreProvider ).config( createBlobstoreConfig( false ) ).build().execute();
 
         assertNotNull( finalBlobStore );
 
@@ -61,12 +58,12 @@ class BlobStoreFactoryTest
         final BlobStoreProviders blobStoreProviders = new BlobStoreProviders();
         blobStoreProviders.add( provider2 );
 
-        final BlobStore finalBlobStore = BlobStoreFactory.create().
-            provider( provider1 ).
-            config( createBlobstoreConfig( cache ) ).
-            providers( blobStoreProviders ).
-            build().
-            execute();
+        final BlobStore finalBlobStore = BlobStoreFactory.create()
+            .provider( provider1 )
+            .config( createBlobstoreConfig( cache ) )
+            .providers( blobStoreProviders )
+            .build()
+            .execute();
 
         assertNotNull( finalBlobStore );
 

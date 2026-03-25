@@ -47,47 +47,32 @@ class ResolveSyncWorkCommandTest
     @Test
     void ignore_nodes_without_diff()
     {
-        final Node node1 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "node1" ) ).
-            parent( NodePath.ROOT ).
-            name( "node1" ).
-            build() );
+        final Node node1 =
+            createNode( CreateNodeParams.create().setNodeId( NodeId.from( "node1" ) ).parent( NodePath.ROOT ).name( "node1" ).build() );
 
-        final Node node1_1 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "node1_1" ) ).
-            parent( node1.path() ).
-            name( "node1_1" ).
-            build() );
+        final Node node1_1 =
+            createNode( CreateNodeParams.create().setNodeId( NodeId.from( "node1_1" ) ).parent( node1.path() ).name( "node1_1" ).build() );
 
-        final Node node2 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "node2" ) ).
-            parent( NodePath.ROOT ).
-            name( "node2" ).
-            build() );
+        final Node node2 =
+            createNode( CreateNodeParams.create().setNodeId( NodeId.from( "node2" ) ).parent( NodePath.ROOT ).name( "node2" ).build() );
 
-        final Node node2_1 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "node2_1" ) ).
-            parent( node2.path() ).
-            name( "node2_1" ).
-            build() );
+        final Node node2_1 =
+            createNode( CreateNodeParams.create().setNodeId( NodeId.from( "node2_1" ) ).parent( node2.path() ).name( "node2_1" ).build() );
 
-        final Node node3 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "node3" ) ).
-            parent( NodePath.ROOT ).
-            name( "node3" ).
-            build() );
+        final Node node3 =
+            createNode( CreateNodeParams.create().setNodeId( NodeId.from( "node3" ) ).parent( NodePath.ROOT ).name( "node3" ).build() );
 
         pushNodes( WS_OTHER, node1.id(), node2.id(), node3.id() );
 
-        final ResolveSyncWorkResult result = ResolveSyncWorkCommand.create().
-            includeChildren( true ).
-            nodeId( getNodeByPath( NodePath.ROOT ).id() ).
-            target( WS_OTHER ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            build().
-            execute();
+        final ResolveSyncWorkResult result = ResolveSyncWorkCommand.create()
+            .includeChildren( true )
+            .nodeId( getNodeByPath( NodePath.ROOT ).id() )
+            .target( WS_OTHER )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.storageService )
+            .searchService( this.searchService )
+            .build()
+            .execute();
 
         assertEquals( 3, result.getSize() );
     }
@@ -114,35 +99,20 @@ class ResolveSyncWorkCommandTest
     @Test
     void resolveDependenciesOfMovedNodes()
     {
-        final Node node1 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "node1" ) ).
-            parent( NodePath.ROOT ).
-            name( "node1" ).
-            build() );
+        final Node node1 =
+            createNode( CreateNodeParams.create().setNodeId( NodeId.from( "node1" ) ).parent( NodePath.ROOT ).name( "node1" ).build() );
 
-        final Node node1_1 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "node1_1" ) ).
-            parent( node1.path() ).
-            name( "node1_1" ).
-            build() );
+        final Node node1_1 =
+            createNode( CreateNodeParams.create().setNodeId( NodeId.from( "node1_1" ) ).parent( node1.path() ).name( "node1_1" ).build() );
 
-        final Node node1_1_1 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "node1_1_1" ) ).
-            parent( node1_1.path() ).
-            name( "node1_1_1" ).
-            build() );
+        final Node node1_1_1 = createNode(
+            CreateNodeParams.create().setNodeId( NodeId.from( "node1_1_1" ) ).parent( node1_1.path() ).name( "node1_1_1" ).build() );
 
-        final Node node1_1_1_1 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "node1_1_1_1" ) ).
-            parent( node1_1_1.path() ).
-            name( "node1_1_1_1" ).
-            build() );
+        final Node node1_1_1_1 = createNode(
+            CreateNodeParams.create().setNodeId( NodeId.from( "node1_1_1_1" ) ).parent( node1_1_1.path() ).name( "node1_1_1_1" ).build() );
 
-        final Node node2 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "node2" ) ).
-            parent( NodePath.ROOT ).
-            name( "node2" ).
-            build() );
+        final Node node2 =
+            createNode( CreateNodeParams.create().setNodeId( NodeId.from( "node2" ) ).parent( NodePath.ROOT ).name( "node2" ).build() );
 
         pushNodes( WS_OTHER, node1.id(), node2.id(), node1_1.id(), node1_1_1.id(), node1_1_1_1.id() );
 
@@ -176,35 +146,20 @@ class ResolveSyncWorkCommandTest
     @Test
     void resolveDependenciesOfMovedNodes2()
     {
-        final Node node1 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "node1" ) ).
-            parent( NodePath.ROOT ).
-            name( "node1" ).
-            build() );
+        final Node node1 =
+            createNode( CreateNodeParams.create().setNodeId( NodeId.from( "node1" ) ).parent( NodePath.ROOT ).name( "node1" ).build() );
 
-        final Node node1_1 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "node1_1" ) ).
-            parent( node1.path() ).
-            name( "node1_1" ).
-            build() );
+        final Node node1_1 =
+            createNode( CreateNodeParams.create().setNodeId( NodeId.from( "node1_1" ) ).parent( node1.path() ).name( "node1_1" ).build() );
 
-        final Node node1_1_1 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "node1_1_1" ) ).
-            parent( node1_1.path() ).
-            name( "node1_1_1" ).
-            build() );
+        final Node node1_1_1 = createNode(
+            CreateNodeParams.create().setNodeId( NodeId.from( "node1_1_1" ) ).parent( node1_1.path() ).name( "node1_1_1" ).build() );
 
-        final Node node1_1_1_1 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "node1_1_1_1" ) ).
-            parent( node1_1_1.path() ).
-            name( "node1_1_1_1" ).
-            build() );
+        final Node node1_1_1_1 = createNode(
+            CreateNodeParams.create().setNodeId( NodeId.from( "node1_1_1_1" ) ).parent( node1_1_1.path() ).name( "node1_1_1_1" ).build() );
 
-        final Node node2 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "node2" ) ).
-            parent( NodePath.ROOT ).
-            name( "node2" ).
-            build() );
+        final Node node2 =
+            createNode( CreateNodeParams.create().setNodeId( NodeId.from( "node2" ) ).parent( NodePath.ROOT ).name( "node2" ).build() );
 
         pushNodes( WS_OTHER, node1.id(), node2.id(), node1_1.id(), node1_1_1.id(), node1_1_1_1.id() );
 
@@ -240,35 +195,20 @@ class ResolveSyncWorkCommandTest
     @Test
     void resolveDependenciesOfMovedNodes3()
     {
-        final Node node1 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "node1" ) ).
-            parent( NodePath.ROOT ).
-            name( "node1" ).
-            build() );
+        final Node node1 =
+            createNode( CreateNodeParams.create().setNodeId( NodeId.from( "node1" ) ).parent( NodePath.ROOT ).name( "node1" ).build() );
 
-        final Node node1_1 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "node1_1" ) ).
-            parent( node1.path() ).
-            name( "node1_1" ).
-            build() );
+        final Node node1_1 =
+            createNode( CreateNodeParams.create().setNodeId( NodeId.from( "node1_1" ) ).parent( node1.path() ).name( "node1_1" ).build() );
 
-        final Node node1_1_1 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "node1_1_1" ) ).
-            parent( node1_1.path() ).
-            name( "node1_1_1" ).
-            build() );
+        final Node node1_1_1 = createNode(
+            CreateNodeParams.create().setNodeId( NodeId.from( "node1_1_1" ) ).parent( node1_1.path() ).name( "node1_1_1" ).build() );
 
-        final Node node1_1_1_1 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "node1_1_1_1" ) ).
-            parent( node1_1_1.path() ).
-            name( "node1_1_1_1" ).
-            build() );
+        final Node node1_1_1_1 = createNode(
+            CreateNodeParams.create().setNodeId( NodeId.from( "node1_1_1_1" ) ).parent( node1_1_1.path() ).name( "node1_1_1_1" ).build() );
 
-        final Node node2 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "node2" ) ).
-            parent( NodePath.ROOT ).
-            name( "node2" ).
-            build() );
+        final Node node2 =
+            createNode( CreateNodeParams.create().setNodeId( NodeId.from( "node2" ) ).parent( NodePath.ROOT ).name( "node2" ).build() );
 
         pushNodes( WS_OTHER, node1.id(), node2.id(), node1_1.id(), node1_1_1.id(), node1_1_1_1.id() );
 
@@ -288,40 +228,28 @@ class ResolveSyncWorkCommandTest
     @Test
     void include_referred_nodes()
     {
-        final Node node1 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "node1" ) ).
-            parent( NodePath.ROOT ).
-            name( "node1" ).
-            build() );
+        final Node node1 =
+            createNode( CreateNodeParams.create().setNodeId( NodeId.from( "node1" ) ).parent( NodePath.ROOT ).name( "node1" ).build() );
 
         final PropertyTree node1_1_data = new PropertyTree();
         node1_1_data.addReference( "myRef", Reference.from( "node2" ) );
 
-        final Node node1_1 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "node1_1" ) ).
-            parent( node1.path() ).
-            name( "node1_1" ).
-            data( node1_1_data ).
-            build() );
+        final Node node1_1 = createNode( CreateNodeParams.create()
+                                             .setNodeId( NodeId.from( "node1_1" ) )
+                                             .parent( node1.path() )
+                                             .name( "node1_1" )
+                                             .data( node1_1_data )
+                                             .build() );
 
-        final Node node2 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "node2" ) ).
-            parent( NodePath.ROOT ).
-            name( "node2" ).
-            build() );
+        final Node node2 =
+            createNode( CreateNodeParams.create().setNodeId( NodeId.from( "node2" ) ).parent( NodePath.ROOT ).name( "node2" ).build() );
 
-        final Node node2_1 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "node2_1" ) ).
-            parent( node2.path() ).
-            name( "node2_1" ).
-            build() );
+        final Node node2_1 =
+            createNode( CreateNodeParams.create().setNodeId( NodeId.from( "node2_1" ) ).parent( node2.path() ).name( "node2_1" ).build() );
 
         final ResolveSyncWorkResult result = resolveSyncWorkResult( node1_1.id(), false );
 
-        assertNodes( result, ExpectedNodes.create().
-            implicit( node1_1.id() ).
-            parent( node1.id() ).
-            referred( node2.id() ) );
+        assertNodes( result, ExpectedNodes.create().implicit( node1_1.id() ).parent( node1.id() ).referred( node2.id() ) );
     }
 
 
@@ -336,92 +264,81 @@ class ResolveSyncWorkCommandTest
     @Test
     void reference_to_another_branch_with_another_branch_reference()
     {
-        final Node node1 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "node1" ) ).
-            parent( NodePath.ROOT ).
-            name( "node1" ).
-            build() );
+        final Node node1 =
+            createNode( CreateNodeParams.create().setNodeId( NodeId.from( "node1" ) ).parent( NodePath.ROOT ).name( "node1" ).build() );
 
         final PropertyTree node1_1_data = new PropertyTree();
         node1_1_data.addReference( "myRef", Reference.from( "node2_1_1" ) );
 
-        final Node node1_1 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "node1_1" ) ).
-            parent( node1.path() ).
-            name( "node1_1" ).
-            data( node1_1_data ).
-            build() );
+        final Node node1_1 = createNode( CreateNodeParams.create()
+                                             .setNodeId( NodeId.from( "node1_1" ) )
+                                             .parent( node1.path() )
+                                             .name( "node1_1" )
+                                             .data( node1_1_data )
+                                             .build() );
 
         final PropertyTree node2_data = new PropertyTree();
         node2_data.addReference( "myRef", Reference.from( "node3" ) );
 
-        final Node node2 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "node2" ) ).
-            parent( NodePath.ROOT ).
-            name( "node2" ).
-            data( node2_data ).
-            build() );
+        final Node node2 = createNode( CreateNodeParams.create()
+                                           .setNodeId( NodeId.from( "node2" ) )
+                                           .parent( NodePath.ROOT )
+                                           .name( "node2" )
+                                           .data( node2_data )
+                                           .build() );
 
-        final Node node2_1 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "node2_1" ) ).
-            parent( node2.path() ).
-            name( "node2_1" ).
-            build() );
+        final Node node2_1 =
+            createNode( CreateNodeParams.create().setNodeId( NodeId.from( "node2_1" ) ).parent( node2.path() ).name( "node2_1" ).build() );
 
-        final Node node2_1_1 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "node2_1_1" ) ).
-            parent( node2_1.path() ).
-            name( "node2_1_1" ).
-            build() );
+        final Node node2_1_1 = createNode(
+            CreateNodeParams.create().setNodeId( NodeId.from( "node2_1_1" ) ).parent( node2_1.path() ).name( "node2_1_1" ).build() );
 
         final PropertyTree node3_data = new PropertyTree();
         node1_1_data.addReference( "myRef", Reference.from( "node2_1" ) );
 
-        final Node node3 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "node3" ) ).
-            parent( NodePath.ROOT ).
-            name( "node3" ).
-            data( node3_data ).
-            build() );
+        final Node node3 = createNode( CreateNodeParams.create()
+                                           .setNodeId( NodeId.from( "node3" ) )
+                                           .parent( NodePath.ROOT )
+                                           .name( "node3" )
+                                           .data( node3_data )
+                                           .build() );
 
-        final ResolveSyncWorkResult result = ResolveSyncWorkCommand.create().
-            includeChildren( true ).
-            nodeId( node1.id() ).
-            target( WS_OTHER ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            build().
-            execute();
+        final ResolveSyncWorkResult result = ResolveSyncWorkCommand.create()
+            .includeChildren( true )
+            .nodeId( node1.id() )
+            .target( WS_OTHER )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.storageService )
+            .searchService( this.searchService )
+            .build()
+            .execute();
 
-        assertNodes( result, ExpectedNodes.create().
-            implicit( node1.id() ).
-            child( node1_1.id() ).
-            referred( node2_1_1.id(), node3.id() ).
-            parent( node2_1.id(), node2.id() ) );
+        assertNodes( result, ExpectedNodes.create()
+            .implicit( node1.id() )
+            .child( node1_1.id() )
+            .referred( node2_1_1.id(), node3.id() )
+            .parent( node2_1.id(), node2.id() ) );
     }
 
     @Test
     void duplicate_node_with_reference_then_resolve()
     {
-        final Node node1 = createNode( CreateNodeParams.create().
-            parent( NodePath.ROOT ).
-            name( "node1" ).
-            data( createDataWithReferences( Reference.from( "node1_1-id" ), Reference.from( "node1_1_1-id" ) ) ).
-            build() );
+        final Node node1 = createNode( CreateNodeParams.create()
+                                           .parent( NodePath.ROOT )
+                                           .name( "node1" )
+                                           .data( createDataWithReferences( Reference.from( "node1_1-id" ),
+                                                                            Reference.from( "node1_1_1-id" ) ) )
+                                           .build() );
 
-        final Node node1_1 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "node1_1-id" ) ).
-            parent( node1.path() ).
-            name( "node1_1" ).
-            data( createDataWithReferences( Reference.from( "node1_1_1-id" ) ) ).
-            build() );
+        final Node node1_1 = createNode( CreateNodeParams.create()
+                                             .setNodeId( NodeId.from( "node1_1-id" ) )
+                                             .parent( node1.path() )
+                                             .name( "node1_1" )
+                                             .data( createDataWithReferences( Reference.from( "node1_1_1-id" ) ) )
+                                             .build() );
 
-        final Node node_1_1_1 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "node1_1_1-id" ) ).
-            parent( node1_1.path() ).
-            name( "node1_1_1" ).
-            build() );
+        final Node node_1_1_1 = createNode(
+            CreateNodeParams.create().setNodeId( NodeId.from( "node1_1_1-id" ) ).parent( node1_1.path() ).name( "node1_1_1" ).build() );
 
         refresh();
 
@@ -429,15 +346,15 @@ class ResolveSyncWorkCommandTest
 
         refresh();
 
-        final ResolveSyncWorkResult result = ResolveSyncWorkCommand.create().
-            includeChildren( true ).
-            nodeId( node1Duplicate.id() ).
-            target( WS_OTHER ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            build().
-            execute();
+        final ResolveSyncWorkResult result = ResolveSyncWorkCommand.create()
+            .includeChildren( true )
+            .nodeId( node1Duplicate.id() )
+            .target( WS_OTHER )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.storageService )
+            .searchService( this.searchService )
+            .build()
+            .execute();
 
         assertEquals( 3, result.getSize() );
     }
@@ -535,9 +452,7 @@ class ResolveSyncWorkCommandTest
 
         final ResolveSyncWorkResult result = resolveSyncWorkResult( "a2_1" );
 
-        assertNodes( result, ExpectedNodes.create().
-            implicit( "a2_1" ).
-            referred( "b2_1" ) );
+        assertNodes( result, ExpectedNodes.create().implicit( "a2_1" ).referred( "b2_1" ) );
 
         assertEquals( 2, result.getSize() );
     }
@@ -567,10 +482,7 @@ class ResolveSyncWorkCommandTest
 
         final ResolveSyncWorkResult result = resolveSyncWorkResult( "a2_1" );
 
-        assertNodes( result, ExpectedNodes.create().
-            implicit( "a2_1" ).
-            referred( "b2_1" ).
-            parent( "b2", "s2" ) );
+        assertNodes( result, ExpectedNodes.create().implicit( "a2_1" ).referred( "b2_1" ).parent( "b2", "s2" ) );
     }
 
     @Test
@@ -587,8 +499,7 @@ class ResolveSyncWorkCommandTest
 
         final ResolveSyncWorkResult result = resolveSyncWorkResult( "a2_1" );
 
-        assertNodes( result, ExpectedNodes.create().
-            implicit( "a2_1" ) );
+        assertNodes( result, ExpectedNodes.create().implicit( "a2_1" ) );
 
         assertEquals( 1, result.getSize() );
     }
@@ -613,20 +524,13 @@ class ResolveSyncWorkCommandTest
         createS1S2Tree();
 
         // Add child-node to B2
-        createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "b2_2" ) ).
-            parent( new NodePath( "/s2/b2" ) ).
-            name( "b2_2" ).
-            build() );
+        createNode(
+            CreateNodeParams.create().setNodeId( NodeId.from( "b2_2" ) ).parent( new NodePath( "/s2/b2" ) ).name( "b2_2" ).build() );
 
         final ResolveSyncWorkResult result = resolveSyncWorkResult( "a2_1" );
 
         assertEquals( 6, result.getSize() );
-        assertNodes( result, ExpectedNodes.create().
-            implicit( "a2_1" ).
-            parent( "a2", "s1" ).
-            referred( "b2_1" ).
-            parent( "b2", "s2" ) );
+        assertNodes( result, ExpectedNodes.create().implicit( "a2_1" ).parent( "a2", "s1" ).referred( "b2_1" ).parent( "b2", "s2" ) );
     }
 
     /*
@@ -653,8 +557,7 @@ class ResolveSyncWorkCommandTest
         moveNode( "b2_1", new NodePath( "/s2/b2" ), "b2_1_renamed" );
 
         final ResolveSyncWorkResult result = resolveSyncWorkResult( "a2_1_1" );
-        assertNodes( result, ExpectedNodes.create().
-            implicit( "a2_1_1" ) );
+        assertNodes( result, ExpectedNodes.create().implicit( "a2_1_1" ) );
     }
 
     @Test
@@ -668,8 +571,7 @@ class ResolveSyncWorkCommandTest
         updateNode( "b2_1" );
 
         final ResolveSyncWorkResult result = resolveSyncWorkResult( "a2_1_1" );
-        assertNodes( result, ExpectedNodes.create().
-            implicit( "a2_1_1" ) );
+        assertNodes( result, ExpectedNodes.create().implicit( "a2_1_1" ) );
     }
 
     @Test
@@ -684,20 +586,14 @@ class ResolveSyncWorkCommandTest
         createNode( NodePath.ROOT, "s3" );
 
         // Update parent node with new reference
-        updateNode( UpdateNodeParams.create().
-            id( NodeId.from( "a2_1" ) ).
-            editor( ( node ) -> {
-                node.data.addReference( "newRef", Reference.from( "s3" ) );
-            } ).
-            build() );
+        updateNode( UpdateNodeParams.create().id( NodeId.from( "a2_1" ) ).editor( ( node ) -> {
+            node.data.addReference( "newRef", Reference.from( "s3" ) );
+        } ).build() );
 
         updateNode( "b2_1" );
 
         final ResolveSyncWorkResult result = resolveSyncWorkResult( "a2_1_1" );
-        assertNodes( result, ExpectedNodes.create().
-            parent( "a2_1" ).
-            referred( "s3" ).
-            implicit( "a2_1_1" ) );
+        assertNodes( result, ExpectedNodes.create().parent( "a2_1" ).referred( "s3" ).implicit( "a2_1_1" ) );
     }
 
     /*
@@ -814,12 +710,12 @@ class ResolveSyncWorkCommandTest
 
         final ResolveSyncWorkResult result = resolveSyncWorkResult( NodeId.from( "a2_1" ), true );
 
-        assertNodes( result, ExpectedNodes.create().
-            implicit( "a2_1" ).
-            child( "a2_1_1" ).
-            parent( "a2", "s1" ).
-            referred( "b2_1" ).
-            parent( "b2", "s2" ) );
+        assertNodes( result, ExpectedNodes.create()
+            .implicit( "a2_1" )
+            .child( "a2_1_1" )
+            .parent( "a2", "s1" )
+            .referred( "b2_1" )
+            .parent( "b2", "s2" ) );
     }
 
 
@@ -841,11 +737,8 @@ class ResolveSyncWorkCommandTest
 
         final ResolveSyncWorkResult result = resolveSyncWorkResult( NodeId.from( "a2_1_1" ), true );
 
-        assertNodes( result, ExpectedNodes.create().
-            implicit( "a2_1_1" ).
-            parent( "a2_1", "a2", "s1" ).
-            referred( "b2_1" ).
-            parent( "b2", "s2" ) );
+        assertNodes( result,
+                     ExpectedNodes.create().implicit( "a2_1_1" ).parent( "a2_1", "a2", "s1" ).referred( "b2_1" ).parent( "b2", "s2" ) );
     }
 
     /*
@@ -885,59 +778,46 @@ class ResolveSyncWorkCommandTest
     @Test
     void reference_to_another_branch_with_back_reference()
     {
-        final Node node1 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "node1" ) ).
-            parent( NodePath.ROOT ).
-            name( "node1" ).
-            build() );
+        final Node node1 =
+            createNode( CreateNodeParams.create().setNodeId( NodeId.from( "node1" ) ).parent( NodePath.ROOT ).name( "node1" ).build() );
 
         final PropertyTree node1_1_data = new PropertyTree();
         node1_1_data.addReference( "myRef", Reference.from( "node2_1_1" ) );
 
-        final Node node1_1 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "node1_1" ) ).
-            parent( node1.path() ).
-            name( "node1_1" ).
-            data( node1_1_data ).
-            build() );
+        final Node node1_1 = createNode( CreateNodeParams.create()
+                                             .setNodeId( NodeId.from( "node1_1" ) )
+                                             .parent( node1.path() )
+                                             .name( "node1_1" )
+                                             .data( node1_1_data )
+                                             .build() );
 
         final PropertyTree node2_data = new PropertyTree();
         node2_data.addReference( "myRef", Reference.from( "node1_1" ) );
 
-        final Node node2 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "node2" ) ).
-            parent( NodePath.ROOT ).
-            name( "node2" ).
-            data( node2_data ).
-            build() );
+        final Node node2 = createNode( CreateNodeParams.create()
+                                           .setNodeId( NodeId.from( "node2" ) )
+                                           .parent( NodePath.ROOT )
+                                           .name( "node2" )
+                                           .data( node2_data )
+                                           .build() );
 
-        final Node node2_1 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "node2_1" ) ).
-            parent( node2.path() ).
-            name( "node2_1" ).
-            build() );
+        final Node node2_1 =
+            createNode( CreateNodeParams.create().setNodeId( NodeId.from( "node2_1" ) ).parent( node2.path() ).name( "node2_1" ).build() );
 
-        final Node node2_1_1 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "node2_1_1" ) ).
-            parent( node2_1.path() ).
-            name( "node2_1_1" ).
-            build() );
+        final Node node2_1_1 = createNode(
+            CreateNodeParams.create().setNodeId( NodeId.from( "node2_1_1" ) ).parent( node2_1.path() ).name( "node2_1_1" ).build() );
 
-        createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "node3" ) ).
-            parent( NodePath.ROOT ).
-            name( "node3" ).
-            build() );
+        createNode( CreateNodeParams.create().setNodeId( NodeId.from( "node3" ) ).parent( NodePath.ROOT ).name( "node3" ).build() );
 
-        final ResolveSyncWorkResult result = ResolveSyncWorkCommand.create().
-            includeChildren( true ).
-            nodeId( node1.id() ).
-            target( WS_OTHER ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            build().
-            execute();
+        final ResolveSyncWorkResult result = ResolveSyncWorkCommand.create()
+            .includeChildren( true )
+            .nodeId( node1.id() )
+            .target( WS_OTHER )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.storageService )
+            .searchService( this.searchService )
+            .build()
+            .execute();
 
         assertEquals( 5, result.getSize() );
     }
@@ -950,8 +830,7 @@ class ResolveSyncWorkCommandTest
 
         ResolveSyncWorkResult result = resolveSyncWorkResult( NodeId.from( "s1" ), NodeIds.empty(), false );
         assertEquals( 1, result.getSize() );
-        assertNodes( result, ExpectedNodes.create().
-            implicit( "s1" ) );
+        assertNodes( result, ExpectedNodes.create().implicit( "s1" ) );
 
         result = resolveSyncWorkResult( NodeId.from( "s1" ), NodeIds.empty(), true );
         assertEquals( 8, result.getSize() );
@@ -980,10 +859,7 @@ class ResolveSyncWorkCommandTest
 
         ResolveSyncWorkResult result = resolveSyncWorkResult( NodeId.from( "s1" ), NodeIds.from( "s1" ), true );
 
-        assertNodes( result, ExpectedNodes.create().
-            child( "a1", "a2", "a2_1", "a2_1_1" ).
-            referred( "b2_1" ).
-            parent( "b2", "s2", "s1" ) );
+        assertNodes( result, ExpectedNodes.create().child( "a1", "a2", "a2_1", "a2_1_1" ).referred( "b2_1" ).parent( "b2", "s2", "s1" ) );
 
         result = resolveSyncWorkResult( NodeId.from( "s1" ), NodeIds.from( "s1" ), false );
 
@@ -1010,12 +886,10 @@ class ResolveSyncWorkCommandTest
         final NodeIds children = NodeIds.from( "a1", "a2", "a2_1", "a2_1_1", "b2_1", "b2", "s2" );
 
         ResolveSyncWorkResult result = resolveSyncWorkResult( NodeId.from( "s1" ), children, false );
-        assertNodes( result, ExpectedNodes.create().
-            implicit( "s1" ) );
+        assertNodes( result, ExpectedNodes.create().implicit( "s1" ) );
 
         result = resolveSyncWorkResult( NodeId.from( "s1" ), children, true );
-        assertNodes( result, ExpectedNodes.create().
-            implicit( "s1" ) );
+        assertNodes( result, ExpectedNodes.create().implicit( "s1" ) );
     }
 
       /*
@@ -1041,9 +915,7 @@ class ResolveSyncWorkCommandTest
 
         final ResolveSyncWorkResult result = resolveSyncWorkResult( NodeId.from( "s1" ), NodeIds.from( "a2_1_1", "a2_1" ), true );
 
-        assertNodes( result, ExpectedNodes.create().
-            implicit( "s1" ).
-            child( "a1", "a2" ) );
+        assertNodes( result, ExpectedNodes.create().implicit( "s1" ).child( "a1", "a2" ) );
     }
 
     @Test
@@ -1054,9 +926,7 @@ class ResolveSyncWorkCommandTest
 
         final ResolveSyncWorkResult result = resolveSyncWorkResult( NodeId.from( "s1" ), NodeIds.from( "b2_1" ), true );
 
-        assertNodes( result, ExpectedNodes.create().
-            implicit( "s1" ).
-            child( "a1", "a2", "a2_1", "a2_1_1" ) );
+        assertNodes( result, ExpectedNodes.create().implicit( "s1" ).child( "a1", "a2", "a2_1", "a2_1_1" ) );
     }
 
     /*
@@ -1081,11 +951,11 @@ class ResolveSyncWorkCommandTest
 
         final ResolveSyncWorkResult result = resolveSyncWorkResult( NodeId.from( "s1" ), true );
 
-        assertNodes( result, ExpectedNodes.create().
-            implicit( "s1" ).
-            child( "a1", "a2", "a2_1", "a2_1_1" ).
-            referred( "b2_1" ).
-            parent( "b2", "s2" ) );
+        assertNodes( result, ExpectedNodes.create()
+            .implicit( "s1" )
+            .child( "a1", "a2", "a2_1", "a2_1_1" )
+            .referred( "b2_1" )
+            .parent( "b2", "s2" ) );
     }
 
 
@@ -1108,9 +978,7 @@ class ResolveSyncWorkCommandTest
 
         final ResolveSyncWorkResult result = resolveSyncWorkResult( NodeId.from( "s1" ), NodeIds.empty(), true, false );
 
-        assertNodes( result, ExpectedNodes.create().
-            implicit( "s1" ).
-            child( "a1", "a2", "a2_1", "a2_1_1" ) );
+        assertNodes( result, ExpectedNodes.create().implicit( "s1" ).child( "a1", "a2", "a2_1", "a2_1_1" ) );
     }
 
 
@@ -1124,7 +992,7 @@ class ResolveSyncWorkCommandTest
         createNode( node1.path(), "node1_4" );
         refresh();
 
-        pushNodes( WS_OTHER, Node.ROOT_UUID, NodeId.from( "node1" ), NodeId.from( "node1_1" ), NodeId.from( "node1_2" ),
+        pushNodes( WS_OTHER, NodeId.ROOT, NodeId.from( "node1" ), NodeId.from( "node1_1" ), NodeId.from( "node1_2" ),
                    NodeId.from( "node1_3" ), NodeId.from( "node1_4" ) );
 
         SortNodeCommand.create()
@@ -1137,9 +1005,7 @@ class ResolveSyncWorkCommandTest
 
         final ResolveSyncWorkResult result = resolveSyncWorkResult( node1.id(), NodeIds.empty(), true, false );
 
-        assertNodes( result, ExpectedNodes.create().
-            implicit( node1.id() ).
-            child( "node1_1", "node1_2", "node1_3", "node1_4" ) );
+        assertNodes( result, ExpectedNodes.create().implicit( node1.id() ).child( "node1_1", "node1_2", "node1_3", "node1_4" ) );
     }
 
     @Test
@@ -1179,78 +1045,45 @@ class ResolveSyncWorkCommandTest
      */
     private void createS1S2Tree()
     {
-        final Node s1 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "s1" ) ).
-            parent( NodePath.ROOT ).
-            name( "s1" ).
-            build() );
+        final Node s1 =
+            createNode( CreateNodeParams.create().setNodeId( NodeId.from( "s1" ) ).parent( NodePath.ROOT ).name( "s1" ).build() );
 
-        createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "a1" ) ).
-            parent( s1.path() ).
-            name( "a1" ).
-            build() );
+        createNode( CreateNodeParams.create().setNodeId( NodeId.from( "a1" ) ).parent( s1.path() ).name( "a1" ).build() );
 
-        final Node a2 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "a2" ) ).
-            parent( s1.path() ).
-            name( "a2" ).
-            build() );
+        final Node a2 = createNode( CreateNodeParams.create().setNodeId( NodeId.from( "a2" ) ).parent( s1.path() ).name( "a2" ).build() );
 
-        final Node a2_1 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "a2_1" ) ).
-            parent( a2.path() ).
-            data( createDataWithReferences( Reference.from( "b2_1" ) ) ).
-            name( "a2_1" ).
-            build() );
+        final Node a2_1 = createNode( CreateNodeParams.create()
+                                          .setNodeId( NodeId.from( "a2_1" ) )
+                                          .parent( a2.path() )
+                                          .data( createDataWithReferences( Reference.from( "b2_1" ) ) )
+                                          .name( "a2_1" )
+                                          .build() );
 
-        createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "a2_1_1" ) ).
-            parent( a2_1.path() ).
-            name( "a2_1_1" ).
-            build() );
+        createNode( CreateNodeParams.create().setNodeId( NodeId.from( "a2_1_1" ) ).parent( a2_1.path() ).name( "a2_1_1" ).build() );
 
-        final Node s2 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "s2" ) ).
-            parent( NodePath.ROOT ).
-            name( "s2" ).
-            build() );
+        final Node s2 =
+            createNode( CreateNodeParams.create().setNodeId( NodeId.from( "s2" ) ).parent( NodePath.ROOT ).name( "s2" ).build() );
 
-        createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "b1" ) ).
-            parent( s2.path() ).
-            name( "b1" ).
-            build() );
+        createNode( CreateNodeParams.create().setNodeId( NodeId.from( "b1" ) ).parent( s2.path() ).name( "b1" ).build() );
 
-        final Node b2 = createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "b2" ) ).
-            parent( s2.path() ).
-            name( "b2" ).
-            build() );
+        final Node b2 = createNode( CreateNodeParams.create().setNodeId( NodeId.from( "b2" ) ).parent( s2.path() ).name( "b2" ).build() );
 
-        createNode( CreateNodeParams.create().
-            setNodeId( NodeId.from( "b2_1" ) ).
-            parent( b2.path() ).
-            name( "b2_1" ).
-            build() );
+        createNode( CreateNodeParams.create().setNodeId( NodeId.from( "b2_1" ) ).parent( b2.path() ).name( "b2_1" ).build() );
     }
 
     private void pushAllNodesInS1S2Tree()
     {
-        pushNodes( WS_OTHER, Node.ROOT_UUID, NodeId.from( "s1" ), NodeId.from( "s2" ), NodeId.from( "a1" ), NodeId.from( "a2" ),
+        pushNodes( WS_OTHER, NodeId.ROOT, NodeId.from( "s1" ), NodeId.from( "s2" ), NodeId.from( "a1" ), NodeId.from( "a2" ),
                    NodeId.from( "a2_1" ), NodeId.from( "b1" ), NodeId.from( "b2" ), NodeId.from( "b2_1" ) );
     }
 
 
     private void updateNode( final String nodeId )
     {
-        final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
-            editor( toBeEdited -> {
-                final PropertyTree nodeData = toBeEdited.data;
-                nodeData.addString( "newValue", "hepp" );
-            } ).
-            id( NodeId.from( nodeId ) ).
-            build();
+        final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().editor( toBeEdited -> {
+            final PropertyTree nodeData = toBeEdited.data;
+            nodeData.addString( "newValue", "hepp" );
+        } ).id( NodeId.from( nodeId ) ).build();
 
         updateNode( updateNodeParams );
     }
@@ -1319,17 +1152,17 @@ class ResolveSyncWorkCommandTest
     private ResolveSyncWorkResult resolveSyncWorkResult( final NodeId nodeId, final NodeIds excludeIds, final boolean includeChildren,
                                                          final boolean includeReferences )
     {
-        return ResolveSyncWorkCommand.create().
-            nodeId( nodeId ).
-            target( WS_OTHER ).
-            includeDependencies( includeReferences ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            includeChildren( includeChildren ).
-            excludedNodeIds( excludeIds ).
-            build().
-            execute();
+        return ResolveSyncWorkCommand.create()
+            .nodeId( nodeId )
+            .target( WS_OTHER )
+            .includeDependencies( includeReferences )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.storageService )
+            .searchService( this.searchService )
+            .includeChildren( includeChildren )
+            .excludedNodeIds( excludeIds )
+            .build()
+            .execute();
     }
 
     private ResolveSyncWorkResult resolveSyncWorkResult( final NodeId nodeId, final boolean includeChildren )
@@ -1359,8 +1192,11 @@ class ResolveSyncWorkCommandTest
 
         StringBuilder builder = new StringBuilder();
         builder.append( LINE_SEPARATOR );
-        builder.append( "Asserted size [" ).append( expectedNodes.nodes.size() ).append( "], actual [" ).append( result.getSize() ).append(
-            "]" );
+        builder.append( "Asserted size [" )
+            .append( expectedNodes.nodes.size() )
+            .append( "], actual [" )
+            .append( result.getSize() )
+            .append( "]" );
         builder.append( LINE_SEPARATOR );
 
         for ( final ExpectedNode expectedNode : expectedNodes )
@@ -1516,9 +1352,7 @@ class ResolveSyncWorkCommandTest
         @Override
         public String toString()
         {
-            return this.nodes.stream().
-                map( Objects::toString ).
-                collect( Collectors.joining( ", " ) );
+            return this.nodes.stream().map( Objects::toString ).collect( Collectors.joining( ", " ) );
         }
     }
 

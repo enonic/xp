@@ -111,11 +111,14 @@ public final class ImageHandlerWorker
             : Integer.parseInt( this.backgroundParam.startsWith( "0x" ) ? this.backgroundParam.substring( 2 ) : this.backgroundParam, 16 );
         try
         {
+            Objects.requireNonNull( content.getMediaAttachment(), "Media content must have an attachment" );
+
             final ReadImageParams readImageParams = ReadImageParams.newImageParams()
                 .contentId( content.getId() )
                 .binaryReference( binaryReference )
                 .cropping( content.getCropping() )
                 .focalPoint( content.getFocalPoint() )
+                .attachmentSha512( content.getMediaAttachment().getSha512() )
                 .orientation( imageOrientation )
                 .scaleParams( this.scaleParams )
                 .filterParam( this.filterParam )
@@ -141,8 +144,7 @@ public final class ImageHandlerWorker
     {
         if ( legacyMode )
         {
-            final String hash = this.contentService.getBinaryKey( content.getId(), binaryReference );
-            return MediaHashResolver.resolveLegacyImageHash( content, hash );
+            return null;
         }
         else
         {

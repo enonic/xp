@@ -20,7 +20,7 @@ public class MemoryBlobRecord
 
     public MemoryBlobRecord( final ByteSource source )
     {
-        this( BlobKey.from( source ), source );
+        this( BlobKey.sha256( source ), source );
     }
 
     public MemoryBlobRecord( final BlobKey blobKey, final ByteSource source )

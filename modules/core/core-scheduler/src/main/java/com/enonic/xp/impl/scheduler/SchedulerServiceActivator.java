@@ -21,7 +21,7 @@ import com.enonic.xp.index.IndexService;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeIdExistsException;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.repository.RepositoryService;
+import com.enonic.xp.repository.internal.InternalRepositoryService;
 import com.enonic.xp.scheduler.SchedulerService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
@@ -34,7 +34,7 @@ public final class SchedulerServiceActivator
 {
     private static final Logger LOG = LoggerFactory.getLogger( SchedulerServiceActivator.class );
 
-    private final RepositoryService repositoryService;
+    private final InternalRepositoryService repositoryService;
 
     private final IndexService indexService;
 
@@ -49,8 +49,8 @@ public final class SchedulerServiceActivator
     private ServiceRegistration<SchedulerService> schedulerServiceReg;
 
     @Activate
-    public SchedulerServiceActivator( @Reference final RepositoryService repositoryService, @Reference final IndexService indexService,
-                                      @Reference final NodeService nodeService,
+    public SchedulerServiceActivator( @Reference final InternalRepositoryService repositoryService,
+                                      @Reference final IndexService indexService, @Reference final NodeService nodeService,
                                       @Reference final SchedulerExecutorService schedulerExecutorService,
                                       @Reference final SchedulerConfig schedulerConfig,
                                       @Reference final ScheduleAuditLogSupport auditLogSupport )
@@ -76,14 +76,9 @@ public final class SchedulerServiceActivator
     @Activate
     public void activate( final BundleContext context )
     {
-        final SchedulerServiceImpl schedulerService =
-            new SchedulerServiceImpl( nodeService, schedulerExecutorService, auditLogSupport );
+        final SchedulerServiceImpl schedulerService = new SchedulerServiceImpl( nodeService, schedulerExecutorService, auditLogSupport );
 
-        SchedulerRepoInitializer.create().
-            setIndexService( indexService ).
-            setRepositoryService( repositoryService ).
-            build().
-            initialize();
+        SchedulerRepoInitializer.create().setIndexService( indexService ).setRepositoryService( repositoryService ).build().initialize();
 
         this.schedulerServiceReg = context.registerService( SchedulerService.class, schedulerService, null );
 

@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.Objects;
 
 import com.enonic.xp.blob.BlobKeys;
+import com.enonic.xp.core.internal.Millis;
 
 
 public final class NodeVersion
@@ -32,7 +33,7 @@ public final class NodeVersion
         nodeId = Objects.requireNonNull( builder.nodeId );
         nodePath = Objects.requireNonNull( builder.nodePath );
         nodeCommitId = builder.nodeCommitId;
-        timestamp = Objects.requireNonNull( builder.timestamp );
+        timestamp = Objects.requireNonNull( Millis.from( builder.timestamp ) );
         attributes = builder.attributes;
     }
 

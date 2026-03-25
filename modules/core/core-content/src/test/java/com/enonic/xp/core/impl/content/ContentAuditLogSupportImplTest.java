@@ -110,7 +110,7 @@ class ContentAuditLogSupportImplTest
             .build();
 
         final Content content = Content.create()
-            .id( ContentId.from( "contentId" ) )
+            .id( ContentId.from( "contentid" ) )
             .type( ContentTypeName.site() )
             .name( "contentName" )
             .displayName( "displayName" )
@@ -125,12 +125,12 @@ class ContentAuditLogSupportImplTest
         throws Exception
     {
         final UpdateContentParams params = new UpdateContentParams().requireValid( true )
-            .contentId( ContentId.from( "contentId" ) )
+            .contentId( ContentId.from( "contentid" ) )
             .clearAttachments( true )
             .editor( edit -> edit.displayName = "New Display Name" );
 
         final Content content = Content.create()
-            .id( ContentId.from( "contentId" ) )
+            .id( ContentId.from( "contentid" ) )
             .type( ContentTypeName.site() )
             .name( "contentName" )
             .displayName( "displayName" )
@@ -145,12 +145,12 @@ class ContentAuditLogSupportImplTest
         throws Exception
     {
         final UpdateContentMetadataParams params = UpdateContentMetadataParams.create()
-            .contentId( ContentId.from( "contentId" ) )
+            .contentId( ContentId.from( "contentid" ) )
             .editor( edit -> {} )
             .build();
 
         final Content content = Content.create()
-            .id( ContentId.from( "contentId" ) )
+            .id( ContentId.from( "contentid" ) )
             .type( ContentTypeName.site() )
             .name( "contentName" )
             .displayName( "Content Name" )
@@ -164,9 +164,9 @@ class ContentAuditLogSupportImplTest
         ArgumentCaptor<LogAuditLogParams> argumentCaptor = test( support::updateMetadata, params, result );
 
         assertEquals( "system.content.updateMetadata", argumentCaptor.getValue().getType() );
-        assertEquals( "contentId", argumentCaptor.getValue().getData().getSet( "params" ).getString( "contentId" ) );
+        assertEquals( "contentid", argumentCaptor.getValue().getData().getSet( "params" ).getString( "contentId" ) );
         assertEquals( "user:system:testUser", argumentCaptor.getValue().getData().getSet( "params" ).getString( "modifier" ) );
-        assertEquals( "contentId", argumentCaptor.getValue().getData().getSet( "result" ).getString( "id" ) );
+        assertEquals( "contentid", argumentCaptor.getValue().getData().getSet( "result" ).getString( "id" ) );
         assertEquals( "/contentName", argumentCaptor.getValue().getData().getSet( "result" ).getString( "path" ) );
     }
 
@@ -176,7 +176,7 @@ class ContentAuditLogSupportImplTest
         throws Exception
     {
         final PatchContentParams params = PatchContentParams.create()
-            .contentId( ContentId.from( "contentId" ) )
+            .contentId( ContentId.from( "contentid" ) )
             .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
             .skipSync( true )
             .createAttachments( CreateAttachments.from( CreateAttachment.create()
@@ -194,16 +194,16 @@ class ContentAuditLogSupportImplTest
             .build();
 
         final PatchContentResult result = PatchContentResult.create()
-            .contentId( ContentId.from( "contentId" ) )
+            .contentId( ContentId.from( "contentid" ) )
             .addResult( ContentConstants.BRANCH_DRAFT, Content.create()
-                .id( ContentId.from( "contentId" ) )
+                .id( ContentId.from( "contentid" ) )
                 .type( ContentTypeName.site() )
                 .name( "contentName1" )
                 .displayName( "displayName1" )
                 .parentPath( ContentPath.ROOT )
                 .build() )
             .addResult( ContentConstants.BRANCH_MASTER, Content.create()
-                .id( ContentId.from( "contentId" ) )
+                .id( ContentId.from( "contentid" ) )
                 .type( ContentTypeName.site() )
                 .name( "contentName2" )
                 .displayName( "displayName2" )
@@ -215,7 +215,7 @@ class ContentAuditLogSupportImplTest
         ArgumentCaptor<LogAuditLogParams> argumentCaptor = test( support::patch, params, result );
 
         assertEquals( "user:system:testUser", argumentCaptor.getValue().getData().getSet( "params" ).getString( "modifier" ) );
-        assertEquals( "contentId", argumentCaptor.getValue().getData().getSet( "params" ).getString( "contentId" ) );
+        assertEquals( "contentid", argumentCaptor.getValue().getData().getSet( "params" ).getString( "contentId" ) );
         assertEquals( "true", argumentCaptor.getValue().getData().getSet( "params" ).getString( "skipSync" ) );
         assertEquals( List.of( "draft", "master" ), argumentCaptor.getValue().getData().getSet( "params" ).getStrings( "branches" ) );
         assertEquals( "MyImage.jpg",
@@ -237,7 +237,7 @@ class ContentAuditLogSupportImplTest
         throws Exception
     {
         final ResetContentInheritParams params = ResetContentInheritParams.create()
-            .contentId( ContentId.from( "contentId" ) )
+            .contentId( ContentId.from( "contentid" ) )
             .projectName( ProjectName.from( "test-project" ) )
             .inherit( EnumSet.of( ContentInheritType.CONTENT, ContentInheritType.SORT ) )
             .build();
@@ -245,7 +245,7 @@ class ContentAuditLogSupportImplTest
         ArgumentCaptor<LogAuditLogParams> argumentCaptor = testSingle( support::resetInheritance, params );
 
         assertEquals( "system.contentSync.resetInheritance", argumentCaptor.getValue().getType() );
-        assertEquals( "contentId", argumentCaptor.getValue().getData().getSet( "params" ).getString( "contentId" ) );
+        assertEquals( "contentid", argumentCaptor.getValue().getData().getSet( "params" ).getString( "contentId" ) );
         assertEquals( "test-project", argumentCaptor.getValue().getData().getSet( "params" ).getString( "projectName" ) );
         assertEquals( List.of( "CONTENT", "SORT" ), argumentCaptor.getValue().getData().getSet( "params" ).getStrings( "inherit" ) );
     }
@@ -274,7 +274,7 @@ class ContentAuditLogSupportImplTest
         params.mimeType( "image/jpeg" );
 
         final Content content = Media.create()
-            .id( ContentId.from( "mediaId" ) )
+            .id( ContentId.from( "mediaid" ) )
             .type( ContentTypeName.imageMedia() )
             .name( "mediaName" )
             .displayName( "Media Display Name" )
@@ -287,7 +287,7 @@ class ContentAuditLogSupportImplTest
         assertEquals( "mediaName", argumentCaptor.getValue().getData().getSet( "params" ).getString( "name" ) );
         assertEquals( "image/jpeg", argumentCaptor.getValue().getData().getSet( "params" ).getString( "mimeType" ) );
         assertEquals( "/", argumentCaptor.getValue().getData().getSet( "params" ).getString( "parent" ) );
-        assertEquals( "mediaId", argumentCaptor.getValue().getData().getSet( "result" ).getString( "id" ) );
+        assertEquals( "mediaid", argumentCaptor.getValue().getData().getSet( "result" ).getString( "id" ) );
         assertEquals( "/mediaName", argumentCaptor.getValue().getData().getSet( "result" ).getString( "path" ) );
     }
 
@@ -296,12 +296,12 @@ class ContentAuditLogSupportImplTest
         throws Exception
     {
         final UpdateMediaParams params = new UpdateMediaParams();
-        params.content( ContentId.from( "mediaId" ) );
+        params.content( ContentId.from( "mediaid" ) );
         params.name( "updatedMediaName" );
         params.mimeType( "image/png" );
 
         final Content content = Media.create()
-            .id( ContentId.from( "mediaId" ) )
+            .id( ContentId.from( "mediaid" ) )
             .type( ContentTypeName.imageMedia() )
             .name( "updatedMediaName" )
             .displayName( "Updated Media" )
@@ -313,8 +313,8 @@ class ContentAuditLogSupportImplTest
         assertEquals( "system.content.update", argumentCaptor.getValue().getType() );
         assertEquals( "updatedMediaName", argumentCaptor.getValue().getData().getSet( "params" ).getString( "name" ) );
         assertEquals( "image/png", argumentCaptor.getValue().getData().getSet( "params" ).getString( "mimeType" ) );
-        assertEquals( "mediaId", argumentCaptor.getValue().getData().getSet( "params" ).getString( "content" ) );
-        assertEquals( "mediaId", argumentCaptor.getValue().getData().getSet( "result" ).getString( "id" ) );
+        assertEquals( "mediaid", argumentCaptor.getValue().getData().getSet( "params" ).getString( "content" ) );
+        assertEquals( "mediaid", argumentCaptor.getValue().getData().getSet( "result" ).getString( "id" ) );
         assertEquals( "/updatedMediaName", argumentCaptor.getValue().getData().getSet( "result" ).getString( "path" ) );
     }
 
@@ -327,16 +327,16 @@ class ContentAuditLogSupportImplTest
             .build();
 
         final DeleteContentsResult result = DeleteContentsResult.create()
-            .addDeleted( ContentId.from( "deletedId" ) )
-            .addUnpublished( ContentId.from( "unpublishedId" ) )
+            .addDeleted( ContentId.from( "deletedid" ) )
+            .addUnpublished( ContentId.from( "unpublishedid" ) )
             .build();
 
         ArgumentCaptor<LogAuditLogParams> argumentCaptor = test( support::delete, params, result );
 
         assertEquals( "system.content.delete", argumentCaptor.getValue().getType() );
         assertEquals( "/content-to-delete", argumentCaptor.getValue().getData().getSet( "params" ).getString( "contentPath" ) );
-        assertEquals( List.of( "deletedId" ), argumentCaptor.getValue().getData().getSet( "result" ).getStrings( "deletedContents" ) );
-        assertEquals( List.of( "unpublishedId" ), argumentCaptor.getValue().getData().getSet( "result" ).getStrings( "unpublishedContents" ) );
+        assertEquals( List.of( "deletedid" ), argumentCaptor.getValue().getData().getSet( "result" ).getStrings( "deletedContents" ) );
+        assertEquals( List.of( "unpublishedid" ), argumentCaptor.getValue().getData().getSet( "result" ).getStrings( "unpublishedContents" ) );
     }
 
     @Test
@@ -344,18 +344,18 @@ class ContentAuditLogSupportImplTest
         throws Exception
     {
         final PushContentParams params = PushContentParams.create()
-            .contentIds( ContentIds.from( ContentId.from( "contentId" ) ) )
+            .contentIds( ContentIds.from( ContentId.from( "contentid" ) ) )
             .build();
 
         final PublishContentResult result = PublishContentResult.create()
-            .add( PublishContentResult.Result.success( ContentId.from( "contentId" ) ) )
+            .add( PublishContentResult.Result.success( ContentId.from( "contentid" ) ) )
             .build();
 
         ArgumentCaptor<LogAuditLogParams> argumentCaptor = test( support::publish, params, result );
 
         assertEquals( "system.content.publish", argumentCaptor.getValue().getType() );
-        assertEquals( List.of( "contentId" ), argumentCaptor.getValue().getData().getSet( "params" ).getStrings( "contentIds" ) );
-        assertEquals( List.of( "contentId" ), argumentCaptor.getValue().getData().getSet( "result" ).getStrings( "pushedContents" ) );
+        assertEquals( List.of( "contentid" ), argumentCaptor.getValue().getData().getSet( "params" ).getStrings( "contentIds" ) );
+        assertEquals( List.of( "contentid" ), argumentCaptor.getValue().getData().getSet( "result" ).getStrings( "pushedContents" ) );
     }
 
     @Test
@@ -363,18 +363,18 @@ class ContentAuditLogSupportImplTest
         throws Exception
     {
         final UnpublishContentParams params = UnpublishContentParams.create()
-            .contentIds( ContentIds.from( ContentId.from( "contentId" ) ) )
+            .contentIds( ContentIds.from( ContentId.from( "contentid" ) ) )
             .build();
 
         final UnpublishContentsResult result = UnpublishContentsResult.create()
-            .addUnpublished( ContentId.from( "contentId" ) )
+            .addUnpublished( ContentId.from( "contentid" ) )
             .build();
 
         ArgumentCaptor<LogAuditLogParams> argumentCaptor = test( support::unpublishContent, params, result );
 
         assertEquals( "system.content.unpublishContent", argumentCaptor.getValue().getType() );
-        assertEquals( List.of( "contentId" ), argumentCaptor.getValue().getData().getSet( "params" ).getStrings( "contentIds" ) );
-        assertEquals( List.of( "contentId" ), argumentCaptor.getValue().getData().getSet( "result" ).getStrings( "unpublishedContents" ) );
+        assertEquals( List.of( "contentid" ), argumentCaptor.getValue().getData().getSet( "params" ).getStrings( "contentIds" ) );
+        assertEquals( List.of( "contentid" ), argumentCaptor.getValue().getData().getSet( "result" ).getStrings( "unpublishedContents" ) );
     }
 
     @Test
@@ -382,18 +382,18 @@ class ContentAuditLogSupportImplTest
         throws Exception
     {
         final DuplicateContentParams params = DuplicateContentParams.create()
-            .contentId( ContentId.from( "contentId" ) )
+            .contentId( ContentId.from( "contentid" ) )
             .build();
 
         final DuplicateContentsResult result = DuplicateContentsResult.create()
-            .addDuplicated( ContentId.from( "duplicatedId" ) )
+            .addDuplicated( ContentId.from( "duplicatedid" ) )
             .build();
 
         ArgumentCaptor<LogAuditLogParams> argumentCaptor = test( support::duplicate, params, result );
 
         assertEquals( "system.content.duplicate", argumentCaptor.getValue().getType() );
-        assertEquals( "contentId", argumentCaptor.getValue().getData().getSet( "params" ).getString( "contentId" ) );
-        assertEquals( List.of( "duplicatedId" ), argumentCaptor.getValue().getData().getSet( "result" ).getStrings( "duplicatedContents" ) );
+        assertEquals( "contentid", argumentCaptor.getValue().getData().getSet( "params" ).getString( "contentId" ) );
+        assertEquals( List.of( "duplicatedid" ), argumentCaptor.getValue().getData().getSet( "result" ).getStrings( "duplicatedContents" ) );
     }
 
     @Test
@@ -401,20 +401,20 @@ class ContentAuditLogSupportImplTest
         throws Exception
     {
         final MoveContentParams params = MoveContentParams.create()
-            .contentId( ContentId.from( "contentId" ) )
+            .contentId( ContentId.from( "contentid" ) )
             .parentContentPath( ContentPath.from( "/new-parent" ) )
             .build();
 
         final MoveContentsResult result = MoveContentsResult.create()
-            .addMoved( ContentId.from( "movedId" ) )
+            .addMoved( ContentId.from( "movedid" ) )
             .build();
 
         ArgumentCaptor<LogAuditLogParams> argumentCaptor = test( support::move, params, result );
 
         assertEquals( "system.content.move", argumentCaptor.getValue().getType() );
-        assertEquals( "contentId", argumentCaptor.getValue().getData().getSet( "params" ).getString( "contentId" ) );
+        assertEquals( "contentid", argumentCaptor.getValue().getData().getSet( "params" ).getString( "contentId" ) );
         assertEquals( "/new-parent", argumentCaptor.getValue().getData().getSet( "params" ).getString( "parentContentPath" ) );
-        assertEquals( List.of( "movedId" ), argumentCaptor.getValue().getData().getSet( "result" ).getStrings( "movedContents" ) );
+        assertEquals( List.of( "movedid" ), argumentCaptor.getValue().getData().getSet( "result" ).getStrings( "movedContents" ) );
     }
 
     @Test
@@ -422,18 +422,18 @@ class ContentAuditLogSupportImplTest
         throws Exception
     {
         final ArchiveContentParams params = ArchiveContentParams.create()
-            .contentId( ContentId.from( "contentId" ) )
+            .contentId( ContentId.from( "contentid" ) )
             .build();
 
         final ArchiveContentsResult result = ArchiveContentsResult.create()
-            .addArchived( ContentId.from( "archivedId" ) )
+            .addArchived( ContentId.from( "archivedid" ) )
             .build();
 
         ArgumentCaptor<LogAuditLogParams> argumentCaptor = test( support::archive, params, result );
 
         assertEquals( "system.content.archive", argumentCaptor.getValue().getType() );
-        assertEquals( "contentId", argumentCaptor.getValue().getData().getSet( "params" ).getString( "contentId" ) );
-        assertEquals( List.of( "archivedId" ), argumentCaptor.getValue().getData().getSet( "result" ).getStrings( "archivedContents" ) );
+        assertEquals( "contentid", argumentCaptor.getValue().getData().getSet( "params" ).getString( "contentId" ) );
+        assertEquals( List.of( "archivedid" ), argumentCaptor.getValue().getData().getSet( "result" ).getStrings( "archivedContents" ) );
     }
 
     @Test
@@ -441,20 +441,20 @@ class ContentAuditLogSupportImplTest
         throws Exception
     {
         final RestoreContentParams params = RestoreContentParams.create()
-            .contentId( ContentId.from( "contentId" ) )
+            .contentId( ContentId.from( "contentid" ) )
             .build();
 
         final RestoreContentsResult result = RestoreContentsResult.create()
-            .addRestored( ContentId.from( "restoredId" ) )
+            .addRestored( ContentId.from( "restoredid" ) )
             .parentPath( ContentPath.ROOT )
             .build();
 
         ArgumentCaptor<LogAuditLogParams> argumentCaptor = test( support::restore, params, result );
 
         assertEquals( "system.content.restore", argumentCaptor.getValue().getType() );
-        assertEquals( "contentId", argumentCaptor.getValue().getData().getSet( "params" ).getString( "contentId" ) );
+        assertEquals( "contentid", argumentCaptor.getValue().getData().getSet( "params" ).getString( "contentId" ) );
         assertEquals( "/", argumentCaptor.getValue().getData().getSet( "result" ).getString( "parentContentPath" ) );
-        assertEquals( List.of( "restoredId" ), argumentCaptor.getValue().getData().getSet( "result" ).getStrings( "restoredContents" ) );
+        assertEquals( List.of( "restoredid" ), argumentCaptor.getValue().getData().getSet( "result" ).getStrings( "restoredContents" ) );
     }
 
     @Test
@@ -462,11 +462,11 @@ class ContentAuditLogSupportImplTest
         throws Exception
     {
         final SortContentParams params = SortContentParams.create()
-            .contentId( ContentId.from( "contentId" ) )
+            .contentId( ContentId.from( "contentid" ) )
             .build();
 
         final Content content = Content.create()
-            .id( ContentId.from( "contentId" ) )
+            .id( ContentId.from( "contentid" ) )
             .type( ContentTypeName.folder() )
             .name( "sortedContent" )
             .displayName( "Sorted Content" )
@@ -481,8 +481,8 @@ class ContentAuditLogSupportImplTest
         ArgumentCaptor<LogAuditLogParams> argumentCaptor = test( support::sort, params, result );
 
         assertEquals( "system.content.sort", argumentCaptor.getValue().getType() );
-        assertEquals( "contentId", argumentCaptor.getValue().getData().getSet( "params" ).getString( "contentId" ) );
-        assertEquals( "contentId", argumentCaptor.getValue().getData().getSet( "result" ).getString( "id" ) );
+        assertEquals( "contentid", argumentCaptor.getValue().getData().getSet( "params" ).getString( "contentId" ) );
+        assertEquals( "contentid", argumentCaptor.getValue().getData().getSet( "result" ).getString( "id" ) );
         assertEquals( "/sortedContent", argumentCaptor.getValue().getData().getSet( "result" ).getString( "path" ) );
     }
 
@@ -491,7 +491,7 @@ class ContentAuditLogSupportImplTest
         throws Exception
     {
         final ApplyContentPermissionsParams params = ApplyContentPermissionsParams.create()
-            .contentId( ContentId.from( "contentId" ) )
+            .contentId( ContentId.from( "contentid" ) )
             .build();
 
         final ApplyContentPermissionsResult result = ApplyContentPermissionsResult.create()
@@ -500,7 +500,7 @@ class ContentAuditLogSupportImplTest
         ArgumentCaptor<LogAuditLogParams> argumentCaptor = test( support::applyPermissions, params, result );
 
         assertEquals( "system.content.applyPermissions", argumentCaptor.getValue().getType() );
-        assertEquals( "contentId", argumentCaptor.getValue().getData().getSet( "params" ).getString( "contentId" ) );
+        assertEquals( "contentid", argumentCaptor.getValue().getData().getSet( "params" ).getString( "contentId" ) );
     }
 
     private <P, R> ArgumentCaptor<LogAuditLogParams> test( BiConsumer<P, R> log, P params, R result )

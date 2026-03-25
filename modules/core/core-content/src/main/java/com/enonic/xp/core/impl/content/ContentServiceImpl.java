@@ -389,7 +389,7 @@ public class ContentServiceImpl
     public Content getById( final ContentId contentId )
     {
         requireReadAccess();
-        
+
         return Tracer.trace( "content.getById", trace -> trace.put( "id", contentId ), () -> doGetById( contentId ),
                              ( trace, content ) -> trace.put( "path", content.getPath().toString() ) );
     }
@@ -418,7 +418,7 @@ public class ContentServiceImpl
     public Site getNearestSite( final ContentId contentId )
     {
         requireReadAccess();
-        
+
         final GetNearestSiteCommand command = GetNearestSiteCommand.create()
             .contentId( contentId )
             .nodeService( this.nodeService )
@@ -437,7 +437,7 @@ public class ContentServiceImpl
     public Site findNearestSiteByPath( final ContentPath contentPath )
     {
         requireReadAccess();
-        
+
         return Tracer.trace( "content.findNearestSiteByPath", trace -> trace.put( "contentPath", contentPath ),
                              () -> (Site) doFindNearestByPath( contentPath, Content::isSite ), ( trace, site ) -> {
                 if ( site != null )
@@ -463,7 +463,7 @@ public class ContentServiceImpl
     public Contents getByIds( final GetContentByIdsParams params )
     {
         requireReadAccess();
-        
+
         final GetContentByIdsCommand command = GetContentByIdsCommand.create( params )
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
@@ -477,7 +477,7 @@ public class ContentServiceImpl
     public @NonNull Content getByPath( final ContentPath path )
     {
         requireReadAccess();
-        
+
         return Tracer.trace( "content.getByPath", trace -> trace.put( "path", path ), () -> doGetByPath( path ),
                              ( trace, content ) -> trace.put( "id", content.getId() ) );
     }
@@ -511,7 +511,7 @@ public class ContentServiceImpl
     public Contents getByPaths( final ContentPaths paths )
     {
         requireReadAccess();
-        
+
         final GetContentByPathsCommand command = GetContentByPathsCommand.create( paths )
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
@@ -525,7 +525,7 @@ public class ContentServiceImpl
     public FindContentByParentResult findByParent( final FindContentByParentParams params )
     {
         requireReadAccess();
-        
+
         final FindContentByParentCommand command = FindContentByParentCommand.create( params )
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
@@ -543,7 +543,7 @@ public class ContentServiceImpl
     public FindContentIdsByParentResult findIdsByParent( final FindContentByParentParams params )
     {
         requireReadAccess();
-        
+
         final FindContentIdsByParentCommand command = FindContentIdsByParentCommand.create( params )
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
@@ -631,7 +631,7 @@ public class ContentServiceImpl
     public FindContentIdsByQueryResult find( final ContentQuery query )
     {
         requireReadAccess();
-        
+
         final FindContentIdsByQueryCommand command = FindContentIdsByQueryCommand.create()
             .query( query )
             .nodeService( this.nodeService )
@@ -651,7 +651,7 @@ public class ContentServiceImpl
     public FindContentPathsByQueryResult findPaths( ContentQuery query )
     {
         requireReadAccess();
-        
+
         return FindContentPathsByQueryCommand.create()
             .contentQuery( query )
             .nodeService( this.nodeService )
@@ -859,25 +859,10 @@ public class ContentServiceImpl
     }
 
     @Override
-    public String getBinaryKey( final ContentId contentId, final BinaryReference binaryReference )
-    {
-        final GetBinaryKeyCommand command = GetBinaryKeyCommand.create( contentId, binaryReference )
-            .nodeService( this.nodeService )
-            .contentTypeService( this.contentTypeService )
-            .eventPublisher( this.eventPublisher )
-            .build();
-
-        return Tracer.trace( "content.getBinaryKey", trace -> {
-            trace.put( "id", contentId );
-            trace.put( "reference", binaryReference );
-        }, command::execute, ( trace, binaryKey ) -> trace.put( "binaryKey", binaryKey ) );
-    }
-
-    @Override
     public Content getByIdAndVersionId( final ContentId contentId, final ContentVersionId versionId )
     {
         requireReadAccess();
-        
+
         final GetContentByIdAndVersionIdCommand command = GetContentByIdAndVersionIdCommand.create()
             .contentId( contentId )
             .versionId( versionId )

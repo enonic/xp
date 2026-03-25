@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.SearchQueryFieldNameResolver;
-import com.enonic.xp.repo.impl.index.IndexValueType;
+import com.enonic.xp.repo.impl.index.StaticIndexValueType;
 
 public class PathMatchFunctionArguments
     extends AbstractFunctionArguments
@@ -58,7 +58,7 @@ public class PathMatchFunctionArguments
 
     public String getFieldName()
     {
-        return SearchQueryFieldNameResolver.INSTANCE.resolve( fieldName, IndexValueType.PATH );
+        return SearchQueryFieldNameResolver.INSTANCE.resolve( fieldName, StaticIndexValueType.PATH );
     }
 
     public String getPath()

@@ -21,7 +21,7 @@ class GetOutboundDependenciesHandlerTest
     {
         final Content content = Mockito.mock( Content.class );
 
-        Mockito.when( content.getId() ).thenReturn( ContentId.from( "contentId" ) );
+        Mockito.when( content.getId() ).thenReturn( ContentId.from( "contentid" ) );
         Mockito.when( contentService.getByPath( Mockito.any( ContentPath.class ) ) ).thenReturn( content );
     }
 

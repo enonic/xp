@@ -36,7 +36,7 @@ public class GetActiveNodeVersionsCommand
         for ( final Branch branch : branches )
         {
             final InternalContext internalContext = InternalContext.create( ContextAccessor.current() ).branch( branch ).build();
-            final NodeBranchEntry nodeBranchEntry = this.nodeStorageService.getBranchNodeVersion( this.nodeId, internalContext );
+            final NodeBranchEntry nodeBranchEntry = this.nodeStorageService.getNodeBranchEntry( this.nodeId, internalContext );
 
             if ( nodeBranchEntry != null )
             {

@@ -12,23 +12,18 @@ import com.google.common.io.MoreFiles;
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
 
-final class FileBlobRecord
+record FileBlobRecord(BlobKey key, Path file)
     implements BlobRecord
 {
-    private final BlobKey key;
-
-    private final Path file;
-
     FileBlobRecord( final BlobKey key, final Path file )
     {
         this.key = Objects.requireNonNull( key );
         this.file = Objects.requireNonNull( file );
     }
 
-    @Override
     public BlobKey getKey()
     {
-        return this.key;
+        return key;
     }
 
     @Override
@@ -61,24 +56,5 @@ final class FileBlobRecord
         {
             return 0;
         }
-    }
-
-    @Override
-    public boolean equals( final Object o )
-    {
-        if ( !( o instanceof FileBlobRecord ) )
-        {
-            return false;
-        }
-
-        final FileBlobRecord that = (FileBlobRecord) o;
-
-        return key.equals( that.key ) && file.equals( that.file );
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash( key, file );
     }
 }

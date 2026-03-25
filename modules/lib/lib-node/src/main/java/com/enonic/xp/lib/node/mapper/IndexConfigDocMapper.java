@@ -1,6 +1,7 @@
 package com.enonic.xp.lib.node.mapper;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.SortedSet;
 import java.util.stream.Collectors;
 
@@ -89,9 +90,7 @@ class IndexConfigDocMapper
             map( IndexValueProcessor::getName ).
             collect( Collectors.toList() ) );
 
-        final List<String> languages = indexConfig.getLanguages();
-
-        serializeArray( gen, "languages", languages );
+        serializeArray( gen, "languages", indexConfig.getLanguages().stream().map( Locale::toLanguageTag ).toList() );
     }
 
     private void serializeArray( final MapGenerator gen, final String name, final List<String> values )
@@ -110,7 +109,6 @@ class IndexConfigDocMapper
         gen.value( "nGram", allTextConfig.isnGram() );
         gen.value( "fulltext", allTextConfig.isFulltext() );
 
-        final List<String> languages = allTextConfig.getLanguages();
-        serializeArray( gen, "languages", languages );
+        serializeArray( gen, "languages", allTextConfig.getLanguages().stream().map( Locale::toLanguageTag ).toList() );
     }
 }

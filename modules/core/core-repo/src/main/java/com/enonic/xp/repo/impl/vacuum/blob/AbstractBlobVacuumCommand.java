@@ -45,9 +45,9 @@ public abstract class AbstractBlobVacuumCommand
     {
         this.result = VacuumTaskResult.create();
 
-        this.blobStore.listSegments().
-            filter( segment -> RepositorySegmentUtils.hasBlobTypeLevel( segment, getBlobTypeSegmentLevel() ) ).
-            forEach( this::processBinarySegment );
+        this.blobStore.listSegments()
+            .filter( segment -> RepositorySegmentUtils.hasBlobTypeLevel( segment, getBlobTypeSegmentLevel() ) )
+            .forEach( this::processBinarySegment );
         return result;
     }
 
@@ -66,8 +66,8 @@ public abstract class AbstractBlobVacuumCommand
         final List<BlobKey> blobToDelete;
         try (Stream<BlobRecord> list = blobStore.list( segment ))
         {
-            blobToDelete = list.filter( blobRecord -> shouldDelete( segment, blobRecord ) )
-                .map( BlobRecord::getKey ).collect( Collectors.toList() );
+            blobToDelete =
+                list.filter( blobRecord -> shouldDelete( segment, blobRecord ) ).map( BlobRecord::getKey ).collect( Collectors.toList() );
         }
         blobToDelete.forEach( blobKey -> blobStore.removeRecord( segment, blobKey ) );
     }
@@ -88,7 +88,9 @@ public abstract class AbstractBlobVacuumCommand
                 LOG.debug( "No version found for {} [{}]", getFieldIndexPath(), blobKey );
                 result.deleted();
                 return true;
-            } else {
+            }
+            else
+            {
                 result.inUse();
             }
         }
@@ -104,21 +106,21 @@ public abstract class AbstractBlobVacuumCommand
     private boolean isUsedByVersion( final Segment segment, final BlobKey blobKey )
     {
         final RepositoryId repositoryId = RepositorySegmentUtils.toRepositoryId( segment );
-        return ContextBuilder.from( ContextAccessor.current() ).
-            repositoryId( repositoryId ).
-            branch( RepositoryConstants.MASTER_BRANCH ).
-            build().
-            callWith( () -> isUsedByVersion( blobKey ) );
+        return ContextBuilder.from( ContextAccessor.current() )
+            .repositoryId( repositoryId )
+            .branch( RepositoryConstants.MASTER_BRANCH )
+            .build()
+            .callWith( () -> isUsedByVersion( blobKey ) );
     }
 
     private boolean isUsedByVersion( final BlobKey blobKey )
     {
-        return IsBlobUsedByVersionCommand.create().
-            nodeService( nodeService ).
-            fieldPath( getFieldIndexPath() ).
-            blobKey( blobKey ).
-            build().
-            execute();
+        return IsBlobUsedByVersionCommand.create()
+            .nodeService( nodeService )
+            .fieldPath( getFieldIndexPath() )
+            .blobKey( blobKey )
+            .build()
+            .execute();
     }
 
     public static class Builder<B extends Builder>

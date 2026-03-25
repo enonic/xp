@@ -85,7 +85,7 @@ public class TestDataFixtures
         data.setBinaryReference( "untouchedBinaryRef", BinaryReference.from( "abcd" ) );
         data.setGeoPoint( "untouchedGeoPoint", GeoPoint.from( "30,-30" ) );
         data.setLocalDate( "untouchedLocalDate", LocalDate.parse( "2017-03-24" ) );
-        data.setReference( "untouchedReference", Reference.from( "myReference" ) );
+        data.setReference( "untouchedReference", Reference.from( "myreference" ) );
 
         profile.setSet( "myApp", data );
 

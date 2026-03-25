@@ -9,7 +9,6 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.DeleteNodeListener;
-import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
@@ -52,14 +51,14 @@ public class DeleteNodeCommand
         super( builder );
         this.nodeId = builder.nodeId;
         this.nodePath = builder.nodePath;
-        this.deleteNodeListener = Objects.requireNonNullElse( builder.deleteNodeListener, count -> {
+        this.deleteNodeListener = Objects.requireNonNullElse( builder.deleteNodeListener, _ -> {
         } );
         this.refresh = builder.refresh;
     }
 
     public NodeBranchEntries execute()
     {
-        if ( Node.ROOT_UUID.equals( this.nodeId ) || NodePath.ROOT.equals( this.nodePath ) )
+        if ( NodeId.ROOT.equals( this.nodeId ) || NodePath.ROOT.equals( this.nodePath ) )
         {
             throw new OperationNotPermittedException( "Not allowed to delete root-node" );
         }
@@ -69,8 +68,8 @@ public class DeleteNodeCommand
         final AuthenticationInfo authInfo = context.getAuthInfo();
 
         final NodeBranchEntry node = nodeId != null
-            ? this.nodeStorageService.getBranchNodeVersion( nodeId, internalContext )
-            : this.nodeStorageService.getBranchNodeVersion( nodePath, internalContext );
+            ? this.nodeStorageService.getNodeBranchEntry( nodeId, internalContext )
+            : this.nodeStorageService.getNodeBranchEntry( nodePath, internalContext );
 
         if ( node == null )
         {

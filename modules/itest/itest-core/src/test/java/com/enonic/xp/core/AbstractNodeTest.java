@@ -1,7 +1,6 @@
 package com.enonic.xp.core;
 
 import java.nio.file.Path;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -86,7 +85,6 @@ import com.enonic.xp.scheduler.SchedulerConstants;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -254,10 +252,9 @@ public abstract class AbstractNodeTest
             new RepositoryEntryServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService );
 
         this.repositoryService =
-            new RepositoryServiceImpl( repositoryEntryService, indexServiceInternal, nodeRepositoryService, storageService, searchService );
+            new RepositoryServiceImpl( repositoryEntryService, nodeRepositoryService, storageService, searchService, branchService );
 
-        this.nodeService =
-            new NodeServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService, repositoryService );
+        this.nodeService = new NodeServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService );
 
         this.indexService =
             new IndexServiceImpl( indexServiceInternal, indexedDataService, searchService, nodeDao, repositoryEntryService );
@@ -277,8 +274,9 @@ public abstract class AbstractNodeTest
     {
         SystemRepoInitializer.create()
             .setIndexServiceInternal( indexServiceInternal )
-            .setRepositoryService( repositoryService )
             .setNodeStorageService( storageService )
+            .setRepositoryEntryService( repositoryEntryService )
+            .setNodeRepositoryService( nodeRepositoryService )
             .build()
             .initialize();
 
@@ -286,12 +284,7 @@ public abstract class AbstractNodeTest
 
         SchedulerRepoInitializer.create().setIndexService( indexService ).setRepositoryService( repositoryService ).build().initialize();
 
-        VirtualAppInitializer.create()
-            .setIndexService( indexService )
-            .setRepositoryService( repositoryService )
-            .setSecurityService( mock( SecurityService.class ) )
-            .build()
-            .initialize();
+        VirtualAppInitializer.create().setIndexService( indexService ).setRepositoryService( repositoryService ).build().initialize();
     }
 
     private void createTestRepository()
@@ -505,18 +498,6 @@ public abstract class AbstractNodeTest
         return doFindByQuery( query );
     }
 
-    protected void assertOrder( final FindNodesByQueryResult result, NodeId... ids )
-    {
-        assertEquals( ids.length, result.getNodeHits().getSize() );
-
-        final Iterator<Node> iterator = getNodes( result.getNodeIds() ).iterator();
-
-        for ( final NodeId id : ids )
-        {
-            assertEquals( id, iterator.next().id() );
-        }
-    }
-
     protected final void createNodes( final Node parent, final int numberOfNodes, final int maxLevels, final int level )
     {
         this.createNodes( parent, numberOfNodes, maxLevels, level, ( child ) -> {
@@ -588,7 +569,7 @@ public abstract class AbstractNodeTest
 
     private void doPrintChildren( int ident, final Node root )
     {
-        System.out.println( " " .repeat( ident ) + "'--" + Objects.requireNonNullElse( root.name(), "" ) + " (" + root.id() + ")" );
+        System.out.println( " ".repeat( ident ) + "'--" + Objects.requireNonNullElse( root.name(), "" ) + " (" + root.id() + ")" );
 
         ident += 3;
 

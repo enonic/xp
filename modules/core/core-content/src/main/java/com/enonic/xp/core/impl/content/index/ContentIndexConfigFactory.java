@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.content.index;
 
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -135,7 +136,7 @@ public class ContentIndexConfigFactory
 
         private Mixins mixins;
 
-        private String language;
+        private Locale language;
 
         public Builder contentTypeService( final ContentTypeService value )
         {
@@ -197,7 +198,7 @@ public class ContentIndexConfigFactory
             return this;
         }
 
-        public Builder language( final String value )
+        public Builder language( final Locale value )
         {
             this.language = value;
             return this;

@@ -36,7 +36,6 @@ import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebResponse;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -88,9 +87,6 @@ class AttachmentHandlerTest
 
         when( this.contentService.getById( eq( content.getId() ) ) ).thenReturn( content );
         when( this.contentService.getByPath( eq( content.getPath() ) ) ).thenReturn( content );
-        when(
-            this.contentService.getBinaryKey( eq( content.getId() ), eq( content.getMediaAttachment().getBinaryReference() ) ) ).thenReturn(
-            "98765" );
 
         this.mediaBytes = ByteSource.wrap( new byte[]{'0', '1', '2', '3', '4', '5', '6'} );
         when( this.contentService.getBinary( isA( ContentId.class ), isA( BinaryReference.class ) ) ).thenReturn( this.mediaBytes );
@@ -347,13 +343,13 @@ class AttachmentHandlerTest
     }
 
     @Test
-    void cacheHeader()
+    void cacheHeader_always_private()
         throws Exception
     {
         this.request.setRawPath( "/_/attachment/inline/123456:98765/logo.png" );
 
         final PortalResponse res = this.handler.handle( this.request );
-        assertEquals( "public, max-age=31536000, immutable", res.getHeaders().get( "Cache-Control" ) );
+        assertEquals( "private, max-age=31536000, immutable", res.getHeaders().get( "Cache-Control" ) );
     }
 
     @Test
@@ -367,16 +363,6 @@ class AttachmentHandlerTest
         assertEquals( "private, max-age=31536000, immutable", res.getHeaders().get( "Cache-Control" ) );
     }
 
-    @Test
-    void cacheHeader_fingerprint_mismatch()
-        throws Exception
-    {
-        this.request.setRawPath( "/_/attachment/inline/123456:123456/logo.png" );
-
-        final PortalResponse res = this.handler.handle( this.request );
-
-        assertThat( res.getHeaders() ).doesNotContainKey( "Cache-Control" );
-    }
 
     @Test
     void contentSecurityPolicy()

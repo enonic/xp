@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.SearchQueryFieldNameResolver;
-import com.enonic.xp.repo.impl.index.IndexValueType;
+import com.enonic.xp.repo.impl.index.StaticIndexValueType;
 import com.enonic.xp.repo.impl.node.NodeConstants;
 
 import static com.google.common.base.Strings.nullToEmpty;
@@ -33,6 +33,6 @@ public class FulltextFunctionArguments
     @Override
     public String resolveQueryFieldName( final String baseFieldName )
     {
-        return SearchQueryFieldNameResolver.INSTANCE.resolve( baseFieldName, IndexValueType.ANALYZED );
+        return SearchQueryFieldNameResolver.INSTANCE.resolve( baseFieldName, StaticIndexValueType.ANALYZED );
     }
 }

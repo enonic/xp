@@ -40,11 +40,11 @@ class ReadThroughBlobStoreTest
     @Test
     void stored_in_readthrough()
     {
-        final ReadThroughBlobStore actualBlobStore = ReadThroughBlobStore.create().
-            readThroughStore( this.readThroughStore ).
-            store( this.finalStore ).
-            sizeThreshold( ByteSizeParser.parse( "80kb" ) ).
-            build();
+        final ReadThroughBlobStore actualBlobStore = ReadThroughBlobStore.create()
+            .readThroughStore( this.readThroughStore )
+            .store( this.finalStore )
+            .sizeThreshold( ByteSizeParser.parse( "80kb" ) )
+            .build();
 
         final ByteSource binary = ByteSource.wrap( "this is a record".getBytes() );
 
@@ -63,10 +63,8 @@ class ReadThroughBlobStoreTest
 
         final BlobRecord record = this.finalStore.addRecord( segment, binary );
 
-        final ReadThroughBlobStore actualBlobStore = ReadThroughBlobStore.create().
-            readThroughStore( this.readThroughStore ).
-            store( this.finalStore ).
-            build();
+        final ReadThroughBlobStore actualBlobStore =
+            ReadThroughBlobStore.create().readThroughStore( this.readThroughStore ).store( this.finalStore ).build();
 
         assertNull( this.readThroughStore.getRecord( segment, record.getKey() ) );
 
@@ -79,11 +77,11 @@ class ReadThroughBlobStoreTest
     void obey_size_threshold()
         throws Exception
     {
-        final ReadThroughBlobStore actualBlobStore = ReadThroughBlobStore.create().
-            readThroughStore( this.readThroughStore ).
-            store( this.finalStore ).
-            sizeThreshold( ByteSizeParser.parse( "80kb" ) ).
-            build();
+        final ReadThroughBlobStore actualBlobStore = ReadThroughBlobStore.create()
+            .readThroughStore( this.readThroughStore )
+            .store( this.finalStore )
+            .sizeThreshold( ByteSizeParser.parse( "80kb" ) )
+            .build();
 
         final ByteSource binary = ByteSource.wrap( ByteStreams.toByteArray( this.getClass().getResourceAsStream( "fish-86kb.jpg" ) ) );
 
@@ -101,10 +99,8 @@ class ReadThroughBlobStoreTest
         final Segment segment = Segment.from( "test", "blob" );
 
         final BlobRecord record = this.finalStore.addRecord( segment, binary );
-        final ReadThroughBlobStore actualBlobStore = ReadThroughBlobStore.create().
-            readThroughStore( this.readThroughStore ).
-            store( this.finalStore ).
-            build();
+        final ReadThroughBlobStore actualBlobStore =
+            ReadThroughBlobStore.create().readThroughStore( this.readThroughStore ).store( this.finalStore ).build();
 
         assertNull( this.readThroughStore.getRecord( segment, record.getKey() ) );
         actualBlobStore.getRecord( segment, record.getKey() );
@@ -122,10 +118,8 @@ class ReadThroughBlobStoreTest
         final Segment segment = Segment.from( "test", "blob" );
 
         final BlobRecord record = this.finalStore.addRecord( segment, binary );
-        final ReadThroughBlobStore actualBlobStore = ReadThroughBlobStore.create().
-            readThroughStore( this.readThroughStore ).
-            store( this.finalStore ).
-            build();
+        final ReadThroughBlobStore actualBlobStore =
+            ReadThroughBlobStore.create().readThroughStore( this.readThroughStore ).store( this.finalStore ).build();
 
         try (Stream<BlobRecord> stream = actualBlobStore.list( segment ))
         {
@@ -140,10 +134,8 @@ class ReadThroughBlobStoreTest
         final Segment segment = Segment.from( "test", "blob" );
 
         final BlobRecord record = this.finalStore.addRecord( segment, binary );
-        final ReadThroughBlobStore actualBlobStore = ReadThroughBlobStore.create().
-            readThroughStore( this.readThroughStore ).
-            store( this.finalStore ).
-            build();
+        final ReadThroughBlobStore actualBlobStore =
+            ReadThroughBlobStore.create().readThroughStore( this.readThroughStore ).store( this.finalStore ).build();
 
         assertNull( this.readThroughStore.getRecord( segment, record.getKey() ) );
         actualBlobStore.getRecord( segment, record.getKey() );
@@ -158,11 +150,11 @@ class ReadThroughBlobStoreTest
     @Test
     void last_modified()
     {
-        final ReadThroughBlobStore actualBlobStore = ReadThroughBlobStore.create().
-            readThroughStore( this.readThroughStore ).
-            store( this.finalStore ).
-            sizeThreshold( ByteSizeParser.parse( "80kb" ) ).
-            build();
+        final ReadThroughBlobStore actualBlobStore = ReadThroughBlobStore.create()
+            .readThroughStore( this.readThroughStore )
+            .store( this.finalStore )
+            .sizeThreshold( ByteSizeParser.parse( "80kb" ) )
+            .build();
 
         final ByteSource binary = ByteSource.wrap( "this is a record".getBytes() );
 
@@ -181,11 +173,11 @@ class ReadThroughBlobStoreTest
     void last_modified_updated()
         throws Exception
     {
-        final ReadThroughBlobStore actualBlobStore = ReadThroughBlobStore.create().
-            readThroughStore( this.readThroughStore ).
-            store( this.finalStore ).
-            sizeThreshold( ByteSizeParser.parse( "80kb" ) ).
-            build();
+        final ReadThroughBlobStore actualBlobStore = ReadThroughBlobStore.create()
+            .readThroughStore( this.readThroughStore )
+            .store( this.finalStore )
+            .sizeThreshold( ByteSizeParser.parse( "80kb" ) )
+            .build();
 
         final ByteSource binary = ByteSource.wrap( "this is a record".getBytes() );
 
@@ -208,10 +200,8 @@ class ReadThroughBlobStoreTest
     @Test
     void listSegments()
     {
-        final ReadThroughBlobStore actualBlobStore = ReadThroughBlobStore.create().
-            readThroughStore( readThroughStore ).
-            store( finalStore ).
-            build();
+        final ReadThroughBlobStore actualBlobStore =
+            ReadThroughBlobStore.create().readThroughStore( readThroughStore ).store( finalStore ).build();
 
         assertEquals( 0, actualBlobStore.listSegments().count() );
 
@@ -224,10 +214,8 @@ class ReadThroughBlobStoreTest
     @Test
     void deleteSegment()
     {
-        final ReadThroughBlobStore actualBlobStore = ReadThroughBlobStore.create().
-            readThroughStore( readThroughStore ).
-            store( finalStore ).
-            build();
+        final ReadThroughBlobStore actualBlobStore =
+            ReadThroughBlobStore.create().readThroughStore( readThroughStore ).store( finalStore ).build();
         final ByteSource binary = ByteSource.wrap( "this is a record".getBytes() );
         final Segment segment = Segment.from( "test", "blob" );
         final BlobRecord record = finalStore.addRecord( segment, binary );

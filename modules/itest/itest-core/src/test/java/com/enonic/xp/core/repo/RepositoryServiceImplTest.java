@@ -14,6 +14,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.BinaryAttachment;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.repo.impl.node.NodeHelper;
@@ -123,7 +124,7 @@ class RepositoryServiceImplTest
         doCreateRepo( repoId );
 
         final BinaryReference binaryRef = BinaryReference.from( "image1.jpg" );
-        ByteSource binarySource = ByteSource.wrap( "this-is-the-binary-data-for-image1" .getBytes() );
+        ByteSource binarySource = ByteSource.wrap( "this-is-the-binary-data-for-image1".getBytes() );
 
         Context mockCurrentContext =
             ContextBuilder.create().branch( "master" ).repositoryId( repoId ).authInfo( REPO_TEST_DEFAULT_USER_AUTHINFO ).build();
@@ -150,7 +151,7 @@ class RepositoryServiceImplTest
         assertNotNull( repo );
         assertEquals( RepositoryId.from( "fisk" ), repo.getId() );
 
-        final Node rootNode = createAdminContext().callWith( () -> getNodeById( Node.ROOT_UUID ) );
+        final Node rootNode = createAdminContext().callWith( () -> getNodeById( NodeId.ROOT ) );
         final AccessControlList acl = rootNode.getPermissions();
 
         System.out.println( acl.toString() );
@@ -171,7 +172,7 @@ class RepositoryServiceImplTest
         final Node node = createAdminContext( RepositoryId.from( "fisk" ), Branch.from( "my-branch" ) ).callWith( () -> {
             doCreateRepo( "fisk" );
             this.repositoryService.createBranch( CreateBranchParams.from( "my-branch" ) );
-            final Node myNode = createNode( NodePath.ROOT, "myNode" );
+            final Node myNode = createNode( NodePath.ROOT, "my-node" );
             this.repositoryService.deleteBranch( DeleteBranchParams.from( Branch.from( "my-branch" ) ) );
             return getNode( myNode.id() );
         } );

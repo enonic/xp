@@ -3,11 +3,13 @@ package com.enonic.xp.repo.impl.dump.serializer.json;
 import java.time.Instant;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.repo.impl.dump.model.CommitDumpEntry;
 import com.enonic.xp.security.PrincipalKey;
 
+@JsonPropertyOrder(value = {"commitId", "timestamp", "committer", "message"})
 public class CommitDumpEntryJson
 {
     @JsonProperty("commitId")
@@ -38,21 +40,18 @@ public class CommitDumpEntryJson
     public static CommitDumpEntryJson from( final CommitDumpEntry commitDumpEntry )
     {
         return create().
-            commitId( commitDumpEntry.getNodeCommitId().toString() ).
-            message( commitDumpEntry.getMessage() ).
-            committer( commitDumpEntry.getCommitter().toString() ).
-            timestamp( commitDumpEntry.getTimestamp().toString() ).
+            commitId( commitDumpEntry.nodeCommitId().toString() ).
+            message( commitDumpEntry.message() ).
+            committer( commitDumpEntry.committer().toString() ).
+            timestamp( commitDumpEntry.timestamp().toString() ).
             build();
     }
 
     public static CommitDumpEntry fromJson( final CommitDumpEntryJson commitDumpEntryJson )
     {
-        return CommitDumpEntry.create().
-            nodeCommitId( NodeCommitId.from( commitDumpEntryJson.commitId ) ).
-            message( commitDumpEntryJson.message ).
-            committer( PrincipalKey.from(commitDumpEntryJson.committer) ).
-            timestamp( Instant.parse( commitDumpEntryJson.timestamp ) ).
-            build();
+        return new CommitDumpEntry( NodeCommitId.from( commitDumpEntryJson.commitId ), commitDumpEntryJson.message,
+                                   Instant.parse( commitDumpEntryJson.timestamp ),
+                                   PrincipalKey.from( commitDumpEntryJson.committer ) );
     }
 
     public static Builder create()

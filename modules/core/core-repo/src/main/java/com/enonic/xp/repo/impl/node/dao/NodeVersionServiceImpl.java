@@ -17,13 +17,13 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
-import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.blob.SegmentLevel;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.PatternIndexConfigDocument;
-import com.enonic.xp.repo.impl.NodeStoreVersion;
+import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.node.NodeConstants;
 import com.enonic.xp.repo.impl.node.json.ImmutableNodeVersion;
@@ -80,8 +80,8 @@ public class NodeVersionServiceImpl
             .build();
     }
 
-    private BlobKey serializeAndAddBlobRecord( final NodeStoreVersion nodeVersion, final RepositoryId repositoryId, final SegmentLevel segmentLevel,
-                                               IOFunction<NodeStoreVersion, byte[]> serializer )
+    private BlobKey serializeAndAddBlobRecord( final NodeStoreVersion nodeVersion, final RepositoryId repositoryId,
+                                               final SegmentLevel segmentLevel, IOFunction<NodeStoreVersion, byte[]> serializer )
     {
         final Segment nodeSegment = RepositorySegmentUtils.toSegment( repositoryId, segmentLevel );
         final byte[] nodeJson;
@@ -129,8 +129,9 @@ public class NodeVersionServiceImpl
     public AccessControlList getPermissions( final NodeVersionKey nodeVersionKey, final InternalContext context )
     {
         final RepositoryId repositoryId = context.getRepositoryId();
-        return fetchAndDeserializeCached( repositoryId, NodeConstants.ACCESS_CONTROL_SEGMENT_LEVEL, nodeVersionKey.getAccessControlBlobKey(),
-                                       NodeVersionJsonSerializer::toNodeVersionAccessControl, accessControlCache );
+        return fetchAndDeserializeCached( repositoryId, NodeConstants.ACCESS_CONTROL_SEGMENT_LEVEL,
+                                          nodeVersionKey.getAccessControlBlobKey(), NodeVersionJsonSerializer::toNodeVersionAccessControl,
+                                          accessControlCache );
     }
 
     private static PropertyTree toPropertyTree( final List<ImmutableProperty> data )
@@ -184,7 +185,9 @@ public class NodeVersionServiceImpl
     }
 
     @FunctionalInterface
-    private interface IOFunction<T, R> {
-        R apply( T t ) throws IOException;
+    private interface IOFunction<T, R>
+    {
+        R apply( T t )
+            throws IOException;
     }
 }

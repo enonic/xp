@@ -190,13 +190,7 @@ public final class Media
             return null;
         }
 
-        //TODO The values stored in top, left, bottom and right are not the correct values
-        final double fixedTop = top / zoom;
-        final double fixedLeft = left / zoom;
-        final double fixedBottom = bottom / zoom;
-        final double fixedRight = right / zoom;
-
-        return Cropping.create().zoom( zoom ).top( fixedTop ).left( fixedLeft ).bottom( fixedBottom ).right( fixedRight ).build();
+        return Cropping.create().zoom( zoom ).top( top / zoom ).left( left / zoom ).bottom( bottom / zoom ).right( right / zoom ).build();
     }
 
     public Attachment getSourceAttachment()

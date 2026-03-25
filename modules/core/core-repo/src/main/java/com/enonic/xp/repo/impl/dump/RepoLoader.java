@@ -13,16 +13,12 @@ import com.enonic.xp.repo.impl.dump.reader.BranchEntryProcessor;
 import com.enonic.xp.repo.impl.dump.reader.CommitEntryProcessor;
 import com.enonic.xp.repo.impl.dump.reader.DumpReader;
 import com.enonic.xp.repo.impl.dump.reader.VersionEntryProcessor;
-import com.enonic.xp.repo.impl.repository.RepositoryEntry;
-import com.enonic.xp.repo.impl.repository.RepositoryEntryService;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 
 class RepoLoader
 {
     private final RepositoryId repositoryId;
-
-    private final RepositoryEntryService repositoryEntryService;
 
     private final NodeService nodeService;
 
@@ -39,28 +35,27 @@ class RepoLoader
     private RepoLoader( final Builder builder )
     {
         repositoryId = builder.repositoryId;
-        repositoryEntryService = builder.repositoryEntryService;
         nodeService = builder.nodeService;
         reader = builder.reader;
         this.includeVersions = builder.includeVersions;
-        this.branchEntryProcessor = BranchEntryProcessor.create().
-            dumpReader( this.reader ).
-            nodeService( this.nodeService ).
-            blobStore( builder.blobStore ).
-            repositoryId( repositoryId ).
-            build();
-        this.versionEntryProcessor = VersionEntryProcessor.create().
-            dumpReader( this.reader ).
-            nodeService( this.nodeService ).
-            blobStore( builder.blobStore ).
-            repositoryId( repositoryId ).
-            build();
-        this.commitEntryProcessor = CommitEntryProcessor.create().
-            dumpReader( this.reader ).
-            nodeService( this.nodeService ).
-            blobStore( builder.blobStore ).
-            repositoryId( repositoryId ).
-            build();
+        this.branchEntryProcessor = BranchEntryProcessor.create()
+            .dumpReader( this.reader )
+            .nodeService( this.nodeService )
+            .blobStore( builder.blobStore )
+            .repositoryId( repositoryId )
+            .build();
+        this.versionEntryProcessor = VersionEntryProcessor.create()
+            .dumpReader( this.reader )
+            .nodeService( this.nodeService )
+            .blobStore( builder.blobStore )
+            .repositoryId( repositoryId )
+            .build();
+        this.commitEntryProcessor = CommitEntryProcessor.create()
+            .dumpReader( this.reader )
+            .nodeService( this.nodeService )
+            .blobStore( builder.blobStore )
+            .repositoryId( repositoryId )
+            .build();
     }
 
     public RepoLoadResult execute()
@@ -71,16 +66,18 @@ class RepoLoader
 
         if ( this.includeVersions )
         {
-            ContextBuilder.from( ContextAccessor.current() ).
-                repositoryId( this.repositoryId ).
-                branch( RepositoryConstants.MASTER_BRANCH ).
-                build().runWith( () -> loadVersions( loadResult ) );
+            ContextBuilder.from( ContextAccessor.current() )
+                .repositoryId( this.repositoryId )
+                .branch( RepositoryConstants.MASTER_BRANCH )
+                .build()
+                .runWith( () -> loadVersions( loadResult ) );
         }
 
-        ContextBuilder.from( ContextAccessor.current() ).
-            repositoryId( this.repositoryId ).
-            branch( RepositoryConstants.MASTER_BRANCH ).
-            build().runWith( () -> loadCommits( loadResult ) );
+        ContextBuilder.from( ContextAccessor.current() )
+            .repositoryId( this.repositoryId )
+            .branch( RepositoryConstants.MASTER_BRANCH )
+            .build()
+            .runWith( () -> loadCommits( loadResult ) );
 
         return loadResult.build();
     }
@@ -92,16 +89,12 @@ class RepoLoader
 
     private Context setContext( final Branch branch )
     {
-        return ContextBuilder.from( ContextAccessor.current() ).
-            repositoryId( this.repositoryId ).
-            branch( branch ).
-            build();
+        return ContextBuilder.from( ContextAccessor.current() ).repositoryId( this.repositoryId ).branch( branch ).build();
     }
 
     private void doExecute( final RepoLoadResult.Builder result )
     {
         final Branch currentBranch = ContextAccessor.current().getBranch();
-        verifyOrCreateBranch( currentBranch );
         final BranchLoadResult branchLoadResult = this.reader.loadBranch( repositoryId, currentBranch, this.branchEntryProcessor );
         result.add( branchLoadResult );
     }
@@ -116,18 +109,6 @@ class RepoLoader
         result.commits( this.reader.loadCommits( repositoryId, this.commitEntryProcessor ) );
     }
 
-    private void verifyOrCreateBranch( final Branch branch )
-    {
-        final RepositoryEntry currentRepo = this.repositoryEntryService.getRepositoryEntry( this.repositoryId );
-
-        if ( currentRepo.getBranches().contains( branch ) )
-        {
-            return;
-        }
-
-        this.repositoryEntryService.addBranchToRepositoryEntry( repositoryId, branch );
-    }
-
     public static Builder create()
     {
         return new Builder();
@@ -136,8 +117,6 @@ class RepoLoader
     public static final class Builder
     {
         private RepositoryId repositoryId;
-
-        private RepositoryEntryService repositoryEntryService;
 
         private NodeService nodeService;
 
@@ -154,12 +133,6 @@ class RepoLoader
         public Builder repositoryId( final RepositoryId val )
         {
             repositoryId = val;
-            return this;
-        }
-
-        public Builder repositoryEntryService( final RepositoryEntryService val )
-        {
-            repositoryEntryService = val;
             return this;
         }
 

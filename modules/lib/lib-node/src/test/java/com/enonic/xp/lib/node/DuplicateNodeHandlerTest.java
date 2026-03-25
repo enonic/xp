@@ -47,7 +47,7 @@ class DuplicateNodeHandlerTest
         runScript( "/lib/xp/examples/node/duplicate.js" );
 
         final DuplicateNodeParams value = captor.getValue();
-        assertThat( value.getNodeId() ).isEqualTo( NodeId.from( "nodeId" ) );
+        assertThat( value.getNodeId() ).isEqualTo( NodeId.from( "nodeid" ) );
         assertThat( value.getIncludeChildren() ).isEqualTo( false );
         assertThat( value.getParent() ).isEqualTo( NodePath.ROOT );
         assertThat( value.getRefresh() ).isEqualTo( RefreshMode.SEARCH );

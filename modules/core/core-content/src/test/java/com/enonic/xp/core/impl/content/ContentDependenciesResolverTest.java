@@ -74,7 +74,7 @@ class ContentDependenciesResolverTest
     @Test
     void resolve_inbound_dependencies()
     {
-        final Content content = createContent( "folderRefContent1", new PropertyTree(), ContentTypeName.folder() );
+        final Content content = createContent( "folderrefcontent1", new PropertyTree(), ContentTypeName.folder() );
 
         final FindContentIdsByQueryResult findContentByQueryResult = FindContentIdsByQueryResult.create()
             .contents( ContentIds.empty() )
@@ -87,7 +87,7 @@ class ContentDependenciesResolverTest
             .build();
 
         Mockito.when( contentService.getById( content.getId() ) ).thenReturn( content );
-        Mockito.when( contentService.getOutboundDependencies( Mockito.any() ) ).thenReturn( ContentIds.from( "folderRefContent1" ) );
+        Mockito.when( contentService.getOutboundDependencies( Mockito.any() ) ).thenReturn( ContentIds.from( "folderrefcontent1" ) );
         Mockito.when( contentService.getByIds( Mockito.any() ) ).thenReturn( Contents.empty() );
         Mockito.when( contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn( findContentByQueryResult );
 
@@ -117,18 +117,18 @@ class ContentDependenciesResolverTest
     {
         final PropertyTree data = new PropertyTree();
 
-        final Content folderRefContent1 = createContent( "folderRefContent1", data, ContentTypeName.folder() );
+        final Content folderRefContent1 = createContent( "folderrefcontent1", data, ContentTypeName.folder() );
 
-        final Content folderRefContent2 = createContent( "folderRefContent2", data, ContentTypeName.folder() );
+        final Content folderRefContent2 = createContent( "folderrefcontent2", data, ContentTypeName.folder() );
 
-        final Content siteRefContent1 = createContent( "siteRefContent1", data, ContentTypeName.site() );
+        final Content siteRefContent1 = createContent( "siterefcontent1", data, ContentTypeName.site() );
 
         data.addReference( "myRef1", Reference.from( folderRefContent1.getId().toString() ) );
         data.addReference( "myRef2", Reference.from( folderRefContent2.getId().toString() ) );
         data.addReference( "myRef3", Reference.from( siteRefContent1.getId().toString() ) );
-        data.addReference( "refToMyself", Reference.from( "contentId" ) );
+        data.addReference( "refToMyself", Reference.from( "contentid" ) );
 
-        final Content content = createContent( "contentId", data, ContentTypeName.site() );
+        final Content content = createContent( "contentid", data, ContentTypeName.site() );
 
         final FindContentIdsByQueryResult findContentByQueryResult = FindContentIdsByQueryResult.create()
             .contents( ContentIds.empty() )
@@ -136,7 +136,7 @@ class ContentDependenciesResolverTest
             .build();
 
         Mockito.when( contentService.getOutboundDependencies( Mockito.any() ) )
-            .thenReturn( ContentIds.from( "folderRefContent1", "folderRefContent2", "siteRefContent1" ) );
+            .thenReturn( ContentIds.from( "folderrefcontent1", "folderrefcontent2", "siterefcontent1" ) );
         Mockito.when( contentService.getByIds( Mockito.any() ) )
             .thenReturn( Contents.from( folderRefContent1, folderRefContent2, siteRefContent1 ) );
         Mockito.when( contentService.getById( content.getId() ) ).thenReturn( content );
@@ -160,8 +160,8 @@ class ContentDependenciesResolverTest
     void resolve_outbound_with_missing_dependency()
     {
         final PropertyTree data = new PropertyTree();
-        final Content folderRefContent1 = createContent( "folderRefContent1", data, ContentTypeName.folder() );
-        final Content folderRefContent2 = createContent( "folderRefContent2", data, ContentTypeName.folder() );
+        final Content folderRefContent1 = createContent( "folderrefcontent1", data, ContentTypeName.folder() );
+        final Content folderRefContent2 = createContent( "folderrefcontent2", data, ContentTypeName.folder() );
 
         data.addReference( "myRef1", Reference.from( folderRefContent1.getId().toString() ) );
         data.addReference( "myRef2", Reference.from( folderRefContent2.getId().toString() ) );
@@ -175,7 +175,7 @@ class ContentDependenciesResolverTest
             .build();
 
         Mockito.when( contentService.getOutboundDependencies( Mockito.any() ) )
-            .thenReturn( ContentIds.from( "folderRefContent1", "folderRefContent2" ) );
+            .thenReturn( ContentIds.from( "folderrefcontent1", "folderrefcontent2" ) );
         Mockito.when( contentService.getByIds( Mockito.any() ) ).thenReturn( Contents.from( folderRefContent1, folderRefContent2 ) );
         Mockito.when( contentService.getById( content.getId() ) ).thenReturn( content );
         Mockito.when( contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn( findContentByQueryResult );

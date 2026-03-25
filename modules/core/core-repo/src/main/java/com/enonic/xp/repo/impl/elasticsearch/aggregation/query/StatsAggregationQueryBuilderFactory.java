@@ -6,7 +6,7 @@ import org.elasticsearch.search.aggregations.metrics.stats.StatsBuilder;
 import com.enonic.xp.query.aggregation.metric.StatsAggregationQuery;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.AbstractBuilderFactory;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFieldNameResolver;
-import com.enonic.xp.repo.impl.index.IndexValueType;
+import com.enonic.xp.repo.impl.index.StaticIndexValueType;
 
 class StatsAggregationQueryBuilderFactory
     extends AbstractBuilderFactory
@@ -19,7 +19,7 @@ class StatsAggregationQueryBuilderFactory
     AbstractAggregationBuilder create( final StatsAggregationQuery statsAggregationQuery )
     {
         return new StatsBuilder( statsAggregationQuery.getName() ).
-            field( fieldNameResolver.resolve( statsAggregationQuery.getFieldName(), IndexValueType.NUMBER ) );
+            field( fieldNameResolver.resolve( statsAggregationQuery.getFieldName(), StaticIndexValueType.NUMBER ) );
     }
 
 

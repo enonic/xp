@@ -2,7 +2,11 @@ package com.enonic.xp.repo.impl.dump.model;
 
 import java.time.Instant;
 
+import com.enonic.xp.branch.Branch;
+import com.enonic.xp.dump.BranchDumpResult;
+import com.enonic.xp.dump.RepoDumpResult;
 import com.enonic.xp.dump.SystemDumpResult;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.util.Version;
 
 public class DumpMeta
@@ -45,16 +49,33 @@ public class DumpMeta
 
     public static Builder create( final DumpMeta source )
     {
-        return new Builder().
-            xpVersion( source.getXpVersion() ).
-            modelVersion( source.getModelVersion() ).
-            timestamp(source.getTimestamp() ).
-            systemDumpResult( source.getSystemDumpResult() );
+        return new Builder().xpVersion( source.getXpVersion() )
+            .modelVersion( source.getModelVersion() )
+            .timestamp( source.getTimestamp() )
+            .systemDumpResult( source.getSystemDumpResult() );
     }
 
     public Version getModelVersion()
     {
         return modelVersion;
+    }
+
+    public Long getBranchSuccessfulCountFromMeta( final RepositoryId repositoryId, final Branch branch )
+    {
+        final SystemDumpResult systemDumpResult = this.getSystemDumpResult();
+        if ( systemDumpResult != null )
+        {
+            final RepoDumpResult repoDumpResult = systemDumpResult.get( repositoryId );
+            if ( repoDumpResult != null )
+            {
+                final BranchDumpResult branchDumpResult = repoDumpResult.get( branch );
+                if ( branchDumpResult != null )
+                {
+                    return branchDumpResult.getSuccessful();
+                }
+            }
+        }
+        return null;
     }
 
     public static class Builder

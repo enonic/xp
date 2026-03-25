@@ -13,9 +13,9 @@ import com.enonic.xp.blob.Segment;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.NodeVersions;
 import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
+import com.enonic.xp.node.NodeVersions;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.vacuum.VacuumTask;
 import com.enonic.xp.repo.impl.vacuum.VacuumTaskParams;
@@ -38,22 +38,16 @@ public abstract class AbstractBlobVacuumTaskTest
     {
         this.blobStore = new MemoryBlobStore();
         this.nodeService = Mockito.mock( NodeService.class );
-        Mockito.when( nodeService.findVersions( Mockito.any( NodeVersionQuery.class ) ) ).
-            thenAnswer( ( invocation ) -> {
-                final NodeVersionQuery query = invocation.getArgument( 0 );
-                final ValueFilter valueFilter = (ValueFilter) query.getQueryFilters().first();
-                if ( valueFilter.getValues().contains( ValueFactory.newString( BlobKey.from( ByteSource.wrap( "a-stuff".getBytes() ) ).toString() ) ) )
-                {
-                    return NodeVersionQueryResult.create().
-                        entityVersions( NodeVersions.empty() ).
-                        totalHits( 1 ).
-                        build();
-                }
-            return NodeVersionQueryResult.create().
-                entityVersions( NodeVersions.empty() ).
-                totalHits( 0 ).
-                build();
-            } );
+        Mockito.when( nodeService.findVersions( Mockito.any( NodeVersionQuery.class ) ) ).thenAnswer( ( invocation ) -> {
+            final NodeVersionQuery query = invocation.getArgument( 0 );
+            final ValueFilter valueFilter = (ValueFilter) query.getQueryFilters().first();
+            if ( valueFilter.getValues()
+                .contains( ValueFactory.newString( BlobKey.sha256( ByteSource.wrap( "a-stuff".getBytes() ) ).toString() ) ) )
+            {
+                return NodeVersionQueryResult.create().entityVersions( NodeVersions.empty() ).totalHits( 1 ).build();
+            }
+            return NodeVersionQueryResult.create().entityVersions( NodeVersions.empty() ).totalHits( 0 ).build();
+        } );
     }
 
     public void test_delete_unused()
@@ -65,7 +59,8 @@ public abstract class AbstractBlobVacuumTaskTest
 
         final VacuumTask task = createTask();
 
-        final VacuumTaskResult result = task.execute( VacuumTaskParams.create().vacuumStartedAt( Instant.now() ).ageThreshold( 0 ).build() );
+        final VacuumTaskResult result =
+            task.execute( VacuumTaskParams.create().vacuumStartedAt( Instant.now() ).ageThreshold( 0 ).build() );
 
         assertEquals( 3, result.getProcessed() );
         assertEquals( 2, result.getDeleted() );

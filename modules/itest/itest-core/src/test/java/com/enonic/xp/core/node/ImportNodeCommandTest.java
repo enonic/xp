@@ -17,7 +17,7 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repo.impl.node.CompareNodeCommand;
 import com.enonic.xp.repo.impl.node.ImportNodeCommand;
-import com.enonic.xp.repo.impl.repository.CreateRepositoryIndexParams;
+import com.enonic.xp.repo.impl.repository.RepositorySettings;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
@@ -43,11 +43,7 @@ class ImportNodeCommandTest
     @Test
     void no_timestamp()
     {
-        final Node importNode = Node.create().
-            name( "myNode" ).
-            parentPath( NodePath.ROOT ).
-            data( new PropertyTree() ).
-            build();
+        final Node importNode = Node.create().name( "myNode" ).parentPath( NodePath.ROOT ).data( new PropertyTree() ).build();
 
         final ImportNodeResult importNodeResult = importNode( importNode );
 
@@ -57,28 +53,28 @@ class ImportNodeCommandTest
     @Test
     void created_nodes_with_id_and_timestamp_should_be_equal()
     {
-        ctxDefault().callWith( () -> importNode( Node.create().
-            id( NodeId.from( "abc" ) ).
-            name( "myNode" ).
-            parentPath( NodePath.ROOT ).
-            data( new PropertyTree() ).
-            timestamp( Instant.parse( "2014-01-01T10:00:00Z" ) ).
-            build() ) );
+        ctxDefault().callWith( () -> importNode( Node.create()
+                                                     .id( NodeId.from( "abc" ) )
+                                                     .name( "myNode" )
+                                                     .parentPath( NodePath.ROOT )
+                                                     .data( new PropertyTree() )
+                                                     .timestamp( Instant.parse( "2014-01-01T10:00:00Z" ) )
+                                                     .build() ) );
 
-        ctxOther().callWith( () -> importNode( Node.create().
-            id( NodeId.from( "abc" ) ).
-            name( "myNode" ).
-            parentPath( NodePath.ROOT ).
-            data( new PropertyTree() ).
-            timestamp( Instant.parse( "2014-01-01T10:00:00Z" ) ).
-            build() ) );
+        ctxOther().callWith( () -> importNode( Node.create()
+                                                   .id( NodeId.from( "abc" ) )
+                                                   .name( "myNode" )
+                                                   .parentPath( NodePath.ROOT )
+                                                   .data( new PropertyTree() )
+                                                   .timestamp( Instant.parse( "2014-01-01T10:00:00Z" ) )
+                                                   .build() ) );
 
-        final NodeComparison comparison = CompareNodeCommand.create().
-            nodeId( NodeId.from( "abc" ) ).
-            target( WS_OTHER ).
-            storageService( this.storageService ).
-            build().
-            execute();
+        final NodeComparison comparison = CompareNodeCommand.create()
+            .nodeId( NodeId.from( "abc" ) )
+            .target( WS_OTHER )
+            .storageService( this.storageService )
+            .build()
+            .execute();
 
         assertEquals( NodeCompareStatus.EQUAL, comparison.getCompareStatus() );
     }
@@ -86,12 +82,8 @@ class ImportNodeCommandTest
     @Test
     void import_with_id()
     {
-        final Node importNode = Node.create().
-            id( NodeId.from( "abc" ) ).
-            name( "myNode" ).
-            parentPath( NodePath.ROOT ).
-            data( new PropertyTree() ).
-            build();
+        final Node importNode =
+            Node.create().id( NodeId.from( "abc" ) ).name( "myNode" ).parentPath( NodePath.ROOT ).data( new PropertyTree() ).build();
 
         importNode( importNode );
 
@@ -103,35 +95,25 @@ class ImportNodeCommandTest
     @Test
     void permissions_on_root_create()
     {
-        final AccessControlList aclList = AccessControlList.create().
-            add( AccessControlEntry.create().
-                principal( PrincipalKey.ofAnonymous() ).
-                allowAll().
-                deny( Permission.DELETE ).
-                build() ).
-            add( AccessControlEntry.create().
-                principal( TEST_DEFAULT_USER.getKey() ).
-                allowAll().
-                deny( Permission.DELETE ).
-                build() ).
-            build();
+        final AccessControlList aclList = AccessControlList.create()
+            .add( AccessControlEntry.create().principal( PrincipalKey.ofAnonymous() ).allowAll().deny( Permission.DELETE ).build() )
+            .add( AccessControlEntry.create().principal( TEST_DEFAULT_USER.getKey() ).allowAll().deny( Permission.DELETE ).build() )
+            .build();
 
-        final Node rootNode = Node.create().
-            id( Node.ROOT_UUID ).
-            name( "rootNode" ).
-            parentPath( NodePath.ROOT ).
-            data( new PropertyTree() ).
-            permissions( aclList ).
-            build();
+        final Node rootNode = Node.create()
+            .id( NodeId.ROOT )
+            .name( "rootNode" )
+            .parentPath( NodePath.ROOT )
+            .data( new PropertyTree() )
+            .permissions( aclList )
+            .build();
 
-        this.nodeRepositoryService.create( CreateRepositoryIndexParams.create().
-            repositoryId( RepositoryId.from( "test" ) ).
-            build() );
+        this.nodeRepositoryService.create( RepositoryId.from( "test" ), RepositorySettings.create().build() );
 
-        final ImportNodeResult importNodeResult = ContextBuilder.from( ContextAccessor.current() ).
-            repositoryId( "test" ).
-            build().
-            callWith( () -> importNode( rootNode, false, true ) );
+        final ImportNodeResult importNodeResult = ContextBuilder.from( ContextAccessor.current() )
+            .repositoryId( "test" )
+            .build()
+            .callWith( () -> importNode( rootNode, false, true ) );
 
         assertEquals( aclList, importNodeResult.getNode().getPermissions() );
     }
@@ -140,26 +122,18 @@ class ImportNodeCommandTest
     @Test
     void keep_permissions_on_create()
     {
-        final AccessControlList aclList = AccessControlList.create().
-            add( AccessControlEntry.create().
-                principal( PrincipalKey.ofAnonymous() ).
-                allowAll().
-                deny( Permission.DELETE ).
-                build() ).
-            add( AccessControlEntry.create().
-                principal( TEST_DEFAULT_USER.getKey() ).
-                allowAll().
-                deny( Permission.DELETE ).
-                build() ).
-            build();
+        final AccessControlList aclList = AccessControlList.create()
+            .add( AccessControlEntry.create().principal( PrincipalKey.ofAnonymous() ).allowAll().deny( Permission.DELETE ).build() )
+            .add( AccessControlEntry.create().principal( TEST_DEFAULT_USER.getKey() ).allowAll().deny( Permission.DELETE ).build() )
+            .build();
 
-        final Node importNode = Node.create().
-            id( NodeId.from( "abc" ) ).
-            name( "myNode" ).
-            parentPath( NodePath.ROOT ).
-            data( new PropertyTree() ).
-            permissions( aclList ).
-            build();
+        final Node importNode = Node.create()
+            .id( NodeId.from( "abc" ) )
+            .name( "myNode" )
+            .parentPath( NodePath.ROOT )
+            .data( new PropertyTree() )
+            .permissions( aclList )
+            .build();
 
         final ImportNodeResult importNodeResult = importNode( importNode );
         final Node abc = getNodeById( NodeId.from( "abc" ) );
@@ -172,26 +146,18 @@ class ImportNodeCommandTest
     @Test
     void skip_permissions_on_create()
     {
-        final AccessControlList aclList = AccessControlList.create().
-            add( AccessControlEntry.create().
-                principal( PrincipalKey.ofAnonymous() ).
-                allowAll().
-                deny( Permission.DELETE ).
-                build() ).
-            add( AccessControlEntry.create().
-                principal( TEST_DEFAULT_USER.getKey() ).
-                allowAll().
-                deny( Permission.DELETE ).
-                build() ).
-            build();
+        final AccessControlList aclList = AccessControlList.create()
+            .add( AccessControlEntry.create().principal( PrincipalKey.ofAnonymous() ).allowAll().deny( Permission.DELETE ).build() )
+            .add( AccessControlEntry.create().principal( TEST_DEFAULT_USER.getKey() ).allowAll().deny( Permission.DELETE ).build() )
+            .build();
 
-        final Node importNode = Node.create().
-            id( NodeId.from( "abc" ) ).
-            name( "myNode" ).
-            parentPath( NodePath.ROOT ).
-            data( new PropertyTree() ).
-            permissions( aclList ).
-            build();
+        final Node importNode = Node.create()
+            .id( NodeId.from( "abc" ) )
+            .name( "myNode" )
+            .parentPath( NodePath.ROOT )
+            .data( new PropertyTree() )
+            .permissions( aclList )
+            .build();
 
         final ImportNodeResult importNodeResult = importNode( importNode, true, false );
         assertNotEquals( aclList, importNodeResult.getNode().getPermissions() );
@@ -200,29 +166,20 @@ class ImportNodeCommandTest
     @Test
     void keep_permissions_on_update()
     {
-        importNode( Node.create().
-            id( NodeId.from( "abc" ) ).
-            name( "myNode" ).
-            parentPath( NodePath.ROOT ).
-            data( new PropertyTree() ).
-            build() );
+        importNode(
+            Node.create().id( NodeId.from( "abc" ) ).name( "myNode" ).parentPath( NodePath.ROOT ).data( new PropertyTree() ).build() );
 
-        final AccessControlList aclList = AccessControlList.create().
-            add( AccessControlEntry.create().
-                principal( TEST_DEFAULT_USER.getKey() ).
-                allowAll().
-                deny( Permission.DELETE ).
-                build() ).
-            build();
+        final AccessControlList aclList = AccessControlList.create()
+            .add( AccessControlEntry.create().principal( TEST_DEFAULT_USER.getKey() ).allowAll().deny( Permission.DELETE ).build() )
+            .build();
 
-        final Node updatedNode = importNode( Node.create().
-            id( NodeId.from( "abc" ) ).
-            name( "myNode" ).
-            parentPath( NodePath.ROOT ).
-            data( new PropertyTree() ).
-            permissions( aclList ).
-            build(), true, true ).
-            getNode();
+        final Node updatedNode = importNode( Node.create()
+                                                 .id( NodeId.from( "abc" ) )
+                                                 .name( "myNode" )
+                                                 .parentPath( NodePath.ROOT )
+                                                 .data( new PropertyTree() )
+                                                 .permissions( aclList )
+                                                 .build(), true, true ).getNode();
 
         assertEquals( aclList, updatedNode.getPermissions() );
     }
@@ -230,30 +187,24 @@ class ImportNodeCommandTest
     @Test
     void skip_permissions_on_update()
     {
-        final Node createdNode = importNode( Node.create().
-            id( NodeId.from( "abc" ) ).
-            name( "myNode" ).
-            parentPath( NodePath.ROOT ).
-            data( new PropertyTree() ).
-            build() ).
-            getNode();
+        final Node createdNode = importNode( Node.create()
+                                                 .id( NodeId.from( "abc" ) )
+                                                 .name( "myNode" )
+                                                 .parentPath( NodePath.ROOT )
+                                                 .data( new PropertyTree() )
+                                                 .build() ).getNode();
 
-        final AccessControlList aclList = AccessControlList.create().
-            add( AccessControlEntry.create().
-                principal( TEST_DEFAULT_USER.getKey() ).
-                allowAll().
-                deny( Permission.DELETE ).
-                build() ).
-            build();
+        final AccessControlList aclList = AccessControlList.create()
+            .add( AccessControlEntry.create().principal( TEST_DEFAULT_USER.getKey() ).allowAll().deny( Permission.DELETE ).build() )
+            .build();
 
-        final Node updatedNode = importNode( Node.create().
-            id( NodeId.from( "abc" ) ).
-            name( "myNode" ).
-            parentPath( NodePath.ROOT ).
-            data( new PropertyTree() ).
-            permissions( aclList ).
-            build() ).
-            getNode();
+        final Node updatedNode = importNode( Node.create()
+                                                 .id( NodeId.from( "abc" ) )
+                                                 .name( "myNode" )
+                                                 .parentPath( NodePath.ROOT )
+                                                 .data( new PropertyTree() )
+                                                 .permissions( aclList )
+                                                 .build() ).getNode();
 
         assertEquals( createdNode.getPermissions(), updatedNode.getPermissions() );
 
@@ -265,12 +216,7 @@ class ImportNodeCommandTest
         PropertyTree data = new PropertyTree();
         data.addString( "name", "value" );
 
-        final Node importNode = Node.create().
-            id( NodeId.from( "abc" ) ).
-            name( "myNode" ).
-            parentPath( NodePath.ROOT ).
-            data( data ).
-            build();
+        final Node importNode = Node.create().id( NodeId.from( "abc" ) ).name( "myNode" ).parentPath( NodePath.ROOT ).data( data ).build();
 
         importNode( importNode );
         final Node abc = getNodeById( NodeId.from( "abc" ) );
@@ -280,12 +226,8 @@ class ImportNodeCommandTest
         PropertyTree data2 = new PropertyTree();
         data2.addString( "name", "valueUpdated" );
 
-        final Node importNode2 = Node.create().
-            id( NodeId.from( "abc" ) ).
-            name( "myNode" ).
-            parentPath( NodePath.ROOT ).
-            data( data2 ).
-            build();
+        final Node importNode2 =
+            Node.create().id( NodeId.from( "abc" ) ).name( "myNode" ).parentPath( NodePath.ROOT ).data( data2 ).build();
 
         final ImportNodeResult importNodeResult = importNode( importNode2 );
         final Node abc2 = getNodeById( NodeId.from( "abc" ) );
@@ -298,28 +240,28 @@ class ImportNodeCommandTest
 
     private ImportNodeResult importNode( final Node importNode )
     {
-        return ImportNodeCommand.create().
-            importNode( importNode ).
-            binaryBlobStore( this.binaryService ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            build().
-            execute();
+        return ImportNodeCommand.create()
+            .importNode( importNode )
+            .binaryBlobStore( this.binaryService )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.storageService )
+            .searchService( this.searchService )
+            .build()
+            .execute();
     }
 
     private ImportNodeResult importNode( final Node importNode, final boolean importPermissionsOnUpdate,
                                          final boolean importPermissionsOnCreate )
     {
-        return ImportNodeCommand.create().
-            importNode( importNode ).
-            binaryBlobStore( this.binaryService ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            importPermissions( importPermissionsOnUpdate ).
-            importPermissionsOnCreate( importPermissionsOnCreate ).
-            build().
-            execute();
+        return ImportNodeCommand.create()
+            .importNode( importNode )
+            .binaryBlobStore( this.binaryService )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.storageService )
+            .searchService( this.searchService )
+            .importPermissions( importPermissionsOnUpdate )
+            .importPermissionsOnCreate( importPermissionsOnCreate )
+            .build()
+            .execute();
     }
 }

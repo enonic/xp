@@ -262,16 +262,16 @@ public abstract class AbstractContentServiceTest
         final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl( indexServiceInternal );
 
         RepositoryServiceImpl repositoryService =
-            new RepositoryServiceImpl( repositoryEntryService, indexServiceInternal, nodeRepositoryService, storageService, searchService );
+            new RepositoryServiceImpl( repositoryEntryService, nodeRepositoryService, storageService, searchService, branchService );
         SystemRepoInitializer.create()
             .setIndexServiceInternal( indexServiceInternal )
-            .setRepositoryService( repositoryService )
             .setNodeStorageService( storageService )
+            .setNodeRepositoryService( nodeRepositoryService )
+            .setRepositoryEntryService( repositoryEntryService )
             .build()
             .initialize();
 
-        nodeService =
-            new NodeServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService, repositoryService );
+        nodeService = new NodeServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService );
 
         formFragmentService = mock( CmsFormFragmentService.class );
         when( formFragmentService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
@@ -300,7 +300,7 @@ public abstract class AbstractContentServiceTest
         LayoutDescriptorService layoutDescriptorService = mock( LayoutDescriptorService.class );
         auditLogService = mock( AuditLogService.class );
 
-        contentAuditLogFilterService = mock( ContentAuditLogFilterService.class, invocation -> true );
+        contentAuditLogFilterService = mock( ContentAuditLogFilterService.class, _ -> true );
 
         final ContentConfig contentConfig = mock( ContentConfig.class );
         when( contentConfig.auditlog_enabled() ).thenReturn( Boolean.TRUE );
@@ -329,7 +329,8 @@ public abstract class AbstractContentServiceTest
             .initialize();
 
         projectService =
-            new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService, eventPublisher, projectConfig );
+            new ProjectServiceImpl( repositoryService, repositoryService, indexService, nodeService, securityService, eventPublisher,
+                                    projectConfig );
         projectService.initialize();
 
         projectService.create( CreateProjectParams.create().name( testprojectName ).displayName( "test" ).build() );

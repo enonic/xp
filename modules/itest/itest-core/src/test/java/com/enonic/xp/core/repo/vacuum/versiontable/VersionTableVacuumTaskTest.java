@@ -13,16 +13,16 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.AbstractNodeTest;
+import com.enonic.xp.node.ApplyVersionAttributesParams;
+import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.GetNodeVersionsParams;
 import com.enonic.xp.node.GetNodeVersionsResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.UpdateNodeParams;
-import com.enonic.xp.node.ApplyVersionAttributesParams;
-import com.enonic.xp.node.Attributes;
 import com.enonic.xp.repo.impl.node.NodeHelper;
 import com.enonic.xp.repo.impl.vacuum.VacuumTaskParams;
 import com.enonic.xp.repo.impl.vacuum.versiontable.VersionTableVacuumTask;
@@ -60,14 +60,14 @@ class VersionTableVacuumTaskTest
     {
         createDefaultRootNode();
 
-        this.task =
-            new VersionTableVacuumTask( this.nodeService, this.repositoryService, this.versionService, this.branchService, BLOB_STORE );
+        this.task = new VersionTableVacuumTask( this.nodeService, this.repositoryEntryService, this.versionService, this.branchService,
+                                                BLOB_STORE );
     }
 
     @Test
     void delete_node_deletes_versions()
     {
-        final int updates = 10_000;
+        final int updates = 11_000;
         final int versionsBatchSize = updates / 2; // to make sure nodes fetched in batches
         final int expectedVersionCount = updates + 1;
 
@@ -78,15 +78,15 @@ class VersionTableVacuumTaskTest
 
         assertVersions( node1.id(), expectedVersionCount );
 
-        final VacuumTaskResult result = NodeHelper.runAsAdmin( () -> this.task.execute( VacuumTaskParams.create().vacuumStartedAt( Instant.now() ).
-            ageThreshold( NEGATIVE_AGE_THRESHOLD_MILLIS ).
-            versionsBatchSize( versionsBatchSize ).
-            build() ) );
+        final VacuumTaskResult result = NodeHelper.runAsAdmin( () -> this.task.execute( VacuumTaskParams.create()
+                                                                                            .vacuumStartedAt( Instant.now() )
+                                                                                            .ageThreshold( NEGATIVE_AGE_THRESHOLD_MILLIS )
+                                                                                            .versionsBatchSize( versionsBatchSize )
+                                                                                            .build() ) );
         refresh();
 
-        assertEquals( updates + 14, result.getProcessed() );
-        //Old version of CMS repository entry is also delete. Remove +1 when config to specify repository is implemented
-        assertEquals( expectedVersionCount + 1, result.getDeleted() );
+        assertEquals( updates + 13, result.getProcessed() );
+        assertEquals( expectedVersionCount, result.getDeleted() );
 
         assertVersions( node1.id(), 0 );
     }
@@ -104,15 +104,12 @@ class VersionTableVacuumTaskTest
         refresh();
         assertVersions( node1.id(), 1 );
 
-        final VacuumTaskResult result = NodeHelper.runAsAdmin( () -> this.task.execute( VacuumTaskParams.create().
-            vacuumStartedAt( Instant.now() ).
-            ageThreshold( NEGATIVE_AGE_THRESHOLD_MILLIS ).
-            build() ) );
+        final VacuumTaskResult result = NodeHelper.runAsAdmin( () -> this.task.execute(
+            VacuumTaskParams.create().vacuumStartedAt( Instant.now() ).ageThreshold( NEGATIVE_AGE_THRESHOLD_MILLIS ).build() ) );
         refresh();
 
-        assertEquals( 14, result.getProcessed() );
-        //Old version of CMS repository entry is also delete. Set to 1 when config to specify repository is implemented
-        assertEquals( 2, result.getDeleted() );
+        assertEquals( 13, result.getProcessed() );
+        assertEquals( 1, result.getDeleted() );
         assertVersions( node1.id(), 0 );
     }
 
@@ -128,15 +125,11 @@ class VersionTableVacuumTaskTest
         refresh();
         assertVersions( node1.id(), 1 );
 
-        final VacuumTaskResult result = NodeHelper.runAsAdmin( () -> this.task.execute( VacuumTaskParams.create().
-            vacuumStartedAt( Instant.now() ).
-            ageThreshold( NEGATIVE_AGE_THRESHOLD_MILLIS ).
-            build() ) );
+        final VacuumTaskResult result = NodeHelper.runAsAdmin( () -> this.task.execute(
+            VacuumTaskParams.create().vacuumStartedAt( Instant.now() ).ageThreshold( NEGATIVE_AGE_THRESHOLD_MILLIS ).build() ) );
         refresh();
 
-        assertEquals( 14, result.getProcessed() );
-        //Old version of CMS repository entry is also delete. Set to 0 when config to specify repository is implemented
-        assertEquals( 1, result.getDeleted() );
+        assertEquals( 0, result.getDeleted() );
 
         assertVersions( node1.id(), 1 );
     }
@@ -222,7 +215,8 @@ class VersionTableVacuumTaskTest
 
     private void assertVersions( final NodeId nodeId, final int versions )
     {
-        final GetNodeVersionsResult result = this.nodeService.getVersions( GetNodeVersionsParams.create().nodeId( nodeId ).size( 0 ).build() );
+        final GetNodeVersionsResult result =
+            this.nodeService.getVersions( GetNodeVersionsParams.create().nodeId( nodeId ).size( 0 ).build() );
 
         assertEquals( versions, result.getTotalHits(), "Wrong number of versions found" );
     }
@@ -233,10 +227,7 @@ class VersionTableVacuumTaskTest
         {
             // Every update should introduce a change into the node
             final long value = i;
-            updateNode( UpdateNodeParams.create().
-                id( nodeId ).
-                editor( node -> node.data.setLong( "someValue", value ) ).
-                build() );
+            updateNode( UpdateNodeParams.create().id( nodeId ).editor( node -> node.data.setLong( "someValue", value ) ).build() );
         }
     }
 
@@ -245,34 +236,35 @@ class VersionTableVacuumTaskTest
     {
         final Node node1 = createNode( NodePath.ROOT, "node1" );
         refresh();
-        
+
         // Get the first version ID
-        final GetNodeVersionsResult versionsResult = this.nodeService.getVersions( GetNodeVersionsParams.create().nodeId( node1.id() ).size( 1 ).build() );
+        final GetNodeVersionsResult versionsResult =
+            this.nodeService.getVersions( GetNodeVersionsParams.create().nodeId( node1.id() ).size( 1 ).build() );
         final NodeVersionId firstVersionId = versionsResult.getNodeVersions().first().getNodeVersionId();
-        
+
         // Mark the first version to prevent vacuum
         NodeHelper.runAsAdmin( () -> this.nodeService.applyVersionAttributes( ApplyVersionAttributesParams.create()
-            .nodeVersionId( firstVersionId )
-            .addAttributes( Attributes.create()
-                .attribute( VacuumConstants.VACUUM_SKIP_ATTRIBUTE, GenericValue.newObject().build() )
-                .build() )
-            .build() ) );
-        
+                                                                                  .nodeVersionId( firstVersionId )
+                                                                                  .addAttributes( Attributes.create()
+                                                                                                      .attribute(
+                                                                                                          VacuumConstants.VACUUM_SKIP_ATTRIBUTE,
+                                                                                                          GenericValue.newObject().build() )
+                                                                                                      .build() )
+                                                                                  .build() ) );
+
         // Update the node to create more versions
         updateNode( node1.id(), 2 );
         pushNodes( WS_OTHER, node1.id() );
         // Delete the node
         doDeleteNode( node1.id() );
         refresh();
-        
+
         // Should have 3 versions total (1 initial + 2 updates, delete doesn't create version)
         assertVersions( node1.id(), 3 );
-        
+
         // Run vacuum
-        final VacuumTaskResult result = NodeHelper.runAsAdmin( () -> this.task.execute( VacuumTaskParams.create()
-            .vacuumStartedAt( Instant.now() )
-            .ageThreshold( NEGATIVE_AGE_THRESHOLD_MILLIS )
-            .build() ) );
+        final VacuumTaskResult result = NodeHelper.runAsAdmin( () -> this.task.execute(
+            VacuumTaskParams.create().vacuumStartedAt( Instant.now() ).ageThreshold( NEGATIVE_AGE_THRESHOLD_MILLIS ).build() ) );
         refresh();
 
         assertEquals( 1, result.getSkipped() );
@@ -281,7 +273,8 @@ class VersionTableVacuumTaskTest
         assertVersions( node1.id(), 2 );
 
         // Verify it's the vacuum.skip version remains - event after it is not use in any branch
-        final GetNodeVersionsResult remainingVersions = this.nodeService.getVersions( GetNodeVersionsParams.create().nodeId( node1.id() ).size( -1 ).build() );
+        final GetNodeVersionsResult remainingVersions =
+            this.nodeService.getVersions( GetNodeVersionsParams.create().nodeId( node1.id() ).size( -1 ).build() );
         assertThat( remainingVersions.getNodeVersions() ).map( NodeVersion::getNodeVersionId ).contains( firstVersionId );
     }
 }

@@ -2,11 +2,13 @@ package com.enonic.xp.repo.impl.branch;
 
 import java.util.Collection;
 
+import com.enonic.xp.branch.Branches;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeBranchEntries;
 import com.enonic.xp.repo.impl.NodeBranchEntry;
+import com.enonic.xp.repository.RepositoryId;
 
 public interface BranchService
 {
@@ -18,6 +20,8 @@ public interface BranchService
 
     NodeBranchEntry get( NodeId nodeId, InternalContext context );
 
+    boolean exists( NodeId nodeId, InternalContext context );
+
     NodeBranchEntries get( Iterable<NodeId> nodeIds, InternalContext context );
 
     NodeBranchEntry get( NodePath nodePath, InternalContext context );
@@ -25,4 +29,6 @@ public interface BranchService
     void evictPath( NodePath nodePath, InternalContext context );
 
     void evictAllPaths();
+
+    Branches getBranches( NodeId nodeId, RepositoryId repositoryId );
 }

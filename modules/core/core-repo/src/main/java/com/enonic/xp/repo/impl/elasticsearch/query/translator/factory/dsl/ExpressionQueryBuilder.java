@@ -11,7 +11,7 @@ import com.enonic.xp.data.ValueTypeException;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.SearchQueryFieldNameResolver;
 import com.enonic.xp.repo.impl.index.IndexValueNormalizer;
-import com.enonic.xp.repo.impl.index.IndexValueType;
+import com.enonic.xp.repo.impl.index.StaticIndexValueType;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
@@ -108,7 +108,7 @@ abstract class ExpressionQueryBuilder
         {
             if ( value instanceof Number )
             {
-                return FIELD_NAME_RESOLVER.resolve( field, IndexValueType.NUMBER );
+                return FIELD_NAME_RESOLVER.resolve( field, StaticIndexValueType.NUMBER );
             }
             return FIELD_NAME_RESOLVER.resolve( field );
         }
@@ -116,7 +116,7 @@ abstract class ExpressionQueryBuilder
         switch ( type )
         {
             case "dateTime":
-                return FIELD_NAME_RESOLVER.resolve( field, IndexValueType.DATETIME );
+                return FIELD_NAME_RESOLVER.resolve( field, StaticIndexValueType.DATETIME );
             case "time":
                 return FIELD_NAME_RESOLVER.resolve( field );
             default:

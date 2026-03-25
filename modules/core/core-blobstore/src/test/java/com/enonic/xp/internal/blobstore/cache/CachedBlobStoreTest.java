@@ -31,10 +31,7 @@ class CachedBlobStoreTest
     void setup()
     {
         this.blobStore = Mockito.mock( BlobStore.class );
-        this.cachedBlobStore = CachedBlobStore.create().
-            blobStore( this.blobStore ).
-            memoryCapacity( 100 ).sizeThreshold( 10 ).
-            build();
+        this.cachedBlobStore = CachedBlobStore.create().blobStore( this.blobStore ).memoryCapacity( 100 ).sizeThreshold( 10 ).build();
     }
 
     private BlobRecord newRecord()
@@ -170,8 +167,10 @@ class CachedBlobStoreTest
     }
 
     @Test
-    void dontCacheCorrupted() {
-        final BlobRecord corruptedRecord  = new BlobRecord() {
+    void dontCacheCorrupted()
+    {
+        final BlobRecord corruptedRecord = new BlobRecord()
+        {
 
             @Override
             public BlobKey getKey()

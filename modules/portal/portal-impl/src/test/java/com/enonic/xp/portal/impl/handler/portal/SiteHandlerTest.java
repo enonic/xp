@@ -146,7 +146,7 @@ class SiteHandlerTest
         when( projectService.get( eq( projectName ) ) ).thenReturn( project );
 
         final ContentNotFoundException contentNotFoundException = ContentNotFoundException.create()
-            .contentId( ContentId.from( "contentId" ) )
+            .contentId( ContentId.from( "contentid" ) )
             .repositoryId( projectName.getRepoId() )
             .branch( branch )
             .contentRoot( NodePath.ROOT )

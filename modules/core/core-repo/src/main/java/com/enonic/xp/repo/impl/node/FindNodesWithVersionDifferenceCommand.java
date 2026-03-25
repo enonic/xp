@@ -51,7 +51,7 @@ public class FindNodesWithVersionDifferenceCommand
 
         final NodePaths excludeEntries = excludes.isEmpty()
             ? NodePaths.empty()
-            : this.nodeStorageService.getBranchNodeVersions( excludes, context )
+            : this.nodeStorageService.getNodeBranchEntries( excludes, context )
                 .stream()
                 .map( NodeBranchEntry::getNodePath )
                 .collect( NodePaths.collector() );

@@ -40,7 +40,7 @@ class PortalUrlService_baseUrlTest
     {
         PortalRequestAccessor.set( null );
 
-        final BaseUrlParams params = BaseUrlParams.create().setId( "contentId" ).build();
+        final BaseUrlParams params = BaseUrlParams.create().setId( "contentid" ).build();
 
         final String url = ContextBuilder.create().build().callWith( () -> this.service.baseUrl( params ) );
         assertThat( url ).startsWith( "/_/error/500?message=Something+went+wrong." );
@@ -51,7 +51,7 @@ class PortalUrlService_baseUrlTest
     {
         PortalRequestAccessor.set( null );
 
-        final BaseUrlParams params = BaseUrlParams.create().setId( "contentId" ).build();
+        final BaseUrlParams params = BaseUrlParams.create().setId( "contentid" ).build();
 
         final String url = ContextBuilder.create()
             .repositoryId( RepositoryId.from( "non.content.project" ) )
@@ -66,7 +66,7 @@ class PortalUrlService_baseUrlTest
     {
         PortalRequestAccessor.set( null );
 
-        final BaseUrlParams params = BaseUrlParams.create().setId( "contentId" ).build();
+        final BaseUrlParams params = BaseUrlParams.create().setId( "contentid" ).build();
 
         final String url = ContextBuilder.create()
             .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )

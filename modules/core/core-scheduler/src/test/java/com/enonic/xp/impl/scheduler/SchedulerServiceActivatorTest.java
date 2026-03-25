@@ -33,7 +33,7 @@ import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.repository.RepositoryService;
+import com.enonic.xp.repository.internal.InternalRepositoryService;
 import com.enonic.xp.scheduler.CalendarService;
 import com.enonic.xp.scheduler.CreateScheduledJobParams;
 import com.enonic.xp.scheduler.CronCalendar;
@@ -70,7 +70,7 @@ class SchedulerServiceActivatorTest
     private IndexService indexService;
 
     @Mock(stubOnly = true)
-    private RepositoryService repositoryService;
+    private InternalRepositoryService repositoryService;
 
     @Mock
     private SchedulerExecutorService schedulerExecutorService;
@@ -96,8 +96,8 @@ class SchedulerServiceActivatorTest
         activator = new SchedulerServiceActivator( repositoryService, indexService, nodeService, schedulerExecutorService, schedulerConfig,
                                                    auditLogSupport );
 
-        when( bundleContext.registerService( same( SchedulerService.class ), any( SchedulerService.class ), isNull() ) ).
-            thenReturn( service );
+        when( bundleContext.registerService( same( SchedulerService.class ), any( SchedulerService.class ), isNull() ) ).thenReturn(
+            service );
     }
 
     @Test
@@ -123,12 +123,12 @@ class SchedulerServiceActivatorTest
     @Test
     void initWithJob()
     {
-        final CreateScheduledJobParams jobParams = CreateScheduledJobParams.create().
-            name( ScheduledJobName.from( "name" ) ).
-            descriptor( DescriptorKey.from( "appKey:descriptorName" ) ).
-            calendar( calendarService.cron( "* * * * *", TimeZone.getDefault() ) ).
-            config( new PropertyTree() ).
-            build();
+        final CreateScheduledJobParams jobParams = CreateScheduledJobParams.create()
+            .name( ScheduledJobName.from( "name" ) )
+            .descriptor( DescriptorKey.from( "appKey:descriptorName" ) )
+            .calendar( calendarService.cron( "* * * * *", TimeZone.getDefault() ) )
+            .config( new PropertyTree() )
+            .build();
 
         mockNode( jobParams );
 
@@ -142,12 +142,12 @@ class SchedulerServiceActivatorTest
     @Test
     void initWithExistJob()
     {
-        final CreateScheduledJobParams jobParams = CreateScheduledJobParams.create().
-            name( ScheduledJobName.from( "name" ) ).
-            descriptor( DescriptorKey.from( "appKey:descriptorName" ) ).
-            calendar( calendarService.cron( "* * * * *", TimeZone.getDefault() ) ).
-            config( new PropertyTree() ).
-            build();
+        final CreateScheduledJobParams jobParams = CreateScheduledJobParams.create()
+            .name( ScheduledJobName.from( "name" ) )
+            .descriptor( DescriptorKey.from( "appKey:descriptorName" ) )
+            .calendar( calendarService.cron( "* * * * *", TimeZone.getDefault() ) )
+            .config( new PropertyTree() )
+            .build();
 
         when( schedulerConfig.jobs() ).thenReturn( Set.of( jobParams ) );
 
@@ -163,12 +163,12 @@ class SchedulerServiceActivatorTest
     @Test
     void initWithInvalidJob()
     {
-        final CreateScheduledJobParams jobParams = CreateScheduledJobParams.create().
-            name( ScheduledJobName.from( "name" ) ).
-            descriptor( DescriptorKey.from( "appKey:descriptorName" ) ).
-            calendar( calendarService.cron( "* * * * *", TimeZone.getDefault() ) ).
-            config( new PropertyTree() ).
-            build();
+        final CreateScheduledJobParams jobParams = CreateScheduledJobParams.create()
+            .name( ScheduledJobName.from( "name" ) )
+            .descriptor( DescriptorKey.from( "appKey:descriptorName" ) )
+            .calendar( calendarService.cron( "* * * * *", TimeZone.getDefault() ) )
+            .config( new PropertyTree() )
+            .build();
 
         when( schedulerConfig.jobs() ).thenReturn( Set.of( jobParams ) );
 
@@ -180,12 +180,12 @@ class SchedulerServiceActivatorTest
     @Test
     void initWithAlreadyScheduledRescheduleTask()
     {
-        final CreateScheduledJobParams jobParams = CreateScheduledJobParams.create().
-            name( ScheduledJobName.from( "name" ) ).
-            descriptor( DescriptorKey.from( "appKey:descriptorName" ) ).
-            calendar( calendarService.cron( "* * * * *", TimeZone.getDefault() ) ).
-            config( new PropertyTree() ).
-            build();
+        final CreateScheduledJobParams jobParams = CreateScheduledJobParams.create()
+            .name( ScheduledJobName.from( "name" ) )
+            .descriptor( DescriptorKey.from( "appKey:descriptorName" ) )
+            .calendar( calendarService.cron( "* * * * *", TimeZone.getDefault() ) )
+            .config( new PropertyTree() )
+            .build();
 
         mockNode( jobParams );
 
@@ -206,12 +206,12 @@ class SchedulerServiceActivatorTest
     @Test
     void rescheduleFinishedRescheduleTask()
     {
-        final CreateScheduledJobParams jobParams = CreateScheduledJobParams.create().
-            name( ScheduledJobName.from( "name" ) ).
-            descriptor( DescriptorKey.from( "appKey:descriptorName" ) ).
-            calendar( calendarService.cron( "* * * * *", TimeZone.getDefault() ) ).
-            config( new PropertyTree() ).
-            build();
+        final CreateScheduledJobParams jobParams = CreateScheduledJobParams.create()
+            .name( ScheduledJobName.from( "name" ) )
+            .descriptor( DescriptorKey.from( "appKey:descriptorName" ) )
+            .calendar( calendarService.cron( "* * * * *", TimeZone.getDefault() ) )
+            .config( new PropertyTree() )
+            .build();
 
         mockNode( jobParams );
 
@@ -225,15 +225,14 @@ class SchedulerServiceActivatorTest
 
         activator.activate( bundleContext );
 
-        verify( schedulerExecutorService, times(1) ).scheduleAtFixedRate( isA( SchedulableTask.class ), anyLong(), anyLong(),
-                                                                         isA( TimeUnit.class ) );
+        verify( schedulerExecutorService, times( 1 ) ).scheduleAtFixedRate( isA( SchedulableTask.class ), anyLong(), anyLong(),
+                                                                            isA( TimeUnit.class ) );
     }
 
     @Test
     void restoreInitialized()
     {
-        activator.onEvent( Event.create( "repository.restoreInitialized" ).
-            build() );
+        activator.onEvent( Event.create( "repository.restoreInitialized" ).build() );
 
         Mockito.verify( schedulerExecutorService, Mockito.times( 1 ) ).dispose( RescheduleTask.NAME );
     }
@@ -258,12 +257,12 @@ class SchedulerServiceActivatorTest
         jobData.setString( ScheduledJobPropertyNames.CREATED_TIME, "2016-11-02T10:36:00Z" );
         jobData.setString( ScheduledJobPropertyNames.MODIFIED_TIME, "2016-11-02T10:36:00Z" );
 
-        final Node job = Node.create().
-            id( NodeId.from( "abc" ) ).
-            name( params.getName().getValue() ).
-            parentPath( NodePath.ROOT ).
-            data( jobData ).
-            build();
+        final Node job = Node.create()
+            .id( NodeId.from( "abc" ) )
+            .name( params.getName().getValue() )
+            .parentPath( NodePath.ROOT )
+            .data( jobData )
+            .build();
 
         when( nodeService.create( isA( CreateNodeParams.class ) ) ).thenReturn( job );
     }

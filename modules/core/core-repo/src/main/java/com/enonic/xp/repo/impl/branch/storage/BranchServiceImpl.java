@@ -14,6 +14,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.Branches;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
@@ -115,6 +116,18 @@ public class BranchServiceImpl
     public NodeBranchEntry get( final NodeId nodeId, final InternalContext context )
     {
         return doGetById( nodeId, context );
+    }
+
+    @Override
+    public boolean exists( final NodeId nodeId, final InternalContext context )
+    {
+        final GetByIdRequest getByIdRequest = GetByIdRequest.create()
+            .id( BranchDocumentId.asString( nodeId, context.getBranch() ) )
+            .storageSettings( createStorageSettings( context.getRepositoryId() ) )
+            .searchPreference( context.getSearchPreference() )
+            .routing( nodeId.toString() )
+            .build();
+        return !this.storageDao.getById( getByIdRequest ).isEmpty();
     }
 
     private NodeBranchEntry doGetById( final NodeId nodeId, final InternalContext context )
@@ -223,6 +236,28 @@ public class BranchServiceImpl
     public void evictAllPaths()
     {
         cache.invalidateAll();
+    }
+
+    @Override
+    public Branches getBranches( NodeId nodeId, RepositoryId repositoryId )
+    {
+        final NodeBranchQuery query = NodeBranchQuery.create()
+            .addQueryFilter( ValueFilter.create()
+                                 .fieldName( BranchIndexPath.NODE_ID.getPath() )
+                                 .addValue( ValueFactory.newString( nodeId.toString() ) )
+                                 .build() )
+            .build();
+
+        final SearchResult searchResult = this.searchDao.search( SearchRequest.create()
+                                                                     .searchSource( SingleRepoStorageSource.create( repositoryId,
+                                                                                                                    StaticStorageType.BRANCH ) )
+                                                                     .query( query )
+                                                                     .build() );
+
+        return searchResult.getHits()
+            .stream()
+            .map( hit -> Branch.from( hit.getId().substring( hit.getId().lastIndexOf( '_' ) + 1 ) ) )
+            .collect( Branches.collector() );
     }
 
     private static StorageSource createStorageSettings( final RepositoryId repositoryId )

@@ -26,7 +26,7 @@ import com.enonic.xp.query.filter.RangeFilter;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFieldNameResolver;
 import com.enonic.xp.repo.impl.index.IndexFieldNameNormalizer;
-import com.enonic.xp.repo.impl.index.IndexValueType;
+import com.enonic.xp.repo.impl.index.StaticIndexValueType;
 
 public class FilterBuilderFactory
     extends AbstractBuilderFactory
@@ -188,7 +188,7 @@ public class FilterBuilderFactory
 
     private QueryBuilder createExistsFilter( final ExistsFilter filter )
     {
-        final String resolvedQueryFieldName = this.fieldNameResolver.resolve( filter.getFieldName(), IndexValueType.STRING );
+        final String resolvedQueryFieldName = this.fieldNameResolver.resolve( filter.getFieldName(), StaticIndexValueType.STRING );
 
         return new ExistsQueryBuilder( resolvedQueryFieldName );
     }

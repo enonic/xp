@@ -84,7 +84,8 @@ public final class SecurityInitializer
                  CreateRoleParams.create().roleKey( RoleKeys.CONTENT_MANAGER_APP ).displayName( "Content Manager App" ).build(),
                  CreateRoleParams.create().roleKey( RoleKeys.CONTENT_MANAGER_EXPERT ).displayName( "Content Manager Expert" ).build(),
                  CreateRoleParams.create().roleKey( RoleKeys.CONTENT_MANAGER_ADMIN ).displayName( "Content Manager Administrator" ).build(),
-                 CreateRoleParams.create().roleKey( RoleKeys.AUDIT_LOG ).displayName( "Audit Log" ).build() );
+                 CreateRoleParams.create().roleKey( RoleKeys.AUDIT_LOG ).displayName( "Audit Log" ).build(),
+                 CreateRoleParams.create().roleKey( RoleKeys.SCHEMA_ADMIN ).displayName( "Schema Admin" ).build() );
 
     private static final List<CreateUserParams> USERS_TO_CREATE = List.of( CreateUserParams.create()
                                                                                .userKey( PrincipalKey.ofAnonymous() )
@@ -126,8 +127,8 @@ public final class SecurityInitializer
     public boolean isInitialized()
     {
         return createAdminContext().callWith(
-            () -> pathInitialized( IDENTITY_PATH ) && rolesInitialized() && systemIdProviderInitialized() &&
-                usersInitialized() && keysInitialized() );
+            () -> pathInitialized( IDENTITY_PATH ) && rolesInitialized() && systemIdProviderInitialized() && usersInitialized() &&
+                keysInitialized() );
     }
 
     @Override
@@ -312,12 +313,12 @@ public final class SecurityInitializer
             if ( securityService.getUser( createUser.getKey() ).isEmpty() )
             {
                 securityService.createUser( createUser );
-                LOG.info( "User created: {}", createUser.getKey().toString() );
+                LOG.info( "User created: {}", createUser.getKey() );
             }
         }
         catch ( final Exception t )
         {
-            LOG.error( "Unable to initialize user: {}", createUser.getKey().toString(), t );
+            LOG.error( "Unable to initialize user: {}", createUser.getKey(), t );
         }
     }
 
@@ -328,12 +329,12 @@ public final class SecurityInitializer
             if ( securityService.getRole( createRoleParams.getKey() ).isEmpty() )
             {
                 securityService.createRole( createRoleParams );
-                LOG.info( "Role created: " + createRoleParams.getKey().toString() );
+                LOG.info( "Role created: {}", createRoleParams.getKey() );
             }
         }
         catch ( final Exception t )
         {
-            LOG.error( "Unable to initialize role: {}", createRoleParams.getKey().toString(), t );
+            LOG.error( "Unable to initialize role: {}", createRoleParams.getKey(), t );
         }
     }
 

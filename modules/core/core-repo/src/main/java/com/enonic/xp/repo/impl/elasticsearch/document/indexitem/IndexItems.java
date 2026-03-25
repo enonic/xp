@@ -8,7 +8,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 
-import com.enonic.xp.repo.impl.index.IndexValueType;
+import com.enonic.xp.repo.impl.index.StaticIndexValueType;
 
 public class IndexItems
 {
@@ -40,7 +40,7 @@ public class IndexItems
         public Builder add( final List<? extends IndexItem<?>> indexItems )
         {
             indexItems.stream()
-                .filter( item -> !( item.valueType().equals( IndexValueType.ORDERBY ) && this.values.containsKey( item.getPath() ) ) )
+                .filter( item -> !( item.valueType().equals( StaticIndexValueType.ORDERBY ) && this.values.containsKey( item.getPath() ) ) )
                 .forEach( item -> this.values.put( item.getPath(), item.getValue() ) );
 
             return this;

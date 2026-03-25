@@ -3,7 +3,7 @@ package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.dsl;
 import org.elasticsearch.index.query.QueryBuilder;
 
 import com.enonic.xp.data.PropertySet;
-import com.enonic.xp.repo.impl.index.IndexValueType;
+import com.enonic.xp.repo.impl.index.StaticIndexValueType;
 import com.enonic.xp.repo.impl.node.NodeConstants;
 
 class FulltextQueryBuilder
@@ -24,7 +24,7 @@ class FulltextQueryBuilder
                 NodeConstants.DEFAULT_FULLTEXT_SEARCH_ANALYZER ).analyzeWildcard( true );
 
         fields.getWeightedQueryFieldNames().forEach( field -> {
-            final String resolvedName = NAME_RESOLVER.resolve( field.getBaseFieldName(), IndexValueType.ANALYZED );
+            final String resolvedName = NAME_RESOLVER.resolve( field.getBaseFieldName(), StaticIndexValueType.ANALYZED );
             if ( field.getWeight() != null )
             {
                 builder.field( resolvedName, field.getWeight() );

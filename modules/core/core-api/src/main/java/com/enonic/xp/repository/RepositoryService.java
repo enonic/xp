@@ -16,8 +16,6 @@ public interface RepositoryService
 
     Repositories list();
 
-    boolean isInitialized( RepositoryId id );
-
     Repository get( RepositoryId repositoryId );
 
     RepositoryId deleteRepository( DeleteRepositoryParams params );

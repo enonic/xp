@@ -2,7 +2,7 @@
   "simple_query_string": {
     "query": "apple",
     "fields": [
-      "displayname._stemmed_no"
+      "displayname._stemmed_nb"
     ],
     "analyzer": "norwegian",
     "default_operator": "and",

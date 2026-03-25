@@ -92,7 +92,7 @@ class RendererDelegateImplTest
     void fragmentNotFoundInEditMode()
     {
         final ContentService contentService = mock( ContentService.class );
-        final ContentId contentId = ContentId.from( "contentId" );
+        final ContentId contentId = ContentId.from( "contentid" );
         when( contentService.getById( contentId ) ).thenThrow( ContentNotFoundException.class );
         RendererDelegateImpl factory = new RendererDelegateImpl( contentService, mock( LayoutDescriptorService.class ) );
         final PortalRequest portalRequest = new PortalRequest();
@@ -109,7 +109,7 @@ class RendererDelegateImplTest
     void fragmentContentHasNoPage()
     {
         final ContentService contentService = mock( ContentService.class );
-        final ContentId contentId = ContentId.from( "contentId" );
+        final ContentId contentId = ContentId.from( "contentid" );
         when( contentService.getById( contentId ) ).thenReturn( createContent() );
         RendererDelegateImpl factory = new RendererDelegateImpl( contentService, mock( LayoutDescriptorService.class ) );
         final PortalRequest portalRequest = new PortalRequest();
@@ -124,7 +124,7 @@ class RendererDelegateImplTest
     void fragmentNotFoundInNonEditMode()
     {
         final ContentService contentService = mock( ContentService.class );
-        final ContentId contentId = ContentId.from( "contentId" );
+        final ContentId contentId = ContentId.from( "contentid" );
         when( contentService.getById( contentId ) ).thenThrow( ContentNotFoundException.class );
         RendererDelegateImpl factory = new RendererDelegateImpl( contentService, mock( LayoutDescriptorService.class ) );
         final PortalRequest portalRequest = new PortalRequest();
@@ -139,7 +139,7 @@ class RendererDelegateImplTest
     void fragmentRenderLayoutNoDescriptor()
     {
         final ContentService contentService = mock( ContentService.class );
-        final ContentId contentId = ContentId.from( "contentId" );
+        final ContentId contentId = ContentId.from( "contentid" );
         when( contentService.getById( contentId ) ).thenReturn( createFragmentContentWithLayoutComponent( DescriptorKey.from( "x:des" ) ) );
         RendererDelegateImpl factory = new RendererDelegateImpl( contentService, mock( LayoutDescriptorService.class ) );
         factory.addRenderer( createRenderer( LayoutComponent.class, PortalResponse.create().body( "LayoutRendered" ).build() ) );
@@ -157,7 +157,7 @@ class RendererDelegateImplTest
     {
         final ContentService contentService = mock( ContentService.class );
         final LayoutDescriptorService layoutDescriptorService = mock( LayoutDescriptorService.class );
-        final ContentId contentId = ContentId.from( "contentId" );
+        final ContentId contentId = ContentId.from( "contentid" );
         final DescriptorKey descriptorKey = DescriptorKey.from( "x:descriptorKey" );
         when( contentService.getById( contentId ) ).thenReturn( createFragmentContentWithLayoutComponent( descriptorKey ) );
         when( layoutDescriptorService.getByKey( descriptorKey ) ).thenReturn( createLayoutDescriptor(descriptorKey) );
@@ -227,7 +227,7 @@ class RendererDelegateImplTest
     private PortalResponse renderFragmentComponent( final PortalResponse fragmentRenderResult, final RenderMode renderMode )
     {
         final ContentService contentService = mock( ContentService.class );
-        final ContentId contentId = ContentId.from( "contentId" );
+        final ContentId contentId = ContentId.from( "contentid" );
         when( contentService.getById( contentId ) ).thenReturn( createFragmentContentWithTextComponent() );
         RendererDelegateImpl factory = new RendererDelegateImpl( contentService, mock( LayoutDescriptorService.class ) );
         factory.addRenderer( createRenderer( TextComponent.class, fragmentRenderResult ) );

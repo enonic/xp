@@ -25,8 +25,6 @@ public class SearchDaoImpl
     @Override
     public SearchResult search( final SearchRequest searchRequest )
     {
-        return SearchExecutor.create( this.client ).
-            build().
-            execute( searchRequest );
+        return SearchExecutor.create( this.client ).build().execute( searchRequest );
     }
 }

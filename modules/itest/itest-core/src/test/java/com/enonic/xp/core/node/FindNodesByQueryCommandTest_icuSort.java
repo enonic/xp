@@ -2,12 +2,11 @@ package com.enonic.xp.core.node;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -18,7 +17,6 @@ import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.FindNodesByQueryResult;
-import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.RefreshMode;
@@ -29,8 +27,7 @@ import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.parser.QueryParser;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Verifies ICU collation sorting.
@@ -81,11 +78,8 @@ class FindNodesByQueryCommandTest_icuSort
         ascendingWords.forEach( word -> createStringNodeWithLanguage( "node-" + word, word, language ) );
         nodeService.refresh( RefreshMode.ALL );
 
-        final Iterator<Node> it = getNodes( sortByStringWithLanguage( "ASC", language ).getNodeIds() ).iterator();
-        for ( final String expectedWord : ascendingWords )
-        {
-            assertEquals( "node-" + expectedWord, it.next().name().toString() );
-        }
+        assertThat( getNodes( sortByStringWithLanguage( "ASC", language ).getNodeIds() ) ).extracting( node -> node.name().toString() )
+            .containsExactlyElementsOf( ascendingWords.stream().map( w -> "node-" + w ).toList() );
     }
 
     @ParameterizedTest
@@ -98,17 +92,14 @@ class FindNodesByQueryCommandTest_icuSort
         final List<String> descendingWords = new ArrayList<>( ascendingWords );
         Collections.reverse( descendingWords );
 
-        final Iterator<Node> it = getNodes( sortByStringWithLanguage( "DESC", language ).getNodeIds() ).iterator();
-        for ( final String expectedWord : descendingWords )
-        {
-            assertEquals( "node-" + expectedWord, it.next().name().toString() );
-        }
+        assertThat( getNodes( sortByStringWithLanguage( "DESC", language ).getNodeIds() ) ).extracting( node -> node.name().toString() )
+            .containsExactlyElementsOf( descendingWords.stream().map( w -> "node-" + w ).toList() );
     }
 
     private FindNodesByQueryResult sortByStringWithLanguage( final String direction, final String language )
     {
         final OrderExpr.Direction dir = OrderExpr.Direction.valueOf( direction );
-        final FieldOrderExpr orderExpr = FieldOrderExpr.create( FIELD_STRING, dir, language );
+        final FieldOrderExpr orderExpr = FieldOrderExpr.create( FIELD_STRING, dir, Locale.forLanguageTag( language ) );
         final ConstraintExpr constraintExpr = QueryParser.parseCostraintExpression( "_parentPath=\"/\"" );
         final QueryExpr queryExpr = QueryExpr.from( constraintExpr, orderExpr );
         return doFindByQuery( NodeQuery.create().query( queryExpr ).build() );
@@ -121,11 +112,8 @@ class FindNodesByQueryCommandTest_icuSort
         ascendingWords.forEach( word -> createStringNodeWithLanguage( "node-" + word, word, language ) );
         nodeService.refresh( RefreshMode.ALL );
 
-        final Iterator<Node> it = getNodes( dslSortByStringWithLanguage( "ASC", language ).getNodeIds() ).iterator();
-        for ( final String expectedWord : ascendingWords )
-        {
-            assertEquals( "node-" + expectedWord, it.next().name().toString() );
-        }
+        assertThat( getNodes( dslSortByStringWithLanguage( "ASC", language ).getNodeIds() ) ).extracting( node -> node.name().toString() )
+            .containsExactlyElementsOf( ascendingWords.stream().map( w -> "node-" + w ).toList() );
     }
 
     @ParameterizedTest
@@ -138,11 +126,8 @@ class FindNodesByQueryCommandTest_icuSort
         final List<String> descendingWords = new ArrayList<>( ascendingWords );
         Collections.reverse( descendingWords );
 
-        final Iterator<Node> it = getNodes( dslSortByStringWithLanguage( "DESC", language ).getNodeIds() ).iterator();
-        for ( final String expectedWord : descendingWords )
-        {
-            assertEquals( "node-" + expectedWord, it.next().name().toString() );
-        }
+        assertThat( getNodes( dslSortByStringWithLanguage( "DESC", language ).getNodeIds() ) ).extracting( node -> node.name().toString() )
+            .containsExactlyElementsOf( descendingWords.stream().map( w -> "node-" + w ).toList() );
     }
 
     private FindNodesByQueryResult dslSortByStringWithLanguage( final String direction, final String language )
@@ -157,34 +142,13 @@ class FindNodesByQueryCommandTest_icuSort
         return doFindByQuery( NodeQuery.create().query( queryExpr ).build() );
     }
 
-    /**
-     * Creating a node with an unsupported language code must throw {@link IllegalArgumentException} at node creation time.
-     */
-    @Test
-    void unsupported_language_throws_at_node_creation()
-    {
-        final PropertyTree data = new PropertyTree();
-        data.addString( FIELD_STRING, "alfa" );
-
-        final IndexConfig fieldIndexConfig = IndexConfig.create().enabled( true ).addLanguage( "xyz" ).build();
-
-        final PatternIndexConfigDocument indexConfigDocument =
-            PatternIndexConfigDocument.create().defaultConfig( IndexConfig.BY_TYPE ).add( FIELD_STRING, fieldIndexConfig ).build();
-
-        assertThrows( IllegalArgumentException.class, () -> createNode( CreateNodeParams.create()
-                                                                            .parent( NodePath.ROOT )
-                                                                            .name( "node-alfa" )
-                                                                            .data( data )
-                                                                            .indexConfigDocument( indexConfigDocument )
-                                                                            .build() ) );
-    }
 
     private void createStringNodeWithLanguage( final String name, final String fieldValue, final String language )
     {
         final PropertyTree data = new PropertyTree();
         data.addString( FIELD_STRING, fieldValue );
 
-        final IndexConfig fieldIndexConfig = IndexConfig.create().enabled( true ).addLanguage( language ).build();
+        final IndexConfig fieldIndexConfig = IndexConfig.create().enabled( true ).addLanguage( Locale.forLanguageTag( language ) ).build();
 
         final PatternIndexConfigDocument indexConfigDocument =
             PatternIndexConfigDocument.create().defaultConfig( IndexConfig.BY_TYPE ).add( FIELD_STRING, fieldIndexConfig ).build();
