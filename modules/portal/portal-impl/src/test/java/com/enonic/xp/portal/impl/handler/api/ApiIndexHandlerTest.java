@@ -130,7 +130,7 @@ class ApiIndexHandlerTest
                                                                        .build(), ApiDescriptor.create()
                                                                        .key( DescriptorKey.from( applicationKey, "myapi2" ) )
                                                                        .allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) )
-                                                                       .mount( "xp" )
+                                                                       .mount( "web" )
                                                                        .build() );
 
         when( this.apiDescriptorService.getByApplication( eq( applicationKey ) ) ).thenReturn( apiDescriptors );
@@ -138,7 +138,7 @@ class ApiIndexHandlerTest
         universalApiHandlerRegistry.addApiHandler( request -> WebResponse.create().build(),
                                                    Map.of( "key", "admin:extension", "title", "Display Name", "description",
                                                            "Brief description", "documentationUrl", "https://docs.enonic.com", "mount",
-                                                           new String[]{"xp", "management"}, "allowedPrincipals",
+                                                           new String[]{"web", "management"}, "allowedPrincipals",
                                                            RoleKeys.EVERYONE.toString() ) );
 
         universalApiHandlerRegistry.addApiHandler( request -> WebResponse.create().build(),
@@ -166,7 +166,7 @@ class ApiIndexHandlerTest
         assertEquals( "Display Name", dynamicApiResource.get( "title" ) );
         assertEquals( "Brief description", dynamicApiResource.get( "description" ) );
         assertEquals( "https://docs.enonic.com", dynamicApiResource.get( "documentationUrl" ) );
-        assertEquals( Set.of( "management", "xp" ), dynamicApiResource.get( "mount" ) );
+        assertEquals( Set.of( "management", "web" ), dynamicApiResource.get( "mount" ) );
 
         final Map<String, Object> apiResource = resources.get( 1 );
 

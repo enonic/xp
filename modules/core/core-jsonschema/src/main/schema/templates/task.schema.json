@@ -23,6 +23,7 @@
     "fieldSetDef": {},
     "itemSetDef": {},
     "optionSetDef": {},
+    "localizedTextDef": {},
     "formItemsDef": {
       "oneOf": [
         {

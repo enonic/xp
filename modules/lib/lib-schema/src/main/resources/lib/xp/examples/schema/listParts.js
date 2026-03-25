@@ -18,7 +18,7 @@ log.info('Fetched parts: ' + result.map((part) => part.key).join(','));
 assert.assertJsonEquals([
     {
         key: 'myapp:part1',
-        displayName: 'News part',
+        title: 'News part',
         description: 'My news part',
         descriptionI18nKey: 'key.description',
         componentPath: 'myapp:/cms/parts/part1',
@@ -41,7 +41,7 @@ assert.assertJsonEquals([
     },
     {
         key: 'myapp:part2',
-        displayName: 'Other part',
+        title: 'Other part',
         componentPath: 'myapp:/cms/parts/part2',
         modifiedTime: '2022-02-25T10:44:33.170079900Z',
         resource: '<part><some-other-data></some-other-data></part>',

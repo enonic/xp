@@ -212,7 +212,7 @@ class SlashApiHandlerTest
         ApiDescriptor apiDescriptor = ApiDescriptor.create()
             .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "api-key" ) )
             .allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) )
-            .mount( "xp" )
+            .mount( "web" )
             .build();
 
         when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
@@ -710,7 +710,7 @@ class SlashApiHandlerTest
         WSUniversalApiHandler wsUniversalApiHandler = new WSUniversalApiHandler();
         universalApiHandlerRegistry.addApiHandler( wsUniversalApiHandler,
                                                    Map.of( "key", "myapp:myapi", "allowedPrincipals", RoleKeys.EVERYONE.toString(), "mount",
-                                                           "xp" ) );
+                                                           "web" ) );
 
         final ApplicationKey apiApplicationKey = ApplicationKey.from( "myapp" );
 

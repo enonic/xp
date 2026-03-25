@@ -43,8 +43,8 @@ log.info('Created page: ' + result.key);
 
 assert.assertJsonEquals({
     key: 'myapp:mypage',
-    displayName: 'Virtual Page',
-    displayNameI18nKey: 'key.display-name',
+    title: 'Virtual Page',
+    titleI18nKey: 'key.display-name',
     description: 'My Page Description',
     descriptionI18nKey: 'key.description',
     componentPath: 'myapp:/cms/pages/mypage',

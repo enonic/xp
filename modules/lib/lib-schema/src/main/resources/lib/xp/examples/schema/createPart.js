@@ -51,8 +51,8 @@ log.info('Created part: ' + result.key);
 
 assert.assertJsonEquals({
     key: 'myapp:mypart',
-    displayName: 'Virtual Part',
-    displayNameI18nKey: 'key.display-name',
+    title: 'Virtual Part',
+    titleI18nKey: 'key.display-name',
     description: 'My Part Description',
     descriptionI18nKey: 'key.description',
     componentPath: 'myapp:/cms/parts/mypart',

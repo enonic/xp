@@ -76,8 +76,8 @@ log.info('Created layout: ' + result.key);
 
 assert.assertJsonEquals({
     key: 'myapp:mylayout',
-    displayName: 'Virtual Layout',
-    displayNameI18nKey: 'key.display-name',
+    title: 'Virtual Layout',
+    titleI18nKey: 'key.display-name',
     description: 'My Layout Description',
     descriptionI18nKey: 'key.description',
     componentPath: 'myapp:/cms/layouts/mylayout',
