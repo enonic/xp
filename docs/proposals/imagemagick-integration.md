@@ -114,7 +114,7 @@ ImageServiceImpl.readImage(ReadImageParams)
 
 On startup, `ImageServiceImpl` probes for ImageMagick (runs `magick -version`). If found and enabled via config, it uses Engine A. Otherwise it falls back to Engine B and logs a warning. The engine selection can also be forced via configuration (`imageMagick.mode=disabled|local|remote|auto`).
 
-**Note:** WebP and AVIF output formats are only available when the ImageMagick engine is active. The Java fallback engine continues to support PNG, JPEG, and GIF only. Requests for unsupported formats in fallback mode return an error (or could auto-downgrade to JPEG with a warning).
+**Note:** WebP and AVIF output formats are only available when the ImageMagick engine is active. The Java fallback engine continues to support PNG, JPEG, and GIF only. Requests for WebP/AVIF in fallback mode auto-downgrade to JPEG and include a response header (`X-Image-Format-Downgraded: true`) for caller detection.
 
 #### Shared ImageMagick Service (Container Deployments)
 
@@ -297,9 +297,9 @@ Add ImageMagick-specific configuration:
 Note: The underscore naming convention (e.g., `imageMagick_path`) follows the existing OSGi config annotation pattern used throughout the project. Underscores map to dots in `.cfg` files (e.g., `imageMagick.path=`).
 
 **Mode behavior:**
-- `auto` (default): Probe for local `magick` binary → check `imageMagick.remoteUrl` → fall back to Java AWT
-- `local`: Use local `magick` binary only, fail startup if not found
-- `remote`: Use shared ImageMagick service at `imageMagick.remoteUrl`, fail startup if unreachable
+- `auto` (default): Probe for local `magick` binary → check `imageMagick.remoteUrl` → fall back to Java AWT. Always starts successfully.
+- `local`: Use local `magick` binary only. If not found, fall back to Java AWT and log an error (XP still starts — image service is not a fatal dependency).
+- `remote`: Use shared ImageMagick service at `imageMagick.remoteUrl`. If unreachable at startup, fall back to Java AWT and log an error. Connection failures during operation are retried, then the request falls back to Java AWT for that individual request.
 - `disabled`: Use Java AWT engine unconditionally (no ImageMagick)
 
 **2.2 Bundle ImageMagick binaries per platform**
@@ -483,7 +483,7 @@ The Java AWT implementation is retained as a full fallback engine (not removed).
 - **Development environments** work without installing ImageMagick
 - **Gradual rollout** — teams can test ImageMagick in staging while production uses the Java engine
 - **Fault tolerance** — if the ImageMagick binary is corrupted or missing after an update, XP continues to serve images
-- **WebP/AVIF limitation** — the Java fallback does not support WebP/AVIF output. Requests for these formats when the fallback is active should either return an error or auto-downgrade to JPEG (configurable behavior)
+- **WebP/AVIF limitation** — the Java fallback does not support WebP/AVIF output. Requests for WebP/AVIF when the fallback is active will auto-downgrade to JPEG and include a `Warning` response header (`X-Image-Format-Downgraded: true`) so callers can detect the degradation. This avoids returning errors for content that was working with ImageMagick and ensures images are always served.
 
 ### 6. Docker/container deployments
 Container images need to include ImageMagick. Options:
@@ -516,5 +516,5 @@ Container images need to include ImageMagick. Options:
 - [ ] **Java AWT fallback engine works when ImageMagick is not available**
 - [ ] **Automatic fallback on startup when ImageMagick binary is missing or misconfigured**
 - [ ] **`imageMagick.mode=disabled` forces Java fallback unconditionally**
-- [ ] **WebP/AVIF requests in fallback mode return clear error or auto-downgrade to JPEG**
+- [ ] **WebP/AVIF requests in fallback mode auto-downgrade to JPEG with `X-Image-Format-Downgraded` header**
 - [ ] **Shared ImageMagick service architecture is documented and configurable via `imageMagick.mode=remote`**
