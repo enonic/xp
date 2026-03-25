@@ -1011,7 +1011,7 @@ class ParentContentSynchronizerTest
 
         Mockito.when( pageDescriptorService.getByKey( pageDescriptorKey ) )
             .thenReturn( PageDescriptor.create()
-                             .displayName( "Landing page" )
+                             .title( "Landing page" )
                              .config( pageDescriptorForm )
                              .regions( RegionDescriptors.create().build() )
                              .key( DescriptorKey.from( "module:landing-page" ) )

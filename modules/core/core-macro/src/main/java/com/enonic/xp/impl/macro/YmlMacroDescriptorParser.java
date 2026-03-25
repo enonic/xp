@@ -34,7 +34,7 @@ final class YmlMacroDescriptorParser
         }
 
         @JsonProperty("title")
-        abstract MacroDescriptor.Builder displayName( LocalizedText text );
+        abstract MacroDescriptor.Builder title( LocalizedText text );
 
         @JsonProperty("description")
         abstract MacroDescriptor.Builder description( LocalizedText text );

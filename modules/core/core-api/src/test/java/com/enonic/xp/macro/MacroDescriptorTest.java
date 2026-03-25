@@ -26,14 +26,14 @@ class MacroDescriptorTest
         final MacroDescriptor macroDescriptor1 = MacroDescriptor.create().
             key( MacroKey.from( "my_app:macro1" ) ).
             description( "my description" ).
-            displayName( "my display name" ).
+            title( "my display name" ).
             form( config ).
             icon( Icon.from( new byte[]{123}, "image/png", Instant.now() ) ).
             build();
 
         assertEquals( "my_app:macro1", macroDescriptor1.getKey().toString() );
         assertEquals( "macro1", macroDescriptor1.getName() );
-        assertEquals( "my display name", macroDescriptor1.getDisplayName() );
+        assertEquals( "my display name", macroDescriptor1.getTitle() );
         assertEquals( "my description", macroDescriptor1.getDescription() );
         assertEquals( config, macroDescriptor1.getForm() );
     }

@@ -23,13 +23,13 @@ class DescriptorsTest
                 build();
 
         final PageDescriptor pageDescriptor = PageDescriptor.create().
-            displayName( "Landing page" ).
+            title( "Landing page" ).
             config( pageForm ).
             regions( RegionDescriptors.create().build() ).
             key( DescriptorKey.from( "module:landing-page" ) ).
             build();
 
-        assertEquals( "Landing page", pageDescriptor.getDisplayName() );
+        assertEquals( "Landing page", pageDescriptor.getTitle() );
         assertEquals( "landing-page", pageDescriptor.getName() );
     }
 
@@ -41,14 +41,14 @@ class DescriptorsTest
             build();
 
         final PartDescriptor partDescriptor = PartDescriptor.create().
-            displayName( "News part" ).
+            title( "News part" ).
             config( partForm ).
             key( DescriptorKey.from( "module:new-part" ) ).
             build();
 
         final PartDescriptor copy = PartDescriptor.copyOf( partDescriptor ).build();
 
-        assertEquals( "News part", partDescriptor.getDisplayName() );
+        assertEquals( "News part", partDescriptor.getTitle() );
         assertEquals( partDescriptor.getComponentPath(), copy.getComponentPath() );
     }
 
@@ -60,7 +60,7 @@ class DescriptorsTest
             build();
 
         final LayoutDescriptor layoutDescriptor = LayoutDescriptor.create().
-            displayName( "Fancy layout" ).
+            title( "Fancy layout" ).
             config( layoutForm ).
             regions( RegionDescriptors.create().build() ).
             key( DescriptorKey.from( "module:fancy-layout" ) ).
@@ -68,7 +68,7 @@ class DescriptorsTest
 
         final LayoutDescriptor copy = LayoutDescriptor.copyOf( layoutDescriptor ).build();
 
-        assertEquals( "Fancy layout", layoutDescriptor.getDisplayName() );
+        assertEquals( "Fancy layout", layoutDescriptor.getTitle() );
         assertEquals( layoutForm, layoutDescriptor.getConfig() );
         assertEquals( layoutDescriptor.getComponentPath(), copy.getComponentPath() );
         assertEquals( layoutDescriptor.getRegions(), copy.getRegions() );

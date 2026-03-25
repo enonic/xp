@@ -70,7 +70,7 @@ public class GetListAllowedAdminExtensionsHandler
         final ObjectNode json = JsonNodeFactory.instance.objectNode();
 
         json.put( "key", descriptor.getKey().toString() );
-        json.put( "displayName", descriptor.getTitle() );
+        json.put( "title", descriptor.getTitle() );
         json.put( "description", descriptor.getDescription() );
         json.put( "iconUrl", resolveIconUrl( descriptor ) );
 
@@ -82,7 +82,7 @@ public class GetListAllowedAdminExtensionsHandler
                                                                   localeService.getSupportedLocale( preferredLocales,
                                                                                                     descriptor.getApplicationKey() ) );
 
-            addLocalizedJson( json, bundle, "displayName", descriptor.getTitleI18nKey(), descriptor.getTitle() );
+            addLocalizedJson( json, bundle, "title", descriptor.getTitleI18nKey(), descriptor.getTitle() );
             addLocalizedJson( json, bundle, "description", descriptor.getDescriptionI18nKey(), descriptor.getDescription() );
         }
 

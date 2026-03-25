@@ -690,8 +690,8 @@ class DynamicSchemaServiceImplTest
 
         assertEquals( "mypart", partDescriptor.getName() );
         assertEquals( "myapp", partDescriptor.getApplicationKey().toString() );
-        assertEquals( "Virtual Part", partDescriptor.getDisplayName() );
-        assertEquals( "key.display-name", partDescriptor.getDisplayNameI18nKey() );
+        assertEquals( "Virtual Part", partDescriptor.getTitle() );
+        assertEquals( "key.display-name", partDescriptor.getTitleI18nKey() );
         assertEquals( "My Part Description", partDescriptor.getDescription() );
         assertEquals( "key.description", partDescriptor.getDescriptionI18nKey() );
         assertEquals( 2, partDescriptor.getConfig().size() );
@@ -750,8 +750,8 @@ class DynamicSchemaServiceImplTest
 
         assertEquals( "mypart", partDescriptor.getName() );
         assertEquals( "myapp", partDescriptor.getApplicationKey().toString() );
-        assertEquals( "Virtual Part", partDescriptor.getDisplayName() );
-        assertEquals( "key.display-name", partDescriptor.getDisplayNameI18nKey() );
+        assertEquals( "Virtual Part", partDescriptor.getTitle() );
+        assertEquals( "key.display-name", partDescriptor.getTitleI18nKey() );
         assertEquals( "My Part Description", partDescriptor.getDescription() );
         assertEquals( "key.description", partDescriptor.getDescriptionI18nKey() );
         assertEquals( 2, partDescriptor.getConfig().size() );
@@ -795,8 +795,8 @@ class DynamicSchemaServiceImplTest
 
         assertEquals( "mylayout", layoutDescriptor.getName() );
         assertEquals( "myapp", layoutDescriptor.getApplicationKey().toString() );
-        assertEquals( "Virtual Layout", layoutDescriptor.getDisplayName() );
-        assertEquals( "key.display-name", layoutDescriptor.getDisplayNameI18nKey() );
+        assertEquals( "Virtual Layout", layoutDescriptor.getTitle() );
+        assertEquals( "key.display-name", layoutDescriptor.getTitleI18nKey() );
         assertEquals( "My Layout Description", layoutDescriptor.getDescription() );
         assertEquals( "key.description", layoutDescriptor.getDescriptionI18nKey() );
         assertEquals( 2, layoutDescriptor.getConfig().size() );
@@ -853,8 +853,8 @@ class DynamicSchemaServiceImplTest
 
         assertEquals( "mylayout", layoutDescriptor.getName() );
         assertEquals( "myapp", layoutDescriptor.getApplicationKey().toString() );
-        assertEquals( "Virtual Layout", layoutDescriptor.getDisplayName() );
-        assertEquals( "key.display-name", layoutDescriptor.getDisplayNameI18nKey() );
+        assertEquals( "Virtual Layout", layoutDescriptor.getTitle() );
+        assertEquals( "key.display-name", layoutDescriptor.getTitleI18nKey() );
         assertEquals( "My Layout Description", layoutDescriptor.getDescription() );
         assertEquals( "key.description", layoutDescriptor.getDescriptionI18nKey() );
         assertEquals( 2, layoutDescriptor.getConfig().size() );
@@ -897,8 +897,8 @@ class DynamicSchemaServiceImplTest
 
         assertEquals( "mypage", pageDescriptor.getName() );
         assertEquals( "myapp", pageDescriptor.getApplicationKey().toString() );
-        assertEquals( "Virtual Page", pageDescriptor.getDisplayName() );
-        assertEquals( "key.display-name", pageDescriptor.getDisplayNameI18nKey() );
+        assertEquals( "Virtual Page", pageDescriptor.getTitle() );
+        assertEquals( "key.display-name", pageDescriptor.getTitleI18nKey() );
         assertEquals( "My Page Description", pageDescriptor.getDescription() );
         assertEquals( "key.description", pageDescriptor.getDescriptionI18nKey() );
         assertEquals( 1, pageDescriptor.getConfig().size() );
@@ -955,8 +955,8 @@ class DynamicSchemaServiceImplTest
 
         assertEquals( "mypage", pageDescriptor.getName() );
         assertEquals( "myapp", pageDescriptor.getApplicationKey().toString() );
-        assertEquals( "Virtual Page", pageDescriptor.getDisplayName() );
-        assertEquals( "key.display-name", pageDescriptor.getDisplayNameI18nKey() );
+        assertEquals( "Virtual Page", pageDescriptor.getTitle() );
+        assertEquals( "key.display-name", pageDescriptor.getTitleI18nKey() );
         assertEquals( "My Page Description", pageDescriptor.getDescription() );
         assertEquals( "key.description", pageDescriptor.getDescriptionI18nKey() );
         assertEquals( 1, pageDescriptor.getConfig().size() );

@@ -34,7 +34,7 @@ public class YmlMacroDescriptorParserTest
         assertEquals( currentApplication, descriptor.getKey().getApplicationKey() );
         assertEquals( "my-macro", descriptor.getKey().getName() );
 
-        assertEquals( "Twitter", descriptor.getDisplayName() );
+        assertEquals( "Twitter", descriptor.getTitle() );
         assertEquals( "Insert a single Tweet into your article or website", descriptor.getDescription() );
 
         // verify form

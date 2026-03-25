@@ -8,11 +8,9 @@ import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.core.internal.HtmlHelper;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.name.NamePrettyfier;
-import com.enonic.xp.page.EditablePage;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.ComponentDescriptor;
@@ -77,35 +75,35 @@ final class CreateFragmentCommand
     {
         if ( component.getType() instanceof TextComponentType )
         {
-            return doGenerateDisplayName( (TextComponent) component );
+            return doGenerateTitle( (TextComponent) component );
         }
 
         if ( component.getType() instanceof ImageComponentType )
         {
-            return doGenerateDisplayName( (ImageComponent) component );
+            return doGenerateTitle( (ImageComponent) component );
         }
 
         if ( component.getType() instanceof PartComponentType )
         {
-            return doGenerateDisplayName( (PartComponent) component );
+            return doGenerateTitle( (PartComponent) component );
         }
 
         if ( component.getType() instanceof LayoutComponentType )
         {
-            return doGenerateDisplayName( (LayoutComponent) component );
+            return doGenerateTitle( (LayoutComponent) component );
         }
 
         return component.getType().toString();
     }
 
-    private String doGenerateDisplayName( final TextComponent textComponent )
+    private String doGenerateTitle( final TextComponent textComponent )
     {
         final String html = textComponent.getText();
         String text = HtmlHelper.htmlToText( html );
         return text.isEmpty() ? "Text" : abbreviate( text, 40 );
     }
 
-    private String doGenerateDisplayName( final ImageComponent imageComponent )
+    private String doGenerateTitle( final ImageComponent imageComponent )
     {
         if ( imageComponent.getImage() != null )
         {
@@ -126,23 +124,23 @@ final class CreateFragmentCommand
         return "Image";
     }
 
-    private String doGenerateDisplayName( final PartComponent partComponent )
+    private String doGenerateTitle( final PartComponent partComponent )
     {
-        return doGenerateDisplayName(
+        return doGenerateTitle(
             partComponent.hasDescriptor() ? this.partDescriptorService.getByKey( partComponent.getDescriptor() ) : null, "Part" );
     }
 
-    private String doGenerateDisplayName( final LayoutComponent layoutComponent )
+    private String doGenerateTitle( final LayoutComponent layoutComponent )
     {
-        return doGenerateDisplayName(
+        return doGenerateTitle(
             layoutComponent.hasDescriptor() ? this.layoutDescriptorService.getByKey( layoutComponent.getDescriptor() ) : null, "FieldSet" );
     }
 
-    private String doGenerateDisplayName( final ComponentDescriptor componentDescriptor, final String defaultName )
+    private String doGenerateTitle( final ComponentDescriptor componentDescriptor, final String defaultName )
     {
-        if ( componentDescriptor != null && componentDescriptor.getDisplayName() != null )
+        if ( componentDescriptor != null && componentDescriptor.getTitle() != null )
         {
-            return componentDescriptor.getDisplayName();
+            return componentDescriptor.getTitle();
         }
         return defaultName;
     }

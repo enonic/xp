@@ -12,9 +12,9 @@ public final class MacroDescriptor
 {
     private final MacroKey key;
 
-    private final String displayName;
+    private final String title;
 
-    private final String displayNameI18nKey;
+    private final String titleI18nKey;
 
     private final String description;
 
@@ -29,8 +29,8 @@ public final class MacroDescriptor
     private MacroDescriptor( final Builder builder )
     {
         this.key = builder.key;
-        this.displayName = builder.displayName == null ? builder.key.getName() : builder.displayName;
-        this.displayNameI18nKey = builder.displayNameI18nKey;
+        this.title = builder.title == null ? builder.key.getName() : builder.title;
+        this.titleI18nKey = builder.titleI18nKey;
         this.description = builder.description;
         this.descriptionI18nKey = builder.descriptionI18nKey;
         this.form = Objects.requireNonNullElse( builder.form, Form.empty() );
@@ -48,14 +48,14 @@ public final class MacroDescriptor
         return key.getName();
     }
 
-    public String getDisplayName()
+    public String getTitle()
     {
-        return displayName;
+        return title;
     }
 
-    public String getDisplayNameI18nKey()
+    public String getTitleI18nKey()
     {
-        return displayNameI18nKey;
+        return titleI18nKey;
     }
 
     public String getDescription()
@@ -92,9 +92,9 @@ public final class MacroDescriptor
     {
         private MacroKey key;
 
-        private String displayName;
+        private String title;
 
-        private String displayNameI18nKey;
+        private String titleI18nKey;
 
         private String description;
 
@@ -122,22 +122,22 @@ public final class MacroDescriptor
             return this;
         }
 
-        public Builder displayName( final String displayName )
+        public Builder title( final String title )
         {
-            this.displayName = displayName;
+            this.title = title;
             return this;
         }
 
-        public Builder displayNameI18nKey( final String displayNameI18nKey )
+        public Builder titleI18nKey( final String titleI18nKey )
         {
-            this.displayNameI18nKey = displayNameI18nKey;
+            this.titleI18nKey = titleI18nKey;
             return this;
         }
 
-        public Builder displayName( final LocalizedText text )
+        public Builder title( final LocalizedText text )
         {
-            this.displayName = text.text();
-            this.displayNameI18nKey = text.i18n();
+            this.title = text.text();
+            this.titleI18nKey = text.i18n();
             return this;
         }
 

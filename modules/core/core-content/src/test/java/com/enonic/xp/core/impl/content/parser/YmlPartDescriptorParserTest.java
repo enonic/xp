@@ -35,7 +35,7 @@ public class YmlPartDescriptorParserTest
 
         assertEquals( currentApplication, descriptor.getApplicationKey() );
 
-        assertEquals( "My Part", descriptor.getDisplayName() );
+        assertEquals( "My Part", descriptor.getTitle() );
         assertEquals( "Description of My Part", descriptor.getDescription() );
         assertEquals( "part.description.myPart", descriptor.getDescriptionI18nKey() );
 

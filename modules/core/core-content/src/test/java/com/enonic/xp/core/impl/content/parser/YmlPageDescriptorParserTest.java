@@ -36,7 +36,7 @@ public class YmlPageDescriptorParserTest
 
         assertEquals( currentApplication, descriptor.getApplicationKey() );
 
-        assertEquals( "Landing page", descriptor.getDisplayName() );
+        assertEquals( "Landing page", descriptor.getTitle() );
         assertEquals( "Description of the Landing page", descriptor.getDescription() );
         assertEquals( "page.description.landingPage", descriptor.getDescriptionI18nKey() );
 

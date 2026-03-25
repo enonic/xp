@@ -74,7 +74,7 @@ public class PartDescriptorLoader
     @Override
     public PartDescriptor createDefault( final DescriptorKey key )
     {
-        return PartDescriptor.create().key( key ).displayName( key.getName() ).config( Form.empty() ).build();
+        return PartDescriptor.create().key( key ).title( key.getName() ).config( Form.empty() ).build();
     }
 
     @Override
