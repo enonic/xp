@@ -71,7 +71,7 @@ class GetListAllowedAdminExtensionsHandlerTest
             .key( DescriptorKey.from( "myapp:myextension" ) )
             .description( "description" )
             .descriptionI18nKey( "descriptionI18nKey" )
-            .displayName( "displayName" )
+            .title( "displayName" )
             .setIcon( icon )
             .interfaces( "myInterface" )
             .config( GenericValue.newObject()

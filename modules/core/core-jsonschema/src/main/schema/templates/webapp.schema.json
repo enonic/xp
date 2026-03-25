@@ -7,6 +7,9 @@
       "type": "string",
       "const": "WebApp"
     },
+    "description": {
+      "$ref": "#/$defs/localizedTextDef"
+    },
     "apis": {
       "type": "array",
       "items": {
@@ -17,5 +20,8 @@
   "required": [
     "kind"
   ],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "$defs": {
+    "localizedTextDef": {}
+  }
 }

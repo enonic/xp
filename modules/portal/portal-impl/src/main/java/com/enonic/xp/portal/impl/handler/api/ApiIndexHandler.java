@@ -82,7 +82,7 @@ public class ApiIndexHandler
         return Stream.concat( universalApiHandlerRegistry.getAllApiDescriptors().stream(), applicationService.getInstalledApplications()
                 .stream()
                 .flatMap( application -> apiDescriptorService.getByApplication( application.getKey() ).stream() ) )
-            .filter( apiDescriptor -> apiDescriptor.getMount().contains( "xp" ) )
+            .filter( apiDescriptor -> apiDescriptor.getMount().contains( "web" ) )
             .map( this::map )
             .toList();
     }
@@ -100,7 +100,7 @@ public class ApiIndexHandler
             .stream()
             .map( PrincipalKey::toString )
             .toList() );
-        result.put( "displayName", apiDescriptor.getDisplayName() );
+        result.put( "title", apiDescriptor.getTitle() );
         result.put( "description", apiDescriptor.getDescription() );
         result.put( "documentationUrl", apiDescriptor.getDocumentationUrl() );
         result.put( "mount", apiDescriptor.getMount() );

@@ -21,19 +21,19 @@ class PartDescriptorsTest
     public static void initRegionDescriptors()
     {
         final PartDescriptor partDescriptor1 = PartDescriptor.create().
-            displayName( "News part" ).
+            title( "News part" ).
             config( Form.empty() ).
             key( DescriptorKey.from( "module:new-part" ) ).
             build();
 
         final PartDescriptor partDescriptor2 = PartDescriptor.create().
-            displayName( "News part2" ).
+            title( "News part2" ).
             config( Form.empty() ).
             key( DescriptorKey.from( "module:new-part2" ) ).
             build();
 
         final PartDescriptor partDescriptor3 = PartDescriptor.create().
-            displayName( "News part3" ).
+            title( "News part3" ).
             config( Form.empty() ).
             key( DescriptorKey.from( "module:new-part3" ) ).
             build();

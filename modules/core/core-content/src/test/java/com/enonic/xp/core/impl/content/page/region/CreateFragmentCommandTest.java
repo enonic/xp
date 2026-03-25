@@ -136,7 +136,7 @@ class CreateFragmentCommandTest
     {
         return PartDescriptor.create().
             key( descriptorKey ).
-            displayName( displayName ).
+            title( displayName ).
             config( Form.empty() ).
             build();
     }
@@ -145,7 +145,7 @@ class CreateFragmentCommandTest
     {
         return LayoutDescriptor.create().
             key( descriptorKey ).
-            displayName( displayName ).
+            title( displayName ).
             config( Form.empty() ).
             regions( RegionDescriptors.create().build() ).
             build();

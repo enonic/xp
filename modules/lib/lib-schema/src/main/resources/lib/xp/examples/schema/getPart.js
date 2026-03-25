@@ -17,7 +17,7 @@ log.info('Fetched part: ' + result.key);
 
 assert.assertJsonEquals({
     key: 'myapp:mypart',
-    displayName: 'News part',
+    title: 'News part',
     description: 'My news part',
     descriptionI18nKey: 'key.description',
     componentPath: 'myapp:/cms/parts/mypart',

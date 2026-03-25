@@ -67,7 +67,7 @@ class AdminExtensionDescriptorLoaderTest
         final Resource resource = this.resourceService.getResource( resourceKey );
         final AdminExtensionDescriptor descriptor = this.loader.load( descriptorKey, resource );
 
-        assertEquals( "My Extension", descriptor.getDisplayName() );
+        assertEquals( "My Extension", descriptor.getTitle() );
         assertEquals( 1, descriptor.getInterfaces().size() );
         assertTrue( descriptor.getInterfaces().contains( "com.enonic.xp.my-interface" ) );
         assertEquals( 1, descriptor.getAllowedPrincipals().getSize() );
@@ -82,7 +82,7 @@ class AdminExtensionDescriptorLoaderTest
         final Resource resource = this.resourceService.getResource( resourceKey );
         final AdminExtensionDescriptor descriptor = this.loader.load( descriptorKey, resource );
 
-        assertEquals( "MyExtension2", descriptor.getDisplayName() );
+        assertEquals( "MyExtension2", descriptor.getTitle() );
         assertEquals( "MyExtension2 description", descriptor.getDescription() );
         assertEquals( 1, descriptor.getInterfaces().size() );
         assertTrue( descriptor.getInterfaces().contains( "com.enonic.xp.my-interface" ) );

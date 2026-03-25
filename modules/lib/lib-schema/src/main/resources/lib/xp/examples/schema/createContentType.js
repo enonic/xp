@@ -8,7 +8,7 @@ superType: "base:structured"
 abstract: false
 final: true
 allowChildContent: true
-displayName: "My Tag"
+title: "My Tag"
 description: "My description"
 form:
 - type: "Tag"
@@ -39,12 +39,12 @@ log.info('Created content type: ' + result.name);
 
 assert.assertJsonEquals({
     name: 'myapp:mytype',
-    displayName: 'My Tag',
+    title: 'My Tag',
     description: 'My description',
     createdTime: '2021-09-25T10:00:00Z',
     creator: 'user:system:anonymous',
     modifiedTime: '2021-09-25T10:00:00Z',
-    resource: 'kind: \"ContentType\"\nsuperType: \"base:structured\"\nabstract: false\nfinal: true\nallowChildContent: true\ndisplayName: \"My Tag\"\ndescription: \"My description\"\nform:\n- type: \"Tag\"\n  name: \"tag_unlimited\"\n  label: \"Tag, unlimited occurrences\"\n  helpText: \"Some help text\"\n  occurrences:\n    min: 0\n    max: 0\n  attributes:\n    context: \"true\"\nconfig:\n  alignment: \"bottom\"\n',
+    resource: 'kind: \"ContentType\"\nsuperType: \"base:structured\"\nabstract: false\nfinal: true\nallowChildContent: true\ntitle: \"My Tag\"\ndescription: \"My description\"\nform:\n- type: \"Tag\"\n  name: \"tag_unlimited\"\n  label: \"Tag, unlimited occurrences\"\n  helpText: \"Some help text\"\n  occurrences:\n    min: 0\n    max: 0\n  attributes:\n    context: \"true\"\nconfig:\n  alignment: \"bottom\"\n',
     type: 'CONTENT_TYPE',
     icon: {
         'data': {},

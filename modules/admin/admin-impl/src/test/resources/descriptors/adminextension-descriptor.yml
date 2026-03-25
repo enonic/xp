@@ -1,5 +1,5 @@
 kind: "AdminExtension"
-displayName:
+title:
   text: "My extension"
   i18n: "i18n.my-extension.display-name"
 description: "My extension description"

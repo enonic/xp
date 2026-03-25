@@ -1,5 +1,5 @@
 kind: "AdminTool"
-displayName: "Content Studio"
+title: "Content Studio"
 description: "Manage content and sites"
 allow:
   - "role:system.authenticated"

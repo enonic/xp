@@ -13,12 +13,16 @@
         "type": "string"
       }
     },
-    "displayName": {
-      "type": "string"
+    "title": {
+      "$ref": "#/$defs/localizedTextDef"
     }
   },
   "required": [
-    "kind"
+    "kind",
+    "title"
   ],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "$defs": {
+    "localizedTextDef": {}
+  }
 }

@@ -169,7 +169,7 @@ public class SlashApiHandler
             }
             else if ( DispatchConstants.XP_CONNECTOR.equals( connector ) )
             {
-                result = apiDescriptor.getMount().contains( "xp" );
+                result = apiDescriptor.getMount().contains( "web" );
             }
             else
             {

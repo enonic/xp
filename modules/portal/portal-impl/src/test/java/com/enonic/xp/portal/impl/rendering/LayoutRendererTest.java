@@ -121,7 +121,7 @@ class LayoutRendererTest
     {
         // setup
         final LayoutDescriptor layoutDescriptor = LayoutDescriptor.create()
-            .displayName( "My layout component" )
+            .title( "My layout component" )
             .config( Form.empty() )
             .key( DescriptorKey.from( "module:myLayoutComponent" ) )
             .regions( RegionDescriptors.create()
@@ -152,7 +152,7 @@ class LayoutRendererTest
     void htmlResponseComponentEditMode()
     {
         final LayoutDescriptor layoutDescriptor = LayoutDescriptor.create()
-            .displayName( "My layout component" )
+            .title( "My layout component" )
             .config( Form.empty() )
             .key( DescriptorKey.from( "module:myLayoutComponent" ) )
             .regions( RegionDescriptors.create()
@@ -197,7 +197,7 @@ class LayoutRendererTest
     void nullResponseComponentEditMode()
     {
         final LayoutDescriptor layoutDescriptor = LayoutDescriptor.create()
-            .displayName( "My layout component" )
+            .title( "My layout component" )
             .config( Form.empty() )
             .key( DescriptorKey.from( "module:myLayoutComponent" ) )
             .regions( RegionDescriptors.create()

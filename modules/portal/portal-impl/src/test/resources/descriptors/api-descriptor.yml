@@ -1,7 +1,7 @@
 kind: "API"
-displayName: "GraphQL API"
+title: "GraphQL API"
 description: "Description of GraphQL API"
-mount: ["xp"]
+mount: ["web"]
 allow:
   - "role:system.roleId_1"
   - "role:system.roleId_2"

@@ -16,7 +16,7 @@ contentTypes.forEach(function (ct) {
 var expected = [
     {
         'name': 'com.enonic.myapp:article',
-        'displayName': 'Article',
+        'title': 'Article',
         'description': 'Article content type',
         'superType': 'base:structured',
         'abstract': false,
@@ -174,7 +174,7 @@ var expected = [
     },
     {
         'name': 'com.enonic.someapp:person',
-        'displayName': 'Person',
+        'title': 'Person',
         'description': 'Person content type',
         'superType': 'base:structured',
         'abstract': false,

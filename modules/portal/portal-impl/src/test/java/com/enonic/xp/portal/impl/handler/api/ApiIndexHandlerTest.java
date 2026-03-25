@@ -130,19 +130,19 @@ class ApiIndexHandlerTest
                                                                        .build(), ApiDescriptor.create()
                                                                        .key( DescriptorKey.from( applicationKey, "myapi2" ) )
                                                                        .allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) )
-                                                                       .mount( "xp" )
+                                                                       .mount( "web" )
                                                                        .build() );
 
         when( this.apiDescriptorService.getByApplication( eq( applicationKey ) ) ).thenReturn( apiDescriptors );
 
         universalApiHandlerRegistry.addApiHandler( request -> WebResponse.create().build(),
-                                                   Map.of( "key", "admin:extension", "displayName", "Display Name", "description",
+                                                   Map.of( "key", "admin:extension", "title", "Display Name", "description",
                                                            "Brief description", "documentationUrl", "https://docs.enonic.com", "mount",
-                                                           new String[]{"xp", "management"}, "allowedPrincipals",
+                                                           new String[]{"web", "management"}, "allowedPrincipals",
                                                            RoleKeys.EVERYONE.toString() ) );
 
         universalApiHandlerRegistry.addApiHandler( request -> WebResponse.create().build(),
-                                                   Map.of( "key", "admin:event", "displayName", "Event API", "description", "Event API",
+                                                   Map.of( "key", "admin:event", "title", "Event API", "description", "Event API",
                                                            "documentationUrl", "https://docs.enonic.com", "allowedPrincipals",
                                                            RoleKeys.ADMIN_LOGIN.toString() ) );
 
@@ -163,10 +163,10 @@ class ApiIndexHandlerTest
         assertEquals( "admin:extension", dynamicApiResource.get( "descriptor" ) );
         assertEquals( "admin", dynamicApiResource.get( "application" ) );
         assertEquals( "extension", dynamicApiResource.get( "name" ) );
-        assertEquals( "Display Name", dynamicApiResource.get( "displayName" ) );
+        assertEquals( "Display Name", dynamicApiResource.get( "title" ) );
         assertEquals( "Brief description", dynamicApiResource.get( "description" ) );
         assertEquals( "https://docs.enonic.com", dynamicApiResource.get( "documentationUrl" ) );
-        assertEquals( Set.of( "management", "xp" ), dynamicApiResource.get( "mount" ) );
+        assertEquals( Set.of( "management", "web" ), dynamicApiResource.get( "mount" ) );
 
         final Map<String, Object> apiResource = resources.get( 1 );
 

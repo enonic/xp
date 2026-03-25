@@ -27,8 +27,8 @@ public final class YmlAdminExtensionDescriptorParser
     @JsonIgnoreProperties("kind")
     private abstract static class AdminExtensionDescriptorBuilderMapper
     {
-        @JsonProperty("displayName")
-        public abstract AdminExtensionDescriptor.Builder displayName( LocalizedText text );
+        @JsonProperty("title")
+        public abstract AdminExtensionDescriptor.Builder title( LocalizedText text );
 
         @JsonProperty("description")
         public abstract AdminExtensionDescriptor.Builder description( LocalizedText text );

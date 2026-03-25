@@ -8,11 +8,14 @@
       "const": "Application"
     },
     "description": {
-      "type": "string"
+      "$ref": "#/$defs/localizedTextDef"
     }
   },
   "required": [
     "kind"
   ],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "$defs": {
+    "localizedTextDef": {}
+  }
 }

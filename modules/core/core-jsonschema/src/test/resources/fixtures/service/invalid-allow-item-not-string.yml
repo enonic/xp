@@ -1,3 +1,4 @@
 kind: "Service"
+title: "My Service"
 allow:
   - 123

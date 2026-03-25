@@ -29,8 +29,8 @@ public final class YmlPageDescriptorParser
     @JsonIgnoreProperties("kind")
     private abstract static class PageDescriptorBuilderMixIn
     {
-        @JsonProperty("displayName")
-        abstract PageDescriptor.Builder displayName( LocalizedText text );
+        @JsonProperty("title")
+        abstract PageDescriptor.Builder title( LocalizedText text );
 
         @JsonProperty("description")
         abstract PageDescriptor.Builder description( LocalizedText text );

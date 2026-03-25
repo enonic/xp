@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.enonic.xp.api.ApiDescriptor;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.schema.YmlParserBase;
+import com.enonic.xp.schema.LocalizedText;
 import com.enonic.xp.security.PrincipalKeys;
 
 public final class YmlApiDescriptorParser
@@ -28,14 +29,14 @@ public final class YmlApiDescriptorParser
         @JsonProperty("allow")
         public abstract ApiDescriptor.Builder allowedPrincipals( PrincipalKeys allowedPrincipals );
 
-        @JsonProperty("displayName")
-        public abstract ApiDescriptor.Builder displayName( String displayName );
+        @JsonProperty("title")
+        public abstract ApiDescriptor.Builder title( LocalizedText text );
 
         @JsonProperty("documentationUrl")
         public abstract ApiDescriptor.Builder documentationUrl( String documentationUrl );
 
         @JsonProperty("description")
-        public abstract ApiDescriptor.Builder description( String description );
+        public abstract ApiDescriptor.Builder description( LocalizedText text );
 
         @JsonProperty("mount")
         abstract ApiDescriptor.Builder mount( String... value );

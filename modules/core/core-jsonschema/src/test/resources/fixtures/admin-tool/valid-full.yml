@@ -1,5 +1,5 @@
 kind: "AdminTool"
-displayName: "My Admin Tool"
+title: "My Admin Tool"
 description:
   text: "Admin Tool Description"
   i18n: "admin.description"

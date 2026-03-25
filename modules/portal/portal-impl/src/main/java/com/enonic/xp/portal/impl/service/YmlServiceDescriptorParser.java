@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.schema.YmlParserBase;
+import com.enonic.xp.schema.LocalizedText;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.service.ServiceDescriptor;
 
@@ -27,5 +28,8 @@ final class YmlServiceDescriptorParser
     {
         @JsonProperty("allow")
         abstract ServiceDescriptor.Builder allowedPrincipals( PrincipalKeys allowedPrincipals );
+
+        @JsonProperty("title")
+        abstract ServiceDescriptor.Builder title( LocalizedText text );
     }
 }

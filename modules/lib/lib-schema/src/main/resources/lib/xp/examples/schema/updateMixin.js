@@ -4,7 +4,7 @@ var assert = require('/lib/xp/testing');
 /* global log*/
 
 let resource = `kind: "Mixin"
-displayName: "Virtual Mixin"
+title: "Virtual Mixin"
 description: "Mixin description"
 form:
 - type: "TextLine"
@@ -30,12 +30,12 @@ log.info('Updated mixin: ' + result.name);
 
 assert.assertJsonEquals({
     name: 'myapp:mydata',
-    displayName: 'Virtual Mixin',
+    title: 'Virtual Mixin',
     description: 'Mixin description',
     createdTime: '2021-09-25T10:00:00Z',
     modifiedTime: '2021-09-25T10:00:00Z',
     resource: 'kind: "Mixin"\n' +
-              'displayName: "Virtual Mixin"\n' +
+              'title: "Virtual Mixin"\n' +
               'description: "Mixin description"\n' +
               'form:\n' +
               '- type: "TextLine"\n' +

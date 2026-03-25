@@ -30,14 +30,14 @@ class PageDescriptorsTest
                 build();
 
         final PageDescriptor pageDescriptor1 = PageDescriptor.create().
-            displayName( "Landing page" ).
+            title( "Landing page" ).
             config( pageForm ).
             regions( RegionDescriptors.create().build() ).
             key( DescriptorKey.from( "module:landing-page" ) ).
             build();
 
         final PageDescriptor pageDescriptor2 = PageDescriptor.create().
-            displayName( "Log out" ).
+            title( "Log out" ).
             config( pageForm ).
             regions( RegionDescriptors.create().build() ).
             key( DescriptorKey.from( "module:logout-page" ) ).

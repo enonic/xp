@@ -118,7 +118,7 @@ class PartRendererTest
     {
         // setup
         final PartDescriptor partDescriptor = PartDescriptor.create()
-            .displayName( "My part component" )
+            .title( "My part component" )
             .config( Form.empty() )
             .key( DescriptorKey.from( "module:myPartComponent" ) )
             .build();
@@ -142,7 +142,7 @@ class PartRendererTest
     void htmlResponseComponentEditMode()
     {
         final PartDescriptor partDescriptor = PartDescriptor.create()
-            .displayName( "My part component" )
+            .title( "My part component" )
             .config( Form.empty() )
             .key( DescriptorKey.from( "module:myPartComponent" ) )
             .build();
@@ -181,7 +181,7 @@ class PartRendererTest
     void htmlResponseComponentEditModeNoMethodToHandleReq()
     {
         final PartDescriptor partDescriptor = PartDescriptor.create()
-            .displayName( "My part component" )
+            .title( "My part component" )
             .config( Form.empty() )
             .key( DescriptorKey.from( "module:myPartComponent" ) )
             .build();
@@ -217,7 +217,7 @@ class PartRendererTest
     void nullResponseComponentEditMode()
     {
         final PartDescriptor partDescriptor = PartDescriptor.create()
-            .displayName( "My part component" )
+            .title( "My part component" )
             .config( Form.empty() )
             .key( DescriptorKey.from( "module:myPartComponent" ) )
             .build();

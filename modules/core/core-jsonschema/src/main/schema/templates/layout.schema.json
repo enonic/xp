@@ -7,7 +7,7 @@
       "type": "string",
       "const": "Layout"
     },
-    "displayName": {
+    "title": {
       "$ref": "#/$defs/localizedTextDef"
     },
     "description": {
@@ -27,8 +27,9 @@
     }
   },
   "required": [
+    "kind",
     "regions",
-    "kind"
+    "title"
   ],
   "additionalProperties": false,
   "$defs": {

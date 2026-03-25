@@ -1,5 +1,5 @@
 kind: "AdminExtension"
-displayName: "MyExtension2"
+title: "MyExtension2"
 description: "MyExtension2 description"
 interfaces:
   - "com.enonic.xp.my-interface"

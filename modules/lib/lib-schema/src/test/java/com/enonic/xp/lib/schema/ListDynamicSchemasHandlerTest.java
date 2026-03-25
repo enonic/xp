@@ -31,7 +31,7 @@ class ListDynamicSchemasHandlerTest
             final ContentType contentType1 = ContentType.create()
                 .superType( ContentTypeName.structured() )
                 .description( "My type description" )
-                .displayName( "My type display name" )
+                .title( "My type display name" )
                 .name( ContentTypeName.from( schemasParams.getKey() + ":type1" ) )
                 .modifiedTime( Instant.parse( "2010-01-01T10:00:00Z" ) )
                 .addFormItem( FieldSet.create()
@@ -51,7 +51,7 @@ class ListDynamicSchemasHandlerTest
             final ContentType contentType2 = ContentType.create()
                 .superType( ContentTypeName.archiveMedia() )
                 .description( "My type description 2" )
-                .displayName( "My type display name 2" )
+                .title( "My type display name 2" )
                 .name( ContentTypeName.from( schemasParams.getKey() + ":type2" ) )
                 .modifiedTime( Instant.parse( "2012-01-01T10:00:00Z" ) )
                 .build();
