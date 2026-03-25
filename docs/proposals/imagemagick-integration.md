@@ -231,12 +231,15 @@ Add ImageMagick-specific configuration:
 @interface ImageConfig {
     int scale_maxDimension() default 8000;
     int filters_maxTotal() default 25;
-    String memoryLimit() default "10%";    // Still used for process concurrency control
+    String memoryLimit() default "10%";
     String progressive() default "jpeg";
-    String imageMagick_path() default "";  // Auto-detect if empty
-    int imageMagick_timeout() default 30;  // Seconds, per operation
+    String imageMagick_path() default "";         // Auto-detect if empty
+    int imageMagick_timeout() default 30;         // Seconds, per operation
+    int imageMagick_maxConcurrent() default 4;    // Max concurrent ImageMagick processes
 }
 ```
+
+Note: The underscore naming convention (e.g., `imageMagick_path`) follows the existing OSGi config annotation pattern used throughout the project. Underscores map to dots in `.cfg` files (e.g., `imageMagick.path=`).
 
 **2.2 Bundle ImageMagick binaries per platform**
 
@@ -303,7 +306,7 @@ The `MemoryCircuitBreaker` semaphore approach can be simplified since ImageMagic
 
 ```java
 // Instead of megabyte-based semaphore, use process count semaphore
-private final Semaphore processSemaphore = new Semaphore(config.imageMagick_maxConcurrent()); // default: 4
+private final Semaphore processSemaphore = new Semaphore(config.imageMagick_maxConcurrent());
 ```
 
 ImageMagick itself has built-in resource limits (`-limit memory`, `-limit map`, `-limit disk`) that can be set via the command line.
