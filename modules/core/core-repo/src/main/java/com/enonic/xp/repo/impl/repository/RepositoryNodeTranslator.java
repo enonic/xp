@@ -42,7 +42,7 @@ public class RepositoryNodeTranslator
         }
         if ( repository.getModelVersion() != null )
         {
-            repositoryNodeData.setString( MODEL_VERSION_KEY, repository.getModelVersion().toString() );
+            repositoryNodeData.setString( MODEL_VERSION_KEY, repository.getModelVersion().toShortestString() );
         }
 
         return Node.create()

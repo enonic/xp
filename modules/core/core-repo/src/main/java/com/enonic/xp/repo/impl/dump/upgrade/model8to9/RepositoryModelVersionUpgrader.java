@@ -21,7 +21,7 @@ public class RepositoryModelVersionUpgrader
 
         if ( nodeVersion.data().hasProperty( "data" ) )
         {
-            nodeVersion.data().setString( MODEL_VERSION_KEY, Model.MODEL_VERSION.toString() );
+            nodeVersion.data().setString( MODEL_VERSION_KEY, Model.MODEL_VERSION.toShortestString() );
             return nodeVersion;
         }
 
