@@ -80,7 +80,7 @@ export interface Schema {
     icon?: Icon;
 }
 
-export type ConfigValue = string | number | boolean | ConfigObject | ConfigObject[];
+export type ConfigValue = string | number | boolean | ConfigObject | ConfigValue[];
 
 export interface ConfigObject {
     [key: string]: ConfigValue
