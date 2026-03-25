@@ -100,7 +100,7 @@ public class ApiIndexHandler
             .stream()
             .map( PrincipalKey::toString )
             .toList() );
-        result.put( "displayName", apiDescriptor.getDisplayName() );
+        result.put( "title", apiDescriptor.getTitle() );
         result.put( "description", apiDescriptor.getDescription() );
         result.put( "documentationUrl", apiDescriptor.getDocumentationUrl() );
         result.put( "mount", apiDescriptor.getMount() );

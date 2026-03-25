@@ -16,7 +16,7 @@ import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 
 @Component(immediate = true, property = {"key=" + AdminExtensionDispatcherApiHandler.EXTENSIONS_API,
-    "allowedPrincipals=role:system.admin.login", "displayName=Admin Extensions API"})
+    "allowedPrincipals=role:system.admin.login", "title=Admin Extensions API"})
 public class AdminExtensionDispatcherApiHandler
     implements UniversalApiHandler
 {

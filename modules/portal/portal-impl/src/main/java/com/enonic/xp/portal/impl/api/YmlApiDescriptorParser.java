@@ -30,7 +30,7 @@ public final class YmlApiDescriptorParser
         public abstract ApiDescriptor.Builder allowedPrincipals( PrincipalKeys allowedPrincipals );
 
         @JsonProperty("title")
-        public abstract ApiDescriptor.Builder displayName( LocalizedText text );
+        public abstract ApiDescriptor.Builder title( LocalizedText text );
 
         @JsonProperty("documentationUrl")
         public abstract ApiDescriptor.Builder documentationUrl( String documentationUrl );

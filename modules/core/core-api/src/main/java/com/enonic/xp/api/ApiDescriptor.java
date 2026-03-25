@@ -18,9 +18,9 @@ public final class ApiDescriptor
 
     private final PrincipalKeys allowedPrincipals;
 
-    private final String displayName;
+    private final String title;
 
-    private final String displayNameI18nKey;
+    private final String titleI18nKey;
 
     private final String description;
 
@@ -38,8 +38,8 @@ public final class ApiDescriptor
 
         this.key = builder.key;
         this.allowedPrincipals = builder.allowedPrincipals;
-        this.displayName = builder.displayName;
-        this.displayNameI18nKey = builder.displayNameI18nKey;
+        this.title = builder.title;
+        this.titleI18nKey = builder.titleI18nKey;
         this.description = builder.description;
         this.descriptionI18nKey = builder.descriptionI18nKey;
         this.documentationUrl = builder.documentationUrl;
@@ -56,9 +56,9 @@ public final class ApiDescriptor
         return allowedPrincipals;
     }
 
-    public String getDisplayName()
+    public String getTitle()
     {
-        return displayName;
+        return title;
     }
 
     public String getDescription()
@@ -71,9 +71,9 @@ public final class ApiDescriptor
         return descriptionI18nKey;
     }
 
-    public String getDisplayNameI18nKey()
+    public String getTitleI18nKey()
     {
-        return displayNameI18nKey;
+        return titleI18nKey;
     }
 
     public String getDocumentationUrl()
@@ -102,9 +102,9 @@ public final class ApiDescriptor
 
         private PrincipalKeys allowedPrincipals;
 
-        private String displayName;
+        private String title;
 
-        private String displayNameI18nKey;
+        private String titleI18nKey;
 
         private String description;
 
@@ -130,22 +130,22 @@ public final class ApiDescriptor
             return this;
         }
 
-        public Builder displayName( final String displayName )
+        public Builder title( final String title )
         {
-            this.displayName = displayName;
+            this.title = title;
             return this;
         }
 
-        public Builder displayNameI18nKey( final String displayNameI18nKey )
+        public Builder titleI18nKey( final String titleI18nKey )
         {
-            this.displayNameI18nKey = displayNameI18nKey;
+            this.titleI18nKey = titleI18nKey;
             return this;
         }
 
-        public Builder displayName( final LocalizedText text )
+        public Builder title( final LocalizedText text )
         {
-            this.displayName = text.text();
-            this.displayNameI18nKey = text.i18n();
+            this.title = text.text();
+            this.titleI18nKey = text.i18n();
             return this;
         }
 

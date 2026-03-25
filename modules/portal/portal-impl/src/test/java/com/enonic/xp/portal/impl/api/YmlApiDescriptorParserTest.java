@@ -32,7 +32,7 @@ public class YmlApiDescriptorParserTest
 
         final ApiDescriptor apiDescriptor = builder.build();
 
-        assertEquals( "GraphQL API", apiDescriptor.getDisplayName() );
+        assertEquals( "GraphQL API", apiDescriptor.getTitle() );
         assertEquals( "Description of GraphQL API", apiDescriptor.getDescription() );
         assertEquals( "https://docs.mygraphqlapi.com", apiDescriptor.getDocumentationUrl() );
         assertTrue( apiDescriptor.getMount().contains( "xp" ) );
