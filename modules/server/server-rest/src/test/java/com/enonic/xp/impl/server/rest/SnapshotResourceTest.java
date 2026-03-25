@@ -3,7 +3,6 @@ package com.enonic.xp.impl.server.rest;
 import java.time.Instant;
 import java.util.Arrays;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -12,112 +11,78 @@ import jakarta.ws.rs.core.MediaType;
 import com.enonic.xp.jaxrs.impl.JaxRsResourceTestSupport;
 import com.enonic.xp.node.DeleteSnapshotParams;
 import com.enonic.xp.node.DeleteSnapshotsResult;
-import com.enonic.xp.node.RestoreParams;
-import com.enonic.xp.node.RestoreResult;
-import com.enonic.xp.node.SnapshotParams;
 import com.enonic.xp.node.SnapshotResult;
 import com.enonic.xp.node.SnapshotResults;
-import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.snapshot.SnapshotService;
+import com.enonic.xp.task.TaskId;
+import com.enonic.xp.task.TaskService;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class SnapshotResourceTest
     extends JaxRsResourceTestSupport
 {
     private SnapshotService snapshotService;
 
+    private TaskService taskService;
+
     @Test
     void snapshot()
         throws Exception
     {
-
-        final SnapshotResult snapshotResult = SnapshotResult.create()
-            .name( "name" )
-            .reason( "because reasons" )
-            .timestamp( Instant.ofEpochMilli( 1438866915875L ) )
-            .state( SnapshotResult.State.SUCCESS )
-            .indices( Arrays.asList( "46f2a9" ) )
-            .build();
-
-        Mockito.when( this.snapshotService.snapshot( isA( SnapshotParams.class ) ) ).thenReturn( snapshotResult );
+        when( taskService.submitTask( any() ) ).thenReturn( TaskId.from( "task-id-1" ) );
 
         final String result = request().path( "repo/snapshot" )
             .entity( readFromFile( "snapshot_params.json" ), MediaType.APPLICATION_JSON_TYPE )
             .post()
             .getAsString();
 
-        assertJson( "snapshot.json", result );
+        assertStringJson( "{\"taskId\" : \"task-id-1\"}", result );
     }
 
     @Test
     void restore()
         throws Exception
     {
-        final RestoreResult restoreResult = RestoreResult.create()
-            .repositoryId( RepositoryId.from( "repo-id" ) )
-            .name( "name" )
-            .message( "He's dead, Jim." )
-            .indices( Arrays.asList( "bc02aa" ) )
-            .failed( false )
-            .build();
-
-        Mockito.when( this.snapshotService.restore( isA( RestoreParams.class ) ) ).thenReturn( restoreResult );
+        when( taskService.submitTask( any() ) ).thenReturn( TaskId.from( "task-id-2" ) );
 
         final String result = request().path( "repo/snapshot/restore" )
             .entity( readFromFile( "restore_params.json" ), MediaType.APPLICATION_JSON_TYPE )
             .post()
             .getAsString();
 
-        assertJson( "restore.json", result );
+        assertStringJson( "{\"taskId\" : \"task-id-2\"}", result );
     }
 
     @Test
     void restore_with_deletion()
         throws Exception
     {
-        final RestoreResult restoreResult = RestoreResult.create()
-            .repositoryId( RepositoryId.from( "repo-id" ) )
-            .name( "name" )
-            .message( "He's dead, Jim." )
-            .indices( Arrays.asList( "bc02aa" ) )
-            .failed( false )
-            .build();
-
-        Mockito.when( this.snapshotService.restore( isA( RestoreParams.class ) ) ).thenAnswer( ( params ) -> {
-            Assertions.assertTrue( ( (RestoreParams) params.getArgument( 0 ) ).isForce() );
-            return restoreResult;
-        } );
+        when( taskService.submitTask( any() ) ).thenReturn( TaskId.from( "task-id-3" ) );
 
         final String result = request().path( "repo/snapshot/restore" )
             .entity( readFromFile( "restore_with_deletion_params.json" ), MediaType.APPLICATION_JSON_TYPE )
             .post()
             .getAsString();
 
-        assertJson( "restore.json", result );
+        assertStringJson( "{\"taskId\" : \"task-id-3\"}", result );
     }
 
     @Test
     void restore_latest()
         throws Exception
     {
-        final RestoreResult restoreResult = RestoreResult.create()
-            .repositoryId( RepositoryId.from( "repo-id" ) )
-            .name( "name" )
-            .message( "He's dead, Jim." )
-            .indices( Arrays.asList( "bc02aa" ) )
-            .failed( false )
-            .build();
-
-        Mockito.when( this.snapshotService.restore( isA( RestoreParams.class ) ) ).thenReturn( restoreResult );
+        when( taskService.submitTask( any() ) ).thenReturn( TaskId.from( "task-id-4" ) );
 
         final String result = request().path( "repo/snapshot/restore" )
             .entity( readFromFile( "restore_latest_params.json" ), MediaType.APPLICATION_JSON_TYPE )
             .post()
             .getAsString();
 
-        assertJson( "restore.json", result );
+        assertStringJson( "{\"taskId\" : \"task-id-4\"}", result );
     }
 
     @Test
@@ -162,9 +127,8 @@ class SnapshotResourceTest
     protected Object getResourceInstance()
     {
         this.snapshotService = mock( SnapshotService.class );
+        this.taskService = mock( TaskService.class );
 
-        final SnapshotResource resource = new SnapshotResource();
-        resource.setSnapshotService( snapshotService );
-        return resource;
+        return new SnapshotResource( snapshotService, taskService );
     }
 }

@@ -1,9 +1,6 @@
 package com.enonic.xp.impl.server.rest;
 
-import java.time.Instant;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
-
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -14,24 +11,23 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.impl.server.rest.model.DeleteSnapshotRequestJson;
 import com.enonic.xp.impl.server.rest.model.DeleteSnapshotsResultJson;
 import com.enonic.xp.impl.server.rest.model.RestoreRequestJson;
-import com.enonic.xp.impl.server.rest.model.RestoreResultJson;
 import com.enonic.xp.impl.server.rest.model.SnapshotRequestJson;
-import com.enonic.xp.impl.server.rest.model.SnapshotResultJson;
 import com.enonic.xp.impl.server.rest.model.SnapshotResultsJson;
+import com.enonic.xp.impl.server.rest.model.TaskResultJson;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.node.DeleteSnapshotParams;
 import com.enonic.xp.node.DeleteSnapshotsResult;
-import com.enonic.xp.node.RestoreParams;
-import com.enonic.xp.node.RestoreResult;
-import com.enonic.xp.node.SnapshotParams;
-import com.enonic.xp.node.SnapshotResult;
 import com.enonic.xp.node.SnapshotResults;
-import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.snapshot.SnapshotService;
+import com.enonic.xp.task.SubmitTaskParams;
+import com.enonic.xp.task.TaskId;
+import com.enonic.xp.task.TaskService;
 import com.enonic.xp.util.DateTimeHelper;
 
 @Path("/repo/snapshot")
@@ -41,54 +37,72 @@ import com.enonic.xp.util.DateTimeHelper;
 public final class SnapshotResource
     implements JaxRsComponent
 {
-    private SnapshotService snapshotService;
+    private final SnapshotService snapshotService;
 
-    private static String createSnapshotName( final RepositoryId repositoryId )
-    {
-        return ( ( repositoryId == null ? "" : repositoryId ) + getDateTimeFormatter().format( Instant.now() ) ).toLowerCase();
-    }
+    private final TaskService taskService;
 
-    private static DateTimeFormatter getDateTimeFormatter()
+    private static final DescriptorKey SNAPSHOT_TASK_DESCRIPTOR_KEY = DescriptorKey.from( "com.enonic.xp.app.system:snapshot" );
+
+    private static final DescriptorKey RESTORE_TASK_DESCRIPTOR_KEY = DescriptorKey.from( "com.enonic.xp.app.system:restore" );
+
+
+    @Activate
+    public SnapshotResource( @Reference final SnapshotService snapshotService, @Reference final TaskService taskService )
     {
-        return DateTimeFormatter.ofPattern( "yyyy-MM-dd'T'HH-mm-ss.SSS'z'" ).withZone( ZoneOffset.UTC );
+        this.snapshotService = snapshotService;
+        this.taskService = taskService;
     }
 
     @POST
-    public SnapshotResultJson snapshot( final SnapshotRequestJson params )
-        throws Exception
+    public TaskResultJson snapshot( final SnapshotRequestJson params )
     {
-        final SnapshotResult result = this.snapshotService.snapshot( SnapshotParams.create().
-            snapshotName( createSnapshotName( params.getRepositoryId() ) ).
-            repositoryId( params.getRepositoryId() ).
-            build() );
+        final PropertyTree data = new PropertyTree();
+        if ( params.getSnapshotName() != null )
+        {
+            data.addString( "snapshotName", params.getSnapshotName() );
+        }
+        if ( params.getRepositoryId() != null )
+        {
+            data.addString( "repositoryId", params.getRepositoryId().toString() );
+        }
 
-        return SnapshotResultJson.from( result );
+        final TaskId taskId =
+            taskService.submitTask( SubmitTaskParams.create().descriptorKey( SNAPSHOT_TASK_DESCRIPTOR_KEY ).data( data ).build() );
+
+        return new TaskResultJson( taskId );
     }
 
     @POST
     @Path("restore")
-    public RestoreResultJson restore( final RestoreRequestJson params )
-        throws Exception
+    public TaskResultJson restore( final RestoreRequestJson params )
     {
-        final RestoreResult result = this.snapshotService.restore( RestoreParams.create()
-                                                                       .snapshotName( params.getSnapshotName() )
-                                                                       .repositoryId( params.getRepositoryId() )
-                                                                       .latest( params.isLatest() )
-                                                                       .force( params.isForce() )
-                                                                       .build() );
+        final PropertyTree data = new PropertyTree();
+        if ( params.getSnapshotName() != null )
+        {
+            data.addString( "snapshotName", params.getSnapshotName() );
+        }
+        if ( params.getRepositoryId() != null )
+        {
+            data.addString( "repositoryId", params.getRepositoryId().toString() );
+        }
+        data.addBoolean( "latest", params.isLatest() );
+        data.addBoolean( "force", params.isForce() );
 
-        return RestoreResultJson.from( result );
+        final TaskId taskId =
+            taskService.submitTask( SubmitTaskParams.create().descriptorKey( RESTORE_TASK_DESCRIPTOR_KEY ).data( data ).build() );
+
+        return new TaskResultJson( taskId );
     }
 
     @POST
     @Path("delete")
     public DeleteSnapshotsResultJson delete( final DeleteSnapshotRequestJson params )
-        throws Exception
     {
-        final DeleteSnapshotsResult result = this.snapshotService.delete( DeleteSnapshotParams.create().
-            before( DateTimeHelper.parseIsoDateTime( params.getBefore() ) ).
-            addAll( params.getSnapshotNames() ).
-            build() );
+        final DeleteSnapshotsResult result = this.snapshotService.delete( DeleteSnapshotParams.create()
+                                                                              .before(
+                                                                                  DateTimeHelper.parseIsoDateTime( params.getBefore() ) )
+                                                                              .addAll( params.getSnapshotNames() )
+                                                                              .build() );
 
         return DeleteSnapshotsResultJson.from( result );
     }
@@ -96,16 +110,9 @@ public final class SnapshotResource
     @GET
     @Path("list")
     public SnapshotResultsJson list()
-        throws Exception
     {
         final SnapshotResults snapshotResults = this.snapshotService.list();
 
         return SnapshotResultsJson.from( snapshotResults );
-    }
-
-    @Reference
-    public void setSnapshotService( final SnapshotService snapshotService )
-    {
-        this.snapshotService = snapshotService;
     }
 }
