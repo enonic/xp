@@ -137,7 +137,7 @@ public class AttachmentSha512Upgrader
         try
         {
             final BlobRecord record = blobStoreAccess.getRecord( binarySegment, blobKey );
-            return MessageDigests.formatHex( MessageDigests.updateWithStream( MessageDigests.sha256(), record.getBytes()::openStream ) );
+            return MessageDigests.formatHex( MessageDigests.updateWithStream( MessageDigests.sha512(), record.getBytes()::openStream ) );
         }
         catch ( IOException e )
         {
