@@ -112,7 +112,7 @@ public final class ContentType
     {
         final MoreObjects.ToStringHelper s = MoreObjects.toStringHelper( this );
         s.add( "name", getName() );
-        s.add( "displayName", getDisplayName() );
+        s.add( "title", getTitle() );
         s.add( "description", getDescription() );
         s.add( "superType", superType );
         s.add( "isAbstract", isAbstract );
@@ -244,10 +244,10 @@ public final class ContentType
             return this;
         }
 
-        public Builder setDisplayName( final LocalizedText source )
+        public Builder setTitle( final LocalizedText source )
         {
-            this.displayName( source.text() );
-            this.displayNameI18nKey( source.i18n() );
+            this.title( source.text() );
+            this.titleI18nKey( source.i18n() );
             return this;
         }
 

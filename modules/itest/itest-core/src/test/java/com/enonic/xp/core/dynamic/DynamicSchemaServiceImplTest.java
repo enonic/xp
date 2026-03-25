@@ -309,7 +309,7 @@ class DynamicSchemaServiceImplTest
                                                                    .build() ).getSchema() ) );
 
         assertEquals( "myapp:mytype", contentType.getName().toString() );
-        assertEquals( "Virtual Content Type", contentType.getDisplayName() );
+        assertEquals( "Virtual Content Type", contentType.getTitle() );
         assertEquals( "description", contentType.getDescription() );
         assertEquals( 1, contentType.getForm().size() );
         assertFalse( contentType.allowChildContent() );
@@ -364,7 +364,7 @@ class DynamicSchemaServiceImplTest
                                                                    .build() ).getSchema() ) );
 
         assertEquals( "myapp:mytype", contentType.getName().toString() );
-        assertEquals( "Virtual Content Type", contentType.getDisplayName() );
+        assertEquals( "Virtual Content Type", contentType.getTitle() );
         assertEquals( "description", contentType.getDescription() );
         assertEquals( 1, contentType.getForm().size() );
         assertFalse( contentType.allowChildContent() );
@@ -407,7 +407,7 @@ class DynamicSchemaServiceImplTest
                                                                    .build() ).getSchema() ) );
 
         assertEquals( "myapp:my-fragment", fragment.getName().toString() );
-        assertEquals( "Virtual FormFragment", fragment.getDisplayName() );
+        assertEquals( "Virtual FormFragment", fragment.getTitle() );
         assertEquals( "FormFragment description", fragment.getDescription() );
         assertEquals( 2, fragment.getForm().size() );
         assertEquals( "myapp:inline", fragment.getForm().getFormFragment( "inline" ).getFormFragmentName().toString() );
@@ -495,7 +495,7 @@ class DynamicSchemaServiceImplTest
                                                                    .build() ).getSchema() ) );
 
         assertEquals( "myapp:my-fragment", fragment.getName().toString() );
-        assertEquals( "Virtual FormFragment", fragment.getDisplayName() );
+        assertEquals( "Virtual FormFragment", fragment.getTitle() );
         assertEquals( "FormFragment description", fragment.getDescription() );
         assertEquals( 2, fragment.getForm().size() );
         assertEquals( "myapp:inline", fragment.getForm().getFormFragment( "inline" ).getFormFragmentName().toString() );
@@ -596,7 +596,7 @@ class DynamicSchemaServiceImplTest
                                                                    .build() ).getSchema() ) );
 
         assertEquals( "myapp:mymixin", mixinDescriptor.getName().toString() );
-        assertEquals( "Virtual Mixin", mixinDescriptor.getDisplayName() );
+        assertEquals( "Virtual Mixin", mixinDescriptor.getTitle() );
         assertEquals( "Mixin description", mixinDescriptor.getDescription() );
         assertEquals( 1, mixinDescriptor.getForm().size() );
 
@@ -649,7 +649,7 @@ class DynamicSchemaServiceImplTest
                                                                    .build() ).getSchema() ) );
 
         assertEquals( "myapp:mymixin", mixinDescriptor.getName().toString() );
-        assertEquals( "Virtual Mixin", mixinDescriptor.getDisplayName() );
+        assertEquals( "Virtual Mixin", mixinDescriptor.getTitle() );
         assertEquals( "Mixin description", mixinDescriptor.getDescription() );
         assertEquals( 1, mixinDescriptor.getForm().size() );
 

@@ -73,7 +73,7 @@ public final class YmlContentTypeParser
         abstract ContentType.Builder superType( ContentTypeName name );
 
         @JsonProperty("title")
-        public abstract ContentType.Builder setDisplayName( LocalizedText value );
+        public abstract ContentType.Builder setTitle( LocalizedText value );
 
         @JsonProperty("description")
         public abstract ContentType.Builder setDescription( LocalizedText value );

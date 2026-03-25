@@ -30,7 +30,7 @@ public final class YmlMixinDescriptorParser
         abstract MixinDescriptor.Builder form( Form value );
 
         @JsonProperty("title")
-        abstract MixinDescriptor.Builder displayName( LocalizedText text );
+        abstract MixinDescriptor.Builder title( LocalizedText text );
 
         @JsonProperty("description")
         abstract MixinDescriptor.Builder description( LocalizedText text );

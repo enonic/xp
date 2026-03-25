@@ -95,7 +95,7 @@ class MoveContentCommandTest
 
         final ContentType contentType = ContentType.create()
             .name( ContentTypeName.folder() )
-            .displayName( "folder" )
+            .title( "folder" )
             .setBuiltIn()
             .setFinal( false )
             .setAbstract( false )

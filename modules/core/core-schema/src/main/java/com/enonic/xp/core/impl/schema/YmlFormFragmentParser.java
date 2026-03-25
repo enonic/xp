@@ -36,7 +36,7 @@ public final class YmlFormFragmentParser
         abstract FormFragmentDescriptor.Builder form( Form value );
 
         @JsonProperty("title")
-        abstract FormFragmentDescriptor.Builder displayName( LocalizedText text );
+        abstract FormFragmentDescriptor.Builder title( LocalizedText text );
 
         @JsonProperty("description")
         abstract FormFragmentDescriptor.Builder description( LocalizedText text );
