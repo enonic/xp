@@ -19,7 +19,7 @@
     "allowChildContent": {
       "type": "boolean"
     },
-    "displayName": {
+    "title": {
       "$ref": "#/$defs/localizedTextDef"
     },
     "description": {
@@ -40,7 +40,8 @@
   },
   "additionalProperties": false,
   "required": [
-    "kind"
+    "kind",
+    "title"
   ],
   "$defs": {
     "localizedTextDef": {},

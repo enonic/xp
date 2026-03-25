@@ -68,12 +68,12 @@ public final class BuiltinMacroDescriptors
         return create( macroKey, "Embed IFrame", "Generic iframe embedder", form );
     }
 
-    private MacroDescriptor create( final MacroKey macroKey, final String displayName, final String description, final Form form )
+    private MacroDescriptor create( final MacroKey macroKey, final String title, final String description, final Form form )
     {
         return MacroDescriptor.create().
             key( macroKey ).
-            displayName( displayName ).
-            displayNameI18nKey( macroKey.getApplicationKey().getName() + "." + macroKey.getName() + ".displayName" ).
+            title( title ).
+            titleI18nKey( macroKey.getApplicationKey().getName() + "." + macroKey.getName() + ".displayName" ).
             description( description ).
             descriptionI18nKey( macroKey.getApplicationKey().getName() + "." + macroKey.getName() + ".description" ).
             form( form ).

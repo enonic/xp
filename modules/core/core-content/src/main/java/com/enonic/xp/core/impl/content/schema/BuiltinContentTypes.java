@@ -410,12 +410,12 @@ final class BuiltinContentTypes
     private static ContentType.Builder createSystemType( final ContentTypeName contentTypeName )
     {
         final String localName = contentTypeName.getLocalName();
-        final String displayName = localName.substring( 0, 1 ).toUpperCase() + localName.substring( 1 );
+        final String title = localName.substring( 0, 1 ).toUpperCase() + localName.substring( 1 );
         final String app = contentTypeName.getApplicationKey().getName();
         return ContentType.create()
             .name( contentTypeName )
-            .displayName( displayName )
-            .displayNameI18nKey( app + "." + localName + ".displayName" )
+            .title( title )
+            .titleI18nKey( app + "." + localName + ".displayName" )
             .setBuiltIn();
     }
 }

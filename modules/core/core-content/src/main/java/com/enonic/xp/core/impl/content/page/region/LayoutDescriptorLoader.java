@@ -71,7 +71,7 @@ public class LayoutDescriptorLoader
     {
         return LayoutDescriptor.create()
             .key( key )
-            .displayName( key.getName() )
+            .title( key.getName() )
             .config( Form.empty() )
             .regions( RegionDescriptors.create().build() )
             .build();

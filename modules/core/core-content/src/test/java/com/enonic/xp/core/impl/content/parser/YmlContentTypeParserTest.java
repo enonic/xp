@@ -34,8 +34,8 @@ public class YmlContentTypeParserTest
         final ContentType contentType = builder.build();
 
         assertEquals( ContentTypeName.from( "myapp:article" ), contentType.getName() );
-        assertEquals( "Article", contentType.getDisplayName() );
-        assertEquals( "i18n.article.displayName", contentType.getDisplayNameI18nKey() );
+        assertEquals( "Article", contentType.getTitle() );
+        assertEquals( "i18n.article.displayName", contentType.getTitleI18nKey() );
         assertNotNull( contentType.getForm() );
         assertEquals( now, contentType.getCreatedTime() );
 

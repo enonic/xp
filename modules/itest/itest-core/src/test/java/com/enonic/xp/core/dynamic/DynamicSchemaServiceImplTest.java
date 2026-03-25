@@ -305,7 +305,7 @@ class DynamicSchemaServiceImplTest
                                                                    .build() ).getSchema() ) );
 
         assertEquals( "myapp:mytype", contentType.getName().toString() );
-        assertEquals( "Virtual Content Type", contentType.getDisplayName() );
+        assertEquals( "Virtual Content Type", contentType.getTitle() );
         assertEquals( "description", contentType.getDescription() );
         assertEquals( 1, contentType.getForm().size() );
         assertFalse( contentType.allowChildContent() );
@@ -360,7 +360,7 @@ class DynamicSchemaServiceImplTest
                                                                    .build() ).getSchema() ) );
 
         assertEquals( "myapp:mytype", contentType.getName().toString() );
-        assertEquals( "Virtual Content Type", contentType.getDisplayName() );
+        assertEquals( "Virtual Content Type", contentType.getTitle() );
         assertEquals( "description", contentType.getDescription() );
         assertEquals( 1, contentType.getForm().size() );
         assertFalse( contentType.allowChildContent() );
@@ -403,7 +403,7 @@ class DynamicSchemaServiceImplTest
                                                                    .build() ).getSchema() ) );
 
         assertEquals( "myapp:my-fragment", fragment.getName().toString() );
-        assertEquals( "Virtual FormFragment", fragment.getDisplayName() );
+        assertEquals( "Virtual FormFragment", fragment.getTitle() );
         assertEquals( "FormFragment description", fragment.getDescription() );
         assertEquals( 2, fragment.getForm().size() );
         assertEquals( "myapp:inline", fragment.getForm().getFormFragment( "inline" ).getFormFragmentName().toString() );
@@ -464,7 +464,7 @@ class DynamicSchemaServiceImplTest
                 .name( FormFragmentName.from( "myapp:my-fragment" ) )
                 .resource( """
                                kind: "FormFragment"
-                               displayName: "MyFormFragment"
+                               title: "MyFormFragment"
                                """ )
                 .type( DynamicContentSchemaType.FORM_FRAGMENT )
                 .build();
@@ -491,7 +491,7 @@ class DynamicSchemaServiceImplTest
                                                                    .build() ).getSchema() ) );
 
         assertEquals( "myapp:my-fragment", fragment.getName().toString() );
-        assertEquals( "Virtual FormFragment", fragment.getDisplayName() );
+        assertEquals( "Virtual FormFragment", fragment.getTitle() );
         assertEquals( "FormFragment description", fragment.getDescription() );
         assertEquals( 2, fragment.getForm().size() );
         assertEquals( "myapp:inline", fragment.getForm().getFormFragment( "inline" ).getFormFragmentName().toString() );
@@ -518,7 +518,7 @@ class DynamicSchemaServiceImplTest
                 .name( FormFragmentName.from( "myapp:my-fragment" ) )
                 .resource( """
                                kind: "FormFragment"
-                               displayName: "FormFragment"
+                               title: "FormFragment"
                                """ )
                 .type( DynamicContentSchemaType.FORM_FRAGMENT )
                 .build();
@@ -548,7 +548,7 @@ class DynamicSchemaServiceImplTest
                 .name( FormFragmentName.from( "myapp:my-fragment" ) )
                 .resource( """
                                kind: "FormFragment"
-                               displayName: "FormFragment"
+                               title: "FormFragment"
                                """ )
                 .type( DynamicContentSchemaType.FORM_FRAGMENT )
                 .build();
@@ -592,7 +592,7 @@ class DynamicSchemaServiceImplTest
                                                                    .build() ).getSchema() ) );
 
         assertEquals( "myapp:mymixin", mixinDescriptor.getName().toString() );
-        assertEquals( "Virtual Mixin", mixinDescriptor.getDisplayName() );
+        assertEquals( "Virtual Mixin", mixinDescriptor.getTitle() );
         assertEquals( "Mixin description", mixinDescriptor.getDescription() );
         assertEquals( 1, mixinDescriptor.getForm().size() );
 
@@ -617,7 +617,7 @@ class DynamicSchemaServiceImplTest
                 .name( MixinName.from( "myapp:mymixin" ) )
                 .resource( """
                                kind: "Mixin"
-                               displayName: "Virtual MIXIN"
+                               title: "Virtual MIXIN"
                                form: [ ]
                                """ )
                 .type( DynamicContentSchemaType.MIXIN )
@@ -645,7 +645,7 @@ class DynamicSchemaServiceImplTest
                                                                    .build() ).getSchema() ) );
 
         assertEquals( "myapp:mymixin", mixinDescriptor.getName().toString() );
-        assertEquals( "Virtual Mixin", mixinDescriptor.getDisplayName() );
+        assertEquals( "Virtual Mixin", mixinDescriptor.getTitle() );
         assertEquals( "Mixin description", mixinDescriptor.getDescription() );
         assertEquals( 1, mixinDescriptor.getForm().size() );
 
@@ -686,8 +686,8 @@ class DynamicSchemaServiceImplTest
 
         assertEquals( "mypart", partDescriptor.getName() );
         assertEquals( "myapp", partDescriptor.getApplicationKey().toString() );
-        assertEquals( "Virtual Part", partDescriptor.getDisplayName() );
-        assertEquals( "key.display-name", partDescriptor.getDisplayNameI18nKey() );
+        assertEquals( "Virtual Part", partDescriptor.getTitle() );
+        assertEquals( "key.display-name", partDescriptor.getTitleI18nKey() );
         assertEquals( "My Part Description", partDescriptor.getDescription() );
         assertEquals( "key.description", partDescriptor.getDescriptionI18nKey() );
         assertEquals( 2, partDescriptor.getConfig().size() );
@@ -717,7 +717,7 @@ class DynamicSchemaServiceImplTest
                 .descriptorKey( DescriptorKey.from( "myapp:mypart" ) )
                 .resource( """
                                kind: "Part"
-                               displayName: "MyPart"
+                               title: "MyPart"
                                form: [ ]
                                """ )
                 .type( DynamicComponentType.PART )
@@ -746,8 +746,8 @@ class DynamicSchemaServiceImplTest
 
         assertEquals( "mypart", partDescriptor.getName() );
         assertEquals( "myapp", partDescriptor.getApplicationKey().toString() );
-        assertEquals( "Virtual Part", partDescriptor.getDisplayName() );
-        assertEquals( "key.display-name", partDescriptor.getDisplayNameI18nKey() );
+        assertEquals( "Virtual Part", partDescriptor.getTitle() );
+        assertEquals( "key.display-name", partDescriptor.getTitleI18nKey() );
         assertEquals( "My Part Description", partDescriptor.getDescription() );
         assertEquals( "key.description", partDescriptor.getDescriptionI18nKey() );
         assertEquals( 2, partDescriptor.getConfig().size() );
@@ -791,8 +791,8 @@ class DynamicSchemaServiceImplTest
 
         assertEquals( "mylayout", layoutDescriptor.getName() );
         assertEquals( "myapp", layoutDescriptor.getApplicationKey().toString() );
-        assertEquals( "Virtual Layout", layoutDescriptor.getDisplayName() );
-        assertEquals( "key.display-name", layoutDescriptor.getDisplayNameI18nKey() );
+        assertEquals( "Virtual Layout", layoutDescriptor.getTitle() );
+        assertEquals( "key.display-name", layoutDescriptor.getTitleI18nKey() );
         assertEquals( "My Layout Description", layoutDescriptor.getDescription() );
         assertEquals( "key.description", layoutDescriptor.getDescriptionI18nKey() );
         assertEquals( 2, layoutDescriptor.getConfig().size() );
@@ -819,7 +819,7 @@ class DynamicSchemaServiceImplTest
                 .descriptorKey( DescriptorKey.from( "myapp:mylayout" ) )
                 .resource( """
                                kind: "Layout"
-                               displayName: MyLayout
+                               title: MyLayout
                                regions: [ ]
                                
                                """ )
@@ -849,8 +849,8 @@ class DynamicSchemaServiceImplTest
 
         assertEquals( "mylayout", layoutDescriptor.getName() );
         assertEquals( "myapp", layoutDescriptor.getApplicationKey().toString() );
-        assertEquals( "Virtual Layout", layoutDescriptor.getDisplayName() );
-        assertEquals( "key.display-name", layoutDescriptor.getDisplayNameI18nKey() );
+        assertEquals( "Virtual Layout", layoutDescriptor.getTitle() );
+        assertEquals( "key.display-name", layoutDescriptor.getTitleI18nKey() );
         assertEquals( "My Layout Description", layoutDescriptor.getDescription() );
         assertEquals( "key.description", layoutDescriptor.getDescriptionI18nKey() );
         assertEquals( 2, layoutDescriptor.getConfig().size() );
@@ -893,8 +893,8 @@ class DynamicSchemaServiceImplTest
 
         assertEquals( "mypage", pageDescriptor.getName() );
         assertEquals( "myapp", pageDescriptor.getApplicationKey().toString() );
-        assertEquals( "Virtual Page", pageDescriptor.getDisplayName() );
-        assertEquals( "key.display-name", pageDescriptor.getDisplayNameI18nKey() );
+        assertEquals( "Virtual Page", pageDescriptor.getTitle() );
+        assertEquals( "key.display-name", pageDescriptor.getTitleI18nKey() );
         assertEquals( "My Page Description", pageDescriptor.getDescription() );
         assertEquals( "key.description", pageDescriptor.getDescriptionI18nKey() );
         assertEquals( 1, pageDescriptor.getConfig().size() );
@@ -921,7 +921,7 @@ class DynamicSchemaServiceImplTest
                 .descriptorKey( DescriptorKey.from( "myapp:mypage" ) )
                 .resource( """
                                kind: "Page"
-                               displayName: "MyPage"
+                               title: "MyPage"
                                regions:
                                  - "main"
                                """ )
@@ -951,8 +951,8 @@ class DynamicSchemaServiceImplTest
 
         assertEquals( "mypage", pageDescriptor.getName() );
         assertEquals( "myapp", pageDescriptor.getApplicationKey().toString() );
-        assertEquals( "Virtual Page", pageDescriptor.getDisplayName() );
-        assertEquals( "key.display-name", pageDescriptor.getDisplayNameI18nKey() );
+        assertEquals( "Virtual Page", pageDescriptor.getTitle() );
+        assertEquals( "key.display-name", pageDescriptor.getTitleI18nKey() );
         assertEquals( "My Page Description", pageDescriptor.getDescription() );
         assertEquals( "key.description", pageDescriptor.getDescriptionI18nKey() );
         assertEquals( 1, pageDescriptor.getConfig().size() );

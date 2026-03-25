@@ -1,5 +1,5 @@
 kind: "ContentType"
-displayName: "All Inputs"
+title: "All Inputs"
 form:
   - type: "TextLine"
     name: "textLine"

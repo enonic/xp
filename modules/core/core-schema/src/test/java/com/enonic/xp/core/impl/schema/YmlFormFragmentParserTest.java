@@ -34,8 +34,8 @@ public class YmlFormFragmentParserTest
 
         assertEquals( currentApplication, descriptor.getName().getApplicationKey() );
         assertEquals( "my-form-fragment", descriptor.getName().getLocalName() );
-        assertEquals( "DisplayName of the FormFragment", descriptor.getDisplayName() );
-        assertNull( descriptor.getDisplayNameI18nKey() );
+        assertEquals( "DisplayName of the FormFragment", descriptor.getTitle() );
+        assertNull( descriptor.getTitleI18nKey() );
         assertEquals( "Description of the FormFragment", descriptor.getDescription() );
         assertNull( descriptor.getDescriptionI18nKey() );
 

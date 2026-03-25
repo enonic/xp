@@ -72,8 +72,8 @@ public final class YmlContentTypeParser
         @JsonProperty("superType")
         abstract ContentType.Builder superType( ContentTypeName name );
 
-        @JsonProperty("displayName")
-        public abstract ContentType.Builder setDisplayName( LocalizedText value );
+        @JsonProperty("title")
+        public abstract ContentType.Builder setTitle( LocalizedText value );
 
         @JsonProperty("description")
         public abstract ContentType.Builder setDescription( LocalizedText value );

@@ -12,9 +12,9 @@ public abstract class BaseSchema<T extends BaseSchemaName>
 {
     final T name;
 
-    final String displayName;
+    final String title;
 
-    final String displayNameI18nKey;
+    final String titleI18nKey;
 
     final String description;
 
@@ -33,8 +33,8 @@ public abstract class BaseSchema<T extends BaseSchemaName>
     protected BaseSchema( final Builder builder )
     {
         this.name = (T) builder.name;
-        this.displayName = builder.displayName == null || builder.displayName.isBlank() ? builder.name.getLocalName() : builder.displayName;
-        this.displayNameI18nKey = builder.displayNameI18nKey;
+        this.title = builder.title == null || builder.title.isBlank() ? builder.name.getLocalName() : builder.title;
+        this.titleI18nKey = builder.titleI18nKey;
         this.description = builder.description;
         this.descriptionI18nKey = builder.descriptionI18nKey;
         this.createdTime = builder.createdTime;
@@ -49,14 +49,14 @@ public abstract class BaseSchema<T extends BaseSchemaName>
         return name;
     }
 
-    public String getDisplayName()
+    public String getTitle()
     {
-        return displayName;
+        return title;
     }
 
-    public String getDisplayNameI18nKey()
+    public String getTitleI18nKey()
     {
-        return displayNameI18nKey;
+        return titleI18nKey;
     }
 
     public String getDescription()
@@ -106,8 +106,8 @@ public abstract class BaseSchema<T extends BaseSchemaName>
             return false;
         }
         final BaseSchema<?> that = (BaseSchema<?>) o;
-        return Objects.equals( name, that.name ) && Objects.equals( displayName, that.displayName ) &&
-            Objects.equals( displayNameI18nKey, that.displayNameI18nKey ) && Objects.equals( description, that.description ) &&
+        return Objects.equals( name, that.name ) && Objects.equals( title, that.title ) &&
+            Objects.equals( titleI18nKey, that.titleI18nKey ) && Objects.equals( description, that.description ) &&
             Objects.equals( descriptionI18nKey, that.descriptionI18nKey ) && Objects.equals( createdTime, that.createdTime ) &&
             Objects.equals( modifiedTime, that.modifiedTime ) && Objects.equals( creator, that.creator ) &&
             Objects.equals( modifier, that.modifier ) && Objects.equals( icon, that.icon );
@@ -116,7 +116,7 @@ public abstract class BaseSchema<T extends BaseSchemaName>
     @Override
     public int hashCode()
     {
-        return Objects.hash( name, displayName, displayNameI18nKey, description, descriptionI18nKey, createdTime, modifiedTime, creator,
+        return Objects.hash( name, title, titleI18nKey, description, descriptionI18nKey, createdTime, modifiedTime, creator,
                              modifier, icon );
     }
 
@@ -124,9 +124,9 @@ public abstract class BaseSchema<T extends BaseSchemaName>
     {
         protected SCHEMA_NAME name;
 
-        private String displayName;
+        private String title;
 
-        private String displayNameI18nKey;
+        private String titleI18nKey;
 
         private String description;
 
@@ -150,8 +150,8 @@ public abstract class BaseSchema<T extends BaseSchemaName>
         {
             Objects.requireNonNull( schema, "BaseSchema cannot be null" );
             this.name = (SCHEMA_NAME) schema.name;
-            this.displayName = schema.displayName;
-            this.displayNameI18nKey = schema.displayNameI18nKey;
+            this.title = schema.title;
+            this.titleI18nKey = schema.titleI18nKey;
             this.description = schema.description;
             this.descriptionI18nKey = schema.descriptionI18nKey;
             this.createdTime = schema.createdTime;
@@ -172,22 +172,22 @@ public abstract class BaseSchema<T extends BaseSchemaName>
             return getThis();
         }
 
-        public T displayName( String value )
+        public T title( String value )
         {
-            this.displayName = value;
+            this.title = value;
             return getThis();
         }
 
-        public T displayNameI18nKey( String value )
+        public T titleI18nKey( String value )
         {
-            this.displayNameI18nKey = value;
+            this.titleI18nKey = value;
             return getThis();
         }
 
-        public T displayName( LocalizedText text )
+        public T title( LocalizedText text )
         {
-            this.displayName = text.text();
-            this.displayNameI18nKey = text.i18n();
+            this.title = text.text();
+            this.titleI18nKey = text.i18n();
             return getThis();
         }
 

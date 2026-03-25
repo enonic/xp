@@ -23,8 +23,8 @@ public abstract class DescriptorMapper<T extends ComponentDescriptor>
     public void serialize( final MapGenerator gen )
     {
         gen.value( "key", descriptor.getKey() );
-        gen.value( "displayName", descriptor.getDisplayName() );
-        gen.value( "displayNameI18nKey", descriptor.getDisplayNameI18nKey() );
+        gen.value( "title", descriptor.getTitle() );
+        gen.value( "titleI18nKey", descriptor.getTitleI18nKey() );
         gen.value( "description", descriptor.getDescription() );
         gen.value( "descriptionI18nKey", descriptor.getDescriptionI18nKey() );
         gen.value( "componentPath", descriptor.getComponentPath() );

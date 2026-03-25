@@ -10,7 +10,7 @@ var contentType = contentLib.getType('com.enonic.myapp:person');
 // Content type returned:
 var expected = {
     'name': 'com.enonic.myapp:person',
-    'displayName': 'Person',
+    'title': 'Person',
     'description': 'Person content type',
     'superType': 'base:structured',
     'abstract': false,

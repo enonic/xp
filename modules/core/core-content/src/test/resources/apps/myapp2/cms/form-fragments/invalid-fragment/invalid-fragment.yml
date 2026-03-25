@@ -1,4 +1,4 @@
 kind: "FormFragment"
-displayName: "Invalid FormFragment"
+title: "Invalid FormFragment"
 form:
   - include: "myapp1:address"

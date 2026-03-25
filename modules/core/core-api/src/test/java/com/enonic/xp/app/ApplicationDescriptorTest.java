@@ -35,10 +35,7 @@ class ApplicationDescriptorTest
     void null_description()
     {
         final ApplicationKey key = ApplicationKey.from( "app" );
-        final ApplicationDescriptor desc = ApplicationDescriptor.create().
-            key( key ).
-            description( null ).
-            build();
+        final ApplicationDescriptor desc = ApplicationDescriptor.create().key( key ).description( (String) null ).build();
 
         assertNotNull( desc );
         assertSame( key, desc.getKey() );

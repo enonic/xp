@@ -1,4 +1,5 @@
 kind: "Macro"
+title: "Invalid macro"
 form:
   - type: "OptionSet"
     name: "myOptions"

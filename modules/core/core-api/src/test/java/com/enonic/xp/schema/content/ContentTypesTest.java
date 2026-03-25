@@ -38,7 +38,7 @@ class ContentTypesTest
                 setFinal().
                 allowChildContent( true ).
                 setBuiltIn().
-                displayName( "displayName" ).
+                title( "displayName" ).
                 description( "description" ).
                 modifiedTime( Instant.now() ).
                 createdTime( Instant.now() ).

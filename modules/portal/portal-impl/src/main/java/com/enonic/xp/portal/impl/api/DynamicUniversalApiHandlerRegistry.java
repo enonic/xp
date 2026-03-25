@@ -61,9 +61,9 @@ public class DynamicUniversalApiHandlerRegistry
         {
             builder.description( properties.get( "description" ).toString() );
         }
-        if ( properties.get( "displayName" ) != null )
+        if ( properties.get( "title" ) != null )
         {
-            builder.displayName( properties.get( "displayName" ).toString() );
+            builder.title( properties.get( "title" ).toString() );
         }
         if ( properties.get( "documentationUrl" ) != null )
         {

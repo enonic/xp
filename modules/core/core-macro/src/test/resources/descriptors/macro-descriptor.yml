@@ -1,5 +1,5 @@
 kind: "Macro"
-displayName: "Twitter"
+title: "Twitter"
 description: "Insert a single Tweet into your article or website"
 form:
   - type: "TextLine"

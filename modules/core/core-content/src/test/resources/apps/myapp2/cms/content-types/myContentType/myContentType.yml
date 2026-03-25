@@ -3,7 +3,7 @@ superType: "com.enonic.app.myapplication:content"
 abstract: false
 final: true
 allowChildContent: true
-displayName: "All the Base Types"
+title: "All the Base Types"
 description: "description"
 form:
   - type: "ItemSet"

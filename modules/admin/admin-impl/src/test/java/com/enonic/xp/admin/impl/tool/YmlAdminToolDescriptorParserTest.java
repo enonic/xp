@@ -32,7 +32,7 @@ public class YmlAdminToolDescriptorParserTest
         final AdminToolDescriptor descriptor = descriptorBuilder.build();
         assertNotNull( descriptor );
         assertEquals( DescriptorKey.from( myapp, "mytool" ), descriptor.getKey() );
-        assertEquals( "Content Studio", descriptor.getDisplayName() );
+        assertEquals( "Content Studio", descriptor.getTitle() );
         assertEquals( "Manage content and sites", descriptor.getDescription() );
 
         final PrincipalKeys allowedPrincipals = descriptor.getAllowedPrincipals();

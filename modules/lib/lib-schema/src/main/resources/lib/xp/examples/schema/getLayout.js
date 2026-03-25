@@ -17,7 +17,7 @@ log.info('Fetched layout: ' + result.key);
 
 assert.assertJsonEquals({
     key: 'myapp:mylayout',
-    displayName: 'News layout',
+    title: 'News layout',
     description: 'My news layout',
     descriptionI18nKey: 'key.description',
     componentPath: 'myapp:/cms/layouts/mylayout',

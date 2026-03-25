@@ -1,5 +1,5 @@
 kind: "FormFragment"
-displayName: "Address"
+title: "Address"
 form:
 - type: "ItemSet"
   name: "address"

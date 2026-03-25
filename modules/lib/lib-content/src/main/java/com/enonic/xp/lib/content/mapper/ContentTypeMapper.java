@@ -29,7 +29,7 @@ public final class ContentTypeMapper
     public void serialize( final MapGenerator gen )
     {
         gen.value( "name", contentType.getName().toString() );
-        gen.value( "displayName", contentType.getDisplayName() );
+        gen.value( "title", contentType.getTitle() );
         gen.value( "description", contentType.getDescription() );
         gen.value( "superType", contentType.getSuperType() == null ? null : contentType.getSuperType().toString() );
         gen.value( "abstract", contentType.isAbstract() );

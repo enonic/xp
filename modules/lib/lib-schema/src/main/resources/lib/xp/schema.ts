@@ -67,8 +67,8 @@ export type ContentSchemaType = 'CONTENT_TYPE' | 'FORM_FRAGMENT' | 'MIXIN';
 
 export interface Schema {
     name: string;
-    displayName: string;
-    displayNameI18nKey: string;
+    title: string;
+    titleI18nKey: string;
     description: string;
     descriptionI18nKey: string;
     createdTime: string;
@@ -80,13 +80,16 @@ export interface Schema {
     icon?: Icon;
 }
 
+export type ConfigValue = string | number | boolean | ConfigObject | ConfigValue[];
+
+export interface ConfigObject {
+    [key: string]: ConfigValue
+}
+
 export interface ContentTypeSchema
     extends Schema {
     form: FormItem[];
-    config: Record<string, {
-        [attributeKey: string]: string;
-        value: string;
-    }[]>;
+    config: Record<string, ConfigValue>;
     mixinNames?: string[];
 }
 
@@ -144,8 +147,8 @@ interface CreateDynamicComponentHandler {
 
 export interface ComponentDescriptor {
     key: string;
-    displayName: string;
-    displayNameI18nKey: string;
+    title: string;
+    titleI18nKey: string;
     description: string;
     descriptionI18nKey: string;
     componentPath: string;
@@ -153,10 +156,7 @@ export interface ComponentDescriptor {
     resource: string;
     type: ComponentDescriptorType;
     form: FormItem[];
-    config: Record<string, {
-        [attributeKey: string]: string;
-        value: string;
-    }[]>;
+    config: Record<string, ConfigValue>;
 }
 
 export interface LayoutDescriptor

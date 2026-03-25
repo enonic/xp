@@ -7,7 +7,7 @@
       "type": "string",
       "const": "AdminExtension"
     },
-    "displayName": {
+    "title": {
       "$ref": "#/$defs/localizedTextDef"
     },
     "description": {
@@ -30,7 +30,8 @@
     }
   },
   "required": [
-    "kind"
+    "kind",
+    "title"
   ],
   "additionalProperties": false,
   "$defs": {
