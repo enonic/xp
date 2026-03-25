@@ -296,19 +296,19 @@ public class NodeStorageServiceImpl
     }
 
     @Override
-    public NodeBranchEntry getBranchNodeVersion( final NodeId nodeId, final InternalContext context )
+    public NodeBranchEntry getNodeBranchEntry( final NodeId nodeId, final InternalContext context )
     {
         return this.branchService.get( nodeId, context );
     }
 
     @Override
-    public boolean existsBranchNodeVersion( final NodeId nodeId, final InternalContext context )
+    public boolean exists( final NodeId nodeId, final InternalContext context )
     {
         return this.branchService.exists( nodeId, context );
     }
 
     @Override
-    public NodeBranchEntries getBranchNodeVersions( final NodeIds nodeIds, final InternalContext context )
+    public NodeBranchEntries getNodeBranchEntries( final NodeIds nodeIds, final InternalContext context )
     {
         return this.branchService.get( nodeIds, context );
     }
@@ -326,7 +326,7 @@ public class NodeStorageServiceImpl
     }
 
     @Override
-    public NodeBranchEntry getBranchNodeVersion( final NodePath nodePath, final InternalContext context )
+    public NodeBranchEntry getNodeBranchEntry( final NodePath nodePath, final InternalContext context )
     {
         return this.branchService.get( nodePath, context );
     }

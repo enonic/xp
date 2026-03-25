@@ -11,12 +11,13 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;
+import com.enonic.xp.node.BinaryAttachment;
+import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeQuery;
-import com.enonic.xp.node.PatchNodeParams;
-import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeBranchEntries;
 import com.enonic.xp.repo.impl.NodeEvents;
@@ -26,7 +27,6 @@ import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.node.DeleteNodeCommand;
-import com.enonic.xp.repo.impl.node.PatchNodeCommand;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
@@ -64,15 +64,58 @@ public class RepositoryEntryServiceImpl
     }
 
     @Override
-    public void createRepositoryEntry( final RepositoryEntry repository )
+    public RepositoryEntry createRepositoryEntry( final RepositoryEntry repository )
     {
-        final Node node = RepositoryNodeTranslator.toNode( repository );
-        final InternalContext internalContext = createInternalContext();
-        final Node createdNode = nodeStorageService.store( StoreNodeParams.newVersion( node ), internalContext ).node();
+        return storeRepositoryEntry( repository, BinaryAttachments.empty(), true );
+    }
 
+    @Override
+    public RepositoryEntry updateRepositoryEntry( final RepositoryEntry repository, final BinaryAttachments binaryAttachments )
+    {
+        return storeRepositoryEntry( repository, binaryAttachments, false );
+    }
+
+    private RepositoryEntry storeRepositoryEntry( final RepositoryEntry repository, final BinaryAttachments binaryAttachments,
+                                                  final boolean isNew )
+    {
+        final AttachedBinaries.Builder resolvedBinaries = AttachedBinaries.create();
+        for ( AttachedBinary existing : repository.getAttachments() )
+        {
+            resolvedBinaries.add( existing );
+        }
+
+        for ( BinaryAttachment binaryAttachment : binaryAttachments )
+        {
+            resolvedBinaries.add( binaryService.store( SystemConstants.SYSTEM_REPO_ID, binaryAttachment ) );
+        }
+
+        final RepositoryEntry entryWithBinaries = RepositoryEntry.create()
+            .id( repository.getId() )
+            .settings( repository.getSettings() )
+            .data( repository.getData() )
+            .attachments( resolvedBinaries.build() )
+            .transientFlag( repository.isTransient() )
+            .modelVersion( repository.getModelVersion() )
+            .build();
+
+        final Node node = RepositoryNodeTranslator.toNode( entryWithBinaries );
+        final InternalContext internalContext = createInternalContext();
+
+        final Node storedNode = nodeStorageService.store( StoreNodeParams.newVersion( node ), internalContext ).node();
         this.indexServiceInternal.refresh( IndexNameResolver.resolveIndexNames( SystemConstants.SYSTEM_REPO_ID ).toArray( String[]::new ) );
-        this.eventPublisher.publish( NodeEvents.created( createdNode, internalContext ) );
-        this.eventPublisher.publish( RepositoryEvents.created( repository.getId() ) );
+
+        if ( isNew )
+        {
+            this.eventPublisher.publish( NodeEvents.created( storedNode, internalContext ) );
+            this.eventPublisher.publish( RepositoryEvents.created( repository.getId() ) );
+        }
+        else
+        {
+            this.eventPublisher.publish( NodeEvents.updated( storedNode, internalContext ) );
+            this.eventPublisher.publish( RepositoryEvents.updated( repository.getId() ) );
+        }
+
+        return entryWithBinaries;
     }
 
     @Override
@@ -98,18 +141,6 @@ public class RepositoryEntryServiceImpl
     }
 
     @Override
-    public RepositoryEntry updateRepositoryEntry( UpdateRepositoryEntryParams params )
-    {
-        final PatchNodeParams updateNodeParams = PatchNodeParams.create()
-            .id( NodeId.from( params.getRepositoryId() ) )
-            .editor( RepositoryNodeTranslator.toUpdateRepositoryNodeEditor( params ) )
-            .setBinaryAttachments( params.getAttachments() )
-            .refresh( RefreshMode.ALL )
-            .build();
-        return updateRepositoryNode( updateNodeParams );
-    }
-
-    @Override
     public void deleteRepositoryEntry( final RepositoryId repositoryId )
     {
         final NodeBranchEntries deletedNodes = createContext().callWith( () -> DeleteNodeCommand.create()
@@ -131,27 +162,6 @@ public class RepositoryEntryServiceImpl
     public ByteSource getBinary( AttachedBinary attachedBinary )
     {
         return binaryService.get( SystemConstants.SYSTEM_REPO_ID, attachedBinary );
-    }
-
-    private RepositoryEntry updateRepositoryNode( final PatchNodeParams updateNodeParams )
-    {
-        final Node updatedNode = createContext().callWith( () -> PatchNodeCommand.create()
-            .params( updateNodeParams )
-            .binaryService( this.binaryService )
-            .indexServiceInternal( this.indexServiceInternal )
-            .storageService( this.nodeStorageService )
-            .searchService( this.nodeSearchService )
-            .build()
-            .execute()
-            .getResult( ContextAccessor.current().getBranch() ) );
-
-        eventPublisher.publish( NodeEvents.updated( updatedNode, createInternalContext() ) );
-
-        RepositoryEntry repository = RepositoryNodeTranslator.toRepository( updatedNode );
-
-        eventPublisher.publish( RepositoryEvents.updated( repository.getId() ) );
-
-        return repository;
     }
 
     private Context createContext()

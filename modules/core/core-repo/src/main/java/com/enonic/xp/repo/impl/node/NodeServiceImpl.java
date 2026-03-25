@@ -884,7 +884,7 @@ public class NodeServiceImpl
         final InternalContext context =
             InternalContext.create( ContextAccessor.current() ).searchPreference( SearchPreference.PRIMARY ).build();
 
-        final NodeVersionIds nodeVersionIds = nodeStorageService.getBranchNodeVersions( nodeIds, context )
+        final NodeVersionIds nodeVersionIds = nodeStorageService.getNodeBranchEntries( nodeIds, context )
             .stream()
             .map( NodeBranchEntry::getVersionId )
             .collect( NodeVersionIds.collector() );
@@ -948,7 +948,7 @@ public class NodeServiceImpl
         final boolean rootExists;
         try
         {
-            rootExists = this.nodeStorageService.existsBranchNodeVersion( NodeId.ROOT, InternalContext.create( ContextAccessor.current() )
+            rootExists = this.nodeStorageService.exists( NodeId.ROOT, InternalContext.create( ContextAccessor.current() )
                 .repositoryId( repositoryId )
                 .branch( branch )
                 .build() );

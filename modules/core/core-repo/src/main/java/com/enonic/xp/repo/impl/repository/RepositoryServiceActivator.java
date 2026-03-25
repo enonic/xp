@@ -54,8 +54,9 @@ public class RepositoryServiceActivator
                                        branchService );
         SystemRepoInitializer.create()
             .setIndexServiceInternal( indexServiceInternal )
-            .setRepositoryService( repositoryService )
             .setNodeStorageService( nodeStorageService )
+            .setRepositoryEntryService( repositoryEntryService )
+            .setNodeRepositoryService( nodeRepositoryService )
             .build()
             .initialize();
         service = context.registerService( new String[]{RepositoryService.class.getName(), InternalRepositoryService.class.getName()},

@@ -1,6 +1,5 @@
 package com.enonic.xp.issue;
 
-import java.time.Instant;
 
 import com.enonic.xp.security.PrincipalKey;
 

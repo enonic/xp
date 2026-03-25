@@ -19,10 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.branch.Branches;
-import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.internal.Millis;
-import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.dump.DumpService;
 import com.enonic.xp.dump.DumpUpgradeResult;
 import com.enonic.xp.dump.RepoDumpResult;
@@ -36,7 +33,6 @@ import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.RepositoryEvents;
 import com.enonic.xp.repo.impl.SecurityHelper;
 import com.enonic.xp.repo.impl.branch.BranchService;
@@ -57,11 +53,7 @@ import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryIds;
-import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SystemConstants;
-import com.enonic.xp.security.acl.AccessControlEntry;
-import com.enonic.xp.security.acl.AccessControlList;
-import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.server.VersionInfo;
 
 import static com.google.common.base.Strings.nullToEmpty;
@@ -73,42 +65,9 @@ public class DumpServiceImpl
 {
     private static final Logger LOG = LoggerFactory.getLogger( DumpServiceImpl.class );
 
-    private static final Map<RepositoryId, AccessControlList> SYSTEM_REPO_DEFAULTS = Map.of( RepositoryId.from( "system.auditlog" ),
-                                                                                             AccessControlList.create()
-                                                                                                 .add( AccessControlEntry.create()
-                                                                                                           .allowAll()
-                                                                                                           .principal( RoleKeys.ADMIN )
-                                                                                                           .build() )
-                                                                                                 .add( AccessControlEntry.create()
-                                                                                                           .allowAll()
-                                                                                                           .principal( RoleKeys.AUDIT_LOG )
-                                                                                                           .build() )
-                                                                                                 .build(),
-                                                                                             RepositoryId.from( "system.scheduler" ),
-                                                                                             AccessControlList.create()
-                                                                                                 .add( AccessControlEntry.create()
-                                                                                                           .allowAll()
-                                                                                                           .principal( RoleKeys.ADMIN )
-                                                                                                           .build() )
-                                                                                                 .build(),
-                                                                                             RepositoryId.from( "system.app" ),
-                                                                                             AccessControlList.create()
-                                                                                                 .add( AccessControlEntry.create()
-                                                                                                           .allowAll()
-                                                                                                           .principal( RoleKeys.ADMIN )
-                                                                                                           .build() )
-                                                                                                 .add( AccessControlEntry.create()
-                                                                                                           .principal(
-                                                                                                               RoleKeys.SCHEMA_ADMIN )
-                                                                                                           .allow( Permission.READ,
-                                                                                                                   Permission.CREATE,
-                                                                                                                   Permission.MODIFY,
-                                                                                                                   Permission.DELETE )
-                                                                                                           .build() )
-                                                                                                 .build() );
 
     public static final Predicate<RepositoryId> ANY_SYSTEM_REPO_PREDICATE =
-        Predicate.<RepositoryId>isEqual( SystemConstants.SYSTEM_REPO_ID ).or( SYSTEM_REPO_DEFAULTS::containsKey );
+        Predicate.<RepositoryId>isEqual( SystemConstants.SYSTEM_REPO_ID ).or( SystemRepoDefaults.SYSTEM_REPO_DEFAULTS::containsKey );
 
     private final BlobStore blobStore;
 
@@ -356,7 +315,7 @@ public class DumpServiceImpl
         final RepositorySettings currentSystemSettings =
             repositoryEntryService.getRepositoryEntry( SystemConstants.SYSTEM_REPO_ID ).getSettings();
 
-        final Map<RepositoryId, RepositorySettings> repoSettings = SYSTEM_REPO_DEFAULTS.keySet()
+        final Map<RepositoryId, RepositorySettings> repoSettings = SystemRepoDefaults.SYSTEM_REPO_DEFAULTS.keySet()
             .stream()
             .collect( Collectors.toMap( Function.identity(), repo -> repositoryEntryService.getRepositoryEntry( repo ).getSettings() ) );
 
@@ -365,14 +324,18 @@ public class DumpServiceImpl
             .filter( ANY_SYSTEM_REPO_PREDICATE.negate() )
             .forEach( this::doDeleteRepository );
 
-        SYSTEM_REPO_DEFAULTS.keySet().forEach( this::doDeleteRepository );
+        SystemRepoDefaults.SYSTEM_REPO_DEFAULTS.keySet().forEach( this::doDeleteRepository );
 
         // system-repo must be deleted last
         doDeleteRepository( SystemConstants.SYSTEM_REPO_ID );
 
+        final RepositoryCreator repositoryCreator =
+            new RepositoryCreator( nodeRepositoryService, nodeStorageService, repositoryEntryService );
+
         // Load system-repo to be able to read repository settings and data
-        initAndLoad( includeVersions, results, dumpReader, SystemConstants.SYSTEM_REPO_ID, currentSystemSettings, null,
-                     AttachedBinaries.empty() );
+        repositoryCreator.createSystemRepository( currentSystemSettings );
+
+        doLoadRepository( SystemConstants.SYSTEM_REPO_ID, includeVersions, dumpReader, results );
 
         // Transient repositories are not part of the dump. Clean them up.
         final RepositoryIds repositoryEntryIds = repositoryEntryService.findRepositoryEntryIds();
@@ -385,28 +348,32 @@ public class DumpServiceImpl
         }
 
         // Load other system repositories
-        SYSTEM_REPO_DEFAULTS.keySet().forEach( repositoryId -> {
+        SystemRepoDefaults.SYSTEM_REPO_DEFAULTS.keySet().forEach( repositoryId -> {
+            repositoryCreator.createRepository( CreateRepositoryParams.create()
+                                                    .repositoryId( repositoryId )
+                                                    .rootPermissions( SystemRepoDefaults.SYSTEM_REPO_DEFAULTS.get( repositoryId ).acl() )
+                                                    .rootChildOrder(
+                                                        SystemRepoDefaults.SYSTEM_REPO_DEFAULTS.get( repositoryId ).childOrder() )
+                                                    .build(), repoSettings.get( repositoryId ), AttachedBinaries.empty(), true );
             if ( dumpRepositories.contains( repositoryId ) )
             {
                 // Dump contains system.X repository. Do a normal load.
-                initAndLoad( includeVersions, results, dumpReader, repositoryId, repoSettings.get( repositoryId ), new PropertyTree(),
-                             AttachedBinaries.empty() );
+                doLoadRepository( repositoryId, includeVersions, dumpReader, results );
             }
-            else
-            {
-                // If it is an old dump it does not contain system.X repository. It should be recreated with current settings
-                initializeRepo( repositoryId, repoSettings.get( repositoryId ), null, AttachedBinaries.empty() );
-            }
-
         } );
 
         // Load non-system repositories
         dumpRepositories.stream().filter( ANY_SYSTEM_REPO_PREDICATE.negate() ).forEach( repositoryId -> {
             final RepositoryEntry repository = repositoryEntryService.getRepositoryEntry( repositoryId );
-            final RepositorySettings settings = repository.getSettings();
-            final PropertyTree data = repository.getData();
-            final AttachedBinaries attachedBinaries = repository.getAttachments();
-            initAndLoad( includeVersions, results, dumpReader, repositoryId, settings, data, attachedBinaries );
+
+            repositoryCreator.createRepository( CreateRepositoryParams.create()
+                                                    .repositoryId( repositoryId )
+                                                    .rootPermissions( RepositoryConstants.DEFAULT_REPO_PERMISSIONS )
+                                                    .rootChildOrder( RepositoryConstants.DEFAULT_CHILD_ORDER )
+                                                    .data( repository.getData() )
+                                                    .build(), repository.getSettings(), repository.getAttachments(), true );
+
+            doLoadRepository( repositoryId, includeVersions, dumpReader, results );
         } );
 
         this.eventPublisher.publish( RepositoryEvents.restored() );
@@ -441,16 +408,25 @@ public class DumpServiceImpl
             .stream()
             .collect( Collectors.toMap( RepositoryEntry::getId, Function.identity() ) );
 
+        final RepositoryCreator repositoryCreator =
+            new RepositoryCreator( nodeRepositoryService, nodeStorageService, repositoryEntryService );
+
         for ( final RepositoryId repositoryId : reposToLoad )
         {
-            final RepositoryEntry dumpEntry = dumpEntries.get( repositoryId );
+            final RepositoryEntry repository = dumpEntries.get( repositoryId );
 
-            if ( dumpEntry != null )
+            if ( repository != null )
             {
                 doDeleteRepository( repositoryId );
 
-                initAndLoad( includeVersions, results, dumpReader, repositoryId, dumpEntry.getSettings(), dumpEntry.getData(),
-                             dumpEntry.getAttachments() );
+                repositoryCreator.createRepository( CreateRepositoryParams.create()
+                                                        .repositoryId( repositoryId )
+                                                        .rootPermissions( RepositoryConstants.DEFAULT_REPO_PERMISSIONS )
+                                                        .rootChildOrder( RepositoryConstants.DEFAULT_CHILD_ORDER )
+                                                        .data( repository.getData() )
+                                                        .build(), repository.getSettings(), repository.getAttachments(), true );
+
+                doLoadRepository( repositoryId, includeVersions, dumpReader, results );
             }
             else
             {
@@ -467,20 +443,6 @@ public class DumpServiceImpl
         return new DumpUpgraderRunner().upgrade( basePath, params.getDumpName(), null ).getDumpName();
     }
 
-    private void initAndLoad( final boolean includeVersions, final SystemLoadResult.Builder results, final DumpReader dumpReader,
-                              final RepositoryId repository, RepositorySettings settings, PropertyTree data,
-                              AttachedBinaries attachedBinaries )
-    {
-        initializeRepo( repository, settings, data, attachedBinaries );
-        doLoadRepository( repository, includeVersions, dumpReader, results );
-
-        ContextBuilder.from( ContextAccessor.current() )
-            .repositoryId( repository )
-            .branch( RepositoryConstants.MASTER_BRANCH )
-            .build()
-            .runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
-    }
-
     private void doDeleteRepository( final RepositoryId repositoryId )
     {
         LOG.info( "Deleting repository [{}]", repositoryId );
@@ -489,18 +451,6 @@ public class DumpServiceImpl
         this.nodeRepositoryService.delete( repositoryId );
 
         this.nodeStorageService.invalidate();
-    }
-
-    private void initializeRepo( final RepositoryId repositoryId, RepositorySettings settings, PropertyTree data,
-                                 AttachedBinaries attachedBinaries )
-    {
-        new RepositoryCreator( nodeRepositoryService, nodeStorageService, repositoryEntryService ).createRepository(
-            CreateRepositoryParams.create()
-                .repositoryId( repositoryId )
-                .rootPermissions( SYSTEM_REPO_DEFAULTS.getOrDefault( repositoryId, RepositoryConstants.DEFAULT_REPO_PERMISSIONS ) )
-                .rootChildOrder( RepositoryConstants.DEFAULT_CHILD_ORDER )
-                .data( data )
-                .build(), settings, attachedBinaries );
     }
 
     private void doLoadRepository( final RepositoryId repositoryId, final boolean includeVersions, final DumpReader dumpReader,
@@ -516,6 +466,7 @@ public class DumpServiceImpl
                          .repositoryId( repositoryId )
                          .build()
                          .execute() );
+        nodeRepositoryService.refresh( repositoryId );
     }
 
     private Branches resolveBranches( final RepositoryId repositoryId )

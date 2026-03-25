@@ -1,4 +1,4 @@
-package com.enonic.xp.repo.impl.dump.upgrade.v8;
+package com.enonic.xp.repo.impl.dump.upgrade.model8to9;
 
 import org.junit.jupiter.api.Test;
 
@@ -83,9 +83,6 @@ class NodePathTrimUpgraderTest
 
     private static BranchDumpEntryJson createBranchEntry( final String nodePath )
     {
-        return BranchDumpEntryJson.create()
-            .nodeId( "node-1" )
-            .meta( createEntry( nodePath ) )
-            .build();
+        return BranchDumpEntryJson.create().nodeId( "node-1" ).meta( createEntry( nodePath ) ).build();
     }
 }

@@ -55,17 +55,17 @@ public interface NodeStorageService
 
     AccessControlList getNodePermissions( NodeVersionKey nodeVersionKey, InternalContext context );
 
-    NodeBranchEntry getBranchNodeVersion( NodeId nodeId, InternalContext context );
+    NodeBranchEntry getNodeBranchEntry( NodeId nodeId, InternalContext context );
 
-    boolean existsBranchNodeVersion( NodeId nodeId, InternalContext context );
+    NodeBranchEntry getNodeBranchEntry( NodePath nodePath, InternalContext context );
 
-    NodeBranchEntries getBranchNodeVersions( NodeIds nodeIds, InternalContext context );
+    NodeBranchEntries getNodeBranchEntries( NodeIds nodeIds, InternalContext context );
+
+    boolean exists( NodeId nodeId, InternalContext context );
 
     NodeVersion getVersion( NodeVersionId nodeVersionId, InternalContext context );
 
     NodeCommitEntry getCommit( NodeCommitId nodeCommitId, InternalContext context );
-
-    NodeBranchEntry getBranchNodeVersion( NodePath nodePath, InternalContext context );
 
     void invalidate();
 

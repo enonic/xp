@@ -207,8 +207,9 @@ class DynamicSchemaServiceImplTest
             new RepositoryServiceImpl( repositoryEntryService, nodeRepositoryService, storageService, searchService, branchService );
         SystemRepoInitializer.create()
             .setIndexServiceInternal( indexServiceInternal )
-            .setRepositoryService( repositoryService )
             .setNodeStorageService( storageService )
+            .setRepositoryEntryService( repositoryEntryService )
+            .setNodeRepositoryService( nodeRepositoryService )
             .build()
             .initialize();
 
@@ -258,12 +259,7 @@ class DynamicSchemaServiceImplTest
             .initialize();
 
         final VirtualAppService virtualAppService = new VirtualAppService( nodeService );
-        VirtualAppInitializer.create()
-            .setIndexService( indexService )
-            .setRepositoryService( repositoryService )
-            .setSecurityService( securityService )
-            .build()
-            .initialize();
+        VirtualAppInitializer.create().setIndexService( indexService ).setRepositoryService( repositoryService ).build().initialize();
 
         ApplicationService applicationService =
             new ApplicationServiceImpl( applicationRegistry, repoService, eventPublisher, appFilterService, virtualAppService,
@@ -275,8 +271,9 @@ class DynamicSchemaServiceImplTest
         createAdminContext().runWith( () -> applicationService.createVirtualApplication(
             CreateVirtualApplicationParams.create().key( ApplicationKey.from( "my_other_app" ) ).build() ) );
 
-        projectService = new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService, eventPublisher,
-                                                 mock( ProjectConfig.class ) );
+        projectService =
+            new ProjectServiceImpl( repositoryService, repositoryService, indexService, nodeService, securityService, eventPublisher,
+                                    mock( ProjectConfig.class ) );
         projectService.initialize();
 
         createAdminContext().runWith( () -> projectService.create(

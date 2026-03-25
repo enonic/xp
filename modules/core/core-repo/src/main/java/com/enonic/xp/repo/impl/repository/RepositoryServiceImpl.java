@@ -18,6 +18,7 @@ import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;
+import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.project.ProjectConstants;
@@ -41,7 +42,6 @@ import com.enonic.xp.repository.EditableRepository;
 import com.enonic.xp.repository.IndexException;
 import com.enonic.xp.repository.Repositories;
 import com.enonic.xp.repository.Repository;
-import com.enonic.xp.repository.RepositoryAlreadyExistsException;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryExeption;
 import com.enonic.xp.repository.RepositoryId;
@@ -68,6 +68,8 @@ public class RepositoryServiceImpl
 
     private final BranchService branchService;
 
+    private final RepositoryCreator repositoryCreator;
+
     public RepositoryServiceImpl( final RepositoryEntryService repositoryEntryService, final NodeRepositoryService nodeRepositoryService,
                                   final NodeStorageService nodeStorageService, final NodeSearchService nodeSearchService,
                                   final BranchService branchService )
@@ -77,14 +79,23 @@ public class RepositoryServiceImpl
         this.nodeStorageService = nodeStorageService;
         this.nodeSearchService = nodeSearchService;
         this.branchService = branchService;
+        this.repositoryCreator = new RepositoryCreator( nodeRepositoryService, nodeStorageService, repositoryEntryService );
     }
 
     @Override
     public boolean isInitialized( final RepositoryId repositoryId )
     {
         requireAdminRole();
-        return this.nodeRepositoryService.isInitialized( repositoryId ) &&
-            this.repositoryEntryService.getRepositoryEntry( repositoryId ) != null;
+
+        return this.repositoryCreator.isInitialized( repositoryId );
+    }
+
+    @Override
+    public void initializeRepository( final CreateRepositoryParams params )
+    {
+        requireAdminRole();
+
+        repositoryCreator.createRepository( params, RepositorySettings.create().build(), AttachedBinaries.empty(), true );
     }
 
     @Override
@@ -97,17 +108,8 @@ public class RepositoryServiceImpl
 
     private Repository doCreateRepo( final CreateRepositoryParams params )
     {
-        final RepositoryId repositoryId = params.getRepositoryId();
-        final boolean repoAlreadyInitialized = this.nodeRepositoryService.isInitialized( repositoryId );
-
-        if ( repoAlreadyInitialized )
-        {
-            throw new RepositoryAlreadyExistsException( repositoryId );
-        }
-
         final RepositoryEntry entry =
-            new RepositoryCreator( this.nodeRepositoryService, this.nodeStorageService, this.repositoryEntryService ).createRepository(
-                params, RepositorySettings.create().build(), AttachedBinaries.empty() );
+            repositoryCreator.createRepository( params, RepositorySettings.create().build(), AttachedBinaries.empty(), false );
 
         return asRepository( entry, Branches.from( RepositoryConstants.MASTER_BRANCH ) );
     }
@@ -130,14 +132,16 @@ public class RepositoryServiceImpl
 
         updateRepositoryParams.getEditor().accept( editableRepository );
 
-        UpdateRepositoryEntryParams params = UpdateRepositoryEntryParams.create()
-            .repositoryId( repositoryId )
-            .repositoryData( editableRepository.data )
-            .attachments( editableRepository.binaryAttachments )
+        final RepositoryEntry entryToUpdate = RepositoryEntry.create( entry )
+            .id( repositoryId )
+            .data( editableRepository.data )
             .transientFlag( editableRepository.transientFlag )
             .build();
 
-        final RepositoryEntry updatedEntry = repositoryEntryService.updateRepositoryEntry( params );
+        final BinaryAttachments.Builder binaryAttachments = BinaryAttachments.create();
+        editableRepository.binaryAttachments.forEach( binaryAttachments::add );
+
+        final RepositoryEntry updatedEntry = repositoryEntryService.updateRepositoryEntry( entryToUpdate, binaryAttachments.build() );
         return asRepository( updatedEntry, branches );
     }
 
@@ -166,11 +170,10 @@ public class RepositoryServiceImpl
             throw new BranchAlreadyExistsException( newBranch );
         }
 
-        final NodeBranchEntry masterRootNode = this.nodeStorageService.getBranchNodeVersion( NodeId.ROOT,
-                                                                                             InternalContext.create( newBranchContext )
-                                                                                                 .branch(
-                                                                                                     RepositoryConstants.MASTER_BRANCH )
-                                                                                                 .build() );
+        final NodeBranchEntry masterRootNode = this.nodeStorageService.getNodeBranchEntry( NodeId.ROOT,
+                                                                                           InternalContext.create( newBranchContext )
+                                                                                               .branch( RepositoryConstants.MASTER_BRANCH )
+                                                                                               .build() );
 
         if ( masterRootNode == null )
         {
@@ -303,22 +306,6 @@ public class RepositoryServiceImpl
     {
         repositoryMap.remove( repositoryId );
         nodeStorageService.invalidate();
-    }
-
-    @Override
-    public void recreateMissing()
-    {
-        for ( RepositoryId repositoryId : repositoryEntryService.findRepositoryEntryIds() )
-        {
-            if ( !this.nodeRepositoryService.isInitialized( repositoryId ) )
-            {
-                final CreateRepositoryIndexParams createRepositoryParams = CreateRepositoryIndexParams.create()
-                    .repositorySettings( repositoryEntryService.getRepositoryEntry( repositoryId ).getSettings() )
-                    .repositoryId( repositoryId )
-                    .build();
-                this.nodeRepositoryService.create( createRepositoryParams );
-            }
-        }
     }
 
     @Override

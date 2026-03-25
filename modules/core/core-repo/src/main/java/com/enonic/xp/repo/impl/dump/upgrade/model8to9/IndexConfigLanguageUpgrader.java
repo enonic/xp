@@ -1,4 +1,4 @@
-package com.enonic.xp.repo.impl.dump.upgrade.v8;
+package com.enonic.xp.repo.impl.dump.upgrade.model8to9;
 
 import java.util.ArrayList;
 import java.util.List;

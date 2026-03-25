@@ -8,13 +8,13 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeEditor;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repo.impl.index.IndexMapping;
 import com.enonic.xp.repo.impl.index.IndexSettings;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.SystemConstants;
+import com.enonic.xp.util.Version;
 
 public class RepositoryNodeTranslator
 {
@@ -28,6 +28,8 @@ public class RepositoryNodeTranslator
 
     private static final String TRANSIENT_KEY = "transient";
 
+    private static final String MODEL_VERSION_KEY = "modelVersion";
+
     public static Node toNode( final RepositoryEntry repository )
     {
         final PropertyTree repositoryNodeData = new PropertyTree();
@@ -37,6 +39,10 @@ public class RepositoryNodeTranslator
         if ( !SystemConstants.SYSTEM_REPO_ID.equals( repository.getId() ) && repository.isTransient() )
         {
             repositoryNodeData.setBoolean( TRANSIENT_KEY, true );
+        }
+        if ( repository.getModelVersion() != null )
+        {
+            repositoryNodeData.setString( MODEL_VERSION_KEY, repository.getModelVersion().toString() );
         }
 
         return Node.create()
@@ -50,29 +56,14 @@ public class RepositoryNodeTranslator
             .build();
     }
 
-    public static NodeEditor toUpdateRepositoryNodeEditor( UpdateRepositoryEntryParams params )
-    {
-        return toBeEdited -> {
-            if ( !SystemConstants.SYSTEM_REPO_ID.equals( params.getRepositoryId() ) )
-            {
-                if ( params.isTransient() )
-                {
-                    toBeEdited.data.setBoolean( TRANSIENT_KEY, true );
-                }
-                else
-                {
-                    toBeEdited.data.removeProperty( TRANSIENT_KEY );
-                }
-            }
-            toBeEdited.data.setSet( DATA_KEY, params.getRepositoryData().getRoot().copy( toBeEdited.data ) );
-        };
-    }
-
     public static RepositoryEntry toRepository( final Node node )
     {
         final PropertyTree nodeData = node.data();
 
         final PropertyTree repositoryData = toRepositoryData( nodeData );
+
+        final Version modelVersion =
+            Optional.ofNullable( nodeData.getString( MODEL_VERSION_KEY ) ).map( Version::parseVersion ).orElse( null );
 
         return RepositoryEntry.create()
             .id( RepositoryId.from( node.id().toString() ) )
@@ -80,6 +71,7 @@ public class RepositoryNodeTranslator
             .data( repositoryData )
             .attachments( node.getAttachedBinaries() )
             .transientFlag( Objects.requireNonNullElse( nodeData.getBoolean( TRANSIENT_KEY ), false ) )
+            .modelVersion( modelVersion )
             .build();
     }
 

@@ -14,7 +14,7 @@ import com.enonic.xp.repo.impl.dump.RepoDumpException;
 import com.enonic.xp.repo.impl.dump.RepoLoadException;
 import com.enonic.xp.repo.impl.dump.reader.DumpReaderV7;
 import com.enonic.xp.repo.impl.dump.reader.ZipDumpReaderV7;
-import com.enonic.xp.repo.impl.dump.upgrade.v8.DumpUpgrader7to8;
+import com.enonic.xp.repo.impl.dump.upgrade.model8to9.DumpUpgrader8to9;
 import com.enonic.xp.repo.impl.dump.writer.DumpWriter;
 import com.enonic.xp.repo.impl.dump.writer.ZipDumpWriterV8;
 import com.enonic.xp.upgrade.UpgradeListener;
@@ -43,7 +43,7 @@ public class DumpUpgraderRunner
                         "]" );
             }
 
-            DumpUpgrader dumpUpgrader = new DumpUpgrader7to8( dumpReader );
+            DumpUpgrader dumpUpgrader = new DumpUpgrader8to9( dumpReader );
 
             if ( upgradeListener != null )
             {

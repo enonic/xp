@@ -1,4 +1,4 @@
-package com.enonic.xp.repo.impl.dump.upgrade.v8;
+package com.enonic.xp.repo.impl.dump.upgrade.model8to9;
 
 import java.io.IOException;
 import java.time.Instant;
@@ -48,10 +48,12 @@ import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.server.VersionInfo;
 import com.enonic.xp.util.Version;
 
-public class DumpUpgrader7to8
+public class DumpUpgrader8to9
     implements DumpUpgrader
 {
-    private static final Logger LOG = LoggerFactory.getLogger( DumpUpgrader7to8.class );
+    private static final Logger LOG = LoggerFactory.getLogger( DumpUpgrader8to9.class );
+
+    public static final Version MODEL_VERSION = new Version( 9, 0, 0 );
 
     private final DumpReaderV7 dumpReader;
 
@@ -61,7 +63,7 @@ public class DumpUpgrader7to8
 
     private final Map<String, String> blobKeyMapping = new HashMap<>();
 
-    public DumpUpgrader7to8( final DumpReaderV7 dumpReader )
+    public DumpUpgrader8to9( final DumpReaderV7 dumpReader )
     {
         this.dumpReader = dumpReader;
     }
@@ -423,8 +425,8 @@ public class DumpUpgrader7to8
         for ( NodeVersionUpgrader upgrader : List.of( new ContentUpgrader(), new AuditLogMillisUpgrader(), new SchedulerUpgrader(),
                                                       new ReferenceLowercaseUpgrader(), new DefaultProjectPermissionsUpgrader(),
                                                       new LanguageTagUpgrader(), new IndexConfigLanguageUpgrader(),
-                                                      new AttachmentSha512Upgrader( dumpReader ),
-                                                      new RepositoryBranchesRemovalUpgrader() ) )
+                                                      new AttachmentSha512Upgrader( dumpReader ), new RepositoryBranchesRemovalUpgrader(),
+                                                      new RepositoryModelVersionUpgrader() ) )
         {
             final NodeStoreVersion upgraded = upgrader.upgradeNodeVersion( repositoryId, dumpEntry );
             if ( upgraded != null )
@@ -438,7 +440,7 @@ public class DumpUpgrader7to8
     @Override
     public Version getModelVersion()
     {
-        return Version.parseVersion( "9" );
+        return MODEL_VERSION;
     }
 
     public void processEntries( final BiConsumer<byte[], String> processor, final PathRef tarFile )

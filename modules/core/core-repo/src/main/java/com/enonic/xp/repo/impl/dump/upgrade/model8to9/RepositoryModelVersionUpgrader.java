@@ -1,14 +1,15 @@
-package com.enonic.xp.repo.impl.dump.upgrade.v8;
+package com.enonic.xp.repo.impl.dump.upgrade.model8to9;
 
+import com.enonic.xp.repo.impl.Model;
 import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.repo.impl.dump.upgrade.NodeVersionUpgrader;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.SystemConstants;
 
-public class RepositoryBranchesRemovalUpgrader
+public class RepositoryModelVersionUpgrader
     implements NodeVersionUpgrader
 {
-    private static final String BRANCHES_KEY = "branches";
+    private static final String MODEL_VERSION_KEY = "modelVersion";
 
     @Override
     public NodeStoreVersion upgradeNodeVersion( final RepositoryId repositoryId, final NodeStoreVersion nodeVersion )
@@ -18,12 +19,12 @@ public class RepositoryBranchesRemovalUpgrader
             return null;
         }
 
-        if ( !nodeVersion.data().hasProperty( BRANCHES_KEY ) )
+        if ( nodeVersion.data().hasProperty( "data" ) )
         {
-            return null;
+            nodeVersion.data().setString( MODEL_VERSION_KEY, Model.MODEL_VERSION.toString() );
+            return nodeVersion;
         }
 
-        nodeVersion.data().removeProperties( BRANCHES_KEY );
-        return nodeVersion;
+        return null;
     }
 }

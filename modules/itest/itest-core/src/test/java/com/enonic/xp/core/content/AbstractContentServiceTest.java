@@ -265,8 +265,9 @@ public abstract class AbstractContentServiceTest
             new RepositoryServiceImpl( repositoryEntryService, nodeRepositoryService, storageService, searchService, branchService );
         SystemRepoInitializer.create()
             .setIndexServiceInternal( indexServiceInternal )
-            .setRepositoryService( repositoryService )
             .setNodeStorageService( storageService )
+            .setNodeRepositoryService( nodeRepositoryService )
+            .setRepositoryEntryService( repositoryEntryService )
             .build()
             .initialize();
 
@@ -299,7 +300,7 @@ public abstract class AbstractContentServiceTest
         LayoutDescriptorService layoutDescriptorService = mock( LayoutDescriptorService.class );
         auditLogService = mock( AuditLogService.class );
 
-        contentAuditLogFilterService = mock( ContentAuditLogFilterService.class, invocation -> true );
+        contentAuditLogFilterService = mock( ContentAuditLogFilterService.class, _ -> true );
 
         final ContentConfig contentConfig = mock( ContentConfig.class );
         when( contentConfig.auditlog_enabled() ).thenReturn( Boolean.TRUE );
@@ -328,7 +329,8 @@ public abstract class AbstractContentServiceTest
             .initialize();
 
         projectService =
-            new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService, eventPublisher, projectConfig );
+            new ProjectServiceImpl( repositoryService, repositoryService, indexService, nodeService, securityService, eventPublisher,
+                                    projectConfig );
         projectService.initialize();
 
         projectService.create( CreateProjectParams.create().name( testprojectName ).displayName( "test" ).build() );

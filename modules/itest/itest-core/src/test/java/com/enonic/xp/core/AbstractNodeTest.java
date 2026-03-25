@@ -85,7 +85,6 @@ import com.enonic.xp.scheduler.SchedulerConstants;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -275,8 +274,9 @@ public abstract class AbstractNodeTest
     {
         SystemRepoInitializer.create()
             .setIndexServiceInternal( indexServiceInternal )
-            .setRepositoryService( repositoryService )
             .setNodeStorageService( storageService )
+            .setRepositoryEntryService( repositoryEntryService )
+            .setNodeRepositoryService( nodeRepositoryService )
             .build()
             .initialize();
 
@@ -284,12 +284,7 @@ public abstract class AbstractNodeTest
 
         SchedulerRepoInitializer.create().setIndexService( indexService ).setRepositoryService( repositoryService ).build().initialize();
 
-        VirtualAppInitializer.create()
-            .setIndexService( indexService )
-            .setRepositoryService( repositoryService )
-            .setSecurityService( mock( SecurityService.class ) )
-            .build()
-            .initialize();
+        VirtualAppInitializer.create().setIndexService( indexService ).setRepositoryService( repositoryService ).build().initialize();
     }
 
     private void createTestRepository()

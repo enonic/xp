@@ -71,6 +71,7 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryNotFoundException;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.repository.UpdateRepositoryParams;
+import com.enonic.xp.repository.internal.InternalRepositoryService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -86,6 +87,8 @@ public class ProjectServiceImpl
 
     private final RepositoryService repositoryService;
 
+    private final InternalRepositoryService internalRepositoryService;
+
     private final IndexService indexService;
 
     private final NodeService nodeService;
@@ -96,10 +99,12 @@ public class ProjectServiceImpl
 
     private final ProjectConfig config;
 
-    public ProjectServiceImpl( final RepositoryService repositoryService, final IndexService indexService, final NodeService nodeService,
-                               final SecurityService securityService, final EventPublisher eventPublisher, final ProjectConfig config )
+    public ProjectServiceImpl( final RepositoryService repositoryService, final InternalRepositoryService internalRepositoryService,
+                               final IndexService indexService, final NodeService nodeService, final SecurityService securityService,
+                               final EventPublisher eventPublisher, final ProjectConfig config )
     {
         this.repositoryService = repositoryService;
+        this.internalRepositoryService = internalRepositoryService;
         this.indexService = indexService;
         this.nodeService = nodeService;
         this.securityService = securityService;
@@ -177,6 +182,7 @@ public class ProjectServiceImpl
         ContentRepoInitializer.create()
             .setIndexService( indexService )
             .repositoryService( repositoryService )
+            .internalRepositoryService( internalRepositoryService )
             .repositoryId( params.getName().getRepoId() )
             .repositoryData( createProjectData( params ) )
             .forceInitialization( params.isForceInitialization() )
@@ -236,7 +242,7 @@ public class ProjectServiceImpl
     public Project create( CreateProjectParams params )
     {
         return callWithCreateContext( () -> {
-            if ( repositoryService.isInitialized( params.getName().getRepoId() ) )
+            if ( repositoryService.get( params.getName().getRepoId() ) != null )
             {
                 throw new ProjectAlreadyExistsException( params.getName() );
             }

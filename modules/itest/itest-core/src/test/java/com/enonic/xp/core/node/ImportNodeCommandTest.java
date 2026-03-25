@@ -17,7 +17,7 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repo.impl.node.CompareNodeCommand;
 import com.enonic.xp.repo.impl.node.ImportNodeCommand;
-import com.enonic.xp.repo.impl.repository.CreateRepositoryIndexParams;
+import com.enonic.xp.repo.impl.repository.RepositorySettings;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
@@ -108,7 +108,7 @@ class ImportNodeCommandTest
             .permissions( aclList )
             .build();
 
-        this.nodeRepositoryService.create( CreateRepositoryIndexParams.create().repositoryId( RepositoryId.from( "test" ) ).build() );
+        this.nodeRepositoryService.create( RepositoryId.from( "test" ), RepositorySettings.create().build() );
 
         final ImportNodeResult importNodeResult = ContextBuilder.from( ContextAccessor.current() )
             .repositoryId( "test" )

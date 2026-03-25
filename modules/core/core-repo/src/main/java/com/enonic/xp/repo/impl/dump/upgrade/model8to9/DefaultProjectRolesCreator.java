@@ -1,4 +1,4 @@
-package com.enonic.xp.repo.impl.dump.upgrade.v8;
+package com.enonic.xp.repo.impl.dump.upgrade.model8to9;
 
 import java.util.List;
 import java.util.Set;
@@ -16,12 +16,9 @@ class DefaultProjectRolesCreator
 
     private static final String DISPLAY_NAME = "Default";
 
-    private static final List<RoleDefinition> ROLES = List.of(
-        new RoleDefinition( "owner", "Owner" ),
-        new RoleDefinition( "editor", "Editor" ),
-        new RoleDefinition( "author", "Author" ),
-        new RoleDefinition( "contributor", "Contributor" ),
-        new RoleDefinition( "viewer", "Viewer" ) );
+    private static final List<RoleDefinition> ROLES =
+        List.of( new RoleDefinition( "owner", "Owner" ), new RoleDefinition( "editor", "Editor" ), new RoleDefinition( "author", "Author" ),
+                 new RoleDefinition( "contributor", "Contributor" ), new RoleDefinition( "viewer", "Viewer" ) );
 
     List<NewDumpNode> createRoleNodes()
     {
@@ -38,11 +35,8 @@ class DefaultProjectRolesCreator
         data.setString( "displayName", DISPLAY_NAME + " - " + role.displayName );
         data.setString( "principalType", "ROLE" );
 
-        final NodeStoreVersion nodeVersion = NodeStoreVersion.create()
-            .id( NodeId.from( nodeId ) )
-            .childOrder( ChildOrder.defaultOrder() )
-            .data( data )
-            .build();
+        final NodeStoreVersion nodeVersion =
+            NodeStoreVersion.create().id( NodeId.from( nodeId ) ).childOrder( ChildOrder.defaultOrder() ).data( data ).build();
 
         return new NewDumpNode( nodeId, nodePath, nodeVersion, Set.of( SystemConstants.BRANCH_SYSTEM ) );
     }

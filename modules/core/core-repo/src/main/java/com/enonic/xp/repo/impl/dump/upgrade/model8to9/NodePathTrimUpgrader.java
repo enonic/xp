@@ -1,4 +1,4 @@
-package com.enonic.xp.repo.impl.dump.upgrade.v8;
+package com.enonic.xp.repo.impl.dump.upgrade.model8to9;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

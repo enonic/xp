@@ -12,12 +12,15 @@ import com.enonic.xp.index.IndexService;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.repository.RepositoryService;
+import com.enonic.xp.repository.internal.InternalRepositoryService;
 import com.enonic.xp.security.SecurityService;
 
 @Component(immediate = true, configurationPid = "com.enonic.xp.project")
 public class ProjectServiceActivator
 {
     private final RepositoryService repositoryService;
+
+    private final InternalRepositoryService internalRepositoryService;
 
     private final IndexService indexService;
 
@@ -32,11 +35,14 @@ public class ProjectServiceActivator
     private final ProjectConfig config;
 
     @Activate
-    public ProjectServiceActivator( @Reference final RepositoryService repositoryService, @Reference final IndexService indexService,
-                                    @Reference final NodeService nodeService, @Reference final SecurityService securityService,
-                                    @Reference final EventPublisher eventPublisher, final ProjectConfig config )
+    public ProjectServiceActivator( @Reference final RepositoryService repositoryService,
+                                    @Reference final InternalRepositoryService internalRepositoryService,
+                                    @Reference final IndexService indexService, @Reference final NodeService nodeService,
+                                    @Reference final SecurityService securityService, @Reference final EventPublisher eventPublisher,
+                                    final ProjectConfig config )
     {
         this.repositoryService = repositoryService;
+        this.internalRepositoryService = internalRepositoryService;
         this.indexService = indexService;
         this.nodeService = nodeService;
         this.securityService = securityService;
@@ -48,7 +54,7 @@ public class ProjectServiceActivator
     public void activate( final BundleContext context )
     {
         final ProjectServiceImpl projectService =
-            new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService,
+            new ProjectServiceImpl( repositoryService, internalRepositoryService, indexService, nodeService, securityService,
                                     eventPublisher, config );
         projectService.initialize();
         service = context.registerService( ProjectService.class, projectService, null );

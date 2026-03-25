@@ -5,6 +5,7 @@ import java.util.Objects;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.util.Version;
 
 public final class RepositoryEntry
 {
@@ -18,6 +19,8 @@ public final class RepositoryEntry
 
     private final boolean transientFlag;
 
+    private final Version modelVersion;
+
     private RepositoryEntry( RepositoryEntry.Builder builder )
     {
         this.id = builder.id;
@@ -25,6 +28,7 @@ public final class RepositoryEntry
         this.data = Objects.requireNonNullElseGet( builder.data, PropertyTree::new );
         this.attachments = Objects.requireNonNullElseGet( builder.attachments, AttachedBinaries::empty );
         this.transientFlag = builder.transientFlag;
+        this.modelVersion = builder.modelVersion;
     }
 
     public RepositoryId getId()
@@ -52,9 +56,19 @@ public final class RepositoryEntry
         return transientFlag;
     }
 
+    public Version getModelVersion()
+    {
+        return modelVersion;
+    }
+
     public static RepositoryEntry.Builder create()
     {
         return new RepositoryEntry.Builder();
+    }
+
+    public static RepositoryEntry.Builder create( final RepositoryEntry source )
+    {
+        return new RepositoryEntry.Builder( source );
     }
 
     public static final class Builder
@@ -69,8 +83,20 @@ public final class RepositoryEntry
 
         private boolean transientFlag;
 
+        private Version modelVersion;
+
         private Builder()
         {
+        }
+
+        private Builder( final RepositoryEntry source )
+        {
+            this.id = source.id;
+            this.settings = source.settings;
+            this.data = source.data;
+            this.attachments = source.attachments;
+            this.transientFlag = source.transientFlag;
+            this.modelVersion = source.modelVersion;
         }
 
         public RepositoryEntry.Builder id( final RepositoryId id )
@@ -100,6 +126,12 @@ public final class RepositoryEntry
         public RepositoryEntry.Builder attachments( final AttachedBinaries attachments )
         {
             this.attachments = attachments;
+            return this;
+        }
+
+        public RepositoryEntry.Builder modelVersion( final Version modelVersion )
+        {
+            this.modelVersion = modelVersion;
             return this;
         }
 

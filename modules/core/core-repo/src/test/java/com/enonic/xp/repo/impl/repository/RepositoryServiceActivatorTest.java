@@ -9,8 +9,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 
-import com.enonic.xp.branch.Branch;
-import com.enonic.xp.branch.Branches;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
@@ -25,7 +23,6 @@ import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.repository.internal.InternalRepositoryService;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -33,6 +30,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
+@org.mockito.junit.jupiter.MockitoSettings(strictness = org.mockito.quality.Strictness.LENIENT)
 class RepositoryServiceActivatorTest
 {
     @Mock
@@ -64,10 +62,20 @@ class RepositoryServiceActivatorTest
     {
         when( indexServiceInternal.isMaster() ).thenReturn( true );
         when( indexServiceInternal.waitForYellowStatus() ).thenReturn( true );
+        when( nodeRepositoryService.isInitialized( any() ) ).thenReturn( true );
 
-        final Node mockNode = Node.create().id( NodeId.from( "1" ) ).parentPath( NodePath.ROOT ).build();
+        final com.enonic.xp.data.PropertyTree data = new com.enonic.xp.data.PropertyTree();
+        data.addString( "version", "8.0.0.pre1" );
+        final Node mockNode = Node.create().id( NodeId.from( "1" ) ).parentPath( NodePath.ROOT ).data( data ).build();
         when( nodeStorageService.store( any(), any() ) ).thenReturn( new NodeVersionData( mockNode, mock( NodeVersion.class ) ) );
+        when( nodeStorageService.get( any( NodePath.class ), any() ) ).thenReturn( mockNode );
         when( repositoryEntryService.findRepositoryEntryIds() ).thenReturn( RepositoryIds.create().build() );
+        when( repositoryEntryService.getRepositoryEntry( any() ) ).thenReturn( RepositoryEntry.create()
+                                                                                   .id(
+                                                                                       com.enonic.xp.security.SystemConstants.SYSTEM_REPO_ID )
+                                                                                   .modelVersion(
+                                                                                       com.enonic.xp.repo.impl.Model.MODEL_VERSION )
+                                                                                   .build() );
     }
 
     @Test

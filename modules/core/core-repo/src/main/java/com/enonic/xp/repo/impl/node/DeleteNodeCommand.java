@@ -51,7 +51,7 @@ public class DeleteNodeCommand
         super( builder );
         this.nodeId = builder.nodeId;
         this.nodePath = builder.nodePath;
-        this.deleteNodeListener = Objects.requireNonNullElse( builder.deleteNodeListener, count -> {
+        this.deleteNodeListener = Objects.requireNonNullElse( builder.deleteNodeListener, _ -> {
         } );
         this.refresh = builder.refresh;
     }
@@ -68,8 +68,8 @@ public class DeleteNodeCommand
         final AuthenticationInfo authInfo = context.getAuthInfo();
 
         final NodeBranchEntry node = nodeId != null
-            ? this.nodeStorageService.getBranchNodeVersion( nodeId, internalContext )
-            : this.nodeStorageService.getBranchNodeVersion( nodePath, internalContext );
+            ? this.nodeStorageService.getNodeBranchEntry( nodeId, internalContext )
+            : this.nodeStorageService.getNodeBranchEntry( nodePath, internalContext );
 
         if ( node == null )
         {

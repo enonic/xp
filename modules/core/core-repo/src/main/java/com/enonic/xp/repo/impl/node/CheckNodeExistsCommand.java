@@ -42,7 +42,7 @@ public class CheckNodeExistsCommand
             .searchPreference( Mode.ACCURACY.equals( mode ) ? SearchPreference.PRIMARY : SearchPreference.LOCAL )
             .build();
 
-        final NodeBranchEntry found = nodeStorageService.getBranchNodeVersion( nodePath, context );
+        final NodeBranchEntry found = nodeStorageService.getNodeBranchEntry( nodePath, context );
 
         if ( found != null && throwIfExists )
         {

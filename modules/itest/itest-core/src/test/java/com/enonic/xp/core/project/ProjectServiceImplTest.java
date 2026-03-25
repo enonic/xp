@@ -200,7 +200,8 @@ class ProjectServiceImplTest
                 .initialize();
 
             projectService =
-                new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService, eventPublisher, projectConfig );
+                new ProjectServiceImpl( repositoryService, repositoryService, indexService, nodeService, securityService, eventPublisher,
+                                        projectConfig );
 
             projectService.initialize();
         } );

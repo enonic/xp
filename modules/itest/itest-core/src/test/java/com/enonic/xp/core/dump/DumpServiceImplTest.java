@@ -12,7 +12,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.branch.Branch;
@@ -38,6 +37,7 @@ import com.enonic.xp.node.ApplyVersionAttributesParams;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.BinaryAttachment;
+import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.GetActiveNodeVersionsParams;
@@ -64,7 +64,6 @@ import com.enonic.xp.repo.impl.node.NodeHelper;
 import com.enonic.xp.repo.impl.repository.RepositoryCreator;
 import com.enonic.xp.repo.impl.repository.RepositoryEntry;
 import com.enonic.xp.repo.impl.repository.RepositorySettings;
-import com.enonic.xp.repo.impl.repository.UpdateRepositoryEntryParams;
 import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.Repositories;
 import com.enonic.xp.repository.Repository;
@@ -105,8 +104,8 @@ class DumpServiceImplTest
         final RepoConfigurationDynamic repoConfiguration = new RepoConfigurationDynamic();
         repoConfiguration.activate( Map.of( "dumps.dir", temporaryFolder.toString() ) );
         this.dumpService =
-            new DumpServiceImpl( eventPublisher, BLOB_STORE, this.nodeService, this.repositoryEntryService,
-                                 this.nodeRepositoryService, this.storageService, this.branchService, repoConfiguration );
+            new DumpServiceImpl( eventPublisher, BLOB_STORE, this.nodeService, this.repositoryEntryService, this.nodeRepositoryService,
+                                 this.storageService, this.branchService, repoConfiguration );
     }
 
     @Test
@@ -247,17 +246,23 @@ class DumpServiceImplTest
         NodeHelper.runAsAdmin( () -> {
             final RepositoryEntry newRepo = NodeHelper.runAsAdmin( () -> doCreateRepository( RepositoryId.from( "new-repo" ), false ) );
 
-            final PropertyTree data = new PropertyTree();
+            final PropertyTree data = newRepo.getData().copy();
             data.addBinaryReference( "attachmentName", BinaryReference.from( "image.png" ) );
 
-            final UpdateRepositoryEntryParams updateParams = UpdateRepositoryEntryParams.create()
-                .repositoryId( newRepo.getId() )
-                .repositoryData( data )
-                .attachments( ImmutableList.of(
-                    new BinaryAttachment( BinaryReference.from( "image.png" ), ByteSource.wrap( "attachmentName".getBytes() ) ) ) )
+            final RepositoryEntry updatedEntry = RepositoryEntry.create()
+                .id( newRepo.getId() )
+                .settings( newRepo.getSettings() )
+                .data( data )
+                .attachments( newRepo.getAttachments() )
+                .transientFlag( newRepo.isTransient() )
+                .modelVersion( newRepo.getModelVersion() )
                 .build();
 
-            repositoryEntryService.updateRepositoryEntry( updateParams );
+            final BinaryAttachments binaryAttachments = BinaryAttachments.create()
+                .add( new BinaryAttachment( BinaryReference.from( "image.png" ), ByteSource.wrap( "attachmentName".getBytes() ) ) )
+                .build();
+
+            repositoryEntryService.updateRepositoryEntry( updatedEntry, binaryAttachments );
         } );
 
         NodeHelper.runAsAdmin( () -> this.dumpService.dump( SystemDumpParams.create().dumpName( "testDump" ).build() ) );
@@ -803,7 +808,7 @@ class DumpServiceImplTest
                 .repositoryId( repositoryId )
                 .transientFlag( transientFlag )
                 .rootPermissions( permissions )
-                .build(), RepositorySettings.create().build(), AttachedBinaries.empty() );
+                .build(), RepositorySettings.create().build(), AttachedBinaries.empty(), false );
     }
 
     private void doDeleteRepository( final RepositoryId repositoryId )

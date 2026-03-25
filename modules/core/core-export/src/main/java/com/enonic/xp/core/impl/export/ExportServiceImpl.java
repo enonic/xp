@@ -8,8 +8,6 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.branch.Branch;
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.export.reader.ZipVirtualFile;
 import com.enonic.xp.core.impl.export.writer.ExportWriter;
 import com.enonic.xp.core.impl.export.writer.ZipExportWriter;
@@ -19,14 +17,10 @@ import com.enonic.xp.export.ImportNodesParams;
 import com.enonic.xp.export.NodeExportResult;
 import com.enonic.xp.export.NodeImportResult;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.repository.internal.InternalRepositoryService;
-import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.server.VersionInfo;
 import com.enonic.xp.vfs.VirtualFile;
 
 @Component(immediate = true)
-@SuppressWarnings("UnusedDeclaration")
 public class ExportServiceImpl
     implements ExportService
 {
@@ -36,16 +30,12 @@ public class ExportServiceImpl
 
     private final ExportConfigurationDynamic exportConfiguration;
 
-    private final InternalRepositoryService repositoryService;
-
     @Activate
-    public ExportServiceImpl( @Reference final ExportConfigurationDynamic exportConfiguration, @Reference final NodeService nodeService,
-                              @Reference final InternalRepositoryService repositoryService )
+    public ExportServiceImpl( @Reference final ExportConfigurationDynamic exportConfiguration, @Reference final NodeService nodeService )
     {
         this.xpVersion = VersionInfo.get().getVersion();
         this.nodeService = nodeService;
         this.exportConfiguration = exportConfiguration;
-        this.repositoryService = repositoryService;
     }
 
     @Override
@@ -55,9 +45,11 @@ public class ExportServiceImpl
 
         final ExportWriter exportWriter = ZipExportWriter.create( exportConfiguration.getExportsDir(), params.getExportName() );
 
-        try ( exportWriter )
+        try (exportWriter)
         {
-            return NodeExporter.create().sourceNodePath( params.getSourceNodePath() ).batchSize( params.getBatchSize() )
+            return NodeExporter.create()
+                .sourceNodePath( params.getSourceNodePath() )
+                .batchSize( params.getBatchSize() )
                 .nodeService( this.nodeService )
                 .nodeExportWriter( exportWriter )
                 .targetDirectory( targetDirectory )
@@ -90,26 +82,16 @@ public class ExportServiceImpl
             }
         }
 
-        final NodeImportResult result = NodeImporter.create()
+        return NodeImporter.create()
             .nodeService( this.nodeService )
-            .sourceDirectory( source ).targetNodePath( params.getTargetNodePath() ).importNodeIds( params.isImportNodeIds() )
+            .sourceDirectory( source )
+            .targetNodePath( params.getTargetNodePath() )
+            .importNodeIds( params.isImportNodeIds() )
             .importPermissions( params.isImportPermissions() )
-            .xslt( params.getXslt() ).xsltParams( params.getXsltParams() ).nodeImportListener( params.getNodeImportListener() )
+            .xslt( params.getXslt() )
+            .xsltParams( params.getXsltParams() )
+            .nodeImportListener( params.getNodeImportListener() )
             .build()
             .execute();
-
-        if ( targetIsSystemRepo() )
-        {
-            repositoryService.recreateMissing();
-        }
-
-        return result;
-    }
-
-    private boolean targetIsSystemRepo()
-    {
-        final RepositoryId repositoryId = ContextAccessor.current().getRepositoryId();
-        final Branch branch = ContextAccessor.current().getBranch();
-        return SystemConstants.SYSTEM_REPO_ID.equals( repositoryId ) && SystemConstants.BRANCH_SYSTEM.equals( branch );
     }
 }

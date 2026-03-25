@@ -30,17 +30,16 @@ public class CompareNodeCommand
     {
         final Context context = ContextAccessor.current();
 
-        final NodeBranchEntry sourceWsVersion = nodeStorageService.getBranchNodeVersion( this.nodeId, InternalContext.from( context ) );
-        final NodeBranchEntry targetWsVersion = nodeStorageService.getBranchNodeVersion( this.nodeId, InternalContext.create( context ).
-            branch( this.target ).
-            build() );
+        final NodeBranchEntry sourceWsVersion = nodeStorageService.getNodeBranchEntry( this.nodeId, InternalContext.from( context ) );
+        final NodeBranchEntry targetWsVersion =
+            nodeStorageService.getNodeBranchEntry( this.nodeId, InternalContext.create( context ).branch( this.target ).build() );
 
-        return CompareStatusResolver.create().
-            source( sourceWsVersion ).
-            target( targetWsVersion ).
-            storageService( this.nodeStorageService ).
-            build().
-            resolve();
+        return CompareStatusResolver.create()
+            .source( sourceWsVersion )
+            .target( targetWsVersion )
+            .storageService( this.nodeStorageService )
+            .build()
+            .resolve();
     }
 
     public static final class Builder
