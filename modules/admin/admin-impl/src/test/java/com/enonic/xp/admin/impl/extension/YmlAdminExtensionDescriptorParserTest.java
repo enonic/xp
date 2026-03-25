@@ -33,8 +33,8 @@ public class YmlAdminExtensionDescriptorParserTest
         final AdminExtensionDescriptor descriptor = descriptorBuilder.build();
         assertNotNull( descriptor );
         assertEquals( DescriptorKey.from( myapp, "myextension" ), descriptor.getKey() );
-        assertEquals( "My extension", descriptor.getDisplayName() );
-        assertEquals( "i18n.my-extension.display-name", descriptor.getDisplayNameI18nKey() );
+        assertEquals( "My extension", descriptor.getTitle() );
+        assertEquals( "i18n.my-extension.display-name", descriptor.getTitleI18nKey() );
         assertEquals( "My extension description", descriptor.getDescription() );
 
         final PrincipalKeys allowedPrincipals = descriptor.getAllowedPrincipals();

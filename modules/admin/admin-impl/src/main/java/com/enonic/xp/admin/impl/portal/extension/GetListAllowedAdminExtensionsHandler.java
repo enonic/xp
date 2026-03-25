@@ -70,19 +70,19 @@ public class GetListAllowedAdminExtensionsHandler
         final ObjectNode json = JsonNodeFactory.instance.objectNode();
 
         json.put( "key", descriptor.getKey().toString() );
-        json.put( "displayName", descriptor.getDisplayName() );
+        json.put( "displayName", descriptor.getTitle() );
         json.put( "description", descriptor.getDescription() );
         json.put( "iconUrl", resolveIconUrl( descriptor ) );
 
         json.put( "url", descriptor.getApplicationKey() + ":" + descriptor.getName() );
 
-        if ( !isNullOrEmpty( descriptor.getDisplayNameI18nKey() ) || !isNullOrEmpty( descriptor.getDescriptionI18nKey() ) )
+        if ( !isNullOrEmpty( descriptor.getTitleI18nKey() ) || !isNullOrEmpty( descriptor.getDescriptionI18nKey() ) )
         {
             final MessageBundle bundle = localeService.getBundle( descriptor.getApplicationKey(),
                                                                   localeService.getSupportedLocale( preferredLocales,
                                                                                                     descriptor.getApplicationKey() ) );
 
-            addLocalizedJson( json, bundle, "displayName", descriptor.getDisplayNameI18nKey(), descriptor.getDisplayName() );
+            addLocalizedJson( json, bundle, "displayName", descriptor.getTitleI18nKey(), descriptor.getTitle() );
             addLocalizedJson( json, bundle, "description", descriptor.getDescriptionI18nKey(), descriptor.getDescription() );
         }
 
