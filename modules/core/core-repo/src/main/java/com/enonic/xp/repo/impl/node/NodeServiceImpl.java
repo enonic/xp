@@ -38,12 +38,8 @@ import com.enonic.xp.node.GetActiveNodeVersionsParams;
 import com.enonic.xp.node.GetActiveNodeVersionsResult;
 import com.enonic.xp.node.GetNodeVersionsParams;
 import com.enonic.xp.node.GetNodeVersionsResult;
-import com.enonic.xp.node.ImportNodeCommitParams;
 import com.enonic.xp.node.ImportNodeParams;
 import com.enonic.xp.node.ImportNodeResult;
-import com.enonic.xp.node.ImportNodeVersionParams;
-import com.enonic.xp.node.LoadNodeParams;
-import com.enonic.xp.node.LoadNodeResult;
 import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.MultiRepoNodeQuery;
@@ -61,7 +57,6 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.NodeStorageException;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.node.NodeVersionQuery;
@@ -763,18 +758,6 @@ public class NodeServiceImpl
     }
 
     @Override
-    public LoadNodeResult loadNode( final LoadNodeParams params )
-    {
-        return LoadNodeCommand.create()
-            .params( params )
-            .searchService( this.nodeSearchService )
-            .storageService( this.nodeStorageService )
-            .indexServiceInternal( this.indexServiceInternal )
-            .build()
-            .execute();
-    }
-
-    @Override
     public boolean nodeExists( final NodeId nodeId )
     {
         verifyContext();
@@ -809,64 +792,6 @@ public class NodeServiceImpl
             .searchService( nodeSearchService )
             .build()
             .execute();
-    }
-
-    @Override
-    public void importNodeVersion( final ImportNodeVersionParams params )
-    {
-        try
-        {
-            LoadNodeVersionCommand.create()
-                .node( params.getNode() )
-                .nodeCommitId( params.getNodeCommitId() )
-                .attributes( params.getAttributes() )
-                .storageService( this.nodeStorageService )
-                .searchService( this.nodeSearchService )
-                .indexServiceInternal( this.indexServiceInternal )
-                .build()
-                .execute();
-        }
-        catch ( NodeStorageException e )
-        {
-            if ( e.getCause() instanceof IndexNotFoundException )
-            {
-                throw new RepositoryNotFoundException( ContextAccessor.current().getRepositoryId() );
-            }
-            else
-            {
-                throw e;
-            }
-        }
-    }
-
-    @Override
-    public void importNodeCommit( final ImportNodeCommitParams params )
-    {
-        try
-        {
-
-            LoadNodeCommitCommand.create()
-                .nodeCommitId( params.getNodeCommitId() )
-                .message( params.getMessage() )
-                .committer( params.getCommitter() )
-                .timestamp( params.getTimestamp() )
-                .storageService( this.nodeStorageService )
-                .searchService( this.nodeSearchService )
-                .indexServiceInternal( this.indexServiceInternal )
-                .build()
-                .execute();
-        }
-        catch ( NodeStorageException e )
-        {
-            if ( e.getCause() instanceof IndexNotFoundException )
-            {
-                throw new RepositoryNotFoundException( ContextAccessor.current().getRepositoryId() );
-            }
-            else
-            {
-                throw e;
-            }
-        }
     }
 
     @Override
