@@ -22,6 +22,7 @@ assert.assertJsonEquals({
     modifiedTime: '1970-01-06T03:07:14.242Z',
     resource: '<x-data><some-data></some-data></x-data>',
     type: 'MIXIN',
-    form: []
+    form: [],
+    config: {}
 }, result);
 

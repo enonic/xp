@@ -160,7 +160,8 @@ exports.testGet = function () {
                     }
                 ]
             }
-        ]
+        ],
+        'config': {}
     };
     assert.assertJsonEquals(expected, result);
     assert.assertNotNull(result.icon.data);
@@ -338,7 +339,8 @@ exports.testList = function () {
                         }
                     ]
                 }
-            ]
+            ],
+            'config': {}
         },
         {
             'name': 'com.enonic.someapp:person',
@@ -348,7 +350,8 @@ exports.testList = function () {
             'abstract': false,
             'final': true,
             'allowChildContent': true,
-            'form': []
+            'form': [],
+            'config': {}
         }
     ];
     assert.assertJsonEquals(expected, result);
