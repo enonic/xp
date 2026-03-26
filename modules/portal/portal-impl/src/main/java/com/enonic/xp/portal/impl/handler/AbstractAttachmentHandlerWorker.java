@@ -73,8 +73,7 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
 
         final MediaType contentType;
         final ByteSource body;
-        if ( attachmentMimeType.is( MediaType.GIF ) || attachmentMimeType.is( MediaType.AVIF ) || attachmentMimeType.is( MediaType.WEBP ) ||
-            attachmentMimeType.is( SVG_MEDIA_TYPE ) )
+        if ( shouldBypassTransform( attachmentMimeType ) )
         {
             contentType = attachmentMimeType;
             body = binary;
@@ -141,6 +140,12 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
         throws IOException
     {
         return binary;
+    }
+
+    protected boolean shouldBypassTransform( final MediaType attachmentMimeType )
+    {
+        return attachmentMimeType.is( MediaType.GIF ) || attachmentMimeType.is( MediaType.AVIF ) ||
+            attachmentMimeType.is( MediaType.WEBP ) || attachmentMimeType.is( SVG_MEDIA_TYPE );
     }
 
     protected abstract String resolveHash( T content, Attachment attachment, BinaryReference binaryReference );
