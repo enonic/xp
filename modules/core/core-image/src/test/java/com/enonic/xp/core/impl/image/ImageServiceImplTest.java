@@ -216,7 +216,7 @@ class ImageServiceImplTest
 
         // Without an external processor configured, WebP output is not supported by Java ImageIO
         // and should result in an IllegalArgumentException from ImageHelper.getWriterByFormat
-        assertThrows( Exception.class, () -> imageService.readImage( readImageParams ) );
+        assertThrows( IllegalArgumentException.class, () -> imageService.readImage( readImageParams ) );
     }
 
     @Test

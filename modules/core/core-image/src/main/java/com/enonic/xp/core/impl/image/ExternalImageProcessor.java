@@ -5,9 +5,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +42,8 @@ class ExternalImageProcessor
     void processImage( final ByteSource source, final ImageProcessingInstruction instruction, final ByteSink sink )
         throws IOException
     {
-        final Path tempDir = Files.createTempDirectory( "xp-image-" );
+        final Path tempDir = Files.createTempDirectory( "xp-image-",
+            PosixFilePermissions.asFileAttribute( PosixFilePermissions.fromString( "rwx------" ) ) );
         try
         {
             final Path inputFile = tempDir.resolve( "input" );
@@ -222,9 +225,9 @@ class ExternalImageProcessor
 
     private static void deleteDirectory( final Path dir )
     {
-        try
+        try (Stream<Path> paths = Files.walk( dir ))
         {
-            Files.walk( dir ).sorted( java.util.Comparator.reverseOrder() ).forEach( path -> {
+            paths.sorted( java.util.Comparator.reverseOrder() ).forEach( path -> {
                 try
                 {
                     Files.deleteIfExists( path );
