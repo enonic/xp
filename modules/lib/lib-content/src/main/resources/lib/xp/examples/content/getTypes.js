@@ -170,7 +170,8 @@ var expected = [
                     }
                 ]
             }
-        ]
+        ],
+        'config': {}
     },
     {
         'name': 'com.enonic.someapp:person',
@@ -180,7 +181,8 @@ var expected = [
         'abstract': false,
         'final': true,
         'allowChildContent': true,
-        'form': []
+        'form': [],
+        'config': {}
     }
 ];
 

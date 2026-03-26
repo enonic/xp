@@ -16,6 +16,7 @@ import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptors;
 import com.enonic.xp.site.processor.ResponseProcessorDescriptor;
 import com.enonic.xp.site.processor.ResponseProcessorDescriptors;
+import com.enonic.xp.util.GenericValue;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -91,6 +92,10 @@ public class YmlSiteDescriptorParserTest
         final Iterator<DescriptorKey> mountedApiIterator = mountedApis.iterator();
         assertEquals( DescriptorKey.from( "admin:extension" ), mountedApiIterator.next() );
         assertEquals( DescriptorKey.from( currentApplication, "content" ), mountedApiIterator.next() );
+
+        final GenericValue schemaConfig = siteDescriptor.getSchemaConfig();
+        assertEquals( "value_1", schemaConfig.property( "property_1" ).asString() );
+        assertEquals( "value_2", schemaConfig.property( "property_2" ).asString() );
     }
 
     private String readAsString( final String name )

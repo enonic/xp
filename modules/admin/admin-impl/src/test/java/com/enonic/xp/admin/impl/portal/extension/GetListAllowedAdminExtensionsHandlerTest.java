@@ -74,7 +74,7 @@ class GetListAllowedAdminExtensionsHandlerTest
             .title( "displayName" )
             .setIcon( icon )
             .interfaces( "myInterface" )
-            .config( GenericValue.newObject()
+            .schemaConfig( GenericValue.newObject()
                          .put( "k1", "v1" )
                          .put( "k2", GenericValue.newObject().put( "k21", "v21" ).build() )
                          .put( "k3", GenericValue.newList().add( GenericValue.stringValue( "string" ) ).build() )

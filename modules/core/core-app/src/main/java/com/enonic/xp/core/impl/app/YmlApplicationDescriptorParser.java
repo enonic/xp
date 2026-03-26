@@ -8,6 +8,7 @@ import com.enonic.xp.app.ApplicationDescriptor;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.schema.YmlParserBase;
 import com.enonic.xp.schema.LocalizedText;
+import com.enonic.xp.util.GenericValue;
 
 final class YmlApplicationDescriptorParser
 {
@@ -31,5 +32,8 @@ final class YmlApplicationDescriptorParser
 
         @JacksonInject("currentApplication")
         abstract ApplicationDescriptor.Builder key( ApplicationKey key );
+
+        @JsonProperty("config")
+        abstract ApplicationDescriptor.Builder schemaConfig( GenericValue schemaConfig );
     }
 }

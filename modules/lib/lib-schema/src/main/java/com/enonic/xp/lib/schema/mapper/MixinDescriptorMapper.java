@@ -17,6 +17,7 @@ public final class MixinDescriptorMapper
     {
         super.serialize( gen );
         DynamicSchemaSerializer.serializeForm( gen, descriptor.getForm() );
+        gen.value( "config", descriptor.getSchemaConfig().toRawJs() );
     }
 
     @Override

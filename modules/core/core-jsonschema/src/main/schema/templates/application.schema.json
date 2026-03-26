@@ -9,6 +9,9 @@
     },
     "description": {
       "$ref": "#/$defs/localizedTextDef"
+    },
+    "config": {
+      "$ref": "#/$defs/genericValueDef"
     }
   },
   "required": [
@@ -16,6 +19,7 @@
   ],
   "additionalProperties": false,
   "$defs": {
-    "localizedTextDef": {}
+    "localizedTextDef": {},
+    "genericValueDef": {}
   }
 }

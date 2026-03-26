@@ -23,6 +23,7 @@ import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.site.CmsDescriptor;
 import com.enonic.xp.site.MixinMapping;
 import com.enonic.xp.site.MixinMappings;
+import com.enonic.xp.util.GenericValue;
 
 public class YmlCmsDescriptorParser
 {
@@ -56,6 +57,9 @@ public class YmlCmsDescriptorParser
 
         @JsonProperty("form")
         abstract CmsDescriptor.Builder form( Form form );
+
+        @JsonProperty("config")
+        abstract CmsDescriptor.Builder schemaConfig( GenericValue schemaConfig );
 
         @JacksonInject("currentApplication")
         abstract CmsDescriptor.Builder applicationKey( ApplicationKey currentApplication );

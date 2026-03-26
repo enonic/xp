@@ -13,6 +13,7 @@ import com.enonic.xp.schema.LocalizedText;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.util.GenericValue;
 
 
 public final class AdminToolDescriptor
@@ -34,6 +35,8 @@ public final class AdminToolDescriptor
 
     private final Icon icon;
 
+    private final GenericValue schemaConfig;
+
     private AdminToolDescriptor( final Builder builder )
     {
         super( builder.key );
@@ -45,6 +48,7 @@ public final class AdminToolDescriptor
         apiMounts = Objects.requireNonNullElse( builder.apiMounts, DescriptorKeys.empty() );
         interfaces = builder.interfaces;
         icon = builder.icon;
+        schemaConfig = builder.schemaConfig.build();
     }
 
     public String getTitle()
@@ -97,6 +101,11 @@ public final class AdminToolDescriptor
         return apiMounts;
     }
 
+    public GenericValue getSchemaConfig()
+    {
+        return schemaConfig;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -122,6 +131,8 @@ public final class AdminToolDescriptor
         private ImmutableSet<String> interfaces = ImmutableSet.of();
 
         private Icon icon;
+
+        private final GenericValue.ObjectBuilder schemaConfig = GenericValue.newObject();
 
         private Builder()
         {
@@ -198,6 +209,12 @@ public final class AdminToolDescriptor
         public Builder setIcon( final Icon icon )
         {
             this.icon = icon;
+            return this;
+        }
+
+        public Builder schemaConfig( final GenericValue value )
+        {
+            value.properties().forEach( e -> this.schemaConfig.put( e.getKey(), e.getValue() ) );
             return this;
         }
 

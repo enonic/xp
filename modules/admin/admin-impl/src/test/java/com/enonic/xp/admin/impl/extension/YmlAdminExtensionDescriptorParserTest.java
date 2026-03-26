@@ -45,7 +45,7 @@ public class YmlAdminExtensionDescriptorParserTest
         assertEquals( "interface_1", interfacesIterator.next() );
         assertEquals( "interface_2", interfacesIterator.next() );
 
-        final GenericValue config = descriptor.getConfig();
+        final GenericValue config = descriptor.getSchemaConfig();
 
         assertEquals( 3, config.properties().size() );
         assertEquals( "value_1", config.property( "property_1" ).asString() );

@@ -15,6 +15,9 @@
       "items": {
         "type": "string"
       }
+    },
+    "config": {
+      "$ref": "#/$defs/genericValueDef"
     }
   },
   "required": [
@@ -22,6 +25,7 @@
   ],
   "additionalProperties": false,
   "$defs": {
-    "localizedTextDef": {}
+    "localizedTextDef": {},
+    "genericValueDef": {}
   }
 }

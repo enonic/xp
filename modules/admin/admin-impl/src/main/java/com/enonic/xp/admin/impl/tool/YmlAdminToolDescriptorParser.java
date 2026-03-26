@@ -9,6 +9,7 @@ import com.enonic.xp.core.impl.schema.YmlParserBase;
 import com.enonic.xp.descriptor.DescriptorKeys;
 import com.enonic.xp.schema.LocalizedText;
 import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.util.GenericValue;
 
 public final class YmlAdminToolDescriptorParser
 {
@@ -28,18 +29,21 @@ public final class YmlAdminToolDescriptorParser
     private abstract static class AdminToolDescriptorBuilderMapper
     {
         @JsonProperty("title")
-        public abstract AdminToolDescriptor.Builder title( LocalizedText text );
+        abstract AdminToolDescriptor.Builder title( LocalizedText text );
 
         @JsonProperty("description")
-        public abstract AdminToolDescriptor.Builder description( LocalizedText text );
+        abstract AdminToolDescriptor.Builder description( LocalizedText text );
 
         @JsonProperty("allow")
-        public abstract AdminToolDescriptor.Builder addAllowedPrincipals( PrincipalKeys allowedPrincipals );
+        abstract AdminToolDescriptor.Builder addAllowedPrincipals( PrincipalKeys allowedPrincipals );
 
         @JsonProperty("apis")
-        public abstract AdminToolDescriptor.Builder apiMounts( DescriptorKeys apiDescriptors );
+        abstract AdminToolDescriptor.Builder apiMounts( DescriptorKeys apiDescriptors );
 
         @JsonProperty("interfaces")
-        public abstract AdminToolDescriptor.Builder interfaces( String... interfaces );
+        abstract AdminToolDescriptor.Builder interfaces( String... interfaces );
+
+        @JsonProperty("config")
+        abstract AdminToolDescriptor.Builder schemaConfig( GenericValue schemaConfig );
     }
 }
