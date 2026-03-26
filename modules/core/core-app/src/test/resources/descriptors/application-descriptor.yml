@@ -1,2 +1,5 @@
 kind: "Application"
 description: "Brief description of the application"
+config:
+  property_1: "value_1"
+  property_2: "value_2"

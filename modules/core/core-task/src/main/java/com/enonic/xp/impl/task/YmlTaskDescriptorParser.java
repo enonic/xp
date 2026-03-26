@@ -8,6 +8,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.schema.YmlParserBase;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.task.TaskDescriptor;
+import com.enonic.xp.util.GenericValue;
 
 final class YmlTaskDescriptorParser
 {
@@ -37,5 +38,8 @@ final class YmlTaskDescriptorParser
 
         @JsonProperty("form")
         abstract TaskDescriptor.Builder config( Form config );
+
+        @JsonProperty("config")
+        abstract TaskDescriptor.Builder schemaConfig( GenericValue schemaConfig );
     }
 }

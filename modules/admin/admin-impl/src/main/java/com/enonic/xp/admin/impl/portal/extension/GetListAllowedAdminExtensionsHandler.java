@@ -86,9 +86,9 @@ public class GetListAllowedAdminExtensionsHandler
             addLocalizedJson( json, bundle, "description", descriptor.getDescriptionI18nKey(), descriptor.getDescription() );
         }
 
-        if ( descriptor.getConfig() != null )
+        if ( descriptor.getSchemaConfig() != null )
         {
-            final ObjectNode config = toObjectNode( descriptor.getConfig() );
+            final ObjectNode config = toObjectNode( descriptor.getSchemaConfig() );
             json.set( "config", config );
         }
 

@@ -13,7 +13,7 @@ declare global {
     }
 }
 
-import type {ByteSource, FormItem, UserKey} from '@enonic-types/core';
+import type {ByteSource, FormItem, UserKey, ConfigValue} from '@enonic-types/core';
 
 export type {
     ByteSource,
@@ -29,6 +29,7 @@ export type {
     RoleKey,
     UserKey,
     ValueType,
+    ConfigValue,
 } from '@enonic-types/core';
 
 function checkRequired<T extends object, K extends keyof T>(
@@ -80,12 +81,6 @@ export interface Schema {
     icon?: Icon;
 }
 
-export type ConfigValue = string | number | boolean | ConfigObject | ConfigValue[];
-
-export interface ConfigObject {
-    [key: string]: ConfigValue
-}
-
 export interface ContentTypeSchema
     extends Schema {
     form: FormItem[];
@@ -101,6 +96,7 @@ export interface FormFragmentSchema
 export interface MixinSchema
     extends Schema {
     form: FormItem[];
+    config: Record<string, ConfigValue>;
 }
 
 /**

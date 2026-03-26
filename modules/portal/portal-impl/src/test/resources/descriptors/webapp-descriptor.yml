@@ -3,3 +3,6 @@ description: "My WebApp"
 apis:
   - "admin:extension"
   - "content"
+config:
+  property_1: "value_1"
+  property_2: "value_2"

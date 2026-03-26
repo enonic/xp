@@ -89,7 +89,8 @@ var expected = {
                 'com.enonic.myapp:country'
             ]
         }
-    ]
+    ],
+    'config': {}
 };
 // END
 

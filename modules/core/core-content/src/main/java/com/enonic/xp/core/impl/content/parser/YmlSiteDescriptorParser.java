@@ -24,6 +24,7 @@ import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptors;
 import com.enonic.xp.site.processor.ResponseProcessorDescriptor;
 import com.enonic.xp.site.processor.ResponseProcessorDescriptors;
+import com.enonic.xp.util.GenericValue;
 
 public final class YmlSiteDescriptorParser
 {
@@ -66,6 +67,9 @@ public final class YmlSiteDescriptorParser
 
         @JsonProperty("apis")
         abstract SiteDescriptor.Builder apiMounts( DescriptorKeys apiMounts );
+
+        @JsonProperty("config")
+        abstract SiteDescriptor.Builder schemaConfig( GenericValue schemaConfig );
 
         @JacksonInject("currentApplication")
         abstract SiteDescriptor.Builder applicationKey( ApplicationKey applicationKey );

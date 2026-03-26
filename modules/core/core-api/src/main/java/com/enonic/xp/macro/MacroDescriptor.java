@@ -6,6 +6,7 @@ import java.util.Objects;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.schema.LocalizedText;
+import com.enonic.xp.util.GenericValue;
 
 
 public final class MacroDescriptor
@@ -26,6 +27,8 @@ public final class MacroDescriptor
 
     private final Instant modifiedTime;
 
+    private final GenericValue schemaConfig;
+
     private MacroDescriptor( final Builder builder )
     {
         this.key = builder.key;
@@ -36,6 +39,7 @@ public final class MacroDescriptor
         this.form = Objects.requireNonNullElse( builder.form, Form.empty() );
         this.icon = builder.icon;
         this.modifiedTime = builder.modifiedTime;
+        this.schemaConfig = builder.schemaConfig.build();
     }
 
     public MacroKey getKey()
@@ -83,6 +87,11 @@ public final class MacroDescriptor
         return modifiedTime;
     }
 
+    public GenericValue getSchemaConfig()
+    {
+        return schemaConfig;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -105,6 +114,8 @@ public final class MacroDescriptor
         private Icon icon;
 
         private Instant modifiedTime;
+
+        private final GenericValue.ObjectBuilder schemaConfig = GenericValue.newObject();
 
         private Builder()
         {
@@ -175,6 +186,12 @@ public final class MacroDescriptor
         public Builder modifiedTime( final Instant modifiedTime )
         {
             this.modifiedTime = modifiedTime;
+            return this;
+        }
+
+        public Builder schemaConfig( final GenericValue value )
+        {
+            value.properties().forEach( e -> this.schemaConfig.put( e.getKey(), e.getValue() ) );
             return this;
         }
 

@@ -28,18 +28,18 @@ public final class YmlAdminExtensionDescriptorParser
     private abstract static class AdminExtensionDescriptorBuilderMapper
     {
         @JsonProperty("title")
-        public abstract AdminExtensionDescriptor.Builder title( LocalizedText text );
+        abstract AdminExtensionDescriptor.Builder title( LocalizedText text );
 
         @JsonProperty("description")
-        public abstract AdminExtensionDescriptor.Builder description( LocalizedText text );
+        abstract AdminExtensionDescriptor.Builder description( LocalizedText text );
 
         @JsonProperty("allow")
-        public abstract AdminExtensionDescriptor.Builder allowedPrincipals( PrincipalKeys allowedPrincipals );
+        abstract AdminExtensionDescriptor.Builder allowedPrincipals( PrincipalKeys allowedPrincipals );
 
         @JsonProperty("interfaces")
-        public abstract AdminExtensionDescriptor.Builder interfaces( String... interfaceNames );
+        abstract AdminExtensionDescriptor.Builder interfaces( String... interfaceNames );
 
         @JsonProperty("config")
-        public abstract AdminExtensionDescriptor.Builder config( GenericValue value );
+        abstract AdminExtensionDescriptor.Builder schemaConfig( GenericValue value );
     }
 }

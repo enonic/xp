@@ -12,6 +12,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.descriptor.DescriptorKeys;
 import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.util.GenericValue;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -48,6 +49,10 @@ public class YmlAdminToolDescriptorParserTest
         final Iterator<String> interfacesIterator = descriptor.getInterfaces().iterator();
         assertEquals( "contentstudio.menuitem", interfacesIterator.next() );
         assertEquals( "contentstudio.contextpanel", interfacesIterator.next() );
+
+        final GenericValue config = descriptor.getSchemaConfig();
+        assertEquals( "value_1", config.property( "property_1" ).asString() );
+        assertEquals( "value_2", config.property( "property_2" ).asString() );
     }
 
     private String readAsString( final String name )

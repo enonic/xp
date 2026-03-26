@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.schema.LocalizedText;
+import com.enonic.xp.util.GenericValue;
 
 
 public final class ApplicationDescriptor
@@ -16,12 +17,15 @@ public final class ApplicationDescriptor
 
     private final Icon icon;
 
+    private final GenericValue schemaConfig;
+
     private ApplicationDescriptor( final Builder builder )
     {
         this.key = Objects.requireNonNull( builder.key, "key cannot be null" );
         this.description = builder.description != null ? builder.description : "";
         this.descriptionI18nKey = builder.descriptionI18nKey;
         this.icon = builder.icon;
+        this.schemaConfig = builder.schemaConfig.build();
     }
 
     public ApplicationKey getKey()
@@ -44,6 +48,11 @@ public final class ApplicationDescriptor
         return icon;
     }
 
+    public GenericValue getSchemaConfig()
+    {
+        return schemaConfig;
+    }
+
     @Override
     public int hashCode()
     {
@@ -64,6 +73,8 @@ public final class ApplicationDescriptor
         private String descriptionI18nKey;
 
         private Icon icon;
+
+        private final GenericValue.ObjectBuilder schemaConfig = GenericValue.newObject();
 
         private Builder()
         {
@@ -91,6 +102,12 @@ public final class ApplicationDescriptor
         public Builder icon( final Icon icon )
         {
             this.icon = icon;
+            return this;
+        }
+
+        public Builder schemaConfig( final GenericValue value )
+        {
+            value.properties().forEach( e -> this.schemaConfig.put( e.getKey(), e.getValue() ) );
             return this;
         }
 

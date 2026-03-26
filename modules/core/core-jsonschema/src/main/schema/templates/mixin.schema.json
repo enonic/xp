@@ -15,6 +15,9 @@
     },
     "form": {
       "$ref": "#/$defs/formDef"
+    },
+    "config": {
+      "$ref": "#/$defs/genericValueDef"
     }
   },
   "required": [
@@ -24,6 +27,7 @@
   "additionalProperties": false,
   "$defs": {
     "localizedTextDef": {},
+    "genericValueDef": {},
     "inputsDef": {},
     "fieldSetDef": {},
     "formFragmentDef": {},

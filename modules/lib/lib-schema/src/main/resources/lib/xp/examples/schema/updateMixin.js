@@ -56,6 +56,7 @@ assert.assertJsonEquals({
                 'minimum': 0
             }
         }
-    ]
+    ],
+    config: {}
 }, result);
 

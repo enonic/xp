@@ -12,6 +12,9 @@
     },
     "form": {
       "$ref": "#/$defs/formDef"
+    },
+    "config": {
+      "$ref": "#/$defs/genericValueDef"
     }
   },
   "additionalProperties": false,
@@ -20,6 +23,7 @@
   ],
   "$defs": {
     "localizedTextDef": {},
+    "genericValueDef": {},
     "inputsDef": {},
     "fieldSetDef": {},
     "itemSetDef": {},

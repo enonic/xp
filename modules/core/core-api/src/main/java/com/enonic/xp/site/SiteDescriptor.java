@@ -8,6 +8,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.descriptor.DescriptorKeys;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptors;
 import com.enonic.xp.site.processor.ResponseProcessorDescriptors;
+import com.enonic.xp.util.GenericValue;
 
 import static java.util.Objects.requireNonNullElse;
 
@@ -24,6 +25,8 @@ public final class SiteDescriptor
 
     private final Instant modifiedTime;
 
+    private final GenericValue schemaConfig;
+
     private SiteDescriptor( final Builder builder )
     {
         this.applicationKey = Objects.requireNonNull( builder.applicationKey );
@@ -31,6 +34,7 @@ public final class SiteDescriptor
         this.responseProcessors = requireNonNullElse( builder.responseProcessors, ResponseProcessorDescriptors.empty() );
         this.mappingDescriptors = requireNonNullElse( builder.mappingDescriptors, ControllerMappingDescriptors.empty() );
         this.apiMounts = requireNonNullElse( builder.apiMounts, DescriptorKeys.empty() );
+        this.schemaConfig = builder.schemaConfig.build();
     }
 
     public ApplicationKey getApplicationKey()
@@ -58,6 +62,11 @@ public final class SiteDescriptor
         return apiMounts;
     }
 
+    public GenericValue getSchemaConfig()
+    {
+        return schemaConfig;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -80,6 +89,8 @@ public final class SiteDescriptor
 
         private DescriptorKeys apiMounts;
 
+        private final GenericValue.ObjectBuilder schemaConfig = GenericValue.newObject();
+
         private Builder()
         {
         }
@@ -91,6 +102,7 @@ public final class SiteDescriptor
             this.responseProcessors = siteDescriptor.responseProcessors;
             this.mappingDescriptors = siteDescriptor.mappingDescriptors;
             this.apiMounts = siteDescriptor.apiMounts;
+            this.schemaConfig( siteDescriptor.schemaConfig );
         }
 
         public Builder applicationKey( final ApplicationKey applicationKey )
@@ -120,6 +132,12 @@ public final class SiteDescriptor
         public Builder apiMounts( final DescriptorKeys apiMounts )
         {
             this.apiMounts = apiMounts;
+            return this;
+        }
+
+        public Builder schemaConfig( final GenericValue value )
+        {
+            value.properties().forEach( e -> this.schemaConfig.put( e.getKey(), e.getValue() ) );
             return this;
         }
 

@@ -5,6 +5,7 @@ import java.util.Objects;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.descriptor.DescriptorKeys;
 import com.enonic.xp.schema.LocalizedText;
+import com.enonic.xp.util.GenericValue;
 
 
 public final class WebappDescriptor
@@ -17,12 +18,15 @@ public final class WebappDescriptor
 
     private final String descriptionI18nKey;
 
+    private final GenericValue schemaConfig;
+
     private WebappDescriptor( final Builder builder )
     {
         this.applicationKey = Objects.requireNonNull( builder.applicationKey );
         this.apiMounts = Objects.requireNonNullElse( builder.apiMounts, DescriptorKeys.empty() );
         this.description = builder.description;
         this.descriptionI18nKey = builder.descriptionI18nKey;
+        this.schemaConfig = builder.schemaConfig.build();
     }
 
     public ApplicationKey getApplicationKey()
@@ -45,6 +49,11 @@ public final class WebappDescriptor
         return descriptionI18nKey;
     }
 
+    public GenericValue getSchemaConfig()
+    {
+        return schemaConfig;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -59,6 +68,8 @@ public final class WebappDescriptor
         private String description;
 
         private String descriptionI18nKey;
+
+        private final GenericValue.ObjectBuilder schemaConfig = GenericValue.newObject();
 
         private Builder()
         {
@@ -93,6 +104,12 @@ public final class WebappDescriptor
         {
             this.description = text.text();
             this.descriptionI18nKey = text.i18n();
+            return this;
+        }
+
+        public Builder schemaConfig( final GenericValue value )
+        {
+            value.properties().forEach( e -> this.schemaConfig.put( e.getKey(), e.getValue() ) );
             return this;
         }
 

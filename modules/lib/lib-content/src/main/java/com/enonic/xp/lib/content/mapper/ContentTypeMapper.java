@@ -38,6 +38,7 @@ public final class ContentTypeMapper
         gen.value( "modifiedTime", contentType.getModifiedTime() );
         serializeIcon( gen, contentType.getIcon() );
         serializeForm( gen, contentType.getForm() );
+        gen.value( "config", contentType.getSchemaConfig().toRawJs() );
     }
 
     private void serializeIcon( final MapGenerator gen, final Icon icon )

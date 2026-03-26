@@ -41,6 +41,7 @@ import {
     ValidationError,
     Workflow,
     WorkflowState,
+    ConfigValue,
 } from '@enonic-types/core';
 
 const isString = (value: unknown): value is string => value instanceof String || typeof value === 'string';
@@ -144,6 +145,7 @@ export type {
     UserKey,
     ValueCountAggregation,
     ValueType,
+    ConfigValue,
 } from '@enonic-types/core';
 
 type Attachments = Content['attachments'];
@@ -1412,6 +1414,7 @@ export interface Icon {
  * @property {string} [icon.mimeType] Mime type of the icon image.
  * @property {string} [icon.modifiedTime] Modified time of the icon. May be used for caching.
  * @property {object[]} form Form schema represented as an array of form items: Input, ItemSet, Layout, OptionSet.
+ * @property {object} config Custom schema configuration for the descriptor.
  */
 export interface ContentType {
     name: string;
@@ -1424,6 +1427,7 @@ export interface ContentType {
     modifiedTime: string;
     icon?: Icon;
     form: FormItem[];
+    config: Record<string, ConfigValue>;
 }
 
 interface ContentTypeHandler {
