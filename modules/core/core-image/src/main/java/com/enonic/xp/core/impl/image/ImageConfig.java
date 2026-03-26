@@ -9,4 +9,8 @@ public @interface ImageConfig
     String memoryLimit() default "10%";
 
     String progressive() default "jpeg";
+
+    String processor() default "java";
+
+    String processor_path() default "";
 }

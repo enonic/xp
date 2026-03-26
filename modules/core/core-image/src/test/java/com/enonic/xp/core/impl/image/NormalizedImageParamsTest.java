@@ -20,6 +20,7 @@ class NormalizedImageParamsTest
         assertEquals( "jpeg", new NormalizedImageParams( noFormatTemplate().mimeType( "image/jpeg" ).build() ).getFormat() );
         assertEquals( "png", new NormalizedImageParams( noFormatTemplate().mimeType( "image/png" ).build() ).getFormat() );
         assertEquals( "gif", new NormalizedImageParams( noFormatTemplate().mimeType( "image/gif" ).build() ).getFormat() );
+        assertEquals( "webp", new NormalizedImageParams( noFormatTemplate().mimeType( "image/webp" ).build() ).getFormat() );
         assertThrows( IllegalArgumentException.class,
                       () -> new NormalizedImageParams( noFormatTemplate().mimeType( "image/bmp" ).build() ) );
     }
@@ -90,6 +91,9 @@ class NormalizedImageParamsTest
 
         assertEquals( 0xFFFFFF, new NormalizedImageParams(
             noFormatTemplate().mimeType( "image/png" ).backgroundColor( 0x00FF00 ).build() ).getBackgroundColor() );
+
+        assertEquals( 0xFFFFFF, new NormalizedImageParams(
+            noFormatTemplate().mimeType( "image/webp" ).backgroundColor( 0x00FF00 ).build() ).getBackgroundColor() );
     }
 
     private static ReadImageParams.Builder someFormatTemplate()

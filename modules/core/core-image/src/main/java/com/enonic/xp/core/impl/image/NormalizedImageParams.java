@@ -115,7 +115,6 @@ class NormalizedImageParams
     private static String normalizeFormat( final ReadImageParams readImageParams )
     {
         // Limit to web formats we support. Leave WBMP and BMP support behind.
-        // Tip: WEBP is not supported by ImageService implementation yet. Throw IllegalArgumentException here.
         final String mimeType = readImageParams.getMimeType();
 
         return switch ( mimeType )
@@ -123,6 +122,7 @@ class NormalizedImageParams
             case "image/png" -> "png";
             case "image/jpeg" -> "jpeg";
             case "image/gif" -> "gif";
+            case "image/webp" -> "webp";
             default -> throw new IllegalArgumentException( "Unsupported type " + mimeType );
         };
     }
@@ -174,8 +174,8 @@ class NormalizedImageParams
 
     private static int normalizeBackgroundColor( final String format, final ReadImageParams readImageParams )
     {
-        // For output format different from png there is no point to have background color, because it is not used.
+        // For output formats that support transparency (png, webp) there is no point to have custom background color.
         // But historically most often value is 0xFFFFFF, as it is a default in Web Image Service.
-        return "png".equals( format ) ? 0xFFFFFF : readImageParams.getBackgroundColor();
+        return "png".equals( format ) || "webp".equals( format ) ? 0xFFFFFF : readImageParams.getBackgroundColor();
     }
 }

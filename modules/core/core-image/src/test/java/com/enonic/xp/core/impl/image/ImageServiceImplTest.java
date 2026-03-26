@@ -26,6 +26,8 @@ import com.enonic.xp.util.BinaryReference;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -202,5 +204,27 @@ class ImageServiceImplTest
             .build();
 
         assertDoesNotThrow( () -> imageService.readImage( readImageParams ) );
+    }
+
+    @Test
+    void readImage_webp_without_external_processor()
+    {
+        mockOriginalImage( "effect/transparent.png" );
+
+        final ReadImageParams readImageParams =
+            ReadImageParams.newImageParams().contentId( contentId ).binaryReference( binaryReference ).mimeType( "image/webp" ).build();
+
+        // Without an external processor configured, WebP output is not supported by Java ImageIO
+        // and should result in an IllegalArgumentException from ImageHelper.getWriterByFormat
+        assertThrows( Exception.class, () -> imageService.readImage( readImageParams ) );
+    }
+
+    @Test
+    void readImage_default_processor_config()
+    {
+        // Default config should use "java" processor (no external processor)
+        final ImageConfig defaultConfig = mock( ImageConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
+        assertEquals( "java", defaultConfig.processor() );
+        assertEquals( "", defaultConfig.processor_path() );
     }
 }

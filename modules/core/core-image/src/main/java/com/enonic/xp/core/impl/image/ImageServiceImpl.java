@@ -67,6 +67,8 @@ public class ImageServiceImpl
 
     private final Set<String> progressiveOnFormats;
 
+    private final ExternalImageProcessor externalProcessor;
+
     @Activate
     public ImageServiceImpl( @Reference final ContentService contentService,
                              @Reference final ImageScaleFunctionBuilder imageScaleFunctionBuilder,
@@ -84,6 +86,20 @@ public class ImageServiceImpl
             .filter( Predicate.not( String::isEmpty ) )
             .map( s -> s.toLowerCase( Locale.ROOT ) )
             .collect( Collectors.toUnmodifiableSet() );
+
+        this.externalProcessor = initExternalProcessor( config );
+    }
+
+    private static ExternalImageProcessor initExternalProcessor( final ImageConfig config )
+    {
+        final String processorType = config.processor();
+        if ( "libvips".equals( processorType ) )
+        {
+            final String path = config.processor_path().isEmpty() ? "vipsthumbnail" : config.processor_path();
+            LOG.info( "External image processor configured: libvips ({})", path );
+            return new ExternalImageProcessor( path );
+        }
+        return null;
     }
 
     @Override
@@ -181,6 +197,22 @@ public class ImageServiceImpl
     }
 
     private void createImage( final ByteSource blob, final NormalizedImageParams readImageParams, ByteSink sink )
+        throws IOException
+    {
+        final boolean progressive =
+            progressiveOnFormats.stream().anyMatch( format -> format.equalsIgnoreCase( readImageParams.getFormat() ) );
+
+        if ( externalProcessor != null && externalProcessor.supportsFormat( readImageParams.getFormat() ) )
+        {
+            final ImageProcessingInstruction instruction = new ImageProcessingInstruction( readImageParams, progressive );
+            externalProcessor.processImage( blob, instruction, sink );
+            return;
+        }
+
+        createImageJava( blob, readImageParams, sink );
+    }
+
+    private void createImageJava( final ByteSource blob, final NormalizedImageParams readImageParams, ByteSink sink )
         throws IOException
     {
         try (InputStream inputStream = blob.openStream(); ImageInputStream stream = ImageIO.createImageInputStream( inputStream ))
