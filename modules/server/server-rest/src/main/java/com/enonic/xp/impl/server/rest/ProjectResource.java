@@ -100,7 +100,7 @@ public final class ProjectResource
         final SiteJson.Builder builder = SiteJson.create().displayName( site.getDisplayName() ).path( site.getPath().toString() );
         if ( site.getLanguage() != null )
         {
-            builder.language( site.getLanguage().getLanguage() );
+            builder.language( site.getLanguage().toLanguageTag() );
         }
 
         return builder.build();
