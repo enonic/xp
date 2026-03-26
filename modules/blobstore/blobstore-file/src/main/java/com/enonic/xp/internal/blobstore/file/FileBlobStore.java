@@ -106,7 +106,7 @@ public final class FileBlobStore
         final Path segmentPath = resolveSegmentPath( segment );
         try
         {
-            return Files.find( segmentPath, 5, ( path, attr ) -> attr.isRegularFile() && path.getFileName().toString().length() >= 6 )
+            return Files.find( segmentPath, 4, ( path, attr ) -> attr.isRegularFile() && path.getFileName().toString().length() >= 6 )
                 .map( path -> {
                     final BlobKey key = toBlobKey( segmentPath, path );
                     return new FileBlobRecord( key, path );
@@ -124,7 +124,7 @@ public final class FileBlobStore
         if ( relativePath.getName( 0 ).toString().equals( "sha256" ) )
         {
             return BlobKey.from(
-                "sha256:" + relativePath.getName( 1 ) + relativePath.getName( 2 ) + relativePath.getName( 3 ) + filePath.getFileName() );
+                "sha256:" + filePath.getFileName() );
         }
         else
         {
@@ -210,8 +210,7 @@ public final class FileBlobStore
             return resolveSegmentPath( segment ).resolve( "sha256" )
                 .resolve( id.substring( 7, 9 ) )
                 .resolve( id.substring( 9, 11 ) )
-                .resolve( id.substring( 11, 13 ) )
-                .resolve( id.substring( 13 ) );
+                .resolve( id.substring( 7 ));
         }
         else
         {
