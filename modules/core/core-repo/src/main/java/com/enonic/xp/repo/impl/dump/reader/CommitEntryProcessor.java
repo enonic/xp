@@ -41,14 +41,14 @@ public class CommitEntryProcessor
     {
         try
         {
-            ImportNodeCommitParams params = ImportNodeCommitParams.create().
-                nodeCommitId( commitDumpEntry.nodeCommitId() ).
-                message( commitDumpEntry.message() ).
-                committer( commitDumpEntry.committer() ).
-                timestamp( commitDumpEntry.timestamp() ).
-                build();
+            ImportNodeCommitParams params = ImportNodeCommitParams.create()
+                .nodeCommitId( commitDumpEntry.nodeCommitId() )
+                .message( commitDumpEntry.message() )
+                .committer( commitDumpEntry.committer() )
+                .timestamp( commitDumpEntry.timestamp() )
+                .build();
 
-            this.nodeService.importNodeCommit( params );
+            this.nodeLoader.importNodeCommit( params );
             result.successful();
         }
         catch ( Exception e )

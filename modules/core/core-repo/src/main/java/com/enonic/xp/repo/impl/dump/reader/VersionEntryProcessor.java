@@ -57,17 +57,17 @@ public class VersionEntryProcessor
 
             try
             {
-                this.nodeService.importNodeVersion( ImportNodeVersionParams.create()
-                                                        .node( NodeFactory.create( nodeVersion )
-                                                                   .id( versionsDumpEntry.nodeId() )
-                                                                   .timestamp( version.timestamp() )
-                                                                   .parentPath( version.nodePath().getParentPath() )
-                                                                   .name( version.nodePath().getName() )
-                                                                   .nodeVersionId( version.version() )
-                                                                   .build() )
-                                                        .nodeCommitId( version.nodeCommitId() )
-                                                        .attributes( version.attributes() )
-                                                        .build() );
+                this.nodeLoader.importNodeVersion( ImportNodeVersionParams.create()
+                                                       .node( NodeFactory.create( nodeVersion )
+                                                                  .id( versionsDumpEntry.nodeId() )
+                                                                  .timestamp( version.timestamp() )
+                                                                  .parentPath( version.nodePath().getParentPath() )
+                                                                  .name( version.nodePath().getName() )
+                                                                  .nodeVersionId( version.version() )
+                                                                  .build() )
+                                                       .nodeCommitId( version.nodeCommitId() )
+                                                       .attributes( version.attributes() )
+                                                       .build() );
 
                 addBinary( nodeVersion, result );
                 result.successful();

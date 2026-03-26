@@ -8,10 +8,10 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.dump.BranchLoadResult;
 import com.enonic.xp.dump.RepoLoadResult;
-import com.enonic.xp.node.NodeService;
 import com.enonic.xp.repo.impl.dump.reader.BranchEntryProcessor;
 import com.enonic.xp.repo.impl.dump.reader.CommitEntryProcessor;
 import com.enonic.xp.repo.impl.dump.reader.DumpReader;
+import com.enonic.xp.repo.impl.dump.reader.NodeLoader;
 import com.enonic.xp.repo.impl.dump.reader.VersionEntryProcessor;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
@@ -19,8 +19,6 @@ import com.enonic.xp.repository.RepositoryId;
 class RepoLoader
 {
     private final RepositoryId repositoryId;
-
-    private final NodeService nodeService;
 
     private final DumpReader reader;
 
@@ -35,24 +33,23 @@ class RepoLoader
     private RepoLoader( final Builder builder )
     {
         repositoryId = builder.repositoryId;
-        nodeService = builder.nodeService;
         reader = builder.reader;
         this.includeVersions = builder.includeVersions;
         this.branchEntryProcessor = BranchEntryProcessor.create()
             .dumpReader( this.reader )
-            .nodeService( this.nodeService )
+            .nodeLoader( builder.nodeLoader )
             .blobStore( builder.blobStore )
             .repositoryId( repositoryId )
             .build();
         this.versionEntryProcessor = VersionEntryProcessor.create()
             .dumpReader( this.reader )
-            .nodeService( this.nodeService )
+            .nodeLoader( builder.nodeLoader )
             .blobStore( builder.blobStore )
             .repositoryId( repositoryId )
             .build();
         this.commitEntryProcessor = CommitEntryProcessor.create()
             .dumpReader( this.reader )
-            .nodeService( this.nodeService )
+            .nodeLoader( builder.nodeLoader )
             .blobStore( builder.blobStore )
             .repositoryId( repositoryId )
             .build();
@@ -118,7 +115,7 @@ class RepoLoader
     {
         private RepositoryId repositoryId;
 
-        private NodeService nodeService;
+        private NodeLoader nodeLoader;
 
         private boolean includeVersions = false;
 
@@ -136,9 +133,9 @@ class RepoLoader
             return this;
         }
 
-        public Builder nodeService( final NodeService val )
+        public Builder nodeLoader( final NodeLoader val )
         {
-            nodeService = val;
+            nodeLoader = val;
             return this;
         }
 

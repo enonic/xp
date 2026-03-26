@@ -39,6 +39,7 @@ import com.enonic.xp.repo.impl.branch.BranchService;
 import com.enonic.xp.repo.impl.config.RepoConfigurationDynamic;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.repo.impl.dump.reader.DumpReader;
+import com.enonic.xp.repo.impl.dump.reader.NodeLoader;
 import com.enonic.xp.repo.impl.dump.reader.ZipDumpReaderV8;
 import com.enonic.xp.repo.impl.dump.upgrade.DumpUpgraderRunner;
 import com.enonic.xp.repo.impl.dump.writer.DumpWriter;
@@ -460,7 +461,7 @@ public class DumpServiceImpl
 
         builder.add( RepoLoader.create()
                          .reader( dumpReader )
-                         .nodeService( this.nodeService )
+                         .nodeLoader( new NodeLoader( this.nodeStorageService ) )
                          .blobStore( this.blobStore )
                          .includeVersions( includeVersions )
                          .repositoryId( repositoryId )

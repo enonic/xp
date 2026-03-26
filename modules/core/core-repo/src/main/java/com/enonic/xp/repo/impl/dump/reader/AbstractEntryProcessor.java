@@ -9,7 +9,6 @@ import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.node.AttachedBinary;
-import com.enonic.xp.node.NodeService;
 import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.repo.impl.dump.RepoLoadException;
 import com.enonic.xp.repo.impl.dump.model.VersionMeta;
@@ -25,7 +24,7 @@ class AbstractEntryProcessor
 
     private final BlobStore blobStore;
 
-    final NodeService nodeService;
+    final NodeLoader nodeLoader;
 
     final DumpReader dumpReader;
 
@@ -36,7 +35,7 @@ class AbstractEntryProcessor
     AbstractEntryProcessor( final Builder<?> builder )
     {
         blobStore = builder.blobStore;
-        nodeService = builder.nodeService;
+        nodeLoader = builder.nodeLoader;
         dumpReader = builder.dumpReader;
         serializer = new JsonDumpSerializer();
         repositoryId = builder.repositoryId;
@@ -68,8 +67,7 @@ class AbstractEntryProcessor
 
     void reportVersionError( final EntryLoadResult.Builder result, final VersionMeta meta )
     {
-        final String message =
-            String.format( "Failed to load version for node with path %s, blobKey %s", meta.nodePath(), meta.version() );
+        final String message = String.format( "Failed to load version for node with path %s, blobKey %s", meta.nodePath(), meta.version() );
         result.error( EntryLoadError.error( message ) );
         LOG.error( message );
     }
@@ -78,7 +76,7 @@ class AbstractEntryProcessor
     {
         private BlobStore blobStore;
 
-        private NodeService nodeService;
+        private NodeLoader nodeLoader;
 
         private DumpReader dumpReader;
 
@@ -96,9 +94,9 @@ class AbstractEntryProcessor
         }
 
         @SuppressWarnings("unchecked")
-        public B nodeService( final NodeService val )
+        public B nodeLoader( final NodeLoader val )
         {
-            nodeService = val;
+            nodeLoader = val;
             return (B) this;
         }
 

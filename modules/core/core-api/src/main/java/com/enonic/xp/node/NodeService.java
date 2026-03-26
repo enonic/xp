@@ -68,8 +68,6 @@ public interface NodeService
 
     ImportNodeResult importNode( ImportNodeParams params );
 
-    LoadNodeResult loadNode( LoadNodeParams params );
-
     NodeCommitEntry commit( CommitNodeParams params );
 
     NodeCommitEntry commit( NodeCommitEntry nodeCommitEntry, NodeIds nodeIds );
@@ -81,10 +79,6 @@ public interface NodeService
     boolean nodeExists( NodePath nodePath );
 
     boolean hasUnpublishedChildren( NodeId parent, Branch target );
-
-    void importNodeVersion( ImportNodeVersionParams params );
-
-    void importNodeCommit( ImportNodeCommitParams params );
 
     /**
      * Applies the specified attribute changes to a particular node version.

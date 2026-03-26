@@ -1,7 +1,6 @@
 package com.enonic.xp.core.node;
 
 import java.io.IOException;
-import java.time.Instant;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -37,8 +36,6 @@ import com.enonic.xp.node.DuplicateNodeParams;
 import com.enonic.xp.node.FindNodesByMultiRepoQueryResult;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.GetNodeVersionsParams;
-import com.enonic.xp.node.ImportNodeCommitParams;
-import com.enonic.xp.node.ImportNodeVersionParams;
 import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.MultiRepoNodeHit;
 import com.enonic.xp.node.MultiRepoNodeHits;
@@ -55,7 +52,6 @@ import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeVersion;
-import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.node.NodeVersions;
 import com.enonic.xp.node.OperationNotPermittedException;
@@ -680,13 +676,15 @@ class NodeServiceImplTest
             CreateNodeParams.create().name( "node-in-default-repo" ).parent( NodePath.ROOT ).data( new PropertyTree() ).build() );
 
         final RepositoryId secondRepoId = RepositoryId.from( "second-repo" );
-        ctxDefaultAdmin().callWith( () -> {
+        ctxDefaultAdmin().runWith( () -> {
             this.repositoryService.createRepository( CreateRepositoryParams.create()
                                                          .repositoryId( secondRepoId )
-                                                         .rootPermissions( AccessControlList.of(
-                                                             AccessControlEntry.create().principal( TEST_DEFAULT_USER.getKey() ).allowAll().build() ) )
+                                                         .rootPermissions( AccessControlList.of( AccessControlEntry.create()
+                                                                                                     .principal(
+                                                                                                         TEST_DEFAULT_USER.getKey() )
+                                                                                                     .allowAll()
+                                                                                                     .build() ) )
                                                          .build() );
-            return null;
         } );
 
         final Context secondRepoCtx = ContextBuilder.from( ContextAccessor.current() )
@@ -724,7 +722,8 @@ class NodeServiceImplTest
             .build();
         final MultiRepoNodeQuery multiRepoNodeQuery = new MultiRepoNodeQuery( searchTargets, nodeQuery );
 
-        final FindNodesByMultiRepoQueryResult result = ContextBuilder.create().build().callWith( () -> this.nodeService.findByQuery( multiRepoNodeQuery ) );
+        final FindNodesByMultiRepoQueryResult result =
+            ContextBuilder.create().build().callWith( () -> this.nodeService.findByQuery( multiRepoNodeQuery ) );
 
         assertEquals( 2L, result.getTotalHits() );
 
@@ -735,8 +734,7 @@ class NodeServiceImplTest
         assertTrue( nodeIds.contains( node1.id() ) );
         assertTrue( nodeIds.contains( node2.id() ) );
 
-        final Set<RepositoryId> repoIds =
-            nodeHits.stream().map( MultiRepoNodeHit::getRepositoryId ).collect( Collectors.toSet() );
+        final Set<RepositoryId> repoIds = nodeHits.stream().map( MultiRepoNodeHit::getRepositoryId ).collect( Collectors.toSet() );
         assertTrue( repoIds.contains( ContextAccessor.current().getRepositoryId() ) );
         assertTrue( repoIds.contains( secondRepoId ) );
     }
@@ -776,32 +774,6 @@ class NodeServiceImplTest
         assertEquals( GenericValue.numberValue( 42 ), updatedAttributes.get( "attr2" ) );
         assertEquals( GenericValue.booleanValue( true ), updatedAttributes.get( "attr3" ) );
     }
-
-    @Test
-    void importNodeVersion_throws_when_repository_missing()
-    {
-        final ImportNodeVersionParams params = ImportNodeVersionParams.create()
-            .node( Node.createRoot().nodeVersionId( NodeVersionId.from( "a-b-c" ) ).timestamp( Instant.EPOCH ).build() )
-            .build();
-
-        assertThrows( RepositoryNotFoundException.class,
-                      () -> missingRepoContext().runWith( () -> this.nodeService.importNodeVersion( params ) ) );
-    }
-
-    @Test
-    void importNodeCommit_throws_when_repository_missing()
-    {
-        final ImportNodeCommitParams params = ImportNodeCommitParams.create()
-            .nodeCommitId( NodeCommitId.from( "commit-id" ) )
-            .message( "test" )
-            .committer( PrincipalKey.ofAnonymous() )
-            .timestamp( Instant.now() )
-            .build();
-
-        assertThrows( RepositoryNotFoundException.class,
-                      () -> missingRepoContext().runWith( () -> this.nodeService.importNodeCommit( params ) ) );
-    }
-
 
     private NodeVersions getVersionsMetadata( NodeId nodeId )
     {
