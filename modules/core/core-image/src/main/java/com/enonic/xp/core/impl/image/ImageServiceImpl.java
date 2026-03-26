@@ -177,8 +177,7 @@ public class ImageServiceImpl
         return cacheFolder.resolve( "sha256" )
             .resolve( hash.substring( 0, 2 ) )
             .resolve( hash.substring( 2, 4 ) )
-            .resolve( hash.substring( 4, 6 ) )
-            .resolve( hash.substring( 6 ) );
+            .resolve( hash );
     }
 
     private void createImage( final ByteSource blob, final NormalizedImageParams readImageParams, ByteSink sink )

@@ -18,8 +18,7 @@ public final class DumpBlobStoreUtils
                 .resolve( "sha256" )
                 .resolve( id.substring( 7, 9 ) )
                 .resolve( id.substring( 9, 11 ) )
-                .resolve( id.substring( 11, 13 ) )
-                .resolve( id.substring( 13 ) );
+                .resolve( id.substring( 7 ) );
         }
         else
         {
