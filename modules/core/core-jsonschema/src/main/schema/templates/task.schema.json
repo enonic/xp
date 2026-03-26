@@ -12,6 +12,9 @@
     },
     "form": {
       "$ref": "#/$defs/formDef"
+    },
+    "config": {
+      "$ref": "#/$defs/genericValueDef"
     }
   },
   "additionalProperties": false,
@@ -19,6 +22,7 @@
     "kind"
   ],
   "$defs": {
+    "genericValueDef": {},
     "inputsDef": {},
     "fieldSetDef": {},
     "itemSetDef": {},

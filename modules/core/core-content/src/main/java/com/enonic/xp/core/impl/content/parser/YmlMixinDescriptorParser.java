@@ -8,6 +8,7 @@ import com.enonic.xp.core.impl.schema.YmlParserBase;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.schema.LocalizedText;
 import com.enonic.xp.schema.mixin.MixinDescriptor;
+import com.enonic.xp.util.GenericValue;
 
 public final class YmlMixinDescriptorParser
 {
@@ -34,5 +35,8 @@ public final class YmlMixinDescriptorParser
 
         @JsonProperty("description")
         abstract MixinDescriptor.Builder description( LocalizedText text );
+
+        @JsonProperty("config")
+        abstract MixinDescriptor.Builder schemaConfig( GenericValue schemaConfig );
     }
 }

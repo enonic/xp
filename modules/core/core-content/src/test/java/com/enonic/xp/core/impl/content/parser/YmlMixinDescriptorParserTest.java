@@ -11,6 +11,7 @@ import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemPath;
 import com.enonic.xp.schema.mixin.MixinDescriptor;
 import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.util.GenericValue;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -43,6 +44,10 @@ public class YmlMixinDescriptorParserTest
         final Form form = descriptor.getForm();
         assertNotNull( form );
         assertNotNull( form.getFormItem( FormItemPath.from( "myField" ) ) );
+
+        final GenericValue schemaConfig = descriptor.getSchemaConfig();
+        assertEquals( "value_1", schemaConfig.property( "property_1" ).asString() );
+        assertEquals( "value_2", schemaConfig.property( "property_2" ).asString() );
     }
 
     private String readAsString( final String name )

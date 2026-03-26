@@ -6,6 +6,7 @@ import com.enonic.xp.descriptor.Descriptor;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.schema.LocalizedText;
+import com.enonic.xp.util.GenericValue;
 
 
 public final class TaskDescriptor
@@ -17,12 +18,15 @@ public final class TaskDescriptor
 
     private final Form config;
 
+    private final GenericValue schemaConfig;
+
     private TaskDescriptor( final Builder builder )
     {
         super( builder.key );
         this.description = builder.description;
         this.descriptionI18nKey = builder.descriptionI18nKey;
         this.config = Objects.requireNonNullElse( builder.config, Form.empty() );
+        this.schemaConfig = builder.schemaConfig.build();
     }
 
     public String getDescription()
@@ -40,6 +44,11 @@ public final class TaskDescriptor
         return config;
     }
 
+    public GenericValue getSchemaConfig()
+    {
+        return schemaConfig;
+    }
+
     @Override
     public boolean equals( final Object o )
     {
@@ -53,7 +62,7 @@ public final class TaskDescriptor
         }
         final TaskDescriptor that = (TaskDescriptor) o;
         return Objects.equals( description, that.description ) && Objects.equals( descriptionI18nKey, that.descriptionI18nKey ) &&
-            Objects.equals( config, that.config );
+            Objects.equals( config, that.config ) && Objects.equals( schemaConfig, that.schemaConfig );
     }
 
     @Override
@@ -76,6 +85,8 @@ public final class TaskDescriptor
         private String descriptionI18nKey;
 
         private Form config;
+
+        private final GenericValue.ObjectBuilder schemaConfig = GenericValue.newObject();
 
         private Builder()
         {
@@ -109,6 +120,12 @@ public final class TaskDescriptor
         public Builder config( final Form config )
         {
             this.config = config;
+            return this;
+        }
+
+        public Builder schemaConfig( final GenericValue value )
+        {
+            value.properties().forEach( e -> this.schemaConfig.put( e.getKey(), e.getValue() ) );
             return this;
         }
 

@@ -9,3 +9,9 @@ apis:
   - "myapp:api"
 interfaces:
   - "com.example.Interface"
+config:
+  property_1: "value_1"
+  property_2: "value_2"
+  property_3:
+    property_31: "value-31"
+    property_32: 123

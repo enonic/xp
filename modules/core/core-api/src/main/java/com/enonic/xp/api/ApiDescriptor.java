@@ -10,6 +10,7 @@ import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.schema.LocalizedText;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.util.GenericValue;
 
 
 public final class ApiDescriptor
@@ -30,6 +31,8 @@ public final class ApiDescriptor
 
     private final ImmutableSet<String> mount;
 
+    private final GenericValue schemaConfig;
+
     private ApiDescriptor( final Builder builder )
     {
         Objects.requireNonNull( builder.key, "key cannot be null" );
@@ -44,6 +47,7 @@ public final class ApiDescriptor
         this.descriptionI18nKey = builder.descriptionI18nKey;
         this.documentationUrl = builder.documentationUrl;
         this.mount = builder.mount;
+        this.schemaConfig = builder.schemaConfig.build();
     }
 
     public DescriptorKey getKey()
@@ -86,6 +90,11 @@ public final class ApiDescriptor
         return mount;
     }
 
+    public GenericValue getSchemaConfig()
+    {
+        return schemaConfig;
+    }
+
     public boolean isAccessAllowed( final PrincipalKeys principalKeys )
     {
         return principalKeys.contains( RoleKeys.ADMIN ) || allowedPrincipals.stream().anyMatch( principalKeys::contains );
@@ -113,6 +122,8 @@ public final class ApiDescriptor
         private String documentationUrl;
 
         private ImmutableSet<String> mount = ImmutableSet.of();
+
+        private final GenericValue.ObjectBuilder schemaConfig = GenericValue.newObject();
 
         private Builder()
         {
@@ -177,6 +188,12 @@ public final class ApiDescriptor
         public Builder mount( final String... mount )
         {
             this.mount = ImmutableSet.copyOf( mount );
+            return this;
+        }
+
+        public Builder schemaConfig( final GenericValue value )
+        {
+            value.properties().forEach( e -> this.schemaConfig.put( e.getKey(), e.getValue() ) );
             return this;
         }
 

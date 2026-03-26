@@ -5,21 +5,30 @@ import java.util.Objects;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.schema.BaseSchema;
+import com.enonic.xp.util.GenericValue;
 
 public final class MixinDescriptor
     extends BaseSchema<MixinName>
 {
     private final Form form;
 
+    private final GenericValue schemaConfig;
+
     private MixinDescriptor( final Builder builder )
     {
         super( builder );
         this.form = builder.formBuilder.build();
+        this.schemaConfig = builder.schemaConfig.build();
     }
 
     public Form getForm()
     {
         return this.form;
+    }
+
+    public GenericValue getSchemaConfig()
+    {
+        return schemaConfig;
     }
 
     public static Builder create()
@@ -62,6 +71,8 @@ public final class MixinDescriptor
     {
         private Form.Builder formBuilder = Form.create();
 
+        private final GenericValue.ObjectBuilder schemaConfig = GenericValue.newObject();
+
         private Builder()
         {
             super();
@@ -70,7 +81,8 @@ public final class MixinDescriptor
         private Builder( final MixinDescriptor mixin )
         {
             super( mixin );
-            this.formBuilder = Form.create( mixin.getForm() );
+            this.form( mixin.getForm() );
+            this.schemaConfig( mixin.getSchemaConfig() );
         }
 
         public Builder form( final Form value )
@@ -82,6 +94,12 @@ public final class MixinDescriptor
         public Builder addFormItem( final FormItem value )
         {
             this.formBuilder.addFormItem( value );
+            return this;
+        }
+
+        public Builder schemaConfig( final GenericValue value )
+        {
+            value.properties().forEach( e -> this.schemaConfig.put( e.getKey(), e.getValue() ) );
             return this;
         }
 

@@ -30,7 +30,7 @@ public final class AdminExtensionDescriptor
 
     private final PrincipalKeys allowedPrincipals;
 
-    private final GenericValue config;
+    private final GenericValue schemaConfig;
 
     private AdminExtensionDescriptor( final Builder builder )
     {
@@ -42,7 +42,7 @@ public final class AdminExtensionDescriptor
         this.icon = builder.icon;
         this.interfaces = builder.interfaces;
         this.allowedPrincipals = builder.allowedPrincipals;
-        this.config = builder.config.build();
+        this.schemaConfig = builder.schemaConfig.build();
     }
 
     public String getTitle()
@@ -91,9 +91,9 @@ public final class AdminExtensionDescriptor
             principalKeys.stream().anyMatch( allowedPrincipals::contains );
     }
 
-    public GenericValue getConfig()
+    public GenericValue getSchemaConfig()
     {
-        return config;
+        return schemaConfig;
     }
 
     public static AdminExtensionDescriptor.Builder create()
@@ -119,7 +119,7 @@ public final class AdminExtensionDescriptor
 
         private PrincipalKeys allowedPrincipals;
 
-        public final GenericValue.ObjectBuilder config = GenericValue.newObject();
+        private final GenericValue.ObjectBuilder schemaConfig = GenericValue.newObject();
 
         private Builder()
         {
@@ -187,9 +187,9 @@ public final class AdminExtensionDescriptor
             return this;
         }
 
-        public Builder config( final GenericValue value )
+        public Builder schemaConfig( final GenericValue value )
         {
-            value.properties().forEach( e -> this.config.put( e.getKey(), e.getValue() ) );
+            value.properties().forEach( e -> this.schemaConfig.put( e.getKey(), e.getValue() ) );
             return this;
         }
 

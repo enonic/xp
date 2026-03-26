@@ -9,6 +9,7 @@ import com.enonic.xp.core.impl.schema.YmlParserBase;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.schema.LocalizedText;
+import com.enonic.xp.util.GenericValue;
 
 final class YmlMacroDescriptorParser
 {
@@ -41,5 +42,8 @@ final class YmlMacroDescriptorParser
 
         @JsonProperty("form")
         abstract MacroDescriptor.Builder form( Form form );
+
+        @JsonProperty("config")
+        abstract MacroDescriptor.Builder schemaConfig( GenericValue schemaConfig );
     }
 }

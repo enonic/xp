@@ -13,6 +13,7 @@ import com.enonic.xp.form.Input;
 import com.enonic.xp.idprovider.IdProviderDescriptor;
 import com.enonic.xp.idprovider.IdProviderDescriptorMode;
 import com.enonic.xp.inputtype.InputTypeName;
+import com.enonic.xp.util.GenericValue;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -41,6 +42,10 @@ public class YmlIdProviderDescriptorParserTest
         assertEquals( InputTypeName.TEXT_LINE, titleTextLine.getInputType() );
         assertEquals( "title", titleTextLine.getName() );
         assertEquals( "Title", titleTextLine.getLabel() );
+
+        final GenericValue schemaConfig = descriptor.getSchemaConfig();
+        assertEquals( "value_1", schemaConfig.property( "property_1" ).asString() );
+        assertEquals( "value_2", schemaConfig.property( "property_2" ).asString() );
     }
 
     private String readAsString( final String name )

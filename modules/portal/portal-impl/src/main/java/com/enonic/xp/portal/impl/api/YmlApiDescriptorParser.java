@@ -8,6 +8,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.schema.YmlParserBase;
 import com.enonic.xp.schema.LocalizedText;
 import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.util.GenericValue;
 
 public final class YmlApiDescriptorParser
 {
@@ -27,18 +28,21 @@ public final class YmlApiDescriptorParser
     private abstract static class ApiDescriptorBuilderMapper
     {
         @JsonProperty("allow")
-        public abstract ApiDescriptor.Builder allowedPrincipals( PrincipalKeys allowedPrincipals );
+        abstract ApiDescriptor.Builder allowedPrincipals( PrincipalKeys allowedPrincipals );
 
         @JsonProperty("title")
-        public abstract ApiDescriptor.Builder title( LocalizedText text );
+        abstract ApiDescriptor.Builder title( LocalizedText text );
 
         @JsonProperty("documentationUrl")
-        public abstract ApiDescriptor.Builder documentationUrl( String documentationUrl );
+        abstract ApiDescriptor.Builder documentationUrl( String documentationUrl );
 
         @JsonProperty("description")
-        public abstract ApiDescriptor.Builder description( LocalizedText text );
+        abstract ApiDescriptor.Builder description( LocalizedText text );
 
         @JsonProperty("mount")
         abstract ApiDescriptor.Builder mount( String... value );
+
+        @JsonProperty("config")
+        abstract ApiDescriptor.Builder schemaConfig( GenericValue schemaConfig );
     }
 }

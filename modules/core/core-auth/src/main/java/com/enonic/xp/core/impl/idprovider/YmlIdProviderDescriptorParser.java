@@ -10,6 +10,7 @@ import com.enonic.xp.core.impl.schema.YmlParserBase;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.idprovider.IdProviderDescriptor;
 import com.enonic.xp.idprovider.IdProviderDescriptorMode;
+import com.enonic.xp.util.GenericValue;
 
 class YmlIdProviderDescriptorParser
 {
@@ -30,19 +31,22 @@ class YmlIdProviderDescriptorParser
     private abstract static class IdProviderDescriptorBuilderMapper
     {
         @JsonProperty("mode")
-        public abstract IdProviderDescriptor.Builder mode( IdProviderDescriptorMode mode );
+        abstract IdProviderDescriptor.Builder mode( IdProviderDescriptorMode mode );
 
         @JsonProperty("form")
-        public abstract IdProviderDescriptor.Builder config( Form config );
+        abstract IdProviderDescriptor.Builder config( Form config );
 
         @JacksonInject("currentApplication")
-        public abstract IdProviderDescriptor.Builder key( ApplicationKey key );
+        abstract IdProviderDescriptor.Builder key( ApplicationKey key );
+
+        @JsonProperty("config")
+        abstract IdProviderDescriptor.Builder schemaConfig( GenericValue schemaConfig );
     }
 
     private static class IdProviderDescriptorModeMapper
     {
         @JsonCreator
-        public static IdProviderDescriptorMode map( String value )
+        static IdProviderDescriptorMode map( String value )
         {
             return IdProviderDescriptorMode.valueOf( value );
         }
