@@ -116,7 +116,7 @@ class ProjectResourceTest
 
     private SiteJson createSiteJson( final Site site )
     {
-        return SiteJson.create().displayName( site.getDisplayName() ).language( "en" ).path( site.getPath().toString() ).build();
+        return SiteJson.create().displayName( site.getDisplayName() ).language( "af-Latn-ZA" ).path( site.getPath().toString() ).build();
     }
 
     private Project mockProject( final ProjectName name )
@@ -154,7 +154,7 @@ class ProjectResourceTest
             .modifier( PrincipalKey.from( "user:system:admin" ) )
             .type( ContentTypeName.from( "portal:site" ) )
             .displayName( "My Content" )
-            .language( Locale.ENGLISH )
+            .language( Locale.forLanguageTag( "af-Latn-ZA" ) )
             .page( page )
             .build();
     }
