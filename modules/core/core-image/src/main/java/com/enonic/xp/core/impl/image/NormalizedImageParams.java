@@ -115,7 +115,6 @@ class NormalizedImageParams
     private static String normalizeFormat( final ReadImageParams readImageParams )
     {
         // Limit to web formats we support. Leave WBMP and BMP support behind.
-        // Tip: WEBP is not supported by ImageService implementation yet. Throw IllegalArgumentException here.
         final String mimeType = readImageParams.getMimeType();
 
         return switch ( mimeType )
@@ -123,6 +122,7 @@ class NormalizedImageParams
             case "image/png" -> "png";
             case "image/jpeg" -> "jpeg";
             case "image/gif" -> "gif";
+            case "image/webp" -> "jpeg";
             default -> throw new IllegalArgumentException( "Unsupported type " + mimeType );
         };
     }

@@ -20,6 +20,7 @@ class NormalizedImageParamsTest
         assertEquals( "jpeg", new NormalizedImageParams( noFormatTemplate().mimeType( "image/jpeg" ).build() ).getFormat() );
         assertEquals( "png", new NormalizedImageParams( noFormatTemplate().mimeType( "image/png" ).build() ).getFormat() );
         assertEquals( "gif", new NormalizedImageParams( noFormatTemplate().mimeType( "image/gif" ).build() ).getFormat() );
+        assertEquals( "jpeg", new NormalizedImageParams( noFormatTemplate().mimeType( "image/webp" ).build() ).getFormat() );
         assertThrows( IllegalArgumentException.class,
                       () -> new NormalizedImageParams( noFormatTemplate().mimeType( "image/bmp" ).build() ) );
     }

@@ -2,11 +2,12 @@ dependencies {
     implementation project( ':core:core-api' )
     implementation project( ':core:core-internal' )
     implementation libs.jhlabs.filters
+    implementation libs.twelvemonkeys.imageio.webp
 }
 
 jar {
     bundle {
         bnd( 'Bundle-Name': 'Enonic XP Core - Image',
-             'Private-Package': 'com.jhlabs.*' )
+             'Private-Package': 'com.jhlabs.*,com.twelvemonkeys.*' )
     }
 }

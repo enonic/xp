@@ -89,6 +89,11 @@ class ImageServiceImplTest
 
     private void mockOriginalImage( final String path )
     {
+        mockOriginalImage( path, "image/png" );
+    }
+
+    private void mockOriginalImage( final String path, final String mimeType )
+    {
         imageDataOriginal = readImage( path );
         when( contentService.getBinary( contentId, binaryReference ) ).thenReturn( ByteSource.wrap( imageDataOriginal ) );
 
@@ -96,7 +101,7 @@ class ImageServiceImplTest
 
         final Content content = mock( Content.class );
         final Attachment attachment =
-            Attachment.create().name( binaryReference.toString() ).mimeType( "image/png" ).sha512( sha512 ).build();
+            Attachment.create().name( binaryReference.toString() ).mimeType( mimeType ).sha512( sha512 ).build();
         when( content.getAttachments() ).thenReturn( Attachments.from( attachment ) );
         when( contentService.getById( contentId ) ).thenReturn( content );
     }
@@ -199,6 +204,20 @@ class ImageServiceImplTest
             .binaryReference( binaryReference )
             .mimeType( "image/jpeg" )
             .scaleSize( 128 )
+            .build();
+
+        assertDoesNotThrow( () -> imageService.readImage( readImageParams ) );
+    }
+
+    @Test
+    void readImage_webp()
+    {
+        mockOriginalImage( "test.webp", "image/webp" );
+
+        final ReadImageParams readImageParams = ReadImageParams.newImageParams()
+            .contentId( contentId )
+            .binaryReference( binaryReference )
+            .mimeType( "image/webp" )
             .build();
 
         assertDoesNotThrow( () -> imageService.readImage( readImageParams ) );

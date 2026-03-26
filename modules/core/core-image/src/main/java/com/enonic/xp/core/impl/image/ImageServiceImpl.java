@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
+import javax.imageio.spi.IIORegistry;
 import javax.imageio.stream.ImageInputStream;
 
 import org.jspecify.annotations.NonNull;
@@ -46,6 +47,8 @@ import com.enonic.xp.image.ImageService;
 import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.image.ScaleParams;
 import com.enonic.xp.media.ImageOrientation;
+
+import com.twelvemonkeys.imageio.plugins.webp.WebPImageReaderSpi;
 
 @Component
 public class ImageServiceImpl
@@ -84,6 +87,9 @@ public class ImageServiceImpl
             .filter( Predicate.not( String::isEmpty ) )
             .map( s -> s.toLowerCase( Locale.ROOT ) )
             .collect( Collectors.toUnmodifiableSet() );
+
+        final IIORegistry registry = IIORegistry.getDefaultInstance();
+        registry.registerServiceProvider( new WebPImageReaderSpi() );
     }
 
     @Override

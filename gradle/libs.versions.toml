@@ -82,6 +82,8 @@ cronutils = { module = "com.cronutils:cron-utils", version = "9.2.1" }
 
 jhlabs-filters = { module = "com.jhlabs:filters", version = "2.0.235-1" }
 
+twelvemonkeys-imageio-webp = { module = "com.twelvemonkeys.imageio:imageio-webp", version = "3.13.1" }
+
 attoparser = { module = "org.attoparser:attoparser", version = "1.3" }
 
 nashorn = { module = "org.openjdk.nashorn:nashorn-core", version = "15.7" }

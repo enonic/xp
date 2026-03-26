@@ -73,7 +73,7 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
 
         final MediaType contentType;
         final ByteSource body;
-        if ( attachmentMimeType.is( MediaType.GIF ) || attachmentMimeType.is( MediaType.AVIF ) || attachmentMimeType.is( MediaType.WEBP ) ||
+        if ( attachmentMimeType.is( MediaType.GIF ) || attachmentMimeType.is( MediaType.AVIF ) ||
             attachmentMimeType.is( SVG_MEDIA_TYPE ) )
         {
             contentType = attachmentMimeType;

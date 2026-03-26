@@ -347,7 +347,7 @@ class ImageHandlerTest
         final WebResponse res = this.handler.handle( this.request );
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
-        assertEquals( MediaType.WEBP, res.getContentType() );
+        assertEquals( MediaType.JPEG, res.getContentType() );
         assertInstanceOf( ByteSource.class, res.getBody() );
         assertNull( res.getHeaders().get( "Content-Encoding" ) );
     }

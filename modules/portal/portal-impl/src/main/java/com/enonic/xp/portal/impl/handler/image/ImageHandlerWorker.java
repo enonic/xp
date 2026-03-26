@@ -77,7 +77,7 @@ public final class ImageHandlerWorker
     @Override
     protected void writeResponseContent( final PortalResponse.Builder portalResponse, final MediaType contentType, final ByteSource body )
     {
-        portalResponse.contentType( contentType );
+        portalResponse.contentType( contentType.is( MediaType.WEBP ) ? MediaType.JPEG : contentType );
         portalResponse.body( body );
     }
 
@@ -102,6 +102,8 @@ public final class ImageHandlerWorker
                                     final MediaType contentType )
         throws IOException
     {
+        final MediaType effectiveContentType = contentType.is( MediaType.WEBP ) ? MediaType.JPEG : contentType;
+
         final ImageOrientation imageOrientation = Objects.requireNonNullElse( content.getOrientation(), ImageOrientation.TopLeft );
 
         final int imageQuality = nullToEmpty( this.qualityParam ).isEmpty() ? DEFAULT_QUALITY : Integer.parseInt( this.qualityParam );
@@ -124,7 +126,7 @@ public final class ImageHandlerWorker
                 .filterParam( this.filterParam )
                 .backgroundColor( backgroundColor )
                 .quality( imageQuality )
-                .mimeType( contentType.toString() )
+                .mimeType( effectiveContentType.toString() )
                 .build();
 
             return this.imageService.readImage( readImageParams );
