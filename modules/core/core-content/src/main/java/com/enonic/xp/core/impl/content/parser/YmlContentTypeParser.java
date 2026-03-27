@@ -76,7 +76,7 @@ public final class YmlContentTypeParser
         public abstract ContentType.Builder setTitle( LocalizedText value );
 
         @JsonProperty("description")
-        public abstract ContentType.Builder setDescription( LocalizedText value );
+        abstract ContentType.Builder setDescription( LocalizedText value );
 
         @JsonProperty("abstract")
         abstract ContentType.Builder setAbstract( boolean value );
@@ -89,6 +89,15 @@ public final class YmlContentTypeParser
 
         @JsonProperty("allowChildContentType")
         abstract ContentType.Builder allowChildContentType( List<String> allowChildContentType );
+
+        @JsonProperty("displayNamePlaceholder")
+        abstract ContentType.Builder displayNamePlaceholder( LocalizedText value );
+
+        @JsonProperty("displayNameExpression")
+        abstract ContentType.Builder displayNameExpression( String value );
+
+        @JsonProperty("displayNameListExpression")
+        abstract ContentType.Builder displayNameListExpression( String value );
 
         @JsonProperty("config")
         abstract ContentType.Builder schemaConfig( GenericValue config );

@@ -118,9 +118,16 @@ form:
         label:
           text: "Option 2"
         selected: true
+displayNamePlaceholder:
+  text: "Article heading"
+  i18n: "article.title"
+displayNameExpression: "${expression}"
+displayNameListExpression: "${title}-${description}"
 config:
-  displayNamePlaceholder:
-    text: "Article heading"
-    i18n: "article.title"
-  displayNameExpression: "${expression}"
-  listTitleExpression: "${displayName}-${description}"
+  prop1: "string"
+  prop2: true
+  prop3:
+    - 1
+    - 2
+  prop4:
+    p1: "string"

@@ -42,12 +42,18 @@ public class YmlContentTypeParserTest
         assertNotNull( contentType.getForm().getFormFragment( "myFragment" ) );
         assertNotNull( contentType.getForm().getFormFragment( "myFragment2" ) );
 
+        assertEquals( "Article heading", contentType.getDisplayNamePlaceholder() );
+        assertEquals( "article.title", contentType.getDisplayNamePlaceholderI18nKey() );
+        assertEquals( "${expression}", contentType.getDisplayNameExpression() );
+        assertEquals( "${title}-${description}", contentType.getDisplayNameListExpression() );
+
         final GenericValue schemaConfig = contentType.getSchemaConfig();
 
         assertNotNull( schemaConfig );
-        assertTrue( schemaConfig.optional( "displayNamePlaceholder" ).isPresent() );
-        assertTrue( schemaConfig.optional( "displayNameExpression" ).isPresent() );
-        assertTrue( schemaConfig.optional( "listTitleExpression" ).isPresent() );
+        assertTrue( schemaConfig.optional( "prop1" ).isPresent() );
+        assertTrue( schemaConfig.optional( "prop2" ).isPresent() );
+        assertTrue( schemaConfig.optional( "prop3" ).isPresent() );
+        assertTrue( schemaConfig.optional( "prop4" ).isPresent() );
     }
 
     private String readAsString( final String name )
