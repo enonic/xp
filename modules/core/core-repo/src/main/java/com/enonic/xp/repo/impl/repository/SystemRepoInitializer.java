@@ -27,8 +27,6 @@ public class SystemRepoInitializer
 
     private final NodeStorageService nodeStorageService;
 
-    private final IndexMigrator indexMigrator;
-
     private final RepositoryCreator repositoryCreator;
 
     private SystemRepoInitializer( final Builder builder )
@@ -36,8 +34,6 @@ public class SystemRepoInitializer
         super( builder );
         this.indexServiceInternal = Objects.requireNonNull( builder.indexServiceInternal );
         this.nodeStorageService = Objects.requireNonNull( builder.nodeStorageService );
-        this.indexMigrator = new IndexMigrator( Objects.requireNonNull( builder.repositoryEntryService ),
-                                                Objects.requireNonNull( builder.nodeRepositoryService ), this.indexServiceInternal );
         this.repositoryCreator =
             new RepositoryCreator( builder.nodeRepositoryService, builder.nodeStorageService, builder.repositoryEntryService );
     }
@@ -46,10 +42,11 @@ public class SystemRepoInitializer
     public void doInitialize()
     {
         createAdminContext().runWith( () -> {
-            repositoryCreator.createSystemRepository( RepositorySettings.create().build() );
+            if ( !repositoryCreator.isInitialized( SystemConstants.SYSTEM_REPO_ID ) )
+            {
+                repositoryCreator.createSystemRepository( RepositorySettings.create().build() );
+            }
             initRepositoryFolder();
-
-            indexMigrator.migrate();
         } );
     }
 
@@ -58,7 +55,7 @@ public class SystemRepoInitializer
     {
         return createAdminContext().callWith( () -> this.repositoryCreator.isInitialized( SystemConstants.SYSTEM_REPO_ID ) &&
             this.nodeStorageService.get( RepositoryConstants.REPOSITORY_STORAGE_PARENT_PATH,
-                                         InternalContext.from( ContextAccessor.current() ) ) != null ) && !indexMigrator.needMigrate();
+                                         InternalContext.from( ContextAccessor.current() ) ) != null );
     }
 
     @Override

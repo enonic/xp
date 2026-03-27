@@ -5,6 +5,7 @@ import java.util.Objects;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
@@ -31,7 +32,7 @@ public class FindNodesByQueryCommand
     public FindNodesByQueryResult execute()
     {
         final SearchResult result =
-            nodeSearchService.query( this.query, returnFields, SingleRepoSearchSource.from( ContextAccessor.current() ) );
+            nodeSearchService.query( this.query, returnFields, SingleRepoSearchSource.from( InternalContext.from( ContextAccessor.current() ) ) );
 
         return FindNodesByQueryResultFactory.create( result );
     }
