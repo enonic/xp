@@ -171,7 +171,7 @@ final class ArchiveContentCommand
         moveParams.processor( processors.build() );
 
         moveParams.versionAttributesResolver( layersSync
-            ? ContentAttributesHelper.layersSyncResolver()
+            ? ContentAttributesHelper.versionHistoryResolver( ContentAttributesHelper.SYNC_ATTR )
             : ContentAttributesHelper.versionHistoryResolver( ContentAttributesHelper.ARCHIVE_ATTR ) );
 
         return nodeService.move( moveParams.build() );

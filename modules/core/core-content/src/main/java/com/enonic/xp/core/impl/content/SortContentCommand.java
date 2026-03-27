@@ -15,7 +15,6 @@ import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.ReorderChildNodeParams;
 import com.enonic.xp.node.SortNodeParams;
 import com.enonic.xp.node.SortNodeResult;
-import com.enonic.xp.node.VersionAttributesResolver;
 
 class SortContentCommand
     extends AbstractCreatingOrUpdatingContentCommand
@@ -53,23 +52,21 @@ class SortContentCommand
                                                   .build() );
             }
 
-            final NodeId sortNodeId = NodeId.from( params.getContentId() );
-
             if ( layersSync )
             {
-                paramsBuilder.versionAttributesResolver( ContentAttributesHelper.layersSyncResolver() );
+                paramsBuilder.versionAttributesResolver(
+                    ContentAttributesHelper.versionHistoryResolver( ContentAttributesHelper.SYNC_ATTR ) );
             }
             else
             {
-                paramsBuilder.processor(
-                    CompositeNodeDataProcessor.create().add( InheritedContentDataProcessor.SORT ).add(
-                        PublishDataProcessor::removePublishTime ).build() );
+                paramsBuilder.processor( CompositeNodeDataProcessor.create()
+                                             .add( InheritedContentDataProcessor.SORT )
+                                             .add( PublishDataProcessor::removePublishTime )
+                                             .build() );
 
-                paramsBuilder.versionAttributesResolver( ( originalNode, editedNode, branch ) -> sortNodeId.equals( editedNode.id() )
-                    ? ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.SORT_ATTR, "childOrder" )
-                    : ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.SORT_ATTR, "manualOrderValue" ) );
+                paramsBuilder.versionAttributesResolver(
+                    ContentAttributesHelper.versionHistoryResolver( ContentAttributesHelper.SORT_ATTR ) );
             }
-
 
             final SortNodeResult sortNodeResult = nodeService.sort( paramsBuilder.build() );
 

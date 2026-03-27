@@ -123,7 +123,7 @@ final class RestoreContentCommand
             .newParentPath( parentPathToRestore )
             .newName( newNodeName )
             .versionAttributesResolver( layersSync
-                                            ? ContentAttributesHelper.layersSyncResolver()
+                                            ? ContentAttributesHelper.versionHistoryResolver( ContentAttributesHelper.SYNC_ATTR )
                                             : ContentAttributesHelper.versionHistoryResolver( ContentAttributesHelper.RESTORE_ATTR ) )
             .refresh( RefreshMode.ALL );
 

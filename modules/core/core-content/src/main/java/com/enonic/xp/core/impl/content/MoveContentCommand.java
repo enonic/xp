@@ -118,7 +118,7 @@ final class MoveContentCommand
 
         if ( layersSync )
         {
-            moveParams.versionAttributesResolver( ContentAttributesHelper.layersSyncResolver() );
+            moveParams.versionAttributesResolver( ContentAttributesHelper.versionHistoryResolver( ContentAttributesHelper.SYNC_ATTR ) );
         }
         else
         {

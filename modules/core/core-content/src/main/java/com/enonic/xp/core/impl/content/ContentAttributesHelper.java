@@ -56,14 +56,14 @@ public class ContentAttributesHelper
     private static final Map<String, Function<Content, ?>> FIELD_GETTERS =
         Map.ofEntries( Map.entry( "displayName", Content::getDisplayName ), Map.entry( "data", Content::getData ),
                        Map.entry( "x", Content::getMixins ), Map.entry( "page", Content::getPage ),
-                       Map.entry( "owner", Content::getOwner ), Map.entry( "language", Content::getLanguage ),
+                       Map.entry( "attachments", Content::getAttachments ), Map.entry( "owner", Content::getOwner ),
+                       Map.entry( "language", Content::getLanguage ), Map.entry( "variantOf", Content::getVariantOf ),
                        Map.entry( "publish", Content::getPublishInfo ), Map.entry( "workflow", Content::getWorkflowInfo ),
-                       Map.entry( "variantOf", Content::getVariantOf ), Map.entry( "attachments", Content::getAttachments ),
                        Map.entry( "inherit", Content::getInherit ), Map.entry( "manualOrderValue", Content::getManualOrderValue ),
                        Map.entry( "childOrder", Content::getChildOrder ), Map.entry( "parentPath", Content::getParentPath ),
                        Map.entry( "name", Content::getName ) );
 
-    public static String[] modifiedFields( Content existingContent, Content updatedContent )
+    private static String[] modifiedFields( Content existingContent, Content updatedContent )
     {
         return FIELD_GETTERS.entrySet()
             .stream()
@@ -81,17 +81,6 @@ public class ContentAttributesHelper
                 .put( OPTIME_PROPERTY, Millis.now().toString() )
                 .build() )
             .attribute( VacuumConstants.VACUUM_SKIP_ATTRIBUTE, GenericValue.newObject().build() )
-            .build();
-    }
-
-    public static Attributes layersSyncAttr( final String... modifiedFields )
-    {
-        return Attributes.create()
-            .attribute( SYNC_ATTR, GenericValue.newObject()
-                .put( FIELDS_PROPERTY, GenericValue.fromRawJava( List.of( modifiedFields ) ) )
-                .put( USER_PROPERTY, getCurrentUserKey().toString() )
-                .put( OPTIME_PROPERTY, Millis.now().toString() )
-                .build() )
             .build();
     }
 
@@ -117,20 +106,9 @@ public class ContentAttributesHelper
         return PrincipalKey.from( attribute.property( ContentAttributesHelper.USER_PROPERTY ).asString() );
     }
 
-    public static VersionAttributesResolver layersSyncResolver()
-    {
-        return ( originalNode, editedNode, branch ) -> {
-            final String[] fields = resolveModifiedFields( originalNode, editedNode );
-            return layersSyncAttr( fields );
-        };
-    }
-
     public static VersionAttributesResolver versionHistoryResolver( final String key )
     {
-        return ( originalNode, editedNode, branch ) -> {
-            final String[] fields = resolveModifiedFields( originalNode, editedNode );
-            return versionHistoryAttr( key, fields );
-        };
+        return ( originalNode, editedNode, _ ) -> versionHistoryAttr( key, resolveModifiedFields( originalNode, editedNode ) );
     }
 
     private static String[] resolveModifiedFields( final Node originalNode, final Node editedNode )

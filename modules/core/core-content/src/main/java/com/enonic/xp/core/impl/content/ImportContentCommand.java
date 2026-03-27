@@ -39,7 +39,7 @@ final class ImportContentCommand
             .insertManualStrategy( params.getContent().getManualOrderValue() != null ? InsertManualStrategy.MANUAL : null )
             .importPermissions( params.isImportPermissions() )
             .importPermissionsOnCreate( params.isImportPermissionsOnCreate() )
-            .versionAttributesResolver( ContentAttributesHelper.layersSyncResolver() )
+            .versionAttributesResolver( ContentAttributesHelper.versionHistoryResolver( ContentAttributesHelper.SYNC_ATTR ) )
             .refresh( RefreshMode.ALL )
             .build();
 

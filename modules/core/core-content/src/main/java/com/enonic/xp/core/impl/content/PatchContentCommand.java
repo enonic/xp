@@ -64,7 +64,7 @@ public class PatchContentCommand
                 return patchedContent;
             } )
             .versionAttributesResolver( layersSync
-                                            ? ContentAttributesHelper.layersSyncResolver()
+                                            ? ContentAttributesHelper.versionHistoryResolver( ContentAttributesHelper.SYNC_ATTR )
                                             : ContentAttributesHelper.versionHistoryResolver( ContentAttributesHelper.PATCH_ATTR ) )
             .createAttachments( params.getCreateAttachments() )
             .branches( params.getBranches() )
