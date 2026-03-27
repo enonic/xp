@@ -108,6 +108,11 @@ public final class MacroDescriptorServiceImpl
 
     private ResourceKey getDescriptorResourceKey( final MacroKey key )
     {
+        final ResourceKey yamlKey = toResourceKey( key, "yaml" );
+        if ( resourceService.getResource( yamlKey ).exists() )
+        {
+            return yamlKey;
+        }
         return toResourceKey( key, "yml" );
     }
 

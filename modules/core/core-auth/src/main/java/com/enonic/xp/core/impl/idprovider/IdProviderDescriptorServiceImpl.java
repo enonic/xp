@@ -20,6 +20,10 @@ import com.enonic.xp.resource.ResourceService;
 public final class IdProviderDescriptorServiceImpl
     implements IdProviderDescriptorService
 {
+    private static final String ID_PROVIDER_DESCRIPTOR_PATH_YAML = "idprovider/idprovider.yaml";
+
+    private static final String ID_PROVIDER_DESCRIPTOR_PATH_YML = "idprovider/idprovider.yml";
+
     private ResourceService resourceService;
 
     @Override
@@ -74,7 +78,12 @@ public final class IdProviderDescriptorServiceImpl
 
     private ResourceKey toResourceKey( final ApplicationKey key )
     {
-        return ResourceKey.from( key, "idprovider/idprovider.yml" );
+        final ResourceKey yamlKey = ResourceKey.from( key, ID_PROVIDER_DESCRIPTOR_PATH_YAML );
+        if ( resourceService.getResource( yamlKey ).exists() )
+        {
+            return yamlKey;
+        }
+        return ResourceKey.from( key, ID_PROVIDER_DESCRIPTOR_PATH_YML );
     }
 
     @Reference

@@ -35,11 +35,16 @@ public final class ApplicationHelper
 
     private static final String CMS_YML = "cms/site.yml";
 
-    private static final String APPLICATION_XML = "application.yml";
+    private static final String CMS_YAML = "cms/site.yaml";
+
+    private static final String APPLICATION_YAML = "application.yaml";
+
+    private static final String APPLICATION_YML = "application.yml";
 
     static boolean isApplication( final JarFile jarFile )
     {
-        return hasApplicationHeader( jarFile ) || jarFile.getEntry( APPLICATION_XML ) != null || jarFile.getEntry( CMS_YML ) != null;
+        return hasApplicationHeader( jarFile ) || jarFile.getEntry( APPLICATION_YAML ) != null ||
+            jarFile.getEntry( APPLICATION_YML ) != null || jarFile.getEntry( CMS_YAML ) != null || jarFile.getEntry( CMS_YML ) != null;
     }
 
     public static ApplicationKey getApplicationKey( final Bundle bundle )

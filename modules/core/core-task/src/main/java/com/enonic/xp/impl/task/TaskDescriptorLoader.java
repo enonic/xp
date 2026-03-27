@@ -25,11 +25,14 @@ public final class TaskDescriptorLoader
 {
     private static final String PATH = "/tasks";
 
+    private final ResourceService resourceService;
+
     private final DescriptorKeyLocator descriptorKeyLocator;
 
     @Activate
     public TaskDescriptorLoader( @Reference final ResourceService resourceService )
     {
+        this.resourceService = resourceService;
         this.descriptorKeyLocator = new DescriptorKeyLocator( resourceService, PATH, false );
     }
 
@@ -48,7 +51,13 @@ public final class TaskDescriptorLoader
     @Override
     public ResourceKey toResource( final DescriptorKey key )
     {
-        return ResourceKey.from( key.getApplicationKey(), PATH + "/" + key.getName() + "/" + key.getName() + ".yml" );
+        final String basePath = PATH + "/" + key.getName() + "/" + key.getName();
+        final ResourceKey yamlKey = ResourceKey.from( key.getApplicationKey(), basePath + ".yaml" );
+        if ( resourceService.getResource( yamlKey ).exists() )
+        {
+            return yamlKey;
+        }
+        return ResourceKey.from( key.getApplicationKey(), basePath + ".yml" );
     }
 
     @Override
