@@ -103,7 +103,7 @@ public class SortNodeCommand
             .batchSize( BATCH_SIZE )
             .build();
 
-        final List<NodeId> childNodeIds = nodeSearchService.query( query, SingleRepoSearchSource.from( ContextAccessor.current() ) )
+        final List<NodeId> childNodeIds = nodeSearchService.query( query, SingleRepoSearchSource.from( InternalContext.from( ContextAccessor.current() ) ) )
             .getIds()
             .stream()
             .distinct()

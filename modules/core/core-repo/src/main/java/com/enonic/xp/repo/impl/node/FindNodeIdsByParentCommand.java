@@ -16,6 +16,7 @@ import com.enonic.xp.query.expr.FieldExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.query.filter.Filters;
+import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
@@ -67,7 +68,7 @@ public class FindNodeIdsByParentCommand
         }
 
         final SearchResult result =
-            this.nodeSearchService.query( createFindChildrenQuery( parentPath ), SingleRepoSearchSource.from( ContextAccessor.current() ) );
+            this.nodeSearchService.query( createFindChildrenQuery( parentPath ), SingleRepoSearchSource.from( InternalContext.from( ContextAccessor.current() ) ) );
 
         return FindNodesByParentResult.create()
             .nodeIds( result.getIds().stream().map( NodeId::from ).collect( NodeIds.collector() ) )

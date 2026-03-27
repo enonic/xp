@@ -2,11 +2,14 @@ package com.enonic.xp.repo.impl;
 
 import java.util.Objects;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.context.Context;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.PrincipalKeys;
 
+@NullMarked
 public class SingleRepoSearchSource
     implements SearchSource
 {
@@ -33,19 +36,14 @@ public class SingleRepoSearchSource
 
     private SingleRepoSearchSource( final Builder builder )
     {
-        repositoryId = builder.repositoryId;
-        branch = builder.branch;
-        acl = builder.acl;
+        repositoryId = Objects.requireNonNull( builder.repositoryId, "repositoryId is required in search-source" );
+        branch = Objects.requireNonNull( builder.branch, "branch is required in search-source" );
+        acl = Objects.requireNonNull( builder.acl, "acl is required in search-source" );
     }
 
     public static SingleRepoSearchSource from( final InternalContext context )
     {
-        return create( context ).build();
-    }
-
-    public static SingleRepoSearchSource from( final Context context )
-    {
-        return create( context ).build();
+        return create().repositoryId( context.getRepositoryId() ).branch( context.getBranch() ).acl( context.getPrincipalKeys() ).build();
     }
 
     public static Builder create()
@@ -53,25 +51,13 @@ public class SingleRepoSearchSource
         return new Builder();
     }
 
-    private static Builder create( final InternalContext context )
-    {
-        return create().repositoryId( context.getRepositoryId() ).branch( context.getBranch() ).acl( context.getPrincipalKeys() );
-    }
-
-    private static Builder create( final Context context )
-    {
-        return create().repositoryId( context.getRepositoryId() )
-            .branch( context.getBranch() )
-            .acl( context.getAuthInfo().getPrincipals() );
-    }
-
     public static final class Builder
     {
-        private RepositoryId repositoryId;
+        private @Nullable RepositoryId repositoryId;
 
-        private Branch branch;
+        private @Nullable Branch branch;
 
-        private PrincipalKeys acl;
+        private @Nullable PrincipalKeys acl;
 
         private Builder()
         {
@@ -95,16 +81,8 @@ public class SingleRepoSearchSource
             return this;
         }
 
-        private void validate()
-        {
-            Objects.requireNonNull( repositoryId, "repositoryId is required in search-source" );
-            Objects.requireNonNull( branch, "branch required in search-source" );
-            Objects.requireNonNull( acl, "acl is required in search-source" );
-        }
-
         public SingleRepoSearchSource build()
         {
-            validate();
             return new SingleRepoSearchSource( this );
         }
     }

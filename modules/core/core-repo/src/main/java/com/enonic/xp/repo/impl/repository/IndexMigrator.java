@@ -12,6 +12,11 @@ import com.enonic.xp.repo.impl.Model;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repository.RepositoryId;
 
+/**
+ * This class is useful for online repository migrations when needed.
+ *
+ */
+@SuppressWarnings("unused")
 public class IndexMigrator
 {
     private static final Logger LOG = LoggerFactory.getLogger( IndexMigrator.class );
@@ -32,28 +37,7 @@ public class IndexMigrator
         this.indexServiceInternal = Objects.requireNonNull( indexServiceInternal );
     }
 
-    public boolean needMigrate()
-    {
-        for ( RepositoryId repositoryId : repositoryEntryService.findRepositoryEntryIds() )
-        {
-            final RepositoryEntry entry = repositoryEntryService.getRepositoryEntry( repositoryId );
-            if ( entry != null && !Model.MODEL_VERSION.equals( entry.getModelVersion() ) )
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public void migrate()
-    {
-        for ( RepositoryId repositoryId : repositoryEntryService.findRepositoryEntryIds() )
-        {
-            upgradeRepository( repositoryId );
-        }
-    }
-
-    private void upgradeRepository( final RepositoryId repositoryId )
+    public void upgradeRepository( final RepositoryId repositoryId )
     {
         final RepositoryEntry entry = repositoryEntryService.getRepositoryEntry( repositoryId );
         if ( entry != null && !Model.MODEL_VERSION.equals( entry.getModelVersion() ) )

@@ -77,7 +77,7 @@ public class PushNodesCommand
 
         final NodeComparisons comparisons = getNodeComparisons( params.getIds() );
 
-        final SingleRepoSearchSource targetSearchSource = SingleRepoSearchSource.from( targetContext() );
+        final SingleRepoSearchSource targetSearchSource = SingleRepoSearchSource.from( InternalContext.from( targetContext() ) );
         for ( NodeComparison comparison : comparisons )
         {
             if ( comparison.getCompareStatus() == NodeCompareStatus.MOVED )
