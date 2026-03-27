@@ -10,6 +10,7 @@ import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.FieldExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
+import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.search.result.SearchHit;
@@ -71,7 +72,7 @@ public class ResolveInsertOrderValueCommand
         refresh( RefreshMode.SEARCH );
         final SearchResult searchResult =
             this.nodeSearchService.query( query.build(), ReturnFields.from( NodeIndexPath.MANUAL_ORDER_VALUE ),
-                                          SingleRepoSearchSource.from( ContextAccessor.current() ) );
+                                          SingleRepoSearchSource.from( InternalContext.from( ContextAccessor.current() ) ) );
         if ( searchResult.isEmpty() )
         {
             return null;
