@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import com.enonic.xp.dump.SystemDumpResult;
-import com.enonic.xp.repo.impl.dump.DumpConstants;
+import com.enonic.xp.repo.impl.Model;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.util.Version;
 
@@ -136,7 +136,7 @@ public class DumpMetaJson
 
         private Map<String, RepoDumpResultJson> result;
 
-        private Version modelVersion = DumpConstants.MODEL_VERSION;
+        private Version modelVersion = Model.MODEL_VERSION;
 
         private Builder()
         {
