@@ -33,6 +33,7 @@ import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.repo.impl.Model;
 import com.enonic.xp.repo.impl.RepositoryEvents;
 import com.enonic.xp.repo.impl.SecurityHelper;
 import com.enonic.xp.repo.impl.branch.BranchService;
@@ -142,7 +143,7 @@ public class DumpServiceImpl
 
             writer.writeDumpMetaData( DumpMeta.create()
                                           .xpVersion( this.xpVersion )
-                                          .modelVersion( DumpConstants.MODEL_VERSION )
+                                          .modelVersion( Model.MODEL_VERSION )
                                           .timestamp( Millis.now() )
                                           .systemDumpResult( systemDumpResult )
                                           .build() );
