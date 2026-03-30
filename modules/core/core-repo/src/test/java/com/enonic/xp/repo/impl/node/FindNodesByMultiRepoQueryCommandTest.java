@@ -38,27 +38,27 @@ class FindNodesByMultiRepoQueryCommandTest
 
     private static final PrincipalKeys CONTEXT_PRINCIPALS = PrincipalKeys.from( USER_KEY, RoleKeys.EVERYONE );
 
-    private final Context context = ContextBuilder.create().
-        repositoryId( RepositoryId.from( "my-repo" ) ).
-        branch( Branch.from( "master" ) ).
-        authInfo( AuthenticationInfo.create().
-            user( User.create().key( USER_KEY ).login( "testuser" ).build() ).
-            principals( CONTEXT_PRINCIPALS ).
-            build() ).
-        build();
+    private final Context context = ContextBuilder.create()
+        .repositoryId( RepositoryId.from( "my-repo" ) )
+        .branch( Branch.from( "master" ) )
+        .authInfo( AuthenticationInfo.create()
+                       .user( User.create().key( USER_KEY ).login( "testuser" ).build() )
+                       .principals( CONTEXT_PRINCIPALS )
+                       .build() )
+        .build();
 
     @Test
     void explicit_principalKeys_used()
     {
         final PrincipalKeys explicitKeys = PrincipalKeys.from( RoleKeys.ADMIN );
 
-        final SearchTargets targets = SearchTargets.create().
-            add( SearchTarget.create().
-                repositoryId( RepositoryId.from( "my-repo" ) ).
-                branch( Branch.from( "master" ) ).
-                principalKeys( explicitKeys ).
-                build() ).
-            build();
+        final SearchTargets targets = SearchTargets.create()
+            .add( SearchTarget.create()
+                      .repositoryId( RepositoryId.from( "my-repo" ) )
+                      .branch( Branch.from( "master" ) )
+                      .principalKeys( explicitKeys )
+                      .build() )
+            .build();
 
         final SingleRepoSearchSource source = context.callWith( () -> executeAndCaptureSource( targets ) );
 
@@ -68,12 +68,25 @@ class FindNodesByMultiRepoQueryCommandTest
     @Test
     void context_principalKeys_used_when_not_set()
     {
-        final SearchTargets targets = SearchTargets.create().
-            add( SearchTarget.create().
-                repositoryId( RepositoryId.from( "my-repo" ) ).
-                branch( Branch.from( "master" ) ).
-                build() ).
-            build();
+        final SearchTargets targets = SearchTargets.create()
+            .add( SearchTarget.create().repositoryId( RepositoryId.from( "my-repo" ) ).branch( Branch.from( "master" ) ).build() )
+            .build();
+
+        final SingleRepoSearchSource source = context.callWith( () -> executeAndCaptureSource( targets ) );
+
+        assertEquals( CONTEXT_PRINCIPALS, source.getAcl() );
+    }
+
+    @Test
+    void context_principalKeys_used_when_empty()
+    {
+        final SearchTargets targets = SearchTargets.create()
+            .add( SearchTarget.create()
+                      .repositoryId( RepositoryId.from( "my-repo" ) )
+                      .branch( Branch.from( "master" ) )
+                      .principalKeys( PrincipalKeys.empty() )
+                      .build() )
+            .build();
 
         final SingleRepoSearchSource source = context.callWith( () -> executeAndCaptureSource( targets ) );
 
@@ -88,13 +101,13 @@ class FindNodesByMultiRepoQueryCommandTest
 
         final MultiRepoNodeQuery query = new MultiRepoNodeQuery( targets, NodeQuery.create().build() );
 
-        FindNodesByMultiRepoQueryCommand.create().
-            query( query ).
-            indexServiceInternal( mock( IndexServiceInternal.class ) ).
-            storageService( mock( NodeStorageService.class ) ).
-            searchService( nodeSearchService ).
-            build().
-            execute();
+        FindNodesByMultiRepoQueryCommand.create()
+            .query( query )
+            .indexServiceInternal( mock( IndexServiceInternal.class ) )
+            .storageService( mock( NodeStorageService.class ) )
+            .searchService( nodeSearchService )
+            .build()
+            .execute();
 
         final ArgumentCaptor<MultiRepoSearchSource> captor = ArgumentCaptor.forClass( MultiRepoSearchSource.class );
         verify( nodeSearchService ).query( any( NodeQuery.class ), captor.capture() );

@@ -265,7 +265,8 @@ interface NodeHandler {
 
     getCommit(commitId: string): NodeCommit | null;
 
-    applyPermissions(key: string, permissions: ScriptValue  | null, addPermissions: ScriptValue  | null, removePermissions: ScriptValue  | null, branches: string[],
+    applyPermissions(key: string, permissions: ScriptValue | null, addPermissions: ScriptValue | null,
+                     removePermissions: ScriptValue | null, branches: string[],
                      scope: string): ApplyPermissionsResult;
 
     getBinary(key: string, binaryReference?: string | null): ByteSource;
@@ -1344,7 +1345,7 @@ export interface MultiRepoConnectParams {
  * @param {object[]} params.sources array of sources to connect to
  * @param {object} params.sources.repoId repository id
  * @param {object} params.sources.branch branch id
- * @param {string[]} [params.sources.principals] Principals to execute the callback with. Uses principals in context if not specified.
+ * @param {string[]} [params.sources.principals] Principals to execute the callback with. Uses principals in context if not specified or empty.
  *
  * @returns {MultiRepoConnection} Returns a new multirepo-connection.
  */

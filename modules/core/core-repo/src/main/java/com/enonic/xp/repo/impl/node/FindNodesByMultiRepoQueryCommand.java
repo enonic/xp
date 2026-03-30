@@ -38,14 +38,14 @@ public class FindNodesByMultiRepoQueryCommand
 
         for ( final SearchTarget searchTarget : searchTargets )
         {
-            final PrincipalKeys acl =
-                searchTarget.getPrincipalKeys() != null ? searchTarget.getPrincipalKeys() : contextPrincipals;
+            final PrincipalKeys principalKeys = searchTarget.getPrincipalKeys();
+            final PrincipalKeys acl = !principalKeys.isEmpty() ? principalKeys : contextPrincipals;
 
-            searchSourceBuilder.add( SingleRepoSearchSource.create().
-                branch( searchTarget.getBranch() ).
-                repositoryId( searchTarget.getRepositoryId() ).
-                acl( acl ).
-                build() );
+            searchSourceBuilder.add( SingleRepoSearchSource.create()
+                                         .branch( searchTarget.getBranch() )
+                                         .repositoryId( searchTarget.getRepositoryId() )
+                                         .acl( acl )
+                                         .build() );
         }
 
         final SearchResult result = nodeSearchService.query( this.query.getNodeQuery(), searchSourceBuilder.build() );

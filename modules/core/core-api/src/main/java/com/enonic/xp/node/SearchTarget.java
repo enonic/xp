@@ -2,10 +2,14 @@ package com.enonic.xp.node;
 
 import java.util.Objects;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.PrincipalKeys;
 
+@NullMarked
 public final class SearchTarget
 {
     private final RepositoryId repositoryId;
@@ -16,9 +20,9 @@ public final class SearchTarget
 
     private SearchTarget( final Builder builder )
     {
-        principalKeys = builder.principalKeys;
-        branch = builder.branch;
-        repositoryId = builder.repositoryId;
+        this.principalKeys = Objects.requireNonNullElse( builder.principalKeys, PrincipalKeys.empty() );
+        this.branch = Objects.requireNonNull( builder.branch, "branch is required" );
+        this.repositoryId = Objects.requireNonNull( builder.repositoryId, "repositoryId is required" );
     }
 
     public static Builder create()
@@ -43,11 +47,11 @@ public final class SearchTarget
 
     public static final class Builder
     {
-        private PrincipalKeys principalKeys;
+        private @Nullable PrincipalKeys principalKeys;
 
-        private Branch branch;
+        private @Nullable Branch branch;
 
-        private RepositoryId repositoryId;
+        private @Nullable RepositoryId repositoryId;
 
         private Builder()
         {
@@ -71,15 +75,8 @@ public final class SearchTarget
             return this;
         }
 
-        private void validate()
-        {
-            Objects.requireNonNull( this.branch, "branch is required" );
-            Objects.requireNonNull( this.repositoryId, "repositoryId is required" );
-        }
-
         public SearchTarget build()
         {
-            validate();
             return new SearchTarget( this );
         }
     }
