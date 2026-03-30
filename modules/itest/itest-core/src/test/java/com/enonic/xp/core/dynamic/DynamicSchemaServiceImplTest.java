@@ -289,7 +289,7 @@ class DynamicSchemaServiceImplTest
     void createContentTypeSchema()
         throws Exception
     {
-        final String resource = readResource( "_contentType.yml" );
+        final String resource = readResource( "_contentType.yaml" );
 
         CreateDynamicContentSchemaParams params = CreateDynamicContentSchemaParams.create()
             .name( ContentTypeName.from( "myapp:mytype" ) )
@@ -321,11 +321,11 @@ class DynamicSchemaServiceImplTest
         assertTrue( result.getResource().exists() );
         assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
         assertEquals( resource, result.getResource().readString() );
-        assertEquals( "myapp:/cms/content-types/mytype/mytype.yml", result.getResource().getKey().toString() );
+        assertEquals( "myapp:/cms/content-types/mytype/mytype.yaml", result.getResource().getKey().toString() );
         assertTrue( result.getResource().getSize() > 0 );
 
         final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/content-types/mytype/mytype.yml" ) ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/content-types/mytype/mytype.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -344,7 +344,7 @@ class DynamicSchemaServiceImplTest
 
         createAdminContext().runWith( () -> dynamicSchemaService.createContentSchema( createParams ) );
 
-        final String resource = readResource( "_contentType.yml" );
+        final String resource = readResource( "_contentType.yaml" );
 
         final UpdateDynamicContentSchemaParams updateParams = UpdateDynamicContentSchemaParams.create()
             .name( ContentTypeName.from( "myapp:mytype" ) )
@@ -375,10 +375,10 @@ class DynamicSchemaServiceImplTest
         assertTrue( result.getResource().exists() );
         assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
         assertEquals( resource, result.getResource().readString() );
-        assertEquals( "myapp:/cms/content-types/mytype/mytype.yml", result.getResource().getKey().toString() );
+        assertEquals( "myapp:/cms/content-types/mytype/mytype.yaml", result.getResource().getKey().toString() );
 
         final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/content-types/mytype/mytype.yml" ) ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/content-types/mytype/mytype.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -387,7 +387,7 @@ class DynamicSchemaServiceImplTest
     void createFormFragmentSchema()
         throws Exception
     {
-        final String resource = readResource( "_formFragment.yml" );
+        final String resource = readResource( "_formFragment.yaml" );
 
         CreateDynamicContentSchemaParams params = CreateDynamicContentSchemaParams.create()
             .name( FormFragmentName.from( "myapp:my-fragment" ) )
@@ -416,10 +416,10 @@ class DynamicSchemaServiceImplTest
         assertTrue( result.getResource().exists() );
         assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
         assertEquals( resource, result.getResource().readString() );
-        assertEquals( "myapp:/cms/form-fragments/my-fragment/my-fragment.yml", result.getResource().getKey().toString() );
+        assertEquals( "myapp:/cms/form-fragments/my-fragment/my-fragment.yaml", result.getResource().getKey().toString() );
 
         final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/form-fragments/my-fragment/my-fragment.yml" ) ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/form-fragments/my-fragment/my-fragment.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -428,7 +428,7 @@ class DynamicSchemaServiceImplTest
     void createFormFragmentSchemaAsDevSchemaAdmin()
         throws Exception
     {
-        final String resource = readResource( "_formFragment.yml" );
+        final String resource = readResource( "_formFragment.yaml" );
 
         CreateDynamicContentSchemaParams params = CreateDynamicContentSchemaParams.create()
             .name( FormFragmentName.from( "myapp:my-fragment" ) )
@@ -446,7 +446,7 @@ class DynamicSchemaServiceImplTest
     void createFormFragmentSchemaAsNonSchemaAdmin()
         throws Exception
     {
-        final String resource = readResource( "_formFragment.yml" );
+        final String resource = readResource( "_formFragment.yaml" );
 
         CreateDynamicContentSchemaParams params = CreateDynamicContentSchemaParams.create()
             .name( FormFragmentName.from( "myapp:my-fragment" ) )
@@ -475,7 +475,7 @@ class DynamicSchemaServiceImplTest
 
         createAdminContext().runWith( () -> dynamicSchemaService.createContentSchema( createParams ) );
 
-        final String resource = readResource( "_formFragment.yml" );
+        final String resource = readResource( "_formFragment.yaml" );
 
         final UpdateDynamicContentSchemaParams updateParams = UpdateDynamicContentSchemaParams.create()
             .name( FormFragmentName.from( "myapp:my-fragment" ) )
@@ -504,10 +504,10 @@ class DynamicSchemaServiceImplTest
         assertTrue( result.getResource().exists() );
         assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
         assertEquals( resource, result.getResource().readString() );
-        assertEquals( "myapp:/cms/form-fragments/my-fragment/my-fragment.yml", result.getResource().getKey().toString() );
+        assertEquals( "myapp:/cms/form-fragments/my-fragment/my-fragment.yaml", result.getResource().getKey().toString() );
 
         final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/form-fragments/my-fragment/my-fragment.yml" ) ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/form-fragments/my-fragment/my-fragment.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -529,7 +529,7 @@ class DynamicSchemaServiceImplTest
 
         createSchemaAdminContext().runWith( () -> dynamicSchemaService.createContentSchema( createParams ) );
 
-        final String resource = readResource( "_formFragment.yml" );
+        final String resource = readResource( "_formFragment.yaml" );
 
         final UpdateDynamicContentSchemaParams updateParams = UpdateDynamicContentSchemaParams.create()
             .name( FormFragmentName.from( "myapp:my-fragment" ) )
@@ -559,7 +559,7 @@ class DynamicSchemaServiceImplTest
 
         createSchemaAdminContext().runWith( () -> dynamicSchemaService.createContentSchema( createParams ) );
 
-        final String resource = readResource( "_formFragment.yml" );
+        final String resource = readResource( "_formFragment.yaml" );
 
         final UpdateDynamicContentSchemaParams updateParams = UpdateDynamicContentSchemaParams.create()
             .name( FormFragmentName.from( "myapp:my-fragment" ) )
@@ -576,7 +576,7 @@ class DynamicSchemaServiceImplTest
     void createMixinSchema()
         throws Exception
     {
-        final String resource = readResource( "_mixin.yml" );
+        final String resource = readResource( "_mixin.yaml" );
 
         CreateDynamicContentSchemaParams params = CreateDynamicContentSchemaParams.create()
             .name( MixinName.from( "myapp:mymixin" ) )
@@ -604,10 +604,10 @@ class DynamicSchemaServiceImplTest
         assertTrue( result.getResource().exists() );
         assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
         assertEquals( resource, result.getResource().readString() );
-        assertEquals( "myapp:/cms/mixins/mymixin/mymixin.yml", result.getResource().getKey().toString() );
+        assertEquals( "myapp:/cms/mixins/mymixin/mymixin.yaml", result.getResource().getKey().toString() );
 
         final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/mixins/mymixin/mymixin.yml" ) ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/mixins/mymixin/mymixin.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -629,7 +629,7 @@ class DynamicSchemaServiceImplTest
 
         createAdminContext().runWith( () -> dynamicSchemaService.createContentSchema( createParams ) );
 
-        final String resource = readResource( "_mixin.yml" );
+        final String resource = readResource( "_mixin.yaml" );
 
         final UpdateDynamicContentSchemaParams updateParams = UpdateDynamicContentSchemaParams.create()
             .name( MixinName.from( "myapp:mymixin" ) )
@@ -657,10 +657,10 @@ class DynamicSchemaServiceImplTest
         assertTrue( result.getResource().exists() );
         assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
         assertEquals( resource, result.getResource().readString() );
-        assertEquals( "myapp:/cms/mixins/mymixin/mymixin.yml", result.getResource().getKey().toString() );
+        assertEquals( "myapp:/cms/mixins/mymixin/mymixin.yaml", result.getResource().getKey().toString() );
 
         final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/mixins/mymixin/mymixin.yml" ) ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/mixins/mymixin/mymixin.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -669,7 +669,7 @@ class DynamicSchemaServiceImplTest
     void createPartComponent()
         throws Exception
     {
-        final String resource = readResource( "_part.yml" );
+        final String resource = readResource( "_part.yaml" );
 
         CreateDynamicComponentParams params = CreateDynamicComponentParams.create()
             .descriptorKey( DescriptorKey.from( "myapp:mypart" ) )
@@ -703,10 +703,10 @@ class DynamicSchemaServiceImplTest
         assertTrue( result.getResource().exists() );
         assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
         assertEquals( resource, result.getResource().readString() );
-        assertEquals( "myapp:/cms/parts/mypart/mypart.yml", result.getResource().getKey().toString() );
+        assertEquals( "myapp:/cms/parts/mypart/mypart.yaml", result.getResource().getKey().toString() );
 
         final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/parts/mypart/mypart.yml" ) ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/parts/mypart/mypart.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -729,7 +729,7 @@ class DynamicSchemaServiceImplTest
 
         createAdminContext().runWith( () -> dynamicSchemaService.createComponent( createParams ) );
 
-        final String resource = readResource( "_part.yml" );
+        final String resource = readResource( "_part.yaml" );
 
         final UpdateDynamicComponentParams updateParams = UpdateDynamicComponentParams.create()
             .descriptorKey( DescriptorKey.from( "myapp:mypart" ) )
@@ -762,10 +762,10 @@ class DynamicSchemaServiceImplTest
         assertTrue( result.getResource().exists() );
         assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
         assertEquals( resource, result.getResource().readString() );
-        assertEquals( "myapp:/cms/parts/mypart/mypart.yml", result.getResource().getKey().toString() );
+        assertEquals( "myapp:/cms/parts/mypart/mypart.yaml", result.getResource().getKey().toString() );
 
         final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/parts/mypart/mypart.yml" ) ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/parts/mypart/mypart.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -774,7 +774,7 @@ class DynamicSchemaServiceImplTest
     void createLayoutComponent()
         throws Exception
     {
-        final String resource = readResource( "_layout.yml" );
+        final String resource = readResource( "_layout.yaml" );
 
         CreateDynamicComponentParams params = CreateDynamicComponentParams.create()
             .descriptorKey( DescriptorKey.from( "myapp:mylayout" ) )
@@ -806,10 +806,10 @@ class DynamicSchemaServiceImplTest
         assertTrue( result.getResource().exists() );
         assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
         assertEquals( resource, result.getResource().readString() );
-        assertEquals( "myapp:/cms/layouts/mylayout/mylayout.yml", result.getResource().getKey().toString() );
+        assertEquals( "myapp:/cms/layouts/mylayout/mylayout.yaml", result.getResource().getKey().toString() );
 
         final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/layouts/mylayout/mylayout.yml" ) ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/layouts/mylayout/mylayout.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -832,7 +832,7 @@ class DynamicSchemaServiceImplTest
 
         createAdminContext().runWith( () -> dynamicSchemaService.createComponent( params ) );
 
-        final String resource = readResource( "_layout.yml" );
+        final String resource = readResource( "_layout.yaml" );
 
         final UpdateDynamicComponentParams updateParams = UpdateDynamicComponentParams.create()
             .descriptorKey( DescriptorKey.from( "myapp:mylayout" ) )
@@ -864,10 +864,10 @@ class DynamicSchemaServiceImplTest
         assertTrue( result.getResource().exists() );
         assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
         assertEquals( resource, result.getResource().readString() );
-        assertEquals( "myapp:/cms/layouts/mylayout/mylayout.yml", result.getResource().getKey().toString() );
+        assertEquals( "myapp:/cms/layouts/mylayout/mylayout.yaml", result.getResource().getKey().toString() );
 
         final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/layouts/mylayout/mylayout.yml" ) ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/layouts/mylayout/mylayout.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -876,7 +876,7 @@ class DynamicSchemaServiceImplTest
     void createPageComponent()
         throws Exception
     {
-        final String resource = readResource( "_page.yml" );
+        final String resource = readResource( "_page.yaml" );
 
         CreateDynamicComponentParams params = CreateDynamicComponentParams.create()
             .descriptorKey( DescriptorKey.from( "myapp:mypage" ) )
@@ -908,10 +908,10 @@ class DynamicSchemaServiceImplTest
         assertTrue( result.getResource().exists() );
         assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
         assertEquals( resource, result.getResource().readString() );
-        assertEquals( "myapp:/cms/pages/mypage/mypage.yml", result.getResource().getKey().toString() );
+        assertEquals( "myapp:/cms/pages/mypage/mypage.yaml", result.getResource().getKey().toString() );
 
         final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/pages/mypage/mypage.yml" ) ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/pages/mypage/mypage.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -934,7 +934,7 @@ class DynamicSchemaServiceImplTest
 
         createAdminContext().runWith( () -> dynamicSchemaService.createComponent( createParams ) );
 
-        final String resource = readResource( "_page.yml" );
+        final String resource = readResource( "_page.yaml" );
 
         final UpdateDynamicComponentParams updateParams = UpdateDynamicComponentParams.create()
             .descriptorKey( DescriptorKey.from( "myapp:mypage" ) )
@@ -966,10 +966,10 @@ class DynamicSchemaServiceImplTest
         assertTrue( result.getResource().exists() );
         assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
         assertEquals( resource, result.getResource().readString() );
-        assertEquals( "myapp:/cms/pages/mypage/mypage.yml", result.getResource().getKey().toString() );
+        assertEquals( "myapp:/cms/pages/mypage/mypage.yaml", result.getResource().getKey().toString() );
 
         final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/pages/mypage/mypage.yml" ) ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/pages/mypage/mypage.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -978,7 +978,7 @@ class DynamicSchemaServiceImplTest
     void createSite()
         throws Exception
     {
-        final String resource = readResource( "_cms.yml" );
+        final String resource = readResource( "_cms.yaml" );
         final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
 
         assertThat( createAdminContext().callWith( () -> dynamicSchemaService.getCmsDescriptor( applicationKey ) ) ).isNotNull();
@@ -996,11 +996,11 @@ class DynamicSchemaServiceImplTest
         assertTrue( result.getResource().exists() );
         assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
         assertEquals( resource, result.getResource().readString() );
-        assertEquals( "myapp:/cms/cms.yml", result.getResource().getKey().toString() );
+        assertEquals( "myapp:/cms/cms.yaml", result.getResource().getKey().toString() );
         assertNotNull( cmsDescriptor.getModifiedTime() );
 
         final Node resourceNode =
-            VirtualAppContext.createAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/cms.yml" ) ) );
+            VirtualAppContext.createAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/cms.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -1017,7 +1017,7 @@ class DynamicSchemaServiceImplTest
     void updateSite()
         throws Exception
     {
-        final String resource = readResource( "_cms.yml" );
+        final String resource = readResource( "_cms.yaml" );
         final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
 
         createAdminContext().runWith( () -> dynamicSchemaService.createCms(
@@ -1036,10 +1036,10 @@ class DynamicSchemaServiceImplTest
         assertTrue( result.getResource().exists() );
         assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
         assertEquals( resource, result.getResource().readString() );
-        assertEquals( "myapp:/cms/cms.yml", result.getResource().getKey().toString() );
+        assertEquals( "myapp:/cms/cms.yaml", result.getResource().getKey().toString() );
 
         final Node resourceNode =
-            VirtualAppContext.createAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/cms.yml" ) ) );
+            VirtualAppContext.createAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/cms.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -1048,7 +1048,7 @@ class DynamicSchemaServiceImplTest
     void updateNotCreatedSite()
         throws Exception
     {
-        final String resource = readResource( "_cms.yml" );
+        final String resource = readResource( "_cms.yaml" );
         final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
 
         final DynamicSchemaResult<CmsDescriptor> result = createAdminContext().callWith(
@@ -1064,10 +1064,10 @@ class DynamicSchemaServiceImplTest
         assertTrue( result.getResource().exists() );
         assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
         assertEquals( resource, result.getResource().readString() );
-        assertEquals( "myapp:/cms/cms.yml", result.getResource().getKey().toString() );
+        assertEquals( "myapp:/cms/cms.yaml", result.getResource().getKey().toString() );
 
         final Node resourceNode =
-            VirtualAppContext.createAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/cms.yml" ) ) );
+            VirtualAppContext.createAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/cms.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -1082,7 +1082,7 @@ class DynamicSchemaServiceImplTest
         assertThat( createAdminContext().callWith( () -> dynamicSchemaService.getCmsDescriptor( applicationKey ) ) ).isNotNull();
 
         createAdminContext().callWith( () -> dynamicSchemaService.createCms(
-            CreateDynamicCmsParams.create().key( applicationKey ).resource( readResource( "_cms.yml" ) ).build() ) );
+            CreateDynamicCmsParams.create().key( applicationKey ).resource( readResource( "_cms.yaml" ) ).build() ) );
 
         DynamicSchemaResult<CmsDescriptor> cmsDescriptorResult =
             createAdminContext().callWith( () -> dynamicSchemaService.getCmsDescriptor( applicationKey ) );
@@ -1102,7 +1102,7 @@ class DynamicSchemaServiceImplTest
     void createStyles()
         throws Exception
     {
-        final String resource = readResource( "_styles.yml" );
+        final String resource = readResource( "_styles.yaml" );
         final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
 
         assertThat( createAdminContext().callWith( () -> dynamicSchemaService.getStyles( applicationKey ) ) ).isNull();
@@ -1119,11 +1119,11 @@ class DynamicSchemaServiceImplTest
         assertTrue( result.getResource().exists() );
         assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
         assertEquals( resource, result.getResource().readString() );
-        assertEquals( "myapp:/cms/styles/image.yml", result.getResource().getKey().toString() );
+        assertEquals( "myapp:/cms/styles/image.yaml", result.getResource().getKey().toString() );
         assertNotNull( styleDescriptor.getModifiedTime() );
 
         final Node resourceNode =
-            VirtualAppContext.createAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/styles/image.yml" ) ) );
+            VirtualAppContext.createAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/styles/image.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -1132,7 +1132,7 @@ class DynamicSchemaServiceImplTest
     void updateStyles()
         throws Exception
     {
-        final String resource = readResource( "_styles.yml" );
+        final String resource = readResource( "_styles.yaml" );
         final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
 
         createAdminContext().callWith( () -> dynamicSchemaService.createStyles(
@@ -1150,10 +1150,10 @@ class DynamicSchemaServiceImplTest
         assertTrue( result.getResource().exists() );
         assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
         assertEquals( resource, result.getResource().readString() );
-        assertEquals( "myapp:/cms/styles/image.yml", result.getResource().getKey().toString() );
+        assertEquals( "myapp:/cms/styles/image.yaml", result.getResource().getKey().toString() );
 
         final Node resourceNode =
-            VirtualAppContext.createAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/styles/image.yml" ) ) );
+            VirtualAppContext.createAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/styles/image.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -1166,7 +1166,7 @@ class DynamicSchemaServiceImplTest
         assertThat( createAdminContext().callWith( () -> dynamicSchemaService.getStyles( applicationKey ) ) ).isNull();
 
         createAdminContext().callWith( () -> dynamicSchemaService.createStyles(
-            CreateDynamicStylesParams.create().key( applicationKey ).resource( readResource( "_styles.yml" ) ).build() ) );
+            CreateDynamicStylesParams.create().key( applicationKey ).resource( readResource( "_styles.yaml" ) ).build() ) );
 
         assertThat( createAdminContext().callWith( () -> dynamicSchemaService.getStyles( applicationKey ) ) ).isNotNull();
 
@@ -1189,19 +1189,19 @@ class DynamicSchemaServiceImplTest
         DynamicSchemaResult<PartDescriptor> part1 = createAdminContext().callWith( () -> dynamicSchemaService.createComponent(
             CreateDynamicComponentParams.create()
                 .descriptorKey( DescriptorKey.from( "myapp:mypart1" ) )
-                .resource( readResource( "_part.yml" ) )
+                .resource( readResource( "_part.yaml" ) )
                 .type( DynamicComponentType.PART )
                 .build() ) );
         DynamicSchemaResult<PartDescriptor> part2 = createAdminContext().callWith( () -> dynamicSchemaService.createComponent(
             CreateDynamicComponentParams.create()
                 .descriptorKey( DescriptorKey.from( "myapp:mypart2" ) )
-                .resource( readResource( "_part.yml" ) )
+                .resource( readResource( "_part.yaml" ) )
                 .type( DynamicComponentType.PART )
                 .build() ) );
         DynamicSchemaResult<PartDescriptor> part3 = createAdminContext().callWith( () -> dynamicSchemaService.createComponent(
             CreateDynamicComponentParams.create()
                 .descriptorKey( DescriptorKey.from( "my_other_app:mypart" ) )
-                .resource( readResource( "_part.yml" ) )
+                .resource( readResource( "_part.yaml" ) )
                 .type( DynamicComponentType.PART )
                 .build() ) );
 
@@ -1236,19 +1236,19 @@ class DynamicSchemaServiceImplTest
         DynamicSchemaResult<ContentType> contentType1 = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
             CreateDynamicContentSchemaParams.create()
                 .name( ContentTypeName.from( "myapp:mytype1" ) )
-                .resource( readResource( "_contentType.yml" ) )
+                .resource( readResource( "_contentType.yaml" ) )
                 .type( DynamicContentSchemaType.CONTENT_TYPE )
                 .build() ) );
         DynamicSchemaResult<ContentType> contentType2 = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
             CreateDynamicContentSchemaParams.create()
                 .name( ContentTypeName.from( "myapp:mytype2" ) )
-                .resource( readResource( "_contentType.yml" ) )
+                .resource( readResource( "_contentType.yaml" ) )
                 .type( DynamicContentSchemaType.CONTENT_TYPE )
                 .build() ) );
         DynamicSchemaResult<ContentType> contentType3 = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
             CreateDynamicContentSchemaParams.create()
                 .name( ContentTypeName.from( "my_other_app:mytype" ) )
-                .resource( readResource( "_contentType.yml" ) )
+                .resource( readResource( "_contentType.yaml" ) )
                 .type( DynamicContentSchemaType.CONTENT_TYPE )
                 .build() ) );
 
@@ -1287,19 +1287,19 @@ class DynamicSchemaServiceImplTest
         DynamicSchemaResult<FormFragmentDescriptor> fragment1 = createAdminContext().callWith(
             () -> dynamicSchemaService.createContentSchema( CreateDynamicContentSchemaParams.create()
                                                                 .name( FormFragmentName.from( "myapp:mytype1" ) )
-                                                                .resource( readResource( "_formFragment.yml" ) )
+                                                                .resource( readResource( "_formFragment.yaml" ) )
                                                                 .type( DynamicContentSchemaType.FORM_FRAGMENT )
                                                                 .build() ) );
         DynamicSchemaResult<FormFragmentDescriptor> fragment2 = createAdminContext().callWith(
             () -> dynamicSchemaService.createContentSchema( CreateDynamicContentSchemaParams.create()
                                                                 .name( FormFragmentName.from( "myapp:mytype2" ) )
-                                                                .resource( readResource( "_formFragment.yml" ) )
+                                                                .resource( readResource( "_formFragment.yaml" ) )
                                                                 .type( DynamicContentSchemaType.FORM_FRAGMENT )
                                                                 .build() ) );
         DynamicSchemaResult<FormFragmentDescriptor> fragment3 = createAdminContext().callWith(
             () -> dynamicSchemaService.createContentSchema( CreateDynamicContentSchemaParams.create()
                                                                 .name( FormFragmentName.from( "my_other_app:mytype" ) )
-                                                                .resource( readResource( "_formFragment.yml" ) )
+                                                                .resource( readResource( "_formFragment.yaml" ) )
                                                                 .type( DynamicContentSchemaType.FORM_FRAGMENT )
                                                                 .build() ) );
 
@@ -1338,19 +1338,19 @@ class DynamicSchemaServiceImplTest
         DynamicSchemaResult<FormFragmentDescriptor> fragment1 = createAdminContext().callWith(
             () -> dynamicSchemaService.createContentSchema( CreateDynamicContentSchemaParams.create()
                                                                 .name( FormFragmentName.from( "myapp:mytype1" ) )
-                                                                .resource( readResource( "_formFragment.yml" ) )
+                                                                .resource( readResource( "_formFragment.yaml" ) )
                                                                 .type( DynamicContentSchemaType.FORM_FRAGMENT )
                                                                 .build() ) );
         DynamicSchemaResult<FormFragmentDescriptor> fragment2 = createAdminContext().callWith(
             () -> dynamicSchemaService.createContentSchema( CreateDynamicContentSchemaParams.create()
                                                                 .name( FormFragmentName.from( "myapp:mytype2" ) )
-                                                                .resource( readResource( "_formFragment.yml" ) )
+                                                                .resource( readResource( "_formFragment.yaml" ) )
                                                                 .type( DynamicContentSchemaType.FORM_FRAGMENT )
                                                                 .build() ) );
         DynamicSchemaResult<FormFragmentDescriptor> fragment3 = createAdminContext().callWith(
             () -> dynamicSchemaService.createContentSchema( CreateDynamicContentSchemaParams.create()
                                                                 .name( FormFragmentName.from( "my_other_app:mytype" ) )
-                                                                .resource( readResource( "_formFragment.yml" ) )
+                                                                .resource( readResource( "_formFragment.yaml" ) )
                                                                 .type( DynamicContentSchemaType.FORM_FRAGMENT )
                                                                 .build() ) );
 
@@ -1388,18 +1388,18 @@ class DynamicSchemaServiceImplTest
 
         createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema( CreateDynamicContentSchemaParams.create()
                                                                                            .name( FormFragmentName.from( "myapp:mytype1" ) )
-                                                                                           .resource( readResource( "_formFragment.yml" ) )
+                                                                                           .resource( readResource( "_formFragment.yaml" ) )
                                                                                            .type( DynamicContentSchemaType.FORM_FRAGMENT )
                                                                                            .build() ) );
         createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema( CreateDynamicContentSchemaParams.create()
                                                                                            .name( FormFragmentName.from( "myapp:mytype2" ) )
-                                                                                           .resource( readResource( "_formFragment.yml" ) )
+                                                                                           .resource( readResource( "_formFragment.yaml" ) )
                                                                                            .type( DynamicContentSchemaType.FORM_FRAGMENT )
                                                                                            .build() ) );
         createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema( CreateDynamicContentSchemaParams.create()
                                                                                            .name( FormFragmentName.from(
                                                                                                "my_other_app:mytype" ) )
-                                                                                           .resource( readResource( "_formFragment.yml" ) )
+                                                                                           .resource( readResource( "_formFragment.yaml" ) )
                                                                                            .type( DynamicContentSchemaType.FORM_FRAGMENT )
                                                                                            .build() ) );
 
@@ -1423,19 +1423,19 @@ class DynamicSchemaServiceImplTest
         DynamicSchemaResult<MixinDescriptor> mixin1 = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
             CreateDynamicContentSchemaParams.create()
                 .name( MixinName.from( "myapp:mytype1" ) )
-                .resource( readResource( "_mixin.yml" ) )
+                .resource( readResource( "_mixin.yaml" ) )
                 .type( DynamicContentSchemaType.MIXIN )
                 .build() ) );
         DynamicSchemaResult<MixinDescriptor> mixin2 = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
             CreateDynamicContentSchemaParams.create()
                 .name( MixinName.from( "myapp:mytype2" ) )
-                .resource( readResource( "_mixin.yml" ) )
+                .resource( readResource( "_mixin.yaml" ) )
                 .type( DynamicContentSchemaType.MIXIN )
                 .build() ) );
         DynamicSchemaResult<MixinDescriptor> mixin3 = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
             CreateDynamicContentSchemaParams.create()
                 .name( MixinName.from( "my_other_app:mytype" ) )
-                .resource( readResource( "_mixin.yml" ) )
+                .resource( readResource( "_mixin.yaml" ) )
                 .type( DynamicContentSchemaType.MIXIN )
                 .build() ) );
 
@@ -1460,7 +1460,7 @@ class DynamicSchemaServiceImplTest
         DynamicSchemaResult<ContentType> contentType = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
             CreateDynamicContentSchemaParams.create()
                 .name( ContentTypeName.from( "myapp:mytype" ) )
-                .resource( readResource( "_contentType.yml" ) )
+                .resource( readResource( "_contentType.yaml" ) )
                 .type( DynamicContentSchemaType.CONTENT_TYPE )
                 .build() ) );
 
@@ -1493,7 +1493,7 @@ class DynamicSchemaServiceImplTest
         DynamicSchemaResult<ContentType> contentType = createSchemaAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
             CreateDynamicContentSchemaParams.create()
                 .name( ContentTypeName.from( "myapp:mytype" ) )
-                .resource( readResource( "_contentType.yml" ) )
+                .resource( readResource( "_contentType.yaml" ) )
                 .type( DynamicContentSchemaType.CONTENT_TYPE )
                 .build() ) );
 
@@ -1512,7 +1512,7 @@ class DynamicSchemaServiceImplTest
         DynamicSchemaResult<ContentType> contentType = createSchemaAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
             CreateDynamicContentSchemaParams.create()
                 .name( ContentTypeName.from( "myapp:mytype" ) )
-                .resource( readResource( "_contentType.yml" ) )
+                .resource( readResource( "_contentType.yaml" ) )
                 .type( DynamicContentSchemaType.CONTENT_TYPE )
                 .build() ) );
 
@@ -1533,7 +1533,7 @@ class DynamicSchemaServiceImplTest
         DynamicSchemaResult<PartDescriptor> part = createAdminContext().callWith( () -> dynamicSchemaService.createComponent(
             CreateDynamicComponentParams.create()
                 .descriptorKey( DescriptorKey.from( "myapp:mypart" ) )
-                .resource( readResource( "_part.yml" ) )
+                .resource( readResource( "_part.yaml" ) )
                 .type( DynamicComponentType.PART )
                 .build() ) );
 

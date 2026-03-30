@@ -13,10 +13,18 @@ import com.enonic.xp.node.NodeService;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 
+import static com.enonic.xp.core.impl.app.VirtualAppConstants.CMS_ROOT_NAME;
+
 public class FakeCmsYmlUrlResolver
     implements ApplicationUrlResolver
 {
-    private static final Set<String> SINGLE_FILE_SET = Set.of( VirtualAppConstants.CMS_RESOURCE_PATH );
+    private static final String CMS_RESOURCE_PATH_BASE = "/" + CMS_ROOT_NAME + "/" + CMS_ROOT_NAME;
+
+    private static final String CMS_RESOURCE_PATH_YAML = CMS_RESOURCE_PATH_BASE + ".yaml";
+
+    private static final String CMS_RESOURCE_PATH_YML = CMS_RESOURCE_PATH_BASE + ".yml";
+
+    private static final Set<String> FILE_SET = Set.of( CMS_RESOURCE_PATH_YAML, CMS_RESOURCE_PATH_YML );
 
     private final ApplicationKey applicationKey;
 
@@ -31,13 +39,13 @@ public class FakeCmsYmlUrlResolver
     @Override
     public Set<String> findFiles()
     {
-        return SINGLE_FILE_SET;
+        return FILE_SET;
     }
 
     @Override
     public Resource findResource( final String path )
     {
-        if ( VirtualAppConstants.CMS_RESOURCE_PATH.equals( path ) )
+        if ( CMS_RESOURCE_PATH_YAML.equals( path ) || CMS_RESOURCE_PATH_YML.equals( path ) )
         {
             final NodePath appPath =
                 new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( applicationKey.toString() ) );
