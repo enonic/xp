@@ -15,7 +15,9 @@ import com.enonic.xp.icon.Icon;
 
 final class ApplicationDescriptorBuilder
 {
-    private static final String APP_DESCRIPTOR_FILENAME = "application.yml";
+    private static final String APP_DESCRIPTOR_PATH_YAML = "application.yaml";
+
+    private static final String APP_DESCRIPTOR_PATH_YML = "application.yml";
 
     private static final String APP_ICON_FILENAME = "application.svg";
 
@@ -29,7 +31,7 @@ final class ApplicationDescriptorBuilder
 
     public ApplicationDescriptor build()
     {
-        final URL url = bundle.getResource( APP_DESCRIPTOR_FILENAME );
+        final URL url = resolveDescriptorUrl( bundle );
         final String yaml = readAppYml( url );
 
         final String applicationName = ApplicationBundleUtils.getApplicationName( bundle );
@@ -55,6 +57,16 @@ final class ApplicationDescriptorBuilder
         return appDescriptorBuilder.build();
     }
 
+    private static URL resolveDescriptorUrl( final Bundle bundle )
+    {
+        final URL yamlUrl = bundle.getEntry( APP_DESCRIPTOR_PATH_YAML );
+        if ( yamlUrl != null )
+        {
+            return bundle.getResource( APP_DESCRIPTOR_PATH_YAML );
+        }
+        return bundle.getResource( APP_DESCRIPTOR_PATH_YML );
+    }
+
     private String readAppYml( final URL siteYmlURL )
     {
         try (InputStream stream = siteYmlURL.openStream())
@@ -63,13 +75,13 @@ final class ApplicationDescriptorBuilder
         }
         catch ( final Exception e )
         {
-            throw new RuntimeException( "Invalid " + APP_DESCRIPTOR_FILENAME + " file", e );
+            throw new RuntimeException( "Invalid application descriptor file", e );
         }
     }
 
     public static boolean hasAppDescriptor( final Bundle bundle )
     {
-        return ( bundle.getEntry( APP_DESCRIPTOR_FILENAME ) != null );
+        return bundle.getEntry( APP_DESCRIPTOR_PATH_YAML ) != null || bundle.getEntry( APP_DESCRIPTOR_PATH_YML ) != null;
     }
 
     private boolean hasAppIcon( final Bundle bundle )

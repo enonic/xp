@@ -1,0 +1,18 @@
+kind: "ContentType"
+superType: "base:structured"
+description:
+  text: "Brief description"
+  i18n: "article.description"
+title:
+  text: "Article"
+  i18n: "i18n.article.displayName"
+form:
+  - type: "TextLine"
+    name: "field1"
+    label: "Field 1"
+    occurrences:
+      min: 0
+      max: 1
+    helpText:
+      text: "helpText"
+      i18n: "helpTextI18nKey"

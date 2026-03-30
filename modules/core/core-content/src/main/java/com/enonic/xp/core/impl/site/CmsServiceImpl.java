@@ -29,7 +29,9 @@ import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_METADATA_NAME;
 public class CmsServiceImpl
     implements CmsService
 {
-    private static final String CMS_DESCRIPTOR_PATH = "cms/cms.yml";
+    private static final String CMS_DESCRIPTOR_PATH_YAML = "cms/cms.yaml";
+
+    private static final String CMS_DESCRIPTOR_PATH_YML = "cms/cms.yml";
 
     private static final CmsDescriptor PORTAL_CMS_DESCRIPTOR = CmsDescriptor.create()
         .applicationKey( ApplicationKey.PORTAL )
@@ -99,6 +101,11 @@ public class CmsServiceImpl
 
     private ResourceKey toResourceKey( final ApplicationKey applicationKey )
     {
-        return ResourceKey.from( applicationKey, CMS_DESCRIPTOR_PATH );
+        final ResourceKey yamlKey = ResourceKey.from( applicationKey, CMS_DESCRIPTOR_PATH_YAML );
+        if ( resourceService.getResource( yamlKey ).exists() )
+        {
+            return yamlKey;
+        }
+        return ResourceKey.from( applicationKey, CMS_DESCRIPTOR_PATH_YML );
     }
 }

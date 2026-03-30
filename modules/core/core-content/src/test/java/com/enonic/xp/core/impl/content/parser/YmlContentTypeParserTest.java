@@ -56,6 +56,19 @@ public class YmlContentTypeParserTest
         assertTrue( schemaConfig.optional( "prop4" ).isPresent() );
     }
 
+    @Test
+    void testParseYaml()
+        throws Exception
+    {
+        final String yaml = readAsString( "/descriptors/content-type.yaml" );
+
+        final ApplicationKey myapp = ApplicationKey.from( "myapp" );
+        ContentType.Builder builder = YmlContentTypeParser.parse( yaml, myapp );
+        builder.name( ContentTypeName.from( myapp, "article" ) );
+
+        assertNotNull( builder.build() );
+    }
+
     private String readAsString( final String name )
         throws Exception
     {

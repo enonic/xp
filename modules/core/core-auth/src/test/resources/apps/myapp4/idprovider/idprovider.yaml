@@ -1,0 +1,16 @@
+kind: "IdProvider"
+mode: "MIXED"
+form:
+  - type: "TextLine"
+    name: "title"
+    label: "Title"
+    occurrences:
+      min: 0
+      max: 1
+  - type: "PrincipalSelector"
+    name: "defaultPrincipals"
+    label: "Groups"
+    occurrences:
+      min: 0
+      max: 0
+    principalType: "GROUP"

@@ -53,6 +53,11 @@ public final class ApiDescriptorServiceImpl
 
     private ResourceKey getDescriptorResourceKey( final DescriptorKey key )
     {
+        final ResourceKey yamlKey = toResourceKey( key, "yaml" );
+        if ( resourceService.getResource( yamlKey ).exists() )
+        {
+            return yamlKey;
+        }
         return toResourceKey( key, "yml" );
     }
 

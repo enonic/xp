@@ -93,6 +93,12 @@ public final class ServiceDescriptorServiceImpl
 
     private ResourceKey toResourceKey( final DescriptorKey key )
     {
-        return ResourceKey.from( key.getApplicationKey(), ROOT_PATH + "/" + key.getName() + "/" + key.getName() + ".yml" );
+        final String basePath = ROOT_PATH + "/" + key.getName() + "/" + key.getName();
+        final ResourceKey yamlKey = ResourceKey.from( key.getApplicationKey(), basePath + ".yaml" );
+        if ( resourceService.getResource( yamlKey ).exists() )
+        {
+            return yamlKey;
+        }
+        return ResourceKey.from( key.getApplicationKey(), basePath + ".yml" );
     }
 }
