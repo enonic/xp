@@ -33,7 +33,7 @@ export interface CreateVirtualApplicationParams {
 
 export interface Application {
     key: string;
-    title: string | null;
+    displayName: string | null;
     vendorName: string | null;
     vendorUrl: string | null;
     url: string | null;

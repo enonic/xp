@@ -15,7 +15,7 @@ log.info('Listed apps: ' + result.map((app) => app.key).join(', '));
 assert.assertJsonEquals([
     {
         key: 'app1',
-        title: 'app display name',
+        displayName: 'app display name',
         vendorName: 'vendor name',
         vendorUrl: 'https://vendor.url',
         url: 'https://myapp.url',
@@ -29,7 +29,7 @@ assert.assertJsonEquals([
     },
     {
         key: 'app2',
-        title: 'app display name 2',
+        displayName: 'app display name 2',
         vendorName: 'vendor name 2',
         vendorUrl: 'https://vendor2.url',
         url: 'https://myapp2.url',

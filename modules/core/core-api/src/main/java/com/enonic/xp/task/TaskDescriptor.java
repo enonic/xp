@@ -68,7 +68,7 @@ public final class TaskDescriptor
     @Override
     public int hashCode()
     {
-        return Objects.hash( description, descriptionI18nKey, config );
+        return Objects.hash( description, descriptionI18nKey, config, schemaConfig );
     }
 
     public static Builder create()

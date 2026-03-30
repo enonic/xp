@@ -15,7 +15,7 @@ import com.enonic.xp.resource.ResourceKey;
 
 import static com.enonic.xp.core.impl.app.VirtualAppConstants.CMS_ROOT_NAME;
 
-public class FakeCmsYmlUrlResolver
+public class FakeCmsYamlUrlResolver
     implements ApplicationUrlResolver
 {
     private static final String CMS_RESOURCE_PATH_YAML = "/" + CMS_ROOT_NAME + "/" + CMS_ROOT_NAME + ".yaml";
@@ -26,7 +26,7 @@ public class FakeCmsYmlUrlResolver
 
     private final NodeService nodeService;
 
-    public FakeCmsYmlUrlResolver( final ApplicationKey applicationKey, final NodeService nodeService )
+    public FakeCmsYamlUrlResolver( final ApplicationKey applicationKey, final NodeService nodeService )
     {
         this.applicationKey = applicationKey;
         this.nodeService = nodeService;

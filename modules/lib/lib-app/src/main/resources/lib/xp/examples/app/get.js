@@ -16,7 +16,7 @@ log.info('Fetched app: ' + result.key);
 
 assert.assertJsonEquals({
     key: 'my_app',
-    title: 'app display name',
+    displayName: 'app display name',
     vendorName: 'vendor name',
     vendorUrl: 'https://vendor.url',
     url: 'https://myapp.url',
