@@ -1353,7 +1353,7 @@ export function multiRepoConnect(params: MultiRepoConnectParams): MultiRepoConne
     const multiRepoNodeHandleContext: MultiRepoNodeHandleContext = __.newBean<MultiRepoNodeHandleContext>(
         'com.enonic.xp.lib.node.MultiRepoNodeHandleContext');
 
-    params.sources.forEach((source: ConnectParams) => {
+    params.sources.forEach((source) => {
         const repoId = checkRequired(source, 'repoId');
         const branch = checkRequired(source, 'branch');
         const principals = source.principals ?? null;
