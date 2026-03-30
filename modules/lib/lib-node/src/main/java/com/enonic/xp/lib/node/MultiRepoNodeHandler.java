@@ -1,6 +1,6 @@
 package com.enonic.xp.lib.node;
 
-import java.util.Set;
+import java.util.List;
 
 import com.enonic.xp.context.Context;
 import com.enonic.xp.node.NodeService;
@@ -47,7 +47,7 @@ public class MultiRepoNodeHandler
 
     public static final class Builder
     {
-        private Set<SearchTarget> searchTargets;
+        private List<SearchTarget> searchTargets;
 
         private Context context;
 
@@ -57,7 +57,7 @@ public class MultiRepoNodeHandler
         {
         }
 
-        public Builder searchTargets( final Set<SearchTarget> val )
+        public Builder searchTargets( final List<SearchTarget> val )
         {
             searchTargets = val;
             return this;

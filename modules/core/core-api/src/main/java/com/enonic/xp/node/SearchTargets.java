@@ -1,7 +1,6 @@
 package com.enonic.xp.node;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
@@ -25,7 +24,7 @@ public final class SearchTargets
 
     public static final class Builder
     {
-        private final ImmutableSet.Builder<SearchTarget> targets = ImmutableSet.builder();
+        private final ImmutableList.Builder<SearchTarget> targets = ImmutableList.builder();
 
         private Builder()
         {
@@ -39,7 +38,7 @@ public final class SearchTargets
 
         public SearchTargets build()
         {
-            return new SearchTargets( targets.build().asList() );
+            return new SearchTargets( targets.build() );
         }
     }
 }

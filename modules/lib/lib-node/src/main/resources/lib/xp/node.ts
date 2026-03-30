@@ -88,8 +88,6 @@ export type {
     ValueType,
 } from '@enonic-types/core';
 
-type WithRequiredProperty<T, K extends keyof T> = T & { [P in K]-?: T[P] };
-
 function checkRequired<T extends object, K extends keyof T>(
     obj: T,
     name: K,
@@ -178,7 +176,7 @@ interface NodeHandleFactory {
 }
 
 interface MultiRepoNodeHandleContext {
-    addSource(repoId: string, branch: string, principals: PrincipalKey[]): void;
+    addSource(repoId: string, branch: string, principals: PrincipalKey[] | null): void;
 }
 
 interface MultiRepoNodeHandleFactory {
@@ -607,7 +605,7 @@ export interface CommonNodeProperties {
     _permissions: AccessControlEntry[];
     _ts: string;
     _versionKey: string;
-};
+}
 
 export type NodePropertiesOnCreate = Partial<CommonNodeProperties> & {
     _indexConfig?: Partial<NodeIndexConfigParams>;
@@ -1334,7 +1332,7 @@ export function connect(params: ConnectParams): RepoConnection {
 }
 
 export interface MultiRepoConnectParams {
-    sources: WithRequiredProperty<ConnectParams, 'principals'>[];
+    sources: Omit<ConnectParams, 'user'>[];
 }
 
 /**
@@ -1346,10 +1344,7 @@ export interface MultiRepoConnectParams {
  * @param {object[]} params.sources array of sources to connect to
  * @param {object} params.sources.repoId repository id
  * @param {object} params.sources.branch branch id
- * @param {object} [params.sources.user] User to execute the callback with. Default is the current user.
- * @param {string} params.sources.user.login Login of the user.
- * @param {string} [params.sources.user.idProvider] Id provider containing the user. By default, the system id provider is used.
- * @param {string[]} params.sources.principals Principals to execute the callback with.
+ * @param {string[]} [params.sources.principals] Principals to execute the callback with. Uses principals in context if not specified.
  *
  * @returns {MultiRepoConnection} Returns a new multirepo-connection.
  */
@@ -1360,8 +1355,10 @@ export function multiRepoConnect(params: MultiRepoConnectParams): MultiRepoConne
     params.sources.forEach((source: ConnectParams) => {
         const repoId = checkRequired(source, 'repoId');
         const branch = checkRequired(source, 'branch');
-        const principals = checkRequired(source, 'principals');
-        assertStringArray(principals, 'principals');
+        const principals = source.principals ?? null;
+        if (principals != null) {
+            assertStringArray(principals, 'principals');
+        }
         multiRepoNodeHandleContext.addSource(repoId, branch, principals);
     });
 
