@@ -23,10 +23,13 @@ final class ContentTypeLoader
     {
         final ContentType.Builder builder = YmlContentTypeParser.parse( resource.readString(), name.getApplicationKey() );
 
+        builder.name( name );
+        builder.icon( loadIcon( name ) );
+
         final Instant modifiedTime = Instant.ofEpochMilli( resource.getTimestamp() );
         builder.modifiedTime( modifiedTime );
         builder.createdTime( modifiedTime );
-        builder.name( name );
+
         return builder.build();
     }
 
