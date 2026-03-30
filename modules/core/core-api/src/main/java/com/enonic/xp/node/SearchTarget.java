@@ -73,7 +73,6 @@ public final class SearchTarget
 
         private void validate()
         {
-            Objects.requireNonNull( this.principalKeys, "principalKeys is required" );
             Objects.requireNonNull( this.branch, "branch is required" );
             Objects.requireNonNull( this.repositoryId, "repositoryId is required" );
         }

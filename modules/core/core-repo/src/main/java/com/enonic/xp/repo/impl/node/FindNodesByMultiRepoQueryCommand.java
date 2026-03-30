@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.node;
 
 import java.util.Objects;
 
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.FindNodesByMultiRepoQueryResult;
 import com.enonic.xp.node.MultiRepoNodeQuery;
 import com.enonic.xp.node.SearchTarget;
@@ -9,6 +10,7 @@ import com.enonic.xp.node.SearchTargets;
 import com.enonic.xp.repo.impl.MultiRepoSearchSource;
 import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
+import com.enonic.xp.security.PrincipalKeys;
 
 public class FindNodesByMultiRepoQueryCommand
     extends AbstractNodeCommand
@@ -32,12 +34,17 @@ public class FindNodesByMultiRepoQueryCommand
 
         final MultiRepoSearchSource.Builder searchSourceBuilder = MultiRepoSearchSource.create();
 
+        final PrincipalKeys contextPrincipals = ContextAccessor.current().getAuthInfo().getPrincipals();
+
         for ( final SearchTarget searchTarget : searchTargets )
         {
+            final PrincipalKeys acl =
+                searchTarget.getPrincipalKeys() != null ? searchTarget.getPrincipalKeys() : contextPrincipals;
+
             searchSourceBuilder.add( SingleRepoSearchSource.create().
                 branch( searchTarget.getBranch() ).
                 repositoryId( searchTarget.getRepositoryId() ).
-                acl( searchTarget.getPrincipalKeys() ).
+                acl( acl ).
                 build() );
         }
 

@@ -319,6 +319,11 @@ public class NodeServiceImpl
     @Override
     public FindNodesByMultiRepoQueryResult findByQuery( final MultiRepoNodeQuery multiNodeQuery )
     {
+        if ( multiNodeQuery.getSearchTargets().isEmpty() )
+        {
+            throw new IllegalArgumentException( "SearchTargets must not be empty" );
+        }
+
         multiNodeQuery.getSearchTargets()
             .forEach( searchTarget -> verifyBranchExists( searchTarget.getRepositoryId(), searchTarget.getBranch() ) );
 
