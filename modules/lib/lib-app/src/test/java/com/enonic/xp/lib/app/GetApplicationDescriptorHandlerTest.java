@@ -38,7 +38,14 @@ class GetApplicationDescriptorHandlerTest
         when( applicationDescriptorService.get( isA( ApplicationKey.class ) ) ).thenAnswer( params -> {
             final ApplicationKey applicationKey = params.getArgument( 0, ApplicationKey.class );
 
-            return ApplicationDescriptor.create().key( applicationKey ).description( "my app description" ).build();
+            return ApplicationDescriptor.create()
+                .key( applicationKey )
+                .description( "my app description" )
+                .title( "Title" )
+                .titleI18nKey( "app.title.key" )
+                .vendorName(  "Vendor Name" )
+                .vendorUrl( "vendorUrl" )
+                .build();
         } );
 
         runFunction( "/test/GetApplicationDescriptorHandlerTest.js", "getWithoutIcon" );

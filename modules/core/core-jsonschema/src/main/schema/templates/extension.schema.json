@@ -30,8 +30,7 @@
     }
   },
   "required": [
-    "kind",
-    "title"
+    "kind"
   ],
   "additionalProperties": false,
   "$defs": {

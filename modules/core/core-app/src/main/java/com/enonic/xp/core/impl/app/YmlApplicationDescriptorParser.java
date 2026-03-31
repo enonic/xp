@@ -27,8 +27,17 @@ final class YmlApplicationDescriptorParser
     @JsonIgnoreProperties("kind")
     private abstract static class ApplicationDescriptorBuilderMapper
     {
+        @JsonProperty("title")
+        abstract ApplicationDescriptor.Builder title( LocalizedText text );
+
         @JsonProperty("description")
         abstract ApplicationDescriptor.Builder description( LocalizedText text );
+
+        @JsonProperty("vendorName")
+        abstract ApplicationDescriptor.Builder vendorName( String value );
+
+        @JsonProperty("vendorUrl")
+        abstract ApplicationDescriptor.Builder vendorUrl( String value );
 
         @JacksonInject("currentApplication")
         abstract ApplicationDescriptor.Builder key( ApplicationKey key );
