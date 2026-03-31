@@ -10,8 +10,8 @@ exports.assetUrlTest = function () {
         }
     });
 
-    // Verify the result is a proper mock URL
-    assert.assertEquals('/site/mocksite/_/asset/styles/my.css', result);
+    // Verify the result is a proper mock URL with params
+    assert.assertEquals('/site/mocksite/_/asset/styles/my.css?a=1&b=1&b=2', result);
     return true;
 };
 
@@ -25,7 +25,7 @@ exports.assetUrlTest_unknownProperty = function () {
         }
     });
 
-    assert.assertEquals('/site/mocksite/_/asset/styles/my.css', result);
+    assert.assertEquals('/site/mocksite/_/asset/styles/my.css?a=1&b=1&b=2', result);
     return true;
 };
 
@@ -53,8 +53,8 @@ exports.attachmentUrlTest = function () {
         }
     });
 
-    // Verify the result is a proper mock URL
-    assert.assertEquals('/site/mocksite/_/attachment/inline/mockid/myattachment.pdf', result);
+    // Verify the result is a proper mock URL with params
+    assert.assertEquals('/site/mocksite/_/attachment/inline/mockid/myattachment.pdf?a=1&b=1&b=2', result);
     return true;
 };
 
@@ -68,7 +68,7 @@ exports.attachmentUrlTest_unknownProperty = function () {
         }
     });
 
-    assert.assertEquals('/site/mocksite/_/attachment/inline/mockid/myattachment.pdf', result);
+    assert.assertEquals('/site/mocksite/_/attachment/inline/mockid/myattachment.pdf?a=1&b=1&b=2', result);
     return true;
 };
 
@@ -81,8 +81,8 @@ exports.componentUrlTest = function () {
         }
     });
 
-    // Verify the result is a proper mock URL
-    assert.assertEquals('/site/mocksite/_/component/mycomp', result);
+    // Verify the result is a proper mock URL with params
+    assert.assertEquals('/site/mocksite/_/component/mycomp?a=1&b=1&b=2', result);
     return true;
 };
 
@@ -96,7 +96,7 @@ exports.componentUrlTest_unknownProperty = function () {
         }
     });
 
-    assert.assertEquals('/site/mocksite/_/component/mycomp', result);
+    assert.assertEquals('/site/mocksite/_/component/mycomp?a=1&b=1&b=2', result);
     return true;
 };
 
@@ -113,8 +113,8 @@ exports.imageUrlTest = function () {
         }
     });
 
-    // Verify the result is a proper mock URL
-    assert.assertEquals('/site/mocksite/_/image/123', result);
+    // Verify the result is a proper mock URL with params
+    assert.assertEquals('/site/mocksite/_/image/123?a=1&b=1&b=2', result);
     return true;
 };
 
@@ -132,7 +132,7 @@ exports.imageUrlTest_unknownProperty = function () {
         unknownProperty: 'value'
     });
 
-    assert.assertEquals('/site/mocksite/_/image/123', result);
+    assert.assertEquals('/site/mocksite/_/image/123?a=1&b=1&b=2', result);
     return true;
 };
 
@@ -145,8 +145,8 @@ exports.pageUrlTest = function () {
         }
     });
 
-    // Verify the result is a proper mock URL
-    assert.assertEquals('/site/mocksite/a/b', result);
+    // Verify the result is a proper mock URL with params
+    assert.assertEquals('/site/mocksite/a/b?a=1&b=1&b=2', result);
     return true;
 };
 
@@ -160,7 +160,7 @@ exports.pageUrlTest_unknownProperty = function () {
         unknownProperty: 'value'
     });
 
-    assert.assertEquals('/site/mocksite/a/b', result);
+    assert.assertEquals('/site/mocksite/a/b?a=1&b=1&b=2', result);
     return true;
 };
 
@@ -173,8 +173,8 @@ exports.serviceUrlTest = function () {
         }
     });
 
-    // Verify the result is a proper mock URL
-    assert.assertEquals('/site/mocksite/_/service/myservice', result);
+    // Verify the result is a proper mock URL with params
+    assert.assertEquals('/site/mocksite/_/service/myservice?a=1&b=1&b=2', result);
     return true;
 };
 
@@ -188,8 +188,8 @@ exports.serviceUrlWebSocketTest = function () {
         }
     });
 
-    // Verify the result is a proper mock URL
-    assert.assertEquals('ws://myservice', result);
+    // Verify the result is a proper mock URL with params
+    assert.assertEquals('ws://myservice?a=1&b=1&b=2', result);
     return true;
 };
 
@@ -203,7 +203,7 @@ exports.serviceUrlTest_unknownProperty = function () {
         }
     });
 
-    assert.assertEquals('/site/mocksite/_/service/myservice', result);
+    assert.assertEquals('/site/mocksite/_/service/myservice?a=1&b=1&b=2', result);
     return true;
 };
 

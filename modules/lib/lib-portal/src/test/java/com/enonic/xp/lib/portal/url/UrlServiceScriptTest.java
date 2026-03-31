@@ -12,6 +12,8 @@ import com.enonic.xp.portal.url.ServiceUrlParams;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.testing.ScriptTestSupport;
+import com.google.common.collect.LinkedListMultimap;
+import com.google.common.collect.Multimap;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
@@ -24,6 +26,21 @@ class UrlServiceScriptTest
 {
     PortalUrlService portalUrlService;
 
+    private String buildQueryString( final Multimap<String, String> params )
+    {
+        if ( params == null || params.isEmpty() )
+        {
+            return "";
+        }
+
+        final String queryString = params.entries()
+            .stream()
+            .map( entry -> entry.getKey() + "=" + entry.getValue() )
+            .collect( Collectors.joining( "&" ) );
+
+        return "?" + queryString;
+    }
+
     @Override
     protected void initialize()
         throws Exception
@@ -35,38 +52,61 @@ class UrlServiceScriptTest
 
         // Configure mock to return proper URL format
         when( portalUrlService.assetUrl( any( AssetUrlParams.class ) ) ).thenAnswer(
-            invocation -> "/site/mocksite/_/asset/" + invocation.getArgument( 0, AssetUrlParams.class ).getPath() );
+            invocation -> {
+                final AssetUrlParams params = invocation.getArgument( 0, AssetUrlParams.class );
+                return "/site/mocksite/_/asset/" + params.getPath() + buildQueryString( params.getParams() );
+            } );
 
         when( portalUrlService.attachmentUrl( any( AttachmentUrlParams.class ) ) ).thenAnswer(
-            invocation -> "/site/mocksite/_/attachment/inline/mockid/" + invocation.getArgument( 0, AttachmentUrlParams.class ).getName() );
+            invocation -> {
+                final AttachmentUrlParams params = invocation.getArgument( 0, AttachmentUrlParams.class );
+                return "/site/mocksite/_/attachment/inline/mockid/" + params.getName() + buildQueryString( params.getParams() );
+            } );
 
         when( portalUrlService.componentUrl( any( ComponentUrlParams.class ) ) ).thenAnswer(
-            invocation -> "/site/mocksite/_/component/" + invocation.getArgument( 0, ComponentUrlParams.class ).getComponent() );
+            invocation -> {
+                final ComponentUrlParams params = invocation.getArgument( 0, ComponentUrlParams.class );
+                return "/site/mocksite/_/component/" + params.getComponent() + buildQueryString( params.getParams() );
+            } );
 
         when( portalUrlService.imageUrl( any( ImageUrlParams.class ) ) ).thenAnswer(
-            invocation -> "/site/mocksite/_/image/" + invocation.getArgument( 0, ImageUrlParams.class ).getId() );
+            invocation -> {
+                final ImageUrlParams params = invocation.getArgument( 0, ImageUrlParams.class );
+                return "/site/mocksite/_/image/" + params.getId() + buildQueryString( params.getParams() );
+            } );
 
         when( portalUrlService.pageUrl( any( PageUrlParams.class ) ) ).thenAnswer(
-            invocation -> "/site/mocksite/" + invocation.getArgument( 0, PageUrlParams.class ).getPath() );
+            invocation -> {
+                final PageUrlParams params = invocation.getArgument( 0, PageUrlParams.class );
+                return "/site/mocksite/" + params.getPath() + buildQueryString( params.getParams() );
+            } );
 
         when( portalUrlService.serviceUrl( any( ServiceUrlParams.class ) ) ).thenAnswer(
             invocation -> {
                 final ServiceUrlParams params = invocation.getArgument( 0, ServiceUrlParams.class );
                 final String type = "websocket".equals( params.getType() ) ? "ws://" : "/site/mocksite/_/service/";
-                return type + params.getService();
+                return type + params.getService() + buildQueryString( params.getParams() );
             } );
 
         when( portalUrlService.processHtml( any( ProcessHtmlParams.class ) ) ).thenAnswer(
             invocation -> invocation.getArgument( 0, ProcessHtmlParams.class ).getValue() );
 
         when( portalUrlService.apiUrl( any( ApiUrlParams.class ) ) ).thenAnswer(
-            invocation -> "/site/mocksite/_/api/" + invocation.getArgument( 0, ApiUrlParams.class ).getDescriptorKey() );
+            invocation -> {
+                final ApiUrlParams params = invocation.getArgument( 0, ApiUrlParams.class );
+                final Multimap<String, String> queryParams = LinkedListMultimap.create();
+                params.getQueryParams().forEach( queryParams::putAll );
+                return "/site/mocksite/_/api/" + params.getDescriptorKey() + buildQueryString( queryParams );
+            } );
 
         when( portalUrlService.baseUrl( any( BaseUrlParams.class ) ) ).thenAnswer(
-            invocation -> "/site/mocksite");
+            invocation -> "/site/mocksite" );
 
         when( portalUrlService.generateUrl( any( GenerateUrlParams.class ) ) ).thenAnswer(
-            invocation -> "/site/mocksite/_/generated/" + invocation.getArgument( 0, GenerateUrlParams.class ).getPath() );
+            invocation -> {
+                final GenerateUrlParams params = invocation.getArgument( 0, GenerateUrlParams.class );
+                return "/site/mocksite/_/generated/" + params.getPath() + buildQueryString( params.getParams() );
+            } );
 
         addService( PortalUrlService.class, this.portalUrlService );
     }
