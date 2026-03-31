@@ -119,8 +119,20 @@ class UrlServiceScriptTest
         when( portalUrlService.generateUrl( any( GenerateUrlParams.class ) ) ).thenAnswer(
             invocation -> {
                 final GenerateUrlParams params = invocation.getArgument( 0, GenerateUrlParams.class );
-                final String path = params.getPath();
-                final String normalizedPath = path != null && path.startsWith( "/" ) ? path.substring( 1 ) : path;
+                String pathStr;
+                if ( params.getPath() != null )
+                {
+                    pathStr = params.getPath();
+                }
+                else if ( params.getPathSegments() != null && !params.getPathSegments().isEmpty() )
+                {
+                    pathStr = "/" + String.join( "/", params.getPathSegments() );
+                }
+                else
+                {
+                    pathStr = "";
+                }
+                final String normalizedPath = pathStr.startsWith( "/" ) ? pathStr.substring( 1 ) : pathStr;
                 return "/site/mocksite/_/generated/" + normalizedPath + buildQueryString( params.getParams() );
             } );
 

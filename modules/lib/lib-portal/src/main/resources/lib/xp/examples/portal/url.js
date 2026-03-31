@@ -21,7 +21,7 @@ const urlBasedOnPathSegments = portalLib.url({
 // END
 
 assert.assertEquals('/site/mocksite/_/generated/site/master/mysite?a=1&b=2', url);
-assert.assertEquals('/site/mocksite/_/generated/null?a=1&b=2', urlBasedOnPathSegments);
+assert.assertEquals('/site/mocksite/_/generated/site/master/mysite?a=1&b=2', urlBasedOnPathSegments);
 
 try {
     portalLib.url({
