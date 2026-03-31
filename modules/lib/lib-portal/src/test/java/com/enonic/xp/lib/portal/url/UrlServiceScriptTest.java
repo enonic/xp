@@ -35,10 +35,22 @@ class UrlServiceScriptTest
 
         final String queryString = params.entries()
             .stream()
-            .map( entry -> entry.getKey() + "=" + entry.getValue() )
+            .map( entry -> urlEncode( entry.getKey() ) + "=" + urlEncode( entry.getValue() ) )
             .collect( Collectors.joining( "&" ) );
 
         return "?" + queryString;
+    }
+
+    private String urlEncode( final String value )
+    {
+        try
+        {
+            return java.net.URLEncoder.encode( value, java.nio.charset.StandardCharsets.UTF_8 );
+        }
+        catch ( Exception e )
+        {
+            return value;
+        }
     }
 
     @Override
@@ -78,7 +90,9 @@ class UrlServiceScriptTest
         when( portalUrlService.pageUrl( any( PageUrlParams.class ) ) ).thenAnswer(
             invocation -> {
                 final PageUrlParams params = invocation.getArgument( 0, PageUrlParams.class );
-                return "/site/mocksite/" + params.getPath() + buildQueryString( params.getParams() );
+                final String path = params.getPath();
+                final String normalizedPath = path != null && path.startsWith( "/" ) ? path.substring( 1 ) : path;
+                return "/site/mocksite/" + normalizedPath + buildQueryString( params.getParams() );
             } );
 
         when( portalUrlService.serviceUrl( any( ServiceUrlParams.class ) ) ).thenAnswer(
@@ -105,7 +119,9 @@ class UrlServiceScriptTest
         when( portalUrlService.generateUrl( any( GenerateUrlParams.class ) ) ).thenAnswer(
             invocation -> {
                 final GenerateUrlParams params = invocation.getArgument( 0, GenerateUrlParams.class );
-                return "/site/mocksite/_/generated/" + params.getPath() + buildQueryString( params.getParams() );
+                final String path = params.getPath();
+                final String normalizedPath = path != null && path.startsWith( "/" ) ? path.substring( 1 ) : path;
+                return "/site/mocksite/_/generated/" + normalizedPath + buildQueryString( params.getParams() );
             } );
 
         addService( PortalUrlService.class, this.portalUrlService );
