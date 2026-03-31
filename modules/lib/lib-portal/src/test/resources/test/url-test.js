@@ -114,7 +114,7 @@ exports.imageUrlTest = function () {
     });
 
     // Verify the result is a proper mock URL with params
-    assert.assertEquals('/site/mocksite/_/image/123?a=1&b=1&b=2', result);
+    assert.assertEquals('/site/mocksite/_/image/123?scale=block%28200%2C100%29&filter=scale%281%2C1%29&background=ffffff&quality=90&a=1&b=1&b=2', result);
     return true;
 };
 
@@ -132,7 +132,7 @@ exports.imageUrlTest_unknownProperty = function () {
         unknownProperty: 'value'
     });
 
-    assert.assertEquals('/site/mocksite/_/image/123?a=1&b=1&b=2', result);
+    assert.assertEquals('/site/mocksite/_/image/123?scale=block%28200%2C100%29&filter=scale%281%2C1%29&background=ffffff&quality=90&a=1&b=1&b=2', result);
     return true;
 };
 

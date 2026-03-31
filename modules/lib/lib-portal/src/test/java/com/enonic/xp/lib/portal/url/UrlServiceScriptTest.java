@@ -84,7 +84,37 @@ class UrlServiceScriptTest
         when( portalUrlService.imageUrl( any( ImageUrlParams.class ) ) ).thenAnswer(
             invocation -> {
                 final ImageUrlParams params = invocation.getArgument( 0, ImageUrlParams.class );
-                return "/site/mocksite/_/image/" + params.getId() + buildQueryString( params.getParams() );
+                final Multimap<String, String> allParams = LinkedListMultimap.create();
+                
+                // Add image-specific parameters
+                if ( params.getScale() != null )
+                {
+                    allParams.put( "scale", params.getScale() );
+                }
+                if ( params.getFilter() != null )
+                {
+                    allParams.put( "filter", params.getFilter() );
+                }
+                if ( params.getBackground() != null )
+                {
+                    allParams.put( "background", params.getBackground() );
+                }
+                if ( params.getQuality() != null )
+                {
+                    allParams.put( "quality", params.getQuality().toString() );
+                }
+                if ( params.getFormat() != null )
+                {
+                    allParams.put( "format", params.getFormat() );
+                }
+                
+                // Add custom params
+                if ( params.getParams() != null )
+                {
+                    allParams.putAll( params.getParams() );
+                }
+                
+                return "/site/mocksite/_/image/" + params.getId() + buildQueryString( allParams );
             } );
 
         when( portalUrlService.pageUrl( any( PageUrlParams.class ) ) ).thenAnswer(
