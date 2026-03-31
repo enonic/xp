@@ -147,6 +147,10 @@ export interface Icon {
 export interface ApplicationDescriptor {
     key: string;
     description: string | null;
+    title: string | null;
+    titleI18nKey: string | null;
+    vendorName: string | null;
+    vendorUrl: string | null;
     icon?: Icon;
 }
 

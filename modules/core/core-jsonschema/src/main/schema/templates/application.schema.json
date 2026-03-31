@@ -7,8 +7,17 @@
       "type": "string",
       "const": "Application"
     },
+    "title": {
+      "$ref": "#/$defs/localizedTextDef"
+    },
     "description": {
       "$ref": "#/$defs/localizedTextDef"
+    },
+    "vendorName": {
+      "type": "string"
+    },
+    "vendorUrl": {
+      "type": "string"
     },
     "config": {
       "$ref": "#/$defs/genericValueDef"
