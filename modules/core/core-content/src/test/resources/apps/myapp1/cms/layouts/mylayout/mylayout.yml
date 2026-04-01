@@ -1,2 +1,3 @@
-displayName: "MyLayout"
+kind: "Layout"
+title: "MyLayout"
 regions: [ ]

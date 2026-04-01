@@ -1,1 +1,8 @@
+kind: "Application"
 description: "Brief description of the application"
+title: "Title"
+vendorName: "Vendor Name"
+vendorUrl: "Vendor URL"
+config:
+  property_1: "value_1"
+  property_2: "value_2"

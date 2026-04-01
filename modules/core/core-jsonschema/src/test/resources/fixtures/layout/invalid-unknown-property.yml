@@ -1,3 +1,5 @@
+kind: "Layout"
+title: "Invalid Layout"
 regions:
   - "main"
 unknownProp: "value"

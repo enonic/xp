@@ -1,3 +1,5 @@
+kind: "Page"
+title: "My Page"
 regions:
   - "main"
 unknownProp: "value"

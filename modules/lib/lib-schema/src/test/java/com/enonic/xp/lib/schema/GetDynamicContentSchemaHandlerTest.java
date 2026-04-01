@@ -41,7 +41,7 @@ class GetDynamicContentSchemaHandlerTest
             final ContentType contentType = ContentType.create()
                 .superType( ContentTypeName.structured() )
                 .description( "My type description" )
-                .displayName( "My type display name" )
+                .title( "My type display name" )
                 .name( (ContentTypeName) schemaParams.getName() )
                 .modifiedTime( Instant.parse( "2010-01-01T10:00:00Z" ) )
                 .addFormItem( FieldSet.create()
@@ -81,7 +81,7 @@ class GetDynamicContentSchemaHandlerTest
             final FormFragmentDescriptor fragmentDescriptor = FormFragmentDescriptor.create()
                 .name( (FormFragmentName) schemaParams.getName() )
                 .description( "My FormFragment description" )
-                .displayName( "My FormFragment display name" )
+                .title( "My FormFragment display name" )
                 .modifiedTime( Instant.parse( "2010-01-01T10:00:00Z" ) )
                 .createdTime( Instant.parse( "2009-01-01T10:00:00Z" ) )
                 .creator( PrincipalKey.ofAnonymous() )
@@ -117,8 +117,8 @@ class GetDynamicContentSchemaHandlerTest
 
             final MixinDescriptor mixinDescriptor = MixinDescriptor.create()
                 .name( CAMERA_INFO_METADATA_NAME )
-                .displayName( "Photo Info" )
-                .displayNameI18nKey( "media.cameraInfo.displayName" )
+                .title( "Photo Info" )
+                .titleI18nKey( "media.cameraInfo.displayName" )
                 .modifiedTime( Instant.ofEpochMilli( 443234242L ) )
                 .build();
 

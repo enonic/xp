@@ -33,8 +33,8 @@ public class YmlAdminExtensionDescriptorParserTest
         final AdminExtensionDescriptor descriptor = descriptorBuilder.build();
         assertNotNull( descriptor );
         assertEquals( DescriptorKey.from( myapp, "myextension" ), descriptor.getKey() );
-        assertEquals( "My extension", descriptor.getDisplayName() );
-        assertEquals( "i18n.my-extension.display-name", descriptor.getDisplayNameI18nKey() );
+        assertEquals( "My extension", descriptor.getTitle() );
+        assertEquals( "i18n.my-extension.display-name", descriptor.getTitleI18nKey() );
         assertEquals( "My extension description", descriptor.getDescription() );
 
         final PrincipalKeys allowedPrincipals = descriptor.getAllowedPrincipals();
@@ -45,7 +45,7 @@ public class YmlAdminExtensionDescriptorParserTest
         assertEquals( "interface_1", interfacesIterator.next() );
         assertEquals( "interface_2", interfacesIterator.next() );
 
-        final GenericValue config = descriptor.getConfig();
+        final GenericValue config = descriptor.getSchemaConfig();
 
         assertEquals( 3, config.properties().size() );
         assertEquals( "value_1", config.property( "property_1" ).asString() );

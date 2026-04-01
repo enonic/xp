@@ -1,8 +1,9 @@
+kind: "ContentType"
 superType: "base:folder"
 abstract: false
 final: true
 allowChildContent: false
-displayName: "Virtual Content Type"
+title: "Virtual Content Type"
 description: "description"
 form:
   - type: "Date"

@@ -3,7 +3,8 @@ var assert = require('/lib/xp/testing');
 
 /* global log*/
 
-let resource = `displayName:
+let resource = `kind: "Layout"
+title:
   text: "Virtual Layout"
   i18n: "key.display-name"
 description:
@@ -61,13 +62,14 @@ log.info('Updated layout: ' + result.key);
 
 assert.assertJsonEquals({
     key: 'myapp:mylayout',
-    displayName: 'Virtual Layout',
-    displayNameI18nKey: 'key.display-name',
+    title: 'Virtual Layout',
+    titleI18nKey: 'key.display-name',
     description: 'My Layout Description',
     descriptionI18nKey: 'key.description',
     componentPath: 'myapp:/cms/layouts/mylayout',
     modifiedTime: '2021-09-25T10:00:00Z',
-    resource: 'displayName:\n' +
+    resource: 'kind: "Layout"\n' +
+              'title:\n' +
               '  text: "Virtual Layout"\n' +
               '  i18n: "key.display-name"\n' +
               'description:\n' +

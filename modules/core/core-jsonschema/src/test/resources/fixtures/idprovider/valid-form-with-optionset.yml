@@ -1,14 +1,15 @@
+kind: "IdProvider"
 form:
   - type: "OptionSet"
     name: "myOptions"
     label: "My Options"
-    selected:
+    selection:
       min: 0
       max: 1
     options:
       - name: "optionA"
         label: "Option A"
-        defaultOption: true
+        selected: true
       - name: "optionB"
         label: "Option B"
-        defaultOption: false
+        selected: false

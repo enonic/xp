@@ -212,7 +212,7 @@ class SlashApiHandlerTest
         ApiDescriptor apiDescriptor = ApiDescriptor.create()
             .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "api-key" ) )
             .allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) )
-            .mount( "xp" )
+            .mount( "web" )
             .build();
 
         when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
@@ -557,7 +557,7 @@ class SlashApiHandlerTest
         final ApplicationKey applicationKey = ApplicationKey.from( "com.enonic.app.myapp" );
         final DescriptorKey descriptorKey = DescriptorKey.from( applicationKey, "mytool" );
         final AdminToolDescriptor toolDescriptor = AdminToolDescriptor.create()
-            .displayName( "My Tool" )
+            .title( "My Tool" )
             .key( descriptorKey )
             .apiMounts( DescriptorKeys.from( DescriptorKey.from( apiApplicationKey, "myapi" ) ) )
             .build();
@@ -584,7 +584,7 @@ class SlashApiHandlerTest
         final ApplicationKey applicationKey = ApplicationKey.from( "com.enonic.app.myapp" );
         final DescriptorKey descriptorKey = DescriptorKey.from( applicationKey, "mytool" );
         final AdminToolDescriptor toolDescriptor =
-            AdminToolDescriptor.create().displayName( "My Tool" ).key( descriptorKey ).apiMounts( DescriptorKeys.empty() ).build();
+            AdminToolDescriptor.create().title( "My Tool" ).key( descriptorKey ).apiMounts( DescriptorKeys.empty() ).build();
 
         when( adminToolDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( toolDescriptor );
 
@@ -663,7 +663,7 @@ class SlashApiHandlerTest
         final ApplicationKey applicationKey = ApplicationKey.from( "com.enonic.app.myapp" );
         final DescriptorKey descriptorKey = DescriptorKey.from( applicationKey, "mytool" );
         final AdminToolDescriptor toolDescriptor = AdminToolDescriptor.create()
-            .displayName( "My Tool" )
+            .title( "My Tool" )
             .key( descriptorKey )
             .apiMounts( DescriptorKeys.from( DescriptorKey.from( apiApplicationKey, "myapi" ) ) )
             .build();
@@ -690,7 +690,7 @@ class SlashApiHandlerTest
         final ApplicationKey applicationKey = ApplicationKey.from( "com.enonic.app.myapp" );
         final DescriptorKey descriptorKey = DescriptorKey.from( applicationKey, "mytool" );
         final AdminToolDescriptor toolDescriptor =
-            AdminToolDescriptor.create().displayName( "My Tool" ).key( descriptorKey ).apiMounts( DescriptorKeys.empty() ).build();
+            AdminToolDescriptor.create().title( "My Tool" ).key( descriptorKey ).apiMounts( DescriptorKeys.empty() ).build();
 
         when( adminToolDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( toolDescriptor );
         when( servletRequestMock.isUserInRole( any() ) ).thenReturn( true );
@@ -710,7 +710,7 @@ class SlashApiHandlerTest
         WSUniversalApiHandler wsUniversalApiHandler = new WSUniversalApiHandler();
         universalApiHandlerRegistry.addApiHandler( wsUniversalApiHandler,
                                                    Map.of( "key", "myapp:myapi", "allowedPrincipals", RoleKeys.EVERYONE.toString(), "mount",
-                                                           "xp" ) );
+                                                           "web" ) );
 
         final ApplicationKey apiApplicationKey = ApplicationKey.from( "myapp" );
 

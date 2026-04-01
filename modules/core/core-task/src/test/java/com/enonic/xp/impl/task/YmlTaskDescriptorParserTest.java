@@ -13,6 +13,7 @@ import com.enonic.xp.form.FormItemPath;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.task.TaskDescriptor;
+import com.enonic.xp.util.GenericValue;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -51,6 +52,10 @@ public class YmlTaskDescriptorParserTest
         assertEquals( "Tasks to be run", tasksField.getLabel() );
         assertEquals( 0, tasksField.getOccurrences().getMinimum() );
         assertEquals( 0, tasksField.getOccurrences().getMaximum() );
+
+        final GenericValue schemaConfig = descriptor.getSchemaConfig();
+        assertEquals( "value_1", schemaConfig.property( "property_1" ).asString() );
+        assertEquals( "value_2", schemaConfig.property( "property_2" ).asString() );
     }
 
     private String readAsString( final String name )

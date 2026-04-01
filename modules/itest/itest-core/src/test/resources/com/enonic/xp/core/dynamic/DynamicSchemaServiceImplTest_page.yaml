@@ -1,4 +1,5 @@
-displayName:
+kind: "Page"
+title:
   text: "Virtual Page"
   i18n: "key.display-name"
 description:

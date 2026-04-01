@@ -17,7 +17,9 @@ import com.enonic.xp.webapp.WebappService;
 public class WebappServiceImpl
     implements WebappService
 {
-    private static final String WEBAPP_DESCRIPTOR_PATH = "webapp/webapp.yml";
+    private static final String WEBAPP_DESCRIPTOR_PATH_YML = "webapp/webapp.yml";
+
+    private static final String WEBAPP_DESCRIPTOR_PATH_YAML = "webapp/webapp.yaml";
 
     private final ResourceService resourceService;
 
@@ -50,6 +52,11 @@ public class WebappServiceImpl
 
     private ResourceKey toResourceKey( final ApplicationKey applicationKey )
     {
-        return ResourceKey.from( applicationKey, WEBAPP_DESCRIPTOR_PATH );
+        final ResourceKey yamlKey = ResourceKey.from( applicationKey, WEBAPP_DESCRIPTOR_PATH_YAML );
+        if ( resourceService.getResource( yamlKey ).exists() )
+        {
+            return yamlKey;
+        }
+        return ResourceKey.from( applicationKey, WEBAPP_DESCRIPTOR_PATH_YML );
     }
 }

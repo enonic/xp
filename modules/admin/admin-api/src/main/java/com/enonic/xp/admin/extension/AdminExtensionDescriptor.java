@@ -16,9 +16,9 @@ import com.enonic.xp.util.GenericValue;
 public final class AdminExtensionDescriptor
     extends Descriptor
 {
-    private final String displayName;
+    private final String title;
 
-    private final String displayNameI18nKey;
+    private final String titleI18nKey;
 
     private final String description;
 
@@ -30,29 +30,29 @@ public final class AdminExtensionDescriptor
 
     private final PrincipalKeys allowedPrincipals;
 
-    private final GenericValue config;
+    private final GenericValue schemaConfig;
 
     private AdminExtensionDescriptor( final Builder builder )
     {
         super( builder.key );
-        this.displayName = builder.displayName;
-        this.displayNameI18nKey = builder.displayNameI18nKey;
+        this.title = builder.title;
+        this.titleI18nKey = builder.titleI18nKey;
         this.description = builder.description;
         this.descriptionI18nKey = builder.descriptionI18nKey;
         this.icon = builder.icon;
         this.interfaces = builder.interfaces;
         this.allowedPrincipals = builder.allowedPrincipals;
-        this.config = builder.config.build();
+        this.schemaConfig = builder.schemaConfig.build();
     }
 
-    public String getDisplayName()
+    public String getTitle()
     {
-        return displayName;
+        return title;
     }
 
-    public String getDisplayNameI18nKey()
+    public String getTitleI18nKey()
     {
-        return displayNameI18nKey;
+        return titleI18nKey;
     }
 
     public String getDescription()
@@ -91,9 +91,9 @@ public final class AdminExtensionDescriptor
             principalKeys.stream().anyMatch( allowedPrincipals::contains );
     }
 
-    public GenericValue getConfig()
+    public GenericValue getSchemaConfig()
     {
-        return config;
+        return schemaConfig;
     }
 
     public static AdminExtensionDescriptor.Builder create()
@@ -105,9 +105,9 @@ public final class AdminExtensionDescriptor
     {
         private DescriptorKey key;
 
-        private String displayName;
+        private String title;
 
-        private String displayNameI18nKey;
+        private String titleI18nKey;
 
         private String description;
 
@@ -119,7 +119,7 @@ public final class AdminExtensionDescriptor
 
         private PrincipalKeys allowedPrincipals;
 
-        public final GenericValue.ObjectBuilder config = GenericValue.newObject();
+        private final GenericValue.ObjectBuilder schemaConfig = GenericValue.newObject();
 
         private Builder()
         {
@@ -131,22 +131,22 @@ public final class AdminExtensionDescriptor
             return this;
         }
 
-        public Builder displayName( final String displayName )
+        public Builder title( final String title )
         {
-            this.displayName = displayName;
+            this.title = title;
             return this;
         }
 
-        public Builder displayName( final LocalizedText text )
+        public Builder title( final LocalizedText text )
         {
-            this.displayName = text.text();
-            this.displayNameI18nKey = text.i18n();
+            this.title = text.text();
+            this.titleI18nKey = text.i18n();
             return this;
         }
 
-        public Builder displayNameI18nKey( final String displayNameI18nKey )
+        public Builder titleI18nKey( final String titleI18nKey )
         {
-            this.displayNameI18nKey = displayNameI18nKey;
+            this.titleI18nKey = titleI18nKey;
             return this;
         }
 
@@ -187,9 +187,9 @@ public final class AdminExtensionDescriptor
             return this;
         }
 
-        public Builder config( final GenericValue value )
+        public Builder schemaConfig( final GenericValue value )
         {
-            value.properties().forEach( e -> this.config.put( e.getKey(), e.getValue() ) );
+            value.properties().forEach( e -> this.schemaConfig.put( e.getKey(), e.getValue() ) );
             return this;
         }
 

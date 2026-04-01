@@ -223,7 +223,8 @@ public abstract class RenderBaseHandlerTest
         final DescriptorKey key = DescriptorKey.from( applicationKey, name );
 
         final String yml = """
-            displayName: "Landing page"
+            kind: "Page"
+            title: "Landing page"
             regions: [ ]
             """;
 

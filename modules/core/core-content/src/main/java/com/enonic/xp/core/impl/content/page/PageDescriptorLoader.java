@@ -27,6 +27,8 @@ public class PageDescriptorLoader
 {
     private static final String PATH = "/cms/pages";
 
+    private final ResourceService resourceService;
+
     private final DescriptorKeyLocator descriptorKeyLocator;
 
     private final CmsFormFragmentService formFragmentService;
@@ -35,8 +37,9 @@ public class PageDescriptorLoader
     public PageDescriptorLoader( @Reference final ResourceService resourceService,
                                  @Reference final CmsFormFragmentService formFragmentService )
     {
-        this.descriptorKeyLocator = new DescriptorKeyLocator( resourceService, PATH, true );
+        this.resourceService = resourceService;
         this.formFragmentService = formFragmentService;
+        this.descriptorKeyLocator = new DescriptorKeyLocator( resourceService, PATH, true );
     }
 
     @Override
@@ -54,7 +57,13 @@ public class PageDescriptorLoader
     @Override
     public ResourceKey toResource( final DescriptorKey key )
     {
-        return ResourceKey.from( key.getApplicationKey(), PATH + "/" + key.getName() + "/" + key.getName() + ".yml" );
+        final String basePath = PATH + "/" + key.getName() + "/" + key.getName();
+        final ResourceKey yamlKey = ResourceKey.from( key.getApplicationKey(), basePath + ".yaml" );
+        if ( resourceService.getResource( yamlKey ).exists() )
+        {
+            return yamlKey;
+        }
+        return ResourceKey.from( key.getApplicationKey(), basePath + ".yml" );
     }
 
     @Override
@@ -71,7 +80,7 @@ public class PageDescriptorLoader
     {
         return PageDescriptor.create()
             .key( key )
-            .displayName( key.getName() )
+            .title( key.getName() )
             .config( Form.empty() )
             .regions( RegionDescriptors.create().build() )
             .modifiedTime( Millis.now() )

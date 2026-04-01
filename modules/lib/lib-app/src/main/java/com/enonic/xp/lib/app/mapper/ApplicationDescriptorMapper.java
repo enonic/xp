@@ -20,6 +20,10 @@ public class ApplicationDescriptorMapper
     {
         gen.value( "key", descriptor.getKey() );
         gen.value( "description", descriptor.getDescription() );
+        gen.value( "title", descriptor.getTitle() );
+        gen.value( "titleI18nKey", descriptor.getTitleI18nKey() );
+        gen.value( "vendorName", descriptor.getVendorName() );
+        gen.value( "vendorUrl", descriptor.getVendorUrl() );
         serializeIcon( gen, descriptor.getIcon() );
     }
 

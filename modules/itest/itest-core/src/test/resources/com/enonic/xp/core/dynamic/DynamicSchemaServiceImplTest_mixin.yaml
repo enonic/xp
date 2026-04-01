@@ -1,4 +1,5 @@
-displayName: "Virtual Mixin"
+kind: "Mixin"
+title: "Virtual Mixin"
 description: "Mixin description"
 form:
   - type: "TextLine"

@@ -1,3 +1,5 @@
+kind: "Macro"
+title: "Invalid macro"
 form:
   - type: "ItemSet"
     name: "mySet"

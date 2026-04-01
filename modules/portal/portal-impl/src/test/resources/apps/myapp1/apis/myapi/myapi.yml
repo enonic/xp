@@ -1,3 +1,5 @@
+kind: "API"
+title: "My API"
 allow:
   - "role:cms.admin"
   - "role:system.admin"

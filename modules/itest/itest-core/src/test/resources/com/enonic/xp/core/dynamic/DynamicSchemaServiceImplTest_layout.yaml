@@ -1,4 +1,5 @@
-displayName:
+kind: "Layout"
+title:
   text: "Virtual Layout"
   i18n: "key.display-name"
 description:

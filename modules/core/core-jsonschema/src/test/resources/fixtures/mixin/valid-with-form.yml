@@ -1,4 +1,5 @@
-displayName: "My Mixin"
+kind: "Mixin"
+title: "My Mixin"
 description: "Mixin description"
 form:
   - type: "TextLine"

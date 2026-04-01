@@ -12,7 +12,7 @@ import com.enonic.xp.schema.formfragment.FormFragmentName;
 @JsonDeserialize(builder = FormFragment.Builder.class)
 public abstract class FormFragmentMapper
 {
-    @JsonIgnoreProperties({"type"})
+    @JsonIgnoreProperties({"type", "include"})
     @JsonPOJOBuilder(withPrefix = "")
     public abstract static class Builder
     {

@@ -207,7 +207,7 @@ public final class ContentFixtures
             Form.create().addFormItem( Input.create().name( "pause" ).label( "Pause" ).inputType( InputTypeName.DOUBLE ).build() ).build();
 
         return PageDescriptor.create()
-            .displayName( "Landing page" )
+            .title( "Landing page" )
             .config( pageForm )
             .regions( RegionDescriptors.create()
                           .add( RegionDescriptor.create().name( "header" ).build() )

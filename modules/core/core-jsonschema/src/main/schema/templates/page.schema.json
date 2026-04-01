@@ -3,7 +3,11 @@
   "$id": "@schemaBaseUrl@/@schemaVersion@/page.schema.json",
   "type": "object",
   "properties": {
-    "displayName": {
+    "kind": {
+      "type": "string",
+      "const": "Page"
+    },
+    "title": {
       "$ref": "#/$defs/localizedTextDef"
     },
     "description": {
@@ -23,6 +27,8 @@
     }
   },
   "required": [
+    "kind",
+    "title",
     "regions"
   ],
   "additionalProperties": false,

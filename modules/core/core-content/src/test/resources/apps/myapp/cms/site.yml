@@ -1,3 +1,4 @@
+kind: "Site"
 processors:
   - name: "filter1"
     order: 10

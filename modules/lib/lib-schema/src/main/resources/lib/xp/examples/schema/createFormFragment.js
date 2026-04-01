@@ -3,7 +3,8 @@ var assert = require('/lib/xp/testing');
 
 /* global log*/
 
-let resource = `displayName: "Virtual FormFragment"
+let resource = `kind: "FormFragment"
+title: "Virtual FormFragment"
 description: "FormFragment description"
 form:
 - type: "TextLine"
@@ -31,11 +32,12 @@ log.info('Created form fragment: ' + result.name);
 
 assert.assertJsonEquals({
     name: 'myapp:mytype',
-    displayName: 'Virtual FormFragment',
+    title: 'Virtual FormFragment',
     description: 'FormFragment description',
     createdTime: '2021-09-25T10:00:00Z',
     modifiedTime: '2021-09-25T10:00:00Z',
-    resource: 'displayName: "Virtual FormFragment"\n' +
+    resource: 'kind: "FormFragment"\n' +
+              'title: "Virtual FormFragment"\n' +
               'description: "FormFragment description"\n' +
               'form:\n' +
               '- type: "TextLine"\n' +

@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.content.parser;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -22,13 +23,14 @@ public final class YmlLayoutDescriptorParser
 
     public static LayoutDescriptor.Builder parse( final String resource, final ApplicationKey currentApplication )
     {
-        return PARSER.parse( resource, LayoutDescriptor.Builder.class, currentApplication );
+        return PARSER.parse( "Layout", resource, LayoutDescriptor.Builder.class, currentApplication );
     }
 
+    @JsonIgnoreProperties("kind")
     private abstract static class LayoutDescriptorBuilderMixIn
     {
-        @JsonProperty("displayName")
-        abstract LayoutDescriptor.Builder displayName( LocalizedText text );
+        @JsonProperty("title")
+        abstract LayoutDescriptor.Builder title( LocalizedText text );
 
         @JsonProperty("description")
         abstract LayoutDescriptor.Builder description( LocalizedText text );

@@ -1,4 +1,5 @@
-displayName: "Full Name"
+kind: "FormFragment"
+title: "Full Name"
 form:
 - type: "ItemSet"
   name: "name"

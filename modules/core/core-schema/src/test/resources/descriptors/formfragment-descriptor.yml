@@ -1,11 +1,12 @@
-displayName: "DisplayName of the FormFragment"
+kind: "FormFragment"
+title: "DisplayName of the FormFragment"
 description: "Description of the FormFragment"
 form:
   - type: "TextLine"
     name: "myField"
     label: "My Field"
     maxLength: 12
-    regexp: "sdsdsds"
+    regexp: "^[a-z]+$"
     occurrences:
       min: 0
       max: 1

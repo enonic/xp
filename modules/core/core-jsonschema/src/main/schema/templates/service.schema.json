@@ -3,15 +3,25 @@
   "$id": "@schemaBaseUrl@/@schemaVersion@/service.schema.json",
   "type": "object",
   "properties": {
+    "kind": {
+      "type": "string",
+      "const": "Service"
+    },
     "allow": {
       "type": "array",
       "items": {
         "type": "string"
       }
     },
-    "displayName": {
-      "type": "string"
+    "title": {
+      "$ref": "#/$defs/localizedTextDef"
     }
   },
-  "additionalProperties": false
+  "required": [
+    "kind"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "localizedTextDef": {}
+  }
 }

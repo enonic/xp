@@ -1,8 +1,9 @@
+kind: "ContentType"
 superType: "base:structured"
 abstract: false
 final: false
 allowChildContent: true
-displayName: "My Content Type"
+title: "My Content Type"
 description: "Content type description"
 allowChildContentType:
   - "myapp:article"

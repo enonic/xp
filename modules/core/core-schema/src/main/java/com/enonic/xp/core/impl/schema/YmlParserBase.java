@@ -4,9 +4,11 @@ import java.io.UncheckedIOException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.InjectableValues;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.google.common.base.Preconditions;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.schema.mapper.ApplicationKeyMixIn;
@@ -86,8 +88,21 @@ public final class YmlParserBase
 
     public <T> T parse( final String resource, final Class<T> clazz, final ApplicationKey currentApplication )
     {
+        return parse( null, resource, clazz, currentApplication );
+    }
+
+    public <T> T parse( final String expectedKind, final String resource, final Class<T> clazz, final ApplicationKey currentApplication )
+    {
         try
         {
+            if ( expectedKind != null )
+            {
+                final JsonNode node = mapper.readTree( resource );
+                final String kindValue = node.path( "kind" ).asText( null );
+                Preconditions.checkArgument( expectedKind.equals( kindValue ), "Invalid kind \"%s\". Expected \"%s\"", kindValue,
+                                             expectedKind );
+            }
+
             final ObjectMapper localMapper = mapper.copy();
             localMapper.setInjectableValues( new InjectableValues.Std().addValue( "currentApplication", currentApplication ) );
             return localMapper.readValue( resource, clazz );

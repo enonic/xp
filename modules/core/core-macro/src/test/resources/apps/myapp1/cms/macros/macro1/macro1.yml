@@ -1,4 +1,5 @@
-displayName: "Macro 1"
+kind: "Macro"
+title: "Macro 1"
 description: "Macro 1 description"
 form:
   - type: "TextLine"

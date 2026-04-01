@@ -1,3 +1,7 @@
+kind: "Task"
+description:
+  text: "My Task"
+  i18n: "tasks.mytask.description"
 form:
   - type: "ItemSet"
     name: "mySet"

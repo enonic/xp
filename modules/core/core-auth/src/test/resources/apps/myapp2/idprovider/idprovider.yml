@@ -1,3 +1,4 @@
+kind: "IdProvider"
 mode: "LOCAL"
 form:
   - type: "FormFragment"

@@ -1,3 +1,4 @@
+kind: "Task"
 description: "MyTask2"
 form:
   - type: "TextLine"

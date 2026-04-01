@@ -1,3 +1,4 @@
+kind: "Task"
 description: "Vacuum task"
 form:
   - type: "TextLine"

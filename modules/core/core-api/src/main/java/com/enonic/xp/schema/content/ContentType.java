@@ -31,6 +31,14 @@ public final class ContentType
 
     private final List<String> allowChildContentType;
 
+    private final String displayNamePlaceholder;
+
+    private final String displayNamePlaceholderI18nKey;
+
+    private final String displayNameExpression;
+
+    private final String displayNameListExpression;
+
     ContentType( final Builder builder )
     {
         super( builder );
@@ -50,6 +58,10 @@ public final class ContentType
         this.form = builder.formBuilder.build();
         this.schemaConfig = builder.schemaConfig.build();
         this.allowChildContentType = builder.allowChildContentType;
+        this.displayNamePlaceholder = builder.displayNamePlaceholder;
+        this.displayNamePlaceholderI18nKey = builder.displayNamePlaceholderI18nKey;
+        this.displayNameExpression = builder.displayNameExpression;
+        this.displayNameListExpression = builder.displayNameListExpression;
     }
 
     public static Builder create()
@@ -107,12 +119,32 @@ public final class ContentType
         return allowChildContentType;
     }
 
+    public String getDisplayNamePlaceholder()
+    {
+        return displayNamePlaceholder;
+    }
+
+    public String getDisplayNamePlaceholderI18nKey()
+    {
+        return displayNamePlaceholderI18nKey;
+    }
+
+    public String getDisplayNameExpression()
+    {
+        return displayNameExpression;
+    }
+
+    public String getDisplayNameListExpression()
+    {
+        return displayNameListExpression;
+    }
+
     @Override
     public String toString()
     {
         final MoreObjects.ToStringHelper s = MoreObjects.toStringHelper( this );
         s.add( "name", getName() );
-        s.add( "displayName", getDisplayName() );
+        s.add( "title", getTitle() );
         s.add( "description", getDescription() );
         s.add( "superType", superType );
         s.add( "isAbstract", isAbstract );
@@ -121,6 +153,9 @@ public final class ContentType
         s.add( "allowChildContent", allowChildContent );
         s.add( "form", form );
         s.add( "icon", getIcon() );
+        s.add( "displayNamePlaceholder", getDisplayNamePlaceholder() );
+        s.add( "displayNameExpression", getDisplayNameExpression() );
+        s.add( "displayNameListExpression", getDisplayNameListExpression() );
         s.omitNullValues();
         return s.toString();
     }
@@ -142,17 +177,25 @@ public final class ContentType
 
         private List<String> allowChildContentType;
 
+        private String displayNamePlaceholder;
+
+        private String displayNamePlaceholderI18nKey;
+
+        private String displayNameExpression;
+
+        private String displayNameListExpression;
+
         private final GenericValue.ObjectBuilder schemaConfig = GenericValue.newObject();
 
         private Builder()
         {
             super();
-            formBuilder = Form.create();
-            isAbstract = false;
-            isFinal = true;
-            allowChildContent = true;
-            isBuiltIn = false;
-            allowChildContentType = List.of();
+            this.formBuilder = Form.create();
+            this.isAbstract = false;
+            this.isFinal = true;
+            this.allowChildContent = true;
+            this.isBuiltIn = false;
+            this.allowChildContentType = List.of();
         }
 
         private Builder( final ContentType source )
@@ -165,6 +208,10 @@ public final class ContentType
             this.superType = source.getSuperType();
             this.formBuilder = Form.create( source.getForm() );
             this.allowChildContentType = source.allowChildContentType;
+            this.displayNamePlaceholder = source.getDisplayNamePlaceholder();
+            this.displayNamePlaceholderI18nKey = source.getDisplayNamePlaceholderI18nKey();
+            this.displayNameExpression = source.getDisplayNameExpression();
+            this.displayNameListExpression = source.getDisplayNameListExpression();
 
             if ( source.schemaConfig != null )
             {
@@ -244,10 +291,10 @@ public final class ContentType
             return this;
         }
 
-        public Builder setDisplayName( final LocalizedText source )
+        public Builder setTitle( final LocalizedText source )
         {
-            this.displayName( source.text() );
-            this.displayNameI18nKey( source.i18n() );
+            this.title( source.text() );
+            this.titleI18nKey( source.i18n() );
             return this;
         }
 
@@ -267,6 +314,37 @@ public final class ContentType
         public Builder allowChildContentType( final List<String> allowChildContentType )
         {
             this.allowChildContentType = List.copyOf( allowChildContentType );
+            return this;
+        }
+
+        public Builder displayNamePlaceholder( final String displayNamePlaceholder )
+        {
+            this.displayNamePlaceholder = displayNamePlaceholder;
+            return this;
+        }
+
+        public Builder displayNamePlaceholderI18nKey( final String displayNamePlaceholderI18nKey )
+        {
+            this.displayNamePlaceholderI18nKey = displayNamePlaceholderI18nKey;
+            return this;
+        }
+
+        public Builder displayNamePlaceholder( final LocalizedText text )
+        {
+            this.displayNamePlaceholder = text.text();
+            this.displayNamePlaceholderI18nKey = text.i18n();
+            return this;
+        }
+
+        public Builder displayNameExpression( final String displayNameExpression )
+        {
+            this.displayNameExpression = displayNameExpression;
+            return this;
+        }
+
+        public Builder displayNameListExpression( final String displayNameListExpression )
+        {
+            this.displayNameListExpression = displayNameListExpression;
             return this;
         }
 

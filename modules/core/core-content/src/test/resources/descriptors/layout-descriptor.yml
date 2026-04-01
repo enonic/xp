@@ -1,4 +1,5 @@
-displayName: "3 columns"
+kind: "Layout"
+title: "3 columns"
 description:
   text: "Layout with 3 columns"
   i18n: "layout.description.3columns"

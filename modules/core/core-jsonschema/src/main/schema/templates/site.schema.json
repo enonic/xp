@@ -3,6 +3,10 @@
   "$id": "@schemaBaseUrl@/@schemaVersion@/site.schema.json",
   "type": "object",
   "properties": {
+    "kind": {
+      "type": "string",
+      "const": "Site"
+    },
     "processors": {
       "type": "array",
       "items": {
@@ -20,8 +24,14 @@
       "items": {
         "type": "string"
       }
+    },
+    "config": {
+      "$ref": "#/$defs/genericValueDef"
     }
   },
+  "required": [
+    "kind"
+  ],
   "additionalProperties": false,
   "$defs": {
     "processor": {
@@ -107,6 +117,7 @@
         }
       ],
       "additionalProperties": false
-    }
+    },
+    "genericValueDef": {}
   }
 }

@@ -1,3 +1,5 @@
+kind: "Macro"
+title: "My Macro"
 form:
   - type: "FieldSet"
     label: "My Group"

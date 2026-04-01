@@ -5,8 +5,6 @@ import java.util.Objects;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
@@ -25,7 +23,9 @@ import com.enonic.xp.style.StyleDescriptors;
 public class StyleDescriptorServiceImpl
     implements StyleDescriptorService
 {
-    private static final Logger LOG = LoggerFactory.getLogger( StyleDescriptorServiceImpl.class );
+    private static final String IMAGE_DESCRIPTOR_PATH_YAML = "cms/styles/image.yaml";
+
+    private static final String IMAGE_DESCRIPTOR_PATH_YML = "cms/styles/image.yml";
 
     private ResourceService resourceService;
 
@@ -73,7 +73,12 @@ public class StyleDescriptorServiceImpl
 
     private ResourceKey toResourceKey( final ApplicationKey key )
     {
-        return ResourceKey.from( key, "cms/styles/image.yml" );
+        final ResourceKey yamlKey = ResourceKey.from( key, IMAGE_DESCRIPTOR_PATH_YAML );
+        if ( resourceService.getResource( yamlKey ).exists() )
+        {
+            return yamlKey;
+        }
+        return ResourceKey.from( key, IMAGE_DESCRIPTOR_PATH_YML );
     }
 
     @Reference

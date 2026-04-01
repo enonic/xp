@@ -3,6 +3,7 @@ package com.enonic.xp.core.impl.content.parser;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -25,7 +26,7 @@ public final class YmlContentTypeParser
 
     public static ContentType.Builder parse( final String resource, final ApplicationKey currentApplication )
     {
-        final ContentType.Builder builder = PARSER.parse( resource, ContentType.Builder.class, currentApplication );
+        final ContentType.Builder builder = PARSER.parse( "ContentType", resource, ContentType.Builder.class, currentApplication );
         builder.name( "_TEMP:NAME_" );
 
         final ContentType contentType = builder.build();
@@ -59,6 +60,7 @@ public final class YmlContentTypeParser
         }
     }
 
+    @JsonIgnoreProperties("kind")
     private abstract static class ContentTypeBuilderMixIn
     {
         @JsonProperty("name")
@@ -70,11 +72,11 @@ public final class YmlContentTypeParser
         @JsonProperty("superType")
         abstract ContentType.Builder superType( ContentTypeName name );
 
-        @JsonProperty("displayName")
-        public abstract ContentType.Builder setDisplayName( LocalizedText value );
+        @JsonProperty("title")
+        public abstract ContentType.Builder setTitle( LocalizedText value );
 
         @JsonProperty("description")
-        public abstract ContentType.Builder setDescription( LocalizedText value );
+        abstract ContentType.Builder setDescription( LocalizedText value );
 
         @JsonProperty("abstract")
         abstract ContentType.Builder setAbstract( boolean value );
@@ -87,6 +89,15 @@ public final class YmlContentTypeParser
 
         @JsonProperty("allowChildContentType")
         abstract ContentType.Builder allowChildContentType( List<String> allowChildContentType );
+
+        @JsonProperty("displayNamePlaceholder")
+        abstract ContentType.Builder displayNamePlaceholder( LocalizedText value );
+
+        @JsonProperty("displayNameExpression")
+        abstract ContentType.Builder displayNameExpression( String value );
+
+        @JsonProperty("displayNameListExpression")
+        abstract ContentType.Builder displayNameListExpression( String value );
 
         @JsonProperty("config")
         abstract ContentType.Builder schemaConfig( GenericValue config );

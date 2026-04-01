@@ -64,7 +64,7 @@ class AdminToolDescriptorLoaderTest
         final Resource resource = this.resourceService.getResource( resourceKey );
         final AdminToolDescriptor descriptor = this.loader.load( descriptorKey, resource );
 
-        assertEquals( "My admin tool", descriptor.getDisplayName() );
+        assertEquals( "My admin tool", descriptor.getTitle() );
         assertEquals( "My admin tool description", descriptor.getDescription() );
         assertEquals( 1, descriptor.getAllowedPrincipals().getSize() );
         assertThat( descriptor.getAllowedPrincipals() ).contains( PrincipalKey.from( "role:system.user.admin" ) );
@@ -80,7 +80,7 @@ class AdminToolDescriptorLoaderTest
         final Resource resource = this.resourceService.getResource( resourceKey );
         final AdminToolDescriptor descriptor = this.loader.load( descriptorKey, resource );
 
-        assertEquals( "My admin tool2", descriptor.getDisplayName() );
+        assertEquals( "My admin tool2", descriptor.getTitle() );
         assertNotNull( descriptor.getIcon() );
     }
 }

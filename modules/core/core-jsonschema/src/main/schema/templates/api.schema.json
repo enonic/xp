@@ -3,17 +3,21 @@
   "$id": "@schemaBaseUrl@/@schemaVersion@/api.schema.json",
   "type": "object",
   "properties": {
+    "kind": {
+      "type": "string",
+      "const": "API"
+    },
     "allow": {
       "type": "array",
       "items": {
         "type": "string"
       }
     },
-    "displayName": {
-      "type": "string"
+    "title": {
+      "$ref": "#/$defs/localizedTextDef"
     },
     "description": {
-      "type": "string"
+      "$ref": "#/$defs/localizedTextDef"
     },
     "documentationUrl": {
       "type": "string"
@@ -24,11 +28,21 @@
       "items": {
         "type": "string",
         "enum": [
-          "xp",
+          "web",
           "management"
         ]
       }
+    },
+    "config": {
+      "$ref": "#/$defs/genericValueDef"
     }
   },
-  "additionalProperties": false
+  "required": [
+    "kind"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "localizedTextDef": {},
+    "genericValueDef": {}
+  }
 }

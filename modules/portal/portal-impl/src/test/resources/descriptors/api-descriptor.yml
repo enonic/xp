@@ -1,7 +1,11 @@
-displayName: "GraphQL API"
+kind: "API"
+title: "GraphQL API"
 description: "Description of GraphQL API"
-mount: ["xp"]
+mount: ["web"]
 allow:
   - "role:system.roleId_1"
   - "role:system.roleId_2"
 documentationUrl: "https://docs.mygraphqlapi.com"
+config:
+  property_1: "value_1"
+  property_2: "value_2"

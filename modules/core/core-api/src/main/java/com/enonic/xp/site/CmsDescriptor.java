@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.Form;
+import com.enonic.xp.util.GenericValue;
 
 import static java.util.Objects.requireNonNullElse;
 
@@ -18,12 +19,15 @@ public final class CmsDescriptor
 
     private final Instant modifiedTime;
 
+    private final GenericValue schemaConfig;
+
     private CmsDescriptor( final Builder builder )
     {
         this.applicationKey = Objects.requireNonNull( builder.applicationKey );
         this.form = requireNonNullElse( builder.form, Form.empty() );
         this.mixinMappings = requireNonNullElse( builder.mixinMappings, MixinMappings.empty() );
         this.modifiedTime = builder.modifiedTime;
+        this.schemaConfig = builder.schemaConfig.build();
     }
 
     public ApplicationKey getApplicationKey()
@@ -46,6 +50,11 @@ public final class CmsDescriptor
         return modifiedTime;
     }
 
+    public GenericValue getSchemaConfig()
+    {
+        return schemaConfig;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -65,6 +74,8 @@ public final class CmsDescriptor
         private MixinMappings mixinMappings;
 
         private Instant modifiedTime;
+
+        private final GenericValue.ObjectBuilder schemaConfig = GenericValue.newObject();
 
         private Builder()
         {
@@ -99,6 +110,12 @@ public final class CmsDescriptor
         public Builder modifiedTime( final Instant modifiedTime )
         {
             this.modifiedTime = modifiedTime;
+            return this;
+        }
+
+        public Builder schemaConfig( final GenericValue value )
+        {
+            value.properties().forEach( e -> this.schemaConfig.put( e.getKey(), e.getValue() ) );
             return this;
         }
 

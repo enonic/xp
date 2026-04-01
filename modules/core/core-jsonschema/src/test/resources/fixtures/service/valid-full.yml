@@ -1,4 +1,5 @@
+kind: "Service"
+title: "My Service"
 allow:
   - "role:system.admin"
   - "role:cms.admin"
-displayName: "My Service"

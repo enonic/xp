@@ -29,22 +29,22 @@ final class BuiltinMixinTypes
 
     private static final MixinDescriptor IMAGE_METADATA = MixinDescriptor.create()
         .name( IMAGE_INFO_METADATA_NAME )
-        .displayName( "Image Info" )
-        .displayNameI18nKey( "media.imageInfo.displayName" )
+        .title( "Image Info" )
+        .titleI18nKey( "media.imageInfo.displayName" )
         .form( createImageInfoForm() )
         .build();
 
     private static final MixinDescriptor CAMERA_METADATA = MixinDescriptor.create()
         .name( CAMERA_INFO_METADATA_NAME )
-        .displayName( "Photo Info" )
-        .displayNameI18nKey( "media.cameraInfo.displayName" )
+        .title( "Photo Info" )
+        .titleI18nKey( "media.cameraInfo.displayName" )
         .form( createPhotoInfoForm() )
         .build();
 
     private static final MixinDescriptor GPS_METADATA = MixinDescriptor.create()
         .name( GPS_INFO_METADATA_NAME )
-        .displayName( "Gps Info" )
-        .displayNameI18nKey( "base.gpsInfo.displayName" )
+        .title( "Gps Info" )
+        .titleI18nKey( "base.gpsInfo.displayName" )
         .form( createGpsInfoForm() )
         .build();
 

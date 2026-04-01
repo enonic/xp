@@ -1,6 +1,7 @@
 package com.enonic.xp.impl.macro;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -8,6 +9,7 @@ import com.enonic.xp.core.impl.schema.YmlParserBase;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.schema.LocalizedText;
+import com.enonic.xp.util.GenericValue;
 
 final class YmlMacroDescriptorParser
 {
@@ -20,9 +22,10 @@ final class YmlMacroDescriptorParser
 
     static MacroDescriptor.Builder parse( final String resource, final ApplicationKey currentApplication )
     {
-        return PARSER.parse( resource, MacroDescriptor.Builder.class, currentApplication );
+        return PARSER.parse( "Macro", resource, MacroDescriptor.Builder.class, currentApplication );
     }
 
+    @JsonIgnoreProperties("kind")
     private abstract static class MacroDescriptorBuilderMixIn
     {
         @JsonCreator
@@ -31,13 +34,16 @@ final class YmlMacroDescriptorParser
             return MacroDescriptor.create();
         }
 
-        @JsonProperty("displayName")
-        abstract MacroDescriptor.Builder displayName( LocalizedText text );
+        @JsonProperty("title")
+        abstract MacroDescriptor.Builder title( LocalizedText text );
 
         @JsonProperty("description")
         abstract MacroDescriptor.Builder description( LocalizedText text );
 
         @JsonProperty("form")
         abstract MacroDescriptor.Builder form( Form form );
+
+        @JsonProperty("config")
+        abstract MacroDescriptor.Builder schemaConfig( GenericValue schemaConfig );
     }
 }

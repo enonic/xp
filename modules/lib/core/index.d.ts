@@ -1278,3 +1278,9 @@ export interface FormItemFormFragment {
 }
 
 export type FormItem = FormItemSet | FormItemLayout | FormItemOptionSet | FormItemInput | FormItemFormFragment;
+
+export type ConfigValue = string | number | boolean | ConfigObject | ConfigValue[];
+
+export interface ConfigObject {
+    [key: string]: ConfigValue
+}

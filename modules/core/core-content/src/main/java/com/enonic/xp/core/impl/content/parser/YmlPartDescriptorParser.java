@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.content.parser;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -20,13 +21,14 @@ public final class YmlPartDescriptorParser
 
     public static PartDescriptor.Builder parse( final String resource, final ApplicationKey currentApplication )
     {
-        return PARSER.parse( resource, PartDescriptor.Builder.class, currentApplication );
+        return PARSER.parse( "Part", resource, PartDescriptor.Builder.class, currentApplication );
     }
 
+    @JsonIgnoreProperties("kind")
     private abstract static class PartDescriptorBuilderMixIn
     {
-        @JsonProperty("displayName")
-        abstract PartDescriptor.Builder displayName( LocalizedText text );
+        @JsonProperty("title")
+        abstract PartDescriptor.Builder title( LocalizedText text );
 
         @JsonProperty("description")
         abstract PartDescriptor.Builder description( LocalizedText text );

@@ -8,6 +8,7 @@ dependencies {
     testFixturesImplementation libs.mockito.core
 
     testImplementation( testFixtures( project(":core:core-api") ) )
+    testImplementation( testFixtures( project(":core:core-app") ) )
 }
 
 jar {

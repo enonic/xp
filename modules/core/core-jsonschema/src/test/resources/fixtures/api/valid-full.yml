@@ -1,8 +1,9 @@
-displayName: "My API"
+kind: "API"
+title: "My API"
 description: "My API description"
 documentationUrl: "https://docs.example.com"
 allow:
   - "role:system.admin"
 mount:
-  - "xp"
+  - "web"
   - "management"

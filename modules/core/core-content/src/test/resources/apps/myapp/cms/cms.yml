@@ -1,3 +1,4 @@
+kind: "CMS"
 mixin:
   - name: "system:menu-item"
     optional: false

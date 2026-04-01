@@ -1,3 +1,5 @@
+kind: "WebApp"
+description: "My WebApp"
 apis:
   - "com.enonic.app.myapp:api-key1"
   - "com.enonic.app.myapp:api-key2"

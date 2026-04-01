@@ -14,9 +14,9 @@ import com.enonic.xp.util.GenericValue;
 public abstract class ComponentDescriptor
     extends Descriptor
 {
-    private final String displayName;
+    private final String title;
 
-    private final String displayNameI18nKey;
+    private final String titleI18nKey;
 
     private final String description;
 
@@ -32,8 +32,8 @@ public abstract class ComponentDescriptor
     {
         super( builder.key );
 
-        this.displayName = builder.displayName == null || builder.displayName.isBlank() ? builder.name : builder.displayName;
-        this.displayNameI18nKey = builder.displayNameI18nKey;
+        this.title = builder.title == null || builder.title.isBlank() ? builder.name : builder.title;
+        this.titleI18nKey = builder.titleI18nKey;
         this.description = builder.description;
         this.descriptionI18nKey = builder.descriptionI18nKey;
         this.modifiedTime = builder.modifiedTime;
@@ -41,14 +41,14 @@ public abstract class ComponentDescriptor
         this.schemaConfig = builder.schemaConfig.build();
     }
 
-    public final String getDisplayName()
+    public final String getTitle()
     {
-        return displayName;
+        return title;
     }
 
-    public String getDisplayNameI18nKey()
+    public String getTitleI18nKey()
     {
-        return displayNameI18nKey;
+        return titleI18nKey;
     }
 
     public String getDescription()
@@ -84,9 +84,9 @@ public abstract class ComponentDescriptor
 
         protected String name;
 
-        protected String displayName;
+        protected String title;
 
-        protected String displayNameI18nKey;
+        protected String titleI18nKey;
 
         protected String description;
 
@@ -106,8 +106,8 @@ public abstract class ComponentDescriptor
         {
             this.key = descriptor.getKey();
             this.name = descriptor.getName();
-            this.displayName = descriptor.getDisplayName();
-            this.displayNameI18nKey = descriptor.getDisplayNameI18nKey();
+            this.title = descriptor.getTitle();
+            this.titleI18nKey = descriptor.getTitleI18nKey();
             this.description = descriptor.getDescription();
             this.descriptionI18nKey = descriptor.getDescriptionI18nKey();
             this.modifiedTime = descriptor.getModifiedTime();
@@ -125,22 +125,22 @@ public abstract class ComponentDescriptor
             return typecastToBuilder( this );
         }
 
-        public final T displayName( final String displayName )
+        public final T title( final String title )
         {
-            this.displayName = displayName;
+            this.title = title;
             return typecastToBuilder( this );
         }
 
-        public final T displayNameI18nKey( final String displayNameI18nKey )
+        public final T titleI18nKey( final String titleI18nKey )
         {
-            this.displayNameI18nKey = displayNameI18nKey;
+            this.titleI18nKey = titleI18nKey;
             return typecastToBuilder( this );
         }
 
-        public final T displayName( final LocalizedText text )
+        public final T title( final LocalizedText text )
         {
-            this.displayName = text.text();
-            this.displayNameI18nKey = text.i18n();
+            this.title = text.text();
+            this.titleI18nKey = text.i18n();
             return typecastToBuilder( this );
         }
 

@@ -96,7 +96,7 @@ class ContentTypeHandlerTest
 
         return ContentType.create()
             .name( "com.enonic.myapp:person" )
-            .displayName( "Person" )
+            .title( "Person" )
             .description( "Person content type" )
             .superType( ContentTypeName.structured() )
             .icon( schemaIcon )
@@ -113,7 +113,7 @@ class ContentTypeHandlerTest
 
         return ContentType.create().
             name( "com.enonic.myapp:article" ).
-            displayName( "Article" ).
+            title( "Article" ).
             description( "Article content type" ).
             superType( ContentTypeName.structured() ).
             icon( schemaIcon ).
@@ -126,7 +126,7 @@ class ContentTypeHandlerTest
         ContentType contentType1 = testContentType();
         ContentType contentType2 = ContentType.create().
             name( "com.enonic.someapp:person" ).
-            displayName( "Person" ).
+            title( "Person" ).
             description( "Person content type" ).
             superType( ContentTypeName.structured() ).
             build();
