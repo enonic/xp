@@ -7,7 +7,12 @@ exports.getWithoutIcon = function () {
     });
 
     assert.assertJsonEquals({
-        'key': '123456', 'description': 'my app description',
+        'key': '123456',
+        'description': 'my app description',
+        'title': 'Title',
+        'titleI18nKey': 'app.title.key',
+        'vendorName': 'Vendor Name',
+        'vendorUrl': 'vendorUrl'
     }, result);
 };
 

@@ -1,3 +1,4 @@
-displayName: "My admin tool2"
+kind: "AdminTool"
+title: "My admin tool2"
 allow:
   - "role:system.admin"

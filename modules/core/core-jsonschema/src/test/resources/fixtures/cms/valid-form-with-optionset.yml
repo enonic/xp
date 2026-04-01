@@ -1,8 +1,9 @@
+kind: "CMS"
 form:
   - type: "OptionSet"
     name: "myOptions"
     label: "My Options"
-    selected:
+    selection:
       max: 1
       min: 1
     options:

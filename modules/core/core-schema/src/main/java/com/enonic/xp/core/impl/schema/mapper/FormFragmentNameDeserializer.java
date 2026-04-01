@@ -20,21 +20,8 @@ public class FormFragmentNameDeserializer
     {
         final ObjectMapper mapper = (ObjectMapper) jsonParser.getCodec();
         final JsonNode node = mapper.readTree( jsonParser );
-
-        final String rawValue = node.asText();
         final ApplicationKey currentApplication = (ApplicationKey) ctxt.findInjectableValue( "currentApplication", null, null, null, null );
 
-        if ( rawValue.contains( ":" ) )
-        {
-            if ( !currentApplication.getName().equals( rawValue.split( ":" )[0] ) )
-            {
-                throw new IllegalStateException( "FormFragment does not belong current application" );
-            }
-            return FormFragmentName.from( rawValue );
-        }
-        else
-        {
-            return FormFragmentName.from( currentApplication, rawValue );
-        }
+        return FormFragmentNameResolver.resolve( node.asText(), currentApplication );
     }
 }

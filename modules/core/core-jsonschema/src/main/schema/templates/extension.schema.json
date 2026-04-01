@@ -3,7 +3,11 @@
   "$id": "@schemaBaseUrl@/@schemaVersion@/extension.schema.json",
   "type": "object",
   "properties": {
-    "displayName": {
+    "kind": {
+      "type": "string",
+      "const": "AdminExtension"
+    },
+    "title": {
       "$ref": "#/$defs/localizedTextDef"
     },
     "description": {
@@ -25,6 +29,9 @@
       "$ref": "#/$defs/genericValueDef"
     }
   },
+  "required": [
+    "kind"
+  ],
   "additionalProperties": false,
   "$defs": {
     "localizedTextDef": {},

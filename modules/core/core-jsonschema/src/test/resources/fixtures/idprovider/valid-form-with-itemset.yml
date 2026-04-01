@@ -1,3 +1,4 @@
+kind: "IdProvider"
 form:
   - type: "ItemSet"
     name: "mySet"

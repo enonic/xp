@@ -1,4 +1,5 @@
-displayName: "Content Studio"
+kind: "AdminTool"
+title: "Content Studio"
 description: "Manage content and sites"
 allow:
   - "role:system.authenticated"
@@ -8,3 +9,6 @@ apis:
 interfaces:
   - "contentstudio.menuitem"
   - "contentstudio.contextpanel"
+config:
+  property_1: "value_1"
+  property_2: "value_2"

@@ -1,5 +1,6 @@
 package com.enonic.xp.admin.impl.extension;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.admin.extension.AdminExtensionDescriptor;
@@ -20,24 +21,25 @@ public final class YmlAdminExtensionDescriptorParser
 
     public static AdminExtensionDescriptor.Builder parse( final String resource, final ApplicationKey currentApplication )
     {
-        return PARSER.parse( resource, AdminExtensionDescriptor.Builder.class, currentApplication );
+        return PARSER.parse( "AdminExtension", resource, AdminExtensionDescriptor.Builder.class, currentApplication );
     }
 
+    @JsonIgnoreProperties("kind")
     private abstract static class AdminExtensionDescriptorBuilderMapper
     {
-        @JsonProperty("displayName")
-        public abstract AdminExtensionDescriptor.Builder displayName( LocalizedText text );
+        @JsonProperty("title")
+        abstract AdminExtensionDescriptor.Builder title( LocalizedText text );
 
         @JsonProperty("description")
-        public abstract AdminExtensionDescriptor.Builder description( LocalizedText text );
+        abstract AdminExtensionDescriptor.Builder description( LocalizedText text );
 
         @JsonProperty("allow")
-        public abstract AdminExtensionDescriptor.Builder allowedPrincipals( PrincipalKeys allowedPrincipals );
+        abstract AdminExtensionDescriptor.Builder allowedPrincipals( PrincipalKeys allowedPrincipals );
 
         @JsonProperty("interfaces")
-        public abstract AdminExtensionDescriptor.Builder interfaces( String... interfaceNames );
+        abstract AdminExtensionDescriptor.Builder interfaces( String... interfaceNames );
 
         @JsonProperty("config")
-        public abstract AdminExtensionDescriptor.Builder config( GenericValue value );
+        abstract AdminExtensionDescriptor.Builder schemaConfig( GenericValue value );
     }
 }

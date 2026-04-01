@@ -3,16 +3,27 @@
   "$id": "@schemaBaseUrl@/@schemaVersion@/idprovider.schema.json",
   "type": "object",
   "properties": {
+    "kind": {
+      "type": "string",
+      "const": "IdProvider"
+    },
     "mode": {
       "type": "string"
     },
     "form": {
       "$ref": "#/$defs/formDef"
+    },
+    "config": {
+      "$ref": "#/$defs/genericValueDef"
     }
   },
   "additionalProperties": false,
+  "required": [
+    "kind"
+  ],
   "$defs": {
     "localizedTextDef": {},
+    "genericValueDef": {},
     "inputsDef": {},
     "fieldSetDef": {},
     "itemSetDef": {},

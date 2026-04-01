@@ -1,4 +1,5 @@
-displayName: "My Part"
+kind: "Part"
+title: "My Part"
 description:
   text: "Description of My Part"
   i18n: "part.description.myPart"

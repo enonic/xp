@@ -1178,7 +1178,7 @@ class ProjectContentEventListenerTest
         final DescriptorKey pageDescriptorKey = DescriptorKey.from( "abc:abc" );
 
         when( pageDescriptorService.getByKey( pageDescriptorKey ) ).thenReturn( PageDescriptor.create()
-                                                                                    .displayName( "Landing page" )
+                                                                                    .title( "Landing page" )
                                                                                     .config( pageDescriptorForm )
                                                                                     .key( DescriptorKey.from( "module:landing-page" ) )
                                                                                     .regions( RegionDescriptors.create().build() )

@@ -55,7 +55,7 @@ class MacroDescriptorServiceTest
         final MacroDescriptor descriptor = this.service.getByKey( macroKey );
         assertNotNull( descriptor );
         assertTrue( descriptor.getKey().equals( macroKey ) );
-        assertEquals( "Disable macros", descriptor.getDisplayName() );
+        assertEquals( "Disable macros", descriptor.getTitle() );
         assertEquals( "Contents of this macro will not be formatted", descriptor.getDescription() );
         assertNotNull( descriptor.getForm() );
     }

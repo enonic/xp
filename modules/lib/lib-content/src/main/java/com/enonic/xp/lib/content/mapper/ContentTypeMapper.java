@@ -29,7 +29,7 @@ public final class ContentTypeMapper
     public void serialize( final MapGenerator gen )
     {
         gen.value( "name", contentType.getName().toString() );
-        gen.value( "displayName", contentType.getDisplayName() );
+        gen.value( "title", contentType.getTitle() );
         gen.value( "description", contentType.getDescription() );
         gen.value( "superType", contentType.getSuperType() == null ? null : contentType.getSuperType().toString() );
         gen.value( "abstract", contentType.isAbstract() );
@@ -38,6 +38,7 @@ public final class ContentTypeMapper
         gen.value( "modifiedTime", contentType.getModifiedTime() );
         serializeIcon( gen, contentType.getIcon() );
         serializeForm( gen, contentType.getForm() );
+        gen.value( "config", contentType.getSchemaConfig().toRawJs() );
     }
 
     private void serializeIcon( final MapGenerator gen, final Icon icon )

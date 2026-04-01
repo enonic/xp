@@ -3,6 +3,10 @@
   "$id": "@schemaBaseUrl@/@schemaVersion@/content-type.schema.json",
   "type": "object",
   "properties": {
+    "kind": {
+      "type": "string",
+      "const": "ContentType"
+    },
     "superType": {
       "type": "string"
     },
@@ -15,7 +19,7 @@
     "allowChildContent": {
       "type": "boolean"
     },
-    "displayName": {
+    "title": {
       "$ref": "#/$defs/localizedTextDef"
     },
     "description": {
@@ -30,11 +34,24 @@
         "type": "string"
       }
     },
+    "displayNamePlaceholder": {
+      "$ref": "#/$defs/localizedTextDef"
+    },
+    "displayNameExpression": {
+      "type": "string"
+    },
+    "displayNameListExpression": {
+      "type": "string"
+    },
     "config": {
       "$ref": "#/$defs/genericValueDef"
     }
   },
   "additionalProperties": false,
+  "required": [
+    "kind",
+    "title"
+  ],
   "$defs": {
     "localizedTextDef": {},
     "genericValueDef": {},

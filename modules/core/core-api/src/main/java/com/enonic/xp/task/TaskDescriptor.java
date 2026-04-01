@@ -5,6 +5,8 @@ import java.util.Objects;
 import com.enonic.xp.descriptor.Descriptor;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.form.Form;
+import com.enonic.xp.schema.LocalizedText;
+import com.enonic.xp.util.GenericValue;
 
 
 public final class TaskDescriptor
@@ -12,13 +14,19 @@ public final class TaskDescriptor
 {
     private final String description;
 
+    private final String descriptionI18nKey;
+
     private final Form config;
+
+    private final GenericValue schemaConfig;
 
     private TaskDescriptor( final Builder builder )
     {
         super( builder.key );
         this.description = builder.description;
+        this.descriptionI18nKey = builder.descriptionI18nKey;
         this.config = Objects.requireNonNullElse( builder.config, Form.empty() );
+        this.schemaConfig = builder.schemaConfig.build();
     }
 
     public String getDescription()
@@ -26,9 +34,19 @@ public final class TaskDescriptor
         return description;
     }
 
+    public String getDescriptionI18nKey()
+    {
+        return descriptionI18nKey;
+    }
+
     public Form getConfig()
     {
         return config;
+    }
+
+    public GenericValue getSchemaConfig()
+    {
+        return schemaConfig;
     }
 
     @Override
@@ -43,13 +61,14 @@ public final class TaskDescriptor
             return false;
         }
         final TaskDescriptor that = (TaskDescriptor) o;
-        return Objects.equals( description, that.description ) && Objects.equals( config, that.config );
+        return Objects.equals( description, that.description ) && Objects.equals( descriptionI18nKey, that.descriptionI18nKey ) &&
+            Objects.equals( config, that.config ) && Objects.equals( schemaConfig, that.schemaConfig );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( description, config );
+        return Objects.hash( description, descriptionI18nKey, config, schemaConfig );
     }
 
     public static Builder create()
@@ -63,7 +82,11 @@ public final class TaskDescriptor
 
         private String description;
 
+        private String descriptionI18nKey;
+
         private Form config;
+
+        private final GenericValue.ObjectBuilder schemaConfig = GenericValue.newObject();
 
         private Builder()
         {
@@ -81,9 +104,28 @@ public final class TaskDescriptor
             return this;
         }
 
+        public Builder descriptionI18nKey( final String descriptionI18nKey )
+        {
+            this.descriptionI18nKey = descriptionI18nKey;
+            return this;
+        }
+
+        public Builder description( final LocalizedText text )
+        {
+            this.description = text.text();
+            this.descriptionI18nKey = text.i18n();
+            return this;
+        }
+
         public Builder config( final Form config )
         {
             this.config = config;
+            return this;
+        }
+
+        public Builder schemaConfig( final GenericValue value )
+        {
+            value.properties().forEach( e -> this.schemaConfig.put( e.getKey(), e.getValue() ) );
             return this;
         }
 

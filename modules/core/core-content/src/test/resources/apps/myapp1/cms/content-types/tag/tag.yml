@@ -1,8 +1,9 @@
+kind: "ContentType"
 superType: "base:structured"
 abstract: false
 final: true
 allowChildContent: true
-displayName: "Tag"
+title: "Tag"
 form:
   - type: "Tag"
     name: "tag_unlimited"

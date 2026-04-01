@@ -26,6 +26,8 @@ public class LayoutDescriptorLoader
 {
     private static final String PATH = "/cms/layouts";
 
+    private final ResourceService resourceService;
+
     private final CmsFormFragmentService formFragmentService;
 
     private final DescriptorKeyLocator descriptorKeyLocator;
@@ -34,6 +36,7 @@ public class LayoutDescriptorLoader
     public LayoutDescriptorLoader( @Reference final ResourceService resourceService,
                                    @Reference final CmsFormFragmentService formFragmentService )
     {
+        this.resourceService = resourceService;
         this.formFragmentService = formFragmentService;
         this.descriptorKeyLocator = new DescriptorKeyLocator( resourceService, PATH, false );
     }
@@ -53,7 +56,13 @@ public class LayoutDescriptorLoader
     @Override
     public ResourceKey toResource( final DescriptorKey key )
     {
-        return ResourceKey.from( key.getApplicationKey(), PATH + "/" + key.getName() + "/" + key.getName() + ".yml" );
+        final String basePath = PATH + "/" + key.getName() + "/" + key.getName();
+        final ResourceKey yamlKey = ResourceKey.from( key.getApplicationKey(), basePath + ".yaml" );
+        if ( resourceService.getResource( yamlKey ).exists() )
+        {
+            return yamlKey;
+        }
+        return ResourceKey.from( key.getApplicationKey(), basePath + ".yml" );
     }
 
     @Override
@@ -71,7 +80,7 @@ public class LayoutDescriptorLoader
     {
         return LayoutDescriptor.create()
             .key( key )
-            .displayName( key.getName() )
+            .title( key.getName() )
             .config( Form.empty() )
             .regions( RegionDescriptors.create().build() )
             .build();

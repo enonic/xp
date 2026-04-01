@@ -27,7 +27,7 @@
         "options": {
           "$ref": "#/$defs/optionSetOptionsDef"
         },
-        "selected": {
+        "selection": {
           "$ref": "#/$defs/occurrencesDef"
         }
       },
@@ -61,7 +61,7 @@
         "helpText": {
           "$ref": "#/$defs/localizedTextDef"
         },
-        "defaultOption": {
+        "selected": {
           "type": "boolean"
         },
         "items": {

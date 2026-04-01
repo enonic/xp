@@ -1,3 +1,4 @@
+kind: "Task"
 description: "AuditLog clean up task"
 form:
   - type: "TextLine"

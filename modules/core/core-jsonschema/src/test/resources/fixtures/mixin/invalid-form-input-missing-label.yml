@@ -1,3 +1,5 @@
+kind: "Mixin"
+title: "My Mixin"
 form:
   - type: "TextLine"
     name: "myField"

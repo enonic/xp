@@ -1,0 +1,10 @@
+kind: "FormFragment"
+title: "FormFragment 3"
+form:
+  - type: "TextLine"
+    name: "text3"
+    label: "Text 3"
+    occurrences:
+      min: 0
+      max: 1
+  - include: "inline4"

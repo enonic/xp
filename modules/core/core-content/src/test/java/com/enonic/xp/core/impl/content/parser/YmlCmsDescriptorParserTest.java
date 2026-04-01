@@ -14,6 +14,7 @@ import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.site.CmsDescriptor;
 import com.enonic.xp.site.MixinMapping;
 import com.enonic.xp.site.MixinMappings;
+import com.enonic.xp.util.GenericValue;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -52,6 +53,10 @@ public class YmlCmsDescriptorParserTest
         assertEquals( MixinName.from( currentApplication, "folders-only" ), mixinMapping_2.getMixinName() );
         assertEquals( "base:folder", mixinMapping_2.getAllowContentTypes() );
         assertFalse( mixinMapping_2.isOptional() );
+
+        final GenericValue schemaConfig = siteDescriptor.getSchemaConfig();
+        assertEquals( "value_1", schemaConfig.property( "property_1" ).asString() );
+        assertEquals( "value_2", schemaConfig.property( "property_2" ).asString() );
     }
 
     private String readAsString( final String name )

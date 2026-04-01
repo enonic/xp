@@ -51,7 +51,14 @@ public abstract class SchemaLoader<N extends BaseSchemaName, V extends BaseSchem
     {
         final ApplicationKey appKey = name.getApplicationKey();
         final String localName = name.getLocalName();
-        return ResourceKey.from( appKey, this.path + "/" + localName + "/" + localName + ".yml" );
+        final String basePath = this.path + "/" + localName + "/" + localName;
+
+        final ResourceKey yamlKey = ResourceKey.from( appKey, basePath + ".yaml" );
+        if ( resourceService.getResource( yamlKey ).exists() )
+        {
+            return yamlKey;
+        }
+        return ResourceKey.from( appKey, basePath + ".yml" );
     }
 
     protected final ResourceKey toResourceKey( final N name, final String ext )

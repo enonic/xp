@@ -1,3 +1,4 @@
+kind: "ContentType"
 superType: "base:structured"
 abstract: false
 final: true
@@ -5,7 +6,7 @@ allowChildContent: true
 description:
   text: "Brief description"
   i18n: "article.description"
-displayName:
+title:
   text: "Article"
   i18n: "i18n.article.displayName"
 allowChildContentType:
@@ -34,8 +35,10 @@ form:
         label:
           text: "Description"
 
+  - include: "myFragment"
+
   - type: "FormFragment"
-    name: "myFragment"
+    name: "myFragment2"
 
   - type: "ItemSet"
     name: "Panel"
@@ -57,14 +60,14 @@ form:
     occurrences:
       min: 1
       max: 0
-    selected:
+    selection:
       min: 1
       max: 1
     options:
       - name: "option_1"
         label:
           text: "Option 1"
-        defaultOption: false
+        selected: false
         items:
           - type: "TextLine"
             name: "text-input"
@@ -114,10 +117,17 @@ form:
       - name: "option_2"
         label:
           text: "Option 2"
-        defaultOption: true
+        selected: true
+displayNamePlaceholder:
+  text: "Article heading"
+  i18n: "article.title"
+displayNameExpression: "${expression}"
+displayNameListExpression: "${title}-${description}"
 config:
-  displayNamePlaceholder:
-    text: "Article heading"
-    i18n: "article.title"
-  displayNameExpression: "${expression}"
-  listTitleExpression: "${displayName}-${description}"
+  prop1: "string"
+  prop2: true
+  prop3:
+    - 1
+    - 2
+  prop4:
+    p1: "string"

@@ -19,7 +19,9 @@ import com.enonic.xp.site.SiteService;
 public class SiteServiceImpl
     implements SiteService
 {
-    private static final String SITE_DESCRIPTOR_PATH = "cms/site.yml";
+    private static final String SITE_DESCRIPTOR_PATH_YML = "cms/site.yml";
+
+    private static final String SITE_DESCRIPTOR_PATH_YAML = "cms/site.yaml";
 
     private final ResourceService resourceService;
 
@@ -61,6 +63,11 @@ public class SiteServiceImpl
 
     private ResourceKey toResourceKey( final ApplicationKey applicationKey )
     {
-        return ResourceKey.from( applicationKey, SITE_DESCRIPTOR_PATH );
+        final ResourceKey yamlKey = ResourceKey.from( applicationKey, SITE_DESCRIPTOR_PATH_YAML );
+        if ( resourceService.getResource( yamlKey ).exists() )
+        {
+            return yamlKey;
+        }
+        return ResourceKey.from( applicationKey, SITE_DESCRIPTOR_PATH_YML );
     }
 }

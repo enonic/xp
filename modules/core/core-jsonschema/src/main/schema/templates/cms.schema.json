@@ -3,6 +3,10 @@
   "$id": "@schemaBaseUrl@/@schemaVersion@/cms.schema.json",
   "type": "object",
   "properties": {
+    "kind": {
+      "type": "string",
+      "const": "CMS"
+    },
     "mixin": {
       "type": "array",
       "items": {
@@ -11,8 +15,14 @@
     },
     "form": {
       "$ref": "#/$defs/formDef"
+    },
+    "config": {
+      "$ref": "#/$defs/genericValueDef"
     }
   },
+  "required": [
+    "kind"
+  ],
   "additionalProperties": false,
   "$defs": {
     "mixinMapping": {
@@ -34,6 +44,7 @@
       "additionalProperties": false
     },
     "localizedTextDef": {},
+    "genericValueDef": {},
     "inputsDef": {},
     "fieldSetDef": {},
     "formFragmentDef": {},

@@ -1,4 +1,5 @@
-displayName: "My Layout"
+kind: "Layout"
+title: "My Layout"
 description: "Layout description"
 regions:
   - "main"

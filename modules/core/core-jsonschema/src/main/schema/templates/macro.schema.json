@@ -3,7 +3,11 @@
   "$id": "@schemaBaseUrl@/@schemaVersion@/macro.schema.json",
   "type": "object",
   "properties": {
-    "displayName": {
+    "kind": {
+      "type": "string",
+      "const": "Macro"
+    },
+    "title": {
       "$ref": "#/$defs/localizedTextDef"
     },
     "description": {
@@ -11,11 +15,19 @@
     },
     "form": {
       "$ref": "#/$defs/formDef"
+    },
+    "config": {
+      "$ref": "#/$defs/genericValueDef"
     }
   },
+  "required": [
+    "kind",
+    "title"
+  ],
   "additionalProperties": false,
   "$defs": {
     "localizedTextDef": {},
+    "genericValueDef": {},
     "inputsDef": {},
     "fieldSetDef": {},
     "formItemsDef": {

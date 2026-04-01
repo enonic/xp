@@ -1,1 +1,5 @@
+kind: "WebApp"
+description:
+  text: "My WebApp"
+  i18n: "webapps.mywebapp.description"
 unknownProp: "value"

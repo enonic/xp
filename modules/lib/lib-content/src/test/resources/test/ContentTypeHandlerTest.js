@@ -6,7 +6,7 @@ exports.testGet = function () {
 
     var expected = {
         'name': 'com.enonic.myapp:article',
-        'displayName': 'Article',
+        'title': 'Article',
         'description': 'Article content type',
         'superType': 'base:structured',
         'abstract': false,
@@ -160,7 +160,8 @@ exports.testGet = function () {
                     }
                 ]
             }
-        ]
+        ],
+        'config': {}
     };
     assert.assertJsonEquals(expected, result);
     assert.assertNotNull(result.icon.data);
@@ -184,7 +185,7 @@ exports.testList = function () {
     var expected = [
         {
             'name': 'com.enonic.myapp:article',
-            'displayName': 'Article',
+            'title': 'Article',
             'description': 'Article content type',
             'superType': 'base:structured',
             'abstract': false,
@@ -338,17 +339,19 @@ exports.testList = function () {
                         }
                     ]
                 }
-            ]
+            ],
+            'config': {}
         },
         {
             'name': 'com.enonic.someapp:person',
-            'displayName': 'Person',
+            'title': 'Person',
             'description': 'Person content type',
             'superType': 'base:structured',
             'abstract': false,
             'final': true,
             'allowChildContent': true,
-            'form': []
+            'form': [],
+            'config': {}
         }
     ];
     assert.assertJsonEquals(expected, result);

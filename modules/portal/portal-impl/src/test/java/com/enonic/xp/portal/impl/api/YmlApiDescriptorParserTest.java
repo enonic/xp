@@ -12,6 +12,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.util.GenericValue;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -32,10 +33,10 @@ public class YmlApiDescriptorParserTest
 
         final ApiDescriptor apiDescriptor = builder.build();
 
-        assertEquals( "GraphQL API", apiDescriptor.getDisplayName() );
+        assertEquals( "GraphQL API", apiDescriptor.getTitle() );
         assertEquals( "Description of GraphQL API", apiDescriptor.getDescription() );
         assertEquals( "https://docs.mygraphqlapi.com", apiDescriptor.getDocumentationUrl() );
-        assertTrue( apiDescriptor.getMount().contains( "xp" ) );
+        assertTrue( apiDescriptor.getMount().contains( "web" ) );
 
         final PrincipalKeys principalKeys = apiDescriptor.getAllowedPrincipals();
         assertEquals( 2, principalKeys.getSize() );
@@ -43,6 +44,10 @@ public class YmlApiDescriptorParserTest
         final Iterator<PrincipalKey> iterator = principalKeys.iterator();
         assertEquals( "role:system.roleId_1", iterator.next().toString() );
         assertEquals( "role:system.roleId_2", iterator.next().toString() );
+
+        final GenericValue schemaConfig = apiDescriptor.getSchemaConfig();
+        assertEquals( "value_1", schemaConfig.property( "property_1" ).asString() );
+        assertEquals( "value_2", schemaConfig.property( "property_2" ).asString() );
     }
 
     private String readAsString( final String name )

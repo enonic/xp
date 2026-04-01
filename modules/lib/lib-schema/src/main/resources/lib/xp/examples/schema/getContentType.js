@@ -17,7 +17,7 @@ log.info('Fetched content type: ' + result.name);
 
 assert.assertJsonEquals({
     name: 'myapp:mytype',
-    displayName: 'My type display name',
+    title: 'My type display name',
     description: 'My type description',
     modifiedTime: '2010-01-01T10:00:00Z',
     resource: '<content-type><some-data></some-data></content-type>',

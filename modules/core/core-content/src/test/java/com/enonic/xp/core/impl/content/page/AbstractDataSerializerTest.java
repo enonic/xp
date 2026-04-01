@@ -68,7 +68,7 @@ public class AbstractDataSerializerTest
 
         Mockito.when( partDescriptorService.getByKey( descriptor ) ).thenReturn( PartDescriptor.create().
             key( descriptor ).
-            displayName( partName ).
+            title( partName ).
             config( Form.empty() ).
             build() );
 

@@ -3,12 +3,29 @@
   "$id": "@schemaBaseUrl@/@schemaVersion@/webapp.schema.json",
   "type": "object",
   "properties": {
+    "kind": {
+      "type": "string",
+      "const": "WebApp"
+    },
+    "description": {
+      "$ref": "#/$defs/localizedTextDef"
+    },
     "apis": {
       "type": "array",
       "items": {
         "type": "string"
       }
+    },
+    "config": {
+      "$ref": "#/$defs/genericValueDef"
     }
   },
-  "additionalProperties": false
+  "required": [
+    "kind"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "localizedTextDef": {},
+    "genericValueDef": {}
+  }
 }

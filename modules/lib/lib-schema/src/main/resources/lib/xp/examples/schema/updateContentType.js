@@ -3,11 +3,12 @@ var assert = require('/lib/xp/testing');
 
 /* global log*/
 
-let resource = `superType: "base:structured"
+let resource = `kind: "ContentType"
+superType: "base:structured"
 abstract: false
 final: true
 allowChildContent: true
-displayName: "My Tag"
+title: "My Tag"
 description: "My description"
 form:
 - type: "Tag"
@@ -34,15 +35,16 @@ log.info('Updated content type: ' + result.name);
 
 assert.assertJsonEquals({
     name: 'myapp:mytype',
-    displayName: 'My Tag',
+    title: 'My Tag',
     description: 'My description',
     createdTime: '2021-09-25T10:00:00Z',
     modifiedTime: '2021-09-25T10:00:00Z',
-    resource: 'superType: "base:structured"\n' +
+    resource: 'kind: "ContentType"\n' +
+              'superType: "base:structured"\n' +
               'abstract: false\n' +
               'final: true\n' +
               'allowChildContent: true\n' +
-              'displayName: "My Tag"\n' +
+              'title: "My Tag"\n' +
               'description: "My description"\n' +
               'form:\n' +
               '- type: "Tag"\n' +

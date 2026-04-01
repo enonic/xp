@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationDescriptor;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.util.GenericValue;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -29,6 +30,10 @@ public class YmlApplicationDescriptorParserTest
         assertNotNull( descriptor );
         assertEquals( myapp, descriptor.getKey() );
         assertEquals( "Brief description of the application", descriptor.getDescription() );
+
+        final GenericValue schemaConfig = descriptor.getSchemaConfig();
+        assertEquals( "value_1", schemaConfig.property( "property_1" ).asString() );
+        assertEquals( "value_2", schemaConfig.property( "property_2" ).asString() );
     }
 
     private String readAsString( final String name )

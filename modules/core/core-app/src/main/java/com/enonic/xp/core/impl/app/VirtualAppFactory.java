@@ -11,7 +11,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.config.Configuration;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
-import com.enonic.xp.core.impl.app.resolver.FakeCmsYmlUrlResolver;
+import com.enonic.xp.core.impl.app.resolver.FakeCmsYamlUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.MultiApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.NodeResourceApplicationUrlResolver;
 import com.enonic.xp.core.internal.Millis;
@@ -29,7 +29,7 @@ public class VirtualAppFactory
             public ApplicationUrlResolver getUrlResolver()
             {
                 return new MultiApplicationUrlResolver( new NodeResourceApplicationUrlResolver( applicationKey, nodeService ),
-                                                        new FakeCmsYmlUrlResolver( applicationKey, nodeService ) );
+                                                        new FakeCmsYamlUrlResolver( applicationKey, nodeService ) );
             }
 
             @Override

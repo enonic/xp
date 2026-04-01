@@ -1,4 +1,5 @@
-displayName: "Mixin Address"
+kind: "Mixin"
+title: "Mixin Address"
 form:
 - type: "ItemSet"
   name: "address"

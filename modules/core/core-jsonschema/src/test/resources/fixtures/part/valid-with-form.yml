@@ -1,4 +1,5 @@
-displayName: "My Part"
+kind: "Part"
+title: "My Part"
 description: "Part description"
 form:
   - type: "TextLine"

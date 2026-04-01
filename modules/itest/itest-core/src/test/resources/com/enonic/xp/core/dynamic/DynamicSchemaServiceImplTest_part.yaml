@@ -1,4 +1,5 @@
-displayName:
+kind: "Part"
+title:
   text: "Virtual Part"
   i18n: "key.display-name"
 description:

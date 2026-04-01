@@ -1,2 +1,4 @@
+kind: "API"
+title: "My API"
 mount:
   - "unknown-mount"

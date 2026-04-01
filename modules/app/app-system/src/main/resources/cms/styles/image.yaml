@@ -1,3 +1,4 @@
+kind: "Style"
 css: "styles/styles.css"
 image:
   - name: "editor-style-original"

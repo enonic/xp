@@ -17,7 +17,7 @@ log.info('Fetched page: ' + result.key);
 
 assert.assertJsonEquals({
     key: 'myapp:mypage',
-    displayName: 'News page',
+    title: 'News page',
     description: 'My news page',
     descriptionI18nKey: 'key.description',
     componentPath: 'myapp:/cms/pages/mypage',

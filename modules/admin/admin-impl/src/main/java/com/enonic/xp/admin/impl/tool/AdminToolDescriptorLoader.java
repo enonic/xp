@@ -49,6 +49,11 @@ public final class AdminToolDescriptorLoader
     @Override
     public ResourceKey toResource( final DescriptorKey key )
     {
+        final ResourceKey yamlKey = toResource( key, "yaml" );
+        if ( resourceService.getResource( yamlKey ).exists() )
+        {
+            return yamlKey;
+        }
         return toResource( key, "yml" );
     }
 

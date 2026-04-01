@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.Form;
+import com.enonic.xp.util.GenericValue;
 
 public final class IdProviderDescriptor
 {
@@ -13,11 +14,14 @@ public final class IdProviderDescriptor
 
     private final Form config;
 
+    private final GenericValue schemaConfig;
+
     private IdProviderDescriptor( final Builder builder )
     {
-        key = builder.key;
-        mode = builder.mode;
-        config = Objects.requireNonNullElse( builder.config, Form.empty() );
+        this.key = builder.key;
+        this.mode = builder.mode;
+        this.config = Objects.requireNonNullElse( builder.config, Form.empty() );
+        this.schemaConfig = builder.schemaConfig.build();
     }
 
     public ApplicationKey getKey()
@@ -35,6 +39,11 @@ public final class IdProviderDescriptor
         return config;
     }
 
+    public GenericValue getSchemaConfig()
+    {
+        return schemaConfig;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -47,6 +56,8 @@ public final class IdProviderDescriptor
         private IdProviderDescriptorMode mode;
 
         private Form config;
+
+        private final GenericValue.ObjectBuilder schemaConfig = GenericValue.newObject();
 
         private Builder()
         {
@@ -67,6 +78,12 @@ public final class IdProviderDescriptor
         public Builder config( final Form config )
         {
             this.config = config;
+            return this;
+        }
+
+        public Builder schemaConfig( final GenericValue value )
+        {
+            value.properties().forEach( e -> this.schemaConfig.put( e.getKey(), e.getValue() ) );
             return this;
         }
 

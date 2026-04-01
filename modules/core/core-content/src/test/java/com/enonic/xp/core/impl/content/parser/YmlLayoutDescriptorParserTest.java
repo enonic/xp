@@ -38,7 +38,7 @@ public class YmlLayoutDescriptorParserTest
 
         assertEquals( currentApplication, descriptor.getApplicationKey() );
 
-        assertEquals( "3 columns", descriptor.getDisplayName() );
+        assertEquals( "3 columns", descriptor.getTitle() );
         assertEquals( "Layout with 3 columns", descriptor.getDescription() );
         assertEquals( "layout.description.3columns", descriptor.getDescriptionI18nKey() );
 

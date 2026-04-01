@@ -40,7 +40,7 @@ class GetDynamicComponentHandlerTest
                 .build();
 
             final PartDescriptor partDescriptor = PartDescriptor.create()
-                .displayName( "News part" )
+                .title( "News part" )
                 .config( partForm )
                 .key( componentParams.getKey() )
                 .modifiedTime( Instant.parse( "2021-02-25T10:44:33.170079900Z" ) )
@@ -73,7 +73,7 @@ class GetDynamicComponentHandlerTest
                 .build();
 
             final LayoutDescriptor layoutDescriptor = LayoutDescriptor.create()
-                .displayName( "News layout" )
+                .title( "News layout" )
                 .config( layoutForm )
                 .regions( RegionDescriptors.create().add( RegionDescriptor.create().name( "region-one" ).build() ).build() )
                 .key( componentParams.getKey() )
@@ -107,7 +107,7 @@ class GetDynamicComponentHandlerTest
                 .build();
 
             final PageDescriptor pageDescriptor = PageDescriptor.create()
-                .displayName( "News page" )
+                .title( "News page" )
                 .config( pageForm )
                 .regions( RegionDescriptors.create().add( RegionDescriptor.create().name( "region-one" ).build() ).build() )
                 .key( componentParams.getKey() )

@@ -1,3 +1,4 @@
+kind: "Style"
 css: "styles.css"
 image:
   - displayName: "Wide Image"

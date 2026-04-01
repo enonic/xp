@@ -24,6 +24,8 @@ class IdProviderDescriptorServiceTest
         addApplication( "myapp1", "/apps/myapp1" );
         addApplication( "myapp2", "/apps/myapp2" );
         addApplication( "myapp3", "/apps/myapp3" );
+        addApplication( "myapp4", "/apps/myapp4" );
+        addApplication( "myapp5", "/apps/myapp5" );
         this.service = new IdProviderDescriptorServiceImpl();
         this.service.setResourceService( this.resourceService );
     }
@@ -53,6 +55,15 @@ class IdProviderDescriptorServiceTest
         final IllegalArgumentException ex =
             assertThrows( IllegalArgumentException.class, () -> this.service.getDescriptor( ApplicationKey.from( "myapp2" ) ) );
         assertEquals( "IdProviderDescriptor form cannot contain FormFragment: my-fragment", ex.getMessage() );
+    }
+
+    @Test
+    void testGetDescriptorWithYamlExtension()
+    {
+        final IdProviderDescriptor idProviderDescriptor = this.service.getDescriptor( ApplicationKey.from( "myapp4" ) );
+        assertNotNull( idProviderDescriptor );
+        assertEquals( ApplicationKey.from( "myapp4" ), idProviderDescriptor.getKey() );
+        assertEquals( IdProviderDescriptorMode.MIXED, idProviderDescriptor.getMode() );
     }
 
     @Test

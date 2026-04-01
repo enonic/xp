@@ -19,7 +19,7 @@ import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketEvent;
 import com.enonic.xp.web.websocket.WebSocketEventType;
 
-@Component(property = {"key=" + EventApiHandler.EVENT_API, "displayName=Event API", "allowedPrincipals=role:system.admin.login"})
+@Component(property = {"key=" + EventApiHandler.EVENT_API, "title=Event API", "allowedPrincipals=role:system.admin.login"})
 public class EventApiHandler
     implements UniversalApiHandler, EventListener
 {

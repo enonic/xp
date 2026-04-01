@@ -3,19 +3,31 @@
   "$id": "@schemaBaseUrl@/@schemaVersion@/task.schema.json",
   "type": "object",
   "properties": {
+    "kind": {
+      "type": "string",
+      "const": "Task"
+    },
     "description": {
-      "type": "string"
+      "$ref": "#/$defs/localizedTextDef"
     },
     "form": {
       "$ref": "#/$defs/formDef"
+    },
+    "config": {
+      "$ref": "#/$defs/genericValueDef"
     }
   },
   "additionalProperties": false,
+  "required": [
+    "kind"
+  ],
   "$defs": {
+    "genericValueDef": {},
     "inputsDef": {},
     "fieldSetDef": {},
     "itemSetDef": {},
     "optionSetDef": {},
+    "localizedTextDef": {},
     "formItemsDef": {
       "oneOf": [
         {

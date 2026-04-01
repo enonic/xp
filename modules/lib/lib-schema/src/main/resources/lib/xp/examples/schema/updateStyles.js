@@ -3,7 +3,8 @@ var assert = require('/lib/xp/testing');
 
 /* global log*/
 
-let resource = 'css: "assets/styles.css"\n' +
+let resource = 'kind: "Style"\n' +
+               'css: "assets/styles.css"\n' +
                'image:\n' +
                '- name: "editor-width-auto"\n' +
                '  displayName:\n' +
@@ -34,7 +35,8 @@ assert.assertJsonEquals({
     application: 'myapp',
     cssPath: 'assets/styles.css',
     modifiedTime: '2021-09-25T10:00:00Z',
-    resource: 'css: "assets/styles.css"\n' +
+    resource: 'kind: "Style"\n' +
+              'css: "assets/styles.css"\n' +
               'image:\n' +
               '- name: "editor-width-auto"\n' +
               '  displayName:\n' +

@@ -3,7 +3,8 @@ var assert = require('/lib/xp/testing');
 
 /* global log*/
 
-let resource = `displayName: "Virtual Mixin"
+let resource = `kind: "Mixin"
+title: "Virtual Mixin"
 description: "Mixin description"
 form:
 - type: "TextLine"
@@ -29,11 +30,12 @@ log.info('Updated mixin: ' + result.name);
 
 assert.assertJsonEquals({
     name: 'myapp:mydata',
-    displayName: 'Virtual Mixin',
+    title: 'Virtual Mixin',
     description: 'Mixin description',
     createdTime: '2021-09-25T10:00:00Z',
     modifiedTime: '2021-09-25T10:00:00Z',
-    resource: 'displayName: "Virtual Mixin"\n' +
+    resource: 'kind: "Mixin"\n' +
+              'title: "Virtual Mixin"\n' +
               'description: "Mixin description"\n' +
               'form:\n' +
               '- type: "TextLine"\n' +
@@ -54,6 +56,7 @@ assert.assertJsonEquals({
                 'minimum': 0
             }
         }
-    ]
+    ],
+    config: {}
 }, result);
 

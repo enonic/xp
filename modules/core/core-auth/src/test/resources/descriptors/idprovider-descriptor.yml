@@ -1,4 +1,8 @@
+kind: "IdProvider"
 mode: "MIXED"
+config:
+  property_1: "value_1"
+  property_2: "value_2"
 form:
   - type: "TextLine"
     name: "title"

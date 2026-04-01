@@ -57,7 +57,13 @@ public class PartDescriptorLoader
     @Override
     public ResourceKey toResource( final DescriptorKey key )
     {
-        return toResourceKey( key, "yml" );
+        final String basePath = PATH + "/" + key.getName() + "/" + key.getName();
+        final ResourceKey yamlKey = ResourceKey.from( key.getApplicationKey(), basePath + ".yaml" );
+        if ( resourceService.getResource( yamlKey ).exists() )
+        {
+            return yamlKey;
+        }
+        return ResourceKey.from( key.getApplicationKey(), basePath + ".yml" );
     }
 
     @Override
@@ -74,7 +80,7 @@ public class PartDescriptorLoader
     @Override
     public PartDescriptor createDefault( final DescriptorKey key )
     {
-        return PartDescriptor.create().key( key ).displayName( key.getName() ).config( Form.empty() ).build();
+        return PartDescriptor.create().key( key ).title( key.getName() ).config( Form.empty() ).build();
     }
 
     @Override

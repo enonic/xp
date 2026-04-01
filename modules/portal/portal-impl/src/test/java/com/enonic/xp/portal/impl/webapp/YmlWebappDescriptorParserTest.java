@@ -11,6 +11,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.descriptor.DescriptorKeys;
 import com.enonic.xp.portal.impl.api.YmlApiDescriptorParserTest;
+import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.webapp.WebappDescriptor;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -37,6 +38,10 @@ public class YmlWebappDescriptorParserTest
 
         assertEquals( DescriptorKey.from( "admin:extension" ), iterator.next() );
         assertEquals( DescriptorKey.from( currentApplication, "content" ), iterator.next() );
+
+        final GenericValue schemaConfig = descriptor.getSchemaConfig();
+        assertEquals( "value_1", schemaConfig.property( "property_1" ).asString() );
+        assertEquals( "value_2", schemaConfig.property( "property_2" ).asString() );
     }
 
     private String readAsString( final String name )

@@ -1,3 +1,4 @@
+kind: "CMS"
 mixin:
   - name: "myapp1:menu-item"
     optional: false

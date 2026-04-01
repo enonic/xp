@@ -1,4 +1,5 @@
-displayName: "My Extension"
+kind: "AdminExtension"
+title: "My Extension"
 description: "Extension description"
 allow:
   - "role:system.admin"
