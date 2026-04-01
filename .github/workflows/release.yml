@@ -68,7 +68,7 @@ jobs:
       - name: Publish
         run: ./gradlew publish -PrepoKey=${{ steps.publish_vars.outputs.repo }} -PrepoUser=ci -PrepoPassword=${{ secrets.ARTIFACTORY_PASSWORD }}
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: 24
           registry-url: 'https://registry.npmjs.org'
