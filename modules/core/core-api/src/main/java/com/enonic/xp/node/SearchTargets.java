@@ -1,23 +1,20 @@
 package com.enonic.xp.node;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import com.google.common.collect.ImmutableList;
+
+import com.enonic.xp.support.AbstractImmutableEntityList;
 
 public final class SearchTargets
-    implements Iterable<SearchTarget>
+    extends AbstractImmutableEntityList<SearchTarget>
 {
-    private final Collection<SearchTarget> targets;
-
-    private SearchTargets( final Collection<SearchTarget> targets )
+    private SearchTargets( final ImmutableList<SearchTarget> list )
     {
-        this.targets = targets;
+        super( list );
     }
 
-    private SearchTargets( final Builder builder )
+    public static SearchTargets from( final Iterable<SearchTarget> searchTargets )
     {
-        targets = builder.targets;
+        return searchTargets instanceof SearchTargets s ? s : new SearchTargets( ImmutableList.copyOf( searchTargets ) );
     }
 
     public static Builder create()
@@ -25,20 +22,9 @@ public final class SearchTargets
         return new Builder();
     }
 
-    public static SearchTargets from( final Collection<SearchTarget> searchTargets )
-    {
-        return new SearchTargets( searchTargets );
-    }
-
-    @Override
-    public Iterator<SearchTarget> iterator()
-    {
-        return targets.iterator();
-    }
-
     public static final class Builder
     {
-        private final Set<SearchTarget> targets = new HashSet<>();
+        private final ImmutableList.Builder<SearchTarget> targets = ImmutableList.builder();
 
         private Builder()
         {
@@ -52,9 +38,7 @@ public final class SearchTargets
 
         public SearchTargets build()
         {
-            return new SearchTargets( this );
+            return new SearchTargets( targets.build() );
         }
     }
 }
-
-
