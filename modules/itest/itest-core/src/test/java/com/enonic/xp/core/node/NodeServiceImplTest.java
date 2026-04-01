@@ -740,6 +740,16 @@ class NodeServiceImplTest
     }
 
     @Test
+    void testFindByQuery_emptySearchTargets()
+    {
+        final SearchTargets emptyTargets = SearchTargets.from( List.of() );
+        final MultiRepoNodeQuery query = new MultiRepoNodeQuery( emptyTargets, NodeQuery.create().build() );
+
+        final IllegalArgumentException ex = assertThrows( IllegalArgumentException.class, () -> this.nodeService.findByQuery( query ) );
+        assertEquals( "SearchTargets must not be empty", ex.getMessage() );
+    }
+
+    @Test
     void applyVersionAttributes()
     {
         // Create a node
