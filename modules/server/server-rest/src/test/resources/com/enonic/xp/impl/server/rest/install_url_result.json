@@ -1,9 +1,7 @@
 {
   "applicationInstalledJson": {
     "application": {
-      "deletable": false,
       "displayName": "application name",
-      "editable": false,
       "key": "testapplication",
       "local": false,
       "maxSystemVersion": "5.1",

@@ -4,7 +4,6 @@ import java.time.Instant;
 import java.util.Set;
 
 import org.osgi.framework.Bundle;
-import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.framework.VersionRange;
 
@@ -57,12 +56,6 @@ public final class ApplicationImpl
     }
 
     @Override
-    public String getDisplayName()
-    {
-        return getHeader( Constants.BUNDLE_NAME, this.getKey().toString() );
-    }
-
-    @Override
     public String getSystemVersion()
     {
         return this.systemVersion != null ? this.systemVersion.toString() : null;
@@ -78,24 +71,6 @@ public final class ApplicationImpl
     public String getMinSystemVersion()
     {
         return this.systemVersion != null ? this.systemVersion.getLeft().toString() : null;
-    }
-
-    @Override
-    public String getUrl()
-    {
-        return getHeader( ApplicationManifestConstants.X_APPLICATION_URL, null );
-    }
-
-    @Override
-    public String getVendorName()
-    {
-        return getHeader( ApplicationManifestConstants.X_VENDOR_NAME, null );
-    }
-
-    @Override
-    public String getVendorUrl()
-    {
-        return getHeader( ApplicationManifestConstants.X_VENDOR_URL, null );
     }
 
     @Override

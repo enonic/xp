@@ -31,13 +31,21 @@ final class ApplicationDescriptorBuilder
 
     public ApplicationDescriptor build()
     {
-        final URL url = resolveDescriptorUrl( bundle );
-        final String yaml = readAppYml( url );
-
         final String applicationName = ApplicationBundleUtils.getApplicationName( bundle );
+        final ApplicationKey applicationKey = ApplicationKey.from( applicationName );
 
-        final ApplicationDescriptor.Builder appDescriptorBuilder =
-            YmlApplicationDescriptorParser.parse( yaml, ApplicationKey.from( applicationName ) );
+        final URL url = resolveDescriptorUrl( bundle );
+
+        final ApplicationDescriptor.Builder appDescriptorBuilder;
+        if ( url != null )
+        {
+            final String yaml = readAppYml( url );
+            appDescriptorBuilder = YmlApplicationDescriptorParser.parse( yaml, applicationKey );
+        }
+        else
+        {
+            appDescriptorBuilder = ApplicationDescriptor.create().key( applicationKey );
+        }
 
         if ( hasAppIcon( bundle ) )
         {

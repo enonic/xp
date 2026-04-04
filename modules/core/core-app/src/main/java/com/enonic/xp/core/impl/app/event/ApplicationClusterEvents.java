@@ -2,7 +2,6 @@ package com.enonic.xp.core.impl.app.event;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.event.Event;
-import com.enonic.xp.node.NodeId;
 
 public class ApplicationClusterEvents
 {
@@ -24,30 +23,18 @@ public class ApplicationClusterEvents
 
     public static final String STATE_CHANGE = "state";
 
-    public static final String NODE_ID_PARAM = "id";
-
     public static final String APPLICATION_KEY_PARAM = "key";
 
     public static final String STARTED_PARAM = "started";
 
-    public static Event install( final ApplicationKey applicationKey, final NodeId nodeId )
+    public static Event install( final ApplicationKey applicationKey )
     {
-        return Event.create( EVENT_TYPE ).
-            distributed( true ).
-            value( EVENT_TYPE_KEY, INSTALL ).
-            value( NODE_ID_PARAM, nodeId.toString() ).
-            value( APPLICATION_KEY_PARAM, applicationKey.getName() ).
-            build();
+        return doCreateEvent( applicationKey, INSTALL );
     }
 
-    public static Event installed( final ApplicationKey applicationKey, final NodeId nodeId )
+    public static Event installed( final ApplicationKey applicationKey )
     {
-        return Event.create( EVENT_TYPE ).
-            distributed( true ).
-            value( EVENT_TYPE_KEY, INSTALLED ).
-            value( NODE_ID_PARAM, nodeId.toString() ).
-            value( APPLICATION_KEY_PARAM, applicationKey.getName() ).
-            build();
+        return doCreateEvent( applicationKey, INSTALLED );
     }
 
     public static Event uninstalled( final ApplicationKey applicationKey )

@@ -16,10 +16,6 @@ log.info('Created app: ' + result.key);
 
 assert.assertJsonEquals({
     key: 'my_app',
-    displayName: 'app display name',
-    vendorName: 'vendor name',
-    vendorUrl: 'https://vendor.url',
-    url: 'https://myapp.url',
     version: '1.0.0',
     minSystemVersion: '2.0.0',
     maxSystemVersion: '3.0.0',

@@ -3,6 +3,7 @@ package com.enonic.xp.core.impl.app;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.jspecify.annotations.NonNull;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.SynchronousBundleListener;
@@ -21,7 +22,6 @@ import com.enonic.xp.core.internal.ApplicationBundleUtils;
 public class ApplicationDescriptorServiceImpl
     implements ApplicationDescriptorService, SynchronousBundleListener
 {
-
     private static final Logger LOG = LoggerFactory.getLogger( ApplicationDescriptorServiceImpl.class );
 
     private final Map<ApplicationKey, ApplicationDescriptor> appDescriptorMap;
@@ -32,7 +32,7 @@ public class ApplicationDescriptorServiceImpl
     }
 
     @Override
-    public ApplicationDescriptor get( final ApplicationKey key )
+    public ApplicationDescriptor get( final @NonNull ApplicationKey key )
     {
         return this.appDescriptorMap.get( key );
     }
@@ -43,7 +43,7 @@ public class ApplicationDescriptorServiceImpl
         context.getBundleContext().addBundleListener( this );
         for ( final Bundle bundle : context.getBundleContext().getBundles() )
         {
-            if ( !hasAppDescriptor( bundle ) )
+            if ( !isApplication( bundle ) )
             {
                 continue;
             }
@@ -64,7 +64,7 @@ public class ApplicationDescriptorServiceImpl
             return;
         }
 
-        if ( !hasAppDescriptor( bundle ) )
+        if ( !isApplication( bundle ) )
         {
             return;
         }
@@ -80,9 +80,9 @@ public class ApplicationDescriptorServiceImpl
         }
     }
 
-    private boolean hasAppDescriptor( final Bundle bundle )
+    private boolean isApplication( final Bundle bundle )
     {
-        return ( bundle.getState() != Bundle.UNINSTALLED ) && ApplicationDescriptorBuilder.hasAppDescriptor( bundle );
+        return ( bundle.getState() != Bundle.UNINSTALLED ) && ApplicationBundleUtils.isApplication( bundle );
     }
 
     private void addBundle( final Bundle bundle )

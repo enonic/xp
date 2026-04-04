@@ -28,10 +28,6 @@ class CreateVirtualApplicationHandlerTest
             final Application application = Mockito.mock( Application.class );
 
             when( application.getKey() ).thenReturn( applicationKey );
-            when( application.getDisplayName() ).thenReturn( "app display name" );
-            when( application.getVendorName() ).thenReturn( "vendor name" );
-            when( application.getVendorUrl() ).thenReturn( "https://vendor.url" );
-            when( application.getUrl() ).thenReturn( "https://myapp.url" );
             when( application.getVersion() ).thenReturn( Version.parseVersion( "1.0.0" ) );
             when( application.getMinSystemVersion() ).thenReturn( "2.0.0" );
             when( application.getMaxSystemVersion() ).thenReturn( "3.0.0" );

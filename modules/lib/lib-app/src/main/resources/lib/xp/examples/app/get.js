@@ -16,10 +16,6 @@ log.info('Fetched app: ' + result.key);
 
 assert.assertJsonEquals({
     key: 'my_app',
-    displayName: 'app display name',
-    vendorName: 'vendor name',
-    vendorUrl: 'https://vendor.url',
-    url: 'https://myapp.url',
     version: '1.0.0',
     systemVersion: '4.2.3-SNAPSHOT',
     minSystemVersion: '2.0.0',

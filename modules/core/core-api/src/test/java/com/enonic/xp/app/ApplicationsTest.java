@@ -20,8 +20,6 @@ class ApplicationsTest
         final Application application2 = Mockito.mock( Application.class );
         final Application application3 = Mockito.mock( Application.class );
 
-        Mockito.when( application1.getDisplayName() ).thenReturn( "aaa" );
-
         Mockito.when( application1.getKey() ).thenReturn( ApplicationKey.from( "aaa" ) );
         Mockito.when( application2.getKey() ).thenReturn( ApplicationKey.from( "bbb" ) );
         Mockito.when( application3.getKey() ).thenReturn( ApplicationKey.from( "ccc" ) );
@@ -43,8 +41,8 @@ class ApplicationsTest
     {
         final Applications applications = Applications.from( ApplicationsTest.list );
 
-        assertEquals( "aaa", applications.first().getDisplayName() );
-        assertThat( applications ).containsExactly( list.toArray( ApplicationsTest.list.toArray( Application[]::new ) ) );
+        assertThat( applications ).extracting( Application::getKey )
+            .containsExactly( ApplicationKey.from( "aaa" ), ApplicationKey.from( "bbb" ), ApplicationKey.from( "ccc" ) );
     }
 
 

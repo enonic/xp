@@ -50,12 +50,6 @@ public class MockApplication
     }
 
     @Override
-    public String getDisplayName()
-    {
-        return "defaultDisplayName";
-    }
-
-    @Override
     public String getSystemVersion()
     {
         return "1.0.1";
@@ -71,24 +65,6 @@ public class MockApplication
     public String getMinSystemVersion()
     {
         return "1.0.0";
-    }
-
-    @Override
-    public String getUrl()
-    {
-        return null;
-    }
-
-    @Override
-    public String getVendorName()
-    {
-        return null;
-    }
-
-    @Override
-    public String getVendorUrl()
-    {
-        return null;
     }
 
     @Override

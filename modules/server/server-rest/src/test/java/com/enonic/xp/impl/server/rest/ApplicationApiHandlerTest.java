@@ -9,8 +9,7 @@ import org.mockito.ArgumentCaptor;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.impl.server.rest.model.ApplicationInstallResultJson;
-import com.enonic.xp.impl.server.rest.model.ApplicationInstalledJson;
+import com.enonic.xp.impl.server.rest.model.ApplicationInfoJson;
 import com.enonic.xp.impl.server.rest.model.ApplicationParams;
 import com.enonic.xp.util.Version;
 import com.enonic.xp.web.HttpMethod;
@@ -71,8 +70,7 @@ class ApplicationApiHandlerTest
     void handleInstall()
     {
         final Application application = createApplication();
-        final ApplicationInstallResultJson resultJson = new ApplicationInstallResultJson();
-        resultJson.setApplicationInstalledJson( new ApplicationInstalledJson( application, false ) );
+        final ApplicationInfoJson resultJson = ApplicationInfoJson.create( application, null, false );
 
         final MultipartForm form = mock( MultipartForm.class );
         when( multipartService.parse( any() ) ).thenReturn( form );
@@ -92,8 +90,7 @@ class ApplicationApiHandlerTest
     void handleInstallUrl()
     {
         final Application application = createApplication();
-        final ApplicationInstallResultJson resultJson = new ApplicationInstallResultJson();
-        resultJson.setApplicationInstalledJson( new ApplicationInstalledJson( application, false ) );
+        final ApplicationInfoJson resultJson = ApplicationInfoJson.create( application, null, false );
         when( applicationResourceService.installUrl( any() ) ).thenReturn( resultJson );
 
         final WebRequest request = new WebRequest();
@@ -106,26 +103,6 @@ class ApplicationApiHandlerTest
         assertEquals( HttpStatus.OK, response.getStatus() );
         final String body = response.getBody().toString();
         assertTrue( body.contains( "\"key\":\"testapplication\"" ) );
-        assertTrue( body.contains( "\"applicationInstalledJson\"" ) );
-    }
-
-    @Test
-    void handleInstallUrlFailure()
-    {
-        final ApplicationInstallResultJson resultJson = new ApplicationInstallResultJson();
-        resultJson.setFailure( "Failed to upload application from https://enonic.net" );
-        when( applicationResourceService.installUrl( any() ) ).thenReturn( resultJson );
-
-        final WebRequest request = new WebRequest();
-        request.setMethod( HttpMethod.POST );
-        request.setRawPath( "/_/server:app/installUrl" );
-        request.setBody( "{\"URL\":\"https://enonic.net\"}" );
-
-        final WebResponse response = handler.handle( request );
-
-        assertEquals( HttpStatus.OK, response.getStatus() );
-        final String body = response.getBody().toString();
-        assertTrue( body.contains( "\"failure\"" ) );
     }
 
     @Test
@@ -206,10 +183,6 @@ class ApplicationApiHandlerTest
         final Application application = mock( Application.class );
         when( application.getKey() ).thenReturn( ApplicationKey.from( "testapplication" ) );
         when( application.getVersion() ).thenReturn( Version.parseVersion( "1.0.0" ) );
-        when( application.getDisplayName() ).thenReturn( "application name" );
-        when( application.getUrl() ).thenReturn( "https://enonic.net" );
-        when( application.getVendorName() ).thenReturn( "Enonic" );
-        when( application.getVendorUrl() ).thenReturn( "https://www.enonic.com" );
         when( application.getMinSystemVersion() ).thenReturn( "5.0" );
         when( application.getMaxSystemVersion() ).thenReturn( "5.1" );
         when( application.isStarted() ).thenReturn( true );

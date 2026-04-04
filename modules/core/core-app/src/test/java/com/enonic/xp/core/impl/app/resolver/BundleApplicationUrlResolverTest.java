@@ -29,8 +29,7 @@ class BundleApplicationUrlResolverTest
         this.resolver = new BundleApplicationUrlResolver( bundle );
 
         final Set<String> files = this.resolver.findFiles();
-        assertEquals( 3, files.size() );
-        assertTrue( files.contains( "site/site.xml" ) );
+        assertEquals( 2, files.size() );
         assertTrue( files.contains( "dummy.txt" ) );
     }
 
@@ -43,13 +42,13 @@ class BundleApplicationUrlResolverTest
         final Bundle bundle = deploy( "bundle", builder );
         this.resolver = new BundleApplicationUrlResolver( bundle );
 
-        final Resource resource1 = this.resolver.findResource( "/site/site.xml" );
+        final Resource resource1 = this.resolver.findResource( "/dummy.txt" );
         assertNotNull( resource1 );
 
-        final Resource resource2 = this.resolver.findResource( "site/site.xml" );
+        final Resource resource2 = this.resolver.findResource( "dummy.txt" );
         assertNotNull( resource2 );
 
-        final Resource resource3 = this.resolver.findResource( "site/not-found.txt" );
+        final Resource resource3 = this.resolver.findResource( "not-found.txt" );
         assertNull( resource3 );
     }
 }

@@ -4,7 +4,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
-import java.util.Dictionary;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -24,6 +23,7 @@ import com.enonic.xp.core.impl.app.MockApplication;
 import com.enonic.xp.core.impl.app.VirtualAppConstants;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.NodeResourceApplicationUrlResolver;
+import com.enonic.xp.core.internal.Dictionaries;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeName;
@@ -38,7 +38,6 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceKeys;
 import com.enonic.xp.resource.ResourceProcessor;
 
-import static com.enonic.xp.core.impl.app.ApplicationManifestConstants.X_PROJECT_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -71,7 +70,7 @@ class ResourceServiceImplTest
         applicationFactoryService = mock( ApplicationFactoryService.class );
 
         bundle = mock( Bundle.class );
-        when( bundle.getHeaders() ).thenReturn( mock( Dictionary.class ) );
+        when( bundle.getHeaders() ).thenReturn( Dictionaries.of() );
         when( bundle.getSymbolicName() ).thenReturn( "myapp" );
 
         final MockApplication app = new MockApplication();
@@ -196,9 +195,7 @@ class ResourceServiceImplTest
 
         final Node partSchemaNode = createNode( "my-part.yml", new NodePath( "/schemas/cms/parts/my-part" ), timestamp, data );
 
-        final Dictionary<String, String> headers = mock( Dictionary.class );
-        when( bundle.getHeaders() ).thenReturn( headers );
-        when( headers.get( X_PROJECT_NAME ) ).thenReturn( "my-project" );
+        when( bundle.getHeaders() ).thenReturn( Dictionaries.of() );
 
         final RepositoryService repositoryService = mock( RepositoryService.class );
         final NodeService nodeService = mock( NodeService.class );

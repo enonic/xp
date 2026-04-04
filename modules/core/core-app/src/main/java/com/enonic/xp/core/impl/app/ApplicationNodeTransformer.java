@@ -32,7 +32,7 @@ class ApplicationNodeTransformer
     private static PropertyTree createApplicationProperties( final AppInfo app )
     {
         final PropertyTree data = new PropertyTree();
-        data.setString( ApplicationPropertyNames.DISPLAY_NAME, app.displayName );
+        data.setString( ApplicationPropertyNames.DISPLAY_NAME, app.title );
         data.setString( ApplicationPropertyNames.MAX_SYSTEM_VERSION, app.maxSystemVersion );
         data.setString( ApplicationPropertyNames.MIN_SYSTEM_VERSION, app.minSystemVersion );
         data.setString( ApplicationPropertyNames.VERSION, app.version );
