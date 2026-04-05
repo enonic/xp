@@ -10,8 +10,8 @@ exports.assetUrlTest = function () {
         }
     });
 
-    // Verify the result is a proper mock URL with params
-    assert.assertEquals('/site/mocksite/_/asset/styles/my.css?a=1&b=1&b=2', result);
+    // NOTE: This is not the actual url. Only a mock representation.
+    assert.assertEquals('AssetUrlParams{type=server, params={a=[1], b=[1, 2]}, path=styles/my.css}', result);
     return true;
 };
 
@@ -25,7 +25,7 @@ exports.assetUrlTest_unknownProperty = function () {
         }
     });
 
-    assert.assertEquals('/site/mocksite/_/asset/styles/my.css?a=1&b=1&b=2', result);
+    assert.assertEquals('AssetUrlParams{type=server, params={a=[1], b=[1, 2]}, path=styles/my.css}', result);
     return true;
 };
 
@@ -53,8 +53,8 @@ exports.attachmentUrlTest = function () {
         }
     });
 
-    // Verify the result is a proper mock URL with params
-    assert.assertEquals('/site/mocksite/_/attachment/inline/mockid/myattachment.pdf?a=1&b=1&b=2', result);
+    // NOTE: This is not the actual url. Only a mock representation.
+    assert.assertEquals('AttachmentUrlParams{type=server, params={a=[1], b=[1, 2]}, name=myattachment.pdf, download=false}', result);
     return true;
 };
 
@@ -68,7 +68,7 @@ exports.attachmentUrlTest_unknownProperty = function () {
         }
     });
 
-    assert.assertEquals('/site/mocksite/_/attachment/inline/mockid/myattachment.pdf?a=1&b=1&b=2', result);
+    assert.assertEquals('AttachmentUrlParams{type=server, params={a=[1], b=[1, 2]}, name=myattachment.pdf, download=false}', result);
     return true;
 };
 
@@ -81,8 +81,8 @@ exports.componentUrlTest = function () {
         }
     });
 
-    // Verify the result is a proper mock URL with params
-    assert.assertEquals('/site/mocksite/_/component/mycomp?a=1&b=1&b=2', result);
+    // NOTE: This is not the actual url. Only a mock representation.
+    assert.assertEquals('ComponentUrlParams{type=server, params={a=[1], b=[1, 2]}, component=mycomp}', result);
     return true;
 };
 
@@ -96,7 +96,7 @@ exports.componentUrlTest_unknownProperty = function () {
         }
     });
 
-    assert.assertEquals('/site/mocksite/_/component/mycomp?a=1&b=1&b=2', result);
+    assert.assertEquals('ComponentUrlParams{type=server, params={a=[1], b=[1, 2]}, component=mycomp}', result);
     return true;
 };
 
@@ -113,8 +113,9 @@ exports.imageUrlTest = function () {
         }
     });
 
-    // Verify the result is a proper mock URL with params
-    assert.assertEquals('/site/mocksite/_/image/123?scale=block%28200%2C100%29&filter=scale%281%2C1%29&background=ffffff&quality=90&a=1&b=1&b=2', result);
+    // NOTE: This is not the actual url. Only a mock representation.
+    assert.assertEquals('ImageUrlParams{type=server, params={a=[1], b=[1, 2]}, id=123, quality=90, filter=scale(1,1), background=ffffff, scale=block(200,100)}',
+        result);
     return true;
 };
 
@@ -132,7 +133,8 @@ exports.imageUrlTest_unknownProperty = function () {
         unknownProperty: 'value'
     });
 
-    assert.assertEquals('/site/mocksite/_/image/123?scale=block%28200%2C100%29&filter=scale%281%2C1%29&background=ffffff&quality=90&a=1&b=1&b=2', result);
+    assert.assertEquals('ImageUrlParams{type=server, params={a=[1], b=[1, 2]}, id=123, quality=90, filter=scale(1,1), background=ffffff, scale=block(200,100)}',
+        result);
     return true;
 };
 
@@ -145,8 +147,8 @@ exports.pageUrlTest = function () {
         }
     });
 
-    // Verify the result is a proper mock URL with params
-    assert.assertEquals('/site/mocksite/a/b?a=1&b=1&b=2', result);
+    // NOTE: This is not the actual url. Only a mock representation.
+    assert.assertEquals('PageUrlParams{type=server, params={a=[1], b=[1, 2]}, path=a/b}', result);
     return true;
 };
 
@@ -160,7 +162,7 @@ exports.pageUrlTest_unknownProperty = function () {
         unknownProperty: 'value'
     });
 
-    assert.assertEquals('/site/mocksite/a/b?a=1&b=1&b=2', result);
+    assert.assertEquals('PageUrlParams{type=server, params={a=[1], b=[1, 2]}, path=a/b}', result);
     return true;
 };
 
@@ -173,8 +175,8 @@ exports.serviceUrlTest = function () {
         }
     });
 
-    // Verify the result is a proper mock URL with params
-    assert.assertEquals('/site/mocksite/_/service/myservice?a=1&b=1&b=2', result);
+    // NOTE: This is not the actual url. Only a mock representation.
+    assert.assertEquals('ServiceUrlParams{type=server, params={a=[1], b=[1, 2]}, service=myservice}', result);
     return true;
 };
 
@@ -188,8 +190,8 @@ exports.serviceUrlWebSocketTest = function () {
         }
     });
 
-    // Verify the result is a proper mock URL with params
-    assert.assertEquals('ws://myservice?a=1&b=1&b=2', result);
+    // NOTE: This is not the actual url. Only a mock representation.
+    assert.assertEquals('ServiceUrlParams{type=websocket, params={a=[1], b=[1, 2]}, service=myservice}', result);
     return true;
 };
 
@@ -203,7 +205,7 @@ exports.serviceUrlTest_unknownProperty = function () {
         }
     });
 
-    assert.assertEquals('/site/mocksite/_/service/myservice?a=1&b=1&b=2', result);
+    assert.assertEquals('ServiceUrlParams{type=server, params={a=[1], b=[1, 2]}, service=myservice}', result);
     return true;
 };
 
@@ -212,8 +214,9 @@ exports.processHtmlTest = function () {
         value: '<p><a title="Link tooltip" href="content://3e266eea-9875-4cb7-b259-41ad152f8532" target="_blank">link</a></p>'
     });
 
-    // Verify the result is the processed HTML value
-    assert.assertEquals('<p><a title="Link tooltip" href="content://3e266eea-9875-4cb7-b259-41ad152f8532" target="_blank">link</a></p>', result);
+    // NOTE: This is not the actual url. Only a mock representation.
+    assert.assertEquals('ProcessHtmlParams{type=server, params={}, value=<p><a title="Link tooltip" ' +
+                        'href="content://3e266eea-9875-4cb7-b259-41ad152f8532" target="_blank">link</a></p>}', result);
     return true;
 };
 
@@ -223,7 +226,8 @@ exports.processHtmlTest_ignoreUnknownProperty = function () {
         unknownProperty: 'value'
     });
 
-    assert.assertEquals('<p><a title="Link tooltip" href="content://3e266eea-9875-4cb7-b259-41ad152f8532" target="_blank">link</a></p>', result);
+    assert.assertEquals('ProcessHtmlParams{type=server, params={}, value=<p><a title="Link tooltip" ' +
+                        'href="content://3e266eea-9875-4cb7-b259-41ad152f8532" target="_blank">link</a></p>}', result);
     return true;
 };
 
@@ -236,7 +240,7 @@ exports.processHtmlImageUrlProcessingTest = function() {
         imageSizes: '(max-width: 960px) 600px'
     });
 
-    assert.assertEquals('<p><figure class="editor-align-justify"><img alt="Alt text" src="image://3e266eea-9875-4cb7-b259-41ad152f8532"/><figcaption>Caption text</figcaption></figure></p>', result);
+    assert.assertEquals('ProcessHtmlParams{type=server, params={}, value=<p><figure class="editor-align-justify"><img alt="Alt text" src="image://3e266eea-9875-4cb7-b259-41ad152f8532"/><figcaption>Caption text</figcaption></figure></p>, imageWidths=[660, 1024], imageSizes=(max-width: 960px) 600px}', result);
 
     return true;
 };

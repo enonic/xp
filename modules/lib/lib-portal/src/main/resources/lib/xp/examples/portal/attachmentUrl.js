@@ -3,7 +3,7 @@ var assert = require('/lib/xp/testing');
 
 // BEGIN
 var url = portalLib.attachmentUrl({
-    name: '1234.pdf',
+    id: '1234',
     project: 'myproject',
     branch: 'mybranch',
     baseUrl: 'mybaseUrl',
@@ -11,4 +11,5 @@ var url = portalLib.attachmentUrl({
 });
 // END
 
-assert.assertEquals('/site/mocksite/_/attachment/inline/mockid/1234.pdf', url);
+assert.assertEquals(
+    'AttachmentUrlParams{type=server, params={}, id=1234, project=myproject, branch=mybranch, baseUrl=mybaseUrl, download=true}', url);

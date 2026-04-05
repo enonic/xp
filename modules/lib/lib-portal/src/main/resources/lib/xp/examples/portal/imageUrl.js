@@ -12,4 +12,6 @@ var url = portalLib.imageUrl({
 });
 // END
 
-assert.assertEquals('/site/mocksite/_/image/1234?scale=block%281024%2C768%29&filter=rounded%285%29%3Bsharpen%28%29', url);
+assert.assertEquals(
+    'ImageUrlParams{type=server, params={}, id=1234, project=myproject, branch=mybranch, baseUrl=mybaseUrl, filter=rounded(5);sharpen(), scale=block(1024,768)}',
+    url);
