@@ -5,12 +5,10 @@ var assert = require('/lib/xp/testing');
 var url = portalLib.serviceUrl({
     service: 'myservice',
     params: {
-        'å': 'a',
-        'ø': 'o',
-        'æ': ['a', 'e'],
-        'empty': ''
+        a: 1,
+        b: 2
     }
 });
 // END
 
-assert.assertEquals('ServiceUrlParams{type=server, params={å=[a], ø=[o], æ=[a, e], empty=[]}, service=myservice}', url);
+assert.assertEquals('/site/mocksite/_/service/myservice?a=1&b=2', url);

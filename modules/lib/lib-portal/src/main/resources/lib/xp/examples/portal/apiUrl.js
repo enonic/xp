@@ -1,16 +1,33 @@
 const portalLib = require('/lib/xp/portal');
+const assert = require('/lib/xp/testing');
 
 // BEGIN
-let url = portalLib.apiUrl({
+const url = portalLib.apiUrl({
     api: 'com.enonic.app.myapp:myapi',
     params: {
-        'å': 'a',
-        'ø': 'o',
-        'æ': ['a', 'e'], // Arrays are supported and will be converted to multiple query parameters with the same name.
-        'empty': '', // Empty string is supported and will be included as a query parameter with an empty value.
-        'no-value': [], // Empty array makes a parameter included without a value. `?no-value`
+        a: 1,
+        b: 2
     },
-    path: ['segment1', 'segment2'],
+    path: 'mypath/subpath'
+});
+
+const apiUrlWithPathSegments = portalLib.apiUrl({
+    api: 'com.enonic.app.myapp:myapi',
+    path: ['mypath', 'myotherpath']
+});
+
+const apiUrl = portalLib.apiUrl({
+    api: 'com.enonic.app.myapp:myapi',
+});
+
+const apiUrlWithBaseUrl = portalLib.apiUrl({
+    api: 'myapi',
     baseUrl: 'https://example.com',
 });
+
 // END
+
+assert.assertEquals('/site/mocksite/_/api/com.enonic.app.myapp:myapi?a=1&b=2', url);
+assert.assertEquals('/site/mocksite/_/api/com.enonic.app.myapp:myapi', apiUrlWithPathSegments);
+assert.assertEquals('/site/mocksite/_/api/com.enonic.app.myapp:myapi', apiUrl);
+assert.assertEquals('/site/mocksite/_/api/myapplication:myapi', apiUrlWithBaseUrl);
