@@ -18,5 +18,5 @@ const urlByPath = portalLib.baseUrl({
 
 // END
 
-assert.assertEquals('BaseUrlParams{type=server, path=contentId, project=explicit-project, branch=explicit-branch}', urlById);
-assert.assertEquals('BaseUrlParams{type=server, path=/path, project=explicit-project, branch=explicit-branch}', urlByPath);
+assert.assertEquals('/site/mocksite', urlById);
+assert.assertEquals('/site/mocksite', urlByPath);
