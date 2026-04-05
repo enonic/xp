@@ -15,7 +15,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Answers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.osgi.framework.BundleContext;
 
 import com.hazelcast.cluster.Member;
 import com.hazelcast.cluster.MemberSelector;
@@ -41,9 +40,6 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class ClusteredTaskManagerImplTest
 {
-    @Mock
-    BundleContext bundleContext;
-
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     private HazelcastInstance hazelcastInstance;
 
@@ -60,7 +56,7 @@ class ClusteredTaskManagerImplTest
     {
         config = mock( TaskConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         when( hazelcastInstance.getExecutorService( ClusteredTaskManagerImpl.ACTION ) ).thenReturn( executorService );
-        clusteredTaskManager = new ClusteredTaskManagerImpl( bundleContext, hazelcastInstance );
+        clusteredTaskManager = new ClusteredTaskManagerImpl( hazelcastInstance );
         clusteredTaskManager.activate( config );
     }
 
