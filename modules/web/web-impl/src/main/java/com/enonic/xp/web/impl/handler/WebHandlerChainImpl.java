@@ -1,6 +1,5 @@
 package com.enonic.xp.web.impl.handler;
 
-import java.util.Iterator;
 import java.util.List;
 
 import com.enonic.xp.web.WebException;
@@ -12,20 +11,22 @@ import com.enonic.xp.web.handler.WebHandlerChain;
 final class WebHandlerChainImpl
     implements WebHandlerChain
 {
-    private final Iterator<WebHandler> webHandlerIterator;
+    private final List<WebHandler> handlers;
+
+    private int index;
 
     WebHandlerChainImpl( final List<WebHandler> handlers )
     {
-        this.webHandlerIterator = handlers.iterator();
+        this.handlers = handlers;
     }
 
     @Override
     public WebResponse handle( final WebRequest webRequest, final WebResponse webResponse )
         throws Exception
     {
-        if ( webHandlerIterator.hasNext() )
+        if ( index < handlers.size() )
         {
-            return webHandlerIterator.next().handle( webRequest, webResponse, this );
+            return handlers.get( index++ ).handle( webRequest, webResponse, this );
         }
         throw WebException.notFound( "Handler not found" );
     }
