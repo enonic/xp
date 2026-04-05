@@ -27,6 +27,8 @@ public final class ApplicationDescriptor
 
     private final String vendorUrl;
 
+    private final String url;
+
     private ApplicationDescriptor( final Builder builder )
     {
         this.key = Objects.requireNonNull( builder.key, "key cannot be null" );
@@ -37,6 +39,7 @@ public final class ApplicationDescriptor
         this.titleI18nKey = builder.titleI18nKey;
         this.vendorName = builder.vendorName;
         this.vendorUrl = builder.vendorUrl;
+        this.url = builder.url;
         this.schemaConfig = builder.schemaConfig.build();
     }
 
@@ -80,6 +83,11 @@ public final class ApplicationDescriptor
         return vendorUrl;
     }
 
+    public String getUrl()
+    {
+        return url;
+    }
+
     public GenericValue getSchemaConfig()
     {
         return schemaConfig;
@@ -102,13 +110,13 @@ public final class ApplicationDescriptor
         return key.equals( that.key ) && Objects.equals( description, that.description ) && Objects.equals( icon, that.icon ) &&
             Objects.equals( descriptionI18nKey, that.descriptionI18nKey ) && Objects.equals( title, that.title ) &&
             Objects.equals( titleI18nKey, that.titleI18nKey ) && Objects.equals( vendorName, that.vendorName ) &&
-            Objects.equals( vendorUrl, that.vendorUrl ) && schemaConfig.equals( that.schemaConfig );
+            Objects.equals( vendorUrl, that.vendorUrl ) && Objects.equals( url, that.url ) && schemaConfig.equals( that.schemaConfig );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( key, description, icon, title, titleI18nKey, vendorName, vendorUrl, schemaConfig );
+        return Objects.hash( key, description, icon, title, titleI18nKey, vendorName, vendorUrl, url, schemaConfig );
     }
 
     public static Builder create()
@@ -133,6 +141,8 @@ public final class ApplicationDescriptor
         private String vendorName;
 
         private String vendorUrl;
+
+        private String url;
 
         private final GenericValue.ObjectBuilder schemaConfig = GenericValue.newObject();
 
@@ -199,6 +209,12 @@ public final class ApplicationDescriptor
         public Builder vendorUrl( final String vendorUrl )
         {
             this.vendorUrl = vendorUrl;
+            return this;
+        }
+
+        public Builder url( final String url )
+        {
+            this.url = url;
             return this;
         }
 

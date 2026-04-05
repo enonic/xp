@@ -25,10 +25,6 @@ class ListVirtualApplicationHandlerTest
             final Application application1 = mock( Application.class );
 
             when( application1.getKey() ).thenReturn( ApplicationKey.from( "app1" ) );
-            when( application1.getDisplayName() ).thenReturn( "app display name" );
-            when( application1.getVendorName() ).thenReturn( "vendor name" );
-            when( application1.getVendorUrl() ).thenReturn( "https://vendor.url" );
-            when( application1.getUrl() ).thenReturn( "https://myapp.url" );
             when( application1.getVersion() ).thenReturn( Version.parseVersion( "1.0.0" ) );
             when( application1.isStarted() ).thenReturn( true );
             when( application1.getMinSystemVersion() ).thenReturn( "2.0.0" );
@@ -45,10 +41,6 @@ class ListVirtualApplicationHandlerTest
             final Application application2 = mock( Application.class );
 
             when( application2.getKey() ).thenReturn( ApplicationKey.from( "app2" ) );
-            when( application2.getDisplayName() ).thenReturn( "app display name 2" );
-            when( application2.getVendorName() ).thenReturn( "vendor name 2" );
-            when( application2.getVendorUrl() ).thenReturn( "https://vendor2.url" );
-            when( application2.getUrl() ).thenReturn( "https://myapp2.url" );
             when( application2.getVersion() ).thenReturn( Version.parseVersion( "4.1.2" ) );
             when( application2.getSystemVersion() ).thenReturn( "1.2.33-SNAPSHOT" );
             when( application2.getMinSystemVersion() ).thenReturn( "5.3.11" );

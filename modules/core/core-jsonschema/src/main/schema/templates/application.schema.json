@@ -19,6 +19,9 @@
     "vendorUrl": {
       "type": "string"
     },
+    "url": {
+      "type": "string"
+    },
     "config": {
       "$ref": "#/$defs/genericValueDef"
     }

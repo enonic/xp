@@ -39,6 +39,9 @@ final class YmlApplicationDescriptorParser
         @JsonProperty("vendorUrl")
         abstract ApplicationDescriptor.Builder vendorUrl( String value );
 
+        @JsonProperty("url")
+        abstract ApplicationDescriptor.Builder url( String value );
+
         @JacksonInject("currentApplication")
         abstract ApplicationDescriptor.Builder key( ApplicationKey key );
 

@@ -4,17 +4,15 @@ import java.util.List;
 
 public class ListApplicationJson
 {
+    private final List<ApplicationJson> applications;
 
-    private final List<ApplicationInfoJson> applications;
-
-    public ListApplicationJson( final List<ApplicationInfoJson> applications )
+    public ListApplicationJson( final List<ApplicationJson> applications )
     {
         this.applications = applications;
     }
 
-    public List<ApplicationInfoJson> getApplications()
+    public List<ApplicationJson> getApplications()
     {
         return applications;
     }
-
 }

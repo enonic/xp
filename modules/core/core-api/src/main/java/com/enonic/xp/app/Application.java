@@ -13,19 +13,11 @@ public interface Application
 
     Version getVersion();
 
-    String getDisplayName();
-
     String getSystemVersion();
 
     String getMaxSystemVersion();
 
     String getMinSystemVersion();
-
-    String getUrl();
-
-    String getVendorName();
-
-    String getVendorUrl();
 
     ClassLoader getClassLoader();
 

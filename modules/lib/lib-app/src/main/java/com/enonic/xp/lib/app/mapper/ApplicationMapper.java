@@ -18,10 +18,6 @@ public class ApplicationMapper
     public void serialize( final MapGenerator gen )
     {
         gen.value( "key", application.getKey() );
-        gen.value( "displayName", application.getDisplayName() );
-        gen.value( "vendorName", application.getVendorName() );
-        gen.value( "vendorUrl", application.getVendorUrl() );
-        gen.value( "url", application.getUrl() );
         gen.value( "version", application.getVersion() );
         gen.value( "systemVersion", application.getSystemVersion() );
         gen.value( "minSystemVersion", application.getMinSystemVersion() );

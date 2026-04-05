@@ -9,8 +9,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.core.internal.json.ObjectMapperHelper;
+import com.enonic.xp.impl.server.rest.model.ApplicationActionResultJson;
+import com.enonic.xp.impl.server.rest.model.ApplicationInfoJson;
 import com.enonic.xp.impl.server.rest.model.ApplicationInstallParams;
-import com.enonic.xp.impl.server.rest.model.ApplicationInstallResultJson;
 import com.enonic.xp.impl.server.rest.model.ApplicationParams;
 import com.enonic.xp.portal.handler.WebHandlerHelper;
 import com.enonic.xp.portal.universalapi.UniversalApiHandler;
@@ -71,7 +72,7 @@ public class ApplicationApiHandler
     private WebResponse handleInstall( final WebRequest request )
         throws JsonProcessingException
     {
-        final ApplicationInstallResultJson result = applicationResourceService.install( multipartService.parse( request.getRawRequest() ) );
+        final ApplicationInfoJson result = applicationResourceService.install( multipartService.parse( request.getRawRequest() ) );
 
         return WebResponse.create()
             .status( HttpStatus.OK )
@@ -84,7 +85,7 @@ public class ApplicationApiHandler
         throws JsonProcessingException
     {
         final ApplicationInstallParams params = OBJECT_MAPPER.readValue( request.getBodyAsString(), ApplicationInstallParams.class );
-        final ApplicationInstallResultJson result = applicationResourceService.installUrl( params );
+        final ApplicationInfoJson result = applicationResourceService.installUrl( params );
 
         return WebResponse.create()
             .status( HttpStatus.OK )
@@ -97,23 +98,38 @@ public class ApplicationApiHandler
         throws JsonProcessingException
     {
         final ApplicationParams params = OBJECT_MAPPER.readValue( request.getBodyAsString(), ApplicationParams.class );
-        applicationResourceService.start( params );
-        return WebResponse.create().status( HttpStatus.OK ).build();
+        final ApplicationActionResultJson result = applicationResourceService.start( params );
+
+        return WebResponse.create()
+            .status( HttpStatus.OK )
+            .contentType( MediaType.JSON_UTF_8 )
+            .body( OBJECT_MAPPER.writeValueAsString( result ) )
+            .build();
     }
 
     private WebResponse handleStop( final WebRequest request )
         throws JsonProcessingException
     {
         final ApplicationParams params = OBJECT_MAPPER.readValue( request.getBodyAsString(), ApplicationParams.class );
-        applicationResourceService.stop( params );
-        return WebResponse.create().status( HttpStatus.OK ).build();
+        final ApplicationActionResultJson result = applicationResourceService.stop( params );
+
+        return WebResponse.create()
+            .status( HttpStatus.OK )
+            .contentType( MediaType.JSON_UTF_8 )
+            .body( OBJECT_MAPPER.writeValueAsString( result ) )
+            .build();
     }
 
     private WebResponse handleUninstall( final WebRequest request )
         throws JsonProcessingException
     {
         final ApplicationParams params = OBJECT_MAPPER.readValue( request.getBodyAsString(), ApplicationParams.class );
-        applicationResourceService.uninstall( params );
-        return WebResponse.create().status( HttpStatus.OK ).build();
+        final ApplicationActionResultJson result = applicationResourceService.uninstall( params );
+
+        return WebResponse.create()
+            .status( HttpStatus.OK )
+            .contentType( MediaType.JSON_UTF_8 )
+            .body( OBJECT_MAPPER.writeValueAsString( result ) )
+            .build();
     }
 }
