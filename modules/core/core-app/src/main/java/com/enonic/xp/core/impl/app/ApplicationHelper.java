@@ -1,11 +1,9 @@
 package com.enonic.xp.core.impl.app;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
-import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
 import org.osgi.framework.Bundle;
@@ -22,50 +20,15 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.internal.ApplicationBundleUtils;
 import com.enonic.xp.security.SystemConstants;
 
-import static com.enonic.xp.core.impl.app.ApplicationManifestConstants.X_BUNDLE_TYPE;
 import static com.enonic.xp.core.impl.app.ApplicationManifestConstants.X_CAPABILITY;
 import static com.enonic.xp.core.impl.app.ApplicationManifestConstants.X_SOURCE_PATHS;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 public final class ApplicationHelper
 {
-    private static final String APPLICATION_BUNDLE_TYPE = "application";
-
-    private static final String SYSTEM_BUNDLE_TYPE = "system";
-
-    private static final String CMS_YML = "cms/site.yml";
-
-    private static final String CMS_YAML = "cms/site.yaml";
-
-    private static final String APPLICATION_YAML = "application.yaml";
-
-    private static final String APPLICATION_YML = "application.yml";
-
-    static boolean isApplication( final JarFile jarFile )
-    {
-        return hasApplicationHeader( jarFile ) || jarFile.getEntry( APPLICATION_YAML ) != null ||
-            jarFile.getEntry( APPLICATION_YML ) != null || jarFile.getEntry( CMS_YAML ) != null || jarFile.getEntry( CMS_YML ) != null;
-    }
-
     public static ApplicationKey getApplicationKey( final Bundle bundle )
     {
         return ApplicationKey.from( ApplicationBundleUtils.getApplicationName( bundle ) );
-    }
-
-    private static boolean hasApplicationHeader( final JarFile jarFile )
-    {
-        final Manifest manifest;
-        try
-        {
-            manifest = jarFile.getManifest();
-        }
-        catch ( IOException e )
-        {
-            return false;
-        }
-
-        final String value = getAttribute( manifest, X_BUNDLE_TYPE, "" );
-        return value.equals( APPLICATION_BUNDLE_TYPE ) || value.equals( SYSTEM_BUNDLE_TYPE );
     }
 
     static String getAttribute( final Manifest manifest, final String name, final String defValue )

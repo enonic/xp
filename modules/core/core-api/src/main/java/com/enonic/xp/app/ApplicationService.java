@@ -25,6 +25,8 @@ public interface ApplicationService
 
     void uninstallApplication( ApplicationKey key );
 
+    void uninstallLocalApplication( ApplicationKey key );
+
     void installAllStoredApplications();
 
     Application createVirtualApplication( CreateVirtualApplicationParams params );

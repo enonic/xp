@@ -33,10 +33,6 @@ export interface CreateVirtualApplicationParams {
 
 export interface Application {
     key: string;
-    displayName: string | null;
-    vendorName: string | null;
-    vendorUrl: string | null;
-    url: string | null;
     version: string | null;
     systemVersion: string | null;
     minSystemVersion: string | null;
@@ -151,6 +147,7 @@ export interface ApplicationDescriptor {
     titleI18nKey: string | null;
     vendorName: string | null;
     vendorUrl: string | null;
+    url: string | null;
     icon?: Icon;
 }
 

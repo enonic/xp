@@ -5,7 +5,6 @@ import java.io.InputStream;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
-import org.osgi.framework.Constants;
 
 import com.enonic.xp.core.internal.ApplicationBundleUtils;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
@@ -29,10 +28,6 @@ class ApplicationImplTest
 
         assertEquals( "myapplication", application.getKey().toString() );
         assertEquals( "1.0.0", application.getVersion().toString() );
-        assertEquals( "myapplication", application.getDisplayName() );
-        assertEquals( "http://enonic.com/path/to/application", application.getUrl() );
-        assertEquals( "Enonic AS", application.getVendorName() );
-        assertEquals( "http://enonic.com", application.getVendorUrl() );
         assertEquals( bundle, application.getBundle() );
         assertTrue( application.getModifiedTime().getEpochSecond() > 0 );
         assertFalse( application.isStarted() );
@@ -48,11 +43,8 @@ class ApplicationImplTest
 
     private Bundle deployBundle()
     {
-        final InputStream in = newBundle( "myapplication", true ).setHeader( Constants.BUNDLE_NAME, "myapplication" )
-            .setHeader( ApplicationManifestConstants.X_APPLICATION_URL, "http://enonic.com/path/to/application" )
+        final InputStream in = newBundle( "myapplication", true )
             .setHeader( ApplicationManifestConstants.X_SYSTEM_VERSION, "[1.2,2)" )
-            .setHeader( ApplicationManifestConstants.X_VENDOR_NAME, "Enonic AS" )
-            .setHeader( ApplicationManifestConstants.X_VENDOR_URL, "http://enonic.com" )
             .setHeader( ApplicationManifestConstants.X_SOURCE_PATHS, "/a/b,/c/d" )
             .build();
 

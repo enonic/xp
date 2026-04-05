@@ -51,12 +51,6 @@ public class VirtualAppFactory
             }
 
             @Override
-            public String getDisplayName()
-            {
-                return applicationKey.toString();
-            }
-
-            @Override
             public String getSystemVersion()
             {
                 return VersionInfo.get().getVersion();
@@ -72,24 +66,6 @@ public class VirtualAppFactory
             public String getMinSystemVersion()
             {
                 return VersionInfo.get().getVersion();
-            }
-
-            @Override
-            public String getUrl()
-            {
-                return null;
-            }
-
-            @Override
-            public String getVendorName()
-            {
-                return null;
-            }
-
-            @Override
-            public String getVendorUrl()
-            {
-                return null;
             }
 
             @Override

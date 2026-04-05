@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.app;
 
 import java.net.URL;
+import java.util.Hashtable;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,18 +14,11 @@ import org.osgi.service.component.ComponentContext;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.support.ResourceTestHelper;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class ApplicationDescriptorServiceImplTest
 {
-
-    private static final String EXISTING_APP_BUNDLE_SYMBOLIC_NAME = "existing_site_bundle";
-
-    private static final String EXISTING_NON_APP_BUNDLE_SYMBOLIC_NAME = "existing_non_site_bundle";
-
-    private static final String BUNDLE_SYMBOLIC_NAME = "bundle";
-
     private static final String APP_DESCRIPTOR_FILENAME = "application.yml";
 
     private ResourceTestHelper resourceTestHelper;
@@ -38,21 +32,11 @@ class ApplicationDescriptorServiceImplTest
     {
         resourceTestHelper = new ResourceTestHelper( this );
 
-        Bundle existingAppBundle = Mockito.mock( Bundle.class );
-        Mockito.when( existingAppBundle.getSymbolicName() ).thenReturn( EXISTING_APP_BUNDLE_SYMBOLIC_NAME );
-        final URL resource = resourceTestHelper.getTestResource( APP_DESCRIPTOR_FILENAME );
-        Mockito.when( existingAppBundle.getResource( APP_DESCRIPTOR_FILENAME ) ).thenReturn( resource );
-        Mockito.when( existingAppBundle.getEntry( APP_DESCRIPTOR_FILENAME ) ).thenReturn( resource );
-        Mockito.when( existingAppBundle.getState() ).thenReturn( Bundle.ACTIVE );
-
-        Bundle bundle = Mockito.mock( Bundle.class );
-
-        Bundle existingNonAppBundle = Mockito.mock( Bundle.class );
-        Mockito.when( existingNonAppBundle.getSymbolicName() ).thenReturn( EXISTING_NON_APP_BUNDLE_SYMBOLIC_NAME );
-        Mockito.when( existingNonAppBundle.getState() ).thenReturn( Bundle.ACTIVE );
+        final Bundle appBundle = mockAppBundle( "com.enonic.myapp" );
+        final Bundle nonAppBundle = mockNonAppBundle( "com.enonic.nonapp" );
 
         BundleContext bundleContext = Mockito.mock( BundleContext.class );
-        Mockito.when( bundleContext.getBundles() ).thenReturn( new Bundle[]{existingAppBundle, existingNonAppBundle} );
+        Mockito.when( bundleContext.getBundles() ).thenReturn( new Bundle[]{appBundle, nonAppBundle} );
 
         componentContext = Mockito.mock( ComponentContext.class );
         Mockito.when( componentContext.getBundleContext() ).thenReturn( bundleContext );
@@ -60,36 +44,69 @@ class ApplicationDescriptorServiceImplTest
         appDescriptorService = new ApplicationDescriptorServiceImpl();
     }
 
-
     @Test
-    void test_start()
+    void start()
     {
         appDescriptorService.start( componentContext );
 
-        assertNotNull( appDescriptorService.get( ApplicationKey.from( EXISTING_APP_BUNDLE_SYMBOLIC_NAME ) ) );
-        assertEquals( null, appDescriptorService.get( ApplicationKey.from( EXISTING_NON_APP_BUNDLE_SYMBOLIC_NAME ) ) );
+        assertNotNull( appDescriptorService.get( ApplicationKey.from( "com.enonic.myapp" ) ) );
+        assertNull( appDescriptorService.get( ApplicationKey.from( "com.enonic.nonapp" ) ) );
     }
 
     @Test
-    void test_bundle_lifecycle()
+    void bundle_lifecycle()
     {
-        Bundle bundle = Mockito.mock( Bundle.class );
-        Mockito.when( bundle.getSymbolicName() ).thenReturn( BUNDLE_SYMBOLIC_NAME );
+        final Bundle bundle = mockAppBundle( "com.enonic.newapp" );
+
+        appDescriptorService.start( componentContext );
+        assertNull( appDescriptorService.get( ApplicationKey.from( "com.enonic.newapp" ) ) );
+
+        appDescriptorService.bundleChanged( new BundleEvent( BundleEvent.INSTALLED, bundle ) );
+        assertNotNull( appDescriptorService.get( ApplicationKey.from( "com.enonic.newapp" ) ) );
+
+        appDescriptorService.bundleChanged( new BundleEvent( BundleEvent.UNINSTALLED, bundle ) );
+        assertNull( appDescriptorService.get( ApplicationKey.from( "com.enonic.newapp" ) ) );
+
+        appDescriptorService.bundleChanged( new BundleEvent( BundleEvent.UPDATED, bundle ) );
+        assertNotNull( appDescriptorService.get( ApplicationKey.from( "com.enonic.newapp" ) ) );
+    }
+
+    @Test
+    void app_without_descriptor_file()
+    {
+        final Hashtable<String, String> headers = new Hashtable<>();
+        headers.put( "X-Bundle-Type", "application" );
+
+        final Bundle appBundleNoDescriptor = Mockito.mock( Bundle.class );
+        Mockito.when( appBundleNoDescriptor.getSymbolicName() ).thenReturn( "com.enonic.nodescriptor" );
+        Mockito.when( appBundleNoDescriptor.getState() ).thenReturn( Bundle.ACTIVE );
+        Mockito.when( appBundleNoDescriptor.getHeaders() ).thenReturn( headers );
+
+        appDescriptorService.start( componentContext );
+
+        appDescriptorService.bundleChanged( new BundleEvent( BundleEvent.INSTALLED, appBundleNoDescriptor ) );
+
+        assertNotNull( appDescriptorService.get( ApplicationKey.from( "com.enonic.nodescriptor" ) ) );
+    }
+
+    private Bundle mockAppBundle( final String symbolicName )
+    {
+        final Bundle bundle = Mockito.mock( Bundle.class );
+        Mockito.when( bundle.getSymbolicName() ).thenReturn( symbolicName );
         final URL resource = resourceTestHelper.getTestResource( APP_DESCRIPTOR_FILENAME );
         Mockito.when( bundle.getResource( APP_DESCRIPTOR_FILENAME ) ).thenReturn( resource );
         Mockito.when( bundle.getEntry( APP_DESCRIPTOR_FILENAME ) ).thenReturn( resource );
         Mockito.when( bundle.getState() ).thenReturn( Bundle.ACTIVE );
+        Mockito.when( bundle.getHeaders() ).thenReturn( new Hashtable<>() );
+        return bundle;
+    }
 
-        appDescriptorService.start( componentContext );
-        assertEquals( null, appDescriptorService.get( ApplicationKey.from( BUNDLE_SYMBOLIC_NAME ) ) );
-
-        appDescriptorService.bundleChanged( new BundleEvent( BundleEvent.INSTALLED, bundle ) );
-        assertNotNull( appDescriptorService.get( ApplicationKey.from( BUNDLE_SYMBOLIC_NAME ) ) );
-
-        appDescriptorService.bundleChanged( new BundleEvent( BundleEvent.UNINSTALLED, bundle ) );
-        assertEquals( null, appDescriptorService.get( ApplicationKey.from( BUNDLE_SYMBOLIC_NAME ) ) );
-
-        appDescriptorService.bundleChanged( new BundleEvent( BundleEvent.UPDATED, bundle ) );
-        assertNotNull( appDescriptorService.get( ApplicationKey.from( BUNDLE_SYMBOLIC_NAME ) ) );
+    private static Bundle mockNonAppBundle( final String symbolicName )
+    {
+        final Bundle bundle = Mockito.mock( Bundle.class );
+        Mockito.when( bundle.getSymbolicName() ).thenReturn( symbolicName );
+        Mockito.when( bundle.getState() ).thenReturn( Bundle.ACTIVE );
+        Mockito.when( bundle.getHeaders() ).thenReturn( new Hashtable<>() );
+        return bundle;
     }
 }

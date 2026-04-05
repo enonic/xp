@@ -4,7 +4,7 @@ public class AppInfo
 {
     public String name;
 
-    public String displayName;
+    public String title;
 
     public String vendorName;
 
@@ -13,4 +13,6 @@ public class AppInfo
     public String maxSystemVersion;
 
     public String minSystemVersion;
+
+    public boolean system;
 }

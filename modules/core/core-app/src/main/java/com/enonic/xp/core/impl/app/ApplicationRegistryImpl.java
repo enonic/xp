@@ -74,26 +74,38 @@ public class ApplicationRegistryImpl
     @Override
     public Application install( final ApplicationKey applicationKey, final ByteSource byteSource )
     {
-        return applications.computeIfAbsent( applicationKey, key -> {
+        final RuntimeException[] exceptionHolder = new RuntimeException[1];
+        final ApplicationAdaptor app = applications.compute( applicationKey, ( key, existingApp ) -> {
+            if ( existingApp != null )
+            {
+                doUninstall( existingApp );
+            }
             try (InputStream in = byteSource.openStream())
             {
-                LOG.debug( "Installing application {} bundle", applicationKey );
+                LOG.debug( "Installing application {} bundle", key );
 
-                final Bundle bundle = context.installBundle( applicationKey.getName(), in );
+                final Bundle bundle = context.installBundle( key.getName(), in );
 
-                LOG.info( "Installed application {} bundle {}", applicationKey, bundle.getBundleId() );
+                LOG.info( "Installed application {} bundle {}", key, bundle.getBundleId() );
 
                 return applicationFactoryService.getApplication( bundle );
             }
             catch ( BundleException e )
             {
-                throw new ApplicationInstallException( "Could not install application bundle: '" + applicationKey + "'", e );
+                exceptionHolder[0] = new ApplicationBundleException( e );
+                return null;
             }
             catch ( IOException e )
             {
-                throw new UncheckedIOException( "Failed to install bundle", e );
+                exceptionHolder[0] = new UncheckedIOException( "Failed to install bundle", e );
+                return null;
             }
         } );
+        if ( exceptionHolder[0] != null )
+        {
+            throw exceptionHolder[0];
+        }
+        return app;
     }
 
     void registerApplication( final Bundle bundle )
@@ -124,7 +136,7 @@ public class ApplicationRegistryImpl
                     // Normal applications get configured when their bundles get in STARTING/STARTED state,
                     // but they already got installed via #install and should exist in registry
 
-                    LOG.info( "Configuring application {} bundle {}", applicationKey, bundle.getBundleId() );
+                    LOG.info( "Configuring application {} bundle {}", key, bundle.getBundleId() );
 
                     existingApp.setConfig( configuration );
                     register( bundle, existingApp );
@@ -134,13 +146,13 @@ public class ApplicationRegistryImpl
                     // Configured application (for which #configure was already called at least once)
                     // must mimic stop/start cycle without actual bundle stop/start
 
-                    LOG.info( "Reconfiguring application {} bundle {}", applicationKey, bundle.getBundleId() );
+                    LOG.info( "Reconfiguring application {} bundle {}", key, bundle.getBundleId() );
 
                     applicationListenerHub.deactivated( existingApp );
 
                     existingApp.setConfig( configuration );
                     register( bundle, existingApp );
-                    callInvalidators( applicationKey );
+                    callInvalidators( key );
                 }
 
                 return existingApp;
@@ -150,9 +162,9 @@ public class ApplicationRegistryImpl
                 // System applications don't get installed or stated via #install/#start,
                 // but they should get configured as soon as their bundles get started.
 
-                LOG.info( "Registering configured application {} bundle {}", applicationKey, bundle.getBundleId() );
+                LOG.info( "Registering configured application {} bundle {}", key, bundle.getBundleId() );
                 final ApplicationAdaptor app = requireNonNull( applicationFactoryService.getApplication( bundle ),
-                                                               () -> "Can't configure application " + applicationKey );
+                                                               () -> "Can't configure application " + key );
                 app.setConfig( configuration );
                 register( bundle, app );
 
@@ -163,83 +175,74 @@ public class ApplicationRegistryImpl
         applicationListenerHub.activated( application );
     }
 
-    private static void register( final Bundle bundle, final ApplicationAdaptor application )
-    {
-        final ServiceRegistration<Application> registration = bundle.getBundleContext()
-            .registerService( Application.class, application, Dictionaries.copyOf(
-                Map.of( "bundleId", bundle.getBundleId(), "name", ApplicationBundleUtils.getApplicationName( bundle ) ) ) );
-        application.setRegistration( registration );
-    }
-
     @Override
     public void uninstall( final ApplicationKey applicationKey )
     {
-        applications.computeIfPresent( applicationKey, ( key, existingApp ) -> {
-            if ( existingApp.isSystem() )
+        applications.compute( applicationKey, ( key, existingApp ) -> {
+            if ( existingApp == null )
             {
-                return existingApp;
+                throw new ApplicationNotFoundException( key );
             }
-
             final Bundle bundle = existingApp.getBundle();
-            LOG.info( "Uninstalling application {} bundle {}", applicationKey, bundle.getBundleId() );
-
-            final boolean started = bundle.getState() == Bundle.ACTIVE;
-            if ( started )
+            if ( bundle.getState() == Bundle.UNINSTALLED )
             {
-                applicationListenerHub.deactivated( existingApp );
+                throw new ApplicationNotFoundException( key );
             }
 
-            final ServiceRegistration<Application> reference = existingApp.getRegistration();
-            if ( reference != null )
-            {
-                reference.unregister();
-                existingApp.setRegistration( null );
-            }
-            existingApp.setConfig( null );
+            LOG.info( "Uninstalling application {} bundle {}", key, bundle.getBundleId() );
 
+            doUninstall( existingApp );
+
+            LOG.info( "Uninstalled application {} bundle {}", key, bundle.getBundleId() );
+
+            return null;
+        } );
+    }
+
+    private void doUninstall( final ApplicationAdaptor existingApp )
+    {
+        final Bundle bundle = existingApp.getBundle();
+        if ( bundle.getState() == Bundle.ACTIVE )
+        {
+            applicationListenerHub.deactivated( existingApp );
+        }
+
+        unregister( existingApp );
+
+        if ( bundle.getState() != Bundle.UNINSTALLED )
+        {
             try
             {
                 bundle.uninstall();
             }
             catch ( BundleException e )
             {
-                throw new RuntimeException( e );
+                throw new ApplicationBundleException( e );
             }
-
-            callInvalidators( applicationKey );
-
-            LOG.info( "Uninstalled application {} bundle {}", applicationKey, bundle.getBundleId() );
-
-            // Remove application from registry.
-            return null;
-        } );
+        }
+        callInvalidators( existingApp.getKey() );
     }
 
     @Override
     public void stop( final ApplicationKey applicationKey )
     {
-        applications.computeIfPresent( applicationKey, ( key, existingApp ) -> {
-            if ( existingApp.isSystem() )
-            {
-                return existingApp;
-            }
-            final Bundle bundle = existingApp.getBundle();
-
+        final ApplicationAdaptor application = applications.get( applicationKey );
+        if ( application == null )
+        {
+            throw new ApplicationNotFoundException( applicationKey );
+        }
+        final Bundle bundle = application.getBundle();
+        if ( bundle.getState() == Bundle.UNINSTALLED )
+        {
+            throw new ApplicationNotFoundException( applicationKey );
+        }
+        if ( bundle.getState() == Bundle.ACTIVE )
+        {
             LOG.info( "Stopping application {} bundle {}", applicationKey, bundle.getBundleId() );
 
-            final boolean started = bundle.getState() == Bundle.ACTIVE;
-            if ( started )
-            {
-                applicationListenerHub.deactivated( existingApp );
-            }
+            applicationListenerHub.deactivated( application );
 
-            final ServiceRegistration<Application> reference = existingApp.getRegistration();
-            if ( reference != null )
-            {
-                reference.unregister();
-                existingApp.setRegistration( null );
-            }
-            existingApp.setConfig( null );
+            unregister( application );
 
             try
             {
@@ -247,16 +250,13 @@ public class ApplicationRegistryImpl
             }
             catch ( BundleException e )
             {
-                throw new RuntimeException( e );
+                throw new ApplicationBundleException( e );
             }
 
             callInvalidators( applicationKey );
 
             LOG.info( "Stopped application {} bundle {}", applicationKey, bundle.getBundleId() );
-
-            // Keep application in registry.
-            return existingApp;
-        } );
+        }
     }
 
     @Override
@@ -268,24 +268,52 @@ public class ApplicationRegistryImpl
             throw new ApplicationNotFoundException( applicationKey );
         }
         final Bundle bundle = application.getBundle();
-        if ( bundle.getState() == Bundle.ACTIVE )
+        if ( bundle.getState() == Bundle.UNINSTALLED )
         {
-            return;
+            throw new ApplicationNotFoundException( applicationKey );
         }
-
-        LOG.debug( "Starting application {} bundle {}", applicationKey, bundle.getBundleId() );
-
-        ApplicationHelper.checkSystemVersion( bundle, context.getBundle().getVersion() );
-
-        try
+        if ( bundle.getState() != Bundle.ACTIVE )
         {
-            bundle.start();
+            LOG.debug( "Starting application {} bundle {}", applicationKey, bundle.getBundleId() );
+
+            ApplicationHelper.checkSystemVersion( bundle, context.getBundle().getVersion() );
+
+            try
+            {
+                bundle.start();
+            }
+            catch ( BundleException e )
+            {
+                throw new ApplicationBundleException( e );
+            }
+            LOG.info( "Started application {} bundle {}", applicationKey, bundle.getBundleId() );
         }
-        catch ( BundleException e )
+    }
+
+    private static void register( final Bundle bundle, final ApplicationAdaptor application )
+    {
+        final ServiceRegistration<Application> registration = bundle.getBundleContext()
+            .registerService( Application.class, application, Dictionaries.copyOf(
+                Map.of( "bundleId", bundle.getBundleId(), "name", ApplicationBundleUtils.getApplicationName( bundle ) ) ) );
+        application.setRegistration( registration );
+    }
+
+    private static void unregister( final ApplicationAdaptor existingApp )
+    {
+        final ServiceRegistration<Application> reference = existingApp.getRegistration();
+        if ( reference != null )
         {
-            throw new RuntimeException( e );
+            try
+            {
+                reference.unregister();
+            }
+            catch ( IllegalStateException e )
+            {
+                LOG.debug( "Failed to unregister application service", e );
+            }
+            existingApp.setRegistration( null );
         }
-        LOG.info( "Started application {} bundle {}", applicationKey, bundle.getBundleId() );
+        existingApp.setConfig( null );
     }
 
     private void callInvalidators( final ApplicationKey key )

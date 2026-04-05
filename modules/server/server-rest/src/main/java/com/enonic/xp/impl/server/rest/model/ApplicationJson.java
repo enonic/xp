@@ -2,82 +2,67 @@ package com.enonic.xp.impl.server.rest.model;
 
 import java.time.Instant;
 
-import com.enonic.xp.app.Application;
-
 public class ApplicationJson
 {
-    final Application application;
+    private final ApplicationInfoJson info;
 
-    final boolean local;
-
-    public ApplicationJson( final Application application, final boolean local )
+    public ApplicationJson( final ApplicationInfoJson info )
     {
-        this.application = application;
-        this.local = local;
+        this.info = info;
     }
 
     public String getKey()
     {
-        return application.getKey().toString();
+        return info.getKey();
     }
 
     public String getVersion()
     {
-        return application.getVersion().toString();
+        return info.getVersion();
     }
 
     public String getDisplayName()
     {
-        return application.getDisplayName();
+        return info.getTitle();
     }
 
     public String getMaxSystemVersion()
     {
-        return application.getMaxSystemVersion();
+        return info.getMaxSystemVersion();
     }
 
     public String getMinSystemVersion()
     {
-        return application.getMinSystemVersion();
+        return info.getMinSystemVersion();
     }
 
     public String getUrl()
     {
-        return application.getUrl();
+        return info.getUrl();
     }
 
     public String getVendorName()
     {
-        return application.getVendorName();
+        return info.getVendorName();
     }
 
     public String getVendorUrl()
     {
-        return application.getVendorUrl();
+        return info.getVendorUrl();
     }
 
     public Instant getModifiedTime()
     {
-        return this.application.getModifiedTime();
+        return info.getModifiedTime();
     }
 
     public String getState()
     {
-        return this.application.isStarted() ? "started" : "stopped";
+        return info.getState();
     }
 
     public boolean getLocal()
     {
-        return local;
-    }
-
-    public boolean getDeletable()
-    {
-        return false;
-    }
-
-    public boolean getEditable()
-    {
-        return false;
+        return info.getLocal();
     }
 }

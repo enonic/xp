@@ -25,10 +25,6 @@ class GetApplicationHandlerTest
             final Application application = mock( Application.class );
 
             when( application.getKey() ).thenReturn( applicationKey );
-            when( application.getDisplayName() ).thenReturn( "app display name" );
-            when( application.getVendorName() ).thenReturn( "vendor name" );
-            when( application.getVendorUrl() ).thenReturn( "https://vendor.url" );
-            when( application.getUrl() ).thenReturn( "https://myapp.url" );
             when( application.getVersion() ).thenReturn( Version.parseVersion( "1.0.0" ) );
             when( application.getSystemVersion() ).thenReturn( ( "4.2.3-SNAPSHOT" ) );
             when( application.getMinSystemVersion() ).thenReturn( "2.0.0" );

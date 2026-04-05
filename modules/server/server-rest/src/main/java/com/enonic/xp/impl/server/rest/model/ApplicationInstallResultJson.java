@@ -2,12 +2,24 @@ package com.enonic.xp.impl.server.rest.model;
 
 public class ApplicationInstallResultJson
 {
-    private ApplicationInstalledJson applicationInstalledJson;
+    private final ApplicationInstalledJson applicationInstalledJson;
 
-    private String failure;
+    private final String failure;
 
-    public ApplicationInstallResultJson()
+    private ApplicationInstallResultJson( final ApplicationInstalledJson applicationInstalledJson, final String failure )
     {
+        this.applicationInstalledJson = applicationInstalledJson;
+        this.failure = failure;
+    }
+
+    public static ApplicationInstallResultJson success( final ApplicationInfoJson application )
+    {
+        return new ApplicationInstallResultJson( new ApplicationInstalledJson( new ApplicationJson( application ) ), null );
+    }
+
+    public static ApplicationInstallResultJson failure( final String failure )
+    {
+        return new ApplicationInstallResultJson( null, failure );
     }
 
     public String getFailure()
@@ -20,13 +32,18 @@ public class ApplicationInstallResultJson
         return applicationInstalledJson;
     }
 
-    public void setFailure( final String failure )
+    public static class ApplicationInstalledJson
     {
-        this.failure = failure;
-    }
+        private final ApplicationJson application;
 
-    public void setApplicationInstalledJson( final ApplicationInstalledJson applicationInstalledJson )
-    {
-        this.applicationInstalledJson = applicationInstalledJson;
+        private ApplicationInstalledJson( final ApplicationJson application )
+        {
+            this.application = application;
+        }
+
+        public ApplicationJson getApplication()
+        {
+            return application;
+        }
     }
 }

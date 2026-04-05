@@ -1,5 +1,8 @@
 package com.enonic.xp.impl.server.rest;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -9,12 +12,13 @@ import org.slf4j.LoggerFactory;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.Application;
+import com.enonic.xp.app.ApplicationDescriptorService;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.event.EventPublisher;
+import com.enonic.xp.impl.server.rest.model.ApplicationActionResultJson;
 import com.enonic.xp.impl.server.rest.model.ApplicationInstallParams;
-import com.enonic.xp.impl.server.rest.model.ApplicationInstallResultJson;
-import com.enonic.xp.impl.server.rest.model.ApplicationInstalledJson;
+import com.enonic.xp.impl.server.rest.model.ApplicationInfoJson;
 import com.enonic.xp.impl.server.rest.model.ApplicationParams;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.multipart.MultipartForm;
@@ -27,19 +31,23 @@ public class ApplicationResourceService
 
     private final ApplicationService applicationService;
 
+    private final ApplicationDescriptorService applicationDescriptorService;
+
     private final EventPublisher eventPublisher;
 
     ApplicationLoader applicationLoader = new ApplicationLoader();
 
     @Activate
     public ApplicationResourceService( final @Reference ApplicationService applicationService,
+                                       final @Reference ApplicationDescriptorService applicationDescriptorService,
                                        final @Reference EventPublisher eventPublisher )
     {
         this.applicationService = applicationService;
+        this.applicationDescriptorService = applicationDescriptorService;
         this.eventPublisher = eventPublisher;
     }
 
-    public ApplicationInstallResultJson install( final MultipartForm form )
+    public ApplicationInfoJson install( final MultipartForm form )
     {
         final MultipartItem appFile = form.get( "file" );
         if ( appFile == null )
@@ -47,53 +55,90 @@ public class ApplicationResourceService
             throw WebException.badRequest( "Missing file item" );
         }
 
-        final ApplicationInstallResultJson result = new ApplicationInstallResultJson();
-        try
-        {
-            final Application application = this.applicationService.installGlobalApplication( appFile.getBytes() );
-            result.setApplicationInstalledJson( new ApplicationInstalledJson( application, false ) );
-        }
-        catch ( Exception e )
-        {
-            final String failure = "Failed to process application " + appFile.getFileName();
-            LOG.error( failure, e );
-            result.setFailure( failure );
-        }
-        return result;
+        final Application application = this.applicationService.installGlobalApplication( appFile.getBytes() );
+        return ApplicationInfoJson.create( application, applicationDescriptorService.get( application.getKey() ), false );
     }
 
-    public ApplicationInstallResultJson installUrl( final ApplicationInstallParams params )
+    public ApplicationInfoJson installUrl( final ApplicationInstallParams params )
     {
-        final ApplicationInstallResultJson result = new ApplicationInstallResultJson();
-        try
+        final ByteSource source = applicationLoader.load( params.getUrl(), params.getSha512(), eventPublisher::publish );
+        final Application application = this.applicationService.installGlobalApplication( source );
+        return ApplicationInfoJson.create( application, applicationDescriptorService.get( application.getKey() ), false );
+    }
+
+    public ApplicationActionResultJson start( final ApplicationParams params )
+    {
+        final List<ApplicationActionResultJson.ActionResult> results = new ArrayList<>();
+        for ( final String key : params.getKey() )
         {
-            final ByteSource source = applicationLoader.load( params.getUrl(), params.getSha512(), eventPublisher::publish );
-            final Application application = this.applicationService.installGlobalApplication( source );
-
-            result.setApplicationInstalledJson( new ApplicationInstalledJson( application, false ) );
-            return result;
+            try
+            {
+                this.applicationService.startApplication( ApplicationKey.from( key ) );
+                results.add( new ApplicationActionResultJson.ActionResult( key, true ) );
+            }
+            catch ( Exception e )
+            {
+                LOG.warn( "Failed to start application [{}]", key, e );
+                results.add( new ApplicationActionResultJson.ActionResult( key, false ) );
+            }
         }
-        catch ( Exception e )
+        return new ApplicationActionResultJson( results );
+    }
+
+    public ApplicationActionResultJson stop( final ApplicationParams params )
+    {
+        final List<ApplicationActionResultJson.ActionResult> results = new ArrayList<>();
+        for ( final String key : params.getKey() )
         {
-            final String failure = "Failed to upload application from " + params.getUrl();
-            LOG.error( failure, e );
-            result.setFailure( failure );
-            return result;
+            try
+            {
+                this.applicationService.stopApplication( ApplicationKey.from( key ) );
+                results.add( new ApplicationActionResultJson.ActionResult( key, true ) );
+            }
+            catch ( Exception e )
+            {
+                LOG.warn( "Failed to stop application [{}]", key, e );
+                results.add( new ApplicationActionResultJson.ActionResult( key, false ) );
+            }
         }
+        return new ApplicationActionResultJson( results );
     }
 
-    public void start( final ApplicationParams params )
+    public List<ApplicationInfoJson> getInstalledApplications()
     {
-        params.getKey().stream().map( ApplicationKey::from ).forEach( this.applicationService::startApplication );
+        return applicationService.getInstalledApplications().stream()
+            .map( application -> ApplicationInfoJson.create( application, applicationDescriptorService.get( application.getKey() ),
+                                                             applicationService.isLocalApplication( application.getKey() ) ) )
+            .toList();
     }
 
-    public void stop( final ApplicationParams params )
+    public ApplicationInfoJson getInstalledApplication( final ApplicationKey applicationKey )
     {
-        params.getKey().stream().map( ApplicationKey::from ).forEach( this.applicationService::stopApplication );
+        final Application application = applicationService.getInstalledApplication( applicationKey );
+        if ( application == null )
+        {
+            return null;
+        }
+        return ApplicationInfoJson.create( application, applicationDescriptorService.get( applicationKey ),
+                                        applicationService.isLocalApplication( application.getKey() ) );
     }
 
-    public void uninstall( final ApplicationParams params )
+    public ApplicationActionResultJson uninstall( final ApplicationParams params )
     {
-        params.getKey().stream().map( ApplicationKey::from ).forEach( this.applicationService::uninstallApplication );
+        final List<ApplicationActionResultJson.ActionResult> results = new ArrayList<>();
+        for ( final String key : params.getKey() )
+        {
+            try
+            {
+                this.applicationService.uninstallApplication( ApplicationKey.from( key ) );
+                results.add( new ApplicationActionResultJson.ActionResult( key, true ) );
+            }
+            catch ( Exception e )
+            {
+                LOG.warn( "Failed to uninstall application [{}]", key, e );
+                results.add( new ApplicationActionResultJson.ActionResult( key, false ) );
+            }
+        }
+        return new ApplicationActionResultJson( results );
     }
 }

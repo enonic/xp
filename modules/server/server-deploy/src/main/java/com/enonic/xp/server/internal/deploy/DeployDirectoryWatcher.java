@@ -165,7 +165,7 @@ public final class DeployDirectoryWatcher
                 if ( path.equals( lastInstalledFile ) )
                 {
                     //Uninstall the corresponding application
-                    DeployHelper.runAsAdmin( () -> this.applicationService.uninstallApplication( a ) );
+                    DeployHelper.runAsAdmin( () -> this.applicationService.uninstallLocalApplication( a ) );
                     fileNameStack.pop();
 
                     // If there is a previous file with the same applicationKey

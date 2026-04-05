@@ -24,6 +24,7 @@ public class ApplicationDescriptorMapper
         gen.value( "titleI18nKey", descriptor.getTitleI18nKey() );
         gen.value( "vendorName", descriptor.getVendorName() );
         gen.value( "vendorUrl", descriptor.getVendorUrl() );
+        gen.value( "url", descriptor.getUrl() );
         serializeIcon( gen, descriptor.getIcon() );
     }
 
