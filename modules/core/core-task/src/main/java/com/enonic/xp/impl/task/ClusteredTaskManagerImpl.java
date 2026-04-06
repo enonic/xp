@@ -87,7 +87,7 @@ public final class ClusteredTaskManagerImpl
     public TaskInfo getTaskInfo( final TaskId taskId )
     {
         final List<TaskInfo> list = send( new SingleTaskReporter( taskId ) );
-        return list.isEmpty() ? null : list.get( 0 );
+        return list.isEmpty() ? null : list.getFirst();
     }
 
     @Override
@@ -119,12 +119,12 @@ public final class ClusteredTaskManagerImpl
             catch ( TimeoutException e )
             {
                 resultsFromMembers.values().forEach( f -> f.cancel( true ) );
-                throw new RuntimeException( e );
+                throw new IllegalStateException( "Timeout while waiting for task manager response", e );
             }
             catch ( InterruptedException e )
             {
                 Thread.currentThread().interrupt();
-                throw new RuntimeException( e );
+                throw new IllegalStateException( "Interrupted while waiting for task manager response", e );
             }
             catch ( ExecutionException e )
             {
@@ -144,12 +144,12 @@ public final class ClusteredTaskManagerImpl
         }
         catch ( TimeoutException e )
         {
-            throw new RuntimeException( e );
+            throw new IllegalStateException( "Task submit status unknown due to timeout while waiting for task manager response.", e );
         }
         catch ( InterruptedException e )
         {
             Thread.currentThread().interrupt();
-            throw new RuntimeException( e );
+            throw new IllegalStateException( "Task submit status unknown due to interruption while waiting for task manager response.", e );
         }
         catch ( ExecutionException e )
         {

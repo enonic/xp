@@ -69,11 +69,11 @@ public class ClusterServiceImpl
             catch ( InterruptedException e )
             {
                 Thread.currentThread().interrupt();
-                throw new RuntimeException( e );
+                throw new IllegalStateException( "Interrupted while waiting for cluster service", e );
             }
             catch ( TimeoutException e )
             {
-                throw new RuntimeException( e );
+                throw new IllegalStateException( "Cannot resolve cluster service", e );
             }
         }
 

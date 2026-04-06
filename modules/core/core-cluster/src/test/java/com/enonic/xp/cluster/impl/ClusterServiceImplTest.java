@@ -6,8 +6,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.cluster.ClusterConfig;
 import com.enonic.xp.cluster.ClusterService;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
@@ -17,6 +19,9 @@ class ClusterServiceImplTest
 {
     @Mock
     ClusterService clusteredClusterService;
+
+    @Mock
+    ClusterConfig clusterConfig;
 
     @Test
     void isLeader_noClusteredService_noConfig()
@@ -66,6 +71,58 @@ class ClusterServiceImplTest
         final ClusterServiceImpl clusterService = new ClusterServiceImpl();
         clusterService.setClusteredClusterService( clusteredClusterService );
         clusterService.unsetClusteredClusterService( clusteredClusterService );
+
+        assertTrue( clusterService.isLeader() );
+    }
+
+    @Test
+    void isLeader_app_afterUnsetClusteredService()
+    {
+        final ClusterServiceImpl clusterService = new ClusterServiceImpl();
+        clusterService.setClusteredClusterService( clusteredClusterService );
+        clusterService.unsetClusteredClusterService( clusteredClusterService );
+
+        assertTrue( clusterService.isLeader( ApplicationKey.from( "com.example.myapp" ) ) );
+    }
+
+    @Test
+    void isLeader_noClusteredService_clusterDisabled()
+    {
+        final ClusterServiceImpl clusterService = new ClusterServiceImpl();
+        when( clusterConfig.isEnabled() ).thenReturn( false );
+        clusterService.setClusterConfig( clusterConfig );
+
+        assertTrue( clusterService.isLeader() );
+    }
+
+    @Test
+    void isLeader_noClusteredService_clusterEnabled_timesOut()
+    {
+        final ClusterServiceImpl clusterService = new ClusterServiceImpl();
+        when( clusterConfig.isEnabled() ).thenReturn( true );
+        clusterService.setClusterConfig( clusterConfig );
+
+        assertThatThrownBy( clusterService::isLeader ).isInstanceOf( IllegalStateException.class )
+            .hasMessage( "Cannot resolve cluster service" );
+    }
+
+    @Test
+    void isLeader_app_noClusteredService_clusterEnabled_timesOut()
+    {
+        final ClusterServiceImpl clusterService = new ClusterServiceImpl();
+        when( clusterConfig.isEnabled() ).thenReturn( true );
+        clusterService.setClusterConfig( clusterConfig );
+
+        assertThatThrownBy( () -> clusterService.isLeader( ApplicationKey.from( "com.example.myapp" ) ) ).isInstanceOf(
+            IllegalStateException.class ).hasMessage( "Cannot resolve cluster service" );
+    }
+
+    @Test
+    void isLeader_afterUnsetClusterConfig()
+    {
+        final ClusterServiceImpl clusterService = new ClusterServiceImpl();
+        clusterService.setClusterConfig( clusterConfig );
+        clusterService.unsetClusterConfig( clusterConfig );
 
         assertTrue( clusterService.isLeader() );
     }
