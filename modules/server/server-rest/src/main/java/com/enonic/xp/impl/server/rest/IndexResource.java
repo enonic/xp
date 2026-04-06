@@ -4,12 +4,16 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import jakarta.annotation.security.RolesAllowed;
+import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 
+import com.enonic.xp.impl.server.rest.model.GetIndexSettingsResultJson;
 import com.enonic.xp.impl.server.rest.model.ReindexRequestJson;
 import com.enonic.xp.impl.server.rest.model.ReindexResultJson;
 import com.enonic.xp.impl.server.rest.model.TaskResultJson;
@@ -18,6 +22,7 @@ import com.enonic.xp.impl.server.rest.model.UpdateIndexSettingsResultJson;
 import com.enonic.xp.impl.server.rest.task.ReindexRunnableTask;
 import com.enonic.xp.impl.server.rest.task.listener.ReindexListenerImpl;
 import com.enonic.xp.index.IndexService;
+import com.enonic.xp.index.IndexType;
 import com.enonic.xp.index.ReindexParams;
 import com.enonic.xp.index.ReindexResult;
 import com.enonic.xp.index.UpdateIndexSettingsParams;
@@ -80,6 +85,32 @@ public final class IndexResource
                                                                .build() );
 
         return new TaskResultJson( taskId );
+    }
+
+    @GET
+    @Path("settings")
+    public GetIndexSettingsResultJson getSettings( @QueryParam("repositoryId") final String repositoryId,
+                                                   @QueryParam("indexType") final String indexType )
+    {
+        if ( isNullOrEmpty( repositoryId ) )
+        {
+            throw new BadRequestException( "Parameter 'repositoryId' is required" );
+        }
+        if ( isNullOrEmpty( indexType ) )
+        {
+            throw new BadRequestException( "Parameter 'indexType' is required" );
+        }
+        final IndexType indexTypeValue;
+        try
+        {
+            indexTypeValue = IndexType.valueOf( indexType.toUpperCase() );
+        }
+        catch ( IllegalArgumentException e )
+        {
+            throw new BadRequestException( "Invalid value for 'indexType': '" + indexType + "'" );
+        }
+        return GetIndexSettingsResultJson.create(
+            this.indexService.getIndexSettings( RepositoryId.from( repositoryId ), indexTypeValue ) );
     }
 
     @POST

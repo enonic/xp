@@ -2,6 +2,8 @@ package com.enonic.xp.impl.server.rest;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -11,6 +13,7 @@ import jakarta.ws.rs.core.MediaType;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.index.IndexService;
+import com.enonic.xp.index.IndexType;
 import com.enonic.xp.index.ReindexParams;
 import com.enonic.xp.index.ReindexResult;
 import com.enonic.xp.index.UpdateIndexSettingsParams;
@@ -30,6 +33,19 @@ class JsonIndexResourceTest
     private IndexService indexService;
 
     private RepositoryService repositoryService;
+
+    @Test
+    void getSettings()
+        throws Exception
+    {
+        Mockito.when( this.indexService.getIndexSettings( RepositoryId.from( "my-repo" ), IndexType.SEARCH ) ).thenReturn(
+            new TreeMap<>( Map.of( "index.number_of_replicas", "1", "index.number_of_shards", "1" ) ) );
+
+        final String result =
+            request().path( "repo/index/settings" ).queryParam( "repositoryId", "my-repo" ).queryParam( "indexType", "search" ).get().getAsString();
+
+        assertJson( "get_index_settings.json", result );
+    }
 
     @Test
     void reindex()
