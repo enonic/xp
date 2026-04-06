@@ -69,7 +69,7 @@ class ClusteredTaskManagerImplTest
         config = mock( TaskConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         when( hazelcastInstance.getExecutorService( ClusteredTaskManagerImpl.ACTION ) ).thenReturn( executorService );
         lenient().doReturn( clusterMap ).when( hazelcastInstance ).getReplicatedMap( "com.enonic.xp.cluster" );
-        lenient().doReturn( taskMap ).when( hazelcastInstance ).getReplicatedMap( TaskAttributesApplier.MAP_NAME );
+        lenient().doReturn( taskMap ).when( hazelcastInstance ).getReplicatedMap( "com.enonic.xp.task" );
         lenient().when( hazelcastInstance.getCluster().getLocalMember().getUuid() ).thenReturn( UUID.randomUUID() );
         clusteredTaskManager = new ClusteredTaskManagerImpl( hazelcastInstance );
         clusteredTaskManager.activate( config );
@@ -176,8 +176,8 @@ class ClusteredTaskManagerImplTest
         when( task.getApplicationKey() ).thenReturn( applicationKey );
 
         when( clusterMap.get( memberUuid ) ).thenReturn( Map.of( "application-" + applicationKey, Boolean.TRUE.toString() ) );
-        when( taskMap.get( memberUuid ) ).thenReturn( Map.of( TaskAttributesApplier.TASKS_ENABLED_ATTRIBUTE_KEY, Boolean.TRUE.toString(),
-                                                              TaskAttributesApplier.SYSTEM_TASKS_ENABLED_ATTRIBUTE_KEY,
+        when( taskMap.get( memberUuid ) ).thenReturn( Map.of( "tasks-enabled", Boolean.TRUE.toString(),
+                                                              "system-tasks-enabled",
                                                               Boolean.FALSE.toString() ) );
 
         final ArgumentCaptor<MemberSelector> selectorCaptor = ArgumentCaptor.forClass( MemberSelector.class );
@@ -243,8 +243,8 @@ class ClusteredTaskManagerImplTest
         when( task.getApplicationKey() ).thenReturn( systemApplicationKey );
 
         when( clusterMap.get( memberUuid ) ).thenReturn( Map.of( "application-" + systemApplicationKey, Boolean.TRUE.toString() ) );
-        when( taskMap.get( memberUuid ) ).thenReturn( Map.of( TaskAttributesApplier.TASKS_ENABLED_ATTRIBUTE_KEY, Boolean.TRUE.toString(),
-                                                              TaskAttributesApplier.SYSTEM_TASKS_ENABLED_ATTRIBUTE_KEY,
+        when( taskMap.get( memberUuid ) ).thenReturn( Map.of( "tasks-enabled", Boolean.TRUE.toString(),
+                                                              "system-tasks-enabled",
                                                               Boolean.FALSE.toString() ) );
 
         final ArgumentCaptor<MemberSelector> selectorCaptor = ArgumentCaptor.forClass( MemberSelector.class );

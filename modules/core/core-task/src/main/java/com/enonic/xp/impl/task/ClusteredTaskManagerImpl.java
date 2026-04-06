@@ -47,9 +47,17 @@ public final class ClusteredTaskManagerImpl
 
     private static final ApplicationKey SYSTEM_APPLICATION_KEY = ApplicationKey.from( "com.enonic.xp.app.system" );
 
+    private static final String TASK_MAP_NAME = "com.enonic.xp.task";
+
+    private static final String TASKS_ENABLED_ATTRIBUTE_KEY = "tasks-enabled";
+
+    private static final String SYSTEM_TASKS_ENABLED_ATTRIBUTE_KEY = "system-tasks-enabled";
+
     private final HazelcastInstance hazelcastInstance;
 
-    private final TaskAttributesApplier taskAttributesApplier;
+    private final ReplicatedMap<UUID, Map<String, String>> taskAttributesMap;
+
+    private final UUID localMemberUuid;
 
     private IExecutorService executorService;
 
@@ -59,7 +67,8 @@ public final class ClusteredTaskManagerImpl
     public ClusteredTaskManagerImpl( @Reference final HazelcastInstance hazelcastInstance )
     {
         this.hazelcastInstance = hazelcastInstance;
-        this.taskAttributesApplier = new TaskAttributesApplier( hazelcastInstance );
+        this.localMemberUuid = hazelcastInstance.getCluster().getLocalMember().getUuid();
+        this.taskAttributesMap = hazelcastInstance.getReplicatedMap( TASK_MAP_NAME );
     }
 
     @Activate
@@ -67,20 +76,27 @@ public final class ClusteredTaskManagerImpl
     {
         outboundTimeoutNs = Duration.parse( config.clustered_timeout() ).toNanos();
         executorService = hazelcastInstance.getExecutorService( ClusteredTaskManagerImpl.ACTION );
-        this.taskAttributesApplier.activate( config );
+        applyTaskAttributes( config );
     }
 
     @Modified
     public void modify( final TaskConfig config )
     {
         outboundTimeoutNs = Duration.parse( config.clustered_timeout() ).toNanos();
-        this.taskAttributesApplier.modify( config );
+        applyTaskAttributes( config );
     }
 
     @Deactivate
     public void deactivate()
     {
-        this.taskAttributesApplier.deactivate();
+        taskAttributesMap.remove( localMemberUuid );
+    }
+
+    private void applyTaskAttributes( final TaskConfig config )
+    {
+        taskAttributesMap.put( localMemberUuid,
+                               Map.of( TASKS_ENABLED_ATTRIBUTE_KEY, String.valueOf( config.distributable_acceptInbound() ),
+                                       SYSTEM_TASKS_ENABLED_ATTRIBUTE_KEY, String.valueOf( config.distributable_acceptSystem() ) ) );
     }
 
     @Override
@@ -180,12 +196,11 @@ public final class ClusteredTaskManagerImpl
                 return false;
             }
 
-            final ReplicatedMap<UUID, Map<String, String>> taskMap = hazelcastInstance.getReplicatedMap( TaskAttributesApplier.MAP_NAME );
-            final Map<String, String> taskAttributes = taskMap.get( memberUuid );
+            final Map<String, String> taskAttributes = taskAttributesMap.get( memberUuid );
             return taskAttributes != null &&
-                Boolean.TRUE.toString().equals( taskAttributes.get( TaskAttributesApplier.TASKS_ENABLED_ATTRIBUTE_KEY ) ) &&
+                Boolean.TRUE.toString().equals( taskAttributes.get( TASKS_ENABLED_ATTRIBUTE_KEY ) ) &&
                 ( !SYSTEM_APPLICATION_KEY.equals( task.getApplicationKey() ) ||
-                    Boolean.TRUE.toString().equals( taskAttributes.get( TaskAttributesApplier.SYSTEM_TASKS_ENABLED_ATTRIBUTE_KEY ) ) );
+                    Boolean.TRUE.toString().equals( taskAttributes.get( SYSTEM_TASKS_ENABLED_ATTRIBUTE_KEY ) ) );
         }
     }
 }
