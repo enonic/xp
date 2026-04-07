@@ -44,7 +44,7 @@ public final class LocaleServiceImpl
 
     private static final String KEY_SEPARATOR = "|";
 
-    private static final String[] DEFAULT_BASE_NAMES = {"/site/i18n/phrases", "/i18n/phrases"};
+    private static final String[] DEFAULT_BASE_NAMES = {"/i18n/phrases"};
 
     private static final Locale LOCALE_NO = new Locale( "no" );
 
