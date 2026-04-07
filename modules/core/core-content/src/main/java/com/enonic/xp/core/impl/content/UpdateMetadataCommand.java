@@ -42,7 +42,7 @@ public class UpdateMetadataCommand
                 return editedContent;
             } )
             .versionAttributesResolver(
-                ContentAttributesHelper.versionHistoryResolver( ContentAttributesHelper.UPDATE_METADATA_ATTR ) )
+                ContentAttributesHelper.versionHistoryResolverWithOrigin( ContentAttributesHelper.UPDATE_METADATA_ATTR ) )
             .branches( Branches.from( ContentConstants.BRANCH_MASTER, ContentConstants.BRANCH_DRAFT ) )
             .contentTypeService( this.contentTypeService )
             .mixinService( this.mixinService )

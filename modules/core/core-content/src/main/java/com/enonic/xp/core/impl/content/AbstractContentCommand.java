@@ -253,7 +253,8 @@ abstract class AbstractContentCommand
                 .map( v -> new ContentVersion.Action( v.getKey(), v.getValue()
                     .optional( "fields" )
                     .map( GenericValue::toStringList )
-                    .orElse( List.of() ), ContentAttributesHelper.getUser( v.getValue() ),
+                    .orElse( List.of() ), v.getValue().optional( "origin" ).map( GenericValue::asString ).orElse( null ),
+                                                      ContentAttributesHelper.getUser( v.getValue() ),
                                                       ContentAttributesHelper.getOpTime( v.getValue() ) ) )
                 .forEach( builder::addAction );
         }

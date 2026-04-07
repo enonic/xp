@@ -23,6 +23,8 @@ public class ContentAttributesHelper
 
     public static final String FIELDS_PROPERTY = "fields";
 
+    public static final String ORIGIN_PROPERTY = "origin";
+
     public static final String OPTIME_PROPERTY = "optime";
 
     public static final String CREATE_ATTR = "content.create";
@@ -84,11 +86,24 @@ public class ContentAttributesHelper
             .build();
     }
 
-    public static Attributes versionHistoryAttr( final String key, String... modifiedFields )
+    public static Attributes versionHistoryAttr( final String key, final String[] modifiedFields )
     {
         return Attributes.create()
             .attribute( key, GenericValue.newObject()
                 .put( FIELDS_PROPERTY, GenericValue.fromRawJava( List.of( modifiedFields ) ) )
+                .put( USER_PROPERTY, getCurrentUserKey().toString() )
+                .put( OPTIME_PROPERTY, Millis.now().toString() )
+                .build() )
+            .attribute( VacuumConstants.VACUUM_SKIP_ATTRIBUTE, GenericValue.newObject().build() )
+            .build();
+    }
+
+    public static Attributes versionHistoryAttr( final String key, final String origin, final String[] modifiedFields )
+    {
+        return Attributes.create()
+            .attribute( key, GenericValue.newObject()
+                .put( FIELDS_PROPERTY, GenericValue.fromRawJava( List.of( modifiedFields ) ) )
+                .put( ORIGIN_PROPERTY, origin )
                 .put( USER_PROPERTY, getCurrentUserKey().toString() )
                 .put( OPTIME_PROPERTY, Millis.now().toString() )
                 .build() )
@@ -109,6 +124,12 @@ public class ContentAttributesHelper
     public static VersionAttributesResolver versionHistoryResolver( final String key )
     {
         return ( originalNode, editedNode, _ ) -> versionHistoryAttr( key, resolveModifiedFields( originalNode, editedNode ) );
+    }
+
+    public static VersionAttributesResolver versionHistoryResolverWithOrigin( final String key )
+    {
+        return ( originalNode, editedNode, branch ) -> versionHistoryAttr( key, branch.getValue(),
+                                                                           resolveModifiedFields( originalNode, editedNode ) );
     }
 
     private static String[] resolveModifiedFields( final Node originalNode, final Node editedNode )

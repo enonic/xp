@@ -48,7 +48,7 @@ final class ApplyContentPermissionsCommand
         }
 
         applyNodePermissionsBuilder.versionAttributesResolver(
-            ContentAttributesHelper.versionHistoryResolver( ContentAttributesHelper.PERMISSIONS_ATTR ) );
+            ContentAttributesHelper.versionHistoryResolverWithOrigin( ContentAttributesHelper.PERMISSIONS_ATTR ) );
 
         final ApplyNodePermissionsResult result = nodeService.applyPermissions( applyNodePermissionsBuilder.build() );
 
