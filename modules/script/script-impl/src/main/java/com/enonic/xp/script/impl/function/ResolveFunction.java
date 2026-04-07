@@ -11,7 +11,7 @@ public final class ResolveFunction
     public ResolveFunction( final ResourceKey script, final ScriptExecutor executor )
     {
         super( "resolve" );
-        this.resolver = new ResourceResolver( executor.getResourceService(), script );
+        this.resolver = new ResourceResolver( script );
     }
 
     @Override

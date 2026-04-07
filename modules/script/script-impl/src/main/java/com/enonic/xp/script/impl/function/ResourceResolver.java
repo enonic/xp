@@ -1,19 +1,13 @@
 package com.enonic.xp.script.impl.function;
 
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.resource.ResourceService;
 
 public final class ResourceResolver
 {
-    private static final String SITE_PREFIX = "/site";
-
-    private final ResourceService resourceService;
-
     private final ResourceKey baseKey;
 
-    public ResourceResolver( final ResourceService resourceService, final ResourceKey baseKey )
+    public ResourceResolver( final ResourceKey baseKey )
     {
-        this.resourceService = resourceService;
         this.baseKey = baseKey;
     }
 
@@ -29,22 +23,11 @@ public final class ResourceResolver
 
     private ResourceKey resolveAbsolute( final String path )
     {
-        final ResourceKey key = this.baseKey.resolve( SITE_PREFIX + path );
-        if ( exists( key ) )
-        {
-            return key;
-        }
-
         return this.baseKey.resolve( path );
     }
 
     private ResourceKey resolveRelative( final String path )
     {
         return this.baseKey.resolve( "../" + path );
-    }
-
-    private boolean exists( final ResourceKey key )
-    {
-        return this.resourceService.getResource( key ).exists();
     }
 }

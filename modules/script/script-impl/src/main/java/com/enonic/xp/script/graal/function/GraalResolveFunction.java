@@ -18,7 +18,7 @@ public class GraalResolveFunction
     {
         super( "resolve" );
         this.context = context;
-        this.resolver = new ResourceResolver( executor.getResourceService(), script );
+        this.resolver = new ResourceResolver( script );
     }
 
     @Override
