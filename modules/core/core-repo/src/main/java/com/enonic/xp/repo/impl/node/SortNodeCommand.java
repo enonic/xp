@@ -146,7 +146,9 @@ public class SortNodeCommand
         for ( final NodeId nodeId : childNodeIds )
         {
             final Node node = doGetById( nodeId, internalContext );
-            final Node updatedNode = Node.create( node ).manualOrderValue( resolver.getAsLong() ).timestamp( Millis.now() ).build();
+            final PropertyTree processedChildData = params.getChildProcessor().process( node.data(), node.path() );
+            final Node updatedNode =
+                Node.create( node ).data( processedChildData ).manualOrderValue( resolver.getAsLong() ).timestamp( Millis.now() ).build();
             final Attributes childResolvedAttributes =
                 resolveVersionAttributes( params.getVersionAttributesResolver(), node, updatedNode,
                                 ContextAccessor.current().getBranch() );
@@ -201,7 +203,9 @@ public class SortNodeCommand
                 LOG.debug( "manualOrderValue not changed {}", node.id() );
                 continue;
             }
-            final Node updatedNode = Node.create( node ).timestamp( Millis.now() ).manualOrderValue( newOrderValue ).build();
+            final PropertyTree processedChildData = params.getChildProcessor().process( node.data(), node.path() );
+            final Node updatedNode =
+                Node.create( node ).data( processedChildData ).timestamp( Millis.now() ).manualOrderValue( newOrderValue ).build();
             final Attributes childResolvedAttributes =
                 resolveVersionAttributes( params.getVersionAttributesResolver(), node, updatedNode,
                                 ContextAccessor.current().getBranch() );

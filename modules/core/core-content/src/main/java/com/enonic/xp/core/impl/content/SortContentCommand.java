@@ -63,6 +63,7 @@ class SortContentCommand
                                              .add( InheritedContentDataProcessor.SORT )
                                              .add( PublishDataProcessor::removePublishTime )
                                              .build() );
+                paramsBuilder.childProcessor( PublishDataProcessor::removePublishTime );
 
                 paramsBuilder.versionAttributesResolver(
                     ContentAttributesHelper.versionHistoryResolver( ContentAttributesHelper.SORT_ATTR ) );

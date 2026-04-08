@@ -103,6 +103,7 @@ final class MoveContentCommand
             if ( !layersSync )
             {
                 processors.add( InheritedContentDataProcessor.NAME );
+                processors.add( PublishDataProcessor::removePublishTime );
             }
             newNodeName = NodeName.from( params.getNewName() );
         }

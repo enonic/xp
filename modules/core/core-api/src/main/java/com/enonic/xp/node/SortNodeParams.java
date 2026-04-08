@@ -22,6 +22,8 @@ public final class SortNodeParams
 
     private final NodeDataProcessor processor;
 
+    private final NodeDataProcessor childProcessor;
+
     private final RefreshMode refresh;
 
     private SortNodeParams( final Builder builder )
@@ -32,6 +34,7 @@ public final class SortNodeParams
         this.reorderChildNodes = builder.reorderChildNodes.build();
         this.versionAttributesResolver = builder.versionAttributesResolver;
         this.processor = Objects.requireNonNullElse( builder.processor, ( n, p ) -> n );
+        this.childProcessor = Objects.requireNonNullElse( builder.childProcessor, ( n, p ) -> n );
         this.refresh = builder.refresh;
     }
 
@@ -65,6 +68,11 @@ public final class SortNodeParams
         return processor;
     }
 
+    public NodeDataProcessor getChildProcessor()
+    {
+        return childProcessor;
+    }
+
     public RefreshMode getRefresh()
     {
         return refresh;
@@ -88,6 +96,8 @@ public final class SortNodeParams
         private VersionAttributesResolver versionAttributesResolver;
 
         private NodeDataProcessor processor;
+
+        private NodeDataProcessor childProcessor;
 
         private RefreshMode refresh;
 
@@ -128,6 +138,12 @@ public final class SortNodeParams
         public Builder processor( final NodeDataProcessor processor )
         {
             this.processor = processor;
+            return this;
+        }
+
+        public Builder childProcessor( final NodeDataProcessor childProcessor )
+        {
+            this.childProcessor = childProcessor;
             return this;
         }
 
