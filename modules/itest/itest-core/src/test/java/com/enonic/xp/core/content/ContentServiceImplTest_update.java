@@ -20,7 +20,10 @@ import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentVersion;
 import com.enonic.xp.content.CreateContentParams;
+import com.enonic.xp.content.GetContentVersionsParams;
+import com.enonic.xp.content.GetContentVersionsResult;
 import com.enonic.xp.content.Mixin;
 import com.enonic.xp.content.Mixins;
 import com.enonic.xp.content.UpdateContentParams;
@@ -545,6 +548,38 @@ class ContentServiceImplTest_update
         this.contentService.update( updateContentParams );
 
         Mockito.verifyNoMoreInteractions( auditLogService );
+    }
+
+    @Test
+    void update_version_has_modified_fields()
+    {
+        final PropertyTree data = new PropertyTree();
+        data.setString( "testString", "value" );
+
+        final Content content = this.contentService.create( CreateContentParams.create()
+                                                                .contentData( data )
+                                                                .displayName( "content" )
+                                                                .name( "content" )
+                                                                .parent( ContentPath.ROOT )
+                                                                .type( ContentTypeName.folder() )
+                                                                .build() );
+
+        final UpdateContentParams updateParams = new UpdateContentParams();
+        updateParams.contentId( content.getId() ).editor( edit -> {
+            edit.displayName = "updated";
+            edit.data.setString( "testString", "new-value" );
+        } );
+
+        this.contentService.update( updateParams );
+
+        final GetContentVersionsResult versionsResult =
+            this.contentService.getVersions( GetContentVersionsParams.create().size( 1 ).contentId( content.getId() ).build() );
+
+        final ContentVersion latestVersion = versionsResult.getContentVersions().first();
+
+        assertThat( latestVersion.actions() ).extracting( ContentVersion.Action::operation ).containsExactly( "content.update" );
+        assertThat( latestVersion.actions() ).flatExtracting( ContentVersion.Action::fields )
+            .contains( "displayName", "data" );
     }
 
     private Mixins createMixins()

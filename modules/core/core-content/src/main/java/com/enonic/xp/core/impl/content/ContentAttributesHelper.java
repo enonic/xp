@@ -86,7 +86,7 @@ public class ContentAttributesHelper
             .build();
     }
 
-    public static Attributes versionHistoryAttr( final String key, final String[] modifiedFields )
+    private static Attributes versionHistoryAttr( final String key, final String[] modifiedFields )
     {
         return Attributes.create()
             .attribute( key, GenericValue.newObject()
@@ -98,7 +98,7 @@ public class ContentAttributesHelper
             .build();
     }
 
-    public static Attributes versionHistoryAttr( final String key, final String origin, final String[] modifiedFields )
+    private static Attributes versionHistoryAttr( final String key, final String origin, final String[] modifiedFields )
     {
         return Attributes.create()
             .attribute( key, GenericValue.newObject()
@@ -134,16 +134,9 @@ public class ContentAttributesHelper
 
     private static String[] resolveModifiedFields( final Node originalNode, final Node editedNode )
     {
-        try
-        {
             final Content existingContent = ContentNodeTranslator.fromNode( originalNode );
             final Content updatedContent = ContentNodeTranslator.fromNode( editedNode );
             return modifiedFields( existingContent, updatedContent );
-        }
-        catch ( Exception e )
-        {
-            return new String[0];
-        }
     }
 
     static PrincipalKey getCurrentUserKey()
