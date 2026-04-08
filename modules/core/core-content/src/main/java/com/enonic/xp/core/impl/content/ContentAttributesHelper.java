@@ -1,15 +1,17 @@
 package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 
-import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.internal.Millis;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.VersionAttributesResolver;
@@ -55,25 +57,17 @@ public class ContentAttributesHelper
 
     public static final String UNPUBLISH_ATTR = "content.unpublish";
 
-    private static final Map<String, Function<Content, ?>> FIELD_GETTERS =
-        Map.ofEntries( Map.entry( "displayName", Content::getDisplayName ), Map.entry( "data", Content::getData ),
-                       Map.entry( "x", Content::getMixins ), Map.entry( "page", Content::getPage ),
-                       Map.entry( "attachments", Content::getAttachments ), Map.entry( "owner", Content::getOwner ),
-                       Map.entry( "language", Content::getLanguage ), Map.entry( "variantOf", Content::getVariantOf ),
-                       Map.entry( "publish", Content::getPublishInfo ), Map.entry( "workflow", Content::getWorkflowInfo ),
-                       Map.entry( "inherit", Content::getInherit ), Map.entry( "manualOrderValue", Content::getManualOrderValue ),
-                       Map.entry( "childOrder", Content::getChildOrder ), Map.entry( "parentPath", Content::getParentPath ),
-                       Map.entry( "name", Content::getName ) );
+    private static final String COMPONENTS = "components";
 
-    private static String[] modifiedFields( Content existingContent, Content updatedContent )
-    {
-        return FIELD_GETTERS.entrySet()
-            .stream()
-            .filter( e -> !Objects.equals( e.getValue().apply( existingContent ), e.getValue().apply( updatedContent ) ) )
-            .map( Map.Entry::getKey )
-            .sorted()
-            .toArray( String[]::new );
-    }
+    private static final Map<String, Function<Node, ?>> NODE_FIELD_GETTERS =
+        Map.ofEntries( Map.entry( "name", Node::name ), Map.entry( "parentPath", Node::parentPath ),
+                       Map.entry( "childOrder", Node::getChildOrder ), Map.entry( "manualOrderValue", Node::getManualOrderValue ) );
+
+    private static final String[] DATA_FIELD_NAMES =
+        {ContentPropertyNames.DISPLAY_NAME, ContentPropertyNames.DATA, ContentPropertyNames.MIXINS, COMPONENTS,
+            ContentPropertyNames.ATTACHMENT, ContentPropertyNames.OWNER, ContentPropertyNames.LANGUAGE,
+            ContentPropertyNames.VARIANT_OF, ContentPropertyNames.PUBLISH_INFO, ContentPropertyNames.WORKFLOW_INFO,
+            ContentPropertyNames.INHERIT};
 
     public static Attributes versionHistoryAttr( final String key )
     {
@@ -134,9 +128,29 @@ public class ContentAttributesHelper
 
     private static String[] resolveModifiedFields( final Node originalNode, final Node editedNode )
     {
-            final Content existingContent = ContentNodeTranslator.fromNode( originalNode );
-            final Content updatedContent = ContentNodeTranslator.fromNode( editedNode );
-            return modifiedFields( existingContent, updatedContent );
+        final List<String> modified = new ArrayList<>();
+
+        for ( Map.Entry<String, Function<Node, ?>> entry : NODE_FIELD_GETTERS.entrySet() )
+        {
+            if ( !Objects.equals( entry.getValue().apply( originalNode ), entry.getValue().apply( editedNode ) ) )
+            {
+                modified.add( entry.getKey() );
+            }
+        }
+
+        final PropertyTree originalData = originalNode.data();
+        final PropertyTree editedData = editedNode.data();
+
+        for ( final String fieldName : DATA_FIELD_NAMES )
+        {
+            if ( !Objects.equals( originalData.getProperties( fieldName ), editedData.getProperties( fieldName ) ) )
+            {
+                modified.add( fieldName );
+            }
+        }
+
+        modified.sort( String::compareTo );
+        return modified.toArray( String[]::new );
     }
 
     static PrincipalKey getCurrentUserKey()
