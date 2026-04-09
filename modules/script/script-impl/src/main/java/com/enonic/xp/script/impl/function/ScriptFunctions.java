@@ -53,7 +53,7 @@ public final class ScriptFunctions
 
     public ResolveFunction getResolve()
     {
-        return new ResolveFunction( this.script, this.executor );
+        return new ResolveFunction( this.script );
     }
 
     public Object newBean( final String type )

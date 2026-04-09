@@ -4,7 +4,6 @@ import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Value;
 
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.script.impl.executor.ScriptExecutor;
 import com.enonic.xp.script.impl.function.ResourceResolver;
 
 public class GraalResolveFunction
@@ -14,11 +13,11 @@ public class GraalResolveFunction
 
     private final ResourceResolver resolver;
 
-    public GraalResolveFunction( final Context context, final ResourceKey script, final ScriptExecutor executor )
+    public GraalResolveFunction( final Context context, final ResourceKey script )
     {
         super( "resolve" );
         this.context = context;
-        this.resolver = new ResourceResolver( executor.getResourceService(), script );
+        this.resolver = new ResourceResolver( script );
     }
 
     @Override

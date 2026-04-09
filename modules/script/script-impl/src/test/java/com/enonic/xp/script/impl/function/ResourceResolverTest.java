@@ -21,7 +21,7 @@ class ResourceResolverTest
         touchFile( "site/dummy.txt" );
 
         final ResourceKey key2 = resolve( "/a/b/c.txt", "/dummy.txt" );
-        assertEquals( "/site/dummy.txt", key2.getPath() );
+        assertEquals( "/dummy.txt", key2.getPath() );
     }
 
     @Test
@@ -48,6 +48,6 @@ class ResourceResolverTest
 
     private ResourceResolver resolver( final String base )
     {
-        return new ResourceResolver( this.resourceService, ResourceKey.from( "foo:" + base ) );
+        return new ResourceResolver( ResourceKey.from( "foo:" + base ) );
     }
 }
