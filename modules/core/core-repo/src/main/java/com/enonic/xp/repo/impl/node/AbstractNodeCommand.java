@@ -5,11 +5,14 @@ import java.util.Objects;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
+import com.enonic.xp.node.VersionAttributesResolver;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
@@ -53,6 +56,14 @@ abstract class AbstractNodeCommand
         {
             RefreshCommand.create().refreshMode( refreshMode ).indexServiceInternal( this.indexServiceInternal ).build().execute();
         }
+    }
+
+    static Attributes resolveVersionAttributes( final VersionAttributesResolver resolver, final Node originalNode, final Node editedNode,
+                                                    final Branch branch )
+    {
+        return resolver != null
+            ? resolver.resolve( Node.create( originalNode ).build(), Node.create( editedNode ).build(), branch )
+            : null;
     }
 
     PrincipalKey getCurrentPrincipalKey()

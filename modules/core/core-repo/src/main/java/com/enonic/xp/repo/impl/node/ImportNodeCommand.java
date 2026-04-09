@@ -6,7 +6,6 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
-import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
@@ -15,6 +14,7 @@ import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.RefreshMode;
+import com.enonic.xp.node.VersionAttributesResolver;
 import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -35,7 +35,7 @@ public class ImportNodeCommand
 
     private final boolean importPermissionsOnCreate;
 
-    private final Attributes versionAttributes;
+    private final VersionAttributesResolver versionAttributesResolver;
 
     private final RefreshMode refresh;
 
@@ -49,7 +49,7 @@ public class ImportNodeCommand
         this.importPermissions = builder.importPermissions;
         this.importPermissionsOnCreate = builder.importPermissionsOnCreate;
         this.refresh = builder.refresh;
-        this.versionAttributes = builder.versionAttributes;
+        this.versionAttributesResolver = builder.versionAttributesResolver;
     }
 
     public static Builder create()
@@ -111,7 +111,7 @@ public class ImportNodeCommand
                 .name( this.importNode.name() )
                 .parent( this.importNode.parentPath() )
                 .permissions( permissions )
-                .versionAttributes( versionAttributes )
+                .versionAttributesResolver( versionAttributesResolver )
                 .build();
 
             node = CreateNodeCommand.create( this )
@@ -131,7 +131,7 @@ public class ImportNodeCommand
             .id( existingNode.id() )
             .setBinaryAttachments( this.binaryAttachments )
             .editor( editableNode -> editableNode.data = this.importNode.data() )
-            .versionAttributes( this.versionAttributes )
+            .versionAttributesResolver( this.versionAttributesResolver )
             .refresh( RefreshMode.ALL )
             .build();
 
@@ -199,7 +199,7 @@ public class ImportNodeCommand
 
         private boolean importPermissionsOnCreate = true;
 
-        private Attributes versionAttributes;
+        private VersionAttributesResolver versionAttributesResolver;
 
         private RefreshMode refresh;
 
@@ -243,9 +243,9 @@ public class ImportNodeCommand
             return this;
         }
 
-        public Builder versionAttributes( final Attributes attributes )
+        public Builder versionAttributesResolver( final VersionAttributesResolver versionAttributesResolver )
         {
-            this.versionAttributes = attributes;
+            this.versionAttributesResolver = versionAttributesResolver;
             return this;
         }
 

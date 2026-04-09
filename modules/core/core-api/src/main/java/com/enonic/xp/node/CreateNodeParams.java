@@ -37,7 +37,7 @@ public final class CreateNodeParams
 
     private final BinaryAttachments binaryAttachments;
 
-    private final Attributes versionAttributes;
+    private final VersionAttributesResolver versionAttributesResolver;
 
     private final RefreshMode refresh;
 
@@ -55,7 +55,7 @@ public final class CreateNodeParams
         this.manualOrderValue = builder.manualOrderValue;
         this.nodeType = builder.nodeType;
         this.binaryAttachments = builder.binaryAttachments.build();
-        this.versionAttributes = builder.versionAttributes;
+        this.versionAttributesResolver = builder.versionAttributesResolver;
         this.refresh = builder.refresh;
     }
 
@@ -140,9 +140,9 @@ public final class CreateNodeParams
         return binaryAttachments;
     }
 
-    public Attributes getVersionAttributes()
+    public VersionAttributesResolver getVersionAttributesResolver()
     {
-        return versionAttributes;
+        return versionAttributesResolver;
     }
 
     public RefreshMode getRefresh()
@@ -176,7 +176,7 @@ public final class CreateNodeParams
 
         private BinaryAttachments.Builder binaryAttachments = BinaryAttachments.create();
 
-        private Attributes versionAttributes;
+        private VersionAttributesResolver versionAttributesResolver;
 
         private RefreshMode refresh;
 
@@ -198,7 +198,7 @@ public final class CreateNodeParams
             this.manualOrderValue = createNodeParams.manualOrderValue;
             this.nodeType = createNodeParams.nodeType;
             this.binaryAttachments.addAll( createNodeParams.binaryAttachments );
-            this.versionAttributes = createNodeParams.versionAttributes;
+            this.versionAttributesResolver = createNodeParams.versionAttributesResolver;
             this.refresh = createNodeParams.refresh;
         }
 
@@ -290,9 +290,9 @@ public final class CreateNodeParams
             return this;
         }
 
-        public Builder versionAttributes( final Attributes versionAttributes )
+        public Builder versionAttributesResolver( final VersionAttributesResolver versionAttributesResolver )
         {
-            this.versionAttributes = versionAttributes;
+            this.versionAttributesResolver = versionAttributesResolver;
             return this;
         }
 

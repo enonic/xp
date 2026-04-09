@@ -10,11 +10,16 @@ import com.enonic.xp.content.ApplyContentPermissionsResult;
 import com.enonic.xp.content.ApplyContentPermissionsScope;
 import com.enonic.xp.content.ApplyPermissionsListener;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentVersion;
 import com.enonic.xp.content.CreateContentParams;
+import com.enonic.xp.content.GetContentVersionsParams;
+import com.enonic.xp.content.GetContentVersionsResult;
 import com.enonic.xp.content.PushContentParams;
+import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.NodeNotFoundException;
@@ -149,5 +154,89 @@ class ContentServiceImplTest_applyPermissions
         assertThat( log.getType() ).isEqualTo( "system.content.applyPermissions" );
         assertThat( log.getData().getString( "result." + content.getId() + ".master" ) ).isEqualTo(
             log.getData().getString( "result." + content.getId() + ".draft" ) );
+    }
+
+    @Test
+    void apply_permissions_same_content_on_both_branches_generates_single_version_with_origin()
+    {
+        final Content content = this.contentService.create( CreateContentParams.create()
+                                                                .contentData( new PropertyTree() )
+                                                                .displayName( "content" )
+                                                                .name( "content" )
+                                                                .parent( ContentPath.ROOT )
+                                                                .type( ContentTypeName.folder() )
+                                                                .build() );
+
+        this.contentService.publish(
+            PushContentParams.create().contentIds( ContentIds.from( content.getId() ) ).includeDependencies( false ).build() );
+
+        final int versionCountBeforeApply = this.contentService.getVersions(
+            GetContentVersionsParams.create().contentId( content.getId() ).build() ).getContentVersions().getSize();
+
+        this.contentService.applyPermissions( ApplyContentPermissionsParams.create()
+                                                  .contentId( content.getId() )
+                                                  .addPermissions( AccessControlList.of( AccessControlEntry.create()
+                                                                                             .principal( TEST_DEFAULT_USER.getKey() )
+                                                                                             .allow( Permission.READ )
+                                                                                             .build() ) )
+                                                  .build() );
+
+        final GetContentVersionsResult versionsResult =
+            this.contentService.getVersions( GetContentVersionsParams.create().contentId( content.getId() ).build() );
+
+        assertThat( versionsResult.getContentVersions() ).hasSize( versionCountBeforeApply + 1 );
+
+        final ContentVersion latestVersion = versionsResult.getContentVersions().first();
+
+        assertThat( latestVersion.actions() ).extracting( ContentVersion.Action::operation ).containsExactly( "content.permissions" );
+        assertThat( latestVersion.actions() ).extracting( ContentVersion.Action::origin )
+            .containsExactly( ContentConstants.BRANCH_MASTER.getValue() );
+    }
+
+    @Test
+    void apply_permissions_different_content_on_branches_generates_two_versions()
+    {
+        final Content content = this.contentService.create( CreateContentParams.create()
+                                                                .contentData( new PropertyTree() )
+                                                                .displayName( "content" )
+                                                                .name( "content" )
+                                                                .parent( ContentPath.ROOT )
+                                                                .type( ContentTypeName.folder() )
+                                                                .build() );
+
+        this.contentService.publish(
+            PushContentParams.create().contentIds( ContentIds.from( content.getId() ) ).includeDependencies( false ).build() );
+
+        final UpdateContentParams updateParams = new UpdateContentParams();
+        updateParams.contentId( content.getId() ).editor( edit -> edit.displayName = "updated-in-draft" );
+        this.contentService.update( updateParams );
+
+        final int versionCountBeforeApply = this.contentService.getVersions(
+            GetContentVersionsParams.create().contentId( content.getId() ).build() ).getContentVersions().getSize();
+
+        this.contentService.applyPermissions( ApplyContentPermissionsParams.create()
+                                                  .contentId( content.getId() )
+                                                  .addPermissions( AccessControlList.of( AccessControlEntry.create()
+                                                                                             .principal( TEST_DEFAULT_USER.getKey() )
+                                                                                             .allow( Permission.READ )
+                                                                                             .build() ) )
+                                                  .build() );
+
+        final GetContentVersionsResult versionsResult =
+            this.contentService.getVersions( GetContentVersionsParams.create().contentId( content.getId() ).build() );
+
+        assertThat( versionsResult.getContentVersions() ).hasSize( versionCountBeforeApply + 2 );
+
+        assertThat( versionsResult.getContentVersions().stream()
+                        .limit( 2 )
+                        .flatMap( v -> v.actions().stream() ) )
+            .extracting( ContentVersion.Action::operation )
+            .containsOnly( "content.permissions" );
+
+        assertThat( versionsResult.getContentVersions().stream()
+                        .limit( 2 )
+                        .flatMap( v -> v.actions().stream() ) )
+            .extracting( ContentVersion.Action::origin )
+            .containsExactly( ContentConstants.BRANCH_DRAFT.getValue(), ContentConstants.BRANCH_MASTER.getValue() );
     }
 }

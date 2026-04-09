@@ -6,6 +6,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.internal.Millis;
+import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.MoveNodeListener;
 import com.enonic.xp.node.MoveNodeParams;
@@ -160,9 +161,12 @@ public class MoveNodeCommand
         }
 
         final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
-        final Node movedNode = this.nodeStorageService.store( StoreNodeParams.newVersion( nodeToMoveBuilder.build(), isTheOriginalMovedNode
-            ? params.getVersionAttributes()
-            : params.getChildVersionAttributes() ), internalContext ).node();
+        final Node builtNode = nodeToMoveBuilder.build();
+        final Attributes resolvedAttributes =
+            resolveVersionAttributes( params.getVersionAttributesResolver(), persistedNode, builtNode,
+                                      ContextAccessor.current().getBranch() );
+        final Node movedNode =
+            this.nodeStorageService.store( StoreNodeParams.newVersion( builtNode, resolvedAttributes ), internalContext ).node();
         this.nodeStorageService.invalidatePath( persistedNode.path(), internalContext );
 
         this.result.addMovedNode( MoveNodeResult.MovedNode.create().previousPath( persistedNode.path() ).node( movedNode ).build() );

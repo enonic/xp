@@ -9,6 +9,7 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.internal.Millis;
+import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.EditableNode;
 import com.enonic.xp.node.Node;
@@ -99,9 +100,9 @@ public final class PatchNodeCommand
         final NodeStoreVersion nodeStoreVersion =
             this.nodeStorageService.getNodeVersion( activeNodeVersion.getNodeVersionKey(), internalContext );
 
-        final Node persistedNode = NodeFactory.create( nodeStoreVersion, activeNodeVersion );
+        final Node originalNode = NodeFactory.create( nodeStoreVersion, activeNodeVersion );
         if ( !NodePermissionsResolver.hasPermission( internalContext.getPrincipalKeys(), Permission.MODIFY,
-                                                     persistedNode.getPermissions() ) )
+                                                     originalNode.getPermissions() ) )
         {
             return;
         }
@@ -115,12 +116,12 @@ public final class PatchNodeCommand
         }
         else
         {
-            final EditableNode editableNode = new EditableNode( persistedNode );
+            final EditableNode editableNode = new EditableNode( originalNode );
             params.getEditor().edit( editableNode );
 
             final AttachedBinaries updatedBinaries = UpdatedAttachedBinariesResolver.create()
                 .editableNode( editableNode )
-                .persistedNode( persistedNode )
+                .persistedNode( originalNode )
                 .binaryAttachments( this.params.getBinaryAttachments() )
                 .binaryService( this.binaryService )
                 .build()
@@ -128,17 +129,19 @@ public final class PatchNodeCommand
 
             final Node editedNode = editableNode.build();
 
-            if ( editedNode.equals( persistedNode ) && updatedBinaries.equals( persistedNode.getAttachedBinaries() ) )
+            if ( editedNode.equals( originalNode ) && updatedBinaries.equals( originalNode.getAttachedBinaries() ) )
             {
-                final NodeVersion existingVersion = this.nodeStorageService.getVersion( persistedNode.getNodeVersionId(), internalContext );
-                results.addResult( internalContext.getBranch(), persistedNode );
-                patchedVersionsCache.put( nodeVersionId, internalContext.getBranch(), existingVersion, persistedNode );
+                final NodeVersion existingVersion = this.nodeStorageService.getVersion( originalNode.getNodeVersionId(), internalContext );
+                results.addResult( internalContext.getBranch(), originalNode );
+                patchedVersionsCache.put( nodeVersionId, internalContext.getBranch(), existingVersion, originalNode );
             }
             else
             {
                 final Node updatedNode = Node.create( editedNode ).timestamp( Millis.now() ).attachedBinaries( updatedBinaries ).build();
+                final Attributes resolvedAttributes =
+                    resolveVersionAttributes( params.getVersionAttributesResolver(), originalNode, updatedNode, internalContext.getBranch() );
                 final NodeVersionData storedData =
-                    this.nodeStorageService.store( StoreNodeParams.newVersion( updatedNode, params.getVersionAttributes() ),
+                    this.nodeStorageService.store( StoreNodeParams.newVersion( updatedNode, resolvedAttributes ),
                                                    internalContext );
                 results.addResult( internalContext.getBranch(), storedData.node() );
                 patchedVersionsCache.put( nodeVersionId, internalContext.getBranch(), storedData.version(), storedData.node() );

@@ -8,11 +8,15 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAlreadyExistsException;
+import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.Mixin;
 import com.enonic.xp.content.Mixins;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.MoveContentsResult;
+import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
@@ -26,6 +30,8 @@ import com.enonic.xp.site.MixinMappings;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.atMostOnce;
@@ -90,6 +96,50 @@ class ContentServiceImplTest_move
             MoveContentParams.create().contentId( content3.getId() ).parentContentPath( content.getParentPath() ).build();
 
         assertThrows( ContentAlreadyExistsException.class, () -> this.contentService.move( params ) );
+    }
+
+    @Test
+    void publish_time_reset_on_move()
+    {
+        final Content content = createContent( ContentPath.ROOT, "child" );
+        this.contentService.publish(
+            PushContentParams.create().contentIds( ContentIds.from( content.getId() ) ).includeDependencies( false ).build() );
+
+        final ContentPublishInfo publishInfoBeforeMove = this.contentService.getById( content.getId() ).getPublishInfo();
+        assertNotNull( publishInfoBeforeMove );
+        assertNotNull( publishInfoBeforeMove.time() );
+
+        final Content folder = createContent( ContentPath.ROOT, "folder" );
+
+        this.contentService.move(
+            MoveContentParams.create().contentId( content.getId() ).parentContentPath( folder.getPath() ).build() );
+
+        final ContentPublishInfo publishInfoAfterMove = this.contentService.getById( content.getId() ).getPublishInfo();
+        assertNotNull( publishInfoAfterMove );
+        assertNull( publishInfoAfterMove.time() );
+        assertNotNull( publishInfoAfterMove.from() );
+        assertNotNull( publishInfoAfterMove.first() );
+    }
+
+    @Test
+    void publish_time_reset_on_rename()
+    {
+        final Content content = createContent( ContentPath.ROOT, "child" );
+        this.contentService.publish(
+            PushContentParams.create().contentIds( ContentIds.from( content.getId() ) ).includeDependencies( false ).build() );
+
+        final ContentPublishInfo publishInfoBeforeRename = this.contentService.getById( content.getId() ).getPublishInfo();
+        assertNotNull( publishInfoBeforeRename );
+        assertNotNull( publishInfoBeforeRename.time() );
+
+        this.contentService.move(
+            MoveContentParams.create().contentId( content.getId() ).newName( ContentName.from( "renamed-child" ) ).build() );
+
+        final ContentPublishInfo publishInfoAfterRename = this.contentService.getById( content.getId() ).getPublishInfo();
+        assertNotNull( publishInfoAfterRename );
+        assertNull( publishInfoAfterRename.time() );
+        assertNotNull( publishInfoAfterRename.from() );
+        assertNotNull( publishInfoAfterRename.first() );
     }
 
     @Test

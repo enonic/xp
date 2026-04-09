@@ -1,7 +1,5 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import com.enonic.xp.content.Content;
@@ -77,7 +75,6 @@ final class MoveContentCommand
         final ContentId contentId = params.getContentId();
         final Content sourceContent = getContent( contentId );
 
-        final List<String> modifiedFields = new ArrayList<>();
         final var processors = CompositeNodeDataProcessor.create().add( updateValid() );
 
         final NodePath newParentPath;
@@ -94,7 +91,6 @@ final class MoveContentCommand
             }
             validateParentChildRelations( params.getParentContentPath(), sourceContent.getType() );
             newParentPath = ContentNodeHelper.translateContentPathToNodePath( params.getParentContentPath() );
-            modifiedFields.add( "parentPath" );
         }
 
         final NodeName newNodeName;
@@ -107,9 +103,9 @@ final class MoveContentCommand
             if ( !layersSync )
             {
                 processors.add( InheritedContentDataProcessor.NAME );
+                processors.add( PublishDataProcessor::removePublishTime );
             }
             newNodeName = NodeName.from( params.getNewName() );
-            modifiedFields.add( "name" );
         }
 
         final NodeId sourceNodeId = NodeId.from( contentId );
@@ -123,14 +119,12 @@ final class MoveContentCommand
 
         if ( layersSync )
         {
-            moveParams.versionAttributes( ContentAttributesHelper.layersSyncAttr() )
-                .childVersionAttributes( ContentAttributesHelper.layersSyncAttr() );
+            moveParams.versionAttributesResolver( ContentAttributesHelper.versionHistoryResolver( ContentAttributesHelper.SYNC_ATTR ) );
         }
         else
         {
-            moveParams.versionAttributes(
-                    ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.MOVE_ATTR, modifiedFields.toArray( String[]::new ) ) )
-                .childVersionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.MOVE_ATTR, "parentPath" ) );
+            moveParams.versionAttributesResolver(
+                ContentAttributesHelper.versionHistoryResolver( ContentAttributesHelper.MOVE_ATTR ) );
         }
 
         if ( params.getMoveContentListener() != null )
