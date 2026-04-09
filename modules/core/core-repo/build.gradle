@@ -2,7 +2,7 @@ dependencies {
     implementation project( ':core:core-api' )
     implementation project( ':core:core-internal' )
 
-    implementation ( libs.elasticsearch ) {
+    implementation( libs.elasticsearch ) {
         exclude group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-cbor'
         exclude group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-yaml'
         exclude group: 'org.yaml', module: 'snakeyaml'
@@ -15,7 +15,6 @@ dependencies {
     runtimeOnly libs.jackson.dataformat.yaml
 
     implementation libs.commons.compress
-
 
     testImplementation( testFixtures( project( ":core:core-api" ) ) )
     testImplementation( testFixtures( project( ":core:core-blobstore" ) ) )
