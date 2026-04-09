@@ -192,10 +192,10 @@ class LocaleServiceImplTest
     void getSupportedLocale_onePreferredFound()
     {
         final ResourceKeys resourceKeys =
-            ResourceKeys.from( "myapplication:/site/i18n/myphrases.properties", "myapplication:/site/i18n/myphrases_en.properties",
-                               "myapplication:/site/i18n/myphrases_en_US.properties",
-                               "myapplication:/site/i18n/myphrases_en_US_1.properties", "myapplication:/site/i18n/myphrases_fr.properties",
-                               "myapplication:/site/i18n/myphrases_ca.properties" );
+            ResourceKeys.from( "myapplication:/i18n/myphrases.properties", "myapplication:/i18n/myphrases_en.properties",
+                               "myapplication:/i18n/myphrases_en_US.properties",
+                               "myapplication:/i18n/myphrases_en_US_1.properties", "myapplication:/i18n/myphrases_fr.properties",
+                               "myapplication:/i18n/myphrases_ca.properties" );
 
         when( resourceService.findFiles( any(), anyString() ) ).thenReturn( resourceKeys );
 
@@ -210,10 +210,10 @@ class LocaleServiceImplTest
     void getSupportedLocale_LanguagePreferredFound()
     {
         final ResourceKeys resourceKeys =
-            ResourceKeys.from( "myapplication:/site/i18n/myphrases.properties", "myapplication:/site/i18n/myphrases_en.properties",
-                               "myapplication:/site/i18n/myphrases_en_US.properties",
-                               "myapplication:/site/i18n/myphrases_en_US_1.properties", "myapplication:/site/i18n/myphrases_fr.properties",
-                               "myapplication:/site/i18n/myphrases_ca.properties" );
+            ResourceKeys.from( "myapplication:/i18n/myphrases.properties", "myapplication:/i18n/myphrases_en.properties",
+                               "myapplication:/i18n/myphrases_en_US.properties",
+                               "myapplication:/i18n/myphrases_en_US_1.properties", "myapplication:/i18n/myphrases_fr.properties",
+                               "myapplication:/i18n/myphrases_ca.properties" );
 
         when( resourceService.findFiles( any(), anyString() ) ).thenReturn( resourceKeys );
 
@@ -228,10 +228,10 @@ class LocaleServiceImplTest
     void getSupportedLocale_moreThanOneFound()
     {
         final ResourceKeys resourceKeys =
-            ResourceKeys.from( "myapplication:/site/i18n/myphrases.properties", "myapplication:/site/i18n/myphrases_en.properties",
-                               "myapplication:/site/i18n/myphrases_en_US.properties",
-                               "myapplication:/site/i18n/myphrases_en_US_1.properties", "myapplication:/site/i18n/myphrases_fr.properties",
-                               "myapplication:/site/i18n/myphrases_ca.properties" );
+            ResourceKeys.from( "myapplication:/i18n/myphrases.properties", "myapplication:/i18n/myphrases_en.properties",
+                               "myapplication:/i18n/myphrases_en_US.properties",
+                               "myapplication:/i18n/myphrases_en_US_1.properties", "myapplication:/i18n/myphrases_fr.properties",
+                               "myapplication:/i18n/myphrases_ca.properties" );
 
         when( resourceService.findFiles( any(), anyString() ) ).thenReturn( resourceKeys );
 
@@ -247,10 +247,10 @@ class LocaleServiceImplTest
     void getSupportedLocale_noPreferredFound()
     {
         final ResourceKeys resourceKeys =
-            ResourceKeys.from( "myapplication:/site/i18n/myphrases.properties", "myapplication:/site/i18n/myphrases_en.properties",
-                               "myapplication:/site/i18n/myphrases_en_US.properties",
-                               "myapplication:/site/i18n/myphrases_en_US_1.properties", "myapplication:/site/i18n/myphrases_fr.properties",
-                               "myapplication:/site/i18n/myphrases_ca.properties" );
+            ResourceKeys.from( "myapplication:/i18n/myphrases.properties", "myapplication:/i18n/myphrases_en.properties",
+                               "myapplication:/i18n/myphrases_en_US.properties",
+                               "myapplication:/i18n/myphrases_en_US_1.properties", "myapplication:/i18n/myphrases_fr.properties",
+                               "myapplication:/i18n/myphrases_ca.properties" );
 
         when( resourceService.findFiles( any(), anyString() ) ).thenReturn( resourceKeys );
 
@@ -264,7 +264,7 @@ class LocaleServiceImplTest
     void getSupportedLocale_no_file_supports_nb_locale()
     {
         final ResourceKeys resourceKeys =
-            ResourceKeys.from( "myapplication:/site/i18n/myphrases.properties", "myapplication:/site/i18n/myphrases_no.properties" );
+            ResourceKeys.from( "myapplication:/i18n/myphrases.properties", "myapplication:/i18n/myphrases_no.properties" );
 
         when( resourceService.findFiles( any(), anyString() ) ).thenReturn( resourceKeys );
 
@@ -279,7 +279,7 @@ class LocaleServiceImplTest
     void getSupportedLocale_no_file_supports_nn_locale()
     {
         final ResourceKeys resourceKeys =
-            ResourceKeys.from( "myapplication:/site/i18n/myphrases.properties", "myapplication:/site/i18n/myphrases_no.properties" );
+            ResourceKeys.from( "myapplication:/i18n/myphrases.properties", "myapplication:/i18n/myphrases_no.properties" );
 
         when( resourceService.findFiles( any(), anyString() ) ).thenReturn( resourceKeys );
 
@@ -294,7 +294,7 @@ class LocaleServiceImplTest
     void getSupportedLocale_nb_file_supports_no_locale()
     {
         final ResourceKeys resourceKeys =
-            ResourceKeys.from( "myapplication:/site/i18n/myphrases.properties", "myapplication:/site/i18n/myphrases_nb.properties" );
+            ResourceKeys.from( "myapplication:/i18n/myphrases.properties", "myapplication:/i18n/myphrases_nb.properties" );
 
         when( resourceService.findFiles( any(), anyString() ) ).thenReturn( resourceKeys );
 
@@ -309,7 +309,7 @@ class LocaleServiceImplTest
     void getSupportedLocale_nn_file_supports_no_locale()
     {
         final ResourceKeys resourceKeys =
-            ResourceKeys.from( "myapplication:/site/i18n/myphrases.properties", "myapplication:/site/i18n/myphrases_nn.properties" );
+            ResourceKeys.from( "myapplication:/i18n/myphrases.properties", "myapplication:/i18n/myphrases_nn.properties" );
 
         when( resourceService.findFiles( any(), anyString() ) ).thenReturn( resourceKeys );
 
@@ -324,7 +324,7 @@ class LocaleServiceImplTest
     void getSupportedLocale_nb_file_does_not_support_nn_locale()
     {
         final ResourceKeys resourceKeys =
-            ResourceKeys.from( "myapplication:/site/i18n/myphrases.properties", "myapplication:/site/i18n/myphrases_nn.properties" );
+            ResourceKeys.from( "myapplication:/i18n/myphrases.properties", "myapplication:/i18n/myphrases_nn.properties" );
 
         when( resourceService.findFiles( any(), anyString() ) ).thenReturn( resourceKeys );
 
