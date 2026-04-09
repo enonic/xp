@@ -41,7 +41,8 @@ public class UpdateMetadataCommand
                 editedContent = Content.create( editedContent ).setInherit( stopDataInherit( editedContent.getInherit() ) ).build();
                 return editedContent;
             } )
-            .versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.UPDATE_METADATA_ATTR ) )
+            .versionAttributesResolver(
+                ContentAttributesHelper.versionHistoryResolverWithOrigin( ContentAttributesHelper.UPDATE_METADATA_ATTR ) )
             .branches( Branches.from( ContentConstants.BRANCH_MASTER, ContentConstants.BRANCH_DRAFT ) )
             .contentTypeService( this.contentTypeService )
             .mixinService( this.mixinService )

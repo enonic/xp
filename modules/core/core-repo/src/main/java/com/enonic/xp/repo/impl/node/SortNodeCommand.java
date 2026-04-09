@@ -13,6 +13,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
@@ -75,7 +76,9 @@ public class SortNodeCommand
         {
             final Node editedNode =
                 Node.create( node ).childOrder( params.getChildOrder() ).data( processedData ).timestamp( Millis.now() ).build();
-            Node updatedNode = this.nodeStorageService.store( StoreNodeParams.newVersion( editedNode, params.getVersionAttributes() ),
+            final Attributes resolvedAttributes = resolveVersionAttributes( params.getVersionAttributesResolver(), node, editedNode,
+                                ContextAccessor.current().getBranch() );
+            Node updatedNode = this.nodeStorageService.store( StoreNodeParams.newVersion( editedNode, resolvedAttributes ),
                                                               InternalContext.from( ContextAccessor.current() ) ).node();
             result.node( updatedNode );
         }
@@ -143,9 +146,14 @@ public class SortNodeCommand
         for ( final NodeId nodeId : childNodeIds )
         {
             final Node node = doGetById( nodeId, internalContext );
-            final Node updatedNode = Node.create( node ).manualOrderValue( resolver.getAsLong() ).timestamp( Millis.now() ).build();
+            final PropertyTree processedChildData = params.getChildProcessor().process( node.data(), node.path() );
+            final Node updatedNode =
+                Node.create( node ).data( processedChildData ).manualOrderValue( resolver.getAsLong() ).timestamp( Millis.now() ).build();
+            final Attributes childResolvedAttributes =
+                resolveVersionAttributes( params.getVersionAttributesResolver(), node, updatedNode,
+                                ContextAccessor.current().getBranch() );
             final Node storedNode =
-                this.nodeStorageService.store( StoreNodeParams.newVersion( updatedNode, params.getChildVersionAttributes() ),
+                this.nodeStorageService.store( StoreNodeParams.newVersion( updatedNode, childResolvedAttributes ),
                                                internalContext ).node();
             result.addReorderedNode( storedNode );
         }
@@ -195,9 +203,14 @@ public class SortNodeCommand
                 LOG.debug( "manualOrderValue not changed {}", node.id() );
                 continue;
             }
-            final Node updatedNode = Node.create( node ).timestamp( Millis.now() ).manualOrderValue( newOrderValue ).build();
+            final PropertyTree processedChildData = params.getChildProcessor().process( node.data(), node.path() );
+            final Node updatedNode =
+                Node.create( node ).data( processedChildData ).timestamp( Millis.now() ).manualOrderValue( newOrderValue ).build();
+            final Attributes childResolvedAttributes =
+                resolveVersionAttributes( params.getVersionAttributesResolver(), node, updatedNode,
+                                ContextAccessor.current().getBranch() );
             final Node storedNode =
-                this.nodeStorageService.store( StoreNodeParams.newVersion( updatedNode, params.getChildVersionAttributes() ),
+                this.nodeStorageService.store( StoreNodeParams.newVersion( updatedNode, childResolvedAttributes ),
                                                internalContext ).node();
             visitedNodes.put( storedNode.id(), storedNode );
 

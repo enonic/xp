@@ -28,6 +28,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.RefreshMode;
+import com.enonic.xp.node.VersionAttributesResolver;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.security.PrincipalKey;
@@ -85,7 +86,8 @@ final class CreateContentCommand
             .cmsService( this.cmsService )
             .build()
             .produce()
-            .versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.CREATE_ATTR ) )
+            .versionAttributesResolver( VersionAttributesResolver.of(
+                ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.CREATE_ATTR ) ) )
             .refresh( params.isRefresh() ? RefreshMode.ALL : RefreshMode.STORAGE )
             .build();
 

@@ -8,6 +8,7 @@ import com.enonic.xp.content.WorkflowEditor;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.PatchNodeResult;
+import com.enonic.xp.node.VersionAttributesResolver;
 
 public class UpdateWorkflowCommand
     extends AbstractCreatingOrUpdatingContentCommand
@@ -43,7 +44,8 @@ public class UpdateWorkflowCommand
                 Content editedContent = editWorkflow( params.getEditor(), content );
                 return afterUpdate( editedContent );
             } )
-            .versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.UPDATE_WORKFLOW_ATTR ) )
+            .versionAttributesResolver( VersionAttributesResolver.of(
+                ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.UPDATE_WORKFLOW_ATTR ) ) )
             .contentTypeService( this.contentTypeService )
             .mixinService( this.mixinService )
             .pageDescriptorService( this.pageDescriptorService )

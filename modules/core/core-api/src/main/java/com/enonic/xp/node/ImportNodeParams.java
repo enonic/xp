@@ -12,7 +12,7 @@ public final class ImportNodeParams
 
     private final boolean importPermissionsOnCreate;
 
-    private final Attributes versionAttributes;
+    private final VersionAttributesResolver versionAttributesResolver;
 
     private final RefreshMode refresh;
 
@@ -23,7 +23,7 @@ public final class ImportNodeParams
         insertManualStrategy = builder.insertManualStrategy;
         importPermissions = builder.importPermissions;
         importPermissionsOnCreate = builder.importPermissionsOnCreate;
-        versionAttributes = builder.versionAttributes;
+        versionAttributesResolver = builder.versionAttributesResolver;
         this.refresh = builder.refresh;
     }
 
@@ -57,9 +57,9 @@ public final class ImportNodeParams
         return importPermissionsOnCreate;
     }
 
-    public Attributes getVersionAttributes()
+    public VersionAttributesResolver getVersionAttributesResolver()
     {
-        return versionAttributes;
+        return versionAttributesResolver;
     }
 
     public RefreshMode getRefresh()
@@ -79,7 +79,7 @@ public final class ImportNodeParams
 
         private boolean importPermissionsOnCreate = true;
 
-        private Attributes versionAttributes;
+        private VersionAttributesResolver versionAttributesResolver;
 
         private RefreshMode refresh;
 
@@ -117,9 +117,9 @@ public final class ImportNodeParams
             return this;
         }
 
-        public Builder versionAttributes( Attributes versionAttributes )
+        public Builder versionAttributesResolver( VersionAttributesResolver versionAttributesResolver )
         {
-            this.versionAttributes = versionAttributes;
+            this.versionAttributesResolver = versionAttributesResolver;
             return this;
         }
 

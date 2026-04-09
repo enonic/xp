@@ -54,21 +54,20 @@ class SortContentCommand
 
             if ( layersSync )
             {
-                paramsBuilder.versionAttributes( ContentAttributesHelper.layersSyncAttr() )
-                    .childVersionAttributes( ContentAttributesHelper.layersSyncAttr() );
+                paramsBuilder.versionAttributesResolver(
+                    ContentAttributesHelper.versionHistoryResolver( ContentAttributesHelper.SYNC_ATTR ) );
             }
             else
             {
-                paramsBuilder.processor(
-                    CompositeNodeDataProcessor.create().add( InheritedContentDataProcessor.SORT ).add(
-                        PublishDataProcessor::removePublishTime ).build() );
+                paramsBuilder.processor( CompositeNodeDataProcessor.create()
+                                             .add( InheritedContentDataProcessor.SORT )
+                                             .add( PublishDataProcessor::removePublishTime )
+                                             .build() );
+                paramsBuilder.childProcessor( PublishDataProcessor::removePublishTime );
 
-                paramsBuilder.versionAttributes(
-                        ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.SORT_ATTR, "childOrder" ) )
-                    .childVersionAttributes(
-                        ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.SORT_ATTR, "manualOrderValue" ) );
+                paramsBuilder.versionAttributesResolver(
+                    ContentAttributesHelper.versionHistoryResolver( ContentAttributesHelper.SORT_ATTR ) );
             }
-
 
             final SortNodeResult sortNodeResult = nodeService.sort( paramsBuilder.build() );
 

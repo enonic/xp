@@ -26,6 +26,7 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
+import com.enonic.xp.node.VersionAttributesResolver;
 
 public class UnpublishContentCommand
     extends AbstractContentCommand
@@ -95,12 +96,12 @@ public class UnpublishContentCommand
 
     private void removePublishInfoAndCommit( final NodeIds deleteNodeResult, Instant now )
     {
-        final Attributes unpublishInfoAttr =
-            ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.UNPUBLISH_ATTR, ContentPropertyNames.PUBLISH_INFO );
+        final VersionAttributesResolver unpublishInfoAttr =
+            ContentAttributesHelper.versionHistoryResolver( ContentAttributesHelper.UNPUBLISH_ATTR );
         for ( final var deleted : deleteNodeResult )
         {
             final UpdateNodeParams updateParams =
-                UpdateNodeParams.create().id( deleted ).versionAttributes( unpublishInfoAttr ).editor( toBeEdited -> {
+                UpdateNodeParams.create().id( deleted ).versionAttributesResolver( unpublishInfoAttr ).editor( toBeEdited -> {
                     PropertySet workflowInfo = toBeEdited.data.getSet( ContentPropertyNames.WORKFLOW_INFO );
                     if ( workflowInfo != null )
                     {

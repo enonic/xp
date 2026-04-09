@@ -11,10 +11,18 @@ import com.enonic.xp.attachment.AttachmentNames;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
+import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentVersion;
 import com.enonic.xp.content.CreateContentParams;
+import com.enonic.xp.content.GetContentVersionsParams;
+import com.enonic.xp.content.GetContentVersionsResult;
 import com.enonic.xp.content.PatchContentParams;
+import com.enonic.xp.content.PushContentParams;
+import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
@@ -22,6 +30,7 @@ import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -199,5 +208,85 @@ class ContentServiceImplTest_patch
         assertEquals( "image/jpeg", thumbnail.getMimeType() );
         assertEquals( AttachmentNames.THUMBNAIL, thumbnail.getBinaryReference().toString() );
         assertEquals( 3, thumbnail.getSize() );
+    }
+
+    @Test
+    void patch_same_content_on_both_branches_generates_single_version_with_origin()
+    {
+        final Content content = this.contentService.create( CreateContentParams.create()
+                                                                .contentData( new PropertyTree() )
+                                                                .displayName( "content" )
+                                                                .name( "content" )
+                                                                .parent( ContentPath.ROOT )
+                                                                .type( ContentTypeName.folder() )
+                                                                .build() );
+
+        this.contentService.publish(
+            PushContentParams.create().contentIds( ContentIds.from( content.getId() ) ).includeDependencies( false ).build() );
+
+        final int versionCountBeforePatch = this.contentService.getVersions(
+            GetContentVersionsParams.create().contentId( content.getId() ).build() ).getContentVersions().getSize();
+
+        this.contentService.patch( PatchContentParams.create()
+                                       .contentId( content.getId() )
+                                       .patcher( edit -> edit.displayName.setValue( "patched" ) )
+                                       .branches( Branches.from( ContentConstants.BRANCH_MASTER, ContentConstants.BRANCH_DRAFT ) )
+                                       .build() );
+
+        final GetContentVersionsResult versionsResult =
+            this.contentService.getVersions( GetContentVersionsParams.create().contentId( content.getId() ).build() );
+
+        assertThat( versionsResult.getContentVersions() ).hasSize( versionCountBeforePatch + 1 );
+
+        final ContentVersion latestVersion = versionsResult.getContentVersions().first();
+
+        assertThat( latestVersion.actions() ).extracting( ContentVersion.Action::operation ).containsExactly( "content.patch" );
+        assertThat( latestVersion.actions() ).extracting( ContentVersion.Action::origin )
+            .containsExactly( ContentConstants.BRANCH_MASTER.getValue() );
+    }
+
+    @Test
+    void patch_different_content_on_branches_generates_two_versions()
+    {
+        final Content content = this.contentService.create( CreateContentParams.create()
+                                                                .contentData( new PropertyTree() )
+                                                                .displayName( "content" )
+                                                                .name( "content" )
+                                                                .parent( ContentPath.ROOT )
+                                                                .type( ContentTypeName.folder() )
+                                                                .build() );
+
+        this.contentService.publish(
+            PushContentParams.create().contentIds( ContentIds.from( content.getId() ) ).includeDependencies( false ).build() );
+
+        final UpdateContentParams updateParams = new UpdateContentParams();
+        updateParams.contentId( content.getId() ).editor( edit -> edit.displayName = "updated-in-draft" );
+        this.contentService.update( updateParams );
+
+        final int versionCountBeforePatch = this.contentService.getVersions(
+            GetContentVersionsParams.create().contentId( content.getId() ).build() ).getContentVersions().getSize();
+
+        this.contentService.patch( PatchContentParams.create()
+                                       .contentId( content.getId() )
+                                       .patcher( edit -> edit.language.setValue( java.util.Locale.ENGLISH ) )
+                                       .branches( Branches.from( ContentConstants.BRANCH_MASTER, ContentConstants.BRANCH_DRAFT ) )
+                                       .build() );
+
+        final GetContentVersionsResult versionsResult =
+            this.contentService.getVersions( GetContentVersionsParams.create().contentId( content.getId() ).build() );
+
+        assertThat( versionsResult.getContentVersions() ).hasSize( versionCountBeforePatch + 2 );
+
+        assertThat( versionsResult.getContentVersions().stream()
+                        .limit( 2 )
+                        .flatMap( v -> v.actions().stream() ) )
+            .extracting( ContentVersion.Action::operation )
+            .containsOnly( "content.patch" );
+
+        assertThat( versionsResult.getContentVersions().stream()
+                        .limit( 2 )
+                        .flatMap( v -> v.actions().stream() ) )
+            .extracting( ContentVersion.Action::origin )
+            .containsExactly( ContentConstants.BRANCH_DRAFT.getValue(), ContentConstants.BRANCH_MASTER.getValue() );
     }
 }

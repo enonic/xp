@@ -15,6 +15,7 @@ import com.enonic.xp.node.DuplicateNodeResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.RefreshMode;
+import com.enonic.xp.node.VersionAttributesResolver;
 
 final class DuplicateContentCommand
     extends AbstractContentCommand
@@ -70,7 +71,8 @@ final class DuplicateContentCommand
 
         final DuplicateNodeParams.Builder builder = DuplicateNodeParams.create()
             .nodeId( sourceNode.id() )
-            .versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.DUPLICATE_ATTR ) )
+            .versionAttributesResolver( VersionAttributesResolver.of(
+                ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.DUPLICATE_ATTR ) ) )
             .dataProcessor( new DuplicateContentProcessor( params.getWorkflowInfo(), sourceNodeId ) )
             .refresh( RefreshMode.ALL );
 

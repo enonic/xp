@@ -14,6 +14,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.node.ApplyNodePermissionsListener;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
+import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.ApplyPermissionsScope;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
@@ -153,11 +154,11 @@ public class ApplyNodePermissionsCommand
     {
         final InternalContext targetContext = InternalContext.create( ContextAccessor.current() ).branch( branch ).build();
 
-        final Node persistedNode = nodeStorageService.get( nodeVersion.getNodeId(), targetContext );
+        final Node originalNode = nodeStorageService.get( nodeVersion.getNodeId(), targetContext );
 
-        if ( persistedNode == null ||
+        if ( originalNode == null ||
             !NodePermissionsResolver.hasPermission( targetContext.getPrincipalKeys(), Permission.WRITE_PERMISSIONS,
-                                                    persistedNode.getPermissions() ) )
+                                                    originalNode.getPermissions() ) )
         {
             listener.notEnoughRights( 1 );
             results.addResult( nodeVersion.getNodeId(), branch, null, null );
@@ -174,9 +175,11 @@ public class ApplyNodePermissionsCommand
             }
             else
             {
-                final Node editedNode = Node.create( persistedNode ).timestamp( Millis.now() ).permissions( permissions ).build();
+                final Node editedNode = Node.create( originalNode ).timestamp( Millis.now() ).permissions( permissions ).build();
+                final Attributes resolvedAttributes =
+                    resolveVersionAttributes( params.getVersionAttributesResolver(), originalNode, editedNode, branch );
                 final NodeVersionData result =
-                    this.nodeStorageService.store( StoreNodeParams.newVersion( editedNode, params.getVersionAttributes() ), targetContext );
+                    this.nodeStorageService.store( StoreNodeParams.newVersion( editedNode, resolvedAttributes ), targetContext );
                 appliedVersions.put( nodeVersion.getNodeVersionId(), branch, result.version(), result.node().getPermissions() );
 
                 listener.permissionsApplied( 1 );

@@ -13,9 +13,7 @@ public final class MoveNodeParams
 
     private final NodePath newParentPath;
 
-    private final Attributes versionAttributes;
-
-    private final Attributes childVersionAttributes;
+    private final VersionAttributesResolver versionAttributesResolver;
 
     private final MoveNodeListener moveListener;
 
@@ -28,8 +26,7 @@ public final class MoveNodeParams
         this.nodeId = Objects.requireNonNull( builder.nodeId, "nodeId is required" );
         this.newName = builder.newName;
         this.newParentPath = builder.newParentPath;
-        this.versionAttributes = builder.versionAttributes;
-        this.childVersionAttributes = builder.childVersionAttributes;
+        this.versionAttributesResolver = builder.versionAttributesResolver;
         this.moveListener = builder.moveListener;
         this.processor = Objects.requireNonNullElse( builder.processor, ( n, p ) -> n );
         this.refresh = builder.refresh;
@@ -55,14 +52,9 @@ public final class MoveNodeParams
         return newParentPath;
     }
 
-    public Attributes getVersionAttributes()
+    public VersionAttributesResolver getVersionAttributesResolver()
     {
-        return versionAttributes;
-    }
-
-    public Attributes getChildVersionAttributes()
-    {
-        return childVersionAttributes;
+        return versionAttributesResolver;
     }
 
     public MoveNodeListener getMoveListener()
@@ -88,9 +80,7 @@ public final class MoveNodeParams
 
         private NodePath newParentPath;
 
-        private Attributes versionAttributes;
-
-        private Attributes childVersionAttributes;
+        private VersionAttributesResolver versionAttributesResolver;
 
         private MoveNodeListener moveListener;
 
@@ -120,15 +110,9 @@ public final class MoveNodeParams
             return this;
         }
 
-        public Builder versionAttributes( final Attributes versionAttributes )
+        public Builder versionAttributesResolver( final VersionAttributesResolver versionAttributesResolver )
         {
-            this.versionAttributes = versionAttributes;
-            return this;
-        }
-
-        public Builder childVersionAttributes( final Attributes childVersionAttributes )
-        {
-            this.childVersionAttributes = childVersionAttributes;
+            this.versionAttributesResolver = versionAttributesResolver;
             return this;
         }
 

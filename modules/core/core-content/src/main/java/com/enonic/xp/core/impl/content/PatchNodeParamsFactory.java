@@ -15,11 +15,11 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.core.impl.content.index.ContentIndexConfigFactory;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.NodeEditor;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.RefreshMode;
+import com.enonic.xp.node.VersionAttributesResolver;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
@@ -36,7 +36,7 @@ public class PatchNodeParamsFactory
 
     private final CreateAttachments createAttachments;
 
-    private final Attributes versionAttributes;
+    private final VersionAttributesResolver versionAttributesResolver;
 
     private final ContentTypeService contentTypeService;
 
@@ -65,7 +65,7 @@ public class PatchNodeParamsFactory
         this.partDescriptorService = builder.partDescriptorService;
         this.layoutDescriptorService = builder.layoutDescriptorService;
         this.cmsService = builder.cmsService;
-        this.versionAttributes = builder.versionAttributes;
+        this.versionAttributesResolver = builder.versionAttributesResolver;
         branches = Branches.from( builder.branches.build() );
     }
 
@@ -82,7 +82,7 @@ public class PatchNodeParamsFactory
             .id( NodeId.from( contentId ) )
             .editor( nodeEditor )
             .branches( branches )
-            .versionAttributes( versionAttributes )
+            .versionAttributesResolver( versionAttributesResolver )
             .refresh( RefreshMode.ALL );
 
         for ( final CreateAttachment createAttachment : createAttachments )
@@ -130,7 +130,7 @@ public class PatchNodeParamsFactory
 
         private CreateAttachments createAttachments = CreateAttachments.empty();
 
-        private Attributes versionAttributes;
+        private VersionAttributesResolver versionAttributesResolver;
 
         private ContentTypeService contentTypeService;
 
@@ -162,9 +162,9 @@ public class PatchNodeParamsFactory
             return this;
         }
 
-        Builder versionAttributes( final Attributes versionAttributes )
+        Builder versionAttributesResolver( final VersionAttributesResolver versionAttributesResolver )
         {
-            this.versionAttributes = versionAttributes;
+            this.versionAttributesResolver = versionAttributesResolver;
             return this;
         }
 

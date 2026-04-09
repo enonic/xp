@@ -90,7 +90,7 @@ final class UpdateContentCommand
                 return editedContent;
             } )
             .createAttachments( params.getCreateAttachments() )
-            .versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.UPDATE_ATTR ) )
+            .versionAttributesResolver( ContentAttributesHelper.versionHistoryResolver( ContentAttributesHelper.UPDATE_ATTR ) )
             .contentTypeService( this.contentTypeService )
             .mixinService( this.mixinService )
             .pageDescriptorService( this.pageDescriptorService )
