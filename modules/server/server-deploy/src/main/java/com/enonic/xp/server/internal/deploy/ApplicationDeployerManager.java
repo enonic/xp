@@ -6,8 +6,9 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.condition.Condition;
 
-import com.enonic.xp.admin.tool.AdminToolDescriptorService;
 import com.enonic.xp.admin.extension.AdminExtensionDescriptorService;
+import com.enonic.xp.admin.tool.AdminToolDescriptorService;
+import com.enonic.xp.cluster.ClusterService;
 import com.enonic.xp.core.internal.Dictionaries;
 import com.enonic.xp.export.ExportService;
 import com.enonic.xp.i18n.LocaleService;
@@ -138,4 +139,9 @@ public class ApplicationDeployerManager
         //Needed to ensure startup-order
     }
 
+    @Reference
+    public void setClusterService( final ClusterService clusterService )
+    {
+        //Needed to ensure startup-order
+    }
 }

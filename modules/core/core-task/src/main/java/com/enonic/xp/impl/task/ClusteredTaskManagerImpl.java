@@ -4,12 +4,12 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -20,6 +20,7 @@ import com.hazelcast.cluster.Member;
 import com.hazelcast.cluster.MemberSelector;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IExecutorService;
+import com.hazelcast.replicatedmap.ReplicatedMap;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.internal.Exceptions;
@@ -40,21 +41,34 @@ public final class ClusteredTaskManagerImpl
 {
     public static final String ACTION = "xp/task";
 
+    private static final String CLUSTER_MAP_NAME = "com.enonic.xp.cluster";
+
+    private static final String APPLICATION_ATTRIBUTE_PREFIX = "application-";
+
     private static final ApplicationKey SYSTEM_APPLICATION_KEY = ApplicationKey.from( "com.enonic.xp.app.system" );
+
+    private static final String TASK_MAP_NAME = "com.enonic.xp.task";
+
+    private static final String TASKS_ENABLED_ATTRIBUTE_KEY = "tasks-enabled";
+
+    private static final String SYSTEM_TASKS_ENABLED_ATTRIBUTE_KEY = "system-tasks-enabled";
 
     private final HazelcastInstance hazelcastInstance;
 
-    private final MemberAttributesApplier memberAttributesApplier;
+    private final ReplicatedMap<UUID, Map<String, String>> taskAttributesMap;
+
+    private final UUID localMemberUuid;
 
     private IExecutorService executorService;
 
     private volatile long outboundTimeoutNs;
 
     @Activate
-    public ClusteredTaskManagerImpl( final BundleContext bundleContext, @Reference final HazelcastInstance hazelcastInstance )
+    public ClusteredTaskManagerImpl( @Reference final HazelcastInstance hazelcastInstance )
     {
         this.hazelcastInstance = hazelcastInstance;
-        this.memberAttributesApplier = new MemberAttributesApplier( bundleContext, hazelcastInstance );
+        this.localMemberUuid = hazelcastInstance.getCluster().getLocalMember().getUuid();
+        this.taskAttributesMap = hazelcastInstance.getReplicatedMap( TASK_MAP_NAME );
     }
 
     @Activate
@@ -62,27 +76,34 @@ public final class ClusteredTaskManagerImpl
     {
         outboundTimeoutNs = Duration.parse( config.clustered_timeout() ).toNanos();
         executorService = hazelcastInstance.getExecutorService( ClusteredTaskManagerImpl.ACTION );
-        this.memberAttributesApplier.activate( config );
+        applyTaskAttributes( config );
     }
 
     @Modified
     public void modify( final TaskConfig config )
     {
         outboundTimeoutNs = Duration.parse( config.clustered_timeout() ).toNanos();
-        this.memberAttributesApplier.modify( config );
+        applyTaskAttributes( config );
     }
 
     @Deactivate
     public void deactivate()
     {
-        this.memberAttributesApplier.deactivate();
+        taskAttributesMap.remove( localMemberUuid );
+    }
+
+    private void applyTaskAttributes( final TaskConfig config )
+    {
+        taskAttributesMap.put( localMemberUuid,
+                               Map.of( TASKS_ENABLED_ATTRIBUTE_KEY, String.valueOf( config.distributable_acceptInbound() ),
+                                       SYSTEM_TASKS_ENABLED_ATTRIBUTE_KEY, String.valueOf( config.distributable_acceptSystem() ) ) );
     }
 
     @Override
     public TaskInfo getTaskInfo( final TaskId taskId )
     {
         final List<TaskInfo> list = send( new SingleTaskReporter( taskId ) );
-        return list.isEmpty() ? null : list.get( 0 );
+        return list.isEmpty() ? null : list.getFirst();
     }
 
     @Override
@@ -114,12 +135,12 @@ public final class ClusteredTaskManagerImpl
             catch ( TimeoutException e )
             {
                 resultsFromMembers.values().forEach( f -> f.cancel( true ) );
-                throw new RuntimeException( e );
+                throw new IllegalStateException( "Timeout while waiting for task manager response", e );
             }
             catch ( InterruptedException e )
             {
                 Thread.currentThread().interrupt();
-                throw new RuntimeException( e );
+                throw new IllegalStateException( "Interrupted while waiting for task manager response", e );
             }
             catch ( ExecutionException e )
             {
@@ -139,12 +160,12 @@ public final class ClusteredTaskManagerImpl
         }
         catch ( TimeoutException e )
         {
-            throw new RuntimeException( e );
+            throw new IllegalStateException( "Task submit status unknown due to timeout while waiting for task manager response.", e );
         }
         catch ( InterruptedException e )
         {
             Thread.currentThread().interrupt();
-            throw new RuntimeException( e );
+            throw new IllegalStateException( "Task submit status unknown due to interruption while waiting for task manager response.", e );
         }
         catch ( ExecutionException e )
         {
@@ -165,12 +186,21 @@ public final class ClusteredTaskManagerImpl
         @Override
         public boolean select( final Member member )
         {
-            final Map<String, String> attributes = memberAttributesApplier.getAttributesReplicatedMap().get( member.getUuid() );
-            return Boolean.TRUE.toString().equals( attributes.get( MemberAttributesApplier.TASKS_ENABLED_ATTRIBUTE_KEY ) ) &&
+            final UUID memberUuid = member.getUuid();
+
+            final ReplicatedMap<UUID, Map<String, String>> clusterMap = hazelcastInstance.getReplicatedMap( CLUSTER_MAP_NAME );
+            final Map<String, String> clusterAttributes = clusterMap.get( memberUuid );
+            if ( clusterAttributes == null ||
+                !Boolean.TRUE.toString().equals( clusterAttributes.get( APPLICATION_ATTRIBUTE_PREFIX + task.getApplicationKey() ) ) )
+            {
+                return false;
+            }
+
+            final Map<String, String> taskAttributes = taskAttributesMap.get( memberUuid );
+            return taskAttributes != null &&
+                Boolean.TRUE.toString().equals( taskAttributes.get( TASKS_ENABLED_ATTRIBUTE_KEY ) ) &&
                 ( !SYSTEM_APPLICATION_KEY.equals( task.getApplicationKey() ) ||
-                    Boolean.TRUE.toString().equals( attributes.get( MemberAttributesApplier.SYSTEM_TASKS_ENABLED_ATTRIBUTE_KEY ) ) ) &&
-                Boolean.TRUE.toString()
-                    .equals( attributes.get( MemberAttributesApplier.TASKS_ENABLED_ATTRIBUTE_PREFIX + task.getApplicationKey() ) );
+                    Boolean.TRUE.toString().equals( taskAttributes.get( SYSTEM_TASKS_ENABLED_ATTRIBUTE_KEY ) ) );
         }
     }
 }

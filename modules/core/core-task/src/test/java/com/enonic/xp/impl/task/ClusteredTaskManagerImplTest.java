@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -13,14 +14,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Answers;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.osgi.framework.BundleContext;
 
 import com.hazelcast.cluster.Member;
 import com.hazelcast.cluster.MemberSelector;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IExecutorService;
+import com.hazelcast.replicatedmap.ReplicatedMap;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.impl.task.distributed.DescribedTask;
@@ -30,10 +32,13 @@ import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskInfo;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -41,14 +46,17 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class ClusteredTaskManagerImplTest
 {
-    @Mock
-    BundleContext bundleContext;
-
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     private HazelcastInstance hazelcastInstance;
 
     @Mock
     private IExecutorService executorService;
+
+    @Mock
+    private ReplicatedMap<UUID, Map<String, String>> clusterMap;
+
+    @Mock
+    private ReplicatedMap<UUID, Map<String, String>> taskMap;
 
     private ClusteredTaskManagerImpl clusteredTaskManager;
 
@@ -60,7 +68,10 @@ class ClusteredTaskManagerImplTest
     {
         config = mock( TaskConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         when( hazelcastInstance.getExecutorService( ClusteredTaskManagerImpl.ACTION ) ).thenReturn( executorService );
-        clusteredTaskManager = new ClusteredTaskManagerImpl( bundleContext, hazelcastInstance );
+        lenient().doReturn( clusterMap ).when( hazelcastInstance ).getReplicatedMap( "com.enonic.xp.cluster" );
+        lenient().doReturn( taskMap ).when( hazelcastInstance ).getReplicatedMap( "com.enonic.xp.task" );
+        lenient().when( hazelcastInstance.getCluster().getLocalMember().getUuid() ).thenReturn( UUID.randomUUID() );
+        clusteredTaskManager = new ClusteredTaskManagerImpl( hazelcastInstance );
         clusteredTaskManager.activate( config );
     }
 
@@ -144,11 +155,103 @@ class ClusteredTaskManagerImplTest
     {
         final DescribedTask task = mock( DescribedTask.class );
 
-        final Future<Void> future = mock( Future.class );
+        final Future<Void> future = mock();
         when( executorService.submit( any( OffloadedTaskCallable.class ), any( MemberSelector.class ) ) ).thenReturn( future );
         clusteredTaskManager.submitTask( task );
         verify( executorService ).submit( any( OffloadedTaskCallable.class ), any( MemberSelector.class ) );
 
         verify( future ).get( anyLong(), any( TimeUnit.class ) );
+    }
+
+    @Test
+    void submitTask_selector_selects_member_when_application_and_tasks_are_enabled()
+        throws Exception
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( "com.enonic.app.test" );
+        final UUID memberUuid = UUID.randomUUID();
+        final Member member = mock( Member.class );
+        when( member.getUuid() ).thenReturn( memberUuid );
+
+        final DescribedTask task = mock( DescribedTask.class );
+        when( task.getApplicationKey() ).thenReturn( applicationKey );
+
+        when( clusterMap.get( memberUuid ) ).thenReturn( Map.of( "application-" + applicationKey, Boolean.TRUE.toString() ) );
+        when( taskMap.get( memberUuid ) ).thenReturn( Map.of( "tasks-enabled", Boolean.TRUE.toString(),
+                                                              "system-tasks-enabled",
+                                                              Boolean.FALSE.toString() ) );
+
+        final ArgumentCaptor<MemberSelector> selectorCaptor = ArgumentCaptor.forClass( MemberSelector.class );
+        when( executorService.submit( any( OffloadedTaskCallable.class ), selectorCaptor.capture() ) ).thenReturn( mock() );
+
+        clusteredTaskManager.submitTask( task );
+
+        assertTrue( selectorCaptor.getValue().select( member ) );
+    }
+
+    @Test
+    void submitTask_selector_rejects_member_when_cluster_attributes_are_missing()
+        throws Exception
+    {
+        final UUID memberUuid = UUID.randomUUID();
+        final Member member = mock( Member.class );
+        when( member.getUuid() ).thenReturn( memberUuid );
+
+        final DescribedTask task = mock( DescribedTask.class );
+
+        when( clusterMap.get( memberUuid ) ).thenReturn( null );
+
+        final ArgumentCaptor<MemberSelector> selectorCaptor = ArgumentCaptor.forClass( MemberSelector.class );
+        when( executorService.submit( any( OffloadedTaskCallable.class ), selectorCaptor.capture() ) ).thenReturn( mock() );
+
+        clusteredTaskManager.submitTask( task );
+
+        assertFalse( selectorCaptor.getValue().select( member ) );
+    }
+
+    @Test
+    void submitTask_selector_rejects_member_when_application_is_not_enabled()
+        throws Exception
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( "com.enonic.app.test" );
+        final UUID memberUuid = UUID.randomUUID();
+        final Member member = mock( Member.class );
+        when( member.getUuid() ).thenReturn( memberUuid );
+
+        final DescribedTask task = mock( DescribedTask.class );
+        when( task.getApplicationKey() ).thenReturn( applicationKey );
+
+        when( clusterMap.get( memberUuid ) ).thenReturn( Map.of( "application-" + applicationKey, Boolean.FALSE.toString() ) );
+
+        final ArgumentCaptor<MemberSelector> selectorCaptor = ArgumentCaptor.forClass( MemberSelector.class );
+        when( executorService.submit( any( OffloadedTaskCallable.class ), selectorCaptor.capture() ) ).thenReturn( mock() );
+
+        clusteredTaskManager.submitTask( task );
+
+        assertFalse( selectorCaptor.getValue().select( member ) );
+    }
+
+    @Test
+    void submitTask_selector_rejects_system_task_when_system_tasks_are_disabled()
+        throws Exception
+    {
+        final ApplicationKey systemApplicationKey = ApplicationKey.from( "com.enonic.xp.app.system" );
+        final UUID memberUuid = UUID.randomUUID();
+        final Member member = mock( Member.class );
+        when( member.getUuid() ).thenReturn( memberUuid );
+
+        final DescribedTask task = mock( DescribedTask.class );
+        when( task.getApplicationKey() ).thenReturn( systemApplicationKey );
+
+        when( clusterMap.get( memberUuid ) ).thenReturn( Map.of( "application-" + systemApplicationKey, Boolean.TRUE.toString() ) );
+        when( taskMap.get( memberUuid ) ).thenReturn( Map.of( "tasks-enabled", Boolean.TRUE.toString(),
+                                                              "system-tasks-enabled",
+                                                              Boolean.FALSE.toString() ) );
+
+        final ArgumentCaptor<MemberSelector> selectorCaptor = ArgumentCaptor.forClass( MemberSelector.class );
+        when( executorService.submit( any( OffloadedTaskCallable.class ), selectorCaptor.capture() ) ).thenReturn( mock() );
+
+        clusteredTaskManager.submitTask( task );
+
+        assertFalse( selectorCaptor.getValue().select( member ) );
     }
 }
