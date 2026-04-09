@@ -295,6 +295,7 @@ export interface RequestConstructorParams {
     url: string;
     validTicket?: boolean;
     webSocket: boolean;
+    locales: string[];
 }
 
 export interface RequestInterface
