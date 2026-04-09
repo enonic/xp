@@ -1,17 +1,16 @@
 package com.enonic.xp.script.impl.function;
 
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.script.impl.executor.ScriptExecutor;
 
 public final class ResolveFunction
     extends AbstractFunction
 {
     private final ResourceResolver resolver;
 
-    public ResolveFunction( final ResourceKey script, final ScriptExecutor executor )
+    public ResolveFunction( final ResourceKey script )
     {
         super( "resolve" );
-        this.resolver = new ResourceResolver( executor.getResourceService(), script );
+        this.resolver = new ResourceResolver( script );
     }
 
     @Override

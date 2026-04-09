@@ -62,7 +62,7 @@ public final class GraalScriptFunctions
 
     public GraalResolveFunction getResolve()
     {
-        return new GraalResolveFunction( context, this.script, this.executor );
+        return new GraalResolveFunction( context, this.script );
     }
 
     public Object newBean( final String type )
