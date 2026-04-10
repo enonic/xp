@@ -41,8 +41,8 @@ public class ZipExportWriter
             Files.createDirectories( basePath );
             final Path baseDirectory = basePath.resolve( exportName );
             final ZipArchiveOutputStream zipArchiveOutputStream = new ZipArchiveOutputStream(
-                Files.newByteChannel( basePath.resolve( exportName + ZIP_FILE_EXTENSION ), StandardOpenOption.CREATE,
-                                      StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING ) );
+                Files.newOutputStream( basePath.resolve( exportName + ZIP_FILE_EXTENSION ), StandardOpenOption.CREATE,
+                                       StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING ) );
 
             return new ZipExportWriter( exportName, baseDirectory, zipArchiveOutputStream );
         }

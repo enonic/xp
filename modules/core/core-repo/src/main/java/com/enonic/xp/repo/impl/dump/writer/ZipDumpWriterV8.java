@@ -96,8 +96,8 @@ public class ZipDumpWriterV8
         throws IOException
     {
         return new DedupZipArchiveOutputStream( new ZipArchiveOutputStream(
-            Files.newByteChannel( basePath.resolve( dumpName + ZIP_FILE_EXTENSION ), StandardOpenOption.CREATE, StandardOpenOption.WRITE,
-                                  StandardOpenOption.READ, StandardOpenOption.TRUNCATE_EXISTING ) ) );
+            Files.newOutputStream( basePath.resolve( dumpName + ZIP_FILE_EXTENSION ), StandardOpenOption.CREATE, StandardOpenOption.WRITE,
+                                   StandardOpenOption.TRUNCATE_EXISTING ) ) );
     }
 
     @Override
