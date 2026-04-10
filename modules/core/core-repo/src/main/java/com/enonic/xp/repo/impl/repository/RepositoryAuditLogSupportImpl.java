@@ -75,7 +75,7 @@ public class RepositoryAuditLogSupportImpl
     {
         if ( isEnabledAuditLog )
         {
-            final String repositoryId = ContextAccessor.current().getRepositoryId().toString();
+            final String repositoryId = currentRepositoryId();
             final String branch = params.getBranch().toString();
 
             final PropertyTree data = new PropertyTree();
@@ -92,7 +92,7 @@ public class RepositoryAuditLogSupportImpl
     {
         if ( isEnabledAuditLog )
         {
-            final String repositoryId = ContextAccessor.current().getRepositoryId().toString();
+            final String repositoryId = currentRepositoryId();
             final String branch = params.getBranch().toString();
 
             final PropertyTree data = new PropertyTree();
@@ -102,6 +102,11 @@ public class RepositoryAuditLogSupportImpl
 
             log( "system.repo.branch.delete", data, AuditLogUris.from( repositoryId ) );
         }
+    }
+
+    private static String currentRepositoryId()
+    {
+        return ContextAccessor.current().getRepositoryId().toString();
     }
 
     private void log( final String type, final PropertyTree data, final AuditLogUris uris )
