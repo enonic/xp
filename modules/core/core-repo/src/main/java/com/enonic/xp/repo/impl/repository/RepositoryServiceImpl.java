@@ -70,9 +70,11 @@ public class RepositoryServiceImpl
 
     private final RepositoryCreator repositoryCreator;
 
+    private final RepositoryAuditLogSupport repositoryAuditLogSupport;
+
     public RepositoryServiceImpl( final RepositoryEntryService repositoryEntryService, final NodeRepositoryService nodeRepositoryService,
                                   final NodeStorageService nodeStorageService, final NodeSearchService nodeSearchService,
-                                  final BranchService branchService )
+                                  final BranchService branchService, final RepositoryAuditLogSupport repositoryAuditLogSupport )
     {
         this.repositoryEntryService = repositoryEntryService;
         this.nodeRepositoryService = nodeRepositoryService;
@@ -80,6 +82,7 @@ public class RepositoryServiceImpl
         this.nodeSearchService = nodeSearchService;
         this.branchService = branchService;
         this.repositoryCreator = new RepositoryCreator( nodeRepositoryService, nodeStorageService, repositoryEntryService );
+        this.repositoryAuditLogSupport = repositoryAuditLogSupport;
     }
 
     @Override
@@ -103,7 +106,9 @@ public class RepositoryServiceImpl
     {
         requireAdminRole();
 
-        return copyRepository( repositoryMap.compute( params.getRepositoryId(), ( _, _ ) -> doCreateRepo( params ) ) );
+        final Repository repository = copyRepository( repositoryMap.compute( params.getRepositoryId(), ( _, _ ) -> doCreateRepo( params ) ) );
+        repositoryAuditLogSupport.createRepository( params );
+        return repository;
     }
 
     private Repository doCreateRepo( final CreateRepositoryParams params )
@@ -153,6 +158,7 @@ public class RepositoryServiceImpl
         repositoryMap.compute( ContextAccessor.current().getRepositoryId(),
                                ( repositoryId, _ ) -> doCreateBranch( createBranchParams, repositoryId ) );
 
+        repositoryAuditLogSupport.createBranch( createBranchParams );
         return createBranchParams.getBranch();
     }
 
@@ -235,6 +241,7 @@ public class RepositoryServiceImpl
 
         nodeStorageService.invalidate();
 
+        repositoryAuditLogSupport.deleteRepository( params );
         return repositoryId;
     }
 
@@ -249,6 +256,7 @@ public class RepositoryServiceImpl
 
         repositoryMap.compute( repositoryId, ( _, _ ) -> doDeleteBranch( params, repositoryId ) );
 
+        repositoryAuditLogSupport.deleteBranch( params );
         return params.getBranch();
     }
 

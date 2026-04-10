@@ -29,6 +29,8 @@ public class RepositoryServiceActivator
 
     private final BranchService branchService;
 
+    private final RepositoryAuditLogSupport repositoryAuditLogSupport;
+
     private ServiceRegistration<?> service;
 
     @Activate
@@ -36,7 +38,9 @@ public class RepositoryServiceActivator
                                        @Reference final IndexServiceInternal indexServiceInternal,
                                        @Reference final NodeRepositoryService nodeRepositoryService,
                                        @Reference final NodeStorageService nodeStorageService,
-                                       @Reference final NodeSearchService nodeSearchService, @Reference final BranchService branchService )
+                                       @Reference final NodeSearchService nodeSearchService,
+                                       @Reference final BranchService branchService,
+                                       @Reference final RepositoryAuditLogSupport repositoryAuditLogSupport )
     {
         this.indexServiceInternal = indexServiceInternal;
         this.nodeStorageService = nodeStorageService;
@@ -44,6 +48,7 @@ public class RepositoryServiceActivator
         this.nodeRepositoryService = nodeRepositoryService;
         this.nodeSearchService = nodeSearchService;
         this.branchService = branchService;
+        this.repositoryAuditLogSupport = repositoryAuditLogSupport;
     }
 
     @Activate
@@ -51,7 +56,7 @@ public class RepositoryServiceActivator
     {
         final RepositoryServiceImpl repositoryService =
             new RepositoryServiceImpl( repositoryEntryService, nodeRepositoryService, nodeStorageService, nodeSearchService,
-                                       branchService );
+                                       branchService, repositoryAuditLogSupport );
         SystemRepoInitializer.create()
             .setIndexServiceInternal( indexServiceInternal )
             .setNodeStorageService( nodeStorageService )
