@@ -7,6 +7,9 @@
     "service": {
       "type": "string"
     },
+    "extension": {
+      "type": "string"
+    },
     "params": {
       "type": "object",
       "additionalProperties": {
@@ -19,5 +22,27 @@
     "default": {
       "type": "string"
     }
-  }
+  },
+  "oneOf": [
+    {
+      "required": [
+        "service"
+      ],
+      "not": {
+        "required": [
+          "extension"
+        ]
+      }
+    },
+    {
+      "required": [
+        "extension"
+      ],
+      "not": {
+        "required": [
+          "service"
+        ]
+      }
+    }
+  ]
 }
