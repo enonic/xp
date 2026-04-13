@@ -22,6 +22,8 @@ public class ExportHandler
 
     private Boolean includeVersions;
 
+    private Boolean archive;
+
     private Function<Long, Void> nodeExported;
 
     private Function<Long, Void> nodeResolved;
@@ -41,6 +43,10 @@ public class ExportHandler
         if ( includeVersions != null )
         {
             paramsBuilder.includeVersions( includeVersions );
+        }
+        if ( archive != null )
+        {
+            paramsBuilder.archive( archive );
         }
         final NodeExportResult nodeImportResult = this.context.getService( ExportService.class ).get().exportNodes( paramsBuilder.build() );
         return new NodeExportResultMapper( nodeImportResult );
@@ -64,6 +70,11 @@ public class ExportHandler
     public void setIncludeVersions( final Boolean includeVersions )
     {
         this.includeVersions = includeVersions;
+    }
+
+    public void setArchive( final Boolean archive )
+    {
+        this.archive = archive;
     }
 
     public void setNodeExported( final Function<Long, Void> nodeExported )

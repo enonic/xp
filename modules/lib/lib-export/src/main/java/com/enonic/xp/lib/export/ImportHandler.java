@@ -33,6 +33,8 @@ public class ImportHandler
 
     private Boolean includePermissions;
 
+    private Boolean archive;
+
     private Function<Long, Void> nodeImported;
 
     private Function<Long, Void> nodeResolved;
@@ -73,6 +75,10 @@ public class ImportHandler
         {
             paramsBuilder.includePermissions( includePermissions );
         }
+        if ( archive != null )
+        {
+            paramsBuilder.archive( archive );
+        }
         final NodeImportResult nodeImportResult = this.context.getService( ExportService.class ).get().importNodes( paramsBuilder.build() );
         return new NodeImportResultMapper( nodeImportResult );
     }
@@ -105,6 +111,11 @@ public class ImportHandler
     public void setIncludePermissions( final Boolean includePermissions )
     {
         this.includePermissions = includePermissions;
+    }
+
+    public void setArchive( final Boolean archive )
+    {
+        this.archive = archive;
     }
 
     public void setNodeImported( final Function<Long, Void> nodeImported )

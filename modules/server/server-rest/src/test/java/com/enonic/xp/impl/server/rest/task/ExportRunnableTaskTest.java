@@ -51,7 +51,7 @@ class ExportRunnableTaskTest
             .exportName( params.getExportName() )
             .includeVersions( params.isIncludeVersions() )
             .exportWithIds( params.isExportWithIds() )
-            .dryRun( params.isDryRun() )
+            .dryRun( params.isDryRun() ).archive( params.isArchive() )
             .build();
     }
 
@@ -65,7 +65,7 @@ class ExportRunnableTaskTest
 
         when( this.exportService.exportNodes( any( ExportNodesParams.class ) ) ).thenReturn( nodeExportResult );
 
-        final ExportRunnableTask task = createTask( new ExportNodesRequestJson( "a:b:c", "export", true, true, true ) );
+        final ExportRunnableTask task = createTask( new ExportNodesRequestJson( "a:b:c", "export", true, true, true, true ) );
 
         ProgressReporter progressReporter = mock( ProgressReporter.class );
 

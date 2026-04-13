@@ -63,7 +63,7 @@ class ImportRunnableTaskTest
             .nodePath( params.getTargetRepoPath().getNodePath() )
             .exportName( params.getExportName() )
             .importWithIds( params.isImportWithIds() )
-            .importWithPermissions( params.isImportWithPermissions() )
+            .importWithPermissions( params.isImportWithPermissions() ).archive( params.isArchive() )
             .xslSource( params.getXslSource() )
             .xslParams( params.getXslParams() )
             .nodeRepositoryService( nodeRepositoryService )
@@ -90,7 +90,7 @@ class ImportRunnableTaskTest
             Repository.create().branches( Branch.from( "master" ) ).id( RepositoryId.from( "system-repo" ) ).data( repoData ).build() ) );
 
         final ImportRunnableTask task =
-            createTask( new ImportNodesRequestJson( "export", "system-repo:master:a", true, true, true, "", null ) );
+            createTask( new ImportNodesRequestJson( "export", "system-repo:master:a", true, true, true, false, "", null ) );
 
         ProgressReporter progressReporter = mock( ProgressReporter.class );
         task.run( TaskId.from( "taskId" ), progressReporter );

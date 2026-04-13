@@ -30,6 +30,7 @@ export interface ImportNodesParams {
     xsltParams?: unknown;
     includeNodeIds?: boolean;
     includePermissions?: boolean;
+    archive?: boolean;
     nodeResolved?: (numberOfNodes: number) => void;
     nodeImported?: (numberOfImportedNodes: number) => void;
 }
@@ -60,6 +61,8 @@ interface ImportHandler {
 
     setIncludePermissions(value: boolean): void;
 
+    setArchive(value: boolean): void;
+
     setNodeResolved(fn?: ((i: number) => void) | null): void;
 
     setNodeImported(fn?: ((i: number) => void) | null): void;
@@ -81,6 +84,7 @@ interface ImportHandler {
  * @param {object} [params.xsltParams] Parameters used in XSLT transformation.
  * @param {boolean} [params.includeNodeIds=false] Set to true to use node IDs from the import, false to generate new node IDs.
  * @param {boolean} [params.includePermissions=false] Set to true to use Node permissions from the import, false to use target node permissions.
+ * @param {boolean} [params.archive=false] Set to true to import from a zip archive.
  * @param {function} [params.nodeResolved] A function to be called before import starts with number of nodes to import.
  * @param {function} [params.nodeImported] A function to be called during import with number of nodes imported since last call.
  *
@@ -97,6 +101,7 @@ export function importNodes(params: ImportNodesParams): ImportNodesResult {
         xsltParams,
         includeNodeIds = false,
         includePermissions = false,
+        archive = false,
         nodeResolved,
         nodeImported,
     } = params ?? {};
@@ -109,6 +114,7 @@ export function importNodes(params: ImportNodesParams): ImportNodesResult {
     bean.setXsltParams(__.toScriptValue(xsltParams));
     bean.setIncludeNodeIds(includeNodeIds);
     bean.setIncludePermissions(includePermissions);
+    bean.setArchive(archive);
     bean.setNodeImported(__.nullOrValue(nodeImported));
     bean.setNodeResolved(__.nullOrValue(nodeResolved));
 
@@ -120,6 +126,7 @@ export interface ExportNodesParams {
     exportName: string;
     includeNodeIds?: boolean;
     includeVersions?: boolean;
+    archive?: boolean;
     nodeResolved?: (numberOfNodes: number) => void;
     nodeExported?: (numberOfExportedNodes: number) => void;
 }
@@ -143,6 +150,8 @@ interface ExportHandler {
 
     setIncludeVersions(value: boolean): void;
 
+    setArchive(value: boolean): void;
+
     setNodeExported(fn?: ((i: number) => void) | null): void;
 
     setNodeResolved(fn?: ((i: number) => void) | null): void;
@@ -161,6 +170,7 @@ interface ExportHandler {
  * @param {string} params.exportName Export name.
  * @param {boolean} [params.includeNodeIds=true] Set to true to export node IDs.
  * @param {boolean} [params.includeVersions=false] Set to true to export all node versions.
+ * @param {boolean} [params.archive=false] Set to true to export as a zip archive.
  * @param {function} [params.nodeResolved] A function to be called before export starts with number of nodes to export.
  * @param {function} [params.nodeExported] A function to be called during export with number of nodes exported since last call.
  *
@@ -175,6 +185,7 @@ export function exportNodes(params: ExportNodesParams): ExportNodesResult {
         exportName,
         includeNodeIds = true,
         includeVersions = false,
+        archive = false,
         nodeResolved,
         nodeExported,
     } = params ?? {};
@@ -185,6 +196,7 @@ export function exportNodes(params: ExportNodesParams): ExportNodesResult {
     bean.setExportName(exportName);
     bean.setIncludeNodeIds(includeNodeIds);
     bean.setIncludeVersions(includeVersions);
+    bean.setArchive(archive);
     bean.setNodeExported(__.nullOrValue(nodeExported));
     bean.setNodeResolved(__.nullOrValue(nodeResolved));
 

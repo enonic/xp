@@ -32,6 +32,8 @@ public class ExportRunnableTask
 
     private final boolean includeVersions;
 
+    private final boolean archive;
+
     private final ExportService exportService;
 
 
@@ -44,6 +46,7 @@ public class ExportRunnableTask
         this.includeVersions = builder.includeVersions;
         this.exportWithIds = builder.exportWithIds;
         this.dryRun = builder.dryRun;
+        this.archive = builder.archive;
 
         this.exportService = builder.exportService;
     }
@@ -62,7 +65,7 @@ public class ExportRunnableTask
                 .exportName( exportName )
                 .dryRun( dryRun )
                 .includeNodeIds( exportWithIds )
-                .includeVersions( includeVersions )
+                .includeVersions( includeVersions ).archive( archive )
                 .nodeExportListener( new ExportListenerImpl( progressReporter ) )
                 .build() ) );
 
@@ -89,6 +92,8 @@ public class ExportRunnableTask
         private boolean dryRun;
 
         private boolean includeVersions;
+
+        private boolean archive = false;
 
         private ExportService exportService;
 
@@ -131,6 +136,12 @@ public class ExportRunnableTask
         public Builder includeVersions( final boolean includeVersions )
         {
             this.includeVersions = includeVersions;
+            return this;
+        }
+
+        public Builder archive( final boolean archive )
+        {
+            this.archive = archive;
             return this;
         }
 
