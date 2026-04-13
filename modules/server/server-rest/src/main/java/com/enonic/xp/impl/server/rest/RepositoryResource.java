@@ -52,7 +52,7 @@ public final class RepositoryResource
             .exportName( params.getExportName() )
             .includeVersions( params.isIncludeVersions() )
             .exportWithIds( params.isExportWithIds() )
-            .dryRun( params.isDryRun() )
+            .dryRun( params.isDryRun() ).archive( params.isArchive() )
             .exportService( exportService )
             .build();
         final TaskId taskId = taskService.submitLocalTask(
@@ -71,7 +71,7 @@ public final class RepositoryResource
             .nodePath( params.getTargetRepoPath().getNodePath() )
             .exportName( params.getExportName() )
             .importWithIds( params.isImportWithIds() )
-            .importWithPermissions( params.isImportWithPermissions() )
+            .importWithPermissions( params.isImportWithPermissions() ).archive( params.isArchive() )
             .xslSource( params.getXslSource() )
             .xslParams( params.getXslParams() )
             .nodeRepositoryService( nodeRepositoryService )

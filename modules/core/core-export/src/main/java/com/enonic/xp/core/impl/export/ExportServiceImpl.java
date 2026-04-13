@@ -1,5 +1,8 @@
 package com.enonic.xp.core.impl.export;
 
+import java.io.Closeable;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.util.Optional;
 
@@ -7,7 +10,10 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.core.impl.export.reader.ZipVirtualFile;
+import com.enonic.xp.core.impl.export.writer.ExportWriter;
 import com.enonic.xp.core.impl.export.writer.FileExportWriter;
+import com.enonic.xp.core.impl.export.writer.ZipExportWriter;
 import com.enonic.xp.export.ExportNodesParams;
 import com.enonic.xp.export.ExportService;
 import com.enonic.xp.export.ImportNodesParams;
@@ -41,6 +47,11 @@ public class ExportServiceImpl
     @Override
     public NodeExportResult exportNodes( final ExportNodesParams params )
     {
+        if ( params.isArchive() && !params.isDryRun() )
+        {
+            return exportNodesToArchive( params );
+        }
+
         final Path targetDirectory = Optional.ofNullable( params.getTargetDirectory() )
             .map( Path::of )
             .orElseGet( () -> exportsDir.resolve( params.getExportName() ) );
@@ -62,23 +73,107 @@ public class ExportServiceImpl
             .execute();
     }
 
+    private NodeExportResult exportNodesToArchive( final ExportNodesParams params )
+    {
+        final Path basePath;
+        final String archiveName;
+
+        if ( params.getTargetDirectory() != null )
+        {
+            final Path target = Path.of( params.getTargetDirectory() );
+            final Path parent = target.getParent();
+            basePath = parent != null ? parent : Path.of( "." );
+            archiveName = target.getFileName().toString();
+        }
+        else
+        {
+            basePath = exportsDir;
+            archiveName = params.getExportName();
+        }
+
+        final Path archiveBaseDirectory = basePath.resolve( archiveName );
+
+        try (ExportWriter writer = ZipExportWriter.create( basePath, archiveName ))
+        {
+            return NodeExporter.create()
+                .sourceNodePath( params.getSourceNodePath() )
+                .nodeService( this.nodeService )
+                .nodeExportWriter( writer )
+                .rootDirectory( archiveBaseDirectory )
+                .targetDirectory( archiveBaseDirectory )
+                .xpVersion( xpVersion )
+                .dryRun( false )
+                .exportNodeIds( params.isIncludeNodeIds() )
+                .exportVersions( params.isIncludeVersions() )
+                .nodeExportListener( params.getNodeExportListener() )
+                .build()
+                .execute();
+        }
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
+    }
+
     @Override
     public NodeImportResult importNodes( final ImportNodesParams params )
     {
-        VirtualFile source =
-            Optional.ofNullable( params.getSource() ).orElseGet( () -> VirtualFiles.from( exportsDir.resolve( params.getExportName() ) ) );
+        final VirtualFile source;
 
-        return NodeImporter.create()
-            .nodeService( this.nodeService )
-            .sourceDirectory( source )
-            .targetNodePath( params.getTargetNodePath() )
-            .dryRun( params.isDryRun() )
-            .importNodeIds( params.isImportNodeids() )
-            .importPermissions( params.isImportPermissions() )
-            .xslt( params.getXslt() )
-            .xsltParams( params.getXsltParams() )
-            .nodeImportListener( params.getNodeImportListener() )
-            .build()
-            .execute();
+        if ( params.getSource() != null )
+        {
+            source = params.getSource();
+        }
+        else if ( params.isArchive() )
+        {
+            source = resolveZipImportSource( params.getExportName() );
+        }
+        else
+        {
+            source = VirtualFiles.from( exportsDir.resolve( params.getExportName() ) );
+        }
+
+        try
+        {
+            return NodeImporter.create()
+                .nodeService( this.nodeService )
+                .sourceDirectory( source )
+                .targetNodePath( params.getTargetNodePath() )
+                .dryRun( params.isDryRun() )
+                .importNodeIds( params.isImportNodeids() )
+                .importPermissions( params.isImportPermissions() )
+                .xslt( params.getXslt() )
+                .xsltParams( params.getXsltParams() )
+                .nodeImportListener( params.getNodeImportListener() )
+                .build()
+                .execute();
+        }
+        finally
+        {
+            if ( source instanceof Closeable )
+            {
+                try
+                {
+                    ( (Closeable) source ).close();
+                }
+                catch ( IOException e )
+                {
+                    throw new UncheckedIOException( e );
+                }
+            }
+        }
+    }
+
+    private VirtualFile resolveZipImportSource( final String exportName )
+    {
+        final Path zipPath = exportsDir.resolve( exportName + ".zip" );
+        try
+        {
+            return ZipVirtualFile.from( zipPath );
+        }
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
     }
 }

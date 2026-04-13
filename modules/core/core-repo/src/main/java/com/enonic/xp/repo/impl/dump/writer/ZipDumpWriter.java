@@ -10,7 +10,6 @@ import java.nio.file.StandardOpenOption;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
-import org.apache.commons.compress.archivers.zip.ZipMethod;
 
 import com.google.common.base.Preconditions;
 
@@ -45,8 +44,8 @@ public class ZipDumpWriter
         try
         {
             final ZipArchiveOutputStream zipArchiveOutputStream = new ZipArchiveOutputStream(
-                Files.newByteChannel( basePath.resolve( dumpName + ZIP_FILE_EXTENSION ), StandardOpenOption.CREATE,
-                                      StandardOpenOption.WRITE, StandardOpenOption.READ, StandardOpenOption.TRUNCATE_EXISTING ) );
+                Files.newOutputStream( basePath.resolve( dumpName + ZIP_FILE_EXTENSION ), StandardOpenOption.CREATE,
+                                       StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING ) );
 
             final PathRef basePathInZip = PathRef.of( dumpName );
             return new ZipDumpWriter( new DefaultFilePaths( basePathInZip ), zipArchiveOutputStream,
@@ -63,7 +62,6 @@ public class ZipDumpWriter
         throws IOException
     {
         final ZipArchiveEntry archiveEntry = new ZipArchiveEntry( metaFile.asString() );
-        archiveEntry.setMethod( ZipMethod.STORED.getCode() );
         zipArchiveOutputStream.putArchiveEntry( archiveEntry );
 
         return new FilterOutputStream( zipArchiveOutputStream )

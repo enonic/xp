@@ -29,6 +29,8 @@ public class ImportNodesParams
 
     private final Map<String, Object> xsltParams;
 
+    private final boolean archive;
+
     private final NodeImportListener nodeImportListener;
 
     private ImportNodesParams( final Builder builder )
@@ -40,6 +42,7 @@ public class ImportNodesParams
         this.importPermissions = builder.importPermissions;
         this.xslt = builder.xslt;
         this.xsltParams = builder.xsltParams;
+        this.archive = builder.archive;
         this.nodeImportListener = builder.nodeImportListener;
         this.exportName = builder.exportName;
     }
@@ -89,6 +92,11 @@ public class ImportNodesParams
         return xsltParams;
     }
 
+    public boolean isArchive()
+    {
+        return archive;
+    }
+
     public NodeImportListener getNodeImportListener()
     {
         return nodeImportListener;
@@ -107,6 +115,8 @@ public class ImportNodesParams
         private boolean importNodeIds;
 
         private boolean importPermissions;
+
+        private boolean archive = false;
 
         private VirtualFile xslt;
 
@@ -153,6 +163,12 @@ public class ImportNodesParams
         public Builder includePermissions( final boolean importPermissions )
         {
             this.importPermissions = importPermissions;
+            return this;
+        }
+
+        public Builder archive( final boolean archive )
+        {
+            this.archive = archive;
             return this;
         }
 
