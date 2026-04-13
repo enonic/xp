@@ -61,8 +61,8 @@ felix-log = { module = "org.apache.felix:org.apache.felix.log", version = "1.3.0
 
 bcprov-jdk18on = { module = "org.bouncycastle:bcprov-jdk18on", version = "1.83" }
 
-elasticsearch = { module = "org.elasticsearch:elasticsearch", version = "2.4.6" }
-elasticsearch-icu = { module = "org.elasticsearch.plugin:analysis-icu", version = "2.4.6" }
+elasticsearch = { module = "org.elasticsearch:elasticsearch", version = "9.3.3" }
+elasticsearch-icu = { module = "org.elasticsearch.plugin:analysis-icu", version = "9.3.3" }
 icu4j = { module = "com.ibm.icu:icu4j", version = "54.1" }
 
 jna = { module = "net.java.dev.jna:jna", version = "4.1.0" }
