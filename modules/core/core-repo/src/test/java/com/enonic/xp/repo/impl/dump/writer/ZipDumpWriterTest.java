@@ -3,9 +3,7 @@ package com.enonic.xp.repo.impl.dump.writer;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.List;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
@@ -58,67 +56,6 @@ class ZipDumpWriterTest
     }
 
     @Test
-    public void test()
-    {
-        List<TreeNode> result = generateTrees( 3 );
-        System.out.println( result.size() );
-    }
-
-    public List<TreeNode> generateTrees( int n )
-    {
-        return buildTrees( 1, n );
-    }
-
-    private List<TreeNode> buildTrees( int from, int to )
-    {
-        if ( from > to )
-        {
-            return List.of();
-        }
-
-        if ( from == to )
-        {
-            return List.of( new TreeNode( from ) );
-        }
-
-        List<TreeNode> result = new ArrayList<>();
-
-        for ( int i = from; i <= to; i++ )
-        {
-            List<TreeNode> leftTrees = buildTrees( from, i - 1 );
-            List<TreeNode> rightTrees = buildTrees( i + 1, to );
-
-            for ( TreeNode left : leftTrees )
-            {
-                if ( rightTrees.isEmpty() )
-                {
-                    TreeNode node = new TreeNode( i, left, null );
-                    result.add( node );
-                }
-                for ( TreeNode right : rightTrees )
-                {
-                    TreeNode node = new TreeNode( i, left, right );
-                    result.add( node );
-                }
-            }
-
-            for ( TreeNode right : rightTrees )
-            {
-                if ( leftTrees.isEmpty() )
-                {
-                    TreeNode node = new TreeNode( i, null, right );
-                    result.add( node );
-                }
-            }
-        }
-
-        return result;
-
-
-    }
-
-
-    @Test
     void writesSequentially_localFileHeadersUseDataDescriptor()
         throws IOException
     {
@@ -134,30 +71,5 @@ class ZipDumpWriterTest
         }
 
         assertAllLocalHeadersUseDataDescriptor( tempDir.resolve( dumpName + ".zip" ) );
-    }
-
-    public class TreeNode
-    {
-        int val;
-
-        TreeNode left;
-
-        TreeNode right;
-
-        TreeNode()
-        {
-        }
-
-        TreeNode( int val )
-        {
-            this.val = val;
-        }
-
-        TreeNode( int val, TreeNode left, TreeNode right )
-        {
-            this.val = val;
-            this.left = left;
-            this.right = right;
-        }
     }
 }

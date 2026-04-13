@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.export.reader;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
@@ -27,7 +28,7 @@ import com.enonic.xp.vfs.VirtualFilePath;
 import com.enonic.xp.vfs.VirtualFilePaths;
 
 public class ZipVirtualFile
-    implements VirtualFile
+    implements VirtualFile, Closeable
 {
     private final ZipFile zipFile;
 
@@ -86,10 +87,11 @@ public class ZipVirtualFile
                 if ( name.equals( rootFolder + "/export.properties" ) )
                 {
                     foldersWithExportProperties.add( rootFolder );
-                    if ( foldersWithExportProperties.size() > 2 )
+                    if ( foldersWithExportProperties.size() > 1 )
                     {
                         throw new IllegalArgumentException( "Cannot determine base path for zip archive '" + zipPath.getFileName() +
-                                                                "'. No folder with export.properties found." );
+                                                                "'. Found multiple folders with export.properties: " +
+                                                                foldersWithExportProperties );
                     }
                 }
             }
@@ -101,8 +103,7 @@ public class ZipVirtualFile
         }
 
         throw new IllegalArgumentException(
-            "Cannot determine base path for zip archive '" + zipPath.getFileName() + "'. Found multiple folders with export.properties: " +
-                foldersWithExportProperties );
+            "Cannot determine base path for zip archive '" + zipPath.getFileName() + "'. No folder with export.properties found." );
     }
 
     @Override
@@ -264,5 +265,12 @@ public class ZipVirtualFile
     public boolean exists()
     {
         return zipFile.getEntry( entryPath ) != null || isFolder();
+    }
+
+    @Override
+    public void close()
+        throws IOException
+    {
+        zipFile.close();
     }
 }

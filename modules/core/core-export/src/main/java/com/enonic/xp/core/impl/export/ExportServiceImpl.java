@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.export;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
@@ -132,18 +133,35 @@ public class ExportServiceImpl
             source = VirtualFiles.from( exportsDir.resolve( params.getExportName() ) );
         }
 
-        return NodeImporter.create()
-            .nodeService( this.nodeService )
-            .sourceDirectory( source )
-            .targetNodePath( params.getTargetNodePath() )
-            .dryRun( params.isDryRun() )
-            .importNodeIds( params.isImportNodeids() )
-            .importPermissions( params.isImportPermissions() )
-            .xslt( params.getXslt() )
-            .xsltParams( params.getXsltParams() )
-            .nodeImportListener( params.getNodeImportListener() )
-            .build()
-            .execute();
+        try
+        {
+            return NodeImporter.create()
+                .nodeService( this.nodeService )
+                .sourceDirectory( source )
+                .targetNodePath( params.getTargetNodePath() )
+                .dryRun( params.isDryRun() )
+                .importNodeIds( params.isImportNodeids() )
+                .importPermissions( params.isImportPermissions() )
+                .xslt( params.getXslt() )
+                .xsltParams( params.getXsltParams() )
+                .nodeImportListener( params.getNodeImportListener() )
+                .build()
+                .execute();
+        }
+        finally
+        {
+            if ( source instanceof Closeable )
+            {
+                try
+                {
+                    ( (Closeable) source ).close();
+                }
+                catch ( IOException e )
+                {
+                    throw new UncheckedIOException( e );
+                }
+            }
+        }
     }
 
     private VirtualFile resolveZipImportSource( final String exportName )
