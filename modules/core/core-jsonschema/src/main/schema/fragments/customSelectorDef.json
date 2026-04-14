@@ -5,6 +5,11 @@
       "const": "CustomSelector"
     },
     "service": {
+      "type": "string",
+      "deprecated": true,
+      "description": "Deprecated. Use 'extension' instead."
+    },
+    "extension": {
       "type": "string"
     },
     "params": {
@@ -19,5 +24,27 @@
     "default": {
       "type": "string"
     }
-  }
+  },
+  "oneOf": [
+    {
+      "required": [
+        "service"
+      ],
+      "not": {
+        "required": [
+          "extension"
+        ]
+      }
+    },
+    {
+      "required": [
+        "extension"
+      ],
+      "not": {
+        "required": [
+          "service"
+        ]
+      }
+    }
+  ]
 }
