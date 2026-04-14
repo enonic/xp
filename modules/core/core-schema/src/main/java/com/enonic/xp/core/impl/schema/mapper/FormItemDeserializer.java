@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.FormFragment;
 import com.enonic.xp.form.FormItem;
@@ -34,7 +35,7 @@ public class FormItemDeserializer
 
         final String include = node.path( "include" ).asText( null );
 
-        final ApplicationKey currentApplication =  resolveApplicationKey( ctxt );
+        final ApplicationKey currentApplication = resolveApplicationKey( ctxt );
 
         if ( include != null && node.size() == 1 )
         {
@@ -58,10 +59,15 @@ public class FormItemDeserializer
                 if ( InputTypeName.CUSTOM_SELECTOR.toString().equals( inputYml.type ) )
                 {
                     final Map<String, GenericValue> topLevelAttributes = inputYml.getTopLevelAttributes();
+                    if ( topLevelAttributes.containsKey( "extension" ) )
+                    {
+                        topLevelAttributes.put( "extension", GenericValue.stringValue(
+                            resolveExtensionDescriptor( topLevelAttributes.get( "extension" ).asString(), currentApplication ) ) );
+                    }
                     if ( topLevelAttributes.containsKey( "service" ) )
                     {
                         topLevelAttributes.put( "service", GenericValue.stringValue(
-                            toServiceUrl( topLevelAttributes.get( "service" ).asString(), resolveApplicationKey( ctxt ) ) ) );
+                            toServiceUrl( topLevelAttributes.get( "service" ).asString(), currentApplication ) ) );
                     }
                 }
 
@@ -76,6 +82,19 @@ public class FormItemDeserializer
         return (ApplicationKey) ctxt.findInjectableValue( "currentApplication", null, null, null, null );
     }
 
+    private static String resolveExtensionDescriptor( final String extension, final ApplicationKey currentApplication )
+    {
+        if ( extension.contains( ":" ) )
+        {
+            return extension;
+        }
+        else
+        {
+            return DescriptorKey.from( currentApplication, extension ).toString();
+        }
+    }
+
+    // Service is deprecated
     private static String toServiceUrl( final String serviceName, final ApplicationKey currentApplication )
     {
         if ( serviceName.contains( ":" ) )
