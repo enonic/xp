@@ -5,7 +5,9 @@
       "const": "CustomSelector"
     },
     "service": {
-      "type": "string"
+      "type": "string",
+      "deprecated": true,
+      "description": "Deprecated. Use 'extension' instead."
     },
     "extension": {
       "type": "string"
