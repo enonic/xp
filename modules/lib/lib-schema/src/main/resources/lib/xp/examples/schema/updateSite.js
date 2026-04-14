@@ -4,7 +4,7 @@ var assert = require('/lib/xp/testing');
 /* global log*/
 
 let resource = `kind: "CMS"
-mixin:
+mixins:
 - name: "myapp1:menu-item"
   optional: false
   allowContentTypes: "mycontent"
@@ -35,7 +35,7 @@ log.info('Updated site: ' + result.application);
 assert.assertJsonEquals({
     application: 'myapp',
     resource: `kind: "CMS"
-mixin:
+mixins:
 - name: "myapp1:menu-item"
   optional: false
   allowContentTypes: "mycontent"
