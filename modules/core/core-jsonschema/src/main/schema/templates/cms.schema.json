@@ -7,7 +7,7 @@
       "type": "string",
       "const": "CMS"
     },
-    "mixin": {
+    "mixins": {
       "type": "array",
       "items": {
         "$ref": "#/$defs/mixinMapping"

@@ -1,5 +1,5 @@
 kind: "CMS"
-mixin:
+mixins:
   - name: "myapp:mymixin"
     optional: true
     allowContentTypes: "myapp:.*"
