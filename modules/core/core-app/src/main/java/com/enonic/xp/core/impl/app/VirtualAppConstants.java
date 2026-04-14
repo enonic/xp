@@ -48,7 +48,7 @@ public final class VirtualAppConstants
 
     public static final String CMS_DESCRIPTOR_DEFAULT_VALUE = """
         kind: "CMS"
-        mixin: [ ]
+        mixins: [ ]
         form: [ ]
         """;
 
