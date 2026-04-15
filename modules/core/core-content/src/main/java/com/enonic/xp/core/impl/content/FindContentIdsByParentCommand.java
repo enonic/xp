@@ -12,7 +12,6 @@ import com.enonic.xp.content.FindContentIdsByParentResult;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
-import com.enonic.xp.node.NodeId;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.filter.Filters;
@@ -44,22 +43,10 @@ final class FindContentIdsByParentCommand
 
     private FindNodesByParentParams createFindNodesByParentParams()
     {
-        final FindNodesByParentParams.Builder builder = FindNodesByParentParams.create();
-
-        if ( params.getParentPath() != null )
-        {
-            builder.parentPath( ContentNodeHelper.translateContentPathToNodePath( params.getParentPath() ) );
-        }
-        else if ( params.getParentId() != null )
-        {
-            builder.parentId( NodeId.from( params.getParentId() ) );
-        }
-        else
-        {
-            builder.parentPath( ContentNodeHelper.getContentRoot() );
-        }
-
         final Content parentContent = getParentContent();
+
+        final FindNodesByParentParams.Builder builder = FindNodesByParentParams.create()
+            .parentPath( ContentNodeHelper.translateContentPathToNodePath( parentContent.getPath() ) );
 
         ChildOrder childOrder = params.getChildOrder();
         if ( childOrder == null )
