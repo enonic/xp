@@ -176,7 +176,7 @@ addBundle( project( ':app:app-system' ), 32 )
 
 def repackTikaParserBundle( depProvider, level, Closure extraConfig = null ) {
     repackBundle( depProvider, level) {
-        fragmentHost = "org.apache.tika.bundle-standard;bundle-version=\"[3.2,4)\""
+        fragmentHost = "org.apache.tika.bundle-standard;bundle-version=\"[3.3,4)\""
         if (extraConfig) {
             extraConfig.delegate = delegate
             extraConfig.resolveStrategy = Closure.DELEGATE_FIRST
