@@ -17,16 +17,13 @@ public final class StyleDescriptor
 {
     private final ApplicationKey applicationKey;
 
-    private final String cssPath;
-
-    private final ImmutableList<ImageStyle> elements;
+    private final ImmutableList<Style> elements;
 
     private final Instant modifiedTime;
 
     private StyleDescriptor( final Builder builder )
     {
         this.applicationKey = requireNonNull( builder.application, "applicationKey is required" );
-        this.cssPath = builder.cssPath;
         this.elements = builder.elements.build();
         this.modifiedTime = builder.modifiedTime;
     }
@@ -36,12 +33,7 @@ public final class StyleDescriptor
         return applicationKey;
     }
 
-    public String getCssPath()
-    {
-        return cssPath;
-    }
-
-    public List<ImageStyle> getElements()
+    public List<Style> getElements()
     {
         return elements;
     }
@@ -63,14 +55,14 @@ public final class StyleDescriptor
             return false;
         }
         final StyleDescriptor that = (StyleDescriptor) o;
-        return Objects.equals( applicationKey, that.applicationKey ) && Objects.equals( cssPath, that.cssPath ) &&
+        return Objects.equals( applicationKey, that.applicationKey ) &&
             Objects.equals( elements, that.elements ) && Objects.equals( modifiedTime, that.modifiedTime );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( applicationKey, cssPath, elements, modifiedTime );
+        return Objects.hash( applicationKey, elements, modifiedTime );
     }
 
     public static Builder copyOf( final StyleDescriptor styleDescriptor )
@@ -88,7 +80,6 @@ public final class StyleDescriptor
     {
         return MoreObjects.toStringHelper( this )
             .add( "applicationKey", applicationKey )
-            .add( "cssPath", cssPath )
             .add( "elements", elements )
             .add( "modifiedTime", modifiedTime )
             .toString();
@@ -98,11 +89,9 @@ public final class StyleDescriptor
     {
         private ApplicationKey application;
 
-        private String cssPath;
-
         private Instant modifiedTime;
 
-        private final ImmutableList.Builder<ImageStyle> elements;
+        private final ImmutableList.Builder<Style> elements;
 
         private final Set<String> elementNames;
 
@@ -111,7 +100,6 @@ public final class StyleDescriptor
             this();
             styleDescriptor.getElements().forEach( this::addStyleElement );
             this.application = styleDescriptor.applicationKey;
-            this.cssPath = styleDescriptor.cssPath;
             this.modifiedTime = styleDescriptor.modifiedTime;
         }
 
@@ -127,19 +115,13 @@ public final class StyleDescriptor
             return this;
         }
 
-        public Builder cssPath( final String cssPath )
-        {
-            this.cssPath = cssPath;
-            return this;
-        }
-
         public Builder modifiedTime( final Instant modifiedTime )
         {
             this.modifiedTime = modifiedTime;
             return this;
         }
 
-        public Builder addStyleElement( final ImageStyle element )
+        public Builder addStyleElement( final Style element )
         {
             if ( this.elementNames.contains( element.getName() ) )
             {
@@ -150,7 +132,7 @@ public final class StyleDescriptor
             return this;
         }
 
-        public Builder addStyleElements( final Iterable<ImageStyle> elements )
+        public Builder addStyleElements( final Iterable<Style> elements )
         {
             elements.forEach( this::addStyleElement );
             return this;

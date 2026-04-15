@@ -1,7 +1,0 @@
-kind: "Style"
-css: "styles/styles.css"
-image:
-  - name: "editor-style-original"
-    displayName:
-      text: "Original (no image processing)"
-      i18n: "style.editor.original"

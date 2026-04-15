@@ -16,12 +16,10 @@ class StyleDescriptorsTest
     {
         StyleDescriptor styleDescriptor = StyleDescriptor.create().
             application( ApplicationKey.from( "myapp" ) ).
-            cssPath( "assets/styles.css" ).
             build();
 
         StyleDescriptor styleDescriptor2 = StyleDescriptor.create().
             application( ApplicationKey.from( "myapp2" ) ).
-            cssPath( "assets/styles.css" ).
             build();
 
         final StyleDescriptors styleDescriptors = StyleDescriptors.from( styleDescriptor, styleDescriptor2 );
@@ -34,12 +32,10 @@ class StyleDescriptorsTest
     {
         StyleDescriptor styleDescriptor = StyleDescriptor.create().
             application( ApplicationKey.from( "myapp" ) ).
-            cssPath( "assets/styles.css" ).
             build();
 
         StyleDescriptor styleDescriptor2 = StyleDescriptor.create().
             application( ApplicationKey.from( "myapp2" ) ).
-            cssPath( "assets/styles.css" ).
             build();
 
         final StyleDescriptors styleDescriptors = StyleDescriptors.from( List.of( styleDescriptor, styleDescriptor2 ) );

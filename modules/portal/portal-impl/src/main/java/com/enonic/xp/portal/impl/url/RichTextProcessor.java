@@ -300,6 +300,8 @@ public class RichTextProcessor
     {
         return styleDescriptors.stream()
             .flatMap( styleDescriptor -> styleDescriptor.getElements().stream() )
+            .filter( element -> element instanceof ImageStyle )
+            .map( ImageStyle.class::cast )
             .collect(
                 Collectors.toUnmodifiableMap( ImageStyle::getName, elementStyle -> elementStyle, ( existingKey, newKey ) -> existingKey ) );
     }

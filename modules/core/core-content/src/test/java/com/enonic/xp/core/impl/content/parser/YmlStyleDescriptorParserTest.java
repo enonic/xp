@@ -9,11 +9,14 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.style.ImageStyle;
+import com.enonic.xp.style.Style;
 import com.enonic.xp.style.StyleDescriptor;
+import com.enonic.xp.util.GenericValue;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class YmlStyleDescriptorParserTest
 {
@@ -32,27 +35,32 @@ public class YmlStyleDescriptorParserTest
         final StyleDescriptor descriptor = builder.build();
 
         assertEquals( currentApplication, descriptor.getApplicationKey() );
-        assertEquals( "assets/styles.css", descriptor.getCssPath() );
 
-        final List<ImageStyle> elements = descriptor.getElements();
+        final List<Style> elements = descriptor.getElements();
         assertNotNull( elements );
         assertEquals( 2, elements.size() );
 
-        final ImageStyle imageStyle_1 = elements.getFirst();
-        assertInstanceOf( ImageStyle.class, imageStyle_1 );
+        final Style imageStyle_1 = elements.getFirst();
+        assertInstanceOf( Style.class, imageStyle_1 );
 
         assertEquals( "editor-width-auto", imageStyle_1.getName() );
-        assertEquals( "Override ${width}", imageStyle_1.getDisplayName() );
-        assertEquals( "editor-width-auto-text", imageStyle_1.getDisplayNameI18nKey() );
+        assertEquals( "Override ${width}", imageStyle_1.getLabel() );
+        assertEquals( "editor-width-auto-text", imageStyle_1.getLabelI18nKey() );
 
-        assertInstanceOf( ImageStyle.class, elements.getLast() );
+        assertInstanceOf( Style.class, elements.getLast() );
 
         final ImageStyle imageStyle_2 = (ImageStyle) elements.getLast();
         assertEquals( "editor-style-cinema", imageStyle_2.getName() );
-        assertEquals( "Cinema", imageStyle_2.getDisplayName() );
-        assertEquals( "editor-style-cinema-text", imageStyle_2.getDisplayNameI18nKey() );
+        assertEquals( "Cinema", imageStyle_2.getLabel() );
+        assertEquals( "editor-style-cinema-text", imageStyle_2.getLabelI18nKey() );
         assertEquals( "21:9", imageStyle_2.getAspectRatio() );
         assertEquals( "pixelate(10)", imageStyle_2.getFilter() );
+
+        final GenericValue editor = imageStyle_2.getEditor();
+        assertNotNull( editor );
+
+        final String css = editor.property( "css" ).asString();
+        assertTrue( css.contains(".my-selector") );
     }
 
     private String readAsString( final String name )

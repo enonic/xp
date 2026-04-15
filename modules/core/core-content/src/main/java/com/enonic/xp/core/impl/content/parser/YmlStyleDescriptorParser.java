@@ -1,15 +1,16 @@
 package com.enonic.xp.core.impl.content.parser;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JacksonInject;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
@@ -19,6 +20,8 @@ import com.enonic.xp.core.impl.schema.YmlParserBase;
 import com.enonic.xp.schema.LocalizedText;
 import com.enonic.xp.style.ImageStyle;
 import com.enonic.xp.style.StyleDescriptor;
+import com.enonic.xp.style.Style;
+import com.enonic.xp.util.GenericValue;
 
 public final class YmlStyleDescriptorParser
 {
@@ -40,61 +43,65 @@ public final class YmlStyleDescriptorParser
     @JsonIgnoreProperties("kind")
     private abstract static class StyleDescriptorBuilderMixIn
     {
-        @JsonCreator
-        static StyleDescriptor.Builder create()
-        {
-            return StyleDescriptor.create();
-        }
-
         @JacksonInject("currentApplication")
         abstract StyleDescriptor.Builder application( ApplicationKey applicationKey );
 
-        @JsonProperty("css")
-        abstract StyleDescriptor.Builder cssPath( String cssPath );
-
-        @JsonProperty("image")
-        @JsonDeserialize(using = ImageStyleDeserializer.class)
-        abstract StyleDescriptor.Builder addStyleElements( Iterable<ImageStyle> elements );
+        @JsonProperty("styles")
+        @JsonDeserialize(using = StyleElementDeserializer.class)
+        abstract StyleDescriptor.Builder addStyleElements( Iterable<Style> elements );
     }
 
     @JsonDeserialize(builder = ImageStyle.Builder.class)
     private abstract static class ImageStyleMixIn
     {
-        @JsonCreator
-        static ImageStyle.Builder create()
-        {
-            return ImageStyle.create();
-        }
-
+        @JsonIgnoreProperties("type")
         @JsonPOJOBuilder(withPrefix = "")
         abstract static class Builder
         {
             @JsonProperty("name")
             abstract ImageStyle.Builder name( String name );
 
-            @JsonProperty("displayName")
-            abstract ImageStyle.Builder displayName( LocalizedText text );
+            @JsonProperty("label")
+            abstract ImageStyle.Builder label( LocalizedText text );
 
             @JsonProperty("aspectRatio")
             abstract ImageStyle.Builder aspectRatio( String aspectRatio );
 
             @JsonProperty("filter")
             abstract ImageStyle.Builder filter( String filter );
+
+            @JsonProperty("editor")
+            abstract ImageStyle.Builder editor( GenericValue value );
         }
     }
 
-    private static final class ImageStyleDeserializer
-        extends JsonDeserializer<Iterable<ImageStyle>>
+    private static final class StyleElementDeserializer
+        extends JsonDeserializer<Iterable<Style>>
     {
-
         @Override
-        public Iterable<ImageStyle> deserialize( final JsonParser jsonParser, final DeserializationContext ctxt )
+        public Iterable<Style> deserialize( final JsonParser jsonParser, final DeserializationContext ctxt )
             throws IOException
         {
             final ObjectMapper mapper = (ObjectMapper) jsonParser.getCodec();
-            return mapper.readValue( jsonParser, new TypeReference<>()
+            final JsonNode node = mapper.readTree( jsonParser );
+
+            final List<Style> result = new ArrayList<>();
+
+            for ( JsonNode styleNode : node )
             {
-            } );
+                final String type = styleNode.get( "type" ).asText();
+
+                if ( "Image".equals( type ) )
+                {
+                    result.add( mapper.treeToValue( styleNode, ImageStyle.class ) );
+                }
+                else
+                {
+                    throw new IllegalArgumentException( String.format( "Unknown style type \"%s\"", type ) );
+                }
+            }
+
+            return result;
         }
     }
 }
