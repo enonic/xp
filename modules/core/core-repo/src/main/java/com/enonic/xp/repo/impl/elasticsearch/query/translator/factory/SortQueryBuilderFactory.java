@@ -62,7 +62,7 @@ public class SortQueryBuilderFactory
     private SortBuilder createFieldSortBuilder( final FieldOrderExpr fieldOrderExpr )
     {
         final FieldSortBuilder fieldSortBuilder = new FieldSortBuilder(
-            fieldNameResolver.resolveOrderByFieldName( fieldOrderExpr.getField().getFieldPath(), fieldOrderExpr.getLanguage() ) );
+            fieldNameResolver.resolveOrderByFieldName( fieldOrderExpr.getField().getIndexPath(), fieldOrderExpr.getLanguage() ) );
         if ( fieldOrderExpr.getDirection() != null )
         {
             fieldSortBuilder.order( SortOrder.valueOf( fieldOrderExpr.getDirection().name() ) );

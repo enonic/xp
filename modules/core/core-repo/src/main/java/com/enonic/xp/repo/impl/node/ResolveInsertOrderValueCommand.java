@@ -8,6 +8,8 @@ import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.FieldExpr;
+import com.enonic.xp.query.expr.FieldOrderExpr;
+import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.repo.impl.InternalContext;
@@ -30,8 +32,8 @@ public class ResolveInsertOrderValueCommand
 
     public long insert( final boolean last )
     {
-        final Long manualOrderValue = NodeHelper.runAsAdmin(
-            () -> this.getManualOrderValue( last ? ChildOrder.reverseManualOrder() : ChildOrder.manualOrder(), null ) );
+        final Long manualOrderValue =
+            NodeHelper.runAsAdmin( () -> this.getManualOrderValue( last ? reverseManualOrder() : ChildOrder.manualOrder(), null ) );
         if ( manualOrderValue == null )
         {
             return NodeManualOrderValueResolver.first();
@@ -44,7 +46,7 @@ public class ResolveInsertOrderValueCommand
 
     public long reorder( final Long before, final Long current )
     {
-        final Long manualOrderValue = NodeHelper.runAsAdmin( () -> this.getManualOrderValue( ChildOrder.reverseManualOrder(), before ) );
+        final Long manualOrderValue = NodeHelper.runAsAdmin( () -> this.getManualOrderValue( reverseManualOrder(), before ) );
 
         if ( manualOrderValue == null )
         {
@@ -87,6 +89,15 @@ public class ResolveInsertOrderValueCommand
                 .orElseThrow(
                     () -> new IllegalStateException( String.format( "Node with id [%s] missing manual order value", hit.getId() ) ) );
         }
+    }
+
+    private static ChildOrder reverseManualOrder()
+    {
+
+        return ChildOrder.create()
+            .add( FieldOrderExpr.create( NodeIndexPath.MANUAL_ORDER_VALUE, OrderExpr.Direction.ASC ) )
+            .add( FieldOrderExpr.create( NodeIndexPath.TIMESTAMP, OrderExpr.Direction.ASC ) )
+            .build();
     }
 
     public static Builder create()

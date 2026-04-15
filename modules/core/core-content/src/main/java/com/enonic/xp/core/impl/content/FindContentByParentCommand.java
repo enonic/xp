@@ -5,12 +5,8 @@ import java.util.Objects;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
-import com.enonic.xp.node.FindNodesByParentParams;
-import com.enonic.xp.node.FindNodesByParentResult;
-import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.Nodes;
-import com.enonic.xp.query.filter.Filters;
+import com.enonic.xp.content.FindContentIdsByParentResult;
+import com.enonic.xp.content.GetContentByIdsParams;
 
 final class FindContentByParentCommand
     extends AbstractContentCommand
@@ -30,45 +26,22 @@ final class FindContentByParentCommand
 
     FindContentByParentResult execute()
     {
-        final FindNodesByParentResult result = nodeService.findByParent( createFindNodesByParentParams() );
+        final FindContentIdsByParentResult idsResult = FindContentIdsByParentCommand.create( params )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .eventPublisher( this.eventPublisher )
+            .build()
+            .execute();
 
-        final Nodes nodes = this.nodeService.getByIds( result.getNodeIds() );
+        final Contents contents =
+            GetContentByIdsCommand.create( GetContentByIdsParams.create().contentIds( idsResult.getContentIds() ).build() )
+                .nodeService( this.nodeService )
+                .contentTypeService( this.contentTypeService )
+                .eventPublisher( this.eventPublisher )
+                .build()
+                .execute();
 
-        final Contents contents = ContentNodeTranslator.fromNodes( nodes );
-
-        return FindContentByParentResult.create().contents( contents ).totalHits( result.getTotalHits() ).build();
-    }
-
-    private FindNodesByParentParams createFindNodesByParentParams()
-    {
-        final FindNodesByParentParams.Builder findNodesParam = FindNodesByParentParams.create();
-
-        setNodePathOrIdAsIdentifier( findNodesParam );
-
-        return findNodesParam.queryFilters( Filters.create().addAll( createFilters() ).addAll( params.getQueryFilters() ).build() )
-            .from( params.getFrom() )
-            .size( params.getSize() )
-            .childOrder( params.getChildOrder() )
-            .build();
-    }
-
-    private void setNodePathOrIdAsIdentifier( final FindNodesByParentParams.Builder findNodesParam )
-    {
-        if ( params.getParentPath() == null && params.getParentId() == null )
-        {
-            final NodePath parentPath = ContentNodeHelper.getContentRoot();
-            findNodesParam.parentPath( parentPath );
-        }
-        else if ( params.getParentPath() != null )
-        {
-            final NodePath parentPath = ContentNodeHelper.translateContentPathToNodePath( params.getParentPath() );
-            findNodesParam.parentPath( parentPath );
-        }
-        else
-        {
-            final NodeId parentId = NodeId.from( params.getParentId() );
-            findNodesParam.parentId( parentId );
-        }
+        return FindContentByParentResult.create().contents( contents ).totalHits( idsResult.getTotalHits() ).build();
     }
 
     public static class Builder

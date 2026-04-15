@@ -110,7 +110,7 @@ abstract class ExpressionQueryBuilder
             {
                 return FIELD_NAME_RESOLVER.resolve( field, StaticIndexValueType.NUMBER );
             }
-            return FIELD_NAME_RESOLVER.resolve( field );
+            return FIELD_NAME_RESOLVER.resolve( field, StaticIndexValueType.STRING );
         }
 
         switch ( type )
@@ -118,7 +118,7 @@ abstract class ExpressionQueryBuilder
             case "dateTime":
                 return FIELD_NAME_RESOLVER.resolve( field, StaticIndexValueType.DATETIME );
             case "time":
-                return FIELD_NAME_RESOLVER.resolve( field );
+                return FIELD_NAME_RESOLVER.resolve( field, StaticIndexValueType.STRING );
             default:
                 throw new IllegalArgumentException( String.format( "There is no [%s] dsl expression type", type ) );
         }
