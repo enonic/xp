@@ -4,6 +4,7 @@ import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 
+import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.query.expr.DslOrderExpr;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.AbstractBuilderFactory;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFieldNameResolver;
@@ -33,10 +34,8 @@ public class DslSortBuilderFactory
         }
         else
         {
-            final String field = orderExpr.getField();
-
-            final FieldSortBuilder fieldSortBuilder =
-                new FieldSortBuilder( fieldNameResolver.resolveOrderByFieldName( field, orderExpr.getLanguage() ) );
+            final FieldSortBuilder fieldSortBuilder = new FieldSortBuilder(
+                fieldNameResolver.resolveOrderByFieldName( IndexPath.from( orderExpr.getField() ), orderExpr.getLanguage() ) );
 
             if ( orderExpr.getDirection() != null )
             {

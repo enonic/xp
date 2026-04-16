@@ -1,6 +1,7 @@
 package com.enonic.xp.query.parser;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.function.BinaryOperator;
 import java.util.function.UnaryOperator;
 
@@ -27,7 +28,7 @@ final class QueryGrammar
 {
     private static final String[] OPERATORS = {"=", "!=", ">", ">=", "<", "<=", ",", "(", ")"};
 
-    private static final String[] KEYWORDS = {"AND", "OR", "NOT", "LIKE", "IN", "ASC", "DESC", "ORDER", "BY"};
+    private static final String[] KEYWORDS = {"AND", "OR", "NOT", "LIKE", "IN", "ASC", "DESC", "ORDER", "BY", "COLLATE"};
 
     private final Terminals terminals;
 
@@ -192,7 +193,8 @@ final class QueryGrammar
 
     private Parser<FieldOrderExpr> parseFieldOrder()
     {
-        return Parsers.sequence( parseField(), parseOrderDirection(), QueryMapper.fieldOrderExpr() );
+        final Parser<Locale> collate = term( "COLLATE" ).next( parseName() ).map( Locale::forLanguageTag ).optional( null );
+        return Parsers.sequence( parseField(), collate, parseOrderDirection(), QueryMapper.fieldOrderExpr() );
     }
 
     private Parser<DynamicOrderExpr> parseDynamicOrder()

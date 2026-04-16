@@ -15,9 +15,15 @@ public final class FieldExpr
         this.indexPath = Objects.requireNonNull( indexPath );
     }
 
+    @Deprecated
     public String getFieldPath()
     {
         return this.indexPath.getPath();
+    }
+
+    public IndexPath getIndexPath()
+    {
+        return this.indexPath;
     }
 
     public static FieldExpr from( final IndexPath indexPath )

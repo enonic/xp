@@ -15,10 +15,10 @@ public final class FieldOrderExpr
 
     public FieldOrderExpr( final FieldExpr field, final Direction direction )
     {
-        this( field, direction, null );
+        this( field, null, direction );
     }
 
-    private FieldOrderExpr( final FieldExpr field, final Direction direction, final Locale language )
+    public FieldOrderExpr( final FieldExpr field, final Locale language, final Direction direction )
     {
         super( direction );
         this.field = Objects.requireNonNull( field );
@@ -32,22 +32,12 @@ public final class FieldOrderExpr
 
     public static FieldOrderExpr create( final IndexPath indexPath, Direction direction, final Locale language )
     {
-        return new FieldOrderExpr( FieldExpr.from( indexPath ), direction, language );
+        return new FieldOrderExpr( FieldExpr.from( indexPath ), language, direction );
     }
 
     public static FieldOrderExpr create( final IndexPath indexPath, Direction direction )
     {
         return new FieldOrderExpr( FieldExpr.from( indexPath ), direction );
-    }
-
-    public static FieldOrderExpr create( final String indexPath, Direction direction )
-    {
-        return new FieldOrderExpr( FieldExpr.from( indexPath ), direction );
-    }
-
-    public static FieldOrderExpr create( final String indexPath, Direction direction, final Locale language )
-    {
-        return new FieldOrderExpr( FieldExpr.from( indexPath ), direction, language );
     }
 
     public Locale getLanguage()
@@ -58,7 +48,8 @@ public final class FieldOrderExpr
     @Override
     public String toString()
     {
-        return this.field + ( getDirection() != null ? " " + getDirection().name() : "" );
+        return this.field + ( language != null ? " COLLATE " + language.toLanguageTag() : "" ) +
+            ( getDirection() != null ? " " + getDirection().name() : "" );
     }
 
     @Override
