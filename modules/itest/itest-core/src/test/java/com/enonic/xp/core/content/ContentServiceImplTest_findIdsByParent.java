@@ -2,15 +2,21 @@ package com.enonic.xp.core.content;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Locale;
 
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentIdsByParentResult;
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.schema.content.ContentTypeName;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -217,6 +223,56 @@ class ContentServiceImplTest_findIdsByParent
             assertEquals( 1, result.getTotalHits() );
             return null;
         } );
+    }
+
+    @Test
+    void childOrderWithLanguage_applies_parent_language_to_displayName_sort()
+    {
+        final Content parent = contentService.create( CreateContentParams.create()
+                                                          .displayName( "parent" )
+                                                          .parent( ContentPath.ROOT )
+                                                          .contentData( new PropertyTree() )
+                                                          .type( ContentTypeName.folder() )
+                                                          .language( Locale.forLanguageTag( "nb" ) )
+                                                          .childOrder( ChildOrder.from( "displayName ASC" ) )
+                                                          .build() );
+
+        // Norwegian ICU collation: æ < ø < å
+        contentService.create( CreateContentParams.create()
+                                   .displayName( "år" )
+                                   .parent( parent.getPath() )
+                                   .contentData( new PropertyTree() )
+                                   .type( ContentTypeName.folder() )
+                                   .language( Locale.forLanguageTag( "no" ) )
+                                   .build() );
+        contentService.create( CreateContentParams.create()
+                                   .displayName( "øl" )
+                                   .parent( parent.getPath() )
+                                   .contentData( new PropertyTree() )
+                                   .type( ContentTypeName.folder() )
+                                   .language( Locale.forLanguageTag( "no" ) )
+                                   .build() );
+        contentService.create( CreateContentParams.create()
+                                   .displayName( "æsel" )
+                                   .parent( parent.getPath() )
+                                   .contentData( new PropertyTree() )
+                                   .type( ContentTypeName.folder() )
+                                   .language( Locale.forLanguageTag( "no" ) )
+                                   .build() );
+        contentService.create( CreateContentParams.create()
+                                   .displayName( "alfa" )
+                                   .parent( parent.getPath() )
+                                   .contentData( new PropertyTree() )
+                                   .type( ContentTypeName.folder() )
+                                   .language( Locale.forLanguageTag( "no" ) )
+                                   .build() );
+
+        final FindContentIdsByParentResult result = contentService.findIdsByParent(
+            FindContentByParentParams.create().parentPath( parent.getPath() ).build() );
+
+        assertThat( result.getContentIds() ).extracting( contentService::getById )
+            .extracting( Content::getDisplayName )
+            .containsExactly( "alfa", "æsel", "øl", "år" );
     }
 
     private FindContentIdsByParentResult findIdsByParent()
