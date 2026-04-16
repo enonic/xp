@@ -30,7 +30,7 @@ mockjavamail = { module = "org.jvnet.mock-javamail:mock-javamail", version = "2.
 slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
 slf4j-jultoslf4j = { module = "org.slf4j:jul-to-slf4j", version.ref = "slf4j" }
-slf4j-jcloverslf4j= { module = "org.slf4j:jcl-over-slf4j", version.ref = "slf4j" }
+slf4j-jcloverslf4j = { module = "org.slf4j:jcl-over-slf4j", version.ref = "slf4j" }
 slf4j-log4joverslf4j = { module = "org.slf4j:log4j-over-slf4j", version.ref = "slf4j" }
 jboss-logging = { module = "org.jboss.logging:jboss-logging", version = "3.6.3.Final" }
 logback-classic = { module = "ch.qos.logback:logback-classic", version = "1.5.32" }
@@ -63,13 +63,13 @@ bcprov-jdk18on = { module = "org.bouncycastle:bcprov-jdk18on", version = "1.83" 
 
 elasticsearch = { module = "org.elasticsearch:elasticsearch", version = "2.4.6" }
 elasticsearch-icu = { module = "org.elasticsearch.plugin:analysis-icu", version = "2.4.6" }
-icu4j = { module = "com.ibm.icu:icu4j", version = "54.1" }
+icu4j = { module = "com.ibm.icu:icu4j", version = "78.3" }
 
 jna = { module = "net.java.dev.jna:jna", version = "4.1.0" }
 
 jspecify = { module = "org.jspecify:jspecify", version = "1.0.0" }
 
-guava-guava = { module = "com.google.guava:guava", version.ref = "guava"  }
+guava-guava = { module = "com.google.guava:guava", version.ref = "guava" }
 guava-failureaccess = { module = "com.google.guava:failureaccess", version = "1.0.3" }
 
 jsoup = { module = "org.jsoup:jsoup", version = "1.21.2" }

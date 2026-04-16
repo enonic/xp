@@ -1,14 +1,19 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.Locale;
 import java.util.Objects;
 
+import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.ContentIndexPath;
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentIdsByParentResult;
+import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
-import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodePath;
+import com.enonic.xp.query.expr.FieldOrderExpr;
+import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.filter.Filters;
 
 final class FindContentIdsByParentCommand
@@ -33,46 +38,67 @@ final class FindContentIdsByParentCommand
 
         final ContentIds contentIds = ContentNodeHelper.toContentIds( result.getNodeIds() );
 
-        return FindContentIdsByParentResult.create().
-            contentIds( contentIds ).
-            totalHits( result.getTotalHits() ).
-            build();
+        return FindContentIdsByParentResult.create().contentIds( contentIds ).totalHits( result.getTotalHits() ).build();
     }
 
     private FindNodesByParentParams createFindNodesByParentParams()
     {
-        final FindNodesByParentParams.Builder findNodesParam = FindNodesByParentParams.create();
+        final Content parentContent = getParentContent();
 
-        setNodePathOrIdAsIdentifier( findNodesParam );
+        final FindNodesByParentParams.Builder builder = FindNodesByParentParams.create()
+            .parentPath( ContentNodeHelper.translateContentPathToNodePath( parentContent.getPath() ) );
 
-        findNodesParam.
-            queryFilters( Filters.create().addAll( createFilters() ).addAll( params.getQueryFilters() ).build() ).
-            from( params.getFrom() ).
-            size( params.getSize() ).
-            childOrder( params.getChildOrder() ).
-            recursive( params.isRecursive() ).
-            build();
+        ChildOrder childOrder = params.getChildOrder();
+        if ( childOrder == null )
+        {
+            childOrder = parentContent.getChildOrder();
+        }
+        childOrder = childOrderWithLanguage( childOrder, parentContent.getLanguage() );
 
-        return findNodesParam.build();
+        return builder.queryFilters( Filters.create().addAll( createFilters() ).addAll( params.getQueryFilters() ).build() )
+            .from( params.getFrom() )
+            .size( params.getSize() )
+            .childOrder( childOrder )
+            .recursive( params.isRecursive() )
+            .build();
     }
 
-    private void setNodePathOrIdAsIdentifier( final FindNodesByParentParams.Builder findNodesParam )
+    private Content getParentContent()
     {
-        if ( params.getParentPath() == null && params.getParentId() == null )
+        if ( params.getParentPath() != null )
         {
-            final NodePath parentPath = ContentNodeHelper.getContentRoot();
-            findNodesParam.parentPath( parentPath );
+            return getContent( params.getParentPath() );
         }
-        else if ( params.getParentPath() != null )
+        else if ( params.getParentId() != null )
         {
-            final NodePath parentPath = ContentNodeHelper.translateContentPathToNodePath( params.getParentPath() );
-            findNodesParam.parentPath( parentPath );
+            return getContent( params.getParentId() );
         }
         else
         {
-            final NodeId parentId = NodeId.from( params.getParentId() );
-            findNodesParam.parentId( parentId );
+            return getContent( ContentPath.ROOT );
         }
+    }
+
+    private static ChildOrder childOrderWithLanguage( final ChildOrder childOrder, final Locale language )
+    {
+        if ( childOrder == null || language == null )
+        {
+            return childOrder;
+        }
+        final ChildOrder.Builder builder = ChildOrder.create();
+        for ( final OrderExpr orderExpr : childOrder.getOrderExpressions() )
+        {
+            if ( orderExpr instanceof FieldOrderExpr fieldOrderExpr && fieldOrderExpr.getLanguage() == null &&
+                ContentIndexPath.DISPLAY_NAME.equals( fieldOrderExpr.getField().getIndexPath() ) )
+            {
+                builder.add( FieldOrderExpr.create( fieldOrderExpr.getField().getIndexPath(), fieldOrderExpr.getDirection(), language ) );
+            }
+            else
+            {
+                builder.add( orderExpr );
+            }
+        }
+        return builder.build();
     }
 
     public static class Builder

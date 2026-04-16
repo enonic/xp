@@ -1,8 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver;
 
-import java.util.Set;
-
-import com.enonic.xp.repo.impl.index.IndexFieldNameNormalizer;
+import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.repo.impl.index.IndexValueType;
 
 public final class StoreQueryFieldNameResolver
@@ -12,12 +10,11 @@ public final class StoreQueryFieldNameResolver
 
     private StoreQueryFieldNameResolver()
     {
-        super( Set.of() );
     }
 
     @Override
-    protected String appendIndexValueType( final String baseFieldName, final IndexValueType indexValueType )
+    public String resolve( final IndexPath queryFieldName, final IndexValueType indexValueType )
     {
-        return IndexFieldNameNormalizer.normalize( baseFieldName );
+        return queryFieldName.getPath();
     }
 }

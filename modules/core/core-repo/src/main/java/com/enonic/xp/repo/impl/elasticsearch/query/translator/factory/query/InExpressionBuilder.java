@@ -9,12 +9,13 @@ import org.elasticsearch.index.query.QueryBuilders;
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFieldNameResolver;
+import com.enonic.xp.repo.impl.index.StaticIndexValueType;
 
 class InExpressionBuilder
 {
     public static QueryBuilder build( final CompareExpr compareExpr, final QueryFieldNameResolver resolver )
     {
-        final String queryFieldName = resolver.resolve( compareExpr.getField().getFieldPath() );
+        final String queryFieldName = resolver.resolve( compareExpr.getField().getIndexPath(), StaticIndexValueType.STRING );
 
         final List<ValueExpr> values = compareExpr.getValues();
 

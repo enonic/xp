@@ -33,7 +33,7 @@ class QueryParserTest
     @Test
     void invalid_query()
     {
-        assertThrows(QueryException.class, () -> QueryParser.parse( "a - 3" ) );
+        assertThrows( QueryException.class, () -> QueryParser.parse( "a - 3" ) );
     }
 
     @Test
@@ -108,7 +108,7 @@ class QueryParserTest
     @Test
     void illegal_value_function()
     {
-        assertThrows(QueryException.class, () -> QueryParser.parse( "a = badFunc()" ) );
+        assertThrows( QueryException.class, () -> QueryParser.parse( "a = badFunc()" ) );
     }
 
     @Test
@@ -118,6 +118,15 @@ class QueryParserTest
         testQuery( "order BY a DESC", "ORDER BY a DESC" );
         testQuery( "ORDER BY a, b", "ORDER BY a ASC, b ASC" );
         testQuery( "order by a DESC, b ASC", "ORDER BY a DESC, b ASC" );
+    }
+
+    @Test
+    void collate_order()
+    {
+        testQuery( "ORDER BY name COLLATE en-US ASC", "ORDER BY name COLLATE en-US ASC" );
+        testQuery( "ORDER BY name COLLATE no DESC", "ORDER BY name COLLATE no DESC" );
+        testQuery( "ORDER BY name COLLATE sv", "ORDER BY name COLLATE sv ASC" );
+        testQuery( "ORDER BY a ASC, name COLLATE no DESC", "ORDER BY a ASC, name COLLATE no DESC" );
     }
 
     @Test
@@ -132,12 +141,12 @@ class QueryParserTest
     @Test
     void invalid_order_expression()
     {
-        assertThrows(QueryException.class, () ->  QueryParser.parseCostraintExpression( "AND" ));
+        assertThrows( QueryException.class, () -> QueryParser.parseCostraintExpression( "AND" ) );
     }
 
     @Test
     void invalid_constraint_expression()
     {
-        assertThrows(QueryException.class, () -> QueryParser.parseOrderExpressions( "AND < 3" ));
+        assertThrows( QueryException.class, () -> QueryParser.parseOrderExpressions( "AND < 3" ) );
     }
 }

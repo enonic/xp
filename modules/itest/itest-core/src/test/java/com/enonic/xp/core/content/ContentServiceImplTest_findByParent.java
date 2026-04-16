@@ -6,10 +6,12 @@ import java.time.Instant;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -24,11 +26,8 @@ class ContentServiceImplTest_findByParent
         createContent( ContentPath.ROOT );
         createContent( ContentPath.ROOT );
 
-        final FindContentByParentResult result = contentService.findByParent( FindContentByParentParams.create().
-            from( 0 ).
-            size( 30 ).
-            parentPath( null ).
-            build() );
+        final FindContentByParentResult result =
+            contentService.findByParent( FindContentByParentParams.create().from( 0 ).size( 30 ).parentPath( null ).build() );
 
         assertNotNull( result );
         assertEquals( 2, result.getTotalHits() );
@@ -38,11 +37,7 @@ class ContentServiceImplTest_findByParent
     @Test
     void root_no_content()
     {
-        final FindContentByParentParams params = FindContentByParentParams.create().
-            from( 0 ).
-            size( 30 ).
-            parentPath( null ).
-            build();
+        final FindContentByParentParams params = FindContentByParentParams.create().from( 0 ).size( 30 ).parentPath( null ).build();
 
         final FindContentByParentResult result = contentService.findByParent( params );
 
@@ -62,11 +57,8 @@ class ContentServiceImplTest_findByParent
 
         final ContentPath parentContentPath = parentContent.getPath();
 
-        final FindContentByParentParams params = FindContentByParentParams.create().
-            from( 0 ).
-            size( 30 ).
-            parentPath( parentContentPath ).
-            build();
+        final FindContentByParentParams params =
+            FindContentByParentParams.create().from( 0 ).size( 30 ).parentPath( parentContentPath ).build();
 
         final FindContentByParentResult result = contentService.findByParent( params );
 
@@ -87,11 +79,8 @@ class ContentServiceImplTest_findByParent
 
         final ContentPath parentContentPath = childrenLevel1.getPath();
 
-        final FindContentByParentParams params = FindContentByParentParams.create().
-            from( 0 ).
-            size( 30 ).
-            parentPath( parentContentPath ).
-            build();
+        final FindContentByParentParams params =
+            FindContentByParentParams.create().from( 0 ).size( 30 ).parentPath( parentContentPath ).build();
 
         final FindContentByParentResult result = contentService.findByParent( params );
 
@@ -104,19 +93,12 @@ class ContentServiceImplTest_findByParent
     void invalid_parent_path()
     {
         final Content rootContent = createContent( ContentPath.ROOT );
-        final Content childrenLevel1 = createContent( rootContent.getPath() );
+        createContent( rootContent.getPath() );
 
-        final FindContentByParentParams params = FindContentByParentParams.create().
-            from( 0 ).
-            size( 30 ).
-            parentPath( ContentPath.from( "/test_invalid_path" ) ).
-            build();
+        final FindContentByParentParams params =
+            FindContentByParentParams.create().from( 0 ).size( 30 ).parentPath( ContentPath.from( "/test_invalid_path" ) ).build();
 
-        final FindContentByParentResult result = contentService.findByParent( params );
-
-        assertNotNull( result );
-        assertEquals( 0, result.getTotalHits() );
-
+        assertThatThrownBy( () -> contentService.findByParent( params ) ).isInstanceOf( ContentNotFoundException.class );
     }
 
     @Test
@@ -127,11 +109,8 @@ class ContentServiceImplTest_findByParent
         createContent( parentContent.getPath() );
         createContent( parentContent.getPath() );
 
-        final FindContentByParentParams params = FindContentByParentParams.create().
-            from( 0 ).
-            size( 0 ).
-            parentPath( parentContent.getPath() ).
-            build();
+        final FindContentByParentParams params =
+            FindContentByParentParams.create().from( 0 ).size( 0 ).parentPath( parentContent.getPath() ).build();
 
         final FindContentByParentResult result = contentService.findByParent( params );
 
@@ -152,11 +131,8 @@ class ContentServiceImplTest_findByParent
 
         final ContentPath parentContentPath = parentContent.getPath();
 
-        final FindContentByParentParams params = FindContentByParentParams.create().
-            from( 0 ).
-            size( 1 ).
-            parentPath( parentContentPath ).
-            build();
+        final FindContentByParentParams params =
+            FindContentByParentParams.create().from( 0 ).size( 1 ).parentPath( parentContentPath ).build();
 
         final FindContentByParentResult result = contentService.findByParent( params );
 
@@ -174,10 +150,8 @@ class ContentServiceImplTest_findByParent
         createContent( parentContent.getPath() );
         createContent( parentContent.getPath() );
 
-        final FindContentByParentResult result = contentService.findByParent( FindContentByParentParams.create().
-            from( 10 ).
-            parentPath( parentContent.getPath() ).
-            build() );
+        final FindContentByParentResult result =
+            contentService.findByParent( FindContentByParentParams.create().from( 10 ).parentPath( parentContent.getPath() ).build() );
 
         assertNotNull( result );
         assertEquals( 3, result.getTotalHits() );
@@ -196,10 +170,7 @@ class ContentServiceImplTest_findByParent
 
         final ContentPath parentContentPath = parentContent.getPath();
 
-        final FindContentByParentParams params = FindContentByParentParams.create().
-            from( 2 ).
-            parentPath( parentContentPath ).
-            build();
+        final FindContentByParentParams params = FindContentByParentParams.create().from( 2 ).parentPath( parentContentPath ).build();
 
         final FindContentByParentResult result = contentService.findByParent( params );
 
@@ -223,7 +194,8 @@ class ContentServiceImplTest_findByParent
     void test_publish_expired_master()
     {
         ctxMaster().runWith( () -> {
-            createAndPublishContent( ContentPath.ROOT, Instant.now().minus( Duration.ofDays( 2 ) ) , Instant.now().minus( Duration.ofDays( 1 ) ) );
+            createAndPublishContent( ContentPath.ROOT, Instant.now().minus( Duration.ofDays( 2 ) ),
+                                     Instant.now().minus( Duration.ofDays( 1 ) ) );
             final FindContentByParentResult result = findByParent();
             assertEquals( 0, result.getTotalHits() );
         } );
@@ -233,7 +205,8 @@ class ContentServiceImplTest_findByParent
     void test_published_master()
     {
         ctxMaster().runWith( () -> {
-            createAndPublishContent( ContentPath.ROOT, Instant.now().minus( Duration.ofDays( 1 ) ), Instant.now().plus( Duration.ofDays( 1 ) ) );
+            createAndPublishContent( ContentPath.ROOT, Instant.now().minus( Duration.ofDays( 1 ) ),
+                                     Instant.now().plus( Duration.ofDays( 1 ) ) );
             final FindContentByParentResult result = findByParent();
 
             assertEquals( 1, result.getTotalHits() );

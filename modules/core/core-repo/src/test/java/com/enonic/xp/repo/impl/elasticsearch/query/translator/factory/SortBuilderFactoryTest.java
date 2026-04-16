@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import org.elasticsearch.search.sort.FieldSortBuilder;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.query.expr.DslOrderExpr;
 import com.enonic.xp.query.expr.DynamicOrderExpr;
 import com.enonic.xp.query.expr.FieldExpr;
@@ -63,6 +65,19 @@ class SortBuilderFactoryTest
         assertEquals( 2, sortBuilders.size() );
         assertTrue( sortBuilders.iterator().next() instanceof FieldSortBuilder );
         assertTrue( sortBuilders.iterator().next() instanceof FieldSortBuilder );
+    }
+
+    @Test
+    void createFieldSortWithLanguage()
+    {
+        final FieldOrderExpr orderExpr =
+            FieldOrderExpr.create( IndexPath.from( "myField" ), OrderExpr.Direction.ASC, Locale.forLanguageTag( "no" ) );
+
+        final List<SortBuilder> sortBuilders =
+            new SortQueryBuilderFactory( SearchQueryFieldNameResolver.INSTANCE ).create( List.of( orderExpr ) );
+
+        assertEquals( 1, sortBuilders.size() );
+        assertTrue( sortBuilders.get( 0 ) instanceof FieldSortBuilder );
     }
 
     @Test

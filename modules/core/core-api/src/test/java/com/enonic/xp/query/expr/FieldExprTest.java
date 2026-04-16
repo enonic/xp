@@ -13,7 +13,7 @@ class FieldExprTest
     {
         final FieldExpr expr = FieldExpr.from( "name" );
 
-        assertEquals( "name", expr.getFieldPath() );
+        assertEquals( "name", expr.getIndexPath().getPath() );
         assertEquals( "name", expr.toString() );
     }
 

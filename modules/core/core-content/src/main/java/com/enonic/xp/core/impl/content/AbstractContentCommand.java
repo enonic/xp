@@ -84,6 +84,21 @@ abstract class AbstractContentCommand
         return content;
     }
 
+    Content getContent( final ContentPath contentPath )
+    {
+        final Content content = GetContentByPathCommand.create( contentPath, this ).build().execute();
+        if ( content == null )
+        {
+            throw ContentNotFoundException.create()
+                .contentPath( contentPath )
+                .repositoryId( ContextAccessor.current().getRepositoryId() )
+                .branch( ContextAccessor.current().getBranch() )
+                .contentRoot( ContentNodeHelper.getContentRoot() )
+                .build();
+        }
+        return content;
+    }
+
     protected Contents filter( Contents contents )
     {
         if ( shouldFilterScheduledPublished() )

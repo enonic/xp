@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.elasticsearch.index.query.BoolQueryBuilder;
@@ -163,13 +164,12 @@ public class FilterBuilderFactory
             return null;
         }
 
-        final String queryFieldName = this.fieldNameResolver.resolve( filter.getFieldName(), from != null ? from : to );
+        final String queryFieldName = this.fieldNameResolver.resolve( filter.getFieldName(), Objects.requireNonNullElse( from, to ) );
 
-        return new RangeQueryBuilder( queryFieldName ).
-            from( from ).
-            to( to ).
-            includeLower( filter.isIncludeLower() ).
-            includeUpper( filter.isIncludeUpper() );
+        return new RangeQueryBuilder( queryFieldName ).from( from )
+            .to( to )
+            .includeLower( filter.isIncludeLower() )
+            .includeUpper( filter.isIncludeUpper() );
     }
 
     private QueryBuilder createTermFilter( final ValueFilter filter )
@@ -179,7 +179,7 @@ public class FilterBuilderFactory
             return null;
         }
 
-        final String queryFieldName = this.fieldNameResolver.resolve( filter );
+        final String queryFieldName = this.fieldNameResolver.resolve( filter.getFieldName(), filter.getValues().iterator().next() );
 
         final List<Object> values = filter.getValues().stream().map( ValueHelper::getValueAsType ).collect( Collectors.toList() );
 
