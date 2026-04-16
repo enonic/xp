@@ -12,7 +12,8 @@ import com.enonic.xp.repo.impl.index.StaticIndexValueType;
 abstract class AbstractQueryFieldNameResolver
     implements QueryFieldNameResolver
 {
-    private static final Set<IndexPath> BUILT_IN_FIELDS = Set.of( IndexPath.from( "_score" ), IndexPath.from( "_id" ) );
+    private static final Set<IndexPath> BUILT_IN_FIELDS =
+        Set.of( IndexPath.from( "_score" ), IndexPath.from( "_id" ), IndexPath.from( "_doc" ) );
 
     public String resolve( final IndexPath queryFieldName, final IndexValueType indexValueType )
     {

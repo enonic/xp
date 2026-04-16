@@ -6,10 +6,12 @@ import java.time.Instant;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentIdsByParentResult;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -91,16 +93,12 @@ class ContentServiceImplTest_findIdsByParent
     void invalid_parent_path()
     {
         final Content rootContent = createContent( ContentPath.ROOT );
-        final Content childrenLevel1 = createContent( rootContent.getPath() );
+        createContent( rootContent.getPath() );
 
         final FindContentByParentParams params =
             FindContentByParentParams.create().from( 0 ).size( 30 ).parentPath( ContentPath.from( "/test_invalid_path" ) ).build();
 
-        final FindContentIdsByParentResult result = contentService.findIdsByParent( params );
-
-        assertNotNull( result );
-        assertEquals( 0, result.getTotalHits() );
-
+        assertThatThrownBy( () -> contentService.findIdsByParent( params ) ).isInstanceOf( ContentNotFoundException.class );
     }
 
     @Test
@@ -198,7 +196,8 @@ class ContentServiceImplTest_findIdsByParent
     void test_publish_expired_master()
     {
         ctxMaster().callWith( () -> {
-            createAndPublishContent( ContentPath.ROOT, Instant.now().minus( Duration.ofDays( 2 ) ), Instant.now().minus( Duration.ofDays( 1 ) ) );
+            createAndPublishContent( ContentPath.ROOT, Instant.now().minus( Duration.ofDays( 2 ) ),
+                                     Instant.now().minus( Duration.ofDays( 1 ) ) );
 
             final FindContentIdsByParentResult result = findIdsByParent();
             assertEquals( 0, result.getTotalHits() );
@@ -210,7 +209,8 @@ class ContentServiceImplTest_findIdsByParent
     void test_published_master()
     {
         ctxMaster().callWith( () -> {
-            createAndPublishContent( ContentPath.ROOT, Instant.now().minus( Duration.ofDays( 1 ) ), Instant.now().plus( Duration.ofDays( 1 ) ) );
+            createAndPublishContent( ContentPath.ROOT, Instant.now().minus( Duration.ofDays( 1 ) ),
+                                     Instant.now().plus( Duration.ofDays( 1 ) ) );
 
             final FindContentIdsByParentResult result = findIdsByParent();
 
