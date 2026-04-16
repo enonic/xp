@@ -13,6 +13,7 @@ import com.google.common.net.MediaType;
 
 import jakarta.servlet.http.Cookie;
 
+import com.enonic.xp.web.sse.SseConfig;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 
 
@@ -30,6 +31,8 @@ public class WebResponse
 
     private final WebSocketConfig webSocket;
 
+    private final SseConfig sse;
+
     protected WebResponse( final Builder<?> builder )
     {
         this.status = builder.status;
@@ -38,6 +41,7 @@ public class WebResponse
         this.headers = ImmutableSortedMap.copyOf( builder.headers, String.CASE_INSENSITIVE_ORDER );
         this.cookies = builder.cookies.build();
         this.webSocket = builder.webSocket;
+        this.sse = builder.sse;
     }
 
     public static Builder<?> create()
@@ -80,6 +84,11 @@ public class WebResponse
         return this.webSocket;
     }
 
+    public SseConfig getSse()
+    {
+        return this.sse;
+    }
+
     public static class Builder<T extends Builder<T>>
     {
         private Object body;
@@ -94,6 +103,8 @@ public class WebResponse
 
         private WebSocketConfig webSocket;
 
+        private SseConfig sse;
+
         protected Builder()
         {
         }
@@ -106,6 +117,7 @@ public class WebResponse
             this.status = source.status;
             addAllCookies( source.cookies );
             this.webSocket = source.webSocket;
+            this.sse = source.sse;
         }
 
         public T body( final Object body )
@@ -171,6 +183,12 @@ public class WebResponse
         public T webSocket( final WebSocketConfig webSocket )
         {
             this.webSocket = webSocket;
+            return (T) this;
+        }
+
+        public T sse( final SseConfig sse )
+        {
+            this.sse = sse;
             return (T) this;
         }
 

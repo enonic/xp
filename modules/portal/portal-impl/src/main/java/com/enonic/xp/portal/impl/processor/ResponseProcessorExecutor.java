@@ -62,6 +62,7 @@ public final class ResponseProcessorExecutor
         final PortalResponseMapper responseMapper = new PortalResponseMapper( response );
 
         final ScriptValue result = filterExports.executeMethod( RESPONSE_PROCESSOR_METHOD, requestMapper, responseMapper );
-        return new PortalResponseSerializer( result ).serialize();
+        final PortalResponse processed = new PortalResponseSerializer( result ).serialize();
+        return PortalResponse.create( processed ).sse( response.getSse() ).webSocket( response.getWebSocket() ).build();
     }
 }

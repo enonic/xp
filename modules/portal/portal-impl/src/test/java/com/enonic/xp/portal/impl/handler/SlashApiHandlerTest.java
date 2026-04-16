@@ -28,6 +28,7 @@ import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.impl.api.DynamicUniversalApiHandlerRegistry;
+import com.enonic.xp.portal.sse.SseManager;
 import com.enonic.xp.portal.universalapi.UniversalApiHandler;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.repository.RepositoryId;
@@ -100,7 +101,7 @@ class SlashApiHandlerTest
 
         handler =
             new SlashApiHandler( controllerScriptFactory, apiDescriptorService, siteService, webappService, adminToolDescriptorService,
-                                 universalApiHandlerRegistry );
+                                 universalApiHandlerRegistry, mock( SseManager.class ) );
 
         final WebSocketConfig webSocketConfig = mock( WebSocketConfig.class );
 

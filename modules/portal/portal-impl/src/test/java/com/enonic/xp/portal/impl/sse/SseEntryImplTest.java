@@ -1,0 +1,139 @@
+package com.enonic.xp.portal.impl.sse;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.UUID;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import jakarta.servlet.AsyncContext;
+import jakarta.servlet.AsyncEvent;
+
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.web.sse.SseConfig;
+import com.enonic.xp.web.sse.SseEndpoint;
+import com.enonic.xp.web.sse.SseEvent;
+import com.enonic.xp.web.sse.SseEventType;
+import com.enonic.xp.web.sse.SseMessage;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+class SseEntryImplTest
+{
+    private SseRegistry registry;
+
+    private AsyncContext asyncContext;
+
+    private StringWriter writerSink;
+
+    private SseEndpoint endpoint;
+
+    private SseEntryImpl entry;
+
+    private UUID clientId;
+
+    @BeforeEach
+    void setup()
+    {
+        ContextBuilder.create().build().runWith( ContextAccessor::current );
+
+        registry = new SseRegistry();
+        asyncContext = mock( AsyncContext.class );
+        writerSink = new StringWriter();
+        final PrintWriter writer = new PrintWriter( writerSink );
+
+        endpoint = mock( SseEndpoint.class );
+        when( endpoint.getConfig() ).thenReturn( SseConfig.empty() );
+
+        clientId = UUID.randomUUID();
+
+        ContextBuilder.create().build().runWith( () -> entry = new SseEntryImpl( clientId, asyncContext, writer, endpoint, registry ) );
+    }
+
+    @Test
+    void sendEvent_writesWire()
+    {
+        entry.sendEvent( SseMessage.create().id( "evt-1" ).event( "update" ).data( "hello" ).build() );
+        assertEquals( "id:evt-1\nevent:update\ndata:hello\n\n", writerSink.toString() );
+    }
+
+    @Test
+    void sendEvent_comment()
+    {
+        entry.sendEvent( SseMessage.create().comment( "keep-alive" ).build() );
+        assertEquals( ":keep-alive\n\n", writerSink.toString() );
+    }
+
+    @Test
+    void getClientId()
+    {
+        assertSame( clientId, entry.getClientId() );
+    }
+
+    @Test
+    void groupMembership()
+    {
+        entry.addGroup( "g1" );
+        assertTrue( entry.isInGroup( "g1" ) );
+        entry.removeGroup( "g1" );
+        assertFalse( entry.isInGroup( "g1" ) );
+    }
+
+    @Test
+    void onComplete_firesCloseEventAndRemovesFromRegistry()
+    {
+        registry.add( entry );
+        entry.onComplete( mock( AsyncEvent.class ) );
+
+        verify( endpoint ).onEvent( any( SseEvent.class ) );
+        assertFalse( registryContains( entry ) );
+    }
+
+    @Test
+    void onTimeout_firesTimeoutEvent()
+    {
+        registry.add( entry );
+        entry.onTimeout( mock( AsyncEvent.class ) );
+
+        verify( endpoint ).onEvent( argThat( e -> e.getType() == SseEventType.TIMEOUT ) );
+        verify( asyncContext ).complete();
+    }
+
+    @Test
+    void onError_firesErrorEventWithThrowable()
+    {
+        registry.add( entry );
+        final RuntimeException cause = new RuntimeException( "boom" );
+        final AsyncEvent ev = mock( AsyncEvent.class );
+        when( ev.getThrowable() ).thenReturn( cause );
+
+        entry.onError( ev );
+
+        verify( endpoint ).onEvent( argThat( e -> e.getType() == SseEventType.ERROR && e.getError() == cause ) );
+        verify( asyncContext ).complete();
+    }
+
+    @Test
+    void close_removesFromRegistryAndCompletesAsync()
+    {
+        registry.add( entry );
+        entry.close();
+        assertFalse( registryContains( entry ) );
+        verify( asyncContext ).complete();
+    }
+
+    private boolean registryContains( final SseEntry e )
+    {
+        return registry.getById( e.getClientId() ) != null;
+    }
+}

@@ -26,8 +26,11 @@ import com.enonic.xp.portal.handler.WebHandlerHelper;
 import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.portal.impl.api.DynamicUniversalApiHandler;
 import com.enonic.xp.portal.impl.api.DynamicUniversalApiHandlerRegistry;
+import com.enonic.xp.portal.impl.sse.SseApiEndpointImpl;
+import com.enonic.xp.portal.impl.sse.SseEndpointImpl;
 import com.enonic.xp.portal.impl.websocket.WebSocketApiEndpointImpl;
 import com.enonic.xp.portal.impl.websocket.WebSocketEndpointImpl;
+import com.enonic.xp.portal.sse.SseManager;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
@@ -41,6 +44,7 @@ import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.dispatch.DispatchConstants;
+import com.enonic.xp.web.sse.SseConfig;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketContext;
 import com.enonic.xp.web.websocket.WebSocketEndpoint;
@@ -62,12 +66,15 @@ public class SlashApiHandler
 
     private final DynamicUniversalApiHandlerRegistry universalApiHandlerRegistry;
 
+    private final SseManager sseManager;
+
     @Activate
     public SlashApiHandler( @Reference final ControllerScriptFactory controllerScriptFactory,
                             @Reference final ApiDescriptorService apiDescriptorService, @Reference final SiteService siteService,
                             @Reference final WebappService webappService,
                             @Reference final AdminToolDescriptorService adminToolDescriptorService,
-                            @Reference final DynamicUniversalApiHandlerRegistry universalApiHandlerRegistry )
+                            @Reference final DynamicUniversalApiHandlerRegistry universalApiHandlerRegistry,
+                            @Reference final SseManager sseManager )
     {
         this.controllerScriptFactory = controllerScriptFactory;
         this.apiDescriptorService = apiDescriptorService;
@@ -75,6 +82,7 @@ public class SlashApiHandler
         this.webappService = webappService;
         this.adminToolDescriptorService = adminToolDescriptorService;
         this.universalApiHandlerRegistry = universalApiHandlerRegistry;
+        this.sseManager = sseManager;
     }
 
     public WebResponse handle( final WebRequest webRequest )
@@ -160,8 +168,10 @@ public class SlashApiHandler
         final boolean result;
         if ( portalRequest.getEndpointPath() == null )
         {
-            final String connector = portalRequest.getRawRequest() != null ? (String) portalRequest.getRawRequest()
-                .getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) : null;
+            final String connector = portalRequest.getRawRequest() != null
+                ? (String) portalRequest.getRawRequest()
+                           .getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE )
+                : null;
 
             if ( DispatchConstants.API_CONNECTOR.equals( connector ) )
             {
@@ -324,6 +334,13 @@ public class SlashApiHandler
         applyWebSocketIfPresent( req.getWebSocketContext(), webSocketConfig,
                                  () -> new WebSocketApiEndpointImpl( webSocketConfig, () -> dynamicApiHandler ) );
 
+        final SseConfig sseConfig = res.getSse();
+        if ( sseConfig != null )
+        {
+            final SseApiEndpointImpl sseEndpoint = new SseApiEndpointImpl( sseConfig, () -> dynamicApiHandler );
+            this.sseManager.setupSse( req, sseEndpoint );
+        }
+
         return res;
     }
 
@@ -335,6 +352,13 @@ public class SlashApiHandler
 
         applyWebSocketIfPresent( req.getWebSocketContext(), webSocketConfig,
                                  () -> new WebSocketEndpointImpl( webSocketConfig, () -> script ) );
+
+        final SseConfig sseConfig = res.getSse();
+        if ( sseConfig != null )
+        {
+            final SseEndpointImpl sseEndpoint = new SseEndpointImpl( sseConfig, () -> script );
+            this.sseManager.setupSse( req, sseEndpoint );
+        }
 
         return res;
     }

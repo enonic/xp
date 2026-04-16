@@ -11,6 +11,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
+import com.enonic.xp.portal.sse.SseManager;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.TraceManager;
@@ -45,8 +46,7 @@ class WebAppHandlerTest
 
         this.controllerScriptFactory = mock( ControllerScriptFactory.class );
 
-        this.handler = new WebAppHandler();
-        this.handler.setControllerScriptFactory( this.controllerScriptFactory );
+        this.handler = new WebAppHandler( this.controllerScriptFactory, mock( SseManager.class ) );
 
         this.request = new PortalRequest();
         this.request.setRawRequest( mock( HttpServletRequest.class ) );

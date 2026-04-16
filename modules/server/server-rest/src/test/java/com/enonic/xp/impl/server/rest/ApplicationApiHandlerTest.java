@@ -17,9 +17,11 @@ import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.multipart.MultipartForm;
+import com.enonic.xp.portal.sse.SseManager;
 import com.enonic.xp.web.multipart.MultipartService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -32,6 +34,8 @@ class ApplicationApiHandlerTest
 
     private MultipartService multipartService;
 
+    private SseManager sseManager;
+
     private ApplicationApiHandler handler;
 
     @BeforeEach
@@ -39,7 +43,21 @@ class ApplicationApiHandlerTest
     {
         applicationResourceService = mock( ApplicationResourceService.class );
         multipartService = mock( MultipartService.class );
-        handler = new ApplicationApiHandler( applicationResourceService, multipartService );
+        sseManager = mock( SseManager.class );
+        handler = new ApplicationApiHandler( applicationResourceService, multipartService, sseManager );
+    }
+
+    @Test
+    void handleEvents()
+    {
+        final WebRequest request = new WebRequest();
+        request.setMethod( HttpMethod.GET );
+        request.setRawPath( "/_/server:app/events" );
+
+        final WebResponse response = handler.handle( request );
+
+        assertEquals( HttpStatus.OK, response.getStatus() );
+        assertNotNull( response.getSse() );
     }
 
     @Test
