@@ -200,12 +200,12 @@ class AttachmentMediaHandlerTest
 
         this.request.setSite( site );
 
-        // mediaService.scope does not specify
+        // media.scope does not specify
         WebResponse webResponse = this.handler.handle( this.request );
         assertEquals( HttpStatus.OK, webResponse.getStatus() );
 
-        // mediaService.scope is different from the baseUrl context
-        ContextBuilder.copyOf( ContextAccessor.current() ).attribute( "mediaService.scope", "myproject:draft" ).build().runWith( () -> {
+        // media.scope is different from the baseUrl context
+        ContextBuilder.copyOf( ContextAccessor.current() ).attribute( "media.scope", "myproject:draft" ).build().runWith( () -> {
             WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
             assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
             assertEquals( "Not a valid media url pattern", ex.getMessage() );
