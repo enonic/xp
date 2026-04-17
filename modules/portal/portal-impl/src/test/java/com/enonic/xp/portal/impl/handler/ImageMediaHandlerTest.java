@@ -23,7 +23,6 @@ import com.enonic.xp.image.ImageService;
 import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.impl.PortalConfig;
-import com.enonic.xp.portal.impl.VirtualHostContextHelper;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.repository.RepositoryId;
@@ -125,7 +124,7 @@ class ImageMediaHandlerTest
     void testMediaScopeWithWrongContext()
     {
         ContextBuilder.copyOf( ContextAccessor.current() )
-            .attribute( VirtualHostContextHelper.MEDIA_SERVICE_SCOPE, "project1, project1:draft, project2" )
+            .attribute( "meida.scope", "project1, project1:draft, project2" )
             .authInfo( ContentConstants.CONTENT_SU_AUTH_INFO )
             .build()
             .runWith( () -> {
@@ -156,7 +155,7 @@ class ImageMediaHandlerTest
         setupContent();
 
         ContextBuilder.copyOf( ContextAccessor.current() )
-            .attribute( VirtualHostContextHelper.MEDIA_SERVICE_SCOPE, "myproject, myproject:draft, myproject2:draft" )
+            .attribute( "media.scope", "myproject, myproject:draft, myproject2:draft" )
             .authInfo( ContentConstants.CONTENT_SU_AUTH_INFO )
             .build()
             .runWith( () -> {
