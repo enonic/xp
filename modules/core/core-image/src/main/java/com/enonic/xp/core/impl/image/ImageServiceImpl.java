@@ -80,7 +80,6 @@ public class ImageServiceImpl
 
         this.progressiveOnFormats = SimpleCsvParser.parseLine( config.progressive() )
             .stream()
-            .map( String::trim )
             .filter( Predicate.not( String::isEmpty ) )
             .map( s -> s.toLowerCase( Locale.ROOT ) )
             .collect( Collectors.toUnmodifiableSet() );
