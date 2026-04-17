@@ -124,7 +124,7 @@ class ImageMediaHandlerTest
     void testMediaScopeWithWrongContext()
     {
         ContextBuilder.copyOf( ContextAccessor.current() )
-            .attribute( "meida.scope", "project1, project1:draft, project2" )
+            .attribute( "media.scope", "project1, project1:draft, project2" )
             .authInfo( ContentConstants.CONTENT_SU_AUTH_INFO )
             .build()
             .runWith( () -> {
