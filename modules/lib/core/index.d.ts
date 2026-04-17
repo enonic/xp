@@ -565,14 +565,9 @@ export interface AttachmentValidationError
 export interface ValidationError {
     message: string;
     i18n: string;
-    errorCode: ValidationErrorCode;
+    errorCode: string;
     /* eslint-disable @typescript-eslint/no-explicit-any*/
     args: any[];
-}
-
-export interface ValidationErrorCode {
-    applicationKey: string;
-    code: string;
 }
 
 export interface PublishInfo {
@@ -725,6 +720,7 @@ export interface Content<
     attachments: Record<string, Attachment>;
     publish?: PublishInfo;
     workflow?: Workflow;
+    validationErrors?: ValidationError[];
     inherit?: ContentInheritValue[];
     variantOf?: string;
     fragment?: Type extends 'portal:fragment' ? _Component : never;

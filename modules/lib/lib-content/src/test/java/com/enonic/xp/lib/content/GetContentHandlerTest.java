@@ -99,6 +99,15 @@ class GetContentHandlerTest
     }
 
     @Test
+    void getByIdWithValidationErrors()
+    {
+        final Content content = TestDataFixtures.newContentWithValidationErrors();
+        Mockito.when( this.contentService.getById( content.getId() ) ).thenReturn( content );
+
+        runFunction( "/test/GetContentHandlerTest.js", "getByIdWithValidationErrors" );
+    }
+
+    @Test
     void getByIdInLayer()
     {
         final Content content = TestDataFixtures.newExampleLayerContentBuilder().build();

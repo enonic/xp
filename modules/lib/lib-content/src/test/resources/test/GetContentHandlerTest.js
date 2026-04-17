@@ -293,6 +293,34 @@ exports.getByIdAndVersionId_notFound = function () {
     assert.assertNull(result);
 };
 
+exports.getByIdWithValidationErrors = function () {
+    var result = content.get({
+        key: '123456'
+    });
+
+    var expectedErrors = [
+        {
+            errorCode: 'com.enonic.myapp:SOME_ERROR',
+            message: 'General error message',
+            i18n: 'my.error.general',
+            args: ['arg1']
+        },
+        {
+            errorCode: 'com.enonic.myapp:INVALID_VALUE',
+            message: 'Invalid value in field',
+            propertyPath: 'mySet.myField'
+        },
+        {
+            errorCode: 'com.enonic.myapp:ATTACHMENT_ERROR',
+            message: 'Invalid attachment',
+            i18n: 'my.error.attachment',
+            attachment: 'logo.png'
+        }
+    ];
+
+    assert.assertJsonEquals(expectedErrors, result.validationErrors);
+};
+
 exports.getByIdInLayer = function () {
     return content.get({
         key: 'mycontentid'

@@ -19,6 +19,10 @@ import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.Mixin;
 import com.enonic.xp.content.Mixins;
+import com.enonic.xp.content.ValidationError;
+import com.enonic.xp.content.ValidationErrorCode;
+import com.enonic.xp.content.ValidationErrors;
+import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
@@ -111,6 +115,43 @@ public final class TestDataFixtures
     {
         return newExampleContentBuilder().originProject( ProjectName.from( "origin" ) )
             .setInherit( Set.of( ContentInheritType.NAME, ContentInheritType.CONTENT ) );
+    }
+
+    public static Content newContentWithValidationErrors()
+    {
+        final ValidationErrors validationErrors = ValidationErrors.create()
+            .add( ValidationError.generalError( ValidationErrorCode.from( ApplicationKey.from( "com.enonic.myapp" ), "SOME_ERROR" ) )
+                      .message( "General error message" )
+                      .i18n( "my.error.general" )
+                      .args( "arg1" )
+                      .build() )
+            .add( ValidationError.dataError( ValidationErrorCode.from( ApplicationKey.from( "com.enonic.myapp" ), "INVALID_VALUE" ),
+                                             PropertyPath.from( "mySet.myField" ) )
+                      .message( "Invalid value in field" )
+                      .build() )
+            .add( ValidationError.attachmentError(
+                      ValidationErrorCode.from( ApplicationKey.from( "com.enonic.myapp" ), "ATTACHMENT_ERROR" ),
+                      BinaryReference.from( "logo.png" ) )
+                      .message( "Invalid attachment" )
+                      .i18n( "my.error.attachment" )
+                      .build() )
+            .build();
+
+        return Content.create()
+            .id( ContentId.from( "123456" ) )
+            .name( "mycontent" )
+            .displayName( "My Content" )
+            .parentPath( ContentPath.from( "/a/b" ) )
+            .modifier( PrincipalKey.from( "user:system:admin" ) )
+            .modifiedTime( Instant.ofEpochSecond( 0 ) )
+            .creator( PrincipalKey.from( "user:system:admin" ) )
+            .createdTime( Instant.ofEpochSecond( 0 ) )
+            .language( Locale.ENGLISH )
+            .data( newPropertyTree() )
+            .attachments( newAttachments() )
+            .valid( false )
+            .validationErrors( validationErrors )
+            .build();
     }
 
     public static Content newSmallContent()

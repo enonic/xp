@@ -38,6 +38,8 @@ import {
     ScriptValue,
     SortDsl,
     UserKey,
+    AttachmentValidationError,
+    DataValidationError,
     ValidationError,
     Workflow,
     WorkflowState,
@@ -185,7 +187,7 @@ export interface PatchableContent<
     modifyAttachments: Attachment;
     removeAttachments: string[];
     createAttachments: AddAttachmentParam[];
-    validationErrors: ValidationError[];
+    validationErrors?: ValidationError[];
     type: Type;
     childOrder: string;
     originProject: string;
