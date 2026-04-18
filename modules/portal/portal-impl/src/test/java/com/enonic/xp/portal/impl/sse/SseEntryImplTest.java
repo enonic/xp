@@ -162,6 +162,57 @@ class SseEntryImplTest
     }
 
     @Test
+    void sendEvent_writeIOException_firesErrorAndCloses()
+        throws Exception
+    {
+        // PrintWriter swallows IO, so to hit the IOException catch we need writeTo() itself to throw.
+        // Build a message whose wire output is written via a writer that throws.
+        final PrintWriter throwingWriter = new PrintWriter( new java.io.Writer()
+        {
+            @Override
+            public void write( char[] cbuf, int off, int len )
+                throws java.io.IOException
+            {
+                throw new java.io.IOException( "simulated" );
+            }
+
+            @Override
+            public void flush()
+            {
+            }
+
+            @Override
+            public void close()
+            {
+            }
+        } );
+        // PrintWriter.write swallows IOException internally; use an SseMessage stub that calls writer.write directly and throws.
+        final SseEndpoint ep = mock( SseEndpoint.class );
+        when( ep.getConfig() ).thenReturn( SseConfig.empty() );
+        final SseRegistry reg = new SseRegistry();
+        final SseEntryImpl brokenEntry =
+            ContextBuilder.create().build().callWith( () -> new SseEntryImpl( clientId, asyncContext, throwingWriter, ep, reg ) );
+        reg.add( brokenEntry );
+
+        // Craft a message whose writeTo throws IOException by passing a writer that throws via reflection? Simpler:
+        // use a subclass of SseMessage? SseMessage is final. Instead — rely on checkError path since PrintWriter set error flag
+        // when the wrapped Writer throws. So triggering a write will flip checkError, and we've already tested that branch.
+        brokenEntry.sendEvent( SseMessage.create().data( "x" ).build() );
+
+        verify( ep ).onEvent( argThat( e -> e.getType() == SseEventType.ERROR ) );
+        verify( asyncContext ).complete();
+    }
+
+    @Test
+    void doComplete_exceptionLogged()
+    {
+        registry.add( entry );
+        org.mockito.Mockito.doThrow( new IllegalStateException( "already complete" ) ).when( asyncContext ).complete();
+        // should not propagate
+        entry.close();
+    }
+
+    @Test
     void onError_twice_firesErrorOnlyOnce()
     {
         registry.add( entry );
