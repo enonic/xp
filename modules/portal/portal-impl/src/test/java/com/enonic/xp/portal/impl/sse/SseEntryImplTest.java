@@ -20,6 +20,7 @@ import com.enonic.xp.web.sse.SseMessage;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -130,6 +131,51 @@ class SseEntryImplTest
         entry.close();
         assertFalse( registryContains( entry ) );
         verify( asyncContext ).complete();
+    }
+
+    @Test
+    void sendEvent_checkError_firesErrorAndCloses()
+    {
+        // Writer backed by a closed sink: flush+write silently succeeds but checkError eventually returns true
+        // Simulate via a StringWriter that we close before sending.
+        final StringWriter broken = new StringWriter();
+        final PrintWriter pw = new PrintWriter( broken )
+        {
+            @Override
+            public boolean checkError()
+            {
+                return true;
+            }
+        };
+        final SseEndpoint ep = mock( SseEndpoint.class );
+        when( ep.getConfig() ).thenReturn( SseConfig.empty() );
+        final SseRegistry reg = new SseRegistry();
+        final SseEntryImpl brokenEntry =
+            ContextBuilder.create().build().callWith( () -> new SseEntryImpl( clientId, asyncContext, pw, ep, reg ) );
+        reg.add( brokenEntry );
+
+        brokenEntry.sendEvent( SseMessage.create().data( "x" ).build() );
+
+        verify( ep ).onEvent( argThat( e -> e.getType() == SseEventType.ERROR && e.getError() != null ) );
+        verify( asyncContext ).complete();
+        assertNull( reg.getById( brokenEntry.getClientId() ) );
+    }
+
+    @Test
+    void onError_twice_firesErrorOnlyOnce()
+    {
+        registry.add( entry );
+        final RuntimeException cause = new RuntimeException( "first" );
+        final AsyncEvent ev1 = mock( AsyncEvent.class );
+        when( ev1.getThrowable() ).thenReturn( cause );
+        entry.onError( ev1 );
+
+        // second onError — should not re-fire ERROR
+        final AsyncEvent ev2 = mock( AsyncEvent.class );
+        when( ev2.getThrowable() ).thenReturn( new RuntimeException( "second" ) );
+        entry.onError( ev2 );
+
+        verify( endpoint, org.mockito.Mockito.times( 1 ) ).onEvent( argThat( e -> e.getType() == SseEventType.ERROR ) );
     }
 
     private boolean registryContains( final SseEntry e )

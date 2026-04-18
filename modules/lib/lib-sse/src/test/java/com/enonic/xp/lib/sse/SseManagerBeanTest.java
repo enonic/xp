@@ -42,9 +42,24 @@ class SseManagerBeanTest
     }
 
     @Test
+    void send_commentOnly()
+    {
+        final UUID id = UUID.randomUUID();
+        bean.send( id.toString(), null, null, null, "ping" );
+        verify( sseManager ).send( eq( id ), any( SseMessage.class ) );
+    }
+
+    @Test
     void sendToGroup()
     {
         bean.sendToGroup( "g1", null, "ev", "data", null );
+        verify( sseManager ).sendToGroup( eq( "g1" ), any( SseMessage.class ) );
+    }
+
+    @Test
+    void sendToGroup_commentOnly()
+    {
+        bean.sendToGroup( "g1", null, null, null, "ping" );
         verify( sseManager ).sendToGroup( eq( "g1" ), any( SseMessage.class ) );
     }
 

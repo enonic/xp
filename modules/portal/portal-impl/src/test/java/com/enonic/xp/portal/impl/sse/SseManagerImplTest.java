@@ -23,6 +23,7 @@ import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.sse.SseConfig;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -183,6 +184,30 @@ class SseManagerImplTest
     }
 
     @Test
+    void setupSse_negativeRetry_notWritten()
+        throws Exception
+    {
+        final HttpServletRequest req = mock( HttpServletRequest.class );
+        final WebRequest webReq = new WebRequest();
+        webReq.setRawRequest( req );
+        final HttpServletResponse res = mock( HttpServletResponse.class );
+        final AsyncContext asyncContext = mock( AsyncContext.class );
+        when( req.startAsync() ).thenReturn( asyncContext );
+        when( asyncContext.getResponse() ).thenReturn( res );
+        final StringWriter sw = new StringWriter();
+        when( res.getWriter() ).thenReturn( new PrintWriter( sw ) );
+
+        final SseConfig config = new SseConfig( GenericValue.newObject().build(), -1, 0 );
+        final SseEndpoint endpoint = mock( SseEndpoint.class );
+        when( endpoint.getConfig() ).thenReturn( config );
+
+        ContextBuilder.create().build().runWith( () -> {
+            manager.setupSse( webReq, endpoint );
+            assertEquals( "", sw.toString() );
+        } );
+    }
+
+    @Test
     void send_noEntry()
     {
         manager.send( UUID.randomUUID(), SseMessage.create().event( "event" ).data( "data" ).build() );
@@ -194,5 +219,25 @@ class SseManagerImplTest
     {
         manager.close( UUID.randomUUID() );
         // should not throw
+    }
+
+    @Test
+    void addToGroup_noEntry()
+    {
+        manager.addToGroup( "g", UUID.randomUUID() );
+        assertEquals( 0, manager.getGroupSize( "g" ) );
+    }
+
+    @Test
+    void removeFromGroup_noEntry()
+    {
+        manager.removeFromGroup( "g", UUID.randomUUID() );
+        // should not throw
+    }
+
+    @Test
+    void isOpen_noEntry()
+    {
+        assertFalse( manager.isOpen( UUID.randomUUID() ) );
     }
 }
