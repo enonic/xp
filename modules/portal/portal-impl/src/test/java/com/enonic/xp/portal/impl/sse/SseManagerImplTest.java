@@ -208,6 +208,33 @@ class SseManagerImplTest
     }
 
     @Test
+    void send_toExistingEntry_writesToWriter()
+        throws Exception
+    {
+        final HttpServletRequest req = mock( HttpServletRequest.class );
+        final WebRequest webReq = new WebRequest();
+        webReq.setRawRequest( req );
+        final HttpServletResponse res = mock( HttpServletResponse.class );
+        final AsyncContext asyncContext = mock( AsyncContext.class );
+        when( req.startAsync() ).thenReturn( asyncContext );
+        when( asyncContext.getResponse() ).thenReturn( res );
+        final StringWriter sw = new StringWriter();
+        when( res.getWriter() ).thenReturn( new PrintWriter( sw ) );
+
+        final SseEndpoint endpoint = mock( SseEndpoint.class );
+        when( endpoint.getConfig() ).thenReturn( SseConfig.empty() );
+
+        ContextBuilder.create().build().runWith( () -> {
+            final UUID id = manager.setupSse( webReq, endpoint );
+            sw.getBuffer().setLength( 0 );
+
+            manager.send( id, SseMessage.create().event( "update" ).data( "hello" ).build() );
+
+            assertEquals( "event:update\ndata:hello\n\n", sw.toString() );
+        } );
+    }
+
+    @Test
     void send_noEntry()
     {
         manager.send( UUID.randomUUID(), SseMessage.create().event( "event" ).data( "data" ).build() );

@@ -52,6 +52,8 @@ import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.dispatch.DispatchConstants;
+import com.enonic.xp.web.sse.SseConfig;
+import com.enonic.xp.web.sse.SseEndpoint;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketContext;
 import com.enonic.xp.web.websocket.WebSocketEndpoint;
@@ -68,6 +70,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class SlashApiHandlerTest
@@ -84,6 +87,10 @@ class SlashApiHandlerTest
 
     private DynamicUniversalApiHandlerRegistry universalApiHandlerRegistry;
 
+    private SseManager sseManager;
+
+    private ControllerScript controllerScript;
+
     private PortalRequest request;
 
     HttpServletRequest servletRequestMock;
@@ -98,14 +105,14 @@ class SlashApiHandlerTest
         webappService = mock( WebappService.class );
         adminToolDescriptorService = mock( AdminToolDescriptorService.class );
         universalApiHandlerRegistry = new DynamicUniversalApiHandlerRegistry();
+        sseManager = mock( SseManager.class );
 
-        handler =
-            new SlashApiHandler( controllerScriptFactory, apiDescriptorService, siteService, webappService, adminToolDescriptorService,
-                                 universalApiHandlerRegistry, mock( SseManager.class ) );
+        handler = new SlashApiHandler( controllerScriptFactory, apiDescriptorService, siteService, webappService, adminToolDescriptorService,
+                                       universalApiHandlerRegistry, sseManager );
 
         final WebSocketConfig webSocketConfig = mock( WebSocketConfig.class );
 
-        final ControllerScript controllerScript = mock( ControllerScript.class );
+        controllerScript = mock( ControllerScript.class );
         when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn(
             PortalResponse.create().webSocket( webSocketConfig ).build() );
 
@@ -705,6 +712,49 @@ class SlashApiHandlerTest
     }
 
     @Test
+    void testDynamicApiHandlerWithSse()
+        throws Exception
+    {
+        SseUniversalApiHandler sseApiHandler = new SseUniversalApiHandler();
+        universalApiHandlerRegistry.addApiHandler( sseApiHandler,
+                                                   Map.of( "key", "myapp:myapi", "allowedPrincipals", RoleKeys.EVERYONE.toString(), "mount",
+                                                           "web" ) );
+
+        request.setApplicationKey( ApplicationKey.from( "myapp" ) );
+        request.setRawPath( "/api/myapp:myapi" );
+
+        final WebResponse response = this.handler.handle( request );
+        assertEquals( 1, sseApiHandler.calls );
+        assertEquals( HttpStatus.OK, response.getStatus() );
+        assertNotNull( response.getSse() );
+
+        verify( sseManager ).setupSse( any( WebRequest.class ), any( SseEndpoint.class ) );
+    }
+
+    @Test
+    void testControllerScriptWithSse()
+        throws Exception
+    {
+        request.setRawPath( "/api/com.enonic.app.myapp:api-key" );
+
+        final ApiDescriptor apiDescriptor = ApiDescriptor.create()
+            .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "api-key" ) )
+            .allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) )
+            .mount( "web" )
+            .build();
+        when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
+
+        when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn(
+            PortalResponse.create().sse( SseConfig.empty() ).build() );
+
+        final WebResponse response = this.handler.handle( request );
+        assertEquals( HttpStatus.OK, response.getStatus() );
+        assertNotNull( response.getSse() );
+
+        verify( sseManager ).setupSse( any( WebRequest.class ), any( SseEndpoint.class ) );
+    }
+
+    @Test
     void testDynamicApiHandlerWithWebSocket()
         throws Exception
     {
@@ -819,6 +869,19 @@ class SlashApiHandlerTest
         public WebResponse handle( final WebRequest request )
         {
             return WebResponse.create().body( "Body" ).build();
+        }
+    }
+
+    private static final class SseUniversalApiHandler
+        implements UniversalApiHandler
+    {
+        int calls = 0;
+
+        @Override
+        public WebResponse handle( final WebRequest request )
+        {
+            calls++;
+            return WebResponse.create().sse( SseConfig.empty() ).build();
         }
     }
 

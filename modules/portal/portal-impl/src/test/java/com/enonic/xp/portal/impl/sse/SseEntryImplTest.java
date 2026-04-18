@@ -1,7 +1,9 @@
 package com.enonic.xp.portal.impl.sse;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -25,7 +27,9 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -167,13 +171,13 @@ class SseEntryImplTest
     {
         // PrintWriter swallows IO, so to hit the IOException catch we need writeTo() itself to throw.
         // Build a message whose wire output is written via a writer that throws.
-        final PrintWriter throwingWriter = new PrintWriter( new java.io.Writer()
+        final PrintWriter throwingWriter = new PrintWriter( new Writer()
         {
             @Override
             public void write( char[] cbuf, int off, int len )
-                throws java.io.IOException
+                throws IOException
             {
-                throw new java.io.IOException( "simulated" );
+                throw new IOException( "simulated" );
             }
 
             @Override
@@ -207,7 +211,7 @@ class SseEntryImplTest
     void doComplete_exceptionLogged()
     {
         registry.add( entry );
-        org.mockito.Mockito.doThrow( new IllegalStateException( "already complete" ) ).when( asyncContext ).complete();
+        doThrow( new IllegalStateException( "already complete" ) ).when( asyncContext ).complete();
         // should not propagate
         entry.close();
     }
@@ -226,7 +230,7 @@ class SseEntryImplTest
         when( ev2.getThrowable() ).thenReturn( new RuntimeException( "second" ) );
         entry.onError( ev2 );
 
-        verify( endpoint, org.mockito.Mockito.times( 1 ) ).onEvent( argThat( e -> e.getType() == SseEventType.ERROR ) );
+        verify( endpoint, times( 1 ) ).onEvent( argThat( e -> e.getType() == SseEventType.ERROR ) );
     }
 
     private boolean registryContains( final SseEntry e )
