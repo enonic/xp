@@ -20,6 +20,7 @@ import com.enonic.xp.web.sse.SseEvent;
 import com.enonic.xp.web.sse.SseEventType;
 import com.enonic.xp.web.sse.SseMessage;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -212,8 +213,7 @@ class SseEntryImplTest
     {
         registry.add( entry );
         doThrow( new IllegalStateException( "already complete" ) ).when( asyncContext ).complete();
-        // should not propagate
-        entry.close();
+        assertDoesNotThrow( () -> entry.close() );
     }
 
     @Test

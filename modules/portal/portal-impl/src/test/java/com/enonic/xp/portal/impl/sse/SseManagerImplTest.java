@@ -22,6 +22,7 @@ import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.sse.SseConfig;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -237,15 +238,13 @@ class SseManagerImplTest
     @Test
     void send_noEntry()
     {
-        manager.send( UUID.randomUUID(), SseMessage.create().event( "event" ).data( "data" ).build() );
-        // should not throw
+        assertDoesNotThrow( () -> manager.send( UUID.randomUUID(), SseMessage.create().event( "event" ).data( "data" ).build() ) );
     }
 
     @Test
     void close_noEntry()
     {
-        manager.close( UUID.randomUUID() );
-        // should not throw
+        assertDoesNotThrow( () -> manager.close( UUID.randomUUID() ) );
     }
 
     @Test
@@ -258,8 +257,7 @@ class SseManagerImplTest
     @Test
     void removeFromGroup_noEntry()
     {
-        manager.removeFromGroup( "g", UUID.randomUUID() );
-        // should not throw
+        assertDoesNotThrow( () -> manager.removeFromGroup( "g", UUID.randomUUID() ) );
     }
 
     @Test
