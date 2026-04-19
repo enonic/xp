@@ -1,6 +1,5 @@
 package com.enonic.xp.portal.impl.url;
 
-import java.util.Objects;
 import java.util.function.Supplier;
 
 import com.google.common.io.Files;
@@ -14,6 +13,7 @@ import com.enonic.xp.project.ProjectName;
 
 import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendPart;
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static java.util.Objects.requireNonNull;
 
 final class ImageMediaPathSupplier
     implements Supplier<String>
@@ -30,7 +30,7 @@ final class ImageMediaPathSupplier
 
     private ImageMediaPathSupplier( final Builder builder )
     {
-        this.scale = Objects.requireNonNull( builder.scale );
+        this.scale = requireNonNull( builder.scale );
         this.mediaSupplier = builder.mediaSupplier;
         this.projectNameSupplier = builder.projectNameSupplier;
         this.branchSupplier = builder.branchSupplier;
@@ -45,9 +45,9 @@ final class ImageMediaPathSupplier
     @Override
     public String get()
     {
-        final Media media = Objects.requireNonNull( mediaSupplier.get() );
-        final ProjectName project = Objects.requireNonNull( projectNameSupplier.get() );
-        final Branch branch = Objects.requireNonNull( branchSupplier.get() );
+        final Media media = requireNonNull( mediaSupplier.get() );
+        final ProjectName project = requireNonNull( projectNameSupplier.get() );
+        final Branch branch = requireNonNull( branchSupplier.get() );
 
         final String hash = MediaHashResolver.resolveImageHash( media );
         final String resolvedScale = resolveScale( scale );

@@ -1,8 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
 import java.util.Locale;
-import java.util.Objects;
-
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentName;
@@ -26,6 +24,7 @@ import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
 
 import static com.google.common.base.Strings.nullToEmpty;
+import static java.util.Objects.requireNonNull;
 
 public class CreateNodeParamsFactory
 {
@@ -192,11 +191,11 @@ public class CreateNodeParamsFactory
 
         void validate()
         {
-            Objects.requireNonNull( params, "params cannot be null" );
-            Objects.requireNonNull( contentTypeService );
-            Objects.requireNonNull( pageDescriptorService );
-            Objects.requireNonNull( cmsService );
-            Objects.requireNonNull( mixinService );
+            requireNonNull( params, "params cannot be null" );
+            requireNonNull( contentTypeService );
+            requireNonNull( pageDescriptorService );
+            requireNonNull( cmsService );
+            requireNonNull( mixinService );
         }
 
         public CreateNodeParamsFactory build()

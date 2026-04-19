@@ -5,6 +5,8 @@ import java.util.Objects;
 
 import com.enonic.xp.util.BinaryReference;
 
+import static java.util.Objects.requireNonNull;
+
 public final class AttachmentValidationError
     extends ValidationError
 {
@@ -14,7 +16,7 @@ public final class AttachmentValidationError
                                       final List<Object> args )
     {
         super( errorCode, message, i18n, args );
-        this.attachment = Objects.requireNonNull( attachment );
+        this.attachment = requireNonNull( attachment );
     }
 
     public BinaryReference getAttachment()

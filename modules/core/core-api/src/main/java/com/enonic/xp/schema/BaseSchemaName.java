@@ -7,6 +7,8 @@ import org.jspecify.annotations.NullMarked;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.descriptor.DescriptorKey;
 
+import static java.util.Objects.requireNonNull;
+
 
 @NullMarked
 public abstract class BaseSchemaName
@@ -15,7 +17,7 @@ public abstract class BaseSchemaName
 
     protected BaseSchemaName( final String name )
     {
-        Objects.requireNonNull( name, "BaseSchemaName cannot be null" );
+        requireNonNull( name, "BaseSchemaName cannot be null" );
         this.descriptorKey = DescriptorKey.from( name );
     }
 

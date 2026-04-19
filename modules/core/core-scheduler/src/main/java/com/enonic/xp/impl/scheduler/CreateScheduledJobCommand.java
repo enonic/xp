@@ -1,7 +1,5 @@
 package com.enonic.xp.impl.scheduler;
 
-import java.util.Objects;
-
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.impl.scheduler.serializer.SchedulerSerializer;
 import com.enonic.xp.node.CreateNodeParams;
@@ -12,6 +10,8 @@ import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.scheduler.CreateScheduledJobParams;
 import com.enonic.xp.scheduler.ScheduledJob;
 import com.enonic.xp.scheduler.SchedulerConstants;
+
+import static java.util.Objects.requireNonNull;
 
 public class CreateScheduledJobCommand
     extends AbstractSchedulerCommand
@@ -71,7 +71,7 @@ public class CreateScheduledJobCommand
         @Override
         protected void validate()
         {
-            Objects.requireNonNull( params, "params cannot be null" );
+            requireNonNull( params, "params cannot be null" );
         }
 
         @Override

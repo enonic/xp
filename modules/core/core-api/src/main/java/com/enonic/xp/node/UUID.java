@@ -1,10 +1,11 @@
 package com.enonic.xp.node;
 
 
-import java.util.Objects;
 import java.util.regex.Pattern;
 
 import com.google.common.base.Preconditions;
+
+import static java.util.Objects.requireNonNull;
 
 
 public class UUID
@@ -31,14 +32,14 @@ public class UUID
         }
         else
         {
-            Objects.requireNonNull( object, "UUID cannot be null" );
+            requireNonNull( object, "UUID cannot be null" );
             this.value = check( object.toString() );
         }
     }
 
     private static String check( String value )
     {
-        Objects.requireNonNull( value, "UUID cannot be null" );
+        requireNonNull( value, "UUID cannot be null" );
         Preconditions.checkArgument( !value.isBlank(), "UUID cannot be blank" );
         Preconditions.checkArgument( value.length() <= 256, "UUID cannot exceed 256 characters: %s", value );
         Preconditions.checkArgument( VALID_NODE_ID_PATTERN.matcher( value ).matches(), "UUID format incorrect: %s", value );

@@ -4,7 +4,6 @@ import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Stream;
 
 import org.osgi.service.component.annotations.Activate;
@@ -31,6 +30,8 @@ import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.handler.BaseWebHandler;
 import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.handler.WebHandlerChain;
+
+import static java.util.Objects.requireNonNullElse;
 
 @Component(immediate = true, service = WebHandler.class, configurationPid = "com.enonic.xp.api")
 public class ApiIndexHandler
@@ -96,7 +97,7 @@ public class ApiIndexHandler
         result.put( "descriptor", descriptorKey.toString() );
         result.put( "application", descriptorKey.getApplicationKey().toString() );
         result.put( "name", descriptorKey.getName() );
-        result.put( "allowedPrincipals", Objects.requireNonNullElse( apiDescriptor.getAllowedPrincipals(), PrincipalKeys.empty() )
+        result.put( "allowedPrincipals", requireNonNullElse( apiDescriptor.getAllowedPrincipals(), PrincipalKeys.empty() )
             .stream()
             .map( PrincipalKey::toString )
             .toList() );

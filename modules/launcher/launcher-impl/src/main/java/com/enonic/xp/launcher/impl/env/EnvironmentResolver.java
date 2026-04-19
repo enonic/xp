@@ -1,11 +1,12 @@
 package com.enonic.xp.launcher.impl.env;
 
 import java.nio.file.Path;
-import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import com.enonic.xp.launcher.impl.SharedConstants;
+
+import static java.util.Objects.requireNonNullElse;
 
 public final class EnvironmentResolver
 {
@@ -36,8 +37,8 @@ public final class EnvironmentResolver
 
     private Path resolveHomeDir( final Path installDir )
     {
-        final String propValue = Objects.requireNonNullElse( this.properties.get( SharedConstants.XP_HOME_DIR ), "" );
-        final String envValue = Objects.requireNonNullElse( this.properties.getEnv( SharedConstants.XP_HOME_DIR_ENV ), "" );
+        final String propValue = requireNonNullElse( this.properties.get( SharedConstants.XP_HOME_DIR ), "" );
+        final String envValue = requireNonNullElse( this.properties.getEnv( SharedConstants.XP_HOME_DIR_ENV ), "" );
 
         return Stream.of( propValue, envValue ).filter( Predicate.not( String::isEmpty ) ).findFirst().
             map( Path::of ).orElseGet( () -> installDir != null ? installDir.resolve( "home" ) : null );

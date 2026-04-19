@@ -1,6 +1,7 @@
 package com.enonic.xp.node;
 
-import java.util.Objects;
+import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
 
 
 public final class DuplicateNodeParams
@@ -120,7 +121,7 @@ public final class DuplicateNodeParams
 
         public Builder includeChildren( final Boolean includeChildren )
         {
-            this.includeChildren = Objects.requireNonNullElse( includeChildren, true );
+            this.includeChildren = requireNonNullElse( includeChildren, true );
             return this;
         }
 
@@ -150,7 +151,7 @@ public final class DuplicateNodeParams
 
         private void validate()
         {
-            Objects.requireNonNull( this.nodeId, "nodeId is required" );
+            requireNonNull( this.nodeId, "nodeId is required" );
         }
 
         public DuplicateNodeParams build()

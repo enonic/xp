@@ -1,6 +1,6 @@
 package com.enonic.xp.task;
 
-import java.util.Objects;
+import static java.util.Objects.requireNonNull;
 
 
 public final class SubmitLocalTaskParams
@@ -13,7 +13,7 @@ public final class SubmitLocalTaskParams
 
     private SubmitLocalTaskParams( final Builder builder )
     {
-        this.runnableTask = Objects.requireNonNull( builder.runnableTask, "runnableTask is required" );
+        this.runnableTask = requireNonNull( builder.runnableTask, "runnableTask is required" );
         this.name = builder.name;
         this.description = builder.description;
     }

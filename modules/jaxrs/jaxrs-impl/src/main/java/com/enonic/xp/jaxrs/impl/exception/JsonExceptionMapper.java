@@ -1,7 +1,5 @@
 package com.enonic.xp.jaxrs.impl.exception;
 
-import java.util.Objects;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +20,8 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.web.WebException;
 
+import static java.util.Objects.requireNonNullElseGet;
+
 @Provider
 public final class JsonExceptionMapper
     implements ExceptionMapper<Throwable>
@@ -40,11 +40,11 @@ public final class JsonExceptionMapper
         };
         if ( status >= 500 )
         {
-            LOG.error( Objects.requireNonNullElseGet( cause.getMessage(), cause.getClass()::getSimpleName ), cause );
+            LOG.error( requireNonNullElseGet( cause.getMessage(), cause.getClass()::getSimpleName ), cause );
         }
         else if ( LOG.isDebugEnabled() )
         {
-            LOG.debug( Objects.requireNonNullElseGet( cause.getMessage(), cause.getClass()::getSimpleName ), cause );
+            LOG.debug( requireNonNullElseGet( cause.getMessage(), cause.getClass()::getSimpleName ), cause );
         }
         return Response.status( status ).entity( createErrorJson( cause, status ) ).type( MediaType.APPLICATION_JSON_TYPE ).build();
     }

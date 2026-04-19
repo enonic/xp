@@ -1,8 +1,8 @@
 package com.enonic.xp.init;
 
-import java.util.Objects;
-
 import com.enonic.xp.index.IndexService;
+
+import static java.util.Objects.requireNonNull;
 
 public abstract class ExternalInitializer
     extends Initializer
@@ -41,7 +41,7 @@ public abstract class ExternalInitializer
 
         protected void validate()
         {
-            Objects.requireNonNull( indexService );
+            requireNonNull( indexService );
         }
     }
 }

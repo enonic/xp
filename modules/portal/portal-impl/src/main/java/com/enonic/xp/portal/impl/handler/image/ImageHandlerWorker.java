@@ -1,8 +1,6 @@
 package com.enonic.xp.portal.impl.handler.image;
 
 import java.io.IOException;
-import java.util.Objects;
-
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
 import com.google.common.net.MediaType;
@@ -27,6 +25,8 @@ import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 
 import static com.google.common.base.Strings.nullToEmpty;
+import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
 
 public final class ImageHandlerWorker
     extends AbstractAttachmentHandlerWorker<Media>
@@ -102,7 +102,7 @@ public final class ImageHandlerWorker
                                     final MediaType contentType )
         throws IOException
     {
-        final ImageOrientation imageOrientation = Objects.requireNonNullElse( content.getOrientation(), ImageOrientation.TopLeft );
+        final ImageOrientation imageOrientation = requireNonNullElse( content.getOrientation(), ImageOrientation.TopLeft );
 
         final int imageQuality = nullToEmpty( this.qualityParam ).isEmpty() ? DEFAULT_QUALITY : Integer.parseInt( this.qualityParam );
 
@@ -111,7 +111,7 @@ public final class ImageHandlerWorker
             : Integer.parseInt( this.backgroundParam.startsWith( "0x" ) ? this.backgroundParam.substring( 2 ) : this.backgroundParam, 16 );
         try
         {
-            Objects.requireNonNull( content.getMediaAttachment(), "Media content must have an attachment" );
+            requireNonNull( content.getMediaAttachment(), "Media content must have an attachment" );
 
             final ReadImageParams readImageParams = ReadImageParams.newImageParams()
                 .contentId( content.getId() )

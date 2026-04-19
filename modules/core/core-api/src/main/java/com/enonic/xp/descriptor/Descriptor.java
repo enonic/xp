@@ -1,8 +1,8 @@
 package com.enonic.xp.descriptor;
 
-import java.util.Objects;
-
 import com.enonic.xp.app.ApplicationKey;
+
+import static java.util.Objects.requireNonNull;
 
 public abstract class Descriptor
 {
@@ -10,7 +10,7 @@ public abstract class Descriptor
 
     public Descriptor( final DescriptorKey key )
     {
-        Objects.requireNonNull( key, "key cannot be null" );
+        requireNonNull( key, "key cannot be null" );
         this.key = key;
     }
 

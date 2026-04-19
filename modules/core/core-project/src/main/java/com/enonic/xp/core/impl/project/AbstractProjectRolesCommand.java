@@ -1,6 +1,5 @@
 package com.enonic.xp.core.impl.project;
 
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -10,6 +9,8 @@ import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.PrincipalRelationship;
 import com.enonic.xp.security.PrincipalRelationships;
 import com.enonic.xp.security.SecurityService;
+
+import static java.util.Objects.requireNonNull;
 
 abstract class AbstractProjectRolesCommand
     extends AbstractProjectCommand
@@ -95,7 +96,7 @@ abstract class AbstractProjectRolesCommand
         @Override
         void validate()
         {
-            Objects.requireNonNull( securityService );
+            requireNonNull( securityService );
         }
     }
 

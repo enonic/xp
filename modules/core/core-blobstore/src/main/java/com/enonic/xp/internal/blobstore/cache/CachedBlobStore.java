@@ -2,7 +2,6 @@ package com.enonic.xp.internal.blobstore.cache;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.util.Objects;
 import java.util.stream.Stream;
 
 import org.slf4j.Logger;
@@ -19,6 +18,8 @@ import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.BlobStoreException;
 import com.enonic.xp.blob.CachingBlobStore;
 import com.enonic.xp.blob.Segment;
+
+import static java.util.Objects.requireNonNullElse;
 
 public final class CachedBlobStore
     implements BlobStore, CachingBlobStore
@@ -113,7 +114,7 @@ public final class CachedBlobStore
             LOG.warn( "Could not cache blob-record with key {}", key, e );
         }
         // If we could not load the blob into cache, we return the original record
-        return Objects.requireNonNullElse( this.cache.getIfPresent( key ), record );
+        return requireNonNullElse( this.cache.getIfPresent( key ), record );
     }
 
     @Override

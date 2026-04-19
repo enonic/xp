@@ -1,8 +1,8 @@
 package com.enonic.xp.script.impl.service;
 
-import java.util.Objects;
-
 import org.osgi.framework.BundleContext;
+
+import static java.util.Objects.requireNonNull;
 
 public final class ServiceRegistryImpl
     implements ServiceRegistry
@@ -11,7 +11,7 @@ public final class ServiceRegistryImpl
 
     public ServiceRegistryImpl( final BundleContext bundleContext )
     {
-        this.bundleContext = Objects.requireNonNull( bundleContext );
+        this.bundleContext = requireNonNull( bundleContext );
     }
 
     @Override

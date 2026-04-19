@@ -1,11 +1,11 @@
 package com.enonic.xp.attachment;
 
-import java.util.Objects;
-
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
 
 import com.enonic.xp.util.BinaryReference;
+
+import static java.util.Objects.requireNonNull;
 
 
 public final class CreateAttachment
@@ -136,8 +136,8 @@ public final class CreateAttachment
 
         private void validate()
         {
-            Objects.requireNonNull( name, "name is required" );
-            Objects.requireNonNull( byteSource, "byteSource is required" );
+            requireNonNull( name, "name is required" );
+            requireNonNull( byteSource, "byteSource is required" );
         }
 
         public CreateAttachment build()

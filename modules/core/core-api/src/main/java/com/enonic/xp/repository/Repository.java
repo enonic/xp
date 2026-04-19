@@ -1,13 +1,14 @@
 package com.enonic.xp.repository;
 
-import java.util.Objects;
-
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.AttachedBinaries;
+
+import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElseGet;
 
 
 public final class Repository
@@ -26,8 +27,8 @@ public final class Repository
     {
         this.id = builder.id;
         this.branches = builder.branches;
-        this.data = Objects.requireNonNullElseGet( builder.data, PropertyTree::new );
-        this.attachments = Objects.requireNonNullElseGet( builder.attachments, AttachedBinaries::empty );
+        this.data = requireNonNullElseGet( builder.data, PropertyTree::new );
+        this.attachments = requireNonNullElseGet( builder.attachments, AttachedBinaries::empty );
         this.transientFlag = builder.transientFlag;
     }
 
@@ -116,7 +117,7 @@ public final class Repository
 
         private void validate()
         {
-            Objects.requireNonNull( branches, "branches is required" );
+            requireNonNull( branches, "branches is required" );
             Preconditions.checkArgument( branches.contains( RepositoryConstants.MASTER_BRANCH ), "branches must contain master branch" );
         }
 

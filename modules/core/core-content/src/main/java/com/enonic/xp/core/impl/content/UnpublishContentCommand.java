@@ -1,8 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
-import java.util.Objects;
-
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPropertyNames;
@@ -27,6 +25,8 @@ import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.node.VersionAttributesResolver;
+
+import static java.util.Objects.requireNonNull;
 
 public class UnpublishContentCommand
     extends AbstractContentCommand
@@ -145,7 +145,7 @@ public class UnpublishContentCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( params, "params cannot be null" );
+            requireNonNull( params, "params cannot be null" );
         }
 
         public UnpublishContentCommand build()

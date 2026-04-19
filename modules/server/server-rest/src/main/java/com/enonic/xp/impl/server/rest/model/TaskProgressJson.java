@@ -1,8 +1,8 @@
 package com.enonic.xp.impl.server.rest.model;
 
-import java.util.Objects;
-
 import com.enonic.xp.task.TaskProgress;
+
+import static java.util.Objects.requireNonNull;
 
 public class TaskProgressJson
 {
@@ -10,7 +10,7 @@ public class TaskProgressJson
 
     public TaskProgressJson( final TaskProgress taskProgress )
     {
-        this.taskProgress = Objects.requireNonNull( taskProgress );
+        this.taskProgress = requireNonNull( taskProgress );
     }
 
     public int getCurrent()

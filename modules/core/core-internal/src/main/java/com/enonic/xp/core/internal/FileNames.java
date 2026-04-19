@@ -4,10 +4,11 @@ import java.nio.charset.StandardCharsets;
 import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * Collection of utility methods for file names
@@ -54,7 +55,7 @@ public class FileNames
      */
     public static boolean isSafeFileName( final String fileName )
     {
-        Objects.requireNonNull( fileName );
+        requireNonNull( fileName );
 
         final int length = fileName.length();
         if ( length == 0 || length > MAX_LENGTH )

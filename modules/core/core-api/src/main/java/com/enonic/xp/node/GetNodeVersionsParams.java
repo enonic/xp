@@ -1,9 +1,9 @@
 package com.enonic.xp.node;
 
-import java.util.Objects;
-
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
+
+import static java.util.Objects.requireNonNull;
 
 
 @NullMarked
@@ -18,7 +18,7 @@ public final class GetNodeVersionsParams
 
     private GetNodeVersionsParams( Builder builder )
     {
-        nodeId = Objects.requireNonNull( builder.nodeId, "nodeId cannot be null" );
+        nodeId = requireNonNull( builder.nodeId, "nodeId cannot be null" );
         cursor = builder.cursor;
         size = builder.size;
     }

@@ -1,13 +1,13 @@
 package com.enonic.xp.core.impl.audit;
 
-import java.util.Objects;
-
 import com.enonic.xp.audit.AuditLog;
 import com.enonic.xp.audit.AuditLogId;
 import com.enonic.xp.core.impl.audit.serializer.AuditLogSerializer;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
+
+import static java.util.Objects.requireNonNull;
 
 public class GetAuditLogCommand
     extends NodeServiceCommand<AuditLog>
@@ -62,7 +62,7 @@ public class GetAuditLogCommand
 
         private void validate()
         {
-            Objects.requireNonNull( auditLogId, "auditLogId is required" );
+            requireNonNull( auditLogId, "auditLogId is required" );
         }
 
         public GetAuditLogCommand build()

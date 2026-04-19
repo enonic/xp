@@ -7,6 +7,8 @@ import java.util.Objects;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.security.PrincipalKey;
 
+import static java.util.Objects.requireNonNull;
+
 
 public abstract class BaseSchema<T extends BaseSchemaName>
 {
@@ -148,7 +150,7 @@ public abstract class BaseSchema<T extends BaseSchemaName>
 
         public Builder( final BaseSchema schema )
         {
-            Objects.requireNonNull( schema, "BaseSchema cannot be null" );
+            requireNonNull( schema, "BaseSchema cannot be null" );
             this.name = (SCHEMA_NAME) schema.name;
             this.title = schema.title;
             this.titleI18nKey = schema.titleI18nKey;

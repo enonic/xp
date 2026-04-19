@@ -3,8 +3,6 @@ package com.enonic.xp.core.impl.security;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.List;
-import java.util.Objects;
-
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
@@ -44,6 +42,7 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 
 import static com.enonic.xp.security.acl.IdProviderAccess.ADMINISTRATOR;
 import static com.enonic.xp.security.acl.IdProviderAccess.READ;
+import static java.util.Objects.requireNonNull;
 
 public final class SecurityInitializer
     extends ExternalInitializer
@@ -382,8 +381,8 @@ public final class SecurityInitializer
         protected void validate()
         {
             super.validate();
-            Objects.requireNonNull( securityService );
-            Objects.requireNonNull( nodeService );
+            requireNonNull( securityService );
+            requireNonNull( nodeService );
         }
 
         public SecurityInitializer build()

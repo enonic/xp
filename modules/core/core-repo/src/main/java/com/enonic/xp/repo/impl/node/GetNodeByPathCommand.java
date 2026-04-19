@@ -1,11 +1,11 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.util.Objects;
-
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repo.impl.InternalContext;
+
+import static java.util.Objects.requireNonNull;
 
 public class GetNodeByPathCommand
     extends AbstractNodeCommand
@@ -58,7 +58,7 @@ public class GetNodeByPathCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( this.path, "path is required" );
+            requireNonNull( this.path, "path is required" );
         }
 
         public GetNodeByPathCommand build()

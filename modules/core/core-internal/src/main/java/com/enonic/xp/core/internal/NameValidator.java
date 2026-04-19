@@ -1,12 +1,13 @@
 package com.enonic.xp.core.internal;
 
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
 import org.jspecify.annotations.NonNull;
+
+import static java.util.Objects.requireNonNull;
 
 public final class NameValidator
 {
@@ -77,7 +78,7 @@ public final class NameValidator
 
     public String validate( final String name, String typeOverride )
     {
-        Objects.requireNonNull( name, () -> typeOverride + " must not be null" );
+        requireNonNull( name, () -> typeOverride + " must not be null" );
 
         if ( name.isEmpty() )
         {

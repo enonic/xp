@@ -1,8 +1,8 @@
 package com.enonic.xp.resource;
 
-import java.util.Objects;
-
 import com.enonic.xp.app.ApplicationKey;
+
+import static java.util.Objects.requireNonNull;
 
 
 public final class UpdateDynamicCmsParams
@@ -56,8 +56,8 @@ public final class UpdateDynamicCmsParams
 
         private void validate()
         {
-            Objects.requireNonNull( key, "key is required" );
-            Objects.requireNonNull( resource, "resource is required" );
+            requireNonNull( key, "key is required" );
+            requireNonNull( resource, "resource is required" );
         }
 
         public UpdateDynamicCmsParams build()

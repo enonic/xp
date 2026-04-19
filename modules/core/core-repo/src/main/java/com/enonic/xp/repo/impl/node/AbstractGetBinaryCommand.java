@@ -1,7 +1,5 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.util.Objects;
-
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.context.ContextAccessor;
@@ -9,6 +7,8 @@ import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.util.BinaryReference;
+
+import static java.util.Objects.requireNonNull;
 
 abstract class AbstractGetBinaryCommand
     extends AbstractNodeCommand
@@ -68,8 +68,8 @@ abstract class AbstractGetBinaryCommand
 
         @Override
         void validate() {
-            Objects.requireNonNull( binaryService );
-            Objects.requireNonNull( binaryReference, "binaryReference is required" );
+            requireNonNull( binaryService );
+            requireNonNull( binaryReference, "binaryReference is required" );
         }
     }
 }

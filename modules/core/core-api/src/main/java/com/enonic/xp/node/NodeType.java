@@ -1,6 +1,6 @@
 package com.enonic.xp.node;
 
-import java.util.Objects;
+import static java.util.Objects.requireNonNull;
 
 
 public final class NodeType
@@ -11,7 +11,7 @@ public final class NodeType
 
     private NodeType( final String name )
     {
-        this.name = Objects.requireNonNull( name );
+        this.name = requireNonNull( name );
     }
 
     public static NodeType from( final String name )

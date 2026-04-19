@@ -1,7 +1,5 @@
 package com.enonic.xp.node;
 
-import java.util.Objects;
-
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.index.ChildOrder;
@@ -12,6 +10,8 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 
+import static java.util.Objects.requireNonNull;
+
 
 public final class CreateRootNodeParams
 {
@@ -21,7 +21,7 @@ public final class CreateRootNodeParams
 
     private CreateRootNodeParams( Builder builder )
     {
-        Objects.requireNonNull( builder.permissions, "Missing permissions for root node" );
+        requireNonNull( builder.permissions, "Missing permissions for root node" );
         Preconditions.checkArgument( !builder.permissions.isEmpty(), "Missing permissions for root node" );
         childOrder = builder.childOrder;
         permissions = builder.permissions;

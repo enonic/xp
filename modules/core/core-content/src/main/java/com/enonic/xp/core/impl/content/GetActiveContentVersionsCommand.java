@@ -1,8 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
 import java.util.Map;
-import java.util.Objects;
-
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -14,6 +12,8 @@ import com.enonic.xp.node.GetActiveNodeVersionsResult;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeVersion;
 
+import static java.util.Objects.requireNonNull;
+
 public class GetActiveContentVersionsCommand
     extends AbstractContentCommand
 {
@@ -23,7 +23,7 @@ public class GetActiveContentVersionsCommand
     private GetActiveContentVersionsCommand( final Builder builder )
     {
         super( builder );
-        this.params = Objects.requireNonNull( builder.params );
+        this.params = requireNonNull( builder.params );
     }
 
     public static Builder create()

@@ -1,6 +1,7 @@
 package com.enonic.xp.content;
 
-import java.util.Objects;
+import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
 
 
 public final class DuplicateContentParams
@@ -111,7 +112,7 @@ public final class DuplicateContentParams
 
         public Builder includeChildren( final Boolean includeChildren )
         {
-            this.includeChildren = Objects.requireNonNullElse( includeChildren, true );
+            this.includeChildren = requireNonNullElse( includeChildren, true );
             return this;
         }
 
@@ -135,7 +136,7 @@ public final class DuplicateContentParams
 
         public DuplicateContentParams build()
         {
-            Objects.requireNonNull( this.contentId, "contentId is required" );
+            requireNonNull( this.contentId, "contentId is required" );
             return new DuplicateContentParams( this );
         }
     }

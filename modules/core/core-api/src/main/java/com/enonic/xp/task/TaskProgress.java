@@ -5,6 +5,8 @@ import java.util.Objects;
 
 import com.google.common.base.MoreObjects;
 
+import static java.util.Objects.requireNonNullElse;
+
 
 public final class TaskProgress
     implements Serializable
@@ -23,7 +25,7 @@ public final class TaskProgress
     {
         current = builder.current;
         total = builder.total;
-        info = Objects.requireNonNullElse( builder.info, "" );
+        info = requireNonNullElse( builder.info, "" );
     }
 
     public int getCurrent()

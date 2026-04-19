@@ -5,6 +5,8 @@ import java.util.Objects;
 
 import com.google.common.io.ByteSource;
 
+import static java.util.Objects.requireNonNull;
+
 
 public final class CreateMediaParams
 {
@@ -104,9 +106,9 @@ public final class CreateMediaParams
 
     public void validate()
     {
-        Objects.requireNonNull( this.parent, "parent is required" );
-        Objects.requireNonNull( this.name, "name is required" );
-        Objects.requireNonNull( this.byteSource, "byteSource is required" );
+        requireNonNull( this.parent, "parent is required" );
+        requireNonNull( this.name, "name is required" );
+        requireNonNull( this.byteSource, "byteSource is required" );
     }
 
     public ContentPath getParent()

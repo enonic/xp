@@ -2,8 +2,6 @@ package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Objects;
-
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.CompareContentResults;
@@ -29,6 +27,8 @@ import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.node.PushNodeParams;
 import com.enonic.xp.node.PushNodeResult;
 import com.enonic.xp.node.PushNodesResult;
+
+import static java.util.Objects.requireNonNullElseGet;
 
 public class PublishContentCommand
     extends AbstractContentCommand
@@ -184,7 +184,7 @@ public class PublishContentCommand
         return ( PropertyTree data, NodePath _ ) -> {
             var toBeEdited = data.copy();
 
-            final PropertySet publishInfo = Objects.requireNonNullElseGet( toBeEdited.getSet( ContentPropertyNames.PUBLISH_INFO ),
+            final PropertySet publishInfo = requireNonNullElseGet( toBeEdited.getSet( ContentPropertyNames.PUBLISH_INFO ),
                                                                            () -> toBeEdited.addSet( ContentPropertyNames.PUBLISH_INFO ) );
 
             publishInfo.setInstant( ContentPropertyNames.PUBLISH_TIME, Millis.now() );

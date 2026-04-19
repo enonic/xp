@@ -1,8 +1,8 @@
 package com.enonic.xp.project;
 
-import java.util.Objects;
-
 import com.enonic.xp.attachment.CreateAttachment;
+
+import static java.util.Objects.requireNonNull;
 
 
 public final class ModifyProjectIconParams
@@ -72,7 +72,7 @@ public final class ModifyProjectIconParams
 
         private void validate()
         {
-            Objects.requireNonNull( name, "name is required" );
+            requireNonNull( name, "name is required" );
         }
 
         public ModifyProjectIconParams build()

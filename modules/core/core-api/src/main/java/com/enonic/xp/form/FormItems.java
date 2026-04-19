@@ -10,6 +10,8 @@ import java.util.function.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 
+import static java.util.Objects.requireNonNull;
+
 final class FormItems
     implements Iterable<FormItem>
 {
@@ -51,7 +53,7 @@ final class FormItems
 
     FormItem getFormItem( final FormItemPath path )
     {
-        Objects.requireNonNull( path, "path cannot be null" );
+        requireNonNull( path, "path cannot be null" );
         Preconditions.checkArgument( path.elementCount() >= 1, "path must have at least one element" );
 
         if ( path.elementCount() > 1 )

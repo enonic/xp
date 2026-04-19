@@ -6,6 +6,8 @@ import java.util.Objects;
 import com.enonic.xp.blob.BlobKeys;
 import com.enonic.xp.core.internal.Millis;
 
+import static java.util.Objects.requireNonNull;
+
 
 public final class NodeVersion
 {
@@ -27,13 +29,13 @@ public final class NodeVersion
 
     private NodeVersion( Builder builder )
     {
-        nodeVersionId = Objects.requireNonNull( builder.nodeVersionId );
-        nodeVersionKey = Objects.requireNonNull( builder.nodeVersionKey );
-        binaryBlobKeys = Objects.requireNonNull( builder.binaryBlobKeys );
-        nodeId = Objects.requireNonNull( builder.nodeId );
-        nodePath = Objects.requireNonNull( builder.nodePath );
+        nodeVersionId = requireNonNull( builder.nodeVersionId );
+        nodeVersionKey = requireNonNull( builder.nodeVersionKey );
+        binaryBlobKeys = requireNonNull( builder.binaryBlobKeys );
+        nodeId = requireNonNull( builder.nodeId );
+        nodePath = requireNonNull( builder.nodePath );
         nodeCommitId = builder.nodeCommitId;
-        timestamp = Objects.requireNonNull( Millis.from( builder.timestamp ) );
+        timestamp = requireNonNull( Millis.from( builder.timestamp ) );
         attributes = builder.attributes;
     }
 

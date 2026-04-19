@@ -1,9 +1,9 @@
 package com.enonic.xp.content;
 
 import java.util.List;
-import java.util.Objects;
-
 import com.google.common.io.ByteSource;
+
+import static java.util.Objects.requireNonNull;
 
 
 public final class UpdateMediaParams
@@ -98,9 +98,9 @@ public final class UpdateMediaParams
 
     public void validate()
     {
-        Objects.requireNonNull( this.content, "content to update is required" );
-        Objects.requireNonNull( this.name, "name is required" );
-        Objects.requireNonNull( this.byteSource, "byteSource is required" );
+        requireNonNull( this.content, "content to update is required" );
+        requireNonNull( this.name, "name is required" );
+        requireNonNull( this.byteSource, "byteSource is required" );
     }
 
     public ContentId getContent()

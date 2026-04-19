@@ -8,6 +8,8 @@ import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.ValueType;
 
+import static java.util.Objects.requireNonNull;
+
 public final class InputTypeValidationException
     extends RuntimeException
 {
@@ -16,7 +18,7 @@ public final class InputTypeValidationException
     private InputTypeValidationException( final String message, final PropertyPath propertyPath )
     {
         super( message );
-        this.propertyPath = Objects.requireNonNull( propertyPath );
+        this.propertyPath = requireNonNull( propertyPath );
     }
 
     public PropertyPath getPropertyPath()

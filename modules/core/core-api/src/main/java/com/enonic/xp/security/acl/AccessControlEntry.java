@@ -10,6 +10,8 @@ import com.google.common.collect.Sets;
 
 import com.enonic.xp.security.PrincipalKey;
 
+import static java.util.Objects.requireNonNull;
+
 
 public final class AccessControlEntry
 {
@@ -21,7 +23,7 @@ public final class AccessControlEntry
 
     private AccessControlEntry( final Builder builder )
     {
-        this.principal = Objects.requireNonNull( builder.principal, "ACE principal cannot be null" );
+        this.principal = requireNonNull( builder.principal, "ACE principal cannot be null" );
         this.allowedPermissions = Sets.immutableEnumSet( builder.allowedPermissions );
         this.deniedPermissions = Sets.immutableEnumSet( builder.deniedPermissions );
     }

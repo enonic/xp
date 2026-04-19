@@ -1,11 +1,11 @@
 package com.enonic.xp.export;
 
-import java.util.Objects;
-
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.core.internal.FileNames;
 import com.enonic.xp.node.NodePath;
+
+import static java.util.Objects.requireNonNull;
 
 
 public final class ExportNodesParams
@@ -91,7 +91,7 @@ public final class ExportNodesParams
 
         private void validate()
         {
-            Objects.requireNonNull( sourceNodePath, "sourceNodePath is required" );
+            requireNonNull( sourceNodePath, "sourceNodePath is required" );
             Preconditions.checkArgument( exportName != null, "exportName is required" );
             Preconditions.checkArgument( FileNames.isSafeFileName( exportName ), "Invalid export name" );
         }

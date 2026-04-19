@@ -1,6 +1,6 @@
 package com.enonic.xp.content;
 
-import java.util.Objects;
+import static java.util.Objects.requireNonNull;
 
 
 public final class GetContentByIdsParams
@@ -10,7 +10,7 @@ public final class GetContentByIdsParams
     @Deprecated
     public GetContentByIdsParams( final ContentIds ids )
     {
-        this.ids = Objects.requireNonNull( ids, "ids must be specified" );
+        this.ids = requireNonNull( ids, "ids must be specified" );
     }
 
     public GetContentByIdsParams( final Builder builder )
@@ -44,7 +44,7 @@ public final class GetContentByIdsParams
 
         public GetContentByIdsParams build()
         {
-            Objects.requireNonNull( this.contentIds, "contentIds is required" );
+            requireNonNull( this.contentIds, "contentIds is required" );
             return new GetContentByIdsParams( this );
         }
     }

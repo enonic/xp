@@ -2,12 +2,13 @@ package com.enonic.xp.form;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 import java.util.regex.Pattern;
 
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.data.PropertyPath;
+
+import static java.util.Objects.requireNonNull;
 
 
 public final class FormItemPath
@@ -26,29 +27,29 @@ public final class FormItemPath
 
     public static FormItemPath from( final FormItemPath parentPath, final String name )
     {
-        Objects.requireNonNull( parentPath, "parentPath cannot be null" );
-        Objects.requireNonNull( name, "name cannot be null" );
+        requireNonNull( parentPath, "parentPath cannot be null" );
+        requireNonNull( name, "name cannot be null" );
 
         return fromInternal( ImmutableList.<String>builder().addAll( parentPath.elements ).add( name ).build() );
     }
 
     public static FormItemPath from( final Iterable<String> pathElements )
     {
-        Objects.requireNonNull( pathElements, "pathElements cannot be null" );
+        requireNonNull( pathElements, "pathElements cannot be null" );
 
         return fromInternal( ImmutableList.copyOf( pathElements ) );
     }
 
     public static FormItemPath from( final String path )
     {
-        Objects.requireNonNull( path, "path cannot be null" );
+        requireNonNull( path, "path cannot be null" );
 
         return fromInternal( ImmutableList.copyOf( path.split( Pattern.quote( ELEMENT_DIVIDER ), -1 ) ) );
     }
 
     public static FormItemPath from( final PropertyPath path )
     {
-        Objects.requireNonNull( path, "path cannot be null" );
+        requireNonNull( path, "path cannot be null" );
         return fromInternal( path.pathElements().stream().map( PropertyPath.Element::getName ).collect( ImmutableList.toImmutableList() ) );
     }
 

@@ -1,8 +1,8 @@
 package com.enonic.xp.node;
 
-import java.util.Objects;
-
 import com.enonic.xp.branch.Branch;
+
+import static java.util.Objects.requireNonNull;
 
 public final class PushNodeParams
 {
@@ -16,8 +16,8 @@ public final class PushNodeParams
 
     private PushNodeParams( final Builder builder )
     {
-        this.ids = Objects.requireNonNull( builder.ids, "ids is required" );
-        this.target = Objects.requireNonNull( builder.target, "target is required" );
+        this.ids = requireNonNull( builder.ids, "ids is required" );
+        this.target = requireNonNull( builder.target, "target is required" );
         this.pushListener = builder.pushListener;
         this.processor = builder.processor;
     }

@@ -2,7 +2,6 @@ package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 
@@ -44,6 +43,8 @@ import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.util.GenericValue;
+
+import static java.util.Objects.requireNonNull;
 
 abstract class AbstractContentCommand
 {
@@ -347,9 +348,9 @@ abstract class AbstractContentCommand
 
         void validate()
         {
-            Objects.requireNonNull( nodeService );
-            Objects.requireNonNull( contentTypeService );
-            Objects.requireNonNull( eventPublisher );
+            requireNonNull( nodeService );
+            requireNonNull( contentTypeService );
+            requireNonNull( eventPublisher );
         }
     }
 }

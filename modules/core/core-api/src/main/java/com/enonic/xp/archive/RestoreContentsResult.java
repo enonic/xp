@@ -1,10 +1,10 @@
 package com.enonic.xp.archive;
 
-import java.util.Objects;
-
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
+
+import static java.util.Objects.requireNonNull;
 
 
 public final class RestoreContentsResult
@@ -58,7 +58,7 @@ public final class RestoreContentsResult
 
         private void validate()
         {
-            Objects.requireNonNull( parentPath );
+            requireNonNull( parentPath );
         }
 
         public RestoreContentsResult build()

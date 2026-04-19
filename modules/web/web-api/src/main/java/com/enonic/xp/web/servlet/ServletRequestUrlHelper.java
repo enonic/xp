@@ -3,7 +3,6 @@ package com.enonic.xp.web.servlet;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Splitter;
@@ -13,6 +12,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 
+import static java.util.Objects.requireNonNullElse;
+
 
 public final class ServletRequestUrlHelper
 {
@@ -21,7 +22,7 @@ public final class ServletRequestUrlHelper
 
     public static String createUri( final HttpServletRequest req, final String path )
     {
-        return Objects.requireNonNullElse( rewriteUri( VirtualHostHelper.getVirtualHost( req ), path ), path );
+        return requireNonNullElse( rewriteUri( VirtualHostHelper.getVirtualHost( req ), path ), path );
     }
 
     public static String getServerUrl( final HttpServletRequest req )
@@ -91,7 +92,7 @@ public final class ServletRequestUrlHelper
 
         return resultBuilder.deletedUriPrefix( target )
             .newUriPrefix( source )
-            .rewrittenUri( Objects.requireNonNullElse( rewrittenUri, uri ) )
+            .rewrittenUri( requireNonNullElse( rewrittenUri, uri ) )
             .outOfScope( rewrittenUri == null )
             .build();
     }

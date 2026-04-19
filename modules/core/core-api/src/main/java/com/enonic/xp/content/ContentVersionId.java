@@ -2,6 +2,8 @@ package com.enonic.xp.content;
 
 import java.util.Objects;
 
+import static java.util.Objects.requireNonNull;
+
 
 public final class ContentVersionId
 {
@@ -9,7 +11,7 @@ public final class ContentVersionId
 
     private ContentVersionId( final String value )
     {
-        Objects.requireNonNull( value, "ContentVersionId cannot be null" );
+        requireNonNull( value, "ContentVersionId cannot be null" );
         this.value = value;
     }
 

@@ -1,8 +1,6 @@
 package com.enonic.xp.content;
 
 import java.util.Locale;
-import java.util.Objects;
-
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
@@ -10,6 +8,9 @@ import com.enonic.xp.page.Page;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlList;
+
+import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
 
 
 public final class CreateContentParams
@@ -48,17 +49,17 @@ public final class CreateContentParams
 
     private CreateContentParams( Builder builder )
     {
-        this.data = Objects.requireNonNull( builder.data, "data is required" );
-        this.mixins = Objects.requireNonNullElse( builder.mixins, Mixins.empty() );
-        this.type = Objects.requireNonNull( builder.type, "type is required" );
+        this.data = requireNonNull( builder.data, "data is required" );
+        this.mixins = requireNonNullElse( builder.mixins, Mixins.empty() );
+        this.type = requireNonNull( builder.type, "type is required" );
         this.owner = builder.owner;
         this.displayName = builder.displayName;
         this.name = builder.name;
-        this.parentContentPath = Objects.requireNonNull( builder.parentPath, "parentPath is required" );
+        this.parentContentPath = requireNonNull( builder.parentPath, "parentPath is required" );
         this.requireValid = builder.requireValid;
         this.permissions = builder.permissions;
         this.inheritPermissions = builder.inheritPermissions;
-        this.createAttachments = Objects.requireNonNullElse( builder.createAttachments, CreateAttachments.empty() );
+        this.createAttachments = requireNonNullElse( builder.createAttachments, CreateAttachments.empty() );
         this.childOrder = builder.childOrder;
         this.language = builder.language;
         this.refresh = builder.refresh;

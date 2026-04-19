@@ -1,7 +1,5 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.util.Objects;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +30,9 @@ import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.util.Reference;
 
+import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
+
 public final class DuplicateNodeCommand
     extends AbstractNodeCommand
 {
@@ -51,7 +52,7 @@ public final class DuplicateNodeCommand
         this.params = builder.params;
         this.binaryService = builder.binaryService;
         this.result = DuplicateNodeResult.create();
-        this.listener = Objects.requireNonNullElse( params.getDuplicateListener(), NoopDuplicateNodeListener.INSTANCE );
+        this.listener = requireNonNullElse( params.getDuplicateListener(), NoopDuplicateNodeListener.INSTANCE );
     }
 
     public static Builder create()
@@ -309,8 +310,8 @@ public final class DuplicateNodeCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( this.binaryService );
-            Objects.requireNonNull( params, "params cannot be null" );
+            requireNonNull( this.binaryService );
+            requireNonNull( params, "params cannot be null" );
         }
     }
 

@@ -1,8 +1,8 @@
 package com.enonic.xp.util;
 
-import java.util.Objects;
-
 import com.enonic.xp.node.NodeId;
+
+import static java.util.Objects.requireNonNull;
 
 
 public final class Reference
@@ -11,7 +11,7 @@ public final class Reference
 
     public Reference( final NodeId nodeId )
     {
-        this.nodeId = Objects.requireNonNull( nodeId );
+        this.nodeId = requireNonNull( nodeId );
     }
 
     public static Reference from( final String value )

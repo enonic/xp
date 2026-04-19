@@ -11,6 +11,8 @@ import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.app.ApplicationKey;
 
+import static java.util.Objects.requireNonNull;
+
 public final class StyleDescriptor
 {
     private final ApplicationKey applicationKey;
@@ -23,7 +25,7 @@ public final class StyleDescriptor
 
     private StyleDescriptor( final Builder builder )
     {
-        this.applicationKey = Objects.requireNonNull( builder.application, "applicationKey is required" );
+        this.applicationKey = requireNonNull( builder.application, "applicationKey is required" );
         this.cssPath = builder.cssPath;
         this.elements = builder.elements.build();
         this.modifiedTime = builder.modifiedTime;

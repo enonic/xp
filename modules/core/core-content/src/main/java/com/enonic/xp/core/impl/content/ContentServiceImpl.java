@@ -2,7 +2,6 @@ package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
 
@@ -108,6 +107,8 @@ import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigService;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
+
+import static java.util.Objects.requireNonNullElseGet;
 
 @Component(configurationPid = "com.enonic.xp.content")
 public class ContentServiceImpl
@@ -678,7 +679,7 @@ public class ContentServiceImpl
         final Instant now = Instant.now();
 
         final Contents contents = ContextBuilder.from( ContextAccessor.current() )
-            .branch( Objects.requireNonNullElseGet( params.getTarget(), ContextAccessor.current()::getBranch ) )
+            .branch( requireNonNullElseGet( params.getTarget(), ContextAccessor.current()::getBranch ) )
             .attribute( "ignorePublishTimes", Boolean.TRUE )
             .build()
             .callWith( () -> this.getByIds( GetContentByIdsParams.create().contentIds( params.getContentIds() ).build() ) );

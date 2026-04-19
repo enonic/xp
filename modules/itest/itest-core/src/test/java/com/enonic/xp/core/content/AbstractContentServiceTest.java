@@ -11,7 +11,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -120,6 +119,7 @@ import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Reference;
 
+import static java.util.Objects.requireNonNullElse;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -648,7 +648,7 @@ public abstract class AbstractContentServiceTest
         StringBuilder builder = new StringBuilder();
         builder.append( new String( new char[indent] ).replace( '\0', ' ' ) );
         builder.append( "'--" );
-        builder.append( Objects.requireNonNullElse( content.getName(), "" ) );
+        builder.append( requireNonNullElse( content.getName(), "" ) );
         builder.append( " (" );
         builder.append( content.getId().toString(), 0, 8 );
         builder.append( ")" );

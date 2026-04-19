@@ -1,7 +1,6 @@
 package com.enonic.xp.core.impl.audit.serializer;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -20,6 +19,8 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.security.PrincipalKey;
 
+import static java.util.Objects.requireNonNullElseGet;
+
 public class AuditLogSerializer
 {
 
@@ -36,7 +37,7 @@ public class AuditLogSerializer
         data.addInstant( AuditLogPropertyNames.TIME, auditLogParams.getTime() );
         data.addString( AuditLogPropertyNames.SOURCE, auditLogParams.getSource() );
 
-        final PrincipalKey userKey = Objects.requireNonNullElseGet( auditLogParams.getUser(),
+        final PrincipalKey userKey = requireNonNullElseGet( auditLogParams.getUser(),
                                                                     () -> ContextAccessor.current().getAuthInfo().getUser() != null
                                                                         ? ContextAccessor.current().getAuthInfo().getUser().getKey()
                                                                         : PrincipalKey.ofAnonymous() );

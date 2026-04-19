@@ -1,9 +1,9 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.util.Objects;
-
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
+
+import static java.util.Objects.requireNonNull;
 
 class AbstractCompareNodeCommand
 {
@@ -40,8 +40,8 @@ class AbstractCompareNodeCommand
 
         void validate()
         {
-            Objects.requireNonNull( nodeStorageService );
-            Objects.requireNonNull( target, "target is required" );
+            requireNonNull( nodeStorageService );
+            requireNonNull( target, "target is required" );
         }
     }
 }

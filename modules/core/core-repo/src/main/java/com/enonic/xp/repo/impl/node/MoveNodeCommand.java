@@ -1,7 +1,5 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.util.Objects;
-
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -32,6 +30,10 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
+import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
+import static java.util.Objects.requireNonNullElseGet;
+
 public class MoveNodeCommand
     extends AbstractNodeCommand
 {
@@ -45,7 +47,7 @@ public class MoveNodeCommand
     {
         super( builder );
         this.params = builder.params;
-        this.moveListener = Objects.requireNonNullElse( builder.params.getMoveListener(), count -> {
+        this.moveListener = requireNonNullElse( builder.params.getMoveListener(), count -> {
         } );
         this.result = MoveNodeResult.create();
     }
@@ -71,7 +73,7 @@ public class MoveNodeCommand
 
         final NodeName newNodeName = resolveNodeName( existingNode );
 
-        final NodePath newParentPath = Objects.requireNonNullElseGet( params.getNewParentPath(), existingNode::parentPath );
+        final NodePath newParentPath = requireNonNullElseGet( params.getNewParentPath(), existingNode::parentPath );
 
         final Context context = ContextAccessor.current();
 
@@ -219,7 +221,7 @@ public class MoveNodeCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( params, "params cannot be null" );
+            requireNonNull( params, "params cannot be null" );
         }
     }
 

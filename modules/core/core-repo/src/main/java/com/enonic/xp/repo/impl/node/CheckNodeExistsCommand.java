@@ -1,13 +1,13 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.util.Objects;
-
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeBranchEntry;
 import com.enonic.xp.repo.impl.SearchPreference;
+
+import static java.util.Objects.requireNonNull;
 
 public class CheckNodeExistsCommand
     extends AbstractNodeCommand
@@ -98,7 +98,7 @@ public class CheckNodeExistsCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( this.nodePath, "nodePath is required" );
+            requireNonNull( this.nodePath, "nodePath is required" );
         }
 
         public CheckNodeExistsCommand build()

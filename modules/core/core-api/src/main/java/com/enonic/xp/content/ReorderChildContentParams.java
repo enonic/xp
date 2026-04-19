@@ -1,8 +1,8 @@
 package com.enonic.xp.content;
 
-import java.util.Objects;
-
 import com.google.common.base.Preconditions;
+
+import static java.util.Objects.requireNonNull;
 
 
 public final class ReorderChildContentParams
@@ -56,7 +56,7 @@ public final class ReorderChildContentParams
 
         public ReorderChildContentParams build()
         {
-            Objects.requireNonNull( contentToMove, "contentToMove is required" );
+            requireNonNull( contentToMove, "contentToMove is required" );
             Preconditions.checkArgument( !contentToMove.equals( contentToMoveBefore ),
                                          "contentToMove and contentToMoveBefore must be different" );
             return new ReorderChildContentParams( this );

@@ -1,13 +1,14 @@
 package com.enonic.xp.node;
 
-import java.util.Objects;
-
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.PrincipalKeys;
+
+import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
 
 @NullMarked
 public final class SearchTarget
@@ -20,9 +21,9 @@ public final class SearchTarget
 
     private SearchTarget( final Builder builder )
     {
-        this.principalKeys = Objects.requireNonNullElse( builder.principalKeys, PrincipalKeys.empty() );
-        this.branch = Objects.requireNonNull( builder.branch, "branch is required" );
-        this.repositoryId = Objects.requireNonNull( builder.repositoryId, "repositoryId is required" );
+        this.principalKeys = requireNonNullElse( builder.principalKeys, PrincipalKeys.empty() );
+        this.branch = requireNonNull( builder.branch, "branch is required" );
+        this.repositoryId = requireNonNull( builder.repositoryId, "repositoryId is required" );
     }
 
     public static Builder create()

@@ -1,12 +1,13 @@
 package com.enonic.xp.node;
 
-import java.util.Objects;
 import java.util.Set;
 
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import com.google.common.collect.ImmutableSet;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * Represents the parameters used to apply attributes to a specific node version.
@@ -25,7 +26,7 @@ public final class ApplyVersionAttributesParams
 
     private ApplyVersionAttributesParams( final Builder builder )
     {
-        this.nodeVersionId = Objects.requireNonNull( builder.nodeVersionId );
+        this.nodeVersionId = requireNonNull( builder.nodeVersionId );
         this.addAttributes = builder.addAttributes.build();
         this.removeAttributes = builder.removeAttributes.build();
     }

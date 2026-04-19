@@ -4,6 +4,8 @@ import java.util.Objects;
 
 import com.enonic.xp.app.ApplicationKey;
 
+import static java.util.Objects.requireNonNull;
+
 public final class ValidationErrorCode
 {
     private static final String SEPARATOR = ":";
@@ -15,7 +17,7 @@ public final class ValidationErrorCode
     private ValidationErrorCode( final ApplicationKey applicationKey, final String code )
     {
         this.applicationKey = applicationKey;
-        this.code = Objects.requireNonNull( code );
+        this.code = requireNonNull( code );
     }
 
     public ApplicationKey getApplicationKey()
