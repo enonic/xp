@@ -43,6 +43,8 @@ public interface NodeStorageService
 
     Node get( NodeId nodeId, InternalContext context );
 
+    NodeVersionData getNodeVersionData( NodeId nodeId, InternalContext context );
+
     Node get( NodePath nodePath, InternalContext context );
 
     Nodes get( NodeIds nodeIds, InternalContext context );

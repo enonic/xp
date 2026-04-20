@@ -25,6 +25,7 @@ import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.search.result.SearchHit;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
+import com.enonic.xp.repo.impl.storage.NodeVersionData;
 import com.enonic.xp.repo.impl.storage.StoreNodeParams;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.Permission;
@@ -135,7 +136,9 @@ public class MoveNodeCommand
 
     private Node doMoveNode( final NodePath newParentPath, final NodeName newNodeName, final NodeId id )
     {
-        final Node persistedNode = doGetById( id );
+        final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
+        final NodeVersionData persistedData = this.nodeStorageService.getNodeVersionData( id, internalContext );
+        final Node persistedNode = persistedData.node();
 
         final Node.Builder nodeToMoveBuilder = Node.create( persistedNode )
             .name( newNodeName )
@@ -162,11 +165,10 @@ public class MoveNodeCommand
             }
         }
 
-        final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
         final Node builtNode = nodeToMoveBuilder.build();
-        final Attributes resolvedAttributes =
-            resolveVersionAttributes( params.getVersionAttributesResolver(), persistedNode, builtNode,
-                                      ContextAccessor.current().getBranch() );
+        final Attributes resolvedAttributes = resolveVersionAttributes( params.getVersionAttributesResolver(), persistedNode, builtNode,
+                                                                        ContextAccessor.current().getBranch(),
+                                                                        persistedData.version().getAttributes() );
         final Node movedNode =
             this.nodeStorageService.store( StoreNodeParams.newVersion( builtNode, resolvedAttributes ), internalContext ).node();
         this.nodeStorageService.invalidatePath( persistedNode.path(), internalContext );

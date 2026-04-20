@@ -31,6 +31,7 @@ public final class ContentVersionMapper
                 gen.map();
                 gen.value( "operation", action.operation() );
                 gen.value( "origin", action.origin() );
+                gen.value( "editorial", action.editorial() );
                 gen.value( "user", action.user() );
                 gen.value( "opTime", action.opTime() );
                 gen.end();

@@ -14,12 +14,15 @@ public final class PushNodeParams
 
     private final NodeDataProcessor processor;
 
+    private final VersionAttributesResolver versionAttributesResolver;
+
     private PushNodeParams( final Builder builder )
     {
         this.ids = requireNonNull( builder.ids, "ids is required" );
         this.target = requireNonNull( builder.target, "target is required" );
         this.pushListener = builder.pushListener;
         this.processor = builder.processor;
+        this.versionAttributesResolver = builder.versionAttributesResolver;
     }
 
     public NodeIds getIds()
@@ -42,6 +45,11 @@ public final class PushNodeParams
         return processor;
     }
 
+    public VersionAttributesResolver getVersionAttributesResolver()
+    {
+        return versionAttributesResolver;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -56,6 +64,8 @@ public final class PushNodeParams
         private PushNodesListener pushListener;
 
         private NodeDataProcessor processor;
+
+        private VersionAttributesResolver versionAttributesResolver;
 
         private Builder()
         {
@@ -82,6 +92,12 @@ public final class PushNodeParams
         public Builder processor( final NodeDataProcessor processor )
         {
             this.processor = processor;
+            return this;
+        }
+
+        public Builder versionAttributesResolver( final VersionAttributesResolver versionAttributesResolver )
+        {
+            this.versionAttributesResolver = versionAttributesResolver;
             return this;
         }
 

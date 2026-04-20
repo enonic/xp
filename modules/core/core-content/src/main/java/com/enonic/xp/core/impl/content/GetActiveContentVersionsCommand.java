@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
 import java.util.Map;
+
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -33,14 +34,16 @@ public class GetActiveContentVersionsCommand
 
     public GetActiveContentVersionsResult execute()
     {
-        final GetActiveNodeVersionsResult nodeResult = nodeService.getActiveVersions(
-            GetActiveNodeVersionsParams.create().nodeId( NodeId.from( params.getContentId() ) ).branches( params.getBranches() ).build() );
+        final NodeId nodeId = NodeId.from( params.getContentId() );
+
+        final GetActiveNodeVersionsResult nodeResult =
+            nodeService.getActiveVersions( GetActiveNodeVersionsParams.create().nodeId( nodeId ).branches( params.getBranches() ).build() );
 
         final GetActiveContentVersionsResult.Builder resultBuilder = GetActiveContentVersionsResult.create();
 
         for ( Map.Entry<Branch, NodeVersion> entry : nodeResult.getNodeVersions().entrySet() )
         {
-            resultBuilder.add( entry.getKey(), this.createVersion( entry.getValue() ) );
+            resultBuilder.add( entry.getKey(), createVersion( entry.getValue() ) );
         }
 
         return resultBuilder.build();

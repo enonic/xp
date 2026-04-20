@@ -26,6 +26,8 @@ public final class ContentPropertyNames
 
     public static final String MIXINS = "x";
 
+    public static final String COMPONENTS = "components";
+
     public static final String MEDIA = "media";
 
     public static final String MEDIA_ATTACHMENT = "attachment";
