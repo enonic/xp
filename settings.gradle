@@ -89,6 +89,7 @@ include 'admin:admin-impl'
 include 'admin:admin-event'
 
 include 'itest:itest-core'
+include 'itest:itest-core-content'
 
 include 'tools:testing'
 
