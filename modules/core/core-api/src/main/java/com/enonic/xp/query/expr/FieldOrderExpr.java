@@ -5,6 +5,8 @@ import java.util.Objects;
 
 import com.enonic.xp.index.IndexPath;
 
+import static java.util.Objects.requireNonNull;
+
 
 public final class FieldOrderExpr
     extends OrderExpr
@@ -21,7 +23,7 @@ public final class FieldOrderExpr
     public FieldOrderExpr( final FieldExpr field, final Locale language, final Direction direction )
     {
         super( direction );
-        this.field = Objects.requireNonNull( field );
+        this.field = requireNonNull( field );
         this.language = language;
     }
 

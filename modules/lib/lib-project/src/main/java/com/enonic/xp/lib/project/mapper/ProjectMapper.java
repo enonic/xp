@@ -1,14 +1,14 @@
 package com.enonic.xp.lib.project.mapper;
 
 import java.util.Locale;
-import java.util.Objects;
-
 import com.enonic.xp.lib.common.PropertyTreeMapper;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectPermissions;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 import com.enonic.xp.site.SiteConfig;
+
+import static java.util.Objects.requireNonNull;
 
 public final class ProjectMapper
     implements MapSerializable
@@ -132,7 +132,7 @@ public final class ProjectMapper
 
         private void validate()
         {
-            Objects.requireNonNull( project, "project is required" );
+            requireNonNull( project, "project is required" );
         }
 
 

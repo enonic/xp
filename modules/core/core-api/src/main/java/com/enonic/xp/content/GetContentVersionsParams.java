@@ -1,9 +1,9 @@
 package com.enonic.xp.content;
 
-import java.util.Objects;
-
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
+
+import static java.util.Objects.requireNonNull;
 
 
 @NullMarked
@@ -18,7 +18,7 @@ public final class GetContentVersionsParams
 
     private GetContentVersionsParams( final Builder builder )
     {
-        contentId = Objects.requireNonNull( builder.contentId, "contentId cannot be null" );
+        contentId = requireNonNull( builder.contentId, "contentId cannot be null" );
         cursor = builder.cursor;
         size = builder.size;
     }

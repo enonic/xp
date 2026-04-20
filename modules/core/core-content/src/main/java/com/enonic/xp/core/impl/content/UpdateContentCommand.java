@@ -30,6 +30,8 @@ import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.util.BinaryReference;
 
+import static java.util.Objects.requireNonNull;
+
 final class UpdateContentCommand
     extends AbstractCreatingOrUpdatingContentCommand
 {
@@ -280,7 +282,7 @@ final class UpdateContentCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( params, "params cannot be null" );
+            requireNonNull( params, "params cannot be null" );
         }
 
         UpdateContentCommand build()

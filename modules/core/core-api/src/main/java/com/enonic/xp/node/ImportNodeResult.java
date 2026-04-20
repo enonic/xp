@@ -1,6 +1,6 @@
 package com.enonic.xp.node;
 
-import java.util.Objects;
+import static java.util.Objects.requireNonNull;
 
 public final class ImportNodeResult
 {
@@ -54,7 +54,7 @@ public final class ImportNodeResult
 
         private void validate()
         {
-            Objects.requireNonNull( node );
+            requireNonNull( node );
         }
 
         public ImportNodeResult build()

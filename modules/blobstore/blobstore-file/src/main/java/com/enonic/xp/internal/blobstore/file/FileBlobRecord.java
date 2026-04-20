@@ -4,21 +4,21 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Objects;
-
 import com.google.common.io.ByteSource;
 import com.google.common.io.MoreFiles;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
 
+import static java.util.Objects.requireNonNull;
+
 record FileBlobRecord(BlobKey key, Path file)
     implements BlobRecord
 {
     FileBlobRecord( final BlobKey key, final Path file )
     {
-        this.key = Objects.requireNonNull( key );
-        this.file = Objects.requireNonNull( file );
+        this.key = requireNonNull( key );
+        this.file = requireNonNull( file );
     }
 
     public BlobKey getKey()

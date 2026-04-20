@@ -2,7 +2,6 @@ package com.enonic.xp.core.impl.content;
 
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -22,6 +21,8 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+
+import static java.util.Objects.requireNonNull;
 
 
 final class ResetContentInheritanceCommand
@@ -158,9 +159,9 @@ final class ResetContentInheritanceCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( this.projectService );
-            Objects.requireNonNull( this.contentService );
-            Objects.requireNonNull( this.contentSynchronizer );
+            requireNonNull( this.projectService );
+            requireNonNull( this.contentService );
+            requireNonNull( this.contentSynchronizer );
         }
 
         public ResetContentInheritanceCommand build()

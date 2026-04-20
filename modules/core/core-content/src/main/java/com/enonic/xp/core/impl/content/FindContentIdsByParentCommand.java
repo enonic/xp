@@ -1,8 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
 import java.util.Locale;
-import java.util.Objects;
-
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentIndexPath;
@@ -15,6 +13,8 @@ import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.filter.Filters;
+
+import static java.util.Objects.requireNonNull;
 
 final class FindContentIdsByParentCommand
     extends AbstractContentCommand
@@ -115,7 +115,7 @@ final class FindContentIdsByParentCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( params, "params cannot be null" );
+            requireNonNull( params, "params cannot be null" );
         }
 
         public FindContentIdsByParentCommand build()

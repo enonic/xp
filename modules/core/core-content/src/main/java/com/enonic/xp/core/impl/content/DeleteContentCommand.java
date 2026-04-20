@@ -1,8 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
 
-import java.util.Objects;
-
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentNotFoundException;
@@ -20,6 +18,8 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
+
+import static java.util.Objects.requireNonNull;
 
 
 final class DeleteContentCommand
@@ -130,7 +130,7 @@ final class DeleteContentCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( params, "params cannot be null" );
+            requireNonNull( params, "params cannot be null" );
         }
 
         DeleteContentCommand build()

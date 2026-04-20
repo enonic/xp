@@ -13,6 +13,8 @@ import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Link;
 import com.enonic.xp.util.Reference;
 
+import static java.util.Objects.requireNonNull;
+
 
 public abstract class Value
 {
@@ -22,7 +24,7 @@ public abstract class Value
 
     protected Value( final ValueType type, final Object value )
     {
-        Objects.requireNonNull( type, "type cannot be null" );
+        requireNonNull( type, "type cannot be null" );
         if ( value != null )
         {
             Preconditions.checkArgument( !( value instanceof Value ), "The value of a Value cannot be: %s", value.getClass() );

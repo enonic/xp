@@ -2,8 +2,6 @@ package com.enonic.xp.core.impl.content;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Objects;
-
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
@@ -11,6 +9,8 @@ import com.enonic.xp.highlight.HighlightedProperties;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.sortvalues.SortValuesProperty;
+
+import static java.util.Objects.requireNonNull;
 
 final class FindContentIdsByQueryCommand
     extends AbstractContentCommand
@@ -93,7 +93,7 @@ final class FindContentIdsByQueryCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( query, "query is required" );
+            requireNonNull( query, "query is required" );
         }
 
     }

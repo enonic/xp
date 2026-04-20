@@ -4,8 +4,6 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Locale;
-import java.util.Objects;
-
 import org.jboss.resteasy.mock.MockDispatcherFactory;
 import org.jboss.resteasy.spi.Dispatcher;
 import org.junit.jupiter.api.AfterEach;
@@ -29,6 +27,8 @@ import com.enonic.xp.jaxrs.impl.multipart.MultipartFormReader;
 import com.enonic.xp.session.Session;
 import com.enonic.xp.session.SessionMock;
 import com.enonic.xp.web.multipart.MultipartService;
+
+import static java.util.Objects.requireNonNull;
 
 public abstract class JaxRsResourceTestSupport
 {
@@ -133,7 +133,7 @@ public abstract class JaxRsResourceTestSupport
         throws Exception
     {
         final InputStream stream =
-            Objects.requireNonNull( getClass().getResourceAsStream( fileName ), "Resource file [" + fileName + "] not found" );
+            requireNonNull( getClass().getResourceAsStream( fileName ), "Resource file [" + fileName + "] not found" );
         try (stream)
         {
             return new String( stream.readAllBytes(), StandardCharsets.UTF_8 );

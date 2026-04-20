@@ -1,11 +1,12 @@
 package com.enonic.xp.node;
 
-import java.util.Objects;
-
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.util.BinaryReference;
+
+import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
 
 
 public final class PatchNodeParams
@@ -32,7 +33,7 @@ public final class PatchNodeParams
         this.binaryAttachments = builder.binaryAttachments.build();
         this.versionAttributesResolver = builder.versionAttributesResolver;
         this.refresh = builder.refresh;
-        this.branches = Objects.requireNonNullElse( builder.branches, Branches.empty() );
+        this.branches = requireNonNullElse( builder.branches, Branches.empty() );
     }
 
     public static Builder create()
@@ -159,7 +160,7 @@ public final class PatchNodeParams
             {
                 throw new IllegalArgumentException( "Either id or path is required" );
             }
-            Objects.requireNonNull( this.editor, "editor is required" );
+            requireNonNull( this.editor, "editor is required" );
         }
     }
 }

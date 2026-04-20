@@ -1,13 +1,13 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.Objects;
-
 import com.enonic.xp.content.ContentPaths;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.FindContentPathsByQueryResult;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeHit;
 import com.enonic.xp.node.NodeQuery;
+
+import static java.util.Objects.requireNonNull;
 
 final class FindContentPathsByQueryCommand
     extends AbstractContentCommand
@@ -69,7 +69,7 @@ final class FindContentPathsByQueryCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( contentQuery, "contentQuery is required" );
+            requireNonNull( contentQuery, "contentQuery is required" );
         }
 
     }

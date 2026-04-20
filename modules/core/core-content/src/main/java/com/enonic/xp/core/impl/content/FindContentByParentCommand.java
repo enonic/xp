@@ -1,12 +1,12 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.Objects;
-
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.content.FindContentIdsByParentResult;
 import com.enonic.xp.content.GetContentByIdsParams;
+
+import static java.util.Objects.requireNonNull;
 
 final class FindContentByParentCommand
     extends AbstractContentCommand
@@ -58,7 +58,7 @@ final class FindContentByParentCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( params, "params cannot be null" );
+            requireNonNull( params, "params cannot be null" );
         }
 
         public FindContentByParentCommand build()

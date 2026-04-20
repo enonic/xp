@@ -4,6 +4,8 @@ import java.util.Objects;
 
 import com.enonic.xp.app.ApplicationKey;
 
+import static java.util.Objects.requireNonNull;
+
 public final class ResponseProcessorDescriptor
 {
     private final String name;
@@ -14,8 +16,8 @@ public final class ResponseProcessorDescriptor
 
     private ResponseProcessorDescriptor( final Builder builder )
     {
-        this.name = Objects.requireNonNull( builder.name, "name cannot be null" );
-        this.application = Objects.requireNonNull( builder.application, "application cannot be null" );
+        this.name = requireNonNull( builder.name, "name cannot be null" );
+        this.application = requireNonNull( builder.application, "application cannot be null" );
         this.order = builder.order;
     }
 

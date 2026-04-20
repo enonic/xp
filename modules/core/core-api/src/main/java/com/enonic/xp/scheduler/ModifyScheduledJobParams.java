@@ -1,6 +1,6 @@
 package com.enonic.xp.scheduler;
 
-import java.util.Objects;
+import static java.util.Objects.requireNonNull;
 
 
 public final class ModifyScheduledJobParams
@@ -54,8 +54,8 @@ public final class ModifyScheduledJobParams
 
         private void validate()
         {
-            Objects.requireNonNull( name, "name is required" );
-            Objects.requireNonNull( editor, "editor is required" );
+            requireNonNull( name, "name is required" );
+            requireNonNull( editor, "editor is required" );
         }
 
         public ModifyScheduledJobParams build()

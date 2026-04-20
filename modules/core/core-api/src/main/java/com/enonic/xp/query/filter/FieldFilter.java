@@ -1,6 +1,6 @@
 package com.enonic.xp.query.filter;
 
-import java.util.Objects;
+import static java.util.Objects.requireNonNull;
 
 
 public abstract class FieldFilter
@@ -11,7 +11,7 @@ public abstract class FieldFilter
     protected FieldFilter( final Builder builder )
     {
         super( builder );
-        this.fieldName = Objects.requireNonNull( builder.fieldName );
+        this.fieldName = requireNonNull( builder.fieldName );
     }
 
     public String getFieldName()

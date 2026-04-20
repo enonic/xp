@@ -8,9 +8,9 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
-import java.util.Objects;
-
 import javax.imageio.ImageIO;
+
+import static java.util.Objects.requireNonNull;
 
 public abstract class BaseImageFilterTest
 {
@@ -28,7 +28,7 @@ public abstract class BaseImageFilterTest
     {
         try (InputStream resourceAsStream = BaseImageFilterTest.class.getResourceAsStream( name ))
         {
-            return ImageIO.read( Objects.requireNonNull( resourceAsStream ) );
+            return ImageIO.read( requireNonNull( resourceAsStream ) );
         }
         catch ( IOException e )
         {

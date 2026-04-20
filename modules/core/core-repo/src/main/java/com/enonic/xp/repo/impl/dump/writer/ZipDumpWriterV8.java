@@ -5,8 +5,6 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.Objects;
-
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.jspecify.annotations.Nullable;
 
@@ -34,6 +32,8 @@ import com.enonic.xp.repo.impl.dump.serializer.json.JsonDumpSerializer;
 import com.enonic.xp.repo.impl.node.NodeConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositorySegmentUtils;
+
+import static java.util.Objects.requireNonNull;
 
 public class ZipDumpWriterV8
     implements DumpWriter
@@ -205,7 +205,7 @@ public class ZipDumpWriterV8
 
     private void addBlob( final Segment segment, final BlobKey blobKey )
     {
-        Objects.requireNonNull( store, "Source blob store is required for writeNodeVersionBlobs/writeBinaryBlob" )
+        requireNonNull( store, "Source blob store is required for writeNodeVersionBlobs/writeBinaryBlob" )
             .add( new BlobReference( segment, blobKey ) );
     }
 

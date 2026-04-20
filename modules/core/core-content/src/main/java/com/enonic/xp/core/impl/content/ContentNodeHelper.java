@@ -1,7 +1,5 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.Objects;
-
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
@@ -20,6 +18,7 @@ import com.enonic.xp.node.NodePaths;
 import static com.enonic.xp.archive.ArchiveConstants.ARCHIVE_ROOT_NAME;
 import static com.enonic.xp.content.ContentConstants.CONTENT_ROOT_NAME;
 import static com.enonic.xp.content.ContentConstants.CONTENT_ROOT_PATH_ATTRIBUTE;
+import static java.util.Objects.requireNonNullElse;
 
 public class ContentNodeHelper
 {
@@ -89,7 +88,7 @@ public class ContentNodeHelper
 
     public static NodePath getContentRoot()
     {
-        return Objects.requireNonNullElse( (NodePath) ContextAccessor.current().getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE ),
+        return requireNonNullElse( (NodePath) ContextAccessor.current().getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE ),
                                            ContentConstants.CONTENT_ROOT_PATH );
     }
 

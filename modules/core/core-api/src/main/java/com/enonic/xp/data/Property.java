@@ -11,6 +11,8 @@ import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Link;
 import com.enonic.xp.util.Reference;
 
+import static java.util.Objects.requireNonNull;
+
 
 public final class Property
 {
@@ -170,7 +172,7 @@ public final class Property
 
     public static void checkName( final String name )
     {
-        Objects.requireNonNull( name, "Property name cannot be null" );
+        requireNonNull( name, "Property name cannot be null" );
         if ( name.isBlank() )
         {
             throw new IllegalArgumentException( "Property name cannot be blank" );

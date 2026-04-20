@@ -1,11 +1,11 @@
 package com.enonic.xp.content;
 
-import java.util.Objects;
-
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import com.enonic.xp.branch.Branches;
+
+import static java.util.Objects.requireNonNull;
 
 
 @NullMarked
@@ -17,8 +17,8 @@ public final class GetActiveContentVersionsParams
 
     private GetActiveContentVersionsParams( final Builder builder )
     {
-        contentId = Objects.requireNonNull( builder.contentId, "contentId is required" );
-        branches = Objects.requireNonNull( builder.branches, "branches is required" );
+        contentId = requireNonNull( builder.contentId, "contentId is required" );
+        branches = requireNonNull( builder.branches, "branches is required" );
     }
 
     public ContentId getContentId()

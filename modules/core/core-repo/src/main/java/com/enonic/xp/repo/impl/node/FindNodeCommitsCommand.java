@@ -1,13 +1,13 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.util.Objects;
-
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.NodeCommitQuery;
 import com.enonic.xp.node.NodeCommitQueryResult;
 import com.enonic.xp.repo.impl.commit.search.NodeCommitQueryResultFactory;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
+
+import static java.util.Objects.requireNonNull;
 
 public class FindNodeCommitsCommand
 {
@@ -56,8 +56,8 @@ public class FindNodeCommitsCommand
 
         private void validate()
         {
-            Objects.requireNonNull( this.nodeSearchService );
-            Objects.requireNonNull( this.query, "query is required" );
+            requireNonNull( this.nodeSearchService );
+            requireNonNull( this.query, "query is required" );
         }
 
         public FindNodeCommitsCommand build()

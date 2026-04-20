@@ -14,8 +14,6 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.networknt.schema.Error;
 import com.networknt.schema.InputFormat;
@@ -25,6 +23,8 @@ import com.networknt.schema.SchemaRegistry;
 import com.networknt.schema.dialect.Dialects;
 
 import org.junit.jupiter.api.BeforeAll;
+
+import static java.util.Objects.requireNonNull;
 
 abstract class AbstractSchemaValidationTest
 {
@@ -53,7 +53,7 @@ abstract class AbstractSchemaValidationTest
 
     protected static Schema schemaFor( final String schemaFileName )
     {
-        return Objects.requireNonNull( schemasByFileName.get( schemaFileName ),
+        return requireNonNull( schemasByFileName.get( schemaFileName ),
                                        () -> schemaFileName + " not found in loaded schemas" );
     }
 
@@ -61,7 +61,7 @@ abstract class AbstractSchemaValidationTest
     {
         final InputStream is =
             AbstractSchemaValidationTest.class.getClassLoader().getResourceAsStream( resourcePath );
-        Objects.requireNonNull( is, () -> "Resource not found: " + resourcePath );
+        requireNonNull( is, () -> "Resource not found: " + resourcePath );
         try ( is )
         {
             return schema.validate( new String( is.readAllBytes(), StandardCharsets.UTF_8 ), InputFormat.YAML );

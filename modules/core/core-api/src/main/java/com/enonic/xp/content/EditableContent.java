@@ -1,14 +1,14 @@
 package com.enonic.xp.content;
 
 
-import java.util.Objects;
-
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.NullUnmarked;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.EditablePage;
 import com.enonic.xp.page.Page;
+
+import static java.util.Objects.requireNonNull;
 
 
 public final class EditableContent
@@ -60,7 +60,7 @@ public final class EditableContent
 
     public EditableContent( @NonNull final Content source )
     {
-        this.source = Objects.requireNonNull( source );
+        this.source = requireNonNull( source );
         this.displayName = source.getDisplayName();
         this.data = source.getData().copy();
         this.mixins = source.getMixins().copy();

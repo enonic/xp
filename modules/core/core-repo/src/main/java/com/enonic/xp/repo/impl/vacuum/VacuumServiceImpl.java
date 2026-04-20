@@ -4,7 +4,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -25,6 +24,8 @@ import com.enonic.xp.vacuum.VacuumParameters;
 import com.enonic.xp.vacuum.VacuumResult;
 import com.enonic.xp.vacuum.VacuumService;
 import com.enonic.xp.vacuum.VacuumTaskResult;
+
+import static java.util.Objects.requireNonNullElseGet;
 
 @Component(immediate = true, configurationPid = "com.enonic.xp.vacuum")
 public class VacuumServiceImpl
@@ -77,7 +78,7 @@ public class VacuumServiceImpl
         }
 
         final long ageThreshold =
-            Objects.requireNonNullElseGet( params.getAgeThreshold(), () -> Duration.parse( config.ageThreshold() ) ).toMillis();
+            requireNonNullElseGet( params.getAgeThreshold(), () -> Duration.parse( config.ageThreshold() ) ).toMillis();
 
         final VacuumResult.Builder taskResults = VacuumResult.create();
         for ( final VacuumTask task : tasks )

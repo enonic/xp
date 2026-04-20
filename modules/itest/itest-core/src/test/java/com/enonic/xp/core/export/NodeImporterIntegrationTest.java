@@ -3,8 +3,6 @@ package com.enonic.xp.core.export;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Objects;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -34,6 +32,7 @@ import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.vfs.VirtualFile;
 import com.enonic.xp.vfs.VirtualFiles;
 
+import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -816,7 +815,7 @@ class NodeImporterIntegrationTest
         throws Exception
     {
         final InputStream stream =
-            Objects.requireNonNull( getClass().getResourceAsStream( resourceName ), "Resource file [" + resourceName + "] not found" );
+            requireNonNull( getClass().getResourceAsStream( resourceName ), "Resource file [" + resourceName + "] not found" );
         try (stream)
         {
             Files.copy( stream, target );

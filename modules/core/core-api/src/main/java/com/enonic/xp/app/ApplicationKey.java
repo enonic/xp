@@ -2,12 +2,13 @@ package com.enonic.xp.app;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Objects;
 import java.util.regex.Pattern;
 
 import org.jspecify.annotations.NullMarked;
 
 import com.enonic.xp.core.internal.NameValidator;
+
+import static java.util.Objects.requireNonNull;
 
 
 @NullMarked
@@ -41,7 +42,7 @@ public final class ApplicationKey
 
     private ApplicationKey( final String name )
     {
-        this.name = Objects.requireNonNull( name );
+        this.name = requireNonNull( name );
     }
 
     public String getName()
@@ -69,7 +70,7 @@ public final class ApplicationKey
 
     public static ApplicationKey from( final String name )
     {
-        return switch ( Objects.requireNonNull( name, "ApplicationKey cannot be null" ) )
+        return switch ( requireNonNull( name, "ApplicationKey cannot be null" ) )
         {
             case "system" -> SYSTEM;
             case "media" -> MEDIA_MOD;

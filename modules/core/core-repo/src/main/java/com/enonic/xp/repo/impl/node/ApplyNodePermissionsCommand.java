@@ -36,6 +36,8 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
+import static java.util.Objects.requireNonNullElse;
+
 public class ApplyNodePermissionsCommand
     extends AbstractNodeCommand
 {
@@ -55,7 +57,7 @@ public class ApplyNodePermissionsCommand
         this.params = builder.params;
         this.results = ApplyPermissionsResult.create();
         this.appliedVersions = new NodePatchCache<>();
-        this.listener = Objects.requireNonNullElse( params.getListener(), NoopApplyNodePermissionsListener.INSTANCE );
+        this.listener = requireNonNullElse( params.getListener(), NoopApplyNodePermissionsListener.INSTANCE );
         this.branches = params.getBranches().isEmpty() ? Branches.from( ContextAccessor.current().getBranch() ) : params.getBranches();
     }
 

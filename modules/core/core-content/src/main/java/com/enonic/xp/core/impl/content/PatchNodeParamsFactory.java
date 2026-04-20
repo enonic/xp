@@ -1,7 +1,5 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.Objects;
-
 import org.osgi.util.function.Function;
 
 import com.google.common.collect.ImmutableSet;
@@ -27,6 +25,8 @@ import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.site.CmsService;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
+
+import static java.util.Objects.requireNonNull;
 
 public class PatchNodeParamsFactory
 {
@@ -212,14 +212,14 @@ public class PatchNodeParamsFactory
 
         void validate()
         {
-            Objects.requireNonNull( contentEditor, "contentSupplier cannot be null" );
-            Objects.requireNonNull( createAttachments, "createAttachments cannot be null" );
+            requireNonNull( contentEditor, "contentSupplier cannot be null" );
+            requireNonNull( createAttachments, "createAttachments cannot be null" );
 
-            Objects.requireNonNull( contentTypeService );
-            Objects.requireNonNull( mixinService );
-            Objects.requireNonNull( pageDescriptorService );
-            Objects.requireNonNull( partDescriptorService );
-            Objects.requireNonNull( layoutDescriptorService );
+            requireNonNull( contentTypeService );
+            requireNonNull( mixinService );
+            requireNonNull( pageDescriptorService );
+            requireNonNull( partDescriptorService );
+            requireNonNull( layoutDescriptorService );
         }
 
         public PatchNodeParamsFactory build()

@@ -4,6 +4,8 @@ import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
+import static java.util.Objects.requireNonNull;
+
 
 public final class PrincipalRelationship
 {
@@ -13,8 +15,8 @@ public final class PrincipalRelationship
 
     private PrincipalRelationship( final Builder builder )
     {
-        Objects.requireNonNull( builder.from, "Principal relationship 'from' cannot be null" );
-        Objects.requireNonNull( builder.to, "Principal relationship 'to' cannot be null" );
+        requireNonNull( builder.from, "Principal relationship 'from' cannot be null" );
+        requireNonNull( builder.to, "Principal relationship 'to' cannot be null" );
         Preconditions.checkArgument( !builder.from.equals( builder.to ),
                                      "Principal relationship 'from' and 'to' cannot refer to the same principal" );
         Preconditions.checkArgument( !( builder.from.isRole() && builder.to.isRole() ),

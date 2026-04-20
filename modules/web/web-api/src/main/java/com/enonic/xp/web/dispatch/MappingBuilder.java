@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -15,6 +14,7 @@ import jakarta.servlet.Filter;
 import jakarta.servlet.Servlet;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static java.util.Objects.requireNonNull;
 
 public final class MappingBuilder
 {
@@ -156,13 +156,13 @@ public final class MappingBuilder
 
     public FilterMapping filter( final Filter filter )
     {
-        Objects.requireNonNull( filter, "Filter cannot not be null" );
+        requireNonNull( filter, "Filter cannot not be null" );
         return new FilterMappingImpl( this, filter );
     }
 
     public ServletMapping servlet( final Servlet servlet )
     {
-        Objects.requireNonNull( servlet, "Servlet cannot not be null" );
+        requireNonNull( servlet, "Servlet cannot not be null" );
         return new ServletMappingImpl( this, servlet );
     }
 

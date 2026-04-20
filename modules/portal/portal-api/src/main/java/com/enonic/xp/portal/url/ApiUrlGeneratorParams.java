@@ -3,12 +3,13 @@ package com.enonic.xp.portal.url;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Supplier;
 
 import com.enonic.xp.descriptor.DescriptorKey;
 
 import static com.google.common.base.Strings.emptyToNull;
+import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
 
 
 public final class ApiUrlGeneratorParams
@@ -26,8 +27,8 @@ public final class ApiUrlGeneratorParams
     private ApiUrlGeneratorParams( final Builder builder )
     {
         this.baseUrl = builder.baseUrl;
-        this.urlType = Objects.requireNonNullElse( builder.urlType, UrlTypeConstants.SERVER_RELATIVE );
-        this.descriptorKey = Objects.requireNonNull( builder.descriptorKey );
+        this.urlType = requireNonNullElse( builder.urlType, UrlTypeConstants.SERVER_RELATIVE );
+        this.descriptorKey = requireNonNull( builder.descriptorKey );
         this.pathSupplier = builder.pathSupplier;
         this.queryParams = builder.queryParams.build();
     }

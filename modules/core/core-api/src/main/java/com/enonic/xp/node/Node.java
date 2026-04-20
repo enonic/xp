@@ -11,6 +11,9 @@ import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.security.acl.AccessControlList;
 
+import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
+
 
 public final class Node
 {
@@ -78,7 +81,7 @@ public final class Node
             this.path = null;
         }
 
-        this.indexConfigDocument = Objects.requireNonNullElse( builder.indexConfigDocument, DEFAULT_INDEX_CONFIG );
+        this.indexConfigDocument = requireNonNullElse( builder.indexConfigDocument, DEFAULT_INDEX_CONFIG );
     }
 
     public boolean isRoot()
@@ -315,11 +318,11 @@ public final class Node
 
         private void validate()
         {
-            Objects.requireNonNull( this.permissions, "permissions is required" );
-            Objects.requireNonNull( this.data, "data is required" );
+            requireNonNull( this.permissions, "permissions is required" );
+            requireNonNull( this.data, "data is required" );
             if ( NodeId.ROOT.equals( this.id ) )
             {
-                Objects.requireNonNull( this.childOrder, "childOrder is required" );
+                requireNonNull( this.childOrder, "childOrder is required" );
             }
         }
 

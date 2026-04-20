@@ -1,7 +1,5 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.Objects;
-
 import com.enonic.xp.archive.ArchiveConstants;
 import com.enonic.xp.archive.RestoreContentException;
 import com.enonic.xp.archive.RestoreContentParams;
@@ -32,6 +30,7 @@ import static com.enonic.xp.content.ContentPropertyNames.ARCHIVED_TIME;
 import static com.enonic.xp.content.ContentPropertyNames.ORIGINAL_NAME;
 import static com.enonic.xp.content.ContentPropertyNames.ORIGINAL_PARENT_PATH;
 import static com.google.common.base.Strings.nullToEmpty;
+import static java.util.Objects.requireNonNull;
 
 final class RestoreContentCommand
     extends AbstractCreatingOrUpdatingContentCommand
@@ -226,7 +225,7 @@ final class RestoreContentCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( params, "params cannot be null" );
+            requireNonNull( params, "params cannot be null" );
         }
 
         RestoreContentCommand build()

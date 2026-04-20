@@ -3,7 +3,6 @@ package com.enonic.xp.lib.project;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
@@ -23,6 +22,7 @@ import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 
 import static com.google.common.base.Strings.nullToEmpty;
+import static java.util.Objects.requireNonNull;
 
 public final class CreateProjectHandler
     extends BaseProjectHandler
@@ -104,7 +104,7 @@ public final class CreateProjectHandler
 
     public void setId( final String value )
     {
-        this.id = ProjectName.from( Objects.requireNonNull( value, "Project name is required" ) );
+        this.id = ProjectName.from( requireNonNull( value, "Project name is required" ) );
     }
 
     public void setDisplayName( final String value )

@@ -1,7 +1,5 @@
 package com.enonic.xp.repo.impl.repository;
 
-import java.util.Objects;
-
 import org.elasticsearch.indices.IndexAlreadyExistsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +19,8 @@ import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.SystemConstants;
 
+import static java.util.Objects.requireNonNull;
+
 public class RepositoryCreator
 {
     private static final Logger LOG = LoggerFactory.getLogger( RepositoryCreator.class );
@@ -34,9 +34,9 @@ public class RepositoryCreator
     public RepositoryCreator( final NodeRepositoryService nodeRepositoryService, final NodeStorageService nodeStorageService,
                               final RepositoryEntryService repositoryEntryService )
     {
-        this.nodeRepositoryService = Objects.requireNonNull( nodeRepositoryService );
-        this.nodeStorageService = Objects.requireNonNull( nodeStorageService );
-        this.repositoryEntryService = Objects.requireNonNull( repositoryEntryService );
+        this.nodeRepositoryService = requireNonNull( nodeRepositoryService );
+        this.nodeStorageService = requireNonNull( nodeStorageService );
+        this.repositoryEntryService = requireNonNull( repositoryEntryService );
     }
 
     public boolean isInitialized( RepositoryId repositoryId )

@@ -1,12 +1,12 @@
 package com.enonic.xp.macro;
 
 import java.time.Instant;
-import java.util.Objects;
-
 import com.enonic.xp.form.Form;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.schema.LocalizedText;
 import com.enonic.xp.util.GenericValue;
+
+import static java.util.Objects.requireNonNullElse;
 
 
 public final class MacroDescriptor
@@ -36,7 +36,7 @@ public final class MacroDescriptor
         this.titleI18nKey = builder.titleI18nKey;
         this.description = builder.description;
         this.descriptionI18nKey = builder.descriptionI18nKey;
-        this.form = Objects.requireNonNullElse( builder.form, Form.empty() );
+        this.form = requireNonNullElse( builder.form, Form.empty() );
         this.icon = builder.icon;
         this.modifiedTime = builder.modifiedTime;
         this.schemaConfig = builder.schemaConfig.build();

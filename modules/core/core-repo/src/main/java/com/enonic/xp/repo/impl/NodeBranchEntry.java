@@ -1,13 +1,13 @@
 package com.enonic.xp.repo.impl;
 
 import java.time.Instant;
-import java.util.Objects;
-
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionKey;
+
+import static java.util.Objects.requireNonNull;
 
 public final class NodeBranchEntry
 {
@@ -23,11 +23,11 @@ public final class NodeBranchEntry
 
     private NodeBranchEntry( Builder builder )
     {
-        this.nodeVersionId = Objects.requireNonNull( builder.nodeVersionId );
-        this.nodeVersionKey = Objects.requireNonNull( builder.nodeVersionKey );
-        this.nodePath = Objects.requireNonNull( builder.nodePath );
-        this.timestamp = Objects.requireNonNull( builder.timestamp );
-        this.nodeId = Objects.requireNonNull( builder.nodeId );
+        this.nodeVersionId = requireNonNull( builder.nodeVersionId );
+        this.nodeVersionKey = requireNonNull( builder.nodeVersionKey );
+        this.nodePath = requireNonNull( builder.nodePath );
+        this.timestamp = requireNonNull( builder.timestamp );
+        this.nodeId = requireNonNull( builder.nodeId );
     }
 
     public static Builder create()

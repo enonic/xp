@@ -19,12 +19,14 @@ import com.enonic.xp.repo.impl.index.IndexLanguageController;
 import com.enonic.xp.repo.impl.index.IndexValueType;
 import com.enonic.xp.repo.impl.index.StaticIndexValueType;
 
+import static java.util.Objects.requireNonNull;
+
 public class IndexItemFactory
 {
     public static List<IndexItem<?>> create( final IndexPath indexPath, final Value value, final IndexConfigDocument indexConfigDocument )
     {
-        Objects.requireNonNull( indexPath );
-        Objects.requireNonNull( value );
+        requireNonNull( indexPath );
+        requireNonNull( value );
 
         Value processedPropertyValue = applyValueProcessors( value, indexConfigDocument.getConfigForPath( indexPath ) );
 

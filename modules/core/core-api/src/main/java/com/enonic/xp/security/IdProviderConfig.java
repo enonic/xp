@@ -6,6 +6,8 @@ import java.util.Objects;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertyTree;
 
+import static java.util.Objects.requireNonNull;
+
 
 public final class IdProviderConfig
 {
@@ -15,7 +17,7 @@ public final class IdProviderConfig
 
     private IdProviderConfig( final Builder builder )
     {
-        this.applicationKey = Objects.requireNonNull( builder.applicationKey, "applicationKey cannot be null" );
+        this.applicationKey = requireNonNull( builder.applicationKey, "applicationKey cannot be null" );
         this.config = builder.config == null ? new PropertyTree() : builder.config;
     }
 

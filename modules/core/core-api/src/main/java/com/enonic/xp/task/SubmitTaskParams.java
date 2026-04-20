@@ -1,9 +1,9 @@
 package com.enonic.xp.task;
 
-import java.util.Objects;
-
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
+
+import static java.util.Objects.requireNonNull;
 
 
 public final class SubmitTaskParams
@@ -16,7 +16,7 @@ public final class SubmitTaskParams
 
     private SubmitTaskParams( final Builder builder )
     {
-        this.descriptorKey = Objects.requireNonNull( builder.descriptorKey, "descriptor key is required" );
+        this.descriptorKey = requireNonNull( builder.descriptorKey, "descriptor key is required" );
         this.name = builder.name;
         this.data = builder.data;
     }

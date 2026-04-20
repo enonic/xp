@@ -1,8 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
 import java.util.List;
-import java.util.Objects;
-
 import com.google.common.collect.Iterables;
 
 import com.enonic.xp.context.Context;
@@ -33,6 +31,8 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
+import static java.util.Objects.requireNonNullElse;
+
 public class DeleteNodeCommand
     extends AbstractNodeCommand
 {
@@ -51,7 +51,7 @@ public class DeleteNodeCommand
         super( builder );
         this.nodeId = builder.nodeId;
         this.nodePath = builder.nodePath;
-        this.deleteNodeListener = Objects.requireNonNullElse( builder.deleteNodeListener, _ -> {
+        this.deleteNodeListener = requireNonNullElse( builder.deleteNodeListener, _ -> {
         } );
         this.refresh = builder.refresh;
     }

@@ -2,11 +2,12 @@ package com.enonic.xp.web.vhost.impl.mapping;
 
 import java.util.Collections;
 import java.util.Map;
-import java.util.Objects;
-
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.IdProviderKeys;
 import com.enonic.xp.web.vhost.VirtualHost;
+
+import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
 
 public final class VirtualHostMapping
     implements VirtualHost
@@ -34,11 +35,11 @@ public final class VirtualHostMapping
     public VirtualHostMapping( final String name, final String host, final String source, final String target,
                                final VirtualHostIdProvidersMapping idProvidersMapping, final int order, final Map<String, String> context )
     {
-        Objects.requireNonNull( name, "name must be set" );
-        Objects.requireNonNull( host, "host must be set" );
-        Objects.requireNonNull( source, "source must be set" );
-        Objects.requireNonNull( target, "target must be set" );
-        Objects.requireNonNull( idProvidersMapping, "idProvidersMapping must be set" );
+        requireNonNull( name, "name must be set" );
+        requireNonNull( host, "host must be set" );
+        requireNonNull( source, "source must be set" );
+        requireNonNull( target, "target must be set" );
+        requireNonNull( idProvidersMapping, "idProvidersMapping must be set" );
 
         this.name = name;
         this.host = host;
@@ -46,7 +47,7 @@ public final class VirtualHostMapping
         this.target = target;
         this.idProvidersMapping = idProvidersMapping;
         this.order = order;
-        this.context = Collections.unmodifiableMap( Objects.requireNonNullElse( context, Map.of() ) );
+        this.context = Collections.unmodifiableMap( requireNonNullElse( context, Map.of() ) );
     }
 
     @Override

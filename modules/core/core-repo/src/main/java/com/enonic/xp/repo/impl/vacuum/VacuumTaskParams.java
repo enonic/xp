@@ -2,9 +2,9 @@ package com.enonic.xp.repo.impl.vacuum;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Objects;
-
 import com.enonic.xp.vacuum.VacuumListener;
+
+import static java.util.Objects.requireNonNull;
 
 public final class VacuumTaskParams
 {
@@ -23,7 +23,7 @@ public final class VacuumTaskParams
         ageThreshold = builder.ageThreshold;
         listener = builder.listener;
         versionsBatchSize = builder.versionsBatchSize;
-        vacuumStartedAt = Objects.requireNonNull( builder.vacuumStartedAt );
+        vacuumStartedAt = requireNonNull( builder.vacuumStartedAt );
     }
 
     public long getAgeThreshold()

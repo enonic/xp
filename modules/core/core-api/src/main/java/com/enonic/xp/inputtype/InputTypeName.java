@@ -1,7 +1,7 @@
 package com.enonic.xp.inputtype;
 
 import java.util.Locale;
-import java.util.Objects;
+import static java.util.Objects.requireNonNull;
 
 
 public final class InputTypeName
@@ -58,7 +58,7 @@ public final class InputTypeName
 
     private InputTypeName( final String name )
     {
-        Objects.requireNonNull( name, "InputTypeName can't be null" );
+        requireNonNull( name, "InputTypeName can't be null" );
         this.name = name;
         this.lowercaseName = name.toLowerCase( Locale.ROOT );
     }

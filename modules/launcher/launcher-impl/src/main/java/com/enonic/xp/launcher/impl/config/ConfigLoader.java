@@ -10,10 +10,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Properties;
 
 import com.enonic.xp.launcher.impl.env.Environment;
+
+import static java.util.Objects.requireNonNull;
 
 public final class ConfigLoader
 {
@@ -42,7 +43,7 @@ public final class ConfigLoader
         throws IOException
     {
         final InputStream stream = getClass().getResourceAsStream( DEFAULT_CONFIG );
-        Objects.requireNonNull( stream, "Could not find " + DEFAULT_CONFIG );
+        requireNonNull( stream, "Could not find " + DEFAULT_CONFIG );
 
         try (stream; Reader reader = new BufferedReader( new InputStreamReader( stream, StandardCharsets.UTF_8 ) ))
         {

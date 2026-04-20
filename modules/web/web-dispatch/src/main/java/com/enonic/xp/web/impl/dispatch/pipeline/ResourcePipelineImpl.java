@@ -3,7 +3,6 @@ package com.enonic.xp.web.impl.dispatch.pipeline;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import jakarta.servlet.ServletContext;
@@ -12,6 +11,8 @@ import jakarta.servlet.ServletException;
 import com.enonic.xp.core.internal.concurrent.AtomicSortedList;
 import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.impl.dispatch.mapping.ResourceDefinition;
+
+import static java.util.Objects.requireNonNull;
 
 public abstract class ResourcePipelineImpl<T extends ResourceDefinition<?>>
     implements ResourcePipeline<T>
@@ -27,14 +28,14 @@ public abstract class ResourcePipelineImpl<T extends ResourceDefinition<?>>
     public ResourcePipelineImpl( final Map<String, ?> properties )
     {
         final String connectorValue = (String) properties.get( DispatchConstants.CONNECTOR_PROPERTY );
-        this.connector = Objects.requireNonNull( connectorValue, "Connector property must not be null" );
+        this.connector = requireNonNull( connectorValue, "Connector property must not be null" );
     }
 
     @Override
     public final void init( final ServletContext context )
         throws ServletException
     {
-        this.context = Objects.requireNonNull( context );
+        this.context = requireNonNull( context );
         this.list.snapshot().forEach( r -> r.init( this.context ) );
     }
 

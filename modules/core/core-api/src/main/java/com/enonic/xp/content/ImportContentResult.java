@@ -1,6 +1,6 @@
 package com.enonic.xp.content;
 
-import java.util.Objects;
+import static java.util.Objects.requireNonNull;
 
 public final class ImportContentResult
 {
@@ -37,7 +37,7 @@ public final class ImportContentResult
 
         private void validate()
         {
-            Objects.requireNonNull( content );
+            requireNonNull( content );
         }
 
         public ImportContentResult build()

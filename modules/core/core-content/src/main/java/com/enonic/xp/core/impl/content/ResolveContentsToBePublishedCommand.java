@@ -1,6 +1,5 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.Objects;
 import java.util.Set;
 
 import com.enonic.xp.archive.ArchiveConstants;
@@ -14,6 +13,8 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.ResolveSyncWorkResult;
 import com.enonic.xp.node.SyncWorkResolverParams;
+
+import static java.util.Objects.requireNonNull;
 
 public class ResolveContentsToBePublishedCommand
     extends AbstractContentCommand
@@ -119,7 +120,7 @@ public class ResolveContentsToBePublishedCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( contentIds, "contentIds is required" );
+            requireNonNull( contentIds, "contentIds is required" );
         }
 
         public ResolveContentsToBePublishedCommand build()

@@ -1,9 +1,9 @@
 package com.enonic.xp.archive;
 
-import java.util.Objects;
-
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
+
+import static java.util.Objects.requireNonNull;
 
 
 public final class RestoreContentParams
@@ -73,7 +73,7 @@ public final class RestoreContentParams
 
         private void validate()
         {
-            Objects.requireNonNull( contentId, "contentId is required" );
+            requireNonNull( contentId, "contentId is required" );
         }
 
         public RestoreContentParams build()

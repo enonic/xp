@@ -1,11 +1,11 @@
 package com.enonic.xp.node;
 
-import java.util.Objects;
-
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import com.enonic.xp.branch.Branches;
+
+import static java.util.Objects.requireNonNull;
 
 
 @NullMarked
@@ -17,8 +17,8 @@ public final class GetActiveNodeVersionsParams
 
     private GetActiveNodeVersionsParams( Builder builder )
     {
-        nodeId = Objects.requireNonNull( builder.nodeId, "nodeId is required" );
-        branches = Objects.requireNonNull( builder.branches, "branches is required" );
+        nodeId = requireNonNull( builder.nodeId, "nodeId is required" );
+        branches = requireNonNull( builder.branches, "branches is required" );
     }
 
     public static Builder create()

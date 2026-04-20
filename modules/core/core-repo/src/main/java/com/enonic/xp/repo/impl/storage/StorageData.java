@@ -2,12 +2,12 @@ package com.enonic.xp.repo.impl.storage;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Objects;
-
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableMultimap;
 
 import com.enonic.xp.index.IndexPath;
+
+import static java.util.Objects.requireNonNull;
 
 public class StorageData
 {
@@ -38,8 +38,8 @@ public class StorageData
 
         public Builder add( final IndexPath key, final Object value )
         {
-            Objects.requireNonNull( key );
-            Objects.requireNonNull( value );
+            requireNonNull( key );
+            requireNonNull( value );
 
             if ( value instanceof Iterable )
             {

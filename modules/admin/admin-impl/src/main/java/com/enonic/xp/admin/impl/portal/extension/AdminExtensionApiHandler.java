@@ -1,6 +1,5 @@
 package com.enonic.xp.admin.impl.portal.extension;
 
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,6 +22,8 @@ import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
+
+import static java.util.Objects.requireNonNull;
 
 @Component(immediate = true, service = AdminExtensionApiHandler.class)
 public class AdminExtensionApiHandler
@@ -49,7 +50,7 @@ public class AdminExtensionApiHandler
 
     public WebResponse handle( final WebRequest webRequest )
     {
-        final String path = Objects.requireNonNull( webRequest.getEndpointPath(), "Endpoint path cannot be null" );
+        final String path = requireNonNull( webRequest.getEndpointPath(), "Endpoint path cannot be null" );
 
         final Matcher matcher = EXTENSION_API_PATTERN.matcher( path );
 

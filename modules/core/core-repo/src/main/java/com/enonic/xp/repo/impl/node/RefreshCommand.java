@@ -1,6 +1,5 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.util.Objects;
 import java.util.Set;
 
 import org.elasticsearch.index.IndexNotFoundException;
@@ -12,6 +11,8 @@ import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.repository.IndexException;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.SystemConstants;
+
+import static java.util.Objects.requireNonNullElse;
 
 public class RefreshCommand
 {
@@ -28,7 +29,7 @@ public class RefreshCommand
     public void execute()
     {
         final RepositoryId repositoryId =
-            Objects.requireNonNullElse( ContextAccessor.current().getRepositoryId(), SystemConstants.SYSTEM_REPO_ID );
+            requireNonNullElse( ContextAccessor.current().getRepositoryId(), SystemConstants.SYSTEM_REPO_ID );
 
         final Set<String> indices = switch ( refreshMode )
         {

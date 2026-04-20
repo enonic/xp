@@ -3,8 +3,6 @@ package com.enonic.xp.admin.event.impl.json;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Objects;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -18,6 +16,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.enonic.xp.core.internal.json.ObjectMapperHelper;
 import com.enonic.xp.event.Event;
 
+import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -82,7 +81,7 @@ class EventJsonSerializerTest
         throws Exception
     {
         final InputStream stream =
-            Objects.requireNonNull( getClass().getResourceAsStream( fileName ), "Resource file [" + fileName + "] not found" );
+            requireNonNull( getClass().getResourceAsStream( fileName ), "Resource file [" + fileName + "] not found" );
         try (stream)
         {
             return new String( stream.readAllBytes(), StandardCharsets.UTF_8 );

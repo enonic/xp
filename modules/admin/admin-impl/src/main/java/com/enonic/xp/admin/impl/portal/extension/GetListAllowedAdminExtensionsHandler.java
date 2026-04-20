@@ -3,8 +3,6 @@ package com.enonic.xp.admin.impl.portal.extension;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
-
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -30,6 +28,7 @@ import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static java.util.Objects.requireNonNullElse;
 
 @Component(immediate = true, service = GetListAllowedAdminExtensionsHandler.class)
 public class GetListAllowedAdminExtensionsHandler
@@ -158,7 +157,7 @@ public class GetListAllowedAdminExtensionsHandler
 
         try
         {
-            return Objects.requireNonNullElse( bundle.localize( key ), defaultValue );
+            return requireNonNullElse( bundle.localize( key ), defaultValue );
         }
         catch ( IllegalArgumentException e )
         {

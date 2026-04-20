@@ -1,8 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
 import java.util.List;
-import java.util.Objects;
-
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.attachment.CreateAttachment;
@@ -14,6 +12,8 @@ import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.schema.content.ContentTypeFromMimeTypeResolver;
 import com.enonic.xp.schema.content.ContentTypeName;
+
+import static java.util.Objects.requireNonNull;
 
 final class UpdateMediaCommand
     extends AbstractCreatingOrUpdatingContentCommand
@@ -50,7 +50,7 @@ final class UpdateMediaCommand
             mediaType = mediaInfo.getMediaType();
         }
 
-        Objects.requireNonNull( mediaType, "Unable to resolve media type" );
+        requireNonNull( mediaType, "Unable to resolve media type" );
 
         final ContentTypeName resolvedTypeFromMimeType = ContentTypeFromMimeTypeResolver.resolve( mediaType );
         final ContentTypeName type = resolvedTypeFromMimeType != null
@@ -124,7 +124,7 @@ final class UpdateMediaCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( params, "params cannot be null" );
+            requireNonNull( params, "params cannot be null" );
         }
 
         public UpdateMediaCommand build()

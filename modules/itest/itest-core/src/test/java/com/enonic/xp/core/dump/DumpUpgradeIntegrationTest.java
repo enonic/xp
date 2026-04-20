@@ -6,8 +6,6 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
-import java.util.Objects;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -34,6 +32,7 @@ import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.Version;
 
+import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -188,7 +187,7 @@ class DumpUpgradeIntegrationTest
     {
         try (InputStream is = DumpUpgradeIntegrationTest.class.getClassLoader().getResourceAsStream( resourceName ))
         {
-            Files.copy( Objects.requireNonNull( is ), targetDir.resolve( resourceName ) );
+            Files.copy( requireNonNull( is ), targetDir.resolve( resourceName ) );
         }
         catch ( IOException e )
         {

@@ -1,8 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch;
 
 import java.time.Instant;
-import java.util.Objects;
-
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.PropertyVisitor;
@@ -25,6 +23,8 @@ import com.enonic.xp.repo.impl.elasticsearch.document.indexitem.IndexItems;
 import com.enonic.xp.security.acl.AccessControlList;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static java.util.Objects.requireNonNullElse;
+import static java.util.Objects.requireNonNullElseGet;
 
 
 public class NodeStoreDocumentFactory
@@ -51,9 +51,9 @@ public class NodeStoreDocumentFactory
     {
         this.nodeId = builder.nodeId;
         this.indexConfigDocument = builder.indexConfigDocument;
-        this.nodeType = Objects.requireNonNullElse( builder.nodeType, NodeType.DEFAULT_NODE_COLLECTION );
-        this.permissions = Objects.requireNonNullElse( builder.permissions, AccessControlList.empty() );
-        this.data = Objects.requireNonNullElseGet( builder.data, PropertyTree::new );
+        this.nodeType = requireNonNullElse( builder.nodeType, NodeType.DEFAULT_NODE_COLLECTION );
+        this.permissions = requireNonNullElse( builder.permissions, AccessControlList.empty() );
+        this.data = requireNonNullElseGet( builder.data, PropertyTree::new );
         this.manualOrderValue = builder.manualOrderValue;
         this.nodePath = builder.nodePath;
         this.versionId = builder.versionId;

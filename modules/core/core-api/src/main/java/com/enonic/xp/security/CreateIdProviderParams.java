@@ -1,8 +1,8 @@
 package com.enonic.xp.security;
 
-import java.util.Objects;
-
 import com.enonic.xp.security.acl.IdProviderAccessControlList;
+
+import static java.util.Objects.requireNonNull;
 
 
 public final class CreateIdProviderParams
@@ -20,8 +20,8 @@ public final class CreateIdProviderParams
 
     private CreateIdProviderParams( final Builder builder )
     {
-        this.idProviderKey = Objects.requireNonNull( builder.idProviderKey, "idProviderKey is required" );
-        this.displayName = Objects.requireNonNull( builder.displayName, "displayName is required" );
+        this.idProviderKey = requireNonNull( builder.idProviderKey, "idProviderKey is required" );
+        this.displayName = requireNonNull( builder.displayName, "displayName is required" );
         this.description = builder.description;
         this.idProviderConfig = builder.idProviderConfig;
         this.idProviderPermissions =

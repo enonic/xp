@@ -1,7 +1,5 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.util.Objects;
-
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.ContextAccessor;
@@ -9,6 +7,8 @@ import com.enonic.xp.node.GetActiveNodeVersionsResult;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeBranchEntry;
+
+import static java.util.Objects.requireNonNull;
 
 public class GetActiveNodeVersionsCommand
     extends AbstractNodeCommand
@@ -72,8 +72,8 @@ public class GetActiveNodeVersionsCommand
         @Override
         void validate()
         {
-            Objects.requireNonNull( this.nodeId, "nodeId is required" );
-            Objects.requireNonNull( this.branches, "branches is required" );
+            requireNonNull( this.nodeId, "nodeId is required" );
+            requireNonNull( this.branches, "branches is required" );
         }
 
         public GetActiveNodeVersionsCommand build()

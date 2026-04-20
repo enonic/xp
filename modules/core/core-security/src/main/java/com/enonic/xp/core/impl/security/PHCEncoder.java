@@ -3,7 +3,6 @@ package com.enonic.xp.core.impl.security;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.util.Base64;
-import java.util.Objects;
 import java.util.function.Supplier;
 
 import javax.crypto.SecretKeyFactory;
@@ -13,6 +12,8 @@ import org.jspecify.annotations.NullMarked;
 
 import com.google.common.base.Strings;
 import com.google.common.base.Suppliers;
+
+import static java.util.Objects.requireNonNullElseGet;
 
 @NullMarked
 final class PHCEncoder
@@ -62,7 +63,7 @@ final class PHCEncoder
     @Override
     public boolean verify( final char[] plainPassword, final String phc )
     {
-        final PHCParser.PHCData phcData = PHCParser.parse( Objects.requireNonNullElseGet( Strings.emptyToNull( phc ), this.dummyHash ) );
+        final PHCParser.PHCData phcData = PHCParser.parse( requireNonNullElseGet( Strings.emptyToNull( phc ), this.dummyHash ) );
 
         if ( !PHC_ID.equals( phcData.id() ) )
         {

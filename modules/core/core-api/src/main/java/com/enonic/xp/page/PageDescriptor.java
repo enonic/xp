@@ -1,11 +1,11 @@
 package com.enonic.xp.page;
 
-import java.util.Objects;
-
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.region.ComponentDescriptor;
 import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.resource.ResourceKey;
+
+import static java.util.Objects.requireNonNull;
 
 
 public final class PageDescriptor
@@ -17,7 +17,7 @@ public final class PageDescriptor
     private PageDescriptor( final Builder builder )
     {
         super( builder );
-        this.regions = Objects.requireNonNull( builder.regions, "regions cannot be null" );
+        this.regions = requireNonNull( builder.regions, "regions cannot be null" );
     }
 
     @Override

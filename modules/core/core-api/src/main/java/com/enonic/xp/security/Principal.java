@@ -5,6 +5,8 @@ import java.util.Objects;
 
 import com.enonic.xp.core.internal.Millis;
 
+import static java.util.Objects.requireNonNull;
+
 
 public abstract class Principal
     implements java.security.Principal
@@ -133,8 +135,8 @@ public abstract class Principal
 
         void validate()
         {
-            Objects.requireNonNull( key, "Principal key cannot be null" );
-            Objects.requireNonNull( displayName, "Principal display name cannot be null" );
+            requireNonNull( key, "Principal key cannot be null" );
+            requireNonNull( displayName, "Principal display name cannot be null" );
         }
     }
 }

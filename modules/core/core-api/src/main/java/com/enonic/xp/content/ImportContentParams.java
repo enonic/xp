@@ -2,10 +2,10 @@ package com.enonic.xp.content;
 
 import java.util.Collection;
 import java.util.EnumSet;
-import java.util.Objects;
-
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.project.ProjectName;
+
+import static java.util.Objects.requireNonNull;
 
 public final class ImportContentParams
 {
@@ -139,8 +139,8 @@ public final class ImportContentParams
 
         private void validate()
         {
-            Objects.requireNonNull( this.content, "content is required" );
-            Objects.requireNonNull( this.targetPath, "targetPath is required" );
+            requireNonNull( this.content, "content is required" );
+            requireNonNull( this.targetPath, "targetPath is required" );
         }
 
         public ImportContentParams build()

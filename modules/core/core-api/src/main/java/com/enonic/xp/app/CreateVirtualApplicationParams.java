@@ -1,6 +1,6 @@
 package com.enonic.xp.app;
 
-import java.util.Objects;
+import static java.util.Objects.requireNonNull;
 
 
 public final class CreateVirtualApplicationParams
@@ -38,7 +38,7 @@ public final class CreateVirtualApplicationParams
 
         private void validate()
         {
-            Objects.requireNonNull( key, "key is required" );
+            requireNonNull( key, "key is required" );
         }
 
         public CreateVirtualApplicationParams build()

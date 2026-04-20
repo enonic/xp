@@ -1,6 +1,6 @@
 package com.enonic.xp.session;
 
-import java.util.Objects;
+import static java.util.Objects.requireNonNull;
 
 
 public final class SessionKey
@@ -9,7 +9,7 @@ public final class SessionKey
 
     private SessionKey( final String value )
     {
-        this.value = Objects.requireNonNull( value );
+        this.value = requireNonNull( value );
     }
 
     @Override

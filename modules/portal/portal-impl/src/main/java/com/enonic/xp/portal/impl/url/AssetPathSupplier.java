@@ -1,7 +1,6 @@
 package com.enonic.xp.portal.impl.url;
 
 import java.util.HexFormat;
-import java.util.Objects;
 import java.util.function.Supplier;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -10,6 +9,8 @@ import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.server.RunMode;
+
+import static java.util.Objects.requireNonNullElseGet;
 
 final class AssetPathSupplier
     implements Supplier<String>
@@ -51,6 +52,6 @@ final class AssetPathSupplier
     private static long stableTime()
     {
         final Long localScopeTime = (Long) ContextAccessor.current().getLocalScope().getAttribute( "__currentTimeMillis" );
-        return Objects.requireNonNullElseGet( localScopeTime, System::currentTimeMillis );
+        return requireNonNullElseGet( localScopeTime, System::currentTimeMillis );
     }
 }

@@ -2,14 +2,14 @@ package com.enonic.xp.portal.impl;
 
 import java.security.MessageDigest;
 import java.util.HexFormat;
-import java.util.Objects;
-
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.core.internal.security.MessageDigests;
 import com.enonic.xp.image.Cropping;
 import com.enonic.xp.image.FocalPoint;
 import com.enonic.xp.media.ImageOrientation;
+
+import static java.util.Objects.requireNonNullElse;
 
 public final class MediaHashResolver
 {
@@ -24,18 +24,18 @@ public final class MediaHashResolver
 
         digest.update( HexFormat.of().parseHex( hash ) );
 
-        final FocalPoint focalPoint = Objects.requireNonNullElse( media.getFocalPoint(), FocalPoint.DEFAULT );
+        final FocalPoint focalPoint = requireNonNullElse( media.getFocalPoint(), FocalPoint.DEFAULT );
         MessageDigests.updateWithDoubleLE( digest, focalPoint.xOffset() );
         MessageDigests.updateWithDoubleLE( digest, focalPoint.yOffset() );
 
-        final Cropping cropping = Objects.requireNonNullElse( media.getCropping(), Cropping.DEFAULT );
+        final Cropping cropping = requireNonNullElse( media.getCropping(), Cropping.DEFAULT );
         MessageDigests.updateWithDoubleLE( digest, cropping.top() );
         MessageDigests.updateWithDoubleLE( digest, cropping.left() );
         MessageDigests.updateWithDoubleLE( digest, cropping.bottom() );
         MessageDigests.updateWithDoubleLE( digest, cropping.right() );
         MessageDigests.updateWithDoubleLE( digest, cropping.zoom() );
 
-        final ImageOrientation orientation = Objects.requireNonNullElse( media.getOrientation(), ImageOrientation.DEFAULT );
+        final ImageOrientation orientation = requireNonNullElse( media.getOrientation(), ImageOrientation.DEFAULT );
         MessageDigests.updateWithIntLE( digest, orientation.ordinal() );
 
         return HexFormat.of().formatHex( digest.digest(), 0, 16 );

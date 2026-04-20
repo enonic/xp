@@ -1,7 +1,5 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.Objects;
-
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
@@ -15,6 +13,8 @@ import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.ReorderChildNodeParams;
 import com.enonic.xp.node.SortNodeParams;
 import com.enonic.xp.node.SortNodeResult;
+
+import static java.util.Objects.requireNonNull;
 
 class SortContentCommand
     extends AbstractCreatingOrUpdatingContentCommand
@@ -92,7 +92,7 @@ class SortContentCommand
 
         private Builder( final SortContentParams params )
         {
-            this.params = Objects.requireNonNull( params, "params cannot be null" );
+            this.params = requireNonNull( params, "params cannot be null" );
         }
 
         @Override

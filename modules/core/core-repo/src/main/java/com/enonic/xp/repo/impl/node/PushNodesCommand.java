@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -46,6 +45,9 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
+import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
+
 public class PushNodesCommand
     extends AbstractNodeCommand
 {
@@ -57,7 +59,7 @@ public class PushNodesCommand
     {
         super( builder );
         this.params = builder.params;
-        this.pushListener = Objects.requireNonNullElse( params.getPushListener(), _ -> {
+        this.pushListener = requireNonNullElse( params.getPushListener(), _ -> {
         } );
     }
 
@@ -287,7 +289,7 @@ public class PushNodesCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( params, "params cannon be null" );
+            requireNonNull( params, "params cannon be null" );
         }
     }
 }

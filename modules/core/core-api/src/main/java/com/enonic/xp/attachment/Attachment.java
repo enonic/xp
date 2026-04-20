@@ -7,6 +7,8 @@ import com.google.common.io.Files;
 
 import com.enonic.xp.util.BinaryReference;
 
+import static java.util.Objects.requireNonNull;
+
 
 public final class Attachment
 {
@@ -24,8 +26,8 @@ public final class Attachment
 
     public Attachment( final Builder builder )
     {
-        this.mimeType = Objects.requireNonNull( builder.mimeType, "mimeType is mandatory for an Attachment" );
-        this.name = Objects.requireNonNull( builder.name, "name is mandatory for an Attachment" );
+        this.mimeType = requireNonNull( builder.mimeType, "mimeType is mandatory for an Attachment" );
+        this.name = requireNonNull( builder.name, "name is mandatory for an Attachment" );
         this.sha512 = builder.sha512;
         this.size = builder.size;
         this.label = builder.label;

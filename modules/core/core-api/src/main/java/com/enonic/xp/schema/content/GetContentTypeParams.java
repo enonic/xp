@@ -1,6 +1,6 @@
 package com.enonic.xp.schema.content;
 
-import java.util.Objects;
+import static java.util.Objects.requireNonNull;
 
 
 public final class GetContentTypeParams
@@ -31,6 +31,6 @@ public final class GetContentTypeParams
 
     public void validate()
     {
-        Objects.requireNonNull( this.contentTypeName, "contentTypeName is required" );
+        requireNonNull( this.contentTypeName, "contentTypeName is required" );
     }
 }

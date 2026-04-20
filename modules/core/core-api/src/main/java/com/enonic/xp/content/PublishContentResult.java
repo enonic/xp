@@ -1,9 +1,9 @@
 package com.enonic.xp.content;
 
 import java.util.List;
-import java.util.Objects;
-
 import com.google.common.collect.ImmutableList;
+
+import static java.util.Objects.requireNonNull;
 
 
 public final class PublishContentResult
@@ -86,7 +86,7 @@ public final class PublishContentResult
 
         public static Result failure( final ContentId contentId, Reason failureReason )
         {
-            return new Result( contentId, Objects.requireNonNull( failureReason ) );
+            return new Result( contentId, requireNonNull( failureReason ) );
         }
     }
 }

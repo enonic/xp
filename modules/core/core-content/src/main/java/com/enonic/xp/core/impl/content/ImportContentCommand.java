@@ -1,7 +1,5 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.Objects;
-
 import com.enonic.xp.content.ImportContentParams;
 import com.enonic.xp.content.ImportContentResult;
 import com.enonic.xp.node.BinaryAttachment;
@@ -11,6 +9,8 @@ import com.enonic.xp.node.ImportNodeResult;
 import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.RefreshMode;
+
+import static java.util.Objects.requireNonNull;
 
 final class ImportContentCommand
     extends AbstractContentCommand
@@ -82,7 +82,7 @@ final class ImportContentCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( params, "params cannot be null" );
+            requireNonNull( params, "params cannot be null" );
         }
 
         public ImportContentCommand build()

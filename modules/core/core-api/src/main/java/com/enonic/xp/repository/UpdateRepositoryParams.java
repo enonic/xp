@@ -1,7 +1,8 @@
 package com.enonic.xp.repository;
 
-import java.util.Objects;
 import java.util.function.Consumer;
+
+import static java.util.Objects.requireNonNull;
 
 
 public final class UpdateRepositoryParams
@@ -55,7 +56,7 @@ public final class UpdateRepositoryParams
 
         private void validate()
         {
-            Objects.requireNonNull( repositoryId, "repositoryId is required" );
+            requireNonNull( repositoryId, "repositoryId is required" );
         }
 
 

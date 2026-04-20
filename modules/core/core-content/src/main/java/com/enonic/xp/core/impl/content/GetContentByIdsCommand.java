@@ -1,11 +1,11 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.Objects;
-
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.Nodes;
+
+import static java.util.Objects.requireNonNull;
 
 
 final class GetContentByIdsCommand
@@ -53,7 +53,7 @@ final class GetContentByIdsCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( params, "params cannot be null" );
+            requireNonNull( params, "params cannot be null" );
         }
 
         public GetContentByIdsCommand build()

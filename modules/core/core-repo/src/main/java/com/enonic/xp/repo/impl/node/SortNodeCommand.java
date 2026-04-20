@@ -29,6 +29,9 @@ import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.StoreNodeParams;
 import com.enonic.xp.security.acl.Permission;
 
+import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
+
 public class SortNodeCommand
     extends AbstractNodeCommand
 {
@@ -61,7 +64,7 @@ public class SortNodeCommand
         {
             if ( !node.getChildOrder().isManualOrder() )
             {
-                orderChildNodes( node.path(), Objects.requireNonNullElse( params.getManualOrderSeed(), node.getChildOrder() ),
+                orderChildNodes( node.path(), requireNonNullElse( params.getManualOrderSeed(), node.getChildOrder() ),
                                  params.getReorderChildNodes(), result );
             }
             else
@@ -263,7 +266,7 @@ public class SortNodeCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( params, "params cannot be null" );
+            requireNonNull( params, "params cannot be null" );
         }
 
         public SortNodeCommand build()

@@ -3,8 +3,6 @@ package com.enonic.xp.core.impl.content;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Objects;
-
 import com.enonic.xp.archive.ArchiveConstants;
 import com.enonic.xp.archive.ArchiveContentException;
 import com.enonic.xp.archive.ArchiveContentParams;
@@ -36,6 +34,7 @@ import static com.enonic.xp.content.ContentPropertyNames.ARCHIVED_BY;
 import static com.enonic.xp.content.ContentPropertyNames.ARCHIVED_TIME;
 import static com.enonic.xp.content.ContentPropertyNames.ORIGINAL_NAME;
 import static com.enonic.xp.content.ContentPropertyNames.ORIGINAL_PARENT_PATH;
+import static java.util.Objects.requireNonNull;
 
 final class ArchiveContentCommand
     extends AbstractCreatingOrUpdatingContentCommand
@@ -200,7 +199,7 @@ final class ArchiveContentCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( params, "params cannot be null" );
+            requireNonNull( params, "params cannot be null" );
         }
 
         public ArchiveContentCommand build()
