@@ -104,7 +104,12 @@ public class SiteHandler
             portalRequest.setSite( content.isSite()
                                        ? (Site) content
                                        : callAsContentAdmin( repositoryId, branch,
-                                                             () -> this.contentService.findNearestSiteByPath( contentPath ) ) );
+                                                             () -> this.contentService.findNearestSiteByPath( content.getPath() ) ) );
+        }
+        else
+        {
+            portalRequest.setSite(
+                callAsContentAdmin( repositoryId, branch, () -> this.contentService.findNearestSiteByPath( contentPath ) ) );
         }
 
         return portalRequest;

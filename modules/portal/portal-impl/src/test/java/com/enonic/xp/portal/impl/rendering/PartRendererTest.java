@@ -146,23 +146,11 @@ class PartRendererTest
             .config( Form.empty() )
             .key( DescriptorKey.from( "module:myPartComponent" ) )
             .build();
-        final ControllerScript controllerScript = new ControllerScript()
-        {
-            @Override
-            public PortalResponse execute( final PortalRequest portalRequest )
-            {
-                return PortalResponse.create()
-                    .body( "<h1 class=\"important\">My component</h1>" )
-                    .contentType( MediaType.HTML_UTF_8 )
-                    .status( HttpStatus.OK )
-                    .build();
-            }
-
-            @Override
-            public void onSocketEvent( final WebSocketEvent event )
-            {
-            }
-        };
+        final ControllerScript controllerScript = _ -> PortalResponse.create()
+            .body( "<h1 class=\"important\">My component</h1>" )
+            .contentType( MediaType.HTML_UTF_8 )
+            .status( HttpStatus.OK )
+            .build();
 
         when( partDescriptorService.getByKey( any() ) ).thenReturn( partDescriptor );
         when( controllerScriptFactory.fromScript( any() ) ).thenReturn( controllerScript );
@@ -185,19 +173,8 @@ class PartRendererTest
             .config( Form.empty() )
             .key( DescriptorKey.from( "module:myPartComponent" ) )
             .build();
-        final ControllerScript controllerScript = new ControllerScript()
-        {
-            @Override
-            public PortalResponse execute( final PortalRequest portalRequest )
-            {
-                return new PortalResponseSerializer( null, HttpStatus.METHOD_NOT_ALLOWED ).serialize();
-            }
-
-            @Override
-            public void onSocketEvent( final WebSocketEvent event )
-            {
-            }
-        };
+        final ControllerScript controllerScript =
+            _ -> new PortalResponseSerializer( null, HttpStatus.METHOD_NOT_ALLOWED ).serialize();
 
         when( partDescriptorService.getByKey( any() ) ).thenReturn( partDescriptor );
         when( controllerScriptFactory.fromScript( any() ) ).thenReturn( controllerScript );
@@ -221,19 +198,7 @@ class PartRendererTest
             .config( Form.empty() )
             .key( DescriptorKey.from( "module:myPartComponent" ) )
             .build();
-        final ControllerScript controllerScript = new ControllerScript()
-        {
-            @Override
-            public PortalResponse execute( final PortalRequest portalRequest )
-            {
-                return new PortalResponseSerializer( null ).serialize();
-            }
-
-            @Override
-            public void onSocketEvent( final WebSocketEvent event )
-            {
-            }
-        };
+        final ControllerScript controllerScript = _ -> new PortalResponseSerializer( null ).serialize();
 
         when( partDescriptorService.getByKey( any() ) ).thenReturn( partDescriptor );
         when( controllerScriptFactory.fromScript( any() ) ).thenReturn( controllerScript );

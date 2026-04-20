@@ -42,7 +42,7 @@ public final class ComponentServiceMappingHandler
         this.mappingHandlerHelper =
             new MappingHandlerHelper( resourceService, controllerScriptFactory, filterScriptFactory, rendererDelegate,
                                       new ControllerMappingsResolver( siteService ),
-                                      new PageResolver( pageTemplateService, pageDescriptorService, layoutDescriptorService ) );
+                                      new PageResolver( pageTemplateService, pageDescriptorService, layoutDescriptorService ), null );
     }
 
     @Override

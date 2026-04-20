@@ -11,14 +11,18 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
+import com.enonic.xp.portal.sse.SseManager;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.TraceManager;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.handler.WebHandlerChain;
+import com.enonic.xp.web.sse.SseConfig;
+import com.enonic.xp.web.sse.SseEndpoint;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -26,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class WebAppHandlerTest
@@ -33,6 +38,8 @@ class WebAppHandlerTest
     private WebAppHandler handler;
 
     private ControllerScriptFactory controllerScriptFactory;
+
+    private SseManager sseManager;
 
     private PortalRequest request;
 
@@ -44,9 +51,9 @@ class WebAppHandlerTest
         ExceptionRenderer exceptionRenderer = mock( ExceptionRenderer.class );
 
         this.controllerScriptFactory = mock( ControllerScriptFactory.class );
+        this.sseManager = mock( SseManager.class );
 
-        this.handler = new WebAppHandler();
-        this.handler.setControllerScriptFactory( this.controllerScriptFactory );
+        this.handler = new WebAppHandler( this.controllerScriptFactory, this.sseManager );
 
         this.request = new PortalRequest();
         this.request.setRawRequest( mock( HttpServletRequest.class ) );
@@ -159,6 +166,24 @@ class WebAppHandlerTest
 
         assertEquals( HttpStatus.TEMPORARY_REDIRECT, response.getStatus() );
         assertEquals( "/webapp/myapp/?param=value&other=test", response.getHeaders().get( "Location" ) );
+    }
+
+    @Test
+    void handle_setupSseWhenResponseHasSseConfig()
+        throws Exception
+    {
+        this.request.setApplicationKey( ApplicationKey.from( "myapp" ) );
+        this.request.setBaseUri( "/webapp/myapp" );
+        this.request.setRawPath( "/webapp/myapp/a.txt" );
+
+        final ControllerScript script = mock( ControllerScript.class );
+        when( this.controllerScriptFactory.fromScript( ResourceKey.from( "myapp:/webapp/webapp.js" ) ) ).thenReturn( script );
+
+        when( script.execute( any() ) ).thenReturn( PortalResponse.create().sse( SseConfig.empty() ).build() );
+
+        this.handler.doHandle( this.request, null, this.chain );
+
+        verify( this.sseManager ).setupSse( any( WebRequest.class ), any( SseEndpoint.class ) );
     }
 }
 

@@ -1,7 +1,9 @@
 package com.enonic.xp.impl.server.rest;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,8 +11,11 @@ import org.mockito.ArgumentCaptor;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.event.Event;
 import com.enonic.xp.impl.server.rest.model.ApplicationInfoJson;
 import com.enonic.xp.impl.server.rest.model.ApplicationParams;
+import com.enonic.xp.portal.sse.SseManager;
+import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.util.Version;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
@@ -18,11 +23,17 @@ import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartService;
+import com.enonic.xp.web.sse.SseEvent;
+import com.enonic.xp.web.sse.SseEventType;
+import com.enonic.xp.web.sse.SseMessage;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -32,6 +43,8 @@ class ApplicationApiHandlerTest
 
     private MultipartService multipartService;
 
+    private SseManager sseManager;
+
     private ApplicationApiHandler handler;
 
     @BeforeEach
@@ -39,7 +52,21 @@ class ApplicationApiHandlerTest
     {
         applicationResourceService = mock( ApplicationResourceService.class );
         multipartService = mock( MultipartService.class );
-        handler = new ApplicationApiHandler( applicationResourceService, multipartService );
+        sseManager = mock( SseManager.class );
+        handler = new ApplicationApiHandler( applicationResourceService, multipartService, sseManager );
+    }
+
+    @Test
+    void handleEvents()
+    {
+        final WebRequest request = new WebRequest();
+        request.setMethod( HttpMethod.GET );
+        request.setRawPath( "/_/server:app/events" );
+
+        final WebResponse response = handler.handle( request );
+
+        assertEquals( HttpStatus.OK, response.getStatus() );
+        assertNotNull( response.getSse() );
     }
 
     @Test
@@ -176,6 +203,140 @@ class ApplicationApiHandlerTest
         final ArgumentCaptor<ApplicationParams> captor = ArgumentCaptor.forClass( ApplicationParams.class );
         verify( applicationResourceService ).uninstall( captor.capture() );
         assertEquals( Set.of( "app1", "app2" ), captor.getValue().getKey() );
+    }
+
+    @Test
+    void onSseEvent_open_addsToGroupAndSendsList()
+    {
+        when( applicationResourceService.getInstalledApplications() ).thenReturn( List.of() );
+
+        final UUID clientId = UUID.randomUUID();
+        final SseEvent event = SseEvent.create()
+            .type( SseEventType.OPEN )
+            .clientId( clientId )
+            .attributes( GenericValue.newObject().build() )
+            .build();
+
+        handler.onSseEvent( event );
+
+        verify( sseManager ).addToGroup( "server:app:events", clientId );
+        verify( sseManager ).send( eq( clientId ), any( SseMessage.class ) );
+    }
+
+    @Test
+    void onSseEvent_close_isIgnored()
+    {
+        final SseEvent event = SseEvent.create()
+            .type( SseEventType.CLOSE )
+            .clientId( UUID.randomUUID() )
+            .attributes( GenericValue.newObject().build() )
+            .build();
+
+        handler.onSseEvent( event );
+
+        verify( sseManager, never() ).addToGroup( any(), any() );
+        verify( sseManager, never() ).send( any(), any() );
+    }
+
+    @Test
+    void onEvent_wrongType_ignored()
+    {
+        final Event event = Event.create( "unknown.event" ).localOrigin( true ).value( "eventType", "installed" ).build();
+
+        handler.onEvent( event );
+
+        verify( sseManager, never() ).sendToGroup( any(), any() );
+    }
+
+    @Test
+    void onEvent_nonLocalOrigin_ignored()
+    {
+        final Event event = Event.create( "application.cluster" ).localOrigin( false ).value( "eventType", "installed" ).build();
+
+        handler.onEvent( event );
+
+        verify( sseManager, never() ).sendToGroup( any(), any() );
+    }
+
+    @Test
+    void onEvent_emptyGroup_skipsSend()
+    {
+        when( sseManager.getGroupSize( "server:app:events" ) ).thenReturn( 0 );
+
+        final Event event = Event.create( "application.cluster" )
+            .localOrigin( true )
+            .value( "eventType", "installed" )
+            .value( "key", "testapplication" )
+            .build();
+
+        handler.onEvent( event );
+
+        verify( sseManager, never() ).sendToGroup( any(), any() );
+    }
+
+    @Test
+    void onEvent_uninstalled_sendsToGroup()
+    {
+        when( sseManager.getGroupSize( "server:app:events" ) ).thenReturn( 1 );
+
+        final Event event = Event.create( "application.cluster" )
+            .localOrigin( true )
+            .value( "eventType", "uninstalled" )
+            .value( "key", "testapplication" )
+            .build();
+
+        handler.onEvent( event );
+
+        verify( sseManager ).sendToGroup( eq( "server:app:events" ), any( SseMessage.class ) );
+    }
+
+    @Test
+    void onEvent_installed_missingApplication_skipsSend()
+    {
+        when( sseManager.getGroupSize( "server:app:events" ) ).thenReturn( 1 );
+        when( applicationResourceService.getInstalledApplication( any() ) ).thenReturn( null );
+
+        final Event event = Event.create( "application.cluster" )
+            .localOrigin( true )
+            .value( "eventType", "installed" )
+            .value( "key", "testapplication" )
+            .build();
+
+        handler.onEvent( event );
+
+        verify( sseManager, never() ).sendToGroup( any(), any() );
+    }
+
+    @Test
+    void onEvent_installed_sendsToGroup()
+    {
+        when( sseManager.getGroupSize( "server:app:events" ) ).thenReturn( 1 );
+        final ApplicationInfoJson info = ApplicationInfoJson.create( createApplication(), null, false );
+        when( applicationResourceService.getInstalledApplication( ApplicationKey.from( "testapplication" ) ) ).thenReturn( info );
+
+        final Event event = Event.create( "application.cluster" )
+            .localOrigin( true )
+            .value( "eventType", "installed" )
+            .value( "key", "testapplication" )
+            .build();
+
+        handler.onEvent( event );
+
+        verify( sseManager ).sendToGroup( eq( "server:app:events" ), any( SseMessage.class ) );
+    }
+
+    @Test
+    void onEvent_unknownSubType_ignored()
+    {
+        final Event event = Event.create( "application.cluster" )
+            .localOrigin( true )
+            .value( "eventType", "bogus" )
+            .value( "key", "testapplication" )
+            .build();
+
+        handler.onEvent( event );
+
+        verify( sseManager, never() ).sendToGroup( any(), any() );
     }
 
     private Application createApplication()

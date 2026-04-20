@@ -16,6 +16,7 @@ import com.enonic.xp.portal.impl.handler.HandlerHelper;
 import com.enonic.xp.portal.impl.handler.render.PageResolver;
 import com.enonic.xp.portal.impl.handler.render.PageResolverResult;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
+import com.enonic.xp.portal.sse.SseManager;
 import com.enonic.xp.repository.RepositoryUtils;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.site.Site;
@@ -44,9 +45,12 @@ class MappingHandlerHelper
 
     private final PageResolver pageResolver;
 
+    private final SseManager sseManager;
+
     MappingHandlerHelper( final ResourceService resourceService, final ControllerScriptFactory controllerScriptFactory,
                           final FilterScriptFactory filterScriptFactory, final RendererDelegate rendererDelegate,
-                          final ControllerMappingsResolver controllerMappingsResolver, final PageResolver pageResolver )
+                          final ControllerMappingsResolver controllerMappingsResolver, final PageResolver pageResolver,
+                          final SseManager sseManager )
     {
         this.resourceService = resourceService;
         this.controllerScriptFactory = controllerScriptFactory;
@@ -54,6 +58,7 @@ class MappingHandlerHelper
         this.rendererDelegate = rendererDelegate;
         this.controllerMappingsResolver = controllerMappingsResolver;
         this.pageResolver = pageResolver;
+        this.sseManager = sseManager;
     }
 
     public WebResponse handle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
@@ -145,6 +150,7 @@ class MappingHandlerHelper
         worker.resourceService = this.resourceService;
         worker.controllerScriptFactory = this.controllerScriptFactory;
         worker.rendererDelegate = rendererDelegate;
+        worker.sseManager = this.sseManager;
 
         final Trace trace = Tracer.newTrace( "renderComponent" );
         if ( trace == null )
