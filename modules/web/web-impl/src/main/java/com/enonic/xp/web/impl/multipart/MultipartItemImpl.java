@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Objects;
-
 import com.google.common.base.Optional;
 import com.google.common.io.ByteSource;
 import com.google.common.net.MediaType;
@@ -13,6 +11,8 @@ import com.google.common.net.MediaType;
 import jakarta.servlet.http.Part;
 
 import com.enonic.xp.web.multipart.MultipartItem;
+
+import static java.util.Objects.requireNonNull;
 
 final class MultipartItemImpl
     extends ByteSource
@@ -22,7 +22,7 @@ final class MultipartItemImpl
 
     MultipartItemImpl( final Part item )
     {
-        this.item = Objects.requireNonNull( item );
+        this.item = requireNonNull( item );
     }
 
     @Override

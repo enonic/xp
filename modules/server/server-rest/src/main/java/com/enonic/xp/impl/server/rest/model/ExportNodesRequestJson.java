@@ -1,8 +1,8 @@
 package com.enonic.xp.impl.server.rest.model;
 
-import java.util.Objects;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import static java.util.Objects.requireNonNull;
 
 public class ExportNodesRequestJson
 {
@@ -16,8 +16,8 @@ public class ExportNodesRequestJson
                                    @JsonProperty("exportName") final String exportName, //
                                    @JsonProperty("batchSize") final Integer batchSize )
     {
-        Objects.requireNonNull( sourceRepoPath, "sourceRepoPath is required" );
-        Objects.requireNonNull( exportName, "exportName is required" );
+        requireNonNull( sourceRepoPath, "sourceRepoPath is required" );
+        requireNonNull( exportName, "exportName is required" );
 
         this.sourceRepoPath = RepoPath.from( sourceRepoPath );
         this.exportName = exportName;

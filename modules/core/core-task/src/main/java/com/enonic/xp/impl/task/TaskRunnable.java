@@ -1,7 +1,5 @@
 package com.enonic.xp.impl.task;
 
-import java.util.Objects;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +11,7 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.trace.Tracer;
 
 import static com.enonic.xp.content.ContentConstants.CONTENT_ROOT_PATH_ATTRIBUTE;
+import static java.util.Objects.requireNonNullElseGet;
 
 final class TaskRunnable
     implements Runnable
@@ -39,7 +38,7 @@ final class TaskRunnable
             User user = runnableTask.getTaskContext().getAuthInfo() != null ? runnableTask.getTaskContext().getAuthInfo().getUser() : null;
             Tracer.trace( "task.run", trace -> {
                 trace.put( "taskId", runnableTask.getTaskId() );
-                trace.put( "user", Objects.requireNonNullElseGet( user, User::anonymous ).getKey() );
+                trace.put( "user", requireNonNullElseGet( user, User::anonymous ).getKey() );
                 trace.put( "app", runnableTask.getApplicationKey() );
             }, this::doRun, ( trace, success ) -> trace.put( "success", success ) );
         }

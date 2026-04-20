@@ -1,7 +1,5 @@
 package com.enonic.xp.repo.impl.repository;
 
-import java.util.Objects;
-
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -20,6 +18,8 @@ import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
+import static java.util.Objects.requireNonNull;
+
 public class SystemRepoInitializer
     extends Initializer
 {
@@ -32,8 +32,8 @@ public class SystemRepoInitializer
     private SystemRepoInitializer( final Builder builder )
     {
         super( builder );
-        this.indexServiceInternal = Objects.requireNonNull( builder.indexServiceInternal );
-        this.nodeStorageService = Objects.requireNonNull( builder.nodeStorageService );
+        this.indexServiceInternal = requireNonNull( builder.indexServiceInternal );
+        this.nodeStorageService = requireNonNull( builder.nodeStorageService );
         this.repositoryCreator =
             new RepositoryCreator( builder.nodeRepositoryService, builder.nodeStorageService, builder.repositoryEntryService );
     }

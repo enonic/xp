@@ -2,7 +2,6 @@ package com.enonic.xp.lib.content;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -30,6 +29,8 @@ import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.site.CmsService;
 import com.enonic.xp.util.BinaryReferences;
+
+import static java.util.Objects.requireNonNull;
 
 public abstract class BaseContentHandler
     extends BaseContextHandler
@@ -121,7 +122,7 @@ public abstract class BaseContentHandler
         if ( map.containsKey( key ) )
         {
             fieldEditor.accept( Optional.ofNullable( map.get( key ) )
-                                    .map( v -> Objects.requireNonNull( Converters.convert( v, type ), "cannot convert" ) ) );
+                                    .map( v -> requireNonNull( Converters.convert( v, type ), "cannot convert" ) ) );
         }
     }
 }

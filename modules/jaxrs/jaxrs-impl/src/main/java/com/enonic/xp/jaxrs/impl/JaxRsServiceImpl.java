@@ -1,8 +1,6 @@
 package com.enonic.xp.jaxrs.impl;
 
 import java.util.Iterator;
-import java.util.Objects;
-
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
@@ -13,6 +11,8 @@ import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.jaxrs.JaxRsService;
 import com.enonic.xp.web.dispatch.MappingBuilder;
 import com.enonic.xp.web.dispatch.ServletMapping;
+
+import static java.util.Objects.requireNonNull;
 
 final class JaxRsServiceImpl
     implements JaxRsService, ServiceTrackerCustomizer<JaxRsComponent, JaxRsComponent>
@@ -34,8 +34,8 @@ final class JaxRsServiceImpl
     JaxRsServiceImpl( final BundleContext context, final String group, final String path, final String connector )
     {
         this.context = context;
-        this.group = Objects.requireNonNull( group );
-        this.path = Objects.requireNonNull( path );
+        this.group = requireNonNull( group );
+        this.path = requireNonNull( path );
         this.connector = connector;
         this.servlet = new JaxRsServlet();
         this.tracker = new ServiceTracker<>( this.context, JaxRsComponent.class, this );

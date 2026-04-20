@@ -1,8 +1,8 @@
 package com.enonic.xp.security;
 
-import java.util.Objects;
-
 import com.google.common.base.Preconditions;
+
+import static java.util.Objects.requireNonNull;
 
 
 public final class UpdateRoleParams
@@ -17,7 +17,7 @@ public final class UpdateRoleParams
 
     private UpdateRoleParams( final Builder builder )
     {
-        this.key = Objects.requireNonNull( builder.principalKey, "roleKey is required for a role" );
+        this.key = requireNonNull( builder.principalKey, "roleKey is required for a role" );
         this.displayName = builder.displayName;
         this.editor = builder.editor;
         this.description = builder.description;

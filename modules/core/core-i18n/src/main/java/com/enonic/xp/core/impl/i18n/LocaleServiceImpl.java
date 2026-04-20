@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -34,6 +33,8 @@ import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceKeys;
 import com.enonic.xp.resource.ResourceService;
+
+import static java.util.Objects.requireNonNullElse;
 
 @Component(immediate = true)
 @NullMarked
@@ -68,7 +69,7 @@ public final class LocaleServiceImpl
     public MessageBundle getBundle( final ApplicationKey applicationKey, final @Nullable Locale locale, final String... bundleNames )
     {
         final String[] baseNames = bundleNames.length == 0 ? DEFAULT_BASE_NAMES : bundleNames;
-        final Locale nonNullLocale = Objects.requireNonNullElse( locale, Locale.ROOT );
+        final Locale nonNullLocale = requireNonNullElse( locale, Locale.ROOT );
 
         final String key = bundleCacheKey( applicationKey, nonNullLocale, baseNames );
         return this.bundleCache.computeIfAbsent( key, k -> createMessageBundle( applicationKey, nonNullLocale, baseNames ) );

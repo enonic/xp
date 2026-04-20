@@ -2,6 +2,8 @@ package com.enonic.xp.region;
 
 import java.util.Objects;
 
+import static java.util.Objects.requireNonNull;
+
 
 public final class RegionPath
 {
@@ -14,7 +16,7 @@ public final class RegionPath
     private RegionPath( final ComponentPath parentComponentPath, final String regionName )
     {
         this.parentComponentPath = parentComponentPath;
-        this.regionName = Objects.requireNonNull( regionName, "regionName cannot be null" );
+        this.regionName = requireNonNull( regionName, "regionName cannot be null" );
 
     }
 

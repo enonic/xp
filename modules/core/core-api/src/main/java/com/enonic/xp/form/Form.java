@@ -8,6 +8,8 @@ import java.util.Objects;
 
 import com.google.common.base.MoreObjects;
 
+import static java.util.Objects.requireNonNull;
+
 
 public final class Form
     implements Iterable<FormItem>
@@ -114,7 +116,7 @@ public final class Form
 
         private Builder( final Form source )
         {
-            Objects.requireNonNull( source, "Given form cannot be null" );
+            requireNonNull( source, "Given form cannot be null" );
 
             this.formItemsList = new ArrayList<>();
             for ( FormItem formItem : source.formItems )

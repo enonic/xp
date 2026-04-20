@@ -1,6 +1,5 @@
 package com.enonic.xp.portal.impl.url;
 
-import java.util.Objects;
 import java.util.function.Supplier;
 
 import com.enonic.xp.attachment.Attachment;
@@ -12,6 +11,8 @@ import com.enonic.xp.portal.impl.MediaHashResolver;
 import com.enonic.xp.project.ProjectName;
 
 import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendPart;
+import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
 
 final class AttachmentMediaPathSupplier
     implements Supplier<String>
@@ -38,9 +39,9 @@ final class AttachmentMediaPathSupplier
     @Override
     public String get()
     {
-        final Content content = Objects.requireNonNull( contentSupplier.get() );
-        final ProjectName project = Objects.requireNonNull( projectNameSupplier.get() );
-        final Branch branch = Objects.requireNonNull( branchSupplier.get() );
+        final Content content = requireNonNull( contentSupplier.get() );
+        final ProjectName project = requireNonNull( projectNameSupplier.get() );
+        final Branch branch = requireNonNull( branchSupplier.get() );
 
         final StringBuilder url = new StringBuilder();
 
@@ -71,7 +72,7 @@ final class AttachmentMediaPathSupplier
         }
         else
         {
-            final String targetLabel = Objects.requireNonNullElse( label, "source" );
+            final String targetLabel = requireNonNullElse( label, "source" );
             attachment = attachments.byLabel( targetLabel );
             if ( attachment == null )
             {

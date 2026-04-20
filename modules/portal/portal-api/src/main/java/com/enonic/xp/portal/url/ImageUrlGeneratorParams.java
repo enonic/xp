@@ -3,12 +3,14 @@ package com.enonic.xp.portal.url;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Supplier;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.project.ProjectName;
+
+import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
 
 
 public final class ImageUrlGeneratorParams
@@ -38,11 +40,11 @@ public final class ImageUrlGeneratorParams
     private ImageUrlGeneratorParams( final Builder builder )
     {
         this.baseUrl = builder.baseUrl;
-        this.urlType = Objects.requireNonNullElse( builder.urlType, UrlTypeConstants.SERVER_RELATIVE );
-        this.mediaSupplier = Objects.requireNonNull( builder.mediaSupplier );
-        this.projectNameSupplier = Objects.requireNonNull( builder.projectNameSupplier );
-        this.branchSupplier = Objects.requireNonNull( builder.branchSupplier );
-        this.scale = Objects.requireNonNull( builder.scale );
+        this.urlType = requireNonNullElse( builder.urlType, UrlTypeConstants.SERVER_RELATIVE );
+        this.mediaSupplier = requireNonNull( builder.mediaSupplier );
+        this.projectNameSupplier = requireNonNull( builder.projectNameSupplier );
+        this.branchSupplier = requireNonNull( builder.branchSupplier );
+        this.scale = requireNonNull( builder.scale );
         this.background = builder.background;
         this.quality = builder.quality;
         this.filter = builder.filter;

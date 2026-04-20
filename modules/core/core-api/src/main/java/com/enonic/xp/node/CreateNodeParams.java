@@ -1,7 +1,5 @@
 package com.enonic.xp.node;
 
-import java.util.Objects;
-
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.data.PropertyTree;
@@ -9,6 +7,9 @@ import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.util.BinaryReference;
+
+import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
 
 
 public final class CreateNodeParams
@@ -49,9 +50,9 @@ public final class CreateNodeParams
         this.indexConfigDocument = builder.indexConfigDocument;
         this.childOrder = builder.childOrder;
         this.nodeId = builder.nodeId;
-        this.permissions = Objects.requireNonNullElse( builder.permissions, AccessControlList.empty() );
+        this.permissions = requireNonNullElse( builder.permissions, AccessControlList.empty() );
         this.inheritPermissions = builder.inheritPermissions;
-        this.insertManualStrategy = Objects.requireNonNullElse( builder.insertManualStrategy, InsertManualStrategy.FIRST );
+        this.insertManualStrategy = requireNonNullElse( builder.insertManualStrategy, InsertManualStrategy.FIRST );
         this.manualOrderValue = builder.manualOrderValue;
         this.nodeType = builder.nodeType;
         this.binaryAttachments = builder.binaryAttachments.build();
@@ -304,7 +305,7 @@ public final class CreateNodeParams
 
         public CreateNodeParams build()
         {
-            Objects.requireNonNull( parent, "parent is required" );
+            requireNonNull( parent, "parent is required" );
 
             return new CreateNodeParams( this );
         }

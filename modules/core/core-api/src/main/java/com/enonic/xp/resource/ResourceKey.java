@@ -7,6 +7,8 @@ import com.google.common.io.Files;
 
 import com.enonic.xp.app.ApplicationKey;
 
+import static java.util.Objects.requireNonNull;
+
 
 public final class ResourceKey
 {
@@ -106,7 +108,7 @@ public final class ResourceKey
 
     public static ResourceKey from( final String uri )
     {
-        Objects.requireNonNull( uri );
+        requireNonNull( uri );
 
         final int pos = uri.indexOf( ':' );
         Preconditions.checkArgument( pos > 0, "Invalid applicationKey file key uri specification" );
@@ -116,15 +118,15 @@ public final class ResourceKey
 
     public static ResourceKey from( final ApplicationKey application, final String path )
     {
-        Objects.requireNonNull( application );
-        Objects.requireNonNull( path );
+        requireNonNull( application );
+        requireNonNull( path );
 
         return new ResourceKey( application, normalizePath( path ) );
     }
 
     public static ResourceKey assets( final ApplicationKey application )
     {
-        Objects.requireNonNull( application );
+        requireNonNull( application );
 
         return new ResourceKey( application, "/assets/" );
     }

@@ -1,12 +1,12 @@
 package com.enonic.xp.page;
 
-import java.util.Objects;
-
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.Regions;
+
+import static java.util.Objects.requireNonNull;
 
 
 public final class CreatePageParams
@@ -104,6 +104,6 @@ public final class CreatePageParams
 
     public void validate()
     {
-        Objects.requireNonNull( this.content, "content is required" );
+        requireNonNull( this.content, "content is required" );
     }
 }

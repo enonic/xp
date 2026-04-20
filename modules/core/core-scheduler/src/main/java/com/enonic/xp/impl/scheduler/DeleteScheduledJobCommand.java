@@ -1,12 +1,12 @@
 package com.enonic.xp.impl.scheduler;
 
-import java.util.Objects;
-
 import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.scheduler.ScheduledJobName;
+
+import static java.util.Objects.requireNonNull;
 
 public class DeleteScheduledJobCommand
     extends AbstractSchedulerCommand
@@ -55,7 +55,7 @@ public class DeleteScheduledJobCommand
         @Override
         protected void validate()
         {
-            Objects.requireNonNull( name, "name is required" );
+            requireNonNull( name, "name is required" );
         }
 
         @Override

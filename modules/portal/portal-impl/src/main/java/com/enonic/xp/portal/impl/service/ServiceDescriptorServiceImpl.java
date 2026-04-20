@@ -2,8 +2,6 @@ package com.enonic.xp.portal.impl.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -20,6 +18,8 @@ import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.service.ServiceDescriptor;
 import com.enonic.xp.service.ServiceDescriptorService;
 import com.enonic.xp.service.ServiceDescriptors;
+
+import static java.util.Objects.requireNonNullElseGet;
 
 @Component(immediate = true)
 public final class ServiceDescriptorServiceImpl
@@ -46,7 +46,7 @@ public final class ServiceDescriptorServiceImpl
         final ResourceProcessor<DescriptorKey, ServiceDescriptor> processor = newRootProcessor( descriptorKey );
         final ServiceDescriptor descriptor = this.resourceService.processResource( processor );
 
-        return Objects.requireNonNullElseGet( descriptor, () -> createDefaultDescriptor( descriptorKey ) );
+        return requireNonNullElseGet( descriptor, () -> createDefaultDescriptor( descriptorKey ) );
     }
 
     @Override

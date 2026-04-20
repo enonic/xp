@@ -2,7 +2,6 @@ package com.enonic.xp.core;
 
 import java.nio.file.Path;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Consumer;
 
 import org.junit.jupiter.api.AfterEach;
@@ -91,6 +90,7 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.Reference;
 
+import static java.util.Objects.requireNonNullElse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
@@ -569,7 +569,7 @@ public abstract class AbstractNodeTest
 
     private void doPrintChildren( int ident, final Node root )
     {
-        System.out.println( " ".repeat( ident ) + "'--" + Objects.requireNonNullElse( root.name(), "" ) + " (" + root.id() + ")" );
+        System.out.println( " ".repeat( ident ) + "'--" + requireNonNullElse( root.name(), "" ) + " (" + root.id() + ")" );
 
         ident += 3;
 

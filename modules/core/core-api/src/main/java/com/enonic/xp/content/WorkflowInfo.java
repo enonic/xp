@@ -2,6 +2,8 @@ package com.enonic.xp.content;
 
 import java.util.Objects;
 
+import static java.util.Objects.requireNonNull;
+
 public final class WorkflowInfo
 {
     private static final WorkflowInfo IN_PROGRESS = WorkflowInfo.create().state( WorkflowState.IN_PROGRESS ).build();
@@ -68,7 +70,7 @@ public final class WorkflowInfo
 
         private void validate()
         {
-            Objects.requireNonNull( this.state, "state is required" );
+            requireNonNull( this.state, "state is required" );
         }
 
         public WorkflowInfo build()

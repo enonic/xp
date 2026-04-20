@@ -2,9 +2,9 @@ package com.enonic.xp.launcher.impl.env;
 
 import java.nio.file.Path;
 import java.util.Map;
-import java.util.Objects;
-
 import com.enonic.xp.launcher.impl.SharedConstants;
+
+import static java.util.Objects.requireNonNull;
 
 final class EnvironmentImpl
     implements Environment
@@ -15,9 +15,9 @@ final class EnvironmentImpl
 
     EnvironmentImpl( final Path installDir, final Path homeDir )
     {
-        this.homeDir = Objects.requireNonNull( homeDir, String.format( "Home directory not set. Please set [%s] system property variable.",
+        this.homeDir = requireNonNull( homeDir, String.format( "Home directory not set. Please set [%s] system property variable.",
                                                                        SharedConstants.XP_HOME_DIR ) ).toAbsolutePath().normalize();
-        this.installDir = Objects.requireNonNull( installDir,
+        this.installDir = requireNonNull( installDir,
                                                   String.format( "Install directory not set. Please set [%s] system property variable.",
                                                                  SharedConstants.XP_INSTALL_DIR ) ).toAbsolutePath().normalize();
     }

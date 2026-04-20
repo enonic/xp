@@ -6,8 +6,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,6 +18,7 @@ import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.impl.value.ScriptValueFactory;
 import com.enonic.xp.web.HttpMethod;
 
+import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -189,7 +188,7 @@ class PortalRequestSerializerTest
     {
         try (InputStream stream = getClass().getResourceAsStream( resourceName ))
         {
-            return new String( Objects.requireNonNull( stream ).readAllBytes(), StandardCharsets.UTF_8 );
+            return new String( requireNonNull( stream ).readAllBytes(), StandardCharsets.UTF_8 );
         }
     }
 }

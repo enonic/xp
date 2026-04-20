@@ -1,6 +1,6 @@
 package com.enonic.xp.audit;
 
-import java.util.Objects;
+import static java.util.Objects.requireNonNull;
 
 public final class FindAuditLogResult
 {
@@ -10,8 +10,8 @@ public final class FindAuditLogResult
 
     private FindAuditLogResult( final Builder builder )
     {
-        hits = Objects.requireNonNull( builder.hits, "FindAuditLogResult hits cannot be null" );
-        total = Objects.requireNonNull( builder.total, "FindAuditLogResult total cannot be null" );
+        hits = requireNonNull( builder.hits, "FindAuditLogResult hits cannot be null" );
+        total = requireNonNull( builder.total, "FindAuditLogResult total cannot be null" );
     }
 
     public AuditLogs getHits()

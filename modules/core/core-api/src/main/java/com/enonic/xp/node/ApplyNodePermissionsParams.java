@@ -1,11 +1,12 @@
 package com.enonic.xp.node;
 
-import java.util.Objects;
-
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.security.acl.AccessControlList;
+
+import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
 
 
 public final class ApplyNodePermissionsParams
@@ -28,14 +29,14 @@ public final class ApplyNodePermissionsParams
 
     private ApplyNodePermissionsParams( Builder builder )
     {
-        nodeId = Objects.requireNonNull( builder.nodeId );
-        scope = Objects.requireNonNullElse( builder.scope, ApplyPermissionsScope.SINGLE );
+        nodeId = requireNonNull( builder.nodeId );
+        scope = requireNonNullElse( builder.scope, ApplyPermissionsScope.SINGLE );
         permissions = builder.permissions.build();
         addPermissions = builder.addPermissions.build();
         removePermissions = builder.removePermissions.build();
         versionAttributesResolver = builder.versionAttributesResolver;
         listener = builder.listener;
-        branches = Objects.requireNonNullElse( builder.branches, Branches.empty() );
+        branches = requireNonNullElse( builder.branches, Branches.empty() );
 
         Preconditions.checkArgument( permissions.isEmpty() || ( addPermissions.isEmpty() && removePermissions.isEmpty() ),
                                      "Permissions cannot be set together with addPermissions or removePermissions" );

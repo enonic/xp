@@ -2,11 +2,12 @@ package com.enonic.xp.core.internal.concurrent;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * Aa atomic sorted list of elements.
@@ -27,7 +28,7 @@ public class AtomicSortedList<T>
      */
     public AtomicSortedList( final Comparator<T> comparator )
     {
-        this.comparator = Objects.requireNonNull( comparator );
+        this.comparator = requireNonNull( comparator );
     }
 
     /**

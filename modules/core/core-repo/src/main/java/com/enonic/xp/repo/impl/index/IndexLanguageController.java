@@ -3,10 +3,10 @@ package com.enonic.xp.repo.impl.index;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
-
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
+
+import static java.util.Objects.requireNonNull;
 
 public class IndexLanguageController
 {
@@ -90,7 +90,7 @@ public class IndexLanguageController
 
     private static String normalizeBase( final Locale language )
     {
-        final String lang = Objects.requireNonNull( language ).getLanguage();
+        final String lang = requireNonNull( language ).getLanguage();
         if ( "no".equals( lang ) )
         {
             return "nb";
@@ -100,7 +100,7 @@ public class IndexLanguageController
 
     private static String normalize( final Locale language )
     {
-        final Locale locale = Objects.requireNonNull( language );
+        final Locale locale = requireNonNull( language );
         if ( "pt".equals( locale.getLanguage() ) && "BR".equals( language.getCountry() ) )
         {
             return "pt-BR";

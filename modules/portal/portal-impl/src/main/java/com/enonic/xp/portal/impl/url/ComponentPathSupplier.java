@@ -1,7 +1,8 @@
 package com.enonic.xp.portal.impl.url;
 
-import java.util.Objects;
 import java.util.function.Supplier;
+
+import static java.util.Objects.requireNonNull;
 
 final class ComponentPathSupplier
     implements Supplier<String>
@@ -10,7 +11,7 @@ final class ComponentPathSupplier
 
     ComponentPathSupplier( final Supplier<String> componentPath )
     {
-        this.componentPath = Objects.requireNonNull( componentPath );
+        this.componentPath = requireNonNull( componentPath );
     }
 
     @Override

@@ -1,9 +1,9 @@
 package com.enonic.xp.audit;
 
 import java.time.Instant;
-import java.util.Objects;
-
 import com.enonic.xp.security.PrincipalKeys;
+
+import static java.util.Objects.requireNonNullElse;
 
 public class FindAuditLogParams
 {
@@ -29,8 +29,8 @@ public class FindAuditLogParams
 
     private FindAuditLogParams( final Builder builder )
     {
-        start = Objects.requireNonNullElse( builder.start, 0 );
-        count = Objects.requireNonNullElse( builder.count, DEFAULT_FETCH_SIZE );
+        start = requireNonNullElse( builder.start, 0 );
+        count = requireNonNullElse( builder.count, DEFAULT_FETCH_SIZE );
         ids = builder.ids;
         from = builder.from;
         to = builder.to;

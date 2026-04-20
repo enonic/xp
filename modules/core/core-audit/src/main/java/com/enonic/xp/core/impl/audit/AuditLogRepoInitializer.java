@@ -1,11 +1,11 @@
 package com.enonic.xp.core.impl.audit;
 
-import java.util.Objects;
-
 import com.enonic.xp.context.Context;
 import com.enonic.xp.init.ExternalInitializer;
 import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.internal.InternalRepositoryService;
+
+import static java.util.Objects.requireNonNull;
 
 public class AuditLogRepoInitializer
     extends ExternalInitializer
@@ -69,7 +69,7 @@ public class AuditLogRepoInitializer
         protected void validate()
         {
             super.validate();
-            Objects.requireNonNull( repositoryService );
+            requireNonNull( repositoryService );
         }
 
         public AuditLogRepoInitializer build()

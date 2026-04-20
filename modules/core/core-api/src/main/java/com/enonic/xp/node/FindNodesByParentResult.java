@@ -1,6 +1,6 @@
 package com.enonic.xp.node;
 
-import java.util.Objects;
+import static java.util.Objects.requireNonNull;
 
 
 public final class FindNodesByParentResult
@@ -12,7 +12,7 @@ public final class FindNodesByParentResult
     private FindNodesByParentResult( final long totalHits, final NodeIds nodeIds )
     {
         this.totalHits = totalHits;
-        this.nodeIds = Objects.requireNonNull( nodeIds );
+        this.nodeIds = requireNonNull( nodeIds );
     }
 
     public static Builder create()

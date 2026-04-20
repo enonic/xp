@@ -3,7 +3,6 @@ package com.enonic.xp.content;
 import java.time.Instant;
 import java.util.EnumSet;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
@@ -18,6 +17,8 @@ import com.enonic.xp.page.Page;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
+
+import static java.util.Objects.requireNonNull;
 
 
 @NullMarked
@@ -159,7 +160,7 @@ public class PatchableContent
 
         public PatchableField<T> setPatcher( Function<PatchableContent, @Nullable T> patcher )
         {
-            this.patcher = Objects.requireNonNull( patcher );
+            this.patcher = requireNonNull( patcher );
             return this;
         }
 

@@ -1,10 +1,10 @@
 package com.enonic.xp.region;
 
 import java.util.Iterator;
-import java.util.Objects;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+
+import static java.util.Objects.requireNonNull;
 
 
 public final class Regions
@@ -36,7 +36,7 @@ public final class Regions
 
     public Component getComponent( final ComponentPath path )
     {
-        Objects.requireNonNull( path, "no path for Component given" );
+        requireNonNull( path, "no path for Component given" );
         Preconditions.checkArgument( path.numberOfLevels() > 0, "empty path for Component given" );
 
         final ComponentPath.RegionAndComponent first = path.getFirstLevel();

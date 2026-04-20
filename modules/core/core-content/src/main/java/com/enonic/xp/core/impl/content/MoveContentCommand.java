@@ -1,7 +1,5 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.Objects;
-
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAlreadyExistsException;
 import com.enonic.xp.content.ContentId;
@@ -31,6 +29,7 @@ import com.enonic.xp.page.Page;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 import static com.enonic.xp.core.impl.content.ContentNodeHelper.translateNodePathToContentPath;
+import static java.util.Objects.requireNonNull;
 
 final class MoveContentCommand
     extends AbstractCreatingOrUpdatingContentCommand
@@ -184,7 +183,7 @@ final class MoveContentCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( params, "params cannot be null" );
+            requireNonNull( params, "params cannot be null" );
         }
 
         MoveContentCommand build()

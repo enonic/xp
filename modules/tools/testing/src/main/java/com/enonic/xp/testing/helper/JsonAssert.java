@@ -3,8 +3,6 @@ package com.enonic.xp.testing.helper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Objects;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -12,6 +10,7 @@ import com.enonic.xp.core.internal.json.ObjectMapperHelper;
 import com.enonic.xp.script.serializer.MapSerializable;
 import com.enonic.xp.testing.serializer.JsonMapGenerator;
 
+import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -50,7 +49,7 @@ public final class JsonAssert
     private static JsonNode readFromFile( final Class<?> context, final String fileName )
     {
         final InputStream stream =
-            Objects.requireNonNull( context.getResourceAsStream( fileName ), "Resource file [" + fileName + "] not found" );
+            requireNonNull( context.getResourceAsStream( fileName ), "Resource file [" + fileName + "] not found" );
         try (stream)
         {
             return MAPPER.readTree( stream.readAllBytes() );

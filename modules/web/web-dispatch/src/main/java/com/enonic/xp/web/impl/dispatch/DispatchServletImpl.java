@@ -2,8 +2,6 @@ package com.enonic.xp.web.impl.dispatch;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Objects;
-
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -21,6 +19,8 @@ import com.enonic.xp.web.dispatch.DispatchServlet;
 import com.enonic.xp.web.impl.dispatch.pipeline.FilterPipeline;
 import com.enonic.xp.web.impl.dispatch.pipeline.ServletPipeline;
 
+import static java.util.Objects.requireNonNull;
+
 @Component(factory = "dispatchServlet", service = DispatchServlet.class)
 public final class DispatchServletImpl
     extends HttpServlet
@@ -36,7 +36,7 @@ public final class DispatchServletImpl
     public DispatchServletImpl( final Map<String, ?> properties )
     {
         final String connectorValue = (String) properties.get( DispatchConstants.CONNECTOR_PROPERTY );
-        this.connector = Objects.requireNonNull( connectorValue, "Connector property must not be null" );
+        this.connector = requireNonNull( connectorValue, "Connector property must not be null" );
     }
 
     @Override

@@ -1,11 +1,12 @@
 package com.enonic.xp.impl.scheduler.distributed;
 
 import java.time.Instant;
-import java.util.Objects;
 import java.util.Optional;
 
 import com.enonic.xp.scheduler.OneTimeCalendar;
 import com.enonic.xp.scheduler.ScheduleCalendarType;
+
+import static java.util.Objects.requireNonNull;
 
 public final class OneTimeCalendarImpl
     implements OneTimeCalendar
@@ -54,7 +55,7 @@ public final class OneTimeCalendarImpl
 
         protected void validate()
         {
-            Objects.requireNonNull( value, "value is required" );
+            requireNonNull( value, "value is required" );
         }
 
         public OneTimeCalendarImpl build()

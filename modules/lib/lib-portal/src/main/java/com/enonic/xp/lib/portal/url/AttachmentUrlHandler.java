@@ -2,13 +2,13 @@ package com.enonic.xp.lib.portal.url;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-
 import com.enonic.xp.portal.url.AttachmentUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
+
+import static java.util.Objects.requireNonNullElse;
 
 public final class AttachmentUrlHandler
     implements ScriptBean
@@ -83,7 +83,7 @@ public final class AttachmentUrlHandler
 
     public void setDownload( final Boolean download )
     {
-        this.download = Objects.requireNonNullElse( download, false );
+        this.download = requireNonNullElse( download, false );
     }
 
     public void setQueryParams( final ScriptValue params )

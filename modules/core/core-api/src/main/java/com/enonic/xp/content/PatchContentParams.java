@@ -1,12 +1,12 @@
 package com.enonic.xp.content;
 
-import java.util.Objects;
-
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
+
+import static java.util.Objects.requireNonNullElseGet;
 
 
 public final class PatchContentParams
@@ -90,7 +90,7 @@ public final class PatchContentParams
 
         public Builder createAttachments( final CreateAttachments value )
         {
-            this.createAttachments = Objects.requireNonNullElseGet( value, CreateAttachments::empty );
+            this.createAttachments = requireNonNullElseGet( value, CreateAttachments::empty );
             return this;
         }
 

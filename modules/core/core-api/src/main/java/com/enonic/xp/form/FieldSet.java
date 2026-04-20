@@ -7,6 +7,8 @@ import java.util.Objects;
 
 import com.enonic.xp.schema.LocalizedText;
 
+import static java.util.Objects.requireNonNull;
+
 
 public final class FieldSet
     extends FormItem
@@ -20,7 +22,7 @@ public final class FieldSet
 
     private FieldSet( final Builder builder )
     {
-        this.label = Objects.requireNonNull( builder.label, "label is required" );
+        this.label = requireNonNull( builder.label, "label is required" );
         this.labelI18nKey = builder.labelI18nKey;
         this.formItems = new FormItems( this, builder.formItems );
     }

@@ -1,13 +1,13 @@
 package com.enonic.xp.impl.scheduler;
 
-import java.util.Objects;
-
 import com.enonic.xp.impl.scheduler.serializer.SchedulerSerializer;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.scheduler.ScheduledJob;
 import com.enonic.xp.scheduler.ScheduledJobName;
+
+import static java.util.Objects.requireNonNull;
 
 public class GetScheduledJobCommand
     extends AbstractSchedulerCommand
@@ -59,7 +59,7 @@ public class GetScheduledJobCommand
         @Override
         protected void validate()
         {
-            Objects.requireNonNull( name, "name is required" );
+            requireNonNull( name, "name is required" );
         }
 
         @Override

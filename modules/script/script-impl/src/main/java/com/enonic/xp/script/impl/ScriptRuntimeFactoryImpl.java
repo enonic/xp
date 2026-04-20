@@ -3,7 +3,6 @@ package com.enonic.xp.script.impl;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.graalvm.polyglot.Engine;
@@ -35,6 +34,8 @@ import com.enonic.xp.script.impl.standard.ScriptRuntimeImpl;
 import com.enonic.xp.script.runtime.ScriptRuntime;
 import com.enonic.xp.script.runtime.ScriptRuntimeFactory;
 import com.enonic.xp.script.runtime.ScriptSettings;
+
+import static java.util.Objects.requireNonNullElseGet;
 
 @Component
 public class ScriptRuntimeFactoryImpl
@@ -152,7 +153,7 @@ public class ScriptRuntimeFactoryImpl
             final AppBundleData appBundleData = getAppBundleData( applicationKey );
 
             final String appScriptEngine = normalizeEngineName(
-                Objects.requireNonNullElseGet( appBundleData.bundle.getHeaders().get( "X-Script-Engine" ),
+                requireNonNullElseGet( appBundleData.bundle.getHeaders().get( "X-Script-Engine" ),
                                                ScriptRuntimeFactoryImpl::defaultEngineName ) );
 
             final ClassLoader appClassloader = appBundleData.appClassloader;

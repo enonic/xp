@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.elasticsearch.index.query.BoolQueryBuilder;
@@ -28,6 +27,8 @@ import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFieldNameResolver;
 import com.enonic.xp.repo.impl.index.IndexFieldNameNormalizer;
 import com.enonic.xp.repo.impl.index.StaticIndexValueType;
+
+import static java.util.Objects.requireNonNullElse;
 
 public class FilterBuilderFactory
     extends AbstractBuilderFactory
@@ -164,7 +165,7 @@ public class FilterBuilderFactory
             return null;
         }
 
-        final String queryFieldName = this.fieldNameResolver.resolve( filter.getFieldName(), Objects.requireNonNullElse( from, to ) );
+        final String queryFieldName = this.fieldNameResolver.resolve( filter.getFieldName(), requireNonNullElse( from, to ) );
 
         return new RangeQueryBuilder( queryFieldName ).from( from )
             .to( to )

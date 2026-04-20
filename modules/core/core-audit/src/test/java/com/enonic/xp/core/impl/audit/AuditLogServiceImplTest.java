@@ -1,7 +1,5 @@
 package com.enonic.xp.core.impl.audit;
 
-import java.util.Objects;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.invocation.InvocationOnMock;
@@ -35,6 +33,7 @@ import com.enonic.xp.node.Nodes;
 import com.enonic.xp.repository.internal.InternalRepositoryService;
 import com.enonic.xp.security.PrincipalKey;
 
+import static java.util.Objects.requireNonNullElse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -221,7 +220,7 @@ class AuditLogServiceImplTest
         assertEquals( auditLogParams.getTime(), log.getTime() );
         assertNotNull( log.getSource() );
         assertEquals( auditLogParams.getSource(), log.getSource() );
-        assertEquals( Objects.requireNonNullElse( auditLogParams.getUser(), PrincipalKey.ofAnonymous() ), log.getUser() );
+        assertEquals( requireNonNullElse( auditLogParams.getUser(), PrincipalKey.ofAnonymous() ), log.getUser() );
         assertNotNull( log.getObjectUris() );
         assertEquals( 2, log.getObjectUris().getSize() );
         assertEquals( auditLogParams.getObjectUris(), log.getObjectUris() );

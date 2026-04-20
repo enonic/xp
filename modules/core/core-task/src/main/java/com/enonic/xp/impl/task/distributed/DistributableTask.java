@@ -2,7 +2,6 @@ package com.enonic.xp.impl.task.distributed;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Objects;
 import java.util.UUID;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -15,6 +14,9 @@ import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.TaskDescriptor;
 import com.enonic.xp.task.TaskDescriptorService;
 import com.enonic.xp.task.TaskId;
+
+import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElseGet;
 
 public final class DistributableTask
     implements DescribedTask, Serializable
@@ -37,7 +39,7 @@ public final class DistributableTask
     public DistributableTask( final DescriptorKey key, final String name, final PropertyTree data, final TaskContext context )
     {
         this.taskId = TaskId.from( UUID.randomUUID().toString() );
-        this.name = Objects.requireNonNullElseGet( name, key::toString );
+        this.name = requireNonNullElseGet( name, key::toString );
         this.key = key;
         this.data = data;
         this.context = context;
@@ -88,7 +90,7 @@ public final class DistributableTask
         if ( taskDescriptor == null )
         {
             taskDescriptor = OsgiSupport.withService( TaskDescriptorService.class, tds -> tds.getTask( key ) );
-            Objects.requireNonNull( taskDescriptor, "TaskDescriptor not found for key: " + key );
+            requireNonNull( taskDescriptor, "TaskDescriptor not found for key: " + key );
 
             data = OsgiSupport.withService( PropertyTreeMarshallerService.class,
                                             ptms -> ptms.marshal( data.toMap(), taskDescriptor.getConfig(), false ) );

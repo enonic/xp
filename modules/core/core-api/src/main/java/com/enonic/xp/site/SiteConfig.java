@@ -6,6 +6,8 @@ import java.util.Objects;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertyTree;
 
+import static java.util.Objects.requireNonNull;
+
 
 public final class SiteConfig
 {
@@ -15,8 +17,8 @@ public final class SiteConfig
 
     public SiteConfig( final Builder builder )
     {
-        this.applicationKey = Objects.requireNonNull( builder.applicationKey, "applicationKey cannot be null" );
-        this.config = Objects.requireNonNull( builder.config, "config cannot be null" );
+        this.applicationKey = requireNonNull( builder.applicationKey, "applicationKey cannot be null" );
+        this.config = requireNonNull( builder.config, "config cannot be null" );
     }
 
     public ApplicationKey getApplicationKey()

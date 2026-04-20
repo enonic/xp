@@ -2,7 +2,6 @@ package com.enonic.xp.core.impl.content.index;
 
 import java.util.Collection;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.enonic.xp.content.Mixins;
@@ -31,6 +30,8 @@ import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.site.CmsDescriptor;
 import com.enonic.xp.site.CmsService;
 import com.enonic.xp.site.SiteConfigs;
+
+import static java.util.Objects.requireNonNull;
 
 public class ContentIndexConfigFactory
 {
@@ -206,7 +207,7 @@ public class ContentIndexConfigFactory
 
         private void validate()
         {
-            Objects.requireNonNull( contentTypeService );
+            requireNonNull( contentTypeService );
         }
 
         public ContentIndexConfigFactory build()

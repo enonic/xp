@@ -1,6 +1,5 @@
 package com.enonic.xp.admin.tool;
 
-import java.util.Objects;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
@@ -14,6 +13,8 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.util.GenericValue;
+
+import static java.util.Objects.requireNonNullElse;
 
 
 public final class AdminToolDescriptor
@@ -45,7 +46,7 @@ public final class AdminToolDescriptor
         description = builder.description;
         descriptionI18nKey = builder.descriptionI18nKey;
         allowedPrincipals = PrincipalKeys.from( builder.allowedPrincipals.build() );
-        apiMounts = Objects.requireNonNullElse( builder.apiMounts, DescriptorKeys.empty() );
+        apiMounts = requireNonNullElse( builder.apiMounts, DescriptorKeys.empty() );
         interfaces = builder.interfaces;
         icon = builder.icon;
         schemaConfig = builder.schemaConfig.build();

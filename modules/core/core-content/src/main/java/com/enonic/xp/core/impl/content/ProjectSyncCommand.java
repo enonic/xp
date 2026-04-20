@@ -1,11 +1,11 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.Objects;
-
 import com.enonic.xp.content.ProjectSyncParams;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
+
+import static java.util.Objects.requireNonNull;
 
 
 final class ProjectSyncCommand
@@ -73,9 +73,9 @@ final class ProjectSyncCommand
 
         void validate()
         {
-            Objects.requireNonNull( this.projectService );
-            Objects.requireNonNull( this.contentSynchronizer );
-            Objects.requireNonNull( params, "params cannot be null" );
+            requireNonNull( this.projectService );
+            requireNonNull( this.contentSynchronizer );
+            requireNonNull( params, "params cannot be null" );
         }
 
         public ProjectSyncCommand build()

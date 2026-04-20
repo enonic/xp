@@ -10,6 +10,9 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.cluster.ClusterNodeId;
 import com.enonic.xp.security.PrincipalKey;
 
+import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
+
 
 public final class TaskInfo
     implements Serializable
@@ -36,14 +39,14 @@ public final class TaskInfo
 
     private TaskInfo( final Builder builder )
     {
-        id = Objects.requireNonNull( builder.id, "Task id is required" );
-        application = Objects.requireNonNull( builder.application, "Task application is required" );
-        name = Objects.requireNonNull( builder.name, "Task name is required" );
-        state = Objects.requireNonNullElse( builder.state, TaskState.WAITING );
-        description = Objects.requireNonNullElse( builder.description, "" );
-        progress = Objects.requireNonNullElse( builder.progress, TaskProgress.EMPTY );
-        user = Objects.requireNonNullElse( builder.user, PrincipalKey.ofAnonymous() );
-        startTime = Objects.requireNonNull( builder.startTime, "Task startTime is required" );
+        id = requireNonNull( builder.id, "Task id is required" );
+        application = requireNonNull( builder.application, "Task application is required" );
+        name = requireNonNull( builder.name, "Task name is required" );
+        state = requireNonNullElse( builder.state, TaskState.WAITING );
+        description = requireNonNullElse( builder.description, "" );
+        progress = requireNonNullElse( builder.progress, TaskProgress.EMPTY );
+        user = requireNonNullElse( builder.user, PrincipalKey.ofAnonymous() );
+        startTime = requireNonNull( builder.startTime, "Task startTime is required" );
         node = builder.node;
     }
 

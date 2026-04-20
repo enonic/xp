@@ -10,6 +10,7 @@ import com.enonic.xp.schema.LocalizedText;
 import com.enonic.xp.util.GenericValue;
 
 import static com.google.common.base.Strings.nullToEmpty;
+import static java.util.Objects.requireNonNull;
 
 
 public final class Input
@@ -37,7 +38,7 @@ public final class Input
 
         Preconditions.checkArgument( !nullToEmpty( builder.name ).isBlank(), "name is required for a Input" );
         Preconditions.checkArgument( !builder.name.contains( "." ), "name cannot contain punctuations: %s", builder.name );
-        Objects.requireNonNull( builder.inputType, "inputType is required for a Input" );
+        requireNonNull( builder.inputType, "inputType is required for a Input" );
         Preconditions.checkArgument( !nullToEmpty( builder.label ).isBlank(), "label is required for a Input" );
 
         this.name = builder.name;

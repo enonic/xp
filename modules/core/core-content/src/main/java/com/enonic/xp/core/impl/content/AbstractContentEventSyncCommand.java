@@ -1,12 +1,12 @@
 package com.enonic.xp.core.impl.content;
 
 import java.util.List;
-import java.util.Objects;
-
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
+
+import static java.util.Objects.requireNonNull;
 
 public abstract class AbstractContentEventSyncCommand
 {
@@ -76,8 +76,8 @@ public abstract class AbstractContentEventSyncCommand
 
         void validate()
         {
-            Objects.requireNonNull( layersContentService );
-            Objects.requireNonNull( contentToSync, "contentToSync cannot be null" );
+            requireNonNull( layersContentService );
+            requireNonNull( contentToSync, "contentToSync cannot be null" );
         }
 
         public abstract <T extends AbstractContentEventSyncCommand> T build();

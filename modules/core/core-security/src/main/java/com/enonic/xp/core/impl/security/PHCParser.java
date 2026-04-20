@@ -3,9 +3,10 @@ package com.enonic.xp.core.impl.security;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static java.util.Objects.requireNonNull;
 
 final class PHCParser
 {
@@ -66,7 +67,7 @@ final class PHCParser
     {
         int paramInt( String param )
         {
-            return Integer.parseInt( Objects.requireNonNull( params.get( param ), "PHC string missing required parameter: " + param ) );
+            return Integer.parseInt( requireNonNull( params.get( param ), "PHC string missing required parameter: " + param ) );
         }
     }
 }

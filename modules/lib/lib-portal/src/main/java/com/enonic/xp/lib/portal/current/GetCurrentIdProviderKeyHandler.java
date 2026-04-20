@@ -1,7 +1,5 @@
 package com.enonic.xp.lib.portal.current;
 
-import java.util.Objects;
-
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
@@ -9,6 +7,8 @@ import com.enonic.xp.security.IdProvider;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
+
+import static java.util.Objects.requireNonNull;
 
 public final class GetCurrentIdProviderKeyHandler
     implements ScriptBean
@@ -44,6 +44,6 @@ public final class GetCurrentIdProviderKeyHandler
     @Override
     public void initialize( final BeanContext context )
     {
-        this.request = Objects.requireNonNull( context.getBinding( PortalRequest.class ).get(), "no request bound" );
+        this.request = requireNonNull( context.getBinding( PortalRequest.class ).get(), "no request bound" );
     }
 }

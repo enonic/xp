@@ -1,6 +1,6 @@
 package com.enonic.xp.schema.content;
 
-import java.util.Objects;
+import static java.util.Objects.requireNonNull;
 
 
 public final class GetChildContentTypesParams
@@ -20,6 +20,6 @@ public final class GetChildContentTypesParams
 
     public void validate()
     {
-        Objects.requireNonNull( this.parentName, "parentName is required" );
+        requireNonNull( this.parentName, "parentName is required" );
     }
 }

@@ -2,8 +2,6 @@ package com.enonic.xp.repo.impl.node;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Objects;
-
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.data.Property;
@@ -29,6 +27,8 @@ import com.enonic.xp.repo.impl.storage.StoreNodeParams;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
+
+import static java.util.Objects.requireNonNull;
 
 public final class CreateNodeCommand
     extends AbstractNodeCommand
@@ -242,7 +242,7 @@ public final class CreateNodeCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( params, "params cannot be null" );
+            requireNonNull( params, "params cannot be null" );
         }
 
         public CreateNodeCommand build()

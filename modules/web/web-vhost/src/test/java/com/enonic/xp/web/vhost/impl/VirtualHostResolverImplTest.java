@@ -4,8 +4,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -17,6 +15,7 @@ import com.enonic.xp.web.vhost.VirtualHostService;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostIdProvidersMapping;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
 
+import static java.util.Objects.requireNonNullElse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -289,7 +288,7 @@ class VirtualHostResolverImplTest
                                                          Map<String, String> contextConfig )
     {
         return new VirtualHostMapping( name, host, source, target, VirtualHostIdProvidersMapping.create().build(),
-                                       Objects.requireNonNullElse( order, Integer.MAX_VALUE ), contextConfig );
+                                       requireNonNullElse( order, Integer.MAX_VALUE ), contextConfig );
     }
 
     private VirtualHostMapping createVirtualHostMapping( String name, String host, String source, String target, Integer order )

@@ -1,7 +1,5 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.util.Objects;
-
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -19,6 +17,8 @@ import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+
+import static java.util.Objects.requireNonNull;
 
 abstract class AbstractNodeCommand
 {
@@ -115,9 +115,9 @@ abstract class AbstractNodeCommand
 
         void validate()
         {
-            Objects.requireNonNull( indexServiceInternal );
-            Objects.requireNonNull( nodeStorageService );
-            Objects.requireNonNull( nodeSearchService );
+            requireNonNull( indexServiceInternal );
+            requireNonNull( nodeStorageService );
+            requireNonNull( nodeSearchService );
         }
     }
 }

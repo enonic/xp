@@ -1,6 +1,6 @@
 package com.enonic.xp.content;
 
-import java.util.Objects;
+import static java.util.Objects.requireNonNull;
 
 
 public final class HasUnpublishedChildrenParams
@@ -38,7 +38,7 @@ public final class HasUnpublishedChildrenParams
 
         public HasUnpublishedChildrenParams build()
         {
-            Objects.requireNonNull( this.contentId, "contentId is required" );
+            requireNonNull( this.contentId, "contentId is required" );
             return new HasUnpublishedChildrenParams( this );
         }
     }

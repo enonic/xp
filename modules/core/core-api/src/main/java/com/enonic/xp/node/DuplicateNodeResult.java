@@ -1,6 +1,6 @@
 package com.enonic.xp.node;
 
-import java.util.Objects;
+import static java.util.Objects.requireNonNull;
 
 public class DuplicateNodeResult
 {
@@ -53,7 +53,7 @@ public class DuplicateNodeResult
 
         private void validate()
         {
-            Objects.requireNonNull( node, "node is required" );
+            requireNonNull( node, "node is required" );
         }
 
         public DuplicateNodeResult build()

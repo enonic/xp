@@ -1,13 +1,13 @@
 package com.enonic.xp.lib.project.command;
 
-import java.util.Objects;
-
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.project.ProjectName;
+
+import static java.util.Objects.requireNonNull;
 
 abstract class AbstractProjectRootCommand
 {
@@ -50,8 +50,8 @@ abstract class AbstractProjectRootCommand
 
         void validate()
         {
-            Objects.requireNonNull( contentService );
-            Objects.requireNonNull( projectName, "projectName is required" );
+            requireNonNull( contentService );
+            requireNonNull( projectName, "projectName is required" );
         }
     }
 

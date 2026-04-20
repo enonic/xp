@@ -3,8 +3,6 @@ package com.enonic.xp.portal.impl.controller;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
-
 import com.google.common.net.HttpHeaders;
 import com.google.common.net.MediaType;
 
@@ -15,6 +13,8 @@ import com.enonic.xp.portal.postprocess.HtmlTag;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.websocket.WebSocketConfig;
+
+import static java.util.Objects.requireNonNull;
 
 public final class PortalResponseSerializer
 {
@@ -36,7 +36,7 @@ public final class PortalResponseSerializer
     public PortalResponseSerializer( final ScriptValue value, final HttpStatus defaultStatus )
     {
         this.value = value;
-        this.defaultStatus = Objects.requireNonNull( defaultStatus );
+        this.defaultStatus = requireNonNull( defaultStatus );
         this.defaultPostProcess = true;
     }
 

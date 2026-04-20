@@ -1,7 +1,5 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.util.Objects;
-
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.NodeCompareStatus;
 import com.enonic.xp.node.NodeComparison;
@@ -10,6 +8,8 @@ import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeBranchEntry;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
+
+import static java.util.Objects.requireNonNull;
 
 class CompareStatusResolver
 {
@@ -127,7 +127,7 @@ class CompareStatusResolver
 
         private void validate()
         {
-            Objects.requireNonNull( this.nodeStorageService );
+            requireNonNull( this.nodeStorageService );
         }
 
         CompareStatusResolver build()

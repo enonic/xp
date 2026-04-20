@@ -1,8 +1,8 @@
 package com.enonic.xp.content;
 
-import java.util.Objects;
-
 import com.enonic.xp.project.ProjectName;
+
+import static java.util.Objects.requireNonNull;
 
 public final class ProjectSyncParams
 {
@@ -39,7 +39,7 @@ public final class ProjectSyncParams
 
         private void validate()
         {
-            Objects.requireNonNull( targetProject, "targetProject is required" );
+            requireNonNull( targetProject, "targetProject is required" );
         }
 
         public ProjectSyncParams build()

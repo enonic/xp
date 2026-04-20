@@ -1,11 +1,12 @@
 package com.enonic.xp.node;
 
 import java.util.List;
-import java.util.Objects;
-
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.index.ChildOrder;
+
+import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
 
 
 public final class SortNodeParams
@@ -33,8 +34,8 @@ public final class SortNodeParams
         this.manualOrderSeed = builder.manualOrderSeed;
         this.reorderChildNodes = builder.reorderChildNodes.build();
         this.versionAttributesResolver = builder.versionAttributesResolver;
-        this.processor = Objects.requireNonNullElse( builder.processor, ( n, p ) -> n );
-        this.childProcessor = Objects.requireNonNullElse( builder.childProcessor, ( n, p ) -> n );
+        this.processor = requireNonNullElse( builder.processor, ( n, p ) -> n );
+        this.childProcessor = requireNonNullElse( builder.childProcessor, ( n, p ) -> n );
         this.refresh = builder.refresh;
     }
 
@@ -155,8 +156,8 @@ public final class SortNodeParams
 
         public SortNodeParams build()
         {
-            Objects.requireNonNull( nodeId, "nodeId is required" );
-            Objects.requireNonNull( childOrder, "childOrder is required" );
+            requireNonNull( nodeId, "nodeId is required" );
+            requireNonNull( childOrder, "childOrder is required" );
             return new SortNodeParams( this );
         }
     }

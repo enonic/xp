@@ -1,11 +1,11 @@
 package com.enonic.xp.core.impl.project;
 
-import java.util.Objects;
-
 import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.Role;
 import com.enonic.xp.security.UpdateRoleParams;
+
+import static java.util.Objects.requireNonNull;
 
 public final class UpdateProjectRoleNamesCommand
     extends AbstractProjectRolesCommand
@@ -58,7 +58,7 @@ public final class UpdateProjectRoleNamesCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( this.projectDisplayName, "Project display name is required" );
+            requireNonNull( this.projectDisplayName, "Project display name is required" );
         }
 
         public UpdateProjectRoleNamesCommand build()

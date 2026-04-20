@@ -1,9 +1,9 @@
 package com.enonic.xp.content;
 
-import java.util.Objects;
-
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
+
+import static java.util.Objects.requireNonNull;
 
 
 @NullMarked
@@ -17,7 +17,7 @@ public final class GetContentVersionsResult
 
     private GetContentVersionsResult( Builder builder )
     {
-        contentVersions = Objects.requireNonNull( builder.contentVersions );
+        contentVersions = requireNonNull( builder.contentVersions );
         totalHits = builder.totalHits;
         cursor = builder.cursor;
     }

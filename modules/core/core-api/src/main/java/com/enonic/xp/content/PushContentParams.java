@@ -1,9 +1,9 @@
 package com.enonic.xp.content;
 
 import java.time.Instant;
-import java.util.Objects;
-
 import com.google.common.base.Preconditions;
+
+import static java.util.Objects.requireNonNullElse;
 
 
 public final class PushContentParams
@@ -30,10 +30,10 @@ public final class PushContentParams
         this.publishFrom = builder.publishFrom;
         this.publishTo = builder.publishTo;
         this.includeDependencies = builder.includeDependencies;
-        this.excludeDescendantsOf = Objects.requireNonNullElse( builder.excludeDescendantsOf, ContentIds.empty() );
+        this.excludeDescendantsOf = requireNonNullElse( builder.excludeDescendantsOf, ContentIds.empty() );
         this.publishContentListener = builder.publishContentListener;
         this.message = builder.message;
-        this.excludedContentIds = Objects.requireNonNullElse( builder.excludedContentIds, ContentIds.empty() );
+        this.excludedContentIds = requireNonNullElse( builder.excludedContentIds, ContentIds.empty() );
     }
 
     public static Builder create()

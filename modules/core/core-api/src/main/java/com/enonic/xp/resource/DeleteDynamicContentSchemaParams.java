@@ -1,8 +1,8 @@
 package com.enonic.xp.resource;
 
-import java.util.Objects;
-
 import com.enonic.xp.schema.BaseSchemaName;
+
+import static java.util.Objects.requireNonNull;
 
 
 public final class DeleteDynamicContentSchemaParams
@@ -56,8 +56,8 @@ public final class DeleteDynamicContentSchemaParams
 
         private void validate()
         {
-            Objects.requireNonNull( name, "name is required" );
-            Objects.requireNonNull( type, "type is required" );
+            requireNonNull( name, "name is required" );
+            requireNonNull( type, "type is required" );
         }
 
         public DeleteDynamicContentSchemaParams build()

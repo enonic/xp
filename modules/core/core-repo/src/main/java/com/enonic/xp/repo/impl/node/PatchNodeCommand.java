@@ -1,8 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
 import java.util.Map;
-import java.util.Objects;
-
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
@@ -27,6 +25,9 @@ import com.enonic.xp.repo.impl.branch.storage.NodeFactory;
 import com.enonic.xp.repo.impl.storage.NodeVersionData;
 import com.enonic.xp.repo.impl.storage.StoreNodeParams;
 import com.enonic.xp.security.acl.Permission;
+
+import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
 
 public final class PatchNodeCommand
     extends AbstractNodeCommand
@@ -65,7 +66,7 @@ public final class PatchNodeCommand
         final Node persistedNode = params.getId() != null ? doGetById( params.getId() ) : doGetByPath( params.getPath() );
         if ( persistedNode == null )
         {
-            throw new NodeNotFoundException( "Node not found: " + Objects.requireNonNullElse( params.getId(), params.getPath() ) );
+            throw new NodeNotFoundException( "Node not found: " + requireNonNullElse( params.getId(), params.getPath() ) );
         }
 
         this.results.nodeId( persistedNode.id() );
@@ -190,7 +191,7 @@ public final class PatchNodeCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( params, "params cannot be null" );
+            requireNonNull( params, "params cannot be null" );
             Preconditions.checkArgument( this.params.getBranches().getSize() <= 1 || this.params.getPath() == null,
                                          "Only one branch is allowed with path" );
         }

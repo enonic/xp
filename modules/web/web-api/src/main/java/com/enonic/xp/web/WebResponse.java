@@ -3,7 +3,6 @@ package com.enonic.xp.web;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.TreeMap;
 
 import com.google.common.collect.ImmutableList;
@@ -14,6 +13,8 @@ import com.google.common.net.MediaType;
 import jakarta.servlet.http.Cookie;
 
 import com.enonic.xp.web.websocket.WebSocketConfig;
+
+import static java.util.Objects.requireNonNull;
 
 
 public class WebResponse
@@ -186,7 +187,7 @@ public class WebResponse
 
         private void putHeader( final String key, final String value )
         {
-            this.headers.put( key.toLowerCase( Locale.ROOT ), Objects.requireNonNull( value ) );
+            this.headers.put( key.toLowerCase( Locale.ROOT ), requireNonNull( value ) );
         }
 
         public void addAllCookies( final List<Cookie> cookies )

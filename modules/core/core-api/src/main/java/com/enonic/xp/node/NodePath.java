@@ -5,13 +5,13 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Splitter;
 
 import static com.google.common.base.Strings.emptyToNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static java.util.Objects.requireNonNull;
 
 
 public final class NodePath
@@ -33,7 +33,7 @@ public final class NodePath
 
     public NodePath( final String path )
     {
-        Objects.requireNonNull( emptyToNull( path ), "path not given" );
+        requireNonNull( emptyToNull( path ), "path not given" );
         if ( path.equals( ELEMENT_DIVIDER ) )
         {
             this.path = ELEMENT_DIVIDER;
@@ -157,7 +157,7 @@ public final class NodePath
 
         private Builder( final NodePath source )
         {
-            Objects.requireNonNull( source, "source to build copy from not given" );
+            requireNonNull( source, "source to build copy from not given" );
             this.elementListBuilder = source.isRoot() ? new ArrayList<>() : toElements( source.path );
         }
 
