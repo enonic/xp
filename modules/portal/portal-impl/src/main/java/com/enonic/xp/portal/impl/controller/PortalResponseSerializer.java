@@ -17,6 +17,7 @@ import com.enonic.xp.web.sse.SseConfig;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 
 import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
 
 public final class PortalResponseSerializer
 {
@@ -228,7 +229,7 @@ public final class PortalResponseSerializer
         else
         {
             final String strValue = value.getValue( String.class );
-            builder.cookie( new Cookie( key, Objects.requireNonNullElse( strValue, "" ) ) );
+            builder.cookie( new Cookie( key, requireNonNullElse( strValue, "" ) ) );
         }
     }
 
