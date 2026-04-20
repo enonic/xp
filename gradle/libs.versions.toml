@@ -157,6 +157,6 @@ prometheus-metrics-model = { module = "io.prometheus:prometheus-metrics-model", 
 prometheus-metrics-tracer-common = { module = "io.prometheus:prometheus-metrics-tracer-common", version.ref = "prometheus" }
 
 ethlo-time = { module = "com.ethlo.time:itu", version = "1.14.0" }
-networknt-jsv = { module = "com.networknt:json-schema-validator", version = "2.0.0" }
+networknt-jsv = { module = "com.networknt:json-schema-validator", version = "3.0.2" }
 
 [plugins]
