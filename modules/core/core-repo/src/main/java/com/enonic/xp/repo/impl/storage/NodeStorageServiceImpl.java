@@ -230,6 +230,28 @@ public class NodeStorageServiceImpl
     }
 
     @Override
+    public NodeVersionData getNodeVersionData( final NodeId nodeId, final InternalContext context )
+    {
+        final NodeBranchEntry nodeBranchEntry = this.branchService.get( nodeId, context );
+
+        if ( nodeBranchEntry == null )
+        {
+            return null;
+        }
+
+        final NodeStoreVersion nodeStoreVersion = nodeVersionService.get( nodeBranchEntry.getNodeVersionKey(), context );
+
+        if ( !canRead( nodeStoreVersion.permissions(), context ) )
+        {
+            return null;
+        }
+
+        final NodeVersion nodeVersion = this.versionService.getVersion( nodeBranchEntry.getVersionId(), context );
+        final Node node = NodeFactory.create( nodeStoreVersion, nodeBranchEntry );
+        return new NodeVersionData( node, nodeVersion );
+    }
+
+    @Override
     public Node get( final NodePath nodePath, final InternalContext context )
     {
         final NodeBranchEntry nodeBranchEntry = this.branchService.get( nodePath, context );
@@ -346,9 +368,9 @@ public class NodeStorageServiceImpl
     private BlobKeys getBinaryBlobKeys( final AttachedBinaries attachedBinaries )
     {
         return attachedBinaries != null ? attachedBinaries.stream()
-            .map( AttachedBinary::getBlobKey )
-            .map( BlobKey::from )
-            .collect( BlobKeys.collector() ) : BlobKeys.empty();
+                                          .map( AttachedBinary::getBlobKey )
+                                          .map( BlobKey::from )
+                                          .collect( BlobKeys.collector() ) : BlobKeys.empty();
     }
 
     private Nodes doReturnNodes( final Stream<NodeBranchEntry> nodeBranchEntries, final InternalContext context )

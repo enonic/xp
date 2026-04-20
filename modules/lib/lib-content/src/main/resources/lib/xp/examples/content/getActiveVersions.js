@@ -20,7 +20,8 @@ let expected = {
         'timestamp': '2024-01-01T00:00:00Z',
         'actions': [
             {
-                'operation': 'publish',
+                'operation': 'content.publish',
+                'editorial': 'editorial-version',
                 'user': 'user:system:admin',
                 'opTime': '2024-01-01T00:00:00Z'
             }

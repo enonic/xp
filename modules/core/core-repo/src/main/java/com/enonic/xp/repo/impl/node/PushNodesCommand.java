@@ -12,6 +12,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeCompareStatus;
 import com.enonic.xp.node.NodeComparison;
@@ -211,6 +212,8 @@ public class PushNodesCommand
             return nbe;
         }
 
+        final Node originalNode = NodeFactory.create( version, nbe.getVersionId(), nbe.getNodePath(), nbe.getTimestamp() );
+
         final Node changedNode = NodeFactory.create( version )
             .name( nbe.getNodePath().getName() )
             .parentPath( nbe.getNodePath().getParentPath() )
@@ -218,7 +221,12 @@ public class PushNodesCommand
             .timestamp( Millis.now() )
             .build();
 
-        final NodeVersionData stored = this.nodeStorageService.store( StoreNodeParams.newVersion( changedNode ), internalContext );
+        final Attributes resolvedAttributes =
+            resolveVersionAttributes( params.getVersionAttributesResolver(), originalNode, changedNode, internalContext.getBranch(),
+                                      this.nodeStorageService.getVersion( nbe.getVersionId(), internalContext ).getAttributes() );
+
+        final NodeVersionData stored =
+            this.nodeStorageService.store( StoreNodeParams.newVersion( changedNode, resolvedAttributes ), internalContext );
 
         return NodeBranchEntry.fromNodeVersion( stored.version() );
     }

@@ -26,6 +26,7 @@ import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
+import com.enonic.xp.repo.impl.storage.NodeVersionData;
 import com.enonic.xp.repo.impl.storage.StoreNodeParams;
 import com.enonic.xp.security.acl.Permission;
 
@@ -54,7 +55,9 @@ public class SortNodeCommand
 
     public SortNodeResult execute()
     {
-        final Node node = doGetById( params.getNodeId() );
+        final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
+        final NodeVersionData nodeData = this.nodeStorageService.getNodeVersionData( params.getNodeId(), internalContext );
+        final Node node = nodeData.node();
 
         checkContextUserPermissionOrAdmin( node );
 
@@ -79,10 +82,11 @@ public class SortNodeCommand
         {
             final Node editedNode =
                 Node.create( node ).childOrder( params.getChildOrder() ).data( processedData ).timestamp( Millis.now() ).build();
-            final Attributes resolvedAttributes = resolveVersionAttributes( params.getVersionAttributesResolver(), node, editedNode,
-                                ContextAccessor.current().getBranch() );
-            Node updatedNode = this.nodeStorageService.store( StoreNodeParams.newVersion( editedNode, resolvedAttributes ),
-                                                              InternalContext.from( ContextAccessor.current() ) ).node();
+            final Attributes resolvedAttributes =
+                resolveVersionAttributes( params.getVersionAttributesResolver(), node, editedNode, ContextAccessor.current().getBranch(),
+                                          nodeData.version().getAttributes() );
+            Node updatedNode =
+                this.nodeStorageService.store( StoreNodeParams.newVersion( editedNode, resolvedAttributes ), internalContext ).node();
             result.node( updatedNode );
         }
         else
@@ -109,12 +113,13 @@ public class SortNodeCommand
             .batchSize( BATCH_SIZE )
             .build();
 
-        final List<NodeId> childNodeIds = nodeSearchService.query( query, SingleRepoSearchSource.from( InternalContext.from( ContextAccessor.current() ) ) )
-            .getIds()
-            .stream()
-            .distinct()
-            .map( NodeId::from )
-            .collect( Collectors.toCollection( ArrayList::new ) );
+        final List<NodeId> childNodeIds =
+            nodeSearchService.query( query, SingleRepoSearchSource.from( InternalContext.from( ContextAccessor.current() ) ) )
+                .getIds()
+                .stream()
+                .distinct()
+                .map( NodeId::from )
+                .collect( Collectors.toCollection( ArrayList::new ) );
 
         for ( ReorderChildNodeParams param : reorderChildNodes )
         {
@@ -148,16 +153,16 @@ public class SortNodeCommand
         final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
         for ( final NodeId nodeId : childNodeIds )
         {
-            final Node node = doGetById( nodeId, internalContext );
+            final NodeVersionData childData = this.nodeStorageService.getNodeVersionData( nodeId, internalContext );
+            final Node node = childData.node();
             final PropertyTree processedChildData = params.getChildProcessor().process( node.data(), node.path() );
             final Node updatedNode =
                 Node.create( node ).data( processedChildData ).manualOrderValue( resolver.getAsLong() ).timestamp( Millis.now() ).build();
             final Attributes childResolvedAttributes =
-                resolveVersionAttributes( params.getVersionAttributesResolver(), node, updatedNode,
-                                ContextAccessor.current().getBranch() );
+                resolveVersionAttributes( params.getVersionAttributesResolver(), node, updatedNode, ContextAccessor.current().getBranch(),
+                                          childData.version().getAttributes() );
             final Node storedNode =
-                this.nodeStorageService.store( StoreNodeParams.newVersion( updatedNode, childResolvedAttributes ),
-                                               internalContext ).node();
+                this.nodeStorageService.store( StoreNodeParams.newVersion( updatedNode, childResolvedAttributes ), internalContext ).node();
             result.addReorderedNode( storedNode );
         }
     }
@@ -209,12 +214,13 @@ public class SortNodeCommand
             final PropertyTree processedChildData = params.getChildProcessor().process( node.data(), node.path() );
             final Node updatedNode =
                 Node.create( node ).data( processedChildData ).timestamp( Millis.now() ).manualOrderValue( newOrderValue ).build();
+            final Attributes originalAttributes =
+                this.nodeStorageService.getVersion( node.getNodeVersionId(), internalContext ).getAttributes();
             final Attributes childResolvedAttributes =
-                resolveVersionAttributes( params.getVersionAttributesResolver(), node, updatedNode,
-                                ContextAccessor.current().getBranch() );
+                resolveVersionAttributes( params.getVersionAttributesResolver(), node, updatedNode, ContextAccessor.current().getBranch(),
+                                          originalAttributes );
             final Node storedNode =
-                this.nodeStorageService.store( StoreNodeParams.newVersion( updatedNode, childResolvedAttributes ),
-                                               internalContext ).node();
+                this.nodeStorageService.store( StoreNodeParams.newVersion( updatedNode, childResolvedAttributes ), internalContext ).node();
             visitedNodes.put( storedNode.id(), storedNode );
 
             result.addReorderedNode( storedNode );

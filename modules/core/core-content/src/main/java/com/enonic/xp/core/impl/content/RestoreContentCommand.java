@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.Map;
+
 import com.enonic.xp.archive.ArchiveConstants;
 import com.enonic.xp.archive.RestoreContentException;
 import com.enonic.xp.archive.RestoreContentParams;
@@ -121,9 +123,9 @@ final class RestoreContentCommand
             .nodeId( nodeToRestore.id() )
             .newParentPath( parentPathToRestore )
             .newName( newNodeName )
-            .versionAttributesResolver( layersSync
-                                            ? ContentAttributesHelper.versionHistoryResolver( ContentAttributesHelper.SYNC_ATTR )
-                                            : ContentAttributesHelper.versionHistoryResolver( ContentAttributesHelper.RESTORE_ATTR ) )
+            .versionAttributesResolver( ContentAttributesHelper.versionHistoryResolver(
+                layersSync ? ContentAttributesHelper.SYNC_ATTR : ContentAttributesHelper.RESTORE_ATTR,
+                Map.ofEntries( ContentAttributesHelper.resolveEditorialProperty() ) ) )
             .refresh( RefreshMode.ALL );
 
         if ( params.getRestoreContentListener() != null )
@@ -134,7 +136,7 @@ final class RestoreContentCommand
         final var processors = CompositeNodeDataProcessor.create().add( updateProperties() );
         if ( !layersSync )
         {
-            processors.add( InheritedContentDataProcessor.ALL );
+            processors.add( InheritedContentDataProcessor.REMOVE_ALL_INHERIT );
         }
         moveParams.processor( processors.build() );
 

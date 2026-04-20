@@ -2,6 +2,8 @@ package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.CompareContentResults;
@@ -15,8 +17,6 @@ import com.enonic.xp.content.PushContentListener;
 import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.node.ApplyVersionAttributesParams;
-import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.CommitNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeCommitEntry;
@@ -113,8 +113,12 @@ public class PublishContentCommand
         }
 
         final NodeIds nodesToPush = ContentNodeHelper.toNodeIds( ids );
-        final PushNodeParams.Builder pushNodeParams =
-            PushNodeParams.create().ids( nodesToPush ).processor( setPublishInfo() ).target( ContentConstants.BRANCH_MASTER );
+        final PushNodeParams.Builder pushNodeParams = PushNodeParams.create()
+            .ids( nodesToPush )
+            .processor( setPublishInfo() )
+            .target( ContentConstants.BRANCH_MASTER )
+            .versionAttributesResolver( ContentAttributesHelper.versionHistoryResolver( ContentAttributesHelper.PUBLISH_ATTR, Map.ofEntries(
+                ContentAttributesHelper.resolveEditorialProperty() ) ) );
         if ( publishContentListener != null )
         {
             pushNodeParams.publishListener( publishContentListener::contentPushed );
@@ -123,16 +127,6 @@ public class PublishContentCommand
         final PushNodesResult pushNodesResult = nodeService.push( pushNodeParams.build() );
 
         commit( pushNodesResult.getSuccessful() );
-
-        final Attributes publishAttr = ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.PUBLISH_ATTR );
-
-        for ( var pushNodeResult : pushNodesResult.getSuccessful() )
-        {
-            nodeService.applyVersionAttributes( ApplyVersionAttributesParams.create()
-                                                    .nodeVersionId( pushNodeResult.getNodeVersionId() )
-                                                    .addAttributes( publishAttr )
-                                                    .build() );
-        }
 
         pushNodesResult.getFailed()
             .stream()
@@ -185,7 +179,7 @@ public class PublishContentCommand
             var toBeEdited = data.copy();
 
             final PropertySet publishInfo = requireNonNullElseGet( toBeEdited.getSet( ContentPropertyNames.PUBLISH_INFO ),
-                                                                           () -> toBeEdited.addSet( ContentPropertyNames.PUBLISH_INFO ) );
+                                                                   () -> toBeEdited.addSet( ContentPropertyNames.PUBLISH_INFO ) );
 
             publishInfo.setInstant( ContentPropertyNames.PUBLISH_TIME, Millis.now() );
 

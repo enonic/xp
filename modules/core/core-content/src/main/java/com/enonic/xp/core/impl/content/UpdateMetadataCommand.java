@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.Map;
+
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
@@ -41,8 +43,10 @@ public class UpdateMetadataCommand
                 editedContent = Content.create( editedContent ).setInherit( stopDataInherit( editedContent.getInherit() ) ).build();
                 return editedContent;
             } )
-            .versionAttributesResolver(
-                ContentAttributesHelper.versionHistoryResolverWithOrigin( ContentAttributesHelper.UPDATE_METADATA_ATTR ) )
+            .versionAttributesResolver( ContentAttributesHelper.versionHistoryResolver( ContentAttributesHelper.UPDATE_METADATA_ATTR,
+                                                                                        Map.ofEntries(
+                                                                                            ContentAttributesHelper.resolveOriginProperty(),
+                                                                                            ContentAttributesHelper.resolveEditorialProperty() ) ) )
             .branches( Branches.from( ContentConstants.BRANCH_MASTER, ContentConstants.BRANCH_DRAFT ) )
             .contentTypeService( this.contentTypeService )
             .mixinService( this.mixinService )

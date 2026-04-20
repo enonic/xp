@@ -28,8 +28,8 @@ class GetVersionsHandlerTest
             .contentId( ContentId.from( "contentid" ) )
             .path( ContentPath.from( "/my-content" ) )
             .timestamp( Instant.parse( "2024-01-01T00:00:00Z" ) )
-            .addAction( new ContentVersion.Action( "publish", List.of(), null, PrincipalKey.from( "user:system:admin" ),
-                                                   Instant.parse( "2024-01-01T00:00:00Z" ) ) )
+            .addAction( new ContentVersion.Action( "content.publish", List.of(), null, ContentVersionId.from( "editorial-version" ),
+                                                   PrincipalKey.from( "user:system:admin" ), Instant.parse( "2024-01-01T00:00:00Z" ) ) )
             .build();
 
         final ContentVersion version2 = ContentVersion.create()

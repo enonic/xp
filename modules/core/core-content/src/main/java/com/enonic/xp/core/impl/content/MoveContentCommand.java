@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.Map;
+
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAlreadyExistsException;
 import com.enonic.xp.content.ContentId;
@@ -85,7 +87,7 @@ final class MoveContentCommand
         {
             if ( !layersSync )
             {
-                processors.add( InheritedContentDataProcessor.PARENT );
+                processors.add( InheritedContentDataProcessor.REMOVE_PARENT_INHERIT );
                 processors.add( PublishDataProcessor::removePublishTime );
             }
             validateParentChildRelations( params.getParentContentPath(), sourceContent.getType() );
@@ -101,7 +103,7 @@ final class MoveContentCommand
         {
             if ( !layersSync )
             {
-                processors.add( InheritedContentDataProcessor.NAME );
+                processors.add( InheritedContentDataProcessor.REMOVE_NAME_INHERIT );
                 processors.add( PublishDataProcessor::removePublishTime );
             }
             newNodeName = NodeName.from( params.getNewName() );
@@ -116,15 +118,8 @@ final class MoveContentCommand
             .processor( processors.build() )
             .refresh( RefreshMode.ALL );
 
-        if ( layersSync )
-        {
-            moveParams.versionAttributesResolver( ContentAttributesHelper.versionHistoryResolver( ContentAttributesHelper.SYNC_ATTR ) );
-        }
-        else
-        {
-            moveParams.versionAttributesResolver(
-                ContentAttributesHelper.versionHistoryResolver( ContentAttributesHelper.MOVE_ATTR ) );
-        }
+        moveParams.versionAttributesResolver( ContentAttributesHelper.versionHistoryResolver(
+            layersSync ? ContentAttributesHelper.SYNC_ATTR : ContentAttributesHelper.MOVE_ATTR, Map.of() ) );
 
         if ( params.getMoveContentListener() != null )
         {

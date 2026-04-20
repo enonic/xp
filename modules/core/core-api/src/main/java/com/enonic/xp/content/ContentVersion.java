@@ -96,7 +96,8 @@ public record ContentVersion(ContentVersionId versionId, ContentId contentId, Co
         }
     }
 
-    public record Action(String operation, List<String> fields, @Nullable String origin, PrincipalKey user, Instant opTime)
+    public record Action(String operation, List<String> fields, @Nullable String origin, @Nullable ContentVersionId editorial,
+                         PrincipalKey user, Instant opTime)
     {
         public Action
         {

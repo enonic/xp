@@ -1,12 +1,18 @@
 package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
+import java.util.SequencedSet;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.function.Function;
 
+import org.jspecify.annotations.Nullable;
+
+import com.enonic.xp.branch.Branch;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -57,17 +63,30 @@ public class ContentAttributesHelper
 
     public static final String UNPUBLISH_ATTR = "content.unpublish";
 
-    private static final String COMPONENTS = "components";
+    public static final String EDITORIAL_PROPERTY = "editorial";
+
+    private static final Set<String> EDITORIAL_FIELDS =
+        Set.of( ContentPropertyNames.DISPLAY_NAME, ContentPropertyNames.DATA, ContentPropertyNames.MIXINS, ContentPropertyNames.COMPONENTS,
+                ContentPropertyNames.ATTACHMENT, "childOrder", "manualOrderValue" );
 
     private static final Map<String, Function<Node, ?>> NODE_FIELD_GETTERS =
         Map.ofEntries( Map.entry( "name", Node::name ), Map.entry( "parentPath", Node::parentPath ),
                        Map.entry( "childOrder", Node::getChildOrder ), Map.entry( "manualOrderValue", Node::getManualOrderValue ) );
 
     private static final String[] DATA_FIELD_NAMES =
-        {ContentPropertyNames.DISPLAY_NAME, ContentPropertyNames.DATA, ContentPropertyNames.MIXINS, COMPONENTS,
-            ContentPropertyNames.ATTACHMENT, ContentPropertyNames.OWNER, ContentPropertyNames.LANGUAGE,
-            ContentPropertyNames.VARIANT_OF, ContentPropertyNames.PUBLISH_INFO, ContentPropertyNames.WORKFLOW_INFO,
-            ContentPropertyNames.INHERIT};
+        {ContentPropertyNames.DISPLAY_NAME, ContentPropertyNames.DATA, ContentPropertyNames.MIXINS, ContentPropertyNames.COMPONENTS,
+            ContentPropertyNames.ATTACHMENT, ContentPropertyNames.OWNER, ContentPropertyNames.LANGUAGE, ContentPropertyNames.VARIANT_OF,
+            ContentPropertyNames.PUBLISH_INFO, ContentPropertyNames.WORKFLOW_INFO, ContentPropertyNames.INHERIT};
+
+    public static Instant getOpTime( final GenericValue attribute )
+    {
+        return Instant.parse( attribute.property( ContentAttributesHelper.OPTIME_PROPERTY ).asString() );
+    }
+
+    public static PrincipalKey getUser( final GenericValue attribute )
+    {
+        return PrincipalKey.from( attribute.property( ContentAttributesHelper.USER_PROPERTY ).asString() );
+    }
 
     public static Attributes versionHistoryAttr( final String key )
     {
@@ -80,55 +99,68 @@ public class ContentAttributesHelper
             .build();
     }
 
-    private static Attributes versionHistoryAttr( final String key, final String[] modifiedFields )
+    public static VersionAttributesResolver versionHistoryResolver( final String key,
+                                                                    final Map<String, VersionPropertyResolver> extraProperties )
     {
-        return Attributes.create()
-            .attribute( key, GenericValue.newObject()
-                .put( FIELDS_PROPERTY, GenericValue.fromRawJava( List.of( modifiedFields ) ) )
+        return ( editedNode, originalNode, branch, originalAttributes ) -> {
+            final SequencedSet<String> modifiedFields = resolveModifiedFields( editedNode, originalNode );
+            final GenericValue.ObjectBuilder obj = GenericValue.newObject()
+                .put( FIELDS_PROPERTY, GenericValue.fromRawJava( modifiedFields ) )
                 .put( USER_PROPERTY, getCurrentUserKey().toString() )
-                .put( OPTIME_PROPERTY, Millis.now().toString() )
-                .build() )
-            .attribute( VacuumConstants.VACUUM_SKIP_ATTRIBUTE, GenericValue.newObject().build() )
-            .build();
+                .put( OPTIME_PROPERTY, Millis.now().toString() );
+            extraProperties.forEach( ( k, resolver ) -> {
+                final String value = resolver.resolve( editedNode, originalNode, branch, originalAttributes );
+                if ( value != null )
+                {
+                    obj.put( k, value );
+                }
+            } );
+            return Attributes.create()
+                .attribute( key, obj.build() )
+                .attribute( VacuumConstants.VACUUM_SKIP_ATTRIBUTE, GenericValue.newObject().build() )
+                .build();
+        };
     }
 
-    private static Attributes versionHistoryAttr( final String key, final String origin, final String[] modifiedFields )
+    @FunctionalInterface
+    public interface VersionPropertyResolver
     {
-        return Attributes.create()
-            .attribute( key, GenericValue.newObject()
-                .put( FIELDS_PROPERTY, GenericValue.fromRawJava( List.of( modifiedFields ) ) )
-                .put( ORIGIN_PROPERTY, origin )
-                .put( USER_PROPERTY, getCurrentUserKey().toString() )
-                .put( OPTIME_PROPERTY, Millis.now().toString() )
-                .build() )
-            .attribute( VacuumConstants.VACUUM_SKIP_ATTRIBUTE, GenericValue.newObject().build() )
-            .build();
+        @Nullable String resolve( Node editedNode, @Nullable Node originalNode, Branch branch, @Nullable Attributes originalAttributes );
     }
 
-    public static Instant getOpTime( final GenericValue attribute )
+    public static Map.Entry<String, VersionPropertyResolver> resolveOriginProperty()
     {
-        return Instant.parse( attribute.property( ContentAttributesHelper.OPTIME_PROPERTY ).asString() );
+        return Map.entry( ORIGIN_PROPERTY, ( _, _, branch, _ ) -> branch.getValue() );
     }
 
-    public static PrincipalKey getUser( final GenericValue attribute )
+    public static Map.Entry<String, VersionPropertyResolver> resolveEditorialProperty()
     {
-        return PrincipalKey.from( attribute.property( ContentAttributesHelper.USER_PROPERTY ).asString() );
+        return Map.entry( EDITORIAL_PROPERTY, ContentAttributesHelper::resolveEditorial );
     }
 
-    public static VersionAttributesResolver versionHistoryResolver( final String key )
+    public static Map.Entry<String, VersionPropertyResolver> resolveEditorialIfNotEditorialChange()
     {
-        return ( originalNode, editedNode, _ ) -> versionHistoryAttr( key, resolveModifiedFields( originalNode, editedNode ) );
+        return Map.entry( EDITORIAL_PROPERTY, ( editedNode, originalNode, branch, originalAttributes ) -> {
+            if ( originalNode == null )
+            {
+                return null;
+            }
+            final SequencedSet<String> modifiedFields = resolveModifiedFields( editedNode, originalNode );
+            if ( !Collections.disjoint( modifiedFields, EDITORIAL_FIELDS ) )
+            {
+                return null;
+            }
+            return resolveEditorial( editedNode, originalNode, branch, originalAttributes );
+        } );
     }
 
-    public static VersionAttributesResolver versionHistoryResolverWithOrigin( final String key )
+    private static SequencedSet<String> resolveModifiedFields( final Node editedNode, final Node originalNode )
     {
-        return ( originalNode, editedNode, branch ) -> versionHistoryAttr( key, branch.getValue(),
-                                                                           resolveModifiedFields( originalNode, editedNode ) );
-    }
-
-    private static String[] resolveModifiedFields( final Node originalNode, final Node editedNode )
-    {
-        final List<String> modified = new ArrayList<>();
+        final SequencedSet<String> modified = new TreeSet<>();
+        if ( originalNode == null )
+        {
+            return modified;
+        }
 
         for ( Map.Entry<String, Function<Node, ?>> entry : NODE_FIELD_GETTERS.entrySet() )
         {
@@ -149,8 +181,35 @@ public class ContentAttributesHelper
             }
         }
 
-        modified.sort( String::compareTo );
-        return modified.toArray( String[]::new );
+        return modified;
+    }
+
+    private static String resolveEditorial( final Node editedNode, final Node originalNode, final Branch branch,
+                                            final Attributes originalAttributes )
+    {
+        if ( !ContentConstants.BRANCH_DRAFT.equals( branch ) )
+        {
+            return null;
+        }
+        if ( originalAttributes != null )
+        {
+            for ( final var entry : originalAttributes.entrySet() )
+            {
+                if ( entry.getKey().startsWith( "content." ) )
+                {
+                    final GenericValue editorial = entry.getValue().optional( EDITORIAL_PROPERTY ).orElse( null );
+                    if ( editorial != null )
+                    {
+                        return editorial.asString();
+                    }
+                }
+            }
+        }
+        if ( originalNode != null )
+        {
+            return originalNode.getNodeVersionId().toString();
+        }
+        return null;
     }
 
     static PrincipalKey getCurrentUserKey()

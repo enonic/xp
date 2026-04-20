@@ -59,11 +59,11 @@ abstract class AbstractNodeCommand
     }
 
     static Attributes resolveVersionAttributes( final VersionAttributesResolver resolver, final Node originalNode, final Node editedNode,
-                                                    final Branch branch )
+                                                final Branch branch, final Attributes originalAttributes )
     {
-        return resolver != null
-            ? resolver.resolve( Node.create( originalNode ).build(), Node.create( editedNode ).build(), branch )
-            : null;
+        return resolver != null ? resolver.resolve( Node.create( editedNode ).build(),
+                                                    originalNode != null ? Node.create( originalNode ).build() : null, branch,
+                                                    originalAttributes ) : null;
     }
 
     PrincipalKey getCurrentPrincipalKey()

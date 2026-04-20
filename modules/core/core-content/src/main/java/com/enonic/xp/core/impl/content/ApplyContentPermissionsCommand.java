@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.Map;
 import java.util.Objects;
 
 import com.enonic.xp.branch.Branches;
@@ -48,7 +49,9 @@ final class ApplyContentPermissionsCommand
         }
 
         applyNodePermissionsBuilder.versionAttributesResolver(
-            ContentAttributesHelper.versionHistoryResolverWithOrigin( ContentAttributesHelper.PERMISSIONS_ATTR ) );
+            ContentAttributesHelper.versionHistoryResolver( ContentAttributesHelper.PERMISSIONS_ATTR,
+                                                            Map.ofEntries( ContentAttributesHelper.resolveOriginProperty(),
+                                                                           ContentAttributesHelper.resolveEditorialProperty() ) ) );
 
         final ApplyNodePermissionsResult result = nodeService.applyPermissions( applyNodePermissionsBuilder.build() );
 

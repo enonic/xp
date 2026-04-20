@@ -1,6 +1,8 @@
 package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
+import java.util.Map;
+
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPropertyNames;
@@ -97,7 +99,8 @@ public class UnpublishContentCommand
     private void removePublishInfoAndCommit( final NodeIds deleteNodeResult, Instant now )
     {
         final VersionAttributesResolver unpublishInfoAttr =
-            ContentAttributesHelper.versionHistoryResolver( ContentAttributesHelper.UNPUBLISH_ATTR );
+            ContentAttributesHelper.versionHistoryResolver( ContentAttributesHelper.UNPUBLISH_ATTR,
+                                                            Map.ofEntries( ContentAttributesHelper.resolveEditorialProperty() ) );
         for ( final var deleted : deleteNodeResult )
         {
             final UpdateNodeParams updateParams =
