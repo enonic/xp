@@ -95,8 +95,7 @@ class ComponentServiceMappingHandlerTest
         when( filterScript.execute( Mockito.any(), Mockito.any(), Mockito.any() ) ).thenReturn( portalResponse );
 
         this.handler = new ComponentServiceMappingHandler( resourceService, controllerScriptFactory, filterScriptFactory, rendererDelegate,
-                                                           siteService, pageTemplateService, pageDescriptorService,
-                                                           layoutDescriptorService );
+                                                           siteService, pageTemplateService, pageDescriptorService, layoutDescriptorService );
 
         this.request.setMethod( HttpMethod.GET );
         this.request.setRepositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) );

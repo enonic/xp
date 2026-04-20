@@ -294,7 +294,8 @@ class ServiceHandlerTest
         siteConfigAsSet.addString( "applicationKey", siteConfig.getApplicationKey().toString() );
         siteConfigAsSet.addSet( "config", siteConfig.getConfig().getRoot().copy( parentSet.getTree() ) );
 
-        return Site.create().data( siteData )
+        return Site.create()
+            .data( siteData )
             .id( ContentId.from( id ) )
             .path( ContentPath.from( path ) )
             .owner( PrincipalKey.from( "user:myStore:me" ) )

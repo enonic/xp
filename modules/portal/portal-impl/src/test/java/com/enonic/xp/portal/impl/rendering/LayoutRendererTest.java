@@ -160,24 +160,12 @@ class LayoutRendererTest
                           .add( RegionDescriptor.create().name( "right" ).build() )
                           .build() )
             .build();
-        final ControllerScript controllerScript = new ControllerScript()
-        {
-            @Override
-            public PortalResponse execute( final PortalRequest portalRequest )
-            {
-                return PortalResponse.create()
-                    .body(
-                        "<div class=\"row\"><div data-portal-region=\"left\" class=\"col-left\"></div><div data-portal-region=\"right\" class=\"col-right\"></div></div>" )
-                    .contentType( MediaType.HTML_UTF_8 )
-                    .status( HttpStatus.OK )
-                    .build();
-            }
-
-            @Override
-            public void onSocketEvent( final WebSocketEvent event )
-            {
-            }
-        };
+        final ControllerScript controllerScript = _ -> PortalResponse.create()
+            .body(
+                "<div class=\"row\"><div data-portal-region=\"left\" class=\"col-left\"></div><div data-portal-region=\"right\" class=\"col-right\"></div></div>" )
+            .contentType( MediaType.HTML_UTF_8 )
+            .status( HttpStatus.OK )
+            .build();
 
         when( layoutDescriptorService.getByKey( any() ) ).thenReturn( layoutDescriptor );
         when( controllerScriptFactory.fromScript( any() ) ).thenReturn( controllerScript );
@@ -205,19 +193,7 @@ class LayoutRendererTest
                           .add( RegionDescriptor.create().name( "right" ).build() )
                           .build() )
             .build();
-        final ControllerScript controllerScript = new ControllerScript()
-        {
-            @Override
-            public PortalResponse execute( final PortalRequest portalRequest )
-            {
-                return new PortalResponseSerializer( null ).serialize();
-            }
-
-            @Override
-            public void onSocketEvent( final WebSocketEvent event )
-            {
-            }
-        };
+        final ControllerScript controllerScript = _ -> new PortalResponseSerializer( null ).serialize();
 
         when( layoutDescriptorService.getByKey( any() ) ).thenReturn( layoutDescriptor );
         when( controllerScriptFactory.fromScript( any() ) ).thenReturn( controllerScript );

@@ -22,6 +22,7 @@ import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.impl.serializer.RequestBodyReader;
 import com.enonic.xp.web.serializer.WebSerializerService;
+import com.enonic.xp.web.sse.SseConfig;
 import com.enonic.xp.web.websocket.WebSocketContext;
 import com.enonic.xp.web.websocket.WebSocketContextFactory;
 
@@ -62,6 +63,12 @@ public final class WebDispatcherServlet
         final WebResponse webResponse = doHandle( webRequest );
 
         if ( webRequest.getWebSocketContext() != null && webResponse.getWebSocket() != null )
+        {
+            return;
+        }
+
+        final SseConfig sseConfig = webResponse.getSse();
+        if ( sseConfig != null )
         {
             return;
         }

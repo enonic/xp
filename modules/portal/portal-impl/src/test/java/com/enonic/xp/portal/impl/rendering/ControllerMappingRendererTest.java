@@ -98,23 +98,11 @@ class ControllerMappingRendererTest
 
     private ControllerScript makeControllerScript()
     {
-        return new ControllerScript()
-        {
-            @Override
-            public PortalResponse execute( final PortalRequest portalRequest )
-            {
-                return PortalResponse.create()
-                    .body( getComponentHtml() )
-                    .contentType( MediaType.HTML_UTF_8 )
-                    .status( HttpStatus.OK )
-                    .build();
-            }
-
-            @Override
-            public void onSocketEvent( final WebSocketEvent event )
-            {
-            }
-        };
+        return _ -> PortalResponse.create()
+            .body( getComponentHtml() )
+            .contentType( MediaType.HTML_UTF_8 )
+            .status( HttpStatus.OK )
+            .build();
     }
 
     private String getComponentHtml()

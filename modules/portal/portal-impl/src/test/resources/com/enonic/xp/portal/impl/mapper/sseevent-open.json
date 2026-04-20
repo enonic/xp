@@ -1,0 +1,8 @@
+{
+  "type": "open",
+  "clientId": "00000000-0000-0000-0000-0000000abc12",
+  "lastEventId": "last-42",
+  "attributes": {
+    "userId": "user1"
+  }
+}

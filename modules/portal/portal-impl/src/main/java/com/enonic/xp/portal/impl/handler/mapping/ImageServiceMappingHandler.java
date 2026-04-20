@@ -39,7 +39,7 @@ public final class ImageServiceMappingHandler
 
         this.mappingHandlerHelper =
             new MappingHandlerHelper( resourceService, controllerScriptFactory, filterScriptFactory, rendererDelegate,
-                                      new ControllerMappingsResolver( siteService ), null );
+                                      new ControllerMappingsResolver( siteService ), null, null );
     }
 
     @Override

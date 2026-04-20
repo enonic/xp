@@ -404,6 +404,18 @@ export interface WebSocketEvent<T> {
 
 type WebSocketEventHandler<T = Record<string, unknown>> = (event: WebSocketEvent<T>) => void;
 
+export type SseEventType = 'open' | 'close' | 'timeout' | 'error';
+
+export interface SseEvent<T = Record<string, unknown>> {
+    type: SseEventType;
+    clientId: string;
+    lastEventId?: string;
+    attributes?: T;
+    error?: string;
+}
+
+type SseEventHandler<T = Record<string, unknown>> = (event: SseEvent<T>) => void;
+
 export interface Controller<
     Request extends RequestInterface = DefaultRequest,
     Response extends ResponseInterface = DefaultResponse,
@@ -419,6 +431,7 @@ export interface Controller<
     put?: RequestHandler<Request, Response>;
     trace?: RequestHandler<Request, Response>;
     webSocketEvent?: WebSocketEventHandler;
+    sseEvent?: SseEventHandler;
 }
 
 export interface ErrorRequest<T extends RequestInterface = DefaultRequest> {

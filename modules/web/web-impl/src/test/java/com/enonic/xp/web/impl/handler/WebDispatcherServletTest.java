@@ -16,6 +16,7 @@ import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.impl.serializer.WebSerializerServiceImpl;
 import com.enonic.xp.web.jetty.impl.JettyTestSupport;
+import com.enonic.xp.web.sse.SseConfig;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -66,7 +67,7 @@ class WebDispatcherServletTest
             assertEquals( HttpMethod.GET, req.getMethod() );
         };
 
-        final HttpResponse response = callRequest( request );
+        final HttpResponse<String> response = callRequest( request );
 
         assertEquals( 200, response.statusCode() );
         assertEquals( List.of( "text/plain;charset=utf-8" ), response.headers().allValues( "content-type" ) );
@@ -82,7 +83,7 @@ class WebDispatcherServletTest
 
         final HttpRequest request = newRequest( "/site/master/a/b" ).GET().build();
 
-        final HttpResponse response = callRequest( request );
+        final HttpResponse<String> response = callRequest( request );
         assertEquals( 200, response.statusCode() );
         assertEquals( List.of( "Value" ), response.headers().allValues( "X-Header" ) );
     }
@@ -95,7 +96,7 @@ class WebDispatcherServletTest
 
         this.handler.verifier = req -> assertEquals( "Value", req.getHeaders().get( "X-Header" ) );
 
-        final HttpResponse response = callRequest( request );
+        final HttpResponse<String> response = callRequest( request );
         assertEquals( 200, response.statusCode() );
     }
 
@@ -110,7 +111,7 @@ class WebDispatcherServletTest
             assertEquals( "abc123", req.getCookies().get( "sessionToken" ) );
         };
 
-        final HttpResponse response = callRequest( request );
+        final HttpResponse<String> response = callRequest( request );
         assertEquals( 200, response.statusCode() );
     }
 
@@ -123,7 +124,7 @@ class WebDispatcherServletTest
         this.handler.verifier = req -> assertAll( () -> assertThat( req.getParams().get( "a" ) ).containsExactly( "1" ),
                                                   () -> assertThat( req.getParams().get( "b" ) ).containsExactly( "2", "3", "3" ) );
 
-        final HttpResponse response = callRequest( request );
+        final HttpResponse<String> response = callRequest( request );
         assertEquals( 200, response.statusCode() );
     }
 
@@ -146,7 +147,7 @@ class WebDispatcherServletTest
             assertEquals( "true", String.join( ",", req.getParams().get( "expand" ) ) );
         };
 
-        final HttpResponse response = callRequest( request );
+        final HttpResponse<String> response = callRequest( request );
         assertEquals( 200, response.statusCode() );
     }
 
@@ -165,7 +166,7 @@ class WebDispatcherServletTest
             assertEquals( "Hello World", req.getBodyAsString() );
         };
 
-        final HttpResponse response = callRequest( request );
+        final HttpResponse<String> response = callRequest( request );
         assertEquals( 200, response.statusCode() );
     }
 
@@ -184,8 +185,24 @@ class WebDispatcherServletTest
             assertEquals( "{}", req.getBodyAsString() );
         };
 
-        final HttpResponse response = callRequest( request );
+        final HttpResponse<String> response = callRequest( request );
         assertEquals( 200, response.statusCode() );
+    }
+
+    @Test
+    void testSseResponse_doesNotSerializeBody()
+        throws Exception
+    {
+        // Servlet bails out because startAsync was called during SSE setup.
+        this.handler.response = WebResponse.create().status( HttpStatus.OK ).sse( SseConfig.empty() ).build();
+
+        final HttpRequest request = newRequest( "/site/master/a/b" ).GET().build();
+
+        final HttpResponse<String> response = callRequest( request );
+
+        // Status defaults to 200 (servlet didn't touch it); body was not serialized.
+        assertEquals( 200, response.statusCode() );
+        assertEquals( "", response.body() );
     }
 
     @Test
@@ -198,7 +215,7 @@ class WebDispatcherServletTest
 
         final HttpRequest request = newRequest( "/site/master/a/b" ).GET().build();
 
-        final HttpResponse response = callRequest( request );
+        final HttpResponse<String> response = callRequest( request );
         assertEquals( 404, response.statusCode() );
     }
 }
