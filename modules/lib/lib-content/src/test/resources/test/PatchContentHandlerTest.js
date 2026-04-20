@@ -455,6 +455,9 @@ exports.patchValidationErrors = function () {
                     message: 'Invalid attachment',
                     attachment: 'image.png',
                     args: []
+                },
+                {
+                    errorCode: 'com.enonic.myapp:REQUIRED'
                 }
             ];
             return c;
@@ -480,10 +483,23 @@ exports.patchValidationErrors = function () {
             errorCode: 'com.enonic.myapp:INVALID',
             message: 'Invalid attachment',
             attachment: 'image.png'
+        },
+        {
+            errorCode: 'com.enonic.myapp:REQUIRED'
         }
     ];
 
     assert.assertJsonEquals(expectedErrors, result.results[0].content.validationErrors);
+};
+
+exports.patchValidationErrors_emptyList = function () {
+    content.patch({
+        key: '/a/b/mycontent',
+        patcher: function (c) {
+            c.validationErrors = [];
+            return c;
+        }
+    });
 };
 
 exports.patchWithSkipSync = function () {

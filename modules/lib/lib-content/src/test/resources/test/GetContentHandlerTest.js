@@ -298,3 +298,28 @@ exports.getByIdInLayer = function () {
         key: 'mycontentid'
     });
 };
+
+exports.getById_withValidationErrors = function () {
+    var result = content.get({key: '123456'});
+
+    var errors = result.validationErrors;
+    assert.assertEquals(3, errors.length);
+
+    assert.assertEquals('com.enonic.myapp:REQUIRED', errors[0].errorCode);
+    assert.assertEquals('Missing value', errors[0].message);
+    assert.assertEquals('err.required', errors[0].i18n);
+    assert.assertJsonEquals(['field1'], errors[0].args);
+
+    assert.assertEquals('com.enonic.myapp:REQUIRED', errors[1].errorCode);
+    assert.assertEquals('set.field', errors[1].propertyPath);
+    assert.assertNull(errors[1].message);
+
+    assert.assertEquals('com.enonic.myapp:REQUIRED', errors[2].errorCode);
+    assert.assertEquals('image.png', errors[2].attachment);
+};
+
+exports.getById_withNullValidationErrors = function () {
+    var result = content.get({key: '123456'});
+
+    assert.assertFalse('validationErrors' in result);
+};

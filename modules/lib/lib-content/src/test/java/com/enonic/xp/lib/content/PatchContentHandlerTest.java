@@ -1,5 +1,7 @@
 package com.enonic.xp.lib.content;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
@@ -10,14 +12,18 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.attachment.CreateAttachment;
+import com.enonic.xp.content.AttachmentValidationError;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPatcher;
+import com.enonic.xp.content.DataValidationError;
 import com.enonic.xp.content.PatchContentParams;
 import com.enonic.xp.content.PatchContentResult;
 import com.enonic.xp.content.PatchableContent;
+import com.enonic.xp.content.ValidationError;
+import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
@@ -29,6 +35,7 @@ import com.enonic.xp.schema.mixin.MixinDescriptor;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.site.CmsDescriptor;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
@@ -218,7 +225,57 @@ public class PatchContentHandlerTest
 
         mockXData();
 
+        final ArgumentCaptor<PatchContentParams> captor = ArgumentCaptor.forClass( PatchContentParams.class );
+
         runFunction( "/test/PatchContentHandlerTest.js", "patchValidationErrors" );
+
+        verify( this.contentService, times( 1 ) ).patch( captor.capture() );
+
+        final PatchableContent patchable = new PatchableContent( content );
+        captor.getValue().getPatcher().patch( patchable );
+        final ValidationErrors errors = patchable.build().getValidationErrors();
+
+        final List<ValidationError> errorList = errors.stream().toList();
+        assertThat( errorList ).hasSize( 4 );
+
+        assertThat( errorList.get( 0 ).getErrorCode().toString() ).isEqualTo( "com.enonic.myapp:REQUIRED" );
+        assertThat( errorList.get( 0 ).getMessage() ).isEqualTo( "Missing value" );
+        assertThat( errorList.get( 0 ).getI18n() ).isEqualTo( "my.error.required" );
+        assertThat( errorList.get( 0 ).getArgs() ).containsExactly( "field1" );
+        assertThat( errorList.get( 0 ) ).isNotInstanceOf( DataValidationError.class );
+
+        assertThat( errorList.get( 1 ) ).isInstanceOf( DataValidationError.class );
+        assertThat( ( (DataValidationError) errorList.get( 1 ) ).getPropertyPath().toString() ).isEqualTo( "set.field2" );
+
+        assertThat( errorList.get( 2 ) ).isInstanceOf( AttachmentValidationError.class );
+        assertThat( ( (AttachmentValidationError) errorList.get( 2 ) ).getAttachment().toString() ).isEqualTo( "image.png" );
+
+        assertThat( errorList.get( 3 ).getMessage() ).isNull();
+        assertThat( errorList.get( 3 ).getI18n() ).isNull();
+        assertThat( errorList.get( 3 ).getArgs() ).isEmpty();
+    }
+
+    @Test
+    void patchValidationErrors_emptyList_clearsErrors()
+    {
+        final Content content = TestDataFixtures.newSmallContent();
+        when( this.contentTypeService.getByName( isA( GetContentTypeParams.class ) ) ).thenReturn(
+            ContentType.create().name( ContentTypeName.unstructured() ).setBuiltIn().build() );
+        when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
+        when( this.contentService.patch( Mockito.isA( PatchContentParams.class ) ) ).thenAnswer(
+            invocation -> invokePatch( invocation.getArgument( 0 ), content ) );
+        mockXData();
+
+        final ArgumentCaptor<PatchContentParams> captor = ArgumentCaptor.forClass( PatchContentParams.class );
+
+        runFunction( "/test/PatchContentHandlerTest.js", "patchValidationErrors_emptyList" );
+
+        verify( this.contentService, times( 1 ) ).patch( captor.capture() );
+
+        final PatchableContent patchable = new PatchableContent( content );
+        captor.getValue().getPatcher().patch( patchable );
+
+        assertThat( patchable.build().getValidationErrors() ).isNull();
     }
 
     @Test
