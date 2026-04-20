@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.Map;
+
 import com.enonic.xp.content.ImportContentParams;
 import com.enonic.xp.content.ImportContentResult;
 import com.enonic.xp.node.BinaryAttachment;
@@ -30,16 +32,15 @@ final class ImportContentCommand
 
     ImportContentResult execute()
     {
-        final Node importNode = ImportContentFactory.create().
-            params( params ).
-            build().execute();
+        final Node importNode = ImportContentFactory.create().params( params ).build().execute();
 
-        final ImportNodeParams importNodeParams = ImportNodeParams.create().importNode( importNode )
+        final ImportNodeParams importNodeParams = ImportNodeParams.create()
+            .importNode( importNode )
             .binaryAttachments( getAttachments() )
             .insertManualStrategy( params.getContent().getManualOrderValue() != null ? InsertManualStrategy.MANUAL : null )
             .importPermissions( params.isImportPermissions() )
             .importPermissionsOnCreate( params.isImportPermissionsOnCreate() )
-            .versionAttributesResolver( ContentAttributesHelper.versionHistoryResolver( ContentAttributesHelper.SYNC_ATTR ) )
+            .versionAttributesResolver( ContentAttributesHelper.versionHistoryResolver( ContentAttributesHelper.SYNC_ATTR, Map.of() ) )
             .refresh( RefreshMode.ALL )
             .build();
 

@@ -1,14 +1,15 @@
 package com.enonic.xp.repo.impl.node;
 
 import java.util.Map;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.internal.Millis;
-import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.AttachedBinaries;
+import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.EditableNode;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
@@ -140,10 +141,10 @@ public final class PatchNodeCommand
             {
                 final Node updatedNode = Node.create( editedNode ).timestamp( Millis.now() ).attachedBinaries( updatedBinaries ).build();
                 final Attributes resolvedAttributes =
-                    resolveVersionAttributes( params.getVersionAttributesResolver(), originalNode, updatedNode, internalContext.getBranch() );
+                    resolveVersionAttributes( params.getVersionAttributesResolver(), originalNode, updatedNode, internalContext.getBranch(),
+                                              activeNodeVersion.getAttributes() );
                 final NodeVersionData storedData =
-                    this.nodeStorageService.store( StoreNodeParams.newVersion( updatedNode, resolvedAttributes ),
-                                                   internalContext );
+                    this.nodeStorageService.store( StoreNodeParams.newVersion( updatedNode, resolvedAttributes ), internalContext );
                 results.addResult( internalContext.getBranch(), storedData.node() );
                 patchedVersionsCache.put( nodeVersionId, internalContext.getBranch(), storedData.version(), storedData.node() );
             }
