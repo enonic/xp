@@ -10,7 +10,7 @@ tika = "3.3.0"
 micrometer = "1.16.4"
 prometheus = "1.5.1"
 graalvm = "25.0.2"
-guava = "33.5.0-jre"
+guava = "33.6.0-jre"
 
 [libraries]
 junit-bom = { module = "org.junit:junit-bom", version.ref = "junit5" }
