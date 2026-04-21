@@ -575,10 +575,15 @@ export interface AttachmentValidationError
     attachment: string;
 }
 
+export interface ValidationErrorCode {
+    applicationKey: string;
+    code: string;
+}
+
 export interface ValidationError {
     message: string | null;
     i18n: string | null;
-    errorCode: string;
+    errorCode: ValidationErrorCode;
     /* eslint-disable @typescript-eslint/no-explicit-any*/
     args?: any[];
 }

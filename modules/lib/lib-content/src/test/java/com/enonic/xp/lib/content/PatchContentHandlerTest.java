@@ -238,18 +238,25 @@ public class PatchContentHandlerTest
         final List<ValidationError> errorList = errors.stream().toList();
         assertThat( errorList ).hasSize( 4 );
 
-        assertThat( errorList.get( 0 ).getErrorCode().toString() ).isEqualTo( "com.enonic.myapp:REQUIRED" );
+        assertThat( errorList.get( 0 ).getErrorCode().getApplicationKey().toString() ).isEqualTo( "com.enonic.myapp" );
+        assertThat( errorList.get( 0 ).getErrorCode().getCode() ).isEqualTo( "REQUIRED" );
         assertThat( errorList.get( 0 ).getMessage() ).isEqualTo( "Missing value" );
         assertThat( errorList.get( 0 ).getI18n() ).isEqualTo( "my.error.required" );
         assertThat( errorList.get( 0 ).getArgs() ).containsExactly( "field1" );
         assertThat( errorList.get( 0 ) ).isNotInstanceOf( DataValidationError.class );
 
+        assertThat( errorList.get( 1 ).getErrorCode().getApplicationKey().toString() ).isEqualTo( "com.enonic.myapp" );
+        assertThat( errorList.get( 1 ).getErrorCode().getCode() ).isEqualTo( "INVALID" );
         assertThat( errorList.get( 1 ) ).isInstanceOf( DataValidationError.class );
         assertThat( ( (DataValidationError) errorList.get( 1 ) ).getPropertyPath().toString() ).isEqualTo( "set.field2" );
 
+        assertThat( errorList.get( 2 ).getErrorCode().getApplicationKey().toString() ).isEqualTo( "com.enonic.myapp" );
+        assertThat( errorList.get( 2 ).getErrorCode().getCode() ).isEqualTo( "INVALID" );
         assertThat( errorList.get( 2 ) ).isInstanceOf( AttachmentValidationError.class );
         assertThat( ( (AttachmentValidationError) errorList.get( 2 ) ).getAttachment().toString() ).isEqualTo( "image.png" );
 
+        assertThat( errorList.get( 3 ).getErrorCode().getApplicationKey().toString() ).isEqualTo( "com.enonic.myapp" );
+        assertThat( errorList.get( 3 ).getErrorCode().getCode() ).isEqualTo( "REQUIRED" );
         assertThat( errorList.get( 3 ).getMessage() ).isNull();
         assertThat( errorList.get( 3 ).getI18n() ).isNull();
         assertThat( errorList.get( 3 ).getArgs() ).isEmpty();

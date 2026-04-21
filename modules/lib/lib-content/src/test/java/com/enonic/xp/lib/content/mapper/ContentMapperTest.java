@@ -66,7 +66,7 @@ class ContentMapperTest
     }
 
     @Test
-    void validationErrors_errorCodeIsSerializedAsString()
+    void validationErrors_errorCodeIsSerializedAsObject()
     {
         final ValidationErrorCode code = ValidationErrorCode.from( ApplicationKey.from( "com.enonic.myapp" ), "REQUIRED" );
         final Content content =
@@ -75,8 +75,9 @@ class ContentMapperTest
 
         final JsonNode error = serialize( content ).get( "validationErrors" ).get( 0 );
 
-        assertThat( error.get( "errorCode" ).isTextual() ).isTrue();
-        assertThat( error.get( "errorCode" ).asText() ).isEqualTo( "com.enonic.myapp:REQUIRED" );
+        assertThat( error.get( "errorCode" ).isObject() ).isTrue();
+        assertThat( error.get( "errorCode" ).get( "applicationKey" ).asText() ).isEqualTo( "com.enonic.myapp" );
+        assertThat( error.get( "errorCode" ).get( "code" ).asText() ).isEqualTo( "REQUIRED" );
     }
 
     private Content.Builder newMinimalContent()
