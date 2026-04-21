@@ -4,6 +4,7 @@ import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
 import com.enonic.xp.admin.extension.AdminExtensionDescriptor;
 import com.enonic.xp.admin.extension.AdminExtensionDescriptorService;
@@ -28,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class AdminExtensionApiHandlerTest
@@ -320,5 +322,41 @@ class AdminExtensionApiHandlerTest
         WebException ex = assertThrows( WebException.class, () -> this.handler.handle( webRequest ) );
         assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
         assertEquals( "Invalid admin tool URL [/admin/app/_/admin:extension/app:widgetName]", ex.getMessage() );
+    }
+
+    @Test
+    void testContextPathIsSet()
+    {
+        final DescriptorKey descriptorKey = DescriptorKey.from( ApplicationKey.from( "app" ), "extensionName" );
+
+        final AdminExtensionDescriptor extensionDescriptor =
+            AdminExtensionDescriptor.create().key( descriptorKey ).interfaces( "myInterface" ).build();
+
+        when( extensionDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( extensionDescriptor );
+
+        final DescriptorKey adminToolDescriptorKey = DescriptorKey.from( ApplicationKey.from( "myapp" ), "toolName" );
+
+        final AdminToolDescriptor adminToolDescriptor =
+            AdminToolDescriptor.create().key( adminToolDescriptorKey ).interfaces( "myInterface" ).build();
+
+        when( adminToolDescriptorService.getByKey( eq( adminToolDescriptorKey ) ) ).thenReturn( adminToolDescriptor );
+
+        final WebRequest webRequest = new WebRequest();
+        webRequest.setMethod( HttpMethod.GET );
+        webRequest.setRawPath( "/admin/myapp/toolName/_/admin:extension/app:extensionName" );
+
+        final ControllerScript controllerScript = mock( ControllerScript.class );
+        when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn( PortalResponse.create().build() );
+
+        when( controllerScriptFactory.fromScript( any( ResourceKey.class ) ) ).thenReturn( controllerScript );
+
+        this.handler.handle( webRequest );
+
+        ArgumentCaptor<PortalRequest> captor = ArgumentCaptor.forClass( PortalRequest.class );
+        verify( controllerScript ).execute( captor.capture() );
+
+        PortalRequest capturedRequest = captor.getValue();
+        assertEquals( "/admin/myapp/toolName/_/admin:extension/app:extensionName", capturedRequest.getContextPath() );
+        assertEquals( ApplicationKey.from( "app" ), capturedRequest.getApplicationKey() );
     }
 }
