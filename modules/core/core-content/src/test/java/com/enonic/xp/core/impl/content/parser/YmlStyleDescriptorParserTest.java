@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.content.parser;
 
+import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -16,6 +17,7 @@ import com.enonic.xp.util.GenericValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class YmlStyleDescriptorParserTest
@@ -47,7 +49,7 @@ public class YmlStyleDescriptorParserTest
         assertEquals( "Override ${width}", imageStyle_1.getLabel() );
         assertEquals( "editor-width-auto-text", imageStyle_1.getLabelI18nKey() );
 
-        assertInstanceOf( Style.class, elements.getLast() );
+        assertInstanceOf( ImageStyle.class, elements.getLast() );
 
         final ImageStyle imageStyle_2 = (ImageStyle) elements.getLast();
         assertEquals( "editor-style-cinema", imageStyle_2.getName() );
@@ -61,6 +63,17 @@ public class YmlStyleDescriptorParserTest
 
         final String css = editor.property( "css" ).asString();
         assertTrue( css.contains(".my-selector") );
+    }
+
+    @Test
+    void testInvalidStyleDescriptor()
+        throws Exception
+    {
+        final String yaml = readAsString( "/descriptors/invalid-style-descriptor.yaml" );
+
+        final ApplicationKey currentApplication = ApplicationKey.from( "myapp" );
+
+        assertThrows( UncheckedIOException.class, () -> YmlStyleDescriptorParser.parse( yaml, currentApplication ) );
     }
 
     private String readAsString( final String name )

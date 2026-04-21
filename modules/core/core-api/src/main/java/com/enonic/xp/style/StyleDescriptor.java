@@ -132,7 +132,7 @@ public final class StyleDescriptor
             return this;
         }
 
-        public Builder addStyleElements( final Iterable<Style> elements )
+        public Builder addStyleElements( final Iterable<? extends Style> elements )
         {
             elements.forEach( this::addStyleElement );
             return this;

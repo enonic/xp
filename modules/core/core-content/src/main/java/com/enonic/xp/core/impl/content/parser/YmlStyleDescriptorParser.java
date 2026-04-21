@@ -19,8 +19,8 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.schema.YmlParserBase;
 import com.enonic.xp.schema.LocalizedText;
 import com.enonic.xp.style.ImageStyle;
-import com.enonic.xp.style.StyleDescriptor;
 import com.enonic.xp.style.Style;
+import com.enonic.xp.style.StyleDescriptor;
 import com.enonic.xp.util.GenericValue;
 
 public final class YmlStyleDescriptorParser
@@ -48,7 +48,7 @@ public final class YmlStyleDescriptorParser
 
         @JsonProperty("styles")
         @JsonDeserialize(using = StyleElementDeserializer.class)
-        abstract StyleDescriptor.Builder addStyleElements( Iterable<Style> elements );
+        abstract StyleDescriptor.Builder addStyleElements( Iterable<? extends Style> elements );
     }
 
     @JsonDeserialize(builder = ImageStyle.Builder.class)
@@ -89,7 +89,12 @@ public final class YmlStyleDescriptorParser
 
             for ( JsonNode styleNode : node )
             {
-                final String type = styleNode.get( "type" ).asText();
+                final String type = styleNode.path( "type" ).asText( null );
+
+                if ( type == null )
+                {
+                    throw new IllegalArgumentException( "Style type can not be null" );
+                }
 
                 if ( "Image".equals( type ) )
                 {
