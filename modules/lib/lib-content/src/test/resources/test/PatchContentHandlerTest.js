@@ -439,22 +439,25 @@ exports.patchValidationErrors = function () {
         patcher: function (c) {
             c.validationErrors = [
                 {
-                    errorCode: 'com.enonic.myapp:REQUIRED',
+                    errorCode: {applicationKey: 'com.enonic.myapp', code: 'REQUIRED'},
                     message: 'Missing value',
                     i18n: 'my.error.required',
                     args: ['field1']
                 },
                 {
-                    errorCode: 'com.enonic.myapp:INVALID',
+                    errorCode: {applicationKey: 'com.enonic.myapp', code: 'INVALID'},
                     message: 'Invalid value: {0}',
                     propertyPath: 'set.field2',
                     args: ['field2']
                 },
                 {
-                    errorCode: 'com.enonic.myapp:INVALID',
+                    errorCode: {applicationKey: 'com.enonic.myapp', code: 'INVALID'},
                     message: 'Invalid attachment',
                     attachment: 'image.png',
                     args: []
+                },
+                {
+                    errorCode: {applicationKey: 'com.enonic.myapp', code: 'REQUIRED'}
                 }
             ];
             return c;
@@ -463,13 +466,13 @@ exports.patchValidationErrors = function () {
 
     var expectedErrors = [
         {
-            errorCode: 'com.enonic.myapp:REQUIRED',
+            errorCode: {applicationKey: 'com.enonic.myapp', code: 'REQUIRED'},
             message: 'Missing value',
             i18n: 'my.error.required',
             args: ['field1']
         },
         {
-            errorCode: 'com.enonic.myapp:INVALID',
+            errorCode: {applicationKey: 'com.enonic.myapp', code: 'INVALID'},
             message: 'Invalid value: field2',
             propertyPath: 'set.field2',
             args: [
@@ -477,13 +480,26 @@ exports.patchValidationErrors = function () {
             ]
         },
         {
-            errorCode: 'com.enonic.myapp:INVALID',
+            errorCode: {applicationKey: 'com.enonic.myapp', code: 'INVALID'},
             message: 'Invalid attachment',
             attachment: 'image.png'
+        },
+        {
+            errorCode: {applicationKey: 'com.enonic.myapp', code: 'REQUIRED'}
         }
     ];
 
     assert.assertJsonEquals(expectedErrors, result.results[0].content.validationErrors);
+};
+
+exports.patchValidationErrors_emptyList = function () {
+    content.patch({
+        key: '/a/b/mycontent',
+        patcher: function (c) {
+            c.validationErrors = [];
+            return c;
+        }
+    });
 };
 
 exports.patchWithSkipSync = function () {
