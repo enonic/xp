@@ -1,7 +1,7 @@
 kind: "Style"
-css: "assets/styles2.css"
-image:
+styles:
   - name: "editor-align-justify"
-    displayName:
+    type: "Image"
+    label:
       text: "Justify"
       i18n: "style.editor.align.justify"

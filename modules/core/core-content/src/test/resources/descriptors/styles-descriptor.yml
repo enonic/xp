@@ -1,15 +1,20 @@
 kind: "Style"
 
-css: "assets/styles.css"
-
-image:
+styles:
   - name: "editor-width-auto"
-    displayName:
+    type: "Image"
+    label:
       text: "Override ${width}"
       i18n: "editor-width-auto-text"
   - name: "editor-style-cinema"
-    displayName:
+    type: "Image"
+    label:
       text: "Cinema"
       i18n: "editor-style-cinema-text"
     aspectRatio: "21:9"
     filter: "pixelate(10)"
+    editor:
+      css: |
+        .my-selector {
+          background-color: #eee;
+        }

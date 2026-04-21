@@ -7,25 +7,14 @@
       "type": "string",
       "const": "Style"
     },
-    "css": {
-      "type": "string"
-    },
-    "image": {
+    "styles": {
       "type": "array",
       "items": {
-        "type": "object",
-        "properties": {
-          "displayName": {
-            "$ref": "#/$defs/localizedTextDef"
-          },
-          "aspectRatio": {
-            "type": "string"
-          },
-          "filter": {
-            "type": "string"
+        "oneOf": [
+          {
+            "$ref": "#/$defs/imageStyleDef"
           }
-        },
-        "additionalProperties": false
+        ]
       }
     }
   },
@@ -34,6 +23,56 @@
     "kind"
   ],
   "$defs": {
+    "styleItemDef": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "label": {
+          "$ref": "#/$defs/localizedTextDef"
+        },
+        "editor": {
+          "$ref": "#/$defs/editorDef"
+        }
+      },
+      "required": [
+        "name",
+        "type"
+      ]
+    },
+    "imageStyleDef": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/styleItemDef"
+        }
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "Image"
+        },
+        "filter": {
+          "type": "string"
+        },
+        "aspectRatio": {
+          "type": "string"
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "editorDef": {
+      "type": "object",
+      "properties": {
+        "css": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
     "localizedTextDef": {}
   }
 }

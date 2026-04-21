@@ -1,11 +1,12 @@
 kind: "Style"
-css: "assets/styles3.css"
-image:
+styles:
   - name: "editor-align-justify"
-    displayName:
+    type: "Image"
+    label:
       text: "Justify 1"
       i18n: "style.editor.align.justify"
   - name: "editor-align-justify"
-    displayName:
+    type: "Image"
+    label:
       text: "Justify 2"
       i18n: "style.editor.align.justify"

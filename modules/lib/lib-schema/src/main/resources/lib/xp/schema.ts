@@ -213,7 +213,7 @@ export interface StyleDescriptor {
     resource: string;
     elements?: {
         element: string;
-        displayName: string;
+        label: string;
         name: string;
     }[];
 }
