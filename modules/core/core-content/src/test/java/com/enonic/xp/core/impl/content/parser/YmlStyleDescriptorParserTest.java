@@ -42,16 +42,13 @@ public class YmlStyleDescriptorParserTest
         assertNotNull( elements );
         assertEquals( 2, elements.size() );
 
-        final Style imageStyle_1 = elements.getFirst();
-        assertInstanceOf( Style.class, imageStyle_1 );
+        final ImageStyle imageStyle_1 = assertInstanceOf( ImageStyle.class, elements.getFirst() );
 
         assertEquals( "editor-width-auto", imageStyle_1.getName() );
         assertEquals( "Override ${width}", imageStyle_1.getLabel() );
         assertEquals( "editor-width-auto-text", imageStyle_1.getLabelI18nKey() );
 
-        assertInstanceOf( ImageStyle.class, elements.getLast() );
-
-        final ImageStyle imageStyle_2 = (ImageStyle) elements.getLast();
+        final ImageStyle imageStyle_2 = assertInstanceOf( ImageStyle.class, elements.getLast() );
         assertEquals( "editor-style-cinema", imageStyle_2.getName() );
         assertEquals( "Cinema", imageStyle_2.getLabel() );
         assertEquals( "editor-style-cinema-text", imageStyle_2.getLabelI18nKey() );
