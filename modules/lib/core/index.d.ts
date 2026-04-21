@@ -575,17 +575,17 @@ export interface AttachmentValidationError
     attachment: string;
 }
 
-export interface ValidationError {
-    message: string;
-    i18n: string;
-    errorCode: ValidationErrorCode;
-    /* eslint-disable @typescript-eslint/no-explicit-any*/
-    args: any[];
-}
-
 export interface ValidationErrorCode {
     applicationKey: string;
     code: string;
+}
+
+export interface ValidationError {
+    message: string | null;
+    i18n: string | null;
+    errorCode: ValidationErrorCode;
+    /* eslint-disable @typescript-eslint/no-explicit-any*/
+    args?: any[];
 }
 
 export interface PublishInfo {
@@ -730,6 +730,7 @@ export interface Content<
     hasChildren: boolean;
     language?: string;
     valid: boolean;
+    validationErrors?: ValidationError[];
     originProject?: string;
     childOrder?: string;
     _sort?: object[];

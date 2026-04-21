@@ -3,6 +3,7 @@ package com.enonic.xp.lib.content.deserializer;
 import java.util.List;
 import java.util.Map;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ValidationError;
 import com.enonic.xp.content.ValidationErrorCode;
 import com.enonic.xp.content.ValidationErrors;
@@ -29,13 +30,7 @@ public final class ValidationErrorsDeserializer
 
             Map<String, Object> errorMap = (Map<String, Object>) item;
 
-            final String errorCodeStr = asString( errorMap.get( "errorCode" ) );
-            if ( errorCodeStr == null )
-            {
-                throw new IllegalArgumentException( "Missing required field 'errorCode'" );
-            }
-
-            final ValidationErrorCode errorCode = ValidationErrorCode.parse( errorCodeStr );
+            final ValidationErrorCode errorCode = parseErrorCode( errorMap.get( "errorCode" ) );
 
             final String message = asString( errorMap.get( "message" ) );
             final String i18n = asString( errorMap.get( "i18n" ) );
@@ -78,6 +73,22 @@ public final class ValidationErrorsDeserializer
         }
 
         return builder.build();
+    }
+
+    private ValidationErrorCode parseErrorCode( final Object errorCodeObj )
+    {
+        if ( !( errorCodeObj instanceof Map ) )
+        {
+            throw new IllegalArgumentException( "Missing required field 'errorCode'" );
+        }
+        final Map<String, Object> errorCodeMap = (Map<String, Object>) errorCodeObj;
+        final String applicationKey = asString( errorCodeMap.get( "applicationKey" ) );
+        final String code = asString( errorCodeMap.get( "code" ) );
+        if ( applicationKey == null || code == null )
+        {
+            throw new IllegalArgumentException( "errorCode must have 'applicationKey' and 'code' fields" );
+        }
+        return ValidationErrorCode.from( ApplicationKey.from( applicationKey ), code );
     }
 
     private String asString( Object obj )

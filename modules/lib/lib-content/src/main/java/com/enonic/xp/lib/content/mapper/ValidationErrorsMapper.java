@@ -27,7 +27,10 @@ public final class ValidationErrorsMapper
         {
             value.stream().forEach( error -> {
                 gen.map();
-                gen.value( "errorCode", error.getErrorCode().toString() );
+                gen.map( "errorCode" );
+                gen.value( "applicationKey", error.getErrorCode().getApplicationKey().toString() );
+                gen.value( "code", error.getErrorCode().getCode() );
+                gen.end();
                 gen.value( "message", error.getMessage() );
                 gen.value( "i18n", error.getI18n() );
 
