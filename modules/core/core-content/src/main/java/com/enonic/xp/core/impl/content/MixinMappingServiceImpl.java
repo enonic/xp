@@ -68,8 +68,7 @@ public final class MixinMappingServiceImpl
             .filter( mixinMapping -> {
                 final String pattern = mixinMapping.getAllowContentTypes();
                 final ApplicationKey applicationKey = mixinMapping.getMixinName().getApplicationKey();
-                return nullToEmpty( pattern ).isBlank() || new ApplicationWildcardMatcher<>( applicationKey, ContentTypeName::toString,
-                                                                                             ApplicationWildcardMatcher.Mode.MATCH ).matches(
+                return nullToEmpty( pattern ).isBlank() || new ApplicationWildcardMatcher<>( applicationKey, ContentTypeName::toString ).matches(
                     pattern, contentTypeName );
             } )
             .map( mixinMapping -> {
