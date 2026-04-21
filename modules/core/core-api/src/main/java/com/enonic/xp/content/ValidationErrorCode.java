@@ -2,10 +2,14 @@ package com.enonic.xp.content;
 
 import java.util.Objects;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import com.enonic.xp.app.ApplicationKey;
 
 import static java.util.Objects.requireNonNull;
 
+@NullMarked
 public final class ValidationErrorCode
 {
     private static final String SEPARATOR = ":";
@@ -16,7 +20,7 @@ public final class ValidationErrorCode
 
     private ValidationErrorCode( final ApplicationKey applicationKey, final String code )
     {
-        this.applicationKey = applicationKey;
+        this.applicationKey = requireNonNull( applicationKey );
         this.code = requireNonNull( code );
     }
 
@@ -31,7 +35,7 @@ public final class ValidationErrorCode
     }
 
     @Override
-    public boolean equals( final Object o )
+    public boolean equals( final @Nullable Object o )
     {
         if ( this == o )
         {
