@@ -16,12 +16,11 @@ log.info('Fetched styles: myapp');
 
 assert.assertJsonEquals({
     application: 'myapp',
-    cssPath: 'assets/styles.css',
     modifiedTime: '2021-02-25T10:44:33.170079900Z',
     resource: '<styles><some-data></some-data></styles>',
     elements: [
         {
-            displayName: 'Style display name',
+            label: 'Style display name',
             name: 'mystyle'
         }
     ]

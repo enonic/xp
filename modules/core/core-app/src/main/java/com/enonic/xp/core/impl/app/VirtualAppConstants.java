@@ -28,7 +28,7 @@ public final class VirtualAppConstants
 
     public static final String MIXINS_ROOT_NAME = "mixins";
 
-    public static final String STYLES_ROOT_NAME = "styles";
+    public static final String STYLE_ROOT_NAME = "style";
 
     public static final String CMS_ROOT_NAME = "cms";
 
@@ -40,7 +40,7 @@ public final class VirtualAppConstants
 
     public static final String LAYOUT_ROOT_NAME = "layouts";
 
-    public static final String STYLES_NAME = "image";
+    public static final String STYLE_NAME = "style";
 
     public static final NodePath VIRTUAL_APP_ROOT_PARENT = NodePath.ROOT;
 

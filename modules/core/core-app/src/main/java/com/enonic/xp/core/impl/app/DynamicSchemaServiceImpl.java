@@ -165,9 +165,10 @@ public class DynamicSchemaServiceImpl
 
         final StyleDescriptor styles = dynamicResourceParser.parseStyles( params.getKey(), params.getResource() );
 
-        final NodePath resourceFolderPath = NodePath.create( createCmsFolderPath( params.getKey() ) ).addElement( "styles" ).build();
+        final NodePath resourceFolderPath =
+            NodePath.create( createCmsFolderPath( params.getKey() ) ).addElement( VirtualAppConstants.STYLE_ROOT_NAME ).build();
         final Resource resource =
-            dynamicResourceManager.createResource( resourceFolderPath, VirtualAppConstants.STYLES_NAME, params.getResource() );
+            dynamicResourceManager.createResource( resourceFolderPath, VirtualAppConstants.STYLE_NAME, params.getResource() );
 
         return new DynamicSchemaResult<>(
             StyleDescriptor.copyOf( styles ).modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) ).build(), resource );
@@ -180,9 +181,10 @@ public class DynamicSchemaServiceImpl
 
         final StyleDescriptor styles = dynamicResourceParser.parseStyles( params.getKey(), params.getResource() );
 
-        final NodePath resourceFolderPath = NodePath.create( createCmsFolderPath( params.getKey() ) ).addElement( "styles" ).build();
+        final NodePath resourceFolderPath =
+            NodePath.create( createCmsFolderPath( params.getKey() ) ).addElement( VirtualAppConstants.STYLE_ROOT_NAME ).build();
         final Resource resource =
-            dynamicResourceManager.updateResource( resourceFolderPath, VirtualAppConstants.STYLES_NAME, params.getResource() );
+            dynamicResourceManager.updateResource( resourceFolderPath, VirtualAppConstants.STYLE_NAME, params.getResource() );
 
         return new DynamicSchemaResult<>(
             StyleDescriptor.copyOf( styles ).modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) ).build(), resource );
@@ -263,8 +265,9 @@ public class DynamicSchemaServiceImpl
     {
         requireAdminRole();
 
-        final NodePath resourceFolderPath = NodePath.create( createCmsFolderPath( key ) ).addElement( "styles" ).build();
-        final Resource resource = dynamicResourceManager.getResource( resourceFolderPath, VirtualAppConstants.STYLES_NAME );
+        final NodePath resourceFolderPath =
+            NodePath.create( createCmsFolderPath( key ) ).addElement( VirtualAppConstants.STYLE_ROOT_NAME ).build();
+        final Resource resource = dynamicResourceManager.getResource( resourceFolderPath, VirtualAppConstants.STYLE_NAME );
 
         if ( resource.exists() && resource.getSize() > 0 )
         {
@@ -324,8 +327,9 @@ public class DynamicSchemaServiceImpl
     {
         requireAdminRole();
 
-        final NodePath resourceFolderPath = NodePath.create( createCmsFolderPath( key ) ).addElement( "styles" ).build();
-        return dynamicResourceManager.deleteResource( resourceFolderPath, VirtualAppConstants.STYLES_NAME, false );
+        final NodePath resourceFolderPath =
+            NodePath.create( createCmsFolderPath( key ) ).addElement( VirtualAppConstants.STYLE_ROOT_NAME ).build();
+        return dynamicResourceManager.deleteResource( resourceFolderPath, VirtualAppConstants.STYLE_NAME, false );
     }
 
     private BaseSchemaName getSchemaName( final ApplicationKey applicationKey, final DynamicContentSchemaType type, final String name )
