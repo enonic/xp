@@ -1,9 +1,15 @@
 package com.enonic.xp.content;
 
 
+import java.util.List;
 import java.util.Objects;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.google.common.io.ByteSource;
+
+import com.enonic.xp.image.FocalPoint;
 
 import static java.util.Objects.requireNonNull;
 
@@ -14,63 +20,79 @@ public final class CreateMediaParams
 
     private ContentName name;
 
-    private String mimeType;
-
     private ByteSource byteSource;
 
-    private double focalX = 0.5;
+    private @Nullable FocalPoint focalPoint;
 
-    private double focalY = 0.5;
+    private @Nullable String caption;
 
-    private String caption = "";
+    private @Nullable String altText;
 
-    private String altText = "";
+    private @Nullable String copyright;
 
-    private String artist = "";
+    private List<String> artist = List.of();
 
-    private String copyright = "";
+    private List<String> tags = List.of();
 
-    private String tags = "";
-
-    public CreateMediaParams parent( final ContentPath value )
+    public CreateMediaParams parent( final @NonNull ContentPath value )
     {
         this.parent = value;
         return this;
     }
 
-    public CreateMediaParams name( final String value )
+    public CreateMediaParams name( final @NonNull String value )
     {
         this.name = ContentName.from( value );
         return this;
     }
 
-    public CreateMediaParams name( final ContentName value )
+    public CreateMediaParams name( final @NonNull ContentName value )
     {
         this.name = value;
         return this;
     }
 
+    /**
+     * @deprecated mime type is auto-detected from the binary; this setter is a no-op.
+     */
+    @Deprecated
+    @SuppressWarnings("unused")
     public CreateMediaParams mimeType( final String value )
     {
-        this.mimeType = value;
         return this;
     }
 
-    public CreateMediaParams byteSource( final ByteSource value )
+    public CreateMediaParams byteSource( final @NonNull ByteSource value )
     {
         this.byteSource = value;
         return this;
     }
 
+    /**
+     * @deprecated use {@link #focalPoint(FocalPoint)} instead.
+     */
+    @Deprecated
     public CreateMediaParams focalX( final double focalX )
     {
-        this.focalX = focalX;
+        final double focalY = focalPoint == null ? FocalPoint.DEFAULT.yOffset() : focalPoint.yOffset();
+        this.focalPoint = new FocalPoint( focalX, focalY );
         return this;
     }
 
+    /**
+     * @deprecated use {@link #focalPoint(FocalPoint)} instead.
+     */
+    @Deprecated
     public CreateMediaParams focalY( final double focalY )
     {
-        this.focalY = focalY;
+        final double focalX = focalPoint == null ? FocalPoint.DEFAULT.xOffset() : focalPoint.xOffset();
+        this.focalPoint = new FocalPoint( focalX, focalY );
+        return this;
+    }
+
+    public CreateMediaParams focalPoint( final @Nullable FocalPoint focalPoint )
+    {
+        this.focalPoint = focalPoint;
         return this;
     }
 
@@ -86,9 +108,19 @@ public final class CreateMediaParams
         return this;
     }
 
+    /**
+     * @deprecated use {@link #artist(List)} instead.
+     */
+    @Deprecated
     public CreateMediaParams artist( final String artist )
     {
-        this.artist = artist;
+        this.artist = artist == null ? List.of() : List.of( artist );
+        return this;
+    }
+
+    public CreateMediaParams artist( final @NonNull List<String> artist )
+    {
+        this.artist = List.copyOf( artist );
         return this;
     }
 
@@ -98,9 +130,19 @@ public final class CreateMediaParams
         return this;
     }
 
+    /**
+     * @deprecated use {@link #tags(List)} instead.
+     */
+    @Deprecated
     public CreateMediaParams tags( final String tags )
     {
-        this.tags = tags;
+        this.tags = tags == null ? List.of() : List.of( tags );
+        return this;
+    }
+
+    public CreateMediaParams tags( final @NonNull List<String> tags )
+    {
+        this.tags = List.copyOf( tags );
         return this;
     }
 
@@ -121,47 +163,37 @@ public final class CreateMediaParams
         return name;
     }
 
-    public String getMimeType()
-    {
-        return mimeType;
-    }
-
     public ByteSource getByteSource()
     {
         return byteSource;
     }
 
-    public double getFocalX()
+    public @Nullable FocalPoint getFocalPoint()
     {
-        return focalX;
+        return focalPoint;
     }
 
-    public double getFocalY()
-    {
-        return focalY;
-    }
-
-    public String getCaption()
+    public @Nullable String getCaption()
     {
         return caption;
     }
 
-    public String getAltText()
+    public @Nullable String getAltText()
     {
         return altText;
     }
 
-    public String getArtist()
+    public List<String> getArtistList()
     {
         return artist;
     }
 
-    public String getCopyright()
+    public @Nullable String getCopyright()
     {
         return copyright;
     }
 
-    public String getTags()
+    public List<String> getTagList()
     {
         return tags;
     }
@@ -178,9 +210,8 @@ public final class CreateMediaParams
             return false;
         }
         final CreateMediaParams that = (CreateMediaParams) o;
-        return Double.compare( that.focalX, focalX ) == 0 && Double.compare( that.focalY, focalY ) == 0 &&
-            Objects.equals( parent, that.parent ) && Objects.equals( name, that.name ) && Objects.equals( mimeType, that.mimeType ) &&
-            Objects.equals( byteSource, that.byteSource ) && Objects.equals( caption, that.caption ) &&
+        return Objects.equals( focalPoint, that.focalPoint ) && Objects.equals( parent, that.parent ) &&
+            Objects.equals( name, that.name ) && Objects.equals( byteSource, that.byteSource ) && Objects.equals( caption, that.caption ) &&
             Objects.equals( altText, that.altText ) && Objects.equals( artist, that.artist ) &&
             Objects.equals( copyright, that.copyright ) && Objects.equals( tags, that.tags );
     }
@@ -188,6 +219,6 @@ public final class CreateMediaParams
     @Override
     public int hashCode()
     {
-        return Objects.hash( parent, name, mimeType, byteSource, focalX, focalY, caption, artist, copyright, tags );
+        return Objects.hash( parent, name, byteSource, focalPoint, caption, artist, copyright, tags );
     }
 }

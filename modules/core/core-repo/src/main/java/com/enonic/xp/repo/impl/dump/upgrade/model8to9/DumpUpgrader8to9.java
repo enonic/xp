@@ -425,7 +425,8 @@ public class DumpUpgrader8to9
         for ( NodeVersionUpgrader upgrader : List.of( new ContentUpgrader(), new AuditLogMillisUpgrader(), new SchedulerUpgrader(),
                                                       new ReferenceLowercaseUpgrader(), new DefaultProjectPermissionsUpgrader(),
                                                       new LanguageTagUpgrader(), new IndexConfigLanguageUpgrader(),
-                                                      new AttachmentSha512Upgrader( dumpReader ), new RepositoryBranchesRemovalUpgrader(),
+                                                      new AttachmentSha512Upgrader( dumpReader ),
+                                                      new ImageOrientationUpgrader( dumpReader ), new RepositoryBranchesRemovalUpgrader(),
                                                       new RepositoryModelVersionUpgrader() ) )
         {
             final NodeStoreVersion upgraded = upgrader.upgradeNodeVersion( repositoryId, dumpEntry );

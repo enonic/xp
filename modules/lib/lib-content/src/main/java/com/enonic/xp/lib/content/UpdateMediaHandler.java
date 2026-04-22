@@ -7,6 +7,7 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.UpdateMediaParams;
+import com.enonic.xp.image.FocalPoint;
 import com.enonic.xp.lib.content.mapper.ContentMapper;
 
 public class UpdateMediaHandler
@@ -16,13 +17,11 @@ public class UpdateMediaHandler
 
     private String name;
 
-    private String mimeType;
-
     private ByteSource data;
 
-    private double focalX = 0.5;
+    private Double focalX;
 
-    private double focalY = 0.5;
+    private Double focalY;
 
     private String caption;
 
@@ -38,10 +37,12 @@ public class UpdateMediaHandler
         final UpdateMediaParams params = new UpdateMediaParams();
         params.content( getContentId( this.key ) );
         params.name( name );
-        params.mimeType( mimeType );
         params.byteSource( data );
-        params.focalX( focalX );
-        params.focalY( focalY );
+        if ( focalX != null || focalY != null )
+        {
+            params.focalPoint( new FocalPoint( focalX != null ? focalX : FocalPoint.DEFAULT.xOffset(),
+                                               focalY != null ? focalY : FocalPoint.DEFAULT.yOffset() ) );
+        }
         params.caption( caption );
         params.artist( artist );
         params.copyright( copyright );
@@ -59,11 +60,6 @@ public class UpdateMediaHandler
     public void setName( final String name )
     {
         this.name = name;
-    }
-
-    public void setMimeType( final String mimeType )
-    {
-        this.mimeType = mimeType;
     }
 
     public void setData( final ByteSource data )

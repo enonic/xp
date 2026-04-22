@@ -1,9 +1,16 @@
 package com.enonic.xp.core.content;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+
+import com.google.common.io.ByteSource;
+import com.google.common.net.HttpHeaders;
 
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.attachment.Attachment;
@@ -13,16 +20,23 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateMediaParams;
+import com.enonic.xp.content.Mixin;
 import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.core.impl.content.MixinMappingServiceImpl;
+import com.enonic.xp.core.impl.content.processor.ImageContentProcessor;
 import com.enonic.xp.core.impl.content.schema.MixinServiceImpl;
+import com.enonic.xp.core.impl.media.MediaInfoServiceImpl;
+import com.enonic.xp.extractor.BinaryExtractor;
+import com.enonic.xp.extractor.ExtractedData;
+import com.enonic.xp.media.MediaInfo;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atMostOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -219,6 +233,59 @@ class ContentServiceImplTest_media
         assertNotNull( storedContent.getData().getString( ContentPropertyNames.MEDIA ) );
         final Attachments attachments = storedContent.getAttachments();
         assertEquals( 1, attachments.getSize() );
+    }
+
+    @Test
+    void update_media_image_refreshes_exif_mixin()
+    {
+        // AbstractContentServiceTest wires a minimal BinaryExtractor mock. Swap in a sequenced
+        // stub so create/update get distinct EXIF payloads and we can assert the update refresh.
+        final BinaryExtractor sequencedExtractor = mock( BinaryExtractor.class );
+        when( sequencedExtractor.extract( any( ByteSource.class ) ) ).thenReturn(
+                exifExtractedData( "NIKON CORPORATION", "NIKON D100", "1" ) )
+            .thenReturn( exifExtractedData( "Canon", "Canon EOS 5D Mark III", "6" ) );
+        final MediaInfoServiceImpl sequencedMediaInfo = new MediaInfoServiceImpl( sequencedExtractor );
+        this.contentService.setMediaInfoService( sequencedMediaInfo );
+
+        final ImageContentProcessor imageContentProcessor = new ImageContentProcessor( this.contentService, this.mixinService );
+        this.contentService.addContentProcessor( imageContentProcessor );
+        try
+        {
+            final CreateMediaParams createParams =
+                new CreateMediaParams().byteSource( loadImage( "cat-small.jpg" ) ).name( "photo.jpg" ).parent( ContentPath.ROOT );
+            final Content created = this.contentService.create( createParams );
+
+            final Content reloadedAfterCreate = this.contentService.getById( created.getId() );
+            assertEquals( "1", reloadedAfterCreate.getData().getString( "media.orientation" ) );
+            final Mixin cameraAfterCreate = reloadedAfterCreate.getMixins().getByName( MediaInfo.CAMERA_INFO_METADATA_NAME );
+            assertNotNull( cameraAfterCreate );
+            assertEquals( "NIKON CORPORATION", cameraAfterCreate.getData().getString( "make", 0 ) );
+
+            final UpdateMediaParams updateParams =
+                new UpdateMediaParams().content( created.getId() ).name( "photo" ).byteSource( loadImage( "cat-small.jpg" ) );
+            this.contentService.update( updateParams );
+
+            final Content reloadedAfterUpdate = this.contentService.getById( created.getId() );
+            assertEquals( "6", reloadedAfterUpdate.getData().getString( "media.orientation" ) );
+            final Mixin cameraAfterUpdate = reloadedAfterUpdate.getMixins().getByName( MediaInfo.CAMERA_INFO_METADATA_NAME );
+            assertNotNull( cameraAfterUpdate );
+            assertEquals( "Canon", cameraAfterUpdate.getData().getString( "make", 0 ) );
+        }
+        finally
+        {
+            this.contentService.removeContentProcessor( imageContentProcessor );
+        }
+    }
+
+    // Raw Tika-style keys; MediaInfo.Builder#addMetadata normalizes via FormItemName.safeName
+    private static ExtractedData exifExtractedData( final String make, final String model, final String orientation )
+    {
+        final Map<String, List<String>> metadata = new HashMap<>();
+        metadata.put( HttpHeaders.CONTENT_TYPE, List.of( "image/jpeg" ) );
+        metadata.put( "tiff:Make", List.of( make ) );
+        metadata.put( "tiff:Model", List.of( model ) );
+        metadata.put( "exif:IFD0:Orientation", List.of( orientation ) );
+        return ExtractedData.create().metadata( metadata ).imageOrientation( orientation ).build();
     }
 
 }

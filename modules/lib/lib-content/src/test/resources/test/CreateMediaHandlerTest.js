@@ -25,7 +25,6 @@ exports.createMedia = function () {
     var result = content.createMedia({
         name: 'mycontent',
         parentPath: '/a/b',
-        mimeType: 'text/plain',
         data: TestClass.createByteSource('Hello World')
     });
 
@@ -36,7 +35,6 @@ exports.createMediaWithFocalPoints = function () {
     var result = content.createMedia({
         name: 'mycontent',
         parentPath: '/a/b',
-        mimeType: 'text/plain',
         focalY: 0.1,
         focalX: 0.3,
         data: TestClass.createByteSource('Hello World')
@@ -68,7 +66,6 @@ exports.createMediaAutoGenerateName = function () {
     var result = content.createMedia({
         name: 'my-content.jpg',
         parentPath: '/a/b',
-        mimeType: 'text/plain',
         data: TestClass.createByteSource('Hello World'),
         idGenerator() {
             return String(counter++);
@@ -112,7 +109,6 @@ exports.createMediaAsPDF = function () {
     var result = content.createMedia({
         name: 'documentName.pdf',
         parentPath: '/a/b',
-        mimeType: 'application/pdf',
         data: TestClass.createByteSource('Some text')
     });
 

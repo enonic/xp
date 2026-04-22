@@ -19,11 +19,12 @@ import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.image.FocalPoint;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class CreateMediaHandlerTest
     extends BaseContentHandlerTest
@@ -48,8 +49,7 @@ public class CreateMediaHandlerTest
         final ArgumentCaptor<CreateMediaParams> argumentCaptor = ArgumentCaptor.forClass( CreateMediaParams.class );
         Mockito.verify( this.contentService, Mockito.times( 1 ) ).create( argumentCaptor.capture() );
 
-        assertEquals( 0.5, argumentCaptor.getValue().getFocalX(), 0 );
-        assertEquals( 0.5, argumentCaptor.getValue().getFocalY(), 0 );
+        assertThat( argumentCaptor.getValue().getFocalPoint() ).isNull();
     }
 
     @Test
@@ -63,8 +63,10 @@ public class CreateMediaHandlerTest
         final ArgumentCaptor<CreateMediaParams> argumentCaptor = ArgumentCaptor.forClass( CreateMediaParams.class );
         Mockito.verify( this.contentService, Mockito.times( 1 ) ).create( argumentCaptor.capture() );
 
-        assertEquals( 0.3, argumentCaptor.getValue().getFocalX(), 0 );
-        assertEquals( 0.1, argumentCaptor.getValue().getFocalY(), 0 );
+        final FocalPoint focalPoint = argumentCaptor.getValue().getFocalPoint();
+        assertThat( focalPoint ).isNotNull();
+        assertThat( focalPoint.xOffset() ).isEqualTo( 0.3 );
+        assertThat( focalPoint.yOffset() ).isEqualTo( 0.1 );
     }
 
     @Test

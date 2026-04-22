@@ -3,13 +3,13 @@ package com.enonic.xp.core.impl.content;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
+import com.enonic.xp.image.FocalPoint;
+import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 import static java.util.Objects.requireNonNull;
@@ -20,19 +20,19 @@ final class MediaFormDataBuilder
 
     private String attachment;
 
-    private String caption = "";
+    private String caption;
 
-    private String altText = "";
+    private String altText;
+
+    private String copyright;
 
     private List<String> artist;
 
-    private String copyright = "";
-
     private List<String> tags;
 
-    private double focalX = 0.5;
+    private FocalPoint focalPoint;
 
-    private double focalY = 0.5;
+    private ImageOrientation orientation;
 
     public MediaFormDataBuilder type( final ContentTypeName type )
     {
@@ -76,31 +76,38 @@ final class MediaFormDataBuilder
         return this;
     }
 
-    MediaFormDataBuilder focalX( final double focalX )
+    MediaFormDataBuilder focalPoint( final FocalPoint focalPoint )
     {
-        this.focalX = focalX;
+        this.focalPoint = focalPoint;
         return this;
     }
 
-    MediaFormDataBuilder focalY( final double focalY )
+    MediaFormDataBuilder orientation( final ImageOrientation orientation )
     {
-        this.focalY = focalY;
+        this.orientation = orientation;
         return this;
     }
 
     void build( PropertyTree data )
     {
         requireNonNull( type, "type is required" );
-        Preconditions.checkArgument( focalX >= 0.0 && focalX <= 1.0, "Image focal point x value must be between 0 and 1 : %s", focalX );
-        Preconditions.checkArgument( focalY >= 0.0 && focalY <= 1.0, "Image focal point y value must be between 0 and 1 : %s", focalY );
 
         final PropertySet set = data.newSet();
         set.setString( ContentPropertyNames.MEDIA_ATTACHMENT, attachment );
 
         if ( type.isImageMedia() )
         {
-            set.setDouble( PropertyPath.from( ContentPropertyNames.MEDIA_FOCAL_POINT, ContentPropertyNames.MEDIA_FOCAL_POINT_X ), focalX );
-            set.setDouble( PropertyPath.from( ContentPropertyNames.MEDIA_FOCAL_POINT, ContentPropertyNames.MEDIA_FOCAL_POINT_Y ), focalY );
+            if ( focalPoint != null )
+            {
+                set.setDouble( PropertyPath.from( ContentPropertyNames.MEDIA_FOCAL_POINT, ContentPropertyNames.MEDIA_FOCAL_POINT_X ),
+                               focalPoint.xOffset() );
+                set.setDouble( PropertyPath.from( ContentPropertyNames.MEDIA_FOCAL_POINT, ContentPropertyNames.MEDIA_FOCAL_POINT_Y ),
+                               focalPoint.yOffset() );
+            }
+            if ( orientation != null )
+            {
+                set.setString( ContentPropertyNames.ORIENTATION, String.valueOf( orientation.getValue() ) );
+            }
         }
 
         data.removeProperties( ContentPropertyNames.MEDIA );

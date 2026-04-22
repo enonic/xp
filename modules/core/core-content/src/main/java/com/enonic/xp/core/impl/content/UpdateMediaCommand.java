@@ -1,6 +1,5 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.List;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.attachment.CreateAttachment;
@@ -44,18 +43,12 @@ final class UpdateMediaCommand
     private Content doExecute()
     {
         final MediaInfo mediaInfo = mediaInfoService.parseMediaInfo( params.getByteSource() );
-        String mediaType = params.getMimeType();
-        if ( ( mediaType == null || isBinaryContentType( mediaType ) ) && mediaInfo.getMediaType() != null )
-        {
-            mediaType = mediaInfo.getMediaType();
-        }
-
-        requireNonNull( mediaType, "Unable to resolve media type" );
+        final String mediaType = requireNonNull( mediaInfo.getMediaType(), "Unable to resolve media type" );
 
         final ContentTypeName resolvedTypeFromMimeType = ContentTypeFromMimeTypeResolver.resolve( mediaType );
         final ContentTypeName type = resolvedTypeFromMimeType != null
             ? resolvedTypeFromMimeType
-            : isExecutableContentType( mediaType, params.getName() ) ? ContentTypeName.executableMedia() : ContentTypeName.unknownMedia();
+            : guessExecutableByFilename( mediaType, params.getName().toString() );
 
         final Content existingContent = getContent( params.getContent() );
         Preconditions.checkArgument( existingContent.getType().equals( type ), "Updated content must be of type: %s",
@@ -71,13 +64,13 @@ final class UpdateMediaCommand
 
         final MediaFormDataBuilder mediaFormBuilder = new MediaFormDataBuilder().type( type )
             .attachment( params.getName().toString() )
-            .focalX( params.getFocalX() )
-            .focalY( params.getFocalY() )
+            .focalPoint( params.getFocalPoint() )
+            .orientation( mediaInfo.getImageOrientation() )
             .caption( params.getCaption() )
             .altText( params.getAltText() )
-            .artist( params.getArtistList().isEmpty() ? List.of( "" ) : params.getArtistList() )
+            .artist( params.getArtistList() )
             .copyright( params.getCopyright() )
-            .tags( params.getTagList().isEmpty() ? List.of( "" ) : params.getTagList() );
+            .tags( params.getTagList() );
 
         final UpdateContentParams updateParams = new UpdateContentParams().contentId( params.getContent() )
             .clearAttachments( true )
@@ -98,6 +91,7 @@ final class UpdateMediaCommand
             .mixinMappingService( this.mixinMappingService )
             .siteConfigService( this.siteConfigService )
             .allowUnsafeAttachmentNames( allowUnsafeAttachmentNames )
+            .mediaInfo( mediaInfo )
             .build()
             .execute();
     }

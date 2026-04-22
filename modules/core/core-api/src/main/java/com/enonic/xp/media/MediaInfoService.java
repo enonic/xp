@@ -7,5 +7,6 @@ public interface MediaInfoService
 {
     MediaInfo parseMediaInfo( ByteSource byteSource );
 
+    @Deprecated
     ImageOrientation getImageOrientation( ByteSource byteSource );
 }

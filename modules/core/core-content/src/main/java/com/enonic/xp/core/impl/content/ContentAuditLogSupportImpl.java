@@ -136,14 +136,12 @@ public class ContentAuditLogSupportImpl
         final PropertySet paramsSet = data.addSet( "params" );
         final PropertySet resultSet = data.addSet( "result" );
 
-        paramsSet.addString( "artist", params.getArtist() );
+        paramsSet.addStrings( "artist", params.getArtistList() );
         paramsSet.addString( "caption", params.getCaption() );
         paramsSet.addString( "copyright", params.getCopyright() );
-        paramsSet.addString( "mimeType", params.getMimeType() );
         paramsSet.addString( "name", safeToString( params.getName() ) );
-        paramsSet.addString( "tags", params.getTags() );
-        paramsSet.addDouble( "focalX", params.getFocalX() );
-        paramsSet.addDouble( "focalY", params.getFocalY() );
+        paramsSet.addStrings( "tags", params.getTagList() );
+        paramsSet.addString( "focalPoint", safeToString( params.getFocalPoint() ) );
         paramsSet.addString( "parent", safeToString( params.getParent() ) );
 
         addContent( resultSet, content );
@@ -249,8 +247,7 @@ public class ContentAuditLogSupportImpl
         executor.execute( () -> doUpdateWorkflow( params, result, context ) );
     }
 
-    private void doUpdateWorkflow( final UpdateWorkflowParams params, final UpdateWorkflowResult result,
-                                   final Context rootContext )
+    private void doUpdateWorkflow( final UpdateWorkflowParams params, final UpdateWorkflowResult result, final Context rootContext )
     {
         final PropertyTree data = new PropertyTree();
         final PropertySet paramsSet = data.addSet( "params" );
@@ -284,11 +281,9 @@ public class ContentAuditLogSupportImpl
         paramsSet.addStrings( "artist", params.getArtistList() );
         paramsSet.addString( "copyright", params.getCopyright() );
         paramsSet.addString( "caption", params.getCaption() );
-        paramsSet.addString( "mimeType", params.getMimeType() );
         paramsSet.addString( "name", safeToString( params.getName() ) );
         paramsSet.addStrings( "tags", params.getTagList() );
-        paramsSet.addDouble( "focalX", params.getFocalX() );
-        paramsSet.addDouble( "focalY", params.getFocalY() );
+        paramsSet.addString( "focalPoint", safeToString( params.getFocalPoint() ) );
         paramsSet.addString( "content", safeToString( params.getContent() ) );
 
         addContent( resultSet, content );

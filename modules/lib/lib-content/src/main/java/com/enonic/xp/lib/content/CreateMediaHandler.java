@@ -1,5 +1,7 @@
 package com.enonic.xp.lib.content;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Supplier;
 
@@ -10,6 +12,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAlreadyExistsException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateMediaParams;
+import com.enonic.xp.image.FocalPoint;
 import com.enonic.xp.lib.content.mapper.ContentMapper;
 
 public final class CreateMediaHandler
@@ -21,11 +24,19 @@ public final class CreateMediaHandler
 
     private ByteSource data;
 
-    private String mimeType;
+    private Double focalX;
 
-    private double focalX = 0.5;
+    private Double focalY;
 
-    private double focalY = 0.5;
+    private List<String> artist;
+
+    private List<String> tags;
+
+    private String caption;
+
+    private String altText;
+
+    private String copyright;
 
     private Supplier<String> idGenerator = () -> Long.toString( ThreadLocalRandom.current().nextLong( Long.MAX_VALUE ) );
 
@@ -66,11 +77,6 @@ public final class CreateMediaHandler
         this.data = data;
     }
 
-    public void setMimeType( final String mimeType )
-    {
-        this.mimeType = mimeType;
-    }
-
     public void setFocalX( final double focalX )
     {
         this.focalX = focalX;
@@ -79,6 +85,31 @@ public final class CreateMediaHandler
     public void setFocalY( final double focalY )
     {
         this.focalY = focalY;
+    }
+
+    public void setArtist( final String[] artist )
+    {
+        this.artist = artist != null ? Arrays.asList( artist ) : null;
+    }
+
+    public void setTags( final String[] tags )
+    {
+        this.tags = tags != null ? Arrays.asList( tags ) : null;
+    }
+
+    public void setCaption( final String caption )
+    {
+        this.caption = caption;
+    }
+
+    public void setAltText( final String altText )
+    {
+        this.altText = altText;
+    }
+
+    public void setCopyright( final String copyright )
+    {
+        this.copyright = copyright;
     }
 
     public void setIdGenerator( final Supplier<String> idGenerator )
@@ -94,10 +125,32 @@ public final class CreateMediaHandler
         final CreateMediaParams params = new CreateMediaParams();
         params.name( name );
         params.parent( this.parentPath != null ? ContentPath.from( this.parentPath ) : null );
-        params.mimeType( this.mimeType );
         params.byteSource( this.data );
-        params.focalX( this.focalX );
-        params.focalY( this.focalY );
+        if ( this.focalX != null || this.focalY != null )
+        {
+            params.focalPoint( new FocalPoint( this.focalX != null ? this.focalX : FocalPoint.DEFAULT.xOffset(),
+                                               this.focalY != null ? this.focalY : FocalPoint.DEFAULT.yOffset() ) );
+        }
+        if ( this.artist != null )
+        {
+            params.artist( this.artist );
+        }
+        if ( this.tags != null )
+        {
+            params.tags( this.tags );
+        }
+        if ( this.caption != null )
+        {
+            params.caption( this.caption );
+        }
+        if ( this.altText != null )
+        {
+            params.altText( this.altText );
+        }
+        if ( this.copyright != null )
+        {
+            params.copyright( this.copyright );
+        }
         return params;
     }
 

@@ -19,6 +19,7 @@ import {
     AggregationsToAggregationResults,
     Attachment,
     ByteSource,
+    ConfigValue,
     Content,
     ContentComponent,
     ContentComponentConstraint,
@@ -41,7 +42,6 @@ import {
     ValidationError,
     Workflow,
     WorkflowState,
-    ConfigValue,
 } from '@enonic-types/core';
 
 const isString = (value: unknown): value is string => value instanceof String || typeof value === 'string';
@@ -1127,9 +1127,13 @@ export function exists(params: ContentExistsParams): boolean {
 export interface CreateMediaParams {
     name: string;
     parentPath?: string;
-    mimeType?: string;
     focalX?: number;
     focalY?: number;
+    artist?: string | string[];
+    tags?: string | string[];
+    caption?: string;
+    altText?: string;
+    copyright?: string;
     data: ByteSource;
     idGenerator?: (v: string) => string;
 }
@@ -1139,11 +1143,19 @@ interface CreateMediaHandler {
 
     setParentPath(value: string | null): void;
 
-    setMimeType(value: string | null): void;
-
     setFocalX(value: number): void;
 
     setFocalY(value: number): void;
+
+    setArtist(value: string[]): void;
+
+    setTags(value: string[]): void;
+
+    setCaption(value: string | null): void;
+
+    setAltText(value: string | null): void;
+
+    setCopyright(value: string | null): void;
 
     setData(value: ByteSource | null): void;
 
@@ -1160,9 +1172,13 @@ interface CreateMediaHandler {
  * @param {object} params JSON with the parameters.
  * @param {string} params.name Name of content.
  * @param {string} [params.parentPath=/] Path to place content under.
- * @param {string} [params.mimeType] Mime-type of the data.
- * @param {number} [params.focalX=0.5] Focal point for X axis (if it's an image).
- * @param {number} [params.focalY=0.5] Focal point for Y axis (if it's an image).
+ * @param {number} [params.focalX] Focal point for X axis (if it's an image).
+ * @param {number} [params.focalY] Focal point for Y axis (if it's an image).
+ * @param {string|string[]} [params.artist] Artist of the media.
+ * @param {string|string[]} [params.tags] Tags of the media.
+ * @param {string} [params.caption] Caption of the media.
+ * @param {string} [params.altText] Alt text of the media.
+ * @param {string} [params.copyright] Copyright of the media.
  * @param  params.data Data (as stream) to use.
  *
  * @returns {object} Returns the created media content.
@@ -1174,15 +1190,23 @@ export function createMedia<Data = Record<string, unknown>, Type extends string 
 
     bean.setName(name);
     bean.setParentPath(__.nullOrValue(params.parentPath));
-    bean.setMimeType(__.nullOrValue(params.mimeType));
     bean.setData(__.nullOrValue(params.data));
     bean.setIdGenerator(__.nullOrValue(params.idGenerator));
+    bean.setCaption(__.nullOrValue(params.caption));
+    bean.setAltText(__.nullOrValue(params.altText));
+    bean.setCopyright(__.nullOrValue(params.copyright));
 
-    if (params.focalX) {
+    if (params.focalX != null) {
         bean.setFocalX(params.focalX);
     }
-    if (params.focalY) {
+    if (params.focalY != null) {
         bean.setFocalY(params.focalY);
+    }
+    if (params.artist != null) {
+        bean.setArtist(([] as string[]).concat(params.artist));
+    }
+    if (params.tags != null) {
+        bean.setTags(([] as string[]).concat(params.tags));
     }
 
     return __.toNativeObject(bean.execute<Data, Type>());
@@ -1541,7 +1565,6 @@ export interface ModifyMediaParams {
     copyright?: string;
     focalX?: number;
     focalY?: number;
-    mimeType?: string;
     tags?: string | string[];
     workflow?: Workflow;
 }
@@ -1555,7 +1578,6 @@ export interface UpdateMediaParams {
     copyright?: string;
     focalX?: number;
     focalY?: number;
-    mimeType?: string;
     tags?: string | string[];
     workflow?: Workflow;
 }
@@ -1580,8 +1602,6 @@ interface ModifyMediaHandler {
 
     setCopyright(value: string | null): void;
 
-    setMimeType(value: string | null): void;
-
     setTags(value: string[]): void;
 
     execute<Data, Type extends string>(): Content<Data, Type>;
@@ -1604,8 +1624,6 @@ interface UpdateMediaHandler {
 
     setCopyright(value: string | null): void;
 
-    setMimeType(value: string | null): void;
-
     setTags(value: string[]): void;
 
     execute<Data, Type extends string>(): Content<Data, Type>;
@@ -1619,14 +1637,13 @@ interface UpdateMediaHandler {
  * @param {string} params.key Path or id to the content.
  * @param {string} params.name Name to the content.
  * @param {function} params.data Data (as stream) to use.
- * @param {string} [params.mimeType] Mime-type of the data.
  * @param {string|string[]} [params.artist] Artist to the content.
  * @param {string} [params.caption] Caption to the content.
  * @param {string} [params.copyright] Copyright to the content.
  * @param {string|string[]} [params.tags] Tags to the content.
  * @param {object} [params.workflow] Workflow information to use. Default has state READY and empty check list.
- * @param {number} [params.focalX=0.5] Focal point for X axis (if it's an image).
- * @param {number} [params.focalY=0.5] Focal point for Y axis (if it's an image).
+ * @param {number} [params.focalX] Focal point for X axis (if it's an image).
+ * @param {number} [params.focalY] Focal point for Y axis (if it's an image).
  *
  * @returns {object} Modified content as JSON.
  */
@@ -1636,7 +1653,6 @@ export function modifyMedia<Data = Record<string, unknown>, Type extends string 
     checkRequiredString(params, 'name');
     checkOptionalString(params, 'caption');
     checkOptionalString(params, 'copyright');
-    checkOptionalString(params, 'mimeType');
     checkOptionalNumber(params, 'focalX');
     checkOptionalNumber(params, 'focalY');
 
@@ -1645,7 +1661,6 @@ export function modifyMedia<Data = Record<string, unknown>, Type extends string 
         name,
         caption,
         copyright,
-        mimeType,
         focalX,
         focalY,
         workflow,
@@ -1660,7 +1675,6 @@ export function modifyMedia<Data = Record<string, unknown>, Type extends string 
     bean.setData(data);
     bean.setCaption(__.nullOrValue(caption));
     bean.setCopyright(__.nullOrValue(copyright));
-    bean.setMimeType(__.nullOrValue(mimeType));
     bean.setArtist(([] as string[]).concat(artist));
     bean.setTags(([] as string[]).concat(tags));
 
@@ -1682,14 +1696,13 @@ export function modifyMedia<Data = Record<string, unknown>, Type extends string 
  * @param {string} params.key Path or id to the content.
  * @param {string} params.name Name to the content.
  * @param {function} params.data Data (as stream) to use.
- * @param {string} [params.mimeType] Mime-type of the data.
  * @param {string|string[]} [params.artist] Artist to the content.
  * @param {string} [params.caption] Caption to the content.
  * @param {string} [params.copyright] Copyright to the content.
  * @param {string|string[]} [params.tags] Tags to the content.
  * @param {object} [params.workflow] Workflow information to use. Default has state READY and empty check list.
- * @param {number} [params.focalX=0.5] Focal point for X axis (if it's an image).
- * @param {number} [params.focalY=0.5] Focal point for Y axis (if it's an image).
+ * @param {number} [params.focalX] Focal point for X axis (if it's an image).
+ * @param {number} [params.focalY] Focal point for Y axis (if it's an image).
  *
  * @returns {object} Modified content as JSON.
  */
@@ -1699,7 +1712,6 @@ export function updateMedia<Data = Record<string, unknown>, Type extends string 
     checkRequiredString(params, 'name');
     checkOptionalString(params, 'caption');
     checkOptionalString(params, 'copyright');
-    checkOptionalString(params, 'mimeType');
     checkOptionalNumber(params, 'focalX');
     checkOptionalNumber(params, 'focalY');
 
@@ -1708,7 +1720,6 @@ export function updateMedia<Data = Record<string, unknown>, Type extends string 
         name,
         caption,
         copyright,
-        mimeType,
         focalX,
         focalY,
         workflow,
@@ -1723,7 +1734,6 @@ export function updateMedia<Data = Record<string, unknown>, Type extends string 
     bean.setData(data);
     bean.setCaption(__.nullOrValue(caption));
     bean.setCopyright(__.nullOrValue(copyright));
-    bean.setMimeType(__.nullOrValue(mimeType));
     bean.setArtist(([] as string[]).concat(artist));
     bean.setTags(([] as string[]).concat(tags));
 
