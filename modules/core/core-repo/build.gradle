@@ -15,6 +15,8 @@ dependencies {
     runtimeOnly libs.jackson.dataformat.yaml
 
     implementation libs.commons.compress
+    implementation libs.tika.core
+    implementation libs.tika.parser.image
 
     testImplementation( testFixtures( project( ":core:core-api" ) ) )
     testImplementation( testFixtures( project( ":core:core-blobstore" ) ) )

@@ -1,6 +1,5 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.List;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.Content;
@@ -40,50 +39,42 @@ final class CreateMediaCommand
     {
         final MediaInfo mediaInfo = mediaInfoService.parseMediaInfo( params.getByteSource() );
 
-        if ( ( params.getMimeType() == null || isBinaryContentType( params.getMimeType() ) ) && mediaInfo.getMediaType() != null )
-        {
-            params.mimeType( mediaInfo.getMediaType() );
-        }
+        final String mimeType = requireNonNull( mediaInfo.getMediaType(), "Unable to resolve media type" );
 
-        requireNonNull( params.getMimeType(), "Unable to resolve media type" );
-
-        final ContentTypeName resolvedTypeFromMimeType = ContentTypeFromMimeTypeResolver.resolve( params.getMimeType() );
+        final ContentTypeName resolvedTypeFromMimeType = ContentTypeFromMimeTypeResolver.resolve( mimeType );
         final ContentTypeName type = resolvedTypeFromMimeType != null
             ? resolvedTypeFromMimeType
-            : isExecutableContentType( params.getMimeType(), params.getName() )
-                ? ContentTypeName.executableMedia()
-                : ContentTypeName.unknownMedia();
+            : guessExecutableByFilename( mimeType, params.getName().toString() );
 
         final PropertyTree data = new PropertyTree();
-        new MediaFormDataBuilder().
-            type( type ).
-            attachment( params.getName().toString() ).
-            focalX( params.getFocalX() ).
-            focalY( params.getFocalY() ).
-            caption( params.getCaption() ).
-            altText( params.getAltText() ).
-            artist( params.getArtist() != null ? List.of( params.getArtist() ) : List.of() ).
-            copyright( params.getCopyright() ).
-            tags( params.getTags() != null ? List.of( params.getTags() ) : List.of() ).
-            build( data );
+        new MediaFormDataBuilder().type( type )
+            .attachment( params.getName().toString() )
+            .focalPoint( params.getFocalPoint() )
+            .orientation( mediaInfo.getImageOrientation() )
+            .caption( params.getCaption() )
+            .altText( params.getAltText() )
+            .artist( params.getArtistList() )
+            .copyright( params.getCopyright() )
+            .tags( params.getTagList() )
+            .build( data );
 
-        final CreateAttachment mediaAttachment = CreateAttachment.create().
-            name( params.getName().toString() ).
-            mimeType( params.getMimeType() ).
-            label( "source" ).
-            byteSource( params.getByteSource() ).
-            text( type.isTextualMedia() ? mediaInfo.getTextContent() : null ).
-            build();
+        final CreateAttachment mediaAttachment = CreateAttachment.create()
+            .name( params.getName().toString() )
+            .mimeType( mimeType )
+            .label( "source" )
+            .byteSource( params.getByteSource() )
+            .text( type.isTextualMedia() ? mediaInfo.getTextContent() : null )
+            .build();
 
-        final CreateContentParams createContentParams = CreateContentParams.create().
-            name( params.getName() ).
-            parent( params.getParent() ).
-            requireValid( true ).
-            type( type ).
-            displayName( trimExtension( params.getName() ) ).
-            contentData( data ).
-            createAttachments( CreateAttachments.from( mediaAttachment ) ).
-            build();
+        final CreateContentParams createContentParams = CreateContentParams.create()
+            .name( params.getName() )
+            .parent( params.getParent() )
+            .requireValid( true )
+            .type( type )
+            .displayName( trimExtension( params.getName() ) )
+            .contentData( data )
+            .createAttachments( CreateAttachments.from( mediaAttachment ) )
+            .build();
 
         final CreateContentCommand createCommand = CreateContentCommand.create()
             .nodeService( this.nodeService )
@@ -110,7 +101,7 @@ final class CreateMediaCommand
     {
         final String nameAsString = name.toString();
         final int endIndex = nameAsString.lastIndexOf( '.' );
-        return (endIndex < 0) ? nameAsString : nameAsString.substring(0, endIndex);
+        return ( endIndex < 0 ) ? nameAsString : nameAsString.substring( 0, endIndex );
     }
 
     public static Builder create()

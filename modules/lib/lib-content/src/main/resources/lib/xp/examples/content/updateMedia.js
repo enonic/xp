@@ -13,7 +13,6 @@ var updateResult = contentLib.updateMedia({
     artist: ['Artist 1', 'Artist 2'],
     caption: 'Caption',
     copyright: 'Copyright',
-    mimeType: 'text/plan',
     tags: ['tag1', 'tag2']
 });
 // END
@@ -35,7 +34,6 @@ var expectedJson = {
             "Artist 2"
         ],
         "copyright": "Copyright",
-        "mimeType": "text/plan",
         "tags": [
             "tag1",
             "tag2"

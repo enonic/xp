@@ -8,9 +8,9 @@ import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.Media;
 import com.enonic.xp.content.Mixin;
 import com.enonic.xp.content.Mixins;
-import com.enonic.xp.content.Media;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
@@ -68,7 +68,7 @@ public final class ContentFixtures
             .sha512( "ec25d6e4126c7064f82aaab8b34693fc" )
             .build();
         final PropertyTree data = newPropertyTree();
-        data.addString( "media", attachment.getName() );
+        data.addSet( "media" ).addString( "attachment", attachment.getName() );
 
         final PropertyTree mediaData = newPropertyTree();
         mediaData.setLong( IMAGE_INFO_PIXEL_SIZE, 300L * 200L );

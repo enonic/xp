@@ -1,7 +1,13 @@
 package com.enonic.xp.content;
 
 import java.util.List;
+
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
 import com.google.common.io.ByteSource;
+
+import com.enonic.xp.image.FocalPoint;
 
 import static java.util.Objects.requireNonNull;
 
@@ -12,57 +18,73 @@ public final class UpdateMediaParams
 
     private ContentName name;
 
-    private String mimeType;
-
     private ByteSource byteSource;
 
-    private double focalX = 0.5;
+    private @Nullable FocalPoint focalPoint;
 
-    private double focalY = 0.5;
+    private @Nullable String caption;
 
-    private String caption;
+    private @Nullable String altText;
+
+    private @Nullable String copyright;
 
     private List<String> artist = List.of();
 
-    private String copyright;
-
-    private String altText;
-
     private List<String> tags = List.of();
 
-    public UpdateMediaParams content( final ContentId value )
+    public UpdateMediaParams content( final @NonNull ContentId value )
     {
         this.content = value;
         return this;
     }
 
-    public UpdateMediaParams name( final String value )
+    public UpdateMediaParams name( final @NonNull String value )
     {
         this.name = ContentName.from( value );
         return this;
     }
 
+    /**
+     * @deprecated mime type is auto-detected from the binary; this setter is a no-op.
+     */
+    @Deprecated
+    @SuppressWarnings("unused")
     public UpdateMediaParams mimeType( final String value )
     {
-        this.mimeType = value;
         return this;
     }
 
-    public UpdateMediaParams byteSource( final ByteSource value )
+    public UpdateMediaParams byteSource( final @NonNull ByteSource value )
     {
         this.byteSource = value;
         return this;
     }
 
+    /**
+     * @deprecated use {@link #focalPoint(FocalPoint)} instead.
+     */
+    @Deprecated
     public UpdateMediaParams focalX( final double focalX )
     {
-        this.focalX = focalX;
+        final double focalY = focalPoint == null ? FocalPoint.DEFAULT.yOffset() : focalPoint.yOffset();
+        this.focalPoint = new FocalPoint( focalX, focalY );
         return this;
     }
 
+    /**
+     * @deprecated use {@link #focalPoint(FocalPoint)} instead.
+     */
+    @Deprecated
     public UpdateMediaParams focalY( final double focalY )
     {
-        this.focalY = focalY;
+        final double focalX = focalPoint == null ? FocalPoint.DEFAULT.xOffset() : focalPoint.xOffset();
+        this.focalPoint = new FocalPoint( focalX, focalY );
+        return this;
+    }
+
+    public UpdateMediaParams focalPoint( final @Nullable FocalPoint focalPoint )
+    {
+        this.focalPoint = focalPoint;
         return this;
     }
 
@@ -72,7 +94,7 @@ public final class UpdateMediaParams
         return this;
     }
 
-    public UpdateMediaParams artist( final List<String> artist )
+    public UpdateMediaParams artist( final @NonNull List<String> artist )
     {
         this.artist = List.copyOf( artist );
         return this;
@@ -90,7 +112,7 @@ public final class UpdateMediaParams
         return this;
     }
 
-    public UpdateMediaParams tags( final List<String> tags )
+    public UpdateMediaParams tags( final @NonNull List<String> tags )
     {
         this.tags = List.copyOf( tags );
         return this;
@@ -113,24 +135,32 @@ public final class UpdateMediaParams
         return name;
     }
 
-    public String getMimeType()
-    {
-        return mimeType;
-    }
-
     public ByteSource getByteSource()
     {
         return byteSource;
     }
 
+    /**
+     * @deprecated use {@link #getFocalPoint()} instead.
+     */
+    @Deprecated
     public double getFocalX()
     {
-        return focalX;
+        return focalPoint == null ? FocalPoint.DEFAULT.xOffset() : focalPoint.xOffset();
     }
 
+    /**
+     * @deprecated use {@link #getFocalPoint()} instead.
+     */
+    @Deprecated
     public double getFocalY()
     {
-        return focalY;
+        return focalPoint == null ? FocalPoint.DEFAULT.yOffset() : focalPoint.yOffset();
+    }
+
+    public @Nullable FocalPoint getFocalPoint()
+    {
+        return focalPoint;
     }
 
     public String getCaption()
