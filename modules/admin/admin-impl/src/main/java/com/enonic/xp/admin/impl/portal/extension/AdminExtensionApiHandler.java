@@ -115,6 +115,7 @@ public class AdminExtensionApiHandler
             webRequest instanceof PortalRequest ? (PortalRequest) webRequest : new PortalRequest( webRequest );
 
         portalRequest.setApplicationKey( descriptorKey.getApplicationKey() );
+        portalRequest.setContextPath( webRequest.getBasePath() + "/_/admin:extension/" + descriptorKey );
 
         return portalRequest;
     }
