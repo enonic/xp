@@ -40,6 +40,7 @@ public enum ImageOrientation
         return LOOKUP_TABLE.getOrDefault( value, DEFAULT );
     }
 
+    @Deprecated
     public static ImageOrientation from( final String value )
     {
         if ( value == null )
@@ -56,6 +57,7 @@ public enum ImageOrientation
         }
     }
 
+    @Deprecated
     public static boolean isValid( final String value )
     {
         if ( value == null )

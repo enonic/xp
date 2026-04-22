@@ -15,6 +15,7 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.macro.MacroService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
@@ -670,7 +671,7 @@ class PortalUrlServiceImpl_attachmentUrlTest
         when( media.getId() ).thenReturn( contentId );
         when( media.getPath() ).thenReturn( ContentPath.from( "/" + id ) );
         when( media.getName() ).thenReturn( ContentName.from( name ) );
-        when( media.getMediaAttachment() ).thenReturn( attachment );
+        when( media.getData() ).thenReturn( new PropertyTree() );
         when( media.getAttachments() ).thenReturn( Attachments.from( attachment ) );
 
         return media;

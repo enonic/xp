@@ -64,7 +64,7 @@ public final class ContentFixtures
         final Attachment attachment = Attachment.create()
             .name( "logo.png" )
             .mimeType( "image/png" )
-            .label( "small" )
+            .label( "source" )
             .sha512( "ec25d6e4126c7064f82aaab8b34693fc" )
             .build();
         final PropertyTree data = newPropertyTree();

@@ -126,6 +126,15 @@ public abstract class Value
         return ValueTypes.LONG.convert( object );
     }
 
+    public Integer asInteger()
+    {
+        if ( object == null || "".equals( object ) )
+        {
+            return null;
+        }
+        return ValueTypes.LONG.convert( object ).intValue();
+    }
+
     public Boolean asBoolean()
     {
         if ( object == null )
