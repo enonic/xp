@@ -159,7 +159,7 @@ class ImageHandlerTest
     private Content createContent( final String id, final String contentPath, final Attachment... attachments )
     {
         final PropertyTree data = new PropertyTree();
-        data.addString( "media", attachments[0].getName() );
+        data.addSet( "media" ).addString( "attachment", attachments[0].getName() );
 
         return Media.create()
             .id( ContentId.from( id ) )

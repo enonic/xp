@@ -25,7 +25,6 @@ import com.enonic.xp.content.Mixin;
 import com.enonic.xp.content.Mixins;
 import com.enonic.xp.core.impl.content.schema.BuiltinMixinsTypesAccessor;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinService;
@@ -67,8 +66,7 @@ class ImageContentProcessorTest
         final CreateAttachments createAttachments = createAttachments();
         final CreateContentParams params = createContentParams( createAttachments );
 
-        final ProcessCreateParams processCreateParams = new ProcessCreateParams( params, MediaInfo.create().
-            build(), ContentIds.empty() );
+        final ProcessCreateParams processCreateParams = new ProcessCreateParams( params, MediaInfo.create().build(), ContentIds.empty() );
 
         final ProcessCreateResult result = this.imageContentProcessor.processCreate( processCreateParams );
 
@@ -79,8 +77,9 @@ class ImageContentProcessorTest
     void testProcessCreateWithGeoData()
     {
         final CreateContentParams params = createContentParams( createAttachments() );
-        final ProcessCreateParams processCreateParams = new ProcessCreateParams( params, MediaInfo.create().
-            addMetadata( "geo lat", "1" ).addMetadata( "geo long", "2" ).build(), ContentIds.empty() );
+        final ProcessCreateParams processCreateParams =
+            new ProcessCreateParams( params, MediaInfo.create().addMetadata( "geo lat", "1" ).addMetadata( "geo long", "2" ).build(),
+                                     ContentIds.empty() );
         final GeoPoint geoPoint = new GeoPoint( 1.0, 2.0 );
         final ProcessCreateResult result = this.imageContentProcessor.processCreate( processCreateParams );
         final Mixin geoMixin = result.getCreateContentParams().getMixins().getByName( MediaInfo.GPS_INFO_METADATA_NAME );
@@ -91,8 +90,11 @@ class ImageContentProcessorTest
     void testProcessCreateWithMixins()
     {
         final CreateContentParams params = createContentParams( createAttachments() );
-        final ProcessCreateParams processCreateParams = new ProcessCreateParams( params, MediaInfo.create().
-            addMetadata( "exposure time", "1" ).addMetadata( "gps altitude ", "2" ).addMetadata( "bytesize", "13" ).build(), ContentIds.empty() );
+        final ProcessCreateParams processCreateParams = new ProcessCreateParams( params, MediaInfo.create()
+            .addMetadata( "exposure time", "1" )
+            .addMetadata( "gps altitude ", "2" )
+            .addMetadata( "bytesize", "13" )
+            .build(), ContentIds.empty() );
         final ProcessCreateResult result = this.imageContentProcessor.processCreate( processCreateParams );
         final Mixins mixins = result.getCreateContentParams().getMixins();
         assertEquals( "1", mixins.getByName( MediaInfo.CAMERA_INFO_METADATA_NAME ).getData().getString( "shutterTime", 0 ) );
@@ -107,7 +109,7 @@ class ImageContentProcessorTest
         when( contentService.getBinary( Mockito.any(), Mockito.any() ) ).thenReturn( this.loadImage( "cat-small.jpg" ) );
 
         final PropertyTree data = new PropertyTree();
-        data.addProperty( ContentPropertyNames.MEDIA, ValueFactory.newString( "MyImage.jpg" ) );
+        data.addSet( ContentPropertyNames.MEDIA ).addString( ContentPropertyNames.MEDIA_ATTACHMENT, "MyImage.jpg" );
 
         final Media content = Media.create()
             .name( "myContentName" )
@@ -138,7 +140,7 @@ class ImageContentProcessorTest
         when( contentService.getBinary( Mockito.any(), Mockito.any() ) ).thenReturn( byteSource );
 
         final PropertyTree data = new PropertyTree();
-        data.addProperty( ContentPropertyNames.MEDIA, ValueFactory.newString( "CorruptedImage.jpg" ) );
+        data.addSet( ContentPropertyNames.MEDIA ).addString( ContentPropertyNames.MEDIA_ATTACHMENT, "CorruptedImage.jpg" );
         final Media content = Media.create()
             .name( "myContentName" )
             .type( ContentTypeName.imageMedia() )
@@ -152,17 +154,21 @@ class ImageContentProcessorTest
 
         final ProcessUpdateResult result = this.imageContentProcessor.processUpdate( processUpdateParams );
 
-        assertThat(result.getContent().getMixins()).map( Mixin::getName ).containsExactly( MediaInfo.IMAGE_INFO_METADATA_NAME );
+        assertThat( result.getContent().getMixins() ).map( Mixin::getName ).containsExactly( MediaInfo.IMAGE_INFO_METADATA_NAME );
     }
 
     @Test
     void testProcessUpdateWithMediaInfo()
     {
         final Content content = Content.create().name( "myContentName" ).parentPath( ContentPath.ROOT ).build();
-        final ProcessUpdateParams processUpdateParams = ProcessUpdateParams.create().content( content ).
-            mediaInfo( MediaInfo.create().
-            addMetadata( "exposure time", "1" ).addMetadata( "gps altitude ", "2" ).addMetadata( "bytesize", "13" ).build() ).
-            build();
+        final ProcessUpdateParams processUpdateParams = ProcessUpdateParams.create()
+            .content( content )
+            .mediaInfo( MediaInfo.create()
+                            .addMetadata( "exposure time", "1" )
+                            .addMetadata( "gps altitude ", "2" )
+                            .addMetadata( "bytesize", "13" )
+                            .build() )
+            .build();
 
         final ProcessUpdateResult result = this.imageContentProcessor.processUpdate( processUpdateParams );
 
@@ -176,7 +182,8 @@ class ImageContentProcessorTest
     void testProcessUpdateWithMediaInfoOverwritten()
     {
         final Content content = Content.create().name( "myContentName" ).parentPath( ContentPath.ROOT ).data( new PropertyTree() ).build();
-        final ProcessUpdateParams processUpdateParams = ProcessUpdateParams.create().content( content )
+        final ProcessUpdateParams processUpdateParams = ProcessUpdateParams.create()
+            .content( content )
             .mediaInfo( MediaInfo.create()
                             .addMetadata( "exposure time", "1" )
                             .addMetadata( "exif Subifd Exposure Time", "2" )
@@ -192,24 +199,24 @@ class ImageContentProcessorTest
 
     private CreateAttachments createAttachments()
     {
-        return CreateAttachments.create().
-            add( CreateAttachment.create().
-            name( "imageAttach" ).
-            byteSource( ByteSource.wrap( "this is image".getBytes() ) ).
-            text( "This is the image" ).
-            build() ).
-            build();
+        return CreateAttachments.create()
+            .add( CreateAttachment.create()
+                      .name( "imageAttach" )
+                      .byteSource( ByteSource.wrap( "this is image".getBytes() ) )
+                      .text( "This is the image" )
+                      .build() )
+            .build();
     }
 
     private CreateContentParams createContentParams( final CreateAttachments createAttachments )
     {
-        return CreateContentParams.create().
-            parent( ContentPath.ROOT ).
-            name( "myContent" ).
-            contentData( new PropertyTree() ).
-            type( ContentTypeName.imageMedia() ).
-            createAttachments( createAttachments ).
-            build();
+        return CreateContentParams.create()
+            .parent( ContentPath.ROOT )
+            .name( "myContent" )
+            .contentData( new PropertyTree() )
+            .type( ContentTypeName.imageMedia() )
+            .createAttachments( createAttachments )
+            .build();
     }
 
     protected ByteSource loadImage( final String name )

@@ -144,10 +144,9 @@ class ContentAuditLogSupportImplTest
     void updateMetadataContent()
         throws Exception
     {
-        final UpdateContentMetadataParams params = UpdateContentMetadataParams.create()
-            .contentId( ContentId.from( "contentid" ) )
-            .editor( edit -> {} )
-            .build();
+        final UpdateContentMetadataParams params =
+            UpdateContentMetadataParams.create().contentId( ContentId.from( "contentid" ) ).editor( edit -> {
+            } ).build();
 
         final Content content = Content.create()
             .id( ContentId.from( "contentid" ) )
@@ -157,9 +156,7 @@ class ContentAuditLogSupportImplTest
             .parentPath( ContentPath.ROOT )
             .build();
 
-        final UpdateContentMetadataResult result = UpdateContentMetadataResult.create()
-            .content( content )
-            .build();
+        final UpdateContentMetadataResult result = UpdateContentMetadataResult.create().content( content ).build();
 
         ArgumentCaptor<LogAuditLogParams> argumentCaptor = test( support::updateMetadata, params, result );
 
@@ -190,7 +187,8 @@ class ContentAuditLogSupportImplTest
                                                             .name( "MyText.txp" )
                                                             .byteSource( ByteSource.wrap( "text data".getBytes( StandardCharsets.UTF_8 ) ) )
                                                             .text( "text data" )
-                                                            .build() ) ).patcher( edit -> edit.displayName.setValue( "New Display Name" ) )
+                                                            .build() ) )
+            .patcher( edit -> edit.displayName.setValue( "New Display Name" ) )
             .build();
 
         final PatchContentResult result = PatchContentResult.create()
@@ -254,9 +252,7 @@ class ContentAuditLogSupportImplTest
     void testSyncProject()
         throws Exception
     {
-        final ProjectSyncParams params = ProjectSyncParams.create()
-            .targetProject( ProjectName.from( "target-project" ) )
-            .build();
+        final ProjectSyncParams params = ProjectSyncParams.create().targetProject( ProjectName.from( "target-project" ) ).build();
 
         ArgumentCaptor<LogAuditLogParams> argumentCaptor = testSingle( support::syncProject, params );
 
@@ -271,7 +267,6 @@ class ContentAuditLogSupportImplTest
         final CreateMediaParams params = new CreateMediaParams();
         params.name( "mediaName" );
         params.parent( ContentPath.ROOT );
-        params.mimeType( "image/jpeg" );
 
         final Content content = Media.create()
             .id( ContentId.from( "mediaid" ) )
@@ -285,7 +280,6 @@ class ContentAuditLogSupportImplTest
 
         assertEquals( "system.content.create", argumentCaptor.getValue().getType() );
         assertEquals( "mediaName", argumentCaptor.getValue().getData().getSet( "params" ).getString( "name" ) );
-        assertEquals( "image/jpeg", argumentCaptor.getValue().getData().getSet( "params" ).getString( "mimeType" ) );
         assertEquals( "/", argumentCaptor.getValue().getData().getSet( "params" ).getString( "parent" ) );
         assertEquals( "mediaid", argumentCaptor.getValue().getData().getSet( "result" ).getString( "id" ) );
         assertEquals( "/mediaName", argumentCaptor.getValue().getData().getSet( "result" ).getString( "path" ) );
@@ -298,7 +292,6 @@ class ContentAuditLogSupportImplTest
         final UpdateMediaParams params = new UpdateMediaParams();
         params.content( ContentId.from( "mediaid" ) );
         params.name( "updatedMediaName" );
-        params.mimeType( "image/png" );
 
         final Content content = Media.create()
             .id( ContentId.from( "mediaid" ) )
@@ -312,7 +305,6 @@ class ContentAuditLogSupportImplTest
 
         assertEquals( "system.content.update", argumentCaptor.getValue().getType() );
         assertEquals( "updatedMediaName", argumentCaptor.getValue().getData().getSet( "params" ).getString( "name" ) );
-        assertEquals( "image/png", argumentCaptor.getValue().getData().getSet( "params" ).getString( "mimeType" ) );
         assertEquals( "mediaid", argumentCaptor.getValue().getData().getSet( "params" ).getString( "content" ) );
         assertEquals( "mediaid", argumentCaptor.getValue().getData().getSet( "result" ).getString( "id" ) );
         assertEquals( "/updatedMediaName", argumentCaptor.getValue().getData().getSet( "result" ).getString( "path" ) );
@@ -322,9 +314,7 @@ class ContentAuditLogSupportImplTest
     void testDelete()
         throws Exception
     {
-        final DeleteContentParams params = DeleteContentParams.create()
-            .contentPath( ContentPath.from( "/content-to-delete" ) )
-            .build();
+        final DeleteContentParams params = DeleteContentParams.create().contentPath( ContentPath.from( "/content-to-delete" ) ).build();
 
         final DeleteContentsResult result = DeleteContentsResult.create()
             .addDeleted( ContentId.from( "deletedid" ) )
@@ -336,20 +326,18 @@ class ContentAuditLogSupportImplTest
         assertEquals( "system.content.delete", argumentCaptor.getValue().getType() );
         assertEquals( "/content-to-delete", argumentCaptor.getValue().getData().getSet( "params" ).getString( "contentPath" ) );
         assertEquals( List.of( "deletedid" ), argumentCaptor.getValue().getData().getSet( "result" ).getStrings( "deletedContents" ) );
-        assertEquals( List.of( "unpublishedid" ), argumentCaptor.getValue().getData().getSet( "result" ).getStrings( "unpublishedContents" ) );
+        assertEquals( List.of( "unpublishedid" ),
+                      argumentCaptor.getValue().getData().getSet( "result" ).getStrings( "unpublishedContents" ) );
     }
 
     @Test
     void testPublish()
         throws Exception
     {
-        final PushContentParams params = PushContentParams.create()
-            .contentIds( ContentIds.from( ContentId.from( "contentid" ) ) )
-            .build();
+        final PushContentParams params = PushContentParams.create().contentIds( ContentIds.from( ContentId.from( "contentid" ) ) ).build();
 
-        final PublishContentResult result = PublishContentResult.create()
-            .add( PublishContentResult.Result.success( ContentId.from( "contentid" ) ) )
-            .build();
+        final PublishContentResult result =
+            PublishContentResult.create().add( PublishContentResult.Result.success( ContentId.from( "contentid" ) ) ).build();
 
         ArgumentCaptor<LogAuditLogParams> argumentCaptor = test( support::publish, params, result );
 
@@ -362,13 +350,10 @@ class ContentAuditLogSupportImplTest
     void testUnpublishContent()
         throws Exception
     {
-        final UnpublishContentParams params = UnpublishContentParams.create()
-            .contentIds( ContentIds.from( ContentId.from( "contentid" ) ) )
-            .build();
+        final UnpublishContentParams params =
+            UnpublishContentParams.create().contentIds( ContentIds.from( ContentId.from( "contentid" ) ) ).build();
 
-        final UnpublishContentsResult result = UnpublishContentsResult.create()
-            .addUnpublished( ContentId.from( "contentid" ) )
-            .build();
+        final UnpublishContentsResult result = UnpublishContentsResult.create().addUnpublished( ContentId.from( "contentid" ) ).build();
 
         ArgumentCaptor<LogAuditLogParams> argumentCaptor = test( support::unpublishContent, params, result );
 
@@ -381,19 +366,16 @@ class ContentAuditLogSupportImplTest
     void testDuplicate()
         throws Exception
     {
-        final DuplicateContentParams params = DuplicateContentParams.create()
-            .contentId( ContentId.from( "contentid" ) )
-            .build();
+        final DuplicateContentParams params = DuplicateContentParams.create().contentId( ContentId.from( "contentid" ) ).build();
 
-        final DuplicateContentsResult result = DuplicateContentsResult.create()
-            .addDuplicated( ContentId.from( "duplicatedid" ) )
-            .build();
+        final DuplicateContentsResult result = DuplicateContentsResult.create().addDuplicated( ContentId.from( "duplicatedid" ) ).build();
 
         ArgumentCaptor<LogAuditLogParams> argumentCaptor = test( support::duplicate, params, result );
 
         assertEquals( "system.content.duplicate", argumentCaptor.getValue().getType() );
         assertEquals( "contentid", argumentCaptor.getValue().getData().getSet( "params" ).getString( "contentId" ) );
-        assertEquals( List.of( "duplicatedid" ), argumentCaptor.getValue().getData().getSet( "result" ).getStrings( "duplicatedContents" ) );
+        assertEquals( List.of( "duplicatedid" ),
+                      argumentCaptor.getValue().getData().getSet( "result" ).getStrings( "duplicatedContents" ) );
     }
 
     @Test
@@ -405,9 +387,7 @@ class ContentAuditLogSupportImplTest
             .parentContentPath( ContentPath.from( "/new-parent" ) )
             .build();
 
-        final MoveContentsResult result = MoveContentsResult.create()
-            .addMoved( ContentId.from( "movedid" ) )
-            .build();
+        final MoveContentsResult result = MoveContentsResult.create().addMoved( ContentId.from( "movedid" ) ).build();
 
         ArgumentCaptor<LogAuditLogParams> argumentCaptor = test( support::move, params, result );
 
@@ -421,13 +401,9 @@ class ContentAuditLogSupportImplTest
     void testArchive()
         throws Exception
     {
-        final ArchiveContentParams params = ArchiveContentParams.create()
-            .contentId( ContentId.from( "contentid" ) )
-            .build();
+        final ArchiveContentParams params = ArchiveContentParams.create().contentId( ContentId.from( "contentid" ) ).build();
 
-        final ArchiveContentsResult result = ArchiveContentsResult.create()
-            .addArchived( ContentId.from( "archivedid" ) )
-            .build();
+        final ArchiveContentsResult result = ArchiveContentsResult.create().addArchived( ContentId.from( "archivedid" ) ).build();
 
         ArgumentCaptor<LogAuditLogParams> argumentCaptor = test( support::archive, params, result );
 
@@ -440,14 +416,10 @@ class ContentAuditLogSupportImplTest
     void testRestore()
         throws Exception
     {
-        final RestoreContentParams params = RestoreContentParams.create()
-            .contentId( ContentId.from( "contentid" ) )
-            .build();
+        final RestoreContentParams params = RestoreContentParams.create().contentId( ContentId.from( "contentid" ) ).build();
 
-        final RestoreContentsResult result = RestoreContentsResult.create()
-            .addRestored( ContentId.from( "restoredid" ) )
-            .parentPath( ContentPath.ROOT )
-            .build();
+        final RestoreContentsResult result =
+            RestoreContentsResult.create().addRestored( ContentId.from( "restoredid" ) ).parentPath( ContentPath.ROOT ).build();
 
         ArgumentCaptor<LogAuditLogParams> argumentCaptor = test( support::restore, params, result );
 
@@ -461,9 +433,7 @@ class ContentAuditLogSupportImplTest
     void testSort()
         throws Exception
     {
-        final SortContentParams params = SortContentParams.create()
-            .contentId( ContentId.from( "contentid" ) )
-            .build();
+        final SortContentParams params = SortContentParams.create().contentId( ContentId.from( "contentid" ) ).build();
 
         final Content content = Content.create()
             .id( ContentId.from( "contentid" ) )
@@ -473,10 +443,7 @@ class ContentAuditLogSupportImplTest
             .parentPath( ContentPath.ROOT )
             .build();
 
-        final SortContentResult result = SortContentResult.create()
-            .content( content )
-            .movedChildren( ContentIds.empty() )
-            .build();
+        final SortContentResult result = SortContentResult.create().content( content ).movedChildren( ContentIds.empty() ).build();
 
         ArgumentCaptor<LogAuditLogParams> argumentCaptor = test( support::sort, params, result );
 
@@ -490,12 +457,10 @@ class ContentAuditLogSupportImplTest
     void testApplyPermissions()
         throws Exception
     {
-        final ApplyContentPermissionsParams params = ApplyContentPermissionsParams.create()
-            .contentId( ContentId.from( "contentid" ) )
-            .build();
+        final ApplyContentPermissionsParams params =
+            ApplyContentPermissionsParams.create().contentId( ContentId.from( "contentid" ) ).build();
 
-        final ApplyContentPermissionsResult result = ApplyContentPermissionsResult.create()
-            .build();
+        final ApplyContentPermissionsResult result = ApplyContentPermissionsResult.create().build();
 
         ArgumentCaptor<LogAuditLogParams> argumentCaptor = test( support::applyPermissions, params, result );
 

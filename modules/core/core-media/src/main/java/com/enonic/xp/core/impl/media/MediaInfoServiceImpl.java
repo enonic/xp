@@ -39,6 +39,12 @@ public final class MediaInfoServiceImpl
         addMetadata( byteSource, builder, extractedData );
         builder.setTextContent( extractedData.getText() );
 
+        final String orientation = extractedData.getImageOrientation();
+        if ( ImageOrientation.isValid( orientation ) )
+        {
+            builder.imageOrientation( ImageOrientation.from( orientation ) );
+        }
+
         return builder.build();
     }
 
@@ -65,14 +71,6 @@ public final class MediaInfoServiceImpl
     @Override
     public ImageOrientation getImageOrientation( ByteSource byteSource )
     {
-        final ExtractedData extractedData = binaryExtractor.extract( byteSource );
-        final String orientation = extractedData.getImageOrientation();
-
-        if ( ImageOrientation.isValid( orientation ) )
-        {
-            return ImageOrientation.from( orientation );
-        }
-
-        return null;
+        return parseMediaInfo( byteSource ).getImageOrientation();
     }
 }

@@ -1,16 +1,15 @@
 package com.enonic.xp.content;
 
 
+import org.jspecify.annotations.Nullable;
+
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
-import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.data.ValueType;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.image.Cropping;
 import com.enonic.xp.image.FocalPoint;
 import com.enonic.xp.media.ImageOrientation;
-import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 
@@ -29,30 +28,13 @@ public final class Media
 
     public Attachment getMediaAttachment()
     {
-        final PropertyTree contentData = getData();
-        final Property mediaProperty = contentData.getProperty( ContentPropertyNames.MEDIA );
-        if ( mediaProperty == null )
-        {
-            return null;
-        }
-        final ValueType mediaPropertyType = mediaProperty.getType();
-
-        final String mediaAttachmentName;
-        if ( mediaPropertyType.equals( ValueTypes.STRING ) )
-        {
-            // backwards compatibility
-            mediaAttachmentName = getData().getString( ContentPropertyNames.MEDIA );
-        }
-        else if ( mediaPropertyType.equals( ValueTypes.PROPERTY_SET ) )
-        {
-            final PropertySet mediaData = getData().getSet( ContentPropertyNames.MEDIA );
-            mediaAttachmentName = mediaData.getString( ContentPropertyNames.MEDIA_ATTACHMENT );
-        }
-        else
+        final PropertySet mediaData = mediaData();
+        if ( mediaData == null )
         {
             return null;
         }
 
+        final String mediaAttachmentName = mediaData.getString( ContentPropertyNames.MEDIA_ATTACHMENT );
         if ( mediaAttachmentName == null )
         {
             return null;
@@ -61,48 +43,15 @@ public final class Media
         return getAttachments().byName( mediaAttachmentName );
     }
 
-    private ImageOrientation getOrientationFromMetaData()
+    public @Nullable ImageOrientation getOrientation()
     {
-        final Mixin cameraInfo = getMixins().getByName( MediaInfo.CAMERA_INFO_METADATA_NAME );
-        if ( cameraInfo != null && cameraInfo.getData().hasProperty( ContentPropertyNames.ORIENTATION ) )
-        {
-            final String orientationValue = cameraInfo.getData().getString( ContentPropertyNames.ORIENTATION );
-            if ( ImageOrientation.isValid( orientationValue ) )
-            {
-                return ImageOrientation.from( orientationValue );
-            }
-        }
-        return null;
-    }
-
-    private ImageOrientation getOrientationFromPropertySet()
-    {
-        final PropertyTree contentData = getData();
-        final Property mediaProperty = contentData.getProperty( ContentPropertyNames.MEDIA );
-        if ( mediaProperty == null )
-        {
-            return null;
-        }
-
-        final ValueType mediaPropertyType = mediaProperty.getType();
-        if ( !mediaPropertyType.equals( ValueTypes.PROPERTY_SET ) )
-        {
-            return null;
-        }
-
-        final PropertySet mediaData = mediaProperty.getSet();
+        final PropertySet mediaData = mediaData();
         if ( mediaData == null )
         {
             return null;
         }
 
-        if ( !mediaData.hasProperty( ContentPropertyNames.ORIENTATION ) )
-        {
-            return null;
-        }
-
         final String orientationValue = mediaData.getString( ContentPropertyNames.ORIENTATION );
-
         if ( !ImageOrientation.isValid( orientationValue ) )
         {
             return null;
@@ -111,69 +60,38 @@ public final class Media
         return ImageOrientation.from( orientationValue );
     }
 
-
-    public ImageOrientation getOrientation()
+    public @Nullable FocalPoint getFocalPoint()
     {
-        final ImageOrientation fromPropertySet = getOrientationFromPropertySet();
-
-        if ( fromPropertySet != null )
+        final PropertySet mediaData = mediaData();
+        if ( mediaData == null )
         {
-            return fromPropertySet;
+            return null;
         }
 
-        final ImageOrientation fromMetaData = getOrientationFromMetaData();
-
-        return fromMetaData;
-    }
-
-    public FocalPoint getFocalPoint()
-    {
-        final PropertyTree contentData = getData();
-        final Property mediaProperty = contentData.getProperty( ContentPropertyNames.MEDIA );
-        if ( mediaProperty == null )
-        {
-            return FocalPoint.DEFAULT;
-        }
-
-        final ValueType mediaPropertyType = mediaProperty.getType();
-        if ( !mediaPropertyType.equals( ValueTypes.PROPERTY_SET ) )
-        {
-            return FocalPoint.DEFAULT;
-        }
-
-        final PropertySet mediaData = getData().getSet( ContentPropertyNames.MEDIA );
         final PropertySet focalPointData = mediaData.getSet( ContentPropertyNames.MEDIA_FOCAL_POINT );
         if ( focalPointData == null )
         {
-            return FocalPoint.DEFAULT;
+            return null;
         }
 
         final Double focalX = focalPointData.getDouble( ContentPropertyNames.MEDIA_FOCAL_POINT_X );
         final Double focalY = focalPointData.getDouble( ContentPropertyNames.MEDIA_FOCAL_POINT_Y );
         if ( focalX == null || focalY == null )
         {
-            return FocalPoint.DEFAULT;
+            return null;
         }
 
         return new FocalPoint( focalX, focalY );
     }
 
-    public Cropping getCropping()
+    public @Nullable Cropping getCropping()
     {
-        final PropertyTree contentData = getData();
-        final Property mediaProperty = contentData.getProperty( ContentPropertyNames.MEDIA );
-        if ( mediaProperty == null )
+        final PropertySet mediaData = mediaData();
+        if ( mediaData == null )
         {
             return null;
         }
 
-        final ValueType mediaPropertyType = mediaProperty.getType();
-        if ( !mediaPropertyType.equals( ValueTypes.PROPERTY_SET ) )
-        {
-            return null;
-        }
-
-        final PropertySet mediaData = getData().getSet( ContentPropertyNames.MEDIA );
         final PropertySet croppingData = mediaData.getSet( ContentPropertyNames.MEDIA_CROPPING );
         if ( croppingData == null )
         {
@@ -196,6 +114,16 @@ public final class Media
     public Attachment getSourceAttachment()
     {
         return getAttachments().byLabel( "source" );
+    }
+
+    private @Nullable PropertySet mediaData()
+    {
+        final Property mediaProperty = getData().getProperty( ContentPropertyNames.MEDIA );
+        if ( mediaProperty == null || !mediaProperty.getType().equals( ValueTypes.PROPERTY_SET ) )
+        {
+            return null;
+        }
+        return mediaProperty.getSet();
     }
 
     @Override

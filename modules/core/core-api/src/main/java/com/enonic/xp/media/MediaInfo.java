@@ -1,5 +1,7 @@
 package com.enonic.xp.media;
 
+import org.jspecify.annotations.Nullable;
+
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 
@@ -17,6 +19,8 @@ public final class MediaInfo
     private final ImmutableMultimap<String, String> metadata;
 
     private final String textContent;
+
+    private final @Nullable ImageOrientation imageOrientation;
 
     public static final String CAMERA_INFO = "cameraInfo";
 
@@ -45,6 +49,7 @@ public final class MediaInfo
         this.mediaType = builder.mediaType;
         this.metadata = requireNonNull( builder.metadata.build(), "metadata cannot be null" );
         this.textContent = builder.textContent;
+        this.imageOrientation = builder.imageOrientation;
     }
 
     public String getMediaType()
@@ -62,6 +67,11 @@ public final class MediaInfo
         return metadata;
     }
 
+    public @Nullable ImageOrientation getImageOrientation()
+    {
+        return imageOrientation;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -74,6 +84,8 @@ public final class MediaInfo
         private final ImmutableMultimap.Builder<String, String> metadata = ImmutableMultimap.builder();
 
         private String textContent;
+
+        private @Nullable ImageOrientation imageOrientation;
 
         private Builder()
         {
@@ -95,6 +107,12 @@ public final class MediaInfo
         public Builder setTextContent( final String textContent )
         {
             this.textContent = textContent;
+            return this;
+        }
+
+        public Builder imageOrientation( final @Nullable ImageOrientation imageOrientation )
+        {
+            this.imageOrientation = imageOrientation;
             return this;
         }
 
