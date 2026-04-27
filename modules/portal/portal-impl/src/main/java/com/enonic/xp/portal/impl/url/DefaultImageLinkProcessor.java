@@ -67,7 +67,7 @@ final class DefaultImageLinkProcessor
                 .build()
                 .callWith( () -> contentService.getById( ContentId.from( id ) ) );
 
-            if ( content instanceof Media media && media.isImage() )
+            if ( content instanceof Media media && ( media.getType().isImageMedia() || media.getType().isVectorMedia() ) )
             {
                 return media;
             }

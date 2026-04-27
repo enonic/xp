@@ -9,7 +9,6 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.image.FocalPoint;
-import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 import static java.util.Objects.requireNonNull;
@@ -31,8 +30,6 @@ final class MediaFormDataBuilder
     private List<String> tags;
 
     private FocalPoint focalPoint;
-
-    private ImageOrientation orientation;
 
     public MediaFormDataBuilder type( final ContentTypeName type )
     {
@@ -82,12 +79,6 @@ final class MediaFormDataBuilder
         return this;
     }
 
-    MediaFormDataBuilder orientation( final ImageOrientation orientation )
-    {
-        this.orientation = orientation;
-        return this;
-    }
-
     void build( PropertyTree data )
     {
         requireNonNull( type, "type is required" );
@@ -103,10 +94,6 @@ final class MediaFormDataBuilder
                                focalPoint.xOffset() );
                 set.setDouble( PropertyPath.from( ContentPropertyNames.MEDIA_FOCAL_POINT, ContentPropertyNames.MEDIA_FOCAL_POINT_Y ),
                                focalPoint.yOffset() );
-            }
-            if ( orientation != null )
-            {
-                set.setString( ContentPropertyNames.ORIENTATION, String.valueOf( orientation.getValue() ) );
             }
         }
 
