@@ -222,7 +222,7 @@ public class ImageUpgrader
         final Property mediaProperty = data.getProperty( ContentPropertyNames.MEDIA );
         if ( mediaProperty == null )
         {
-            return data.addSet( ContentPropertyNames.MEDIA );
+            return null;
         }
         if ( ValueTypes.STRING.equals( mediaProperty.getType() ) )
         {
