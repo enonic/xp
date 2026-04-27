@@ -202,18 +202,18 @@ public class ImageUpgrader
         {
             return false;
         }
+        final long orientationValue;
         try
         {
-            mediaSet.removeProperties( ContentPropertyNames.ORIENTATION );
-            final String existingString = existing.getString();
-            mediaSet.setLong( ContentPropertyNames.ORIENTATION,
-                              (long) ImageOrientation.valueOf( Integer.parseInt( existingString ) ).getValue() );
+            orientationValue = (long) ImageOrientation.valueOf( Integer.parseInt( existing.getString() ) ).getValue();
         }
         catch ( Exception e )
         {
-            LOG.warn( "Failed to parse process orientation value: {}", existing );
+            LOG.warn( "Failed to parse process orientation value: {}", existing, e );
+            return false;
         }
-
+        mediaSet.removeProperties( ContentPropertyNames.ORIENTATION );
+        mediaSet.setLong( ContentPropertyNames.ORIENTATION, orientationValue );
         return true;
     }
 

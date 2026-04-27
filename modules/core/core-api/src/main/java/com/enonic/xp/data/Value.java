@@ -119,7 +119,7 @@ public abstract class Value
 
     public Long asLong()
     {
-        if ( object == null || "".equals( object ) )
+        if ( object == null || object instanceof String s && s.isEmpty() )
         {
             return null;
         }
@@ -128,7 +128,7 @@ public abstract class Value
 
     public Integer asInteger()
     {
-        if ( object == null || "".equals( object ) )
+        if ( object == null || object instanceof String s && s.isEmpty() )
         {
             return null;
         }

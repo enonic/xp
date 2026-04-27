@@ -93,7 +93,7 @@ public final class ImageHandlerWorker
             throw WebException.notFound( String.format( "Content with id [%s] is not an Image", content.getId() ) );
         }
 
-        if ( !(media.getType().isImageMedia() || media.getType().isVectorMedia()) )
+        if ( !( media.getType().isImageMedia() || media.getType().isVectorMedia() ) )
         {
             throw WebException.notFound( String.format( "Content with id [%s] is not an Image", content.getId() ) );
         }
