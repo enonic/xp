@@ -83,7 +83,9 @@ repackBundle( libs.tika.core, 8 ) {
 addBundle( project( ':repack:repack-tika' ), 8 )
 
 repackTikaParserBundle( libs.tika.parser.apple, 8 )
-repackTikaParserBundle( libs.tika.parser.audiovideo, 8 )
+repackTikaParserBundle( libs.tika.parser.audiovideo, 8 ) {
+    stripExports = ["org.apache.tika.detect;"]
+}
 repackTikaParserBundle( libs.tika.parser.cad, 8 )
 repackTikaParserBundle( libs.tika.parser.code, 8 )
 repackTikaParserBundle( libs.tika.parser.crypto, 8 )
@@ -179,9 +181,14 @@ addBundle( project( ':blobstore:blobstore-file' ), 22 )
 // Applications
 addBundle( project( ':app:app-system' ), 32 )
 
-def repackTikaParserBundle( depProvider, level ) {
+def repackTikaParserBundle( depProvider, level, Closure extraConfig = null ) {
     repackBundle( depProvider, level) {
-        fragmentHost = "org.apache.tika.bundle-standard;bundle-version=\"[3.2,4)\""
+        fragmentHost = "org.apache.tika.bundle-standard;bundle-version=\"[3.3,4)\""
+        if (extraConfig) {
+            extraConfig.delegate = delegate
+            extraConfig.resolveStrategy = Closure.DELEGATE_FIRST
+            extraConfig()
+        }
     }
 }
 
@@ -238,7 +245,7 @@ def repackBundle( depProvider, level, Closure config = null ) {
         }
 
         manifest {
-            attributes originalManifest.mainAttributes.collectEntries { key, value ->
+            def attrs = originalManifest.mainAttributes.collectEntries { key, value ->
                 if (key.toString() == "Import-Package") {
                     ["Import-Package": modifiedImportPackage]
                 } else if (key.toString() == "DynamicImport-Package") {
@@ -246,7 +253,20 @@ def repackBundle( depProvider, level, Closure config = null ) {
                 } else {
                     [(key.toString()): value.toString()]
                 }
-            }  + (context.fragmentHost ? ["Fragment-Host": context.fragmentHost] : [:])
+            }
+            if (context.fragmentHost) {
+                attrs["Fragment-Host"] = context.fragmentHost
+            }
+            if (context.stripExports) {
+                def exportPackage = attrs["Export-Package"]
+                if (exportPackage) {
+                    def filtered = exportPackage.split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/)
+                        .findAll { entry -> !context.stripExports.any { entry.trim().startsWith(it) } }
+                        .join(',')
+                    attrs["Export-Package"] = filtered ?: attrs.remove("Export-Package")
+                }
+            }
+            attributes attrs
         }
     }
 
