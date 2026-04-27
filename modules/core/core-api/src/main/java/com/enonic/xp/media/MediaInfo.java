@@ -1,12 +1,9 @@
 package com.enonic.xp.media;
 
-import org.jspecify.annotations.Nullable;
-
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.form.FormItemName;
 import com.enonic.xp.schema.mixin.MixinName;
 
 import static java.util.Objects.requireNonNull;
@@ -19,8 +16,6 @@ public final class MediaInfo
     private final ImmutableMultimap<String, String> metadata;
 
     private final String textContent;
-
-    private final @Nullable ImageOrientation imageOrientation;
 
     public static final String CAMERA_INFO = "cameraInfo";
 
@@ -42,6 +37,8 @@ public final class MediaInfo
 
     public static final String IMAGE_INFO_IMAGE_WIDTH = "imageWidth";
 
+    public static final String IMAGE_INFO_ORIENTATION = "orientation";
+
     public static final String MEDIA_INFO_BYTE_SIZE = "byteSize";
 
     private MediaInfo( final Builder builder )
@@ -49,7 +46,6 @@ public final class MediaInfo
         this.mediaType = builder.mediaType;
         this.metadata = requireNonNull( builder.metadata.build(), "metadata cannot be null" );
         this.textContent = builder.textContent;
-        this.imageOrientation = builder.imageOrientation;
     }
 
     public String getMediaType()
@@ -67,11 +63,6 @@ public final class MediaInfo
         return metadata;
     }
 
-    public @Nullable ImageOrientation getImageOrientation()
-    {
-        return imageOrientation;
-    }
-
     public static Builder create()
     {
         return new Builder();
@@ -85,8 +76,6 @@ public final class MediaInfo
 
         private String textContent;
 
-        private @Nullable ImageOrientation imageOrientation;
-
         private Builder()
         {
         }
@@ -99,7 +88,7 @@ public final class MediaInfo
 
         public Builder addMetadata( final String name, final String value )
         {
-            this.metadata.put( FormItemName.safeName( name ), value );
+            this.metadata.put( name, value );
             return this;
         }
 
@@ -107,12 +96,6 @@ public final class MediaInfo
         public Builder setTextContent( final String textContent )
         {
             this.textContent = textContent;
-            return this;
-        }
-
-        public Builder imageOrientation( final @Nullable ImageOrientation imageOrientation )
-        {
-            this.imageOrientation = imageOrientation;
             return this;
         }
 

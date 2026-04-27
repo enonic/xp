@@ -15,6 +15,7 @@ import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.url.ApiUrlGeneratorParams;
@@ -58,7 +59,7 @@ class PortalUrlGeneratorServiceImplTest
 
         final String url = this.service.imageUrl( params );
 
-        assertEquals( "baseUrl/_/media:image/myproject:draft/123456:b12b4c973748042e3b3a7e4798344289/max-300/mycontent.png", url );
+        assertEquals( "baseUrl/_/media:image/myproject:draft/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png", url );
     }
 
     @Test
@@ -74,7 +75,7 @@ class PortalUrlGeneratorServiceImplTest
 
         final String url = this.service.imageUrl( params );
 
-        assertEquals( "baseUrl/_/media:image/myproject/123456:b12b4c973748042e3b3a7e4798344289/max-300/mycontent.png", url );
+        assertEquals( "baseUrl/_/media:image/myproject/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png", url );
     }
 
     @Test
@@ -94,7 +95,7 @@ class PortalUrlGeneratorServiceImplTest
         final String url = this.service.imageUrl( params );
 
         assertEquals(
-            "baseUrl/_/media:image/myproject:draft/123456:b12b4c973748042e3b3a7e4798344289/max-300/mycontent.png?quality=85&background=0x000000&filter=blur%283%29",
+            "baseUrl/_/media:image/myproject:draft/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png?quality=85&background=0x000000&filter=blur%283%29",
             url );
     }
 
@@ -112,7 +113,7 @@ class PortalUrlGeneratorServiceImplTest
 
         final String url = this.service.imageUrl( params );
 
-        assertEquals( "baseUrl/_/media:image/myproject:draft/123456:b12b4c973748042e3b3a7e4798344289/max-300/mycontent.png.webp", url );
+        assertEquals( "baseUrl/_/media:image/myproject:draft/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png.webp", url );
     }
 
     @Test
@@ -129,7 +130,7 @@ class PortalUrlGeneratorServiceImplTest
 
         final String url = this.service.imageUrl( params );
 
-        assertEquals( "baseUrl/_/media:image/myproject:draft/123456:b12b4c973748042e3b3a7e4798344289/max-300/mycontent.png?ts=123", url );
+        assertEquals( "baseUrl/_/media:image/myproject:draft/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png?ts=123", url );
     }
 
     @Test
@@ -344,7 +345,7 @@ class PortalUrlGeneratorServiceImplTest
         when( media.getId() ).thenReturn( contentId );
         when( media.getPath() ).thenReturn( ContentPath.from( "/" + id ) );
         when( media.getName() ).thenReturn( ContentName.from( name ) );
-        when( media.getMediaAttachment() ).thenReturn( attachment );
+        when( media.getData() ).thenReturn( new PropertyTree() );
         when( media.getAttachments() ).thenReturn( Attachments.from( attachment ) );
 
         return media;
@@ -362,7 +363,7 @@ class PortalUrlGeneratorServiceImplTest
         when( media.getId() ).thenReturn( contentId );
         when( media.getPath() ).thenReturn( ContentPath.from( "/" + id ) );
         when( media.getName() ).thenReturn( ContentName.from( name ) );
-        when( media.getMediaAttachment() ).thenReturn( attachment );
+        when( media.getData() ).thenReturn( new PropertyTree() );
         when( media.getAttachments() ).thenReturn( Attachments.from( attachment ) );
 
         return media;

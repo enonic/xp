@@ -1,14 +1,18 @@
 package com.enonic.xp.portal.impl.handler.image;
 
 import java.io.IOException;
+
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
+import com.enonic.xp.content.MediaUtils;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.exception.ThrottlingException;
 import com.enonic.xp.image.ImageService;
 import com.enonic.xp.image.ReadImageParams;
@@ -54,7 +58,7 @@ public final class ImageHandlerWorker
     @Override
     protected Attachment resolveAttachment( final Content content, final String name )
     {
-        final Attachment attachment = ( (Media) content ).getMediaAttachment();
+        final Attachment attachment = content.getAttachments().byLabel( "source" );
         if ( attachment == null )
         {
             throw WebException.notFound( String.format( "Attachment [%s] not found", content.getName() ) );
@@ -89,7 +93,7 @@ public final class ImageHandlerWorker
             throw WebException.notFound( String.format( "Content with id [%s] is not an Image", content.getId() ) );
         }
 
-        if ( !media.isImage() )
+        if ( !( media.getType().isImageMedia() || media.getType().isVectorMedia() ) )
         {
             throw WebException.notFound( String.format( "Content with id [%s] is not an Image", content.getId() ) );
         }
@@ -102,7 +106,9 @@ public final class ImageHandlerWorker
                                     final MediaType contentType )
         throws IOException
     {
-        final ImageOrientation imageOrientation = requireNonNullElse( content.getOrientation(), ImageOrientation.TopLeft );
+        final PropertySet mediaData = content.getData().getSet( ContentPropertyNames.MEDIA );
+        final ImageOrientation imageOrientation = requireNonNullElse(
+            MediaUtils.readOrientation( mediaData ), ImageOrientation.TopLeft );
 
         final int imageQuality = nullToEmpty( this.qualityParam ).isEmpty() ? DEFAULT_QUALITY : Integer.parseInt( this.qualityParam );
 
@@ -111,14 +117,15 @@ public final class ImageHandlerWorker
             : Integer.parseInt( this.backgroundParam.startsWith( "0x" ) ? this.backgroundParam.substring( 2 ) : this.backgroundParam, 16 );
         try
         {
-            requireNonNull( content.getMediaAttachment(), "Media content must have an attachment" );
+            final Attachment attachment =
+                requireNonNull( content.getAttachments().byLabel( "source" ), "Media content must have an attachment" );
 
             final ReadImageParams readImageParams = ReadImageParams.newImageParams()
                 .contentId( content.getId() )
                 .binaryReference( binaryReference )
-                .cropping( content.getCropping() )
-                .focalPoint( content.getFocalPoint() )
-                .attachmentSha512( content.getMediaAttachment().getSha512() )
+                .cropping( MediaUtils.readCropping( mediaData ) )
+                .focalPoint( MediaUtils.readFocalPoint( mediaData ) )
+                .attachmentSha512( attachment.getSha512() )
                 .orientation( imageOrientation )
                 .scaleParams( this.scaleParams )
                 .filterParam( this.filterParam )

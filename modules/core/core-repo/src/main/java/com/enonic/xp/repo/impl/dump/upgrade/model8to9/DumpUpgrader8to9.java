@@ -426,7 +426,7 @@ public class DumpUpgrader8to9
                                                       new ReferenceLowercaseUpgrader(), new DefaultProjectPermissionsUpgrader(),
                                                       new LanguageTagUpgrader(), new IndexConfigLanguageUpgrader(),
                                                       new AttachmentSha512Upgrader( dumpReader ),
-                                                      new ImageOrientationUpgrader( dumpReader ), new RepositoryBranchesRemovalUpgrader(),
+                                                      new ImageUpgrader( dumpReader ), new RepositoryBranchesRemovalUpgrader(),
                                                       new RepositoryModelVersionUpgrader() ) )
         {
             final NodeStoreVersion upgraded = upgrader.upgradeNodeVersion( repositoryId, dumpEntry );

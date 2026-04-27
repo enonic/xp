@@ -247,7 +247,7 @@ class ContentServiceImplTest_media
         final MediaInfoServiceImpl sequencedMediaInfo = new MediaInfoServiceImpl( sequencedExtractor );
         this.contentService.setMediaInfoService( sequencedMediaInfo );
 
-        final ImageContentProcessor imageContentProcessor = new ImageContentProcessor( this.contentService, this.mixinService );
+        final ImageContentProcessor imageContentProcessor = new ImageContentProcessor();
         this.contentService.addContentProcessor( imageContentProcessor );
         try
         {
@@ -256,7 +256,7 @@ class ContentServiceImplTest_media
             final Content created = this.contentService.create( createParams );
 
             final Content reloadedAfterCreate = this.contentService.getById( created.getId() );
-            assertEquals( "1", reloadedAfterCreate.getData().getString( "media.orientation" ) );
+            assertEquals( 1, reloadedAfterCreate.getData().getInteger( "media.orientation" ) );
             final Mixin cameraAfterCreate = reloadedAfterCreate.getMixins().getByName( MediaInfo.CAMERA_INFO_METADATA_NAME );
             assertNotNull( cameraAfterCreate );
             assertEquals( "NIKON CORPORATION", cameraAfterCreate.getData().getString( "make", 0 ) );
@@ -266,7 +266,7 @@ class ContentServiceImplTest_media
             this.contentService.update( updateParams );
 
             final Content reloadedAfterUpdate = this.contentService.getById( created.getId() );
-            assertEquals( "6", reloadedAfterUpdate.getData().getString( "media.orientation" ) );
+            assertEquals( 6, reloadedAfterUpdate.getData().getInteger( "media.orientation" ) );
             final Mixin cameraAfterUpdate = reloadedAfterUpdate.getMixins().getByName( MediaInfo.CAMERA_INFO_METADATA_NAME );
             assertNotNull( cameraAfterUpdate );
             assertEquals( "Canon", cameraAfterUpdate.getData().getString( "make", 0 ) );
@@ -277,14 +277,14 @@ class ContentServiceImplTest_media
         }
     }
 
-    // Raw Tika-style keys; MediaInfo.Builder#addMetadata normalizes via FormItemName.safeName
+    // Raw Tika-style keys
     private static ExtractedData exifExtractedData( final String make, final String model, final String orientation )
     {
         final Map<String, List<String>> metadata = new HashMap<>();
         metadata.put( HttpHeaders.CONTENT_TYPE, List.of( "image/jpeg" ) );
         metadata.put( "tiff:Make", List.of( make ) );
         metadata.put( "tiff:Model", List.of( model ) );
-        metadata.put( "exif:IFD0:Orientation", List.of( orientation ) );
+        metadata.put( "tiff:Orientation", List.of( orientation ) );
         return ExtractedData.create().metadata( metadata ).imageOrientation( orientation ).build();
     }
 

@@ -65,7 +65,6 @@ final class UpdateMediaCommand
         final MediaFormDataBuilder mediaFormBuilder = new MediaFormDataBuilder().type( type )
             .attachment( params.getName().toString() )
             .focalPoint( params.getFocalPoint() )
-            .orientation( mediaInfo.getImageOrientation() )
             .caption( params.getCaption() )
             .altText( params.getAltText() )
             .artist( params.getArtistList() )

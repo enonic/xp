@@ -163,7 +163,6 @@ public class ImageServiceImpl
         MessageDigests.updateWithDoubleLE( digest, cropping.left() );
         MessageDigests.updateWithDoubleLE( digest, cropping.bottom() );
         MessageDigests.updateWithDoubleLE( digest, cropping.right() );
-        MessageDigests.updateWithDoubleLE( digest, cropping.zoom() );
 
         MessageDigests.updateWithIntLE( digest, readImageParams.getOrientation().ordinal() );
 
