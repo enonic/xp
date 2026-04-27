@@ -1,5 +1,6 @@
 package com.enonic.xp.lib.content;
 
+import java.util.Locale;
 import java.util.Map;
 
 import com.enonic.xp.content.Content;
@@ -52,6 +53,8 @@ public final class UpdateContentHandler
         {
             target.displayName = displayName;
         }
+
+        edit( map, "language", String.class, val -> target.language = val.map( Locale::forLanguageTag ).orElse( null ) );
 
         final Object data = map.get( "data" );
         if ( data instanceof Map )

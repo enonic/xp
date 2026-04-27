@@ -19,7 +19,7 @@ import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.Mixin;
 import com.enonic.xp.content.Mixins;
-import com.enonic.xp.content.UpdateContentMetadataParams;
+import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.core.impl.content.MixinMappingServiceImpl;
@@ -149,8 +149,9 @@ class ContentServiceImplTest_create
     void create_with_root_language()
     {
         final Content root = this.contentService.getByPath( ContentPath.ROOT );
-        contentService.updateMetadata(
-            UpdateContentMetadataParams.create().contentId( root.getId() ).editor( edit -> edit.language = Locale.ENGLISH ).build() );
+        final UpdateContentParams rootUpdateParams = new UpdateContentParams();
+        rootUpdateParams.contentId( root.getId() ).editor( edit -> edit.language = Locale.ENGLISH );
+        contentService.update( rootUpdateParams );
 
         final CreateContentParams createContentParams = CreateContentParams.create()
             .contentData( new PropertyTree() )

@@ -1,7 +1,5 @@
 package com.enonic.xp.core.content;
 
-import java.util.Locale;
-
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.ApplyContentPermissionsParams;
@@ -34,6 +32,7 @@ import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.repo.impl.version.VersionIndexPath;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
@@ -155,8 +154,10 @@ class ContentServiceImplTest_editorial
         final Content content = createFolder( "content", ContentPath.ROOT );
         final String createVersionId = getLatestNodeVersionId( content );
 
-        this.contentService.updateMetadata(
-            UpdateContentMetadataParams.create().contentId( content.getId() ).editor( edit -> edit.language = Locale.ENGLISH ).build() );
+        this.contentService.updateMetadata( UpdateContentMetadataParams.create()
+                                                .contentId( content.getId() )
+                                                .editor( edit -> edit.owner = PrincipalKey.from( "user:system:new-owner" ) )
+                                                .build() );
 
         assertThat( getEditorialProperty( content ) ).isEqualTo( createVersionId );
     }
@@ -188,8 +189,10 @@ class ContentServiceImplTest_editorial
         assertThat( getEditorialProperty( content ) ).isEqualTo( createVersionId );
 
         // Second non-editorial: updateMetadata — should still point to original create version
-        this.contentService.updateMetadata(
-            UpdateContentMetadataParams.create().contentId( content.getId() ).editor( edit -> edit.language = Locale.ENGLISH ).build() );
+        this.contentService.updateMetadata( UpdateContentMetadataParams.create()
+                                                .contentId( content.getId() )
+                                                .editor( edit -> edit.owner = PrincipalKey.from( "user:system:new-owner" ) )
+                                                .build() );
 
         assertThat( getEditorialProperty( content ) ).isEqualTo( createVersionId );
     }
@@ -218,8 +221,10 @@ class ContentServiceImplTest_editorial
         assertThat( getEditorialProperty( content ) ).isNull();
 
         // Non-editorial: updateMetadata — should now point to the update version
-        this.contentService.updateMetadata(
-            UpdateContentMetadataParams.create().contentId( content.getId() ).editor( edit -> edit.language = Locale.FRENCH ).build() );
+        this.contentService.updateMetadata( UpdateContentMetadataParams.create()
+                                                .contentId( content.getId() )
+                                                .editor( edit -> edit.owner = PrincipalKey.from( "user:system:other-owner" ) )
+                                                .build() );
 
         assertThat( getEditorialProperty( content ) ).isEqualTo( updateVersionId );
     }

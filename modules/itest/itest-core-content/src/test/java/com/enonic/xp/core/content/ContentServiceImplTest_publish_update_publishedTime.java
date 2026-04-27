@@ -2,7 +2,6 @@ package com.enonic.xp.core.content;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Locale;
 
 import org.junit.jupiter.api.Test;
 
@@ -26,6 +25,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.security.PrincipalKey;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -147,8 +147,10 @@ class ContentServiceImplTest_publish_update_publishedTime
         final Content content = doCreateContent();
         final ContentId id = content.getId();
 
-        this.contentService.updateMetadata(
-            UpdateContentMetadataParams.create().contentId( id ).editor( edit -> edit.language = Locale.CANADA ).build() );
+        this.contentService.updateMetadata( UpdateContentMetadataParams.create()
+                                                .contentId( id )
+                                                .editor( edit -> edit.owner = PrincipalKey.from( "user:system:new-owner" ) )
+                                                .build() );
 
         doPublishContent( content );
 

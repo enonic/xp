@@ -1,7 +1,6 @@
 package com.enonic.xp.core.content;
 
 import java.util.EnumSet;
-import java.util.Locale;
 
 import org.junit.jupiter.api.Test;
 
@@ -25,40 +24,10 @@ import com.enonic.xp.security.PrincipalKey;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 class ContentServiceImplTest_updateMetadata
     extends AbstractContentServiceTest
 {
-
-    @Test
-    void update_metadata_language()
-    {
-        final CreateContentParams createContentParams = CreateContentParams.create()
-            .contentData( new PropertyTree() )
-            .displayName( "This is my content" )
-            .parent( ContentPath.ROOT )
-            .type( ContentTypeName.folder() )
-            .build();
-
-        final Content content = this.contentService.create( createContentParams );
-
-        assertNull( content.getLanguage() );
-
-        final UpdateContentMetadataParams updateContentMetadataParams =
-            UpdateContentMetadataParams.create().contentId( content.getId() ).editor( edit -> {
-                edit.language = Locale.forLanguageTag( "en" );
-            } ).build();
-
-        final UpdateContentMetadataResult result = this.contentService.updateMetadata( updateContentMetadataParams );
-
-        final Content updatedContent = this.contentService.getById( content.getId() );
-
-        assertEquals( Locale.forLanguageTag( "en" ), updatedContent.getLanguage() );
-        assertEquals( updatedContent.getCreatedTime(), content.getCreatedTime() );
-        assertEquals( updatedContent.getModifier(), content.getModifier() );
-        assertEquals( content.getId(), result.getContent().getId() );
-    }
 
     @Test
     void update_metadata_owner()
@@ -90,37 +59,6 @@ class ContentServiceImplTest_updateMetadata
     }
 
     @Test
-    void update_metadata_language_and_owner()
-    {
-        final CreateContentParams createContentParams = CreateContentParams.create()
-            .contentData( new PropertyTree() )
-            .displayName( "This is my content" )
-            .parent( ContentPath.ROOT )
-            .type( ContentTypeName.folder() )
-            .build();
-
-        final Content content = this.contentService.create( createContentParams );
-
-        final PrincipalKey newOwner = PrincipalKey.from( "user:system:new-owner" );
-
-        final UpdateContentMetadataParams updateContentMetadataParams =
-            UpdateContentMetadataParams.create().contentId( content.getId() ).editor( edit -> {
-                edit.language = Locale.forLanguageTag( "no" );
-                edit.owner = newOwner;
-            } ).build();
-
-        final UpdateContentMetadataResult result = this.contentService.updateMetadata( updateContentMetadataParams );
-
-        final Content updatedContent = this.contentService.getById( content.getId() );
-
-        assertEquals( Locale.forLanguageTag( "no" ), updatedContent.getLanguage() );
-        assertEquals( newOwner, updatedContent.getOwner() );
-        assertEquals( updatedContent.getCreatedTime(), content.getCreatedTime() );
-        assertEquals( updatedContent.getModifier(), content.getModifier() );
-        assertEquals( content.getId(), result.getContent().getId() );
-    }
-
-    @Test
     void update_metadata_same_content_on_both_branches_generates_single_version_with_origin()
     {
         final Content content = this.contentService.create( CreateContentParams.create()
@@ -137,8 +75,10 @@ class ContentServiceImplTest_updateMetadata
         final int versionCountBeforeUpdate = this.contentService.getVersions(
             GetContentVersionsParams.create().contentId( content.getId() ).build() ).getContentVersions().getSize();
 
-        this.contentService.updateMetadata(
-            UpdateContentMetadataParams.create().contentId( content.getId() ).editor( edit -> edit.language = Locale.ENGLISH ).build() );
+        this.contentService.updateMetadata( UpdateContentMetadataParams.create()
+                                                .contentId( content.getId() )
+                                                .editor( edit -> edit.owner = PrincipalKey.from( "user:system:new-owner" ) )
+                                                .build() );
 
         final GetContentVersionsResult versionsResult =
             this.contentService.getVersions( GetContentVersionsParams.create().contentId( content.getId() ).build() );
@@ -173,8 +113,10 @@ class ContentServiceImplTest_updateMetadata
         final int versionCountBeforeUpdate = this.contentService.getVersions(
             GetContentVersionsParams.create().contentId( content.getId() ).build() ).getContentVersions().getSize();
 
-        this.contentService.updateMetadata(
-            UpdateContentMetadataParams.create().contentId( content.getId() ).editor( edit -> edit.language = Locale.ENGLISH ).build() );
+        this.contentService.updateMetadata( UpdateContentMetadataParams.create()
+                                                .contentId( content.getId() )
+                                                .editor( edit -> edit.owner = PrincipalKey.from( "user:system:new-owner" ) )
+                                                .build() );
 
         final GetContentVersionsResult versionsResult =
             this.contentService.getVersions( GetContentVersionsParams.create().contentId( content.getId() ).build() );
@@ -195,8 +137,10 @@ class ContentServiceImplTest_updateMetadata
     }
 
     @Test
-    void update_metadata_same_language_still_generates_version_when_inherit_flag_removed()
+    void update_metadata_same_owner_still_generates_version_when_inherit_flag_removed()
     {
+        final PrincipalKey owner = PrincipalKey.from( "user:system:new-owner" );
+
         final Content content = this.contentService.create( CreateContentParams.create()
                                                                 .contentData( new PropertyTree() )
                                                                 .displayName( "content" )
@@ -206,7 +150,7 @@ class ContentServiceImplTest_updateMetadata
                                                                 .build() );
 
         this.contentService.updateMetadata(
-            UpdateContentMetadataParams.create().contentId( content.getId() ).editor( edit -> edit.language = Locale.ENGLISH ).build() );
+            UpdateContentMetadataParams.create().contentId( content.getId() ).editor( edit -> edit.owner = owner ).build() );
 
         this.contentService.patch( PatchContentParams.create()
                                        .contentId( content.getId() )
@@ -215,14 +159,14 @@ class ContentServiceImplTest_updateMetadata
                                        .build() );
 
         final Content contentWithInherit = this.contentService.getById( content.getId() );
-        assertThat( contentWithInherit.getLanguage() ).isEqualTo( Locale.ENGLISH );
+        assertThat( contentWithInherit.getOwner() ).isEqualTo( owner );
         assertThat( contentWithInherit.getInherit() ).contains( ContentInheritType.CONTENT );
 
         final int versionCountBefore = this.contentService.getVersions(
             GetContentVersionsParams.create().contentId( content.getId() ).build() ).getContentVersions().getSize();
 
         this.contentService.updateMetadata(
-            UpdateContentMetadataParams.create().contentId( content.getId() ).editor( edit -> edit.language = Locale.ENGLISH ).build() );
+            UpdateContentMetadataParams.create().contentId( content.getId() ).editor( edit -> edit.owner = owner ).build() );
 
         final GetContentVersionsResult versionsResult =
             this.contentService.getVersions( GetContentVersionsParams.create().contentId( content.getId() ).build() );

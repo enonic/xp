@@ -3,6 +3,7 @@ package com.enonic.xp.core.content;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Locale;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -580,6 +581,32 @@ class ContentServiceImplTest_update
         assertThat( latestVersion.actions() ).extracting( ContentVersion.Action::operation ).containsExactly( "content.update" );
         assertThat( latestVersion.actions() ).flatExtracting( ContentVersion.Action::fields )
             .contains( "displayName", "data" );
+    }
+
+    @Test
+    void update_language_creates_content_update_version_with_language_in_fields()
+    {
+        final Content content = this.contentService.create( CreateContentParams.create()
+                                                                .contentData( new PropertyTree() )
+                                                                .displayName( "content" )
+                                                                .name( "language-edit" )
+                                                                .parent( ContentPath.ROOT )
+                                                                .type( ContentTypeName.folder() )
+                                                                .build() );
+
+        final UpdateContentParams params = new UpdateContentParams();
+        params.contentId( content.getId() ).editor( edit -> edit.language = Locale.ENGLISH );
+        final Content updated = this.contentService.update( params );
+
+        assertThat( updated.getLanguage() ).isEqualTo( Locale.ENGLISH );
+
+        final GetContentVersionsResult versionsResult =
+            this.contentService.getVersions( GetContentVersionsParams.create().size( 1 ).contentId( content.getId() ).build() );
+
+        final ContentVersion latest = versionsResult.getContentVersions().first();
+
+        assertThat( latest.actions() ).extracting( ContentVersion.Action::operation ).containsExactly( "content.update" );
+        assertThat( latest.actions() ).flatExtracting( ContentVersion.Action::fields ).containsExactlyInAnyOrder( "language", "workflow" );
     }
 
     private Mixins createMixins()

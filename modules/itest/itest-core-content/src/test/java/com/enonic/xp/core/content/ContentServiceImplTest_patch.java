@@ -1,6 +1,7 @@
 package com.enonic.xp.core.content;
 
 import java.util.Iterator;
+import java.util.Locale;
 
 import org.junit.jupiter.api.Test;
 
@@ -16,6 +17,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentVersionId;
 import com.enonic.xp.content.ContentVersion;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.GetContentVersionsParams;
@@ -27,6 +29,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.exception.ForbiddenAccessException;
+import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
@@ -268,7 +271,7 @@ class ContentServiceImplTest_patch
 
         this.contentService.patch( PatchContentParams.create()
                                        .contentId( content.getId() )
-                                       .patcher( edit -> edit.language.setValue( java.util.Locale.ENGLISH ) )
+                                       .patcher( edit -> edit.language.setValue( Locale.ENGLISH ) )
                                        .branches( Branches.from( ContentConstants.BRANCH_MASTER, ContentConstants.BRANCH_DRAFT ) )
                                        .build() );
 
@@ -288,5 +291,147 @@ class ContentServiceImplTest_patch
                         .flatMap( v -> v.actions().stream() ) )
             .extracting( ContentVersion.Action::origin )
             .containsExactly( ContentConstants.BRANCH_DRAFT.getValue(), ContentConstants.BRANCH_MASTER.getValue() );
+    }
+
+    @Test
+    void patch_language_only_resets_editorial_pointer()
+    {
+        final Content content = this.contentService.create( CreateContentParams.create()
+                                                                .contentData( new PropertyTree() )
+                                                                .displayName( "content" )
+                                                                .name( "lang-patch" )
+                                                                .parent( ContentPath.ROOT )
+                                                                .type( ContentTypeName.folder() )
+                                                                .build() );
+
+        this.contentService.patch( PatchContentParams.create()
+                                       .contentId( content.getId() )
+                                       .patcher( edit -> edit.language.setValue( Locale.ENGLISH ) )
+                                       .build() );
+
+        final GetContentVersionsResult versions =
+            this.contentService.getVersions( GetContentVersionsParams.create().contentId( content.getId() ).build() );
+
+        final ContentVersion latest = versions.getContentVersions().first();
+
+        assertThat( latest.actions() ).extracting( ContentVersion.Action::operation ).containsExactly( "content.patch" );
+        assertThat( latest.actions() ).flatExtracting( ContentVersion.Action::fields ).contains( "language" );
+        // With language in EDITORIAL_FIELDS, the resolveEditorialIfNotEditorialChange resolver returns null
+        // (no carry-over), so the new version has no `editorial` action property.
+        assertThat( latest.actions() ).extracting( ContentVersion.Action::editorial ).containsExactly( (ContentVersionId) null );
+    }
+
+    @Test
+    void patch_data_only_resets_editorial_pointer()
+    {
+        final Content content = this.contentService.create( CreateContentParams.create()
+                                                                .contentData( new PropertyTree() )
+                                                                .displayName( "content" )
+                                                                .name( "data-patch" )
+                                                                .parent( ContentPath.ROOT )
+                                                                .type( ContentTypeName.folder() )
+                                                                .build() );
+
+        this.contentService.patch( PatchContentParams.create()
+                                       .contentId( content.getId() )
+                                       .patcher( edit -> {
+                                           final PropertyTree newData = new PropertyTree();
+                                           newData.addString( "myField", "value" );
+                                           edit.data.setValue( newData );
+                                       } )
+                                       .build() );
+
+        final GetContentVersionsResult versions =
+            this.contentService.getVersions( GetContentVersionsParams.create().contentId( content.getId() ).size( 1 ).build() );
+
+        final ContentVersion latest = versions.getContentVersions().first();
+
+        assertThat( latest.actions() ).extracting( ContentVersion.Action::operation ).containsExactly( "content.patch" );
+        assertThat( latest.actions() ).flatExtracting( ContentVersion.Action::fields ).contains( "data" );
+        assertThat( latest.actions() ).extracting( ContentVersion.Action::editorial ).containsExactly( (ContentVersionId) null );
+    }
+
+    @Test
+    void patch_childOrder_only_resets_editorial_pointer()
+    {
+        final Content content = this.contentService.create( CreateContentParams.create()
+                                                                .contentData( new PropertyTree() )
+                                                                .displayName( "content" )
+                                                                .name( "childorder-patch" )
+                                                                .parent( ContentPath.ROOT )
+                                                                .type( ContentTypeName.folder() )
+                                                                .build() );
+
+        this.contentService.patch( PatchContentParams.create()
+                                       .contentId( content.getId() )
+                                       .patcher( edit -> edit.childOrder.setValue( ChildOrder.from( "_name ASC" ) ) )
+                                       .build() );
+
+        final GetContentVersionsResult versions =
+            this.contentService.getVersions( GetContentVersionsParams.create().contentId( content.getId() ).size( 1 ).build() );
+
+        final ContentVersion latest = versions.getContentVersions().first();
+
+        assertThat( latest.actions() ).extracting( ContentVersion.Action::operation ).containsExactly( "content.patch" );
+        assertThat( latest.actions() ).flatExtracting( ContentVersion.Action::fields ).contains( "childOrder" );
+        assertThat( latest.actions() ).extracting( ContentVersion.Action::editorial ).containsExactly( (ContentVersionId) null );
+    }
+
+    @Test
+    void patch_editorial_with_draft_ahead_of_master_resets_editorial_on_both_versions()
+    {
+        // Create content; publish so DRAFT and MASTER are both at V1.
+        final Content content = this.contentService.create( CreateContentParams.create()
+                                                                .contentData( new PropertyTree() )
+                                                                .displayName( "content" )
+                                                                .name( "two-version-patch" )
+                                                                .parent( ContentPath.ROOT )
+                                                                .type( ContentTypeName.folder() )
+                                                                .build() );
+
+        this.contentService.publish( PushContentParams.create()
+                                         .contentIds( ContentIds.from( content.getId() ) )
+                                         .includeDependencies( false )
+                                         .build() );
+
+        // Diverge: editorial update only on DRAFT; MASTER stays at V1.
+        final UpdateContentParams updateParams = new UpdateContentParams();
+        updateParams.contentId( content.getId() ).editor( edit -> edit.displayName = "updated-in-draft" );
+        this.contentService.update( updateParams );
+
+        final int versionsBefore = this.contentService.getVersions(
+            GetContentVersionsParams.create().contentId( content.getId() ).build() ).getContentVersions().getSize();
+
+        // Editorial patch targeting BOTH branches — must produce two new versions, both with editorial = null.
+        this.contentService.patch( PatchContentParams.create()
+                                       .contentId( content.getId() )
+                                       .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
+                                       .patcher( edit -> edit.language.setValue( Locale.ENGLISH ) )
+                                       .build() );
+
+        final GetContentVersionsResult versionsResult =
+            this.contentService.getVersions( GetContentVersionsParams.create().contentId( content.getId() ).build() );
+
+        assertThat( versionsResult.getContentVersions() ).hasSize( versionsBefore + 2 );
+
+        // The two newest versions are the patch outputs, one per branch.
+        assertThat( versionsResult.getContentVersions().stream()
+                        .limit( 2 )
+                        .flatMap( v -> v.actions().stream() ) )
+            .extracting( ContentVersion.Action::operation )
+            .containsOnly( "content.patch" );
+
+        assertThat( versionsResult.getContentVersions().stream()
+                        .limit( 2 )
+                        .flatMap( v -> v.actions().stream() ) )
+            .extracting( ContentVersion.Action::origin )
+            .containsExactlyInAnyOrder( ContentConstants.BRANCH_DRAFT.getValue(), ContentConstants.BRANCH_MASTER.getValue() );
+
+        // Both new versions must have editorial = null.
+        assertThat( versionsResult.getContentVersions().stream()
+                        .limit( 2 )
+                        .flatMap( v -> v.actions().stream() ) )
+            .extracting( ContentVersion.Action::editorial )
+            .containsOnly( (ContentVersionId) null );
     }
 }

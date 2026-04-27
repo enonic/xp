@@ -1,7 +1,5 @@
 package com.enonic.xp.content;
 
-import java.util.Locale;
-
 import com.enonic.xp.security.PrincipalKey;
 
 
@@ -11,20 +9,17 @@ public final class EditableContentMetadata
 
     public PrincipalKey owner;
 
-    public Locale language;
-
     public ContentId variantOf;
 
     public EditableContentMetadata( final Content source )
     {
         this.source = source;
         this.owner = source.getOwner();
-        this.language = source.getLanguage();
         this.variantOf = source.getVariantOf();
     }
 
     public Content build()
     {
-        return Content.create( this.source ).owner( owner ).language( language ).variantOf( variantOf ).build();
+        return Content.create( this.source ).owner( owner ).variantOf( variantOf ).build();
     }
 }
