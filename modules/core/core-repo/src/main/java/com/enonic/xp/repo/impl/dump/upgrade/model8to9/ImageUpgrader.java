@@ -220,21 +220,35 @@ public class ImageUpgrader
     private static PropertySet ensureMediaSet( final PropertyTree data )
     {
         final Property mediaProperty = data.getProperty( ContentPropertyNames.MEDIA );
-        if ( mediaProperty == null )
+        if ( mediaProperty != null && ValueTypes.PROPERTY_SET.equals( mediaProperty.getType() ) )
+        {
+            return mediaProperty.getSet();
+        }
+        final String attachmentName =
+            mediaProperty != null && ValueTypes.STRING.equals( mediaProperty.getType() ) ? mediaProperty.getString() : findSourceAttachmentName( data );
+        if ( attachmentName == null )
         {
             return null;
         }
-        if ( ValueTypes.STRING.equals( mediaProperty.getType() ) )
+        data.removeProperties( ContentPropertyNames.MEDIA );
+        final PropertySet mediaSet = data.addSet( ContentPropertyNames.MEDIA );
+        mediaSet.addString( ContentPropertyNames.MEDIA_ATTACHMENT, attachmentName );
+        return mediaSet;
+    }
+
+    private static String findSourceAttachmentName( final PropertyTree data )
+    {
+        final Iterable<PropertySet> attachments = data.getSets( ContentPropertyNames.ATTACHMENT );
+        if ( attachments == null )
         {
-            final String attachmentName = mediaProperty.getString();
-            data.removeProperties( ContentPropertyNames.MEDIA );
-            final PropertySet mediaSet = data.addSet( ContentPropertyNames.MEDIA );
-            mediaSet.addString( ContentPropertyNames.MEDIA_ATTACHMENT, attachmentName );
-            return mediaSet;
+            return null;
         }
-        if ( ValueTypes.PROPERTY_SET.equals( mediaProperty.getType() ) )
+        for ( PropertySet attachmentSet : attachments )
         {
-            return mediaProperty.getSet();
+            if ( "source".equals( attachmentSet.getString( ContentPropertyNames.ATTACHMENT_LABEL ) ) )
+            {
+                return attachmentSet.getString( ContentPropertyNames.ATTACHMENT_NAME );
+            }
         }
         return null;
     }
