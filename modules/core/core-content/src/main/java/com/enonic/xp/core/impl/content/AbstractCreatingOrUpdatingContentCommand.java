@@ -374,27 +374,29 @@ class AbstractCreatingOrUpdatingContentCommand
             Objects.equals( c1.getVariantOf(), c2.getVariantOf() );
     }
 
-    protected static Content afterUpdate( final Content editedContent )
+    protected static Content afterUpdate( final Content editedContent, final ContentInheritType... stopInherit )
     {
         final PatchableContent patchableContent = new PatchableContent( editedContent );
         patchableContent.publishInfo.setPatcher( c -> c.publishInfo.originalValue == null
             ? null
             : ContentPublishInfo.create( editedContent.getPublishInfo() ).time( null ).build() );
-        patchableContent.inherit.setPatcher( c -> stopDataInherit( c.inherit.originalValue ) );
+        patchableContent.inherit.setPatcher( c -> stopInherit( c.inherit.originalValue, stopInherit ) );
 
         return patchableContent.build();
     }
 
-    protected static Set<ContentInheritType> stopDataInherit( final Set<ContentInheritType> currentInherit )
+    protected static Set<ContentInheritType> stopInherit( final Set<ContentInheritType> currentInherit, final ContentInheritType... types )
     {
-        if ( currentInherit == null || currentInherit.isEmpty() )
+        if ( currentInherit == null || currentInherit.isEmpty() || types.length == 0 )
         {
             return currentInherit;
         }
 
         final EnumSet<ContentInheritType> newInherit = EnumSet.copyOf( currentInherit );
-        newInherit.remove( ContentInheritType.CONTENT );
-        newInherit.remove( ContentInheritType.NAME );
+        for ( ContentInheritType type : types )
+        {
+            newInherit.remove( type );
+        }
         return newInherit;
     }
 

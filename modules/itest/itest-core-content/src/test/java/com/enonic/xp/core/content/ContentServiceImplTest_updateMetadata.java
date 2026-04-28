@@ -44,9 +44,7 @@ class ContentServiceImplTest_updateMetadata
         final PrincipalKey newOwner = PrincipalKey.from( "user:system:new-owner" );
 
         final UpdateContentMetadataParams updateContentMetadataParams =
-            UpdateContentMetadataParams.create().contentId( content.getId() ).editor( edit -> {
-                edit.owner = newOwner;
-            } ).build();
+            UpdateContentMetadataParams.create().contentId( content.getId() ).editor( edit -> edit.owner = newOwner ).build();
 
         final UpdateContentMetadataResult result = this.contentService.updateMetadata( updateContentMetadataParams );
 
@@ -72,8 +70,10 @@ class ContentServiceImplTest_updateMetadata
         this.contentService.publish(
             PushContentParams.create().contentIds( ContentIds.from( content.getId() ) ).includeDependencies( false ).build() );
 
-        final int versionCountBeforeUpdate = this.contentService.getVersions(
-            GetContentVersionsParams.create().contentId( content.getId() ).build() ).getContentVersions().getSize();
+        final int versionCountBeforeUpdate =
+            this.contentService.getVersions( GetContentVersionsParams.create().contentId( content.getId() ).build() )
+                .getContentVersions()
+                .getSize();
 
         this.contentService.updateMetadata( UpdateContentMetadataParams.create()
                                                 .contentId( content.getId() )
@@ -110,8 +110,10 @@ class ContentServiceImplTest_updateMetadata
         updateParams.contentId( content.getId() ).editor( edit -> edit.displayName = "updated-in-draft" );
         this.contentService.update( updateParams );
 
-        final int versionCountBeforeUpdate = this.contentService.getVersions(
-            GetContentVersionsParams.create().contentId( content.getId() ).build() ).getContentVersions().getSize();
+        final int versionCountBeforeUpdate =
+            this.contentService.getVersions( GetContentVersionsParams.create().contentId( content.getId() ).build() )
+                .getContentVersions()
+                .getSize();
 
         this.contentService.updateMetadata( UpdateContentMetadataParams.create()
                                                 .contentId( content.getId() )
@@ -123,16 +125,11 @@ class ContentServiceImplTest_updateMetadata
 
         assertThat( versionsResult.getContentVersions() ).hasSize( versionCountBeforeUpdate + 2 );
 
-        assertThat( versionsResult.getContentVersions().stream()
-                        .limit( 2 )
-                        .flatMap( v -> v.actions().stream() ) )
-            .extracting( ContentVersion.Action::operation )
-            .containsOnly( "content.updateMetadata" );
+        assertThat( versionsResult.getContentVersions().stream().limit( 2 ).flatMap( v -> v.actions().stream() ) ).extracting(
+            ContentVersion.Action::operation ).containsOnly( "content.updateMetadata" );
 
-        assertThat( versionsResult.getContentVersions().stream()
-                        .limit( 2 )
-                        .flatMap( v -> v.actions().stream() ) )
-            .extracting( ContentVersion.Action::origin )
+        assertThat( versionsResult.getContentVersions().stream().limit( 2 ).flatMap( v -> v.actions().stream() ) ).extracting(
+                ContentVersion.Action::origin )
             .containsExactly( ContentConstants.BRANCH_DRAFT.getValue(), ContentConstants.BRANCH_MASTER.getValue() );
     }
 
@@ -162,8 +159,10 @@ class ContentServiceImplTest_updateMetadata
         assertThat( contentWithInherit.getOwner() ).isEqualTo( owner );
         assertThat( contentWithInherit.getInherit() ).contains( ContentInheritType.CONTENT );
 
-        final int versionCountBefore = this.contentService.getVersions(
-            GetContentVersionsParams.create().contentId( content.getId() ).build() ).getContentVersions().getSize();
+        final int versionCountBefore =
+            this.contentService.getVersions( GetContentVersionsParams.create().contentId( content.getId() ).build() )
+                .getContentVersions()
+                .getSize();
 
         this.contentService.updateMetadata(
             UpdateContentMetadataParams.create().contentId( content.getId() ).editor( edit -> edit.owner = owner ).build() );
@@ -181,5 +180,33 @@ class ContentServiceImplTest_updateMetadata
 
         final Content updatedContent = this.contentService.getById( content.getId() );
         assertThat( updatedContent.getInherit() ).doesNotContain( ContentInheritType.CONTENT );
+    }
+
+    @Test
+    void update_metadata_does_not_reset_name_inherit()
+    {
+        final Content content = this.contentService.create( CreateContentParams.create()
+                                                                .contentData( new PropertyTree() )
+                                                                .displayName( "content" )
+                                                                .name( "content" )
+                                                                .parent( ContentPath.ROOT )
+                                                                .type( ContentTypeName.folder() )
+                                                                .build() );
+
+        this.contentService.patch( PatchContentParams.create()
+                                       .contentId( content.getId() )
+                                       .patcher( edit -> edit.inherit.setValue(
+                                           EnumSet.of( ContentInheritType.CONTENT, ContentInheritType.NAME, ContentInheritType.SORT,
+                                                       ContentInheritType.PARENT ) ) )
+                                       .build() );
+
+        this.contentService.updateMetadata( UpdateContentMetadataParams.create()
+                                                .contentId( content.getId() )
+                                                .editor( edit -> edit.owner = PrincipalKey.from( "user:system:new-owner" ) )
+                                                .build() );
+
+        final Content updatedContent = this.contentService.getById( content.getId() );
+        assertThat( updatedContent.getInherit() ).doesNotContain( ContentInheritType.CONTENT )
+            .contains( ContentInheritType.NAME, ContentInheritType.SORT, ContentInheritType.PARENT );
     }
 }

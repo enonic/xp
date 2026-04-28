@@ -5,6 +5,7 @@ import java.util.Map;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentMetadataEditor;
 import com.enonic.xp.content.EditableContentMetadata;
 import com.enonic.xp.content.UpdateContentMetadataParams;
@@ -40,7 +41,9 @@ public class UpdateMetadataCommand
             .contentId( params.getContentId() )
             .editor( content -> {
                 Content editedContent = editMetadata( params.getEditor(), content );
-                editedContent = Content.create( editedContent ).setInherit( stopDataInherit( editedContent.getInherit() ) ).build();
+                editedContent = Content.create( editedContent )
+                    .setInherit( stopInherit( editedContent.getInherit(), ContentInheritType.CONTENT ) )
+                    .build();
                 return editedContent;
             } )
             .versionAttributesResolver( ContentAttributesHelper.versionHistoryResolver( ContentAttributesHelper.UPDATE_METADATA_ATTR,

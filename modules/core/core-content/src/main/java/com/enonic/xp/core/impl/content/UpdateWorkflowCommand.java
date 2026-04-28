@@ -3,6 +3,7 @@ package com.enonic.xp.core.impl.content;
 import java.util.Map;
 
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.EditableContentWorkflow;
 import com.enonic.xp.content.UpdateWorkflowParams;
 import com.enonic.xp.content.UpdateWorkflowResult;
@@ -43,7 +44,7 @@ public class UpdateWorkflowCommand
             .contentId( params.getContentId() )
             .editor( content -> {
                 Content editedContent = editWorkflow( params.getEditor(), content );
-                return afterUpdate( editedContent );
+                return afterUpdate( editedContent, ContentInheritType.CONTENT );
             } )
             .versionAttributesResolver( ContentAttributesHelper.versionHistoryResolver( ContentAttributesHelper.UPDATE_WORKFLOW_ATTR,
                                                                                         Map.ofEntries(
