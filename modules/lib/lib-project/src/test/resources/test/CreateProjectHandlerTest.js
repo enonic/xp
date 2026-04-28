@@ -99,7 +99,7 @@ var createProjectWithoutPermissionsExpected = {
     id: 'myproject',
     displayName: 'project display name',
     description: 'project description',
-    language: 'ja',
+    language: 'no',
     parents: [],
     permissions: {},
     readAccess: {

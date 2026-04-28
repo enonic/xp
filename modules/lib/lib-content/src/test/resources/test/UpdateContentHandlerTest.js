@@ -11,7 +11,7 @@ var expectedJson = {
     'modifiedTime': '1970-01-01T00:00:00Z',
     'type': 'test:myContentType',
     'displayName': 'Modified',
-    'language': 'en',
+    'language': 'es',
     'valid': false,
     'data': {
         'a': 2,
@@ -448,4 +448,30 @@ exports.updatePageAllComponents = function () {
     };
 
     assert.assertJsonEquals(expected, result.page);
+};
+
+exports.updateLanguage = function () {
+    var result = content.update({
+        key: '123456',
+        editor: function (c) {
+            c.language = 'ja';
+            return c;
+        }
+    });
+
+    assert.assertEquals('123456', result._id);
+    assert.assertEquals('ja', result.language);
+};
+
+exports.clearLanguage = function () {
+    var result = content.update({
+        key: '123456',
+        editor: function (c) {
+            c.language = null;
+            return c;
+        }
+    });
+
+    assert.assertEquals('123456', result._id);
+    assert.assertNull(result.language);
 };

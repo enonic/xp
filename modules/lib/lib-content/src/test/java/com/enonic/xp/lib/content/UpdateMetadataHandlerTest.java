@@ -27,7 +27,7 @@ public class UpdateMetadataHandlerTest
     }
 
     @Test
-    void updateLanguage()
+    void languageInEditorMapIsSilentlyIgnored()
     {
         final Content content = TestDataFixtures.newSmallContent();
         when( this.contentService.getById( content.getId() ) ).thenReturn( content );
@@ -35,19 +35,7 @@ public class UpdateMetadataHandlerTest
         when( this.contentService.updateMetadata( isA( UpdateContentMetadataParams.class ) ) ).thenAnswer(
             invocationOnMock -> invokeUpdateMetadata( invocationOnMock.getArgument( 0 ), content ) );
 
-        runFunction( "/test/UpdateMetadataHandlerTest.js", "updateLanguage" );
-    }
-
-    @Test
-    void unsetLanguage()
-    {
-        final Content content = TestDataFixtures.newSmallContent();
-        when( this.contentService.getById( content.getId() ) ).thenReturn( content );
-
-        when( this.contentService.updateMetadata( isA( UpdateContentMetadataParams.class ) ) ).thenAnswer(
-            invocationOnMock -> invokeUpdateMetadata( invocationOnMock.getArgument( 0 ), content ) );
-
-        runFunction( "/test/UpdateMetadataHandlerTest.js", "unsetLanguage" );
+        runFunction( "/test/UpdateMetadataHandlerTest.js", "languageInEditorMapIsSilentlyIgnored" );
     }
 
     @Test
@@ -60,18 +48,6 @@ public class UpdateMetadataHandlerTest
             invocationOnMock -> invokeUpdateMetadata( invocationOnMock.getArgument( 0 ), content ) );
 
         runFunction( "/test/UpdateMetadataHandlerTest.js", "updateOwner" );
-    }
-
-    @Test
-    void updateLanguageAndOwner()
-    {
-        final Content content = TestDataFixtures.newSmallContent();
-        when( this.contentService.getById( content.getId() ) ).thenReturn( content );
-
-        when( this.contentService.updateMetadata( isA( UpdateContentMetadataParams.class ) ) ).thenAnswer(
-            invocationOnMock -> invokeUpdateMetadata( invocationOnMock.getArgument( 0 ), content ) );
-
-        runFunction( "/test/UpdateMetadataHandlerTest.js", "updateLanguageAndOwner" );
     }
 
     @Test

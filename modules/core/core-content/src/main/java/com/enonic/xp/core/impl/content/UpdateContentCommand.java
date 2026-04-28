@@ -11,6 +11,7 @@ import com.enonic.xp.content.AttachmentValidationError;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentDataValidationException;
 import com.enonic.xp.content.ContentEditor;
+import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.Media;
@@ -87,7 +88,7 @@ final class UpdateContentCommand
                 checkAccess( content, editedContent );
 
                 editedContent = editContentMetadata( editedContent );
-                editedContent = afterUpdate( editedContent );
+                editedContent = afterUpdate( editedContent, ContentInheritType.CONTENT, ContentInheritType.NAME );
 
                 validate( editedContent );
 
