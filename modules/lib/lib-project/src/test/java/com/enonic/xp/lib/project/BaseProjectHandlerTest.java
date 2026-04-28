@@ -9,14 +9,15 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.content.EditableContentMetadata;
 import com.enonic.xp.content.Mixins;
-import com.enonic.xp.content.UpdateContentMetadataParams;
-import com.enonic.xp.content.UpdateContentMetadataResult;
+import com.enonic.xp.content.PatchContentParams;
+import com.enonic.xp.content.PatchContentResult;
+import com.enonic.xp.content.PatchableContent;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.PropertyTreeMarshallerService;
 import com.enonic.xp.project.CreateProjectParams;
@@ -60,15 +61,19 @@ public abstract class BaseProjectHandlerTest
             .mixins( Mixins.empty() );
 
         when( contentService.getByPath( ContentPath.ROOT ) ).thenReturn( contentRoot.build() );
-        when( contentService.updateMetadata( any() ) ).thenAnswer( invocation -> {
+        when( contentService.patch( any( PatchContentParams.class ) ) ).thenAnswer( invocation -> {
+            final PatchContentParams params = invocation.getArgument( 0 );
+            final PatchableContent patchable = new PatchableContent( contentRoot.build() );
+            params.getPatcher().patch( patchable );
+            final Content patched = patchable.build();
 
-            final UpdateContentMetadataParams params = invocation.getArgument( 0 );
-            final EditableContentMetadata editableContent = new EditableContentMetadata( contentRoot.build() );
-            params.getEditor().edit( editableContent );
-
-            contentRoot.language( editableContent.source.getLanguage() );
+            contentRoot.language( patched.getLanguage() );
             when( contentService.getByPath( ContentPath.ROOT ) ).thenReturn( contentRoot.build() );
-            return UpdateContentMetadataResult.create().content( contentRoot.build() ).build();
+            return PatchContentResult.create()
+                .contentId( params.getContentId() )
+                .addResult( ContentConstants.BRANCH_DRAFT, patched )
+                .addResult( ContentConstants.BRANCH_MASTER, patched )
+                .build();
         } );
     }
 

@@ -6,7 +6,6 @@ var assert = require('/lib/xp/testing');
 var result = contentLib.updateMetadata({
     key: '/a/b/mycontent',
     editor: function (c) {
-        c.language = 'en';
         c.owner = 'user:system:new-owner';
         return c;
     }

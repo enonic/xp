@@ -2,9 +2,13 @@ package com.enonic.xp.lib.project.command;
 
 import java.util.Locale;
 
+import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.UpdateContentMetadataParams;
+import com.enonic.xp.content.PatchContentParams;
+import com.enonic.xp.content.PatchContentResult;
+import com.enonic.xp.context.ContextAccessor;
 
 public final class ApplyProjectLanguageCommand
     extends AbstractProjectRootCommand
@@ -32,10 +36,15 @@ public final class ApplyProjectLanguageCommand
         return projectRepoContext.callWith( () -> {
             final Content root = this.contentService.getByPath( ContentPath.ROOT );
 
-            final UpdateContentMetadataParams params =
-                UpdateContentMetadataParams.create().contentId( root.getId() ).editor( edit -> edit.language = this.language ).build();
+            final PatchContentParams params = PatchContentParams.create()
+                .contentId( root.getId() )
+                .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
+                .patcher( edit -> edit.language.setValue( this.language ) )
+                .build();
 
-            return this.contentService.updateMetadata( params ).getContent().getLanguage();
+            final PatchContentResult result = this.contentService.patch( params );
+
+            return result.getResult( ContextAccessor.current().getBranch() ).getLanguage();
         } );
     }
 

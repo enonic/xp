@@ -1,7 +1,5 @@
 package com.enonic.xp.core.content;
 
-import java.util.Locale;
-
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.archive.ArchiveContentParams;
@@ -36,6 +34,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
@@ -418,8 +417,10 @@ class ContentServiceImplTest_versionAttributes
     {
         final Content content = createFolder( "content", ContentPath.ROOT );
 
-        this.contentService.updateMetadata(
-            UpdateContentMetadataParams.create().contentId( content.getId() ).editor( edit -> edit.language = Locale.ENGLISH ).build() );
+        this.contentService.updateMetadata( UpdateContentMetadataParams.create()
+                                                .contentId( content.getId() )
+                                                .editor( edit -> edit.owner = PrincipalKey.from( "user:system:new-owner" ) )
+                                                .build() );
 
         final ContentVersion version = getLatestVersion( content );
 

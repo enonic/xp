@@ -66,8 +66,8 @@ public class ContentAttributesHelper
     public static final String EDITORIAL_PROPERTY = "editorial";
 
     private static final Set<String> EDITORIAL_FIELDS =
-        Set.of( ContentPropertyNames.DISPLAY_NAME, ContentPropertyNames.DATA, ContentPropertyNames.MIXINS, ContentPropertyNames.COMPONENTS,
-                ContentPropertyNames.ATTACHMENT, "childOrder", "manualOrderValue" );
+        Set.of( ContentPropertyNames.DISPLAY_NAME, ContentPropertyNames.DATA, ContentPropertyNames.LANGUAGE, ContentPropertyNames.MIXINS,
+                ContentPropertyNames.COMPONENTS, ContentPropertyNames.ATTACHMENT, "childOrder", "manualOrderValue" );
 
     private static final Map<String, Function<Node, ?>> NODE_FIELD_GETTERS =
         Map.ofEntries( Map.entry( "name", Node::name ), Map.entry( "parentPath", Node::parentPath ),

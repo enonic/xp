@@ -908,7 +908,6 @@ export function patch(params: PatchContentParams): PatchContentResult {
 
 export interface EditableContentMetadata {
     source: Content;
-    language?: string;
     owner?: string;
     variantOf?: string;
 }
@@ -931,7 +930,7 @@ interface UpdateMetadataHandler {
 }
 
 /**
- * This function updates metadata (language, owner, and variantOf) for a content.
+ * This function updates metadata (owner and variantOf) for a content.
  * The update is applied to both master and draft branches.
  *
  * @example-ref examples/content/updateMetadata.js
