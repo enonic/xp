@@ -9,7 +9,6 @@ import com.enonic.xp.util.DoubleHelper;
 
 public final class Cropping
 {
-
     public static final Cropping DEFAULT = Cropping.create().build();
 
     private final double top;
@@ -20,20 +19,16 @@ public final class Cropping
 
     private final double right;
 
-    private final double zoom;
-
     private Cropping( final Cropping.Builder builder )
     {
         this.top = builder.top;
         this.left = builder.left;
         this.bottom = builder.bottom;
         this.right = builder.right;
-        this.zoom = builder.zoom;
         Preconditions.checkArgument( top >= 0, "Cropping top offset value must be positive : %s", top );
         Preconditions.checkArgument( left >= 0, "Cropping left offset value must be positive : %s", left );
         Preconditions.checkArgument( bottom > top, "Cropping bottom value must be bigger than top : %s", bottom );
         Preconditions.checkArgument( right > left, "Cropping right value must be bigger than left : %s", right );
-        Preconditions.checkArgument( zoom >= 1.0, "Cropping zoom value must be bigger than 1: %s", zoom );
     }
 
     public boolean isUnmodified()
@@ -41,8 +36,7 @@ public final class Cropping
         return DoubleHelper.fuzzyEquals( top, 0.0 ) &&
             DoubleHelper.fuzzyEquals( left, 0.0 ) &&
             DoubleHelper.fuzzyEquals( bottom, 1.0 ) &&
-            DoubleHelper.fuzzyEquals( right, 1.0 ) &&
-            DoubleHelper.fuzzyEquals( zoom, 1.0 );
+            DoubleHelper.fuzzyEquals( right, 1.0 );
     }
 
     public double top()
@@ -65,9 +59,13 @@ public final class Cropping
         return right;
     }
 
+    /**
+     * @deprecated Zoom is no longer stored on Cropping. This accessor returns 1.0 for backwards compatibility.
+     */
+    @Deprecated
     public double zoom()
     {
-        return zoom;
+        return 1.0;
     }
 
     public double width()
@@ -93,13 +91,13 @@ public final class Cropping
         }
         final Cropping cropping = (Cropping) o;
         return left == cropping.left && top == cropping.top && right == cropping.right &&
-            bottom == cropping.bottom && zoom == cropping.zoom;
+            bottom == cropping.bottom;
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( left, top, right, bottom, zoom );
+        return Objects.hash( left, top, right, bottom );
     }
 
     @Override
@@ -110,7 +108,6 @@ public final class Cropping
             add( "left", left ).
             add( "bottom", bottom ).
             add( "right", right ).
-            add( "zoom", zoom ).
             toString();
     }
 
@@ -134,15 +131,12 @@ public final class Cropping
 
         private double right;
 
-        private double zoom;
-
         private Builder()
         {
             this.top = 0;
             this.left = 0;
             this.bottom = 1.0;
             this.right = 1.0;
-            this.zoom = 1.0;
         }
 
         private Builder( final Cropping source )
@@ -151,7 +145,6 @@ public final class Cropping
             this.left = source.left;
             this.bottom = source.bottom;
             this.right = source.right;
-            this.zoom = source.zoom;
         }
 
         public Builder left( final double left )
@@ -178,9 +171,12 @@ public final class Cropping
             return this;
         }
 
+        /**
+         * @deprecated Zoom is no longer stored on Cropping. This setter is a no-op kept for backwards compatibility.
+         */
+        @Deprecated
         public Builder zoom( final double zoom )
         {
-            this.zoom = zoom;
             return this;
         }
 

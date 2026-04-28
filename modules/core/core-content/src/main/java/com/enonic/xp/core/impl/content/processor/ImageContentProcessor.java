@@ -1,58 +1,40 @@
 package com.enonic.xp.core.impl.content.processor;
 
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
+import java.util.Optional;
+import java.util.stream.Stream;
 
-import javax.imageio.ImageIO;
-
-import org.osgi.service.component.annotations.Activate;
+import org.apache.tika.metadata.Geographic;
+import org.apache.tika.metadata.HttpHeaders;
+import org.apache.tika.metadata.TIFF;
+import org.apache.tika.metadata.TikaCoreProperties;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Multimap;
-import com.google.common.io.ByteSource;
-
-import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.content.Media;
+import com.enonic.xp.content.MediaUtils;
 import com.enonic.xp.content.Mixin;
 import com.enonic.xp.content.Mixins;
+import com.enonic.xp.core.impl.content.schema.BuiltinMixinTypes;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.data.Value;
+import com.enonic.xp.data.ValueFactory;
+import com.enonic.xp.data.ValueTypeException;
 import com.enonic.xp.data.ValueTypes;
-import com.enonic.xp.form.FormItem;
-import com.enonic.xp.form.FormItemPath;
-import com.enonic.xp.form.Input;
 import com.enonic.xp.image.Cropping;
-import com.enonic.xp.inputtype.InputTypeName;
+import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinDescriptor;
-import com.enonic.xp.schema.mixin.MixinDescriptors;
 import com.enonic.xp.schema.mixin.MixinName;
-import com.enonic.xp.schema.mixin.MixinNames;
-import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.util.GeoPoint;
-
-import static com.enonic.xp.media.MediaInfo.CAMERA_INFO_METADATA_NAME;
-import static com.enonic.xp.media.MediaInfo.GPS_INFO_METADATA_NAME;
-import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_IMAGE_HEIGHT;
-import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_IMAGE_WIDTH;
-import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_METADATA_NAME;
-import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_PIXEL_SIZE;
-import static com.enonic.xp.media.MediaInfo.MEDIA_INFO_BYTE_SIZE;
 
 @Component
 public final class ImageContentProcessor
@@ -60,143 +42,43 @@ public final class ImageContentProcessor
 {
     private static final Logger LOG = LoggerFactory.getLogger( ImageContentProcessor.class );
 
-    private static final List<String> IMAGE_LENGTH_VALUES = List.of( "tiffImagelength", "imageHeight" );
-
-    private static final List<String> IMAGE_WIDTH_VALUES = List.of( "tiffImagewidth", "imageWidth" );
-
-    private static final List<String> EXPOSURE_BIAS_VALUES = List.of( "exifSubifdExposureBiasValue", "exposureBiasValue", "exposureBias" );
-
-    private static final List<String> APERTURE_VALUES = List.of( "exifSubifdApertureValue", "FNumber", "aperture" );
-
-    private static final List<String> SHUTTER_TIME_VALUES = List.of( "exifSubifdExposureTime", "exposureTime", "shutterTime" );
-
-    private static final List<String> FOCUS_DISTANCE_VALUES = List.of( "subjectDistanceRange", "focusDistance" );
-
-    private static final List<String> ALTITUDE_VALUES = List.of( "gpsAltitude", "globalAltitude", "altitude" );
-
-    private static final List<String> DIRECTION_VALUES = List.of( "gpsImgDirection", "direction" );
-
-    private static final List<String> WHITE_BALANCE_VALUES = List.of( "exifSubifdWhiteBalanceMode", "whiteBalanceMode", "whiteBalance" );
-
-    private static final List<String> ISO_VALUES = List.of( "isoSpeedRatings", "exifIsospeedratings", "iso" );
-
-    private static final List<String> DESCRIPTION_VALUES = List.of( "dcDescription", "description" );
-
-    private static final List<String> COLOR_SPACE_VALUES = List.of( "exifSubifdColorSpace", "iccColorSpace", "colorSpace" );
-
-    private static final List<String> DATE_VALUES = List.of( "dctermsModified", "date" );
-
-    private static final List<String> MAKE_VALUES = List.of( "tiffMake", "make" );
-
-    private static final List<String> MODEL_VALUES = List.of( "tiffModel", "model" );
-
-    private static final List<String> LENS_VALUES = List.of( "exifSubifdLensModel", "lens" );
-
-    private static final List<String> FOCAL_LENGTH_VALUES = List.of( "exifSubifdFocalLength", "focalLength" );
-
-    private static final List<String> EXPOSURE_PROGRAM_VALUES = List.of( "exifSubifdExposureProgram", "exposureProgram" );
-
-    private static final List<String> METERING_MODE_VALUES = List.of( "exifSubifdMeteringMode", "meteringMode" );
-
-    private static final List<String> EXPOSURE_MODE_VALUES = List.of( "exifSubifdExposureMode", "exposureMode" );
-
-    private static final List<String> ORIENTATION_VALUES = List.of( "exifIfd0Orientation", "orientation" );
-
-    private static final List<String> FLASH_VALUES = List.of( "exifSubifdFlash", "flash" );
-
-    private static final Map<String, List<String>> METADATA_PRIORITY_MAP = ImmutableMap.<String, List<String>>builder()
-        .put( "tiffImagelength", IMAGE_LENGTH_VALUES )
-        .put( "imageHeight", IMAGE_LENGTH_VALUES )
-        .put( "tiffImagewidth", IMAGE_WIDTH_VALUES )
-        .put( "imageWidth", IMAGE_WIDTH_VALUES )
-        .put( "exifSubifdExposureBiasValue", EXPOSURE_BIAS_VALUES )
-        .put( "exposureBiasValue", EXPOSURE_BIAS_VALUES )
-        .put( "exposureBias", EXPOSURE_BIAS_VALUES )
-        .put( "exifSubifdApertureValue", APERTURE_VALUES )
-        .put( "FNumber", APERTURE_VALUES )
-        .put( "aperture", APERTURE_VALUES )
-        .put( "exifSubifdExposureTime", SHUTTER_TIME_VALUES )
-        .put( "exposureTime", SHUTTER_TIME_VALUES )
-        .put( "shutterTime", SHUTTER_TIME_VALUES )
-        .put( "subjectDistanceRange", FOCUS_DISTANCE_VALUES )
-        .put( "focusDistance", FOCUS_DISTANCE_VALUES )
-        .put( "gpsAltitude", ALTITUDE_VALUES )
-        .put( "globalAltitude", ALTITUDE_VALUES )
-        .put( "altitude", ALTITUDE_VALUES )
-        .put( "gpsImgDirection", DIRECTION_VALUES )
-        .put( "direction", DIRECTION_VALUES )
-        .put( "exifSubifdWhiteBalanceMode", WHITE_BALANCE_VALUES )
-        .put( "whiteBalanceMode", WHITE_BALANCE_VALUES )
-        .put( "whiteBalance", WHITE_BALANCE_VALUES )
-        .put( "isoSpeedRatings", ISO_VALUES )
-        .put( "exifIsospeedratings", ISO_VALUES )
-        .put( "iso", ISO_VALUES )
-        .put( "dcDescription", DESCRIPTION_VALUES )
-        .put( "description", DESCRIPTION_VALUES )
-        .put( "exifSubifdColorSpace", COLOR_SPACE_VALUES )
-        .put( "iccColorSpace", COLOR_SPACE_VALUES )
-        .put( "colorSpace", COLOR_SPACE_VALUES )
-        .put( "dctermsModified", DATE_VALUES )
-        .put( "date", DATE_VALUES )
-        .put( "tiffMake", MAKE_VALUES )
-        .put( "make", MAKE_VALUES )
-        .put( "tiffModel", MODEL_VALUES )
-        .put( "model", MODEL_VALUES )
-        .put( "exifSubifdLensModel", LENS_VALUES )
-        .put( "lens", LENS_VALUES )
-        .put( "exifSubifdFocalLength", FOCAL_LENGTH_VALUES )
-        .put( "focalLength", FOCAL_LENGTH_VALUES )
-        .put( "exifSubifdExposureProgram", EXPOSURE_PROGRAM_VALUES )
-        .put( "exposureProgram", EXPOSURE_PROGRAM_VALUES )
-        .put( "exifSubifdMeteringMode", METERING_MODE_VALUES )
-        .put( "meteringMode", METERING_MODE_VALUES )
-        .put( "exifSubifdExposureMode", EXPOSURE_MODE_VALUES )
-        .put( "exposureMode", EXPOSURE_MODE_VALUES )
-        .put( "exifIfd0Orientation", ORIENTATION_VALUES )
-        .put( "orientation", ORIENTATION_VALUES )
-        .put( "flash", FLASH_VALUES )
-        .build();
-
-    private static final ImmutableMap<String, String> FORM_CONFORMITY_MAP = ImmutableMap.<String, String>builder()
-        .putAll( getFlattenedMap( IMAGE_LENGTH_VALUES, "imageHeight" ) )
-        .putAll( getFlattenedMap( IMAGE_WIDTH_VALUES, "imageWidth" ) )
-        .putAll( getFlattenedMap( EXPOSURE_BIAS_VALUES, "exposureBias" ) )
-        .putAll( getFlattenedMap( APERTURE_VALUES, "aperture" ) )
-        .putAll( getFlattenedMap( SHUTTER_TIME_VALUES, "shutterTime" ) )
-        .putAll( getFlattenedMap( FOCUS_DISTANCE_VALUES, "focusDistance" ) )
-        .putAll( getFlattenedMap( ALTITUDE_VALUES, "altitude" ) )
-        .putAll( getFlattenedMap( DIRECTION_VALUES, "direction" ) )
-        .putAll( getFlattenedMap( WHITE_BALANCE_VALUES, "whiteBalance" ) )
-        .putAll( getFlattenedMap( ISO_VALUES, "iso" ) )
-        .putAll( getFlattenedMap( DESCRIPTION_VALUES, "description" ) )
-        .putAll( getFlattenedMap( COLOR_SPACE_VALUES, "colorSpace" ) )
-        .putAll( getFlattenedMap( DATE_VALUES, "date" ) )
-        .putAll( getFlattenedMap( MAKE_VALUES, "make" ) )
-        .putAll( getFlattenedMap( MODEL_VALUES, "model" ) )
-        .putAll( getFlattenedMap( LENS_VALUES, "lens" ) )
-        .putAll( getFlattenedMap( FOCAL_LENGTH_VALUES, "focalLength" ) )
-        .putAll( getFlattenedMap( EXPOSURE_PROGRAM_VALUES, "exposureProgram" ) )
-        .putAll( getFlattenedMap( METERING_MODE_VALUES, "meteringMode" ) )
-        .putAll( getFlattenedMap( EXPOSURE_MODE_VALUES, "exposureMode" ) )
-        .putAll( getFlattenedMap( ORIENTATION_VALUES, "orientation" ) )
-        .putAll( getFlattenedMap( FLASH_VALUES, "flash" ) )
-        .build();
-
-    private static final String GEO_LONGITUDE = "geoLong";
-
-    private static final String GEO_LATITUDE = "geoLat";
-
-    private final ContentService contentService;
-
-    private final MixinDescriptors mixinDescriptors;
-
-    @Activate
-    public ImageContentProcessor( @Reference final ContentService contentService, @Reference final MixinService mixinService )
-    {
-        this.contentService = contentService;
-        this.mixinDescriptors =
-            mixinService.getByNames( MixinNames.from( IMAGE_INFO_METADATA_NAME, CAMERA_INFO_METADATA_NAME, GPS_INFO_METADATA_NAME ) );
-    }
+    private static final List<FormItemSource> FORM_ITEM_SOURCES =
+        List.of( source( BuiltinMixinTypes.IMAGE_METADATA, MediaInfo.IMAGE_INFO_IMAGE_HEIGHT, longValue( TIFF.IMAGE_LENGTH.getName() ) ),
+                 source( BuiltinMixinTypes.IMAGE_METADATA, MediaInfo.IMAGE_INFO_IMAGE_WIDTH, longValue( TIFF.IMAGE_WIDTH.getName() ) ),
+                 source( BuiltinMixinTypes.IMAGE_METADATA, MediaInfo.IMAGE_INFO_ORIENTATION, longValue( TIFF.ORIENTATION.getName() ) ),
+                 source( BuiltinMixinTypes.IMAGE_METADATA, "contentType", string( HttpHeaders.CONTENT_TYPE ) ),
+                 source( BuiltinMixinTypes.IMAGE_METADATA, "description", string( TikaCoreProperties.DESCRIPTION.getName() ) ),
+                 source( BuiltinMixinTypes.IMAGE_METADATA, "colorSpace", string( "Exif SubIFD:Color Space" ) ),
+                 source( BuiltinMixinTypes.IMAGE_METADATA, "fileSource", string( "Exif SubIFD:File Source" ) ),
+                 source( BuiltinMixinTypes.IMAGE_METADATA, MediaInfo.MEDIA_INFO_BYTE_SIZE, longValue( MediaInfo.MEDIA_INFO_BYTE_SIZE ) ),
+                 source( BuiltinMixinTypes.IMAGE_METADATA, MediaInfo.IMAGE_INFO_PIXEL_SIZE,
+                         longProduct( TIFF.IMAGE_LENGTH.getName(), TIFF.IMAGE_WIDTH.getName() ) ),
+                 source( BuiltinMixinTypes.CAMERA_METADATA, "date", dateTime( TikaCoreProperties.CREATED.getName() ) ),
+                 source( BuiltinMixinTypes.CAMERA_METADATA, "make", string( TIFF.EQUIPMENT_MAKE.getName() ) ),
+                 source( BuiltinMixinTypes.CAMERA_METADATA, "model", string( TIFF.EQUIPMENT_MODEL.getName() ) ),
+                 source( BuiltinMixinTypes.CAMERA_METADATA, "lens", string( "Exif SubIFD:Lens Model", "aux:Lens" ) ),
+                 source( BuiltinMixinTypes.CAMERA_METADATA, "iso",
+                         string( TIFF.ISO_SPEED_RATINGS.getName(), "Exif SubIFD:ISO Speed Ratings" ) ),
+                 source( BuiltinMixinTypes.CAMERA_METADATA, "focalLength",
+                         string( TIFF.FOCAL_LENGTH.getName(), "Exif SubIFD:Focal Length" ) ),
+                 source( BuiltinMixinTypes.CAMERA_METADATA, "focalLength35", string( "Exif SubIFD:Focal Length 35" ) ),
+                 source( BuiltinMixinTypes.CAMERA_METADATA, "exposureBias", string( "Exif SubIFD:Exposure Bias Value" ) ),
+                 source( BuiltinMixinTypes.CAMERA_METADATA, "aperture", string( TIFF.F_NUMBER.getName(), "Exif SubIFD:F-Number" ) ),
+                 source( BuiltinMixinTypes.CAMERA_METADATA, "shutterTime",
+                         string( TIFF.EXPOSURE_TIME.getName(), "Exif SubIFD:Exposure Time" ) ),
+                 source( BuiltinMixinTypes.CAMERA_METADATA, "flash", string( TIFF.FLASH_FIRED.getName(), "Exif SubIFD:Flash" ) ),
+                 source( BuiltinMixinTypes.CAMERA_METADATA, "autoFlashCompensation", string( "aux:FlashCompensation", "Flash Bias" ) ),
+                 source( BuiltinMixinTypes.CAMERA_METADATA, "whiteBalance", string( "Exif SubIFD:White Balance Mode" ) ),
+                 source( BuiltinMixinTypes.CAMERA_METADATA, "exposureProgram", string( "Exif SubIFD:Exposure Program" ) ),
+                 source( BuiltinMixinTypes.CAMERA_METADATA, "shootingMode", string( "Shooting Mode", "Record Mode" ) ),
+                 source( BuiltinMixinTypes.CAMERA_METADATA, "meteringMode", string( "Exif SubIFD:Metering Mode" ) ),
+                 source( BuiltinMixinTypes.CAMERA_METADATA, "exposureMode", string( "Exif SubIFD:Exposure Mode" ) ),
+                 source( BuiltinMixinTypes.CAMERA_METADATA, "focusDistance", string( "Exif SubIFD:Subject Distance Range" ) ),
+                 source( BuiltinMixinTypes.CAMERA_METADATA, "orientation", string( "Exif IFD0:Orientation" ) ),
+                 source( BuiltinMixinTypes.GPS_METADATA, "altitude", string( Geographic.ALTITUDE.getName(), "GPS:GPS Altitude" ) ),
+                 source( BuiltinMixinTypes.GPS_METADATA, "direction", string( "GPS:GPS Img Direction" ) ),
+                 source( BuiltinMixinTypes.GPS_METADATA, MediaInfo.GPS_INFO_GEO_POINT,
+                         geoPoint( Geographic.LATITUDE.getName(), Geographic.LONGITUDE.getName() ) ) );
 
     @Override
     public boolean supports( final ContentTypeName contentType )
@@ -207,218 +89,96 @@ public final class ImageContentProcessor
     @Override
     public ProcessCreateResult processCreate( final ProcessCreateParams params )
     {
-        final MediaInfo mediaInfo = params.getMediaInfo();
-        final Mixins mixins = mediaInfo != null ? extractMetadata( mediaInfo ) : null;
-
-        return new ProcessCreateResult( CreateContentParams.create( params.getCreateContentParams() ).mixins( mixins ).build(),
-                                        params.getProcessedReferences() );
+        if ( params.getMediaInfo() == null )
+        {
+            return new ProcessCreateResult( params.getCreateContentParams(), params.getProcessedReferences() );
+        }
+        final Mixins mixins = extractMetadata( params.getMediaInfo() );
+        final CreateContentParams.Builder newParams = CreateContentParams.create( params.getCreateContentParams() ).mixins( mixins );
+        writeEffectiveDimension( params.getCreateContentParams().getData().getSet( ContentPropertyNames.MEDIA ),
+                                 mixins.getByName( MediaInfo.IMAGE_INFO_METADATA_NAME ), true );
+        return new ProcessCreateResult( newParams.build(), params.getProcessedReferences() );
     }
 
     @Override
     public ProcessUpdateResult processUpdate( final ProcessUpdateParams params )
     {
-        final MediaInfo mediaInfo = params.getMediaInfo();
-        final Mixins mixins;
-        if ( mediaInfo != null )
+        final Content content = params.getContent();
+        final Content.Builder<?> builder = Content.create( content );
+
+        Mixins mixins = content.getMixins();
+        final boolean binaryChanged = params.getMediaInfo() != null;
+        if ( binaryChanged )
         {
-            mixins =
-                Mixins.create().addAll( params.getContent().getMixins().copy() ).addAll( extractMetadata( mediaInfo ) ).buildKeepingLast();
+            mixins = Mixins.create().addAll( mixins.copy() ).addAll( extractMetadata( params.getMediaInfo() ) ).buildKeepingLast();
+            builder.mixins( mixins );
         }
-        else
+        final Content newContent = builder.build();
+        writeEffectiveDimension( newContent.getData().getSet( ContentPropertyNames.MEDIA ),
+                                 mixins.getByName( MediaInfo.IMAGE_INFO_METADATA_NAME ), binaryChanged );
+        return new ProcessUpdateResult( newContent );
+    }
+
+    private static void writeEffectiveDimension( final PropertySet mediaData, final Mixin imageInfo, final boolean refreshOrientation )
+    {
+        if ( mediaData == null || imageInfo == null )
         {
-            final Mixin updatedImageMetadata =
-                updateImageMetadata( (Media) params.getContent(), params.getContent().getMixins().getByName( IMAGE_INFO_METADATA_NAME ) );
-            if ( updatedImageMetadata == null )
+            return;
+        }
+
+        if ( refreshOrientation )
+        {
+            final Long origOrientation = imageInfo.getData().getLong( MediaInfo.IMAGE_INFO_ORIENTATION );
+            if ( origOrientation != null )
             {
-                return new ProcessUpdateResult( params.getContent() );
-            }
-            else
-            {
-                mixins = Mixins.create().addAll( params.getContent().getMixins().copy() ).add( updatedImageMetadata ).buildKeepingLast();
+                mediaData.removeProperties( ContentPropertyNames.ORIENTATION );
+                mediaData.setLong( ContentPropertyNames.ORIENTATION, origOrientation );
             }
         }
 
-        return new ProcessUpdateResult( Content.create( params.getContent() ).mixins( mixins ).build() );
+        final Long origWidth = imageInfo.getData().getLong( MediaInfo.IMAGE_INFO_IMAGE_WIDTH );
+        final Long origHeight = imageInfo.getData().getLong( MediaInfo.IMAGE_INFO_IMAGE_HEIGHT );
+        if ( origWidth == null || origHeight == null )
+        {
+            return;
+        }
+
+        final ImageOrientation orientation = MediaUtils.readOrientation( mediaData );
+        final Cropping cropping = MediaUtils.readCropping( mediaData );
+
+        final boolean swap = switch ( orientation )
+        {
+            case LeftTop, RightTop, RightBottom, LeftBottom -> true;
+            case null, default -> false;
+        };
+        long width = swap ? origHeight : origWidth;
+        long height = swap ? origWidth : origHeight;
+        if ( cropping != null && !cropping.isUnmodified() )
+        {
+            width = (long) ( width * ( cropping.right() - cropping.left() ) );
+            height = (long) ( height * ( cropping.bottom() - cropping.top() ) );
+        }
+
+        mediaData.removeProperties( ContentPropertyNames.MEDIA_IMAGE_HEIGHT );
+        mediaData.removeProperties( ContentPropertyNames.MEDIA_IMAGE_WIDTH );
+        mediaData.setLong( ContentPropertyNames.MEDIA_IMAGE_HEIGHT, height );
+        mediaData.setLong( ContentPropertyNames.MEDIA_IMAGE_WIDTH, width );
     }
 
-    private Mixin updateImageMetadata( final Media media, final Mixin imageMetadata )
-    {
-        if ( imageMetadata == null )
-        {
-            return null;
-        }
-
-        final Attachment mediaAttachment = media.getMediaAttachment();
-        if ( mediaAttachment == null )
-        {
-            return null;
-        }
-        final ByteSource binary = contentService.getBinary( media.getId(), mediaAttachment.getBinaryReference() );
-        if ( binary == null )
-        {
-            return null;
-        }
-        final BufferedImage image = toBufferedImage( binary );
-        if ( image == null )
-        {
-            return null;
-        }
-        final Cropping cropping = media.getCropping();
-
-        final long imageWidth;
-        final long imageHeight;
-        if ( cropping == null || cropping.isUnmodified() )
-        {
-            imageWidth = image.getWidth();
-            imageHeight = image.getHeight();
-        }
-        else
-        {
-            final BufferedImage croppedImage = cropImage( image, cropping );
-            imageWidth = croppedImage.getWidth();
-            imageHeight = croppedImage.getHeight();
-        }
-
-        final PropertyTree mixinData = imageMetadata.getData();
-        setLongProperty( mixinData, IMAGE_INFO_PIXEL_SIZE, imageWidth * imageHeight );
-        setLongProperty( mixinData, IMAGE_INFO_IMAGE_HEIGHT, imageHeight );
-        setLongProperty( mixinData, IMAGE_INFO_IMAGE_WIDTH, imageWidth );
-        setLongProperty( mixinData, MEDIA_INFO_BYTE_SIZE, mediaAttachment.getSize() );
-
-        return imageMetadata;
-    }
-
-    private void setLongProperty( final PropertyTree propertyTree, final String path, final long value )
-    {
-        propertyTree.removeProperties( path );
-        propertyTree.setLong( path, value );
-    }
-
-    private void setGeoPointProperty( final PropertyTree propertyTree, final String path, final double geoLat, final double geoLong )
-    {
-        propertyTree.removeProperties( path );
-        propertyTree.setGeoPoint( path, new GeoPoint( geoLat, geoLong ) );
-    }
-
-    private BufferedImage toBufferedImage( final ByteSource source )
-    {
-        try (InputStream stream = source.openStream())
-        {
-            return ImageIO.read( stream );
-        }
-        catch ( IOException e )
-        {
-            LOG.warn( "Failed to read BufferedImage from InputStream", e );
-            return null;
-        }
-    }
-
-    private BufferedImage cropImage( final BufferedImage image, final Cropping cropping )
-    {
-        final double width = image.getWidth();
-        final double height = image.getHeight();
-        return image.getSubimage( (int) ( width * cropping.left() ), (int) ( height * cropping.top() ), (int) ( width * cropping.width() ),
-                                  (int) ( height * cropping.height() ) );
-    }
-
-    private Mixins extractMetadata( final MediaInfo mediaInfo )
+    private static Mixins extractMetadata( final MediaInfo mediaInfo )
     {
         final Map<MixinName, Mixin> metadataMap = new LinkedHashMap<>();
 
-        final Set<String> visitedFormItems = new HashSet<>();
-
-        for ( Map.Entry<String, Collection<String>> mediaInfoEntry : mediaInfo.getMetadata().asMap().entrySet() )
+        for ( FormItemSource source : FORM_ITEM_SOURCES )
         {
-            String formItemName;
-            Collection<String> mediaEntryValues;
-
-            final List<String> priorityList = METADATA_PRIORITY_MAP.get( mediaInfoEntry.getKey() );
-
-            if ( priorityList != null )
-            {
-                formItemName = FORM_CONFORMITY_MAP.get( mediaInfoEntry.getKey() );
-
-                if ( visitedFormItems.contains( formItemName ) )
-                {
-                    continue;
-                }
-
-                mediaEntryValues =
-                    priorityList.stream().map( mediaInfo.getMetadata().asMap()::get ).filter( Objects::nonNull ).findFirst().orElseThrow();
-
-                visitedFormItems.add( formItemName );
-            }
-            else
-            {
-                formItemName = mediaInfoEntry.getKey();
-                mediaEntryValues = mediaInfoEntry.getValue();
-            }
-
-            for ( MixinDescriptor mixinDescriptor : mixinDescriptors )
-            {
-                final FormItem formItem = mixinDescriptor.getForm().getFormItem( FormItemPath.from( formItemName ) );
-                if ( formItem instanceof Input input )
-                {
-                    final Mixin mixin = getOrCreate( metadataMap, mixinDescriptor.getName() );
-                    if ( InputTypeName.DATE_TIME.equals( input.getInputType() ) )
-                    {
-                        mixin.getData()
-                            .addLocalDateTime( formItemName, ValueTypes.LOCAL_DATE_TIME.convert( mediaEntryValues.toArray()[0] ) );
-                    }
-                    else if ( InputTypeName.LONG.equals( input.getInputType() ) )
-                    {
-                        final Long[] longValues = mediaEntryValues.stream().map( Long::parseLong ).toArray( Long[]::new );
-                        mixin.getData().addLongs( formItemName, longValues );
-                    }
-                    else
-                    {
-                        mixin.getData().addStrings( formItemName, mediaEntryValues );
-                    }
-                }
-            }
-        }
-
-        final Multimap<String, String> mediaItems = mediaInfo.getMetadata();
-
-        final Double geoLat = parseDouble( mediaItems.get( GEO_LATITUDE ).stream().findFirst().orElse( null ) );
-        final Double geoLong = parseDouble( mediaItems.get( GEO_LONGITUDE ).stream().findFirst().orElse( null ) );
-        if ( geoLat != null && geoLong != null )
-        {
-            final Mixin geoInfoMixin = getOrCreate( metadataMap, GPS_INFO_METADATA_NAME );
-            setGeoPointProperty( geoInfoMixin.getData(), MediaInfo.GPS_INFO_GEO_POINT, geoLat, geoLong );
-        }
-
-        final Mixin imageInfoMixin = getOrCreate( metadataMap, IMAGE_INFO_METADATA_NAME );
-        final PropertyTree imageInfoMixinData = imageInfoMixin.getData();
-        final Long imageHeight = imageInfoMixinData.getLong( IMAGE_INFO_IMAGE_HEIGHT );
-        final Long imageWidth = imageInfoMixinData.getLong( IMAGE_INFO_IMAGE_WIDTH );
-        if ( imageHeight != null && imageWidth != null )
-        {
-            setLongProperty( imageInfoMixinData, IMAGE_INFO_PIXEL_SIZE, imageHeight * imageWidth );
-        }
-        final Collection<String> imageSize = mediaItems.get( "bytesize" );
-        if ( !imageSize.isEmpty() )
-        {
-            setLongProperty( imageInfoMixinData, MEDIA_INFO_BYTE_SIZE, Long.parseLong( imageSize.stream().findFirst().orElseThrow() ) );
+            source.strategy().resolve( mediaInfo ).ifPresent( value -> {
+                final PropertyTree data = getOrCreate( metadataMap, source.mixin() ).getData();
+                data.removeProperties( source.formItemName() );
+                data.setProperty( source.formItemName(), value );
+            } );
         }
 
         return metadataMap.values().stream().collect( Mixins.collector() );
-    }
-
-    private static Double parseDouble( final String str )
-    {
-        if ( str == null )
-        {
-            return null;
-        }
-        try
-        {
-            return Double.parseDouble( str );
-        }
-        catch ( NumberFormatException e )
-        {
-            return null;
-        }
     }
 
     private static Mixin getOrCreate( Map<MixinName, Mixin> metadataMap, MixinName name )
@@ -426,14 +186,95 @@ public final class ImageContentProcessor
         return metadataMap.computeIfAbsent( name, n -> new Mixin( n, new PropertyTree() ) );
     }
 
-    // Helper function to create a map where each key in the list points to the same value
-    private static ImmutableMap<String, String> getFlattenedMap( List<String> keys, String value )
+    private record FormItemSource(MixinName mixin, String formItemName, Strategy strategy)
     {
-        ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
-        for ( String key : keys )
-        {
-            builder.put( key, value );
-        }
-        return builder.build();
+    }
+
+    @FunctionalInterface
+    private interface Strategy
+    {
+        Optional<Value> resolve( MediaInfo mediaInfo );
+    }
+
+    private static FormItemSource source( final MixinDescriptor mixin, final String formItemName, final Strategy strategy )
+    {
+        return new FormItemSource( mixin.getName(), formItemName, strategy );
+    }
+
+    private static Optional<String> firstMatch( final MediaInfo mediaInfo, final String... priorityKeys )
+    {
+        return Stream.of( priorityKeys )
+            .map( mediaInfo.getMetadata().asMap()::get )
+            .filter( Objects::nonNull )
+            .findFirst()
+            .map( values -> values.iterator().next() );
+    }
+
+    private static Strategy string( final String... priorityKeys )
+    {
+        return mediaInfo -> firstMatch( mediaInfo, priorityKeys ).map( ValueFactory::newString );
+    }
+
+    private static Strategy longValue( final String... priorityKeys )
+    {
+        return mediaInfo -> firstMatch( mediaInfo, priorityKeys ).flatMap( value -> {
+            try
+            {
+                return Optional.of( ValueFactory.newLong( ValueTypes.LONG.convert( value ) ) );
+            }
+            catch ( ValueTypeException e )
+            {
+                LOG.debug( "Failed to parse '{}' as {}", value, ValueTypes.LONG.getJavaType(), e );
+                return Optional.empty();
+            }
+        } );
+    }
+
+    private static Strategy dateTime( final String... priorityKeys )
+    {
+        return mediaInfo -> firstMatch( mediaInfo, priorityKeys ).flatMap( value -> {
+            try
+            {
+                return Optional.of( ValueFactory.newLocalDateTime( ValueTypes.LOCAL_DATE_TIME.convert( value ) ) );
+            }
+            catch ( ValueTypeException e )
+            {
+                LOG.debug( "Failed to parse '{}' as {}", value, ValueTypes.LOCAL_DATE_TIME.getJavaType(), e );
+                return Optional.empty();
+            }
+        } );
+    }
+
+    private static Strategy geoPoint( final String latKey, final String lonKey )
+    {
+        return mediaInfo -> firstMatch( mediaInfo, latKey ).flatMap( latStr -> firstMatch( mediaInfo, lonKey ).flatMap( lonStr -> {
+            try
+            {
+                return Optional.of(
+                    ValueFactory.newGeoPoint( new GeoPoint( ValueTypes.DOUBLE.convert( latStr ), ValueTypes.DOUBLE.convert( lonStr ) ) ) );
+            }
+            catch ( ValueTypeException e )
+            {
+                LOG.debug( "Failed to build GeoPoint from '{}' / '{}'", latStr, lonStr, e );
+                return Optional.empty();
+            }
+        } ) );
+    }
+
+    private static Strategy longProduct( final String firstKey, final String secondKey )
+    {
+        return mediaInfo -> firstMatch( mediaInfo, firstKey ).flatMap(
+            firstStr -> firstMatch( mediaInfo, secondKey ).flatMap( secondStr -> {
+                try
+                {
+                    return Optional.of(
+                        ValueFactory.newLong( ValueTypes.LONG.convert( firstStr ) * ValueTypes.LONG.convert( secondStr ) ) );
+                }
+                catch ( ValueTypeException e )
+                {
+                    LOG.debug( "Failed to compute long product from '{}' * '{}'", firstStr, secondStr, e );
+                    return Optional.empty();
+                }
+            } ) );
     }
 }

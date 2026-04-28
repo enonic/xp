@@ -12,8 +12,10 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentDataValidationException;
 import com.enonic.xp.content.ContentEditor;
 import com.enonic.xp.content.ContentInheritType;
+import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.Media;
+import com.enonic.xp.content.MediaUtils;
 import com.enonic.xp.content.PatchableContent;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.ValidationErrors;
@@ -243,7 +245,7 @@ final class UpdateContentCommand
         try
         {
             // validate focal point values
-            mediaContent.getFocalPoint();
+            MediaUtils.readFocalPoint( mediaContent.getData().getSet( ContentPropertyNames.MEDIA ) );
         }
         catch ( IllegalArgumentException e )
         {

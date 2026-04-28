@@ -125,6 +125,11 @@ public final class Property
         return value.asLong();
     }
 
+    public Integer getInteger()
+    {
+        return value.asInteger();
+    }
+
     public Double getDouble()
     {
         return value.asDouble();

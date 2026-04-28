@@ -119,11 +119,20 @@ public abstract class Value
 
     public Long asLong()
     {
-        if ( object == null || "".equals( object ) )
+        if ( object == null || object instanceof String s && s.isEmpty() )
         {
             return null;
         }
         return ValueTypes.LONG.convert( object );
+    }
+
+    public Integer asInteger()
+    {
+        if ( object == null || object instanceof String s && s.isEmpty() )
+        {
+            return null;
+        }
+        return ValueTypes.LONG.convert( object ).intValue();
     }
 
     public Boolean asBoolean()
