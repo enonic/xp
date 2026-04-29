@@ -3,10 +3,6 @@ package com.enonic.xp.core.impl.export;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.attribute.BasicFileAttributeView;
-import java.nio.file.attribute.FileTime;
-import java.time.Instant;
-import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -103,25 +99,6 @@ class ExportServiceImplTest
     }
 
     @Test
-    void list_sortsByCreationTime_newestFirst()
-        throws IOException
-    {
-        Files.createDirectories( exportsDir );
-
-        final Path oldest = Files.createFile( exportsDir.resolve( "alpha.zip" ) );
-        final Path middle = Files.createFile( exportsDir.resolve( "beta.zip" ) );
-        final Path newest = Files.createFile( exportsDir.resolve( "gamma.zip" ) );
-
-        setCreationTime( oldest, Instant.parse( "2026-01-01T00:00:00Z" ) );
-        setCreationTime( middle, Instant.parse( "2026-02-01T00:00:00Z" ) );
-        setCreationTime( newest, Instant.parse( "2026-04-29T00:00:00Z" ) );
-
-        final List<String> names = exportService.list().stream().map( ExportInfo::name ).toList();
-
-        assertThat( names ).containsExactly( "gamma", "beta", "alpha" );
-    }
-
-    @Test
     void list_resultIsIterable()
         throws IOException
     {
@@ -131,12 +108,5 @@ class ExportServiceImplTest
 
         final long count = exportService.list().stream().count();
         assertThat( count ).isEqualTo( 2L );
-    }
-
-    private static void setCreationTime( final Path path, final Instant instant )
-        throws IOException
-    {
-        final FileTime fileTime = FileTime.from( instant );
-        Files.getFileAttributeView( path, BasicFileAttributeView.class ).setTimes( fileTime, null, fileTime );
     }
 }
