@@ -34,6 +34,7 @@ export interface ImportNodesParams {
     xsltParams?: unknown;
     includeNodeIds?: boolean;
     includePermissions?: boolean;
+    versionAttributes?: Record<string, unknown>;
     nodeResolved?: (numberOfNodes: number) => void;
     nodeImported?: (numberOfImportedNodes: number) => void;
     nodeSkipped?: (numberOfSkippedNodes: number) => void;
@@ -65,6 +66,8 @@ interface ImportHandler {
 
     setIncludePermissions(value: boolean): void;
 
+    setVersionAttributes(value: ScriptValue | null): void;
+
     setNodeResolved(fn?: ((i: number) => void) | null): void;
 
     setNodeImported(fn?: ((i: number) => void) | null): void;
@@ -88,6 +91,7 @@ interface ImportHandler {
  * @param {object} [params.xsltParams] Parameters used in XSLT transformation.
  * @param {boolean} [params.includeNodeIds=false] Set to true to use node IDs from the import, false to generate new node IDs.
  * @param {boolean} [params.includePermissions=false] Set to true to use Node permissions from the import, false to use target node permissions.
+ * @param {object} [params.versionAttributes] Optional attributes to attach to the node version of every imported node.
  * @param {function} [params.nodeResolved] A function to be called before import starts with number of nodes to import.
  * @param {function} [params.nodeImported] A function to be called during import with number of nodes imported since last call.
  * @param {function} [params.nodeSkipped] A function to be called during import with number of nodes skipped since last call.
@@ -103,6 +107,7 @@ export function importNodes(params: ImportNodesParams): ImportNodesResult {
         xsltParams,
         includeNodeIds = false,
         includePermissions = false,
+        versionAttributes,
         nodeResolved,
         nodeImported,
         nodeSkipped,
@@ -116,6 +121,7 @@ export function importNodes(params: ImportNodesParams): ImportNodesResult {
     bean.setXsltParams(__.toScriptValue(xsltParams));
     bean.setIncludeNodeIds(includeNodeIds);
     bean.setIncludePermissions(includePermissions);
+    bean.setVersionAttributes(__.toScriptValue(versionAttributes));
     bean.setNodeImported(__.nullOrValue(nodeImported));
     bean.setNodeResolved(__.nullOrValue(nodeResolved));
     bean.setNodeSkipped(__.nullOrValue(nodeSkipped));
@@ -170,6 +176,30 @@ interface ExportHandler {
  *
  * @returns {ExportNodesResult} Node export results.
  */
+export interface ExportInfo {
+    name: string;
+}
+
+export interface ListExportsResult {
+    exports: ExportInfo[];
+}
+
+interface ListExportsHandler {
+    execute(): ListExportsResult;
+}
+
+/**
+ * List the available node-exports stored in the exports directory.
+ *
+ * @example-ref examples/export/listExports.js
+ *
+ * @returns {ListExportsResult} Names of all available exports.
+ */
+export function list(): ListExportsResult {
+    const bean: ListExportsHandler = __.newBean<ListExportsHandler>('com.enonic.xp.lib.export.ListExportsHandler');
+    return __.toNativeObject(bean.execute());
+}
+
 export function exportNodes(params: ExportNodesParams): ExportNodesResult {
     const sourceNodePath = checkRequired(params, 'sourceNodePath');
     const exportName = checkRequired(params, 'exportName');
