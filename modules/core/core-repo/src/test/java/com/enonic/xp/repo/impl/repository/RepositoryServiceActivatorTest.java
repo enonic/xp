@@ -57,6 +57,9 @@ class RepositoryServiceActivatorTest
     @Mock(stubOnly = true)
     private BranchService branchService;
 
+    @Mock(stubOnly = true)
+    private RepositoryAuditLogSupport repositoryAuditLogSupport;
+
     @BeforeEach
     void setUp()
     {
@@ -83,7 +86,7 @@ class RepositoryServiceActivatorTest
     {
         final RepositoryServiceActivator activator =
             new RepositoryServiceActivator( repositoryEntryService, indexServiceInternal, nodeRepositoryService, nodeStorageService,
-                                            nodeSearchService, branchService );
+                                            nodeSearchService, branchService, repositoryAuditLogSupport );
 
         doReturn( service ).when( bundleContext )
             .registerService(
