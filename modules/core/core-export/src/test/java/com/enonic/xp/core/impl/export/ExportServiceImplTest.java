@@ -129,12 +129,8 @@ class ExportServiceImplTest
         Files.createFile( exportsDir.resolve( "one.zip" ) );
         Files.createFile( exportsDir.resolve( "two.zip" ) );
 
-        int count = 0;
-        for ( ExportInfo ignored : exportService.list() )
-        {
-            count++;
-        }
-        assertThat( count ).isEqualTo( 2 );
+        final long count = exportService.list().stream().count();
+        assertThat( count ).isEqualTo( 2L );
     }
 
     private static void setCreationTime( final Path path, final Instant instant )
