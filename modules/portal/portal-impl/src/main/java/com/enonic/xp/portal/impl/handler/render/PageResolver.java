@@ -20,7 +20,6 @@ import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.region.RegionDescriptor;
 import com.enonic.xp.region.Regions;
-import com.enonic.xp.schema.content.ContentTypeName;
 
 public class PageResolver
 {
@@ -69,7 +68,20 @@ public class PageResolver
 
             if ( page.getTemplate() != null )
             {
-                final PageTemplate pageTemplate = getPageTemplateOrFindDefault( page.getTemplate(), content.getType(), sitePath );
+                PageTemplate pageTemplate;
+                try
+                {
+                    pageTemplate = this.pageTemplateService.getByKey( page.getTemplate() );
+                }
+                catch ( ContentNotFoundException e )
+                {
+                    if ( sitePath.isRoot() )
+                    {
+                        return PageResolverResult.errorResult( String.format( "Template [%s] is missing and content is not part of a site", page.getTemplate() ) );
+                    }
+                    pageTemplate = this.pageTemplateService.getDefault(
+                        GetDefaultPageTemplateParams.create().sitePath( sitePath ).contentType( content.getType() ).build() );
+                }
 
                 if ( pageTemplate != null )
                 {
@@ -88,6 +100,10 @@ public class PageResolver
         }
         else
         {
+            if ( sitePath.isRoot() )
+            {
+                return PageResolverResult.errorResult( "Content has no page and is not part of a site" );
+            }
             final PageTemplate pageTemplate = this.pageTemplateService.getDefault(
                 GetDefaultPageTemplateParams.create().sitePath( sitePath ).contentType( content.getType() ).build() );
 
@@ -113,20 +129,6 @@ public class PageResolver
     private static PageResolverResult noPageInTemplateResult( final PageTemplate pageTemplate )
     {
         return PageResolverResult.errorResult( String.format( "Template [%s] has no page descriptor", pageTemplate.getName() ) );
-    }
-
-    private PageTemplate getPageTemplateOrFindDefault( final PageTemplateKey pageTemplate, final ContentTypeName contentType,
-                                                       final ContentPath sitePath )
-    {
-        try
-        {
-            return this.pageTemplateService.getByKey( pageTemplate );
-        }
-        catch ( ContentNotFoundException e )
-        {
-            return this.pageTemplateService.getDefault(
-                GetDefaultPageTemplateParams.create().sitePath( sitePath ).contentType( contentType ).build() );
-        }
     }
 
     private static Page mergePageFromPageTemplate( final PageTemplate pageTemplate, final Page page )
