@@ -34,6 +34,8 @@ public final class ControllerMappingDescriptor
 
     private final ApplicationKey applicationKey;
 
+    private final FilterMode filterMode;
+
     private ControllerMappingDescriptor( final Builder builder )
     {
         Preconditions.checkArgument( builder.controller != null ^ builder.filter != null,
@@ -48,6 +50,7 @@ public final class ControllerMappingDescriptor
         this.invertPattern = builder.invertPattern;
         this.contentConstraint = builder.contentConstraint;
         this.order = builder.order;
+        this.filterMode = builder.filterMode != null ? builder.filterMode : FilterMode.RENDER;
     }
 
     public ApplicationKey getApplication()
@@ -100,6 +103,11 @@ public final class ControllerMappingDescriptor
         return this.filter != null;
     }
 
+    public FilterMode getFilterMode()
+    {
+        return filterMode;
+    }
+
     @Override
     public boolean equals( final Object o )
     {
@@ -114,7 +122,7 @@ public final class ControllerMappingDescriptor
         final ControllerMappingDescriptor that = (ControllerMappingDescriptor) o;
         return order == that.order && invertPattern == that.invertPattern && Objects.equals( service, that.service ) &&
             Objects.equals( controller, that.controller ) && Objects.equals( filter, that.filter ) &&
-            Objects.equals( contentConstraint, that.contentConstraint ) &&
+            Objects.equals( contentConstraint, that.contentConstraint ) && Objects.equals( filterMode, that.filterMode ) &&
             Objects.equals( Optional.ofNullable( pattern ).map( Pattern::toString ).orElse( null ),
                             Optional.ofNullable( that.pattern ).map( Pattern::toString ).orElse( null ) );
     }
@@ -122,7 +130,7 @@ public final class ControllerMappingDescriptor
     @Override
     public int hashCode()
     {
-        return Objects.hash( service, controller, filter, invertPattern, contentConstraint, order,
+        return Objects.hash( service, controller, filter, invertPattern, contentConstraint, order, filterMode,
                              Optional.ofNullable( pattern ).map( Pattern::toString ).orElse( null ) );
     }
 
@@ -143,6 +151,7 @@ public final class ControllerMappingDescriptor
             .add( "invertPattern", invertPattern )
             .add( "contentConstraint", contentConstraint )
             .add( "order", order )
+            .add( "filterMode", filterMode )
             .toString();
     }
 
@@ -172,6 +181,8 @@ public final class ControllerMappingDescriptor
 
         private int order = DEFAULT_ORDER;
 
+        private FilterMode filterMode;
+
         private Builder( final ControllerMappingDescriptor mappingDescriptor )
         {
             this.service = mappingDescriptor.getService();
@@ -181,6 +192,7 @@ public final class ControllerMappingDescriptor
             this.invertPattern = mappingDescriptor.invertPattern();
             this.contentConstraint = mappingDescriptor.getContentConstraint();
             this.order = mappingDescriptor.getOrder();
+            this.filterMode = mappingDescriptor.getFilterMode();
         }
 
         private Builder()
@@ -238,6 +250,18 @@ public final class ControllerMappingDescriptor
         public Builder order( final int order )
         {
             this.order = order;
+            return this;
+        }
+
+        public Builder filterMode( final FilterMode filterMode )
+        {
+            this.filterMode = filterMode;
+            return this;
+        }
+
+        public Builder filterMode( final String filterMode )
+        {
+            this.filterMode = filterMode != null ? FilterMode.from( filterMode ) : null;
             return this;
         }
 

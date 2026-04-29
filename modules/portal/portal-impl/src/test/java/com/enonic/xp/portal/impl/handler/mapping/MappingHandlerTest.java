@@ -56,6 +56,7 @@ import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptors;
+import com.enonic.xp.site.mapping.FilterMode;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
@@ -343,6 +344,51 @@ class MappingHandlerTest
         assertNotNull( this.request.getSite() );
         assertNotNull( this.request.getContent() );
         assertEquals( "/site/myproject/draft/site", this.request.getContextPath() );
+    }
+
+    @Test
+    void executeFilterChain()
+        throws Exception
+    {
+        final ResourceKey filter1 = ResourceKey.from( "demo:/services/filter1" );
+        final ResourceKey filter2 = ResourceKey.from( "demo:/services/filter2" );
+
+        // Mock resources for both filters
+        final Resource resource1 = mock( Resource.class );
+        when( resource1.exists() ).thenReturn( true );
+        final Resource resource2 = mock( Resource.class );
+        when( resource2.exists() ).thenReturn( true );
+        when( this.resourceService.getResource( filter1 ) ).thenReturn( resource1 );
+        when( this.resourceService.getResource( filter2 ) ).thenReturn( resource2 );
+
+        final ControllerMappingDescriptor mapping1 =
+            ControllerMappingDescriptor.create().filter( filter1 ).pattern( ".*/content" ).order( 10 ).filterMode( FilterMode.CHAIN ).build();
+
+        final ControllerMappingDescriptor mapping2 =
+            ControllerMappingDescriptor.create().filter( filter2 ).pattern( ".*/content" ).order( 20 ).filterMode( FilterMode.CHAIN ).build();
+
+        setupContentAndSiteWithMultipleFilters( mapping1, mapping2 );
+
+        this.request.setBaseUri( "/site" );
+        this.request.setContentPath( ContentPath.from( "/site/somesite/content" ) );
+
+        final WebResponse response = this.handler.handle( this.request, PortalResponse.create().build(), null );
+        assertEquals( HttpStatus.OK, response.getStatus() );
+    }
+
+    private void setupContentAndSiteWithMultipleFilters( final ControllerMappingDescriptor... mappings )
+    {
+        final Content content = createPage( "id", "site/somesite/content", "myapplication:ctype", false );
+        final Site site = createSite( "id", "site", "myapplication:contenttypename", "myapplication" );
+
+        this.request.setContent( content );
+        this.request.setSite( site );
+
+        final ControllerMappingDescriptors mappingDescriptors = ControllerMappingDescriptors.from( mappings );
+        final ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );
+        final SiteDescriptor siteDescriptor =
+            SiteDescriptor.create().applicationKey( applicationKey ).mappingDescriptors( mappingDescriptors ).build();
+        when( this.siteService.getDescriptor( any( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
     }
 
     private void setupContentAndSite( final ControllerMappingDescriptor mapping, boolean withPage )
