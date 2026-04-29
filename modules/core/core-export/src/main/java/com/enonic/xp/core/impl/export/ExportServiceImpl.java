@@ -117,26 +117,6 @@ public class ExportServiceImpl
             return builder.build();
         }
 
-        record TimedExport(Path path, FileTime created)
-        {
-            TimedExport( final Path path )
-            {
-                this( path, readCreationTime( path ) );
-            }
-
-            private static FileTime readCreationTime( final Path path )
-            {
-                try
-                {
-                    return Files.readAttributes( path, BasicFileAttributes.class ).creationTime();
-                }
-                catch ( IOException e )
-                {
-                    throw new UncheckedIOException( e );
-                }
-            }
-        }
-
         try (Stream<Path> entries = Files.list( exportsDir ))
         {
             entries.filter( Files::isRegularFile )
@@ -144,7 +124,7 @@ public class ExportServiceImpl
                 .filter( path -> FileNames.isAnyOfExtensions( path.getFileName().toString(), "zip" ) )
                 .map( TimedExport::new )
                 .sorted( Comparator.comparing( TimedExport::created ).reversed() )
-                .map( e -> e.path().getFileName().toString() )
+                .map( e -> e.path.getFileName().toString() )
                 .map( name -> name.substring( 0, name.length() - ".zip".length() ) )
                 .map( ExportInfo::new )
                 .forEach( builder::addExport );
@@ -155,5 +135,35 @@ public class ExportServiceImpl
         }
 
         return builder.build();
+    }
+
+    private static final class TimedExport
+    {
+        private final Path path;
+
+        private final FileTime created;
+
+        private TimedExport( final Path path )
+        {
+            this.path = path;
+            this.created = readCreationTime( path );
+        }
+
+        private FileTime created()
+        {
+            return created;
+        }
+
+        private static FileTime readCreationTime( final Path path )
+        {
+            try
+            {
+                return Files.readAttributes( path, BasicFileAttributes.class ).creationTime();
+            }
+            catch ( IOException e )
+            {
+                throw new UncheckedIOException( e );
+            }
+        }
     }
 }
