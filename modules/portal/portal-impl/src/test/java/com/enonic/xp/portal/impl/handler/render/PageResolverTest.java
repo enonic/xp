@@ -54,6 +54,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.notNull;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -153,6 +154,26 @@ class PageResolverTest
 
         assertThrowsWebException( () -> pageResolver.resolve( content, site.getPath() ).getEffectivePageOrElseThrow( RenderMode.EDIT ), HttpStatus.IM_A_TEAPOT,
                                   "Template [my-template] has no page descriptor" );
+    }
+
+    @Test
+    void content_without_Page_and_no_site()
+    {
+        final Content content = Content.create().parentPath( ContentPath.ROOT ).name( "my-content" ).build();
+
+        assertThrowsWebException( () -> pageResolver.resolve( content, ContentPath.ROOT ).getEffectivePageOrElseThrow( RenderMode.LIVE ),
+                                  HttpStatus.NOT_FOUND, "Content has no page and is not part of a site" );
+
+        assertThrowsWebException( () -> pageResolver.resolve( content, ContentPath.ROOT ).getEffectivePageOrElseThrow( RenderMode.PREVIEW ),
+                                  HttpStatus.NOT_FOUND, "Content has no page and is not part of a site" );
+
+        assertThrowsWebException( () -> pageResolver.resolve( content, ContentPath.ROOT ).getEffectivePageOrElseThrow( RenderMode.INLINE ),
+                                  HttpStatus.IM_A_TEAPOT, "Content has no page and is not part of a site" );
+
+        assertThrowsWebException( () -> pageResolver.resolve( content, ContentPath.ROOT ).getEffectivePageOrElseThrow( RenderMode.EDIT ),
+                                  HttpStatus.IM_A_TEAPOT, "Content has no page and is not part of a site" );
+
+        verifyNoInteractions( pageTemplateService );
     }
 
     @Test
@@ -426,6 +447,34 @@ class PageResolverTest
 
         assertThrowsWebException( () -> pageResolver.resolve( content, site.getPath() ).getEffectivePageOrElseThrow(RenderMode.EDIT), HttpStatus.IM_A_TEAPOT,
                                   "Template [t-not-exists] is missing and no default template found for content" );
+    }
+
+    @Test
+    void content_with_Page_but_template_was_deleted_and_no_site()
+    {
+        final Content content = Content.create()
+            .parentPath( ContentPath.ROOT )
+            .id( ContentId.from( "content-id" ) )
+            .name( "my-content" )
+            .page( Page.create().template( PageTemplateKey.from( "t-not-exists" ) ).build() )
+            .type( ContentTypeName.templateFolder() )
+            .build();
+
+        when( pageTemplateService.getByKey( PageTemplateKey.from( "t-not-exists" ) ) ).thenThrow( ContentNotFoundException.class );
+
+        assertThrowsWebException( () -> pageResolver.resolve( content, ContentPath.ROOT ).getEffectivePageOrElseThrow( RenderMode.LIVE ),
+                                  HttpStatus.NOT_FOUND, "Template [t-not-exists] is missing and content is not part of a site" );
+
+        assertThrowsWebException( () -> pageResolver.resolve( content, ContentPath.ROOT ).getEffectivePageOrElseThrow( RenderMode.PREVIEW ),
+                                  HttpStatus.NOT_FOUND, "Template [t-not-exists] is missing and content is not part of a site" );
+
+        assertThrowsWebException( () -> pageResolver.resolve( content, ContentPath.ROOT ).getEffectivePageOrElseThrow( RenderMode.INLINE ),
+                                  HttpStatus.IM_A_TEAPOT, "Template [t-not-exists] is missing and content is not part of a site" );
+
+        assertThrowsWebException( () -> pageResolver.resolve( content, ContentPath.ROOT ).getEffectivePageOrElseThrow( RenderMode.EDIT ),
+                                  HttpStatus.IM_A_TEAPOT, "Template [t-not-exists] is missing and content is not part of a site" );
+
+        verify( pageTemplateService, never() ).getDefault( any() );
     }
 
     @Test
