@@ -55,8 +55,6 @@ final class ApplyContentPermissionsCommand
 
         final ApplyNodePermissionsResult result = nodeService.applyPermissions( applyNodePermissionsBuilder.build() );
 
-        commitResult( result );
-
         final ApplyContentPermissionsResult.Builder builder = ApplyContentPermissionsResult.create();
 
         result.getResults().forEach( ( id, branchResults ) -> {
@@ -71,28 +69,6 @@ final class ApplyContentPermissionsCommand
         } );
 
         return builder.build();
-    }
-
-    private void commitResult( final ApplyNodePermissionsResult result )
-    {
-        final NodeVersionIds versionIdsToCommit = result.getResults()
-            .entrySet()
-            .stream()
-            .flatMap( entry -> entry.getValue()
-                .stream()
-                .filter( br -> ContentConstants.BRANCH_MASTER.equals( br.branch() ) )
-                .map( ApplyNodePermissionsResult.BranchResult::nodeVersionId )
-                .filter( Objects::nonNull ) )
-            .collect( NodeVersionIds.collector() );
-
-        if ( !versionIdsToCommit.isEmpty() )
-        {
-            nodeService.commit( CommitNodeParams.create()
-                                    .nodeCommitEntry(
-                                        NodeCommitEntry.create().message( ContentConstants.APPLY_PERMISSIONS_COMMIT_PREFIX ).build() )
-                                    .nodeVersionIds( versionIdsToCommit )
-                                    .build() );
-        }
     }
 
     public static Builder create( final ApplyContentPermissionsParams params )

@@ -2,7 +2,6 @@ package com.enonic.xp.repo.impl.dump.upgrade.model8to9;
 
 import org.junit.jupiter.api.Test;
 
-import com.enonic.xp.repo.impl.dump.serializer.json.BranchDumpEntryJson;
 import com.enonic.xp.repo.impl.dump.serializer.json.VersionDumpEntryJson;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -52,23 +51,23 @@ class NodePathTrimUpgraderTest
     }
 
     @Test
-    void branchEntry_nodePath_with_whitespace_is_trimmed()
+    void branchMeta_nodePath_with_whitespace_is_trimmed()
     {
-        final BranchDumpEntryJson branchEntry = createBranchEntry( "/content/my-node " );
+        final VersionDumpEntryJson meta = createEntry( "/content/my-node " );
 
-        final BranchDumpEntryJson result = upgrader.upgradeBranchEntry( branchEntry );
+        final VersionDumpEntryJson result = upgrader.upgradeBranchMeta( null, meta );
 
-        assertThat( result.getMeta().getNodePath() ).isEqualTo( "/content/my-node" );
+        assertThat( result.getNodePath() ).isEqualTo( "/content/my-node" );
     }
 
     @Test
-    void branchEntry_nodePath_without_whitespace_is_unchanged()
+    void branchMeta_nodePath_without_whitespace_is_unchanged()
     {
-        final BranchDumpEntryJson branchEntry = createBranchEntry( "/content/my-node" );
+        final VersionDumpEntryJson meta = createEntry( "/content/my-node" );
 
-        final BranchDumpEntryJson result = upgrader.upgradeBranchEntry( branchEntry );
+        final VersionDumpEntryJson result = upgrader.upgradeBranchMeta( null, meta );
 
-        assertThat( result ).isSameAs( branchEntry );
+        assertThat( result ).isSameAs( meta );
     }
 
     private static VersionDumpEntryJson createEntry( final String nodePath )
@@ -79,10 +78,5 @@ class NodePathTrimUpgraderTest
             .indexConfigBlobKey( "def" )
             .accessControlBlobKey( "ghi" )
             .build();
-    }
-
-    private static BranchDumpEntryJson createBranchEntry( final String nodePath )
-    {
-        return BranchDumpEntryJson.create().nodeId( "node-1" ).meta( createEntry( nodePath ) ).build();
     }
 }

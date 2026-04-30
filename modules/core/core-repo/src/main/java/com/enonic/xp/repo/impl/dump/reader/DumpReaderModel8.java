@@ -17,7 +17,7 @@ import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryIds;
 
-public interface DumpReaderV7
+public interface DumpReaderModel8
     extends AutoCloseable, BlobStoreAccess
 {
     RepositoryIds getRepositories();

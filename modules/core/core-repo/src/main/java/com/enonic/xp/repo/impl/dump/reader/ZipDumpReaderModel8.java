@@ -50,8 +50,8 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryIds;
 import com.enonic.xp.repository.RepositorySegmentUtils;
 
-public class ZipDumpReaderV7
-    implements DumpReaderV7
+public class ZipDumpReaderModel8
+    implements DumpReaderModel8
 {
     private static final Pattern ROOT_DUMP_DIR_PATTERN = Pattern.compile( "^([^/]+)/dump\\.json$" );
 
@@ -61,14 +61,14 @@ public class ZipDumpReaderV7
 
     private final FilePaths filePaths;
 
-    private ZipDumpReaderV7( final PathRef basePathInZip, final ZipFile zipFile )
+    private ZipDumpReaderModel8( final PathRef basePathInZip, final ZipFile zipFile )
     {
         this.zipFile = zipFile;
         this.basePathInZip = basePathInZip;
         this.filePaths = new DefaultFilePaths( basePathInZip );
     }
 
-    public static ZipDumpReaderV7 create( final Path basePath, final String dumpName )
+    public static ZipDumpReaderModel8 create( final Path basePath, final String dumpName )
     {
         Preconditions.checkArgument( FileNames.isSafeFileName( dumpName ) );
         try
@@ -85,15 +85,15 @@ public class ZipDumpReaderV7
         }
     }
 
-    private static ZipDumpReaderV7 create( final String dumpName, final ZipFile zipFile )
+    private static ZipDumpReaderModel8 create( final String dumpName, final ZipFile zipFile )
     {
         if ( zipFile.getEntry( "dump.json" ) != null )
         {
-            return new ZipDumpReaderV7( PathRef.of(), zipFile );
+            return new ZipDumpReaderModel8( PathRef.of(), zipFile );
         }
         else if ( zipFile.getEntry( dumpName + "/dump.json" ) != null )
         {
-            return new ZipDumpReaderV7( PathRef.of( dumpName ), zipFile );
+            return new ZipDumpReaderModel8( PathRef.of( dumpName ), zipFile );
         }
         else
         {
@@ -107,7 +107,7 @@ public class ZipDumpReaderV7
 
                 if ( matcher.matches() )
                 {
-                    return new ZipDumpReaderV7( PathRef.of( matcher.group( 1 ) ), zipFile );
+                    return new ZipDumpReaderModel8( PathRef.of( matcher.group( 1 ) ), zipFile );
                 }
             }
 
