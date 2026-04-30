@@ -73,11 +73,8 @@ jobs:
         if: steps.publish_vars.outputs.release != 'true'
         run: exit 1
 
-      - name: Publish to Maven
-        run: ./gradlew publish -PrepoKey=${{ steps.publish_vars.outputs.repo }} -PrepoUser=ci -PrepoPassword=${{ secrets.ARTIFACTORY_PASSWORD }}
-
-      - name: Prepare npm packages
-        run: ./gradlew :lib:prepareAllToPublish
+      #- name: Publish to Maven (also stages npm packages)
+      #  run: ./gradlew publish -PrepoKey=${{ steps.publish_vars.outputs.repo }} -PrepoUser=ci -PrepoPassword=${{ secrets.ARTIFACTORY_PASSWORD }}
 
       - name: Stage npm packages
         id: stage_npm
@@ -125,7 +122,7 @@ jobs:
 
       - name: Publish @enonic-types/${{ matrix.package }}
         run: |
-          DIR="npm-staging/${{ matrix.package }}"
+          DIR="./npm-staging/${{ matrix.package }}"
           VERSION="${{ needs.build.outputs.version }}"
           if [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             NPM_TAG=latest
