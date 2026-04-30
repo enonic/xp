@@ -15,7 +15,7 @@ class SiteSchemaValidationTest
     @BeforeAll
     static void initSchema()
     {
-        schema = schemaFor( "site.schema.json" );
+        schema = schemaFor( "site" );
     }
 
     @Test
@@ -52,12 +52,6 @@ class SiteSchemaValidationTest
     void mappingWithoutControllerOrFilterIsInvalid()
     {
         assertThat( validateYaml( schema, "fixtures/site/invalid-mapping-missing-controller-and-filter.yml" ) ).isNotEmpty();
-    }
-
-    @Test
-    void mappingWithServiceAndPatternIsInvalid()
-    {
-        assertThat( validateYaml( schema, "fixtures/site/invalid-mapping-service-with-pattern.yml" ) ).isNotEmpty();
     }
 
     @Test

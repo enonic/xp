@@ -1,7 +1,6 @@
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 
-def schemaBaseUrl = "https://json-schema.enonic.com"
 def schemaVersion = project.version.toString().split( '-' )[0]
 def genResourcesDir = layout.buildDirectory.dir( "generated/resources/schema" )
 
@@ -125,14 +124,14 @@ def generateTask = tasks.register( 'generateJsonSchema' ) {
         templatesDir.listFiles().each { templateFile ->
             if ( templateFile.name.endsWith( ".json" ) )
             {
-                def template = slurper.parseText(
-                    templateFile.text.replace( '@schemaBaseUrl@', schemaBaseUrl ).replace( '@schemaVersion@', schemaVersion ) )
+                def schemaFileName = templateFile.name.replace( '.schema.json', '' );
+                def shemaId = "https://json.schemastore.org/enonic-xp-${schemaFileName}-${schemaVersion}.json";
+                def template = slurper.parseText( templateFile.text.replace( '@id@', shemaId ) )
 
                 def finalSchema = fillDefinitions( template, allFragments, slurper )
-
-                def finalFile = new File( outputDir, "META-INF/schemas/${schemaVersion}/${templateFile.name}" )
+                def finalFile = new File( outputDir, "META-INF/schemas/${schemaVersion}/enonic-xp-${schemaFileName}-${schemaVersion}.json" )
                 finalFile.parentFile.mkdirs()
-                finalFile.text = JsonOutput.prettyPrint( JsonOutput.toJson( finalSchema ) )
+                finalFile.text = JsonOutput.prettyPrint( JsonOutput.toJson( finalSchema ) ) + '\n'
             }
         }
     }

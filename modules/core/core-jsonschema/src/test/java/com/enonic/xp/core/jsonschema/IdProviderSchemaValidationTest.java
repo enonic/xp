@@ -15,7 +15,7 @@ class IdProviderSchemaValidationTest
     @BeforeAll
     static void initSchema()
     {
-        schema = schemaFor( "idprovider.schema.json" );
+        schema = schemaFor( "idprovider" );
     }
 
     @Test
