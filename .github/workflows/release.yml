@@ -76,6 +76,10 @@ jobs:
       #- name: Publish to Maven (also stages npm packages)
       #  run: ./gradlew publish -PrepoKey=${{ steps.publish_vars.outputs.repo }} -PrepoUser=ci -PrepoPassword=${{ secrets.ARTIFACTORY_PASSWORD }}
 
+      # TEMPORARY: Maven publish disabled above for testing — restore that step and remove this one before B2.
+      - name: Stage npm packages (gradle)
+        run: ./gradlew :lib:prepareAllToPublish
+
       - name: Stage npm packages
         id: stage_npm
         run: |
