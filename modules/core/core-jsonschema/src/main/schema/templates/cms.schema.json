@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "@schemaBaseUrl@/@schemaVersion@/cms.schema.json",
+  "$id": "@id@",
   "type": "object",
   "properties": {
     "kind": {

@@ -15,7 +15,7 @@ class MacroSchemaValidationTest
     @BeforeAll
     static void initSchema()
     {
-        schema = schemaFor( "macro.schema.json" );
+        schema = schemaFor( "macro" );
     }
 
     @Test

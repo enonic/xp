@@ -15,7 +15,7 @@ class TaskSchemaValidationTest
     @BeforeAll
     static void initSchema()
     {
-        schema = schemaFor( "task.schema.json" );
+        schema = schemaFor( "task" );
     }
 
     @Test

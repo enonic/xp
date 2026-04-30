@@ -15,7 +15,7 @@ class StyleSchemaValidationTest
     @BeforeAll
     static void initSchema()
     {
-        schema = schemaFor( "style.schema.json" );
+        schema = schemaFor( "style" );
     }
 
     @Test

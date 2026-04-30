@@ -15,7 +15,7 @@ class PartSchemaValidationTest
     @BeforeAll
     static void initSchema()
     {
-        schema = schemaFor( "part.schema.json" );
+        schema = schemaFor( "part" );
     }
 
     @Test

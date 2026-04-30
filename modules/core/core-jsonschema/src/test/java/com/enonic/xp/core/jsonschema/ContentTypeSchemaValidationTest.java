@@ -15,7 +15,7 @@ class ContentTypeSchemaValidationTest
     @BeforeAll
     static void initSchema()
     {
-        schema = schemaFor( "content-type.schema.json" );
+        schema = schemaFor( "content-type" );
     }
 
     @Test

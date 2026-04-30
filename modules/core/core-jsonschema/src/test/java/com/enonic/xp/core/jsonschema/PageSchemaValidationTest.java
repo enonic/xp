@@ -15,7 +15,7 @@ class PageSchemaValidationTest
     @BeforeAll
     static void initSchema()
     {
-        schema = schemaFor( "page.schema.json" );
+        schema = schemaFor( "page" );
     }
 
     @Test

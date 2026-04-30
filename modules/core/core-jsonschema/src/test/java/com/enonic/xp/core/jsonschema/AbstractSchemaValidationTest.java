@@ -14,6 +14,9 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.junit.jupiter.api.BeforeAll;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.networknt.schema.Error;
 import com.networknt.schema.InputFormat;
@@ -21,8 +24,6 @@ import com.networknt.schema.Schema;
 import com.networknt.schema.SchemaLocation;
 import com.networknt.schema.SchemaRegistry;
 import com.networknt.schema.dialect.Dialects;
-
-import org.junit.jupiter.api.BeforeAll;
 
 import static java.util.Objects.requireNonNull;
 
@@ -40,8 +41,7 @@ abstract class AbstractSchemaValidationTest
         }
 
         final Map<String, String> schemas = loadAllSchemas();
-        final SchemaRegistry registry =
-            SchemaRegistry.withDialect( Dialects.getDraft202012(), builder -> builder.schemas( schemas ) );
+        final SchemaRegistry registry = SchemaRegistry.withDialect( Dialects.getDraft202012(), builder -> builder.schemas( schemas ) );
 
         schemasByFileName = new HashMap<>();
         for ( final String id : schemas.keySet() )
@@ -51,18 +51,22 @@ abstract class AbstractSchemaValidationTest
         }
     }
 
+    protected static Schema schemaFor( final String descriptorName, final String version )
+    {
+        final String schemaFileName = "enonic-xp-" + descriptorName + "-" + version + ".json";
+        return requireNonNull( schemasByFileName.get( schemaFileName ), () -> schemaFileName + " not found in loaded schemas" );
+    }
+
     protected static Schema schemaFor( final String schemaFileName )
     {
-        return requireNonNull( schemasByFileName.get( schemaFileName ),
-                                       () -> schemaFileName + " not found in loaded schemas" );
+        return schemaFor( schemaFileName, "8.0.0" );
     }
 
     protected static Collection<Error> validateYaml( final Schema schema, final String resourcePath )
     {
-        final InputStream is =
-            AbstractSchemaValidationTest.class.getClassLoader().getResourceAsStream( resourcePath );
+        final InputStream is = AbstractSchemaValidationTest.class.getClassLoader().getResourceAsStream( resourcePath );
         requireNonNull( is, () -> "Resource not found: " + resourcePath );
-        try ( is )
+        try (is)
         {
             return schema.validate( new String( is.readAllBytes(), StandardCharsets.UTF_8 ), InputFormat.YAML );
         }
@@ -89,7 +93,7 @@ abstract class AbstractSchemaValidationTest
         {
             final String uriStr = uri.toString();
             final Path jarPath = Path.of( URI.create( uriStr.substring( "jar:".length(), uriStr.indexOf( '!' ) ) ) );
-            try ( FileSystem fs = FileSystems.newFileSystem( jarPath, Map.of() ) )
+            try (FileSystem fs = FileSystems.newFileSystem( jarPath, Map.of() ))
             {
                 walkAndCollect( fs.getPath( "/META-INF/schemas" ), schemas, mapper );
             }
@@ -105,7 +109,7 @@ abstract class AbstractSchemaValidationTest
     private static void walkAndCollect( final Path dir, final Map<String, String> schemas, final ObjectMapper mapper )
         throws IOException
     {
-        try ( var stream = Files.walk( dir ) )
+        try (var stream = Files.walk( dir ))
         {
             stream.filter( p -> p.toString().endsWith( ".json" ) ).forEach( p -> {
                 try
