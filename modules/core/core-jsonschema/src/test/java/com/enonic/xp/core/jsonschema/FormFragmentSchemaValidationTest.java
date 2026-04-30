@@ -15,7 +15,7 @@ class FormFragmentSchemaValidationTest
     @BeforeAll
     static void initSchema()
     {
-        schema = schemaFor( "form-fragment.schema.json" );
+        schema = schemaFor( "form-fragment" );
     }
 
     @Test

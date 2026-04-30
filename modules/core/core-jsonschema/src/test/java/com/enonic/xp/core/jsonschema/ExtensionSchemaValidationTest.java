@@ -15,24 +15,24 @@ class ExtensionSchemaValidationTest
     @BeforeAll
     static void initSchema()
     {
-        schema = schemaFor( "extension.schema.json" );
+        schema = schemaFor( "admin-extension" );
     }
 
     @Test
     void emptyDocumentIsValid()
     {
-        assertThat( validateYaml( schema, "fixtures/extension/valid-minimal.yml" ) ).isEmpty();
+        assertThat( validateYaml( schema, "fixtures/admin-extension/valid-minimal.yml" ) ).isEmpty();
     }
 
     @Test
     void fullDocumentIsValid()
     {
-        assertThat( validateYaml( schema, "fixtures/extension/valid-full.yml" ) ).isEmpty();
+        assertThat( validateYaml( schema, "fixtures/admin-extension/valid-full.yml" ) ).isEmpty();
     }
 
     @Test
     void additionalPropertiesAreNotAllowed()
     {
-        assertThat( validateYaml( schema, "fixtures/extension/invalid-unknown-property.yml" ) ).isNotEmpty();
+        assertThat( validateYaml( schema, "fixtures/admin-extension/invalid-unknown-property.yml" ) ).isNotEmpty();
     }
 }

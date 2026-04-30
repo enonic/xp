@@ -15,7 +15,7 @@ class LayoutSchemaValidationTest
     @BeforeAll
     static void initSchema()
     {
-        schema = schemaFor( "layout.schema.json" );
+        schema = schemaFor( "layout" );
     }
 
     @Test
