@@ -27,6 +27,7 @@ import com.enonic.xp.server.RunMode;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
+import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.handler.BaseWebHandler;
 import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.handler.WebHandlerChain;
@@ -75,15 +76,21 @@ public class ApiIndexHandler
     protected WebResponse doHandle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
         throws Exception
     {
-        return WebResponse.create().contentType( MediaType.JSON_UTF_8 ).body( Map.of( "resources", getApiResources() ) ).build();
+        return WebResponse.create().contentType( MediaType.JSON_UTF_8 ).body( Map.of( "resources", getApiResources( webRequest ) ) ).build();
     }
 
-    private List<Map<String, Object>> getApiResources()
+    private List<Map<String, Object>> getApiResources( final WebRequest webRequest )
     {
+        final String connector = webRequest.getRawRequest() != null
+            ? (String) webRequest.getRawRequest().getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE )
+            : null;
+
+        final String mountFilter = DispatchConstants.API_CONNECTOR.equals( connector ) ? "management" : "web";
+
         return Stream.concat( universalApiHandlerRegistry.getAllApiDescriptors().stream(), applicationService.getInstalledApplications()
                 .stream()
                 .flatMap( application -> apiDescriptorService.getByApplication( application.getKey() ).stream() ) )
-            .filter( apiDescriptor -> apiDescriptor.getMount().contains( "web" ) )
+            .filter( apiDescriptor -> apiDescriptor.getMount().contains( mountFilter ) )
             .map( this::map )
             .toList();
     }
