@@ -48,23 +48,23 @@ export interface Icon {
     modifiedTime: string;
 }
 
+export type ContentSchemaType = 'CONTENT_TYPE' | 'FORM_FRAGMENT' | 'MIXIN';
+
 export interface CreateDynamicContentSchemaParams {
     name: string;
-    type: string;
-    resource?: string | null;
+    type: ContentSchemaType;
+    resource: string;
 }
 
 interface CreateDynamicContentSchemaHandler {
     setName(value: string): void;
 
-    setType(value: string): void;
+    setType(value: ContentSchemaType): void;
 
     setResource(value: string): void;
 
     execute(): ContentTypeSchema | FormFragmentSchema | MixinSchema;
 }
-
-export type ContentSchemaType = 'CONTENT_TYPE' | 'FORM_FRAGMENT' | 'MIXIN';
 
 export interface Schema {
     name: string;
@@ -105,7 +105,7 @@ export interface MixinSchema
  * @param {object} params JSON with the parameters.
  * @param {string} params.name Schema resource name.
  * @param {string} params.type Schema type.
- * @param {string} [params.resource] Schema resource value.
+ * @param {string} params.resource Schema resource value.
  *
  * @returns {ContentTypeSchema | FormFragmentSchema | MixinSchema} created resource.
  */
@@ -117,9 +117,7 @@ export function createSchema(params: CreateDynamicContentSchemaParams): ContentT
     const bean: CreateDynamicContentSchemaHandler = __.newBean<CreateDynamicContentSchemaHandler>('com.enonic.xp.lib.schema.CreateDynamicContentSchemaHandler');
     bean.setName(name);
     bean.setType(type);
-    if (resource != null) {
-        bean.setResource(resource);
-    }
+    bean.setResource(resource);
     return __.toNativeObject(bean.execute());
 }
 
@@ -136,7 +134,7 @@ interface CreateDynamicComponentHandler {
 
     setType(value: string): void;
 
-    setResource(value: string | null): void;
+    setResource(value: string): void;
 
     execute(): LayoutDescriptor | PageDescriptor | PartDescriptor;
 }
@@ -176,9 +174,9 @@ export interface PartDescriptor
  * @param {object} params JSON with the parameters.
  * @param {string} params.key Component resource descriptor key.
  * @param {string} params.type Component type.
- * @param {string} [params.resource] Component resource value.
+ * @param {string} params.resource Component resource value.
  *
- * @returns {string} created resource.
+ * @returns {LayoutDescriptor | PageDescriptor | PartDescriptor} created resource.
  */
 export function createComponent(params: CreateDynamicComponentParams): LayoutDescriptor | PageDescriptor | PartDescriptor {
     const key = checkRequired(params, 'key');
@@ -208,12 +206,10 @@ interface CreateDynamicStylesHandler {
 
 export interface StyleDescriptor {
     application: string;
-    cssPath: string;
     modifiedTime: string;
     resource: string;
-    elements?: {
-        element: string;
-        label: string;
+    elements: {
+        label: string | null;
         name: string;
     }[];
 }
@@ -223,7 +219,7 @@ export interface StyleDescriptor {
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.application Application key.
- * @param {string} [params.resource] Styles resource value.
+ * @param {string} params.resource Styles resource value.
  *
  * @returns {StyleDescriptor} created resource.
  */
@@ -247,7 +243,7 @@ interface GetDynamicContentSchemaHandler {
 
     setType(value: ContentSchemaType): void;
 
-    execute(): ContentTypeSchema | FormFragmentSchema | MixinSchema;
+    execute(): ContentTypeSchema | FormFragmentSchema | MixinSchema | null;
 }
 
 /**
@@ -257,9 +253,9 @@ interface GetDynamicContentSchemaHandler {
  * @param {string} params.name Content schema resource name.
  * @param {string} params.type Content schema type.
  *
- * @returns {ContentTypeSchema | FormFragmentSchema | MixinSchema} fetched resource.
+ * @returns {ContentTypeSchema | FormFragmentSchema | MixinSchema | null} fetched resource, or `null` if not found.
  */
-export function getSchema(params: GetDynamicContentSchemaParams): ContentTypeSchema | FormFragmentSchema | MixinSchema {
+export function getSchema(params: GetDynamicContentSchemaParams): ContentTypeSchema | FormFragmentSchema | MixinSchema | null {
     const name = checkRequired(params, 'name');
     const type = checkRequired(params, 'type');
 
@@ -279,7 +275,7 @@ interface GetDynamicComponentHandler {
 
     setType(value: ComponentDescriptorType): void;
 
-    execute(): ContentTypeSchema | FormFragmentSchema | MixinSchema;
+    execute(): LayoutDescriptor | PageDescriptor | PartDescriptor;
 }
 
 /**
@@ -289,9 +285,9 @@ interface GetDynamicComponentHandler {
  * @param {string} params.key Component resource descriptor key.
  * @param {string} params.type Component type.
  *
- * @returns {string} fetched resource.
+ * @returns {LayoutDescriptor | PageDescriptor | PartDescriptor} fetched resource.
  */
-export function getComponent(params: GetDynamicComponentParams): unknown {
+export function getComponent(params: GetDynamicComponentParams): LayoutDescriptor | PageDescriptor | PartDescriptor {
     const key = checkRequired(params, 'key');
     const type = checkRequired(params, 'type');
 
@@ -329,7 +325,7 @@ interface GetDynamicSiteHandler {
  * @param {object} params JSON with the parameters.
  * @param {string} params.application Application key.
  *
- * @returns {SiteDescriptor} fetched resource.
+ * @returns {SiteDescriptor | null} fetched resource, or `null` if not found.
  */
 export function getSite(params: GetDynamicSiteParams): SiteDescriptor | null {
     const application = checkRequired(params, 'application');
@@ -353,9 +349,9 @@ interface GetDynamicStylesHandler {
  * Fetches dynamic styles schema resource.
  *
  * @param {object} params JSON with the parameters.
- * @param {string} params.application application key.
+ * @param {string} params.application Application key.
  *
- * @returns {StyleDescriptor} fetched resource.
+ * @returns {StyleDescriptor | null} fetched resource, or `null` if not found.
  */
 export function getStyles(params: GetDynamicStylesParams): StyleDescriptor | null {
     const application = checkRequired(params, 'application');
@@ -477,9 +473,9 @@ interface UpdateDynamicContentSchemaHandler {
  * @param {object} params JSON with the parameters.
  * @param {string} params.name Content schema resource name.
  * @param {string} params.type Content schema type.
- * @param {string} [params.resource] Schema resource value.
+ * @param {string} params.resource Schema resource value.
  *
- * @returns {ContentTypeSchema | FormFragmentSchema | MixinSchema} created resource.
+ * @returns {ContentTypeSchema | FormFragmentSchema | MixinSchema} updated resource.
  */
 export function updateSchema(params: UpdateDynamicContentSchemaParams): ContentTypeSchema | FormFragmentSchema | MixinSchema {
     const name = checkRequired(params, 'name');
@@ -515,9 +511,9 @@ interface UpdateDynamicComponentHandler {
  * @param {object} params JSON with the parameters.
  * @param {string} params.key Component resource descriptor key.
  * @param {string} params.type Component type.
- * @param {string} [params.resource] Component resource value.
+ * @param {string} params.resource Component resource value.
  *
- * @returns {LayoutDescriptor | PageDescriptor | PartDescriptor} created resource.
+ * @returns {LayoutDescriptor | PageDescriptor | PartDescriptor} updated resource.
  */
 export function updateComponent(params: UpdateDynamicComponentParams): LayoutDescriptor | PageDescriptor | PartDescriptor {
     const key = checkRequired(params, 'key');
@@ -550,9 +546,9 @@ interface UpdateDynamicSiteHandler {
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.application Application key.
- * @param {string} [params.resource] Site schema resource value.
+ * @param {string} params.resource Site schema resource value.
  *
- * @returns {string} created resource.
+ * @returns {SiteDescriptor} updated resource.
  */
 export function updateSite(params: UpdateDynamicSiteParams): SiteDescriptor {
     const application = checkRequired(params, 'application');
@@ -582,9 +578,9 @@ interface UpdateDynamicStylesHandler {
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.application Application key.
- * @param {string} [params.resource] Styles schema resource value.
+ * @param {string} params.resource Styles schema resource value.
  *
- * @returns {string} created resource.
+ * @returns {StyleDescriptor} updated resource.
  */
 export function updateStyles(params: UpdateDynamicStylesParams): StyleDescriptor {
     const application = checkRequired(params, 'application');
@@ -638,7 +634,7 @@ interface ListDynamicSchemasHandler {
 
     setType(value: ContentSchemaType): void;
 
-    execute(): ContentSchemaType[] | FormFragmentSchema[] | MixinSchema[];
+    execute(): ContentTypeSchema[] | FormFragmentSchema[] | MixinSchema[];
 }
 
 /**
@@ -648,9 +644,9 @@ interface ListDynamicSchemasHandler {
  * @param {string} params.application Application key.
  * @param {string} params.type Content schema type.
  *
- * @returns {ContentSchemaType[] | FormFragmentSchema[] | MixinSchema[]} fetched resources.
+ * @returns {ContentTypeSchema[] | FormFragmentSchema[] | MixinSchema[]} fetched resources.
  */
-export function listSchemas(params: ListDynamicSchemasParams): ContentSchemaType[] | FormFragmentSchema[] | MixinSchema[] {
+export function listSchemas(params: ListDynamicSchemasParams): ContentTypeSchema[] | FormFragmentSchema[] | MixinSchema[] {
     const application = checkRequired(params, 'application');
     const type = checkRequired(params, 'type');
 
