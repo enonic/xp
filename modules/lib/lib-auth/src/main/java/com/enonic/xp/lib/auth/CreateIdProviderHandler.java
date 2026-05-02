@@ -3,7 +3,6 @@ package com.enonic.xp.lib.auth;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Supplier;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -112,7 +111,7 @@ public final class CreateIdProviderHandler
         {
             return null;
         }
-        final List<ScriptValue> entries = Optional.ofNullable( this.permissions.getArray() ).orElse( List.of() );
+        final List<ScriptValue> entries = this.permissions.getArray();
         if ( entries.isEmpty() )
         {
             return null;
