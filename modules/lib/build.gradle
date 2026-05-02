@@ -204,4 +204,10 @@ subprojects { p ->
     jar {
         exclude '**/*.ts'
     }
+
+    plugins.withId( 'maven-publish' ) {
+        tasks.named( 'publish' ).configure {
+            dependsOn tasks.named( 'prepareToPublish' )
+        }
+    }
 }
