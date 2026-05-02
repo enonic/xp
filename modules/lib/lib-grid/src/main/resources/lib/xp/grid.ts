@@ -29,7 +29,7 @@ interface JavaSharedMap<Map extends GridMap> {
 
     set<Key extends keyof Map>(key: Key, value: ConvertedType, ttlSeconds?: number | null): void;
 
-    modify<Key extends keyof Map>(key: Key, modifier: SharedMapModifierFn<Map, Key>, ttlSeconds?: number | null): Map[Key];
+    modify<Key extends keyof Map>(key: Key, modifier: SharedMapModifierFn<Map, Key>, ttlSeconds?: number | null): Map[Key] | null;
 }
 
 interface SharedMapHandler<Map extends GridMap> {
@@ -53,7 +53,7 @@ export interface SharedMap<Map extends GridMap> {
 
     set<Key extends keyof Map>(params: SetParams<Map, Key>): void;
 
-    modify<Key extends keyof Map>(params: ModifyParams<Map, Key>): Map[Key];
+    modify<Key extends keyof Map>(params: ModifyParams<Map, Key>): Map[Key] | null;
 
     delete(key: keyof Map): void;
 }
@@ -62,7 +62,7 @@ export interface SharedMap<Map extends GridMap> {
  * Shared Map is similar to other Map, but its instances are shared across all applications and even cluster nodes.
  *
  *  WARNING: Due to distributed nature of the Shared Map not all types of keys and values can be used.
- *  Strings, numbers, and pure JSON objects are supported. There is no runtime check for type compatibility due to performance reasons.
+ *  Strings, numbers, booleans, and pure JSON objects are supported. There is no runtime check for type compatibility due to performance reasons.
  *  The developer is also responsible for not modifying shared objects (keys and values) in place.
  *
  * @constructor
@@ -82,7 +82,7 @@ class SharedMapImpl<Map extends GridMap>
     /**
      * Returns the value to which the specified key is mapped, or null if this map contains no mapping for the key.
      *
-     * @param {string} key - key the key whose associated value is to be returned
+     * @param {string} key the key whose associated value is to be returned
      * @returns {string|number|boolean|JSON|null} the value to which the specified key is mapped, or null if this map contains no mapping for the key
      */
     get<Key extends keyof Map>(key: Key): Map[Key] | null {
@@ -118,9 +118,9 @@ class SharedMapImpl<Map extends GridMap>
      *                            The returned value replaces the existing mapped value for the specified key.
      *                            If returned value is null then the value is removed from the map
      * @param {number} [params.ttlSeconds] maximum time to live in seconds for this entry to stay in the map. (0 means infinite, negative means map config default or infinite if map config is not available)
-     * @returns the new value to which the specified key is mapped, or null if this map no longer contains mapping for the key
+     * @returns {string|number|boolean|JSON|null} the new value to which the specified key is mapped, or null if this map no longer contains mapping for the key
      */
-    modify<Key extends keyof Map>(params: ModifyParams<Map, Key>): Map[Key] {
+    modify<Key extends keyof Map>(params: ModifyParams<Map, Key>): Map[Key] | null {
         const key = requireNotNull(params.key, 'key');
         const func = requireNotNull(params.func, 'func');
         if (typeof func !== 'function') {
