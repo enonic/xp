@@ -237,7 +237,7 @@ interface NodeHandler {
 
     patch(params: PatchNodeHandlerParams): PatchNodeResult;
 
-    sort<NodeData>(key: string, childOrder: string): Node<NodeData>;
+    sort<NodeData>(key: string, childOrder: string): SortNodeResult<NodeData>;
 
     get<NodeData>(params: GetNodeHandlerParams): Node<NodeData> | Node<NodeData>[] | null;
 
@@ -531,9 +531,7 @@ export type ApplyPermissionsResult = Record<string, {
 
 export interface BranchResult {
     branch: string;
-    permissions: {
-        _permissions?: AccessControlEntry[];
-    };
+    permissions: AccessControlEntry[];
 }
 
 export type RefreshMode = 'SEARCH' | 'STORAGE' | 'ALL';
