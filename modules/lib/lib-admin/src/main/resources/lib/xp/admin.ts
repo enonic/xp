@@ -72,7 +72,7 @@ export function getHomeToolUrl(params?: GetHomeToolUrlParams): string {
 }
 
 export interface GetHomeToolUrlParams {
-    type: HomeToolUrlType;
+    type?: HomeToolUrlType;
 }
 
 export type HomeToolUrlType = 'server' | 'absolute';
@@ -107,7 +107,7 @@ export interface WidgetUrlParams {
  *
  * Returns the URL for a widget.
  *
- * @param {object} [params] Parameter object
+ * @param {object} params Parameter object
  * @param {string} params.application Application to reference to a widget.
  * @param {string} params.widget Name of the widget.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
@@ -139,7 +139,7 @@ export interface ExtensionUrlParams {
 /**
  * Returns the URL for an extension.
  *
- * @param {object} [params] Parameter object
+ * @param {object} params Parameter object
  * @param {string} params.application Application to reference to an extension.
  * @param {string} params.extension Name of the extension.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
