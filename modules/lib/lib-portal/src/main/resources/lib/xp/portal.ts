@@ -102,7 +102,6 @@ export type ImageUrlParams = IdXorPath & {
     background?: string;
     format?: string;
     filter?: string;
-    server?: string;
     params?: object;
     type?: 'server' | 'absolute';
     scale:
@@ -152,9 +151,9 @@ interface ImageUrlHandler {
  * @example-ref examples/portal/imageUrl.js
  *
  * @param {object} params Input parameters as JSON.
- * @param {string} params.id ID of the image content.
- * @param {string} params.path Path to the image. If `id` is specified, this parameter is not used.
- * @param {string} params.scale Required. Options are width(px), height(px), block(width,height) and square(px).
+ * @param {string} [params.id] ID of the image content. Either `id` or `path` is required.
+ * @param {string} [params.path] Path to the image. If `id` is specified, this parameter is not used.
+ * @param {string} params.scale Required. Options are `width(px)`, `height(px)`, `block(width,height)`, `square(px)`, `max(px)`, `wide(width,height)` and `full`.
  * @param {number} [params.quality=85] Quality for JPEG images, ranges from 0 (max compression) to 100 (min compression).
  * @param {string} [params.background] Background color.
  * @param {string} [params.format] Format of the image.
@@ -481,6 +480,7 @@ export function loginUrl(params?: LoginUrlParams): string {
     bean.setIdProvider(__.nullOrValue(params?.idProvider));
     bean.setRedirect(__.nullOrValue(params?.redirect));
     bean.setUrlType(__.nullOrValue(params?.type));
+    bean.setQueryParams(__.toScriptValue(params?.params));
 
     return bean.createUrl();
 }
@@ -717,7 +717,7 @@ interface GetCurrentIdProviderKeyHandler {
  *
  * @example-ref examples/portal/getIdProviderKey.js
  *
- * @returns {string|null} The current id provider as JSON.
+ * @returns {string|null} The current id provider key, or `null` if no id provider is bound to the current context.
  */
 export function getIdProviderKey(): string | null {
     const bean: GetCurrentIdProviderKeyHandler = __.newBean<GetCurrentIdProviderKeyHandler>(
@@ -745,7 +745,7 @@ interface MultipartHandler {
 }
 
 /**
- * This function returns a JSON containing multipart items. If not a multipart request, then this function returns `undefined`.
+ * This function returns a JSON containing multipart items. If the request is not multipart, an empty object is returned.
  *
  * @example-ref examples/portal/getMultipartForm.js
  *
@@ -757,7 +757,7 @@ export function getMultipartForm(): MultipartForm {
 }
 
 /**
- * This function returns a JSON containing a named multipart item. If the item does not exists, it returns `undefined`.
+ * This function returns a JSON containing a named multipart item. If the item does not exist, it returns `null`.
  *
  * @example-ref examples/portal/getMultipartItem.js
  *
@@ -772,14 +772,14 @@ export function getMultipartItem(name: string, index = 0): MultipartItem | null 
 }
 
 /**
- * This function returns a data-stream for a named multipart item.
+ * This function returns a data-stream for a named multipart item. If the item does not exist, it returns `null`.
  *
  * @example-ref examples/portal/getMultipartStream.js
  *
  * @param {string} name Name of the multipart item.
  * @param {number} [index] Optional zero-based index. It should be specified if there are multiple items with the same name.
  *
- * @returns {*} Stream of multipart item data.
+ * @returns {object|null} Stream of multipart item data.
  */
 export function getMultipartStream(name: string, index = 0): ByteSource | null {
     const bean: MultipartHandler = __.newBean<MultipartHandler>('com.enonic.xp.lib.portal.multipart.MultipartHandler');
