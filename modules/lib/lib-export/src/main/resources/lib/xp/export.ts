@@ -31,7 +31,7 @@ export interface ImportNodesParams {
     source: string | object;
     targetNodePath: string;
     xslt?: string | ResourceKey;
-    xsltParams?: unknown;
+    xsltParams?: Record<string, unknown>;
     includeNodeIds?: boolean;
     includePermissions?: boolean;
     versionAttributes?: Record<string, unknown>;
@@ -49,6 +49,7 @@ export interface ImportNodesError {
 export interface ImportNodesResult {
     addedNodes: string[];
     updatedNodes: string[];
+    skippedNodes: string[];
     importedBinaries: string[];
     importErrors: ImportNodesError[];
 }
@@ -137,14 +138,10 @@ export interface ExportNodesParams {
     nodeExported?: (numberOfExportedNodes: number) => void;
 }
 
-export interface ExportNodesError {
-    message: string;
-}
-
 export interface ExportNodesResult {
     exportedNodes: string[];
     exportedBinaries: string[];
-    exportErrors: ExportNodesError[];
+    exportErrors: string[];
 }
 
 interface ExportHandler {
@@ -176,6 +173,27 @@ interface ExportHandler {
  *
  * @returns {ExportNodesResult} Node export results.
  */
+export function exportNodes(params: ExportNodesParams): ExportNodesResult {
+    const sourceNodePath = checkRequired(params, 'sourceNodePath');
+    const exportName = checkRequired(params, 'exportName');
+
+    const {
+        nodeResolved,
+        batchSize,
+        nodeExported,
+    } = params ?? {};
+
+    const bean: ExportHandler = __.newBean<ExportHandler>('com.enonic.xp.lib.export.ExportHandler');
+
+    bean.setSourceNodePath(sourceNodePath);
+    bean.setExportName(exportName);
+    bean.setBatchSize(__.nullOrValue(batchSize));
+    bean.setNodeExported(__.nullOrValue(nodeExported));
+    bean.setNodeResolved(__.nullOrValue(nodeResolved));
+
+    return __.toNativeObject(bean.execute());
+}
+
 export interface ExportInfo {
     name: string;
 }
@@ -197,26 +215,5 @@ interface ListExportsHandler {
  */
 export function list(): ListExportsResult {
     const bean: ListExportsHandler = __.newBean<ListExportsHandler>('com.enonic.xp.lib.export.ListExportsHandler');
-    return __.toNativeObject(bean.execute());
-}
-
-export function exportNodes(params: ExportNodesParams): ExportNodesResult {
-    const sourceNodePath = checkRequired(params, 'sourceNodePath');
-    const exportName = checkRequired(params, 'exportName');
-
-    const {
-        nodeResolved,
-        batchSize,
-        nodeExported,
-    } = params ?? {};
-
-    const bean: ExportHandler = __.newBean<ExportHandler>('com.enonic.xp.lib.export.ExportHandler');
-
-    bean.setSourceNodePath(sourceNodePath);
-    bean.setExportName(exportName);
-    bean.setBatchSize(__.nullOrValue(batchSize));
-    bean.setNodeExported(__.nullOrValue(nodeExported));
-    bean.setNodeResolved(__.nullOrValue(nodeResolved));
-
     return __.toNativeObject(bean.execute());
 }
