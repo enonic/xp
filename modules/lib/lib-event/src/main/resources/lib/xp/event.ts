@@ -90,7 +90,7 @@ interface EventListenerHelper {
  * @param {object} params Listener parameters.
  * @param {string} params.type Event type pattern. Works like a Java Pattern, with two key differences: `.` is treated as a literal dot, not a wildcard. `*` acts as `.*`, matching any sequence of characters.
  * @param {function} params.callback Callback event listener.
- * @param {boolean} params.localOnly Local events only (default to false).
+ * @param {boolean} [params.localOnly=false] Local events only.
  */
 export function listener<EventData extends object = EnonicEventData>(params: ListenerParams<EventData>): void {
     const helper: EventListenerHelper = __.newBean<EventListenerHelper>('com.enonic.xp.lib.event.EventListenerHelper');
@@ -109,8 +109,8 @@ export function listener<EventData extends object = EnonicEventData>(params: Lis
  *
  * @param {object} event Event to send.
  * @param {string} event.type Event type.
- * @param {boolean} event.distributed True if it should be distributed in cluster.
- * @param {object} event.data Additional data for event.
+ * @param {boolean} [event.distributed=false] True if it should be distributed in cluster.
+ * @param {object} [event.data] Additional data for event.
  */
 export function send<EventData extends object = object>(event: SendParams<EventData>): void {
     const helper: EventSenderHelper = __.newBean<EventSenderHelper>('com.enonic.xp.lib.event.EventSenderHelper');
