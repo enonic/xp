@@ -200,7 +200,7 @@ interface LocalDateHandler {
 
 /**
  * Creates a LocalDate java-type.
- * @param {string|Date} value A ISO local date-time string (e.g '2011-12-03'), or a Date object.
+ * @param {string|Date} value An ISO local date string (e.g '2011-12-03'), or a Date object.
  *
  * @returns {*} LocalDate java-type
  */
@@ -230,7 +230,7 @@ interface LocalTimeHandler {
 
 /**
  * Creates a LocalTime java-type.
- * @param {string|Date} value A ISO local date-time string (e.g '10:15:30'), or a Date object.
+ * @param {string|Date} value An ISO local time string (e.g '10:15:30'), or a Date object.
  *
  * @returns {*} LocalTime java-type
  */
