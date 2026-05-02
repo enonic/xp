@@ -860,3 +860,93 @@ export function modifyRole(params: ModifyRoleParams): Role | null {
 
     return __.toNativeObject(bean.modifyRole());
 }
+
+export type IdProviderAccess = 'READ' | 'CREATE_USERS' | 'WRITE_USERS' | 'ID_PROVIDER_MANAGER' | 'ADMINISTRATOR';
+
+export interface IdProviderAccessControlEntry {
+    principal: PrincipalKey;
+    access: IdProviderAccess;
+}
+
+export interface IdProviderConfig<Config extends Record<string, unknown> = Record<string, unknown>> {
+    applicationKey: string;
+    config?: Config;
+}
+
+export interface IdProvider<Config extends Record<string, unknown> = Record<string, unknown>> {
+    key: string;
+    displayName: string;
+    description?: string;
+    idProviderConfig?: IdProviderConfig<Config>;
+}
+
+export interface CreateIdProviderParams<Config extends Record<string, unknown> = Record<string, unknown>> {
+    key: string;
+    displayName: string;
+    description?: string;
+    idProviderConfig?: IdProviderConfig<Config>;
+    permissions?: IdProviderAccessControlEntry[];
+}
+
+interface CreateIdProviderHandler {
+    setKey(value: string): void;
+
+    setDisplayName(value: string): void;
+
+    setDescription(value: string | null): void;
+
+    setIdProviderConfig(value: ScriptValue | null): void;
+
+    setPermissions(value: ScriptValue | null): void;
+
+    createIdProvider(): IdProvider;
+}
+
+/**
+ * Creates an id provider.
+ *
+ * @example-ref examples/auth/createIdProvider.js
+ *
+ * @param {object} params JSON parameters.
+ * @param {string} params.key Id provider key.
+ * @param {string} params.displayName Id provider display name.
+ * @param {string} [params.description] Id provider description.
+ * @param {object} [params.idProviderConfig] Id provider config.
+ * @param {string} params.idProviderConfig.applicationKey Application key of the id provider application.
+ * @param {object} [params.idProviderConfig.config] Id provider configuration.
+ * @param {Array<object>} [params.permissions] Id provider permissions.
+ * @returns {IdProvider} The created id provider.
+ */
+export function createIdProvider<Config extends Record<string, unknown> = Record<string, unknown>>(
+    params: CreateIdProviderParams<Config>,
+): IdProvider<Config> {
+    const key = checkRequired(params, 'key');
+    const displayName = checkRequired(params, 'displayName');
+
+    const bean: CreateIdProviderHandler = __.newBean<CreateIdProviderHandler>('com.enonic.xp.lib.auth.CreateIdProviderHandler');
+
+    bean.setKey(key);
+    bean.setDisplayName(displayName);
+    bean.setDescription(__.nullOrValue(params.description));
+    bean.setIdProviderConfig(params.idProviderConfig == null ? null : __.toScriptValue(params.idProviderConfig));
+    bean.setPermissions(params.permissions == null ? null : __.toScriptValue(params.permissions));
+
+    return __.toNativeObject(bean.createIdProvider()) as IdProvider<Config>;
+}
+
+interface GetIdProvidersHandler {
+    getIdProviders(): IdProvider[];
+}
+
+/**
+ * Returns all id providers.
+ *
+ * @example-ref examples/auth/getIdProviders.js
+ *
+ * @returns {Array<IdProvider>} List of id providers.
+ */
+export function getIdProviders(): IdProvider[] {
+    const bean: GetIdProvidersHandler = __.newBean<GetIdProvidersHandler>('com.enonic.xp.lib.auth.GetIdProvidersHandler');
+
+    return __.toNativeObject(bean.getIdProviders());
+}
