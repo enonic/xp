@@ -131,7 +131,8 @@ public abstract class AbstractIssueServiceTest
             new IndexServiceImpl( indexServiceInternal, indexedDataService, searchService, nodeDao, repositoryEntryService );
 
         final RepositoryServiceImpl repositoryService =
-            new RepositoryServiceImpl( repositoryEntryService, nodeRepositoryService, storageService, searchService, branchService );
+            new RepositoryServiceImpl( repositoryEntryService, nodeRepositoryService, storageService, searchService, branchService,
+                                       () -> null );
         SystemRepoInitializer.create()
             .setIndexServiceInternal( indexServiceInternal )
             .setNodeStorageService( storageService )

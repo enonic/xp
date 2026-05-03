@@ -3,6 +3,7 @@ package com.enonic.xp.repo.impl.repository;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import org.jspecify.annotations.NonNull;
@@ -70,9 +71,12 @@ public class RepositoryServiceImpl
 
     private final RepositoryCreator repositoryCreator;
 
+    private final Supplier<RepositoryAuditLogSupport> repositoryAuditLogSupport;
+
     public RepositoryServiceImpl( final RepositoryEntryService repositoryEntryService, final NodeRepositoryService nodeRepositoryService,
                                   final NodeStorageService nodeStorageService, final NodeSearchService nodeSearchService,
-                                  final BranchService branchService )
+                                  final BranchService branchService,
+                                  final Supplier<RepositoryAuditLogSupport> repositoryAuditLogSupport )
     {
         this.repositoryEntryService = repositoryEntryService;
         this.nodeRepositoryService = nodeRepositoryService;
@@ -80,6 +84,7 @@ public class RepositoryServiceImpl
         this.nodeSearchService = nodeSearchService;
         this.branchService = branchService;
         this.repositoryCreator = new RepositoryCreator( nodeRepositoryService, nodeStorageService, repositoryEntryService );
+        this.repositoryAuditLogSupport = repositoryAuditLogSupport;
     }
 
     @Override
@@ -103,7 +108,13 @@ public class RepositoryServiceImpl
     {
         requireAdminRole();
 
-        return copyRepository( repositoryMap.compute( params.getRepositoryId(), ( _, _ ) -> doCreateRepo( params ) ) );
+        final Repository repository = copyRepository( repositoryMap.compute( params.getRepositoryId(), ( _, _ ) -> doCreateRepo( params ) ) );
+        final RepositoryAuditLogSupport auditLog = repositoryAuditLogSupport.get();
+        if ( auditLog != null )
+        {
+            auditLog.createRepository( params );
+        }
+        return repository;
     }
 
     private Repository doCreateRepo( final CreateRepositoryParams params )
@@ -153,6 +164,11 @@ public class RepositoryServiceImpl
         repositoryMap.compute( ContextAccessor.current().getRepositoryId(),
                                ( repositoryId, _ ) -> doCreateBranch( createBranchParams, repositoryId ) );
 
+        final RepositoryAuditLogSupport auditLog = repositoryAuditLogSupport.get();
+        if ( auditLog != null )
+        {
+            auditLog.createBranch( createBranchParams );
+        }
         return createBranchParams.getBranch();
     }
 
@@ -235,6 +251,11 @@ public class RepositoryServiceImpl
 
         nodeStorageService.invalidate();
 
+        final RepositoryAuditLogSupport auditLog = repositoryAuditLogSupport.get();
+        if ( auditLog != null )
+        {
+            auditLog.deleteRepository( params );
+        }
         return repositoryId;
     }
 
@@ -249,6 +270,11 @@ public class RepositoryServiceImpl
 
         repositoryMap.compute( repositoryId, ( _, _ ) -> doDeleteBranch( params, repositoryId ) );
 
+        final RepositoryAuditLogSupport auditLog = repositoryAuditLogSupport.get();
+        if ( auditLog != null )
+        {
+            auditLog.deleteBranch( params );
+        }
         return params.getBranch();
     }
 

@@ -131,7 +131,8 @@ class SecurityServiceImplTest
             new RepositoryEntryServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService );
 
         RepositoryServiceImpl repositoryService =
-            new RepositoryServiceImpl( repositoryEntryService, nodeRepositoryService, storageService, searchService, branchService );
+            new RepositoryServiceImpl( repositoryEntryService, nodeRepositoryService, storageService, searchService, branchService,
+                                       () -> null );
         SystemRepoInitializer.create()
             .setIndexServiceInternal( indexServiceInternal )
             .setNodeStorageService( storageService )

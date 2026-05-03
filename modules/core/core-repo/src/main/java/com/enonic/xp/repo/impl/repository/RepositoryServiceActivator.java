@@ -6,6 +6,9 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
+import org.osgi.service.component.annotations.ReferencePolicyOption;
 
 import com.enonic.xp.repo.impl.branch.BranchService;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
@@ -29,6 +32,8 @@ public class RepositoryServiceActivator
 
     private final BranchService branchService;
 
+    private volatile RepositoryAuditLogSupport repositoryAuditLogSupport;
+
     private ServiceRegistration<?> service;
 
     @Activate
@@ -36,7 +41,8 @@ public class RepositoryServiceActivator
                                        @Reference final IndexServiceInternal indexServiceInternal,
                                        @Reference final NodeRepositoryService nodeRepositoryService,
                                        @Reference final NodeStorageService nodeStorageService,
-                                       @Reference final NodeSearchService nodeSearchService, @Reference final BranchService branchService )
+                                       @Reference final NodeSearchService nodeSearchService,
+                                       @Reference final BranchService branchService )
     {
         this.indexServiceInternal = indexServiceInternal;
         this.nodeStorageService = nodeStorageService;
@@ -51,7 +57,7 @@ public class RepositoryServiceActivator
     {
         final RepositoryServiceImpl repositoryService =
             new RepositoryServiceImpl( repositoryEntryService, nodeRepositoryService, nodeStorageService, nodeSearchService,
-                                       branchService );
+                                       branchService, () -> repositoryAuditLogSupport );
         SystemRepoInitializer.create()
             .setIndexServiceInternal( indexServiceInternal )
             .setNodeStorageService( nodeStorageService )
@@ -61,6 +67,20 @@ public class RepositoryServiceActivator
             .initialize();
         service = context.registerService( new String[]{RepositoryService.class.getName(), InternalRepositoryService.class.getName()},
                                            repositoryService, null );
+    }
+
+    @Reference(cardinality = ReferenceCardinality.OPTIONAL, policy = ReferencePolicy.DYNAMIC, policyOption = ReferencePolicyOption.GREEDY)
+    public void setRepositoryAuditLogSupport( final RepositoryAuditLogSupport repositoryAuditLogSupport )
+    {
+        this.repositoryAuditLogSupport = repositoryAuditLogSupport;
+    }
+
+    public void unsetRepositoryAuditLogSupport( final RepositoryAuditLogSupport repositoryAuditLogSupport )
+    {
+        if ( this.repositoryAuditLogSupport == repositoryAuditLogSupport )
+        {
+            this.repositoryAuditLogSupport = null;
+        }
     }
 
     @Deactivate
