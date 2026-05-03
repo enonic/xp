@@ -49,7 +49,6 @@ export interface CreateProjectParams<Config extends Record<string, unknown>> {
     displayName: string;
     description?: string;
     language?: string;
-    parent?: string;
     parents?: string[];
     siteConfig?: SiteConfig<Config>[];
     permissions?: ProjectPermission;
@@ -60,7 +59,6 @@ export interface Project<Config extends Record<string, unknown> = Record<string,
     id: string;
     displayName: string;
     description?: string;
-    parent?: string;
     parents: string[];
     siteConfig?: SiteConfig<Config>[];
     language?: string;
@@ -100,7 +98,6 @@ interface CreateProjectHandler<Config extends Record<string, unknown>> {
  * @param {string} params.displayName Project's display name.
  * @param {string} [params.description] Project description.
  * @param {string} [params.language] Default project language.
- * @param {string} [params.parent] Deprecated: use 'parents' param. Parent project id.
  * @param {string[]} [params.parents] Parent project ids.
  * @param {Object[]} [params.siteConfig] Connected applications config.
  * @param {Object.<string, string[]>} [params.permissions] Project permissions. 1 to 5 properties where key is role id and value is an array of principals.
@@ -120,9 +117,6 @@ export function create<Config extends Record<string, unknown> = Record<string, u
     bean.setLanguage(__.nullOrValue(params.language));
     bean.setPermissions(__.toScriptValue(params.permissions));
     bean.setReadAccess(__.toScriptValue(params.readAccess));
-    if (params.parent != null) {
-        bean.setParents([params.parent]);
-    }
     if (params.parents) {
         bean.setParents(__.nullOrValue(params.parents));
     }
