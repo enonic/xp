@@ -204,6 +204,11 @@ interface CreateDynamicStylesHandler {
     execute(): StyleDescriptor;
 }
 
+export type EditorConfig = {
+    css?: string;
+    [key: string]: ConfigValue;
+};
+
 export interface StyleDescriptor {
     application: string;
     modifiedTime: string;
@@ -212,7 +217,7 @@ export interface StyleDescriptor {
         label: string | null;
         name: string;
         type: string;
-        editor?: Record<string, unknown>;
+        editor?: EditorConfig;
     }[];
 }
 

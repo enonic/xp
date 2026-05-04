@@ -22,7 +22,7 @@ assert.assertJsonEquals({
         {
             label: 'Style display name',
             name: 'mystyle',
-            type: 'image'
+            type: 'Image'
         }
     ]
 }, result);

@@ -12,7 +12,7 @@ import com.enonic.xp.style.StyleDescriptor;
 public class StyleDescriptorMapper
     implements MapSerializable
 {
-    private static final String IMAGE_TYPE = "image";
+    private static final String IMAGE_TYPE = "Image";
 
     private final StyleDescriptor descriptor;
 
