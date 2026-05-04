@@ -186,7 +186,6 @@ class ContentAuditLogSupportImplTest
                                                             .label( "My Text 1" )
                                                             .name( "MyText.txp" )
                                                             .byteSource( ByteSource.wrap( "text data".getBytes( StandardCharsets.UTF_8 ) ) )
-                                                            .text( "text data" )
                                                             .build() ) )
             .patcher( edit -> edit.displayName.setValue( "New Display Name" ) )
             .build();
@@ -223,8 +222,6 @@ class ContentAuditLogSupportImplTest
         assertEquals( "My Image 1",
                       argumentCaptor.getValue().getData().getSet( "params" ).getSet( "createAttachments" ).getString( "label" ) );
         assertEquals( 4L, argumentCaptor.getValue().getData().getSet( "params" ).getSet( "createAttachments" ).getLong( "byteSize" ) );
-
-        assertEquals( 9L, argumentCaptor.getValue().getData().getSet( "params" ).getSet( "createAttachments", 1 ).getLong( "textSize" ) );
 
         assertEquals( "/contentName1", argumentCaptor.getValue().getData().getSet( "result" ).getSet( "draft" ).getString( "path" ) );
         assertEquals( "/contentName2", argumentCaptor.getValue().getData().getSet( "result" ).getSet( "master" ).getString( "path" ) );

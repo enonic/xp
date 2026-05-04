@@ -138,8 +138,7 @@ public class PatchContentCommand
         final Attachment.Builder builder = Attachment.create()
             .name( createAttachment.getName() )
             .label( createAttachment.getLabel() )
-            .mimeType( createAttachment.getMimeType() )
-            .textContent( createAttachment.getTextContent() );
+            .mimeType( createAttachment.getMimeType() );
 
         populateByteSourceProperties( createAttachment.getByteSource(), builder );
         return builder.build();

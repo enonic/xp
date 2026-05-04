@@ -172,7 +172,6 @@ public class ProjectServiceImpl
                               .mimeType( iconData.getString( ContentPropertyNames.ATTACHMENT_MIMETYPE ) )
                               .size( iconData.getLong( ContentPropertyNames.ATTACHMENT_SIZE ) )
                               .sha512( iconData.getString( ContentPropertyNames.ATTACHMENT_SHA512 ) )
-                              .textContent( iconData.getString( ContentPropertyNames.ATTACHMENT_TEXT ) )
                               .build() );
         }
     }

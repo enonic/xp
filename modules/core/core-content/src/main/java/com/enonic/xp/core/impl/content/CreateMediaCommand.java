@@ -55,6 +55,7 @@ final class CreateMediaCommand
             .artist( params.getArtistList() )
             .copyright( params.getCopyright() )
             .tags( params.getTagList() )
+            .text( mediaInfo.getTextContent() )
             .build( data );
 
         final CreateAttachment mediaAttachment = CreateAttachment.create()
@@ -62,7 +63,6 @@ final class CreateMediaCommand
             .mimeType( mimeType )
             .label( "source" )
             .byteSource( params.getByteSource() )
-            .text( type.isTextualMedia() ? mediaInfo.getTextContent() : null )
             .build();
 
         final CreateContentParams createContentParams = CreateContentParams.create()

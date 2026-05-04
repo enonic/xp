@@ -7,20 +7,16 @@ import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.schema.content.ContentTypeName;
 
-import static com.enonic.xp.content.ContentPropertyNames.ATTACHMENT_TEXT_COMPONENT;
+import static com.enonic.xp.content.ContentPropertyNames.MEDIA_TEXT_COMPONENT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class AttachmentConfigProcessorTest
 {
-    private ContentTypeName contentTypeName;
-
-    private AttachmentConfigProcessor configProcessor;
-
     @Test
     void test_textual_media()
     {
-        this.contentTypeName = ContentTypeName.textMedia();
-        this.configProcessor = new AttachmentConfigProcessor( contentTypeName );
+        final ContentTypeName contentTypeName = ContentTypeName.textMedia();
+        final AttachmentConfigProcessor configProcessor = new AttachmentConfigProcessor( contentTypeName );
 
         final PatternIndexConfigDocument config = configProcessor.processDocument( PatternIndexConfigDocument.empty() );
 
@@ -30,25 +26,18 @@ class AttachmentConfigProcessorTest
             fulltext( true ).
             includeInAllText( true ).
             nGram( true ).
-            decideByType( false ).build(), config.getConfigForPath( IndexPath.from( ATTACHMENT_TEXT_COMPONENT ) ) );
+            decideByType( false ).build(), config.getConfigForPath( IndexPath.from( MEDIA_TEXT_COMPONENT ) ) );
 
     }
 
     @Test
     void test_non_textual_media()
     {
-        this.contentTypeName = ContentTypeName.folder();
-        this.configProcessor = new AttachmentConfigProcessor( contentTypeName );
+        final ContentTypeName contentTypeName = ContentTypeName.folder();
+        final AttachmentConfigProcessor configProcessor = new AttachmentConfigProcessor( contentTypeName );
 
         final PatternIndexConfigDocument config = configProcessor.processDocument( PatternIndexConfigDocument.empty() );
 
-        assertEquals( 1, config.getPathIndexConfigs().size() );
-        assertEquals( IndexConfig.create().
-            enabled( true ).
-            fulltext( true ).
-            includeInAllText( false ).
-            nGram( true ).
-            decideByType( false ).build(), config.getConfigForPath( IndexPath.from( ATTACHMENT_TEXT_COMPONENT ) ) );
-
+        assertEquals( 0, config.getPathIndexConfigs().size() );
     }
 }

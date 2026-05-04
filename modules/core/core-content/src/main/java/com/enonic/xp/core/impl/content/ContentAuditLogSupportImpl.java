@@ -3,7 +3,6 @@ package com.enonic.xp.core.impl.content;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
@@ -608,9 +607,6 @@ public class ContentAuditLogSupportImpl
         targetSet.addString( "mimeType", attachment.getMimeType() );
         targetSet.addString( "label", attachment.getLabel() );
         attachment.getByteSource().sizeIfKnown().toJavaUtil().ifPresent( ( size -> targetSet.addLong( "byteSize", size ) ) );
-        targetSet.addLong( "textSize", Optional.ofNullable( attachment.getTextContent() )
-            .map( textContent -> (long) textContent.length() )
-            .orElse( null ) );
     }
 
 

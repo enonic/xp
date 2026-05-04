@@ -516,7 +516,6 @@ class ParentContentSynchronizerTest
                                                                          .name( AttachmentNames.THUMBNAIL )
                                                                          .byteSource( ByteSource.wrap( "this is image".getBytes() ) )
                                                                          .mimeType( "image/png" )
-                                                                         .text( "This is the image" )
                                                                          .build() )
                                                                .build() )
                                        .editor( _ -> {
