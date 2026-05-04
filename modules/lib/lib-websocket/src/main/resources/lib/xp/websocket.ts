@@ -83,6 +83,8 @@ export function sendToGroup(group: string, message: string): void {
  * @example-ref examples/websocket/addToGroup.js
  *
  * @param {string} group Group name.
+ *
+ * @returns {number} Number of sockets in the group.
  */
 export function getGroupSize(group: string): number {
     const bean: WebSocketManagerBean = __.newBean<WebSocketManagerBean>('com.enonic.xp.lib.websocket.WebSocketManagerBean');
