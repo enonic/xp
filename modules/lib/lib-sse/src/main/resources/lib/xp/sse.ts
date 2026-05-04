@@ -179,6 +179,7 @@ export function removeFromGroup(params: RemoveFromGroupParams): void {
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.group Group name.
+ * @returns {number} Number of connections in the group, or 0 if the group has no members.
  */
 export function getGroupSize(params: GetGroupSizeParams): number {
     const bean = __.newBean<SseManagerBean>('com.enonic.xp.lib.sse.SseManagerBean');
