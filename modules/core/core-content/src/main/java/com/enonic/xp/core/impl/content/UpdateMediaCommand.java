@@ -59,7 +59,6 @@ final class UpdateMediaCommand
             .mimeType( mediaType )
             .label( "source" )
             .byteSource( params.getByteSource() )
-            .text( type.isTextualMedia() ? mediaInfo.getTextContent() : null )
             .build();
 
         final MediaFormDataBuilder mediaFormBuilder = new MediaFormDataBuilder().type( type )
@@ -69,7 +68,8 @@ final class UpdateMediaCommand
             .altText( params.getAltText() )
             .artist( params.getArtistList() )
             .copyright( params.getCopyright() )
-            .tags( params.getTagList() );
+            .tags( params.getTagList() )
+            .text( mediaInfo.getTextContent() );
 
         final UpdateContentParams updateParams = new UpdateContentParams().contentId( params.getContent() )
             .clearAttachments( true )

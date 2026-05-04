@@ -103,21 +103,18 @@ class ContentServiceImplTest_patch
                                               .name( "test-attachment1" )
                                               .label( "test-label1" )
                                               .mimeType( "image/jpeg" )
-                                              .text( "text content 1" )
                                               .byteSource( ByteSource.wrap( "ABC".getBytes() ) )
                                               .build() )
                                     .add( CreateAttachment.create()
                                               .name( "test-attachment2" )
                                               .label( "test-label2" )
                                               .mimeType( "image/jpeg" )
-                                              .text( "text content 2" )
                                               .byteSource( ByteSource.wrap( "ABCD".getBytes() ) )
                                               .build() )
                                     .add( CreateAttachment.create()
                                               .name( "test-attachment3" )
                                               .label( "test-label3" )
                                               .mimeType( "image/jpeg" )
-                                              .text( "text content 3" )
                                               .byteSource( ByteSource.wrap( "ABCDE".getBytes() ) )
                                               .build() )
                                     .build() )
@@ -136,7 +133,6 @@ class ContentServiceImplTest_patch
                                                          .mimeType( "image/gif" )
                                                          .size( 666 )
                                                          .sha512( "sha512" )
-                                                         .textContent( "text content edited" )
                                                          .build() )
                                                .build() );
             } )
@@ -145,7 +141,6 @@ class ContentServiceImplTest_patch
                                               .name( "test-attachment-added" )
                                               .label( "test-label-edited" )
                                               .mimeType( "image/jpeg" )
-                                              .text( "text content added" )
                                               .byteSource( ByteSource.wrap( "ABC".getBytes() ) )
                                               .build() )
                                     .build() )
@@ -165,14 +160,11 @@ class ContentServiceImplTest_patch
         assertEquals( "image/gif", attachment.getMimeType() );
         assertEquals( 666, attachment.getSize() );
         assertEquals( "sha512", attachment.getSha512() );
-        assertEquals( "text content edited", attachment.getTextContent() );
-        assertEquals( "sha512", attachment.getSha512() );
 
         final Attachment attachment2 = iterator.next();
         assertEquals( "test-attachment-added", attachment2.getName() );
         assertEquals( "test-label-edited", attachment2.getLabel() );
         assertEquals( "image/jpeg", attachment2.getMimeType() );
-        assertEquals( "text content added", attachment2.getTextContent() );
         assertEquals( 3, attachment2.getSize() );
         assertEquals( 128, attachment2.getSha512().length() );
     }
@@ -197,7 +189,6 @@ class ContentServiceImplTest_patch
                                               .name( AttachmentNames.THUMBNAIL )
                                               .label( "test-label-edited" )
                                               .mimeType( "image/jpeg" )
-                                              .text( "text content added" )
                                               .byteSource( ByteSource.wrap( "ABC".getBytes() ) )
                                               .build() )
                                     .build() )

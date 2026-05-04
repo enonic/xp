@@ -80,7 +80,6 @@ final class CreatedEventSyncCommand
                                  .name( attachment.getName() )
                                  .label( attachment.getLabel() )
                                  .mimeType( attachment.getMimeType() )
-                                 .text( attachment.getTextContent() )
                                  .byteSource( binary )
                                  .build() );
         }

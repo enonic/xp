@@ -33,7 +33,6 @@ public final class AttachmentSerializer
             attachmentSet.addString( ContentPropertyNames.ATTACHMENT_LABEL, createAttachment.getLabel() );
             attachmentSet.addBinaryReference( ContentPropertyNames.ATTACHMENT_BINARY_REF, createAttachment.getBinaryReference() );
             attachmentSet.addString( ContentPropertyNames.ATTACHMENT_MIMETYPE, createAttachment.getMimeType() );
-            attachmentSet.addString( ContentPropertyNames.ATTACHMENT_TEXT, createAttachment.getTextContent() );
             populateByteSourceProperties( createAttachment.getByteSource(), attachmentSet );
         }
     }

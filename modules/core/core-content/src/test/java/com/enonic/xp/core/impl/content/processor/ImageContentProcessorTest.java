@@ -270,7 +270,6 @@ class ImageContentProcessorTest
             .add( CreateAttachment.create()
                       .name( "imageAttach" )
                       .byteSource( ByteSource.wrap( "this is image".getBytes() ) )
-                      .text( "This is the image" )
                       .build() )
             .build();
     }

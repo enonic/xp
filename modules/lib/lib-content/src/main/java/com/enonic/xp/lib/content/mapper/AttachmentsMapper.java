@@ -34,6 +34,5 @@ public final class AttachmentsMapper
         gen.value( "size", attachment.getSize() );
         gen.value( "mimeType", attachment.getMimeType() );
         gen.value( "sha512", attachment.getSha512() );
-        gen.value( "textContent", attachment.getTextContent() );
     }
 }

@@ -773,7 +773,6 @@ export interface ModifyAttachmentParam {
     name: string;
     label?: string;
     mimeType?: string;
-    textContent?: string;
     sha512?: string;
     size?: number;
 }
@@ -782,7 +781,6 @@ export interface CreateAttachmentParam {
     name: string;
     label?: string;
     mimeType?: string;
-    textContent?: string;
     data?: ByteSource | string;
 }
 
