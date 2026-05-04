@@ -23,6 +23,11 @@ assert.assertJsonEquals([
         modifiedTime: '2010-01-01T10:00:00Z',
         resource: '<content-type><some-data></some-data></content-type>',
         type: 'CONTENT_TYPE',
+        superType: 'base:structured',
+        abstract: false,
+        final: true,
+        allowChildContent: true,
+        allowChildContentType: [],
         form: [
             {
                 'formItemType': 'Layout',
@@ -60,6 +65,11 @@ assert.assertJsonEquals([
         modifiedTime: '2012-01-01T10:00:00Z',
         resource: '<content-type><some-other-data></some-other-data></content-type>',
         type: 'CONTENT_TYPE',
+        superType: 'media:archive',
+        abstract: false,
+        final: true,
+        allowChildContent: true,
+        allowChildContentType: [],
         form: [],
         config: {}
     }
