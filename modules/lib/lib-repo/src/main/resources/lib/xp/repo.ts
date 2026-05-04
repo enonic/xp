@@ -64,13 +64,13 @@ interface RefreshHandler {
  *
  * @example-ref examples/repo/refresh.js
  *
- * @param {object?} params JSON with the parameters.
+ * @param {object} [params] JSON with the parameters.
  * @param {string} [params.mode='all'] Index type to be refreshed. Possible values: 'all' | 'search' | 'storage'.
- * @param {string} [params.repo='com.enonic.cms.default'] Repository id: 'com.enonic.cms.default' | 'system-repo'. Default is the current repository set in portal.
- * @param {string} [params.branch='master'] Branch. Default is the current repository set in portal.
+ * @param {string} [params.repo] Repository id. Defaults to the repository of the current context.
+ * @param {string} [params.branch] Branch. Defaults to the branch of the current context.
  *
  */
-export function refresh(params: RefreshParams): void {
+export function refresh(params?: RefreshParams): void {
     const {
         mode = 'all',
         repo,
@@ -199,7 +199,7 @@ interface GetRepositoryHandler {
  * @example-ref examples/repo/get.js
  *
  * @param {string} id Repository ID.
- * @return {object} The repository (as JSON).
+ * @return {object | null} The repository (as JSON), or `null` if no repository exists with the given id.
  *
  */
 export function get(id: string): Repository | null {
@@ -350,7 +350,7 @@ interface GetRepositoryBinaryHandler {
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.repoId Repository ID.
- * @param {string} params.binaryReference to the binary.
+ * @param {string} params.binaryReference Reference to the binary.
  *
  * @returns {*} Stream of the attachment data.
  */
