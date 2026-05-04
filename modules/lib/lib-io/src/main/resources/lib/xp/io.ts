@@ -49,7 +49,7 @@ const bean: IOHandlerBean = __.newBean<IOHandlerBean>('com.enonic.xp.lib.io.IOHa
  * @example-ref examples/io/readText.js
  *
  * @param stream Stream to read text from.
- * @returns {string} Returns the text read from stream or string.
+ * @returns {string} Returns the text read from the stream.
  */
 export function readText(stream: ByteSource): string {
     return bean.readText(stream);
@@ -120,7 +120,7 @@ export function newStream(text: string): ByteSource {
  *
  * @example-ref examples/io/getResource.js
  *
- * @param {string} key Resource key to look up.
+ * @param {string|ResourceKey} key Resource key to look up.
  * @returns {Resource} Resource reference.
  */
 export function getResource(key: string | ResourceKey): Resource {
