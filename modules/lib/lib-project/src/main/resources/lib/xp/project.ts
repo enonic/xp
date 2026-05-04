@@ -29,10 +29,10 @@ function checkRequired<T extends object, K extends keyof T>(
 
 export type ProjectRole = 'owner' | 'editor' | 'author' | 'contributor' | 'viewer';
 
-export type ProjectPermission = Record<ProjectRole, string[]>;
+export type ProjectPermission = Partial<Record<ProjectRole, string[]>>;
 
 export interface ProjectPermissions {
-    permissions?: Record<ProjectRole, string[]>;
+    permissions: ProjectPermission;
 }
 
 export interface ProjectReadAccess {
@@ -49,7 +49,6 @@ export interface CreateProjectParams<Config extends Record<string, unknown>> {
     displayName: string;
     description?: string;
     language?: string;
-    parent?: string;
     parents?: string[];
     siteConfig?: SiteConfig<Config>[];
     permissions?: ProjectPermission;
@@ -59,13 +58,12 @@ export interface CreateProjectParams<Config extends Record<string, unknown>> {
 export interface Project<Config extends Record<string, unknown> = Record<string, unknown>> {
     id: string;
     displayName: string;
-    description: string;
-    parent?: string;
+    description?: string;
     parents: string[];
-    siteConfig: SiteConfig<Config>[];
+    siteConfig?: SiteConfig<Config>[];
     language?: string;
     permissions?: ProjectPermission;
-    readAccess?: ProjectPermission;
+    readAccess: ProjectReadAccess;
 }
 
 interface CreateProjectHandler<Config extends Record<string, unknown>> {
@@ -100,13 +98,10 @@ interface CreateProjectHandler<Config extends Record<string, unknown>> {
  * @param {string} params.displayName Project's display name.
  * @param {string} [params.description] Project description.
  * @param {string} [params.language] Default project language.
- * @param {string} [params.parent] Deprecated: use 'parents' param. Parent project id.
  * @param {string[]} [params.parents] Parent project ids.
- * @param {object} [params.siteConfig] Connected applications config.
+ * @param {Object[]} [params.siteConfig] Connected applications config.
  * @param {Object.<string, string[]>} [params.permissions] Project permissions. 1 to 5 properties where key is role id and value is an array of principals.
- * @param {string} params.permissions.role - Role id (one of `owner`, `editor`, `author`, `contributor`, `viewer`).
- * @param {string[]} params.permissions.principals - Array of principals.
- * @param {Object<string, boolean>} [params.readAccess] Read access settings.
+ * @param {Object<string, boolean>} params.readAccess Read access settings.
  * @param {boolean} params.readAccess.public Public read access (READ permissions for `system.everyone`).
  *
  * @returns {Object} Created project.
@@ -122,9 +117,6 @@ export function create<Config extends Record<string, unknown> = Record<string, u
     bean.setLanguage(__.nullOrValue(params.language));
     bean.setPermissions(__.toScriptValue(params.permissions));
     bean.setReadAccess(__.toScriptValue(params.readAccess));
-    if (params.parent != null) {
-        bean.setParents([params.parent]);
-    }
     if (params.parents) {
         bean.setParents(__.nullOrValue(params.parents));
     }
@@ -135,7 +127,7 @@ export function create<Config extends Record<string, unknown> = Record<string, u
 
 export interface ModifyProjectParams<Config extends Record<string, unknown>> {
     id: string;
-    displayName: string;
+    displayName?: string;
     description?: string;
     language?: string;
     siteConfig?: SiteConfig<Config>[];
@@ -166,7 +158,7 @@ interface ModifyProjectHandler<Config extends Record<string, unknown>> {
  * @param {string} [params.displayName] Project's display name.
  * @param {string} [params.description] Project description.
  * @param {string} [params.language] Default project language.
- * @param {object} [params.siteConfig] Connected applications config.
+ * @param {Object[]} [params.siteConfig] Connected applications config.
  *
  * @returns {Object} Modified project.
  */
@@ -264,7 +256,7 @@ interface GetAvailableApplicationsHandler {
  *
  * @example-ref examples/project/getAvailableApplications.js
  *
- * @param {GetProjectParams} params JSON with the parameters.
+ * @param {GetAvailableApplicationsParams} params JSON with the parameters.
  * @param {string} params.id Unique project id to identify the project.
  *
  * @returns {string[]} Keys of the available applications.
@@ -317,10 +309,7 @@ interface AddProjectPermissionsHandler {
  *
  * @param {Object} params JSON with the parameters.
  * @param {string} params.id Unique project id to identify the project.
- * @param {Object.<string, string[]>} params.permissions Project permissions to add. 1 to 5 properties where key is role id and value is an array of principals.
- * @param {string} params.permissions.role - Role id (one of `owner`, `editor`, `author`, `contributor`, `viewer`)
- * @param {Object[]} params.permissions.principals - Array of principals to add to this role
-
+ * @param {Object.<string, string[]>} [params.permissions] Project permissions to add. 1 to 5 properties where key is role id (one of `owner`, `editor`, `author`, `contributor`, `viewer`) and value is an array of principals to add to that role.
  *
  * @returns {Object} All current project permissions.
  */
@@ -354,9 +343,7 @@ interface RemoveProjectPermissionsHandler {
  *
  * @param {Object} params JSON with the parameters.
  * @param {string} params.id Unique project id to identify the project.
- * @param {Object.<string, string[]>} params.permissions Project permissions to delete. 1 to 5 properties where key is role id and value is an array of principals.
- * @param {string} params.permissions.role - Role id (one of `owner`, `editor`, `author`, `contributor`, `viewer`)
- * @param {Object[]} params.permissions.principals - Array of principals to delete from this role
+ * @param {Object.<string, string[]>} [params.permissions] Project permissions to delete. 1 to 5 properties where key is role id (one of `owner`, `editor`, `author`, `contributor`, `viewer`) and value is an array of principals to delete from that role.
  *
  * @returns {Object} All current project permissions.
  */
@@ -372,7 +359,7 @@ export function removePermissions(params: RemoveProjectPermissionsParams): Proje
 
 export interface ModifyProjectReadAccessParams {
     id: string;
-    readAccess?: ProjectReadAccess;
+    readAccess: ProjectReadAccess;
 }
 
 interface ModifyProjectReadAccessHandler {
