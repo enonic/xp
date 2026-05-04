@@ -55,6 +55,11 @@ assert.assertJsonEquals({
               '    min: 0\n' +
               '    max: 0',
     type: 'CONTENT_TYPE',
+    superType: 'base:structured',
+    abstract: false,
+    final: true,
+    allowChildContent: true,
+    allowChildContentType: [],
     form: [
         {
             'formItemType': 'Input',

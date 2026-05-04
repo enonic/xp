@@ -83,6 +83,15 @@ export interface Schema {
 
 export interface ContentTypeSchema
     extends Schema {
+    superType?: string | null;
+    abstract?: boolean;
+    final?: boolean;
+    allowChildContent?: boolean;
+    allowChildContentType?: string[];
+    displayNamePlaceholder?: string | null;
+    displayNamePlaceholderI18nKey?: string | null;
+    displayNameExpression?: string | null;
+    displayNameListExpression?: string | null;
     form: FormItem[];
     config: Record<string, ConfigValue>;
     mixinNames?: string[];
