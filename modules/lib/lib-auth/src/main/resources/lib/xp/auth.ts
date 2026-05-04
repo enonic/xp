@@ -880,11 +880,10 @@ export interface IdProvider<Config extends Record<string, unknown> = Record<stri
     idProviderConfig?: IdProviderConfig<Config>;
 }
 
-export interface CreateIdProviderParams<Config extends Record<string, unknown> = Record<string, unknown>> {
+export interface CreateIdProviderParams {
     key: string;
     displayName: string;
     description?: string;
-    idProviderConfig?: IdProviderConfig<Config>;
     permissions?: IdProviderAccessControlEntry[];
 }
 
@@ -894,8 +893,6 @@ interface CreateIdProviderHandler {
     setDisplayName(value: string): void;
 
     setDescription(value: string | null): void;
-
-    setIdProviderConfig(value: ScriptValue | null): void;
 
     setPermissions(value: ScriptValue | null): void;
 
@@ -911,15 +908,12 @@ interface CreateIdProviderHandler {
  * @param {string} params.key Id provider key.
  * @param {string} params.displayName Id provider display name.
  * @param {string} [params.description] Id provider description.
- * @param {object} [params.idProviderConfig] Id provider config.
- * @param {string} params.idProviderConfig.applicationKey Application key of the id provider application.
- * @param {object} [params.idProviderConfig.config] Id provider configuration.
  * @param {Array<object>} [params.permissions] Id provider permissions.
  * @returns {IdProvider} The created id provider.
  */
-export function createIdProvider<Config extends Record<string, unknown> = Record<string, unknown>>(
-    params: CreateIdProviderParams<Config>,
-): IdProvider<Config> {
+export function createIdProvider(
+    params: CreateIdProviderParams,
+): IdProvider {
     const key = checkRequired(params, 'key');
     const displayName = checkRequired(params, 'displayName');
 
@@ -928,10 +922,9 @@ export function createIdProvider<Config extends Record<string, unknown> = Record
     bean.setKey(key);
     bean.setDisplayName(displayName);
     bean.setDescription(__.nullOrValue(params.description));
-    bean.setIdProviderConfig(params.idProviderConfig == null ? null : __.toScriptValue(params.idProviderConfig));
     bean.setPermissions(params.permissions == null ? null : __.toScriptValue(params.permissions));
 
-    return __.toNativeObject(bean.createIdProvider()) as IdProvider<Config>;
+    return __.toNativeObject(bean.createIdProvider()) as IdProvider;
 }
 
 interface GetIdProvidersHandler {

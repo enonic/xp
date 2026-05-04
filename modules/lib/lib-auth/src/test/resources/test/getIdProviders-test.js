@@ -10,7 +10,7 @@ exports.getIdProviders = function () {
             'key': 'idProviderTestKey',
             'displayName': 'Id Provider test',
             'description': 'Id Provider used for testing',
-            'config': {
+            'idProviderConfig': {
                 'applicationKey': 'com.enonic.app.test',
                 'config': {
                     'set': {

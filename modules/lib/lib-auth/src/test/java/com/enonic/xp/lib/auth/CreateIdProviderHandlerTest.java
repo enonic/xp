@@ -48,8 +48,7 @@ class CreateIdProviderHandlerTest
         assertThat( params.getKey() ).isEqualTo( IdProviderKey.from( "idProviderTestKey" ) );
         assertThat( params.getDisplayName() ).isEqualTo( "Id Provider test" );
         assertThat( params.getDescription() ).isEqualTo( "Id Provider used for testing" );
-        assertThat( params.getIdProviderConfig() ).isNotNull();
-        assertThat( params.getIdProviderConfig().getApplicationKey().toString() ).isEqualTo( "com.enonic.app.test" );
+        assertThat( params.getIdProviderConfig() ).isNull();
         assertThat( params.getIdProviderPermissions() ).isNotNull();
         assertThat( params.getIdProviderPermissions().isEmpty() ).isFalse();
     }
