@@ -58,7 +58,9 @@ assert.assertJsonEquals({
         {
             label: 'Cinema',
             name: 'editor-style-cinema',
-            type: 'Image'
+            type: 'Image',
+            aspectRatio: '21:9',
+            filter: 'pixelate(10)'
         }
     ]
 }, result);

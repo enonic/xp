@@ -30,6 +30,12 @@ class GetDynamicStylesHandlerTest
 
                                       .name( "mystyle" )
                                       .labelI18nKey( "style.display" )
+                                      .aspectRatio( "16:9" )
+                                      .filter( "sharpen()" )
+                                      .build() )
+                .addStyleElement( ImageStyle.create()
+                                      .label( "Plain" )
+                                      .name( "plain" )
                                       .build() )
                 .modifiedTime( Instant.parse( "2021-02-25T10:44:33.170079900Z" ) )
                 .build();
