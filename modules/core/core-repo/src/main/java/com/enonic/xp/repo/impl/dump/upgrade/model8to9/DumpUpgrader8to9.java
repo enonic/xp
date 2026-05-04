@@ -425,7 +425,7 @@ public class DumpUpgrader8to9
         for ( NodeVersionUpgrader upgrader : List.of( new ContentUpgrader(), new AuditLogMillisUpgrader(), new SchedulerUpgrader(),
                                                       new ReferenceLowercaseUpgrader(), new DefaultProjectPermissionsUpgrader(),
                                                       new LanguageTagUpgrader(), new IndexConfigLanguageUpgrader(),
-                                                      new AttachmentSha512Upgrader( dumpReader ),
+                                                      new AttachmentSha512Upgrader( dumpReader ), new AttachmentTextToMediaUpgrader(),
                                                       new ImageUpgrader( dumpReader ), new RepositoryBranchesRemovalUpgrader(),
                                                       new RepositoryModelVersionUpgrader() ) )
         {
