@@ -136,6 +136,33 @@ exports.imageUrlTest_unknownProperty = function () {
     return true;
 };
 
+exports.loginUrlTest = function () {
+    var result = portal.loginUrl({
+        idProvider: 'system',
+        params: {
+            a: 1,
+            b: [1, 2]
+        }
+    });
+
+    assert.assertEquals('/site/mocksite/_/idprovider/system/login?a=1&b=1&b=2', result);
+    return true;
+};
+
+exports.loginUrlTest_unknownProperty = function () {
+    var result = portal.loginUrl({
+        idProvider: 'system',
+        unknownProperty: 'value',
+        params: {
+            a: 1,
+            b: [1, 2]
+        }
+    });
+
+    assert.assertEquals('/site/mocksite/_/idprovider/system/login?a=1&b=1&b=2', result);
+    return true;
+};
+
 exports.pageUrlTest = function () {
     var result = portal.pageUrl({
         path: 'a/b',
