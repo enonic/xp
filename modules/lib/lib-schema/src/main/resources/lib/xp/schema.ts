@@ -13,7 +13,7 @@ declare global {
     }
 }
 
-import type {ByteSource, FormItem, UserKey, ConfigValue} from '@enonic-types/core';
+import type {ByteSource, ConfigObject, ConfigValue, FormItem, UserKey} from '@enonic-types/core';
 
 export type {
     ByteSource,
@@ -204,9 +204,8 @@ interface CreateDynamicStylesHandler {
     execute(): StyleDescriptor;
 }
 
-export type EditorConfig = {
+export type EditorConfig = ConfigObject & {
     css?: string;
-    [key: string]: ConfigValue;
 };
 
 export interface StyleDescriptor {
