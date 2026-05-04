@@ -47,9 +47,11 @@ public class StyleDescriptorMapper
                 gen.value( "label", element.getLabel() );
                 gen.value( "name", element.getName() );
 
-                if ( element instanceof ImageStyle )
+                if ( element instanceof ImageStyle imageStyle )
                 {
                     gen.value( "type", IMAGE_TYPE );
+                    gen.value( "aspectRatio", imageStyle.getAspectRatio() );
+                    gen.value( "filter", imageStyle.getFilter() );
                 }
 
                 if ( !element.getEditor().properties().isEmpty() )

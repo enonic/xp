@@ -225,6 +225,8 @@ export interface StyleDescriptor {
         label: string | null;
         name: string;
         type: string;
+        aspectRatio?: string | null;
+        filter?: string | null;
         editor?: EditorConfig;
     }[];
 }

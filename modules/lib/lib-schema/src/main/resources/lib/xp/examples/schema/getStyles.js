@@ -22,6 +22,13 @@ assert.assertJsonEquals({
         {
             label: 'Style display name',
             name: 'mystyle',
+            type: 'Image',
+            aspectRatio: '16:9',
+            filter: 'sharpen()'
+        },
+        {
+            label: 'Plain',
+            name: 'plain',
             type: 'Image'
         }
     ]
