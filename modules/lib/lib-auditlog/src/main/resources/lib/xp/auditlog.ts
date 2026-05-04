@@ -111,7 +111,7 @@ interface GetAuditLogHandler {
  * @param {object} params     JSON with the parameters.
  * @param {string} params.id  Id of the audit log.
  *
- * @returns {object} Audit log as JSON.
+ * @returns {object|null} Audit log as JSON, or `null` if no audit log exists with the given id.
  */
 export function get(params: GetAuditLogParams): AuditLog | null {
     const id = checkRequired(params, 'id');
@@ -171,7 +171,7 @@ interface FindAuditLogHandler {
  *
  * @param {object} params     JSON with the parameters.
  * @param {number} [params.start=0] Start index (used for paging).
- * @param {number} [params.count=10] Number of contents to fetch.
+ * @param {number} [params.count=10] Number of audit logs to fetch.
  * @param {array} [params.ids] Filter by ids of audit logs.
  * @param {string} [params.from] Filter by logs younger than from.
  * @param {string} [params.to] Filter by logs older than to.
