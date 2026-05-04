@@ -52,11 +52,13 @@ assert.assertJsonEquals({
     elements: [
         {
             label: 'Override ${width}',
-            name: 'editor-width-auto'
+            name: 'editor-width-auto',
+            type: 'Image'
         },
         {
             label: 'Cinema',
-            name: 'editor-style-cinema'
+            name: 'editor-style-cinema',
+            type: 'Image'
         }
     ]
 }, result);
