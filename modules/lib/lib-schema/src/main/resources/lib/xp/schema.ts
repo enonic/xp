@@ -211,6 +211,8 @@ export interface StyleDescriptor {
     elements: {
         label: string | null;
         name: string;
+        type: string;
+        editor?: Record<string, unknown>;
     }[];
 }
 
