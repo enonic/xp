@@ -8,8 +8,6 @@ public final class ContentPropertyNames
 
     public static final String APPLICATION_KEY = "applicationkey";
 
-    public static final String ATTACHMENT_TEXT_COMPONENT = "attachment.text";
-
     public static final String FORM = "form";
 
     public static final String SITE = "site";
@@ -54,6 +52,10 @@ public final class ContentPropertyNames
 
     public static final String MEDIA_IMAGE_HEIGHT = "imageHeight";
 
+    public static final String MEDIA_TEXT = "text";
+
+    public static final String MEDIA_TEXT_COMPONENT = "media.text";
+
     public static final String ATTACHMENT = "attachment";
 
     public static final String ATTACHMENT_LABEL = "label";
@@ -77,8 +79,6 @@ public final class ContentPropertyNames
     public static final String ATTACHMENT_SIZE = "size";
 
     public static final String ATTACHMENT_SHA512 = "sha512";
-
-    public static final String ATTACHMENT_TEXT = "text";
 
     public static final String OWNER = "owner";
 

@@ -530,7 +530,6 @@ exports.patchAttachments = function () {
                 name: 'file.txt',
                 mimeType: 'text/plain',
                 label: 'File 1',
-                textContent: 'data 1',
                 sha512: '2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae',
                 size: 14
             }],
@@ -539,7 +538,6 @@ exports.patchAttachments = function () {
                 mimeType: 'text/plain',
                 name: 'file4.txt',
                 label: 'File 4',
-                textContent: 'data 4',
                 data: dataStream2
             }]
         }

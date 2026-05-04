@@ -118,9 +118,6 @@ public class AttachmentsDeserializer
                 case "mimeType":
                     builder.mimeType( (String) value );
                     break;
-                case "textContent":
-                    builder.textContent( (String) value );
-                    break;
                 case "sha512":
                     builder.sha512( (String) value );
                     break;
@@ -162,9 +159,6 @@ public class AttachmentsDeserializer
                     break;
                 case "mimeType":
                     builder.mimeType( (String) value );
-                    break;
-                case "textContent":
-                    builder.text( (String) value );
                     break;
                 case "data":
                     if ( value instanceof ByteSource )

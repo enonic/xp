@@ -21,7 +21,6 @@ class AttachmentsMapperTest
             .mimeType( "application/pdf" )
             .size( 1234L )
             .sha512( "deadbeef" )
-            .textContent( "Quarterly report contents" )
             .build();
 
         final JsonNode node = serialize( Attachments.from( attachment ) ).get( "report.pdf" );
@@ -31,11 +30,11 @@ class AttachmentsMapperTest
         assertThat( node.get( "size" ).asLong() ).isEqualTo( 1234L );
         assertThat( node.get( "mimeType" ).asText() ).isEqualTo( "application/pdf" );
         assertThat( node.get( "sha512" ).asText() ).isEqualTo( "deadbeef" );
-        assertThat( node.get( "textContent" ).asText() ).isEqualTo( "Quarterly report contents" );
+        assertThat( node.has( "textContent" ) ).isFalse();
     }
 
     @Test
-    void sha512AndTextContentNullEmittedAsNull()
+    void sha512NullEmittedAsNull()
     {
         final Attachment attachment = Attachment.create()
             .name( "image.png" )
@@ -47,8 +46,6 @@ class AttachmentsMapperTest
 
         assertThat( node.has( "sha512" ) ).isTrue();
         assertThat( node.get( "sha512" ).isNull() ).isTrue();
-        assertThat( node.has( "textContent" ) ).isTrue();
-        assertThat( node.get( "textContent" ).isNull() ).isTrue();
     }
 
     private JsonNode serialize( final Attachments attachments )

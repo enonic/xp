@@ -31,6 +31,8 @@ final class MediaFormDataBuilder
 
     private FocalPoint focalPoint;
 
+    private String text;
+
     public MediaFormDataBuilder type( final ContentTypeName type )
     {
         this.type = type;
@@ -79,6 +81,12 @@ final class MediaFormDataBuilder
         return this;
     }
 
+    MediaFormDataBuilder text( final String text )
+    {
+        this.text = text;
+        return this;
+    }
+
     void build( PropertyTree data )
     {
         requireNonNull( type, "type is required" );
@@ -95,6 +103,11 @@ final class MediaFormDataBuilder
                 set.setDouble( PropertyPath.from( ContentPropertyNames.MEDIA_FOCAL_POINT, ContentPropertyNames.MEDIA_FOCAL_POINT_Y ),
                                focalPoint.yOffset() );
             }
+        }
+
+        if ( type.isTextualMedia() && text != null )
+        {
+            set.setString( ContentPropertyNames.MEDIA_TEXT, text );
         }
 
         data.removeProperties( ContentPropertyNames.MEDIA );

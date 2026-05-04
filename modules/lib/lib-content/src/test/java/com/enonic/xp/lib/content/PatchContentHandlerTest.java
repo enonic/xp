@@ -319,7 +319,6 @@ public class PatchContentHandlerTest
                                         .name( "file.txt" )
                                         .label( "initial label" )
                                         .mimeType( "image/jpeg" )
-                                        .textContent( "initial content" )
                                         .sha512( "ABC" )
                                         .size( 123 )
                                         .build() )
@@ -346,7 +345,6 @@ public class PatchContentHandlerTest
         assertEquals( "file4.txt", createAttachment.getName() );
         assertEquals( "File 4", createAttachment.getLabel() );
         assertEquals( "text/plain", createAttachment.getMimeType() );
-        assertEquals( "data 4", createAttachment.getTextContent() );
         assertEquals( "data 2", new String( createAttachment.getByteSource().read() ) );
 
         final PatchableContent patchable = new PatchableContent( content );
@@ -359,7 +357,6 @@ public class PatchContentHandlerTest
         assertEquals( "text/plain", patchedAttachment.getMimeType() );
         assertEquals( "2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae", patchedAttachment.getSha512() );
         assertEquals( 14, patchedAttachment.getSize() );
-        assertEquals( "data 1", patchedAttachment.getTextContent() );
     }
 
     @Test

@@ -175,8 +175,7 @@ final class UpdateContentCommand
             final Attachment.Builder builder = Attachment.create()
                 .name( createAttachment.getName() )
                 .label( createAttachment.getLabel() )
-                .mimeType( createAttachment.getMimeType() )
-                .textContent( createAttachment.getTextContent() );
+                .mimeType( createAttachment.getMimeType() );
             populateByteSourceProperties( createAttachment.getByteSource(), builder );
 
             final Attachment attachment = builder.build();
