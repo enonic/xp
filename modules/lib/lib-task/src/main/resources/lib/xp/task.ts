@@ -52,6 +52,7 @@ interface ExecuteFunctionHandler {
  * @property {string} application Application containing the callback function to run.
  * @property {string} user Key of the user that submitted the task.
  * @property {string} startTime Time when the task was submitted (in ISO-8601 format).
+ * @property {string} [node] Identifier of the cluster node where the task is running. Absent when no cluster is configured.
  * @property {object} progress Progress information provided by the running task.
  * @property {number} progress.current Latest progress current numeric value.
  * @property {number} progress.total Latest progress target numeric value.
@@ -104,13 +105,13 @@ export interface SubmitTaskParams<Config extends Record<string, unknown>> {
 /**
  * Submits a task to be executed in the background and returns an id representing the task.
  *
- * This function returns immediately. The callback function will be executed asynchronously.
+ * This function returns immediately. The task will be executed asynchronously.
  *
  * @example-ref examples/task/submitTask.js
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.descriptor Descriptor of the task to execute.
- * @param {string} [params.name] Optional name of the task. If not specified, descriptor name will be used instead.
+ * @param {string} [params.name] Optional name of the task. If not specified, the descriptor key will be used instead.
  * @param {object} [params.config] Configuration parameters to pass to the task to be executed.
  * The object must be valid according to the schema defined in the form of the task descriptor XML.
  * @returns {string} Id of the task that will be executed.
@@ -157,7 +158,7 @@ export interface TaskInfo {
     user: UserKey;
     startTime: string;
     progress: TaskProgress;
-    node: string;
+    node?: string;
 }
 
 /**
@@ -167,7 +168,7 @@ export interface TaskInfo {
  *
  * @param {object} [params] JSON with optional parameters.
  * @param {string} [params.name] Filter by name.
- * @param {object} [params.state] Filter by task state ('WAITING' | 'RUNNING' | 'FINISHED' | 'FAILED').
+ * @param {string} [params.state] Filter by task state ('WAITING' | 'RUNNING' | 'FINISHED' | 'FAILED').
  * @returns {TaskInfo[]} List with task information for every task.
  */
 export function list(params?: ListTasksParams): TaskInfo[] {
