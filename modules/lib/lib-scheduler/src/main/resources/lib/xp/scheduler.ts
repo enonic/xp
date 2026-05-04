@@ -97,7 +97,7 @@ interface CreateScheduledJobHandler<Config extends Record<string, unknown>> {
  * @param {object} params.schedule task time run config.
  * @param {string} params.schedule.value schedule value according to its type.
  * @param {string} params.schedule.type schedule type (CRON | ONE_TIME).
- * @param {string} params.schedule.timezone time zone of cron scheduling.
+ * @param {string} [params.schedule.timeZone] time zone of cron scheduling. Only applies when type is `CRON`.
  * @param {string} [params.user] key of the user that submitted the task.
  * @param {boolean} params.enabled job is active or not.
  */
