@@ -868,16 +868,10 @@ export interface IdProviderAccessControlEntry {
     access: IdProviderAccess;
 }
 
-export interface IdProviderConfig<Config extends Record<string, unknown> = Record<string, unknown>> {
-    applicationKey: string;
-    config?: Config;
-}
-
-export interface IdProvider<Config extends Record<string, unknown> = Record<string, unknown>> {
+export interface IdProvider {
     key: string;
     displayName: string;
     description?: string;
-    idProviderConfig?: IdProviderConfig<Config>;
 }
 
 export interface CreateIdProviderParams {
