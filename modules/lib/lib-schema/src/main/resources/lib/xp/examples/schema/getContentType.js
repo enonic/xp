@@ -22,6 +22,13 @@ assert.assertJsonEquals({
     modifiedTime: '2010-01-01T10:00:00Z',
     resource: '<content-type><some-data></some-data></content-type>',
     type: 'CONTENT_TYPE',
+    superType: 'base:structured',
+    abstract: false,
+    final: true,
+    allowChildContent: true,
+    allowChildContentType: ['myapp:other-type', 'myapp:another-type'],
+    displayNamePlaceholder: 'Enter a display name',
+    displayNameExpression: '${title}',
     form: [
         {
             'formItemType': 'Layout',

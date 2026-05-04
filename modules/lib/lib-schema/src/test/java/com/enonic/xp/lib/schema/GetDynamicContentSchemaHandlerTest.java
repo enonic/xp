@@ -1,6 +1,7 @@
 package com.enonic.xp.lib.schema;
 
 import java.time.Instant;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
@@ -44,6 +45,9 @@ class GetDynamicContentSchemaHandlerTest
                 .title( "My type display name" )
                 .name( (ContentTypeName) schemaParams.getName() )
                 .modifiedTime( Instant.parse( "2010-01-01T10:00:00Z" ) )
+                .allowChildContentType( List.of( "myapp:other-type", "myapp:another-type" ) )
+                .displayNamePlaceholder( "Enter a display name" )
+                .displayNameExpression( "${title}" )
                 .addFormItem( FieldSet.create()
                                   .label( "My layout" )
                                   .addFormItem( FormItemSet.create()
