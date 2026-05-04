@@ -563,6 +563,8 @@ export interface Attachment {
     label?: string;
     size: number;
     mimeType: string;
+    sha512?: string | null;
+    textContent?: string | null;
 }
 
 export interface DataValidationError
