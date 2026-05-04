@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.app.ApplicationDescriptor;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.icon.Icon;
+import com.enonic.xp.schema.LocalizedText;
 
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.when;
@@ -40,7 +41,7 @@ class GetApplicationDescriptorHandlerTest
 
             return ApplicationDescriptor.create()
                 .key( applicationKey )
-                .description( "my app description" )
+                .description( new LocalizedText( "my app description", "app.description.key" ) )
                 .title( "Title" )
                 .titleI18nKey( "app.title.key" )
                 .vendorName(  "Vendor Name" )
