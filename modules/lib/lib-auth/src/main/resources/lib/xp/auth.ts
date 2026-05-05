@@ -864,3 +864,80 @@ export function modifyRole(params: ModifyRoleParams): Role | null {
 
     return __.toNativeObject(bean.modifyRole());
 }
+
+export type IdProviderAccess = 'READ' | 'CREATE_USERS' | 'WRITE_USERS' | 'ID_PROVIDER_MANAGER' | 'ADMINISTRATOR';
+
+export interface IdProviderAccessControlEntry {
+    principal: PrincipalKey;
+    access: IdProviderAccess;
+}
+
+export interface IdProvider {
+    key: string;
+    displayName: string;
+    description?: string;
+}
+
+export interface CreateIdProviderParams {
+    key: string;
+    displayName: string;
+    description?: string;
+    permissions?: IdProviderAccessControlEntry[];
+}
+
+interface CreateIdProviderHandler {
+    setKey(value: string): void;
+
+    setDisplayName(value: string): void;
+
+    setDescription(value: string | null): void;
+
+    setPermissions(value: ScriptValue | null): void;
+
+    createIdProvider(): IdProvider;
+}
+
+/**
+ * Creates an id provider.
+ *
+ * @example-ref examples/auth/createIdProvider.js
+ *
+ * @param {object} params JSON parameters.
+ * @param {string} params.key Id provider key.
+ * @param {string} params.displayName Id provider display name.
+ * @param {string} [params.description] Id provider description.
+ * @param {Array<object>} [params.permissions] Id provider permissions.
+ * @returns {IdProvider} The created id provider.
+ */
+export function createIdProvider(
+    params: CreateIdProviderParams,
+): IdProvider {
+    const key = checkRequired(params, 'key');
+    const displayName = checkRequired(params, 'displayName');
+
+    const bean: CreateIdProviderHandler = __.newBean<CreateIdProviderHandler>('com.enonic.xp.lib.auth.CreateIdProviderHandler');
+
+    bean.setKey(key);
+    bean.setDisplayName(displayName);
+    bean.setDescription(__.nullOrValue(params.description));
+    bean.setPermissions(params.permissions == null ? null : __.toScriptValue(params.permissions));
+
+    return __.toNativeObject(bean.createIdProvider()) as IdProvider;
+}
+
+interface GetIdProvidersHandler {
+    getIdProviders(): IdProvider[];
+}
+
+/**
+ * Returns all id providers.
+ *
+ * @example-ref examples/auth/getIdProviders.js
+ *
+ * @returns {Array<IdProvider>} List of id providers.
+ */
+export function getIdProviders(): IdProvider[] {
+    const bean: GetIdProvidersHandler = __.newBean<GetIdProvidersHandler>('com.enonic.xp.lib.auth.GetIdProvidersHandler');
+
+    return __.toNativeObject(bean.getIdProviders());
+}
