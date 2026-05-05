@@ -60,12 +60,12 @@ export interface Attachment {
 
 export interface SendMessageParams {
     subject: string;
-    from: string;
+    from: string | string[];
     body: string;
     to: string | string[];
     cc?: string | string[];
     bcc?: string | string[];
-    replyTo?: string;
+    replyTo?: string | string[];
     contentType?: string;
     headers?: Record<string, string>;
     attachments?: Attachment[];
@@ -77,8 +77,8 @@ export interface SendMessageParams {
  * The address values can be either a simple email address (e.g. ‘name@domain.org’ ) or an address with a
  * display name. In the latter case the email will be enclosed with angle brackets (e.g. ‘Some Name <name@domain.org>’ ).
  *
- * The parameters `to`, `cc` and `bcc` can be passed as a single string or as an array of strings, if there are multiple addresses
- * to specify.
+ * The parameters `from`, `to`, `cc`, `bcc` and `replyTo` can be passed as a single string or as an array of strings, if there are
+ * multiple addresses to specify.
  *
  * The content-type of the email can be specified by using the `contentType` parameter. See example below for
  * sending a message with an HTML body.
@@ -86,20 +86,20 @@ export interface SendMessageParams {
  * @example-ref examples/mail/send.js
  *
  * @param {object} params JSON with the parameters.
- * @param {string} params.from The email address, and optionally name of the sender of the message.
+ * @param {(string|string[])} params.from The email address(es), and optionally name(s) of the sender of the message.
  * @param {(string|string[])} params.to The email address(es), and optionally name(s) of the primary message’s recipient(s).
  * @param {(string|string[])} [params.cc] The carbon copy email address(es).
  * @param {(string|string[])} [params.bcc] The blind carbon copy email address(es).
- * @param {string} [params.replyTo] The email address that should be used to reply to the message.
+ * @param {(string|string[])} [params.replyTo] The email address(es) that should be used to reply to the message.
  * @param {string} params.subject The subject line of the message.
  * @param {string} params.body The text content of the message.
  * @param {string} [params.contentType] Content type of the message body.
- * @param {object} [params.headers] Custom headers in the form of name-value pairs.
+ * @param {Object<string, string>} [params.headers] Custom headers in the form of name-value pairs.
  * @param {object[]} [params.attachments] Attachments to include in the email.
  * @param {string} params.attachments.fileName Attachment file name.
- * @param {*} params.attachments.data Attachment stream.
+ * @param {ByteSource} params.attachments.data Attachment stream.
  * @param {string} [params.attachments.mimeType] Attachment content type. If not specified will be inferred from the file extension.
- * @param {object} [params.attachments.headers] Attachment headers, in the form of name-value pairs.
+ * @param {Object<string, string>} [params.attachments.headers] Attachment headers, in the form of name-value pairs.
  *
  * @returns {boolean} True if the message was sent successfully, false otherwise.
  */
@@ -140,9 +140,9 @@ interface GetDefaultFromEmailHandler {
 }
 
 /**
- * This function returns defaultFromMail.
+ * This function returns the default from email address.
  *
- * @returns {string} The default from mail address, or null if not set.
+ * @returns {string|null} The default from email address, or null if not set.
  */
 export function getDefaultFromEmail(): string | null {
     const bean: GetDefaultFromEmailHandler = __.newBean<GetDefaultFromEmailHandler>('com.enonic.xp.lib.mail.GetDefaultFromEmailHandler');
