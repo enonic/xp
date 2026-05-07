@@ -9,10 +9,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.repo.impl.Model;
 import com.enonic.xp.repo.impl.branch.BranchService;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
@@ -21,7 +23,9 @@ import com.enonic.xp.repo.impl.storage.NodeVersionData;
 import com.enonic.xp.repository.RepositoryIds;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.repository.internal.InternalRepositoryService;
+import com.enonic.xp.security.SystemConstants;
 
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doReturn;
@@ -57,6 +61,9 @@ class RepositoryServiceActivatorTest
     @Mock(stubOnly = true)
     private BranchService branchService;
 
+    @Mock(stubOnly = true)
+    private RepositoryAuditLogSupport repositoryAuditLogSupport;
+
     @BeforeEach
     void setUp()
     {
@@ -64,22 +71,37 @@ class RepositoryServiceActivatorTest
         when( indexServiceInternal.waitForYellowStatus() ).thenReturn( true );
         when( nodeRepositoryService.isInitialized( any() ) ).thenReturn( true );
 
-        final com.enonic.xp.data.PropertyTree data = new com.enonic.xp.data.PropertyTree();
+        final PropertyTree data = new PropertyTree();
         data.addString( "version", "8.0.0.pre1" );
         final Node mockNode = Node.create().id( NodeId.from( "1" ) ).parentPath( NodePath.ROOT ).data( data ).build();
         when( nodeStorageService.store( any(), any() ) ).thenReturn( new NodeVersionData( mockNode, mock( NodeVersion.class ) ) );
         when( nodeStorageService.get( any( NodePath.class ), any() ) ).thenReturn( mockNode );
         when( repositoryEntryService.findRepositoryEntryIds() ).thenReturn( RepositoryIds.create().build() );
-        when( repositoryEntryService.getRepositoryEntry( any() ) ).thenReturn( RepositoryEntry.create()
-                                                                                   .id(
-                                                                                       com.enonic.xp.security.SystemConstants.SYSTEM_REPO_ID )
-                                                                                   .modelVersion(
-                                                                                       com.enonic.xp.repo.impl.Model.MODEL_VERSION )
-                                                                                   .build() );
+        when( repositoryEntryService.getRepositoryEntry( any() ) ).thenReturn(
+            RepositoryEntry.create().id( SystemConstants.SYSTEM_REPO_ID ).modelVersion( Model.MODEL_VERSION ).build() );
     }
 
     @Test
     void lifecycle()
+    {
+        final RepositoryServiceActivator activator =
+            new RepositoryServiceActivator( repositoryEntryService, indexServiceInternal, nodeRepositoryService, nodeStorageService,
+                                            nodeSearchService, branchService );
+        activator.setRepositoryAuditLogSupport( repositoryAuditLogSupport );
+
+        doReturn( service ).when( bundleContext )
+            .registerService(
+                AdditionalMatchers.aryEq( new String[]{RepositoryService.class.getName(), InternalRepositoryService.class.getName()} ),
+                any( RepositoryService.class ), isNull() );
+
+        activator.activate( bundleContext );
+
+        activator.deactivate();
+        verify( service ).unregister();
+    }
+
+    @Test
+    void activates_without_audit_log_support()
     {
         final RepositoryServiceActivator activator =
             new RepositoryServiceActivator( repositoryEntryService, indexServiceInternal, nodeRepositoryService, nodeStorageService,
@@ -90,7 +112,7 @@ class RepositoryServiceActivatorTest
                 AdditionalMatchers.aryEq( new String[]{RepositoryService.class.getName(), InternalRepositoryService.class.getName()} ),
                 any( RepositoryService.class ), isNull() );
 
-        activator.activate( bundleContext );
+        assertThatCode( () -> activator.activate( bundleContext ) ).doesNotThrowAnyException();
 
         activator.deactivate();
         verify( service ).unregister();

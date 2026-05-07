@@ -78,7 +78,7 @@ class SnapshotServiceImplTest
 
         this.repositoryService =
             new RepositoryServiceImpl( this.repositoryEntryService, nodeRepositoryService, this.storageService, this.searchService,
-                                       this.branchService );
+                                       this.branchService, () -> null );
 
         final RepoConfiguration configuration = Mockito.mock( RepoConfiguration.class );
         Mockito.when( configuration.getSnapshotsDir() ).thenReturn( getSnapshotsDir() );
