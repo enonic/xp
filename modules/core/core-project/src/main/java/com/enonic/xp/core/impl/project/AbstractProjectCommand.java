@@ -1,8 +1,8 @@
 package com.enonic.xp.core.impl.project;
 
-import java.util.Objects;
-
 import com.enonic.xp.project.ProjectName;
+
+import static java.util.Objects.requireNonNull;
 
 abstract class AbstractProjectCommand
 {
@@ -25,7 +25,7 @@ abstract class AbstractProjectCommand
 
         void validate()
         {
-            Objects.requireNonNull( projectName, "projectName is required" );
+            requireNonNull( projectName, "projectName is required" );
         }
 
     }

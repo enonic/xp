@@ -1,11 +1,11 @@
 package com.enonic.xp.core.impl.project;
 
-import java.util.Objects;
-
 import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.security.CreateRoleParams;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.Role;
+
+import static java.util.Objects.requireNonNull;
 
 public final class CreateProjectRolesCommand
     extends AbstractProjectRolesCommand
@@ -58,7 +58,7 @@ public final class CreateProjectRolesCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( this.projectDisplayName, "Project display name is required" );
+            requireNonNull( this.projectDisplayName, "Project display name is required" );
         }
 
         public CreateProjectRolesCommand build()

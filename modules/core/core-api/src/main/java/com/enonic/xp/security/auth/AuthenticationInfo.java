@@ -17,6 +17,8 @@ import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 
+import static java.util.Objects.requireNonNull;
+
 
 public final class AuthenticationInfo
     implements Serializable
@@ -35,7 +37,7 @@ public final class AuthenticationInfo
         this.authenticated = builder.authenticated;
         if ( builder.authenticated )
         {
-            this.user = Objects.requireNonNull( builder.user, "user is required" );
+            this.user = requireNonNull( builder.user, "user is required" );
             builder.principals.add( user.getKey() );
         }
         else

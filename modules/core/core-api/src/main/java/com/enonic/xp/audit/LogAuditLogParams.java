@@ -7,6 +7,9 @@ import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.security.PrincipalKey;
 
+import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
+
 public final class LogAuditLogParams
 {
     private final String type;
@@ -23,12 +26,12 @@ public final class LogAuditLogParams
 
     private LogAuditLogParams( final Builder builder )
     {
-        type = Objects.requireNonNull( builder.type, "LogAuditLogParams type cannot be null" );
+        type = requireNonNull( builder.type, "LogAuditLogParams type cannot be null" );
         time = Millis.fromOrElseNow( builder.time );
-        source = Objects.requireNonNullElse( builder.source, "" );
+        source = requireNonNullElse( builder.source, "" );
         user = builder.user;
-        objectUris = Objects.requireNonNullElse( builder.objectUris, AuditLogUris.empty() );
-        data = Objects.requireNonNullElse( builder.data, new PropertyTree() );
+        objectUris = requireNonNullElse( builder.objectUris, AuditLogUris.empty() );
+        data = requireNonNullElse( builder.data, new PropertyTree() );
     }
 
     public String getType()

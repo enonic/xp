@@ -1,6 +1,7 @@
 package com.enonic.xp.query.parser;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
@@ -87,7 +88,7 @@ final class QueryMapper
         return DynamicConstraintExpr::new;
     }
 
-    public static BiFunction<FieldExpr, OrderExpr.Direction, FieldOrderExpr> fieldOrderExpr()
+    public static Map3<FieldExpr, Locale, OrderExpr.Direction, FieldOrderExpr> fieldOrderExpr()
     {
         return FieldOrderExpr::new;
     }

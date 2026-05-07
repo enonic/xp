@@ -1,6 +1,6 @@
 package com.enonic.xp.content;
 
-import java.util.Objects;
+import static java.util.Objects.requireNonNull;
 
 
 public final class CompareContentsParams
@@ -38,7 +38,7 @@ public final class CompareContentsParams
 
         public CompareContentsParams build()
         {
-            Objects.requireNonNull( this.contentIds, "contentIds is required" );
+            requireNonNull( this.contentIds, "contentIds is required" );
             return new CompareContentsParams( this );
         }
     }

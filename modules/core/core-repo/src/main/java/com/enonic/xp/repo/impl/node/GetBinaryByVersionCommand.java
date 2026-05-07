@@ -1,7 +1,5 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.util.Objects;
-
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.context.ContextAccessor;
@@ -10,6 +8,8 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repo.impl.InternalContext;
+
+import static java.util.Objects.requireNonNull;
 
 public class GetBinaryByVersionCommand
     extends AbstractGetBinaryCommand
@@ -75,8 +75,8 @@ public class GetBinaryByVersionCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( this.nodeVersionId, "nodeVersionId is required" );
-            Objects.requireNonNull( this.nodeId, "nodeId is required" );
+            requireNonNull( this.nodeVersionId, "nodeVersionId is required" );
+            requireNonNull( this.nodeId, "nodeId is required" );
         }
 
         public GetBinaryByVersionCommand build()

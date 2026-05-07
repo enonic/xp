@@ -7,6 +7,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.core.internal.FileNames;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.VersionAttributesResolver;
 import com.enonic.xp.vfs.VirtualFile;
 
 
@@ -28,6 +29,8 @@ public final class ImportNodesParams
 
     private final NodeImportListener nodeImportListener;
 
+    private final VersionAttributesResolver versionAttributesResolver;
+
     private ImportNodesParams( final Builder builder )
     {
         this.targetNodePath = builder.targetNodePath;
@@ -38,6 +41,7 @@ public final class ImportNodesParams
         this.xsltParams = builder.xsltParams;
         this.nodeImportListener = builder.nodeImportListener;
         this.exportName = builder.exportName;
+        this.versionAttributesResolver = builder.versionAttributesResolver;
     }
 
     public static Builder create()
@@ -85,6 +89,11 @@ public final class ImportNodesParams
         return nodeImportListener;
     }
 
+    public VersionAttributesResolver getVersionAttributesResolver()
+    {
+        return versionAttributesResolver;
+    }
+
     public static final class Builder
     {
         private NodePath targetNodePath;
@@ -104,6 +113,8 @@ public final class ImportNodesParams
         private Map<String, Object> xsltParams;
 
         private NodeImportListener nodeImportListener;
+
+        private VersionAttributesResolver versionAttributesResolver;
 
         private Builder()
         {
@@ -170,6 +181,12 @@ public final class ImportNodesParams
         public Builder nodeImportListener( final NodeImportListener nodeImportListener )
         {
             this.nodeImportListener = nodeImportListener;
+            return this;
+        }
+
+        public Builder versionAttributesResolver( final VersionAttributesResolver versionAttributesResolver )
+        {
+            this.versionAttributesResolver = versionAttributesResolver;
             return this;
         }
 

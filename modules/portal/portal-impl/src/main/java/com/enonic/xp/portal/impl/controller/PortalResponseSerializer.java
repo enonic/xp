@@ -3,8 +3,6 @@ package com.enonic.xp.portal.impl.controller;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
-
 import com.google.common.net.HttpHeaders;
 import com.google.common.net.MediaType;
 
@@ -13,8 +11,13 @@ import jakarta.servlet.http.Cookie;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.postprocess.HtmlTag;
 import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.sse.SseConfig;
 import com.enonic.xp.web.websocket.WebSocketConfig;
+
+import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
 
 public final class PortalResponseSerializer
 {
@@ -36,7 +39,7 @@ public final class PortalResponseSerializer
     public PortalResponseSerializer( final ScriptValue value, final HttpStatus defaultStatus )
     {
         this.value = value;
-        this.defaultStatus = Objects.requireNonNull( defaultStatus );
+        this.defaultStatus = requireNonNull( defaultStatus );
         this.defaultPostProcess = true;
     }
 
@@ -72,6 +75,7 @@ public final class PortalResponseSerializer
         setRedirect( builder, value.getMember( "redirect" ) );
         populatePostProcess( builder, value.getMember( "postProcess" ) );
         populateWebSocket( builder, value.getMember( "webSocket" ) );
+        populateSse( builder, value.getMember( "sse" ) );
 
         if ( this.forceApplyFilters != null )
         {
@@ -225,14 +229,7 @@ public final class PortalResponseSerializer
         else
         {
             final String strValue = value.getValue( String.class );
-            if ( strValue != null )
-            {
-                builder.cookie( new Cookie( key, strValue ) );
-            }
-            else
-            {
-                builder.cookie( new Cookie( key, "" ) );
-            }
+            builder.cookie( new Cookie( key, requireNonNullElse( strValue, "" ) ) );
         }
     }
 
@@ -339,5 +336,38 @@ public final class PortalResponseSerializer
         {
             config.setSubProtocols( Collections.singletonList( value.getValue( String.class ) ) );
         }
+    }
+
+    private void populateSse( final PortalResponse.Builder builder, final ScriptValue value )
+    {
+        if ( value == null )
+        {
+            return;
+        }
+
+        builder.sse(
+            new SseConfig( extractSseAttributes( value.getMember( "attributes" ) ), extractSseLong( value.getMember( "retry" ), -1 ),
+                           extractSseLong( value.getMember( "timeout" ), 0 ) ) );
+    }
+
+    private long extractSseLong( final ScriptValue value, final long defaultValue )
+    {
+        if ( value == null )
+        {
+            return defaultValue;
+        }
+
+        final Double number = value.getValue( Double.class );
+        return number != null ? number.longValue() : defaultValue;
+    }
+
+    private GenericValue extractSseAttributes( final ScriptValue value )
+    {
+        if ( value == null )
+        {
+            return GenericValue.newObject().build();
+        }
+
+        return GenericValue.fromRawJava( value.getMap() );
     }
 }

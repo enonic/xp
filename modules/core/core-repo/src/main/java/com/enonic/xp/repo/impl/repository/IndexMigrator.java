@@ -1,8 +1,6 @@
 package com.enonic.xp.repo.impl.repository;
 
 import java.util.Map;
-import java.util.Objects;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,6 +9,8 @@ import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.repo.impl.Model;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repository.RepositoryId;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * This class is useful for online repository migrations when needed.
@@ -32,9 +32,9 @@ public class IndexMigrator
     public IndexMigrator( final RepositoryEntryService repositoryEntryService, final NodeRepositoryService nodeRepositoryService,
                           final IndexServiceInternal indexServiceInternal )
     {
-        this.repositoryEntryService = Objects.requireNonNull( repositoryEntryService );
-        this.nodeRepositoryService = Objects.requireNonNull( nodeRepositoryService );
-        this.indexServiceInternal = Objects.requireNonNull( indexServiceInternal );
+        this.repositoryEntryService = requireNonNull( repositoryEntryService );
+        this.nodeRepositoryService = requireNonNull( nodeRepositoryService );
+        this.indexServiceInternal = requireNonNull( indexServiceInternal );
     }
 
     public void upgradeRepository( final RepositoryId repositoryId )

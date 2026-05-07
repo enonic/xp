@@ -15,6 +15,7 @@ import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.util.GenericValue;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class YmlTypeParserTest
@@ -116,6 +117,22 @@ public class YmlTypeParserTest
 
         assertTrue( inputTypeConfig.optional( "service" ).isPresent() );
         assertTrue( inputTypeConfig.optional( "params" ).isPresent() );
+    }
+
+    @Test
+    void testParseCustomSelectorWithExtension()
+        throws Exception
+    {
+        final String yaml = readAsString( "/descriptors/customselector-type-ext.yml" );
+
+        final Input input = parser.parse( yaml, InputYml.class, CURRENT_APPLICATION ).convertToInput();
+
+        assertEquals( InputTypeName.CUSTOM_SELECTOR, input.getInputType() );
+
+        final GenericValue inputTypeConfig = input.getInputTypeConfig();
+
+        assertFalse( inputTypeConfig.optional( "service" ).isPresent() );
+        assertTrue( inputTypeConfig.optional( "extension" ).isPresent() );
     }
 
     @Test

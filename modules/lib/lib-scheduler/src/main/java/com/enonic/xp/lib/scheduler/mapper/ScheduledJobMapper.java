@@ -1,7 +1,5 @@
 package com.enonic.xp.lib.scheduler.mapper;
 
-import java.util.Objects;
-
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.lib.common.PropertyTreeMapper;
 import com.enonic.xp.scheduler.CronCalendar;
@@ -10,6 +8,8 @@ import com.enonic.xp.scheduler.ScheduleCalendar;
 import com.enonic.xp.scheduler.ScheduledJob;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
+
+import static java.util.Objects.requireNonNull;
 
 public final class ScheduledJobMapper
     implements MapSerializable
@@ -92,7 +92,7 @@ public final class ScheduledJobMapper
 
         private void validate()
         {
-            Objects.requireNonNull( job, "job is required" );
+            requireNonNull( job, "job is required" );
         }
 
         public ScheduledJobMapper build()

@@ -1,7 +1,7 @@
 package com.enonic.xp.content;
 
 
-import java.util.Objects;
+import java.util.Locale;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.NullUnmarked;
@@ -9,6 +9,8 @@ import org.jspecify.annotations.NullUnmarked;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.EditablePage;
 import com.enonic.xp.page.Page;
+
+import static java.util.Objects.requireNonNull;
 
 
 public final class EditableContent
@@ -20,6 +22,8 @@ public final class EditableContent
     public PropertyTree data;
 
     public Mixins mixins;
+
+    public Locale language;
 
     private EditablePage page;
 
@@ -60,10 +64,11 @@ public final class EditableContent
 
     public EditableContent( @NonNull final Content source )
     {
-        this.source = Objects.requireNonNull( source );
+        this.source = requireNonNull( source );
         this.displayName = source.getDisplayName();
         this.data = source.getData().copy();
         this.mixins = source.getMixins().copy();
+        this.language = source.getLanguage();
         this.page = this.page( source.getPage() );
     }
 
@@ -73,6 +78,7 @@ public final class EditableContent
             .displayName( displayName )
             .data( data )
             .mixins( mixins )
+            .language( language )
             .page( page != null ? page.build() : null )
             .build();
     }

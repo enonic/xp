@@ -1,9 +1,9 @@
 package com.enonic.xp.impl.server.rest.model;
 
 import java.time.Instant;
-import java.util.Objects;
-
 import com.enonic.xp.task.TaskInfo;
+
+import static java.util.Objects.requireNonNull;
 
 public class TaskInfoJson
 {
@@ -11,7 +11,7 @@ public class TaskInfoJson
 
     public TaskInfoJson( final TaskInfo taskInfo )
     {
-        this.taskInfo = Objects.requireNonNull( taskInfo );
+        this.taskInfo = requireNonNull( taskInfo );
     }
 
     public String getId()

@@ -167,6 +167,34 @@ class UpdateContentHandlerTest
     }
 
     @Test
+    void updateLanguage()
+    {
+        final Content content = TestDataFixtures.newSmallContent();
+        when( this.contentService.getById( content.getId() ) ).thenReturn( content );
+
+        when( this.contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenAnswer(
+            invocationOnMock -> invokeUpdate( invocationOnMock.getArgument( 0 ), TestDataFixtures.newSmallContent() ) );
+
+        mockXData();
+
+        runFunction( "/test/UpdateContentHandlerTest.js", "updateLanguage" );
+    }
+
+    @Test
+    void clearLanguage()
+    {
+        final Content content = TestDataFixtures.newSmallContent();
+        when( this.contentService.getById( content.getId() ) ).thenReturn( content );
+
+        when( this.contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenAnswer(
+            invocationOnMock -> invokeUpdate( invocationOnMock.getArgument( 0 ), TestDataFixtures.newSmallContent() ) );
+
+        mockXData();
+
+        runFunction( "/test/UpdateContentHandlerTest.js", "clearLanguage" );
+    }
+
+    @Test
     void updatePageAllComponents()
     {
         final Content content = TestDataFixtures.newSmallContent();

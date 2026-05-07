@@ -3,12 +3,14 @@ package com.enonic.xp.portal.url;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Supplier;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.project.ProjectName;
+
+import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
 
 
 public final class AttachmentUrlGeneratorParams
@@ -34,10 +36,10 @@ public final class AttachmentUrlGeneratorParams
     private AttachmentUrlGeneratorParams( final Builder builder )
     {
         this.baseUrl = builder.baseUrl;
-        this.urlType = Objects.requireNonNullElse( builder.urlType, UrlTypeConstants.SERVER_RELATIVE );
-        this.contentSupplier = Objects.requireNonNull( builder.contentSupplier );
-        this.projectName = Objects.requireNonNull( builder.projectNameSupplier );
-        this.branch = Objects.requireNonNull( builder.branchSupplier );
+        this.urlType = requireNonNullElse( builder.urlType, UrlTypeConstants.SERVER_RELATIVE );
+        this.contentSupplier = requireNonNull( builder.contentSupplier );
+        this.projectName = requireNonNull( builder.projectNameSupplier );
+        this.branch = requireNonNull( builder.branchSupplier );
         this.download = builder.download;
         this.name = builder.name;
         this.label = builder.label;

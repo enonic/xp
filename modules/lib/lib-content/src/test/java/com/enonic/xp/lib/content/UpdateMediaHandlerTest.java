@@ -43,7 +43,6 @@ class UpdateMediaHandlerTest
             data.setString( "caption", params.getCaption() );
             data.setValues( "artist", params.getArtistList().stream().map( ValueFactory::newString ).collect( Collectors.toList() ) );
             data.setString( "copyright", params.getCopyright() );
-            data.setString( "mimeType", params.getMimeType() );
             data.setValues( "tags", params.getTagList().stream().map( ValueFactory::newString ).collect( Collectors.toList() ) );
 
             return Content.create( content ).workflowInfo( WorkflowInfo.inProgress() ).data( data ).build();

@@ -1,0 +1,47 @@
+dependencies {
+    testImplementation project( ':core:core-content' )
+    testImplementation project( ':core:core-audit' )
+    testImplementation project( ':core:core-repo' )
+    testImplementation project( ':core:core-schema' )
+    testImplementation project( ':core:core-event' )
+    testImplementation project( ':core:core-media' )
+    testImplementation project( ':core:core-project' )
+    testImplementation project( ':core:core-app' )
+
+    testImplementation( testFixtures( project( ":core:core-api" ) ) )
+    testImplementation( testFixtures( project( ":core:core-blobstore" ) ) )
+    testImplementation( testFixtures( project( ":core:core-security" ) ) )
+    testImplementation( testFixtures( project( ":core:core-task" ) ) )
+    testImplementation( testFixtures( project( ":core:core-internal" ) ) )
+    testImplementation( testFixtures( project( ":core:core-app" ) ) )
+
+    testImplementation( testFixtures( project( ":itest:itest-core" ) ) )
+
+    testImplementation libs.hazelcast.hazelcast
+    testImplementation libs.felix.framework
+}
+
+tasks.register( 'integrationTest', Test ) {
+    usesService( gradle.sharedServices.registrations.named( "integration" ).get().service )
+    description = 'Runs integration tests.'
+    group = 'verification'
+
+    useJUnitPlatform {
+        includeTags 'elasticsearch'
+    }
+
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+
+    systemProperty 'java.awt.headless', 'true'
+    maxHeapSize = '2G'
+
+    shouldRunAfter test
+}
+
+check.dependsOn( tasks.named( 'integrationTest' ) )
+
+tasks.named( 'jacocoTestReport' ) {
+    dependsOn( tasks.named( 'integrationTest' ) )
+    executionData.from = fileTree( layout.buildDirectory ).include( "/jacoco/*.exec" )
+}

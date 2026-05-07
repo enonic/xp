@@ -2,10 +2,9 @@ package com.enonic.xp.core.impl.export.xml;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Objects;
-
 import org.w3c.dom.Document;
 
+import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public abstract class BaseXmlSerializerTest
@@ -14,7 +13,7 @@ public abstract class BaseXmlSerializerTest
         throws Exception
     {
         final InputStream stream =
-            Objects.requireNonNull( getClass().getResourceAsStream( fileName ), "Resource file [" + fileName + "] not found" );
+            requireNonNull( getClass().getResourceAsStream( fileName ), "Resource file [" + fileName + "] not found" );
         try (stream)
         {
             final String xml = new String( stream.readAllBytes(), StandardCharsets.UTF_8 );

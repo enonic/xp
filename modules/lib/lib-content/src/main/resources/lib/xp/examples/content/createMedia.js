@@ -9,7 +9,6 @@ var stream = TestClass.createByteSource('Hello World');
 var result = contentLib.createMedia({
     name: 'mycontent',
     parentPath: '/a/b',
-    mimeType: 'text/plain',
     data: stream
 });
 // END

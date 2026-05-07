@@ -1,8 +1,6 @@
 package com.enonic.xp.core.impl.content.page;
 
 
-import java.util.Objects;
-
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -15,6 +13,8 @@ import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.page.PageTemplates;
+
+import static java.util.Objects.requireNonNull;
 
 @Component(immediate = true)
 public final class PageTemplateServiceImpl
@@ -45,7 +45,7 @@ public final class PageTemplateServiceImpl
     @Override
     public PageTemplate getByKey( final PageTemplateKey pageTemplateKey )
     {
-        Objects.requireNonNull( pageTemplateKey, "pageTemplateKey is required" );
+        requireNonNull( pageTemplateKey, "pageTemplateKey is required" );
         return new GetPageTemplateByKeyCommand().
             pageTemplateKey( pageTemplateKey ).
             contentService( this.contentService ).
@@ -66,7 +66,7 @@ public final class PageTemplateServiceImpl
     @Override
     public PageTemplates getBySite( final ContentId siteId )
     {
-        Objects.requireNonNull( siteId, "siteId is required" );
+        requireNonNull( siteId, "siteId is required" );
         return new GetPageTemplateBySiteCommand().
             site( siteId ).
             contentService( this.contentService ).

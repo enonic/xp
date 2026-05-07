@@ -1,6 +1,5 @@
 package com.enonic.xp.portal.impl.url;
 
-import java.util.Objects;
 import java.util.Optional;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -24,12 +23,15 @@ import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
 
+import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
+
 record BaseUrlExtractor(ContentService contentService, ProjectService projectService)
 {
     BaseUrlExtractor( final ContentService contentService, final ProjectService projectService )
     {
-        this.contentService = Objects.requireNonNull( contentService );
-        this.projectService = Objects.requireNonNull( projectService );
+        this.contentService = requireNonNull( contentService );
+        this.projectService = requireNonNull( projectService );
     }
 
     BaseUrlMetadata extract( final BaseUrlParams params )
@@ -66,7 +68,7 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
             final Context context =
                 ContextBuilder.copyOf( ContextAccessor.current() ).repositoryId( projectName.getRepoId() ).branch( branch ).build();
 
-            final Content content = context.callWith( () -> getContent( Objects.requireNonNullElse( params.getId(), params.getPath() ) ) );
+            final Content content = context.callWith( () -> getContent( requireNonNullElse( params.getId(), params.getPath() ) ) );
 
             builder.setContent( content );
 

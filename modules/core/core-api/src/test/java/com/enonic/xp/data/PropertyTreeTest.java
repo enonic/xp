@@ -624,6 +624,27 @@ class PropertyTreeTest
     }
 
     @Test
+    void getInteger()
+    {
+        PropertyTree tree = new PropertyTree();
+
+        tree.setLong( "Int1", 1L );
+        assertEquals( 1, tree.getInteger( "Int1" ) );
+
+        tree.setLong( PropertyPath.from( "Int2" ), 2L );
+        assertEquals( 2, tree.getInteger( PropertyPath.from( "Int2" ) ) );
+
+        tree.setLong( "Int3", 0, 3L );
+        assertEquals( 3, tree.getInteger( "Int3", 0 ) );
+
+        assertEquals( 3, tree.getIntegers( "Int3" ).iterator().next() );
+
+        assertNull( tree.getInteger( "missing" ) );
+        assertNull( tree.getInteger( PropertyPath.from( "missing" ) ) );
+        assertNull( tree.getInteger( "missing", 0 ) );
+    }
+
+    @Test
     void setDouble()
     {
         PropertyTree tree = new PropertyTree();

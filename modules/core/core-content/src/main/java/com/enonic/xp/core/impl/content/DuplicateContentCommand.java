@@ -1,7 +1,5 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.Objects;
-
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPropertyNames;
@@ -16,6 +14,8 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.VersionAttributesResolver;
+
+import static java.util.Objects.requireNonNull;
 
 final class DuplicateContentCommand
     extends AbstractContentCommand
@@ -105,7 +105,7 @@ final class DuplicateContentCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( params, "params cannot be null" );
+            requireNonNull( params, "params cannot be null" );
         }
 
         DuplicateContentCommand build()

@@ -1,14 +1,14 @@
 package com.enonic.xp.repo.impl.dump.serializer.json;
 
 import java.util.List;
-import java.util.Objects;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
+
+import static java.util.Objects.requireNonNullElse;
 
 @JsonPropertyOrder(value = {"nodeId", "meta", "nodePath", "binaries"})
 public class BranchDumpEntryJson
@@ -45,7 +45,7 @@ public class BranchDumpEntryJson
     public static BranchDumpEntry fromJson( final BranchDumpEntryJson json )
     {
         return new BranchDumpEntry( NodeId.from( json.getNodeId() ), VersionDumpEntryJson.fromJson( json.getMeta() ),
-                                    Objects.requireNonNullElse( json.getBinaries(), List.of() ) );
+                                    requireNonNullElse( json.getBinaries(), List.of() ) );
     }
 
     public static BranchDumpEntryJson from( final BranchDumpEntry branchDumpEntry )

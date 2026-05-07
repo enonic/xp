@@ -2,8 +2,6 @@ package com.enonic.xp.repo.impl.dump.upgrade;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Objects;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +18,8 @@ import com.enonic.xp.repo.impl.dump.writer.ZipDumpWriterV8;
 import com.enonic.xp.upgrade.UpgradeListener;
 import com.enonic.xp.util.Version;
 
+import static java.util.Objects.requireNonNullElse;
+
 public class DumpUpgraderRunner
 {
     private static final Logger LOG = LoggerFactory.getLogger( DumpUpgraderRunner.class );
@@ -32,7 +32,7 @@ public class DumpUpgraderRunner
 
         try (DumpReaderV7 dumpReader = ZipDumpReaderV7.create( basePath, dumpName ))
         {
-            final Version modelVersion = Objects.requireNonNullElse( dumpReader.getDumpMeta().getModelVersion(), Version.emptyVersion );
+            final Version modelVersion = requireNonNullElse( dumpReader.getDumpMeta().getModelVersion(), Version.emptyVersion );
 
             result.initialVersion( modelVersion );
 

@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -53,6 +52,8 @@ import com.enonic.xp.repo.impl.version.VersionIndexPath;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 
+import static java.util.Objects.requireNonNullElse;
+
 public class RepoDumper
 {
     private static final Logger LOG = LoggerFactory.getLogger( RepoDumper.class );
@@ -91,7 +92,7 @@ public class RepoDumper
         this.maxAge = builder.maxAge;
         this.maxVersions = builder.maxVersions;
         this.nodeIds = builder.nodeIds;
-        this.listener = Objects.requireNonNullElse( builder.listener, NoopSystemDumpListener.INSTANCE );
+        this.listener = requireNonNullElse( builder.listener, NoopSystemDumpListener.INSTANCE );
     }
 
     public RepoDumpResult execute()

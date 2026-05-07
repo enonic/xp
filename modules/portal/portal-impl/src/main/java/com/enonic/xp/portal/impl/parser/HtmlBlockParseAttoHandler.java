@@ -1,18 +1,15 @@
 package com.enonic.xp.portal.impl.parser;
 
-import org.attoparser.AttoParseException;
-import org.attoparser.IAttoHandler;
-import org.attoparser.markup.CommentMarkupParsingUtil;
-import org.attoparser.markup.ElementMarkupParsingUtil;
-import org.attoparser.markup.IBasicElementHandling;
-import org.attoparser.markup.ICommentHandling;
+import org.attoparser.AbstractMarkupHandler;
 
 import com.enonic.xp.portal.postprocess.HtmlTag;
 
 final class HtmlBlockParseAttoHandler
-    implements IAttoHandler, ICommentHandling, IBasicElementHandling
+    extends AbstractMarkupHandler
 {
     private final HtmlBlockParser parser;
+
+    private StringBuilder elementBuffer;
 
     HtmlBlockParseAttoHandler( final HtmlBlockParser parser )
     {
@@ -20,51 +17,18 @@ final class HtmlBlockParseAttoHandler
     }
 
     @Override
-    public void handleDocumentStart( final int line, final int col )
-        throws AttoParseException
-    {
-        // Do nothing
-    }
-
-    @Override
-    public void handleDocumentEnd( final int line, final int col )
-        throws AttoParseException
-    {
-        // Do nothing
-    }
-
-    @Override
     public void handleText( final char[] buffer, final int offset, final int len, final int line, final int col )
-        throws AttoParseException
     {
-        parser.appendHtml( new String( buffer, offset, len ) );
-    }
-
-    @Override
-    public void handleStructure( final char[] buffer, final int offset, final int len, final int line, final int col )
-        throws AttoParseException
-    {
-        if ( CommentMarkupParsingUtil.tryParseComment( buffer, offset, len, line, col, this ) )
-        {
-            return;
-        }
-
-        if ( ElementMarkupParsingUtil.tryParseElement( buffer, offset, len, line, col, this ) )
-        {
-            return;
-        }
-
-        parser.appendHtml( new String( buffer, offset, len ) );
+        parser.appendHtml( buffer, offset, len );
     }
 
     @Override
     public void handleComment( final char[] buffer, final int contentOffset, final int contentLen, final int outerOffset,
                                final int outerLen, final int line, final int col )
-        throws AttoParseException
     {
         if ( ( contentLen < 1 ) || ( buffer[contentOffset] != '#' ) )
         {
-            parser.appendHtml( new String( buffer, outerOffset, outerLen ) );
+            parser.appendHtml( buffer, outerOffset, outerLen );
             return;
         }
 
@@ -73,71 +37,153 @@ final class HtmlBlockParseAttoHandler
     }
 
     @Override
-    public void handleStandaloneElement( final char[] buffer, final int contentOffset, final int contentLen, final int outerOffset,
-                                         final int outerLen, final int line, final int col )
-        throws AttoParseException
+    public void handleStandaloneElementStart( final char[] buffer, final int nameOffset, final int nameLen, final boolean minimized,
+                                              final int line, final int col )
     {
-        parser.appendHtml( new String( buffer, outerOffset, outerLen ) );
+        elementBuffer = new StringBuilder();
+        elementBuffer.append( '<' );
+        elementBuffer.append( buffer, nameOffset, nameLen );
     }
 
     @Override
-    public void handleOpenElement( final char[] buffer, final int contentOffset, final int contentLen, final int outerOffset,
-                                   final int outerLen, final int line, final int col )
-        throws AttoParseException
+    public void handleStandaloneElementEnd( final char[] buffer, final int nameOffset, final int nameLen, final boolean minimized,
+                                            final int line, final int col )
     {
-        parser.appendHtml( new String( buffer, outerOffset, outerLen ) );
+        if ( minimized )
+        {
+            elementBuffer.append( "/>" );
+        }
+        else
+        {
+            elementBuffer.append( '>' );
+        }
+        parser.appendHtml( elementBuffer );
+        elementBuffer = null;
+    }
 
-        if ( isHeadElement( buffer, contentOffset, contentLen ) )
+    @Override
+    public void handleOpenElementStart( final char[] buffer, final int nameOffset, final int nameLen, final int line, final int col )
+    {
+        elementBuffer = new StringBuilder();
+        elementBuffer.append( '<' );
+        elementBuffer.append( buffer, nameOffset, nameLen );
+    }
+
+    @Override
+    public void handleOpenElementEnd( final char[] buffer, final int nameOffset, final int nameLen, final int line, final int col )
+    {
+        elementBuffer.append( '>' );
+        parser.appendHtml( elementBuffer );
+
+        if ( isTag( "head", buffer, nameOffset, nameLen ) )
         {
             parser.addTagMarker( HtmlTag.HEAD_BEGIN );
         }
-        else if ( isBodyElement( buffer, contentOffset, contentLen ) )
+        else if ( isTag( "body", buffer, nameOffset, nameLen ) )
         {
             parser.addTagMarker( HtmlTag.BODY_BEGIN );
         }
+
+        elementBuffer = null;
     }
 
     @Override
-    public void handleCloseElement( final char[] buffer, final int contentOffset, final int contentLen, final int outerOffset,
-                                    final int outerLen, final int line, final int col )
-        throws AttoParseException
+    public void handleCloseElementStart( final char[] buffer, final int nameOffset, final int nameLen, final int line, final int col )
     {
-        if ( isHeadElement( buffer, contentOffset, contentLen ) )
+        elementBuffer = new StringBuilder();
+        elementBuffer.append( "</" );
+        elementBuffer.append( buffer, nameOffset, nameLen );
+    }
+
+    @Override
+    public void handleCloseElementEnd( final char[] buffer, final int nameOffset, final int nameLen, final int line, final int col )
+    {
+        elementBuffer.append( '>' );
+
+        if ( isTag( "head", buffer, nameOffset, nameLen ) )
         {
             parser.addTagMarker( HtmlTag.HEAD_END );
         }
-        else if ( isBodyElement( buffer, contentOffset, contentLen ) )
+        else if ( isTag( "body", buffer, nameOffset, nameLen ) )
         {
             parser.addTagMarker( HtmlTag.BODY_END );
         }
 
-        parser.appendHtml( new String( buffer, outerOffset, outerLen ) );
+        parser.appendHtml( elementBuffer );
+        elementBuffer = null;
     }
 
-    private boolean isTag( final String tag, final char[] buffer, final int offset, final int len )
+    @Override
+    public void handleAttribute( final char[] buffer, final int nameOffset, final int nameLen, final int nameLine, final int nameCol,
+                                 final int operatorOffset, final int operatorLen, final int operatorLine, final int operatorCol,
+                                 final int valueContentOffset, final int valueContentLen, final int valueOuterOffset,
+                                 final int valueOuterLen, final int valueLine, final int valueCol )
     {
-        if ( len < tag.length() )
+        if ( elementBuffer != null )
         {
-            return false;
+            elementBuffer.append( buffer, nameOffset, nameLen );
+            if ( operatorLen > 0 )
+            {
+                elementBuffer.append( buffer, operatorOffset, operatorLen );
+            }
+            if ( valueOuterLen > 0 )
+            {
+                elementBuffer.append( buffer, valueOuterOffset, valueOuterLen );
+            }
         }
+    }
 
-        final String str = new String( buffer, offset, tag.length() );
-        if ( len == tag.length() )
+    @Override
+    public void handleInnerWhiteSpace( final char[] buffer, final int offset, final int len, final int line, final int col )
+    {
+        if ( elementBuffer != null )
         {
-            return str.equalsIgnoreCase( tag );
+            elementBuffer.append( buffer, offset, len );
         }
-
-        return str.equalsIgnoreCase( tag ) && ( buffer[offset + tag.length()] == ' ' );
     }
 
-    private boolean isHeadElement( final char[] buffer, final int offset, final int len )
+    @Override
+    public void handleDocType( final char[] buffer, final int keywordOffset, final int keywordLen, final int keywordLine,
+                               final int keywordCol, final int elementNameOffset, final int elementNameLen, final int elementNameLine,
+                               final int elementNameCol, final int typeOffset, final int typeLen, final int typeLine, final int typeCol,
+                               final int publicIdOffset, final int publicIdLen, final int publicIdLine, final int publicIdCol,
+                               final int systemIdOffset, final int systemIdLen, final int systemIdLine, final int systemIdCol,
+                               final int internalSubsetOffset, final int internalSubsetLen, final int internalSubsetLine,
+                               final int internalSubsetCol, final int outerOffset, final int outerLen, final int outerLine,
+                               final int outerCol )
     {
-        return isTag( "head", buffer, offset, len );
+        parser.appendHtml( buffer, outerOffset, outerLen );
     }
 
-    private boolean isBodyElement( final char[] buffer, final int offset, final int len )
+    @Override
+    public void handleCDATASection( final char[] buffer, final int contentOffset, final int contentLen, final int outerOffset,
+                                    final int outerLen, final int line, final int col )
     {
-        return isTag( "body", buffer, offset, len );
+        parser.appendHtml( buffer, outerOffset, outerLen );
     }
 
+    @Override
+    public void handleXmlDeclaration( final char[] buffer, final int keywordOffset, final int keywordLen, final int keywordLine,
+                                      final int keywordCol, final int versionOffset, final int versionLen, final int versionLine,
+                                      final int versionCol, final int encodingOffset, final int encodingLen, final int encodingLine,
+                                      final int encodingCol, final int standaloneOffset, final int standaloneLen, final int standaloneLine,
+                                      final int standaloneCol, final int outerOffset, final int outerLen, final int outerLine,
+                                      final int outerCol )
+    {
+        parser.appendHtml( buffer, outerOffset, outerLen );
+    }
+
+    @Override
+    public void handleProcessingInstruction( final char[] buffer, final int targetOffset, final int targetLen, final int targetLine,
+                                             final int targetCol, final int contentOffset, final int contentLen, final int contentLine,
+                                             final int contentCol, final int outerOffset, final int outerLen, final int outerLine,
+                                             final int outerCol )
+    {
+        parser.appendHtml( buffer, outerOffset, outerLen );
+    }
+
+    private static boolean isTag( final String tag, final char[] buffer, final int offset, final int len )
+    {
+        return tag.equalsIgnoreCase( new String( buffer, offset, len ) );
+    }
 }

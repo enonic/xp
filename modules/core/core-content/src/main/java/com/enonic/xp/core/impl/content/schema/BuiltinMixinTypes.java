@@ -20,28 +20,29 @@ import static com.enonic.xp.media.MediaInfo.GPS_INFO_METADATA_NAME;
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_IMAGE_HEIGHT;
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_IMAGE_WIDTH;
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_METADATA_NAME;
+import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_ORIENTATION;
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_PIXEL_SIZE;
 import static com.enonic.xp.media.MediaInfo.MEDIA_INFO_BYTE_SIZE;
 
-final class BuiltinMixinTypes
+public final class BuiltinMixinTypes
 {
     private static final String MIXIN_FOLDER = "mixins";
 
-    private static final MixinDescriptor IMAGE_METADATA = MixinDescriptor.create()
+    public static final MixinDescriptor IMAGE_METADATA = MixinDescriptor.create()
         .name( IMAGE_INFO_METADATA_NAME )
         .title( "Image Info" )
         .titleI18nKey( "media.imageInfo.displayName" )
         .form( createImageInfoForm() )
         .build();
 
-    private static final MixinDescriptor CAMERA_METADATA = MixinDescriptor.create()
+    public static final MixinDescriptor CAMERA_METADATA = MixinDescriptor.create()
         .name( CAMERA_INFO_METADATA_NAME )
         .title( "Photo Info" )
         .titleI18nKey( "media.cameraInfo.displayName" )
         .form( createPhotoInfoForm() )
         .build();
 
-    private static final MixinDescriptor GPS_METADATA = MixinDescriptor.create()
+    public static final MixinDescriptor GPS_METADATA = MixinDescriptor.create()
         .name( GPS_INFO_METADATA_NAME )
         .title( "Gps Info" )
         .titleI18nKey( "base.gpsInfo.displayName" )
@@ -67,10 +68,11 @@ final class BuiltinMixinTypes
         form.addFormItem( createLong( IMAGE_INFO_PIXEL_SIZE, "Size (px)", i18n ).occurrences( 0, 1 ).build() );
         form.addFormItem( createLong( IMAGE_INFO_IMAGE_HEIGHT, "Height (px)", i18n ).occurrences( 0, 1 ).build() );
         form.addFormItem( createLong( IMAGE_INFO_IMAGE_WIDTH, "Width (px)", i18n ).occurrences( 0, 1 ).build() );
+        form.addFormItem( createLong( IMAGE_INFO_ORIENTATION, "Orientation", i18n ).occurrences( 0, 1 ).build() );
         form.addFormItem( createTextLine( "contentType", "Content Type", i18n ).occurrences( 0, 1 ).build() );
         form.addFormItem( createTextLine( "description", "Description", i18n ).occurrences( 0, 1 ).build() );
         form.addFormItem( createLong( MEDIA_INFO_BYTE_SIZE, "Size (bytes)", i18n ).occurrences( 0, 1 ).build() );
-        form.addFormItem( createTextLine( "colorSpace", "Color Space", i18n ).occurrences( 0, 0 ).build() );
+        form.addFormItem( createTextLine( "colorSpace", "Color Space", i18n ).occurrences( 0, 1 ).build() );
         form.addFormItem( createTextLine( "fileSource", "File Source", i18n ).occurrences( 0, 1 ).build() );
 
         return form.build();
@@ -119,7 +121,7 @@ final class BuiltinMixinTypes
         form.addFormItem( createTextLine( "focalLength", "Focal Length", i18n ).occurrences( 0, 1 ).build() );
         form.addFormItem( createTextLine( "focalLength35", "Focal Length 35mm", i18n ).occurrences( 0, 1 ).build() );
         form.addFormItem( createTextLine( "exposureBias", "Exposure Bias", i18n ).occurrences( 0, 1 ).build() );
-        form.addFormItem( createTextLine( "aperture", "Aperture", i18n ).occurrences( 0, 0 ).build() );
+        form.addFormItem( createTextLine( "aperture", "Aperture", i18n ).occurrences( 0, 1 ).build() );
         form.addFormItem( createTextLine( "shutterTime", "Shutter Time", i18n ).occurrences( 0, 1 ).build() );
         form.addFormItem( createTextLine( "flash", "Flash", i18n ).occurrences( 0, 1 ).build() );
         form.addFormItem( createTextLine( "autoFlashCompensation", "Auto Flash Compensation", i18n ).occurrences( 0, 1 ).build() );

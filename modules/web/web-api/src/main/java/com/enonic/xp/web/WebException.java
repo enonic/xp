@@ -1,11 +1,11 @@
 package com.enonic.xp.web;
 
-import java.util.Objects;
-
 import org.jspecify.annotations.NonNull;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+
+import static java.util.Objects.requireNonNull;
 
 public final class WebException
     extends RuntimeException
@@ -17,28 +17,28 @@ public final class WebException
     public WebException( final @NonNull HttpStatus status, final String message )
     {
         super( message );
-        this.status = Objects.requireNonNull( status );
+        this.status = requireNonNull( status );
         this.loggable = this.status.is5xxServerError();
     }
 
     public WebException( final @NonNull HttpStatus status, final String message, final boolean loggable )
     {
         super( message );
-        this.status = Objects.requireNonNull( status );
+        this.status = requireNonNull( status );
         this.loggable = loggable;
     }
 
     public WebException( final @NonNull HttpStatus status, final Throwable cause )
     {
         super( cause.getMessage(), cause );
-        this.status = Objects.requireNonNull( status );
+        this.status = requireNonNull( status );
         this.loggable = this.status.is5xxServerError();
     }
 
     public WebException( final @NonNull HttpStatus status, final String message, final Throwable cause )
     {
         super( message, cause );
-        this.status = Objects.requireNonNull( status );
+        this.status = requireNonNull( status );
         this.loggable = this.status.is5xxServerError();
     }
 

@@ -4,6 +4,8 @@ import java.util.Objects;
 
 import com.enonic.xp.content.ContentId;
 
+import static java.util.Objects.requireNonNull;
+
 public final class PublishRequestItem
 {
     private final ContentId id;
@@ -81,7 +83,7 @@ public final class PublishRequestItem
 
         private void validate()
         {
-            Objects.requireNonNull( id, "content id is required" );
+            requireNonNull( id, "content id is required" );
         }
 
         public PublishRequestItem build()

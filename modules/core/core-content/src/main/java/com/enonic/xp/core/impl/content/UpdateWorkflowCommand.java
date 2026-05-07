@@ -1,6 +1,9 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.Map;
+
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.EditableContentWorkflow;
 import com.enonic.xp.content.UpdateWorkflowParams;
 import com.enonic.xp.content.UpdateWorkflowResult;
@@ -8,7 +11,6 @@ import com.enonic.xp.content.WorkflowEditor;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.PatchNodeResult;
-import com.enonic.xp.node.VersionAttributesResolver;
 
 public class UpdateWorkflowCommand
     extends AbstractCreatingOrUpdatingContentCommand
@@ -42,10 +44,11 @@ public class UpdateWorkflowCommand
             .contentId( params.getContentId() )
             .editor( content -> {
                 Content editedContent = editWorkflow( params.getEditor(), content );
-                return afterUpdate( editedContent );
+                return afterUpdate( editedContent, ContentInheritType.CONTENT );
             } )
-            .versionAttributesResolver( VersionAttributesResolver.of(
-                ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.UPDATE_WORKFLOW_ATTR ) ) )
+            .versionAttributesResolver( ContentAttributesHelper.versionHistoryResolver( ContentAttributesHelper.UPDATE_WORKFLOW_ATTR,
+                                                                                        Map.ofEntries(
+                                                                                            ContentAttributesHelper.resolveEditorialProperty() ) ) )
             .contentTypeService( this.contentTypeService )
             .mixinService( this.mixinService )
             .pageDescriptorService( this.pageDescriptorService )

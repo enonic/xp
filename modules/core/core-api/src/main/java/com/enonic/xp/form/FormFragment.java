@@ -6,6 +6,8 @@ import java.util.Objects;
 import com.enonic.xp.schema.formfragment.FormFragmentDescriptor;
 import com.enonic.xp.schema.formfragment.FormFragmentName;
 
+import static java.util.Objects.requireNonNull;
+
 
 public final class FormFragment
     extends FormItem
@@ -16,7 +18,7 @@ public final class FormFragment
     {
         super();
 
-        Objects.requireNonNull( builder.formFragmentName, "formFragmentName is required" );
+        requireNonNull( builder.formFragmentName, "formFragmentName is required" );
         this.formFragmentName = builder.formFragmentName;
     }
 

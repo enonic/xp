@@ -2,47 +2,18 @@ package com.enonic.xp.style;
 
 import java.util.Objects;
 
-import com.google.common.base.MoreObjects;
-import com.google.common.base.Preconditions;
-
-import com.enonic.xp.schema.LocalizedText;
-
-import static com.google.common.base.Strings.nullToEmpty;
-
 public final class ImageStyle
+    extends Style
 {
-    private final String name;
-
-    private final String displayName;
-
-    private final String displayNameI18nKey;
-
     private final String aspectRatio;
 
     private final String filter;
 
     private ImageStyle( final Builder builder )
     {
-        this.name = builder.name;
-        this.displayName = builder.displayName;
-        this.displayNameI18nKey = builder.displayNameI18nKey;
+        super( builder );
         this.aspectRatio = builder.aspectRatio;
         this.filter = builder.filter;
-    }
-
-    public String getName()
-    {
-        return name;
-    }
-
-    public String getDisplayName()
-    {
-        return displayName;
-    }
-
-    public String getDisplayNameI18nKey()
-    {
-        return displayNameI18nKey;
     }
 
     public String getAspectRatio()
@@ -62,32 +33,18 @@ public final class ImageStyle
         {
             return true;
         }
-        if ( o == null || getClass() != o.getClass() )
+        if ( !super.equals( o ) )
         {
             return false;
         }
         final ImageStyle that = (ImageStyle) o;
-        return Objects.equals( name, that.name ) && Objects.equals( displayName, that.displayName ) &&
-            Objects.equals( displayNameI18nKey, that.displayNameI18nKey ) && Objects.equals( aspectRatio, that.aspectRatio ) &&
-            Objects.equals( filter, that.filter );
+        return Objects.equals( aspectRatio, that.aspectRatio ) && Objects.equals( filter, that.filter );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( name, displayName, displayNameI18nKey, aspectRatio, filter );
-    }
-
-    @Override
-    public String toString()
-    {
-        return MoreObjects.toStringHelper( this ).
-            add( "name", name ).
-            add( "displayName", displayName ).
-            add( "displayNameI18nKey", displayNameI18nKey ).
-            add( "aspectRatio", aspectRatio ).
-            add( "filter", filter ).
-            toString();
+        return Objects.hash( super.hashCode(), aspectRatio, filter );
     }
 
     public static Builder create()
@@ -96,45 +53,11 @@ public final class ImageStyle
     }
 
     public static final class Builder
+        extends Style.Builder<Builder, ImageStyle>
     {
-        private String name;
-
-        private String displayName;
-
-        private String displayNameI18nKey;
-
         private String aspectRatio;
 
         private String filter;
-
-        private Builder()
-        {
-        }
-
-        public Builder name( final String name )
-        {
-            this.name = name;
-            return this;
-        }
-
-        public Builder displayName( final String displayName )
-        {
-            this.displayName = displayName;
-            return this;
-        }
-
-        public Builder displayNameI18nKey( final String displayNameI18nKey )
-        {
-            this.displayNameI18nKey = displayNameI18nKey;
-            return this;
-        }
-
-        public Builder displayName( final LocalizedText text )
-        {
-            this.displayName = text.text();
-            this.displayNameI18nKey = text.i18n();
-            return this;
-        }
 
         public Builder aspectRatio( final String aspectRatio )
         {
@@ -148,9 +71,15 @@ public final class ImageStyle
             return this;
         }
 
-        public ImageStyle build()
+        @Override
+        protected Builder self()
         {
-            Preconditions.checkArgument( !nullToEmpty( this.name ).isBlank(), "name is required for an ImageStyle" );
+            return this;
+        }
+
+        @Override
+        protected ImageStyle doBuild()
+        {
             return new ImageStyle( this );
         }
     }

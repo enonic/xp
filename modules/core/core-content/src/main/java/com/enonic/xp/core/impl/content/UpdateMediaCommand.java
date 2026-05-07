@@ -1,8 +1,5 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.List;
-import java.util.Objects;
-
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.attachment.CreateAttachment;
@@ -14,6 +11,8 @@ import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.schema.content.ContentTypeFromMimeTypeResolver;
 import com.enonic.xp.schema.content.ContentTypeName;
+
+import static java.util.Objects.requireNonNull;
 
 final class UpdateMediaCommand
     extends AbstractCreatingOrUpdatingContentCommand
@@ -44,18 +43,12 @@ final class UpdateMediaCommand
     private Content doExecute()
     {
         final MediaInfo mediaInfo = mediaInfoService.parseMediaInfo( params.getByteSource() );
-        String mediaType = params.getMimeType();
-        if ( ( mediaType == null || isBinaryContentType( mediaType ) ) && mediaInfo.getMediaType() != null )
-        {
-            mediaType = mediaInfo.getMediaType();
-        }
-
-        Objects.requireNonNull( mediaType, "Unable to resolve media type" );
+        final String mediaType = requireNonNull( mediaInfo.getMediaType(), "Unable to resolve media type" );
 
         final ContentTypeName resolvedTypeFromMimeType = ContentTypeFromMimeTypeResolver.resolve( mediaType );
         final ContentTypeName type = resolvedTypeFromMimeType != null
             ? resolvedTypeFromMimeType
-            : isExecutableContentType( mediaType, params.getName() ) ? ContentTypeName.executableMedia() : ContentTypeName.unknownMedia();
+            : guessExecutableByFilename( mediaType, params.getName().toString() );
 
         final Content existingContent = getContent( params.getContent() );
         Preconditions.checkArgument( existingContent.getType().equals( type ), "Updated content must be of type: %s",
@@ -66,18 +59,17 @@ final class UpdateMediaCommand
             .mimeType( mediaType )
             .label( "source" )
             .byteSource( params.getByteSource() )
-            .text( type.isTextualMedia() ? mediaInfo.getTextContent() : null )
             .build();
 
         final MediaFormDataBuilder mediaFormBuilder = new MediaFormDataBuilder().type( type )
             .attachment( params.getName().toString() )
-            .focalX( params.getFocalX() )
-            .focalY( params.getFocalY() )
+            .focalPoint( params.getFocalPoint() )
             .caption( params.getCaption() )
             .altText( params.getAltText() )
-            .artist( params.getArtistList().isEmpty() ? List.of( "" ) : params.getArtistList() )
+            .artist( params.getArtistList() )
             .copyright( params.getCopyright() )
-            .tags( params.getTagList().isEmpty() ? List.of( "" ) : params.getTagList() );
+            .tags( params.getTagList() )
+            .text( mediaInfo.getTextContent() );
 
         final UpdateContentParams updateParams = new UpdateContentParams().contentId( params.getContent() )
             .clearAttachments( true )
@@ -98,6 +90,7 @@ final class UpdateMediaCommand
             .mixinMappingService( this.mixinMappingService )
             .siteConfigService( this.siteConfigService )
             .allowUnsafeAttachmentNames( allowUnsafeAttachmentNames )
+            .mediaInfo( mediaInfo )
             .build()
             .execute();
     }
@@ -124,7 +117,7 @@ final class UpdateMediaCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( params, "params cannot be null" );
+            requireNonNull( params, "params cannot be null" );
         }
 
         public UpdateMediaCommand build()

@@ -1,8 +1,9 @@
 package com.enonic.xp.node;
 
-import java.util.Objects;
-
 import com.google.common.base.Preconditions;
+
+import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
 
 
 public final class MoveNodeParams
@@ -23,12 +24,12 @@ public final class MoveNodeParams
 
     private MoveNodeParams( final Builder builder )
     {
-        this.nodeId = Objects.requireNonNull( builder.nodeId, "nodeId is required" );
+        this.nodeId = requireNonNull( builder.nodeId, "nodeId is required" );
         this.newName = builder.newName;
         this.newParentPath = builder.newParentPath;
         this.versionAttributesResolver = builder.versionAttributesResolver;
         this.moveListener = builder.moveListener;
-        this.processor = Objects.requireNonNullElse( builder.processor, ( n, p ) -> n );
+        this.processor = requireNonNullElse( builder.processor, ( n, p ) -> n );
         this.refresh = builder.refresh;
     }
 

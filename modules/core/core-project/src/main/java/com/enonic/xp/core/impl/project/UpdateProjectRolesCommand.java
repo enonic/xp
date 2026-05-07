@@ -1,6 +1,5 @@
 package com.enonic.xp.core.impl.project;
 
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -10,6 +9,8 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.PrincipalRelationship;
 import com.enonic.xp.security.PrincipalRelationships;
+
+import static java.util.Objects.requireNonNull;
 
 public final class UpdateProjectRolesCommand
     extends AbstractProjectRolesCommand
@@ -86,7 +87,7 @@ public final class UpdateProjectRolesCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( this.permissions, "Project permissions is required" );
+            requireNonNull( this.permissions, "Project permissions is required" );
         }
 
         public UpdateProjectRolesCommand build()

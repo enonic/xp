@@ -51,6 +51,11 @@ assert.assertJsonEquals({
         'mimeType': 'image/png',
         'modifiedTime': '2016-01-01T12:00:00Z'
     },
+    superType: 'base:structured',
+    abstract: false,
+    final: true,
+    allowChildContent: true,
+    allowChildContentType: [],
     form: [
         {
             'formItemType': 'Input',

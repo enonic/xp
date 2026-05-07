@@ -1,16 +1,17 @@
 package com.enonic.xp.repo.impl.dump.model;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 import com.enonic.xp.node.NodeId;
+
+import static java.util.Objects.requireNonNull;
 
 public record VersionsDumpEntry(NodeId nodeId, List<VersionMeta> versions)
 {
     public VersionsDumpEntry
     {
-        Objects.requireNonNull( nodeId );
+        requireNonNull( nodeId );
         versions = List.copyOf( versions );
     }
 }

@@ -1,7 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -22,6 +21,8 @@ import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.ResolveSyncWorkResult;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeBranchEntry;
+
+import static java.util.Objects.requireNonNull;
 
 public class ResolveSyncWorkCommand
     extends AbstractNodeCommand
@@ -305,8 +306,8 @@ public class ResolveSyncWorkCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( nodeId, "nodeId is required" );
-            Objects.requireNonNull( target, "target branch is required" );
+            requireNonNull( nodeId, "nodeId is required" );
+            requireNonNull( target, "target branch is required" );
         }
 
         public ResolveSyncWorkCommand build()

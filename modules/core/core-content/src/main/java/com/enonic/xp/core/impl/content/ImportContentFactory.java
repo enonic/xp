@@ -1,6 +1,5 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.enonic.xp.content.ContentConstants;
@@ -14,6 +13,7 @@ import com.enonic.xp.node.NodePath;
 
 import static com.enonic.xp.content.ContentPropertyNames.ORIGIN_PROJECT;
 import static com.enonic.xp.content.ContentPropertyNames.PUBLISH_INFO;
+import static java.util.Objects.requireNonNull;
 
 public class ImportContentFactory
 {
@@ -83,7 +83,7 @@ public class ImportContentFactory
 
         private void validate()
         {
-            Objects.requireNonNull( params, "params cannot be null" );
+            requireNonNull( params, "params cannot be null" );
         }
 
         public ImportContentFactory build()

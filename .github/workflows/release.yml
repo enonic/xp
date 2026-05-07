@@ -5,16 +5,15 @@ on:
     tags:
       - 'v*'
 
-permissions:
-  id-token: write  # Required for npm publishing
-  contents: write
-
 concurrency: release
 
 jobs:
 
   release_notes:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
 
     steps:
       - uses: actions/checkout@v6
@@ -44,6 +43,15 @@ jobs:
 
     needs: release_notes
 
+    permissions:
+      contents: read
+
+    outputs:
+      packages: ${{ steps.stage_npm.outputs.packages }}
+      version: ${{ steps.publish_vars.outputs.version }}
+      tag_name: ${{ steps.publish_vars.outputs.tag_name }}
+      prerelease: ${{ steps.publish_vars.outputs.prerelease }}
+
     steps:
       - uses: actions/checkout@v6
 
@@ -65,48 +73,84 @@ jobs:
         if: steps.publish_vars.outputs.release != 'true'
         run: exit 1
 
-      - name: Publish
+      - name: Publish to Maven and Stage npm packages
         run: ./gradlew publish -PrepoKey=${{ steps.publish_vars.outputs.repo }} -PrepoUser=ci -PrepoPassword=${{ secrets.ARTIFACTORY_PASSWORD }}
 
+      - name: Stage npm packages
+        id: stage_npm
+        run: |
+          mkdir -p npm-staging
+          names=()
+          for dir in modules/lib/build/npm modules/lib/core/build/npm modules/lib/lib-*/build/npm; do
+            [ -d "$dir" ] || continue
+            short=$(jq -r .name "$dir/package.json" | sed 's|@enonic-types/||')
+            cp -r "$dir" "npm-staging/$short"
+            names+=("$short")
+          done
+          packages=$(printf '%s\n' "${names[@]}" | jq -R . | jq -s -c .)
+          echo "packages=$packages" >> $GITHUB_OUTPUT
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: npm-packages
+          path: npm-staging
+          if-no-files-found: error
+
+  npm_publish:
+    runs-on: ubuntu-latest
+
+    needs: build
+
+    permissions:
+      id-token: write  # required for npm provenance
+
+    strategy:
+      fail-fast: false
+      matrix:
+        package: ${{ fromJSON(needs.build.outputs.packages) }}
+
+    steps:
       - uses: actions/setup-node@v6
         with:
           node-version: 24
           registry-url: 'https://registry.npmjs.org'
 
-      - name: Prepare npm packages
-        run: ./gradlew :lib:prepareAllToPublish
+      - uses: actions/download-artifact@v8
+        with:
+          name: npm-packages
+          path: npm-staging
 
-      - name: Set npm tag
+      - name: Publish @enonic-types/${{ matrix.package }}
         run: |
-          VERSION=${{ steps.publish_vars.outputs.version }}
+          DIR="./npm-staging/${{ matrix.package }}"
+          VERSION="${{ needs.build.outputs.version }}"
           if [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "NPM_TAG=latest" >> $GITHUB_ENV
+            NPM_TAG=latest
           else
-            echo "NPM_TAG=beta" >> $GITHUB_ENV
+            NPM_TAG=beta
           fi
+          npm publish "$DIR" --provenance --access public --tag "$NPM_TAG"
 
-      - name: Publish to npm
-        run: |
-          for dir in modules/lib/build/npm modules/lib/core/build/npm modules/lib/lib-*/build/npm; do
-            if [ -d "$dir" ]; then
-              echo "Publishing $dir"
-              npm publish "$dir" --provenance --access public --tag $NPM_TAG
-            fi
-          done
+  release:
+    runs-on: ubuntu-latest
 
+    needs: build
+
+    permissions:
+      contents: write
+
+    steps:
       - name: Download changelog
         uses: actions/download-artifact@v8
         with:
           name: changelog
 
       - name: Create Release
-        id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.publish_vars.outputs.tag_name }}
+          tag_name: ${{ needs.build.outputs.tag_name }}
           body_path: changelog.md
-          release_name: Enonic XP Runtime ${{ steps.publish_vars.outputs.version }}
-          prerelease: ${{ steps.publish_vars.outputs.prerelease == 'true' }}
-
+          release_name: Enonic XP Runtime ${{ needs.build.outputs.version }}
+          prerelease: ${{ needs.build.outputs.prerelease == 'true' }}

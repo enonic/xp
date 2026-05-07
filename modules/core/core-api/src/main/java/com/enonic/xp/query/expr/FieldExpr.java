@@ -1,8 +1,8 @@
 package com.enonic.xp.query.expr;
 
-import java.util.Objects;
-
 import com.enonic.xp.index.IndexPath;
+
+import static java.util.Objects.requireNonNull;
 
 
 public final class FieldExpr
@@ -12,12 +12,18 @@ public final class FieldExpr
 
     private FieldExpr( final IndexPath indexPath )
     {
-        this.indexPath = Objects.requireNonNull( indexPath );
+        this.indexPath = requireNonNull( indexPath );
     }
 
+    @Deprecated
     public String getFieldPath()
     {
         return this.indexPath.getPath();
+    }
+
+    public IndexPath getIndexPath()
+    {
+        return this.indexPath;
     }
 
     public static FieldExpr from( final IndexPath indexPath )

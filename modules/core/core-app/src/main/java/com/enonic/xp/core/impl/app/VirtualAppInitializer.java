@@ -1,7 +1,5 @@
 package com.enonic.xp.core.impl.app;
 
-import java.util.Objects;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,6 +7,8 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.init.ExternalInitializer;
 import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.internal.InternalRepositoryService;
+
+import static java.util.Objects.requireNonNull;
 
 public class VirtualAppInitializer
     extends ExternalInitializer
@@ -74,7 +74,7 @@ public class VirtualAppInitializer
         protected void validate()
         {
             super.validate();
-            Objects.requireNonNull( repositoryService );
+            requireNonNull( repositoryService );
         }
 
         public VirtualAppInitializer build()

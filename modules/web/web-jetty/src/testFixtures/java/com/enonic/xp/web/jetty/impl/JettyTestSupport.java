@@ -68,7 +68,7 @@ public abstract class JettyTestSupport
         return HttpRequest.newBuilder( URI.create( this.baseUrl + path ) );
     }
 
-    protected final HttpResponse callRequest( final HttpRequest request )
+    protected final HttpResponse<String> callRequest( final HttpRequest request )
         throws Exception
     {
         return this.client.send( request, HttpResponse.BodyHandlers.ofString() );

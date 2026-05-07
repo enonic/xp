@@ -38,8 +38,8 @@ export interface Application {
     minSystemVersion: string | null;
     maxSystemVersion: string | null;
     modifiedTime: string | null;
-    started: boolean | null;
-    system: boolean | null;
+    started: boolean;
+    system: boolean;
 }
 
 interface CreateVirtualApplicationHandler {
@@ -54,7 +54,7 @@ interface CreateVirtualApplicationHandler {
  * @param {object} params JSON with the parameters.
  * @param {string} params.key Application key.
  *
- * @returns {object} created application.
+ * @returns {Application} created application.
  */
 export function createVirtualApplication(params: CreateVirtualApplicationParams): Application {
     const key = checkRequired(params, 'key');
@@ -97,7 +97,7 @@ export interface GetApplicationParams {
 interface GetApplicationHandler {
     setKey(value: string): void;
 
-    execute(): Application;
+    execute(): Application | null;
 }
 
 /**
@@ -106,9 +106,9 @@ interface GetApplicationHandler {
  * @param {object} params JSON with the parameters.
  * @param {string} params.key Application key.
  *
- * @returns {Application} fetched application.
+ * @returns {Application | null} fetched application, or null if not found.
  */
-export function get(params: GetApplicationParams): Application {
+export function get(params: GetApplicationParams): Application | null {
     const key = checkRequired(params, 'key');
 
     const bean: GetApplicationHandler = __.newBean<GetApplicationHandler>('com.enonic.xp.lib.app.GetApplicationHandler');
@@ -123,7 +123,7 @@ interface ListApplicationsHandler {
 /**
  * Fetches both static and virtual applications.
  *
- * @returns {object[]} applications list.
+ * @returns {Application[]} applications list.
  */
 export function list(): Application[] {
     const bean: ListApplicationsHandler = __.newBean<ListApplicationsHandler>('com.enonic.xp.lib.app.ListApplicationsHandler');
@@ -142,7 +142,8 @@ export interface Icon {
 
 export interface ApplicationDescriptor {
     key: string;
-    description: string | null;
+    description: string;
+    descriptionI18nKey: string | null;
     title: string | null;
     titleI18nKey: string | null;
     vendorName: string | null;
@@ -154,7 +155,7 @@ export interface ApplicationDescriptor {
 interface GetApplicationDescriptorHandler {
     setKey(value: string): void;
 
-    execute(): ApplicationDescriptor;
+    execute(): ApplicationDescriptor | null;
 }
 
 /**
@@ -163,36 +164,12 @@ interface GetApplicationDescriptorHandler {
  * @param {object} params JSON with the parameters.
  * @param {string} params.key Application key.
  *
- * @returns {object} fetched application descriptor.
+ * @returns {ApplicationDescriptor | null} fetched application descriptor, or null if not found.
  */
-export function getDescriptor(params: GetApplicationDescriptorParams): ApplicationDescriptor {
-    const bean: GetApplicationDescriptorHandler = __.newBean<GetApplicationDescriptorHandler>('com.enonic.xp.lib.app.GetApplicationDescriptorHandler');
-    bean.setKey(params.key);
-    return __.toNativeObject(bean.execute());
-}
-
-export interface HasVirtualApplicationParams {
-    key: string;
-}
-
-interface HasVirtualApplicationHandler {
-    setKey(value: string): void;
-
-    execute(): boolean;
-}
-
-/**
- * Checks if there is a virtual app with the app key.
- *
- * @param {object} params JSON with the parameters.
- * @param {string} params.key Application key.
- *
- * @returns {boolean} result.
- */
-export function hasVirtual(params: HasVirtualApplicationParams): boolean {
+export function getDescriptor(params: GetApplicationDescriptorParams): ApplicationDescriptor | null {
     const key = checkRequired(params, 'key');
 
-    const bean: HasVirtualApplicationHandler = __.newBean<HasVirtualApplicationHandler>('com.enonic.xp.lib.app.HasVirtualApplicationHandler');
+    const bean: GetApplicationDescriptorHandler = __.newBean<GetApplicationDescriptorHandler>('com.enonic.xp.lib.app.GetApplicationDescriptorHandler');
     bean.setKey(key);
     return __.toNativeObject(bean.execute());
 }
@@ -213,7 +190,7 @@ interface GetApplicationModeHandler {
  * @param {object} params JSON with the parameters.
  * @param {string} params.key Application key.
  *
- * @returns {string} application mode.
+ * @returns {string | null} application mode, or null if the application is not installed.
  */
 export function getApplicationMode(params: GetApplicationModeParams): string | null {
     const key = checkRequired(params, 'key');

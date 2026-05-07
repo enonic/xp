@@ -13,13 +13,15 @@ import com.enonic.xp.node.NodePath;
 public class InheritedContentDataProcessor
     implements NodeDataProcessor
 {
-    public static final InheritedContentDataProcessor ALL = new InheritedContentDataProcessor( EnumSet.allOf( ContentInheritType.class ) );
+    public static final InheritedContentDataProcessor REMOVE_ALL_INHERIT =
+        new InheritedContentDataProcessor( EnumSet.allOf( ContentInheritType.class ) );
 
-    public static final InheritedContentDataProcessor SORT = new InheritedContentDataProcessor( ContentInheritType.SORT );
+    public static final InheritedContentDataProcessor REMOVE_SORT_INHERIT = new InheritedContentDataProcessor( ContentInheritType.SORT );
 
-    public static final InheritedContentDataProcessor PARENT = new InheritedContentDataProcessor( ContentInheritType.PARENT );
+    public static final InheritedContentDataProcessor REMOVE_PARENT_INHERIT =
+        new InheritedContentDataProcessor( ContentInheritType.PARENT );
 
-    public static final InheritedContentDataProcessor NAME = new InheritedContentDataProcessor( ContentInheritType.NAME );
+    public static final InheritedContentDataProcessor REMOVE_NAME_INHERIT = new InheritedContentDataProcessor( ContentInheritType.NAME );
 
     private final EnumSet<ContentInheritType> typesToProceed;
 

@@ -2,8 +2,6 @@ package com.enonic.xp.core.impl.audit;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Objects;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +19,9 @@ import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.filter.RangeFilter;
 import com.enonic.xp.query.filter.ValueFilter;
 
+import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElseGet;
+
 public class CleanUpAuditLogCommand
     extends NodeServiceCommand<CleanUpAuditLogResult>
 {
@@ -36,7 +37,7 @@ public class CleanUpAuditLogCommand
     {
         super( builder );
         until = builder.ageThreshold.isBlank() ? Instant.EPOCH : Instant.now().minus( Duration.parse( builder.ageThreshold ) );
-        listener = Objects.requireNonNullElseGet( builder.listener, EmptyCleanUpAuditLogListener::new );
+        listener = requireNonNullElseGet( builder.listener, EmptyCleanUpAuditLogListener::new );
     }
 
     @Override
@@ -136,7 +137,7 @@ public class CleanUpAuditLogCommand
 
         private void validate()
         {
-            Objects.requireNonNull( ageThreshold, "ageThreshold is required" );
+            requireNonNull( ageThreshold, "ageThreshold is required" );
         }
 
         public CleanUpAuditLogCommand build()

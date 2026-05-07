@@ -1,6 +1,6 @@
 package com.enonic.xp.content;
 
-import java.util.Objects;
+import static java.util.Objects.requireNonNullElse;
 
 
 public final class ResolvePublishDependenciesParams
@@ -13,9 +13,9 @@ public final class ResolvePublishDependenciesParams
 
     private ResolvePublishDependenciesParams( Builder builder )
     {
-        contentIds = Objects.requireNonNullElse( builder.contentIds, ContentIds.empty() );
-        excludeDescendantsOf = Objects.requireNonNullElse( builder.excludeDescendantsOf, ContentIds.empty() );
-        excludedContentIds = Objects.requireNonNullElse( builder.excludedContentIds, ContentIds.empty() );
+        contentIds = requireNonNullElse( builder.contentIds, ContentIds.empty() );
+        excludeDescendantsOf = requireNonNullElse( builder.excludeDescendantsOf, ContentIds.empty() );
+        excludedContentIds = requireNonNullElse( builder.excludedContentIds, ContentIds.empty() );
     }
 
     public static Builder create()

@@ -1,6 +1,5 @@
 package com.enonic.xp.core.impl.content.page.region;
 
-import java.util.Objects;
 import java.util.stream.IntStream;
 
 import com.enonic.xp.content.Content;
@@ -26,6 +25,8 @@ import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.region.TextComponent;
 import com.enonic.xp.region.TextComponentType;
 import com.enonic.xp.schema.content.ContentTypeName;
+
+import static java.util.Objects.requireNonNull;
 
 final class CreateFragmentCommand
 {
@@ -217,10 +218,10 @@ final class CreateFragmentCommand
 
         private void validate()
         {
-            Objects.requireNonNull( contentService );
-            Objects.requireNonNull( partDescriptorService );
-            Objects.requireNonNull( layoutDescriptorService );
-            Objects.requireNonNull( params, "params cannot be null" );
+            requireNonNull( contentService );
+            requireNonNull( partDescriptorService );
+            requireNonNull( layoutDescriptorService );
+            requireNonNull( params, "params cannot be null" );
         }
 
         public CreateFragmentCommand build()

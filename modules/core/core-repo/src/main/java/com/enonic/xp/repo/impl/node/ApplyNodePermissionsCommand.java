@@ -14,8 +14,8 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.node.ApplyNodePermissionsListener;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
-import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.ApplyPermissionsScope;
+import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIndexPath;
@@ -36,6 +36,8 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
+import static java.util.Objects.requireNonNullElse;
+
 public class ApplyNodePermissionsCommand
     extends AbstractNodeCommand
 {
@@ -55,7 +57,7 @@ public class ApplyNodePermissionsCommand
         this.params = builder.params;
         this.results = ApplyPermissionsResult.create();
         this.appliedVersions = new NodePatchCache<>();
-        this.listener = Objects.requireNonNullElse( params.getListener(), NoopApplyNodePermissionsListener.INSTANCE );
+        this.listener = requireNonNullElse( params.getListener(), NoopApplyNodePermissionsListener.INSTANCE );
         this.branches = params.getBranches().isEmpty() ? Branches.from( ContextAccessor.current().getBranch() ) : params.getBranches();
     }
 
@@ -156,9 +158,8 @@ public class ApplyNodePermissionsCommand
 
         final Node originalNode = nodeStorageService.get( nodeVersion.getNodeId(), targetContext );
 
-        if ( originalNode == null ||
-            !NodePermissionsResolver.hasPermission( targetContext.getPrincipalKeys(), Permission.WRITE_PERMISSIONS,
-                                                    originalNode.getPermissions() ) )
+        if ( originalNode == null || !NodePermissionsResolver.hasPermission( targetContext.getPrincipalKeys(), Permission.WRITE_PERMISSIONS,
+                                                                             originalNode.getPermissions() ) )
         {
             listener.notEnoughRights( 1 );
             results.addResult( nodeVersion.getNodeId(), branch, null, null );
@@ -177,7 +178,8 @@ public class ApplyNodePermissionsCommand
             {
                 final Node editedNode = Node.create( originalNode ).timestamp( Millis.now() ).permissions( permissions ).build();
                 final Attributes resolvedAttributes =
-                    resolveVersionAttributes( params.getVersionAttributesResolver(), originalNode, editedNode, branch );
+                    resolveVersionAttributes( params.getVersionAttributesResolver(), originalNode, editedNode, branch,
+                                              nodeVersion.getAttributes() );
                 final NodeVersionData result =
                     this.nodeStorageService.store( StoreNodeParams.newVersion( editedNode, resolvedAttributes ), targetContext );
                 appliedVersions.put( nodeVersion.getNodeVersionId(), branch, result.version(), result.node().getPermissions() );
@@ -222,12 +224,12 @@ public class ApplyNodePermissionsCommand
                 newPermissions.compute( entryToAdd.getPrincipal(), ( key, entry ) -> entry == null
                     ? entryToAdd
                     : AccessControlEntry.create()
-                        .principal( entry.getPrincipal() )
-                        .allow( entry.getAllowedPermissions() )
-                        .allow( entryToAdd.getAllowedPermissions() )
-                        .deny( entry.getDeniedPermissions() )
-                        .deny( entryToAdd.getDeniedPermissions() )
-                        .build() );
+                      .principal( entry.getPrincipal() )
+                      .allow( entry.getAllowedPermissions() )
+                      .allow( entryToAdd.getAllowedPermissions() )
+                      .deny( entry.getDeniedPermissions() )
+                      .deny( entryToAdd.getDeniedPermissions() )
+                      .build() );
             }
         }
 

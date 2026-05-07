@@ -2,7 +2,6 @@ package com.enonic.xp.core.internal.concurrent;
 
 import java.time.Duration;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -12,6 +11,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import org.jspecify.annotations.NullMarked;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * A "one size fits all" {@link Executor} for OSGi services
@@ -50,7 +51,7 @@ public final class SimpleExecutor
      */
     public static SimpleExecutor ofVirtual( final String namePrefix, final Consumer<Throwable> uncaughtExceptionHandler )
     {
-        Objects.requireNonNull( uncaughtExceptionHandler, "uncaughtExceptionHandler is required" );
+        requireNonNull( uncaughtExceptionHandler, "uncaughtExceptionHandler is required" );
         return new SimpleExecutor( Executors.newThreadPerTaskExecutor( Thread.ofVirtual()
                                                                            .name( namePrefix, 0 )
                                                                            .uncaughtExceptionHandler( ( _, e ) -> uncaughtExceptionHandler.accept( e ) )
@@ -67,7 +68,7 @@ public final class SimpleExecutor
      */
     public static SimpleExecutor ofSingle( final String name, final Consumer<Throwable> uncaughtExceptionHandler )
     {
-        Objects.requireNonNull( uncaughtExceptionHandler, "uncaughtExceptionHandler is required" );
+        requireNonNull( uncaughtExceptionHandler, "uncaughtExceptionHandler is required" );
         return new SimpleExecutor( Executors.newSingleThreadExecutor( new ThreadFactoryImpl( name, uncaughtExceptionHandler ) ) );
     }
 

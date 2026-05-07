@@ -1,8 +1,6 @@
 package com.enonic.xp.core.impl.issue;
 
 import java.time.Instant;
-import java.util.Objects;
-
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.issue.serializer.IssueDataSerializer;
 import com.enonic.xp.core.internal.Millis;
@@ -28,6 +26,7 @@ import static com.enonic.xp.issue.IssuePropertyNames.CREATED_TIME;
 import static com.enonic.xp.issue.IssuePropertyNames.CREATOR;
 import static com.enonic.xp.issue.IssuePropertyNames.INDEX;
 import static com.enonic.xp.issue.IssuePropertyNames.MODIFIED_TIME;
+import static java.util.Objects.requireNonNullElseGet;
 
 public class CreateIssueCommand
     extends AbstractIssueCommand
@@ -83,7 +82,7 @@ public class CreateIssueCommand
 
     User getCurrentUser()
     {
-        return Objects.requireNonNullElseGet( ContextAccessor.current().getAuthInfo().getUser(), User::anonymous );
+        return requireNonNullElseGet( ContextAccessor.current().getAuthInfo().getUser(), User::anonymous );
     }
 
     private long countTotalIssues()

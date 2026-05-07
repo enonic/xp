@@ -16,13 +16,20 @@ log.info('Fetched styles: myapp');
 
 assert.assertJsonEquals({
     application: 'myapp',
-    cssPath: 'assets/styles.css',
     modifiedTime: '2021-02-25T10:44:33.170079900Z',
     resource: '<styles><some-data></some-data></styles>',
     elements: [
         {
-            displayName: 'Style display name',
-            name: 'mystyle'
+            label: 'Style display name',
+            name: 'mystyle',
+            type: 'Image',
+            aspectRatio: '16:9',
+            filter: 'sharpen()'
+        },
+        {
+            label: 'Plain',
+            name: 'plain',
+            type: 'Image'
         }
     ]
 }, result);

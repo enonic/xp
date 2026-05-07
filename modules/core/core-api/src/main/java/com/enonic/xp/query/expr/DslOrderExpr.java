@@ -10,6 +10,7 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static java.util.Objects.requireNonNull;
 
 
 public final class DslOrderExpr
@@ -37,8 +38,8 @@ public final class DslOrderExpr
         this.language = isNullOrEmpty( langString ) ? null : Locale.forLanguageTag( langString );
 
         final PropertySet location = expression.getSet( "location" );
-        this.lat = location != null ? Objects.requireNonNull( location.getDouble( "lat" ) ) : null;
-        this.lon = location != null ? Objects.requireNonNull( location.getDouble( "lon" ) ) : null;
+        this.lat = location != null ? requireNonNull( location.getDouble( "lat" ) ) : null;
+        this.lon = location != null ? requireNonNull( location.getDouble( "lon" ) ) : null;
     }
 
     public static DslOrderExpr from( final PropertyTree expression )

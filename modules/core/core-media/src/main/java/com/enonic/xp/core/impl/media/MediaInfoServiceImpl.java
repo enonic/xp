@@ -62,17 +62,22 @@ public final class MediaInfoServiceImpl
         }
     }
 
+    @Deprecated
     @Override
     public ImageOrientation getImageOrientation( ByteSource byteSource )
     {
-        final ExtractedData extractedData = binaryExtractor.extract( byteSource );
-        final String orientation = extractedData.getImageOrientation();
-
-        if ( ImageOrientation.isValid( orientation ) )
+        try
         {
-            return ImageOrientation.from( orientation );
+            return parseMediaInfo( byteSource ).getMetadata()
+                .get( "tiff:Orientation" )
+                .stream()
+                .findFirst()
+                .map( value -> ImageOrientation.valueOf( Integer.parseInt( value ) ) )
+                .orElse( null );
         }
-
-        return null;
+        catch ( NumberFormatException | ArithmeticException e )
+        {
+            return null;
+        }
     }
 }

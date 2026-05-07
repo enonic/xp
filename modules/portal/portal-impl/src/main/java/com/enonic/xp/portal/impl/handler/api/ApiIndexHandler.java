@@ -4,7 +4,6 @@ import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Stream;
 
 import org.osgi.service.component.annotations.Activate;
@@ -28,9 +27,12 @@ import com.enonic.xp.server.RunMode;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
+import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.handler.BaseWebHandler;
 import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.handler.WebHandlerChain;
+
+import static java.util.Objects.requireNonNullElse;
 
 @Component(immediate = true, service = WebHandler.class, configurationPid = "com.enonic.xp.api")
 public class ApiIndexHandler
@@ -74,15 +76,21 @@ public class ApiIndexHandler
     protected WebResponse doHandle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
         throws Exception
     {
-        return WebResponse.create().contentType( MediaType.JSON_UTF_8 ).body( Map.of( "resources", getApiResources() ) ).build();
+        return WebResponse.create().contentType( MediaType.JSON_UTF_8 ).body( Map.of( "resources", getApiResources( webRequest ) ) ).build();
     }
 
-    private List<Map<String, Object>> getApiResources()
+    private List<Map<String, Object>> getApiResources( final WebRequest webRequest )
     {
+        final String connector = webRequest.getRawRequest() != null
+            ? (String) webRequest.getRawRequest().getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE )
+            : null;
+
+        final String mountFilter = DispatchConstants.API_CONNECTOR.equals( connector ) ? "management" : "web";
+
         return Stream.concat( universalApiHandlerRegistry.getAllApiDescriptors().stream(), applicationService.getInstalledApplications()
                 .stream()
                 .flatMap( application -> apiDescriptorService.getByApplication( application.getKey() ).stream() ) )
-            .filter( apiDescriptor -> apiDescriptor.getMount().contains( "web" ) )
+            .filter( apiDescriptor -> apiDescriptor.getMount().contains( mountFilter ) )
             .map( this::map )
             .toList();
     }
@@ -96,7 +104,7 @@ public class ApiIndexHandler
         result.put( "descriptor", descriptorKey.toString() );
         result.put( "application", descriptorKey.getApplicationKey().toString() );
         result.put( "name", descriptorKey.getName() );
-        result.put( "allowedPrincipals", Objects.requireNonNullElse( apiDescriptor.getAllowedPrincipals(), PrincipalKeys.empty() )
+        result.put( "allowedPrincipals", requireNonNullElse( apiDescriptor.getAllowedPrincipals(), PrincipalKeys.empty() )
             .stream()
             .map( PrincipalKey::toString )
             .toList() );

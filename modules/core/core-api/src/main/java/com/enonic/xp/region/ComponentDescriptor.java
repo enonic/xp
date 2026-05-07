@@ -1,14 +1,14 @@
 package com.enonic.xp.region;
 
 import java.time.Instant;
-import java.util.Objects;
-
 import com.enonic.xp.descriptor.Descriptor;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.schema.LocalizedText;
 import com.enonic.xp.util.GenericValue;
+
+import static java.util.Objects.requireNonNullElse;
 
 
 public abstract class ComponentDescriptor
@@ -37,7 +37,7 @@ public abstract class ComponentDescriptor
         this.description = builder.description;
         this.descriptionI18nKey = builder.descriptionI18nKey;
         this.modifiedTime = builder.modifiedTime;
-        this.config = Objects.requireNonNullElse( builder.config, Form.empty() );
+        this.config = requireNonNullElse( builder.config, Form.empty() );
         this.schemaConfig = builder.schemaConfig.build();
     }
 

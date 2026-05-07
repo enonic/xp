@@ -1,7 +1,5 @@
 package com.enonic.xp.repo.impl.vacuum.blob;
 
-import java.util.Objects;
-
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.index.IndexPath;
@@ -9,6 +7,8 @@ import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.query.filter.ValueFilter;
+
+import static java.util.Objects.requireNonNull;
 
 public class IsBlobUsedByVersionCommand
 {
@@ -82,9 +82,9 @@ public class IsBlobUsedByVersionCommand
 
         public IsBlobUsedByVersionCommand build()
         {
-            Objects.requireNonNull( nodeService );
-            Objects.requireNonNull( fieldPath, "fieldPath is required" );
-            Objects.requireNonNull( blobKey, "blobKey is required" );
+            requireNonNull( nodeService );
+            requireNonNull( fieldPath, "fieldPath is required" );
+            requireNonNull( blobKey, "blobKey is required" );
             return new IsBlobUsedByVersionCommand( this );
         }
     }

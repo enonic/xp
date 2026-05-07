@@ -1,10 +1,10 @@
 package com.enonic.xp.query.highlight;
 
 import java.util.List;
-import java.util.Objects;
-
 import com.enonic.xp.query.highlight.constants.Fragmenter;
 import com.enonic.xp.query.highlight.constants.Order;
+
+import static java.util.Objects.requireNonNull;
 
 public final class HighlightQueryProperty
 {
@@ -91,7 +91,7 @@ public final class HighlightQueryProperty
 
         private void validate()
         {
-            Objects.requireNonNull( name, "name is required" );
+            requireNonNull( name, "name is required" );
         }
 
         public HighlightQueryProperty build()

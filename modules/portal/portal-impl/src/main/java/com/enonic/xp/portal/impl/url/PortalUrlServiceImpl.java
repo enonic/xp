@@ -1,6 +1,5 @@
 package com.enonic.xp.portal.impl.url;
 
-import java.util.Objects;
 import java.util.function.Supplier;
 
 import org.osgi.service.component.annotations.Activate;
@@ -40,6 +39,8 @@ import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.style.StyleDescriptorService;
+
+import static java.util.Objects.requireNonNull;
 
 @Component(immediate = true, configurationPid = "com.enonic.xp.portal")
 public final class PortalUrlServiceImpl
@@ -285,7 +286,7 @@ public final class PortalUrlServiceImpl
             final StringBuilder url = new StringBuilder();
             UrlBuilderHelper.appendAndEncodePathParts( url, params.getPath() );
             UrlBuilderHelper.appendPathSegments( url, params.getPathSegments() );
-            return UrlBuilderHelper.rewriteUri( Objects.requireNonNull( PortalRequestAccessor.get(), "no request bound" ).getRawRequest(),
+            return UrlBuilderHelper.rewriteUri( requireNonNull( PortalRequestAccessor.get(), "no request bound" ).getRawRequest(),
                                                 params.getType(), url.toString() );
         } );
 

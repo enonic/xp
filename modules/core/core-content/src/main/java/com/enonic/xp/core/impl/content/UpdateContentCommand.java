@@ -11,8 +11,11 @@ import com.enonic.xp.content.AttachmentValidationError;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentDataValidationException;
 import com.enonic.xp.content.ContentEditor;
+import com.enonic.xp.content.ContentInheritType;
+import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.Media;
+import com.enonic.xp.content.MediaUtils;
 import com.enonic.xp.content.PatchableContent;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.ValidationErrors;
@@ -29,6 +32,8 @@ import com.enonic.xp.node.PatchNodeResult;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.util.BinaryReference;
+
+import static java.util.Objects.requireNonNull;
 
 final class UpdateContentCommand
     extends AbstractCreatingOrUpdatingContentCommand
@@ -83,14 +88,14 @@ final class UpdateContentCommand
                 checkAccess( content, editedContent );
 
                 editedContent = editContentMetadata( editedContent );
-                editedContent = afterUpdate( editedContent );
+                editedContent = afterUpdate( editedContent, ContentInheritType.CONTENT, ContentInheritType.NAME );
 
                 validate( editedContent );
 
                 return editedContent;
             } )
             .createAttachments( params.getCreateAttachments() )
-            .versionAttributesResolver( ContentAttributesHelper.versionHistoryResolver( ContentAttributesHelper.UPDATE_ATTR ) )
+            .versionAttributesResolver( ContentAttributesHelper.versionHistoryResolver( ContentAttributesHelper.UPDATE_ATTR, Map.of() ) )
             .contentTypeService( this.contentTypeService )
             .mixinService( this.mixinService )
             .pageDescriptorService( this.pageDescriptorService )
@@ -170,8 +175,7 @@ final class UpdateContentCommand
             final Attachment.Builder builder = Attachment.create()
                 .name( createAttachment.getName() )
                 .label( createAttachment.getLabel() )
-                .mimeType( createAttachment.getMimeType() )
-                .textContent( createAttachment.getTextContent() );
+                .mimeType( createAttachment.getMimeType() );
             populateByteSourceProperties( createAttachment.getByteSource(), builder );
 
             final Attachment attachment = builder.build();
@@ -240,7 +244,7 @@ final class UpdateContentCommand
         try
         {
             // validate focal point values
-            mediaContent.getFocalPoint();
+            MediaUtils.readFocalPoint( mediaContent.getData().getSet( ContentPropertyNames.MEDIA ) );
         }
         catch ( IllegalArgumentException e )
         {
@@ -280,7 +284,7 @@ final class UpdateContentCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( params, "params cannot be null" );
+            requireNonNull( params, "params cannot be null" );
         }
 
         UpdateContentCommand build()

@@ -1,7 +1,5 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.Objects;
-
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
@@ -11,6 +9,8 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodeVersionId;
+
+import static java.util.Objects.requireNonNull;
 
 public final class GetContentByIdAndVersionIdCommand
     extends AbstractContentCommand
@@ -84,8 +84,8 @@ public final class GetContentByIdAndVersionIdCommand
         {
             super.validate();
 
-            Objects.requireNonNull( this.contentId, "contentId is required" );
-            Objects.requireNonNull( this.versionId, "versionId is required" );
+            requireNonNull( this.contentId, "contentId is required" );
+            requireNonNull( this.versionId, "versionId is required" );
         }
 
         public GetContentByIdAndVersionIdCommand build()

@@ -2,7 +2,6 @@ package com.enonic.xp.core.impl.security;
 
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -88,6 +87,8 @@ import com.enonic.xp.security.auth.PasswordAuthToken;
 import com.enonic.xp.security.auth.UsernamePasswordAuthToken;
 import com.enonic.xp.security.auth.VerifiedEmailAuthToken;
 import com.enonic.xp.security.auth.VerifiedUsernameAuthToken;
+
+import static java.util.Objects.requireNonNull;
 
 public final class SecurityServiceImpl
     implements SecurityService
@@ -674,7 +675,7 @@ public final class SecurityServiceImpl
     @Override
     public Optional<? extends Principal> getPrincipal( final PrincipalKey principalKey )
     {
-        return switch ( Objects.requireNonNull( principalKey, "Principal key was null" ).getType() )
+        return switch ( requireNonNull( principalKey, "Principal key was null" ).getType() )
         {
             case USER -> getUser( principalKey );
             case GROUP -> getGroup( principalKey );

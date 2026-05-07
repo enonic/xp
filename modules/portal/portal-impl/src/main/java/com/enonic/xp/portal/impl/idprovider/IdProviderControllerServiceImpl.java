@@ -3,7 +3,6 @@ package com.enonic.xp.portal.impl.idprovider;
 
 import java.io.IOException;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.concurrent.Callable;
 
 import org.osgi.service.component.annotations.Component;
@@ -31,6 +30,8 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.web.serializer.WebSerializerService;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
+
+import static java.util.Objects.requireNonNull;
 
 @Component
 public class IdProviderControllerServiceImpl
@@ -70,7 +71,7 @@ public class IdProviderControllerServiceImpl
             }
             else
             {
-                portalRequest = Objects.requireNonNull( params.getPortalRequest() );
+                portalRequest = requireNonNull( params.getPortalRequest() );
             }
 
             portalRequest.setApplicationKey( idProviderDescriptor.getKey() );

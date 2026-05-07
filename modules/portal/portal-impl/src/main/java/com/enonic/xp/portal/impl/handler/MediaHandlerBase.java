@@ -1,15 +1,15 @@
 package com.enonic.xp.portal.impl.handler;
 
-import java.util.Arrays;
 import java.util.EnumSet;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.core.internal.SimpleCsvParser;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.impl.PortalRequestHelper;
-import com.enonic.xp.portal.impl.VirtualHostContextHelper;
 import com.enonic.xp.portal.universalapi.UniversalApiHandler;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.repository.RepositoryId;
@@ -21,6 +21,8 @@ import com.enonic.xp.web.WebRequest;
 public abstract class MediaHandlerBase
     implements UniversalApiHandler
 {
+    private static final String MEDIA_SERVICE_SCOPE_ATTR = "media.scope";
+
     protected static final EnumSet<HttpMethod> ALLOWED_METHODS = EnumSet.of( HttpMethod.GET, HttpMethod.HEAD, HttpMethod.OPTIONS );
 
     protected final ContentService contentService;
@@ -56,9 +58,9 @@ public abstract class MediaHandlerBase
             throw new WebException( HttpStatus.METHOD_NOT_ALLOWED, String.format( "Method %s not allowed", webRequest.getMethod() ) );
         }
 
-        final String mediaServiceScope = VirtualHostContextHelper.getMediaServiceScope();
+        final String mediaServiceScope = (String) ContextAccessor.current().getAttribute( MEDIA_SERVICE_SCOPE_ATTR );
         if ( mediaServiceScope != null &&
-            Arrays.stream( mediaServiceScope.split( ",", -1 ) ).map( String::trim ).noneMatch( pathMetadata.context::equals ) )
+            SimpleCsvParser.parseLine( mediaServiceScope ).stream().noneMatch( pathMetadata.context::equals ) )
         {
             throw createNotFoundException();
         }

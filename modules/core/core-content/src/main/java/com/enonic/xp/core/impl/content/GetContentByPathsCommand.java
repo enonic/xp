@@ -1,11 +1,11 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.Objects;
-
 import com.enonic.xp.content.ContentPaths;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.node.Nodes;
+
+import static java.util.Objects.requireNonNull;
 
 
 final class GetContentByPathsCommand
@@ -52,7 +52,7 @@ final class GetContentByPathsCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( contentPaths, "contentPaths is required" );
+            requireNonNull( contentPaths, "contentPaths is required" );
         }
 
         public GetContentByPathsCommand build()

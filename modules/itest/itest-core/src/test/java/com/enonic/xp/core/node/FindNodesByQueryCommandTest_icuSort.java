@@ -14,6 +14,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexConfig;
+import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.FindNodesByQueryResult;
@@ -99,7 +100,7 @@ class FindNodesByQueryCommandTest_icuSort
     private FindNodesByQueryResult sortByStringWithLanguage( final String direction, final String language )
     {
         final OrderExpr.Direction dir = OrderExpr.Direction.valueOf( direction );
-        final FieldOrderExpr orderExpr = FieldOrderExpr.create( FIELD_STRING, dir, Locale.forLanguageTag( language ) );
+        final FieldOrderExpr orderExpr = FieldOrderExpr.create( IndexPath.from( FIELD_STRING ), dir, Locale.forLanguageTag( language ) );
         final ConstraintExpr constraintExpr = QueryParser.parseCostraintExpression( "_parentPath=\"/\"" );
         final QueryExpr queryExpr = QueryExpr.from( constraintExpr, orderExpr );
         return doFindByQuery( NodeQuery.create().query( queryExpr ).build() );

@@ -1,7 +1,5 @@
 package com.enonic.xp.core.impl.project.init;
 
-import java.util.Objects;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +14,8 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repository.BranchNotFoundException;
 import com.enonic.xp.schema.content.ContentTypeName;
+
+import static java.util.Objects.requireNonNullElse;
 
 
 public final class ArchiveInitializer
@@ -73,7 +73,7 @@ public final class ArchiveInitializer
             data( data ).
             name( ArchiveConstants.ARCHIVE_ROOT_NAME ).
             parent( NodePath.ROOT ).
-            permissions( Objects.requireNonNullElse( accessControlList, ArchiveConstants.ARCHIVE_ROOT_DEFAULT_ACL ) ).
+            permissions( requireNonNullElse( accessControlList, ArchiveConstants.ARCHIVE_ROOT_DEFAULT_ACL ) ).
             childOrder( ArchiveConstants.DEFAULT_ARCHIVE_REPO_ROOT_ORDER ).
             refresh( RefreshMode.ALL ).
             build() );

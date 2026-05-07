@@ -23,6 +23,7 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.site.Site;
 
+import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElse;
 
 
@@ -96,7 +97,7 @@ public class Content
         this.id = builder.id;
         this.data = builder.data;
         this.attachments = requireNonNullElse( builder.attachments, Attachments.empty() );
-        this.mixins = Objects.requireNonNull( builder.mixins );
+        this.mixins = requireNonNull( builder.mixins );
         this.createdTime = Millis.from( builder.createdTime );
         this.modifiedTime = Millis.from( builder.modifiedTime );
         this.publishInfo = builder.publishInfo;
@@ -537,7 +538,7 @@ public class Content
 
         public BUILDER data( final PropertyTree data )
         {
-            this.data = Objects.requireNonNull( data );
+            this.data = requireNonNull( data );
             return (BUILDER) this;
         }
 
@@ -699,18 +700,18 @@ public class Content
         {
             if ( !root )
             {
-                Objects.requireNonNull( parentPath, "parentPath is required for a Content" );
-                Objects.requireNonNull( name, "name is required for a Content" );
+                requireNonNull( parentPath, "parentPath is required for a Content" );
+                requireNonNull( name, "name is required for a Content" );
             }
 
-            Objects.requireNonNull( data, "data is required for a Content" );
+            requireNonNull( data, "data is required for a Content" );
 
             if ( page != null )
             {
                 Preconditions.checkArgument( !( page.getDescriptor() != null && page.getTemplate() != null ),
                                              "A Page cannot have both have a descriptor and a template set" );
             }
-            Objects.requireNonNull( type, "type is required for a Content" );
+            requireNonNull( type, "type is required for a Content" );
         }
 
         public Content build()

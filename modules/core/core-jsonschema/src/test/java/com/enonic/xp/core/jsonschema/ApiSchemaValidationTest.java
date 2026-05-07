@@ -15,7 +15,7 @@ class ApiSchemaValidationTest
     @BeforeAll
     static void initSchema()
     {
-        schema = schemaFor( "api.schema.json" );
+        schema = schemaFor( "api" );
     }
 
     @Test

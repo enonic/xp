@@ -4,7 +4,6 @@ import java.util.ArrayDeque;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -18,6 +17,8 @@ import com.enonic.xp.project.Projects;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
+
+import static java.util.Objects.requireNonNull;
 
 public final class ProjectsSyncTask
     implements RunnableTask
@@ -110,8 +111,8 @@ public final class ProjectsSyncTask
 
         private void validate()
         {
-            Objects.requireNonNull( this.projectService );
-            Objects.requireNonNull( this.syncContentService );
+            requireNonNull( this.projectService );
+            requireNonNull( this.syncContentService );
         }
 
         public ProjectsSyncTask build()

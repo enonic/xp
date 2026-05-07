@@ -4,13 +4,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Objects;
-
 import com.enonic.xp.script.ScriptFixturesFacade;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.impl.value.ScriptValueFactory;
 import com.enonic.xp.script.serializer.MapSerializable;
 
+import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public final class MapSerializableAssert
@@ -49,7 +48,7 @@ public final class MapSerializableAssert
     private static String readFromFile( final Class<?> clazz, final String resource )
     {
         final InputStream stream =
-            Objects.requireNonNull( clazz.getResourceAsStream( resource ), "Resource file [" + resource + "] not found" );
+            requireNonNull( clazz.getResourceAsStream( resource ), "Resource file [" + resource + "] not found" );
         try (stream)
         {
             return new String( stream.readAllBytes(), StandardCharsets.UTF_8 );

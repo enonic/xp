@@ -1,7 +1,5 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.util.Objects;
-
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeQuery;
@@ -9,6 +7,8 @@ import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
+
+import static java.util.Objects.requireNonNull;
 
 public class FindNodesByQueryCommand
     extends AbstractNodeCommand
@@ -65,7 +65,7 @@ public class FindNodesByQueryCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( this.query, "query is required" );
+            requireNonNull( this.query, "query is required" );
         }
 
         public FindNodesByQueryCommand build()

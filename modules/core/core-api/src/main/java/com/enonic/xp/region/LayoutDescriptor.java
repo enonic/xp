@@ -1,9 +1,9 @@
 package com.enonic.xp.region;
 
-import java.util.Objects;
-
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.resource.ResourceKey;
+
+import static java.util.Objects.requireNonNull;
 
 
 public final class LayoutDescriptor
@@ -14,7 +14,7 @@ public final class LayoutDescriptor
     private LayoutDescriptor( final Builder builder )
     {
         super( builder );
-        this.regions = Objects.requireNonNull( builder.regions, "regions cannot be null" );
+        this.regions = requireNonNull( builder.regions, "regions cannot be null" );
     }
 
     public RegionDescriptors getRegions()

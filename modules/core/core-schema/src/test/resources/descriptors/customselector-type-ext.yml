@@ -1,0 +1,10 @@
+type: "CustomSelector"
+name: "musicTrack"
+label: "Intro song"
+helpText: "Help Text"
+occurrences:
+  min: 0
+  max: 1
+default: "DefaultValue"
+extension: "com.enonic.app.extapp:extname"
+attributes: { }

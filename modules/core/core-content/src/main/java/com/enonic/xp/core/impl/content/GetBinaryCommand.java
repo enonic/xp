@@ -1,8 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
-import java.util.Objects;
-
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.content.ContentId;
@@ -11,6 +9,8 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.util.BinaryReference;
+
+import static java.util.Objects.requireNonNull;
 
 
 final class GetBinaryCommand
@@ -67,8 +67,8 @@ final class GetBinaryCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( contentId, "contentId is required" );
-            Objects.requireNonNull( binaryReference, "binaryReference is required" );
+            requireNonNull( contentId, "contentId is required" );
+            requireNonNull( binaryReference, "binaryReference is required" );
         }
 
         public GetBinaryCommand build()

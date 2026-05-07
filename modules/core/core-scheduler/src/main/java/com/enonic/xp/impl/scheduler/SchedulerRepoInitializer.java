@@ -1,12 +1,12 @@
 package com.enonic.xp.impl.scheduler;
 
-import java.util.Objects;
-
 import com.enonic.xp.context.Context;
 import com.enonic.xp.init.ExternalInitializer;
 import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.internal.InternalRepositoryService;
 import com.enonic.xp.scheduler.SchedulerConstants;
+
+import static java.util.Objects.requireNonNull;
 
 public class SchedulerRepoInitializer
     extends ExternalInitializer
@@ -70,7 +70,7 @@ public class SchedulerRepoInitializer
         protected void validate()
         {
             super.validate();
-            Objects.requireNonNull( repositoryService );
+            requireNonNull( repositoryService );
         }
 
         public SchedulerRepoInitializer build()

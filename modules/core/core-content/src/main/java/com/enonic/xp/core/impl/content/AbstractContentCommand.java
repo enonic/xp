@@ -2,7 +2,6 @@ package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 
@@ -45,6 +44,8 @@ import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.util.GenericValue;
 
+import static java.util.Objects.requireNonNull;
+
 abstract class AbstractContentCommand
 {
     private static final Logger LOG = LoggerFactory.getLogger( AbstractContentCommand.class );
@@ -76,6 +77,21 @@ abstract class AbstractContentCommand
         {
             throw ContentNotFoundException.create()
                 .contentId( contentId )
+                .repositoryId( ContextAccessor.current().getRepositoryId() )
+                .branch( ContextAccessor.current().getBranch() )
+                .contentRoot( ContentNodeHelper.getContentRoot() )
+                .build();
+        }
+        return content;
+    }
+
+    Content getContent( final ContentPath contentPath )
+    {
+        final Content content = GetContentByPathCommand.create( contentPath, this ).build().execute();
+        if ( content == null )
+        {
+            throw ContentNotFoundException.create()
+                .contentPath( contentPath )
                 .repositoryId( ContextAccessor.current().getRepositoryId() )
                 .branch( ContextAccessor.current().getBranch() )
                 .contentRoot( ContentNodeHelper.getContentRoot() )
@@ -253,8 +269,10 @@ abstract class AbstractContentCommand
                 .map( v -> new ContentVersion.Action( v.getKey(), v.getValue()
                     .optional( "fields" )
                     .map( GenericValue::toStringList )
-                    .orElse( List.of() ), v.getValue().optional( "origin" ).map( GenericValue::asString ).orElse( null ),
-                                                      ContentAttributesHelper.getUser( v.getValue() ),
+                    .orElse( List.of() ), v.getValue().optional( "origin" ).map( GenericValue::asString ).orElse( null ), v.getValue()
+                                                          .optional( "editorial" )
+                                                          .map( g -> ContentVersionId.from( g.asString() ) )
+                                                          .orElse( null ), ContentAttributesHelper.getUser( v.getValue() ),
                                                       ContentAttributesHelper.getOpTime( v.getValue() ) ) )
                 .forEach( builder::addAction );
         }
@@ -332,9 +350,9 @@ abstract class AbstractContentCommand
 
         void validate()
         {
-            Objects.requireNonNull( nodeService );
-            Objects.requireNonNull( contentTypeService );
-            Objects.requireNonNull( eventPublisher );
+            requireNonNull( nodeService );
+            requireNonNull( contentTypeService );
+            requireNonNull( eventPublisher );
         }
     }
 }

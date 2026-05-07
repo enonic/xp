@@ -1,7 +1,5 @@
 package com.enonic.xp.admin.impl.portal.extension;
 
-import java.util.Objects;
-
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -14,6 +12,8 @@ import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
+
+import static java.util.Objects.requireNonNull;
 
 @Component(immediate = true, property = {"key=" + AdminExtensionDispatcherApiHandler.EXTENSIONS_API,
     "allowedPrincipals=role:system.admin.login", "title=Admin Extensions API"})
@@ -41,7 +41,7 @@ public class AdminExtensionDispatcherApiHandler
     @Override
     public WebResponse handle( final WebRequest webRequest )
     {
-        Objects.requireNonNull( webRequest.getEndpointPath(), "Endpoint path cannot be null" );
+        requireNonNull( webRequest.getEndpointPath(), "Endpoint path cannot be null" );
 
         if ( HttpMethod.GET.equals( webRequest.getMethod() ) && WebHandlerHelper.findApiPath( webRequest, EXTENSIONS_API ).isEmpty() )
         {

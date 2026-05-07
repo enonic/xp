@@ -3,8 +3,6 @@ package com.enonic.xp.testing.resource;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Objects;
-
 import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
 import com.google.common.io.Resources;
@@ -19,6 +17,8 @@ import com.enonic.xp.resource.UrlResource;
 import com.enonic.xp.vfs.VirtualFile;
 import com.enonic.xp.vfs.VirtualFilePath;
 import com.enonic.xp.vfs.VirtualFilePaths;
+
+import static java.util.Objects.requireNonNull;
 
 public final class ClassLoaderResourceService
     implements ResourceService
@@ -94,13 +94,13 @@ public final class ClassLoaderResourceService
             @Override
             public CharSource getCharSource()
             {
-                return Resources.asCharSource( Objects.requireNonNull( url ), StandardCharsets.UTF_8 );
+                return Resources.asCharSource( requireNonNull( url ), StandardCharsets.UTF_8 );
             }
 
             @Override
             public ByteSource getByteSource()
             {
-                return Resources.asByteSource( Objects.requireNonNull( url ) );
+                return Resources.asByteSource( requireNonNull( url ) );
             }
 
             @Override

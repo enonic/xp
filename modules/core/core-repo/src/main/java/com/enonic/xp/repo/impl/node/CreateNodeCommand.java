@@ -2,7 +2,6 @@ package com.enonic.xp.repo.impl.node;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Objects;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.internal.Millis;
@@ -10,9 +9,9 @@ import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.index.ChildOrder;
-import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;
+import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.BinaryAttachment;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.InsertManualStrategy;
@@ -29,6 +28,8 @@ import com.enonic.xp.repo.impl.storage.StoreNodeParams;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
+
+import static java.util.Objects.requireNonNull;
 
 public final class CreateNodeCommand
     extends AbstractNodeCommand
@@ -91,10 +92,9 @@ public final class CreateNodeCommand
 
         final Node builtNode = nodeBuilder.build();
         final Attributes resolvedAttributes =
-            resolveVersionAttributes( params.getVersionAttributesResolver(), builtNode, builtNode, ContextAccessor.current().getBranch() );
-        final Node newNode =
-            this.nodeStorageService.store( StoreNodeParams.newVersion( builtNode, resolvedAttributes ),
-                                           InternalContext.from( ContextAccessor.current() ) ).node();
+            resolveVersionAttributes( params.getVersionAttributesResolver(), null, builtNode, ContextAccessor.current().getBranch(), null );
+        final Node newNode = this.nodeStorageService.store( StoreNodeParams.newVersion( builtNode, resolvedAttributes ),
+                                                            InternalContext.from( ContextAccessor.current() ) ).node();
 
         refresh( params.getRefresh() );
         return newNode;
@@ -242,7 +242,7 @@ public final class CreateNodeCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( params, "params cannot be null" );
+            requireNonNull( params, "params cannot be null" );
         }
 
         public CreateNodeCommand build()

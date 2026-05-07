@@ -1,8 +1,8 @@
 package com.enonic.xp.archive;
 
-import java.util.Objects;
-
 import com.enonic.xp.content.ContentId;
+
+import static java.util.Objects.requireNonNull;
 
 
 public final class ArchiveContentParams
@@ -72,7 +72,7 @@ public final class ArchiveContentParams
 
         private void validate()
         {
-            Objects.requireNonNull( contentId, "contentId is required" );
+            requireNonNull( contentId, "contentId is required" );
         }
 
         public ArchiveContentParams build()

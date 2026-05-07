@@ -1,8 +1,6 @@
 package com.enonic.xp.impl.scheduler;
 
 import java.time.Instant;
-import java.util.Objects;
-
 import com.enonic.xp.impl.scheduler.serializer.SchedulerSerializer;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeName;
@@ -12,6 +10,8 @@ import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.scheduler.ScheduledJob;
 import com.enonic.xp.scheduler.ScheduledJobName;
 import com.enonic.xp.task.TaskId;
+
+import static java.util.Objects.requireNonNull;
 
 public class UpdateLastRunCommand
     extends AbstractSchedulerCommand
@@ -90,8 +90,8 @@ public class UpdateLastRunCommand
         @Override
         protected void validate()
         {
-            Objects.requireNonNull( name, "name is required" );
-            Objects.requireNonNull( lastRun, "lastRun is required" );
+            requireNonNull( name, "name is required" );
+            requireNonNull( lastRun, "lastRun is required" );
         }
 
         @Override

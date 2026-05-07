@@ -1,6 +1,6 @@
 package com.enonic.xp.query.suggester;
 
-import java.util.Objects;
+import static java.util.Objects.requireNonNull;
 
 public abstract class SuggestionQuery
 {
@@ -16,9 +16,9 @@ public abstract class SuggestionQuery
 
     protected SuggestionQuery( final SuggestionQuery.Builder builder )
     {
-        this.name = Objects.requireNonNull( builder.name, "name is required" );
-        this.field = Objects.requireNonNull( builder.field, "field is required" );
-        this.text = Objects.requireNonNull( builder.text, "text is required" );
+        this.name = requireNonNull( builder.name, "name is required" );
+        this.field = requireNonNull( builder.field, "field is required" );
+        this.text = requireNonNull( builder.text, "text is required" );
         this.size = builder.size;
         this.analyzer = builder.analyzer;
     }

@@ -1,7 +1,8 @@
 package com.enonic.xp.portal.impl.parser;
 
-import org.attoparser.AttoParseException;
-import org.attoparser.markup.MarkupAttoParser;
+import org.attoparser.MarkupParser;
+import org.attoparser.ParseException;
+import org.attoparser.config.ParseConfiguration;
 
 import com.enonic.xp.portal.impl.rendering.RenderException;
 import com.enonic.xp.portal.postprocess.HtmlTag;
@@ -23,14 +24,16 @@ public final class HtmlBlockParser
 
         try
         {
-            final MarkupAttoParser parser = new MarkupAttoParser();
+            final ParseConfiguration config = ParseConfiguration.htmlConfiguration();
+            config.setElementBalancing( ParseConfiguration.ElementBalancing.NO_BALANCING );
+            final MarkupParser parser = new MarkupParser( config );
             parser.parse( html, new HtmlBlockParseAttoHandler( this ) );
 
             addStaticHtml();
 
             return this.htmlBlocks.build();
         }
-        catch ( final AttoParseException e )
+        catch ( final ParseException e )
         {
             final Throwable cause = e.getCause();
             if ( cause instanceof RuntimeException )
@@ -42,14 +45,19 @@ public final class HtmlBlockParser
         }
     }
 
-    void appendHtml( final String html )
+    void appendHtml( final char[] buffer, final int offset, final int len )
+    {
+        this.currentBlock.append( buffer, offset, len );
+    }
+
+    void appendHtml( final CharSequence html )
     {
         this.currentBlock.append( html );
     }
 
     void addStaticHtml()
     {
-        if ( this.currentBlock.length() == 0 )
+        if ( this.currentBlock.isEmpty() )
         {
             return;
         }

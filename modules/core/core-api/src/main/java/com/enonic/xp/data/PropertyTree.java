@@ -714,6 +714,28 @@ public final class PropertyTree
         return this.root.getLongs( name );
     }
 
+    // getting integer
+
+    public Integer getInteger( final String name, final int index )
+    {
+        return this.root.getInteger( name, index );
+    }
+
+    public Integer getInteger( final PropertyPath path )
+    {
+        return this.root.getInteger( path );
+    }
+
+    public Integer getInteger( final String path )
+    {
+        return this.root.getInteger( path );
+    }
+
+    public Iterable<Integer> getIntegers( final String name )
+    {
+        return this.root.getIntegers( name );
+    }
+
     // getting double
 
     public Double getDouble( final String name, final int index )

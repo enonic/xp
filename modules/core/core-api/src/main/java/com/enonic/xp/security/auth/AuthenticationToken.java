@@ -1,10 +1,10 @@
 package com.enonic.xp.security.auth;
 
-import java.util.Objects;
-
 import org.jspecify.annotations.NullMarked;
 
 import com.enonic.xp.security.IdProviderKey;
+
+import static java.util.Objects.requireNonNull;
 
 
 @NullMarked
@@ -15,7 +15,7 @@ public abstract sealed class AuthenticationToken
 
     protected AuthenticationToken( final IdProviderKey idProvider )
     {
-        this.idProvider = Objects.requireNonNull( idProvider );
+        this.idProvider = requireNonNull( idProvider );
     }
 
     public final IdProviderKey getIdProvider()

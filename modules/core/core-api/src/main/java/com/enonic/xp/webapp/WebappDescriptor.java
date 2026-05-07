@@ -1,11 +1,12 @@
 package com.enonic.xp.webapp;
 
-import java.util.Objects;
-
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.descriptor.DescriptorKeys;
 import com.enonic.xp.schema.LocalizedText;
 import com.enonic.xp.util.GenericValue;
+
+import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
 
 
 public final class WebappDescriptor
@@ -22,8 +23,8 @@ public final class WebappDescriptor
 
     private WebappDescriptor( final Builder builder )
     {
-        this.applicationKey = Objects.requireNonNull( builder.applicationKey );
-        this.apiMounts = Objects.requireNonNullElse( builder.apiMounts, DescriptorKeys.empty() );
+        this.applicationKey = requireNonNull( builder.applicationKey );
+        this.apiMounts = requireNonNullElse( builder.apiMounts, DescriptorKeys.empty() );
         this.description = builder.description;
         this.descriptionI18nKey = builder.descriptionI18nKey;
         this.schemaConfig = builder.schemaConfig.build();

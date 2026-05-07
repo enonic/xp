@@ -5,6 +5,8 @@ import java.util.Objects;
 
 import com.enonic.xp.schema.mixin.MixinName;
 
+import static java.util.Objects.requireNonNull;
+
 
 public final class MixinMapping
 {
@@ -96,7 +98,7 @@ public final class MixinMapping
 
         private void validate()
         {
-            Objects.requireNonNull( mixinName, "mixinName is required" );
+            requireNonNull( mixinName, "mixinName is required" );
         }
 
         public MixinMapping build()

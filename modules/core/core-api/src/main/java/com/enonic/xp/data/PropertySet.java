@@ -1114,6 +1114,30 @@ public final class PropertySet
         return getFilteredValues( name, Property::getLong );
     }
 
+    // getting integer
+
+    public Integer getInteger( final String name, final int index )
+    {
+        final Property property = this.getProperty( name, index );
+        return property != null ? property.getValue().asInteger() : null;
+    }
+
+    public Integer getInteger( final PropertyPath path )
+    {
+        final Property property = this.getProperty( path );
+        return property != null ? property.getValue().asInteger() : null;
+    }
+
+    public Integer getInteger( final String path )
+    {
+        return getInteger( PropertyPath.from( path ) );
+    }
+
+    public Iterable<Integer> getIntegers( final String name )
+    {
+        return getFilteredValues( name, Property::getInteger );
+    }
+
     // getting double
 
     public Double getDouble( final String name, final int index )

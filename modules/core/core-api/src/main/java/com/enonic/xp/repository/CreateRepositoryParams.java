@@ -1,10 +1,10 @@
 package com.enonic.xp.repository;
 
-import java.util.Objects;
-
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.security.acl.AccessControlList;
+
+import static java.util.Objects.requireNonNull;
 
 public final class CreateRepositoryParams
 {
@@ -111,7 +111,7 @@ public final class CreateRepositoryParams
 
         private void validate()
         {
-            Objects.requireNonNull( repositoryId, "repositoryId is required" );
+            requireNonNull( repositoryId, "repositoryId is required" );
         }
 
         public CreateRepositoryParams build()

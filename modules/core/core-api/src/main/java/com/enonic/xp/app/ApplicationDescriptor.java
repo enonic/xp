@@ -6,6 +6,8 @@ import com.enonic.xp.icon.Icon;
 import com.enonic.xp.schema.LocalizedText;
 import com.enonic.xp.util.GenericValue;
 
+import static java.util.Objects.requireNonNull;
+
 
 public final class ApplicationDescriptor
 {
@@ -31,7 +33,7 @@ public final class ApplicationDescriptor
 
     private ApplicationDescriptor( final Builder builder )
     {
-        this.key = Objects.requireNonNull( builder.key, "key cannot be null" );
+        this.key = requireNonNull( builder.key, "key cannot be null" );
         this.description = builder.description != null ? builder.description : "";
         this.descriptionI18nKey = builder.descriptionI18nKey;
         this.icon = builder.icon;

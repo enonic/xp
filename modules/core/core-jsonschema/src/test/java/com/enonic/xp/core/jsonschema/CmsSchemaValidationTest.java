@@ -15,7 +15,7 @@ class CmsSchemaValidationTest
     @BeforeAll
     static void initSchema()
     {
-        schema = schemaFor( "cms.schema.json" );
+        schema = schemaFor( "cms" );
     }
 
     @Test

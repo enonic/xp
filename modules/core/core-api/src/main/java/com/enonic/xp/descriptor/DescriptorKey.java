@@ -9,6 +9,8 @@ import org.jspecify.annotations.NullMarked;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.internal.NameValidator;
 
+import static java.util.Objects.requireNonNull;
+
 
 @NullMarked
 public final class DescriptorKey
@@ -36,8 +38,8 @@ public final class DescriptorKey
 
     private DescriptorKey( final ApplicationKey applicationKey, final String name )
     {
-        this.applicationKey = Objects.requireNonNull( applicationKey );
-        this.name = Objects.requireNonNull( name );
+        this.applicationKey = requireNonNull( applicationKey );
+        this.name = requireNonNull( name );
     }
 
     public ApplicationKey getApplicationKey()
@@ -79,7 +81,7 @@ public final class DescriptorKey
 
     public static DescriptorKey from( final String key )
     {
-        Objects.requireNonNull( key, "DescriptorKey cannot be null" );
+        requireNonNull( key, "DescriptorKey cannot be null" );
         final int index = key.indexOf( SEPARATOR );
         if ( index == -1 )
         {

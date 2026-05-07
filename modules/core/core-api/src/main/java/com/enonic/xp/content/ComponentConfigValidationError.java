@@ -7,6 +7,8 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.region.ComponentPath;
 
+import static java.util.Objects.requireNonNull;
+
 public final class ComponentConfigValidationError
     extends DataValidationError
 {
@@ -19,8 +21,8 @@ public final class ComponentConfigValidationError
                                     final List<Object> args )
     {
         super( propertyPath, errorCode, message, i18n, args );
-        this.applicationKey = Objects.requireNonNull( applicationKey );
-        this.componentPath = Objects.requireNonNull( componentPath );
+        this.applicationKey = requireNonNull( applicationKey );
+        this.componentPath = requireNonNull( componentPath );
     }
 
     public ApplicationKey getApplicationKey()

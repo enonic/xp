@@ -1,8 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
 import java.util.List;
-import java.util.Objects;
-
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentName;
@@ -16,6 +14,8 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
+
+import static java.util.Objects.requireNonNullElseGet;
 
 final class ValidateContentDataCommand
 {
@@ -42,7 +42,7 @@ final class ValidateContentDataCommand
             .createAttachments( builder.createAttachments )
             .page( builder.page );
         contentTypeName = builder.contentTypeName;
-        resultBuilder = Objects.requireNonNullElseGet( builder.validationErrorsBuilder, ValidationErrors::create );
+        resultBuilder = requireNonNullElseGet( builder.validationErrorsBuilder, ValidationErrors::create );
     }
 
     public static Builder create()

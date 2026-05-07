@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.TreeMap;
 
 import org.jspecify.annotations.NonNull;
@@ -19,6 +18,8 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import com.enonic.xp.security.IdProvider;
 import com.enonic.xp.web.websocket.WebSocketContext;
+
+import static java.util.Objects.requireNonNull;
 
 
 public class WebRequest
@@ -163,7 +164,7 @@ public class WebRequest
 
     public void setRawPath( final String rawPath )
     {
-        this.rawPath = Objects.requireNonNull( rawPath );
+        this.rawPath = requireNonNull( rawPath );
         final int endpointPathIndex = rawPath.indexOf( "/_/" );
         if ( endpointPathIndex > -1 )
         {

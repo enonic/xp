@@ -1,6 +1,6 @@
 package com.enonic.xp.blob;
 
-import java.util.Objects;
+import static java.util.Objects.requireNonNull;
 
 public final class SegmentLevel
 {
@@ -8,7 +8,7 @@ public final class SegmentLevel
 
     SegmentLevel( final String value )
     {
-        this.value = Objects.requireNonNull( value );
+        this.value = requireNonNull( value );
     }
 
     public static SegmentLevel from( final String value )

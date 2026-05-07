@@ -1,12 +1,11 @@
 package com.enonic.xp.site;
 
 import java.time.Instant;
-import java.util.Objects;
-
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.util.GenericValue;
 
+import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElse;
 
 public final class CmsDescriptor
@@ -23,7 +22,7 @@ public final class CmsDescriptor
 
     private CmsDescriptor( final Builder builder )
     {
-        this.applicationKey = Objects.requireNonNull( builder.applicationKey );
+        this.applicationKey = requireNonNull( builder.applicationKey );
         this.form = requireNonNullElse( builder.form, Form.empty() );
         this.mixinMappings = requireNonNullElse( builder.mixinMappings, MixinMappings.empty() );
         this.modifiedTime = builder.modifiedTime;

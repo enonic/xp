@@ -12,7 +12,11 @@ class SimpleCsvParserTest
     void parseLine()
     {
         assertEquals( List.of( "a", "b", "c" ), SimpleCsvParser.parseLine( "a,b,c" ) );
-        assertEquals( List.of( "Cache-Control: no-store, private", " X-Instance: \"jupiter\"" ),
+        assertEquals( List.of( "a", "b" ), SimpleCsvParser.parseLine( "a, b" ) );
+        assertEquals( List.of( "a", " b" ), SimpleCsvParser.parseLine( "a, \" b\"" ) );
+        assertEquals( List.of( "a", "b" ), SimpleCsvParser.parseLine( "  a  ,  b  " ) );
+        assertEquals( List.of( "hello world" ), SimpleCsvParser.parseLine( "  hello world  " ) );
+        assertEquals( List.of( "Cache-Control: no-store, private", "X-Instance: \"jupiter\"" ),
                       SimpleCsvParser.parseLine( "\"Cache-Control: no-store, private\", \"X-Instance: \"\"jupiter\"\"\"" ) );
     }
 }

@@ -6,11 +6,14 @@ import com.enonic.xp.resource.Resource;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 import com.enonic.xp.style.ImageStyle;
+import com.enonic.xp.style.Style;
 import com.enonic.xp.style.StyleDescriptor;
 
 public class StyleDescriptorMapper
     implements MapSerializable
 {
+    private static final String IMAGE_TYPE = "Image";
+
     private final StyleDescriptor descriptor;
 
     private final Resource resource;
@@ -25,25 +28,38 @@ public class StyleDescriptorMapper
     public void serialize( final MapGenerator gen )
     {
         gen.value( "application", descriptor.getApplicationKey() );
-        gen.value( "cssPath", descriptor.getCssPath() );
         gen.value( "modifiedTime", descriptor.getModifiedTime() );
         gen.value( "resource", resource.readString() );
 
         serializeElements( gen, descriptor.getElements() );
     }
 
-    private void serializeElements( final MapGenerator gen, final List<ImageStyle> elementStyles )
+    private void serializeElements( final MapGenerator gen, final List<Style> elementStyles )
     {
         if ( elementStyles != null )
         {
             gen.array( "elements" );
 
-            for ( final ImageStyle element : elementStyles )
+            for ( final Style element : elementStyles )
             {
                 gen.map();
 
-                gen.value( "displayName", element.getDisplayName() );
+                gen.value( "label", element.getLabel() );
                 gen.value( "name", element.getName() );
+
+                if ( element instanceof ImageStyle imageStyle )
+                {
+                    gen.value( "type", IMAGE_TYPE );
+                    gen.value( "aspectRatio", imageStyle.getAspectRatio() );
+                    gen.value( "filter", imageStyle.getFilter() );
+                }
+
+                if ( !element.getEditor().properties().isEmpty() )
+                {
+                    gen.map( "editor" );
+                    DynamicSchemaSerializer.serializeConfig( gen, element.getEditor() );
+                    gen.end();
+                }
 
                 gen.end();
             }

@@ -11,7 +11,6 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.Collectors;
@@ -62,6 +61,8 @@ import com.enonic.xp.repository.RepositoryIds;
 import com.enonic.xp.repository.RepositorySegmentUtils;
 import com.enonic.xp.security.SystemConstants;
 
+import static java.util.Objects.requireNonNullElse;
+
 public class ZipDumpReaderV8
     implements DumpReader
 {
@@ -73,7 +74,7 @@ public class ZipDumpReaderV8
 
     private ZipDumpReaderV8( final SystemLoadListener listener, final PathRef basePath, final ZipFile zipFile )
     {
-        this.listener = Objects.requireNonNullElse( listener, NoopSystemLoadListener.INSTANCE );
+        this.listener = requireNonNullElse( listener, NoopSystemLoadListener.INSTANCE );
         this.basePath = basePath;
         this.zipFile = zipFile;
     }

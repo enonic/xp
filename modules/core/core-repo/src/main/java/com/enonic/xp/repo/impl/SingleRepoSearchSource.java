@@ -1,13 +1,13 @@
 package com.enonic.xp.repo.impl;
 
-import java.util.Objects;
-
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.PrincipalKeys;
+
+import static java.util.Objects.requireNonNull;
 
 @NullMarked
 public class SingleRepoSearchSource
@@ -36,9 +36,9 @@ public class SingleRepoSearchSource
 
     private SingleRepoSearchSource( final Builder builder )
     {
-        repositoryId = Objects.requireNonNull( builder.repositoryId, "repositoryId is required in search-source" );
-        branch = Objects.requireNonNull( builder.branch, "branch is required in search-source" );
-        acl = Objects.requireNonNull( builder.acl, "acl is required in search-source" );
+        repositoryId = requireNonNull( builder.repositoryId, "repositoryId is required in search-source" );
+        branch = requireNonNull( builder.branch, "branch is required in search-source" );
+        acl = requireNonNull( builder.acl, "acl is required in search-source" );
     }
 
     public static SingleRepoSearchSource from( final InternalContext context )

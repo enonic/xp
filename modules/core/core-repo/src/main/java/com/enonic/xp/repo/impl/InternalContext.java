@@ -10,6 +10,9 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.PrincipalKeys;
 
+import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
+
 
 public class InternalContext
 {
@@ -27,7 +30,7 @@ public class InternalContext
     {
         this.repositoryId = builder.repositoryId;
         this.branch = builder.branch;
-        this.principalsKeys = Objects.requireNonNullElse( builder.principalsKeys, PrincipalKeys.empty() );
+        this.principalsKeys = requireNonNullElse( builder.principalsKeys, PrincipalKeys.empty() );
         this.searchPreference = builder.searchPreference;
         this.eventMetadata = builder.eventMetadata.build();
     }
@@ -163,8 +166,8 @@ public class InternalContext
 
         private void verify()
         {
-            Objects.requireNonNull( repositoryId, "repositoryId is required" );
-            Objects.requireNonNull( branch, "branch is required" );
+            requireNonNull( repositoryId, "repositoryId is required" );
+            requireNonNull( branch, "branch is required" );
         }
 
         public InternalContext build()

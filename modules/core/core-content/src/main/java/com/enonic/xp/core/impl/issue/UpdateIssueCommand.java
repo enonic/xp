@@ -1,7 +1,5 @@
 package com.enonic.xp.core.impl.issue;
 
-import java.util.Objects;
-
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.issue.serializer.IssueDataSerializer;
 import com.enonic.xp.core.internal.Millis;
@@ -17,6 +15,8 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.security.User;
+
+import static java.util.Objects.requireNonNullElseGet;
 
 public class UpdateIssueCommand
     extends AbstractIssueCommand
@@ -70,7 +70,7 @@ public class UpdateIssueCommand
 
     User getCurrentUser()
     {
-        return Objects.requireNonNullElseGet( ContextAccessor.current().getAuthInfo().getUser(), User::anonymous );
+        return requireNonNullElseGet( ContextAccessor.current().getAuthInfo().getUser(), User::anonymous );
     }
 
     public static Builder create()

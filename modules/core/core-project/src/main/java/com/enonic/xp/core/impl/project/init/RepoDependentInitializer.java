@@ -1,7 +1,5 @@
 package com.enonic.xp.core.impl.project.init;
 
-import java.util.Objects;
-
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -14,6 +12,8 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+
+import static java.util.Objects.requireNonNull;
 
 public abstract class RepoDependentInitializer
     extends ExternalInitializer
@@ -33,8 +33,8 @@ public abstract class RepoDependentInitializer
     {
         super( builder );
 
-        this.nodeService = Objects.requireNonNull( builder.nodeService );
-        this.repositoryId = Objects.requireNonNull( builder.repositoryId );
+        this.nodeService = requireNonNull( builder.nodeService );
+        this.repositoryId = requireNonNull( builder.repositoryId );
         this.accessControlList = builder.accessControlList;
     }
 

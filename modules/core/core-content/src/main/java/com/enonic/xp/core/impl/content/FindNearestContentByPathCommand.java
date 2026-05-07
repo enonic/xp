@@ -1,11 +1,12 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.Objects;
 import java.util.function.Predicate;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
+
+import static java.util.Objects.requireNonNull;
 
 public final class FindNearestContentByPathCommand
     extends AbstractContentCommand
@@ -93,8 +94,8 @@ public final class FindNearestContentByPathCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( contentPath, "contentPath must be set" );
-            Objects.requireNonNull( predicate, "predicate must be set" );
+            requireNonNull( contentPath, "contentPath must be set" );
+            requireNonNull( predicate, "predicate must be set" );
         }
 
         public FindNearestContentByPathCommand build()

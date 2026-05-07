@@ -1,9 +1,9 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.util.Objects;
-
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
+
+import static java.util.Objects.requireNonNull;
 
 public class GetNodeByIdCommand
     extends AbstractNodeCommand
@@ -46,7 +46,7 @@ public class GetNodeByIdCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( this.id, "id is required" );
+            requireNonNull( this.id, "id is required" );
         }
 
         public GetNodeByIdCommand build()

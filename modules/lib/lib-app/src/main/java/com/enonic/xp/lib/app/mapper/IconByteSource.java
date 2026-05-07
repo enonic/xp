@@ -2,14 +2,14 @@ package com.enonic.xp.lib.app.mapper;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Objects;
-
 import com.google.common.base.Optional;
 import com.google.common.io.ByteProcessor;
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 
 import com.enonic.xp.icon.Icon;
+
+import static java.util.Objects.requireNonNull;
 
 public final class IconByteSource
     extends ByteSource
@@ -18,7 +18,7 @@ public final class IconByteSource
 
     public IconByteSource( final Icon icon )
     {
-        this.icon = Objects.requireNonNull( icon );
+        this.icon = requireNonNull( icon );
     }
 
     @Override

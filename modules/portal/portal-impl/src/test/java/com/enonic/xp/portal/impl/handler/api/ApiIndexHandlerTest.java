@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -24,6 +26,7 @@ import com.enonic.xp.server.RunModeSupport;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
+import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.handler.WebHandlerChain;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -174,6 +177,54 @@ class ApiIndexHandlerTest
         assertEquals( "myapplication", apiResource.get( "application" ) );
         assertEquals( "myapi2", apiResource.get( "name" ) );
         assertEquals( List.of( RoleKeys.EVERYONE.toString() ), apiResource.get( "allowedPrincipals" ) );
+    }
+
+    @Test
+    void testDoHandle_managementConnector()
+        throws Exception
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );
+        final Application application = mock( Application.class );
+
+        when( application.getKey() ).thenReturn( applicationKey );
+        when( this.applicationService.getInstalledApplications() ).then( invocationOnMock -> Applications.from( application ) );
+
+        final ApiDescriptors apiDescriptors = ApiDescriptors.from( ApiDescriptor.create()
+                                                                       .key( DescriptorKey.from( applicationKey, "myapi-web" ) )
+                                                                       .allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) )
+                                                                       .mount( "web" )
+                                                                       .build(), ApiDescriptor.create()
+                                                                       .key( DescriptorKey.from( applicationKey, "myapi-management" ) )
+                                                                       .allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) )
+                                                                       .mount( "management" )
+                                                                       .build() );
+
+        when( this.apiDescriptorService.getByApplication( eq( applicationKey ) ) ).thenReturn( apiDescriptors );
+
+        universalApiHandlerRegistry.addApiHandler( request -> WebResponse.create().build(),
+                                                   Map.of( "key", "admin:extension", "title", "Display Name", "description",
+                                                           "Brief description", "documentationUrl", "https://docs.enonic.com", "mount",
+                                                           new String[]{"web", "management"}, "allowedPrincipals",
+                                                           RoleKeys.EVERYONE.toString() ) );
+
+        final HttpServletRequest rawRequest = mock( HttpServletRequest.class );
+        when( rawRequest.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.API_CONNECTOR );
+
+        final WebRequest webRequest = new WebRequest();
+        webRequest.setRawRequest( rawRequest );
+
+        final WebResponse webResponse =
+            this.handler.doHandle( webRequest, WebResponse.create().build(), mock( WebHandlerChain.class ) );
+
+        assertEquals( HttpStatus.OK, webResponse.getStatus() );
+        final Map<String, List<Map<String, Object>>> objectAsMap = (Map<String, List<Map<String, Object>>>) webResponse.getBody();
+        assertTrue( objectAsMap.containsKey( "resources" ) );
+
+        final List<Map<String, Object>> resources = objectAsMap.get( "resources" );
+        assertEquals( 2, resources.size() );
+
+        assertEquals( "admin:extension", resources.get( 0 ).get( "descriptor" ) );
+        assertEquals( "myapplication:myapi-management", resources.get( 1 ).get( "descriptor" ) );
     }
 
 }

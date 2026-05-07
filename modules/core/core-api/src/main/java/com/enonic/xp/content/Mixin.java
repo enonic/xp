@@ -6,6 +6,8 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.mixin.MixinName;
 
+import static java.util.Objects.requireNonNull;
+
 
 public final class Mixin
 {
@@ -15,8 +17,8 @@ public final class Mixin
 
     public Mixin( final MixinName name, final PropertyTree data )
     {
-        this.name = Objects.requireNonNull( name, "name cannot be null" );
-        this.data = Objects.requireNonNull( data, "data cannot be null" );
+        this.name = requireNonNull( name, "name cannot be null" );
+        this.data = requireNonNull( data, "data cannot be null" );
     }
 
     public PropertyTree getData()

@@ -9,6 +9,8 @@ import java.util.regex.Pattern;
 import com.enonic.xp.core.internal.NameValidator;
 import com.enonic.xp.node.NodePath;
 
+import static java.util.Objects.requireNonNull;
+
 
 public final class PrincipalKey
     implements Serializable
@@ -51,13 +53,13 @@ public final class PrincipalKey
     private PrincipalKey( final IdProviderKey idProviderKey, final PrincipalType type, final String id )
     {
         this.idProviderKey = idProviderKey;
-        this.type = Objects.requireNonNull( type );
-        this.id = Objects.requireNonNull( id );
+        this.type = requireNonNull( type );
+        this.id = requireNonNull( id );
     }
 
     public static PrincipalKey from( final String principalKey )
     {
-        switch ( Objects.requireNonNull( principalKey, "PrincipalKey cannot be null" ) )
+        switch ( requireNonNull( principalKey, "PrincipalKey cannot be null" ) )
         {
             case "user:system:anonymous":
                 return ANONYMOUS_PRINCIPAL;
@@ -171,13 +173,13 @@ public final class PrincipalKey
 
     public static PrincipalKey ofUser( final IdProviderKey idProvider, final String userId )
     {
-        return new PrincipalKey( Objects.requireNonNull( idProvider, "User idProvider cannot be null" ), PrincipalType.USER,
+        return new PrincipalKey( requireNonNull( idProvider, "User idProvider cannot be null" ), PrincipalType.USER,
                                  ID_VALIDATOR.withSubject( "User id" ).validate( userId ) );
     }
 
     public static PrincipalKey ofGroup( final IdProviderKey idProvider, final String groupId )
     {
-        return new PrincipalKey( Objects.requireNonNull( idProvider, "Group idProvider cannot be null" ), PrincipalType.GROUP,
+        return new PrincipalKey( requireNonNull( idProvider, "Group idProvider cannot be null" ), PrincipalType.GROUP,
                                  ID_VALIDATOR.withSubject( "Group id" ).validate( groupId ) );
     }
 

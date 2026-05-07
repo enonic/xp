@@ -1,7 +1,5 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.util.Objects;
-
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.FindNodesByParentResult;
@@ -20,6 +18,8 @@ import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
+
+import static java.util.Objects.requireNonNullElseGet;
 
 public class FindNodeIdsByParentCommand
     extends AbstractNodeCommand
@@ -45,7 +45,7 @@ public class FindNodeIdsByParentCommand
         super( builder );
         parentPath = builder.parentPath;
         parentId = builder.parentId;
-        queryFilters = Objects.requireNonNullElseGet( builder.queryFilters, Filters::empty );
+        queryFilters = requireNonNullElseGet( builder.queryFilters, Filters::empty );
         size = builder.size;
         from = builder.from;
         childOrder = builder.childOrder;

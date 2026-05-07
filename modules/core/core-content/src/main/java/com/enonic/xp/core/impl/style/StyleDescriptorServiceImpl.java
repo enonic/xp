@@ -23,9 +23,9 @@ import com.enonic.xp.style.StyleDescriptors;
 public class StyleDescriptorServiceImpl
     implements StyleDescriptorService
 {
-    private static final String IMAGE_DESCRIPTOR_PATH_YAML = "cms/styles/image.yaml";
+    private static final String STYLE_DESCRIPTOR_PATH_YAML = "cms/style/style.yaml";
 
-    private static final String IMAGE_DESCRIPTOR_PATH_YML = "cms/styles/image.yml";
+    private static final String STYLE_DESCRIPTOR_PATH_YML = "cms/style/style.yml";
 
     private ResourceService resourceService;
 
@@ -73,12 +73,12 @@ public class StyleDescriptorServiceImpl
 
     private ResourceKey toResourceKey( final ApplicationKey key )
     {
-        final ResourceKey yamlKey = ResourceKey.from( key, IMAGE_DESCRIPTOR_PATH_YAML );
+        final ResourceKey yamlKey = ResourceKey.from( key, STYLE_DESCRIPTOR_PATH_YAML );
         if ( resourceService.getResource( yamlKey ).exists() )
         {
             return yamlKey;
         }
-        return ResourceKey.from( key, IMAGE_DESCRIPTOR_PATH_YML );
+        return ResourceKey.from( key, STYLE_DESCRIPTOR_PATH_YML );
     }
 
     @Reference

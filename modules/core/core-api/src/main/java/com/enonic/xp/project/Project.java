@@ -1,13 +1,13 @@
 package com.enonic.xp.project;
 
 import java.util.List;
-import java.util.Objects;
-
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
+
+import static java.util.Objects.requireNonNull;
 
 
 public final class Project
@@ -136,7 +136,7 @@ public final class Project
 
         private void validate()
         {
-            Objects.requireNonNull( name, "name is required" );
+            requireNonNull( name, "name is required" );
         }
 
 

@@ -1,0 +1,7 @@
+kind: "Style"
+
+styles:
+  - name: "editor-width-auto"
+    label:
+      text: "Override ${width}"
+      i18n: "editor-width-auto-text"

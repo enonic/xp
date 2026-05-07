@@ -19,6 +19,7 @@ import {
     AggregationsToAggregationResults,
     Attachment,
     ByteSource,
+    ConfigValue,
     Content,
     ContentComponent,
     ContentComponentConstraint,
@@ -41,7 +42,6 @@ import {
     ValidationError,
     Workflow,
     WorkflowState,
-    ConfigValue,
 } from '@enonic-types/core';
 
 const isString = (value: unknown): value is string => value instanceof String || typeof value === 'string';
@@ -176,20 +176,19 @@ export interface PatchableContent<
     createdTime: string;
     modifier: UserKey;
     modifiedTime: string;
-    publishInfo: PublishInfo;
+    publish: PublishInfo;
     processedReferences: string[];
-    workflowInfo: Workflow;
+    workflow: Workflow;
     manualOrderValue: number;
     inherit: ContentInheritValue[];
     variantOf: string;
-    modifyAttachments: Attachment;
-    removeAttachments: string[];
-    createAttachments: AddAttachmentParam[];
+    attachments: Attachments;
     validationErrors: ValidationError[];
     type: Type;
     childOrder: string;
     originProject: string;
     originalParentPath: string;
+    originalName: string;
     archivedTime: string;
     archivedBy: UserKey;
 }
@@ -637,7 +636,9 @@ interface CreateContentHandler {
  * @param {string} [params.language] The language tag representing the content’s locale.
  * @param {string} [params.childOrder] Default ordering of children when doing getChildren if no order is given in query
  * @param {object} params.data Actual content data.
+ * @param {object} [params.page] Page configuration to use.
  * @param {object} [params.x] eXtra data to use.
+ * @param {function} [params.idGenerator] Function used to generate the id-suffix appended to the content name.
  * @param {object} [params.workflow] Workflow information to use. Default has state READY and empty check list.
  *
  * @returns {object} Content created as JSON.
@@ -725,11 +726,12 @@ interface QueryContentHandler {
  * @param {object} params JSON with the parameters.
  * @param {number} [params.start=0] Start index (used for paging).
  * @param {number} [params.count=10] Number of contents to fetch.
- * @param {string|object} params.query Query expression.
+ * @param {string|object} [params.query] Query expression.
  * @param {object|object[]} [params.filters] Filters to apply to query result
  * @param {string|object|object[]} [params.sort] Sorting expression.
  * @param {object} [params.aggregations] Aggregations expression.
  * @param {string[]} [params.contentTypes] Content types to filter on.
+ * @param {object} [params.highlight] Highlight expression.
  *
  * @returns {object} Result of query.
  */
@@ -767,10 +769,31 @@ export interface UpdateContentParams<Data, Type extends string> {
     requireValid?: boolean;
 }
 
+export interface ModifyAttachmentParam {
+    name: string;
+    label?: string;
+    mimeType?: string;
+    sha512?: string;
+    size?: number;
+}
+
+export interface CreateAttachmentParam {
+    name: string;
+    label?: string;
+    mimeType?: string;
+    data?: ByteSource | string;
+}
+
+export interface PatchAttachmentsParam {
+    createAttachments?: CreateAttachmentParam[];
+    modifyAttachments?: ModifyAttachmentParam[];
+    removeAttachments?: string[];
+}
+
 export interface PatchContentParams {
     key: string;
-    patcher: (v: PatchableContent) => PatchableContent;
-    attachments?: AddAttachmentParam[];
+    patcher: (v: PatchableContent) => PatchableContent | void;
+    attachments?: PatchAttachmentsParam;
     branches?: string[];
     skipSync?: boolean;
 }
@@ -880,6 +903,10 @@ export function update<Data extends Record<string, unknown> = Record<string, unk
  * @param {object} params JSON with the parameters.
  * @param {string} params.key Path or id to the content.
  * @param {function} params.patcher Patcher callback function.
+ * @param {object} [params.attachments] Attachments to create, modify or remove on the patched content.
+ * @param {object[]} [params.attachments.createAttachments] Attachments to add to the content.
+ * @param {object[]} [params.attachments.modifyAttachments] Existing attachments to modify on the content.
+ * @param {string[]} [params.attachments.removeAttachments] Names of attachments to remove from the content.
  * @param {boolean} [params.skipSync=false] If true, the content will not be immediately synced to the child projects.
  * @param {string[]} [params.branches=[]] List of branches to patch the content in. If not specified, the context's branch is used.
  *
@@ -908,7 +935,6 @@ export function patch(params: PatchContentParams): PatchContentResult {
 
 export interface EditableContentMetadata {
     source: Content;
-    language?: string;
     owner?: string;
     variantOf?: string;
 }
@@ -931,7 +957,7 @@ interface UpdateMetadataHandler {
 }
 
 /**
- * This function updates metadata (language, owner, and variantOf) for a content.
+ * This function updates metadata (owner and variantOf) for a content.
  * The update is applied to both master and draft branches.
  *
  * @example-ref examples/content/updateMetadata.js
@@ -1001,7 +1027,6 @@ export function updateWorkflow(params: UpdateWorkflowParams): UpdateWorkflowResu
 export interface PublishContentParams {
     keys: string[];
     schedule?: Schedule;
-    includeChildren?: boolean;
     /**
      * @deprecated Use excludeDescendantsOf instead.
      */
@@ -1110,7 +1135,8 @@ interface ContentExistsHandler {
  *
  * @example-ref examples/content/exists.js
  *
- * @param {string} params.key content id.
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key Path or id of the content.
  *
  * @returns {boolean} True if exist, false otherwise.
  */
@@ -1127,9 +1153,13 @@ export function exists(params: ContentExistsParams): boolean {
 export interface CreateMediaParams {
     name: string;
     parentPath?: string;
-    mimeType?: string;
     focalX?: number;
     focalY?: number;
+    artist?: string | string[];
+    tags?: string | string[];
+    caption?: string;
+    altText?: string;
+    copyright?: string;
     data: ByteSource;
     idGenerator?: (v: string) => string;
 }
@@ -1139,11 +1169,19 @@ interface CreateMediaHandler {
 
     setParentPath(value: string | null): void;
 
-    setMimeType(value: string | null): void;
-
     setFocalX(value: number): void;
 
     setFocalY(value: number): void;
+
+    setArtist(value: string[]): void;
+
+    setTags(value: string[]): void;
+
+    setCaption(value: string | null): void;
+
+    setAltText(value: string | null): void;
+
+    setCopyright(value: string | null): void;
 
     setData(value: ByteSource | null): void;
 
@@ -1160,9 +1198,13 @@ interface CreateMediaHandler {
  * @param {object} params JSON with the parameters.
  * @param {string} params.name Name of content.
  * @param {string} [params.parentPath=/] Path to place content under.
- * @param {string} [params.mimeType] Mime-type of the data.
- * @param {number} [params.focalX=0.5] Focal point for X axis (if it's an image).
- * @param {number} [params.focalY=0.5] Focal point for Y axis (if it's an image).
+ * @param {number} [params.focalX] Focal point for X axis (if it's an image).
+ * @param {number} [params.focalY] Focal point for Y axis (if it's an image).
+ * @param {string|string[]} [params.artist] Artist of the media.
+ * @param {string|string[]} [params.tags] Tags of the media.
+ * @param {string} [params.caption] Caption of the media.
+ * @param {string} [params.altText] Alt text of the media.
+ * @param {string} [params.copyright] Copyright of the media.
  * @param  params.data Data (as stream) to use.
  *
  * @returns {object} Returns the created media content.
@@ -1174,15 +1216,23 @@ export function createMedia<Data = Record<string, unknown>, Type extends string 
 
     bean.setName(name);
     bean.setParentPath(__.nullOrValue(params.parentPath));
-    bean.setMimeType(__.nullOrValue(params.mimeType));
     bean.setData(__.nullOrValue(params.data));
     bean.setIdGenerator(__.nullOrValue(params.idGenerator));
+    bean.setCaption(__.nullOrValue(params.caption));
+    bean.setAltText(__.nullOrValue(params.altText));
+    bean.setCopyright(__.nullOrValue(params.copyright));
 
-    if (params.focalX) {
+    if (params.focalX != null) {
         bean.setFocalX(params.focalX);
     }
-    if (params.focalY) {
+    if (params.focalY != null) {
         bean.setFocalY(params.focalY);
+    }
+    if (params.artist != null) {
+        bean.setArtist(([] as string[]).concat(params.artist));
+    }
+    if (params.tags != null) {
+        bean.setTags(([] as string[]).concat(params.tags));
     }
 
     return __.toNativeObject(bean.execute<Data, Type>());
@@ -1254,7 +1304,7 @@ export function archive(params: ArchiveContentParams): string[] {
 
 export interface RestoreContentParams {
     content: string;
-    path: string;
+    path?: string;
 }
 
 interface RestoreContentHandler {
@@ -1272,7 +1322,7 @@ interface RestoreContentHandler {
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.content Path or id of the content to be restored.
- * @param {string} params.path Path of parent for restored content.
+ * @param {string} [params.path] Path of parent for restored content.
  *
  * @returns {string[]} List with ids of the contents that were restored.
  */
@@ -1333,11 +1383,11 @@ interface ApplyPermissionsHandler {
  *
  * @param {object} params JSON parameters.
  * @param {string} params.key Path or id of the content.
- * @param {string} [params.scope] Scope of operation. Possible values are 'SINGE', 'TREE' or 'SUBTREE'. Default is 'SINGLE'.
+ * @param {string} [params.scope] Scope of operation. Possible values are 'SINGLE', 'TREE' or 'SUBTREE'. Default is 'SINGLE'.
  * @param {array} [params.permissions] Array of permissions. Cannot be used together with addPermissions and removePermissions.
  * @param {string} params.permissions.principal Principal key.
- * @param {array} params.permissions.allow Allowed permissions.
- * @param {array} params.permissions.deny Denied permissions.
+ * @param {array} [params.permissions.allow] Allowed permissions.
+ * @param {array} [params.permissions.deny] Denied permissions.
  * @param {array} [params.addPermissions] Array of permissions to add. Cannot be used together with permissions.
  * @param {array} [params.removePermissions] Array of permissions to remove. Cannot be used together with permissions.
  *
@@ -1409,6 +1459,7 @@ export interface Icon {
  * @property {boolean} abstract Whether or not content of this type may be instantiated.
  * @property {boolean} final Whether or not it may be used as super type of other content types.
  * @property {boolean} allowChildContent Whether or not allow creating child items on content of this type.
+ * @property {string} modifiedTime Modified time of the content type.
  * @property {object} [icon] Icon of the content type.
  * @property {object} [icon.data] Stream with the binary data for the icon.
  * @property {string} [icon.mimeType] Mime type of the icon image.
@@ -1443,7 +1494,7 @@ interface ContentTypeHandler {
  *
  * @example-ref examples/content/getType.js
  *
- * @param name Name of the content type, as 'app:name' (e.g. 'com.enonic.myapp:article').
+ * @param {string} name Name of the content type, as 'app:name' (e.g. 'com.enonic.myapp:article').
  * @returns {ContentType} The content type object if found, or null otherwise. See ContentType type definition below.
  */
 export function getType(name: string): ContentType | null {
@@ -1479,7 +1530,7 @@ interface GetOutboundDependenciesHandler {
  *
  * @param {object} params JSON parameters.
  * @param {string} params.key Path or id of the content.
- * @returns {object} Content Ids.
+ * @returns {string[]} List of content ids.
  */
 export function getOutboundDependencies(params: GetOutboundDependenciesParams): string[] {
     const key = checkRequired(params, 'key');
@@ -1541,9 +1592,7 @@ export interface ModifyMediaParams {
     copyright?: string;
     focalX?: number;
     focalY?: number;
-    mimeType?: string;
     tags?: string | string[];
-    workflow?: Workflow;
 }
 
 export interface UpdateMediaParams {
@@ -1555,9 +1604,7 @@ export interface UpdateMediaParams {
     copyright?: string;
     focalX?: number;
     focalY?: number;
-    mimeType?: string;
     tags?: string | string[];
-    workflow?: Workflow;
 }
 
 /**
@@ -1579,8 +1626,6 @@ interface ModifyMediaHandler {
     setCaption(value: string | null): void;
 
     setCopyright(value: string | null): void;
-
-    setMimeType(value: string | null): void;
 
     setTags(value: string[]): void;
 
@@ -1604,8 +1649,6 @@ interface UpdateMediaHandler {
 
     setCopyright(value: string | null): void;
 
-    setMimeType(value: string | null): void;
-
     setTags(value: string[]): void;
 
     execute<Data, Type extends string>(): Content<Data, Type>;
@@ -1619,14 +1662,12 @@ interface UpdateMediaHandler {
  * @param {string} params.key Path or id to the content.
  * @param {string} params.name Name to the content.
  * @param {function} params.data Data (as stream) to use.
- * @param {string} [params.mimeType] Mime-type of the data.
  * @param {string|string[]} [params.artist] Artist to the content.
  * @param {string} [params.caption] Caption to the content.
  * @param {string} [params.copyright] Copyright to the content.
  * @param {string|string[]} [params.tags] Tags to the content.
- * @param {object} [params.workflow] Workflow information to use. Default has state READY and empty check list.
- * @param {number} [params.focalX=0.5] Focal point for X axis (if it's an image).
- * @param {number} [params.focalY=0.5] Focal point for Y axis (if it's an image).
+ * @param {number} [params.focalX] Focal point for X axis (if it's an image).
+ * @param {number} [params.focalY] Focal point for Y axis (if it's an image).
  *
  * @returns {object} Modified content as JSON.
  */
@@ -1636,7 +1677,6 @@ export function modifyMedia<Data = Record<string, unknown>, Type extends string 
     checkRequiredString(params, 'name');
     checkOptionalString(params, 'caption');
     checkOptionalString(params, 'copyright');
-    checkOptionalString(params, 'mimeType');
     checkOptionalNumber(params, 'focalX');
     checkOptionalNumber(params, 'focalY');
 
@@ -1645,10 +1685,8 @@ export function modifyMedia<Data = Record<string, unknown>, Type extends string 
         name,
         caption,
         copyright,
-        mimeType,
         focalX,
         focalY,
-        workflow,
         artist = [],
         tags = [],
     } = params;
@@ -1660,7 +1698,6 @@ export function modifyMedia<Data = Record<string, unknown>, Type extends string 
     bean.setData(data);
     bean.setCaption(__.nullOrValue(caption));
     bean.setCopyright(__.nullOrValue(copyright));
-    bean.setMimeType(__.nullOrValue(mimeType));
     bean.setArtist(([] as string[]).concat(artist));
     bean.setTags(([] as string[]).concat(tags));
 
@@ -1682,14 +1719,12 @@ export function modifyMedia<Data = Record<string, unknown>, Type extends string 
  * @param {string} params.key Path or id to the content.
  * @param {string} params.name Name to the content.
  * @param {function} params.data Data (as stream) to use.
- * @param {string} [params.mimeType] Mime-type of the data.
  * @param {string|string[]} [params.artist] Artist to the content.
  * @param {string} [params.caption] Caption to the content.
  * @param {string} [params.copyright] Copyright to the content.
  * @param {string|string[]} [params.tags] Tags to the content.
- * @param {object} [params.workflow] Workflow information to use. Default has state READY and empty check list.
- * @param {number} [params.focalX=0.5] Focal point for X axis (if it's an image).
- * @param {number} [params.focalY=0.5] Focal point for Y axis (if it's an image).
+ * @param {number} [params.focalX] Focal point for X axis (if it's an image).
+ * @param {number} [params.focalY] Focal point for Y axis (if it's an image).
  *
  * @returns {object} Modified content as JSON.
  */
@@ -1699,7 +1734,6 @@ export function updateMedia<Data = Record<string, unknown>, Type extends string 
     checkRequiredString(params, 'name');
     checkOptionalString(params, 'caption');
     checkOptionalString(params, 'copyright');
-    checkOptionalString(params, 'mimeType');
     checkOptionalNumber(params, 'focalX');
     checkOptionalNumber(params, 'focalY');
 
@@ -1708,10 +1742,8 @@ export function updateMedia<Data = Record<string, unknown>, Type extends string 
         name,
         caption,
         copyright,
-        mimeType,
         focalX,
         focalY,
-        workflow,
         artist = [],
         tags = [],
     } = params;
@@ -1723,7 +1755,6 @@ export function updateMedia<Data = Record<string, unknown>, Type extends string 
     bean.setData(data);
     bean.setCaption(__.nullOrValue(caption));
     bean.setCopyright(__.nullOrValue(copyright));
-    bean.setMimeType(__.nullOrValue(mimeType));
     bean.setArtist(([] as string[]).concat(artist));
     bean.setTags(([] as string[]).concat(tags));
 

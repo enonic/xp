@@ -1,8 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch;
 
 import java.util.List;
-import java.util.Objects;
-
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
@@ -17,6 +15,9 @@ import com.enonic.xp.query.highlight.constants.TagsSchema;
 import com.enonic.xp.repo.impl.SearchPreference;
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticHighlightQuery;
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
+
+import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
 
 public class SearchRequestBuilderFactory
 {
@@ -76,7 +77,7 @@ public class SearchRequestBuilderFactory
             .setQuery( query.getQuery() )
             .setPostFilter( query.getFilter() )
             .setFrom( query.getFrom() )
-            .setPreference( Objects.requireNonNullElse( query.getSearchPreference(), SearchPreference.LOCAL ).getName() );
+            .setPreference( requireNonNullElse( query.getSearchPreference(), SearchPreference.LOCAL ).getName() );
 
         if ( query.getHighlight() != null )
         {
@@ -173,8 +174,8 @@ public class SearchRequestBuilderFactory
 
         private void validate()
         {
-            Objects.requireNonNull( this.client );
-            Objects.requireNonNull( this.query );
+            requireNonNull( this.client );
+            requireNonNull( this.query );
         }
 
         public SearchRequestBuilderFactory build()

@@ -3,13 +3,14 @@ package com.enonic.xp.event;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.convert.Converters;
+
+import static java.util.Objects.requireNonNull;
 
 public final class Event
     implements Serializable
@@ -216,7 +217,7 @@ public final class Event
 
         private void validate()
         {
-            Objects.requireNonNull( type, "type is required" );
+            requireNonNull( type, "type is required" );
         }
 
 

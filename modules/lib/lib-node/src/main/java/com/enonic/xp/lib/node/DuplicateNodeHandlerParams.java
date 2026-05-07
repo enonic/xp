@@ -1,7 +1,5 @@
 package com.enonic.xp.lib.node;
 
-import java.util.Objects;
-
 import com.enonic.xp.lib.common.PropertyTreeMapper;
 import com.enonic.xp.lib.value.ScriptValueTranslator;
 import com.enonic.xp.node.NodeDataProcessor;
@@ -9,6 +7,8 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.script.ScriptValue;
+
+import static java.util.Objects.requireNonNull;
 
 public class DuplicateNodeHandlerParams
 {
@@ -26,7 +26,7 @@ public class DuplicateNodeHandlerParams
 
     public void setNodeId( final String nodeId )
     {
-        this.nodeId = NodeId.from( Objects.requireNonNull( nodeId ) );
+        this.nodeId = NodeId.from( requireNonNull( nodeId ) );
     }
 
     public void setName( final String name )

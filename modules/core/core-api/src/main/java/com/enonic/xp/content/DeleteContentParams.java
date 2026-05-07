@@ -1,6 +1,6 @@
 package com.enonic.xp.content;
 
-import java.util.Objects;
+import static java.util.Objects.requireNonNull;
 
 
 public final class DeleteContentParams
@@ -54,7 +54,7 @@ public final class DeleteContentParams
 
         public DeleteContentParams build()
         {
-            Objects.requireNonNull( this.contentPath, "contentPath is required" );
+            requireNonNull( this.contentPath, "contentPath is required" );
             return new DeleteContentParams( this );
         }
     }

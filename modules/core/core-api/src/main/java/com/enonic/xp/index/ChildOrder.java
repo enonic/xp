@@ -19,8 +19,6 @@ public final class ChildOrder
 {
     private static final OrderExpr DEFAULT_ORDER = FieldOrderExpr.create( NodeIndexPath.TIMESTAMP, OrderExpr.Direction.DESC );
 
-    private static final OrderExpr REVERSE_DEFAULT_ORDER = FieldOrderExpr.create( NodeIndexPath.TIMESTAMP, OrderExpr.Direction.ASC );
-
     private static final FieldOrderExpr MANUAL_ORDER = FieldOrderExpr.create( NodeIndexPath.MANUAL_ORDER_VALUE, OrderExpr.Direction.DESC );
 
     private static final FieldOrderExpr PATH_ASC = FieldOrderExpr.create( NodeIndexPath.PATH, OrderExpr.Direction.ASC );
@@ -33,9 +31,6 @@ public final class ChildOrder
 
     private static final FieldOrderExpr PUBLISH_DESC = FieldOrderExpr.create( ContentIndexPath.PUBLISH_FIRST, OrderExpr.Direction.DESC );
 
-    private static final FieldOrderExpr MANUAL_ORDER_REVERSE =
-        FieldOrderExpr.create( NodeIndexPath.MANUAL_ORDER_VALUE, OrderExpr.Direction.ASC );
-
     private final OrderExpressions orderExpressions;
 
     private ChildOrder( final Builder builder )
@@ -46,11 +41,6 @@ public final class ChildOrder
     public static ChildOrder manualOrder()
     {
         return ChildOrder.create().add( MANUAL_ORDER ).add( DEFAULT_ORDER ).build();
-    }
-
-    public static ChildOrder reverseManualOrder()
-    {
-        return ChildOrder.create().add( MANUAL_ORDER_REVERSE ).add( REVERSE_DEFAULT_ORDER ).build();
     }
 
     public static ChildOrder defaultOrder()
@@ -107,10 +97,9 @@ public final class ChildOrder
 
         final OrderExpr orderExpr = this.orderExpressions.iterator().next();
 
-        if ( orderExpr instanceof FieldOrderExpr )
+        if ( orderExpr instanceof final FieldOrderExpr fieldOrderExpr )
         {
-            final FieldOrderExpr fieldOrderExpr = (FieldOrderExpr) orderExpr;
-            return fieldOrderExpr.getField().getFieldPath().equalsIgnoreCase( MANUAL_ORDER.getField().getFieldPath() );
+            return fieldOrderExpr.getField().getIndexPath().equals( MANUAL_ORDER.getField().getIndexPath() );
         }
 
         return false;

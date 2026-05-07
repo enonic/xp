@@ -1,8 +1,8 @@
 package com.enonic.xp.portal.url;
 
-import java.util.Objects;
-
 import com.google.common.base.MoreObjects;
+
+import static java.util.Objects.requireNonNullElse;
 
 
 public final class BaseUrlParams
@@ -19,7 +19,7 @@ public final class BaseUrlParams
 
     private BaseUrlParams( final Builder builder )
     {
-        this.urlType = Objects.requireNonNullElse( builder.urlType, UrlTypeConstants.SERVER_RELATIVE );
+        this.urlType = requireNonNullElse( builder.urlType, UrlTypeConstants.SERVER_RELATIVE );
         this.projectName = builder.projectName;
         this.branch = builder.branch;
         this.id = builder.id;

@@ -1,12 +1,12 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.util.Objects;
-
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repo.impl.InternalContext;
+
+import static java.util.Objects.requireNonNull;
 
 public class GetNodeByIdAndVersionIdCommand
     extends AbstractNodeCommand
@@ -69,8 +69,8 @@ public class GetNodeByIdAndVersionIdCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( this.nodeId, "nodeId is required" );
-            Objects.requireNonNull( this.versionId, "versionId is required" );
+            requireNonNull( this.nodeId, "nodeId is required" );
+            requireNonNull( this.versionId, "versionId is required" );
         }
 
         public GetNodeByIdAndVersionIdCommand build()

@@ -1,7 +1,6 @@
 package com.enonic.xp.lib.content;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -10,6 +9,8 @@ import com.enonic.xp.content.ResetContentInheritParams;
 import com.enonic.xp.content.SyncContentService;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.script.bean.BeanContext;
+
+import static java.util.Objects.requireNonNull;
 
 public class ResetInheritanceHandler
     extends BaseContextHandler
@@ -61,8 +62,8 @@ public class ResetInheritanceHandler
 
     private void validate()
     {
-        Objects.requireNonNull( key, "key is required" );
-        Objects.requireNonNull( projectName, "projectName is required" );
-        Objects.requireNonNull( inherit, "inherit is required" );
+        requireNonNull( key, "key is required" );
+        requireNonNull( projectName, "projectName is required" );
+        requireNonNull( inherit, "inherit is required" );
     }
 }

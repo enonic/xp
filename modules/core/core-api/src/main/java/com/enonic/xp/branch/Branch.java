@@ -2,10 +2,11 @@ package com.enonic.xp.branch;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Objects;
 import java.util.regex.Pattern;
 
 import com.enonic.xp.core.internal.NameValidator;
+
+import static java.util.Objects.requireNonNull;
 
 
 public final class Branch
@@ -27,12 +28,12 @@ public final class Branch
 
     private Branch( final String value )
     {
-        this.value = Objects.requireNonNull( value );
+        this.value = requireNonNull( value );
     }
 
     public static Branch from( final String name )
     {
-        return switch ( Objects.requireNonNull( name, "Branch cannot be null" ) )
+        return switch ( requireNonNull( name, "Branch cannot be null" ) )
         {
             case "master" -> MASTER;
             case "draft" -> DRAFT;

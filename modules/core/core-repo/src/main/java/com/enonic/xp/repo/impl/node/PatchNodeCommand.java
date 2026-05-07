@@ -1,7 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
 import java.util.Map;
-import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
@@ -9,8 +8,8 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.internal.Millis;
-import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.AttachedBinaries;
+import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.EditableNode;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
@@ -27,6 +26,9 @@ import com.enonic.xp.repo.impl.branch.storage.NodeFactory;
 import com.enonic.xp.repo.impl.storage.NodeVersionData;
 import com.enonic.xp.repo.impl.storage.StoreNodeParams;
 import com.enonic.xp.security.acl.Permission;
+
+import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
 
 public final class PatchNodeCommand
     extends AbstractNodeCommand
@@ -65,7 +67,7 @@ public final class PatchNodeCommand
         final Node persistedNode = params.getId() != null ? doGetById( params.getId() ) : doGetByPath( params.getPath() );
         if ( persistedNode == null )
         {
-            throw new NodeNotFoundException( "Node not found: " + Objects.requireNonNullElse( params.getId(), params.getPath() ) );
+            throw new NodeNotFoundException( "Node not found: " + requireNonNullElse( params.getId(), params.getPath() ) );
         }
 
         this.results.nodeId( persistedNode.id() );
@@ -139,10 +141,10 @@ public final class PatchNodeCommand
             {
                 final Node updatedNode = Node.create( editedNode ).timestamp( Millis.now() ).attachedBinaries( updatedBinaries ).build();
                 final Attributes resolvedAttributes =
-                    resolveVersionAttributes( params.getVersionAttributesResolver(), originalNode, updatedNode, internalContext.getBranch() );
+                    resolveVersionAttributes( params.getVersionAttributesResolver(), originalNode, updatedNode, internalContext.getBranch(),
+                                              activeNodeVersion.getAttributes() );
                 final NodeVersionData storedData =
-                    this.nodeStorageService.store( StoreNodeParams.newVersion( updatedNode, resolvedAttributes ),
-                                                   internalContext );
+                    this.nodeStorageService.store( StoreNodeParams.newVersion( updatedNode, resolvedAttributes ), internalContext );
                 results.addResult( internalContext.getBranch(), storedData.node() );
                 patchedVersionsCache.put( nodeVersionId, internalContext.getBranch(), storedData.version(), storedData.node() );
             }
@@ -190,7 +192,7 @@ public final class PatchNodeCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( params, "params cannot be null" );
+            requireNonNull( params, "params cannot be null" );
             Preconditions.checkArgument( this.params.getBranches().getSize() <= 1 || this.params.getPath() == null,
                                          "Only one branch is allowed with path" );
         }

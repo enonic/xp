@@ -6,6 +6,8 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.data.PropertyTree;
 
+import static java.util.Objects.requireNonNull;
+
 
 public final class CreateFragmentParams
 {
@@ -125,9 +127,9 @@ public final class CreateFragmentParams
 
         private void validate()
         {
-            Objects.requireNonNull( parentPath, "parentPath is required" );
-            Objects.requireNonNull( component, "component is required" );
-            Objects.requireNonNull( workflowInfo, "workflowInfo is required" );
+            requireNonNull( parentPath, "parentPath is required" );
+            requireNonNull( component, "component is required" );
+            requireNonNull( workflowInfo, "workflowInfo is required" );
         }
 
         public CreateFragmentParams build()

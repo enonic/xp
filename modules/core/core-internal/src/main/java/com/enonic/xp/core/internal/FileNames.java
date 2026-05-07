@@ -4,10 +4,11 @@ import java.nio.charset.StandardCharsets;
 import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * Collection of utility methods for file names
@@ -54,7 +55,7 @@ public class FileNames
      */
     public static boolean isSafeFileName( final String fileName )
     {
-        Objects.requireNonNull( fileName );
+        requireNonNull( fileName );
 
         final int length = fileName.length();
         if ( length == 0 || length > MAX_LENGTH )
@@ -122,5 +123,35 @@ public class FileNames
     private static boolean charIsInvisible( final int c )
     {
         return Character.isWhitespace( c ) || Arrays.binarySearch( INVISIBLE_CHARACTER_TYPES, Character.getType( c ) ) >= 0;
+    }
+
+    /**
+     * Tests whether the given file name ends with any of the specified suffixes, ignoring case.
+     * Matching is a plain suffix comparison and does not enforce a preceding {@code '.'} separator,
+     * so callers typically pass the bare extension (e.g. {@code "jpg"}, {@code "png"}).
+     *
+     * @param filename file name to test
+     * @param ext      suffixes to match against
+     * @return {@code true} if {@code filename} ends with any of {@code ext} (case-insensitive);
+     * {@code false} if none match or {@code ext} is empty
+     */
+    public static boolean isAnyOfExtensions( final String filename, final String... ext )
+    {
+        for ( String s : ext )
+        {
+            if ( endsWithIgnoreCase( filename, s ) )
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * MacOS and Windows are case-insensitive, so we compare ignoring case.
+     */
+    private static boolean endsWithIgnoreCase( String str, String suffix )
+    {
+        return str.regionMatches( true, str.length() - suffix.length(), suffix, 0, suffix.length() );
     }
 }

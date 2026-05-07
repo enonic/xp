@@ -1,8 +1,8 @@
 package com.enonic.xp.security;
 
-import java.util.Objects;
-
 import com.google.common.base.Preconditions;
+
+import static java.util.Objects.requireNonNull;
 
 
 public final class UpdateGroupParams
@@ -17,7 +17,7 @@ public final class UpdateGroupParams
 
     private UpdateGroupParams( final Builder builder )
     {
-        this.key = Objects.requireNonNull( builder.principalKey, "groupKey is required for a group" );
+        this.key = requireNonNull( builder.principalKey, "groupKey is required for a group" );
         this.displayName = builder.displayName;
         this.editor = builder.editor;
         this.description = builder.description;

@@ -32,6 +32,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.RefreshMode;
+import com.enonic.xp.node.VersionAttributesResolver;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.vfs.VirtualFile;
 import com.enonic.xp.vfs.VirtualFilePath;
@@ -68,6 +69,8 @@ public final class NodeImporter
 
     private final NodeImportListener nodeImportListener;
 
+    private final VersionAttributesResolver versionAttributesResolver;
+
     private NodeImporter( final Builder builder )
     {
         this.nodeService = builder.nodeService;
@@ -77,6 +80,7 @@ public final class NodeImporter
         this.importPermissions = builder.importPermissions;
         this.transformer = builder.xslt != null ? XsltTransformer.create( builder.xslt.getByteSource(), builder.xsltParams ) : null;
         this.nodeImportListener = builder.nodeImportListener;
+        this.versionAttributesResolver = builder.versionAttributesResolver;
     }
 
     public static Builder create()
@@ -297,6 +301,7 @@ public final class NodeImporter
             .insertManualStrategy( processNodeSettings.getInsertManualStrategy() )
             .importPermissions( this.importPermissions )
             .importPermissionsOnCreate( this.importPermissions )
+            .versionAttributesResolver( this.versionAttributesResolver )
             .build();
 
         return this.nodeService.importNode( importNodeParams );
@@ -424,6 +429,8 @@ public final class NodeImporter
 
         private NodeImportListener nodeImportListener;
 
+        private VersionAttributesResolver versionAttributesResolver;
+
         private Builder()
         {
         }
@@ -483,6 +490,12 @@ public final class NodeImporter
         public Builder nodeImportListener( final NodeImportListener nodeImportListener )
         {
             this.nodeImportListener = nodeImportListener;
+            return this;
+        }
+
+        public Builder versionAttributesResolver( final VersionAttributesResolver versionAttributesResolver )
+        {
+            this.versionAttributesResolver = versionAttributesResolver;
             return this;
         }
 

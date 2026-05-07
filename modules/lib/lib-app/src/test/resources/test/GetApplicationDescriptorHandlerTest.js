@@ -9,6 +9,7 @@ exports.getWithoutIcon = function () {
     assert.assertJsonEquals({
         'key': '123456',
         'description': 'my app description',
+        'descriptionI18nKey': 'app.description.key',
         'title': 'Title',
         'titleI18nKey': 'app.title.key',
         'vendorName': 'Vendor Name',

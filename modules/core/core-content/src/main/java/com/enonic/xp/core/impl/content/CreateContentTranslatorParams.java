@@ -2,8 +2,6 @@ package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
 import java.util.Locale;
-import java.util.Objects;
-
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentName;
@@ -19,6 +17,8 @@ import com.enonic.xp.page.Page;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlList;
+
+import static java.util.Objects.requireNonNull;
 
 public class CreateContentTranslatorParams
 {
@@ -417,14 +417,14 @@ public class CreateContentTranslatorParams
 
         private void validate()
         {
-            Objects.requireNonNull( parent, "parentPath cannot be null" );
-            Objects.requireNonNull( data, "data cannot be null" );
-            Objects.requireNonNull( displayName, "displayName cannot be null" );
-            Objects.requireNonNull( createAttachments, "createAttachments cannot be null" );
-            Objects.requireNonNull( type, "type cannot be null" );
-            Objects.requireNonNull( creator, "creator cannot be null" );
-            Objects.requireNonNull( name, "name cannot be null" );
-            Objects.requireNonNull( childOrder, "childOrder cannot be null" );
+            requireNonNull( parent, "parentPath cannot be null" );
+            requireNonNull( data, "data cannot be null" );
+            requireNonNull( displayName, "displayName cannot be null" );
+            requireNonNull( createAttachments, "createAttachments cannot be null" );
+            requireNonNull( type, "type cannot be null" );
+            requireNonNull( creator, "creator cannot be null" );
+            requireNonNull( name, "name cannot be null" );
+            requireNonNull( childOrder, "childOrder cannot be null" );
         }
 
         public CreateContentTranslatorParams build()

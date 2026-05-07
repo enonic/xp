@@ -57,6 +57,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.node.NodeVersionQuery;
@@ -173,6 +174,19 @@ public class NodeServiceImpl
         }
 
         return node;
+    }
+
+    @Override
+    public @Nullable NodeVersion getVersion( final NodeId nodeId, final NodeVersionId nodeVersionId )
+    {
+        verifyContext();
+        final NodeVersion nodeVersion =
+            this.nodeStorageService.getVersion( nodeVersionId, InternalContext.from( ContextAccessor.current() ) );
+        if ( nodeVersion == null || !nodeVersion.getNodeId().equals( nodeId ) )
+        {
+            return null;
+        }
+        return nodeVersion;
     }
 
     private @Nullable Node doGetById( final NodeId id )

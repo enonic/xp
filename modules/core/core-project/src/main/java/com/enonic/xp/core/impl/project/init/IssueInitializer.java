@@ -1,7 +1,5 @@
 package com.enonic.xp.core.impl.project.init;
 
-import java.util.Objects;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,6 +21,8 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
+
+import static java.util.Objects.requireNonNullElse;
 
 
 public class IssueInitializer
@@ -84,7 +84,7 @@ public class IssueInitializer
                                                        .name( IssueConstants.ISSUE_ROOT_NAME )
                                                        .parent( NodePath.ROOT )
                                                        .permissions(
-                                                           Objects.requireNonNullElse( accessControlList, ISSUE_ROOT_DEFAULT_ACL ) )
+                                                           requireNonNullElse( accessControlList, ISSUE_ROOT_DEFAULT_ACL ) )
                                                        .childOrder( IssueConstants.DEFAULT_CHILD_ORDER )
                                                        .refresh( RefreshMode.ALL )
                                                        .build() );

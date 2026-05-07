@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.Objects;
+import java.util.Map;
 
 import com.enonic.xp.content.ImportContentParams;
 import com.enonic.xp.content.ImportContentResult;
@@ -11,6 +11,8 @@ import com.enonic.xp.node.ImportNodeResult;
 import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.RefreshMode;
+
+import static java.util.Objects.requireNonNull;
 
 final class ImportContentCommand
     extends AbstractContentCommand
@@ -30,16 +32,15 @@ final class ImportContentCommand
 
     ImportContentResult execute()
     {
-        final Node importNode = ImportContentFactory.create().
-            params( params ).
-            build().execute();
+        final Node importNode = ImportContentFactory.create().params( params ).build().execute();
 
-        final ImportNodeParams importNodeParams = ImportNodeParams.create().importNode( importNode )
+        final ImportNodeParams importNodeParams = ImportNodeParams.create()
+            .importNode( importNode )
             .binaryAttachments( getAttachments() )
             .insertManualStrategy( params.getContent().getManualOrderValue() != null ? InsertManualStrategy.MANUAL : null )
             .importPermissions( params.isImportPermissions() )
             .importPermissionsOnCreate( params.isImportPermissionsOnCreate() )
-            .versionAttributesResolver( ContentAttributesHelper.versionHistoryResolver( ContentAttributesHelper.SYNC_ATTR ) )
+            .versionAttributesResolver( ContentAttributesHelper.versionHistoryResolver( ContentAttributesHelper.SYNC_ATTR, Map.of() ) )
             .refresh( RefreshMode.ALL )
             .build();
 
@@ -82,7 +83,7 @@ final class ImportContentCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( params, "params cannot be null" );
+            requireNonNull( params, "params cannot be null" );
         }
 
         public ImportContentCommand build()

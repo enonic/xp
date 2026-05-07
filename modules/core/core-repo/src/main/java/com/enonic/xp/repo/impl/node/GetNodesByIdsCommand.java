@@ -1,11 +1,11 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.util.Objects;
-
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.repo.impl.InternalContext;
+
+import static java.util.Objects.requireNonNull;
 
 public class GetNodesByIdsCommand
     extends AbstractNodeCommand
@@ -48,7 +48,7 @@ public class GetNodesByIdsCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( this.ids, "ids is required" );
+            requireNonNull( this.ids, "ids is required" );
         }
 
         public GetNodesByIdsCommand build()

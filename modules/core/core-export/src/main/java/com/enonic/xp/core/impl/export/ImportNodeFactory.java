@@ -1,11 +1,11 @@
 package com.enonic.xp.core.impl.export;
 
-import java.util.Objects;
-
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.security.acl.AccessControlList;
+
+import static java.util.Objects.requireNonNull;
 
 public class ImportNodeFactory
 {
@@ -104,8 +104,8 @@ public class ImportNodeFactory
 
         private void validate()
         {
-            Objects.requireNonNull( this.importPath, "importPath cannot be null" );
-            Objects.requireNonNull( this.serializedNode, "serializedNode cannot be null" );
+            requireNonNull( this.importPath, "importPath cannot be null" );
+            requireNonNull( this.serializedNode, "serializedNode cannot be null" );
         }
 
         public ImportNodeFactory build()

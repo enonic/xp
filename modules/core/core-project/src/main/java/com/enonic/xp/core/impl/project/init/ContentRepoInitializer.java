@@ -1,7 +1,5 @@
 package com.enonic.xp.core.impl.project.init;
 
-import java.util.Objects;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +17,8 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.repository.internal.InternalRepositoryService;
 
+import static java.util.Objects.requireNonNull;
+
 public class ContentRepoInitializer
     extends ExternalInitializer
 {
@@ -35,10 +35,10 @@ public class ContentRepoInitializer
     private ContentRepoInitializer( Builder builder )
     {
         super( builder );
-        this.repositoryService = Objects.requireNonNull( builder.repositoryService );
-        this.internalRepositoryService = Objects.requireNonNull( builder.internalRepositoryService );
-        this.repositoryData = Objects.requireNonNull( builder.repositoryData );
-        this.repositoryId = Objects.requireNonNull( builder.repositoryId );
+        this.repositoryService = requireNonNull( builder.repositoryService );
+        this.internalRepositoryService = requireNonNull( builder.internalRepositoryService );
+        this.repositoryData = requireNonNull( builder.repositoryData );
+        this.repositoryId = requireNonNull( builder.repositoryId );
     }
 
     public static Builder create()

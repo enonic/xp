@@ -1,11 +1,11 @@
 package com.enonic.xp.init;
 
-import java.util.Objects;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.exception.InitializationException;
+
+import static java.util.Objects.requireNonNullElse;
 
 public abstract class Initializer
 {
@@ -23,7 +23,7 @@ public abstract class Initializer
 
     protected Initializer( final Builder builder )
     {
-        this.initializationCheckPeriod = Objects.requireNonNullElse( builder.initializationCheckPeriod, INITIALIZATION_CHECK_PERIOD );
+        this.initializationCheckPeriod = requireNonNullElse( builder.initializationCheckPeriod, INITIALIZATION_CHECK_PERIOD );
         this.initializationCheckMaxCount = builder.initializationCheckMaxCount != null
             ? builder.initializationCheckMaxCount
             : Long.getLong( "xp.init.maxTries", INITIALIZATION_CHECK_MAX_COUNT );

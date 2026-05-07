@@ -404,6 +404,18 @@ export interface WebSocketEvent<T> {
 
 type WebSocketEventHandler<T = Record<string, unknown>> = (event: WebSocketEvent<T>) => void;
 
+export type SseEventType = 'open' | 'close' | 'timeout' | 'error';
+
+export interface SseEvent<T = Record<string, unknown>> {
+    type: SseEventType;
+    clientId: string;
+    lastEventId?: string;
+    attributes?: T;
+    error?: string;
+}
+
+type SseEventHandler<T = Record<string, unknown>> = (event: SseEvent<T>) => void;
+
 export interface Controller<
     Request extends RequestInterface = DefaultRequest,
     Response extends ResponseInterface = DefaultResponse,
@@ -419,6 +431,7 @@ export interface Controller<
     put?: RequestHandler<Request, Response>;
     trace?: RequestHandler<Request, Response>;
     webSocketEvent?: WebSocketEventHandler;
+    sseEvent?: SseEventHandler;
 }
 
 export interface ErrorRequest<T extends RequestInterface = DefaultRequest> {
@@ -550,6 +563,7 @@ export interface Attachment {
     label?: string;
     size: number;
     mimeType: string;
+    sha512?: string | null;
 }
 
 export interface DataValidationError
@@ -562,17 +576,17 @@ export interface AttachmentValidationError
     attachment: string;
 }
 
-export interface ValidationError {
-    message: string;
-    i18n: string;
-    errorCode: ValidationErrorCode;
-    /* eslint-disable @typescript-eslint/no-explicit-any*/
-    args: any[];
-}
-
 export interface ValidationErrorCode {
     applicationKey: string;
     code: string;
+}
+
+export interface ValidationError {
+    message: string | null;
+    i18n: string | null;
+    errorCode: ValidationErrorCode;
+    /* eslint-disable @typescript-eslint/no-explicit-any*/
+    args?: any[];
 }
 
 export interface PublishInfo {
@@ -717,6 +731,7 @@ export interface Content<
     hasChildren: boolean;
     language?: string;
     valid: boolean;
+    validationErrors?: ValidationError[];
     originProject?: string;
     childOrder?: string;
     _sort?: object[];

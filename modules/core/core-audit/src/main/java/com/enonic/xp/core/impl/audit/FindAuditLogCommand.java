@@ -1,7 +1,5 @@
 package com.enonic.xp.core.impl.audit;
 
-import java.util.Objects;
-
 import com.enonic.xp.audit.AuditLogUri;
 import com.enonic.xp.audit.AuditLogs;
 import com.enonic.xp.audit.FindAuditLogParams;
@@ -15,6 +13,8 @@ import com.enonic.xp.query.filter.IdFilter;
 import com.enonic.xp.query.filter.RangeFilter;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.security.PrincipalKey;
+
+import static java.util.Objects.requireNonNull;
 
 public class FindAuditLogCommand
     extends NodeServiceCommand<FindAuditLogResult>
@@ -145,7 +145,7 @@ public class FindAuditLogCommand
 
         private void validate()
         {
-            Objects.requireNonNull( params, "params cannot be null" );
+            requireNonNull( params, "params cannot be null" );
         }
 
         public FindAuditLogCommand build()

@@ -5,6 +5,8 @@ import java.util.Objects;
 
 import com.enonic.xp.data.PropertyPath;
 
+import static java.util.Objects.requireNonNull;
+
 public sealed class DataValidationError
     extends ValidationError
     permits SiteConfigValidationError, MixinConfigValidationError, ComponentConfigValidationError
@@ -15,7 +17,7 @@ public sealed class DataValidationError
                          final List<Object> args )
     {
         super( errorCode, message, i18n, args );
-        this.propertyPath = Objects.requireNonNull( propertyPath );
+        this.propertyPath = requireNonNull( propertyPath );
     }
 
     public PropertyPath getPropertyPath()

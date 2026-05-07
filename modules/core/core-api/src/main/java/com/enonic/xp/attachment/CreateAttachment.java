@@ -1,11 +1,11 @@
 package com.enonic.xp.attachment;
 
-import java.util.Objects;
-
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
 
 import com.enonic.xp.util.BinaryReference;
+
+import static java.util.Objects.requireNonNull;
 
 
 public final class CreateAttachment
@@ -18,15 +18,12 @@ public final class CreateAttachment
 
     private final ByteSource byteSource;
 
-    private final String textContent;
-
     private CreateAttachment( final Builder builder )
     {
         this.mimeType = builder.mimeType;
         this.name = builder.name;
         this.label = builder.label;
         this.byteSource = builder.byteSource;
-        this.textContent = builder.text;
     }
 
     public String getName()
@@ -64,11 +61,6 @@ public final class CreateAttachment
         return BinaryReference.from( name );
     }
 
-    public String getTextContent()
-    {
-        return textContent;
-    }
-
     public static Builder create()
     {
         return new Builder();
@@ -89,8 +81,6 @@ public final class CreateAttachment
 
         private String label;
 
-        private String text;
-
         private Builder()
         {
         }
@@ -101,7 +91,6 @@ public final class CreateAttachment
             this.mimeType = source.mimeType;
             this.label = source.label;
             this.byteSource = source.byteSource;
-            this.text = source.textContent;
         }
 
         public Builder mimeType( final String value )
@@ -128,16 +117,10 @@ public final class CreateAttachment
             return this;
         }
 
-        public Builder text( final String value )
-        {
-            this.text = value;
-            return this;
-        }
-
         private void validate()
         {
-            Objects.requireNonNull( name, "name is required" );
-            Objects.requireNonNull( byteSource, "byteSource is required" );
+            requireNonNull( name, "name is required" );
+            requireNonNull( byteSource, "byteSource is required" );
         }
 
         public CreateAttachment build()

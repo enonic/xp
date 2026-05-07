@@ -4,6 +4,8 @@ import java.util.Objects;
 
 import com.enonic.xp.blob.BlobKey;
 
+import static java.util.Objects.requireNonNull;
+
 public final class NodeVersionKey
 {
     private final BlobKey nodeBlobKey;
@@ -14,9 +16,9 @@ public final class NodeVersionKey
 
     private NodeVersionKey( final Builder builder )
     {
-        nodeBlobKey = Objects.requireNonNull( builder.nodeBlobKey );
-        indexConfigBlobKey = Objects.requireNonNull( builder.indexConfigBlobKey );
-        accessControlBlobKey = Objects.requireNonNull( builder.accessControlBlobKey );
+        nodeBlobKey = requireNonNull( builder.nodeBlobKey );
+        indexConfigBlobKey = requireNonNull( builder.indexConfigBlobKey );
+        accessControlBlobKey = requireNonNull( builder.accessControlBlobKey );
     }
 
     public BlobKey getNodeBlobKey()

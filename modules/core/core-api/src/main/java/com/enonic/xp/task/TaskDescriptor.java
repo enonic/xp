@@ -8,6 +8,9 @@ import com.enonic.xp.form.Form;
 import com.enonic.xp.schema.LocalizedText;
 import com.enonic.xp.util.GenericValue;
 
+import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
+
 
 public final class TaskDescriptor
     extends Descriptor
@@ -25,7 +28,7 @@ public final class TaskDescriptor
         super( builder.key );
         this.description = builder.description;
         this.descriptionI18nKey = builder.descriptionI18nKey;
-        this.config = Objects.requireNonNullElse( builder.config, Form.empty() );
+        this.config = requireNonNullElse( builder.config, Form.empty() );
         this.schemaConfig = builder.schemaConfig.build();
     }
 
@@ -131,7 +134,7 @@ public final class TaskDescriptor
 
         public TaskDescriptor build()
         {
-            Objects.requireNonNull( this.key, "key is required" );
+            requireNonNull( this.key, "key is required" );
             return new TaskDescriptor( this );
         }
     }

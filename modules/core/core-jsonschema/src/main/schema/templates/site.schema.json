@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "@schemaBaseUrl@/@schemaVersion@/site.schema.json",
+  "$id": "@id@",
   "type": "object",
   "properties": {
     "kind": {
@@ -64,9 +64,6 @@
         "pattern": {
           "type": "string"
         },
-        "contentConstraint": {
-          "type": "string"
-        },
         "invertPattern": {
           "type": "boolean"
         },
@@ -93,26 +90,23 @@
           ]
         },
         {
+          "not": {
+            "required": [
+              "controller",
+              "filter"
+            ]
+          }
+        },
+        {
           "if": {
             "required": [
-              "service"
+              "invertPattern"
             ]
           },
           "then": {
-            "not": {
-              "anyOf": [
-                {
-                  "required": [
-                    "pattern"
-                  ]
-                },
-                {
-                  "required": [
-                    "contentConstraint"
-                  ]
-                }
-              ]
-            }
+            "required": [
+              "pattern"
+            ]
           }
         }
       ],

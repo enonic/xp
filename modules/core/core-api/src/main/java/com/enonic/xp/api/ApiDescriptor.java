@@ -1,6 +1,5 @@
 package com.enonic.xp.api;
 
-import java.util.Objects;
 import java.util.Set;
 
 import com.google.common.base.Preconditions;
@@ -11,6 +10,8 @@ import com.enonic.xp.schema.LocalizedText;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.util.GenericValue;
+
+import static java.util.Objects.requireNonNull;
 
 
 public final class ApiDescriptor
@@ -35,8 +36,8 @@ public final class ApiDescriptor
 
     private ApiDescriptor( final Builder builder )
     {
-        Objects.requireNonNull( builder.key, "key cannot be null" );
-        Objects.requireNonNull( builder.allowedPrincipals, "allowedPrincipals cannot be null" );
+        requireNonNull( builder.key, "key cannot be null" );
+        requireNonNull( builder.allowedPrincipals, "allowedPrincipals cannot be null" );
         Preconditions.checkArgument( !builder.allowedPrincipals.isEmpty(), "allowedPrincipals cannot be empty" );
 
         this.key = builder.key;

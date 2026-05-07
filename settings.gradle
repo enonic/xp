@@ -1,6 +1,6 @@
 pluginManagement {
     plugins {
-        id 'com.gradle.develocity' version '4.4.0'
+        id 'com.gradle.develocity' version '4.4.1'
         id 'biz.aQute.bnd.builder' version '7.2.3'
         id 'com.github.jk1.dependency-license-report' version '3.1.2'
         id 'com.github.node-gradle.node' version '7.1.0'
@@ -89,6 +89,7 @@ include 'admin:admin-impl'
 include 'admin:admin-event'
 
 include 'itest:itest-core'
+include 'itest:itest-core-content'
 
 include 'tools:testing'
 
@@ -101,6 +102,7 @@ include 'lib:lib-auth'
 include 'lib:lib-io'
 include 'lib:lib-context'
 include 'lib:lib-websocket'
+include 'lib:lib-sse'
 include 'lib:lib-repo'
 include 'lib:lib-node'
 include 'lib:lib-task'

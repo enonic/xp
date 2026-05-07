@@ -2,8 +2,6 @@ package com.enonic.xp.core.impl.export;
 
 import java.nio.file.Path;
 import java.util.Iterator;
-import java.util.Objects;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +37,8 @@ import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.util.BinaryReference;
 
+import static java.util.Objects.requireNonNull;
+
 public class NodeExporter
 {
     private static final String LINE_SEPARATOR = System.lineSeparator();
@@ -67,7 +67,7 @@ public class NodeExporter
         this.nodeService = builder.nodeService;
         this.exportWriter = builder.exportWriter;
         this.targetDirectory = builder.targetDirectory;
-        this.xpVersion = Objects.requireNonNull( builder.xpVersion );
+        this.xpVersion = requireNonNull( builder.xpVersion );
         this.batchSize = Math.max( 1, builder.batchSize );
         this.nodeExportListener = builder.nodeExportListener;
     }

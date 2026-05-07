@@ -1,9 +1,9 @@
 package com.enonic.xp.node;
 
-import java.util.Objects;
-
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
+
+import static java.util.Objects.requireNonNull;
 
 
 @NullMarked
@@ -15,7 +15,7 @@ public final class NodeVersionQueryResult
 
     private NodeVersionQueryResult( Builder builder )
     {
-        nodeVersions = Objects.requireNonNull( builder.nodeVersions );
+        nodeVersions = requireNonNull( builder.nodeVersions );
         totalHits = builder.totalHits;
     }
 

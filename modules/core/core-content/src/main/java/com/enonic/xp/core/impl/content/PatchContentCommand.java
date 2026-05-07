@@ -63,9 +63,10 @@ public class PatchContentCommand
                 }
                 return patchedContent;
             } )
-            .versionAttributesResolver( layersSync
-                                            ? ContentAttributesHelper.versionHistoryResolverWithOrigin( ContentAttributesHelper.SYNC_ATTR )
-                                            : ContentAttributesHelper.versionHistoryResolverWithOrigin( ContentAttributesHelper.PATCH_ATTR ) )
+            .versionAttributesResolver( ContentAttributesHelper.versionHistoryResolver(
+                layersSync ? ContentAttributesHelper.SYNC_ATTR : ContentAttributesHelper.PATCH_ATTR,
+                Map.ofEntries( ContentAttributesHelper.resolveOriginProperty(),
+                               ContentAttributesHelper.resolveEditorialIfNotEditorialChange() ) ) )
             .createAttachments( params.getCreateAttachments() )
             .branches( params.getBranches() )
             .contentTypeService( this.contentTypeService )
@@ -137,8 +138,7 @@ public class PatchContentCommand
         final Attachment.Builder builder = Attachment.create()
             .name( createAttachment.getName() )
             .label( createAttachment.getLabel() )
-            .mimeType( createAttachment.getMimeType() )
-            .textContent( createAttachment.getTextContent() );
+            .mimeType( createAttachment.getMimeType() );
 
         populateByteSourceProperties( createAttachment.getByteSource(), builder );
         return builder.build();

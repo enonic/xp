@@ -1,0 +1,28 @@
+kind: "Style"
+styles:
+  - name: "editor-align-justify"
+    type: "Image"
+    label:
+      text: "Justify"
+      i18n: "style.editor.align.justify"
+  - name: "editor-width-auto"
+    type: "Image"
+    label:
+      text: "Override ${width}"
+      i18n: "editor-width-auto-text"
+  - name: "editor-style-cinema"
+    type: "Image"
+    label:
+      text: "Cinema"
+      i18n: "editor-style-cinema-text"
+    filter: "pixelate(10)"
+  - name: "editor-style-square"
+    type: "Image"
+    label:
+      text: "Square"
+      i18n: "editor-style-square-text"
+  - name: "editor-style-tall"
+    type: "Image"
+    label:
+      text: "Tall"
+      i18n: "editor-style-tall-text"

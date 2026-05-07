@@ -1,11 +1,11 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.Objects;
-
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
+
+import static java.util.Objects.requireNonNull;
 
 final class GetContentByPathCommand
     extends AbstractContentCommand
@@ -15,7 +15,7 @@ final class GetContentByPathCommand
     private GetContentByPathCommand( final Builder builder )
     {
         super( builder );
-        Objects.requireNonNull( builder.contentPath, "contentPath is required" );
+        requireNonNull( builder.contentPath, "contentPath is required" );
         this.contentPath = builder.contentPath;
     }
 
@@ -64,7 +64,7 @@ final class GetContentByPathCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( contentPath, "contentPath is required" );
+            requireNonNull( contentPath, "contentPath is required" );
         }
 
         public GetContentByPathCommand build()

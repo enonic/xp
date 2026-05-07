@@ -2,7 +2,6 @@ package com.enonic.xp.repo.impl.elasticsearch.storage;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import org.elasticsearch.action.delete.DeleteAction;
@@ -36,6 +35,8 @@ import com.enonic.xp.repo.impl.storage.RoutableId;
 import com.enonic.xp.repo.impl.storage.StorageDao;
 import com.enonic.xp.repo.impl.storage.StoreRequest;
 import com.enonic.xp.repository.IndexException;
+
+import static java.util.Objects.requireNonNullElse;
 
 @Component
 public class StorageDaoImpl
@@ -146,7 +147,7 @@ public class StorageDaoImpl
             new GetRequest( storageSource.getStorageName().getName() ).type( storageSource.getStorageType().getName() )
                 .fetchSourceContext(
                     request.getReturnFields() == null ? FetchSourceContext.DO_NOT_FETCH_SOURCE : FetchSourceContext.FETCH_SOURCE )
-                .preference( Objects.requireNonNullElse( request.getSearchPreference(), SearchPreference.LOCAL ).getName() )
+                .preference( requireNonNullElse( request.getSearchPreference(), SearchPreference.LOCAL ).getName() )
                 .id( request.getId() )
                 .routing( request.getRouting() );
 
@@ -165,7 +166,7 @@ public class StorageDaoImpl
 
         final MultiGetRequestBuilder multiGetRequestBuilder =
             new MultiGetRequestBuilder( this.client, MultiGetAction.INSTANCE ).setPreference(
-                Objects.requireNonNullElse( requests.getSearchPreference(), SearchPreference.LOCAL ).getName() );
+                requireNonNullElse( requests.getSearchPreference(), SearchPreference.LOCAL ).getName() );
 
         for ( final GetByIdRequest request : requests.getRequests() )
         {

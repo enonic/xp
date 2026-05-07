@@ -9,6 +9,8 @@ import org.jspecify.annotations.NullMarked;
 
 import com.enonic.xp.core.internal.NameValidator;
 
+import static java.util.Objects.requireNonNull;
+
 
 @NullMarked
 public final class RepositoryId
@@ -31,7 +33,7 @@ public final class RepositoryId
 
     private RepositoryId( final String value )
     {
-        this.value = Objects.requireNonNull( value );
+        this.value = requireNonNull( value );
     }
 
     @Override

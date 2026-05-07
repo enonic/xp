@@ -1,8 +1,8 @@
 package com.enonic.xp.resource;
 
-import java.util.Objects;
-
 import com.enonic.xp.descriptor.DescriptorKey;
+
+import static java.util.Objects.requireNonNull;
 
 
 public final class GetDynamicComponentParams
@@ -56,8 +56,8 @@ public final class GetDynamicComponentParams
 
         private void validate()
         {
-            Objects.requireNonNull( key, "key is required" );
-            Objects.requireNonNull( type, "type is required" );
+            requireNonNull( key, "key is required" );
+            requireNonNull( type, "type is required" );
         }
 
         public GetDynamicComponentParams build()

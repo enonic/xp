@@ -1,10 +1,10 @@
 package com.enonic.xp.security;
 
-import java.util.Objects;
-
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.mail.EmailValidator;
+
+import static java.util.Objects.requireNonNull;
 
 
 public final class UpdateUserParams
@@ -21,7 +21,7 @@ public final class UpdateUserParams
 
     private UpdateUserParams( final Builder builder )
     {
-        this.key = Objects.requireNonNull( builder.principalKey, "userKey is required for a user" );
+        this.key = requireNonNull( builder.principalKey, "userKey is required for a user" );
         this.displayName = builder.displayName;
         if ( builder.email != null )
         {

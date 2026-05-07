@@ -1,7 +1,7 @@
 package com.enonic.xp.repo.impl.dump;
 
 import java.nio.file.Path;
-import java.util.Objects;
+import static java.util.Objects.requireNonNull;
 
 public final class PathRef
 {
@@ -29,7 +29,7 @@ public final class PathRef
 
     private static String validate( String element )
     {
-        Objects.requireNonNull( element, "element can't be null" );
+        requireNonNull( element, "element can't be null" );
         if ( element.equals( "." ) || element.equals( ".." ) || element.contains( SEPARATOR ) )
         {
             throw new IllegalArgumentException( "Invalid element " + element );

@@ -1,6 +1,6 @@
 package com.enonic.xp.content;
 
-import java.util.Objects;
+import static java.util.Objects.requireNonNull;
 
 public final class ContentValidityParams
 {
@@ -37,7 +37,7 @@ public final class ContentValidityParams
 
         public ContentValidityParams build()
         {
-            Objects.requireNonNull( this.contentIds, "contentIds is required" );
+            requireNonNull( this.contentIds, "contentIds is required" );
             return new ContentValidityParams( this.contentIds );
         }
     }

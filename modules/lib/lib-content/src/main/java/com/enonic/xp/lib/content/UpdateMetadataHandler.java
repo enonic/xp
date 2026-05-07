@@ -1,6 +1,5 @@
 package com.enonic.xp.lib.content;
 
-import java.util.Locale;
 import java.util.Map;
 
 import com.enonic.xp.content.ContentId;
@@ -50,7 +49,6 @@ public final class UpdateMetadataHandler
 
     private void updateMetadata( final EditableContentMetadata target, final Map<String, ?> map )
     {
-        edit( map, "language", String.class, val -> target.language = val.map( Locale::forLanguageTag ).orElse( null ) );
         edit( map, "owner", String.class, val -> target.owner = val.map( PrincipalKey::from ).orElse( null ) );
         edit( map, "variantOf", String.class, val -> target.variantOf = val.map( ContentId::from ).orElse( null ) );
     }

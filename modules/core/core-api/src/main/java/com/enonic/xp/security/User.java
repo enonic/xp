@@ -9,6 +9,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.mail.EmailValidator;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static java.util.Objects.requireNonNull;
 
 
 public final class User
@@ -168,7 +169,7 @@ public final class User
         protected void validate()
         {
             super.validate();
-            Objects.requireNonNull( this.login, "login is required for a User" );
+            requireNonNull( this.login, "login is required for a User" );
             Preconditions.checkArgument( this.key.isUser(), "Invalid Principal Type for User: %s", this.key.getType() );
             if ( !isNullOrEmpty( this.email ) )
             {

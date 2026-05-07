@@ -2,11 +2,11 @@ package com.enonic.xp.security;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Objects;
-
 import org.jspecify.annotations.NullMarked;
 
 import com.enonic.xp.core.internal.NameValidator;
+
+import static java.util.Objects.requireNonNull;
 
 
 @NullMarked
@@ -28,7 +28,7 @@ public final class IdProviderKey
 
     private IdProviderKey( final String id )
     {
-        this.id = Objects.requireNonNull( id );
+        this.id = requireNonNull( id );
     }
 
     @Override
@@ -51,7 +51,7 @@ public final class IdProviderKey
 
     public static IdProviderKey from( final String id )
     {
-        return switch ( Objects.requireNonNull( id, "IdProviderKey cannot be null" ) )
+        return switch ( requireNonNull( id, "IdProviderKey cannot be null" ) )
         {
             case "system" -> SYSTEM;
             default ->

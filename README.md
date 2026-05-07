@@ -1,59 +1,81 @@
-<img align="right" src="https://raw.githubusercontent.com/enonic/xp/master/misc/logo.png">
+<div align="center">
+
+<img src="https://raw.githubusercontent.com/enonic/xp/master/misc/logo.png">
 
 # Enonic XP
 
+
 [![Actions Status](https://github.com/enonic/xp/workflows/Gradle%20Build/badge.svg)](https://github.com/enonic/xp/actions)
 [![Codecov](https://codecov.io/gh/enonic/xp/branch/master/graph/badge.svg)](https://codecov.io/gh/enonic/xp)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/1c21f9de69f0444797abdeea49a682e6)](https://www.codacy.com/gh/enonic/xp/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=enonic/xp&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/1c21f9de69f0444797abdeea49a682e6)](https://www.codacy.com/gh/enonic/xp/dashboard?utm_source=github.com&utm_medium=referral&utm_content=enonic/xp&utm_campaign=Badge_Grade)
 
-Welcome to the home of Enonic XP. Here you will find all source code for the product. To get started,
-please read our docs here: https://developer.enonic.com/start.
+</div>
 
-## Building
+## The Universal CMS
 
-Before trying to build the project, you need to verify that the following software are installed:
+Enonic XP is an open-source, API-first CMS designed as the backend for digital experiences. It exposes your content and services through flexible APIs that adapt to whatever front-end stack you choose — whether that's Next.js, Astro, a mobile app, or anything in between.   
 
-*    [JDK 25](https://adoptium.net/temurin/releases?version=25) or [GraalVM 25](https://www.graalvm.org/downloads/).   
-*    [Git](https://git-scm.com/downloads) installed on system.
+Built like an operating system around a lean, extensible core, XP combines a server-side TypeScript/JavaScript framework with a built-in NoSQL content store, identity management, and a universal API layer — all fully open source, with no vendor lock-in.     
 
-Build all code and run all tests, including integration tests:
+## Quick Start
 
-    .\gradlew build
+To get started with Enonic, visit **[developer.enonic.com/start](https://developer.enonic.com/start)**.
 
-Build all code skipping all tests:
+## Features
 
-    .\gradlew build -x check
-
-Build all code skipping integration tests:
-
-    .\gradlew build -x integrationTest
-
-Main output of the build process is located in the `moduels/runtime/build` directory
-*   `install` contains pure runtime of the Enonic XP platform.
-*   `distributions` contains a zip file ready for packaging by the xp-distro project.
-
-Jsdoc output is located in the `modules/lib/build/distributions` directory.
-
-## Running
-
-This project is just the runtime of the Enonic XP platform. To run the system properly,
-please see the xp-distro project that bundles the necessary part together: (https://github.com/enonic/xp-distro)
-
-Note that [GraalVM 25](https://www.graalvm.org/downloads/) is required to run the platform.
+- **Headless CMS** — Ships with Content Studio; works with any front-end framework
+- **Universal API** — Apps contribute their own API endpoints through a Kubernetes-inspired extension model
+- **Built-in NoSQL content store** — Versioned, branch-based content management with a flexible schema system
+- **Next.js integration** — First-class support with dedicated React components
+- **Identity & Access Management** — Authentication, authorization, and pluggable ID providers built in
+- **Server-side TypeScript/JavaScript** — Write apps in TypeScript, deployed without Node.js or a separate JS process
+- **Multi-app runtime** — Run multiple applications simultaneously on a single instance
+- **Clustering** — Distributed caching, event bus, and job scheduling included
+- **25+ standard libraries** — Content, auth, mail, scheduling, audit logging, and more
 
 ## Documentation
 
-*   [Developer Guide](https://developer.enonic.com/docs/xp/stable)
-*   [Release Notes](https://developer.enonic.com/docs/xp/stable/release)
-*   [JSDoc](https://developer.enonic.com/jsdoc/) 
+| Resource | URL |
+|---|---|
+| XP Platform Guide | https://developer.enonic.com/docs/xp |
+| CMS Guide (front-end devs) | https://developer.enonic.com/docs/cms |
+| Developer Tooling | https://developer.enonic.com/docs/code |
+| Release Notes | https://developer.enonic.com/docs/xp/stable/release |
+
+## Building
+
+**Prerequisites:**
+- [JDK 25](https://adoptium.net/temurin/releases?version=25) or [GraalVM 25](https://www.graalvm.org/downloads/) — GraalVM is required to *run* the platform
+- [Git](https://git-scm.com/downloads)
+
+```sh
+# Build everything, including integration tests
+./gradlew build
+
+# Skip all tests
+./gradlew build -x check
+
+# Skip integration tests only
+./gradlew build -x integrationTest
+```
+
+Build output is in `modules/runtime/build/`:
+- `install/` — the bare platform runtime
+- `distributions/` — zip for packaging by xp-distro
+
+JSDoc output is in `modules/lib/build/distributions/`.
 
 ## License
 
-This software is licensed under GPL v3 with [Linking exception](https://en.wikipedia.org/wiki/GPL_linking_exception). GPL Linking exception means you can create applications on the platform without being subject to licensing them as GPL too. Derivate work of the platform itself is however subject to the terms of the GPL license.
-See [LICENSE.txt](https://github.com/enonic/xp/raw/master/LICENSE.txt). 
-Also, the distribution includes 3rd party software components. The vast majority of these libraries are licensed under 
-Apache 2.0. For a complete list please read [NOTICE.txt](https://github.com/enonic/xp/raw/master/NOTICE.txt).
+Enonic XP is licensed under **GPL v3** with a [Linking Exception](https://en.wikipedia.org/wiki/GPL_linking_exception) — you can build and ship applications on the platform without licensing them under GPL. Derivative works of the platform itself remain subject to GPL.
 
-All our libraries (`lib-*`) that can be bundled in your own applications are licensed as Apache 2.0. 
-See [LICENSE_AL.txt](https://github.com/enonic/xp/raw/master/LICENSE_AL.txt)
+- Platform: [LICENSE.txt](https://github.com/enonic/xp/raw/master/LICENSE.txt)
+- Third-party components (mostly Apache 2.0): [NOTICE.txt](https://github.com/enonic/xp/raw/master/NOTICE.txt)
 
+All `lib-*` libraries bundleable in your own applications are licensed under **Apache 2.0**: [LICENSE_AL.txt](https://github.com/enonic/xp/raw/master/LICENSE_AL.txt)
+
+## Support
+
+- [Developer Portal](https://developer.enonic.com)
+- [Slack Community](https://slack.enonic.com)
+- [Commercial Support](https://support.enonic.com)

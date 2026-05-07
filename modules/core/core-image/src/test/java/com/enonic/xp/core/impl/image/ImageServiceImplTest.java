@@ -147,7 +147,7 @@ class ImageServiceImplTest
     {
         mockOriginalImage( "effect/transparent.png" );
 
-        Cropping cropping = Cropping.create().top( 0.25 ).bottom( 0.75 ).left( 0.25 ).right( 0.75 ).zoom( 2 ).build();
+        Cropping cropping = Cropping.create().top( 0.25 ).bottom( 0.75 ).left( 0.25 ).right( 0.75 ).build();
 
         final ReadImageParams readImageParams = ReadImageParams.newImageParams()
             .contentId( contentId )

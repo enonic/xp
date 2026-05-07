@@ -1,7 +1,6 @@
 package com.enonic.xp.portal.impl.url;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
@@ -23,6 +22,8 @@ import com.enonic.xp.portal.url.ProcessHtmlParams;
 import com.enonic.xp.portal.url.UrlGeneratorParams;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.style.ImageStyle;
+
+import static java.util.Objects.requireNonNullElse;
 
 final class DefaultImageLinkProcessor
 {
@@ -66,7 +67,7 @@ final class DefaultImageLinkProcessor
                 .build()
                 .callWith( () -> contentService.getById( ContentId.from( id ) ) );
 
-            if ( content instanceof Media media && media.isImage() )
+            if ( content instanceof Media media && ( media.getType().isImageMedia() || media.getType().isVectorMedia() ) )
             {
                 return media;
             }
@@ -132,7 +133,7 @@ final class DefaultImageLinkProcessor
             final String horizontalProportion = matcher.group( "horizontalProportion" );
             final String verticalProportion = matcher.group( "verticalProportion" );
 
-            final int width = Objects.requireNonNullElse( expectedWidth, DEFAULT_WIDTH );
+            final int width = requireNonNullElse( expectedWidth, DEFAULT_WIDTH );
             final int height = width / Integer.parseInt( horizontalProportion ) * Integer.parseInt( verticalProportion );
 
             return "block(" + width + "," + height + ")";

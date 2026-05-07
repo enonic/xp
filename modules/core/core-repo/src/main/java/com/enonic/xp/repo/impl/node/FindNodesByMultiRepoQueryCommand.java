@@ -1,7 +1,5 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.util.Objects;
-
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.FindNodesByMultiRepoQueryResult;
 import com.enonic.xp.node.MultiRepoNodeQuery;
@@ -11,6 +9,8 @@ import com.enonic.xp.repo.impl.MultiRepoSearchSource;
 import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.security.PrincipalKeys;
+
+import static java.util.Objects.requireNonNull;
 
 public class FindNodesByMultiRepoQueryCommand
     extends AbstractNodeCommand
@@ -73,7 +73,7 @@ public class FindNodesByMultiRepoQueryCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( this.query, "query is required" );
+            requireNonNull( this.query, "query is required" );
         }
 
         public FindNodesByMultiRepoQueryCommand build()

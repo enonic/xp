@@ -3,6 +3,8 @@ package com.enonic.xp.region;
 
 import java.util.Objects;
 
+import static java.util.Objects.requireNonNull;
+
 
 public final class RegionDescriptor
 {
@@ -10,7 +12,7 @@ public final class RegionDescriptor
 
     private RegionDescriptor( final Builder builder )
     {
-        this.name = Objects.requireNonNull( builder.name, "name cannot be null" );
+        this.name = requireNonNull( builder.name, "name cannot be null" );
     }
 
     public String getName()

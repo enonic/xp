@@ -15,7 +15,7 @@ class AdminToolSchemaValidationTest
     @BeforeAll
     static void initSchema()
     {
-        schema = schemaFor( "admin-tool.schema.json" );
+        schema = schemaFor( "admin-tool" );
     }
 
     @Test

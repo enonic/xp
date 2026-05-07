@@ -1,6 +1,6 @@
 package com.enonic.xp.content;
 
-import java.util.Objects;
+import static java.util.Objects.requireNonNull;
 
 
 public final class MoveContentParams
@@ -86,7 +86,7 @@ public final class MoveContentParams
 
         public MoveContentParams build()
         {
-            Objects.requireNonNull( this.contentId, "contentId is required" );
+            requireNonNull( this.contentId, "contentId is required" );
             return new MoveContentParams( this );
         }
     }

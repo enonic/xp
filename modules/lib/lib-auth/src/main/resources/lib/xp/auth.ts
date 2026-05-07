@@ -160,14 +160,14 @@ export function getUser<Profile extends Record<string, unknown> = Record<string,
     includeProfile: true
 }): UserWithProfile<Profile> | null;
 /**
- * Returns the logged-in user. If not logged-in, this will return *undefined*.
+ * Returns the logged-in user. If not logged-in, this will return *null*.
  *
  * @example-ref examples/auth/getUser.js
  *
  * @param {object} [params] JSON parameters.
  * @param {boolean} [params.includeProfile=false] Include profile.
  *
- * @returns {User} Information for logged-in user.
+ * @returns {User | null} Information for the logged-in user, or null if not logged in.
  */
 export function getUser(params?: GetUserParams): User | null {
     const {
@@ -365,6 +365,7 @@ interface CreateUserHandler {
  * @param {string} params.name User login name to set.
  * @param {string} [params.displayName] User display name.
  * @param {string} [params.email] User email.
+ * @returns {User} The created user.
  */
 export function createUser(params: CreateUserParams): User {
     const name = checkRequired(params, 'name');
@@ -401,7 +402,7 @@ interface ModifyUserHandler {
  * @param {object} params JSON parameters.
  * @param {string} params.key Principal key of the user to modify.
  * @param {function} params.editor User editor function to apply to user.
- * @returns {User} the updated user or null if a  user not found.
+ * @returns {User | null} The updated user, or null if user not found.
  */
 export function modifyUser(params: ModifyUserParams): User | null {
     const key = checkRequired(params, 'key');
@@ -443,7 +444,8 @@ interface CreateGroupHandler {
  * @param {string} params.idProvider Key for id provider where group has to be created.
  * @param {string} params.name Group name.
  * @param {string} [params.displayName] Group display name.
- * @param {string} [params.description] as principal description .
+ * @param {string} [params.description] Group description.
+ * @returns {Group} The created group.
  */
 export function createGroup(params: CreateGroupParams): Group {
     const idProvider = checkRequired(params, 'idProvider');
@@ -480,7 +482,7 @@ interface ModifyGroupHandler {
  * @param {object} params JSON parameters.
  * @param {string} params.key Principal key of the group to modify.
  * @param {function} params.editor Group editor function to apply to group.
- * @returns {Group} the updated group or null if a group not found.
+ * @returns {Group | null} The updated group, or null if group not found.
  */
 export function modifyGroup(params: ModifyGroupParams): Group | null {
     const key = checkRequired(params, 'key');
@@ -503,12 +505,12 @@ interface AddMembersHandler {
 }
 
 /**
- * Adds members to a principal (user or role).
+ * Adds members to a principal (group or role).
  *
  * @example-ref examples/auth/addMembers.js
  *
  * @param {string} principalKey Key of the principal to add members to.
- * @param {Array<string>} members Keys of users and groups to add.
+ * @param {string[]} members Keys of users and groups to add.
  */
 export function addMembers(principalKey: GroupKey | RoleKey, members: (UserKey | GroupKey)[]): void {
     checkRequiredArg(principalKey, 'principalKey');
@@ -530,12 +532,12 @@ interface RemoveMembersHandler {
 }
 
 /**
- * Removes members from a principal (user or role).
+ * Removes members from a principal (group or role).
  *
  * @example-ref examples/auth/removeMembers.js
  *
  * @param {string} principalKey Key of the principal to remove members from.
- * @param {string} members Keys of the principals to remove.
+ * @param {string[]} members Keys of the principals to remove.
  */
 export function removeMembers(principalKey: GroupKey | RoleKey, members: (UserKey | GroupKey)[]): void {
     checkRequiredArg(principalKey, 'principalKey');
@@ -763,7 +765,7 @@ export function findUsers(params: FindUsersParams): FindPrincipalsResult<User | 
  *
  * @param {object} params JSON with the parameters.
  * @param {number} [params.start=0] Start index (used for paging).
- * @param {number} [params.count=10] Number of contents to fetch.
+ * @param {number} [params.count=10] Number of users to fetch.
  * @param {string} params.query Query expression.
  * @param {string} [params.sort] Sorting expression.
  * @param {boolean} [params.includeProfile=false] Include profile.
@@ -810,9 +812,11 @@ interface CreateRoleHandler {
  *
  * @example-ref examples/auth/createRole.js
  *
+ * @param {object} params JSON parameters.
  * @param {string} params.name Role name.
  * @param {string} [params.displayName] Role display name.
- * @param {string} [params.description] as principal description .
+ * @param {string} [params.description] Role description.
+ * @returns {Role} The created role.
  */
 export function createRole(params: CreateRoleParams): Role {
     const name = checkRequired(params, 'name');
@@ -847,7 +851,7 @@ interface ModifyRoleHandler {
  * @param {object} params JSON parameters.
  * @param {string} params.key Principal key of the role to modify.
  * @param {function} params.editor Role editor function to apply to role.
- * @returns {Role} the updated role or null if a role not found.
+ * @returns {Role | null} The updated role, or null if role not found.
  */
 export function modifyRole(params: ModifyRoleParams): Role | null {
     const key = checkRequired(params, 'key');
@@ -859,4 +863,81 @@ export function modifyRole(params: ModifyRoleParams): Role | null {
     bean.setEditor(__.toScriptValue(editor));
 
     return __.toNativeObject(bean.modifyRole());
+}
+
+export type IdProviderAccess = 'READ' | 'CREATE_USERS' | 'WRITE_USERS' | 'ID_PROVIDER_MANAGER' | 'ADMINISTRATOR';
+
+export interface IdProviderAccessControlEntry {
+    principal: PrincipalKey;
+    access: IdProviderAccess;
+}
+
+export interface IdProvider {
+    key: string;
+    displayName: string;
+    description?: string;
+}
+
+export interface CreateIdProviderParams {
+    key: string;
+    displayName: string;
+    description?: string;
+    permissions?: IdProviderAccessControlEntry[];
+}
+
+interface CreateIdProviderHandler {
+    setKey(value: string): void;
+
+    setDisplayName(value: string): void;
+
+    setDescription(value: string | null): void;
+
+    setPermissions(value: ScriptValue | null): void;
+
+    createIdProvider(): IdProvider;
+}
+
+/**
+ * Creates an id provider.
+ *
+ * @example-ref examples/auth/createIdProvider.js
+ *
+ * @param {object} params JSON parameters.
+ * @param {string} params.key Id provider key.
+ * @param {string} params.displayName Id provider display name.
+ * @param {string} [params.description] Id provider description.
+ * @param {Array<object>} [params.permissions] Id provider permissions.
+ * @returns {IdProvider} The created id provider.
+ */
+export function createIdProvider(
+    params: CreateIdProviderParams,
+): IdProvider {
+    const key = checkRequired(params, 'key');
+    const displayName = checkRequired(params, 'displayName');
+
+    const bean: CreateIdProviderHandler = __.newBean<CreateIdProviderHandler>('com.enonic.xp.lib.auth.CreateIdProviderHandler');
+
+    bean.setKey(key);
+    bean.setDisplayName(displayName);
+    bean.setDescription(__.nullOrValue(params.description));
+    bean.setPermissions(params.permissions == null ? null : __.toScriptValue(params.permissions));
+
+    return __.toNativeObject(bean.createIdProvider()) as IdProvider;
+}
+
+interface GetIdProvidersHandler {
+    getIdProviders(): IdProvider[];
+}
+
+/**
+ * Returns all id providers.
+ *
+ * @example-ref examples/auth/getIdProviders.js
+ *
+ * @returns {Array<IdProvider>} List of id providers.
+ */
+export function getIdProviders(): IdProvider[] {
+    const bean: GetIdProvidersHandler = __.newBean<GetIdProvidersHandler>('com.enonic.xp.lib.auth.GetIdProvidersHandler');
+
+    return __.toNativeObject(bean.getIdProviders());
 }

@@ -1,11 +1,11 @@
 package com.enonic.xp.blob;
 
 import java.io.IOException;
-import java.util.Objects;
-
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.core.internal.security.MessageDigests;
+
+import static java.util.Objects.requireNonNull;
 
 public final class BlobKey
 {
@@ -13,7 +13,7 @@ public final class BlobKey
 
     private BlobKey( final String key )
     {
-        this.key = Objects.requireNonNull( key );
+        this.key = requireNonNull( key );
     }
 
     @Override

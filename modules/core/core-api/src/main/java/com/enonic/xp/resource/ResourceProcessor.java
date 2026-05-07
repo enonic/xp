@@ -1,7 +1,8 @@
 package com.enonic.xp.resource;
 
-import java.util.Objects;
 import java.util.function.Function;
+
+import static java.util.Objects.requireNonNull;
 
 public final class ResourceProcessor<K, V>
 {
@@ -83,10 +84,10 @@ public final class ResourceProcessor<K, V>
 
         public ResourceProcessor<K, V> build()
         {
-            Objects.requireNonNull( this.key, "key is required" );
-            Objects.requireNonNull( this.segment, "segment is required" );
-            Objects.requireNonNull( this.keyTranslator, "keyTranslator is required" );
-            Objects.requireNonNull( this.processor, "processor is required" );
+            requireNonNull( this.key, "key is required" );
+            requireNonNull( this.segment, "segment is required" );
+            requireNonNull( this.keyTranslator, "keyTranslator is required" );
+            requireNonNull( this.processor, "processor is required" );
 
             return new ResourceProcessor<>( this );
         }

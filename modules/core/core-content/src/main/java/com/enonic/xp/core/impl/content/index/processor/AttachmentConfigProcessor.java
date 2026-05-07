@@ -4,7 +4,7 @@ import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.schema.content.ContentTypeName;
 
-import static com.enonic.xp.content.ContentPropertyNames.ATTACHMENT_TEXT_COMPONENT;
+import static com.enonic.xp.content.ContentPropertyNames.MEDIA_TEXT_COMPONENT;
 
 public class AttachmentConfigProcessor
     implements ContentIndexConfigProcessor
@@ -22,20 +22,10 @@ public class AttachmentConfigProcessor
 
         if ( contentTypeName.isTextualMedia() )
         {
-            configBuilder.add( ATTACHMENT_TEXT_COMPONENT, IndexConfig.create().
+            configBuilder.add( MEDIA_TEXT_COMPONENT, IndexConfig.create().
                 enabled( true ).
                 fulltext( true ).
                 includeInAllText( true ).
-                nGram( true ).
-                decideByType( false ).
-                build() );
-        }
-        else
-        {
-            configBuilder.add( ATTACHMENT_TEXT_COMPONENT, IndexConfig.create().
-                enabled( true ).
-                fulltext( true ).
-                includeInAllText( false ).
                 nGram( true ).
                 decideByType( false ).
                 build() );

@@ -1,8 +1,8 @@
 package com.enonic.xp.impl.scheduler;
 
-import java.util.Objects;
-
 import com.enonic.xp.scheduler.ScheduledJobName;
+
+import static java.util.Objects.requireNonNull;
 
 final class UnscheduleJobCommand
 {
@@ -46,8 +46,8 @@ final class UnscheduleJobCommand
 
         private void validate()
         {
-            Objects.requireNonNull( schedulerExecutorService );
-            Objects.requireNonNull( name, "name is required" );
+            requireNonNull( schedulerExecutorService );
+            requireNonNull( name, "name is required" );
         }
 
         public UnscheduleJobCommand build()

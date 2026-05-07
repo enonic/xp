@@ -1,8 +1,8 @@
 package com.enonic.xp.node;
 
-import java.util.Objects;
-
 import com.google.common.base.Preconditions;
+
+import static java.util.Objects.requireNonNull;
 
 
 public final class ReorderChildNodeParams
@@ -56,7 +56,7 @@ public final class ReorderChildNodeParams
 
         public ReorderChildNodeParams build()
         {
-            Objects.requireNonNull( nodeId, "nodeId is required" );
+            requireNonNull( nodeId, "nodeId is required" );
             Preconditions.checkArgument( !nodeId.equals( moveBefore ), "nodeId and moveBefore must be different" );
             return new ReorderChildNodeParams( this );
         }

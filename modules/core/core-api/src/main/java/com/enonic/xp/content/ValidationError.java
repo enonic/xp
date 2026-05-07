@@ -14,6 +14,8 @@ import com.enonic.xp.region.ComponentPath;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.util.BinaryReference;
 
+import static java.util.Objects.requireNonNull;
+
 public sealed class ValidationError
     permits DataValidationError, AttachmentValidationError
 {
@@ -178,7 +180,7 @@ public sealed class ValidationError
 
         public ValidationError build()
         {
-            Objects.requireNonNull( errorCode );
+            requireNonNull( errorCode );
 
             final List<Object> args = this.argsBuilder.build();
 

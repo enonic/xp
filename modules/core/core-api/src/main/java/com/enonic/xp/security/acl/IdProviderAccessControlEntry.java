@@ -4,6 +4,8 @@ import java.util.Objects;
 
 import com.enonic.xp.security.PrincipalKey;
 
+import static java.util.Objects.requireNonNull;
+
 
 public final class IdProviderAccessControlEntry
 {
@@ -13,8 +15,8 @@ public final class IdProviderAccessControlEntry
 
     private IdProviderAccessControlEntry( final Builder builder )
     {
-        this.principal = Objects.requireNonNull( builder.principal, "principal cannot be null" );
-        this.access = Objects.requireNonNull( builder.access, "access cannot be null" );
+        this.principal = requireNonNull( builder.principal, "principal cannot be null" );
+        this.access = requireNonNull( builder.access, "access cannot be null" );
     }
 
     public PrincipalKey getPrincipal()

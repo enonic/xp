@@ -2,11 +2,12 @@ package com.enonic.xp.project;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Objects;
 import java.util.regex.Pattern;
 
 import com.enonic.xp.core.internal.NameValidator;
 import com.enonic.xp.repository.RepositoryId;
+
+import static java.util.Objects.requireNonNull;
 
 
 public final class ProjectName
@@ -29,7 +30,7 @@ public final class ProjectName
 
     private ProjectName( final String value )
     {
-        this.value = Objects.requireNonNull( value );
+        this.value = requireNonNull( value );
     }
 
     public static ProjectName from( final String projectName )

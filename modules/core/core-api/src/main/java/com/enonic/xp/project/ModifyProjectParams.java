@@ -1,9 +1,9 @@
 package com.enonic.xp.project;
 
-import java.util.Objects;
-
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
+
+import static java.util.Objects.requireNonNull;
 
 
 public final class ModifyProjectParams
@@ -89,7 +89,7 @@ public final class ModifyProjectParams
 
         private void validate()
         {
-            Objects.requireNonNull( name, "name is required" );
+            requireNonNull( name, "name is required" );
         }
 
         public ModifyProjectParams build()

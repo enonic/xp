@@ -22,6 +22,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.math.DoubleMath;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * A generic value wrapper that can hold different types of values such as String, Number, Boolean, List, and Map, similar to JSON values.
  * It provides methods to access and convert the underlying value in a type-safe manner.
@@ -47,7 +49,7 @@ public final class GenericValue
 
     private GenericValue( final Serializable value )
     {
-        this.value = Objects.requireNonNull( value );
+        this.value = requireNonNull( value );
     }
 
     /**
@@ -462,7 +464,7 @@ public final class GenericValue
          */
         public ObjectBuilder put( final String key, final String value )
         {
-            builder.put( Objects.requireNonNull( key ), GenericValue.stringValue( value ) );
+            builder.put( requireNonNull( key ), GenericValue.stringValue( value ) );
             return this;
         }
 
@@ -475,7 +477,7 @@ public final class GenericValue
          */
         public ObjectBuilder put( final String key, final long value )
         {
-            builder.put( Objects.requireNonNull( key ), GenericValue.numberValue( value ) );
+            builder.put( requireNonNull( key ), GenericValue.numberValue( value ) );
             return this;
         }
 
@@ -488,7 +490,7 @@ public final class GenericValue
          */
         public ObjectBuilder put( final String key, final double value )
         {
-            builder.put( Objects.requireNonNull( key ), GenericValue.numberValue( value ) );
+            builder.put( requireNonNull( key ), GenericValue.numberValue( value ) );
             return this;
         }
 
@@ -501,7 +503,7 @@ public final class GenericValue
          */
         public ObjectBuilder put( final String key, final boolean value )
         {
-            builder.put( Objects.requireNonNull( key ), GenericValue.booleanValue( value ) );
+            builder.put( requireNonNull( key ), GenericValue.booleanValue( value ) );
             return this;
         }
 
@@ -514,7 +516,7 @@ public final class GenericValue
          */
         public ObjectBuilder put( final String key, final GenericValue value )
         {
-            builder.put( Objects.requireNonNull( key ), Objects.requireNonNull( value ) );
+            builder.put( requireNonNull( key ), requireNonNull( value ) );
             return this;
         }
 

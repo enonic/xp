@@ -1,7 +1,5 @@
 package com.enonic.xp.core.impl.audit;
 
-import java.util.Objects;
-
 import com.enonic.xp.audit.AuditLog;
 import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.core.impl.audit.serializer.AuditLogSerializer;
@@ -9,6 +7,8 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
+
+import static java.util.Objects.requireNonNull;
 
 public class CreateAuditLogCommand
     extends NodeServiceCommand<AuditLog>
@@ -65,7 +65,7 @@ public class CreateAuditLogCommand
 
         private void validate()
         {
-            Objects.requireNonNull( params, "params cannot be null" );
+            requireNonNull( params, "params cannot be null" );
         }
 
         public CreateAuditLogCommand build()

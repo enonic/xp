@@ -1,11 +1,11 @@
 package com.enonic.xp.repo.impl.repository;
 
-import java.util.Objects;
-
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.util.Version;
+
+import static java.util.Objects.requireNonNullElseGet;
 
 public final class RepositoryEntry
 {
@@ -25,8 +25,8 @@ public final class RepositoryEntry
     {
         this.id = builder.id;
         this.settings = builder.settings == null ? RepositorySettings.create().build() : builder.settings;
-        this.data = Objects.requireNonNullElseGet( builder.data, PropertyTree::new );
-        this.attachments = Objects.requireNonNullElseGet( builder.attachments, AttachedBinaries::empty );
+        this.data = requireNonNullElseGet( builder.data, PropertyTree::new );
+        this.attachments = requireNonNullElseGet( builder.attachments, AttachedBinaries::empty );
         this.transientFlag = builder.transientFlag;
         this.modelVersion = builder.modelVersion;
     }

@@ -1,6 +1,5 @@
 package com.enonic.xp.portal.impl.url;
 
-import java.util.Objects;
 import java.util.function.Supplier;
 
 import com.enonic.xp.portal.PortalRequest;
@@ -9,6 +8,9 @@ import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.project.ProjectName;
 
+import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
+
 final class ServiceRequestBaseUrlSupplier
     implements Supplier<String>
 {
@@ -16,13 +18,13 @@ final class ServiceRequestBaseUrlSupplier
 
     private ServiceRequestBaseUrlSupplier( final Builder builder )
     {
-        this.urlType = Objects.requireNonNullElse( builder.urlType, UrlTypeConstants.SERVER_RELATIVE );
+        this.urlType = requireNonNullElse( builder.urlType, UrlTypeConstants.SERVER_RELATIVE );
     }
 
     @Override
     public String get()
     {
-        final PortalRequest portalRequest = Objects.requireNonNull( PortalRequestAccessor.get(), "no request bound" );
+        final PortalRequest portalRequest = requireNonNull( PortalRequestAccessor.get(), "no request bound" );
 
         final StringBuilder uriBuilder = new StringBuilder();
 

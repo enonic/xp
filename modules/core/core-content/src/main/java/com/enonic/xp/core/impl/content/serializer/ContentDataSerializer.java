@@ -420,7 +420,6 @@ public final class ContentDataSerializer
                                  .mimeType( attachmentAsSet.getString( ContentPropertyNames.ATTACHMENT_MIMETYPE ) )
                                  .size( attachmentAsSet.getLong( ContentPropertyNames.ATTACHMENT_SIZE ) )
                                  .sha512( attachmentAsSet.getString( ContentPropertyNames.ATTACHMENT_SHA512 ) )
-                                 .textContent( attachmentAsSet.getString( ContentPropertyNames.ATTACHMENT_TEXT ) )
                                  .build() );
         }
         return attachments.build();
@@ -437,7 +436,6 @@ public final class ContentDataSerializer
             attachmentSet.addString( ContentPropertyNames.ATTACHMENT_MIMETYPE, attachment.getMimeType() );
             attachmentSet.addLong( ContentPropertyNames.ATTACHMENT_SIZE, attachment.getSize() );
             attachmentSet.addString( ContentPropertyNames.ATTACHMENT_SHA512, attachment.getSha512() );
-            attachmentSet.addString( ContentPropertyNames.ATTACHMENT_TEXT, attachment.getTextContent() );
         }
     }
 }

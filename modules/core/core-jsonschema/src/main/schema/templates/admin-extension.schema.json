@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "@id@",
+  "type": "object",
+  "properties": {
+    "kind": {
+      "type": "string",
+      "const": "AdminExtension"
+    },
+    "title": {
+      "$ref": "#/$defs/localizedTextDef"
+    },
+    "description": {
+      "$ref": "#/$defs/localizedTextDef"
+    },
+    "allow": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "interfaces": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "config": {
+      "$ref": "#/$defs/genericValueDef"
+    }
+  },
+  "required": [
+    "kind"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "localizedTextDef": {},
+    "genericValueDef": {}
+  }
+}

@@ -1,5 +1,0 @@
-kind: "Site"
-mappings:
-  - service: "myapp:myservice"
-    controller: "myapp:mycontroller"
-    pattern: "/path/*"

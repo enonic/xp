@@ -1,6 +1,5 @@
 package com.enonic.xp.repo.impl.repository;
 
-import java.util.Objects;
 import java.util.Optional;
 
 import com.enonic.xp.data.PropertySet;
@@ -15,6 +14,8 @@ import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.util.Version;
+
+import static java.util.Objects.requireNonNullElse;
 
 public class RepositoryNodeTranslator
 {
@@ -70,7 +71,7 @@ public class RepositoryNodeTranslator
             .settings( toRepositorySettings( nodeData ) )
             .data( repositoryData )
             .attachments( node.getAttachedBinaries() )
-            .transientFlag( Objects.requireNonNullElse( nodeData.getBoolean( TRANSIENT_KEY ), false ) )
+            .transientFlag( requireNonNullElse( nodeData.getBoolean( TRANSIENT_KEY ), false ) )
             .modelVersion( modelVersion )
             .build();
     }

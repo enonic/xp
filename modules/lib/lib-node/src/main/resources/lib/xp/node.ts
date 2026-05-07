@@ -237,7 +237,7 @@ interface NodeHandler {
 
     patch(params: PatchNodeHandlerParams): PatchNodeResult;
 
-    sort<NodeData>(key: string, childOrder: string): Node<NodeData>;
+    sort<NodeData>(key: string, childOrder: string): SortNodeResult<NodeData>;
 
     get<NodeData>(params: GetNodeHandlerParams): Node<NodeData> | Node<NodeData>[] | null;
 
@@ -247,7 +247,7 @@ interface NodeHandler {
 
     diff(params: DiffBranchesHandlerParams): DiffBranchesResult;
 
-    move(source: string, target: string): boolean;
+    move<NodeData>(source: string, target: string): Node<NodeData>;
 
     query<
         AggregationInput extends Aggregations = never
@@ -317,7 +317,6 @@ export interface PushNodesResult {
         id: string;
         reason: string;
     }[];
-    deleted: string[];
 }
 
 interface PushNodeHandlerParams {
@@ -337,12 +336,11 @@ interface PushNodeHandlerParams {
 export interface PatchNodeParams {
     key: string;
     editor: (node: Node) => PatchedNode;
-    branches: string[];
+    branches?: string[];
 }
 
 export interface PatchNodeResult {
-    nodeId: string;
-    branchResult: {
+    branchResults: {
         branch: string;
         node: PatchedNode;
     }[];
@@ -394,7 +392,9 @@ export interface SortNodeParams {
 
 export interface SortNodeResult<NodeData> {
     node: Node<NodeData>;
-    reorderedNodes?: Node<NodeData>[];
+    reorderedNodes: {
+        node: Node<NodeData>;
+    }[];
 }
 
 export interface QueryNodeParams<AggregationInput extends Aggregations = never> {
@@ -525,11 +525,13 @@ export interface ApplyPermissionsParams {
     scope?: string;
 }
 
-export type ApplyPermissionsResult = Record<string, BranchResult[]>;
+export type ApplyPermissionsResult = Record<string, {
+    branchResults: BranchResult[];
+}>;
 
 export interface BranchResult {
     branch: string;
-    node: Node;
+    permissions: AccessControlEntry[];
 }
 
 export type RefreshMode = 'SEARCH' | 'STORAGE' | 'ALL';
@@ -671,7 +673,7 @@ export interface RepoConnection {
 
     getBinary(params: GetBinaryParams): ByteSource;
 
-    move(params: MoveNodeParams): boolean;
+    move<NodeData = Record<string, unknown>>(params: MoveNodeParams): Node<NodeData>;
 
     sort<NodeData = Record<string, unknown>>(params: SortNodeParams): SortNodeResult<NodeData>;
 
@@ -755,13 +757,14 @@ class RepoConnectionImpl
     /**
      * This function patches a node.
      *
-     * @example-ref examples/node/update.js
+     * @example-ref examples/node/patch-1.js
      *
-     * @param {PatchNodeParams} params JSON with the parameters.
+     * @param {object} params JSON with the parameters.
      * @param {string} params.key Path or id to the node.
      * @param {function} params.editor Editor callback function.
+     * @param {string[]} [params.branches] Branches to patch in. If empty or omitted the patch is applied only to the current context branch.
      *
-     * @returns {PatchNodeResult} patch result.
+     * @returns {object} Patch result, with one entry per branch where the node was patched.
      */
     patch(params: PatchNodeParams): PatchNodeResult {
         const key = checkRequired(params, 'key');
@@ -838,8 +841,8 @@ class RepoConnectionImpl
      * @example-ref examples/node/push-3.js
      *
      * @param {object} params JSON with the parameters
-     * @param {string} params.key Id or path to the nodes
-     * @param {string[]} params.keys Array of ids or paths to the nodes
+     * @param {string} [params.key] Id or path to the nodes. Either `key` or `keys` must be specified.
+     * @param {string[]} [params.keys] Array of ids or paths to the nodes. Either `key` or `keys` must be specified.
      * @param {string} params.target Branch to push nodes to
      * @param {boolean} [params.includeChildren=false] Also push children of given nodes
      * @param {boolean} [params.resolve=true] Resolve dependencies before pushing, meaning that references will also be pushed
@@ -928,13 +931,13 @@ class RepoConnectionImpl
      * @param {string} params.source Path or id of the node to be moved or renamed.
      * @param {string} params.target New path or name for the node. If the target ends in slash '/', it specifies the parent path where to be moved. Otherwise it means the new desired path or name for the node.
      *
-     * @returns {boolean} True if the node was successfully moved or renamed, false otherwise.
+     * @returns {object} The moved or renamed node as JSON.
      */
-    move(params: MoveNodeParams): boolean {
+    move<NodeData = Record<string, unknown>>(params: MoveNodeParams): Node<NodeData> {
         const source = checkRequired(params, 'source');
         const target = checkRequired(params, 'target');
 
-        return __.toNativeObject(this.nodeHandler.move(source, target));
+        return __.toNativeObject(this.nodeHandler.move<NodeData>(source, target));
     }
 
     /**
@@ -1049,7 +1052,7 @@ class RepoConnectionImpl
      * @param {object} params JSON parameters.
      * @param {string} params.key Path or ID of the node.
      *
-     * @returns {object} Active content versions per branch.
+     * @returns {object} Active node version, or null if not found.
      */
     getActiveVersion(params: GetActiveVersionParams): NodeVersion | null {
         const key = checkRequired(params, 'key');
@@ -1063,7 +1066,7 @@ class RepoConnectionImpl
      * @example-ref examples/node/findChildren.js
      *
      * @param {object} params JSON with the parameters.
-     * @param {number} params.parentKey path or id of parent to get children of
+     * @param {string} params.parentKey path or id of parent to get children of
      * @param {number} [params.start=0] Start index (used for paging).
      * @param {number} [params.count=10] Number of contents to fetch.
      * @param {string} [params.childOrder] How to order the children (defaults to value stored on parent)
@@ -1117,7 +1120,7 @@ class RepoConnectionImpl
      * @param {object} [params.addPermissions] the permissions to add json
      * @param {object} [params.removePermissions] the permissions to remove json
      * @param {string[]} [params.branches] Additional branches to apply permissions to. Current context branch should not be included.
-     * @param {string} [params.scope] Scope of operation. Possible values are 'SINGE', 'TREE' or 'SUBTREE'. Default is 'SINGLE'.
+     * @param {string} [params.scope] Scope of operation. Possible values are 'SINGLE', 'TREE' or 'SUBTREE'. Default is 'SINGLE'.
      *
      * @returns {object} Result of the apply permissions operation.
      */
@@ -1137,7 +1140,8 @@ class RepoConnectionImpl
      *
      * @example-ref examples/node/commit.js
      *
-     * @param {...(string|string[])} params.keys Node keys to commit. Each argument could be an id, a path or an array of the two. Prefer the usage of ID rather than paths.
+     * @param {object} params JSON with the parameters.
+     * @param {string|string[]} params.keys Node keys to commit. The value can be an id, a path or an array of the two. Prefer the usage of ID rather than paths.
      * @param {string} [params.message] Commit message.
      *
      * @returns {object} Commit object.
@@ -1151,11 +1155,12 @@ class RepoConnectionImpl
     /**
      * This function fetches commit by id.
      *
-     * @example-ref examples/node/commit.js
+     * @example-ref examples/node/getCommit.js
      *
+     * @param {object} params JSON with the parameters.
      * @param {string} params.id existing commit id.
      *
-     * @returns {object} Commit object.
+     * @returns {object} Commit object, or null if no commit with that id was found.
      */
     getCommit(params: GetCommitParams): NodeCommit | null {
         const id = checkRequired(params, 'id');
@@ -1302,8 +1307,8 @@ interface NodeHandleContext {
  * @example-ref examples/node/connect.js
  *
  * @param {object} params JSON with the parameters.
- * @param {object} params.repoId repository id
- * @param {object} params.branch branch id
+ * @param {string} params.repoId repository id
+ * @param {string} params.branch branch id
  * @param {object} [params.user] User to execute the callback with. Default is the current user.
  * @param {string} params.user.login Login of the user.
  * @param {string} [params.user.idProvider] Id provider containing the user. By default, the system id provider is used.
@@ -1343,8 +1348,8 @@ export interface MultiRepoConnectParams {
  *
  * @param {object} params JSON with the parameters.
  * @param {object[]} params.sources array of sources to connect to
- * @param {object} params.sources.repoId repository id
- * @param {object} params.sources.branch branch id
+ * @param {string} params.sources.repoId repository id
+ * @param {string} params.sources.branch branch id
  * @param {string[]} [params.sources.principals] Principals to execute the callback with. Uses principals in context if not specified or empty.
  *
  * @returns {MultiRepoConnection} Returns a new multirepo-connection.

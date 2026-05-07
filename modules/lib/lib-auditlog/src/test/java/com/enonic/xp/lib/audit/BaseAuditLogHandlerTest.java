@@ -1,8 +1,6 @@
 package com.enonic.xp.lib.audit;
 
 import java.time.Instant;
-import java.util.Objects;
-
 import org.mockito.Mockito;
 
 import com.enonic.xp.audit.AuditLog;
@@ -12,6 +10,8 @@ import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.form.PropertyTreeMarshallerService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.testing.ScriptTestSupport;
+
+import static java.util.Objects.requireNonNullElse;
 
 public abstract class BaseAuditLogHandlerTest
     extends ScriptTestSupport
@@ -39,7 +39,7 @@ public abstract class BaseAuditLogHandlerTest
             type( p.getType() ).
             time( Instant.ofEpochMilli( 1565599442767L ) ).
             source( p.getSource() ).
-            user( Objects.requireNonNullElse( p.getUser(), PrincipalKey.ofAnonymous()) ).
+            user( requireNonNullElse( p.getUser(), PrincipalKey.ofAnonymous()) ).
             objectUris( p.getObjectUris() ).
             data( p.getData() );
     }

@@ -1,7 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
-import java.util.Objects;
+import java.util.Map;
 
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
@@ -27,6 +27,8 @@ import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.node.VersionAttributesResolver;
+
+import static java.util.Objects.requireNonNull;
 
 public class UnpublishContentCommand
     extends AbstractContentCommand
@@ -97,7 +99,8 @@ public class UnpublishContentCommand
     private void removePublishInfoAndCommit( final NodeIds deleteNodeResult, Instant now )
     {
         final VersionAttributesResolver unpublishInfoAttr =
-            ContentAttributesHelper.versionHistoryResolver( ContentAttributesHelper.UNPUBLISH_ATTR );
+            ContentAttributesHelper.versionHistoryResolver( ContentAttributesHelper.UNPUBLISH_ATTR,
+                                                            Map.ofEntries( ContentAttributesHelper.resolveEditorialProperty() ) );
         for ( final var deleted : deleteNodeResult )
         {
             final UpdateNodeParams updateParams =
@@ -145,7 +148,7 @@ public class UnpublishContentCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( params, "params cannot be null" );
+            requireNonNull( params, "params cannot be null" );
         }
 
         public UnpublishContentCommand build()

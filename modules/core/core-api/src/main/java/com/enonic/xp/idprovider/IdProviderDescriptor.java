@@ -1,10 +1,10 @@
 package com.enonic.xp.idprovider;
 
-import java.util.Objects;
-
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.util.GenericValue;
+
+import static java.util.Objects.requireNonNullElse;
 
 public final class IdProviderDescriptor
 {
@@ -20,7 +20,7 @@ public final class IdProviderDescriptor
     {
         this.key = builder.key;
         this.mode = builder.mode;
-        this.config = Objects.requireNonNullElse( builder.config, Form.empty() );
+        this.config = requireNonNullElse( builder.config, Form.empty() );
         this.schemaConfig = builder.schemaConfig.build();
     }
 

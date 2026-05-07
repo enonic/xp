@@ -22,6 +22,8 @@ dependencies {
     testImplementation libs.felix.framework
 
     testFixturesApi project( ':core:core-api' )
+    testFixturesImplementation( testFixtures( project( ":core:core-api" ) ) )
+    testFixturesImplementation( project( ":core:core-repo" ) )
     testFixturesImplementation( project( ":core:core-audit" ) )
     testFixturesImplementation( project( ":core:core-scheduler" ) )
     testFixturesImplementation( project( ":core:core-app" ) )
@@ -38,12 +40,8 @@ dependencies {
     }
 }
 
-def integration = gradle.sharedServices.registerIfAbsent( "integration", BuildService ) {
-    maxParallelUsages = 1
-}
-
 tasks.register( 'integrationTest', Test ) {
-    usesService( integration )
+    usesService( gradle.sharedServices.registrations.named( "integration" ).get().service )
     description = 'Runs integration tests.'
     group = 'verification'
 

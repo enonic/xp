@@ -1,6 +1,5 @@
 package com.enonic.xp.portal.impl.url;
 
-import java.util.Objects;
 import java.util.function.Supplier;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,6 +12,8 @@ import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 import com.enonic.xp.web.servlet.UriRewritingResult;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
+
+import static java.util.Objects.requireNonNull;
 
 final class AssetBaseUrlSupplier
     implements Supplier<String>
@@ -27,7 +28,7 @@ final class AssetBaseUrlSupplier
     @Override
     public String get()
     {
-        final PortalRequest portalRequest = Objects.requireNonNull( PortalRequestAccessor.get(), "no request bound" );
+        final PortalRequest portalRequest = requireNonNull( PortalRequestAccessor.get(), "no request bound" );
 
         final StringBuilder uriBuilder = new StringBuilder();
 

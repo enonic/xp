@@ -1,12 +1,12 @@
 package com.enonic.xp.core.impl.project;
 
-import java.util.Objects;
-
 import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
+
+import static java.util.Objects.requireNonNullElse;
 
 public final class CreateProjectRootAccessListCommand
     extends AbstractProjectCommand
@@ -16,7 +16,7 @@ public final class CreateProjectRootAccessListCommand
     private CreateProjectRootAccessListCommand( final Builder builder )
     {
         super( builder );
-        this.permissions = Objects.requireNonNullElse( builder.permissions, AccessControlList.empty() );
+        this.permissions = requireNonNullElse( builder.permissions, AccessControlList.empty() );
     }
 
     public static Builder create()

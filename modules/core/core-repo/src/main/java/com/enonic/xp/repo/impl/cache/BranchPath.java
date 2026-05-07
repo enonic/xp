@@ -6,6 +6,8 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repository.RepositoryId;
 
+import static java.util.Objects.requireNonNull;
+
 public final class BranchPath
 {
     private final RepositoryId repositoryId;
@@ -16,9 +18,9 @@ public final class BranchPath
 
     public BranchPath( final RepositoryId repositoryId, final Branch branch, final NodePath path )
     {
-        this.repositoryId = Objects.requireNonNull( repositoryId );
-        this.branch = Objects.requireNonNull( branch );
-        this.path = Objects.requireNonNull( path );
+        this.repositoryId = requireNonNull( repositoryId );
+        this.branch = requireNonNull( branch );
+        this.path = requireNonNull( path );
     }
 
     public RepositoryId getRepositoryId()

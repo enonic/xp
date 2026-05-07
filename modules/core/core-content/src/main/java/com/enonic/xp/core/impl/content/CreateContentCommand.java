@@ -2,8 +2,6 @@ package com.enonic.xp.core.impl.content;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
-
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAlreadyExistsException;
 import com.enonic.xp.content.ContentConstants;
@@ -36,6 +34,8 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
 
 final class CreateContentCommand
     extends AbstractCreatingOrUpdatingContentCommand
@@ -157,7 +157,7 @@ final class CreateContentCommand
             .creator( getCurrentUserKey() )
             .owner( getDefaultOwner( processedContent ) );
         populateName( builder );
-        builder.childOrder( Objects.requireNonNullElse( this.params.getChildOrder(), ContentConstants.DEFAULT_CHILD_ORDER ) );
+        builder.childOrder( requireNonNullElse( this.params.getChildOrder(), ContentConstants.DEFAULT_CHILD_ORDER ) );
         populateLanguage( builder );
 
         populateValid( builder );
@@ -313,7 +313,7 @@ final class CreateContentCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( params, "params cannot be null" );
+            requireNonNull( params, "params cannot be null" );
         }
 
         public CreateContentCommand build()

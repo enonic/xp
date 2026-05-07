@@ -18,15 +18,15 @@ import type {PrincipalKey, ScriptValue, User} from '@enonic-types/core';
 export type {PrincipalKey, UserKey, Principal, ScriptValue, User} from '@enonic-types/core';
 
 export interface AuthInfo {
-    user?: User | null;
-    principals?: PrincipalKey[] | null;
+    user?: User;
+    principals?: PrincipalKey[];
 }
 
 export type ContextAttributes = Record<string, number | string | boolean | Record<string, unknown>>;
 
 export interface Context {
-    branch: string;
-    repository: string;
+    branch?: string;
+    repository?: string;
     authInfo?: AuthInfo;
     attributes: ContextAttributes;
 }
@@ -84,7 +84,7 @@ const bean: ContextHandler = __.newBean<ContextHandler>('com.enonic.xp.lib.conte
  * @param {array} [context.principals] Additional principals to execute the callback with.
  * @param {object} [context.attributes] Additional Context attributes.
  * @param {function} callback Function to execute.
- * @returns {object} Result of the function execution.
+ * @returns {*} Result of the function execution.
  */
 export function run<T>(context: ContextParams, callback: () => T): T {
     const params: ContextRunParams = bean.newRunParams();

@@ -15,7 +15,7 @@ class MixinSchemaValidationTest
     @BeforeAll
     static void initSchema()
     {
-        schema = schemaFor( "mixin.schema.json" );
+        schema = schemaFor( "mixin" );
     }
 
     @Test

@@ -1,6 +1,5 @@
 package com.enonic.xp.portal.impl.url;
 
-import java.util.Objects;
 import java.util.function.Supplier;
 
 import com.enonic.xp.descriptor.DescriptorKey;
@@ -8,6 +7,8 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.project.ProjectName;
+
+import static java.util.Objects.requireNonNull;
 
 final class ApiUrlBaseUrlResolver
     implements Supplier<String>
@@ -20,7 +21,7 @@ final class ApiUrlBaseUrlResolver
 
     ApiUrlBaseUrlResolver( final Builder builder )
     {
-        this.descriptorKey = Objects.requireNonNull( builder.descriptorKey, "DescriptorKey must be set" );
+        this.descriptorKey = requireNonNull( builder.descriptorKey, "DescriptorKey must be set" );
         this.baseUrl = builder.baseUrl;
         this.urlType = builder.urlType;
     }

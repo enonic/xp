@@ -15,7 +15,7 @@ class ServiceSchemaValidationTest
     @BeforeAll
     static void initSchema()
     {
-        schema = schemaFor( "service.schema.json" );
+        schema = schemaFor( "service" );
     }
 
     @Test

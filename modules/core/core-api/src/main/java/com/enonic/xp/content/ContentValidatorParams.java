@@ -1,13 +1,13 @@
 package com.enonic.xp.content;
 
-import java.util.Objects;
-
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.schema.content.ContentType;
+
+import static java.util.Objects.requireNonNullElse;
 
 public final class ContentValidatorParams
 {
@@ -31,11 +31,11 @@ public final class ContentValidatorParams
     {
         contentId = builder.contentId;
         data = builder.data;
-        mixins = Objects.requireNonNullElse( builder.mixins, Mixins.empty() );
+        mixins = requireNonNullElse( builder.mixins, Mixins.empty() );
         contentType = builder.contentType;
         name = builder.name;
         displayName = builder.displayName;
-        createAttachments = Objects.requireNonNullElse( builder.createAttachments, CreateAttachments.empty() );
+        createAttachments = requireNonNullElse( builder.createAttachments, CreateAttachments.empty() );
         page = builder.page;
     }
 

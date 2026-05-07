@@ -53,6 +53,25 @@ class FileNamesTest
         assertSafe( ".gitignore" );
     }
 
+    @Test
+    void isAnyOfExtensions_matches()
+    {
+        assertTrue( FileNames.isAnyOfExtensions( "photo.jpg", "jpg" ) );
+        assertTrue( FileNames.isAnyOfExtensions( "photo.jpg", "png", "jpg" ) );
+        assertTrue( FileNames.isAnyOfExtensions( "photo.JPG", "jpg" ) );
+        assertTrue( FileNames.isAnyOfExtensions( "PHOTO.JPG", "JpG" ) );
+        assertTrue( FileNames.isAnyOfExtensions( "archive.tar.gz", ".gz" ) );
+    }
+
+    @Test
+    void isAnyOfExtensions_doesNotMatch()
+    {
+        assertFalse( FileNames.isAnyOfExtensions( "photo.jpg", "png" ) );
+        assertFalse( FileNames.isAnyOfExtensions( "photo.jpg" ) );
+        assertFalse( FileNames.isAnyOfExtensions( "jp", "jpg" ) );
+        assertFalse( FileNames.isAnyOfExtensions( "", "jpg" ) );
+    }
+
     void assertUnsafe( final String fileName )
     {
         assertFalse( FileNames.isSafeFileName( fileName ) );

@@ -1,10 +1,10 @@
 package com.enonic.xp.security.auth;
 
-import java.util.Objects;
-
 import org.jspecify.annotations.NullMarked;
 
 import com.enonic.xp.security.IdProviderKey;
+
+import static java.util.Objects.requireNonNull;
 
 @NullMarked
 public abstract sealed class PasswordAuthToken
@@ -16,7 +16,7 @@ public abstract sealed class PasswordAuthToken
     protected PasswordAuthToken( final IdProviderKey idProvider, final String password )
     {
         super( idProvider );
-        this.password = Objects.requireNonNull( password, "password cannot be null" );
+        this.password = requireNonNull( password, "password cannot be null" );
     }
 
     public final String getPassword()

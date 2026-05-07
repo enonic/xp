@@ -26,11 +26,17 @@ class GetDynamicStylesHandlerTest
             StyleDescriptor styleDescriptor = StyleDescriptor.create()
                 .application( applicationKey )
                 .addStyleElement( ImageStyle.create()
-                                      .displayName( "Style display name" )
+                                      .label( "Style display name" )
+
                                       .name( "mystyle" )
-                                      .displayNameI18nKey( "style.display" )
+                                      .labelI18nKey( "style.display" )
+                                      .aspectRatio( "16:9" )
+                                      .filter( "sharpen()" )
                                       .build() )
-                .cssPath( "assets/styles.css" )
+                .addStyleElement( ImageStyle.create()
+                                      .label( "Plain" )
+                                      .name( "plain" )
+                                      .build() )
                 .modifiedTime( Instant.parse( "2021-02-25T10:44:33.170079900Z" ) )
                 .build();
 

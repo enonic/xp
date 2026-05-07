@@ -1,10 +1,10 @@
 package com.enonic.xp.mail;
 
 import java.util.Map;
-import java.util.Objects;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteSource;
+
+import static java.util.Objects.requireNonNull;
 
 
 public final class MailAttachment
@@ -19,8 +19,8 @@ public final class MailAttachment
 
     private MailAttachment( final Builder builder )
     {
-        this.fileName = Objects.requireNonNull( builder.fileName );
-        this.data = Objects.requireNonNull( builder.data );
+        this.fileName = requireNonNull( builder.fileName );
+        this.data = requireNonNull( builder.data );
         this.mimeType = builder.mimeType;
         this.headers = builder.headers != null ? ImmutableMap.copyOf( builder.headers ) : ImmutableMap.of();
     }

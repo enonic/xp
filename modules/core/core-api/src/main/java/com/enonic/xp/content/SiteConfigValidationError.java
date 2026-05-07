@@ -6,6 +6,8 @@ import java.util.Objects;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertyPath;
 
+import static java.util.Objects.requireNonNull;
+
 public final class SiteConfigValidationError
     extends DataValidationError
 {
@@ -15,7 +17,7 @@ public final class SiteConfigValidationError
                                final String i18n, final ApplicationKey applicationKey, final List<Object> args )
     {
         super( propertyPath, errorCode, message, i18n, args );
-        this.applicationKey = Objects.requireNonNull( applicationKey );
+        this.applicationKey = requireNonNull( applicationKey );
     }
 
     public ApplicationKey getApplicationKey()

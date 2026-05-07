@@ -1,7 +1,5 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.util.Objects;
-
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -27,10 +25,15 @@ import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.search.result.SearchHit;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
+import com.enonic.xp.repo.impl.storage.NodeVersionData;
 import com.enonic.xp.repo.impl.storage.StoreNodeParams;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+
+import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
+import static java.util.Objects.requireNonNullElseGet;
 
 public class MoveNodeCommand
     extends AbstractNodeCommand
@@ -45,7 +48,7 @@ public class MoveNodeCommand
     {
         super( builder );
         this.params = builder.params;
-        this.moveListener = Objects.requireNonNullElse( builder.params.getMoveListener(), count -> {
+        this.moveListener = requireNonNullElse( builder.params.getMoveListener(), count -> {
         } );
         this.result = MoveNodeResult.create();
     }
@@ -71,7 +74,7 @@ public class MoveNodeCommand
 
         final NodeName newNodeName = resolveNodeName( existingNode );
 
-        final NodePath newParentPath = Objects.requireNonNullElseGet( params.getNewParentPath(), existingNode::parentPath );
+        final NodePath newParentPath = requireNonNullElseGet( params.getNewParentPath(), existingNode::parentPath );
 
         final Context context = ContextAccessor.current();
 
@@ -133,7 +136,9 @@ public class MoveNodeCommand
 
     private Node doMoveNode( final NodePath newParentPath, final NodeName newNodeName, final NodeId id )
     {
-        final Node persistedNode = doGetById( id );
+        final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
+        final NodeVersionData persistedData = this.nodeStorageService.getNodeVersionData( id, internalContext );
+        final Node persistedNode = persistedData.node();
 
         final Node.Builder nodeToMoveBuilder = Node.create( persistedNode )
             .name( newNodeName )
@@ -160,11 +165,10 @@ public class MoveNodeCommand
             }
         }
 
-        final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
         final Node builtNode = nodeToMoveBuilder.build();
-        final Attributes resolvedAttributes =
-            resolveVersionAttributes( params.getVersionAttributesResolver(), persistedNode, builtNode,
-                                      ContextAccessor.current().getBranch() );
+        final Attributes resolvedAttributes = resolveVersionAttributes( params.getVersionAttributesResolver(), persistedNode, builtNode,
+                                                                        ContextAccessor.current().getBranch(),
+                                                                        persistedData.version().getAttributes() );
         final Node movedNode =
             this.nodeStorageService.store( StoreNodeParams.newVersion( builtNode, resolvedAttributes ), internalContext ).node();
         this.nodeStorageService.invalidatePath( persistedNode.path(), internalContext );
@@ -219,7 +223,7 @@ public class MoveNodeCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( params, "params cannot be null" );
+            requireNonNull( params, "params cannot be null" );
         }
     }
 

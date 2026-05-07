@@ -11,6 +11,8 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteStreams;
 
+import static java.util.Objects.requireNonNull;
+
 
 public final class Icon
 {
@@ -22,8 +24,8 @@ public final class Icon
 
     private Icon( final byte[] iconData, final String mimeType, final Instant modifiedTime )
     {
-        Objects.requireNonNull( mimeType, "mimeType is required" );
-        Objects.requireNonNull( iconData, "iconData is required" );
+        requireNonNull( mimeType, "mimeType is required" );
+        requireNonNull( iconData, "iconData is required" );
         Preconditions.checkArgument( iconData.length > 0, "iconData cannot be empty" );
         this.iconData = iconData;
         this.mimeType = mimeType;
@@ -97,7 +99,7 @@ public final class Icon
 
     public static Icon from( final InputStream dataStream, final String mimeType, final Instant modifiedTime )
     {
-        Objects.requireNonNull( dataStream, "dataStream is required" );
+        requireNonNull( dataStream, "dataStream is required" );
         try
         {
             return new Icon( ByteStreams.toByteArray( dataStream ), mimeType, modifiedTime );

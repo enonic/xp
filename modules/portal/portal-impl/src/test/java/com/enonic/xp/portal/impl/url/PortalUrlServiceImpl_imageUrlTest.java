@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import jakarta.servlet.http.HttpServletRequest;
 
 import com.enonic.xp.attachment.Attachment;
+import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentName;
@@ -14,6 +15,7 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.macro.MacroService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
@@ -122,7 +124,7 @@ class PortalUrlServiceImpl_imageUrlTest
             .build()
             .callWith( () -> this.service.imageUrl( params ) );
 
-        assertEquals( "baseUrl/_/media:image/context-project:context-branch/123456:b12b4c973748042e3b3a7e4798344289/max-300/mycontent.png",
+        assertEquals( "baseUrl/_/media:image/context-project:context-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
                       url );
     }
 
@@ -142,7 +144,7 @@ class PortalUrlServiceImpl_imageUrlTest
             .build()
             .callWith( () -> this.service.imageUrl( params ) );
 
-        assertEquals( "/api/media:image/context-project:context-branch/123456:b12b4c973748042e3b3a7e4798344289/max-300/mycontent.png",
+        assertEquals( "/api/media:image/context-project:context-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
                       url );
     }
 
@@ -217,7 +219,7 @@ class PortalUrlServiceImpl_imageUrlTest
 
         final String url = this.service.imageUrl( params );
 
-        assertEquals( "/api/media:image/explicit-project:explicit-branch/123456:b12b4c973748042e3b3a7e4798344289/max-300/mycontent.png",
+        assertEquals( "/api/media:image/explicit-project:explicit-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
                       url );
     }
 
@@ -251,7 +253,7 @@ class PortalUrlServiceImpl_imageUrlTest
             .callWith( () -> this.service.imageUrl( params ) );
 
         assertEquals(
-            "http://localhost/source/context-project:context-branch/123456:b12b4c973748042e3b3a7e4798344289/max-300/mycontent.png", url );
+            "http://localhost/source/context-project:context-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png", url );
     }
 
     @Test
@@ -283,7 +285,7 @@ class PortalUrlServiceImpl_imageUrlTest
             .build()
             .callWith( () -> this.service.imageUrl( params ) );
 
-        assertEquals( "baseUrl/_/media:image/context-project:context-branch/123456:b12b4c973748042e3b3a7e4798344289/max-300/mycontent.png",
+        assertEquals( "baseUrl/_/media:image/context-project:context-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
                       url );
     }
 
@@ -317,7 +319,7 @@ class PortalUrlServiceImpl_imageUrlTest
             .callWith( () -> this.service.imageUrl( params ) );
 
         assertEquals(
-            "http://localhost/api/media:image/context-project:context-branch/123456:b12b4c973748042e3b3a7e4798344289/max-300/mycontent.png",
+            "http://localhost/api/media:image/context-project:context-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
             url );
     }
 
@@ -342,7 +344,7 @@ class PortalUrlServiceImpl_imageUrlTest
             .callWith( () -> this.service.imageUrl( params ) );
 
         assertEquals(
-            "/webapp/myapp/_/media:image/context-project:context-branch/123456:b12b4c973748042e3b3a7e4798344289/max-300/mycontent.png",
+            "/webapp/myapp/_/media:image/context-project:context-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
             url );
     }
 
@@ -375,7 +377,7 @@ class PortalUrlServiceImpl_imageUrlTest
             .build()
             .callWith( () -> this.service.imageUrl( params ) );
 
-        assertEquals( "/source/_/media:image/context-project:context-branch/123456:b12b4c973748042e3b3a7e4798344289/max-300/mycontent.png",
+        assertEquals( "/source/_/media:image/context-project:context-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
                       url );
     }
 
@@ -408,7 +410,7 @@ class PortalUrlServiceImpl_imageUrlTest
             .build()
             .callWith( () -> this.service.imageUrl( params ) );
 
-        assertEquals( "/api/media:image/context-project:context-branch/123456:b12b4c973748042e3b3a7e4798344289/max-300/mycontent.png",
+        assertEquals( "/api/media:image/context-project:context-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
                       url );
     }
 
@@ -437,7 +439,7 @@ class PortalUrlServiceImpl_imageUrlTest
         final String url = this.service.imageUrl( params );
 
         assertEquals(
-            "/site/request-project/request-branch/mysite/_/media:image/request-project:request-branch/123456:b12b4c973748042e3b3a7e4798344289/max-300/mycontent.png",
+            "/site/request-project/request-branch/mysite/_/media:image/request-project:request-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
             url );
     }
 
@@ -470,7 +472,7 @@ class PortalUrlServiceImpl_imageUrlTest
             .callWith( () -> this.service.imageUrl( params ) );
 
         assertEquals(
-            "/site/request-project/request-branch/mysite/_/media:image/request-project:request-branch/123456:b12b4c973748042e3b3a7e4798344289/max-300/mycontent.png",
+            "/site/request-project/request-branch/mysite/_/media:image/request-project:request-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
             url );
     }
 
@@ -508,7 +510,7 @@ class PortalUrlServiceImpl_imageUrlTest
         final String url = this.service.imageUrl( params );
 
         assertEquals(
-            "http://localhost/source/_/media:image/request-project:request-branch/123456:b12b4c973748042e3b3a7e4798344289/max-300/mycontent.png",
+            "http://localhost/source/_/media:image/request-project:request-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
             url );
     }
 
@@ -540,7 +542,7 @@ class PortalUrlServiceImpl_imageUrlTest
         final String url = this.service.imageUrl( params );
 
         assertEquals(
-            "/site/request-project/request-branch/mysite/_/media:image/explicit-project:explicit-branch/123456:b12b4c973748042e3b3a7e4798344289/max-300/mycontent.png",
+            "/site/request-project/request-branch/mysite/_/media:image/explicit-project:explicit-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
             url );
     }
 
@@ -570,7 +572,7 @@ class PortalUrlServiceImpl_imageUrlTest
             .build()
             .callWith( () -> this.service.imageUrl( params ) );
 
-        assertEquals( "baseUrl/_/media:image/context-project:context-branch/123456:b12b4c973748042e3b3a7e4798344289/max-300/mycontent.png",
+        assertEquals( "baseUrl/_/media:image/context-project:context-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
                       url );
     }
 
@@ -587,12 +589,13 @@ class PortalUrlServiceImpl_imageUrlTest
 
         final String url = this.portalUrlGeneratorService.imageUrl( params );
 
-        assertEquals( "baseUrl/_/media:image/project:branch/123456:b12b4c973748042e3b3a7e4798344289/max-300/mycontent.png", url );
+        assertEquals( "baseUrl/_/media:image/project:branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png", url );
     }
 
     private Media mockMedia( String id, String name, String attachmentHash )
     {
-        final Attachment attachment = Attachment.create().name( name ).mimeType( "image/png" ).sha512( attachmentHash ).build();
+        final Attachment attachment =
+            Attachment.create().name( name ).mimeType( "image/png" ).sha512( attachmentHash ).label( "source" ).build();
 
         final Media media = mock( Media.class );
 
@@ -601,7 +604,8 @@ class PortalUrlServiceImpl_imageUrlTest
         when( media.getId() ).thenReturn( contentId );
         when( media.getPath() ).thenReturn( ContentPath.from( "/" + id ) );
         when( media.getName() ).thenReturn( ContentName.from( name ) );
-        when( media.getMediaAttachment() ).thenReturn( attachment );
+        when( media.getData() ).thenReturn( new PropertyTree() );
+        when( media.getAttachments() ).thenReturn( Attachments.from( attachment ) );
 
         return media;
     }

@@ -6,6 +6,8 @@ import java.util.Objects;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.schema.mixin.MixinName;
 
+import static java.util.Objects.requireNonNull;
+
 public final class MixinConfigValidationError
     extends DataValidationError
 {
@@ -15,7 +17,7 @@ public final class MixinConfigValidationError
                                 final String i18n, final MixinName mixinName, final List<Object> args )
     {
         super( propertyPath, errorCode, message, i18n, args );
-        this.mixinName = Objects.requireNonNull( mixinName );
+        this.mixinName = requireNonNull( mixinName );
     }
 
     public MixinName getMixinName()

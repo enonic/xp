@@ -7,7 +7,6 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.Objects;
 import java.util.concurrent.locks.Lock;
 import java.util.function.Consumer;
 
@@ -15,6 +14,8 @@ import com.google.common.io.ByteSink;
 import com.google.common.io.ByteSource;
 import com.google.common.io.MoreFiles;
 import com.google.common.util.concurrent.Striped;
+
+import static java.util.Objects.requireNonNull;
 
 
 public class ImmutableFilesHelper
@@ -31,8 +32,8 @@ public class ImmutableFilesHelper
     public ByteSource computeIfAbsent( final Path path, final Consumer<ByteSink> consumer )
         throws IOException
     {
-        Objects.requireNonNull( path, "path is required" );
-        Objects.requireNonNull( consumer, "consumer is required" );
+        requireNonNull( path, "path is required" );
+        requireNonNull( consumer, "consumer is required" );
 
         if ( Files.exists( path ) )
         {

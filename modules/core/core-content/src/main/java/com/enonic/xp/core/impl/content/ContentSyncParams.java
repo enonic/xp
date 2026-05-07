@@ -1,11 +1,11 @@
 package com.enonic.xp.core.impl.content;
 
 import java.util.Collection;
-import java.util.Objects;
-
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.project.ProjectName;
+
+import static java.util.Objects.requireNonNull;
 
 public final class ContentSyncParams
 {
@@ -92,8 +92,8 @@ public final class ContentSyncParams
 
         private void validate()
         {
-            Objects.requireNonNull( sourceProject, "sourceProject is required" );
-            Objects.requireNonNull( targetProject, "targetProject is required" );
+            requireNonNull( sourceProject, "sourceProject is required" );
+            requireNonNull( targetProject, "targetProject is required" );
         }
 
         public ContentSyncParams build()

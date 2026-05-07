@@ -1,8 +1,8 @@
 package com.enonic.xp.content;
 
-import java.util.Objects;
-
 import com.enonic.xp.branch.Branch;
+
+import static java.util.Objects.requireNonNull;
 
 
 public final class ResolveRequiredDependenciesParams
@@ -45,7 +45,7 @@ public final class ResolveRequiredDependenciesParams
 
         public ResolveRequiredDependenciesParams build()
         {
-            Objects.requireNonNull( this.contentIds, "contentIds is required" );
+            requireNonNull( this.contentIds, "contentIds is required" );
             return new ResolveRequiredDependenciesParams( this );
         }
     }

@@ -6,6 +6,8 @@ import java.util.Objects;
 
 import com.google.common.collect.ImmutableList;
 
+import static java.util.Objects.requireNonNull;
+
 
 public final class PropertyArray
 {
@@ -19,9 +21,9 @@ public final class PropertyArray
 
     PropertyArray( final PropertySet parent, final String name, final ValueType valueType, final int initialCapacity )
     {
-        Objects.requireNonNull( parent, "parent cannot be null" );
-        Objects.requireNonNull( name, "name cannot be null" );
-        Objects.requireNonNull( valueType, "valueType cannot be null" );
+        requireNonNull( parent, "parent cannot be null" );
+        requireNonNull( name, "name cannot be null" );
+        requireNonNull( valueType, "valueType cannot be null" );
         Property.checkName( name );
 
         this.parent = parent;
@@ -35,8 +37,8 @@ public final class PropertyArray
      */
     private PropertyArray( final PropertyArray source, final PropertySet parent )
     {
-        Objects.requireNonNull( source, "source cannot be null" );
-        Objects.requireNonNull( parent, "parent cannot be null" );
+        requireNonNull( source, "source cannot be null" );
+        requireNonNull( parent, "parent cannot be null" );
 
         this.parent = parent;
         this.name = source.name;

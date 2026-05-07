@@ -1,7 +1,5 @@
 package com.enonic.xp.core.impl.project.init;
 
-import java.util.Objects;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +23,8 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
+
+import static java.util.Objects.requireNonNullElse;
 
 public final class ContentInitializer
     extends RepoDependentInitializer
@@ -105,7 +105,7 @@ public final class ContentInitializer
                                                              .data( data )
                                                              .name( ContentConstants.CONTENT_ROOT_NAME )
                                                              .parent( NodePath.ROOT )
-                                                             .permissions( Objects.requireNonNullElse( this.accessControlList,
+                                                             .permissions( requireNonNullElse( this.accessControlList,
                                                                                                        CONTENT_ROOT_DEFAULT_ACL ) )
                                                              .childOrder( CONTENT_DEFAULT_CHILD_ORDER )
                                                              .refresh( RefreshMode.ALL )

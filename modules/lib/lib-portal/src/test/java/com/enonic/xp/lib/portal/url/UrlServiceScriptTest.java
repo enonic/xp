@@ -15,6 +15,7 @@ import com.enonic.xp.portal.url.AttachmentUrlParams;
 import com.enonic.xp.portal.url.BaseUrlParams;
 import com.enonic.xp.portal.url.ComponentUrlParams;
 import com.enonic.xp.portal.url.GenerateUrlParams;
+import com.enonic.xp.portal.url.IdentityUrlParams;
 import com.enonic.xp.portal.url.ImageUrlParams;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
@@ -143,6 +144,12 @@ class UrlServiceScriptTest
 
         when( portalUrlService.baseUrl( any( BaseUrlParams.class ) ) ).thenAnswer( invocation -> "/site/mocksite" );
 
+        when( portalUrlService.identityUrl( any( IdentityUrlParams.class ) ) ).thenAnswer( invocation -> {
+            final IdentityUrlParams params = invocation.getArgument( 0, IdentityUrlParams.class );
+            final String idProviderKey = params.getIdProviderKey() != null ? params.getIdProviderKey().toString() : "default";
+            return "/site/mocksite/_/idprovider/" + idProviderKey + "/" + params.getIdProviderFunction() + buildQueryString( params.getParams() );
+        } );
+
         when( portalUrlService.generateUrl( any( GenerateUrlParams.class ) ) ).thenAnswer( invocation -> {
             final GenerateUrlParams params = invocation.getArgument( 0, GenerateUrlParams.class );
             String pathStr;
@@ -218,6 +225,17 @@ class UrlServiceScriptTest
         assertEquals( expectedService, captor.getValue().getService() );
     }
 
+    private void verifyLoginUrl( final String expectedIdProvider )
+    {
+        final ArgumentCaptor<IdentityUrlParams> captor = ArgumentCaptor.forClass( IdentityUrlParams.class );
+        verify( portalUrlService ).identityUrl( captor.capture() );
+        assertEquals( expectedIdProvider, captor.getValue().getIdProviderKey().toString() );
+        assertEquals( "login", captor.getValue().getIdProviderFunction() );
+        assertNotNull( captor.getValue().getParams() );
+        assertTrue( captor.getValue().getParams().containsKey( "a" ) );
+        assertTrue( captor.getValue().getParams().containsKey( "b" ) );
+    }
+
     private void verifyProcessHtml()
     {
         final ArgumentCaptor<ProcessHtmlParams> captor = ArgumentCaptor.forClass( ProcessHtmlParams.class );
@@ -285,6 +303,20 @@ class UrlServiceScriptTest
     {
         assertTrue( execute( "imageUrlTest_unknownProperty" ) );
         verifyImageUrl( "123" );
+    }
+
+    @Test
+    void loginUrlTest()
+    {
+        assertTrue( execute( "loginUrlTest" ) );
+        verifyLoginUrl( "system" );
+    }
+
+    @Test
+    void loginUrlTest_unknownProperty()
+    {
+        assertTrue( execute( "loginUrlTest_unknownProperty" ) );
+        verifyLoginUrl( "system" );
     }
 
     @Test

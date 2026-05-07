@@ -78,7 +78,7 @@ class AttachmentTest
             name( "MyImage.jpg" ).
             build();
 
-        assertEquals( "Attachment{name=MyImage.jpg, mimeType=image/jpeg, label=My Image 1, size=1024, sha512=null, textContent=null}", a1.toString() );
+        assertEquals( "Attachment{name=MyImage.jpg, mimeType=image/jpeg, label=My Image 1, size=1024, sha512=null}", a1.toString() );
 
     }
 

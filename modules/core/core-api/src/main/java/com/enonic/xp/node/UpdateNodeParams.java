@@ -1,11 +1,11 @@
 package com.enonic.xp.node;
 
-import java.util.Objects;
-
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.util.BinaryReference;
+
+import static java.util.Objects.requireNonNull;
 
 
 public final class UpdateNodeParams
@@ -140,7 +140,7 @@ public final class UpdateNodeParams
         private void validate()
         {
             Preconditions.checkArgument( this.id != null || this.path != null, "Either id or path is required" );
-            Objects.requireNonNull( this.editor, "editor is required" );
+            requireNonNull( this.editor, "editor is required" );
         }
     }
 }

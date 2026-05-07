@@ -1,0 +1,3 @@
+gradle.sharedServices.registerIfAbsent( "integration", BuildService ) {
+    maxParallelUsages = 2
+}

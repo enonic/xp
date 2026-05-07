@@ -1,7 +1,7 @@
 package com.enonic.xp.cluster;
 
 import java.io.Serializable;
-import java.util.Objects;
+import static java.util.Objects.requireNonNull;
 
 
 public final class ClusterNodeId
@@ -13,7 +13,7 @@ public final class ClusterNodeId
 
     private ClusterNodeId( final String value )
     {
-        this.value = Objects.requireNonNull( value );
+        this.value = requireNonNull( value );
     }
 
     @Override

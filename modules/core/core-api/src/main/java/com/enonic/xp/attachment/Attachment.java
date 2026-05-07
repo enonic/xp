@@ -7,6 +7,8 @@ import com.google.common.io.Files;
 
 import com.enonic.xp.util.BinaryReference;
 
+import static java.util.Objects.requireNonNull;
+
 
 public final class Attachment
 {
@@ -20,16 +22,13 @@ public final class Attachment
 
     private final String sha512;
 
-    private final String textContent;
-
     public Attachment( final Builder builder )
     {
-        this.mimeType = Objects.requireNonNull( builder.mimeType, "mimeType is mandatory for an Attachment" );
-        this.name = Objects.requireNonNull( builder.name, "name is mandatory for an Attachment" );
+        this.mimeType = requireNonNull( builder.mimeType, "mimeType is mandatory for an Attachment" );
+        this.name = requireNonNull( builder.name, "name is mandatory for an Attachment" );
         this.sha512 = builder.sha512;
         this.size = builder.size;
         this.label = builder.label;
-        this.textContent = builder.textContent;
     }
 
     public String getMimeType()
@@ -72,11 +71,6 @@ public final class Attachment
         return sha512;
     }
 
-    public String getTextContent()
-    {
-        return textContent;
-    }
-
     @Override
     public boolean equals( final Object o )
     {
@@ -90,14 +84,13 @@ public final class Attachment
         }
         final Attachment that = (Attachment) o;
         return Objects.equals( this.name, that.name ) && Objects.equals( this.mimeType, that.mimeType ) &&
-            Objects.equals( this.label, that.label ) && this.size == that.size && Objects.equals( this.sha512, that.sha512 ) &&
-            Objects.equals( this.textContent, that.textContent );
+            Objects.equals( this.label, that.label ) && this.size == that.size && Objects.equals( this.sha512, that.sha512 );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( name, mimeType, label, size, sha512, textContent );
+        return Objects.hash( name, mimeType, label, size, sha512 );
     }
 
     @Override
@@ -109,7 +102,6 @@ public final class Attachment
         s.add( "label", label );
         s.add( "size", size );
         s.add( "sha512", sha512 );
-        s.add( "textContent", textContent );
         return s.toString();
     }
 
@@ -135,8 +127,6 @@ public final class Attachment
 
         private long size;
 
-        private String textContent;
-
         private Builder()
         {
 
@@ -148,7 +138,6 @@ public final class Attachment
             this.name = attachment.name;
             this.label = attachment.label;
             this.size = attachment.size;
-            this.textContent = attachment.textContent;
             this.sha512 = attachment.sha512;
         }
 
@@ -179,12 +168,6 @@ public final class Attachment
         public Builder size( final long size )
         {
             this.size = size;
-            return this;
-        }
-
-        public Builder textContent( final String textContent )
-        {
-            this.textContent = textContent;
             return this;
         }
 

@@ -135,7 +135,7 @@ public final class ImageRenderer
                 return null;
             }
 
-            final Attachment attachment = ( (Media) image ).getMediaAttachment();
+            final Attachment attachment = image.getAttachments().byLabel( "source" );
 
             if ( attachment != null )
             {

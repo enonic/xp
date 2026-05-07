@@ -2,14 +2,13 @@ package com.enonic.xp.site;
 
 
 import java.time.Instant;
-import java.util.Objects;
-
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.descriptor.DescriptorKeys;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptors;
 import com.enonic.xp.site.processor.ResponseProcessorDescriptors;
 import com.enonic.xp.util.GenericValue;
 
+import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElse;
 
 
@@ -29,7 +28,7 @@ public final class SiteDescriptor
 
     private SiteDescriptor( final Builder builder )
     {
-        this.applicationKey = Objects.requireNonNull( builder.applicationKey );
+        this.applicationKey = requireNonNull( builder.applicationKey );
         this.modifiedTime = builder.modifiedTime;
         this.responseProcessors = requireNonNullElse( builder.responseProcessors, ResponseProcessorDescriptors.empty() );
         this.mappingDescriptors = requireNonNullElse( builder.mappingDescriptors, ControllerMappingDescriptors.empty() );

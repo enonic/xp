@@ -1,6 +1,6 @@
 package com.enonic.xp.node;
 
-import java.util.Objects;
+import static java.util.Objects.requireNonNull;
 
 
 public final class PushNodeResult
@@ -58,7 +58,7 @@ public final class PushNodeResult
 
     public static PushNodeResult failure( final NodeId nodeId, final NodePath nodePath, final Reason failureReason )
     {
-        return new PushNodeResult( nodeId, nodePath, null, null, Objects.requireNonNull( failureReason ) );
+        return new PushNodeResult( nodeId, nodePath, null, null, requireNonNull( failureReason ) );
     }
 
     public enum Reason

@@ -1,8 +1,8 @@
 package com.enonic.xp.impl.scheduler;
 
-import java.util.Objects;
-
 import com.enonic.xp.node.NodeService;
+
+import static java.util.Objects.requireNonNull;
 
 public abstract class AbstractSchedulerCommand
 {
@@ -29,7 +29,7 @@ public abstract class AbstractSchedulerCommand
 
         protected void validate()
         {
-            Objects.requireNonNull( nodeService );
+            requireNonNull( nodeService );
         }
 
         abstract AbstractSchedulerCommand build();

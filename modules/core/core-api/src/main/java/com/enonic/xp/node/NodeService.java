@@ -28,6 +28,8 @@ public interface NodeService
 
     Node getByIdAndVersionId( NodeId id, NodeVersionId versionId );
 
+    @Nullable NodeVersion getVersion( NodeId nodeId, NodeVersionId nodeVersionId );
+
     Nodes getByIds( NodeIds ids );
 
     @Nullable Node getByPath( NodePath path );

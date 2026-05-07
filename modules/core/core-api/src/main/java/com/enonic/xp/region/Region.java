@@ -8,6 +8,8 @@ import java.util.Objects;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 
+import static java.util.Objects.requireNonNull;
+
 
 public final class Region
 {
@@ -19,7 +21,7 @@ public final class Region
 
     public Region( final Builder builder )
     {
-        this.name = Objects.requireNonNull( builder.name, "name cannot be null" );
+        this.name = requireNonNull( builder.name, "name cannot be null" );
         this.parent = builder.parent;
         this.components = ImmutableList.copyOf( builder.components );
 

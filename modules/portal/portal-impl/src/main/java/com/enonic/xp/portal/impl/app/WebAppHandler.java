@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.app;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -11,7 +12,9 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.impl.handler.PathMatchers;
+import com.enonic.xp.portal.impl.sse.SseEndpointImpl;
 import com.enonic.xp.portal.impl.websocket.WebSocketEndpointImpl;
+import com.enonic.xp.portal.sse.SseManager;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
@@ -21,6 +24,7 @@ import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.handler.BaseWebHandler;
 import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.handler.WebHandlerChain;
+import com.enonic.xp.web.sse.SseConfig;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketContext;
 import com.enonic.xp.web.websocket.WebSocketEndpoint;
@@ -29,11 +33,16 @@ import com.enonic.xp.web.websocket.WebSocketEndpoint;
 public final class WebAppHandler
     extends BaseWebHandler
 {
-    private ControllerScriptFactory controllerScriptFactory;
+    private final ControllerScriptFactory controllerScriptFactory;
 
-    public WebAppHandler()
+    private final SseManager sseManager;
+
+    @Activate
+    public WebAppHandler( @Reference final ControllerScriptFactory controllerScriptFactory, @Reference final SseManager sseManager )
     {
         super( 200 );
+        this.controllerScriptFactory = controllerScriptFactory;
+        this.sseManager = sseManager;
     }
 
     @Override
@@ -94,6 +103,13 @@ public final class WebAppHandler
             webSocketContext.apply( webSocketEndpoint );
         }
 
+        final SseConfig sseConfig = res.getSse();
+        if ( sseConfig != null )
+        {
+            final SseEndpointImpl sseEndpoint = new SseEndpointImpl( sseConfig, () -> script );
+            this.sseManager.setupSse( req, sseEndpoint );
+        }
+
         return res;
     }
 
@@ -120,11 +136,5 @@ public final class WebAppHandler
             trace.put( "app", applicationKey.toString() );
             trace.put( "path", path );
         }
-    }
-
-    @Reference
-    public void setControllerScriptFactory( final ControllerScriptFactory controllerScriptFactory )
-    {
-        this.controllerScriptFactory = controllerScriptFactory;
     }
 }

@@ -1,11 +1,12 @@
 package com.enonic.xp.portal.url;
 
-import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import com.enonic.xp.portal.html.HtmlDocument;
 import com.enonic.xp.portal.html.HtmlElement;
+
+import static java.util.Objects.requireNonNull;
 
 
 public final class HtmlProcessorParams
@@ -19,8 +20,8 @@ public final class HtmlProcessorParams
     private HtmlProcessorParams( Builder builder )
     {
         this.htmlDocument = builder.htmlDocument;
-        this.defaultProcessor = Objects.requireNonNull( builder.defaultProcessor );
-        this.defaultElementProcessor = Objects.requireNonNull( builder.defaultElementProcessor );
+        this.defaultProcessor = requireNonNull( builder.defaultProcessor );
+        this.defaultElementProcessor = requireNonNull( builder.defaultElementProcessor );
     }
 
     public HtmlDocument getDocument()

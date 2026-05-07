@@ -1,13 +1,13 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.util.Objects;
-
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.repo.impl.version.search.NodeVersionQueryResultFactory;
+
+import static java.util.Objects.requireNonNull;
 
 public class FindNodeVersionsCommand
 {
@@ -56,8 +56,8 @@ public class FindNodeVersionsCommand
 
         private void validate()
         {
-            Objects.requireNonNull( this.nodeSearchService );
-            Objects.requireNonNull( this.query, "query is required" );
+            requireNonNull( this.nodeSearchService );
+            requireNonNull( this.query, "query is required" );
         }
 
         public FindNodeVersionsCommand build()

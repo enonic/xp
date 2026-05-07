@@ -2,10 +2,11 @@ package com.enonic.xp.project;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
+
+import static java.util.Objects.requireNonNull;
 
 
 public final class ProjectGraphEntry
@@ -77,7 +78,7 @@ public final class ProjectGraphEntry
 
         private void validate()
         {
-            Objects.requireNonNull( name, "name is required" );
+            requireNonNull( name, "name is required" );
         }
 
 

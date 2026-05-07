@@ -1,9 +1,10 @@
 package com.enonic.xp.content;
 
-import java.util.Objects;
-
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.util.BinaryReferences;
+
+import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElseGet;
 
 
 public final class UpdateContentParams
@@ -34,7 +35,7 @@ public final class UpdateContentParams
 
     public UpdateContentParams createAttachments( final CreateAttachments value )
     {
-        this.createAttachments = Objects.requireNonNullElseGet( value, CreateAttachments::empty );
+        this.createAttachments = requireNonNullElseGet( value, CreateAttachments::empty );
         return this;
     }
 
@@ -46,7 +47,7 @@ public final class UpdateContentParams
 
     public UpdateContentParams removeAttachments( final BinaryReferences removeAttachments )
     {
-        this.removeAttachments = Objects.requireNonNullElseGet( removeAttachments, BinaryReferences::empty );
+        this.removeAttachments = requireNonNullElseGet( removeAttachments, BinaryReferences::empty );
         return this;
     }
 
@@ -58,7 +59,7 @@ public final class UpdateContentParams
 
     public void validate()
     {
-        Objects.requireNonNull( contentId, "contentId is required" );
+        requireNonNull( contentId, "contentId is required" );
     }
 
     public ContentEditor getEditor()

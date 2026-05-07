@@ -1,8 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
 import java.util.Collection;
-import java.util.Objects;
-
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
@@ -11,6 +9,8 @@ import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeComparisons;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
+
+import static java.util.Objects.requireNonNull;
 
 public class ResolveRequiredDependenciesCommand
     extends AbstractContentCommand
@@ -90,7 +90,7 @@ public class ResolveRequiredDependenciesCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( contentIds, "contentIds is required" );
+            requireNonNull( contentIds, "contentIds is required" );
         }
 
         public ResolveRequiredDependenciesCommand build()

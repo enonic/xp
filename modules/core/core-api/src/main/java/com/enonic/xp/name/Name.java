@@ -1,10 +1,10 @@
 package com.enonic.xp.name;
 
-import java.util.Objects;
-
 import org.jspecify.annotations.NullMarked;
 
 import com.enonic.xp.core.internal.NameValidator;
+
+import static java.util.Objects.requireNonNull;
 
 
 @NullMarked
@@ -19,7 +19,7 @@ public abstract class Name
 
     protected Name( final String name, final boolean validate )
     {
-        this.value = Objects.requireNonNull( validate ? NameValidator.NAME.cachedExtend( getClass() ).validate( name ) : name );
+        this.value = requireNonNull( validate ? NameValidator.NAME.cachedExtend( getClass() ).validate( name ) : name );
     }
 
     @Override

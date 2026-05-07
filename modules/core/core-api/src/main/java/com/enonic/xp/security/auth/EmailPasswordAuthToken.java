@@ -1,13 +1,13 @@
 package com.enonic.xp.security.auth;
 
-import java.util.Objects;
-
 import org.jspecify.annotations.NullMarked;
 
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.mail.EmailValidator;
 import com.enonic.xp.security.IdProviderKey;
+
+import static java.util.Objects.requireNonNull;
 
 
 @NullMarked
@@ -29,7 +29,7 @@ public final class EmailPasswordAuthToken
 
     private static String checkValidEmail( final String email )
     {
-        Objects.requireNonNull( email, "email is required" );
+        requireNonNull( email, "email is required" );
         Preconditions.checkArgument( EmailValidator.isValid( email ), "Email [%s] is not valid", email );
         return email;
     }

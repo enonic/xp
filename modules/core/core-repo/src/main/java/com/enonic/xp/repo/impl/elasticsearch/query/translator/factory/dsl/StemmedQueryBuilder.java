@@ -1,13 +1,13 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.dsl;
 
 import java.util.Locale;
-import java.util.Objects;
-
 import org.elasticsearch.index.query.QueryBuilder;
 
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.repo.impl.index.IndexLanguageController;
 import com.enonic.xp.repo.impl.index.IndexValueType;
+
+import static java.util.Objects.requireNonNull;
 
 class StemmedQueryBuilder
     extends SimpleQueryStringBuilder
@@ -20,7 +20,7 @@ class StemmedQueryBuilder
     {
         super( expression );
 
-        language = Locale.forLanguageTag( Objects.requireNonNull( getString( "language" ), "language is required" ) );
+        language = Locale.forLanguageTag( requireNonNull( getString( "language" ), "language is required" ) );
     }
 
     @Override

@@ -1,0 +1,7 @@
+kind: "Style"
+styles:
+  - name: "editor-align-justify"
+    type: "Image"
+    label:
+      text: "Justify"
+      i18n: "style.editor.align.justify"

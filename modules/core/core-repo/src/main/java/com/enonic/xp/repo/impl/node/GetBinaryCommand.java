@@ -1,12 +1,12 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.util.Objects;
-
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
+
+import static java.util.Objects.requireNonNull;
 
 public class GetBinaryCommand
     extends AbstractGetBinaryCommand
@@ -51,7 +51,7 @@ public class GetBinaryCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( nodeId, "nodeId is required" );
+            requireNonNull( nodeId, "nodeId is required" );
         }
 
         public GetBinaryCommand build()

@@ -1,7 +1,5 @@
 package com.enonic.xp.portal.impl.url;
 
-import java.util.Objects;
-
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
@@ -13,6 +11,9 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.project.ProjectName;
+
+import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElseGet;
 
 final class MediaResolver
 {
@@ -30,9 +31,9 @@ final class MediaResolver
 
     private MediaResolver( final Builder builder )
     {
-        this.projectName = Objects.requireNonNull( builder.projectName );
-        this.branch = Objects.requireNonNull( builder.branch );
-        this.contentService = Objects.requireNonNull( builder.contentService );
+        this.projectName = requireNonNull( builder.projectName );
+        this.branch = requireNonNull( builder.branch );
+        this.contentService = requireNonNull( builder.contentService );
         this.baseUrl = builder.baseUrl;
         this.id = builder.id;
         this.path = builder.path;
@@ -40,13 +41,13 @@ final class MediaResolver
 
     public MediaResolverResult resolve()
     {
-        final String contentKey = Objects.requireNonNullElseGet( id, () -> {
+        final String contentKey = requireNonNullElseGet( id, () -> {
             if ( baseUrl != null )
             {
-                return Objects.requireNonNull( path );
+                return requireNonNull( path );
             }
 
-            return Objects.requireNonNullElseGet( path, () -> {
+            return requireNonNullElseGet( path, () -> {
                 final PortalRequest portalRequest = PortalRequestAccessor.get();
                 if ( PortalRequestHelper.isSiteBase( portalRequest ) )
                 {

@@ -151,7 +151,7 @@ class PortalUrlServiceImpl_processHtmlTest
             .callWith( () -> service.processHtml( params ) );
 
         assertEquals(
-            "<a href=\"/site/context-project/context-branch/a/b/mycontent\">Content</a><img alt=\"Alt text\" src=\"/api/media:image/context-project:context-branch/id:b12b4c973748042e3b3a7e4798344289/width-768/logo.png\">",
+            "<a href=\"/site/context-project/context-branch/a/b/mycontent\">Content</a><img alt=\"Alt text\" src=\"/api/media:image/context-project:context-branch/id:0a350f43700951cdcca1574f448a7e22/width-768/logo.png\">",
             html );
     }
 
@@ -306,11 +306,11 @@ class PortalUrlServiceImpl_processHtmlTest
         final String processedHtml = this.service.processHtml( params );
         assertEquals(
             "<figure class=\"editor-align-justify\">" + "<img alt=\"Alt text\" src=\"/site/myproject/draft/_/media:image/myproject:draft/" +
-                media.getId() + ":b12b4c973748042e3b3a7e4798344289/width-768/mycontent\" " +
+                media.getId() + ":0a350f43700951cdcca1574f448a7e22/width-768/mycontent\" " +
                 "srcset=\"/site/myproject/draft/_/media:image/myproject:draft/" + media.getId() +
-                ":b12b4c973748042e3b3a7e4798344289/width-660/mycontent 660w," + "/site/myproject/draft/_/media:image/myproject:draft/" +
+                ":0a350f43700951cdcca1574f448a7e22/width-660/mycontent 660w," + "/site/myproject/draft/_/media:image/myproject:draft/" +
                 media.getId() +
-                ":b12b4c973748042e3b3a7e4798344289/width-1024/mycontent 1024w\"><figcaption>Caption text</figcaption></figure>",
+                ":0a350f43700951cdcca1574f448a7e22/width-1024/mycontent 1024w\"><figcaption>Caption text</figcaption></figure>",
             processedHtml );
     }
 
@@ -342,7 +342,7 @@ class PortalUrlServiceImpl_processHtmlTest
         //Checks that the page URL of the content is returned
         final String processedHtml = this.service.processHtml( params );
         assertEquals(
-            "<a href=\"/site/myproject/draft/_/media:image/myproject:draft/" + media.getId() + ":b12b4c973748042e3b3a7e4798344289/" +
+            "<a href=\"/site/myproject/draft/_/media:image/myproject:draft/" + media.getId() + ":0a350f43700951cdcca1574f448a7e22/" +
                 "width-768" + "/" + media.getName() + "\">Image</a>", processedHtml );
     }
 
@@ -532,7 +532,7 @@ class PortalUrlServiceImpl_processHtmlTest
         //Checks that the page URL of the content is returned
         final String processedHtml = this.service.processHtml( params );
         assertEquals(
-            "<a href=\"/site/myproject/draft/_/media:image/myproject:draft/" + media.getId() + ":b12b4c973748042e3b3a7e4798344289/" +
+            "<a href=\"/site/myproject/draft/_/media:image/myproject:draft/" + media.getId() + ":0a350f43700951cdcca1574f448a7e22/" +
                 "block-768-324" + "/" + media.getName() + "\">Image</a>", processedHtml );
     }
 
@@ -578,10 +578,10 @@ class PortalUrlServiceImpl_processHtmlTest
 
         //Checks that the page URL of the content is returned
         final String expectedResult1 =
-            "<img src=\"/site/myproject/draft/_/media:image/myproject:draft/" + media.getId() + ":b12b4c973748042e3b3a7e4798344289/" +
+            "<img src=\"/site/myproject/draft/_/media:image/myproject:draft/" + media.getId() + ":0a350f43700951cdcca1574f448a7e22/" +
                 "block-768-384" + "/" + media.getName() + "?filter=myfilter\" data-image-ref=\"imageRef\">";
         final String expectedResult2 = "<a href=\"/site/myproject/draft/_/media:image/myproject:draft/" + media.getId() +
-            ":b12b4c973748042e3b3a7e4798344289/width-768/" + media.getName() + "\">Image</a>";
+            ":0a350f43700951cdcca1574f448a7e22/width-768/" + media.getName() + "\">Image</a>";
         assertEquals( expectedResult1, processedLink1 );
         assertEquals( expectedResult2, processedLink2 );
 
@@ -610,11 +610,11 @@ class PortalUrlServiceImpl_processHtmlTest
         final String processedHtml = this.service.processHtml( params );
         assertEquals(
             "<figure class=\"editor-align-justify\">" + "<img alt=\"Alt text\" src=\"/site/myproject/draft/_/media:image/myproject:draft/" +
-                media.getId() + ":b12b4c973748042e3b3a7e4798344289/width-768/mycontent\" " +
+                media.getId() + ":0a350f43700951cdcca1574f448a7e22/width-768/mycontent\" " +
                 "srcset=\"/site/myproject/draft/_/media:image/myproject:draft/" + media.getId() +
-                ":b12b4c973748042e3b3a7e4798344289/width-660/mycontent 660w," + "/site/myproject/draft/_/media:image/myproject:draft/" +
+                ":0a350f43700951cdcca1574f448a7e22/width-660/mycontent 660w," + "/site/myproject/draft/_/media:image/myproject:draft/" +
                 media.getId() +
-                ":b12b4c973748042e3b3a7e4798344289/width-1024/mycontent 1024w\"><figcaption>Caption text</figcaption></figure>",
+                ":0a350f43700951cdcca1574f448a7e22/width-1024/mycontent 1024w\"><figcaption>Caption text</figcaption></figure>",
             processedHtml );
     }
 
@@ -636,11 +636,11 @@ class PortalUrlServiceImpl_processHtmlTest
         final String processedHtml = this.service.processHtml( params );
         assertEquals(
             "<figure class=\"editor-align-justify\">" + "<img alt=\"Alt text\" src=\"/site/myproject/draft/_/media:image/myproject:draft/" +
-                media.getId() + ":b12b4c973748042e3b3a7e4798344289/width-768/mycontent\" " +
+                media.getId() + ":0a350f43700951cdcca1574f448a7e22/width-768/mycontent\" " +
                 "srcset=\"/site/myproject/draft/_/media:image/myproject:draft/" + media.getId() +
-                ":b12b4c973748042e3b3a7e4798344289/width-660/mycontent 660w," + "/site/myproject/draft/_/media:image/myproject:draft/" +
+                ":0a350f43700951cdcca1574f448a7e22/width-660/mycontent 660w," + "/site/myproject/draft/_/media:image/myproject:draft/" +
                 media.getId() +
-                ":b12b4c973748042e3b3a7e4798344289/width-1024/mycontent 1024w\" sizes=\"(max-width: 960px) 660px\"><figcaption>Caption text</figcaption></figure>",
+                ":0a350f43700951cdcca1574f448a7e22/width-1024/mycontent 1024w\" sizes=\"(max-width: 960px) 660px\"><figcaption>Caption text</figcaption></figure>",
             processedHtml );
     }
 
@@ -819,7 +819,7 @@ class PortalUrlServiceImpl_processHtmlTest
         final String processedLink = this.service.processHtml( params );
 
         final String expectedResult =
-            "<img src=\"/site/myproject/draft/_/media:image/myproject:draft/" + media.getId() + ":b12b4c973748042e3b3a7e4798344289/" +
+            "<img src=\"/site/myproject/draft/_/media:image/myproject:draft/" + media.getId() + ":0a350f43700951cdcca1574f448a7e22/" +
                 "block-768-384" + "/" + media.getName() + "?filter=myfilter\" data-image-ref=\"imageRef\">";
 
         assertEquals( expectedResult, processedLink );

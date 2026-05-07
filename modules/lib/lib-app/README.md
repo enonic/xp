@@ -50,8 +50,7 @@ const {
     get,
     list,
     getDescriptor,
-    hasVirtual,
-    hasReal
+    getApplicationMode
 } = require('/lib/xp/app');
 ```
 
@@ -85,8 +84,7 @@ import {
     get,
     list,
     getDescriptor,
-    hasVirtual,
-    hasReal
+    getApplicationMode
 } from '/lib/xp/app';
 ```
 

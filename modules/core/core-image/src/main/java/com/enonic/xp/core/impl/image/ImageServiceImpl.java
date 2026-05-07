@@ -13,7 +13,6 @@ import java.security.MessageDigest;
 import java.util.HexFormat;
 import java.util.Iterator;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -46,6 +45,8 @@ import com.enonic.xp.image.ImageService;
 import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.image.ScaleParams;
 import com.enonic.xp.media.ImageOrientation;
+
+import static java.util.Objects.requireNonNull;
 
 @Component
 public class ImageServiceImpl
@@ -80,7 +81,6 @@ public class ImageServiceImpl
 
         this.progressiveOnFormats = SimpleCsvParser.parseLine( config.progressive() )
             .stream()
-            .map( String::trim )
             .filter( Predicate.not( String::isEmpty ) )
             .map( s -> s.toLowerCase( Locale.ROOT ) )
             .collect( Collectors.toUnmodifiableSet() );
@@ -163,7 +163,6 @@ public class ImageServiceImpl
         MessageDigests.updateWithDoubleLE( digest, cropping.left() );
         MessageDigests.updateWithDoubleLE( digest, cropping.bottom() );
         MessageDigests.updateWithDoubleLE( digest, cropping.right() );
-        MessageDigests.updateWithDoubleLE( digest, cropping.zoom() );
 
         MessageDigests.updateWithIntLE( digest, readImageParams.getOrientation().ordinal() );
 
@@ -244,7 +243,7 @@ public class ImageServiceImpl
                 {
                     BufferedImage bufferedImage = imageReader.read( 0, imageReader.getDefaultReadParam() );
                     imageReader.dispose();
-                    Objects.requireNonNull( bufferedImage, "BufferedImage is null" );
+                    requireNonNull( bufferedImage, "BufferedImage is null" );
                     if ( toRotate )
                     {
                         bufferedImage = applyRotation( bufferedImage, readImageParams.getOrientation() );

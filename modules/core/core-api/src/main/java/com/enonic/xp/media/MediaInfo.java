@@ -1,13 +1,12 @@
 package com.enonic.xp.media;
 
-import java.util.Objects;
-
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.form.FormItemName;
 import com.enonic.xp.schema.mixin.MixinName;
+
+import static java.util.Objects.requireNonNull;
 
 
 public final class MediaInfo
@@ -38,12 +37,14 @@ public final class MediaInfo
 
     public static final String IMAGE_INFO_IMAGE_WIDTH = "imageWidth";
 
+    public static final String IMAGE_INFO_ORIENTATION = "orientation";
+
     public static final String MEDIA_INFO_BYTE_SIZE = "byteSize";
 
     private MediaInfo( final Builder builder )
     {
         this.mediaType = builder.mediaType;
-        this.metadata = Objects.requireNonNull( builder.metadata.build(), "metadata cannot be null" );
+        this.metadata = requireNonNull( builder.metadata.build(), "metadata cannot be null" );
         this.textContent = builder.textContent;
     }
 
@@ -87,7 +88,7 @@ public final class MediaInfo
 
         public Builder addMetadata( final String name, final String value )
         {
-            this.metadata.put( FormItemName.safeName( name ), value );
+            this.metadata.put( name, value );
             return this;
         }
 

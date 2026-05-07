@@ -1,7 +1,5 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.util.Objects;
-
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.context.Context;
@@ -13,6 +11,8 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeBranchEntries;
 import com.enonic.xp.repo.impl.NodeBranchEntry;
+
+import static java.util.Objects.requireNonNull;
 
 public class CompareNodesCommand
     extends AbstractCompareNodeCommand
@@ -72,7 +72,7 @@ public class CompareNodesCommand
         protected void validate()
         {
             super.validate();
-            Objects.requireNonNull( nodeIds, "nodeIds is required" );
+            requireNonNull( nodeIds, "nodeIds is required" );
         }
 
         public CompareNodesCommand build()

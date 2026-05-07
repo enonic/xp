@@ -1,7 +1,5 @@
 package com.enonic.xp.lib.portal.current;
 
-import java.util.Objects;
-
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.lib.common.PropertyTreeMapper;
 import com.enonic.xp.portal.PortalRequest;
@@ -10,6 +8,8 @@ import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
+
+import static java.util.Objects.requireNonNull;
 
 public final class GetCurrentSiteConfigHandler
     implements ScriptBean
@@ -37,6 +37,6 @@ public final class GetCurrentSiteConfigHandler
     @Override
     public void initialize( final BeanContext context )
     {
-        this.request = Objects.requireNonNull( context.getBinding( PortalRequest.class ).get(), "no request bound" );
+        this.request = requireNonNull( context.getBinding( PortalRequest.class ).get(), "no request bound" );
     }
 }

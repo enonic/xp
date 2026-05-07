@@ -1,13 +1,13 @@
 package com.enonic.xp.content;
 
 import java.util.Map;
-import java.util.Objects;
-
 import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.aggregation.Aggregations;
 import com.enonic.xp.highlight.HighlightedProperties;
 import com.enonic.xp.sortvalues.SortValuesProperty;
+
+import static java.util.Objects.requireNonNull;
 
 
 public final class FindContentIdsByQueryResult
@@ -26,7 +26,7 @@ public final class FindContentIdsByQueryResult
 
     private FindContentIdsByQueryResult( final Builder builder )
     {
-        this.contentIds = Objects.requireNonNull( builder.contentIds );
+        this.contentIds = requireNonNull( builder.contentIds );
         this.totalHits = builder.totalHits;
         this.aggregations = builder.aggregations;
         this.highlight = builder.highlight != null ? ImmutableMap.copyOf( builder.highlight ) : null;

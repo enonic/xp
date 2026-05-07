@@ -6,7 +6,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.google.common.io.ByteSource;
@@ -29,6 +28,7 @@ import com.enonic.xp.mail.SendMailParams;
 import com.enonic.xp.util.MediaTypes;
 
 import static com.google.common.base.Strings.nullToEmpty;
+import static java.util.Objects.requireNonNullElseGet;
 
 class MimeMessageConverter
 {
@@ -110,7 +110,7 @@ class MimeMessageConverter
     {
         final MimeBodyPart result = new MimeBodyPart();
 
-        final String mimeType = Objects.requireNonNullElseGet( attachment.getMimeType(),
+        final String mimeType = requireNonNullElseGet( attachment.getMimeType(),
                                                          () -> MediaTypes.instance().fromFile( attachment.getFileName() ).toString() );
 
         final DataSource source = new ByteSourceDataSource( attachment.getData(), attachment.getFileName(), mimeType );

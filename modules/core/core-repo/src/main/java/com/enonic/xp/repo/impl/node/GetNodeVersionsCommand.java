@@ -1,7 +1,5 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.util.Objects;
-
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.GetNodeVersionsParams;
 import com.enonic.xp.node.GetNodeVersionsResult;
@@ -16,6 +14,8 @@ import com.enonic.xp.query.filter.RangeFilter;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.version.VersionIndexPath;
+
+import static java.util.Objects.requireNonNull;
 
 public class GetNodeVersionsCommand
 {
@@ -68,7 +68,7 @@ public class GetNodeVersionsCommand
         final String nextCursor;
         if ( versions.getSize() > 0 && queryResult.getTotalHits() > versions.getSize() )
         {
-            final NodeVersion last = Objects.requireNonNull( versions.last() );
+            final NodeVersion last = requireNonNull( versions.last() );
             nextCursor = VersionCursorHelper.encodeCursor( new VersionCursorHelper.CursorData( last.getTimestamp(), last.getNodeVersionId()) );
         }
         else
@@ -112,8 +112,8 @@ public class GetNodeVersionsCommand
 
         private void validate()
         {
-            Objects.requireNonNull( this.nodeSearchService );
-            Objects.requireNonNull( this.params, "params is required" );
+            requireNonNull( this.nodeSearchService );
+            requireNonNull( this.params, "params is required" );
         }
 
         public GetNodeVersionsCommand build()

@@ -19,6 +19,8 @@ import com.enonic.xp.node.SearchOptimizer;
 import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.SearchPreference;
 
+import static java.util.Objects.requireNonNullElse;
+
 public class ElasticsearchQuery
 {
     private static final int DEFAULT_SIZE = 10;
@@ -66,7 +68,7 @@ public class ElasticsearchQuery
         this.aggregations = ImmutableList.copyOf( builder.aggregations );
         this.suggestions = ImmutableList.copyOf( builder.suggestions );
         this.highlight = builder.highlight;
-        this.returnFields = Objects.requireNonNullElse( builder.returnFields, ReturnFields.empty() );
+        this.returnFields = requireNonNullElse( builder.returnFields, ReturnFields.empty() );
         this.searchOptimizer = builder.searchOptimizer;
         this.explain = builder.explain;
         this.searchPreference = builder.searchPreference;

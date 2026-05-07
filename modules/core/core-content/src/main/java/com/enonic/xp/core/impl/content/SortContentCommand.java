@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.Objects;
+import java.util.Map;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
@@ -15,6 +15,8 @@ import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.ReorderChildNodeParams;
 import com.enonic.xp.node.SortNodeParams;
 import com.enonic.xp.node.SortNodeResult;
+
+import static java.util.Objects.requireNonNull;
 
 class SortContentCommand
     extends AbstractCreatingOrUpdatingContentCommand
@@ -52,22 +54,17 @@ class SortContentCommand
                                                   .build() );
             }
 
-            if ( layersSync )
-            {
-                paramsBuilder.versionAttributesResolver(
-                    ContentAttributesHelper.versionHistoryResolver( ContentAttributesHelper.SYNC_ATTR ) );
-            }
-            else
+            if ( !layersSync )
             {
                 paramsBuilder.processor( CompositeNodeDataProcessor.create()
-                                             .add( InheritedContentDataProcessor.SORT )
+                                             .add( InheritedContentDataProcessor.REMOVE_SORT_INHERIT )
                                              .add( PublishDataProcessor::removePublishTime )
                                              .build() );
                 paramsBuilder.childProcessor( PublishDataProcessor::removePublishTime );
-
-                paramsBuilder.versionAttributesResolver(
-                    ContentAttributesHelper.versionHistoryResolver( ContentAttributesHelper.SORT_ATTR ) );
             }
+
+            paramsBuilder.versionAttributesResolver( ContentAttributesHelper.versionHistoryResolver(
+                layersSync ? ContentAttributesHelper.SYNC_ATTR : ContentAttributesHelper.SORT_ATTR, Map.of() ) );
 
             final SortNodeResult sortNodeResult = nodeService.sort( paramsBuilder.build() );
 
@@ -92,7 +89,7 @@ class SortContentCommand
 
         private Builder( final SortContentParams params )
         {
-            this.params = Objects.requireNonNull( params, "params cannot be null" );
+            this.params = requireNonNull( params, "params cannot be null" );
         }
 
         @Override

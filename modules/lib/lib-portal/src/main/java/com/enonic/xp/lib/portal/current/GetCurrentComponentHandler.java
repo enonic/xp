@@ -1,12 +1,12 @@
 package com.enonic.xp.lib.portal.current;
 
-import java.util.Objects;
-
 import com.enonic.xp.lib.content.mapper.ComponentMapper;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
+
+import static java.util.Objects.requireNonNull;
 
 public final class GetCurrentComponentHandler
     implements ScriptBean
@@ -22,6 +22,6 @@ public final class GetCurrentComponentHandler
     @Override
     public void initialize( final BeanContext context )
     {
-        this.request = Objects.requireNonNull( context.getBinding( PortalRequest.class ).get(), "no request bound" );
+        this.request = requireNonNull( context.getBinding( PortalRequest.class ).get(), "no request bound" );
     }
 }

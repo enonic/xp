@@ -1,9 +1,9 @@
 package com.enonic.xp.content;
 
-import java.util.Objects;
-
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
+
+import static java.util.Objects.requireNonNull;
 
 
 @NullMarked
@@ -15,8 +15,8 @@ public final class UpdateWorkflowParams
 
     private UpdateWorkflowParams( final Builder builder )
     {
-        this.contentId = Objects.requireNonNull( builder.contentId, "contentId is required" );
-        this.editor = Objects.requireNonNull( builder.editor, "editor is required" );
+        this.contentId = requireNonNull( builder.contentId, "contentId is required" );
+        this.editor = requireNonNull( builder.editor, "editor is required" );
     }
 
     public static Builder create()

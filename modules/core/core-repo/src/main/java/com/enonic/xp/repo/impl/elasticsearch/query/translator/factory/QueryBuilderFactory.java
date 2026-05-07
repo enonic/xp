@@ -1,7 +1,5 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory;
 
-import java.util.Objects;
-
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -12,6 +10,8 @@ import com.enonic.xp.query.filter.Filter;
 import com.enonic.xp.query.filter.Filters;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.query.ConstraintExpressionBuilder;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFieldNameResolver;
+
+import static java.util.Objects.requireNonNull;
 
 public class QueryBuilderFactory
     extends AbstractBuilderFactory
@@ -100,7 +100,7 @@ public class QueryBuilderFactory
 
         private void validate()
         {
-            Objects.requireNonNull( fieldNameResolver );
+            requireNonNull( fieldNameResolver );
         }
 
         public QueryBuilderFactory build()

@@ -2,13 +2,13 @@ package com.enonic.xp.scheduler;
 
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.Objects;
-
 import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.task.TaskId;
+
+import static java.util.Objects.requireNonNull;
 
 
 public final class ScheduledJob
@@ -241,10 +241,10 @@ public final class ScheduledJob
 
         private void validate()
         {
-            Objects.requireNonNull( name, "name is required" );
-            Objects.requireNonNull( calendar, "calendar is required" );
-            Objects.requireNonNull( descriptor, "descriptor is required" );
-            Objects.requireNonNull( config, "config is required" );
+            requireNonNull( name, "name is required" );
+            requireNonNull( calendar, "calendar is required" );
+            requireNonNull( descriptor, "descriptor is required" );
+            requireNonNull( config, "config is required" );
         }
 
         public ScheduledJob build()

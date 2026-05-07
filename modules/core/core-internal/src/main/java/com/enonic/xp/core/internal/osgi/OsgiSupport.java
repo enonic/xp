@@ -1,7 +1,6 @@
 package com.enonic.xp.core.internal.osgi;
 
 import java.util.Collection;
-import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -10,6 +9,8 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
+
+import static java.util.Objects.requireNonNullElseGet;
 
 public final class OsgiSupport
 {
@@ -26,7 +27,7 @@ public final class OsgiSupport
 
     public static Bundle getBundle( final Class<?> clazz )
     {
-        return Objects.requireNonNullElseGet( bundle, () -> FrameworkUtil.getBundle( clazz ) );
+        return requireNonNullElseGet( bundle, () -> FrameworkUtil.getBundle( clazz ) );
     }
 
     public static <T, R> R withServiceOrElseGet( Class<T> serviceClass, String filter, Function<? super T, R> function,

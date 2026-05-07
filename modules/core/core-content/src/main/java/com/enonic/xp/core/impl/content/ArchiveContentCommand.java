@@ -3,7 +3,7 @@ package com.enonic.xp.core.impl.content;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Objects;
+import java.util.Map;
 
 import com.enonic.xp.archive.ArchiveConstants;
 import com.enonic.xp.archive.ArchiveContentException;
@@ -36,6 +36,7 @@ import static com.enonic.xp.content.ContentPropertyNames.ARCHIVED_BY;
 import static com.enonic.xp.content.ContentPropertyNames.ARCHIVED_TIME;
 import static com.enonic.xp.content.ContentPropertyNames.ORIGINAL_NAME;
 import static com.enonic.xp.content.ContentPropertyNames.ORIGINAL_PARENT_PATH;
+import static java.util.Objects.requireNonNull;
 
 final class ArchiveContentCommand
     extends AbstractCreatingOrUpdatingContentCommand
@@ -166,13 +167,13 @@ final class ArchiveContentCommand
         final var processors = CompositeNodeDataProcessor.create().add( updateProperties( originalPath ) );
         if ( !layersSync )
         {
-            processors.add( InheritedContentDataProcessor.ALL );
+            processors.add( InheritedContentDataProcessor.REMOVE_ALL_INHERIT );
         }
         moveParams.processor( processors.build() );
 
-        moveParams.versionAttributesResolver( layersSync
-            ? ContentAttributesHelper.versionHistoryResolver( ContentAttributesHelper.SYNC_ATTR )
-            : ContentAttributesHelper.versionHistoryResolver( ContentAttributesHelper.ARCHIVE_ATTR ) );
+        moveParams.versionAttributesResolver( ContentAttributesHelper.versionHistoryResolver(
+            layersSync ? ContentAttributesHelper.SYNC_ATTR : ContentAttributesHelper.ARCHIVE_ATTR,
+            Map.ofEntries( ContentAttributesHelper.resolveEditorialProperty() ) ) );
 
         return nodeService.move( moveParams.build() );
     }
@@ -200,7 +201,7 @@ final class ArchiveContentCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( params, "params cannot be null" );
+            requireNonNull( params, "params cannot be null" );
         }
 
         public ArchiveContentCommand build()

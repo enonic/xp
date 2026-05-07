@@ -1,10 +1,10 @@
 package com.enonic.xp.scheduler;
 
-import java.util.Objects;
-
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.security.PrincipalKey;
+
+import static java.util.Objects.requireNonNull;
 
 
 public final class CreateScheduledJobParams
@@ -138,10 +138,10 @@ public final class CreateScheduledJobParams
 
         private void validate()
         {
-            Objects.requireNonNull( name, "name is required" );
-            Objects.requireNonNull( calendar, "calendar is required" );
-            Objects.requireNonNull( descriptor, "descriptor is required" );
-            Objects.requireNonNull( config, "config is required" );
+            requireNonNull( name, "name is required" );
+            requireNonNull( calendar, "calendar is required" );
+            requireNonNull( descriptor, "descriptor is required" );
+            requireNonNull( config, "config is required" );
         }
 
         public CreateScheduledJobParams build()

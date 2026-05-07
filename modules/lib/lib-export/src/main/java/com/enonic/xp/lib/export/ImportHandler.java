@@ -1,16 +1,20 @@
 package com.enonic.xp.lib.export;
 
+import java.util.Map;
 import java.util.function.Function;
 
 import com.enonic.xp.export.ExportService;
 import com.enonic.xp.export.ImportNodesParams;
 import com.enonic.xp.export.NodeImportResult;
+import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.VersionAttributesResolver;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
+import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.vfs.VirtualFile;
 
 public class ImportHandler
@@ -29,6 +33,8 @@ public class ImportHandler
     private Boolean includeNodeIds;
 
     private Boolean includePermissions;
+
+    private ScriptValue versionAttributes;
 
     private Function<Integer, Void> nodeImported;
 
@@ -72,8 +78,25 @@ public class ImportHandler
         {
             paramsBuilder.includePermissions( includePermissions );
         }
+        if ( versionAttributes != null )
+        {
+            paramsBuilder.versionAttributesResolver( VersionAttributesResolver.of( toAttributes( versionAttributes.getMap() ) ) );
+        }
         final NodeImportResult nodeImportResult = this.context.getService( ExportService.class ).get().importNodes( paramsBuilder.build() );
         return new NodeImportResultMapper( nodeImportResult );
+    }
+
+    private static Attributes toAttributes( final Map<String, Object> map )
+    {
+        final Attributes.Builder builder = Attributes.create();
+        for ( Map.Entry<String, Object> entry : map.entrySet() )
+        {
+            if ( entry.getValue() != null )
+            {
+                builder.attribute( entry.getKey(), GenericValue.fromRawJava( entry.getValue() ) );
+            }
+        }
+        return builder.build();
     }
 
     public void setSource( final Object source )
@@ -104,6 +127,11 @@ public class ImportHandler
     public void setIncludePermissions( final Boolean includePermissions )
     {
         this.includePermissions = includePermissions;
+    }
+
+    public void setVersionAttributes( final ScriptValue versionAttributes )
+    {
+        this.versionAttributes = versionAttributes;
     }
 
     public void setNodeImported( final Function<Integer, Void> nodeImported )

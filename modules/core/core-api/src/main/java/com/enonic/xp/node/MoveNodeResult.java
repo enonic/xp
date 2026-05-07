@@ -1,9 +1,9 @@
 package com.enonic.xp.node;
 
 import java.util.List;
-import java.util.Objects;
-
 import com.google.common.collect.ImmutableList;
+
+import static java.util.Objects.requireNonNull;
 
 public final class MoveNodeResult
 {
@@ -75,8 +75,8 @@ public final class MoveNodeResult
 
             private void validate()
             {
-                Objects.requireNonNull( previousPath );
-                Objects.requireNonNull( node );
+                requireNonNull( previousPath );
+                requireNonNull( node );
             }
 
             public MovedNode build()

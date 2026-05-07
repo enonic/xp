@@ -28,6 +28,8 @@ import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFiel
 import com.enonic.xp.repo.impl.index.IndexFieldNameNormalizer;
 import com.enonic.xp.repo.impl.index.StaticIndexValueType;
 
+import static java.util.Objects.requireNonNullElse;
+
 public class FilterBuilderFactory
     extends AbstractBuilderFactory
 {
@@ -163,13 +165,12 @@ public class FilterBuilderFactory
             return null;
         }
 
-        final String queryFieldName = this.fieldNameResolver.resolve( filter.getFieldName(), from != null ? from : to );
+        final String queryFieldName = this.fieldNameResolver.resolve( filter.getFieldName(), requireNonNullElse( from, to ) );
 
-        return new RangeQueryBuilder( queryFieldName ).
-            from( from ).
-            to( to ).
-            includeLower( filter.isIncludeLower() ).
-            includeUpper( filter.isIncludeUpper() );
+        return new RangeQueryBuilder( queryFieldName ).from( from )
+            .to( to )
+            .includeLower( filter.isIncludeLower() )
+            .includeUpper( filter.isIncludeUpper() );
     }
 
     private QueryBuilder createTermFilter( final ValueFilter filter )
@@ -179,7 +180,7 @@ public class FilterBuilderFactory
             return null;
         }
 
-        final String queryFieldName = this.fieldNameResolver.resolve( filter );
+        final String queryFieldName = this.fieldNameResolver.resolve( filter.getFieldName(), filter.getValues().iterator().next() );
 
         final List<Object> values = filter.getValues().stream().map( ValueHelper::getValueAsType ).collect( Collectors.toList() );
 

@@ -1,12 +1,12 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.Objects;
-
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.context.Context;
+
+import static java.util.Objects.requireNonNull;
 
 public final class ContentToSync
 {
@@ -110,8 +110,8 @@ public final class ContentToSync
 
         private void validate()
         {
-            Objects.requireNonNull( sourceCtx, "sourceCtx is required" );
-            Objects.requireNonNull( targetCtx, "targetCtx is required" );
+            requireNonNull( sourceCtx, "sourceCtx is required" );
+            requireNonNull( targetCtx, "targetCtx is required" );
             Preconditions.checkArgument( sourceContent != null || targetContent != null, "source or target content is required" );
         }
 

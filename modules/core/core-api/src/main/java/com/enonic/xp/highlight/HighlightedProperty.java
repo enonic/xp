@@ -6,6 +6,8 @@ import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
 
+import static java.util.Objects.requireNonNull;
+
 
 public final class HighlightedProperty
 {
@@ -79,7 +81,7 @@ public final class HighlightedProperty
 
         private void validate()
         {
-            Objects.requireNonNull( name, "name is required" );
+            requireNonNull( name, "name is required" );
         }
 
         public HighlightedProperty build()

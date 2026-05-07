@@ -1,6 +1,6 @@
 package com.enonic.xp.node;
 
-import java.util.Objects;
+import static java.util.Objects.requireNonNull;
 
 public final class MultiRepoNodeQuery
 {
@@ -10,8 +10,8 @@ public final class MultiRepoNodeQuery
 
     public MultiRepoNodeQuery( final SearchTargets searchTargets, final NodeQuery nodeQuery )
     {
-        this.searchTargets = Objects.requireNonNull( searchTargets );
-        this.nodeQuery = Objects.requireNonNull( nodeQuery );
+        this.searchTargets = requireNonNull( searchTargets );
+        this.nodeQuery = requireNonNull( nodeQuery );
     }
 
     public SearchTargets getSearchTargets()

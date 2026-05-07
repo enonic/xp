@@ -7,6 +7,9 @@ import com.enonic.xp.node.ApplyNodePermissionsResult;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
+import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.acl.Permission;
 
 public class ApplyPermissionsResultMapper
     implements MapSerializable
@@ -30,11 +33,41 @@ public class ApplyPermissionsResultMapper
             entry.getValue().forEach( branchResult -> {
                 gen.map();
                 gen.value( "branch", branchResult.branch() );
-                gen.value( "permissions", new PermissionsMapper( branchResult.permissions() ) );
+                serializePermissions( gen, branchResult.permissions() );
                 gen.end();
             } );
             gen.end();
             gen.end();
         }
+    }
+
+    private void serializePermissions( final MapGenerator gen, final AccessControlList permissions )
+    {
+        gen.array( "permissions" );
+        if ( permissions != null )
+        {
+            for ( AccessControlEntry entry : permissions )
+            {
+                gen.map();
+                gen.value( "principal", entry.getPrincipal().toString() );
+
+                gen.array( "allow" );
+                for ( Permission permission : entry.getAllowedPermissions() )
+                {
+                    gen.value( permission.toString() );
+                }
+                gen.end();
+
+                gen.array( "deny" );
+                for ( Permission permission : entry.getDeniedPermissions() )
+                {
+                    gen.value( permission.toString() );
+                }
+                gen.end();
+
+                gen.end();
+            }
+        }
+        gen.end();
     }
 }

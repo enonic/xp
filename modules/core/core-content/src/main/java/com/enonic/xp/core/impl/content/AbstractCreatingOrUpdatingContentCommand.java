@@ -10,7 +10,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 import com.google.common.net.MediaType;
@@ -22,7 +21,6 @@ import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentInheritType;
-import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ContentValidator;
@@ -64,23 +62,17 @@ import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.CmsDescriptor;
 import com.enonic.xp.site.CmsService;
+import com.enonic.xp.site.MixinMappingService;
+import com.enonic.xp.site.MixinOption;
+import com.enonic.xp.site.MixinOptions;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigService;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
-import com.enonic.xp.site.MixinMappingService;
-import com.enonic.xp.site.MixinOption;
-import com.enonic.xp.site.MixinOptions;
 
 class AbstractCreatingOrUpdatingContentCommand
     extends AbstractContentCommand
 {
-    private static final ImmutableList<MediaType> BINARY_CONTENT_TYPES =
-        ImmutableList.of( MediaType.OCTET_STREAM, MediaType.create( "application", "force-download" ),
-                          MediaType.create( "application", "x-force-download" ) );
-
-    private static final ImmutableList<MediaType> EXECUTABLE_CONTENT_TYPES =
-        ImmutableList.of( MediaType.OCTET_STREAM, MediaType.create( "text", "plain" ), MediaType.create( "application", "x-bzip2" ) );
 
     final MixinService mixinService;
 
@@ -331,16 +323,24 @@ class AbstractCreatingOrUpdatingContentCommand
         }
     }
 
-    protected boolean isBinaryContentType( final String contentType )
+    protected ContentTypeName guessExecutableByFilename( final String contentType, final String fileName )
     {
-        final MediaType mediaType = MediaType.parse( contentType );
-        return BINARY_CONTENT_TYPES.stream().anyMatch( mediaType::is );
-    }
-
-    protected boolean isExecutableContentType( final String contentType, final ContentName fileName )
-    {
-        final MediaType mediaType = MediaType.parse( contentType );
-        return EXECUTABLE_CONTENT_TYPES.stream().anyMatch( mediaType::is ) && isExecutableFileName( fileName.toString() );
+        if ( FileNames.isAnyOfExtensions( fileName, "exe", "msi", "dmg" ) )
+        {
+            return MediaType.parse( contentType ).is( MediaType.OCTET_STREAM )
+                ? ContentTypeName.executableMedia()
+                : ContentTypeName.unknownMedia();
+        }
+        else if ( FileNames.isAnyOfExtensions( fileName, "bat", "sh" ) )
+        {
+            return MediaType.parse( contentType ).is( MediaType.ANY_TEXT_TYPE )
+                ? ContentTypeName.executableMedia()
+                : ContentTypeName.unknownMedia();
+        }
+        else
+        {
+            return ContentTypeName.unknownMedia();
+        }
     }
 
     void checkOwnerAccess()
@@ -354,12 +354,6 @@ class AbstractCreatingOrUpdatingContentCommand
         {
             throw new ForbiddenAccessException( authInfo.getUser() );
         }
-    }
-
-    private boolean isExecutableFileName( final String fileName )
-    {
-        return fileName.endsWith( ".exe" ) || fileName.endsWith( ".msi" ) || fileName.endsWith( ".dmg" ) || fileName.endsWith( ".bat" ) ||
-            fileName.endsWith( ".sh" );
     }
 
     protected boolean isContentTheSame( Content c1, Content c2 )
@@ -380,27 +374,29 @@ class AbstractCreatingOrUpdatingContentCommand
             Objects.equals( c1.getVariantOf(), c2.getVariantOf() );
     }
 
-    protected static Content afterUpdate( final Content editedContent )
+    protected static Content afterUpdate( final Content editedContent, final ContentInheritType... stopInherit )
     {
         final PatchableContent patchableContent = new PatchableContent( editedContent );
         patchableContent.publishInfo.setPatcher( c -> c.publishInfo.originalValue == null
             ? null
             : ContentPublishInfo.create( editedContent.getPublishInfo() ).time( null ).build() );
-        patchableContent.inherit.setPatcher( c -> stopDataInherit( c.inherit.originalValue ) );
+        patchableContent.inherit.setPatcher( c -> stopInherit( c.inherit.originalValue, stopInherit ) );
 
         return patchableContent.build();
     }
 
-    protected static Set<ContentInheritType> stopDataInherit( final Set<ContentInheritType> currentInherit )
+    protected static Set<ContentInheritType> stopInherit( final Set<ContentInheritType> currentInherit, final ContentInheritType... types )
     {
-        if ( currentInherit == null || currentInherit.isEmpty() )
+        if ( currentInherit == null || currentInherit.isEmpty() || types.length == 0 )
         {
             return currentInherit;
         }
 
         final EnumSet<ContentInheritType> newInherit = EnumSet.copyOf( currentInherit );
-        newInherit.remove( ContentInheritType.CONTENT );
-        newInherit.remove( ContentInheritType.NAME );
+        for ( ContentInheritType type : types )
+        {
+            newInherit.remove( type );
+        }
         return newInherit;
     }
 
