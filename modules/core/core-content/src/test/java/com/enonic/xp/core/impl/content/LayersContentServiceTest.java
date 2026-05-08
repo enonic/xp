@@ -23,6 +23,7 @@ import com.enonic.xp.site.CmsService;
 
 import static com.enonic.xp.context.ContextAccessor.current;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -64,6 +65,23 @@ class LayersContentServiceTest
             .runWith( () -> service.getById( ContentId.from( "id" ) ) );
 
         assertEquals( "PRIMARY", searchPreference.get() );
+    }
+
+    @Test
+    void getById_setsPrimarySearchPreferenceInContext_whenContentExists()
+    {
+        final AtomicReference<String> searchPreference = new AtomicReference<>();
+
+        when( nodeService.getById( any() ) ).thenAnswer( invocation -> {
+            searchPreference.set( (String) current().getAttribute( "searchPreference" ) );
+            return ContentFixture.someContentNode();
+        } );
+
+        final boolean contentFound = ContextBuilder.create().repositoryId( "repo" ).branch( "draft" ).build()
+            .callWith( () -> service.getById( ContentId.from( "id" ) ).isPresent() );
+
+        assertEquals( "PRIMARY", searchPreference.get() );
+        assertTrue( contentFound );
     }
 
     @Test
