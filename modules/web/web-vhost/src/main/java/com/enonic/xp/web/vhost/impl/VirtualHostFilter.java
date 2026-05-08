@@ -60,8 +60,7 @@ public final class VirtualHostFilter
             }
             else
             {
-                VirtualHostHelper.setVirtualHost( req, virtualHost );
-                chain.doFilter( new VirtualHostRequestWrapper( req, virtualHost ), res );
+                applyVirtualHost( req, res, chain, virtualHost );
             }
         }
         else if ( virtualHostService.isEnabled() &&
@@ -70,22 +69,33 @@ public final class VirtualHostFilter
             final VirtualHost virtualHost = virtualHostResolver.resolveVirtualHost( req );
             if ( virtualHost != null )
             {
-                VirtualHostHelper.setVirtualHost( req, virtualHost );
-                chain.doFilter( new VirtualHostRequestWrapper( req, virtualHost ), res );
+                applyVirtualHost( req, res, chain, virtualHost );
             }
             else
             {
-                final VirtualHostMapping defaultVirtualHost = generateDefaultVirtualHostMapping( req );
-                VirtualHostHelper.setVirtualHost( req, defaultVirtualHost );
-                chain.doFilter( req, res );
+                applyDefaultVirtualHost( req, res, chain );
             }
         }
         else
         {
-            final VirtualHostMapping virtualHost = generateDefaultVirtualHostMapping( req );
-            VirtualHostHelper.setVirtualHost( req, virtualHost );
-            chain.doFilter( req, res );
+            applyDefaultVirtualHost( req, res, chain );
         }
+    }
+
+    private static void applyVirtualHost( final HttpServletRequest req, final HttpServletResponse res, final FilterChain chain,
+                                          final VirtualHost virtualHost )
+        throws Exception
+    {
+        VirtualHostHelper.setVirtualHost( req, virtualHost );
+        chain.doFilter( new VirtualHostRequestWrapper( req, virtualHost ), res );
+    }
+
+    private static void applyDefaultVirtualHost( final HttpServletRequest req, final HttpServletResponse res, final FilterChain chain )
+        throws Exception
+    {
+        final VirtualHostMapping defaultVirtualHost = generateDefaultVirtualHostMapping( req );
+        VirtualHostHelper.setVirtualHost( req, defaultVirtualHost );
+        chain.doFilter( req, res );
     }
 
     private static VirtualHostMapping generateDefaultVirtualHostMapping( final HttpServletRequest req )
