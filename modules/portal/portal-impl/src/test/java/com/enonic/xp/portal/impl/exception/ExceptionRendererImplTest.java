@@ -332,6 +332,14 @@ class ExceptionRendererImplTest
         final String responseBody = response.getBody().toString();
         assertThat( responseBody ).contains( "<h3>403 - Forbidden</h3>" );
         assertThat( responseBody ).contains( "class=\"logout\"" ).contains( "/_/idprovider/system/logout" );
+
+        this.request.setContextPath( "/contextPath" );
+
+        final PortalResponse responseWithContextPath =
+            context.callWith( () -> this.renderer.render( this.request, new WebException( HttpStatus.FORBIDDEN, cause ) ) );
+
+        final String responseBodyWithContextPath = responseWithContextPath.getBody().toString();
+        assertThat( responseBodyWithContextPath ).contains( "class=\"logout\"" ).contains( "/contextPath/_/idprovider/system/logout" );
     }
 
     private Site newSite()

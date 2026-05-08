@@ -295,7 +295,10 @@ public final class ExceptionRendererImpl
                 new ErrorPageSimpleBuilder().status( info.status.value() ).tip( info.tip ).title( info.status.getReasonPhrase() );
             if ( info.status == HttpStatus.FORBIDDEN && ContextAccessor.current().getAuthInfo().isAuthenticated() )
             {
-                errorBuilder.logoutUrl( ServletRequestUrlHelper.createUri( req.getRawRequest(), "/_/idprovider/" +
+                final String contextPath =
+                    req instanceof final PortalRequest portalRequest ? nullToEmpty( portalRequest.getContextPath() ) : "";
+
+                errorBuilder.logoutUrl( ServletRequestUrlHelper.createUri( req.getRawRequest(), contextPath + "/_/idprovider/" +
                     ContextAccessor.current().getAuthInfo().getUser().getKey().getIdProviderKey() + "/logout" ) );
             }
             builder = errorBuilder;
