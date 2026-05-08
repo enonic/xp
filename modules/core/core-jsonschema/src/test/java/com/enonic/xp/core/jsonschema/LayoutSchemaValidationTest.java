@@ -37,6 +37,12 @@ class LayoutSchemaValidationTest
     }
 
     @Test
+    void titleIsRequired()
+    {
+        assertThat( validateYaml( schema, "fixtures/layout/invalid-missing-title.yml" ) ).isNotEmpty();
+    }
+
+    @Test
     void additionalPropertiesAreNotAllowed()
     {
         assertThat( validateYaml( schema, "fixtures/layout/invalid-unknown-property.yml" ) ).isNotEmpty();

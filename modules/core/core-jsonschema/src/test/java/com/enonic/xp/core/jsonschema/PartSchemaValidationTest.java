@@ -31,6 +31,12 @@ class PartSchemaValidationTest
     }
 
     @Test
+    void titleIsRequired()
+    {
+        assertThat( validateYaml( schema, "fixtures/part/invalid-missing-title.yml" ) ).isNotEmpty();
+    }
+
+    @Test
     void additionalPropertiesAreNotAllowed()
     {
         assertThat( validateYaml( schema, "fixtures/part/invalid-unknown-property.yml" ) ).isNotEmpty();

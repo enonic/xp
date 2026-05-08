@@ -28,8 +28,8 @@
   },
   "required": [
     "kind",
-    "title",
-    "regions"
+    "regions",
+    "title"
   ],
   "additionalProperties": false,
   "$defs": {

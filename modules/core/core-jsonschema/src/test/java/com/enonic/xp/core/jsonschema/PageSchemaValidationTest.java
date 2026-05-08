@@ -25,9 +25,21 @@ class PageSchemaValidationTest
     }
 
     @Test
+    void fullDocumentIsValid()
+    {
+        assertThat( validateYaml( schema, "fixtures/page/valid-full.yml" ) ).isEmpty();
+    }
+
+    @Test
     void regionsIsRequired()
     {
         assertThat( validateYaml( schema, "fixtures/page/invalid-missing-regions.yml" ) ).isNotEmpty();
+    }
+
+    @Test
+    void titleIsRequired()
+    {
+        assertThat( validateYaml( schema, "fixtures/page/invalid-missing-title.yml" ) ).isNotEmpty();
     }
 
     @Test
