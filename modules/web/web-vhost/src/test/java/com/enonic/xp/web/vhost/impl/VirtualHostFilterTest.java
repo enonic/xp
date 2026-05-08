@@ -68,7 +68,7 @@ class VirtualHostFilterTest
     }
 
     @Test
-    void testManagementPort_localhostVhostUsed()
+    void testManagementPort_noMappingFound_defaultVhostUsed()
         throws Exception
     {
         when( this.virtualHostService.isEnabled() ).thenReturn( true );
@@ -78,6 +78,7 @@ class VirtualHostFilterTest
         VirtualHostFilter filter = new VirtualHostFilter( virtualHostService, new VirtualHostResolverImpl( virtualHostService ) );
         filter.doFilter( this.req, this.res, this.chain );
 
+        verify( req ).setAttribute( eq( VirtualHost.class.getName() ), notNull() );
         verify( this.chain, times( 1 ) ).doFilter( any(), eq( this.res ) );
     }
 
@@ -102,7 +103,7 @@ class VirtualHostFilterTest
     }
 
     @Test
-    void testStatusPort_localhostVhostUsed()
+    void testStatusPort_noMappingFound_defaultVhostUsed()
         throws Exception
     {
         when( this.virtualHostService.isEnabled() ).thenReturn( true );
@@ -112,6 +113,7 @@ class VirtualHostFilterTest
         VirtualHostFilter filter = new VirtualHostFilter( virtualHostService, new VirtualHostResolverImpl( virtualHostService ) );
         filter.doFilter( this.req, this.res, this.chain );
 
+        verify( req ).setAttribute( eq( VirtualHost.class.getName() ), notNull() );
         verify( this.chain, times( 1 ) ).doFilter( any(), eq( this.res ) );
     }
 
