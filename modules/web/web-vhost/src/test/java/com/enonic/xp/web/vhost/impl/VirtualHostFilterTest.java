@@ -82,6 +82,60 @@ class VirtualHostFilterTest
     }
 
     @Test
+    void testManagementPort_mappingFound()
+        throws Exception
+    {
+        addMapping();
+        when( this.virtualHostService.isEnabled() ).thenReturn( true );
+        when( this.req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.API_CONNECTOR );
+        when( req.getServerName() ).thenReturn( "enonic.com" );
+        when( req.getRequestURI() ).thenReturn( "/rest/status" );
+        when( req.getPathInfo() ).thenReturn( "/rest/status" );
+
+        VirtualHostFilter filter = new VirtualHostFilter( virtualHostService, new VirtualHostResolverImpl( virtualHostService ) );
+        filter.doFilter( this.req, this.res, this.chain );
+
+        verify( req ).setAttribute( eq( VirtualHost.class.getName() ), notNull() );
+        final ArgumentCaptor<HttpServletRequest> requestCaptor = forClass( HttpServletRequest.class );
+        verify( this.chain ).doFilter( requestCaptor.capture(), eq( this.res ) );
+        assertEquals( "/admin/rest/status", requestCaptor.getValue().getRequestURI() );
+    }
+
+    @Test
+    void testStatusPort_localhostVhostUsed()
+        throws Exception
+    {
+        when( this.virtualHostService.isEnabled() ).thenReturn( true );
+        when( this.req.getServerName() ).thenReturn( "domain.com" );
+        when( this.req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.STATUS_CONNECTOR );
+
+        VirtualHostFilter filter = new VirtualHostFilter( virtualHostService, new VirtualHostResolverImpl( virtualHostService ) );
+        filter.doFilter( this.req, this.res, this.chain );
+
+        verify( this.chain, times( 1 ) ).doFilter( any(), eq( this.res ) );
+    }
+
+    @Test
+    void testStatusPort_mappingFound()
+        throws Exception
+    {
+        addMapping();
+        when( this.virtualHostService.isEnabled() ).thenReturn( true );
+        when( this.req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.STATUS_CONNECTOR );
+        when( req.getServerName() ).thenReturn( "enonic.com" );
+        when( req.getRequestURI() ).thenReturn( "/rest/status" );
+        when( req.getPathInfo() ).thenReturn( "/rest/status" );
+
+        VirtualHostFilter filter = new VirtualHostFilter( virtualHostService, new VirtualHostResolverImpl( virtualHostService ) );
+        filter.doFilter( this.req, this.res, this.chain );
+
+        verify( req ).setAttribute( eq( VirtualHost.class.getName() ), notNull() );
+        final ArgumentCaptor<HttpServletRequest> requestCaptor = forClass( HttpServletRequest.class );
+        verify( this.chain ).doFilter( requestCaptor.capture(), eq( this.res ) );
+        assertEquals( "/admin/rest/status", requestCaptor.getValue().getRequestURI() );
+    }
+
+    @Test
     void testNoMapping()
         throws Exception
     {

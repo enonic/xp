@@ -23,7 +23,7 @@ import com.enonic.xp.web.vhost.VirtualHostService;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostIdProvidersMapping;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
 
-@Component(immediate = true, service = Filter.class, property = {"connector=xp", "connector=api"})
+@Component(immediate = true, service = Filter.class, property = {"connector=xp", "connector=api", "connector=status"})
 @Order(-200)
 @WebFilter("/*")
 public final class VirtualHostFilter
@@ -47,8 +47,9 @@ public final class VirtualHostFilter
     protected void doHandle( final HttpServletRequest req, final HttpServletResponse res, final FilterChain chain )
         throws Exception
     {
-        if ( virtualHostService.isEnabled() &&
-            DispatchConstants.XP_CONNECTOR.equals( req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ) )
+        final String connector = (String) req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE );
+
+        if ( virtualHostService.isEnabled() && DispatchConstants.XP_CONNECTOR.equals( connector ) )
         {
             final VirtualHost virtualHost = virtualHostResolver.resolveVirtualHost( req );
             if ( virtualHost == null )
@@ -61,6 +62,22 @@ public final class VirtualHostFilter
             {
                 VirtualHostHelper.setVirtualHost( req, virtualHost );
                 chain.doFilter( new VirtualHostRequestWrapper( req, virtualHost ), res );
+            }
+        }
+        else if ( virtualHostService.isEnabled() &&
+            ( DispatchConstants.API_CONNECTOR.equals( connector ) || DispatchConstants.STATUS_CONNECTOR.equals( connector ) ) )
+        {
+            final VirtualHost virtualHost = virtualHostResolver.resolveVirtualHost( req );
+            if ( virtualHost != null )
+            {
+                VirtualHostHelper.setVirtualHost( req, virtualHost );
+                chain.doFilter( new VirtualHostRequestWrapper( req, virtualHost ), res );
+            }
+            else
+            {
+                final VirtualHostMapping defaultVirtualHost = generateDefaultVirtualHostMapping( req );
+                VirtualHostHelper.setVirtualHost( req, defaultVirtualHost );
+                chain.doFilter( req, res );
             }
         }
         else
