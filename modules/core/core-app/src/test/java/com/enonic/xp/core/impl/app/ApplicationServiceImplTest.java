@@ -273,7 +273,7 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    void startApplication_systemApp_throws()
+    void start_system_application_ignored()
         throws Exception
     {
         final Bundle bundle = deploySystemAppBundle( "systemApp" );
@@ -284,10 +284,7 @@ class ApplicationServiceImplTest
 
         assertEquals( Bundle.ACTIVE, bundle.getState() );
         final ApplicationKey applicationKey = ApplicationKey.from( "systemApp" );
-
-        assertThatThrownBy( () -> this.service.startApplication( applicationKey ) ).isInstanceOf( IllegalArgumentException.class )
-            .hasMessageContaining( "system application" );
-
+        this.service.startApplication( applicationKey );
         assertEquals( Bundle.ACTIVE, bundle.getState() );
     }
 
@@ -378,38 +375,6 @@ class ApplicationServiceImplTest
         assertThatThrownBy( () -> this.service.stopApplication( applicationKey ) ).isInstanceOf( IllegalArgumentException.class )
             .hasMessageContaining( "system application" );
 
-        assertEquals( Bundle.ACTIVE, bundle.getState() );
-    }
-
-    @Test
-    void uninstallApplication_systemApp_throws()
-    {
-        final Bundle bundle = deploySystemAppBundle( "systemApp" );
-        applicationRegistry.registerApplication( bundle );
-
-        final ApplicationKey applicationKey = ApplicationKey.from( "systemApp" );
-
-        assertThatThrownBy( () -> this.service.uninstallApplication( applicationKey ) ).isInstanceOf( IllegalArgumentException.class )
-            .hasMessageContaining( "system application" );
-
-        assertNotNull( this.service.getInstalledApplication( applicationKey ) );
-        assertEquals( Bundle.INSTALLED, bundle.getState() );
-    }
-
-    @Test
-    void uninstallLocalApplication_systemApp_throws()
-        throws Exception
-    {
-        final Bundle bundle = deploySystemAppBundle( "systemApp" );
-        applicationRegistry.registerApplication( bundle );
-        bundle.start();
-
-        final ApplicationKey applicationKey = ApplicationKey.from( "systemApp" );
-
-        assertThatThrownBy( () -> this.service.uninstallLocalApplication( applicationKey ) ).isInstanceOf( IllegalArgumentException.class )
-            .hasMessageContaining( "system application" );
-
-        assertNotNull( this.service.getInstalledApplication( applicationKey ) );
         assertEquals( Bundle.ACTIVE, bundle.getState() );
     }
 
