@@ -195,7 +195,7 @@ public class InternalContext
         {
             try
             {
-                return SearchPreference.valueOf( valueString.toUpperCase( Locale.ROOT ) );
+                return SearchPreference.valueOf( valueString );
             }
             catch ( final IllegalArgumentException ignored )
             {
