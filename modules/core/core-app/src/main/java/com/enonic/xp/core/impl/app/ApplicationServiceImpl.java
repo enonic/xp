@@ -122,6 +122,7 @@ public final class ApplicationServiceImpl
     @Override
     public void startApplication( final ApplicationKey key )
     {
+        requireNotSystemApp( key, "start" );
         final boolean global = !localApplicationSet.contains( key );
         ApplicationHelper.runWithContext( () -> {
             if ( global )
@@ -143,6 +144,7 @@ public final class ApplicationServiceImpl
     @Override
     public void stopApplication( final ApplicationKey key )
     {
+        requireNotSystemApp( key, "stop" );
         final boolean global = !localApplicationSet.contains( key );
         ApplicationHelper.runWithContext( () -> {
             if ( global )
@@ -186,6 +188,7 @@ public final class ApplicationServiceImpl
     @Override
     public void uninstallApplication( final ApplicationKey key )
     {
+        requireNotSystemApp( key, "uninstall" );
         if ( localApplicationSet.contains( key ) )
         {
             throw new ApplicationBundleException(
@@ -206,6 +209,7 @@ public final class ApplicationServiceImpl
     @Override
     public void uninstallLocalApplication( final ApplicationKey key )
     {
+        requireNotSystemApp( key, "uninstall" );
         final boolean removed = localApplicationSet.remove( key );
         if ( !removed )
         {
@@ -213,6 +217,15 @@ public final class ApplicationServiceImpl
         }
         doUninstallApplication( key );
         ApplicationHelper.runWithContext( () -> doReinstallStoredApplication( key ) );
+    }
+
+    private void requireNotSystemApp( final ApplicationKey key, final String op )
+    {
+        final Application app = registry.get( key );
+        if ( app != null && app.isSystem() )
+        {
+            throw new IllegalArgumentException( "Cannot " + op + " system application: " + key );
+        }
     }
 
     @Override

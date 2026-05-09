@@ -50,6 +50,7 @@ import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.Nodes;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -272,7 +273,7 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    void start_system_application_ignored()
+    void startApplication_systemApp_throws()
         throws Exception
     {
         final Bundle bundle = deploySystemAppBundle( "systemApp" );
@@ -283,7 +284,10 @@ class ApplicationServiceImplTest
 
         assertEquals( Bundle.ACTIVE, bundle.getState() );
         final ApplicationKey applicationKey = ApplicationKey.from( "systemApp" );
-        this.service.startApplication( applicationKey );
+
+        assertThatThrownBy( () -> this.service.startApplication( applicationKey ) ).isInstanceOf( IllegalArgumentException.class )
+            .hasMessageContaining( "system application" );
+
         assertEquals( Bundle.ACTIVE, bundle.getState() );
     }
 
@@ -359,7 +363,7 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    void stop_system_application()
+    void stopApplication_systemApp_throws()
         throws Exception
     {
         final Bundle bundle = deploySystemAppBundle( "systemApp" );
@@ -370,8 +374,43 @@ class ApplicationServiceImplTest
 
         assertEquals( Bundle.ACTIVE, bundle.getState() );
         final ApplicationKey applicationKey = ApplicationKey.from( "systemApp" );
-        this.service.stopApplication( applicationKey );
-        assertEquals( Bundle.RESOLVED, bundle.getState() );
+
+        assertThatThrownBy( () -> this.service.stopApplication( applicationKey ) ).isInstanceOf( IllegalArgumentException.class )
+            .hasMessageContaining( "system application" );
+
+        assertEquals( Bundle.ACTIVE, bundle.getState() );
+    }
+
+    @Test
+    void uninstallApplication_systemApp_throws()
+    {
+        final Bundle bundle = deploySystemAppBundle( "systemApp" );
+        applicationRegistry.registerApplication( bundle );
+
+        final ApplicationKey applicationKey = ApplicationKey.from( "systemApp" );
+
+        assertThatThrownBy( () -> this.service.uninstallApplication( applicationKey ) ).isInstanceOf( IllegalArgumentException.class )
+            .hasMessageContaining( "system application" );
+
+        assertNotNull( this.service.getInstalledApplication( applicationKey ) );
+        assertEquals( Bundle.INSTALLED, bundle.getState() );
+    }
+
+    @Test
+    void uninstallLocalApplication_systemApp_throws()
+        throws Exception
+    {
+        final Bundle bundle = deploySystemAppBundle( "systemApp" );
+        applicationRegistry.registerApplication( bundle );
+        bundle.start();
+
+        final ApplicationKey applicationKey = ApplicationKey.from( "systemApp" );
+
+        assertThatThrownBy( () -> this.service.uninstallLocalApplication( applicationKey ) ).isInstanceOf( IllegalArgumentException.class )
+            .hasMessageContaining( "system application" );
+
+        assertNotNull( this.service.getInstalledApplication( applicationKey ) );
+        assertEquals( Bundle.ACTIVE, bundle.getState() );
     }
 
     @Test
