@@ -26,13 +26,28 @@ public interface NodeService
 
     Node getById( NodeId id );
 
+    default Node getById( final NodeId id, final NodeSearchPreference searchPreference )
+    {
+        return getById( id );
+    }
+
     Node getByIdAndVersionId( NodeId id, NodeVersionId versionId );
 
     @Nullable NodeVersion getVersion( NodeId nodeId, NodeVersionId nodeVersionId );
 
     Nodes getByIds( NodeIds ids );
 
+    default Nodes getByIds( final NodeIds ids, final NodeSearchPreference searchPreference )
+    {
+        return getByIds( ids );
+    }
+
     @Nullable Node getByPath( NodePath path );
+
+    default @Nullable Node getByPath( final NodePath path, final NodeSearchPreference searchPreference )
+    {
+        return getByPath( path );
+    }
 
     Nodes getByPaths( NodePaths paths );
 
@@ -41,6 +56,11 @@ public interface NodeService
     FindNodesByParentResult findByParent( FindNodesByParentParams params );
 
     FindNodesByQueryResult findByQuery( NodeQuery nodeQuery );
+
+    default FindNodesByQueryResult findByQuery( final NodeQuery nodeQuery, final NodeSearchPreference searchPreference )
+    {
+        return findByQuery( nodeQuery );
+    }
 
     FindNodesByMultiRepoQueryResult findByQuery( MultiRepoNodeQuery nodeQuery );
 

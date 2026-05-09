@@ -3,6 +3,7 @@ package com.enonic.xp.core.impl.content;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodeSearchPreference;
 import com.enonic.xp.node.Nodes;
 
 import static java.util.Objects.requireNonNull;
@@ -13,10 +14,13 @@ final class GetContentByIdsCommand
 {
     private final GetContentByIdsParams params;
 
+    private final NodeSearchPreference searchPreference;
+
     private GetContentByIdsCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
+        this.searchPreference = builder.searchPreference;
     }
 
     Contents execute()
@@ -29,7 +33,7 @@ final class GetContentByIdsCommand
     {
         final NodeIds nodeIds = ContentNodeHelper.toNodeIds( this.params.getIds() );
 
-        final Nodes nodes = nodeService.getByIds( nodeIds );
+        final Nodes nodes = searchPreference != null ? nodeService.getByIds( nodeIds, searchPreference ) : nodeService.getByIds( nodeIds );
 
         return ContentNodeTranslator.fromNodes( nodes );
     }
@@ -44,6 +48,8 @@ final class GetContentByIdsCommand
     {
         private final GetContentByIdsParams params;
 
+        private NodeSearchPreference searchPreference;
+
         Builder( final GetContentByIdsParams params )
         {
             this.params = params;
@@ -54,6 +60,12 @@ final class GetContentByIdsCommand
         {
             super.validate();
             requireNonNull( params, "params cannot be null" );
+        }
+
+        Builder searchPreference( final NodeSearchPreference searchPreference )
+        {
+            this.searchPreference = searchPreference;
+            return this;
         }
 
         public GetContentByIdsCommand build()

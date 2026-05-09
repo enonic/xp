@@ -3,7 +3,6 @@ package com.enonic.xp.core.impl.content;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.Supplier;
 
 import org.jspecify.annotations.NullMarked;
 import org.osgi.service.component.annotations.Activate;
@@ -35,10 +34,9 @@ import com.enonic.xp.content.PatchContentResult;
 import com.enonic.xp.content.SortContentParams;
 import com.enonic.xp.content.SortContentResult;
 import com.enonic.xp.core.impl.content.processor.ContentProcessor;
-import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.NodeIndexPath;
+import com.enonic.xp.node.NodeSearchPreference;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.query.expr.CompareExpr;
@@ -56,10 +54,6 @@ import com.enonic.xp.util.BinaryReference;
 @NullMarked
 public class LayersContentService
 {
-    private static final String SEARCH_PREFERENCE_ATTRIBUTE = "searchPreference";
-
-    private static final String SEARCH_PREFERENCE_PRIMARY = "PRIMARY";
-
     private final NodeService nodeService;
 
     private final ContentTypeService contentTypeService;
@@ -212,32 +206,35 @@ public class LayersContentService
 
     public Optional<Content> getByPath( final ContentPath path )
     {
-        return callOnPrimary( () -> Optional.ofNullable( GetContentByPathCommand.create( path )
-                                                             .nodeService( this.nodeService )
-                                                             .contentTypeService( this.contentTypeService )
-                                                             .eventPublisher( this.eventPublisher )
-                                                             .build()
-                                                             .execute() ) );
+        return Optional.ofNullable( GetContentByPathCommand.create( path )
+                                        .searchPreference( NodeSearchPreference.PRIMARY )
+                                        .nodeService( this.nodeService )
+                                        .contentTypeService( this.contentTypeService )
+                                        .eventPublisher( this.eventPublisher )
+                                        .build()
+                                        .execute() );
     }
 
     public Contents getByIds( final ContentIds contentIds )
     {
-        return callOnPrimary( () -> GetContentByIdsCommand.create( GetContentByIdsParams.create().contentIds( contentIds ).build() )
+        return GetContentByIdsCommand.create( GetContentByIdsParams.create().contentIds( contentIds ).build() )
+            .searchPreference( NodeSearchPreference.PRIMARY )
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
             .eventPublisher( this.eventPublisher )
             .build()
-            .execute() );
+            .execute();
     }
 
     public Optional<Content> getById( final ContentId contentId )
     {
-        return callOnPrimary( () -> Optional.ofNullable( GetContentByIdCommand.create( contentId )
-                                                             .nodeService( this.nodeService )
-                                                             .contentTypeService( this.contentTypeService )
-                                                             .eventPublisher( this.eventPublisher )
-                                                             .build()
-                                                             .execute() ) );
+        return Optional.ofNullable( GetContentByIdCommand.create( contentId )
+                                        .searchPreference( NodeSearchPreference.PRIMARY )
+                                        .nodeService( this.nodeService )
+                                        .contentTypeService( this.contentTypeService )
+                                        .eventPublisher( this.eventPublisher )
+                                        .build()
+                                        .execute() );
     }
 
     public ByteSource getBinary( final ContentId contentId, final BinaryReference binaryReference )
@@ -252,13 +249,14 @@ public class LayersContentService
 
     public FindContentIdsByQueryResult find( final ContentQuery query )
     {
-        return callOnPrimary( () -> FindContentIdsByQueryCommand.create()
+        return FindContentIdsByQueryCommand.create()
             .query( query )
+            .searchPreference( NodeSearchPreference.PRIMARY )
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
             .eventPublisher( this.eventPublisher )
             .build()
-            .execute() );
+            .execute();
     }
 
     public ContentIds findAllChildren( final ContentPath contentPath )
@@ -281,11 +279,4 @@ public class LayersContentService
         return find( query ).getContentIds();
     }
 
-    private <T> T callOnPrimary( final Supplier<T> supplier )
-    {
-        return ContextBuilder.from( ContextAccessor.current() )
-            .attribute( SEARCH_PREFERENCE_ATTRIBUTE, SEARCH_PREFERENCE_PRIMARY )
-            .build()
-            .callWith( supplier::get );
-    }
 }

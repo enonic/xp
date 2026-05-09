@@ -12,6 +12,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.VersionAttributesResolver;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.SearchPreference;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
@@ -37,7 +38,7 @@ abstract class AbstractNodeCommand
 
     @Nullable Node doGetById( final @NonNull NodeId id )
     {
-        return doGetById( id, InternalContext.from( ContextAccessor.current() ) );
+        return doGetById( id, createInternalContext( null ) );
     }
 
     @Nullable Node doGetById( final @NonNull NodeId id, final @NonNull InternalContext context )
@@ -48,6 +49,11 @@ abstract class AbstractNodeCommand
     @Nullable Node doGetByPath( final NodePath path )
     {
         return GetNodeByPathCommand.create( this ).nodePath( path ).build().execute();
+    }
+
+    @NonNull InternalContext createInternalContext( final @Nullable SearchPreference searchPreference )
+    {
+        return InternalContext.create( ContextAccessor.current() ).searchPreference( searchPreference ).build();
     }
 
     void refresh( final RefreshMode refreshMode )

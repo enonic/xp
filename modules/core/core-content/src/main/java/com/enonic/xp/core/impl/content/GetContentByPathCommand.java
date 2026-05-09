@@ -4,6 +4,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeSearchPreference;
 
 import static java.util.Objects.requireNonNull;
 
@@ -12,18 +13,21 @@ final class GetContentByPathCommand
 {
     private final ContentPath contentPath;
 
+    private final NodeSearchPreference searchPreference;
+
     private GetContentByPathCommand( final Builder builder )
     {
         super( builder );
         requireNonNull( builder.contentPath, "contentPath is required" );
         this.contentPath = builder.contentPath;
+        this.searchPreference = builder.searchPreference;
     }
 
     Content execute()
     {
         final NodePath nodePath = ContentNodeHelper.translateContentPathToNodePath( contentPath );
 
-        final Node node = nodeService.getByPath( nodePath );
+        final Node node = searchPreference != null ? nodeService.getByPath( nodePath, searchPreference ) : nodeService.getByPath( nodePath );
 
         if ( node == null )
         {
@@ -49,6 +53,8 @@ final class GetContentByPathCommand
     {
         private final ContentPath contentPath;
 
+        private NodeSearchPreference searchPreference;
+
         Builder( final ContentPath contentPath )
         {
             this.contentPath = contentPath;
@@ -65,6 +71,12 @@ final class GetContentByPathCommand
         {
             super.validate();
             requireNonNull( contentPath, "contentPath is required" );
+        }
+
+        Builder searchPreference( final NodeSearchPreference searchPreference )
+        {
+            this.searchPreference = searchPreference;
+            return this;
         }
 
         public GetContentByPathCommand build()

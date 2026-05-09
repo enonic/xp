@@ -56,6 +56,7 @@ import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.NodeSearchPreference;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
@@ -124,17 +125,29 @@ public class NodeServiceImpl
     @Override
     public Node getById( final NodeId id )
     {
+        return getById( id, NodeSearchPreference.LOCAL );
+    }
+
+    @Override
+    public Node getById( final NodeId id, final NodeSearchPreference searchPreference )
+    {
         verifyContext();
         return Tracer.trace( "node.getById", trace -> {
             trace.put( "id", id );
             trace.put( "repo", ContextAccessor.current().getRepositoryId() );
             trace.put( "branch", ContextAccessor.current().getBranch() );
-        }, () -> executeGetById( id ), ( trace, node ) -> trace.put( "path", node.path() ) );
+            trace.put( "searchPreference", searchPreference );
+        }, () -> executeGetById( id, searchPreference ), ( trace, node ) -> trace.put( "path", node.path() ) );
     }
 
     private Node executeGetById( final NodeId id )
     {
-        final Node node = doGetById( id );
+        return executeGetById( id, NodeSearchPreference.LOCAL );
+    }
+
+    private Node executeGetById( final NodeId id, final NodeSearchPreference searchPreference )
+    {
+        final Node node = doGetById( id, searchPreference );
 
         if ( node == null )
         {
@@ -191,8 +204,14 @@ public class NodeServiceImpl
 
     private @Nullable Node doGetById( final NodeId id )
     {
+        return doGetById( id, NodeSearchPreference.LOCAL );
+    }
+
+    private @Nullable Node doGetById( final NodeId id, final NodeSearchPreference searchPreference )
+    {
         return GetNodeByIdCommand.create()
             .id( id )
+            .searchPreference( toSearchPreference( searchPreference ) )
             .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )
@@ -203,13 +222,20 @@ public class NodeServiceImpl
     @Override
     public @Nullable Node getByPath( final NodePath path )
     {
+        return getByPath( path, NodeSearchPreference.LOCAL );
+    }
+
+    @Override
+    public @Nullable Node getByPath( final NodePath path, final NodeSearchPreference searchPreference )
+    {
         verifyContext();
 
         return Tracer.trace( "node.getByPath", trace -> {
             trace.put( "path", path );
             trace.put( "repo", ContextAccessor.current().getRepositoryId() );
             trace.put( "branch", ContextAccessor.current().getBranch() );
-        }, () -> executeGetByPath( path ), ( trace, node ) -> {
+            trace.put( "searchPreference", searchPreference );
+        }, () -> executeGetByPath( path, searchPreference ), ( trace, node ) -> {
             if ( node != null )
             {
                 trace.put( "id", node.id() );
@@ -219,8 +245,14 @@ public class NodeServiceImpl
 
     private @Nullable Node executeGetByPath( final NodePath path )
     {
+        return executeGetByPath( path, NodeSearchPreference.LOCAL );
+    }
+
+    private @Nullable Node executeGetByPath( final NodePath path, final NodeSearchPreference searchPreference )
+    {
         return GetNodeByPathCommand.create()
             .nodePath( path )
+            .searchPreference( toSearchPreference( searchPreference ) )
             .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )
@@ -231,19 +263,32 @@ public class NodeServiceImpl
     @Override
     public Nodes getByIds( final NodeIds ids )
     {
+        return getByIds( ids, NodeSearchPreference.LOCAL );
+    }
+
+    @Override
+    public Nodes getByIds( final NodeIds ids, final NodeSearchPreference searchPreference )
+    {
         verifyContext();
 
         return Tracer.trace( "node.getByIds", trace -> {
             trace.put( "id", ids );
             trace.put( "repo", ContextAccessor.current().getRepositoryId() );
             trace.put( "branch", ContextAccessor.current().getBranch() );
-        }, () -> executeGetByIds( ids ) );
+            trace.put( "searchPreference", searchPreference );
+        }, () -> executeGetByIds( ids, searchPreference ) );
     }
 
     private Nodes executeGetByIds( final NodeIds ids )
     {
+        return executeGetByIds( ids, NodeSearchPreference.LOCAL );
+    }
+
+    private Nodes executeGetByIds( final NodeIds ids, final NodeSearchPreference searchPreference )
+    {
         return GetNodesByIdsCommand.create()
             .ids( ids )
+            .searchPreference( toSearchPreference( searchPreference ) )
             .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )
@@ -308,6 +353,12 @@ public class NodeServiceImpl
     @Override
     public FindNodesByQueryResult findByQuery( final NodeQuery nodeQuery )
     {
+        return findByQuery( nodeQuery, NodeSearchPreference.LOCAL );
+    }
+
+    @Override
+    public FindNodesByQueryResult findByQuery( final NodeQuery nodeQuery, final NodeSearchPreference searchPreference )
+    {
         verifyContext();
         return Tracer.trace( "node.findByQuery", trace -> {
             trace.put( "query", nodeQuery.getQuery() );
@@ -316,18 +367,39 @@ public class NodeServiceImpl
             trace.put( "size", nodeQuery.getSize() );
             trace.put( "repo", ContextAccessor.current().getRepositoryId() );
             trace.put( "branch", ContextAccessor.current().getBranch() );
-        }, () -> executeFindByQuery( nodeQuery ), ( trace, result ) -> trace.put( "hits", result.getTotalHits() ) );
+            trace.put( "searchPreference", searchPreference );
+        }, () -> executeFindByQuery( nodeQuery, searchPreference ), ( trace, result ) -> trace.put( "hits", result.getTotalHits() ) );
     }
 
     private FindNodesByQueryResult executeFindByQuery( final NodeQuery nodeQuery )
     {
+        return executeFindByQuery( nodeQuery, NodeSearchPreference.LOCAL );
+    }
+
+    private FindNodesByQueryResult executeFindByQuery( final NodeQuery nodeQuery, final NodeSearchPreference searchPreference )
+    {
         return FindNodesByQueryCommand.create()
             .query( nodeQuery )
+            .searchPreference( toSearchPreference( searchPreference ) )
             .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )
             .build()
             .execute();
+    }
+
+    private SearchPreference toSearchPreference( final NodeSearchPreference searchPreference )
+    {
+        if ( searchPreference == null )
+        {
+            return null;
+        }
+
+        return switch ( searchPreference )
+        {
+            case PRIMARY -> SearchPreference.PRIMARY;
+            case LOCAL -> SearchPreference.LOCAL;
+        };
     }
 
     @Override
