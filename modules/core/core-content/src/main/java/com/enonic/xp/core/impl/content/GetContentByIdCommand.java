@@ -6,7 +6,6 @@ import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
-import com.enonic.xp.node.NodeSearchPreference;
 
 
 final class GetContentByIdCommand
@@ -14,13 +13,10 @@ final class GetContentByIdCommand
 {
     private final ContentId contentId;
 
-    private final NodeSearchPreference searchPreference;
-
     private GetContentByIdCommand( final Builder builder )
     {
         super( builder );
         this.contentId = builder.contentId;
-        this.searchPreference = builder.searchPreference;
     }
 
     Content execute()
@@ -30,7 +26,7 @@ final class GetContentByIdCommand
 
         try
         {
-            final Node node = searchPreference != null ? nodeService.getById( nodeId, searchPreference ) : nodeService.getById( nodeId );
+            final Node node = nodeService.getById( nodeId );
             content = filter( ContentNodeTranslator.fromNode( node ) );
         }
         catch ( NodeNotFoundException | ContentNotFoundException e )
@@ -59,8 +55,6 @@ final class GetContentByIdCommand
     {
         private final ContentId contentId;
 
-        private NodeSearchPreference searchPreference;
-
         Builder( final ContentId contentId )
         {
             this.contentId = contentId;
@@ -78,12 +72,6 @@ final class GetContentByIdCommand
             super.validate();
         }
 
-        Builder searchPreference( final NodeSearchPreference searchPreference )
-        {
-            this.searchPreference = searchPreference;
-            return this;
-        }
-
         public GetContentByIdCommand build()
         {
             validate();
@@ -91,3 +79,4 @@ final class GetContentByIdCommand
         }
     }
 }
+

@@ -1,8 +1,9 @@
 package com.enonic.xp.repo.impl.node;
 
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.repo.impl.SearchPreference;
+import com.enonic.xp.repo.impl.InternalContext;
 
 import static java.util.Objects.requireNonNull;
 
@@ -11,18 +12,15 @@ public class GetNodeByPathCommand
 {
     private final NodePath path;
 
-    private final SearchPreference searchPreference;
-
     private GetNodeByPathCommand( final Builder builder )
     {
         super( builder );
         path = builder.path;
-        searchPreference = builder.searchPreference;
     }
 
     public Node execute()
     {
-        return this.nodeStorageService.get( path, createInternalContext( searchPreference ) );
+        return this.nodeStorageService.get( path, InternalContext.from( ContextAccessor.current() ) );
     }
 
     public static Builder create()
@@ -40,8 +38,6 @@ public class GetNodeByPathCommand
     {
         private NodePath path;
 
-        private SearchPreference searchPreference;
-
         private Builder()
         {
             super();
@@ -55,12 +51,6 @@ public class GetNodeByPathCommand
         public Builder nodePath( NodePath path )
         {
             this.path = path;
-            return this;
-        }
-
-        public Builder searchPreference( final SearchPreference searchPreference )
-        {
-            this.searchPreference = searchPreference;
             return this;
         }
 

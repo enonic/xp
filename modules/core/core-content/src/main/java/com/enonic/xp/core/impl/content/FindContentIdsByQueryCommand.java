@@ -8,7 +8,6 @@ import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.highlight.HighlightedProperties;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeQuery;
-import com.enonic.xp.node.NodeSearchPreference;
 import com.enonic.xp.sortvalues.SortValuesProperty;
 
 import static java.util.Objects.requireNonNull;
@@ -18,13 +17,10 @@ final class FindContentIdsByQueryCommand
 {
     private final ContentQuery query;
 
-    private final NodeSearchPreference searchPreference;
-
     private FindContentIdsByQueryCommand( final Builder builder )
     {
         super( builder );
         this.query = builder.query;
-        this.searchPreference = builder.searchPreference;
     }
 
     public static Builder create()
@@ -44,8 +40,7 @@ final class FindContentIdsByQueryCommand
 
         final Map<ContentId, Float> scoreValues = new LinkedHashMap<>();
 
-        final FindNodesByQueryResult result =
-            searchPreference != null ? nodeService.findByQuery( nodeQuery, searchPreference ) : nodeService.findByQuery( nodeQuery );
+        final FindNodesByQueryResult result = nodeService.findByQuery( nodeQuery );
 
         result.getNodeHits().forEach( nodeHit -> {
             final ContentId contentId = ContentId.from( nodeHit.getNodeId() );
@@ -78,8 +73,6 @@ final class FindContentIdsByQueryCommand
     {
         private ContentQuery query;
 
-        private NodeSearchPreference searchPreference;
-
         private Builder()
         {
         }
@@ -87,12 +80,6 @@ final class FindContentIdsByQueryCommand
         public Builder query( final ContentQuery query )
         {
             this.query = query;
-            return this;
-        }
-
-        Builder searchPreference( final NodeSearchPreference searchPreference )
-        {
-            this.searchPreference = searchPreference;
             return this;
         }
 

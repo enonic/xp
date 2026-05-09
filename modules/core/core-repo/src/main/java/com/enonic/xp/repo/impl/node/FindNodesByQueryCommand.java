@@ -5,7 +5,6 @@ import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.ReturnFields;
-import com.enonic.xp.repo.impl.SearchPreference;
 import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 
@@ -18,14 +17,11 @@ public class FindNodesByQueryCommand
 
     private final ReturnFields returnFields;
 
-    private final SearchPreference searchPreference;
-
     private FindNodesByQueryCommand( Builder builder )
     {
         super( builder );
         query = builder.query;
         returnFields = builder.returnFields;
-        searchPreference = builder.searchPreference;
     }
 
     public static Builder create()
@@ -35,11 +31,8 @@ public class FindNodesByQueryCommand
 
     public FindNodesByQueryResult execute()
     {
-        final SearchResult result = nodeSearchService.query( this.query, returnFields,
-                                                             SingleRepoSearchSource.from(
-                                                                 InternalContext.create( ContextAccessor.current() )
-                                                                     .searchPreference( searchPreference )
-                                                                     .build() ) );
+        final SearchResult result =
+            nodeSearchService.query( this.query, returnFields, SingleRepoSearchSource.from( InternalContext.from( ContextAccessor.current() ) ) );
 
         return FindNodesByQueryResultFactory.create( result );
     }
@@ -50,8 +43,6 @@ public class FindNodesByQueryCommand
         private NodeQuery query;
 
         private ReturnFields returnFields = ReturnFields.empty();
-
-        private SearchPreference searchPreference;
 
         private Builder()
         {
@@ -67,12 +58,6 @@ public class FindNodesByQueryCommand
         public Builder returnFields( ReturnFields returnFields )
         {
             this.returnFields = returnFields;
-            return this;
-        }
-
-        public Builder searchPreference( final SearchPreference searchPreference )
-        {
-            this.searchPreference = searchPreference;
             return this;
         }
 
