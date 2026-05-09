@@ -79,4 +79,3 @@ final class GetContentByIdCommand
         }
     }
 }
-
