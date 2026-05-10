@@ -43,6 +43,12 @@ class LayoutSchemaValidationTest
     }
 
     @Test
+    void regionsMustHaveUniqueNames()
+    {
+        assertThat( validateYaml( schema, "fixtures/layout/invalid-duplicate-regions.yml" ) ).isNotEmpty();
+    }
+
+    @Test
     void additionalPropertiesAreNotAllowed()
     {
         assertThat( validateYaml( schema, "fixtures/layout/invalid-unknown-property.yml" ) ).isNotEmpty();

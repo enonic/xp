@@ -43,6 +43,12 @@ class PageSchemaValidationTest
     }
 
     @Test
+    void regionsMustHaveUniqueNames()
+    {
+        assertThat( validateYaml( schema, "fixtures/page/invalid-duplicate-regions.yml" ) ).isNotEmpty();
+    }
+
+    @Test
     void additionalPropertiesAreNotAllowed()
     {
         assertThat( validateYaml( schema, "fixtures/page/invalid-unknown-property.yml" ) ).isNotEmpty();

@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.schema.YmlParserBase;
 import com.enonic.xp.form.Form;
+import com.enonic.xp.schema.LocalizedText;
 import com.enonic.xp.task.TaskDescriptor;
 import com.enonic.xp.util.GenericValue;
 
@@ -34,7 +35,7 @@ final class YmlTaskDescriptorParser
         }
 
         @JsonProperty("description")
-        abstract TaskDescriptor.Builder description( String description );
+        abstract TaskDescriptor.Builder description( LocalizedText text );
 
         @JsonProperty("form")
         abstract TaskDescriptor.Builder config( Form config );

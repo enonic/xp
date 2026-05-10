@@ -49,6 +49,12 @@ class MacroSchemaValidationTest
     }
 
     @Test
+    void fieldSetLabelIsRequired()
+    {
+        assertThat( validateYaml( schema, "fixtures/macro/invalid-form-fieldset-missing-label.yml" ) ).isNotEmpty();
+    }
+
+    @Test
     void formDoesNotSupportItemSet()
     {
         assertThat( validateYaml( schema, "fixtures/macro/invalid-form-itemset-not-supported.yml" ) ).isNotEmpty();

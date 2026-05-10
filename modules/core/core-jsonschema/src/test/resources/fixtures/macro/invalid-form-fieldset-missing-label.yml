@@ -1,0 +1,8 @@
+kind: "Macro"
+title: "My Macro"
+form:
+  - type: "FieldSet"
+    items:
+      - type: "TextLine"
+        name: "myField"
+        label: "My Field"
