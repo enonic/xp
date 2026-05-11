@@ -171,7 +171,7 @@ class ComponentServiceMappingHandlerTest
 
         final String body = "Project body";
 
-        when( filterScript.execute( eq( request ), isA( PortalResponse.class ), eq( webHandlerChain ) ) ).thenReturn(
+        when( filterScript.execute( eq( request ), isA( PortalResponse.class ), isA( WebHandlerChain.class ) ) ).thenReturn(
             PortalResponse.create().body( body ).build() );
 
         setupContentInsideSite( SiteConfigs.from( SiteConfig.create().application( myapplication ).config( new PropertyTree() ).build() ) );

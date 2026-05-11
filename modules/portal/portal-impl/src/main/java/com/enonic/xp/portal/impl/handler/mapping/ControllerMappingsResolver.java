@@ -1,9 +1,9 @@
 package com.enonic.xp.portal.impl.handler.mapping;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Multimap;
@@ -22,6 +22,20 @@ final class ControllerMappingsResolver
     ControllerMappingsResolver( final SiteService siteService )
     {
         this.siteService = siteService;
+    }
+
+    List<ControllerMappingDescriptor> resolveAll( final String siteRelativePath, final Multimap<String, String> params,
+                                                  final Content content, final SiteConfigs siteConfigs, final String serviceType )
+    {
+        return siteConfigs.stream()
+            .map( SiteConfig::getApplicationKey )
+            .map( siteService::getDescriptor )
+            .filter( Objects::nonNull )
+            .flatMap( siteDescriptor -> siteDescriptor.getMappingDescriptors().stream() )
+            .filter( controllerMappingDescriptor -> filterDescriptor( controllerMappingDescriptor, siteRelativePath, params, content,
+                                                                      serviceType ) )
+            .sorted( Comparator.comparingInt( ControllerMappingDescriptor::getOrder ) )
+            .toList();
     }
 
     private static String normalizedQueryParams( final Multimap<String, String> params )
@@ -76,20 +90,6 @@ final class ControllerMappingsResolver
         }
 
         return descriptor.getService().equals( serviceType );
-    }
-
-    Optional<ControllerMappingDescriptor> resolve( final String siteRelativePath, final Multimap<String, String> params,
-                                                   final Content content, final SiteConfigs siteConfigs, final String serviceType )
-    {
-
-        return siteConfigs.stream()
-            .map( SiteConfig::getApplicationKey )
-            .map( siteService::getDescriptor )
-            .filter( Objects::nonNull )
-            .flatMap( siteDescriptor -> siteDescriptor.getMappingDescriptors().stream() )
-            .filter( controllerMappingDescriptor -> filterDescriptor( controllerMappingDescriptor, siteRelativePath, params, content,
-                                                                      serviceType ) )
-            .min( Comparator.comparingInt( ControllerMappingDescriptor::getOrder ) );
     }
 
     private boolean filterDescriptor( final ControllerMappingDescriptor controllerMappingDescriptor, final String siteRelativePath,

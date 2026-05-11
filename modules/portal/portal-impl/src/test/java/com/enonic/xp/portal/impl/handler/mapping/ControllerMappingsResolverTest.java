@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
@@ -47,9 +48,10 @@ class ControllerMappingsResolverTest
         final Site site = newSite();
 
         final ControllerMappingsResolver resolver = new ControllerMappingsResolver( this.siteService );
-        final Optional<ControllerMappingDescriptor> mapping = resolver.resolve( "/landing-page", ImmutableMultimap.of(), content,
-                                                                                SiteConfigsDataSerializer.fromData(
-                                                                                    site.getData().getRoot() ), null );
+        final SiteConfigs siteConfigs = SiteConfigsDataSerializer.fromData(
+            site.getData().getRoot() );
+        final Optional<ControllerMappingDescriptor> mapping =
+            resolver.resolveAll( "/landing-page", ImmutableMultimap.of(), content, siteConfigs, null ).stream().findFirst();
 
         assertTrue( mapping.isEmpty() );
     }
@@ -66,9 +68,10 @@ class ControllerMappingsResolverTest
         Mockito.when( this.siteService.getDescriptor( getAppKey2() ) ).thenReturn( siteDescriptor2 );
 
         final ControllerMappingsResolver resolver = new ControllerMappingsResolver( this.siteService );
-        final Optional<ControllerMappingDescriptor> mapping = resolver.resolve( "/landing-page", ImmutableMultimap.of(), content,
-                                                                                SiteConfigsDataSerializer.fromData(
-                                                                                    site.getData().getRoot() ), null );
+        final SiteConfigs siteConfigs = SiteConfigsDataSerializer.fromData(
+            site.getData().getRoot() );
+        final Optional<ControllerMappingDescriptor> mapping =
+            resolver.resolveAll( "/landing-page", ImmutableMultimap.of(), content, siteConfigs, null ).stream().findFirst();
 
         assertThat( mapping ).map( ControllerMappingDescriptor::getController )
             .map( ResourceKey::getPath )
@@ -86,9 +89,10 @@ class ControllerMappingsResolverTest
 
         final ControllerMappingsResolver resolver = new ControllerMappingsResolver( this.siteService );
 
+        final Multimap<String, String> params = ImmutableMultimap.of( "key", "123", "category", "foo" );
+        final SiteConfigs siteConfigs = SiteConfigsDataSerializer.fromData( site.getData().getRoot() );
         final Optional<ControllerMappingDescriptor> mapping =
-            resolver.resolve( "/api", ImmutableMultimap.of( "key", "123", "category", "foo" ), content,
-                              SiteConfigsDataSerializer.fromData( site.getData().getRoot() ), null );
+            resolver.resolveAll( "/api", params, content, siteConfigs, null ).stream().findFirst();
 
         assertThat( mapping ).map( ControllerMappingDescriptor::getController )
             .map( ResourceKey::getPath )
@@ -106,9 +110,9 @@ class ControllerMappingsResolverTest
 
         final ControllerMappingsResolver resolver = new ControllerMappingsResolver( this.siteService );
 
+        final SiteConfigs siteConfigs = SiteConfigsDataSerializer.fromData( site.getData().getRoot() );
         final Optional<ControllerMappingDescriptor> mapping =
-            resolver.resolve( "/api", ImmutableMultimap.of(), content, SiteConfigsDataSerializer.fromData( site.getData().getRoot() ),
-                              null );
+            resolver.resolveAll( "/api", ImmutableMultimap.of(), content, siteConfigs, null ).stream().findFirst();
 
         assertTrue( mapping.isEmpty() );
     }
@@ -125,13 +129,14 @@ class ControllerMappingsResolverTest
 
         final ControllerMappingsResolver resolver = new ControllerMappingsResolver( this.siteService );
 
+        final SiteConfigs siteConfigs1 = SiteConfigsDataSerializer.fromData( site.getData().getRoot() );
         final Optional<ControllerMappingDescriptor> serviceMapping =
-            resolver.resolve( "/api", ImmutableMultimap.of(), content, SiteConfigsDataSerializer.fromData( site.getData().getRoot() ),
-                              "image" );
+            resolver.resolveAll( "/api", ImmutableMultimap.of(), content, siteConfigs1, "image" ).stream().findFirst();
 
+        final Multimap<String, String> params = ImmutableMultimap.of( "key", "123", "category", "foo" );
+        final SiteConfigs siteConfigs = SiteConfigsDataSerializer.fromData( site.getData().getRoot() );
         final Optional<ControllerMappingDescriptor> patternMapping =
-            resolver.resolve( "/api", ImmutableMultimap.of( "key", "123", "category", "foo" ), content,
-                              SiteConfigsDataSerializer.fromData( site.getData().getRoot() ), null );
+            resolver.resolveAll( "/api", params, content, siteConfigs, null ).stream().findFirst();
 
         assertFalse( patternMapping.isEmpty() );
         assertFalse( serviceMapping.isEmpty() );
@@ -156,24 +161,27 @@ class ControllerMappingsResolverTest
 
         final ControllerMappingsResolver resolver = new ControllerMappingsResolver( this.siteService );
 
-        final Optional<ControllerMappingDescriptor> mapping = resolver.resolve( "/landing-page", ImmutableMultimap.of(), content,
-                                                                                SiteConfigsDataSerializer.fromData(
-                                                                                    site.getData().getRoot() ), null );
+        final SiteConfigs siteConfigs2 = SiteConfigsDataSerializer.fromData(
+            site.getData().getRoot() );
+        final Optional<ControllerMappingDescriptor> mapping =
+            resolver.resolveAll( "/landing-page", ImmutableMultimap.of(), content, siteConfigs2, null ).stream().findFirst();
 
         assertThat( mapping ).map( ControllerMappingDescriptor::getController )
             .map( ResourceKey::getPath )
             .contains( "/other/controller1.js" );
 
-        final Optional<ControllerMappingDescriptor> mapping2 = resolver.resolve( "/does-not-exist", ImmutableMultimap.of(), null,
-                                                                                 SiteConfigsDataSerializer.fromData(
-                                                                                     site.getData().getRoot() ), null );
+        final SiteConfigs siteConfigs1 = SiteConfigsDataSerializer.fromData(
+            site.getData().getRoot() );
+        final Optional<ControllerMappingDescriptor> mapping2 =
+            resolver.resolveAll( "/does-not-exist", ImmutableMultimap.of(), null, siteConfigs1, null ).stream().findFirst();
 
         assertThat( mapping2 ).map( ControllerMappingDescriptor::getController )
             .map( ResourceKey::getPath )
             .contains( "/other/controller1.js" );
 
+        final SiteConfigs siteConfigs = SiteConfigsDataSerializer.fromData( site.getData().getRoot() );
         final Optional<ControllerMappingDescriptor> mapping3 =
-            resolver.resolve( "/", ImmutableMultimap.of(), site, SiteConfigsDataSerializer.fromData( site.getData().getRoot() ), null );
+            resolver.resolveAll( "/", ImmutableMultimap.of(), site, siteConfigs, null ).stream().findFirst();
 
         assertThat( mapping3 ).map( ControllerMappingDescriptor::getController )
             .map( ResourceKey::getPath )
@@ -198,9 +206,10 @@ class ControllerMappingsResolverTest
 
         final ControllerMappingsResolver resolver = new ControllerMappingsResolver( this.siteService );
 
-        final Optional<ControllerMappingDescriptor> mapping = resolver.resolve( "/does-not-exist", ImmutableMultimap.of(), null,
-                                                                                SiteConfigsDataSerializer.fromData(
-                                                                                    site.getData().getRoot() ), null );
+        final SiteConfigs siteConfigs = SiteConfigsDataSerializer.fromData(
+            site.getData().getRoot() );
+        final Optional<ControllerMappingDescriptor> mapping =
+            resolver.resolveAll( "/does-not-exist", ImmutableMultimap.of(), null, siteConfigs, null ).stream().findFirst();
 
         assertTrue( mapping.isEmpty() );
 

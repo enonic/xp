@@ -1,6 +1,6 @@
 package com.enonic.xp.portal.impl.handler.mapping;
 
-import java.util.Optional;
+import java.util.List;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
@@ -94,51 +94,49 @@ class MappingHandlerHelper
 
         final Content content = request.getContent();
 
-        final Optional<ControllerMappingDescriptor> optionalControllerMapping =
-            controllerMappingsResolver.resolve( PortalRequestHelper.getSiteRelativePath( request ), request.getParams(), content,
-                                                siteConfigs, HandlerHelper.findEndpoint( request ) );
+        final List<ControllerMappingDescriptor> matchingMappings =
+            controllerMappingsResolver.resolveAll( PortalRequestHelper.getSiteRelativePath( request ), request.getParams(), content,
+                                                   siteConfigs, HandlerHelper.findEndpoint( request ) );
 
-        if ( optionalControllerMapping.isPresent() )
+        if ( matchingMappings.isEmpty() )
         {
-            final ControllerMappingDescriptor mapping = optionalControllerMapping.get();
+            return webHandlerChain.handle( request, webResponse );
+        }
 
-            if ( content == null || pageResolver == null )
-            {
-                request.setContent( content );
-            }
-            else
-            {
-                final PageResolverResult resolvedPage = pageResolver.resolve( content, site != null ? site.getPath() : ContentPath.ROOT );
-                final Page effectivePage = resolvedPage.getEffectivePage();
-                if ( effectivePage != null )
-                {
-                    final Content effectiveContent = Content.create( content ).page( effectivePage ).build();
-                    request.setContent( effectiveContent );
-                    request.setPageDescriptor( resolvedPage.getPageDescriptor() );
-                }
-                else
-                {
-                    request.setContent( content );
-                }
-            }
+        final ControllerMappingDescriptor primaryMapping = matchingMappings.getFirst();
 
-            request.setContextPath(
-                request.getBaseUri() + "/" + RepositoryUtils.getContentRepoName( request.getRepositoryId() ) + "/" + request.getBranch() +
-                    ( site != null ? site.getPath() : ContentPath.ROOT ) );
-            request.setApplicationKey( mapping.getApplication() );
-
-            if ( mapping.isController() )
-            {
-                return handleController( request, mapping );
-            }
-            else
-            {
-                return handleFilter( request, webResponse, webHandlerChain, mapping );
-            }
+        if ( content == null || pageResolver == null )
+        {
+            request.setContent( content );
         }
         else
         {
-            return webHandlerChain.handle( request, webResponse );
+            final PageResolverResult resolvedPage = pageResolver.resolve( content, site != null ? site.getPath() : ContentPath.ROOT );
+            final Page effectivePage = resolvedPage.getEffectivePage();
+            if ( effectivePage != null )
+            {
+                final Content effectiveContent = Content.create( content ).page( effectivePage ).build();
+                request.setContent( effectiveContent );
+                request.setPageDescriptor( resolvedPage.getPageDescriptor() );
+            }
+            else
+            {
+                request.setContent( content );
+            }
+        }
+
+        request.setContextPath(
+            request.getBaseUri() + "/" + RepositoryUtils.getContentRepoName( request.getRepositoryId() ) + "/" + request.getBranch() +
+                ( site != null ? site.getPath() : ContentPath.ROOT ) );
+        request.setApplicationKey( primaryMapping.getApplication() );
+
+        if ( primaryMapping.isController() )
+        {
+            return handleController( request, primaryMapping );
+        }
+        else
+        {
+            return handleFilter( request, webResponse, webHandlerChain, matchingMappings );
         }
     }
 
@@ -161,13 +159,14 @@ class MappingHandlerHelper
     }
 
     private PortalResponse handleFilter( final PortalRequest request, final WebResponse response, final WebHandlerChain webHandlerChain,
-                                         final ControllerMappingDescriptor mapping )
+                                         final List<ControllerMappingDescriptor> mappings )
         throws Exception
     {
-        final MappingFilterHandlerWorker worker = new MappingFilterHandlerWorker( request, response, webHandlerChain );
-        worker.mappingDescriptor = mapping;
+        final MappingFilterHandlerWorker worker =
+            new MappingFilterHandlerWorker( request, response, webHandlerChain, mappings, mapping -> handleController( request, mapping ) );
         worker.resourceService = this.resourceService;
         worker.filterScriptFactory = this.filterScriptFactory;
+
         final Trace trace = Tracer.newTrace( "filter" );
         if ( trace == null )
         {
@@ -175,5 +174,4 @@ class MappingHandlerHelper
         }
         return Tracer.traceEx( trace, worker::execute );
     }
-
 }
