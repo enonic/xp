@@ -4,7 +4,9 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InOrder;
 import org.mockito.Mockito;
+import org.mockito.stubbing.Answer;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
@@ -85,6 +87,8 @@ class MappingHandlerTest
 
     protected ResourceService resourceService;
 
+    private FilterScriptFactory filterScriptFactory;
+
     private RendererDelegate rendererDelegate;
 
     private SiteService siteService;
@@ -110,9 +114,9 @@ class MappingHandlerTest
         final PortalResponse portalResponse = PortalResponse.create().build();
         when( controllerScript.execute( Mockito.any() ) ).thenReturn( portalResponse );
 
-        FilterScriptFactory filterScriptFactory = mock( FilterScriptFactory.class );
+        this.filterScriptFactory = mock( FilterScriptFactory.class );
         FilterScript filterScript = mock( FilterScript.class );
-        when( filterScriptFactory.fromScript( Mockito.any() ) ).thenReturn( filterScript );
+        when( this.filterScriptFactory.fromScript( Mockito.any() ) ).thenReturn( filterScript );
         when( filterScript.execute( Mockito.any(), Mockito.any(), Mockito.any() ) ).thenReturn( portalResponse );
 
         this.resourceService = mock( ResourceService.class );
@@ -343,6 +347,289 @@ class MappingHandlerTest
         assertNotNull( this.request.getSite() );
         assertNotNull( this.request.getContent() );
         assertEquals( "/site/myproject/draft/site", this.request.getContextPath() );
+    }
+
+    @Test
+    void executeFilterChain_chainsAllMatchingFiltersInOrder()
+        throws Exception
+    {
+        final FilterScript filter1Script = mock( FilterScript.class );
+        final FilterScript filter2Script = mock( FilterScript.class );
+        final FilterScript filter3Script = mock( FilterScript.class );
+
+        final ResourceKey filter1 = stubFilterResource( "demo:/filters/filter1", filter1Script );
+        final ResourceKey filter2 = stubFilterResource( "demo:/filters/filter2", filter2Script );
+        final ResourceKey filter3 = stubFilterResource( "demo:/filters/filter3", filter3Script );
+
+        final PortalResponse okResponse = PortalResponse.create().build();
+        when( filter1Script.execute( any(), any(), any() ) ).thenAnswer( invokeNext( okResponse ) );
+        when( filter2Script.execute( any(), any(), any() ) ).thenAnswer( invokeNext( okResponse ) );
+        when( filter3Script.execute( any(), any(), any() ) ).thenAnswer( invokeNext( okResponse ) );
+
+        // Add in non-ascending order to verify ordering by `order` attribute.
+        final ControllerMappingDescriptor mapping3 =
+            ControllerMappingDescriptor.create().filter( filter3 ).pattern( ".*/content" ).order( 30 ).build();
+        final ControllerMappingDescriptor mapping1 =
+            ControllerMappingDescriptor.create().filter( filter1 ).pattern( ".*/content" ).order( 10 ).build();
+        final ControllerMappingDescriptor mapping2 =
+            ControllerMappingDescriptor.create().filter( filter2 ).pattern( ".*/content" ).order( 20 ).build();
+
+        setupContentAndSiteWithMappings( mapping3, mapping1, mapping2 );
+
+        final WebHandlerChain chain = mock( WebHandlerChain.class );
+        when( chain.handle( any(), any() ) ).thenReturn( PortalResponse.create().build() );
+
+        this.request.setBaseUri( "/site" );
+        this.request.setContentPath( ContentPath.from( "/site/somesite/content" ) );
+
+        final WebResponse response = this.handler.handle( this.request, PortalResponse.create().build(), chain );
+        assertEquals( HttpStatus.OK, response.getStatus() );
+
+        // All three filters invoked, in ascending `order`, then the original chain reached.
+        final InOrder inOrder = Mockito.inOrder( filter1Script, filter2Script, filter3Script, chain );
+        inOrder.verify( filter1Script ).execute( same( this.request ), any(), any() );
+        inOrder.verify( filter2Script ).execute( same( this.request ), any(), any() );
+        inOrder.verify( filter3Script ).execute( same( this.request ), any(), any() );
+        inOrder.verify( chain ).handle( same( this.request ), any() );
+    }
+
+    @Test
+    void executeFilterChain_filterShortCircuitsByNotCallingNext()
+        throws Exception
+    {
+        final FilterScript filter1Script = mock( FilterScript.class );
+        final FilterScript filter2Script = mock( FilterScript.class );
+
+        final ResourceKey filter1 = stubFilterResource( "demo:/filters/filter1", filter1Script );
+        final ResourceKey filter2 = stubFilterResource( "demo:/filters/filter2", filter2Script );
+
+        final PortalResponse shortCircuitResponse = PortalResponse.create().status( HttpStatus.FORBIDDEN ).build();
+        when( filter1Script.execute( any(), any(), any() ) ).thenReturn( shortCircuitResponse );
+
+        final ControllerMappingDescriptor mapping1 =
+            ControllerMappingDescriptor.create().filter( filter1 ).pattern( ".*/content" ).order( 10 ).build();
+        final ControllerMappingDescriptor mapping2 =
+            ControllerMappingDescriptor.create().filter( filter2 ).pattern( ".*/content" ).order( 20 ).build();
+
+        setupContentAndSiteWithMappings( mapping1, mapping2 );
+
+        final WebHandlerChain chain = mock( WebHandlerChain.class );
+
+        this.request.setBaseUri( "/site" );
+        this.request.setContentPath( ContentPath.from( "/site/somesite/content" ) );
+
+        final WebResponse response = this.handler.handle( this.request, PortalResponse.create().build(), chain );
+        assertEquals( HttpStatus.FORBIDDEN, response.getStatus() );
+
+        verify( filter1Script ).execute( same( this.request ), any(), any() );
+        verifyNoInteractions( filter2Script );
+        verifyNoInteractions( chain );
+    }
+
+    @Test
+    void executeFilterChain_singleMatchingFilterFallsThroughToRendering()
+        throws Exception
+    {
+        final FilterScript filter1Script = mock( FilterScript.class );
+        final ResourceKey filter1 = stubFilterResource( "demo:/filters/onlyone", filter1Script );
+
+        final PortalResponse okResponse = PortalResponse.create().build();
+        when( filter1Script.execute( any(), any(), any() ) ).thenAnswer( invokeNext( okResponse ) );
+
+        final ControllerMappingDescriptor mapping1 =
+            ControllerMappingDescriptor.create().filter( filter1 ).pattern( ".*/content" ).order( 10 ).build();
+
+        setupContentAndSiteWithMappings( mapping1 );
+
+        final WebHandlerChain chain = mock( WebHandlerChain.class );
+        when( chain.handle( any(), any() ) ).thenReturn( okResponse );
+
+        this.request.setBaseUri( "/site" );
+        this.request.setContentPath( ContentPath.from( "/site/somesite/content" ) );
+
+        this.handler.handle( this.request, PortalResponse.create().build(), chain );
+
+        verify( filter1Script ).execute( same( this.request ), any(), any() );
+        verify( chain ).handle( same( this.request ), any() );
+    }
+
+    @Test
+    void executeFilterChain_excludesNonMatchingFilters()
+        throws Exception
+    {
+        final FilterScript matchingScript = mock( FilterScript.class );
+        final FilterScript otherScript = mock( FilterScript.class );
+
+        final ResourceKey matching = stubFilterResource( "demo:/filters/matching", matchingScript );
+        final ResourceKey other = stubFilterResource( "demo:/filters/other", otherScript );
+
+        when( matchingScript.execute( any(), any(), any() ) ).thenAnswer( invokeNext( PortalResponse.create().build() ) );
+
+        final ControllerMappingDescriptor matchingMapping =
+            ControllerMappingDescriptor.create().filter( matching ).pattern( ".*/content" ).order( 10 ).build();
+        // invertPattern: only matches paths that do NOT end with /content -> excluded for /site/somesite/content
+        final ControllerMappingDescriptor excludedByInvert =
+            ControllerMappingDescriptor.create().filter( other ).pattern( ".*/content" ).invertPattern( true ).order( 20 ).build();
+
+        setupContentAndSiteWithMappings( matchingMapping, excludedByInvert );
+
+        final WebHandlerChain chain = mock( WebHandlerChain.class );
+        when( chain.handle( any(), any() ) ).thenReturn( PortalResponse.create().build() );
+
+        this.request.setBaseUri( "/site" );
+        this.request.setContentPath( ContentPath.from( "/site/somesite/content" ) );
+
+        this.handler.handle( this.request, PortalResponse.create().build(), chain );
+
+        verify( matchingScript ).execute( same( this.request ), any(), any() );
+        verifyNoInteractions( otherScript );
+        verify( chain ).handle( same( this.request ), any() );
+    }
+
+    @Test
+    void executeFilterChain_lowerOrderControllerSkipsFilters()
+        throws Exception
+    {
+        final ResourceKey controller = ResourceKey.from( "demo:/services/test" );
+        final FilterScript filterScript = mock( FilterScript.class );
+        final ResourceKey filter = stubFilterResource( "demo:/filters/skipped", filterScript );
+
+        final ControllerMappingDescriptor controllerMapping =
+            ControllerMappingDescriptor.create().controller( controller ).pattern( ".*/content" ).order( 10 ).build();
+        final ControllerMappingDescriptor filterMapping =
+            ControllerMappingDescriptor.create().filter( filter ).pattern( ".*/content" ).order( 20 ).build();
+
+        setupContentAndSiteWithMappings( controllerMapping, filterMapping );
+
+        when( rendererDelegate.render( same( controllerMapping ), same( request ) ) ).thenReturn(
+            PortalResponse.create().body( "from controller" ).build() );
+
+        this.request.setBaseUri( "/site" );
+        this.request.setContentPath( ContentPath.from( "/site/somesite/content" ) );
+
+        final WebResponse response = this.handler.handle( this.request, PortalResponse.create().build(), null );
+
+        assertEquals( "from controller", response.getBody() );
+        verifyNoInteractions( filterScript );
+    }
+
+    @Test
+    void executeFilterChain_filtersChainToControllerThenStop()
+        throws Exception
+    {
+        final FilterScript filter1Script = mock( FilterScript.class );
+        final FilterScript filter2Script = mock( FilterScript.class );
+
+        final ResourceKey filter1 = stubFilterResource( "demo:/filters/filter1", filter1Script );
+        final ResourceKey filter2 = stubFilterResource( "demo:/filters/filter2", filter2Script );
+        final ResourceKey controller = ResourceKey.from( "demo:/services/test" );
+
+        final PortalResponse okResponse = PortalResponse.create().build();
+        when( filter1Script.execute( any(), any(), any() ) ).thenAnswer( invokeNext( okResponse ) );
+        when( filter2Script.execute( any(), any(), any() ) ).thenAnswer( invokeNext( okResponse ) );
+
+        final ControllerMappingDescriptor filterMapping1 =
+            ControllerMappingDescriptor.create().filter( filter1 ).pattern( ".*/content" ).order( 10 ).build();
+        final ControllerMappingDescriptor filterMapping2 =
+            ControllerMappingDescriptor.create().filter( filter2 ).pattern( ".*/content" ).order( 20 ).build();
+        final ControllerMappingDescriptor controllerMapping =
+            ControllerMappingDescriptor.create().controller( controller ).pattern( ".*/content" ).order( 30 ).build();
+
+        setupContentAndSiteWithMappings( filterMapping1, filterMapping2, controllerMapping );
+
+        when( rendererDelegate.render( same( controllerMapping ), same( request ) ) ).thenReturn(
+            PortalResponse.create().body( "from controller" ).build() );
+
+        final WebHandlerChain chain = mock( WebHandlerChain.class );
+
+        this.request.setBaseUri( "/site" );
+        this.request.setContentPath( ContentPath.from( "/site/somesite/content" ) );
+
+        final WebResponse response = this.handler.handle( this.request, PortalResponse.create().build(), chain );
+
+        assertEquals( "from controller", response.getBody() );
+        final InOrder inOrder = Mockito.inOrder( filter1Script, filter2Script, rendererDelegate );
+        inOrder.verify( filter1Script ).execute( same( this.request ), any(), any() );
+        inOrder.verify( filter2Script ).execute( same( this.request ), any(), any() );
+        inOrder.verify( rendererDelegate ).render( same( controllerMapping ), same( this.request ) );
+        verifyNoInteractions( chain );
+    }
+
+    @Test
+    void executeFilterChain_controllerInMiddleStopsLaterFilters()
+        throws Exception
+    {
+        final FilterScript filter1Script = mock( FilterScript.class );
+        final FilterScript filter2Script = mock( FilterScript.class );
+
+        final ResourceKey filter1 = stubFilterResource( "demo:/filters/filter1", filter1Script );
+        final ResourceKey filter2 = stubFilterResource( "demo:/filters/filter2", filter2Script );
+        final ResourceKey controller = ResourceKey.from( "demo:/services/test" );
+
+        final PortalResponse okResponse = PortalResponse.create().build();
+        when( filter1Script.execute( any(), any(), any() ) ).thenAnswer( invokeNext( okResponse ) );
+
+        final ControllerMappingDescriptor filterMapping1 =
+            ControllerMappingDescriptor.create().filter( filter1 ).pattern( ".*/content" ).order( 10 ).build();
+        final ControllerMappingDescriptor controllerMapping =
+            ControllerMappingDescriptor.create().controller( controller ).pattern( ".*/content" ).order( 20 ).build();
+        final ControllerMappingDescriptor filterMapping2 =
+            ControllerMappingDescriptor.create().filter( filter2 ).pattern( ".*/content" ).order( 30 ).build();
+
+        setupContentAndSiteWithMappings( filterMapping1, controllerMapping, filterMapping2 );
+
+        when( rendererDelegate.render( same( controllerMapping ), same( request ) ) ).thenReturn(
+            PortalResponse.create().body( "from controller" ).build() );
+
+        final WebHandlerChain chain = mock( WebHandlerChain.class );
+
+        this.request.setBaseUri( "/site" );
+        this.request.setContentPath( ContentPath.from( "/site/somesite/content" ) );
+
+        final WebResponse response = this.handler.handle( this.request, PortalResponse.create().build(), chain );
+
+        assertEquals( "from controller", response.getBody() );
+        verify( filter1Script ).execute( same( this.request ), any(), any() );
+        verify( rendererDelegate ).render( same( controllerMapping ), same( this.request ) );
+        verifyNoInteractions( filter2Script );
+        verifyNoInteractions( chain );
+    }
+
+    private ResourceKey stubFilterResource( final String resourceKey, final FilterScript filterScript )
+    {
+        final ResourceKey key = ResourceKey.from( resourceKey );
+        final Resource resource = mock( Resource.class );
+        when( resource.exists() ).thenReturn( true );
+        when( resource.getKey() ).thenReturn( key );
+        when( this.resourceService.getResource( key ) ).thenReturn( resource );
+        when( this.filterScriptFactory.fromScript( key ) ).thenReturn( filterScript );
+        return key;
+    }
+
+    private static Answer<PortalResponse> invokeNext( final PortalResponse fallback )
+    {
+        return invocation -> {
+            final PortalRequest req = invocation.getArgument( 0 );
+            final WebResponse resp = invocation.getArgument( 1 );
+            final WebHandlerChain next = invocation.getArgument( 2 );
+            final WebResponse result = next.handle( req, resp );
+            return result instanceof PortalResponse pr ? pr : fallback;
+        };
+    }
+
+    private void setupContentAndSiteWithMappings( final ControllerMappingDescriptor... mappings )
+    {
+        final Content content = createPage( "id", "site/somesite/content", "myapplication:ctype", false );
+        final Site site = createSite( "id", "site", "myapplication:contenttypename", "myapplication" );
+
+        this.request.setContent( content );
+        this.request.setSite( site );
+
+        final ControllerMappingDescriptors mappingDescriptors = ControllerMappingDescriptors.from( mappings );
+        final ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );
+        final SiteDescriptor siteDescriptor =
+            SiteDescriptor.create().applicationKey( applicationKey ).mappingDescriptors( mappingDescriptors ).build();
+        when( this.siteService.getDescriptor( any( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
     }
 
     private void setupContentAndSite( final ControllerMappingDescriptor mapping, boolean withPage )
