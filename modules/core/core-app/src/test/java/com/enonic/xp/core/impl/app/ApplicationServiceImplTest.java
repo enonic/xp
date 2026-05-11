@@ -50,6 +50,7 @@ import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.Nodes;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -359,7 +360,7 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    void stop_system_application()
+    void stopApplication_systemApp_throws()
         throws Exception
     {
         final Bundle bundle = deploySystemAppBundle( "systemApp" );
@@ -370,8 +371,11 @@ class ApplicationServiceImplTest
 
         assertEquals( Bundle.ACTIVE, bundle.getState() );
         final ApplicationKey applicationKey = ApplicationKey.from( "systemApp" );
-        this.service.stopApplication( applicationKey );
-        assertEquals( Bundle.RESOLVED, bundle.getState() );
+
+        assertThatThrownBy( () -> this.service.stopApplication( applicationKey ) ).isInstanceOf( IllegalArgumentException.class )
+            .hasMessageContaining( "system application" );
+
+        assertEquals( Bundle.ACTIVE, bundle.getState() );
     }
 
     @Test
