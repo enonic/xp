@@ -1,0 +1,6 @@
+kind: "Layout"
+title: "My Layout"
+regions:
+  - "main"
+  - "aside"
+  - "main"

@@ -37,9 +37,21 @@ class MacroSchemaValidationTest
     }
 
     @Test
+    void titleIsRequired()
+    {
+        assertThat( validateYaml( schema, "fixtures/macro/invalid-missing-title.yml" ) ).isNotEmpty();
+    }
+
+    @Test
     void formSupportsFieldSet()
     {
         assertThat( validateYaml( schema, "fixtures/macro/valid-form-with-fieldset.yml" ) ).isEmpty();
+    }
+
+    @Test
+    void fieldSetLabelIsRequired()
+    {
+        assertThat( validateYaml( schema, "fixtures/macro/invalid-form-fieldset-missing-label.yml" ) ).isNotEmpty();
     }
 
     @Test

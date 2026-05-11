@@ -19,6 +19,9 @@
           "const": "FieldSet"
         }
       },
+      "required": [
+        "label"
+      ],
       "additionalProperties": false
     }
   ],

@@ -5,7 +5,12 @@
       "const": "PrincipalSelector"
     },
     "principalType": {
-      "type": "string"
+      "type": "string",
+      "enum": [
+        "USER",
+        "GROUP",
+        "ROLE"
+      ]
     },
     "default": {
       "type": "string"

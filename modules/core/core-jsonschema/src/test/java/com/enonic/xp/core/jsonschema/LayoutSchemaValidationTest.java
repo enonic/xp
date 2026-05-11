@@ -37,6 +37,18 @@ class LayoutSchemaValidationTest
     }
 
     @Test
+    void titleIsRequired()
+    {
+        assertThat( validateYaml( schema, "fixtures/layout/invalid-missing-title.yml" ) ).isNotEmpty();
+    }
+
+    @Test
+    void regionsMustHaveUniqueNames()
+    {
+        assertThat( validateYaml( schema, "fixtures/layout/invalid-duplicate-regions.yml" ) ).isNotEmpty();
+    }
+
+    @Test
     void additionalPropertiesAreNotAllowed()
     {
         assertThat( validateYaml( schema, "fixtures/layout/invalid-unknown-property.yml" ) ).isNotEmpty();
