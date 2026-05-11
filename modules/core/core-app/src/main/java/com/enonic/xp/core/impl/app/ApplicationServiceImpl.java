@@ -143,6 +143,11 @@ public final class ApplicationServiceImpl
     @Override
     public void stopApplication( final ApplicationKey key )
     {
+        final Application app = registry.get( key );
+        if ( app != null && app.isSystem() )
+        {
+            throw new IllegalArgumentException( "Cannot stop system application: " + key );
+        }
         final boolean global = !localApplicationSet.contains( key );
         ApplicationHelper.runWithContext( () -> {
             if ( global )
