@@ -31,6 +31,12 @@ class FormFragmentSchemaValidationTest
     }
 
     @Test
+    void titleIsRequired()
+    {
+        assertThat( validateYaml( schema, "fixtures/form-fragment/invalid-missing-title.yml" ) ).isNotEmpty();
+    }
+
+    @Test
     void additionalPropertiesAreNotAllowed()
     {
         assertThat( validateYaml( schema, "fixtures/form-fragment/invalid-unknown-property.yml" ) ).isNotEmpty();

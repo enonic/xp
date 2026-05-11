@@ -37,6 +37,12 @@ class MixinSchemaValidationTest
     }
 
     @Test
+    void titleIsRequired()
+    {
+        assertThat( validateYaml( schema, "fixtures/mixin/invalid-missing-title.yml" ) ).isNotEmpty();
+    }
+
+    @Test
     void additionalPropertiesAreNotAllowed()
     {
         assertThat( validateYaml( schema, "fixtures/mixin/invalid-unknown-property.yml" ) ).isNotEmpty();

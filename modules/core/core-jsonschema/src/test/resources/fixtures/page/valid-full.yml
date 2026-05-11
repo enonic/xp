@@ -1,0 +1,10 @@
+kind: "Page"
+title: "My Page"
+description: "Page description"
+regions:
+  - "main"
+  - "aside"
+form:
+  - type: "TextLine"
+    name: "config"
+    label: "Config"

@@ -8,7 +8,12 @@
       "const": "IdProvider"
     },
     "mode": {
-      "type": "string"
+      "type": "string",
+      "enum": [
+        "LOCAL",
+        "EXTERNAL",
+        "MIXED"
+      ]
     },
     "form": {
       "$ref": "#/$defs/formDef"
