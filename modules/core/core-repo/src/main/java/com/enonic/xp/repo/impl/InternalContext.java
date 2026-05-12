@@ -2,7 +2,6 @@ package com.enonic.xp.repo.impl;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.Locale;
 
 import com.google.common.collect.ImmutableMap;
 

@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.event.EventPublisher;
@@ -14,6 +16,7 @@ import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.Nodes;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
@@ -96,6 +99,38 @@ class LayersContentServiceTest
 
         ContextBuilder.create().repositoryId( "repo" ).branch( "draft" ).build()
             .runWith( () -> service.find( ContentQuery.create().build() ) );
+
+        assertEquals( "PRIMARY", searchPreference.get() );
+    }
+
+    @Test
+    void getByPath_setsPrimarySearchPreferenceInContext()
+    {
+        final AtomicReference<String> searchPreference = new AtomicReference<>();
+
+        when( nodeService.getByPath( any() ) ).thenAnswer( invocation -> {
+            searchPreference.set( (String) current().getAttribute( "_search_preference" ) );
+            return null;
+        } );
+
+        ContextBuilder.create().repositoryId( "repo" ).branch( "draft" ).build()
+            .runWith( () -> service.getByPath( ContentPath.from( "/path" ) ) );
+
+        assertEquals( "PRIMARY", searchPreference.get() );
+    }
+
+    @Test
+    void getByIds_setsPrimarySearchPreferenceInContext()
+    {
+        final AtomicReference<String> searchPreference = new AtomicReference<>();
+
+        when( nodeService.getByIds( any() ) ).thenAnswer( invocation -> {
+            searchPreference.set( (String) current().getAttribute( "_search_preference" ) );
+            return Nodes.empty();
+        } );
+
+        ContextBuilder.create().repositoryId( "repo" ).branch( "draft" ).build()
+            .runWith( () -> service.getByIds( ContentIds.from( ContentId.from( "id" ) ) ) );
 
         assertEquals( "PRIMARY", searchPreference.get() );
     }

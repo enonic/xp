@@ -30,6 +30,18 @@ class InternalContextTest
     }
 
     @Test
+    void fromContext_withSearchPreferenceEnumAttribute()
+    {
+        final InternalContext context = InternalContext.from( ContextBuilder.create()
+                                                                  .repositoryId( "repo" )
+                                                                  .branch( "draft" )
+                                                                  .attribute( "_search_preference", SearchPreference.PRIMARY )
+                                                                  .build() );
+
+        assertEquals( SearchPreference.PRIMARY, context.getSearchPreference() );
+    }
+
+    @Test
     void fromContext_withInvalidSearchPreferenceAttribute()
     {
         final InternalContext context = InternalContext.from( ContextBuilder.create()
