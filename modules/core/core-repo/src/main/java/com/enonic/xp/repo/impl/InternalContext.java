@@ -16,6 +16,8 @@ import static java.util.Objects.requireNonNullElse;
 
 public class InternalContext
 {
+    private static final String SEARCH_PREFERENCE_ATTRIBUTE = "_search_preference";
+
     private final RepositoryId repositoryId;
 
     private final Branch branch;
@@ -41,6 +43,7 @@ public class InternalContext
             .branch( context.getBranch() )
             .repositoryId( context.getRepositoryId() )
             .principalsKeys( context.getAuthInfo() != null ? context.getAuthInfo().getPrincipals() : PrincipalKeys.empty() )
+            .searchPreference( getSearchPreference( context ) )
             .eventMetadata( (Map) context.getAttribute( "eventMetadata" ) )
             .build();
     }
@@ -74,6 +77,7 @@ public class InternalContext
         return create().principalsKeys( context.getAuthInfo() != null ? context.getAuthInfo().getPrincipals() : PrincipalKeys.empty() )
             .branch( context.getBranch() )
             .repositoryId( context.getRepositoryId() )
+            .searchPreference( getSearchPreference( context ) )
             .eventMetadata( (Map) context.getAttribute( "eventMetadata" ) );
     }
 
@@ -175,5 +179,29 @@ public class InternalContext
             this.verify();
             return new InternalContext( this );
         }
+    }
+
+    private static SearchPreference getSearchPreference( final Context context )
+    {
+        final Object value = context.getAttribute( SEARCH_PREFERENCE_ATTRIBUTE );
+
+        if ( value instanceof SearchPreference searchPreference )
+        {
+            return searchPreference;
+        }
+
+        if ( value instanceof String valueString )
+        {
+            try
+            {
+                return SearchPreference.valueOf( valueString );
+            }
+            catch ( final IllegalArgumentException ignored )
+            {
+                return null;
+            }
+        }
+
+        return null;
     }
 }
