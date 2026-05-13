@@ -1,7 +1,6 @@
 package com.enonic.xp.core.dump;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.core.AbstractNodeTest;
@@ -16,12 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 class RepoDumperLoadTest
     extends AbstractNodeTest
 {
-    @BeforeEach
-    void setUp()
-    {
-        createDefaultRootNode();
-    }
-
     @Test
     void load()
     {

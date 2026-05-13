@@ -1,7 +1,9 @@
 package com.enonic.xp.repo.impl.dump.reader;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
 import java.nio.channels.SeekableByteChannel;
 import java.nio.charset.StandardCharsets;
@@ -24,22 +26,21 @@ import org.jspecify.annotations.NonNull;
 
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
-import com.google.common.io.LineProcessor;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.SegmentLevel;
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.branch.Branches;
 import com.enonic.xp.core.internal.FileNames;
-import com.enonic.xp.dump.BranchLoadResult;
+import com.enonic.xp.dump.BranchDumpResult;
 import com.enonic.xp.dump.CommitsLoadResult;
 import com.enonic.xp.dump.LoadError;
+import com.enonic.xp.dump.RepoDumpResult;
+import com.enonic.xp.dump.SystemDumpResult;
 import com.enonic.xp.dump.SystemLoadListener;
 import com.enonic.xp.dump.VersionsLoadResult;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.repo.impl.dump.PathRef;
@@ -47,10 +48,11 @@ import com.enonic.xp.repo.impl.dump.RepoDumpException;
 import com.enonic.xp.repo.impl.dump.RepoLoadException;
 import com.enonic.xp.repo.impl.dump.blobstore.BlobReference;
 import com.enonic.xp.repo.impl.dump.blobstore.DumpBlobStoreUtils;
-import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
+import com.enonic.xp.repo.impl.dump.model.VersionMeta;
 import com.enonic.xp.repo.impl.dump.serializer.json.DumpMetaJsonSerializer;
 import com.enonic.xp.repo.impl.dump.serializer.json.JsonDumpSerializer;
+import com.enonic.xp.repo.impl.dump.serializer.json.VersionDumpEntryJson;
 import com.enonic.xp.repo.impl.node.NodeConstants;
 import com.enonic.xp.repo.impl.node.json.NodeVersionJsonSerializer;
 import com.enonic.xp.repo.impl.repository.RepositoryEntry;
@@ -63,7 +65,7 @@ import com.enonic.xp.security.SystemConstants;
 
 import static java.util.Objects.requireNonNullElse;
 
-public class ZipDumpReaderV8
+public class ZipDumpReaderModel9
     implements DumpReader
 {
     private final SystemLoadListener listener;
@@ -72,14 +74,14 @@ public class ZipDumpReaderV8
 
     private final ZipFile zipFile;
 
-    private ZipDumpReaderV8( final SystemLoadListener listener, final PathRef basePath, final ZipFile zipFile )
+    private ZipDumpReaderModel9( final SystemLoadListener listener, final PathRef basePath, final ZipFile zipFile )
     {
         this.listener = requireNonNullElse( listener, NoopSystemLoadListener.INSTANCE );
         this.basePath = basePath;
         this.zipFile = zipFile;
     }
 
-    public static ZipDumpReaderV8 create( final SystemLoadListener listener, final Path basePath, final String dumpName )
+    public static ZipDumpReaderModel9 create( final SystemLoadListener listener, final Path basePath, final String dumpName )
     {
         Preconditions.checkArgument( FileNames.isSafeFileName( dumpName ) );
         try
@@ -96,15 +98,15 @@ public class ZipDumpReaderV8
         }
     }
 
-    private static ZipDumpReaderV8 create( final SystemLoadListener listener, final String dumpName, final ZipFile zipFile )
+    private static ZipDumpReaderModel9 create( final SystemLoadListener listener, final String dumpName, final ZipFile zipFile )
     {
         if ( zipFile.getEntry( "dump.json" ) != null )
         {
-            return new ZipDumpReaderV8( listener, PathRef.of(), zipFile );
+            return new ZipDumpReaderModel9( listener, PathRef.of(), zipFile );
         }
         else if ( zipFile.getEntry( dumpName + "/dump.json" ) != null )
         {
-            return new ZipDumpReaderV8( listener, PathRef.of( dumpName ), zipFile );
+            return new ZipDumpReaderModel9( listener, PathRef.of( dumpName ), zipFile );
         }
         else
         {
@@ -121,34 +123,22 @@ public class ZipDumpReaderV8
     }
 
     @Override
-    public Branches getBranches( final RepositoryId repositoryId )
-    {
-        final PathRef repoPath = basePath.resolve( "meta" ).resolve( repositoryId.toString() );
-
-        return listDirectories( repoPath ).filter( name -> !name.startsWith( "_" ) ).map( Branch::from ).collect( Branches.collector() );
-    }
-
-    @Override
-    public BranchLoadResult loadBranch( final RepositoryId repositoryId, final Branch branch,
-                                        final LineProcessor<EntryLoadResult> processor )
-    {
-        final PathRef dirPath = basePath.resolve( "meta" ).resolve( repositoryId.toString() ).resolve( branch.toString() );
-
-        listener.loadingBranch( repositoryId, branch, getDumpMeta().getBranchSuccessfulCountFromMeta( repositoryId, branch ) );
-
-        final BranchLoadResult.Builder builder = BranchLoadResult.create( branch );
-
-        final EntriesLoadResult result = doLoadEntries( processor, dirPath );
-
-        return builder.successful( result.getSuccessful() )
-            .errors( result.getErrors().stream().map( error -> LoadError.error( error.getMessage() ) ).collect( Collectors.toList() ) )
-            .build();
-    }
-
-    @Override
-    public VersionsLoadResult loadVersions( final RepositoryId repositoryId, final LineProcessor<EntryLoadResult> processor )
+    public VersionsLoadResult loadVersions( final RepositoryId repositoryId, final EntryProcessor processor )
     {
         final PathRef dirPath = basePath.resolve( "meta" ).resolve( repositoryId.toString() ).resolve( "_versions" );
+
+        final SystemDumpResult systemDumpResult = getDumpMeta().getSystemDumpResult();
+        if ( systemDumpResult != null )
+        {
+            final RepoDumpResult repoDumpResult = systemDumpResult.get( repositoryId );
+            if ( repoDumpResult != null )
+            {
+                for ( BranchDumpResult branchResult : repoDumpResult.getBranchResults() )
+                {
+                    listener.loadingBranch( repositoryId, branchResult.getBranch(), branchResult.getSuccessful() );
+                }
+            }
+        }
 
         listener.loadingVersions( repositoryId );
 
@@ -162,7 +152,7 @@ public class ZipDumpReaderV8
     }
 
     @Override
-    public CommitsLoadResult loadCommits( final RepositoryId repositoryId, final LineProcessor<EntryLoadResult> processor )
+    public CommitsLoadResult loadCommits( final RepositoryId repositoryId, final EntryProcessor processor )
     {
         final PathRef dirPath = basePath.resolve( "meta" ).resolve( repositoryId.toString() ).resolve( "_commits" );
 
@@ -196,6 +186,34 @@ public class ZipDumpReaderV8
         }
     }
 
+    private VersionMeta readActiveVersionMeta( final RepositoryId repositoryId, final NodeId nodeId, final Branch branch )
+    {
+        final PathRef path =
+            basePath.resolve( "meta" ).resolve( repositoryId.toString() ).resolve( "_versions" ).resolve( nodeId + ".jsonl" );
+        try (BufferedReader reader = new BufferedReader( new InputStreamReader( openZipEntryStream( path ), StandardCharsets.UTF_8 ) ))
+        {
+            String line;
+            while ( ( line = reader.readLine() ) != null )
+            {
+                if ( line.isBlank() )
+                {
+                    continue;
+                }
+                final VersionDumpEntryJson version =
+                    JsonDumpSerializer.readValue( line.getBytes( StandardCharsets.UTF_8 ), VersionDumpEntryJson.class );
+                if ( version.getBranches() != null && version.getBranches().contains( branch.getValue() ) )
+                {
+                    return VersionDumpEntryJson.fromJson( version );
+                }
+            }
+            throw new RepoLoadException( "No active version of node [" + nodeId + "] found for branch [" + branch + "]" );
+        }
+        catch ( IOException e )
+        {
+            throw new RepoLoadException( "Cannot read versions entry for node [" + nodeId + "]", e );
+        }
+    }
+
     @Override
     public ByteSource getBinary( final RepositoryId repositoryId, final BlobKey blobKey )
     {
@@ -219,53 +237,33 @@ public class ZipDumpReaderV8
     @Override
     public List<RepositoryEntry> getRepositoryEntries( final RepositoryIds repositoryIds )
     {
-        final PathRef dirPath = basePath.resolve( "meta" )
-            .resolve( SystemConstants.SYSTEM_REPO_ID.toString() )
-            .resolve( SystemConstants.BRANCH_SYSTEM.toString() );
-
-        final String prefix = dirPath.asString() + "/";
-
-        final JsonDumpSerializer serializer = new JsonDumpSerializer();
-        final NodeIds targetNodeIds =
-            repositoryIds.stream().map( repositoryId -> NodeId.from( repositoryId.toString() ) ).collect( NodeIds.collector() );
-
         final List<RepositoryEntry> result = new ArrayList<>();
-
-        listZipEntries( prefix ).forEach( zipEntry -> {
-            if ( result.size() >= repositoryIds.getSize() )
+        for ( RepositoryId repositoryId : repositoryIds )
+        {
+            final NodeId nodeId = NodeId.from( repositoryId.toString() );
+            final PathRef path = basePath.resolve( "meta" )
+                .resolve( SystemConstants.SYSTEM_REPO_ID.toString() )
+                .resolve( "_versions" )
+                .resolve( nodeId + ".jsonl" );
+            if ( zipFile.getEntry( path.asString() ) == null )
             {
-                return;
+                continue;
             }
+            final VersionMeta activeMeta = readActiveVersionMeta( SystemConstants.SYSTEM_REPO_ID, nodeId, SystemConstants.BRANCH_SYSTEM );
+            final NodeStoreVersion nodeStoreVersion = get( SystemConstants.SYSTEM_REPO_ID, activeMeta.nodeVersionKey() );
 
-            try (InputStream stream = zipFile.getInputStream( zipEntry ))
-            {
-                final String content = new String( stream.readAllBytes(), StandardCharsets.UTF_8 );
-                final BranchDumpEntry branchDumpEntry = serializer.toBranchMetaEntry( content );
+            final Node node = Node.create()
+                .id( nodeId )
+                .childOrder( ChildOrder.defaultOrder() )
+                .data( nodeStoreVersion.data() )
+                .name( nodeId.toString() )
+                .parentPath( RepositoryConstants.REPOSITORY_STORAGE_PARENT_PATH )
+                .permissions( nodeStoreVersion.permissions() )
+                .attachedBinaries( nodeStoreVersion.attachedBinaries() )
+                .build();
 
-                if ( targetNodeIds.contains( branchDumpEntry.nodeId() ) )
-                {
-                    final NodeVersionKey nodeVersionKey = branchDumpEntry.meta().nodeVersionKey();
-                    final NodeStoreVersion nodeStoreVersion = get( SystemConstants.SYSTEM_REPO_ID, nodeVersionKey );
-
-                    final Node node = Node.create()
-                        .id( branchDumpEntry.nodeId() )
-                        .childOrder( ChildOrder.defaultOrder() )
-                        .data( nodeStoreVersion.data() )
-                        .name( branchDumpEntry.nodeId().toString() )
-                        .parentPath( RepositoryConstants.REPOSITORY_STORAGE_PARENT_PATH )
-                        .permissions( nodeStoreVersion.permissions() )
-                        .attachedBinaries( nodeStoreVersion.attachedBinaries() )
-                        .build();
-
-                    result.add( RepositoryNodeTranslator.toRepository( node ) );
-                }
-            }
-            catch ( IOException e )
-            {
-                throw new RepoDumpException( "Cannot read repository entry from dump", e );
-            }
-        } );
-
+            result.add( RepositoryNodeTranslator.toRepository( node ) );
+        }
         return result;
     }
 
@@ -276,18 +274,20 @@ public class ZipDumpReaderV8
         zipFile.close();
     }
 
-    private EntriesLoadResult doLoadEntries( final LineProcessor<EntryLoadResult> processor, final PathRef dirPath )
+    private EntriesLoadResult doLoadEntries( final EntryProcessor processor, final PathRef dirPath )
     {
-        final EntriesLoadResult.Builder result = EntriesLoadResult.create();
-
         final String prefix = dirPath.asString() + "/";
 
         listZipEntries( prefix ).forEach( zipEntry -> {
-            try (InputStream stream = zipFile.getInputStream( zipEntry ))
+            try (InputStream stream = zipFile.getInputStream( zipEntry );
+                 BufferedReader reader = new BufferedReader( new InputStreamReader( stream, StandardCharsets.UTF_8 ) ))
             {
-                processor.processLine( new String( stream.readAllBytes(), StandardCharsets.UTF_8 ) );
+                String line;
+                while ( ( line = reader.readLine() ) != null )
+                {
+                    processor.processLine( line );
+                }
                 listener.entryLoaded();
-                result.add( processor.getResult() );
             }
             catch ( IOException e )
             {
@@ -295,7 +295,7 @@ public class ZipDumpReaderV8
             }
         } );
 
-        return result.build();
+        return EntriesLoadResult.create().add( processor.getResult() ).build();
     }
 
     private Stream<ZipArchiveEntry> listZipEntries( final String prefix )

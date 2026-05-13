@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.dump.serializer.json;
 
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -20,9 +21,17 @@ import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repo.impl.dump.model.VersionMeta;
 import com.enonic.xp.util.GenericValue;
 
-@JsonPropertyOrder(value = {"version", "timestamp", "nodePath", "nodeBlobKey", "indexConfigBlobKey", "accessControlBlobKey", "commitId", "attributes"})
+@JsonPropertyOrder(value = {"nodeId", "branches", "version", "timestamp", "nodePath", "nodeBlobKey", "indexConfigBlobKey", "accessControlBlobKey", "commitId", "attributes"})
 public class VersionDumpEntryJson
 {
+    @JsonProperty("nodeId")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String nodeId;
+
+    @JsonProperty("branches")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private List<String> branches;
+
     @JsonProperty("nodePath")
     private String nodePath;
 
@@ -59,6 +68,8 @@ public class VersionDumpEntryJson
 
     private VersionDumpEntryJson( final Builder builder )
     {
+        nodeId = builder.nodeId;
+        branches = builder.branches;
         nodePath = builder.nodePath;
         timestamp = builder.timestamp;
         version = builder.version;
@@ -84,15 +95,25 @@ public class VersionDumpEntryJson
             attributes = null;
         }
 
+        final NodeVersionKey nodeVersionKey;
+        if ( json.getNodeBlobKey() != null )
+        {
+            nodeVersionKey = NodeVersionKey.create()
+                .nodeBlobKey( BlobKey.from( json.getNodeBlobKey() ) )
+                .indexConfigBlobKey( BlobKey.from( json.getIndexConfigBlobKey() ) )
+                .accessControlBlobKey( BlobKey.from( json.getAccessControlBlobKey() ) )
+                .build();
+        }
+        else
+        {
+            nodeVersionKey = null;
+        }
+
         return VersionMeta.create()
-            .nodePath( new NodePath( json.nodePath ) )
+            .nodePath( json.nodePath != null ? new NodePath( json.nodePath ) : null )
             .timestamp( Millis.from( json.getTimestamp() != null ? Instant.parse( json.getTimestamp() ) : null ) )
             .version( json.getVersion() != null ? NodeVersionId.from( json.getVersion() ) : null )
-            .nodeVersionKey( NodeVersionKey.create()
-                                 .nodeBlobKey( BlobKey.from( json.getNodeBlobKey() ) )
-                                 .indexConfigBlobKey( BlobKey.from( json.getIndexConfigBlobKey() ) )
-                                 .accessControlBlobKey( BlobKey.from( json.getAccessControlBlobKey() ) )
-                                 .build() )
+            .nodeVersionKey( nodeVersionKey )
             .nodeCommitId( json.getCommitId() == null ? null : NodeCommitId.from( json.getCommitId() ) )
             .attributes( attributes )
             .build();
@@ -133,17 +154,27 @@ public class VersionDumpEntryJson
         return new Builder( source );
     }
 
+    public String getNodeId()
+    {
+        return nodeId;
+    }
+
+    public List<String> getBranches()
+    {
+        return branches;
+    }
+
     public String getNodePath()
     {
         return nodePath;
     }
 
-    private String getTimestamp()
+    public String getTimestamp()
     {
         return timestamp;
     }
 
-    private String getVersion()
+    public String getVersion()
     {
         return version;
     }
@@ -175,6 +206,10 @@ public class VersionDumpEntryJson
 
     public static final class Builder
     {
+        private String nodeId;
+
+        private List<String> branches;
+
         private String nodePath;
 
         private String timestamp;
@@ -197,6 +232,8 @@ public class VersionDumpEntryJson
 
         private Builder( final VersionDumpEntryJson source )
         {
+            this.nodeId = source.getNodeId();
+            this.branches = source.getBranches();
             this.nodePath = source.getNodePath();
             this.timestamp = source.getTimestamp();
             this.version = source.getVersion();
@@ -205,6 +242,18 @@ public class VersionDumpEntryJson
             this.accessControlBlobKey = source.getAccessControlBlobKey();
             this.commitId = source.getCommitId();
             this.attributes = source.getAttributes();
+        }
+
+        public Builder nodeId( final String val )
+        {
+            nodeId = val;
+            return this;
+        }
+
+        public Builder branches( final List<String> val )
+        {
+            branches = val;
+            return this;
         }
 
         public Builder nodePath( final String val )

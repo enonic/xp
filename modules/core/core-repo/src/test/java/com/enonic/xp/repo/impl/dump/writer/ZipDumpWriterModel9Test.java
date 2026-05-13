@@ -16,7 +16,7 @@ import com.enonic.xp.repository.RepositoryId;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class ZipDumpWriterV8Test
+class ZipDumpWriterModel9Test
 {
     @TempDir
     Path tempDir;
@@ -62,7 +62,7 @@ class ZipDumpWriterV8Test
     {
         final String dumpName = "sequential-dump";
 
-        try (ZipDumpWriterV8 writer = ZipDumpWriterV8.create( tempDir, dumpName ))
+        try (ZipDumpWriterModel9 writer = ZipDumpWriterModel9.create( tempDir, dumpName ))
         {
             writer.openVersionsMeta( RepositoryId.from( "test-repo" ) );
             writer.writeRawEntry( "entry-1.json", "{\"a\":1}".getBytes( StandardCharsets.UTF_8 ) );
