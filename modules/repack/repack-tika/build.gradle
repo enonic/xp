@@ -11,10 +11,10 @@ configurations {
 
 dependencies {
     origin (libs.tika.bundlestandard)
-    extra "org.apache.pdfbox:pdfbox-io:3.0.5"
-    extra "commons-logging:commons-logging:1.3.5"
-    extra "org.apache.logging.log4j:log4j-api:2.25.0"
-    extra "org.apache.logging.log4j:log4j-to-jul:2.25.0"
+    extra libs.pdfbox.io
+    extra libs.commons.logging
+    extra libs.log4j.api
+    extra libs.log4j.tojul
 }
 
 tasks.named('jar') {
