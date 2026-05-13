@@ -45,6 +45,7 @@ import com.enonic.xp.node.GetActiveNodeVersionsResult;
 import com.enonic.xp.node.GetNodeVersionsParams;
 import com.enonic.xp.node.GetNodeVersionsResult;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
@@ -651,7 +652,7 @@ class DumpServiceImplTest
         Mockito.verify( systemLoadListener ).loadingVersions( SchedulerConstants.SCHEDULER_REPO_ID );
         Mockito.verify( systemLoadListener ).loadingBranch( SystemConstants.SYSTEM_REPO_ID, SystemConstants.BRANCH_SYSTEM, 7L );
         Mockito.verify( systemLoadListener ).loadingVersions( SystemConstants.SYSTEM_REPO_ID );
-        Mockito.verify( systemLoadListener, Mockito.times( 25 ) ).entryLoaded();
+        Mockito.verify( systemLoadListener, Mockito.times( 12 ) ).entryLoaded();
     }
 
     @Test

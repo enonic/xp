@@ -1,85 +1,125 @@
 package com.enonic.xp.repo.impl.dump.reader;
 
-import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.io.LineProcessor;
-
+import com.enonic.xp.branch.Branch;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.dump.BranchLoadResult;
 import com.enonic.xp.node.ImportNodeVersionParams;
+import com.enonic.xp.node.LoadNodeParams;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.repo.impl.branch.storage.NodeFactory;
 import com.enonic.xp.repo.impl.dump.RepoLoadException;
 import com.enonic.xp.repo.impl.dump.model.VersionMeta;
-import com.enonic.xp.repo.impl.dump.model.VersionsDumpEntry;
+import com.enonic.xp.repo.impl.dump.serializer.DumpSerializer;
 
 public class VersionEntryProcessor
     extends AbstractEntryProcessor
-    implements LineProcessor<EntryLoadResult>
+    implements EntryProcessor
 {
-    private EntryLoadResult result;
-
     private static final Logger LOG = LoggerFactory.getLogger( VersionEntryProcessor.class );
+
+    private final boolean includeVersions;
+
+    private final Map<Branch, BranchLoadResult.Builder> branchResults = new LinkedHashMap<>();
+
+    private final EntryLoadResult.Builder resultBuilder = EntryLoadResult.create();
 
     private VersionEntryProcessor( final Builder builder )
     {
         super( builder );
+        this.includeVersions = builder.includeVersions;
     }
 
     @Override
-    public boolean processLine( final String line )
-        throws IOException
+    public void processLine( final String line )
     {
-        final EntryLoadResult.Builder result = EntryLoadResult.create();
-
-        final VersionsDumpEntry nodeVersionsEntry = this.serializer.toNodeVersionsEntry( line );
-
-        addVersions( result, nodeVersionsEntry, nodeVersionsEntry.versions() );
-
-        this.result = result.build();
-        return true;
+        if ( line.isBlank() )
+        {
+            return;
+        }
+        final DumpSerializer.NodeVersionLine versionLine = this.serializer.toNodeVersionLine( line );
+        final NodeId nodeId = NodeId.from( versionLine.nodeId() );
+        final List<Branch> branches = versionLine.branches() == null
+            ? List.of()
+            : versionLine.branches().stream().map( Branch::from ).toList();
+        processVersion( resultBuilder, nodeId, versionLine.version(), branches );
     }
 
-    private void addVersions( final EntryLoadResult.Builder result, final VersionsDumpEntry versionsDumpEntry,
-                              final List<VersionMeta> versions )
+    private void processVersion( final EntryLoadResult.Builder entryResult, final NodeId nodeId, final VersionMeta version,
+                                 final List<Branch> activeBranches )
     {
-        for ( final VersionMeta version : versions )
+        final NodeStoreVersion nodeVersion = getVersion( version );
+
+        if ( nodeVersion == null )
         {
-            final NodeStoreVersion nodeVersion = getVersion( version );
+            reportVersionError( entryResult, version );
+            return;
+        }
 
-            if ( nodeVersion == null )
-            {
-                reportVersionError( result, version );
-                return;
-            }
+        try
+        {
+            final Node node = NodeFactory.create( nodeVersion )
+                .id( nodeId )
+                .timestamp( version.timestamp() )
+                .parentPath( version.nodePath().getParentPath() )
+                .name( version.nodePath().getName() )
+                .nodeVersionId( version.version() )
+                .build();
 
-            try
+            if ( includeVersions )
             {
                 this.nodeLoader.importNodeVersion( ImportNodeVersionParams.create()
-                                                       .node( NodeFactory.create( nodeVersion )
-                                                                  .id( versionsDumpEntry.nodeId() )
-                                                                  .timestamp( version.timestamp() )
-                                                                  .parentPath( version.nodePath().getParentPath() )
-                                                                  .name( version.nodePath().getName() )
-                                                                  .nodeVersionId( version.version() )
-                                                                  .build() )
+                                                       .node( node )
                                                        .nodeCommitId( version.nodeCommitId() )
                                                        .attributes( version.attributes() )
                                                        .build() );
+            }
 
-                addBinary( nodeVersion, result );
-                result.successful();
-            }
-            catch ( Exception e )
+            for ( Branch branch : activeBranches )
             {
-                final String message =
-                    String.format( "Cannot load version with id %s, path %s: %s", versionsDumpEntry.nodeId(), version.nodePath(),
-                                   e.getMessage() );
-                result.error( EntryLoadError.error( message ) );
-                LOG.error( message, e );
+                loadIntoBranch( branch, node, version );
             }
+
+            addBinary( nodeVersion, entryResult );
+            entryResult.successful();
+        }
+        catch ( Exception e )
+        {
+            final String message =
+                String.format( "Cannot load version with id %s, path %s: %s", nodeId, version.nodePath(), e.getMessage() );
+            entryResult.error( EntryLoadError.error( message ) );
+            LOG.error( message, e );
+        }
+    }
+
+    private void loadIntoBranch( final Branch branch, final Node node, final VersionMeta version )
+    {
+        final BranchLoadResult.Builder branchResult = branchResults.computeIfAbsent( branch, BranchLoadResult::create );
+        try
+        {
+            ContextBuilder.from( ContextAccessor.current() )
+                .repositoryId( repositoryId )
+                .branch( branch )
+                .build()
+                .runWith( () -> this.nodeLoader.loadNode( LoadNodeParams.create()
+                                                              .node( node )
+                                                              .nodeCommitId( version.nodeCommitId() )
+                                                              .attributes( version.attributes() )
+                                                              .build() ) );
+            branchResult.successful( branchResult.build().getSuccessful() + 1 );
+        }
+        catch ( Exception e )
+        {
+            LOG.error( "Cannot load node {} into branch {}: {}", node.id(), branch, e.getMessage(), e );
         }
     }
 
@@ -91,7 +131,7 @@ public class VersionEntryProcessor
         }
         catch ( RepoLoadException e )
         {
-            LOG.error( "Cannot load version, missing in existing blobStore, and not present in dump: " + meta.version(), e );
+            LOG.error( "Cannot load version, missing in existing blobStore, and not present in dump: {}", meta.version(), e );
             return null;
         }
     }
@@ -99,7 +139,14 @@ public class VersionEntryProcessor
     @Override
     public EntryLoadResult getResult()
     {
-        return result;
+        return resultBuilder.build();
+    }
+
+    public Map<Branch, BranchLoadResult> getBranchLoadResults()
+    {
+        final Map<Branch, BranchLoadResult> built = new LinkedHashMap<>();
+        branchResults.forEach( ( branch, builder ) -> built.put( branch, builder.build() ) );
+        return built;
     }
 
     public static Builder create()
@@ -110,6 +157,14 @@ public class VersionEntryProcessor
     public static final class Builder
         extends AbstractEntryProcessor.Builder<Builder>
     {
+        private boolean includeVersions;
+
+        public Builder includeVersions( final boolean val )
+        {
+            includeVersions = val;
+            return this;
+        }
+
         public VersionEntryProcessor build()
         {
             return new VersionEntryProcessor( this );

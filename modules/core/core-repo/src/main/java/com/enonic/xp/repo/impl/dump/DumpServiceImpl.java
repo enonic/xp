@@ -41,10 +41,10 @@ import com.enonic.xp.repo.impl.config.RepoConfigurationDynamic;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.repo.impl.dump.reader.DumpReader;
 import com.enonic.xp.repo.impl.dump.reader.NodeLoader;
-import com.enonic.xp.repo.impl.dump.reader.ZipDumpReaderV8;
+import com.enonic.xp.repo.impl.dump.reader.ZipDumpReaderModel9;
 import com.enonic.xp.repo.impl.dump.upgrade.DumpUpgraderRunner;
 import com.enonic.xp.repo.impl.dump.writer.DumpWriter;
-import com.enonic.xp.repo.impl.dump.writer.ZipDumpWriterV8;
+import com.enonic.xp.repo.impl.dump.writer.ZipDumpWriterModel9;
 import com.enonic.xp.repo.impl.repository.NodeRepositoryService;
 import com.enonic.xp.repo.impl.repository.RepositoryCreator;
 import com.enonic.xp.repo.impl.repository.RepositoryEntry;
@@ -135,7 +135,7 @@ public class DumpServiceImpl
 
         final Path basePath = ensureBasePath();
 
-        final DumpWriter writer = ZipDumpWriterV8.create( basePath, params.getDumpName(), blobStore );
+        final DumpWriter writer = ZipDumpWriterModel9.create( basePath, params.getDumpName(), blobStore );
         try (writer)
         {
             final SystemDumpResult systemDumpResult =
@@ -267,7 +267,7 @@ public class DumpServiceImpl
 
         final String dumpName = params.isUpgrade() ? verifyOrUpgradeDump( basePath, params ) : params.getDumpName();
 
-        try (DumpReader dumpReader = ZipDumpReaderV8.create( params.getListener(), basePath, dumpName ))
+        try (DumpReader dumpReader = ZipDumpReaderModel9.create( params.getListener(), basePath, dumpName ))
         {
             final RepositoryIds dumpRepositories = dumpReader.getRepositories();
 
@@ -306,10 +306,7 @@ public class DumpServiceImpl
 
         if ( params.getListener() != null )
         {
-            final long branchesCount =
-                dumpRepositories.stream().flatMap( repositoryId -> dumpReader.getBranches( repositoryId ).stream() ).count();
-
-            params.getListener().totalBranches( branchesCount );
+            params.getListener().totalBranches( countBranches( dumpReader, dumpRepositories ) );
         }
 
         final boolean includeVersions = params.isIncludeVersions();
@@ -398,10 +395,7 @@ public class DumpServiceImpl
 
         if ( params.getListener() != null )
         {
-            final long branchesCount =
-                reposToLoad.stream().flatMap( repositoryId -> dumpReader.getBranches( repositoryId ).stream() ).count();
-
-            params.getListener().totalBranches( branchesCount );
+            params.getListener().totalBranches( countBranches( dumpReader, RepositoryIds.from( reposToLoad ) ) );
         }
 
         final boolean includeVersions = params.isIncludeVersions();
@@ -486,5 +480,24 @@ public class DumpServiceImpl
         {
             throw new RepoDumpException( "Cannot create dump directory", e );
         }
+    }
+
+    private static long countBranches( final DumpReader dumpReader, final RepositoryIds repositoryIds )
+    {
+        final SystemDumpResult systemDumpResult = dumpReader.getDumpMeta().getSystemDumpResult();
+        if ( systemDumpResult == null )
+        {
+            return 0;
+        }
+        long count = 0;
+        for ( RepositoryId repositoryId : repositoryIds )
+        {
+            final RepoDumpResult repoDumpResult = systemDumpResult.get( repositoryId );
+            if ( repoDumpResult != null )
+            {
+                count += repoDumpResult.getBranchResults().size();
+            }
+        }
+        return count;
     }
 }

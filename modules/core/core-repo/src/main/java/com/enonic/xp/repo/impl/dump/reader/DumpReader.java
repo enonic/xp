@@ -4,12 +4,8 @@ import java.io.Closeable;
 import java.util.List;
 
 import com.google.common.io.ByteSource;
-import com.google.common.io.LineProcessor;
 
 import com.enonic.xp.blob.BlobKey;
-import com.enonic.xp.branch.Branch;
-import com.enonic.xp.branch.Branches;
-import com.enonic.xp.dump.BranchLoadResult;
 import com.enonic.xp.dump.CommitsLoadResult;
 import com.enonic.xp.dump.VersionsLoadResult;
 import com.enonic.xp.node.NodeVersionKey;
@@ -24,13 +20,9 @@ public interface DumpReader
 {
     RepositoryIds getRepositories();
 
-    Branches getBranches( RepositoryId repositoryId );
+    VersionsLoadResult loadVersions( RepositoryId repositoryId, EntryProcessor processor );
 
-    BranchLoadResult loadBranch( RepositoryId repositoryId, Branch branch, LineProcessor<EntryLoadResult> processor );
-
-    VersionsLoadResult loadVersions( RepositoryId repositoryId, LineProcessor<EntryLoadResult> processor );
-
-    CommitsLoadResult loadCommits( RepositoryId repositoryId, LineProcessor<EntryLoadResult> processor );
+    CommitsLoadResult loadCommits( RepositoryId repositoryId, EntryProcessor processor );
 
     NodeStoreVersion get( RepositoryId repositoryId, NodeVersionKey nodeVersionKey );
 

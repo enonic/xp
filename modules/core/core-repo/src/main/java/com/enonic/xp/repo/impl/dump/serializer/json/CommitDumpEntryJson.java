@@ -47,6 +47,26 @@ public class CommitDumpEntryJson
             build();
     }
 
+    public String getCommitId()
+    {
+        return commitId;
+    }
+
+    public String getMessage()
+    {
+        return message;
+    }
+
+    public String getCommitter()
+    {
+        return committer;
+    }
+
+    public String getTimestamp()
+    {
+        return timestamp;
+    }
+
     public static CommitDumpEntry fromJson( final CommitDumpEntryJson commitDumpEntryJson )
     {
         return new CommitDumpEntry( NodeCommitId.from( commitDumpEntryJson.commitId ), commitDumpEntryJson.message,

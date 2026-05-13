@@ -10,11 +10,11 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.dump.DumpUpgradeResult;
 import com.enonic.xp.repo.impl.dump.RepoDumpException;
 import com.enonic.xp.repo.impl.dump.RepoLoadException;
-import com.enonic.xp.repo.impl.dump.reader.DumpReaderV7;
-import com.enonic.xp.repo.impl.dump.reader.ZipDumpReaderV7;
+import com.enonic.xp.repo.impl.dump.reader.DumpReaderModel8;
+import com.enonic.xp.repo.impl.dump.reader.ZipDumpReaderModel8;
 import com.enonic.xp.repo.impl.dump.upgrade.model8to9.DumpUpgrader8to9;
 import com.enonic.xp.repo.impl.dump.writer.DumpWriter;
-import com.enonic.xp.repo.impl.dump.writer.ZipDumpWriterV8;
+import com.enonic.xp.repo.impl.dump.writer.ZipDumpWriterModel9;
 import com.enonic.xp.upgrade.UpgradeListener;
 import com.enonic.xp.util.Version;
 
@@ -30,7 +30,7 @@ public class DumpUpgraderRunner
     {
         final DumpUpgradeResult.Builder result = DumpUpgradeResult.create().dumpName( dumpName );
 
-        try (DumpReaderV7 dumpReader = ZipDumpReaderV7.create( basePath, dumpName ))
+        try (DumpReaderModel8 dumpReader = ZipDumpReaderModel8.create( basePath, dumpName ))
         {
             final Version modelVersion = requireNonNullElse( dumpReader.getDumpMeta().getModelVersion(), Version.emptyVersion );
 
@@ -53,7 +53,7 @@ public class DumpUpgraderRunner
             final Version targetModelVersion = dumpUpgrader.getModelVersion();
             final String targetDumpName = dumpName + "-upgraded-to-" + targetModelVersion.toShortestString();
 
-            try (DumpWriter dumpWriter = ZipDumpWriterV8.create( basePath, targetDumpName ))
+            try (DumpWriter dumpWriter = ZipDumpWriterModel9.create( basePath, targetDumpName ))
             {
                 LOG.info( "Running upgrade step [{}]...", dumpUpgrader.getName() );
                 dumpUpgrader.upgrade( dumpWriter );

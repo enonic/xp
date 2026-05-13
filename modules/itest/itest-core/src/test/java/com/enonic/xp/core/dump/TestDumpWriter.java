@@ -1,33 +1,27 @@
 package com.enonic.xp.core.dump;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ListMultimap;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeVersionKey;
-import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
 import com.enonic.xp.repo.impl.dump.model.CommitDumpEntry;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
-import com.enonic.xp.repo.impl.dump.model.VersionsDumpEntry;
+import com.enonic.xp.repo.impl.dump.model.VersionMeta;
 import com.enonic.xp.repo.impl.dump.writer.DumpWriter;
 import com.enonic.xp.repository.RepositoryId;
 
 class TestDumpWriter
     implements DumpWriter
 {
-    private final ListMultimap<RepoBranchEntry, BranchDumpEntry> entries;
-
-    private RepoBranchEntry current;
-
     private final Set<BlobKey> binaries = new HashSet<>();
 
     private final Set<NodeVersionKey> nodeVersionKeys = new HashSet<>();
@@ -38,21 +32,10 @@ class TestDumpWriter
 
     private DumpMeta dumpMeta;
 
-    public TestDumpWriter()
-    {
-        this.entries = ArrayListMultimap.create();
-    }
-
     @Override
     public void writeDumpMetaData( final DumpMeta dumpMeta )
     {
         this.dumpMeta = dumpMeta;
-    }
-
-    @Override
-    public void openBranchMeta( final RepositoryId repositoryId, final Branch branch )
-    {
-        current = new RepoBranchEntry( repositoryId, branch );
     }
 
     @Override
@@ -70,25 +53,29 @@ class TestDumpWriter
     @Override
     public void closeMeta()
     {
-        current = null;
     }
 
     @Override
     public void close()
     {
-        current = null;
     }
 
     @Override
-    public void writeBranchEntry( final BranchDumpEntry branchDumpEntry )
+    public VersionsStream openVersions( final NodeId nodeId )
     {
-        entries.put( current, branchDumpEntry );
-    }
+        return new VersionsStream()
+        {
+            @Override
+            public void append( final VersionMeta version, final Collection<Branch> branches )
+            {
+                versionCount.incrementAndGet();
+            }
 
-    @Override
-    public void writeVersionsEntry( final VersionsDumpEntry versionsDumpEntry )
-    {
-        versionCount.incrementAndGet();
+            @Override
+            public void close()
+            {
+            }
+        };
     }
 
     @Override
@@ -96,7 +83,6 @@ class TestDumpWriter
     {
         commitCount.incrementAndGet();
     }
-
 
     @Override
     public void writeRawEntry( final String entryName, final byte[] data )
@@ -120,11 +106,6 @@ class TestDumpWriter
     public void writeBinaryBlob( final RepositoryId repositoryId, final BlobKey key )
     {
         binaries.add( key );
-    }
-
-    public List<BranchDumpEntry> get( final RepositoryId repoId, final Branch branch )
-    {
-        return this.entries.get( new RepoBranchEntry( repoId, branch ) );
     }
 
     public Set<BlobKey> getBinaries()
@@ -156,48 +137,4 @@ class TestDumpWriter
     {
         return versionCount.get();
     }
-
-    static final class RepoBranchEntry
-    {
-        private final RepositoryId repositoryId;
-
-        private final Branch branch;
-
-        public RepoBranchEntry( final RepositoryId repositoryId, final Branch branch )
-        {
-            this.repositoryId = repositoryId;
-            this.branch = branch;
-        }
-
-        @Override
-        public boolean equals( final Object o )
-        {
-            if ( this == o )
-            {
-                return true;
-            }
-            if ( o == null || getClass() != o.getClass() )
-            {
-                return false;
-            }
-
-            final RepoBranchEntry that = (RepoBranchEntry) o;
-
-            if ( repositoryId != null ? !repositoryId.equals( that.repositoryId ) : that.repositoryId != null )
-            {
-                return false;
-            }
-            return branch != null ? branch.equals( that.branch ) : that.branch == null;
-
-        }
-
-        @Override
-        public int hashCode()
-        {
-            int result = repositoryId != null ? repositoryId.hashCode() : 0;
-            result = 31 * result + ( branch != null ? branch.hashCode() : 0 );
-            return result;
-        }
-    }
 }
-

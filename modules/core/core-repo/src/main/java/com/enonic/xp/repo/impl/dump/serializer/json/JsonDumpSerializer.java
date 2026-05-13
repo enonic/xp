@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.dump.serializer.json;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -9,6 +10,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.core.internal.json.ObjectMapperHelper;
 import com.enonic.xp.data.PropertyTreeJson;
 import com.enonic.xp.index.AllTextIndexConfig;
@@ -23,9 +25,8 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeType;
 import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.repo.impl.dump.RepoDumpException;
-import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
 import com.enonic.xp.repo.impl.dump.model.CommitDumpEntry;
-import com.enonic.xp.repo.impl.dump.model.VersionsDumpEntry;
+import com.enonic.xp.repo.impl.dump.model.VersionMeta;
 import com.enonic.xp.repo.impl.dump.serializer.DumpSerializer;
 import com.enonic.xp.repo.impl.node.json.AllTextIndexConfigJson;
 import com.enonic.xp.repo.impl.node.json.AttachedBinaryJson;
@@ -42,28 +43,20 @@ public class JsonDumpSerializer
     private static final ObjectMapper MAPPER = ObjectMapperHelper.create();
 
     @Override
-    public byte[] serialize( final BranchDumpEntry branchDumpEntry )
+    public byte[] serialize( final String nodeId, final VersionMeta version, final Collection<Branch> branches )
     {
         try
         {
-            return MAPPER.writeValueAsBytes( BranchDumpEntryJson.from( branchDumpEntry ) );
+            final VersionDumpEntryJson.Builder builder = VersionDumpEntryJson.create( VersionDumpEntryJson.from( version ) ).nodeId( nodeId );
+            if ( branches != null && !branches.isEmpty() )
+            {
+                builder.branches( branches.stream().map( Branch::toString ).toList() );
+            }
+            return MAPPER.writeValueAsBytes( builder.build() );
         }
         catch ( JsonProcessingException e )
         {
-            throw new RepoDumpException( "Cannot serializer dumpEntry", e );
-        }
-    }
-
-    @Override
-    public byte[] serialize( final VersionsDumpEntry versionsDumpEntry )
-    {
-        try
-        {
-            return MAPPER.writeValueAsBytes( VersionsDumpEntryJson.from( versionsDumpEntry ) );
-        }
-        catch ( JsonProcessingException e )
-        {
-            throw new RepoDumpException( "Cannot serializer dumpEntry", e );
+            throw new RepoDumpException( "Cannot serialize version entry", e );
         }
     }
 
@@ -81,26 +74,12 @@ public class JsonDumpSerializer
     }
 
     @Override
-    public BranchDumpEntry toBranchMetaEntry( final String value )
+    public NodeVersionLine toNodeVersionLine( final String value )
     {
         try
         {
-            final BranchDumpEntryJson branchDumpEntryJson = MAPPER.readValue( value, BranchDumpEntryJson.class );
-            return BranchDumpEntryJson.fromJson( branchDumpEntryJson );
-        }
-        catch ( IOException e )
-        {
-            throw new RepoDumpException( "Cannot deserialize value [" + value + "] to DumpEntry", e );
-        }
-    }
-
-    @Override
-    public VersionsDumpEntry toNodeVersionsEntry( final String value )
-    {
-        try
-        {
-            final VersionsDumpEntryJson nodeVersionMetaEntryJson = MAPPER.readValue( value, VersionsDumpEntryJson.class );
-            return VersionsDumpEntryJson.fromJson( nodeVersionMetaEntryJson );
+            final VersionDumpEntryJson versionJson = MAPPER.readValue( value, VersionDumpEntryJson.class );
+            return new NodeVersionLine( versionJson.getNodeId(), VersionDumpEntryJson.fromJson( versionJson ), versionJson.getBranches() );
         }
         catch ( IOException e )
         {

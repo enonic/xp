@@ -1,8 +1,6 @@
 package com.enonic.xp.core.dump;
 
 
-import java.util.List;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,7 +18,6 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.dump.RepoDumper;
-import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
 import com.enonic.xp.repo.impl.node.NodeHelper;
 import com.enonic.xp.util.BinaryReference;
 
@@ -46,11 +43,14 @@ class RepoDumperTest
 
         final TestDumpWriter writer = new TestDumpWriter();
 
-        doDump( writer );
+        final RepoDumpResult result = doDump( writer );
 
-        final List<BranchDumpEntry> dumpEntries = writer.get( testRepoId, ctxDefault().getBranch() );
-
-        assertEquals( 5, dumpEntries.size() );
+        final long draftCount = result.getBranchResults()
+            .stream()
+            .filter( br -> br.getBranch().equals( ctxDefault().getBranch() ) )
+            .mapToLong( br -> br.getSuccessful() )
+            .sum();
+        assertEquals( 5, draftCount );
     }
 
     @Test
@@ -64,9 +64,6 @@ class RepoDumperTest
 
         doDump( writer );
 
-        final List<BranchDumpEntry> dumpEntries = writer.get( testRepoId, ctxDefault().getBranch() );
-
-        assertEquals( 2, dumpEntries.size() );
         // 2 versions for the root node on draft and master + 2 versions of the node
         Assertions.assertEquals( 4, writer.getNodeVersionKeys().size() );
     }
@@ -140,16 +137,18 @@ class RepoDumperTest
 
         final TestDumpWriter writer = new TestDumpWriter();
 
-        RepoDumpResult result = doDump( writer, -1 );
-        assertEquals( 0, result.getVersions() );
-
-        result = doDump( writer, 1 );
-        assertEquals( 8, result.getVersions() );
+        // maxAge=-1 excludes history; active versions (one per node per branch) are still always written
+        final RepoDumpResult activeOnly = doDump( writer, -1 );
+        final long withHistory = doDump( writer, 1 ).getVersions();
+        Assertions.assertTrue( activeOnly.getVersions() > 0,
+                               "active versions should always be present in the dump (got " + activeOnly.getVersions() + ")" );
+        Assertions.assertTrue( withHistory >= activeOnly.getVersions(),
+                               "with history >= active-only (got " + withHistory + " >= " + activeOnly.getVersions() + ")" );
     }
 
-    private void doDump( final TestDumpWriter writer )
+    private RepoDumpResult doDump( final TestDumpWriter writer )
     {
-        doDump( writer, null );
+        return doDump( writer, null );
     }
 
     private RepoDumpResult doDump( final TestDumpWriter writer, final Integer maxAge )

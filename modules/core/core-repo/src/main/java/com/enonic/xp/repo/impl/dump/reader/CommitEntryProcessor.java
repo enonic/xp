@@ -1,22 +1,18 @@
 package com.enonic.xp.repo.impl.dump.reader;
 
-import java.io.IOException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.io.LineProcessor;
 
 import com.enonic.xp.node.ImportNodeCommitParams;
 import com.enonic.xp.repo.impl.dump.model.CommitDumpEntry;
 
 public class CommitEntryProcessor
     extends AbstractEntryProcessor
-    implements LineProcessor<EntryLoadResult>
+    implements EntryProcessor
 {
     private static final Logger LOG = LoggerFactory.getLogger( CommitEntryProcessor.class );
 
-    private EntryLoadResult result;
+    private final EntryLoadResult.Builder resultBuilder = EntryLoadResult.create();
 
     private CommitEntryProcessor( final Builder builder )
     {
@@ -24,17 +20,14 @@ public class CommitEntryProcessor
     }
 
     @Override
-    public boolean processLine( final String line )
-        throws IOException
+    public void processLine( final String line )
     {
-        final EntryLoadResult.Builder result = EntryLoadResult.create();
-
+        if ( line.isBlank() )
+        {
+            return;
+        }
         final CommitDumpEntry commitDumpEntry = this.serializer.toCommitDumpEntry( line );
-
-        addCommit( result, commitDumpEntry );
-
-        this.result = result.build();
-        return true;
+        addCommit( resultBuilder, commitDumpEntry );
     }
 
     private void addCommit( final EntryLoadResult.Builder result, final CommitDumpEntry commitDumpEntry )
@@ -62,7 +55,7 @@ public class CommitEntryProcessor
     @Override
     public EntryLoadResult getResult()
     {
-        return result;
+        return resultBuilder.build();
     }
 
     public static Builder create()
