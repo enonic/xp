@@ -28,6 +28,10 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
     Apache License 2.0
     https://www.attoparser.org/license.html
 
+    Bouncy Castle
+    MIT License
+    https://www.bouncycastle.org/
+
     Byte Buddy
     Apache License 2.0
     https://bytebuddy.net/
@@ -35,10 +39,6 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
     Carrot Search
     Apache License 2.0
     https://github.com/carrotsearch/hppc/blob/master/LICENSE.txt
-
-    Checker Framework
-    MIT License
-    https://github.com/typetools/checker-framework/blob/master/LICENSE.txt
 
     Compress LZF
     Apache License 2.0
@@ -48,10 +48,6 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
     Apache License 2.0
     http://cron-parser.com/
 
-    Dropwizard Metrics
-    Apache License 2.0
-    https://metrics.dropwizard.io
-
     Eclipse Jetty
     Apache License 2.0
     https://github.com/eclipse/jetty.project/
@@ -60,21 +56,13 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
     Apache License 2.0
     https://github.com/elastic/elasticsearch/blob/master/LICENSE.txt
 
-    Google Error Prone
+    ethlo-time (ITU)
     Apache License 2.0
-    https://github.com/google/error-prone/blob/master/COPYING
+    https://github.com/ethlo/itu
 
     Google Guava
     Apache License 2.0
     https://github.com/google/guava/blob/master/COPYING
-
-    Google J2ObjC
-    Apache License 2.0
-    https://github.com/google/j2objc/blob/master/LICENSE
-
-    GoogleCode FindBugs
-    Apache License 2.0
-    http://findbugs.sourceforge.net
 
     GoogleCode OWASP Java HTML Sanitizer
     Apache License 2.0
@@ -84,37 +72,17 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
     Universal Permissive License v1.0
     https://github.com/oracle/graal
 
-    GraphQL
-    MIT License
-    https://github.com/graphql-java/graphql-java/blob/master/LICENSE.md
-
-    Hamcrest library
-    BSD 2-clause
-    http://hamcrest.org
-
     Hazelcast
     Apache License 2.0
     https://github.com/hazelcast/hazelcast/blob/master/LICENSE
-
-    Hazelcast Kubernetes
-    Apache License 2.0
-    https://github.com/hazelcast/hazelcast-kubernetes/blob/master/LICENSE
 
     HDR Histogram
     CC0 1.0 Universal
     http://hdrhistogram.github.io/HdrHistogram/
 
-    IcoMoon icons (Ultimate Pack)
-    Friendly license (Need seperate development licenses for developing software using the icons.)
-    https://icomoon.io/#icons-icomoon/license
-
     Jackson Annotations
     Apache License 2.0
     https://github.com/FasterXML/jackson-annotations
-
-    Jackson BOM
-    Apache License 2.0
-    https://github.com/FasterXML/jackson-bom
 
     Jackson Core
     Apache License 2.0
@@ -132,9 +100,9 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
     Apache License 2.0
     https://github.com/FasterXML/jackson-datatype-jsr310
 
-    Jackson JAX-RS (Base and JSON)
+    Jackson Jakarta RS
     Apache License 2.0
-    https://github.com/FasterXML/jackson-jaxrs-providers
+    https://github.com/FasterXML/jackson-jakarta-rs-providers
 
     Jackson Modules (JAXB)
     Apache License 2.0
@@ -164,6 +132,10 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
     Apache License 2.0
     https://beanvalidation.org/licensing/
 
+    Jakarta WebSocket Client and Server
+    Apache License 2.0 and Eclipse Public License 2.0
+    https://github.com/eclipse/jetty.project/
+
     Jakarta XML Bind
     Eclipse Public License 2.0
     https://projects.eclipse.org/projects/ee4j.jaxb
@@ -171,15 +143,6 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
     Jansi
     Apache License 2.0
     https://github.com/fusesource/jansi/blob/master/license.txt
-
-    Javax WebSocket Client and Server
-    Apache License 2.0 and Eclipse Public License 2.0
-    https://github.com/eclipse/jetty.project/
-
-    JAXB
-    Common Development and Distribution License 1.1:
-    https://github.com/javaee/jaxb-v2/blob/master/LICENSE
-    Source code: https://github.com/javaee/jaxb-v2
 
     JBoss Logging
     Apache License 2.0
@@ -193,6 +156,10 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
     Apache License 2.0
     http://www.jhlabs.com/ip/filters/
 
+    JNA (Java Native Access)
+    Apache License 2.0
+    https://github.com/java-native-access/jna
+
     Joda Time
     Apache License 2.0
     http://www.joda.org/joda-time/
@@ -200,6 +167,10 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
     JParSec
     Apache License 2.0
     https://github.com/jparsec/jparsec/blob/master/LICENSE
+
+    JSpecify
+    Apache License 2.0
+    https://jspecify.dev/
 
     jsoup
     MIT License
@@ -210,6 +181,10 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
     https://logback.qos.ch/license.html
     Source code: https://github.com/qos-ch/logback
 
+    Micrometer
+    Apache License 2.0
+    https://micrometer.io/
+
     Nashorn
     GPL v2.0
     https://github.com/openjdk/nashorn?tab=GPL-2.0-1-ov-file#readme
@@ -218,13 +193,13 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
     Apache License 2.0
     http://netty.io/
 
+    networknt JSON Schema Validator
+    Apache License 2.0
+    https://github.com/networknt/json-schema-validator
+
     Objenesis
     Apache License 2.0
     http://objenesis.org
-
-    Opentest4j
-    Apache License 2.0
-    https://github.com/ota4j-team/opentest4j
 
     OSGi Core
     Apache License 2.0
@@ -233,6 +208,10 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
     OSGi Services & Utilities
     Apache License 2.0
     https://docs.osgi.org/
+
+    Prometheus Java client
+    Apache License 2.0
+    https://prometheus.io/
 
     Reactive Streams
     CC0 1.0 Universal
@@ -244,7 +223,7 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
 
     Snake YAML
     Apache License 2.0
-    https://github.com/bmoliveira/snake-yaml
+    https://github.com/snakeyaml/snakeyaml
 
     Spatial4J
     Apache License 2.0
@@ -271,12 +250,11 @@ LICENSE TEXTS
 3. Eclipse Public License 1.0
 4. Eclipse Public License 2.0
 5. MIT License
-6. IcoMoon Friendly License
-7. BSD 2-clause license
-8. BSD 3-clause license
-9. Unicode, inc. License Agreement
-10. The Universal Permissive License Version 1.0
-11. The GNU General Public License (GPL) Version 2.0
+6. BSD 2-clause license
+7. BSD 3-clause license
+8. Unicode, inc. License Agreement
+9. The Universal Permissive License Version 1.0
+10. The GNU General Public License (GPL) Version 2.0
 
 ---------------------------------------------------------------------------
 
@@ -974,125 +952,6 @@ MIT License
   LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
   OF CONTRACT, TORT OR OTHERWISE,  ARISING FROM, OUT OF OR IN CONNECTION
   WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
----------------------------------------------------------------------------
-
-IcoMoon Friendly License
-
-License Agreement
-
-This license agreement (“Agreement”) constitutes a legal contract
-between you (“Licensee” or “you”) and Keyamoon.com (“Licensor”),
-setting forth the terms and conditions with respect to the digital
-content, non-ditigal content, icons, symbols, pictograms, or part
-thereof (collectively, “Item”) licensed to you, by Licensor. By
-downloading, using, or copying any part of the Item, you automatically
-agree to the following terms and conditions:
-
-Grant of License
-
-Licensor grants the Licensee a non-exclusive license without the right
-of sublicense to use the Item, subject to the terms of this Agreement.
-In consideration for the rights granted to Licensee hereunder, Licensee
-shall pay a license fee. The Item may be accessed and used for
-development purposes, by the Licensee and up to nine (9) other people
-employed by the Licensee. These ten people must belong to the same
-company or household purchasing the license. You do not need an extra
-license for new projects. The license includes future updates, which
-means that no additional payment is required.
-
-Permitted Uses
-
-You can use the Item in all your commercial and non-commercial
-projects, services and products.You may alter, modify or manipulate
-the Item, or incorporate it into other content and make a derivative
-work from it. The resulting derivative work is subject to the terms of
-this Agreement.
-
-Prohibited Uses
-
-You may not sublicense, resell, share, or otherwise redistribute the
-Item, not even for free. You need to get permission for using the Item
-in open source projects. You may not give, rent, or lease the Item or
-parts of it to third parties. You may not use the Item as a part of any
-project where your customers are not a final customer. You need to get
-permission to use the Item in any project where your customers or users
-can select any part of the Item to use in, modify, or customize the end
-product. You may not use the Item in a project which most or all of its
-value is driven by the Item.
-
-Refund Policy
-
-You have 14 calendar days to request for a refund from the date you
-purchased the license. You may only submit your request to the
-publisher from which you purchased the license. After receiving your
-refund, you should stop using and destroy all copies of the Item,
-including all backups and copies.
-
-Disclaimer & Warranty
-
-All parts of the Item are provided “as is” without warranty of any
-kind, either expressed or implied. Licensor is not liable for any
-damages arising out of any defects in the materials and the Item. You
-agree to hold Licensor harmless for any result that may occur during
-the course of using, or inability to use the Item. In no event shall
-Licensor be liable for any damages including, but not limited to,
-direct, indirect, special, incidental or consequential damages or other
-losses arising out of the use of or inability to use the Item.
-
-To the best of the knowledge of the Licensor, no part of the Item is
-defamatory, obscene or immoral, and does not infringe any rights of
-copyright or other intellectual property or proprietary rights of third
-parties, but no right of action shall accrue against Licensor in the
-event of any part of the Item being deemed or found to be defamatory,
-obscene or immoral or an infringement of third party rights. If the
-Item contains trademarks or other intellectual property owned by third
-parties, clearance from the rights owner may be required. It is your
-responsibility to consider whether your use of the Item requires a
-clearance and if so, to obtain that clearance from the rights owner.
-
-Copyright
-
-All parts of the Item are owned by and property of the Licensor. No
-title to or intellectual property rights to the Item are transferred to
-you. All parts of the Item and the accompanying materials are
-copyrighted and contain proprietary information and trade secrets
-belonging to the Licensor. The Item cannot be incorporated in a
-trademark or service mark, not even logos. You may make a reasonable
-number of backup copies of the Item for archival purposes only. Copies
-must contain the same documentation, license, copyright, trademark,
-and other proprietary notices that appear on, in, or with the Item.
-Except for using the Item in your project, you may not copy the Item or
-allow third parties to copy the Item. Unpublished rights are reserved.
-
-Reserved Rights
-
-Licensor reserves rights to change the price of the license and to
-update the Item without prior notice and at its sole discretion.
-Licensor reserves the rights to make changes to this Agreement without
-any prior notice at its sole discretion. Any such changes will be
-reflected on this page. Licensor has the right to terminate your
-license immediately if you fail to comply with any terms of this
-Agreement.
-
-Governing Law & General Provisions
-
-This Agreement will be governed by and construed in accordance with the
-laws in force in the United States of America and the State of
-California, excluding its conflict of law principles. This Agreement
-shall not be governed by the United Nations Convention on Contracts for
-the International Sale of Goods, the application of which is expressly
-excluded. If any part of this Agreement is found void and
-unenforceable, the remainder of this Agreement shall remain valid and
-continue in full force and effect. You agree that the Item will not be
-shipped, transferred, or exported into any country or used in any
-manner prohibited by export administration legislation or any other
-export laws, restrictions, or regulations. The section headings
-contained in this Agreement are for reference purposes only and shall
-not affect the meaning or interpretation of this Agreement.
-
-If you have any questions regarding this Agreement feel free to contact
-the Licensor at: http://keyamoon.com
 
 ---------------------------------------------------------------------------
 
