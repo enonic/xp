@@ -106,13 +106,11 @@ class ProjectServiceImplTest
 
     private static final AuthenticationInfo REPO_TEST_CONTENT_MANAGER_AUTHINFO = AuthenticationInfo.create()
         .principals( RoleKeys.AUTHENTICATED )
-        .principals( RoleKeys.CONTENT_MANAGER_APP )
         .user( REPO_TEST_DEFAULT_USER )
         .build();
 
     private static final AuthenticationInfo REPO_TEST_CUSTOM_MANAGER_AUTHINFO = AuthenticationInfo.create()
         .principals( RoleKeys.AUTHENTICATED )
-        .principals( RoleKeys.CONTENT_MANAGER_APP )
         .principals( ProjectAccessHelper.createRoleKey( ProjectName.from( "test-project" ), ProjectRole.OWNER ) )
         .user( REPO_TEST_OWNER )
         .build();
@@ -1127,7 +1125,6 @@ class ProjectServiceImplTest
     {
         final AuthenticationInfo.Builder authenticationInfo = AuthenticationInfo.create()
             .principals( RoleKeys.AUTHENTICATED )
-            .principals( RoleKeys.CONTENT_MANAGER_APP )
             .user( REPO_TEST_OWNER );
 
         roles.forEach( role -> authenticationInfo.principals( ProjectAccessHelper.createRoleKey( projectName, role ) ) );

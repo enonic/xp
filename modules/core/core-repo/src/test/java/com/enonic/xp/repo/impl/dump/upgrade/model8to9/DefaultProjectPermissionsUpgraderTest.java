@@ -16,6 +16,7 @@ import com.enonic.xp.security.acl.Permission;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@SuppressWarnings( "deprecation" )
 class DefaultProjectPermissionsUpgraderTest
 {
     private final DefaultProjectPermissionsUpgrader upgrader = new DefaultProjectPermissionsUpgrader();

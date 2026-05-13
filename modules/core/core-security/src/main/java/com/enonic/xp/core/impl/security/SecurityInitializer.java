@@ -80,7 +80,6 @@ public final class SecurityInitializer
                  CreateRoleParams.create().roleKey( RoleKeys.ADMIN_LOGIN ).displayName( "Administration Console Login" ).build(),
                  CreateRoleParams.create().roleKey( RoleKeys.USER_MANAGER_APP ).displayName( "Users App" ).build(),
                  CreateRoleParams.create().roleKey( RoleKeys.USER_MANAGER_ADMIN ).displayName( "Users Administrator" ).build(),
-                 CreateRoleParams.create().roleKey( RoleKeys.CONTENT_MANAGER_APP ).displayName( "Content Manager App" ).build(),
                  CreateRoleParams.create().roleKey( RoleKeys.CONTENT_MANAGER_EXPERT ).displayName( "Content Manager Expert" ).build(),
                  CreateRoleParams.create().roleKey( RoleKeys.CONTENT_MANAGER_ADMIN ).displayName( "Content Manager Administrator" ).build(),
                  CreateRoleParams.create().roleKey( RoleKeys.AUDIT_LOG ).displayName( "Audit Log" ).build(),
