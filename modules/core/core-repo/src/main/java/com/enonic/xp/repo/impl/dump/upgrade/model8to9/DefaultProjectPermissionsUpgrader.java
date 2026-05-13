@@ -18,6 +18,7 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
+@SuppressWarnings( "deprecation" )
 public class DefaultProjectPermissionsUpgrader
     implements NodeVersionUpgrader
 {

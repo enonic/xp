@@ -22,7 +22,6 @@ import com.enonic.xp.repository.BranchNotFoundException;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
-import com.enonic.xp.security.acl.Permission;
 
 import static java.util.Objects.requireNonNullElse;
 
@@ -34,7 +33,6 @@ public final class ContentInitializer
     private static final AccessControlList CONTENT_ROOT_DEFAULT_ACL = AccessControlList.create()
         .add( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() )
         .add( AccessControlEntry.create().principal( RoleKeys.CONTENT_MANAGER_ADMIN ).allowAll().build() )
-        .add( AccessControlEntry.create().principal( RoleKeys.CONTENT_MANAGER_APP ).allow( Permission.READ ).build() )
         .build();
 
     private static final IndexPath CONTENT_INDEX_PATH_DISPLAY_NAME = IndexPath.from( "displayName" );

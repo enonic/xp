@@ -20,7 +20,6 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
-import com.enonic.xp.security.acl.Permission;
 
 import static java.util.Objects.requireNonNullElse;
 
@@ -33,10 +32,6 @@ public class IssueInitializer
     private static final AccessControlList ISSUE_ROOT_DEFAULT_ACL = AccessControlList.create()
         .add( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() )
         .add( AccessControlEntry.create().principal( RoleKeys.CONTENT_MANAGER_ADMIN ).allowAll().build() )
-        .add( AccessControlEntry.create()
-                  .principal( RoleKeys.CONTENT_MANAGER_APP )
-                  .allow( Permission.READ, Permission.CREATE, Permission.MODIFY, Permission.DELETE )
-                  .build() )
         .build();
 
     private IssueInitializer( final Builder builder )
