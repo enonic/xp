@@ -28,8 +28,20 @@ public final class RoleKeys
 
     public static final PrincipalKey USER_MANAGER_ADMIN = PrincipalKey.ofRole( "system.user.admin" );
 
+    /**
+     * Legacy role id retained for backwards compatibility with existing installs and external apps that grant it.
+     * Superseded by the per-project role hierarchy ({@code cms.project.<name>.{owner,editor,author,contributor,viewer}}).
+     * New code must not use it.
+     */
+    @Deprecated
     public static final String CONTENT_MANAGER_APP_ID = "cms.cm.app";
 
+    /**
+     * Legacy role retained for backwards compatibility with existing installs and external apps that grant it.
+     * Superseded by the per-project role hierarchy ({@code cms.project.<name>.{owner,editor,author,contributor,viewer}}).
+     * New code must not use it.
+     */
+    @Deprecated
     public static final PrincipalKey CONTENT_MANAGER_APP = PrincipalKey.ofRole( CONTENT_MANAGER_APP_ID );
 
     public static final PrincipalKey CONTENT_MANAGER_EXPERT = PrincipalKey.ofRole( "cms.expert" );
