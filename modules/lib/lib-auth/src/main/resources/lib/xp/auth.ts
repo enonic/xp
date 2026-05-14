@@ -881,14 +881,14 @@ export interface IdProviderAccessControlEntry {
  * providers — each with its own `config` tree (e.g. a `staff` and a
  * `customers` provider both implemented by the same id-provider app).
  *
- * When an id provider has no `idProviderConfig`, it exists in the security
- * repository but is inert: requests to `/_/idprovider/<key>` are not
- * dispatched to any app.
+ * An id provider without `idProviderConfig` is incomplete: admin UIs
+ * reject it as invalid, and most flows that rely on it won't work until
+ * a binding is added.
  */
 export interface IdProviderConfig {
     /**
-     * Key of the application whose `idprovider/*.js` handlers serve
-     * requests for this provider.
+     * Key of the application whose handlers serve requests for this
+     * provider.
      */
     applicationKey: string;
     /**
@@ -898,9 +898,9 @@ export interface IdProviderConfig {
 }
 
 /**
- * An id provider in the security repository. Has 0 or 1 bound application
- * via `idProviderConfig`; the binding determines which app handles login,
- * logout, registration, and similar flows for this provider.
+ * An id provider. Has 0 or 1 bound application via `idProviderConfig`;
+ * the binding determines which app handles login, logout, registration,
+ * and similar flows for this provider.
  */
 export interface IdProvider {
     /** Unique key identifying this provider (e.g. `system`, `simpleid`). */
@@ -910,16 +910,16 @@ export interface IdProvider {
     /** Optional free-text description. */
     description?: string;
     /**
-     * Application binding. Absent ⇒ passive provider (exists in the
-     * security repository but routes no auth requests).
+     * Application binding. Absent ⇒ the provider is incomplete; admin
+     * UIs treat it as invalid and dependent flows generally won't work.
      */
     idProviderConfig?: IdProviderConfig;
 }
 
 /**
  * Parameters for {@link createIdProvider}. See {@link IdProvider} for the
- * meaning of each field; `idProviderConfig` is optional and creates a
- * passive provider when omitted.
+ * meaning of each field; without `idProviderConfig` the provider is
+ * incomplete.
  */
 export interface CreateIdProviderParams {
     key: string;
@@ -944,12 +944,12 @@ interface CreateIdProviderHandler {
 }
 
 /**
- * Creates an id provider in the security repository.
+ * Creates an id provider.
  *
  * An id provider can be bound to at most one application via
- * `params.idProviderConfig`. Omit it to create a passive provider: the
- * record exists but cannot service `/_/idprovider/<key>` requests until a
- * binding is added.
+ * `params.idProviderConfig`. Without it the provider is incomplete —
+ * admin UIs reject it as invalid and most flows that rely on it won't
+ * work until a binding is added.
  *
  * @example-ref examples/auth/createIdProvider.js
  *
@@ -957,7 +957,7 @@ interface CreateIdProviderHandler {
  * @param {string} params.key Id provider key.
  * @param {string} params.displayName Id provider display name.
  * @param {string} [params.description] Id provider description.
- * @param {object} [params.idProviderConfig] Binds this provider to one application. Omit for a passive provider.
+ * @param {object} [params.idProviderConfig] Binds this provider to one application. Without it the provider is incomplete.
  * @param {string} params.idProviderConfig.applicationKey Application that handles requests for this provider. Required when `idProviderConfig` is set.
  * @param {object} [params.idProviderConfig.config] Per-instance configuration tree passed to the bound application.
  * @param {Array<object>} [params.permissions] Id provider permissions.
@@ -985,9 +985,9 @@ interface GetIdProvidersHandler {
 }
 
 /**
- * Returns all id providers known to the security repository. Each entry's
- * `idProviderConfig` is present only when the provider is bound to an
- * application; passive providers come back without it.
+ * Returns all id providers. Each entry's `idProviderConfig` is present
+ * only when the provider is bound to an application; incomplete
+ * providers come back without it.
  *
  * @example-ref examples/auth/getIdProviders.js
  *
