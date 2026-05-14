@@ -639,8 +639,8 @@ export function deletePrincipal(principalKey: PrincipalKey): boolean {
     return __.toNativeObject(bean.deletePrincipal());
 }
 
-interface GetIdProviderConfigHandler<IdProviderConfig extends Record<string, unknown>> {
-    execute(): IdProviderConfig | null;
+interface GetIdProviderConfigHandler<Config extends Record<string, unknown>> {
+    execute(): Config | null;
 }
 
 /**
@@ -651,8 +651,8 @@ interface GetIdProviderConfigHandler<IdProviderConfig extends Record<string, unk
  *
  * @returns {object} The ID provider configuration as JSON.
  */
-export function getIdProviderConfig<IdProviderConfig extends Record<string, unknown>>(): IdProviderConfig | null {
-    const bean: GetIdProviderConfigHandler<IdProviderConfig> = __.newBean<GetIdProviderConfigHandler<IdProviderConfig>>(
+export function getIdProviderConfig<Config extends Record<string, unknown>>(): Config | null {
+    const bean: GetIdProviderConfigHandler<Config> = __.newBean<GetIdProviderConfigHandler<Config>>(
         'com.enonic.xp.lib.auth.GetIdProviderConfigHandler');
     return __.toNativeObject(bean.execute());
 }
