@@ -872,16 +872,23 @@ export interface IdProviderAccessControlEntry {
     access: IdProviderAccess;
 }
 
+export interface IdProviderConfig {
+    applicationKey: string;
+    config?: Record<string, unknown>;
+}
+
 export interface IdProvider {
     key: string;
     displayName: string;
     description?: string;
+    idProviderConfig?: IdProviderConfig;
 }
 
 export interface CreateIdProviderParams {
     key: string;
     displayName: string;
     description?: string;
+    idProviderConfig?: IdProviderConfig;
     permissions?: IdProviderAccessControlEntry[];
 }
 
@@ -891,6 +898,8 @@ interface CreateIdProviderHandler {
     setDisplayName(value: string): void;
 
     setDescription(value: string | null): void;
+
+    setIdProviderConfig(value: ScriptValue | null): void;
 
     setPermissions(value: ScriptValue | null): void;
 
@@ -906,6 +915,9 @@ interface CreateIdProviderHandler {
  * @param {string} params.key Id provider key.
  * @param {string} params.displayName Id provider display name.
  * @param {string} [params.description] Id provider description.
+ * @param {object} [params.idProviderConfig] Id provider configuration binding it to an application.
+ * @param {string} params.idProviderConfig.applicationKey Application key that handles the id provider requests.
+ * @param {object} [params.idProviderConfig.config] Application-specific configuration tree.
  * @param {Array<object>} [params.permissions] Id provider permissions.
  * @returns {IdProvider} The created id provider.
  */
@@ -920,6 +932,7 @@ export function createIdProvider(
     bean.setKey(key);
     bean.setDisplayName(displayName);
     bean.setDescription(__.nullOrValue(params.description));
+    bean.setIdProviderConfig(params.idProviderConfig == null ? null : __.toScriptValue(params.idProviderConfig));
     bean.setPermissions(params.permissions == null ? null : __.toScriptValue(params.permissions));
 
     return __.toNativeObject(bean.createIdProvider()) as IdProvider;
