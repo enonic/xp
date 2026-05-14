@@ -31,6 +31,8 @@ abstract class AbstractSchemaValidationTest
 {
     private static Map<String, Schema> schemasByFileName;
 
+    private static String currentSchemaVersion;
+
     @BeforeAll
     static void initSchemas()
         throws IOException, URISyntaxException
@@ -49,6 +51,11 @@ abstract class AbstractSchemaValidationTest
             final String fileName = id.substring( id.lastIndexOf( '/' ) + 1 );
             schemasByFileName.put( fileName, registry.getSchema( SchemaLocation.of( id ) ) );
         }
+
+        currentSchemaVersion = schemasByFileName.keySet().stream()
+            .findFirst()
+            .map( name -> name.replaceFirst( "^enonic-xp-.+-(\\d+\\.\\d+\\.\\d+)\\.json$", "$1" ) )
+            .orElseThrow( () -> new IllegalStateException( "No schemas were loaded from META-INF/schemas" ) );
     }
 
     protected static Schema schemaFor( final String descriptorName, final String version )
@@ -59,7 +66,7 @@ abstract class AbstractSchemaValidationTest
 
     protected static Schema schemaFor( final String schemaFileName )
     {
-        return schemaFor( schemaFileName, "8.0.0" );
+        return schemaFor( schemaFileName, currentSchemaVersion );
     }
 
     protected static Collection<Error> validateYaml( final Schema schema, final String resourcePath )
