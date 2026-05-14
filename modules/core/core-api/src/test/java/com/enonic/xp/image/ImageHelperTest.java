@@ -50,6 +50,47 @@ class ImageHelperTest
     }
 
     @Test
+    void getScaledInstance_preserves_grayscale_brightness()
+    {
+        // Fill a gray image with a known raw sample ramp 0..255 and verify the mean raw sample value
+        // survives the downscale. The legacy SCALE_SMOOTH path shifted this by ~+55 levels (#7688).
+        final BufferedImage gray = new BufferedImage( 256, 32, BufferedImage.TYPE_BYTE_GRAY );
+        for ( int x = 0; x < 256; x++ )
+        {
+            for ( int y = 0; y < 32; y++ )
+            {
+                gray.getRaster().setSample( x, y, 0, x );
+            }
+        }
+
+        final BufferedImage scaled = ImageHelper.getScaledInstance( gray, 128, 16 );
+
+        assertEquals( BufferedImage.TYPE_BYTE_GRAY, scaled.getType() );
+        assertEquals( 127.5, meanRawSample( scaled ), 2.0, "raw gray sample mean should survive scaling" );
+    }
+
+    @Test
+    void getScaledInstance_preserves_alpha_for_argb_source()
+    {
+        final BufferedImage argb = new BufferedImage( 80, 80, BufferedImage.TYPE_INT_ARGB );
+        final Graphics2D g = argb.createGraphics();
+        try
+        {
+            g.setColor( new Color( 255, 0, 0, 128 ) );
+            g.fillRect( 0, 0, 80, 80 );
+        }
+        finally
+        {
+            g.dispose();
+        }
+
+        final BufferedImage scaled = ImageHelper.getScaledInstance( argb, 40, 40 );
+
+        assertEquals( BufferedImage.TYPE_INT_ARGB, scaled.getType() );
+        assertTrue( scaled.getColorModel().hasAlpha(), "alpha channel should be preserved" );
+    }
+
+    @Test
     void getScaledInstance_preserves_rgb_color_model()
     {
         final BufferedImage rgb = paintGradient( new BufferedImage( 100, 100, BufferedImage.TYPE_INT_RGB ) );
@@ -61,14 +102,45 @@ class ImageHelperTest
     }
 
     @Test
-    void createCompatibleImage_matches_source_color_model()
+    void getScaledInstance_upscale_interpolates_not_nearest_neighbor()
     {
-        final BufferedImage gray = new BufferedImage( 10, 10, BufferedImage.TYPE_BYTE_GRAY );
-        final BufferedImage compatible = ImageHelper.createCompatibleImage( gray, 4, 6 );
+        // 4-pixel ramp upscaled 16x — nearest-neighbor would produce only the four input values.
+        // Bicubic interpolation should give a continuous range of in-between values.
+        final BufferedImage ramp = new BufferedImage( 4, 1, BufferedImage.TYPE_INT_RGB );
+        ramp.setRGB( 0, 0, 0x000000 );
+        ramp.setRGB( 1, 0, 0x404040 );
+        ramp.setRGB( 2, 0, 0xC0C0C0 );
+        ramp.setRGB( 3, 0, 0xFFFFFF );
 
-        assertEquals( 4, compatible.getWidth() );
-        assertEquals( 6, compatible.getHeight() );
-        assertEquals( gray.getColorModel(), compatible.getColorModel() );
+        final BufferedImage upscaled = ImageHelper.getScaledInstance( ramp, 64, 16 );
+
+        int distinct = 0;
+        boolean[] seen = new boolean[256];
+        for ( int x = 0; x < upscaled.getWidth(); x++ )
+        {
+            final int v = upscaled.getRGB( x, 0 ) & 0xFF;
+            if ( !seen[v] )
+            {
+                seen[v] = true;
+                distinct++;
+            }
+        }
+        assertTrue( distinct > 8, "expected smooth interpolation, got only " + distinct + " distinct values" );
+    }
+
+    private static double meanRawSample( final BufferedImage img )
+    {
+        long sum = 0;
+        long count = 0;
+        for ( int y = 0; y < img.getHeight(); y++ )
+        {
+            for ( int x = 0; x < img.getWidth(); x++ )
+            {
+                sum += img.getRaster().getSample( x, y, 0 );
+                count++;
+            }
+        }
+        return sum / (double) count;
     }
 
     private static BufferedImage paintGradient( final BufferedImage image )

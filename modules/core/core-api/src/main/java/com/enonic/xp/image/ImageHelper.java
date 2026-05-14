@@ -2,11 +2,11 @@ package com.enonic.xp.image;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Image;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.Transparency;
+import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
@@ -103,39 +103,54 @@ public final class ImageHelper
         return new BufferedImage( width, height, hasAlpha ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB );
     }
 
-    public static BufferedImage createCompatibleImage( BufferedImage source, int width, int height )
-    {
-        final ColorModel cm = source.getColorModel();
-        final WritableRaster raster = cm.createCompatibleWritableRaster( width, height );
-        return new BufferedImage( cm, raster, cm.isAlphaPremultiplied(), null );
-    }
-
     public static BufferedImage getScaledInstance( BufferedImage img, int width, int height )
     {
-        Image scaledImage = img.getScaledInstance( width, height, Image.SCALE_SMOOTH );
-        // For non-sRGB inputs (grayscale, CMYK, ICC-profiled) keep the source ColorModel so the
-        // scale step doesn't silently flatten the image to sRGB. See issue #7688. sRGB inputs
-        // continue to land in TYPE_INT_RGB/ARGB to preserve historical encoder output.
-        final BufferedImage targetImage;
-        if ( img.getColorModel().getColorSpace().isCS_sRGB() )
+        // The legacy path used Image.getScaledInstance(SCALE_SMOOTH), which routes through Java's
+        // color management and shifts brightness on non-sRGB profiles (e.g. grayscale +55 levels,
+        // issue #7688), and degenerates to nearest-neighbor on upscale. We instead use a progressive
+        // bilinear halving for downscale and a single bicubic step for the final / upscale pass.
+        final int destType = chooseDestinationType( img );
+
+        BufferedImage current = img;
+        int cw = current.getWidth();
+        int ch = current.getHeight();
+        while ( cw > width * 2 || ch > height * 2 )
         {
-            final boolean hasAlpha = img.getTransparency() != Transparency.OPAQUE;
-            targetImage = createImage( width, height, hasAlpha );
+            final int nw = Math.max( width, cw / 2 );
+            final int nh = Math.max( height, ch / 2 );
+            current = scaleStep( current, nw, nh, destType, RenderingHints.VALUE_INTERPOLATION_BILINEAR );
+            cw = nw;
+            ch = nh;
         }
-        else
+        return scaleStep( current, width, height, destType, RenderingHints.VALUE_INTERPOLATION_BICUBIC );
+    }
+
+    private static int chooseDestinationType( BufferedImage img )
+    {
+        // Grayscale is browser-universal and visibly cheaper to store, so preserve it through scaling.
+        // CMYK and other non-sRGB profiles get flattened to sRGB because browser support for non-sRGB
+        // JPEGs is unreliable (Firefox in particular).
+        if ( img.getColorModel().getColorSpace().getType() == ColorSpace.TYPE_GRAY )
         {
-            targetImage = createCompatibleImage( img, width, height );
+            return BufferedImage.TYPE_BYTE_GRAY;
         }
-        Graphics g = targetImage.createGraphics();
+        return img.getTransparency() != Transparency.OPAQUE ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB;
+    }
+
+    private static BufferedImage scaleStep( BufferedImage src, int width, int height, int destType, Object interpolation )
+    {
+        final BufferedImage out = new BufferedImage( width, height, destType );
+        final Graphics2D g = out.createGraphics();
         try
         {
-            g.drawImage( scaledImage, 0, 0, null );
+            g.setRenderingHint( RenderingHints.KEY_INTERPOLATION, interpolation );
+            g.drawImage( src, 0, 0, width, height, null );
         }
         finally
         {
             g.dispose();
         }
-        return targetImage;
+        return out;
     }
 
     public static BufferedImage removeAlphaChannel( final BufferedImage img, final int color )

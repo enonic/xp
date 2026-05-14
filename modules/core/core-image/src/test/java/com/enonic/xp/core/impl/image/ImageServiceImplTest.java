@@ -195,7 +195,8 @@ class ImageServiceImplTest
     }
 
     @Test
-    void readImage_cmyk()
+    void readImage_cmyk_is_flattened_to_srgb()
+        throws IOException
     {
         mockOriginalImage( "effect/cmyk.jpg" );
 
@@ -206,7 +207,16 @@ class ImageServiceImplTest
             .scaleSize( 128 )
             .build();
 
-        assertDoesNotThrow( () -> imageService.readImage( readImageParams ) );
+        final ByteSource imageData = imageService.readImage( readImageParams );
+
+        final BufferedImage decoded;
+        try (InputStream stream = imageData.openStream())
+        {
+            decoded = ImageIO.read( stream );
+        }
+        // CMYK JPEGs render unreliably across browsers (Firefox in particular). The scaler flattens
+        // CMYK inputs to sRGB so the produced thumbnail is universally displayable.
+        assertEquals( ColorSpace.TYPE_RGB, decoded.getColorModel().getColorSpace().getType() );
     }
 
     @Test
