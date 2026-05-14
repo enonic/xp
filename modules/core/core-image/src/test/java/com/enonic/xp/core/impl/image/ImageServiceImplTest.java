@@ -1,9 +1,13 @@
 package com.enonic.xp.core.impl.image;
 
+import java.awt.color.ColorSpace;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.HexFormat;
+
+import javax.imageio.ImageIO;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -26,6 +30,7 @@ import com.enonic.xp.util.BinaryReference;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -202,5 +207,32 @@ class ImageServiceImplTest
             .build();
 
         assertDoesNotThrow( () -> imageService.readImage( readImageParams ) );
+    }
+
+    @Test
+    void readImage_grayscale_jpeg_preserves_grayscale_after_scaling()
+        throws IOException
+    {
+        mockOriginalImage( "effect/grayscale.jpg" );
+
+        final ReadImageParams readImageParams = ReadImageParams.newImageParams()
+            .contentId( contentId )
+            .binaryReference( binaryReference )
+            .mimeType( "image/jpeg" )
+            .scaleSize( 32 )
+            .build();
+
+        final ByteSource imageData = imageService.readImage( readImageParams );
+
+        final BufferedImage decoded;
+        try (InputStream stream = imageData.openStream())
+        {
+            decoded = ImageIO.read( stream );
+        }
+        // Before the fix, the scaled JPEG came back as TYPE_3BYTE_BGR / sRGB because the
+        // scale step in ImageHelper flattened the source ColorModel.
+        assertEquals( BufferedImage.TYPE_BYTE_GRAY, decoded.getType() );
+        assertEquals( ColorSpace.TYPE_GRAY, decoded.getColorModel().getColorSpace().getType() );
+        assertEquals( 1, decoded.getColorModel().getNumComponents() );
     }
 }

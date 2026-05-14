@@ -5,6 +5,8 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Transparency;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
@@ -101,11 +103,29 @@ public final class ImageHelper
         return new BufferedImage( width, height, hasAlpha ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB );
     }
 
+    public static BufferedImage createCompatibleImage( BufferedImage source, int width, int height )
+    {
+        final ColorModel cm = source.getColorModel();
+        final WritableRaster raster = cm.createCompatibleWritableRaster( width, height );
+        return new BufferedImage( cm, raster, cm.isAlphaPremultiplied(), null );
+    }
+
     public static BufferedImage getScaledInstance( BufferedImage img, int width, int height )
     {
         Image scaledImage = img.getScaledInstance( width, height, Image.SCALE_SMOOTH );
-        final boolean hasAlpha = img.getTransparency() != Transparency.OPAQUE;
-        BufferedImage targetImage = createImage( width, height, hasAlpha );
+        // For non-sRGB inputs (grayscale, CMYK, ICC-profiled) keep the source ColorModel so the
+        // scale step doesn't silently flatten the image to sRGB. See issue #7688. sRGB inputs
+        // continue to land in TYPE_INT_RGB/ARGB to preserve historical encoder output.
+        final BufferedImage targetImage;
+        if ( img.getColorModel().getColorSpace().isCS_sRGB() )
+        {
+            final boolean hasAlpha = img.getTransparency() != Transparency.OPAQUE;
+            targetImage = createImage( width, height, hasAlpha );
+        }
+        else
+        {
+            targetImage = createCompatibleImage( img, width, height );
+        }
         Graphics g = targetImage.createGraphics();
         try
         {
