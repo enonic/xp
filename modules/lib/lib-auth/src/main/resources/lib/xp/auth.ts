@@ -881,9 +881,8 @@ export interface IdProviderAccessControlEntry {
  * providers — each with its own `config` tree (e.g. a `staff` and a
  * `customers` provider both implemented by the same id-provider app).
  *
- * An id provider without `idProviderConfig` is incomplete: admin UIs
- * reject it as invalid, and most flows that rely on it won't work until
- * a binding is added.
+ * An id provider without `idProviderConfig` is incomplete and most
+ * flows that rely on it won't work until a binding is added.
  */
 export interface IdProviderConfig {
     /**
@@ -910,8 +909,8 @@ export interface IdProvider {
     /** Optional free-text description. */
     description?: string;
     /**
-     * Application binding. Absent ⇒ the provider is incomplete; admin
-     * UIs treat it as invalid and dependent flows generally won't work.
+     * Application binding. Absent ⇒ the provider is incomplete and
+     * dependent flows generally won't work.
      */
     idProviderConfig?: IdProviderConfig;
 }
@@ -947,9 +946,8 @@ interface CreateIdProviderHandler {
  * Creates an id provider.
  *
  * An id provider can be bound to at most one application via
- * `params.idProviderConfig`. Without it the provider is incomplete —
- * admin UIs reject it as invalid and most flows that rely on it won't
- * work until a binding is added.
+ * `params.idProviderConfig`. Without it the provider is incomplete and
+ * most flows that rely on it won't work until a binding is added.
  *
  * @example-ref examples/auth/createIdProvider.js
  *
