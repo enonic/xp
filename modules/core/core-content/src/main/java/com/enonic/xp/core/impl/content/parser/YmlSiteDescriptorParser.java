@@ -129,6 +129,9 @@ public final class YmlSiteDescriptorParser
 
                 @JsonProperty("match")
                 abstract ControllerMappingDescriptor.Builder contentConstraint( String contentConstraint );
+
+                @JacksonInject("currentApplication")
+                abstract ControllerMappingDescriptor.Builder applicationKey( ApplicationKey applicationKey );
             }
         }
 

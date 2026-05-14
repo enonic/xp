@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Iterator;
+import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.Test;
 
@@ -86,6 +87,12 @@ public class YmlSiteDescriptorParserTest
         assertEquals( "/my-filter", mapping_3.getPattern().pattern() );
         assertTrue( mapping_3.invertPattern() );
         assertEquals( "type:'portal:fragment'", mapping_3.getContentConstraint().toString() );
+
+        final ControllerMappingDescriptor mapping_4 = mappingsIterator.next();
+        assertEquals( ResourceKey.from( currentApplication, "/site/mappings/static-controller.js" ), mapping_4.getController() );
+        assertEquals( "/_/static/" + Pattern.quote( "myapp" ) + "/.+", mapping_4.getPattern().pattern() );
+        assertTrue( mapping_4.getPattern().matcher( "/_/static/myapp/main.js" ).matches() );
+        assertFalse( mapping_4.getPattern().matcher( "/_/static/other.app/main.js" ).matches() );
 
         // verify mounted APIs
         final DescriptorKeys mountedApis = siteDescriptor.getApiMounts();

@@ -158,6 +158,8 @@ public final class ControllerMappingDescriptor
 
     public static final class Builder
     {
+        private static final String APP_TOKEN = "${app}";
+
         private String service;
 
         private ResourceKey controller;
@@ -166,11 +168,15 @@ public final class ControllerMappingDescriptor
 
         private Pattern pattern;
 
+        private String patternStr;
+
         private boolean invertPattern = false;
 
         private ContentMappingConstraint contentConstraint;
 
         private int order = DEFAULT_ORDER;
+
+        private ApplicationKey applicationKey;
 
         private Builder( final ControllerMappingDescriptor mappingDescriptor )
         {
@@ -181,6 +187,7 @@ public final class ControllerMappingDescriptor
             this.invertPattern = mappingDescriptor.invertPattern();
             this.contentConstraint = mappingDescriptor.getContentConstraint();
             this.order = mappingDescriptor.getOrder();
+            this.applicationKey = mappingDescriptor.getApplication();
         }
 
         private Builder()
@@ -208,12 +215,14 @@ public final class ControllerMappingDescriptor
         public Builder pattern( final Pattern pattern )
         {
             this.pattern = pattern;
+            this.patternStr = null;
             return this;
         }
 
         public Builder pattern( final String pattern )
         {
-            this.pattern = pattern != null ? Pattern.compile( pattern ) : null;
+            this.patternStr = pattern;
+            this.pattern = null;
             return this;
         }
 
@@ -241,8 +250,26 @@ public final class ControllerMappingDescriptor
             return this;
         }
 
+        public Builder applicationKey( final ApplicationKey applicationKey )
+        {
+            this.applicationKey = applicationKey;
+            return this;
+        }
+
         public ControllerMappingDescriptor build()
         {
+            if ( this.patternStr != null )
+            {
+                final ApplicationKey resolvedApp = this.applicationKey != null
+                    ? this.applicationKey
+                    : this.controller != null ? this.controller.getApplicationKey()
+                        : this.filter != null ? this.filter.getApplicationKey() : null;
+                final String resolved = resolvedApp != null
+                    ? this.patternStr.replace( APP_TOKEN, Pattern.quote( resolvedApp.getName() ) )
+                    : this.patternStr;
+                this.pattern = Pattern.compile( resolved );
+                this.patternStr = null;
+            }
             return new ControllerMappingDescriptor( this );
         }
     }
