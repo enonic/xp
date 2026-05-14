@@ -872,18 +872,55 @@ export interface IdProviderAccessControlEntry {
     access: IdProviderAccess;
 }
 
+/**
+ * Configuration that binds an id provider to the application implementing
+ * its authentication flow.
+ *
+ * An id provider can be bound to at most **one** application via
+ * `applicationKey`. The same application may, in turn, back several id
+ * providers — each with its own `config` tree (e.g. a `staff` and a
+ * `customers` provider both implemented by the same id-provider app).
+ *
+ * When an id provider has no `idProviderConfig`, it exists in the security
+ * repository but is inert: requests to `/_/idprovider/<key>` are not
+ * dispatched to any app.
+ */
 export interface IdProviderConfig {
+    /**
+     * Key of the application whose `idprovider/*.js` handlers serve
+     * requests for this provider.
+     */
     applicationKey: string;
+    /**
+     * Per-instance configuration tree, exposed to the bound application.
+     */
     config?: Record<string, unknown>;
 }
 
+/**
+ * An id provider in the security repository. Has 0 or 1 bound application
+ * via `idProviderConfig`; the binding determines which app handles login,
+ * logout, registration, and similar flows for this provider.
+ */
 export interface IdProvider {
+    /** Unique key identifying this provider (e.g. `system`, `simpleid`). */
     key: string;
+    /** Human-readable label shown in admin UIs. */
     displayName: string;
+    /** Optional free-text description. */
     description?: string;
+    /**
+     * Application binding. Absent ⇒ passive provider (exists in the
+     * security repository but routes no auth requests).
+     */
     idProviderConfig?: IdProviderConfig;
 }
 
+/**
+ * Parameters for {@link createIdProvider}. See {@link IdProvider} for the
+ * meaning of each field; `idProviderConfig` is optional and creates a
+ * passive provider when omitted.
+ */
 export interface CreateIdProviderParams {
     key: string;
     displayName: string;
@@ -907,7 +944,12 @@ interface CreateIdProviderHandler {
 }
 
 /**
- * Creates an id provider.
+ * Creates an id provider in the security repository.
+ *
+ * An id provider can be bound to at most one application via
+ * `params.idProviderConfig`. Omit it to create a passive provider: the
+ * record exists but cannot service `/_/idprovider/<key>` requests until a
+ * binding is added.
  *
  * @example-ref examples/auth/createIdProvider.js
  *
@@ -915,9 +957,9 @@ interface CreateIdProviderHandler {
  * @param {string} params.key Id provider key.
  * @param {string} params.displayName Id provider display name.
  * @param {string} [params.description] Id provider description.
- * @param {object} [params.idProviderConfig] Id provider configuration binding it to an application.
- * @param {string} params.idProviderConfig.applicationKey Application key that handles the id provider requests.
- * @param {object} [params.idProviderConfig.config] Application-specific configuration tree.
+ * @param {object} [params.idProviderConfig] Binds this provider to one application. Omit for a passive provider.
+ * @param {string} params.idProviderConfig.applicationKey Application that handles requests for this provider. Required when `idProviderConfig` is set.
+ * @param {object} [params.idProviderConfig.config] Per-instance configuration tree passed to the bound application.
  * @param {Array<object>} [params.permissions] Id provider permissions.
  * @returns {IdProvider} The created id provider.
  */
@@ -943,7 +985,9 @@ interface GetIdProvidersHandler {
 }
 
 /**
- * Returns all id providers.
+ * Returns all id providers known to the security repository. Each entry's
+ * `idProviderConfig` is present only when the provider is bound to an
+ * application; passive providers come back without it.
  *
  * @example-ref examples/auth/getIdProviders.js
  *
