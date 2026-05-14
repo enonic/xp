@@ -23,6 +23,9 @@ mappings:
     invertPattern: true
     match: "type:'portal:fragment'"
     order: 10
+  - pattern: "/_/static/${app}/.+"
+    controller: "/site/mappings/static-controller.js"
+    order: 10
 
 apis:
   - "admin:extension"

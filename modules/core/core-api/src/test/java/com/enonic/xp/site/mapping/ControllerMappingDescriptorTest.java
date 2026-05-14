@@ -120,6 +120,70 @@ class ControllerMappingDescriptorTest
     }
 
     @Test
+    void testAppTokenSubstitutedInPattern()
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( "com.foo.bar" );
+
+        final ControllerMappingDescriptor descriptor = ControllerMappingDescriptor.create().
+            controller( ResourceKey.from( applicationKey, "/site/controllers/mycontroller.js" ) ).
+            pattern( "/_/static/${app}/.+" ).
+            build();
+
+        final String expected = "/_/static/" + Pattern.quote( "com.foo.bar" ) + "/.+";
+        assertEquals( expected, descriptor.getPattern().pattern() );
+        assertTrue( descriptor.getPattern().matcher( "/_/static/com.foo.bar/main.js" ).matches() );
+        assertFalse( descriptor.getPattern().matcher( "/_/static/com.other.app/main.js" ).matches() );
+    }
+
+    @Test
+    void testAppTokenAbsentIsNoOp()
+    {
+        final ControllerMappingDescriptor descriptor = ControllerMappingDescriptor.create().
+            controller( ResourceKey.from( ApplicationKey.from( "com.foo.bar" ), "/site/controllers/mycontroller.js" ) ).
+            pattern( "/people/.*" ).
+            build();
+
+        assertEquals( "/people/.*", descriptor.getPattern().pattern() );
+    }
+
+    @Test
+    void testAppTokenExpansionIsRegexQuoted()
+    {
+        final ControllerMappingDescriptor descriptor = ControllerMappingDescriptor.create().
+            controller( ResourceKey.from( ApplicationKey.from( "com.foo.bar" ), "/site/controllers/mycontroller.js" ) ).
+            pattern( "/_/static/${app}/.+" ).
+            build();
+
+        assertFalse( descriptor.getPattern().matcher( "/_/static/comXfooYbar/main.js" ).matches() );
+    }
+
+    @Test
+    void testAppTokenSubstitutedForFilter()
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( "com.foo.bar" );
+
+        final ControllerMappingDescriptor descriptor = ControllerMappingDescriptor.create().
+            filter( ResourceKey.from( applicationKey, "/site/filters/myfilter.js" ) ).
+            pattern( "/_/static/${app}/.+" ).
+            build();
+
+        assertTrue( descriptor.getPattern().matcher( "/_/static/com.foo.bar/main.js" ).matches() );
+    }
+
+    @Test
+    void testExplicitApplicationKeyTakesPrecedence()
+    {
+        final ControllerMappingDescriptor descriptor = ControllerMappingDescriptor.create().
+            controller( ResourceKey.from( ApplicationKey.from( "com.foo.bar" ), "/site/controllers/mycontroller.js" ) ).
+            applicationKey( ApplicationKey.from( "com.override.app" ) ).
+            pattern( "/_/static/${app}/.+" ).
+            build();
+
+        assertTrue( descriptor.getPattern().matcher( "/_/static/com.override.app/main.js" ).matches() );
+        assertFalse( descriptor.getPattern().matcher( "/_/static/com.foo.bar/main.js" ).matches() );
+    }
+
+    @Test
     void testCompare()
     {
         final ControllerMappingDescriptor descriptor = ControllerMappingDescriptor.create().
