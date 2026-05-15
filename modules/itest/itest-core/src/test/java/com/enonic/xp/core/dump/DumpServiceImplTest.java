@@ -26,6 +26,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.dump.BranchDumpResult;
 import com.enonic.xp.dump.RepoDumpResult;
 import com.enonic.xp.dump.RepoLoadResult;
+import com.enonic.xp.dump.SystemDumpEntry;
 import com.enonic.xp.dump.SystemDumpListener;
 import com.enonic.xp.dump.SystemDumpParams;
 import com.enonic.xp.dump.SystemDumpResult;
@@ -45,7 +46,6 @@ import com.enonic.xp.node.GetActiveNodeVersionsResult;
 import com.enonic.xp.node.GetNodeVersionsParams;
 import com.enonic.xp.node.GetNodeVersionsResult;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
@@ -144,6 +144,44 @@ class DumpServiceImplTest
             doDump( SystemDumpParams.create().dumpName( "testDump" ).build() );
 
         } );
+    }
+
+    @Test
+    void list_requires_admin()
+    {
+        assertThrows( RepoDumpException.class, () -> this.dumpService.list() );
+    }
+
+    @Test
+    void list_returns_existing_dumps()
+        throws Exception
+    {
+        NodeHelper.runAsAdmin( () -> this.dumpService.dump( SystemDumpParams.create().dumpName( "alpha-dump" ).build() ) );
+        NodeHelper.runAsAdmin(
+            () -> this.dumpService.dump( SystemDumpParams.create().dumpName( "beta-dump" ).includeVersions( true ).build() ) );
+
+        // not a real dump — must be skipped
+        Files.writeString( temporaryFolder.resolve( "not-a-dump.zip" ), "garbage" );
+
+        final var entries = NodeHelper.runAsAdmin( () -> this.dumpService.list() );
+
+        assertEquals( 2, entries.size() );
+        assertThat( entries ).map( SystemDumpEntry::name ).containsExactly( "alpha-dump", "beta-dump" );
+
+        final var alpha = entries.getFirst();
+        assertEquals( "alpha-dump", alpha.name() );
+        assertNotNull( alpha.timestamp() );
+        assertNotNull( alpha.xpVersion() );
+        assertNotNull( alpha.modelVersion() );
+        assertNotNull( alpha.systemDumpResult() );
+        assertTrue( alpha.size() > 0 );
+    }
+
+    @Test
+    void list_empty_when_no_dumps()
+    {
+        final var entries = NodeHelper.runAsAdmin( () -> this.dumpService.list() );
+        assertTrue( entries.isEmpty() );
     }
 
     @Test
