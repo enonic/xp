@@ -219,6 +219,7 @@ public class ImageServiceImpl
 
                 final ImageScaleFunction imageScaleFunction;
                 final int scaledMemoryRequirements;
+                final int intermediatesMemoryRequirements;
                 if ( toScale )
                 {
                     imageScaleFunction =
@@ -226,17 +227,24 @@ public class ImageServiceImpl
                     final int scaledMultiplier = 1 + ( ( toApplyFilters || toAddBackground ) ? 1 : 0 );
                     scaledMemoryRequirements = Math.max(
                         toMegaBytes( (long) imageScaleFunction.estimateResolution( width, height ) * pixelSize * scaledMultiplier ), 1 );
+                    // ImageHelper.getScaledInstance does progressive halving on significant downscales, keeping
+                    // the previous intermediate alive while allocating the next one. Peak overhead is bounded by
+                    // the two largest intermediates (~1/4 + 1/16 = 5/16 of original area), rounded up to 1/3.
+                    intermediatesMemoryRequirements = Math.max( toMegaBytes( (long) width * height * pixelSize / 3 ), 1 );
                 }
                 else
                 {
                     imageScaleFunction = null;
                     scaledMemoryRequirements = 0;
+                    intermediatesMemoryRequirements = 0;
                 }
 
-                final int totalMemoryRequirementsEstimate = originalMemoryRequirements + scaledMemoryRequirements;
+                final int totalMemoryRequirementsEstimate =
+                    originalMemoryRequirements + scaledMemoryRequirements + intermediatesMemoryRequirements;
 
-                LOG.debug( "Estimated original {} scaled {} total {} requirements. With pixelSize {}", originalMemoryRequirements,
-                           scaledMemoryRequirements, totalMemoryRequirementsEstimate, pixelSize );
+                LOG.debug( "Estimated original {} scaled {} intermediates {} total {} requirements. With pixelSize {}",
+                           originalMemoryRequirements, scaledMemoryRequirements, intermediatesMemoryRequirements,
+                           totalMemoryRequirementsEstimate, pixelSize );
 
                 final int permitted = circuitBreaker.softTryAcquire( totalMemoryRequirementsEstimate );
                 try
