@@ -46,6 +46,7 @@ import com.enonic.xp.project.ProjectNotFoundException;
 import com.enonic.xp.project.ProjectPermissions;
 import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.project.Projects;
+import com.enonic.xp.project.SetProjectPublicReadParams;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeBranchEntry;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
@@ -67,6 +68,7 @@ import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.groups.Tuple.tuple;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -424,6 +426,112 @@ class ProjectServiceImplTest
 
             assertTrue( rootContentPermissions.getEntry( RoleKeys.EVERYONE ).isAllowed( Permission.READ ) );
         } );
+    }
+
+    @Test
+    void getRootPermissions()
+    {
+        final ProjectName projectName = ProjectName.from( "test-project" );
+        doCreateProjectAsAdmin( projectName );
+
+        final AccessControlList rootPermissions = adminContext().callWith( () -> projectService.getRootPermissions( projectName ) );
+
+        assertTrue( rootPermissions.getEntry( RoleKeys.ADMIN ).isAllowedAll() );
+        assertTrue( rootPermissions.getEntry( RoleKeys.CONTENT_MANAGER_ADMIN ).isAllowedAll() );
+        assertTrue( rootPermissions.getEntry( ProjectAccessHelper.createRoleKey( projectName, ProjectRole.OWNER ) ).isAllowedAll() );
+        assertTrue( rootPermissions.getEntry( ProjectAccessHelper.createRoleKey( projectName, ProjectRole.EDITOR ) ).isAllowedAll() );
+        assertTrue( rootPermissions.getEntry( ProjectAccessHelper.createRoleKey( projectName, ProjectRole.AUTHOR ) )
+                        .isAllowed( Permission.READ, Permission.CREATE, Permission.MODIFY, Permission.DELETE ) );
+        assertTrue( rootPermissions.getEntry( ProjectAccessHelper.createRoleKey( projectName, ProjectRole.CONTRIBUTOR ) )
+                        .isAllowed( Permission.READ ) );
+        assertTrue( rootPermissions.getEntry( ProjectAccessHelper.createRoleKey( projectName, ProjectRole.VIEWER ) )
+                        .isAllowed( Permission.READ ) );
+        assertNull( rootPermissions.getEntry( RoleKeys.EVERYONE ) );
+    }
+
+    @Test
+    void getRootPermissions_unknown_project()
+    {
+        assertThatThrownBy(
+            () -> adminContext().callWith( () -> projectService.getRootPermissions( ProjectName.from( "does-not-exist" ) ) ) ).isInstanceOf(
+            ProjectNotFoundException.class );
+    }
+
+    @Test
+    void getPublicRead_default_is_false()
+    {
+        final ProjectName projectName = ProjectName.from( "test-project" );
+        doCreateProjectAsAdmin( projectName );
+
+        assertFalse( adminContext().callWith( () -> projectService.getPublicRead( projectName ) ) );
+    }
+
+    @Test
+    void getPublicRead_true_when_created_public()
+    {
+        final ProjectName projectName = ProjectName.from( "test-project" );
+        adminContext().callWith( () -> doCreateProject( projectName, null, false, null, true, null ) );
+
+        assertTrue( adminContext().callWith( () -> projectService.getPublicRead( projectName ) ) );
+    }
+
+    @Test
+    void getPublicRead_unknown_project()
+    {
+        assertThatThrownBy(
+            () -> adminContext().callWith( () -> projectService.getPublicRead( ProjectName.from( "does-not-exist" ) ) ) ).isInstanceOf(
+            ProjectNotFoundException.class );
+    }
+
+    @Test
+    void setPublicRead_grants_then_revokes_everyone_read()
+    {
+        final RepositoryId projectRepoId = RepositoryId.from( "com.enonic.cms.test-project" );
+        final ProjectName projectName = ProjectName.from( projectRepoId );
+        doCreateProjectAsAdmin( projectName );
+
+        assertFalse( adminContext().callWith( () -> projectService.getPublicRead( projectName ) ) );
+
+        final boolean afterGrant = adminContext().callWith(
+            () -> projectService.setPublicRead( SetProjectPublicReadParams.create().name( projectName ).publicRead( true ).build() ) );
+        assertTrue( afterGrant );
+        assertTrue( adminContext().callWith( () -> projectService.getPublicRead( projectName ) ) );
+
+        List.of( ContextBuilder.from( adminContext() ).branch( ContentConstants.BRANCH_DRAFT ).repositoryId( projectRepoId ).build(),
+                 ContextBuilder.from( adminContext() ).branch( ContentConstants.BRANCH_MASTER ).repositoryId( projectRepoId ).build() )
+            .forEach( context -> context.runWith( () -> {
+                final Node rootContentNode = nodeService.getByPath( ContentConstants.CONTENT_ROOT_PATH );
+                assertTrue( rootContentNode.getPermissions().getEntry( RoleKeys.EVERYONE ).isAllowed( Permission.READ ) );
+            } ) );
+
+        final boolean afterRevoke = adminContext().callWith(
+            () -> projectService.setPublicRead( SetProjectPublicReadParams.create().name( projectName ).publicRead( false ).build() ) );
+        assertFalse( afterRevoke );
+        assertFalse( adminContext().callWith( () -> projectService.getPublicRead( projectName ) ) );
+
+        List.of( ContextBuilder.from( adminContext() ).branch( ContentConstants.BRANCH_DRAFT ).repositoryId( projectRepoId ).build(),
+                 ContextBuilder.from( adminContext() ).branch( ContentConstants.BRANCH_MASTER ).repositoryId( projectRepoId ).build() )
+            .forEach( context -> context.runWith( () -> {
+                final Node rootContentNode = nodeService.getByPath( ContentConstants.CONTENT_ROOT_PATH );
+                assertNull( rootContentNode.getPermissions().getEntry( RoleKeys.EVERYONE ) );
+            } ) );
+    }
+
+    @Test
+    void setPublicRead_preserves_role_permissions()
+    {
+        final RepositoryId projectRepoId = RepositoryId.from( "com.enonic.cms.test-project" );
+        final ProjectName projectName = ProjectName.from( projectRepoId );
+        doCreateProjectAsAdmin( projectName );
+
+        adminContext().callWith(
+            () -> projectService.setPublicRead( SetProjectPublicReadParams.create().name( projectName ).publicRead( true ).build() ) );
+
+        final AccessControlList rootPermissions = adminContext().callWith( () -> projectService.getRootPermissions( projectName ) );
+
+        assertTrue( rootPermissions.getEntry( RoleKeys.EVERYONE ).isAllowed( Permission.READ ) );
+        assertTrue( rootPermissions.getEntry( ProjectAccessHelper.createRoleKey( projectName, ProjectRole.OWNER ) ).isAllowedAll() );
+        assertTrue( rootPermissions.getEntry( ProjectAccessHelper.createRoleKey( projectName, ProjectRole.EDITOR ) ).isAllowedAll() );
     }
 
     @Test

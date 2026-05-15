@@ -513,16 +513,8 @@ public class ProjectServiceImpl
 
     private AccessControlList doGetRootPermissions( final ProjectName projectName )
     {
-        try
-        {
-            final Node contentRoot =
-                contentRootDataContext( projectName ).callWith( () -> nodeService.getByPath( ContentConstants.CONTENT_ROOT_PATH ) );
-            return contentRoot != null ? contentRoot.getPermissions() : AccessControlList.empty();
-        }
-        catch ( RepositoryNotFoundException | BranchNotFoundException e )
-        {
-            return AccessControlList.empty();
-        }
+        final Node contentRoot = getProjectContentRootOrThrow( projectName );
+        return contentRoot.getPermissions();
     }
 
     @Override
@@ -533,16 +525,27 @@ public class ProjectServiceImpl
 
     private boolean doGetPublicRead( final ProjectName projectName )
     {
+        final Node contentRoot = getProjectContentRootOrThrow( projectName );
+        return contentRoot.getPermissions().isAllowedFor( RoleKeys.EVERYONE, Permission.READ );
+    }
+
+    private Node getProjectContentRootOrThrow( final ProjectName projectName )
+    {
+        final Node contentRoot;
         try
         {
-            final Node contentRoot =
+            contentRoot =
                 contentRootDataContext( projectName ).callWith( () -> nodeService.getByPath( ContentConstants.CONTENT_ROOT_PATH ) );
-            return contentRoot != null && contentRoot.getPermissions().isAllowedFor( RoleKeys.EVERYONE, Permission.READ );
         }
         catch ( RepositoryNotFoundException | BranchNotFoundException e )
         {
-            return false;
+            throw new ProjectNotFoundException( projectName );
         }
+        if ( contentRoot == null )
+        {
+            throw new ProjectNotFoundException( projectName );
+        }
+        return contentRoot;
     }
 
     @Override
