@@ -1,17 +1,25 @@
 package com.enonic.xp.impl.server.rest;
 
+import java.time.Instant;
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import jakarta.ws.rs.core.MediaType;
 
+import com.enonic.xp.dump.DumpService;
+import com.enonic.xp.dump.SystemDumpEntry;
+import com.enonic.xp.dump.SystemDumpResult;
 import com.enonic.xp.impl.server.rest.model.TaskResultJson;
 import com.enonic.xp.impl.server.rest.model.VacuumRequestJson;
 import com.enonic.xp.jaxrs.impl.JaxRsResourceTestSupport;
+import com.enonic.xp.support.JsonTestHelper;
 import com.enonic.xp.task.SubmitLocalTaskParams;
 import com.enonic.xp.task.SubmitTaskParams;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskService;
+import com.enonic.xp.util.Version;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -26,6 +34,8 @@ class SystemResourceTest
     extends JaxRsResourceTestSupport
 {
     private TaskService taskService;
+
+    private DumpService dumpService;
 
     private SystemResource resource;
 
@@ -93,12 +103,28 @@ class SystemResourceTest
         assertEquals( "{\"taskId\":\"task-id\"}", result );
     }
 
+    @Test
+    void list()
+        throws Exception
+    {
+        final SystemDumpEntry entry =
+            new SystemDumpEntry( "my-dump", Instant.parse( "2025-01-02T03:04:05Z" ), "8.1.0", new Version( 9 ), 1234L,
+                                 SystemDumpResult.create().build() );
+
+        when( dumpService.list() ).thenReturn( List.of( entry ) );
+
+        final JsonTestHelper jsonTestHelper = new JsonTestHelper( this );
+        final String result = request().path( "system/dump" ).get().getAsString();
+        jsonTestHelper.assertJsonEquals( jsonTestHelper.loadTestJson( "list_dumps_result.json" ), jsonTestHelper.stringToJson( result ) );
+    }
+
     @Override
     protected Object getResourceInstance()
     {
         this.taskService = mock( TaskService.class );
+        this.dumpService = mock( DumpService.class );
 
-        resource = new SystemResource(null, taskService);
+        resource = new SystemResource( dumpService, taskService );
 
         return resource;
     }

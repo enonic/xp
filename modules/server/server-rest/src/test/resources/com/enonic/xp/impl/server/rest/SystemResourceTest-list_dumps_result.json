@@ -1,0 +1,14 @@
+{
+  "dumps": [
+    {
+      "modelVersion": "9.0.0",
+      "name": "my-dump",
+      "repositories": {
+        "repositories": []
+      },
+      "size": 1234,
+      "timestamp": "2025-01-02T03:04:05Z",
+      "xpVersion": "8.1.0"
+    }
+  ]
+}

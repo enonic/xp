@@ -1,16 +1,25 @@
 package com.enonic.xp.repo.impl.dump;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.nio.channels.SeekableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -23,6 +32,7 @@ import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.dump.DumpService;
 import com.enonic.xp.dump.DumpUpgradeResult;
 import com.enonic.xp.dump.RepoDumpResult;
+import com.enonic.xp.dump.SystemDumpEntry;
 import com.enonic.xp.dump.SystemDumpParams;
 import com.enonic.xp.dump.SystemDumpResult;
 import com.enonic.xp.dump.SystemDumpUpgradeParams;
@@ -42,6 +52,7 @@ import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.repo.impl.dump.reader.DumpReader;
 import com.enonic.xp.repo.impl.dump.reader.NodeLoader;
 import com.enonic.xp.repo.impl.dump.reader.ZipDumpReaderModel9;
+import com.enonic.xp.repo.impl.dump.serializer.json.DumpMetaJsonSerializer;
 import com.enonic.xp.repo.impl.dump.upgrade.DumpUpgraderRunner;
 import com.enonic.xp.repo.impl.dump.writer.DumpWriter;
 import com.enonic.xp.repo.impl.dump.writer.ZipDumpWriterModel9;
@@ -104,6 +115,69 @@ public class DumpServiceImpl
         this.branchService = branchService;
         this.eventPublisher = eventPublisher;
         this.repoConfiguration = repoConfiguration;
+    }
+
+    @Override
+    public List<SystemDumpEntry> list()
+    {
+        if ( !SecurityHelper.isAdmin() )
+        {
+            throw new RepoDumpException( "Only admin role users can list dumps" );
+        }
+
+        final Path basePath = ensureBasePath();
+
+        try (Stream<Path> files = Files.list( basePath ))
+        {
+            final List<SystemDumpEntry> entries = new ArrayList<>();
+            files.filter( Files::isRegularFile ).filter( path -> path.getFileName().toString().endsWith( ".zip" ) ).forEach( path -> {
+                final SystemDumpEntry entry = readDumpEntry( path );
+                if ( entry != null )
+                {
+                    entries.add( entry );
+                }
+            } );
+            entries.sort( Comparator.comparing( SystemDumpEntry::name ) );
+            return List.copyOf( entries );
+        }
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
+    }
+
+    private SystemDumpEntry readDumpEntry( final Path zipPath )
+    {
+        final String fileName = zipPath.getFileName().toString();
+        final String dumpName = fileName.substring( 0, fileName.length() - ".zip".length() );
+
+        try (SeekableByteChannel channel = Files.newByteChannel( zipPath, EnumSet.of(
+            StandardOpenOption.READ ) ); ZipFile zipFile = ZipFile.builder().setSeekableByteChannel( channel ).get())
+        {
+            ZipArchiveEntry metaEntry = zipFile.getEntry( "dump.json" );
+            if ( metaEntry == null )
+            {
+                metaEntry = zipFile.getEntry( dumpName + "/dump.json" );
+            }
+            if ( metaEntry == null )
+            {
+                return null;
+            }
+
+            final DumpMeta dumpMeta;
+            try (InputStream stream = zipFile.getInputStream( metaEntry ))
+            {
+                dumpMeta = new DumpMetaJsonSerializer().toDumpMeta( stream );
+            }
+
+            return new SystemDumpEntry( dumpName, dumpMeta.getTimestamp(), dumpMeta.getXpVersion(), dumpMeta.getModelVersion(),
+                                        Files.size( zipPath ), dumpMeta.getSystemDumpResult() );
+        }
+        catch ( IOException | RuntimeException e )
+        {
+            LOG.warn( "Cannot read dump [{}], skipping", dumpName, e );
+            return null;
+        }
     }
 
     @Override
