@@ -639,8 +639,8 @@ export function deletePrincipal(principalKey: PrincipalKey): boolean {
     return __.toNativeObject(bean.deletePrincipal());
 }
 
-interface GetIdProviderConfigHandler<IdProviderConfig extends Record<string, unknown>> {
-    execute(): IdProviderConfig | null;
+interface GetIdProviderConfigHandler<Config extends Record<string, unknown>> {
+    execute(): Config | null;
 }
 
 /**
@@ -651,8 +651,8 @@ interface GetIdProviderConfigHandler<IdProviderConfig extends Record<string, unk
  *
  * @returns {object} The ID provider configuration as JSON.
  */
-export function getIdProviderConfig<IdProviderConfig extends Record<string, unknown>>(): IdProviderConfig | null {
-    const bean: GetIdProviderConfigHandler<IdProviderConfig> = __.newBean<GetIdProviderConfigHandler<IdProviderConfig>>(
+export function getIdProviderConfig<Config extends Record<string, unknown>>(): Config | null {
+    const bean: GetIdProviderConfigHandler<Config> = __.newBean<GetIdProviderConfigHandler<Config>>(
         'com.enonic.xp.lib.auth.GetIdProviderConfigHandler');
     return __.toNativeObject(bean.execute());
 }
@@ -872,16 +872,59 @@ export interface IdProviderAccessControlEntry {
     access: IdProviderAccess;
 }
 
-export interface IdProvider {
-    key: string;
-    displayName: string;
-    description?: string;
+/**
+ * Configuration that binds an id provider to the application implementing
+ * its authentication flow.
+ *
+ * An id provider can be bound to at most **one** application via
+ * `applicationKey`. The same application may, in turn, back several id
+ * providers — each with its own `config` tree (e.g. a `staff` and a
+ * `customers` provider both implemented by the same id-provider app).
+ *
+ * An id provider without `idProviderConfig` is incomplete and most
+ * flows that rely on it won't work until a binding is added.
+ */
+export interface IdProviderConfig {
+    /**
+     * Key of the application whose handlers serve requests for this
+     * provider.
+     */
+    applicationKey: string;
+    /**
+     * Per-instance configuration tree, exposed to the bound application.
+     */
+    config?: Record<string, unknown>;
 }
 
+/**
+ * An id provider. Has 0 or 1 bound application via `idProviderConfig`;
+ * the binding determines which app handles login, logout, registration,
+ * and similar flows for this provider.
+ */
+export interface IdProvider {
+    /** Unique key identifying this provider (e.g. `system`, `simpleid`). */
+    key: string;
+    /** Human-readable label shown in admin UIs. */
+    displayName: string;
+    /** Optional free-text description. */
+    description?: string;
+    /**
+     * Application binding. Absent ⇒ the provider is incomplete and
+     * dependent flows generally won't work.
+     */
+    idProviderConfig?: IdProviderConfig;
+}
+
+/**
+ * Parameters for {@link createIdProvider}. See {@link IdProvider} for the
+ * meaning of each field; without `idProviderConfig` the provider is
+ * incomplete.
+ */
 export interface CreateIdProviderParams {
     key: string;
     displayName: string;
     description?: string;
+    idProviderConfig?: IdProviderConfig;
     permissions?: IdProviderAccessControlEntry[];
 }
 
@@ -892,6 +935,8 @@ interface CreateIdProviderHandler {
 
     setDescription(value: string | null): void;
 
+    setIdProviderConfig(value: ScriptValue | null): void;
+
     setPermissions(value: ScriptValue | null): void;
 
     createIdProvider(): IdProvider;
@@ -900,12 +945,19 @@ interface CreateIdProviderHandler {
 /**
  * Creates an id provider.
  *
+ * An id provider can be bound to at most one application via
+ * `params.idProviderConfig`. Without it the provider is incomplete and
+ * most flows that rely on it won't work until a binding is added.
+ *
  * @example-ref examples/auth/createIdProvider.js
  *
  * @param {object} params JSON parameters.
  * @param {string} params.key Id provider key.
  * @param {string} params.displayName Id provider display name.
  * @param {string} [params.description] Id provider description.
+ * @param {object} [params.idProviderConfig] Binds this provider to one application. Without it the provider is incomplete.
+ * @param {string} params.idProviderConfig.applicationKey Application that handles requests for this provider. Required when `idProviderConfig` is set.
+ * @param {object} [params.idProviderConfig.config] Per-instance configuration tree passed to the bound application.
  * @param {Array<object>} [params.permissions] Id provider permissions.
  * @returns {IdProvider} The created id provider.
  */
@@ -920,6 +972,7 @@ export function createIdProvider(
     bean.setKey(key);
     bean.setDisplayName(displayName);
     bean.setDescription(__.nullOrValue(params.description));
+    bean.setIdProviderConfig(params.idProviderConfig == null ? null : __.toScriptValue(params.idProviderConfig));
     bean.setPermissions(params.permissions == null ? null : __.toScriptValue(params.permissions));
 
     return __.toNativeObject(bean.createIdProvider()) as IdProvider;
@@ -930,7 +983,9 @@ interface GetIdProvidersHandler {
 }
 
 /**
- * Returns all id providers.
+ * Returns all id providers. Each entry's `idProviderConfig` is present
+ * only when the provider is bound to an application; incomplete
+ * providers come back without it.
  *
  * @example-ref examples/auth/getIdProviders.js
  *
