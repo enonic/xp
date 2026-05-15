@@ -4,8 +4,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.security.CreateIdProviderParams;
 import com.enonic.xp.security.IdProviderAlreadyExistsException;
+import com.enonic.xp.security.IdProviderConfig;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.testing.ScriptTestSupport;
@@ -48,7 +50,15 @@ class CreateIdProviderHandlerTest
         assertThat( params.getKey() ).isEqualTo( IdProviderKey.from( "idProviderTestKey" ) );
         assertThat( params.getDisplayName() ).isEqualTo( "Id Provider test" );
         assertThat( params.getDescription() ).isEqualTo( "Id Provider used for testing" );
-        assertThat( params.getIdProviderConfig() ).isNull();
+
+        final IdProviderConfig idProviderConfig = params.getIdProviderConfig();
+        assertThat( idProviderConfig ).isNotNull();
+        assertThat( idProviderConfig.getApplicationKey() ).isEqualTo( ApplicationKey.from( "com.enonic.app.test" ) );
+        assertThat( idProviderConfig.getConfig() ).isNotNull();
+        assertThat( idProviderConfig.getConfig().getString( "loginUrl" ) ).isEqualTo( "https://example.com/login" );
+        assertThat( idProviderConfig.getConfig().getBoolean( "nested.flag" ) ).isTrue();
+        assertThat( idProviderConfig.getConfig().getLong( "nested.count" ) ).isEqualTo( 7L );
+
         assertThat( params.getIdProviderPermissions() ).isNotNull();
         assertThat( params.getIdProviderPermissions().isEmpty() ).isFalse();
     }
@@ -69,6 +79,31 @@ class CreateIdProviderHandlerTest
         assertThat( params.getDescription() ).isNull();
         assertThat( params.getIdProviderConfig() ).isNull();
         assertThat( params.getIdProviderPermissions().isEmpty() ).isTrue();
+    }
+
+    @Test
+    void testCreateIdProviderConfigWithoutConfig()
+    {
+        Mockito.when( securityService.createIdProvider( Mockito.any() ) ).thenReturn( TestDataFixtures.getTestIdProvider() );
+
+        runFunction( "/test/createIdProvider-test.js", "createIdProviderConfigWithoutConfig" );
+
+        final ArgumentCaptor<CreateIdProviderParams> captor = ArgumentCaptor.forClass( CreateIdProviderParams.class );
+        Mockito.verify( securityService ).createIdProvider( captor.capture() );
+
+        final IdProviderConfig idProviderConfig = captor.getValue().getIdProviderConfig();
+        assertThat( idProviderConfig ).isNotNull();
+        assertThat( idProviderConfig.getApplicationKey() ).isEqualTo( ApplicationKey.from( "com.enonic.app.test" ) );
+        assertThat( idProviderConfig.getConfig() ).isNotNull();
+        assertThat( idProviderConfig.getConfig().getRoot().getPropertySize() ).isZero();
+    }
+
+    @Test
+    void testCreateIdProviderMissingApplicationKey()
+    {
+        assertThatThrownBy(
+            () -> runFunction( "/test/createIdProvider-test.js", "createIdProviderMissingApplicationKey" ) ).hasMessageContaining(
+            "applicationKey" );
     }
 
     @Test
