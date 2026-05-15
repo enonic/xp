@@ -5,12 +5,14 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import jakarta.annotation.security.RolesAllowed;
+import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
 import com.enonic.xp.dump.DumpService;
+import com.enonic.xp.impl.server.rest.model.SystemDumpListJson;
 import com.enonic.xp.impl.server.rest.model.SystemDumpRequestJson;
 import com.enonic.xp.impl.server.rest.model.SystemDumpUpgradeRequestJson;
 import com.enonic.xp.impl.server.rest.model.SystemLoadRequestJson;
@@ -44,6 +46,13 @@ public final class SystemResource
     {
         this.dumpService = dumpService;
         this.taskService = taskService;
+    }
+
+    @GET
+    @Path("dump")
+    public SystemDumpListJson list()
+    {
+        return SystemDumpListJson.from( dumpService.list() );
     }
 
     @POST
