@@ -32,11 +32,11 @@ public interface ProjectService
 
     ProjectPermissions modifyPermissions( ProjectName projectName, ProjectPermissions projectPermissions );
 
-    boolean setReadAccess( SetProjectReadAccessParams params );
+    boolean setPublicRead( SetProjectPublicReadParams params );
 
     ProjectPermissions getPermissions( ProjectName projectName );
 
     AccessControlList getRootPermissions( ProjectName projectName );
 
-    boolean getReadAccess( ProjectName projectName );
+    boolean getPublicRead( ProjectName projectName );
 }

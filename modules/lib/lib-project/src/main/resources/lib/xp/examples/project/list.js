@@ -16,9 +16,7 @@ var expected = [
         'id': 'my-project',
         'displayName': 'My Content Project',
         'permissions': [],
-        'readAccess': {
-            'public': true
-        }
+        'publicRead': true
     }
 ];
 // END

@@ -10,12 +10,12 @@ import com.enonic.xp.security.acl.Permission;
 public final class CreateProjectRootAccessListCommand
     extends AbstractProjectCommand
 {
-    private final boolean isPublic;
+    private final boolean publicRead;
 
     private CreateProjectRootAccessListCommand( final Builder builder )
     {
         super( builder );
-        this.isPublic = builder.isPublic;
+        this.publicRead = builder.publicRead;
     }
 
     public static Builder create()
@@ -54,7 +54,7 @@ public final class CreateProjectRootAccessListCommand
                       .principal( ProjectAccessHelper.createRoleKey( projectName, ProjectRole.VIEWER ) )
                       .build() );
 
-        if ( isPublic )
+        if ( publicRead )
         {
             builder.add( AccessControlEntry.create().allow( Permission.READ ).principal( RoleKeys.EVERYONE ).build() );
         }
@@ -65,15 +65,15 @@ public final class CreateProjectRootAccessListCommand
     public static final class Builder
         extends AbstractProjectCommand.Builder<Builder>
     {
-        boolean isPublic;
+        boolean publicRead;
 
         private Builder()
         {
         }
 
-        public Builder isPublic( final boolean isPublic )
+        public Builder publicRead( final boolean publicRead )
         {
-            this.isPublic = isPublic;
+            this.publicRead = publicRead;
             return this;
         }
 

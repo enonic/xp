@@ -9,18 +9,18 @@ import static java.util.Objects.requireNonNull;
 
 
 @NullMarked
-public final class SetProjectReadAccessParams
+public final class SetProjectPublicReadParams
 {
     private final ProjectName name;
 
-    private final boolean isPublic;
+    private final boolean publicRead;
 
     private final @Nullable ApplyPermissionsListener listener;
 
-    private SetProjectReadAccessParams( final Builder builder )
+    private SetProjectPublicReadParams( final Builder builder )
     {
         this.name = requireNonNull( builder.name, "name is required" );
-        this.isPublic = builder.isPublic;
+        this.publicRead = builder.publicRead;
         this.listener = builder.listener;
     }
 
@@ -34,9 +34,9 @@ public final class SetProjectReadAccessParams
         return name;
     }
 
-    public boolean isPublic()
+    public boolean isPublicRead()
     {
-        return isPublic;
+        return publicRead;
     }
 
     public @Nullable ApplyPermissionsListener getListener()
@@ -48,7 +48,7 @@ public final class SetProjectReadAccessParams
     {
         private @Nullable ProjectName name;
 
-        private boolean isPublic;
+        private boolean publicRead;
 
         private @Nullable ApplyPermissionsListener listener;
 
@@ -62,9 +62,9 @@ public final class SetProjectReadAccessParams
             return this;
         }
 
-        public Builder isPublic( final boolean isPublic )
+        public Builder publicRead( final boolean publicRead )
         {
-            this.isPublic = isPublic;
+            this.publicRead = publicRead;
             return this;
         }
 
@@ -74,9 +74,9 @@ public final class SetProjectReadAccessParams
             return this;
         }
 
-        public SetProjectReadAccessParams build()
+        public SetProjectPublicReadParams build()
         {
-            return new SetProjectReadAccessParams( this );
+            return new SetProjectPublicReadParams( this );
         }
     }
 }

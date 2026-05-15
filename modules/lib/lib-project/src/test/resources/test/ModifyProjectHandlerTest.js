@@ -31,9 +31,7 @@ var modifyProjectExpected = {
             'user:system:viewer1'
         ]
     },
-    readAccess: {
-        public: true
-    }
+    publicRead: true
 };
 
 exports.modifyProject = function () {
@@ -83,9 +81,7 @@ var modifyDescriptionExpected = {
             'user:system:viewer1'
         ]
     },
-    readAccess: {
-        public: true
-    }
+    publicRead: true
 };
 
 exports.modifyDescription = function () {
@@ -117,9 +113,7 @@ var modifyDisplayNameExpected = {
             'user:system:viewer1'
         ]
     },
-    readAccess: {
-        public: true
-    }
+    publicRead: true
 };
 
 exports.modifyDisplayName = function () {
@@ -151,9 +145,7 @@ var modifyLanguageExpected = {
             'user:system:viewer1'
         ]
     },
-    readAccess: {
-        public: true
-    }
+    publicRead: true
 };
 
 var clearLanguageExpected = {
@@ -170,9 +162,7 @@ var clearLanguageExpected = {
             'user:system:viewer1'
         ]
     },
-    readAccess: {
-        public: true
-    }
+    publicRead: true
 };
 
 var modifyApplicationsExpected = {
@@ -198,9 +188,7 @@ var modifyApplicationsExpected = {
             'user:system:viewer1'
         ]
     },
-    readAccess: {
-        public: true
-    }
+    publicRead: true
 };
 
 exports.modifyLanguage = function () {
@@ -258,7 +246,7 @@ function createProject() {
         displayName: 'project display name',
         description: 'project description',
         language: 'ja',
-        readAccess: {public: true},
+        publicRead: true,
         permissions: {owner: ['user:system:owner2', 'user:system:owner1'], viewer: ['user:system:viewer1']}
     });
 }

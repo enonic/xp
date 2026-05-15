@@ -1,7 +1,6 @@
 package com.enonic.xp.lib.project;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 import com.enonic.xp.lib.project.mapper.ProjectMapper;
@@ -19,15 +18,12 @@ public final class ListProjectsHandler
         return projects.stream().map( project -> {
             final ProjectPermissions projectPermissions = this.projectService.get().getPermissions( project.getName() );
 
-            final boolean readAccess = this.projectService.get().getReadAccess( project.getName() );
-
-            final Locale language = project.getLanguage();
+            final boolean publicRead = this.projectService.get().getPublicRead( project.getName() );
 
             return ProjectMapper.create()
                 .setProject( project )
-                .setLanguage( language )
                 .setProjectPermissions( projectPermissions )
-                .setIsPublic( readAccess )
+                .setPublicRead( publicRead )
                 .build();
 
         } ).collect( Collectors.toList() );

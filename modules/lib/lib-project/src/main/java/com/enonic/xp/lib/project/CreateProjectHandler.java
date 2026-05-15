@@ -36,7 +36,7 @@ public final class CreateProjectHandler
 
     private SiteConfigs siteConfigs;
 
-    private boolean isPublic;
+    private boolean publicRead;
 
     @Override
     protected ProjectMapper doExecute()
@@ -50,9 +50,8 @@ public final class CreateProjectHandler
 
         return ProjectMapper.create()
             .setProject( project )
-            .setLanguage( project.getLanguage() )
             .setProjectPermissions( modifiedPermissions )
-            .setIsPublic( isPublic )
+            .setPublicRead( publicRead )
             .build();
     }
 
@@ -63,7 +62,7 @@ public final class CreateProjectHandler
             .displayName( this.displayName )
             .description( this.description )
             .language( this.language )
-            .isPublic( isPublic )
+            .publicRead( publicRead )
             .forceInitialization( true );
 
         if ( parents != null )
@@ -110,9 +109,9 @@ public final class CreateProjectHandler
         this.permissions = buildProjectPermissions( value );
     }
 
-    public void setReadAccess( final ScriptValue value )
+    public void setPublicRead( final boolean value )
     {
-        this.isPublic = buildReadAccess( value );
+        this.publicRead = value;
     }
 
     public void setParents( final String[] values )

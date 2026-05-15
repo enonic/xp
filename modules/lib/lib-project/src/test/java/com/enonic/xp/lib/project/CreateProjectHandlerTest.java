@@ -31,12 +31,6 @@ class CreateProjectHandlerTest
     }
 
     @Test
-    void createProjectWithoutReadAccess()
-    {
-        runFunction( "/test/CreateProjectHandlerTest.js", "createProjectWithoutReadAccess" );
-    }
-
-    @Test
     void createProjectWithApplications()
     {
         runFunction( "/test/CreateProjectHandlerTest.js", "createProjectWithApplications" );

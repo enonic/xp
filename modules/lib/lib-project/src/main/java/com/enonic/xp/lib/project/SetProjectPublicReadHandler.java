@@ -1,29 +1,28 @@
 package com.enonic.xp.lib.project;
 
 import com.enonic.xp.content.ApplyPermissionsListener;
-import com.enonic.xp.lib.project.mapper.ProjectReadAccessMapper;
 import com.enonic.xp.project.ProjectName;
-import com.enonic.xp.project.SetProjectReadAccessParams;
-import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.project.SetProjectPublicReadParams;
 import com.enonic.xp.task.ProgressReportParams;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.TaskProgressReporterContext;
 
-public final class ModifyProjectReadAccessHandler
+public final class SetProjectPublicReadHandler
     extends BaseProjectHandler
 {
     private ProjectName id;
 
-    private boolean isPublic;
+    private boolean publicRead;
 
     @Override
-    protected ProjectReadAccessMapper doExecute()
+    protected Boolean doExecute()
     {
-        final boolean result = this.projectService.get()
-            .setReadAccess(
-                SetProjectReadAccessParams.create().name( this.id ).isPublic( this.isPublic ).listener( taskProgressListener() ).build() );
-
-        return new ProjectReadAccessMapper( result );
+        return this.projectService.get()
+            .setPublicRead( SetProjectPublicReadParams.create()
+                                .name( this.id )
+                                .publicRead( this.publicRead )
+                                .listener( taskProgressListener() )
+                                .build() );
     }
 
     private static ApplyPermissionsListener taskProgressListener()
@@ -76,8 +75,8 @@ public final class ModifyProjectReadAccessHandler
         this.id = ProjectName.from( value );
     }
 
-    public void setReadAccess( final ScriptValue value )
+    public void setPublicRead( final boolean value )
     {
-        this.isPublic = buildReadAccess( value );
+        this.publicRead = value;
     }
 }

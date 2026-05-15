@@ -36,16 +36,11 @@ public final class ModifyProjectHandler
 
         final Project project = this.projectService.get().modify( params );
 
-        final boolean isPublic = this.projectService.get().getReadAccess( this.id );
+        final boolean publicRead = this.projectService.get().getPublicRead( this.id );
 
         final ProjectPermissions projectPermissions = this.projectService.get().getPermissions( this.id );
 
-        return ProjectMapper.create()
-            .setProject( project )
-            .setLanguage( project.getLanguage() )
-            .setProjectPermissions( projectPermissions )
-            .setIsPublic( isPublic )
-            .build();
+        return ProjectMapper.create().setProject( project ).setProjectPermissions( projectPermissions ).setPublicRead( publicRead ).build();
     }
 
     private ProjectEditor newProjectEditor()

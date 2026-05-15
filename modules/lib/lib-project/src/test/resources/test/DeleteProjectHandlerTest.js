@@ -29,7 +29,7 @@ exports.deleteProjectNull = function () {
         });
         throw new Error('IllegalArgumentException should be thrown.');
 
-    } catch (e ) {
+    } catch (e) {
         assert.assertEquals('Parameter \'id\' is required', e.message);
 
     }
@@ -40,7 +40,7 @@ function createProject() {
         id: 'myproject',
         displayName: 'project display name',
         description: 'project description',
-        readAccess: {public: true},
+        publicRead: true,
         permissions: {owner: ['user:system:owner2', 'user:system:owner1'], viewer: ['user:system:viewer1']}
     });
 }

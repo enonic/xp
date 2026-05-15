@@ -61,7 +61,7 @@ function createProject(siteConfig) {
         id: 'myproject',
         displayName: 'project display name',
         description: 'project description',
-        readAccess: {public: true},
+        publicRead: true,
         siteConfig: siteConfig
     });
 }

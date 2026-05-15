@@ -29,7 +29,7 @@ import com.enonic.xp.project.ProjectNotFoundException;
 import com.enonic.xp.project.ProjectPermissions;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.project.Projects;
-import com.enonic.xp.project.SetProjectReadAccessParams;
+import com.enonic.xp.project.SetProjectPublicReadParams;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -89,7 +89,7 @@ public abstract class BaseProjectHandlerTest
             when( projectService.get( project.getName() ) ).thenReturn( project );
             when( projectService.delete( project.getName() ) ).thenReturn( true );
 
-            when( projectService.getReadAccess( project.getName() ) ).thenReturn( params.isPublic() );
+            when( projectService.getPublicRead( project.getName() ) ).thenReturn( params.isPublicRead() );
 
             projects.put( project.getName(), project );
 
@@ -111,10 +111,10 @@ public abstract class BaseProjectHandlerTest
             return project;
         } );
 
-        when( this.projectService.setReadAccess( any( SetProjectReadAccessParams.class ) ) ).thenAnswer( invocation -> {
-            final SetProjectReadAccessParams setParams = invocation.getArgument( 0 );
-            when( projectService.getReadAccess( setParams.getName() ) ).thenReturn( setParams.isPublic() );
-            return setParams.isPublic();
+        when( this.projectService.setPublicRead( any( SetProjectPublicReadParams.class ) ) ).thenAnswer( invocation -> {
+            final SetProjectPublicReadParams setParams = invocation.getArgument( 0 );
+            when( projectService.getPublicRead( setParams.getName() ) ).thenReturn( setParams.isPublicRead() );
+            return setParams.isPublicRead();
         } );
 
         when( this.projectService.list() ).thenAnswer( mock -> Projects.create().addAll( projects.values() ).build() );

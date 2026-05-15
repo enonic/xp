@@ -26,6 +26,7 @@ import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.ApplicationKeys;
@@ -74,7 +75,7 @@ import com.enonic.xp.project.ProjectPermissions;
 import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.project.Projects;
-import com.enonic.xp.project.SetProjectReadAccessParams;
+import com.enonic.xp.project.SetProjectPublicReadParams;
 import com.enonic.xp.repository.BranchNotFoundException;
 import com.enonic.xp.repository.DeleteRepositoryParams;
 import com.enonic.xp.repository.Repositories;
@@ -97,6 +98,7 @@ import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.vacuum.VacuumConstants;
 
+import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElse;
 
 @NullMarked
@@ -139,11 +141,15 @@ public class ProjectServiceImpl
             final Repositories repositories = this.repositoryService.list();
 
             getProjectRepositories( repositories ).forEach( repository -> {
+                final ProjectName projectName = requireNonNull( ProjectName.from( repository.getId() ) );
                 final PropertySet projectData = repository.getData().getSet( ProjectConstants.PROJECT_DATA_SET_NAME );
 
+                final String displayName =
+                    requireNonNullElse( projectData.getString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY ), projectName.toString() );
+
                 doInitRootNodes( CreateProjectParams.create()
-                                     .name( ProjectName.from( repository.getId() ) )
-                                     .displayName( projectData.getString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY ) )
+                                     .name( projectName )
+                                     .displayName( displayName )
                                      .description( projectData.getString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY ) )
                                      .build(), null );
             } );
@@ -215,7 +221,7 @@ public class ProjectServiceImpl
             .setContentData( contentRootData )
             .accessControlList( CreateProjectRootAccessListCommand.create()
                                     .projectName( params.getName() )
-                                    .isPublic( params.isPublic() )
+                                    .publicRead( params.isPublicRead() )
                                     .build()
                                     .execute() )
             .forceInitialization( params.isForceInitialization() )
@@ -520,12 +526,12 @@ public class ProjectServiceImpl
     }
 
     @Override
-    public boolean getReadAccess( final ProjectName projectName )
+    public boolean getPublicRead( final ProjectName projectName )
     {
-        return callWithGetContext( () -> doGetReadAccess( projectName ), projectName );
+        return callWithGetContext( () -> doGetPublicRead( projectName ), projectName );
     }
 
-    private boolean doGetReadAccess( final ProjectName projectName )
+    private boolean doGetPublicRead( final ProjectName projectName )
     {
         try
         {
@@ -540,14 +546,14 @@ public class ProjectServiceImpl
     }
 
     @Override
-    public boolean setReadAccess( final SetProjectReadAccessParams params )
+    public boolean setPublicRead( final SetProjectPublicReadParams params )
     {
-        return callWithUpdateContext( () -> doSetReadAccess( params ), params.getName() );
+        return callWithUpdateContext( () -> doSetPublicRead( params ), params.getName() );
     }
 
-    private boolean doSetReadAccess( final SetProjectReadAccessParams params )
+    private boolean doSetPublicRead( final SetProjectPublicReadParams params )
     {
-        final boolean isPublic = params.isPublic();
+        final boolean publicRead = params.isPublicRead();
         final ApplyPermissionsListener listener = params.getListener();
 
         return contentRootDataContext( params.getName() ).callWith( () -> {
@@ -558,7 +564,7 @@ public class ProjectServiceImpl
             }
 
             final AccessControlList currentPermissions = contentRoot.getPermissions();
-            final AccessControlList newPermissions = isPublic
+            final AccessControlList newPermissions = publicRead
                 ? AccessControlList.create( currentPermissions )
                   .add( AccessControlEntry.create()
                         .principal( RoleKeys.EVERYONE )
@@ -581,7 +587,7 @@ public class ProjectServiceImpl
 
             nodeService.applyPermissions( paramsBuilder.build() );
 
-            return isPublic;
+            return publicRead;
         } );
     }
 
@@ -743,6 +749,9 @@ public class ProjectServiceImpl
         final EditableProject editable = new EditableProject( current );
         params.getEditor().edit( editable );
 
+        Preconditions.checkArgument( editable.displayName != null && !editable.displayName.isBlank(),
+                                     "displayName must not be null or blank" );
+
         UpdateProjectRoleNamesCommand.create()
             .securityService( securityService )
             .projectName( projectName )
@@ -828,10 +837,8 @@ public class ProjectServiceImpl
     {
         PropertyTree data = new PropertyTree();
 
-        if ( params.getDisplayName() != null )
-        {
-            data.setString( ContentPropertyNames.DISPLAY_NAME, params.getDisplayName() );
-        }
+        data.setString( ContentPropertyNames.DISPLAY_NAME, params.getDisplayName() );
+
         if ( params.getLanguage() != null )
         {
             data.setString( ContentPropertyNames.LANGUAGE, params.getLanguage().toLanguageTag() );

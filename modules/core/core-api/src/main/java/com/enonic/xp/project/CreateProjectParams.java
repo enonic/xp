@@ -7,6 +7,7 @@ import java.util.Locale;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.site.SiteConfig;
@@ -20,7 +21,7 @@ public final class CreateProjectParams
 {
     private final ProjectName name;
 
-    private final @Nullable String displayName;
+    private final String displayName;
 
     private final @Nullable String description;
 
@@ -28,7 +29,7 @@ public final class CreateProjectParams
 
     private final List<ProjectName> parents;
 
-    private final boolean isPublic;
+    private final boolean publicRead;
 
     private final SiteConfigs siteConfigs;
 
@@ -37,13 +38,14 @@ public final class CreateProjectParams
     private CreateProjectParams( final Builder builder )
     {
         this.name = requireNonNull( builder.name, "name is required" );
-        this.displayName = builder.displayName;
+        this.displayName = requireNonNull( builder.displayName, "displayName is required" );
+        Preconditions.checkArgument( !this.displayName.isBlank(), "displayName must not be blank" );
         this.description = builder.description;
         this.language = builder.language;
         this.parents = builder.parents.build();
         this.siteConfigs = builder.siteConfigs.build();
         this.forceInitialization = builder.forceInitialization;
-        this.isPublic = builder.isPublic;
+        this.publicRead = builder.publicRead;
     }
 
     public static Builder create()
@@ -56,7 +58,7 @@ public final class CreateProjectParams
         return name;
     }
 
-    public @Nullable String getDisplayName()
+    public String getDisplayName()
     {
         return displayName;
     }
@@ -86,9 +88,9 @@ public final class CreateProjectParams
         return siteConfigs;
     }
 
-    public boolean isPublic()
+    public boolean isPublicRead()
     {
-        return isPublic;
+        return publicRead;
     }
 
     public boolean isForceInitialization()
@@ -109,7 +111,7 @@ public final class CreateProjectParams
 
         private final ImmutableList.Builder<ProjectName> parents = ImmutableList.builder();
 
-        private boolean isPublic;
+        private boolean publicRead;
 
         private boolean forceInitialization = false;
 
@@ -125,7 +127,7 @@ public final class CreateProjectParams
             return this;
         }
 
-        public Builder displayName( final @Nullable String displayName )
+        public Builder displayName( final String displayName )
         {
             this.displayName = displayName;
             return this;
@@ -158,9 +160,9 @@ public final class CreateProjectParams
             return this;
         }
 
-        public Builder isPublic( final boolean isPublic )
+        public Builder publicRead( final boolean publicRead )
         {
-            this.isPublic = isPublic;
+            this.publicRead = publicRead;
             return this;
         }
 

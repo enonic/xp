@@ -1056,13 +1056,13 @@ class ProjectServiceImplTest
     }
 
     private Project doCreateProject( final ProjectName name, final ProjectPermissions projectPermissions, final boolean forceInitialization,
-                                     final Collection<ProjectName> parents, final boolean isPublic, final SiteConfigs siteConfigs )
+                                     final Collection<ProjectName> parents, final boolean publicRead, final SiteConfigs siteConfigs )
     {
         final CreateProjectParams.Builder params = CreateProjectParams.create()
             .name( name )
             .description( "description" )
             .displayName( "Project display name" )
-            .isPublic( isPublic )
+            .publicRead( publicRead )
             .forceInitialization( forceInitialization );
 
         if ( parents != null && !parents.isEmpty() )
