@@ -40,6 +40,7 @@ public class UpdateMetadataCommand
         final PatchNodeParams patchNodeParams = PatchNodeParamsFactory.create()
             .contentId( params.getContentId() )
             .editor( content -> {
+                verifyNotProtectedRoot( content );
                 Content editedContent = editMetadata( params.getEditor(), content );
                 editedContent = Content.create( editedContent )
                     .setInherit( stopInherit( editedContent.getInherit(), ContentInheritType.CONTENT ) )

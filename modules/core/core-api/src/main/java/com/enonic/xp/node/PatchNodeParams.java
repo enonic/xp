@@ -102,6 +102,11 @@ public final class PatchNodeParams
             return this;
         }
 
+        /**
+         * Identifies the node to patch by path. The path is resolved in the branch of the current context;
+         * the resolved node is then patched in every branch listed via {@link #branches(Branches)}
+         * (which must include the current context's branch).
+         */
         public Builder path( final NodePath path )
         {
             this.path = path;

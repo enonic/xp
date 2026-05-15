@@ -4,11 +4,15 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import com.google.common.collect.ImmutableList;
 
 import static java.util.Objects.requireNonNull;
 
 
+@NullMarked
 public final class ProjectGraphEntry
 {
     private final ProjectName name;
@@ -17,7 +21,7 @@ public final class ProjectGraphEntry
 
     private ProjectGraphEntry( Builder builder )
     {
-        this.name = builder.name;
+        this.name = requireNonNull( builder.name, "name is required" );
         this.parents = builder.parents.build();
     }
 
@@ -31,7 +35,7 @@ public final class ProjectGraphEntry
         return name;
     }
 
-    public ProjectName getParent()
+    public @Nullable ProjectName getParent()
     {
         return !parents.isEmpty() ? parents.get( 0 ) : null;
     }
@@ -50,7 +54,7 @@ public final class ProjectGraphEntry
 
     public static final class Builder
     {
-        private ProjectName name;
+        private @Nullable ProjectName name;
 
         private final ImmutableList.Builder<ProjectName> parents = ImmutableList.builder();
 
@@ -76,15 +80,8 @@ public final class ProjectGraphEntry
             return this;
         }
 
-        private void validate()
-        {
-            requireNonNull( name, "name is required" );
-        }
-
-
         public ProjectGraphEntry build()
         {
-            validate();
             return new ProjectGraphEntry( this );
         }
     }

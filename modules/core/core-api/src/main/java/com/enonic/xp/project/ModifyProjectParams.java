@@ -1,27 +1,22 @@
 package com.enonic.xp.project;
 
-import com.enonic.xp.site.SiteConfig;
-import com.enonic.xp.site.SiteConfigs;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import static java.util.Objects.requireNonNull;
 
 
+@NullMarked
 public final class ModifyProjectParams
 {
     private final ProjectName name;
 
-    private final String displayName;
-
-    private final String description;
-
-    private final SiteConfigs siteConfigs;
+    private final ProjectEditor editor;
 
     private ModifyProjectParams( final Builder builder )
     {
-        this.name = builder.name;
-        this.displayName = builder.displayName;
-        this.description = builder.description;
-        this.siteConfigs = builder.siteConfigs.build();
+        this.name = requireNonNull( builder.name, "name is required" );
+        this.editor = requireNonNull( builder.editor, "editor is required" );
     }
 
     public static Builder create()
@@ -34,30 +29,16 @@ public final class ModifyProjectParams
         return name;
     }
 
-    public String getDisplayName()
+    public ProjectEditor getEditor()
     {
-        return displayName;
-    }
-
-    public String getDescription()
-    {
-        return description;
-    }
-
-    public SiteConfigs getSiteConfigs()
-    {
-        return siteConfigs;
+        return editor;
     }
 
     public static final class Builder
     {
-        private ProjectName name;
+        private @Nullable ProjectName name;
 
-        private String displayName;
-
-        private String description;
-
-        private final SiteConfigs.Builder siteConfigs = SiteConfigs.create();
+        private @Nullable ProjectEditor editor;
 
         private Builder()
         {
@@ -69,32 +50,14 @@ public final class ModifyProjectParams
             return this;
         }
 
-        public Builder displayName( final String displayName )
+        public Builder editor( final ProjectEditor editor )
         {
-            this.displayName = displayName;
+            this.editor = editor;
             return this;
-        }
-
-        public Builder description( final String description )
-        {
-            this.description = description;
-            return this;
-        }
-
-        public Builder addSiteConfig( final SiteConfig siteConfig )
-        {
-            this.siteConfigs.add( siteConfig );
-            return this;
-        }
-
-        private void validate()
-        {
-            requireNonNull( name, "name is required" );
         }
 
         public ModifyProjectParams build()
         {
-            validate();
             return new ModifyProjectParams( this );
         }
     }

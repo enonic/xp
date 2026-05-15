@@ -18,7 +18,6 @@ import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CommitNodeParams;
-import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeDataProcessor;
 import com.enonic.xp.node.NodeIds;
@@ -82,13 +81,7 @@ public class PublishContentCommand
 
         doPush( results.contentIds() );
 
-        final PublishContentResult result = resultBuilder.build();
-
-        if ( !result.getPublished().isEmpty() )
-        {
-            runAsAdmin( this::doPushRoot );
-        }
-        return result;
+        return resultBuilder.build();
     }
 
     private void doPush( final ContentIds ids )
@@ -139,14 +132,6 @@ public class PublishContentCommand
             .stream()
             .map( r -> PublishContentResult.Result.success( ContentId.from( r.getNodeId() ) ) )
             .forEach( resultBuilder::add );
-    }
-
-    private PushNodesResult doPushRoot()
-    {
-        final Node contentRootNode = nodeService.getByPath( ContentConstants.CONTENT_ROOT_PATH );
-        final PushNodeParams pushNodeParams =
-            PushNodeParams.create().ids( NodeIds.from( contentRootNode.id() ) ).target( ContentConstants.BRANCH_MASTER ).build();
-        return nodeService.push( pushNodeParams );
     }
 
     private CompareContentResults getSyncWork()

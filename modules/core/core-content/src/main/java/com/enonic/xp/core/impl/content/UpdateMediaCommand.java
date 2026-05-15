@@ -51,6 +51,7 @@ final class UpdateMediaCommand
             : guessExecutableByFilename( mediaType, params.getName().toString() );
 
         final Content existingContent = getContent( params.getContent() );
+        verifyNotProtectedRoot( existingContent );
         Preconditions.checkArgument( existingContent.getType().equals( type ), "Updated content must be of type: %s",
                                      existingContent.getType() );
 

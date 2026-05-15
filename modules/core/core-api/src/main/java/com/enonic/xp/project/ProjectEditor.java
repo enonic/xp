@@ -3,8 +3,7 @@ package com.enonic.xp.project;
 import org.jspecify.annotations.NullMarked;
 
 @NullMarked
-public enum ProjectRole
+public interface ProjectEditor
 {
-    OWNER, EDITOR, AUTHOR, CONTRIBUTOR, VIEWER
+    void edit( EditableProject edit );
 }
-

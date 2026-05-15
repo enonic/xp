@@ -13,10 +13,13 @@ final class GetContentByIdsCommand
 {
     private final GetContentByIdsParams params;
 
+    private final boolean allowRoot;
+
     private GetContentByIdsCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
+        this.allowRoot = builder.allowRoot;
     }
 
     Contents execute()
@@ -31,7 +34,10 @@ final class GetContentByIdsCommand
 
         final Nodes nodes = nodeService.getByIds( nodeIds );
 
-        return ContentNodeTranslator.fromNodes( nodes );
+        final Nodes filteredNodes =
+            allowRoot ? nodes : nodes.stream().filter( n -> !isProtectedRoot( n.path() ) ).collect( Nodes.collector() );
+
+        return ContentNodeTranslator.fromNodes( filteredNodes );
     }
 
     public static Builder create( final GetContentByIdsParams params )
@@ -44,9 +50,17 @@ final class GetContentByIdsCommand
     {
         private final GetContentByIdsParams params;
 
+        private boolean allowRoot;
+
         Builder( final GetContentByIdsParams params )
         {
             this.params = params;
+        }
+
+        public Builder allowRoot()
+        {
+            this.allowRoot = true;
+            return this;
         }
 
         @Override

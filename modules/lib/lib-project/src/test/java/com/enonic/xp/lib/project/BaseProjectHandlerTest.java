@@ -21,6 +21,7 @@ import com.enonic.xp.content.PatchableContent;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.PropertyTreeMarshallerService;
 import com.enonic.xp.project.CreateProjectParams;
+import com.enonic.xp.project.EditableProject;
 import com.enonic.xp.project.ModifyProjectParams;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
@@ -28,6 +29,7 @@ import com.enonic.xp.project.ProjectNotFoundException;
 import com.enonic.xp.project.ProjectPermissions;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.project.Projects;
+import com.enonic.xp.project.SetProjectReadAccessParams;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -82,10 +84,12 @@ public abstract class BaseProjectHandlerTest
         final Map<ProjectName, Project> projects = new HashMap<>();
 
         when( this.projectService.create( any( CreateProjectParams.class ) ) ).thenAnswer( invocation -> {
-
-            final Project project = createProject( (CreateProjectParams) invocation.getArgument( 0 ) );
+            final CreateProjectParams params = invocation.getArgument( 0 );
+            final Project project = createProject( params );
             when( projectService.get( project.getName() ) ).thenReturn( project );
             when( projectService.delete( project.getName() ) ).thenReturn( true );
+
+            when( projectService.getReadAccess( project.getName() ) ).thenReturn( params.isPublic() );
 
             projects.put( project.getName(), project );
 
@@ -93,13 +97,24 @@ public abstract class BaseProjectHandlerTest
         } );
 
         when( this.projectService.modify( any( ModifyProjectParams.class ) ) ).thenAnswer( invocation -> {
-
-            final Project project = createProject( (ModifyProjectParams) invocation.getArgument( 0 ) );
+            final ModifyProjectParams params = invocation.getArgument( 0 );
+            final Project existing = projects.get( params.getName() );
+            if ( existing == null )
+            {
+                throw new ProjectNotFoundException( params.getName() );
+            }
+            final Project project = modifyProject( existing, params );
             when( projectService.get( project.getName() ) ).thenReturn( project );
 
             projects.put( project.getName(), project );
 
             return project;
+        } );
+
+        when( this.projectService.setReadAccess( any( SetProjectReadAccessParams.class ) ) ).thenAnswer( invocation -> {
+            final SetProjectReadAccessParams setParams = invocation.getArgument( 0 );
+            when( projectService.getReadAccess( setParams.getName() ) ).thenReturn( setParams.isPublic() );
+            return setParams.isPublic();
         } );
 
         when( this.projectService.list() ).thenAnswer( mock -> Projects.create().addAll( projects.values() ).build() );
@@ -128,14 +143,22 @@ public abstract class BaseProjectHandlerTest
             } );
     }
 
-    private Project createProject( final ModifyProjectParams params )
+    private Project modifyProject( final Project existing, final ModifyProjectParams params )
     {
-        final Project.Builder builder = Project.create();
-        builder.name( params.getName() );
-        builder.displayName( params.getDisplayName() );
-        builder.description( params.getDescription() );
+        final EditableProject editable = new EditableProject( existing );
+        params.getEditor().edit( editable );
 
-        params.getSiteConfigs().forEach( builder::addSiteConfig );
+        final Project.Builder builder = Project.create();
+        builder.name( existing.getName() );
+        builder.displayName( editable.displayName );
+        builder.description( editable.description );
+        builder.language( editable.language );
+        existing.getParents().forEach( builder::addParent );
+
+        if ( editable.siteConfigs != null )
+        {
+            editable.siteConfigs.forEach( builder::addSiteConfig );
+        }
 
         return builder.build();
     }
@@ -146,6 +169,7 @@ public abstract class BaseProjectHandlerTest
         builder.name( params.getName() );
         builder.displayName( params.getDisplayName() );
         builder.description( params.getDescription() );
+        builder.language( params.getLanguage() );
 
         params.getParents().forEach( builder::addParent );
 

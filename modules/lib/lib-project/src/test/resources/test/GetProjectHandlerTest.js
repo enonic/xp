@@ -84,6 +84,7 @@ function createProject(permissions) {
         id: 'myproject',
         displayName: 'project display name',
         description: 'project description',
+        language: 'ja',
         readAccess: {public: true},
         permissions: permissions
     });

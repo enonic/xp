@@ -29,10 +29,10 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.DuplicateContentParams;
-import com.enonic.xp.content.Mixin;
-import com.enonic.xp.content.Mixins;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
+import com.enonic.xp.content.Mixin;
+import com.enonic.xp.content.Mixins;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.PatchContentParams;
 import com.enonic.xp.content.PatchContentResult;
@@ -72,9 +72,10 @@ import com.enonic.xp.schema.mixin.MixinDescriptor;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.CmsDescriptor;
-import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.MixinMapping;
 import com.enonic.xp.site.MixinMappings;
+import com.enonic.xp.site.SiteConfig;
+import com.enonic.xp.site.SiteConfigs;
 
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_IMAGE_HEIGHT;
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_IMAGE_WIDTH;
@@ -488,14 +489,11 @@ class ProjectContentEventListenerTest
         final ApplicationKey myApp = ApplicationKey.from( "myApp" );
         final MixinName mixinName = MixinName.from( myApp, "mixinName" );
 
-        projectContext.runWith( () -> projectService.modify( ModifyProjectParams.create()
-                                                                 .addSiteConfig( SiteConfig.create()
-                                                                                     .application( myApp )
-                                                                                     .config( new PropertyTree() )
-                                                                                     .build() )
-                                                                 .name( ProjectName.from( projectContext.getRepositoryId() ) )
-                                                                 .displayName( "new display name" )
-                                                                 .build() ) );
+        projectContext.runWith( () -> projectService.modify(
+            ModifyProjectParams.create().name( ProjectName.from( projectContext.getRepositoryId() ) ).editor( edit -> {
+                edit.siteConfigs = SiteConfigs.from( SiteConfig.create().application( myApp ).config( new PropertyTree() ).build() );
+                edit.displayName = "new display name";
+            } ).build() ) );
 
         when( resourceService.processResource( isA( ResourceProcessor.class ) ) ).thenReturn( CmsDescriptor.create()
                                                                                                   .applicationKey( myApp )

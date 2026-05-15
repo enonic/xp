@@ -3,12 +3,16 @@ package com.enonic.xp.project;
 import java.util.Collection;
 import java.util.Map;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 
 import static java.util.Objects.requireNonNullElse;
 
 
+@NullMarked
 public final class ProjectPermissions
 {
     private final Map<ProjectRole, PrincipalKeys> permissions;
@@ -55,7 +59,7 @@ public final class ProjectPermissions
         return permissions.get( ProjectRole.VIEWER );
     }
 
-    public PrincipalKeys getPermission( final ProjectRole projectRole )
+    public @Nullable PrincipalKeys getPermission( final ProjectRole projectRole )
     {
         return permissions.get( projectRole );
     }

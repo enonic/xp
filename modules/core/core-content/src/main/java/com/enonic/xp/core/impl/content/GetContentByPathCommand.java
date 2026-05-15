@@ -12,11 +12,14 @@ final class GetContentByPathCommand
 {
     private final ContentPath contentPath;
 
+    private final boolean allowRoot;
+
     private GetContentByPathCommand( final Builder builder )
     {
         super( builder );
         requireNonNull( builder.contentPath, "contentPath is required" );
         this.contentPath = builder.contentPath;
+        this.allowRoot = builder.allowRoot;
     }
 
     Content execute()
@@ -26,6 +29,11 @@ final class GetContentByPathCommand
         final Node node = nodeService.getByPath( nodePath );
 
         if ( node == null )
+        {
+            return null;
+        }
+
+        if ( !allowRoot && isProtectedRoot( node.path() ) )
         {
             return null;
         }
@@ -49,6 +57,8 @@ final class GetContentByPathCommand
     {
         private final ContentPath contentPath;
 
+        private boolean allowRoot;
+
         Builder( final ContentPath contentPath )
         {
             this.contentPath = contentPath;
@@ -58,6 +68,12 @@ final class GetContentByPathCommand
         {
             super( source );
             this.contentPath = contentPath;
+        }
+
+        public Builder allowRoot()
+        {
+            this.allowRoot = true;
+            return this;
         }
 
         @Override

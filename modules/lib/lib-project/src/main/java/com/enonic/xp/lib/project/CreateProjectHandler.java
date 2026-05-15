@@ -7,17 +7,12 @@ import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.lib.project.command.ApplyProjectLanguageCommand;
 import com.enonic.xp.lib.project.mapper.ProjectMapper;
 import com.enonic.xp.project.CreateProjectParams;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectPermissions;
 import com.enonic.xp.script.ScriptValue;
-import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.acl.AccessControlEntry;
-import com.enonic.xp.security.acl.AccessControlList;
-import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 
@@ -49,20 +44,13 @@ public final class CreateProjectHandler
         final CreateProjectParams params = createProjectParams();
         final Project project = this.projectService.get().create( params );
 
-        final Locale modifiedLanguage = this.language != null ? ApplyProjectLanguageCommand.create()
-            .projectName( this.id )
-            .language( this.language )
-            .contentService( this.contentService.get() )
-            .build()
-            .execute() : null;
-
         final ProjectPermissions modifiedPermissions = this.permissions != null
             ? this.projectService.get().modifyPermissions( this.id, this.permissions )
             : ProjectPermissions.create().build();
 
         return ProjectMapper.create()
             .setProject( project )
-            .setLanguage( modifiedLanguage )
+            .setLanguage( project.getLanguage() )
             .setProjectPermissions( modifiedPermissions )
             .setIsPublic( isPublic )
             .build();
@@ -74,18 +62,13 @@ public final class CreateProjectHandler
             .name( this.id )
             .displayName( this.displayName )
             .description( this.description )
+            .language( this.language )
+            .isPublic( isPublic )
             .forceInitialization( true );
 
         if ( parents != null )
         {
             builder.addParents( parents );
-        }
-
-        if ( isPublic )
-        {
-            builder.permissions( AccessControlList.create()
-                                     .add( AccessControlEntry.create().principal( RoleKeys.EVERYONE ).allow( Permission.READ ).build() )
-                                     .build() );
         }
 
         if ( siteConfigs != null )

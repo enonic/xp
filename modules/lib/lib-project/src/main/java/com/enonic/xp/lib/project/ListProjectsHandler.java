@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-import com.enonic.xp.lib.project.command.GetProjectLanguageCommand;
-import com.enonic.xp.lib.project.command.GetProjectReadAccessCommand;
 import com.enonic.xp.lib.project.mapper.ProjectMapper;
 import com.enonic.xp.project.ProjectPermissions;
 import com.enonic.xp.project.Projects;
@@ -18,21 +16,12 @@ public final class ListProjectsHandler
     {
         final Projects projects = this.projectService.get().list();
 
-        return projects.stream().
-            map( project -> {
+        return projects.stream().map( project -> {
             final ProjectPermissions projectPermissions = this.projectService.get().getPermissions( project.getName() );
 
-            final Boolean readAccess = GetProjectReadAccessCommand.create()
-                .contentService( this.contentService.get() )
-                .projectName( project.getName() )
-                .build()
-                .execute();
+            final boolean readAccess = this.projectService.get().getReadAccess( project.getName() );
 
-            final Locale language = GetProjectLanguageCommand.create()
-                .projectName( project.getName() )
-                .contentService( this.contentService.get() )
-                .build()
-                .execute();
+            final Locale language = project.getLanguage();
 
             return ProjectMapper.create()
                 .setProject( project )

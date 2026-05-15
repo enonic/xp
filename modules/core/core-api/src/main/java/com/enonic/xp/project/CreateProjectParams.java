@@ -2,26 +2,33 @@ package com.enonic.xp.project;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
+
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 
 import static java.util.Objects.requireNonNull;
 
 
+@NullMarked
 public final class CreateProjectParams
 {
     private final ProjectName name;
 
-    private final String displayName;
+    private final @Nullable String displayName;
 
-    private final String description;
+    private final @Nullable String description;
+
+    private final @Nullable Locale language;
 
     private final List<ProjectName> parents;
 
-    private final AccessControlList permissions;
+    private final boolean isPublic;
 
     private final SiteConfigs siteConfigs;
 
@@ -29,13 +36,14 @@ public final class CreateProjectParams
 
     private CreateProjectParams( final Builder builder )
     {
-        this.name = builder.name;
+        this.name = requireNonNull( builder.name, "name is required" );
         this.displayName = builder.displayName;
         this.description = builder.description;
+        this.language = builder.language;
         this.parents = builder.parents.build();
         this.siteConfigs = builder.siteConfigs.build();
         this.forceInitialization = builder.forceInitialization;
-        this.permissions = builder.permissions;
+        this.isPublic = builder.isPublic;
     }
 
     public static Builder create()
@@ -48,14 +56,19 @@ public final class CreateProjectParams
         return name;
     }
 
-    public String getDisplayName()
+    public @Nullable String getDisplayName()
     {
         return displayName;
     }
 
-    public String getDescription()
+    public @Nullable String getDescription()
     {
         return description;
+    }
+
+    public @Nullable Locale getLanguage()
+    {
+        return language;
     }
 
     public List<ProjectName> getParents()
@@ -63,7 +76,7 @@ public final class CreateProjectParams
         return parents;
     }
 
-    public ProjectName getParent()
+    public @Nullable ProjectName getParent()
     {
         return !parents.isEmpty() ? parents.get( 0 ) : null;
     }
@@ -73,9 +86,9 @@ public final class CreateProjectParams
         return siteConfigs;
     }
 
-    public AccessControlList getPermissions()
+    public boolean isPublic()
     {
-        return permissions;
+        return isPublic;
     }
 
     public boolean isForceInitialization()
@@ -86,15 +99,17 @@ public final class CreateProjectParams
     public static final class Builder
     {
 
-        private ProjectName name;
+        private @Nullable ProjectName name;
 
-        private String displayName;
+        private @Nullable String displayName;
 
-        private String description;
+        private @Nullable String description;
+
+        private @Nullable Locale language;
 
         private final ImmutableList.Builder<ProjectName> parents = ImmutableList.builder();
 
-        private AccessControlList permissions;
+        private boolean isPublic;
 
         private boolean forceInitialization = false;
 
@@ -110,15 +125,21 @@ public final class CreateProjectParams
             return this;
         }
 
-        public Builder displayName( final String displayName )
+        public Builder displayName( final @Nullable String displayName )
         {
             this.displayName = displayName;
             return this;
         }
 
-        public Builder description( final String description )
+        public Builder description( final @Nullable String description )
         {
             this.description = description;
+            return this;
+        }
+
+        public Builder language( final @Nullable Locale language )
+        {
+            this.language = language;
             return this;
         }
 
@@ -128,7 +149,7 @@ public final class CreateProjectParams
             return this;
         }
 
-        public Builder parent( final ProjectName parent )
+        public Builder parent( final @Nullable ProjectName parent )
         {
             if ( parent != null )
             {
@@ -137,9 +158,9 @@ public final class CreateProjectParams
             return this;
         }
 
-        public Builder permissions( final AccessControlList permissions )
+        public Builder isPublic( final boolean isPublic )
         {
-            this.permissions = permissions;
+            this.isPublic = isPublic;
             return this;
         }
 
@@ -155,14 +176,8 @@ public final class CreateProjectParams
             return this;
         }
 
-        private void validate()
-        {
-            requireNonNull( name, "name is required" );
-        }
-
         public CreateProjectParams build()
         {
-            validate();
             return new CreateProjectParams( this );
         }
     }

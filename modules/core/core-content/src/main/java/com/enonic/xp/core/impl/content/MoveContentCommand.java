@@ -75,6 +75,7 @@ final class MoveContentCommand
     {
         final ContentId contentId = params.getContentId();
         final Content sourceContent = getContent( contentId );
+        verifyNotProtectedRoot( sourceContent );
 
         final var processors = CompositeNodeDataProcessor.create().add( updateValid() );
 

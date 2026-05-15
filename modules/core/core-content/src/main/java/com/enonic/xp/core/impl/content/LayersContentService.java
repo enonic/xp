@@ -34,9 +34,9 @@ import com.enonic.xp.content.PatchContentParams;
 import com.enonic.xp.content.PatchContentResult;
 import com.enonic.xp.content.SortContentParams;
 import com.enonic.xp.content.SortContentResult;
-import com.enonic.xp.core.impl.content.processor.ContentProcessor;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.core.impl.content.processor.ContentProcessor;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeService;
@@ -52,7 +52,7 @@ import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.site.CmsService;
 import com.enonic.xp.util.BinaryReference;
 
-@Component(configurationPid = "com.enonic.xp.content", service = LayersContentService.class )
+@Component(configurationPid = "com.enonic.xp.content", service = LayersContentService.class)
 @NullMarked
 public class LayersContentService
 {
@@ -213,6 +213,7 @@ public class LayersContentService
     public Optional<Content> getByPath( final ContentPath path )
     {
         return callOnPrimary( () -> Optional.ofNullable( GetContentByPathCommand.create( path )
+                                                             .allowRoot()
                                                              .nodeService( this.nodeService )
                                                              .contentTypeService( this.contentTypeService )
                                                              .eventPublisher( this.eventPublisher )
@@ -223,6 +224,7 @@ public class LayersContentService
     public Contents getByIds( final ContentIds contentIds )
     {
         return callOnPrimary( () -> GetContentByIdsCommand.create( GetContentByIdsParams.create().contentIds( contentIds ).build() )
+            .allowRoot()
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
             .eventPublisher( this.eventPublisher )
@@ -233,6 +235,7 @@ public class LayersContentService
     public Optional<Content> getById( final ContentId contentId )
     {
         return callOnPrimary( () -> Optional.ofNullable( GetContentByIdCommand.create( contentId )
+                                                             .allowRoot()
                                                              .nodeService( this.nodeService )
                                                              .contentTypeService( this.contentTypeService )
                                                              .eventPublisher( this.eventPublisher )

@@ -4,12 +4,16 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.regex.Pattern;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import com.enonic.xp.core.internal.NameValidator;
 import com.enonic.xp.repository.RepositoryId;
 
 import static java.util.Objects.requireNonNull;
 
 
+@NullMarked
 public final class ProjectName
     implements Serializable
 {
@@ -38,12 +42,12 @@ public final class ProjectName
         return new ProjectName( PROJECT_NAME_VALIDATOR.validate( projectName ) );
     }
 
-    public static ProjectName from( final RepositoryId repositoryId )
+    public static @Nullable ProjectName from( final RepositoryId repositoryId )
     {
         return replacePrefix( repositoryId.toString() );
     }
 
-    private static ProjectName replacePrefix( final String value )
+    private static @Nullable ProjectName replacePrefix( final String value )
     {
         if ( value.startsWith( ProjectConstants.PROJECT_REPO_ID_PREFIX ) )
         {
@@ -58,7 +62,7 @@ public final class ProjectName
     }
 
     @Override
-    public boolean equals( final Object o )
+    public boolean equals( final @Nullable Object o )
     {
         return this == o || o instanceof ProjectName && this.value.equals( ( (ProjectName) o ).value );
     }

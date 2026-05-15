@@ -3,11 +3,14 @@ package com.enonic.xp.project;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
+import org.jspecify.annotations.NullMarked;
+
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
 
+@NullMarked
 public final class ProjectGraph
     extends AbstractImmutableEntityList<ProjectGraphEntry>
 {

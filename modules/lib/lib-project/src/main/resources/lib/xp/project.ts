@@ -125,24 +125,24 @@ export function create<Config extends Record<string, unknown> = Record<string, u
     return __.toNativeObject(bean.execute());
 }
 
+export interface EditableProject<Config extends Record<string, unknown>> {
+    displayName?: string | null;
+    description?: string | null;
+    language?: string | null;
+    siteConfig?: SiteConfig<Config>[] | null;
+}
+
+export type ProjectEditor<Config extends Record<string, unknown>> = (project: Project<Config> & EditableProject<Config>) => void;
+
 export interface ModifyProjectParams<Config extends Record<string, unknown>> {
     id: string;
-    displayName?: string;
-    description?: string;
-    language?: string;
-    siteConfig?: SiteConfig<Config>[];
+    editor: ProjectEditor<Config>;
 }
 
 interface ModifyProjectHandler<Config extends Record<string, unknown>> {
     setId(value: string): void;
 
-    setDisplayName(value: string | null): void;
-
-    setDescription(value: string | null): void;
-
-    setLanguage(value: string | null): void;
-
-    setSiteConfig(value: ScriptValue | null): void;
+    setEditor(value: ScriptValue | null): void;
 
     execute(): Project<Config>;
 }
@@ -151,26 +151,24 @@ interface ModifyProjectHandler<Config extends Record<string, unknown>> {
  * Modifies an existing Content Project.
  * To modify a project, user must have `owner` permissions for this project, or either `system.admin` or `cms.admin` role.
  *
+ * Pass an `editor` function that receives the current project. Mutate fields on the argument to apply changes.
+ * Setting a field to `null` clears it. Fields you do not touch are left unchanged.
+ *
  * @example-ref examples/project/modify.js
  *
  * @param {Object} params JSON with the parameters.
  * @param {string} params.id Unique project id to identify the project.
- * @param {string} [params.displayName] Project's display name.
- * @param {string} [params.description] Project description.
- * @param {string} [params.language] Default project language.
- * @param {Object[]} [params.siteConfig] Connected applications config.
+ * @param {Function} params.editor Function that receives the editable project and mutates fields to apply changes.
  *
  * @returns {Object} Modified project.
  */
 export function modify<Config extends Record<string, unknown> = Record<string, unknown>>(params: ModifyProjectParams<Config>): Project<Config> {
     const id = checkRequired(params, 'id');
+    const editor = checkRequired(params, 'editor');
 
     const bean: ModifyProjectHandler<Config> = __.newBean<ModifyProjectHandler<Config>>('com.enonic.xp.lib.project.ModifyProjectHandler');
     bean.setId(id);
-    bean.setDisplayName(__.nullOrValue(params.displayName));
-    bean.setDescription(__.nullOrValue(params.description));
-    bean.setLanguage(__.nullOrValue(params.language));
-    bean.setSiteConfig(__.toScriptValue(params.siteConfig));
+    bean.setEditor(__.toScriptValue(editor));
 
     return __.toNativeObject(bean.execute());
 }
@@ -264,7 +262,8 @@ interface GetAvailableApplicationsHandler {
 export function getAvailableApplications(params: GetAvailableApplicationsParams): string[] {
     const id = checkRequired(params, 'id');
 
-    const bean: GetAvailableApplicationsHandler = __.newBean<GetAvailableApplicationsHandler>('com.enonic.xp.lib.project.GetAvailableApplicationsHandler');
+    const bean: GetAvailableApplicationsHandler = __.newBean<GetAvailableApplicationsHandler>(
+        'com.enonic.xp.lib.project.GetAvailableApplicationsHandler');
     bean.setId(id);
     return __.toNativeObject(bean.execute());
 }
@@ -316,7 +315,8 @@ interface AddProjectPermissionsHandler {
 export function addPermissions(params: AddProjectPermissionsParams): ProjectPermissions | null {
     const id = checkRequired(params, 'id');
 
-    const bean: AddProjectPermissionsHandler = __.newBean<AddProjectPermissionsHandler>('com.enonic.xp.lib.project.AddProjectPermissionsHandler');
+    const bean: AddProjectPermissionsHandler = __.newBean<AddProjectPermissionsHandler>(
+        'com.enonic.xp.lib.project.AddProjectPermissionsHandler');
     bean.setId(id);
     bean.setPermissions(__.toScriptValue(params.permissions));
     return __.toNativeObject(bean.execute());
@@ -350,7 +350,8 @@ interface RemoveProjectPermissionsHandler {
 export function removePermissions(params: RemoveProjectPermissionsParams): ProjectPermissions | null {
     const id = checkRequired(params, 'id');
 
-    const bean: RemoveProjectPermissionsHandler = __.newBean<RemoveProjectPermissionsHandler>('com.enonic.xp.lib.project.RemoveProjectPermissionsHandler');
+    const bean: RemoveProjectPermissionsHandler = __.newBean<RemoveProjectPermissionsHandler>(
+        'com.enonic.xp.lib.project.RemoveProjectPermissionsHandler');
     bean.setId(id);
     bean.setPermissions(__.toScriptValue(params.permissions));
 
@@ -387,7 +388,8 @@ interface ModifyProjectReadAccessHandler {
 export function modifyReadAccess(params: ModifyProjectReadAccessParams): ProjectReadAccess | null {
     const id = checkRequired(params, 'id');
 
-    const bean: ModifyProjectReadAccessHandler = __.newBean<ModifyProjectReadAccessHandler>('com.enonic.xp.lib.project.ModifyProjectReadAccessHandler');
+    const bean: ModifyProjectReadAccessHandler = __.newBean<ModifyProjectReadAccessHandler>(
+        'com.enonic.xp.lib.project.ModifyProjectReadAccessHandler');
     bean.setId(id);
     bean.setReadAccess(__.toScriptValue(params.readAccess));
     return __.toNativeObject(bean.execute());
