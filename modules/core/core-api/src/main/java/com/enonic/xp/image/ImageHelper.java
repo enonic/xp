@@ -109,6 +109,11 @@ public final class ImageHelper
         // color management and shifts brightness on non-sRGB profiles (e.g. grayscale +55 levels,
         // issue #7688), and degenerates to nearest-neighbor on upscale. We instead use a progressive
         // bilinear halving for downscale and a single bicubic step for the final / upscale pass.
+        if ( width <= 0 || height <= 0 )
+        {
+            throw new IllegalArgumentException(
+                "width and height must be positive (got " + width + "x" + height + "); the legacy -1 aspect-ratio sentinel from Image.getScaledInstance is not supported" );
+        }
         final int destType = chooseDestinationType( img );
 
         BufferedImage current = img;
@@ -127,6 +132,12 @@ public final class ImageHelper
 
     private static int chooseDestinationType( BufferedImage img )
     {
+        // Alpha first: grayscale-with-alpha sources (e.g. PNGs) must route to an alpha-capable
+        // destination, otherwise transparent pixels get flattened into the opaque background.
+        if ( img.getTransparency() != Transparency.OPAQUE )
+        {
+            return BufferedImage.TYPE_INT_ARGB;
+        }
         // Grayscale is browser-universal and visibly cheaper to store, so preserve it through scaling.
         // CMYK and other non-sRGB profiles get flattened to sRGB because browser support for non-sRGB
         // JPEGs is unreliable (Firefox in particular).
@@ -134,7 +145,7 @@ public final class ImageHelper
         {
             return BufferedImage.TYPE_BYTE_GRAY;
         }
-        return img.getTransparency() != Transparency.OPAQUE ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB;
+        return BufferedImage.TYPE_INT_RGB;
     }
 
     private static BufferedImage scaleStep( BufferedImage src, int width, int height, int destType, Object interpolation )

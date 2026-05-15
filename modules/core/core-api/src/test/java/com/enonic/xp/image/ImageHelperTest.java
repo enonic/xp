@@ -3,11 +3,20 @@ package com.enonic.xp.image;
 import java.awt.Color;
 import java.awt.GradientPaint;
 import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Transparency;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
+import java.awt.image.ComponentColorModel;
+import java.awt.image.DataBuffer;
+import java.awt.image.PixelInterleavedSampleModel;
+import java.awt.image.Raster;
+import java.awt.image.WritableRaster;
 
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -88,6 +97,47 @@ class ImageHelperTest
 
         assertEquals( BufferedImage.TYPE_INT_ARGB, scaled.getType() );
         assertTrue( scaled.getColorModel().hasAlpha(), "alpha channel should be preserved" );
+    }
+
+    @Test
+    void getScaledInstance_preserves_alpha_for_grayscale_alpha_source()
+    {
+        // Grayscale color space with an alpha channel (e.g. grayscale PNGs). The destination
+        // type chooser must route this to an alpha-capable destination rather than TYPE_BYTE_GRAY,
+        // otherwise transparent pixels would be flattened into an opaque thumbnail.
+        final ColorSpace grayCs = ColorSpace.getInstance( ColorSpace.CS_GRAY );
+        final ComponentColorModel grayAlphaCm =
+            new ComponentColorModel( grayCs, new int[]{8, 8}, true, false, Transparency.TRANSLUCENT, DataBuffer.TYPE_BYTE );
+        final WritableRaster raster = Raster.createWritableRaster(
+            new PixelInterleavedSampleModel( DataBuffer.TYPE_BYTE, 40, 40, 2, 40 * 2, new int[]{0, 1} ), new Point() );
+        final BufferedImage grayAlpha = new BufferedImage( grayAlphaCm, raster, false, null );
+
+        // Fill: left half opaque mid-gray, right half fully transparent.
+        for ( int y = 0; y < 40; y++ )
+        {
+            for ( int x = 0; x < 40; x++ )
+            {
+                raster.setSample( x, y, 0, 128 );
+                raster.setSample( x, y, 1, x < 20 ? 255 : 0 );
+            }
+        }
+
+        final BufferedImage scaled = ImageHelper.getScaledInstance( grayAlpha, 20, 20 );
+
+        assertThat( scaled.getColorModel().hasAlpha() ).as( "alpha channel must be preserved for grayscale+alpha source" ).isTrue();
+        final int rightAlpha = ( scaled.getRGB( scaled.getWidth() - 1, scaled.getHeight() / 2 ) >>> 24 ) & 0xFF;
+        assertThat( rightAlpha ).as( "transparent source pixel must remain transparent after scaling" ).isLessThanOrEqualTo( 8 );
+    }
+
+    @Test
+    void getScaledInstance_rejects_non_positive_dimensions()
+    {
+        final BufferedImage rgb = new BufferedImage( 40, 40, BufferedImage.TYPE_INT_RGB );
+
+        assertThatThrownBy( () -> ImageHelper.getScaledInstance( rgb, -1, 20 ) ).isInstanceOf( IllegalArgumentException.class );
+        assertThatThrownBy( () -> ImageHelper.getScaledInstance( rgb, 20, -1 ) ).isInstanceOf( IllegalArgumentException.class );
+        assertThatThrownBy( () -> ImageHelper.getScaledInstance( rgb, 0, 20 ) ).isInstanceOf( IllegalArgumentException.class );
+        assertThatThrownBy( () -> ImageHelper.getScaledInstance( rgb, 20, 0 ) ).isInstanceOf( IllegalArgumentException.class );
     }
 
     @Test
