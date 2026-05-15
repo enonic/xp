@@ -2,8 +2,10 @@ package com.enonic.xp.image;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Image;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.Transparency;
+import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -103,19 +105,63 @@ public final class ImageHelper
 
     public static BufferedImage getScaledInstance( BufferedImage img, int width, int height )
     {
-        Image scaledImage = img.getScaledInstance( width, height, Image.SCALE_SMOOTH );
-        final boolean hasAlpha = img.getTransparency() != Transparency.OPAQUE;
-        BufferedImage targetImage = createImage( width, height, hasAlpha );
-        Graphics g = targetImage.createGraphics();
+        // The legacy path used Image.getScaledInstance(SCALE_SMOOTH), which routes through Java's
+        // color management and shifts brightness on non-sRGB profiles (e.g. grayscale +55 levels,
+        // issue #7688), and degenerates to nearest-neighbor on upscale. We instead use a progressive
+        // bilinear halving for downscale and a single bicubic step for the final / upscale pass.
+        if ( width <= 0 || height <= 0 )
+        {
+            throw new IllegalArgumentException(
+                "width and height must be positive (got " + width + "x" + height + "); the legacy -1 aspect-ratio sentinel from Image.getScaledInstance is not supported" );
+        }
+        final int destType = chooseDestinationType( img );
+
+        BufferedImage current = img;
+        int cw = current.getWidth();
+        int ch = current.getHeight();
+        while ( cw > width * 2 || ch > height * 2 )
+        {
+            final int nw = Math.max( width, cw / 2 );
+            final int nh = Math.max( height, ch / 2 );
+            current = scaleStep( current, nw, nh, destType, RenderingHints.VALUE_INTERPOLATION_BILINEAR );
+            cw = nw;
+            ch = nh;
+        }
+        return scaleStep( current, width, height, destType, RenderingHints.VALUE_INTERPOLATION_BICUBIC );
+    }
+
+    private static int chooseDestinationType( BufferedImage img )
+    {
+        // Alpha first: grayscale-with-alpha sources (e.g. PNGs) must route to an alpha-capable
+        // destination, otherwise transparent pixels get flattened into the opaque background.
+        if ( img.getTransparency() != Transparency.OPAQUE )
+        {
+            return BufferedImage.TYPE_INT_ARGB;
+        }
+        // Grayscale is browser-universal and visibly cheaper to store, so preserve it through scaling.
+        // CMYK and other non-sRGB profiles get flattened to sRGB because browser support for non-sRGB
+        // JPEGs is unreliable (Firefox in particular).
+        if ( img.getColorModel().getColorSpace().getType() == ColorSpace.TYPE_GRAY )
+        {
+            return BufferedImage.TYPE_BYTE_GRAY;
+        }
+        return BufferedImage.TYPE_INT_RGB;
+    }
+
+    private static BufferedImage scaleStep( BufferedImage src, int width, int height, int destType, Object interpolation )
+    {
+        final BufferedImage out = new BufferedImage( width, height, destType );
+        final Graphics2D g = out.createGraphics();
         try
         {
-            g.drawImage( scaledImage, 0, 0, null );
+            g.setRenderingHint( RenderingHints.KEY_INTERPOLATION, interpolation );
+            g.drawImage( src, 0, 0, width, height, null );
         }
         finally
         {
             g.dispose();
         }
-        return targetImage;
+        return out;
     }
 
     public static BufferedImage removeAlphaChannel( final BufferedImage img, final int color )
