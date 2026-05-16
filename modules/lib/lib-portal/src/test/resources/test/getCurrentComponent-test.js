@@ -34,3 +34,29 @@ exports.noCurrentComponent = function () {
     var result = portal.getComponent();
     assert.assertNull(result);
 };
+
+var expectedRegionsJson = [
+    {
+        'components': [
+            {
+                'path': '/main/0/bottom/0',
+                'type': 'part',
+                'descriptor': 'myapplication:mypart',
+                'config': {
+                    'a': '1'
+                }
+            }
+        ],
+        'name': 'bottom'
+    }
+];
+
+exports.currentRegions = function () {
+    var result = portal.getRegions();
+    assert.assertJsonEquals(expectedRegionsJson, result);
+};
+
+exports.noCurrentComponentRegions = function () {
+    var result = portal.getRegions();
+    assert.assertJsonEquals([], result);
+};

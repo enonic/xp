@@ -708,6 +708,29 @@ export function getComponent<
     return __.toNativeObject(bean.execute());
 }
 
+/**
+ * This function returns the regions of the current page or layout component as an array, in the order
+ * they are declared on the descriptor.
+ *
+ * Convenience wrapper around `getComponent().regions`. Returns an empty array when there is no current
+ * component (e.g. called outside a page/layout) or the current component has no regions.
+ *
+ * @example-ref examples/portal/getRegions.js
+ *
+ * @returns {object[]} Array of regions on the current component, or an empty array if there are none.
+ */
+export function getRegions(): Region[] {
+    const component = getComponent();
+    if (component == null || (component.type !== 'layout' && component.type !== 'page')) {
+        return [];
+    }
+    const regions = component.regions;
+    if (regions == null) {
+        return [];
+    }
+    return Object.keys(regions).map((key) => regions[key]);
+}
+
 interface GetCurrentIdProviderKeyHandler {
     execute(): string | null;
 }

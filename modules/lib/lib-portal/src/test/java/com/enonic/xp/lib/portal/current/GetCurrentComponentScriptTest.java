@@ -33,4 +33,29 @@ class GetCurrentComponentScriptTest
 
         runScript( "/lib/xp/examples/portal/getComponent.js" );
     }
+
+    @Test
+    void currentRegions()
+    {
+        final Component component = TestDataFixtures.newLayoutComponent();
+        this.portalRequest.setComponent( component );
+
+        runFunction( "/test/getCurrentComponent-test.js", "currentRegions" );
+    }
+
+    @Test
+    void noCurrentComponentRegions()
+    {
+        this.portalRequest.setComponent( null );
+        runFunction( "/test/getCurrentComponent-test.js", "noCurrentComponentRegions" );
+    }
+
+    @Test
+    void testGetRegionsExample()
+    {
+        final Component component = TestDataFixtures.newLayoutComponent();
+        this.portalRequest.setComponent( component );
+
+        runScript( "/lib/xp/examples/portal/getRegions.js" );
+    }
 }
