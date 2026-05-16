@@ -264,6 +264,18 @@ class UrlServiceScriptTest
     }
 
     @Test
+    void assetUrlTest_stringArg()
+    {
+        assertTrue( execute( "assetUrlTest_stringArg" ) );
+    }
+
+    @Test
+    void assetUrlTest_stringArg_empty()
+    {
+        assertTrue( execute( "assetUrlTest_stringArg_empty" ) );
+    }
+
+    @Test
     void attachmentUrlTest()
     {
         assertTrue( execute( "attachmentUrlTest" ) );

@@ -74,6 +74,9 @@ interface AssetUrlHandler {
  *
  * This function generates a URL pointing to a static file.
  *
+ * For backward compatibility, a `string` may be passed in place of `params`;
+ * it is treated as `params.path` with all other fields defaulted.
+ *
  * @example-ref examples/portal/assetUrl.js
  *
  * @param {object} params Input parameters as JSON.
@@ -84,15 +87,17 @@ interface AssetUrlHandler {
  *
  * @returns {string} The generated URL.
  */
-export function assetUrl(params: AssetUrlParams): string {
+export function assetUrl(params: AssetUrlParams | string): string {
+    const normalized: AssetUrlParams = typeof params === 'string' ? {path: params} : params;
+
     const bean: AssetUrlHandler = __.newBean<AssetUrlHandler>('com.enonic.xp.lib.portal.url.AssetUrlHandler');
 
-    const path = checkRequired(params, 'path');
+    const path = checkRequired(normalized, 'path');
 
     bean.setPath(path);
-    bean.setUrlType(__.nullOrValue(params.type));
-    bean.setApplication(__.nullOrValue(params.application));
-    bean.setQueryParams(__.toScriptValue(params.params));
+    bean.setUrlType(__.nullOrValue(normalized.type));
+    bean.setApplication(__.nullOrValue(normalized.application));
+    bean.setQueryParams(__.toScriptValue(normalized.params));
 
     return bean.createUrl();
 }
