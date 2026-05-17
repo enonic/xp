@@ -44,6 +44,22 @@ exports.assetUrlTest_invalidProperty = function () {
     return true;
 };
 
+exports.assetUrlTest_stringArg = function () {
+    var stringForm = portal.assetUrl('styles/my.css');
+    var objectForm = portal.assetUrl({path: 'styles/my.css'});
+
+    assert.assertEquals(objectForm, stringForm);
+    return true;
+};
+
+exports.assetUrlTest_stringArg_empty = function () {
+    var stringForm = portal.assetUrl('');
+    var objectForm = portal.assetUrl({path: ''});
+
+    assert.assertEquals(objectForm, stringForm);
+    return true;
+};
+
 exports.attachmentUrlTest = function () {
     var result = portal.attachmentUrl({
         name: 'myattachment.pdf',
