@@ -165,37 +165,38 @@ public class DumpUpgrader8to9
 
     private void extractProjectMetadata( final NodeStoreVersion nodeVersion )
     {
-        final PropertyTree data = nodeVersion.data();
-        if ( !data.hasProperty( "data" ) )
+        final Map.Entry<RepositoryId, ProjectContentRootMetadataUpgrader.ProjectMetadata> entry = readProjectMetadata( nodeVersion );
+        if ( entry != null )
         {
-            return;
+            projectMetadata.put( entry.getKey(), entry.getValue() );
         }
-        final PropertySet repoData = data.getSet( "data" );
+    }
+
+    static Map.@Nullable Entry<RepositoryId, ProjectContentRootMetadataUpgrader.ProjectMetadata> readProjectMetadata(
+        final NodeStoreVersion nodeVersion )
+    {
+        final PropertySet repoData = nodeVersion.data().getSet( "data" );
         if ( repoData == null )
         {
-            return;
+            return null;
         }
         final PropertySet projectData = repoData.getSet( ProjectConstants.PROJECT_DATA_SET_NAME );
         if ( projectData == null )
         {
-            return;
+            return null;
         }
-        final String repoIdValue = data.getString( "id" );
-        if ( repoIdValue == null )
-        {
-            return;
-        }
-        final RepositoryId repoId = RepositoryId.from( repoIdValue );
+        final RepositoryId repoId = RepositoryId.from( nodeVersion.id().toString() );
         if ( !repoId.toString().startsWith( ProjectConstants.PROJECT_REPO_ID_PREFIX ) )
         {
-            return;
+            return null;
         }
         final String displayName = projectData.getString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY );
         final String description = projectData.getString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY );
-        if ( displayName != null || description != null )
+        if ( displayName == null && description == null )
         {
-            projectMetadata.put( repoId, new ProjectContentRootMetadataUpgrader.ProjectMetadata( displayName, description ) );
+            return null;
         }
+        return Map.entry( repoId, new ProjectContentRootMetadataUpgrader.ProjectMetadata( displayName, description ) );
     }
 
     protected void upgradeRepository( final RepositoryId repositoryId )
