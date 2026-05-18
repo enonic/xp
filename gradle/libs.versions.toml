@@ -2,7 +2,7 @@
 jackson = "2.21.3"
 junit5 = "6.0.3"
 mockito = "5.23.0"
-slf4j = "2.0.17"
+slf4j = "2.0.18"
 jetty = "12.1.9"
 resteasy = "7.0.2.Final"
 hazelcast = "5.6.0"
