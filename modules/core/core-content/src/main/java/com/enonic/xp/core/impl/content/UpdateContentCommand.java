@@ -74,6 +74,7 @@ final class UpdateContentCommand
         final PatchNodeParams patchNodeParams = PatchNodeParamsFactory.create()
             .contentId( params.getContentId() )
             .editor( content -> {
+                verifyNotProtectedRoot( content );
                 Content editedContent;
 
                 editedContent = editContent( params.getEditor(), content );
@@ -207,9 +208,7 @@ final class UpdateContentCommand
             editor.edit( editableContent );
         }
 
-        editableContent.mixins = mergeMixins( original.getType(), editableContent.data,
-                                              original.getPath().isRoot() ? original.getPath() : original.getParentPath(),
-                                              editableContent.mixins );
+        editableContent.mixins = mergeMixins( original.getType(), editableContent.data, original.getParentPath(), editableContent.mixins );
 
         return Content.create( editableContent.build() ).build();
     }

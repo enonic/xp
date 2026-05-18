@@ -30,6 +30,12 @@ class ModifyProjectHandlerTest
     }
 
     @Test
+    void clearProjectLanguage()
+    {
+        runFunction( "/test/ModifyProjectHandlerTest.js", "clearLanguage" );
+    }
+
+    @Test
     void modifyProjectApplications()
     {
         runFunction( "/test/ModifyProjectHandlerTest.js", "modifyApplications" );

@@ -89,6 +89,11 @@ public interface ContentService
 
     ByteSource getBinary( ContentId contentId, ContentVersionId contentVersionId, BinaryReference binaryReference );
 
+    /**
+     * @deprecated Use {@link com.enonic.xp.project.ProjectService#getRootPermissions(com.enonic.xp.project.ProjectName)} instead.
+     * Root content is project state and should be accessed via the project API.
+     */
+    @Deprecated
     AccessControlList getRootPermissions();
 
     ContentDependencies getDependencies( ContentId id );

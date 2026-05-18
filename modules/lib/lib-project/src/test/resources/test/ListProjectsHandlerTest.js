@@ -15,9 +15,7 @@ var project1Expected = {
             'user:system:viewer1'
         ]
     },
-    readAccess: {
-        public: false
-    }
+    publicRead: false
 };
 
 var project2Expected = {
@@ -26,7 +24,7 @@ var project2Expected = {
     description: 'project description 2',
     parents: [],
     permissions: {},
-    readAccess: {public: false}
+    publicRead: false
 };
 
 exports.listProjects = function () {
@@ -44,7 +42,7 @@ function createProject1() {
         id: 'myproject1',
         displayName: 'project display name 1',
         description: 'project description 1',
-        readAccess: {public: false},
+        publicRead: false,
         permissions: {
             owner: ['user:system:owner2', 'user:system:owner1'],
             viewer: ['user:system:viewer1']
@@ -57,7 +55,6 @@ function createProject2() {
         id: 'myproject2',
         displayName: 'project display name 2',
         description: 'project description 2',
-        readAccess: {public: false}
+        publicRead: false
     });
 }
-

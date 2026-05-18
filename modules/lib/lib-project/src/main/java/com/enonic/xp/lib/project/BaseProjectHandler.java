@@ -2,7 +2,6 @@ package com.enonic.xp.lib.project;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -10,7 +9,6 @@ import java.util.stream.Collectors;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.form.PropertyTreeMarshallerService;
 import com.enonic.xp.project.ProjectPermissions;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.script.ScriptValue;
@@ -67,15 +65,6 @@ public abstract class BaseProjectHandler
 
             return builder.build();
         } ).orElse( null );
-    }
-
-    protected boolean buildReadAccess( final ScriptValue value )
-    {
-        return Optional.ofNullable( value )
-            .flatMap( readAccessValue -> Optional.ofNullable( readAccessValue.getMember( "public" ) )
-                .map( ScriptValue::getValue )
-                .map( isPublic -> ( (Boolean) isPublic ) ) )
-            .orElseThrow( () -> new IllegalArgumentException( "Invalid value for readAccess." ) );
     }
 
     protected List<SiteConfig> buildSiteConfigs( final ScriptValue value )

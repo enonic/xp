@@ -1,21 +1,25 @@
 package com.enonic.xp.project;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import com.enonic.xp.attachment.CreateAttachment;
 
 import static java.util.Objects.requireNonNull;
 
 
+@NullMarked
 public final class ModifyProjectIconParams
 {
     private final ProjectName name;
 
-    private final CreateAttachment icon;
+    private final @Nullable CreateAttachment icon;
 
     private final int scaleWidth;
 
     private ModifyProjectIconParams( final Builder builder )
     {
-        this.name = builder.name;
+        this.name = requireNonNull( builder.name, "name is required" );
         this.icon = builder.icon;
         this.scaleWidth = builder.scaleWidth;
     }
@@ -30,7 +34,7 @@ public final class ModifyProjectIconParams
         return name;
     }
 
-    public CreateAttachment getIcon()
+    public @Nullable CreateAttachment getIcon()
     {
         return icon;
     }
@@ -42,9 +46,9 @@ public final class ModifyProjectIconParams
 
     public static final class Builder
     {
-        private ProjectName name;
+        private @Nullable ProjectName name;
 
-        private CreateAttachment icon;
+        private @Nullable CreateAttachment icon;
 
         private int scaleWidth;
 
@@ -58,7 +62,7 @@ public final class ModifyProjectIconParams
             return this;
         }
 
-        public Builder icon( final CreateAttachment icon )
+        public Builder icon( final @Nullable CreateAttachment icon )
         {
             this.icon = icon;
             return this;
@@ -70,14 +74,8 @@ public final class ModifyProjectIconParams
             return this;
         }
 
-        private void validate()
-        {
-            requireNonNull( name, "name is required" );
-        }
-
         public ModifyProjectIconParams build()
         {
-            validate();
             return new ModifyProjectIconParams( this );
         }
     }

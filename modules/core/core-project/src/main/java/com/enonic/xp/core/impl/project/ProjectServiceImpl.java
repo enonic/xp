@@ -10,6 +10,7 @@ import java.math.RoundingMode;
 import java.util.ArrayDeque;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
@@ -20,10 +21,12 @@ import java.util.stream.Stream;
 
 import javax.imageio.ImageIO;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.ApplicationKeys;
@@ -31,6 +34,8 @@ import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.AttachmentSerializer;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
+import com.enonic.xp.branch.Branches;
+import com.enonic.xp.content.ApplyPermissionsListener;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.context.Context;
@@ -40,17 +45,24 @@ import com.enonic.xp.core.impl.project.init.ArchiveInitializer;
 import com.enonic.xp.core.impl.project.init.ContentInitializer;
 import com.enonic.xp.core.impl.project.init.ContentRepoInitializer;
 import com.enonic.xp.core.impl.project.init.IssueInitializer;
+import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.image.ImageHelper;
 import com.enonic.xp.index.IndexService;
+import com.enonic.xp.node.ApplyNodePermissionsListener;
+import com.enonic.xp.node.ApplyNodePermissionsParams;
+import com.enonic.xp.node.ApplyPermissionsScope;
+import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.BinaryAttachment;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeEditor;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.UpdateNodeParams;
+import com.enonic.xp.node.PatchNodeParams;
+import com.enonic.xp.node.VersionAttributesResolver;
 import com.enonic.xp.project.CreateProjectParams;
+import com.enonic.xp.project.EditableProject;
 import com.enonic.xp.project.ModifyProjectIconParams;
 import com.enonic.xp.project.ModifyProjectParams;
 import com.enonic.xp.project.Project;
@@ -63,6 +75,7 @@ import com.enonic.xp.project.ProjectPermissions;
 import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.project.Projects;
+import com.enonic.xp.project.SetProjectPublicReadParams;
 import com.enonic.xp.repository.BranchNotFoundException;
 import com.enonic.xp.repository.DeleteRepositoryParams;
 import com.enonic.xp.repository.Repositories;
@@ -74,12 +87,21 @@ import com.enonic.xp.repository.UpdateRepositoryParams;
 import com.enonic.xp.repository.internal.InternalRepositoryService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
+import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.util.BinaryReference;
+import com.enonic.xp.util.GenericValue;
+import com.enonic.xp.vacuum.VacuumConstants;
 
+import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
+
+@NullMarked
 public class ProjectServiceImpl
     implements ProjectService
 {
@@ -119,11 +141,15 @@ public class ProjectServiceImpl
             final Repositories repositories = this.repositoryService.list();
 
             getProjectRepositories( repositories ).forEach( repository -> {
+                final ProjectName projectName = requireNonNull( ProjectName.from( repository.getId() ) );
                 final PropertySet projectData = repository.getData().getSet( ProjectConstants.PROJECT_DATA_SET_NAME );
 
+                final String displayName =
+                    requireNonNullElse( projectData.getString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY ), projectName.toString() );
+
                 doInitRootNodes( CreateProjectParams.create()
-                                     .name( ProjectName.from( repository.getId() ) )
-                                     .displayName( projectData.getString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY ) )
+                                     .name( projectName )
+                                     .displayName( displayName )
                                      .description( projectData.getString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY ) )
                                      .build(), null );
             } );
@@ -176,7 +202,7 @@ public class ProjectServiceImpl
         }
     }
 
-    private void doInitRootNodes( final CreateProjectParams params, final PropertyTree contentRootData )
+    private void doInitRootNodes( final CreateProjectParams params, final @Nullable PropertyTree contentRootData )
     {
         ContentRepoInitializer.create()
             .setIndexService( indexService )
@@ -195,7 +221,7 @@ public class ProjectServiceImpl
             .setContentData( contentRootData )
             .accessControlList( CreateProjectRootAccessListCommand.create()
                                     .projectName( params.getName() )
-                                    .permissions( params.getPermissions() )
+                                    .publicRead( params.isPublicRead() )
                                     .build()
                                     .execute() )
             .forceInitialization( params.isForceInitialization() )
@@ -231,7 +257,7 @@ public class ProjectServiceImpl
     {
         return callWithUpdateContext( () -> {
             final Project result = doModify( params );
-            LOG.debug( "Project updated: " + params.getName() );
+            LOG.debug( "Project updated: {}", params.getName() );
 
             return result;
         }, params.getName() );
@@ -271,7 +297,9 @@ public class ProjectServiceImpl
 
             LOG.debug( "Project created: {}", params.getName() );
 
-            return toProject( repositoryService.get( params.getName().getRepoId() ), toProjectSiteConfigs( contentRootData ) );
+            return Objects.requireNonNull(
+                toProject( repositoryService.get( params.getName().getRepoId() ), getProjectContentRoot( params.getName() ) ),
+                "Project must exist after create" );
         } );
     }
 
@@ -311,12 +339,12 @@ public class ProjectServiceImpl
     }
 
     @Override
-    public ByteSource getIcon( final ProjectName projectName )
+    public @Nullable ByteSource getIcon( final ProjectName projectName )
     {
         return callWithGetContext( () -> doGetIcon( projectName ), projectName );
     }
 
-    private ByteSource doGetIcon( final ProjectName projectName )
+    private @Nullable ByteSource doGetIcon( final ProjectName projectName )
     {
         return Optional.ofNullable( doGet( projectName ) )
             .map( Project::getIcon )
@@ -426,7 +454,7 @@ public class ProjectServiceImpl
     }
 
     @Override
-    public Project get( final ProjectName projectName )
+    public @Nullable Project get( final ProjectName projectName )
     {
         return callWithGetContext( () -> doGet( projectName ), projectName );
     }
@@ -436,7 +464,7 @@ public class ProjectServiceImpl
     {
         return callWithDeleteContext( () -> {
             final boolean result = doDelete( projectName );
-            LOG.debug( "Project deleted: " + projectName );
+            LOG.debug( "Project deleted: {}", projectName );
 
             return result;
         }, projectName );
@@ -469,12 +497,130 @@ public class ProjectServiceImpl
         return callWithUpdateContext( () -> {
 
             final ProjectPermissions result = doModifyPermissions( projectName, projectPermissions );
-            LOG.debug( "Project permissions updated: " + projectName );
+            LOG.debug( "Project permissions updated: {}", projectName );
 
             return result;
 
 
         }, projectName );
+    }
+
+    @Override
+    public AccessControlList getRootPermissions( final ProjectName projectName )
+    {
+        return callWithGetContext( () -> doGetRootPermissions( projectName ), projectName );
+    }
+
+    private AccessControlList doGetRootPermissions( final ProjectName projectName )
+    {
+        final Node contentRoot = getProjectContentRootOrThrow( projectName );
+        return contentRoot.getPermissions();
+    }
+
+    @Override
+    public boolean getPublicRead( final ProjectName projectName )
+    {
+        return callWithGetContext( () -> doGetPublicRead( projectName ), projectName );
+    }
+
+    private boolean doGetPublicRead( final ProjectName projectName )
+    {
+        final Node contentRoot = getProjectContentRootOrThrow( projectName );
+        return contentRoot.getPermissions().isAllowedFor( RoleKeys.EVERYONE, Permission.READ );
+    }
+
+    private Node getProjectContentRootOrThrow( final ProjectName projectName )
+    {
+        final Node contentRoot;
+        try
+        {
+            contentRoot =
+                contentRootDataContext( projectName ).callWith( () -> nodeService.getByPath( ContentConstants.CONTENT_ROOT_PATH ) );
+        }
+        catch ( RepositoryNotFoundException | BranchNotFoundException e )
+        {
+            throw new ProjectNotFoundException( projectName );
+        }
+        if ( contentRoot == null )
+        {
+            throw new ProjectNotFoundException( projectName );
+        }
+        return contentRoot;
+    }
+
+    @Override
+    public boolean setPublicRead( final SetProjectPublicReadParams params )
+    {
+        return callWithUpdateContext( () -> doSetPublicRead( params ), params.getName() );
+    }
+
+    private boolean doSetPublicRead( final SetProjectPublicReadParams params )
+    {
+        final boolean publicRead = params.isPublicRead();
+        final ApplyPermissionsListener listener = params.getListener();
+
+        return contentRootDataContext( params.getName() ).callWith( () -> {
+            final Node contentRoot = nodeService.getByPath( ContentConstants.CONTENT_ROOT_PATH );
+            if ( contentRoot == null )
+            {
+                return false;
+            }
+
+            final AccessControlList currentPermissions = contentRoot.getPermissions();
+            final AccessControlList newPermissions = publicRead
+                ? AccessControlList.create( currentPermissions )
+                  .add( AccessControlEntry.create()
+                        .principal( RoleKeys.EVERYONE )
+                        .allow( Permission.READ )
+                        .build() )
+                  .build()
+                : AccessControlList.create( currentPermissions ).remove( RoleKeys.EVERYONE ).build();
+
+            final ApplyNodePermissionsParams.Builder paramsBuilder = ApplyNodePermissionsParams.create()
+                .nodeId( contentRoot.id() )
+                .permissions( newPermissions )
+                .scope( ApplyPermissionsScope.TREE )
+                .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
+                .versionAttributesResolver( projectVersionAttributesResolver( "content.permissions" ) );
+
+            if ( listener != null )
+            {
+                paramsBuilder.applyPermissionsListener( new ApplyPermissionsListenerAdapter( listener ) );
+            }
+
+            nodeService.applyPermissions( paramsBuilder.build() );
+
+            return publicRead;
+        } );
+    }
+
+    private static final class ApplyPermissionsListenerAdapter
+        implements ApplyNodePermissionsListener
+    {
+        private final ApplyPermissionsListener delegate;
+
+        ApplyPermissionsListenerAdapter( final ApplyPermissionsListener delegate )
+        {
+            this.delegate = delegate;
+        }
+
+        @Override
+        public void setTotal( final int count )
+        {
+            delegate.setTotal( count );
+        }
+
+        @Override
+        public void permissionsApplied( final int count )
+        {
+            delegate.permissionsApplied( count );
+        }
+
+        @Override
+        public void notEnoughRights( final int count )
+        {
+            delegate.notEnoughRights( count );
+        }
     }
 
     private ProjectPermissions doModifyPermissions( final ProjectName projectName, final ProjectPermissions projectPermissions )
@@ -493,8 +639,6 @@ public class ProjectServiceImpl
 
         final PropertySet projectData = data.addSet( ProjectConstants.PROJECT_DATA_SET_NAME );
 
-        projectData.setString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY, params.getDescription() );
-        projectData.setString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY, params.getDisplayName() );
         if ( !params.getParents().isEmpty() )
         {
             projectData.addStrings( ProjectConstants.PROJECT_PARENTS_PROPERTY,
@@ -504,22 +648,7 @@ public class ProjectServiceImpl
         return data;
     }
 
-    private PropertyTree modifyProjectData( final ModifyProjectParams params, final PropertyTree data )
-    {
-        PropertySet projectData = data.getSet( ProjectConstants.PROJECT_DATA_SET_NAME );
-
-        if ( projectData == null )
-        {
-            projectData = data.addSet( ProjectConstants.PROJECT_DATA_SET_NAME );
-        }
-
-        projectData.setString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY, params.getDescription() );
-        projectData.setString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY, params.getDisplayName() );
-
-        return data;
-    }
-
-    private void setIconData( final PropertySet parent, final CreateAttachment icon )
+    private void setIconData( final PropertySet parent, final @Nullable CreateAttachment icon )
     {
         parent.removeProperties( ProjectConstants.PROJECT_ICON_PROPERTY );
 
@@ -536,34 +665,28 @@ public class ProjectServiceImpl
     private BinaryAttachment createProjectIcon( final CreateAttachment icon, final int size )
         throws IOException
     {
+        final ByteSource source = icon.getByteSource();
 
-        if ( icon != null )
+        if ( "image/svg+xml".equals( icon.getMimeType() ) )
         {
-            final ByteSource source = icon.getByteSource();
-
-            if ( "image/svg+xml".equals( icon.getMimeType() ) )
-            {
-                return new BinaryAttachment( BinaryReference.from( icon.getName() ), icon.getByteSource() );
-            }
-
-            try (InputStream inputStream = source.openStream())
-            {
-                final BufferedImage bufferedImage = ImageIO.read( inputStream );
-
-                if ( size > 0 && ( bufferedImage.getWidth() >= size ) )
-                {
-                    final BufferedImage scaledImage = scaleWidth( bufferedImage, size );
-                    final ByteArrayOutputStream out = new ByteArrayOutputStream();
-                    ImageHelper.writeImage( out, scaledImage, ImageHelper.getFormatByMimeType( icon.getMimeType() ), -1 );
-
-                    return new BinaryAttachment( BinaryReference.from( icon.getName() ), ByteSource.wrap( out.toByteArray() ) );
-                }
-
-                return new BinaryAttachment( BinaryReference.from( icon.getName() ), icon.getByteSource() );
-            }
+            return new BinaryAttachment( BinaryReference.from( icon.getName() ), icon.getByteSource() );
         }
 
-        return null;
+        try (InputStream inputStream = source.openStream())
+        {
+            final BufferedImage bufferedImage = ImageIO.read( inputStream );
+
+            if ( size > 0 && ( bufferedImage.getWidth() >= size ) )
+            {
+                final BufferedImage scaledImage = scaleWidth( bufferedImage, size );
+                final ByteArrayOutputStream out = new ByteArrayOutputStream();
+                ImageHelper.writeImage( out, scaledImage, ImageHelper.getFormatByMimeType( icon.getMimeType() ), -1 );
+
+                return new BinaryAttachment( BinaryReference.from( icon.getName() ), ByteSource.wrap( out.toByteArray() ) );
+            }
+
+            return new BinaryAttachment( BinaryReference.from( icon.getName() ), icon.getByteSource() );
+        }
     }
 
     private BufferedImage scaleWidth( final BufferedImage source, final int sizeInt )
@@ -609,51 +732,127 @@ public class ProjectServiceImpl
     {
         final ProjectName projectName = params.getName();
 
-        final UpdateRepositoryParams updateParams = UpdateRepositoryParams.create()
-            .repositoryId( projectName.getRepoId() )
-            .editor( editableRepository -> modifyProjectData( params, editableRepository.data ) )
-            .build();
-
-        final Repository updatedRepository;
-        try
-        {
-            updatedRepository = repositoryService.updateRepository( updateParams );
-        }
-        catch ( RepositoryNotFoundException e )
+        final Repository repository = repositoryService.get( projectName.getRepoId() );
+        if ( repository == null )
         {
             throw new ProjectNotFoundException( projectName );
         }
 
+        final Node currentContentRoot = getProjectContentRoot( projectName );
+        if ( currentContentRoot == null )
+        {
+            throw new ProjectNotFoundException( projectName );
+        }
+        final Project current = toProject( repository, currentContentRoot );
+        if ( current == null )
+        {
+            throw new ProjectNotFoundException( projectName );
+        }
+
+        final EditableProject editable = new EditableProject( current );
+        params.getEditor().edit( editable );
+
+        Preconditions.checkArgument( editable.displayName != null && !editable.displayName.isBlank(),
+                                     "displayName must not be null or blank" );
+
         UpdateProjectRoleNamesCommand.create()
             .securityService( securityService )
             .projectName( projectName )
-            .projectDisplayName( params.getDisplayName() )
+            .projectDisplayName( editable.displayName )
             .build()
             .execute();
 
-        final Node updatedContentRootNode = updateProjectSiteConfigs( projectName, params.getSiteConfigs() );
+        final Node updatedContentRootNode = updateProjectContentRoot( projectName, editable );
 
-        return toProject( updatedRepository, toProjectSiteConfigs( updatedContentRootNode.data() ) );
+        return Objects.requireNonNull( toProject( repository, updatedContentRootNode ), "Project must exist after modify" );
+    }
+
+    private Node updateProjectContentRoot( final ProjectName projectName, final EditableProject editable )
+    {
+        final NodeEditor editor = edit -> {
+            if ( editable.displayName != null )
+            {
+                edit.data.setString( ContentPropertyNames.DISPLAY_NAME, editable.displayName );
+            }
+            else
+            {
+                edit.data.removeProperties( ContentPropertyNames.DISPLAY_NAME );
+            }
+            if ( editable.language != null )
+            {
+                edit.data.setString( ContentPropertyNames.LANGUAGE, editable.language.toLanguageTag() );
+            }
+            else
+            {
+                edit.data.removeProperties( ContentPropertyNames.LANGUAGE );
+            }
+            final PropertySet data = edit.data.getSet( ContentPropertyNames.DATA );
+            if ( data == null )
+            {
+                throw new IllegalStateException( "Cannot update project config" );
+            }
+            if ( editable.description != null )
+            {
+                data.setString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY, editable.description );
+            }
+            else
+            {
+                data.removeProperties( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY );
+            }
+            data.removeProperties( ContentPropertyNames.SITECONFIG );
+            SiteConfigsDataSerializer.toData( requireNonNullElse( editable.siteConfigs, SiteConfigs.empty() ), data );
+        };
+        final PatchNodeParams params = PatchNodeParams.create()
+            .path( ContentConstants.CONTENT_ROOT_PATH )
+            .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
+            .editor( editor )
+            .versionAttributesResolver( projectVersionAttributesResolver( "project.modify" ) )
+            .build();
+        return contentRootDataContext( projectName ).callWith(
+            () -> nodeService.patch( params ).getResult( ContextAccessor.current().getBranch() ) );
+    }
+
+    private static VersionAttributesResolver projectVersionAttributesResolver( final String actionKey )
+    {
+        return ( _, _, _, _ ) -> Attributes.create()
+            .attribute( actionKey, GenericValue.newObject()
+                .put( "user", ContextAccessor.current().getAuthInfo().getUser().getKey().toString() )
+                .put( "optime", Millis.now().toString() )
+                .build() )
+            .attribute( VacuumConstants.VACUUM_SKIP_ATTRIBUTE, GenericValue.newObject().build() )
+            .build();
     }
 
     private Projects doList()
     {
         return this.repositoryService.list().stream().map( repository -> {
             final ProjectName projectName = ProjectName.from( repository.getId() );
-            return projectName != null ? toProject( repository, getProjectSiteConfigs( projectName ) ) : null;
+            return projectName != null ? toProject( repository, getProjectContentRoot( projectName ) ) : null;
         } ).filter( Objects::nonNull ).collect( Projects.collector() );
     }
 
-    private Project doGet( final ProjectName projectName )
+    private @Nullable Project doGet( final ProjectName projectName )
     {
-        return toProject( this.repositoryService.get( projectName.getRepoId() ), getProjectSiteConfigs( projectName ) );
+        return toProject( this.repositoryService.get( projectName.getRepoId() ), getProjectContentRoot( projectName ) );
     }
 
     private PropertyTree toContentRootData( final CreateProjectParams params )
     {
         PropertyTree data = new PropertyTree();
 
-        final PropertySet contentRootData = data.addSet( "data" );
+        data.setString( ContentPropertyNames.DISPLAY_NAME, params.getDisplayName() );
+
+        if ( params.getLanguage() != null )
+        {
+            data.setString( ContentPropertyNames.LANGUAGE, params.getLanguage().toLanguageTag() );
+        }
+
+        final PropertySet contentRootData = data.addSet( ContentPropertyNames.DATA );
+
+        if ( params.getDescription() != null )
+        {
+            contentRootData.setString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY, params.getDescription() );
+        }
 
         if ( !params.getSiteConfigs().isEmpty() )
         {
@@ -663,24 +862,16 @@ public class ProjectServiceImpl
         return data;
     }
 
-    private @Nullable SiteConfigs getProjectSiteConfigs( final ProjectName projectName )
+    private @Nullable Node getProjectContentRoot( final ProjectName projectName )
     {
-        final Node contentRoot;
         try
         {
-            contentRoot =
-                contentRootDataContext( projectName ).callWith( () -> nodeService.getByPath( ContentConstants.CONTENT_ROOT_PATH ) );
-            if ( contentRoot == null )
-            {
-                return null;
-            }
+            return contentRootDataContext( projectName ).callWith( () -> nodeService.getByPath( ContentConstants.CONTENT_ROOT_PATH ) );
         }
         catch ( RepositoryNotFoundException | BranchNotFoundException e )
         {
             return null;
         }
-
-        return toProjectSiteConfigs( contentRoot.data() );
     }
 
     private SiteConfigs toProjectSiteConfigs( final PropertyTree contentRootData )
@@ -690,24 +881,9 @@ public class ProjectServiceImpl
             .orElse( SiteConfigs.empty() );
     }
 
-    private Node updateProjectSiteConfigs( final ProjectName projectName, final SiteConfigs siteConfigs )
+    private @Nullable Project toProject( final @Nullable Repository repository, final @Nullable Node contentRoot )
     {
-        final NodeEditor editor = edit -> {
-            final PropertySet data = edit.data.getSet( ContentPropertyNames.DATA );
-            if ( data == null )
-            {
-                throw new IllegalStateException( "Cannot update project config" );
-            }
-            data.removeProperties( ContentPropertyNames.SITECONFIG );
-            SiteConfigsDataSerializer.toData( siteConfigs, data );
-        };
-        final UpdateNodeParams build = UpdateNodeParams.create().path( ContentConstants.CONTENT_ROOT_PATH ).editor( editor ).build();
-        return contentRootDataContext( projectName ).callWith( () -> nodeService.update( build ) );
-    }
-
-    private Project toProject( final Repository repository, final SiteConfigs siteConfigs )
-    {
-        if ( repository == null || siteConfigs == null )
+        if ( repository == null || contentRoot == null )
         {
             return null;
         }
@@ -721,14 +897,25 @@ public class ProjectServiceImpl
             return null;
         }
 
+        final ProjectName projectName = ProjectName.from( repository.getId() );
+        if ( projectName == null )
+        {
+            return null;
+        }
+
+        final PropertyTree contentRootData = contentRoot.data();
+        final PropertySet contentDataSet = contentRootData.getSet( ContentPropertyNames.DATA );
+        final String languageTag = contentRootData.getString( ContentPropertyNames.LANGUAGE );
+
         final Project.Builder project = Project.create()
-            .name( ProjectName.from( repository.getId() ) )
-            .description( projectData.getString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY ) )
-            .displayName( projectData.getString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY ) );
+            .name( projectName )
+            .displayName( contentRootData.getString( ContentPropertyNames.DISPLAY_NAME ) )
+            .description( contentDataSet != null ? contentDataSet.getString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY ) : null )
+            .language( languageTag != null ? Locale.forLanguageTag( languageTag ) : null );
 
         buildParents( project, projectData );
         buildIcon( project, projectData );
-        buildSiteConfigs( project, siteConfigs );
+        buildSiteConfigs( project, toProjectSiteConfigs( contentRootData ) );
 
         return project.build();
     }

@@ -32,7 +32,6 @@ import com.enonic.xp.core.impl.security.SecurityAuditLogSupportImpl;
 import com.enonic.xp.core.impl.security.SecurityConfig;
 import com.enonic.xp.core.impl.security.SecurityInitializer;
 import com.enonic.xp.core.impl.security.SecurityServiceImpl;
-import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
@@ -41,13 +40,13 @@ import com.enonic.xp.project.CreateProjectParams;
 import com.enonic.xp.project.ModifyProjectIconParams;
 import com.enonic.xp.project.ModifyProjectParams;
 import com.enonic.xp.project.Project;
-import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.project.ProjectGraph;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectNotFoundException;
 import com.enonic.xp.project.ProjectPermissions;
 import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.project.Projects;
+import com.enonic.xp.project.SetProjectPublicReadParams;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeBranchEntry;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
@@ -62,7 +61,6 @@ import com.enonic.xp.security.PrincipalRelationships;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.User;
-import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -70,6 +68,7 @@ import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.groups.Tuple.tuple;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -104,10 +103,8 @@ class ProjectServiceImplTest
         .user( REPO_TEST_DEFAULT_USER )
         .build();
 
-    private static final AuthenticationInfo REPO_TEST_CONTENT_MANAGER_AUTHINFO = AuthenticationInfo.create()
-        .principals( RoleKeys.AUTHENTICATED )
-        .user( REPO_TEST_DEFAULT_USER )
-        .build();
+    private static final AuthenticationInfo REPO_TEST_CONTENT_MANAGER_AUTHINFO =
+        AuthenticationInfo.create().principals( RoleKeys.AUTHENTICATED ).user( REPO_TEST_DEFAULT_USER ).build();
 
     private static final AuthenticationInfo REPO_TEST_CUSTOM_MANAGER_AUTHINFO = AuthenticationInfo.create()
         .principals( RoleKeys.AUTHENTICATED )
@@ -245,18 +242,12 @@ class ProjectServiceImplTest
         final String displayName = "test display name";
         final String description = "test description";
 
-        final PropertyTree data = new PropertyTree();
-
-        final PropertySet projectData = data.addSet( ProjectConstants.PROJECT_DATA_SET_NAME );
-
-        projectData.setString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY, displayName );
-        projectData.setString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY, description );
-
         adminContext().callWith( () -> doCreateProject( ProjectName.from( projectRepoId ), displayName, description ) );
 
         adminContext().runWith( () -> {
-            final Repository projectRepo = repositoryService.get( projectRepoId );
-            assertEquals( data, projectRepo.getData() );
+            final Project project = projectService.get( ProjectName.from( projectRepoId ) );
+            assertEquals( displayName, project.getDisplayName() );
+            assertEquals( description, project.getDescription() );
         } );
     }
 
@@ -426,9 +417,7 @@ class ProjectServiceImplTest
         final RepositoryId projectRepoId = RepositoryId.from( "com.enonic.cms.test-project" );
         final ProjectName projectName = ProjectName.from( projectRepoId );
 
-        adminContext().callWith( () -> doCreateProject( projectName, null, false, null, AccessControlList.create()
-            .add( AccessControlEntry.create().principal( RoleKeys.EVERYONE ).allow( Permission.READ ).build() )
-            .build(), null ) );
+        adminContext().callWith( () -> doCreateProject( projectName, null, false, null, true, null ) );
 
         ContextBuilder.from( adminContext() ).branch( ContentConstants.BRANCH_DRAFT ).repositoryId( projectRepoId ).build().runWith( () -> {
 
@@ -437,6 +426,112 @@ class ProjectServiceImplTest
 
             assertTrue( rootContentPermissions.getEntry( RoleKeys.EVERYONE ).isAllowed( Permission.READ ) );
         } );
+    }
+
+    @Test
+    void getRootPermissions()
+    {
+        final ProjectName projectName = ProjectName.from( "test-project" );
+        doCreateProjectAsAdmin( projectName );
+
+        final AccessControlList rootPermissions = adminContext().callWith( () -> projectService.getRootPermissions( projectName ) );
+
+        assertTrue( rootPermissions.getEntry( RoleKeys.ADMIN ).isAllowedAll() );
+        assertTrue( rootPermissions.getEntry( RoleKeys.CONTENT_MANAGER_ADMIN ).isAllowedAll() );
+        assertTrue( rootPermissions.getEntry( ProjectAccessHelper.createRoleKey( projectName, ProjectRole.OWNER ) ).isAllowedAll() );
+        assertTrue( rootPermissions.getEntry( ProjectAccessHelper.createRoleKey( projectName, ProjectRole.EDITOR ) ).isAllowedAll() );
+        assertTrue( rootPermissions.getEntry( ProjectAccessHelper.createRoleKey( projectName, ProjectRole.AUTHOR ) )
+                        .isAllowed( Permission.READ, Permission.CREATE, Permission.MODIFY, Permission.DELETE ) );
+        assertTrue( rootPermissions.getEntry( ProjectAccessHelper.createRoleKey( projectName, ProjectRole.CONTRIBUTOR ) )
+                        .isAllowed( Permission.READ ) );
+        assertTrue( rootPermissions.getEntry( ProjectAccessHelper.createRoleKey( projectName, ProjectRole.VIEWER ) )
+                        .isAllowed( Permission.READ ) );
+        assertNull( rootPermissions.getEntry( RoleKeys.EVERYONE ) );
+    }
+
+    @Test
+    void getRootPermissions_unknown_project()
+    {
+        assertThatThrownBy(
+            () -> adminContext().callWith( () -> projectService.getRootPermissions( ProjectName.from( "does-not-exist" ) ) ) ).isInstanceOf(
+            ProjectNotFoundException.class );
+    }
+
+    @Test
+    void getPublicRead_default_is_false()
+    {
+        final ProjectName projectName = ProjectName.from( "test-project" );
+        doCreateProjectAsAdmin( projectName );
+
+        assertFalse( adminContext().callWith( () -> projectService.getPublicRead( projectName ) ) );
+    }
+
+    @Test
+    void getPublicRead_true_when_created_public()
+    {
+        final ProjectName projectName = ProjectName.from( "test-project" );
+        adminContext().callWith( () -> doCreateProject( projectName, null, false, null, true, null ) );
+
+        assertTrue( adminContext().callWith( () -> projectService.getPublicRead( projectName ) ) );
+    }
+
+    @Test
+    void getPublicRead_unknown_project()
+    {
+        assertThatThrownBy(
+            () -> adminContext().callWith( () -> projectService.getPublicRead( ProjectName.from( "does-not-exist" ) ) ) ).isInstanceOf(
+            ProjectNotFoundException.class );
+    }
+
+    @Test
+    void setPublicRead_grants_then_revokes_everyone_read()
+    {
+        final RepositoryId projectRepoId = RepositoryId.from( "com.enonic.cms.test-project" );
+        final ProjectName projectName = ProjectName.from( projectRepoId );
+        doCreateProjectAsAdmin( projectName );
+
+        assertFalse( adminContext().callWith( () -> projectService.getPublicRead( projectName ) ) );
+
+        final boolean afterGrant = adminContext().callWith(
+            () -> projectService.setPublicRead( SetProjectPublicReadParams.create().name( projectName ).publicRead( true ).build() ) );
+        assertTrue( afterGrant );
+        assertTrue( adminContext().callWith( () -> projectService.getPublicRead( projectName ) ) );
+
+        List.of( ContextBuilder.from( adminContext() ).branch( ContentConstants.BRANCH_DRAFT ).repositoryId( projectRepoId ).build(),
+                 ContextBuilder.from( adminContext() ).branch( ContentConstants.BRANCH_MASTER ).repositoryId( projectRepoId ).build() )
+            .forEach( context -> context.runWith( () -> {
+                final Node rootContentNode = nodeService.getByPath( ContentConstants.CONTENT_ROOT_PATH );
+                assertTrue( rootContentNode.getPermissions().getEntry( RoleKeys.EVERYONE ).isAllowed( Permission.READ ) );
+            } ) );
+
+        final boolean afterRevoke = adminContext().callWith(
+            () -> projectService.setPublicRead( SetProjectPublicReadParams.create().name( projectName ).publicRead( false ).build() ) );
+        assertFalse( afterRevoke );
+        assertFalse( adminContext().callWith( () -> projectService.getPublicRead( projectName ) ) );
+
+        List.of( ContextBuilder.from( adminContext() ).branch( ContentConstants.BRANCH_DRAFT ).repositoryId( projectRepoId ).build(),
+                 ContextBuilder.from( adminContext() ).branch( ContentConstants.BRANCH_MASTER ).repositoryId( projectRepoId ).build() )
+            .forEach( context -> context.runWith( () -> {
+                final Node rootContentNode = nodeService.getByPath( ContentConstants.CONTENT_ROOT_PATH );
+                assertNull( rootContentNode.getPermissions().getEntry( RoleKeys.EVERYONE ) );
+            } ) );
+    }
+
+    @Test
+    void setPublicRead_preserves_role_permissions()
+    {
+        final RepositoryId projectRepoId = RepositoryId.from( "com.enonic.cms.test-project" );
+        final ProjectName projectName = ProjectName.from( projectRepoId );
+        doCreateProjectAsAdmin( projectName );
+
+        adminContext().callWith(
+            () -> projectService.setPublicRead( SetProjectPublicReadParams.create().name( projectName ).publicRead( true ).build() ) );
+
+        final AccessControlList rootPermissions = adminContext().callWith( () -> projectService.getRootPermissions( projectName ) );
+
+        assertTrue( rootPermissions.getEntry( RoleKeys.EVERYONE ).isAllowed( Permission.READ ) );
+        assertTrue( rootPermissions.getEntry( ProjectAccessHelper.createRoleKey( projectName, ProjectRole.OWNER ) ).isAllowedAll() );
+        assertTrue( rootPermissions.getEntry( ProjectAccessHelper.createRoleKey( projectName, ProjectRole.EDITOR ) ).isAllowedAll() );
     }
 
     @Test
@@ -690,11 +785,10 @@ class ProjectServiceImplTest
         doCreateProjectAsAdmin( ProjectName.from( "test-project" ) );
 
         adminContext().runWith( () -> {
-            projectService.modify( ModifyProjectParams.create()
-                                       .name( ProjectName.from( "test-project" ) )
-                                       .description( "new description" )
-                                       .displayName( "new display name" )
-                                       .build() );
+            projectService.modify( ModifyProjectParams.create().name( ProjectName.from( "test-project" ) ).editor( edit -> {
+                edit.description = "new description";
+                edit.displayName = "new display name";
+            } ).build() );
 
             final Project modifiedProject = projectService.get( ProjectName.from( "test-project" ) );
 
@@ -788,11 +882,10 @@ class ProjectServiceImplTest
         adminContext().runWith( () -> {
             securityService.deletePrincipal( PrincipalKey.ofRole( "cms.project.test-project.owner" ) );
 
-            projectService.modify( ModifyProjectParams.create()
-                                       .name( ProjectName.from( "test-project" ) )
-                                       .description( "new description" )
-                                       .displayName( "new display name" )
-                                       .build() );
+            projectService.modify( ModifyProjectParams.create().name( ProjectName.from( "test-project" ) ).editor( edit -> {
+                edit.description = "new description";
+                edit.displayName = "new display name";
+            } ).build() );
         } );
 
         assertFalse( securityService.getRole( PrincipalKey.ofRole( "cms.project.test-project.owner" ) ).isPresent() );
@@ -812,16 +905,12 @@ class ProjectServiceImplTest
         adminContext().callWith( () -> doCreateProject( ProjectName.from( projectRepoId ), SiteConfigs.from(
             SiteConfig.create().application( ApplicationKey.from( "app" ) ).config( config1 ).build() ) ) );
 
-        final Project project = adminContext().callWith( () -> projectService.modify( ModifyProjectParams.create()
-                                                                                          .name( ProjectName.from( "test-project" ) )
-                                                                                          .displayName( "project name" )
-                                                                                          .addSiteConfig( SiteConfig.create()
-                                                                                                              .application(
-                                                                                                                  ApplicationKey.from(
-                                                                                                                      "app" ) )
-                                                                                                              .config( config2 )
-                                                                                                              .build() )
-                                                                                          .build() ) );
+        final Project project = adminContext().callWith(
+            () -> projectService.modify( ModifyProjectParams.create().name( ProjectName.from( "test-project" ) ).editor( edit -> {
+                edit.displayName = "project name";
+                edit.siteConfigs =
+                    SiteConfigs.from( SiteConfig.create().application( ApplicationKey.from( "app" ) ).config( config2 ).build() );
+            } ).build() ) );
 
         assertEquals( 1, project.getSiteConfigs().getSize() );
         assertTrue(
@@ -1071,18 +1160,17 @@ class ProjectServiceImplTest
     private Project doCreateProject( final ProjectName name, final ProjectPermissions projectPermissions, final boolean forceInitialization,
                                      final Collection<ProjectName> parents )
     {
-        return doCreateProject( name, projectPermissions, forceInitialization, parents, null, null );
+        return doCreateProject( name, projectPermissions, forceInitialization, parents, false, null );
     }
 
     private Project doCreateProject( final ProjectName name, final ProjectPermissions projectPermissions, final boolean forceInitialization,
-                                     final Collection<ProjectName> parents, final AccessControlList permissions,
-                                     final SiteConfigs siteConfigs )
+                                     final Collection<ProjectName> parents, final boolean publicRead, final SiteConfigs siteConfigs )
     {
         final CreateProjectParams.Builder params = CreateProjectParams.create()
             .name( name )
             .description( "description" )
             .displayName( "Project display name" )
-            .permissions( permissions )
+            .publicRead( publicRead )
             .forceInitialization( forceInitialization );
 
         if ( parents != null && !parents.isEmpty() )
@@ -1107,12 +1195,12 @@ class ProjectServiceImplTest
 
     private Project doCreateProject( final ProjectName name, final ProjectName parent, final SiteConfigs siteConfigs )
     {
-        return this.doCreateProject( name, null, false, List.of( parent ), null, siteConfigs );
+        return this.doCreateProject( name, null, false, List.of( parent ), false, siteConfigs );
     }
 
     private Project doCreateProject( final ProjectName name, final SiteConfigs siteConfigs )
     {
-        return this.doCreateProject( name, null, false, null, null, siteConfigs );
+        return this.doCreateProject( name, null, false, null, false, siteConfigs );
     }
 
     private void assertProjectEquals( final Project p1, final Project p2 )
@@ -1123,9 +1211,8 @@ class ProjectServiceImplTest
 
     private AuthenticationInfo getAccessForProject( final ProjectName projectName, final List<ProjectRole> roles )
     {
-        final AuthenticationInfo.Builder authenticationInfo = AuthenticationInfo.create()
-            .principals( RoleKeys.AUTHENTICATED )
-            .user( REPO_TEST_OWNER );
+        final AuthenticationInfo.Builder authenticationInfo =
+            AuthenticationInfo.create().principals( RoleKeys.AUTHENTICATED ).user( REPO_TEST_OWNER );
 
         roles.forEach( role -> authenticationInfo.principals( ProjectAccessHelper.createRoleKey( projectName, role ) ) );
 

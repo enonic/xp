@@ -43,6 +43,7 @@ public class UpdateWorkflowCommand
         final PatchNodeParams patchNodeParams = PatchNodeParamsFactory.create()
             .contentId( params.getContentId() )
             .editor( content -> {
+                verifyNotProtectedRoot( content );
                 Content editedContent = editWorkflow( params.getEditor(), content );
                 return afterUpdate( editedContent, ContentInheritType.CONTENT );
             } )

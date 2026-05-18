@@ -31,9 +31,7 @@ var modifyProjectExpected = {
             'user:system:viewer1'
         ]
     },
-    readAccess: {
-        public: true
-    }
+    publicRead: true
 };
 
 exports.modifyProject = function () {
@@ -41,24 +39,27 @@ exports.modifyProject = function () {
 
     var result = project.modify({
         id: 'myproject',
-        displayName: 'new display name',
-        description: 'new description',
-        language: 'ja',
-        siteConfig: [
-            {
-                applicationKey: 'appKey1',
-                config: {
-                    a: 'a',
-                    b: true
+        editor: function (p) {
+            p.displayName = 'new display name';
+            p.description = 'new description';
+            p.language = 'ja';
+            p.siteConfig = [
+                {
+                    applicationKey: 'appKey1',
+                    config: {
+                        a: 'a',
+                        b: true
+                    }
+                },
+                {
+                    applicationKey: 'appKey2',
+                    config: {
+                        c: 4
+                    }
                 }
-            },
-            {
-                applicationKey: 'appKey2',
-                config: {
-                    c: 4
-                }
-            }
-        ]
+            ];
+            return p;
+        }
     });
 
 
@@ -80,9 +81,7 @@ var modifyDescriptionExpected = {
             'user:system:viewer1'
         ]
     },
-    readAccess: {
-        public: true
-    }
+    publicRead: true
 };
 
 exports.modifyDescription = function () {
@@ -90,7 +89,10 @@ exports.modifyDescription = function () {
 
     var result = project.modify({
         id: 'myproject',
-        description: 'new description'
+        editor: function (p) {
+            p.description = 'new description';
+            return p;
+        }
     });
 
     assert.assertJsonEquals(modifyDescriptionExpected, result);
@@ -111,9 +113,7 @@ var modifyDisplayNameExpected = {
             'user:system:viewer1'
         ]
     },
-    readAccess: {
-        public: true
-    }
+    publicRead: true
 };
 
 exports.modifyDisplayName = function () {
@@ -121,7 +121,10 @@ exports.modifyDisplayName = function () {
 
     var result = project.modify({
         id: 'myproject',
-        displayName: 'new display name'
+        editor: function (p) {
+            p.displayName = 'new display name';
+            return p;
+        }
     });
 
     assert.assertJsonEquals(modifyDisplayNameExpected, result);
@@ -131,7 +134,7 @@ var modifyLanguageExpected = {
     id: 'myproject',
     displayName: 'project display name',
     description: 'project description',
-    language: 'ja',
+    language: 'no',
     parents: [],
     permissions: {
         owner: [
@@ -142,9 +145,24 @@ var modifyLanguageExpected = {
             'user:system:viewer1'
         ]
     },
-    readAccess: {
-        public: true
-    }
+    publicRead: true
+};
+
+var clearLanguageExpected = {
+    id: 'myproject',
+    displayName: 'project display name',
+    description: 'project description',
+    parents: [],
+    permissions: {
+        owner: [
+            'user:system:owner2',
+            'user:system:owner1'
+        ],
+        viewer: [
+            'user:system:viewer1'
+        ]
+    },
+    publicRead: true
 };
 
 var modifyApplicationsExpected = {
@@ -170,9 +188,7 @@ var modifyApplicationsExpected = {
             'user:system:viewer1'
         ]
     },
-    readAccess: {
-        public: true
-    }
+    publicRead: true
 };
 
 exports.modifyLanguage = function () {
@@ -180,10 +196,27 @@ exports.modifyLanguage = function () {
 
     var result = project.modify({
         id: 'myproject',
-        language: 'ja'
+        editor: function (p) {
+            p.language = 'no';
+            return p;
+        }
     });
 
     assert.assertJsonEquals(modifyLanguageExpected, result);
+};
+
+exports.clearLanguage = function () {
+    createProject();
+
+    var result = project.modify({
+        id: 'myproject',
+        editor: function (p) {
+            p.language = null;
+            return p;
+        }
+    });
+
+    assert.assertJsonEquals(clearLanguageExpected, result);
 };
 
 exports.modifyApplications = function () {
@@ -191,14 +224,17 @@ exports.modifyApplications = function () {
 
     var result = project.modify({
         id: 'myproject',
-        siteConfig: [
-            {
-                applicationKey: 'appKey2',
-                config: {
-                    c: 4
+        editor: function (p) {
+            p.siteConfig = [
+                {
+                    applicationKey: 'appKey2',
+                    config: {
+                        c: 4
+                    }
                 }
-            }
-        ]
+            ];
+            return p;
+        }
     });
 
     assert.assertJsonEquals(modifyApplicationsExpected, result);
@@ -209,7 +245,8 @@ function createProject() {
         id: 'myproject',
         displayName: 'project display name',
         description: 'project description',
-        readAccess: {public: true},
+        language: 'ja',
+        publicRead: true,
         permissions: {owner: ['user:system:owner2', 'user:system:owner1'], viewer: ['user:system:viewer1']}
     });
 }

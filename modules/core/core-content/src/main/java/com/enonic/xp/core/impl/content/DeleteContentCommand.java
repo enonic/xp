@@ -59,13 +59,15 @@ final class DeleteContentCommand
 
         if ( nodeToDelete == null )
         {
-            throw  ContentNotFoundException.create()
-            .contentPath( contentPath )
-            .repositoryId( ContextAccessor.current().getRepositoryId() )
-            .branch( ContextAccessor.current().getBranch() )
-            .contentRoot( ContentNodeHelper.getContentRoot() )
-            .build();
+            throw ContentNotFoundException.create()
+                .contentPath( contentPath )
+                .repositoryId( ContextAccessor.current().getRepositoryId() )
+                .branch( ContextAccessor.current().getBranch() )
+                .contentRoot( ContentNodeHelper.getContentRoot() )
+                .build();
         }
+
+        verifyNotProtectedRoot( nodeToDelete.path() );
 
         return doDeleteContent( ContentId.from( nodeToDelete.id() ) );
     }
@@ -82,9 +84,7 @@ final class DeleteContentCommand
         final ContentIds unpublishedContents = unpublish( nodeToDelete, ContentNodeHelper.toContentIds( descendants ) );
         result.addUnpublished( unpublishedContents );
 
-        final DeleteNodeParams.Builder builder = DeleteNodeParams.create()
-            .nodeId( nodeId )
-            .refresh( RefreshMode.SEARCH );
+        final DeleteNodeParams.Builder builder = DeleteNodeParams.create().nodeId( nodeId ).refresh( RefreshMode.SEARCH );
 
         if ( params.getDeleteContentListener() != null )
         {
@@ -104,12 +104,8 @@ final class DeleteContentCommand
             .nodeService( nodeService )
             .contentTypeService( contentTypeService )
             .eventPublisher( eventPublisher )
-            .params( UnpublishContentParams.create()
-                         .contentIds( ContentIds.create()
-                                          .addAll( descendants )
-                                          .add( contentId )
-                                          .build() )
-                         .build() )
+            .params(
+                UnpublishContentParams.create().contentIds( ContentIds.create().addAll( descendants ).add( contentId ).build() ).build() )
             .build()
             .execute()
             .getUnpublishedContents();

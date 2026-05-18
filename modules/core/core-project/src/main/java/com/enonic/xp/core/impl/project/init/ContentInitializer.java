@@ -93,8 +93,14 @@ public final class ContentInitializer
 
             final PropertyTree data = contentData != null ? contentData : new PropertyTree();
             data.setString( ContentPropertyNames.TYPE, "base:folder" );
-            data.setString( ContentPropertyNames.DISPLAY_NAME, "Content" );
-            data.addSet( ContentPropertyNames.DATA );
+            if ( !data.hasProperty( ContentPropertyNames.DISPLAY_NAME ) )
+            {
+                data.setString( ContentPropertyNames.DISPLAY_NAME, "Content" );
+            }
+            if ( !data.hasProperty( ContentPropertyNames.DATA ) )
+            {
+                data.addSet( ContentPropertyNames.DATA );
+            }
             data.addSet( ContentPropertyNames.FORM );
             data.setString( ContentPropertyNames.CREATOR, ContextAccessor.current().getAuthInfo().getUser().getKey().toString() );
             data.setInstant( ContentPropertyNames.CREATED_TIME, Millis.now() );
@@ -103,8 +109,8 @@ public final class ContentInitializer
                                                              .data( data )
                                                              .name( ContentConstants.CONTENT_ROOT_NAME )
                                                              .parent( NodePath.ROOT )
-                                                             .permissions( requireNonNullElse( this.accessControlList,
-                                                                                                       CONTENT_ROOT_DEFAULT_ACL ) )
+                                                             .permissions(
+                                                                 requireNonNullElse( this.accessControlList, CONTENT_ROOT_DEFAULT_ACL ) )
                                                              .childOrder( CONTENT_DEFAULT_CHILD_ORDER )
                                                              .refresh( RefreshMode.ALL )
                                                              .build() );

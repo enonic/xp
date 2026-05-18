@@ -18,8 +18,6 @@ var expected = {
             'user:mystore:user2'
         ]
     },
-    'readAccess': {
-        'public': true
-    }
+    'publicRead': true
 };
 // END

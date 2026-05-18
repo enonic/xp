@@ -1,10 +1,5 @@
 package com.enonic.xp.lib.project;
 
-import java.util.Locale;
-import java.util.Objects;
-
-import com.enonic.xp.lib.project.command.GetProjectLanguageCommand;
-import com.enonic.xp.lib.project.command.GetProjectReadAccessCommand;
 import com.enonic.xp.lib.project.mapper.ProjectMapper;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
@@ -27,21 +22,9 @@ public final class GetProjectHandler
 
         final ProjectPermissions projectPermissions = this.projectService.get().getPermissions( project.getName() );
 
-        final Boolean readAccess = GetProjectReadAccessCommand.create()
-            .contentService( this.contentService.get() )
-            .projectName( project.getName() )
-            .build()
-            .execute();
+        final boolean publicRead = this.projectService.get().getPublicRead( project.getName() );
 
-        final Locale language =
-            GetProjectLanguageCommand.create().projectName( this.id ).contentService( this.contentService.get() ).build().execute();
-
-        return ProjectMapper.create()
-            .setProject( project )
-            .setLanguage( language )
-            .setProjectPermissions( projectPermissions )
-            .setIsPublic( readAccess )
-            .build();
+        return ProjectMapper.create().setProject( project ).setProjectPermissions( projectPermissions ).setPublicRead( publicRead ).build();
     }
 
     public void setId( final String value )

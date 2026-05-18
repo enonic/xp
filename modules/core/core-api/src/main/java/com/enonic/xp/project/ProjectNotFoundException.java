@@ -2,8 +2,11 @@ package com.enonic.xp.project;
 
 import java.text.MessageFormat;
 
+import org.jspecify.annotations.NullMarked;
+
 import com.enonic.xp.exception.NotFoundException;
 
+@NullMarked
 public final class ProjectNotFoundException
     extends NotFoundException
 {

@@ -5,9 +5,7 @@ try {
     var project = projectLib.create({
         id: 'my-project',
         displayName: 'My Content Project',
-        readAccess: {
-            public: true
-        }
+        publicRead: true
     });
 } catch (e) {
     log.error('Failed to create a project: ' + e);
@@ -19,9 +17,7 @@ var expected = {
     'id': 'my-project',
     'displayName': 'My Content Project',
     'permissions': [],
-    'readAccess': {
-        'public': true
-    }
+    'publicRead': true
 };
 // END
 
@@ -40,9 +36,7 @@ var project2 = projectLib2.create({
         contributor: ['user:mystore:user4'],
         viewer: ['user:mystore:user5']
     },
-    readAccess: {
-        public: false
-    }
+    publicRead: false
 });
 // END
 
@@ -69,9 +63,7 @@ var expected2 = {
             'user:mystore:user5'
         ]
     },
-    readAccess: {
-        'public': false
-    }
+    'publicRead': false
 };
 // END
 
@@ -84,9 +76,7 @@ var createProject = function () {
     return projectLib3.create({
         id: 'my-project',
         displayName: 'My Content Project',
-        readAccess: {
-            public: true
-        }
+        publicRead: true
     });
 };
 

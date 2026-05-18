@@ -13,10 +13,13 @@ final class GetContentByIdCommand
 {
     private final ContentId contentId;
 
+    private final boolean allowRoot;
+
     private GetContentByIdCommand( final Builder builder )
     {
         super( builder );
         this.contentId = builder.contentId;
+        this.allowRoot = builder.allowRoot;
     }
 
     Content execute()
@@ -27,6 +30,10 @@ final class GetContentByIdCommand
         try
         {
             final Node node = nodeService.getById( nodeId );
+            if ( !allowRoot && isProtectedRoot( node.path() ) )
+            {
+                return null;
+            }
             content = filter( ContentNodeTranslator.fromNode( node ) );
         }
         catch ( NodeNotFoundException | ContentNotFoundException e )
@@ -55,6 +62,8 @@ final class GetContentByIdCommand
     {
         private final ContentId contentId;
 
+        private boolean allowRoot;
+
         Builder( final ContentId contentId )
         {
             this.contentId = contentId;
@@ -64,6 +73,12 @@ final class GetContentByIdCommand
         {
             super( source );
             this.contentId = contentId;
+        }
+
+        public Builder allowRoot()
+        {
+            this.allowRoot = true;
+            return this;
         }
 
         @Override

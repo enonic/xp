@@ -35,10 +35,6 @@ export interface ProjectPermissions {
     permissions: ProjectPermission;
 }
 
-export interface ProjectReadAccess {
-    public: boolean;
-}
-
 export interface SiteConfig<Config> {
     applicationKey: string;
     config?: Config;
@@ -52,7 +48,7 @@ export interface CreateProjectParams<Config extends Record<string, unknown>> {
     parents?: string[];
     siteConfig?: SiteConfig<Config>[];
     permissions?: ProjectPermission;
-    readAccess: ProjectReadAccess;
+    publicRead: boolean;
 }
 
 export interface Project<Config extends Record<string, unknown> = Record<string, unknown>> {
@@ -63,7 +59,7 @@ export interface Project<Config extends Record<string, unknown> = Record<string,
     siteConfig?: SiteConfig<Config>[];
     language?: string;
     permissions?: ProjectPermission;
-    readAccess: ProjectReadAccess;
+    publicRead: boolean;
 }
 
 interface CreateProjectHandler<Config extends Record<string, unknown>> {
@@ -77,7 +73,7 @@ interface CreateProjectHandler<Config extends Record<string, unknown>> {
 
     setPermissions(value: ScriptValue | null): void;
 
-    setReadAccess(value: ScriptValue | null): void;
+    setPublicRead(value: boolean): void;
 
     setParent(value: string | null): void;
 
@@ -101,8 +97,7 @@ interface CreateProjectHandler<Config extends Record<string, unknown>> {
  * @param {string[]} [params.parents] Parent project ids.
  * @param {Object[]} [params.siteConfig] Connected applications config.
  * @param {Object.<string, string[]>} [params.permissions] Project permissions. 1 to 5 properties where key is role id and value is an array of principals.
- * @param {Object<string, boolean>} params.readAccess Read access settings.
- * @param {boolean} params.readAccess.public Public read access (READ permissions for `system.everyone`).
+ * @param {boolean} params.publicRead `true` to grant READ permissions to `system.everyone`, `false` otherwise.
  *
  * @returns {Object} Created project.
  */
@@ -116,7 +111,7 @@ export function create<Config extends Record<string, unknown> = Record<string, u
     bean.setDescription(__.nullOrValue(params.description));
     bean.setLanguage(__.nullOrValue(params.language));
     bean.setPermissions(__.toScriptValue(params.permissions));
-    bean.setReadAccess(__.toScriptValue(params.readAccess));
+    bean.setPublicRead(params.publicRead === true);
     if (params.parents) {
         bean.setParents(__.nullOrValue(params.parents));
     }
@@ -125,24 +120,24 @@ export function create<Config extends Record<string, unknown> = Record<string, u
     return __.toNativeObject(bean.execute());
 }
 
+export interface EditableProject<Config extends Record<string, unknown>> {
+    displayName?: string;
+    description?: string | null;
+    language?: string | null;
+    siteConfig?: SiteConfig<Config>[] | null;
+}
+
+export type ProjectEditor<Config extends Record<string, unknown>> = (project: Project<Config> & EditableProject<Config>) => Project<Config> & EditableProject<Config>;
+
 export interface ModifyProjectParams<Config extends Record<string, unknown>> {
     id: string;
-    displayName?: string;
-    description?: string;
-    language?: string;
-    siteConfig?: SiteConfig<Config>[];
+    editor: ProjectEditor<Config>;
 }
 
 interface ModifyProjectHandler<Config extends Record<string, unknown>> {
     setId(value: string): void;
 
-    setDisplayName(value: string | null): void;
-
-    setDescription(value: string | null): void;
-
-    setLanguage(value: string | null): void;
-
-    setSiteConfig(value: ScriptValue | null): void;
+    setEditor(value: ScriptValue | null): void;
 
     execute(): Project<Config>;
 }
@@ -151,26 +146,25 @@ interface ModifyProjectHandler<Config extends Record<string, unknown>> {
  * Modifies an existing Content Project.
  * To modify a project, user must have `owner` permissions for this project, or either `system.admin` or `cms.admin` role.
  *
+ * Pass an `editor` function that receives the current project, mutates fields on it, and returns it.
+ * Fields you do not touch are left unchanged. Setting `description`, `language`, or `siteConfig` to `null`
+ * clears them. `displayName` is required and cannot be cleared.
+ *
  * @example-ref examples/project/modify.js
  *
  * @param {Object} params JSON with the parameters.
  * @param {string} params.id Unique project id to identify the project.
- * @param {string} [params.displayName] Project's display name.
- * @param {string} [params.description] Project description.
- * @param {string} [params.language] Default project language.
- * @param {Object[]} [params.siteConfig] Connected applications config.
+ * @param {Function} params.editor Function that receives the editable project, mutates fields, and returns it.
  *
  * @returns {Object} Modified project.
  */
 export function modify<Config extends Record<string, unknown> = Record<string, unknown>>(params: ModifyProjectParams<Config>): Project<Config> {
     const id = checkRequired(params, 'id');
+    const editor = checkRequired(params, 'editor');
 
     const bean: ModifyProjectHandler<Config> = __.newBean<ModifyProjectHandler<Config>>('com.enonic.xp.lib.project.ModifyProjectHandler');
     bean.setId(id);
-    bean.setDisplayName(__.nullOrValue(params.displayName));
-    bean.setDescription(__.nullOrValue(params.description));
-    bean.setLanguage(__.nullOrValue(params.language));
-    bean.setSiteConfig(__.toScriptValue(params.siteConfig));
+    bean.setEditor(__.toScriptValue(editor));
 
     return __.toNativeObject(bean.execute());
 }
@@ -264,7 +258,8 @@ interface GetAvailableApplicationsHandler {
 export function getAvailableApplications(params: GetAvailableApplicationsParams): string[] {
     const id = checkRequired(params, 'id');
 
-    const bean: GetAvailableApplicationsHandler = __.newBean<GetAvailableApplicationsHandler>('com.enonic.xp.lib.project.GetAvailableApplicationsHandler');
+    const bean: GetAvailableApplicationsHandler = __.newBean<GetAvailableApplicationsHandler>(
+        'com.enonic.xp.lib.project.GetAvailableApplicationsHandler');
     bean.setId(id);
     return __.toNativeObject(bean.execute());
 }
@@ -316,7 +311,8 @@ interface AddProjectPermissionsHandler {
 export function addPermissions(params: AddProjectPermissionsParams): ProjectPermissions | null {
     const id = checkRequired(params, 'id');
 
-    const bean: AddProjectPermissionsHandler = __.newBean<AddProjectPermissionsHandler>('com.enonic.xp.lib.project.AddProjectPermissionsHandler');
+    const bean: AddProjectPermissionsHandler = __.newBean<AddProjectPermissionsHandler>(
+        'com.enonic.xp.lib.project.AddProjectPermissionsHandler');
     bean.setId(id);
     bean.setPermissions(__.toScriptValue(params.permissions));
     return __.toNativeObject(bean.execute());
@@ -350,24 +346,25 @@ interface RemoveProjectPermissionsHandler {
 export function removePermissions(params: RemoveProjectPermissionsParams): ProjectPermissions | null {
     const id = checkRequired(params, 'id');
 
-    const bean: RemoveProjectPermissionsHandler = __.newBean<RemoveProjectPermissionsHandler>('com.enonic.xp.lib.project.RemoveProjectPermissionsHandler');
+    const bean: RemoveProjectPermissionsHandler = __.newBean<RemoveProjectPermissionsHandler>(
+        'com.enonic.xp.lib.project.RemoveProjectPermissionsHandler');
     bean.setId(id);
     bean.setPermissions(__.toScriptValue(params.permissions));
 
     return __.toNativeObject(bean.execute());
 }
 
-export interface ModifyProjectReadAccessParams {
+export interface SetProjectPublicReadParams {
     id: string;
-    readAccess: ProjectReadAccess;
+    publicRead: boolean;
 }
 
-interface ModifyProjectReadAccessHandler {
+interface SetProjectPublicReadHandler {
     setId(value: string): void;
 
-    setReadAccess(value: ScriptValue | null): void;
+    setPublicRead(value: boolean): void;
 
-    execute(): ProjectReadAccess | null;
+    execute(): boolean;
 }
 
 /**
@@ -375,20 +372,20 @@ interface ModifyProjectReadAccessHandler {
  * This will modify permissions on ALL the content items inside the project repository by adding or removing READ access for `system.everyone`.
  * To modify READ access, user must have `owner` permissions for the project, or either `system.admin` or `cms.admin` role.
  *
- * @example-ref examples/project/modifyReadAccess.js
+ * @example-ref examples/project/setPublicRead.js
  *
  * @param {Object} params JSON with the parameters.
  * @param {string} params.id Unique project id to identify the project.
- * @param {Object<string, boolean>} params.readAccess READ access.
- * @param {boolean} params.readAccess.public Public read access (READ permissions for `system.everyone`).
+ * @param {boolean} params.publicRead `true` to grant READ permissions to `system.everyone`, `false` otherwise.
  *
- * @returns {Object<string, boolean>} Current state of READ access.
+ * @returns {boolean} Current state of public-read access after the change.
  */
-export function modifyReadAccess(params: ModifyProjectReadAccessParams): ProjectReadAccess | null {
+export function setPublicRead(params: SetProjectPublicReadParams): boolean {
     const id = checkRequired(params, 'id');
 
-    const bean: ModifyProjectReadAccessHandler = __.newBean<ModifyProjectReadAccessHandler>('com.enonic.xp.lib.project.ModifyProjectReadAccessHandler');
+    const bean: SetProjectPublicReadHandler = __.newBean<SetProjectPublicReadHandler>(
+        'com.enonic.xp.lib.project.SetProjectPublicReadHandler');
     bean.setId(id);
-    bean.setReadAccess(__.toScriptValue(params.readAccess));
+    bean.setPublicRead(params.publicRead === true);
     return __.toNativeObject(bean.execute());
 }

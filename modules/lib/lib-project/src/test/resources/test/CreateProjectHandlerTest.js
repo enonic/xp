@@ -16,9 +16,7 @@ var createProjectExpected = {
             'user:system:viewer1'
         ]
     },
-    readAccess: {
-        public: true
-    }
+    publicRead: true
 };
 
 exports.createProject = function () {
@@ -27,7 +25,7 @@ exports.createProject = function () {
         displayName: 'project display name',
         description: 'project description',
         language: 'ja',
-        readAccess: {public: true},
+        publicRead: true,
         permissions: {
             owner: ['user:system:owner2', 'user:system:owner1'], viewer: ['user:system:viewer1']
         }
@@ -44,9 +42,7 @@ var createProjectWithOneParentExpected = {
     parents: ['testparent'],
     parent: 'testparent',
     permissions: {},
-    readAccess: {
-        public: true
-    }
+    publicRead: true
 };
 
 exports.createProjectWithOneParent = function () {
@@ -56,7 +52,7 @@ exports.createProjectWithOneParent = function () {
         description: 'project description',
         language: 'ja',
         parents: ['testparent'],
-        readAccess: {public: true},
+        publicRead: true,
         permissions: {}
     });
 
@@ -77,9 +73,7 @@ var createProjectWithoutLanguageExpected = {
             'user:system:viewer1'
         ]
     },
-    readAccess: {
-        public: true
-    }
+    publicRead: true
 };
 
 exports.createProjectWithoutLanguage = function () {
@@ -87,7 +81,7 @@ exports.createProjectWithoutLanguage = function () {
         id: 'myproject',
         displayName: 'project display name',
         description: 'project description',
-        readAccess: {public: true},
+        publicRead: true,
         permissions: {owner: ['user:system:owner2', 'user:system:owner1'], viewer: ['user:system:viewer1']}
     });
 
@@ -102,9 +96,7 @@ var createProjectWithoutPermissionsExpected = {
     language: 'no',
     parents: [],
     permissions: {},
-    readAccess: {
-        public: true
-    }
+    publicRead: true
 
 };
 
@@ -114,27 +106,10 @@ exports.createProjectWithoutPermissions = function () {
         displayName: 'project display name',
         description: 'project description',
         language: 'no',
-        readAccess: {public: true}
+        publicRead: true
     });
 
     assert.assertJsonEquals(createProjectWithoutPermissionsExpected, result);
-};
-
-exports.createProjectWithoutReadAccess = function () {
-
-    try {
-        project.create({
-            id: 'myproject',
-            displayName: 'project display name',
-            description: 'project description',
-            language: 'no',
-            permissions: {owner: ['user:system:owner2', 'user:system:owner1'], viewer: ['user:system:viewer1']}
-        });
-
-        throw new Error('IllegalArgumentException should be thrown.');
-    } catch (e) {
-        assert.assertEquals('Invalid value for readAccess.', e.getMessage());
-    }
 };
 
 var createProjectWithApplicationsExpected = {
@@ -158,9 +133,7 @@ var createProjectWithApplicationsExpected = {
         }
     ],
     permissions: {},
-    readAccess: {
-        public: true
-    }
+    publicRead: true
 };
 
 exports.createProjectWithApplications = function () {
@@ -168,7 +141,7 @@ exports.createProjectWithApplications = function () {
         id: 'myproject',
         displayName: 'project display name',
         description: 'project description',
-        readAccess: {public: true},
+        publicRead: true,
         siteConfig: [
             {
                 applicationKey: 'appKey1',
