@@ -19,7 +19,6 @@ import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.Mixin;
 import com.enonic.xp.content.Mixins;
-import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.core.impl.content.MixinMappingServiceImpl;
@@ -30,6 +29,7 @@ import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
+import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.region.RegionDescriptors;
@@ -39,11 +39,11 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinDescriptor;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.site.CmsDescriptor;
+import com.enonic.xp.site.MixinMapping;
+import com.enonic.xp.site.MixinMappings;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
-import com.enonic.xp.site.MixinMapping;
-import com.enonic.xp.site.MixinMappings;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -148,10 +148,10 @@ class ContentServiceImplTest_create
     @Test
     void create_with_root_language()
     {
-        final Content root = this.contentService.getByPath( ContentPath.ROOT );
-        final UpdateContentParams rootUpdateParams = new UpdateContentParams();
-        rootUpdateParams.contentId( root.getId() ).editor( edit -> edit.language = Locale.ENGLISH );
-        contentService.update( rootUpdateParams );
+        nodeService.update( UpdateNodeParams.create()
+                                .path( ContentConstants.CONTENT_ROOT_PATH )
+                                .editor( edit -> edit.data.setString( ContentPropertyNames.LANGUAGE, Locale.ENGLISH.toLanguageTag() ) )
+                                .build() );
 
         final CreateContentParams createContentParams = CreateContentParams.create()
             .contentData( new PropertyTree() )
@@ -318,11 +318,14 @@ class ContentServiceImplTest_create
                                                                                                           .build() ) )
                                                                                                   .build() );
 
-        final MixinDescriptor mixinDescriptor1 = MixinDescriptor.create().name( MixinName.from( "app:mixin1" ) ).form( Form.create().build() ).build();
+        final MixinDescriptor mixinDescriptor1 =
+            MixinDescriptor.create().name( MixinName.from( "app:mixin1" ) ).form( Form.create().build() ).build();
         when( mixinService.getByName( mixinDescriptor1.getName() ) ).thenReturn( mixinDescriptor1 );
-        final MixinDescriptor mixinDescriptor2 = MixinDescriptor.create().name( MixinName.from( "app:mixin2" ) ).form( Form.create().build() ).build();
+        final MixinDescriptor mixinDescriptor2 =
+            MixinDescriptor.create().name( MixinName.from( "app:mixin2" ) ).form( Form.create().build() ).build();
         when( mixinService.getByName( mixinDescriptor2.getName() ) ).thenReturn( mixinDescriptor2 );
-        final MixinDescriptor mixinDescriptor3 = MixinDescriptor.create().name( MixinName.from( "app:mixin3" ) ).form( Form.create().build() ).build();
+        final MixinDescriptor mixinDescriptor3 =
+            MixinDescriptor.create().name( MixinName.from( "app:mixin3" ) ).form( Form.create().build() ).build();
         when( mixinService.getByName( mixinDescriptor3.getName() ) ).thenReturn( mixinDescriptor3 );
 
         final Content storedContent = this.contentService.create( CreateContentParams.create()

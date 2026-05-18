@@ -79,6 +79,7 @@ final class ArchiveContentCommand
         final NodeId nodeId = NodeId.from( contentId );
         final Node originalNode = nodeService.getById( nodeId );
 
+        verifyNotProtectedRoot( originalNode.path() );
         validateLocation( originalNode );
 
         final NodeIds descendants =

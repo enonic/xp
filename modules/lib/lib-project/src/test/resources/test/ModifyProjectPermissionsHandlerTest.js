@@ -151,6 +151,6 @@ function createProject() {
         id: 'myproject',
         displayName: 'project display name',
         description: 'project description',
-        readAccess: {public: true}
+        publicRead: true
     });
 }

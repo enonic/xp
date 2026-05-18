@@ -70,6 +70,7 @@ final class RestoreContentCommand
     {
         final Node nodeToRestore = nodeService.getById( NodeId.from( params.getContentId() ) );
 
+        verifyNotProtectedRoot( nodeToRestore.path() );
         validateLocation( nodeToRestore );
 
         final NodePath parentPathToRestore = getParentPathToRestore( nodeToRestore );

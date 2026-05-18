@@ -13,10 +13,13 @@ final class GetContentByPathsCommand
 {
     private final ContentPaths contentPaths;
 
+    private final boolean allowRoot;
+
     private GetContentByPathsCommand( final Builder builder )
     {
         super( builder );
         this.contentPaths = builder.contentPaths;
+        this.allowRoot = builder.allowRoot;
     }
 
     Contents execute()
@@ -30,7 +33,10 @@ final class GetContentByPathsCommand
         final NodePaths paths = ContentNodeHelper.translateContentPathsToNodePaths( contentPaths );
         final Nodes nodes = nodeService.getByPaths( paths );
 
-        return ContentNodeTranslator.fromNodes( nodes );
+        final Nodes filteredNodes =
+            allowRoot ? nodes : nodes.stream().filter( n -> !isProtectedRoot( n.path() ) ).collect( Nodes.collector() );
+
+        return ContentNodeTranslator.fromNodes( filteredNodes );
     }
 
     public static Builder create( final ContentPaths contentPaths )
@@ -43,9 +49,17 @@ final class GetContentByPathsCommand
     {
         private final ContentPaths contentPaths;
 
+        private boolean allowRoot;
+
         Builder( final ContentPaths contentPaths )
         {
             this.contentPaths = contentPaths;
+        }
+
+        public Builder allowRoot()
+        {
+            this.allowRoot = true;
+            return this;
         }
 
         @Override

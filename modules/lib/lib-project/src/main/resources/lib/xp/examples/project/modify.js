@@ -4,9 +4,12 @@ var projectLib = require('/lib/xp/project');
 
 var project = projectLib.modify({
     id: 'my-project',
-    displayName: 'New project name',
-    description: 'New project description',
-    language: 'en'
+    editor: function (p) {
+        p.displayName = 'New project name';
+        p.description = 'New project description';
+        p.language = 'en';
+        return p;
+    }
 });
 // END
 
@@ -18,9 +21,12 @@ var contextLib = require('/lib/xp/context');
 var modifyProject = function () {
     return projectLib2.modify({
         id: 'my-project',
-        displayName: 'New project name',
-        description: 'New project description',
-        language: 'en'
+        editor: function (p) {
+            p.displayName = 'New project name';
+            p.description = 'New project description';
+            p.language = 'en';
+            return p;
+        }
     });
 };
 
@@ -36,9 +42,6 @@ var expected = {
     'description': 'New project description',
     'language': 'en',
     'permissions': {},
-    'readAccess': {
-        'public': true
-    }
+    'publicRead': true
 };
 // END
-

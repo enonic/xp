@@ -9,7 +9,6 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -31,7 +30,8 @@ class ContentServiceImplTest_getByPath
     void test_publish_expired_master()
     {
         assertThrows( ContentNotFoundException.class, () -> ctxMaster().callWith( () -> {
-            final Content content = createAndPublishContent( ContentPath.ROOT, Instant.now().minus( Duration.ofDays( 2 ) ), Instant.now().minus( Duration.ofDays( 1 ) ) );
+            final Content content = createAndPublishContent( ContentPath.ROOT, Instant.now().minus( Duration.ofDays( 2 ) ),
+                                                             Instant.now().minus( Duration.ofDays( 1 ) ) );
 
             return this.contentService.getByPath( content.getPath() );
         } ) );
@@ -41,7 +41,8 @@ class ContentServiceImplTest_getByPath
     void test_published_master()
     {
         ctxMaster().callWith( () -> {
-            final Content content = createAndPublishContent( ContentPath.ROOT, Instant.now().minus( Duration.ofDays( 1 ) ), Instant.now().plus( Duration.ofDays( 1 ) ) );
+            final Content content = createAndPublishContent( ContentPath.ROOT, Instant.now().minus( Duration.ofDays( 1 ) ),
+                                                             Instant.now().plus( Duration.ofDays( 1 ) ) );
 
             assertNotNull( this.contentService.getByPath( content.getPath() ) );
             return null;
@@ -49,11 +50,9 @@ class ContentServiceImplTest_getByPath
     }
 
     @Test
-    void test_root()
+    void test_root_is_not_accessible()
     {
-        final Content content = contentService.getByPath( ContentPath.ROOT );
-
-        assertEquals( ContentPath.ROOT, content.getPath() );
+        assertThrows( ContentNotFoundException.class, () -> contentService.getByPath( ContentPath.ROOT ) );
     }
 
 }

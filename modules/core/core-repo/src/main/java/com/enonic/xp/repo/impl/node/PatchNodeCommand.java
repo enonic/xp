@@ -193,8 +193,6 @@ public final class PatchNodeCommand
         {
             super.validate();
             requireNonNull( params, "params cannot be null" );
-            Preconditions.checkArgument( this.params.getBranches().getSize() <= 1 || this.params.getPath() == null,
-                                         "Only one branch is allowed with path" );
         }
 
         public PatchNodeCommand build()

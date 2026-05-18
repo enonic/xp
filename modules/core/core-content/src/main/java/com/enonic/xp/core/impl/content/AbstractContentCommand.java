@@ -32,6 +32,7 @@ import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeCommitEntry;
+import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.query.filter.BooleanFilter;
@@ -188,6 +189,40 @@ abstract class AbstractContentCommand
     static PrincipalKey getCurrentUserKey()
     {
         return ContentAttributesHelper.getCurrentUserKey();
+    }
+
+    static boolean isProtectedRoot( final NodePath path )
+    {
+        return path != null && ( path.isRoot() || path.getParentPath().isRoot() );
+    }
+
+    static void verifyNotProtectedRoot( final NodePath path )
+    {
+        if ( isProtectedRoot( path ) )
+        {
+            throw notFoundForProtectedRoot( null );
+        }
+    }
+
+    static void verifyNotProtectedRoot( final Content content )
+    {
+        if ( content != null && content.getPath().isRoot() )
+        {
+            throw notFoundForProtectedRoot( content.getId() );
+        }
+    }
+
+    private static ContentNotFoundException notFoundForProtectedRoot( final ContentId contentId )
+    {
+        final ContentNotFoundException.Builder builder = ContentNotFoundException.create()
+            .repositoryId( ContextAccessor.current().getRepositoryId() )
+            .branch( ContextAccessor.current().getBranch() )
+            .contentRoot( ContentNodeHelper.getContentRoot() );
+        if ( contentId != null )
+        {
+            builder.contentId( contentId );
+        }
+        return builder.build();
     }
 
     protected <T> T runAsAdmin( final Callable<T> callable )

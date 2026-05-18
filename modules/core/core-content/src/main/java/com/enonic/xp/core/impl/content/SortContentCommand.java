@@ -38,8 +38,12 @@ class SortContentCommand
     {
         try
         {
+            final NodeId nodeId = NodeId.from( params.getContentId() );
+
+            verifyNotProtectedRoot( nodeService.getById( nodeId ).path() );
+
             final SortNodeParams.Builder paramsBuilder = SortNodeParams.create()
-                .nodeId( NodeId.from( params.getContentId() ) )
+                .nodeId( nodeId )
                 .refresh( RefreshMode.ALL )
                 .childOrder( params.getChildOrder() )
                 .manualOrderSeed( params.getManualOrderSeed() );

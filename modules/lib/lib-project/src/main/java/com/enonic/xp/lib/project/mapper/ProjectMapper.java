@@ -1,6 +1,5 @@
 package com.enonic.xp.lib.project.mapper;
 
-import java.util.Locale;
 import com.enonic.xp.lib.common.PropertyTreeMapper;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectPermissions;
@@ -15,18 +14,15 @@ public final class ProjectMapper
 {
     private final Project project;
 
-    private final Locale language;
-
     private final ProjectPermissions permissions;
 
-    private final Boolean isPublic;
+    private final Boolean publicRead;
 
     public ProjectMapper( final Builder builder )
     {
         this.project = builder.project;
         this.permissions = builder.permissions;
-        this.language = builder.language;
-        this.isPublic = builder.isPublic;
+        this.publicRead = builder.publicRead;
     }
 
     public static Builder create()
@@ -45,12 +41,12 @@ public final class ProjectMapper
         gen.value( "id", project.getName().toString() );
         gen.value( "displayName", project.getDisplayName() );
         gen.value( "description", project.getDescription() );
-        gen.value( "language", language != null ? language.toLanguageTag() : null );
+        gen.value( "language", project.getLanguage() != null ? project.getLanguage().toLanguageTag() : null );
 
         serializeParents( gen );
         serializeSiteConfigs( gen );
         serializePermissions( gen );
-        serializeReadAccess( gen );
+        serializePublicRead( gen );
     }
 
     private void serializePermissions( final MapGenerator gen )
@@ -58,9 +54,12 @@ public final class ProjectMapper
         new ProjectPermissionsMapper( permissions ).serialize( gen );
     }
 
-    private void serializeReadAccess( final MapGenerator gen )
+    private void serializePublicRead( final MapGenerator gen )
     {
-        new ProjectReadAccessMapper( isPublic ).serialize( gen );
+        if ( publicRead != null )
+        {
+            gen.value( "publicRead", publicRead );
+        }
     }
 
     private void serializeSiteConfigs( final MapGenerator gen )
@@ -98,9 +97,7 @@ public final class ProjectMapper
 
         private ProjectPermissions permissions;
 
-        private Locale language;
-
-        private Boolean isPublic;
+        private Boolean publicRead;
 
         private Builder()
         {
@@ -118,15 +115,9 @@ public final class ProjectMapper
             return this;
         }
 
-        public Builder setLanguage( final Locale language )
+        public Builder setPublicRead( final Boolean publicRead )
         {
-            this.language = language;
-            return this;
-        }
-
-        public Builder setIsPublic( final Boolean isPublic )
-        {
-            this.isPublic = isPublic;
+            this.publicRead = publicRead;
             return this;
         }
 
@@ -143,4 +134,3 @@ public final class ProjectMapper
         }
     }
 }
-

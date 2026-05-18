@@ -54,6 +54,7 @@ public class PatchContentCommand
         final PatchNodeParams patchNodeParams = PatchNodeParamsFactory.create()
             .contentId( params.getContentId() )
             .editor( content -> {
+                verifyNotProtectedRoot( content );
                 Content patchedContent = patchContent( params.getPatcher(), content );
                 if ( !params.getCreateAttachments().isEmpty() )
                 {

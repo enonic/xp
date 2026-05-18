@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
 import java.util.Locale;
+
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentIndexPath;
@@ -45,8 +46,8 @@ final class FindContentIdsByParentCommand
     {
         final Content parentContent = getParentContent();
 
-        final FindNodesByParentParams.Builder builder = FindNodesByParentParams.create()
-            .parentPath( ContentNodeHelper.translateContentPathToNodePath( parentContent.getPath() ) );
+        final FindNodesByParentParams.Builder builder =
+            FindNodesByParentParams.create().parentPath( ContentNodeHelper.translateContentPathToNodePath( parentContent.getPath() ) );
 
         ChildOrder childOrder = params.getChildOrder();
         if ( childOrder == null )
@@ -65,9 +66,10 @@ final class FindContentIdsByParentCommand
 
     private Content getParentContent()
     {
-        if ( params.getParentPath() != null )
+        final ContentPath parentPath = params.getParentPath();
+        if ( parentPath != null && !parentPath.isRoot() )
         {
-            return getContent( params.getParentPath() );
+            return getContent( parentPath );
         }
         else if ( params.getParentId() != null )
         {
@@ -75,7 +77,7 @@ final class FindContentIdsByParentCommand
         }
         else
         {
-            return getContent( ContentPath.ROOT );
+            return GetContentByPathCommand.create( ContentPath.ROOT, this ).allowRoot().build().execute();
         }
     }
 

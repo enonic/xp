@@ -775,6 +775,7 @@ public class ContentServiceImpl
         return result;
     }
 
+    @Deprecated
     @Override
     public AccessControlList getRootPermissions()
     {

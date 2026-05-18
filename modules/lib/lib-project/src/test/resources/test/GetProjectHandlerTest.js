@@ -16,9 +16,7 @@ var getProjectExpected = {
             'user:system:viewer1'
         ]
     },
-    readAccess: {
-        'public': true
-    }
+    publicRead: true
 };
 
 exports.getProject = function () {
@@ -38,9 +36,7 @@ var getProjectWithoutPermissionsExpected = {
     language: 'ja',
     parents: [],
     permissions: {},
-    readAccess: {
-        'public': true
-    }
+    publicRead: true
 };
 
 exports.getProjectWithoutPermissions = function () {
@@ -84,7 +80,8 @@ function createProject(permissions) {
         id: 'myproject',
         displayName: 'project display name',
         description: 'project description',
-        readAccess: {public: true},
+        language: 'ja',
+        publicRead: true,
         permissions: permissions
     });
 }

@@ -1,7 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
 import java.util.Map;
-import java.util.Objects;
 
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
@@ -14,10 +13,7 @@ import com.enonic.xp.node.ApplyNodePermissionsListener;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.ApplyNodePermissionsResult;
 import com.enonic.xp.node.ApplyPermissionsScope;
-import com.enonic.xp.node.CommitNodeParams;
-import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeVersionIds;
 
 
 final class ApplyContentPermissionsCommand
@@ -34,6 +30,8 @@ final class ApplyContentPermissionsCommand
     ApplyContentPermissionsResult execute()
     {
         final NodeId nodeId = NodeId.from( params.getContentId() );
+
+        verifyNotProtectedRoot( nodeService.getById( nodeId ).path() );
 
         final ApplyNodePermissionsParams.Builder applyNodePermissionsBuilder = ApplyNodePermissionsParams.create()
             .nodeId( nodeId )

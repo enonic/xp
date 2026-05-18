@@ -48,6 +48,7 @@ final class DuplicateContentCommand
     private DuplicateContentsResult doExecute()
     {
         final Node sourceNode = nodeService.getById( NodeId.from( params.getContentId() ) );
+        verifyNotProtectedRoot( sourceNode.path() );
 
         final DuplicateNodeResult duplicatedNode = nodeService.duplicate( createDuplicateNodeParams( sourceNode ) );
 
@@ -71,8 +72,8 @@ final class DuplicateContentCommand
 
         final DuplicateNodeParams.Builder builder = DuplicateNodeParams.create()
             .nodeId( sourceNode.id() )
-            .versionAttributesResolver( VersionAttributesResolver.of(
-                ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.DUPLICATE_ATTR ) ) )
+            .versionAttributesResolver(
+                VersionAttributesResolver.of( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.DUPLICATE_ATTR ) ) )
             .dataProcessor( new DuplicateContentProcessor( params.getWorkflowInfo(), sourceNodeId ) )
             .refresh( RefreshMode.ALL );
 

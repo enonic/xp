@@ -1,7 +1,10 @@
 package com.enonic.xp.project;
 
+import org.jspecify.annotations.NullMarked;
+
 import com.enonic.xp.repository.RepositoryConstants;
 
+@NullMarked
 public final class ProjectConstants
 {
     public static final String PROJECT_REPO_ID_PREFIX = "com.enonic.cms.";

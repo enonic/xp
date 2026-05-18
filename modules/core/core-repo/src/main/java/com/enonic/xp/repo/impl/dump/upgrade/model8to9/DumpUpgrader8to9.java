@@ -25,9 +25,12 @@ import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.dump.DumpUpgradeStepResult;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;
+import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.repo.impl.NodeStoreVersion;
@@ -93,6 +96,16 @@ public class DumpUpgrader8to9
 
     private List<BranchEntryUpgrader> branchEntryUpgraders = List.of();
 
+    /**
+     * Per-project legacy metadata harvested from the system repo's project config nodes (v8 stored
+     * {@code displayName}/{@code description} there). Used to populate the project's {@code /content}
+     * node and then stripped from the system repo entries by {@link ProjectMetadataStripperUpgrader}.
+     */
+    private final Map<RepositoryId, ProjectContentRootMetadataUpgrader.ProjectMetadata> projectMetadata = new HashMap<>();
+
+    private final ProjectContentRootMetadataUpgrader contentRootMetadataUpgrader =
+        new ProjectContentRootMetadataUpgrader( projectMetadata );
+
     public DumpUpgrader8to9( final DumpReaderModel8 dumpReader )
     {
         this.dumpReader = dumpReader;
@@ -112,8 +125,77 @@ public class DumpUpgrader8to9
 
         this.dumpWriter.writeDumpMetaData(
             DumpMeta.create( sourceDumpMeta ).xpVersion( VersionInfo.get().getVersion() ).modelVersion( getModelVersion() ).build() );
+
+        collectProjectMetadata();
+
         this.dumpReader.getRepositories().forEach( this::upgradeRepository );
         return result.build();
+    }
+
+    /**
+     * Pre-pass over the system repo's v8 versions tar to harvest per-project {@code displayName}
+     * and {@code description}, which v8 stored on the project's repository config node. The values
+     * are written onto the project's {@code /content} node by {@link ProjectContentRootMetadataUpgrader}
+     * during the per-repo loop, and removed from the system repo entries by
+     * {@link ProjectMetadataStripperUpgrader}.
+     */
+    private void collectProjectMetadata()
+    {
+        final RepositoryId systemRepoId = SystemConstants.SYSTEM_REPO_ID;
+        final Segment nodeSegment = RepositorySegmentUtils.toSegment( systemRepoId, NodeConstants.NODE_SEGMENT_LEVEL );
+        final Segment indexConfigSegment = RepositorySegmentUtils.toSegment( systemRepoId, NodeConstants.INDEX_CONFIG_SEGMENT_LEVEL );
+        final Segment accessControlSegment = RepositorySegmentUtils.toSegment( systemRepoId, NodeConstants.ACCESS_CONTROL_SEGMENT_LEVEL );
+
+        dumpReader.getVersions( systemRepoId ).ifPresent( ref -> processEntries( ( entryContent, entryName ) -> {
+            try
+            {
+                final Model8VersionsDumpEntryJson v8Entry = JsonDumpSerializer.readValue( entryContent, Model8VersionsDumpEntryJson.class );
+                for ( VersionDumpEntryJson version : v8Entry.getVersions() )
+                {
+                    final NodeStoreVersion nv = readNodeVersion( version, nodeSegment, indexConfigSegment, accessControlSegment );
+                    extractProjectMetadata( nv );
+                }
+            }
+            catch ( Exception e )
+            {
+                LOG.error( "Error while pre-scanning system repo entry [{}] for project metadata", entryName, e );
+            }
+        }, ref ) );
+    }
+
+    private void extractProjectMetadata( final NodeStoreVersion nodeVersion )
+    {
+        final PropertyTree data = nodeVersion.data();
+        if ( !data.hasProperty( "data" ) )
+        {
+            return;
+        }
+        final PropertySet repoData = data.getSet( "data" );
+        if ( repoData == null )
+        {
+            return;
+        }
+        final PropertySet projectData = repoData.getSet( ProjectConstants.PROJECT_DATA_SET_NAME );
+        if ( projectData == null )
+        {
+            return;
+        }
+        final String repoIdValue = data.getString( "id" );
+        if ( repoIdValue == null )
+        {
+            return;
+        }
+        final RepositoryId repoId = RepositoryId.from( repoIdValue );
+        if ( !repoId.toString().startsWith( ProjectConstants.PROJECT_REPO_ID_PREFIX ) )
+        {
+            return;
+        }
+        final String displayName = projectData.getString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY );
+        final String description = projectData.getString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY );
+        if ( displayName != null || description != null )
+        {
+            projectMetadata.put( repoId, new ProjectContentRootMetadataUpgrader.ProjectMetadata( displayName, description ) );
+        }
     }
 
     protected void upgradeRepository( final RepositoryId repositoryId )
@@ -209,8 +291,7 @@ public class DumpUpgrader8to9
 
     private void writeVersionsJsonl( final String nodeId, final List<VersionDumpEntryJson> versions )
     {
-        final Map<String, List<String>> activationsForNode =
-            branchActivations.getOrDefault( nodeId, Map.of() );
+        final Map<String, List<String>> activationsForNode = branchActivations.getOrDefault( nodeId, Map.of() );
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         for ( VersionDumpEntryJson version : versions )
         {
@@ -316,6 +397,9 @@ public class DumpUpgrader8to9
         final Segment accessControlSegment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.ACCESS_CONTROL_SEGMENT_LEVEL );
 
         final NodeStoreVersion dumpEntry = readNodeVersion( versionDumpEntryJson, nodeSegment, indexConfigSegment, accessControlSegment );
+
+        final NodePath entryPath = versionDumpEntryJson.getNodePath() != null ? new NodePath( versionDumpEntryJson.getNodePath() ) : null;
+        contentRootMetadataUpgrader.upgrade( repositoryId, entryPath, dumpEntry );
 
         final NodeStoreVersion upgraded = upgradeNodeVersion( repositoryId, dumpEntry );
 
@@ -519,8 +603,8 @@ public class DumpUpgrader8to9
                                                       new ReferenceLowercaseUpgrader(), new DefaultProjectPermissionsUpgrader(),
                                                       new LanguageTagUpgrader(), new IndexConfigLanguageUpgrader(),
                                                       new AttachmentSha512Upgrader( dumpReader ), new AttachmentTextToMediaUpgrader(),
-                                                      new ImageUpgrader( dumpReader ), new RepositoryBranchesRemovalUpgrader(),
-                                                      new RepositoryModelVersionUpgrader() ) )
+                                                      new ImageUpgrader( dumpReader ), new ProjectMetadataStripperUpgrader(),
+                                                      new RepositoryBranchesRemovalUpgrader(), new RepositoryModelVersionUpgrader() ) )
         {
             final NodeStoreVersion upgraded = upgrader.upgradeNodeVersion( repositoryId, dumpEntry );
             if ( upgraded != null )
