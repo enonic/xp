@@ -15,6 +15,7 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
+import com.enonic.xp.attachment.AttachmentNames;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.content.ContentConstants;
@@ -823,17 +824,16 @@ class ProjectServiceImplTest
                                                       .name( "MyNewImage.png" )
                                                       .byteSource( ByteSource.wrap( "new bytes".getBytes() ) )
                                                       .build() )
-                                           .scaleWidth( 0 )
                                            .build() );
 
             Project modifiedProject = projectService.get( ProjectName.from( "test-project" ) );
 
             assertEquals( "image/png", modifiedProject.getIcon().getMimeType() );
             assertEquals( "My New Image", modifiedProject.getIcon().getLabel() );
-            assertEquals( "MyNewImage.png", modifiedProject.getIcon().getName() );
+            assertEquals( AttachmentNames.THUMBNAIL, modifiedProject.getIcon().getName() );
 
             projectService.modifyIcon(
-                ModifyProjectIconParams.create().name( ProjectName.from( "test-project" ) ).icon( null ).scaleWidth( 0 ).build() );
+                ModifyProjectIconParams.create().name( ProjectName.from( "test-project" ) ).icon( null ).build() );
 
             modifiedProject = projectService.get( ProjectName.from( "test-project" ) );
 

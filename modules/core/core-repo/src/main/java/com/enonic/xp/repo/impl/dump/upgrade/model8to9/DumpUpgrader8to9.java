@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.BiConsumer;
+import java.util.stream.StreamSupport;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
@@ -25,6 +26,7 @@ import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.dump.DumpUpgradeStepResult;
@@ -33,6 +35,7 @@ import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.project.ProjectConstants;
+import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.repo.impl.dump.PathRef;
 import com.enonic.xp.repo.impl.dump.RepoDumpException;
@@ -165,15 +168,30 @@ public class DumpUpgrader8to9
 
     private void extractProjectMetadata( final NodeStoreVersion nodeVersion )
     {
-        final Map.Entry<RepositoryId, ProjectContentRootMetadataUpgrader.ProjectMetadata> entry = readProjectMetadata( nodeVersion );
+        final Map.Entry<RepositoryId, ProjectContentRootMetadataUpgrader.ProjectMetadata> entry =
+            readProjectMetadata( nodeVersion, this::copyIconBlobToProjectRepo );
         if ( entry != null )
         {
             projectMetadata.put( entry.getKey(), entry.getValue() );
         }
     }
 
+    private String copyIconBlobToProjectRepo( final RepositoryId projectRepoId, final String systemRepoBlobKey )
+    {
+        final Segment systemBinarySegment = RepositorySegmentUtils.toSegment( SystemConstants.SYSTEM_REPO_ID, NodeConstants.BINARY_SEGMENT_LEVEL );
+        final Segment projectBinarySegment = RepositorySegmentUtils.toSegment( projectRepoId, NodeConstants.BINARY_SEGMENT_LEVEL );
+        final BlobRecord record = dumpReader.getRecord( systemBinarySegment, BlobKey.from( systemRepoBlobKey ) );
+        return dumpWriter.addBlobRecord( projectBinarySegment, record.getBytes() ).toString();
+    }
+
+    @FunctionalInterface
+    interface IconBlobCopier
+    {
+        String copy( RepositoryId projectRepoId, String systemRepoBlobKey );
+    }
+
     static Map.@Nullable Entry<RepositoryId, ProjectContentRootMetadataUpgrader.ProjectMetadata> readProjectMetadata(
-        final NodeStoreVersion nodeVersion )
+        final NodeStoreVersion nodeVersion, final IconBlobCopier iconBlobCopier )
     {
         final PropertySet repoData = nodeVersion.data().getSet( "data" );
         if ( repoData == null )
@@ -192,11 +210,44 @@ public class DumpUpgrader8to9
         }
         final String displayName = projectData.getString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY );
         final String description = projectData.getString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY );
-        if ( displayName == null && description == null )
+        final List<String> parents =
+            StreamSupport.stream( projectData.getStrings( ProjectConstants.PROJECT_PARENTS_PROPERTY ).spliterator(), false ).toList();
+        final ProjectContentRootMetadataUpgrader.IconBinary icon = readIcon( repoId, nodeVersion, projectData, iconBlobCopier );
+
+        if ( displayName == null && description == null && parents.isEmpty() && icon == null )
         {
             return null;
         }
-        return Map.entry( repoId, new ProjectContentRootMetadataUpgrader.ProjectMetadata( displayName, description ) );
+        return Map.entry( repoId,
+                          new ProjectContentRootMetadataUpgrader.ProjectMetadata( displayName, description, parents, icon ) );
+    }
+
+    private static ProjectContentRootMetadataUpgrader.@Nullable IconBinary readIcon( final RepositoryId projectRepoId,
+                                                                                     final NodeStoreVersion nodeVersion,
+                                                                                     final PropertySet projectData,
+                                                                                     final IconBlobCopier iconBlobCopier )
+    {
+        final PropertySet iconSet = projectData.getSet( ProjectConstants.PROJECT_ICON_PROPERTY );
+        if ( iconSet == null )
+        {
+            return null;
+        }
+        final BinaryReference binaryRef = iconSet.getBinaryReference( ContentPropertyNames.ATTACHMENT_BINARY_REF );
+        if ( binaryRef == null )
+        {
+            return null;
+        }
+        final AttachedBinary attachedBinary = nodeVersion.attachedBinaries().getByBinaryReference( binaryRef );
+        if ( attachedBinary == null )
+        {
+            return null;
+        }
+        final String label = iconSet.getString( ContentPropertyNames.ATTACHMENT_LABEL );
+        final String mimeType = iconSet.getString( ContentPropertyNames.ATTACHMENT_MIMETYPE );
+        final Long size = iconSet.getLong( ContentPropertyNames.ATTACHMENT_SIZE );
+        final String sha512 = iconSet.getString( ContentPropertyNames.ATTACHMENT_SHA512 );
+        final String projectRepoBlobKey = iconBlobCopier.copy( projectRepoId, attachedBinary.getBlobKey() );
+        return new ProjectContentRootMetadataUpgrader.IconBinary( label, mimeType, size != null ? size : 0L, sha512, projectRepoBlobKey );
     }
 
     protected void upgradeRepository( final RepositoryId repositoryId )

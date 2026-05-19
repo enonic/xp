@@ -5,6 +5,7 @@ import java.util.EnumSet;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -18,6 +19,7 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextAccessorSupport;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.content.schema.BuiltinContentTypesAccessor;
 import com.enonic.xp.data.PropertySet;
@@ -110,6 +112,17 @@ class CreateContentCommandTest
         when( this.mixinMappingService.getMixinMappingOptions( any(), any() ) ).thenReturn( MixinOptions.empty() );
         when( this.siteConfigService.getSiteConfigs( any() ) ).thenReturn( SiteConfigs.empty() );
         when( this.nodeService.create( any( CreateNodeParams.class ) ) ).thenAnswer( this::mockNodeServiceCreate );
+
+        ContextAccessorSupport.getInstance().set( ContextBuilder.create()
+                                                      .repositoryId( "com.enonic.cms.default" )
+                                                      .branch( ContentConstants.BRANCH_DRAFT )
+                                                      .build() );
+    }
+
+    @AfterEach
+    void tearDown()
+    {
+        ContextAccessorSupport.getInstance().remove();
     }
 
     @Test

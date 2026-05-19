@@ -3,6 +3,7 @@ dependencies {
     api libs.jackson.databind
     implementation project( ':core:core-app' )
     implementation project( ':core:core-internal' )
+    implementation testFixtures( project( ':core:core-api' ) )
     implementation testFixtures( project( ':script:script-impl' ) )
     implementation libs.junit.jupiter.api
     implementation libs.mockito.core
