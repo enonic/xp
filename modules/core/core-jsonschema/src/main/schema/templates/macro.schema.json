@@ -1,6 +1,30 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "@id@",
+  "$defs": {
+    "localizedTextDef": {},
+    "genericValueDef": {},
+    "inputsDef": {},
+    "fieldSetDef": {},
+    "formItemsDef": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/inputsDef"
+        },
+        {
+          "$ref": "#/$defs/fieldSetDef"
+        }
+      ]
+    },
+    "formDef": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/formItemsDef"
+      },
+      "additionalProperties": false
+    }
+  },
+  "description": "YAML descriptor for Enonic XP Macros.\nhttps://developer.enonic.com/docs/cms/stable/richtext/macros",
   "type": "object",
   "properties": {
     "kind": {
@@ -24,28 +48,5 @@
     "kind",
     "title"
   ],
-  "additionalProperties": false,
-  "$defs": {
-    "localizedTextDef": {},
-    "genericValueDef": {},
-    "inputsDef": {},
-    "fieldSetDef": {},
-    "formItemsDef": {
-      "oneOf": [
-        {
-          "$ref": "#/$defs/inputsDef"
-        },
-        {
-          "$ref": "#/$defs/fieldSetDef"
-        }
-      ]
-    },
-    "formDef": {
-      "type": "array",
-      "items": {
-        "$ref": "#/$defs/formItemsDef"
-      },
-      "additionalProperties": false
-    }
-  }
+  "additionalProperties": false
 }

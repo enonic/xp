@@ -1,6 +1,11 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "@id@",
+  "$defs": {
+    "localizedTextDef": {},
+    "genericValueDef": {}
+  },
+  "description": "YAML descriptor for Enonic XP Admin Tools.\nhttps://developer.enonic.com/docs/code/stable/tools",
   "type": "object",
   "properties": {
     "kind": {
@@ -39,9 +44,5 @@
     "kind",
     "title"
   ],
-  "additionalProperties": false,
-  "$defs": {
-    "localizedTextDef": {},
-    "genericValueDef": {}
-  }
+  "additionalProperties": false
 }

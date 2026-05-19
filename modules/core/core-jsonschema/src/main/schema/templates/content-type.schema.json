@@ -1,6 +1,42 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "@id@",
+  "$defs": {
+    "localizedTextDef": {},
+    "genericValueDef": {},
+    "inputsDef": {},
+    "fieldSetDef": {},
+    "formFragmentDef": {},
+    "itemSetDef": {},
+    "optionSetDef": {},
+    "formItemsDef": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/inputsDef"
+        },
+        {
+          "$ref": "#/$defs/fieldSetDef"
+        },
+        {
+          "$ref": "#/$defs/formFragmentDef"
+        },
+        {
+          "$ref": "#/$defs/itemSetDef"
+        },
+        {
+          "$ref": "#/$defs/optionSetDef"
+        }
+      ]
+    },
+    "formDef": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/formItemsDef"
+      },
+      "additionalProperties": false
+    }
+  },
+  "description": "YAML descriptor for Enonic XP Content Types.\nhttps://developer.enonic.com/docs/cms/stable/content/content-types",
   "type": "object",
   "properties": {
     "kind": {
@@ -51,40 +87,5 @@
   "required": [
     "kind",
     "title"
-  ],
-  "$defs": {
-    "localizedTextDef": {},
-    "genericValueDef": {},
-    "inputsDef": {},
-    "fieldSetDef": {},
-    "formFragmentDef": {},
-    "itemSetDef": {},
-    "optionSetDef": {},
-    "formItemsDef": {
-      "oneOf": [
-        {
-          "$ref": "#/$defs/inputsDef"
-        },
-        {
-          "$ref": "#/$defs/fieldSetDef"
-        },
-        {
-          "$ref": "#/$defs/formFragmentDef"
-        },
-        {
-          "$ref": "#/$defs/itemSetDef"
-        },
-        {
-          "$ref": "#/$defs/optionSetDef"
-        }
-      ]
-    },
-    "formDef": {
-      "type": "array",
-      "items": {
-        "$ref": "#/$defs/formItemsDef"
-      },
-      "additionalProperties": false
-    }
-  }
+  ]
 }

@@ -1,6 +1,11 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "@id@",
+  "$defs": {
+    "localizedTextDef": {},
+    "genericValueDef": {}
+  },
+  "description": "YAML descriptor for Enonic XP Universal and Harmonized APIs.\nhttps://developer.enonic.com/docs/code/stable/apis",
   "type": "object",
   "properties": {
     "kind": {
@@ -40,9 +45,5 @@
   "required": [
     "kind"
   ],
-  "additionalProperties": false,
-  "$defs": {
-    "localizedTextDef": {},
-    "genericValueDef": {}
-  }
+  "additionalProperties": false
 }

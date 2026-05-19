@@ -1,26 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "@id@",
-  "type": "object",
-  "properties": {
-    "kind": {
-      "type": "string",
-      "const": "Task"
-    },
-    "description": {
-      "$ref": "#/$defs/localizedTextDef"
-    },
-    "form": {
-      "$ref": "#/$defs/formDef"
-    },
-    "config": {
-      "$ref": "#/$defs/genericValueDef"
-    }
-  },
-  "additionalProperties": false,
-  "required": [
-    "kind"
-  ],
   "$defs": {
     "genericValueDef": {},
     "inputsDef": {},
@@ -51,5 +31,26 @@
       },
       "additionalProperties": false
     }
-  }
+  },
+  "description": "YAML descriptor for Enonic XP Tasks.\nhttps://developer.enonic.com/docs/code/stable/background/tasks",
+  "type": "object",
+  "properties": {
+    "kind": {
+      "type": "string",
+      "const": "Task"
+    },
+    "description": {
+      "$ref": "#/$defs/localizedTextDef"
+    },
+    "form": {
+      "$ref": "#/$defs/formDef"
+    },
+    "config": {
+      "$ref": "#/$defs/genericValueDef"
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "kind"
+  ]
 }

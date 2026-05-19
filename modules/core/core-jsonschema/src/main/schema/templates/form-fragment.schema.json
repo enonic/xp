@@ -1,27 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "@id@",
-  "type": "object",
-  "properties": {
-    "kind": {
-      "type": "string",
-      "const": "FormFragment"
-    },
-    "title": {
-      "$ref": "#/$defs/localizedTextDef"
-    },
-    "description": {
-      "$ref": "#/$defs/localizedTextDef"
-    },
-    "form": {
-      "$ref": "#/$defs/formDef"
-    }
-  },
-  "required": [
-    "kind",
-    "title"
-  ],
-  "additionalProperties": false,
   "$defs": {
     "localizedTextDef": {},
     "inputsDef": {},
@@ -55,5 +34,27 @@
       },
       "additionalProperties": false
     }
-  }
+  },
+  "description": "YAML descriptor for Enonic XP Form Fragments.\nhttps://developer.enonic.com/docs/cms/stable/schemas/form-fragments",
+  "type": "object",
+  "properties": {
+    "kind": {
+      "type": "string",
+      "const": "FormFragment"
+    },
+    "title": {
+      "$ref": "#/$defs/localizedTextDef"
+    },
+    "description": {
+      "$ref": "#/$defs/localizedTextDef"
+    },
+    "form": {
+      "$ref": "#/$defs/formDef"
+    }
+  },
+  "required": [
+    "kind",
+    "title"
+  ],
+  "additionalProperties": false
 }
