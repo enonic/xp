@@ -2,13 +2,15 @@ package com.enonic.xp.context;
 
 import java.util.concurrent.Callable;
 
-import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 
+@NullMarked
 public interface Context
     extends ScopeAttributes
 {
@@ -16,11 +18,11 @@ public interface Context
 
     Branch getBranch();
 
-    @NonNull AuthenticationInfo getAuthInfo();
+    AuthenticationInfo getAuthInfo();
 
     void runWith( Runnable runnable );
 
-    <T> T callWith( Callable<T> runnable );
+    <T extends @Nullable Object> T callWith( Callable<T> runnable );
 
     LocalScope getLocalScope();
 }
