@@ -3,6 +3,7 @@ package com.enonic.xp.repo.impl.node.event;
 import java.time.Instant;
 import java.util.List;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -11,6 +12,7 @@ import org.mockito.Mockito;
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextAccessorSupport;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.node.MoveNodeResult;
@@ -41,6 +43,17 @@ class NodeEventListenerTest
         nodeEventListener = new NodeEventListener();
         nodeStorageService = Mockito.mock( NodeStorageService.class );
         nodeEventListener.setNodeStorageService( nodeStorageService );
+
+        ContextAccessorSupport.getInstance().set( ContextBuilder.create()
+                                                      .repositoryId( "com.enonic.cms.default" )
+                                                      .branch( ContentConstants.BRANCH_DRAFT )
+                                                      .build() );
+    }
+
+    @AfterEach
+    void tearDown()
+    {
+        ContextAccessorSupport.getInstance().remove();
     }
 
     @Test

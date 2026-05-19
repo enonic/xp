@@ -16,6 +16,7 @@ public interface ProjectService
 
     Project modify( ModifyProjectParams params );
 
+    @Deprecated
     void modifyIcon( ModifyProjectIconParams params );
 
     @Nullable ByteSource getIcon( ProjectName projectName );

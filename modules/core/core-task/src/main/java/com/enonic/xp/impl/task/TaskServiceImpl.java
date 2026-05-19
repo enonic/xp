@@ -14,6 +14,7 @@ import org.osgi.service.component.annotations.ReferencePolicyOption;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.internal.concurrent.DynamicReference;
@@ -21,6 +22,7 @@ import com.enonic.xp.impl.task.distributed.DistributableTask;
 import com.enonic.xp.impl.task.distributed.TaskContext;
 import com.enonic.xp.impl.task.distributed.TaskManager;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.task.SubmitLocalTaskParams;
 import com.enonic.xp.task.SubmitTaskParams;
 import com.enonic.xp.task.TaskId;
@@ -101,8 +103,8 @@ public final class TaskServiceImpl
     {
         final Context userContext = ContextAccessor.current();
         return TaskContext.create()
-            .setBranch( userContext.getBranch() )
-            .setRepo( userContext.getRepositoryId() )
+            .setBranch( userContext.getAttribute( Branch.class ) )
+            .setRepo( userContext.getAttribute( RepositoryId.class ) )
             .setAuthInfo( userContext.getAuthInfo() )
             .setContentRootPath( (NodePath) userContext.getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE ) )
             .build();

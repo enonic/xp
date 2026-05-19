@@ -14,8 +14,16 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 public interface Context
     extends ScopeAttributes
 {
+    /**
+     * @return the repository id bound to this context.
+     * @throws NullPointerException if no repository id is set on the context.
+     */
     RepositoryId getRepositoryId();
 
+    /**
+     * @return the branch bound to this context.
+     * @throws NullPointerException if no branch is set on the context.
+     */
     Branch getBranch();
 
     AuthenticationInfo getAuthInfo();

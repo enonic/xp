@@ -11,6 +11,8 @@ import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.context.ContextAccessorSupport;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.impl.macro.MacroServiceImpl;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
@@ -88,6 +90,11 @@ public abstract class AbstractPortalUrlServiceImplTest
 
         PortalRequestAccessor.set( this.portalRequest );
 
+        ContextAccessorSupport.getInstance().set( ContextBuilder.create()
+                                                      .repositoryId( "com.enonic.cms.myproject" )
+                                                      .branch( "draft" )
+                                                      .build() );
+
         this.virtualHost = mock( VirtualHost.class );
         when( req.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
         when( virtualHost.getSource() ).thenReturn( "/" );
@@ -98,5 +105,6 @@ public abstract class AbstractPortalUrlServiceImplTest
     void destroy()
     {
         PortalRequestAccessor.remove();
+        ContextAccessorSupport.getInstance().remove();
     }
 }

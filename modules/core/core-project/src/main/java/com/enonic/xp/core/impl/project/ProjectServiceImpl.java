@@ -150,6 +150,7 @@ public class ProjectServiceImpl
     {
         return repositories.stream()
             .filter( repository -> ProjectName.from( repository.getId() ) != null )
+            .filter( repository -> !repository.getBranches().contains( ContentConstants.BRANCH_DRAFT ) )
             .toList();
     }
 
@@ -560,6 +561,16 @@ public class ProjectServiceImpl
             .securityService( securityService )
             .build()
             .execute();
+    }
+
+    private static PropertyTree createProjectMarkerData()
+    {
+        // Empty PROJECT_DATA_SET_NAME set serves as the "this repo is a project" marker on the system repo's
+        // repository data node. After the 8->9 migration, all per-project metadata (displayName, description,
+        // parents, icon) lives on the project's /content node; only the marker remains here.
+        final PropertyTree data = new PropertyTree();
+        data.addSet( ProjectConstants.PROJECT_DATA_SET_NAME );
+        return data;
     }
 
     private CreateAttachment scaleProjectIcon( final CreateAttachment icon, final int targetWidth )

@@ -1,13 +1,17 @@
 package com.enonic.xp.core.impl.content;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentVersionId;
+import com.enonic.xp.context.ContextAccessorSupport;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
@@ -41,6 +45,17 @@ class GetContentByIdAndVersionIdCommandTest
         nodeService = Mockito.mock( NodeService.class );
         contentTypeService = Mockito.mock( ContentTypeService.class );
         eventPublisher = Mockito.mock( EventPublisher.class );
+
+        ContextAccessorSupport.getInstance().set( ContextBuilder.create()
+                                                      .repositoryId( "com.enonic.cms.default" )
+                                                      .branch( ContentConstants.BRANCH_DRAFT )
+                                                      .build() );
+    }
+
+    @AfterEach
+    void tearDown()
+    {
+        ContextAccessorSupport.getInstance().remove();
     }
 
     @Test
