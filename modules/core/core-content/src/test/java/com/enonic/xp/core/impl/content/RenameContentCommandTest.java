@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.content;
 
 import java.util.List;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -9,10 +10,13 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAlreadyExistsException;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.MoveContentParams;
+import com.enonic.xp.context.ContextAccessorSupport;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.content.ValidationError;
 import com.enonic.xp.content.ValidationErrorCode;
 import com.enonic.xp.content.ValidationErrors;
@@ -98,6 +102,17 @@ class RenameContentCommandTest
         when( patchNodeResult.getNodeId() ).thenReturn( mockNode.id() );
         when( nodeService.patch( isA( PatchNodeParams.class ) ) ).thenReturn( patchNodeResult );
         when( nodeService.getById( mockNode.id() ) ).thenReturn( mockNode );
+
+        ContextAccessorSupport.getInstance().set( ContextBuilder.create()
+                                                      .repositoryId( "com.enonic.cms.default" )
+                                                      .branch( ContentConstants.BRANCH_DRAFT )
+                                                      .build() );
+    }
+
+    @AfterEach
+    void tearDown()
+    {
+        ContextAccessorSupport.getInstance().remove();
     }
 
     @Test

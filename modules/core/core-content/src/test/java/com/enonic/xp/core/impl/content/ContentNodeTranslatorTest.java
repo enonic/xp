@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.Content;
@@ -7,6 +9,8 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
+import com.enonic.xp.context.ContextAccessorSupport;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
@@ -20,6 +24,21 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class ContentNodeTranslatorTest
 {
     public static final NodeId ID_1 = NodeId.from( "id1" );
+
+    @BeforeEach
+    void setUp()
+    {
+        ContextAccessorSupport.getInstance().set( ContextBuilder.create()
+                                                      .repositoryId( "com.enonic.cms.default" )
+                                                      .branch( ContentConstants.BRANCH_DRAFT )
+                                                      .build() );
+    }
+
+    @AfterEach
+    void tearDown()
+    {
+        ContextAccessorSupport.getInstance().remove();
+    }
 
     @Test
     void testNodeOutsideOfContentRoot()

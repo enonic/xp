@@ -3,7 +3,8 @@ package com.enonic.xp.context;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -12,6 +13,7 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.Exceptions;
 
+@NullMarked
 final class ContextImpl
     implements Context
 {
@@ -26,19 +28,19 @@ final class ContextImpl
     }
 
     @Override
-    public RepositoryId getRepositoryId()
+    public @Nullable RepositoryId getRepositoryId()
     {
         return getAttribute( RepositoryId.class );
     }
 
     @Override
-    public Branch getBranch()
+    public @Nullable Branch getBranch()
     {
         return getAttribute( Branch.class );
     }
 
     @Override
-    public @NonNull AuthenticationInfo getAuthInfo()
+    public AuthenticationInfo getAuthInfo()
     {
         final AuthenticationInfo attribute = getAttribute( AuthenticationInfo.class );
         return attribute == null ? AuthenticationInfo.unAuthenticated() : attribute;
@@ -46,7 +48,7 @@ final class ContextImpl
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T getAttribute( final Class<T> type )
+    public <T extends @Nullable Object> @Nullable T getAttribute( final Class<T> type )
     {
         return (T) getAttribute( type.getName() );
     }
@@ -58,7 +60,7 @@ final class ContextImpl
     }
 
     @Override
-    public Object getAttribute( final String key )
+    public @Nullable Object getAttribute( final String key )
     {
         final Object value = this.attributes.get( key );
         if ( value != null )
@@ -92,7 +94,7 @@ final class ContextImpl
     }
 
     @Override
-    public <T> T callWith( final Callable<T> runnable )
+    public <T extends @Nullable Object> T callWith( final Callable<T> runnable )
     {
         final Context old = ContextAccessor.INSTANCE.get();
         ContextAccessor.INSTANCE.set( this );

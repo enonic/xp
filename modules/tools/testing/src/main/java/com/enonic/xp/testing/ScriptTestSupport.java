@@ -19,10 +19,13 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextAccessorSupport;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.app.ApplicationImpl;
 import com.enonic.xp.core.impl.app.resolver.ClassLoaderApplicationUrlResolver;
 import com.enonic.xp.core.internal.Dictionaries;
@@ -110,6 +113,11 @@ public abstract class ScriptTestSupport
     protected void initialize()
         throws Exception
     {
+        ContextAccessorSupport.getInstance().set( ContextBuilder.create()
+                                                      .repositoryId( "com.enonic.cms.default" )
+                                                      .branch( ContentConstants.BRANCH_DRAFT )
+                                                      .build() );
+
         this.serviceRegistry = new MockServiceRegistry();
 
         this.portalRequest = createPortalRequest();
@@ -141,6 +149,7 @@ public abstract class ScriptTestSupport
         {
             ( (Closeable) executor ).close();
         }
+        ContextAccessorSupport.getInstance().remove();
     }
 
     protected final <T> void addService( final Class<T> type, final T instance )

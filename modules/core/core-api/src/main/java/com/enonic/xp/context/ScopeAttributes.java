@@ -2,12 +2,16 @@ package com.enonic.xp.context;
 
 import java.util.Map;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
+
+@NullMarked
 public interface ScopeAttributes
 {
-    Object getAttribute( String key );
+    @Nullable Object getAttribute( String key );
 
-    <T> T getAttribute( Class<T> type );
+    <T extends @Nullable Object> @Nullable T getAttribute( Class<T> type );
 
     Map<String, Object> getAttributes();
 }
