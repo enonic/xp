@@ -20,10 +20,10 @@ public class IssueCommentDataSerializer
         final PropertyTree propertyTree = new PropertyTree();
         final PropertySet commentAsData = propertyTree.getRoot();
 
-        commentAsData.ifNotNull().addInstant( CREATED_TIME, Millis.now() );
-        commentAsData.ifNotNull().addString( CREATOR, params.getCreator().toString() );
-        commentAsData.ifNotNull().addString( CREATOR_DISPLAY_NAME, params.getCreatorDisplayName() );
-        commentAsData.ifNotNull().addString( TEXT, params.getText() );
+        commentAsData.resetInstant( CREATED_TIME, Millis.now() );
+        commentAsData.resetString( CREATOR, params.getCreator().toString() );
+        commentAsData.resetString( CREATOR_DISPLAY_NAME, params.getCreatorDisplayName() );
+        commentAsData.resetString( TEXT, params.getText() );
 
         return propertyTree;
     }

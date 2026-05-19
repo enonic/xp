@@ -131,8 +131,7 @@ public final class ImageContentProcessor
             final Long origOrientation = imageInfo.getData().getLong( MediaInfo.IMAGE_INFO_ORIENTATION );
             if ( origOrientation != null )
             {
-                mediaData.removeProperties( ContentPropertyNames.ORIENTATION );
-                mediaData.setLong( ContentPropertyNames.ORIENTATION, origOrientation );
+                mediaData.resetLong( ContentPropertyNames.ORIENTATION, origOrientation );
             }
         }
 
@@ -159,10 +158,8 @@ public final class ImageContentProcessor
             height = (long) ( height * ( cropping.bottom() - cropping.top() ) );
         }
 
-        mediaData.removeProperties( ContentPropertyNames.MEDIA_IMAGE_HEIGHT );
-        mediaData.removeProperties( ContentPropertyNames.MEDIA_IMAGE_WIDTH );
-        mediaData.setLong( ContentPropertyNames.MEDIA_IMAGE_HEIGHT, height );
-        mediaData.setLong( ContentPropertyNames.MEDIA_IMAGE_WIDTH, width );
+        mediaData.resetLong( ContentPropertyNames.MEDIA_IMAGE_HEIGHT, height );
+        mediaData.resetLong( ContentPropertyNames.MEDIA_IMAGE_WIDTH, width );
     }
 
     private static Mixins extractMetadata( final MediaInfo mediaInfo )

@@ -40,7 +40,7 @@ public class SchedulerSerializer
         final PropertyTree tree = new PropertyTree();
         final PropertySet data = tree.getRoot();
 
-        data.ifNotNull().setString( ScheduledJobPropertyNames.DESCRIPTION, params.getDescription() );
+        data.resetString( ScheduledJobPropertyNames.DESCRIPTION, params.getDescription() );
         data.setBoolean( ScheduledJobPropertyNames.ENABLED, params.isEnabled() );
 
         addCalendar( params::getCalendar, data );
@@ -76,7 +76,7 @@ public class SchedulerSerializer
         final PropertyTree tree = new PropertyTree();
         final PropertySet data = tree.getRoot();
 
-        data.ifNotNull().setString( ScheduledJobPropertyNames.DESCRIPTION, modifiedJob.getDescription() );
+        data.setString( ScheduledJobPropertyNames.DESCRIPTION, modifiedJob.getDescription() );
         data.setBoolean( ScheduledJobPropertyNames.ENABLED, modifiedJob.isEnabled() );
 
         addCalendar( modifiedJob::getCalendar, data );

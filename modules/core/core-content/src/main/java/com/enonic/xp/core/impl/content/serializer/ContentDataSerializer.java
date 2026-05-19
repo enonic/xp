@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.content.serializer;
 
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -92,17 +93,16 @@ public final class ContentDataSerializer
 
         validationErrorsSerializer.toData( params.getValidationErrors(), contentAsData );
 
-        contentAsData.ifNotNull().addString( DISPLAY_NAME, params.getDisplayName() );
-        contentAsData.ifNotNull().addString( TYPE, params.getType() != null ? params.getType().toString() : null );
-        contentAsData.ifNotNull().addInstant( CREATED_TIME, params.getCreatedTime() );
-        contentAsData.ifNotNull().addString( CREATOR, params.getCreator().toString() );
-        contentAsData.ifNotNull().addString( MODIFIER, params.getModifier().toString() );
-        contentAsData.ifNotNull().addInstant( MODIFIED_TIME, params.getModifiedTime() );
-        contentAsData.ifNotNull()
-            .addString( OWNER, PrincipalKey.ofAnonymous().equals( params.getOwner() ) || params.getOwner() == null
-                ? null
-                : params.getOwner().toString() );
-        contentAsData.ifNotNull().addString( LANGUAGE, params.getLanguage() != null ? params.getLanguage().toLanguageTag() : null );
+        contentAsData.resetString( DISPLAY_NAME, params.getDisplayName() );
+        contentAsData.resetString( TYPE, Objects.toString( params.getType(), null ) );
+        contentAsData.resetInstant( CREATED_TIME, params.getCreatedTime() );
+        contentAsData.resetString( CREATOR, params.getCreator().toString() );
+        contentAsData.resetString( MODIFIER, params.getModifier().toString() );
+        contentAsData.resetInstant( MODIFIED_TIME, params.getModifiedTime() );
+        contentAsData.resetString( OWNER, PrincipalKey.ofAnonymous().equals( params.getOwner() ) || params.getOwner() == null
+            ? null
+            : params.getOwner().toString() );
+        contentAsData.resetString( LANGUAGE, params.getLanguage() != null ? params.getLanguage().toLanguageTag() : null );
 
         contentAsData.addSet( DATA, params.getData().getRoot().copy( contentAsData.getTree() ) );
 
@@ -119,7 +119,7 @@ public final class ContentDataSerializer
             mixinDataSerializer.toData( mixins, contentAsData );
         }
 
-        AttachmentSerializer.create( contentAsData.getTree(), params.getCreateAttachments() );
+        AttachmentSerializer.create( contentAsData, params.getCreateAttachments() );
 
         addProcessedReferences( contentAsData, params.getProcessedIds() );
 
@@ -201,27 +201,24 @@ public final class ContentDataSerializer
         contentAsData.setBoolean( ContentPropertyNames.VALID, content.isValid() );
         validationErrorsSerializer.toData( content.getValidationErrors(), contentAsData );
 
-        contentAsData.ifNotNull().addString( DISPLAY_NAME, content.getDisplayName() );
-        contentAsData.ifNotNull().addString( TYPE, content.getType().toString() );
-        contentAsData.ifNotNull().addString( OWNER, content.getOwner() != null ? content.getOwner().toString() : null );
-        contentAsData.ifNotNull().addString( LANGUAGE, content.getLanguage() != null ? content.getLanguage().toLanguageTag() : null );
-        contentAsData.ifNotNull().addInstant( MODIFIED_TIME, content.getModifiedTime() );
-        contentAsData.ifNotNull().addString( MODIFIER, content.getModifier() != null ? content.getModifier().toString() : null );
-        contentAsData.ifNotNull().addString( CREATOR, content.getCreator().toString() );
-        contentAsData.ifNotNull().addInstant( CREATED_TIME, content.getCreatedTime() );
-        contentAsData.ifNotNull()
-            .addReference( VARIANT_OF, content.getVariantOf() != null ? new Reference( NodeId.from( content.getVariantOf() ) ) : null );
-        contentAsData.ifNotNull()
-            .addString( ORIGIN_PROJECT, content.getOriginProject() != null ? content.getOriginProject().toString() : null );
+        contentAsData.resetString( DISPLAY_NAME, content.getDisplayName() );
+        contentAsData.resetString( TYPE, content.getType().toString() );
+        contentAsData.resetString( OWNER, Objects.toString( content.getOwner(), null ) );
+        contentAsData.resetString( LANGUAGE, content.getLanguage() != null ? content.getLanguage().toLanguageTag() : null );
+        contentAsData.resetInstant( MODIFIED_TIME, content.getModifiedTime() );
+        contentAsData.resetString( MODIFIER, Objects.toString( content.getModifier(), null ) );
+        contentAsData.resetString( CREATOR, content.getCreator().toString() );
+        contentAsData.resetInstant( CREATED_TIME, content.getCreatedTime() );
+        contentAsData.resetReference( VARIANT_OF,
+                                      content.getVariantOf() != null ? new Reference( NodeId.from( content.getVariantOf() ) ) : null );
+        contentAsData.resetString( ORIGIN_PROJECT, Objects.toString( content.getOriginProject(), null ) );
         addPublishInfo( contentAsData, content.getPublishInfo() );
         addWorkflowInfo( contentAsData, content.getWorkflowInfo() );
         addInherit( contentAsData, content.getInherit() );
-        contentAsData.ifNotNull()
-            .addString( ORIGINAL_NAME, content.getOriginalName() != null ? content.getOriginalName().toString() : null );
-        contentAsData.ifNotNull()
-            .addString( ORIGINAL_PARENT_PATH, content.getOriginalParentPath() != null ? content.getOriginalParentPath().toString() : null );
-        contentAsData.ifNotNull().addInstant( ARCHIVED_TIME, content.getArchivedTime() );
-        contentAsData.ifNotNull().addString( ARCHIVED_BY, content.getArchivedBy() != null ? content.getArchivedBy().toString() : null );
+        contentAsData.resetString( ORIGINAL_NAME, Objects.toString( content.getOriginalName(), null ) );
+        contentAsData.resetString( ORIGINAL_PARENT_PATH, Objects.toString( content.getOriginalParentPath(), null ) );
+        contentAsData.resetInstant( ARCHIVED_TIME, content.getArchivedTime() );
+        contentAsData.resetString( ARCHIVED_BY, Objects.toString( content.getArchivedBy(), null ) );
     }
 
     private void addProcessedReferences( final PropertySet contentAsData, final ContentIds processedIds )
@@ -230,10 +227,9 @@ public final class ContentDataSerializer
         {
             return;
         }
-        contentAsData.ifNotNull()
-            .addReferences( PROCESSED_REFERENCES, processedIds.stream()
-                .map( contentId -> new Reference( NodeId.from( contentId ) ) )
-                .toArray( Reference[]::new ) );
+        contentAsData.addReferences( PROCESSED_REFERENCES, processedIds.stream()
+                                         .map( contentId -> new Reference( NodeId.from( contentId ) ) )
+                                         .toArray( Reference[]::new ) );
     }
 
     private static void addPublishInfo( final PropertySet contentAsData, final ContentPublishInfo data )
@@ -241,10 +237,10 @@ public final class ContentDataSerializer
         if ( data != null )
         {
             final PropertySet publishInfo = contentAsData.addSet( PUBLISH_INFO );
-            publishInfo.setInstant( PUBLISH_FIRST, data.first() );
-            publishInfo.setInstant( PUBLISH_FROM, data.from() );
-            publishInfo.setInstant( PUBLISH_TO, data.to() );
-            publishInfo.setInstant( PUBLISH_TIME, data.time() );
+            publishInfo.resetInstant( PUBLISH_FIRST, data.first() );
+            publishInfo.resetInstant( PUBLISH_FROM, data.from() );
+            publishInfo.resetInstant( PUBLISH_TO, data.to() );
+            publishInfo.resetInstant( PUBLISH_TIME, data.time() );
         }
     }
 
@@ -263,7 +259,7 @@ public final class ContentDataSerializer
     {
         if ( inherit != null )
         {
-            contentAsData.ifNotNull().addStrings( INHERIT, inherit.stream().map( Enum::name ).collect( Collectors.toList() ) );
+            contentAsData.addStrings( INHERIT, inherit.stream().map( Enum::name ).collect( Collectors.toList() ) );
         }
     }
 

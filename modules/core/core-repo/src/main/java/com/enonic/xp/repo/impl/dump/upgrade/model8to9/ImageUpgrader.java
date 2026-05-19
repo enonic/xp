@@ -212,8 +212,7 @@ public class ImageUpgrader
             LOG.warn( "Failed to parse process orientation value: {}", existing, e );
             return false;
         }
-        mediaSet.removeProperties( ContentPropertyNames.ORIENTATION );
-        mediaSet.setLong( ContentPropertyNames.ORIENTATION, orientationValue );
+        mediaSet.resetLong( ContentPropertyNames.ORIENTATION, orientationValue );
         return true;
     }
 
@@ -256,19 +255,15 @@ public class ImageUpgrader
     private static void writeOriginalDimensions( final PropertyTree data, final long width, final long height )
     {
         final PropertySet imageInfoSet = ensureImageInfoSet( data );
-        imageInfoSet.removeProperties( MediaInfo.IMAGE_INFO_IMAGE_WIDTH );
-        imageInfoSet.removeProperties( MediaInfo.IMAGE_INFO_IMAGE_HEIGHT );
-        imageInfoSet.removeProperties( MediaInfo.IMAGE_INFO_PIXEL_SIZE );
-        imageInfoSet.setLong( MediaInfo.IMAGE_INFO_IMAGE_WIDTH, width );
-        imageInfoSet.setLong( MediaInfo.IMAGE_INFO_IMAGE_HEIGHT, height );
-        imageInfoSet.setLong( MediaInfo.IMAGE_INFO_PIXEL_SIZE, width * height );
+        imageInfoSet.resetLong( MediaInfo.IMAGE_INFO_IMAGE_WIDTH, width );
+        imageInfoSet.resetLong( MediaInfo.IMAGE_INFO_IMAGE_HEIGHT, height );
+        imageInfoSet.resetLong( MediaInfo.IMAGE_INFO_PIXEL_SIZE, width * height );
     }
 
     private static void writeOriginalOrientation( final PropertyTree data, final long orientation )
     {
         final PropertySet imageInfoSet = ensureImageInfoSet( data );
-        imageInfoSet.removeProperties( MediaInfo.IMAGE_INFO_ORIENTATION );
-        imageInfoSet.setLong( MediaInfo.IMAGE_INFO_ORIENTATION, orientation );
+        imageInfoSet.resetLong( MediaInfo.IMAGE_INFO_ORIENTATION, orientation );
     }
 
     private static PropertySet ensureImageInfoSet( final PropertyTree data )

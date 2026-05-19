@@ -82,9 +82,9 @@ public class ValidationErrorsSerializer
                 return propertySet;
             } ).toArray( PropertySet[]::new ) );
         }
-        else if ( contentAsData.hasProperty( VALIDATION_ERRORS ) )
+        else
         {
-            contentAsData.removeProperty( VALIDATION_ERRORS );
+            contentAsData.removeProperties( VALIDATION_ERRORS );
         }
     }
 

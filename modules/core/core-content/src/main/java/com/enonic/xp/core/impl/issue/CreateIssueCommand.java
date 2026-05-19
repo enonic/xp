@@ -134,10 +134,10 @@ public class CreateIssueCommand
             final Instant now = Millis.now();
             final PropertyTree contentAsData = ISSUE_DATA_SERIALIZER.toCreateNodeData( params );
 
-            contentAsData.getRoot().ifNotNull().addInstant( CREATED_TIME, now );
-            contentAsData.getRoot().ifNotNull().addInstant( MODIFIED_TIME, now );
-            contentAsData.getRoot().ifNotNull().addString( CREATOR, creator.getKey().toString() );
-            contentAsData.getRoot().ifNotNull().addLong( INDEX, index );
+            contentAsData.getRoot().resetInstant( CREATED_TIME, now );
+            contentAsData.getRoot().resetInstant( MODIFIED_TIME, now );
+            contentAsData.getRoot().resetString( CREATOR, creator.getKey().toString() );
+            contentAsData.getRoot().resetLong( INDEX, index );
 
             final IndexConfigDocument indexConfigDocument = IssueIndexConfigFactory.create();
 

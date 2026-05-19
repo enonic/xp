@@ -422,15 +422,20 @@ public class DumpUpgrader8to9
     {
         final Model8VersionsDumpEntryJson v8Entry = JsonDumpSerializer.readValue( entryContent, Model8VersionsDumpEntryJson.class );
 
-        nodeIdsWithVersions.add( v8Entry.getNodeId() );
+        final String nodeId = v8Entry.getNodeId();
+        nodeIdsWithVersions.add( nodeId );
+
+        final VersionHistoryMigrationUpgrader.ContentHistoryContext historyContext = repoInScope
+            ? VersionHistoryMigrationUpgrader.buildContext( branchActivations.getOrDefault( nodeId, Map.of() ) )
+            : null;
 
         final List<VersionDumpEntryJson> upgradedVersions = new ArrayList<>();
         for ( VersionDumpEntryJson versionDumpEntryJson : v8Entry.getVersions() )
         {
-            upgradedVersions.add( ensureVersionId( processVersionMeta( versionDumpEntryJson, repositoryId ) ) );
+            upgradedVersions.add( ensureVersionId( processVersionMeta( versionDumpEntryJson, repositoryId, historyContext ) ) );
         }
 
-        writeVersionsJsonl( v8Entry.getNodeId(), upgradedVersions );
+        writeVersionsJsonl( nodeId, upgradedVersions );
     }
 
     private static VersionDumpEntryJson ensureVersionId( final VersionDumpEntryJson entry )
@@ -442,7 +447,8 @@ public class DumpUpgrader8to9
         return VersionDumpEntryJson.create( entry ).version( new NodeVersionId().toString() ).build();
     }
 
-    private VersionDumpEntryJson processVersionMeta( final VersionDumpEntryJson versionDumpEntryJson, final RepositoryId repositoryId )
+    private VersionDumpEntryJson processVersionMeta( final VersionDumpEntryJson versionDumpEntryJson, final RepositoryId repositoryId,
+                                                     final VersionHistoryMigrationUpgrader.@Nullable ContentHistoryContext historyContext )
     {
         final Segment nodeSegment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.NODE_SEGMENT_LEVEL );
         final Segment indexConfigSegment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.INDEX_CONFIG_SEGMENT_LEVEL );
@@ -457,7 +463,13 @@ public class DumpUpgrader8to9
 
         final NodeStoreVersion withUpgradedBinaries = copyBinaryBlobs( upgraded != null ? upgraded : dumpEntry, repositoryId );
 
-        final NodeStoreVersion toWrite = withUpgradedBinaries != null ? withUpgradedBinaries : ( upgraded != null ? upgraded : dumpEntry );
+        NodeStoreVersion toWrite = withUpgradedBinaries != null ? withUpgradedBinaries : ( upgraded != null ? upgraded : dumpEntry );
+
+        final VersionHistoryMigrationUpgrader.CommitInfo commitInfo = commitInfos.get( versionDumpEntryJson.getCommitId() );
+        if ( repoInScope )
+        {
+            toWrite = VersionHistoryMigrationUpgrader.applyPublishTime( toWrite, commitInfo );
+        }
 
         final BlobKey newNodeBlobKey = writeNodeStoreVersionBlob( toWrite, nodeSegment, NodeVersionJsonSerializer::toNodeVersionBytes );
         final BlobKey newIndexConfigBlobKey =
@@ -482,7 +494,7 @@ public class DumpUpgrader8to9
 
         if ( repoInScope )
         {
-            result = VersionHistoryMigrationUpgrader.stampVersion( toWrite, result, commitInfos.get( result.getCommitId() ) );
+            result = VersionHistoryMigrationUpgrader.stampVersion( toWrite, result, commitInfo, historyContext );
         }
 
         return LayerBaseCommitDropUpgrader.clearDroppedCommitId( droppedCommitIds, result );

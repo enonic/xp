@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.content.serializer;
 
+import java.time.Instant;
+
 import org.junit.jupiter.api.Test;
 
 import com.google.common.io.ByteSource;
@@ -12,6 +14,7 @@ import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
+import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.Mixin;
 import com.enonic.xp.content.Mixins;
 import com.enonic.xp.content.ValidationError;
@@ -43,6 +46,32 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class ContentDataSerializerTest
 {
+    @Test
+    void publishInfo_with_null_time_and_to_does_not_create_no_value_properties()
+    {
+        final ContentDataSerializer contentDataSerializer = new ContentDataSerializer();
+
+        final Content content = Content.create()
+            .name( "myContent" )
+            .parentPath( ContentPath.ROOT )
+            .creator( PrincipalKey.ofAnonymous() )
+            .modifier( PrincipalKey.ofAnonymous() )
+            .publishInfo( ContentPublishInfo.create()
+                              .from( Instant.parse( "2026-01-01T00:00:00Z" ) )
+                              .first( Instant.parse( "2026-01-01T00:00:00Z" ) )
+                              .build() )
+            .build();
+
+        final PropertyTree data = contentDataSerializer.toNodeData( content );
+
+        final PropertySet publishSet = data.getSet( ContentPropertyNames.PUBLISH_INFO );
+        assertNotNull( publishSet );
+        assertThat( publishSet.hasProperty( ContentPropertyNames.PUBLISH_FROM ) ).isTrue();
+        assertThat( publishSet.hasProperty( ContentPropertyNames.PUBLISH_FIRST ) ).isTrue();
+        assertThat( publishSet.hasProperty( ContentPropertyNames.PUBLISH_TIME ) ).isFalse();
+        assertThat( publishSet.hasProperty( ContentPropertyNames.PUBLISH_TO ) ).isFalse();
+    }
+
     @Test
     void create_propertyTree_populated_with_attachment_properties()
     {
