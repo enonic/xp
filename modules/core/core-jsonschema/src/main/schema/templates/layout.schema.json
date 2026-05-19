@@ -1,38 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "@id@",
-  "type": "object",
-  "properties": {
-    "kind": {
-      "type": "string",
-      "const": "Layout"
-    },
-    "title": {
-      "$ref": "#/$defs/localizedTextDef"
-    },
-    "description": {
-      "$ref": "#/$defs/localizedTextDef"
-    },
-    "form": {
-      "$ref": "#/$defs/formDef"
-    },
-    "regions": {
-      "type": "array",
-      "uniqueItems": true,
-      "items": {
-        "type": "string"
-      }
-    },
-    "config": {
-      "$ref": "#/$defs/genericValueDef"
-    }
-  },
-  "required": [
-    "kind",
-    "regions",
-    "title"
-  ],
-  "additionalProperties": false,
   "$defs": {
     "localizedTextDef": {},
     "genericValueDef": {},
@@ -67,5 +35,38 @@
       },
       "additionalProperties": false
     }
-  }
+  },
+  "description": "YAML descriptor for Enonic XP Layouts.\nhttps://developer.enonic.com/docs/cms/stable/pages/parts#layouts",
+  "type": "object",
+  "properties": {
+    "kind": {
+      "type": "string",
+      "const": "Layout"
+    },
+    "title": {
+      "$ref": "#/$defs/localizedTextDef"
+    },
+    "description": {
+      "$ref": "#/$defs/localizedTextDef"
+    },
+    "form": {
+      "$ref": "#/$defs/formDef"
+    },
+    "regions": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      }
+    },
+    "config": {
+      "$ref": "#/$defs/genericValueDef"
+    }
+  },
+  "required": [
+    "kind",
+    "regions",
+    "title"
+  ],
+  "additionalProperties": false
 }

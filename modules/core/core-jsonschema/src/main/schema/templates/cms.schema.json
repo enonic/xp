@@ -1,29 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "@id@",
-  "type": "object",
-  "properties": {
-    "kind": {
-      "type": "string",
-      "const": "CMS"
-    },
-    "mixins": {
-      "type": "array",
-      "items": {
-        "$ref": "#/$defs/mixinMapping"
-      }
-    },
-    "form": {
-      "$ref": "#/$defs/formDef"
-    },
-    "config": {
-      "$ref": "#/$defs/genericValueDef"
-    }
-  },
-  "required": [
-    "kind"
-  ],
-  "additionalProperties": false,
   "$defs": {
     "mixinMapping": {
       "type": "object",
@@ -76,5 +53,29 @@
       },
       "additionalProperties": false
     }
-  }
+  },
+  "description": "YAML descriptor for Enonic XP CMS configuration.\nhttps://developer.enonic.com/docs/code/stable/schemas",
+  "type": "object",
+  "properties": {
+    "kind": {
+      "type": "string",
+      "const": "CMS"
+    },
+    "mixins": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/mixinMapping"
+      }
+    },
+    "form": {
+      "$ref": "#/$defs/formDef"
+    },
+    "config": {
+      "$ref": "#/$defs/genericValueDef"
+    }
+  },
+  "required": [
+    "kind"
+  ],
+  "additionalProperties": false
 }

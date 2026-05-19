@@ -1,31 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "@id@",
-  "type": "object",
-  "properties": {
-    "kind": {
-      "type": "string",
-      "const": "IdProvider"
-    },
-    "mode": {
-      "type": "string",
-      "enum": [
-        "LOCAL",
-        "EXTERNAL",
-        "MIXED"
-      ]
-    },
-    "form": {
-      "$ref": "#/$defs/formDef"
-    },
-    "config": {
-      "$ref": "#/$defs/genericValueDef"
-    }
-  },
-  "additionalProperties": false,
-  "required": [
-    "kind"
-  ],
   "$defs": {
     "localizedTextDef": {},
     "genericValueDef": {},
@@ -56,5 +31,31 @@
       },
       "additionalProperties": false
     }
-  }
+  },
+  "description": "YAML descriptor for Enonic XP ID Providers.\nhttps://developer.enonic.com/docs/code/stable/http/id-providers",
+  "type": "object",
+  "properties": {
+    "kind": {
+      "type": "string",
+      "const": "IdProvider"
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "LOCAL",
+        "EXTERNAL",
+        "MIXED"
+      ]
+    },
+    "form": {
+      "$ref": "#/$defs/formDef"
+    },
+    "config": {
+      "$ref": "#/$defs/genericValueDef"
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "kind"
+  ]
 }

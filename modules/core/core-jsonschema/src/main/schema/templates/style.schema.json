@@ -1,27 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "@id@",
-  "type": "object",
-  "properties": {
-    "kind": {
-      "type": "string",
-      "const": "Style"
-    },
-    "styles": {
-      "type": "array",
-      "items": {
-        "oneOf": [
-          {
-            "$ref": "#/$defs/imageStyleDef"
-          }
-        ]
-      }
-    }
-  },
-  "additionalProperties": false,
-  "required": [
-    "kind"
-  ],
   "$defs": {
     "styleItemDef": {
       "type": "object",
@@ -74,5 +53,27 @@
       "additionalProperties": false
     },
     "localizedTextDef": {}
-  }
+  },
+  "description": "YAML descriptor for Enonic XP Styles.\nhttps://developer.enonic.com/docs/cms/stable/richtext/styles",
+  "type": "object",
+  "properties": {
+    "kind": {
+      "type": "string",
+      "const": "Style"
+    },
+    "styles": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "$ref": "#/$defs/imageStyleDef"
+          }
+        ]
+      }
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "kind"
+  ]
 }
