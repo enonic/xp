@@ -31,12 +31,12 @@ public final class ContextMapper
     @Override
     public void serialize( final MapGenerator gen )
     {
-        final Branch branch = this.context.getAttribute( Branch.class );
+        final Branch branch = this.context.getBranch();
         if ( branch != null )
         {
             gen.value( "branch", branch.toString() );
         }
-        final RepositoryId repositoryId = this.context.getAttribute( RepositoryId.class );
+        final RepositoryId repositoryId = this.context.getRepositoryId();
         if ( repositoryId != null )
         {
             gen.value( "repository", repositoryId.toString() );

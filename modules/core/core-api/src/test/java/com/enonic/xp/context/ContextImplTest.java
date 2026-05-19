@@ -11,6 +11,7 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -116,7 +117,7 @@ class ContextImplTest
     void testRepositoryId()
     {
         final ContextImpl context = createContext();
-        assertThrows( NullPointerException.class, context::getRepositoryId );
+        assertNull( context.getRepositoryId() );
 
         final RepositoryId value = RepositoryId.from( "repo-id" );
         context.getLocalScope().setAttribute( value );
@@ -127,7 +128,7 @@ class ContextImplTest
     void testBranch()
     {
         final ContextImpl context = createContext();
-        assertThrows( NullPointerException.class, context::getBranch );
+        assertNull( context.getBranch() );
 
         final Branch value = Branch.from( "branch" );
         context.getLocalScope().setAttribute( value );

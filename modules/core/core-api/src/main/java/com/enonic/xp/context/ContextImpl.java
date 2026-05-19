@@ -13,8 +13,6 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.Exceptions;
 
-import static java.util.Objects.requireNonNull;
-
 @NullMarked
 final class ContextImpl
     implements Context
@@ -30,15 +28,15 @@ final class ContextImpl
     }
 
     @Override
-    public RepositoryId getRepositoryId()
+    public @Nullable RepositoryId getRepositoryId()
     {
-        return requireNonNull( getAttribute( RepositoryId.class ), "RepositoryId is not set on context" );
+        return getAttribute( RepositoryId.class );
     }
 
     @Override
-    public Branch getBranch()
+    public @Nullable Branch getBranch()
     {
-        return requireNonNull( getAttribute( Branch.class ), "Branch is not set on context" );
+        return getAttribute( Branch.class );
     }
 
     @Override
