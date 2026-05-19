@@ -1,38 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "@id@",
-  "type": "object",
-  "properties": {
-    "kind": {
-      "type": "string",
-      "const": "Site"
-    },
-    "processors": {
-      "type": "array",
-      "items": {
-        "$ref": "#/$defs/processor"
-      }
-    },
-    "mappings": {
-      "type": "array",
-      "items": {
-        "$ref": "#/$defs/controllerMapping"
-      }
-    },
-    "apis": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "config": {
-      "$ref": "#/$defs/genericValueDef"
-    }
-  },
-  "required": [
-    "kind"
-  ],
-  "additionalProperties": false,
   "$defs": {
     "processor": {
       "type": "object",
@@ -113,5 +81,38 @@
       "additionalProperties": false
     },
     "genericValueDef": {}
-  }
+  },
+  "description": "YAML descriptor for Enonic XP Sites.\nhttps://developer.enonic.com/docs/code/stable/sites",
+  "type": "object",
+  "properties": {
+    "kind": {
+      "type": "string",
+      "const": "Site"
+    },
+    "processors": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/processor"
+      }
+    },
+    "mappings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/controllerMapping"
+      }
+    },
+    "apis": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "config": {
+      "$ref": "#/$defs/genericValueDef"
+    }
+  },
+  "required": [
+    "kind"
+  ],
+  "additionalProperties": false
 }
