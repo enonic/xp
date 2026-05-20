@@ -166,25 +166,18 @@ public class PublishContentCommand
             final PropertySet publishInfo = requireNonNullElseGet( toBeEdited.getSet( ContentPropertyNames.PUBLISH_INFO ),
                                                                    () -> toBeEdited.addSet( ContentPropertyNames.PUBLISH_INFO ) );
 
-            publishInfo.setInstant( ContentPropertyNames.PUBLISH_TIME, Millis.now() );
+            publishInfo.resetInstant( ContentPropertyNames.PUBLISH_TIME, Millis.now() );
 
             if ( !publishInfo.hasProperty( ContentPropertyNames.PUBLISH_FROM ) )
             {
-                publishInfo.setInstant( ContentPropertyNames.PUBLISH_FROM, publishFrom );
+                publishInfo.resetInstant( ContentPropertyNames.PUBLISH_FROM, publishFrom );
             }
 
-            if ( publishTo == null )
-            {
-                publishInfo.removeProperties( ContentPropertyNames.PUBLISH_TO );
-            }
-            else
-            {
-                publishInfo.setInstant( ContentPropertyNames.PUBLISH_TO, publishTo );
-            }
+            publishInfo.resetInstant( ContentPropertyNames.PUBLISH_TO, publishTo );
 
             if ( !publishInfo.hasProperty( ContentPropertyNames.PUBLISH_FIRST ) )
             {
-                publishInfo.setInstant( ContentPropertyNames.PUBLISH_FIRST, publishFrom );
+                publishInfo.resetInstant( ContentPropertyNames.PUBLISH_FIRST, publishFrom );
             }
             return toBeEdited;
         };

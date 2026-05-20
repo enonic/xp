@@ -44,9 +44,9 @@ public class IssueDataSerializer
 
         final PropertySet issueAsData = propertyTree.getRoot();
 
-        issueAsData.ifNotNull().addEnum( TYPE, params.getIssueType() );
-        issueAsData.ifNotNull().addString( TITLE, params.getTitle() );
-        issueAsData.ifNotNull().addString( STATUS, params.getStatus().toString() );
+        issueAsData.resetEnum( TYPE, params.getIssueType() );
+        issueAsData.resetString( TITLE, params.getTitle() );
+        issueAsData.resetString( STATUS, params.getStatus().toString() );
         issueAsData.addString( DESCRIPTION, params.getDescription() );
 
         if ( !params.getApproverIds().isEmpty() )
@@ -74,14 +74,14 @@ public class IssueDataSerializer
 
         final PropertySet issueAsData = propertyTree.getRoot();
 
-        issueAsData.ifNotNull().addEnum( TYPE, editedIssue.getIssueType() );
-        issueAsData.ifNotNull().addLong( INDEX, editedIssue.getIndex() );
-        issueAsData.ifNotNull().addString( TITLE, editedIssue.getTitle() );
-        issueAsData.ifNotNull().addInstant( CREATED_TIME, editedIssue.getCreatedTime() );
-        issueAsData.ifNotNull().addInstant( MODIFIED_TIME, editedIssue.getModifiedTime() );
-        issueAsData.ifNotNull().addString( CREATOR, editedIssue.getCreator().toString() );
-        issueAsData.ifNotNull().addString( MODIFIER, editedIssue.getModifier().toString() );
-        issueAsData.ifNotNull().addString( STATUS, editedIssue.getStatus().toString() );
+        issueAsData.resetEnum( TYPE, editedIssue.getIssueType() );
+        issueAsData.resetLong( INDEX, editedIssue.getIndex() );
+        issueAsData.resetString( TITLE, editedIssue.getTitle() );
+        issueAsData.resetInstant( CREATED_TIME, editedIssue.getCreatedTime() );
+        issueAsData.resetInstant( MODIFIED_TIME, editedIssue.getModifiedTime() );
+        issueAsData.resetString( CREATOR, editedIssue.getCreator().toString() );
+        issueAsData.resetString( MODIFIER, editedIssue.getModifier().toString() );
+        issueAsData.resetString( STATUS, editedIssue.getStatus().toString() );
         issueAsData.addString( DESCRIPTION, editedIssue.getDescription() );
 
         issueAsData.addStrings( APPROVERS,

@@ -91,6 +91,7 @@ public final class PropertyTree
         return root.getProperties( valueType );
     }
 
+    @Deprecated
     public PropertyTree ifNotNull()
     {
         root.ifNotNull();

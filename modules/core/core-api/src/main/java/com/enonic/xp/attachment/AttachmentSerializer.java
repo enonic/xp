@@ -19,9 +19,15 @@ public final class AttachmentSerializer
     {
     }
 
+    @Deprecated
     public static void create( final PropertyTree propertyTree, final CreateAttachments createAttachments )
     {
-        create( propertyTree.getRoot(), createAttachments, ContentPropertyNames.ATTACHMENT );
+        create( propertyTree.getRoot(), createAttachments );
+    }
+
+    public static void create( final PropertySet propertySet, final CreateAttachments createAttachments )
+    {
+        create( propertySet, createAttachments, ContentPropertyNames.ATTACHMENT );
     }
 
     public static void create( final PropertySet propertySet, final CreateAttachments createAttachments, final String name )

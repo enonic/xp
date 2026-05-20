@@ -106,6 +106,14 @@ public class DumpUpgrader8to9
      */
     private final Map<RepositoryId, ProjectContentRootMetadataUpgrader.ProjectMetadata> projectMetadata = new HashMap<>();
 
+    /**
+     * Blob keys that have been written directly to the dump writer (not present in the source reader)
+     * — e.g., the project icon blob copied from system repo to the project repo binary segment
+     * during {@link #collectProjectMetadata()}. {@link #copyBinaryBlobs} consults this set so it
+     * does not try to re-read those blobs from the reader.
+     */
+    private final Set<String> writerOnlyBinaryKeys = new HashSet<>();
+
     private final ProjectContentRootMetadataUpgrader contentRootMetadataUpgrader =
         new ProjectContentRootMetadataUpgrader( projectMetadata );
 
@@ -181,7 +189,9 @@ public class DumpUpgrader8to9
         final Segment systemBinarySegment = RepositorySegmentUtils.toSegment( SystemConstants.SYSTEM_REPO_ID, NodeConstants.BINARY_SEGMENT_LEVEL );
         final Segment projectBinarySegment = RepositorySegmentUtils.toSegment( projectRepoId, NodeConstants.BINARY_SEGMENT_LEVEL );
         final BlobRecord record = dumpReader.getRecord( systemBinarySegment, BlobKey.from( systemRepoBlobKey ) );
-        return dumpWriter.addBlobRecord( projectBinarySegment, record.getBytes() ).toString();
+        final String newKey = dumpWriter.addBlobRecord( projectBinarySegment, record.getBytes() ).toString();
+        writerOnlyBinaryKeys.add( newKey );
+        return newKey;
     }
 
     @FunctionalInterface
@@ -242,12 +252,10 @@ public class DumpUpgrader8to9
         {
             return null;
         }
-        final String label = iconSet.getString( ContentPropertyNames.ATTACHMENT_LABEL );
         final String mimeType = iconSet.getString( ContentPropertyNames.ATTACHMENT_MIMETYPE );
         final Long size = iconSet.getLong( ContentPropertyNames.ATTACHMENT_SIZE );
-        final String sha512 = iconSet.getString( ContentPropertyNames.ATTACHMENT_SHA512 );
         final String projectRepoBlobKey = iconBlobCopier.copy( projectRepoId, attachedBinary.getBlobKey() );
-        return new ProjectContentRootMetadataUpgrader.IconBinary( label, mimeType, size != null ? size : 0L, sha512, projectRepoBlobKey );
+        return new ProjectContentRootMetadataUpgrader.IconBinary( mimeType, size != null ? size : 0L, projectRepoBlobKey );
     }
 
     protected void upgradeRepository( final RepositoryId repositoryId )
@@ -422,15 +430,20 @@ public class DumpUpgrader8to9
     {
         final Model8VersionsDumpEntryJson v8Entry = JsonDumpSerializer.readValue( entryContent, Model8VersionsDumpEntryJson.class );
 
-        nodeIdsWithVersions.add( v8Entry.getNodeId() );
+        final String nodeId = v8Entry.getNodeId();
+        nodeIdsWithVersions.add( nodeId );
+
+        final VersionHistoryMigrationUpgrader.ContentHistoryContext historyContext = repoInScope
+            ? VersionHistoryMigrationUpgrader.buildContext( branchActivations.getOrDefault( nodeId, Map.of() ) )
+            : null;
 
         final List<VersionDumpEntryJson> upgradedVersions = new ArrayList<>();
         for ( VersionDumpEntryJson versionDumpEntryJson : v8Entry.getVersions() )
         {
-            upgradedVersions.add( ensureVersionId( processVersionMeta( versionDumpEntryJson, repositoryId ) ) );
+            upgradedVersions.add( ensureVersionId( processVersionMeta( versionDumpEntryJson, repositoryId, historyContext ) ) );
         }
 
-        writeVersionsJsonl( v8Entry.getNodeId(), upgradedVersions );
+        writeVersionsJsonl( nodeId, upgradedVersions );
     }
 
     private static VersionDumpEntryJson ensureVersionId( final VersionDumpEntryJson entry )
@@ -442,7 +455,8 @@ public class DumpUpgrader8to9
         return VersionDumpEntryJson.create( entry ).version( new NodeVersionId().toString() ).build();
     }
 
-    private VersionDumpEntryJson processVersionMeta( final VersionDumpEntryJson versionDumpEntryJson, final RepositoryId repositoryId )
+    private VersionDumpEntryJson processVersionMeta( final VersionDumpEntryJson versionDumpEntryJson, final RepositoryId repositoryId,
+                                                     final VersionHistoryMigrationUpgrader.@Nullable ContentHistoryContext historyContext )
     {
         final Segment nodeSegment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.NODE_SEGMENT_LEVEL );
         final Segment indexConfigSegment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.INDEX_CONFIG_SEGMENT_LEVEL );
@@ -451,13 +465,20 @@ public class DumpUpgrader8to9
         final NodeStoreVersion dumpEntry = readNodeVersion( versionDumpEntryJson, nodeSegment, indexConfigSegment, accessControlSegment );
 
         final NodePath entryPath = versionDumpEntryJson.getNodePath() != null ? new NodePath( versionDumpEntryJson.getNodePath() ) : null;
-        contentRootMetadataUpgrader.upgrade( repositoryId, entryPath, dumpEntry );
+        final NodeStoreVersion rootMetadataApplied = contentRootMetadataUpgrader.upgrade( repositoryId, entryPath, dumpEntry );
+        final NodeStoreVersion base = rootMetadataApplied != null ? rootMetadataApplied : dumpEntry;
 
-        final NodeStoreVersion upgraded = upgradeNodeVersion( repositoryId, dumpEntry );
+        final NodeStoreVersion upgraded = upgradeNodeVersion( repositoryId, base );
 
-        final NodeStoreVersion withUpgradedBinaries = copyBinaryBlobs( upgraded != null ? upgraded : dumpEntry, repositoryId );
+        final NodeStoreVersion withUpgradedBinaries = copyBinaryBlobs( upgraded != null ? upgraded : base, repositoryId );
 
-        final NodeStoreVersion toWrite = withUpgradedBinaries != null ? withUpgradedBinaries : ( upgraded != null ? upgraded : dumpEntry );
+        NodeStoreVersion toWrite = withUpgradedBinaries != null ? withUpgradedBinaries : ( upgraded != null ? upgraded : base );
+
+        final VersionHistoryMigrationUpgrader.CommitInfo commitInfo = commitInfos.get( versionDumpEntryJson.getCommitId() );
+        if ( repoInScope )
+        {
+            toWrite = VersionHistoryMigrationUpgrader.applyPublishTime( toWrite, commitInfo );
+        }
 
         final BlobKey newNodeBlobKey = writeNodeStoreVersionBlob( toWrite, nodeSegment, NodeVersionJsonSerializer::toNodeVersionBytes );
         final BlobKey newIndexConfigBlobKey =
@@ -482,7 +503,7 @@ public class DumpUpgrader8to9
 
         if ( repoInScope )
         {
-            result = VersionHistoryMigrationUpgrader.stampVersion( toWrite, result, commitInfos.get( result.getCommitId() ) );
+            result = VersionHistoryMigrationUpgrader.stampVersion( toWrite, result, commitInfo, historyContext );
         }
 
         return LayerBaseCommitDropUpgrader.clearDroppedCommitId( droppedCommitIds, result );
@@ -535,6 +556,11 @@ public class DumpUpgrader8to9
 
         for ( AttachedBinary binary : dumpEntry.attachedBinaries() )
         {
+            if ( writerOnlyBinaryKeys.contains( binary.getBlobKey() ) )
+            {
+                updatedBinaries.add( binary );
+                continue;
+            }
             final BlobRecord binaryRecord = dumpReader.getRecord( binarySegment, BlobKey.from( binary.getBlobKey() ) );
             final BlobKey newBlobKey = dumpWriter.addBlobRecord( binarySegment, binaryRecord.getBytes() );
 

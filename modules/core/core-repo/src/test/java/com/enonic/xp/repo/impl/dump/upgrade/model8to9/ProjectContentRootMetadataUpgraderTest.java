@@ -187,7 +187,7 @@ class ProjectContentRootMetadataUpgraderTest
     void applies_icon_as_thumbnail_attachment_with_attached_binary()
     {
         final ProjectContentRootMetadataUpgrader.IconBinary icon =
-            new ProjectContentRootMetadataUpgrader.IconBinary( "Small", "image/png", 726L, "deadbeef", "project-blob-key" );
+            new ProjectContentRootMetadataUpgrader.IconBinary( "image/png", 726L, "project-blob-key" );
         final ProjectContentRootMetadataUpgrader upgrader = new ProjectContentRootMetadataUpgrader(
             Map.of( PROJECT_REPO, new ProjectContentRootMetadataUpgrader.ProjectMetadata( null, null, java.util.List.of(), icon ) ) );
 
@@ -199,12 +199,12 @@ class ProjectContentRootMetadataUpgraderTest
         final PropertySet attachmentSet = result.data().getSet( ContentPropertyNames.ATTACHMENT );
         assertThat( attachmentSet ).isNotNull();
         assertThat( attachmentSet.getString( ContentPropertyNames.ATTACHMENT_NAME ) ).isEqualTo( AttachmentNames.THUMBNAIL );
-        assertThat( attachmentSet.getString( ContentPropertyNames.ATTACHMENT_LABEL ) ).isEqualTo( "Small" );
+        assertThat( attachmentSet.hasProperty( ContentPropertyNames.ATTACHMENT_LABEL ) ).isFalse();
         assertThat( attachmentSet.getBinaryReference( ContentPropertyNames.ATTACHMENT_BINARY_REF ) ).isEqualTo(
             BinaryReference.from( AttachmentNames.THUMBNAIL ) );
         assertThat( attachmentSet.getString( ContentPropertyNames.ATTACHMENT_MIMETYPE ) ).isEqualTo( "image/png" );
         assertThat( attachmentSet.getLong( ContentPropertyNames.ATTACHMENT_SIZE ) ).isEqualTo( 726L );
-        assertThat( attachmentSet.getString( ContentPropertyNames.ATTACHMENT_SHA512 ) ).isEqualTo( "deadbeef" );
+        assertThat( attachmentSet.hasProperty( ContentPropertyNames.ATTACHMENT_SHA512 ) ).isFalse();
 
         final AttachedBinary attachedBinary = result.attachedBinaries().getByBinaryReference( BinaryReference.from( AttachmentNames.THUMBNAIL ) );
         assertThat( attachedBinary ).isNotNull();
