@@ -329,6 +329,12 @@ public final class ApplicationServiceImpl
             throw new ApplicationBundleException( "Cannot install application [" + applicationKey + "], source not found" );
         }
 
+        if ( getAppInfo( byteSource ).system )
+        {
+            throw new ApplicationBundleException(
+                "Cannot install application [" + applicationKey + "], system app must not be stored" );
+        }
+
         doInstallApplication( byteSource, applicationKey );
 
         LOG.info( "Stored application [{}] installed successfully", applicationKey );
