@@ -1,11 +1,13 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ImportContentParams;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
@@ -34,24 +36,18 @@ public class ImportContentFactory
     public Node execute()
     {
         final PropertyTree nodeData = contentDataSerializer.toNodeData( params.getContent() );
+        final PropertySet propertySet = nodeData.getRoot();
 
         if ( params.getInherit() != null )
         {
-            nodeData.removeProperties( ContentPropertyNames.INHERIT );
-            nodeData.addStrings( ContentPropertyNames.INHERIT,
+            propertySet.removeProperties( ContentPropertyNames.INHERIT );
+            propertySet.addStrings( ContentPropertyNames.INHERIT,
                                  params.getInherit().stream().map( Enum::name ).collect( Collectors.toList() ) );
         }
 
-        if ( params.getOriginProject() != null )
-        {
-            nodeData.setString( ORIGIN_PROJECT, params.getOriginProject().toString() );
-        }
-        else
-        {
-            nodeData.removeProperties( ORIGIN_PROJECT );
-        }
+        propertySet.resetString( ORIGIN_PROJECT, Objects.toString( params.getOriginProject(), null ) );
 
-        nodeData.removeProperties( PUBLISH_INFO );
+        propertySet.removeProperties( PUBLISH_INFO );
 
         final NodePath nodePath = ContentNodeHelper.translateContentPathToNodePath( params.getTargetPath() );
         return Node.create()

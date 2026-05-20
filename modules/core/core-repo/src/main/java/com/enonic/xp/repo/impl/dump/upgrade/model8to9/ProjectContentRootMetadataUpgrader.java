@@ -110,11 +110,9 @@ public class ProjectContentRootMetadataUpgrader
         data.removeProperties( ContentPropertyNames.ATTACHMENT );
         final PropertySet attachmentSet = data.addSet( ContentPropertyNames.ATTACHMENT );
         attachmentSet.addString( ContentPropertyNames.ATTACHMENT_NAME, AttachmentNames.THUMBNAIL );
-        attachmentSet.addString( ContentPropertyNames.ATTACHMENT_LABEL, icon.label() );
         attachmentSet.addBinaryReference( ContentPropertyNames.ATTACHMENT_BINARY_REF, BinaryReference.from( AttachmentNames.THUMBNAIL ) );
         attachmentSet.addString( ContentPropertyNames.ATTACHMENT_MIMETYPE, icon.mimeType() );
         attachmentSet.addLong( ContentPropertyNames.ATTACHMENT_SIZE, icon.size() );
-        attachmentSet.addString( ContentPropertyNames.ATTACHMENT_SHA512, icon.sha512() );
     }
 
     private static AttachedBinaries appendThumbnailBinary( final AttachedBinaries existing, final IconBinary icon )
@@ -138,7 +136,7 @@ public class ProjectContentRootMetadataUpgrader
      * {@code blobKey} is the project repo binary segment key after the icon blob has been copied from
      * the system repo binary segment by {@link DumpUpgrader8to9}.
      */
-    public record IconBinary(String label, String mimeType, long size, String sha512, String blobKey)
+    public record IconBinary(String mimeType, long size, String blobKey)
     {
     }
 }

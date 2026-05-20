@@ -163,6 +163,7 @@ public final class PropertySet
         this.property = property;
     }
 
+    @Deprecated
     public PropertySet ifNotNull()
     {
         ifNotNull = true;
@@ -619,6 +620,12 @@ public final class PropertySet
         return this.addProperty( name, ValueFactory.newString( value ) );
     }
 
+    public Property resetString( final String name, final String value )
+    {
+        removeProperties( name );
+        return value != null ? addString( name, value ) : null;
+    }
+
     public Property[] addStrings( final String name, final String... values )
     {
         final Property[] properties = new Property[values.length];
@@ -718,6 +725,12 @@ public final class PropertySet
     public Property addLong( final String name, final Long value )
     {
         return this.addProperty( name, ValueFactory.newLong( value ) );
+    }
+
+    public Property resetLong( final String name, final Long value )
+    {
+        removeProperties( name );
+        return value != null ? addLong( name, value ) : null;
     }
 
     public Property[] addLongs( final String name, final Long... values )
@@ -843,6 +856,12 @@ public final class PropertySet
         return this.setProperty( name, index, ValueFactory.newDateTime( value ) );
     }
 
+    public Property resetInstant( final String name, final Instant value )
+    {
+        removeProperties( name );
+        return value != null ? addInstant( name, value ) : null;
+    }
+
     public Property addInstant( final String name, final Instant value )
     {
         return this.addProperty( name, ValueFactory.newDateTime( value ) );
@@ -941,6 +960,12 @@ public final class PropertySet
     public Property addReference( final String name, final Reference value )
     {
         return this.addProperty( name, ValueFactory.newReference( value ) );
+    }
+
+    public Property resetReference( final String name, final Reference value )
+    {
+        removeProperties( name );
+        return value != null ? addReference( name, value ) : null;
     }
 
     public Property[] addReferences( final String name, final Reference... values )
@@ -1394,6 +1419,11 @@ public final class PropertySet
     public Property addEnum( final String name, final Enum value )
     {
         return this.addString( name, enumToString( value ) );
+    }
+
+    public Property resetEnum( final String name, final Enum value )
+    {
+        return resetString( name, enumToString( value ) );
     }
 
     private <T extends Enum<T>> T stringToEnum( final String value, Class<T> enumClass )

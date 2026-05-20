@@ -138,10 +138,8 @@ class DumpUpgrader8to9Test
         assertThat( entry ).isNotNull();
         final ProjectContentRootMetadataUpgrader.IconBinary icon = entry.getValue().icon();
         assertThat( icon ).isNotNull();
-        assertThat( icon.label() ).isEqualTo( "Small" );
         assertThat( icon.mimeType() ).isEqualTo( "image/png" );
         assertThat( icon.size() ).isEqualTo( 726L );
-        assertThat( icon.sha512() ).isEqualTo( "deadbeef" );
         assertThat( icon.blobKey() ).isEqualTo( "project-blob-key" );
     }
 

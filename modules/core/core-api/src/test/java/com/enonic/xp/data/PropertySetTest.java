@@ -1,10 +1,14 @@
 package com.enonic.xp.data;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.util.Reference;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -211,5 +215,162 @@ class PropertySetTest
         assertEquals( 0, addedProperty.getIndex() );
         assertSame( ValueTypes.LONG, addedProperty.getValue().getType() );
         assertEquals( 42L, addedProperty.getValue().asLong().longValue() );
+    }
+
+    @Test
+    void resetInstant_with_non_null_value_adds_property()
+    {
+        final PropertySet set = new PropertyTree().newSet();
+        final Instant value = Instant.parse( "2026-05-19T12:00:00Z" );
+
+        set.resetInstant( "myProp", value );
+
+        assertThat( set.hasProperty( "myProp" ) ).isTrue();
+        assertEquals( value, set.getInstant( "myProp" ) );
+    }
+
+    @Test
+    void resetInstant_with_null_value_does_not_add_property()
+    {
+        final PropertySet set = new PropertyTree().newSet();
+
+        set.resetInstant( "myProp", null );
+
+        assertThat( set.hasProperty( "myProp" ) ).isFalse();
+    }
+
+    @Test
+    void resetInstant_with_null_value_removes_existing_property()
+    {
+        final PropertySet set = new PropertyTree().newSet();
+        set.addInstant( "myProp", Instant.parse( "2026-05-19T12:00:00Z" ) );
+
+        set.resetInstant( "myProp", null );
+
+        assertThat( set.hasProperty( "myProp" ) ).isFalse();
+    }
+
+    @Test
+    void resetInstant_with_non_null_value_replaces_existing_property()
+    {
+        final PropertySet set = new PropertyTree().newSet();
+        set.addInstant( "myProp", Instant.parse( "2026-01-01T00:00:00Z" ) );
+        final Instant newValue = Instant.parse( "2026-05-19T12:00:00Z" );
+
+        set.resetInstant( "myProp", newValue );
+
+        assertEquals( newValue, set.getInstant( "myProp" ) );
+    }
+
+    @Test
+    void resetString_with_non_null_value_adds_property()
+    {
+        final PropertySet set = new PropertyTree().newSet();
+
+        set.resetString( "myProp", "myValue" );
+
+        assertThat( set.hasProperty( "myProp" ) ).isTrue();
+        assertEquals( "myValue", set.getString( "myProp" ) );
+    }
+
+    @Test
+    void resetString_with_null_value_does_not_add_property()
+    {
+        final PropertySet set = new PropertyTree().newSet();
+
+        set.resetString( "myProp", null );
+
+        assertThat( set.hasProperty( "myProp" ) ).isFalse();
+    }
+
+    @Test
+    void resetString_with_null_value_removes_existing_property()
+    {
+        final PropertySet set = new PropertyTree().newSet();
+        set.addString( "myProp", "originalValue" );
+
+        set.resetString( "myProp", null );
+
+        assertThat( set.hasProperty( "myProp" ) ).isFalse();
+    }
+
+    @Test
+    void resetString_with_non_null_value_replaces_existing_property()
+    {
+        final PropertySet set = new PropertyTree().newSet();
+        set.addString( "myProp", "originalValue" );
+
+        set.resetString( "myProp", "newValue" );
+
+        assertEquals( "newValue", set.getString( "myProp" ) );
+    }
+
+    @Test
+    void resetLong_with_non_null_value_adds_property()
+    {
+        final PropertySet set = new PropertyTree().newSet();
+
+        set.resetLong( "myProp", 42L );
+
+        assertEquals( 42L, set.getLong( "myProp" ).longValue() );
+    }
+
+    @Test
+    void resetLong_with_null_value_removes_existing_property()
+    {
+        final PropertySet set = new PropertyTree().newSet();
+        set.addLong( "myProp", 7L );
+
+        set.resetLong( "myProp", null );
+
+        assertThat( set.hasProperty( "myProp" ) ).isFalse();
+    }
+
+    @Test
+    void resetReference_with_non_null_value_adds_property()
+    {
+        final PropertySet set = new PropertyTree().newSet();
+        final Reference ref = Reference.from( "abc" );
+
+        set.resetReference( "myProp", ref );
+
+        assertEquals( ref, set.getReference( "myProp" ) );
+    }
+
+    @Test
+    void resetReference_with_null_value_removes_existing_property()
+    {
+        final PropertySet set = new PropertyTree().newSet();
+        set.addReference( "myProp", Reference.from( "abc" ) );
+
+        set.resetReference( "myProp", null );
+
+        assertThat( set.hasProperty( "myProp" ) ).isFalse();
+    }
+
+    @Test
+    void resetEnum_with_non_null_value_adds_property_as_string()
+    {
+        final PropertySet set = new PropertyTree().newSet();
+
+        set.resetEnum( "myProp", SampleEnum.ONE );
+
+        assertEquals( "ONE", set.getString( "myProp" ) );
+    }
+
+    @Test
+    void resetEnum_with_null_value_removes_existing_property()
+    {
+        final PropertySet set = new PropertyTree().newSet();
+        set.addEnum( "myProp", SampleEnum.ONE );
+
+        set.resetEnum( "myProp", null );
+
+        assertThat( set.hasProperty( "myProp" ) ).isFalse();
+    }
+
+    private enum SampleEnum
+    {
+        ONE, TWO
     }
 }

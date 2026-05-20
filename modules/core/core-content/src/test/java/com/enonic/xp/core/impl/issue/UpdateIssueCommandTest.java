@@ -98,10 +98,10 @@ class UpdateIssueCommandTest
         final PropertyTree propertyTree = new PropertyTree();
         final PropertySet issueAsData = propertyTree.getRoot();
 
-        issueAsData.ifNotNull().addString( STATUS, IssueStatus.OPEN.toString() );
-        issueAsData.ifNotNull().addString( CREATOR, PrincipalKey.from( "user:myStore:me" ).toString() );
-        issueAsData.ifNotNull().addString( TITLE, "title" );
-        issueAsData.ifNotNull().addLong( INDEX, 1L );
+        issueAsData.addString( STATUS, IssueStatus.OPEN.toString() );
+        issueAsData.addString( CREATOR, PrincipalKey.from( "user:myStore:me" ).toString() );
+        issueAsData.addString( TITLE, "title" );
+        issueAsData.addLong( INDEX, 1L );
 
         return propertyTree;
     }

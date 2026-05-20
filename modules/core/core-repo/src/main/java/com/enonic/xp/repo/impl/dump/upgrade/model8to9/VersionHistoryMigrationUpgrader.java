@@ -1,12 +1,17 @@
 package com.enonic.xp.repo.impl.dump.upgrade.model8to9;
 
+import java.time.Instant;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 import org.jspecify.annotations.Nullable;
 
 import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.content.ContentPropertyNames;
+import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.repo.impl.dump.serializer.json.VersionDumpEntryJson;
 import com.enonic.xp.repo.impl.dump.upgrade.BranchEntryUpgrader;
@@ -36,6 +41,10 @@ public final class VersionHistoryMigrationUpgrader
     {
     }
 
+    public record ContentHistoryContext(@Nullable String draftVersionId, @Nullable String masterVersionId)
+    {
+    }
+
     static final String CONTENT_PUBLISH_ATTR = "content.publish";
 
     static final String CONTENT_UNPUBLISH_ATTR = "content.unpublish";
@@ -44,12 +53,20 @@ public final class VersionHistoryMigrationUpgrader
 
     static final String CONTENT_ARCHIVE_ATTR = "content.archive";
 
+    static final String CONTENT_UPDATE_ATTR = "content.update";
+
     private static final String USER_PROPERTY = "user";
 
     private static final String OPTIME_PROPERTY = "optime";
 
     public static VersionDumpEntryJson stampVersion( final NodeStoreVersion nodeVersion, final VersionDumpEntryJson entry,
                                                      @Nullable final CommitInfo commitInfo )
+    {
+        return stampVersion( nodeVersion, entry, commitInfo, null );
+    }
+
+    public static VersionDumpEntryJson stampVersion( final NodeStoreVersion nodeVersion, final VersionDumpEntryJson entry,
+                                                     @Nullable final CommitInfo commitInfo, @Nullable final ContentHistoryContext ctx )
     {
         if ( !ContentConstants.CONTENT_NODE_COLLECTION.equals( nodeVersion.nodeType() ) )
         {
@@ -60,9 +77,85 @@ public final class VersionHistoryMigrationUpgrader
         {
             attributes.put( resolveAttrKey( commitInfo ), resolveAttrValue( entry, commitInfo ) );
         }
+        else if ( isDraftNotMaster( entry, ctx ) )
+        {
+            attributes.put( CONTENT_UPDATE_ATTR, resolveDraftUpdateAttrValue( nodeVersion, entry ) );
+        }
         attributes.put( VacuumConstants.VACUUM_SKIP_ATTRIBUTE, Map.of() );
         return VersionDumpEntryJson.create( entry ).attributes( attributes ).build();
     }
+
+    public static ContentHistoryContext buildContext( final Map<String, List<String>> activationsForNode )
+    {
+        final String draftVersionId = resolveVersionForBranch( activationsForNode, ContentConstants.BRANCH_DRAFT.getValue() );
+        final String masterVersionId = resolveVersionForBranch( activationsForNode, ContentConstants.BRANCH_MASTER.getValue() );
+        return new ContentHistoryContext( draftVersionId, masterVersionId );
+    }
+
+    public static NodeStoreVersion applyPublishTime( final NodeStoreVersion nodeVersion, @Nullable final CommitInfo commitInfo )
+    {
+        if ( !ContentConstants.CONTENT_NODE_COLLECTION.equals( nodeVersion.nodeType() ) )
+        {
+            return nodeVersion;
+        }
+        if ( !hasPublishCommit( commitInfo ) || commitInfo.timestamp() == null )
+        {
+            return nodeVersion;
+        }
+        final PropertyTree data = nodeVersion.data() != null ? nodeVersion.data().copy() : new PropertyTree();
+        final PropertySet publishSet = data.getSet( ContentPropertyNames.PUBLISH_INFO ) != null
+            ? data.getSet( ContentPropertyNames.PUBLISH_INFO )
+            : data.addSet( ContentPropertyNames.PUBLISH_INFO );
+        publishSet.resetInstant( ContentPropertyNames.PUBLISH_TIME, Instant.parse( commitInfo.timestamp() ) );
+        return NodeStoreVersion.create( nodeVersion ).data( data ).build();
+    }
+
+    private static @Nullable String resolveVersionForBranch( final Map<String, List<String>> activationsForNode, final String branch )
+    {
+        for ( Map.Entry<String, List<String>> entry : activationsForNode.entrySet() )
+        {
+            if ( entry.getValue().contains( branch ) )
+            {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+
+    private static boolean hasPublishCommit( @Nullable final CommitInfo commitInfo )
+    {
+        return commitInfo != null && commitInfo.message() != null &&
+            commitInfo.message().startsWith( ContentConstants.PUBLISH_COMMIT_PREFIX );
+    }
+
+    private static Map<String, Object> resolveDraftUpdateAttrValue( final NodeStoreVersion nodeVersion, final VersionDumpEntryJson entry )
+    {
+        final Map<String, Object> attrValue = new LinkedHashMap<>();
+        final String modifier = readModifier( nodeVersion );
+        putIfPresent( attrValue, USER_PROPERTY, modifier );
+        putIfPresent( attrValue, OPTIME_PROPERTY, entry.getTimestamp() );
+        return attrValue;
+    }
+
+    private static @Nullable String readModifier( final NodeStoreVersion nodeVersion )
+    {
+        final PropertyTree data = nodeVersion.data();
+        if ( data == null )
+        {
+            return null;
+        }
+        return data.getString( ContentPropertyNames.MODIFIER );
+    }
+
+    private static boolean isDraftNotMaster( final VersionDumpEntryJson entry, @Nullable final ContentHistoryContext ctx )
+    {
+        if ( ctx == null || ctx.draftVersionId() == null || entry.getVersion() == null )
+        {
+            return false;
+        }
+        return ctx.draftVersionId().equals( entry.getVersion() ) && !ctx.draftVersionId().equals( ctx.masterVersionId() );
+    }
+
 
     private static Map<String, Object> resolveAttrValue( final VersionDumpEntryJson entry, final CommitInfo commitInfo )
     {

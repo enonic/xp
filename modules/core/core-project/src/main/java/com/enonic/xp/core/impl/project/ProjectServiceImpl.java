@@ -653,45 +653,26 @@ public class ProjectServiceImpl
                                            final @Nullable CreateAttachment icon, final boolean removeIcon )
     {
         final NodeEditor editor = edit -> {
-            if ( editable.displayName != null )
-            {
-                edit.data.setString( ContentPropertyNames.DISPLAY_NAME, editable.displayName );
-            }
-            else
-            {
-                edit.data.removeProperties( ContentPropertyNames.DISPLAY_NAME );
-            }
+            final PropertySet propertySet = edit.data.getRoot();
 
-            if ( editable.language != null )
-            {
-                edit.data.setString( ContentPropertyNames.LANGUAGE, editable.language.toLanguageTag() );
-            }
-            else
-            {
-                edit.data.removeProperties( ContentPropertyNames.LANGUAGE );
-            }
+            propertySet.resetString( ContentPropertyNames.DISPLAY_NAME, editable.displayName );
+            propertySet.resetString( ContentPropertyNames.LANGUAGE,
+                                   editable.language != null ? editable.language.toLanguageTag() : null );
 
-            final PropertySet data = requireNonNull( edit.data.getSet( ContentPropertyNames.DATA ), "Content root data set must exist" );
-            if ( editable.description != null )
-            {
-                data.setString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY, editable.description );
-            }
-            else
-            {
-                data.removeProperties( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY );
-            }
+            final PropertySet data = requireNonNull( propertySet.getSet( ContentPropertyNames.DATA ), "Content root data set must exist" );
+            data.resetString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY, editable.description );
 
             data.removeProperties( ContentPropertyNames.SITECONFIG );
             SiteConfigsDataSerializer.toData( requireNonNullElse( editable.siteConfigs, SiteConfigs.empty() ), data );
 
             if ( icon != null )
             {
-                edit.data.removeProperties( ContentPropertyNames.ATTACHMENT );
-                AttachmentSerializer.create( edit.data, CreateAttachments.from( icon ) );
+                propertySet.removeProperties( ContentPropertyNames.ATTACHMENT );
+                AttachmentSerializer.create( propertySet, CreateAttachments.from( icon ) );
             }
             else if ( removeIcon )
             {
-                edit.data.removeProperties( ContentPropertyNames.ATTACHMENT );
+                propertySet.removeProperties( ContentPropertyNames.ATTACHMENT );
             }
         };
 
