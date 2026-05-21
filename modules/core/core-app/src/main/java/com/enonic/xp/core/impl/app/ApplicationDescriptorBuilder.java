@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.util.List;
+import java.util.Objects;
 
 import org.osgi.framework.Bundle;
 
@@ -17,9 +19,18 @@ final class ApplicationDescriptorBuilder
 {
     private static final String APP_DESCRIPTOR_PATH_YAML = "application.yaml";
 
+    private static final String ENONIC_APP_DESCRIPTOR_PATH_YAML = "enonic.yaml";
+
     private static final String APP_DESCRIPTOR_PATH_YML = "application.yml";
 
+    private static final String ENONIC_APP_DESCRIPTOR_PATH_YML = "enonic.yml";
+
     private static final String APP_ICON_FILENAME = "application.svg";
+
+    private static final String ENONIC_APP_ICON_FILENAME = "enonic.svg";
+
+    private static final List<String> DESCRIPTOR_PATHS =
+        List.of( ENONIC_APP_DESCRIPTOR_PATH_YAML, ENONIC_APP_DESCRIPTOR_PATH_YML, APP_DESCRIPTOR_PATH_YAML, APP_DESCRIPTOR_PATH_YML );
 
     private Bundle bundle;
 
@@ -49,7 +60,8 @@ final class ApplicationDescriptorBuilder
 
         if ( hasAppIcon( bundle ) )
         {
-            final URL iconUrl = bundle.getResource( APP_ICON_FILENAME );
+            final URL iconUrl = Objects.requireNonNullElseGet( bundle.getResource( ENONIC_APP_ICON_FILENAME ),
+                                                               () -> bundle.getResource( APP_ICON_FILENAME ) );
             try (InputStream stream = iconUrl.openStream())
             {
                 final byte[] iconData = stream.readAllBytes();
@@ -67,17 +79,16 @@ final class ApplicationDescriptorBuilder
 
     private static URL resolveDescriptorUrl( final Bundle bundle )
     {
-        final URL yamlUrl = bundle.getEntry( APP_DESCRIPTOR_PATH_YAML );
-        if ( yamlUrl != null )
-        {
-            return bundle.getResource( APP_DESCRIPTOR_PATH_YAML );
-        }
-        return bundle.getResource( APP_DESCRIPTOR_PATH_YML );
+        return DESCRIPTOR_PATHS.stream()
+            .filter( path -> bundle.getEntry( path ) != null )
+            .findFirst()
+            .map( bundle::getResource )
+            .orElse( null );
     }
 
-    private String readAppYml( final URL siteYmlURL )
+    private String readAppYml( final URL yamlURL )
     {
-        try (InputStream stream = siteYmlURL.openStream())
+        try (InputStream stream = yamlURL.openStream())
         {
             return new String( stream.readAllBytes(), StandardCharsets.UTF_8 );
         }
@@ -89,11 +100,11 @@ final class ApplicationDescriptorBuilder
 
     public static boolean hasAppDescriptor( final Bundle bundle )
     {
-        return bundle.getEntry( APP_DESCRIPTOR_PATH_YAML ) != null || bundle.getEntry( APP_DESCRIPTOR_PATH_YML ) != null;
+        return DESCRIPTOR_PATHS.stream().anyMatch( path -> bundle.getEntry( path ) != null );
     }
 
     private boolean hasAppIcon( final Bundle bundle )
     {
-        return ( bundle.getEntry( APP_ICON_FILENAME ) != null );
+        return bundle.getEntry( ENONIC_APP_ICON_FILENAME ) != null || bundle.getEntry( APP_ICON_FILENAME ) != null;
     }
 }
