@@ -5,6 +5,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.ContentValidator;
 import com.enonic.xp.content.ContentValidatorParams;
 import com.enonic.xp.content.ValidationError;
@@ -13,7 +14,6 @@ import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageTemplate;
-import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.region.ComponentPath;
 import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.LayoutDescriptor;
@@ -31,20 +31,19 @@ public final class PageValidator
 {
     private final PageDescriptorService pageDescriptorService;
 
-    private final PageTemplateService pageTemplateService;
+    private final ContentService contentService;
 
     private final PartDescriptorService partDescriptorService;
 
     private final LayoutDescriptorService layoutDescriptorService;
 
     @Activate
-    public PageValidator( @Reference final PageDescriptorService pageDescriptorService,
-                          @Reference final PageTemplateService pageTemplateService,
+    public PageValidator( @Reference final PageDescriptorService pageDescriptorService, @Reference final ContentService contentService,
                           @Reference final PartDescriptorService partDescriptorService,
                           @Reference final LayoutDescriptorService layoutDescriptorService )
     {
         this.pageDescriptorService = pageDescriptorService;
-        this.pageTemplateService = pageTemplateService;
+        this.contentService = contentService;
         this.partDescriptorService = partDescriptorService;
         this.layoutDescriptorService = layoutDescriptorService;
     }
@@ -76,7 +75,7 @@ public final class PageValidator
         else if ( page.hasTemplate() )
         {
             // Page template - get descriptor from the template
-            final PageTemplate pageTemplate = pageTemplateService.getByKey( page.getTemplate() );
+            final PageTemplate pageTemplate = (PageTemplate) contentService.getById( page.getTemplate().getContentId() );
             if ( pageTemplate != null && pageTemplate.getPage() != null && pageTemplate.getPage().hasDescriptor() )
             {
                 pageDescriptor = pageDescriptorService.getByKey( pageTemplate.getPage().getDescriptor() );

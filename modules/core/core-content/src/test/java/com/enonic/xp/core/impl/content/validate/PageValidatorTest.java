@@ -6,6 +6,7 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ComponentConfigValidationError;
+import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.ContentValidatorParams;
 import com.enonic.xp.content.ValidationError;
 import com.enonic.xp.content.ValidationErrors;
@@ -22,7 +23,6 @@ import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.page.PageTemplateKey;
-import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.LayoutDescriptorService;
@@ -49,7 +49,7 @@ class PageValidatorTest
 
     private PageDescriptorService pageDescriptorService;
 
-    private PageTemplateService pageTemplateService;
+    private ContentService contentService;
 
     private PartDescriptorService partDescriptorService;
 
@@ -61,10 +61,10 @@ class PageValidatorTest
     void setUp()
     {
         this.pageDescriptorService = Mockito.mock( PageDescriptorService.class );
-        this.pageTemplateService = Mockito.mock( PageTemplateService.class );
+        this.contentService = Mockito.mock( ContentService.class );
         this.partDescriptorService = Mockito.mock( PartDescriptorService.class );
         this.layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
-        this.validator = new PageValidator( pageDescriptorService, pageTemplateService, partDescriptorService, layoutDescriptorService );
+        this.validator = new PageValidator( pageDescriptorService, contentService, partDescriptorService, layoutDescriptorService );
     }
 
     @Test
@@ -311,7 +311,7 @@ class PageValidatorTest
             .page( templatePage )
             .build();
 
-        Mockito.when( pageTemplateService.getByKey( pageTemplateKey ) ).thenReturn( pageTemplate );
+        Mockito.when( contentService.getById( pageTemplateKey.getContentId() ) ).thenReturn( pageTemplate );
         Mockito.when( pageDescriptorService.getByKey( pageDescriptorKey ) ).thenReturn( pageDescriptor );
 
         final PropertyTree pageConfig = new PropertyTree();
@@ -350,7 +350,7 @@ class PageValidatorTest
             .page( templatePage )
             .build();
 
-        Mockito.when( pageTemplateService.getByKey( pageTemplateKey ) ).thenReturn( pageTemplate );
+        Mockito.when( contentService.getById( pageTemplateKey.getContentId() ) ).thenReturn( pageTemplate );
         Mockito.when( pageDescriptorService.getByKey( pageDescriptorKey ) ).thenReturn( pageDescriptor );
 
         final PropertyTree pageConfig = new PropertyTree();
@@ -377,7 +377,7 @@ class PageValidatorTest
     {
         final PageTemplateKey pageTemplateKey = PageTemplateKey.from( "my-page-template" );
 
-        Mockito.when( pageTemplateService.getByKey( pageTemplateKey ) ).thenReturn( null );
+        Mockito.when( contentService.getById( pageTemplateKey.getContentId() ) ).thenReturn( null );
 
         final Page page = Page.create().template( pageTemplateKey ).config( new PropertyTree() ).build();
 
@@ -403,7 +403,7 @@ class PageValidatorTest
             .parentPath( com.enonic.xp.content.ContentPath.ROOT )
             .build();
 
-        Mockito.when( pageTemplateService.getByKey( pageTemplateKey ) ).thenReturn( pageTemplate );
+        Mockito.when( contentService.getById( pageTemplateKey.getContentId() ) ).thenReturn( pageTemplate );
 
         final Page page = Page.create().template( pageTemplateKey ).config( new PropertyTree() ).build();
 
