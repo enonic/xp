@@ -6,13 +6,15 @@ import org.mockito.ArgumentCaptor;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.FindContentByParentParams;
-import com.enonic.xp.content.FindContentByParentResult;
+import com.enonic.xp.content.FindContentIdsByParentResult;
+import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.page.CreatePageTemplateParams;
@@ -126,9 +128,11 @@ class PageTemplateServiceTest
         when( this.contentService.getById( siteId ) ).thenReturn( mockSite );
 
         final PageTemplate mockTemplate = mock( PageTemplate.class );
-        final FindContentByParentResult mockResult = mock( FindContentByParentResult.class );
-        when( mockResult.getContents() ).thenReturn( Contents.from( mockTemplate ) );
-        when( this.contentService.findByParent( any( FindContentByParentParams.class ) ) ).thenReturn( mockResult );
+        final ContentId templateId = ContentId.from( "template-id" );
+        final FindContentIdsByParentResult mockResult =
+            FindContentIdsByParentResult.create().contentIds( ContentIds.from( templateId ) ).totalHits( 1 ).build();
+        when( this.contentService.findIdsByParent( any( FindContentByParentParams.class ) ) ).thenReturn( mockResult );
+        when( this.contentService.getById( templateId ) ).thenReturn( mockTemplate );
 
         final PageTemplate result = this.service.getDefault( params );
 
@@ -138,7 +142,7 @@ class PageTemplateServiceTest
         verify( this.contentService ).getById( siteId );
 
         final ArgumentCaptor<FindContentByParentParams> captor = ArgumentCaptor.forClass( FindContentByParentParams.class );
-        verify( this.contentService ).findByParent( captor.capture() );
+        verify( this.contentService ).findIdsByParent( captor.capture() );
 
         final FindContentByParentParams capturedParams = captor.getValue();
         assertEquals( 1, capturedParams.getSize() );
@@ -158,9 +162,12 @@ class PageTemplateServiceTest
 
         final PageTemplate mockTemplate1 = mock( PageTemplate.class );
         final PageTemplate mockTemplate2 = mock( PageTemplate.class );
-        final FindContentByParentResult mockResult = mock( FindContentByParentResult.class );
-        when( mockResult.getContents() ).thenReturn( Contents.from( mockTemplate1, mockTemplate2 ) );
-        when( this.contentService.findByParent( any( FindContentByParentParams.class ) ) ).thenReturn( mockResult );
+        final ContentIds templateIds = ContentIds.from( "template-1", "template-2" );
+        final FindContentIdsByParentResult mockResult =
+            FindContentIdsByParentResult.create().contentIds( templateIds ).totalHits( 2 ).build();
+        when( this.contentService.findIdsByParent( any( FindContentByParentParams.class ) ) ).thenReturn( mockResult );
+        when( this.contentService.getByIds( any( GetContentByIdsParams.class ) ) ).thenReturn(
+            Contents.from( mockTemplate1, mockTemplate2 ) );
 
         final PageTemplates result = this.service.getBySite( siteId );
 
@@ -170,7 +177,7 @@ class PageTemplateServiceTest
         verify( this.contentService ).getById( siteId );
 
         final ArgumentCaptor<FindContentByParentParams> captor = ArgumentCaptor.forClass( FindContentByParentParams.class );
-        verify( this.contentService ).findByParent( captor.capture() );
+        verify( this.contentService ).findIdsByParent( captor.capture() );
         assertEquals( "/my-site/_templates", captor.getValue().getParentPath().toString() );
     }
 

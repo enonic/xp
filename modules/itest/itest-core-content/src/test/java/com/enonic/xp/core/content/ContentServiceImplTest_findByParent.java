@@ -2,6 +2,7 @@ package com.enonic.xp.core.content;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
@@ -10,6 +11,9 @@ import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.schema.content.ContentTypeName;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -179,6 +183,30 @@ class ContentServiceImplTest_findByParent
         assertEquals( 2, result.getContents().getSize() );
     }
 
+
+    @Test
+    void child_order_name_asc_by_site_path()
+    {
+        final Content site = createContent( ContentPath.ROOT, "mysite", new PropertyTree(), ContentTypeName.site() );
+        createContent( site.getPath(), "gamma" );
+        createContent( site.getPath(), "alpha" );
+        createContent( site.getPath(), "beta" );
+
+        final FindContentByParentParams params = FindContentByParentParams.create()
+            .from( 0 )
+            .size( 30 )
+            .parentPath( site.getPath() )
+            .childOrder( ChildOrder.from( "_name ASC" ) )
+            .build();
+
+        final FindContentByParentResult result = contentService.findByParent( params );
+
+        assertNotNull( result );
+        assertEquals( 4, result.getTotalHits() );
+
+        final List<String> names = result.getContents().stream().map( c -> c.getName().toString() ).toList();
+        assertEquals( List.of( "_templates", "alpha", "beta", "gamma" ), names );
+    }
 
     @Test
     void test_pending_publish_master()
