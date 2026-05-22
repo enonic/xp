@@ -725,26 +725,13 @@
         }
       },
       {
-        "template_orderby_nb": {
-          "match": "*._orderby_nb",
+        "template_orderby_no": {
+          "match": "*._orderby_no",
           "mapping": {
             "type": "string",
             "store": false,
             "index": "analyzed",
-            "analyzer": "icu_sort_nb",
-            "ignore_above": 3072,
-            "include_in_all": false
-          }
-        }
-      },
-      {
-        "template_orderby_nn": {
-          "match": "*._orderby_nn",
-          "mapping": {
-            "type": "string",
-            "store": false,
-            "index": "analyzed",
-            "analyzer": "icu_sort_nn",
+            "analyzer": "icu_sort_no",
             "ignore_above": 3072,
             "include_in_all": false
           }
