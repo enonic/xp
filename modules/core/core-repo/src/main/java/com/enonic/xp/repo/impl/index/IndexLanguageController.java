@@ -3,6 +3,7 @@ package com.enonic.xp.repo.impl.index;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -48,8 +49,8 @@ public class IndexLanguageController
         put( map, "it", "italian", null );
         put( map, "lv", "latvian", "lv" );
         put( map, "lt", "lithuanian", "lt" );
-        put( map, "nb", "norwegian", "nb" );
-        put( map, "nn", "language_analyzer_nn", "nn" );
+        put( map, "nb", "norwegian", "no" );
+        put( map, "nn", "language_analyzer_nn", "no" );
         put( map, "fa", "persian", "fa" );
         put( map, "ro", "romanian", "ro" );
         put( map, "ru", "russian", "ru" );

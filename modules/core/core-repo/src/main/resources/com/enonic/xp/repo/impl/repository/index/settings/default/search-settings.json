@@ -82,13 +82,9 @@
         "type": "icu_collation",
         "language": "lt"
       },
-      "icu_collation_nb": {
+      "icu_collation_no": {
         "type": "icu_collation",
-        "language": "nb"
-      },
-      "icu_collation_nn": {
-        "type": "icu_collation",
-        "language": "nn"
+        "language": "no"
       },
       "icu_collation_fa": {
         "type": "icu_collation",
@@ -410,18 +406,11 @@
           "icu_collation_lt"
         ]
       },
-      "icu_sort_nb": {
+      "icu_sort_no": {
         "type": "custom",
         "tokenizer": "keyword",
         "filter": [
-          "icu_collation_nb"
-        ]
-      },
-      "icu_sort_nn": {
-        "type": "custom",
-        "tokenizer": "keyword",
-        "filter": [
-          "icu_collation_nn"
+          "icu_collation_no"
         ]
       },
       "icu_sort_fa": {

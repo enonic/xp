@@ -275,6 +275,58 @@ class ContentServiceImplTest_findIdsByParent
             .containsExactly( "alfa", "æsel", "øl", "år" );
     }
 
+    @Test
+    void childOrderWithLanguage_sorts_mixed_norwegian_variants_together()
+    {
+        final Content parent = contentService.create( CreateContentParams.create()
+                                                          .displayName( "parent" )
+                                                          .parent( ContentPath.ROOT )
+                                                          .contentData( new PropertyTree() )
+                                                          .type( ContentTypeName.folder() )
+                                                          .language( Locale.forLanguageTag( "no" ) )
+                                                          .childOrder( ChildOrder.from( "displayName ASC" ) )
+                                                          .build() );
+
+        // Children tagged with different Norwegian variants. After the nb/nn/no orderBy fold,
+        // all three locales index displayName into the shared _orderby_no field, so a mixed-language
+        // set of siblings must still sort in correct Norwegian collation: æ < ø < å.
+        contentService.create( CreateContentParams.create()
+                                   .displayName( "år" )
+                                   .parent( parent.getPath() )
+                                   .contentData( new PropertyTree() )
+                                   .type( ContentTypeName.folder() )
+                                   .language( Locale.forLanguageTag( "nb" ) )
+                                   .build() );
+        contentService.create( CreateContentParams.create()
+                                   .displayName( "øl" )
+                                   .parent( parent.getPath() )
+                                   .contentData( new PropertyTree() )
+                                   .type( ContentTypeName.folder() )
+                                   .language( Locale.forLanguageTag( "no" ) )
+                                   .build() );
+        contentService.create( CreateContentParams.create()
+                                   .displayName( "æsel" )
+                                   .parent( parent.getPath() )
+                                   .contentData( new PropertyTree() )
+                                   .type( ContentTypeName.folder() )
+                                   .language( Locale.forLanguageTag( "nn" ) )
+                                   .build() );
+        contentService.create( CreateContentParams.create()
+                                   .displayName( "alfa" )
+                                   .parent( parent.getPath() )
+                                   .contentData( new PropertyTree() )
+                                   .type( ContentTypeName.folder() )
+                                   .language( Locale.forLanguageTag( "nb" ) )
+                                   .build() );
+
+        final FindContentIdsByParentResult result = contentService.findIdsByParent(
+            FindContentByParentParams.create().parentPath( parent.getPath() ).build() );
+
+        assertThat( result.getContentIds() ).extracting( contentService::getById )
+            .extracting( Content::getDisplayName )
+            .containsExactly( "alfa", "æsel", "øl", "år" );
+    }
+
     private FindContentIdsByParentResult findIdsByParent()
     {
         final FindContentByParentParams params = FindContentByParentParams.create().parentPath( ContentPath.ROOT ).build();
