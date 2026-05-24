@@ -52,7 +52,7 @@ tasks.register( 'performanceTest', JavaExec ) {
 
     usesService( gradle.sharedServices.registrations.named( 'performance' ).get().service )
 
-    mainClass = 'com.enonic.xp.perftest.content.ContentCreatePerfMain'
+    mainClass = 'com.enonic.xp.perftest.content.BenchmarkMain'
     classpath = sourceSets.main.runtimeClasspath
 
     systemProperty 'java.awt.headless', 'true'

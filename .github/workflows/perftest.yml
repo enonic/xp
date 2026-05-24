@@ -3,14 +3,10 @@ name: Performance Test
 on:
   workflow_dispatch:
     inputs:
-      iterations:
-        description: 'Iteration count for ContentService.create'
+      tests:
+        description: 'Comma-separated tests to run (create,getById,getByPath). Empty = all.'
         required: false
-        default: '100000'
-      warmup:
-        description: 'Warmup iteration count'
-        required: false
-        default: '1000'
+        default: ''
 
 concurrency: perftest-${{ github.ref }}
 
@@ -29,11 +25,10 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v5
 
-      - name: Run ContentService.create benchmark
+      - name: Run ContentService benchmarks
         run: |
           ./gradlew :ptest:ptest-content:performanceTest \
-            -Dperftest.warmup=${{ inputs.warmup }} \
-            -Dperftest.iterations=${{ inputs.iterations }}
+            -Dperftest.tests='${{ inputs.tests }}'
 
       - name: Publish report to job summary
         if: always()
