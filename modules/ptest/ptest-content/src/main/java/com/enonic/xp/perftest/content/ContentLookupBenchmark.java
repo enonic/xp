@@ -50,6 +50,9 @@ public class ContentLookupBenchmark
         bs = new Bootstrap();
         bs.start();
 
+        // Fast corpus prep (refresh disabled).
+        bs.setRefreshInterval( "-1" );
+
         ids = new ArrayList<>( CORPUS_SIZE );
         paths = new ArrayList<>( CORPUS_SIZE );
         for ( int i = 0; i < CORPUS_SIZE; i++ )
@@ -64,6 +67,13 @@ public class ContentLookupBenchmark
             ids.add( c.getId() );
             paths.add( c.getPath() );
         }
+
+        // End of corpus build: force a refresh so all corpus entries are
+        // searchable, then restore production-like settings for measurement.
+        bs.refresh();
+        bs.setRefreshInterval( "1s" );
+        bs.setStoreThrottleType( "merge" );
+
         rng = new Random( 42L );
     }
 

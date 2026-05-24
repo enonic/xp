@@ -49,6 +49,13 @@ tasks.named( 'test' ) {
     enabled = false
 }
 
+// Performance benchmarks contribute no test coverage; jacocoMergedReport in
+// root build.gradle also filters this project out, but disabling locally keeps
+// the intent visible at this module.
+tasks.named( 'jacocoTestReport' ) {
+    enabled = false
+}
+
 tasks.register( 'performanceTest', JavaExec ) {
     description = 'Runs ContentService performance benchmark. Writes report to build/perftest-report/.'
     group = 'verification'

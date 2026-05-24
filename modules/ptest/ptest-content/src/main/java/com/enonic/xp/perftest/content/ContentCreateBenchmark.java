@@ -40,6 +40,11 @@ public class ContentCreateBenchmark
     {
         bs = new Bootstrap();
         bs.start();
+        // The embedded ES helper boots with itest-friendly fast-write settings
+        // (refresh_interval=-1, store throttle disabled). Restore production-like
+        // defaults so the measurement is not inflated.
+        bs.setRefreshInterval( "1s" );
+        bs.setStoreThrottleType( "merge" );
     }
 
     @TearDown( Level.Trial )

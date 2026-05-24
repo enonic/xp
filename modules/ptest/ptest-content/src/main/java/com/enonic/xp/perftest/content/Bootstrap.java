@@ -13,6 +13,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.elasticsearch.client.Client;
+import org.elasticsearch.common.settings.Settings;
 
 import com.google.common.net.HttpHeaders;
 
@@ -252,6 +253,30 @@ public final class Bootstrap
         contentService.addContentValidator( new CmsConfigsValidator( cmsService ) );
         contentService.addContentValidator( new OccurrenceValidator() );
         contentService.addContentValidator( new MixinValidator( mixinService ) );
+    }
+
+    /** Sets index.refresh_interval on all indices. Use "1s" for realistic measurement, "-1" to disable. */
+    public void setRefreshInterval( final String value )
+    {
+        esServer.getClient().admin().indices().prepareUpdateSettings( "*" )
+            .setSettings( Settings.builder().put( "index.refresh_interval", value ) ).get();
+    }
+
+    /** Force one refresh across all indices. Call this at the end of corpus prep so the data is searchable. */
+    public void refresh()
+    {
+        esServer.getClient().admin().indices().prepareRefresh( "*" ).get();
+    }
+
+    /**
+     * Sets indices.store.throttle.type cluster-wide. Use "merge" (ES default) for
+     * realistic measurement; the embedded ES helper boots with "none" (no merge
+     * throttling), which speeds up itest setup but inflates write benchmarks.
+     */
+    public void setStoreThrottleType( final String value )
+    {
+        esServer.getClient().admin().cluster().prepareUpdateSettings()
+            .setTransientSettings( Settings.builder().put( "indices.store.throttle.type", value ) ).get();
     }
 
     public void stop()
