@@ -1,0 +1,75 @@
+// ptest-content: ContentService benchmarks.
+//
+// Pure Java main, no JUnit. Run with:
+//   ./gradlew :ptest:ptest-content:performanceTest
+//
+// `./gradlew :ptest:ptest-content:build` compiles but does NOT run the benchmark.
+
+evaluationDependsOn( ':itest:itest-core' )
+
+dependencies {
+    implementation project( ':core:core-content' )
+    implementation project( ':core:core-audit' )
+    implementation project( ':core:core-repo' )
+    implementation project( ':core:core-schema' )
+    implementation project( ':core:core-event' )
+    implementation project( ':core:core-media' )
+    implementation project( ':core:core-project' )
+    implementation project( ':core:core-app' )
+    implementation project( ':core:core-security' )
+
+    implementation( testFixtures( project( ':core:core-api' ) ) )
+    implementation( testFixtures( project( ':core:core-blobstore' ) ) )
+    implementation( testFixtures( project( ':core:core-internal' ) ) )
+
+    // The only thing ptest borrows from itest: the EmbeddedElasticsearchServer
+    // helper that boots an in-process ES node. It has zero JUnit imports.
+    implementation files( rootProject.project( ':itest:itest-core' ).sourceSets.testFixtures.output.classesDirs )
+
+    // Same ES classpath shape as itest-core's testFixturesApi.
+    implementation libs.elasticsearch.icu
+    implementation( libs.elasticsearch ) {
+        exclude(group: 'org.yaml', module: 'snakeyaml')
+        exclude(group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-cbor')
+        exclude(group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-yaml')
+        exclude(group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-smile')
+    }
+
+    runtimeOnly libs.slf4j.simple
+}
+
+// Ensure itest-core testFixtures classes are compiled before we compile against them.
+compileJava.dependsOn( ':itest:itest-core:testFixturesClasses' )
+
+// No `test` source set - benchmark is a main() in src/main/java.
+tasks.named( 'test' ) {
+    enabled = false
+}
+
+tasks.register( 'performanceTest', JavaExec ) {
+    description = 'Runs ContentService performance benchmark. Writes report to build/perftest-report/.'
+    group = 'verification'
+
+    usesService( gradle.sharedServices.registrations.named( 'performance' ).get().service )
+
+    mainClass = 'com.enonic.xp.perftest.content.ContentCreatePerfMain'
+    classpath = sourceSets.main.runtimeClasspath
+
+    systemProperty 'java.awt.headless', 'true'
+    systemProperty 'perftest.report.dir', layout.buildDirectory.dir( 'perftest-report' ).get().asFile.absolutePath
+
+    // Forward `-Dperftest.*` overrides from the Gradle CLI to the child JVM.
+    System.getProperties().each { k, v ->
+        if ( k.toString().startsWith( 'perftest.' ) )
+        {
+            systemProperty( k.toString(), v.toString() )
+        }
+    }
+
+    maxHeapSize = '4G'
+
+    standardOutput = System.out
+    errorOutput = System.err
+
+    outputs.upToDateWhen { false }
+}
