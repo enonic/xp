@@ -27,6 +27,9 @@ dependencies {
     implementation files( rootProject.project( ':itest:itest-core' ).sourceSets.testFixtures.output.classesDirs )
 
     // Same ES classpath shape as itest-core's testFixturesApi.
+    implementation 'org.openjdk.jmh:jmh-core:1.37'
+    annotationProcessor 'org.openjdk.jmh:jmh-generator-annprocess:1.37'
+
     implementation libs.elasticsearch.icu
     implementation( libs.elasticsearch ) {
         exclude(group: 'org.yaml', module: 'snakeyaml')
@@ -56,14 +59,10 @@ tasks.register( 'performanceTest', JavaExec ) {
     classpath = sourceSets.main.runtimeClasspath
 
     systemProperty 'java.awt.headless', 'true'
-    systemProperty 'perftest.report.dir', layout.buildDirectory.dir( 'perftest-report' ).get().asFile.absolutePath
 
-    // Forward `-Dperftest.*` overrides from the Gradle CLI to the child JVM.
-    System.getProperties().each { k, v ->
-        if ( k.toString().startsWith( 'perftest.' ) )
-        {
-            systemProperty( k.toString(), v.toString() )
-        }
+    workingDir = layout.buildDirectory.dir( 'perftest-report' ).get().asFile
+    doFirst {
+        workingDir.mkdirs()
     }
 
     maxHeapSize = '4G'
