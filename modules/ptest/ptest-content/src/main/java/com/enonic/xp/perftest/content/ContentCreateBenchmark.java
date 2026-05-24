@@ -40,6 +40,10 @@ public class ContentCreateBenchmark
     {
         bs = new Bootstrap();
         bs.start();
+        // 7.16's ES helper uses ES default refresh (1s), so this is effectively
+        // a no-op here, but kept for parity with master where the helper boots
+        // with refresh_interval=-1.
+        bs.setRefreshInterval( "1s" );
     }
 
     @TearDown( Level.Trial )

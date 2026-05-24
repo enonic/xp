@@ -50,6 +50,10 @@ public class ContentLookupBenchmark
         bs = new Bootstrap();
         bs.start();
 
+        // Fast corpus prep (refresh disabled). 7.16's ES helper defaults to ES
+        // refresh=1s, so disabling here cuts corpus build from ~200s to ~60s.
+        bs.setRefreshInterval( "-1" );
+
         ids = new ArrayList<>( CORPUS_SIZE );
         paths = new ArrayList<>( CORPUS_SIZE );
         for ( int i = 0; i < CORPUS_SIZE; i++ )
@@ -64,6 +68,12 @@ public class ContentLookupBenchmark
             ids.add( c.getId() );
             paths.add( c.getPath() );
         }
+
+        // End of corpus build: force a refresh so all corpus entries are
+        // searchable, then restore realistic refresh cadence for measurement.
+        bs.refresh();
+        bs.setRefreshInterval( "1s" );
+
         rng = new Random( 42L );
     }
 

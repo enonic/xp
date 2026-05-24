@@ -48,6 +48,11 @@ compileJava.dependsOn ':itest:itest-core:testFixturesClasses'
 // `test` source set is empty by design - the benchmark is a main() in src/main/java.
 test.enabled = false
 
+// Performance benchmarks contribute no test coverage; jacocoMergedReport in
+// root build.gradle also filters this project out, but disabling locally keeps
+// the intent visible at this module.
+jacocoTestReport.enabled = false
+
 tasks.register( 'performanceTest', JavaExec ) {
     description = 'Runs ContentService performance benchmark. Writes report to build/perftest-report/.'
     group = 'verification'

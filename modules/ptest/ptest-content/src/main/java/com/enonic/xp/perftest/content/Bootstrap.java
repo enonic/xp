@@ -13,6 +13,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.elasticsearch.client.Client;
+import org.elasticsearch.common.settings.Settings;
 
 import com.google.common.io.ByteSource;
 import com.google.common.net.HttpHeaders;
@@ -245,6 +246,19 @@ public final class Bootstrap
         contentService.addContentValidator( new SiteConfigsValidator( siteService ) );
         contentService.addContentValidator( new OccurrenceValidator() );
         contentService.addContentValidator( new ExtraDataValidator( xDataService ) );
+    }
+
+    /** Sets index.refresh_interval on all indices. Use "1s" for realistic measurement, "-1" to disable. */
+    public void setRefreshInterval( final String value )
+    {
+        esServer.getClient().admin().indices().prepareUpdateSettings( "*" )
+            .setSettings( Settings.builder().put( "index.refresh_interval", value ) ).get();
+    }
+
+    /** Force one refresh across all indices. Call this at the end of corpus prep so the data is searchable. */
+    public void refresh()
+    {
+        esServer.getClient().admin().indices().prepareRefresh( "*" ).get();
     }
 
     public void stop()
