@@ -2,11 +2,6 @@ name: Performance Test
 
 on:
   workflow_dispatch:
-    inputs:
-      tests:
-        description: 'Comma-separated tests to run (create,getById,getByPath). Empty = all.'
-        required: false
-        default: ''
 
 concurrency: perftest-${{ github.ref }}
 
@@ -25,17 +20,22 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v5
 
-      - name: Run ContentService benchmarks
-        run: |
-          ./gradlew :ptest:ptest-content:performanceTest \
-            -Dperftest.tests='${{ inputs.tests }}'
+      - name: Run JMH benchmarks
+        run: ./gradlew :ptest:ptest-content:performanceTest
 
       - name: Publish report to job summary
         if: always()
         run: |
-          REPORT=modules/ptest/ptest-content/build/perftest-report/results.md
-          if [ -f "$REPORT" ]; then
-            cat "$REPORT" >> "$GITHUB_STEP_SUMMARY"
+          REPORT_DIR=modules/ptest/ptest-content/build/perftest-report
+          if [ -f "$REPORT_DIR/results.md" ]; then
+            cat "$REPORT_DIR/results.md" >> "$GITHUB_STEP_SUMMARY"
+            echo >> "$GITHUB_STEP_SUMMARY"
+            echo "<details><summary>Raw JMH output</summary>" >> "$GITHUB_STEP_SUMMARY"
+            echo >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+            cat "$REPORT_DIR/results.txt" >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+            echo "</details>" >> "$GITHUB_STEP_SUMMARY"
           else
             echo "No report produced." >> "$GITHUB_STEP_SUMMARY"
           fi
