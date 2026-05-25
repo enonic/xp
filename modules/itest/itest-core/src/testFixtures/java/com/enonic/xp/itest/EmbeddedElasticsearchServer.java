@@ -1,4 +1,4 @@
-package com.enonic.xp.repo.impl.elasticsearch;
+package com.enonic.xp.itest;
 
 
 import java.io.IOException;
@@ -20,7 +20,7 @@ public class EmbeddedElasticsearchServer
 
     private final Node node;
 
-    private static final Logger LOG = LoggerFactory.getLogger( AbstractElasticsearchIntegrationTest.class );
+    private static final Logger LOG = LoggerFactory.getLogger( EmbeddedElasticsearchServer.class );
 
     private final Path snaphotsDir;
 

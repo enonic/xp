@@ -1,0 +1,9 @@
+// Performance tests (`ptest`) — slow, single-threaded benchmarks.
+// Not part of `check`/`build`; invoked explicitly. See README in this folder
+// or :ptest:ptest-content for usage.
+//
+// The shared build service below enforces serial execution across all
+// ptest modules so two benchmarks never compete for CPU on the same JVM.
+gradle.sharedServices.registerIfAbsent( "performance", BuildService ) {
+    maxParallelUsages = 1
+}

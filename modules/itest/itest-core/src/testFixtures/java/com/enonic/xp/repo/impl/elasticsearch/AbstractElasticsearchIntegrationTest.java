@@ -19,6 +19,8 @@ import org.slf4j.LoggerFactory;
 import com.google.common.io.MoreFiles;
 import com.google.common.io.RecursiveDeleteOption;
 
+import com.enonic.xp.itest.EmbeddedElasticsearchServer;
+
 @Tag("elasticsearch")
 @ExtendWith(AbstractElasticsearchIntegrationTest.EmbeddedElasticsearchExtension.class)
 public abstract class AbstractElasticsearchIntegrationTest
