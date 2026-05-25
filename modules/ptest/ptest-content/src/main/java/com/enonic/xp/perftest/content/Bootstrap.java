@@ -115,6 +115,8 @@ public final class Bootstrap
 
     public ContentServiceImpl contentService;
 
+    public NodeServiceImpl nodeService;
+
     public ProjectName projectName;
 
     public Context draftContext()
@@ -179,8 +181,7 @@ public final class Bootstrap
             .build()
             .initialize();
 
-        final NodeServiceImpl nodeService =
-            new NodeServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService );
+        nodeService = new NodeServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService );
 
         final CmsFormFragmentService formFragmentService = noOp( CmsFormFragmentService.class,
             ( method, args ) -> "inlineFormItems".equals( method.getName() ) && args.length == 1 && args[0] instanceof Form
