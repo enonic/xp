@@ -1,0 +1,3 @@
+gradle.sharedServices.registerIfAbsent( "performance", BuildService ) {
+    maxParallelUsages = 1
+}

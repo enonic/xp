@@ -109,7 +109,7 @@ tasks.register('jacocoMergedReport', JacocoReport) {
     group = 'verification'
     description = 'Generates a merged report all sub-projects.'
 
-    def projects = subprojects.findAll { it.plugins.hasPlugin( JacocoPlugin ) }
+    def projects = subprojects.findAll { it.plugins.hasPlugin( JacocoPlugin ) && !it.path.startsWith( ':ptest' ) }
 
     dependsOn projects*.jacocoTestReport
 
