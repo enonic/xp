@@ -91,6 +91,8 @@ include 'admin:admin-event'
 include 'itest:itest-core'
 include 'itest:itest-core-content'
 
+include 'ptest:ptest-content'
+
 include 'tools:testing'
 
 include 'lib:lib-common'
