@@ -113,6 +113,8 @@ public final class Bootstrap
 
     public ContentServiceImpl contentService;
 
+    public NodeServiceImpl nodeService;
+
     public ProjectName projectName;
 
     public Context draftContext()
@@ -175,8 +177,7 @@ public final class Bootstrap
             .build()
             .initialize();
 
-        final NodeServiceImpl nodeService =
-            new NodeServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService, repositoryService );
+        nodeService = new NodeServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService, repositoryService );
 
         final MixinService mixinService = noOp( MixinService.class,
             ( method, args ) -> "inlineFormItems".equals( method.getName() ) && args.length == 1 ? args[0] : UNSET );
