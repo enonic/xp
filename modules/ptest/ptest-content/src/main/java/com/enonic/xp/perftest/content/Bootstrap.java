@@ -1,5 +1,6 @@
 package com.enonic.xp.perftest.content;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -11,6 +12,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiFunction;
 
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.settings.Settings;
@@ -85,6 +87,12 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 public final class Bootstrap
 {
     private static final AtomicInteger PROJECT_COUNTER = new AtomicInteger();
+
+    /** Sentinel meaning "the override has no opinion about this method - fall back to default". */
+    private static final Object UNSET = new Object();
+
+    /** No override at all - every method returns its default value (null / 0 / false). */
+    private static final BiFunction<Method, Object[], Object> NONE = ( m, a ) -> UNSET;
 
     private final User testUser = User.create()
         .key( PrincipalKey.ofUser( IdProviderKey.system(), "perftest-user" ) )
@@ -284,7 +292,7 @@ public final class Bootstrap
     }
 
     private static void deleteRecursively( final Path path )
-        throws java.io.IOException
+        throws IOException
     {
         if ( !Files.exists( path ) )
         {
@@ -295,7 +303,7 @@ public final class Bootstrap
             {
                 Files.deleteIfExists( p );
             }
-            catch ( java.io.IOException ignore )
+            catch ( IOException ignore )
             {
             }
         } );
@@ -303,19 +311,12 @@ public final class Bootstrap
 
     // --- proxy-based no-op mocks (replaces Mockito) ---------------------------
 
-    /** Sentinel meaning "the override has no opinion about this method - fall back to default". */
-    private static final Object UNSET = new Object();
-
-    /** No override at all - every method returns its default value (null / 0 / false). */
-    @SuppressWarnings( "unchecked" )
-    private static final java.util.function.BiFunction<Method, Object[], Object> NONE = ( m, a ) -> UNSET;
-
-    private static <T> T noOp( final Class<T> iface, final java.util.function.BiFunction<Method, Object[], Object> override )
+    private static <T> T noOp( final Class<T> iface, final BiFunction<Method, Object[], Object> override )
     {
         return iface.cast( Proxy.newProxyInstance( iface.getClassLoader(), new Class<?>[]{ iface }, new MockHandler( iface, override ) ) );
     }
 
-    private static <T> T annotationDefaults( final Class<T> annotation, final java.util.function.BiFunction<Method, Object[], Object> override )
+    private static <T> T annotationDefaults( final Class<T> annotation, final BiFunction<Method, Object[], Object> override )
     {
         return annotation.cast( Proxy.newProxyInstance( annotation.getClassLoader(), new Class<?>[]{ annotation },
                                                         new MockHandler( annotation, override ) ) );
@@ -326,9 +327,9 @@ public final class Bootstrap
     {
         private final Class<?> iface;
 
-        private final java.util.function.BiFunction<Method, Object[], Object> override;
+        private final BiFunction<Method, Object[], Object> override;
 
-        MockHandler( final Class<?> iface, final java.util.function.BiFunction<Method, Object[], Object> override )
+        MockHandler( final Class<?> iface, final BiFunction<Method, Object[], Object> override )
         {
             this.iface = iface;
             this.override = override;
