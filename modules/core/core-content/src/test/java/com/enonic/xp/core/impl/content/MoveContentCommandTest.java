@@ -10,6 +10,7 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.context.ContextAccessorSupport;
 import com.enonic.xp.context.ContextBuilder;
@@ -28,6 +29,8 @@ import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.site.Site;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -78,6 +81,75 @@ class MoveContentCommandTest
 
         // exercise
         assertThrows( ContentNotFoundException.class, () -> command.execute() );
+    }
+
+    @Test
+    void move_content_with_missing_content_type()
+    {
+        final Site parentSite = ContentFixture.mockSite();
+        final Content existingContent = Content.create( ContentFixture.mockContent( parentSite.getPath(), "my-content" ) )
+            .type( ContentTypeName.from( "myapp:content-type" ) )
+            .build();
+        final Content existingFolder = ContentFixture.mockContent( parentSite.getPath(), "my-folder" );
+
+        MoveContentParams params =
+            MoveContentParams.create().contentId( existingContent.getId() ).parentContentPath( existingFolder.getPath() ).build();
+
+        final MoveContentCommand command = MoveContentCommand.create( params )
+            .contentTypeService( this.contentTypeService )
+            .nodeService( this.nodeService )
+            .mixinService( this.mixinService )
+            .eventPublisher( this.eventPublisher )
+            .build();
+
+        final Node mockNode = ContentFixture.mockContentNode( existingContent );
+        mockNode.data().setString( ContentPropertyNames.DISPLAY_NAME, existingContent.getDisplayName() );
+        mockNode.data().setBoolean( ContentPropertyNames.VALID, false );
+
+        final PropertyTree[] processedData = new PropertyTree[1];
+
+        when( nodeService.getById( NodeId.from( existingContent.getId() ) ) ).thenReturn( mockNode );
+
+        when( nodeService.move( Mockito.any( MoveNodeParams.class ) ) ).thenAnswer( invocation -> {
+            final MoveNodeParams moveParams = invocation.getArgument( 0 );
+            processedData[0] = moveParams.getProcessor().process( mockNode.data(), mockNode.path() );
+
+            return MoveNodeResult.create()
+                .addMovedNode( MoveNodeResult.MovedNode.create()
+                                   .previousPath( mockNode.path() )
+                                   .node( Node.create( mockNode )
+                                              .data( processedData[0] )
+                                              .parentPath( moveParams.getNewParentPath() )
+                                              .build() )
+                                   .build() )
+                .build();
+        } );
+
+        final Node mockFolderNode = ContentFixture.mockContentNode( existingFolder );
+
+        when( nodeService.getByPath( ContentNodeHelper.translateContentPathToNodePath( existingFolder.getPath() ) ) ).thenReturn(
+            mockFolderNode );
+
+        final ContentType contentType = ContentType.create()
+            .name( ContentTypeName.folder() )
+            .title( "folder" )
+            .setBuiltIn()
+            .setFinal( false )
+            .setAbstract( false )
+            .build();
+
+        when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenAnswer( invocation -> {
+            final GetContentTypeParams getContentTypeParams = invocation.getArgument( 0 );
+            return existingFolder.getType().equals( getContentTypeParams.getContentTypeName() ) ? contentType : null;
+        } );
+
+        // exercise
+        command.execute();
+        assertEquals( false, processedData[0].getBoolean( ContentPropertyNames.VALID ) );
+        assertFalse( processedData[0].hasProperty( ContentPropertyNames.VALIDATION_ERRORS ) );
+        Mockito.verify( contentTypeService )
+            .getByName( Mockito.argThat( getContentTypeParams -> existingContent.getType()
+                .equals( getContentTypeParams.getContentTypeName() ) ) );
     }
 
     @Test
