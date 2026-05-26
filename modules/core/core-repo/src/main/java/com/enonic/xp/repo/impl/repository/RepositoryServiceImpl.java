@@ -1,8 +1,6 @@
 package com.enonic.xp.repo.impl.repository;
 
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -57,8 +55,6 @@ import com.enonic.xp.util.BinaryReference;
 public class RepositoryServiceImpl
     implements RepositoryService, InternalRepositoryService
 {
-    private final ConcurrentMap<RepositoryId, Repository> repositoryMap = new ConcurrentHashMap<>();
-
     private final RepositoryEntryService repositoryEntryService;
 
     private final NodeRepositoryService nodeRepositoryService;
@@ -108,7 +104,7 @@ public class RepositoryServiceImpl
     {
         requireAdminRole();
 
-        final Repository repository = copyRepository( repositoryMap.compute( params.getRepositoryId(), ( _, _ ) -> doCreateRepo( params ) ) );
+        final Repository repository = doCreateRepo( params );
         final RepositoryAuditLogSupport auditLog = repositoryAuditLogSupport.get();
         if ( auditLog != null )
         {
@@ -130,7 +126,7 @@ public class RepositoryServiceImpl
     {
         requireAdminRole();
 
-        return copyRepository( repositoryMap.compute( params.getRepositoryId(), ( _, _ ) -> doUpdateRepository( params ) ) );
+        return doUpdateRepository( params );
     }
 
     private Repository doUpdateRepository( final UpdateRepositoryParams updateRepositoryParams )
@@ -161,8 +157,7 @@ public class RepositoryServiceImpl
     {
         requireAdminRole();
 
-        repositoryMap.compute( ContextAccessor.current().getRepositoryId(),
-                               ( repositoryId, _ ) -> doCreateBranch( createBranchParams, repositoryId ) );
+        doCreateBranch( createBranchParams, ContextAccessor.current().getRepositoryId() );
 
         final RepositoryAuditLogSupport auditLog = repositoryAuditLogSupport.get();
         if ( auditLog != null )
@@ -223,8 +218,7 @@ public class RepositoryServiceImpl
 
     private @Nullable Repository doGet( final RepositoryId repositoryId )
     {
-        final Repository cached = repositoryMap.computeIfAbsent( repositoryId, this::loadRepository );
-        return cached == null ? null : copyRepository( cached );
+        return loadRepository( repositoryId );
     }
 
     private Repository loadRepository( final RepositoryId repositoryId )
@@ -243,11 +237,8 @@ public class RepositoryServiceImpl
     {
         requireAdminRole();
         final RepositoryId repositoryId = params.getRepositoryId();
-        repositoryMap.compute( repositoryId, ( _, _ ) -> {
-            repositoryEntryService.deleteRepositoryEntry( repositoryId );
-            nodeRepositoryService.delete( repositoryId );
-            return null;
-        } );
+        repositoryEntryService.deleteRepositoryEntry( repositoryId );
+        nodeRepositoryService.delete( repositoryId );
 
         nodeStorageService.invalidate();
 
@@ -268,7 +259,7 @@ public class RepositoryServiceImpl
         final Branch branch = params.getBranch();
         checkProtectedBranch( repositoryId, branch );
 
-        repositoryMap.compute( repositoryId, ( _, _ ) -> doDeleteBranch( params, repositoryId ) );
+        doDeleteBranch( params, repositoryId );
 
         final RepositoryAuditLogSupport auditLog = repositoryAuditLogSupport.get();
         if ( auditLog != null )
@@ -321,20 +312,6 @@ public class RepositoryServiceImpl
     }
 
     @Override
-    public void invalidateAll()
-    {
-        repositoryMap.clear();
-        nodeStorageService.invalidate();
-    }
-
-    @Override
-    public void invalidate( final RepositoryId repositoryId )
-    {
-        repositoryMap.remove( repositoryId );
-        nodeStorageService.invalidate();
-    }
-
-    @Override
     public ByteSource getBinary( final RepositoryId repositoryId, final BinaryReference binaryReference )
     {
         requireAdminRole();
@@ -353,17 +330,6 @@ public class RepositoryServiceImpl
             throw new RepositoryNotFoundException( repositoryId );
         }
         return repository;
-    }
-
-    private static Repository copyRepository( final Repository repository )
-    {
-        return Repository.create()
-            .id( repository.getId() )
-            .branches( repository.getBranches() )
-            .data( repository.getData().copy() )
-            .attachments( repository.getAttachments() )
-            .transientFlag( repository.isTransient() )
-            .build();
     }
 
     private Repository asRepository( final RepositoryEntry entry, final Branches branches )

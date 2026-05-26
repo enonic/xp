@@ -299,9 +299,6 @@ class RepositoryServiceImplTest
 
     private Repository getPersistedRepoWithoutCache( String id )
     {
-        return createAdminContext().callWith( () -> {
-            repositoryService.invalidateAll();
-            return this.repositoryService.get( RepositoryId.from( id ) );
-        } );
+        return createAdminContext().callWith( () -> this.repositoryService.get( RepositoryId.from( id ) ) );
     }
 }

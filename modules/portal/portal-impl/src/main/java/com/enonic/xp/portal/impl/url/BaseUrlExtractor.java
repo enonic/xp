@@ -1,7 +1,5 @@
 package com.enonic.xp.portal.impl.url;
 
-import java.util.Optional;
-
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
@@ -82,9 +80,16 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
                 site = context.callWith( () -> contentService.getNearestSite( ContentId.from( content.getId() ) ) );
             }
 
-            final SiteConfigs siteConfigs = site != null
-                ? SiteConfigsDataSerializer.fromData( site.getData().getRoot() )
-                : Optional.ofNullable( projectService.get( projectName ) ).map( Project::getSiteConfigs ).orElse( SiteConfigs.empty() );
+            final SiteConfigs siteConfigs;
+            if ( site != null )
+            {
+                siteConfigs = SiteConfigsDataSerializer.fromData( site.getData().getRoot() );
+            }
+            else
+            {
+                final Project resolvedProject = resolveProject( projectName, portalRequest );
+                siteConfigs = resolvedProject != null ? resolvedProject.getSiteConfigs() : SiteConfigs.empty();
+            }
 
             if ( site != null )
             {
@@ -95,6 +100,19 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
         }
 
         return builder.build();
+    }
+
+    private Project resolveProject( final ProjectName projectName, final PortalRequest portalRequest )
+    {
+        if ( portalRequest != null )
+        {
+            final Project current = portalRequest.getProject();
+            if ( current != null && projectName.equals( current.getName() ) )
+            {
+                return current;
+            }
+        }
+        return projectService.get( projectName );
     }
 
     private String extractBaseUrl( final SiteConfigs siteConfigs )

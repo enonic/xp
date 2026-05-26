@@ -3,6 +3,7 @@ package com.enonic.xp.repo.impl.node;
 import java.util.List;
 import java.util.Map;
 import java.util.Spliterator;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -124,7 +125,6 @@ public class NodeServiceImpl
     @Override
     public Node getById( final NodeId id )
     {
-        verifyContext();
         return Tracer.trace( "node.getById", trace -> {
             trace.put( "id", id );
             trace.put( "repo", ContextAccessor.current().getRepositoryId() );
@@ -134,13 +134,13 @@ public class NodeServiceImpl
 
     private Node executeGetById( final NodeId id )
     {
-        final Node node = doGetById( id );
-
+        final Node node = doGetWithExceptionTranslation( () -> doGetById( id ) );
         if ( node == null )
         {
-            throw new NodeNotFoundException( "Node with id " + id + " not found in branch " + ContextAccessor.current().getBranch() );
+            final Context ctx = ContextAccessor.current();
+            verifyBranchExists( ctx.getRepositoryId(), ctx.getBranch() );
+            throw new NodeNotFoundException( "Node with id " + id + " not found in branch " + ctx.getBranch() );
         }
-
         return node;
     }
 
@@ -203,8 +203,6 @@ public class NodeServiceImpl
     @Override
     public @Nullable Node getByPath( final NodePath path )
     {
-        verifyContext();
-
         return Tracer.trace( "node.getByPath", trace -> {
             trace.put( "path", path );
             trace.put( "repo", ContextAccessor.current().getRepositoryId() );
@@ -218,6 +216,17 @@ public class NodeServiceImpl
     }
 
     private @Nullable Node executeGetByPath( final NodePath path )
+    {
+        final Node node = doGetWithExceptionTranslation( () -> doGetByPath( path ) );
+        if ( node == null )
+        {
+            final Context ctx = ContextAccessor.current();
+            verifyBranchExists( ctx.getRepositoryId(), ctx.getBranch() );
+        }
+        return node;
+    }
+
+    private @Nullable Node doGetByPath( final NodePath path )
     {
         return GetNodeByPathCommand.create()
             .nodePath( path )
@@ -884,6 +893,18 @@ public class NodeServiceImpl
         for ( Branch branch : branches )
         {
             verifyBranchExists( currentContext.getRepositoryId(), branch );
+        }
+    }
+
+    private static <T> T doGetWithExceptionTranslation( final Supplier<T> action )
+    {
+        try
+        {
+            return action.get();
+        }
+        catch ( IndexNotFoundException e )
+        {
+            throw new RepositoryNotFoundException( ContextAccessor.current().getRepositoryId() );
         }
     }
 
