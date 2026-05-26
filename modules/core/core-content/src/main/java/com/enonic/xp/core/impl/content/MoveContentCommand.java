@@ -29,6 +29,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.content.GetContentTypeParams;
 
 import static com.enonic.xp.core.impl.content.ContentNodeHelper.translateNodePathToContentPath;
 import static java.util.Objects.requireNonNull;
@@ -141,6 +142,12 @@ final class MoveContentCommand
             final PropertyTree contentData = data.getProperty( ContentPropertyNames.DATA ).getSet().toTree();
             final String displayName = data.getProperty( ContentPropertyNames.DISPLAY_NAME ).getString();
             final ContentTypeName type = ContentTypeName.from( data.getProperty( ContentPropertyNames.TYPE ).getString() );
+
+            if ( contentTypeService.getByName( new GetContentTypeParams().contentTypeName( type ) ) == null )
+            {
+                return data;
+            }
+
             final Mixins mixins = data.hasProperty( ContentPropertyNames.MIXINS ) ? contentDataSerializer.fromMixinData(
                 data.getProperty( ContentPropertyNames.MIXINS ).getSet() ) : null;
             final Page page = data.hasProperty( ContentPropertyNames.PAGE ) ? contentDataSerializer.fromPageData(
