@@ -312,11 +312,15 @@ public class ImageServiceImpl
 
     private static BufferedImage applyCropping( final BufferedImage bufferedImage, final Cropping cropping )
     {
-        final double width = bufferedImage.getWidth();
-        final double height = bufferedImage.getHeight();
-        return bufferedImage.getSubimage( (int) ( width * cropping.left() ), (int) ( height * cropping.top() ),
-                                          (int) ( width * cropping.width() ), (int) ( height * cropping.height() ) );
+        final int imageWidth = bufferedImage.getWidth();
+        final int imageHeight = bufferedImage.getHeight();
 
+        final int x = Math.clamp( (long) ( imageWidth * cropping.left() ), 0, imageWidth - 1 );
+        final int y = Math.clamp( (long) ( imageHeight * cropping.top() ), 0, imageHeight - 1 );
+        final int width = Math.clamp( (long) ( imageWidth * cropping.width() ), 1, imageWidth - x );
+        final int height = Math.clamp( (long) ( imageHeight * cropping.height() ), 1, imageHeight - y );
+
+        return bufferedImage.getSubimage( x, y, width, height );
     }
 
     private static BufferedImage applyRotation( final BufferedImage bufferedImage, final ImageOrientation orientation )

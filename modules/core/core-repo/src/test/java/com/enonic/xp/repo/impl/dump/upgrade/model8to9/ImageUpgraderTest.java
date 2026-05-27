@@ -29,6 +29,7 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.util.BinaryReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.within;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -308,6 +309,31 @@ class ImageUpgraderTest
         assertThat( upgraded.getDouble( ContentPropertyNames.MEDIA_CROPPING_LEFT ) ).isEqualTo( 0.05 );
         assertThat( upgraded.getDouble( ContentPropertyNames.MEDIA_CROPPING_BOTTOM ) ).isEqualTo( 0.40 );
         assertThat( upgraded.getDouble( ContentPropertyNames.MEDIA_CROPPING_RIGHT ) ).isEqualTo( 0.45 );
+        assertThat( upgraded.getDouble( "zoom" ) ).isNull();
+    }
+
+    @Test
+    void normalizes_crop_position_from_issue_12082()
+    {
+        // Real data from issue #12082: zoomed cropPosition whose right/bottom edges exceed 1.0,
+        // which made the runtime image service throw RasterFormatException. The migration must
+        // bring every edge back into [0,1] by dividing through the zoom factor.
+        final NodeStoreVersion nodeVersion = imageNode();
+        final PropertySet cropping = nodeVersion.data().getSet( ContentPropertyNames.MEDIA ).addSet( ContentPropertyNames.MEDIA_CROPPING );
+        cropping.addDouble( ContentPropertyNames.MEDIA_CROPPING_TOP, 0.36745983558369705 );
+        cropping.addDouble( ContentPropertyNames.MEDIA_CROPPING_LEFT, 0.28542309670781896 );
+        cropping.addDouble( ContentPropertyNames.MEDIA_CROPPING_BOTTOM, 1.367459835583697 );
+        cropping.addDouble( ContentPropertyNames.MEDIA_CROPPING_RIGHT, 1.2854230967078188 );
+        cropping.addDouble( "zoom", 1.7489711934156378 );
+
+        final NodeStoreVersion result = upgrader.upgradeNodeVersion( PROJECT_REPO, nodeVersion );
+
+        assertThat( result ).isNotNull();
+        final PropertySet upgraded = result.data().getSet( ContentPropertyNames.MEDIA ).getSet( ContentPropertyNames.MEDIA_CROPPING );
+        assertThat( upgraded.getDouble( ContentPropertyNames.MEDIA_CROPPING_TOP ) ).isCloseTo( 0.21010, within( 1e-4 ) );
+        assertThat( upgraded.getDouble( ContentPropertyNames.MEDIA_CROPPING_LEFT ) ).isCloseTo( 0.16319, within( 1e-4 ) );
+        assertThat( upgraded.getDouble( ContentPropertyNames.MEDIA_CROPPING_BOTTOM ) ).isCloseTo( 0.78187, within( 1e-4 ) );
+        assertThat( upgraded.getDouble( ContentPropertyNames.MEDIA_CROPPING_RIGHT ) ).isCloseTo( 0.73496, within( 1e-4 ) );
         assertThat( upgraded.getDouble( "zoom" ) ).isNull();
     }
 
