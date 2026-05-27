@@ -9,7 +9,6 @@ import javax.crypto.SecretKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
@@ -25,7 +24,6 @@ import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.security.CreateIdProviderParams;
 import com.enonic.xp.security.CreateRoleParams;
 import com.enonic.xp.security.CreateUserParams;
-import com.enonic.xp.security.IdProviderConfig;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalRelationship;
@@ -60,10 +58,6 @@ public final class SecurityInitializer
     private static final NodePath IDENTITY_PATH = IdProviderNodeTranslator.ID_PROVIDERS_PARENT_PATH;
 
     private static final NodePath ROLES_PATH = new NodePath( IDENTITY_PATH, NodeName.from( PrincipalKey.ROLES_NODE_NAME ) );
-
-    private static final String ADMIN_USER_CREATION_PROPERTY_KEY = "xp.init.adminUserCreation";
-
-    private static final ApplicationKey SYSTEM_ID_PROVIDER_KEY = IdProviderNodeTranslator.SYSTEM_ID_PROVIDER_KEY;
 
     static final IdProviderAccessControlList DEFAULT_ID_PROVIDER_ACL =
         IdProviderAccessControlList.of( IdProviderAccessControlEntry.create().principal( RoleKeys.ADMIN ).access( ADMINISTRATOR ).build(),
@@ -220,18 +214,9 @@ public final class SecurityInitializer
         {
             LOG.info( "Initializing id provider [{}]", IdProviderKey.system() );
 
-            final PropertyTree idProviderConfigTree = new PropertyTree();
-            if ( !"false".equalsIgnoreCase( System.getProperty( ADMIN_USER_CREATION_PROPERTY_KEY ) ) )
-            {
-                idProviderConfigTree.setBoolean( "adminUserCreationEnabled", true );
-            }
-            final IdProviderConfig idProviderConfig =
-                IdProviderConfig.create().applicationKey( SYSTEM_ID_PROVIDER_KEY ).config( idProviderConfigTree ).build();
-
             final CreateIdProviderParams createParams = CreateIdProviderParams.create()
                 .key( IdProviderKey.system() )
                 .displayName( "System Id Provider" )
-                .idProviderConfig( idProviderConfig )
                 .permissions( DEFAULT_ID_PROVIDER_ACL )
                 .build();
 
