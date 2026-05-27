@@ -179,6 +179,25 @@ class ImageServiceImplTest
     }
 
     @Test
+    void readImage_cropping_out_of_bounds_does_not_throw()
+    {
+        mockOriginalImage( "effect/transparent.png" );
+
+        // Legacy zoomed cropPosition that escaped the offline migration: edges exceed [0,1].
+        // Before the fix this threw java.awt.image.RasterFormatException from BufferedImage.getSubimage.
+        final Cropping cropping = Cropping.create().top( 0.367 ).left( 0.285 ).bottom( 1.367 ).right( 1.285 ).build();
+
+        final ReadImageParams readImageParams = ReadImageParams.newImageParams()
+            .contentId( contentId )
+            .binaryReference( binaryReference )
+            .cropping( cropping )
+            .mimeType( "image/png" )
+            .build();
+
+        assertDoesNotThrow( () -> imageService.readImage( readImageParams ) );
+    }
+
+    @Test
     void readImage_filter_on_jpeg()
     {
         mockOriginalImage( "effect/source.jpg" );
