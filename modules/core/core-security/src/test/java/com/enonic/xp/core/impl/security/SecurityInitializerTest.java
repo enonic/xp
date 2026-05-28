@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.security.CreateIdProviderParams;
+import com.enonic.xp.security.IdProviderConfig;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.SecurityService;
 
@@ -45,6 +46,9 @@ class SecurityInitializerTest
         final ArgumentCaptor<CreateIdProviderParams> captor = ArgumentCaptor.forClass( CreateIdProviderParams.class );
         verify( securityService ).createIdProvider( captor.capture() );
 
-        assertThat( captor.getValue().getIdProviderConfig() ).isNull();
+        final IdProviderConfig idProviderConfig = captor.getValue().getIdProviderConfig();
+        assertThat( idProviderConfig ).isNotNull();
+        assertThat( idProviderConfig.getApplicationKey() ).isEqualTo( IdProviderNodeTranslator.SYSTEM_ID_PROVIDER_KEY );
+        assertThat( idProviderConfig.getConfig().getTotalSize() ).isZero();
     }
 }
