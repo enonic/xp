@@ -6,9 +6,7 @@ import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
@@ -20,7 +18,7 @@ import static java.util.Objects.requireNonNull;
  *
  * <p>This instance is mutable and request-scoped. Multiple contributors during request rendering
  * (platform, site app, custom apps, widgets, page controllers) may extend the same policy through
- * {@link #add}, {@link #set}, {@link #addSha}, {@link #nonce}, and {@link #applyNonceTo}. The final
+ * {@link #add}, {@link #set}, {@link #addSha}, and {@link #nonce}. The final
  * {@code Content-Security-Policy} header value is composed at portal response-flush time by
  * {@link #build()} so late additions during rendering still land in the header.</p>
  *
@@ -35,6 +33,12 @@ import static java.util.Objects.requireNonNull;
  *       {@code add} unions sources. Browsers interpret the union permissively, which matches the
  *       weaker-on-conflict semantics this API targets.</li>
  * </ul>
+ *
+ * <p>The nonce is added to {@code script-src} only. To allow inline content in other directives
+ * (e.g. {@code style-src} for inline {@code <style nonce="...">}), call:</p>
+ * <pre>
+ *     csp.add( "style-src", "'nonce-" + csp.nonce() + "'" );
+ * </pre>
  *
  * <p>{@code 'unsafe-inline'} interaction: per W3C CSP3, modern browsers ignore
  * {@code 'unsafe-inline'} when a {@code 'nonce-…'} or {@code 'strict-dynamic'} value is also
@@ -52,17 +56,12 @@ public final class ContentSecurityPolicy
 
     private static final int NONCE_BYTE_LENGTH = 16;
 
-    private final Map<String, LinkedHashSet<String>> directives = new TreeMap<>();
+    private static final String NONCE_DIRECTIVE = "script-src";
 
-    private final Set<String> nonceDirectives = new TreeSet<>();
+    private final Map<String, LinkedHashSet<String>> directives = new TreeMap<>();
 
     @Nullable
     private String nonceValue;
-
-    public ContentSecurityPolicy()
-    {
-        this.nonceDirectives.add( "script-src" );
-    }
 
     /**
      * Unions {@code sources} into the existing source set for {@code directive}, deduped. With no
@@ -126,9 +125,10 @@ public final class ContentSecurityPolicy
      * generated and cached on first call. Every call after the first returns the same value for the
      * life of this policy instance (= life of the {@code PortalRequest}).
      *
-     * <p>On the first call, {@code 'nonce-<value>'} is added to every directive configured to
-     * receive the nonce (by default, {@code script-src}; extend via {@link #applyNonceTo}). If this
-     * method is never called, no {@code nonce-} entry is emitted anywhere.</p>
+     * <p>On the first call, {@code 'nonce-<value>'} is added to {@code script-src}. If this method
+     * is never called, no {@code nonce-} entry is emitted anywhere. To allow inline content in
+     * other directives (e.g. {@code style-src} for inline {@code <style nonce="...">}), call
+     * {@code csp.add( "style-src", "'nonce-" + csp.nonce() + "'" )} directly.</p>
      */
     public String nonce()
     {
@@ -137,32 +137,9 @@ public final class ContentSecurityPolicy
             final byte[] bytes = new byte[NONCE_BYTE_LENGTH];
             SECURE_RANDOM.nextBytes( bytes );
             this.nonceValue = NONCE_BASE64.encodeToString( bytes );
-            final String nonceSource = "'nonce-" + this.nonceValue + "'";
-            for ( final String dir : this.nonceDirectives )
-            {
-                this.directives.computeIfAbsent( dir, k -> new LinkedHashSet<>() ).add( nonceSource );
-            }
+            this.directives.computeIfAbsent( NONCE_DIRECTIVE, k -> new LinkedHashSet<>() ).add( "'nonce-" + this.nonceValue + "'" );
         }
         return this.nonceValue;
-    }
-
-    /**
-     * Opts the given directives into receiving the nonce. If {@link #nonce()} has already been
-     * called, the existing nonce value is immediately added to each directive's source set.
-     */
-    public ContentSecurityPolicy applyNonceTo( final String... directives )
-    {
-        requireNonNull( directives, "directives is required" );
-        for ( final String directive : directives )
-        {
-            requireNonNull( directive, "directive is required" );
-            this.nonceDirectives.add( directive );
-            if ( this.nonceValue != null )
-            {
-                this.directives.computeIfAbsent( directive, k -> new LinkedHashSet<>() ).add( "'nonce-" + this.nonceValue + "'" );
-            }
-        }
-        return this;
     }
 
     /**

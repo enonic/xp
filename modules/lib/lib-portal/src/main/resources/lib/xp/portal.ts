@@ -991,17 +991,11 @@ export interface Csp {
     /**
      * Returns the request-scoped nonce, lazily generated on first call and
      * cached for the remainder of the request. On first call, `'nonce-<value>'`
-     * is added to every directive configured to receive the nonce (by default
-     * `script-src`; extend via {@link applyNonceTo}).
+     * is added to `script-src`. To allow inline content in other directives
+     * (e.g. `style-src` for inline `<style nonce="...">`), call
+     * `csp.add('style-src', ["'nonce-" + csp.getNonce() + "'"])` directly.
      */
     getNonce(): string;
-
-    /**
-     * Opts the given directives into receiving the nonce. If {@link getNonce}
-     * has already been called, the existing nonce is added to each directive's
-     * source set immediately.
-     */
-    applyNonceTo(directives: string[]): Csp;
 }
 
 interface CspHandler {
@@ -1014,8 +1008,6 @@ interface CspHandler {
     addShaDigest(directive: string, base64: string, algo: string): void;
 
     getNonce(): string;
-
-    applyNonceTo(directives: ScriptValue): void;
 }
 
 /**
@@ -1048,10 +1040,6 @@ export function getCsp(): Csp {
         },
         getNonce(): string {
             return bean.getNonce();
-        },
-        applyNonceTo(directives: string[]): Csp {
-            bean.applyNonceTo(__.toScriptValue(directives));
-            return csp;
         },
     };
     return csp;
