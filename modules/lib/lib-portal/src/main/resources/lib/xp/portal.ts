@@ -947,3 +947,112 @@ export interface MacroContext {
     params: Record<string, string | undefined>;
     request: Request;
 }
+
+export type CspHashAlgo = 'sha256' | 'sha384' | 'sha512';
+
+/**
+ * A request-scoped Content Security Policy builder. The same instance is returned
+ * for the lifetime of the current portal request, so multiple controllers, layouts,
+ * parts and widgets can each contribute to the final policy.
+ *
+ * The composed header value is emitted as `Content-Security-Policy` at portal
+ * response-flush time, so late additions during rendering still land in the header.
+ *
+ * Merge semantics: {@link add} unions sources for a directive (deduped);
+ * {@link set} resets the directive's source list. There is no freeze — {@link add}
+ * after {@link set} still extends.
+ */
+export interface Csp {
+    /**
+     * Unions sources into the existing source set for `directive`, deduped.
+     * Pass an empty array to register a boolean directive (e.g.
+     * `upgrade-insecure-requests`).
+     */
+    add(directive: string, sources: string[]): Csp;
+
+    /**
+     * Resets the directive's source list to exactly these sources.
+     * Subsequent {@link add} calls may still extend it — there is no freeze.
+     */
+    set(directive: string, sources: string[]): Csp;
+
+    /**
+     * Computes a SHA-256 digest of the UTF-8 bytes of `content` and unions
+     * `'sha256-<base64>'` into the directive's source set.
+     */
+    addSha(directive: string, content: string): Csp;
+
+    /**
+     * Unions a precomputed `'<algo>-<base64>'` digest into the directive's
+     * source set. `algo` defaults to `'sha256'`.
+     */
+    addSha(directive: string, base64: string, algo: CspHashAlgo): Csp;
+
+    /**
+     * Returns the request-scoped nonce, lazily generated on first call and
+     * cached for the remainder of the request. On first call, `'nonce-<value>'`
+     * is added to every directive configured to receive the nonce (by default
+     * `script-src`; extend via {@link applyNonceTo}).
+     */
+    getNonce(): string;
+
+    /**
+     * Opts the given directives into receiving the nonce. If {@link getNonce}
+     * has already been called, the existing nonce is added to each directive's
+     * source set immediately.
+     */
+    applyNonceTo(directives: string[]): Csp;
+}
+
+interface CspHandler {
+    add(directive: string, sources: ScriptValue): void;
+
+    set(directive: string, sources: ScriptValue): void;
+
+    addShaContent(directive: string, content: string): void;
+
+    addShaDigest(directive: string, base64: string, algo: string): void;
+
+    getNonce(): string;
+
+    applyNonceTo(directives: ScriptValue): void;
+}
+
+/**
+ * Returns the request-scoped Content Security Policy. The same instance is
+ * returned for the lifetime of the current portal request.
+ *
+ * @example-ref examples/portal/getCsp.js
+ *
+ * @returns {Csp} The Content Security Policy bound to the current portal request.
+ */
+export function getCsp(): Csp {
+    const bean: CspHandler = __.newBean<CspHandler>('com.enonic.xp.lib.portal.csp.CspHandler');
+
+    const csp: Csp = {
+        add(directive: string, sources: string[]): Csp {
+            bean.add(directive, __.toScriptValue(sources));
+            return csp;
+        },
+        set(directive: string, sources: string[]): Csp {
+            bean.set(directive, __.toScriptValue(sources));
+            return csp;
+        },
+        addSha(directive: string, contentOrBase64: string, algo?: CspHashAlgo): Csp {
+            if (algo === undefined) {
+                bean.addShaContent(directive, contentOrBase64);
+            } else {
+                bean.addShaDigest(directive, contentOrBase64, algo);
+            }
+            return csp;
+        },
+        getNonce(): string {
+            return bean.getNonce();
+        },
+        applyNonceTo(directives: string[]): Csp {
+            bean.applyNonceTo(__.toScriptValue(directives));
+            return csp;
+        },
+    };
+    return csp;
+}

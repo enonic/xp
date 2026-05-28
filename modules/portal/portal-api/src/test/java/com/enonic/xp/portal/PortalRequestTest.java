@@ -3,8 +3,10 @@ package com.enonic.xp.portal;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.portal.csp.ContentSecurityPolicy;
 import com.enonic.xp.web.HttpMethod;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -119,5 +121,22 @@ class PortalRequestTest
 
         request.setRemoteAddress( "10.0.0.1" );
         assertEquals( "10.0.0.1", request.getRemoteAddress() );
+    }
+
+    @Test
+    void getContentSecurityPolicy_lazy_same_instance_per_request()
+    {
+        final PortalRequest request = new PortalRequest();
+        final ContentSecurityPolicy first = request.getContentSecurityPolicy();
+        assertNotNull( first );
+        assertThat( request.getContentSecurityPolicy() ).isSameAs( first );
+    }
+
+    @Test
+    void getContentSecurityPolicy_distinct_instances_per_request()
+    {
+        final ContentSecurityPolicy first = new PortalRequest().getContentSecurityPolicy();
+        final ContentSecurityPolicy second = new PortalRequest().getContentSecurityPolicy();
+        assertThat( first ).isNotSameAs( second );
     }
 }
