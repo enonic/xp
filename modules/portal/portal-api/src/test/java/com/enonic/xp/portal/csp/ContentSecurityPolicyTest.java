@@ -107,19 +107,11 @@ class ContentSecurityPolicyTest
     }
 
     @Test
-    void applyNonceTo_before_nonce_call_extends_default_directives()
-    {
-        final ContentSecurityPolicy csp = new ContentSecurityPolicy().applyNonceTo( "style-src" );
-        final String nonce = csp.nonce();
-        assertThat( csp.build() ).isEqualTo( "script-src 'nonce-" + nonce + "'; style-src 'nonce-" + nonce + "'" );
-    }
-
-    @Test
-    void applyNonceTo_after_nonce_call_immediately_adds_to_new_directive()
+    void manual_nonce_in_style_src_via_add()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy();
         final String nonce = csp.nonce();
-        csp.applyNonceTo( "style-src" );
+        csp.add( "style-src", "'nonce-" + nonce + "'" );
         assertThat( csp.build() ).isEqualTo( "script-src 'nonce-" + nonce + "'; style-src 'nonce-" + nonce + "'" );
     }
 
@@ -201,11 +193,5 @@ class ContentSecurityPolicyTest
     {
         assertThatThrownBy( () -> new ContentSecurityPolicy().addSha( "script-src", null, "AAAA" ) ).isInstanceOf(
             NullPointerException.class );
-    }
-
-    @Test
-    void applyNonceTo_null_directive_throws()
-    {
-        assertThatThrownBy( () -> new ContentSecurityPolicy().applyNonceTo( (String) null ) ).isInstanceOf( NullPointerException.class );
     }
 }

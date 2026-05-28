@@ -12,9 +12,9 @@ csp.set('default-src', ["'none'"]);
 // Add a SHA-256 of an inline script's UTF-8 content
 csp.addSha('script-src', 'window.foo = 42;');
 
-// Opt extra directives into receiving the request nonce
-csp.applyNonceTo(['style-src']);
-
 // Read the request-scoped nonce (lazy; same value on subsequent calls)
 var nonce = csp.getNonce();
+
+// Allow inline style nonces
+csp.add('style-src', ["'nonce-" + nonce + "'"]);
 // END

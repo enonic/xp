@@ -8,7 +8,6 @@ exports.returnsObject = function () {
     assert.assertEquals('function', typeof csp.set);
     assert.assertEquals('function', typeof csp.addSha);
     assert.assertEquals('function', typeof csp.getNonce);
-    assert.assertEquals('function', typeof csp.applyNonceTo);
 };
 
 exports.addSources = function () {
@@ -68,20 +67,10 @@ exports.nonceLazyAndStable = function () {
     assert.assertEquals("script-src 'nonce-" + n1 + "'", __.toNativeObject(testInstance.policyBuild()));
 };
 
-exports.applyNonceToBeforeNonce = function () {
-    var csp = portal.getCsp();
-    csp.applyNonceTo(['style-src']);
-    var n = csp.getNonce();
-    assert.assertEquals(
-        "script-src 'nonce-" + n + "'; style-src 'nonce-" + n + "'",
-        __.toNativeObject(testInstance.policyBuild())
-    );
-};
-
-exports.applyNonceToAfterNonce = function () {
+exports.manualNonceInStyleSrc = function () {
     var csp = portal.getCsp();
     var n = csp.getNonce();
-    csp.applyNonceTo(['style-src']);
+    csp.add('style-src', ["'nonce-" + n + "'"]);
     assert.assertEquals(
         "script-src 'nonce-" + n + "'; style-src 'nonce-" + n + "'",
         __.toNativeObject(testInstance.policyBuild())

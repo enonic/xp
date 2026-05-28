@@ -61,15 +61,9 @@ public class CspHandlerScriptTest
     }
 
     @Test
-    void applyNonceToBeforeNonce()
+    void manualNonceInStyleSrc()
     {
-        runFunction( "/test/getCsp-test.js", "applyNonceToBeforeNonce" );
-    }
-
-    @Test
-    void applyNonceToAfterNonce()
-    {
-        runFunction( "/test/getCsp-test.js", "applyNonceToAfterNonce" );
+        runFunction( "/test/getCsp-test.js", "manualNonceInStyleSrc" );
     }
 
     public String policyBuild()

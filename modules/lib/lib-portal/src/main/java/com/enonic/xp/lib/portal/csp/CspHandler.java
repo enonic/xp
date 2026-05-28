@@ -44,11 +44,6 @@ public final class CspHandler
         return policy().nonce();
     }
 
-    public void applyNonceTo( final ScriptValue directives )
-    {
-        policy().applyNonceTo( toSources( directives ) );
-    }
-
     public String build()
     {
         return policy().build();
