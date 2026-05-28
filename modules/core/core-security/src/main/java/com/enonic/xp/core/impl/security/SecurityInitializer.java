@@ -9,6 +9,7 @@ import javax.crypto.SecretKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
@@ -24,6 +25,7 @@ import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.security.CreateIdProviderParams;
 import com.enonic.xp.security.CreateRoleParams;
 import com.enonic.xp.security.CreateUserParams;
+import com.enonic.xp.security.IdProviderConfig;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalRelationship;
@@ -46,6 +48,8 @@ public final class SecurityInitializer
     extends ExternalInitializer
 {
     private static final Logger LOG = LoggerFactory.getLogger( SecurityInitializer.class );
+
+    private static final ApplicationKey SYSTEM_ID_PROVIDER_KEY = IdProviderNodeTranslator.SYSTEM_ID_PROVIDER_KEY;
 
     private static final NodePath KEYS_PATH = new NodePath( NodePath.ROOT, NodeName.from( "keys" ) );
 
@@ -214,9 +218,14 @@ public final class SecurityInitializer
         {
             LOG.info( "Initializing id provider [{}]", IdProviderKey.system() );
 
+            final PropertyTree idProviderConfigTree = new PropertyTree();
+            final IdProviderConfig idProviderConfig =
+                IdProviderConfig.create().applicationKey( SYSTEM_ID_PROVIDER_KEY ).config( idProviderConfigTree ).build();
+
             final CreateIdProviderParams createParams = CreateIdProviderParams.create()
                 .key( IdProviderKey.system() )
                 .displayName( "System Id Provider" )
+                .idProviderConfig( idProviderConfig )
                 .permissions( DEFAULT_ID_PROVIDER_ACL )
                 .build();
 
