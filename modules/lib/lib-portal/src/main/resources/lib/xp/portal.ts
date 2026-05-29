@@ -1034,10 +1034,10 @@ export interface Csp {
     strict(): Csp;
 
     /**
-     * Seeds the nonce-based "strict CSP" baseline recommended by web.dev
-     * (`script-src 'nonce-<value>' 'strict-dynamic' https: 'unsafe-inline'`, `object-src 'none'`,
-     * `base-uri 'none'`). A request nonce is generated eagerly on `script-src` — retrieve it with
-     * `nonceScriptSrc()` to stamp on inline `<script nonce="...">` tags.
+     * Seeds a nonce-based "strict CSP" baseline (the modern core of web.dev's recipe, without its
+     * legacy `https:` / `'unsafe-inline'` fallbacks): `script-src 'nonce-<value>' 'strict-dynamic'`,
+     * `object-src 'none'`, `base-uri 'none'`. A request nonce is generated eagerly on `script-src` —
+     * retrieve it with `nonceScriptSrc()` to stamp on inline `<script nonce="...">` tags.
      */
     strictDynamic(): Csp;
 
