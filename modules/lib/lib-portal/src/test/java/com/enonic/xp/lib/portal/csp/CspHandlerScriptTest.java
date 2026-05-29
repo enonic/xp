@@ -133,6 +133,12 @@ public class CspHandlerScriptTest
     }
 
     @Test
+    void schemeSourcesTyped()
+    {
+        runFunction( "/test/csp-test.js", "schemeSourcesTyped" );
+    }
+
+    @Test
     void sandboxFlagTokens()
     {
         runFunction( "/test/csp-test.js", "sandboxFlagTokens" );
