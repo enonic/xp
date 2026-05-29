@@ -15,121 +15,151 @@ public class CspHandlerScriptTest
     @Test
     void returnsObject()
     {
-        runFunction( "/test/getCsp-test.js", "returnsObject" );
+        runFunction( "/test/csp-test.js", "returnsObject" );
     }
 
     @Test
     void addSources()
     {
-        runFunction( "/test/getCsp-test.js", "addSources" );
+        runFunction( "/test/csp-test.js", "addSources" );
     }
 
     @Test
     void setResets()
     {
-        runFunction( "/test/getCsp-test.js", "setResets" );
+        runFunction( "/test/csp-test.js", "setResets" );
     }
 
     @Test
     void addAfterSet()
     {
-        runFunction( "/test/getCsp-test.js", "addAfterSet" );
+        runFunction( "/test/csp-test.js", "addAfterSet" );
     }
 
     @Test
     void addShaContent()
     {
-        runFunction( "/test/getCsp-test.js", "addShaContent" );
+        runFunction( "/test/csp-test.js", "addShaContent" );
     }
 
     @Test
     void addShaDigest()
     {
-        runFunction( "/test/getCsp-test.js", "addShaDigest" );
+        runFunction( "/test/csp-test.js", "addShaDigest" );
     }
 
     @Test
     void unsupportedAlgo()
     {
-        runFunction( "/test/getCsp-test.js", "unsupportedAlgo" );
+        runFunction( "/test/csp-test.js", "unsupportedAlgo" );
     }
 
     @Test
-    void nonceLazyAndStable()
+    void nonceScriptSrc()
     {
-        runFunction( "/test/getCsp-test.js", "nonceLazyAndStable" );
+        runFunction( "/test/csp-test.js", "nonceScriptSrc" );
     }
 
     @Test
-    void manualNonceInStyleSrc()
+    void nonceStyleSrc()
     {
-        runFunction( "/test/getCsp-test.js", "manualNonceInStyleSrc" );
+        runFunction( "/test/csp-test.js", "nonceStyleSrc" );
+    }
+
+    @Test
+    void nonceBoth()
+    {
+        runFunction( "/test/csp-test.js", "nonceBoth" );
+    }
+
+    @Test
+    void nonceStableAcrossMethods()
+    {
+        runFunction( "/test/csp-test.js", "nonceStableAcrossMethods" );
     }
 
     @Test
     void scriptSrcTypedAndRaw()
     {
-        runFunction( "/test/getCsp-test.js", "scriptSrcTypedAndRaw" );
+        runFunction( "/test/csp-test.js", "scriptSrcTypedAndRaw" );
     }
 
     @Test
     void scriptSrcAndAddUnion()
     {
-        runFunction( "/test/getCsp-test.js", "scriptSrcAndAddUnion" );
+        runFunction( "/test/csp-test.js", "scriptSrcAndAddUnion" );
     }
 
     @Test
     void upgradeInsecureRequests()
     {
-        runFunction( "/test/getCsp-test.js", "upgradeInsecureRequests" );
+        runFunction( "/test/csp-test.js", "upgradeInsecureRequests" );
     }
 
     @Test
     void sandboxSingleFlag()
     {
-        runFunction( "/test/getCsp-test.js", "sandboxSingleFlag" );
+        runFunction( "/test/csp-test.js", "sandboxSingleFlag" );
     }
 
     @Test
     void sandboxMultipleFlags()
     {
-        runFunction( "/test/getCsp-test.js", "sandboxMultipleFlags" );
+        runFunction( "/test/csp-test.js", "sandboxMultipleFlags" );
     }
 
     @Test
     void addScriptSrcShaContent()
     {
-        runFunction( "/test/getCsp-test.js", "addScriptSrcShaContent" );
+        runFunction( "/test/csp-test.js", "addScriptSrcShaContent" );
     }
 
     @Test
     void addScriptSrcShaDigest()
     {
-        runFunction( "/test/getCsp-test.js", "addScriptSrcShaDigest" );
+        runFunction( "/test/csp-test.js", "addScriptSrcShaDigest" );
     }
 
     @Test
     void addStyleSrcShaContent()
     {
-        runFunction( "/test/getCsp-test.js", "addStyleSrcShaContent" );
+        runFunction( "/test/csp-test.js", "addStyleSrcShaContent" );
     }
 
     @Test
     void cspSourceTokens()
     {
-        runFunction( "/test/getCsp-test.js", "cspSourceTokens" );
+        runFunction( "/test/csp-test.js", "cspSourceTokens" );
     }
 
     @Test
     void sandboxFlagTokens()
     {
-        runFunction( "/test/getCsp-test.js", "sandboxFlagTokens" );
+        runFunction( "/test/csp-test.js", "sandboxFlagTokens" );
     }
 
     @Test
     void restrictiveDirectivesTyped()
     {
-        runFunction( "/test/getCsp-test.js", "restrictiveDirectivesTyped" );
+        runFunction( "/test/csp-test.js", "restrictiveDirectivesTyped" );
+    }
+
+    @Test
+    void strict()
+    {
+        runFunction( "/test/csp-test.js", "strict" );
+    }
+
+    @Test
+    void strictThenOpenUp()
+    {
+        runFunction( "/test/csp-test.js", "strictThenOpenUp" );
+    }
+
+    @Test
+    void strictDynamic()
+    {
+        runFunction( "/test/csp-test.js", "strictDynamic" );
     }
 
     public String policyBuild()

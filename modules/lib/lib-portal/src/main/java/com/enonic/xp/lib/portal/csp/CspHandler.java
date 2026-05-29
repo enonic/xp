@@ -28,6 +28,16 @@ public final class CspHandler
         policy().set( directive, toSources( sources ) );
     }
 
+    public void strict()
+    {
+        policy().strict();
+    }
+
+    public void strictDynamic()
+    {
+        policy().strictDynamic();
+    }
+
     public void addShaContent( final String directive, final String content )
     {
         requireNonNull( content, "content is required" );
@@ -146,9 +156,19 @@ public final class CspHandler
         policy().addStyleSrcSha( parseAlgo( algo ), base64 );
     }
 
-    public String getNonce()
+    public String nonce()
     {
         return policy().nonce();
+    }
+
+    public String nonceScriptSrc()
+    {
+        return policy().nonceScriptSrc();
+    }
+
+    public String nonceStyleSrc()
+    {
+        return policy().nonceStyleSrc();
     }
 
     public String build()

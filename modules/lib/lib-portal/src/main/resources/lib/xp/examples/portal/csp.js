@@ -1,7 +1,11 @@
 var portalLib = require('/lib/xp/portal');
 
 // BEGIN
-var csp = portalLib.getCsp();
+var csp = portalLib.csp();
+
+// One-shot strict baselines -- pick one as a starting point, then open up what you need:
+//   csp.strict();         // deny-all: default-src 'none', base-uri 'none', frame-ancestors 'none'
+//   csp.strictDynamic();  // nonce + 'strict-dynamic' script policy (web.dev), then csp.nonceScriptSrc()
 
 // Typed source-list directives -- variadic typed sources
 csp.defaultSrc(portalLib.CspSource.NONE);
@@ -24,11 +28,11 @@ csp.sandbox(portalLib.SandboxFlag.ALLOW_SCRIPTS, portalLib.SandboxFlag.ALLOW_SAM
 csp.addScriptSrcSha('window.foo = 42;');
 csp.addStyleSrcSha('body { color: red; }');
 
-// Request-scoped nonce (lazy; same value on subsequent calls)
-var nonce = csp.getNonce();
-
-// Allow inline style nonces
-csp.add('style-src', ["'nonce-" + nonce + "'"]);
+// Request-scoped nonce (lazy; same value on subsequent calls). Wire it into script-src,
+// style-src, or both -- the only directives a nonce is valid for.
+var nonce = csp.nonceScriptSrc();     // -> script-src 'nonce-...'
+csp.nonceStyleSrc();                  // -> style-src  'nonce-...' (same value)
+// var nonce = csp.nonce();          // both at once
 
 // Escape hatches for less-common / future directives
 csp.add('require-trusted-types-for', ["'script'"]);

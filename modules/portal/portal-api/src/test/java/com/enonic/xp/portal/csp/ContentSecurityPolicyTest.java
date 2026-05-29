@@ -87,7 +87,34 @@ class ContentSecurityPolicyTest
         final byte[] decoded = Base64.getUrlDecoder().decode( first );
         assertThat( decoded.length ).isGreaterThanOrEqualTo( 16 );
 
-        assertThat( csp.build() ).isEqualTo( "script-src 'nonce-" + first + "'" );
+        assertThat( csp.build() ).isEqualTo( "script-src 'nonce-" + first + "'; style-src 'nonce-" + first + "'" );
+    }
+
+    @Test
+    void nonceScriptSrc_targets_script_src_only()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy();
+        final String nonce = csp.nonceScriptSrc();
+        assertThat( csp.build() ).isEqualTo( "script-src 'nonce-" + nonce + "'" );
+    }
+
+    @Test
+    void nonceStyleSrc_targets_style_src_only()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy();
+        final String nonce = csp.nonceStyleSrc();
+        assertThat( csp.build() ).isEqualTo( "style-src 'nonce-" + nonce + "'" );
+    }
+
+    @Test
+    void nonce_value_stable_across_methods()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy();
+        final String fromScript = csp.nonceScriptSrc();
+        assertThat( csp.nonceStyleSrc() ).isEqualTo( fromScript );
+        assertThat( csp.nonce() ).isEqualTo( fromScript );
+        assertThat( csp.build() ).isEqualTo(
+            "script-src 'nonce-" + fromScript + "'; style-src 'nonce-" + fromScript + "'" );
     }
 
     @Test
@@ -104,15 +131,6 @@ class ContentSecurityPolicyTest
         final ContentSecurityPolicy csp =
             new ContentSecurityPolicy().add( "script-src", "'self'" ).add( "style-src", "'self'" );
         assertThat( csp.build() ).doesNotContain( "nonce-" );
-    }
-
-    @Test
-    void manual_nonce_in_style_src_via_add()
-    {
-        final ContentSecurityPolicy csp = new ContentSecurityPolicy();
-        final String nonce = csp.nonce();
-        csp.add( "style-src", "'nonce-" + nonce + "'" );
-        assertThat( csp.build() ).isEqualTo( "script-src 'nonce-" + nonce + "'; style-src 'nonce-" + nonce + "'" );
     }
 
     @Test
@@ -142,7 +160,7 @@ class ContentSecurityPolicyTest
     void unsafe_inline_and_nonce_coexist_in_output()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy().add( "script-src", "'unsafe-inline'" );
-        final String nonce = csp.nonce();
+        final String nonce = csp.nonceScriptSrc();
         assertThat( csp.build() ).isEqualTo( "script-src 'unsafe-inline' 'nonce-" + nonce + "'" );
     }
 
@@ -346,5 +364,37 @@ class ContentSecurityPolicyTest
     void sandbox_null_flag_throws()
     {
         assertThatThrownBy( () -> new ContentSecurityPolicy().sandbox( (SandboxFlag) null ) ).isInstanceOf( NullPointerException.class );
+    }
+
+    @Test
+    void strict_seeds_deny_all_baseline()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().strict();
+        assertThat( csp.build() ).isEqualTo( "base-uri 'none'; default-src 'none'; frame-ancestors 'none'" );
+    }
+
+    @Test
+    void strict_then_open_specific_directives()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().strict().scriptSrc( CspSource.SELF ).styleSrc( CspSource.SELF );
+        assertThat( csp.build() ).isEqualTo(
+            "base-uri 'none'; default-src 'none'; frame-ancestors 'none'; script-src 'self'; style-src 'self'" );
+    }
+
+    @Test
+    void strictDynamic_seeds_nonce_based_baseline()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().strictDynamic();
+        final String nonce = csp.nonceScriptSrc();
+        assertThat( csp.build() ).isEqualTo(
+            "base-uri 'none'; object-src 'none'; script-src 'nonce-" + nonce + "' 'strict-dynamic' https: 'unsafe-inline'" );
+    }
+
+    @Test
+    void strictDynamic_nonce_is_retrievable_and_stable()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().strictDynamic();
+        assertThat( csp.nonceScriptSrc() ).isEqualTo( csp.nonceScriptSrc() );
+        assertThat( csp.build() ).contains( "'nonce-" + csp.nonceScriptSrc() + "'" );
     }
 }

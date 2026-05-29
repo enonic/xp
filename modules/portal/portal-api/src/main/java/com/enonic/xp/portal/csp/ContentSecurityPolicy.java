@@ -35,11 +35,9 @@ import static java.util.Objects.requireNonNull;
  *       weaker-on-conflict semantics this API targets.</li>
  * </ul>
  *
- * <p>The nonce is added to {@code script-src} only. To allow inline content in other directives
- * (e.g. {@code style-src} for inline {@code <style nonce="...">}), call:</p>
- * <pre>
- *     csp.add( "style-src", "'nonce-" + csp.nonce() + "'" );
- * </pre>
+ * <p>A {@code nonce-} source is valid only for {@code script-src} and {@code style-src}. Use
+ * {@link #nonceScriptSrc()} or {@link #nonceStyleSrc()} to wire it into one, or {@link #nonce()}
+ * for both; each returns the same request-scoped value to stamp on the matching inline tag.</p>
  *
  * <p>{@code 'unsafe-inline'} interaction: per W3C CSP3, modern browsers ignore
  * {@code 'unsafe-inline'} when a {@code 'nonce-…'} or {@code 'strict-dynamic'} value is also
@@ -121,6 +119,41 @@ public final class ContentSecurityPolicy
         requireNonNull( algo, "algo is required" );
         requireNonNull( base64, "base64 is required" );
         return add( directive, "'" + algo.token() + "-" + base64 + "'" );
+    }
+
+    /**
+     * Seeds a restrictive deny-all baseline: {@code default-src 'none'}, {@code base-uri 'none'},
+     * and {@code frame-ancestors 'none'}. Intended as a one-shot starting point — call it first,
+     * then open up only the directives you need (e.g. {@code scriptSrc( CspSource.SELF )}).
+     */
+    public ContentSecurityPolicy strict()
+    {
+        defaultSrc( CspSource.NONE );
+        baseUri( CspSource.NONE );
+        frameAncestors( CspSource.NONE );
+        return this;
+    }
+
+    /**
+     * Seeds the nonce-based "strict CSP" baseline recommended by
+     * <a href="https://web.dev/articles/strict-csp">web.dev</a>:
+     * {@code script-src 'nonce-<value>' 'strict-dynamic' https: 'unsafe-inline'},
+     * {@code object-src 'none'}, and {@code base-uri 'none'}. A request nonce is generated eagerly on
+     * {@code script-src} (retrieve it with {@link #nonceScriptSrc()} to stamp on inline
+     * {@code <script nonce="...">} tags).
+     * {@code 'strict-dynamic'} lets those trusted scripts load further scripts, while {@code https:}
+     * and {@code 'unsafe-inline'} are fallbacks ignored by browsers that honor the nonce. Call it
+     * first, then add more sources as needed.
+     */
+    public ContentSecurityPolicy strictDynamic()
+    {
+        nonceScriptSrc();
+        scriptSrc( CspSource.STRICT_DYNAMIC );
+        scriptSrc( "https:" );
+        scriptSrc( CspSource.UNSAFE_INLINE );
+        objectSrc( CspSource.NONE );
+        baseUri( CspSource.NONE );
+        return this;
     }
 
     public ContentSecurityPolicy defaultSrc( final CspSource... sources )
@@ -331,24 +364,50 @@ public final class ContentSecurityPolicy
     }
 
     /**
-     * Returns a cryptographically random, base64-encoded nonce (≥ 128 bits of entropy), lazily
-     * generated and cached on first call. Every call after the first returns the same value for the
-     * life of this policy instance (= life of the {@code PortalRequest}).
-     *
-     * <p>On the first call, {@code 'nonce-<value>'} is added to {@code script-src}. If this method
-     * is never called, no {@code nonce-} entry is emitted anywhere. To allow inline content in
-     * other directives (e.g. {@code style-src} for inline {@code <style nonce="...">}), call
-     * {@code csp.add( "style-src", "'nonce-" + csp.nonce() + "'" )} directly.</p>
+     * Wires the request nonce into both {@code script-src} and {@code style-src} — the only two
+     * directives for which a {@code nonce-} source is valid per the CSP spec — and returns its
+     * value. Equivalent to calling {@link #nonceScriptSrc()} and {@link #nonceStyleSrc()}.
      */
     public String nonce()
+    {
+        nonceScriptSrc();
+        return nonceStyleSrc();
+    }
+
+    /**
+     * Wires the request nonce into {@code script-src} and returns its value (for stamping on inline
+     * {@code <script nonce="...">} tags).
+     */
+    public String nonceScriptSrc()
+    {
+        return nonceFor( SCRIPT_SRC );
+    }
+
+    /**
+     * Wires the request nonce into {@code style-src} and returns its value (for stamping on inline
+     * {@code <style nonce="...">} tags).
+     */
+    public String nonceStyleSrc()
+    {
+        return nonceFor( STYLE_SRC );
+    }
+
+    /**
+     * The nonce is a cryptographically random, base64-encoded value (≥ 128 bits of entropy), lazily
+     * generated and cached on first use. Every {@code nonce*} call returns the same value for the
+     * life of this policy instance (= life of the {@code PortalRequest}); each adds
+     * {@code 'nonce-<value>'} to the directive it targets. If no {@code nonce*} method is ever
+     * called, no {@code nonce-} entry is emitted anywhere.
+     */
+    private String nonceFor( final String directive )
     {
         if ( this.nonceValue == null )
         {
             final byte[] bytes = new byte[NONCE_BYTE_LENGTH];
             SECURE_RANDOM.nextBytes( bytes );
             this.nonceValue = NONCE_BASE64.encodeToString( bytes );
-            this.directives.computeIfAbsent( SCRIPT_SRC, k -> new LinkedHashSet<>() ).add( "'nonce-" + this.nonceValue + "'" );
         }
+        this.directives.computeIfAbsent( directive, k -> new LinkedHashSet<>() ).add( "'nonce-" + this.nonceValue + "'" );
         return this.nonceValue;
     }
 
