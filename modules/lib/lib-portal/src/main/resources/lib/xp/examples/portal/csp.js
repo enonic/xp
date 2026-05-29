@@ -11,7 +11,7 @@ var csp = portalLib.csp();
 csp.defaultSrc(portalLib.CspSource.NONE);
 csp.scriptSrc(portalLib.CspSource.SELF, 'https://cdn.example.com');
 csp.styleSrc(portalLib.CspSource.SELF);
-csp.imgSrc(portalLib.CspSource.SELF, 'data:');
+csp.imgSrc(portalLib.CspSource.SELF, portalLib.CspSource.DATA);
 
 // Restrictive / single-list directives
 csp.frameAncestors(portalLib.CspSource.NONE);

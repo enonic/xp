@@ -257,6 +257,13 @@ class ContentSecurityPolicyTest
     }
 
     @Test
+    void scheme_sources_emitted_unquoted()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().imgSrc( CspSource.SELF, CspSource.DATA, CspSource.BLOB );
+        assertThat( csp.build() ).isEqualTo( "img-src 'self' data: blob:" );
+    }
+
+    @Test
     void defaultSrc_none()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy().defaultSrc( CspSource.NONE );

@@ -1,9 +1,10 @@
 package com.enonic.xp.portal.csp;
 
 /**
- * Special source-list keywords used in a CSP source expression, per W3C CSP3. These are emitted
- * with their canonical single-quote wrappers (e.g. {@code 'self'}). Free-form sources (hosts,
- * schemes, paths, URLs) are passed as plain strings.
+ * Common source-list values for a CSP source expression, per W3C CSP3. Keyword sources are emitted
+ * with their canonical single-quote wrappers (e.g. {@code 'self'}); scheme sources are emitted
+ * verbatim (e.g. {@code data:}). Other free-form sources (hosts, paths, URLs, other schemes) are
+ * passed as plain strings.
  */
 public enum CspSource
 {
@@ -14,7 +15,9 @@ public enum CspSource
     STRICT_DYNAMIC( "'strict-dynamic'" ),
     UNSAFE_HASHES( "'unsafe-hashes'" ),
     WASM_UNSAFE_EVAL( "'wasm-unsafe-eval'" ),
-    REPORT_SAMPLE( "'report-sample'" );
+    REPORT_SAMPLE( "'report-sample'" ),
+    DATA( "data:" ),
+    BLOB( "blob:" );
 
     private final String token;
 
@@ -24,7 +27,8 @@ public enum CspSource
     }
 
     /**
-     * The single-quoted CSP token (e.g. {@code 'self'}).
+     * The CSP token: single-quoted for keywords (e.g. {@code 'self'}), verbatim for schemes
+     * (e.g. {@code data:}).
      */
     public String token()
     {

@@ -186,6 +186,14 @@ exports.cspSourceTokens = function () {
     assert.assertEquals("'unsafe-hashes'", portal.CspSource.UNSAFE_HASHES);
     assert.assertEquals("'wasm-unsafe-eval'", portal.CspSource.WASM_UNSAFE_EVAL);
     assert.assertEquals("'report-sample'", portal.CspSource.REPORT_SAMPLE);
+    assert.assertEquals('data:', portal.CspSource.DATA);
+    assert.assertEquals('blob:', portal.CspSource.BLOB);
+};
+
+exports.schemeSourcesTyped = function () {
+    var csp = portal.csp();
+    csp.imgSrc(portal.CspSource.SELF, portal.CspSource.DATA, portal.CspSource.BLOB);
+    assert.assertEquals("img-src 'self' data: blob:", __.toNativeObject(testInstance.policyBuild()));
 };
 
 exports.sandboxFlagTokens = function () {

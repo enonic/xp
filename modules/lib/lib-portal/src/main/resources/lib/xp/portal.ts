@@ -951,9 +951,9 @@ export interface MacroContext {
 export type CspHashAlgo = 'sha256' | 'sha384' | 'sha512';
 
 /**
- * Special source-list keywords used in a CSP source expression, per W3C CSP3. Variadic
- * source params on {@link Csp} accept these values or raw strings (hosts, schemes, paths,
- * full URLs).
+ * Common source-list values for a CSP source expression, per W3C CSP3. Keyword sources are
+ * single-quoted (e.g. `'self'`); scheme sources are verbatim (e.g. `data:`). Variadic source
+ * params on {@link Csp} accept these values or raw strings (hosts, other schemes, paths, URLs).
  */
 export const CspSource = {
     SELF: "'self'",
@@ -964,6 +964,8 @@ export const CspSource = {
     UNSAFE_HASHES: "'unsafe-hashes'",
     WASM_UNSAFE_EVAL: "'wasm-unsafe-eval'",
     REPORT_SAMPLE: "'report-sample'",
+    DATA: 'data:',
+    BLOB: 'blob:',
 } as const;
 
 export type CspSource = typeof CspSource[keyof typeof CspSource];
