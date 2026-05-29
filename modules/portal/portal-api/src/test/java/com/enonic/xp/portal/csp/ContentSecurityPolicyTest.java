@@ -194,4 +194,157 @@ class ContentSecurityPolicyTest
         assertThatThrownBy( () -> new ContentSecurityPolicy().addSha( "script-src", null, "AAAA" ) ).isInstanceOf(
             NullPointerException.class );
     }
+
+    @Test
+    void scriptSrc_single_typed_source()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrc( CspSource.SELF );
+        assertThat( csp.build() ).isEqualTo( "script-src 'self'" );
+    }
+
+    @Test
+    void scriptSrc_multiple_typed_sources()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrc( CspSource.SELF, CspSource.UNSAFE_INLINE );
+        assertThat( csp.build() ).isEqualTo( "script-src 'self' 'unsafe-inline'" );
+    }
+
+    @Test
+    void scriptSrc_raw_host_emitted_unquoted()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrc( "https://cdn.example.com" );
+        assertThat( csp.build() ).isEqualTo( "script-src https://cdn.example.com" );
+    }
+
+    @Test
+    void scriptSrc_typed_and_raw_are_unioned()
+    {
+        final ContentSecurityPolicy csp =
+            new ContentSecurityPolicy().scriptSrc( CspSource.SELF ).scriptSrc( "https://cdn.example.com" );
+        assertThat( csp.build() ).isEqualTo( "script-src 'self' https://cdn.example.com" );
+    }
+
+    @Test
+    void styleSrc_typed_source()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().styleSrc( CspSource.SELF );
+        assertThat( csp.build() ).isEqualTo( "style-src 'self'" );
+    }
+
+    @Test
+    void imgSrc_mixed_typed_and_raw()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().imgSrc( CspSource.SELF ).imgSrc( "data:" );
+        assertThat( csp.build() ).isEqualTo( "img-src 'self' data:" );
+    }
+
+    @Test
+    void defaultSrc_none()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().defaultSrc( CspSource.NONE );
+        assertThat( csp.build() ).isEqualTo( "default-src 'none'" );
+    }
+
+    @Test
+    void frameAncestors_none()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().frameAncestors( CspSource.NONE );
+        assertThat( csp.build() ).isEqualTo( "frame-ancestors 'none'" );
+    }
+
+    @Test
+    void baseUri_self()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().baseUri( CspSource.SELF );
+        assertThat( csp.build() ).isEqualTo( "base-uri 'self'" );
+    }
+
+    @Test
+    void formAction_self()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().formAction( CspSource.SELF );
+        assertThat( csp.build() ).isEqualTo( "form-action 'self'" );
+    }
+
+    @Test
+    void upgradeInsecureRequests_serializes_without_sources()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().upgradeInsecureRequests();
+        assertThat( csp.build() ).isEqualTo( "upgrade-insecure-requests" );
+    }
+
+    @Test
+    void sandbox_unions_flags_unquoted()
+    {
+        final ContentSecurityPolicy csp =
+            new ContentSecurityPolicy().sandbox( SandboxFlag.ALLOW_SCRIPTS, SandboxFlag.ALLOW_SAME_ORIGIN );
+        assertThat( csp.build() ).isEqualTo( "sandbox allow-scripts allow-same-origin" );
+    }
+
+    @Test
+    void sandbox_no_flags_emits_directive_only()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().sandbox();
+        assertThat( csp.build() ).isEqualTo( "sandbox" );
+    }
+
+    @Test
+    void addScriptSrcSha_bytes_encodes_sha256_into_script_src()
+        throws Exception
+    {
+        final byte[] content = "alert('hi');".getBytes();
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().addScriptSrcSha( content );
+
+        final String expectedDigest = Base64.getEncoder().encodeToString( MessageDigest.getInstance( "SHA-256" ).digest( content ) );
+        assertThat( csp.build() ).isEqualTo( "script-src 'sha256-" + expectedDigest + "'" );
+    }
+
+    @Test
+    void addScriptSrcSha_precomputed_emits_algo_and_value()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().addScriptSrcSha( HashAlgo.SHA384, "AbC" );
+        assertThat( csp.build() ).isEqualTo( "script-src 'sha384-AbC'" );
+    }
+
+    @Test
+    void addStyleSrcSha_bytes_encodes_sha256_into_style_src()
+        throws Exception
+    {
+        final byte[] content = "body { color: red; }".getBytes();
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().addStyleSrcSha( content );
+
+        final String expectedDigest = Base64.getEncoder().encodeToString( MessageDigest.getInstance( "SHA-256" ).digest( content ) );
+        assertThat( csp.build() ).isEqualTo( "style-src 'sha256-" + expectedDigest + "'" );
+    }
+
+    @Test
+    void addStyleSrcSha_precomputed_emits_algo_and_value()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().addStyleSrcSha( HashAlgo.SHA512, "XyZ" );
+        assertThat( csp.build() ).isEqualTo( "style-src 'sha512-XyZ'" );
+    }
+
+    @Test
+    void typed_directive_methods_are_chainable()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().defaultSrc( CspSource.NONE )
+            .scriptSrc( CspSource.SELF )
+            .styleSrc( CspSource.SELF )
+            .upgradeInsecureRequests();
+        assertThat( csp.build() ).isEqualTo(
+            "default-src 'none'; script-src 'self'; style-src 'self'; upgrade-insecure-requests" );
+    }
+
+    @Test
+    void typed_scriptSrc_null_source_throws()
+    {
+        assertThatThrownBy( () -> new ContentSecurityPolicy().scriptSrc( (CspSource) null ) ).isInstanceOf(
+            NullPointerException.class );
+    }
+
+    @Test
+    void sandbox_null_flag_throws()
+    {
+        assertThatThrownBy( () -> new ContentSecurityPolicy().sandbox( (SandboxFlag) null ) ).isInstanceOf( NullPointerException.class );
+    }
 }
