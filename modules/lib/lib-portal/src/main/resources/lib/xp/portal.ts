@@ -1025,6 +1025,20 @@ export interface Csp {
      */
     addSha(directive: string, base64: string, algo: CspHashAlgo): Csp;
 
+    /**
+     * Seeds a restrictive deny-all baseline (`default-src 'none'`, `base-uri 'none'`,
+     * `frame-ancestors 'none'`). Call it first, then open up only the directives you need.
+     */
+    strict(): Csp;
+
+    /**
+     * Seeds the nonce-based "strict CSP" baseline recommended by web.dev
+     * (`script-src 'nonce-<value>' 'strict-dynamic' https: 'unsafe-inline'`, `object-src 'none'`,
+     * `base-uri 'none'`). A request nonce is generated eagerly on `script-src` — retrieve it with
+     * `nonceScriptSrc()` to stamp on inline `<script nonce="...">` tags.
+     */
+    strictDynamic(): Csp;
+
     /** Unions sources into `default-src`. */
     defaultSrc(...sources: (CspSource | string)[]): Csp;
 
@@ -1102,19 +1116,33 @@ export interface Csp {
     addStyleSrcSha(base64: string, algo: CspHashAlgo): Csp;
 
     /**
-     * Returns the request-scoped nonce, lazily generated on first call and
-     * cached for the remainder of the request. On first call, `'nonce-<value>'`
-     * is added to `script-src`. To allow inline content in other directives
-     * (e.g. `style-src` for inline `<style nonce="...">`), call
-     * `csp.add('style-src', ["'nonce-" + csp.getNonce() + "'"])` directly.
+     * Wires the request nonce into both `script-src` and `style-src` (the only directives a
+     * `nonce-` source is valid for) and returns its value. Equivalent to calling
+     * `nonceScriptSrc()` and `nonceStyleSrc()`.
      */
-    getNonce(): string;
+    nonce(): string;
+
+    /**
+     * Wires the request nonce into `script-src` and returns its value (for stamping on inline
+     * `<script nonce="...">` tags). Lazily generated and cached for the request.
+     */
+    nonceScriptSrc(): string;
+
+    /**
+     * Wires the request nonce into `style-src` and returns its value (for stamping on inline
+     * `<style nonce="...">` tags). Lazily generated and cached for the request.
+     */
+    nonceStyleSrc(): string;
 }
 
 interface CspHandler {
     add(directive: string, sources: ScriptValue): void;
 
     set(directive: string, sources: ScriptValue): void;
+
+    strict(): void;
+
+    strictDynamic(): void;
 
     addShaContent(directive: string, content: string): void;
 
@@ -1162,28 +1190,40 @@ interface CspHandler {
 
     addStyleSrcShaDigest(base64: string, algo: string): void;
 
-    getNonce(): string;
+    nonce(): string;
+
+    nonceScriptSrc(): string;
+
+    nonceStyleSrc(): string;
 }
 
 /**
  * Returns the request-scoped Content Security Policy. The same instance is
  * returned for the lifetime of the current portal request.
  *
- * @example-ref examples/portal/getCsp.js
+ * @example-ref examples/portal/csp.js
  *
  * @returns {Csp} The Content Security Policy bound to the current portal request.
  */
-export function getCsp(): Csp {
+export function csp(): Csp {
     const bean: CspHandler = __.newBean<CspHandler>('com.enonic.xp.lib.portal.csp.CspHandler');
 
-    const csp: Csp = {
+    const instance: Csp = {
         add(directive: string, sources: string[]): Csp {
             bean.add(directive, __.toScriptValue(sources));
-            return csp;
+            return instance;
         },
         set(directive: string, sources: string[]): Csp {
             bean.set(directive, __.toScriptValue(sources));
-            return csp;
+            return instance;
+        },
+        strict(): Csp {
+            bean.strict();
+            return instance;
+        },
+        strictDynamic(): Csp {
+            bean.strictDynamic();
+            return instance;
         },
         addSha(directive: string, contentOrBase64: string, algo?: CspHashAlgo): Csp {
             if (algo === undefined) {
@@ -1191,75 +1231,75 @@ export function getCsp(): Csp {
             } else {
                 bean.addShaDigest(directive, contentOrBase64, algo);
             }
-            return csp;
+            return instance;
         },
         defaultSrc(...sources: (CspSource | string)[]): Csp {
             bean.defaultSrc(__.toScriptValue(sources));
-            return csp;
+            return instance;
         },
         scriptSrc(...sources: (CspSource | string)[]): Csp {
             bean.scriptSrc(__.toScriptValue(sources));
-            return csp;
+            return instance;
         },
         styleSrc(...sources: (CspSource | string)[]): Csp {
             bean.styleSrc(__.toScriptValue(sources));
-            return csp;
+            return instance;
         },
         imgSrc(...sources: (CspSource | string)[]): Csp {
             bean.imgSrc(__.toScriptValue(sources));
-            return csp;
+            return instance;
         },
         fontSrc(...sources: (CspSource | string)[]): Csp {
             bean.fontSrc(__.toScriptValue(sources));
-            return csp;
+            return instance;
         },
         connectSrc(...sources: (CspSource | string)[]): Csp {
             bean.connectSrc(__.toScriptValue(sources));
-            return csp;
+            return instance;
         },
         mediaSrc(...sources: (CspSource | string)[]): Csp {
             bean.mediaSrc(__.toScriptValue(sources));
-            return csp;
+            return instance;
         },
         objectSrc(...sources: (CspSource | string)[]): Csp {
             bean.objectSrc(__.toScriptValue(sources));
-            return csp;
+            return instance;
         },
         frameSrc(...sources: (CspSource | string)[]): Csp {
             bean.frameSrc(__.toScriptValue(sources));
-            return csp;
+            return instance;
         },
         workerSrc(...sources: (CspSource | string)[]): Csp {
             bean.workerSrc(__.toScriptValue(sources));
-            return csp;
+            return instance;
         },
         manifestSrc(...sources: (CspSource | string)[]): Csp {
             bean.manifestSrc(__.toScriptValue(sources));
-            return csp;
+            return instance;
         },
         childSrc(...sources: (CspSource | string)[]): Csp {
             bean.childSrc(__.toScriptValue(sources));
-            return csp;
+            return instance;
         },
         frameAncestors(...sources: (CspSource | string)[]): Csp {
             bean.frameAncestors(__.toScriptValue(sources));
-            return csp;
+            return instance;
         },
         baseUri(...sources: (CspSource | string)[]): Csp {
             bean.baseUri(__.toScriptValue(sources));
-            return csp;
+            return instance;
         },
         formAction(...sources: (CspSource | string)[]): Csp {
             bean.formAction(__.toScriptValue(sources));
-            return csp;
+            return instance;
         },
         upgradeInsecureRequests(): Csp {
             bean.upgradeInsecureRequests();
-            return csp;
+            return instance;
         },
         sandbox(...flags: SandboxFlag[]): Csp {
             bean.sandbox(__.toScriptValue(flags));
-            return csp;
+            return instance;
         },
         addScriptSrcSha(contentOrBase64: string, algo?: CspHashAlgo): Csp {
             if (algo === undefined) {
@@ -1267,7 +1307,7 @@ export function getCsp(): Csp {
             } else {
                 bean.addScriptSrcShaDigest(contentOrBase64, algo);
             }
-            return csp;
+            return instance;
         },
         addStyleSrcSha(contentOrBase64: string, algo?: CspHashAlgo): Csp {
             if (algo === undefined) {
@@ -1275,11 +1315,17 @@ export function getCsp(): Csp {
             } else {
                 bean.addStyleSrcShaDigest(contentOrBase64, algo);
             }
-            return csp;
+            return instance;
         },
-        getNonce(): string {
-            return bean.getNonce();
+        nonce(): string {
+            return bean.nonce();
+        },
+        nonceScriptSrc(): string {
+            return bean.nonceScriptSrc();
+        },
+        nonceStyleSrc(): string {
+            return bean.nonceStyleSrc();
         },
     };
-    return csp;
+    return instance;
 }
