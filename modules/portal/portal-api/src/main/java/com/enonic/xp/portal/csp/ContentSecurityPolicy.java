@@ -18,9 +18,10 @@ import static java.util.Objects.requireNonNull;
  *
  * <p>This instance is mutable and request-scoped. Multiple contributors during request rendering
  * (platform, site app, custom apps, widgets, page controllers) may extend the same policy through
- * {@link #add}, {@link #set}, {@link #addSha}, and {@link #nonce}. The final
- * {@code Content-Security-Policy} header value is composed at portal response-flush time by
- * {@link #build()} so late additions during rendering still land in the header.</p>
+ * the typed per-directive methods or through the generic escape hatches {@link #add},
+ * {@link #set}, and {@link #addSha}. The final {@code Content-Security-Policy} header value is
+ * composed at portal response-flush time by {@link #build()} so late additions during rendering
+ * still land in the header.</p>
  *
  * <p>Merge semantics — {@code add} is union for every directive class:</p>
  * <ul>
@@ -56,7 +57,9 @@ public final class ContentSecurityPolicy
 
     private static final int NONCE_BYTE_LENGTH = 16;
 
-    private static final String NONCE_DIRECTIVE = "script-src";
+    private static final String SCRIPT_SRC = "script-src";
+
+    private static final String STYLE_SRC = "style-src";
 
     private final Map<String, LinkedHashSet<String>> directives = new TreeMap<>();
 
@@ -120,6 +123,213 @@ public final class ContentSecurityPolicy
         return add( directive, "'" + algo.token() + "-" + base64 + "'" );
     }
 
+    public ContentSecurityPolicy defaultSrc( final CspSource... sources )
+    {
+        return addTokens( "default-src", sources );
+    }
+
+    public ContentSecurityPolicy defaultSrc( final String... sources )
+    {
+        return add( "default-src", sources );
+    }
+
+    public ContentSecurityPolicy scriptSrc( final CspSource... sources )
+    {
+        return addTokens( SCRIPT_SRC, sources );
+    }
+
+    public ContentSecurityPolicy scriptSrc( final String... sources )
+    {
+        return add( SCRIPT_SRC, sources );
+    }
+
+    public ContentSecurityPolicy styleSrc( final CspSource... sources )
+    {
+        return addTokens( STYLE_SRC, sources );
+    }
+
+    public ContentSecurityPolicy styleSrc( final String... sources )
+    {
+        return add( STYLE_SRC, sources );
+    }
+
+    public ContentSecurityPolicy imgSrc( final CspSource... sources )
+    {
+        return addTokens( "img-src", sources );
+    }
+
+    public ContentSecurityPolicy imgSrc( final String... sources )
+    {
+        return add( "img-src", sources );
+    }
+
+    public ContentSecurityPolicy fontSrc( final CspSource... sources )
+    {
+        return addTokens( "font-src", sources );
+    }
+
+    public ContentSecurityPolicy fontSrc( final String... sources )
+    {
+        return add( "font-src", sources );
+    }
+
+    public ContentSecurityPolicy connectSrc( final CspSource... sources )
+    {
+        return addTokens( "connect-src", sources );
+    }
+
+    public ContentSecurityPolicy connectSrc( final String... sources )
+    {
+        return add( "connect-src", sources );
+    }
+
+    public ContentSecurityPolicy mediaSrc( final CspSource... sources )
+    {
+        return addTokens( "media-src", sources );
+    }
+
+    public ContentSecurityPolicy mediaSrc( final String... sources )
+    {
+        return add( "media-src", sources );
+    }
+
+    public ContentSecurityPolicy objectSrc( final CspSource... sources )
+    {
+        return addTokens( "object-src", sources );
+    }
+
+    public ContentSecurityPolicy objectSrc( final String... sources )
+    {
+        return add( "object-src", sources );
+    }
+
+    public ContentSecurityPolicy frameSrc( final CspSource... sources )
+    {
+        return addTokens( "frame-src", sources );
+    }
+
+    public ContentSecurityPolicy frameSrc( final String... sources )
+    {
+        return add( "frame-src", sources );
+    }
+
+    public ContentSecurityPolicy workerSrc( final CspSource... sources )
+    {
+        return addTokens( "worker-src", sources );
+    }
+
+    public ContentSecurityPolicy workerSrc( final String... sources )
+    {
+        return add( "worker-src", sources );
+    }
+
+    public ContentSecurityPolicy manifestSrc( final CspSource... sources )
+    {
+        return addTokens( "manifest-src", sources );
+    }
+
+    public ContentSecurityPolicy manifestSrc( final String... sources )
+    {
+        return add( "manifest-src", sources );
+    }
+
+    public ContentSecurityPolicy childSrc( final CspSource... sources )
+    {
+        return addTokens( "child-src", sources );
+    }
+
+    public ContentSecurityPolicy childSrc( final String... sources )
+    {
+        return add( "child-src", sources );
+    }
+
+    public ContentSecurityPolicy frameAncestors( final CspSource... sources )
+    {
+        return addTokens( "frame-ancestors", sources );
+    }
+
+    public ContentSecurityPolicy frameAncestors( final String... sources )
+    {
+        return add( "frame-ancestors", sources );
+    }
+
+    public ContentSecurityPolicy baseUri( final CspSource... sources )
+    {
+        return addTokens( "base-uri", sources );
+    }
+
+    public ContentSecurityPolicy baseUri( final String... sources )
+    {
+        return add( "base-uri", sources );
+    }
+
+    public ContentSecurityPolicy formAction( final CspSource... sources )
+    {
+        return addTokens( "form-action", sources );
+    }
+
+    public ContentSecurityPolicy formAction( final String... sources )
+    {
+        return add( "form-action", sources );
+    }
+
+    /**
+     * Registers the boolean {@code upgrade-insecure-requests} directive.
+     */
+    public ContentSecurityPolicy upgradeInsecureRequests()
+    {
+        return add( "upgrade-insecure-requests" );
+    }
+
+    /**
+     * Unions {@code flags} into the {@code sandbox} directive. With no flags, registers an empty
+     * {@code sandbox} (all restrictions applied).
+     */
+    public ContentSecurityPolicy sandbox( final SandboxFlag... flags )
+    {
+        requireNonNull( flags, "flags is required" );
+        final String[] tokens = new String[flags.length];
+        for ( int i = 0; i < flags.length; i++ )
+        {
+            tokens[i] = requireNonNull( flags[i], "flag is required" ).token();
+        }
+        return add( "sandbox", tokens );
+    }
+
+    /**
+     * Computes the SHA-256 digest of {@code content} and unions {@code 'sha256-<base64>'} into
+     * {@code script-src}.
+     */
+    public ContentSecurityPolicy addScriptSrcSha( final byte[] content )
+    {
+        return addSha( SCRIPT_SRC, content );
+    }
+
+    /**
+     * Unions a precomputed {@code '<algo>-<base64>'} digest into {@code script-src}.
+     */
+    public ContentSecurityPolicy addScriptSrcSha( final HashAlgo algo, final String base64 )
+    {
+        return addSha( SCRIPT_SRC, algo, base64 );
+    }
+
+    /**
+     * Computes the SHA-256 digest of {@code content} and unions {@code 'sha256-<base64>'} into
+     * {@code style-src}.
+     */
+    public ContentSecurityPolicy addStyleSrcSha( final byte[] content )
+    {
+        return addSha( STYLE_SRC, content );
+    }
+
+    /**
+     * Unions a precomputed {@code '<algo>-<base64>'} digest into {@code style-src}.
+     */
+    public ContentSecurityPolicy addStyleSrcSha( final HashAlgo algo, final String base64 )
+    {
+        return addSha( STYLE_SRC, algo, base64 );
+    }
+
     /**
      * Returns a cryptographically random, base64-encoded nonce (≥ 128 bits of entropy), lazily
      * generated and cached on first call. Every call after the first returns the same value for the
@@ -137,7 +347,7 @@ public final class ContentSecurityPolicy
             final byte[] bytes = new byte[NONCE_BYTE_LENGTH];
             SECURE_RANDOM.nextBytes( bytes );
             this.nonceValue = NONCE_BASE64.encodeToString( bytes );
-            this.directives.computeIfAbsent( NONCE_DIRECTIVE, k -> new LinkedHashSet<>() ).add( "'nonce-" + this.nonceValue + "'" );
+            this.directives.computeIfAbsent( SCRIPT_SRC, k -> new LinkedHashSet<>() ).add( "'nonce-" + this.nonceValue + "'" );
         }
         return this.nonceValue;
     }
@@ -170,6 +380,17 @@ public final class ContentSecurityPolicy
             }
         }
         return sb.toString();
+    }
+
+    private ContentSecurityPolicy addTokens( final String directive, final CspSource[] sources )
+    {
+        requireNonNull( sources, "sources is required" );
+        final String[] tokens = new String[sources.length];
+        for ( int i = 0; i < sources.length; i++ )
+        {
+            tokens[i] = requireNonNull( sources[i], "source is required" ).token();
+        }
+        return add( directive, tokens );
     }
 
     private static byte[] digest( final HashAlgo algo, final byte[] content )

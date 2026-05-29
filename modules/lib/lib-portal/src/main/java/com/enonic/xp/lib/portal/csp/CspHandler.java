@@ -39,6 +39,113 @@ public final class CspHandler
         policy().addSha( directive, parseAlgo( algo ), base64 );
     }
 
+    public void defaultSrc( final ScriptValue sources )
+    {
+        policy().defaultSrc( toSources( sources ) );
+    }
+
+    public void scriptSrc( final ScriptValue sources )
+    {
+        policy().scriptSrc( toSources( sources ) );
+    }
+
+    public void styleSrc( final ScriptValue sources )
+    {
+        policy().styleSrc( toSources( sources ) );
+    }
+
+    public void imgSrc( final ScriptValue sources )
+    {
+        policy().imgSrc( toSources( sources ) );
+    }
+
+    public void fontSrc( final ScriptValue sources )
+    {
+        policy().fontSrc( toSources( sources ) );
+    }
+
+    public void connectSrc( final ScriptValue sources )
+    {
+        policy().connectSrc( toSources( sources ) );
+    }
+
+    public void mediaSrc( final ScriptValue sources )
+    {
+        policy().mediaSrc( toSources( sources ) );
+    }
+
+    public void objectSrc( final ScriptValue sources )
+    {
+        policy().objectSrc( toSources( sources ) );
+    }
+
+    public void frameSrc( final ScriptValue sources )
+    {
+        policy().frameSrc( toSources( sources ) );
+    }
+
+    public void workerSrc( final ScriptValue sources )
+    {
+        policy().workerSrc( toSources( sources ) );
+    }
+
+    public void manifestSrc( final ScriptValue sources )
+    {
+        policy().manifestSrc( toSources( sources ) );
+    }
+
+    public void childSrc( final ScriptValue sources )
+    {
+        policy().childSrc( toSources( sources ) );
+    }
+
+    public void frameAncestors( final ScriptValue sources )
+    {
+        policy().frameAncestors( toSources( sources ) );
+    }
+
+    public void baseUri( final ScriptValue sources )
+    {
+        policy().baseUri( toSources( sources ) );
+    }
+
+    public void formAction( final ScriptValue sources )
+    {
+        policy().formAction( toSources( sources ) );
+    }
+
+    public void upgradeInsecureRequests()
+    {
+        policy().upgradeInsecureRequests();
+    }
+
+    public void sandbox( final ScriptValue flags )
+    {
+        policy().add( "sandbox", toSources( flags ) );
+    }
+
+    public void addScriptSrcShaContent( final String content )
+    {
+        requireNonNull( content, "content is required" );
+        policy().addScriptSrcSha( content.getBytes( StandardCharsets.UTF_8 ) );
+    }
+
+    public void addScriptSrcShaDigest( final String base64, final String algo )
+    {
+        policy().addScriptSrcSha( parseAlgo( algo ), base64 );
+    }
+
+    public void addStyleSrcShaContent( final String content )
+    {
+        requireNonNull( content, "content is required" );
+        policy().addStyleSrcSha( content.getBytes( StandardCharsets.UTF_8 ) );
+    }
+
+    public void addStyleSrcShaDigest( final String base64, final String algo )
+    {
+        policy().addStyleSrcSha( parseAlgo( algo ), base64 );
+    }
+
     public String getNonce()
     {
         return policy().nonce();

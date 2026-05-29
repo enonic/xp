@@ -951,6 +951,43 @@ export interface MacroContext {
 export type CspHashAlgo = 'sha256' | 'sha384' | 'sha512';
 
 /**
+ * Special source-list keywords used in a CSP source expression, per W3C CSP3. Variadic
+ * source params on {@link Csp} accept these values or raw strings (hosts, schemes, paths,
+ * full URLs).
+ */
+export const CspSource = {
+    SELF: "'self'",
+    NONE: "'none'",
+    UNSAFE_INLINE: "'unsafe-inline'",
+    UNSAFE_EVAL: "'unsafe-eval'",
+    STRICT_DYNAMIC: "'strict-dynamic'",
+    UNSAFE_HASHES: "'unsafe-hashes'",
+    WASM_UNSAFE_EVAL: "'wasm-unsafe-eval'",
+    REPORT_SAMPLE: "'report-sample'",
+} as const;
+
+export type CspSource = typeof CspSource[keyof typeof CspSource];
+
+/**
+ * Flags allowed in a CSP `sandbox` directive. Sandbox tokens are emitted unquoted,
+ * as the CSP spec defines them.
+ */
+export const SandboxFlag = {
+    ALLOW_SCRIPTS: 'allow-scripts',
+    ALLOW_SAME_ORIGIN: 'allow-same-origin',
+    ALLOW_FORMS: 'allow-forms',
+    ALLOW_POPUPS: 'allow-popups',
+    ALLOW_MODALS: 'allow-modals',
+    ALLOW_TOP_NAVIGATION: 'allow-top-navigation',
+    ALLOW_DOWNLOADS: 'allow-downloads',
+    ALLOW_POINTER_LOCK: 'allow-pointer-lock',
+    ALLOW_PRESENTATION: 'allow-presentation',
+    ALLOW_ORIENTATION_LOCK: 'allow-orientation-lock',
+} as const;
+
+export type SandboxFlag = typeof SandboxFlag[keyof typeof SandboxFlag];
+
+/**
  * A request-scoped Content Security Policy builder. The same instance is returned
  * for the lifetime of the current portal request, so multiple controllers, layouts,
  * parts and widgets can each contribute to the final policy.
@@ -988,6 +1025,82 @@ export interface Csp {
      */
     addSha(directive: string, base64: string, algo: CspHashAlgo): Csp;
 
+    /** Unions sources into `default-src`. */
+    defaultSrc(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions sources into `script-src`. */
+    scriptSrc(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions sources into `style-src`. */
+    styleSrc(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions sources into `img-src`. */
+    imgSrc(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions sources into `font-src`. */
+    fontSrc(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions sources into `connect-src`. */
+    connectSrc(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions sources into `media-src`. */
+    mediaSrc(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions sources into `object-src`. */
+    objectSrc(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions sources into `frame-src`. */
+    frameSrc(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions sources into `worker-src`. */
+    workerSrc(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions sources into `manifest-src`. */
+    manifestSrc(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions sources into `child-src`. */
+    childSrc(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions sources into `frame-ancestors`. */
+    frameAncestors(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions sources into `base-uri`. */
+    baseUri(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions sources into `form-action`. */
+    formAction(...sources: (CspSource | string)[]): Csp;
+
+    /** Registers the boolean `upgrade-insecure-requests` directive. */
+    upgradeInsecureRequests(): Csp;
+
+    /**
+     * Unions sandbox flags into the `sandbox` directive. With no flags, registers
+     * an empty `sandbox` (all restrictions applied).
+     */
+    sandbox(...flags: SandboxFlag[]): Csp;
+
+    /**
+     * Computes a SHA-256 digest of the UTF-8 bytes of `content` and unions
+     * `'sha256-<base64>'` into `script-src`.
+     */
+    addScriptSrcSha(content: string): Csp;
+
+    /**
+     * Unions a precomputed `'<algo>-<base64>'` digest into `script-src`.
+     */
+    addScriptSrcSha(base64: string, algo: CspHashAlgo): Csp;
+
+    /**
+     * Computes a SHA-256 digest of the UTF-8 bytes of `content` and unions
+     * `'sha256-<base64>'` into `style-src`.
+     */
+    addStyleSrcSha(content: string): Csp;
+
+    /**
+     * Unions a precomputed `'<algo>-<base64>'` digest into `style-src`.
+     */
+    addStyleSrcSha(base64: string, algo: CspHashAlgo): Csp;
+
     /**
      * Returns the request-scoped nonce, lazily generated on first call and
      * cached for the remainder of the request. On first call, `'nonce-<value>'`
@@ -1006,6 +1119,48 @@ interface CspHandler {
     addShaContent(directive: string, content: string): void;
 
     addShaDigest(directive: string, base64: string, algo: string): void;
+
+    defaultSrc(sources: ScriptValue): void;
+
+    scriptSrc(sources: ScriptValue): void;
+
+    styleSrc(sources: ScriptValue): void;
+
+    imgSrc(sources: ScriptValue): void;
+
+    fontSrc(sources: ScriptValue): void;
+
+    connectSrc(sources: ScriptValue): void;
+
+    mediaSrc(sources: ScriptValue): void;
+
+    objectSrc(sources: ScriptValue): void;
+
+    frameSrc(sources: ScriptValue): void;
+
+    workerSrc(sources: ScriptValue): void;
+
+    manifestSrc(sources: ScriptValue): void;
+
+    childSrc(sources: ScriptValue): void;
+
+    frameAncestors(sources: ScriptValue): void;
+
+    baseUri(sources: ScriptValue): void;
+
+    formAction(sources: ScriptValue): void;
+
+    upgradeInsecureRequests(): void;
+
+    sandbox(flags: ScriptValue): void;
+
+    addScriptSrcShaContent(content: string): void;
+
+    addScriptSrcShaDigest(base64: string, algo: string): void;
+
+    addStyleSrcShaContent(content: string): void;
+
+    addStyleSrcShaDigest(base64: string, algo: string): void;
 
     getNonce(): string;
 }
@@ -1035,6 +1190,90 @@ export function getCsp(): Csp {
                 bean.addShaContent(directive, contentOrBase64);
             } else {
                 bean.addShaDigest(directive, contentOrBase64, algo);
+            }
+            return csp;
+        },
+        defaultSrc(...sources: (CspSource | string)[]): Csp {
+            bean.defaultSrc(__.toScriptValue(sources));
+            return csp;
+        },
+        scriptSrc(...sources: (CspSource | string)[]): Csp {
+            bean.scriptSrc(__.toScriptValue(sources));
+            return csp;
+        },
+        styleSrc(...sources: (CspSource | string)[]): Csp {
+            bean.styleSrc(__.toScriptValue(sources));
+            return csp;
+        },
+        imgSrc(...sources: (CspSource | string)[]): Csp {
+            bean.imgSrc(__.toScriptValue(sources));
+            return csp;
+        },
+        fontSrc(...sources: (CspSource | string)[]): Csp {
+            bean.fontSrc(__.toScriptValue(sources));
+            return csp;
+        },
+        connectSrc(...sources: (CspSource | string)[]): Csp {
+            bean.connectSrc(__.toScriptValue(sources));
+            return csp;
+        },
+        mediaSrc(...sources: (CspSource | string)[]): Csp {
+            bean.mediaSrc(__.toScriptValue(sources));
+            return csp;
+        },
+        objectSrc(...sources: (CspSource | string)[]): Csp {
+            bean.objectSrc(__.toScriptValue(sources));
+            return csp;
+        },
+        frameSrc(...sources: (CspSource | string)[]): Csp {
+            bean.frameSrc(__.toScriptValue(sources));
+            return csp;
+        },
+        workerSrc(...sources: (CspSource | string)[]): Csp {
+            bean.workerSrc(__.toScriptValue(sources));
+            return csp;
+        },
+        manifestSrc(...sources: (CspSource | string)[]): Csp {
+            bean.manifestSrc(__.toScriptValue(sources));
+            return csp;
+        },
+        childSrc(...sources: (CspSource | string)[]): Csp {
+            bean.childSrc(__.toScriptValue(sources));
+            return csp;
+        },
+        frameAncestors(...sources: (CspSource | string)[]): Csp {
+            bean.frameAncestors(__.toScriptValue(sources));
+            return csp;
+        },
+        baseUri(...sources: (CspSource | string)[]): Csp {
+            bean.baseUri(__.toScriptValue(sources));
+            return csp;
+        },
+        formAction(...sources: (CspSource | string)[]): Csp {
+            bean.formAction(__.toScriptValue(sources));
+            return csp;
+        },
+        upgradeInsecureRequests(): Csp {
+            bean.upgradeInsecureRequests();
+            return csp;
+        },
+        sandbox(...flags: SandboxFlag[]): Csp {
+            bean.sandbox(__.toScriptValue(flags));
+            return csp;
+        },
+        addScriptSrcSha(contentOrBase64: string, algo?: CspHashAlgo): Csp {
+            if (algo === undefined) {
+                bean.addScriptSrcShaContent(contentOrBase64);
+            } else {
+                bean.addScriptSrcShaDigest(contentOrBase64, algo);
+            }
+            return csp;
+        },
+        addStyleSrcSha(contentOrBase64: string, algo?: CspHashAlgo): Csp {
+            if (algo === undefined) {
+                bean.addStyleSrcShaContent(contentOrBase64);
+            } else {
+                bean.addStyleSrcShaDigest(contentOrBase64, algo);
             }
             return csp;
         },

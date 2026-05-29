@@ -66,6 +66,72 @@ public class CspHandlerScriptTest
         runFunction( "/test/getCsp-test.js", "manualNonceInStyleSrc" );
     }
 
+    @Test
+    void scriptSrcTypedAndRaw()
+    {
+        runFunction( "/test/getCsp-test.js", "scriptSrcTypedAndRaw" );
+    }
+
+    @Test
+    void scriptSrcAndAddUnion()
+    {
+        runFunction( "/test/getCsp-test.js", "scriptSrcAndAddUnion" );
+    }
+
+    @Test
+    void upgradeInsecureRequests()
+    {
+        runFunction( "/test/getCsp-test.js", "upgradeInsecureRequests" );
+    }
+
+    @Test
+    void sandboxSingleFlag()
+    {
+        runFunction( "/test/getCsp-test.js", "sandboxSingleFlag" );
+    }
+
+    @Test
+    void sandboxMultipleFlags()
+    {
+        runFunction( "/test/getCsp-test.js", "sandboxMultipleFlags" );
+    }
+
+    @Test
+    void addScriptSrcShaContent()
+    {
+        runFunction( "/test/getCsp-test.js", "addScriptSrcShaContent" );
+    }
+
+    @Test
+    void addScriptSrcShaDigest()
+    {
+        runFunction( "/test/getCsp-test.js", "addScriptSrcShaDigest" );
+    }
+
+    @Test
+    void addStyleSrcShaContent()
+    {
+        runFunction( "/test/getCsp-test.js", "addStyleSrcShaContent" );
+    }
+
+    @Test
+    void cspSourceTokens()
+    {
+        runFunction( "/test/getCsp-test.js", "cspSourceTokens" );
+    }
+
+    @Test
+    void sandboxFlagTokens()
+    {
+        runFunction( "/test/getCsp-test.js", "sandboxFlagTokens" );
+    }
+
+    @Test
+    void restrictiveDirectivesTyped()
+    {
+        runFunction( "/test/getCsp-test.js", "restrictiveDirectivesTyped" );
+    }
+
     public String policyBuild()
     {
         return this.portalRequest.getContentSecurityPolicy().build();
