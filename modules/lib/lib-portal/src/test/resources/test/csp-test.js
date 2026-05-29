@@ -243,7 +243,7 @@ exports.strictDynamic = function () {
     csp.strictDynamic();
     var n = csp.nonceScriptSrc();
     assert.assertEquals(
-        "base-uri 'none'; object-src 'none'; script-src 'nonce-" + n + "' 'strict-dynamic' https: 'unsafe-inline'",
+        "base-uri 'none'; object-src 'none'; script-src 'nonce-" + n + "' 'strict-dynamic'",
         __.toNativeObject(testInstance.policyBuild())
     );
 };

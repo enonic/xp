@@ -394,7 +394,7 @@ class ContentSecurityPolicyTest
         final ContentSecurityPolicy csp = new ContentSecurityPolicy().strictDynamic();
         final String nonce = csp.nonceScriptSrc();
         assertThat( csp.build() ).isEqualTo(
-            "base-uri 'none'; object-src 'none'; script-src 'nonce-" + nonce + "' 'strict-dynamic' https: 'unsafe-inline'" );
+            "base-uri 'none'; object-src 'none'; script-src 'nonce-" + nonce + "' 'strict-dynamic'" );
     }
 
     @Test

@@ -135,22 +135,19 @@ public final class ContentSecurityPolicy
     }
 
     /**
-     * Seeds the nonce-based "strict CSP" baseline recommended by
-     * <a href="https://web.dev/articles/strict-csp">web.dev</a>:
-     * {@code script-src 'nonce-<value>' 'strict-dynamic' https: 'unsafe-inline'},
-     * {@code object-src 'none'}, and {@code base-uri 'none'}. A request nonce is generated eagerly on
-     * {@code script-src} (retrieve it with {@link #nonceScriptSrc()} to stamp on inline
-     * {@code <script nonce="...">} tags).
-     * {@code 'strict-dynamic'} lets those trusted scripts load further scripts, while {@code https:}
-     * and {@code 'unsafe-inline'} are fallbacks ignored by browsers that honor the nonce. Call it
-     * first, then add more sources as needed.
+     * Seeds a nonce-based "strict CSP" baseline (the modern core of the
+     * <a href="https://web.dev/articles/strict-csp">web.dev</a> recipe, without its legacy
+     * {@code https:} / {@code 'unsafe-inline'} fallbacks): {@code script-src 'nonce-<value>'
+     * 'strict-dynamic'}, {@code object-src 'none'}, and {@code base-uri 'none'}. A request nonce is
+     * generated eagerly on {@code script-src} (retrieve it with {@link #nonceScriptSrc()} to stamp
+     * on inline {@code <script nonce="...">} tags); {@code 'strict-dynamic'} lets those
+     * nonce-trusted scripts load further scripts without a host allowlist. Call it first, then add
+     * more sources as needed.
      */
     public ContentSecurityPolicy strictDynamic()
     {
         nonceScriptSrc();
         scriptSrc( CspSource.STRICT_DYNAMIC );
-        scriptSrc( "https:" );
-        scriptSrc( CspSource.UNSAFE_INLINE );
         objectSrc( CspSource.NONE );
         baseUri( CspSource.NONE );
         return this;
