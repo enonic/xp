@@ -42,6 +42,10 @@ tasks.register( 'typescript', NpmTask ) {
     inputs.file coreDir.file( "index.d.ts" )
     inputs.file "tsconfig.build.json"
     inputs.file "tsconfig.json"
+    inputs.files( subprojects.collect {
+        it.layout.projectDirectory.dir( 'src/main/resources/lib/xp' )
+            .asFileTree.matching { include '**/*.ts', '**/*.js', '**/*.json' }
+    } )
     outputs.files( subprojects.collect {
         it.layout.buildDirectory.dir( 'typescript/lib/xp' ).map { d -> d.asFileTree.matching { include '**/*.js' }
         }
