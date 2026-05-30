@@ -1138,9 +1138,9 @@ export interface Csp {
 }
 
 interface CspHandler {
-    add(directive: string, sources: ScriptValue): void;
+    add(directive: string, sources: string[]): void;
 
-    set(directive: string, sources: ScriptValue): void;
+    set(directive: string, sources: string[]): void;
 
     strict(): void;
 
@@ -1150,39 +1150,39 @@ interface CspHandler {
 
     addShaDigest(directive: string, base64: string, algo: string): void;
 
-    defaultSrc(sources: ScriptValue): void;
+    defaultSrc(sources: string[]): void;
 
-    scriptSrc(sources: ScriptValue): void;
+    scriptSrc(sources: string[]): void;
 
-    styleSrc(sources: ScriptValue): void;
+    styleSrc(sources: string[]): void;
 
-    imgSrc(sources: ScriptValue): void;
+    imgSrc(sources: string[]): void;
 
-    fontSrc(sources: ScriptValue): void;
+    fontSrc(sources: string[]): void;
 
-    connectSrc(sources: ScriptValue): void;
+    connectSrc(sources: string[]): void;
 
-    mediaSrc(sources: ScriptValue): void;
+    mediaSrc(sources: string[]): void;
 
-    objectSrc(sources: ScriptValue): void;
+    objectSrc(sources: string[]): void;
 
-    frameSrc(sources: ScriptValue): void;
+    frameSrc(sources: string[]): void;
 
-    workerSrc(sources: ScriptValue): void;
+    workerSrc(sources: string[]): void;
 
-    manifestSrc(sources: ScriptValue): void;
+    manifestSrc(sources: string[]): void;
 
-    childSrc(sources: ScriptValue): void;
+    childSrc(sources: string[]): void;
 
-    frameAncestors(sources: ScriptValue): void;
+    frameAncestors(sources: string[]): void;
 
-    baseUri(sources: ScriptValue): void;
+    baseUri(sources: string[]): void;
 
-    formAction(sources: ScriptValue): void;
+    formAction(sources: string[]): void;
 
     upgradeInsecureRequests(): void;
 
-    sandbox(flags: ScriptValue): void;
+    sandbox(flags: string[]): void;
 
     addScriptSrcShaContent(content: string): void;
 
@@ -1212,11 +1212,11 @@ export function csp(): Csp {
 
     const instance: Csp = {
         add(directive: string, sources: string[]): Csp {
-            bean.add(directive, __.toScriptValue(sources));
+            bean.add(directive, sources);
             return instance;
         },
         set(directive: string, sources: string[]): Csp {
-            bean.set(directive, __.toScriptValue(sources));
+            bean.set(directive, sources);
             return instance;
         },
         strict(): Csp {
@@ -1236,63 +1236,63 @@ export function csp(): Csp {
             return instance;
         },
         defaultSrc(...sources: (CspSource | string)[]): Csp {
-            bean.defaultSrc(__.toScriptValue(sources));
+            bean.defaultSrc(sources);
             return instance;
         },
         scriptSrc(...sources: (CspSource | string)[]): Csp {
-            bean.scriptSrc(__.toScriptValue(sources));
+            bean.scriptSrc(sources);
             return instance;
         },
         styleSrc(...sources: (CspSource | string)[]): Csp {
-            bean.styleSrc(__.toScriptValue(sources));
+            bean.styleSrc(sources);
             return instance;
         },
         imgSrc(...sources: (CspSource | string)[]): Csp {
-            bean.imgSrc(__.toScriptValue(sources));
+            bean.imgSrc(sources);
             return instance;
         },
         fontSrc(...sources: (CspSource | string)[]): Csp {
-            bean.fontSrc(__.toScriptValue(sources));
+            bean.fontSrc(sources);
             return instance;
         },
         connectSrc(...sources: (CspSource | string)[]): Csp {
-            bean.connectSrc(__.toScriptValue(sources));
+            bean.connectSrc(sources);
             return instance;
         },
         mediaSrc(...sources: (CspSource | string)[]): Csp {
-            bean.mediaSrc(__.toScriptValue(sources));
+            bean.mediaSrc(sources);
             return instance;
         },
         objectSrc(...sources: (CspSource | string)[]): Csp {
-            bean.objectSrc(__.toScriptValue(sources));
+            bean.objectSrc(sources);
             return instance;
         },
         frameSrc(...sources: (CspSource | string)[]): Csp {
-            bean.frameSrc(__.toScriptValue(sources));
+            bean.frameSrc(sources);
             return instance;
         },
         workerSrc(...sources: (CspSource | string)[]): Csp {
-            bean.workerSrc(__.toScriptValue(sources));
+            bean.workerSrc(sources);
             return instance;
         },
         manifestSrc(...sources: (CspSource | string)[]): Csp {
-            bean.manifestSrc(__.toScriptValue(sources));
+            bean.manifestSrc(sources);
             return instance;
         },
         childSrc(...sources: (CspSource | string)[]): Csp {
-            bean.childSrc(__.toScriptValue(sources));
+            bean.childSrc(sources);
             return instance;
         },
         frameAncestors(...sources: (CspSource | string)[]): Csp {
-            bean.frameAncestors(__.toScriptValue(sources));
+            bean.frameAncestors(sources);
             return instance;
         },
         baseUri(...sources: (CspSource | string)[]): Csp {
-            bean.baseUri(__.toScriptValue(sources));
+            bean.baseUri(sources);
             return instance;
         },
         formAction(...sources: (CspSource | string)[]): Csp {
-            bean.formAction(__.toScriptValue(sources));
+            bean.formAction(sources);
             return instance;
         },
         upgradeInsecureRequests(): Csp {
@@ -1300,7 +1300,7 @@ export function csp(): Csp {
             return instance;
         },
         sandbox(...flags: SandboxFlag[]): Csp {
-            bean.sandbox(__.toScriptValue(flags));
+            bean.sandbox(flags);
             return instance;
         },
         addScriptSrcSha(contentOrBase64: string, algo?: CspHashAlgo): Csp {
