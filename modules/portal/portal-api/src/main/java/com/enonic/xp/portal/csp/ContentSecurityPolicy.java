@@ -23,26 +23,23 @@ import static java.util.Objects.requireNonNull;
  * composed at portal response-flush time by {@link #build()} so late additions during rendering
  * still land in the header.</p>
  *
- * <p>Merge semantics — {@code add} is union for every directive class:</p>
- * <ul>
- *   <li><b>Source-list</b> ({@code script-src}, {@code style-src}, {@code img-src},
- *       {@code connect-src}, …): {@code add} appends new sources to the existing set, deduped.</li>
- *   <li><b>Boolean</b> ({@code upgrade-insecure-requests},
- *       {@code block-all-mixed-content}): there is no value to weaken; both {@code add} and
- *       {@code set} ensure the directive is present.</li>
- *   <li><b>Restrictive</b> ({@code frame-ancestors}, {@code base-uri}, {@code sandbox}):
- *       {@code add} unions sources. Browsers interpret the union permissively, which matches the
- *       weaker-on-conflict semantics this API targets.</li>
- * </ul>
+ * <p>Merge semantics — this policy is a <i>collector of wishes</i> from every contributor in the
+ * chain, and it aims for the most permissive result so that no contributor's content is blocked by
+ * another's policy. {@code add} unions sources for a directive (deduped); {@code set} resets a
+ * directive's source list (no freeze — {@code add} after {@code set} still extends).</p>
+ *
+ * <p>Because this is an aggregator and not a browser, {@link #build()} resolves the one CSP3
+ * interaction where a syntactic union would be <i>less</i> permissive than its parts: when a
+ * directive holds {@code 'unsafe-inline'} together with a {@code 'nonce-…'} or a hash source, a
+ * browser ignores {@code 'unsafe-inline'} and so allows fewer inline scripts/styles. To honor the
+ * relaxing wish, {@code build()} drops the nonce/hash sources from that directive — {@code 'unsafe-inline'}
+ * already permits every inline a nonce/hash would have, so the result only widens. The trade-off is
+ * deliberate: a contributor that adds {@code 'unsafe-inline'} voids another's nonce/hash hardening on
+ * that directive (weakest wish wins).</p>
  *
  * <p>A {@code nonce-} source is valid only for {@code script-src} and {@code style-src}. Use
  * {@link #nonceScriptSrc()} or {@link #nonceStyleSrc()} to wire it into one, or {@link #nonce()}
  * for both; each returns the same request-scoped value to stamp on the matching inline tag.</p>
- *
- * <p>{@code 'unsafe-inline'} interaction: per W3C CSP3, modern browsers ignore
- * {@code 'unsafe-inline'} when a {@code 'nonce-…'} or {@code 'strict-dynamic'} value is also
- * present. This API does not attempt to be clever — if both are added, both are emitted in the
- * header and the browser's precedence rules apply.</p>
  */
 @NullMarked
 public final class ContentSecurityPolicy
@@ -58,6 +55,8 @@ public final class ContentSecurityPolicy
     private static final String SCRIPT_SRC = "script-src";
 
     private static final String STYLE_SRC = "style-src";
+
+    private static final String UNSAFE_INLINE = "'unsafe-inline'";
 
     private final Map<String, LinkedHashSet<String>> directives = new TreeMap<>();
 
@@ -410,6 +409,10 @@ public final class ContentSecurityPolicy
      *
      * <p>Directives are emitted in alphabetical order for deterministic output. Sources within a
      * directive follow insertion order.</p>
+     *
+     * <p>Relaxing resolution: in a directive that holds {@code 'unsafe-inline'}, any {@code 'nonce-…'}
+     * and hash sources are omitted from the output — they would otherwise make a browser ignore
+     * {@code 'unsafe-inline'} and allow fewer inline scripts/styles than was wished for.</p>
      */
     public String build()
     {
@@ -425,12 +428,24 @@ public final class ContentSecurityPolicy
                 sb.append( "; " );
             }
             sb.append( entry.getKey() );
-            for ( final String source : entry.getValue() )
+            final LinkedHashSet<String> sources = entry.getValue();
+            final boolean dropNonceAndHash = sources.contains( UNSAFE_INLINE );
+            for ( final String source : sources )
             {
+                if ( dropNonceAndHash && isNonceOrHash( source ) )
+                {
+                    continue;
+                }
                 sb.append( ' ' ).append( source );
             }
         }
         return sb.toString();
+    }
+
+    private static boolean isNonceOrHash( final String source )
+    {
+        return source.startsWith( "'nonce-" ) || source.startsWith( "'sha256-" ) || source.startsWith( "'sha384-" ) ||
+            source.startsWith( "'sha512-" );
     }
 
     private ContentSecurityPolicy addTokens( final String directive, final CspSource[] sources )

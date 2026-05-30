@@ -128,11 +128,45 @@ class ContentSecurityPolicyTest
     }
 
     @Test
-    void unsafe_inline_and_nonce_coexist_in_output()
+    void unsafe_inline_drops_nonce_in_output()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy().add( "script-src", "'unsafe-inline'" );
+        csp.nonceScriptSrc();
+        assertThat( csp.build() ).isEqualTo( "script-src 'unsafe-inline'" );
+    }
+
+    @Test
+    void unsafe_inline_drops_hash_in_output()
+    {
+        final ContentSecurityPolicy csp =
+            new ContentSecurityPolicy().add( "style-src", "'unsafe-inline'" ).addStyleSrcSha( HashAlgo.SHA256, "AbC" );
+        assertThat( csp.build() ).isEqualTo( "style-src 'unsafe-inline'" );
+    }
+
+    @Test
+    void unsafe_inline_drops_nonce_regardless_of_order()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy();
+        csp.nonceScriptSrc();
+        csp.add( "script-src", "'unsafe-inline'" );
+        assertThat( csp.build() ).isEqualTo( "script-src 'unsafe-inline'" );
+    }
+
+    @Test
+    void unsafe_inline_keeps_host_and_self_sources()
+    {
+        final ContentSecurityPolicy csp =
+            new ContentSecurityPolicy().scriptSrc( CspSource.SELF, CspSource.UNSAFE_INLINE ).scriptSrc( "https://cdn.example.com" );
+        csp.nonceScriptSrc();
+        assertThat( csp.build() ).isEqualTo( "script-src 'self' 'unsafe-inline' https://cdn.example.com" );
+    }
+
+    @Test
+    void nonce_kept_without_unsafe_inline()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrc( CspSource.SELF );
         final String nonce = csp.nonceScriptSrc();
-        assertThat( csp.build() ).isEqualTo( "script-src 'unsafe-inline' 'nonce-" + nonce + "'" );
+        assertThat( csp.build() ).isEqualTo( "script-src 'self' 'nonce-" + nonce + "'" );
     }
 
     @Test
