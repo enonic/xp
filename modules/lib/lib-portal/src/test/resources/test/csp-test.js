@@ -8,7 +8,6 @@ exports.returnsObject = function () {
     assert.assertEquals('function', typeof csp.set);
     assert.assertEquals('function', typeof csp.strict);
     assert.assertEquals('function', typeof csp.strictDynamic);
-    assert.assertEquals('function', typeof csp.nonce);
     assert.assertEquals('function', typeof csp.nonceScriptSrc);
     assert.assertEquals('function', typeof csp.nonceStyleSrc);
     assert.assertEquals('function', typeof csp.defaultSrc);
@@ -76,22 +75,11 @@ exports.nonceStyleSrc = function () {
     assert.assertEquals("style-src 'nonce-" + n + "'", __.toNativeObject(testInstance.policyBuild()));
 };
 
-exports.nonceBoth = function () {
-    var csp = portal.csp();
-    var n = csp.nonce();
-    assert.assertEquals(
-        "script-src 'nonce-" + n + "'; style-src 'nonce-" + n + "'",
-        __.toNativeObject(testInstance.policyBuild())
-    );
-};
-
 exports.nonceStableAcrossMethods = function () {
     var csp = portal.csp();
     var a = csp.nonceScriptSrc();
     var b = csp.nonceStyleSrc();
-    var c = csp.nonce();
     assert.assertEquals(a, b);
-    assert.assertEquals(a, c);
     assert.assertEquals(
         "script-src 'nonce-" + a + "'; style-src 'nonce-" + a + "'",
         __.toNativeObject(testInstance.policyBuild())
@@ -240,9 +228,18 @@ exports.strictThenOpenUp = function () {
 exports.strictDynamic = function () {
     var csp = portal.csp();
     csp.strictDynamic();
+    assert.assertEquals(
+        "base-uri 'none'; object-src 'none'; script-src 'strict-dynamic'",
+        __.toNativeObject(testInstance.policyBuild())
+    );
+};
+
+exports.strictDynamicBootstrappedWithNonce = function () {
+    var csp = portal.csp();
+    csp.strictDynamic();
     var n = csp.nonceScriptSrc();
     assert.assertEquals(
-        "base-uri 'none'; object-src 'none'; script-src 'nonce-" + n + "' 'strict-dynamic'",
+        "base-uri 'none'; object-src 'none'; script-src 'strict-dynamic' 'nonce-" + n + "'",
         __.toNativeObject(testInstance.policyBuild())
     );
 };
