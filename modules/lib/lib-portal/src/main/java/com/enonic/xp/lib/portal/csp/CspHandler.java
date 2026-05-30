@@ -1,13 +1,11 @@
 package com.enonic.xp.lib.portal.csp;
 
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 import java.util.Locale;
 
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.csp.ContentSecurityPolicy;
 import com.enonic.xp.portal.csp.HashAlgo;
-import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 
@@ -18,14 +16,14 @@ public final class CspHandler
 {
     private PortalRequest request;
 
-    public void add( final String directive, final ScriptValue sources )
+    public void add( final String directive, final String[] sources )
     {
-        policy().add( directive, toSources( sources ) );
+        policy().add( directive, sources );
     }
 
-    public void set( final String directive, final ScriptValue sources )
+    public void set( final String directive, final String[] sources )
     {
-        policy().set( directive, toSources( sources ) );
+        policy().set( directive, sources );
     }
 
     public void strict()
@@ -49,79 +47,79 @@ public final class CspHandler
         policy().addSha( directive, parseAlgo( algo ), base64 );
     }
 
-    public void defaultSrc( final ScriptValue sources )
+    public void defaultSrc( final String[] sources )
     {
-        policy().defaultSrc( toSources( sources ) );
+        policy().defaultSrc( sources );
     }
 
-    public void scriptSrc( final ScriptValue sources )
+    public void scriptSrc( final String[] sources )
     {
-        policy().scriptSrc( toSources( sources ) );
+        policy().scriptSrc( sources );
     }
 
-    public void styleSrc( final ScriptValue sources )
+    public void styleSrc( final String[] sources )
     {
-        policy().styleSrc( toSources( sources ) );
+        policy().styleSrc( sources );
     }
 
-    public void imgSrc( final ScriptValue sources )
+    public void imgSrc( final String[] sources )
     {
-        policy().imgSrc( toSources( sources ) );
+        policy().imgSrc( sources );
     }
 
-    public void fontSrc( final ScriptValue sources )
+    public void fontSrc( final String[] sources )
     {
-        policy().fontSrc( toSources( sources ) );
+        policy().fontSrc( sources );
     }
 
-    public void connectSrc( final ScriptValue sources )
+    public void connectSrc( final String[] sources )
     {
-        policy().connectSrc( toSources( sources ) );
+        policy().connectSrc( sources );
     }
 
-    public void mediaSrc( final ScriptValue sources )
+    public void mediaSrc( final String[] sources )
     {
-        policy().mediaSrc( toSources( sources ) );
+        policy().mediaSrc( sources );
     }
 
-    public void objectSrc( final ScriptValue sources )
+    public void objectSrc( final String[] sources )
     {
-        policy().objectSrc( toSources( sources ) );
+        policy().objectSrc( sources );
     }
 
-    public void frameSrc( final ScriptValue sources )
+    public void frameSrc( final String[] sources )
     {
-        policy().frameSrc( toSources( sources ) );
+        policy().frameSrc( sources );
     }
 
-    public void workerSrc( final ScriptValue sources )
+    public void workerSrc( final String[] sources )
     {
-        policy().workerSrc( toSources( sources ) );
+        policy().workerSrc( sources );
     }
 
-    public void manifestSrc( final ScriptValue sources )
+    public void manifestSrc( final String[] sources )
     {
-        policy().manifestSrc( toSources( sources ) );
+        policy().manifestSrc( sources );
     }
 
-    public void childSrc( final ScriptValue sources )
+    public void childSrc( final String[] sources )
     {
-        policy().childSrc( toSources( sources ) );
+        policy().childSrc( sources );
     }
 
-    public void frameAncestors( final ScriptValue sources )
+    public void frameAncestors( final String[] sources )
     {
-        policy().frameAncestors( toSources( sources ) );
+        policy().frameAncestors( sources );
     }
 
-    public void baseUri( final ScriptValue sources )
+    public void baseUri( final String[] sources )
     {
-        policy().baseUri( toSources( sources ) );
+        policy().baseUri( sources );
     }
 
-    public void formAction( final ScriptValue sources )
+    public void formAction( final String[] sources )
     {
-        policy().formAction( toSources( sources ) );
+        policy().formAction( sources );
     }
 
     public void upgradeInsecureRequests()
@@ -129,9 +127,9 @@ public final class CspHandler
         policy().upgradeInsecureRequests();
     }
 
-    public void sandbox( final ScriptValue flags )
+    public void sandbox( final String[] flags )
     {
-        policy().add( "sandbox", toSources( flags ) );
+        policy().add( "sandbox", flags );
     }
 
     public void addScriptSrcShaContent( final String content )
@@ -179,24 +177,6 @@ public final class CspHandler
     private ContentSecurityPolicy policy()
     {
         return this.request.getContentSecurityPolicy();
-    }
-
-    private static String[] toSources( final ScriptValue value )
-    {
-        if ( value == null )
-        {
-            return new String[0];
-        }
-        if ( value.isArray() )
-        {
-            final List<String> list = value.getArray( String.class );
-            return list.toArray( new String[0] );
-        }
-        if ( value.isValue() )
-        {
-            return new String[]{value.getValue( String.class )};
-        }
-        throw new IllegalArgumentException( "Expected a string or an array of strings" );
     }
 
     private static HashAlgo parseAlgo( final String algo )
