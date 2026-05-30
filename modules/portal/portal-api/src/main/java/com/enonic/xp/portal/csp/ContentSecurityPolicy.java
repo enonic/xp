@@ -16,38 +16,43 @@ import static java.util.Objects.requireNonNull;
 /**
  * A Content Security Policy carried on {@link com.enonic.xp.portal.PortalRequest}.
  *
- * <p>This instance is mutable and request-scoped. Multiple contributors during request rendering
- * (platform, site app, custom apps, widgets, page controllers) may extend the same policy through
- * the typed per-directive methods or through the generic escape hatches {@link #add} and
- * {@link #set}. The final {@code Content-Security-Policy} header value is
- * composed at portal response-flush time by {@link #build()} so late additions during rendering
- * still land in the header.</p>
+ * <p>Mutable and request-scoped: many contributors (platform, site app, apps, widgets, page
+ * controllers) extend the same policy during rendering, and {@link #build()} composes the header at
+ * response-flush time so late additions still land.</p>
  *
- * <p>Merge semantics — this policy is a <i>collector of wishes</i> from every contributor in the
- * chain, and it aims for the most permissive result so that no contributor's content is blocked by
- * another's policy. {@code add} unions sources for a directive (deduped); {@code set} resets a
- * directive's source list (no freeze — {@code add} after {@code set} still extends).</p>
+ * <p>It works as a <b>collector of wishes</b> that resolves to the <b>most permissive</b> result, so
+ * no contributor's content is blocked by another's rule:</p>
+ * <ul>
+ *   <li>{@link #add} unions sources into a directive (deduped).</li>
+ *   <li>{@link #set} resets a directive's sources — no freeze, so a later {@link #add} still extends.</li>
+ * </ul>
  *
- * <p>Because this is an aggregator and not a browser, {@link #build()} resolves the CSP3
- * interactions where a syntactic union would be <i>less</i> permissive than its parts: when a
- * directive holds {@code 'unsafe-inline'} together with a {@code 'nonce-…'}, a hash, or
- * {@code 'strict-dynamic'}, a browser ignores {@code 'unsafe-inline'} (and {@code 'strict-dynamic'}
- * also ignores {@code 'self'}/host/scheme allowlists), allowing fewer scripts/styles than wished. To
- * honor the relaxing wish, {@code build()} drops the nonce/hash/{@code 'strict-dynamic'} sources from
- * that directive so {@code 'unsafe-inline'} takes effect. Since {@code 'unsafe-inline'} covers only
- * inline content, a caller relaxing this way should also list the host/scheme sources its external
- * scripts need ({@code 'self'}, {@code https:}, …) — those are kept; {@code 'strict-dynamic'}-based
- * propagation is not. The trade-off is deliberate: a contributor that adds {@code 'unsafe-inline'}
- * voids another's nonce/hash/{@code 'strict-dynamic'} hardening on that directive (weakest wish wins).</p>
+ * <p>One CSP3 quirk works against that goal: a browser treats a {@code 'nonce-…'}, a hash, or
+ * {@code 'strict-dynamic'} as a reason to <i>ignore</i> {@code 'unsafe-inline'} (and
+ * {@code 'strict-dynamic'} also ignores {@code 'self'}/host/scheme), which makes the union
+ * <i>narrower</i>, not wider. So {@link #build()} applies a single rule:</p>
+ * <blockquote>If a directive contains {@code 'unsafe-inline'}, its {@code 'nonce-…'}, hash, and
+ * {@code 'strict-dynamic'} sources are dropped from the emitted header.</blockquote>
+ * <p>{@code 'unsafe-inline'} already permits every inline script/style a nonce or hash would, so
+ * this only widens the policy. For example, the strict-CSP recipe collapses to its permissive legacy
+ * form:</p>
+ * <pre>
+ *     script-src 'nonce-r' 'strict-dynamic' https: 'unsafe-inline'
+ *         -&gt; script-src https: 'unsafe-inline'
+ * </pre>
+ * <p>{@code 'unsafe-inline'} governs <i>inline</i> content only, and {@code 'strict-dynamic'}
+ * propagation is dropped along with it, so a caller relaxing this way should also list the sources
+ * its <i>external</i> scripts need ({@code 'self'}, {@code https:}, …) — those are kept. By design
+ * this means a contributor that adds {@code 'unsafe-inline'} voids another's nonce/hash/{@code
+ * 'strict-dynamic'} hardening on that directive: the weakest wish wins.</p>
  *
- * <p>{@code 'strict-dynamic'} <i>without</i> {@code 'unsafe-inline'} is left intact: it conflicts
- * irreducibly with {@code 'self'}/host allowlists (no permissive superset exists — keeping it blocks
- * those hosts, dropping it removes script propagation), so the API does not arbitrate and the
- * browser's {@code 'strict-dynamic'} semantics apply.</p>
+ * <p>{@code 'strict-dynamic'} <i>without</i> {@code 'unsafe-inline'} is left untouched — it has no
+ * permissive superset with {@code 'self'}/host allowlists (keeping it blocks those hosts, dropping it
+ * removes script propagation), so the API does not arbitrate and the browser decides.</p>
  *
- * <p>A {@code nonce-} source is valid only for {@code script-src} and {@code style-src}. Use
- * {@link #nonceScriptSrc()} or {@link #nonceStyleSrc()} to wire it into one, or {@link #nonce()}
- * for both; each returns the same request-scoped value to stamp on the matching inline tag.</p>
+ * <p>A {@code 'nonce-'} source is valid only on {@code script-src} and {@code style-src}: use
+ * {@link #nonceScriptSrc()}, {@link #nonceStyleSrc()}, or {@link #nonce()} for both. All return the
+ * same request-scoped value to stamp on the matching inline tag.</p>
  */
 @NullMarked
 public final class ContentSecurityPolicy
