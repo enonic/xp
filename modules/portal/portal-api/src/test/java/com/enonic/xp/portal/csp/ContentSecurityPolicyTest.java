@@ -170,6 +170,33 @@ class ContentSecurityPolicyTest
     }
 
     @Test
+    void unsafe_inline_drops_strict_dynamic_and_nonce()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrc( CspSource.UNSAFE_INLINE, CspSource.STRICT_DYNAMIC );
+        csp.nonceScriptSrc();
+        assertThat( csp.build() ).isEqualTo( "script-src 'unsafe-inline'" );
+    }
+
+    @Test
+    void web_dev_recipe_collapses_to_legacy_fallback()
+    {
+        // 'nonce' 'strict-dynamic' https: 'self' 'unsafe-inline' resolves to the permissive fallback
+        final ContentSecurityPolicy csp =
+            new ContentSecurityPolicy().scriptSrc( CspSource.SELF, CspSource.UNSAFE_INLINE, CspSource.STRICT_DYNAMIC )
+                .scriptSrc( "https:" );
+        csp.nonceScriptSrc();
+        assertThat( csp.build() ).isEqualTo( "script-src 'self' 'unsafe-inline' https:" );
+    }
+
+    @Test
+    void strict_dynamic_kept_without_unsafe_inline()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrc( CspSource.STRICT_DYNAMIC );
+        final String nonce = csp.nonceScriptSrc();
+        assertThat( csp.build() ).isEqualTo( "script-src 'strict-dynamic' 'nonce-" + nonce + "'" );
+    }
+
+    @Test
     void late_mutation_lands_in_subsequent_build()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy().add( "script-src", "'self'" );

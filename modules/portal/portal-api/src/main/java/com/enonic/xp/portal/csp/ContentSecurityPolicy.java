@@ -28,14 +28,22 @@ import static java.util.Objects.requireNonNull;
  * another's policy. {@code add} unions sources for a directive (deduped); {@code set} resets a
  * directive's source list (no freeze — {@code add} after {@code set} still extends).</p>
  *
- * <p>Because this is an aggregator and not a browser, {@link #build()} resolves the one CSP3
- * interaction where a syntactic union would be <i>less</i> permissive than its parts: when a
- * directive holds {@code 'unsafe-inline'} together with a {@code 'nonce-…'} or a hash source, a
- * browser ignores {@code 'unsafe-inline'} and so allows fewer inline scripts/styles. To honor the
- * relaxing wish, {@code build()} drops the nonce/hash sources from that directive — {@code 'unsafe-inline'}
- * already permits every inline a nonce/hash would have, so the result only widens. The trade-off is
- * deliberate: a contributor that adds {@code 'unsafe-inline'} voids another's nonce/hash hardening on
- * that directive (weakest wish wins).</p>
+ * <p>Because this is an aggregator and not a browser, {@link #build()} resolves the CSP3
+ * interactions where a syntactic union would be <i>less</i> permissive than its parts: when a
+ * directive holds {@code 'unsafe-inline'} together with a {@code 'nonce-…'}, a hash, or
+ * {@code 'strict-dynamic'}, a browser ignores {@code 'unsafe-inline'} (and {@code 'strict-dynamic'}
+ * also ignores {@code 'self'}/host/scheme allowlists), allowing fewer scripts/styles than wished. To
+ * honor the relaxing wish, {@code build()} drops the nonce/hash/{@code 'strict-dynamic'} sources from
+ * that directive so {@code 'unsafe-inline'} takes effect. Since {@code 'unsafe-inline'} covers only
+ * inline content, a caller relaxing this way should also list the host/scheme sources its external
+ * scripts need ({@code 'self'}, {@code https:}, …) — those are kept; {@code 'strict-dynamic'}-based
+ * propagation is not. The trade-off is deliberate: a contributor that adds {@code 'unsafe-inline'}
+ * voids another's nonce/hash/{@code 'strict-dynamic'} hardening on that directive (weakest wish wins).</p>
+ *
+ * <p>{@code 'strict-dynamic'} <i>without</i> {@code 'unsafe-inline'} is left intact: it conflicts
+ * irreducibly with {@code 'self'}/host allowlists (no permissive superset exists — keeping it blocks
+ * those hosts, dropping it removes script propagation), so the API does not arbitrate and the
+ * browser's {@code 'strict-dynamic'} semantics apply.</p>
  *
  * <p>A {@code nonce-} source is valid only for {@code script-src} and {@code style-src}. Use
  * {@link #nonceScriptSrc()} or {@link #nonceStyleSrc()} to wire it into one, or {@link #nonce()}
@@ -410,9 +418,12 @@ public final class ContentSecurityPolicy
      * <p>Directives are emitted in alphabetical order for deterministic output. Sources within a
      * directive follow insertion order.</p>
      *
-     * <p>Relaxing resolution: in a directive that holds {@code 'unsafe-inline'}, any {@code 'nonce-…'}
-     * and hash sources are omitted from the output — they would otherwise make a browser ignore
-     * {@code 'unsafe-inline'} and allow fewer inline scripts/styles than was wished for.</p>
+     * <p>Relaxing resolution: in a directive that holds {@code 'unsafe-inline'}, any {@code 'nonce-…'},
+     * hash, and {@code 'strict-dynamic'} source is omitted from the output — each would otherwise make
+     * a browser ignore {@code 'unsafe-inline'} and allow fewer scripts/styles than was wished for.
+     * {@code 'unsafe-inline'} governs only inline content, so a caller relaxing this way should also
+     * list the host/scheme sources its external scripts need (e.g. {@code 'self'}, {@code https:});
+     * those are kept, only the strictness sources are dropped.</p>
      */
     public String build()
     {
@@ -429,10 +440,10 @@ public final class ContentSecurityPolicy
             }
             sb.append( entry.getKey() );
             final LinkedHashSet<String> sources = entry.getValue();
-            final boolean dropNonceAndHash = sources.contains( UNSAFE_INLINE );
+            final boolean hasUnsafeInline = sources.contains( UNSAFE_INLINE );
             for ( final String source : sources )
             {
-                if ( dropNonceAndHash && isNonceOrHash( source ) )
+                if ( hasUnsafeInline && isInlineStrictnessSource( source ) )
                 {
                     continue;
                 }
@@ -442,10 +453,10 @@ public final class ContentSecurityPolicy
         return sb.toString();
     }
 
-    private static boolean isNonceOrHash( final String source )
+    private static boolean isInlineStrictnessSource( final String source )
     {
-        return source.startsWith( "'nonce-" ) || source.startsWith( "'sha256-" ) || source.startsWith( "'sha384-" ) ||
-            source.startsWith( "'sha512-" );
+        return source.equals( "'strict-dynamic'" ) || source.startsWith( "'nonce-" ) || source.startsWith( "'sha256-" ) ||
+            source.startsWith( "'sha384-" ) || source.startsWith( "'sha512-" );
     }
 
     private ContentSecurityPolicy addTokens( final String directive, final CspSource[] sources )
