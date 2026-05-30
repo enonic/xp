@@ -1011,16 +1011,16 @@ export type SandboxFlag = typeof SandboxFlag[keyof typeof SandboxFlag];
 export interface Csp {
     /**
      * Unions sources into the existing source set for `directive`, deduped.
-     * Pass an empty array to register a boolean directive (e.g.
+     * Pass no sources to register a boolean directive (e.g.
      * `upgrade-insecure-requests`).
      */
-    add(directive: string, sources: string[]): Csp;
+    add(directive: string, ...sources: string[]): Csp;
 
     /**
      * Resets the directive's source list to exactly these sources.
      * Subsequent {@link add} calls may still extend it — there is no freeze.
      */
-    set(directive: string, sources: string[]): Csp;
+    set(directive: string, ...sources: string[]): Csp;
 
     /**
      * Seeds a restrictive deny-all baseline (`default-src 'none'`, `base-uri 'none'`,
@@ -1192,11 +1192,11 @@ export function csp(): Csp {
     const bean: CspHandler = __.newBean<CspHandler>('com.enonic.xp.lib.portal.csp.CspHandler');
 
     const instance: Csp = {
-        add(directive: string, sources: string[]): Csp {
+        add(directive: string, ...sources: string[]): Csp {
             bean.add(directive, sources);
             return instance;
         },
-        set(directive: string, sources: string[]): Csp {
+        set(directive: string, ...sources: string[]): Csp {
             bean.set(directive, sources);
             return instance;
         },
