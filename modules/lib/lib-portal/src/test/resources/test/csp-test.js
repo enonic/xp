@@ -98,6 +98,13 @@ exports.nonceStableAcrossMethods = function () {
     );
 };
 
+exports.unsafeInlineDropsNonce = function () {
+    var csp = portal.csp();
+    csp.scriptSrc(portal.CspSource.UNSAFE_INLINE);
+    csp.nonceScriptSrc();
+    assert.assertEquals("script-src 'unsafe-inline'", __.toNativeObject(testInstance.policyBuild()));
+};
+
 exports.scriptSrcTypedAndRaw = function () {
     var csp = portal.csp();
     csp.scriptSrc(portal.CspSource.SELF, 'https://cdn.example.com');

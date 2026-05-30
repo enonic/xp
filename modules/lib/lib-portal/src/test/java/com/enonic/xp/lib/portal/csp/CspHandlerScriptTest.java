@@ -37,6 +37,12 @@ public class CspHandlerScriptTest
     }
 
     @Test
+    void unsafeInlineDropsNonce()
+    {
+        runFunction( "/test/csp-test.js", "unsafeInlineDropsNonce" );
+    }
+
+    @Test
     void unsupportedAlgo()
     {
         runFunction( "/test/csp-test.js", "unsupportedAlgo" );
