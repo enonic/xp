@@ -37,18 +37,6 @@ public class CspHandlerScriptTest
     }
 
     @Test
-    void addShaContent()
-    {
-        runFunction( "/test/csp-test.js", "addShaContent" );
-    }
-
-    @Test
-    void addShaDigest()
-    {
-        runFunction( "/test/csp-test.js", "addShaDigest" );
-    }
-
-    @Test
     void unsupportedAlgo()
     {
         runFunction( "/test/csp-test.js", "unsupportedAlgo" );
@@ -115,6 +103,12 @@ public class CspHandlerScriptTest
     }
 
     @Test
+    void addScriptSrcShaContentWithAlgo()
+    {
+        runFunction( "/test/csp-test.js", "addScriptSrcShaContentWithAlgo" );
+    }
+
+    @Test
     void addScriptSrcShaDigest()
     {
         runFunction( "/test/csp-test.js", "addScriptSrcShaDigest" );
@@ -173,12 +167,12 @@ public class CspHandlerScriptTest
         return this.portalRequest.getContentSecurityPolicy().build();
     }
 
-    public String sha256Base64( final String content )
+    public String shaBase64( final String content, final String algorithm )
     {
         try
         {
             return Base64.getEncoder()
-                .encodeToString( MessageDigest.getInstance( "SHA-256" ).digest( content.getBytes( StandardCharsets.UTF_8 ) ) );
+                .encodeToString( MessageDigest.getInstance( algorithm ).digest( content.getBytes( StandardCharsets.UTF_8 ) ) );
         }
         catch ( NoSuchAlgorithmException e )
         {

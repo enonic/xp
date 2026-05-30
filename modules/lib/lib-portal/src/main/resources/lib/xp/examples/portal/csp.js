@@ -24,9 +24,10 @@ csp.upgradeInsecureRequests();
 // Sandbox flags
 csp.sandbox(portalLib.SandboxFlag.ALLOW_SCRIPTS, portalLib.SandboxFlag.ALLOW_SAME_ORIGIN);
 
-// Hash convenience -- SHA-256 of UTF-8 bytes, or precomputed digest
-csp.addScriptSrcSha('window.foo = 42;');
-csp.addStyleSrcSha('body { color: red; }');
+// Hash sources for script-src / style-src -- digest inline content, or a precomputed digest
+csp.addScriptSrcSha({content: 'window.foo = 42;'});                  // sha256 of the content
+csp.addStyleSrcSha({content: 'body { color: red; }', algo: 'sha384'}); // choose the algorithm
+csp.addScriptSrcSha({hash: 'AbCdEf0123...', algo: 'sha384'});         // precomputed base64 digest
 
 // Request-scoped nonce (lazy; same value on subsequent calls). Wire it into script-src,
 // style-src, or both -- the only directives a nonce is valid for.

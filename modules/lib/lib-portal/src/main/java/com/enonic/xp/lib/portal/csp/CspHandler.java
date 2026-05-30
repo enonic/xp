@@ -1,7 +1,6 @@
 package com.enonic.xp.lib.portal.csp;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Locale;
 
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.csp.ContentSecurityPolicy;
@@ -34,17 +33,6 @@ public final class CspHandler
     public void strictDynamic()
     {
         policy().strictDynamic();
-    }
-
-    public void addShaContent( final String directive, final String content )
-    {
-        requireNonNull( content, "content is required" );
-        policy().addSha( directive, content.getBytes( StandardCharsets.UTF_8 ) );
-    }
-
-    public void addShaDigest( final String directive, final String base64, final String algo )
-    {
-        policy().addSha( directive, parseAlgo( algo ), base64 );
     }
 
     public void defaultSrc( final String[] sources )
@@ -132,10 +120,10 @@ public final class CspHandler
         policy().add( "sandbox", flags );
     }
 
-    public void addScriptSrcShaContent( final String content )
+    public void addScriptSrcShaContent( final String content, final String algo )
     {
         requireNonNull( content, "content is required" );
-        policy().addScriptSrcSha( content.getBytes( StandardCharsets.UTF_8 ) );
+        policy().addScriptSrcSha( parseAlgo( algo ), content.getBytes( StandardCharsets.UTF_8 ) );
     }
 
     public void addScriptSrcShaDigest( final String base64, final String algo )
@@ -143,10 +131,10 @@ public final class CspHandler
         policy().addScriptSrcSha( parseAlgo( algo ), base64 );
     }
 
-    public void addStyleSrcShaContent( final String content )
+    public void addStyleSrcShaContent( final String content, final String algo )
     {
         requireNonNull( content, "content is required" );
-        policy().addStyleSrcSha( content.getBytes( StandardCharsets.UTF_8 ) );
+        policy().addStyleSrcSha( parseAlgo( algo ), content.getBytes( StandardCharsets.UTF_8 ) );
     }
 
     public void addStyleSrcShaDigest( final String base64, final String algo )
@@ -185,7 +173,7 @@ public final class CspHandler
         {
             return HashAlgo.SHA256;
         }
-        switch ( algo.toLowerCase( Locale.ROOT ) )
+        switch ( algo )
         {
             case "sha256":
                 return HashAlgo.SHA256;

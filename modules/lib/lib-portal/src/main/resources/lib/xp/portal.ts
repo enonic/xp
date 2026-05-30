@@ -951,6 +951,13 @@ export interface MacroContext {
 export type CspHashAlgo = 'sha256' | 'sha384' | 'sha512';
 
 /**
+ * A hash source for `script-src` / `style-src`. Either inline `content` to be digested
+ * (`algo` defaults to `'sha256'`), or a precomputed base64 `hash` with its `algo` — the two are
+ * mutually exclusive.
+ */
+export type CspHashSource = XOR<{ content: string; algo?: CspHashAlgo }, { hash: string; algo: CspHashAlgo }>;
+
+/**
  * Common source-list values for a CSP source expression, per W3C CSP3. Keyword sources are
  * single-quoted (e.g. `'self'`); scheme sources are verbatim (e.g. `data:`). Variadic source
  * params on {@link Csp} accept these values or raw strings (hosts, other schemes, paths, URLs).
@@ -1014,18 +1021,6 @@ export interface Csp {
      * Subsequent {@link add} calls may still extend it — there is no freeze.
      */
     set(directive: string, sources: string[]): Csp;
-
-    /**
-     * Computes a SHA-256 digest of the UTF-8 bytes of `content` and unions
-     * `'sha256-<base64>'` into the directive's source set.
-     */
-    addSha(directive: string, content: string): Csp;
-
-    /**
-     * Unions a precomputed `'<algo>-<base64>'` digest into the directive's
-     * source set. `algo` defaults to `'sha256'`.
-     */
-    addSha(directive: string, base64: string, algo: CspHashAlgo): Csp;
 
     /**
      * Seeds a restrictive deny-all baseline (`default-src 'none'`, `base-uri 'none'`,
@@ -1096,26 +1091,16 @@ export interface Csp {
     sandbox(...flags: SandboxFlag[]): Csp;
 
     /**
-     * Computes a SHA-256 digest of the UTF-8 bytes of `content` and unions
-     * `'sha256-<base64>'` into `script-src`.
+     * Unions a hash source into `script-src`. Pass `{ content }` to digest inline script text
+     * (`algo` defaults to `'sha256'`), or `{ hash, algo }` for a precomputed base64 digest.
      */
-    addScriptSrcSha(content: string): Csp;
+    addScriptSrcSha(source: CspHashSource): Csp;
 
     /**
-     * Unions a precomputed `'<algo>-<base64>'` digest into `script-src`.
+     * Unions a hash source into `style-src`. Pass `{ content }` to digest inline style text
+     * (`algo` defaults to `'sha256'`), or `{ hash, algo }` for a precomputed base64 digest.
      */
-    addScriptSrcSha(base64: string, algo: CspHashAlgo): Csp;
-
-    /**
-     * Computes a SHA-256 digest of the UTF-8 bytes of `content` and unions
-     * `'sha256-<base64>'` into `style-src`.
-     */
-    addStyleSrcSha(content: string): Csp;
-
-    /**
-     * Unions a precomputed `'<algo>-<base64>'` digest into `style-src`.
-     */
-    addStyleSrcSha(base64: string, algo: CspHashAlgo): Csp;
+    addStyleSrcSha(source: CspHashSource): Csp;
 
     /**
      * Wires the request nonce into both `script-src` and `style-src` (the only directives a
@@ -1145,10 +1130,6 @@ interface CspHandler {
     strict(): void;
 
     strictDynamic(): void;
-
-    addShaContent(directive: string, content: string): void;
-
-    addShaDigest(directive: string, base64: string, algo: string): void;
 
     defaultSrc(sources: string[]): void;
 
@@ -1184,11 +1165,11 @@ interface CspHandler {
 
     sandbox(flags: string[]): void;
 
-    addScriptSrcShaContent(content: string): void;
+    addScriptSrcShaContent(content: string, algo: string | null): void;
 
     addScriptSrcShaDigest(base64: string, algo: string): void;
 
-    addStyleSrcShaContent(content: string): void;
+    addStyleSrcShaContent(content: string, algo: string | null): void;
 
     addStyleSrcShaDigest(base64: string, algo: string): void;
 
@@ -1225,14 +1206,6 @@ export function csp(): Csp {
         },
         strictDynamic(): Csp {
             bean.strictDynamic();
-            return instance;
-        },
-        addSha(directive: string, contentOrBase64: string, algo?: CspHashAlgo): Csp {
-            if (algo === undefined) {
-                bean.addShaContent(directive, contentOrBase64);
-            } else {
-                bean.addShaDigest(directive, contentOrBase64, algo);
-            }
             return instance;
         },
         defaultSrc(...sources: (CspSource | string)[]): Csp {
@@ -1303,19 +1276,19 @@ export function csp(): Csp {
             bean.sandbox(flags);
             return instance;
         },
-        addScriptSrcSha(contentOrBase64: string, algo?: CspHashAlgo): Csp {
-            if (algo === undefined) {
-                bean.addScriptSrcShaContent(contentOrBase64);
+        addScriptSrcSha(source: CspHashSource): Csp {
+            if (source.content !== undefined) {
+                bean.addScriptSrcShaContent(source.content, __.nullOrValue(source.algo));
             } else {
-                bean.addScriptSrcShaDigest(contentOrBase64, algo);
+                bean.addScriptSrcShaDigest(source.hash, source.algo);
             }
             return instance;
         },
-        addStyleSrcSha(contentOrBase64: string, algo?: CspHashAlgo): Csp {
-            if (algo === undefined) {
-                bean.addStyleSrcShaContent(contentOrBase64);
+        addStyleSrcSha(source: CspHashSource): Csp {
+            if (source.content !== undefined) {
+                bean.addStyleSrcShaContent(source.content, __.nullOrValue(source.algo));
             } else {
-                bean.addStyleSrcShaDigest(contentOrBase64, algo);
+                bean.addStyleSrcShaDigest(source.hash, source.algo);
             }
             return instance;
         },

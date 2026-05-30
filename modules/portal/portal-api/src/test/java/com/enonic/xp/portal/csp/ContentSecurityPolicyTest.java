@@ -48,35 +48,6 @@ class ContentSecurityPolicyTest
     }
 
     @Test
-    void addSha_bytes_encodes_sha256_of_content()
-        throws Exception
-    {
-        final byte[] content = "alert('hi');".getBytes();
-        final ContentSecurityPolicy csp = new ContentSecurityPolicy().addSha( "script-src", content );
-
-        final String expectedDigest = Base64.getEncoder().encodeToString( MessageDigest.getInstance( "SHA-256" ).digest( content ) );
-        assertThat( csp.build() ).isEqualTo( "script-src 'sha256-" + expectedDigest + "'" );
-    }
-
-    @Test
-    void addSha_precomputed_emits_token_dash_value()
-    {
-        final ContentSecurityPolicy csp = new ContentSecurityPolicy().addSha( "style-src", HashAlgo.SHA384, "abc123def456" );
-        assertThat( csp.build() ).isEqualTo( "style-src 'sha384-abc123def456'" );
-    }
-
-    @Test
-    void addSha_precomputed_supports_all_algorithms()
-    {
-        assertThat( new ContentSecurityPolicy().addSha( "script-src", HashAlgo.SHA256, "AAAA" ).build() ).isEqualTo(
-            "script-src 'sha256-AAAA'" );
-        assertThat( new ContentSecurityPolicy().addSha( "script-src", HashAlgo.SHA384, "AAAA" ).build() ).isEqualTo(
-            "script-src 'sha384-AAAA'" );
-        assertThat( new ContentSecurityPolicy().addSha( "script-src", HashAlgo.SHA512, "AAAA" ).build() ).isEqualTo(
-            "script-src 'sha512-AAAA'" );
-    }
-
-    @Test
     void nonce_lazy_and_cached()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy();
@@ -200,16 +171,16 @@ class ContentSecurityPolicyTest
     }
 
     @Test
-    void addSha_null_content_throws()
+    void addScriptSrcSha_null_content_throws()
     {
-        assertThatThrownBy( () -> new ContentSecurityPolicy().addSha( "script-src", (byte[]) null ) ).isInstanceOf(
+        assertThatThrownBy( () -> new ContentSecurityPolicy().addScriptSrcSha( (byte[]) null ) ).isInstanceOf(
             NullPointerException.class );
     }
 
     @Test
-    void addSha_null_algo_throws()
+    void addScriptSrcSha_null_algo_throws()
     {
-        assertThatThrownBy( () -> new ContentSecurityPolicy().addSha( "script-src", null, "AAAA" ) ).isInstanceOf(
+        assertThatThrownBy( () -> new ContentSecurityPolicy().addScriptSrcSha( null, "AAAA" ) ).isInstanceOf(
             NullPointerException.class );
     }
 
@@ -322,6 +293,17 @@ class ContentSecurityPolicyTest
 
         final String expectedDigest = Base64.getEncoder().encodeToString( MessageDigest.getInstance( "SHA-256" ).digest( content ) );
         assertThat( csp.build() ).isEqualTo( "script-src 'sha256-" + expectedDigest + "'" );
+    }
+
+    @Test
+    void addScriptSrcSha_bytes_encodes_chosen_algo_into_script_src()
+        throws Exception
+    {
+        final byte[] content = "alert('hi');".getBytes();
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().addScriptSrcSha( HashAlgo.SHA384, content );
+
+        final String expectedDigest = Base64.getEncoder().encodeToString( MessageDigest.getInstance( "SHA-384" ).digest( content ) );
+        assertThat( csp.build() ).isEqualTo( "script-src 'sha384-" + expectedDigest + "'" );
     }
 
     @Test

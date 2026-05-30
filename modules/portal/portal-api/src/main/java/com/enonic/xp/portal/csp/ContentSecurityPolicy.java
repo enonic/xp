@@ -18,8 +18,8 @@ import static java.util.Objects.requireNonNull;
  *
  * <p>This instance is mutable and request-scoped. Multiple contributors during request rendering
  * (platform, site app, custom apps, widgets, page controllers) may extend the same policy through
- * the typed per-directive methods or through the generic escape hatches {@link #add},
- * {@link #set}, and {@link #addSha}. The final {@code Content-Security-Policy} header value is
+ * the typed per-directive methods or through the generic escape hatches {@link #add} and
+ * {@link #set}. The final {@code Content-Security-Policy} header value is
  * composed at portal response-flush time by {@link #build()} so late additions during rendering
  * still land in the header.</p>
  *
@@ -96,29 +96,6 @@ public final class ContentSecurityPolicy
         }
         this.directives.put( directive, set );
         return this;
-    }
-
-    /**
-     * Computes the SHA-256 digest of {@code content} and unions {@code 'sha256-<base64>'} into the
-     * source set for {@code directive}.
-     */
-    public ContentSecurityPolicy addSha( final String directive, final byte[] content )
-    {
-        requireNonNull( directive, "directive is required" );
-        requireNonNull( content, "content is required" );
-        return add( directive, "'sha256-" + HASH_BASE64.encodeToString( digest( HashAlgo.SHA256, content ) ) + "'" );
-    }
-
-    /**
-     * Unions {@code '<algo>-<base64>'} into the source set for {@code directive}. Use this overload
-     * when the digest has been computed elsewhere (e.g. shipped with a build manifest).
-     */
-    public ContentSecurityPolicy addSha( final String directive, final HashAlgo algo, final String base64 )
-    {
-        requireNonNull( directive, "directive is required" );
-        requireNonNull( algo, "algo is required" );
-        requireNonNull( base64, "base64 is required" );
-        return add( directive, "'" + algo.token() + "-" + base64 + "'" );
     }
 
     /**
@@ -332,7 +309,16 @@ public final class ContentSecurityPolicy
      */
     public ContentSecurityPolicy addScriptSrcSha( final byte[] content )
     {
-        return addSha( SCRIPT_SRC, content );
+        return addScriptSrcSha( HashAlgo.SHA256, content );
+    }
+
+    /**
+     * Computes the {@code algo} digest of {@code content} and unions {@code '<algo>-<base64>'} into
+     * {@code script-src}.
+     */
+    public ContentSecurityPolicy addScriptSrcSha( final HashAlgo algo, final byte[] content )
+    {
+        return addComputedSha( SCRIPT_SRC, algo, content );
     }
 
     /**
@@ -340,7 +326,7 @@ public final class ContentSecurityPolicy
      */
     public ContentSecurityPolicy addScriptSrcSha( final HashAlgo algo, final String base64 )
     {
-        return addSha( SCRIPT_SRC, algo, base64 );
+        return addPrecomputedSha( SCRIPT_SRC, algo, base64 );
     }
 
     /**
@@ -349,7 +335,16 @@ public final class ContentSecurityPolicy
      */
     public ContentSecurityPolicy addStyleSrcSha( final byte[] content )
     {
-        return addSha( STYLE_SRC, content );
+        return addStyleSrcSha( HashAlgo.SHA256, content );
+    }
+
+    /**
+     * Computes the {@code algo} digest of {@code content} and unions {@code '<algo>-<base64>'} into
+     * {@code style-src}.
+     */
+    public ContentSecurityPolicy addStyleSrcSha( final HashAlgo algo, final byte[] content )
+    {
+        return addComputedSha( STYLE_SRC, algo, content );
     }
 
     /**
@@ -357,7 +352,7 @@ public final class ContentSecurityPolicy
      */
     public ContentSecurityPolicy addStyleSrcSha( final HashAlgo algo, final String base64 )
     {
-        return addSha( STYLE_SRC, algo, base64 );
+        return addPrecomputedSha( STYLE_SRC, algo, base64 );
     }
 
     /**
@@ -447,6 +442,20 @@ public final class ContentSecurityPolicy
             tokens[i] = requireNonNull( sources[i], "source is required" ).token();
         }
         return add( directive, tokens );
+    }
+
+    private ContentSecurityPolicy addComputedSha( final String directive, final HashAlgo algo, final byte[] content )
+    {
+        requireNonNull( algo, "algo is required" );
+        requireNonNull( content, "content is required" );
+        return add( directive, "'" + algo.token() + "-" + HASH_BASE64.encodeToString( digest( algo, content ) ) + "'" );
+    }
+
+    private ContentSecurityPolicy addPrecomputedSha( final String directive, final HashAlgo algo, final String base64 )
+    {
+        requireNonNull( algo, "algo is required" );
+        requireNonNull( base64, "base64 is required" );
+        return add( directive, "'" + algo.token() + "-" + base64 + "'" );
     }
 
     private static byte[] digest( final HashAlgo algo, final byte[] content )
