@@ -36,6 +36,6 @@ csp.nonceStyleSrc();                  // -> style-src  'nonce-...' (same value)
 // var nonce = csp.nonce();          // both at once
 
 // Escape hatches for less-common / future directives
-csp.add('require-trusted-types-for', ["'script'"]);
-csp.set('script-src', [portalLib.CspSource.SELF]);
+csp.add('require-trusted-types-for', "'script'");
+csp.set('script-src', portalLib.CspSource.SELF);
 // END

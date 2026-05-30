@@ -34,22 +34,22 @@ exports.returnsObject = function () {
 
 exports.addSources = function () {
     var csp = portal.csp();
-    csp.add('script-src', ["'self'", 'https://cdn.example.com']);
-    csp.add('script-src', ['https://cdn.example.com', "'unsafe-inline'"]);
+    csp.add('script-src', "'self'", 'https://cdn.example.com');
+    csp.add('script-src', 'https://cdn.example.com', "'unsafe-inline'");
     assert.assertEquals("script-src 'self' https://cdn.example.com 'unsafe-inline'", __.toNativeObject(testInstance.policyBuild()));
 };
 
 exports.setResets = function () {
     var csp = portal.csp();
-    csp.add('style-src', ["'self'"]);
-    csp.set('style-src', ["'none'"]);
+    csp.add('style-src', "'self'");
+    csp.set('style-src', "'none'");
     assert.assertEquals("style-src 'none'", __.toNativeObject(testInstance.policyBuild()));
 };
 
 exports.addAfterSet = function () {
     var csp = portal.csp();
-    csp.set('img-src', ["'self'"]);
-    csp.add('img-src', ['data:']);
+    csp.set('img-src', "'self'");
+    csp.add('img-src', 'data:');
     assert.assertEquals("img-src 'self' data:", __.toNativeObject(testInstance.policyBuild()));
 };
 
@@ -110,7 +110,7 @@ exports.scriptSrcTypedAndRaw = function () {
 exports.scriptSrcAndAddUnion = function () {
     var csp = portal.csp();
     csp.scriptSrc(portal.CspSource.SELF);
-    csp.add('script-src', ['https:']);
+    csp.add('script-src', 'https:');
     csp.scriptSrc(portal.CspSource.SELF);
     assert.assertEquals(
         "script-src 'self' https:",
