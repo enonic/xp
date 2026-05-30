@@ -51,8 +51,8 @@ import static java.util.Objects.requireNonNull;
  * removes script propagation), so the API does not arbitrate and the browser decides.</p>
  *
  * <p>A {@code 'nonce-'} source is valid only on {@code script-src} and {@code style-src}: use
- * {@link #nonceScriptSrc()}, {@link #nonceStyleSrc()}, or {@link #nonce()} for both. All return the
- * same request-scoped value to stamp on the matching inline tag.</p>
+ * {@link #nonceScriptSrc()} or {@link #nonceStyleSrc()}. Both return the same request-scoped value to
+ * stamp on the matching inline tag.</p>
  */
 @NullMarked
 public final class ContentSecurityPolicy
@@ -124,18 +124,15 @@ public final class ContentSecurityPolicy
     }
 
     /**
-     * Seeds a nonce-based "strict CSP" baseline (the modern core of the
-     * <a href="https://web.dev/articles/strict-csp">web.dev</a> recipe, without its legacy
-     * {@code https:} / {@code 'unsafe-inline'} fallbacks): {@code script-src 'nonce-<value>'
-     * 'strict-dynamic'}, {@code object-src 'none'}, and {@code base-uri 'none'}. A request nonce is
-     * generated eagerly on {@code script-src} (retrieve it with {@link #nonceScriptSrc()} to stamp
-     * on inline {@code <script nonce="...">} tags); {@code 'strict-dynamic'} lets those
-     * nonce-trusted scripts load further scripts without a host allowlist. Call it first, then add
-     * more sources as needed.
+     * Seeds a strict, allowlist-free script baseline: {@code script-src 'strict-dynamic'},
+     * {@code object-src 'none'}, and {@code base-uri 'none'}. {@code 'strict-dynamic'} trusts scripts
+     * loaded by an already-trusted script, but something must bootstrap that trust — add a nonce
+     * ({@link #nonceScriptSrc()}, which returns the value to stamp on inline {@code <script nonce>})
+     * or a hash ({@link #addScriptSrcSha(byte[])}); on its own this baseline allows no scripts. Call
+     * it first, then bootstrap and add more sources as needed.
      */
     public ContentSecurityPolicy strictDynamic()
     {
-        nonceScriptSrc();
         scriptSrc( CspSource.STRICT_DYNAMIC );
         objectSrc( CspSource.NONE );
         baseUri( CspSource.NONE );
@@ -365,17 +362,6 @@ public final class ContentSecurityPolicy
     public ContentSecurityPolicy addStyleSrcSha( final HashAlgo algo, final String base64 )
     {
         return addPrecomputedSha( STYLE_SRC, algo, base64 );
-    }
-
-    /**
-     * Wires the request nonce into both {@code script-src} and {@code style-src} — the only two
-     * directives for which a {@code nonce-} source is valid per the CSP spec — and returns its
-     * value. Equivalent to calling {@link #nonceScriptSrc()} and {@link #nonceStyleSrc()}.
-     */
-    public String nonce()
-    {
-        nonceScriptSrc();
-        return nonceStyleSrc();
     }
 
     /**

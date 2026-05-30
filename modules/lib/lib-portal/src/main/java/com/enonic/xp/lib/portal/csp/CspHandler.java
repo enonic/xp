@@ -142,11 +142,6 @@ public final class CspHandler
         policy().addStyleSrcSha( parseAlgo( algo ), base64 );
     }
 
-    public String nonce()
-    {
-        return policy().nonce();
-    }
-
     public String nonceScriptSrc()
     {
         return policy().nonceScriptSrc();

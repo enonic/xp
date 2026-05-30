@@ -1047,10 +1047,11 @@ export interface Csp {
     strict(): Csp;
 
     /**
-     * Seeds a nonce-based "strict CSP" baseline (the modern core of web.dev's recipe, without its
-     * legacy `https:` / `'unsafe-inline'` fallbacks): `script-src 'nonce-<value>' 'strict-dynamic'`,
-     * `object-src 'none'`, `base-uri 'none'`. A request nonce is generated eagerly on `script-src` —
-     * retrieve it with `nonceScriptSrc()` to stamp on inline `<script nonce="...">` tags.
+     * Seeds a strict, allowlist-free script baseline: `script-src 'strict-dynamic'`,
+     * `object-src 'none'`, `base-uri 'none'`. `'strict-dynamic'` trusts scripts loaded by an
+     * already-trusted script, but something must bootstrap that trust — add a nonce
+     * (`nonceScriptSrc()`, which returns the value to stamp on inline `<script nonce>`) or a hash
+     * (`addScriptSrcSha`); on its own this baseline allows no scripts.
      */
     strictDynamic(): Csp;
 
@@ -1121,13 +1122,6 @@ export interface Csp {
     addStyleSrcSha(source: CspHashSource): Csp;
 
     /**
-     * Wires the request nonce into both `script-src` and `style-src` (the only directives a
-     * `nonce-` source is valid for) and returns its value. Equivalent to calling
-     * `nonceScriptSrc()` and `nonceStyleSrc()`.
-     */
-    nonce(): string;
-
-    /**
      * Wires the request nonce into `script-src` and returns its value (for stamping on inline
      * `<script nonce="...">` tags). Lazily generated and cached for the request.
      */
@@ -1190,8 +1184,6 @@ interface CspHandler {
     addStyleSrcShaContent(content: string, algo: string | null): void;
 
     addStyleSrcShaDigest(base64: string, algo: string): void;
-
-    nonce(): string;
 
     nonceScriptSrc(): string;
 
@@ -1309,9 +1301,6 @@ export function csp(): Csp {
                 bean.addStyleSrcShaDigest(source.hash, source.algo);
             }
             return instance;
-        },
-        nonce(): string {
-            return bean.nonce();
         },
         nonceScriptSrc(): string {
             return bean.nonceScriptSrc();

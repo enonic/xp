@@ -60,11 +60,6 @@ public class CspHandlerScriptTest
         runFunction( "/test/csp-test.js", "nonceStyleSrc" );
     }
 
-    @Test
-    void nonceBoth()
-    {
-        runFunction( "/test/csp-test.js", "nonceBoth" );
-    }
 
     @Test
     void nonceStableAcrossMethods()
@@ -166,6 +161,12 @@ public class CspHandlerScriptTest
     void strictDynamic()
     {
         runFunction( "/test/csp-test.js", "strictDynamic" );
+    }
+
+    @Test
+    void strictDynamicBootstrappedWithNonce()
+    {
+        runFunction( "/test/csp-test.js", "strictDynamicBootstrappedWithNonce" );
     }
 
     public String policyBuild()

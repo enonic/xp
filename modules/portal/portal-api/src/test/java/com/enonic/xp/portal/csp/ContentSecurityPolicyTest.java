@@ -51,14 +51,14 @@ class ContentSecurityPolicyTest
     void nonce_lazy_and_cached()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy();
-        final String first = csp.nonce();
-        final String second = csp.nonce();
+        final String first = csp.nonceScriptSrc();
+        final String second = csp.nonceScriptSrc();
         assertThat( first ).isEqualTo( second );
 
         final byte[] decoded = Base64.getUrlDecoder().decode( first );
         assertThat( decoded.length ).isGreaterThanOrEqualTo( 16 );
 
-        assertThat( csp.build() ).isEqualTo( "script-src 'nonce-" + first + "'; style-src 'nonce-" + first + "'" );
+        assertThat( csp.build() ).isEqualTo( "script-src 'nonce-" + first + "'" );
     }
 
     @Test
@@ -83,7 +83,6 @@ class ContentSecurityPolicyTest
         final ContentSecurityPolicy csp = new ContentSecurityPolicy();
         final String fromScript = csp.nonceScriptSrc();
         assertThat( csp.nonceStyleSrc() ).isEqualTo( fromScript );
-        assertThat( csp.nonce() ).isEqualTo( fromScript );
         assertThat( csp.build() ).isEqualTo(
             "script-src 'nonce-" + fromScript + "'; style-src 'nonce-" + fromScript + "'" );
     }
@@ -91,8 +90,8 @@ class ContentSecurityPolicyTest
     @Test
     void nonce_uniqueness_across_instances()
     {
-        final String first = new ContentSecurityPolicy().nonce();
-        final String second = new ContentSecurityPolicy().nonce();
+        final String first = new ContentSecurityPolicy().nonceScriptSrc();
+        final String second = new ContentSecurityPolicy().nonceScriptSrc();
         assertThat( first ).isNotEqualTo( second );
     }
 
@@ -178,7 +177,7 @@ class ContentSecurityPolicyTest
     }
 
     @Test
-    void web_dev_recipe_collapses_to_legacy_fallback()
+    void strict_recipe_collapses_to_legacy_fallback()
     {
         // 'nonce' 'strict-dynamic' https: 'self' 'unsafe-inline' resolves to the permissive fallback
         final ContentSecurityPolicy csp =
@@ -432,19 +431,26 @@ class ContentSecurityPolicyTest
     }
 
     @Test
-    void strictDynamic_seeds_nonce_based_baseline()
+    void strictDynamic_seeds_baseline_without_a_bootstrap()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().strictDynamic();
+        assertThat( csp.build() ).isEqualTo( "base-uri 'none'; object-src 'none'; script-src 'strict-dynamic'" );
+    }
+
+    @Test
+    void strictDynamic_bootstrapped_with_nonce()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy().strictDynamic();
         final String nonce = csp.nonceScriptSrc();
         assertThat( csp.build() ).isEqualTo(
-            "base-uri 'none'; object-src 'none'; script-src 'nonce-" + nonce + "' 'strict-dynamic'" );
+            "base-uri 'none'; object-src 'none'; script-src 'strict-dynamic' 'nonce-" + nonce + "'" );
     }
 
     @Test
-    void strictDynamic_nonce_is_retrievable_and_stable()
+    void strictDynamic_bootstrapped_with_hash()
     {
-        final ContentSecurityPolicy csp = new ContentSecurityPolicy().strictDynamic();
-        assertThat( csp.nonceScriptSrc() ).isEqualTo( csp.nonceScriptSrc() );
-        assertThat( csp.build() ).contains( "'nonce-" + csp.nonceScriptSrc() + "'" );
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().strictDynamic().addScriptSrcSha( HashAlgo.SHA256, "AbC" );
+        assertThat( csp.build() ).isEqualTo(
+            "base-uri 'none'; object-src 'none'; script-src 'strict-dynamic' 'sha256-AbC'" );
     }
 }
