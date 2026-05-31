@@ -1038,10 +1038,19 @@ export interface Csp {
     add(directive: string, ...sources: string[]): Csp;
 
     /**
-     * Resets the directive's source list to exactly these sources.
-     * Subsequent {@link add} calls may still extend it — there is no freeze.
+     * Replaces the directive's source list with exactly these sources, overriding what other
+     * contributors set. Policy-level and **not** additive — it can narrow the policy. No freeze, so
+     * a later {@link add} still extends. To remove a directive entirely, use {@link reset}.
      */
-    set(directive: string, ...sources: string[]): Csp;
+    override(directive: string, ...sources: string[]): Csp;
+
+    /**
+     * Removes directives, overriding what other contributors set. With no argument, removes every
+     * directive (clean slate); otherwise removes each named directive (e.g.
+     * `reset('upgrade-insecure-requests')`). Policy-level and **not** additive. The request nonce is
+     * left intact.
+     */
+    reset(...directives: string[]): Csp;
 
     /**
      * Seeds a restrictive deny-all baseline (`default-src 'none'`, `base-uri 'none'`,
@@ -1107,13 +1116,13 @@ export interface Csp {
      * Unions a hash source into `script-src`. Pass `{ content }` to digest inline script text
      * (`algo` defaults to `'sha256'`), or `{ hash, algo }` for a precomputed base64 digest.
      */
-    addScriptSrcSha(source: CspHashSource): Csp;
+    scriptSrcSha(source: CspHashSource): Csp;
 
     /**
      * Unions a hash source into `style-src`. Pass `{ content }` to digest inline style text
      * (`algo` defaults to `'sha256'`), or `{ hash, algo }` for a precomputed base64 digest.
      */
-    addStyleSrcSha(source: CspHashSource): Csp;
+    styleSrcSha(source: CspHashSource): Csp;
 
     /**
      * Wires the request nonce into `script-src` and returns its value (for stamping on inline
@@ -1131,7 +1140,9 @@ export interface Csp {
 interface CspHandler {
     add(directive: string, sources: string[]): void;
 
-    set(directive: string, sources: string[]): void;
+    override(directive: string, sources: string[]): void;
+
+    reset(directives: string[]): void;
 
     strict(): void;
 
@@ -1169,13 +1180,13 @@ interface CspHandler {
 
     sandbox(flags: string[]): void;
 
-    addScriptSrcShaContent(content: string, algo: string | null): void;
+    scriptSrcShaContent(content: string, algo: string | null): void;
 
-    addScriptSrcShaDigest(base64: string, algo: string): void;
+    scriptSrcShaDigest(base64: string, algo: string): void;
 
-    addStyleSrcShaContent(content: string, algo: string | null): void;
+    styleSrcShaContent(content: string, algo: string | null): void;
 
-    addStyleSrcShaDigest(base64: string, algo: string): void;
+    styleSrcShaDigest(base64: string, algo: string): void;
 
     nonceScriptSrc(): string;
 
@@ -1198,8 +1209,12 @@ export function csp(): Csp {
             bean.add(directive, sources);
             return instance;
         },
-        set(directive: string, ...sources: string[]): Csp {
-            bean.set(directive, sources);
+        override(directive: string, ...sources: string[]): Csp {
+            bean.override(directive, sources);
+            return instance;
+        },
+        reset(...directives: string[]): Csp {
+            bean.reset(directives);
             return instance;
         },
         strict(): Csp {
@@ -1274,19 +1289,19 @@ export function csp(): Csp {
             bean.sandbox(flags);
             return instance;
         },
-        addScriptSrcSha(source: CspHashSource): Csp {
+        scriptSrcSha(source: CspHashSource): Csp {
             if (source.content !== undefined) {
-                bean.addScriptSrcShaContent(source.content, __.nullOrValue(source.algo));
+                bean.scriptSrcShaContent(source.content, __.nullOrValue(source.algo));
             } else {
-                bean.addScriptSrcShaDigest(source.hash, source.algo);
+                bean.scriptSrcShaDigest(source.hash, source.algo);
             }
             return instance;
         },
-        addStyleSrcSha(source: CspHashSource): Csp {
+        styleSrcSha(source: CspHashSource): Csp {
             if (source.content !== undefined) {
-                bean.addStyleSrcShaContent(source.content, __.nullOrValue(source.algo));
+                bean.styleSrcShaContent(source.content, __.nullOrValue(source.algo));
             } else {
-                bean.addStyleSrcShaDigest(source.hash, source.algo);
+                bean.styleSrcShaDigest(source.hash, source.algo);
             }
             return instance;
         },

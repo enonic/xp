@@ -32,19 +32,44 @@ class ContentSecurityPolicyTest
     }
 
     @Test
-    void set_after_add_resets_directive()
+    void override_after_add_replaces_directive()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy().add( "script-src", "'self'", "https://cdn.example.com" )
-            .set( "script-src", "'none'" );
+            .override( "script-src", "'none'" );
         assertThat( csp.build() ).isEqualTo( "script-src 'none'" );
     }
 
     @Test
-    void add_after_set_extends_without_freeze()
+    void add_after_override_extends_without_freeze()
     {
         final ContentSecurityPolicy csp =
-            new ContentSecurityPolicy().set( "script-src", "'self'" ).add( "script-src", "https://cdn.example.com" );
+            new ContentSecurityPolicy().override( "script-src", "'self'" ).add( "script-src", "https://cdn.example.com" );
         assertThat( csp.build() ).isEqualTo( "script-src 'self' https://cdn.example.com" );
+    }
+
+    @Test
+    void reset_removes_all_directives()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrc( CspSource.SELF ).imgSrc( CspSource.SELF );
+        csp.reset();
+        assertThat( csp.build() ).isEmpty();
+    }
+
+    @Test
+    void reset_removes_named_directives()
+    {
+        final ContentSecurityPolicy csp =
+            new ContentSecurityPolicy().scriptSrc( CspSource.SELF ).upgradeInsecureRequests().reset( "upgrade-insecure-requests" );
+        assertThat( csp.build() ).isEqualTo( "script-src 'self'" );
+    }
+
+    @Test
+    void reset_preserves_nonce_so_it_stays_stable()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy();
+        final String nonce = csp.nonceScriptSrc();
+        csp.reset();
+        assertThat( csp.nonceScriptSrc() ).isEqualTo( nonce );
     }
 
     @Test
@@ -138,7 +163,7 @@ class ContentSecurityPolicyTest
     void unsafe_inline_drops_hash_in_output()
     {
         final ContentSecurityPolicy csp =
-            new ContentSecurityPolicy().add( "style-src", "'unsafe-inline'" ).addStyleSrcSha( HashAlgo.SHA256, "AbC" );
+            new ContentSecurityPolicy().add( "style-src", "'unsafe-inline'" ).styleSrcSha( HashAlgo.SHA256, "AbC" );
         assertThat( csp.build() ).isEqualTo( "style-src 'unsafe-inline'" );
     }
 
@@ -205,9 +230,9 @@ class ContentSecurityPolicyTest
     }
 
     @Test
-    void set_with_no_sources_creates_empty_directive()
+    void override_with_no_sources_creates_empty_directive()
     {
-        final ContentSecurityPolicy csp = new ContentSecurityPolicy().set( "upgrade-insecure-requests" );
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().override( "upgrade-insecure-requests" );
         assertThat( csp.build() ).isEqualTo( "upgrade-insecure-requests" );
     }
 
@@ -225,22 +250,22 @@ class ContentSecurityPolicyTest
     }
 
     @Test
-    void set_null_directive_throws()
+    void override_null_directive_throws()
     {
-        assertThatThrownBy( () -> new ContentSecurityPolicy().set( null, "'self'" ) ).isInstanceOf( NullPointerException.class );
+        assertThatThrownBy( () -> new ContentSecurityPolicy().override( null, "'self'" ) ).isInstanceOf( NullPointerException.class );
     }
 
     @Test
-    void addScriptSrcSha_null_content_throws()
+    void scriptSrcSha_null_content_throws()
     {
-        assertThatThrownBy( () -> new ContentSecurityPolicy().addScriptSrcSha( (byte[]) null ) ).isInstanceOf(
+        assertThatThrownBy( () -> new ContentSecurityPolicy().scriptSrcSha( (byte[]) null ) ).isInstanceOf(
             NullPointerException.class );
     }
 
     @Test
-    void addScriptSrcSha_null_algo_throws()
+    void scriptSrcSha_null_algo_throws()
     {
-        assertThatThrownBy( () -> new ContentSecurityPolicy().addScriptSrcSha( null, "AAAA" ) ).isInstanceOf(
+        assertThatThrownBy( () -> new ContentSecurityPolicy().scriptSrcSha( null, "AAAA" ) ).isInstanceOf(
             NullPointerException.class );
     }
 
@@ -345,49 +370,49 @@ class ContentSecurityPolicyTest
     }
 
     @Test
-    void addScriptSrcSha_bytes_encodes_sha256_into_script_src()
+    void scriptSrcSha_bytes_encodes_sha256_into_script_src()
         throws Exception
     {
         final byte[] content = "alert('hi');".getBytes();
-        final ContentSecurityPolicy csp = new ContentSecurityPolicy().addScriptSrcSha( content );
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrcSha( content );
 
         final String expectedDigest = Base64.getEncoder().encodeToString( MessageDigest.getInstance( "SHA-256" ).digest( content ) );
         assertThat( csp.build() ).isEqualTo( "script-src 'sha256-" + expectedDigest + "'" );
     }
 
     @Test
-    void addScriptSrcSha_bytes_encodes_chosen_algo_into_script_src()
+    void scriptSrcSha_bytes_encodes_chosen_algo_into_script_src()
         throws Exception
     {
         final byte[] content = "alert('hi');".getBytes();
-        final ContentSecurityPolicy csp = new ContentSecurityPolicy().addScriptSrcSha( HashAlgo.SHA384, content );
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrcSha( HashAlgo.SHA384, content );
 
         final String expectedDigest = Base64.getEncoder().encodeToString( MessageDigest.getInstance( "SHA-384" ).digest( content ) );
         assertThat( csp.build() ).isEqualTo( "script-src 'sha384-" + expectedDigest + "'" );
     }
 
     @Test
-    void addScriptSrcSha_precomputed_emits_algo_and_value()
+    void scriptSrcSha_precomputed_emits_algo_and_value()
     {
-        final ContentSecurityPolicy csp = new ContentSecurityPolicy().addScriptSrcSha( HashAlgo.SHA384, "AbC" );
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrcSha( HashAlgo.SHA384, "AbC" );
         assertThat( csp.build() ).isEqualTo( "script-src 'sha384-AbC'" );
     }
 
     @Test
-    void addStyleSrcSha_bytes_encodes_sha256_into_style_src()
+    void styleSrcSha_bytes_encodes_sha256_into_style_src()
         throws Exception
     {
         final byte[] content = "body { color: red; }".getBytes();
-        final ContentSecurityPolicy csp = new ContentSecurityPolicy().addStyleSrcSha( content );
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().styleSrcSha( content );
 
         final String expectedDigest = Base64.getEncoder().encodeToString( MessageDigest.getInstance( "SHA-256" ).digest( content ) );
         assertThat( csp.build() ).isEqualTo( "style-src 'sha256-" + expectedDigest + "'" );
     }
 
     @Test
-    void addStyleSrcSha_precomputed_emits_algo_and_value()
+    void styleSrcSha_precomputed_emits_algo_and_value()
     {
-        final ContentSecurityPolicy csp = new ContentSecurityPolicy().addStyleSrcSha( HashAlgo.SHA512, "XyZ" );
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().styleSrcSha( HashAlgo.SHA512, "XyZ" );
         assertThat( csp.build() ).isEqualTo( "style-src 'sha512-XyZ'" );
     }
 

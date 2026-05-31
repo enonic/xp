@@ -20,9 +20,14 @@ public final class CspHandler
         policy().add( directive, sources );
     }
 
-    public void set( final String directive, final String[] sources )
+    public void override( final String directive, final String[] sources )
     {
-        policy().set( directive, sources );
+        policy().override( directive, sources );
+    }
+
+    public void reset( final String[] directives )
+    {
+        policy().reset( directives );
     }
 
     public void strict()
@@ -115,26 +120,26 @@ public final class CspHandler
         policy().add( "sandbox", flags );
     }
 
-    public void addScriptSrcShaContent( final String content, final String algo )
+    public void scriptSrcShaContent( final String content, final String algo )
     {
         requireNonNull( content, "content is required" );
-        policy().addScriptSrcSha( parseAlgo( algo ), content.getBytes( StandardCharsets.UTF_8 ) );
+        policy().scriptSrcSha( parseAlgo( algo ), content.getBytes( StandardCharsets.UTF_8 ) );
     }
 
-    public void addScriptSrcShaDigest( final String base64, final String algo )
+    public void scriptSrcShaDigest( final String base64, final String algo )
     {
-        policy().addScriptSrcSha( parseAlgo( algo ), base64 );
+        policy().scriptSrcSha( parseAlgo( algo ), base64 );
     }
 
-    public void addStyleSrcShaContent( final String content, final String algo )
+    public void styleSrcShaContent( final String content, final String algo )
     {
         requireNonNull( content, "content is required" );
-        policy().addStyleSrcSha( parseAlgo( algo ), content.getBytes( StandardCharsets.UTF_8 ) );
+        policy().styleSrcSha( parseAlgo( algo ), content.getBytes( StandardCharsets.UTF_8 ) );
     }
 
-    public void addStyleSrcShaDigest( final String base64, final String algo )
+    public void styleSrcShaDigest( final String base64, final String algo )
     {
-        policy().addStyleSrcSha( parseAlgo( algo ), base64 );
+        policy().styleSrcSha( parseAlgo( algo ), base64 );
     }
 
     public String nonceScriptSrc()

@@ -23,10 +23,15 @@ import static java.util.Objects.requireNonNull;
  * <p>It aggregates directives from independent contributors with <b>additive, widening merge
  * semantics</b>: combining contributions only ever broadens what is permitted, never narrows it, so
  * one contributor cannot tighten — and thereby break — another's content.</p>
- * <ul>
- *   <li>{@link #add} unions sources into a directive (deduped).</li>
- *   <li>{@link #set} resets a directive's sources — no freeze, so a later {@link #add} still extends.</li>
- * </ul>
+ *
+ * <p><b>Contributor methods</b> (used by parts, layouts, widgets, page controllers) are additive:
+ * the per-directive methods ({@link #scriptSrc}, {@link #styleSrc}, {@link #imgSrc}, …, the nonce and
+ * hash helpers) and the generic {@link #add}. They only union sources.</p>
+ *
+ * <p><b>Policy-level methods</b> (for the platform or site owner) can narrow or drop, breaking the
+ * additive invariant — use sparingly, not from a part: {@link #strict()} (deny-all baseline),
+ * {@link #override} (replace a directive's sources), and {@link #reset} (remove directives, or all
+ * of them). There is no per-source removal; {@code reset} removes whole directives.</p>
  *
  * <p>One CSP3 rule works against that invariant: a browser treats a {@code 'nonce-…'}, a hash, or
  * {@code 'strict-dynamic'} as a reason to <i>ignore</i> {@code 'unsafe-inline'} (and
@@ -96,10 +101,12 @@ public final class ContentSecurityPolicy
     }
 
     /**
-     * Resets the source list for {@code directive} to exactly {@code sources}. Subsequent
-     * {@link #add(String, String...)} calls may still extend it — there is no freeze.
+     * Replaces the source list for {@code directive} with exactly {@code sources}, overriding what
+     * other contributors set. A policy-level escape hatch — unlike {@link #add(String, String...)} it
+     * is not additive and can narrow the policy. There is no freeze, so a later {@code add} still
+     * extends. To remove a directive entirely, use {@link #reset(String...)}.
      */
-    public ContentSecurityPolicy set( final String directive, final String... sources )
+    public ContentSecurityPolicy override( final String directive, final String... sources )
     {
         requireNonNull( directive, "directive is required" );
         requireNonNull( sources, "sources is required" );
@@ -109,6 +116,28 @@ public final class ContentSecurityPolicy
             set.add( requireNonNull( source, "source is required" ) );
         }
         this.directives.put( directive, set );
+        return this;
+    }
+
+    /**
+     * Removes directives, overriding what other contributors set. With no argument, removes every
+     * directive (a clean slate); otherwise removes each named {@code directives}. The cached nonce is
+     * left intact so it stays stable for the request. A policy-level escape hatch — not additive.
+     */
+    public ContentSecurityPolicy reset( final String... directives )
+    {
+        requireNonNull( directives, "directives is required" );
+        if ( directives.length == 0 )
+        {
+            this.directives.clear();
+        }
+        else
+        {
+            for ( final String directive : directives )
+            {
+                this.directives.remove( requireNonNull( directive, "directive is required" ) );
+            }
+        }
         return this;
     }
 
@@ -302,16 +331,16 @@ public final class ContentSecurityPolicy
      * Computes the SHA-256 digest of {@code content} and unions {@code 'sha256-<base64>'} into
      * {@code script-src}.
      */
-    public ContentSecurityPolicy addScriptSrcSha( final byte[] content )
+    public ContentSecurityPolicy scriptSrcSha( final byte[] content )
     {
-        return addScriptSrcSha( HashAlgo.SHA256, content );
+        return scriptSrcSha( HashAlgo.SHA256, content );
     }
 
     /**
      * Computes the {@code algo} digest of {@code content} and unions {@code '<algo>-<base64>'} into
      * {@code script-src}.
      */
-    public ContentSecurityPolicy addScriptSrcSha( final HashAlgo algo, final byte[] content )
+    public ContentSecurityPolicy scriptSrcSha( final HashAlgo algo, final byte[] content )
     {
         return addComputedSha( SCRIPT_SRC, algo, content );
     }
@@ -319,7 +348,7 @@ public final class ContentSecurityPolicy
     /**
      * Unions a precomputed {@code '<algo>-<base64>'} digest into {@code script-src}.
      */
-    public ContentSecurityPolicy addScriptSrcSha( final HashAlgo algo, final String base64 )
+    public ContentSecurityPolicy scriptSrcSha( final HashAlgo algo, final String base64 )
     {
         return addPrecomputedSha( SCRIPT_SRC, algo, base64 );
     }
@@ -328,16 +357,16 @@ public final class ContentSecurityPolicy
      * Computes the SHA-256 digest of {@code content} and unions {@code 'sha256-<base64>'} into
      * {@code style-src}.
      */
-    public ContentSecurityPolicy addStyleSrcSha( final byte[] content )
+    public ContentSecurityPolicy styleSrcSha( final byte[] content )
     {
-        return addStyleSrcSha( HashAlgo.SHA256, content );
+        return styleSrcSha( HashAlgo.SHA256, content );
     }
 
     /**
      * Computes the {@code algo} digest of {@code content} and unions {@code '<algo>-<base64>'} into
      * {@code style-src}.
      */
-    public ContentSecurityPolicy addStyleSrcSha( final HashAlgo algo, final byte[] content )
+    public ContentSecurityPolicy styleSrcSha( final HashAlgo algo, final byte[] content )
     {
         return addComputedSha( STYLE_SRC, algo, content );
     }
@@ -345,7 +374,7 @@ public final class ContentSecurityPolicy
     /**
      * Unions a precomputed {@code '<algo>-<base64>'} digest into {@code style-src}.
      */
-    public ContentSecurityPolicy addStyleSrcSha( final HashAlgo algo, final String base64 )
+    public ContentSecurityPolicy styleSrcSha( final HashAlgo algo, final String base64 )
     {
         return addPrecomputedSha( STYLE_SRC, algo, base64 );
     }
