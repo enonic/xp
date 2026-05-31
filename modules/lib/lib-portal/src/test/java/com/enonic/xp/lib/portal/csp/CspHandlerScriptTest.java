@@ -49,9 +49,9 @@ public class CspHandlerScriptTest
     }
 
     @Test
-    void unsafeInlineDropsNonce()
+    void unsafeInlineAndNonceBothEmitted()
     {
-        runFunction( "/test/csp-test.js", "unsafeInlineDropsNonce" );
+        runFunction( "/test/csp-test.js", "unsafeInlineAndNonceBothEmitted" );
     }
 
     @Test

@@ -110,11 +110,11 @@ exports.nonceStableAcrossMethods = function () {
     );
 };
 
-exports.unsafeInlineDropsNonce = function () {
+exports.unsafeInlineAndNonceBothEmitted = function () {
     var csp = portal.csp();
     csp.scriptSrc(portal.CspSource.UNSAFE_INLINE);
-    csp.nonceScriptSrc();
-    assert.assertEquals("script-src 'unsafe-inline'", __.toNativeObject(testInstance.policyBuild()));
+    var nonce = csp.nonceScriptSrc();
+    assert.assertEquals("script-src 'unsafe-inline' 'nonce-" + nonce + "'", __.toNativeObject(testInstance.policyBuild()));
 };
 
 exports.scriptSrcTypedAndRaw = function () {
