@@ -140,9 +140,9 @@ public final class CspHandler
         policy().reportTo( group );
     }
 
-    public void requireTrustedTypesFor()
+    public void requireTrustedTypesForScript()
     {
-        policy().requireTrustedTypesFor();
+        policy().requireTrustedTypesForScript();
     }
 
     public void trustedTypes( final String[] values )

@@ -31,7 +31,7 @@ exports.returnsObject = function () {
     assert.assertEquals('function', typeof csp.styleSrcElem);
     assert.assertEquals('function', typeof csp.styleSrcAttr);
     assert.assertEquals('function', typeof csp.reportTo);
-    assert.assertEquals('function', typeof csp.requireTrustedTypesFor);
+    assert.assertEquals('function', typeof csp.requireTrustedTypesForScript);
     assert.assertEquals('function', typeof csp.trustedTypes);
     assert.assertEquals('function', typeof csp.reportOnly);
     assert.assertEquals('function', typeof csp.sandbox);
@@ -208,7 +208,7 @@ exports.reportToDirective = function () {
 
 exports.trustedTypesDirectives = function () {
     var csp = portal.csp();
-    csp.requireTrustedTypesFor();
+    csp.requireTrustedTypesForScript();
     csp.trustedTypes('my-policy', "'allow-duplicates'");
     assert.assertEquals(
         "require-trusted-types-for 'script'; trusted-types my-policy 'allow-duplicates'",
