@@ -1002,26 +1002,29 @@ export type SandboxFlag = typeof SandboxFlag[keyof typeof SandboxFlag];
  * the final policy. The header is emitted as `Content-Security-Policy` at response-flush time, so
  * late additions during rendering still land.
  *
- * It works as a **collector of wishes** that resolves to the **most permissive** result, so no
- * contributor's content is blocked by another's rule:
+ * It aggregates directives from independent contributors with **additive, widening merge semantics**:
+ * combining contributions only ever broadens what is permitted, never narrows it, so one contributor
+ * cannot tighten — and thereby break — another's content.
  * - {@link add} unions sources into a directive (deduped).
  * - {@link set} resets a directive's sources — no freeze, so a later {@link add} still extends.
  *
- * One CSP3 quirk works against that goal: a browser treats a `'nonce-…'`, a hash, or
+ * One CSP3 rule works against that invariant: a browser treats a `'nonce-…'`, a hash, or
  * `'strict-dynamic'` as a reason to *ignore* `'unsafe-inline'` (and `'strict-dynamic'` also ignores
- * `'self'`/host/scheme), making the union narrower rather than wider. So the composed header applies
- * one rule: **if a directive contains `'unsafe-inline'`, its `'nonce-…'`, hash, and `'strict-dynamic'`
- * sources are dropped.** `'unsafe-inline'` already permits every inline a nonce/hash would, so this
- * only widens the policy — e.g. the strict-CSP recipe collapses to its permissive legacy form:
+ * `'self'`/host/scheme), making the union narrower rather than wider. To keep the merge widening, the
+ * composed header applies one rule: **if a directive contains `'unsafe-inline'`, its `'nonce-…'`,
+ * hash, and `'strict-dynamic'` sources are dropped.** `'unsafe-inline'` already permits every inline a
+ * nonce/hash would, so this only widens the policy — e.g. the strict-CSP recipe collapses to its
+ * permissive legacy form:
  *
  * ```
  * script-src 'nonce-r' 'strict-dynamic' https: 'unsafe-inline'  ->  script-src https: 'unsafe-inline'
  * ```
  *
  * `'unsafe-inline'` covers *inline* content only, and `'strict-dynamic'` propagation is dropped along
- * with it, so a caller relaxing this way should also list the sources its *external* scripts need
- * (`'self'`, `https:`, …) — those are kept. By design, a contributor that adds `'unsafe-inline'` voids
- * another's nonce/hash/`'strict-dynamic'` hardening on that directive (the weakest wish wins).
+ * with it, so a contributor that broadens a directive this way should also list the sources its
+ * *external* scripts need (`'self'`, `https:`, …) — those are kept. A direct consequence of the
+ * widening invariant: adding `'unsafe-inline'` supersedes another contributor's
+ * nonce/hash/`'strict-dynamic'` hardening on that directive (the least-restrictive contribution prevails).
  *
  * `'strict-dynamic'` *without* `'unsafe-inline'` is left untouched — it has no permissive superset
  * with `'self'`/host allowlists, so the API does not arbitrate and the browser decides.
