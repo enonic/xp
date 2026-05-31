@@ -123,22 +123,6 @@ public final class ContentSecurityPolicy
         return this;
     }
 
-    /**
-     * Seeds a strict, allowlist-free script baseline: {@code script-src 'strict-dynamic'},
-     * {@code object-src 'none'}, and {@code base-uri 'none'}. {@code 'strict-dynamic'} trusts scripts
-     * loaded by an already-trusted script, but something must bootstrap that trust — add a nonce
-     * ({@link #nonceScriptSrc()}, which returns the value to stamp on inline {@code <script nonce>})
-     * or a hash ({@link #addScriptSrcSha(byte[])}); on its own this baseline allows no scripts. Call
-     * it first, then bootstrap and add more sources as needed.
-     */
-    public ContentSecurityPolicy strictDynamic()
-    {
-        scriptSrc( CspSource.STRICT_DYNAMIC );
-        objectSrc( CspSource.NONE );
-        baseUri( CspSource.NONE );
-        return this;
-    }
-
     public ContentSecurityPolicy defaultSrc( final CspSource... sources )
     {
         return addTokens( "default-src", sources );

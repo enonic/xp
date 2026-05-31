@@ -429,28 +429,4 @@ class ContentSecurityPolicyTest
         assertThat( csp.build() ).isEqualTo(
             "base-uri 'none'; default-src 'none'; frame-ancestors 'none'; script-src 'self'; style-src 'self'" );
     }
-
-    @Test
-    void strictDynamic_seeds_baseline_without_a_bootstrap()
-    {
-        final ContentSecurityPolicy csp = new ContentSecurityPolicy().strictDynamic();
-        assertThat( csp.build() ).isEqualTo( "base-uri 'none'; object-src 'none'; script-src 'strict-dynamic'" );
-    }
-
-    @Test
-    void strictDynamic_bootstrapped_with_nonce()
-    {
-        final ContentSecurityPolicy csp = new ContentSecurityPolicy().strictDynamic();
-        final String nonce = csp.nonceScriptSrc();
-        assertThat( csp.build() ).isEqualTo(
-            "base-uri 'none'; object-src 'none'; script-src 'strict-dynamic' 'nonce-" + nonce + "'" );
-    }
-
-    @Test
-    void strictDynamic_bootstrapped_with_hash()
-    {
-        final ContentSecurityPolicy csp = new ContentSecurityPolicy().strictDynamic().addScriptSrcSha( HashAlgo.SHA256, "AbC" );
-        assertThat( csp.build() ).isEqualTo(
-            "base-uri 'none'; object-src 'none'; script-src 'strict-dynamic' 'sha256-AbC'" );
-    }
 }

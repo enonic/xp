@@ -157,18 +157,6 @@ public class CspHandlerScriptTest
         runFunction( "/test/csp-test.js", "strictThenOpenUp" );
     }
 
-    @Test
-    void strictDynamic()
-    {
-        runFunction( "/test/csp-test.js", "strictDynamic" );
-    }
-
-    @Test
-    void strictDynamicBootstrappedWithNonce()
-    {
-        runFunction( "/test/csp-test.js", "strictDynamicBootstrappedWithNonce" );
-    }
-
     public String policyBuild()
     {
         return this.portalRequest.getContentSecurityPolicy().build();
