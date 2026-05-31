@@ -1106,6 +1106,38 @@ export interface Csp {
     /** Registers the boolean `upgrade-insecure-requests` directive. */
     upgradeInsecureRequests(): Csp;
 
+    /** Unions sources into `script-src-elem` (governs `<script>` elements). */
+    scriptSrcElem(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions sources into `script-src-attr` (governs inline event handlers). */
+    scriptSrcAttr(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions sources into `style-src-elem` (governs `<style>`/`<link rel=stylesheet>`). */
+    styleSrcElem(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions sources into `style-src-attr` (governs inline `style` attributes). */
+    styleSrcAttr(...sources: (CspSource | string)[]): Csp;
+
+    /**
+     * Adds the `report-to` directive naming a reporting group. The group must be defined by a
+     * companion `Reporting-Endpoints` response header (the caller's responsibility). `report-uri` is
+     * deprecated — use `add('report-uri', ...)` if still needed.
+     */
+    reportTo(group: string): Csp;
+
+    /** Registers `require-trusted-types-for 'script'` (the only sink group the spec defines). */
+    requireTrustedTypesFor(): Csp;
+
+    /** Adds policy names and/or keywords (`'none'`, `'allow-duplicates'`, `*`) to `trusted-types`. */
+    trustedTypes(...values: string[]): Csp;
+
+    /**
+     * Policy-level: when `true`, the policy is emitted as `Content-Security-Policy-Report-Only`
+     * (violations are reported, e.g. to a `reportTo` group, but **not** enforced); `false` (default)
+     * emits the enforcing header. Enabling it disables enforcement for the whole response.
+     */
+    reportOnly(value: boolean): Csp;
+
     /**
      * Unions sandbox flags into the `sandbox` directive. With no flags, registers
      * an empty `sandbox` (all restrictions applied).
@@ -1177,6 +1209,22 @@ interface CspHandler {
     formAction(sources: string[]): void;
 
     upgradeInsecureRequests(): void;
+
+    scriptSrcElem(sources: string[]): void;
+
+    scriptSrcAttr(sources: string[]): void;
+
+    styleSrcElem(sources: string[]): void;
+
+    styleSrcAttr(sources: string[]): void;
+
+    reportTo(group: string): void;
+
+    requireTrustedTypesFor(): void;
+
+    trustedTypes(values: string[]): void;
+
+    reportOnly(value: boolean): void;
 
     sandbox(flags: string[]): void;
 
@@ -1283,6 +1331,38 @@ export function csp(): Csp {
         },
         upgradeInsecureRequests(): Csp {
             bean.upgradeInsecureRequests();
+            return instance;
+        },
+        scriptSrcElem(...sources: (CspSource | string)[]): Csp {
+            bean.scriptSrcElem(sources);
+            return instance;
+        },
+        scriptSrcAttr(...sources: (CspSource | string)[]): Csp {
+            bean.scriptSrcAttr(sources);
+            return instance;
+        },
+        styleSrcElem(...sources: (CspSource | string)[]): Csp {
+            bean.styleSrcElem(sources);
+            return instance;
+        },
+        styleSrcAttr(...sources: (CspSource | string)[]): Csp {
+            bean.styleSrcAttr(sources);
+            return instance;
+        },
+        reportTo(group: string): Csp {
+            bean.reportTo(group);
+            return instance;
+        },
+        requireTrustedTypesFor(): Csp {
+            bean.requireTrustedTypesFor();
+            return instance;
+        },
+        trustedTypes(...values: string[]): Csp {
+            bean.trustedTypes(values);
+            return instance;
+        },
+        reportOnly(value: boolean): Csp {
+            bean.reportOnly(value);
             return instance;
         },
         sandbox(...flags: SandboxFlag[]): Csp {

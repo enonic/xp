@@ -134,6 +134,30 @@ public class CspHandlerScriptTest
     }
 
     @Test
+    void granularDirectives()
+    {
+        runFunction( "/test/csp-test.js", "granularDirectives" );
+    }
+
+    @Test
+    void reportToDirective()
+    {
+        runFunction( "/test/csp-test.js", "reportToDirective" );
+    }
+
+    @Test
+    void trustedTypesDirectives()
+    {
+        runFunction( "/test/csp-test.js", "trustedTypesDirectives" );
+    }
+
+    @Test
+    void reportOnlyFlag()
+    {
+        runFunction( "/test/csp-test.js", "reportOnlyFlag" );
+    }
+
+    @Test
     void cspSourceTokens()
     {
         runFunction( "/test/csp-test.js", "cspSourceTokens" );
@@ -172,6 +196,11 @@ public class CspHandlerScriptTest
     public String policyBuild()
     {
         return this.portalRequest.getContentSecurityPolicy().build();
+    }
+
+    public boolean policyReportOnly()
+    {
+        return this.portalRequest.getContentSecurityPolicy().isReportOnly();
     }
 
     public String shaBase64( final String content, final String algorithm )

@@ -18,6 +18,8 @@ public abstract class BasePortalHandler
 {
     private static final String CSP_HEADER = "Content-Security-Policy";
 
+    private static final String CSP_REPORT_ONLY_HEADER = "Content-Security-Policy-Report-Only";
+
     protected ExceptionRenderer exceptionRenderer;
 
     public BasePortalHandler()
@@ -70,10 +72,11 @@ public abstract class BasePortalHandler
     {
         final ContentSecurityPolicy policy = portalRequest.getContentSecurityPolicy();
         final String headerValue = policy.build();
-        if ( headerValue.isEmpty() || response.getHeaders().containsKey( CSP_HEADER ) )
+        final String header = policy.isReportOnly() ? CSP_REPORT_ONLY_HEADER : CSP_HEADER;
+        if ( headerValue.isEmpty() || response.getHeaders().containsKey( header ) )
         {
             return response;
         }
-        return PortalResponse.create( response ).header( CSP_HEADER, headerValue ).build();
+        return PortalResponse.create( response ).header( header, headerValue ).build();
     }
 }

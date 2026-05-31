@@ -26,6 +26,14 @@ exports.returnsObject = function () {
     assert.assertEquals('function', typeof csp.baseUri);
     assert.assertEquals('function', typeof csp.formAction);
     assert.assertEquals('function', typeof csp.upgradeInsecureRequests);
+    assert.assertEquals('function', typeof csp.scriptSrcElem);
+    assert.assertEquals('function', typeof csp.scriptSrcAttr);
+    assert.assertEquals('function', typeof csp.styleSrcElem);
+    assert.assertEquals('function', typeof csp.styleSrcAttr);
+    assert.assertEquals('function', typeof csp.reportTo);
+    assert.assertEquals('function', typeof csp.requireTrustedTypesFor);
+    assert.assertEquals('function', typeof csp.trustedTypes);
+    assert.assertEquals('function', typeof csp.reportOnly);
     assert.assertEquals('function', typeof csp.sandbox);
     assert.assertEquals('function', typeof csp.scriptSrcSha);
     assert.assertEquals('function', typeof csp.styleSrcSha);
@@ -178,6 +186,41 @@ exports.styleSrcShaContent = function () {
         "style-src 'sha256-" + testInstance.shaBase64('body { color: red; }', 'SHA-256') + "'",
         __.toNativeObject(testInstance.policyBuild())
     );
+};
+
+exports.granularDirectives = function () {
+    var csp = portal.csp();
+    csp.scriptSrcElem(portal.CspSource.SELF);
+    csp.scriptSrcAttr(portal.CspSource.NONE);
+    csp.styleSrcElem(portal.CspSource.SELF);
+    csp.styleSrcAttr(portal.CspSource.NONE);
+    assert.assertEquals(
+        "script-src-attr 'none'; script-src-elem 'self'; style-src-attr 'none'; style-src-elem 'self'",
+        __.toNativeObject(testInstance.policyBuild())
+    );
+};
+
+exports.reportToDirective = function () {
+    var csp = portal.csp();
+    csp.reportTo('csp-endpoint');
+    assert.assertEquals('report-to csp-endpoint', __.toNativeObject(testInstance.policyBuild()));
+};
+
+exports.trustedTypesDirectives = function () {
+    var csp = portal.csp();
+    csp.requireTrustedTypesFor();
+    csp.trustedTypes('my-policy', "'allow-duplicates'");
+    assert.assertEquals(
+        "require-trusted-types-for 'script'; trusted-types my-policy 'allow-duplicates'",
+        __.toNativeObject(testInstance.policyBuild())
+    );
+};
+
+exports.reportOnlyFlag = function () {
+    var csp = portal.csp();
+    assert.assertTrue('default not report-only', !__.toNativeObject(testInstance.policyReportOnly()));
+    csp.reportOnly(true);
+    assert.assertTrue('report-only after enable', __.toNativeObject(testInstance.policyReportOnly()));
 };
 
 exports.cspSourceTokens = function () {
