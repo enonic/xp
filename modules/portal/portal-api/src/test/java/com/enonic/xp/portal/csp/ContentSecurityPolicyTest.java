@@ -67,17 +67,17 @@ class ContentSecurityPolicyTest
     void reset_preserves_nonce_so_it_stays_stable()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy();
-        final String nonce = csp.scriptSrcNonce();
+        final String nonce = csp.nonceScriptSrc();
         csp.reset();
-        assertThat( csp.scriptSrcNonce() ).isEqualTo( nonce );
+        assertThat( csp.nonceScriptSrc() ).isEqualTo( nonce );
     }
 
     @Test
     void nonce_lazy_and_cached()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy();
-        final String first = csp.scriptSrcNonce();
-        final String second = csp.scriptSrcNonce();
+        final String first = csp.nonceScriptSrc();
+        final String second = csp.nonceScriptSrc();
         assertThat( first ).isEqualTo( second );
 
         final byte[] decoded = Base64.getUrlDecoder().decode( first );
@@ -87,18 +87,18 @@ class ContentSecurityPolicyTest
     }
 
     @Test
-    void scriptSrcNonce_targets_script_src_only()
+    void nonceScriptSrc_targets_script_src_only()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy();
-        final String nonce = csp.scriptSrcNonce();
+        final String nonce = csp.nonceScriptSrc();
         assertThat( csp.build() ).isEqualTo( "script-src 'nonce-" + nonce + "'" );
     }
 
     @Test
-    void styleSrcNonce_targets_style_src_only()
+    void nonceStyleSrc_targets_style_src_only()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy();
-        final String nonce = csp.styleSrcNonce();
+        final String nonce = csp.nonceStyleSrc();
         assertThat( csp.build() ).isEqualTo( "style-src 'nonce-" + nonce + "'" );
     }
 
@@ -106,8 +106,8 @@ class ContentSecurityPolicyTest
     void nonce_value_stable_across_methods()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy();
-        final String fromScript = csp.scriptSrcNonce();
-        assertThat( csp.styleSrcNonce() ).isEqualTo( fromScript );
+        final String fromScript = csp.nonceScriptSrc();
+        assertThat( csp.nonceStyleSrc() ).isEqualTo( fromScript );
         assertThat( csp.build() ).isEqualTo(
             "script-src 'nonce-" + fromScript + "'; style-src 'nonce-" + fromScript + "'" );
     }
@@ -115,8 +115,8 @@ class ContentSecurityPolicyTest
     @Test
     void nonce_uniqueness_across_instances()
     {
-        final String first = new ContentSecurityPolicy().scriptSrcNonce();
-        final String second = new ContentSecurityPolicy().scriptSrcNonce();
+        final String first = new ContentSecurityPolicy().nonceScriptSrc();
+        final String second = new ContentSecurityPolicy().nonceScriptSrc();
         assertThat( first ).isNotEqualTo( second );
     }
 
@@ -155,7 +155,7 @@ class ContentSecurityPolicyTest
     void unsafe_inline_drops_nonce_in_output()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy().add( "script-src", "'unsafe-inline'" );
-        csp.scriptSrcNonce();
+        csp.nonceScriptSrc();
         assertThat( csp.build() ).isEqualTo( "script-src 'unsafe-inline'" );
     }
 
@@ -163,7 +163,7 @@ class ContentSecurityPolicyTest
     void unsafe_inline_drops_hash_in_output()
     {
         final ContentSecurityPolicy csp =
-            new ContentSecurityPolicy().add( "style-src", "'unsafe-inline'" ).styleSrcSha( HashAlgo.SHA256, "AbC" );
+            new ContentSecurityPolicy().add( "style-src", "'unsafe-inline'" ).shaStyleSrc( HashAlgo.SHA256, "AbC" );
         assertThat( csp.build() ).isEqualTo( "style-src 'unsafe-inline'" );
     }
 
@@ -171,7 +171,7 @@ class ContentSecurityPolicyTest
     void unsafe_inline_drops_nonce_regardless_of_order()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy();
-        csp.scriptSrcNonce();
+        csp.nonceScriptSrc();
         csp.add( "script-src", "'unsafe-inline'" );
         assertThat( csp.build() ).isEqualTo( "script-src 'unsafe-inline'" );
     }
@@ -181,7 +181,7 @@ class ContentSecurityPolicyTest
     {
         final ContentSecurityPolicy csp =
             new ContentSecurityPolicy().scriptSrc( CspSource.SELF, CspSource.UNSAFE_INLINE ).scriptSrc( "https://cdn.example.com" );
-        csp.scriptSrcNonce();
+        csp.nonceScriptSrc();
         assertThat( csp.build() ).isEqualTo( "script-src 'self' 'unsafe-inline' https://cdn.example.com" );
     }
 
@@ -189,7 +189,7 @@ class ContentSecurityPolicyTest
     void nonce_kept_without_unsafe_inline()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrc( CspSource.SELF );
-        final String nonce = csp.scriptSrcNonce();
+        final String nonce = csp.nonceScriptSrc();
         assertThat( csp.build() ).isEqualTo( "script-src 'self' 'nonce-" + nonce + "'" );
     }
 
@@ -197,7 +197,7 @@ class ContentSecurityPolicyTest
     void unsafe_inline_drops_strict_dynamic_and_nonce()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrc( CspSource.UNSAFE_INLINE, CspSource.STRICT_DYNAMIC );
-        csp.scriptSrcNonce();
+        csp.nonceScriptSrc();
         assertThat( csp.build() ).isEqualTo( "script-src 'unsafe-inline'" );
     }
 
@@ -208,7 +208,7 @@ class ContentSecurityPolicyTest
         final ContentSecurityPolicy csp =
             new ContentSecurityPolicy().scriptSrc( CspSource.SELF, CspSource.UNSAFE_INLINE, CspSource.STRICT_DYNAMIC )
                 .scriptSrc( "https:" );
-        csp.scriptSrcNonce();
+        csp.nonceScriptSrc();
         assertThat( csp.build() ).isEqualTo( "script-src 'self' 'unsafe-inline' https:" );
     }
 
@@ -216,7 +216,7 @@ class ContentSecurityPolicyTest
     void strict_dynamic_kept_without_unsafe_inline()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrc( CspSource.STRICT_DYNAMIC );
-        final String nonce = csp.scriptSrcNonce();
+        final String nonce = csp.nonceScriptSrc();
         assertThat( csp.build() ).isEqualTo( "script-src 'strict-dynamic' 'nonce-" + nonce + "'" );
     }
 
@@ -256,16 +256,16 @@ class ContentSecurityPolicyTest
     }
 
     @Test
-    void scriptSrcSha_null_content_throws()
+    void shaScriptSrc_null_content_throws()
     {
-        assertThatThrownBy( () -> new ContentSecurityPolicy().scriptSrcSha( (byte[]) null ) ).isInstanceOf(
+        assertThatThrownBy( () -> new ContentSecurityPolicy().shaScriptSrc( (byte[]) null ) ).isInstanceOf(
             NullPointerException.class );
     }
 
     @Test
-    void scriptSrcSha_null_algo_throws()
+    void shaScriptSrc_null_algo_throws()
     {
-        assertThatThrownBy( () -> new ContentSecurityPolicy().scriptSrcSha( null, "AAAA" ) ).isInstanceOf(
+        assertThatThrownBy( () -> new ContentSecurityPolicy().shaScriptSrc( null, "AAAA" ) ).isInstanceOf(
             NullPointerException.class );
     }
 
@@ -370,49 +370,49 @@ class ContentSecurityPolicyTest
     }
 
     @Test
-    void scriptSrcSha_bytes_encodes_sha256_into_script_src()
+    void shaScriptSrc_bytes_encodes_sha256_into_script_src()
         throws Exception
     {
         final byte[] content = "alert('hi');".getBytes();
-        final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrcSha( content );
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().shaScriptSrc( content );
 
         final String expectedDigest = Base64.getEncoder().encodeToString( MessageDigest.getInstance( "SHA-256" ).digest( content ) );
         assertThat( csp.build() ).isEqualTo( "script-src 'sha256-" + expectedDigest + "'" );
     }
 
     @Test
-    void scriptSrcSha_bytes_encodes_chosen_algo_into_script_src()
+    void shaScriptSrc_bytes_encodes_chosen_algo_into_script_src()
         throws Exception
     {
         final byte[] content = "alert('hi');".getBytes();
-        final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrcSha( HashAlgo.SHA384, content );
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().shaScriptSrc( HashAlgo.SHA384, content );
 
         final String expectedDigest = Base64.getEncoder().encodeToString( MessageDigest.getInstance( "SHA-384" ).digest( content ) );
         assertThat( csp.build() ).isEqualTo( "script-src 'sha384-" + expectedDigest + "'" );
     }
 
     @Test
-    void scriptSrcSha_precomputed_emits_algo_and_value()
+    void shaScriptSrc_precomputed_emits_algo_and_value()
     {
-        final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrcSha( HashAlgo.SHA384, "AbC" );
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().shaScriptSrc( HashAlgo.SHA384, "AbC" );
         assertThat( csp.build() ).isEqualTo( "script-src 'sha384-AbC'" );
     }
 
     @Test
-    void styleSrcSha_bytes_encodes_sha256_into_style_src()
+    void shaStyleSrc_bytes_encodes_sha256_into_style_src()
         throws Exception
     {
         final byte[] content = "body { color: red; }".getBytes();
-        final ContentSecurityPolicy csp = new ContentSecurityPolicy().styleSrcSha( content );
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().shaStyleSrc( content );
 
         final String expectedDigest = Base64.getEncoder().encodeToString( MessageDigest.getInstance( "SHA-256" ).digest( content ) );
         assertThat( csp.build() ).isEqualTo( "style-src 'sha256-" + expectedDigest + "'" );
     }
 
     @Test
-    void styleSrcSha_precomputed_emits_algo_and_value()
+    void shaStyleSrc_precomputed_emits_algo_and_value()
     {
-        final ContentSecurityPolicy csp = new ContentSecurityPolicy().styleSrcSha( HashAlgo.SHA512, "XyZ" );
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().shaStyleSrc( HashAlgo.SHA512, "XyZ" );
         assertThat( csp.build() ).isEqualTo( "style-src 'sha512-XyZ'" );
     }
 

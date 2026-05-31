@@ -59,7 +59,7 @@ import static java.util.Objects.requireNonNull;
  * removes script propagation), so the API does not arbitrate and the browser decides.</p>
  *
  * <p>A {@code 'nonce-'} source is valid only on {@code script-src} and {@code style-src}: use
- * {@link #scriptSrcNonce()} or {@link #styleSrcNonce()}. Both return the same request-scoped value to
+ * {@link #nonceScriptSrc()} or {@link #nonceStyleSrc()}. Both return the same request-scoped value to
  * stamp on the matching inline tag.</p>
  */
 @NullMarked
@@ -438,16 +438,16 @@ public final class ContentSecurityPolicy
      * Computes the SHA-256 digest of {@code content} and unions {@code 'sha256-<base64>'} into
      * {@code script-src}.
      */
-    public ContentSecurityPolicy scriptSrcSha( final byte[] content )
+    public ContentSecurityPolicy shaScriptSrc( final byte[] content )
     {
-        return scriptSrcSha( HashAlgo.SHA256, content );
+        return shaScriptSrc( HashAlgo.SHA256, content );
     }
 
     /**
      * Computes the {@code algo} digest of {@code content} and unions {@code '<algo>-<base64>'} into
      * {@code script-src}.
      */
-    public ContentSecurityPolicy scriptSrcSha( final HashAlgo algo, final byte[] content )
+    public ContentSecurityPolicy shaScriptSrc( final HashAlgo algo, final byte[] content )
     {
         return addComputedSha( SCRIPT_SRC, algo, content );
     }
@@ -455,7 +455,7 @@ public final class ContentSecurityPolicy
     /**
      * Unions a precomputed {@code '<algo>-<base64>'} digest into {@code script-src}.
      */
-    public ContentSecurityPolicy scriptSrcSha( final HashAlgo algo, final String base64 )
+    public ContentSecurityPolicy shaScriptSrc( final HashAlgo algo, final String base64 )
     {
         return addPrecomputedSha( SCRIPT_SRC, algo, base64 );
     }
@@ -464,16 +464,16 @@ public final class ContentSecurityPolicy
      * Computes the SHA-256 digest of {@code content} and unions {@code 'sha256-<base64>'} into
      * {@code style-src}.
      */
-    public ContentSecurityPolicy styleSrcSha( final byte[] content )
+    public ContentSecurityPolicy shaStyleSrc( final byte[] content )
     {
-        return styleSrcSha( HashAlgo.SHA256, content );
+        return shaStyleSrc( HashAlgo.SHA256, content );
     }
 
     /**
      * Computes the {@code algo} digest of {@code content} and unions {@code '<algo>-<base64>'} into
      * {@code style-src}.
      */
-    public ContentSecurityPolicy styleSrcSha( final HashAlgo algo, final byte[] content )
+    public ContentSecurityPolicy shaStyleSrc( final HashAlgo algo, final byte[] content )
     {
         return addComputedSha( STYLE_SRC, algo, content );
     }
@@ -481,7 +481,7 @@ public final class ContentSecurityPolicy
     /**
      * Unions a precomputed {@code '<algo>-<base64>'} digest into {@code style-src}.
      */
-    public ContentSecurityPolicy styleSrcSha( final HashAlgo algo, final String base64 )
+    public ContentSecurityPolicy shaStyleSrc( final HashAlgo algo, final String base64 )
     {
         return addPrecomputedSha( STYLE_SRC, algo, base64 );
     }
@@ -490,7 +490,7 @@ public final class ContentSecurityPolicy
      * Wires the request nonce into {@code script-src} and returns its value (for stamping on inline
      * {@code <script nonce="...">} tags).
      */
-    public String scriptSrcNonce()
+    public String nonceScriptSrc()
     {
         return nonceFor( SCRIPT_SRC );
     }
@@ -499,7 +499,7 @@ public final class ContentSecurityPolicy
      * Wires the request nonce into {@code style-src} and returns its value (for stamping on inline
      * {@code <style nonce="...">} tags).
      */
-    public String styleSrcNonce()
+    public String nonceStyleSrc()
     {
         return nonceFor( STYLE_SRC );
     }

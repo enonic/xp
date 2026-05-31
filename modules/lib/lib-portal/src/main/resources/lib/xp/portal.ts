@@ -1160,25 +1160,25 @@ export interface Csp {
      * Unions a hash source into `script-src`. Pass `{ content }` to digest inline script text
      * (`algo` defaults to `'sha256'`), or `{ hash, algo }` for a precomputed base64 digest.
      */
-    scriptSrcSha(source: CspHashSource): Csp;
+    shaScriptSrc(source: CspHashSource): Csp;
 
     /**
      * Unions a hash source into `style-src`. Pass `{ content }` to digest inline style text
      * (`algo` defaults to `'sha256'`), or `{ hash, algo }` for a precomputed base64 digest.
      */
-    styleSrcSha(source: CspHashSource): Csp;
+    shaStyleSrc(source: CspHashSource): Csp;
 
     /**
      * Wires the request nonce into `script-src` and returns its value (for stamping on inline
      * `<script nonce="...">` tags). Lazily generated and cached for the request.
      */
-    scriptSrcNonce(): string;
+    nonceScriptSrc(): string;
 
     /**
      * Wires the request nonce into `style-src` and returns its value (for stamping on inline
      * `<style nonce="...">` tags). Lazily generated and cached for the request.
      */
-    styleSrcNonce(): string;
+    nonceStyleSrc(): string;
 }
 
 interface CspHandler {
@@ -1240,17 +1240,17 @@ interface CspHandler {
 
     sandbox(flags: string[]): void;
 
-    scriptSrcShaContent(content: string, algo: string | null): void;
+    shaScriptSrcContent(content: string, algo: string | null): void;
 
-    scriptSrcShaDigest(base64: string, algo: string): void;
+    shaScriptSrcDigest(base64: string, algo: string): void;
 
-    styleSrcShaContent(content: string, algo: string | null): void;
+    shaStyleSrcContent(content: string, algo: string | null): void;
 
-    styleSrcShaDigest(base64: string, algo: string): void;
+    shaStyleSrcDigest(base64: string, algo: string): void;
 
-    scriptSrcNonce(): string;
+    nonceScriptSrc(): string;
 
-    styleSrcNonce(): string;
+    nonceStyleSrc(): string;
 }
 
 /**
@@ -1381,27 +1381,27 @@ export function csp(): Csp {
             bean.sandbox(flags);
             return instance;
         },
-        scriptSrcSha(source: CspHashSource): Csp {
+        shaScriptSrc(source: CspHashSource): Csp {
             if (source.content !== undefined) {
-                bean.scriptSrcShaContent(source.content, __.nullOrValue(source.algo));
+                bean.shaScriptSrcContent(source.content, __.nullOrValue(source.algo));
             } else {
-                bean.scriptSrcShaDigest(source.hash, source.algo);
+                bean.shaScriptSrcDigest(source.hash, source.algo);
             }
             return instance;
         },
-        styleSrcSha(source: CspHashSource): Csp {
+        shaStyleSrc(source: CspHashSource): Csp {
             if (source.content !== undefined) {
-                bean.styleSrcShaContent(source.content, __.nullOrValue(source.algo));
+                bean.shaStyleSrcContent(source.content, __.nullOrValue(source.algo));
             } else {
-                bean.styleSrcShaDigest(source.hash, source.algo);
+                bean.shaStyleSrcDigest(source.hash, source.algo);
             }
             return instance;
         },
-        scriptSrcNonce(): string {
-            return bean.scriptSrcNonce();
+        nonceScriptSrc(): string {
+            return bean.nonceScriptSrc();
         },
-        styleSrcNonce(): string {
-            return bean.styleSrcNonce();
+        nonceStyleSrc(): string {
+            return bean.nonceStyleSrc();
         },
     };
     return instance;

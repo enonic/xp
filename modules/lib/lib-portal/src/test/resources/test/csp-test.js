@@ -8,8 +8,8 @@ exports.returnsObject = function () {
     assert.assertEquals('function', typeof csp.override);
     assert.assertEquals('function', typeof csp.reset);
     assert.assertEquals('function', typeof csp.strict);
-    assert.assertEquals('function', typeof csp.scriptSrcNonce);
-    assert.assertEquals('function', typeof csp.styleSrcNonce);
+    assert.assertEquals('function', typeof csp.nonceScriptSrc);
+    assert.assertEquals('function', typeof csp.nonceStyleSrc);
     assert.assertEquals('function', typeof csp.defaultSrc);
     assert.assertEquals('function', typeof csp.scriptSrc);
     assert.assertEquals('function', typeof csp.styleSrc);
@@ -35,8 +35,8 @@ exports.returnsObject = function () {
     assert.assertEquals('function', typeof csp.trustedTypes);
     assert.assertEquals('function', typeof csp.reportOnly);
     assert.assertEquals('function', typeof csp.sandbox);
-    assert.assertEquals('function', typeof csp.scriptSrcSha);
-    assert.assertEquals('function', typeof csp.styleSrcSha);
+    assert.assertEquals('function', typeof csp.shaScriptSrc);
+    assert.assertEquals('function', typeof csp.shaStyleSrc);
 };
 
 exports.addSources = function () {
@@ -80,29 +80,29 @@ exports.unsupportedAlgo = function () {
     var csp = portal.csp();
     var threw = false;
     try {
-        csp.scriptSrcSha({hash: 'AbCd', algo: 'md5'});
+        csp.shaScriptSrc({hash: 'AbCd', algo: 'md5'});
     } catch (e) {
         threw = true;
     }
-    assert.assertTrue('expected scriptSrcSha to throw on unsupported algo', threw);
+    assert.assertTrue('expected shaScriptSrc to throw on unsupported algo', threw);
 };
 
-exports.scriptSrcNonce = function () {
+exports.nonceScriptSrc = function () {
     var csp = portal.csp();
-    var n = csp.scriptSrcNonce();
+    var n = csp.nonceScriptSrc();
     assert.assertEquals("script-src 'nonce-" + n + "'", __.toNativeObject(testInstance.policyBuild()));
 };
 
-exports.styleSrcNonce = function () {
+exports.nonceStyleSrc = function () {
     var csp = portal.csp();
-    var n = csp.styleSrcNonce();
+    var n = csp.nonceStyleSrc();
     assert.assertEquals("style-src 'nonce-" + n + "'", __.toNativeObject(testInstance.policyBuild()));
 };
 
 exports.nonceStableAcrossMethods = function () {
     var csp = portal.csp();
-    var a = csp.scriptSrcNonce();
-    var b = csp.styleSrcNonce();
+    var a = csp.nonceScriptSrc();
+    var b = csp.nonceStyleSrc();
     assert.assertEquals(a, b);
     assert.assertEquals(
         "script-src 'nonce-" + a + "'; style-src 'nonce-" + a + "'",
@@ -113,7 +113,7 @@ exports.nonceStableAcrossMethods = function () {
 exports.unsafeInlineDropsNonce = function () {
     var csp = portal.csp();
     csp.scriptSrc(portal.CspSource.UNSAFE_INLINE);
-    csp.scriptSrcNonce();
+    csp.nonceScriptSrc();
     assert.assertEquals("script-src 'unsafe-inline'", __.toNativeObject(testInstance.policyBuild()));
 };
 
@@ -155,33 +155,33 @@ exports.sandboxMultipleFlags = function () {
     assert.assertEquals('sandbox allow-scripts allow-same-origin', __.toNativeObject(testInstance.policyBuild()));
 };
 
-exports.scriptSrcShaContent = function () {
+exports.shaScriptSrcContent = function () {
     var csp = portal.csp();
-    csp.scriptSrcSha({content: 'window.foo = 42;'});
+    csp.shaScriptSrc({content: 'window.foo = 42;'});
     assert.assertEquals(
         "script-src 'sha256-" + testInstance.shaBase64('window.foo = 42;', 'SHA-256') + "'",
         __.toNativeObject(testInstance.policyBuild())
     );
 };
 
-exports.scriptSrcShaContentWithAlgo = function () {
+exports.shaScriptSrcContentWithAlgo = function () {
     var csp = portal.csp();
-    csp.scriptSrcSha({content: 'window.foo = 42;', algo: 'sha384'});
+    csp.shaScriptSrc({content: 'window.foo = 42;', algo: 'sha384'});
     assert.assertEquals(
         "script-src 'sha384-" + testInstance.shaBase64('window.foo = 42;', 'SHA-384') + "'",
         __.toNativeObject(testInstance.policyBuild())
     );
 };
 
-exports.scriptSrcShaDigest = function () {
+exports.shaScriptSrcDigest = function () {
     var csp = portal.csp();
-    csp.scriptSrcSha({hash: 'AbC', algo: 'sha384'});
+    csp.shaScriptSrc({hash: 'AbC', algo: 'sha384'});
     assert.assertEquals("script-src 'sha384-AbC'", __.toNativeObject(testInstance.policyBuild()));
 };
 
-exports.styleSrcShaContent = function () {
+exports.shaStyleSrcContent = function () {
     var csp = portal.csp();
-    csp.styleSrcSha({content: 'body { color: red; }'});
+    csp.shaStyleSrc({content: 'body { color: red; }'});
     assert.assertEquals(
         "style-src 'sha256-" + testInstance.shaBase64('body { color: red; }', 'SHA-256') + "'",
         __.toNativeObject(testInstance.policyBuild())

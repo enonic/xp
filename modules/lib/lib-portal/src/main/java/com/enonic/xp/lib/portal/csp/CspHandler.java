@@ -160,36 +160,36 @@ public final class CspHandler
         policy().add( "sandbox", flags );
     }
 
-    public void scriptSrcShaContent( final String content, final String algo )
+    public void shaScriptSrcContent( final String content, final String algo )
     {
         requireNonNull( content, "content is required" );
-        policy().scriptSrcSha( parseAlgo( algo ), content.getBytes( StandardCharsets.UTF_8 ) );
+        policy().shaScriptSrc( parseAlgo( algo ), content.getBytes( StandardCharsets.UTF_8 ) );
     }
 
-    public void scriptSrcShaDigest( final String base64, final String algo )
+    public void shaScriptSrcDigest( final String base64, final String algo )
     {
-        policy().scriptSrcSha( parseAlgo( algo ), base64 );
+        policy().shaScriptSrc( parseAlgo( algo ), base64 );
     }
 
-    public void styleSrcShaContent( final String content, final String algo )
+    public void shaStyleSrcContent( final String content, final String algo )
     {
         requireNonNull( content, "content is required" );
-        policy().styleSrcSha( parseAlgo( algo ), content.getBytes( StandardCharsets.UTF_8 ) );
+        policy().shaStyleSrc( parseAlgo( algo ), content.getBytes( StandardCharsets.UTF_8 ) );
     }
 
-    public void styleSrcShaDigest( final String base64, final String algo )
+    public void shaStyleSrcDigest( final String base64, final String algo )
     {
-        policy().styleSrcSha( parseAlgo( algo ), base64 );
+        policy().shaStyleSrc( parseAlgo( algo ), base64 );
     }
 
-    public String scriptSrcNonce()
+    public String nonceScriptSrc()
     {
-        return policy().scriptSrcNonce();
+        return policy().nonceScriptSrc();
     }
 
-    public String styleSrcNonce()
+    public String nonceStyleSrc()
     {
-        return policy().styleSrcNonce();
+        return policy().nonceStyleSrc();
     }
 
     public String build()
