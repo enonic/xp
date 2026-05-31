@@ -395,8 +395,24 @@ public final class ContentSecurityPolicy
     }
 
     /**
-     * Adds {@code values} to the {@code trusted-types} directive — policy names and/or the keywords
-     * {@code 'none'}, {@code 'allow-duplicates'}, {@code *}.
+     * Adds the special {@link TrustedTypesKeyword} tokens ({@code 'none'}, {@code 'allow-duplicates'},
+     * {@code *}) to the {@code trusted-types} directive. Use {@link #trustedTypes(String...)} for
+     * policy names.
+     */
+    public ContentSecurityPolicy trustedTypes( final TrustedTypesKeyword... keywords )
+    {
+        requireNonNull( keywords, "keywords is required" );
+        final String[] tokens = new String[keywords.length];
+        for ( int i = 0; i < keywords.length; i++ )
+        {
+            tokens[i] = requireNonNull( keywords[i], "keyword is required" ).token();
+        }
+        return add( "trusted-types", tokens );
+    }
+
+    /**
+     * Adds (user-defined) policy names to the {@code trusted-types} directive. For the special
+     * keywords use {@link #trustedTypes(TrustedTypesKeyword...)}.
      */
     public ContentSecurityPolicy trustedTypes( final String... values )
     {

@@ -152,6 +152,12 @@ public class CspHandlerScriptTest
     }
 
     @Test
+    void trustedTypesKeywordTokens()
+    {
+        runFunction( "/test/csp-test.js", "trustedTypesKeywordTokens" );
+    }
+
+    @Test
     void reportOnlyFlag()
     {
         runFunction( "/test/csp-test.js", "reportOnlyFlag" );

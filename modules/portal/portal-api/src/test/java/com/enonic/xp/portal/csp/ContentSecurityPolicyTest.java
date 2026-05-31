@@ -481,10 +481,18 @@ class ContentSecurityPolicyTest
     }
 
     @Test
-    void trustedTypes_adds_values()
+    void trustedTypes_policy_names_and_keywords()
     {
-        final ContentSecurityPolicy csp = new ContentSecurityPolicy().trustedTypes( "my-policy", "'allow-duplicates'" );
+        final ContentSecurityPolicy csp =
+            new ContentSecurityPolicy().trustedTypes( "my-policy" ).trustedTypes( TrustedTypesKeyword.ALLOW_DUPLICATES );
         assertThat( csp.build() ).isEqualTo( "trusted-types my-policy 'allow-duplicates'" );
+    }
+
+    @Test
+    void trustedTypes_keyword_tokens()
+    {
+        assertThat( new ContentSecurityPolicy().trustedTypes( TrustedTypesKeyword.NONE ).build() ).isEqualTo( "trusted-types 'none'" );
+        assertThat( new ContentSecurityPolicy().trustedTypes( TrustedTypesKeyword.WILDCARD ).build() ).isEqualTo( "trusted-types *" );
     }
 
     @Test
