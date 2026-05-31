@@ -29,8 +29,8 @@ csp.styleSrcSha({content: 'body { color: red; }', algo: 'sha384'}); // choose th
 csp.scriptSrcSha({hash: 'AbCdEf0123...', algo: 'sha384'});         // precomputed base64 digest
 
 // Request-scoped nonce (lazy; same value on subsequent calls), valid only on script-src/style-src
-var nonce = csp.nonceScriptSrc();     // -> script-src 'nonce-...'
-csp.nonceStyleSrc();                  // -> style-src  'nonce-...' (same value)
+var nonce = csp.scriptSrcNonce();     // -> script-src 'nonce-...'
+csp.styleSrcNonce();                  // -> style-src  'nonce-...' (same value)
 
 // Escape hatches for less-common / future directives
 csp.add('require-trusted-types-for', "'script'");

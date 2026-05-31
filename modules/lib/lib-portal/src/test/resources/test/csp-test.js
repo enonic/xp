@@ -8,8 +8,8 @@ exports.returnsObject = function () {
     assert.assertEquals('function', typeof csp.override);
     assert.assertEquals('function', typeof csp.reset);
     assert.assertEquals('function', typeof csp.strict);
-    assert.assertEquals('function', typeof csp.nonceScriptSrc);
-    assert.assertEquals('function', typeof csp.nonceStyleSrc);
+    assert.assertEquals('function', typeof csp.scriptSrcNonce);
+    assert.assertEquals('function', typeof csp.styleSrcNonce);
     assert.assertEquals('function', typeof csp.defaultSrc);
     assert.assertEquals('function', typeof csp.scriptSrc);
     assert.assertEquals('function', typeof csp.styleSrc);
@@ -87,22 +87,22 @@ exports.unsupportedAlgo = function () {
     assert.assertTrue('expected scriptSrcSha to throw on unsupported algo', threw);
 };
 
-exports.nonceScriptSrc = function () {
+exports.scriptSrcNonce = function () {
     var csp = portal.csp();
-    var n = csp.nonceScriptSrc();
+    var n = csp.scriptSrcNonce();
     assert.assertEquals("script-src 'nonce-" + n + "'", __.toNativeObject(testInstance.policyBuild()));
 };
 
-exports.nonceStyleSrc = function () {
+exports.styleSrcNonce = function () {
     var csp = portal.csp();
-    var n = csp.nonceStyleSrc();
+    var n = csp.styleSrcNonce();
     assert.assertEquals("style-src 'nonce-" + n + "'", __.toNativeObject(testInstance.policyBuild()));
 };
 
 exports.nonceStableAcrossMethods = function () {
     var csp = portal.csp();
-    var a = csp.nonceScriptSrc();
-    var b = csp.nonceStyleSrc();
+    var a = csp.scriptSrcNonce();
+    var b = csp.styleSrcNonce();
     assert.assertEquals(a, b);
     assert.assertEquals(
         "script-src 'nonce-" + a + "'; style-src 'nonce-" + a + "'",
@@ -113,7 +113,7 @@ exports.nonceStableAcrossMethods = function () {
 exports.unsafeInlineDropsNonce = function () {
     var csp = portal.csp();
     csp.scriptSrc(portal.CspSource.UNSAFE_INLINE);
-    csp.nonceScriptSrc();
+    csp.scriptSrcNonce();
     assert.assertEquals("script-src 'unsafe-inline'", __.toNativeObject(testInstance.policyBuild()));
 };
 

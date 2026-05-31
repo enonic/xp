@@ -59,7 +59,7 @@ import static java.util.Objects.requireNonNull;
  * removes script propagation), so the API does not arbitrate and the browser decides.</p>
  *
  * <p>A {@code 'nonce-'} source is valid only on {@code script-src} and {@code style-src}: use
- * {@link #nonceScriptSrc()} or {@link #nonceStyleSrc()}. Both return the same request-scoped value to
+ * {@link #scriptSrcNonce()} or {@link #styleSrcNonce()}. Both return the same request-scoped value to
  * stamp on the matching inline tag.</p>
  */
 @NullMarked
@@ -490,7 +490,7 @@ public final class ContentSecurityPolicy
      * Wires the request nonce into {@code script-src} and returns its value (for stamping on inline
      * {@code <script nonce="...">} tags).
      */
-    public String nonceScriptSrc()
+    public String scriptSrcNonce()
     {
         return nonceFor( SCRIPT_SRC );
     }
@@ -499,7 +499,7 @@ public final class ContentSecurityPolicy
      * Wires the request nonce into {@code style-src} and returns its value (for stamping on inline
      * {@code <style nonce="...">} tags).
      */
-    public String nonceStyleSrc()
+    public String styleSrcNonce()
     {
         return nonceFor( STYLE_SRC );
     }
