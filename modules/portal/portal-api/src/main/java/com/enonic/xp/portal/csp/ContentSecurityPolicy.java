@@ -20,17 +20,18 @@ import static java.util.Objects.requireNonNull;
  * controllers) extend the same policy during rendering, and {@link #build()} composes the header at
  * response-flush time so late additions still land.</p>
  *
- * <p>It works as a <b>collector of wishes</b> that resolves to the <b>most permissive</b> result, so
- * no contributor's content is blocked by another's rule:</p>
+ * <p>It aggregates directives from independent contributors with <b>additive, widening merge
+ * semantics</b>: combining contributions only ever broadens what is permitted, never narrows it, so
+ * one contributor cannot tighten — and thereby break — another's content.</p>
  * <ul>
  *   <li>{@link #add} unions sources into a directive (deduped).</li>
  *   <li>{@link #set} resets a directive's sources — no freeze, so a later {@link #add} still extends.</li>
  * </ul>
  *
- * <p>One CSP3 quirk works against that goal: a browser treats a {@code 'nonce-…'}, a hash, or
+ * <p>One CSP3 rule works against that invariant: a browser treats a {@code 'nonce-…'}, a hash, or
  * {@code 'strict-dynamic'} as a reason to <i>ignore</i> {@code 'unsafe-inline'} (and
  * {@code 'strict-dynamic'} also ignores {@code 'self'}/host/scheme), which makes the union
- * <i>narrower</i>, not wider. So {@link #build()} applies a single rule:</p>
+ * <i>narrower</i>, not wider. To keep the merge widening, {@link #build()} applies a single rule:</p>
  * <blockquote>If a directive contains {@code 'unsafe-inline'}, its {@code 'nonce-…'}, hash, and
  * {@code 'strict-dynamic'} sources are dropped from the emitted header.</blockquote>
  * <p>{@code 'unsafe-inline'} already permits every inline script/style a nonce or hash would, so
@@ -41,10 +42,11 @@ import static java.util.Objects.requireNonNull;
  *         -&gt; script-src https: 'unsafe-inline'
  * </pre>
  * <p>{@code 'unsafe-inline'} governs <i>inline</i> content only, and {@code 'strict-dynamic'}
- * propagation is dropped along with it, so a caller relaxing this way should also list the sources
- * its <i>external</i> scripts need ({@code 'self'}, {@code https:}, …) — those are kept. By design
- * this means a contributor that adds {@code 'unsafe-inline'} voids another's nonce/hash/{@code
- * 'strict-dynamic'} hardening on that directive: the weakest wish wins.</p>
+ * propagation is dropped along with it, so a contributor that broadens a directive this way should
+ * also list the sources its <i>external</i> scripts need ({@code 'self'}, {@code https:}, …) — those
+ * are kept. A direct consequence of the widening invariant: adding {@code 'unsafe-inline'} supersedes
+ * another contributor's nonce/hash/{@code 'strict-dynamic'} hardening on that directive — the
+ * least-restrictive contribution prevails.</p>
  *
  * <p>{@code 'strict-dynamic'} <i>without</i> {@code 'unsafe-inline'} is left untouched — it has no
  * permissive superset with {@code 'self'}/host allowlists (keeping it blocks those hosts, dropping it
@@ -393,12 +395,12 @@ public final class ContentSecurityPolicy
      * <p>Directives are emitted in alphabetical order for deterministic output. Sources within a
      * directive follow insertion order.</p>
      *
-     * <p>Relaxing resolution: in a directive that holds {@code 'unsafe-inline'}, any {@code 'nonce-…'},
+     * <p>Widening resolution: in a directive that holds {@code 'unsafe-inline'}, any {@code 'nonce-…'},
      * hash, and {@code 'strict-dynamic'} source is omitted from the output — each would otherwise make
-     * a browser ignore {@code 'unsafe-inline'} and allow fewer scripts/styles than was wished for.
-     * {@code 'unsafe-inline'} governs only inline content, so a caller relaxing this way should also
-     * list the host/scheme sources its external scripts need (e.g. {@code 'self'}, {@code https:});
-     * those are kept, only the strictness sources are dropped.</p>
+     * a browser ignore {@code 'unsafe-inline'} and permit fewer scripts/styles than the union implies.
+     * {@code 'unsafe-inline'} governs only inline content, so a contributor that broadens a directive
+     * this way should also list the host/scheme sources its external scripts need (e.g. {@code 'self'},
+     * {@code https:}); those are kept, only the strictness sources are dropped.</p>
      */
     public String build()
     {
