@@ -30,11 +30,6 @@ public final class CspHandler
         policy().strict();
     }
 
-    public void strictDynamic()
-    {
-        policy().strictDynamic();
-    }
-
     public void defaultSrc( final String[] sources )
     {
         policy().defaultSrc( sources );

@@ -1046,15 +1046,6 @@ export interface Csp {
      */
     strict(): Csp;
 
-    /**
-     * Seeds a strict, allowlist-free script baseline: `script-src 'strict-dynamic'`,
-     * `object-src 'none'`, `base-uri 'none'`. `'strict-dynamic'` trusts scripts loaded by an
-     * already-trusted script, but something must bootstrap that trust — add a nonce
-     * (`nonceScriptSrc()`, which returns the value to stamp on inline `<script nonce>`) or a hash
-     * (`addScriptSrcSha`); on its own this baseline allows no scripts.
-     */
-    strictDynamic(): Csp;
-
     /** Unions sources into `default-src`. */
     defaultSrc(...sources: (CspSource | string)[]): Csp;
 
@@ -1141,8 +1132,6 @@ interface CspHandler {
 
     strict(): void;
 
-    strictDynamic(): void;
-
     defaultSrc(sources: string[]): void;
 
     scriptSrc(sources: string[]): void;
@@ -1212,10 +1201,6 @@ export function csp(): Csp {
         },
         strict(): Csp {
             bean.strict();
-            return instance;
-        },
-        strictDynamic(): Csp {
-            bean.strictDynamic();
             return instance;
         },
         defaultSrc(...sources: (CspSource | string)[]): Csp {

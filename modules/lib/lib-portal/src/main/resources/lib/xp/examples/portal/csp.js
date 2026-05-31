@@ -3,10 +3,8 @@ var portalLib = require('/lib/xp/portal');
 // BEGIN
 var csp = portalLib.csp();
 
-// One-shot strict baselines -- pick one as a starting point, then open up what you need:
-//   csp.strict();         // deny-all: default-src 'none', base-uri 'none', frame-ancestors 'none'
-//   csp.strictDynamic();  // script-src 'strict-dynamic', object-src/base-uri 'none';
-//                         // then bootstrap with csp.nonceScriptSrc() or csp.addScriptSrcSha({...})
+// Deny-all baseline -- a starting point you then open up directive by directive:
+//   csp.strict();  // default-src 'none', base-uri 'none', frame-ancestors 'none'
 
 // Typed source-list directives -- variadic typed sources
 csp.defaultSrc(portalLib.CspSource.NONE);

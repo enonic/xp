@@ -7,7 +7,6 @@ exports.returnsObject = function () {
     assert.assertEquals('function', typeof csp.add);
     assert.assertEquals('function', typeof csp.set);
     assert.assertEquals('function', typeof csp.strict);
-    assert.assertEquals('function', typeof csp.strictDynamic);
     assert.assertEquals('function', typeof csp.nonceScriptSrc);
     assert.assertEquals('function', typeof csp.nonceStyleSrc);
     assert.assertEquals('function', typeof csp.defaultSrc);
@@ -221,25 +220,6 @@ exports.strictThenOpenUp = function () {
     csp.strict().scriptSrc(portal.CspSource.SELF).styleSrc(portal.CspSource.SELF);
     assert.assertEquals(
         "base-uri 'none'; default-src 'none'; frame-ancestors 'none'; script-src 'self'; style-src 'self'",
-        __.toNativeObject(testInstance.policyBuild())
-    );
-};
-
-exports.strictDynamic = function () {
-    var csp = portal.csp();
-    csp.strictDynamic();
-    assert.assertEquals(
-        "base-uri 'none'; object-src 'none'; script-src 'strict-dynamic'",
-        __.toNativeObject(testInstance.policyBuild())
-    );
-};
-
-exports.strictDynamicBootstrappedWithNonce = function () {
-    var csp = portal.csp();
-    csp.strictDynamic();
-    var n = csp.nonceScriptSrc();
-    assert.assertEquals(
-        "base-uri 'none'; object-src 'none'; script-src 'strict-dynamic' 'nonce-" + n + "'",
         __.toNativeObject(testInstance.policyBuild())
     );
 };
