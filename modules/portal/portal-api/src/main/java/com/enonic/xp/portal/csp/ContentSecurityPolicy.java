@@ -389,7 +389,7 @@ public final class ContentSecurityPolicy
     /**
      * Registers {@code require-trusted-types-for 'script'} (the only sink group the spec defines).
      */
-    public ContentSecurityPolicy requireTrustedTypesFor()
+    public ContentSecurityPolicy requireTrustedTypesForScript()
     {
         return add( "require-trusted-types-for", "'script'" );
     }

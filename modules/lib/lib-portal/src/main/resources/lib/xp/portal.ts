@@ -1126,7 +1126,7 @@ export interface Csp {
     reportTo(group: string): Csp;
 
     /** Registers `require-trusted-types-for 'script'` (the only sink group the spec defines). */
-    requireTrustedTypesFor(): Csp;
+    requireTrustedTypesForScript(): Csp;
 
     /** Adds policy names and/or keywords (`'none'`, `'allow-duplicates'`, `*`) to `trusted-types`. */
     trustedTypes(...values: string[]): Csp;
@@ -1220,7 +1220,7 @@ interface CspHandler {
 
     reportTo(group: string): void;
 
-    requireTrustedTypesFor(): void;
+    requireTrustedTypesForScript(): void;
 
     trustedTypes(values: string[]): void;
 
@@ -1353,8 +1353,8 @@ export function csp(): Csp {
             bean.reportTo(group);
             return instance;
         },
-        requireTrustedTypesFor(): Csp {
-            bean.requireTrustedTypesFor();
+        requireTrustedTypesForScript(): Csp {
+            bean.requireTrustedTypesForScript();
             return instance;
         },
         trustedTypes(...values: string[]): Csp {

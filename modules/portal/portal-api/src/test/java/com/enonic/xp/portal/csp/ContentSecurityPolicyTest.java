@@ -474,9 +474,9 @@ class ContentSecurityPolicyTest
     }
 
     @Test
-    void requireTrustedTypesFor_adds_script()
+    void requireTrustedTypesForScript_adds_script()
     {
-        final ContentSecurityPolicy csp = new ContentSecurityPolicy().requireTrustedTypesFor();
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().requireTrustedTypesForScript();
         assertThat( csp.build() ).isEqualTo( "require-trusted-types-for 'script'" );
     }
 
