@@ -28,10 +28,11 @@ import static java.util.Objects.requireNonNull;
  * the per-directive methods ({@link #scriptSrc}, {@link #styleSrc}, {@link #imgSrc}, …, the nonce and
  * hash helpers) and the generic {@link #add}. They only union sources.</p>
  *
- * <p><b>Policy-level methods</b> (for the platform or site owner) can narrow or drop, breaking the
- * additive invariant — use sparingly, not from a part: {@link #strict()} (deny-all baseline),
- * {@link #override} (replace a directive's sources), and {@link #reset} (remove directives, or all
- * of them). There is no per-source removal; {@code reset} removes whole directives.</p>
+ * <p><b>Policy-level methods</b> (for the platform or site owner) can narrow, drop, or change how the
+ * whole policy is emitted, breaking the additive invariant — use sparingly, not from a part:
+ * {@link #strict()} (deny-all baseline), {@link #override} (replace a directive's sources),
+ * {@link #reset} (remove directives, or all of them), and {@link #reportOnly(boolean)} (report
+ * instead of enforce). There is no per-source removal; {@code reset} removes whole directives.</p>
  *
  * <p>One CSP3 rule works against that invariant: a browser treats a {@code 'nonce-…'}, a hash, or
  * {@code 'strict-dynamic'} as a reason to <i>ignore</i> {@code 'unsafe-inline'} (and
@@ -82,6 +83,8 @@ public final class ContentSecurityPolicy
 
     @Nullable
     private String nonceValue;
+
+    private boolean reportOnly;
 
     /**
      * Unions {@code sources} into the existing source set for {@code directive}, deduped. With no
@@ -139,6 +142,27 @@ public final class ContentSecurityPolicy
             }
         }
         return this;
+    }
+
+    /**
+     * Selects the header the policy is emitted as: {@code true} →
+     * {@code Content-Security-Policy-Report-Only} (violations are reported, e.g. to a
+     * {@link #reportTo} group, but <b>not</b> enforced); {@code false} (default) → the enforcing
+     * {@code Content-Security-Policy}. Policy-level — enabling it disables enforcement for the whole
+     * response.
+     */
+    public ContentSecurityPolicy reportOnly( final boolean value )
+    {
+        this.reportOnly = value;
+        return this;
+    }
+
+    /**
+     * Whether the policy is emitted in report-only mode. See {@link #reportOnly(boolean)}.
+     */
+    public boolean isReportOnly()
+    {
+        return this.reportOnly;
     }
 
     /**
@@ -310,6 +334,73 @@ public final class ContentSecurityPolicy
     public ContentSecurityPolicy upgradeInsecureRequests()
     {
         return add( "upgrade-insecure-requests" );
+    }
+
+    public ContentSecurityPolicy scriptSrcElem( final CspSource... sources )
+    {
+        return addTokens( "script-src-elem", sources );
+    }
+
+    public ContentSecurityPolicy scriptSrcElem( final String... sources )
+    {
+        return add( "script-src-elem", sources );
+    }
+
+    public ContentSecurityPolicy scriptSrcAttr( final CspSource... sources )
+    {
+        return addTokens( "script-src-attr", sources );
+    }
+
+    public ContentSecurityPolicy scriptSrcAttr( final String... sources )
+    {
+        return add( "script-src-attr", sources );
+    }
+
+    public ContentSecurityPolicy styleSrcElem( final CspSource... sources )
+    {
+        return addTokens( "style-src-elem", sources );
+    }
+
+    public ContentSecurityPolicy styleSrcElem( final String... sources )
+    {
+        return add( "style-src-elem", sources );
+    }
+
+    public ContentSecurityPolicy styleSrcAttr( final CspSource... sources )
+    {
+        return addTokens( "style-src-attr", sources );
+    }
+
+    public ContentSecurityPolicy styleSrcAttr( final String... sources )
+    {
+        return add( "style-src-attr", sources );
+    }
+
+    /**
+     * Adds the {@code report-to} directive naming a reporting group. The group must be defined by a
+     * companion {@code Reporting-Endpoints} response header — that header is the caller's
+     * responsibility. ({@code report-uri} is deprecated; use {@link #add} if you still need it.)
+     */
+    public ContentSecurityPolicy reportTo( final String group )
+    {
+        return add( "report-to", group );
+    }
+
+    /**
+     * Registers {@code require-trusted-types-for 'script'} (the only sink group the spec defines).
+     */
+    public ContentSecurityPolicy requireTrustedTypesFor()
+    {
+        return add( "require-trusted-types-for", "'script'" );
+    }
+
+    /**
+     * Adds {@code values} to the {@code trusted-types} directive — policy names and/or the keywords
+     * {@code 'none'}, {@code 'allow-duplicates'}, {@code *}.
+     */
+    public ContentSecurityPolicy trustedTypes( final String... values )
+    {
+        return add( "trusted-types", values );
     }
 
     /**

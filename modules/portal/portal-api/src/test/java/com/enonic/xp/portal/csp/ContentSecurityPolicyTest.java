@@ -454,4 +454,47 @@ class ContentSecurityPolicyTest
         assertThat( csp.build() ).isEqualTo(
             "base-uri 'none'; default-src 'none'; frame-ancestors 'none'; script-src 'self'; style-src 'self'" );
     }
+
+    @Test
+    void granular_script_and_style_directives()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrcElem( CspSource.SELF )
+            .scriptSrcAttr( CspSource.NONE )
+            .styleSrcElem( CspSource.SELF )
+            .styleSrcAttr( CspSource.NONE );
+        assertThat( csp.build() ).isEqualTo(
+            "script-src-attr 'none'; script-src-elem 'self'; style-src-attr 'none'; style-src-elem 'self'" );
+    }
+
+    @Test
+    void reportTo_adds_directive()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().reportTo( "csp-endpoint" );
+        assertThat( csp.build() ).isEqualTo( "report-to csp-endpoint" );
+    }
+
+    @Test
+    void requireTrustedTypesFor_adds_script()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().requireTrustedTypesFor();
+        assertThat( csp.build() ).isEqualTo( "require-trusted-types-for 'script'" );
+    }
+
+    @Test
+    void trustedTypes_adds_values()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().trustedTypes( "my-policy", "'allow-duplicates'" );
+        assertThat( csp.build() ).isEqualTo( "trusted-types my-policy 'allow-duplicates'" );
+    }
+
+    @Test
+    void reportOnly_defaults_false_and_toggles()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy();
+        assertThat( csp.isReportOnly() ).isFalse();
+        csp.reportOnly( true );
+        assertThat( csp.isReportOnly() ).isTrue();
+        csp.reportOnly( false );
+        assertThat( csp.isReportOnly() ).isFalse();
+    }
 }

@@ -115,6 +115,46 @@ public final class CspHandler
         policy().upgradeInsecureRequests();
     }
 
+    public void scriptSrcElem( final String[] sources )
+    {
+        policy().scriptSrcElem( sources );
+    }
+
+    public void scriptSrcAttr( final String[] sources )
+    {
+        policy().scriptSrcAttr( sources );
+    }
+
+    public void styleSrcElem( final String[] sources )
+    {
+        policy().styleSrcElem( sources );
+    }
+
+    public void styleSrcAttr( final String[] sources )
+    {
+        policy().styleSrcAttr( sources );
+    }
+
+    public void reportTo( final String group )
+    {
+        policy().reportTo( group );
+    }
+
+    public void requireTrustedTypesFor()
+    {
+        policy().requireTrustedTypesFor();
+    }
+
+    public void trustedTypes( final String[] values )
+    {
+        policy().trustedTypes( values );
+    }
+
+    public void reportOnly( final boolean value )
+    {
+        policy().reportOnly( value );
+    }
+
     public void sandbox( final String[] flags )
     {
         policy().add( "sandbox", flags );
