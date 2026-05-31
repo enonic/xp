@@ -20,43 +20,26 @@ import static java.util.Objects.requireNonNull;
  * controllers) extend the same policy during rendering, and {@link #build()} composes the header at
  * response-flush time so late additions still land.</p>
  *
- * <p>It aggregates directives from independent contributors with <b>additive, widening merge
- * semantics</b>: combining contributions only ever broadens what is permitted, never narrows it, so
- * one contributor cannot tighten — and thereby break — another's content.</p>
+ * <p>Contributions are merged by plain <b>union</b>: each directive's source list is the union of
+ * every contributor's sources, emitted as written. The API deliberately does <i>not</i> arbitrate
+ * between sources that interact in the browser — notably {@code 'unsafe-inline'} sharing a directive
+ * with a {@code 'nonce-…'}, hash, or {@code 'strict-dynamic'} (which makes the browser ignore
+ * {@code 'unsafe-inline'}). That precedence is the browser's documented behaviour and the secure
+ * default; a contributor that genuinely needs the looser source to win uses a policy-level method
+ * rather than relying on emergent merge magic.</p>
  *
  * <p><b>Contributor methods</b> (used by parts, layouts, widgets, page controllers) are additive:
  * the per-directive methods ({@link #scriptSrc}, {@link #styleSrc}, {@link #imgSrc}, …, the nonce and
  * hash helpers) and the generic {@link #add}. They only union sources.</p>
  *
- * <p><b>Policy-level methods</b> (for the platform or site owner) can narrow, drop, or change how the
- * whole policy is emitted, breaking the additive invariant — use sparingly, not from a part:
- * {@link #strict()} (deny-all baseline), {@link #override} (replace a directive's sources),
- * {@link #reset} (remove directives, or all of them), and {@link #reportOnly(boolean)} (report
- * instead of enforce). There is no per-source removal; {@code reset} removes whole directives.</p>
- *
- * <p>One CSP3 rule works against that invariant: a browser treats a {@code 'nonce-…'}, a hash, or
- * {@code 'strict-dynamic'} as a reason to <i>ignore</i> {@code 'unsafe-inline'} (and
- * {@code 'strict-dynamic'} also ignores {@code 'self'}/host/scheme), which makes the union
- * <i>narrower</i>, not wider. To keep the merge widening, {@link #build()} applies a single rule:</p>
- * <blockquote>If a directive contains {@code 'unsafe-inline'}, its {@code 'nonce-…'}, hash, and
- * {@code 'strict-dynamic'} sources are dropped from the emitted header.</blockquote>
- * <p>{@code 'unsafe-inline'} already permits every inline script/style a nonce or hash would, so
- * this only widens the policy. For example, the strict-CSP recipe collapses to its permissive legacy
- * form:</p>
- * <pre>
- *     script-src 'nonce-r' 'strict-dynamic' https: 'unsafe-inline'
- *         -&gt; script-src https: 'unsafe-inline'
- * </pre>
- * <p>{@code 'unsafe-inline'} governs <i>inline</i> content only, and {@code 'strict-dynamic'}
- * propagation is dropped along with it, so a contributor that broadens a directive this way should
- * also list the sources its <i>external</i> scripts need ({@code 'self'}, {@code https:}, …) — those
- * are kept. A direct consequence of the widening invariant: adding {@code 'unsafe-inline'} supersedes
- * another contributor's nonce/hash/{@code 'strict-dynamic'} hardening on that directive — the
- * least-restrictive contribution prevails.</p>
- *
- * <p>{@code 'strict-dynamic'} <i>without</i> {@code 'unsafe-inline'} is left untouched — it has no
- * permissive superset with {@code 'self'}/host allowlists (keeping it blocks those hosts, dropping it
- * removes script propagation), so the API does not arbitrate and the browser decides.</p>
+ * <p><b>Policy-level methods</b> (for the platform or site owner) change the whole policy and are not
+ * additive — use sparingly, not from a part: {@link #strict()} (deny-all baseline), {@link #override}
+ * (replace a directive's sources, dropping what others set), {@link #reset} (remove directives, or all
+ * of them), and {@link #reportOnly(boolean)} (report instead of enforce). There is no per-source
+ * removal; {@code reset} removes whole directives. To relax another contributor's hardening — e.g. an
+ * editor that must allow inline styles over a strict {@code style-src} — {@code override} the
+ * directive: replacing it drops the nonce/hash that would otherwise neutralize {@code 'unsafe-inline'},
+ * so the relaxation is an explicit, greppable act by the contributor that needs it.</p>
  *
  * <p>A {@code 'nonce-'} source is valid only on {@code script-src} and {@code style-src}: use
  * {@link #nonceScriptSrc()} or {@link #nonceStyleSrc()}. Both return the same request-scoped value to
@@ -77,7 +60,7 @@ public final class ContentSecurityPolicy
 
     private static final String STYLE_SRC = "style-src";
 
-    private static final String UNSAFE_INLINE = "'unsafe-inline'";
+    private static final String NONE = "'none'";
 
     private final Map<String, LinkedHashSet<String>> directives = new TreeMap<>();
 
@@ -528,15 +511,11 @@ public final class ContentSecurityPolicy
      * empty string when no directive has been added — callers should skip emitting the header in
      * that case.
      *
-     * <p>Directives are emitted in alphabetical order for deterministic output. Sources within a
-     * directive follow insertion order.</p>
-     *
-     * <p>Widening resolution: in a directive that holds {@code 'unsafe-inline'}, any {@code 'nonce-…'},
-     * hash, and {@code 'strict-dynamic'} source is omitted from the output — each would otherwise make
-     * a browser ignore {@code 'unsafe-inline'} and permit fewer scripts/styles than the union implies.
-     * {@code 'unsafe-inline'} governs only inline content, so a contributor that broadens a directive
-     * this way should also list the host/scheme sources its external scripts need (e.g. {@code 'self'},
-     * {@code https:}); those are kept, only the strictness sources are dropped.</p>
+     * <p>Directives are emitted in alphabetical order for deterministic output; sources within a
+     * directive follow insertion order. Sources are emitted as the plain union of all contributions —
+     * the browser applies its own precedence between interacting sources (the API does not). The one
+     * tidy-up: a redundant {@code 'none'} (the union identity — it matches nothing) is omitted from a
+     * directive that also carries real sources, since any real source already supersedes it.</p>
      */
     public String build()
     {
@@ -553,10 +532,10 @@ public final class ContentSecurityPolicy
             }
             sb.append( entry.getKey() );
             final LinkedHashSet<String> sources = entry.getValue();
-            final boolean hasUnsafeInline = sources.contains( UNSAFE_INLINE );
+            final boolean dropNone = sources.size() > 1 && sources.contains( NONE );
             for ( final String source : sources )
             {
-                if ( hasUnsafeInline && isInlineStrictnessSource( source ) )
+                if ( dropNone && source.equals( NONE ) )
                 {
                     continue;
                 }
@@ -564,12 +543,6 @@ public final class ContentSecurityPolicy
             }
         }
         return sb.toString();
-    }
-
-    private static boolean isInlineStrictnessSource( final String source )
-    {
-        return source.equals( "'strict-dynamic'" ) || source.startsWith( "'nonce-" ) || source.startsWith( "'sha256-" ) ||
-            source.startsWith( "'sha384-" ) || source.startsWith( "'sha512-" );
     }
 
     private ContentSecurityPolicy addTokens( final String directive, final CspSource[] sources )

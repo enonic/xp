@@ -152,37 +152,38 @@ class ContentSecurityPolicyTest
     }
 
     @Test
-    void unsafe_inline_drops_nonce_in_output()
+    void unsafe_inline_and_nonce_both_emitted()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy().add( "script-src", "'unsafe-inline'" );
-        csp.nonceScriptSrc();
-        assertThat( csp.build() ).isEqualTo( "script-src 'unsafe-inline'" );
+        final String nonce = csp.nonceScriptSrc();
+        assertThat( csp.build() ).isEqualTo( "script-src 'unsafe-inline' 'nonce-" + nonce + "'" );
     }
 
     @Test
-    void unsafe_inline_drops_hash_in_output()
+    void unsafe_inline_and_hash_both_emitted()
     {
         final ContentSecurityPolicy csp =
             new ContentSecurityPolicy().add( "style-src", "'unsafe-inline'" ).shaStyleSrc( HashAlgo.SHA256, "AbC" );
-        assertThat( csp.build() ).isEqualTo( "style-src 'unsafe-inline'" );
+        assertThat( csp.build() ).isEqualTo( "style-src 'unsafe-inline' 'sha256-AbC'" );
     }
 
     @Test
-    void unsafe_inline_drops_nonce_regardless_of_order()
+    void sources_emitted_in_insertion_order()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy();
-        csp.nonceScriptSrc();
+        final String nonce = csp.nonceScriptSrc();
         csp.add( "script-src", "'unsafe-inline'" );
-        assertThat( csp.build() ).isEqualTo( "script-src 'unsafe-inline'" );
+        assertThat( csp.build() ).isEqualTo( "script-src 'nonce-" + nonce + "' 'unsafe-inline'" );
     }
 
     @Test
-    void unsafe_inline_keeps_host_and_self_sources()
+    void union_keeps_every_source_unresolved()
     {
         final ContentSecurityPolicy csp =
-            new ContentSecurityPolicy().scriptSrc( CspSource.SELF, CspSource.UNSAFE_INLINE ).scriptSrc( "https://cdn.example.com" );
-        csp.nonceScriptSrc();
-        assertThat( csp.build() ).isEqualTo( "script-src 'self' 'unsafe-inline' https://cdn.example.com" );
+            new ContentSecurityPolicy().scriptSrc( CspSource.SELF, CspSource.UNSAFE_INLINE, CspSource.STRICT_DYNAMIC )
+                .scriptSrc( "https:" );
+        final String nonce = csp.nonceScriptSrc();
+        assertThat( csp.build() ).isEqualTo( "script-src 'self' 'unsafe-inline' 'strict-dynamic' https: 'nonce-" + nonce + "'" );
     }
 
     @Test
@@ -194,30 +195,37 @@ class ContentSecurityPolicyTest
     }
 
     @Test
-    void unsafe_inline_drops_strict_dynamic_and_nonce()
-    {
-        final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrc( CspSource.UNSAFE_INLINE, CspSource.STRICT_DYNAMIC );
-        csp.nonceScriptSrc();
-        assertThat( csp.build() ).isEqualTo( "script-src 'unsafe-inline'" );
-    }
-
-    @Test
-    void strict_recipe_collapses_to_legacy_fallback()
-    {
-        // 'nonce' 'strict-dynamic' https: 'self' 'unsafe-inline' resolves to the permissive fallback
-        final ContentSecurityPolicy csp =
-            new ContentSecurityPolicy().scriptSrc( CspSource.SELF, CspSource.UNSAFE_INLINE, CspSource.STRICT_DYNAMIC )
-                .scriptSrc( "https:" );
-        csp.nonceScriptSrc();
-        assertThat( csp.build() ).isEqualTo( "script-src 'self' 'unsafe-inline' https:" );
-    }
-
-    @Test
     void strict_dynamic_kept_without_unsafe_inline()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrc( CspSource.STRICT_DYNAMIC );
         final String nonce = csp.nonceScriptSrc();
         assertThat( csp.build() ).isEqualTo( "script-src 'strict-dynamic' 'nonce-" + nonce + "'" );
+    }
+
+    @Test
+    void override_relaxes_by_replacing_a_strict_directive()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrc( CspSource.SELF );
+        csp.styleSrc( CspSource.SELF );
+        csp.nonceStyleSrc();
+        // an editor that needs inline styles relaxes style-src: override replaces it, dropping the
+        // nonce that would otherwise make the browser ignore 'unsafe-inline'
+        csp.override( "style-src", "'self'", "'unsafe-inline'" );
+        assertThat( csp.build() ).isEqualTo( "script-src 'self'; style-src 'self' 'unsafe-inline'" );
+    }
+
+    @Test
+    void redundant_none_dropped_when_real_source_present()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().add( "script-src", "'none'" ).add( "script-src", "'self'" );
+        assertThat( csp.build() ).isEqualTo( "script-src 'self'" );
+    }
+
+    @Test
+    void none_kept_when_sole_source()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().add( "script-src", "'none'" );
+        assertThat( csp.build() ).isEqualTo( "script-src 'none'" );
     }
 
     @Test

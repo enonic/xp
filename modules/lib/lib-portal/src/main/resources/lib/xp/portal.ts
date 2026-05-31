@@ -1014,32 +1014,19 @@ export type TrustedTypesKeyword = typeof TrustedTypesKeyword[keyof typeof Truste
  * the final policy. The header is emitted as `Content-Security-Policy` at response-flush time, so
  * late additions during rendering still land.
  *
- * It aggregates directives from independent contributors with **additive, widening merge semantics**:
- * combining contributions only ever broadens what is permitted, never narrows it, so one contributor
- * cannot tighten — and thereby break — another's content.
+ * Contributions are merged by plain **union**: each directive's source list is the union of every
+ * contributor's sources, emitted as written.
  * - {@link add} unions sources into a directive (deduped).
- * - {@link set} resets a directive's sources — no freeze, so a later {@link add} still extends.
+ * - {@link override} replaces a directive's sources — no freeze, so a later {@link add} still extends.
  *
- * One CSP3 rule works against that invariant: a browser treats a `'nonce-…'`, a hash, or
- * `'strict-dynamic'` as a reason to *ignore* `'unsafe-inline'` (and `'strict-dynamic'` also ignores
- * `'self'`/host/scheme), making the union narrower rather than wider. To keep the merge widening, the
- * composed header applies one rule: **if a directive contains `'unsafe-inline'`, its `'nonce-…'`,
- * hash, and `'strict-dynamic'` sources are dropped.** `'unsafe-inline'` already permits every inline a
- * nonce/hash would, so this only widens the policy — e.g. the strict-CSP recipe collapses to its
- * permissive legacy form:
- *
- * ```
- * script-src 'nonce-r' 'strict-dynamic' https: 'unsafe-inline'  ->  script-src https: 'unsafe-inline'
- * ```
- *
- * `'unsafe-inline'` covers *inline* content only, and `'strict-dynamic'` propagation is dropped along
- * with it, so a contributor that broadens a directive this way should also list the sources its
- * *external* scripts need (`'self'`, `https:`, …) — those are kept. A direct consequence of the
- * widening invariant: adding `'unsafe-inline'` supersedes another contributor's
- * nonce/hash/`'strict-dynamic'` hardening on that directive (the least-restrictive contribution prevails).
- *
- * `'strict-dynamic'` *without* `'unsafe-inline'` is left untouched — it has no permissive superset
- * with `'self'`/host allowlists, so the API does not arbitrate and the browser decides.
+ * The builder deliberately does **not** arbitrate between sources that interact in the browser —
+ * notably `'unsafe-inline'` sharing a directive with a `'nonce-…'`, hash, or `'strict-dynamic'`, which
+ * makes the browser ignore `'unsafe-inline'`. That precedence is the browser's documented behaviour and
+ * the secure default; the API emits what you declare. A contributor that genuinely needs the looser
+ * source to win — e.g. an editor that must allow inline styles over a strict `style-src` — uses
+ * {@link override} to replace the directive, which drops the nonce/hash that would otherwise neutralize
+ * `'unsafe-inline'`. Relaxing is then an explicit, greppable act by the contributor that needs it,
+ * rather than emergent merge magic applied to everyone.
  */
 export interface Csp {
     /**
