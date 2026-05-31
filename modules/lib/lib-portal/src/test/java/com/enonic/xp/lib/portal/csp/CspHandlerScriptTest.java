@@ -61,17 +61,16 @@ public class CspHandlerScriptTest
     }
 
     @Test
-    void nonceScriptSrc()
+    void scriptSrcNonce()
     {
-        runFunction( "/test/csp-test.js", "nonceScriptSrc" );
+        runFunction( "/test/csp-test.js", "scriptSrcNonce" );
     }
 
     @Test
-    void nonceStyleSrc()
+    void styleSrcNonce()
     {
-        runFunction( "/test/csp-test.js", "nonceStyleSrc" );
+        runFunction( "/test/csp-test.js", "styleSrcNonce" );
     }
-
 
     @Test
     void nonceStableAcrossMethods()

@@ -1172,13 +1172,13 @@ export interface Csp {
      * Wires the request nonce into `script-src` and returns its value (for stamping on inline
      * `<script nonce="...">` tags). Lazily generated and cached for the request.
      */
-    nonceScriptSrc(): string;
+    scriptSrcNonce(): string;
 
     /**
      * Wires the request nonce into `style-src` and returns its value (for stamping on inline
      * `<style nonce="...">` tags). Lazily generated and cached for the request.
      */
-    nonceStyleSrc(): string;
+    styleSrcNonce(): string;
 }
 
 interface CspHandler {
@@ -1248,9 +1248,9 @@ interface CspHandler {
 
     styleSrcShaDigest(base64: string, algo: string): void;
 
-    nonceScriptSrc(): string;
+    scriptSrcNonce(): string;
 
-    nonceStyleSrc(): string;
+    styleSrcNonce(): string;
 }
 
 /**
@@ -1397,11 +1397,11 @@ export function csp(): Csp {
             }
             return instance;
         },
-        nonceScriptSrc(): string {
-            return bean.nonceScriptSrc();
+        scriptSrcNonce(): string {
+            return bean.scriptSrcNonce();
         },
-        nonceStyleSrc(): string {
-            return bean.nonceStyleSrc();
+        styleSrcNonce(): string {
+            return bean.styleSrcNonce();
         },
     };
     return instance;

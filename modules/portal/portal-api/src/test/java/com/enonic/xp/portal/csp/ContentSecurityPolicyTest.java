@@ -67,17 +67,17 @@ class ContentSecurityPolicyTest
     void reset_preserves_nonce_so_it_stays_stable()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy();
-        final String nonce = csp.nonceScriptSrc();
+        final String nonce = csp.scriptSrcNonce();
         csp.reset();
-        assertThat( csp.nonceScriptSrc() ).isEqualTo( nonce );
+        assertThat( csp.scriptSrcNonce() ).isEqualTo( nonce );
     }
 
     @Test
     void nonce_lazy_and_cached()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy();
-        final String first = csp.nonceScriptSrc();
-        final String second = csp.nonceScriptSrc();
+        final String first = csp.scriptSrcNonce();
+        final String second = csp.scriptSrcNonce();
         assertThat( first ).isEqualTo( second );
 
         final byte[] decoded = Base64.getUrlDecoder().decode( first );
@@ -87,18 +87,18 @@ class ContentSecurityPolicyTest
     }
 
     @Test
-    void nonceScriptSrc_targets_script_src_only()
+    void scriptSrcNonce_targets_script_src_only()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy();
-        final String nonce = csp.nonceScriptSrc();
+        final String nonce = csp.scriptSrcNonce();
         assertThat( csp.build() ).isEqualTo( "script-src 'nonce-" + nonce + "'" );
     }
 
     @Test
-    void nonceStyleSrc_targets_style_src_only()
+    void styleSrcNonce_targets_style_src_only()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy();
-        final String nonce = csp.nonceStyleSrc();
+        final String nonce = csp.styleSrcNonce();
         assertThat( csp.build() ).isEqualTo( "style-src 'nonce-" + nonce + "'" );
     }
 
@@ -106,8 +106,8 @@ class ContentSecurityPolicyTest
     void nonce_value_stable_across_methods()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy();
-        final String fromScript = csp.nonceScriptSrc();
-        assertThat( csp.nonceStyleSrc() ).isEqualTo( fromScript );
+        final String fromScript = csp.scriptSrcNonce();
+        assertThat( csp.styleSrcNonce() ).isEqualTo( fromScript );
         assertThat( csp.build() ).isEqualTo(
             "script-src 'nonce-" + fromScript + "'; style-src 'nonce-" + fromScript + "'" );
     }
@@ -115,8 +115,8 @@ class ContentSecurityPolicyTest
     @Test
     void nonce_uniqueness_across_instances()
     {
-        final String first = new ContentSecurityPolicy().nonceScriptSrc();
-        final String second = new ContentSecurityPolicy().nonceScriptSrc();
+        final String first = new ContentSecurityPolicy().scriptSrcNonce();
+        final String second = new ContentSecurityPolicy().scriptSrcNonce();
         assertThat( first ).isNotEqualTo( second );
     }
 
@@ -155,7 +155,7 @@ class ContentSecurityPolicyTest
     void unsafe_inline_drops_nonce_in_output()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy().add( "script-src", "'unsafe-inline'" );
-        csp.nonceScriptSrc();
+        csp.scriptSrcNonce();
         assertThat( csp.build() ).isEqualTo( "script-src 'unsafe-inline'" );
     }
 
@@ -171,7 +171,7 @@ class ContentSecurityPolicyTest
     void unsafe_inline_drops_nonce_regardless_of_order()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy();
-        csp.nonceScriptSrc();
+        csp.scriptSrcNonce();
         csp.add( "script-src", "'unsafe-inline'" );
         assertThat( csp.build() ).isEqualTo( "script-src 'unsafe-inline'" );
     }
@@ -181,7 +181,7 @@ class ContentSecurityPolicyTest
     {
         final ContentSecurityPolicy csp =
             new ContentSecurityPolicy().scriptSrc( CspSource.SELF, CspSource.UNSAFE_INLINE ).scriptSrc( "https://cdn.example.com" );
-        csp.nonceScriptSrc();
+        csp.scriptSrcNonce();
         assertThat( csp.build() ).isEqualTo( "script-src 'self' 'unsafe-inline' https://cdn.example.com" );
     }
 
@@ -189,7 +189,7 @@ class ContentSecurityPolicyTest
     void nonce_kept_without_unsafe_inline()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrc( CspSource.SELF );
-        final String nonce = csp.nonceScriptSrc();
+        final String nonce = csp.scriptSrcNonce();
         assertThat( csp.build() ).isEqualTo( "script-src 'self' 'nonce-" + nonce + "'" );
     }
 
@@ -197,7 +197,7 @@ class ContentSecurityPolicyTest
     void unsafe_inline_drops_strict_dynamic_and_nonce()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrc( CspSource.UNSAFE_INLINE, CspSource.STRICT_DYNAMIC );
-        csp.nonceScriptSrc();
+        csp.scriptSrcNonce();
         assertThat( csp.build() ).isEqualTo( "script-src 'unsafe-inline'" );
     }
 
@@ -208,7 +208,7 @@ class ContentSecurityPolicyTest
         final ContentSecurityPolicy csp =
             new ContentSecurityPolicy().scriptSrc( CspSource.SELF, CspSource.UNSAFE_INLINE, CspSource.STRICT_DYNAMIC )
                 .scriptSrc( "https:" );
-        csp.nonceScriptSrc();
+        csp.scriptSrcNonce();
         assertThat( csp.build() ).isEqualTo( "script-src 'self' 'unsafe-inline' https:" );
     }
 
@@ -216,7 +216,7 @@ class ContentSecurityPolicyTest
     void strict_dynamic_kept_without_unsafe_inline()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrc( CspSource.STRICT_DYNAMIC );
-        final String nonce = csp.nonceScriptSrc();
+        final String nonce = csp.scriptSrcNonce();
         assertThat( csp.build() ).isEqualTo( "script-src 'strict-dynamic' 'nonce-" + nonce + "'" );
     }
 
