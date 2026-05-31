@@ -61,15 +61,15 @@ public class CspHandlerScriptTest
     }
 
     @Test
-    void scriptSrcNonce()
+    void nonceScriptSrc()
     {
-        runFunction( "/test/csp-test.js", "scriptSrcNonce" );
+        runFunction( "/test/csp-test.js", "nonceScriptSrc" );
     }
 
     @Test
-    void styleSrcNonce()
+    void nonceStyleSrc()
     {
-        runFunction( "/test/csp-test.js", "styleSrcNonce" );
+        runFunction( "/test/csp-test.js", "nonceStyleSrc" );
     }
 
     @Test
@@ -109,27 +109,27 @@ public class CspHandlerScriptTest
     }
 
     @Test
-    void scriptSrcShaContent()
+    void shaScriptSrcContent()
     {
-        runFunction( "/test/csp-test.js", "scriptSrcShaContent" );
+        runFunction( "/test/csp-test.js", "shaScriptSrcContent" );
     }
 
     @Test
-    void scriptSrcShaContentWithAlgo()
+    void shaScriptSrcContentWithAlgo()
     {
-        runFunction( "/test/csp-test.js", "scriptSrcShaContentWithAlgo" );
+        runFunction( "/test/csp-test.js", "shaScriptSrcContentWithAlgo" );
     }
 
     @Test
-    void scriptSrcShaDigest()
+    void shaScriptSrcDigest()
     {
-        runFunction( "/test/csp-test.js", "scriptSrcShaDigest" );
+        runFunction( "/test/csp-test.js", "shaScriptSrcDigest" );
     }
 
     @Test
-    void styleSrcShaContent()
+    void shaStyleSrcContent()
     {
-        runFunction( "/test/csp-test.js", "styleSrcShaContent" );
+        runFunction( "/test/csp-test.js", "shaStyleSrcContent" );
     }
 
     @Test

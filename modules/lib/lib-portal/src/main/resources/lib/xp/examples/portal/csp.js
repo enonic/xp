@@ -24,13 +24,13 @@ csp.upgradeInsecureRequests();
 csp.sandbox(portalLib.SandboxFlag.ALLOW_SCRIPTS, portalLib.SandboxFlag.ALLOW_SAME_ORIGIN);
 
 // Hash sources for script-src / style-src -- digest inline content, or a precomputed digest
-csp.scriptSrcSha({content: 'window.foo = 42;'});                  // sha256 of the content
-csp.styleSrcSha({content: 'body { color: red; }', algo: 'sha384'}); // choose the algorithm
-csp.scriptSrcSha({hash: 'AbCdEf0123...', algo: 'sha384'});         // precomputed base64 digest
+csp.shaScriptSrc({content: 'window.foo = 42;'});                  // sha256 of the content
+csp.shaStyleSrc({content: 'body { color: red; }', algo: 'sha384'}); // choose the algorithm
+csp.shaScriptSrc({hash: 'AbCdEf0123...', algo: 'sha384'});         // precomputed base64 digest
 
 // Request-scoped nonce (lazy; same value on subsequent calls), valid only on script-src/style-src
-var nonce = csp.scriptSrcNonce();     // -> script-src 'nonce-...'
-csp.styleSrcNonce();                  // -> style-src  'nonce-...' (same value)
+var nonce = csp.nonceScriptSrc();     // -> script-src 'nonce-...'
+csp.nonceStyleSrc();                  // -> style-src  'nonce-...' (same value)
 
 // Escape hatches for less-common / future directives
 csp.add('require-trusted-types-for', "'script'");
