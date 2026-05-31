@@ -997,6 +997,18 @@ export const SandboxFlag = {
 export type SandboxFlag = typeof SandboxFlag[keyof typeof SandboxFlag];
 
 /**
+ * Special keywords for the `trusted-types` directive, used alongside (user-defined) policy names.
+ * `'none'` / `'allow-duplicates'` are single-quoted; `WILDCARD` is the bare `*`.
+ */
+export const TrustedTypesKeyword = {
+    ALLOW_DUPLICATES: "'allow-duplicates'",
+    NONE: "'none'",
+    WILDCARD: '*',
+} as const;
+
+export type TrustedTypesKeyword = typeof TrustedTypesKeyword[keyof typeof TrustedTypesKeyword];
+
+/**
  * A request-scoped Content Security Policy builder. The same instance is returned for the lifetime
  * of the current portal request, so controllers, layouts, parts and widgets can each contribute to
  * the final policy. The header is emitted as `Content-Security-Policy` at response-flush time, so
@@ -1128,8 +1140,8 @@ export interface Csp {
     /** Registers `require-trusted-types-for 'script'` (the only sink group the spec defines). */
     requireTrustedTypesForScript(): Csp;
 
-    /** Adds policy names and/or keywords (`'none'`, `'allow-duplicates'`, `*`) to `trusted-types`. */
-    trustedTypes(...values: string[]): Csp;
+    /** Adds policy names and/or {@link TrustedTypesKeyword} keywords to `trusted-types`. */
+    trustedTypes(...values: (TrustedTypesKeyword | string)[]): Csp;
 
     /**
      * Policy-level: when `true`, the policy is emitted as `Content-Security-Policy-Report-Only`
@@ -1357,7 +1369,7 @@ export function csp(): Csp {
             bean.requireTrustedTypesForScript();
             return instance;
         },
-        trustedTypes(...values: string[]): Csp {
+        trustedTypes(...values: (TrustedTypesKeyword | string)[]): Csp {
             bean.trustedTypes(values);
             return instance;
         },

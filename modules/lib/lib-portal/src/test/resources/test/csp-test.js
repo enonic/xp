@@ -209,11 +209,17 @@ exports.reportToDirective = function () {
 exports.trustedTypesDirectives = function () {
     var csp = portal.csp();
     csp.requireTrustedTypesForScript();
-    csp.trustedTypes('my-policy', "'allow-duplicates'");
+    csp.trustedTypes('my-policy', portal.TrustedTypesKeyword.ALLOW_DUPLICATES);
     assert.assertEquals(
         "require-trusted-types-for 'script'; trusted-types my-policy 'allow-duplicates'",
         __.toNativeObject(testInstance.policyBuild())
     );
+};
+
+exports.trustedTypesKeywordTokens = function () {
+    assert.assertEquals("'allow-duplicates'", portal.TrustedTypesKeyword.ALLOW_DUPLICATES);
+    assert.assertEquals("'none'", portal.TrustedTypesKeyword.NONE);
+    assert.assertEquals('*', portal.TrustedTypesKeyword.WILDCARD);
 };
 
 exports.reportOnlyFlag = function () {
