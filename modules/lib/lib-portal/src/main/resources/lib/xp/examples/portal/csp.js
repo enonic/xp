@@ -17,8 +17,8 @@ csp.frameAncestors(portalLib.CspSource.NONE);
 csp.baseUri(portalLib.CspSource.SELF);
 csp.formAction(portalLib.CspSource.SELF);
 
-// Boolean directive
-csp.upgradeInsecureRequests();
+// Boolean directive -- add() with no sources registers a bare directive
+csp.add('upgrade-insecure-requests');
 
 // Sandbox flags
 csp.sandbox(portalLib.SandboxFlag.ALLOW_SCRIPTS, portalLib.SandboxFlag.ALLOW_SAME_ORIGIN);

@@ -311,14 +311,6 @@ public final class ContentSecurityPolicy
         return add( "form-action", sources );
     }
 
-    /**
-     * Registers the boolean {@code upgrade-insecure-requests} directive.
-     */
-    public ContentSecurityPolicy upgradeInsecureRequests()
-    {
-        return add( "upgrade-insecure-requests" );
-    }
-
     public ContentSecurityPolicy scriptSrcElem( final CspSource... sources )
     {
         return addTokens( "script-src-elem", sources );

@@ -25,7 +25,6 @@ exports.returnsObject = function () {
     assert.assertEquals('function', typeof csp.frameAncestors);
     assert.assertEquals('function', typeof csp.baseUri);
     assert.assertEquals('function', typeof csp.formAction);
-    assert.assertEquals('function', typeof csp.upgradeInsecureRequests);
     assert.assertEquals('function', typeof csp.scriptSrcElem);
     assert.assertEquals('function', typeof csp.scriptSrcAttr);
     assert.assertEquals('function', typeof csp.styleSrcElem);
@@ -71,7 +70,7 @@ exports.resetRemovesAll = function () {
 exports.resetRemovesNamedDirectives = function () {
     var csp = portal.csp();
     csp.scriptSrc(portal.CspSource.SELF);
-    csp.upgradeInsecureRequests();
+    csp.add('upgrade-insecure-requests');
     csp.reset('upgrade-insecure-requests');
     assert.assertEquals("script-src 'self'", __.toNativeObject(testInstance.policyBuild()));
 };
@@ -137,9 +136,9 @@ exports.scriptSrcAndAddUnion = function () {
     );
 };
 
-exports.upgradeInsecureRequests = function () {
+exports.booleanDirectiveViaAdd = function () {
     var csp = portal.csp();
-    csp.upgradeInsecureRequests();
+    csp.add('upgrade-insecure-requests');
     assert.assertEquals('upgrade-insecure-requests', __.toNativeObject(testInstance.policyBuild()));
 };
 
