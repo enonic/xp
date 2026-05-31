@@ -25,15 +25,27 @@ public class CspHandlerScriptTest
     }
 
     @Test
-    void setResets()
+    void overrideReplaces()
     {
-        runFunction( "/test/csp-test.js", "setResets" );
+        runFunction( "/test/csp-test.js", "overrideReplaces" );
     }
 
     @Test
-    void addAfterSet()
+    void addAfterOverride()
     {
-        runFunction( "/test/csp-test.js", "addAfterSet" );
+        runFunction( "/test/csp-test.js", "addAfterOverride" );
+    }
+
+    @Test
+    void resetRemovesAll()
+    {
+        runFunction( "/test/csp-test.js", "resetRemovesAll" );
+    }
+
+    @Test
+    void resetRemovesNamedDirectives()
+    {
+        runFunction( "/test/csp-test.js", "resetRemovesNamedDirectives" );
     }
 
     @Test
@@ -98,27 +110,27 @@ public class CspHandlerScriptTest
     }
 
     @Test
-    void addScriptSrcShaContent()
+    void scriptSrcShaContent()
     {
-        runFunction( "/test/csp-test.js", "addScriptSrcShaContent" );
+        runFunction( "/test/csp-test.js", "scriptSrcShaContent" );
     }
 
     @Test
-    void addScriptSrcShaContentWithAlgo()
+    void scriptSrcShaContentWithAlgo()
     {
-        runFunction( "/test/csp-test.js", "addScriptSrcShaContentWithAlgo" );
+        runFunction( "/test/csp-test.js", "scriptSrcShaContentWithAlgo" );
     }
 
     @Test
-    void addScriptSrcShaDigest()
+    void scriptSrcShaDigest()
     {
-        runFunction( "/test/csp-test.js", "addScriptSrcShaDigest" );
+        runFunction( "/test/csp-test.js", "scriptSrcShaDigest" );
     }
 
     @Test
-    void addStyleSrcShaContent()
+    void styleSrcShaContent()
     {
-        runFunction( "/test/csp-test.js", "addStyleSrcShaContent" );
+        runFunction( "/test/csp-test.js", "styleSrcShaContent" );
     }
 
     @Test
