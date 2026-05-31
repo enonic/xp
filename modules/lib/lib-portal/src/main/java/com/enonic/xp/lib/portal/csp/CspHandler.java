@@ -110,11 +110,6 @@ public final class CspHandler
         policy().formAction( sources );
     }
 
-    public void upgradeInsecureRequests()
-    {
-        policy().upgradeInsecureRequests();
-    }
-
     public void scriptSrcElem( final String[] sources )
     {
         policy().scriptSrcElem( sources );

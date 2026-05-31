@@ -1102,9 +1102,6 @@ export interface Csp {
     /** Unions sources into `form-action`. */
     formAction(...sources: (CspSource | string)[]): Csp;
 
-    /** Registers the boolean `upgrade-insecure-requests` directive. */
-    upgradeInsecureRequests(): Csp;
-
     /** Unions sources into `script-src-elem` (governs `<script>` elements). */
     scriptSrcElem(...sources: (CspSource | string)[]): Csp;
 
@@ -1206,8 +1203,6 @@ interface CspHandler {
     baseUri(sources: string[]): void;
 
     formAction(sources: string[]): void;
-
-    upgradeInsecureRequests(): void;
 
     scriptSrcElem(sources: string[]): void;
 
@@ -1326,10 +1321,6 @@ export function csp(): Csp {
         },
         formAction(...sources: (CspSource | string)[]): Csp {
             bean.formAction(sources);
-            return instance;
-        },
-        upgradeInsecureRequests(): Csp {
-            bean.upgradeInsecureRequests();
             return instance;
         },
         scriptSrcElem(...sources: (CspSource | string)[]): Csp {

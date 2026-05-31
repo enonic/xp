@@ -59,7 +59,7 @@ class ContentSecurityPolicyTest
     void reset_removes_named_directives()
     {
         final ContentSecurityPolicy csp =
-            new ContentSecurityPolicy().scriptSrc( CspSource.SELF ).upgradeInsecureRequests().reset( "upgrade-insecure-requests" );
+            new ContentSecurityPolicy().scriptSrc( CspSource.SELF ).add( "upgrade-insecure-requests" ).reset( "upgrade-insecure-requests" );
         assertThat( csp.build() ).isEqualTo( "script-src 'self'" );
     }
 
@@ -356,9 +356,9 @@ class ContentSecurityPolicyTest
     }
 
     @Test
-    void upgradeInsecureRequests_serializes_without_sources()
+    void boolean_directive_via_add_serializes_without_sources()
     {
-        final ContentSecurityPolicy csp = new ContentSecurityPolicy().upgradeInsecureRequests();
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().add( "upgrade-insecure-requests" );
         assertThat( csp.build() ).isEqualTo( "upgrade-insecure-requests" );
     }
 
@@ -430,7 +430,7 @@ class ContentSecurityPolicyTest
         final ContentSecurityPolicy csp = new ContentSecurityPolicy().defaultSrc( CspSource.NONE )
             .scriptSrc( CspSource.SELF )
             .styleSrc( CspSource.SELF )
-            .upgradeInsecureRequests();
+            .add( "upgrade-insecure-requests" );
         assertThat( csp.build() ).isEqualTo(
             "default-src 'none'; script-src 'self'; style-src 'self'; upgrade-insecure-requests" );
     }

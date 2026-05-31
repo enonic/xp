@@ -91,9 +91,9 @@ public class CspHandlerScriptTest
     }
 
     @Test
-    void upgradeInsecureRequests()
+    void booleanDirectiveViaAdd()
     {
-        runFunction( "/test/csp-test.js", "upgradeInsecureRequests" );
+        runFunction( "/test/csp-test.js", "booleanDirectiveViaAdd" );
     }
 
     @Test
