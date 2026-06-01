@@ -3,13 +3,17 @@ package com.enonic.xp.web.jetty.impl.websocket;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import org.eclipse.jetty.ee11.servlet.ServletContextHandler;
 import org.eclipse.jetty.ee11.servlet.ServletContextRequest;
 import org.eclipse.jetty.ee11.websocket.jakarta.server.JakartaWebSocketServerContainer;
 import org.eclipse.jetty.ee11.websocket.jakarta.server.config.ContainerDefaultConfigurator;
 import org.eclipse.jetty.websocket.core.server.WebSocketMappings;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,6 +22,7 @@ import jakarta.websocket.Endpoint;
 import jakarta.websocket.Extension;
 import jakarta.websocket.server.ServerEndpointConfig;
 
+import com.enonic.xp.web.jetty.impl.JettyConfig;
 import com.enonic.xp.web.websocket.EndpointFactory;
 import com.enonic.xp.web.websocket.WebSocketService;
 
@@ -25,6 +30,16 @@ import com.enonic.xp.web.websocket.WebSocketService;
 public final class WebSocketServiceImpl
     implements WebSocketService
 {
+    private static final Logger LOG = LoggerFactory.getLogger( WebSocketServiceImpl.class );
+
+    private final boolean originCheckEnabled;
+
+    @Activate
+    public WebSocketServiceImpl( final JettyConfig config )
+    {
+        this.originCheckEnabled = config.websocket_originCheck();
+    }
+
     @Override
     public boolean isUpgradeRequest( final HttpServletRequest req )
     {
@@ -37,8 +52,12 @@ public final class WebSocketServiceImpl
     public boolean acceptWebSocket( final HttpServletRequest req, final HttpServletResponse res, final EndpointFactory factory )
         throws IOException
     {
+        final String expectedScheme = req.getScheme();
+        final String expectedHost = req.getServerName();
+        final int expectedPort = req.getServerPort();
+
         final ServerEndpointConfig config = ServerEndpointConfig.Builder.create( Endpoint.class, "/" )
-            .configurator( newConfigurator( factory ) )
+            .configurator( newConfigurator( factory, expectedScheme, expectedHost, expectedPort, this.originCheckEnabled ) )
             .subprotocols( factory.getSubProtocols() )
             .build();
 
@@ -53,7 +72,9 @@ public final class WebSocketServiceImpl
         }
     }
 
-    private static ServerEndpointConfig.Configurator newConfigurator( final EndpointFactory factory )
+    private static ServerEndpointConfig.Configurator newConfigurator( final EndpointFactory factory, final String expectedScheme,
+                                                                      final String expectedHost, final int expectedPort,
+                                                                      final boolean originCheckEnabled )
     {
         final ContainerDefaultConfigurator defaultConfigurator = new ContainerDefaultConfigurator();
 
@@ -74,8 +95,29 @@ public final class WebSocketServiceImpl
             @Override
             public boolean checkOrigin( final String originHeaderValue )
             {
-                // TODO: Check origin
-                return defaultConfigurator.checkOrigin( originHeaderValue );
+                final Predicate<String> validator = factory.getOriginValidator();
+                if ( validator != null )
+                {
+                    final boolean accepted = validator.test( originHeaderValue );
+                    if ( !accepted )
+                    {
+                        LOG.debug( "WebSocket upgrade rejected by checkOrigin function (Origin={})", originHeaderValue );
+                    }
+                    return accepted;
+                }
+
+                if ( !originCheckEnabled )
+                {
+                    return true;
+                }
+
+                final boolean accepted = SameOriginCheck.check( originHeaderValue, expectedScheme, expectedHost, expectedPort );
+                if ( !accepted )
+                {
+                    LOG.debug( "WebSocket upgrade rejected by same-origin check (Origin={}, expected {}://{}:{})", originHeaderValue,
+                               expectedScheme, expectedHost, expectedPort );
+                }
+                return accepted;
             }
 
             @Override

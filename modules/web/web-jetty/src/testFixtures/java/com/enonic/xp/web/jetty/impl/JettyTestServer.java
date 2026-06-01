@@ -6,6 +6,7 @@ import java.util.List;
 import org.eclipse.jetty.ee11.servlet.FilterHolder;
 import org.eclipse.jetty.ee11.servlet.ServletContextHandler;
 import org.eclipse.jetty.ee11.servlet.ServletHolder;
+import org.eclipse.jetty.ee11.websocket.jakarta.server.config.JakartaWebSocketServletContainerInitializer;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
@@ -34,6 +35,7 @@ public final class JettyTestServer
         this.server.addConnector( connector );
 
         this.handler = new ServletContextHandler( "/", ServletContextHandler.SESSIONS );
+        JakartaWebSocketServletContainerInitializer.configure( this.handler, null );
         this.server.setHandler( this.handler );
     }
 

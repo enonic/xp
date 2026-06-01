@@ -15,6 +15,7 @@ dependencies {
     testFixturesImplementation libs.mockito.core
     testFixturesImplementation libs.jetty.server
     testFixturesImplementation libs.jetty.servlet
+    testFixturesImplementation libs.jetty.websocket.server
 
     testImplementation( testFixtures( project(":core:core-api") ) )
 }

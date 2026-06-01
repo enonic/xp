@@ -3,6 +3,11 @@ package com.enonic.xp.portal.impl.controller;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Predicate;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.net.HttpHeaders;
 import com.google.common.net.MediaType;
 
@@ -21,6 +26,8 @@ import static java.util.Objects.requireNonNullElse;
 
 public final class PortalResponseSerializer
 {
+    private static final Logger LOG = LoggerFactory.getLogger( PortalResponseSerializer.class );
+
     private final ScriptValue value;
 
     private final HttpStatus defaultStatus;
@@ -299,8 +306,37 @@ public final class PortalResponseSerializer
         final WebSocketConfig config = new WebSocketConfig();
         populateWebSocketData( config, value.getMember( "data" ) );
         populateWebSocketSubProtocols( config, value.getMember( "subProtocols" ) );
+        populateWebSocketOriginValidator( config, value.getMember( "checkOrigin" ) );
 
         builder.webSocket( config );
+    }
+
+    private void populateWebSocketOriginValidator( final WebSocketConfig config, final ScriptValue value )
+    {
+        if ( value == null || !value.isFunction() )
+        {
+            return;
+        }
+        config.setOriginValidator( wrapOriginValidator( value ) );
+    }
+
+    // The function is invoked later during the WebSocket handshake, after the controller has returned.
+    // It receives only the Origin header as argument and must be a pure function of that string — request
+    // context that the predicate needs should be captured by closure when the controller builds it.
+    private static Predicate<String> wrapOriginValidator( final ScriptValue function )
+    {
+        return origin -> {
+            try
+            {
+                final ScriptValue result = function.call( origin );
+                return result != null && Boolean.TRUE.equals( result.getValue( Boolean.class ) );
+            }
+            catch ( RuntimeException e )
+            {
+                LOG.warn( "checkOrigin function threw; rejecting WebSocket upgrade", e );
+                return false;
+            }
+        };
     }
 
     private void populateWebSocketData( final WebSocketConfig config, final ScriptValue value )
