@@ -12,21 +12,42 @@ import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.util.HexFormat;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Consumer;
 
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.core.internal.security.MessageDigests;
 import com.enonic.xp.event.Event;
+import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 
 public class ApplicationLoader
 {
-    private static final Set<String> ALLOWED_PROTOCOLS = Set.of( "http", "https" );
+    private final UrlAllowList allowList;
+
+    private final boolean requireChecksum;
+
+    public ApplicationLoader()
+    {
+        this( "", true );
+    }
+
+    public ApplicationLoader( final String allowedUrls, final boolean requireChecksum )
+    {
+        this.allowList = new UrlAllowList( allowedUrls );
+        this.requireChecksum = requireChecksum;
+    }
 
     public ByteSource load( final String urlString, final String sha512Hex, final Consumer<Event> eventConsumer )
     {
+        if ( !allowList.matches( urlString ) )
+        {
+            throw new WebException( HttpStatus.CONFLICT, "URL is not in the installUrl allowlist" );
+        }
+        if ( requireChecksum && ( sha512Hex == null || sha512Hex.isBlank() ) )
+        {
+            throw new WebException( HttpStatus.CONFLICT, "SHA512 checksum is required for installUrl" );
+        }
         final byte[] sha512 = Optional.ofNullable( sha512Hex ).map( HexFormat.of()::parseHex ).orElse( null );
         try
         {
@@ -41,11 +62,6 @@ public class ApplicationLoader
 
     public ByteSource load( final URL url, final byte[] sha512Checksum, final Consumer<Event> eventConsumer )
     {
-        if ( !ALLOWED_PROTOCOLS.contains( url.getProtocol() ) )
-        {
-            throw WebException.badRequest( "Unsupported protocol: " + url.getProtocol() );
-        }
-
         try
         {
             final URLConnection connection = url.openConnection();

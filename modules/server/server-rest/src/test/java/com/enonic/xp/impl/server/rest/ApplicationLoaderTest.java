@@ -18,12 +18,16 @@ import com.google.common.io.ByteSource;
 import com.sun.net.httpserver.HttpServer;
 
 import com.enonic.xp.event.Event;
+import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.notNull;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 @ExtendWith(MockitoExtension.class)
 class ApplicationLoaderTest
@@ -110,5 +114,67 @@ class ApplicationLoaderTest
         } );
 
         assertThrows( WebException.class, () -> new ApplicationLoader().load( URI.create( appUrl ).toURL(), sha512, eventListener ) );
+    }
+
+    @Test
+    void load_rejects_url_outside_allowlist()
+    {
+        final ApplicationLoader loader = new ApplicationLoader( "https://allowed.example/*", false );
+
+        assertThatThrownBy( () -> loader.load( appUrl, null, eventListener ) ).isInstanceOfSatisfying( WebException.class,
+                                                                                                       e -> assertThat( e.getStatus() ).isEqualTo(
+                                                                                                           HttpStatus.CONFLICT ) );
+        verifyNoInteractions( eventListener );
+    }
+
+    @Test
+    void load_rejects_when_empty_allowlist()
+    {
+        final ApplicationLoader loader = new ApplicationLoader( "", false );
+
+        assertThatThrownBy( () -> loader.load( appUrl, null, eventListener ) ).isInstanceOfSatisfying( WebException.class,
+                                                                                                       e -> assertThat( e.getStatus() ).isEqualTo(
+                                                                                                           HttpStatus.CONFLICT ) );
+        verifyNoInteractions( eventListener );
+    }
+
+    @Test
+    void load_rejects_when_checksum_required_but_missing()
+    {
+        final ApplicationLoader loader = new ApplicationLoader( appUrl + "*", true );
+
+        assertThatThrownBy( () -> loader.load( appUrl, null, eventListener ) ).isInstanceOfSatisfying( WebException.class,
+                                                                                                       e -> assertThat( e.getStatus() ).isEqualTo(
+                                                                                                           HttpStatus.CONFLICT ) );
+        verifyNoInteractions( eventListener );
+    }
+
+    @Test
+    void load_rejects_when_checksum_required_but_blank()
+    {
+        final ApplicationLoader loader = new ApplicationLoader( appUrl + "*", true );
+
+        assertThatThrownBy( () -> loader.load( appUrl, "   ", eventListener ) ).isInstanceOfSatisfying( WebException.class,
+                                                                                                        e -> assertThat( e.getStatus() ).isEqualTo(
+                                                                                                            HttpStatus.CONFLICT ) );
+        verifyNoInteractions( eventListener );
+    }
+
+    @Test
+    void load_allows_when_url_in_allowlist_and_checksum_not_required()
+        throws Exception
+    {
+        final byte[] bytes = "this is a test".getBytes( StandardCharsets.UTF_8 );
+        this.server.createContext( "/", exchange -> {
+            exchange.sendResponseHeaders( 200, 0 );
+            final OutputStream os = exchange.getResponseBody();
+            os.write( bytes );
+            exchange.close();
+        } );
+
+        final ApplicationLoader loader = new ApplicationLoader( appUrl + "*", false );
+        final ByteSource result = loader.load( appUrl, null, eventListener );
+
+        assertTrue( result.contentEquals( ByteSource.wrap( bytes ) ) );
     }
 }
