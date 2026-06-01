@@ -55,7 +55,7 @@ public class ApplicationLoader
         }
         catch ( IllegalArgumentException e )
         {
-            throw WebException.badRequest( "Invalid SHA512 checksum: " + e.getMessage() );
+            throw WebException.badRequest( "Invalid SHA512 checksum", e );
         }
         final URL url;
         try
@@ -64,7 +64,7 @@ public class ApplicationLoader
         }
         catch ( IllegalArgumentException | MalformedURLException e )
         {
-            throw WebException.badRequest( "Invalid URL: " + e.getMessage() );
+            throw WebException.badRequest( "Invalid URL", e );
         }
         return load( url, sha512, eventConsumer );
     }
