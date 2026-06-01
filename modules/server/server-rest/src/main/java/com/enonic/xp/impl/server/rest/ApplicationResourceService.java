@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +25,7 @@ import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
 
-@Component(service = ApplicationResourceService.class)
+@Component(service = ApplicationResourceService.class, configurationPid = "com.enonic.xp.server.management.app")
 public class ApplicationResourceService
 {
     private static final Logger LOG = LoggerFactory.getLogger( ApplicationResourceService.class );
@@ -35,7 +36,7 @@ public class ApplicationResourceService
 
     private final EventPublisher eventPublisher;
 
-    ApplicationLoader applicationLoader = new ApplicationLoader();
+    volatile ApplicationLoader applicationLoader;
 
     @Activate
     public ApplicationResourceService( final @Reference ApplicationService applicationService,
@@ -45,6 +46,13 @@ public class ApplicationResourceService
         this.applicationService = applicationService;
         this.applicationDescriptorService = applicationDescriptorService;
         this.eventPublisher = eventPublisher;
+    }
+
+    @Activate
+    @Modified
+    public void activate( final AppManagementConfig config )
+    {
+        this.applicationLoader = new ApplicationLoader( config.installUrl_allowedUrls(), config.installUrl_checksumRequired() );
     }
 
     public ApplicationInfoJson install( final MultipartForm form )
