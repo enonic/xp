@@ -35,7 +35,8 @@ public final class JettyTestServer
         this.server.addConnector( connector );
 
         this.handler = new ServletContextHandler( "/", ServletContextHandler.SESSIONS );
-        JakartaWebSocketServletContainerInitializer.configure( this.handler, null );
+        JakartaWebSocketServletContainerInitializer.configure( this.handler, ( _, _ ) -> {
+        } );
         this.server.setHandler( this.handler );
     }
 

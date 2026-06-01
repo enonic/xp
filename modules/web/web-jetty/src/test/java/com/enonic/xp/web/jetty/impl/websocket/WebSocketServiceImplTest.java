@@ -194,6 +194,18 @@ class WebSocketServiceImplTest
     }
 
     @Test
+    void handshake_with_throwing_validator_rejected()
+        throws Exception
+    {
+        addServletWithValidator( "/ws-throws", origin -> {
+            throw new IllegalStateException( "validator boom" );
+        } );
+
+        final String status = rawHandshakeStatusLine( "/ws-throws", "http://localhost:" + this.server.getPort() );
+        assertThat( status ).contains( "403" );
+    }
+
+    @Test
     void handshake_with_kill_switch_allows_cross_origin()
         throws Exception
     {

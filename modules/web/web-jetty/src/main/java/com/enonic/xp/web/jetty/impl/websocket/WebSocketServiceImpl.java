@@ -26,7 +26,7 @@ import com.enonic.xp.web.jetty.impl.JettyConfig;
 import com.enonic.xp.web.websocket.EndpointFactory;
 import com.enonic.xp.web.websocket.WebSocketService;
 
-@Component
+@Component(configurationPid = "com.enonic.xp.web.jetty")
 public final class WebSocketServiceImpl
     implements WebSocketService
 {
@@ -98,7 +98,16 @@ public final class WebSocketServiceImpl
                 final Predicate<String> validator = factory.getOriginValidator();
                 if ( validator != null )
                 {
-                    final boolean accepted = validator.test( originHeaderValue );
+                    final boolean accepted;
+                    try
+                    {
+                        accepted = validator.test( originHeaderValue );
+                    }
+                    catch ( RuntimeException e )
+                    {
+                        LOG.warn( "WebSocket origin validator threw; rejecting upgrade (Origin={})", originHeaderValue, e );
+                        return false;
+                    }
                     if ( !accepted )
                     {
                         LOG.debug( "WebSocket upgrade rejected by checkOrigin function (Origin={})", originHeaderValue );
