@@ -210,7 +210,7 @@ class WebSocketServiceImplTest
         throws Exception
     {
         final WebSocketServiceImpl permissiveService = new WebSocketServiceImpl( mock( JettyConfig.class, invocation -> {
-            if ( "websocket_originCheck".equals( invocation.getMethod().getName() ) )
+            if ( "websocket_defaultOriginCheck".equals( invocation.getMethod().getName() ) )
             {
                 return false;
             }

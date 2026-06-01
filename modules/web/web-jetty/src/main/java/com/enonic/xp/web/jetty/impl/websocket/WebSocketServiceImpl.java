@@ -32,12 +32,12 @@ public final class WebSocketServiceImpl
 {
     private static final Logger LOG = LoggerFactory.getLogger( WebSocketServiceImpl.class );
 
-    private final boolean originCheckEnabled;
+    private final boolean defaultOriginCheckEnabled;
 
     @Activate
     public WebSocketServiceImpl( final JettyConfig config )
     {
-        this.originCheckEnabled = config.websocket_originCheck();
+        this.defaultOriginCheckEnabled = config.websocket_defaultOriginCheck();
     }
 
     @Override
@@ -57,7 +57,7 @@ public final class WebSocketServiceImpl
         final int expectedPort = req.getServerPort();
 
         final ServerEndpointConfig config = ServerEndpointConfig.Builder.create( Endpoint.class, "/" )
-            .configurator( newConfigurator( factory, expectedScheme, expectedHost, expectedPort, this.originCheckEnabled ) )
+            .configurator( newConfigurator( factory, expectedScheme, expectedHost, expectedPort, this.defaultOriginCheckEnabled ) )
             .subprotocols( factory.getSubProtocols() )
             .build();
 
@@ -74,7 +74,7 @@ public final class WebSocketServiceImpl
 
     private static ServerEndpointConfig.Configurator newConfigurator( final EndpointFactory factory, final String expectedScheme,
                                                                       final String expectedHost, final int expectedPort,
-                                                                      final boolean originCheckEnabled )
+                                                                      final boolean defaultOriginCheckEnabled )
     {
         final ContainerDefaultConfigurator defaultConfigurator = new ContainerDefaultConfigurator();
 
@@ -115,7 +115,7 @@ public final class WebSocketServiceImpl
                     return accepted;
                 }
 
-                if ( !originCheckEnabled )
+                if ( !defaultOriginCheckEnabled )
                 {
                     return true;
                 }

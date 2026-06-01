@@ -157,5 +157,5 @@ public @interface JettyConfig
      * Disable only as a fallback for deployments where the reverse proxy does not propagate the
      * public scheme/host/port to Jetty and the proxy configuration cannot be fixed.
      */
-    boolean websocket_originCheck() default true;
+    boolean websocket_defaultOriginCheck() default true;
 }
