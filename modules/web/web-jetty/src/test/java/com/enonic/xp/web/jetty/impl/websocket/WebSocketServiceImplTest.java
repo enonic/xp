@@ -8,6 +8,7 @@ import java.net.URI;
 import java.net.http.WebSocket;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Predicate;
 
 import org.junit.jupiter.api.Test;
 
@@ -49,12 +50,18 @@ class WebSocketServiceImplTest
     private String rawHandshakeStatusLine( final String originHeader )
         throws IOException
     {
+        return rawHandshakeStatusLine( "/ws", originHeader );
+    }
+
+    private String rawHandshakeStatusLine( final String path, final String originHeader )
+        throws IOException
+    {
         // java.net.http.WebSocket and HttpClient both refuse to let callers set the Origin header
         // (it is on the JDK disallowed-headers list), so the upgrade handshake is built by hand.
         try ( Socket socket = new Socket( "localhost", this.server.getPort() ) )
         {
             final StringBuilder request = new StringBuilder();
-            request.append( "GET /ws HTTP/1.1\r\n" );
+            request.append( "GET " ).append( path ).append( " HTTP/1.1\r\n" );
             request.append( "Host: localhost:" ).append( this.server.getPort() ).append( "\r\n" );
             request.append( "Upgrade: websocket\r\n" );
             request.append( "Connection: Upgrade\r\n" );
@@ -72,6 +79,15 @@ class WebSocketServiceImplTest
             final BufferedReader reader = new BufferedReader( new InputStreamReader( socket.getInputStream(), StandardCharsets.US_ASCII ) );
             return reader.readLine();
         }
+    }
+
+    private void addServletWithValidator( final String path, final Predicate<String> validator )
+    {
+        final TestWebSocketServlet servlet = new TestWebSocketServlet();
+        servlet.service = this.service;
+        servlet.endpoint = new TestEndpoint();
+        servlet.originValidator = validator;
+        addServlet( servlet, path );
     }
 
     @Test
@@ -144,5 +160,56 @@ class WebSocketServiceImplTest
     {
         final String status = rawHandshakeStatusLine( "null" );
         assertThat( status ).contains( "403" );
+    }
+
+    @Test
+    void handshake_with_validator_accepts_cross_origin()
+        throws Exception
+    {
+        addServletWithValidator( "/ws-accept", origin -> true );
+
+        final String status = rawHandshakeStatusLine( "/ws-accept", "https://other.example.org" );
+        assertThat( status ).contains( "101" );
+    }
+
+    @Test
+    void handshake_with_validator_rejects_same_origin()
+        throws Exception
+    {
+        addServletWithValidator( "/ws-reject", origin -> false );
+
+        final String status = rawHandshakeStatusLine( "/ws-reject", "http://localhost:" + this.server.getPort() );
+        assertThat( status ).contains( "403" );
+    }
+
+    @Test
+    void handshake_with_validator_receives_origin_argument()
+        throws Exception
+    {
+        final String allowed = "https://allowed.example.com";
+        addServletWithValidator( "/ws-allowed", allowed::equals );
+
+        assertThat( rawHandshakeStatusLine( "/ws-allowed", allowed ) ).contains( "101" );
+        assertThat( rawHandshakeStatusLine( "/ws-allowed", "https://other.example.org" ) ).contains( "403" );
+    }
+
+    @Test
+    void handshake_with_kill_switch_allows_cross_origin()
+        throws Exception
+    {
+        final WebSocketServiceImpl permissiveService = new WebSocketServiceImpl( mock( JettyConfig.class, invocation -> {
+            if ( "websocket_originCheck".equals( invocation.getMethod().getName() ) )
+            {
+                return false;
+            }
+            return invocation.getMethod().getDefaultValue();
+        } ) );
+        final TestWebSocketServlet servlet = new TestWebSocketServlet();
+        servlet.service = permissiveService;
+        servlet.endpoint = new TestEndpoint();
+        addServlet( servlet, "/ws-permissive" );
+
+        final String status = rawHandshakeStatusLine( "/ws-permissive", "https://evil.example.org" );
+        assertThat( status ).contains( "101" );
     }
 }
