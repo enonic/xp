@@ -161,6 +161,37 @@ class ApplicationLoaderTest
     }
 
     @Test
+    void load_rejects_invalid_sha512_hex_with_400()
+    {
+        final ApplicationLoader loader = new ApplicationLoader( "https://*", true );
+
+        assertThatThrownBy( () -> loader.load( "https://example.com/foo", "not-a-hex-string", eventListener ) ).isInstanceOfSatisfying(
+            WebException.class, e -> assertThat( e.getStatus() ).isEqualTo( HttpStatus.BAD_REQUEST ) );
+    }
+
+    @Test
+    void load_rejects_malformed_url_with_400()
+    {
+        final ApplicationLoader loader = new ApplicationLoader( "xyz://*", false );
+
+        assertThatThrownBy( () -> loader.load( "xyz://example.com/foo", null, eventListener ) ).isInstanceOfSatisfying( WebException.class,
+                                                                                                                       e -> assertThat(
+                                                                                                                           e.getStatus() ).isEqualTo(
+                                                                                                                           HttpStatus.BAD_REQUEST ) );
+    }
+
+    @Test
+    void load_rejects_unparseable_uri_with_400()
+    {
+        final ApplicationLoader loader = new ApplicationLoader( "https://*", false );
+
+        assertThatThrownBy( () -> loader.load( "https://exa mple.com", null, eventListener ) ).isInstanceOfSatisfying( WebException.class,
+                                                                                                                      e -> assertThat(
+                                                                                                                          e.getStatus() ).isEqualTo(
+                                                                                                                          HttpStatus.BAD_REQUEST ) );
+    }
+
+    @Test
     void load_allows_when_url_in_allowlist_and_checksum_not_required()
         throws Exception
     {

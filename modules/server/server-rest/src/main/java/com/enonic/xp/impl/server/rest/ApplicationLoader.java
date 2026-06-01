@@ -48,16 +48,25 @@ public class ApplicationLoader
         {
             throw new WebException( HttpStatus.CONFLICT, "SHA512 checksum is required for installUrl" );
         }
-        final byte[] sha512 = Optional.ofNullable( sha512Hex ).map( HexFormat.of()::parseHex ).orElse( null );
+        final byte[] sha512;
         try
         {
-            final URL url = URI.create( urlString ).toURL();
-            return load( url, sha512, eventConsumer );
+            sha512 = Optional.ofNullable( sha512Hex ).map( HexFormat.of()::parseHex ).orElse( null );
         }
-        catch ( MalformedURLException e )
+        catch ( IllegalArgumentException e )
         {
-            throw new UncheckedIOException( e );
+            throw WebException.badRequest( "Invalid SHA512 checksum: " + e.getMessage() );
         }
+        final URL url;
+        try
+        {
+            url = URI.create( urlString ).toURL();
+        }
+        catch ( IllegalArgumentException | MalformedURLException e )
+        {
+            throw WebException.badRequest( "Invalid URL: " + e.getMessage() );
+        }
+        return load( url, sha512, eventConsumer );
     }
 
     public ByteSource load( final URL url, final byte[] sha512Checksum, final Consumer<Event> eventConsumer )
