@@ -24,6 +24,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.core.internal.security.MessageDigests;
 import com.enonic.xp.image.Cropping;
+import com.enonic.xp.image.FocalPoint;
 import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.util.BinaryReference;
@@ -31,6 +32,7 @@ import com.enonic.xp.util.BinaryReference;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -176,6 +178,43 @@ class ImageServiceImplTest
         verify( contentService, times( 2 ) ).getById( contentId );
         verify( contentService ).getBinary( contentId, binaryReference );
         verifyNoMoreInteractions( contentService );
+    }
+
+    @Test
+    void toCropRelativeFocalPoint_remaps_original_into_crop_frame()
+    {
+        // Round-trip of issue #12107: the migration stored focal (0.5,0.5)-of-crop as original-relative
+        // (0.44908, 0.49598); the renderer must map it back into the crop frame -> (0.5, 0.5).
+        final Cropping cropping = Cropping.create()
+            .left( 0.16319485 )
+            .top( 0.21010056 )
+            .right( 0.73495956 )
+            .bottom( 0.78186527 )
+            .build();
+
+        final FocalPoint result = ImageServiceImpl.toCropRelativeFocalPoint( new FocalPoint( 0.44907720, 0.49598291 ), cropping );
+
+        assertEquals( 0.5, result.xOffset(), 1e-4 );
+        assertEquals( 0.5, result.yOffset(), 1e-4 );
+    }
+
+    @Test
+    void toCropRelativeFocalPoint_returns_same_instance_when_unmodified()
+    {
+        final FocalPoint focalPoint = new FocalPoint( 0.3, 0.7 );
+
+        assertSame( focalPoint, ImageServiceImpl.toCropRelativeFocalPoint( focalPoint, Cropping.DEFAULT ) );
+    }
+
+    @Test
+    void toCropRelativeFocalPoint_clamps_point_outside_crop()
+    {
+        final Cropping cropping = Cropping.create().left( 0.5 ).top( 0.5 ).right( 1.0 ).bottom( 1.0 ).build();
+
+        final FocalPoint result = ImageServiceImpl.toCropRelativeFocalPoint( new FocalPoint( 0.1, 0.9 ), cropping );
+
+        assertEquals( 0.0, result.xOffset(), 1e-9 ); // 0.1 is left of the crop -> clamped to 0
+        assertEquals( 0.8, result.yOffset(), 1e-9 ); // (0.9 - 0.5) / 0.5
     }
 
     @Test

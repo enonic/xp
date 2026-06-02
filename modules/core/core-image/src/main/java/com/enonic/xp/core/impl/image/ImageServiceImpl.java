@@ -222,8 +222,11 @@ public class ImageServiceImpl
                 final int intermediatesMemoryRequirements;
                 if ( toScale )
                 {
-                    imageScaleFunction =
-                        imageScaleFunctionBuilder.build( readImageParams.getScaleParams(), readImageParams.getFocalPoint() );
+                    // focalPoint is stored relative to the original image; the scale step runs on the
+                    // already-cropped image, so remap the point into the crop's coordinate frame first.
+                    final FocalPoint focalPoint =
+                        toCropRelativeFocalPoint( readImageParams.getFocalPoint(), readImageParams.getCropping() );
+                    imageScaleFunction = imageScaleFunctionBuilder.build( readImageParams.getScaleParams(), focalPoint );
                     final int scaledMultiplier = 1 + ( ( toApplyFilters || toAddBackground ) ? 1 : 0 );
                     scaledMemoryRequirements = Math.max(
                         toMegaBytes( (long) imageScaleFunction.estimateResolution( width, height ) * pixelSize * scaledMultiplier ), 1 );
@@ -308,6 +311,17 @@ public class ImageServiceImpl
     private static int toMegaBytes( long bytesValue )
     {
         return Math.toIntExact( bytesValue / 1024 / 1024 );
+    }
+
+    static FocalPoint toCropRelativeFocalPoint( final FocalPoint focalPoint, final Cropping cropping )
+    {
+        if ( cropping.isUnmodified() )
+        {
+            return focalPoint;
+        }
+        final double x = Math.clamp( ( focalPoint.xOffset() - cropping.left() ) / cropping.width(), 0.0, 1.0 );
+        final double y = Math.clamp( ( focalPoint.yOffset() - cropping.top() ) / cropping.height(), 0.0, 1.0 );
+        return new FocalPoint( x, y );
     }
 
     private static BufferedImage applyCropping( final BufferedImage bufferedImage, final Cropping cropping )

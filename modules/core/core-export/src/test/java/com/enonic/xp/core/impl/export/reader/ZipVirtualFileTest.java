@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.export.reader;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -459,6 +460,34 @@ class ZipVirtualFileTest
 
         // Getting URL should not throw even if file doesn't exist
         assertNotNull( nonExistent.getUrl() );
+    }
+
+    @Test
+    void testGetURLEncodesEntryNamesWithSpaces()
+        throws Exception
+    {
+        final String exportName = "url-space-test";
+        final Path baseDir = tempDir.resolve( exportName );
+
+        try (ZipExportWriter writer = ZipExportWriter.create( tempDir, exportName ))
+        {
+            writer.writeElement( baseDir.resolve( "Man meeting glasses.jpg" ), "content" );
+            writer.writeElement( baseDir.resolve( "export.properties" ), "xp.version=1.0" );
+        }
+
+        final Path zipFile = tempDir.resolve( exportName + ".zip" );
+        final VirtualFile root = ZipVirtualFile.from( zipFile );
+
+        final VirtualFile file = root.resolve( VirtualFilePaths.from( "Man meeting glasses.jpg", "/" ) );
+
+        final URL url = file.getUrl();
+        assertNotNull( url );
+        assertTrue( url.toString().contains( "Man%20meeting%20glasses.jpg" ), url.toString() );
+
+        try (var in = url.openStream())
+        {
+            assertEquals( "content", new String( in.readAllBytes(), StandardCharsets.UTF_8 ) );
+        }
     }
 
     @Test
