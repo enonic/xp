@@ -68,7 +68,7 @@ class ImageUpgraderTest
         final NodeStoreVersion result = upgrader.upgradeNodeVersion( PROJECT_REPO, nodeVersion );
 
         assertThat( result ).isNotNull();
-        final PropertySet mediaSet = result.data().getSet( ContentPropertyNames.MEDIA );
+        final PropertySet mediaSet = result.data().getSet( ContentPropertyNames.DATA ).getSet( ContentPropertyNames.MEDIA );
         assertThat( mediaSet.getLong( ContentPropertyNames.ORIENTATION ) ).isEqualTo( 2L );
         assertThat( mediaSet.getProperty( ContentPropertyNames.ORIENTATION ).getType() ).isEqualTo( ValueTypes.LONG );
     }
@@ -128,7 +128,7 @@ class ImageUpgraderTest
         final NodeStoreVersion result = upgrader.upgradeNodeVersion( PROJECT_REPO, nodeVersion );
 
         assertThat( result ).isNotNull();
-        final PropertySet mediaSet = result.data().getSet( ContentPropertyNames.MEDIA );
+        final PropertySet mediaSet = result.data().getSet( ContentPropertyNames.DATA ).getSet( ContentPropertyNames.MEDIA );
         final PropertySet imageInfo = imageInfoSet( result.data() );
         final Long origWidth = imageInfo.getLong( MediaInfo.IMAGE_INFO_IMAGE_WIDTH );
         final Long origHeight = imageInfo.getLong( MediaInfo.IMAGE_INFO_IMAGE_HEIGHT );
@@ -141,7 +141,7 @@ class ImageUpgraderTest
     void writes_effective_size_applying_cropping()
     {
         final NodeStoreVersion nodeVersion = imageNode();
-        final PropertySet mediaSet = nodeVersion.data().getSet( ContentPropertyNames.MEDIA );
+        final PropertySet mediaSet = nodeVersion.data().getSet( ContentPropertyNames.DATA ).getSet( ContentPropertyNames.MEDIA );
         final PropertySet cropping = mediaSet.addSet( ContentPropertyNames.MEDIA_CROPPING );
         cropping.addDouble( ContentPropertyNames.MEDIA_CROPPING_TOP, 0.0 );
         cropping.addDouble( ContentPropertyNames.MEDIA_CROPPING_LEFT, 0.0 );
@@ -155,7 +155,7 @@ class ImageUpgraderTest
         final PropertySet imageInfo = imageInfoSet( result.data() );
         final Long origWidth = imageInfo.getLong( MediaInfo.IMAGE_INFO_IMAGE_WIDTH );
         final Long origHeight = imageInfo.getLong( MediaInfo.IMAGE_INFO_IMAGE_HEIGHT );
-        final PropertySet resultMedia = result.data().getSet( ContentPropertyNames.MEDIA );
+        final PropertySet resultMedia = result.data().getSet( ContentPropertyNames.DATA ).getSet( ContentPropertyNames.MEDIA );
         assertThat( resultMedia.getLong( ContentPropertyNames.MEDIA_IMAGE_WIDTH ) ).isEqualTo( origWidth / 2 );
         assertThat( resultMedia.getLong( ContentPropertyNames.MEDIA_IMAGE_HEIGHT ) ).isEqualTo( origHeight / 2 );
     }
@@ -164,12 +164,12 @@ class ImageUpgraderTest
     void normalizes_legacy_string_orientation_to_long()
     {
         final NodeStoreVersion nodeVersion = imageNode();
-        nodeVersion.data().getSet( ContentPropertyNames.MEDIA ).addString( ContentPropertyNames.ORIENTATION, "6" );
+        nodeVersion.data().getSet( ContentPropertyNames.DATA ).getSet( ContentPropertyNames.MEDIA ).addString( ContentPropertyNames.ORIENTATION, "6" );
 
         final NodeStoreVersion result = upgrader.upgradeNodeVersion( PROJECT_REPO, nodeVersion );
 
         assertThat( result ).isNotNull();
-        final PropertySet mediaSet = result.data().getSet( ContentPropertyNames.MEDIA );
+        final PropertySet mediaSet = result.data().getSet( ContentPropertyNames.DATA ).getSet( ContentPropertyNames.MEDIA );
         assertThat( mediaSet.getLong( ContentPropertyNames.ORIENTATION ) ).isEqualTo( 6L );
         assertThat( mediaSet.getProperty( ContentPropertyNames.ORIENTATION ).getType() ).isEqualTo( ValueTypes.LONG );
     }
@@ -179,6 +179,7 @@ class ImageUpgraderTest
     {
         final NodeStoreVersion nodeVersion = imageNode();
         nodeVersion.data()
+            .getSet( ContentPropertyNames.DATA )
             .getSet( ContentPropertyNames.MEDIA )
             .addLong( ContentPropertyNames.ORIENTATION, (long) ImageOrientation.RightTop.getValue() );
 
@@ -188,7 +189,7 @@ class ImageUpgraderTest
         final PropertySet imageInfo = imageInfoSet( result.data() );
         final Long origWidth = imageInfo.getLong( MediaInfo.IMAGE_INFO_IMAGE_WIDTH );
         final Long origHeight = imageInfo.getLong( MediaInfo.IMAGE_INFO_IMAGE_HEIGHT );
-        final PropertySet resultMedia = result.data().getSet( ContentPropertyNames.MEDIA );
+        final PropertySet resultMedia = result.data().getSet( ContentPropertyNames.DATA ).getSet( ContentPropertyNames.MEDIA );
         assertThat( resultMedia.getLong( ContentPropertyNames.MEDIA_IMAGE_WIDTH ) ).isEqualTo( origHeight );
         assertThat( resultMedia.getLong( ContentPropertyNames.MEDIA_IMAGE_HEIGHT ) ).isEqualTo( origWidth );
     }
@@ -198,7 +199,7 @@ class ImageUpgraderTest
     {
         final PropertyTree data = new PropertyTree();
         data.setString( ContentPropertyNames.TYPE, "media:image" );
-        data.setString( ContentPropertyNames.MEDIA, "exif-orientation-f2.jpg" );
+        data.addSet( ContentPropertyNames.DATA ).setString( ContentPropertyNames.MEDIA, "exif-orientation-f2.jpg" );
         final PropertySet attachment = data.addSet( ContentPropertyNames.ATTACHMENT );
         attachment.addString( ContentPropertyNames.ATTACHMENT_NAME, "exif-orientation-f2.jpg" );
         attachment.addBinaryReference( ContentPropertyNames.ATTACHMENT_BINARY_REF, BINARY_REF );
@@ -215,7 +216,7 @@ class ImageUpgraderTest
         final NodeStoreVersion result = upgrader.upgradeNodeVersion( PROJECT_REPO, nodeVersion );
 
         assertThat( result ).isNotNull();
-        final PropertySet mediaSet = result.data().getSet( ContentPropertyNames.MEDIA );
+        final PropertySet mediaSet = result.data().getSet( ContentPropertyNames.DATA ).getSet( ContentPropertyNames.MEDIA );
         assertThat( mediaSet ).isNotNull();
         assertThat( mediaSet.getString( ContentPropertyNames.MEDIA_ATTACHMENT ) ).isEqualTo( "exif-orientation-f2.jpg" );
         assertThat( mediaSet.getLong( ContentPropertyNames.ORIENTATION ) ).isEqualTo( 2L );
@@ -248,6 +249,7 @@ class ImageUpgraderTest
     {
         final PropertyTree data = new PropertyTree();
         data.setString( ContentPropertyNames.TYPE, "media:image" );
+        data.addSet( ContentPropertyNames.DATA );
         final NodeStoreVersion nodeVersion = NodeStoreVersion.create()
             .id( NodeId.from( "image-2" ) )
             .nodeType( ContentConstants.CONTENT_NODE_COLLECTION )
@@ -262,7 +264,7 @@ class ImageUpgraderTest
     {
         final PropertyTree data = new PropertyTree();
         data.setString( ContentPropertyNames.TYPE, "media:image" );
-        data.addSet( ContentPropertyNames.MEDIA ).addString( ContentPropertyNames.MEDIA_ATTACHMENT, "ghost.jpg" );
+        data.addSet( ContentPropertyNames.DATA ).addSet( ContentPropertyNames.MEDIA ).addString( ContentPropertyNames.MEDIA_ATTACHMENT, "ghost.jpg" );
         final PropertySet attachment = data.addSet( ContentPropertyNames.ATTACHMENT );
         attachment.addString( ContentPropertyNames.ATTACHMENT_NAME, "ghost.jpg" );
         attachment.addBinaryReference( ContentPropertyNames.ATTACHMENT_BINARY_REF, BinaryReference.from( "ghost.jpg" ) );
@@ -294,7 +296,7 @@ class ImageUpgraderTest
     void normalizes_crop_position_zoom_greater_than_one()
     {
         final NodeStoreVersion nodeVersion = imageNode();
-        final PropertySet cropping = nodeVersion.data().getSet( ContentPropertyNames.MEDIA ).addSet( ContentPropertyNames.MEDIA_CROPPING );
+        final PropertySet cropping = nodeVersion.data().getSet( ContentPropertyNames.DATA ).getSet( ContentPropertyNames.MEDIA ).addSet( ContentPropertyNames.MEDIA_CROPPING );
         cropping.addDouble( ContentPropertyNames.MEDIA_CROPPING_TOP, 0.20 );
         cropping.addDouble( ContentPropertyNames.MEDIA_CROPPING_LEFT, 0.10 );
         cropping.addDouble( ContentPropertyNames.MEDIA_CROPPING_BOTTOM, 0.80 );
@@ -304,7 +306,7 @@ class ImageUpgraderTest
         final NodeStoreVersion result = upgrader.upgradeNodeVersion( PROJECT_REPO, nodeVersion );
 
         assertThat( result ).isNotNull();
-        final PropertySet upgraded = result.data().getSet( ContentPropertyNames.MEDIA ).getSet( ContentPropertyNames.MEDIA_CROPPING );
+        final PropertySet upgraded = result.data().getSet( ContentPropertyNames.DATA ).getSet( ContentPropertyNames.MEDIA ).getSet( ContentPropertyNames.MEDIA_CROPPING );
         assertThat( upgraded.getDouble( ContentPropertyNames.MEDIA_CROPPING_TOP ) ).isEqualTo( 0.10 );
         assertThat( upgraded.getDouble( ContentPropertyNames.MEDIA_CROPPING_LEFT ) ).isEqualTo( 0.05 );
         assertThat( upgraded.getDouble( ContentPropertyNames.MEDIA_CROPPING_BOTTOM ) ).isEqualTo( 0.40 );
@@ -319,7 +321,7 @@ class ImageUpgraderTest
         // which made the runtime image service throw RasterFormatException. The migration must
         // bring every edge back into [0,1] by dividing through the zoom factor.
         final NodeStoreVersion nodeVersion = imageNode();
-        final PropertySet cropping = nodeVersion.data().getSet( ContentPropertyNames.MEDIA ).addSet( ContentPropertyNames.MEDIA_CROPPING );
+        final PropertySet cropping = nodeVersion.data().getSet( ContentPropertyNames.DATA ).getSet( ContentPropertyNames.MEDIA ).addSet( ContentPropertyNames.MEDIA_CROPPING );
         cropping.addDouble( ContentPropertyNames.MEDIA_CROPPING_TOP, 0.36745983558369705 );
         cropping.addDouble( ContentPropertyNames.MEDIA_CROPPING_LEFT, 0.28542309670781896 );
         cropping.addDouble( ContentPropertyNames.MEDIA_CROPPING_BOTTOM, 1.367459835583697 );
@@ -329,7 +331,7 @@ class ImageUpgraderTest
         final NodeStoreVersion result = upgrader.upgradeNodeVersion( PROJECT_REPO, nodeVersion );
 
         assertThat( result ).isNotNull();
-        final PropertySet upgraded = result.data().getSet( ContentPropertyNames.MEDIA ).getSet( ContentPropertyNames.MEDIA_CROPPING );
+        final PropertySet upgraded = result.data().getSet( ContentPropertyNames.DATA ).getSet( ContentPropertyNames.MEDIA ).getSet( ContentPropertyNames.MEDIA_CROPPING );
         assertThat( upgraded.getDouble( ContentPropertyNames.MEDIA_CROPPING_TOP ) ).isCloseTo( 0.21010, within( 1e-4 ) );
         assertThat( upgraded.getDouble( ContentPropertyNames.MEDIA_CROPPING_LEFT ) ).isCloseTo( 0.16319, within( 1e-4 ) );
         assertThat( upgraded.getDouble( ContentPropertyNames.MEDIA_CROPPING_BOTTOM ) ).isCloseTo( 0.78187, within( 1e-4 ) );
@@ -341,7 +343,7 @@ class ImageUpgraderTest
     void removes_crop_position_zoom_equal_to_one()
     {
         final NodeStoreVersion nodeVersion = imageNode();
-        final PropertySet cropping = nodeVersion.data().getSet( ContentPropertyNames.MEDIA ).addSet( ContentPropertyNames.MEDIA_CROPPING );
+        final PropertySet cropping = nodeVersion.data().getSet( ContentPropertyNames.DATA ).getSet( ContentPropertyNames.MEDIA ).addSet( ContentPropertyNames.MEDIA_CROPPING );
         cropping.addDouble( ContentPropertyNames.MEDIA_CROPPING_TOP, 0.10 );
         cropping.addDouble( ContentPropertyNames.MEDIA_CROPPING_LEFT, 0.20 );
         cropping.addDouble( ContentPropertyNames.MEDIA_CROPPING_BOTTOM, 0.80 );
@@ -351,7 +353,7 @@ class ImageUpgraderTest
         final NodeStoreVersion result = upgrader.upgradeNodeVersion( PROJECT_REPO, nodeVersion );
 
         assertThat( result ).isNotNull();
-        final PropertySet upgraded = result.data().getSet( ContentPropertyNames.MEDIA ).getSet( ContentPropertyNames.MEDIA_CROPPING );
+        final PropertySet upgraded = result.data().getSet( ContentPropertyNames.DATA ).getSet( ContentPropertyNames.MEDIA ).getSet( ContentPropertyNames.MEDIA_CROPPING );
         assertThat( upgraded.getDouble( ContentPropertyNames.MEDIA_CROPPING_TOP ) ).isEqualTo( 0.10 );
         assertThat( upgraded.getDouble( ContentPropertyNames.MEDIA_CROPPING_RIGHT ) ).isEqualTo( 0.90 );
         assertThat( upgraded.getDouble( "zoom" ) ).isNull();
@@ -361,7 +363,7 @@ class ImageUpgraderTest
     void crop_position_without_zoom_is_unchanged()
     {
         final NodeStoreVersion nodeVersion = imageNode();
-        final PropertySet cropping = nodeVersion.data().getSet( ContentPropertyNames.MEDIA ).addSet( ContentPropertyNames.MEDIA_CROPPING );
+        final PropertySet cropping = nodeVersion.data().getSet( ContentPropertyNames.DATA ).getSet( ContentPropertyNames.MEDIA ).addSet( ContentPropertyNames.MEDIA_CROPPING );
         cropping.addDouble( ContentPropertyNames.MEDIA_CROPPING_TOP, 0.10 );
         cropping.addDouble( ContentPropertyNames.MEDIA_CROPPING_LEFT, 0.20 );
         cropping.addDouble( ContentPropertyNames.MEDIA_CROPPING_BOTTOM, 0.80 );
@@ -370,7 +372,7 @@ class ImageUpgraderTest
         final NodeStoreVersion result = upgrader.upgradeNodeVersion( PROJECT_REPO, nodeVersion );
 
         assertThat( result ).isNotNull();
-        final PropertySet upgraded = result.data().getSet( ContentPropertyNames.MEDIA ).getSet( ContentPropertyNames.MEDIA_CROPPING );
+        final PropertySet upgraded = result.data().getSet( ContentPropertyNames.DATA ).getSet( ContentPropertyNames.MEDIA ).getSet( ContentPropertyNames.MEDIA_CROPPING );
         assertThat( upgraded.getDouble( ContentPropertyNames.MEDIA_CROPPING_TOP ) ).isEqualTo( 0.10 );
         assertThat( upgraded.getDouble( ContentPropertyNames.MEDIA_CROPPING_RIGHT ) ).isEqualTo( 0.90 );
         assertThat( upgraded.getDouble( "zoom" ) ).isNull();
@@ -380,7 +382,7 @@ class ImageUpgraderTest
     void crop_position_zoom_less_than_one_keeps_edges_removes_zoom()
     {
         final NodeStoreVersion nodeVersion = imageNode();
-        final PropertySet cropping = nodeVersion.data().getSet( ContentPropertyNames.MEDIA ).addSet( ContentPropertyNames.MEDIA_CROPPING );
+        final PropertySet cropping = nodeVersion.data().getSet( ContentPropertyNames.DATA ).getSet( ContentPropertyNames.MEDIA ).addSet( ContentPropertyNames.MEDIA_CROPPING );
         cropping.addDouble( ContentPropertyNames.MEDIA_CROPPING_TOP, 0.10 );
         cropping.addDouble( ContentPropertyNames.MEDIA_CROPPING_LEFT, 0.20 );
         cropping.addDouble( ContentPropertyNames.MEDIA_CROPPING_BOTTOM, 0.80 );
@@ -390,7 +392,7 @@ class ImageUpgraderTest
         final NodeStoreVersion result = upgrader.upgradeNodeVersion( PROJECT_REPO, nodeVersion );
 
         assertThat( result ).isNotNull();
-        final PropertySet upgraded = result.data().getSet( ContentPropertyNames.MEDIA ).getSet( ContentPropertyNames.MEDIA_CROPPING );
+        final PropertySet upgraded = result.data().getSet( ContentPropertyNames.DATA ).getSet( ContentPropertyNames.MEDIA ).getSet( ContentPropertyNames.MEDIA_CROPPING );
         assertThat( upgraded.getDouble( ContentPropertyNames.MEDIA_CROPPING_TOP ) ).isEqualTo( 0.10 );
         assertThat( upgraded.getDouble( ContentPropertyNames.MEDIA_CROPPING_RIGHT ) ).isEqualTo( 0.90 );
         assertThat( upgraded.getDouble( "zoom" ) ).isNull();
@@ -400,7 +402,7 @@ class ImageUpgraderTest
     void crop_position_with_missing_edge_keeps_edges_removes_zoom_even_when_zoom_greater_than_one()
     {
         final NodeStoreVersion nodeVersion = imageNode();
-        final PropertySet cropping = nodeVersion.data().getSet( ContentPropertyNames.MEDIA ).addSet( ContentPropertyNames.MEDIA_CROPPING );
+        final PropertySet cropping = nodeVersion.data().getSet( ContentPropertyNames.DATA ).getSet( ContentPropertyNames.MEDIA ).addSet( ContentPropertyNames.MEDIA_CROPPING );
         cropping.addDouble( ContentPropertyNames.MEDIA_CROPPING_TOP, 0.20 );
         cropping.addDouble( ContentPropertyNames.MEDIA_CROPPING_LEFT, 0.10 );
         // bottom intentionally missing
@@ -410,7 +412,7 @@ class ImageUpgraderTest
         final NodeStoreVersion result = upgrader.upgradeNodeVersion( PROJECT_REPO, nodeVersion );
 
         assertThat( result ).isNotNull();
-        final PropertySet upgraded = result.data().getSet( ContentPropertyNames.MEDIA ).getSet( ContentPropertyNames.MEDIA_CROPPING );
+        final PropertySet upgraded = result.data().getSet( ContentPropertyNames.DATA ).getSet( ContentPropertyNames.MEDIA ).getSet( ContentPropertyNames.MEDIA_CROPPING );
         // Edges left as-is — NOT divided by zoom
         assertThat( upgraded.getDouble( ContentPropertyNames.MEDIA_CROPPING_TOP ) ).isEqualTo( 0.20 );
         assertThat( upgraded.getDouble( ContentPropertyNames.MEDIA_CROPPING_LEFT ) ).isEqualTo( 0.10 );
@@ -424,7 +426,7 @@ class ImageUpgraderTest
     void crop_position_zoom_normalization_is_idempotent()
     {
         final NodeStoreVersion nodeVersion = imageNode();
-        final PropertySet cropping = nodeVersion.data().getSet( ContentPropertyNames.MEDIA ).addSet( ContentPropertyNames.MEDIA_CROPPING );
+        final PropertySet cropping = nodeVersion.data().getSet( ContentPropertyNames.DATA ).getSet( ContentPropertyNames.MEDIA ).addSet( ContentPropertyNames.MEDIA_CROPPING );
         cropping.addDouble( ContentPropertyNames.MEDIA_CROPPING_TOP, 0.20 );
         cropping.addDouble( ContentPropertyNames.MEDIA_CROPPING_LEFT, 0.10 );
         cropping.addDouble( ContentPropertyNames.MEDIA_CROPPING_BOTTOM, 0.80 );
@@ -436,7 +438,7 @@ class ImageUpgraderTest
 
         // After the first pass, edges are halved and zoom is removed.
         // Second pass should re-run safely without further mutation of edges or re-introducing zoom.
-        final PropertySet upgraded = ( secondPass != null ? secondPass : firstPass ).data().getSet( ContentPropertyNames.MEDIA ).getSet( ContentPropertyNames.MEDIA_CROPPING );
+        final PropertySet upgraded = ( secondPass != null ? secondPass : firstPass ).data().getSet( ContentPropertyNames.DATA ).getSet( ContentPropertyNames.MEDIA ).getSet( ContentPropertyNames.MEDIA_CROPPING );
         assertThat( upgraded.getDouble( ContentPropertyNames.MEDIA_CROPPING_TOP ) ).isEqualTo( 0.10 );
         assertThat( upgraded.getDouble( ContentPropertyNames.MEDIA_CROPPING_LEFT ) ).isEqualTo( 0.05 );
         assertThat( upgraded.getDouble( ContentPropertyNames.MEDIA_CROPPING_BOTTOM ) ).isEqualTo( 0.40 );
@@ -470,7 +472,9 @@ class ImageUpgraderTest
     {
         final PropertyTree data = new PropertyTree();
         data.setString( ContentPropertyNames.TYPE, "media:image" );
-        data.addSet( ContentPropertyNames.MEDIA ).addString( ContentPropertyNames.MEDIA_ATTACHMENT, "exif-orientation-f2.jpg" );
+        data.addSet( ContentPropertyNames.DATA )
+            .addSet( ContentPropertyNames.MEDIA )
+            .addString( ContentPropertyNames.MEDIA_ATTACHMENT, "exif-orientation-f2.jpg" );
 
         final PropertySet attachment = data.addSet( ContentPropertyNames.ATTACHMENT );
         attachment.addString( ContentPropertyNames.ATTACHMENT_NAME, "exif-orientation-f2.jpg" );
