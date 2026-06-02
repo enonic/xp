@@ -68,6 +68,7 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryIds;
 import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.server.VersionInfo;
+import com.enonic.xp.util.Version;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
@@ -343,6 +344,8 @@ public class DumpServiceImpl
 
         try (DumpReader dumpReader = ZipDumpReaderModel9.create( params.getListener(), basePath, dumpName ))
         {
+            verifyModelVersion( dumpReader.getDumpMeta().getModelVersion() );
+
             final RepositoryIds dumpRepositories = dumpReader.getRepositories();
 
             if ( !dumpRepositories.contains( SystemConstants.SYSTEM_REPO_ID ) )
@@ -371,6 +374,16 @@ public class DumpServiceImpl
             throw new UncheckedIOException( e );
         }
         return results.build();
+    }
+
+    static void verifyModelVersion( final Version modelVersion )
+    {
+        if ( !Model.MODEL_VERSION.equals( modelVersion ) )
+        {
+            throw new RepoLoadException(
+                "Cannot load dump; model version [" + modelVersion + "] is not supported, expected [" + Model.MODEL_VERSION +
+                    "]. Load with upgrade enabled to migrate it first." );
+        }
     }
 
     private void doFullLoad( final SystemLoadParams params, final DumpReader dumpReader, final RepositoryIds dumpRepositories,
