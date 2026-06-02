@@ -70,7 +70,13 @@ public class ImageUpgrader
             return null;
         }
 
-        final PropertySet mediaSet = ensureMediaSet( data );
+        final PropertySet contentData = data.getSet( ContentPropertyNames.DATA );
+        if ( contentData == null )
+        {
+            return null;
+        }
+
+        final PropertySet mediaSet = ensureMediaSet( contentData, data );
         if ( mediaSet == null )
         {
             return null;
@@ -78,7 +84,7 @@ public class ImageUpgrader
 
         boolean changed = normalizeCropPositionZoom( mediaSet, nodeVersion.id().toString() );
 
-        final ImageMetadata metadata = loadImageMetadata( repositoryId, nodeVersion, data );
+        final ImageMetadata metadata = loadImageMetadata( repositoryId, nodeVersion, contentData, data );
 
         if ( metadata != null && metadata.width != null && metadata.height != null )
         {
@@ -156,9 +162,10 @@ public class ImageUpgrader
         return nodeVersion;
     }
 
-    private ImageMetadata loadImageMetadata( final RepositoryId repositoryId, final NodeStoreVersion nodeVersion, final PropertyTree data )
+    private ImageMetadata loadImageMetadata( final RepositoryId repositoryId, final NodeStoreVersion nodeVersion,
+                                             final PropertySet contentData, final PropertyTree data )
     {
-        final String attachmentName = resolveAttachmentName( data );
+        final String attachmentName = resolveAttachmentName( contentData );
         if ( attachmentName == null )
         {
             return null;
@@ -216,9 +223,9 @@ public class ImageUpgrader
         return true;
     }
 
-    private static PropertySet ensureMediaSet( final PropertyTree data )
+    private static PropertySet ensureMediaSet( final PropertySet contentData, final PropertyTree data )
     {
-        final Property mediaProperty = data.getProperty( ContentPropertyNames.MEDIA );
+        final Property mediaProperty = contentData.getProperty( ContentPropertyNames.MEDIA );
         if ( mediaProperty != null && ValueTypes.PROPERTY_SET.equals( mediaProperty.getType() ) )
         {
             return mediaProperty.getSet();
@@ -229,8 +236,8 @@ public class ImageUpgrader
         {
             return null;
         }
-        data.removeProperties( ContentPropertyNames.MEDIA );
-        final PropertySet mediaSet = data.addSet( ContentPropertyNames.MEDIA );
+        contentData.removeProperties( ContentPropertyNames.MEDIA );
+        final PropertySet mediaSet = contentData.addSet( ContentPropertyNames.MEDIA );
         mediaSet.addString( ContentPropertyNames.MEDIA_ATTACHMENT, attachmentName );
         return mediaSet;
     }
@@ -324,9 +331,9 @@ public class ImageUpgrader
         return Cropping.create().top( top ).left( left ).bottom( bottom ).right( right ).build();
     }
 
-    private static String resolveAttachmentName( final PropertyTree data )
+    private static String resolveAttachmentName( final PropertySet contentData )
     {
-        final Property mediaProperty = data.getProperty( ContentPropertyNames.MEDIA );
+        final Property mediaProperty = contentData.getProperty( ContentPropertyNames.MEDIA );
         if ( mediaProperty == null )
         {
             return null;
