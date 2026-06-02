@@ -82,7 +82,15 @@ public class ImageUpgrader
             return null;
         }
 
+        final PropertySet legacyCropSet = mediaSet.getSet( ContentPropertyNames.MEDIA_CROPPING );
+        final boolean hadZoom = legacyCropSet != null && legacyCropSet.getDouble( "zoom" ) != null;
+
         boolean changed = normalizeCropPositionZoom( mediaSet, nodeVersion.id().toString() );
+        if ( hadZoom )
+        {
+            changed |= convertFocalPointToOriginal( mediaSet );
+        }
+        changed |= removeZoomPosition( mediaSet );
 
         final ImageMetadata metadata = loadImageMetadata( repositoryId, nodeVersion, contentData, data );
 
@@ -440,6 +448,50 @@ public class ImageUpgrader
             changed = true;
         }
         return changed;
+    }
+
+    private static boolean convertFocalPointToOriginal( final PropertySet mediaSet )
+    {
+        final PropertySet focalSet = mediaSet.getSet( ContentPropertyNames.MEDIA_FOCAL_POINT );
+        if ( focalSet == null )
+        {
+            return false;
+        }
+        final Double focalX = focalSet.getDouble( ContentPropertyNames.MEDIA_FOCAL_POINT_X );
+        final Double focalY = focalSet.getDouble( ContentPropertyNames.MEDIA_FOCAL_POINT_Y );
+        if ( focalX == null || focalY == null )
+        {
+            return false;
+        }
+        final PropertySet cropSet = mediaSet.getSet( ContentPropertyNames.MEDIA_CROPPING );
+        if ( cropSet == null )
+        {
+            // No cropping: legacy focalPoint is already relative to the whole image.
+            return false;
+        }
+        final Double left = cropSet.getDouble( ContentPropertyNames.MEDIA_CROPPING_LEFT );
+        final Double top = cropSet.getDouble( ContentPropertyNames.MEDIA_CROPPING_TOP );
+        final Double right = cropSet.getDouble( ContentPropertyNames.MEDIA_CROPPING_RIGHT );
+        final Double bottom = cropSet.getDouble( ContentPropertyNames.MEDIA_CROPPING_BOTTOM );
+        if ( left == null || top == null || right == null || bottom == null )
+        {
+            return false;
+        }
+        // Legacy focalPoint is a fraction of the crop rectangle; remap to original-image coordinates
+        // using the already-normalized crop edges so the stored point is the exact original pixel.
+        focalSet.setDouble( ContentPropertyNames.MEDIA_FOCAL_POINT_X, clamp01( left + focalX * ( right - left ) ) );
+        focalSet.setDouble( ContentPropertyNames.MEDIA_FOCAL_POINT_Y, clamp01( top + focalY * ( bottom - top ) ) );
+        return true;
+    }
+
+    private static boolean removeZoomPosition( final PropertySet mediaSet )
+    {
+        if ( mediaSet.getProperty( "zoomPosition" ) == null )
+        {
+            return false;
+        }
+        mediaSet.removeProperties( "zoomPosition" );
+        return true;
     }
 
     private static double clamp01( final double v )
