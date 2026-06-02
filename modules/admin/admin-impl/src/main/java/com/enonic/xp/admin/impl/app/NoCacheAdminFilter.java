@@ -45,15 +45,11 @@ public class NoCacheAdminFilter
             {
                 if ( value != null )
                 {
-                    if ( value.contains( "private" ) )
-                    {
-                        return;
-                    }
-                    else if ( value.contains( "public" ) )
+                    if ( value.contains( "public" ) )
                     {
                         value = value.replaceAll( "public", "private" );
                     }
-                    else
+                    else if ( !value.contains( "private" ) )
                     {
                         value = "private, " + value;
                     }

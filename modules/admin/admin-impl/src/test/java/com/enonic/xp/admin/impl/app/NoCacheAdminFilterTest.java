@@ -17,7 +17,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 
 @ExtendWith(MockitoExtension.class)
 class NoCacheAdminFilterTest
@@ -67,7 +66,7 @@ class NoCacheAdminFilterTest
 
         responseWrapper.setHeader( HttpHeaders.CACHE_CONTROL, "private, max-age=3600" );
 
-        verifyNoInteractions( response );
+        verify( response ).setHeader( HttpHeaders.CACHE_CONTROL, "private, max-age=3600" );
     }
 
     @Test
