@@ -446,6 +446,101 @@ class ImageUpgraderTest
         assertThat( upgraded.getDouble( "zoom" ) ).isNull();
     }
 
+    @Test
+    void converts_focal_point_to_original_relative_issue_12107()
+    {
+        // Legacy focalPoint is stored relative to the crop rectangle. Convert it to original-image
+        // coordinates using the normalized crop edges so the exact pixel is known. Issue #12107 data.
+        final NodeStoreVersion nodeVersion = imageNode();
+        final PropertySet mediaSet = nodeVersion.data().getSet( ContentPropertyNames.DATA ).getSet( ContentPropertyNames.MEDIA );
+        final PropertySet cropping = mediaSet.addSet( ContentPropertyNames.MEDIA_CROPPING );
+        cropping.addDouble( ContentPropertyNames.MEDIA_CROPPING_TOP, 0.36745983558369705 );
+        cropping.addDouble( ContentPropertyNames.MEDIA_CROPPING_LEFT, 0.28542309670781896 );
+        cropping.addDouble( ContentPropertyNames.MEDIA_CROPPING_BOTTOM, 1.367459835583697 );
+        cropping.addDouble( ContentPropertyNames.MEDIA_CROPPING_RIGHT, 1.2854230967078188 );
+        cropping.addDouble( "zoom", 1.7489711934156378 );
+        final PropertySet focal = mediaSet.addSet( ContentPropertyNames.MEDIA_FOCAL_POINT );
+        focal.addDouble( ContentPropertyNames.MEDIA_FOCAL_POINT_X, 0.5 );
+        focal.addDouble( ContentPropertyNames.MEDIA_FOCAL_POINT_Y, 0.5 );
+
+        final NodeStoreVersion result = upgrader.upgradeNodeVersion( PROJECT_REPO, nodeVersion );
+
+        assertThat( result ).isNotNull();
+        final PropertySet upgradedFocal = result.data()
+            .getSet( ContentPropertyNames.DATA )
+            .getSet( ContentPropertyNames.MEDIA )
+            .getSet( ContentPropertyNames.MEDIA_FOCAL_POINT );
+        // crop-relative (0.5,0.5) mapped through normalized crop [0.16319,0.21010,0.73496,0.78187]
+        assertThat( upgradedFocal.getDouble( ContentPropertyNames.MEDIA_FOCAL_POINT_X ) ).isCloseTo( 0.44908, within( 1e-4 ) );
+        assertThat( upgradedFocal.getDouble( ContentPropertyNames.MEDIA_FOCAL_POINT_Y ) ).isCloseTo( 0.49598, within( 1e-4 ) );
+    }
+
+    @Test
+    void focal_point_without_cropping_is_unchanged()
+    {
+        final NodeStoreVersion nodeVersion = imageNode();
+        final PropertySet focal =
+            nodeVersion.data().getSet( ContentPropertyNames.DATA ).getSet( ContentPropertyNames.MEDIA ).addSet( ContentPropertyNames.MEDIA_FOCAL_POINT );
+        focal.addDouble( ContentPropertyNames.MEDIA_FOCAL_POINT_X, 0.3 );
+        focal.addDouble( ContentPropertyNames.MEDIA_FOCAL_POINT_Y, 0.7 );
+
+        final NodeStoreVersion result = upgrader.upgradeNodeVersion( PROJECT_REPO, nodeVersion );
+
+        assertThat( result ).isNotNull();
+        final PropertySet upgradedFocal = result.data()
+            .getSet( ContentPropertyNames.DATA )
+            .getSet( ContentPropertyNames.MEDIA )
+            .getSet( ContentPropertyNames.MEDIA_FOCAL_POINT );
+        assertThat( upgradedFocal.getDouble( ContentPropertyNames.MEDIA_FOCAL_POINT_X ) ).isEqualTo( 0.3 );
+        assertThat( upgradedFocal.getDouble( ContentPropertyNames.MEDIA_FOCAL_POINT_Y ) ).isEqualTo( 0.7 );
+    }
+
+    @Test
+    void focal_point_conversion_is_idempotent()
+    {
+        final NodeStoreVersion nodeVersion = imageNode();
+        final PropertySet mediaSet = nodeVersion.data().getSet( ContentPropertyNames.DATA ).getSet( ContentPropertyNames.MEDIA );
+        final PropertySet cropping = mediaSet.addSet( ContentPropertyNames.MEDIA_CROPPING );
+        cropping.addDouble( ContentPropertyNames.MEDIA_CROPPING_TOP, 0.20 );
+        cropping.addDouble( ContentPropertyNames.MEDIA_CROPPING_LEFT, 0.10 );
+        cropping.addDouble( ContentPropertyNames.MEDIA_CROPPING_BOTTOM, 0.80 );
+        cropping.addDouble( ContentPropertyNames.MEDIA_CROPPING_RIGHT, 0.90 );
+        cropping.addDouble( "zoom", 2.0 );
+        final PropertySet focal = mediaSet.addSet( ContentPropertyNames.MEDIA_FOCAL_POINT );
+        focal.addDouble( ContentPropertyNames.MEDIA_FOCAL_POINT_X, 0.5 );
+        focal.addDouble( ContentPropertyNames.MEDIA_FOCAL_POINT_Y, 0.5 );
+
+        final NodeStoreVersion firstPass = upgrader.upgradeNodeVersion( PROJECT_REPO, nodeVersion );
+        final NodeStoreVersion secondPass = upgrader.upgradeNodeVersion( PROJECT_REPO, firstPass );
+
+        // First pass: crop normalized to [0.05,0.10,0.45,0.40]; focal (0.5,0.5) -> (0.05+0.5*0.40, 0.10+0.5*0.30) = (0.25, 0.25).
+        // Second pass must NOT re-convert (zoom already gone), leaving focal stable.
+        final PropertySet upgradedFocal = ( secondPass != null ? secondPass : firstPass ).data()
+            .getSet( ContentPropertyNames.DATA )
+            .getSet( ContentPropertyNames.MEDIA )
+            .getSet( ContentPropertyNames.MEDIA_FOCAL_POINT );
+        assertThat( upgradedFocal.getDouble( ContentPropertyNames.MEDIA_FOCAL_POINT_X ) ).isCloseTo( 0.25, within( 1e-9 ) );
+        assertThat( upgradedFocal.getDouble( ContentPropertyNames.MEDIA_FOCAL_POINT_Y ) ).isCloseTo( 0.25, within( 1e-9 ) );
+    }
+
+    @Test
+    void removes_legacy_zoom_position()
+    {
+        final NodeStoreVersion nodeVersion = imageNode();
+        final PropertySet zoomPosition =
+            nodeVersion.data().getSet( ContentPropertyNames.DATA ).getSet( ContentPropertyNames.MEDIA ).addSet( "zoomPosition" );
+        zoomPosition.addDouble( ContentPropertyNames.MEDIA_CROPPING_LEFT, -0.28542309670781896 );
+        zoomPosition.addDouble( ContentPropertyNames.MEDIA_CROPPING_TOP, -0.36745983558369705 );
+        zoomPosition.addDouble( ContentPropertyNames.MEDIA_CROPPING_RIGHT, 1.463548096707819 );
+        zoomPosition.addDouble( ContentPropertyNames.MEDIA_CROPPING_BOTTOM, 1.3815113578319407 );
+
+        final NodeStoreVersion result = upgrader.upgradeNodeVersion( PROJECT_REPO, nodeVersion );
+
+        assertThat( result ).isNotNull();
+        final PropertySet upgradedMedia = result.data().getSet( ContentPropertyNames.DATA ).getSet( ContentPropertyNames.MEDIA );
+        assertThat( upgradedMedia.getSet( "zoomPosition" ) ).isNull();
+    }
+
     private static PropertySet imageInfoSet( final PropertyTree data )
     {
         final PropertySet mixins = data.getSet( ContentPropertyNames.MIXINS );

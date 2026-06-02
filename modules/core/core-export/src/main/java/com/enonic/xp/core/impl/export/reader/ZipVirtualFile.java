@@ -1,9 +1,9 @@
 package com.enonic.xp.core.impl.export.reader;
 
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.channels.SeekableByteChannel;
 import java.nio.charset.StandardCharsets;
@@ -127,11 +127,12 @@ public class ZipVirtualFile
     {
         try
         {
-            return URI.create( "jar:" + zipFilePath.toAbsolutePath().toUri() + "!/" + entryPath ).toURL();
+            final String encodedEntryPath = new URI( null, null, entryPath, null ).getRawPath();
+            return URI.create( "jar:" + zipFilePath.toAbsolutePath().toUri() + "!/" + encodedEntryPath ).toURL();
         }
-        catch ( MalformedURLException e )
+        catch ( MalformedURLException | URISyntaxException e )
         {
-            throw new UncheckedIOException( e );
+            throw new IllegalArgumentException( e );
         }
     }
 
