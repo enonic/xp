@@ -128,8 +128,6 @@ public class ZipVirtualFile
     {
         try
         {
-            // The zip path is percent-encoded by toUri(); the entry path must be encoded the same way
-            // (spaces -> %20, '/' preserved) or jar: URI parsing fails for names with spaces, '#', etc.
             final String encodedEntryPath = new URI( null, null, entryPath, null ).getRawPath();
             return URI.create( "jar:" + zipFilePath.toAbsolutePath().toUri() + "!/" + encodedEntryPath ).toURL();
         }
