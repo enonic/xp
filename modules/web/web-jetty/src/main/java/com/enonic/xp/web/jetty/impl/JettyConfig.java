@@ -150,4 +150,12 @@ public @interface JettyConfig
      * The time in milliseconds that a websocket may be idle before closing.
      */
     long websocket_idleTimeout() default 300000;
+
+    /**
+     * Enforce a same-origin check on WebSocket handshakes by default. When false, the platform
+     * accepts any {@code Origin} unless a controller supplies its own {@code checkOrigin} function.
+     * Disable only as a fallback for deployments where the reverse proxy does not propagate the
+     * public scheme/host/port to Jetty and the proxy configuration cannot be fixed.
+     */
+    boolean websocket_defaultOriginCheck() default true;
 }
