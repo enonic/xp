@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.channels.SeekableByteChannel;
 import java.nio.charset.StandardCharsets;
@@ -127,11 +128,14 @@ public class ZipVirtualFile
     {
         try
         {
-            return URI.create( "jar:" + zipFilePath.toAbsolutePath().toUri() + "!/" + entryPath ).toURL();
+            // The zip path is percent-encoded by toUri(); the entry path must be encoded the same way
+            // (spaces -> %20, '/' preserved) or jar: URI parsing fails for names with spaces, '#', etc.
+            final String encodedEntryPath = new URI( null, null, entryPath, null ).getRawPath();
+            return URI.create( "jar:" + zipFilePath.toAbsolutePath().toUri() + "!/" + encodedEntryPath ).toURL();
         }
-        catch ( MalformedURLException e )
+        catch ( MalformedURLException | URISyntaxException e )
         {
-            throw new UncheckedIOException( e );
+            throw new UncheckedIOException( new IOException( e ) );
         }
     }
 
