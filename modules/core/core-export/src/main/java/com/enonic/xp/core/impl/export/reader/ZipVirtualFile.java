@@ -1,7 +1,6 @@
 package com.enonic.xp.core.impl.export.reader;
 
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -133,7 +132,7 @@ public class ZipVirtualFile
         }
         catch ( MalformedURLException | URISyntaxException e )
         {
-            throw new UncheckedIOException( new IOException( e ) );
+            throw new IllegalArgumentException( e );
         }
     }
 
