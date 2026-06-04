@@ -1,12 +1,16 @@
 package com.enonic.xp.web.jetty.impl;
 
+import java.net.InetSocketAddress;
+import java.nio.channels.ServerSocketChannel;
 import java.util.List;
 
 import org.eclipse.jetty.ee11.servlet.ServletContextHandler;
 import org.eclipse.jetty.ee11.servlet.ServletHolder;
 import org.eclipse.jetty.ee11.servlet.SessionHandler;
 import org.eclipse.jetty.ee11.websocket.jakarta.server.config.JakartaWebSocketServletContainerInitializer;
+import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.osgi.framework.BundleContext;
@@ -21,7 +25,6 @@ import org.slf4j.LoggerFactory;
 import io.micrometer.core.instrument.Metrics;
 import io.micrometer.core.instrument.binder.jetty.JettyConnectionMetrics;
 
-import com.enonic.xp.server.RunMode;
 import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.dispatch.DispatchServlet;
 import com.enonic.xp.web.jetty.impl.configurator.ErrorHandlerConfigurator;
@@ -97,8 +100,28 @@ public final class JettyActivator
         this.serverServiceRegistration = bundleContext.registerService( Server.class, this.server, null );
 
         LOG.info( "Started Jetty" );
-        LOG.info( "Listening on ports [{}](xp), [{}](management) and [{}](monitoring)", config.http_xp_port(),
-                  config.http_management_port(), config.http_monitor_port() );
+        for ( final Connector connector : server.getConnectors() )
+        {
+            // report the address the server socket is actually bound to, e.g. "::" wildcard when host is not set
+            if ( connector instanceof final ServerConnector serverConnector &&
+                serverConnector.getTransport() instanceof final ServerSocketChannel channel &&
+                channel.getLocalAddress() instanceof final InetSocketAddress socketAddress )
+            {
+                LOG.info( "Listening on [{}:{}] ({})", socketAddress.getAddress().getHostAddress(), socketAddress.getPort(),
+                          connectorLabel( serverConnector.getName() ) );
+            }
+        }
+    }
+
+    private static String connectorLabel( final String connectorName )
+    {
+        return switch ( connectorName )
+        {
+            case DispatchConstants.XP_CONNECTOR -> "web";
+            case DispatchConstants.API_CONNECTOR -> "management";
+            case DispatchConstants.STATUS_CONNECTOR -> "statistics";
+            default -> connectorName;
+        };
     }
 
     @Deactivate

@@ -1,5 +1,6 @@
 package com.enonic.xp.cluster.impl;
 
+import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.cluster.NodeDiscovery;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -37,5 +39,15 @@ class ClusterConfigImplTest
         config.activate( settings );
 
         assertNotNull( config.name() );
+    }
+
+    @Test
+    void networkHost_and_networkPublishHost_resolved()
+    {
+        final ClusterConfigImpl config = new ClusterConfigImpl();
+        config.activate( Map.of( "network.host", "_local_", "network.publish.host", "_local_" ) );
+
+        assertAll( () -> assertEquals( InetAddress.getLoopbackAddress().getHostAddress(), config.networkHost() ),
+                   () -> assertEquals( InetAddress.getLoopbackAddress().getHostAddress(), config.networkPublishHost() ) );
     }
 }
