@@ -15,6 +15,7 @@ import com.enonic.xp.cluster.impl.discovery.StaticIpNodeDiscovery;
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.config.ConfigInterpolator;
 import com.enonic.xp.config.Configuration;
+import com.enonic.xp.core.internal.net.NetworkInterfaceResolver;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
