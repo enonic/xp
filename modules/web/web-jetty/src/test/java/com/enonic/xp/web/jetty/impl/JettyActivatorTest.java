@@ -39,8 +39,8 @@ class JettyActivatorTest
             thenReturn( serverServiceRegistration );
 
         this.config = mock( JettyConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
-        when( this.config.http_xp_port() ).thenReturn( 0 );
-        when( this.config.http_monitor_port() ).thenReturn( 0 );
+        when( this.config.http_web_port() ).thenReturn( 0 );
+        when( this.config.http_statistics_port() ).thenReturn( 0 );
         when( this.config.http_management_port() ).thenReturn( 0 );
     }
 

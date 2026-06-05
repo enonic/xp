@@ -8,7 +8,13 @@ public interface ClusterConfig
 
     boolean isEnabled();
 
+    /**
+     * Publish host, resolved to a single concrete address.
+     */
     String networkPublishHost();
 
+    /**
+     * Bind host, resolved to a single concrete address.
+     */
     String networkHost();
 }

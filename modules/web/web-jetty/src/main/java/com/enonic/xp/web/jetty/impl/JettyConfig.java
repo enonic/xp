@@ -3,9 +3,11 @@ package com.enonic.xp.web.jetty.impl;
 public @interface JettyConfig
 {
     /**
-     * Host name.
+     * Bind address used for all connectors unless overridden per connector.
+     * Supports network interface expressions, e.g. "_en0_", "_local_".
+     * "_auto_" resolves to loopback in dev mode and all interfaces in prod mode.
      */
-    String host();
+    String host() default "_auto_";
 
     /**
      * Connector timeout in min.
@@ -23,9 +25,22 @@ public @interface JettyConfig
     boolean http_enabled() default true;
 
     /**
-     * Http xp port.
+     * Http web port. When not set, falls back to the deprecated {@code http.xp.port}, then to 8080.
      */
-    int http_xp_port() default 8080;
+    int http_web_port() default -1;
+
+    /**
+     * Http web bind address. Overrides {@link #host()} for the web connector.
+     */
+    String http_web_host();
+
+    /**
+     * Http xp port.
+     *
+     * @deprecated use {@link #http_web_port()} instead.
+     */
+    @Deprecated
+    int http_xp_port() default -1;
 
     /**
      * Http management port.
@@ -35,11 +50,29 @@ public @interface JettyConfig
     int http_management_port() default 4848;
 
     /**
-     * Http monitor port.
+     * Http management bind address. Overrides {@link #host()} for the management connector.
+     */
+    String http_management_host();
+
+    /**
+     * Http statistics port. When not set, falls back to the deprecated {@code http.monitor.port}, then to 2609.
      *
      * @see <a href="https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers">iana.org port numbers</a>
      */
-    int http_monitor_port() default 2609;
+    int http_statistics_port() default -1;
+
+    /**
+     * Http statistics bind address. Overrides {@link #host()} for the statistics connector.
+     */
+    String http_statistics_host();
+
+    /**
+     * Http monitor port.
+     *
+     * @deprecated use {@link #http_statistics_port()} instead.
+     */
+    @Deprecated
+    int http_monitor_port() default -1;
 
     /**
      * Session timeout in minutes.

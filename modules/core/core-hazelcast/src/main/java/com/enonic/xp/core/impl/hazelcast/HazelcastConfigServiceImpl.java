@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.hazelcast;
 
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
@@ -48,6 +49,18 @@ public class HazelcastConfigServiceImpl
     public boolean isHazelcastEnabled()
     {
         return clusterConfig.isEnabled();
+    }
+
+    private static boolean isAnyLocalAddress( final String address )
+    {
+        try
+        {
+            return InetAddress.getByName( address ).isAnyLocalAddress();
+        }
+        catch ( UnknownHostException e )
+        {
+            return false;
+        }
     }
 
     @Override
@@ -176,9 +189,15 @@ public class HazelcastConfigServiceImpl
     {
         if ( hazelcastConfig.clusterConfigDefaults() )
         {
-            InterfacesConfig interfacesConfig = config.getNetworkConfig().getInterfaces();
-            interfacesConfig.setEnabled( true );
-            interfacesConfig.setInterfaces( List.of( clusterConfig.networkHost() ) );
+            final String networkHost = clusterConfig.networkHost();
+            // neither unset host nor a wildcard bind address must become an interface restriction:
+            // no interface has the address 0.0.0.0
+            if ( networkHost != null && !isAnyLocalAddress( networkHost ) )
+            {
+                InterfacesConfig interfacesConfig = config.getNetworkConfig().getInterfaces();
+                interfacesConfig.setEnabled( true );
+                interfacesConfig.setInterfaces( List.of( networkHost ) );
+            }
         }
         else
         {
