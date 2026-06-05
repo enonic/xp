@@ -16,12 +16,15 @@ import jakarta.servlet.Filter;
 import jakarta.servlet.http.HttpServlet;
 
 import com.enonic.xp.web.dispatch.DispatchConstants;
+import com.enonic.xp.web.jetty.impl.websocket.WebSocketSessionTracker;
 
 public final class JettyTestServer
 {
     private final Server server;
 
     private final ServletContextHandler handler;
+
+    private final WebSocketSessionTracker sessionTracker = new WebSocketSessionTracker();
 
     public JettyTestServer()
     {
@@ -35,9 +38,15 @@ public final class JettyTestServer
         this.server.addConnector( connector );
 
         this.handler = new ServletContextHandler( "/", ServletContextHandler.SESSIONS );
+        this.handler.addEventListener( this.sessionTracker );
         JakartaWebSocketServletContainerInitializer.configure( this.handler, ( _, _ ) -> {
         } );
         this.server.setHandler( this.handler );
+    }
+
+    public WebSocketSessionTracker getSessionTracker()
+    {
+        return this.sessionTracker;
     }
 
     public void start()

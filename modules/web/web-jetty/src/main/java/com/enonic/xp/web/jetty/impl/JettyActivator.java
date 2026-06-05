@@ -31,6 +31,7 @@ import com.enonic.xp.web.jetty.impl.configurator.MultipartConfigurator;
 import com.enonic.xp.web.jetty.impl.configurator.RequestLogConfigurator;
 import com.enonic.xp.web.jetty.impl.configurator.SessionConfigurator;
 import com.enonic.xp.web.jetty.impl.session.JettySessionStoreConfigurator;
+import com.enonic.xp.web.jetty.impl.websocket.WebSocketSessionTracker;
 
 @Component(immediate = true, configurationPid = "com.enonic.xp.web.jetty")
 public final class JettyActivator
@@ -43,6 +44,8 @@ public final class JettyActivator
 
     private final List<DispatchServlet> dispatchServlets;
 
+    private final WebSocketSessionTracker webSocketSessionTracker;
+
     private final JettyConfig config;
 
     private volatile Server server;
@@ -52,11 +55,13 @@ public final class JettyActivator
     @Activate
     public JettyActivator( final JettyConfig config, final BundleContext bundleContext,
                            @Reference final JettySessionStoreConfigurator jettySessionStoreConfigurator,
+                           @Reference final WebSocketSessionTracker webSocketSessionTracker,
                            @Reference final List<DispatchServlet> dispatchServlets )
     {
         this.config = config;
         this.bundleContext = bundleContext;
         this.jettySessionStoreConfigurator = jettySessionStoreConfigurator;
+        this.webSocketSessionTracker = webSocketSessionTracker;
         this.dispatchServlets = dispatchServlets;
     }
 
@@ -115,6 +120,9 @@ public final class JettyActivator
     {
         final ServletContextHandler context = new ServletContextHandler( "/", ServletContextHandler.SESSIONS );
         final SessionHandler sessionHandler = context.getSessionHandler();
+
+        // Close WebSocket sessions bound to an HTTP session when that session ends (logout or idle-timeout).
+        context.addEventListener( this.webSocketSessionTracker );
 
         final ServletHolder holder = new ServletHolder( servlet );
         holder.setAsyncSupported( true );

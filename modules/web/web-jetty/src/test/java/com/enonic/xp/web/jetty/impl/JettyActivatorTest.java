@@ -15,6 +15,7 @@ import org.osgi.framework.ServiceRegistration;
 import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.dispatch.DispatchServlet;
 import com.enonic.xp.web.jetty.impl.session.JettySessionStoreConfigurator;
+import com.enonic.xp.web.jetty.impl.websocket.WebSocketSessionTracker;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -52,8 +53,8 @@ class JettyActivatorTest
         final JettySessionStoreConfigurator jettySessionStoreConfigurator = Mockito.mock( JettySessionStoreConfigurator.class );
         final DispatchServlet xpDispatcherServlet = mock( DispatchServlet.class );
         when( xpDispatcherServlet.getConnector() ).thenReturn( DispatchConstants.XP_CONNECTOR );
-        JettyActivator activator =
-            new JettyActivator( config, bundleContext, jettySessionStoreConfigurator, Collections.singletonList( xpDispatcherServlet ) );
+        JettyActivator activator = new JettyActivator( config, bundleContext, jettySessionStoreConfigurator, new WebSocketSessionTracker(),
+                                                       Collections.singletonList( xpDispatcherServlet ) );
 
         activator.activate();
 
