@@ -1,5 +1,8 @@
 package com.enonic.xp.web.jetty.impl.configurator;
 
+import java.net.Inet6Address;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.mockito.Mockito.when;
 
 class HttpConfiguratorTest
@@ -63,7 +67,10 @@ class HttpConfiguratorTest
 
     @Test
     void defaultConfigInDev()
+        throws SocketException
     {
+        assumeTrue( hasIpv6Loopback() );
+
         RunModeSupport.set( RunMode.DEV );
 
         configure();
@@ -122,7 +129,10 @@ class HttpConfiguratorTest
 
     @Test
     void perConnectorHost()
+        throws SocketException
     {
+        assumeTrue( hasIpv6Loopback() );
+
         RunModeSupport.set( RunMode.PROD );
         when( this.config.http_web_host() ).thenReturn( "_local_" );
         when( this.config.http_management_host() ).thenReturn( "127.0.0.2" );
@@ -191,5 +201,26 @@ class HttpConfiguratorTest
             .filter( connector -> name.equals( connector.getName() ) )
             .map( connector -> ( (ServerConnector) connector ).getHost() )
             .toList();
+    }
+
+    private static boolean hasIpv6Loopback()
+        throws SocketException
+    {
+        return NetworkInterface.networkInterfaces()
+            .filter( HttpConfiguratorTest::isLoopback )
+            .flatMap( NetworkInterface::inetAddresses )
+            .anyMatch( Inet6Address.class::isInstance );
+    }
+
+    private static boolean isLoopback( final NetworkInterface networkInterface )
+    {
+        try
+        {
+            return networkInterface.isLoopback();
+        }
+        catch ( SocketException e )
+        {
+            return false;
+        }
     }
 }

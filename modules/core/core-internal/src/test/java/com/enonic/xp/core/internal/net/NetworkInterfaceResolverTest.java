@@ -1,5 +1,6 @@
 package com.enonic.xp.core.internal.net;
 
+import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -10,12 +11,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 class NetworkInterfaceResolverTest
 {
     @Test
     void resolveInterface()
+        throws SocketException
     {
+        assumeTrue( hasIpv6Loopback() );
+
         final NetworkInterfaceResolver resolver = new NetworkInterfaceResolver();
         final String localIpv6 = resolver.resolveAddress( "_local:ipv6_" );
         final String localIpv4 = resolver.resolveAddress( "_local:ipv4_" );
@@ -32,6 +37,8 @@ class NetworkInterfaceResolverTest
     void resolveLoopbackInterfaceName()
         throws SocketException
     {
+        assumeTrue( hasIpv6Loopback() );
+
         final NetworkInterface loopback =
             NetworkInterface.networkInterfaces().filter( NetworkInterfaceResolverTest::isLoopback ).findFirst().orElseThrow();
 
@@ -43,28 +50,22 @@ class NetworkInterfaceResolverTest
                    () -> assertEquals( "0:0:0:0:0:0:0:1", resolver.resolveAddress( "_" + loopback.getName() + ":ipv6_" ) ) );
     }
 
-    private static boolean isLoopback( final NetworkInterface networkInterface )
-    {
-        try
-        {
-            return networkInterface.isLoopback();
-        }
-        catch ( SocketException e )
-        {
-            return false;
-        }
-    }
-
     @Test
     void resolveAddresses_allFamiliesWhenVersionNotSpecified()
+        throws SocketException
     {
+        assumeTrue( hasIpv6Loopback() );
+
         final NetworkInterfaceResolver resolver = new NetworkInterfaceResolver();
         assertThat( resolver.resolveAddresses( "_local_" ) ).containsExactlyInAnyOrder( "127.0.0.1", "0:0:0:0:0:0:0:1" );
     }
 
     @Test
     void resolveAddresses_singleAddress()
+        throws SocketException
     {
+        assumeTrue( hasIpv6Loopback() );
+
         final NetworkInterfaceResolver resolver = new NetworkInterfaceResolver();
         assertAll( () -> assertThat( resolver.resolveAddresses( "192.168.0.1" ) ).containsExactly( "192.168.0.1" ),
                    () -> assertThat( resolver.resolveAddresses( "_local:ipv4_" ) ).containsExactly( "127.0.0.1" ),
@@ -73,7 +74,10 @@ class NetworkInterfaceResolverTest
 
     @Test
     void resolveAddresses_auto()
+        throws SocketException
     {
+        assumeTrue( hasIpv6Loopback() );
+
         final NetworkInterfaceResolver resolver = new NetworkInterfaceResolver( () -> "_local_" );
         assertThat( resolver.resolveAddresses( "_auto_" ) ).containsExactlyInAnyOrder( "127.0.0.1", "0:0:0:0:0:0:0:1" );
     }
@@ -100,5 +104,26 @@ class NetworkInterfaceResolverTest
     {
         final NetworkInterfaceResolver resolver = new NetworkInterfaceResolver( () -> "_auto_" );
         assertThatThrownBy( () -> resolver.resolveAddress( "_auto_" ) ).isInstanceOf( IllegalArgumentException.class );
+    }
+
+    private static boolean hasIpv6Loopback()
+        throws SocketException
+    {
+        return NetworkInterface.networkInterfaces()
+            .filter( NetworkInterfaceResolverTest::isLoopback )
+            .flatMap( NetworkInterface::inetAddresses )
+            .anyMatch( Inet6Address.class::isInstance );
+    }
+
+    private static boolean isLoopback( final NetworkInterface networkInterface )
+    {
+        try
+        {
+            return networkInterface.isLoopback();
+        }
+        catch ( SocketException e )
+        {
+            return false;
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.enonic.xp.web.jetty.impl;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.ServerSocketChannel;
 import java.util.List;
@@ -100,16 +101,23 @@ public final class JettyActivator
         this.serverServiceRegistration = bundleContext.registerService( Server.class, this.server, null );
 
         LOG.info( "Started Jetty" );
-        for ( final Connector connector : server.getConnectors() )
+        try
         {
-            // report the address the server socket is actually bound to, e.g. "::" wildcard when host is not set
-            if ( connector instanceof final ServerConnector serverConnector &&
-                serverConnector.getTransport() instanceof final ServerSocketChannel channel &&
-                channel.getLocalAddress() instanceof final InetSocketAddress socketAddress )
+            for ( final Connector connector : server.getConnectors() )
             {
-                LOG.info( "Listening on [{}:{}] ({})", socketAddress.getAddress().getHostAddress(), socketAddress.getPort(),
-                          connectorLabel( serverConnector.getName() ) );
+                // report the address the server socket is actually bound to, e.g. "::" wildcard when host is not set
+                if ( connector instanceof final ServerConnector serverConnector &&
+                    serverConnector.getTransport() instanceof final ServerSocketChannel channel &&
+                    channel.getLocalAddress() instanceof final InetSocketAddress socketAddress )
+                {
+                    LOG.info( "Listening on [{}:{}] ({})", socketAddress.getAddress().getHostAddress(), socketAddress.getPort(),
+                              connectorLabel( serverConnector.getName() ) );
+                }
             }
+        }
+        catch ( IOException e )
+        {
+            LOG.warn( "Could not report bound addresses", e );
         }
     }
 

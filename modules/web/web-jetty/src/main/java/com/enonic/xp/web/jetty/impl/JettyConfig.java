@@ -25,7 +25,7 @@ public @interface JettyConfig
     boolean http_enabled() default true;
 
     /**
-     * Http web port. Defaults to 8080.
+     * Http web port. When not set, falls back to the deprecated {@code http.xp.port}, then to 8080.
      */
     int http_web_port() default -1;
 
@@ -55,7 +55,7 @@ public @interface JettyConfig
     String http_management_host();
 
     /**
-     * Http statistics port. Defaults to 2609.
+     * Http statistics port. When not set, falls back to the deprecated {@code http.monitor.port}, then to 2609.
      *
      * @see <a href="https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers">iana.org port numbers</a>
      */

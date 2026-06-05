@@ -78,6 +78,18 @@ class HazelcastConfigServiceImplTest
     }
 
     @Test
+    void configure_clusterConfigDefaults_noHost()
+        throws Exception
+    {
+        when( clusterConfig.discovery().get() ).thenReturn( List.of( InetAddress.getByName( "127.0.0.1" ) ) );
+
+        final Config config = hazelcastConfigService.configure();
+
+        // blank network.host resolves to null: no interface restriction instead of a failure
+        assertFalse( config.getNetworkConfig().getInterfaces().isEnabled() );
+    }
+
+    @Test
     void configure_clusterConfigDefaults_wildcardHost()
         throws Exception
     {

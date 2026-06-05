@@ -190,8 +190,9 @@ public class HazelcastConfigServiceImpl
         if ( hazelcastConfig.clusterConfigDefaults() )
         {
             final String networkHost = clusterConfig.networkHost();
-            // a wildcard bind address must not become an interface restriction: no interface has the address 0.0.0.0
-            if ( !isAnyLocalAddress( networkHost ) )
+            // neither unset host nor a wildcard bind address must become an interface restriction:
+            // no interface has the address 0.0.0.0
+            if ( networkHost != null && !isAnyLocalAddress( networkHost ) )
             {
                 InterfacesConfig interfacesConfig = config.getNetworkConfig().getInterfaces();
                 interfacesConfig.setEnabled( true );
