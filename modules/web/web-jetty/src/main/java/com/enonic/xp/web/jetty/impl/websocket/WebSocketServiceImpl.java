@@ -1,6 +1,7 @@
 package com.enonic.xp.web.jetty.impl.websocket;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -12,11 +13,13 @@ import org.eclipse.jetty.ee11.websocket.jakarta.server.config.ContainerDefaultCo
 import org.eclipse.jetty.websocket.core.server.WebSocketMappings;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import jakarta.websocket.DeploymentException;
 import jakarta.websocket.Endpoint;
 import jakarta.websocket.Extension;
@@ -34,10 +37,13 @@ public final class WebSocketServiceImpl
 
     private final boolean defaultOriginCheckEnabled;
 
+    private final WebSocketSessionTracker sessionTracker;
+
     @Activate
-    public WebSocketServiceImpl( final JettyConfig config )
+    public WebSocketServiceImpl( final JettyConfig config, @Reference final WebSocketSessionTracker sessionTracker )
     {
         this.defaultOriginCheckEnabled = config.websocket_defaultOriginCheck();
+        this.sessionTracker = sessionTracker;
     }
 
     @Override
@@ -56,8 +62,30 @@ public final class WebSocketServiceImpl
         final String expectedHost = req.getServerName();
         final int expectedPort = req.getServerPort();
 
+        final boolean terminateOnSessionExit = factory.isTerminateOnSessionExit();
+        final boolean sessionAccess = factory.isSessionAccess();
+
+        // The HTTP session is only observable during the upgrade request, so capture what we need now: its id
+        // (to close the socket when the session ends) and/or an Accessor (to refresh it on inbound messages).
+        final String httpSessionId;
+        final HttpSession.Accessor sessionAccessor;
+        final HttpSession httpSession = terminateOnSessionExit || sessionAccess ? req.getSession( false ) : null;
+        if ( httpSession == null )
+        {
+            // No HTTP session at upgrade time (or nothing to bind): the socket is left detached.
+            httpSessionId = null;
+            sessionAccessor = null;
+        }
+        else
+        {
+            httpSessionId = terminateOnSessionExit ? httpSession.getId() : null;
+            sessionAccessor = sessionAccess ? httpSession.getAccessor() : null;
+        }
+
         final ServerEndpointConfig config = ServerEndpointConfig.Builder.create( Endpoint.class, "/" )
-            .configurator( newConfigurator( factory, expectedScheme, expectedHost, expectedPort, this.defaultOriginCheckEnabled ) )
+            .configurator(
+                newConfigurator( factory, expectedScheme, expectedHost, expectedPort, this.defaultOriginCheckEnabled, this.sessionTracker,
+                                 httpSessionId, sessionAccessor, factory.getSessionAccessThrottle() ) )
             .subprotocols( factory.getSubProtocols() )
             .build();
 
@@ -74,7 +102,11 @@ public final class WebSocketServiceImpl
 
     private static ServerEndpointConfig.Configurator newConfigurator( final EndpointFactory factory, final String expectedScheme,
                                                                       final String expectedHost, final int expectedPort,
-                                                                      final boolean defaultOriginCheckEnabled )
+                                                                      final boolean defaultOriginCheckEnabled,
+                                                                      final WebSocketSessionTracker sessionTracker,
+                                                                      final String httpSessionId,
+                                                                      final HttpSession.Accessor sessionAccessor,
+                                                                      final Duration sessionAccessThrottle )
     {
         final ContainerDefaultConfigurator defaultConfigurator = new ContainerDefaultConfigurator();
 
@@ -132,7 +164,13 @@ public final class WebSocketServiceImpl
             @Override
             public <T> T getEndpointInstance( final Class<T> endpointClass )
             {
-                return endpointClass.cast( factory.newEndpoint() );
+                final Endpoint endpoint = factory.newEndpoint();
+                if ( httpSessionId == null && sessionAccessor == null )
+                {
+                    return endpointClass.cast( endpoint );
+                }
+                return endpointClass.cast(
+                    new SessionBoundEndpoint( endpoint, sessionTracker, httpSessionId, sessionAccessor, sessionAccessThrottle ) );
             }
         };
     }

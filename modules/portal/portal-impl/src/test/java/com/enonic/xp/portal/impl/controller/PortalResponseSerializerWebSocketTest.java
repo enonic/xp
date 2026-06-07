@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.controller;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.web.websocket.WebSocketConfig;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
@@ -52,6 +54,71 @@ class PortalResponseSerializerWebSocketTest
         assertThat( response.getWebSocket().getSubProtocols() ).containsExactly( "text" );
         assertThat( response.getWebSocket().getData() ).containsEntry( "k", "v" );
         assertThat( response.getWebSocket().getOriginValidator() ).isNull();
+    }
+
+    @Test
+    void session_binding_defaults_when_absent()
+    {
+        final ScriptValue root = mock( ScriptValue.class );
+        when( root.isObject() ).thenReturn( true );
+
+        final ScriptValue webSocket = mock( ScriptValue.class );
+        when( root.getMember( "webSocket" ) ).thenReturn( webSocket );
+
+        final WebSocketConfig config = new PortalResponseSerializer( root ).serialize().getWebSocket();
+
+        assertThat( config.isTerminateOnSessionExit() ).isTrue();
+        assertThat( config.isSessionAccess() ).isFalse();
+        assertThat( config.getSessionAccessThrottle() ).isEqualTo( WebSocketConfig.DEFAULT_SESSION_ACCESS_THROTTLE );
+    }
+
+    @Test
+    void terminateOnSessionExit_false_is_mapped()
+    {
+        final WebSocketConfig config = serializeWebSocket( webSocket -> {
+            final ScriptValue terminate = mock( ScriptValue.class );
+            when( terminate.getValue( Boolean.class ) ).thenReturn( Boolean.FALSE );
+            when( webSocket.getMember( "terminateOnSessionExit" ) ).thenReturn( terminate );
+        } );
+
+        assertThat( config.isTerminateOnSessionExit() ).isFalse();
+    }
+
+    @Test
+    void sessionAccess_true_is_mapped()
+    {
+        final WebSocketConfig config = serializeWebSocket( webSocket -> {
+            final ScriptValue access = mock( ScriptValue.class );
+            when( access.getValue( Boolean.class ) ).thenReturn( Boolean.TRUE );
+            when( webSocket.getMember( "sessionAccess" ) ).thenReturn( access );
+        } );
+
+        assertThat( config.isSessionAccess() ).isTrue();
+    }
+
+    @Test
+    void sessionAccessThrottleMs_is_mapped_to_duration()
+    {
+        final WebSocketConfig config = serializeWebSocket( webSocket -> {
+            final ScriptValue throttle = mock( ScriptValue.class );
+            when( throttle.getValue( Double.class ) ).thenReturn( 30000.0 );
+            when( webSocket.getMember( "sessionAccessThrottleMs" ) ).thenReturn( throttle );
+        } );
+
+        assertThat( config.getSessionAccessThrottle() ).isEqualTo( Duration.ofMillis( 30000 ) );
+    }
+
+    private static WebSocketConfig serializeWebSocket( final java.util.function.Consumer<ScriptValue> webSocketSetup )
+    {
+        final ScriptValue root = mock( ScriptValue.class );
+        when( root.isObject() ).thenReturn( true );
+
+        final ScriptValue webSocket = mock( ScriptValue.class );
+        when( root.getMember( "webSocket" ) ).thenReturn( webSocket );
+
+        webSocketSetup.accept( webSocket );
+
+        return new PortalResponseSerializer( root ).serialize().getWebSocket();
     }
 
     @Test
