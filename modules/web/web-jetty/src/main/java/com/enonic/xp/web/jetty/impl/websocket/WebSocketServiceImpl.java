@@ -85,7 +85,8 @@ public final class WebSocketServiceImpl
         final ServerEndpointConfig config = ServerEndpointConfig.Builder.create( Endpoint.class, "/" )
             .configurator(
                 newConfigurator( factory, expectedScheme, expectedHost, expectedPort, this.defaultOriginCheckEnabled, this.sessionTracker,
-                                 httpSessionId, sessionAccessor, factory.getSessionAccessThrottle() ) )
+                                 httpSessionId != null ? httpSession : null, httpSessionId, sessionAccessor,
+                                 factory.getSessionAccessThrottle() ) )
             .subprotocols( factory.getSubProtocols() )
             .build();
 
@@ -104,7 +105,7 @@ public final class WebSocketServiceImpl
                                                                       final String expectedHost, final int expectedPort,
                                                                       final boolean defaultOriginCheckEnabled,
                                                                       final WebSocketSessionTracker sessionTracker,
-                                                                      final String httpSessionId,
+                                                                      final HttpSession httpSession, final String httpSessionId,
                                                                       final HttpSession.Accessor sessionAccessor,
                                                                       final Duration sessionAccessThrottle )
     {
@@ -170,7 +171,8 @@ public final class WebSocketServiceImpl
                     return endpointClass.cast( endpoint );
                 }
                 return endpointClass.cast(
-                    new SessionBoundEndpoint( endpoint, sessionTracker, httpSessionId, sessionAccessor, sessionAccessThrottle ) );
+                    new SessionBoundEndpoint( endpoint, sessionTracker, httpSession, httpSessionId, sessionAccessor,
+                                              sessionAccessThrottle ) );
             }
         };
     }

@@ -12,10 +12,17 @@ import jakarta.websocket.Endpoint;
 import jakarta.websocket.EndpointConfig;
 import jakarta.websocket.Session;
 
+import org.mockito.ArgumentCaptor;
+import org.mockito.InOrder;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
 class SessionBoundEndpointTest
 {
@@ -31,7 +38,8 @@ class SessionBoundEndpointTest
     void registers_and_unregisters_raw_session_and_forwards_raw_session_when_not_accessing()
     {
         final Session session = mock( Session.class );
-        final SessionBoundEndpoint endpoint = new SessionBoundEndpoint( this.delegate, this.tracker, "s1", null, THROTTLE );
+        final SessionBoundEndpoint endpoint =
+            new SessionBoundEndpoint( this.delegate, this.tracker, mock( HttpSession.class ), "s1", null, THROTTLE );
 
         endpoint.onOpen( session, this.config );
         endpoint.onClose( session, new CloseReason( CloseReason.CloseCodes.NORMAL_CLOSURE, "bye" ) );
@@ -49,7 +57,8 @@ class SessionBoundEndpointTest
     {
         final Session session = mock( Session.class );
         final HttpSession.Accessor accessor = mock( HttpSession.Accessor.class );
-        final SessionBoundEndpoint endpoint = new SessionBoundEndpoint( this.delegate, this.tracker, "s1", accessor, THROTTLE );
+        final SessionBoundEndpoint endpoint =
+            new SessionBoundEndpoint( this.delegate, this.tracker, mock( HttpSession.class ), "s1", accessor, THROTTLE );
 
         endpoint.onOpen( session, this.config );
         endpoint.onError( session, new RuntimeException( "boom" ) );
@@ -70,13 +79,50 @@ class SessionBoundEndpointTest
     {
         final Session session = mock( Session.class );
         final HttpSession.Accessor accessor = mock( HttpSession.Accessor.class );
-        final SessionBoundEndpoint endpoint = new SessionBoundEndpoint( this.delegate, this.tracker, null, accessor, THROTTLE );
+        final SessionBoundEndpoint endpoint = new SessionBoundEndpoint( this.delegate, this.tracker, null, null, accessor, THROTTLE );
 
         endpoint.onOpen( session, this.config );
         endpoint.onClose( session, new CloseReason( CloseReason.CloseCodes.NORMAL_CLOSURE, "bye" ) );
 
         verifyNoInteractions( this.tracker );
         assertThat( this.delegate.opened.get( 0 ) ).isInstanceOf( KeepAliveSession.class );
+    }
+
+    @Test
+    void closes_socket_with_1008_when_http_session_ended_before_registration()
+        throws Exception
+    {
+        final Session session = mock( Session.class );
+        final HttpSession httpSession = mock( HttpSession.class );
+        when( httpSession.getCreationTime() ).thenThrow( new IllegalStateException( "invalidated" ) );
+        final SessionBoundEndpoint endpoint = new SessionBoundEndpoint( this.delegate, this.tracker, httpSession, "s1", null, THROTTLE );
+
+        endpoint.onOpen( session, this.config );
+
+        // Registration must happen BEFORE the probe: if the session ends after register(), the tracker closes
+        // the socket; if it ended before, the probe catches it here. Either order of the race is covered.
+        final InOrder inOrder = inOrder( this.tracker, session );
+        inOrder.verify( this.tracker ).register( "s1", session );
+
+        final ArgumentCaptor<CloseReason> reason = ArgumentCaptor.forClass( CloseReason.class );
+        inOrder.verify( session ).close( reason.capture() );
+        assertThat( reason.getValue().getCloseCode() ).isEqualTo( CloseReason.CloseCodes.VIOLATED_POLICY );
+
+        // The delegate saw a normal open; the container will deliver the matching onClose.
+        assertThat( this.delegate.opened ).containsExactly( session );
+    }
+
+    @Test
+    void does_not_close_socket_when_http_session_is_still_valid_at_open()
+        throws Exception
+    {
+        final Session session = mock( Session.class );
+        final SessionBoundEndpoint endpoint =
+            new SessionBoundEndpoint( this.delegate, this.tracker, mock( HttpSession.class ), "s1", null, THROTTLE );
+
+        endpoint.onOpen( session, this.config );
+
+        verify( session, never() ).close( any( CloseReason.class ) );
     }
 
     private static final class RecordingEndpoint
