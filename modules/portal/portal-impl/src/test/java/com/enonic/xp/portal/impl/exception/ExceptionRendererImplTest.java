@@ -345,9 +345,9 @@ class ExceptionRendererImplTest
         this.request.getHeaders().put( HttpHeaders.ACCEPT, "text/html,text/*" );
 
         final VirtualHost virtualHost = mock( VirtualHost.class );
-        when( virtualHost.getSource() ).thenReturn( "/" );
-        when( virtualHost.getTarget() ).thenReturn( "/admin/site/intranet/master" );
-        VirtualHostHelper.setVirtualHost( request.getRawRequest(), virtualHost );
+        when( virtualHost.getSource() ).thenReturn( "/intranet" );
+        when( virtualHost.getTarget() ).thenReturn( "/site/intra/master" );
+        when( request.getRawRequest().getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
 
         final RuntimeException cause = new RuntimeException( "Custom message" );
 
@@ -358,7 +358,7 @@ class ExceptionRendererImplTest
             context.callWith( () -> this.renderer.render( this.request, new WebException( HttpStatus.FORBIDDEN, cause ) ) );
 
         final String responseBody = response.getBody().toString();
-        assertThat( responseBody ).contains( "class=\"logout\"" ).contains( "href=\"/_/idprovider/system/logout\"" );
+        assertThat( responseBody ).contains( "class=\"logout\"" ).contains( "href=\"/intranet/_/idprovider/system/logout\"" );
     }
 
     private Site newSite()
