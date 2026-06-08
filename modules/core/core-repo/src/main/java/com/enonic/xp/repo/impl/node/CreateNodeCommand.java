@@ -1,6 +1,5 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.time.Instant;
 import java.util.List;
 
 import com.enonic.xp.context.ContextAccessor;
@@ -36,8 +35,6 @@ public final class CreateNodeCommand
 {
     private final CreateNodeParams params;
 
-    private final Instant timestamp;
-
     private final BinaryService binaryService;
 
     private final boolean skipVerification;
@@ -46,7 +43,6 @@ public final class CreateNodeCommand
     {
         super( builder );
         this.params = builder.params;
-        this.timestamp = builder.timestamp;
         this.binaryService = builder.binaryService;
         this.skipVerification = builder.skipVerification;
     }
@@ -88,7 +84,7 @@ public final class CreateNodeCommand
             .permissions( permissions )
             .nodeType( params.getNodeType() != null ? params.getNodeType() : NodeType.DEFAULT_NODE_COLLECTION )
             .attachedBinaries( attachedBinaries )
-            .timestamp( Millis.fromOrElseNow( this.timestamp ) );
+            .timestamp( Millis.now() );
 
         final Node builtNode = nodeBuilder.build();
         final Attributes resolvedAttributes =
@@ -198,8 +194,6 @@ public final class CreateNodeCommand
     {
         private CreateNodeParams params;
 
-        private Instant timestamp;
-
         private BinaryService binaryService;
 
         private boolean skipVerification;
@@ -223,12 +217,6 @@ public final class CreateNodeCommand
         public Builder binaryService( final BinaryService binaryService )
         {
             this.binaryService = binaryService;
-            return this;
-        }
-
-        public Builder timestamp( final Instant timestamp )
-        {
-            this.timestamp = timestamp;
             return this;
         }
 

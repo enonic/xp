@@ -116,7 +116,6 @@ public class ImportNodeCommand
 
             node = CreateNodeCommand.create( this )
                 .params( createNodeParams )
-                .timestamp( this.importNode.getTimestamp() )
                 .binaryService( binaryService )
                 .build()
                 .execute();
