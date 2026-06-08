@@ -3,6 +3,7 @@ import type {
     RequestConstructorParams,
     RequestCookies,
     RequestHeaders,
+    RequestParams,
 } from '../core/index';
 
 type ReplacerFn = (this: unknown, key: string, value: unknown) => unknown;
@@ -62,7 +63,7 @@ export class RequestImplementation implements Request {
     host: string;
     method: string;
     mode: string;
-    params: Record<string, string | string[]>;
+    params: RequestParams;
     path: string;
     port: number;
     rawPath: string;
@@ -70,6 +71,7 @@ export class RequestImplementation implements Request {
     scheme: string;
     url: string;
     webSocket: boolean;
+    locales: string[];
 
     branch?: string;
     contextPath?: string;
@@ -93,6 +95,7 @@ export class RequestImplementation implements Request {
         scheme,
         url,
         webSocket,
+        locales,
         // Optionals
         branch,
         contextPath,
@@ -115,6 +118,7 @@ export class RequestImplementation implements Request {
         this.scheme = scheme;
         this.url = url;
         this.webSocket = webSocket;
+        this.locales = locales;
 
         this.branch = branch;
         this.contextPath = contextPath;
@@ -159,6 +163,7 @@ export class RequestImplementation implements Request {
             scheme: this.scheme,
             url: this.url,
             webSocket: this.webSocket,
+            locales: this.locales,
         };
         if (this.branch) {
             obj.branch = this.branch;

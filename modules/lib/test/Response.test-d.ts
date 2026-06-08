@@ -142,3 +142,67 @@ expectNotAssignable<Response>({
 expectNotAssignable<Response>({
     status: '200', // Not number!
 });
+
+// ────────────────────────────────────────────────────────────────────────────
+// Scenario: Switch the connection to a WebSocket
+// ────────────────────────────────────────────────────────────────────────────
+
+// Minimal: just signal the upgrade
+expectAssignable<Response>({
+    webSocket: {},
+});
+
+expectAssignable<Response>({
+    webSocket: {
+        data: {
+            user: 'alice',
+        },
+        subProtocols: ['chat', 'superchat'],
+        checkOrigin: (origin) => origin === 'https://example.com',
+        terminateOnSessionExit: false,
+        sessionAccess: true,
+        sessionAccessThrottleMs: 30000,
+    },
+});
+
+// data values must be strings
+expectNotAssignable<Response>({
+    webSocket: {
+        data: {
+            count: 42, // Not string!
+        },
+    },
+});
+
+// ────────────────────────────────────────────────────────────────────────────
+// Scenario: Switch the connection to a Server-Sent Events stream
+// ────────────────────────────────────────────────────────────────────────────
+
+// Minimal: just signal the switch
+expectAssignable<Response>({
+    sse: {},
+});
+
+// attributes may hold arbitrary (not only string) values
+expectAssignable<Response>({
+    sse: {
+        attributes: {
+            user: 'alice',
+            count: 42,
+        },
+        retry: 5000,
+        timeout: 60000,
+    },
+});
+
+expectNotAssignable<Response>({
+    sse: {
+        retry: 'soon', // Not number!
+    },
+});
+
+expectNotAssignable<Response>({
+    sse: {
+        timeout: true, // Not number!
+    },
+});

@@ -31,6 +31,19 @@ tasks.register( 'lint', NpmTask ) {
 
 check.dependsOn tasks.named( 'lint' )
 
+tasks.register( 'testTypes', NpmTask ) {
+    dependsOn tasks.named( 'npmInstall' )
+    dependsOn tasks.named( 'prepareGlobalToPublish' )
+    description = 'Type-test the public type definitions (tsd)'
+    args = ['run', 'test:types']
+    inputs.file 'global.d.ts'
+    inputs.file coreDir.file( 'index.d.ts' )
+    inputs.dir 'test'
+    inputs.dir layout.buildDirectory.dir( 'npm' )
+}
+
+check.dependsOn tasks.named( 'testTypes' )
+
 /* Configure & Build */
 tasks.register( 'typescript', NpmTask ) {
     dependsOn tasks.named( 'npmInstall' )
