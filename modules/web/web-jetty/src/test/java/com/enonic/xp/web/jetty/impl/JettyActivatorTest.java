@@ -3,7 +3,6 @@ package com.enonic.xp.web.jetty.impl;
 import java.util.Collections;
 
 import org.eclipse.jetty.server.Server;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -15,7 +14,9 @@ import org.osgi.framework.ServiceRegistration;
 import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.dispatch.DispatchServlet;
 import com.enonic.xp.web.jetty.impl.session.JettySessionStoreConfigurator;
+import com.enonic.xp.web.jetty.impl.websocket.WebSocketSessionTracker;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -32,8 +33,9 @@ class JettyActivatorTest
 
     private JettyConfig config;
 
-    @BeforeEach
-    void setup()
+    @Test
+    void testLifecycle()
+        throws Exception
     {
         when( bundleContext.registerService( eq( Server.class ), any( Server.class ), any() ) ).
             thenReturn( serverServiceRegistration );
@@ -42,21 +44,26 @@ class JettyActivatorTest
         when( this.config.http_web_port() ).thenReturn( 0 );
         when( this.config.http_statistics_port() ).thenReturn( 0 );
         when( this.config.http_management_port() ).thenReturn( 0 );
-    }
 
-
-    @Test
-    void testLifecycle()
-        throws Exception
-    {
         final JettySessionStoreConfigurator jettySessionStoreConfigurator = Mockito.mock( JettySessionStoreConfigurator.class );
         final DispatchServlet xpDispatcherServlet = mock( DispatchServlet.class );
         when( xpDispatcherServlet.getConnector() ).thenReturn( DispatchConstants.XP_CONNECTOR );
-        JettyActivator activator =
-            new JettyActivator( config, bundleContext, jettySessionStoreConfigurator, Collections.singletonList( xpDispatcherServlet ) );
+        JettyActivator activator = new JettyActivator( config, bundleContext, jettySessionStoreConfigurator, new WebSocketSessionTracker(),
+                                                       Collections.singletonList( xpDispatcherServlet ) );
 
         activator.activate();
 
+        Mockito.verify( jettySessionStoreConfigurator ).configure( any( Server.class ), eq( 360 ) );
+
         activator.deactivate();
+    }
+
+    @Test
+    void sessionScavengeInterval_derived_from_session_timeout()
+    {
+        assertEquals( 360, JettyActivator.sessionScavengeIntervalSeconds( 60 ) ); // default 60 min timeout -> 6 min sweep
+        assertEquals( 10, JettyActivator.sessionScavengeIntervalSeconds( 1 ) ); // floor: 10 s
+        assertEquals( 600, JettyActivator.sessionScavengeIntervalSeconds( 1440 ) ); // cap: Jetty's default 10 min
+        assertEquals( 600, JettyActivator.sessionScavengeIntervalSeconds( 0 ) ); // sessions never expire -> Jetty's default
     }
 }

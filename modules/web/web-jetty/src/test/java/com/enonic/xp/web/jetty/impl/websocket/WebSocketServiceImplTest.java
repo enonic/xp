@@ -7,11 +7,16 @@ import java.net.Socket;
 import java.net.URI;
 import java.net.http.WebSocket;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+
+import jakarta.websocket.CloseReason;
 
 import com.enonic.xp.web.jetty.impl.JettyConfig;
 import com.enonic.xp.web.jetty.impl.JettyTestSupport;
@@ -33,7 +38,8 @@ class WebSocketServiceImplTest
     {
         this.endpoint = new TestEndpoint();
 
-        this.service = new WebSocketServiceImpl( mock( JettyConfig.class, invocation -> invocation.getMethod().getDefaultValue() ) );
+        this.service = new WebSocketServiceImpl( mock( JettyConfig.class, invocation -> invocation.getMethod().getDefaultValue() ),
+                                                 this.server.getSessionTracker() );
 
         TestWebSocketServlet servlet = new TestWebSocketServlet();
         servlet.service = this.service;
@@ -45,7 +51,125 @@ class WebSocketServiceImplTest
     private WebSocket newWebSocketRequest( final WebSocket.Listener listener )
         throws ExecutionException, InterruptedException
     {
-        return client.newWebSocketBuilder().buildAsync( URI.create( "ws://localhost:" + this.server.getPort() + "/ws" ), listener ).get();
+        return newWebSocketRequest( listener, "/ws" );
+    }
+
+    private WebSocket newWebSocketRequest( final WebSocket.Listener listener, final String path )
+        throws ExecutionException, InterruptedException
+    {
+        return client.newWebSocketBuilder().buildAsync( URI.create( "ws://localhost:" + this.server.getPort() + path ), listener ).get();
+    }
+
+    private static void awaitSession( final TestEndpoint endpoint )
+        throws InterruptedException
+    {
+        awaitSessionCount( endpoint, 1 );
+    }
+
+    private static void awaitSessionCount( final TestEndpoint endpoint, final int expected )
+        throws InterruptedException
+    {
+        final long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos( 10 );
+        while ( endpoint.sessions.size() != expected )
+        {
+            if ( System.nanoTime() > deadline )
+            {
+                throw new AssertionError( "WebSocket session count did not reach " + expected + " in time" );
+            }
+            Thread.sleep( 10 );
+        }
+    }
+
+    private TestEndpoint addSessionAwareServlet( final String path, final boolean createSession, final TestWebSocketServlet servlet )
+    {
+        final TestEndpoint endpoint = new TestEndpoint();
+        servlet.service = this.service;
+        servlet.endpoint = endpoint;
+        servlet.createSession = createSession;
+        addServlet( servlet, path );
+        return endpoint;
+    }
+
+    @Test
+    void terminating_socket_closes_with_1008_on_session_invalidation_while_sessionless_socket_survives()
+        throws Exception
+    {
+        // Default config: terminateOnSessionExit = true, sessionAccess = false.
+        final TestWebSocketServlet boundServlet = new TestWebSocketServlet();
+        final TestEndpoint boundEndpoint = addSessionAwareServlet( "/ws-bound", true, boundServlet );
+
+        final TestEndpoint freeEndpoint = addSessionAwareServlet( "/ws-free", false, new TestWebSocketServlet() );
+
+        final CloseListener boundListener = new CloseListener();
+        final CloseListener freeListener = new CloseListener();
+        newWebSocketRequest( boundListener, "/ws-bound" );
+        newWebSocketRequest( freeListener, "/ws-free" );
+
+        awaitSession( boundEndpoint );
+        awaitSession( freeEndpoint );
+
+        boundServlet.session.invalidate();
+
+        assertEquals( CloseReason.CloseCodes.VIOLATED_POLICY.getCode(), boundListener.awaitCloseCode() );
+        assertThat( freeListener.isClosed() ).isFalse();
+        assertThat( freeEndpoint.sessions ).hasSize( 1 );
+    }
+
+    @Test
+    void session_access_socket_closes_with_1008_and_endpoint_cleans_up_on_invalidation()
+        throws Exception
+    {
+        final TestWebSocketServlet servlet = new TestWebSocketServlet();
+        servlet.sessionAccess = true; // terminateOnSessionExit stays true (default)
+        final TestEndpoint endpoint = addSessionAwareServlet( "/ws-access", true, servlet );
+
+        final CloseListener listener = new CloseListener();
+        newWebSocketRequest( listener, "/ws-access" );
+        awaitSession( endpoint );
+
+        servlet.session.invalidate();
+
+        assertEquals( CloseReason.CloseCodes.VIOLATED_POLICY.getCode(), listener.awaitCloseCode() );
+        // onClose must receive the same (KeepAliveSession) instance opened in onOpen, so the endpoint's
+        // identity-based removal works and the session list drains.
+        awaitSessionCount( endpoint, 0 );
+    }
+
+    @Test
+    void terminating_socket_closes_with_1008_when_idle_session_expires()
+        throws Exception
+    {
+        final TestWebSocketServlet expiringServlet = new TestWebSocketServlet();
+        expiringServlet.sessionMaxInactiveSeconds = 1;
+        final TestEndpoint expiringEndpoint = addSessionAwareServlet( "/ws-expiring", true, expiringServlet );
+
+        final CloseListener listener = new CloseListener();
+        newWebSocketRequest( listener, "/ws-expiring" );
+        awaitSession( expiringEndpoint );
+
+        // No request touches the session again: it idles out after 1 s, the test server's 1 s scavenger
+        // invalidates it, and the invalidation must close the bound socket.
+        assertEquals( CloseReason.CloseCodes.VIOLATED_POLICY.getCode(), listener.awaitCloseCode() );
+    }
+
+    @Test
+    void non_terminating_socket_survives_session_invalidation()
+        throws Exception
+    {
+        final TestWebSocketServlet servlet = new TestWebSocketServlet();
+        servlet.terminateOnSessionExit = false;
+        final TestEndpoint endpoint = addSessionAwareServlet( "/ws-detached", true, servlet );
+
+        final CloseListener listener = new CloseListener();
+        newWebSocketRequest( listener, "/ws-detached" );
+        awaitSession( endpoint );
+
+        servlet.session.invalidate();
+
+        // Give a (would-be) close a chance to propagate before asserting the socket is still alive.
+        Thread.sleep( 500 );
+        assertThat( listener.isClosed() ).isFalse();
+        assertThat( endpoint.sessions ).hasSize( 1 );
     }
 
     private String rawHandshakeStatusLine( final String originHeader )
@@ -217,7 +341,7 @@ class WebSocketServiceImplTest
                 return false;
             }
             return invocation.getMethod().getDefaultValue();
-        } ) );
+        } ), this.server.getSessionTracker() );
         final TestWebSocketServlet servlet = new TestWebSocketServlet();
         servlet.service = permissiveService;
         servlet.endpoint = new TestEndpoint();
@@ -225,5 +349,29 @@ class WebSocketServiceImplTest
 
         final String status = rawHandshakeStatusLine( "/ws-permissive", "https://evil.example.org" );
         assertThat( status ).contains( "101" );
+    }
+
+    private static final class CloseListener
+        implements WebSocket.Listener
+    {
+        private final CompletableFuture<Integer> closeCode = new CompletableFuture<>();
+
+        @Override
+        public CompletionStage<?> onClose( final WebSocket webSocket, final int statusCode, final String reason )
+        {
+            this.closeCode.complete( statusCode );
+            return null;
+        }
+
+        int awaitCloseCode()
+            throws Exception
+        {
+            return this.closeCode.get( 30, TimeUnit.SECONDS );
+        }
+
+        boolean isClosed()
+        {
+            return this.closeCode.isDone();
+        }
     }
 }

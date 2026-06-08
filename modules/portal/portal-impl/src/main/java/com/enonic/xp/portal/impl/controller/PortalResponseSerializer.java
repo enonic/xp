@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.controller;
 
+import java.time.Duration;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -307,8 +308,42 @@ public final class PortalResponseSerializer
         populateWebSocketData( config, value.getMember( "data" ) );
         populateWebSocketSubProtocols( config, value.getMember( "subProtocols" ) );
         populateWebSocketOriginValidator( config, value.getMember( "checkOrigin" ) );
+        populateWebSocketSessionBinding( config, value );
 
         builder.webSocket( config );
+    }
+
+    private void populateWebSocketSessionBinding( final WebSocketConfig config, final ScriptValue value )
+    {
+        final ScriptValue terminateOnSessionExit = value.getMember( "terminateOnSessionExit" );
+        if ( terminateOnSessionExit != null )
+        {
+            final Boolean terminate = terminateOnSessionExit.getValue( Boolean.class );
+            if ( terminate != null )
+            {
+                config.setTerminateOnSessionExit( terminate );
+            }
+        }
+
+        final ScriptValue sessionAccess = value.getMember( "sessionAccess" );
+        if ( sessionAccess != null )
+        {
+            final Boolean access = sessionAccess.getValue( Boolean.class );
+            if ( access != null )
+            {
+                config.setSessionAccess( access );
+            }
+        }
+
+        final ScriptValue sessionAccessThrottleMs = value.getMember( "sessionAccessThrottleMs" );
+        if ( sessionAccessThrottleMs != null )
+        {
+            final Double throttleMs = sessionAccessThrottleMs.getValue( Double.class );
+            if ( throttleMs != null )
+            {
+                config.setSessionAccessThrottle( Duration.ofMillis( throttleMs.longValue() ) );
+            }
+        }
     }
 
     private void populateWebSocketOriginValidator( final WebSocketConfig config, final ScriptValue value )

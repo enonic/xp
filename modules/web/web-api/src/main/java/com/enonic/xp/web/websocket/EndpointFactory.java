@@ -1,5 +1,6 @@
 package com.enonic.xp.web.websocket;
 
+import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
@@ -18,5 +19,20 @@ public interface EndpointFactory
     default Predicate<String> getOriginValidator()
     {
         return null;
+    }
+
+    default boolean isTerminateOnSessionExit()
+    {
+        return true;
+    }
+
+    default boolean isSessionAccess()
+    {
+        return false;
+    }
+
+    default Duration getSessionAccessThrottle()
+    {
+        return WebSocketConfig.DEFAULT_SESSION_ACCESS_THROTTLE;
     }
 }

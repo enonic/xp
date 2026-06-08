@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.websocket;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -31,5 +32,23 @@ final class EndpointFactoryImpl
     public Predicate<String> getOriginValidator()
     {
         return this.endpoint.getConfig().getOriginValidator();
+    }
+
+    @Override
+    public boolean isTerminateOnSessionExit()
+    {
+        return this.endpoint.getConfig().isTerminateOnSessionExit();
+    }
+
+    @Override
+    public boolean isSessionAccess()
+    {
+        return this.endpoint.getConfig().isSessionAccess();
+    }
+
+    @Override
+    public Duration getSessionAccessThrottle()
+    {
+        return this.endpoint.getConfig().getSessionAccessThrottle();
     }
 }

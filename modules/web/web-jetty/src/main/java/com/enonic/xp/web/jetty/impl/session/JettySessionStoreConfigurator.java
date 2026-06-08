@@ -4,5 +4,5 @@ import org.eclipse.jetty.server.Server;
 
 public interface JettySessionStoreConfigurator
 {
-    void configure( Server server );
+    void configure( Server server, int scavengeIntervalSeconds );
 }

@@ -13,6 +13,7 @@ import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
+import org.eclipse.jetty.session.HouseKeeper;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
@@ -35,6 +36,7 @@ import com.enonic.xp.web.jetty.impl.configurator.MultipartConfigurator;
 import com.enonic.xp.web.jetty.impl.configurator.RequestLogConfigurator;
 import com.enonic.xp.web.jetty.impl.configurator.SessionConfigurator;
 import com.enonic.xp.web.jetty.impl.session.JettySessionStoreConfigurator;
+import com.enonic.xp.web.jetty.impl.websocket.WebSocketSessionTracker;
 
 @Component(immediate = true, configurationPid = "com.enonic.xp.web.jetty")
 public final class JettyActivator
@@ -47,6 +49,8 @@ public final class JettyActivator
 
     private final List<DispatchServlet> dispatchServlets;
 
+    private final WebSocketSessionTracker webSocketSessionTracker;
+
     private final JettyConfig config;
 
     private volatile Server server;
@@ -56,11 +60,13 @@ public final class JettyActivator
     @Activate
     public JettyActivator( final JettyConfig config, final BundleContext bundleContext,
                            @Reference final JettySessionStoreConfigurator jettySessionStoreConfigurator,
+                           @Reference final WebSocketSessionTracker webSocketSessionTracker,
                            @Reference final List<DispatchServlet> dispatchServlets )
     {
         this.config = config;
         this.bundleContext = bundleContext;
         this.jettySessionStoreConfigurator = jettySessionStoreConfigurator;
+        this.webSocketSessionTracker = webSocketSessionTracker;
         this.dispatchServlets = dispatchServlets;
     }
 
@@ -72,7 +78,7 @@ public final class JettyActivator
             new QueuedThreadPool( config.threadPool_maxThreads(), config.threadPool_minThreads(), config.threadPool_idleTimeout() );
         final Server server = new Server( threadPool );
 
-        this.jettySessionStoreConfigurator.configure( server );
+        this.jettySessionStoreConfigurator.configure( server, sessionScavengeIntervalSeconds( config.session_timeout() ) );
         new HttpConfigurator().configure( this.config, server );
         new RequestLogConfigurator().configure( this.config, server );
         new ErrorHandlerConfigurator().configure( server );
@@ -142,10 +148,28 @@ public final class JettyActivator
         LOG.info( "Stopped Jetty" );
     }
 
+    /**
+     * Idle-expired sessions are only invalidated (firing session-end events, e.g. closing session-bound
+     * WebSockets) when the session scavenger runs, so the sweep interval must stay shorter than the session
+     * timeout: 1/10 of the timeout, clamped to [10 s, Jetty's default 10 min].
+     */
+    static int sessionScavengeIntervalSeconds( final int sessionTimeoutMinutes )
+    {
+        final int jettyDefaultSeconds = (int) ( HouseKeeper.DEFAULT_PERIOD_MS / 1000 );
+        if ( sessionTimeoutMinutes <= 0 )
+        {
+            return jettyDefaultSeconds;
+        }
+        return Math.clamp( sessionTimeoutMinutes * 60L / 10, 10, jettyDefaultSeconds );
+    }
+
     private ServletContextHandler initServletContextHandler( final DispatchServlet servlet )
     {
         final ServletContextHandler context = new ServletContextHandler( "/", ServletContextHandler.SESSIONS );
         final SessionHandler sessionHandler = context.getSessionHandler();
+
+        // Close WebSocket sessions bound to an HTTP session when that session ends (logout or idle-timeout).
+        context.addEventListener( this.webSocketSessionTracker );
 
         final ServletHolder holder = new ServletHolder( servlet );
         holder.setAsyncSupported( true );
