@@ -331,7 +331,34 @@ class ExceptionRendererImplTest
 
         final String responseBody = response.getBody().toString();
         assertThat( responseBody ).contains( "<h3>403 - Forbidden</h3>" );
-        assertThat( responseBody ).contains( "class=\"logout\"" ).contains( "/_/idprovider/system/logout" );
+        assertThat( responseBody ).contains( "class=\"logout\"" ).contains( "/admin/_/idprovider/system/logout" );
+    }
+
+    @Test
+    void testRenderForbiddenLogoutUrlConsidersVhostRewrite()
+        throws IOException
+    {
+        RunModeSupport.set( RunMode.PROD );
+        this.renderer = new ExceptionRendererImpl( resourceService, errorHandlerScriptFactory, idProviderControllerService, postProcessor,
+                                                   new ExceptionMapperImpl() );
+
+        this.request.getHeaders().put( HttpHeaders.ACCEPT, "text/html,text/*" );
+
+        final VirtualHost virtualHost = mock( VirtualHost.class );
+        when( virtualHost.getSource() ).thenReturn( "/intranet" );
+        when( virtualHost.getTarget() ).thenReturn( "/site/intra/master" );
+        when( request.getRawRequest().getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+
+        final RuntimeException cause = new RuntimeException( "Custom message" );
+
+        final AuthenticationInfo authenticationInfo = AuthenticationInfo.create().user( User.anonymous() ).build();
+        final Context context = ContextBuilder.from( ContextAccessor.current() ).authInfo( authenticationInfo ).build();
+
+        final PortalResponse response =
+            context.callWith( () -> this.renderer.render( this.request, new WebException( HttpStatus.FORBIDDEN, cause ) ) );
+
+        final String responseBody = response.getBody().toString();
+        assertThat( responseBody ).contains( "class=\"logout\"" ).contains( "href=\"/intranet/_/idprovider/system/logout\"" );
     }
 
     private Site newSite()
