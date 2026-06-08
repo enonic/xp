@@ -42,6 +42,7 @@ const pageRequest = {
     url: 'http://localhost:8080/admin/site/preview/my-project/draft/my-site',
     remoteAddress: '127.0.0.1',
     webSocket: false,
+    locales: ['en-GB', 'en-US', 'en', 'no'] as string[],
     repositoryId: 'com.enonic.cms.my-project',
     params: {},
     headers: {
