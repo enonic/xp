@@ -359,6 +359,7 @@ export interface ResponseInterface
     extends Partial<MappedResponse> {
     redirect?: string;
     webSocket?: WebSocketResponse;
+    sse?: SseResponse;
 }
 
 export interface DefaultResponse
@@ -429,6 +430,26 @@ export interface WebSocketEvent<T> {
 }
 
 type WebSocketEventHandler<T = Record<string, unknown>> = (event: WebSocketEvent<T>) => void;
+
+export interface SseResponse<T = Record<string, unknown>> {
+    /**
+     * Per-connection state, exposed (unchanged) on every {@link SseEvent} fired for this connection. Lets an
+     * `sseEvent` handler share setup-time state between the `open` event and the later `close` / `timeout` /
+     * `error` events. Defaults to an empty object.
+     */
+    attributes?: T;
+
+    /**
+     * Client reconnection hint in milliseconds, sent to the browser as the initial `retry:` field. A negative
+     * value (the default) is not sent, leaving the client to use its own default.
+     */
+    retry?: number;
+
+    /**
+     * Async context timeout in milliseconds. A value of zero or less (the default) means no timeout.
+     */
+    timeout?: number;
+}
 
 export type SseEventType = 'open' | 'close' | 'timeout' | 'error';
 
