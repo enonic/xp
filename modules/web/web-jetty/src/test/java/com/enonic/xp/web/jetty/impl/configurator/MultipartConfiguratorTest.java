@@ -40,9 +40,9 @@ class MultipartConfiguratorTest
 
         final MultipartConfigElement multipartConfig = getMultipartConfig();
         assertEquals( StandardSystemProperty.JAVA_IO_TMPDIR.value(), multipartConfig.getLocation() );
-        assertEquals( -1, multipartConfig.getMaxFileSize() );
-        assertEquals( -1, multipartConfig.getMaxRequestSize() );
-        assertEquals( 1000, multipartConfig.getFileSizeThreshold() );
+        assertEquals( 16106127360L, multipartConfig.getMaxFileSize() );
+        assertEquals( 16106127360L, multipartConfig.getMaxRequestSize() );
+        assertEquals( 10240, multipartConfig.getFileSizeThreshold() );
     }
 
     @Test
