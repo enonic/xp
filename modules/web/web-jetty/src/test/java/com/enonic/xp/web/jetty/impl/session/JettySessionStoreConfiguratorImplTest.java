@@ -1,9 +1,9 @@
 package com.enonic.xp.web.jetty.impl.session;
 
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.session.DefaultSessionIdManager;
 import org.eclipse.jetty.session.SessionCacheFactory;
 import org.eclipse.jetty.session.SessionDataStoreFactory;
-import org.eclipse.jetty.session.SessionIdManager;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -33,14 +33,15 @@ class JettySessionStoreConfiguratorImplTest
         final JettySessionStoreConfiguratorImpl jettySessionStorageConfigurator =
             new JettySessionStoreConfiguratorImpl( sessionDataStoreFactory, sessionCacheFactory );
 
-        jettySessionStorageConfigurator.configure( server );
+        jettySessionStorageConfigurator.configure( server, 42 );
 
         verify( server ).addBean( same( sessionDataStoreFactory ) );
         verify( server ).addBean( same( sessionCacheFactory ) );
 
-        final ArgumentCaptor<SessionIdManager> captor = ArgumentCaptor.forClass( SessionIdManager.class );
+        final ArgumentCaptor<DefaultSessionIdManager> captor = ArgumentCaptor.forClass( DefaultSessionIdManager.class );
         verify( server ).addBean( captor.capture(), eq( true ) );
 
         assertEquals( "", captor.getValue().getWorkerName() );
+        assertEquals( 42, captor.getValue().getSessionHouseKeeper().getIntervalSec() );
     }
 }

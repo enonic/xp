@@ -358,6 +358,7 @@ export interface MappedResponse {
 export interface ResponseInterface
     extends Partial<MappedResponse> {
     redirect?: string;
+    webSocket?: WebSocketResponse;
 }
 
 export interface DefaultResponse
@@ -383,6 +384,31 @@ export type HttpFilterNext<
     RequestToJava extends SerializableRequest = SerializableRequest<DefaultRequest>,
     ResponseToJava extends ResponseInterface = DefaultResponse
 > = (request: RequestToJava) => ResponseToJava;
+
+export interface WebSocketResponse {
+    data?: Record<string, string>;
+    subProtocols?: string | string[];
+    checkOrigin?: (origin: string) => boolean;
+
+    /**
+     * When `true` (default), the WebSocket is closed with code 1008 when its HTTP session ends — either
+     * through logout (invalidation) or idle-timeout expiry. Set to `false` to let the socket outlive the
+     * session.
+     */
+    terminateOnSessionExit?: boolean;
+
+    /**
+     * When `true`, inbound WebSocket messages refresh (access) the HTTP session, keeping it alive.
+     * Server-to-client messages never count. Defaults to `false`.
+     */
+    sessionAccess?: boolean;
+
+    /**
+     * Minimum interval, in milliseconds, between session refreshes when `sessionAccess` is enabled.
+     * Defaults to 60000.
+     */
+    sessionAccessThrottleMs?: number;
+}
 
 export interface WebSocketSession {
     id: string;

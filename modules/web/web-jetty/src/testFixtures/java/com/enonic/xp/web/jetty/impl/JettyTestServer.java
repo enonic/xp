@@ -10,18 +10,23 @@ import org.eclipse.jetty.ee11.websocket.jakarta.server.config.JakartaWebSocketSe
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.session.DefaultSessionIdManager;
+import org.eclipse.jetty.session.HouseKeeper;
 
 import jakarta.servlet.DispatcherType;
 import jakarta.servlet.Filter;
 import jakarta.servlet.http.HttpServlet;
 
 import com.enonic.xp.web.dispatch.DispatchConstants;
+import com.enonic.xp.web.jetty.impl.websocket.WebSocketSessionTracker;
 
 public final class JettyTestServer
 {
     private final Server server;
 
     private final ServletContextHandler handler;
+
+    private final WebSocketSessionTracker sessionTracker = new WebSocketSessionTracker();
 
     public JettyTestServer()
     {
@@ -34,10 +39,31 @@ public final class JettyTestServer
 
         this.server.addConnector( connector );
 
+        // Mirror production wiring: idle-expired sessions are only invalidated when the scavenger runs.
+        // Sweep every second so tests can observe expiry promptly.
+        final DefaultSessionIdManager sessionIdManager = new DefaultSessionIdManager( this.server );
+        final HouseKeeper houseKeeper = new HouseKeeper();
+        try
+        {
+            houseKeeper.setIntervalSec( 1 );
+        }
+        catch ( final Exception e )
+        {
+            throw new IllegalStateException( e );
+        }
+        sessionIdManager.setSessionHouseKeeper( houseKeeper );
+        this.server.addBean( sessionIdManager, true );
+
         this.handler = new ServletContextHandler( "/", ServletContextHandler.SESSIONS );
+        this.handler.addEventListener( this.sessionTracker );
         JakartaWebSocketServletContainerInitializer.configure( this.handler, ( _, _ ) -> {
         } );
         this.server.setHandler( this.handler );
+    }
+
+    public WebSocketSessionTracker getSessionTracker()
+    {
+        return this.sessionTracker;
     }
 
     public void start()
