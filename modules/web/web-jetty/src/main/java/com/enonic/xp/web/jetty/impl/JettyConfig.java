@@ -110,19 +110,19 @@ public @interface JettyConfig
     String multipart_store();
 
     /**
-     * Max file size for multipart (-1 if unlimited).
+     * Max file size for multipart, in bytes (-1 if unlimited). Default: 15 GiB.
      */
-    long multipart_maxFileSize() default -1;
+    long multipart_maxFileSize() default 16106127360L;
 
     /**
-     * Max request size for multipart (-1 if unlimited).
+     * Max request size for multipart, in bytes (-1 if unlimited). Default: 15 GiB.
      */
-    long multipart_maxRequestSize() default -1;
+    long multipart_maxRequestSize() default 16106127360L;
 
     /**
      * File size treshold for when to store to disk. 0 means always. Specified in bytes.
      */
-    int multipart_fileSizeThreshold() default 1000;
+    int multipart_fileSizeThreshold() default 10240;
 
     /**
      * True if GZip should be enabled.
