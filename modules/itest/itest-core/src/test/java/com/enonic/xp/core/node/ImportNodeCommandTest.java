@@ -51,30 +51,46 @@ class ImportNodeCommandTest
     }
 
     @Test
-    void created_nodes_with_id_and_timestamp_should_be_equal()
+    void imported_timestamp_is_not_used_as_version_timestamp()
     {
-        ctxDefault().callWith( () -> importNode( Node.create()
-                                                     .id( NodeId.from( "abc" ) )
-                                                     .name( "myNode" )
-                                                     .parentPath( NodePath.ROOT )
-                                                     .data( new PropertyTree() )
-                                                     .timestamp( Instant.parse( "2014-01-01T10:00:00Z" ) )
-                                                     .build() ) );
+        final Instant nodeTimestamp = Instant.parse( "2014-01-01T10:00:00Z" );
+        final Instant beforeImport = Instant.now().minusSeconds( 60 );
 
-        ctxOther().callWith( () -> importNode( Node.create()
-                                                   .id( NodeId.from( "abc" ) )
-                                                   .name( "myNode" )
-                                                   .parentPath( NodePath.ROOT )
-                                                   .data( new PropertyTree() )
-                                                   .timestamp( Instant.parse( "2014-01-01T10:00:00Z" ) )
-                                                   .build() ) );
+        final ImportNodeResult importNodeResult = importNode( Node.create()
+                                                                  .name( "myNode" )
+                                                                  .parentPath( NodePath.ROOT )
+                                                                  .data( new PropertyTree() )
+                                                                  .timestamp( nodeTimestamp )
+                                                                  .build() );
 
-        final NodeComparison comparison = CompareNodeCommand.create()
-            .nodeId( NodeId.from( "abc" ) )
+        final Instant versionTimestamp = importNodeResult.getNode().getTimestamp();
+        assertNotEquals( nodeTimestamp, versionTimestamp );
+        assertTrue( versionTimestamp.isAfter( beforeImport ), "version timestamp should be the import time, not the imported value" );
+    }
+
+    @Test
+    void pushed_node_is_equal_in_both_branches()
+    {
+        final NodeId nodeId = NodeId.from( "abc" );
+
+        // Branches are kept in sync by sharing the same version (push), not by importing the same
+        // content separately into each branch - separate imports now get independent version timestamps.
+        ctxDefault().callWith( () -> {
+            importNode( Node.create()
+                            .id( nodeId )
+                            .name( "myNode" )
+                            .parentPath( NodePath.ROOT )
+                            .data( new PropertyTree() )
+                            .build() );
+            return pushNodes( WS_OTHER, nodeId );
+        } );
+
+        final NodeComparison comparison = ctxDefault().callWith( () -> CompareNodeCommand.create()
+            .nodeId( nodeId )
             .target( WS_OTHER )
             .storageService( this.storageService )
             .build()
-            .execute();
+            .execute() );
 
         assertEquals( NodeCompareStatus.EQUAL, comparison.getCompareStatus() );
     }
