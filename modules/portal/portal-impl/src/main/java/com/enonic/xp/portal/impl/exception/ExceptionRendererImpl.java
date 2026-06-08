@@ -14,6 +14,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.net.HttpHeaders;
 import com.google.common.net.MediaType;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.ContextAccessor;
@@ -28,6 +30,7 @@ import com.enonic.xp.portal.impl.error.PortalError;
 import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.server.RunMode;
 import com.enonic.xp.site.SiteConfig;
@@ -39,6 +42,8 @@ import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.exception.ExceptionMapper;
 import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
+import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 import static com.enonic.xp.portal.RenderMode.EDIT;
 import static com.google.common.base.Strings.nullToEmpty;
@@ -295,13 +300,24 @@ public final class ExceptionRendererImpl
                 new ErrorPageSimpleBuilder().status( info.status.value() ).tip( info.tip ).title( info.status.getReasonPhrase() );
             if ( info.status == HttpStatus.FORBIDDEN && ContextAccessor.current().getAuthInfo().isAuthenticated() )
             {
-                errorBuilder.logoutUrl( ServletRequestUrlHelper.createUri( req.getRawRequest(), "/_/idprovider/" +
-                    ContextAccessor.current().getAuthInfo().getUser().getKey().getIdProviderKey() + "/logout" ) );
+                errorBuilder.logoutUrl( createLogoutUrl( req.getRawRequest() ) );
             }
             builder = errorBuilder;
         }
 
         final String html = builder.build();
         return PortalResponse.create().status( info.status ).body( html ).contentType( MediaType.HTML_UTF_8 ).build();
+    }
+
+    private static String createLogoutUrl( final HttpServletRequest rawRequest )
+    {
+        final IdProviderKey idProviderKey = ContextAccessor.current().getAuthInfo().getUser().getKey().getIdProviderKey();
+
+        // Prepend the virtual host target so createUri can rewrite it back to the source path (vhost rewrite).
+        final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( rawRequest );
+        final String target = virtualHost != null ? virtualHost.getTarget() : "/";
+        final String base = target.endsWith( "/" ) ? target : target + "/";
+
+        return ServletRequestUrlHelper.createUri( rawRequest, base + "_/idprovider/" + idProviderKey + "/logout" );
     }
 }
