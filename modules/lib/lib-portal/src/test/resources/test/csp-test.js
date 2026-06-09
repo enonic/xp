@@ -36,6 +36,8 @@ exports.returnsObject = function () {
     assert.assertEquals('function', typeof csp.sandbox);
     assert.assertEquals('function', typeof csp.shaScriptSrc);
     assert.assertEquals('function', typeof csp.shaStyleSrc);
+    assert.assertEquals('function', typeof csp.isReportOnly);
+    assert.assertEquals('function', typeof csp.build);
 };
 
 exports.addSources = function () {
@@ -73,6 +75,39 @@ exports.resetRemovesNamedDirectives = function () {
     csp.add('upgrade-insecure-requests');
     csp.reset('upgrade-insecure-requests');
     assert.assertEquals("script-src 'self'", __.toNativeObject(testInstance.policyBuild()));
+};
+
+exports.fetchDirectiveForwarders = function () {
+    var csp = portal.csp();
+    csp.defaultSrc(portal.CspSource.NONE);
+    csp.fontSrc(portal.CspSource.SELF, portal.CspSource.DATA);
+    csp.connectSrc(portal.CspSource.SELF, 'wss://example.com');
+    csp.mediaSrc(portal.CspSource.SELF);
+    csp.objectSrc(portal.CspSource.NONE);
+    csp.frameSrc(portal.CspSource.SELF);
+    csp.workerSrc(portal.CspSource.SELF, portal.CspSource.BLOB);
+    csp.manifestSrc(portal.CspSource.SELF);
+    csp.childSrc(portal.CspSource.SELF);
+    assert.assertEquals(
+        "child-src 'self'; connect-src 'self' wss://example.com; default-src 'none'; font-src 'self' data:; " +
+        "frame-src 'self'; manifest-src 'self'; media-src 'self'; object-src 'none'; worker-src 'self' blob:",
+        __.toNativeObject(testInstance.policyBuild())
+    );
+};
+
+exports.buildReturnsHeaderValue = function () {
+    var csp = portal.csp();
+    assert.assertEquals('', csp.build());
+    csp.scriptSrc(portal.CspSource.SELF);
+    assert.assertEquals("script-src 'self'", csp.build());
+    assert.assertEquals(__.toNativeObject(testInstance.policyBuild()), csp.build());
+};
+
+exports.isReportOnly = function () {
+    var csp = portal.csp();
+    assert.assertTrue('default not report-only', !csp.isReportOnly());
+    csp.reportOnly(true);
+    assert.assertTrue('report-only after enable', csp.isReportOnly());
 };
 
 exports.unsupportedAlgo = function () {
@@ -183,6 +218,21 @@ exports.shaStyleSrcContent = function () {
     csp.shaStyleSrc({content: 'body { color: red; }'});
     assert.assertEquals(
         "style-src 'sha256-" + testInstance.shaBase64('body { color: red; }', 'SHA-256') + "'",
+        __.toNativeObject(testInstance.policyBuild())
+    );
+};
+
+exports.shaStyleSrcDigest = function () {
+    var csp = portal.csp();
+    csp.shaStyleSrc({hash: 'XyZ', algo: 'sha512'});
+    assert.assertEquals("style-src 'sha512-XyZ'", __.toNativeObject(testInstance.policyBuild()));
+};
+
+exports.shaScriptSrcContentSha512 = function () {
+    var csp = portal.csp();
+    csp.shaScriptSrc({content: 'window.foo = 42;', algo: 'sha512'});
+    assert.assertEquals(
+        "script-src 'sha512-" + testInstance.shaBase64('window.foo = 42;', 'SHA-512') + "'",
         __.toNativeObject(testInstance.policyBuild())
     );
 };

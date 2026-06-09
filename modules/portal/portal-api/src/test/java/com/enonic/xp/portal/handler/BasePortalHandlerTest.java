@@ -83,6 +83,35 @@ class BasePortalHandlerTest
     }
 
     @Test
+    void emits_report_only_header_when_policy_flagged_report_only()
+        throws Exception
+    {
+        final PortalRequest portalRequest = newPortalRequest();
+        portalRequest.getContentSecurityPolicy().reportOnly( true ).add( "script-src", "'self'" );
+
+        final WebResponse response = doHandle( portalRequest, PortalResponse.create().status( HttpStatus.OK ).build() );
+
+        assertThat( response.getHeaders() ).containsEntry( "Content-Security-Policy-Report-Only", "script-src 'self'" )
+            .doesNotContainKey( "Content-Security-Policy" );
+    }
+
+    @Test
+    void preserves_existing_report_only_header_on_response()
+        throws Exception
+    {
+        final PortalRequest portalRequest = newPortalRequest();
+        portalRequest.getContentSecurityPolicy().reportOnly( true ).add( "script-src", "'self'" );
+
+        final WebResponse seedResponse = PortalResponse.create()
+            .status( HttpStatus.OK )
+            .header( "Content-Security-Policy-Report-Only", "default-src 'none'" )
+            .build();
+        final WebResponse response = doHandle( portalRequest, seedResponse );
+
+        assertThat( response.getHeaders() ).containsEntry( "Content-Security-Policy-Report-Only", "default-src 'none'" );
+    }
+
+    @Test
     void emits_csp_header_on_exception_path()
         throws Exception
     {

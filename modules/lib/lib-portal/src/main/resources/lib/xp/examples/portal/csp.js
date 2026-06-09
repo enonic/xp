@@ -1,4 +1,5 @@
 var portalLib = require('/lib/xp/portal');
+var assert = require('/lib/xp/testing');
 
 // BEGIN
 var csp = portalLib.csp();
@@ -28,11 +29,20 @@ csp.shaScriptSrc({content: 'window.foo = 42;'});                  // sha256 of t
 csp.shaStyleSrc({content: 'body { color: red; }', algo: 'sha384'}); // choose the algorithm
 csp.shaScriptSrc({hash: 'AbCdEf0123...', algo: 'sha384'});         // precomputed base64 digest
 
-// Request-scoped nonce (lazy; same value on subsequent calls), valid only on script-src/style-src
+// Request-scoped nonce (lazy; same value on subsequent calls), valid only on script-src/style-src.
+// Stamp the returned value on the matching inline tag: <script nonce="...">
 var nonce = csp.nonceScriptSrc();     // -> script-src 'nonce-...'
 csp.nonceStyleSrc();                  // -> style-src  'nonce-...' (same value)
 
 // Escape hatches for less-common / future directives
 csp.add('require-trusted-types-for', "'script'");
 csp.override('script-src', portalLib.CspSource.SELF);
+
+// The header is emitted automatically at response-flush time; build() renders the
+// current header value for pipelines that compose the response themselves
+var headerValue = csp.build();
 // END
+
+assert.assertTrue('nonce is a non-empty string', typeof nonce === 'string' && nonce.length > 0);
+assert.assertTrue('policy contains the nonce', headerValue.indexOf("'nonce-" + nonce + "'") >= 0);
+assert.assertTrue('override replaced script-src', headerValue.indexOf("script-src 'self';") >= 0);

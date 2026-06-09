@@ -61,6 +61,42 @@ public class CspHandlerScriptTest
     }
 
     @Test
+    void fetchDirectiveForwarders()
+    {
+        runFunction( "/test/csp-test.js", "fetchDirectiveForwarders" );
+    }
+
+    @Test
+    void buildReturnsHeaderValue()
+    {
+        runFunction( "/test/csp-test.js", "buildReturnsHeaderValue" );
+    }
+
+    @Test
+    void isReportOnly()
+    {
+        runFunction( "/test/csp-test.js", "isReportOnly" );
+    }
+
+    @Test
+    void shaStyleSrcDigest()
+    {
+        runFunction( "/test/csp-test.js", "shaStyleSrcDigest" );
+    }
+
+    @Test
+    void shaScriptSrcContentSha512()
+    {
+        runFunction( "/test/csp-test.js", "shaScriptSrcContentSha512" );
+    }
+
+    @Test
+    void example()
+    {
+        runScript( "/lib/xp/examples/portal/csp.js" );
+    }
+
+    @Test
     void nonceScriptSrc()
     {
         runFunction( "/test/csp-test.js", "nonceScriptSrc" );

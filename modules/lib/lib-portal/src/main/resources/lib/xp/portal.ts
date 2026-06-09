@@ -1163,6 +1163,19 @@ export interface Csp {
      * `<style nonce="...">` tags). Lazily generated and cached for the request.
      */
     nonceStyleSrc(): string;
+
+    /**
+     * Whether the policy is emitted in report-only mode. See {@link reportOnly}.
+     */
+    isReportOnly(): boolean;
+
+    /**
+     * Renders the current policy as a header value; the empty string when no directive has been
+     * added. Normally not needed — the portal composes and emits the header automatically at
+     * response-flush time. Use it where the response is composed outside the portal pipeline
+     * (e.g. admin widgets), pairing it with {@link isReportOnly} to pick the header name.
+     */
+    build(): string;
 }
 
 interface CspHandler {
@@ -1233,6 +1246,10 @@ interface CspHandler {
     nonceScriptSrc(): string;
 
     nonceStyleSrc(): string;
+
+    isReportOnly(): boolean;
+
+    build(): string;
 }
 
 /**
@@ -1380,6 +1397,12 @@ export function csp(): Csp {
         },
         nonceStyleSrc(): string {
             return bean.nonceStyleSrc();
+        },
+        isReportOnly(): boolean {
+            return bean.isReportOnly();
+        },
+        build(): string {
+            return bean.build();
         },
     };
     return instance;

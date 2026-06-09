@@ -504,6 +504,67 @@ class ContentSecurityPolicyTest
     }
 
     @Test
+    void every_fetch_directive_method_targets_its_directive()
+    {
+        assertThat( new ContentSecurityPolicy().fontSrc( CspSource.SELF ).build() ).isEqualTo( "font-src 'self'" );
+        assertThat( new ContentSecurityPolicy().connectSrc( CspSource.SELF ).build() ).isEqualTo( "connect-src 'self'" );
+        assertThat( new ContentSecurityPolicy().mediaSrc( CspSource.SELF ).build() ).isEqualTo( "media-src 'self'" );
+        assertThat( new ContentSecurityPolicy().objectSrc( CspSource.NONE ).build() ).isEqualTo( "object-src 'none'" );
+        assertThat( new ContentSecurityPolicy().frameSrc( CspSource.SELF ).build() ).isEqualTo( "frame-src 'self'" );
+        assertThat( new ContentSecurityPolicy().workerSrc( CspSource.BLOB ).build() ).isEqualTo( "worker-src blob:" );
+        assertThat( new ContentSecurityPolicy().manifestSrc( CspSource.SELF ).build() ).isEqualTo( "manifest-src 'self'" );
+        assertThat( new ContentSecurityPolicy().childSrc( CspSource.SELF ).build() ).isEqualTo( "child-src 'self'" );
+    }
+
+    @Test
+    void every_directive_method_accepts_raw_string_sources()
+    {
+        assertThat( new ContentSecurityPolicy().defaultSrc( "'self'" ).build() ).isEqualTo( "default-src 'self'" );
+        assertThat( new ContentSecurityPolicy().styleSrc( "https://cdn.example.com" ).build() ).isEqualTo(
+            "style-src https://cdn.example.com" );
+        assertThat( new ContentSecurityPolicy().fontSrc( "data:" ).build() ).isEqualTo( "font-src data:" );
+        assertThat( new ContentSecurityPolicy().connectSrc( "wss://example.com" ).build() ).isEqualTo( "connect-src wss://example.com" );
+        assertThat( new ContentSecurityPolicy().mediaSrc( "'self'" ).build() ).isEqualTo( "media-src 'self'" );
+        assertThat( new ContentSecurityPolicy().objectSrc( "'none'" ).build() ).isEqualTo( "object-src 'none'" );
+        assertThat( new ContentSecurityPolicy().frameSrc( "https://example.com" ).build() ).isEqualTo( "frame-src https://example.com" );
+        assertThat( new ContentSecurityPolicy().workerSrc( "blob:" ).build() ).isEqualTo( "worker-src blob:" );
+        assertThat( new ContentSecurityPolicy().manifestSrc( "'self'" ).build() ).isEqualTo( "manifest-src 'self'" );
+        assertThat( new ContentSecurityPolicy().childSrc( "'self'" ).build() ).isEqualTo( "child-src 'self'" );
+        assertThat( new ContentSecurityPolicy().frameAncestors( "https://example.com" ).build() ).isEqualTo(
+            "frame-ancestors https://example.com" );
+        assertThat( new ContentSecurityPolicy().baseUri( "'none'" ).build() ).isEqualTo( "base-uri 'none'" );
+        assertThat( new ContentSecurityPolicy().formAction( "'self'" ).build() ).isEqualTo( "form-action 'self'" );
+        assertThat( new ContentSecurityPolicy().scriptSrcElem( "'self'" ).build() ).isEqualTo( "script-src-elem 'self'" );
+        assertThat( new ContentSecurityPolicy().scriptSrcAttr( "'none'" ).build() ).isEqualTo( "script-src-attr 'none'" );
+        assertThat( new ContentSecurityPolicy().styleSrcElem( "'self'" ).build() ).isEqualTo( "style-src-elem 'self'" );
+        assertThat( new ContentSecurityPolicy().styleSrcAttr( "'none'" ).build() ).isEqualTo( "style-src-attr 'none'" );
+    }
+
+    @Test
+    void shaStyleSrc_bytes_encodes_chosen_algo_into_style_src()
+        throws Exception
+    {
+        final byte[] content = "body { color: red; }".getBytes();
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().shaStyleSrc( HashAlgo.SHA512, content );
+
+        final String expectedDigest = Base64.getEncoder().encodeToString( MessageDigest.getInstance( "SHA-512" ).digest( content ) );
+        assertThat( csp.build() ).isEqualTo( "style-src 'sha512-" + expectedDigest + "'" );
+    }
+
+    @Test
+    void reset_null_directive_throws()
+    {
+        assertThatThrownBy( () -> new ContentSecurityPolicy().reset( (String) null ) ).isInstanceOf( NullPointerException.class );
+    }
+
+    @Test
+    void trustedTypes_null_keyword_throws()
+    {
+        assertThatThrownBy( () -> new ContentSecurityPolicy().trustedTypes( (TrustedTypesKeyword) null ) ).isInstanceOf(
+            NullPointerException.class );
+    }
+
+    @Test
     void reportOnly_defaults_false_and_toggles()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy();
