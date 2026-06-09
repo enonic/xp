@@ -30,6 +30,11 @@ public final class CspHandler
         policy().reset( directives );
     }
 
+    public void resetAll()
+    {
+        policy().resetAll();
+    }
+
     public void strict()
     {
         policy().strict();
@@ -143,11 +148,6 @@ public final class CspHandler
     public void trustedTypes( final String[] values )
     {
         policy().trustedTypes( values );
-    }
-
-    public void reportOnly( final boolean value )
-    {
-        policy().reportOnly( value );
     }
 
     public void sandbox( final String[] flags )

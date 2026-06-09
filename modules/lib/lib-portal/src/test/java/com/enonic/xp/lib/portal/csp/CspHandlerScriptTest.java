@@ -37,9 +37,21 @@ public class CspHandlerScriptTest
     }
 
     @Test
-    void resetRemovesAll()
+    void resetAllRemovesAll()
     {
-        runFunction( "/test/csp-test.js", "resetRemovesAll" );
+        runFunction( "/test/csp-test.js", "resetAllRemovesAll" );
+    }
+
+    @Test
+    void resetWithNoArgsRemovesNothing()
+    {
+        runFunction( "/test/csp-test.js", "resetWithNoArgsRemovesNothing" );
+    }
+
+    @Test
+    void invalidSourceThrows()
+    {
+        runFunction( "/test/csp-test.js", "invalidSourceThrows" );
     }
 
     @Test
@@ -181,12 +193,6 @@ public class CspHandlerScriptTest
     }
 
     @Test
-    void reportOnlyFlag()
-    {
-        runFunction( "/test/csp-test.js", "reportOnlyFlag" );
-    }
-
-    @Test
     void cspSourceTokens()
     {
         runFunction( "/test/csp-test.js", "cspSourceTokens" );
@@ -225,11 +231,6 @@ public class CspHandlerScriptTest
     public String policyBuild()
     {
         return this.portalRequest.getContentSecurityPolicy().build();
-    }
-
-    public boolean policyReportOnly()
-    {
-        return this.portalRequest.getContentSecurityPolicy().isReportOnly();
     }
 
     public String shaBase64( final String content, final String algorithm )

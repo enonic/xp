@@ -1044,12 +1044,17 @@ export interface Csp {
     override(directive: string, ...sources: string[]): Csp;
 
     /**
-     * Removes directives, overriding what other contributors set. With no argument, removes every
-     * directive (clean slate); otherwise removes each named directive (e.g.
-     * `reset('upgrade-insecure-requests')`). Policy-level and **not** additive. The request nonce is
-     * left intact.
+     * Removes the named directives, overriding what other contributors set — e.g.
+     * `reset('upgrade-insecure-requests')` is how a boolean directive is unset. With no argument,
+     * removes nothing; for a clean slate use {@link resetAll}. Policy-level and **not** additive.
      */
     reset(...directives: string[]): Csp;
+
+    /**
+     * Removes every directive (a clean slate), overriding what other contributors set. The request
+     * nonce is left intact. Policy-level and **not** additive — not for parts.
+     */
+    resetAll(): Csp;
 
     /**
      * Seeds a restrictive deny-all baseline (`default-src 'none'`, `base-uri 'none'`,
@@ -1128,13 +1133,6 @@ export interface Csp {
     trustedTypes(...values: (TrustedTypesKeyword | string)[]): Csp;
 
     /**
-     * Policy-level: when `true`, the policy is emitted as `Content-Security-Policy-Report-Only`
-     * (violations are reported, e.g. to a `reportTo` group, but **not** enforced); `false` (default)
-     * emits the enforcing header. Enabling it disables enforcement for the whole response.
-     */
-    reportOnly(value: boolean): Csp;
-
-    /**
      * Unions sandbox flags into the `sandbox` directive. With no flags, registers
      * an empty `sandbox` (all restrictions applied).
      */
@@ -1171,6 +1169,8 @@ interface CspHandler {
     override(directive: string, sources: string[]): void;
 
     reset(directives: string[]): void;
+
+    resetAll(): void;
 
     strict(): void;
 
@@ -1218,8 +1218,6 @@ interface CspHandler {
 
     trustedTypes(values: string[]): void;
 
-    reportOnly(value: boolean): void;
-
     sandbox(flags: string[]): void;
 
     shaScriptSrcContent(content: string, algo: string | null): void;
@@ -1257,6 +1255,10 @@ export function csp(): Csp {
         },
         reset(...directives: string[]): Csp {
             bean.reset(directives);
+            return instance;
+        },
+        resetAll(): Csp {
+            bean.resetAll();
             return instance;
         },
         strict(): Csp {
@@ -1349,10 +1351,6 @@ export function csp(): Csp {
         },
         trustedTypes(...values: (TrustedTypesKeyword | string)[]): Csp {
             bean.trustedTypes(values);
-            return instance;
-        },
-        reportOnly(value: boolean): Csp {
-            bean.reportOnly(value);
             return instance;
         },
         sandbox(...flags: SandboxFlag[]): Csp {

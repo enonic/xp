@@ -48,11 +48,19 @@ class ContentSecurityPolicyTest
     }
 
     @Test
-    void reset_removes_all_directives()
+    void resetAll_removes_all_directives()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrc( CspSource.SELF ).imgSrc( CspSource.SELF );
-        csp.reset();
+        csp.resetAll();
         assertThat( csp.build() ).isEmpty();
+    }
+
+    @Test
+    void reset_with_no_args_removes_nothing()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrc( CspSource.SELF );
+        csp.reset();
+        assertThat( csp.build() ).isEqualTo( "script-src 'self'" );
     }
 
     @Test
@@ -64,12 +72,42 @@ class ContentSecurityPolicyTest
     }
 
     @Test
-    void reset_preserves_nonce_so_it_stays_stable()
+    void resetAll_preserves_nonce_so_it_stays_stable()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy();
         final String nonce = csp.nonceScriptSrc();
-        csp.reset();
+        csp.resetAll();
         assertThat( csp.nonceScriptSrc() ).isEqualTo( nonce );
+    }
+
+    @Test
+    void add_invalid_directive_name_throws()
+    {
+        assertThatThrownBy( () -> new ContentSecurityPolicy().add( "script src" ) ).isInstanceOf( IllegalArgumentException.class );
+        assertThatThrownBy( () -> new ContentSecurityPolicy().add( "" ) ).isInstanceOf( IllegalArgumentException.class );
+        assertThatThrownBy( () -> new ContentSecurityPolicy().add( "script-src; img-src" ) ).isInstanceOf(
+            IllegalArgumentException.class );
+    }
+
+    @Test
+    void add_source_with_policy_injection_throws()
+    {
+        assertThatThrownBy( () -> new ContentSecurityPolicy().add( "script-src", "x; script-src *" ) ).isInstanceOf(
+            IllegalArgumentException.class );
+        assertThatThrownBy( () -> new ContentSecurityPolicy().add( "script-src", "'self' 'unsafe-inline'" ) ).isInstanceOf(
+            IllegalArgumentException.class );
+        assertThatThrownBy( () -> new ContentSecurityPolicy().add( "script-src", "a,b" ) ).isInstanceOf(
+            IllegalArgumentException.class );
+        assertThatThrownBy( () -> new ContentSecurityPolicy().add( "script-src", "" ) ).isInstanceOf( IllegalArgumentException.class );
+        assertThatThrownBy( () -> new ContentSecurityPolicy().add( "script-src", "a\nb" ) ).isInstanceOf(
+            IllegalArgumentException.class );
+    }
+
+    @Test
+    void override_source_with_policy_injection_throws()
+    {
+        assertThatThrownBy( () -> new ContentSecurityPolicy().override( "script-src", "x; script-src *" ) ).isInstanceOf(
+            IllegalArgumentException.class );
     }
 
     @Test

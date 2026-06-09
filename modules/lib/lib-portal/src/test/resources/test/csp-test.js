@@ -32,7 +32,8 @@ exports.returnsObject = function () {
     assert.assertEquals('function', typeof csp.reportTo);
     assert.assertEquals('function', typeof csp.requireTrustedTypesForScript);
     assert.assertEquals('function', typeof csp.trustedTypes);
-    assert.assertEquals('function', typeof csp.reportOnly);
+    assert.assertEquals('function', typeof csp.resetAll);
+    assert.assertEquals('undefined', typeof csp.reportOnly);
     assert.assertEquals('function', typeof csp.sandbox);
     assert.assertEquals('function', typeof csp.shaScriptSrc);
     assert.assertEquals('function', typeof csp.shaStyleSrc);
@@ -59,12 +60,30 @@ exports.addAfterOverride = function () {
     assert.assertEquals("img-src 'self' data:", __.toNativeObject(testInstance.policyBuild()));
 };
 
-exports.resetRemovesAll = function () {
+exports.resetAllRemovesAll = function () {
     var csp = portal.csp();
     csp.scriptSrc(portal.CspSource.SELF);
     csp.imgSrc(portal.CspSource.SELF);
-    csp.reset();
+    csp.resetAll();
     assert.assertEquals('', __.toNativeObject(testInstance.policyBuild()));
+};
+
+exports.resetWithNoArgsRemovesNothing = function () {
+    var csp = portal.csp();
+    csp.scriptSrc(portal.CspSource.SELF);
+    csp.reset();
+    assert.assertEquals("script-src 'self'", __.toNativeObject(testInstance.policyBuild()));
+};
+
+exports.invalidSourceThrows = function () {
+    var csp = portal.csp();
+    var threw = false;
+    try {
+        csp.scriptSrc('x; script-src *');
+    } catch (e) {
+        threw = true;
+    }
+    assert.assertTrue('expected scriptSrc to throw on policy injection', threw);
 };
 
 exports.resetRemovesNamedDirectives = function () {
@@ -252,13 +271,6 @@ exports.trustedTypesKeywordTokens = function () {
     assert.assertEquals("'allow-duplicates'", portal.TrustedTypesKeyword.ALLOW_DUPLICATES);
     assert.assertEquals("'none'", portal.TrustedTypesKeyword.NONE);
     assert.assertEquals('*', portal.TrustedTypesKeyword.WILDCARD);
-};
-
-exports.reportOnlyFlag = function () {
-    var csp = portal.csp();
-    assert.assertTrue('default not report-only', !__.toNativeObject(testInstance.policyReportOnly()));
-    csp.reportOnly(true);
-    assert.assertTrue('report-only after enable', __.toNativeObject(testInstance.policyReportOnly()));
 };
 
 exports.cspSourceTokens = function () {

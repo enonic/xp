@@ -7,6 +7,7 @@ import java.util.Base64;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.regex.Pattern;
 
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
@@ -34,8 +35,9 @@ import static java.util.Objects.requireNonNull;
  *
  * <p><b>Policy-level methods</b> (for the platform or site owner) change the whole policy and are not
  * additive — use sparingly, not from a part: {@link #strict()} (deny-all baseline), {@link #override}
- * (replace a directive's sources, dropping what others set), {@link #reset} (remove directives, or all
- * of them), and {@link #reportOnly(boolean)} (report instead of enforce). There is no per-source
+ * (replace a directive's sources, dropping what others set), {@link #reset} / {@link #resetAll()}
+ * (remove directives, or all of them), and {@link #reportOnly(boolean)} (report instead of enforce;
+ * deliberately not exposed to the JavaScript API). There is no per-source
  * removal; {@code reset} removes whole directives. To relax another contributor's hardening — e.g. an
  * editor that must allow inline styles over a strict {@code style-src} — {@code override} the
  * directive: replacing it drops the nonce/hash that would otherwise neutralize {@code 'unsafe-inline'},
@@ -62,6 +64,8 @@ public final class ContentSecurityPolicy
 
     private static final String NONE = "'none'";
 
+    private static final Pattern DIRECTIVE_NAME = Pattern.compile( "[a-zA-Z][a-zA-Z0-9-]*" );
+
     private final Map<String, LinkedHashSet<String>> directives = new TreeMap<>();
 
     @Nullable
@@ -73,15 +77,18 @@ public final class ContentSecurityPolicy
      * Unions {@code sources} into the existing source set for {@code directive}, deduped. With no
      * {@code sources}, registers the directive (useful for boolean directives like
      * {@code upgrade-insecure-requests}).
+     *
+     * @throws IllegalArgumentException when {@code directive} is not a valid directive name, or a
+     * source contains whitespace, control characters, {@code ;} or {@code ,} — tokens that would
+     * smuggle extra directives into the emitted header.
      */
     public ContentSecurityPolicy add( final String directive, final String... sources )
     {
-        requireNonNull( directive, "directive is required" );
         requireNonNull( sources, "sources is required" );
-        final LinkedHashSet<String> set = this.directives.computeIfAbsent( directive, k -> new LinkedHashSet<>() );
+        final LinkedHashSet<String> set = this.directives.computeIfAbsent( validDirective( directive ), k -> new LinkedHashSet<>() );
         for ( final String source : sources )
         {
-            set.add( requireNonNull( source, "source is required" ) );
+            set.add( validSource( source ) );
         }
         return this;
     }
@@ -94,36 +101,40 @@ public final class ContentSecurityPolicy
      */
     public ContentSecurityPolicy override( final String directive, final String... sources )
     {
-        requireNonNull( directive, "directive is required" );
         requireNonNull( sources, "sources is required" );
         final LinkedHashSet<String> set = new LinkedHashSet<>();
         for ( final String source : sources )
         {
-            set.add( requireNonNull( source, "source is required" ) );
+            set.add( validSource( source ) );
         }
-        this.directives.put( directive, set );
+        this.directives.put( validDirective( directive ), set );
         return this;
     }
 
     /**
-     * Removes directives, overriding what other contributors set. With no argument, removes every
-     * directive (a clean slate); otherwise removes each named {@code directives}. The cached nonce is
-     * left intact so it stays stable for the request. A policy-level escape hatch — not additive.
+     * Removes the named directives, overriding what other contributors set — e.g.
+     * {@code reset("upgrade-insecure-requests")} is how a boolean directive is unset. With no
+     * argument, removes nothing. For a clean slate use {@link #resetAll()}. A policy-level escape
+     * hatch — not additive.
      */
     public ContentSecurityPolicy reset( final String... directives )
     {
         requireNonNull( directives, "directives is required" );
-        if ( directives.length == 0 )
+        for ( final String directive : directives )
         {
-            this.directives.clear();
+            this.directives.remove( requireNonNull( directive, "directive is required" ) );
         }
-        else
-        {
-            for ( final String directive : directives )
-            {
-                this.directives.remove( requireNonNull( directive, "directive is required" ) );
-            }
-        }
+        return this;
+    }
+
+    /**
+     * Removes every directive (a clean slate), overriding what other contributors set. The cached
+     * nonce is left intact so it stays stable for the request. A policy-level escape hatch — not
+     * additive, not for parts.
+     */
+    public ContentSecurityPolicy resetAll()
+    {
+        this.directives.clear();
         return this;
     }
 
@@ -535,6 +546,34 @@ public final class ContentSecurityPolicy
             }
         }
         return sb.toString();
+    }
+
+    private static String validDirective( final String directive )
+    {
+        requireNonNull( directive, "directive is required" );
+        if ( !DIRECTIVE_NAME.matcher( directive ).matches() )
+        {
+            throw new IllegalArgumentException( "Invalid CSP directive name: " + directive );
+        }
+        return directive;
+    }
+
+    private static String validSource( final String source )
+    {
+        requireNonNull( source, "source is required" );
+        if ( source.isEmpty() )
+        {
+            throw new IllegalArgumentException( "CSP source must not be empty" );
+        }
+        for ( int i = 0; i < source.length(); i++ )
+        {
+            final char c = source.charAt( i );
+            if ( c <= ' ' || c == ';' || c == ',' || c == 0x7F )
+            {
+                throw new IllegalArgumentException( "Invalid character in CSP source: " + source );
+            }
+        }
+        return source;
     }
 
     private ContentSecurityPolicy addTokens( final String directive, final CspSource[] sources )
