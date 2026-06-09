@@ -67,18 +67,6 @@ public class CspHandlerScriptTest
     }
 
     @Test
-    void buildReturnsHeaderValue()
-    {
-        runFunction( "/test/csp-test.js", "buildReturnsHeaderValue" );
-    }
-
-    @Test
-    void isReportOnly()
-    {
-        runFunction( "/test/csp-test.js", "isReportOnly" );
-    }
-
-    @Test
     void shaStyleSrcDigest()
     {
         runFunction( "/test/csp-test.js", "shaStyleSrcDigest" );

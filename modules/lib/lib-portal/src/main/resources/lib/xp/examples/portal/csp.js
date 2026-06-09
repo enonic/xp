@@ -38,11 +38,8 @@ csp.nonceStyleSrc();                  // -> style-src  'nonce-...' (same value)
 csp.add('require-trusted-types-for', "'script'");
 csp.override('script-src', portalLib.CspSource.SELF);
 
-// The header is emitted automatically at response-flush time; build() renders the
-// current header value for pipelines that compose the response themselves
-var headerValue = csp.build();
+// The Content-Security-Policy header is composed and emitted automatically
+// at response-flush time
 // END
 
 assert.assertTrue('nonce is a non-empty string', typeof nonce === 'string' && nonce.length > 0);
-assert.assertTrue('policy contains the nonce', headerValue.indexOf("'nonce-" + nonce + "'") >= 0);
-assert.assertTrue('override replaced script-src', headerValue.indexOf("script-src 'self';") >= 0);

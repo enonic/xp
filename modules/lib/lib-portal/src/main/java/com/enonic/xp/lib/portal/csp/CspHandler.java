@@ -187,16 +187,6 @@ public final class CspHandler
         return policy().nonceStyleSrc();
     }
 
-    public boolean isReportOnly()
-    {
-        return policy().isReportOnly();
-    }
-
-    public String build()
-    {
-        return policy().build();
-    }
-
     private ContentSecurityPolicy policy()
     {
         return this.request.getContentSecurityPolicy();

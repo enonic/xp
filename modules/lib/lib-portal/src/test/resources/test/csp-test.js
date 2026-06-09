@@ -36,8 +36,6 @@ exports.returnsObject = function () {
     assert.assertEquals('function', typeof csp.sandbox);
     assert.assertEquals('function', typeof csp.shaScriptSrc);
     assert.assertEquals('function', typeof csp.shaStyleSrc);
-    assert.assertEquals('function', typeof csp.isReportOnly);
-    assert.assertEquals('function', typeof csp.build);
 };
 
 exports.addSources = function () {
@@ -93,21 +91,6 @@ exports.fetchDirectiveForwarders = function () {
         "frame-src 'self'; manifest-src 'self'; media-src 'self'; object-src 'none'; worker-src 'self' blob:",
         __.toNativeObject(testInstance.policyBuild())
     );
-};
-
-exports.buildReturnsHeaderValue = function () {
-    var csp = portal.csp();
-    assert.assertEquals('', csp.build());
-    csp.scriptSrc(portal.CspSource.SELF);
-    assert.assertEquals("script-src 'self'", csp.build());
-    assert.assertEquals(__.toNativeObject(testInstance.policyBuild()), csp.build());
-};
-
-exports.isReportOnly = function () {
-    var csp = portal.csp();
-    assert.assertTrue('default not report-only', !csp.isReportOnly());
-    csp.reportOnly(true);
-    assert.assertTrue('report-only after enable', csp.isReportOnly());
 };
 
 exports.unsupportedAlgo = function () {
