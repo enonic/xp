@@ -1,6 +1,7 @@
 package com.enonic.xp.web.jetty.impl.websocket;
 
 import java.time.Duration;
+import java.util.function.BooleanSupplier;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,9 +30,8 @@ final class SessionBoundEndpoint
 
     private final String httpSessionId;
 
-    // Held only until the validity probe in onOpen, then dropped - the HttpSession must not be retained for
-    // the socket's lifetime.
-    private HttpSession httpSession;
+    // Held only until the validity probe in onOpen, then dropped.
+    private BooleanSupplier httpSessionAlive;
 
     private final HttpSession.Accessor sessionAccessor;
 
@@ -43,12 +43,12 @@ final class SessionBoundEndpoint
     // compare session identity.
     private volatile Session effectiveSession;
 
-    SessionBoundEndpoint( final Endpoint delegate, final WebSocketSessionTracker tracker, final HttpSession httpSession,
+    SessionBoundEndpoint( final Endpoint delegate, final WebSocketSessionTracker tracker, final BooleanSupplier httpSessionAlive,
                           final String httpSessionId, final HttpSession.Accessor sessionAccessor, final Duration sessionAccessThrottle )
     {
         this.delegate = delegate;
         this.tracker = tracker;
-        this.httpSession = httpSession;
+        this.httpSessionAlive = httpSessionAlive;
         this.httpSessionId = httpSessionId;
         this.sessionAccessor = sessionAccessor;
         this.sessionAccessThrottle = sessionAccessThrottle;
@@ -79,26 +79,20 @@ final class SessionBoundEndpoint
      */
     private void closeIfHttpSessionAlreadyEnded( final Session session )
     {
-        final HttpSession probed = this.httpSession;
-        this.httpSession = null;
-        if ( probed == null )
+        final BooleanSupplier probe = this.httpSessionAlive;
+        this.httpSessionAlive = null;
+        if ( probe == null || probe.getAsBoolean() )
         {
             return;
         }
+        LOG.debug( "HTTP session ended before WebSocket [{}] open", session.getId() );
         try
         {
-            probed.getCreationTime(); // throws IllegalStateException once the session is invalidated
+            session.close( new CloseReason( CloseReason.CloseCodes.VIOLATED_POLICY, "HTTP session ended during upgrade" ) );
         }
-        catch ( IllegalStateException sessionEnded )
+        catch ( Exception e )
         {
-            try
-            {
-                session.close( new CloseReason( CloseReason.CloseCodes.VIOLATED_POLICY, "HTTP session ended" ) );
-            }
-            catch ( Exception e )
-            {
-                LOG.warn( "Failed to close WebSocket session [{}] opened under an already-ended HTTP session", session.getId(), e );
-            }
+            LOG.warn( "Failed to close WebSocket session [{}] opened under an already-ended HTTP session", session.getId(), e );
         }
     }
 

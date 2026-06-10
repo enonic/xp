@@ -28,12 +28,17 @@ public abstract class JettyTestSupport
         throws Exception
     {
         this.config = mock( JettyConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
-        this.server = new JettyTestServer();
+        this.server = createServer();
         this.server.start();
         configure();
 
         this.client = HttpClient.newHttpClient();
         this.baseUrl = "http://localhost:" + this.server.getPort();
+    }
+
+    protected JettyTestServer createServer()
+    {
+        return new JettyTestServer();
     }
 
     protected abstract void configure()
