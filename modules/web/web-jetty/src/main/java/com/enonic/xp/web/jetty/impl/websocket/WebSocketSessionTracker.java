@@ -52,6 +52,8 @@ public final class WebSocketSessionTracker
             return;
         }
 
+        LOG.debug( "Closing {} WebSocket session(s) after HTTP session [{}] ended", tracked.size(), se.getSession().getId() );
+
         final CloseReason reason = new CloseReason( CloseReason.CloseCodes.VIOLATED_POLICY, "HTTP session ended" );
         for ( final Session wsSession : tracked )
         {

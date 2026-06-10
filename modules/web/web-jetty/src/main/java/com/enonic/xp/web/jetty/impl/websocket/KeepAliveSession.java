@@ -70,9 +70,10 @@ final class KeepAliveSession
         catch ( IllegalStateException e )
         {
             // The HTTP session is already gone; close the socket as a backstop (the listener normally wins).
+            LOG.debug( "HTTP session gone on inbound message for WebSocket [{}]", this.delegate.getId(), e );
             try
             {
-                this.delegate.close( new CloseReason( CloseReason.CloseCodes.VIOLATED_POLICY, "HTTP session ended" ) );
+                this.delegate.close( new CloseReason( CloseReason.CloseCodes.VIOLATED_POLICY, "HTTP session ended (keep-alive)" ) );
             }
             catch ( IOException ex )
             {

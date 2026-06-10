@@ -4,10 +4,12 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
 
 import org.eclipse.jetty.ee11.servlet.ServletContextHandler;
 import org.eclipse.jetty.ee11.servlet.ServletContextRequest;
+import org.eclipse.jetty.session.SessionManager;
 import org.eclipse.jetty.ee11.websocket.jakarta.server.JakartaWebSocketServerContainer;
 import org.eclipse.jetty.ee11.websocket.jakarta.server.config.ContainerDefaultConfigurator;
 import org.eclipse.jetty.websocket.core.server.WebSocketMappings;
@@ -82,11 +84,18 @@ public final class WebSocketServiceImpl
             sessionAccessor = sessionAccess ? httpSession.getAccessor() : null;
         }
 
+        // The session must never be probed through the captured HttpSession object: with a NullSessionCache
+        // (cluster session store) it goes non-resident as soon as the upgrade request completes, while the
+        // session itself lives on. Liveness is checked by id through the SessionManager instead.
+        final BooleanSupplier httpSessionAlive = httpSessionId == null
+            ? null
+            : newHttpSessionProbe( ServletContextHandler.getServletContextHandler( req.getServletContext() ).getSessionHandler(),
+                                   httpSessionId );
+
         final ServerEndpointConfig config = ServerEndpointConfig.Builder.create( Endpoint.class, "/" )
             .configurator(
                 newConfigurator( factory, expectedScheme, expectedHost, expectedPort, this.defaultOriginCheckEnabled, this.sessionTracker,
-                                 httpSessionId != null ? httpSession : null, httpSessionId, sessionAccessor,
-                                 factory.getSessionAccessThrottle() ) )
+                                 httpSessionAlive, httpSessionId, sessionAccessor, factory.getSessionAccessThrottle() ) )
             .subprotocols( factory.getSubProtocols() )
             .build();
 
@@ -101,11 +110,28 @@ public final class WebSocketServiceImpl
         }
     }
 
+    private static BooleanSupplier newHttpSessionProbe( final SessionManager sessionManager, final String httpSessionId )
+    {
+        return () -> {
+            try
+            {
+                // exists() consults the cache and store without entering the session, so the probe neither
+                // marks the session as in-use nor resets its inactivity timer.
+                return sessionManager.getSessionCache().exists( httpSessionId );
+            }
+            catch ( Exception e )
+            {
+                LOG.debug( "Could not determine HTTP session [{}] state; treating it as alive", httpSessionId, e );
+                return true;
+            }
+        };
+    }
+
     private static ServerEndpointConfig.Configurator newConfigurator( final EndpointFactory factory, final String expectedScheme,
                                                                       final String expectedHost, final int expectedPort,
                                                                       final boolean defaultOriginCheckEnabled,
                                                                       final WebSocketSessionTracker sessionTracker,
-                                                                      final HttpSession httpSession, final String httpSessionId,
+                                                                      final BooleanSupplier httpSessionAlive, final String httpSessionId,
                                                                       final HttpSession.Accessor sessionAccessor,
                                                                       final Duration sessionAccessThrottle )
     {
@@ -171,7 +197,7 @@ public final class WebSocketServiceImpl
                     return endpointClass.cast( endpoint );
                 }
                 return endpointClass.cast(
-                    new SessionBoundEndpoint( endpoint, sessionTracker, httpSession, httpSessionId, sessionAccessor,
+                    new SessionBoundEndpoint( endpoint, sessionTracker, httpSessionAlive, httpSessionId, sessionAccessor,
                                               sessionAccessThrottle ) );
             }
         };

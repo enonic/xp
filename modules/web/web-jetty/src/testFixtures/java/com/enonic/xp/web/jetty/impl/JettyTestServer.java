@@ -12,6 +12,8 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.session.DefaultSessionIdManager;
 import org.eclipse.jetty.session.HouseKeeper;
+import org.eclipse.jetty.session.NullSessionCacheFactory;
+import org.eclipse.jetty.session.SessionCache;
 
 import jakarta.servlet.DispatcherType;
 import jakarta.servlet.Filter;
@@ -29,6 +31,11 @@ public final class JettyTestServer
     private final WebSocketSessionTracker sessionTracker = new WebSocketSessionTracker();
 
     public JettyTestServer()
+    {
+        this( false );
+    }
+
+    public JettyTestServer( final boolean clusterStyleSessions )
     {
         this.server = new Server();
 
@@ -55,6 +62,15 @@ public final class JettyTestServer
         this.server.addBean( sessionIdManager, true );
 
         this.handler = new ServletContextHandler( "/", ServletContextHandler.SESSIONS );
+        if ( clusterStyleSessions )
+        {
+            // Mirror the Hazelcast wiring (HazelcastSessionStoreFactoryActivator): no session cache, so each
+            // request works on its own ManagedSession object that goes non-resident at request completion,
+            // and sessions survive only in the shared data store.
+            final SessionCache sessionCache = new NullSessionCacheFactory().getSessionCache( this.handler.getSessionHandler() );
+            sessionCache.setSessionDataStore( new InMemorySessionDataStore() );
+            this.handler.getSessionHandler().setSessionCache( sessionCache );
+        }
         this.handler.addEventListener( this.sessionTracker );
         JakartaWebSocketServletContainerInitializer.configure( this.handler, ( _, _ ) -> {
         } );
