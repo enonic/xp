@@ -22,7 +22,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
 
 class SessionBoundEndpointTest
 {
@@ -38,8 +37,7 @@ class SessionBoundEndpointTest
     void registers_and_unregisters_raw_session_and_forwards_raw_session_when_not_accessing()
     {
         final Session session = mock( Session.class );
-        final SessionBoundEndpoint endpoint =
-            new SessionBoundEndpoint( this.delegate, this.tracker, mock( HttpSession.class ), "s1", null, THROTTLE );
+        final SessionBoundEndpoint endpoint = new SessionBoundEndpoint( this.delegate, this.tracker, () -> true, "s1", null, THROTTLE );
 
         endpoint.onOpen( session, this.config );
         endpoint.onClose( session, new CloseReason( CloseReason.CloseCodes.NORMAL_CLOSURE, "bye" ) );
@@ -58,7 +56,7 @@ class SessionBoundEndpointTest
         final Session session = mock( Session.class );
         final HttpSession.Accessor accessor = mock( HttpSession.Accessor.class );
         final SessionBoundEndpoint endpoint =
-            new SessionBoundEndpoint( this.delegate, this.tracker, mock( HttpSession.class ), "s1", accessor, THROTTLE );
+            new SessionBoundEndpoint( this.delegate, this.tracker, () -> true, "s1", accessor, THROTTLE );
 
         endpoint.onOpen( session, this.config );
         endpoint.onError( session, new RuntimeException( "boom" ) );
@@ -93,9 +91,7 @@ class SessionBoundEndpointTest
         throws Exception
     {
         final Session session = mock( Session.class );
-        final HttpSession httpSession = mock( HttpSession.class );
-        when( httpSession.getCreationTime() ).thenThrow( new IllegalStateException( "invalidated" ) );
-        final SessionBoundEndpoint endpoint = new SessionBoundEndpoint( this.delegate, this.tracker, httpSession, "s1", null, THROTTLE );
+        final SessionBoundEndpoint endpoint = new SessionBoundEndpoint( this.delegate, this.tracker, () -> false, "s1", null, THROTTLE );
 
         endpoint.onOpen( session, this.config );
 
@@ -117,8 +113,7 @@ class SessionBoundEndpointTest
         throws Exception
     {
         final Session session = mock( Session.class );
-        final SessionBoundEndpoint endpoint =
-            new SessionBoundEndpoint( this.delegate, this.tracker, mock( HttpSession.class ), "s1", null, THROTTLE );
+        final SessionBoundEndpoint endpoint = new SessionBoundEndpoint( this.delegate, this.tracker, () -> true, "s1", null, THROTTLE );
 
         endpoint.onOpen( session, this.config );
 
