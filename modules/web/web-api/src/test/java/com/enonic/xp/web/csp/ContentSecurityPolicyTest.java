@@ -140,7 +140,6 @@ class ContentSecurityPolicyTest
     @Test
     void unquoted_nonce_lookalike_is_a_plain_host_source()
     {
-        // without the quotes this is just a host named "nonce-abc" — harmless, allowed
         final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrc( "nonce-abc" );
         assertThat( csp.build() ).isEqualTo( "script-src nonce-abc" );
     }
@@ -734,7 +733,6 @@ class ContentSecurityPolicyTest
     @Test
     void addPolicy_seeded_from_header_value_and_nonced()
     {
-        // the preview-floor pattern: parse a configured baseline, share the request nonce with it
         final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrc( CspSource.SELF );
         final String nonce =
             csp.addPolicy().resetTo( "default-src 'self'; script-src 'self'; style-src * 'unsafe-inline'" ).nonceScriptSrc();
@@ -809,7 +807,6 @@ class ContentSecurityPolicyTest
         csp.resetTo( "script-src 'self' 'nonce-static123'; style-src 'NONCE-x' 'unsafe-inline'" );
         assertThat( csp.build() ).isEqualTo( "script-src 'self'; style-src 'unsafe-inline'" );
 
-        // the request nonce minted by the policy itself still goes in
         final String nonce = csp.nonceScriptSrc();
         assertThat( csp.build() ).isEqualTo( "script-src 'self' 'nonce-" + nonce + "'; style-src 'unsafe-inline'" );
     }

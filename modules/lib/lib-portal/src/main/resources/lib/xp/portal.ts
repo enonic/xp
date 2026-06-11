@@ -973,7 +973,6 @@ export const CspSource = {
     REPORT_SAMPLE: "'report-sample'",
     DATA: 'data:',
     BLOB: 'blob:',
-    // matches network-scheme sources only — not data:, blob: or filesystem:
     WILDCARD: '*',
 } as const;
 
