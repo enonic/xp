@@ -35,6 +35,7 @@ exports.returnsObject = function () {
     assert.assertEquals('function', typeof csp.resetAll);
     assert.assertEquals('function', typeof csp.resetTo);
     assert.assertEquals('undefined', typeof csp.reportOnly);
+    assert.assertEquals('undefined', typeof csp.addPolicy);
     assert.assertEquals('function', typeof csp.sandbox);
     assert.assertEquals('function', typeof csp.shaScriptSrc);
     assert.assertEquals('function', typeof csp.shaStyleSrc);

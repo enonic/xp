@@ -3,8 +3,10 @@ package com.enonic.xp.web.csp;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
@@ -51,6 +53,12 @@ import static java.util.Objects.requireNonNull;
  * the request nonce and builds its own {@code Content-Security-Policy-Report-Only} value.
  * Deliberately not exposed to the JavaScript API.</p>
  *
+ * <p>A response can also carry several <i>enforced</i> policies: the browser enforces each one
+ * independently, so a load must satisfy all of them — an extra policy can only restrict, never
+ * broaden. {@link #addPolicy()} appends such a policy (comma-joined into the same header by
+ * {@link #build()}), for a context that must impose a baseline on content whose own policy it does
+ * not fully trust. Also not exposed to the JavaScript API.</p>
+ *
  * <p>A {@code 'nonce-'} source is valid only on {@code script-src} and {@code style-src}: use
  * {@link #nonceScriptSrc()} or {@link #nonceStyleSrc()}. Both return the same request-scoped value to
  * stamp on the matching inline tag. The request nonce is the <i>only</i> nonce this policy will
@@ -85,6 +93,8 @@ public final class ContentSecurityPolicy
 
     private final Map<String, LinkedHashSet<String>> directives = new TreeMap<>();
 
+    private final List<ContentSecurityPolicy> additionalPolicies = new ArrayList<>();
+
     private final Nonce nonce;
 
     @Nullable
@@ -115,6 +125,30 @@ public final class ContentSecurityPolicy
             this.reportOnly = new ContentSecurityPolicy( this.nonce );
         }
         return this.reportOnly;
+    }
+
+    /**
+     * Appends another <i>enforced</i> policy to this response and returns it. The browser enforces
+     * every policy independently — a load must satisfy all of them — so an added policy can only
+     * restrict, never broaden, what this policy allows. Its use is imposing a baseline on content
+     * whose own policy the serving context does not fully trust (e.g. an admin context rendering
+     * site content); each call appends one more policy, comma-joined into the same header by
+     * {@link #build()}. While left empty, an added policy is not emitted.
+     *
+     * <p>The returned rule set has the full API — seed it from a raw header value with
+     * {@link #resetTo} — and shares the request nonce: chain {@link #nonceScriptSrc()} so inline
+     * scripts stamped with the request nonce satisfy the added policy too. Do not nonce a directive
+     * that relies on {@code 'unsafe-inline'}: a nonce makes the browser ignore it.</p>
+     *
+     * <p>Added policies are separate policies, not directives: {@link #reset}, {@link #resetAll()}
+     * and {@link #resetTo} on this policy do not touch them. Like {@link #reportOnly()},
+     * deliberately not exposed to the JavaScript API.</p>
+     */
+    public ContentSecurityPolicy addPolicy()
+    {
+        final ContentSecurityPolicy additional = new ContentSecurityPolicy( this.nonce );
+        this.additionalPolicies.add( additional );
+        return additional;
     }
 
     /**
@@ -580,13 +614,12 @@ public final class ContentSecurityPolicy
      * the browser applies its own precedence between interacting sources (the API does not). The one
      * tidy-up: a redundant {@code 'none'} (the union identity — it matches nothing) is omitted from a
      * directive that also carries real sources, since any real source already supersedes it.</p>
+     *
+     * <p>Non-empty policies appended via {@link #addPolicy()} follow, comma-separated, in insertion
+     * order — the standard form for several policies in one header value.</p>
      */
     public String build()
     {
-        if ( this.directives.isEmpty() )
-        {
-            return "";
-        }
         final StringBuilder sb = new StringBuilder();
         for ( final Map.Entry<String, LinkedHashSet<String>> entry : this.directives.entrySet() )
         {
@@ -604,6 +637,18 @@ public final class ContentSecurityPolicy
                     continue;
                 }
                 sb.append( ' ' ).append( source );
+            }
+        }
+        for ( final ContentSecurityPolicy additional : this.additionalPolicies )
+        {
+            final String value = additional.build();
+            if ( !value.isEmpty() )
+            {
+                if ( sb.length() > 0 )
+                {
+                    sb.append( ", " );
+                }
+                sb.append( value );
             }
         }
         return sb.toString();

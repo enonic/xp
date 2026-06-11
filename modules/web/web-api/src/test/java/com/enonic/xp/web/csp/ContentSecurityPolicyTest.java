@@ -673,6 +673,87 @@ class ContentSecurityPolicyTest
     }
 
     @Test
+    void addPolicy_joins_comma_separated()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrc( CspSource.SELF );
+        csp.addPolicy().defaultSrc( CspSource.SELF ).objectSrc( CspSource.NONE );
+        assertThat( csp.build() ).isEqualTo( "script-src 'self', default-src 'self'; object-src 'none'" );
+    }
+
+    @Test
+    void addPolicy_multiple_in_insertion_order()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrc( CspSource.SELF );
+        csp.addPolicy().objectSrc( CspSource.NONE );
+        csp.addPolicy().baseUri( CspSource.SELF );
+        assertThat( csp.build() ).isEqualTo( "script-src 'self', object-src 'none', base-uri 'self'" );
+    }
+
+    @Test
+    void addPolicy_left_empty_is_not_emitted()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrc( CspSource.SELF );
+        csp.addPolicy();
+        assertThat( csp.build() ).isEqualTo( "script-src 'self'" );
+    }
+
+    @Test
+    void addPolicy_emitted_alone_when_main_policy_empty()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy();
+        csp.addPolicy().objectSrc( CspSource.NONE );
+        assertThat( csp.build() ).isEqualTo( "object-src 'none'" );
+    }
+
+    @Test
+    void addPolicy_shares_the_request_nonce()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy();
+        final String nonce = csp.nonceScriptSrc();
+        assertThat( csp.addPolicy().nonceScriptSrc() ).isEqualTo( nonce );
+    }
+
+    @Test
+    void addPolicy_survives_resetAll_and_resetTo_on_the_main_policy()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrc( CspSource.SELF );
+        csp.addPolicy().objectSrc( CspSource.NONE );
+        csp.resetAll();
+        assertThat( csp.build() ).isEqualTo( "object-src 'none'" );
+        csp.resetTo( "img-src data:" );
+        assertThat( csp.build() ).isEqualTo( "img-src data:, object-src 'none'" );
+    }
+
+    @Test
+    void addPolicy_seeded_from_header_value_and_nonced()
+    {
+        // the preview-floor pattern: parse a configured baseline, share the request nonce with it
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrc( CspSource.SELF );
+        final String nonce =
+            csp.addPolicy().resetTo( "default-src 'self'; script-src 'self'; style-src * 'unsafe-inline'" ).nonceScriptSrc();
+        assertThat( csp.build() ).isEqualTo(
+            "script-src 'self', default-src 'self'; script-src 'self' 'nonce-" + nonce + "'; style-src * 'unsafe-inline'" );
+    }
+
+    @Test
+    void addPolicy_is_not_part_of_report_only()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy();
+        csp.addPolicy().objectSrc( CspSource.NONE );
+        assertThat( csp.reportOnly().build() ).isEmpty();
+        assertThat( csp.build() ).isEqualTo( "object-src 'none'" );
+    }
+
+    @Test
+    void reportOnly_can_carry_added_policies_of_its_own()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy();
+        csp.reportOnly().scriptSrc( CspSource.SELF ).addPolicy().objectSrc( CspSource.NONE );
+        assertThat( csp.reportOnly().build() ).isEqualTo( "script-src 'self', object-src 'none'" );
+        assertThat( csp.build() ).isEmpty();
+    }
+
+    @Test
     void resetTo_replaces_policy_with_header_rules()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrc( CspSource.SELF ).imgSrc( CspSource.SELF );
