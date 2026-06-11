@@ -6,7 +6,6 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.portal.controller.ControllerScript;
-import com.enonic.xp.portal.csp.ContentSecurityPolicy;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.repository.RepositoryId;
@@ -44,8 +43,6 @@ public final class PortalRequest
     private ControllerScript controllerScript;
 
     private Boolean validTicket;
-
-    private ContentSecurityPolicy contentSecurityPolicy;
 
     public PortalRequest()
     {
@@ -194,14 +191,5 @@ public final class PortalRequest
     public void setValidTicket( final Boolean validTicket )
     {
         this.validTicket = validTicket;
-    }
-
-    public ContentSecurityPolicy getContentSecurityPolicy()
-    {
-        if ( this.contentSecurityPolicy == null )
-        {
-            this.contentSecurityPolicy = new ContentSecurityPolicy();
-        }
-        return this.contentSecurityPolicy;
     }
 }

@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.csp;
+package com.enonic.xp.web.csp;
 
 /**
  * Flags allowed in a CSP {@code sandbox} directive, per W3C CSP3. Sandbox tokens are emitted

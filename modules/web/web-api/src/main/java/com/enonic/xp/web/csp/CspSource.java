@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.csp;
+package com.enonic.xp.web.csp;
 
 /**
  * Common source-list values for a CSP source expression, per W3C CSP3. Keyword sources are emitted

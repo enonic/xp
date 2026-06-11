@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.csp;
+package com.enonic.xp.web.csp;
 
 /**
  * Hash algorithms allowed in a CSP {@code 'sha256-…'} / {@code 'sha384-…'} / {@code 'sha512-…'}

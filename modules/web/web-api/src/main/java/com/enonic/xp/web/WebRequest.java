@@ -17,6 +17,7 @@ import com.google.common.collect.MultimapBuilder;
 import jakarta.servlet.http.HttpServletRequest;
 
 import com.enonic.xp.security.IdProvider;
+import com.enonic.xp.web.csp.ContentSecurityPolicy;
 import com.enonic.xp.web.websocket.WebSocketContext;
 
 import static java.util.Objects.requireNonNull;
@@ -62,12 +63,15 @@ public class WebRequest
 
     private IdProvider idProvider;
 
+    private final ContentSecurityPolicy contentSecurityPolicy;
+
     public WebRequest()
     {
         this.params = MultimapBuilder.linkedHashKeys().arrayListValues().build();
         this.headers = new TreeMap<>( String.CASE_INSENSITIVE_ORDER );
         this.cookies = new HashMap<>();
         this.locales = new ArrayList<>();
+        this.contentSecurityPolicy = new ContentSecurityPolicy();
         this.setRawPath( "/" );
     }
 
@@ -89,7 +93,20 @@ public class WebRequest
         this.webSocketContext = webRequest.webSocketContext;
         this.idProvider = webRequest.idProvider;
         this.locales = webRequest.locales;
+        // shared by reference, like params and headers: handlers re-wrap requests, and the policy
+        // must stay one per servlet request so the final serialization sees every contribution
+        this.contentSecurityPolicy = webRequest.contentSecurityPolicy;
         this.setRawPath( webRequest.rawPath );
+    }
+
+    /**
+     * The request-scoped {@link ContentSecurityPolicy}. One instance per servlet request — request
+     * wrappers share it — serialized into the response headers by the platform. The companion
+     * report-only rule set is reached via {@link ContentSecurityPolicy#reportOnly()}.
+     */
+    public ContentSecurityPolicy getContentSecurityPolicy()
+    {
+        return this.contentSecurityPolicy;
     }
 
     public HttpMethod getMethod()

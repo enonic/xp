@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.csp;
+package com.enonic.xp.web.csp;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -15,11 +15,14 @@ import org.jspecify.annotations.Nullable;
 import static java.util.Objects.requireNonNull;
 
 /**
- * A Content Security Policy carried on {@link com.enonic.xp.portal.PortalRequest}.
+ * A Content Security Policy carried on {@link com.enonic.xp.web.WebRequest}.
  *
  * <p>Mutable and request-scoped: many contributors (platform, site app, apps, widgets, page
- * controllers) extend the same policy during rendering, and {@link #build()} composes the header at
- * response-flush time so late additions still land.</p>
+ * controllers) extend the same policy during rendering, and the platform serializes it into the
+ * {@code Content-Security-Policy} response header alongside the other headers, so late additions
+ * still land. A non-empty policy wins over a header set directly on the response; a header a
+ * portal controller sets directly is folded into the policy first ({@link #resetTo} semantics), so
+ * later contributions still apply on top of it.</p>
  *
  * <p>Contributions are merged by plain <b>union</b>: each directive's source list is the union of
  * every contributor's sources, emitted as written. The API deliberately does <i>not</i> arbitrate
@@ -36,12 +39,17 @@ import static java.util.Objects.requireNonNull;
  * <p><b>Policy-level methods</b> (for the platform or site owner) change the whole policy and are not
  * additive — use sparingly, not from a part: {@link #strict()} (deny-all baseline), {@link #override}
  * (replace a directive's sources, dropping what others set), {@link #reset} / {@link #resetAll()}
- * (remove directives, or all of them), and {@link #reportOnly(boolean)} (report instead of enforce;
- * deliberately not exposed to the JavaScript API). There is no per-source
+ * (remove directives, or all of them), and {@link #resetTo} (replace the policy with a raw header
+ * value's rules). There is no per-source
  * removal; {@code reset} removes whole directives. To relax another contributor's hardening — e.g. an
  * editor that must allow inline styles over a strict {@code style-src} — {@code override} the
  * directive: replacing it drops the nonce/hash that would otherwise neutralize {@code 'unsafe-inline'},
  * so the relaxation is an explicit, greppable act by the contributor that needs it.</p>
+ *
+ * <p>Since the enforcing and report-only headers can legitimately coexist on one response, the
+ * report-only rules are a second, independent rule set reached via {@link #reportOnly()}. It shares
+ * the request nonce and builds its own {@code Content-Security-Policy-Report-Only} value.
+ * Deliberately not exposed to the JavaScript API.</p>
  *
  * <p>A {@code 'nonce-'} source is valid only on {@code script-src} and {@code style-src}: use
  * {@link #nonceScriptSrc()} or {@link #nonceStyleSrc()}. Both return the same request-scoped value to
@@ -50,6 +58,10 @@ import static java.util.Objects.requireNonNull;
 @NullMarked
 public final class ContentSecurityPolicy
 {
+    public static final String HEADER_NAME = "Content-Security-Policy";
+
+    public static final String REPORT_ONLY_HEADER_NAME = "Content-Security-Policy-Report-Only";
+
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
     private static final Base64.Encoder HASH_BASE64 = Base64.getEncoder();
@@ -68,10 +80,37 @@ public final class ContentSecurityPolicy
 
     private final Map<String, LinkedHashSet<String>> directives = new TreeMap<>();
 
-    @Nullable
-    private String nonceValue;
+    private final Nonce nonce;
 
-    private boolean reportOnly;
+    @Nullable
+    private ContentSecurityPolicy reportOnly;
+
+    public ContentSecurityPolicy()
+    {
+        this.nonce = new Nonce();
+    }
+
+    private ContentSecurityPolicy( final Nonce nonce )
+    {
+        this.nonce = nonce;
+        this.reportOnly = this;
+    }
+
+    /**
+     * The companion rule set emitted as {@code Content-Security-Policy-Report-Only}. The two
+     * headers can legitimately coexist on one response (e.g. enforce a settled policy while
+     * trialling a stricter one), so the report-only rules are an independent
+     * {@code ContentSecurityPolicy} with the full contributor/policy-level API; it shares the
+     * request nonce. Lazily created; while left empty, no report-only header is emitted.
+     */
+    public ContentSecurityPolicy reportOnly()
+    {
+        if ( this.reportOnly == null )
+        {
+            this.reportOnly = new ContentSecurityPolicy( this.nonce );
+        }
+        return this.reportOnly;
+    }
 
     /**
      * Unions {@code sources} into the existing source set for {@code directive}, deduped. With no
@@ -139,24 +178,38 @@ public final class ContentSecurityPolicy
     }
 
     /**
-     * Selects the header the policy is emitted as: {@code true} →
-     * {@code Content-Security-Policy-Report-Only} (violations are reported, e.g. to a
-     * {@link #reportTo} group, but <b>not</b> enforced); {@code false} (default) → the enforcing
-     * {@code Content-Security-Policy}. Policy-level — enabling it disables enforcement for the whole
-     * response.
+     * Replaces the whole policy with the directives parsed from a raw header value —
+     * {@link #resetAll()} plus the header's own rules. This is the meaning a
+     * {@code Content-Security-Policy} header set directly by a controller gets when the platform
+     * folds it into the request policy: the directly-set header overrides everything contributed
+     * before it, while later contributions still apply on top. Parsing is lenient, mirroring the
+     * browser: tokens that would not survive {@link #add} validation are skipped rather than
+     * thrown (hand-built headers are arbitrary), and of repeated directives only the first
+     * occurrence counts. A policy-level escape hatch — not additive.
      */
-    public ContentSecurityPolicy reportOnly( final boolean value )
+    public ContentSecurityPolicy resetTo( final String headerValue )
     {
-        this.reportOnly = value;
+        requireNonNull( headerValue, "headerValue is required" );
+        resetAll();
+        for ( final String part : headerValue.split( ";" ) )
+        {
+            final String[] tokens = part.trim().split( "\\s+" );
+            final String directive = tokens[0];
+            if ( !DIRECTIVE_NAME.matcher( directive ).matches() || this.directives.containsKey( directive ) )
+            {
+                continue;
+            }
+            final LinkedHashSet<String> set = new LinkedHashSet<>();
+            for ( int i = 1; i < tokens.length; i++ )
+            {
+                if ( isValidSource( tokens[i] ) )
+                {
+                    set.add( tokens[i] );
+                }
+            }
+            this.directives.put( directive, set );
+        }
         return this;
-    }
-
-    /**
-     * Whether the policy is emitted in report-only mode. See {@link #reportOnly(boolean)}.
-     */
-    public boolean isReportOnly()
-    {
-        return this.reportOnly;
     }
 
     /**
@@ -499,14 +552,9 @@ public final class ContentSecurityPolicy
      */
     private String nonceFor( final String directive )
     {
-        if ( this.nonceValue == null )
-        {
-            final byte[] bytes = new byte[NONCE_BYTE_LENGTH];
-            SECURE_RANDOM.nextBytes( bytes );
-            this.nonceValue = NONCE_BASE64.encodeToString( bytes );
-        }
-        this.directives.computeIfAbsent( directive, k -> new LinkedHashSet<>() ).add( "'nonce-" + this.nonceValue + "'" );
-        return this.nonceValue;
+        final String nonceValue = this.nonce.get();
+        this.directives.computeIfAbsent( directive, k -> new LinkedHashSet<>() ).add( "'nonce-" + nonceValue + "'" );
+        return nonceValue;
     }
 
     /**
@@ -561,19 +609,28 @@ public final class ContentSecurityPolicy
     private static String validSource( final String source )
     {
         requireNonNull( source, "source is required" );
+        if ( !isValidSource( source ) )
+        {
+            throw new IllegalArgumentException( "Invalid CSP source: " + source );
+        }
+        return source;
+    }
+
+    private static boolean isValidSource( final String source )
+    {
         if ( source.isEmpty() )
         {
-            throw new IllegalArgumentException( "CSP source must not be empty" );
+            return false;
         }
         for ( int i = 0; i < source.length(); i++ )
         {
             final char c = source.charAt( i );
             if ( c <= ' ' || c == ';' || c == ',' || c == 0x7F )
             {
-                throw new IllegalArgumentException( "Invalid character in CSP source: " + source );
+                return false;
             }
         }
-        return source;
+        return true;
     }
 
     private ContentSecurityPolicy addTokens( final String directive, final CspSource[] sources )
@@ -610,6 +667,28 @@ public final class ContentSecurityPolicy
         catch ( NoSuchAlgorithmException e )
         {
             throw new IllegalStateException( e );
+        }
+    }
+
+    /**
+     * The request nonce, shared between the enforcing and report-only rule sets: a
+     * cryptographically random, base64-encoded value (≥ 128 bits of entropy), lazily generated and
+     * cached on first use.
+     */
+    private static final class Nonce
+    {
+        @Nullable
+        private String value;
+
+        String get()
+        {
+            if ( this.value == null )
+            {
+                final byte[] bytes = new byte[NONCE_BYTE_LENGTH];
+                SECURE_RANDOM.nextBytes( bytes );
+                this.value = NONCE_BASE64.encodeToString( bytes );
+            }
+            return this.value;
         }
     }
 }

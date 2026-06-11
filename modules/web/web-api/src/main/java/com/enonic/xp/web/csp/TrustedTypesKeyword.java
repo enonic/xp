@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.csp;
+package com.enonic.xp.web.csp;
 
 /**
  * Special keywords for the {@code trusted-types} directive, used alongside (user-defined) policy

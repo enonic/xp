@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.InOrder;
 
 import com.google.common.io.Resources;
 import com.google.common.net.MediaType;
@@ -24,6 +25,7 @@ import com.enonic.xp.web.WebResponse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -233,5 +235,103 @@ class ResponseSerializerTest
 
         verify( httpResponse ).isCommitted();
         verifyNoMoreInteractions( httpResponse );
+    }
+
+    @Test
+    void serializeContentSecurityPolicy()
+        throws Exception
+    {
+        final WebRequest req = new WebRequest();
+        req.setMethod( HttpMethod.GET );
+        req.getContentSecurityPolicy().add( "script-src", "'self'" );
+
+        final HttpServletResponse httpResponse = serializeEmptyResponse( req );
+
+        verify( httpResponse ).setHeader( "Content-Security-Policy", "script-src 'self'" );
+        verify( httpResponse, times( 0 ) ).setHeader( eq( "Content-Security-Policy-Report-Only" ), any() );
+    }
+
+    @Test
+    void serializeNoContentSecurityPolicyWhenEmpty()
+        throws Exception
+    {
+        final WebRequest req = new WebRequest();
+        req.setMethod( HttpMethod.GET );
+
+        final HttpServletResponse httpResponse = serializeEmptyResponse( req );
+
+        verify( httpResponse, times( 0 ) ).setHeader( eq( "Content-Security-Policy" ), any() );
+        verify( httpResponse, times( 0 ) ).setHeader( eq( "Content-Security-Policy-Report-Only" ), any() );
+    }
+
+    @Test
+    void serializeContentSecurityPolicyOverridesDirectHeader()
+        throws Exception
+    {
+        final WebRequest req = new WebRequest();
+        req.setMethod( HttpMethod.GET );
+        req.getContentSecurityPolicy().add( "script-src", "'self'" );
+
+        final WebResponse resp = WebResponse.create().
+            status( HttpStatus.OK ).
+            contentType( MediaType.PLAIN_TEXT_UTF_8 ).
+            header( "Content-Security-Policy", "default-src 'none'" ).
+            build();
+
+        final HttpServletResponse httpResponse = mock( HttpServletResponse.class );
+        new ResponseSerializer( req, resp ).serialize( httpResponse );
+
+        // the policy is written after the plain headers (WebResponse lowercases header names;
+        // servlet setHeader is case-insensitive), so it wins on the servlet response
+        final InOrder inOrder = inOrder( httpResponse );
+        inOrder.verify( httpResponse ).setHeader( "content-security-policy", "default-src 'none'" );
+        inOrder.verify( httpResponse ).setHeader( "Content-Security-Policy", "script-src 'self'" );
+    }
+
+    @Test
+    void serializeContentSecurityPolicyKeepsDirectHeaderWhenPolicyEmpty()
+        throws Exception
+    {
+        final WebRequest req = new WebRequest();
+        req.setMethod( HttpMethod.GET );
+
+        final WebResponse resp = WebResponse.create().
+            status( HttpStatus.OK ).
+            contentType( MediaType.PLAIN_TEXT_UTF_8 ).
+            header( "Content-Security-Policy", "default-src 'none'" ).
+            build();
+
+        final HttpServletResponse httpResponse = mock( HttpServletResponse.class );
+        new ResponseSerializer( req, resp ).serialize( httpResponse );
+
+        verify( httpResponse ).setHeader( "content-security-policy", "default-src 'none'" );
+        verify( httpResponse, times( 0 ) ).setHeader( eq( "Content-Security-Policy" ), any() );
+    }
+
+    @Test
+    void serializeEnforcedAndReportOnlyPoliciesCoexist()
+        throws Exception
+    {
+        final WebRequest req = new WebRequest();
+        req.setMethod( HttpMethod.GET );
+        req.getContentSecurityPolicy().add( "script-src", "'self'" );
+        req.getContentSecurityPolicy().reportOnly().add( "script-src", "'none'" );
+
+        final HttpServletResponse httpResponse = serializeEmptyResponse( req );
+
+        verify( httpResponse ).setHeader( "Content-Security-Policy", "script-src 'self'" );
+        verify( httpResponse ).setHeader( "Content-Security-Policy-Report-Only", "script-src 'none'" );
+    }
+
+    private static HttpServletResponse serializeEmptyResponse( final WebRequest req )
+        throws Exception
+    {
+        final WebResponse resp = WebResponse.create().
+            status( HttpStatus.OK ).
+            contentType( MediaType.PLAIN_TEXT_UTF_8 ).
+            build();
+        final HttpServletResponse httpResponse = mock( HttpServletResponse.class );
+        new ResponseSerializer( req, resp ).serialize( httpResponse );
+        return httpResponse;
     }
 }

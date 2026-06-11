@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.csp;
+package com.enonic.xp.web.csp;
 
 import java.security.MessageDigest;
 import java.util.Base64;
@@ -603,13 +603,101 @@ class ContentSecurityPolicyTest
     }
 
     @Test
-    void reportOnly_defaults_false_and_toggles()
+    void reportOnly_is_an_independent_rule_set()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrc( CspSource.SELF );
+        csp.reportOnly().scriptSrc( CspSource.NONE ).imgSrc( CspSource.SELF );
+
+        assertThat( csp.build() ).isEqualTo( "script-src 'self'" );
+        assertThat( csp.reportOnly().build() ).isEqualTo( "img-src 'self'; script-src 'none'" );
+    }
+
+    @Test
+    void reportOnly_returns_same_companion_and_is_idempotent()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy();
-        assertThat( csp.isReportOnly() ).isFalse();
-        csp.reportOnly( true );
-        assertThat( csp.isReportOnly() ).isTrue();
-        csp.reportOnly( false );
-        assertThat( csp.isReportOnly() ).isFalse();
+        final ContentSecurityPolicy companion = csp.reportOnly();
+        assertThat( csp.reportOnly() ).isSameAs( companion );
+        assertThat( companion.reportOnly() ).isSameAs( companion );
+        assertThat( companion ).isNotSameAs( csp );
+    }
+
+    @Test
+    void reportOnly_left_untouched_builds_empty()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrc( CspSource.SELF );
+        assertThat( csp.reportOnly().build() ).isEmpty();
+    }
+
+    @Test
+    void reportOnly_shares_the_request_nonce()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy();
+        final String nonce = csp.nonceScriptSrc();
+        assertThat( csp.reportOnly().nonceScriptSrc() ).isEqualTo( nonce );
+    }
+
+    @Test
+    void resetTo_replaces_policy_with_header_rules()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrc( CspSource.SELF ).imgSrc( CspSource.SELF );
+        csp.resetTo( "default-src 'none'; script-src 'self' https://cdn.example.com" );
+        assertThat( csp.build() ).isEqualTo( "default-src 'none'; script-src 'self' https://cdn.example.com" );
+    }
+
+    @Test
+    void resetTo_then_contributions_apply_on_top()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy();
+        csp.resetTo( "script-src 'self'" );
+        csp.scriptSrc( "https://cdn.example.com" ).imgSrc( CspSource.DATA );
+        assertThat( csp.build() ).isEqualTo( "img-src data:; script-src 'self' https://cdn.example.com" );
+    }
+
+    @Test
+    void resetTo_keeps_boolean_directives()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy();
+        csp.resetTo( "upgrade-insecure-requests; script-src 'self'" );
+        assertThat( csp.build() ).isEqualTo( "script-src 'self'; upgrade-insecure-requests" );
+    }
+
+    @Test
+    void resetTo_is_lenient_and_skips_invalid_tokens()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy();
+        csp.resetTo( "scr!pt-src oops; script-src 'self' bad,token; ; img-src data:" );
+        assertThat( csp.build() ).isEqualTo( "img-src data:; script-src 'self'" );
+    }
+
+    @Test
+    void resetTo_passes_unknown_but_well_formed_directives_through()
+    {
+        // like the browser: unknown directive names are kept (and warned about there), not dropped
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy();
+        csp.resetTo( "script src; img-src data:" );
+        assertThat( csp.build() ).isEqualTo( "img-src data:; script src" );
+    }
+
+    @Test
+    void resetTo_first_occurrence_of_repeated_directive_wins()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy();
+        csp.resetTo( "script-src 'self'; script-src 'unsafe-inline'" );
+        assertThat( csp.build() ).isEqualTo( "script-src 'self'" );
+    }
+
+    @Test
+    void resetTo_empty_value_clears_policy()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrc( CspSource.SELF );
+        csp.resetTo( "" );
+        assertThat( csp.build() ).isEmpty();
+    }
+
+    @Test
+    void resetTo_null_throws()
+    {
+        assertThatThrownBy( () -> new ContentSecurityPolicy().resetTo( null ) ).isInstanceOf( NullPointerException.class );
     }
 }

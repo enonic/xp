@@ -3,7 +3,8 @@ package com.enonic.xp.portal;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.portal.csp.ContentSecurityPolicy;
+import com.enonic.xp.web.WebRequest;
+import com.enonic.xp.web.csp.ContentSecurityPolicy;
 import com.enonic.xp.web.HttpMethod;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -124,12 +125,20 @@ class PortalRequestTest
     }
 
     @Test
-    void getContentSecurityPolicy_lazy_same_instance_per_request()
+    void getContentSecurityPolicy_same_instance_per_request()
     {
         final PortalRequest request = new PortalRequest();
         final ContentSecurityPolicy first = request.getContentSecurityPolicy();
         assertNotNull( first );
         assertThat( request.getContentSecurityPolicy() ).isSameAs( first );
+    }
+
+    @Test
+    void getContentSecurityPolicy_shared_when_request_is_wrapped()
+    {
+        final WebRequest webRequest = new WebRequest();
+        final PortalRequest portalRequest = new PortalRequest( webRequest );
+        assertThat( portalRequest.getContentSecurityPolicy() ).isSameAs( webRequest.getContentSecurityPolicy() );
     }
 
     @Test

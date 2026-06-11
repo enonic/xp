@@ -3,8 +3,8 @@ package com.enonic.xp.lib.portal.csp;
 import java.nio.charset.StandardCharsets;
 
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.csp.ContentSecurityPolicy;
-import com.enonic.xp.portal.csp.HashAlgo;
+import com.enonic.xp.web.csp.ContentSecurityPolicy;
+import com.enonic.xp.web.csp.HashAlgo;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 
