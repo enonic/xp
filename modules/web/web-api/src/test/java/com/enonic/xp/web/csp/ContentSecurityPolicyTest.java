@@ -111,6 +111,41 @@ class ContentSecurityPolicyTest
     }
 
     @Test
+    void add_external_nonce_source_throws()
+    {
+        assertThatThrownBy( () -> new ContentSecurityPolicy().add( "script-src", "'nonce-evil'" ) ).isInstanceOf(
+            IllegalArgumentException.class );
+        assertThatThrownBy( () -> new ContentSecurityPolicy().add( "style-src", "'NoNcE-evil'" ) ).isInstanceOf(
+            IllegalArgumentException.class );
+        assertThatThrownBy( () -> new ContentSecurityPolicy().add( "script-src", "'nonce-unterminated" ) ).isInstanceOf(
+            IllegalArgumentException.class );
+    }
+
+    @Test
+    void override_external_nonce_source_throws()
+    {
+        assertThatThrownBy( () -> new ContentSecurityPolicy().override( "script-src", "'nonce-evil'" ) ).isInstanceOf(
+            IllegalArgumentException.class );
+    }
+
+    @Test
+    void directive_method_external_nonce_source_throws()
+    {
+        assertThatThrownBy( () -> new ContentSecurityPolicy().scriptSrc( "'nonce-evil'" ) ).isInstanceOf(
+            IllegalArgumentException.class );
+        assertThatThrownBy( () -> new ContentSecurityPolicy().styleSrc( "'nonce-evil'" ) ).isInstanceOf(
+            IllegalArgumentException.class );
+    }
+
+    @Test
+    void unquoted_nonce_lookalike_is_a_plain_host_source()
+    {
+        // without the quotes this is just a host named "nonce-abc" — harmless, allowed
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrc( "nonce-abc" );
+        assertThat( csp.build() ).isEqualTo( "script-src nonce-abc" );
+    }
+
+    @Test
     void nonce_lazy_and_cached()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy();
@@ -677,6 +712,18 @@ class ContentSecurityPolicyTest
         final ContentSecurityPolicy csp = new ContentSecurityPolicy();
         csp.resetTo( "script src; img-src data:" );
         assertThat( csp.build() ).isEqualTo( "img-src data:; script src" );
+    }
+
+    @Test
+    void resetTo_drops_external_nonce_sources()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy();
+        csp.resetTo( "script-src 'self' 'nonce-static123'; style-src 'NONCE-x' 'unsafe-inline'" );
+        assertThat( csp.build() ).isEqualTo( "script-src 'self'; style-src 'unsafe-inline'" );
+
+        // the request nonce minted by the policy itself still goes in
+        final String nonce = csp.nonceScriptSrc();
+        assertThat( csp.build() ).isEqualTo( "script-src 'self' 'nonce-" + nonce + "'; style-src 'unsafe-inline'" );
     }
 
     @Test

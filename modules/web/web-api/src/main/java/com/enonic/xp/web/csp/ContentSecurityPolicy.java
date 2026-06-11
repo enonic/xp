@@ -53,7 +53,10 @@ import static java.util.Objects.requireNonNull;
  *
  * <p>A {@code 'nonce-'} source is valid only on {@code script-src} and {@code style-src}: use
  * {@link #nonceScriptSrc()} or {@link #nonceStyleSrc()}. Both return the same request-scoped value to
- * stamp on the matching inline tag.</p>
+ * stamp on the matching inline tag. The request nonce is the <i>only</i> nonce this policy will
+ * carry: a {@code 'nonce-…'} source supplied from outside is rejected by {@link #add} /
+ * {@link #override} and dropped by {@link #resetTo}, because a caller-supplied nonce is necessarily
+ * static across requests (or worse, attacker-known), which defeats the point of nonces.</p>
  */
 @NullMarked
 public final class ContentSecurityPolicy
@@ -75,6 +78,8 @@ public final class ContentSecurityPolicy
     private static final String STYLE_SRC = "style-src";
 
     private static final String NONE = "'none'";
+
+    private static final String NONCE_SOURCE_PREFIX = "'nonce-";
 
     private static final Pattern DIRECTIVE_NAME = Pattern.compile( "[a-zA-Z][a-zA-Z0-9-]*" );
 
@@ -119,7 +124,8 @@ public final class ContentSecurityPolicy
      *
      * @throws IllegalArgumentException when {@code directive} is not a valid directive name, or a
      * source contains whitespace, control characters, {@code ;} or {@code ,} — tokens that would
-     * smuggle extra directives into the emitted header.
+     * smuggle extra directives into the emitted header — or is a {@code 'nonce-…'} source, which
+     * only {@link #nonceScriptSrc()} / {@link #nonceStyleSrc()} may mint.
      */
     public ContentSecurityPolicy add( final String directive, final String... sources )
     {
@@ -186,7 +192,9 @@ public final class ContentSecurityPolicy
      * effectively {@code resetAll()} — if nothing is added afterwards, no header is emitted.
      * Parsing is lenient, mirroring the browser: tokens that would not survive {@link #add}
      * validation are skipped rather than thrown (hand-built headers are arbitrary), and of
-     * repeated directives only the first occurrence counts. A policy-level escape hatch — not
+     * repeated directives only the first occurrence counts. {@code 'nonce-…'} sources are likewise
+     * dropped — a nonce baked into a header value is static across requests; use
+     * {@link #nonceScriptSrc()} / {@link #nonceStyleSrc()}. A policy-level escape hatch — not
      * additive.
      */
     public ContentSecurityPolicy resetTo( @Nullable final String headerValue )
@@ -614,6 +622,11 @@ public final class ContentSecurityPolicy
     private static String validSource( final String source )
     {
         requireNonNull( source, "source is required" );
+        if ( isExternalNonce( source ) )
+        {
+            throw new IllegalArgumentException(
+                "A 'nonce-' source cannot be supplied; only nonceScriptSrc()/nonceStyleSrc() mint the request nonce: " + source );
+        }
         if ( !isValidSource( source ) )
         {
             throw new IllegalArgumentException( "Invalid CSP source: " + source );
@@ -621,9 +634,14 @@ public final class ContentSecurityPolicy
         return source;
     }
 
+    private static boolean isExternalNonce( final String source )
+    {
+        return source.regionMatches( true, 0, NONCE_SOURCE_PREFIX, 0, NONCE_SOURCE_PREFIX.length() );
+    }
+
     private static boolean isValidSource( final String source )
     {
-        if ( source.isEmpty() )
+        if ( source.isEmpty() || isExternalNonce( source ) )
         {
             return false;
         }

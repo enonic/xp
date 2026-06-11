@@ -73,6 +73,18 @@ public class CspHandlerScriptTest
     }
 
     @Test
+    void externalNonceSourceThrows()
+    {
+        runFunction( "/test/csp-test.js", "externalNonceSourceThrows" );
+    }
+
+    @Test
+    void resetToDropsExternalNonceSources()
+    {
+        runFunction( "/test/csp-test.js", "resetToDropsExternalNonceSources" );
+    }
+
+    @Test
     void resetRemovesNamedDirectives()
     {
         runFunction( "/test/csp-test.js", "resetRemovesNamedDirectives" );

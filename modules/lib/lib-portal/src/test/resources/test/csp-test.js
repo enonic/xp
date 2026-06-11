@@ -110,6 +110,31 @@ exports.invalidSourceThrows = function () {
     assert.assertTrue('expected scriptSrc to throw on policy injection', threw);
 };
 
+exports.externalNonceSourceThrows = function () {
+    var csp = portal.csp();
+    var threw = false;
+    try {
+        csp.scriptSrc("'nonce-evil'");
+    } catch (e) {
+        threw = true;
+    }
+    assert.assertTrue('expected scriptSrc to throw on a hand-supplied nonce source', threw);
+
+    threw = false;
+    try {
+        csp.add('style-src', "'nonce-evil'");
+    } catch (e) {
+        threw = true;
+    }
+    assert.assertTrue('expected add to throw on a hand-supplied nonce source', threw);
+};
+
+exports.resetToDropsExternalNonceSources = function () {
+    var csp = portal.csp();
+    csp.resetTo("script-src 'self' 'nonce-static123'");
+    assert.assertEquals("script-src 'self'", __.toNativeObject(testInstance.policyBuild()));
+};
+
 exports.resetRemovesNamedDirectives = function () {
     var csp = portal.csp();
     csp.scriptSrc(portal.CspSource.SELF);

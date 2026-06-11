@@ -1033,6 +1033,9 @@ export interface Csp {
      * Unions sources into the existing source set for `directive`, deduped.
      * Pass no sources to register a boolean directive (e.g.
      * `upgrade-insecure-requests`).
+     *
+     * A `'nonce-…'` source is rejected: only {@link nonceScriptSrc} / {@link nonceStyleSrc} mint
+     * the request nonce — a hand-supplied nonce is static across requests, which defeats it.
      */
     add(directive: string, ...sources: string[]): Csp;
 
@@ -1061,7 +1064,9 @@ export interface Csp {
      * plus the header's own rules, so later contributions still apply on top. A `null`, `undefined`
      * or empty value is effectively {@link resetAll} — if nothing is added afterwards, no header is
      * emitted. Parsing is lenient, mirroring the browser: invalid tokens are skipped, and of
-     * repeated directives only the first occurrence counts. Policy-level and **not** additive.
+     * repeated directives only the first occurrence counts. `'nonce-…'` sources are likewise
+     * dropped — use {@link nonceScriptSrc} / {@link nonceStyleSrc}. Policy-level and **not**
+     * additive.
      */
     resetTo(headerValue?: string | null): Csp;
 
