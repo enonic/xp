@@ -401,6 +401,13 @@ class ContentSecurityPolicyTest
     }
 
     @Test
+    void wildcard_emitted_unquoted()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().imgSrc( CspSource.WILDCARD, CspSource.DATA );
+        assertThat( csp.build() ).isEqualTo( "img-src * data:" );
+    }
+
+    @Test
     void defaultSrc_none()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy().defaultSrc( CspSource.NONE );

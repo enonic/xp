@@ -334,6 +334,7 @@ exports.cspSourceTokens = function () {
     assert.assertEquals("'report-sample'", portal.CspSource.REPORT_SAMPLE);
     assert.assertEquals('data:', portal.CspSource.DATA);
     assert.assertEquals('blob:', portal.CspSource.BLOB);
+    assert.assertEquals('*', portal.CspSource.WILDCARD);
 };
 
 exports.schemeSourcesTyped = function () {

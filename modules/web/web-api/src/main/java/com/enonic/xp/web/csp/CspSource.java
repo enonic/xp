@@ -17,7 +17,13 @@ public enum CspSource
     WASM_UNSAFE_EVAL( "'wasm-unsafe-eval'" ),
     REPORT_SAMPLE( "'report-sample'" ),
     DATA( "data:" ),
-    BLOB( "blob:" );
+    BLOB( "blob:" ),
+
+    /**
+     * The {@code *} wildcard: matches network-scheme sources only — notably <i>not</i>
+     * {@code data:}, {@code blob:} or {@code filesystem:}, which must be allowed explicitly.
+     */
+    WILDCARD( "*" );
 
     private final String token;
 
