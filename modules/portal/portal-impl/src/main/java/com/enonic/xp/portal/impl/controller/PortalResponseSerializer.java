@@ -200,8 +200,7 @@ public final class PortalResponseSerializer
         }
         final ContentSecurityPolicy policy =
             enforced ? request.getContentSecurityPolicy() : request.getContentSecurityPolicy().reportOnly();
-        final String headerValue = value != null ? value.getValue( String.class ) : null;
-        policy.resetTo( headerValue != null ? headerValue : "" );
+        policy.resetTo( value != null ? value.getValue( String.class ) : null );
         return true;
     }
 

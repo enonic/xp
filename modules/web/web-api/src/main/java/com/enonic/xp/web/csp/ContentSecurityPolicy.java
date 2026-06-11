@@ -182,15 +182,20 @@ public final class ContentSecurityPolicy
      * {@link #resetAll()} plus the header's own rules. This is the meaning a
      * {@code Content-Security-Policy} header set directly by a controller gets when the platform
      * folds it into the request policy: the directly-set header overrides everything contributed
-     * before it, while later contributions still apply on top. Parsing is lenient, mirroring the
-     * browser: tokens that would not survive {@link #add} validation are skipped rather than
-     * thrown (hand-built headers are arbitrary), and of repeated directives only the first
-     * occurrence counts. A policy-level escape hatch — not additive.
+     * before it, while later contributions still apply on top. A {@code null} or empty value is
+     * effectively {@code resetAll()} — if nothing is added afterwards, no header is emitted.
+     * Parsing is lenient, mirroring the browser: tokens that would not survive {@link #add}
+     * validation are skipped rather than thrown (hand-built headers are arbitrary), and of
+     * repeated directives only the first occurrence counts. A policy-level escape hatch — not
+     * additive.
      */
-    public ContentSecurityPolicy resetTo( final String headerValue )
+    public ContentSecurityPolicy resetTo( @Nullable final String headerValue )
     {
-        requireNonNull( headerValue, "headerValue is required" );
         resetAll();
+        if ( headerValue == null )
+        {
+            return this;
+        }
         for ( final String part : headerValue.split( ";" ) )
         {
             final String[] tokens = part.trim().split( "\\s+" );

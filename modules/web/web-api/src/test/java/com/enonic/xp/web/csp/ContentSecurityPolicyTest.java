@@ -696,8 +696,10 @@ class ContentSecurityPolicyTest
     }
 
     @Test
-    void resetTo_null_throws()
+    void resetTo_null_clears_policy()
     {
-        assertThatThrownBy( () -> new ContentSecurityPolicy().resetTo( null ) ).isInstanceOf( NullPointerException.class );
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrc( CspSource.SELF );
+        csp.resetTo( null );
+        assertThat( csp.build() ).isEmpty();
     }
 }

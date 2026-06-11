@@ -49,6 +49,24 @@ public class CspHandlerScriptTest
     }
 
     @Test
+    void resetToReplacesPolicyAndLaterContributionsApply()
+    {
+        runFunction( "/test/csp-test.js", "resetToReplacesPolicyAndLaterContributionsApply" );
+    }
+
+    @Test
+    void resetToEmptyClearsPolicy()
+    {
+        runFunction( "/test/csp-test.js", "resetToEmptyClearsPolicy" );
+    }
+
+    @Test
+    void resetToUndefinedClearsPolicy()
+    {
+        runFunction( "/test/csp-test.js", "resetToUndefinedClearsPolicy" );
+    }
+
+    @Test
     void invalidSourceThrows()
     {
         runFunction( "/test/csp-test.js", "invalidSourceThrows" );

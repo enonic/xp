@@ -35,6 +35,11 @@ public final class CspHandler
         policy().resetAll();
     }
 
+    public void resetTo( final String headerValue )
+    {
+        policy().resetTo( headerValue );
+    }
+
     public void strict()
     {
         policy().strict();

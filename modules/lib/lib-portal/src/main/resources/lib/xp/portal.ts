@@ -1057,6 +1057,15 @@ export interface Csp {
     resetAll(): Csp;
 
     /**
+     * Replaces the whole policy with the directives parsed from a raw header value — {@link resetAll}
+     * plus the header's own rules, so later contributions still apply on top. A `null`, `undefined`
+     * or empty value is effectively {@link resetAll} — if nothing is added afterwards, no header is
+     * emitted. Parsing is lenient, mirroring the browser: invalid tokens are skipped, and of
+     * repeated directives only the first occurrence counts. Policy-level and **not** additive.
+     */
+    resetTo(headerValue?: string | null): Csp;
+
+    /**
      * Seeds a restrictive deny-all baseline (`default-src 'none'`, `base-uri 'none'`,
      * `frame-ancestors 'none'`). Call it first, then open up only the directives you need.
      */
@@ -1172,6 +1181,8 @@ interface CspHandler {
 
     resetAll(): void;
 
+    resetTo(headerValue: string | null): void;
+
     strict(): void;
 
     defaultSrc(sources: string[]): void;
@@ -1259,6 +1270,10 @@ export function csp(): Csp {
         },
         resetAll(): Csp {
             bean.resetAll();
+            return instance;
+        },
+        resetTo(headerValue?: string | null): Csp {
+            bean.resetTo(headerValue ?? null);
             return instance;
         },
         strict(): Csp {

@@ -33,6 +33,7 @@ exports.returnsObject = function () {
     assert.assertEquals('function', typeof csp.requireTrustedTypesForScript);
     assert.assertEquals('function', typeof csp.trustedTypes);
     assert.assertEquals('function', typeof csp.resetAll);
+    assert.assertEquals('function', typeof csp.resetTo);
     assert.assertEquals('undefined', typeof csp.reportOnly);
     assert.assertEquals('function', typeof csp.sandbox);
     assert.assertEquals('function', typeof csp.shaScriptSrc);
@@ -73,6 +74,29 @@ exports.resetWithNoArgsRemovesNothing = function () {
     csp.scriptSrc(portal.CspSource.SELF);
     csp.reset();
     assert.assertEquals("script-src 'self'", __.toNativeObject(testInstance.policyBuild()));
+};
+
+exports.resetToReplacesPolicyAndLaterContributionsApply = function () {
+    var csp = portal.csp();
+    csp.imgSrc(portal.CspSource.SELF);
+    csp.resetTo("default-src 'none'; script-src 'self'");
+    csp.scriptSrc('https://cdn.example.com');
+    assert.assertEquals("default-src 'none'; script-src 'self' https://cdn.example.com",
+        __.toNativeObject(testInstance.policyBuild()));
+};
+
+exports.resetToEmptyClearsPolicy = function () {
+    var csp = portal.csp();
+    csp.scriptSrc(portal.CspSource.SELF);
+    csp.resetTo('');
+    assert.assertEquals('', __.toNativeObject(testInstance.policyBuild()));
+};
+
+exports.resetToUndefinedClearsPolicy = function () {
+    var csp = portal.csp();
+    csp.scriptSrc(portal.CspSource.SELF);
+    csp.resetTo();
+    assert.assertEquals('', __.toNativeObject(testInstance.policyBuild()));
 };
 
 exports.invalidSourceThrows = function () {
