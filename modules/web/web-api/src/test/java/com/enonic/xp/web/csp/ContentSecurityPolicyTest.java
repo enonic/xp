@@ -759,6 +759,15 @@ class ContentSecurityPolicyTest
     }
 
     @Test
+    void reportOnly_from_any_rule_set_is_the_request_report_only_set()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy();
+        final ContentSecurityPolicy reportOnly = csp.reportOnly();
+        assertThat( csp.addPolicy().reportOnly() ).isSameAs( reportOnly );
+        assertThat( reportOnly.addPolicy().reportOnly() ).isSameAs( reportOnly );
+    }
+
+    @Test
     void resetTo_replaces_policy_with_header_rules()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrc( CspSource.SELF ).imgSrc( CspSource.SELF );

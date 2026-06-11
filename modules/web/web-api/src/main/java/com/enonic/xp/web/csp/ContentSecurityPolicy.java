@@ -98,17 +98,21 @@ public final class ContentSecurityPolicy
     private final Nonce nonce;
 
     @Nullable
+    private final ContentSecurityPolicy owner;
+
+    @Nullable
     private ContentSecurityPolicy reportOnly;
 
     public ContentSecurityPolicy()
     {
         this.nonce = new Nonce();
+        this.owner = null;
     }
 
-    private ContentSecurityPolicy( final Nonce nonce )
+    private ContentSecurityPolicy( final Nonce nonce, final ContentSecurityPolicy owner )
     {
         this.nonce = nonce;
-        this.reportOnly = this;
+        this.owner = owner;
     }
 
     /**
@@ -117,12 +121,21 @@ public final class ContentSecurityPolicy
      * trialling a stricter one), so the report-only rules are an independent
      * {@code ContentSecurityPolicy} with the full contributor/policy-level API; it shares the
      * request nonce. Lazily created; while left empty, no report-only header is emitted.
+     *
+     * <p>There is one report-only rule set per request: called on any rule set — including ones
+     * appended via {@link #addPolicy()} — this returns that one. Report-only policies never block;
+     * each is just one more observed policy, so for several of them call {@link #addPolicy()} on
+     * the returned set.</p>
      */
     public ContentSecurityPolicy reportOnly()
     {
+        if ( this.owner != null )
+        {
+            return this.owner.reportOnly();
+        }
         if ( this.reportOnly == null )
         {
-            this.reportOnly = new ContentSecurityPolicy( this.nonce );
+            this.reportOnly = new ContentSecurityPolicy( this.nonce, this );
         }
         return this.reportOnly;
     }
@@ -135,10 +148,11 @@ public final class ContentSecurityPolicy
      * site content); each call appends one more policy, comma-joined into the same header by
      * {@link #build()}. While left empty, an added policy is not emitted.
      *
-     * <p>The returned rule set has the full API — seed it from a raw header value with
-     * {@link #resetTo} — and shares the request nonce: chain {@link #nonceScriptSrc()} so inline
-     * scripts stamped with the request nonce satisfy the added policy too. Do not nonce a directive
-     * that relies on {@code 'unsafe-inline'}: a nonce makes the browser ignore it.</p>
+     * <p>The returned rule set has the full API and shares the request nonce. Order matters when
+     * seeding it from a raw header value: {@link #resetTo} first (it starts from a clean slate and
+     * would drop an already-wired nonce entry), then {@link #nonceScriptSrc()} so inline scripts
+     * stamped with the request nonce satisfy the added policy too. Do not nonce a directive that
+     * relies on {@code 'unsafe-inline'}: a nonce makes the browser ignore it.</p>
      *
      * <p>Added policies are separate policies, not directives: {@link #reset}, {@link #resetAll()}
      * and {@link #resetTo} on this policy do not touch them. Like {@link #reportOnly()},
@@ -146,7 +160,7 @@ public final class ContentSecurityPolicy
      */
     public ContentSecurityPolicy addPolicy()
     {
-        final ContentSecurityPolicy additional = new ContentSecurityPolicy( this.nonce );
+        final ContentSecurityPolicy additional = new ContentSecurityPolicy( this.nonce, this );
         this.additionalPolicies.add( additional );
         return additional;
     }
