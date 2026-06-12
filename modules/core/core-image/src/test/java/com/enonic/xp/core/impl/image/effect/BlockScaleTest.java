@@ -73,6 +73,26 @@ class BlockScaleTest
     }
 
     @Test
+    public void same_aspect_ratio_upscale()
+    {
+        final BufferedImage original = ImageHelper.createImage( 800, 600, false );
+
+        BufferedImage scaled = newScaleFunctions().block( FocalPoint.DEFAULT, 804, 603 ).apply( original );
+        assertEquals( 804, scaled.getWidth() );
+        assertEquals( 603, scaled.getHeight() );
+    }
+
+    @Test
+    public void same_aspect_ratio_downscale()
+    {
+        final BufferedImage original = ImageHelper.createImage( 1600, 1200, false );
+
+        BufferedImage scaled = newScaleFunctions().block( FocalPoint.DEFAULT, 804, 603 ).apply( original );
+        assertEquals( 804, scaled.getWidth() );
+        assertEquals( 603, scaled.getHeight() );
+    }
+
+    @Test
     void upscale_square()
     {
         final BufferedImage original = ImageHelper.createImage( 400, 300, false );
