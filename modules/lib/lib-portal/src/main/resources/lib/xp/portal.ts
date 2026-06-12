@@ -1062,9 +1062,9 @@ export interface Csp {
 
     /**
      * Replaces the whole policy with the directives parsed from a raw header value — {@link resetAll}
-     * plus the header's own rules, so later contributions still apply on top. A `null`, `undefined`
-     * or empty value is effectively {@link resetAll} — if nothing is added afterwards, no header is
-     * emitted. Parsing is lenient, mirroring the browser: invalid tokens are skipped, and of
+     * plus the header's own rules, so later contributions still apply on top. A `null`, `undefined`,
+     * empty or blank value is effectively {@link resetAll} — if nothing is added afterwards, no header
+     * is emitted. Parsing is lenient, mirroring the browser: invalid tokens are skipped, and of
      * repeated directives only the first occurrence counts. `'nonce-…'` sources are likewise
      * dropped — use {@link nonceScriptSrc} / {@link nonceStyleSrc}. Policy-level and **not**
      * additive.

@@ -61,6 +61,12 @@ public class CspHandlerScriptTest
     }
 
     @Test
+    void resetToBlankClearsPolicy()
+    {
+        runFunction( "/test/csp-test.js", "resetToBlankClearsPolicy" );
+    }
+
+    @Test
     void resetToUndefinedClearsPolicy()
     {
         runFunction( "/test/csp-test.js", "resetToUndefinedClearsPolicy" );

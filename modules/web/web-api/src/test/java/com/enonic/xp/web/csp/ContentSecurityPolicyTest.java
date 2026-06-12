@@ -837,6 +837,14 @@ class ContentSecurityPolicyTest
     }
 
     @Test
+    void resetTo_blank_value_clears_policy()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrc( CspSource.SELF );
+        csp.resetTo( " \t ; ; " );
+        assertThat( csp.build() ).isEmpty();
+    }
+
+    @Test
     void resetTo_null_clears_policy()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrc( CspSource.SELF );

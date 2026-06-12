@@ -236,8 +236,8 @@ public final class ContentSecurityPolicy
      * {@link #resetAll()} plus the header's own rules. This is the meaning a
      * {@code Content-Security-Policy} header set directly by a controller gets when the platform
      * folds it into the request policy: the directly-set header overrides everything contributed
-     * before it, while later contributions still apply on top. A {@code null} or empty value is
-     * effectively {@code resetAll()} — if nothing is added afterwards, no header is emitted.
+     * before it, while later contributions still apply on top. A {@code null}, empty or blank value
+     * is effectively {@code resetAll()} — if nothing is added afterwards, no header is emitted.
      * Parsing is lenient, mirroring the browser: tokens that would not survive {@link #add}
      * validation are skipped rather than thrown (hand-built headers are arbitrary), and of
      * repeated directives only the first occurrence counts. {@code 'nonce-…'} sources are likewise

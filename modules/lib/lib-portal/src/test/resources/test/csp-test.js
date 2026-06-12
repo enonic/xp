@@ -93,6 +93,13 @@ exports.resetToEmptyClearsPolicy = function () {
     assert.assertEquals('', __.toNativeObject(testInstance.policyBuild()));
 };
 
+exports.resetToBlankClearsPolicy = function () {
+    var csp = portal.csp();
+    csp.scriptSrc(portal.CspSource.SELF);
+    csp.resetTo(' \t ; ; ');
+    assert.assertEquals('', __.toNativeObject(testInstance.policyBuild()));
+};
+
 exports.resetToUndefinedClearsPolicy = function () {
     var csp = portal.csp();
     csp.scriptSrc(portal.CspSource.SELF);
