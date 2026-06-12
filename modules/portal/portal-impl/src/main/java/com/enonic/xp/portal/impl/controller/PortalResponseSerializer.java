@@ -181,8 +181,8 @@ public final class PortalResponseSerializer
     }
 
     /**
-     * A CSP header a controller sets directly is folded into the request policy — resetAll plus
-     * the header's own rules — instead of travelling as a plain header: the policy stays the
+     * A CSP header a controller sets directly is folded into the request policy — replaced by the
+     * header's own rules — instead of travelling as a plain header: the policy stays the
      * single source of truth, later contributions (post-process, filters) still apply on top, and
      * the platform serializes the composed value. A {@code null} value clears the rule set.
      */

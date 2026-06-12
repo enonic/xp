@@ -18,7 +18,7 @@ class ControllerScriptImpl_cspTest
 
         execute( "myapplication:/controller/cspheader.js" );
 
-        // the directly-set headers replaced the policies (resetAll + the header's rules) and do
+        // the directly-set headers replaced the policies and do
         // not travel as plain headers; the platform serializes the composed value at the end
         final ContentSecurityPolicy policy = this.portalRequest.getContentSecurityPolicy();
         assertThat( policy.build() ).isEqualTo( "default-src 'none'; script-src 'self'" );

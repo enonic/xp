@@ -40,9 +40,9 @@ import static java.util.Objects.requireNonNull;
  *
  * <p><b>Policy-level methods</b> (for the platform or site owner) change the whole policy and are not
  * additive — use sparingly, not from a part: {@link #strict()} (deny-all baseline), {@link #override}
- * (replace a directive's sources, dropping what others set), {@link #reset} / {@link #resetAll()}
- * (remove directives, or all of them), and {@link #resetTo} (replace the policy with a raw header
- * value's rules). There is no per-source
+ * (replace a directive's sources, dropping what others set), {@link #reset} (remove directives),
+ * and {@link #resetTo} (replace the policy with a raw header value's rules; an empty value clears
+ * it). There is no per-source
  * removal; {@code reset} removes whole directives. To relax another contributor's hardening — e.g. an
  * editor that must allow inline styles over a strict {@code style-src} — {@code override} the
  * directive: replacing it drops the nonce/hash that would otherwise neutralize {@code 'unsafe-inline'},
@@ -50,14 +50,13 @@ import static java.util.Objects.requireNonNull;
  *
  * <p>Since the enforcing and report-only headers can legitimately coexist on one response, the
  * report-only rules are a second, independent rule set reached via {@link #reportOnly()}. It shares
- * the request nonce and builds its own {@code Content-Security-Policy-Report-Only} value.
- * Deliberately not exposed to the JavaScript API.</p>
+ * the request nonce and builds its own {@code Content-Security-Policy-Report-Only} value.</p>
  *
  * <p>A response can also carry several <i>enforced</i> policies: the browser enforces each one
  * independently, so a load must satisfy all of them — an extra policy can only restrict, never
  * broaden. {@link #addPolicy()} appends such a policy (comma-joined into the same header by
  * {@link #build()}), for a context that must impose a baseline on content whose own policy it does
- * not fully trust. Also not exposed to the JavaScript API.</p>
+ * not fully trust.</p>
  *
  * <p>A {@code 'nonce-'} source is valid only on {@code script-src} and {@code style-src}: use
  * {@link #nonceScriptSrc()} or {@link #nonceStyleSrc()}. Both return the same request-scoped value to
@@ -154,9 +153,8 @@ public final class ContentSecurityPolicy
      * stamped with the request nonce satisfy the added policy too. Do not nonce a directive that
      * relies on {@code 'unsafe-inline'}: a nonce makes the browser ignore it.</p>
      *
-     * <p>Added policies are separate policies, not directives: {@link #reset}, {@link #resetAll()}
-     * and {@link #resetTo} on this policy do not touch them. Like {@link #reportOnly()},
-     * deliberately not exposed to the JavaScript API.</p>
+     * <p>Added policies are separate policies, not directives: {@link #reset} and {@link #resetTo}
+     * on this policy do not touch them.</p>
      */
     public ContentSecurityPolicy addPolicy()
     {
@@ -207,8 +205,8 @@ public final class ContentSecurityPolicy
     /**
      * Removes the named directives, overriding what other contributors set — e.g.
      * {@code reset("upgrade-insecure-requests")} is how a boolean directive is unset. With no
-     * argument, removes nothing. For a clean slate use {@link #resetAll()}. A policy-level escape
-     * hatch — not additive.
+     * argument, removes nothing. To clear the whole policy use {@link #resetTo} with an empty
+     * value. A policy-level escape hatch — not additive.
      */
     public ContentSecurityPolicy reset( final String... directives )
     {
@@ -221,33 +219,21 @@ public final class ContentSecurityPolicy
     }
 
     /**
-     * Removes every directive (a clean slate), overriding what other contributors set. The cached
-     * nonce is left intact so it stays stable for the request. A policy-level escape hatch — not
-     * additive, not for parts.
-     */
-    public ContentSecurityPolicy resetAll()
-    {
-        this.directives.clear();
-        return this;
-    }
-
-    /**
-     * Replaces the whole policy with the directives parsed from a raw header value —
-     * {@link #resetAll()} plus the header's own rules. This is the meaning a
-     * {@code Content-Security-Policy} header set directly by a controller gets when the platform
-     * folds it into the request policy: the directly-set header overrides everything contributed
-     * before it, while later contributions still apply on top. A {@code null}, empty or blank value
-     * is effectively {@code resetAll()} — if nothing is added afterwards, no header is emitted.
-     * Parsing is lenient, mirroring the browser: tokens that would not survive {@link #add}
-     * validation are skipped rather than thrown (hand-built headers are arbitrary), and of
-     * repeated directives only the first occurrence counts. {@code 'nonce-…'} sources are likewise
-     * dropped — a nonce baked into a header value is static across requests; use
-     * {@link #nonceScriptSrc()} / {@link #nonceStyleSrc()}. A policy-level escape hatch — not
-     * additive.
+     * Replaces the whole policy with the directives parsed from a raw header value. This is the
+     * meaning a {@code Content-Security-Policy} header set directly by a controller gets when the
+     * platform folds it into the request policy: the directly-set header overrides everything
+     * contributed before it, while later contributions still apply on top. A {@code null}, empty
+     * or blank value clears the policy — if nothing is added afterwards, no header is emitted.
+     * The request nonce stays stable. Parsing is lenient, mirroring the browser: tokens that would
+     * not survive {@link #add} validation are skipped rather than thrown (hand-built headers are
+     * arbitrary), and of repeated directives only the first occurrence counts.
+     * {@code 'nonce-…'} sources are likewise dropped — a nonce baked into a header value is static
+     * across requests; use {@link #nonceScriptSrc()} / {@link #nonceStyleSrc()}. A policy-level
+     * escape hatch — not additive.
      */
     public ContentSecurityPolicy resetTo( @Nullable final String headerValue )
     {
-        resetAll();
+        this.directives.clear();
         if ( headerValue == null )
         {
             return this;
@@ -487,7 +473,7 @@ public final class ContentSecurityPolicy
     }
 
     /**
-     * Registers {@code require-trusted-types-for 'script'} (the only sink group the spec defines).
+     * Registers {@code require-trusted-types-for 'script'}.
      */
     public ContentSecurityPolicy requireTrustedTypesForScript()
     {
@@ -605,11 +591,10 @@ public final class ContentSecurityPolicy
     }
 
     /**
-     * The nonce is a cryptographically random, base64-encoded value (≥ 128 bits of entropy), lazily
-     * generated and cached on first use. Every {@code nonce*} call returns the same value for the
-     * life of this policy instance (= life of the {@code PortalRequest}); each adds
-     * {@code 'nonce-<value>'} to the directive it targets. If no {@code nonce*} method is ever
-     * called, no {@code nonce-} entry is emitted anywhere.
+     * The nonce is a cryptographically random, base64-encoded value (≥ 128 bits of entropy). Every
+     * {@code nonce*} call returns the same value for the life of this policy instance (= life of
+     * the {@code PortalRequest}); each adds {@code 'nonce-<value>'} to the directive it targets.
+     * If no {@code nonce*} method is ever called, no {@code nonce-} entry is emitted anywhere.
      */
     private String nonceFor( final String directive )
     {

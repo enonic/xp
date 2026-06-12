@@ -48,14 +48,6 @@ class ContentSecurityPolicyTest
     }
 
     @Test
-    void resetAll_removes_all_directives()
-    {
-        final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrc( CspSource.SELF ).imgSrc( CspSource.SELF );
-        csp.resetAll();
-        assertThat( csp.build() ).isEmpty();
-    }
-
-    @Test
     void reset_with_no_args_removes_nothing()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrc( CspSource.SELF );
@@ -72,11 +64,11 @@ class ContentSecurityPolicyTest
     }
 
     @Test
-    void resetAll_preserves_nonce_so_it_stays_stable()
+    void resetTo_preserves_nonce_so_it_stays_stable()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy();
         final String nonce = csp.nonceScriptSrc();
-        csp.resetAll();
+        csp.resetTo( null );
         assertThat( csp.nonceScriptSrc() ).isEqualTo( nonce );
     }
 
@@ -720,11 +712,11 @@ class ContentSecurityPolicyTest
     }
 
     @Test
-    void addPolicy_survives_resetAll_and_resetTo_on_the_main_policy()
+    void addPolicy_survives_resetTo_on_the_main_policy()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrc( CspSource.SELF );
         csp.addPolicy().objectSrc( CspSource.NONE );
-        csp.resetAll();
+        csp.resetTo( null );
         assertThat( csp.build() ).isEqualTo( "object-src 'none'" );
         csp.resetTo( "img-src data:" );
         assertThat( csp.build() ).isEqualTo( "img-src data:, object-src 'none'" );

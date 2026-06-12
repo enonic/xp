@@ -1,8 +1,7 @@
 package com.enonic.xp.web.csp;
 
 /**
- * Flags allowed in a CSP {@code sandbox} directive, per W3C CSP3. Sandbox tokens are emitted
- * unquoted.
+ * Flags allowed in a CSP {@code sandbox} directive, per W3C CSP3.
  */
 public enum SandboxFlag
 {

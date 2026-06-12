@@ -93,8 +93,6 @@ public class WebRequest
         this.webSocketContext = webRequest.webSocketContext;
         this.idProvider = webRequest.idProvider;
         this.locales = webRequest.locales;
-        // shared by reference, like params and headers: handlers re-wrap requests, and the policy
-        // must stay one per servlet request so the final serialization sees every contribution
         this.contentSecurityPolicy = webRequest.contentSecurityPolicy;
         this.setRawPath( webRequest.rawPath );
     }

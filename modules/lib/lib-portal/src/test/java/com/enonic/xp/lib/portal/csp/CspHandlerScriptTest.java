@@ -37,12 +37,6 @@ public class CspHandlerScriptTest
     }
 
     @Test
-    void resetAllRemovesAll()
-    {
-        runFunction( "/test/csp-test.js", "resetAllRemovesAll" );
-    }
-
-    @Test
     void resetWithNoArgsRemovesNothing()
     {
         runFunction( "/test/csp-test.js", "resetWithNoArgsRemovesNothing" );

@@ -1026,8 +1026,7 @@ export type TrustedTypesKeyword = typeof TrustedTypesKeyword[keyof typeof Truste
  * the secure default; the API emits what you declare. A contributor that genuinely needs the looser
  * source to win — e.g. an editor that must allow inline styles over a strict `style-src` — uses
  * {@link override} to replace the directive, which drops the nonce/hash that would otherwise neutralize
- * `'unsafe-inline'`. Relaxing is then an explicit, greppable act by the contributor that needs it,
- * rather than emergent merge magic applied to everyone.
+ * `'unsafe-inline'`.
  */
 export interface Csp {
     /**
@@ -1036,7 +1035,7 @@ export interface Csp {
      * `upgrade-insecure-requests`).
      *
      * A `'nonce-…'` source is rejected: only {@link nonceScriptSrc} / {@link nonceStyleSrc} mint
-     * the request nonce — a hand-supplied nonce is static across requests, which defeats it.
+     * the request nonce.
      */
     add(directive: string, ...sources: string[]): Csp;
 
@@ -1050,21 +1049,16 @@ export interface Csp {
     /**
      * Removes the named directives, overriding what other contributors set — e.g.
      * `reset('upgrade-insecure-requests')` is how a boolean directive is unset. With no argument,
-     * removes nothing; for a clean slate use {@link resetAll}. Policy-level and **not** additive.
+     * removes nothing; to clear the whole policy use {@link resetTo} with an empty value.
+     * Policy-level and **not** additive.
      */
     reset(...directives: string[]): Csp;
 
     /**
-     * Removes every directive (a clean slate), overriding what other contributors set. The request
-     * nonce is left intact. Policy-level and **not** additive — not for parts.
-     */
-    resetAll(): Csp;
-
-    /**
-     * Replaces the whole policy with the directives parsed from a raw header value — {@link resetAll}
-     * plus the header's own rules, so later contributions still apply on top. A `null`, `undefined`,
-     * empty or blank value is effectively {@link resetAll} — if nothing is added afterwards, no header
-     * is emitted. Parsing is lenient, mirroring the browser: invalid tokens are skipped, and of
+     * Replaces the whole policy with the directives parsed from a raw header value, so later
+     * contributions still apply on top. A `null`, `undefined`, empty or blank value clears the
+     * policy — if nothing is added afterwards, no header is emitted. The request nonce stays
+     * stable. Parsing is lenient, mirroring the browser: invalid tokens are skipped, and of
      * repeated directives only the first occurrence counts. `'nonce-…'` sources are likewise
      * dropped — use {@link nonceScriptSrc} / {@link nonceStyleSrc}. Policy-level and **not**
      * additive.
@@ -1141,7 +1135,7 @@ export interface Csp {
      */
     reportTo(group: string): Csp;
 
-    /** Registers `require-trusted-types-for 'script'` (the only sink group the spec defines). */
+    /** Registers `require-trusted-types-for 'script'`. */
     requireTrustedTypesForScript(): Csp;
 
     /** Adds policy names and/or {@link TrustedTypesKeyword} keywords to `trusted-types`. */
@@ -1167,13 +1161,13 @@ export interface Csp {
 
     /**
      * Wires the request nonce into `script-src` and returns its value (for stamping on inline
-     * `<script nonce="...">` tags). Lazily generated and cached for the request.
+     * `<script nonce="...">` tags). Always the same for the request.
      */
     nonceScriptSrc(): string;
 
     /**
      * Wires the request nonce into `style-src` and returns its value (for stamping on inline
-     * `<style nonce="...">` tags). Lazily generated and cached for the request.
+     * `<style nonce="...">` tags). Always the same for the request.
      */
     nonceStyleSrc(): string;
 }
@@ -1184,8 +1178,6 @@ interface CspHandler {
     override(directive: string, sources: string[]): void;
 
     reset(directives: string[]): void;
-
-    resetAll(): void;
 
     resetTo(headerValue: string | null): void;
 
@@ -1272,10 +1264,6 @@ export function csp(): Csp {
         },
         reset(...directives: string[]): Csp {
             bean.reset(directives);
-            return instance;
-        },
-        resetAll(): Csp {
-            bean.resetAll();
             return instance;
         },
         resetTo(headerValue?: string | null): Csp {

@@ -32,7 +32,7 @@ exports.returnsObject = function () {
     assert.assertEquals('function', typeof csp.reportTo);
     assert.assertEquals('function', typeof csp.requireTrustedTypesForScript);
     assert.assertEquals('function', typeof csp.trustedTypes);
-    assert.assertEquals('function', typeof csp.resetAll);
+    assert.assertEquals('undefined', typeof csp.resetAll);
     assert.assertEquals('function', typeof csp.resetTo);
     assert.assertEquals('undefined', typeof csp.reportOnly);
     assert.assertEquals('undefined', typeof csp.addPolicy);
@@ -60,14 +60,6 @@ exports.addAfterOverride = function () {
     csp.override('img-src', "'self'");
     csp.add('img-src', 'data:');
     assert.assertEquals("img-src 'self' data:", __.toNativeObject(testInstance.policyBuild()));
-};
-
-exports.resetAllRemovesAll = function () {
-    var csp = portal.csp();
-    csp.scriptSrc(portal.CspSource.SELF);
-    csp.imgSrc(portal.CspSource.SELF);
-    csp.resetAll();
-    assert.assertEquals('', __.toNativeObject(testInstance.policyBuild()));
 };
 
 exports.resetWithNoArgsRemovesNothing = function () {

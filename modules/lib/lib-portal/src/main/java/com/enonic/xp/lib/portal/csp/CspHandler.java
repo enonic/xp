@@ -30,11 +30,6 @@ public final class CspHandler
         policy().reset( directives );
     }
 
-    public void resetAll()
-    {
-        policy().resetAll();
-    }
-
     public void resetTo( final String headerValue )
     {
         policy().resetTo( headerValue );
