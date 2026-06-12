@@ -85,6 +85,12 @@ exports.resetToEmptyClearsPolicy = function () {
     assert.assertEquals('', __.toNativeObject(testInstance.policyBuild()));
 };
 
+exports.resetToParsesCommaSeparatedPolicies = function () {
+    var csp = portal.csp();
+    csp.resetTo("default-src 'none', script-src 'self'");
+    assert.assertEquals("default-src 'none', script-src 'self'", __.toNativeObject(testInstance.policyBuild()));
+};
+
 exports.resetToBlankClearsPolicy = function () {
     var csp = portal.csp();
     csp.scriptSrc(portal.CspSource.SELF);

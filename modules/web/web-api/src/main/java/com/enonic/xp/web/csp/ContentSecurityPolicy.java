@@ -94,6 +94,8 @@ public final class ContentSecurityPolicy
 
     private final List<ContentSecurityPolicy> additionalPolicies = new ArrayList<>();
 
+    private final List<ContentSecurityPolicy> resetToPolicies = new ArrayList<>();
+
     private final Nonce nonce;
 
     @Nullable
@@ -228,17 +230,37 @@ public final class ContentSecurityPolicy
      * not survive {@link #add} validation are skipped rather than thrown (hand-built headers are
      * arbitrary), and of repeated directives only the first occurrence counts.
      * {@code 'nonce-…'} sources are likewise dropped — a nonce baked into a header value is static
-     * across requests; use {@link #nonceScriptSrc()} / {@link #nonceStyleSrc()}. A policy-level
-     * escape hatch — not additive.
+     * across requests; use {@link #nonceScriptSrc()} / {@link #nonceStyleSrc()}.
+     *
+     * <p>A header value carrying several comma-separated policies is honored: the first policy
+     * replaces this rule set and each additional one is appended via {@link #addPolicy()}, so
+     * {@link #build()} output round-trips. A later {@code resetTo} replaces the policies a
+     * previous {@code resetTo} appended; policies added explicitly via {@link #addPolicy()} are
+     * untouched. A policy-level escape hatch — not additive.</p>
      */
     public ContentSecurityPolicy resetTo( @Nullable final String headerValue )
     {
         this.directives.clear();
+        this.additionalPolicies.removeAll( this.resetToPolicies );
+        this.resetToPolicies.clear();
         if ( headerValue == null )
         {
             return this;
         }
-        for ( final String part : headerValue.split( ";" ) )
+        final String[] policies = headerValue.split( "," );
+        parsePolicy( policies[0] );
+        for ( int i = 1; i < policies.length; i++ )
+        {
+            final ContentSecurityPolicy parsed = addPolicy();
+            parsed.parsePolicy( policies[i] );
+            this.resetToPolicies.add( parsed );
+        }
+        return this;
+    }
+
+    private void parsePolicy( final String policyValue )
+    {
+        for ( final String part : policyValue.split( ";" ) )
         {
             final String[] tokens = part.trim().split( "\\s+" );
             final String directive = tokens[0];
@@ -256,7 +278,6 @@ public final class ContentSecurityPolicy
             }
             this.directives.put( directive, set );
         }
-        return this;
     }
 
     /**

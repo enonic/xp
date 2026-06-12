@@ -1060,8 +1060,9 @@ export interface Csp {
      * policy — if nothing is added afterwards, no header is emitted. The request nonce stays
      * stable. Parsing is lenient, mirroring the browser: invalid tokens are skipped, and of
      * repeated directives only the first occurrence counts. `'nonce-…'` sources are likewise
-     * dropped — use {@link nonceScriptSrc} / {@link nonceStyleSrc}. Policy-level and **not**
-     * additive.
+     * dropped — use {@link nonceScriptSrc} / {@link nonceStyleSrc}. A header value carrying
+     * several comma-separated policies is honored: the browser enforces each of them, so a load
+     * must satisfy all. Policy-level and **not** additive.
      */
     resetTo(headerValue?: string | null): Csp;
 
@@ -1243,8 +1244,9 @@ interface CspHandler {
 }
 
 /**
- * Returns the request-scoped Content Security Policy. The same instance is
- * returned for the lifetime of the current portal request.
+ * Returns a handle to the request-scoped Content Security Policy. Each call returns a new
+ * handle, but all handles are backed by the same policy bound to the current portal request —
+ * contributions through any of them land in the same emitted header.
  *
  * @example-ref examples/portal/csp.js
  *

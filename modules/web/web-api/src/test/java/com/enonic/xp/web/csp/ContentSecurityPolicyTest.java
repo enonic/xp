@@ -788,7 +788,7 @@ class ContentSecurityPolicyTest
     void resetTo_is_lenient_and_skips_invalid_tokens()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy();
-        csp.resetTo( "scr!pt-src oops; script-src 'self' bad,token; ; img-src data:" );
+        csp.resetTo( "scr!pt-src oops; script-src 'self' bad\u0001token; ; img-src data:" );
         assertThat( csp.build() ).isEqualTo( "img-src data:; script-src 'self'" );
     }
 
@@ -810,6 +810,34 @@ class ContentSecurityPolicyTest
 
         final String nonce = csp.nonceScriptSrc();
         assertThat( csp.build() ).isEqualTo( "script-src 'self' 'nonce-" + nonce + "'; style-src 'unsafe-inline'" );
+    }
+
+    @Test
+    void resetTo_parses_comma_separated_policies_and_round_trips()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy();
+        csp.resetTo( "default-src 'none', script-src 'self'" );
+        assertThat( csp.build() ).isEqualTo( "default-src 'none', script-src 'self'" );
+        csp.resetTo( csp.build() );
+        assertThat( csp.build() ).isEqualTo( "default-src 'none', script-src 'self'" );
+    }
+
+    @Test
+    void resetTo_replaces_policies_a_previous_resetTo_appended()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy();
+        csp.resetTo( "default-src 'none', object-src 'none'" );
+        csp.resetTo( "img-src data:" );
+        assertThat( csp.build() ).isEqualTo( "img-src data:" );
+    }
+
+    @Test
+    void resetTo_with_comma_separated_policies_keeps_explicitly_added_policies()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy();
+        csp.addPolicy().objectSrc( CspSource.NONE );
+        csp.resetTo( "script-src 'self', img-src data:" );
+        assertThat( csp.build() ).isEqualTo( "script-src 'self', object-src 'none', img-src data:" );
     }
 
     @Test

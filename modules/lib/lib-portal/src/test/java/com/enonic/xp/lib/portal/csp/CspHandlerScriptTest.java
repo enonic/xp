@@ -55,6 +55,12 @@ public class CspHandlerScriptTest
     }
 
     @Test
+    void resetToParsesCommaSeparatedPolicies()
+    {
+        runFunction( "/test/csp-test.js", "resetToParsesCommaSeparatedPolicies" );
+    }
+
+    @Test
     void resetToBlankClearsPolicy()
     {
         runFunction( "/test/csp-test.js", "resetToBlankClearsPolicy" );
