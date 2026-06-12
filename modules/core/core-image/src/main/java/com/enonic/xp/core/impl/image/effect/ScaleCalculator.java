@@ -46,11 +46,11 @@ public interface ScaleCalculator
             if ( heightScale < widthScale )
             {
                 newWidth = width;
-                newHeight = (int) ( sourceHeight * widthScale );
+                newHeight = Math.max( height, (int) ( sourceHeight * widthScale ) );
             }
             else
             {
-                newWidth = (int) ( sourceWidth * heightScale );
+                newWidth = Math.max( width, (int) ( sourceWidth * heightScale ) );
                 newHeight = height;
             }
 
