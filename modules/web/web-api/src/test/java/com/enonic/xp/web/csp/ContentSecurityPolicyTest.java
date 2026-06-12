@@ -813,6 +813,26 @@ class ContentSecurityPolicyTest
     }
 
     @Test
+    void mintedNonce_is_passive_and_empty_until_a_nonce_call_mints()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy();
+        assertThat( csp.mintedNonce() ).isEmpty();
+        assertThat( csp.build() ).isEmpty();
+
+        final String nonce = csp.nonceScriptSrc();
+        assertThat( csp.mintedNonce() ).contains( nonce );
+    }
+
+    @Test
+    void mintedNonce_answers_for_the_whole_request_across_rule_sets()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy();
+        final String nonce = csp.reportOnly().nonceStyleSrc();
+        assertThat( csp.mintedNonce() ).contains( nonce );
+        assertThat( csp.addPolicy().mintedNonce() ).contains( nonce );
+    }
+
+    @Test
     void resetTo_parses_comma_separated_policies_and_round_trips()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy();

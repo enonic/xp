@@ -8,6 +8,7 @@ import java.util.Base64;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
 
@@ -609,6 +610,21 @@ public final class ContentSecurityPolicy
     public String nonceStyleSrc()
     {
         return nonceFor( STYLE_SRC );
+    }
+
+    /**
+     * The request nonce if some {@code nonce*} call already minted it during this request; empty
+     * otherwise. Passive: never mints a nonce and never touches a directive. For code late in the
+     * pipeline that injects markup and wants it to ride through a strict, nonce-based policy: stamp
+     * the nonce only when one is present — calling {@link #nonceScriptSrc()} instead would make the
+     * minted nonce the page's only {@code script-src} entry on pages whose policy has none, blocking
+     * every other script. The nonce is shared across the enforcing, report-only and added rule sets,
+     * so this answers for the whole request. It does not verify the entry is still wired into any
+     * directive (a later {@link #resetTo} drops wired entries while the value stays stable).
+     */
+    public Optional<String> mintedNonce()
+    {
+        return Optional.ofNullable( this.nonce.value );
     }
 
     /**
