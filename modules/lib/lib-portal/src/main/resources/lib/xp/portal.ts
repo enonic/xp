@@ -947,3 +947,449 @@ export interface MacroContext {
     params: Record<string, string | undefined>;
     request: Request;
 }
+
+export type CspHashAlgo = 'sha256' | 'sha384' | 'sha512';
+
+/**
+ * A hash source for `script-src` / `style-src`. Either inline `content` to be digested
+ * (`algo` defaults to `'sha256'`), or a precomputed base64 `hash` with its `algo` — the two are
+ * mutually exclusive.
+ */
+export type CspHashSource = XOR<{ content: string; algo?: CspHashAlgo }, { hash: string; algo: CspHashAlgo }>;
+
+/**
+ * Common source-list values for a CSP source expression, per W3C CSP3. Keyword sources are
+ * single-quoted (e.g. `'self'`); scheme sources are verbatim (e.g. `data:`). Variadic source
+ * params on {@link Csp} accept these values or raw strings (hosts, other schemes, paths, URLs).
+ */
+export const CspSource = {
+    SELF: "'self'",
+    NONE: "'none'",
+    UNSAFE_INLINE: "'unsafe-inline'",
+    UNSAFE_EVAL: "'unsafe-eval'",
+    STRICT_DYNAMIC: "'strict-dynamic'",
+    UNSAFE_HASHES: "'unsafe-hashes'",
+    WASM_UNSAFE_EVAL: "'wasm-unsafe-eval'",
+    REPORT_SAMPLE: "'report-sample'",
+    DATA: 'data:',
+    BLOB: 'blob:',
+    WILDCARD: '*',
+} as const;
+
+export type CspSource = typeof CspSource[keyof typeof CspSource];
+
+/**
+ * Flags allowed in a CSP `sandbox` directive. Sandbox tokens are emitted unquoted,
+ * as the CSP spec defines them.
+ */
+export const SandboxFlag = {
+    ALLOW_SCRIPTS: 'allow-scripts',
+    ALLOW_SAME_ORIGIN: 'allow-same-origin',
+    ALLOW_FORMS: 'allow-forms',
+    ALLOW_POPUPS: 'allow-popups',
+    ALLOW_MODALS: 'allow-modals',
+    ALLOW_TOP_NAVIGATION: 'allow-top-navigation',
+    ALLOW_DOWNLOADS: 'allow-downloads',
+    ALLOW_POINTER_LOCK: 'allow-pointer-lock',
+    ALLOW_PRESENTATION: 'allow-presentation',
+    ALLOW_ORIENTATION_LOCK: 'allow-orientation-lock',
+} as const;
+
+export type SandboxFlag = typeof SandboxFlag[keyof typeof SandboxFlag];
+
+/**
+ * Special keywords for the `trusted-types` directive, used alongside (user-defined) policy names.
+ * `'none'` / `'allow-duplicates'` are single-quoted; `WILDCARD` is the bare `*`.
+ */
+export const TrustedTypesKeyword = {
+    ALLOW_DUPLICATES: "'allow-duplicates'",
+    NONE: "'none'",
+    WILDCARD: '*',
+} as const;
+
+export type TrustedTypesKeyword = typeof TrustedTypesKeyword[keyof typeof TrustedTypesKeyword];
+
+/**
+ * A request-scoped Content Security Policy builder. The same instance is returned for the lifetime
+ * of the current portal request, so controllers, layouts, parts and widgets can each contribute to
+ * the final policy. The header is emitted as `Content-Security-Policy` at response-flush time, so
+ * late additions during rendering still land.
+ *
+ * Contributions are merged by plain **union**: each directive's source list is the union of every
+ * contributor's sources, emitted as written.
+ * - {@link add} unions sources into a directive (deduped).
+ * - {@link override} replaces a directive's sources — no freeze, so a later {@link add} still extends.
+ *
+ * The builder deliberately does **not** arbitrate between sources that interact in the browser —
+ * notably `'unsafe-inline'` sharing a directive with a `'nonce-…'`, hash, or `'strict-dynamic'`, which
+ * makes the browser ignore `'unsafe-inline'`. That precedence is the browser's documented behaviour and
+ * the secure default; the API emits what you declare. A contributor that genuinely needs the looser
+ * source to win — e.g. an editor that must allow inline styles over a strict `style-src` — uses
+ * {@link override} to replace the directive, which drops the nonce/hash that would otherwise neutralize
+ * `'unsafe-inline'`.
+ */
+export interface Csp {
+    /**
+     * Unions sources into the existing source set for `directive`, deduped.
+     * Pass no sources to register a boolean directive (e.g.
+     * `upgrade-insecure-requests`).
+     *
+     * A `'nonce-…'` source is rejected: only {@link nonceScriptSrc} / {@link nonceStyleSrc} mint
+     * the request nonce.
+     */
+    add(directive: string, ...sources: string[]): Csp;
+
+    /**
+     * Replaces the directive's source list with exactly these sources, overriding what other
+     * contributors set. Policy-level and **not** additive — it can narrow the policy. No freeze, so
+     * a later {@link add} still extends. To remove a directive entirely, use {@link reset}.
+     */
+    override(directive: string, ...sources: string[]): Csp;
+
+    /**
+     * Removes the named directives, overriding what other contributors set — e.g.
+     * `reset('upgrade-insecure-requests')` is how a boolean directive is unset. With no argument,
+     * removes nothing; to clear the whole policy use {@link resetTo} with an empty value.
+     * Policy-level and **not** additive.
+     */
+    reset(...directives: string[]): Csp;
+
+    /**
+     * Replaces the whole policy with the directives parsed from a raw header value, so later
+     * contributions still apply on top. A `null`, `undefined`, empty or blank value clears the
+     * policy — if nothing is added afterwards, no header is emitted. The request nonce stays
+     * stable. Parsing is lenient, mirroring the browser: invalid tokens are skipped, and of
+     * repeated directives only the first occurrence counts. `'nonce-…'` sources are likewise
+     * dropped — use {@link nonceScriptSrc} / {@link nonceStyleSrc}. A header value carrying
+     * several comma-separated policies is honored: the browser enforces each of them, so a load
+     * must satisfy all. Policy-level and **not** additive.
+     */
+    resetTo(headerValue?: string | null): Csp;
+
+    /**
+     * Seeds a restrictive deny-all baseline (`default-src 'none'`, `base-uri 'none'`,
+     * `frame-ancestors 'none'`). Call it first, then open up only the directives you need.
+     */
+    strict(): Csp;
+
+    /** Unions sources into `default-src`. */
+    defaultSrc(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions sources into `script-src`. */
+    scriptSrc(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions sources into `style-src`. */
+    styleSrc(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions sources into `img-src`. */
+    imgSrc(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions sources into `font-src`. */
+    fontSrc(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions sources into `connect-src`. */
+    connectSrc(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions sources into `media-src`. */
+    mediaSrc(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions sources into `object-src`. */
+    objectSrc(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions sources into `frame-src`. */
+    frameSrc(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions sources into `worker-src`. */
+    workerSrc(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions sources into `manifest-src`. */
+    manifestSrc(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions sources into `child-src`. */
+    childSrc(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions sources into `frame-ancestors`. */
+    frameAncestors(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions sources into `base-uri`. */
+    baseUri(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions sources into `form-action`. */
+    formAction(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions sources into `script-src-elem` (governs `<script>` elements). */
+    scriptSrcElem(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions sources into `script-src-attr` (governs inline event handlers). */
+    scriptSrcAttr(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions sources into `style-src-elem` (governs `<style>`/`<link rel=stylesheet>`). */
+    styleSrcElem(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions sources into `style-src-attr` (governs inline `style` attributes). */
+    styleSrcAttr(...sources: (CspSource | string)[]): Csp;
+
+    /**
+     * Adds the `report-to` directive naming a reporting group. The group must be defined by a
+     * companion `Reporting-Endpoints` response header (the caller's responsibility). `report-uri` is
+     * deprecated — use `add('report-uri', ...)` if still needed.
+     */
+    reportTo(group: string): Csp;
+
+    /** Registers `require-trusted-types-for 'script'`. */
+    requireTrustedTypesForScript(): Csp;
+
+    /** Adds policy names and/or {@link TrustedTypesKeyword} keywords to `trusted-types`. */
+    trustedTypes(...values: (TrustedTypesKeyword | string)[]): Csp;
+
+    /**
+     * Unions sandbox flags into the `sandbox` directive. With no flags, registers
+     * an empty `sandbox` (all restrictions applied).
+     */
+    sandbox(...flags: SandboxFlag[]): Csp;
+
+    /**
+     * Unions a hash source into `script-src`. Pass `{ content }` to digest inline script text
+     * (`algo` defaults to `'sha256'`), or `{ hash, algo }` for a precomputed base64 digest.
+     */
+    shaScriptSrc(source: CspHashSource): Csp;
+
+    /**
+     * Unions a hash source into `style-src`. Pass `{ content }` to digest inline style text
+     * (`algo` defaults to `'sha256'`), or `{ hash, algo }` for a precomputed base64 digest.
+     */
+    shaStyleSrc(source: CspHashSource): Csp;
+
+    /**
+     * Wires the request nonce into `script-src` and returns its value (for stamping on inline
+     * `<script nonce="...">` tags). Always the same for the request.
+     */
+    nonceScriptSrc(): string;
+
+    /**
+     * Wires the request nonce into `style-src` and returns its value (for stamping on inline
+     * `<style nonce="...">` tags). Always the same for the request.
+     */
+    nonceStyleSrc(): string;
+}
+
+interface CspHandler {
+    add(directive: string, sources: string[]): void;
+
+    override(directive: string, sources: string[]): void;
+
+    reset(directives: string[]): void;
+
+    resetTo(headerValue: string | null): void;
+
+    strict(): void;
+
+    defaultSrc(sources: string[]): void;
+
+    scriptSrc(sources: string[]): void;
+
+    styleSrc(sources: string[]): void;
+
+    imgSrc(sources: string[]): void;
+
+    fontSrc(sources: string[]): void;
+
+    connectSrc(sources: string[]): void;
+
+    mediaSrc(sources: string[]): void;
+
+    objectSrc(sources: string[]): void;
+
+    frameSrc(sources: string[]): void;
+
+    workerSrc(sources: string[]): void;
+
+    manifestSrc(sources: string[]): void;
+
+    childSrc(sources: string[]): void;
+
+    frameAncestors(sources: string[]): void;
+
+    baseUri(sources: string[]): void;
+
+    formAction(sources: string[]): void;
+
+    scriptSrcElem(sources: string[]): void;
+
+    scriptSrcAttr(sources: string[]): void;
+
+    styleSrcElem(sources: string[]): void;
+
+    styleSrcAttr(sources: string[]): void;
+
+    reportTo(group: string): void;
+
+    requireTrustedTypesForScript(): void;
+
+    trustedTypes(values: string[]): void;
+
+    sandbox(flags: string[]): void;
+
+    shaScriptSrcContent(content: string, algo: string | null): void;
+
+    shaScriptSrcDigest(base64: string, algo: string): void;
+
+    shaStyleSrcContent(content: string, algo: string | null): void;
+
+    shaStyleSrcDigest(base64: string, algo: string): void;
+
+    nonceScriptSrc(): string;
+
+    nonceStyleSrc(): string;
+}
+
+/**
+ * Returns a handle to the request-scoped Content Security Policy. Each call returns a new
+ * handle, but all handles are backed by the same policy bound to the current portal request —
+ * contributions through any of them land in the same emitted header.
+ *
+ * @example-ref examples/portal/csp.js
+ *
+ * @returns {Csp} The Content Security Policy bound to the current portal request.
+ */
+export function csp(): Csp {
+    const bean: CspHandler = __.newBean<CspHandler>('com.enonic.xp.lib.portal.csp.CspHandler');
+
+    const instance: Csp = {
+        add(directive: string, ...sources: string[]): Csp {
+            bean.add(directive, sources);
+            return instance;
+        },
+        override(directive: string, ...sources: string[]): Csp {
+            bean.override(directive, sources);
+            return instance;
+        },
+        reset(...directives: string[]): Csp {
+            bean.reset(directives);
+            return instance;
+        },
+        resetTo(headerValue?: string | null): Csp {
+            bean.resetTo(headerValue ?? null);
+            return instance;
+        },
+        strict(): Csp {
+            bean.strict();
+            return instance;
+        },
+        defaultSrc(...sources: (CspSource | string)[]): Csp {
+            bean.defaultSrc(sources);
+            return instance;
+        },
+        scriptSrc(...sources: (CspSource | string)[]): Csp {
+            bean.scriptSrc(sources);
+            return instance;
+        },
+        styleSrc(...sources: (CspSource | string)[]): Csp {
+            bean.styleSrc(sources);
+            return instance;
+        },
+        imgSrc(...sources: (CspSource | string)[]): Csp {
+            bean.imgSrc(sources);
+            return instance;
+        },
+        fontSrc(...sources: (CspSource | string)[]): Csp {
+            bean.fontSrc(sources);
+            return instance;
+        },
+        connectSrc(...sources: (CspSource | string)[]): Csp {
+            bean.connectSrc(sources);
+            return instance;
+        },
+        mediaSrc(...sources: (CspSource | string)[]): Csp {
+            bean.mediaSrc(sources);
+            return instance;
+        },
+        objectSrc(...sources: (CspSource | string)[]): Csp {
+            bean.objectSrc(sources);
+            return instance;
+        },
+        frameSrc(...sources: (CspSource | string)[]): Csp {
+            bean.frameSrc(sources);
+            return instance;
+        },
+        workerSrc(...sources: (CspSource | string)[]): Csp {
+            bean.workerSrc(sources);
+            return instance;
+        },
+        manifestSrc(...sources: (CspSource | string)[]): Csp {
+            bean.manifestSrc(sources);
+            return instance;
+        },
+        childSrc(...sources: (CspSource | string)[]): Csp {
+            bean.childSrc(sources);
+            return instance;
+        },
+        frameAncestors(...sources: (CspSource | string)[]): Csp {
+            bean.frameAncestors(sources);
+            return instance;
+        },
+        baseUri(...sources: (CspSource | string)[]): Csp {
+            bean.baseUri(sources);
+            return instance;
+        },
+        formAction(...sources: (CspSource | string)[]): Csp {
+            bean.formAction(sources);
+            return instance;
+        },
+        scriptSrcElem(...sources: (CspSource | string)[]): Csp {
+            bean.scriptSrcElem(sources);
+            return instance;
+        },
+        scriptSrcAttr(...sources: (CspSource | string)[]): Csp {
+            bean.scriptSrcAttr(sources);
+            return instance;
+        },
+        styleSrcElem(...sources: (CspSource | string)[]): Csp {
+            bean.styleSrcElem(sources);
+            return instance;
+        },
+        styleSrcAttr(...sources: (CspSource | string)[]): Csp {
+            bean.styleSrcAttr(sources);
+            return instance;
+        },
+        reportTo(group: string): Csp {
+            bean.reportTo(group);
+            return instance;
+        },
+        requireTrustedTypesForScript(): Csp {
+            bean.requireTrustedTypesForScript();
+            return instance;
+        },
+        trustedTypes(...values: (TrustedTypesKeyword | string)[]): Csp {
+            bean.trustedTypes(values);
+            return instance;
+        },
+        sandbox(...flags: SandboxFlag[]): Csp {
+            bean.sandbox(flags);
+            return instance;
+        },
+        shaScriptSrc(source: CspHashSource): Csp {
+            if (source.content !== undefined) {
+                bean.shaScriptSrcContent(source.content, __.nullOrValue(source.algo));
+            } else {
+                bean.shaScriptSrcDigest(source.hash, source.algo);
+            }
+            return instance;
+        },
+        shaStyleSrc(source: CspHashSource): Csp {
+            if (source.content !== undefined) {
+                bean.shaStyleSrcContent(source.content, __.nullOrValue(source.algo));
+            } else {
+                bean.shaStyleSrcDigest(source.hash, source.algo);
+            }
+            return instance;
+        },
+        nonceScriptSrc(): string {
+            return bean.nonceScriptSrc();
+        },
+        nonceStyleSrc(): string {
+            return bean.nonceStyleSrc();
+        },
+    };
+    return instance;
+}

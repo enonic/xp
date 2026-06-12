@@ -14,11 +14,14 @@ import com.google.common.net.MediaType;
 
 import jakarta.servlet.http.Cookie;
 
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.postprocess.HtmlTag;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.csp.ContentSecurityPolicy;
 import com.enonic.xp.web.sse.SseConfig;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 
@@ -162,6 +165,10 @@ public final class PortalResponseSerializer
         for ( final String key : value.getKeys() )
         {
             final ScriptValue headerValue = value.getMember( key );
+            if ( foldContentSecurityPolicy( key, headerValue ) )
+            {
+                continue;
+            }
             if ( headerValue == null )
             {
                 builder.removeHeader( key );
@@ -171,6 +178,30 @@ public final class PortalResponseSerializer
                 builder.header( key, headerValue.getValue( String.class ) );
             }
         }
+    }
+
+    /**
+     * A CSP header a controller sets directly is folded into the request policy — replaced by the
+     * header's own rules — instead of travelling as a plain header: the policy stays the
+     * single source of truth, later contributions (post-process, filters) still apply on top, and
+     * the platform serializes the composed value. A {@code null} value clears the rule set.
+     */
+    private static boolean foldContentSecurityPolicy( final String name, final ScriptValue value )
+    {
+        final boolean enforced = ContentSecurityPolicy.HEADER_NAME.equalsIgnoreCase( name );
+        if ( !enforced && !ContentSecurityPolicy.REPORT_ONLY_HEADER_NAME.equalsIgnoreCase( name ) )
+        {
+            return false;
+        }
+        final PortalRequest request = PortalRequestAccessor.get();
+        if ( request == null )
+        {
+            return false;
+        }
+        final ContentSecurityPolicy policy =
+            enforced ? request.getContentSecurityPolicy() : request.getContentSecurityPolicy().reportOnly();
+        policy.resetTo( value != null ? value.getValue( String.class ) : null );
+        return true;
     }
 
     private void populateCookies( final PortalResponse.Builder builder, final ScriptValue value )

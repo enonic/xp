@@ -15,6 +15,7 @@ import com.enonic.xp.resource.Resource;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
+import com.enonic.xp.web.csp.ContentSecurityPolicy;
 
 public final class ResponseSerializer
 {
@@ -42,8 +43,30 @@ public final class ResponseSerializer
         response.setContentType( this.webResponse.getContentType().toString() );
 
         this.webResponse.getHeaders().forEach( response::setHeader );
+        serializeContentSecurityPolicy( response );
         this.webResponse.getCookies().forEach( response::addCookie );
         serializeBody( response, this.webResponse.getBody() );
+    }
+
+    /**
+     * The request policy is the source of truth for both CSP headers: a non-empty rule set
+     * overrides a header of the same name set directly on the response (a directly-set header
+     * should have been folded into the policy where it was set). An empty rule set emits nothing,
+     * leaving a directly-set header as is.
+     */
+    private void serializeContentSecurityPolicy( final HttpServletResponse response )
+    {
+        final ContentSecurityPolicy policy = this.webRequest.getContentSecurityPolicy();
+        setIfNotEmpty( response, ContentSecurityPolicy.HEADER_NAME, policy.build() );
+        setIfNotEmpty( response, ContentSecurityPolicy.REPORT_ONLY_HEADER_NAME, policy.reportOnly().build() );
+    }
+
+    private static void setIfNotEmpty( final HttpServletResponse response, final String name, final String value )
+    {
+        if ( !value.isEmpty() )
+        {
+            response.setHeader( name, value );
+        }
     }
 
     private void serializeBody( final HttpServletResponse response, final Object body )
