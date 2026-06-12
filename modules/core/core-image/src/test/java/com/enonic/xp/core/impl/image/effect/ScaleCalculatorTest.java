@@ -52,6 +52,15 @@ class ScaleCalculatorTest
     }
 
     @Test
+    void block_same_aspect_ratio_floating_point_truncation()
+    {
+        final ScaleCalculator.Values values = ScaleCalculator.block( 804, 603, 0.5, 0.5 ).calc( 800, 600 );
+
+        assertThat( values ).extracting( v -> v.newWidth, v -> v.newHeight, v -> v.widthOffset, v -> v.heightOffset, v -> v.viewWidth,
+                                         v -> v.viewHeight ).containsExactly( 804, 603, 0, 0, 804, 603 );
+    }
+
+    @Test
     void block_focal_lower_right()
     {
         final ScaleCalculator.Values values = ScaleCalculator.block( 10, 10, 1, 1 ).calc( 200, 100 );
