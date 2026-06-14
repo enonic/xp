@@ -58,7 +58,7 @@ import static java.util.Objects.requireNonNull;
  * <p>A response can also carry several <i>enforced</i> policies: the browser enforces each one
  * independently, so a load must satisfy all of them — an extra policy can only restrict, never
  * broaden. {@link #addPolicy()} appends such a policy (comma-joined into the same header value by
- * {@link ContentSecurityPolicySerializer}), for a context that must impose a baseline on content
+ * {@link #serialize()}), for a context that must impose a baseline on content
  * whose own policy it does not fully trust.</p>
  *
  * <p>A {@code 'nonce-'} source is valid only on {@code script-src} and {@code style-src}: use
@@ -86,6 +86,8 @@ public final class ContentSecurityPolicy
     private static final String SCRIPT_SRC = "script-src";
 
     private static final String STYLE_SRC = "style-src";
+
+    private static final String NONE = "'none'";
 
     private static final String NONCE_SOURCE_PREFIX = "'nonce-";
 
@@ -148,7 +150,7 @@ public final class ContentSecurityPolicy
      * restrict, never broaden, what this policy allows. Its use is imposing a baseline on content
      * whose own policy the serving context does not fully trust (e.g. an admin context rendering
      * site content); each call appends one more policy, comma-joined into the same header value by
-     * {@link ContentSecurityPolicySerializer}. While left empty, an added policy is not emitted.
+     * {@link #serialize()}. While left empty, an added policy is not emitted.
      *
      * <p>The returned rule set has the full API and shares the request nonce. Order matters when
      * seeding it from a raw header value: {@link #resetTo} first (it starts from a clean slate and
@@ -194,31 +196,13 @@ public final class ContentSecurityPolicy
      * returns an empty set. The returned set is an immutable snapshot. Lets a baseline gap-fill what
      * is missing without overriding what is set —
      * {@code if ( policy.directive( name ).isEmpty() ) policy.add( name, … )} — and a contributor
-     * probe what another already set. Reads this rule set only: added policies and the report-only
-     * set are reached via {@link #addedPolicies()} and {@link #reportOnly()}.
+     * probe what another already set. Reads this rule set only; the report-only set is reached via
+     * {@link #reportOnly()}.
      */
     public Optional<SequencedSet<String>> directive( final String directive )
     {
         final LinkedHashSet<String> sources = this.directives.get( directive );
         return sources == null ? Optional.empty() : Optional.of( Collections.unmodifiableSequencedSet( new LinkedHashSet<>( sources ) ) );
-    }
-
-    /**
-     * The names of every directive declared on this rule set, in the alphabetical order they are
-     * emitted. Immutable snapshot.
-     */
-    public SequencedSet<String> directiveNames()
-    {
-        return Collections.unmodifiableSequencedSet( new LinkedHashSet<>( this.directives.keySet() ) );
-    }
-
-    /**
-     * The enforced policies appended via {@link #addPolicy()}, in insertion order; each is rendered
-     * as its own comma-separated policy. Immutable snapshot of the list — the policies stay live.
-     */
-    public List<ContentSecurityPolicy> addedPolicies()
-    {
-        return List.copyOf( this.additionalPolicies );
     }
 
     /**
@@ -269,7 +253,7 @@ public final class ContentSecurityPolicy
      *
      * <p>A header value carrying several comma-separated policies is honored: the first policy
      * replaces this rule set and each additional one is appended via {@link #addPolicy()}, so
-     * {@link ContentSecurityPolicySerializer} output round-trips. A later {@code resetTo} replaces the policies a
+     * {@link #serialize()} output round-trips. A later {@code resetTo} replaces the policies a
      * previous {@code resetTo} appended; policies added explicitly via {@link #addPolicy()} are
      * untouched. A policy-level escape hatch — not additive.</p>
      */
@@ -672,6 +656,57 @@ public final class ContentSecurityPolicy
         final String nonceValue = this.nonce.get();
         this.directives.computeIfAbsent( directive, k -> new LinkedHashSet<>() ).add( "'nonce-" + nonceValue + "'" );
         return nonceValue;
+    }
+
+    /**
+     * Renders the current state as a {@code Content-Security-Policy} header value. Returns the
+     * empty string when no directive has been added — callers should skip emitting the header in
+     * that case. This is the platform's response-serialization step, run when the web response
+     * completes; contributors build the policy up through the methods above and do not call this.
+     *
+     * <p>Directives are emitted in alphabetical order for deterministic output; sources within a
+     * directive follow insertion order. Sources are emitted as the plain union of all contributions —
+     * the browser applies its own precedence between interacting sources (the policy does not). The
+     * one tidy-up: a redundant {@code 'none'} (the union identity — it matches nothing) is omitted
+     * from a directive that also carries real sources, since any real source already supersedes it.</p>
+     *
+     * <p>Non-empty policies appended via {@link #addPolicy()} follow, comma-separated, in insertion
+     * order — the standard form for several policies in one header value.</p>
+     */
+    public String serialize()
+    {
+        final StringBuilder sb = new StringBuilder();
+        for ( final Map.Entry<String, LinkedHashSet<String>> entry : this.directives.entrySet() )
+        {
+            if ( sb.length() > 0 )
+            {
+                sb.append( "; " );
+            }
+            sb.append( entry.getKey() );
+            final LinkedHashSet<String> sources = entry.getValue();
+            final boolean dropNone = sources.size() > 1 && sources.contains( NONE );
+            for ( final String source : sources )
+            {
+                if ( dropNone && source.equals( NONE ) )
+                {
+                    continue;
+                }
+                sb.append( ' ' ).append( source );
+            }
+        }
+        for ( final ContentSecurityPolicy additional : this.additionalPolicies )
+        {
+            final String value = additional.serialize();
+            if ( !value.isEmpty() )
+            {
+                if ( sb.length() > 0 )
+                {
+                    sb.append( ", " );
+                }
+                sb.append( value );
+            }
+        }
+        return sb.toString();
     }
 
     private static String validDirective( final String directive )
