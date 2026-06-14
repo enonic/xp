@@ -8,6 +8,7 @@ import java.util.Base64;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.testing.ScriptTestSupport;
+import com.enonic.xp.web.csp.ContentSecurityPolicySerializer;
 
 public class CspHandlerScriptTest
     extends ScriptTestSupport
@@ -266,7 +267,7 @@ public class CspHandlerScriptTest
 
     public String policyBuild()
     {
-        return this.portalRequest.getContentSecurityPolicy().build();
+        return ContentSecurityPolicySerializer.serialize( this.portalRequest.getContentSecurityPolicy() );
     }
 
     public String shaBase64( final String content, final String algorithm )
