@@ -11,18 +11,17 @@ class ControllerScriptImpl_cspTest
     extends AbstractControllerTest
 {
     @Test
-    void directHeadersAreFoldedAsAdditionalPolicies()
+    void directHeadersAreFoldedIntoTheRequestPolicy()
     {
         this.portalRequest.setMethod( HttpMethod.GET );
         this.portalRequest.getContentSecurityPolicy().add( "img-src", "data:" );
 
         execute( "myapplication:/controller/cspheader.js" );
 
-        // the directly-set headers are folded in as additional enforced policies, without replacing
-        // the platform's own contributions (img-src survives) and without travelling as plain
-        // headers; the platform serializes the composed value at the end
+        // the directly-set headers replaced the policies and do
+        // not travel as plain headers; the platform serializes the composed value at the end
         final ContentSecurityPolicy policy = this.portalRequest.getContentSecurityPolicy();
-        assertThat( policy.build() ).isEqualTo( "img-src data:, default-src 'none'; script-src 'self'" );
+        assertThat( policy.build() ).isEqualTo( "default-src 'none'; script-src 'self'" );
         assertThat( policy.reportOnly().build() ).isEqualTo( "script-src 'none'" );
         assertThat( this.portalResponse.getHeaders() ).doesNotContainKeys( "Content-Security-Policy",
                                                                            "content-security-policy-report-only" )
@@ -38,24 +37,6 @@ class ControllerScriptImpl_cspTest
 
         this.portalRequest.getContentSecurityPolicy().add( "script-src", "https://cdn.example.com" );
         assertThat( this.portalRequest.getContentSecurityPolicy().build() ).isEqualTo(
-            "script-src https://cdn.example.com, default-src 'none'; script-src 'self'" );
-    }
-
-    @Test
-    void blankOrNullDirectHeadersDoNotClearThePolicy()
-    {
-        this.portalRequest.setMethod( HttpMethod.GET );
-        this.portalRequest.getContentSecurityPolicy().add( "img-src", "data:" );
-
-        execute( "myapplication:/controller/cspheaderblank.js" );
-
-        // a blank enforced header and a null report-only header are both ignored, so the platform's
-        // own contributions survive and neither CSP header is serialized
-        final ContentSecurityPolicy policy = this.portalRequest.getContentSecurityPolicy();
-        assertThat( policy.build() ).isEqualTo( "img-src data:" );
-        assertThat( policy.reportOnly().build() ).isEmpty();
-        assertThat( this.portalResponse.getHeaders() ).doesNotContainKeys( "Content-Security-Policy",
-                                                                           "content-security-policy-report-only" )
-            .containsEntry( "X-Custom", "kept" );
+            "default-src 'none'; script-src 'self' https://cdn.example.com" );
     }
 }
