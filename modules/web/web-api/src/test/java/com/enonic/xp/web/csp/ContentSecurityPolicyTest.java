@@ -32,6 +32,15 @@ class ContentSecurityPolicyTest
     }
 
     @Test
+    void addIfAbsent_fills_only_missing_directives()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().add( "script-src", "'self'", "https://cdn.example.com" );
+        csp.addIfAbsent( "script-src", "'self'" );
+        csp.addIfAbsent( "connect-src", "'self'" );
+        assertThat( csp.build() ).isEqualTo( "connect-src 'self'; script-src 'self' https://cdn.example.com" );
+    }
+
+    @Test
     void override_after_add_replaces_directive()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy().add( "script-src", "'self'", "https://cdn.example.com" )

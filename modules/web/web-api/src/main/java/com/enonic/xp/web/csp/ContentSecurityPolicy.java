@@ -188,6 +188,21 @@ public final class ContentSecurityPolicy
     }
 
     /**
+     * Adds {@code sources} under {@code directive} only when the directive is not already present,
+     * leaving a directive another contributor (or a previewed page) already declared untouched. Lets
+     * a baseline gap-fill what is missing without overriding what is set. Java-only, like
+     * {@link #mintedNonce()}: not exposed to scripts.
+     */
+    public ContentSecurityPolicy addIfAbsent( final String directive, final String... sources )
+    {
+        if ( !this.directives.containsKey( validDirective( directive ) ) )
+        {
+            add( directive, sources );
+        }
+        return this;
+    }
+
+    /**
      * Replaces the source list for {@code directive} with exactly {@code sources}, overriding what
      * other contributors set. A policy-level escape hatch — unlike {@link #add(String, String...)} it
      * is not additive and can narrow the policy. There is no freeze, so a later {@code add} still
