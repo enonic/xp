@@ -1,0 +1,19 @@
+<node>
+  <childOrder>_name DESC</childOrder>
+  <nodeType>content</nodeType>
+  <permissions/>
+  <data>
+    <string name="myString">myStringValue</string>
+    <binaryReference name="myImage">../../../../../../../../etc/passwd</binaryReference>
+  </data>
+  <indexConfigs>
+    <defaultConfig>
+      <decideByType>false</decideByType>
+      <enabled>true</enabled>
+      <nGram>true</nGram>
+      <fulltext>true</fulltext>
+      <includeInAllText>true</includeInAllText>
+    </defaultConfig>
+    <pathIndexConfigs/>
+  </indexConfigs>
+</node>
