@@ -1,6 +1,6 @@
 package com.enonic.xp.web.csp;
 
-import java.util.List;
+import java.util.SequencedSet;
 
 import org.jspecify.annotations.NullMarked;
 
@@ -36,7 +36,7 @@ public final class ContentSecurityPolicySerializer
         final StringBuilder sb = new StringBuilder();
         for ( final String directive : policy.directiveNames() )
         {
-            final List<String> sources = policy.directive( directive ).orElseThrow();
+            final SequencedSet<String> sources = policy.directive( directive ).orElseThrow();
             if ( sb.length() > 0 )
             {
                 sb.append( "; " );

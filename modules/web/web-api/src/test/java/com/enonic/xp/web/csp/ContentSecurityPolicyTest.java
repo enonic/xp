@@ -2,7 +2,6 @@ package com.enonic.xp.web.csp;
 
 import java.security.MessageDigest;
 import java.util.Base64;
-import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
@@ -40,7 +39,7 @@ class ContentSecurityPolicyTest
         // loosening the page to allow same-origin scripts. Gating on directive().isEmpty() leaves
         // the declared script-src alone and fills only the missing connect-src.
         final ContentSecurityPolicy csp = new ContentSecurityPolicy().add( "script-src", "'none'" );
-        assertThat( csp.directive( "script-src" ) ).contains( List.of( "'none'" ) );
+        assertThat( csp.directive( "script-src" ) ).hasValueSatisfying( sources -> assertThat( sources ).containsExactly( "'none'" ) );
         assertThat( csp.directive( "connect-src" ) ).isEmpty();
 
         for ( final String directive : new String[]{"script-src", "connect-src"} )

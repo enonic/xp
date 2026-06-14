@@ -5,10 +5,12 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.SequencedSet;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
 
@@ -186,27 +188,28 @@ public final class ContentSecurityPolicy
     }
 
     /**
-     * The sources currently declared for {@code directive}, in insertion order, or
-     * {@link Optional#empty()} if no contributor has declared it. A present directive with no
-     * sources (a boolean directive such as {@code upgrade-insecure-requests}) returns an empty list.
-     * The returned list is an immutable snapshot. Lets a baseline gap-fill what is missing without
-     * overriding what is set — {@code if ( policy.directive( name ).isEmpty() ) policy.add( name, … )}
-     * — and a contributor probe what another already set. Reads this rule set only: added policies
-     * and the report-only set are reached via {@link #addedPolicies()} and {@link #reportOnly()}.
+     * The sources currently declared for {@code directive}, deduplicated and in insertion order
+     * (the order they are emitted), or {@link Optional#empty()} if no contributor has declared it. A
+     * present directive with no sources (a boolean directive such as {@code upgrade-insecure-requests})
+     * returns an empty set. The returned set is an immutable snapshot. Lets a baseline gap-fill what
+     * is missing without overriding what is set —
+     * {@code if ( policy.directive( name ).isEmpty() ) policy.add( name, … )} — and a contributor
+     * probe what another already set. Reads this rule set only: added policies and the report-only
+     * set are reached via {@link #addedPolicies()} and {@link #reportOnly()}.
      */
-    public Optional<List<String>> directive( final String directive )
+    public Optional<SequencedSet<String>> directive( final String directive )
     {
         final LinkedHashSet<String> sources = this.directives.get( directive );
-        return sources == null ? Optional.empty() : Optional.of( List.copyOf( sources ) );
+        return sources == null ? Optional.empty() : Optional.of( Collections.unmodifiableSequencedSet( new LinkedHashSet<>( sources ) ) );
     }
 
     /**
      * The names of every directive declared on this rule set, in the alphabetical order they are
      * emitted. Immutable snapshot.
      */
-    public List<String> directiveNames()
+    public SequencedSet<String> directiveNames()
     {
-        return List.copyOf( this.directives.keySet() );
+        return Collections.unmodifiableSequencedSet( new LinkedHashSet<>( this.directives.keySet() ) );
     }
 
     /**
