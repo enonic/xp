@@ -32,12 +32,15 @@ class ContentSecurityPolicyTest
     }
 
     @Test
-    void addIfAbsent_fills_only_missing_directives()
+    void addIfAbsent_fills_gaps_without_touching_a_declared_directive()
     {
-        final ContentSecurityPolicy csp = new ContentSecurityPolicy().add( "script-src", "'self'", "https://cdn.example.com" );
+        // add( "script-src", "'self'" ) here would union 'self' and drop the 'none' identity,
+        // loosening the page to allow same-origin scripts. addIfAbsent leaves the declared
+        // script-src alone and only fills the missing connect-src.
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().add( "script-src", "'none'" );
         csp.addIfAbsent( "script-src", "'self'" );
         csp.addIfAbsent( "connect-src", "'self'" );
-        assertThat( csp.build() ).isEqualTo( "connect-src 'self'; script-src 'self' https://cdn.example.com" );
+        assertThat( csp.build() ).isEqualTo( "connect-src 'self'; script-src 'none'" );
     }
 
     @Test
