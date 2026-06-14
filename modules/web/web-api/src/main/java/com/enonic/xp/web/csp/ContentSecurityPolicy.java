@@ -5,12 +5,10 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.SequencedSet;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
 
@@ -190,19 +188,19 @@ public final class ContentSecurityPolicy
     }
 
     /**
-     * The sources currently declared for {@code directive}, deduplicated and in insertion order
-     * (the order they are emitted), or {@link Optional#empty()} if no contributor has declared it. A
-     * present directive with no sources (a boolean directive such as {@code upgrade-insecure-requests})
-     * returns an empty set. The returned set is an immutable snapshot. Lets a baseline gap-fill what
-     * is missing without overriding what is set —
+     * The sources currently declared for {@code directive}, in the order they are emitted (already
+     * deduplicated, since contributions union into a set), or {@link Optional#empty()} if no
+     * contributor has declared it. A present directive with no sources (a boolean directive such as
+     * {@code upgrade-insecure-requests}) returns an empty list. The returned list is an immutable
+     * snapshot. Lets a baseline gap-fill what is missing without overriding what is set —
      * {@code if ( policy.directive( name ).isEmpty() ) policy.add( name, … )} — and a contributor
      * probe what another already set. Reads this rule set only; the report-only set is reached via
      * {@link #reportOnly()}.
      */
-    public Optional<SequencedSet<String>> directive( final String directive )
+    public Optional<List<String>> directive( final String directive )
     {
         final LinkedHashSet<String> sources = this.directives.get( directive );
-        return sources == null ? Optional.empty() : Optional.of( Collections.unmodifiableSequencedSet( new LinkedHashSet<>( sources ) ) );
+        return sources == null ? Optional.empty() : Optional.of( List.copyOf( sources ) );
     }
 
     /**
