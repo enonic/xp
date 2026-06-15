@@ -16,6 +16,7 @@ import com.enonic.xp.core.impl.export.validator.ImportValidator;
 import com.enonic.xp.core.impl.export.xml.XmlException;
 import com.enonic.xp.core.impl.export.xml.XmlNodeParser;
 import com.enonic.xp.core.impl.export.xml.XsltTransformer;
+import com.enonic.xp.core.internal.FileNames;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
@@ -361,6 +362,12 @@ public final class NodeImporter
     private VirtualFile tryFindBinaryFile( final VirtualFile nodeFile, final BinaryReference binaryReference )
     {
         final String binaryReferenceAsString = binaryReference.toString();
+
+        if ( !FileNames.isSafeFileName( Normalizer.normalize( binaryReferenceAsString, Normalizer.Form.NFC ) ) )
+        {
+            throw new ImportNodeException( "Invalid binary reference: " + binaryReferenceAsString );
+        }
+
         final VirtualFile binaryOriginal =
             nodeFile.resolve( nodeFile.getPath().join( SYSTEM_FOLDER_NAME, BINARY_FOLDER, binaryReferenceAsString ) );
 

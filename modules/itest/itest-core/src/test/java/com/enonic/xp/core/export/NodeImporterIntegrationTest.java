@@ -390,6 +390,27 @@ class NodeImporterIntegrationTest
     }
 
     @Test
+    void import_with_binary_path_traversal_rejected()
+        throws Exception
+    {
+        final Path file = Files.createDirectories(
+            resolveInTemporaryFolder( "myExport", "mynode" ).resolve( NodeExportPathResolver.SYSTEM_FOLDER_NAME ) ).resolve(
+            NodeExportPathResolver.NODE_XML_EXPORT_NAME );
+        copyFormResource( "node_with_traversal_binary.xml", file );
+
+        final NodeImportResult result = NodeImporter.create().
+            nodeService( this.nodeService ).
+            targetNodePath( NodePath.ROOT ).
+            sourceDirectory( VirtualFiles.from( temporaryFolder.resolve( "myExport" ) ) ).
+            build().
+            execute();
+
+        assertNull( nodeService.getByPath( new NodePath( "/mynode" ) ) );
+        assertTrue( result.getImportErrors().stream()
+                        .anyMatch( error -> error.getException().contains( "Invalid binary reference" ) ) );
+    }
+
+    @Test
     void import_special_characters()
         throws Exception
     {
