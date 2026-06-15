@@ -83,6 +83,8 @@ public final class ContentSecurityPolicy
 
     private static final String SCRIPT_SRC = "script-src";
 
+    private static final String SCRIPT_SRC_ELEM = "script-src-elem";
+
     private static final String STYLE_SRC = "style-src";
 
     private static final String NONE = "'none'";
@@ -620,27 +622,23 @@ public final class ContentSecurityPolicy
     }
 
     /**
+     * Wires the request nonce into {@code script-src-elem} and returns its value (for stamping on a
+     * {@code <script nonce="...">} element that must satisfy a page whose {@code script-src-elem}
+     * uses {@code 'strict-dynamic'}, where {@code 'self'} and host sources are ignored). A nonce is
+     * valid on {@code script-src-elem} per CSP Level 3.
+     */
+    public String nonceScriptSrcElem()
+    {
+        return nonceFor( SCRIPT_SRC_ELEM );
+    }
+
+    /**
      * Wires the request nonce into {@code style-src} and returns its value (for stamping on inline
      * {@code <style nonce="...">} tags).
      */
     public String nonceStyleSrc()
     {
         return nonceFor( STYLE_SRC );
-    }
-
-    /**
-     * The request nonce if some {@code nonce*} call already minted it during this request; empty
-     * otherwise. Passive: never mints a nonce and never touches a directive. For code late in the
-     * pipeline that injects markup and wants it to ride through a strict, nonce-based policy: stamp
-     * the nonce only when one is present — calling {@link #nonceScriptSrc()} instead would make the
-     * minted nonce the page's only {@code script-src} entry on pages whose policy has none, blocking
-     * every other script. The nonce is shared across the enforcing, report-only and added rule sets,
-     * so this answers for the whole request. It does not verify the entry is still wired into any
-     * directive (a later {@link #resetTo} drops wired entries while the value stays stable).
-     */
-    public Optional<String> mintedNonce()
-    {
-        return Optional.ofNullable( this.nonce.value );
     }
 
     /**

@@ -834,23 +834,13 @@ class ContentSecurityPolicyTest
     }
 
     @Test
-    void mintedNonce_is_passive_and_empty_until_a_nonce_call_mints()
+    void nonceScriptSrcElem_wires_the_request_nonce_into_script_src_elem()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy();
-        assertThat( csp.mintedNonce() ).isEmpty();
-        assertThat( csp.serialize() ).isEmpty();
-
-        final String nonce = csp.nonceScriptSrc();
-        assertThat( csp.mintedNonce() ).contains( nonce );
-    }
-
-    @Test
-    void mintedNonce_answers_for_the_whole_request_across_rule_sets()
-    {
-        final ContentSecurityPolicy csp = new ContentSecurityPolicy();
-        final String nonce = csp.reportOnly().nonceStyleSrc();
-        assertThat( csp.mintedNonce() ).contains( nonce );
-        assertThat( csp.addPolicy().mintedNonce() ).contains( nonce );
+        final String nonce = csp.nonceScriptSrcElem();
+        assertThat( csp.serialize() ).isEqualTo( "script-src-elem 'nonce-" + nonce + "'" );
+        // shares the one request nonce with the other nonce* methods
+        assertThat( csp.nonceScriptSrc() ).isEqualTo( nonce );
     }
 
     @Test
