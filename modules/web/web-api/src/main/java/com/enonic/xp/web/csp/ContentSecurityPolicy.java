@@ -55,9 +55,9 @@ import static java.util.Objects.requireNonNull;
  *
  * <p>A response can also carry several <i>enforced</i> policies: the browser enforces each one
  * independently, so a load must satisfy all of them — an extra policy can only restrict, never
- * broaden. {@link #addPolicy()} appends such a policy (comma-joined into the same header by
- * {@link #build()}), for a context that must impose a baseline on content whose own policy it does
- * not fully trust.</p>
+ * broaden. {@link #addPolicy()} appends such a policy (comma-joined into the same header value by
+ * {@link #serialize()}), for a context that must impose a baseline on content
+ * whose own policy it does not fully trust.</p>
  *
  * <p>A {@code 'nonce-'} source is valid only on {@code script-src} and {@code style-src}: use
  * {@link #nonceScriptSrc()} or {@link #nonceStyleSrc()}. Both return the same request-scoped value to
@@ -83,7 +83,11 @@ public final class ContentSecurityPolicy
 
     private static final String SCRIPT_SRC = "script-src";
 
+    private static final String SCRIPT_SRC_ELEM = "script-src-elem";
+
     private static final String STYLE_SRC = "style-src";
+
+    private static final String STYLE_SRC_ELEM = "style-src-elem";
 
     private static final String NONE = "'none'";
 
@@ -147,8 +151,8 @@ public final class ContentSecurityPolicy
      * every policy independently — a load must satisfy all of them — so an added policy can only
      * restrict, never broaden, what this policy allows. Its use is imposing a baseline on content
      * whose own policy the serving context does not fully trust (e.g. an admin context rendering
-     * site content); each call appends one more policy, comma-joined into the same header by
-     * {@link #build()}. While left empty, an added policy is not emitted.
+     * site content); each call appends one more policy, comma-joined into the same header value by
+     * {@link #serialize()}. While left empty, an added policy is not emitted.
      *
      * <p>The returned rule set has the full API and shares the request nonce. Order matters when
      * seeding it from a raw header value: {@link #resetTo} first (it starts from a clean slate and
@@ -185,6 +189,22 @@ public final class ContentSecurityPolicy
             set.add( validSource( source ) );
         }
         return this;
+    }
+
+    /**
+     * The sources currently declared for {@code directive}, in the order they are emitted (already
+     * deduplicated, since contributions union into a set), or {@link Optional#empty()} if no
+     * contributor has declared it. A present directive with no sources (a boolean directive such as
+     * {@code upgrade-insecure-requests}) returns an empty list. The returned list is an immutable
+     * snapshot. Lets a baseline gap-fill what is missing without overriding what is set —
+     * {@code if ( policy.directive( name ).isEmpty() ) policy.add( name, … )} — and a contributor
+     * probe what another already set. Reads this rule set only; the report-only set is reached via
+     * {@link #reportOnly()}.
+     */
+    public Optional<List<String>> directive( final String directive )
+    {
+        final LinkedHashSet<String> sources = this.directives.get( directive );
+        return sources == null ? Optional.empty() : Optional.of( List.copyOf( sources ) );
     }
 
     /**
@@ -235,7 +255,7 @@ public final class ContentSecurityPolicy
      *
      * <p>A header value carrying several comma-separated policies is honored: the first policy
      * replaces this rule set and each additional one is appended via {@link #addPolicy()}, so
-     * {@link #build()} output round-trips. A later {@code resetTo} replaces the policies a
+     * {@link #serialize()} output round-trips. A later {@code resetTo} replaces the policies a
      * previous {@code resetTo} appended; policies added explicitly via {@link #addPolicy()} are
      * untouched. A policy-level escape hatch — not additive.</p>
      */
@@ -604,6 +624,17 @@ public final class ContentSecurityPolicy
     }
 
     /**
+     * Wires the request nonce into {@code script-src-elem} and returns its value (for stamping on a
+     * {@code <script nonce="...">} element that must satisfy a page whose {@code script-src-elem}
+     * uses {@code 'strict-dynamic'}, where {@code 'self'} and host sources are ignored). A nonce is
+     * valid on {@code script-src-elem} per CSP Level 3.
+     */
+    public String nonceScriptSrcElem()
+    {
+        return nonceFor( SCRIPT_SRC_ELEM );
+    }
+
+    /**
      * Wires the request nonce into {@code style-src} and returns its value (for stamping on inline
      * {@code <style nonce="...">} tags).
      */
@@ -613,18 +644,13 @@ public final class ContentSecurityPolicy
     }
 
     /**
-     * The request nonce if some {@code nonce*} call already minted it during this request; empty
-     * otherwise. Passive: never mints a nonce and never touches a directive. For code late in the
-     * pipeline that injects markup and wants it to ride through a strict, nonce-based policy: stamp
-     * the nonce only when one is present — calling {@link #nonceScriptSrc()} instead would make the
-     * minted nonce the page's only {@code script-src} entry on pages whose policy has none, blocking
-     * every other script. The nonce is shared across the enforcing, report-only and added rule sets,
-     * so this answers for the whole request. It does not verify the entry is still wired into any
-     * directive (a later {@link #resetTo} drops wired entries while the value stays stable).
+     * Wires the request nonce into {@code style-src-elem} and returns its value (for stamping on a
+     * {@code <style nonce="...">} element that must satisfy a page whose {@code style-src-elem} uses
+     * {@code 'strict-dynamic'}). A nonce is valid on {@code style-src-elem} per CSP Level 3.
      */
-    public Optional<String> mintedNonce()
+    public String nonceStyleSrcElem()
     {
-        return Optional.ofNullable( this.nonce.value );
+        return nonceFor( STYLE_SRC_ELEM );
     }
 
     /**
@@ -643,18 +669,19 @@ public final class ContentSecurityPolicy
     /**
      * Renders the current state as a {@code Content-Security-Policy} header value. Returns the
      * empty string when no directive has been added — callers should skip emitting the header in
-     * that case.
+     * that case. This is the platform's response-serialization step, run when the web response
+     * completes; contributors build the policy up through the methods above and do not call this.
      *
      * <p>Directives are emitted in alphabetical order for deterministic output; sources within a
      * directive follow insertion order. Sources are emitted as the plain union of all contributions —
-     * the browser applies its own precedence between interacting sources (the API does not). The one
-     * tidy-up: a redundant {@code 'none'} (the union identity — it matches nothing) is omitted from a
-     * directive that also carries real sources, since any real source already supersedes it.</p>
+     * the browser applies its own precedence between interacting sources (the policy does not). The
+     * one tidy-up: a redundant {@code 'none'} (the union identity — it matches nothing) is omitted
+     * from a directive that also carries real sources, since any real source already supersedes it.</p>
      *
      * <p>Non-empty policies appended via {@link #addPolicy()} follow, comma-separated, in insertion
      * order — the standard form for several policies in one header value.</p>
      */
-    public String build()
+    public String serialize()
     {
         final StringBuilder sb = new StringBuilder();
         for ( final Map.Entry<String, LinkedHashSet<String>> entry : this.directives.entrySet() )
@@ -677,7 +704,7 @@ public final class ContentSecurityPolicy
         }
         for ( final ContentSecurityPolicy additional : this.additionalPolicies )
         {
-            final String value = additional.build();
+            final String value = additional.serialize();
             if ( !value.isEmpty() )
             {
                 if ( sb.length() > 0 )

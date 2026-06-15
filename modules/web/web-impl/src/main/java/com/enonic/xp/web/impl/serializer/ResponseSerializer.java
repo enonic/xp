@@ -57,8 +57,8 @@ public final class ResponseSerializer
     private void serializeContentSecurityPolicy( final HttpServletResponse response )
     {
         final ContentSecurityPolicy policy = this.webRequest.getContentSecurityPolicy();
-        setIfNotEmpty( response, ContentSecurityPolicy.HEADER_NAME, policy.build() );
-        setIfNotEmpty( response, ContentSecurityPolicy.REPORT_ONLY_HEADER_NAME, policy.reportOnly().build() );
+        setIfNotEmpty( response, ContentSecurityPolicy.HEADER_NAME, policy.serialize() );
+        setIfNotEmpty( response, ContentSecurityPolicy.REPORT_ONLY_HEADER_NAME, policy.reportOnly().serialize() );
     }
 
     private static void setIfNotEmpty( final HttpServletResponse response, final String name, final String value )

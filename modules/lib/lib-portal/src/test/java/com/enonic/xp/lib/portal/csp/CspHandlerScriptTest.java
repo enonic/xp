@@ -266,7 +266,7 @@ public class CspHandlerScriptTest
 
     public String policyBuild()
     {
-        return this.portalRequest.getContentSecurityPolicy().build();
+        return this.portalRequest.getContentSecurityPolicy().serialize();
     }
 
     public String shaBase64( final String content, final String algorithm )
