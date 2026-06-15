@@ -87,6 +87,8 @@ public final class ContentSecurityPolicy
 
     private static final String STYLE_SRC = "style-src";
 
+    private static final String STYLE_SRC_ELEM = "style-src-elem";
+
     private static final String NONE = "'none'";
 
     private static final String NONCE_SOURCE_PREFIX = "'nonce-";
@@ -639,6 +641,16 @@ public final class ContentSecurityPolicy
     public String nonceStyleSrc()
     {
         return nonceFor( STYLE_SRC );
+    }
+
+    /**
+     * Wires the request nonce into {@code style-src-elem} and returns its value (for stamping on a
+     * {@code <style nonce="...">} element that must satisfy a page whose {@code style-src-elem} uses
+     * {@code 'strict-dynamic'}). A nonce is valid on {@code style-src-elem} per CSP Level 3.
+     */
+    public String nonceStyleSrcElem()
+    {
+        return nonceFor( STYLE_SRC_ELEM );
     }
 
     /**

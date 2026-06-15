@@ -844,6 +844,15 @@ class ContentSecurityPolicyTest
     }
 
     @Test
+    void nonceStyleSrcElem_wires_the_request_nonce_into_style_src_elem()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy();
+        final String nonce = csp.nonceStyleSrcElem();
+        assertThat( csp.serialize() ).isEqualTo( "style-src-elem 'nonce-" + nonce + "'" );
+        assertThat( csp.nonceStyleSrc() ).isEqualTo( nonce );
+    }
+
+    @Test
     void resetTo_parses_comma_separated_policies_and_round_trips()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy();
