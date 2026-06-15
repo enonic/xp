@@ -9,7 +9,9 @@ exports.returnsObject = function () {
     assert.assertEquals('function', typeof csp.reset);
     assert.assertEquals('function', typeof csp.strict);
     assert.assertEquals('function', typeof csp.nonceScriptSrc);
+    assert.assertEquals('function', typeof csp.nonceScriptSrcElem);
     assert.assertEquals('function', typeof csp.nonceStyleSrc);
+    assert.assertEquals('function', typeof csp.nonceStyleSrcElem);
     assert.assertEquals('function', typeof csp.defaultSrc);
     assert.assertEquals('function', typeof csp.scriptSrc);
     assert.assertEquals('function', typeof csp.styleSrc);
@@ -190,13 +192,30 @@ exports.nonceStyleSrc = function () {
     assert.assertEquals("style-src 'nonce-" + n + "'", __.toNativeObject(testInstance.policyBuild()));
 };
 
+exports.nonceScriptSrcElem = function () {
+    var csp = portal.csp();
+    var n = csp.nonceScriptSrcElem();
+    assert.assertEquals("script-src-elem 'nonce-" + n + "'", __.toNativeObject(testInstance.policyBuild()));
+};
+
+exports.nonceStyleSrcElem = function () {
+    var csp = portal.csp();
+    var n = csp.nonceStyleSrcElem();
+    assert.assertEquals("style-src-elem 'nonce-" + n + "'", __.toNativeObject(testInstance.policyBuild()));
+};
+
 exports.nonceStableAcrossMethods = function () {
     var csp = portal.csp();
     var a = csp.nonceScriptSrc();
     var b = csp.nonceStyleSrc();
+    var c = csp.nonceScriptSrcElem();
+    var d = csp.nonceStyleSrcElem();
     assert.assertEquals(a, b);
+    assert.assertEquals(a, c);
+    assert.assertEquals(a, d);
     assert.assertEquals(
-        "script-src 'nonce-" + a + "'; style-src 'nonce-" + a + "'",
+        "script-src 'nonce-" + a + "'; script-src-elem 'nonce-" + a + "'; " +
+        "style-src 'nonce-" + a + "'; style-src-elem 'nonce-" + a + "'",
         __.toNativeObject(testInstance.policyBuild())
     );
 };

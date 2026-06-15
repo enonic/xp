@@ -59,12 +59,14 @@ import static java.util.Objects.requireNonNull;
  * {@link #serialize()}), for a context that must impose a baseline on content
  * whose own policy it does not fully trust.</p>
  *
- * <p>A {@code 'nonce-'} source is valid only on {@code script-src} and {@code style-src}: use
- * {@link #nonceScriptSrc()} or {@link #nonceStyleSrc()}. Both return the same request-scoped value to
- * stamp on the matching inline tag. The request nonce is the <i>only</i> nonce this policy will
- * carry: a {@code 'nonce-…'} source supplied from outside is rejected by {@link #add} /
- * {@link #override} and dropped by {@link #resetTo}, because a caller-supplied nonce is necessarily
- * static across requests (or worse, attacker-known), which defeats the point of nonces.</p>
+ * <p>A {@code 'nonce-'} source is valid only on the script and style directives — {@code script-src}
+ * and {@code script-src-elem}, {@code style-src} and {@code style-src-elem}: use
+ * {@link #nonceScriptSrc()}, {@link #nonceScriptSrcElem()}, {@link #nonceStyleSrc()} or
+ * {@link #nonceStyleSrcElem()}. They all return the same request-scoped value to stamp on the
+ * matching inline tag. The request nonce is the <i>only</i> nonce this policy will carry: a
+ * {@code 'nonce-…'} source supplied from outside is rejected by {@link #add} / {@link #override} and
+ * dropped by {@link #resetTo}, because a caller-supplied nonce is necessarily static across requests
+ * (or worse, attacker-known), which defeats the point of nonces.</p>
  */
 @NullMarked
 public final class ContentSecurityPolicy
@@ -178,7 +180,7 @@ public final class ContentSecurityPolicy
      * @throws IllegalArgumentException when {@code directive} is not a valid directive name, or a
      * source contains whitespace, control characters, {@code ;} or {@code ,} — tokens that would
      * smuggle extra directives into the emitted header — or is a {@code 'nonce-…'} source, which
-     * only {@link #nonceScriptSrc()} / {@link #nonceStyleSrc()} may mint.
+     * only the {@code nonce*} methods may mint.
      */
     public ContentSecurityPolicy add( final String directive, final String... sources )
     {
@@ -251,7 +253,7 @@ public final class ContentSecurityPolicy
      * not survive {@link #add} validation are skipped rather than thrown (hand-built headers are
      * arbitrary), and of repeated directives only the first occurrence counts.
      * {@code 'nonce-…'} sources are likewise dropped — a nonce baked into a header value is static
-     * across requests; use {@link #nonceScriptSrc()} / {@link #nonceStyleSrc()}.
+     * across requests; use the {@code nonce*} methods.
      *
      * <p>A header value carrying several comma-separated policies is honored: the first policy
      * replaces this rule set and each additional one is appended via {@link #addPolicy()}, so
@@ -733,7 +735,7 @@ public final class ContentSecurityPolicy
         if ( isExternalNonce( source ) )
         {
             throw new IllegalArgumentException(
-                "A 'nonce-' source cannot be supplied; only nonceScriptSrc()/nonceStyleSrc() mint the request nonce: " + source );
+                "A 'nonce-' source cannot be supplied; only the nonce* methods mint the request nonce: " + source );
         }
         if ( !isValidSource( source ) )
         {

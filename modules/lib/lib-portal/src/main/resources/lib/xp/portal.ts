@@ -1034,8 +1034,7 @@ export interface Csp {
      * Pass no sources to register a boolean directive (e.g.
      * `upgrade-insecure-requests`).
      *
-     * A `'nonce-…'` source is rejected: only {@link nonceScriptSrc} / {@link nonceStyleSrc} mint
-     * the request nonce.
+     * A `'nonce-…'` source is rejected: only the `nonce*` methods mint the request nonce.
      */
     add(directive: string, ...sources: string[]): Csp;
 
@@ -1060,7 +1059,7 @@ export interface Csp {
      * policy — if nothing is added afterwards, no header is emitted. The request nonce stays
      * stable. Parsing is lenient, mirroring the browser: invalid tokens are skipped, and of
      * repeated directives only the first occurrence counts. `'nonce-…'` sources are likewise
-     * dropped — use {@link nonceScriptSrc} / {@link nonceStyleSrc}. A header value carrying
+     * dropped — use the `nonce*` methods. A header value carrying
      * several comma-separated policies is honored: the browser enforces each of them, so a load
      * must satisfy all. Policy-level and **not** additive.
      */
@@ -1167,10 +1166,25 @@ export interface Csp {
     nonceScriptSrc(): string;
 
     /**
+     * Wires the request nonce into `script-src-elem` and returns its value (for stamping on a
+     * `<script nonce="...">` element that must satisfy a page whose `script-src-elem` uses
+     * `'strict-dynamic'`, where `'self'` and host sources are ignored). Always the same for the
+     * request.
+     */
+    nonceScriptSrcElem(): string;
+
+    /**
      * Wires the request nonce into `style-src` and returns its value (for stamping on inline
      * `<style nonce="...">` tags). Always the same for the request.
      */
     nonceStyleSrc(): string;
+
+    /**
+     * Wires the request nonce into `style-src-elem` and returns its value (for stamping on a
+     * `<style nonce="...">` element that must satisfy a page whose `style-src-elem` uses
+     * `'strict-dynamic'`). Always the same for the request.
+     */
+    nonceStyleSrcElem(): string;
 }
 
 interface CspHandler {
@@ -1240,7 +1254,11 @@ interface CspHandler {
 
     nonceScriptSrc(): string;
 
+    nonceScriptSrcElem(): string;
+
     nonceStyleSrc(): string;
+
+    nonceStyleSrcElem(): string;
 }
 
 /**
@@ -1387,8 +1405,14 @@ export function csp(): Csp {
         nonceScriptSrc(): string {
             return bean.nonceScriptSrc();
         },
+        nonceScriptSrcElem(): string {
+            return bean.nonceScriptSrcElem();
+        },
         nonceStyleSrc(): string {
             return bean.nonceStyleSrc();
+        },
+        nonceStyleSrcElem(): string {
+            return bean.nonceStyleSrcElem();
         },
     };
     return instance;

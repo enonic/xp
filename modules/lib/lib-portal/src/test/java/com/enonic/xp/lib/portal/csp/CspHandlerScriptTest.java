@@ -145,6 +145,18 @@ public class CspHandlerScriptTest
     }
 
     @Test
+    void nonceScriptSrcElem()
+    {
+        runFunction( "/test/csp-test.js", "nonceScriptSrcElem" );
+    }
+
+    @Test
+    void nonceStyleSrcElem()
+    {
+        runFunction( "/test/csp-test.js", "nonceStyleSrcElem" );
+    }
+
+    @Test
     void nonceStableAcrossMethods()
     {
         runFunction( "/test/csp-test.js", "nonceStableAcrossMethods" );

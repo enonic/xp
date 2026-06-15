@@ -182,9 +182,19 @@ public final class CspHandler
         return policy().nonceScriptSrc();
     }
 
+    public String nonceScriptSrcElem()
+    {
+        return policy().nonceScriptSrcElem();
+    }
+
     public String nonceStyleSrc()
     {
         return policy().nonceStyleSrc();
+    }
+
+    public String nonceStyleSrcElem()
+    {
+        return policy().nonceStyleSrcElem();
     }
 
     private ContentSecurityPolicy policy()
