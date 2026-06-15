@@ -659,6 +659,8 @@ export interface RepoConnection {
 
     update<NodeData = Record<string, unknown>>(params: UpdateNodeParams<NodeData>): Node<NodeData>;
 
+    patch(params: PatchNodeParams): PatchNodeResult;
+
     get<NodeData = Record<string, unknown>>(key: string | GetNodeParams): Node<NodeData> | null;
 
     get<NodeData = Record<string, unknown>>(keys: (string | GetNodeParams)[]): Node<NodeData> | Node<NodeData>[] | null;
