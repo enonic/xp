@@ -55,9 +55,9 @@ public class CspHandlerScriptTest
     }
 
     @Test
-    void resetToParsesCommaSeparatedPolicies()
+    void resetToIgnoresPoliciesAfterFirstComma()
     {
-        runFunction( "/test/csp-test.js", "resetToParsesCommaSeparatedPolicies" );
+        runFunction( "/test/csp-test.js", "resetToIgnoresPoliciesAfterFirstComma" );
     }
 
     @Test
@@ -160,6 +160,42 @@ public class CspHandlerScriptTest
     void nonceStableAcrossMethods()
     {
         runFunction( "/test/csp-test.js", "nonceStableAcrossMethods" );
+    }
+
+    @Test
+    void mergeUnionsIntoExistingAndAddsNew()
+    {
+        runFunction( "/test/csp-test.js", "mergeUnionsIntoExistingAndAddsNew" );
+    }
+
+    @Test
+    void mergeDropsExternalNonceSources()
+    {
+        runFunction( "/test/csp-test.js", "mergeDropsExternalNonceSources" );
+    }
+
+    @Test
+    void mergeKeepsAWiredNonce()
+    {
+        runFunction( "/test/csp-test.js", "mergeKeepsAWiredNonce" );
+    }
+
+    @Test
+    void directiveReads()
+    {
+        runFunction( "/test/csp-test.js", "directiveReads" );
+    }
+
+    @Test
+    void reportOnlyIsSeparateRuleSet()
+    {
+        runFunction( "/test/csp-test.js", "reportOnlyIsSeparateRuleSet" );
+    }
+
+    @Test
+    void reportOnlySharesNonce()
+    {
+        runFunction( "/test/csp-test.js", "reportOnlySharesNonce" );
     }
 
     @Test
@@ -279,6 +315,11 @@ public class CspHandlerScriptTest
     public String policyBuild()
     {
         return this.portalRequest.getContentSecurityPolicy().serialize();
+    }
+
+    public String reportOnlyBuild()
+    {
+        return this.portalRequest.getContentSecurityPolicy().reportOnly().serialize();
     }
 
     public String shaBase64( final String content, final String algorithm )

@@ -37,9 +37,20 @@ csp.nonceStyleSrc();                  // -> style-src       'nonce-...' (same va
 csp.nonceScriptSrcElem();            // -> script-src-elem 'nonce-...' (same value)
 csp.nonceStyleSrcElem();             // -> style-src-elem  'nonce-...' (same value)
 
+// Union extra directives from a raw header value (e.g. operator config) on top of the policy,
+// without restating it -- existing directives are extended, the nonce above is kept
+csp.merge("connect-src https://api.example.com; img-src https://cdn.example.com");
+
 // Escape hatches for less-common / future directives
 csp.add('require-trusted-types-for', "'script'");
 csp.override('script-src', portalLib.CspSource.SELF);
+
+// Inspect what is currently declared -- null if no contributor set it yet
+csp.directive('script-src');  // -> ["'self'"]
+
+// Report-only companion -- a separate handle via portal.cspReportOnly(), same fluent API, emitted
+// as Content-Security-Policy-Report-Only, shares the request nonce
+portalLib.cspReportOnly().scriptSrc(portalLib.CspSource.SELF, portalLib.CspSource.REPORT_SAMPLE);
 
 // The Content-Security-Policy header is composed and emitted automatically
 // at response-flush time

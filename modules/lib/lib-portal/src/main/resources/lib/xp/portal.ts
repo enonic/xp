@@ -1030,18 +1030,163 @@ export type TrustedTypesKeyword = typeof TrustedTypesKeyword[keyof typeof Truste
  */
 export interface Csp {
     /**
-     * Unions sources into the existing source set for `directive`, deduped.
-     * Pass no sources to register a boolean directive (e.g.
-     * `upgrade-insecure-requests`).
+     * Seeds a restrictive deny-all baseline (`default-src 'none'`, `base-uri 'none'`,
+     * `frame-ancestors 'none'`). Call it first, then open up only the directives you need.
+     */
+    strict(): Csp;
+
+    /** Unions source expressions into `default-src`, the fetch directive the other fetch directives fall back to when omitted. */
+    defaultSrc(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions source expressions into `script-src` (fetch directive for JavaScript and WebAssembly); the fallback for `script-src-elem` and `script-src-attr`. */
+    scriptSrc(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions source expressions into `style-src` (fetch directive for stylesheets); the fallback for `style-src-elem` and `style-src-attr`. */
+    styleSrc(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions source expressions into `img-src` (fetch directive for images and favicons). */
+    imgSrc(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions source expressions into `font-src` (fetch directive for fonts loaded with `@font-face`). */
+    fontSrc(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions source expressions into `connect-src` (fetch directive for script interfaces: `fetch`, `XMLHttpRequest`, `WebSocket`, `EventSource`, `<a ping>`). */
+    connectSrc(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions source expressions into `media-src` (fetch directive for `<audio>`, `<video>`, `<track>`). */
+    mediaSrc(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions source expressions into `object-src` (fetch directive for `<object>` and `<embed>`). */
+    objectSrc(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions source expressions into `frame-src` (fetch directive for nested browsing contexts: `<frame>`, `<iframe>`); falls back to `child-src`. */
+    frameSrc(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions source expressions into `worker-src` (fetch directive for `Worker`, `SharedWorker`, `ServiceWorker`); falls back to `child-src`. */
+    workerSrc(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions source expressions into `manifest-src` (fetch directive for application manifest files). */
+    manifestSrc(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions source expressions into `child-src` (fetch directive; the fallback for `frame-src` and `worker-src`). */
+    childSrc(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions source expressions into `frame-ancestors` (navigation directive: which parents may embed this page via `<frame>`/`<iframe>`/`<object>`/`<embed>`). Does not fall back to `default-src`. */
+    frameAncestors(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions source expressions into `base-uri` (document directive restricting the URLs allowed in a `<base>` element). Does not fall back to `default-src`. */
+    baseUri(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions source expressions into `form-action` (navigation directive restricting the targets of form submissions). */
+    formAction(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions source expressions into `script-src-elem` (fetch directive for `<script>` elements); falls back to `script-src`. */
+    scriptSrcElem(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions source expressions into `script-src-attr` (fetch directive for inline event handlers, e.g. `onclick`); falls back to `script-src`. */
+    scriptSrcAttr(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions source expressions into `style-src-elem` (fetch directive for `<style>` and `<link rel="stylesheet">`); falls back to `style-src`. */
+    styleSrcElem(...sources: (CspSource | string)[]): Csp;
+
+    /** Unions source expressions into `style-src-attr` (fetch directive for inline `style` attributes); falls back to `style-src`. */
+    styleSrcAttr(...sources: (CspSource | string)[]): Csp;
+
+    /**
+     * Adds the `report-to` reporting directive naming a reporting endpoint group, which must be defined
+     * by a companion `Reporting-Endpoints` response header (the caller's responsibility). Violation
+     * reports are then POSTed to that endpoint. The older `report-uri` directive is deprecated — use
+     * `add('report-uri', ...)` if still needed.
+     */
+    reportTo(group: string): Csp;
+
+    /** Registers `require-trusted-types-for 'script'`, enforcing Trusted Types at injection sinks. */
+    requireTrustedTypesForScript(): Csp;
+
+    /** Adds policy names and/or {@link TrustedTypesKeyword} keywords to the `trusted-types` directive. */
+    trustedTypes(...values: (TrustedTypesKeyword | string)[]): Csp;
+
+    /**
+     * Unions sandboxing flags into the `sandbox` directive — a document directive that applies an HTML
+     * sandbox to the resource. With no flags, registers a bare `sandbox` (all restrictions applied).
+     */
+    sandbox(...flags: SandboxFlag[]): Csp;
+
+    /**
+     * Unions a hash-source (`'<algo>-<base64>'`) into `script-src`. Pass `{ content }` to digest inline
+     * script text (`algo` defaults to `'sha256'`), or `{ hash, algo }` for a precomputed base64 digest.
+     */
+    shaScriptSrc(source: CspHashSource): Csp;
+
+    /**
+     * Unions a hash-source (`'<algo>-<base64>'`) into `style-src`. Pass `{ content }` to digest inline
+     * style text (`algo` defaults to `'sha256'`), or `{ hash, algo }` for a precomputed base64 digest.
+     */
+    shaStyleSrc(source: CspHashSource): Csp;
+
+    /**
+     * Adds a nonce-source (`'nonce-<base64>'`) carrying the per-request nonce to `script-src` and
+     * returns the base64 value — set it as the `nonce` attribute of the matching inline `<script>`.
+     * Always the same value within a request.
+     */
+    nonceScriptSrc(): string;
+
+    /**
+     * Adds a nonce-source for the per-request nonce to `script-src-elem` and returns its base64 value —
+     * for a `<script>` element that must satisfy a page whose `script-src-elem` uses `'strict-dynamic'`
+     * (under which `'self'` and host-sources are ignored). Always the same value within a request.
+     */
+    nonceScriptSrcElem(): string;
+
+    /**
+     * Adds a nonce-source (`'nonce-<base64>'`) carrying the per-request nonce to `style-src` and returns
+     * the base64 value — set it as the `nonce` attribute of the matching inline `<style>`. Always the
+     * same value within a request.
+     */
+    nonceStyleSrc(): string;
+
+    /**
+     * Adds a nonce-source for the per-request nonce to `style-src-elem` and returns its base64 value —
+     * for a `<style>` element that must satisfy a page whose `style-src-elem` uses `'strict-dynamic'`.
+     * Always the same value within a request.
+     */
+    nonceStyleSrcElem(): string;
+
+    // Low-level, string-based building blocks — prefer the typed methods above; reach for these for
+    // directives the typed API does not cover, to read/inspect, or for whole-policy operations.
+
+    /**
+     * Unions source expressions into the serialized-source-list for `directive`, de-duplicated. With
+     * no source expressions, registers a valueless directive (e.g. `upgrade-insecure-requests`).
      *
-     * A `'nonce-…'` source is rejected: only the `nonce*` methods mint the request nonce.
+     * A nonce-source is rejected: only the `nonce*` methods mint the per-request nonce.
      */
     add(directive: string, ...sources: string[]): Csp;
 
     /**
-     * Replaces the directive's source list with exactly these sources, overriding what other
-     * contributors set. Policy-level and **not** additive — it can narrow the policy. No freeze, so
-     * a later {@link add} still extends. To remove a directive entirely, use {@link reset}.
+     * Parses a serialized policy (a `Content-Security-Policy` header value) and unions each directive's
+     * source expressions onto this policy — the additive counterpart to {@link resetTo}. Existing
+     * directives are extended and absent ones added, so you can grant extra permissions on top of a
+     * policy built elsewhere without restating it (a nonce-source already wired into
+     * `script-src`/`style-src` is kept). Lenient like {@link resetTo}: invalid tokens are skipped and
+     * nonce-sources dropped. `null`/`undefined` adds nothing. A comma-separated list of policies is
+     * flattened into one additive directive set (no extra enforced policy is created). Additive.
+     */
+    merge(headerValue?: string | null): Csp;
+
+    /**
+     * The source expressions currently declared for `directive`, in serialized order (already
+     * de-duplicated), or `null` if no contributor has declared it. A declared valueless directive
+     * (e.g. `upgrade-insecure-requests`) returns an empty array. Lets a contributor inspect before it
+     * `override`s or gap-fills (`if (csp.directive(name) === null) csp.add(name, ...)`). Reads this
+     * policy only; the report-only policy is reached via {@link cspReportOnly}.
+     */
+    directive(directive: string): string[] | null;
+
+    /**
+     * Replaces `directive`'s serialized-source-list with exactly these source expressions, overriding
+     * what other contributors set. Policy-level and **not** additive — it can narrow the policy. No
+     * freeze, so a later {@link add} still extends. To remove a directive entirely, use {@link reset}.
      */
     override(directive: string, ...sources: string[]): Csp;
 
@@ -1054,141 +1199,25 @@ export interface Csp {
     reset(...directives: string[]): Csp;
 
     /**
-     * Replaces the whole policy with the directives parsed from a raw header value, so later
+     * Replaces this policy's directives with the single policy parsed from a raw header value, so later
      * contributions still apply on top. A `null`, `undefined`, empty or blank value clears the
-     * policy — if nothing is added afterwards, no header is emitted. The request nonce stays
-     * stable. Parsing is lenient, mirroring the browser: invalid tokens are skipped, and of
-     * repeated directives only the first occurrence counts. `'nonce-…'` sources are likewise
-     * dropped — use the `nonce*` methods. A header value carrying
-     * several comma-separated policies is honored: the browser enforces each of them, so a load
-     * must satisfy all. Policy-level and **not** additive.
+     * directives — if nothing is added afterwards, no header is emitted. The request nonce stays
+     * stable. Parsing is lenient, mirroring the browser: invalid tokens are skipped, and of repeated
+     * directives only the first occurrence counts. `'nonce-…'` sources are dropped — use the `nonce*`
+     * methods. A `,` (which would begin a further policy) and everything after it is ignored — only the
+     * first policy is applied. Policy-level and **not** additive.
      */
     resetTo(headerValue?: string | null): Csp;
-
-    /**
-     * Seeds a restrictive deny-all baseline (`default-src 'none'`, `base-uri 'none'`,
-     * `frame-ancestors 'none'`). Call it first, then open up only the directives you need.
-     */
-    strict(): Csp;
-
-    /** Unions sources into `default-src`. */
-    defaultSrc(...sources: (CspSource | string)[]): Csp;
-
-    /** Unions sources into `script-src`. */
-    scriptSrc(...sources: (CspSource | string)[]): Csp;
-
-    /** Unions sources into `style-src`. */
-    styleSrc(...sources: (CspSource | string)[]): Csp;
-
-    /** Unions sources into `img-src`. */
-    imgSrc(...sources: (CspSource | string)[]): Csp;
-
-    /** Unions sources into `font-src`. */
-    fontSrc(...sources: (CspSource | string)[]): Csp;
-
-    /** Unions sources into `connect-src`. */
-    connectSrc(...sources: (CspSource | string)[]): Csp;
-
-    /** Unions sources into `media-src`. */
-    mediaSrc(...sources: (CspSource | string)[]): Csp;
-
-    /** Unions sources into `object-src`. */
-    objectSrc(...sources: (CspSource | string)[]): Csp;
-
-    /** Unions sources into `frame-src`. */
-    frameSrc(...sources: (CspSource | string)[]): Csp;
-
-    /** Unions sources into `worker-src`. */
-    workerSrc(...sources: (CspSource | string)[]): Csp;
-
-    /** Unions sources into `manifest-src`. */
-    manifestSrc(...sources: (CspSource | string)[]): Csp;
-
-    /** Unions sources into `child-src`. */
-    childSrc(...sources: (CspSource | string)[]): Csp;
-
-    /** Unions sources into `frame-ancestors`. */
-    frameAncestors(...sources: (CspSource | string)[]): Csp;
-
-    /** Unions sources into `base-uri`. */
-    baseUri(...sources: (CspSource | string)[]): Csp;
-
-    /** Unions sources into `form-action`. */
-    formAction(...sources: (CspSource | string)[]): Csp;
-
-    /** Unions sources into `script-src-elem` (governs `<script>` elements). */
-    scriptSrcElem(...sources: (CspSource | string)[]): Csp;
-
-    /** Unions sources into `script-src-attr` (governs inline event handlers). */
-    scriptSrcAttr(...sources: (CspSource | string)[]): Csp;
-
-    /** Unions sources into `style-src-elem` (governs `<style>`/`<link rel=stylesheet>`). */
-    styleSrcElem(...sources: (CspSource | string)[]): Csp;
-
-    /** Unions sources into `style-src-attr` (governs inline `style` attributes). */
-    styleSrcAttr(...sources: (CspSource | string)[]): Csp;
-
-    /**
-     * Adds the `report-to` directive naming a reporting group. The group must be defined by a
-     * companion `Reporting-Endpoints` response header (the caller's responsibility). `report-uri` is
-     * deprecated — use `add('report-uri', ...)` if still needed.
-     */
-    reportTo(group: string): Csp;
-
-    /** Registers `require-trusted-types-for 'script'`. */
-    requireTrustedTypesForScript(): Csp;
-
-    /** Adds policy names and/or {@link TrustedTypesKeyword} keywords to `trusted-types`. */
-    trustedTypes(...values: (TrustedTypesKeyword | string)[]): Csp;
-
-    /**
-     * Unions sandbox flags into the `sandbox` directive. With no flags, registers
-     * an empty `sandbox` (all restrictions applied).
-     */
-    sandbox(...flags: SandboxFlag[]): Csp;
-
-    /**
-     * Unions a hash source into `script-src`. Pass `{ content }` to digest inline script text
-     * (`algo` defaults to `'sha256'`), or `{ hash, algo }` for a precomputed base64 digest.
-     */
-    shaScriptSrc(source: CspHashSource): Csp;
-
-    /**
-     * Unions a hash source into `style-src`. Pass `{ content }` to digest inline style text
-     * (`algo` defaults to `'sha256'`), or `{ hash, algo }` for a precomputed base64 digest.
-     */
-    shaStyleSrc(source: CspHashSource): Csp;
-
-    /**
-     * Wires the request nonce into `script-src` and returns its value (for stamping on inline
-     * `<script nonce="...">` tags). Always the same for the request.
-     */
-    nonceScriptSrc(): string;
-
-    /**
-     * Wires the request nonce into `script-src-elem` and returns its value (for stamping on a
-     * `<script nonce="...">` element that must satisfy a page whose `script-src-elem` uses
-     * `'strict-dynamic'`, where `'self'` and host sources are ignored). Always the same for the
-     * request.
-     */
-    nonceScriptSrcElem(): string;
-
-    /**
-     * Wires the request nonce into `style-src` and returns its value (for stamping on inline
-     * `<style nonce="...">` tags). Always the same for the request.
-     */
-    nonceStyleSrc(): string;
-
-    /**
-     * Wires the request nonce into `style-src-elem` and returns its value (for stamping on a
-     * `<style nonce="...">` element that must satisfy a page whose `style-src-elem` uses
-     * `'strict-dynamic'`). Always the same for the request.
-     */
-    nonceStyleSrcElem(): string;
 }
 
 interface CspHandler {
+    setReportOnly(reportOnly: boolean): void;
+
     add(directive: string, sources: string[]): void;
+
+    merge(headerValue: string | null): void;
+
+    directive(directive: string): string[] | null;
 
     override(directive: string, sources: string[]): void;
 
@@ -1262,21 +1291,47 @@ interface CspHandler {
 }
 
 /**
- * Returns a handle to the request-scoped Content Security Policy. Each call returns a new
- * handle, but all handles are backed by the same policy bound to the current portal request —
- * contributions through any of them land in the same emitted header.
+ * Returns a handle to the request-scoped enforced Content Security Policy (emitted as the
+ * `Content-Security-Policy` header). Each call returns a new handle, but all handles are backed by
+ * the same policy bound to the current portal request — contributions through any of them land in
+ * the same emitted header. For the report-only companion, use {@link cspReportOnly}.
  *
  * @example-ref examples/portal/csp.js
  *
- * @returns {Csp} The Content Security Policy bound to the current portal request.
+ * @returns {Csp} The enforced Content Security Policy bound to the current portal request.
  */
 export function csp(): Csp {
+    return createCsp(false);
+}
+
+/**
+ * Returns a handle to the request-scoped report-only Content Security Policy (emitted as the
+ * `Content-Security-Policy-Report-Only` header). It is an independent companion to the enforced
+ * policy from {@link csp} — same API, shares the request nonce — and the two headers can coexist on
+ * one response (e.g. enforce a settled policy while trialling a stricter one). While left empty, no
+ * report-only header is emitted.
+ *
+ * @returns {Csp} The report-only Content Security Policy bound to the current portal request.
+ */
+export function cspReportOnly(): Csp {
+    return createCsp(true);
+}
+
+function createCsp(reportOnly: boolean): Csp {
     const bean: CspHandler = __.newBean<CspHandler>('com.enonic.xp.lib.portal.csp.CspHandler');
+    bean.setReportOnly(reportOnly);
 
     const instance: Csp = {
         add(directive: string, ...sources: string[]): Csp {
             bean.add(directive, sources);
             return instance;
+        },
+        merge(headerValue?: string | null): Csp {
+            bean.merge(headerValue ?? null);
+            return instance;
+        },
+        directive(directive: string): string[] | null {
+            return __.toNativeObject(bean.directive(directive));
         },
         override(directive: string, ...sources: string[]): Csp {
             bean.override(directive, sources);
