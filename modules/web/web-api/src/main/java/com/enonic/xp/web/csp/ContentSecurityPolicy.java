@@ -27,27 +27,28 @@ import static java.util.Objects.requireNonNull;
  * portal controller sets directly is folded into the policy first ({@link #resetTo} semantics), so
  * later contributions still apply on top of it.</p>
  *
- * <p>Contributions are merged by plain <b>union</b>: each directive's source list is the union of
- * every contributor's sources, emitted as written. The API deliberately does <i>not</i> arbitrate
- * between sources that interact in the browser — notably {@code 'unsafe-inline'} sharing a directive
- * with a {@code 'nonce-…'}, hash, or {@code 'strict-dynamic'} (which makes the browser ignore
- * {@code 'unsafe-inline'}). That precedence is the browser's documented behaviour and the secure
- * default; a contributor that genuinely needs the looser source to win uses a policy-level method
- * rather than relying on emergent merge magic.</p>
+ * <p>Contributions are merged by plain <b>union</b>: each directive's serialized-source-list is the
+ * union of every contributor's source expressions, emitted as written. The API deliberately does
+ * <i>not</i> arbitrate between source expressions that interact in the browser — notably
+ * {@code 'unsafe-inline'} sharing a directive with a nonce-source, hash-source, or
+ * {@code 'strict-dynamic'} (any of which makes the browser ignore {@code 'unsafe-inline'}). That
+ * precedence is the browser's documented behaviour and the secure default; a contributor that
+ * genuinely needs the looser source to win uses a policy-level method rather than relying on emergent
+ * merge magic.</p>
  *
  * <p><b>Contributor methods</b> (used by parts, layouts, widgets, page controllers) are additive:
  * the per-directive methods ({@link #scriptSrc}, {@link #styleSrc}, {@link #imgSrc}, …, the nonce and
- * hash helpers) and the generic {@link #add}. They only union sources.</p>
+ * hash helpers), the generic {@link #add}, and {@link #merge} (union the directives parsed from a
+ * raw header value). They only union source expressions.</p>
  *
  * <p><b>Policy-level methods</b> (for the platform or site owner) change the whole policy and are not
  * additive — use sparingly, not from a part: {@link #strict()} (deny-all baseline), {@link #override}
  * (replace a directive's sources, dropping what others set), {@link #reset} (remove directives),
- * and {@link #resetTo} (replace the policy with a raw header value's rules; an empty value clears
- * it). There is no per-source
+ * {@link #resetTo} (replace the policy with a raw header value's rules; an empty value clears
+ * it) and {@link #clearAdditionalPolicies()} (drop the appended enforced policies). There is no per-source
  * removal; {@code reset} removes whole directives. To relax another contributor's hardening — e.g. an
- * editor that must allow inline styles over a strict {@code style-src} — {@code override} the
- * directive: replacing it drops the nonce/hash that would otherwise neutralize {@code 'unsafe-inline'},
- * so the relaxation is an explicit, greppable act by the contributor that needs it.</p>
+ * editor that must allow inline styles over a strict {@code style-src} — {@code override} the directive:
+ * replacing it drops the nonce/hash that would otherwise neutralize {@code 'unsafe-inline'}</p>
  *
  * <p>Since the enforcing and report-only headers can legitimately coexist on one response, the
  * report-only rules are a second, independent rule set reached via {@link #reportOnly()}. It shares
@@ -57,16 +58,20 @@ import static java.util.Objects.requireNonNull;
  * independently, so a load must satisfy all of them — an extra policy can only restrict, never
  * broaden. {@link #addPolicy()} appends such a policy (comma-joined into the same header value by
  * {@link #serialize()}), for a context that must impose a baseline on content
- * whose own policy it does not fully trust.</p>
+ * whose own policy it does not fully trust. Conversely, a trusted rendering host that frames and
+ * instruments untrusted content uses {@link #clearAdditionalPolicies()} to drop additional enforced
+ * policies the content contributed (which it cannot relax otherwise), and empties the
+ * {@link #reportOnly()} rule set ({@code reportOnly().resetTo(null).clearAdditionalPolicies()}) so a
+ * report-only policy it contributed does not ride onto its response.</p>
  *
- * <p>A {@code 'nonce-'} source is valid only on the script and style directives — {@code script-src}
+ * <p>A nonce-source is valid only on the script and style fetch directives — {@code script-src}
  * and {@code script-src-elem}, {@code style-src} and {@code style-src-elem}: use
  * {@link #nonceScriptSrc()}, {@link #nonceScriptSrcElem()}, {@link #nonceStyleSrc()} or
- * {@link #nonceStyleSrcElem()}. They all return the same request-scoped value to stamp on the
- * matching inline tag. The request nonce is the <i>only</i> nonce this policy will carry: a
- * {@code 'nonce-…'} source supplied from outside is rejected by {@link #add} / {@link #override} and
- * dropped by {@link #resetTo}, because a caller-supplied nonce is necessarily static across requests
- * (or worse, attacker-known), which defeats the point of nonces.</p>
+ * {@link #nonceStyleSrcElem()}. They all return the same request-scoped base64 value to set as the
+ * {@code nonce} attribute on the matching inline element. The request nonce is the <i>only</i> nonce
+ * this policy will carry: a nonce-source supplied from outside is rejected by {@link #add} /
+ * {@link #override} and dropped by {@link #resetTo}, because a caller-supplied nonce is necessarily
+ * static across requests (or worse, attacker-known), which defeats the point of nonces.</p>
  */
 @NullMarked
 public final class ContentSecurityPolicy
@@ -83,16 +88,6 @@ public final class ContentSecurityPolicy
 
     private static final int NONCE_BYTE_LENGTH = 16;
 
-    private static final String SCRIPT_SRC = "script-src";
-
-    private static final String SCRIPT_SRC_ELEM = "script-src-elem";
-
-    private static final String STYLE_SRC = "style-src";
-
-    private static final String STYLE_SRC_ELEM = "style-src-elem";
-
-    private static final String NONE = "'none'";
-
     private static final String NONCE_SOURCE_PREFIX = "'nonce-";
 
     private static final Pattern DIRECTIVE_NAME = Pattern.compile( "[a-zA-Z][a-zA-Z0-9-]*" );
@@ -101,12 +96,9 @@ public final class ContentSecurityPolicy
 
     private final List<ContentSecurityPolicy> additionalPolicies = new ArrayList<>();
 
-    private final List<ContentSecurityPolicy> resetToPolicies = new ArrayList<>();
-
     private final Nonce nonce;
 
-    @Nullable
-    private final ContentSecurityPolicy owner;
+    private final boolean topLevel;
 
     @Nullable
     private ContentSecurityPolicy reportOnly;
@@ -114,13 +106,13 @@ public final class ContentSecurityPolicy
     public ContentSecurityPolicy()
     {
         this.nonce = new Nonce();
-        this.owner = null;
+        this.topLevel = true;
     }
 
-    private ContentSecurityPolicy( final Nonce nonce, final ContentSecurityPolicy owner )
+    private ContentSecurityPolicy( final Nonce nonce )
     {
         this.nonce = nonce;
-        this.owner = owner;
+        this.topLevel = false;
     }
 
     /**
@@ -130,20 +122,26 @@ public final class ContentSecurityPolicy
      * {@code ContentSecurityPolicy} with the full contributor/policy-level API; it shares the
      * request nonce. Lazily created; while left empty, no report-only header is emitted.
      *
-     * <p>There is one report-only rule set per request: called on any rule set — including ones
-     * appended via {@link #addPolicy()} — this returns that one. Report-only policies never block;
-     * each is just one more observed policy, so for several of them call {@link #addPolicy()} on
-     * the returned set.</p>
+     * <p>Report-only is a single companion of the request's top-level enforced policy, so this is
+     * only valid there. Calling it on an added policy ({@link #addPolicy()}) or on the report-only
+     * companion itself throws {@link IllegalStateException}: report-only has no report-only of its
+     * own, and an added policy is not where the request's companion lives. Report-only policies never
+     * block; each is just one more observed policy, so for several of them call {@link #addPolicy()}
+     * on the returned set.</p>
+     *
+     * @throws IllegalStateException if called on an added or report-only policy rather than on the
+     * top-level enforced policy
      */
     public ContentSecurityPolicy reportOnly()
     {
-        if ( this.owner != null )
+        if ( !this.topLevel )
         {
-            return this.owner.reportOnly();
+            throw new IllegalStateException(
+                "reportOnly() is only available on the request's top-level enforced policy, not on an added or report-only policy" );
         }
         if ( this.reportOnly == null )
         {
-            this.reportOnly = new ContentSecurityPolicy( this.nonce, this );
+            this.reportOnly = new ContentSecurityPolicy( this.nonce );
         }
         return this.reportOnly;
     }
@@ -153,8 +151,8 @@ public final class ContentSecurityPolicy
      * every policy independently — a load must satisfy all of them — so an added policy can only
      * restrict, never broaden, what this policy allows. Its use is imposing a baseline on content
      * whose own policy the serving context does not fully trust (e.g. an admin context rendering
-     * site content); each call appends one more policy, comma-joined into the same header value by
-     * {@link #serialize()}. While left empty, an added policy is not emitted.
+     * site content); each call appends one more policy, comma-joined into the same header value.
+     * While left empty, an added policy is not emitted.
      *
      * <p>The returned rule set has the full API and shares the request nonce. Order matters when
      * seeding it from a raw header value: {@link #resetTo} first (it starts from a clean slate and
@@ -167,7 +165,7 @@ public final class ContentSecurityPolicy
      */
     public ContentSecurityPolicy addPolicy()
     {
-        final ContentSecurityPolicy additional = new ContentSecurityPolicy( this.nonce, this );
+        final ContentSecurityPolicy additional = new ContentSecurityPolicy( this.nonce );
         this.additionalPolicies.add( additional );
         return additional;
     }
@@ -189,6 +187,44 @@ public final class ContentSecurityPolicy
         for ( final String source : sources )
         {
             set.add( validSource( source ) );
+        }
+        return this;
+    }
+
+    /**
+     * Unions every directive parsed from a raw header value into this policy.
+     * Existing directives are extended and absent ones are added,
+     * so a caller can grant extra permissions on top of a policy built elsewhere without
+     * restating it (and without discarding a nonce already wired into {@code script-src}/{@code style-src}).
+     * Parsing is lenient, mirroring the browser and {@link #resetTo}: tokens that would not survive
+     * {@link #add} validation are skipped rather than thrown, and {@code 'nonce-…'} sources are dropped
+     * (a nonce baked into a header value is static across requests). A {@code null} value adds nothing.
+     * Several comma-separated policies are flattened into one additive set of directives — no additional
+     * enforced policy is created, since an extra policy could only restrict, the opposite of the intent.
+     * Additive — safe to call from a contributor.
+     */
+    public ContentSecurityPolicy merge( @Nullable final String headerValue )
+    {
+        if ( headerValue == null )
+        {
+            return this;
+        }
+        for ( final String part : headerValue.replace( ',', ';' ).split( ";" ) )
+        {
+            final String[] tokens = part.trim().split( "\\s+" );
+            final String directive = tokens[0];
+            if ( !DIRECTIVE_NAME.matcher( directive ).matches() )
+            {
+                continue;
+            }
+            final LinkedHashSet<String> set = this.directives.computeIfAbsent( directive, k -> new LinkedHashSet<>() );
+            for ( int i = 1; i < tokens.length; i++ )
+            {
+                if ( isValidSource( tokens[i] ) )
+                {
+                    set.add( tokens[i] );
+                }
+            }
         }
         return this;
     }
@@ -244,40 +280,50 @@ public final class ContentSecurityPolicy
     }
 
     /**
-     * Replaces the whole policy with the directives parsed from a raw header value. This is the
-     * meaning a {@code Content-Security-Policy} header set directly by a controller gets when the
-     * platform folds it into the request policy: the directly-set header overrides everything
+     * Replaces this rule set's directives with the single policy parsed from a raw header value. This
+     * is the meaning a {@code Content-Security-Policy} header set directly by a controller gets when
+     * the platform folds it into the request policy: the directly-set header overrides everything
      * contributed before it, while later contributions still apply on top. A {@code null}, empty
-     * or blank value clears the policy — if nothing is added afterwards, no header is emitted.
+     * or blank value clears the directives — if nothing is added afterwards, no header is emitted.
      * The request nonce stays stable. Parsing is lenient, mirroring the browser: tokens that would
      * not survive {@link #add} validation are skipped rather than thrown (hand-built headers are
      * arbitrary), and of repeated directives only the first occurrence counts.
      * {@code 'nonce-…'} sources are likewise dropped — a nonce baked into a header value is static
      * across requests; use the {@code nonce*} methods.
      *
-     * <p>A header value carrying several comma-separated policies is honored: the first policy
-     * replaces this rule set and each additional one is appended via {@link #addPolicy()}, so
-     * {@link #serialize()} output round-trips. A later {@code resetTo} replaces the policies a
-     * previous {@code resetTo} appended; policies added explicitly via {@link #addPolicy()} are
-     * untouched. A policy-level escape hatch — not additive.</p>
+     * <p>Operates on this rule set's directives only. A {@code ,} (which in a header value would
+     * begin a further enforced policy) and everything after it is ignored — only the first policy is
+     * applied; this never creates or touches {@link #addPolicy() additional policies}. To impose
+     * several enforced policies, call {@link #addPolicy()} explicitly. A policy-level escape hatch —
+     * not additive.</p>
      */
     public ContentSecurityPolicy resetTo( @Nullable final String headerValue )
     {
         this.directives.clear();
-        this.additionalPolicies.removeAll( this.resetToPolicies );
-        this.resetToPolicies.clear();
         if ( headerValue == null )
         {
             return this;
         }
-        final String[] policies = headerValue.split( "," );
-        parsePolicy( policies[0] );
-        for ( int i = 1; i < policies.length; i++ )
-        {
-            final ContentSecurityPolicy parsed = addPolicy();
-            parsed.parsePolicy( policies[i] );
-            this.resetToPolicies.add( parsed );
-        }
+        final int comma = headerValue.indexOf( ',' );
+        parsePolicy( comma < 0 ? headerValue : headerValue.substring( 0, comma ) );
+        return this;
+    }
+
+    /**
+     * Removes every <i>additional</i> enforced policy appended to this rule set via
+     * {@link #addPolicy()}, while leaving this rule set's own directives untouched. The
+     * {@link #reportOnly()} rule set is a sibling and is not affected.
+     *
+     * <p>For a trusted rendering host (e.g. an admin context that frames and instruments content it
+     * does not fully trust): an additional enforced policy can only <i>restrict</i> — the browser
+     * enforces every policy on the response independently — so one contributed by the framed content
+     * could block resources the host injects, and the host cannot relax it by editing its own
+     * directives. Dropping the additional policies lets the host's own policy be authoritative. A
+     * policy-level escape hatch — not additive.</p>
+     */
+    public ContentSecurityPolicy clearAdditionalPolicies()
+    {
+        this.additionalPolicies.clear();
         return this;
     }
 
@@ -316,194 +362,99 @@ public final class ContentSecurityPolicy
         return this;
     }
 
-    public ContentSecurityPolicy defaultSrc( final CspSource... sources )
-    {
-        return addTokens( "default-src", sources );
-    }
-
     public ContentSecurityPolicy defaultSrc( final String... sources )
     {
-        return add( "default-src", sources );
-    }
-
-    public ContentSecurityPolicy scriptSrc( final CspSource... sources )
-    {
-        return addTokens( SCRIPT_SRC, sources );
+        return add( CspDirective.DEFAULT_SRC, sources );
     }
 
     public ContentSecurityPolicy scriptSrc( final String... sources )
     {
-        return add( SCRIPT_SRC, sources );
-    }
-
-    public ContentSecurityPolicy styleSrc( final CspSource... sources )
-    {
-        return addTokens( STYLE_SRC, sources );
+        return add( CspDirective.SCRIPT_SRC, sources );
     }
 
     public ContentSecurityPolicy styleSrc( final String... sources )
     {
-        return add( STYLE_SRC, sources );
-    }
-
-    public ContentSecurityPolicy imgSrc( final CspSource... sources )
-    {
-        return addTokens( "img-src", sources );
+        return add( CspDirective.STYLE_SRC, sources );
     }
 
     public ContentSecurityPolicy imgSrc( final String... sources )
     {
-        return add( "img-src", sources );
-    }
-
-    public ContentSecurityPolicy fontSrc( final CspSource... sources )
-    {
-        return addTokens( "font-src", sources );
+        return add( CspDirective.IMG_SRC, sources );
     }
 
     public ContentSecurityPolicy fontSrc( final String... sources )
     {
-        return add( "font-src", sources );
-    }
-
-    public ContentSecurityPolicy connectSrc( final CspSource... sources )
-    {
-        return addTokens( "connect-src", sources );
+        return add( CspDirective.FONT_SRC, sources );
     }
 
     public ContentSecurityPolicy connectSrc( final String... sources )
     {
-        return add( "connect-src", sources );
-    }
-
-    public ContentSecurityPolicy mediaSrc( final CspSource... sources )
-    {
-        return addTokens( "media-src", sources );
+        return add( CspDirective.CONNECT_SRC, sources );
     }
 
     public ContentSecurityPolicy mediaSrc( final String... sources )
     {
-        return add( "media-src", sources );
-    }
-
-    public ContentSecurityPolicy objectSrc( final CspSource... sources )
-    {
-        return addTokens( "object-src", sources );
+        return add( CspDirective.MEDIA_SRC, sources );
     }
 
     public ContentSecurityPolicy objectSrc( final String... sources )
     {
-        return add( "object-src", sources );
-    }
-
-    public ContentSecurityPolicy frameSrc( final CspSource... sources )
-    {
-        return addTokens( "frame-src", sources );
+        return add( CspDirective.OBJECT_SRC, sources );
     }
 
     public ContentSecurityPolicy frameSrc( final String... sources )
     {
-        return add( "frame-src", sources );
-    }
-
-    public ContentSecurityPolicy workerSrc( final CspSource... sources )
-    {
-        return addTokens( "worker-src", sources );
+        return add( CspDirective.FRAME_SRC, sources );
     }
 
     public ContentSecurityPolicy workerSrc( final String... sources )
     {
-        return add( "worker-src", sources );
-    }
-
-    public ContentSecurityPolicy manifestSrc( final CspSource... sources )
-    {
-        return addTokens( "manifest-src", sources );
+        return add( CspDirective.WORKER_SRC, sources );
     }
 
     public ContentSecurityPolicy manifestSrc( final String... sources )
     {
-        return add( "manifest-src", sources );
-    }
-
-    public ContentSecurityPolicy childSrc( final CspSource... sources )
-    {
-        return addTokens( "child-src", sources );
+        return add( CspDirective.MANIFEST_SRC, sources );
     }
 
     public ContentSecurityPolicy childSrc( final String... sources )
     {
-        return add( "child-src", sources );
-    }
-
-    public ContentSecurityPolicy frameAncestors( final CspSource... sources )
-    {
-        return addTokens( "frame-ancestors", sources );
+        return add( CspDirective.CHILD_SRC, sources );
     }
 
     public ContentSecurityPolicy frameAncestors( final String... sources )
     {
-        return add( "frame-ancestors", sources );
-    }
-
-    public ContentSecurityPolicy baseUri( final CspSource... sources )
-    {
-        return addTokens( "base-uri", sources );
+        return add( CspDirective.FRAME_ANCESTORS, sources );
     }
 
     public ContentSecurityPolicy baseUri( final String... sources )
     {
-        return add( "base-uri", sources );
-    }
-
-    public ContentSecurityPolicy formAction( final CspSource... sources )
-    {
-        return addTokens( "form-action", sources );
+        return add( CspDirective.BASE_URI, sources );
     }
 
     public ContentSecurityPolicy formAction( final String... sources )
     {
-        return add( "form-action", sources );
-    }
-
-    public ContentSecurityPolicy scriptSrcElem( final CspSource... sources )
-    {
-        return addTokens( "script-src-elem", sources );
+        return add( CspDirective.FORM_ACTION, sources );
     }
 
     public ContentSecurityPolicy scriptSrcElem( final String... sources )
     {
-        return add( "script-src-elem", sources );
-    }
-
-    public ContentSecurityPolicy scriptSrcAttr( final CspSource... sources )
-    {
-        return addTokens( "script-src-attr", sources );
+        return add( CspDirective.SCRIPT_SRC_ELEM, sources );
     }
 
     public ContentSecurityPolicy scriptSrcAttr( final String... sources )
     {
-        return add( "script-src-attr", sources );
-    }
-
-    public ContentSecurityPolicy styleSrcElem( final CspSource... sources )
-    {
-        return addTokens( "style-src-elem", sources );
+        return add( CspDirective.SCRIPT_SRC_ATTR, sources );
     }
 
     public ContentSecurityPolicy styleSrcElem( final String... sources )
     {
-        return add( "style-src-elem", sources );
-    }
-
-    public ContentSecurityPolicy styleSrcAttr( final CspSource... sources )
-    {
-        return addTokens( "style-src-attr", sources );
+        return add( CspDirective.STYLE_SRC_ELEM, sources );
     }
 
     public ContentSecurityPolicy styleSrcAttr( final String... sources )
     {
-        return add( "style-src-attr", sources );
+        return add( CspDirective.STYLE_SRC_ATTR, sources );
     }
 
     /**
@@ -513,7 +464,7 @@ public final class ContentSecurityPolicy
      */
     public ContentSecurityPolicy reportTo( final String group )
     {
-        return add( "report-to", group );
+        return add( CspDirective.REPORT_TO, group );
     }
 
     /**
@@ -521,32 +472,17 @@ public final class ContentSecurityPolicy
      */
     public ContentSecurityPolicy requireTrustedTypesForScript()
     {
-        return add( "require-trusted-types-for", "'script'" );
+        return add( CspDirective.REQUIRE_TRUSTED_TYPES_FOR, "'script'" );
     }
 
     /**
-     * Adds the special {@link TrustedTypesKeyword} tokens ({@code 'none'}, {@code 'allow-duplicates'},
-     * {@code *}) to the {@code trusted-types} directive. Use {@link #trustedTypes(String...)} for
-     * policy names.
-     */
-    public ContentSecurityPolicy trustedTypes( final TrustedTypesKeyword... keywords )
-    {
-        requireNonNull( keywords, "keywords is required" );
-        final String[] tokens = new String[keywords.length];
-        for ( int i = 0; i < keywords.length; i++ )
-        {
-            tokens[i] = requireNonNull( keywords[i], "keyword is required" ).token();
-        }
-        return add( "trusted-types", tokens );
-    }
-
-    /**
-     * Adds (user-defined) policy names to the {@code trusted-types} directive. For the special
-     * keywords use {@link #trustedTypes(TrustedTypesKeyword...)}.
+     * Adds (user-defined) policy names and/or the special {@link TrustedTypesKeyword} keyword
+     * constants ({@code 'none'}, {@code 'allow-duplicates'}, {@code *}) to the {@code trusted-types}
+     * directive.
      */
     public ContentSecurityPolicy trustedTypes( final String... values )
     {
-        return add( "trusted-types", values );
+        return add( CspDirective.TRUSTED_TYPES, values );
     }
 
     /**
@@ -561,7 +497,7 @@ public final class ContentSecurityPolicy
         {
             tokens[i] = requireNonNull( flags[i], "flag is required" ).token();
         }
-        return add( "sandbox", tokens );
+        return add( CspDirective.SANDBOX, tokens );
     }
 
     /**
@@ -579,7 +515,7 @@ public final class ContentSecurityPolicy
      */
     public ContentSecurityPolicy shaScriptSrc( final HashAlgo algo, final byte[] content )
     {
-        return addComputedSha( SCRIPT_SRC, algo, content );
+        return addComputedSha( CspDirective.SCRIPT_SRC, algo, content );
     }
 
     /**
@@ -587,7 +523,7 @@ public final class ContentSecurityPolicy
      */
     public ContentSecurityPolicy shaScriptSrc( final HashAlgo algo, final String base64 )
     {
-        return addPrecomputedSha( SCRIPT_SRC, algo, base64 );
+        return addPrecomputedSha( CspDirective.SCRIPT_SRC, algo, base64 );
     }
 
     /**
@@ -605,7 +541,7 @@ public final class ContentSecurityPolicy
      */
     public ContentSecurityPolicy shaStyleSrc( final HashAlgo algo, final byte[] content )
     {
-        return addComputedSha( STYLE_SRC, algo, content );
+        return addComputedSha( CspDirective.STYLE_SRC, algo, content );
     }
 
     /**
@@ -613,46 +549,48 @@ public final class ContentSecurityPolicy
      */
     public ContentSecurityPolicy shaStyleSrc( final HashAlgo algo, final String base64 )
     {
-        return addPrecomputedSha( STYLE_SRC, algo, base64 );
+        return addPrecomputedSha( CspDirective.STYLE_SRC, algo, base64 );
     }
 
     /**
-     * Wires the request nonce into {@code script-src} and returns its value (for stamping on inline
-     * {@code <script nonce="...">} tags).
+     * Adds a nonce-source ({@code 'nonce-<base64>'}) carrying the request nonce to {@code script-src}
+     * and returns the base64 value, to set as the {@code nonce} attribute of the matching inline
+     * {@code <script>}.
      */
     public String nonceScriptSrc()
     {
-        return nonceFor( SCRIPT_SRC );
+        return nonceFor( CspDirective.SCRIPT_SRC );
     }
 
     /**
-     * Wires the request nonce into {@code script-src-elem} and returns its value (for stamping on a
-     * {@code <script nonce="...">} element that must satisfy a page whose {@code script-src-elem}
-     * uses {@code 'strict-dynamic'}, where {@code 'self'} and host sources are ignored). A nonce is
-     * valid on {@code script-src-elem} per CSP Level 3.
+     * Adds a nonce-source for the request nonce to {@code script-src-elem} and returns its base64
+     * value, for a {@code <script>} element that must satisfy a page whose {@code script-src-elem}
+     * uses {@code 'strict-dynamic'} (under which {@code 'self'} and host-sources are ignored). A
+     * nonce-source is valid on {@code script-src-elem} per CSP Level 3.
      */
     public String nonceScriptSrcElem()
     {
-        return nonceFor( SCRIPT_SRC_ELEM );
+        return nonceFor( CspDirective.SCRIPT_SRC_ELEM );
     }
 
     /**
-     * Wires the request nonce into {@code style-src} and returns its value (for stamping on inline
-     * {@code <style nonce="...">} tags).
+     * Adds a nonce-source ({@code 'nonce-<base64>'}) carrying the request nonce to {@code style-src}
+     * and returns the base64 value, to set as the {@code nonce} attribute of the matching inline
+     * {@code <style>}.
      */
     public String nonceStyleSrc()
     {
-        return nonceFor( STYLE_SRC );
+        return nonceFor( CspDirective.STYLE_SRC );
     }
 
     /**
-     * Wires the request nonce into {@code style-src-elem} and returns its value (for stamping on a
-     * {@code <style nonce="...">} element that must satisfy a page whose {@code style-src-elem} uses
-     * {@code 'strict-dynamic'}). A nonce is valid on {@code style-src-elem} per CSP Level 3.
+     * Adds a nonce-source for the request nonce to {@code style-src-elem} and returns its base64
+     * value, for a {@code <style>} element that must satisfy a page whose {@code style-src-elem} uses
+     * {@code 'strict-dynamic'}. A nonce-source is valid on {@code style-src-elem} per CSP Level 3.
      */
     public String nonceStyleSrcElem()
     {
-        return nonceFor( STYLE_SRC_ELEM );
+        return nonceFor( CspDirective.STYLE_SRC_ELEM );
     }
 
     /**
@@ -688,16 +626,16 @@ public final class ContentSecurityPolicy
         final StringBuilder sb = new StringBuilder();
         for ( final Map.Entry<String, LinkedHashSet<String>> entry : this.directives.entrySet() )
         {
-            if ( sb.length() > 0 )
+            if ( !sb.isEmpty() )
             {
                 sb.append( "; " );
             }
             sb.append( entry.getKey() );
             final LinkedHashSet<String> sources = entry.getValue();
-            final boolean dropNone = sources.size() > 1 && sources.contains( NONE );
+            final boolean dropNone = sources.size() > 1 && sources.contains( CspSource.NONE );
             for ( final String source : sources )
             {
-                if ( dropNone && source.equals( NONE ) )
+                if ( dropNone && source.equals( CspSource.NONE ) )
                 {
                     continue;
                 }
@@ -709,7 +647,7 @@ public final class ContentSecurityPolicy
             final String value = additional.serialize();
             if ( !value.isEmpty() )
             {
-                if ( sb.length() > 0 )
+                if ( !sb.isEmpty() )
                 {
                     sb.append( ", " );
                 }
@@ -764,17 +702,6 @@ public final class ContentSecurityPolicy
             }
         }
         return true;
-    }
-
-    private ContentSecurityPolicy addTokens( final String directive, final CspSource[] sources )
-    {
-        requireNonNull( sources, "sources is required" );
-        final String[] tokens = new String[sources.length];
-        for ( int i = 0; i < sources.length; i++ )
-        {
-            tokens[i] = requireNonNull( sources[i], "source is required" ).token();
-        }
-        return add( directive, tokens );
     }
 
     private ContentSecurityPolicy addComputedSha( final String directive, final HashAlgo algo, final byte[] content )

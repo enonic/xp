@@ -36,8 +36,13 @@ exports.returnsObject = function () {
     assert.assertEquals('function', typeof csp.trustedTypes);
     assert.assertEquals('undefined', typeof csp.resetAll);
     assert.assertEquals('function', typeof csp.resetTo);
+    assert.assertEquals('function', typeof csp.merge);
+    assert.assertEquals('function', typeof csp.directive);
     assert.assertEquals('undefined', typeof csp.reportOnly);
+    assert.assertEquals('function', typeof portal.cspReportOnly);
     assert.assertEquals('undefined', typeof csp.addPolicy);
+    assert.assertEquals('undefined', typeof csp.clear);
+    assert.assertEquals('undefined', typeof csp.clearAdditionalPolicies);
     assert.assertEquals('function', typeof csp.sandbox);
     assert.assertEquals('function', typeof csp.shaScriptSrc);
     assert.assertEquals('function', typeof csp.shaStyleSrc);
@@ -87,10 +92,10 @@ exports.resetToEmptyClearsPolicy = function () {
     assert.assertEquals('', __.toNativeObject(testInstance.policyBuild()));
 };
 
-exports.resetToParsesCommaSeparatedPolicies = function () {
+exports.resetToIgnoresPoliciesAfterFirstComma = function () {
     var csp = portal.csp();
     csp.resetTo("default-src 'none', script-src 'self'");
-    assert.assertEquals("default-src 'none', script-src 'self'", __.toNativeObject(testInstance.policyBuild()));
+    assert.assertEquals("default-src 'none'", __.toNativeObject(testInstance.policyBuild()));
 };
 
 exports.resetToBlankClearsPolicy = function () {
@@ -225,6 +230,51 @@ exports.unsafeInlineAndNonceBothEmitted = function () {
     csp.scriptSrc(portal.CspSource.UNSAFE_INLINE);
     var nonce = csp.nonceScriptSrc();
     assert.assertEquals("script-src 'unsafe-inline' 'nonce-" + nonce + "'", __.toNativeObject(testInstance.policyBuild()));
+};
+
+exports.mergeUnionsIntoExistingAndAddsNew = function () {
+    var csp = portal.csp();
+    csp.connectSrc(portal.CspSource.SELF);
+    csp.merge("connect-src https://api.example.com; img-src data:");
+    assert.assertEquals("connect-src 'self' https://api.example.com; img-src data:",
+        __.toNativeObject(testInstance.policyBuild()));
+};
+
+exports.mergeDropsExternalNonceSources = function () {
+    var csp = portal.csp();
+    csp.merge("script-src 'self' 'nonce-static123'");
+    assert.assertEquals("script-src 'self'", __.toNativeObject(testInstance.policyBuild()));
+};
+
+exports.mergeKeepsAWiredNonce = function () {
+    var csp = portal.csp();
+    var nonce = csp.nonceScriptSrc();
+    csp.merge("connect-src https://api.example.com");
+    assert.assertEquals("connect-src https://api.example.com; script-src 'nonce-" + nonce + "'",
+        __.toNativeObject(testInstance.policyBuild()));
+};
+
+exports.directiveReads = function () {
+    var csp = portal.csp();
+    csp.scriptSrc(portal.CspSource.SELF, 'https://cdn.example.com');
+    var sources = csp.directive('script-src');
+    assert.assertEquals(2, sources.length);
+    assert.assertEquals("'self'", sources[0]);
+    assert.assertEquals('https://cdn.example.com', sources[1]);
+    assert.assertEquals(null, csp.directive('style-src'));
+};
+
+exports.reportOnlyIsSeparateRuleSet = function () {
+    portal.csp().scriptSrc(portal.CspSource.SELF);
+    portal.cspReportOnly().scriptSrc(portal.CspSource.UNSAFE_INLINE);
+    assert.assertEquals("script-src 'self'", __.toNativeObject(testInstance.policyBuild()));
+    assert.assertEquals("script-src 'unsafe-inline'", __.toNativeObject(testInstance.reportOnlyBuild()));
+};
+
+exports.reportOnlySharesNonce = function () {
+    var a = portal.csp().nonceScriptSrc();
+    var b = portal.cspReportOnly().nonceScriptSrc();
+    assert.assertEquals(a, b);
 };
 
 exports.scriptSrcTypedAndRaw = function () {

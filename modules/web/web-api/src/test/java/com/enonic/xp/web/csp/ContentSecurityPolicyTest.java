@@ -32,6 +32,60 @@ class ContentSecurityPolicyTest
     }
 
     @Test
+    void cspDirective_constants_drop_into_the_string_methods()
+    {
+        assertThat( CspDirective.SCRIPT_SRC ).isEqualTo( "script-src" );
+
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy();
+        csp.add( CspDirective.CONNECT_SRC, "'self'" );
+        assertThat( csp.directive( CspDirective.CONNECT_SRC ) ).hasValueSatisfying(
+            s -> assertThat( s ).containsExactly( "'self'" ) );
+        csp.reset( CspDirective.CONNECT_SRC );
+        assertThat( csp.serialize() ).isEmpty();
+    }
+
+    @Test
+    void merge_unions_into_existing_and_adds_new()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().connectSrc( CspSource.SELF );
+        csp.merge( "connect-src https://api.example.com; img-src data:" );
+        assertThat( csp.serialize() ).isEqualTo( "connect-src 'self' https://api.example.com; img-src data:" );
+    }
+
+    @Test
+    void merge_is_lenient_and_drops_external_nonce_sources()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy();
+        csp.merge( "script-src 'self' 'nonce-static123'" );
+        assertThat( csp.serialize() ).isEqualTo( "script-src 'self'" );
+    }
+
+    @Test
+    void merge_flattens_comma_separated_policies_into_one_set()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy();
+        csp.merge( "default-src 'self', connect-src https://api.example.com" );
+        assertThat( csp.serialize() ).isEqualTo( "connect-src https://api.example.com; default-src 'self'" );
+    }
+
+    @Test
+    void merge_null_adds_nothing()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrc( CspSource.SELF );
+        csp.merge( null );
+        assertThat( csp.serialize() ).isEqualTo( "script-src 'self'" );
+    }
+
+    @Test
+    void merge_keeps_a_nonce_already_wired()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy();
+        final String nonce = csp.nonceScriptSrc();
+        csp.merge( "connect-src https://api.example.com" );
+        assertThat( csp.serialize() ).isEqualTo( "connect-src https://api.example.com; script-src 'nonce-" + nonce + "'" );
+    }
+
+    @Test
     void directive_reads_sources_and_drives_gap_fill()
     {
         // directive() reports what a contributor declared, so a baseline can gap-fill only what is
@@ -528,9 +582,9 @@ class ContentSecurityPolicyTest
     }
 
     @Test
-    void typed_scriptSrc_null_source_throws()
+    void scriptSrc_null_source_throws()
     {
-        assertThatThrownBy( () -> new ContentSecurityPolicy().scriptSrc( (CspSource) null ) ).isInstanceOf(
+        assertThatThrownBy( () -> new ContentSecurityPolicy().scriptSrc( (String) null ) ).isInstanceOf(
             NullPointerException.class );
     }
 
@@ -650,9 +704,9 @@ class ContentSecurityPolicyTest
     }
 
     @Test
-    void trustedTypes_null_keyword_throws()
+    void trustedTypes_null_value_throws()
     {
-        assertThatThrownBy( () -> new ContentSecurityPolicy().trustedTypes( (TrustedTypesKeyword) null ) ).isInstanceOf(
+        assertThatThrownBy( () -> new ContentSecurityPolicy().trustedTypes( (String) null ) ).isInstanceOf(
             NullPointerException.class );
     }
 
@@ -672,7 +726,7 @@ class ContentSecurityPolicyTest
         final ContentSecurityPolicy csp = new ContentSecurityPolicy();
         final ContentSecurityPolicy companion = csp.reportOnly();
         assertThat( csp.reportOnly() ).isSameAs( companion );
-        assertThat( companion.reportOnly() ).isSameAs( companion );
+        assertThatThrownBy( companion::reportOnly ).isInstanceOf( IllegalStateException.class );
         assertThat( companion ).isNotSameAs( csp );
     }
 
@@ -772,12 +826,55 @@ class ContentSecurityPolicyTest
     }
 
     @Test
-    void reportOnly_from_any_rule_set_is_the_request_report_only_set()
+    void reportOnly_throws_on_added_and_report_only_policies()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy();
-        final ContentSecurityPolicy reportOnly = csp.reportOnly();
-        assertThat( csp.addPolicy().reportOnly() ).isSameAs( reportOnly );
-        assertThat( reportOnly.addPolicy().reportOnly() ).isSameAs( reportOnly );
+        // report-only is a single companion of the top-level enforced policy; reaching it from an
+        // added policy or from the companion itself is a misuse and fails fast
+        assertThatThrownBy( () -> csp.addPolicy().reportOnly() ).isInstanceOf( IllegalStateException.class );
+        assertThatThrownBy( () -> csp.reportOnly().reportOnly() ).isInstanceOf( IllegalStateException.class );
+        assertThatThrownBy( () -> csp.reportOnly().addPolicy().reportOnly() ).isInstanceOf( IllegalStateException.class );
+    }
+
+    @Test
+    void clearAdditionalPolicies_drops_appended_policies_keeps_directives()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrc( CspSource.SELF );
+        csp.addPolicy().objectSrc( CspSource.NONE );
+        csp.clearAdditionalPolicies();
+        assertThat( csp.serialize() ).isEqualTo( "script-src 'self'" );
+    }
+
+    @Test
+    void clearAdditionalPolicies_drops_all_added_policies()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().defaultSrc( CspSource.NONE );
+        csp.addPolicy().scriptSrc( CspSource.NONE );
+        csp.addPolicy().objectSrc( CspSource.NONE );
+        csp.clearAdditionalPolicies();
+        assertThat( csp.serialize() ).isEqualTo( "default-src 'none'" );
+    }
+
+    @Test
+    void clearAdditionalPolicies_leaves_report_only_untouched()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrc( CspSource.SELF );
+        csp.addPolicy().objectSrc( CspSource.NONE );
+        csp.reportOnly().scriptSrc( CspSource.NONE );
+        csp.clearAdditionalPolicies();
+        assertThat( csp.serialize() ).isEqualTo( "script-src 'self'" );
+        assertThat( csp.reportOnly().serialize() ).isEqualTo( "script-src 'none'" );
+    }
+
+    @Test
+    void report_only_emptied_via_resetTo_and_clearAdditionalPolicies()
+    {
+        final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrc( CspSource.SELF );
+        csp.reportOnly().scriptSrc( CspSource.NONE ).addPolicy().objectSrc( CspSource.NONE );
+        // how a render host empties the report-only set: clear its directives and drop its added policies
+        csp.reportOnly().resetTo( null ).clearAdditionalPolicies();
+        assertThat( csp.reportOnly().serialize() ).isEmpty();
+        assertThat( csp.serialize() ).isEqualTo( "script-src 'self'" );
     }
 
     @Test
@@ -853,31 +950,31 @@ class ContentSecurityPolicyTest
     }
 
     @Test
-    void resetTo_parses_comma_separated_policies_and_round_trips()
+    void resetTo_ignores_policies_after_the_first_comma()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy();
         csp.resetTo( "default-src 'none', script-src 'self'" );
-        assertThat( csp.serialize() ).isEqualTo( "default-src 'none', script-src 'self'" );
-        csp.resetTo( csp.serialize() );
-        assertThat( csp.serialize() ).isEqualTo( "default-src 'none', script-src 'self'" );
+        // only the first policy is applied; the comma and everything after it is ignored
+        assertThat( csp.serialize() ).isEqualTo( "default-src 'none'" );
     }
 
     @Test
-    void resetTo_replaces_policies_a_previous_resetTo_appended()
+    void resetTo_again_replaces_the_previous_directives()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy();
-        csp.resetTo( "default-src 'none', object-src 'none'" );
+        csp.resetTo( "default-src 'none'; object-src 'none'" );
         csp.resetTo( "img-src data:" );
         assertThat( csp.serialize() ).isEqualTo( "img-src data:" );
     }
 
     @Test
-    void resetTo_with_comma_separated_policies_keeps_explicitly_added_policies()
+    void resetTo_ignores_its_comma_policies_but_keeps_added_policies()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy();
         csp.addPolicy().objectSrc( CspSource.NONE );
         csp.resetTo( "script-src 'self', img-src data:" );
-        assertThat( csp.serialize() ).isEqualTo( "script-src 'self', object-src 'none', img-src data:" );
+        // 'img-src data:' (after the comma) is dropped; the explicitly added policy is untouched
+        assertThat( csp.serialize() ).isEqualTo( "script-src 'self', object-src 'none'" );
     }
 
     @Test

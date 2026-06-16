@@ -15,9 +15,26 @@ public final class CspHandler
 {
     private PortalRequest request;
 
+    private boolean reportOnly;
+
+    public void setReportOnly( final boolean reportOnly )
+    {
+        this.reportOnly = reportOnly;
+    }
+
     public void add( final String directive, final String[] sources )
     {
         policy().add( directive, sources );
+    }
+
+    public void merge( final String headerValue )
+    {
+        policy().merge( headerValue );
+    }
+
+    public String[] directive( final String directive )
+    {
+        return policy().directive( directive ).map( sources -> sources.toArray( new String[0] ) ).orElse( null );
     }
 
     public void override( final String directive, final String[] sources )
@@ -199,7 +216,8 @@ public final class CspHandler
 
     private ContentSecurityPolicy policy()
     {
-        return this.request.getContentSecurityPolicy();
+        final ContentSecurityPolicy policy = this.request.getContentSecurityPolicy();
+        return this.reportOnly ? policy.reportOnly() : policy;
     }
 
     private static HashAlgo parseAlgo( final String algo )

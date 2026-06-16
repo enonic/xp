@@ -1,28 +1,19 @@
 package com.enonic.xp.web.csp;
 
 /**
- * Special keywords for the {@code trusted-types} directive, used alongside (user-defined) policy
- * names. Keyword tokens are emitted as-is — single-quoted for {@code 'none'} /
- * {@code 'allow-duplicates'}, and the bare wildcard {@code *}.
+ * Special keyword values for the {@code trusted-types} directive, used alongside (user-defined)
+ * policy names via {@link ContentSecurityPolicy#trustedTypes}. Emitted as-is — single-quoted for
+ * {@code 'none'} / {@code 'allow-duplicates'}, and the bare wildcard {@code *}.
  */
-public enum TrustedTypesKeyword
+public final class TrustedTypesKeyword
 {
-    ALLOW_DUPLICATES( "'allow-duplicates'" ),
-    NONE( "'none'" ),
-    WILDCARD( "*" );
+    public static final String ALLOW_DUPLICATES = "'allow-duplicates'";
 
-    private final String token;
+    public static final String NONE = "'none'";
 
-    TrustedTypesKeyword( final String token )
+    public static final String WILDCARD = "*";
+
+    private TrustedTypesKeyword()
     {
-        this.token = token;
-    }
-
-    /**
-     * The {@code trusted-types} token (e.g. {@code 'allow-duplicates'}).
-     */
-    public String token()
-    {
-        return this.token;
     }
 }
