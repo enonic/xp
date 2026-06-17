@@ -178,7 +178,7 @@ public final class ContentSecurityPolicy
      * @throws IllegalArgumentException when {@code directive} is not a valid directive name, or a
      * source contains whitespace, control characters, {@code ;} or {@code ,} — tokens that would
      * smuggle extra directives into the emitted header — or is a {@code 'nonce-…'} source, which
-     * only the {@code nonce*} methods may mint.
+     * only the {@code nonce*} methods may generate.
      */
     public ContentSecurityPolicy add( final String directive, final String... sources )
     {
@@ -672,7 +672,7 @@ public final class ContentSecurityPolicy
         if ( isExternalNonce( source ) )
         {
             throw new IllegalArgumentException(
-                "A 'nonce-' source cannot be supplied; only the nonce* methods mint the request nonce: " + source );
+                "A 'nonce-' source cannot be supplied; only the nonce* methods generate the request nonce: " + source );
         }
         if ( !isValidSource( source ) )
         {

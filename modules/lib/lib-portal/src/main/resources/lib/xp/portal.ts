@@ -1159,7 +1159,7 @@ export interface Csp {
      * Unions source expressions into the serialized-source-list for `directive`, de-duplicated. With
      * no source expressions, registers a valueless directive (e.g. `upgrade-insecure-requests`).
      *
-     * A nonce-source is rejected: only the `nonce*` methods mint the per-request nonce.
+     * A nonce-source is rejected: only the `nonce*` methods generate the per-request nonce.
      */
     add(directive: string, ...sources: string[]): Csp;
 
