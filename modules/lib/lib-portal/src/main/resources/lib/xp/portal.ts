@@ -1133,8 +1133,8 @@ export interface Csp {
 
     /**
      * Adds a nonce-source for the per-request nonce to `script-src-elem` and returns its base64 value —
-     * for a `<script>` element that must satisfy a page whose `script-src-elem` uses `'strict-dynamic'`
-     * (under which `'self'` and host-sources are ignored). Always the same value within a request.
+     * for a `<script>` element under a `script-src-elem` that uses `'strict-dynamic'`. Always the same
+     * value within a request.
      */
     nonceScriptSrcElem(): string;
 
@@ -1146,9 +1146,9 @@ export interface Csp {
     nonceStyleSrc(): string;
 
     /**
-     * Adds a nonce-source for the per-request nonce to `style-src-elem` and returns its base64 value —
-     * for a `<style>` element that must satisfy a page whose `style-src-elem` uses `'strict-dynamic'`.
-     * Always the same value within a request.
+     * Adds a nonce-source (`'nonce-<base64>'`) carrying the per-request nonce to `style-src-elem` and
+     * returns the base64 value — set it as the `nonce` attribute of the matching `<style>` or
+     * `<link rel="stylesheet">`. Always the same value within a request.
      */
     nonceStyleSrcElem(): string;
 

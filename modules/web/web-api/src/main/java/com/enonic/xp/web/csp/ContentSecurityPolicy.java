@@ -564,9 +564,8 @@ public final class ContentSecurityPolicy
 
     /**
      * Adds a nonce-source for the request nonce to {@code script-src-elem} and returns its base64
-     * value, for a {@code <script>} element that must satisfy a page whose {@code script-src-elem}
-     * uses {@code 'strict-dynamic'} (under which {@code 'self'} and host-sources are ignored). A
-     * nonce-source is valid on {@code script-src-elem} per CSP Level 3.
+     * value, for a {@code <script>} element under a {@code script-src-elem} that uses
+     * {@code 'strict-dynamic'}.
      */
     public String nonceScriptSrcElem()
     {
@@ -584,9 +583,9 @@ public final class ContentSecurityPolicy
     }
 
     /**
-     * Adds a nonce-source for the request nonce to {@code style-src-elem} and returns its base64
-     * value, for a {@code <style>} element that must satisfy a page whose {@code style-src-elem} uses
-     * {@code 'strict-dynamic'}. A nonce-source is valid on {@code style-src-elem} per CSP Level 3.
+     * Adds a nonce-source ({@code 'nonce-<base64>'}) carrying the request nonce to
+     * {@code style-src-elem} and returns the base64 value, to set as the {@code nonce} attribute of
+     * the matching {@code <style>} or {@code <link rel=stylesheet>}.
      */
     public String nonceStyleSrcElem()
     {
