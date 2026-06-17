@@ -1177,8 +1177,7 @@ export interface Csp {
     /**
      * The source expressions currently declared for `directive`, in serialized order (already
      * de-duplicated), or `null` if no contributor has declared it. A declared valueless directive
-     * (e.g. `upgrade-insecure-requests`) returns an empty array. Lets a contributor inspect before it
-     * `override`s or gap-fills (`if (csp.directive(name) === null) csp.add(name, ...)`). Reads this
+     * (e.g. `upgrade-insecure-requests`) returns an empty array. Reads this
      * policy only; the report-only policy is reached via {@link cspReportOnly}.
      */
     directive(directive: string): string[] | null;

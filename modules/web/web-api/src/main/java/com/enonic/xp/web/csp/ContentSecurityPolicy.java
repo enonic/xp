@@ -234,10 +234,7 @@ public final class ContentSecurityPolicy
      * deduplicated, since contributions union into a set), or {@link Optional#empty()} if no
      * contributor has declared it. A present directive with no sources (a boolean directive such as
      * {@code upgrade-insecure-requests}) returns an empty list. The returned list is an immutable
-     * snapshot. Lets a baseline gap-fill what is missing without overriding what is set —
-     * {@code if ( policy.directive( name ).isEmpty() ) policy.add( name, … )} — and a contributor
-     * probe what another already set. Reads this rule set only; the report-only set is reached via
-     * {@link #reportOnly()}.
+     * snapshot. Reads this rule set only; the report-only set is reached via {@link #reportOnly()}.
      */
     public Optional<List<String>> directive( final String directive )
     {
