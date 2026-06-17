@@ -196,7 +196,7 @@ public final class ContentSecurityPolicy
      * Existing directives are extended and absent ones are added,
      * so a caller can grant extra permissions on top of a policy built elsewhere without
      * restating it (and without discarding a nonce already wired into {@code script-src}/{@code style-src}).
-     * Parsing is lenient, mirroring the browser and {@link #resetTo}: tokens that would not survive
+     * Parsing is lenient, mirroring the browser: tokens that would not survive
      * {@link #add} validation are skipped rather than thrown, and {@code 'nonce-…'} sources are dropped
      * (a nonce baked into a header value is static across requests). A {@code null} value adds nothing.
      * Several comma-separated policies are flattened into one additive set of directives — no additional

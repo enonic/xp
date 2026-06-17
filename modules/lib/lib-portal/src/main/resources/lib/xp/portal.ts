@@ -1165,10 +1165,10 @@ export interface Csp {
 
     /**
      * Parses a serialized policy (a `Content-Security-Policy` header value) and unions each directive's
-     * source expressions onto this policy — the additive counterpart to {@link resetTo}. Existing
+     * source expressions onto this policy. Existing
      * directives are extended and absent ones added, so you can grant extra permissions on top of a
      * policy built elsewhere without restating it (a nonce-source already wired into
-     * `script-src`/`style-src` is kept). Lenient like {@link resetTo}: invalid tokens are skipped and
+     * `script-src`/`style-src` is kept). Lenient: invalid tokens are skipped and
      * nonce-sources dropped. `null`/`undefined` adds nothing. A comma-separated list of policies is
      * flattened into one additive directive set (no extra enforced policy is created). Additive.
      */
