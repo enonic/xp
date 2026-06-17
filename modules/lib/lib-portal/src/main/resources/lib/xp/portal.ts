@@ -1159,16 +1159,16 @@ export interface Csp {
      * Unions source expressions into the serialized-source-list for `directive`, de-duplicated. With
      * no source expressions, registers a valueless directive (e.g. `upgrade-insecure-requests`).
      *
-     * A nonce-source is rejected: only the `nonce*` methods mint the per-request nonce.
+     * A nonce-source is rejected: only the `nonce*` methods generate the per-request nonce.
      */
     add(directive: string, ...sources: string[]): Csp;
 
     /**
      * Parses a serialized policy (a `Content-Security-Policy` header value) and unions each directive's
-     * source expressions onto this policy — the additive counterpart to {@link resetTo}. Existing
+     * source expressions onto this policy. Existing
      * directives are extended and absent ones added, so you can grant extra permissions on top of a
      * policy built elsewhere without restating it (a nonce-source already wired into
-     * `script-src`/`style-src` is kept). Lenient like {@link resetTo}: invalid tokens are skipped and
+     * `script-src`/`style-src` is kept). Lenient: invalid tokens are skipped and
      * nonce-sources dropped. `null`/`undefined` adds nothing. A comma-separated list of policies is
      * flattened into one additive directive set (no extra enforced policy is created). Additive.
      */
@@ -1177,8 +1177,7 @@ export interface Csp {
     /**
      * The source expressions currently declared for `directive`, in serialized order (already
      * de-duplicated), or `null` if no contributor has declared it. A declared valueless directive
-     * (e.g. `upgrade-insecure-requests`) returns an empty array. Lets a contributor inspect before it
-     * `override`s or gap-fills (`if (csp.directive(name) === null) csp.add(name, ...)`). Reads this
+     * (e.g. `upgrade-insecure-requests`) returns an empty array. Reads this
      * policy only; the report-only policy is reached via {@link cspReportOnly}.
      */
     directive(directive: string): string[] | null;

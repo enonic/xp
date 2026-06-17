@@ -178,7 +178,7 @@ public final class ContentSecurityPolicy
      * @throws IllegalArgumentException when {@code directive} is not a valid directive name, or a
      * source contains whitespace, control characters, {@code ;} or {@code ,} — tokens that would
      * smuggle extra directives into the emitted header — or is a {@code 'nonce-…'} source, which
-     * only the {@code nonce*} methods may mint.
+     * only the {@code nonce*} methods may generate.
      */
     public ContentSecurityPolicy add( final String directive, final String... sources )
     {
@@ -196,7 +196,7 @@ public final class ContentSecurityPolicy
      * Existing directives are extended and absent ones are added,
      * so a caller can grant extra permissions on top of a policy built elsewhere without
      * restating it (and without discarding a nonce already wired into {@code script-src}/{@code style-src}).
-     * Parsing is lenient, mirroring the browser and {@link #resetTo}: tokens that would not survive
+     * Parsing is lenient, mirroring the browser: tokens that would not survive
      * {@link #add} validation are skipped rather than thrown, and {@code 'nonce-…'} sources are dropped
      * (a nonce baked into a header value is static across requests). A {@code null} value adds nothing.
      * Several comma-separated policies are flattened into one additive set of directives — no additional
@@ -234,10 +234,7 @@ public final class ContentSecurityPolicy
      * deduplicated, since contributions union into a set), or {@link Optional#empty()} if no
      * contributor has declared it. A present directive with no sources (a boolean directive such as
      * {@code upgrade-insecure-requests}) returns an empty list. The returned list is an immutable
-     * snapshot. Lets a baseline gap-fill what is missing without overriding what is set —
-     * {@code if ( policy.directive( name ).isEmpty() ) policy.add( name, … )} — and a contributor
-     * probe what another already set. Reads this rule set only; the report-only set is reached via
-     * {@link #reportOnly()}.
+     * snapshot. Reads this rule set only; the report-only set is reached via {@link #reportOnly()}.
      */
     public Optional<List<String>> directive( final String directive )
     {
@@ -672,7 +669,7 @@ public final class ContentSecurityPolicy
         if ( isExternalNonce( source ) )
         {
             throw new IllegalArgumentException(
-                "A 'nonce-' source cannot be supplied; only the nonce* methods mint the request nonce: " + source );
+                "A 'nonce-' source cannot be supplied; only the nonce* methods generate the request nonce: " + source );
         }
         if ( !isValidSource( source ) )
         {
