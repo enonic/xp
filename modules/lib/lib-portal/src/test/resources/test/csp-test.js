@@ -105,11 +105,15 @@ exports.resetToBlankClearsPolicy = function () {
     assert.assertEquals('', __.toNativeObject(testInstance.policyBuild()));
 };
 
-exports.resetToUndefinedClearsPolicy = function () {
+exports.resetToUndefinedThrows = function () {
     var csp = portal.csp();
-    csp.scriptSrc(portal.CspSource.SELF);
-    csp.resetTo();
-    assert.assertEquals('', __.toNativeObject(testInstance.policyBuild()));
+    var threw = false;
+    try {
+        csp.resetTo();
+    } catch (e) {
+        threw = true;
+    }
+    assert.assertTrue('expected resetTo to throw on a missing header value', threw);
 };
 
 exports.invalidSourceThrows = function () {
@@ -252,6 +256,17 @@ exports.mergeKeepsAWiredNonce = function () {
     csp.merge("connect-src https://api.example.com");
     assert.assertEquals("connect-src https://api.example.com; script-src 'nonce-" + nonce + "'",
         __.toNativeObject(testInstance.policyBuild()));
+};
+
+exports.mergeUndefinedThrows = function () {
+    var csp = portal.csp();
+    var threw = false;
+    try {
+        csp.merge();
+    } catch (e) {
+        threw = true;
+    }
+    assert.assertTrue('expected merge to throw on a missing header value', threw);
 };
 
 exports.directiveReads = function () {

@@ -184,7 +184,7 @@ public final class PortalResponseSerializer
      * A CSP header a controller sets directly is folded into the request policy — replaced by the
      * header's own rules — instead of travelling as a plain header: the policy stays the
      * single source of truth, later contributions (post-process, filters) still apply on top, and
-     * the platform serializes the composed value. A {@code null} value clears the rule set.
+     * the platform serializes the composed value. A missing value clears the rule set.
      */
     private static boolean foldContentSecurityPolicy( final String name, final ScriptValue value )
     {
@@ -200,7 +200,8 @@ public final class PortalResponseSerializer
         }
         final ContentSecurityPolicy policy =
             enforced ? request.getContentSecurityPolicy() : request.getContentSecurityPolicy().reportOnly();
-        policy.resetTo( value != null ? value.getValue( String.class ) : null );
+        final String headerValue = value != null ? value.getValue( String.class ) : null;
+        policy.resetTo( headerValue == null ? "" : headerValue );
         return true;
     }
 

@@ -1169,10 +1169,10 @@ export interface Csp {
      * directives are extended and absent ones added, so you can grant extra permissions on top of a
      * policy built elsewhere without restating it (a nonce-source already wired into
      * `script-src`/`style-src` is kept). Lenient: invalid tokens are skipped and
-     * nonce-sources dropped. `null`/`undefined` adds nothing. A comma-separated list of policies is
+     * nonce-sources dropped. An empty or blank value adds nothing. A comma-separated list of policies is
      * flattened into one additive directive set (no extra enforced policy is created). Additive.
      */
-    merge(headerValue?: string | null): Csp;
+    merge(headerValue: string): Csp;
 
     /**
      * The source expressions currently declared for `directive`, in serialized order (already
@@ -1199,14 +1199,14 @@ export interface Csp {
 
     /**
      * Replaces this policy's directives with the single policy parsed from a raw header value, so later
-     * contributions still apply on top. A `null`, `undefined`, empty or blank value clears the
+     * contributions still apply on top. An empty or blank value clears the
      * directives — if nothing is added afterwards, no header is emitted. The request nonce stays
      * stable. Parsing is lenient, mirroring the browser: invalid tokens are skipped, and of repeated
      * directives only the first occurrence counts. `'nonce-…'` sources are dropped — use the `nonce*`
      * methods. A `,` (which would begin a further policy) and everything after it is ignored — only the
      * first policy is applied. Policy-level and **not** additive.
      */
-    resetTo(headerValue?: string | null): Csp;
+    resetTo(headerValue: string): Csp;
 }
 
 interface CspHandler {
@@ -1214,7 +1214,7 @@ interface CspHandler {
 
     add(directive: string, sources: string[]): void;
 
-    merge(headerValue: string | null): void;
+    merge(headerValue: string): void;
 
     directive(directive: string): string[] | null;
 
@@ -1222,7 +1222,7 @@ interface CspHandler {
 
     reset(directives: string[]): void;
 
-    resetTo(headerValue: string | null): void;
+    resetTo(headerValue: string): void;
 
     strict(): void;
 
@@ -1325,8 +1325,8 @@ function createCsp(reportOnly: boolean): Csp {
             bean.add(directive, sources);
             return instance;
         },
-        merge(headerValue?: string | null): Csp {
-            bean.merge(headerValue ?? null);
+        merge(headerValue: string): Csp {
+            bean.merge(headerValue);
             return instance;
         },
         directive(directive: string): string[] | null {
@@ -1340,8 +1340,8 @@ function createCsp(reportOnly: boolean): Csp {
             bean.reset(directives);
             return instance;
         },
-        resetTo(headerValue?: string | null): Csp {
-            bean.resetTo(headerValue ?? null);
+        resetTo(headerValue: string): Csp {
+            bean.resetTo(headerValue);
             return instance;
         },
         strict(): Csp {

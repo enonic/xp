@@ -61,7 +61,7 @@ import static java.util.Objects.requireNonNull;
  * whose own policy it does not fully trust. Conversely, a trusted rendering host that frames and
  * instruments untrusted content uses {@link #clearAdditionalPolicies()} to drop additional enforced
  * policies the content contributed (which it cannot relax otherwise), and empties the
- * {@link #reportOnly()} rule set ({@code reportOnly().resetTo(null).clearAdditionalPolicies()}) so a
+ * {@link #reportOnly()} rule set ({@code reportOnly().resetTo("").clearAdditionalPolicies()}) so a
  * report-only policy it contributed does not ride onto its response.</p>
  *
  * <p>A nonce-source is valid only on the script and style fetch directives — {@code script-src}
@@ -198,17 +198,14 @@ public final class ContentSecurityPolicy
      * restating it (and without discarding a nonce already wired into {@code script-src}/{@code style-src}).
      * Parsing is lenient, mirroring the browser: tokens that would not survive
      * {@link #add} validation are skipped rather than thrown, and {@code 'nonce-…'} sources are dropped
-     * (a nonce baked into a header value is static across requests). A {@code null} value adds nothing.
+     * (a nonce baked into a header value is static across requests). An empty or blank value adds nothing.
      * Several comma-separated policies are flattened into one additive set of directives — no additional
      * enforced policy is created, since an extra policy could only restrict, the opposite of the intent.
      * Additive — safe to call from a contributor.
      */
-    public ContentSecurityPolicy merge( @Nullable final String headerValue )
+    public ContentSecurityPolicy merge( final String headerValue )
     {
-        if ( headerValue == null )
-        {
-            return this;
-        }
+        requireNonNull( headerValue, "headerValue is required" );
         for ( final String part : headerValue.replace( ',', ';' ).split( ";" ) )
         {
             final String[] tokens = part.trim().split( "\\s+" );
@@ -280,8 +277,8 @@ public final class ContentSecurityPolicy
      * Replaces this rule set's directives with the single policy parsed from a raw header value. This
      * is the meaning a {@code Content-Security-Policy} header set directly by a controller gets when
      * the platform folds it into the request policy: the directly-set header overrides everything
-     * contributed before it, while later contributions still apply on top. A {@code null}, empty
-     * or blank value clears the directives — if nothing is added afterwards, no header is emitted.
+     * contributed before it, while later contributions still apply on top. An empty or blank value
+     * clears the directives — if nothing is added afterwards, no header is emitted.
      * The request nonce stays stable. Parsing is lenient, mirroring the browser: tokens that would
      * not survive {@link #add} validation are skipped rather than thrown (hand-built headers are
      * arbitrary), and of repeated directives only the first occurrence counts.
@@ -294,13 +291,10 @@ public final class ContentSecurityPolicy
      * several enforced policies, call {@link #addPolicy()} explicitly. A policy-level escape hatch —
      * not additive.</p>
      */
-    public ContentSecurityPolicy resetTo( @Nullable final String headerValue )
+    public ContentSecurityPolicy resetTo( final String headerValue )
     {
+        requireNonNull( headerValue, "headerValue is required" );
         this.directives.clear();
-        if ( headerValue == null )
-        {
-            return this;
-        }
         final int comma = headerValue.indexOf( ',' );
         parsePolicy( comma < 0 ? headerValue : headerValue.substring( 0, comma ) );
         return this;

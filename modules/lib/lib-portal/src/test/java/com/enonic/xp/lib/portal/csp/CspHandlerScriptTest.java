@@ -67,9 +67,15 @@ public class CspHandlerScriptTest
     }
 
     @Test
-    void resetToUndefinedClearsPolicy()
+    void resetToUndefinedThrows()
     {
-        runFunction( "/test/csp-test.js", "resetToUndefinedClearsPolicy" );
+        runFunction( "/test/csp-test.js", "resetToUndefinedThrows" );
+    }
+
+    @Test
+    void mergeUndefinedThrows()
+    {
+        runFunction( "/test/csp-test.js", "mergeUndefinedThrows" );
     }
 
     @Test

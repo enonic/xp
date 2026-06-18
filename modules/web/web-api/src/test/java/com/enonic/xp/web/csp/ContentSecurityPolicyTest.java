@@ -69,11 +69,10 @@ class ContentSecurityPolicyTest
     }
 
     @Test
-    void merge_null_adds_nothing()
+    void merge_null_throws()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrc( CspSource.SELF );
-        csp.merge( null );
-        assertThat( csp.serialize() ).isEqualTo( "script-src 'self'" );
+        assertThatThrownBy( () -> csp.merge( null ) ).isInstanceOf( NullPointerException.class );
     }
 
     @Test
@@ -143,7 +142,7 @@ class ContentSecurityPolicyTest
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy();
         final String nonce = csp.nonceScriptSrc();
-        csp.resetTo( null );
+        csp.resetTo( "" );
         assertThat( csp.nonceScriptSrc() ).isEqualTo( nonce );
     }
 
@@ -791,7 +790,7 @@ class ContentSecurityPolicyTest
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrc( CspSource.SELF );
         csp.addPolicy().objectSrc( CspSource.NONE );
-        csp.resetTo( null );
+        csp.resetTo( "" );
         assertThat( csp.serialize() ).isEqualTo( "object-src 'none'" );
         csp.resetTo( "img-src data:" );
         assertThat( csp.serialize() ).isEqualTo( "img-src data:, object-src 'none'" );
@@ -872,7 +871,7 @@ class ContentSecurityPolicyTest
         final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrc( CspSource.SELF );
         csp.reportOnly().scriptSrc( CspSource.NONE ).addPolicy().objectSrc( CspSource.NONE );
         // how a render host empties the report-only set: clear its directives and drop its added policies
-        csp.reportOnly().resetTo( null ).clearAdditionalPolicies();
+        csp.reportOnly().resetTo( "" ).clearAdditionalPolicies();
         assertThat( csp.reportOnly().serialize() ).isEmpty();
         assertThat( csp.serialize() ).isEqualTo( "script-src 'self'" );
     }
@@ -1002,10 +1001,9 @@ class ContentSecurityPolicyTest
     }
 
     @Test
-    void resetTo_null_clears_policy()
+    void resetTo_null_throws()
     {
         final ContentSecurityPolicy csp = new ContentSecurityPolicy().scriptSrc( CspSource.SELF );
-        csp.resetTo( null );
-        assertThat( csp.serialize() ).isEmpty();
+        assertThatThrownBy( () -> csp.resetTo( null ) ).isInstanceOf( NullPointerException.class );
     }
 }
