@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.security;
 
 import java.security.NoSuchAlgorithmException;
+import java.time.Instant;
 import java.util.Base64;
 import java.util.List;
 import javax.crypto.KeyGenerator;
@@ -58,6 +59,15 @@ public final class SecurityInitializer
      * Should be used for low severity security purposes only, like anti open-redirect attacks.
      */
     private static final NodePath GENERIC_KEY_PATH = new NodePath( KEYS_PATH, NodeName.from( "generic-hmac-sha512" ) );
+
+    /**
+     * Key used to sign self-issued access tokens (e.g. device-login tokens).
+     * Kept separate from the generic key so it has its own rotation/revocation lifecycle:
+     * the generic key is low value and rotated freely, while this key signs bearer credentials.
+     * The node name doubles as the {@code kid}; the data is self-describing to allow rotation
+     * (additional keys can be added under {@code /keys} with their own kid).
+     */
+    private static final NodePath TOKEN_SIGNING_KEY_PATH = new NodePath( KEYS_PATH, NodeName.from( "token-signing-hs512" ) );
 
     private static final NodePath IDENTITY_PATH = IdProviderNodeTranslator.ID_PROVIDERS_PARENT_PATH;
 
@@ -205,11 +215,39 @@ public final class SecurityInitializer
                                     .inheritPermissions( true )
                                     .build() );
         }
+
+        if ( !pathInitialized( TOKEN_SIGNING_KEY_PATH ) )
+        {
+            LOG.info( "Initializing [{}] key", TOKEN_SIGNING_KEY_PATH );
+
+            final SecretKey key;
+            try
+            {
+                key = KeyGenerator.getInstance( "HmacSHA512" ).generateKey();
+            }
+            catch ( NoSuchAlgorithmException e )
+            {
+                throw new IllegalStateException( e );
+            }
+
+            final PropertyTree data = new PropertyTree();
+            data.setString( "key", Base64.getEncoder().encodeToString( key.getEncoded() ) );
+            data.setString( "alg", "HS512" );
+            data.setString( "use", "token-sig" );
+            data.setString( "mode", "derive" );
+            data.setInstant( "created", Instant.now() );
+            nodeService.create( CreateNodeParams.create()
+                                    .parent( TOKEN_SIGNING_KEY_PATH.getParentPath() )
+                                    .name( TOKEN_SIGNING_KEY_PATH.getName() )
+                                    .data( data )
+                                    .inheritPermissions( true )
+                                    .build() );
+        }
     }
 
     private boolean keysInitialized()
     {
-        return pathInitialized( KEYS_PATH ) && pathInitialized( GENERIC_KEY_PATH );
+        return pathInitialized( KEYS_PATH ) && pathInitialized( GENERIC_KEY_PATH ) && pathInitialized( TOKEN_SIGNING_KEY_PATH );
     }
 
     private void initializeSystemIdProvider()
