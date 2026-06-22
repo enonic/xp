@@ -131,7 +131,7 @@ tika-parser-xmpcommons = { module = "org.apache.tika:tika-parser-xmp-commons", v
 tika-parser-zipcommons = { module = "org.apache.tika:tika-parser-zip-commons", version.ref = "tika" }
 
 pdfbox-io = { module = "org.apache.pdfbox:pdfbox-io", version = "3.0.7" }
-commons-logging = { module = "commons-logging:commons-logging", version = "1.3.6" }
+commons-logging = { module = "commons-logging:commons-logging", version = "1.4.0" }
 log4j-api = { module = "org.apache.logging.log4j:log4j-api", version.ref = "log4j" }
 log4j-tojul = { module = "org.apache.logging.log4j:log4j-to-jul", version.ref = "log4j" }
 
