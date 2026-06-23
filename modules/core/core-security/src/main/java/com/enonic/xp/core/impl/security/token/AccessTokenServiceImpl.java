@@ -17,13 +17,12 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.data.PropertySet;
-import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.security.CryptoService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.token.AccessToken;
 import com.enonic.xp.security.token.AccessTokenParams;
 import com.enonic.xp.security.token.AccessTokenService;
+import com.enonic.xp.util.GenericValue;
 
 @Component(service = AccessTokenService.class)
 @NullMarked
@@ -139,7 +138,7 @@ public class AccessTokenServiceImpl
                                     .issuer( (String) iss )
                                     .audiences( toStringSet( claims.get( "aud" ) ) )
                                     .expiresAt( expiresAt )
-                                    .claims( toPropertyTree( claims ) )
+                                    .claims( toGenericObject( claims ) )
                                     .build() );
         }
         catch ( Exception e )
@@ -149,56 +148,71 @@ public class AccessTokenServiceImpl
     }
 
     /**
-     * Converts the parsed JSON claims into a {@link PropertyTree} of typed values. {@code null}
-     * values are skipped, so the resulting claims never carry nulls.
+     * Converts the parsed JSON claims into an immutable {@link GenericValue} object. {@code null}
+     * values are skipped (GenericValue does not support nulls), so the claims carry only typed,
+     * non-null JSON values.
      */
-    private static PropertyTree toPropertyTree( final Map<String, Object> claims )
+    private static GenericValue toGenericObject( final Map<String, Object> claims )
     {
-        final PropertyTree tree = new PropertyTree();
-        addAll( tree.getRoot(), claims );
-        return tree;
+        final GenericValue.ObjectBuilder builder = GenericValue.newObject();
+        claims.forEach( ( name, value ) -> {
+            final GenericValue converted = toGenericValue( value );
+            if ( converted != null )
+            {
+                builder.put( name, converted );
+            }
+        } );
+        return builder.build();
     }
 
-    private static void addAll( final PropertySet set, final Map<String, Object> map )
-    {
-        map.forEach( ( name, value ) -> addValue( set, name, value ) );
-    }
-
-    private static void addValue( final PropertySet set, final String name, @Nullable final Object value )
+    @Nullable
+    private static GenericValue toGenericValue( @Nullable final Object value )
     {
         if ( value == null )
         {
-            return;
+            return null;
         }
         if ( value instanceof String string )
         {
-            set.addString( name, string );
+            return GenericValue.stringValue( string );
         }
-        else if ( value instanceof Boolean bool )
+        if ( value instanceof Boolean bool )
         {
-            set.addBoolean( name, bool );
+            return GenericValue.booleanValue( bool );
         }
-        else if ( value instanceof Integer || value instanceof Long )
+        if ( value instanceof Integer || value instanceof Long )
         {
-            set.addLong( name, ( (Number) value ).longValue() );
+            return GenericValue.numberValue( ( (Number) value ).longValue() );
         }
-        else if ( value instanceof Number number )
+        if ( value instanceof Number number )
         {
-            set.addDouble( name, number.doubleValue() );
+            return GenericValue.numberValue( number.doubleValue() );
         }
-        else if ( value instanceof Map<?, ?> map )
+        if ( value instanceof Map<?, ?> map )
         {
-            @SuppressWarnings("unchecked") final Map<String, Object> child = (Map<String, Object>) map;
-            addAll( set.addSet( name ), child );
+            final GenericValue.ObjectBuilder builder = GenericValue.newObject();
+            map.forEach( ( key, child ) -> {
+                final GenericValue converted = toGenericValue( child );
+                if ( converted != null )
+                {
+                    builder.put( (String) key, converted );
+                }
+            } );
+            return builder.build();
         }
-        else if ( value instanceof Iterable<?> iterable )
+        if ( value instanceof Iterable<?> iterable )
         {
-            iterable.forEach( item -> addValue( set, name, item ) );
+            final GenericValue.ListBuilder builder = GenericValue.newList();
+            iterable.forEach( item -> {
+                final GenericValue converted = toGenericValue( item );
+                if ( converted != null )
+                {
+                    builder.add( converted );
+                }
+            } );
+            return builder.build();
         }
-        else
-        {
-            set.addString( name, value.toString() );
-        }
+        return GenericValue.stringValue( value.toString() );
     }
 
     private static Set<String> toStringSet( @Nullable final Object audience )

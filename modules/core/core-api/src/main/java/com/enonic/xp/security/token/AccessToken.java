@@ -8,8 +8,8 @@ import org.jspecify.annotations.Nullable;
 
 import com.google.common.collect.ImmutableSet;
 
-import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.util.GenericValue;
 
 /**
  * A verified access token. The signature, issuer and expiry have already been validated;
@@ -27,7 +27,7 @@ public final class AccessToken
 
     private final Instant expiresAt;
 
-    private final PropertyTree claims;
+    private final GenericValue claims;
 
     private AccessToken( final Builder builder )
     {
@@ -64,9 +64,9 @@ public final class AccessToken
     }
 
     /**
-     * The full set of token claims. Values are typed JSON values and are never {@code null}.
+     * The full set of token claims as an immutable JSON object. Values are typed and never null.
      */
-    public PropertyTree getClaims()
+    public GenericValue getClaims()
     {
         return claims;
     }
@@ -84,7 +84,7 @@ public final class AccessToken
         @Nullable
         private Instant expiresAt;
 
-        private PropertyTree claims = new PropertyTree();
+        private GenericValue claims = GenericValue.newObject().build();
 
         public Builder subject( final PrincipalKey subject )
         {
@@ -110,7 +110,7 @@ public final class AccessToken
             return this;
         }
 
-        public Builder claims( final PropertyTree claims )
+        public Builder claims( final GenericValue claims )
         {
             this.claims = claims;
             return this;
