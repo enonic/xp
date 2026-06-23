@@ -1,13 +1,11 @@
 package com.enonic.xp.security.token;
 
 import java.time.Instant;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
 import org.jspecify.annotations.NullMarked;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.security.PrincipalKey;
@@ -29,7 +27,7 @@ public final class AccessToken
 
     private final Instant expiresAt;
 
-    private final ImmutableMap<String, GenericValue> claims;
+    private final GenericValue claims;
 
     private AccessToken( final Builder builder )
     {
@@ -37,7 +35,11 @@ public final class AccessToken
         this.issuer = Objects.requireNonNull( builder.issuer, "issuer is required" );
         this.audiences = ImmutableSet.copyOf( builder.audiences );
         this.expiresAt = Objects.requireNonNull( builder.expiresAt, "expiresAt is required" );
-        this.claims = ImmutableMap.copyOf( builder.claims );
+        if ( builder.claims.getType() != GenericValue.Type.OBJECT )
+        {
+            throw new IllegalArgumentException( "claims must be a JSON object" );
+        }
+        this.claims = builder.claims;
     }
 
     public static Builder create()
@@ -66,10 +68,9 @@ public final class AccessToken
     }
 
     /**
-     * The token claims as an immutable JSON object (claim name to value). Values are typed JSON
-     * values and are never null.
+     * The token claims as an immutable JSON object. Values are typed JSON values and never null.
      */
-    public Map<String, GenericValue> getClaims()
+    public GenericValue getClaims()
     {
         return claims;
     }
@@ -84,7 +85,7 @@ public final class AccessToken
 
         private Instant expiresAt;
 
-        private Map<String, GenericValue> claims = Map.of();
+        private GenericValue claims = GenericValue.newObject().build();
 
         public Builder subject( final PrincipalKey subject )
         {
@@ -110,7 +111,7 @@ public final class AccessToken
             return this;
         }
 
-        public Builder claims( final Map<String, GenericValue> claims )
+        public Builder claims( final GenericValue claims )
         {
             this.claims = claims;
             return this;

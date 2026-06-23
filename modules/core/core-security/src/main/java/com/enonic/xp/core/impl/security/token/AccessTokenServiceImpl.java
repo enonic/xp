@@ -17,8 +17,6 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.google.common.collect.ImmutableMap;
-
 import com.enonic.xp.security.CryptoService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.token.AccessToken;
@@ -135,7 +133,7 @@ public class AccessTokenServiceImpl
                                     .issuer( (String) iss )
                                     .audiences( toStringSet( claims.get( "aud" ) ) )
                                     .expiresAt( expiresAt )
-                                    .claims( toClaims( claims ) )
+                                    .claims( toClaimsObject( claims ) )
                                     .build() );
         }
         catch ( Exception e )
@@ -145,13 +143,13 @@ public class AccessTokenServiceImpl
     }
 
     /**
-     * Converts the parsed JSON claims into an immutable object (claim name to value). {@code null}
+     * Converts the parsed JSON claims into an immutable {@link GenericValue} object. {@code null}
      * values are skipped (GenericValue does not support nulls), so the claims carry only typed,
      * non-null JSON values.
      */
-    private static Map<String, GenericValue> toClaims( final Map<String, Object> claims )
+    private static GenericValue toClaimsObject( final Map<String, Object> claims )
     {
-        final ImmutableMap.Builder<String, GenericValue> builder = ImmutableMap.builder();
+        final GenericValue.ObjectBuilder builder = GenericValue.newObject();
         claims.forEach( ( name, value ) -> {
             final GenericValue converted = toGenericValue( value );
             if ( converted != null )
