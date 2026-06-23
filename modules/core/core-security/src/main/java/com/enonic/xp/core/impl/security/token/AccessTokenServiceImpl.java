@@ -18,7 +18,6 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.security.CryptoService;
-import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.token.AccessToken;
 import com.enonic.xp.security.token.AccessTokenParams;
@@ -55,10 +54,6 @@ public class AccessTokenServiceImpl
         if ( !params.getAudiences().isEmpty() )
         {
             claims.put( "aud", params.getAudiences() );
-        }
-        if ( params.getIdProvider() != null )
-        {
-            claims.put( "idp", params.getIdProvider().toString() );
         }
         if ( params.getClientId() != null )
         {
@@ -125,17 +120,18 @@ public class AccessTokenServiceImpl
                 return Optional.empty();
             }
 
+            final PrincipalKey subjectKey = PrincipalKey.from( (String) sub );
             final AccessToken.Builder result = AccessToken.create()
-                .subject( PrincipalKey.from( (String) sub ) )
+                .subject( subjectKey )
                 .issuer( (String) iss )
                 .audiences( toStringSet( claims.get( "aud" ) ) )
                 .expiresAt( expiresAt )
                 .claims( claims );
 
-            final Object idp = claims.get( "idp" );
-            if ( idp instanceof String )
+            // The id provider is part of the subject PrincipalKey; no separate claim is needed.
+            if ( subjectKey.isUser() )
             {
-                result.idProvider( IdProviderKey.from( (String) idp ) );
+                result.idProvider( subjectKey.getIdProviderKey() );
             }
 
             return Optional.of( result.build() );

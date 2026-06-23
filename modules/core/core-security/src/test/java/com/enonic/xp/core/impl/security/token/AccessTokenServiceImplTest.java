@@ -36,7 +36,6 @@ class AccessTokenServiceImplTest
     {
         return AccessTokenParams.create()
             .subject( PrincipalKey.from( "user:myidp:john" ) )
-            .idProvider( IdProviderKey.from( "myidp" ) )
             .issuer( "app:myidp" )
             .addAudience( "https://api.example.com" )
             .clientId( "cli" )

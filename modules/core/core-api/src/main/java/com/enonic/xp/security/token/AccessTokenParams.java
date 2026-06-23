@@ -8,20 +8,17 @@ import org.jspecify.annotations.Nullable;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 
 /**
  * Parameters for issuing an access token. The subject is the principal the token authenticates
- * as; the audiences (RFC 8707 resource indicators) constrain where the token may be accepted.
+ * as (it also identifies the id provider); the audiences (RFC 8707 resource indicators)
+ * constrain where the token may be accepted.
  */
 @NullMarked
 public final class AccessTokenParams
 {
     private final PrincipalKey subject;
-
-    @Nullable
-    private final IdProviderKey idProvider;
 
     private final String issuer;
 
@@ -38,7 +35,6 @@ public final class AccessTokenParams
     private AccessTokenParams( final Builder builder )
     {
         this.subject = Objects.requireNonNull( builder.subject, "subject is required" );
-        this.idProvider = builder.idProvider;
         this.issuer = Objects.requireNonNull( builder.issuer, "issuer is required" );
         this.audiences = ImmutableList.copyOf( builder.audiences );
         this.clientId = builder.clientId;
@@ -54,12 +50,6 @@ public final class AccessTokenParams
     public PrincipalKey getSubject()
     {
         return subject;
-    }
-
-    @Nullable
-    public IdProviderKey getIdProvider()
-    {
-        return idProvider;
     }
 
     public String getIssuer()
@@ -95,9 +85,6 @@ public final class AccessTokenParams
         private PrincipalKey subject;
 
         @Nullable
-        private IdProviderKey idProvider;
-
-        @Nullable
         private String issuer;
 
         private final List<String> audiences = new java.util.ArrayList<>();
@@ -113,12 +100,6 @@ public final class AccessTokenParams
         public Builder subject( final PrincipalKey subject )
         {
             this.subject = subject;
-            return this;
-        }
-
-        public Builder idProvider( final IdProviderKey idProvider )
-        {
-            this.idProvider = idProvider;
             return this;
         }
 
