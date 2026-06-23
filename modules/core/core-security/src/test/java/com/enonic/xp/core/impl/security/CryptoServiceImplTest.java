@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.security;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
@@ -51,5 +52,26 @@ class CryptoServiceImplTest
     {
         final byte[] derived = CryptoServiceImpl.deriveKey( "kek".getBytes( StandardCharsets.UTF_8 ), MATERIAL, "token-sig", "k" );
         assertTrue( derived.length == 64 ); // HMAC-SHA512 output
+    }
+
+    @Test
+    void preferred_key_wins_over_non_preferred()
+    {
+        final Instant older = Instant.parse( "2026-01-01T00:00:00Z" );
+        final Instant newer = Instant.parse( "2026-06-01T00:00:00Z" );
+        // A preferred (older) key beats a non-preferred newer one.
+        assertTrue( CryptoServiceImpl.preferOver( true, older, false, newer ) );
+        assertFalse( CryptoServiceImpl.preferOver( false, newer, true, older ) );
+    }
+
+    @Test
+    void newest_wins_when_preference_is_equal()
+    {
+        final Instant older = Instant.parse( "2026-01-01T00:00:00Z" );
+        final Instant newer = Instant.parse( "2026-06-01T00:00:00Z" );
+        assertTrue( CryptoServiceImpl.preferOver( false, newer, false, older ) );
+        assertFalse( CryptoServiceImpl.preferOver( false, older, false, newer ) );
+        // A key with a creation time beats one missing it.
+        assertTrue( CryptoServiceImpl.preferOver( false, older, false, null ) );
     }
 }
