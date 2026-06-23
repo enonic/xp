@@ -70,7 +70,7 @@ public class AccessTokenServiceImpl
             claims.put( "scope", params.getScope() );
         }
         claims.put( "iat", now.getEpochSecond() );
-        claims.put( "exp", now.plusSeconds( params.getTtlSeconds() ).getEpochSecond() );
+        claims.put( "exp", now.plus( params.getTtl() ).getEpochSecond() );
         claims.put( "jti", UUID.randomUUID().toString() );
 
         return JwsHs512.sign( header, claims, key );

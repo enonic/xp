@@ -3,7 +3,8 @@ package com.enonic.xp.security.token;
 import org.jspecify.annotations.NullMarked;
 
 /**
- * The result of starting a device authorization request (RFC 8628 section 3.2).
+ * The result of starting a device authorization request (RFC 8628 section 3.2). The expiry and
+ * interval are the protocol's integer-seconds values ({@code expires_in} and {@code interval}).
  */
 @NullMarked
 public final class DeviceAuthorization
@@ -12,11 +13,11 @@ public final class DeviceAuthorization
 
     private final String userCode;
 
-    private final long expiresInSeconds;
+    private final int expiresInSeconds;
 
-    private final long intervalSeconds;
+    private final int intervalSeconds;
 
-    public DeviceAuthorization( final String deviceCode, final String userCode, final long expiresInSeconds, final long intervalSeconds )
+    public DeviceAuthorization( final String deviceCode, final String userCode, final int expiresInSeconds, final int intervalSeconds )
     {
         this.deviceCode = deviceCode;
         this.userCode = userCode;
@@ -34,12 +35,12 @@ public final class DeviceAuthorization
         return userCode;
     }
 
-    public long getExpiresInSeconds()
+    public int getExpiresInSeconds()
     {
         return expiresInSeconds;
     }
 
-    public long getIntervalSeconds()
+    public int getIntervalSeconds()
     {
         return intervalSeconds;
     }

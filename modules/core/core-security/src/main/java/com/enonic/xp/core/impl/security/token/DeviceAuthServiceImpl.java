@@ -54,6 +54,9 @@ public class DeviceAuthServiceImpl
         final String userCode = generateUserCode();
         final long now = System.currentTimeMillis();
 
+        final int ttlSeconds = (int) params.getTtl().toSeconds();
+        final int intervalSeconds = (int) params.getInterval().toSeconds();
+
         final HashMap<String, Object> record = new HashMap<>();
         record.put( "status", "pending" );
         record.put( "userCode", userCode );
@@ -61,15 +64,14 @@ public class DeviceAuthServiceImpl
         record.put( "scope", nullToEmpty( params.getScope() ) );
         record.put( "audience", nullToEmpty( params.getAudience() ) );
         record.put( "createdAt", now );
-        record.put( "ttlSeconds", params.getTtlSeconds() );
-        record.put( "intervalSeconds", params.getIntervalSeconds() );
+        record.put( "ttlSeconds", ttlSeconds );
+        record.put( "intervalSeconds", intervalSeconds );
         record.put( "lastPolledAt", 0L );
 
-        final int ttl = (int) params.getTtlSeconds();
-        map.set( deviceCode, record, ttl );
-        map.set( USER_CODE_INDEX_PREFIX + userCode, deviceCode, ttl );
+        map.set( deviceCode, record, ttlSeconds );
+        map.set( USER_CODE_INDEX_PREFIX + userCode, deviceCode, ttlSeconds );
 
-        return new DeviceAuthorization( deviceCode, userCode, params.getTtlSeconds(), params.getIntervalSeconds() );
+        return new DeviceAuthorization( deviceCode, userCode, ttlSeconds, intervalSeconds );
     }
 
     @Override

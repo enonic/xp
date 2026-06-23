@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.security.token;
 
+import java.time.Duration;
 import java.util.Optional;
 
 import javax.crypto.KeyGenerator;
@@ -32,7 +33,7 @@ class AccessTokenServiceImplTest
         this.service = new AccessTokenServiceImpl( new StubCryptoService( key ) );
     }
 
-    private AccessTokenParams params( final long ttl )
+    private AccessTokenParams params( final Duration ttl )
     {
         return AccessTokenParams.create()
             .subject( PrincipalKey.from( "user:myidp:john" ) )
@@ -40,14 +41,14 @@ class AccessTokenServiceImplTest
             .addAudience( "https://api.example.com" )
             .clientId( "cli" )
             .scope( "openid" )
-            .ttlSeconds( ttl )
+            .ttl( ttl )
             .build();
     }
 
     @Test
     void issue_and_verify_roundtrip()
     {
-        final String token = service.issue( params( 3600 ) );
+        final String token = service.issue( params( Duration.ofHours( 1 ) ) );
         final Optional<AccessToken> verified = service.verify( token );
 
         assertTrue( verified.isPresent() );
@@ -62,7 +63,7 @@ class AccessTokenServiceImplTest
     @Test
     void verify_rejects_tampered_token()
     {
-        final String token = service.issue( params( 3600 ) );
+        final String token = service.issue( params( Duration.ofHours( 1 ) ) );
         final String tampered = token.substring( 0, token.lastIndexOf( '.' ) + 1 ) + "AAAdeadbeef";
         assertFalse( service.verify( tampered ).isPresent() );
     }
@@ -70,7 +71,7 @@ class AccessTokenServiceImplTest
     @Test
     void verify_rejects_token_signed_with_other_key()
     {
-        final String token = service.issue( params( 3600 ) );
+        final String token = service.issue( params( Duration.ofHours( 1 ) ) );
 
         final SecretKey otherKey = newKey();
         final AccessTokenServiceImpl otherService = new AccessTokenServiceImpl( new StubCryptoService( otherKey ) );
@@ -80,7 +81,7 @@ class AccessTokenServiceImplTest
     @Test
     void verify_rejects_expired_token()
     {
-        final String token = service.issue( params( -10 ) );
+        final String token = service.issue( params( Duration.ofSeconds( -10 ) ) );
         assertFalse( service.verify( token ).isPresent() );
     }
 
@@ -96,7 +97,7 @@ class AccessTokenServiceImplTest
                 throw new IllegalArgumentException( "Unknown signing key id: " + kid );
             }
         } );
-        final String token = service.issue( params( 3600 ) );
+        final String token = service.issue( params( Duration.ofHours( 1 ) ) );
         assertFalse( guarded.verify( token ).isPresent() );
     }
 

@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.security.token;
 
+import java.time.Duration;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -40,8 +41,8 @@ class DeviceAuthServiceImplTest
                                   .clientId( "cli" )
                                   .scope( "openid" )
                                   .audience( "https://api.example.com" )
-                                  .ttlSeconds( 600 )
-                                  .intervalSeconds( 0 )
+                                  .ttl( Duration.ofMinutes( 10 ) )
+                                  .interval( Duration.ZERO )
                                   .build() );
     }
 
@@ -86,8 +87,8 @@ class DeviceAuthServiceImplTest
     {
         final DeviceAuthorization auth = service.start( DeviceAuthorizationParams.create()
                                                             .idProvider( IDP )
-                                                            .ttlSeconds( 600 )
-                                                            .intervalSeconds( 5 )
+                                                            .ttl( Duration.ofMinutes( 10 ) )
+                                                            .interval( Duration.ofSeconds( 5 ) )
                                                             .build() );
         assertEquals( DeviceAuthorizationState.PENDING, service.poll( IDP, auth.getDeviceCode() ).getState() );
         assertEquals( DeviceAuthorizationState.SLOW_DOWN, service.poll( IDP, auth.getDeviceCode() ).getState() );

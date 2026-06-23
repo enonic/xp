@@ -1,5 +1,6 @@
 package com.enonic.xp.security.token;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
 
@@ -30,7 +31,7 @@ public final class AccessTokenParams
     @Nullable
     private final String scope;
 
-    private final long ttlSeconds;
+    private final Duration ttl;
 
     private AccessTokenParams( final Builder builder )
     {
@@ -39,7 +40,7 @@ public final class AccessTokenParams
         this.audiences = builder.audiences.build();
         this.clientId = builder.clientId;
         this.scope = builder.scope;
-        this.ttlSeconds = builder.ttlSeconds;
+        this.ttl = builder.ttl;
     }
 
     public static Builder create()
@@ -74,9 +75,9 @@ public final class AccessTokenParams
         return scope;
     }
 
-    public long getTtlSeconds()
+    public Duration getTtl()
     {
-        return ttlSeconds;
+        return ttl;
     }
 
     public static final class Builder
@@ -93,7 +94,7 @@ public final class AccessTokenParams
         @Nullable
         private String scope;
 
-        private long ttlSeconds = 3600;
+        private Duration ttl = Duration.ofHours( 1 );
 
         public Builder subject( final PrincipalKey subject )
         {
@@ -131,9 +132,9 @@ public final class AccessTokenParams
             return this;
         }
 
-        public Builder ttlSeconds( final long ttlSeconds )
+        public Builder ttl( final Duration ttl )
         {
-            this.ttlSeconds = ttlSeconds;
+            this.ttl = ttl;
             return this;
         }
 

@@ -1,5 +1,6 @@
 package com.enonic.xp.security.token;
 
+import java.time.Duration;
 import java.util.Objects;
 
 import org.jspecify.annotations.NullMarked;
@@ -24,9 +25,9 @@ public final class DeviceAuthorizationParams
     @Nullable
     private final String audience;
 
-    private final long ttlSeconds;
+    private final Duration ttl;
 
-    private final long intervalSeconds;
+    private final Duration interval;
 
     private DeviceAuthorizationParams( final Builder builder )
     {
@@ -34,8 +35,8 @@ public final class DeviceAuthorizationParams
         this.clientId = builder.clientId;
         this.scope = builder.scope;
         this.audience = builder.audience;
-        this.ttlSeconds = builder.ttlSeconds;
-        this.intervalSeconds = builder.intervalSeconds;
+        this.ttl = builder.ttl;
+        this.interval = builder.interval;
     }
 
     public static Builder create()
@@ -66,14 +67,14 @@ public final class DeviceAuthorizationParams
         return audience;
     }
 
-    public long getTtlSeconds()
+    public Duration getTtl()
     {
-        return ttlSeconds;
+        return ttl;
     }
 
-    public long getIntervalSeconds()
+    public Duration getInterval()
     {
-        return intervalSeconds;
+        return interval;
     }
 
     public static final class Builder
@@ -89,9 +90,9 @@ public final class DeviceAuthorizationParams
         @Nullable
         private String audience;
 
-        private long ttlSeconds = 600;
+        private Duration ttl = Duration.ofMinutes( 10 );
 
-        private long intervalSeconds = 5;
+        private Duration interval = Duration.ofSeconds( 5 );
 
         public Builder idProvider( final IdProviderKey idProvider )
         {
@@ -117,15 +118,15 @@ public final class DeviceAuthorizationParams
             return this;
         }
 
-        public Builder ttlSeconds( final long ttlSeconds )
+        public Builder ttl( final Duration ttl )
         {
-            this.ttlSeconds = ttlSeconds;
+            this.ttl = ttl;
             return this;
         }
 
-        public Builder intervalSeconds( final long intervalSeconds )
+        public Builder interval( final Duration interval )
         {
-            this.intervalSeconds = intervalSeconds;
+            this.interval = interval;
             return this;
         }
 
