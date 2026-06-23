@@ -101,7 +101,8 @@ public class VirtualHostResolverImpl
             }
             if ( virtualHost.getIdProviderKeys() != null )
             {
-                virtualHost.getIdProviderKeys().forEach( idProvidersMapping::addIdProviderKey );
+                virtualHost.getIdProviderKeys()
+                    .forEach( key -> idProvidersMapping.addIdProvider( key, virtualHost.getIdProviderFlows( key ) ) );
             }
             return idProvidersMapping.build();
         }

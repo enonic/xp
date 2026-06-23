@@ -28,6 +28,7 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.token.AccessToken;
 import com.enonic.xp.security.token.AccessTokenService;
 import com.enonic.xp.web.filter.OncePerRequestFilter;
+import com.enonic.xp.web.vhost.IdProviderFlow;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 
@@ -140,8 +141,8 @@ public final class AccessTokenAuthFilter
         {
             return true;
         }
-        final String value = virtualHost.getContext().get( idProvider + ".deviceLogin.accept" );
-        return !"false".equals( value );
+        // Token acceptance is a form of auto-login, gated per the token's own id provider.
+        return virtualHost.getIdProviderFlows( idProvider ).contains( IdProviderFlow.AUTOLOGIN );
     }
 
     @Nullable
