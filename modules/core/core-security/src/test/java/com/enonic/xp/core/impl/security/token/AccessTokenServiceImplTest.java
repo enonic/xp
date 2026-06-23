@@ -56,7 +56,7 @@ class AccessTokenServiceImplTest
         assertEquals( IdProviderKey.from( "myidp" ), at.getSubject().getIdProviderKey() );
         assertEquals( "app:myidp", at.getIssuer() );
         assertTrue( at.getAudiences().contains( "https://api.example.com" ) );
-        assertEquals( "cli", at.getClaims().property( "client_id" ).asString() );
+        assertEquals( "cli", at.getClaims().get( "client_id" ).asString() );
     }
 
     @Test

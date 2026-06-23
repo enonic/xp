@@ -1,11 +1,13 @@
 package com.enonic.xp.security.token;
 
 import java.time.Instant;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
 import org.jspecify.annotations.NullMarked;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.security.PrincipalKey;
@@ -27,7 +29,7 @@ public final class AccessToken
 
     private final Instant expiresAt;
 
-    private final GenericValue claims;
+    private final ImmutableMap<String, GenericValue> claims;
 
     private AccessToken( final Builder builder )
     {
@@ -35,7 +37,7 @@ public final class AccessToken
         this.issuer = Objects.requireNonNull( builder.issuer, "issuer is required" );
         this.audiences = ImmutableSet.copyOf( builder.audiences );
         this.expiresAt = Objects.requireNonNull( builder.expiresAt, "expiresAt is required" );
-        this.claims = builder.claims;
+        this.claims = ImmutableMap.copyOf( builder.claims );
     }
 
     public static Builder create()
@@ -64,9 +66,10 @@ public final class AccessToken
     }
 
     /**
-     * The full set of token claims as an immutable JSON object. Values are typed and never null.
+     * The token claims as an immutable JSON object (claim name to value). Values are typed JSON
+     * values and are never null.
      */
-    public GenericValue getClaims()
+    public Map<String, GenericValue> getClaims()
     {
         return claims;
     }
@@ -81,7 +84,7 @@ public final class AccessToken
 
         private Instant expiresAt;
 
-        private GenericValue claims = GenericValue.newObject().build();
+        private Map<String, GenericValue> claims = Map.of();
 
         public Builder subject( final PrincipalKey subject )
         {
@@ -107,7 +110,7 @@ public final class AccessToken
             return this;
         }
 
-        public Builder claims( final GenericValue claims )
+        public Builder claims( final Map<String, GenericValue> claims )
         {
             this.claims = claims;
             return this;
