@@ -78,7 +78,6 @@ public final class DeviceAuthorizationParams
 
     public static final class Builder
     {
-        @Nullable
         private IdProviderKey idProvider;
 
         @Nullable
@@ -100,19 +99,19 @@ public final class DeviceAuthorizationParams
             return this;
         }
 
-        public Builder clientId( @Nullable final String clientId )
+        public Builder clientId( final String clientId )
         {
             this.clientId = clientId;
             return this;
         }
 
-        public Builder scope( @Nullable final String scope )
+        public Builder scope( final String scope )
         {
             this.scope = scope;
             return this;
         }
 
-        public Builder audience( @Nullable final String audience )
+        public Builder audience( final String audience )
         {
             this.audience = audience;
             return this;

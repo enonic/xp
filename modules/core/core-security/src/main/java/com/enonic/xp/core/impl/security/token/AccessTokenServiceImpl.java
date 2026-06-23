@@ -77,13 +77,8 @@ public class AccessTokenServiceImpl
     }
 
     @Override
-    public Optional<AccessToken> verify( @Nullable final String token )
+    public Optional<AccessToken> verify( final String token )
     {
-        if ( token == null )
-        {
-            return Optional.empty();
-        }
-
         try
         {
             final Map<String, Object> header = JwsHs512.peekSegment( token, 0 );

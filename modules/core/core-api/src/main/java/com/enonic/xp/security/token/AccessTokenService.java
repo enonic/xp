@@ -3,7 +3,6 @@ package com.enonic.xp.security.token;
 import java.util.Optional;
 
 import org.jspecify.annotations.NullMarked;
-import org.jspecify.annotations.Nullable;
 
 /**
  * Issues and verifies self-issued access tokens (RFC 9068 "at+jwt"), signed with the managed
@@ -26,5 +25,5 @@ public interface AccessTokenService
      *
      * @return the decoded token, or {@link Optional#empty()} if verification fails.
      */
-    Optional<AccessToken> verify( @Nullable String token );
+    Optional<AccessToken> verify( String token );
 }

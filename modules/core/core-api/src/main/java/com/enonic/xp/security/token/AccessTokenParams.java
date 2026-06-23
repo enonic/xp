@@ -81,10 +81,8 @@ public final class AccessTokenParams
 
     public static final class Builder
     {
-        @Nullable
         private PrincipalKey subject;
 
-        @Nullable
         private String issuer;
 
         private final ImmutableList.Builder<String> audiences = ImmutableList.builder();
@@ -121,13 +119,13 @@ public final class AccessTokenParams
             return this;
         }
 
-        public Builder clientId( @Nullable final String clientId )
+        public Builder clientId( final String clientId )
         {
             this.clientId = clientId;
             return this;
         }
 
-        public Builder scope( @Nullable final String scope )
+        public Builder scope( final String scope )
         {
             this.scope = scope;
             return this;

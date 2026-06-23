@@ -1,5 +1,7 @@
 package com.enonic.xp.security.token;
 
+import java.util.Objects;
+
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
@@ -33,7 +35,7 @@ public final class DeviceAuthorizationPoll
 
     private DeviceAuthorizationPoll( final Builder builder )
     {
-        this.state = builder.state;
+        this.state = Objects.requireNonNull( builder.state, "state is required" );
         this.subject = builder.subject;
         this.idProvider = builder.idProvider;
         this.audience = builder.audience;
@@ -88,7 +90,6 @@ public final class DeviceAuthorizationPoll
 
     public static final class Builder
     {
-        @Nullable
         private DeviceAuthorizationState state;
 
         @Nullable

@@ -1,10 +1,10 @@
 package com.enonic.xp.security.token;
 
 import java.time.Instant;
+import java.util.Objects;
 import java.util.Set;
 
 import org.jspecify.annotations.NullMarked;
-import org.jspecify.annotations.Nullable;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -31,10 +31,10 @@ public final class AccessToken
 
     private AccessToken( final Builder builder )
     {
-        this.subject = builder.subject;
-        this.issuer = builder.issuer;
+        this.subject = Objects.requireNonNull( builder.subject, "subject is required" );
+        this.issuer = Objects.requireNonNull( builder.issuer, "issuer is required" );
         this.audiences = ImmutableSet.copyOf( builder.audiences );
-        this.expiresAt = builder.expiresAt;
+        this.expiresAt = Objects.requireNonNull( builder.expiresAt, "expiresAt is required" );
         this.claims = builder.claims;
     }
 
@@ -73,15 +73,12 @@ public final class AccessToken
 
     public static final class Builder
     {
-        @Nullable
         private PrincipalKey subject;
 
-        @Nullable
         private String issuer;
 
         private Set<String> audiences = Set.of();
 
-        @Nullable
         private Instant expiresAt;
 
         private GenericValue claims = GenericValue.newObject().build();
