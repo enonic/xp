@@ -1,0 +1,131 @@
+package com.enonic.xp.security.token;
+
+import java.time.Instant;
+import java.util.Map;
+import java.util.Set;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+
+import com.enonic.xp.security.IdProviderKey;
+import com.enonic.xp.security.PrincipalKey;
+
+/**
+ * A verified access token. The signature, issuer and expiry have already been validated;
+ * audience enforcement is left to the caller via {@link #getAudiences()}.
+ */
+public final class AccessToken
+{
+    private final PrincipalKey subject;
+
+    private final IdProviderKey idProvider;
+
+    private final String issuer;
+
+    private final ImmutableSet<String> audiences;
+
+    private final Instant expiresAt;
+
+    private final ImmutableMap<String, Object> claims;
+
+    private AccessToken( final Builder builder )
+    {
+        this.subject = builder.subject;
+        this.idProvider = builder.idProvider;
+        this.issuer = builder.issuer;
+        this.audiences = ImmutableSet.copyOf( builder.audiences );
+        this.expiresAt = builder.expiresAt;
+        this.claims = ImmutableMap.copyOf( builder.claims );
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public PrincipalKey getSubject()
+    {
+        return subject;
+    }
+
+    public IdProviderKey getIdProvider()
+    {
+        return idProvider;
+    }
+
+    public String getIssuer()
+    {
+        return issuer;
+    }
+
+    public Set<String> getAudiences()
+    {
+        return audiences;
+    }
+
+    public Instant getExpiresAt()
+    {
+        return expiresAt;
+    }
+
+    public Map<String, Object> getClaims()
+    {
+        return claims;
+    }
+
+    public static final class Builder
+    {
+        private PrincipalKey subject;
+
+        private IdProviderKey idProvider;
+
+        private String issuer;
+
+        private Set<String> audiences = Set.of();
+
+        private Instant expiresAt;
+
+        private Map<String, Object> claims = Map.of();
+
+        public Builder subject( final PrincipalKey subject )
+        {
+            this.subject = subject;
+            return this;
+        }
+
+        public Builder idProvider( final IdProviderKey idProvider )
+        {
+            this.idProvider = idProvider;
+            return this;
+        }
+
+        public Builder issuer( final String issuer )
+        {
+            this.issuer = issuer;
+            return this;
+        }
+
+        public Builder audiences( final Set<String> audiences )
+        {
+            this.audiences = audiences;
+            return this;
+        }
+
+        public Builder expiresAt( final Instant expiresAt )
+        {
+            this.expiresAt = expiresAt;
+            return this;
+        }
+
+        public Builder claims( final Map<String, Object> claims )
+        {
+            this.claims = claims;
+            return this;
+        }
+
+        public AccessToken build()
+        {
+            return new AccessToken( this );
+        }
+    }
+}

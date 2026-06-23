@@ -1,0 +1,124 @@
+package com.enonic.xp.security.token;
+
+import java.util.Objects;
+
+import com.enonic.xp.security.IdProviderKey;
+
+/**
+ * Parameters to start a device authorization request (RFC 8628 section 3.1).
+ */
+public final class DeviceAuthorizationParams
+{
+    private final IdProviderKey idProvider;
+
+    private final String clientId;
+
+    private final String scope;
+
+    private final String audience;
+
+    private final long ttlSeconds;
+
+    private final long intervalSeconds;
+
+    private DeviceAuthorizationParams( final Builder builder )
+    {
+        this.idProvider = Objects.requireNonNull( builder.idProvider, "idProvider is required" );
+        this.clientId = builder.clientId;
+        this.scope = builder.scope;
+        this.audience = builder.audience;
+        this.ttlSeconds = builder.ttlSeconds;
+        this.intervalSeconds = builder.intervalSeconds;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public IdProviderKey getIdProvider()
+    {
+        return idProvider;
+    }
+
+    public String getClientId()
+    {
+        return clientId;
+    }
+
+    public String getScope()
+    {
+        return scope;
+    }
+
+    public String getAudience()
+    {
+        return audience;
+    }
+
+    public long getTtlSeconds()
+    {
+        return ttlSeconds;
+    }
+
+    public long getIntervalSeconds()
+    {
+        return intervalSeconds;
+    }
+
+    public static final class Builder
+    {
+        private IdProviderKey idProvider;
+
+        private String clientId;
+
+        private String scope;
+
+        private String audience;
+
+        private long ttlSeconds = 600;
+
+        private long intervalSeconds = 5;
+
+        public Builder idProvider( final IdProviderKey idProvider )
+        {
+            this.idProvider = idProvider;
+            return this;
+        }
+
+        public Builder clientId( final String clientId )
+        {
+            this.clientId = clientId;
+            return this;
+        }
+
+        public Builder scope( final String scope )
+        {
+            this.scope = scope;
+            return this;
+        }
+
+        public Builder audience( final String audience )
+        {
+            this.audience = audience;
+            return this;
+        }
+
+        public Builder ttlSeconds( final long ttlSeconds )
+        {
+            this.ttlSeconds = ttlSeconds;
+            return this;
+        }
+
+        public Builder intervalSeconds( final long intervalSeconds )
+        {
+            this.intervalSeconds = intervalSeconds;
+            return this;
+        }
+
+        public DeviceAuthorizationParams build()
+        {
+            return new DeviceAuthorizationParams( this );
+        }
+    }
+}
