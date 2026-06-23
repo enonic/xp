@@ -18,6 +18,7 @@ import com.enonic.xp.annotation.Order;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
@@ -27,6 +28,8 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.token.AccessToken;
 import com.enonic.xp.security.token.AccessTokenService;
 import com.enonic.xp.web.filter.OncePerRequestFilter;
+import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 /**
  * Authenticates requests bearing a self-issued access token (e.g. a device-login token).
@@ -103,7 +106,16 @@ public final class AccessTokenAuthFilter
             return null;
         }
 
-        final PrincipalKey subject = verified.get().getSubject();
+        final AccessToken accessToken = verified.get();
+
+        // Per-vhost flow gating: a vhost may keep the id provider configured but disable
+        // acceptance of device-login tokens for it (mapping.<vh>.context.<idp>.deviceLogin.accept=false).
+        if ( !isAcceptanceEnabled( req, accessToken.getIdProvider() ) )
+        {
+            return null;
+        }
+
+        final PrincipalKey subject = accessToken.getSubject();
         if ( subject == null || !subject.isUser() )
         {
             return null;
@@ -121,6 +133,21 @@ public final class AccessTokenAuthFilter
             .principals( RoleKeys.AUTHENTICATED, RoleKeys.EVERYONE )
             .user( user )
             .build();
+    }
+
+    private static boolean isAcceptanceEnabled( final HttpServletRequest req, @Nullable final IdProviderKey idProvider )
+    {
+        if ( idProvider == null )
+        {
+            return true;
+        }
+        final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( req );
+        if ( virtualHost == null )
+        {
+            return true;
+        }
+        final String value = virtualHost.getContext().get( idProvider + ".deviceLogin.accept" );
+        return !"false".equals( value );
     }
 
     @Nullable
