@@ -1,8 +1,11 @@
 package com.enonic.xp.security.token;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * State of a device authorization request when polled (RFC 8628 section 3.5).
  */
+@NullMarked
 public enum DeviceAuthorizationState
 {
     /**

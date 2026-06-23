@@ -9,6 +9,8 @@ import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -27,6 +29,7 @@ import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 @Component(configurationPid = "com.enonic.xp.security", service = CryptoService.class)
+@NullMarked
 public class CryptoServiceImpl
     implements CryptoService
 {
@@ -42,6 +45,7 @@ public class CryptoServiceImpl
 
     private final NodeService nodeService;
 
+    @Nullable
     private final byte[] encryptionKey;
 
     private final ConcurrentMap<String, SecretKey> keyCache = new ConcurrentHashMap<>();
@@ -58,7 +62,7 @@ public class CryptoServiceImpl
     {
         this.nodeService = nodeService;
         final String configuredKey = config.encryption_key();
-        this.encryptionKey = configuredKey == null || configuredKey.isEmpty()
+        this.encryptionKey = configuredKey.isEmpty()
             ? null
             : configuredKey.getBytes( StandardCharsets.UTF_8 );
     }
@@ -108,7 +112,7 @@ public class CryptoServiceImpl
      * (and the use/kid for domain separation) via HMAC-SHA512, so identical stored material in
      * different environments yields different effective keys.
      */
-    static byte[] deriveKey( final byte[] encryptionKey, final byte[] material, final String use, final String kid )
+    static byte[] deriveKey( @Nullable final byte[] encryptionKey, final byte[] material, final String use, final String kid )
     {
         if ( encryptionKey == null )
         {

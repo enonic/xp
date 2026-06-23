@@ -2,19 +2,26 @@ package com.enonic.xp.security.token;
 
 import java.util.Objects;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import com.enonic.xp.security.IdProviderKey;
 
 /**
  * Parameters to start a device authorization request (RFC 8628 section 3.1).
  */
+@NullMarked
 public final class DeviceAuthorizationParams
 {
     private final IdProviderKey idProvider;
 
+    @Nullable
     private final String clientId;
 
+    @Nullable
     private final String scope;
 
+    @Nullable
     private final String audience;
 
     private final long ttlSeconds;
@@ -41,16 +48,19 @@ public final class DeviceAuthorizationParams
         return idProvider;
     }
 
+    @Nullable
     public String getClientId()
     {
         return clientId;
     }
 
+    @Nullable
     public String getScope()
     {
         return scope;
     }
 
+    @Nullable
     public String getAudience()
     {
         return audience;
@@ -68,12 +78,16 @@ public final class DeviceAuthorizationParams
 
     public static final class Builder
     {
+        @Nullable
         private IdProviderKey idProvider;
 
+        @Nullable
         private String clientId;
 
+        @Nullable
         private String scope;
 
+        @Nullable
         private String audience;
 
         private long ttlSeconds = 600;
@@ -86,19 +100,19 @@ public final class DeviceAuthorizationParams
             return this;
         }
 
-        public Builder clientId( final String clientId )
+        public Builder clientId( @Nullable final String clientId )
         {
             this.clientId = clientId;
             return this;
         }
 
-        public Builder scope( final String scope )
+        public Builder scope( @Nullable final String scope )
         {
             this.scope = scope;
             return this;
         }
 
-        public Builder audience( final String audience )
+        public Builder audience( @Nullable final String audience )
         {
             this.audience = audience;
             return this;

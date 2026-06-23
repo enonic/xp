@@ -2,6 +2,9 @@ package com.enonic.xp.security.token;
 
 import java.util.Optional;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 /**
  * Issues and verifies self-issued access tokens (RFC 9068 "at+jwt"), signed with the managed
  * token-signing key resolved through {@link com.enonic.xp.security.CryptoService}.
@@ -9,6 +12,7 @@ import java.util.Optional;
  * Because the issuer and verifier are the same trust domain, the tokens are symmetric (HS512);
  * the {@code kid} header keeps the format open to a managed keyring and key rotation.
  */
+@NullMarked
 public interface AccessTokenService
 {
     /**
@@ -22,5 +26,5 @@ public interface AccessTokenService
      *
      * @return the decoded token, or {@link Optional#empty()} if verification fails.
      */
-    Optional<AccessToken> verify( String token );
+    Optional<AccessToken> verify( @Nullable String token );
 }

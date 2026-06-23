@@ -3,6 +3,9 @@ package com.enonic.xp.security.token;
 import java.util.List;
 import java.util.Objects;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.security.IdProviderKey;
@@ -12,18 +15,22 @@ import com.enonic.xp.security.PrincipalKey;
  * Parameters for issuing an access token. The subject is the principal the token authenticates
  * as; the audiences (RFC 8707 resource indicators) constrain where the token may be accepted.
  */
+@NullMarked
 public final class AccessTokenParams
 {
     private final PrincipalKey subject;
 
+    @Nullable
     private final IdProviderKey idProvider;
 
     private final String issuer;
 
     private final ImmutableList<String> audiences;
 
+    @Nullable
     private final String clientId;
 
+    @Nullable
     private final String scope;
 
     private final long ttlSeconds;
@@ -49,6 +56,7 @@ public final class AccessTokenParams
         return subject;
     }
 
+    @Nullable
     public IdProviderKey getIdProvider()
     {
         return idProvider;
@@ -64,11 +72,13 @@ public final class AccessTokenParams
         return audiences;
     }
 
+    @Nullable
     public String getClientId()
     {
         return clientId;
     }
 
+    @Nullable
     public String getScope()
     {
         return scope;
@@ -81,16 +91,21 @@ public final class AccessTokenParams
 
     public static final class Builder
     {
+        @Nullable
         private PrincipalKey subject;
 
+        @Nullable
         private IdProviderKey idProvider;
 
+        @Nullable
         private String issuer;
 
         private final List<String> audiences = new java.util.ArrayList<>();
 
+        @Nullable
         private String clientId;
 
+        @Nullable
         private String scope;
 
         private long ttlSeconds = 3600;
@@ -113,7 +128,7 @@ public final class AccessTokenParams
             return this;
         }
 
-        public Builder addAudience( final String audience )
+        public Builder addAudience( @Nullable final String audience )
         {
             if ( audience != null && !audience.isEmpty() )
             {
@@ -128,13 +143,13 @@ public final class AccessTokenParams
             return this;
         }
 
-        public Builder clientId( final String clientId )
+        public Builder clientId( @Nullable final String clientId )
         {
             this.clientId = clientId;
             return this;
         }
 
-        public Builder scope( final String scope )
+        public Builder scope( @Nullable final String scope )
         {
             this.scope = scope;
             return this;

@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
 
 import javax.crypto.SecretKey;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -23,6 +25,7 @@ import com.enonic.xp.security.token.AccessTokenParams;
 import com.enonic.xp.security.token.AccessTokenService;
 
 @Component(service = AccessTokenService.class)
+@NullMarked
 public class AccessTokenServiceImpl
     implements AccessTokenService
 {
@@ -73,7 +76,7 @@ public class AccessTokenServiceImpl
     }
 
     @Override
-    public Optional<AccessToken> verify( final String token )
+    public Optional<AccessToken> verify( @Nullable final String token )
     {
         if ( token == null )
         {
@@ -143,7 +146,7 @@ public class AccessTokenServiceImpl
         }
     }
 
-    private static Set<String> toStringSet( final Object audience )
+    private static Set<String> toStringSet( @Nullable final Object audience )
     {
         if ( audience instanceof String )
         {

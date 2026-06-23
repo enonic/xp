@@ -4,6 +4,9 @@ import java.time.Instant;
 import java.util.Map;
 import java.util.Set;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
@@ -14,10 +17,12 @@ import com.enonic.xp.security.PrincipalKey;
  * A verified access token. The signature, issuer and expiry have already been validated;
  * audience enforcement is left to the caller via {@link #getAudiences()}.
  */
+@NullMarked
 public final class AccessToken
 {
     private final PrincipalKey subject;
 
+    @Nullable
     private final IdProviderKey idProvider;
 
     private final String issuer;
@@ -48,6 +53,7 @@ public final class AccessToken
         return subject;
     }
 
+    @Nullable
     public IdProviderKey getIdProvider()
     {
         return idProvider;
@@ -75,14 +81,18 @@ public final class AccessToken
 
     public static final class Builder
     {
+        @Nullable
         private PrincipalKey subject;
 
+        @Nullable
         private IdProviderKey idProvider;
 
+        @Nullable
         private String issuer;
 
         private Set<String> audiences = Set.of();
 
+        @Nullable
         private Instant expiresAt;
 
         private Map<String, Object> claims = Map.of();
@@ -93,7 +103,7 @@ public final class AccessToken
             return this;
         }
 
-        public Builder idProvider( final IdProviderKey idProvider )
+        public Builder idProvider( @Nullable final IdProviderKey idProvider )
         {
             this.idProvider = idProvider;
             return this;

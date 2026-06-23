@@ -2,6 +2,9 @@ package com.enonic.xp.security.token;
 
 import java.util.Optional;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 
@@ -11,6 +14,7 @@ import com.enonic.xp.security.PrincipalKey;
  * State is held in the cluster-shared map with a TTL, so it expires automatically and no
  * cleanup is required. Issued access tokens are stateless and independent of this state.
  */
+@NullMarked
 public interface DeviceAuthService
 {
     /**
@@ -28,7 +32,7 @@ public interface DeviceAuthService
      *
      * @return {@code true} if a pending request was updated.
      */
-    boolean resolve( IdProviderKey idProvider, String deviceCode, boolean approved, PrincipalKey subject );
+    boolean resolve( IdProviderKey idProvider, String deviceCode, boolean approved, @Nullable PrincipalKey subject );
 
     /**
      * Polls a request, enforcing the minimum interval and consuming the request once approved

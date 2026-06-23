@@ -2,6 +2,8 @@ package com.enonic.xp.security;
 
 import javax.crypto.SecretKey;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Resolves managed signing keys for self-issued tokens (e.g. device-login access tokens).
  * <p>
@@ -20,6 +22,7 @@ import javax.crypto.SecretKey;
  * </ul>
  * The stored material on its own is consequently not sufficient to forge or verify a token.
  */
+@NullMarked
 public interface CryptoService
 {
     /**

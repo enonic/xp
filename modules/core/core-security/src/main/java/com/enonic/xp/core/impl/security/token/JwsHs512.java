@@ -8,6 +8,9 @@ import java.util.Map;
 import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
@@ -15,6 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * library in core) and deliberately small: it signs and verifies compact JWS; all claim
  * semantics (exp/iss/aud) are enforced by the caller.
  */
+@NullMarked
 final class JwsHs512
 {
     private static final ObjectMapper MAPPER = new ObjectMapper();
@@ -47,6 +51,7 @@ final class JwsHs512
      * Verifies the signature and returns the decoded claims, or {@code null} if the token is
      * malformed or the signature does not match.
      */
+    @Nullable
     static Map<String, Object> verify( final String token, final SecretKey key )
     {
         try
@@ -77,6 +82,7 @@ final class JwsHs512
     /**
      * Decodes a JWS segment (e.g. the header) without any verification.
      */
+    @Nullable
     static Map<String, Object> peekSegment( final String token, final int index )
     {
         try

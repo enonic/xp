@@ -2,6 +2,8 @@ package com.enonic.xp.portal.impl.idprovider;
 
 import java.util.Optional;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -38,6 +40,7 @@ import com.enonic.xp.web.filter.OncePerRequestFilter;
 @Component(immediate = true, service = Filter.class, property = {"connector=xp", "connector=api"})
 @Order(-31)
 @WebFilter("/*")
+@NullMarked
 public final class AccessTokenAuthFilter
     extends OncePerRequestFilter
 {
@@ -85,6 +88,7 @@ public final class AccessTokenAuthFilter
         chain.doFilter( req, res );
     }
 
+    @Nullable
     private AuthenticationInfo authenticate( final HttpServletRequest req )
     {
         final String token = extractBearerToken( req );
@@ -119,6 +123,7 @@ public final class AccessTokenAuthFilter
             .build();
     }
 
+    @Nullable
     private static String extractBearerToken( final HttpServletRequest req )
     {
         final String authHeader = req.getHeader( "Authorization" );

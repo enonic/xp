@@ -1,8 +1,11 @@
 package com.enonic.xp.security.token;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * The result of starting a device authorization request (RFC 8628 section 3.2).
  */
+@NullMarked
 public final class DeviceAuthorization
 {
     private final String deviceCode;

@@ -1,5 +1,8 @@
 package com.enonic.xp.security.token;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 
@@ -8,18 +11,24 @@ import com.enonic.xp.security.PrincipalKey;
  * {@link DeviceAuthorizationState#APPROVED} the approved subject and the original request
  * details (used to mint the access token) are populated.
  */
+@NullMarked
 public final class DeviceAuthorizationPoll
 {
     private final DeviceAuthorizationState state;
 
+    @Nullable
     private final PrincipalKey subject;
 
+    @Nullable
     private final IdProviderKey idProvider;
 
+    @Nullable
     private final String audience;
 
+    @Nullable
     private final String scope;
 
+    @Nullable
     private final String clientId;
 
     private DeviceAuthorizationPoll( final Builder builder )
@@ -47,26 +56,31 @@ public final class DeviceAuthorizationPoll
         return state;
     }
 
+    @Nullable
     public PrincipalKey getSubject()
     {
         return subject;
     }
 
+    @Nullable
     public IdProviderKey getIdProvider()
     {
         return idProvider;
     }
 
+    @Nullable
     public String getAudience()
     {
         return audience;
     }
 
+    @Nullable
     public String getScope()
     {
         return scope;
     }
 
+    @Nullable
     public String getClientId()
     {
         return clientId;
@@ -74,16 +88,22 @@ public final class DeviceAuthorizationPoll
 
     public static final class Builder
     {
+        @Nullable
         private DeviceAuthorizationState state;
 
+        @Nullable
         private PrincipalKey subject;
 
+        @Nullable
         private IdProviderKey idProvider;
 
+        @Nullable
         private String audience;
 
+        @Nullable
         private String scope;
 
+        @Nullable
         private String clientId;
 
         public Builder state( final DeviceAuthorizationState state )

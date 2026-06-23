@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -22,6 +24,7 @@ import com.enonic.xp.shared.SharedMap;
 import com.enonic.xp.shared.SharedMapService;
 
 @Component(service = DeviceAuthService.class)
+@NullMarked
 public class DeviceAuthServiceImpl
     implements DeviceAuthService
 {
@@ -87,7 +90,8 @@ public class DeviceAuthServiceImpl
     }
 
     @Override
-    public boolean resolve( final IdProviderKey idProvider, final String deviceCode, final boolean approved, final PrincipalKey subject )
+    public boolean resolve( final IdProviderKey idProvider, final String deviceCode, final boolean approved,
+                            @Nullable final PrincipalKey subject )
     {
         final SharedMap<String, Object> map = getMap( idProvider );
         final AtomicReference<Boolean> updated = new AtomicReference<>( Boolean.FALSE );
@@ -167,7 +171,8 @@ public class DeviceAuthServiceImpl
     }
 
     @SuppressWarnings("unchecked")
-    private static HashMap<String, Object> asRecord( final Object value )
+    @Nullable
+    private static HashMap<String, Object> asRecord( @Nullable final Object value )
     {
         if ( value instanceof HashMap )
         {
@@ -180,7 +185,7 @@ public class DeviceAuthServiceImpl
         return null;
     }
 
-    private static int remainingTtl( final Object value )
+    private static int remainingTtl( @Nullable final Object value )
     {
         final HashMap<String, Object> record = asRecord( value );
         if ( record == null )
