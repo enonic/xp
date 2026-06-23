@@ -1,15 +1,14 @@
 package com.enonic.xp.security.token;
 
 import java.time.Instant;
-import java.util.Map;
 import java.util.Set;
 
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.security.PrincipalKey;
 
 /**
@@ -28,7 +27,7 @@ public final class AccessToken
 
     private final Instant expiresAt;
 
-    private final ImmutableMap<String, Object> claims;
+    private final PropertyTree claims;
 
     private AccessToken( final Builder builder )
     {
@@ -36,7 +35,7 @@ public final class AccessToken
         this.issuer = builder.issuer;
         this.audiences = ImmutableSet.copyOf( builder.audiences );
         this.expiresAt = builder.expiresAt;
-        this.claims = ImmutableMap.copyOf( builder.claims );
+        this.claims = builder.claims;
     }
 
     public static Builder create()
@@ -64,7 +63,10 @@ public final class AccessToken
         return expiresAt;
     }
 
-    public Map<String, Object> getClaims()
+    /**
+     * The full set of token claims. Values are typed JSON values and are never {@code null}.
+     */
+    public PropertyTree getClaims()
     {
         return claims;
     }
@@ -82,7 +84,7 @@ public final class AccessToken
         @Nullable
         private Instant expiresAt;
 
-        private Map<String, Object> claims = Map.of();
+        private PropertyTree claims = new PropertyTree();
 
         public Builder subject( final PrincipalKey subject )
         {
@@ -108,7 +110,7 @@ public final class AccessToken
             return this;
         }
 
-        public Builder claims( final Map<String, Object> claims )
+        public Builder claims( final PropertyTree claims )
         {
             this.claims = claims;
             return this;

@@ -17,6 +17,8 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.security.CryptoService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.token.AccessToken;
@@ -137,12 +139,65 @@ public class AccessTokenServiceImpl
                                     .issuer( (String) iss )
                                     .audiences( toStringSet( claims.get( "aud" ) ) )
                                     .expiresAt( expiresAt )
-                                    .claims( claims )
+                                    .claims( toPropertyTree( claims ) )
                                     .build() );
         }
         catch ( Exception e )
         {
             return Optional.empty();
+        }
+    }
+
+    /**
+     * Converts the parsed JSON claims into a {@link PropertyTree} of typed values. {@code null}
+     * values are skipped, so the resulting claims never carry nulls.
+     */
+    private static PropertyTree toPropertyTree( final Map<String, Object> claims )
+    {
+        final PropertyTree tree = new PropertyTree();
+        addAll( tree.getRoot(), claims );
+        return tree;
+    }
+
+    private static void addAll( final PropertySet set, final Map<String, Object> map )
+    {
+        map.forEach( ( name, value ) -> addValue( set, name, value ) );
+    }
+
+    private static void addValue( final PropertySet set, final String name, @Nullable final Object value )
+    {
+        if ( value == null )
+        {
+            return;
+        }
+        if ( value instanceof String string )
+        {
+            set.addString( name, string );
+        }
+        else if ( value instanceof Boolean bool )
+        {
+            set.addBoolean( name, bool );
+        }
+        else if ( value instanceof Integer || value instanceof Long )
+        {
+            set.addLong( name, ( (Number) value ).longValue() );
+        }
+        else if ( value instanceof Number number )
+        {
+            set.addDouble( name, number.doubleValue() );
+        }
+        else if ( value instanceof Map<?, ?> map )
+        {
+            @SuppressWarnings("unchecked") final Map<String, Object> child = (Map<String, Object>) map;
+            addAll( set.addSet( name ), child );
+        }
+        else if ( value instanceof Iterable<?> iterable )
+        {
+            iterable.forEach( item -> addValue( set, name, item ) );
+        }
+        else
+        {
+            set.addString( name, value.toString() );
         }
     }
 

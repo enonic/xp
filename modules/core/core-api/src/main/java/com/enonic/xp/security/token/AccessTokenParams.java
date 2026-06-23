@@ -36,7 +36,7 @@ public final class AccessTokenParams
     {
         this.subject = Objects.requireNonNull( builder.subject, "subject is required" );
         this.issuer = Objects.requireNonNull( builder.issuer, "issuer is required" );
-        this.audiences = ImmutableList.copyOf( builder.audiences );
+        this.audiences = builder.audiences.build();
         this.clientId = builder.clientId;
         this.scope = builder.scope;
         this.ttlSeconds = builder.ttlSeconds;
@@ -87,7 +87,7 @@ public final class AccessTokenParams
         @Nullable
         private String issuer;
 
-        private final List<String> audiences = new java.util.ArrayList<>();
+        private final ImmutableList.Builder<String> audiences = ImmutableList.builder();
 
         @Nullable
         private String clientId;
@@ -109,12 +109,9 @@ public final class AccessTokenParams
             return this;
         }
 
-        public Builder addAudience( @Nullable final String audience )
+        public Builder addAudience( final String audience )
         {
-            if ( audience != null && !audience.isEmpty() )
-            {
-                this.audiences.add( audience );
-            }
+            this.audiences.add( Objects.requireNonNull( audience, "audience is required" ) );
             return this;
         }
 
