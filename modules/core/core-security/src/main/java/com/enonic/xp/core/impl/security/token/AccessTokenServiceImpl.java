@@ -39,6 +39,11 @@ public class AccessTokenServiceImpl
     @Override
     public String issue( final AccessTokenParams params )
     {
+        if ( !params.getSubject().isUser() )
+        {
+            throw new IllegalArgumentException( "Access token subject must be a user: " + params.getSubject() );
+        }
+
         final String kid = cryptoService.tokenSigningKeyId();
         final SecretKey key = cryptoService.getSigningKey( kid );
 
@@ -121,20 +126,19 @@ public class AccessTokenServiceImpl
             }
 
             final PrincipalKey subjectKey = PrincipalKey.from( (String) sub );
-            final AccessToken.Builder result = AccessToken.create()
-                .subject( subjectKey )
-                .issuer( (String) iss )
-                .audiences( toStringSet( claims.get( "aud" ) ) )
-                .expiresAt( expiresAt )
-                .claims( claims );
-
-            // The id provider is part of the subject PrincipalKey; no separate claim is needed.
-            if ( subjectKey.isUser() )
+            if ( !subjectKey.isUser() )
             {
-                result.idProvider( subjectKey.getIdProviderKey() );
+                return Optional.empty();
             }
 
-            return Optional.of( result.build() );
+            // The id provider is part of the subject PrincipalKey; it is not stored separately.
+            return Optional.of( AccessToken.create()
+                                    .subject( subjectKey )
+                                    .issuer( (String) iss )
+                                    .audiences( toStringSet( claims.get( "aud" ) ) )
+                                    .expiresAt( expiresAt )
+                                    .claims( claims )
+                                    .build() );
         }
         catch ( Exception e )
         {

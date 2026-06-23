@@ -106,17 +106,15 @@ public final class AccessTokenAuthFilter
             return null;
         }
 
-        final AccessToken accessToken = verified.get();
-
-        // Per-vhost flow gating: a vhost may keep the id provider configured but disable
-        // acceptance of device-login tokens for it (mapping.<vh>.context.<idp>.deviceLogin.accept=false).
-        if ( !isAcceptanceEnabled( req, accessToken.getIdProvider() ) )
+        final PrincipalKey subject = verified.get().getSubject();
+        if ( !subject.isUser() )
         {
             return null;
         }
 
-        final PrincipalKey subject = accessToken.getSubject();
-        if ( subject == null || !subject.isUser() )
+        // Per-vhost flow gating: a vhost may keep the id provider configured but disable
+        // acceptance of device-login tokens for it (mapping.<vh>.context.<idp>.deviceLogin.accept=false).
+        if ( !isAcceptanceEnabled( req, subject.getIdProviderKey() ) )
         {
             return null;
         }
@@ -135,12 +133,8 @@ public final class AccessTokenAuthFilter
             .build();
     }
 
-    private static boolean isAcceptanceEnabled( final HttpServletRequest req, @Nullable final IdProviderKey idProvider )
+    private static boolean isAcceptanceEnabled( final HttpServletRequest req, final IdProviderKey idProvider )
     {
-        if ( idProvider == null )
-        {
-            return true;
-        }
         final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( req );
         if ( virtualHost == null )
         {

@@ -53,7 +53,7 @@ class AccessTokenServiceImplTest
         assertTrue( verified.isPresent() );
         final AccessToken at = verified.get();
         assertEquals( PrincipalKey.from( "user:myidp:john" ), at.getSubject() );
-        assertEquals( IdProviderKey.from( "myidp" ), at.getIdProvider() );
+        assertEquals( IdProviderKey.from( "myidp" ), at.getSubject().getIdProviderKey() );
         assertEquals( "app:myidp", at.getIssuer() );
         assertTrue( at.getAudiences().contains( "https://api.example.com" ) );
         assertEquals( "cli", at.getClaims().get( "client_id" ) );

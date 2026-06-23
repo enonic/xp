@@ -10,20 +10,17 @@ import org.jspecify.annotations.Nullable;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
-import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 
 /**
  * A verified access token. The signature, issuer and expiry have already been validated;
- * audience enforcement is left to the caller via {@link #getAudiences()}.
+ * audience enforcement is left to the caller via {@link #getAudiences()}. The subject is always a
+ * user principal, which also identifies the id provider via {@link PrincipalKey#getIdProviderKey()}.
  */
 @NullMarked
 public final class AccessToken
 {
     private final PrincipalKey subject;
-
-    @Nullable
-    private final IdProviderKey idProvider;
 
     private final String issuer;
 
@@ -36,7 +33,6 @@ public final class AccessToken
     private AccessToken( final Builder builder )
     {
         this.subject = builder.subject;
-        this.idProvider = builder.idProvider;
         this.issuer = builder.issuer;
         this.audiences = ImmutableSet.copyOf( builder.audiences );
         this.expiresAt = builder.expiresAt;
@@ -51,12 +47,6 @@ public final class AccessToken
     public PrincipalKey getSubject()
     {
         return subject;
-    }
-
-    @Nullable
-    public IdProviderKey getIdProvider()
-    {
-        return idProvider;
     }
 
     public String getIssuer()
@@ -85,9 +75,6 @@ public final class AccessToken
         private PrincipalKey subject;
 
         @Nullable
-        private IdProviderKey idProvider;
-
-        @Nullable
         private String issuer;
 
         private Set<String> audiences = Set.of();
@@ -100,12 +87,6 @@ public final class AccessToken
         public Builder subject( final PrincipalKey subject )
         {
             this.subject = subject;
-            return this;
-        }
-
-        public Builder idProvider( @Nullable final IdProviderKey idProvider )
-        {
-            this.idProvider = idProvider;
             return this;
         }
 
