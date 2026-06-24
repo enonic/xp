@@ -7,6 +7,7 @@ import java.util.Base64;
 import java.util.HexFormat;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 
 import javax.crypto.KeyGenerator;
@@ -66,12 +67,7 @@ public class TokenSigningKeyServiceImpl
     @Nullable
     private final byte[] encryptionKey;
 
-    private final ConcurrentMap<String, SecretKey> keyCache = new ConcurrentHashMap<>();
-
-    private volatile long preferredKidExpiresAt;
-
-    @Nullable
-    private volatile String preferredKid;
+    private final AtomicReference<KeyState> keyState = new AtomicReference<>();
 
     /**
      * Used to make sure the SecurityInitializer is run before this component is activated.
@@ -91,7 +87,7 @@ public class TokenSigningKeyServiceImpl
     @Override
     public String getCurrentKeyId()
     {
-        final String kid = currentPreferredKid();
+        final String kid = keyState().preferredKid;
         if ( kid == null )
         {
             throw new IllegalStateException( "No token-signing key is available" );
@@ -106,8 +102,7 @@ public class TokenSigningKeyServiceImpl
         {
             throw new IllegalArgumentException( "Invalid signing key id: " + kid );
         }
-        expireCacheIfStale();
-        return keyCache.computeIfAbsent( kid, this::resolveSigningKey );
+        return keyState().keys.computeIfAbsent( kid, this::resolveSigningKey );
     }
 
     @Override
@@ -174,25 +169,20 @@ public class TokenSigningKeyServiceImpl
         return new SecretKeySpec( deriveKey( encryptionKey, material, USE_TOKEN_SIGNING, kid ), HMAC_SHA512 );
     }
 
-    @Nullable
-    private String currentPreferredKid()
+    /**
+     * The cached key state, rebuilt when absent or once its short TTL elapses. The TTL bounds how
+     * long a rotate/decommission on another cluster node takes to be observed here (there is no event
+     * plumbing). Concurrent refreshes race harmlessly: each builds an equivalent state, last one wins.
+     */
+    private KeyState keyState()
     {
-        expireCacheIfStale();
-        String kid = preferredKid;
-        if ( kid == null )
+        KeyState current = keyState.get();
+        if ( current == null || System.currentTimeMillis() >= current.expiresAt )
         {
-            synchronized ( this )
-            {
-                kid = preferredKid;
-                if ( kid == null )
-                {
-                    kid = findPreferredKid();
-                    preferredKid = kid;
-                    preferredKidExpiresAt = System.currentTimeMillis() + CACHE_TTL_MS;
-                }
-            }
+            current = new KeyState( findPreferredKid(), System.currentTimeMillis() + CACHE_TTL_MS );
+            keyState.set( current );
         }
-        return kid;
+        return current;
     }
 
     /**
@@ -262,19 +252,29 @@ public class TokenSigningKeyServiceImpl
         return data;
     }
 
-    private void expireCacheIfStale()
+    private void invalidate()
     {
-        if ( System.currentTimeMillis() >= preferredKidExpiresAt )
-        {
-            invalidate();
-        }
+        keyState.set( null );
     }
 
-    private synchronized void invalidate()
+    /**
+     * Immutable snapshot of the signing-key state: the preferred kid and a lazily-populated cache of
+     * resolved verification keys, valid until {@link #expiresAt}.
+     */
+    private static final class KeyState
     {
-        this.preferredKid = null;
-        this.preferredKidExpiresAt = 0;
-        this.keyCache.clear();
+        @Nullable
+        final String preferredKid;
+
+        final long expiresAt;
+
+        final ConcurrentMap<String, SecretKey> keys = new ConcurrentHashMap<>();
+
+        KeyState( @Nullable final String preferredKid, final long expiresAt )
+        {
+            this.preferredKid = preferredKid;
+            this.expiresAt = expiresAt;
+        }
     }
 
     private static NodePath keyPath( final String kid )
