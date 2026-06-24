@@ -53,9 +53,10 @@ import com.enonic.xp.web.vhost.IdProviderFlow;
  * <ul>
  *     <li>{@code deviceVerification(req, context)} - the device verification / approval page;</li>
  *     <li>{@code authorizeConsent(req, context)} - the native authorization consent page;</li>
- *     <li>{@code allowRedirectUri(req, context)} - redirect policy: returns whether a non-loopback
- *     redirect (an RFC 8252 private-use scheme or a claimed {@code https} URL) is registered for this
- *     id provider. Only loopback redirects are allowed without consulting it.</li>
+ *     <li>{@code allowRedirectUri(req)} - redirect policy. When implemented, it takes over redirect
+ *     validation entirely (loopback included): it returns a {@link PortalResponse} to reject the
+ *     request, or nothing to allow it. When it is not implemented, core falls back to allowing only
+ *     loopback redirects (any port) and rejecting everything else.</li>
  * </ul>
  * Per-vhost flow gating (DEVICE / NATIVE) is enforced by the caller and re-checked here per grant.
  */
@@ -384,10 +385,16 @@ public class DeviceLoginHandler
         throws IOException
     {
         final String redirectUri = param( req, "redirect_uri" );
-        if ( redirectUri == null || !redirectAllowed( req, idProvider, redirectUri ) )
+        if ( redirectUri == null )
         {
-            // An invalid redirect target must never be redirected to (open-redirect / code-leak guard).
-            return oauthError( HttpStatus.BAD_REQUEST, "invalid_request", "redirect_uri is not allowed" );
+            return oauthError( HttpStatus.BAD_REQUEST, "invalid_request", "redirect_uri is required" );
+        }
+        // An invalid redirect target must never be redirected to (open-redirect / code-leak guard), so
+        // a rejection is rendered directly and the flow stops here.
+        final PortalResponse rejected = checkRedirect( req, idProvider, redirectUri );
+        if ( rejected != null )
+        {
+            return rejected;
         }
         if ( param( req, "code_challenge" ) == null || !"S256".equals( param( req, "code_challenge_method" ) ) )
         {
@@ -397,26 +404,35 @@ public class DeviceLoginHandler
     }
 
     /**
-     * Only loopback redirects (any port) are allowed unconditionally - they never leave the device.
-     * Every other redirect (an RFC 8252 private-use scheme or a claimed {@code https} URL) is allowed
-     * only if the id provider's {@code allowRedirectUri} hook approves it: registration is the id
-     * provider's policy. The id provider is the one addressed in the request URL (it issues the token),
-     * so there is no ambiguity about which one decides.
+     * Validates the {@code redirect_uri}. If the id provider implements the {@code allowRedirectUri}
+     * hook it takes over redirect validation entirely - it decides every target itself (loopback
+     * included) and returns a {@link PortalResponse} to reject the request, or nothing to allow it.
+     * If the id provider does not implement the hook, core falls back to allowing only loopback
+     * redirects (any port) - they never leave the device - and rejecting everything else. The deciding
+     * id provider is the one addressed in the request URL (it issues the token), so there is no
+     * ambiguity about which one decides.
+     *
+     * @return a response to reject (or otherwise handle) the request, or {@code null} if the redirect
+     * is allowed and the flow may continue.
      */
-    private boolean redirectAllowed( final PortalRequest req, final IdProviderKey idProvider, final String redirectUri )
+    @Nullable
+    private PortalResponse checkRedirect( final PortalRequest req, final IdProviderKey idProvider, final String redirectUri )
         throws IOException
     {
-        if ( isLoopback( redirectUri ) )
+        if ( idProviderControllerService.hasFunction( idProvider, ALLOW_REDIRECT_FUNCTION ) )
         {
-            return true;
+            // The hook owns the decision: a returned response rejects (or otherwise handles) the
+            // request, a null result allows it. The redirect to validate is the request's own
+            // redirect_uri param, so the hook reads it from the request - nothing extra to pass.
+            return idProviderControllerService.execute( IdProviderControllerExecutionParams.create()
+                                                            .idProviderKey( idProvider )
+                                                            .functionName( ALLOW_REDIRECT_FUNCTION )
+                                                            .portalRequest( req )
+                                                            .build() );
         }
-        // The redirect to validate is the request's own redirect_uri param, so the hook reads it from
-        // the request - nothing extra to pass.
-        return idProviderControllerService.executeBoolean( IdProviderControllerExecutionParams.create()
-                                                               .idProviderKey( idProvider )
-                                                               .functionName( ALLOW_REDIRECT_FUNCTION )
-                                                               .portalRequest( req )
-                                                               .build() );
+        return isLoopback( redirectUri )
+            ? null
+            : oauthError( HttpStatus.BAD_REQUEST, "invalid_request", "redirect_uri is not allowed" );
     }
 
     /**
@@ -497,8 +513,8 @@ public class DeviceLoginHandler
         }
     }
 
-    // Only loopback (any port) is auto-allowed - it never leaves the device. Every other redirect
-    // (private-use scheme or claimed https) is deferred to the id provider's allowRedirectUri hook.
+    // Only loopback (any port) is auto-allowed in the fallback path (when the id provider does not
+    // implement allowRedirectUri) - it never leaves the device.
     static boolean isLoopback( final String uri )
     {
         return LOOPBACK.matcher( uri ).matches();

@@ -90,38 +90,6 @@ public class IdProviderControllerServiceImpl
     }
 
     @Override
-    public boolean executeBoolean( final IdProviderControllerExecutionParams params )
-        throws IOException
-    {
-        final IdProviderKey idProviderKey = retrieveIdProviderKey( params );
-        final IdProvider idProvider = retrieveIdProvider( idProviderKey );
-        final IdProviderDescriptor idProviderDescriptor = retrieveIdProviderDescriptor( idProvider );
-
-        if ( idProviderDescriptor == null )
-        {
-            return false;
-        }
-
-        final IdProviderControllerScript idProviderControllerScript =
-            idProviderControllerScriptFactory.fromScript( getScriptResourceKey( idProviderDescriptor.getKey() ) );
-
-        final String functionName = params.getFunctionName();
-        if ( functionName == null || !idProviderControllerScript.hasMethod( functionName ) )
-        {
-            return false;
-        }
-
-        final PortalRequest portalRequest = params.getServletRequest() != null
-            ? new PortalRequestAdapter().adapt( webSerializerService.request( params.getServletRequest() ) )
-            : requireNonNull( params.getPortalRequest() );
-
-        portalRequest.setApplicationKey( idProviderDescriptor.getKey() );
-        portalRequest.setIdProvider( idProvider );
-
-        return idProviderControllerScript.executeBoolean( functionName, portalRequest );
-    }
-
-    @Override
     public boolean hasFunction( final IdProviderKey idProviderKey, final String functionName )
     {
         final IdProvider idProvider = retrieveIdProvider( idProviderKey );

@@ -12,7 +12,7 @@ import com.enonic.xp.web.HttpStatus;
 
 /**
  * Executes an id provider controller script (idprovider.js) function, mapping the result to a
- * {@link PortalResponse} or a boolean.
+ * {@link PortalResponse}.
  */
 class IdProviderControllerScript
 {
@@ -38,22 +38,6 @@ class IdProviderControllerScript
             final ScriptValue result = invoke( functionName, request );
             return ( result == null || !result.isObject() ) ? null : new PortalResponseSerializer( result ).serialize();
         } );
-    }
-
-    /**
-     * Executes the function and returns its boolean result, or {@code false} if it is missing or does
-     * not return a boolean.
-     */
-    public boolean executeBoolean( final String functionName, final PortalRequest request )
-    {
-        return Boolean.TRUE.equals( withRequest( request, () -> {
-            if ( !this.scriptExports.hasMethod( functionName ) )
-            {
-                return Boolean.FALSE;
-            }
-            final ScriptValue result = invoke( functionName, request );
-            return result != null && result.isValue() ? result.getValue( Boolean.class ) : Boolean.FALSE;
-        } ) );
     }
 
     private ScriptValue invoke( final String functionName, final PortalRequest portalRequest )
