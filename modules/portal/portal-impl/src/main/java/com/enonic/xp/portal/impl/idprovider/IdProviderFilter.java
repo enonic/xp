@@ -49,7 +49,7 @@ public final class IdProviderFilter
             final IdProviderKey idProviderKey = resolveAutoLoginIdProvider( req );
             if ( idProviderKey != null )
             {
-                idProviderControllerService.execute( IdProviderControllerExecutionParams.create()
+                idProviderControllerService.executeResponse( IdProviderControllerExecutionParams.create()
                                                          .functionName( "autoLogin" )
                                                          .idProviderKey( idProviderKey )
                                                          .servletRequest( req )

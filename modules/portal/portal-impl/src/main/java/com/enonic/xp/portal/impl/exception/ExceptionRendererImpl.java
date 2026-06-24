@@ -236,7 +236,7 @@ public final class ExceptionRendererImpl
                 IdProviderControllerExecutionParams.create().functionName( "handle401" ).portalRequest( req ).build();
             try
             {
-                return idProviderControllerService.execute( executionParams );
+                return idProviderControllerService.executeResponse( executionParams );
             }
             catch ( IOException e )
             {

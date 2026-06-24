@@ -29,7 +29,7 @@ class IdProviderResponseWrapperTest
         throws IOException
     {
         this.idProviderControllerService = Mockito.mock( IdProviderControllerService.class );
-        Mockito.when( idProviderControllerService.execute( Mockito.any() ) ).thenReturn( PortalResponse.create().build() );
+        Mockito.when( idProviderControllerService.executeResponse( Mockito.any() ) ).thenReturn( PortalResponse.create().build() );
         final HttpServletRequest httpServletRequest = Mockito.mock( HttpServletRequest.class );
         final HttpServletResponse httpServletResponse = Mockito.mock( HttpServletResponse.class );
 
@@ -42,11 +42,11 @@ class IdProviderResponseWrapperTest
         throws IOException
     {
         idProviderResponseWrapper.setStatus( 404 );
-        Mockito.verify( idProviderControllerService, Mockito.times( 0 ) ).execute( Mockito.any() );
+        Mockito.verify( idProviderControllerService, Mockito.times( 0 ) ).executeResponse( Mockito.any() );
         idProviderResponseWrapper.setStatus( 403 );
-        Mockito.verify( idProviderControllerService ).execute( Mockito.any() );
+        Mockito.verify( idProviderControllerService ).executeResponse( Mockito.any() );
         idProviderResponseWrapper.setStatus( 403 );
-        Mockito.verify( idProviderControllerService ).execute( Mockito.any() );
+        Mockito.verify( idProviderControllerService ).executeResponse( Mockito.any() );
     }
 
     @Test
@@ -54,11 +54,11 @@ class IdProviderResponseWrapperTest
         throws IOException
     {
         idProviderResponseWrapper.sendError( 404 );
-        Mockito.verify( idProviderControllerService, Mockito.times( 0 ) ).execute( Mockito.any() );
+        Mockito.verify( idProviderControllerService, Mockito.times( 0 ) ).executeResponse( Mockito.any() );
         idProviderResponseWrapper.sendError( 403 );
-        Mockito.verify( idProviderControllerService ).execute( Mockito.any() );
+        Mockito.verify( idProviderControllerService ).executeResponse( Mockito.any() );
         idProviderResponseWrapper.sendError( 403 );
-        Mockito.verify( idProviderControllerService ).execute( Mockito.any() );
+        Mockito.verify( idProviderControllerService ).executeResponse( Mockito.any() );
     }
 
     @Test
@@ -66,11 +66,11 @@ class IdProviderResponseWrapperTest
         throws IOException
     {
         idProviderResponseWrapper.sendError( 404, "message" );
-        Mockito.verify( idProviderControllerService, Mockito.times( 0 ) ).execute( Mockito.any() );
+        Mockito.verify( idProviderControllerService, Mockito.times( 0 ) ).executeResponse( Mockito.any() );
         idProviderResponseWrapper.sendError( 403, "message" );
-        Mockito.verify( idProviderControllerService ).execute( Mockito.any() );
+        Mockito.verify( idProviderControllerService ).executeResponse( Mockito.any() );
         idProviderResponseWrapper.sendError( 403, "message" );
-        Mockito.verify( idProviderControllerService ).execute( Mockito.any() );
+        Mockito.verify( idProviderControllerService ).executeResponse( Mockito.any() );
     }
 
     @Test

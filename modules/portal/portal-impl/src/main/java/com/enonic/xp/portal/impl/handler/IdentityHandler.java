@@ -141,7 +141,7 @@ public class IdentityHandler
             .portalRequest( portalRequest )
             .build();
 
-        final PortalResponse portalResponse = idProviderControllerService.execute( executionParams );
+        final PortalResponse portalResponse = idProviderControllerService.executeResponse( executionParams );
 
         if ( portalResponse == null )
         {

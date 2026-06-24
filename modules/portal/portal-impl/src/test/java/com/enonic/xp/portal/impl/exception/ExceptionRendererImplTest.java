@@ -301,7 +301,7 @@ class ExceptionRendererImplTest
         this.renderer = new ExceptionRendererImpl( resourceService, errorHandlerScriptFactory, idProviderControllerService, postProcessor,
                                                    new ExceptionMapperImpl() );
 
-        when( idProviderControllerService.execute( any( IdProviderControllerExecutionParams.class ) ) ).thenReturn( null );
+        when( idProviderControllerService.executeResponse( any( IdProviderControllerExecutionParams.class ) ) ).thenReturn( null );
         this.request.getHeaders().put( HttpHeaders.ACCEPT, "text/html,text/*" );
 
         VirtualHost virtualHost = mock( VirtualHost.class );

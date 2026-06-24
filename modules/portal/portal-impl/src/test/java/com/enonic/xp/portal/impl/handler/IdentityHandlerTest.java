@@ -50,7 +50,7 @@ class IdentityHandlerTest
 
         final IdProviderKey myIdProvider = IdProviderKey.from( "myidprovider" );
 
-        when( idProviderControllerService.execute( Mockito.any() ) ).thenAnswer( invocation -> {
+        when( idProviderControllerService.executeResponse( Mockito.any() ) ).thenAnswer( invocation -> {
             Object[] args = invocation.getArguments();
             final IdProviderControllerExecutionParams arg = (IdProviderControllerExecutionParams) args[0];
             if ( myIdProvider.equals( arg.getIdProviderKey() ) && arg.getFunctionName() == null )
@@ -87,7 +87,7 @@ class IdentityHandlerTest
     {
         final IdProviderControllerService idProviderControllerService = mock( IdProviderControllerService.class );
         final PortalResponse response = PortalResponse.create().status( HttpStatus.METHOD_NOT_ALLOWED ).build();
-        when( idProviderControllerService.execute( Mockito.any() ) ).thenReturn( response );
+        when( idProviderControllerService.executeResponse( Mockito.any() ) ).thenReturn( response );
         this.handler = new IdentityHandler( idProviderControllerService, mock(), mock( DeviceLoginHandler.class ) );
 
         this.request.setMethod( HttpMethod.OPTIONS );

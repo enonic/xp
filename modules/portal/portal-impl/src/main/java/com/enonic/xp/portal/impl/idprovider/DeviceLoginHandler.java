@@ -6,6 +6,9 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -53,9 +56,10 @@ import com.enonic.xp.web.vhost.IdProviderFlow;
  * <ul>
  *     <li>{@code deviceVerification(req, context)} - the device verification / approval page;</li>
  *     <li>{@code authorizeConsent(req, context)} - the native authorization consent page;</li>
- *     <li>{@code allowRedirectUri(req)} - redirect policy. When implemented, it takes over redirect
- *     validation entirely (loopback included): it returns a {@link PortalResponse} to reject the
- *     request, or nothing to allow it. When it is not implemented, core falls back to allowing only
+ *     <li>{@code configure(req)} - returns the id provider configuration core needs, parsed by the app
+ *     (which owns its config) - e.g. the native flow's per-client redirect registry
+ *     {@code {native: {clients: [{clientId, redirectUris}]}}}. Core owns the redirect-matching logic;
+ *     the hook only supplies the data. When it is not implemented, core falls back to allowing only
  *     loopback redirects (any port) and rejecting everything else.</li>
  * </ul>
  * Per-vhost flow gating (DEVICE / NATIVE) is enforced by the caller and re-checked here per grant.
@@ -68,7 +72,7 @@ public class DeviceLoginHandler
 
     static final String AUTHORIZE_CONSENT_FUNCTION = "authorizeConsent";
 
-    static final String ALLOW_REDIRECT_FUNCTION = "allowRedirectUri";
+    static final String CONFIGURE_FUNCTION = "configure";
 
     static final String DEVICE_CODE_GRANT = "urn:ietf:params:oauth:grant-type:device_code";
 
@@ -405,35 +409,72 @@ public class DeviceLoginHandler
     }
 
     /**
-     * Validates the {@code redirect_uri}. If the id provider implements the {@code allowRedirectUri}
-     * hook it takes over redirect validation entirely - it decides every target itself (loopback
-     * included) and returns a {@link PortalResponse} to reject the request, or nothing to allow it.
-     * If the id provider does not implement the hook, core falls back to allowing only loopback
-     * redirects (any port) - they never leave the device - and rejecting everything else. The deciding
-     * id provider is the one addressed in the request URL (it issues the token), so there is no
-     * ambiguity about which one decides.
+     * Validates the {@code redirect_uri}. If the id provider implements the {@code configure} hook, it
+     * supplies the per-client redirect registry and core does the matching: the redirect is allowed
+     * only if it is registered for the request's {@code client_id} (matched exactly, except a loopback
+     * redirect, for which only the port is flexible). If the id provider does not implement the hook,
+     * core falls back to allowing only loopback redirects (any port) - they never leave the device -
+     * and rejecting everything else. The deciding id provider is the one addressed in the request URL
+     * (it issues the token), so there is no ambiguity about which one decides.
      *
-     * @return a response to reject (or otherwise handle) the request, or {@code null} if the redirect
-     * is allowed and the flow may continue.
+     * @return a response rejecting the request, or {@code null} if the redirect is allowed and the
+     * flow may continue.
      */
     @Nullable
     private PortalResponse checkRedirect( final PortalRequest req, final IdProviderKey idProvider, final String redirectUri )
         throws IOException
     {
-        if ( idProviderControllerService.hasFunction( idProvider, ALLOW_REDIRECT_FUNCTION ) )
+        if ( idProviderControllerService.hasFunction( idProvider, CONFIGURE_FUNCTION ) )
         {
-            // The hook owns the decision: a returned response rejects (or otherwise handles) the
-            // request, a null result allows it. The redirect to validate is the request's own
-            // redirect_uri param, so the hook reads it from the request - nothing extra to pass.
-            return idProviderControllerService.execute( IdProviderControllerExecutionParams.create()
-                                                            .idProviderKey( idProvider )
-                                                            .functionName( ALLOW_REDIRECT_FUNCTION )
-                                                            .portalRequest( req )
-                                                            .build() );
+            // The id provider supplies its per-client redirect registry via configure(); core owns the
+            // matching. Allowed only if registered for the request's client_id.
+            final boolean allowed = registeredRedirectUris( req, idProvider, param( req, "client_id" ) ).stream()
+                .anyMatch( registered -> redirectMatches( registered, redirectUri ) );
+            return allowed ? null : oauthError( HttpStatus.BAD_REQUEST, "invalid_request", "redirect_uri is not allowed" );
         }
         return isLoopback( redirectUri )
             ? null
             : oauthError( HttpStatus.BAD_REQUEST, "invalid_request", "redirect_uri is not allowed" );
+    }
+
+    /**
+     * The redirect URIs registered for {@code clientId} in the id provider's native client registry,
+     * read from the {@code configure} hook ({@code {native: {clients: [{clientId, redirectUris}]}}}).
+     * Empty if the hook returns nothing, the client is unknown, or it has no registered URIs.
+     */
+    @SuppressWarnings("unchecked")
+    private List<String> registeredRedirectUris( final PortalRequest req, final IdProviderKey idProvider,
+                                                 @Nullable final String clientId )
+        throws IOException
+    {
+        final Object config = idProviderControllerService.executeFunction( IdProviderControllerExecutionParams.create()
+                                                                               .idProviderKey( idProvider )
+                                                                               .functionName( CONFIGURE_FUNCTION )
+                                                                               .portalRequest( req )
+                                                                               .build() );
+        if ( !( config instanceof Map ) )
+        {
+            return List.of();
+        }
+        final Object nativeConfig = ( (Map<String, Object>) config ).get( "native" );
+        if ( !( nativeConfig instanceof Map ) )
+        {
+            return List.of();
+        }
+        final Object clients = ( (Map<String, Object>) nativeConfig ).get( "clients" );
+        if ( !( clients instanceof List ) )
+        {
+            return List.of();
+        }
+        for ( final Object entry : (List<Object>) clients )
+        {
+            if ( entry instanceof Map && Objects.equals( ( (Map<String, Object>) entry ).get( "clientId" ), clientId ) )
+            {
+                final Object uris = ( (Map<String, Object>) entry ).get( "redirectUris" );
+                return uris instanceof List ? ( (List<Object>) uris ).stream().map( String::valueOf ).toList() : List.of();
+            }
+        }
+        return List.of();
     }
 
     /**
@@ -445,11 +486,11 @@ public class DeviceLoginHandler
     private PortalResponse render( final PortalRequest req, final IdProviderKey idProvider, final String functionName )
         throws IOException
     {
-        final PortalResponse response = idProviderControllerService.execute( IdProviderControllerExecutionParams.create()
-                                                                                 .idProviderKey( idProvider )
-                                                                                 .functionName( functionName )
-                                                                                 .portalRequest( req )
-                                                                                 .build() );
+        final PortalResponse response = idProviderControllerService.executeResponse( IdProviderControllerExecutionParams.create()
+                                                                                         .idProviderKey( idProvider )
+                                                                                         .functionName( functionName )
+                                                                                         .portalRequest( req )
+                                                                                         .build() );
         return response != null ? response : status( HttpStatus.NOT_FOUND );
     }
 
@@ -515,10 +556,30 @@ public class DeviceLoginHandler
     }
 
     // Only loopback (any port) is auto-allowed in the fallback path (when the id provider does not
-    // implement allowRedirectUri) - it never leaves the device.
+    // implement configure) - it never leaves the device.
     static boolean isLoopback( final String uri )
     {
         return LOOPBACK.matcher( uri ).matches();
+    }
+
+    /**
+     * A requested redirect_uri matches a registered one if they are identical, or - for an RFC 8252
+     * section 7.3 loopback redirect - once the ephemeral port is removed. Only the port is flexible;
+     * scheme, host and path must still match (as Keycloak / Spring Authorization Server / Entra do).
+     */
+    static boolean redirectMatches( final String registered, final String requested )
+    {
+        if ( registered.equals( requested ) )
+        {
+            return true;
+        }
+        return isLoopback( registered ) && isLoopback( requested ) &&
+            stripLoopbackPort( registered ).equals( stripLoopbackPort( requested ) );
+    }
+
+    private static String stripLoopbackPort( final String uri )
+    {
+        return uri.replaceFirst( "^(http://(?:127\\.0\\.0\\.1|\\[::1\\]))(:\\d+)?(/.*)?$", "$1$3" );
     }
 
     private static String[] splitAudience( @Nullable final String value )
