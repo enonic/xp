@@ -33,13 +33,24 @@ import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 /**
- * Authenticates requests bearing a self-issued access token (e.g. a device-login token).
+ * Authenticates a request bearing an XP-issued self-issued access token (device / native login).
  * <p>
- * This runs before {@link IdProviderFilter} and is id-provider agnostic: a token issued by XP is
- * verified by XP, so it is accepted on any vhost regardless of whether the resolved principal's
- * id provider implements {@code autoLogin}. On a missing or invalid token the request is left
- * unauthenticated and normal id-provider handling proceeds (which, on the {@code api} connector,
- * never triggers an interactive login).
+ * Bearer authentication has two mechanisms, both enabled by the id provider's {@code autologin} flow
+ * on the vhost and applied in a defined order:
+ * <ol>
+ *     <li><b>this filter</b> ({@link Order @Order} -31, before {@link IdProviderFilter}) goes first:
+ *     it verifies the bearer as an XP-issued token (signature, {@code kid}, issuer) and, if valid,
+ *     establishes the auth context from the principal + memberships. It is id-provider agnostic - an
+ *     XP token is verified by XP - but is still gated by the token id provider's {@code autologin}
+ *     flow on the current vhost, which is the per-vhost switch for non-interactive auth;</li>
+ *     <li>otherwise the request falls through to {@link IdProviderFilter} (@Order -30), which runs
+ *     the id provider's own {@code autoLogin} (e.g. validating an <i>external</i>-IdP bearer against
+ *     JWKS).</li>
+ * </ol>
+ * So a valid XP-issued token is consumed here and never reaches the id provider's {@code autoLogin};
+ * any other bearer is left untouched for it. A missing or invalid token leaves the request
+ * unauthenticated and normal id-provider handling proceeds (on the {@code api} connector this never
+ * triggers an interactive login).
  */
 @Component(immediate = true, service = Filter.class, property = {"connector=xp", "connector=api"})
 @Order(-31)
