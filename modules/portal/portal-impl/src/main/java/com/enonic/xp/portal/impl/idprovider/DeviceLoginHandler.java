@@ -83,8 +83,9 @@ public class DeviceLoginHandler
     private static final String[] NATIVE_REQUEST_PARAMS =
         {"redirect_uri", "code_challenge", "code_challenge_method", "scope", "state", "client_id", "resource"};
 
-    // RFC 8252 loopback redirect (any port), which needs no registration.
-    private static final Pattern LOOPBACK = Pattern.compile( "^http://(127\\.0\\.0\\.1|\\[::1\\]|localhost)(:\\d+)?(/.*)?$" );
+    // RFC 8252 section 7.3 loopback redirect (any port), which needs no registration. The literal
+    // loopback IPs only - 'localhost' is intentionally excluded, as it can resolve off-loopback.
+    private static final Pattern LOOPBACK = Pattern.compile( "^http://(127\\.0\\.0\\.1|\\[::1\\])(:\\d+)?(/.*)?$" );
 
     private final DeviceAuthService deviceAuthService;
 
