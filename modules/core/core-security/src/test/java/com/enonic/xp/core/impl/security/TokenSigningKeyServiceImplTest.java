@@ -55,33 +55,28 @@ class TokenSigningKeyServiceImplTest
     }
 
     @Test
-    void preferred_key_ranks_above_non_preferred()
+    void newest_key_ranks_highest()
     {
         final Instant older = Instant.parse( "2026-01-01T00:00:00Z" );
         final Instant newer = Instant.parse( "2026-06-01T00:00:00Z" );
-        // A preferred (older) key outranks a non-preferred newer one.
-        assertTrue( ranksAbove( candidate( true, older ), candidate( false, newer ) ) );
-        assertFalse( ranksAbove( candidate( false, newer ), candidate( true, older ) ) );
+        assertTrue( ranksAbove( candidate( newer ), candidate( older ) ) );
+        assertFalse( ranksAbove( candidate( older ), candidate( newer ) ) );
     }
 
     @Test
-    void newest_ranks_above_when_preference_is_equal()
+    void key_with_creation_time_ranks_above_one_without()
     {
-        final Instant older = Instant.parse( "2026-01-01T00:00:00Z" );
-        final Instant newer = Instant.parse( "2026-06-01T00:00:00Z" );
-        assertTrue( ranksAbove( candidate( false, newer ), candidate( false, older ) ) );
-        assertFalse( ranksAbove( candidate( false, older ), candidate( false, newer ) ) );
-        // A key with a creation time outranks one missing it.
-        assertTrue( ranksAbove( candidate( false, older ), candidate( false, null ) ) );
+        final Instant created = Instant.parse( "2026-01-01T00:00:00Z" );
+        assertTrue( ranksAbove( candidate( created ), candidate( null ) ) );
     }
 
     private static boolean ranksAbove( final TokenSigningKeyServiceImpl.KeyCandidate a, final TokenSigningKeyServiceImpl.KeyCandidate b )
     {
-        return TokenSigningKeyServiceImpl.BY_PREFERENCE.compare( a, b ) > 0;
+        return TokenSigningKeyServiceImpl.BY_AGE.compare( a, b ) > 0;
     }
 
-    private static TokenSigningKeyServiceImpl.KeyCandidate candidate( final boolean preferred, final Instant created )
+    private static TokenSigningKeyServiceImpl.KeyCandidate candidate( final Instant created )
     {
-        return new TokenSigningKeyServiceImpl.KeyCandidate( "kid", preferred, created );
+        return new TokenSigningKeyServiceImpl.KeyCandidate( "kid", created );
     }
 }

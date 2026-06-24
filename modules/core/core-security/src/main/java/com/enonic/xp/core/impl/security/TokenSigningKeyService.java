@@ -22,42 +22,45 @@ import org.jspecify.annotations.NullMarked;
  *     QA) still end up with different effective keys. The stored material on its own is therefore
  *     not sufficient to forge or verify a token.</li>
  * </ul>
- * Keys are stored flat under {@code /keys}; each node's name is its {@code kid} and a
- * {@code preferred} field marks the single key currently used for <i>signing</i>. All present keys
- * remain valid for <i>verification</i>, which supports rotation with an overlap window.
+ * Keys are stored flat under {@code /keys}; each node's name is its {@code kid}. There is no
+ * "preferred" flag (which would assume a single coordinated writer): any <i>live</i>
+ * (non-{@code decommissioned}) key is a valid signing key, and all live keys verify. Rotation is
+ * therefore purely additive and needs no cluster coordination - a key is retired by flagging it
+ * {@code decommissioned}, after which it neither signs nor verifies.
  */
 @NullMarked
 public interface TokenSigningKeyService
 {
     /**
-     * @return the {@code kid} of the key currently used for signing (the preferred key).
+     * @return the {@code kid} to sign with - any live (non-decommissioned) key (the newest, for a
+     * stable choice).
      */
     String getCurrentKeyId();
 
     /**
-     * Resolves the effective signing/verification key for the given key id.
+     * Resolves the effective verification/signing key for the given key id.
      *
      * @param kid the key id, as carried in a token's JOSE {@code kid} header. It must reference a
-     *            known signing key; arbitrary node paths are rejected.
+     *            known, live signing key; arbitrary node paths are rejected.
      * @return the derived secret key (an {@code HmacSHA512} key).
-     * @throws IllegalArgumentException if the key id is not a known signing key.
+     * @throws IllegalArgumentException if the key id is not a known, live signing key.
      */
     SecretKey getSigningKey( String kid );
 
     /**
-     * Generates a new signing key, marks it preferred and demotes the previous preferred key to
-     * verify-only. New tokens are signed with the new key; tokens signed by the previous key keep
-     * verifying until that key is decommissioned.
+     * Generates and stores a new live signing key. Purely additive: no existing key is changed, so
+     * concurrent rotations on different cluster nodes are safe (you simply end up with more live
+     * keys, which is fine).
      *
      * @return the {@code kid} of the new key.
      */
     String rotate();
 
     /**
-     * Permanently deletes a key. The key must not be the preferred (signing) key - rotate first.
-     * After deletion, tokens carrying this {@code kid} no longer verify.
+     * Flags a key {@code decommissioned}: it stops being used for signing and stops verifying, so
+     * tokens carrying this {@code kid} no longer work. Idempotent.
      *
-     * @throws IllegalStateException if the key is the current preferred key.
+     * @throws IllegalStateException if it is the last live signing key - rotate first.
      */
     void decommission( String keyId );
 }

@@ -6,6 +6,7 @@ import java.time.Instant;
 import java.util.Base64;
 import java.util.Comparator;
 import java.util.HexFormat;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicReference;
@@ -27,7 +28,6 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
-import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeName;
@@ -88,7 +88,7 @@ public class TokenSigningKeyServiceImpl
     @Override
     public String getCurrentKeyId()
     {
-        final String kid = keyState().preferredKid;
+        final String kid = keyState().signingKid;
         if ( kid == null )
         {
             throw new IllegalStateException( "No token-signing key is available" );
@@ -107,31 +107,23 @@ public class TokenSigningKeyServiceImpl
     }
 
     @Override
-    public synchronized String rotate()
+    public String rotate()
     {
+        // Purely additive: create a new live key. No demote of any existing key, so no read-modify-write
+        // and no need for cluster-wide coordination - any live key is a valid signing key.
         final String newKid = KEY_PREFIX + "-" + randomSuffix();
-        createSystemContext().runWith( () -> {
-            final String previous = findPreferredKid();
-            if ( previous != null )
-            {
-                nodeService.update( UpdateNodeParams.create()
-                                        .path( keyPath( previous ) )
-                                        .editor( editable -> editable.data.setBoolean( "preferred", Boolean.FALSE ) )
-                                        .build() );
-            }
-            nodeService.create( CreateNodeParams.create()
-                                    .parent( KEYS_PATH )
-                                    .name( newKid )
-                                    .data( newKeyData( true ) )
-                                    .inheritPermissions( true )
-                                    .build() );
-        } );
+        createSystemContext().runWith( () -> nodeService.create( CreateNodeParams.create()
+                                                                     .parent( KEYS_PATH )
+                                                                     .name( newKid )
+                                                                     .data( newKeyData() )
+                                                                     .inheritPermissions( true )
+                                                                     .build() ) );
         invalidate();
         return newKid;
     }
 
     @Override
-    public synchronized void decommission( final String keyId )
+    public void decommission( final String keyId )
     {
         if ( keyId == null || !KID_PATTERN.matcher( keyId ).matches() )
         {
@@ -143,11 +135,20 @@ public class TokenSigningKeyServiceImpl
             {
                 throw new IllegalArgumentException( "Token-signing key not found: " + keyId );
             }
-            if ( Boolean.TRUE.equals( node.data().getBoolean( "preferred" ) ) )
+            final List<String> liveKids = liveKidsInContext();
+            if ( liveKids.size() == 1 && liveKids.contains( keyId ) )
             {
-                throw new IllegalStateException( "Cannot decommission the preferred signing key; rotate first: " + keyId );
+                throw new IllegalStateException( "Cannot decommission the last live signing key; rotate first: " + keyId );
             }
-            nodeService.delete( DeleteNodeParams.create().nodeId( node.id() ).build() );
+            // Flag, do not delete: an additive marker needs no coordination and leaves an audit trail.
+            // A decommissioned key no longer signs and no longer verifies, so its tokens stop working.
+            if ( !Boolean.TRUE.equals( node.data().getBoolean( "decommissioned" ) ) )
+            {
+                nodeService.update( UpdateNodeParams.create()
+                                        .path( keyPath( keyId ) )
+                                        .editor( editable -> editable.data.setBoolean( "decommissioned", Boolean.TRUE ) )
+                                        .build() );
+            }
         } );
         invalidate();
     }
@@ -159,6 +160,10 @@ public class TokenSigningKeyServiceImpl
             if ( node == null || !USE_TOKEN_SIGNING.equals( node.data().getString( "use" ) ) )
             {
                 throw new IllegalArgumentException( "Token-signing key not found: " + kid );
+            }
+            if ( Boolean.TRUE.equals( node.data().getBoolean( "decommissioned" ) ) )
+            {
+                throw new IllegalArgumentException( "Token-signing key is decommissioned: " + kid );
             }
             final String stored = node.data().getString( "key" );
             if ( stored == null )
@@ -180,46 +185,54 @@ public class TokenSigningKeyServiceImpl
         KeyState current = keyState.get();
         if ( current == null || System.currentTimeMillis() >= current.expiresAt )
         {
-            current = new KeyState( findPreferredKid(), System.currentTimeMillis() + CACHE_TTL_MS );
+            current = new KeyState( findSigningKid(), System.currentTimeMillis() + CACHE_TTL_MS );
             keyState.set( current );
         }
         return current;
     }
 
     /**
-     * Scans the keys folder and selects the preferred token-signing key: the one flagged
-     * {@code preferred}, breaking ties (or a missing flag) by the most recent {@code created}.
+     * Picks the kid to sign with: any live (non-decommissioned) token-signing key. Which one does not
+     * matter for correctness - all live keys are valid - so the newest {@code created} is chosen for a
+     * stable, deterministic result.
      */
     @Nullable
-    private String findPreferredKid()
+    private String findSigningKid()
     {
-        return createSystemContext().callWith( () -> {
-            final Nodes nodes = nodeService.getByIds(
-                nodeService.findByParent( FindNodesByParentParams.create().parentPath( KEYS_PATH ).size( -1 ).build() ).getNodeIds() );
-
-            return nodes.stream()
-                .filter( node -> USE_TOKEN_SIGNING.equals( node.data().getString( "use" ) ) )
-                .map( node -> new KeyCandidate( node.name().toString(), Boolean.TRUE.equals( node.data().getBoolean( "preferred" ) ),
-                                                node.data().getInstant( "created" ) ) )
-                .max( BY_PREFERENCE )
-                .map( KeyCandidate::kid )
-                .orElse( null );
-        } );
+        return createSystemContext().callWith( () -> liveKeysInContext().stream().max( BY_AGE ).map( KeyCandidate::kid ).orElse( null ) );
     }
 
     /**
-     * Orders signing keys so the preferred (signing) key is the maximum: an explicitly preferred key
-     * ranks above a non-preferred one; ties (and missing flags) are broken by the most recent
-     * {@code created} (a key with a creation time ranks above one without). Package-private for testing.
+     * The live (non-decommissioned) token-signing keys. Must be called within the system context.
      */
-    static final Comparator<KeyCandidate> BY_PREFERENCE = Comparator.comparing( KeyCandidate::preferred )
-        .thenComparing( KeyCandidate::created, Comparator.nullsFirst( Comparator.naturalOrder() ) );
+    private List<KeyCandidate> liveKeysInContext()
+    {
+        final Nodes nodes = nodeService.getByIds(
+            nodeService.findByParent( FindNodesByParentParams.create().parentPath( KEYS_PATH ).size( -1 ).build() ).getNodeIds() );
 
-    record KeyCandidate(String kid, boolean preferred, @Nullable Instant created)
+        return nodes.stream()
+            .filter( node -> USE_TOKEN_SIGNING.equals( node.data().getString( "use" ) ) )
+            .filter( node -> !Boolean.TRUE.equals( node.data().getBoolean( "decommissioned" ) ) )
+            .map( node -> new KeyCandidate( node.name().toString(), node.data().getInstant( "created" ) ) )
+            .toList();
+    }
+
+    private List<String> liveKidsInContext()
+    {
+        return liveKeysInContext().stream().map( KeyCandidate::kid ).toList();
+    }
+
+    /**
+     * Orders token-signing keys by age, newest last (the maximum). A key with a creation time ranks
+     * above one without. Package-private for testing.
+     */
+    static final Comparator<KeyCandidate> BY_AGE = Comparator.comparing( KeyCandidate::created, Comparator.nullsFirst( Comparator.naturalOrder() ) );
+
+    record KeyCandidate(String kid, @Nullable Instant created)
     {
     }
 
-    private PropertyTree newKeyData( final boolean preferred )
+    private PropertyTree newKeyData()
     {
         final SecretKey key;
         try
@@ -234,7 +247,6 @@ public class TokenSigningKeyServiceImpl
         data.setString( "key", Base64.getEncoder().encodeToString( key.getEncoded() ) );
         data.setString( "alg", "HS512" );
         data.setString( "use", USE_TOKEN_SIGNING );
-        data.setBoolean( "preferred", preferred );
         data.setInstant( "created", Instant.now() );
         return data;
     }
@@ -251,15 +263,15 @@ public class TokenSigningKeyServiceImpl
     private static final class KeyState
     {
         @Nullable
-        final String preferredKid;
+        final String signingKid;
 
         final long expiresAt;
 
         final ConcurrentMap<String, SecretKey> keys = new ConcurrentHashMap<>();
 
-        KeyState( @Nullable final String preferredKid, final long expiresAt )
+        KeyState( @Nullable final String signingKid, final long expiresAt )
         {
-            this.preferredKid = preferredKid;
+            this.signingKid = signingKid;
             this.expiresAt = expiresAt;
         }
     }

@@ -67,9 +67,9 @@ public final class SecurityInitializer
      * Bootstrap key used to sign self-issued access tokens (e.g. device-login tokens).
      * Kept separate from the generic key so it has its own rotation/revocation lifecycle: the
      * generic key is low value and rotated freely, while this key signs bearer credentials. The
-     * node name doubles as the {@code kid}; the self-describing data ({@code use}, {@code preferred},
-     * {@code created}) lets {@link TokenSigningKeyServiceImpl} add further keys for rotation and pick the
-     * preferred (signing) one by field rather than by a fixed name.
+     * node name doubles as the {@code kid}; the self-describing data ({@code use}, {@code created}, and
+     * an optional {@code decommissioned} flag) lets {@link TokenSigningKeyServiceImpl} add further keys
+     * for rotation and pick any live (non-decommissioned) one to sign with, rather than by a fixed name.
      */
     private static final NodePath TOKEN_SIGNING_BOOTSTRAP_PATH = new NodePath( KEYS_PATH, NodeName.from( "token-signing-hs512" ) );
 
@@ -238,7 +238,6 @@ public final class SecurityInitializer
             data.setString( "key", Base64.getEncoder().encodeToString( key.getEncoded() ) );
             data.setString( "alg", "HS512" );
             data.setString( "use", "token-sig" );
-            data.setBoolean( "preferred", Boolean.TRUE );
             data.setInstant( "created", Instant.now() );
             nodeService.create( CreateNodeParams.create()
                                     .parent( TOKEN_SIGNING_BOOTSTRAP_PATH.getParentPath() )
