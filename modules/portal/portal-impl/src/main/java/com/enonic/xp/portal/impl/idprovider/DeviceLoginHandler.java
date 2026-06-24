@@ -16,8 +16,6 @@ import org.jspecify.annotations.Nullable;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.net.MediaType;
 
@@ -76,8 +74,6 @@ public class DeviceLoginHandler
     static final String DEVICE_CODE_GRANT = "urn:ietf:params:oauth:grant-type:device_code";
 
     static final String AUTH_CODE_GRANT = "authorization_code";
-
-    private static final Logger LOG = LoggerFactory.getLogger( DeviceLoginHandler.class );
 
     private static final Duration ACCESS_TOKEN_TTL = Duration.ofHours( 1 );
 
@@ -408,7 +404,8 @@ public class DeviceLoginHandler
 
     /**
      * Invokes a predefined id provider hook to render the human-facing page, passing the context as
-     * its second argument. The hook is required: a missing implementation is a server misconfiguration.
+     * its second argument. If the id provider does not implement the hook it does not support this
+     * flow, so the endpoint responds {@code 404} (as for a flow not enabled on the vhost).
      */
     private PortalResponse render( final PortalRequest req, final IdProviderKey idProvider, final String functionName,
                                   final GenericValue context )
@@ -420,12 +417,7 @@ public class DeviceLoginHandler
                                                                                  .portalRequest( req )
                                                                                  .contextArg( asArg( context ) )
                                                                                  .build() );
-        if ( response == null )
-        {
-            LOG.warn( "Id provider [{}] does not implement the required [{}] hook", idProvider, functionName );
-            return status( HttpStatus.INTERNAL_SERVER_ERROR );
-        }
-        return response;
+        return response != null ? response : status( HttpStatus.NOT_FOUND );
     }
 
     private GenericValue deviceContext( final PortalRequest req, final User user, final String status, @Nullable final String userCode )
