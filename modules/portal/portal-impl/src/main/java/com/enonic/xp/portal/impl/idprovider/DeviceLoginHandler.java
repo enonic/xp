@@ -6,7 +6,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.time.Duration;
 import java.util.Arrays;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -27,7 +26,6 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
-import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
@@ -40,6 +38,7 @@ import com.enonic.xp.security.token.DeviceAuthorization;
 import com.enonic.xp.security.token.DeviceAuthorizationParams;
 import com.enonic.xp.security.token.DeviceAuthorizationPoll;
 import com.enonic.xp.shared.SharedMapService;
+import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
@@ -158,14 +157,14 @@ public class DeviceLoginHandler
         final DeviceAuthorization auth = deviceAuthService.start( params.build() );
 
         final String verificationUri = endpointUrl( req, "device" );
-        final Map<String, Object> body = new LinkedHashMap<>();
-        body.put( "device_code", auth.getDeviceCode() );
-        body.put( "user_code", auth.getUserCode() );
-        body.put( "verification_uri", verificationUri );
-        body.put( "verification_uri_complete", verificationUri + "?user_code=" + enc( auth.getUserCode() ) );
-        body.put( "expires_in", auth.getExpiresInSeconds() );
-        body.put( "interval", auth.getPollIntervalSeconds() );
-        return json( HttpStatus.OK, body );
+        return json( HttpStatus.OK, GenericValue.newObject()
+            .put( "device_code", auth.getDeviceCode() )
+            .put( "user_code", auth.getUserCode() )
+            .put( "verification_uri", verificationUri )
+            .put( "verification_uri_complete", verificationUri + "?user_code=" + enc( auth.getUserCode() ) )
+            .put( "expires_in", (long) auth.getExpiresInSeconds() )
+            .put( "interval", (long) auth.getPollIntervalSeconds() )
+            .build() );
     }
 
     // POST .../token - RFC 6749 token endpoint (device_code and authorization_code grants).
@@ -254,15 +253,15 @@ public class DeviceLoginHandler
 
         final String token = accessTokenService.issue( params.build() );
 
-        final Map<String, Object> body = new LinkedHashMap<>();
-        body.put( "access_token", token );
-        body.put( "token_type", "Bearer" );
-        body.put( "expires_in", (int) ACCESS_TOKEN_TTL.toSeconds() );
+        final GenericValue.ObjectBuilder body = GenericValue.newObject()
+            .put( "access_token", token )
+            .put( "token_type", "Bearer" )
+            .put( "expires_in", ACCESS_TOKEN_TTL.toSeconds() );
         if ( scope != null && !scope.isEmpty() )
         {
             body.put( "scope", scope );
         }
-        return json( HttpStatus.OK, body );
+        return json( HttpStatus.OK, body.build() );
     }
 
     // GET .../device - human verification + approval page (rendered by the id provider hook).
@@ -396,15 +395,14 @@ public class DeviceLoginHandler
         {
             return true;
         }
-        final Map<String, Object> context = new LinkedHashMap<>();
-        context.put( "redirectUri", redirectUri );
+        final GenericValue.ObjectBuilder context = GenericValue.newObject().put( "redirectUri", redirectUri );
         applyIfPresent( param( req, "client_id" ), value -> context.put( "clientId", value ) );
 
         return idProviderControllerService.executeBoolean( IdProviderControllerExecutionParams.create()
                                                                .idProviderKey( idProvider )
                                                                .functionName( ALLOW_REDIRECT_FUNCTION )
                                                                .portalRequest( req )
-                                                               .contextArg( new HookContext( context ) )
+                                                               .contextArg( asArg( context.build() ) )
                                                                .build() );
     }
 
@@ -413,14 +411,14 @@ public class DeviceLoginHandler
      * its second argument. The hook is required: a missing implementation is a server misconfiguration.
      */
     private PortalResponse render( final PortalRequest req, final IdProviderKey idProvider, final String functionName,
-                                  final HookContext context )
+                                  final GenericValue context )
         throws IOException
     {
         final PortalResponse response = idProviderControllerService.execute( IdProviderControllerExecutionParams.create()
                                                                                  .idProviderKey( idProvider )
                                                                                  .functionName( functionName )
                                                                                  .portalRequest( req )
-                                                                                 .contextArg( context )
+                                                                                 .contextArg( asArg( context ) )
                                                                                  .build() );
         if ( response == null )
         {
@@ -430,37 +428,35 @@ public class DeviceLoginHandler
         return response;
     }
 
-    private HookContext deviceContext( final PortalRequest req, final User user, final String status, @Nullable final String userCode )
+    private GenericValue deviceContext( final PortalRequest req, final User user, final String status, @Nullable final String userCode )
     {
-        final Map<String, Object> values = new LinkedHashMap<>();
-        values.put( "status", status );
-        values.put( "actionUrl", endpointUrl( req, "device" ) );
+        final GenericValue.ObjectBuilder context =
+            GenericValue.newObject().put( "status", status ).put( "actionUrl", endpointUrl( req, "device" ) );
         if ( userCode != null )
         {
-            values.put( "userCode", userCode );
+            context.put( "userCode", userCode );
         }
-        putUser( values, user );
-        return new HookContext( values );
+        putUser( context, user );
+        return context.build();
     }
 
-    private HookContext nativeContext( final PortalRequest req, final User user )
+    private GenericValue nativeContext( final PortalRequest req, final User user )
     {
-        final Map<String, Object> values = new LinkedHashMap<>();
-        values.put( "actionUrl", endpointUrl( req, "authorize" ) );
+        final GenericValue.ObjectBuilder context = GenericValue.newObject().put( "actionUrl", endpointUrl( req, "authorize" ) );
         // The consent page echoes these as hidden fields, so the POST carries the original request.
         for ( final String name : NATIVE_REQUEST_PARAMS )
         {
-            applyIfPresent( param( req, name ), value -> values.put( name, value ) );
+            applyIfPresent( param( req, name ), value -> context.put( name, value ) );
         }
-        putUser( values, user );
-        return new HookContext( values );
+        putUser( context, user );
+        return context.build();
     }
 
-    private static void putUser( final Map<String, Object> values, final User user )
+    private static void putUser( final GenericValue.ObjectBuilder context, final User user )
     {
-        values.put( "userKey", user.getKey().toString() );
-        values.put( "userDisplayName", user.getDisplayName() == null ? user.getLogin() : user.getDisplayName() );
-        values.put( "userLogin", user.getLogin() );
+        context.put( "userKey", user.getKey().toString() );
+        context.put( "userDisplayName", user.getDisplayName() == null ? user.getLogin() : user.getDisplayName() );
+        context.put( "userLogin", user.getLogin() );
     }
 
     // ---------------------------------------------------------------------------
@@ -526,7 +522,9 @@ public class DeviceLoginHandler
 
     private static String endpointUrl( final PortalRequest req, final String suffix )
     {
-        return ServletRequestUrlHelper.getServerUrl( req.getRawRequest() ) + req.getContextPath() + "/" + suffix;
+        // getServerUrl + createUri (vhost-rewritten path) is how the framework builds absolute URLs.
+        return ServletRequestUrlHelper.getServerUrl( req.getRawRequest() ) +
+            ServletRequestUrlHelper.createUri( req.getRawRequest(), req.getContextPath() + "/" + suffix );
     }
 
     @Nullable
@@ -587,12 +585,13 @@ public class DeviceLoginHandler
         return flows.contains( flow ) ? supplier.get() : status( HttpStatus.NOT_FOUND );
     }
 
-    private static PortalResponse json( final HttpStatus status, final Map<String, Object> body )
+    private static PortalResponse json( final HttpStatus status, final GenericValue body )
     {
+        // A Map body is serialized to JSON by the response serializer.
         return PortalResponse.create()
             .status( status )
             .contentType( MediaType.JSON_UTF_8 )
-            .body( toJson( body ) )
+            .body( body.toRawJava() )
             .header( "Cache-Control", "no-store" )
             .header( "Pragma", "no-cache" )
             .build();
@@ -600,13 +599,12 @@ public class DeviceLoginHandler
 
     private static PortalResponse oauthError( final HttpStatus status, final String error, @Nullable final String description )
     {
-        final Map<String, Object> body = new LinkedHashMap<>();
-        body.put( "error", error );
+        final GenericValue.ObjectBuilder body = GenericValue.newObject().put( "error", error );
         if ( description != null )
         {
             body.put( "error_description", description );
         }
-        return json( status, body );
+        return json( status, body.build() );
     }
 
     private static PortalResponse redirect( final String location )
@@ -619,74 +617,14 @@ public class DeviceLoginHandler
         return PortalResponse.create().status( status ).build();
     }
 
-    private static String toJson( final Map<String, Object> map )
+    /**
+     * Adapts a {@link GenericValue} object into the {@link MapSerializable} the script engine needs
+     * to expose it to a controller hook as a JS object.
+     */
+    @SuppressWarnings("unchecked")
+    private static MapSerializable asArg( final GenericValue object )
     {
-        final StringBuilder sb = new StringBuilder( "{" );
-        boolean first = true;
-        for ( final Map.Entry<String, Object> entry : map.entrySet() )
-        {
-            if ( !first )
-            {
-                sb.append( ',' );
-            }
-            first = false;
-            sb.append( jsonString( entry.getKey() ) ).append( ':' );
-            final Object value = entry.getValue();
-            if ( value instanceof Number || value instanceof Boolean )
-            {
-                sb.append( value );
-            }
-            else
-            {
-                sb.append( jsonString( String.valueOf( value ) ) );
-            }
-        }
-        return sb.append( '}' ).toString();
-    }
-
-    private static String jsonString( final String value )
-    {
-        final StringBuilder sb = new StringBuilder( "\"" );
-        for ( int i = 0; i < value.length(); i++ )
-        {
-            final char c = value.charAt( i );
-            switch ( c )
-            {
-                case '"' -> sb.append( "\\\"" );
-                case '\\' -> sb.append( "\\\\" );
-                case '\n' -> sb.append( "\\n" );
-                case '\r' -> sb.append( "\\r" );
-                case '\t' -> sb.append( "\\t" );
-                default ->
-                {
-                    if ( c < 0x20 )
-                    {
-                        sb.append( String.format( "\\u%04x", (int) c ) );
-                    }
-                    else
-                    {
-                        sb.append( c );
-                    }
-                }
-            }
-        }
-        return sb.append( '"' ).toString();
-    }
-
-    private static final class HookContext
-        implements MapSerializable
-    {
-        private final Map<String, Object> values;
-
-        private HookContext( final Map<String, Object> values )
-        {
-            this.values = values;
-        }
-
-        @Override
-        public void serialize( final MapGenerator gen )
-        {
-            values.forEach( gen::value );
-        }
+        final Map<String, Object> values = (Map<String, Object>) object.toRawJava();
+        return gen -> values.forEach( gen::value );
     }
 }
