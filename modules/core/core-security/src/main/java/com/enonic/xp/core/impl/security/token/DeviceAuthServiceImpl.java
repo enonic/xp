@@ -5,7 +5,6 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
 
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
@@ -125,14 +124,13 @@ public class DeviceAuthServiceImpl
     public DeviceAuthorizationPoll poll( final IdProviderKey idProvider, final String deviceCode )
     {
         final SharedMap<String, Object> map = getMap( idProvider );
-        final AtomicReference<DeviceAuthorizationPoll> result =
-            new AtomicReference<>( DeviceAuthorizationPoll.of( DeviceAuthorizationState.EXPIRED ) );
+        final DeviceAuthorizationPoll[] result = {DeviceAuthorizationPoll.of( DeviceAuthorizationState.EXPIRED )};
 
         map.modify( deviceCode, value -> {
             final HashMap<String, Object> record = asRecord( value );
             if ( record == null )
             {
-                result.set( DeviceAuthorizationPoll.of( DeviceAuthorizationState.EXPIRED ) );
+                result[0] = DeviceAuthorizationPoll.of( DeviceAuthorizationState.EXPIRED );
                 return null;
             }
 
@@ -141,7 +139,7 @@ public class DeviceAuthServiceImpl
             final long lastPolledAt = ( (Number) record.get( "lastPolledAt" ) ).longValue();
             if ( lastPolledAt != 0 && ( now - lastPolledAt ) < pollIntervalMillis )
             {
-                result.set( DeviceAuthorizationPoll.of( DeviceAuthorizationState.SLOW_DOWN ) );
+                result[0] = DeviceAuthorizationPoll.of( DeviceAuthorizationState.SLOW_DOWN );
                 return record;
             }
             record.put( "lastPolledAt", now );
@@ -149,27 +147,27 @@ public class DeviceAuthServiceImpl
             final String status = (String) record.get( "status" );
             if ( "denied".equals( status ) )
             {
-                result.set( DeviceAuthorizationPoll.of( DeviceAuthorizationState.DENIED ) );
+                result[0] = DeviceAuthorizationPoll.of( DeviceAuthorizationState.DENIED );
                 return null;
             }
             if ( "approved".equals( status ) )
             {
-                result.set( DeviceAuthorizationPoll.create()
-                                .state( DeviceAuthorizationState.APPROVED )
-                                .subject( PrincipalKey.from( (String) record.get( "subject" ) ) )
-                                .idProvider( IdProviderKey.from( (String) record.get( "idProvider" ) ) )
-                                .audience( (String) record.get( "audience" ) )
-                                .scope( (String) record.get( "scope" ) )
-                                .clientId( (String) record.get( "clientId" ) )
-                                .build() );
+                result[0] = DeviceAuthorizationPoll.create()
+                    .state( DeviceAuthorizationState.APPROVED )
+                    .subject( PrincipalKey.from( (String) record.get( "subject" ) ) )
+                    .idProvider( IdProviderKey.from( (String) record.get( "idProvider" ) ) )
+                    .audience( (String) record.get( "audience" ) )
+                    .scope( (String) record.get( "scope" ) )
+                    .clientId( (String) record.get( "clientId" ) )
+                    .build();
                 return null; // single use
             }
 
-            result.set( DeviceAuthorizationPoll.of( DeviceAuthorizationState.PENDING ) );
+            result[0] = DeviceAuthorizationPoll.of( DeviceAuthorizationState.PENDING );
             return record;
         }, remainingTtl( map.get( deviceCode ) ) );
 
-        return result.get();
+        return result[0];
     }
 
     @SuppressWarnings("unchecked")

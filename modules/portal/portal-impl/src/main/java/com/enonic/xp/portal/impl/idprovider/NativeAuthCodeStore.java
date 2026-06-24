@@ -4,7 +4,6 @@ import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
@@ -63,20 +62,20 @@ final class NativeAuthCodeStore
     @Nullable
     AuthCode consume( final IdProviderKey idProvider, final String code )
     {
-        final AtomicReference<Map<String, Object>> ref = new AtomicReference<>();
+        final Object[] holder = new Object[1];
         getMap( idProvider ).modify( code, value -> {
             if ( value instanceof Map )
             {
-                ref.set( (Map<String, Object>) value );
+                holder[0] = value;
             }
             return null; // always remove
         } );
 
-        final Map<String, Object> record = ref.get();
-        if ( record == null )
+        if ( holder[0] == null )
         {
             return null;
         }
+        final Map<String, Object> record = (Map<String, Object>) holder[0];
         return new AuthCode( str( record, "challenge" ), str( record, "redirectUri" ), str( record, "subject" ),
                              str( record, "clientId" ), str( record, "scope" ), str( record, "audience" ) );
     }
