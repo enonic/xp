@@ -96,7 +96,7 @@ public class DeviceAuthServiceImpl
                             @Nullable final PrincipalKey subject )
     {
         final SharedMap<String, Object> map = getMap( idProvider );
-        final AtomicReference<Boolean> updated = new AtomicReference<>( Boolean.FALSE );
+        final boolean[] updated = {false};
 
         map.modify( deviceCode, value -> {
             final HashMap<String, Object> record = asRecord( value );
@@ -104,7 +104,7 @@ public class DeviceAuthServiceImpl
             {
                 return value;
             }
-            updated.set( Boolean.TRUE );
+            updated[0] = true;
             if ( approved )
             {
                 record.put( "status", "approved" );
@@ -118,7 +118,7 @@ public class DeviceAuthServiceImpl
             return record;
         }, remainingTtl( map.get( deviceCode ) ) );
 
-        return updated.get();
+        return updated[0];
     }
 
     @Override
