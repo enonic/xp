@@ -29,12 +29,18 @@ final class IdProviderControllerScriptImpl
     @Override
     public PortalResponse execute( final String functionName, final PortalRequest request )
     {
+        return execute( functionName, request, null );
+    }
+
+    @Override
+    public PortalResponse execute( final String functionName, final PortalRequest request, final Object context )
+    {
         final ApplicationKey previousApp = request.getApplicationKey();
         request.setApplicationKey( scriptExports.getScript().getApplicationKey() );
         PortalRequestAccessor.set( request );
         try
         {
-            return doExecute( functionName, request );
+            return doExecute( functionName, request, context );
         }
         finally
         {
@@ -43,7 +49,7 @@ final class IdProviderControllerScriptImpl
         }
     }
 
-    private PortalResponse doExecute( final String functionName, final PortalRequest portalRequest )
+    private PortalResponse doExecute( final String functionName, final PortalRequest portalRequest, final Object context )
     {
         final boolean exists = this.scriptExports.hasMethod( functionName );
         if ( !exists )
@@ -52,7 +58,9 @@ final class IdProviderControllerScriptImpl
         }
 
         final PortalRequestMapper requestMapper = new PortalRequestMapper( portalRequest );
-        final ScriptValue result = this.scriptExports.executeMethod( functionName, requestMapper );
+        final ScriptValue result = context == null
+            ? this.scriptExports.executeMethod( functionName, requestMapper )
+            : this.scriptExports.executeMethod( functionName, requestMapper, context );
 
         if ( ( result == null ) || !result.isObject() )
         {

@@ -20,6 +20,8 @@ public final class IdProviderControllerExecutionParams
 
     private final HttpServletResponse response;
 
+    private final Object contextArg;
+
     private IdProviderControllerExecutionParams( final Builder builder )
     {
         idProviderKey = builder.idProviderKey;
@@ -27,6 +29,7 @@ public final class IdProviderControllerExecutionParams
         servletRequest = builder.servletRequest;
         portalRequest = builder.portalRequest;
         response = builder.response;
+        contextArg = builder.contextArg;
     }
 
     public IdProviderKey getIdProviderKey()
@@ -54,6 +57,16 @@ public final class IdProviderControllerExecutionParams
         return response;
     }
 
+    /**
+     * An optional value passed as the second argument to the controller function (after the
+     * request). Used to hand a function-specific context to predefined hooks - e.g. the device/native
+     * approval context passed to the {@code approval} function.
+     */
+    public Object getContextArg()
+    {
+        return contextArg;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -70,6 +83,8 @@ public final class IdProviderControllerExecutionParams
         private PortalRequest portalRequest;
 
         private HttpServletResponse response;
+
+        private Object contextArg;
 
         private Builder()
         {
@@ -102,6 +117,12 @@ public final class IdProviderControllerExecutionParams
         public Builder response( final HttpServletResponse response )
         {
             this.response = response;
+            return this;
+        }
+
+        public Builder contextArg( final Object contextArg )
+        {
+            this.contextArg = contextArg;
             return this;
         }
 

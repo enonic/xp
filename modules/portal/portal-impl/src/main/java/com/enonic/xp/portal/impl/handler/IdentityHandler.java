@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.handler;
 
 import java.io.IOException;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,12 +16,14 @@ import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
 import com.enonic.xp.security.IdProviderKey;
+import com.enonic.xp.portal.impl.idprovider.DeviceLoginHandler;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
+import com.enonic.xp.web.vhost.IdProviderFlow;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 
@@ -33,12 +36,16 @@ public class IdentityHandler
 
     private final RedirectChecksumService redirectChecksumService;
 
+    private final DeviceLoginHandler deviceLoginHandler;
+
     @Activate
     public IdentityHandler( @Reference final IdProviderControllerService idProviderControllerService,
-                            @Reference final RedirectChecksumService redirectChecksumService )
+                            @Reference final RedirectChecksumService redirectChecksumService,
+                            @Reference final DeviceLoginHandler deviceLoginHandler )
     {
         this.idProviderControllerService = idProviderControllerService;
         this.redirectChecksumService = redirectChecksumService;
+        this.deviceLoginHandler = deviceLoginHandler;
     }
 
     public PortalResponse handle( final WebRequest webRequest )
@@ -77,15 +84,32 @@ public class IdentityHandler
             throw WebException.notFound( "Not a valid idprovider url pattern" );
         }
 
-        String idProviderFunction = matcher.group( "fun" );
+        final String idp = matcher.group( "idp" );
+        final String subPath = restPath.length() > idp.length() ? restPath.substring( idp.length() + 1 ) : "";
 
-        final PortalRequest portalRequest = createPortalRequest( webRequest, idProviderKey, idProviderFunction );
+        final PortalRequest portalRequest;
+        final ResponseProducer action;
+
+        if ( DeviceLoginHandler.isFlowEndpoint( subPath ) )
+        {
+            // Device/native login endpoints are owned by core: the protocol and the per-vhost flow
+            // gating live here; the id provider only contributes the approval UI hook.
+            portalRequest = createPortalRequest( webRequest, idProviderKey, null );
+            final Set<IdProviderFlow> flows = virtualHost.getIdProviderFlows( idProviderKey );
+            action = () -> deviceLoginHandler.handle( portalRequest, idProviderKey, subPath, flows );
+        }
+        else
+        {
+            final String idProviderFunction = matcher.group( "fun" );
+            portalRequest = createPortalRequest( webRequest, idProviderKey, idProviderFunction );
+            action = () -> doHandle( idProviderKey, idProviderFunction, portalRequest );
+        }
 
         final Trace trace = Tracer.newTrace( "portalRequest" );
 
         if ( trace == null )
         {
-            return doHandle( idProviderKey, idProviderFunction, portalRequest );
+            return action.produce();
         }
 
         trace.put( "path", webRequest.getPath() );
@@ -95,10 +119,17 @@ public class IdentityHandler
         trace.put( "context", ContextAccessor.current() );
 
         return Tracer.traceIO( trace, () -> {
-            final PortalResponse portalResponse = doHandle( idProviderKey, idProviderFunction, portalRequest );
+            final PortalResponse portalResponse = action.produce();
             HandlerHelper.addTraceInfo( trace, portalResponse );
             return portalResponse;
         } );
+    }
+
+    @FunctionalInterface
+    private interface ResponseProducer
+    {
+        PortalResponse produce()
+            throws IOException;
     }
 
     private PortalResponse doHandle( final IdProviderKey idProviderKey, final String idProviderFunction, final PortalRequest portalRequest )

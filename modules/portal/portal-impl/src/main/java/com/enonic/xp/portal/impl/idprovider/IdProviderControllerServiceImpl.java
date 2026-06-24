@@ -77,7 +77,9 @@ public class IdProviderControllerServiceImpl
             portalRequest.setApplicationKey( idProviderDescriptor.getKey() );
             portalRequest.setIdProvider( idProvider );
 
-            final PortalResponse portalResponse = idProviderControllerScript.execute( functionName, portalRequest );
+            final PortalResponse portalResponse = params.getContextArg() != null
+                ? idProviderControllerScript.execute( functionName, portalRequest, params.getContextArg() )
+                : idProviderControllerScript.execute( functionName, portalRequest );
 
             if ( portalResponse != null && params.getResponse() != null )
             {
