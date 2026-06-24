@@ -87,30 +87,45 @@ public final class AccessToken
 
         private GenericValue claims = GenericValue.newObject().build();
 
+        /**
+         * Sets the verified subject (always a user principal). Required.
+         */
         public Builder subject( final PrincipalKey subject )
         {
             this.subject = subject;
             return this;
         }
 
+        /**
+         * Sets the issuer from the {@code iss} claim. Required.
+         */
         public Builder issuer( final String issuer )
         {
             this.issuer = issuer;
             return this;
         }
 
+        /**
+         * Sets the audiences from the {@code aud} claim (for the caller to enforce).
+         */
         public Builder audiences( final Set<String> audiences )
         {
             this.audiences = audiences;
             return this;
         }
 
+        /**
+         * Sets the expiry from the {@code exp} claim. Required.
+         */
         public Builder expiresAt( final Instant expiresAt )
         {
             this.expiresAt = expiresAt;
             return this;
         }
 
+        /**
+         * Sets the full token claims. Must be a JSON object ({@link GenericValue.Type#OBJECT}).
+         */
         public Builder claims( final GenericValue claims )
         {
             this.claims = claims;

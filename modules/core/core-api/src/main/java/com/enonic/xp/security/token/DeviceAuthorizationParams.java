@@ -94,36 +94,54 @@ public final class DeviceAuthorizationParams
 
         private Duration interval = Duration.ofSeconds( 5 );
 
+        /**
+         * Sets the id provider the device authorization is for. Required.
+         */
         public Builder idProvider( final IdProviderKey idProvider )
         {
             this.idProvider = idProvider;
             return this;
         }
 
+        /**
+         * Sets the requesting client identifier. Optional.
+         */
         public Builder clientId( final String clientId )
         {
             this.clientId = clientId;
             return this;
         }
 
+        /**
+         * Sets the requested scope. Optional.
+         */
         public Builder scope( final String scope )
         {
             this.scope = scope;
             return this;
         }
 
+        /**
+         * Sets the requested audience (RFC 8707 resource indicator) for the issued token. Optional.
+         */
         public Builder audience( final String audience )
         {
             this.audience = audience;
             return this;
         }
 
+        /**
+         * Sets how long the device/user codes remain valid ({@code expires_in}). Defaults to ten minutes.
+         */
         public Builder ttl( final Duration ttl )
         {
             this.ttl = ttl;
             return this;
         }
 
+        /**
+         * Sets the minimum interval the client must wait between polls. Defaults to five seconds.
+         */
         public Builder interval( final Duration interval )
         {
             this.interval = interval;

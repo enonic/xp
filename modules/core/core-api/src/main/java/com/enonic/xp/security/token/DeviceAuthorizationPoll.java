@@ -107,36 +107,55 @@ public final class DeviceAuthorizationPoll
         @Nullable
         private String clientId;
 
+        /**
+         * Sets the poll state. Required.
+         */
         public Builder state( final DeviceAuthorizationState state )
         {
             this.state = state;
             return this;
         }
 
+        /**
+         * Sets the approved subject. Present only when the state is
+         * {@link DeviceAuthorizationState#APPROVED}.
+         */
         public Builder subject( final PrincipalKey subject )
         {
             this.subject = subject;
             return this;
         }
 
+        /**
+         * Sets the id provider the request was approved for.
+         */
         public Builder idProvider( final IdProviderKey idProvider )
         {
             this.idProvider = idProvider;
             return this;
         }
 
+        /**
+         * Sets the requested audience captured at authorization time (used to mint the token).
+         */
         public Builder audience( final String audience )
         {
             this.audience = audience;
             return this;
         }
 
+        /**
+         * Sets the requested scope captured at authorization time.
+         */
         public Builder scope( final String scope )
         {
             this.scope = scope;
             return this;
         }
 
+        /**
+         * Sets the requesting client identifier captured at authorization time.
+         */
         public Builder clientId( final String clientId )
         {
             this.clientId = clientId;
