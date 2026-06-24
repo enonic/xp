@@ -56,16 +56,15 @@ public class DeviceAuthServiceImpl
         final int ttlSeconds = (int) params.getTtl().toSeconds();
         final int pollIntervalSeconds = (int) params.getPollInterval().toSeconds();
 
-        final HashMap<String, Object> record = new HashMap<>();
-        record.put( "status", "pending" );
-        record.put( "userCode", userCode );
-        record.put( "clientId", nullToEmpty( params.getClientId() ) );
-        record.put( "scope", nullToEmpty( params.getScope() ) );
-        record.put( "audience", nullToEmpty( params.getAudience() ) );
-        record.put( "createdAt", now );
-        record.put( "ttlSeconds", ttlSeconds );
-        record.put( "pollIntervalSeconds", pollIntervalSeconds );
-        record.put( "lastPolledAt", 0L );
+        final Map<String, Object> record = Map.of( "status", "pending",
+                                                    "userCode", userCode,
+                                                    "clientId", nullToEmpty( params.getClientId() ),
+                                                    "scope", nullToEmpty( params.getScope() ),
+                                                    "audience", nullToEmpty( params.getAudience() ),
+                                                    "createdAt", now,
+                                                    "ttlSeconds", ttlSeconds,
+                                                    "pollIntervalSeconds", pollIntervalSeconds,
+                                                    "lastPolledAt", 0L );
 
         map.set( deviceCode, record, ttlSeconds );
         map.set( USER_CODE_INDEX_PREFIX + userCode, deviceCode, ttlSeconds );
@@ -170,19 +169,13 @@ public class DeviceAuthServiceImpl
         return result[0];
     }
 
+    // SharedMap values must not be modified in-place (see SharedMap javadoc), so always return a
+    // fresh copy: the modify callback mutates the copy and returns it as the new value.
     @SuppressWarnings("unchecked")
     @Nullable
     private static HashMap<String, Object> asRecord( @Nullable final Object value )
     {
-        if ( value instanceof HashMap )
-        {
-            return (HashMap<String, Object>) value;
-        }
-        if ( value instanceof Map )
-        {
-            return new HashMap<>( (Map<String, Object>) value );
-        }
-        return null;
+        return value instanceof Map<?, ?> ? new HashMap<>( (Map<String, Object>) value ) : null;
     }
 
     private static int remainingTtl( @Nullable final Object value )
