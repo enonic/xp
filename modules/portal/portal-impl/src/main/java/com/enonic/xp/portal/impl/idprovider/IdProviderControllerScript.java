@@ -30,48 +30,35 @@ class IdProviderControllerScript
 
     public PortalResponse execute( final String functionName, final PortalRequest request )
     {
-        return execute( functionName, request, null );
-    }
-
-    /**
-     * Executes the function passing {@code context} as its second argument (after the request).
-     * Used for predefined hooks that need a function-specific context, e.g. the device verification
-     * and native consent hooks.
-     */
-    public PortalResponse execute( final String functionName, final PortalRequest request, final Object context )
-    {
         return withRequest( request, () -> {
             if ( !this.scriptExports.hasMethod( functionName ) )
             {
                 return new PortalResponseSerializer( null, HttpStatus.NOT_FOUND ).serialize();
             }
-            final ScriptValue result = invoke( functionName, request, context );
+            final ScriptValue result = invoke( functionName, request );
             return ( result == null || !result.isObject() ) ? null : new PortalResponseSerializer( result ).serialize();
         } );
     }
 
     /**
-     * Executes the function (with {@code context} as its second argument) and returns its boolean
-     * result, or {@code false} if it is missing or does not return a boolean.
+     * Executes the function and returns its boolean result, or {@code false} if it is missing or does
+     * not return a boolean.
      */
-    public boolean executeBoolean( final String functionName, final PortalRequest request, final Object context )
+    public boolean executeBoolean( final String functionName, final PortalRequest request )
     {
         return Boolean.TRUE.equals( withRequest( request, () -> {
             if ( !this.scriptExports.hasMethod( functionName ) )
             {
                 return Boolean.FALSE;
             }
-            final ScriptValue result = invoke( functionName, request, context );
+            final ScriptValue result = invoke( functionName, request );
             return result != null && result.isValue() ? result.getValue( Boolean.class ) : Boolean.FALSE;
         } ) );
     }
 
-    private ScriptValue invoke( final String functionName, final PortalRequest portalRequest, final Object context )
+    private ScriptValue invoke( final String functionName, final PortalRequest portalRequest )
     {
-        final PortalRequestMapper requestMapper = new PortalRequestMapper( portalRequest );
-        return context == null
-            ? this.scriptExports.executeMethod( functionName, requestMapper )
-            : this.scriptExports.executeMethod( functionName, requestMapper, context );
+        return this.scriptExports.executeMethod( functionName, new PortalRequestMapper( portalRequest ) );
     }
 
     private <T> T withRequest( final PortalRequest request, final java.util.function.Supplier<T> action )

@@ -53,6 +53,13 @@ public final class PortalRequestMapper
             gen.value( "contextPath", this.request.getContextPath() );
         }
 
+        if ( !this.request.getAttributes().isEmpty() )
+        {
+            gen.map( "attributes" );
+            this.request.getAttributes().forEach( gen::value );
+            gen.end();
+        }
+
         serializeBody( gen );
         MapperHelper.serializeMultimap( "params", gen, this.request.getParams().asMap() );
         gen.value( "headers", this.request.getHeaders() );

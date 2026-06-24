@@ -6,7 +6,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.time.Duration;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -24,7 +23,6 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
-import com.enonic.xp.script.serializer.MapSerializable;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.User;
@@ -298,8 +296,8 @@ public class DeviceLoginHandler
             status = deviceAuthService.findByUserCode( idProvider, userCode.toUpperCase() ).isPresent() ? "confirm" : "invalid";
         }
 
-        return render( req, idProvider, DEVICE_VERIFICATION_FUNCTION,
-                       deviceContext( req, user, status, userCode == null ? null : userCode.toUpperCase() ) );
+        applyDeviceContext( req, user, status, userCode == null ? null : userCode.toUpperCase() );
+        return render( req, idProvider, DEVICE_VERIFICATION_FUNCTION );
     }
 
     // POST .../device - approve / deny submission.
@@ -318,12 +316,13 @@ public class DeviceLoginHandler
         final Optional<String> deviceCode = userCode == null ? Optional.empty() : deviceAuthService.findByUserCode( idProvider, userCode );
         if ( deviceCode.isEmpty() )
         {
-            return render( req, idProvider, DEVICE_VERIFICATION_FUNCTION, deviceContext( req, user, "invalid", userCode ) );
+            applyDeviceContext( req, user, "invalid", userCode );
+            return render( req, idProvider, DEVICE_VERIFICATION_FUNCTION );
         }
 
         deviceAuthService.resolve( idProvider, deviceCode.get(), approve, approve ? user.getKey() : null );
-        return render( req, idProvider, DEVICE_VERIFICATION_FUNCTION,
-                       deviceContext( req, user, approve ? "approved" : "denied", userCode ) );
+        applyDeviceContext( req, user, approve ? "approved" : "denied", userCode );
+        return render( req, idProvider, DEVICE_VERIFICATION_FUNCTION );
     }
 
     // GET .../authorize - native-app authorization endpoint (PKCE S256 required), renders consent.
@@ -342,7 +341,8 @@ public class DeviceLoginHandler
             return status( HttpStatus.UNAUTHORIZED );
         }
 
-        return render( req, idProvider, AUTHORIZE_CONSENT_FUNCTION, nativeContext( req, user ) );
+        applyNativeContext( req, user );
+        return render( req, idProvider, AUTHORIZE_CONSENT_FUNCTION );
     }
 
     // POST .../authorize - consent submission: issue a one-time code and redirect, or deny.
@@ -408,64 +408,61 @@ public class DeviceLoginHandler
         {
             return true;
         }
-        final GenericValue.ObjectBuilder context = GenericValue.newObject().put( "redirectUri", redirectUri );
-        applyIfPresent( param( req, "client_id" ), value -> context.put( "clientId", value ) );
-
+        // The redirect to validate is the request's own redirect_uri param, so the hook reads it from
+        // the request - nothing extra to pass.
         return idProviderControllerService.executeBoolean( IdProviderControllerExecutionParams.create()
                                                                .idProviderKey( idProvider )
                                                                .functionName( ALLOW_REDIRECT_FUNCTION )
                                                                .portalRequest( req )
-                                                               .contextArg( asArg( context.build() ) )
                                                                .build() );
     }
 
     /**
-     * Invokes a predefined id provider hook to render the human-facing page, passing the context as
-     * its second argument. If the id provider does not implement the hook it does not support this
-     * flow, so the endpoint responds {@code 404} (as for a flow not enabled on the vhost).
+     * Invokes a predefined id provider hook to render the human-facing page (the approval context is
+     * carried on the request - see {@link #applyDeviceContext}/{@link #applyNativeContext}). If the id
+     * provider does not implement the hook it does not support this flow, so the endpoint responds
+     * {@code 404} (as for a flow not enabled on the vhost).
      */
-    private PortalResponse render( final PortalRequest req, final IdProviderKey idProvider, final String functionName,
-                                  final GenericValue context )
+    private PortalResponse render( final PortalRequest req, final IdProviderKey idProvider, final String functionName )
         throws IOException
     {
         final PortalResponse response = idProviderControllerService.execute( IdProviderControllerExecutionParams.create()
                                                                                  .idProviderKey( idProvider )
                                                                                  .functionName( functionName )
                                                                                  .portalRequest( req )
-                                                                                 .contextArg( asArg( context ) )
                                                                                  .build() );
         return response != null ? response : status( HttpStatus.NOT_FOUND );
     }
 
-    private GenericValue deviceContext( final PortalRequest req, final User user, final String status, @Nullable final String userCode )
+    // The approval context is set as request attributes (req.attributes.* in the hook) rather than
+    // passed as a separate argument - the request is itself the context.
+    private void applyDeviceContext( final PortalRequest req, final User user, final String status, @Nullable final String userCode )
     {
-        final GenericValue.ObjectBuilder context =
-            GenericValue.newObject().put( "status", status ).put( "actionUrl", endpointUrl( req, "device" ) );
+        req.setAttribute( "status", status );
+        req.setAttribute( "actionUrl", endpointUrl( req, "device" ) );
         if ( userCode != null )
         {
-            context.put( "userCode", userCode );
+            req.setAttribute( "userCode", userCode );
         }
-        putUser( context, user );
-        return context.build();
+        applyUser( req, user );
     }
 
-    private GenericValue nativeContext( final PortalRequest req, final User user )
+    private void applyNativeContext( final PortalRequest req, final User user )
     {
-        final GenericValue.ObjectBuilder context = GenericValue.newObject().put( "actionUrl", endpointUrl( req, "authorize" ) );
+        req.setAttribute( "actionUrl", endpointUrl( req, "authorize" ) );
         // The consent page echoes these as hidden fields, so the POST carries the original request.
         for ( final String name : NATIVE_REQUEST_PARAMS )
         {
-            applyIfPresent( param( req, name ), value -> context.put( name, value ) );
+            applyIfPresent( param( req, name ), value -> req.setAttribute( name, value ) );
         }
-        putUser( context, user );
-        return context.build();
+        applyUser( req, user );
     }
 
-    private static void putUser( final GenericValue.ObjectBuilder context, final User user )
+    private static void applyUser( final PortalRequest req, final User user )
     {
-        context.put( "userKey", user.getKey().toString() );
-        context.put( "userDisplayName", user.getDisplayName() == null ? user.getLogin() : user.getDisplayName() );
-        context.put( "userLogin", user.getLogin() );
+        req.setAttribute( "userKey", user.getKey().toString() );
+        req.setAttribute( "userDisplayName", user.getDisplayName() == null ? user.getLogin() : user.getDisplayName() );
+        req.setAttribute( "userLogin", user.getLogin() );
     }
 
     // ---------------------------------------------------------------------------
@@ -624,16 +621,5 @@ public class DeviceLoginHandler
     private static PortalResponse status( final HttpStatus status )
     {
         return PortalResponse.create().status( status ).build();
-    }
-
-    /**
-     * Adapts a {@link GenericValue} object into the {@link MapSerializable} the script engine needs
-     * to expose it to a controller hook as a JS object.
-     */
-    @SuppressWarnings("unchecked")
-    private static MapSerializable asArg( final GenericValue object )
-    {
-        final Map<String, Object> values = (Map<String, Object>) object.toRawJava();
-        return gen -> values.forEach( gen::value );
     }
 }
