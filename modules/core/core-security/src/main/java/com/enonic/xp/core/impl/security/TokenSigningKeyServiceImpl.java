@@ -23,9 +23,8 @@ import org.osgi.service.component.annotations.Component;
  * <p>
  * Key lifecycle is the operator's responsibility, managed with {@code keytool} on the keystore:
  * rotate by adding an entry and repointing the signing alias; retire one by removing it. So
- * "decommission" and "removal" are the same thing - a change to the keystore - and the in-process
- * {@link #rotate()} / {@link #decommission(String)} operations are therefore unsupported here. The
- * keystore file is reloaded automatically when it changes.
+ * "decommission" and "removal" are the same thing - a change to the keystore - and there is no
+ * in-process key-management API. The keystore file is reloaded automatically when it changes.
  * <p>
  * Internal to core-security: it deals in raw key material ({@link SecretKey}) that must not leak
  * onto the public security API.
