@@ -1,24 +1,92 @@
 package com.enonic.xp.portal.impl.idprovider;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.impl.controller.PortalResponseSerializer;
+import com.enonic.xp.portal.impl.mapper.PortalRequestMapper;
+import com.enonic.xp.script.ScriptExports;
+import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.web.HttpStatus;
 
-public interface IdProviderControllerScript
+/**
+ * Executes an id provider controller script (idprovider.js) function, mapping the result to a
+ * {@link PortalResponse} or a boolean.
+ */
+class IdProviderControllerScript
 {
-    boolean hasMethod( String functionName );
+    private final ScriptExports scriptExports;
 
-    PortalResponse execute( String functionName, PortalRequest portalRequest );
+    IdProviderControllerScript( final ScriptExports scriptExports )
+    {
+        this.scriptExports = scriptExports;
+    }
+
+    public boolean hasMethod( final String functionName )
+    {
+        return this.scriptExports.hasMethod( functionName );
+    }
+
+    public PortalResponse execute( final String functionName, final PortalRequest request )
+    {
+        return execute( functionName, request, null );
+    }
 
     /**
      * Executes the function passing {@code context} as its second argument (after the request).
      * Used for predefined hooks that need a function-specific context, e.g. the device verification
      * and native consent hooks.
      */
-    PortalResponse execute( String functionName, PortalRequest portalRequest, Object context );
+    public PortalResponse execute( final String functionName, final PortalRequest request, final Object context )
+    {
+        return withRequest( request, () -> {
+            if ( !this.scriptExports.hasMethod( functionName ) )
+            {
+                return new PortalResponseSerializer( null, HttpStatus.NOT_FOUND ).serialize();
+            }
+            final ScriptValue result = invoke( functionName, request, context );
+            return ( result == null || !result.isObject() ) ? null : new PortalResponseSerializer( result ).serialize();
+        } );
+    }
 
     /**
      * Executes the function (with {@code context} as its second argument) and returns its boolean
      * result, or {@code false} if it is missing or does not return a boolean.
      */
-    boolean executeBoolean( String functionName, PortalRequest portalRequest, Object context );
+    public boolean executeBoolean( final String functionName, final PortalRequest request, final Object context )
+    {
+        return Boolean.TRUE.equals( withRequest( request, () -> {
+            if ( !this.scriptExports.hasMethod( functionName ) )
+            {
+                return Boolean.FALSE;
+            }
+            final ScriptValue result = invoke( functionName, request, context );
+            return result != null && result.isValue() ? result.getValue( Boolean.class ) : Boolean.FALSE;
+        } ) );
+    }
+
+    private ScriptValue invoke( final String functionName, final PortalRequest portalRequest, final Object context )
+    {
+        final PortalRequestMapper requestMapper = new PortalRequestMapper( portalRequest );
+        return context == null
+            ? this.scriptExports.executeMethod( functionName, requestMapper )
+            : this.scriptExports.executeMethod( functionName, requestMapper, context );
+    }
+
+    private <T> T withRequest( final PortalRequest request, final java.util.function.Supplier<T> action )
+    {
+        final ApplicationKey previousApp = request.getApplicationKey();
+        request.setApplicationKey( scriptExports.getScript().getApplicationKey() );
+        PortalRequestAccessor.set( request );
+        try
+        {
+            return action.get();
+        }
+        finally
+        {
+            PortalRequestAccessor.remove();
+            request.setApplicationKey( previousApp );
+        }
+    }
 }
