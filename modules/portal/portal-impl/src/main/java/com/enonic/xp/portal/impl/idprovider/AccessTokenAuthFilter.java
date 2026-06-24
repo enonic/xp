@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.idprovider;
 
 import java.util.Optional;
+import java.util.Set;
 
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
@@ -35,17 +36,18 @@ import com.enonic.xp.web.vhost.VirtualHostHelper;
 /**
  * Authenticates a request bearing an XP-issued self-issued access token (device / native login).
  * <p>
- * Bearer authentication has two mechanisms, both enabled by the id provider's {@code autologin} flow
- * on the vhost and applied in a defined order:
+ * Two independent bearer mechanisms can run, in a defined order:
  * <ol>
  *     <li><b>this filter</b> ({@link Order @Order} -31, before {@link IdProviderFilter}) goes first:
  *     it verifies the bearer as an XP-issued token (signature, {@code kid}, issuer) and, if valid,
  *     establishes the auth context from the principal + memberships. It is id-provider agnostic - an
- *     XP token is verified by XP - but is still gated by the token id provider's {@code autologin}
- *     flow on the current vhost, which is the per-vhost switch for non-interactive auth;</li>
- *     <li>otherwise the request falls through to {@link IdProviderFilter} (@Order -30), which runs
- *     the id provider's own {@code autoLogin} (e.g. validating an <i>external</i>-IdP bearer against
- *     JWKS).</li>
+ *     XP token is verified by XP - and is honored where the token's id provider has an XP-token flow
+ *     ({@code device} or {@code native}, the flows that issue these tokens) enabled on the vhost.
+ *     Acceptance does <b>not</b> require {@code autologin}: enabling device/native is enough for the
+ *     tokens they issue to be usable;</li>
+ *     <li>otherwise the request falls through to {@link IdProviderFilter} (@Order -30) which, gated by
+ *     the {@code autologin} flow, runs the id provider's own {@code autoLogin} method (e.g. validating
+ *     an <i>external</i>-IdP bearer against JWKS). {@code autologin} is exactly that method call.</li>
  * </ol>
  * So a valid XP-issued token is consumed here and never reaches the id provider's {@code autoLogin};
  * any other bearer is left untouched for it. A missing or invalid token leaves the request
@@ -124,8 +126,8 @@ public final class AccessTokenAuthFilter
             return null;
         }
 
-        // Per-vhost flow gating: a vhost may keep the id provider configured but disable token
-        // acceptance for it by not enabling the autologin flow (e.g. mapping value enabled=login).
+        // Per-vhost flow gating: tokens are honored where the id provider runs an XP-token flow
+        // (device or native), so a vhost can keep the id provider for login only and not accept tokens.
         if ( !isAcceptanceEnabled( req, subject.getIdProviderKey() ) )
         {
             return null;
@@ -152,8 +154,11 @@ public final class AccessTokenAuthFilter
         {
             return true;
         }
-        // Token acceptance is a form of auto-login, gated per the token's own id provider.
-        return virtualHost.getIdProviderFlows( idProvider ).contains( IdProviderFlow.AUTOLOGIN );
+        // XP-issued tokens are honored where the token's id provider runs an XP-token flow (device or
+        // native) - the flows that issue them. This is independent of autologin (which is only the
+        // id provider's autoLogin method call), so enabling device/native is enough for tokens to work.
+        final Set<IdProviderFlow> flows = virtualHost.getIdProviderFlows( idProvider );
+        return flows.contains( IdProviderFlow.DEVICE ) || flows.contains( IdProviderFlow.NATIVE );
     }
 
     @Nullable
