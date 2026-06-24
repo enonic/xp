@@ -1,5 +1,6 @@
 package com.enonic.xp.portal;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,7 +48,7 @@ public final class PortalRequest
 
     private Boolean validTicket;
 
-    private final Map<String, Object> attributes = new HashMap<>();
+    private final Map<String, Serializable> attributes = new HashMap<>();
 
     public PortalRequest()
     {
@@ -201,19 +202,19 @@ public final class PortalRequest
     /**
      * Server-side request attributes, exposed to the controller. Used to pass data computed by the
      * dispatcher to the controller (e.g. the device/native login approval context) without inventing
-     * a one-off field per feature - the request is itself the context.
+     * a one-off field per feature - the request is itself the context. Values are {@link Serializable}.
      */
-    public Map<String, Object> getAttributes()
+    public Map<String, Serializable> getAttributes()
     {
         return attributes;
     }
 
-    public Object getAttribute( final String key )
+    public Serializable getAttribute( final String key )
     {
         return attributes.get( key );
     }
 
-    public void setAttribute( final String key, final Object value )
+    public void setAttribute( final String key, final Serializable value )
     {
         attributes.put( key, value );
     }
