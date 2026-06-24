@@ -113,8 +113,8 @@ public final class AccessTokenAuthFilter
             return null;
         }
 
-        // Per-vhost flow gating: a vhost may keep the id provider configured but disable
-        // acceptance of device-login tokens for it (mapping.<vh>.context.<idp>.deviceLogin.accept=false).
+        // Per-vhost flow gating: a vhost may keep the id provider configured but disable token
+        // acceptance for it by not enabling the autologin flow (e.g. mapping value enabled=login).
         if ( !isAcceptanceEnabled( req, subject.getIdProviderKey() ) )
         {
             return null;
