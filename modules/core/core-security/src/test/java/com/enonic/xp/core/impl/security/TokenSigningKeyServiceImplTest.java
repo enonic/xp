@@ -1,82 +1,158 @@
 package com.enonic.xp.core.impl.security;
 
-import java.nio.charset.StandardCharsets;
-import java.time.Instant;
-import java.util.Arrays;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.FileTime;
+import java.security.KeyStore;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class TokenSigningKeyServiceImplTest
 {
-    private static final byte[] MATERIAL = "stored-key-material".getBytes( StandardCharsets.UTF_8 );
+    private static final char[] PASSWORD = "secret-pass".toCharArray();
+
+    @TempDir
+    Path tempDir;
 
     @Test
-    void no_encryption_key_passes_material_through()
+    void resolves_the_configured_signing_key()
+        throws Exception
     {
-        assertArrayEquals( MATERIAL, TokenSigningKeyServiceImpl.deriveKey( null, MATERIAL, "token-sig", "token-signing-hs512" ) );
-    }
+        final Path keystore = tempDir.resolve( "tokens.p12" );
+        final SecretKey key = newKey();
+        writeKeystore( keystore, Map.of( "sign-1", key ) );
 
-    @Test
-    void derivation_is_deterministic_within_an_environment()
-    {
-        final byte[] kek = "prod-kek".getBytes( StandardCharsets.UTF_8 );
-        final byte[] a = TokenSigningKeyServiceImpl.deriveKey( kek, MATERIAL, "token-sig", "token-signing-hs512" );
-        final byte[] b = TokenSigningKeyServiceImpl.deriveKey( kek, MATERIAL, "token-sig", "token-signing-hs512" );
-        assertArrayEquals( a, b );
-    }
+        final TokenSigningKeyServiceImpl service = service( keystore, "sign-1" );
 
-    @Test
-    void same_material_different_encryption_key_yields_different_keys()
-    {
-        // The QA-copied-from-prod scenario: identical stored material, different KEK in config.
-        final byte[] prod = TokenSigningKeyServiceImpl.deriveKey( "prod-kek".getBytes( StandardCharsets.UTF_8 ), MATERIAL, "token-sig", "k" );
-        final byte[] qa = TokenSigningKeyServiceImpl.deriveKey( "qa-kek".getBytes( StandardCharsets.UTF_8 ), MATERIAL, "token-sig", "k" );
-        assertFalse( Arrays.equals( prod, qa ) );
+        assertEquals( "sign-1", service.getCurrentKeyId() );
+        assertArrayEquals( key.getEncoded(), service.getSigningKey( "sign-1" ).getEncoded() );
     }
 
     @Test
-    void different_use_or_kid_yields_different_keys()
+    void verification_resolves_any_alias_in_the_keystore()
+        throws Exception
     {
-        final byte[] kek = "kek".getBytes( StandardCharsets.UTF_8 );
-        final byte[] base = TokenSigningKeyServiceImpl.deriveKey( kek, MATERIAL, "token-sig", "k1" );
-        assertFalse( Arrays.equals( base, TokenSigningKeyServiceImpl.deriveKey( kek, MATERIAL, "other-use", "k1" ) ) );
-        assertFalse( Arrays.equals( base, TokenSigningKeyServiceImpl.deriveKey( kek, MATERIAL, "token-sig", "k2" ) ) );
+        final Path keystore = tempDir.resolve( "tokens.p12" );
+        final SecretKey signing = newKey();
+        final SecretKey other = newKey();
+        writeKeystore( keystore, Map.of( "sign-1", signing, "sign-2", other ) );
+
+        final TokenSigningKeyServiceImpl service = service( keystore, "sign-1" );
+
+        // A token's kid resolves to its alias regardless of which one is the signing alias.
+        assertArrayEquals( other.getEncoded(), service.getSigningKey( "sign-2" ).getEncoded() );
     }
 
     @Test
-    void derived_key_is_full_length()
+    void unknown_alias_is_rejected()
+        throws Exception
     {
-        final byte[] derived = TokenSigningKeyServiceImpl.deriveKey( "kek".getBytes( StandardCharsets.UTF_8 ), MATERIAL, "token-sig", "k" );
-        assertTrue( derived.length == 64 ); // HMAC-SHA512 output
+        final Path keystore = tempDir.resolve( "tokens.p12" );
+        writeKeystore( keystore, Map.of( "sign-1", newKey() ) );
+
+        final TokenSigningKeyServiceImpl service = service( keystore, "sign-1" );
+
+        assertThrows( IllegalArgumentException.class, () -> service.getSigningKey( "removed" ) );
     }
 
     @Test
-    void newest_key_ranks_highest()
+    void invalid_alias_is_rejected()
+        throws Exception
     {
-        final Instant older = Instant.parse( "2026-01-01T00:00:00Z" );
-        final Instant newer = Instant.parse( "2026-06-01T00:00:00Z" );
-        assertTrue( ranksAbove( candidate( newer ), candidate( older ) ) );
-        assertFalse( ranksAbove( candidate( older ), candidate( newer ) ) );
+        final Path keystore = tempDir.resolve( "tokens.p12" );
+        writeKeystore( keystore, Map.of( "sign-1", newKey() ) );
+
+        final TokenSigningKeyServiceImpl service = service( keystore, "sign-1" );
+
+        assertThrows( IllegalArgumentException.class, () -> service.getSigningKey( "../evil" ) );
     }
 
     @Test
-    void key_with_creation_time_ranks_above_one_without()
+    void missing_signing_alias_fails()
+        throws Exception
     {
-        final Instant created = Instant.parse( "2026-01-01T00:00:00Z" );
-        assertTrue( ranksAbove( candidate( created ), candidate( null ) ) );
+        final Path keystore = tempDir.resolve( "tokens.p12" );
+        writeKeystore( keystore, Map.of( "sign-1", newKey() ) );
+
+        final TokenSigningKeyServiceImpl service = service( keystore, "not-there" );
+
+        assertThrows( IllegalStateException.class, service::getCurrentKeyId );
     }
 
-    private static boolean ranksAbove( final TokenSigningKeyServiceImpl.KeyCandidate a, final TokenSigningKeyServiceImpl.KeyCandidate b )
+    @Test
+    void rotate_and_decommission_are_unsupported()
+        throws Exception
     {
-        return TokenSigningKeyServiceImpl.BY_AGE.compare( a, b ) > 0;
+        final Path keystore = tempDir.resolve( "tokens.p12" );
+        writeKeystore( keystore, Map.of( "sign-1", newKey() ) );
+
+        final TokenSigningKeyServiceImpl service = service( keystore, "sign-1" );
+
+        assertThrows( UnsupportedOperationException.class, service::rotate );
+        assertThrows( UnsupportedOperationException.class, () -> service.decommission( "sign-1" ) );
     }
 
-    private static TokenSigningKeyServiceImpl.KeyCandidate candidate( final Instant created )
+    @Test
+    void reloads_when_the_keystore_file_changes()
+        throws Exception
     {
-        return new TokenSigningKeyServiceImpl.KeyCandidate( "kid", created );
+        final Path keystore = tempDir.resolve( "tokens.p12" );
+        writeKeystore( keystore, Map.of( "sign-1", newKey() ) );
+
+        final TokenSigningKeyServiceImpl service = service( keystore, "sign-1" );
+        assertThrows( IllegalArgumentException.class, () -> service.getSigningKey( "sign-2" ) );
+
+        final SecretKey added = newKey();
+        final Map<String, SecretKey> updated = new LinkedHashMap<>();
+        updated.put( "sign-1", newKey() );
+        updated.put( "sign-2", added );
+        writeKeystore( keystore, updated );
+        Files.setLastModifiedTime( keystore, FileTime.fromMillis( Files.getLastModifiedTime( keystore ).toMillis() + 5000 ) );
+
+        assertArrayEquals( added.getEncoded(), service.getSigningKey( "sign-2" ).getEncoded() );
+    }
+
+    private TokenSigningKeyServiceImpl service( final Path keystore, final String signingAlias )
+    {
+        final SecurityConfig config = mock( SecurityConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
+        when( config.tokenSigningKeystore() ).thenReturn( keystore.toString() );
+        when( config.tokenSigningKeystorePassword() ).thenReturn( new String( PASSWORD ) );
+        when( config.tokenSigningKeyAlias() ).thenReturn( signingAlias );
+        return new TokenSigningKeyServiceImpl( config );
+    }
+
+    private static void writeKeystore( final Path path, final Map<String, SecretKey> entries )
+        throws Exception
+    {
+        final KeyStore keystore = KeyStore.getInstance( "PKCS12" );
+        keystore.load( null, PASSWORD );
+        for ( final Map.Entry<String, SecretKey> entry : entries.entrySet() )
+        {
+            keystore.setEntry( entry.getKey(), new KeyStore.SecretKeyEntry( entry.getValue() ),
+                               new KeyStore.PasswordProtection( PASSWORD ) );
+        }
+        try (OutputStream out = Files.newOutputStream( path ))
+        {
+            keystore.store( out, PASSWORD );
+        }
+    }
+
+    private static SecretKey newKey()
+        throws Exception
+    {
+        return KeyGenerator.getInstance( "HmacSHA512" ).generateKey();
     }
 }

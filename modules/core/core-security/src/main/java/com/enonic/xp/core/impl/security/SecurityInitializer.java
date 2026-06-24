@@ -1,7 +1,6 @@
 package com.enonic.xp.core.impl.security;
 
 import java.security.NoSuchAlgorithmException;
-import java.time.Instant;
 import java.util.Base64;
 import java.util.List;
 import javax.crypto.KeyGenerator;
@@ -17,13 +16,10 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.init.ExternalInitializer;
 import com.enonic.xp.node.CreateNodeParams;
-import com.enonic.xp.node.FindNodesByParentParams;
-import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.Nodes;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.security.CreateIdProviderParams;
@@ -62,16 +58,6 @@ public final class SecurityInitializer
      * Should be used for low severity security purposes only, like anti open-redirect attacks.
      */
     private static final NodePath GENERIC_KEY_PATH = new NodePath( KEYS_PATH, NodeName.from( "generic-hmac-sha512" ) );
-
-    /**
-     * Bootstrap key used to sign self-issued access tokens (e.g. device-login tokens).
-     * Kept separate from the generic key so it has its own rotation/revocation lifecycle: the
-     * generic key is low value and rotated freely, while this key signs bearer credentials. The
-     * node name doubles as the {@code kid}; the self-describing data ({@code use}, {@code created}, and
-     * an optional {@code decommissioned} flag) lets {@link TokenSigningKeyServiceImpl} add further keys
-     * for rotation and pick any live (non-decommissioned) one to sign with, rather than by a fixed name.
-     */
-    private static final NodePath TOKEN_SIGNING_BOOTSTRAP_PATH = new NodePath( KEYS_PATH, NodeName.from( "token-signing-hs512" ) );
 
     private static final NodePath IDENTITY_PATH = IdProviderNodeTranslator.ID_PROVIDERS_PARENT_PATH;
 
@@ -219,61 +205,11 @@ public final class SecurityInitializer
                                     .inheritPermissions( true )
                                     .build() );
         }
-
-        if ( !hasTokenSigningKey() )
-        {
-            LOG.info( "Initializing [{}] token-signing key", TOKEN_SIGNING_BOOTSTRAP_PATH );
-
-            final SecretKey key;
-            try
-            {
-                key = KeyGenerator.getInstance( "HmacSHA512" ).generateKey();
-            }
-            catch ( NoSuchAlgorithmException e )
-            {
-                throw new IllegalStateException( e );
-            }
-
-            final PropertyTree data = new PropertyTree();
-            data.setString( "key", Base64.getEncoder().encodeToString( key.getEncoded() ) );
-            data.setString( "alg", "HS512" );
-            data.setString( "use", "token-sig" );
-            data.setInstant( "created", Instant.now() );
-            nodeService.create( CreateNodeParams.create()
-                                    .parent( TOKEN_SIGNING_BOOTSTRAP_PATH.getParentPath() )
-                                    .name( TOKEN_SIGNING_BOOTSTRAP_PATH.getName() )
-                                    .data( data )
-                                    .inheritPermissions( true )
-                                    .build() );
-        }
     }
 
     private boolean keysInitialized()
     {
-        return pathInitialized( KEYS_PATH ) && pathInitialized( GENERIC_KEY_PATH ) && hasTokenSigningKey();
-    }
-
-    /**
-     * True if at least one token-signing key exists under {@code /keys}. Determined by scanning
-     * (rather than a fixed path) so that decommissioning the bootstrap key does not cause it to be
-     * recreated on the next start.
-     */
-    private boolean hasTokenSigningKey()
-    {
-        if ( !pathInitialized( KEYS_PATH ) )
-        {
-            return false;
-        }
-        final Nodes nodes = nodeService.getByIds(
-            nodeService.findByParent( FindNodesByParentParams.create().parentPath( KEYS_PATH ).size( -1 ).build() ).getNodeIds() );
-        for ( final Node node : nodes )
-        {
-            if ( "token-sig".equals( node.data().getString( "use" ) ) )
-            {
-                return true;
-            }
-        }
-        return false;
+        return pathInitialized( KEYS_PATH ) && pathInitialized( GENERIC_KEY_PATH );
     }
 
     private void initializeSystemIdProvider()
