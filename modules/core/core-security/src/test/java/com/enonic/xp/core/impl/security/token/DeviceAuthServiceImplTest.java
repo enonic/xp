@@ -42,7 +42,7 @@ class DeviceAuthServiceImplTest
                                   .scope( "openid" )
                                   .audience( "https://api.example.com" )
                                   .ttl( Duration.ofMinutes( 10 ) )
-                                  .interval( Duration.ZERO )
+                                  .pollInterval( Duration.ZERO )
                                   .build() );
     }
 
@@ -88,7 +88,7 @@ class DeviceAuthServiceImplTest
         final DeviceAuthorization auth = service.start( DeviceAuthorizationParams.create()
                                                             .idProvider( IDP )
                                                             .ttl( Duration.ofMinutes( 10 ) )
-                                                            .interval( Duration.ofSeconds( 5 ) )
+                                                            .pollInterval( Duration.ofSeconds( 5 ) )
                                                             .build() );
         assertEquals( DeviceAuthorizationState.PENDING, service.poll( IDP, auth.getDeviceCode() ).getState() );
         assertEquals( DeviceAuthorizationState.SLOW_DOWN, service.poll( IDP, auth.getDeviceCode() ).getState() );

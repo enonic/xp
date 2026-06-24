@@ -164,7 +164,7 @@ public class DeviceLoginHandler
         body.put( "verification_uri", verificationUri );
         body.put( "verification_uri_complete", verificationUri + "?user_code=" + enc( auth.getUserCode() ) );
         body.put( "expires_in", auth.getExpiresInSeconds() );
-        body.put( "interval", auth.getIntervalSeconds() );
+        body.put( "interval", auth.getPollIntervalSeconds() );
         return json( HttpStatus.OK, body );
     }
 

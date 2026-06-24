@@ -55,7 +55,7 @@ public class DeviceAuthServiceImpl
         final long now = System.currentTimeMillis();
 
         final int ttlSeconds = (int) params.getTtl().toSeconds();
-        final int intervalSeconds = (int) params.getInterval().toSeconds();
+        final int pollIntervalSeconds = (int) params.getPollInterval().toSeconds();
 
         final HashMap<String, Object> record = new HashMap<>();
         record.put( "status", "pending" );
@@ -65,13 +65,13 @@ public class DeviceAuthServiceImpl
         record.put( "audience", nullToEmpty( params.getAudience() ) );
         record.put( "createdAt", now );
         record.put( "ttlSeconds", ttlSeconds );
-        record.put( "intervalSeconds", intervalSeconds );
+        record.put( "pollIntervalSeconds", pollIntervalSeconds );
         record.put( "lastPolledAt", 0L );
 
         map.set( deviceCode, record, ttlSeconds );
         map.set( USER_CODE_INDEX_PREFIX + userCode, deviceCode, ttlSeconds );
 
-        return new DeviceAuthorization( deviceCode, userCode, ttlSeconds, intervalSeconds );
+        return new DeviceAuthorization( deviceCode, userCode, ttlSeconds, pollIntervalSeconds );
     }
 
     @Override
@@ -137,9 +137,9 @@ public class DeviceAuthServiceImpl
             }
 
             final long now = System.currentTimeMillis();
-            final long interval = ( (Number) record.get( "intervalSeconds" ) ).longValue() * 1000;
+            final long pollIntervalMillis = ( (Number) record.get( "pollIntervalSeconds" ) ).longValue() * 1000;
             final long lastPolledAt = ( (Number) record.get( "lastPolledAt" ) ).longValue();
-            if ( lastPolledAt != 0 && ( now - lastPolledAt ) < interval )
+            if ( lastPolledAt != 0 && ( now - lastPolledAt ) < pollIntervalMillis )
             {
                 result.set( DeviceAuthorizationPoll.of( DeviceAuthorizationState.SLOW_DOWN ) );
                 return record;

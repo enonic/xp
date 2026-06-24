@@ -27,7 +27,7 @@ public final class DeviceAuthorizationParams
 
     private final Duration ttl;
 
-    private final Duration interval;
+    private final Duration pollInterval;
 
     private DeviceAuthorizationParams( final Builder builder )
     {
@@ -36,7 +36,7 @@ public final class DeviceAuthorizationParams
         this.scope = builder.scope;
         this.audience = builder.audience;
         this.ttl = builder.ttl;
-        this.interval = builder.interval;
+        this.pollInterval = builder.pollInterval;
     }
 
     public static Builder create()
@@ -72,9 +72,9 @@ public final class DeviceAuthorizationParams
         return ttl;
     }
 
-    public Duration getInterval()
+    public Duration getPollInterval()
     {
-        return interval;
+        return pollInterval;
     }
 
     public static final class Builder
@@ -92,7 +92,7 @@ public final class DeviceAuthorizationParams
 
         private Duration ttl = Duration.ofMinutes( 10 );
 
-        private Duration interval = Duration.ofSeconds( 5 );
+        private Duration pollInterval = Duration.ofSeconds( 5 );
 
         /**
          * Sets the id provider the device authorization is for. Required.
@@ -140,11 +140,12 @@ public final class DeviceAuthorizationParams
         }
 
         /**
-         * Sets the minimum interval the client must wait between polls. Defaults to five seconds.
+         * Sets the minimum interval the client must wait between polls (the {@code interval} in the
+         * RFC 8628 response). Defaults to five seconds.
          */
-        public Builder interval( final Duration interval )
+        public Builder pollInterval( final Duration pollInterval )
         {
-            this.interval = interval;
+            this.pollInterval = pollInterval;
             return this;
         }
 
