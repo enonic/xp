@@ -17,7 +17,7 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.security.CryptoService;
+import com.enonic.xp.core.impl.security.TokenSigningKeyService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.token.AccessToken;
 import com.enonic.xp.security.token.AccessTokenParams;
@@ -29,12 +29,12 @@ import com.enonic.xp.util.GenericValue;
 public class AccessTokenServiceImpl
     implements AccessTokenService
 {
-    private final CryptoService cryptoService;
+    private final TokenSigningKeyService tokenSigningKeyService;
 
     @Activate
-    public AccessTokenServiceImpl( @Reference final CryptoService cryptoService )
+    public AccessTokenServiceImpl( @Reference final TokenSigningKeyService tokenSigningKeyService )
     {
-        this.cryptoService = cryptoService;
+        this.tokenSigningKeyService = tokenSigningKeyService;
     }
 
     @Override
@@ -45,8 +45,8 @@ public class AccessTokenServiceImpl
             throw new IllegalArgumentException( "Access token subject must be a user: " + params.getSubject() );
         }
 
-        final String kid = cryptoService.tokenSigningKeyId();
-        final SecretKey key = cryptoService.getSigningKey( kid );
+        final String kid = tokenSigningKeyService.getCurrentKeyId();
+        final SecretKey key = tokenSigningKeyService.getSigningKey( kid );
 
         final Map<String, Object> header = new LinkedHashMap<>();
         header.put( "alg", "HS512" );
@@ -99,7 +99,7 @@ public class AccessTokenServiceImpl
                 return Optional.empty();
             }
 
-            final SecretKey key = cryptoService.getSigningKey( (String) kid );
+            final SecretKey key = tokenSigningKeyService.getSigningKey( (String) kid );
 
             final Map<String, Object> claims = JwsHs512.verify( token, key );
             if ( claims == null )

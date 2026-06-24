@@ -33,17 +33,15 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.UpdateNodeParams;
-import com.enonic.xp.security.CryptoService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.SystemConstants;
-import com.enonic.xp.security.TokenSigningKeyManager;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
-@Component(configurationPid = "com.enonic.xp.security", service = {CryptoService.class, TokenSigningKeyManager.class})
+@Component(configurationPid = "com.enonic.xp.security", service = TokenSigningKeyService.class)
 @NullMarked
-public class CryptoServiceImpl
-    implements CryptoService, TokenSigningKeyManager
+public class TokenSigningKeyServiceImpl
+    implements TokenSigningKeyService
 {
     static final String KEY_PREFIX = "token-signing-hs512";
 
@@ -83,17 +81,11 @@ public class CryptoServiceImpl
     private SecurityService securityService;
 
     @Activate
-    public CryptoServiceImpl( @Reference final NodeService nodeService, final SecurityConfig config )
+    public TokenSigningKeyServiceImpl( @Reference final NodeService nodeService, final SecurityConfig config )
     {
         this.nodeService = nodeService;
         final String configuredKey = config.encryption_key();
         this.encryptionKey = configuredKey.isEmpty() ? null : configuredKey.getBytes( StandardCharsets.UTF_8 );
-    }
-
-    @Override
-    public String tokenSigningKeyId()
-    {
-        return getCurrentKeyId();
     }
 
     @Override

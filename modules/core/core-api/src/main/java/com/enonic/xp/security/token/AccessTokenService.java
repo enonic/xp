@@ -5,8 +5,8 @@ import java.util.Optional;
 import org.jspecify.annotations.NullMarked;
 
 /**
- * Issues and verifies self-issued access tokens (RFC 9068 "at+jwt"), signed with the managed
- * token-signing key resolved through {@link com.enonic.xp.security.CryptoService}.
+ * Issues and verifies self-issued access tokens (RFC 9068 "at+jwt"), signed with a managed
+ * token-signing key.
  * <p>
  * Because the issuer and verifier are the same trust domain, the tokens are symmetric (HS512);
  * the {@code kid} header keeps the format open to a managed keyring and key rotation.

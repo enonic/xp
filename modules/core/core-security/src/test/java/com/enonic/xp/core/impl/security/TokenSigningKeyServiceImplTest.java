@@ -10,22 +10,22 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class CryptoServiceImplTest
+class TokenSigningKeyServiceImplTest
 {
     private static final byte[] MATERIAL = "stored-key-material".getBytes( StandardCharsets.UTF_8 );
 
     @Test
     void no_encryption_key_passes_material_through()
     {
-        assertArrayEquals( MATERIAL, CryptoServiceImpl.deriveKey( null, MATERIAL, "token-sig", "token-signing-hs512" ) );
+        assertArrayEquals( MATERIAL, TokenSigningKeyServiceImpl.deriveKey( null, MATERIAL, "token-sig", "token-signing-hs512" ) );
     }
 
     @Test
     void derivation_is_deterministic_within_an_environment()
     {
         final byte[] kek = "prod-kek".getBytes( StandardCharsets.UTF_8 );
-        final byte[] a = CryptoServiceImpl.deriveKey( kek, MATERIAL, "token-sig", "token-signing-hs512" );
-        final byte[] b = CryptoServiceImpl.deriveKey( kek, MATERIAL, "token-sig", "token-signing-hs512" );
+        final byte[] a = TokenSigningKeyServiceImpl.deriveKey( kek, MATERIAL, "token-sig", "token-signing-hs512" );
+        final byte[] b = TokenSigningKeyServiceImpl.deriveKey( kek, MATERIAL, "token-sig", "token-signing-hs512" );
         assertArrayEquals( a, b );
     }
 
@@ -33,8 +33,8 @@ class CryptoServiceImplTest
     void same_material_different_encryption_key_yields_different_keys()
     {
         // The QA-copied-from-prod scenario: identical stored material, different KEK in config.
-        final byte[] prod = CryptoServiceImpl.deriveKey( "prod-kek".getBytes( StandardCharsets.UTF_8 ), MATERIAL, "token-sig", "k" );
-        final byte[] qa = CryptoServiceImpl.deriveKey( "qa-kek".getBytes( StandardCharsets.UTF_8 ), MATERIAL, "token-sig", "k" );
+        final byte[] prod = TokenSigningKeyServiceImpl.deriveKey( "prod-kek".getBytes( StandardCharsets.UTF_8 ), MATERIAL, "token-sig", "k" );
+        final byte[] qa = TokenSigningKeyServiceImpl.deriveKey( "qa-kek".getBytes( StandardCharsets.UTF_8 ), MATERIAL, "token-sig", "k" );
         assertFalse( Arrays.equals( prod, qa ) );
     }
 
@@ -42,15 +42,15 @@ class CryptoServiceImplTest
     void different_use_or_kid_yields_different_keys()
     {
         final byte[] kek = "kek".getBytes( StandardCharsets.UTF_8 );
-        final byte[] base = CryptoServiceImpl.deriveKey( kek, MATERIAL, "token-sig", "k1" );
-        assertFalse( Arrays.equals( base, CryptoServiceImpl.deriveKey( kek, MATERIAL, "other-use", "k1" ) ) );
-        assertFalse( Arrays.equals( base, CryptoServiceImpl.deriveKey( kek, MATERIAL, "token-sig", "k2" ) ) );
+        final byte[] base = TokenSigningKeyServiceImpl.deriveKey( kek, MATERIAL, "token-sig", "k1" );
+        assertFalse( Arrays.equals( base, TokenSigningKeyServiceImpl.deriveKey( kek, MATERIAL, "other-use", "k1" ) ) );
+        assertFalse( Arrays.equals( base, TokenSigningKeyServiceImpl.deriveKey( kek, MATERIAL, "token-sig", "k2" ) ) );
     }
 
     @Test
     void derived_key_is_full_length()
     {
-        final byte[] derived = CryptoServiceImpl.deriveKey( "kek".getBytes( StandardCharsets.UTF_8 ), MATERIAL, "token-sig", "k" );
+        final byte[] derived = TokenSigningKeyServiceImpl.deriveKey( "kek".getBytes( StandardCharsets.UTF_8 ), MATERIAL, "token-sig", "k" );
         assertTrue( derived.length == 64 ); // HMAC-SHA512 output
     }
 
@@ -60,8 +60,8 @@ class CryptoServiceImplTest
         final Instant older = Instant.parse( "2026-01-01T00:00:00Z" );
         final Instant newer = Instant.parse( "2026-06-01T00:00:00Z" );
         // A preferred (older) key beats a non-preferred newer one.
-        assertTrue( CryptoServiceImpl.preferOver( true, older, false, newer ) );
-        assertFalse( CryptoServiceImpl.preferOver( false, newer, true, older ) );
+        assertTrue( TokenSigningKeyServiceImpl.preferOver( true, older, false, newer ) );
+        assertFalse( TokenSigningKeyServiceImpl.preferOver( false, newer, true, older ) );
     }
 
     @Test
@@ -69,9 +69,9 @@ class CryptoServiceImplTest
     {
         final Instant older = Instant.parse( "2026-01-01T00:00:00Z" );
         final Instant newer = Instant.parse( "2026-06-01T00:00:00Z" );
-        assertTrue( CryptoServiceImpl.preferOver( false, newer, false, older ) );
-        assertFalse( CryptoServiceImpl.preferOver( false, older, false, newer ) );
+        assertTrue( TokenSigningKeyServiceImpl.preferOver( false, newer, false, older ) );
+        assertFalse( TokenSigningKeyServiceImpl.preferOver( false, older, false, newer ) );
         // A key with a creation time beats one missing it.
-        assertTrue( CryptoServiceImpl.preferOver( false, older, false, null ) );
+        assertTrue( TokenSigningKeyServiceImpl.preferOver( false, older, false, null ) );
     }
 }

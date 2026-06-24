@@ -9,7 +9,7 @@ import javax.crypto.SecretKey;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.enonic.xp.security.CryptoService;
+import com.enonic.xp.core.impl.security.TokenSigningKeyService;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.token.AccessToken;
@@ -30,7 +30,7 @@ class AccessTokenServiceImplTest
         throws Exception
     {
         this.key = KeyGenerator.getInstance( "HmacSHA512" ).generateKey();
-        this.service = new AccessTokenServiceImpl( new StubCryptoService( key ) );
+        this.service = new AccessTokenServiceImpl( new StubTokenSigningKeyService( key ) );
     }
 
     private AccessTokenParams params( final Duration ttl )
@@ -74,7 +74,7 @@ class AccessTokenServiceImplTest
         final String token = service.issue( params( Duration.ofHours( 1 ) ) );
 
         final SecretKey otherKey = newKey();
-        final AccessTokenServiceImpl otherService = new AccessTokenServiceImpl( new StubCryptoService( otherKey ) );
+        final AccessTokenServiceImpl otherService = new AccessTokenServiceImpl( new StubTokenSigningKeyService( otherKey ) );
         assertFalse( otherService.verify( token ).isPresent() );
     }
 
@@ -89,7 +89,7 @@ class AccessTokenServiceImplTest
     void verify_rejects_unknown_kid()
     {
         // Stub throws for any kid other than the signing kid; simulates the namespace guard.
-        final AccessTokenServiceImpl guarded = new AccessTokenServiceImpl( new StubCryptoService( key )
+        final AccessTokenServiceImpl guarded = new AccessTokenServiceImpl( new StubTokenSigningKeyService( key )
         {
             @Override
             public SecretKey getSigningKey( final String kid )
@@ -113,18 +113,18 @@ class AccessTokenServiceImplTest
         }
     }
 
-    private static class StubCryptoService
-        implements CryptoService
+    private static class StubTokenSigningKeyService
+        implements TokenSigningKeyService
     {
         private final SecretKey key;
 
-        StubCryptoService( final SecretKey key )
+        StubTokenSigningKeyService( final SecretKey key )
         {
             this.key = key;
         }
 
         @Override
-        public String tokenSigningKeyId()
+        public String getCurrentKeyId()
         {
             return "token-signing-hs512";
         }
@@ -133,6 +133,18 @@ class AccessTokenServiceImplTest
         public SecretKey getSigningKey( final String kid )
         {
             return key;
+        }
+
+        @Override
+        public String rotate()
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void decommission( final String keyId )
+        {
+            throw new UnsupportedOperationException();
         }
     }
 }

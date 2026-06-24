@@ -68,7 +68,7 @@ public final class SecurityInitializer
      * Kept separate from the generic key so it has its own rotation/revocation lifecycle: the
      * generic key is low value and rotated freely, while this key signs bearer credentials. The
      * node name doubles as the {@code kid}; the self-describing data ({@code use}, {@code preferred},
-     * {@code created}) lets {@link CryptoServiceImpl} add further keys for rotation and pick the
+     * {@code created}) lets {@link TokenSigningKeyServiceImpl} add further keys for rotation and pick the
      * preferred (signing) one by field rather than by a fixed name.
      */
     private static final NodePath TOKEN_SIGNING_BOOTSTRAP_PATH = new NodePath( KEYS_PATH, NodeName.from( "token-signing-hs512" ) );
