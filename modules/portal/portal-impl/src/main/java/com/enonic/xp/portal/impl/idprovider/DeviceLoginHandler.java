@@ -128,18 +128,35 @@ public class DeviceLoginHandler
         switch ( subPath )
         {
             case "device/code":
-                return requirePost( method, () -> requireFlow( flows, IdProviderFlow.DEVICE, () -> deviceAuthorization( req, idProvider ) ) );
+                return requireSupport( deviceSupported( idProvider, flows ),
+                                       () -> requirePost( method, () -> deviceAuthorization( req, idProvider ) ) );
             case "device":
-                return requireFlow( flows, IdProviderFlow.DEVICE,
-                                    () -> method == HttpMethod.POST ? verificationSubmit( req, idProvider ) : verificationPage( req, idProvider ) );
+                return requireSupport( deviceSupported( idProvider, flows ),
+                                       () -> method == HttpMethod.POST ? verificationSubmit( req, idProvider ) : verificationPage( req, idProvider ) );
             case "authorize":
-                return requireFlow( flows, IdProviderFlow.NATIVE,
-                                    () -> method == HttpMethod.POST ? authorizeSubmit( req, idProvider ) : authorizePrompt( req, idProvider ) );
+                return requireSupport( nativeSupported( idProvider, flows ),
+                                       () -> method == HttpMethod.POST ? authorizeSubmit( req, idProvider ) : authorizePrompt( req, idProvider ) );
             case "token":
                 return requirePost( method, () -> token( req, idProvider, flows ) );
             default:
                 return status( HttpStatus.NOT_FOUND );
         }
+    }
+
+    /**
+     * A flow is supported only if it is enabled on the vhost <i>and</i> the id provider implements
+     * the flow's page hook. The whole flow (issuance + page + token) then succeeds or 404s together.
+     */
+    private boolean deviceSupported( final IdProviderKey idProvider, final Set<IdProviderFlow> flows )
+    {
+        return flows.contains( IdProviderFlow.DEVICE ) &&
+            idProviderControllerService.hasFunction( idProvider, DEVICE_VERIFICATION_FUNCTION );
+    }
+
+    private boolean nativeSupported( final IdProviderKey idProvider, final Set<IdProviderFlow> flows )
+    {
+        return flows.contains( IdProviderFlow.NATIVE ) &&
+            idProviderControllerService.hasFunction( idProvider, AUTHORIZE_CONSENT_FUNCTION );
     }
 
     // POST .../device/code - RFC 8628 device authorization endpoint.
@@ -169,11 +186,11 @@ public class DeviceLoginHandler
         final String grantType = param( req, "grant_type" );
         if ( DEVICE_CODE_GRANT.equals( grantType ) )
         {
-            return flows.contains( IdProviderFlow.DEVICE ) ? deviceCodeGrant( req, idProvider ) : status( HttpStatus.NOT_FOUND );
+            return deviceSupported( idProvider, flows ) ? deviceCodeGrant( req, idProvider ) : status( HttpStatus.NOT_FOUND );
         }
         if ( AUTH_CODE_GRANT.equals( grantType ) )
         {
-            return flows.contains( IdProviderFlow.NATIVE ) ? authorizationCodeGrant( req, idProvider ) : status( HttpStatus.NOT_FOUND );
+            return nativeSupported( idProvider, flows ) ? authorizationCodeGrant( req, idProvider ) : status( HttpStatus.NOT_FOUND );
         }
         return oauthError( HttpStatus.BAD_REQUEST, "unsupported_grant_type", null );
     }
@@ -571,10 +588,10 @@ public class DeviceLoginHandler
         return method == HttpMethod.POST ? supplier.get() : status( HttpStatus.METHOD_NOT_ALLOWED );
     }
 
-    private static PortalResponse requireFlow( final Set<IdProviderFlow> flows, final IdProviderFlow flow, final ResponseSupplier supplier )
+    private static PortalResponse requireSupport( final boolean supported, final ResponseSupplier supplier )
         throws IOException
     {
-        return flows.contains( flow ) ? supplier.get() : status( HttpStatus.NOT_FOUND );
+        return supported ? supplier.get() : status( HttpStatus.NOT_FOUND );
     }
 
     private static PortalResponse json( final HttpStatus status, final GenericValue body )

@@ -123,6 +123,20 @@ public class IdProviderControllerServiceImpl
         return idProviderControllerScript.executeBoolean( functionName, portalRequest, params.getContextArg() );
     }
 
+    @Override
+    public boolean hasFunction( final IdProviderKey idProviderKey, final String functionName )
+    {
+        final IdProvider idProvider = retrieveIdProvider( idProviderKey );
+        final IdProviderDescriptor idProviderDescriptor = retrieveIdProviderDescriptor( idProvider );
+
+        if ( idProviderDescriptor == null )
+        {
+            return false;
+        }
+
+        return idProviderControllerScriptFactory.fromScript( getScriptResourceKey( idProviderDescriptor.getKey() ) ).hasMethod( functionName );
+    }
+
     private static String resolveFunctionName( final String exact, final IdProviderControllerScript idProviderControllerScript,
                                                final PortalRequest portalRequest )
     {
