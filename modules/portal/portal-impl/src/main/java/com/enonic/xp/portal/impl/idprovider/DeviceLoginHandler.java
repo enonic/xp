@@ -53,9 +53,9 @@ import com.enonic.xp.web.vhost.IdProviderFlow;
  * <ul>
  *     <li>{@code deviceVerification(req, context)} - the device verification / approval page;</li>
  *     <li>{@code authorizeConsent(req, context)} - the native authorization consent page;</li>
- *     <li>{@code allowRedirectUri(req, context)} - optional redirect policy: returns whether a
- *     non-loopback, non-private-use redirect (e.g. a claimed {@code https} URI) is registered for
- *     this id provider. Loopback and RFC 8252 private-use schemes are always allowed.</li>
+ *     <li>{@code allowRedirectUri(req, context)} - redirect policy: returns whether a non-loopback
+ *     redirect (an RFC 8252 private-use scheme or a claimed {@code https} URL) is registered for this
+ *     id provider. Only loopback redirects are allowed without consulting it.</li>
  * </ul>
  * Per-vhost flow gating (DEVICE / NATIVE) is enforced by the caller and re-checked here per grant.
  */
@@ -397,14 +397,16 @@ public class DeviceLoginHandler
     }
 
     /**
-     * Loopback and RFC 8252 private-use-scheme redirects are always allowed (PKCE-protected).
-     * Anything else (e.g. a claimed {@code https} URI) is allowed only if the id provider's
-     * {@code allowRedirectUri} hook approves it - registration is the id provider's policy.
+     * Only loopback redirects (any port) are allowed unconditionally - they never leave the device.
+     * Every other redirect (an RFC 8252 private-use scheme or a claimed {@code https} URL) is allowed
+     * only if the id provider's {@code allowRedirectUri} hook approves it: registration is the id
+     * provider's policy. The id provider is the one addressed in the request URL (it issues the token),
+     * so there is no ambiguity about which one decides.
      */
     private boolean redirectAllowed( final PortalRequest req, final IdProviderKey idProvider, final String redirectUri )
         throws IOException
     {
-        if ( isBuiltInRedirect( redirectUri ) )
+        if ( isLoopback( redirectUri ) )
         {
             return true;
         }
@@ -495,26 +497,11 @@ public class DeviceLoginHandler
         }
     }
 
-    static boolean isBuiltInRedirect( final String uri )
+    // Only loopback (any port) is auto-allowed - it never leaves the device. Every other redirect
+    // (private-use scheme or claimed https) is deferred to the id provider's allowRedirectUri hook.
+    static boolean isLoopback( final String uri )
     {
-        if ( LOOPBACK.matcher( uri ).matches() )
-        {
-            return true;
-        }
-        // RFC 8252 private-use URI scheme (reverse-DNS, e.g. com.example.app:/cb). PKCE is mandatory,
-        // which mitigates code interception. Remote http(s) redirects are deferred to the id provider's
-        // allowRedirectUri policy hook.
-        final int colon = uri.indexOf( ':' );
-        if ( colon <= 0 )
-        {
-            return false;
-        }
-        final String scheme = uri.substring( 0, colon ).toLowerCase();
-        if ( scheme.equals( "http" ) || scheme.equals( "https" ) )
-        {
-            return false;
-        }
-        return scheme.contains( "." );
+        return LOOPBACK.matcher( uri ).matches();
     }
 
     private static String[] splitAudience( @Nullable final String value )

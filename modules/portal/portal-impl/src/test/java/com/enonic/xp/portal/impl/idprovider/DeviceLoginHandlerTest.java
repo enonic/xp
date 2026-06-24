@@ -27,30 +27,23 @@ class DeviceLoginHandlerTest
     }
 
     @Test
-    void loopback_redirects_are_allowed()
+    void only_loopback_is_auto_allowed()
     {
-        assertTrue( DeviceLoginHandler.isBuiltInRedirect( "http://127.0.0.1" ) );
-        assertTrue( DeviceLoginHandler.isBuiltInRedirect( "http://127.0.0.1:12345/callback" ) );
-        assertTrue( DeviceLoginHandler.isBuiltInRedirect( "http://localhost/cb" ) );
-        assertTrue( DeviceLoginHandler.isBuiltInRedirect( "http://[::1]:9000/x" ) );
+        assertTrue( DeviceLoginHandler.isLoopback( "http://127.0.0.1" ) );
+        assertTrue( DeviceLoginHandler.isLoopback( "http://127.0.0.1:12345/callback" ) );
+        assertTrue( DeviceLoginHandler.isLoopback( "http://localhost/cb" ) );
+        assertTrue( DeviceLoginHandler.isLoopback( "http://[::1]:9000/x" ) );
     }
 
     @Test
-    void private_use_scheme_redirects_are_allowed()
+    void non_loopback_redirects_go_to_the_idp_hook()
     {
-        // RFC 8252 reverse-DNS private-use scheme (PKCE-protected).
-        assertTrue( DeviceLoginHandler.isBuiltInRedirect( "com.example.app:/oauth/cb" ) );
-        assertTrue( DeviceLoginHandler.isBuiltInRedirect( "org.enonic.cli:/done" ) );
-    }
-
-    @Test
-    void remote_http_and_bare_schemes_are_rejected()
-    {
-        // Remote http(s) is not allowed built-in - it is deferred to the idp allowRedirectUri hook.
-        assertFalse( DeviceLoginHandler.isBuiltInRedirect( "http://evil.example.com/cb" ) );
-        assertFalse( DeviceLoginHandler.isBuiltInRedirect( "https://app.example.com/cb" ) );
-        // A non-reverse-DNS custom scheme is not allowed built-in.
-        assertFalse( DeviceLoginHandler.isBuiltInRedirect( "myapp:/cb" ) );
-        assertFalse( DeviceLoginHandler.isBuiltInRedirect( "/relative/path" ) );
+        // Private-use scheme, claimed https, remote http, bare scheme and relative paths are not
+        // auto-allowed - each is the id provider's allowRedirectUri decision.
+        assertFalse( DeviceLoginHandler.isLoopback( "com.example.app:/oauth/cb" ) );
+        assertFalse( DeviceLoginHandler.isLoopback( "https://app.example.com/cb" ) );
+        assertFalse( DeviceLoginHandler.isLoopback( "http://evil.example.com/cb" ) );
+        assertFalse( DeviceLoginHandler.isLoopback( "myapp:/cb" ) );
+        assertFalse( DeviceLoginHandler.isLoopback( "/relative/path" ) );
     }
 }
