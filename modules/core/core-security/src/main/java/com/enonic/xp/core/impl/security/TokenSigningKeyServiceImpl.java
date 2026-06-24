@@ -97,18 +97,6 @@ public class TokenSigningKeyServiceImpl
         }
     }
 
-    @Override
-    public String rotate()
-    {
-        throw new UnsupportedOperationException( "Token-signing keys are managed in the PKCS12 keystore; rotate with keytool" );
-    }
-
-    @Override
-    public void decommission( final String keyId )
-    {
-        throw new UnsupportedOperationException( "Token-signing keys are managed in the PKCS12 keystore; remove with keytool" );
-    }
-
     /**
      * The loaded keystore, reloaded when the file's modification time changes (so a rotated/swapped
      * keystore is picked up without a restart).

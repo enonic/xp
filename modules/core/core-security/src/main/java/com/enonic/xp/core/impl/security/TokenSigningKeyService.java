@@ -12,10 +12,9 @@ import org.jspecify.annotations.NullMarked;
  * <p>
  * The keystore holds one or more {@code HmacSHA512} secret-key entries; each entry's alias is its
  * {@code kid}. Any entry verifies; the configured signing alias signs new tokens. Key lifecycle is
- * the operator's responsibility (managed with {@code keytool} on the keystore): rotate by adding an
- * entry and repointing the signing alias, retire one by removing it. So "decommission" and "removal"
- * are the same thing - a change to the keystore - and {@link #rotate()} / {@link #decommission(String)}
- * are unsupported here.
+ * the operator's responsibility, managed with {@code keytool} on the keystore: rotate by adding an
+ * entry and repointing the signing alias, retire one by removing it - so there is no in-process key
+ * management here.
  */
 @NullMarked
 public interface TokenSigningKeyService
@@ -35,20 +34,4 @@ public interface TokenSigningKeyService
      * @throws IllegalArgumentException if the key id is not a known keystore entry.
      */
     SecretKey getSigningKey( String kid );
-
-    /**
-     * Unsupported: token-signing keys are managed in the keystore (with {@code keytool}), not in
-     * process. Rotate by adding an entry and repointing the signing alias.
-     *
-     * @throws UnsupportedOperationException always.
-     */
-    String rotate();
-
-    /**
-     * Unsupported: a key is retired by removing it from the keystore (with {@code keytool}), which is
-     * the same operation as removal.
-     *
-     * @throws UnsupportedOperationException always.
-     */
-    void decommission( String keyId );
 }

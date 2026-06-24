@@ -93,19 +93,6 @@ class TokenSigningKeyServiceImplTest
     }
 
     @Test
-    void rotate_and_decommission_are_unsupported()
-        throws Exception
-    {
-        final Path keystore = tempDir.resolve( "tokens.p12" );
-        writeKeystore( keystore, Map.of( "sign-1", newKey() ) );
-
-        final TokenSigningKeyServiceImpl service = service( keystore, "sign-1" );
-
-        assertThrows( UnsupportedOperationException.class, service::rotate );
-        assertThrows( UnsupportedOperationException.class, () -> service.decommission( "sign-1" ) );
-    }
-
-    @Test
     void reloads_when_the_keystore_file_changes()
         throws Exception
     {

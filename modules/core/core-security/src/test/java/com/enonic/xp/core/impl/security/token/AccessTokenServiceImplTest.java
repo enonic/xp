@@ -134,17 +134,5 @@ class AccessTokenServiceImplTest
         {
             return key;
         }
-
-        @Override
-        public String rotate()
-        {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void decommission( final String keyId )
-        {
-            throw new UnsupportedOperationException();
-        }
     }
 }
