@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.Base64;
+import java.util.Comparator;
 import java.util.HexFormat;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -196,40 +197,26 @@ public class TokenSigningKeyServiceImpl
             final Nodes nodes = nodeService.getByIds(
                 nodeService.findByParent( FindNodesByParentParams.create().parentPath( KEYS_PATH ).size( -1 ).build() ).getNodeIds() );
 
-            Node best = null;
-            for ( final Node node : nodes )
-            {
-                if ( !USE_TOKEN_SIGNING.equals( node.data().getString( "use" ) ) )
-                {
-                    continue;
-                }
-                if ( best == null || isBetter( node, best ) )
-                {
-                    best = node;
-                }
-            }
-            return best == null ? null : best.name().toString();
+            return nodes.stream()
+                .filter( node -> USE_TOKEN_SIGNING.equals( node.data().getString( "use" ) ) )
+                .map( node -> new KeyCandidate( node.name().toString(), Boolean.TRUE.equals( node.data().getBoolean( "preferred" ) ),
+                                                node.data().getInstant( "created" ) ) )
+                .max( BY_PREFERENCE )
+                .map( KeyCandidate::kid )
+                .orElse( null );
         } );
     }
 
-    private static boolean isBetter( final Node candidate, final Node current )
-    {
-        return preferOver( Boolean.TRUE.equals( candidate.data().getBoolean( "preferred" ) ), candidate.data().getInstant( "created" ),
-                           Boolean.TRUE.equals( current.data().getBoolean( "preferred" ) ), current.data().getInstant( "created" ) );
-    }
-
     /**
-     * Selection rule for the preferred signing key: an explicitly preferred key wins; otherwise (or
-     * on a tie) the most recently created key wins. Package-private for testing.
+     * Orders signing keys so the preferred (signing) key is the maximum: an explicitly preferred key
+     * ranks above a non-preferred one; ties (and missing flags) are broken by the most recent
+     * {@code created} (a key with a creation time ranks above one without). Package-private for testing.
      */
-    static boolean preferOver( final boolean candidatePreferred, @Nullable final Instant candidateCreated, final boolean currentPreferred,
-                               @Nullable final Instant currentCreated )
+    static final Comparator<KeyCandidate> BY_PREFERENCE = Comparator.comparing( KeyCandidate::preferred )
+        .thenComparing( KeyCandidate::created, Comparator.nullsFirst( Comparator.naturalOrder() ) );
+
+    record KeyCandidate(String kid, boolean preferred, @Nullable Instant created)
     {
-        if ( candidatePreferred != currentPreferred )
-        {
-            return candidatePreferred;
-        }
-        return candidateCreated != null && ( currentCreated == null || candidateCreated.isAfter( currentCreated ) );
     }
 
     private PropertyTree newKeyData( final boolean preferred )
