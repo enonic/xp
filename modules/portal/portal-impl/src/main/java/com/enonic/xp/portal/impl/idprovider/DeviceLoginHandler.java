@@ -235,7 +235,7 @@ public class DeviceLoginHandler
                 {
                     return oauthError( HttpStatus.BAD_REQUEST, "invalid_grant", "client_id mismatch" );
                 }
-                return tokenResponse( idProvider, subject, poll.getAudience(), poll.getClientId(), poll.getScope() );
+                return tokenResponse( idProvider, subject, poll.getAudience(), clientId, poll.getScope() );
             case EXPIRED:
             default:
                 return oauthError( HttpStatus.BAD_REQUEST, "expired_token", null );
@@ -273,19 +273,18 @@ public class DeviceLoginHandler
             return oauthError( HttpStatus.BAD_REQUEST, "invalid_grant", "PKCE verification failed" );
         }
 
-        return tokenResponse( idProvider, PrincipalKey.from( authCode.subject ), authCode.audience, authCode.clientId, authCode.scope );
+        return tokenResponse( idProvider, PrincipalKey.from( authCode.subject ), authCode.audience, clientId, authCode.scope );
     }
 
     private PortalResponse tokenResponse( final IdProviderKey idProvider, final PrincipalKey subject, @Nullable final String audience,
-                                          @Nullable final String clientId, @Nullable final String scope )
+                                          final String clientId, @Nullable final String scope )
     {
         final AccessTokenParams.Builder params =
-            AccessTokenParams.create().subject( subject ).issuer( issuer( idProvider ) ).ttl( ACCESS_TOKEN_TTL );
+            AccessTokenParams.create().subject( subject ).issuer( issuer( idProvider ) ).ttl( ACCESS_TOKEN_TTL ).clientId( clientId );
         for ( final String aud : splitAudience( audience ) )
         {
             params.addAudience( aud );
         }
-        applyIfPresent( clientId, params::clientId );
         applyIfPresent( scope, params::scope );
 
         final String token = accessTokenService.issue( params.build() );
@@ -411,7 +410,8 @@ public class DeviceLoginHandler
     {
         // RFC 6749 section 4.1.1: client_id is REQUIRED. A missing/invalid client_id (like a bad
         // redirect_uri) must never be redirected to (RFC 6749 section 4.1.2.1), so it is rendered here.
-        if ( param( req, "client_id" ) == null )
+        final String clientId = param( req, "client_id" );
+        if ( clientId == null )
         {
             return oauthError( HttpStatus.BAD_REQUEST, "invalid_request", "client_id is required" );
         }
@@ -422,7 +422,7 @@ public class DeviceLoginHandler
         }
         // An invalid redirect target must never be redirected to (open-redirect / code-leak guard), so
         // a rejection is rendered directly and the flow stops here.
-        final PortalResponse rejected = checkRedirect( req, idProvider, redirectUri );
+        final PortalResponse rejected = checkRedirect( req, idProvider, redirectUri, clientId );
         if ( rejected != null )
         {
             return rejected;
@@ -447,14 +447,15 @@ public class DeviceLoginHandler
      * flow may continue.
      */
     @Nullable
-    private PortalResponse checkRedirect( final PortalRequest req, final IdProviderKey idProvider, final String redirectUri )
+    private PortalResponse checkRedirect( final PortalRequest req, final IdProviderKey idProvider, final String redirectUri,
+                                          final String clientId )
         throws IOException
     {
         if ( idProviderControllerService.hasFunction( idProvider, CONFIGURE_FUNCTION ) )
         {
             // The id provider supplies its per-client redirect registry via configure(); core owns the
             // matching. Allowed only if registered for the request's client_id.
-            final boolean allowed = registeredRedirectUris( req, idProvider, param( req, "client_id" ) ).stream()
+            final boolean allowed = registeredRedirectUris( req, idProvider, clientId ).stream()
                 .anyMatch( registered -> redirectMatches( registered, redirectUri ) );
             return allowed ? null : oauthError( HttpStatus.BAD_REQUEST, "invalid_request", "redirect_uri is not allowed" );
         }
@@ -469,8 +470,7 @@ public class DeviceLoginHandler
      * Empty if the hook returns nothing, the client is unknown, or it has no registered URIs.
      */
     @SuppressWarnings("unchecked")
-    private List<String> registeredRedirectUris( final PortalRequest req, final IdProviderKey idProvider,
-                                                 @Nullable final String clientId )
+    private List<String> registeredRedirectUris( final PortalRequest req, final IdProviderKey idProvider, final String clientId )
         throws IOException
     {
         final Object config = idProviderControllerService.executeFunction( IdProviderControllerExecutionParams.create()

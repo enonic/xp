@@ -87,6 +87,7 @@ class DeviceAuthServiceImplTest
     {
         final DeviceAuthorization auth = service.start( DeviceAuthorizationParams.create()
                                                             .idProvider( IDP )
+                                                            .clientId( "cli" )
                                                             .ttl( Duration.ofMinutes( 10 ) )
                                                             .pollInterval( Duration.ofSeconds( 5 ) )
                                                             .build() );

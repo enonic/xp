@@ -16,7 +16,6 @@ public final class DeviceAuthorizationParams
 {
     private final IdProviderKey idProvider;
 
-    @Nullable
     private final String clientId;
 
     @Nullable
@@ -32,7 +31,7 @@ public final class DeviceAuthorizationParams
     private DeviceAuthorizationParams( final Builder builder )
     {
         this.idProvider = Objects.requireNonNull( builder.idProvider, "idProvider is required" );
-        this.clientId = builder.clientId;
+        this.clientId = Objects.requireNonNull( builder.clientId, "clientId is required" );
         this.scope = builder.scope;
         this.audience = builder.audience;
         this.ttl = builder.ttl;
@@ -49,7 +48,6 @@ public final class DeviceAuthorizationParams
         return idProvider;
     }
 
-    @Nullable
     public String getClientId()
     {
         return clientId;
@@ -104,7 +102,7 @@ public final class DeviceAuthorizationParams
         }
 
         /**
-         * Sets the requesting client identifier. Optional.
+         * Sets the requesting client identifier. Required (RFC 8628 section 3.1).
          */
         public Builder clientId( final String clientId )
         {

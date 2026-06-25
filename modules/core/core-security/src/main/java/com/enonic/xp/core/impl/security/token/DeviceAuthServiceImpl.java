@@ -58,7 +58,7 @@ public class DeviceAuthServiceImpl
 
         final Map<String, Object> record = Map.of( "status", "pending",
                                                     "userCode", userCode,
-                                                    "clientId", nullToEmpty( params.getClientId() ),
+                                                    "clientId", params.getClientId(),
                                                     "scope", nullToEmpty( params.getScope() ),
                                                     "audience", nullToEmpty( params.getAudience() ),
                                                     "createdAt", now,
