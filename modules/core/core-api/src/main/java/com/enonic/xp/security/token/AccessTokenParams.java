@@ -1,13 +1,13 @@
 package com.enonic.xp.security.token;
 
 import java.time.Duration;
-import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.security.PrincipalKey;
 
@@ -23,7 +23,7 @@ public final class AccessTokenParams
 
     private final String issuer;
 
-    private final ImmutableList<String> audiences;
+    private final ImmutableSet<String> audiences;
 
     @Nullable
     private final String clientId;
@@ -58,7 +58,7 @@ public final class AccessTokenParams
         return issuer;
     }
 
-    public List<String> getAudiences()
+    public Set<String> getAudiences()
     {
         return audiences;
     }
@@ -86,7 +86,7 @@ public final class AccessTokenParams
 
         private String issuer;
 
-        private final ImmutableList.Builder<String> audiences = ImmutableList.builder();
+        private final ImmutableSet.Builder<String> audiences = ImmutableSet.builder();
 
         @Nullable
         private String clientId;
@@ -122,15 +122,6 @@ public final class AccessTokenParams
         public Builder addAudience( final String audience )
         {
             this.audiences.add( Objects.requireNonNull( audience, "audience is required" ) );
-            return this;
-        }
-
-        /**
-         * Adds all the given audiences (RFC 8707 resource indicators).
-         */
-        public Builder audiences( final Iterable<String> audiences )
-        {
-            audiences.forEach( this::addAudience );
             return this;
         }
 
