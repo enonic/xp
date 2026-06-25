@@ -18,7 +18,7 @@ import com.enonic.xp.security.token.DeviceAuthService;
 import com.enonic.xp.security.token.DeviceAuthorization;
 import com.enonic.xp.security.token.DeviceAuthorizationParams;
 import com.enonic.xp.security.token.DeviceAuthorizationPoll;
-import com.enonic.xp.security.token.DeviceAuthorizationState;
+import com.enonic.xp.security.token.DeviceAuthorizationPoll.State;
 import com.enonic.xp.shared.SharedMap;
 import com.enonic.xp.shared.SharedMapService;
 
@@ -123,13 +123,13 @@ public class DeviceAuthServiceImpl
     public DeviceAuthorizationPoll poll( final IdProviderKey idProvider, final String deviceCode )
     {
         final SharedMap<String, Object> map = getMap( idProvider );
-        final DeviceAuthorizationPoll[] result = {DeviceAuthorizationPoll.of( DeviceAuthorizationState.EXPIRED )};
+        final DeviceAuthorizationPoll[] result = {DeviceAuthorizationPoll.of( State.EXPIRED )};
 
         map.modify( deviceCode, value -> {
             final HashMap<String, Object> record = asRecord( value );
             if ( record == null )
             {
-                result[0] = DeviceAuthorizationPoll.of( DeviceAuthorizationState.EXPIRED );
+                result[0] = DeviceAuthorizationPoll.of( State.EXPIRED );
                 return null;
             }
 
@@ -138,7 +138,7 @@ public class DeviceAuthServiceImpl
             final long lastPolledAt = ( (Number) record.get( "lastPolledAt" ) ).longValue();
             if ( lastPolledAt != 0 && ( now - lastPolledAt ) < pollIntervalMillis )
             {
-                result[0] = DeviceAuthorizationPoll.of( DeviceAuthorizationState.SLOW_DOWN );
+                result[0] = DeviceAuthorizationPoll.of( State.SLOW_DOWN );
                 return record;
             }
             record.put( "lastPolledAt", now );
@@ -146,23 +146,19 @@ public class DeviceAuthServiceImpl
             final String status = (String) record.get( "status" );
             if ( "denied".equals( status ) )
             {
-                result[0] = DeviceAuthorizationPoll.of( DeviceAuthorizationState.DENIED );
+                result[0] = DeviceAuthorizationPoll.of( State.DENIED );
                 return null;
             }
             if ( "approved".equals( status ) )
             {
-                result[0] = DeviceAuthorizationPoll.create()
-                    .state( DeviceAuthorizationState.APPROVED )
-                    .subject( PrincipalKey.from( (String) record.get( "subject" ) ) )
-                    .idProvider( IdProviderKey.from( (String) record.get( "idProvider" ) ) )
-                    .audience( (String) record.get( "audience" ) )
-                    .scope( (String) record.get( "scope" ) )
-                    .clientId( (String) record.get( "clientId" ) )
-                    .build();
+                result[0] = new DeviceAuthorizationPoll( State.APPROVED, PrincipalKey.from( (String) record.get( "subject" ) ),
+                                                         IdProviderKey.from( (String) record.get( "idProvider" ) ),
+                                                         (String) record.get( "audience" ), (String) record.get( "scope" ),
+                                                         (String) record.get( "clientId" ) );
                 return null; // single use
             }
 
-            result[0] = DeviceAuthorizationPoll.of( DeviceAuthorizationState.PENDING );
+            result[0] = DeviceAuthorizationPoll.of( State.PENDING );
             return record;
         }, remainingTtl( map.get( deviceCode ) ) );
 

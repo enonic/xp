@@ -9,162 +9,55 @@ import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 
 /**
- * The result of polling a device authorization request. When the state is
- * {@link DeviceAuthorizationState#APPROVED} the approved subject and the original request
- * details (used to mint the access token) are populated.
+ * The result of polling a device authorization request. When the {@link State} is
+ * {@link State#APPROVED} the approved subject and the original request details (used to mint the
+ * access token) are populated; otherwise they are {@code null}.
  */
 @NullMarked
-public final class DeviceAuthorizationPoll
+public record DeviceAuthorizationPoll(State state, @Nullable PrincipalKey subject, @Nullable IdProviderKey idProvider,
+                                      @Nullable String audience, @Nullable String scope, @Nullable String clientId)
 {
-    private final DeviceAuthorizationState state;
-
-    @Nullable
-    private final PrincipalKey subject;
-
-    @Nullable
-    private final IdProviderKey idProvider;
-
-    @Nullable
-    private final String audience;
-
-    @Nullable
-    private final String scope;
-
-    @Nullable
-    private final String clientId;
-
-    private DeviceAuthorizationPoll( final Builder builder )
+    public DeviceAuthorizationPoll
     {
-        this.state = Objects.requireNonNull( builder.state, "state is required" );
-        this.subject = builder.subject;
-        this.idProvider = builder.idProvider;
-        this.audience = builder.audience;
-        this.scope = builder.scope;
-        this.clientId = builder.clientId;
+        Objects.requireNonNull( state, "state is required" );
     }
 
-    public static DeviceAuthorizationPoll of( final DeviceAuthorizationState state )
+    /**
+     * A poll result carrying only a state, with no approval details (for the non-approved states).
+     */
+    public static DeviceAuthorizationPoll of( final State state )
     {
-        return new Builder().state( state ).build();
+        return new DeviceAuthorizationPoll( state, null, null, null, null, null );
     }
 
-    public static Builder create()
+    /**
+     * State of a device authorization request when polled (RFC 8628 section 3.5).
+     */
+    public enum State
     {
-        return new Builder();
-    }
-
-    public DeviceAuthorizationState getState()
-    {
-        return state;
-    }
-
-    @Nullable
-    public PrincipalKey getSubject()
-    {
-        return subject;
-    }
-
-    @Nullable
-    public IdProviderKey getIdProvider()
-    {
-        return idProvider;
-    }
-
-    @Nullable
-    public String getAudience()
-    {
-        return audience;
-    }
-
-    @Nullable
-    public String getScope()
-    {
-        return scope;
-    }
-
-    @Nullable
-    public String getClientId()
-    {
-        return clientId;
-    }
-
-    public static final class Builder
-    {
-        private DeviceAuthorizationState state;
-
-        @Nullable
-        private PrincipalKey subject;
-
-        @Nullable
-        private IdProviderKey idProvider;
-
-        @Nullable
-        private String audience;
-
-        @Nullable
-        private String scope;
-
-        @Nullable
-        private String clientId;
+        /**
+         * The end user has not yet completed the verification step.
+         */
+        PENDING,
 
         /**
-         * Sets the poll state. Required.
+         * The client polled faster than the allowed interval and should slow down.
          */
-        public Builder state( final DeviceAuthorizationState state )
-        {
-            this.state = state;
-            return this;
-        }
+        SLOW_DOWN,
 
         /**
-         * Sets the approved subject. Present only when the state is
-         * {@link DeviceAuthorizationState#APPROVED}.
+         * The end user denied the request.
          */
-        public Builder subject( final PrincipalKey subject )
-        {
-            this.subject = subject;
-            return this;
-        }
+        DENIED,
 
         /**
-         * Sets the id provider the request was approved for.
+         * The request is unknown or has expired.
          */
-        public Builder idProvider( final IdProviderKey idProvider )
-        {
-            this.idProvider = idProvider;
-            return this;
-        }
+        EXPIRED,
 
         /**
-         * Sets the requested audience captured at authorization time (used to mint the token).
+         * The end user approved the request; a token may now be issued.
          */
-        public Builder audience( final String audience )
-        {
-            this.audience = audience;
-            return this;
-        }
-
-        /**
-         * Sets the requested scope captured at authorization time.
-         */
-        public Builder scope( final String scope )
-        {
-            this.scope = scope;
-            return this;
-        }
-
-        /**
-         * Sets the requesting client identifier captured at authorization time.
-         */
-        public Builder clientId( final String clientId )
-        {
-            this.clientId = clientId;
-            return this;
-        }
-
-        public DeviceAuthorizationPoll build()
-        {
-            return new DeviceAuthorizationPoll( this );
-        }
+        APPROVED
     }
 }

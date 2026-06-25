@@ -215,7 +215,7 @@ public class DeviceLoginHandler
         }
 
         final DeviceAuthorizationPoll poll = deviceAuthService.poll( idProvider, deviceCode );
-        switch ( poll.getState() )
+        switch ( poll.state() )
         {
             case PENDING:
                 return oauthError( HttpStatus.BAD_REQUEST, "authorization_pending", null );
@@ -224,18 +224,18 @@ public class DeviceLoginHandler
             case DENIED:
                 return oauthError( HttpStatus.BAD_REQUEST, "access_denied", null );
             case APPROVED:
-                final PrincipalKey subject = poll.getSubject();
+                final PrincipalKey subject = poll.subject();
                 if ( subject == null )
                 {
                     return oauthError( HttpStatus.BAD_REQUEST, "expired_token", null );
                 }
                 // RFC 8628 section 3.4 / RFC 6749 section 4.1.3: the device_code must have been issued
                 // to the requesting client.
-                if ( !clientId.equals( poll.getClientId() ) )
+                if ( !clientId.equals( poll.clientId() ) )
                 {
                     return oauthError( HttpStatus.BAD_REQUEST, "invalid_grant", "client_id mismatch" );
                 }
-                return tokenResponse( idProvider, subject, poll.getAudience(), clientId, poll.getScope() );
+                return tokenResponse( idProvider, subject, poll.audience(), clientId, poll.scope() );
             case EXPIRED:
             default:
                 return oauthError( HttpStatus.BAD_REQUEST, "expired_token", null );

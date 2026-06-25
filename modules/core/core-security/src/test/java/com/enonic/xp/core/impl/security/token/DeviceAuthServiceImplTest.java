@@ -14,7 +14,7 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.token.DeviceAuthorization;
 import com.enonic.xp.security.token.DeviceAuthorizationParams;
 import com.enonic.xp.security.token.DeviceAuthorizationPoll;
-import com.enonic.xp.security.token.DeviceAuthorizationState;
+import com.enonic.xp.security.token.DeviceAuthorizationPoll.State;
 import com.enonic.xp.shared.SharedMap;
 import com.enonic.xp.shared.SharedMapService;
 
@@ -51,7 +51,7 @@ class DeviceAuthServiceImplTest
     {
         final DeviceAuthorization auth = start();
 
-        assertEquals( DeviceAuthorizationState.PENDING, service.poll( IDP, auth.deviceCode() ).getState() );
+        assertEquals( State.PENDING, service.poll( IDP, auth.deviceCode() ).state() );
 
         final Optional<String> byUserCode = service.findByUserCode( IDP, auth.userCode() );
         assertTrue( byUserCode.isPresent() );
@@ -60,12 +60,12 @@ class DeviceAuthServiceImplTest
         assertTrue( service.resolve( IDP, auth.deviceCode(), true, PrincipalKey.from( "user:myidp:john" ) ) );
 
         final DeviceAuthorizationPoll approved = service.poll( IDP, auth.deviceCode() );
-        assertEquals( DeviceAuthorizationState.APPROVED, approved.getState() );
-        assertEquals( PrincipalKey.from( "user:myidp:john" ), approved.getSubject() );
-        assertEquals( "https://api.example.com", approved.getAudience() );
+        assertEquals( State.APPROVED, approved.state() );
+        assertEquals( PrincipalKey.from( "user:myidp:john" ), approved.subject() );
+        assertEquals( "https://api.example.com", approved.audience() );
 
         // Single use: the code is consumed once approved.
-        assertEquals( DeviceAuthorizationState.EXPIRED, service.poll( IDP, auth.deviceCode() ).getState() );
+        assertEquals( State.EXPIRED, service.poll( IDP, auth.deviceCode() ).state() );
     }
 
     @Test
@@ -73,13 +73,13 @@ class DeviceAuthServiceImplTest
     {
         final DeviceAuthorization auth = start();
         assertTrue( service.resolve( IDP, auth.deviceCode(), false, null ) );
-        assertEquals( DeviceAuthorizationState.DENIED, service.poll( IDP, auth.deviceCode() ).getState() );
+        assertEquals( State.DENIED, service.poll( IDP, auth.deviceCode() ).state() );
     }
 
     @Test
     void unknown_device_code_is_expired()
     {
-        assertEquals( DeviceAuthorizationState.EXPIRED, service.poll( IDP, "nope" ).getState() );
+        assertEquals( State.EXPIRED, service.poll( IDP, "nope" ).state() );
     }
 
     @Test
@@ -91,8 +91,8 @@ class DeviceAuthServiceImplTest
                                                             .ttl( Duration.ofMinutes( 10 ) )
                                                             .pollInterval( Duration.ofSeconds( 5 ) )
                                                             .build() );
-        assertEquals( DeviceAuthorizationState.PENDING, service.poll( IDP, auth.deviceCode() ).getState() );
-        assertEquals( DeviceAuthorizationState.SLOW_DOWN, service.poll( IDP, auth.deviceCode() ).getState() );
+        assertEquals( State.PENDING, service.poll( IDP, auth.deviceCode() ).state() );
+        assertEquals( State.SLOW_DOWN, service.poll( IDP, auth.deviceCode() ).state() );
     }
 
     @Test
