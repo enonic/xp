@@ -51,29 +51,29 @@ class DeviceAuthServiceImplTest
     {
         final DeviceAuthorization auth = start();
 
-        assertEquals( DeviceAuthorizationState.PENDING, service.poll( IDP, auth.getDeviceCode() ).getState() );
+        assertEquals( DeviceAuthorizationState.PENDING, service.poll( IDP, auth.deviceCode() ).getState() );
 
-        final Optional<String> byUserCode = service.findByUserCode( IDP, auth.getUserCode() );
+        final Optional<String> byUserCode = service.findByUserCode( IDP, auth.userCode() );
         assertTrue( byUserCode.isPresent() );
-        assertEquals( auth.getDeviceCode(), byUserCode.get() );
+        assertEquals( auth.deviceCode(), byUserCode.get() );
 
-        assertTrue( service.resolve( IDP, auth.getDeviceCode(), true, PrincipalKey.from( "user:myidp:john" ) ) );
+        assertTrue( service.resolve( IDP, auth.deviceCode(), true, PrincipalKey.from( "user:myidp:john" ) ) );
 
-        final DeviceAuthorizationPoll approved = service.poll( IDP, auth.getDeviceCode() );
+        final DeviceAuthorizationPoll approved = service.poll( IDP, auth.deviceCode() );
         assertEquals( DeviceAuthorizationState.APPROVED, approved.getState() );
         assertEquals( PrincipalKey.from( "user:myidp:john" ), approved.getSubject() );
         assertEquals( "https://api.example.com", approved.getAudience() );
 
         // Single use: the code is consumed once approved.
-        assertEquals( DeviceAuthorizationState.EXPIRED, service.poll( IDP, auth.getDeviceCode() ).getState() );
+        assertEquals( DeviceAuthorizationState.EXPIRED, service.poll( IDP, auth.deviceCode() ).getState() );
     }
 
     @Test
     void deny_flow()
     {
         final DeviceAuthorization auth = start();
-        assertTrue( service.resolve( IDP, auth.getDeviceCode(), false, null ) );
-        assertEquals( DeviceAuthorizationState.DENIED, service.poll( IDP, auth.getDeviceCode() ).getState() );
+        assertTrue( service.resolve( IDP, auth.deviceCode(), false, null ) );
+        assertEquals( DeviceAuthorizationState.DENIED, service.poll( IDP, auth.deviceCode() ).getState() );
     }
 
     @Test
@@ -91,8 +91,8 @@ class DeviceAuthServiceImplTest
                                                             .ttl( Duration.ofMinutes( 10 ) )
                                                             .pollInterval( Duration.ofSeconds( 5 ) )
                                                             .build() );
-        assertEquals( DeviceAuthorizationState.PENDING, service.poll( IDP, auth.getDeviceCode() ).getState() );
-        assertEquals( DeviceAuthorizationState.SLOW_DOWN, service.poll( IDP, auth.getDeviceCode() ).getState() );
+        assertEquals( DeviceAuthorizationState.PENDING, service.poll( IDP, auth.deviceCode() ).getState() );
+        assertEquals( DeviceAuthorizationState.SLOW_DOWN, service.poll( IDP, auth.deviceCode() ).getState() );
     }
 
     @Test

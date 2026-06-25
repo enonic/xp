@@ -120,7 +120,7 @@ public final class AccessTokenAuthFilter
             return null;
         }
 
-        final PrincipalKey subject = verified.get().getSubject();
+        final PrincipalKey subject = verified.get().subject();
         if ( !subject.isUser() )
         {
             return null;

@@ -44,12 +44,12 @@ final class NativeAuthCodeStore
         final String code = generateCode();
 
         final HashMap<String, Object> record = new HashMap<>();
-        record.put( "challenge", authCode.challenge );
-        record.put( "redirectUri", authCode.redirectUri );
-        record.put( "subject", authCode.subject );
-        record.put( "clientId", authCode.clientId );
-        record.put( "scope", authCode.scope );
-        record.put( "audience", authCode.audience );
+        record.put( "challenge", authCode.challenge() );
+        record.put( "redirectUri", authCode.redirectUri() );
+        record.put( "subject", authCode.subject() );
+        record.put( "clientId", authCode.clientId() );
+        record.put( "scope", authCode.scope() );
+        record.put( "audience", authCode.audience() );
 
         getMap( idProvider ).set( code, record, ttlSeconds );
         return code;
@@ -98,29 +98,7 @@ final class NativeAuthCodeStore
         return value == null ? "" : value.toString();
     }
 
-    static final class AuthCode
+    record AuthCode(String challenge, String redirectUri, String subject, String clientId, String scope, String audience)
     {
-        final String challenge;
-
-        final String redirectUri;
-
-        final String subject;
-
-        final String clientId;
-
-        final String scope;
-
-        final String audience;
-
-        AuthCode( final String challenge, final String redirectUri, final String subject, final String clientId, final String scope,
-                  final String audience )
-        {
-            this.challenge = challenge;
-            this.redirectUri = redirectUri;
-            this.subject = subject;
-            this.clientId = clientId;
-            this.scope = scope;
-            this.audience = audience;
-        }
     }
 }

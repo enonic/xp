@@ -128,13 +128,8 @@ public class AccessTokenServiceImpl
             }
 
             // The id provider is part of the subject PrincipalKey; it is not stored separately.
-            return Optional.of( AccessToken.create()
-                                    .subject( subjectKey )
-                                    .issuer( (String) iss )
-                                    .audiences( toStringSet( claims.get( "aud" ) ) )
-                                    .expiresAt( expiresAt )
-                                    .claims( toClaimsObject( claims ) )
-                                    .build() );
+            return Optional.of(
+                new AccessToken( subjectKey, (String) iss, toStringSet( claims.get( "aud" ) ), expiresAt, toClaimsObject( claims ) ) );
         }
         catch ( Exception e )
         {

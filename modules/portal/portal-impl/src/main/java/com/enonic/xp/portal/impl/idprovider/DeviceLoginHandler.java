@@ -181,12 +181,12 @@ public class DeviceLoginHandler
 
         final String verificationUri = endpointUrl( req, "device" );
         return json( HttpStatus.OK, GenericValue.newObject()
-            .put( "device_code", auth.getDeviceCode() )
-            .put( "user_code", auth.getUserCode() )
+            .put( "device_code", auth.deviceCode() )
+            .put( "user_code", auth.userCode() )
             .put( "verification_uri", verificationUri )
-            .put( "verification_uri_complete", verificationUri + "?user_code=" + enc( auth.getUserCode() ) )
-            .put( "expires_in", (long) auth.getExpiresInSeconds() )
-            .put( "interval", (long) auth.getPollIntervalSeconds() )
+            .put( "verification_uri_complete", verificationUri + "?user_code=" + enc( auth.userCode() ) )
+            .put( "expires_in", (long) auth.expiresInSeconds() )
+            .put( "interval", (long) auth.pollIntervalSeconds() )
             .build() );
     }
 
@@ -258,22 +258,22 @@ public class DeviceLoginHandler
         {
             return oauthError( HttpStatus.BAD_REQUEST, "invalid_grant", "Invalid or expired code" );
         }
-        if ( !authCode.redirectUri.equals( redirectUri ) )
+        if ( !authCode.redirectUri().equals( redirectUri ) )
         {
             return oauthError( HttpStatus.BAD_REQUEST, "invalid_grant", "redirect_uri mismatch" );
         }
         // RFC 6749 section 4.1.3: for a public client, the code must have been issued to the client_id
         // in the token request.
-        if ( !clientId.equals( authCode.clientId ) )
+        if ( !clientId.equals( authCode.clientId() ) )
         {
             return oauthError( HttpStatus.BAD_REQUEST, "invalid_grant", "client_id mismatch" );
         }
-        if ( !pkceMatches( codeVerifier, authCode.challenge ) )
+        if ( !pkceMatches( codeVerifier, authCode.challenge() ) )
         {
             return oauthError( HttpStatus.BAD_REQUEST, "invalid_grant", "PKCE verification failed" );
         }
 
-        return tokenResponse( idProvider, PrincipalKey.from( authCode.subject ), authCode.audience, clientId, authCode.scope );
+        return tokenResponse( idProvider, PrincipalKey.from( authCode.subject() ), authCode.audience(), clientId, authCode.scope() );
     }
 
     private PortalResponse tokenResponse( final IdProviderKey idProvider, final PrincipalKey subject, @Nullable final String audience,

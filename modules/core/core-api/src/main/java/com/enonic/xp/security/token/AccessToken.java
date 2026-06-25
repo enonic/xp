@@ -13,128 +13,24 @@ import com.enonic.xp.util.GenericValue;
 
 /**
  * A verified access token. The signature, issuer and expiry have already been validated;
- * audience enforcement is left to the caller via {@link #getAudiences()}. The subject is always a
+ * audience enforcement is left to the caller via {@link #audiences()}. The subject is always a
  * user principal, which also identifies the id provider via {@link PrincipalKey#getIdProviderKey()}.
+ * The {@code claims} are an immutable JSON object ({@link GenericValue.Type#OBJECT}); values are
+ * typed JSON values and never null.
  */
 @NullMarked
-public final class AccessToken
+public record AccessToken(PrincipalKey subject, String issuer, Set<String> audiences, Instant expiresAt, GenericValue claims)
 {
-    private final PrincipalKey subject;
-
-    private final String issuer;
-
-    private final ImmutableSet<String> audiences;
-
-    private final Instant expiresAt;
-
-    private final GenericValue claims;
-
-    private AccessToken( final Builder builder )
+    public AccessToken
     {
-        this.subject = Objects.requireNonNull( builder.subject, "subject is required" );
-        this.issuer = Objects.requireNonNull( builder.issuer, "issuer is required" );
-        this.audiences = ImmutableSet.copyOf( builder.audiences );
-        this.expiresAt = Objects.requireNonNull( builder.expiresAt, "expiresAt is required" );
-        if ( builder.claims.getType() != GenericValue.Type.OBJECT )
+        Objects.requireNonNull( subject, "subject is required" );
+        Objects.requireNonNull( issuer, "issuer is required" );
+        audiences = ImmutableSet.copyOf( audiences );
+        Objects.requireNonNull( expiresAt, "expiresAt is required" );
+        Objects.requireNonNull( claims, "claims is required" );
+        if ( claims.getType() != GenericValue.Type.OBJECT )
         {
             throw new IllegalArgumentException( "claims must be a JSON object" );
-        }
-        this.claims = builder.claims;
-    }
-
-    public static Builder create()
-    {
-        return new Builder();
-    }
-
-    public PrincipalKey getSubject()
-    {
-        return subject;
-    }
-
-    public String getIssuer()
-    {
-        return issuer;
-    }
-
-    public Set<String> getAudiences()
-    {
-        return audiences;
-    }
-
-    public Instant getExpiresAt()
-    {
-        return expiresAt;
-    }
-
-    /**
-     * The token claims as an immutable JSON object. Values are typed JSON values and never null.
-     */
-    public GenericValue getClaims()
-    {
-        return claims;
-    }
-
-    public static final class Builder
-    {
-        private PrincipalKey subject;
-
-        private String issuer;
-
-        private Set<String> audiences = Set.of();
-
-        private Instant expiresAt;
-
-        private GenericValue claims = GenericValue.newObject().build();
-
-        /**
-         * Sets the verified subject (always a user principal). Required.
-         */
-        public Builder subject( final PrincipalKey subject )
-        {
-            this.subject = subject;
-            return this;
-        }
-
-        /**
-         * Sets the issuer from the {@code iss} claim. Required.
-         */
-        public Builder issuer( final String issuer )
-        {
-            this.issuer = issuer;
-            return this;
-        }
-
-        /**
-         * Sets the audiences from the {@code aud} claim (for the caller to enforce).
-         */
-        public Builder audiences( final Set<String> audiences )
-        {
-            this.audiences = audiences;
-            return this;
-        }
-
-        /**
-         * Sets the expiry from the {@code exp} claim. Required.
-         */
-        public Builder expiresAt( final Instant expiresAt )
-        {
-            this.expiresAt = expiresAt;
-            return this;
-        }
-
-        /**
-         * Sets the full token claims. Must be a JSON object ({@link GenericValue.Type#OBJECT}).
-         */
-        public Builder claims( final GenericValue claims )
-        {
-            this.claims = claims;
-            return this;
-        }
-
-        public AccessToken build()
-        {
-            return new AccessToken( this );
         }
     }
 }

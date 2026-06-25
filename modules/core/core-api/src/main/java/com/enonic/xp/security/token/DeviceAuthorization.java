@@ -7,41 +7,6 @@ import org.jspecify.annotations.NullMarked;
  * poll interval are the protocol's integer-seconds values ({@code expires_in} and {@code interval}).
  */
 @NullMarked
-public final class DeviceAuthorization
+public record DeviceAuthorization(String deviceCode, String userCode, int expiresInSeconds, int pollIntervalSeconds)
 {
-    private final String deviceCode;
-
-    private final String userCode;
-
-    private final int expiresInSeconds;
-
-    private final int pollIntervalSeconds;
-
-    public DeviceAuthorization( final String deviceCode, final String userCode, final int expiresInSeconds, final int pollIntervalSeconds )
-    {
-        this.deviceCode = deviceCode;
-        this.userCode = userCode;
-        this.expiresInSeconds = expiresInSeconds;
-        this.pollIntervalSeconds = pollIntervalSeconds;
-    }
-
-    public String getDeviceCode()
-    {
-        return deviceCode;
-    }
-
-    public String getUserCode()
-    {
-        return userCode;
-    }
-
-    public int getExpiresInSeconds()
-    {
-        return expiresInSeconds;
-    }
-
-    public int getPollIntervalSeconds()
-    {
-        return pollIntervalSeconds;
-    }
 }
