@@ -142,7 +142,7 @@ public class IdProviderResponseWrapper
                 .servletRequest( request )
                 .response( response )
                 .build();
-            final boolean responseSerialized = idProviderControllerService.executeResponse( executionParams ) != null;
+            final boolean responseSerialized = idProviderControllerService.execute( executionParams ) != null;
             if ( responseSerialized )
             {
                 errorHandled = true;

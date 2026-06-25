@@ -36,39 +36,16 @@ class DeviceLoginHandlerTest
     }
 
     @Test
-    void non_loopback_redirects_are_not_auto_allowed()
+    void non_loopback_redirects_go_to_the_idp_hook()
     {
         // Private-use scheme, claimed https, remote http, bare scheme and relative paths are not
-        // auto-allowed - each must be registered for the client via the configure hook. 'localhost' is
-        // not a loopback literal per RFC 8252 (it can resolve off-loopback), so it is not auto-allowed.
+        // auto-allowed - each is the id provider's allowRedirectUri decision. 'localhost' is not a
+        // loopback literal per RFC 8252 (it can resolve off-loopback), so it is not auto-allowed either.
         assertFalse( DeviceLoginHandler.isLoopback( "http://localhost/cb" ) );
         assertFalse( DeviceLoginHandler.isLoopback( "com.example.app:/oauth/cb" ) );
         assertFalse( DeviceLoginHandler.isLoopback( "https://app.example.com/cb" ) );
         assertFalse( DeviceLoginHandler.isLoopback( "http://evil.example.com/cb" ) );
         assertFalse( DeviceLoginHandler.isLoopback( "myapp:/cb" ) );
         assertFalse( DeviceLoginHandler.isLoopback( "/relative/path" ) );
-    }
-
-    @Test
-    void redirect_matches_exactly_for_non_loopback()
-    {
-        // Non-loopback redirects must match the registered entry exactly.
-        assertTrue( DeviceLoginHandler.redirectMatches( "com.example.app:/oauth", "com.example.app:/oauth" ) );
-        assertTrue( DeviceLoginHandler.redirectMatches( "https://app.example.com/cb", "https://app.example.com/cb" ) );
-        assertFalse( DeviceLoginHandler.redirectMatches( "https://app.example.com/cb", "https://app.example.com/other" ) );
-        assertFalse( DeviceLoginHandler.redirectMatches( "com.example.app:/oauth", "com.evil.app:/oauth" ) );
-    }
-
-    @Test
-    void redirect_matches_loopback_on_flexible_port_only()
-    {
-        // Loopback: the port is flexible, but scheme, host and path must still match.
-        assertTrue( DeviceLoginHandler.redirectMatches( "http://127.0.0.1/cb", "http://127.0.0.1:54321/cb" ) );
-        assertTrue( DeviceLoginHandler.redirectMatches( "http://127.0.0.1:1/cb", "http://127.0.0.1:2/cb" ) );
-        assertTrue( DeviceLoginHandler.redirectMatches( "http://[::1]/cb", "http://[::1]:8080/cb" ) );
-        // Different path - not a match even on loopback.
-        assertFalse( DeviceLoginHandler.redirectMatches( "http://127.0.0.1/cb", "http://127.0.0.1:54321/other" ) );
-        // Different loopback host literal - not a match.
-        assertFalse( DeviceLoginHandler.redirectMatches( "http://127.0.0.1/cb", "http://[::1]/cb" ) );
     }
 }

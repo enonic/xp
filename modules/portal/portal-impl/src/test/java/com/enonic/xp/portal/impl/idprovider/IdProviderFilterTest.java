@@ -51,7 +51,7 @@ class IdProviderFilterTest
         VirtualHostHelper.setVirtualHost( httpServletRequest, virtualHost );
 
         idProviderFilter.doHandle( httpServletRequest, httpServletResponse, filterChain );
-        Mockito.verify( idProviderControllerService ).executeResponse( Mockito.any() );
+        Mockito.verify( idProviderControllerService ).execute( Mockito.any() );
     }
 
     @Test
@@ -76,7 +76,7 @@ class IdProviderFilterTest
                 final FilterChain filterChain = Mockito.mock( FilterChain.class );
 
                 idProviderFilter.doHandle( httpServletRequest, httpServletResponse, filterChain );
-                Mockito.verify( idProviderControllerService, Mockito.times( 0 ) ).executeResponse( Mockito.any() );
+                Mockito.verify( idProviderControllerService, Mockito.times( 0 ) ).execute( Mockito.any() );
                 return null;
             } );
 

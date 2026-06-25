@@ -130,7 +130,7 @@ class IdProviderControllerServiceImplTest
             .idProviderKey( IdProviderKey.from( "missingidprovider" ) )
             .functionName( "missingfunction" )
             .build();
-        final PortalResponse portalResponse = idProviderControllerService.executeResponse( executionParams );
+        final PortalResponse portalResponse = idProviderControllerService.execute( executionParams );
         assertNull( portalResponse );
     }
 
@@ -143,7 +143,7 @@ class IdProviderControllerServiceImplTest
             .idProviderKey( IdProviderKey.from( "myemptyidprovider" ) )
             .functionName( "missingfunction" )
             .build();
-        final PortalResponse portalResponse = idProviderControllerService.executeResponse( executionParams );
+        final PortalResponse portalResponse = idProviderControllerService.execute( executionParams );
         assertNull( portalResponse );
     }
 
@@ -156,7 +156,7 @@ class IdProviderControllerServiceImplTest
             .idProviderKey( IdProviderKey.from( "myemptyidprovider" ) )
             .functionName( "myfunction" )
             .build();
-        final PortalResponse portalResponse = idProviderControllerService.executeResponse( executionParams );
+        final PortalResponse portalResponse = idProviderControllerService.execute( executionParams );
         assertNull( portalResponse );
     }
 
@@ -169,7 +169,7 @@ class IdProviderControllerServiceImplTest
             .idProviderKey( IdProviderKey.from( "myidprovider" ) )
             .functionName( "myfunction" )
             .build();
-        final PortalResponse portalResponse = idProviderControllerService.executeResponse( executionParams );
+        final PortalResponse portalResponse = idProviderControllerService.execute( executionParams );
         assertNotNull( portalResponse );
         assertEquals( HttpStatus.OK, portalResponse.getStatus() );
         assertEquals( "myapplication/myfunction", portalResponse.getBody() );
@@ -183,7 +183,7 @@ class IdProviderControllerServiceImplTest
         final HttpServletRequest httpServletRequest = createHttpServletRequest();
         final IdProviderControllerExecutionParams executionParams =
             IdProviderControllerExecutionParams.create().servletRequest( httpServletRequest ).functionName( "myfunction" ).build();
-        final PortalResponse portalResponse = idProviderControllerService.executeResponse( executionParams );
+        final PortalResponse portalResponse = idProviderControllerService.execute( executionParams );
         assertNull( portalResponse );
     }
 
@@ -208,7 +208,7 @@ class IdProviderControllerServiceImplTest
             .response( response )
             .functionName( "myfunction" )
             .build();
-        final PortalResponse portalResponse = idProviderControllerService.executeResponse( executionParams );
+        final PortalResponse portalResponse = idProviderControllerService.execute( executionParams );
         assertNotNull( portalResponse );
         assertEquals( HttpStatus.OK, portalResponse.getStatus() );
         assertEquals( "myapplication/myfunction", portalResponse.getBody() );
@@ -328,7 +328,7 @@ class IdProviderControllerServiceImplTest
                 .idProviderKey( ID_PROVIDER_KEY )
                 .functionName( functionName )
                 .build();
-            return service.executeResponse( params );
+            return service.execute( params );
         }
 
         private PortalResponse executeWithMethod( final HttpMethod method )
@@ -340,7 +340,7 @@ class IdProviderControllerServiceImplTest
                 .portalRequest( request )
                 .idProviderKey( ID_PROVIDER_KEY )
                 .build();
-            return service.executeResponse( params );
+            return service.execute( params );
         }
     }
 }

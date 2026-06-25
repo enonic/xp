@@ -46,87 +46,47 @@ public class IdProviderControllerServiceImpl
     private WebSerializerService webSerializerService;
 
     @Override
-    public PortalResponse executeResponse( final IdProviderControllerExecutionParams params )
+    public PortalResponse execute( final IdProviderControllerExecutionParams params )
         throws IOException
-    {
-        final Prepared prepared = prepare( params );
-        if ( prepared == null )
-        {
-            return null;
-        }
-
-        final PortalResponse portalResponse = prepared.script.execute( prepared.functionName, prepared.portalRequest );
-
-        if ( portalResponse != null && params.getResponse() != null )
-        {
-            webSerializerService.response( prepared.portalRequest, portalResponse, params.getResponse() );
-        }
-        return portalResponse;
-    }
-
-    @Override
-    public Object executeFunction( final IdProviderControllerExecutionParams params )
-        throws IOException
-    {
-        final Prepared prepared = prepare( params );
-        return prepared == null ? null : prepared.script.executeFunction( prepared.functionName, prepared.portalRequest );
-    }
-
-    /**
-     * Resolves the controller script, the function to call and the portal request to call it with -
-     * the shared prelude for {@link #executeResponse} and {@link #executeFunction}. Returns
-     * {@code null} when the id provider has no controller or does not implement the function.
-     */
-    private Prepared prepare( final IdProviderControllerExecutionParams params )
     {
         final IdProviderKey idProviderKey = retrieveIdProviderKey( params );
         final IdProvider idProvider = retrieveIdProvider( idProviderKey );
         final IdProviderDescriptor idProviderDescriptor = retrieveIdProviderDescriptor( idProvider );
 
-        if ( idProviderDescriptor == null )
+        if ( idProviderDescriptor != null )
         {
-            return null;
+            final IdProviderControllerScript idProviderControllerScript =
+                idProviderControllerScriptFactory.fromScript( getScriptResourceKey( idProviderDescriptor.getKey() ) );
+            final String functionName =
+                resolveFunctionName( params.getFunctionName(), idProviderControllerScript, params.getPortalRequest() );
+            if ( functionName == null )
+            {
+                return null;
+            }
+            final PortalRequest portalRequest;
+
+            if ( params.getServletRequest() != null )
+            {
+                portalRequest = new PortalRequestAdapter().adapt( webSerializerService.request( params.getServletRequest() ) );
+            }
+            else
+            {
+                portalRequest = requireNonNull( params.getPortalRequest() );
+            }
+
+            portalRequest.setApplicationKey( idProviderDescriptor.getKey() );
+            portalRequest.setIdProvider( idProvider );
+
+            final PortalResponse portalResponse = idProviderControllerScript.execute( functionName, portalRequest );
+
+            if ( portalResponse != null && params.getResponse() != null )
+            {
+                webSerializerService.response( portalRequest, portalResponse, params.getResponse() );
+            }
+            return portalResponse;
         }
 
-        final IdProviderControllerScript idProviderControllerScript =
-            idProviderControllerScriptFactory.fromScript( getScriptResourceKey( idProviderDescriptor.getKey() ) );
-        final String functionName =
-            resolveFunctionName( params.getFunctionName(), idProviderControllerScript, params.getPortalRequest() );
-        if ( functionName == null )
-        {
-            return null;
-        }
-
-        final PortalRequest portalRequest;
-        if ( params.getServletRequest() != null )
-        {
-            portalRequest = new PortalRequestAdapter().adapt( webSerializerService.request( params.getServletRequest() ) );
-        }
-        else
-        {
-            portalRequest = requireNonNull( params.getPortalRequest() );
-        }
-
-        portalRequest.setApplicationKey( idProviderDescriptor.getKey() );
-        portalRequest.setIdProvider( idProvider );
-
-        return new Prepared( idProviderControllerScript, functionName, portalRequest );
-    }
-
-    private static final class Prepared
-    {
-        final IdProviderControllerScript script;
-
-        final String functionName;
-
-        final PortalRequest portalRequest;
-
-        Prepared( final IdProviderControllerScript script, final String functionName, final PortalRequest portalRequest )
-        {
-            this.script = script;
-            this.functionName = functionName;
-            this.portalRequest = portalRequest;
-        }
+        return null;
     }
 
     @Override

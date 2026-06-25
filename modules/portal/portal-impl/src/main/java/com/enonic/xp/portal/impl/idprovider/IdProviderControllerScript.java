@@ -40,28 +40,6 @@ class IdProviderControllerScript
         } );
     }
 
-    /**
-     * Executes the function and returns its result mapped to a plain Java value (a {@code Map} for an
-     * object, a {@code List} for an array, or a scalar), rather than serializing it to a
-     * {@link PortalResponse}. Used by the data hooks (e.g. {@code configure}). Returns {@code null} if
-     * the function is absent or returns nothing.
-     */
-    public Object executeFunction( final String functionName, final PortalRequest request )
-    {
-        return withRequest( request, () -> {
-            if ( !this.scriptExports.hasMethod( functionName ) )
-            {
-                return null;
-            }
-            final ScriptValue result = invoke( functionName, request );
-            if ( result == null )
-            {
-                return null;
-            }
-            return result.isObject() ? result.getMap() : result.getValue();
-        } );
-    }
-
     private ScriptValue invoke( final String functionName, final PortalRequest portalRequest )
     {
         return this.scriptExports.executeMethod( functionName, new PortalRequestMapper( portalRequest ) );
