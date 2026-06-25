@@ -166,8 +166,14 @@ public class DeviceLoginHandler
     // POST .../device/code - RFC 8628 device authorization endpoint.
     private PortalResponse deviceAuthorization( final PortalRequest req, final IdProviderKey idProvider )
     {
-        final DeviceAuthorizationParams.Builder params = DeviceAuthorizationParams.create().idProvider( idProvider );
-        applyIfPresent( param( req, "client_id" ), params::clientId );
+        // RFC 8628 section 3.1: client_id is REQUIRED.
+        final String clientId = param( req, "client_id" );
+        if ( clientId == null )
+        {
+            return oauthError( HttpStatus.BAD_REQUEST, "invalid_request", "client_id is required" );
+        }
+
+        final DeviceAuthorizationParams.Builder params = DeviceAuthorizationParams.create().idProvider( idProvider ).clientId( clientId );
         applyIfPresent( param( req, "scope" ), params::scope );
         applyIfPresent( param( req, "resource" ), params::audience );
 
@@ -202,9 +208,10 @@ public class DeviceLoginHandler
     private PortalResponse deviceCodeGrant( final PortalRequest req, final IdProviderKey idProvider )
     {
         final String deviceCode = param( req, "device_code" );
-        if ( deviceCode == null )
+        final String clientId = param( req, "client_id" );
+        if ( deviceCode == null || clientId == null )
         {
-            return oauthError( HttpStatus.BAD_REQUEST, "invalid_request", "Missing device_code" );
+            return oauthError( HttpStatus.BAD_REQUEST, "invalid_request", "Missing device_code or client_id" );
         }
 
         final DeviceAuthorizationPoll poll = deviceAuthService.poll( idProvider, deviceCode );
@@ -222,6 +229,12 @@ public class DeviceLoginHandler
                 {
                     return oauthError( HttpStatus.BAD_REQUEST, "expired_token", null );
                 }
+                // RFC 8628 section 3.4 / RFC 6749 section 4.1.3: the device_code must have been issued
+                // to the requesting client.
+                if ( !clientId.equals( poll.getClientId() ) )
+                {
+                    return oauthError( HttpStatus.BAD_REQUEST, "invalid_grant", "client_id mismatch" );
+                }
                 return tokenResponse( idProvider, subject, poll.getAudience(), poll.getClientId(), poll.getScope() );
             case EXPIRED:
             default:
@@ -234,9 +247,10 @@ public class DeviceLoginHandler
         final String code = param( req, "code" );
         final String redirectUri = param( req, "redirect_uri" );
         final String codeVerifier = param( req, "code_verifier" );
-        if ( code == null || redirectUri == null || codeVerifier == null )
+        final String clientId = param( req, "client_id" );
+        if ( code == null || redirectUri == null || codeVerifier == null || clientId == null )
         {
-            return oauthError( HttpStatus.BAD_REQUEST, "invalid_request", "Missing code, redirect_uri or code_verifier" );
+            return oauthError( HttpStatus.BAD_REQUEST, "invalid_request", "Missing code, redirect_uri, code_verifier or client_id" );
         }
 
         final NativeAuthCodeStore.AuthCode authCode = nativeAuthCodeStore.consume( idProvider, code );
@@ -247,6 +261,12 @@ public class DeviceLoginHandler
         if ( !authCode.redirectUri.equals( redirectUri ) )
         {
             return oauthError( HttpStatus.BAD_REQUEST, "invalid_grant", "redirect_uri mismatch" );
+        }
+        // RFC 6749 section 4.1.3: for a public client, the code must have been issued to the client_id
+        // in the token request.
+        if ( !clientId.equals( authCode.clientId ) )
+        {
+            return oauthError( HttpStatus.BAD_REQUEST, "invalid_grant", "client_id mismatch" );
         }
         if ( !pkceMatches( codeVerifier, authCode.challenge ) )
         {
@@ -389,6 +409,12 @@ public class DeviceLoginHandler
     private PortalResponse validateAuthorize( final PortalRequest req, final IdProviderKey idProvider )
         throws IOException
     {
+        // RFC 6749 section 4.1.1: client_id is REQUIRED. A missing/invalid client_id (like a bad
+        // redirect_uri) must never be redirected to (RFC 6749 section 4.1.2.1), so it is rendered here.
+        if ( param( req, "client_id" ) == null )
+        {
+            return oauthError( HttpStatus.BAD_REQUEST, "invalid_request", "client_id is required" );
+        }
         final String redirectUri = param( req, "redirect_uri" );
         if ( redirectUri == null )
         {
