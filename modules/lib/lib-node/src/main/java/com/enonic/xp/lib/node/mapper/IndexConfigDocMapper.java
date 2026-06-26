@@ -14,11 +14,13 @@ import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 
+import static com.enonic.xp.lib.node.NodePropertyConstants.ALL_TEXT;
 import static com.enonic.xp.lib.node.NodePropertyConstants.ANALYZER;
 import static com.enonic.xp.lib.node.NodePropertyConstants.CONFIG_ARRAY;
 import static com.enonic.xp.lib.node.NodePropertyConstants.CONFIG_PATH;
 import static com.enonic.xp.lib.node.NodePropertyConstants.CONFIG_SETTINGS;
 import static com.enonic.xp.lib.node.NodePropertyConstants.DEFAULT_CONFIG;
+import static com.enonic.xp.lib.node.NodePropertyConstants.LANGUAGES;
 
 class IndexConfigDocMapper
     implements MapSerializable
@@ -66,6 +68,10 @@ class IndexConfigDocMapper
             gen.end();
         }
 
+        gen.end();
+
+        gen.map( ALL_TEXT );
+        serializeArray( gen, LANGUAGES, document.getAllTextConfig().getLanguages() );
         gen.end();
     }
 

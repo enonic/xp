@@ -91,6 +91,17 @@ public class IndexConfigFactoryTest
     }
 
     @Test
+    public void allText_languages()
+        throws Exception
+    {
+        final IndexConfigDocument config = create( "{ \"allText\": { \"languages\": [ \"no\", \"en\" ] } }" );
+
+        assertTrue( config instanceof PatternIndexConfigDocument );
+        final List<String> languages = ( (PatternIndexConfigDocument) config ).getAllTextConfig().getLanguages();
+        assertEquals( List.of( "no", "en" ), languages );
+    }
+
+    @Test
     public void empty()
         throws Exception
     {

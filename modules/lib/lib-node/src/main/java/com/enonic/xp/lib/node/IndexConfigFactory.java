@@ -9,10 +9,12 @@ import com.enonic.xp.index.IndexValueProcessor;
 import com.enonic.xp.index.IndexValueProcessors;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 
+import static com.enonic.xp.lib.node.NodePropertyConstants.ALL_TEXT;
 import static com.enonic.xp.lib.node.NodePropertyConstants.ANALYZER;
 import static com.enonic.xp.lib.node.NodePropertyConstants.CONFIG_ARRAY;
 import static com.enonic.xp.lib.node.NodePropertyConstants.CONFIG_PATH;
 import static com.enonic.xp.lib.node.NodePropertyConstants.CONFIG_SETTINGS;
+import static com.enonic.xp.lib.node.NodePropertyConstants.LANGUAGES;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 public class IndexConfigFactory
@@ -48,7 +50,24 @@ public class IndexConfigFactory
 
         createPathConfigs( builder );
 
+        createAllTextConfig( builder );
+
         return builder.build();
+    }
+
+    private void createAllTextConfig( final PatternIndexConfigDocument.Builder builder )
+    {
+        final PropertySet allTextConfig = this.propertySet.getSet( ALL_TEXT );
+
+        if ( allTextConfig == null )
+        {
+            return;
+        }
+
+        for ( final String language : allTextConfig.getStrings( LANGUAGES ) )
+        {
+            builder.addAllTextConfigLanguage( language );
+        }
     }
 
     private void createDefaultSettings( final PatternIndexConfigDocument.Builder builder )
