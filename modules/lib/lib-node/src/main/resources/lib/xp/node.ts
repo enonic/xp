@@ -567,6 +567,7 @@ export interface NodeIndexConfig {
         path: string;
         config: NodeConfigEntry;
     }[];
+    allText: NodeAllTextConfig;
 }
 
 export type NodeIndexConfigTemplates =
@@ -583,6 +584,7 @@ export interface NodeIndexConfigParams {
         path: string;
         config: Partial<NodeConfigEntry> | NodeIndexConfigTemplates;
     }[];
+    allText?: Partial<NodeAllTextConfig>;
 }
 
 export interface NodeConfigEntry {
@@ -593,6 +595,13 @@ export interface NodeConfigEntry {
     includeInAllText: boolean;
     path: boolean;
     indexValueProcessors: string[];
+    languages: string[];
+}
+
+export interface NodeAllTextConfig {
+    enabled: boolean;
+    nGram: boolean;
+    fulltext: boolean;
     languages: string[];
 }
 
