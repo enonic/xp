@@ -160,11 +160,6 @@ public class SlashApiHandler
         } );
     }
 
-    /**
-     * Classifies the request into the single mount context it is served through. Both the access check and
-     * the mount check are driven from this, so the site-vs-tool-vs-webapp-vs-connector decision lives in one
-     * place rather than being re-derived per check.
-     */
     private MountContext resolveMountContext( final PortalRequest portalRequest )
     {
         if ( portalRequest.getEndpointPath() == null )
@@ -297,23 +292,17 @@ public class SlashApiHandler
     {
         final PrincipalKeys principals = ContextAccessor.current().getAuthInfo().getPrincipals();
 
-        // Perimeter: only authenticated admin users may reach anything served under the admin area.
         if ( portalRequest.getBasePath().startsWith( PathMatchers.ADMIN_TOOL_PREFIX ) )
         {
             WebHandlerHelper.checkAdminLoginRole( portalRequest );
         }
 
-        // Capability: an API mounted on an admin tool inherits the tool's access list - reaching it through
-        // the tool requires being allowed to access the tool itself. Site mounts (e.g. Content Studio
-        // rendering a site under /admin) are governed by the content/project layer instead, so they are not
-        // classified as ADMIN_TOOL here.
         if ( mountContext.type() == MountContext.Type.ADMIN_TOOL && mountContext.adminTool() != null &&
             !mountContext.adminTool().isAccessAllowed( principals ) )
         {
             throw forbidden( apiDescriptor );
         }
 
-        // Resource: the API's own access list.
         if ( !apiDescriptor.isAccessAllowed( principals ) )
         {
             throw forbidden( apiDescriptor );
