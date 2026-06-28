@@ -210,22 +210,27 @@ public class SlashApiHandler
 
     private boolean verifyPathMountedOnAdminTool( final DescriptorKey descriptorKey, final PortalRequest portalRequest )
     {
-        final MatchResult matcher = PathMatchers.adminTool( portalRequest );
-        if ( !matcher.hasMatch() )
-        {
-            return false;
-        }
-
-        final ApplicationKey applicationKey = HandlerHelper.resolveApplicationKey( matcher.group( "app" ) );
-        final String tool = matcher.group( "tool" );
-
-        final AdminToolDescriptor adminToolDescriptor = adminToolDescriptorService.getByKey( DescriptorKey.from( applicationKey, tool ) );
+        final AdminToolDescriptor adminToolDescriptor = resolveAdminTool( portalRequest );
         if ( adminToolDescriptor == null )
         {
             return false;
         }
 
         return adminToolDescriptor.getApiMounts().contains( descriptorKey );
+    }
+
+    private AdminToolDescriptor resolveAdminTool( final PortalRequest portalRequest )
+    {
+        final MatchResult matcher = PathMatchers.adminTool( portalRequest );
+        if ( !matcher.hasMatch() )
+        {
+            return null;
+        }
+
+        final ApplicationKey applicationKey = HandlerHelper.resolveApplicationKey( matcher.group( "app" ) );
+        final String tool = matcher.group( "tool" );
+
+        return adminToolDescriptorService.getByKey( DescriptorKey.from( applicationKey, tool ) );
     }
 
     private boolean verifyPathMountedOnWebapps( final DescriptorKey descriptorKey, final PortalRequest portalRequest )
@@ -291,12 +296,27 @@ public class SlashApiHandler
 
     private void verifyAccessToApi( final ApiDescriptor apiDescriptor, final PortalRequest portalRequest )
     {
+        final PrincipalKeys principals = ContextAccessor.current().getAuthInfo().getPrincipals();
+
         if ( portalRequest.getBasePath().startsWith( PathMatchers.ADMIN_TOOL_PREFIX ) )
         {
             WebHandlerHelper.checkAdminLoginRole( portalRequest );
+
+            // An API mounted on an admin tool inherits the tool's access list: reaching it through the
+            // tool requires being allowed to access the tool itself. Site-embedded admin paths (e.g.
+            // Content Studio's "site" pseudo-tool) are governed by the content/project layer instead.
+            if ( !PortalRequestHelper.isSiteBase( portalRequest ) )
+            {
+                final AdminToolDescriptor adminToolDescriptor = resolveAdminTool( portalRequest );
+                if ( adminToolDescriptor != null && !adminToolDescriptor.isAccessAllowed( principals ) )
+                {
+                    throw WebException.forbidden(
+                        String.format( "You don't have permission to access \"%s\" API for \"%s\"", apiDescriptor.getKey().getName(),
+                                       apiDescriptor.getKey().getApplicationKey() ) );
+                }
+            }
         }
 
-        final PrincipalKeys principals = ContextAccessor.current().getAuthInfo().getPrincipals();
         if ( !apiDescriptor.isAccessAllowed( principals ) )
         {
             throw WebException.forbidden(
