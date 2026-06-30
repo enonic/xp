@@ -63,16 +63,7 @@ public final class TextRenderer
                     return processor.getDocument().getInnerHtml();
                 } );
 
-                final String processedHtml;
-                try
-                {
-                    PortalRequestAccessor.set( portalRequest );
-                    processedHtml = portalUrlService.processHtml( params );
-                }
-                finally
-                {
-                    PortalRequestAccessor.remove();
-                }
+                final String processedHtml = PortalRequestAccessor.callWith( portalRequest, () -> portalUrlService.processHtml( params ) );
                 portalResponseBuilder.body( renderHtml( textComponent, processedHtml ) );
             }
         }

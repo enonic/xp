@@ -147,16 +147,9 @@ public class SlashApiHandler
     private WebResponse execute( final PortalRequest portalRequest, final DescriptorKey descriptorKey,
                                  final Supplier<WebResponse> supplier )
     {
-        final Trace trace = Tracer.newTrace( "universalAPI" );
-        if ( trace == null )
-        {
-            return handleAPIRequest( portalRequest, supplier );
-        }
-        return Tracer.trace( trace, () -> {
-            final WebResponse response = handleAPIRequest( portalRequest, supplier );
-            addTranceInfo( trace, descriptorKey, response );
-            return response;
-        } );
+        return Tracer.trace( "universalAPI", trace -> {
+        }, () -> PortalRequestAccessor.callWith( portalRequest, supplier ),
+                             ( trace, response ) -> addTranceInfo( trace, descriptorKey, response ) );
     }
 
     private void verifyRequestMounted( final ApiDescriptor apiDescriptor, final PortalRequest portalRequest )
@@ -274,19 +267,6 @@ public class SlashApiHandler
         trace.put( "app", descriptorKey.getApplicationKey().toString() );
         trace.put( "api", descriptorKey.getName() );
         HandlerHelper.addTraceInfo( trace, response );
-    }
-
-    private WebResponse handleAPIRequest( final PortalRequest portalRequest, final Supplier<WebResponse> supplier )
-    {
-        PortalRequestAccessor.set( portalRequest );
-        try
-        {
-            return supplier.get();
-        }
-        finally
-        {
-            PortalRequestAccessor.remove();
-        }
     }
 
     private void verifyAccessToApi( final ApiDescriptor apiDescriptor, final PortalRequest portalRequest )

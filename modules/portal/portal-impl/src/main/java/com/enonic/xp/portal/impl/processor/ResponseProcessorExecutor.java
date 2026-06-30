@@ -43,15 +43,16 @@ public final class ResponseProcessorExecutor
 
         final ApplicationKey previousApp = request.getApplicationKey();
         request.setApplicationKey( script.getApplicationKey() );
-        PortalRequestAccessor.set( request );
         try
         {
-            return Tracer.trace( "responseProcessorScript", trace -> trace.put( "script", filterExports.getScript().toString() ),
-                                 () -> executeFilter( filterExports, request, response ) );
+            return PortalRequestAccessor.callWith( request, () -> Tracer.trace( "responseProcessorScript",
+                                                                                trace -> trace.put( "script",
+                                                                                                    filterExports.getScript().toString() ),
+                                                                                () -> executeFilter( filterExports, request,
+                                                                                                     response ) ) );
         }
         finally
         {
-            PortalRequestAccessor.remove();
             request.setApplicationKey( previousApp );
         }
     }

@@ -111,16 +111,7 @@ public final class ImageRenderer
         private String buildUrl()
         {
             final ImageUrlParams params = new ImageUrlParams().id( component.getImage().toString() ).scale( "width(768)" );
-            try
-            {
-                PortalRequestAccessor.set( portalRequest );
-
-                return urlService.imageUrl( params );
-            }
-            finally
-            {
-                PortalRequestAccessor.remove();
-            }
+            return PortalRequestAccessor.callWith( portalRequest, () -> urlService.imageUrl( params ) );
         }
 
         private String getImageAlternativeText()

@@ -31,14 +31,12 @@ final class IdProviderControllerScriptImpl
     {
         final ApplicationKey previousApp = request.getApplicationKey();
         request.setApplicationKey( scriptExports.getScript().getApplicationKey() );
-        PortalRequestAccessor.set( request );
         try
         {
-            return doExecute( functionName, request );
+            return PortalRequestAccessor.callWith( request, () -> doExecute( functionName, request ) );
         }
         finally
         {
-            PortalRequestAccessor.remove();
             request.setApplicationKey( previousApp );
         }
     }

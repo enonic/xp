@@ -36,15 +36,15 @@ final class ControllerScriptImpl
     {
         final ApplicationKey previousApp = request.getApplicationKey();
         request.setApplicationKey( this.scriptExports.getScript().getApplicationKey() );
-        PortalRequestAccessor.set( request );
         try
         {
-            return Tracer.trace( "controllerScript", trace -> trace.put( "script", this.scriptExports.getScript().toString() ),
-                                 () -> doExecute( request ) );
+            return PortalRequestAccessor.callWith( request, () -> Tracer.trace( "controllerScript",
+                                                                                trace -> trace.put( "script",
+                                                                                                    this.scriptExports.getScript().toString() ),
+                                                                                () -> doExecute( request ) ) );
         }
         finally
         {
-            PortalRequestAccessor.remove();
             request.setApplicationKey( previousApp );
         }
     }
