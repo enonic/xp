@@ -640,6 +640,14 @@ export interface PublishInfo {
     from?: string;
     to?: string;
     first?: string;
+    /**
+     * Marker used to detect whether there is anything to publish from draft.
+     * If this field exists, draft matches the published version.
+     * If it is missing, draft differs from the published version.
+     *
+     * The value itself is only a hint and should not be interpreted.
+     */
+    time?: string;
 }
 
 export interface FragmentComponent {
