@@ -567,6 +567,11 @@ export interface NodeIndexConfig {
         path: string;
         config: NodeConfigEntry;
     }[];
+
+    /**
+     * Indexing config for the generated `_allText` property. See {@link NodeAllTextConfig}.
+     */
+    allText: NodeAllTextConfig;
 }
 
 export type NodeIndexConfigTemplates =
@@ -583,6 +588,12 @@ export interface NodeIndexConfigParams {
         path: string;
         config: Partial<NodeConfigEntry> | NodeIndexConfigTemplates;
     }[];
+
+    /**
+     * Indexing config for the generated `_allText` property. Any omitted fields keep their defaults.
+     * See {@link NodeAllTextConfig}.
+     */
+    allText?: Partial<NodeAllTextConfig>;
 }
 
 export interface NodeConfigEntry {
@@ -593,6 +604,33 @@ export interface NodeConfigEntry {
     includeInAllText: boolean;
     path: boolean;
     indexValueProcessors: string[];
+    languages: string[];
+}
+
+/**
+ * Customizes the indexing of the generated `_allText` system property, which aggregates the text
+ * content of all indexed `String` properties on a node and is commonly used in "search everything" queries.
+ */
+export interface NodeAllTextConfig {
+    /**
+     * If `false`, indexing of the `_allText` property is disabled. Defaults to `true`.
+     */
+    enabled: boolean;
+
+    /**
+     * If `true`, values are indexed as `ngram`, enabling the nGram-function in queries. Defaults to `true`.
+     */
+    nGram: boolean;
+
+    /**
+     * If `true`, values are indexed as `analyzed`, enabling the fulltext query expression. Defaults to `true`.
+     */
+    fulltext: boolean;
+
+    /**
+     * Generates a stemming index (where supported) and a collation index for each specified language.
+     * Language codes use the `la[-co]` format (ISO-639 language code, optional ISO-3166 country code).
+     */
     languages: string[];
 }
 
