@@ -96,7 +96,10 @@ var expected = {
                     'languages': []
                 }
             }
-        ]
+        ],
+        'allText': {
+            'languages': []
+        }
     },
     '_inheritsPermissions': false,
     '_permissions': [

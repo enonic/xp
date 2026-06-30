@@ -21,7 +21,10 @@ var expectedJson = {
             "path": false,
             "indexValueProcessors": [],
             "languages": []
-        }, "configs": []
+        }, "configs": [],
+        "allText": {
+            "languages": []
+        }
     },
     "_inheritsPermissions": false,
     "_permissions": [{

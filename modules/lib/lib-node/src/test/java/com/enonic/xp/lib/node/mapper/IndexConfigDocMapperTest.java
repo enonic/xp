@@ -33,4 +33,20 @@ public class IndexConfigDocMapperTest
 
         assertJson( "index_config_full.json", jsonGenerator );
     }
+
+    @Test
+    public void allText_languages()
+        throws Exception
+    {
+        final IndexConfigDocument doc = PatternIndexConfigDocument.create().
+            defaultConfig( IndexConfig.BY_TYPE ).
+            addAllTextConfigLanguage( "no" ).
+            addAllTextConfigLanguage( "en" ).
+            build();
+
+        final JsonMapGenerator jsonGenerator = new JsonMapGenerator();
+        new IndexConfigDocMapper( doc ).serialize( jsonGenerator );
+
+        assertJson( "index_config_alltext.json", jsonGenerator );
+    }
 }

@@ -50,7 +50,10 @@ var expected = {
             'indexValueProcessors': [],
             'languages': []
         },
-        'configs': []
+        'configs': [],
+        'allText': {
+            'languages': []
+        }
     },
     '_inheritsPermissions': false,
     '_state': 'DEFAULT',
