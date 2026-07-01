@@ -75,30 +75,48 @@ public final class IdProviderControllerExecutionParams
         {
         }
 
+        /**
+         * Sets the id provider whose controller is executed. If omitted, the vhost's default id
+         * provider is used.
+         */
         public Builder idProviderKey( final IdProviderKey idProviderKey )
         {
             this.idProviderKey = idProviderKey;
             return this;
         }
 
+        /**
+         * Sets the controller function to execute. If omitted, the request method (e.g. {@code GET})
+         * is used to resolve the function.
+         */
         public Builder functionName( final String functionName )
         {
             this.functionName = functionName;
             return this;
         }
 
+        /**
+         * Sets the portal request to execute with. Either this or {@link #servletRequest} is required.
+         */
         public Builder portalRequest( final PortalRequest portalRequest )
         {
             this.portalRequest = portalRequest;
             return this;
         }
 
+        /**
+         * Sets the servlet request to adapt into a portal request. Either this or
+         * {@link #portalRequest} is required.
+         */
         public Builder servletRequest( final HttpServletRequest servletRequest )
         {
             this.servletRequest = servletRequest;
             return this;
         }
 
+        /**
+         * Sets the servlet response that the controller response is serialized to, if any.
+         */
         public Builder response( final HttpServletResponse response )
         {
             this.response = response;

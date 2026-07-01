@@ -14,6 +14,10 @@ import jakarta.servlet.http.HttpServletResponseWrapper;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
+import com.enonic.xp.security.IdProviderKey;
+import com.enonic.xp.web.vhost.IdProviderFlow;
+import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 public class IdProviderResponseWrapper
     extends HttpServletResponseWrapper
@@ -131,7 +135,7 @@ public class IdProviderResponseWrapper
     private void handleError( final int sc )
         throws IOException
     {
-        if ( !errorHandled && isUnauthorizedError( sc ) && !isErrorAlreadyHandled() )
+        if ( !errorHandled && isUnauthorizedError( sc ) && !isErrorAlreadyHandled() && isInteractiveLoginEnabled() )
         {
             final IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create()
                 .functionName( "handle401" )
@@ -149,6 +153,19 @@ public class IdProviderResponseWrapper
     private boolean isUnauthorizedError( final int sc )
     {
         return 401 == sc || 403 == sc && !ContextAccessor.current().getAuthInfo().isAuthenticated();
+    }
+
+    // Interactive login (handle401) targets the vhost's default id provider, and only when it has
+    // the 'login' flow enabled on this vhost.
+    private boolean isInteractiveLoginEnabled()
+    {
+        final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( request );
+        if ( virtualHost == null )
+        {
+            return true;
+        }
+        final IdProviderKey defaultKey = virtualHost.getDefaultIdProviderKey();
+        return defaultKey != null && virtualHost.getIdProviderFlows( defaultKey ).contains( IdProviderFlow.LOGIN );
     }
 
     private boolean isErrorAlreadyHandled()

@@ -1,6 +1,7 @@
 package com.enonic.xp.web.vhost.impl.config;
 
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -10,6 +11,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.enonic.xp.security.IdProviderKey;
+import com.enonic.xp.web.vhost.IdProviderFlow;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostIdProvidersMapping;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
@@ -72,18 +74,55 @@ final class VirtualHostConfigMap
 
             final IdProviderKey idProviderKey = IdProviderKey.from( idProviderName );
 
-            if ( DEFAULT_ID_PROVIDER_VALUE.equals( idProviderStatus ) )
+            // Query-string style value: "default" and/or "enabled[=flow,flow...]".
+            // The flow list (if any) comes from the "enabled" parameter; no list means all flows.
+            boolean isDefault = false;
+            boolean isEnabled = false;
+            Set<IdProviderFlow> flows = null;
+
+            for ( final String token : idProviderStatus.split( "&" ) )
             {
-                hostIdProvidersMapping.setDefaultIdProvider( idProviderKey );
+                final String trimmed = token.trim();
+                final int eq = trimmed.indexOf( '=' );
+                final String name = eq < 0 ? trimmed : trimmed.substring( 0, eq );
+                final String value = eq < 0 ? null : trimmed.substring( eq + 1 );
+
+                if ( DEFAULT_ID_PROVIDER_VALUE.equals( name ) )
+                {
+                    isDefault = true;
+                }
+                else if ( ENABLED_ID_PROVIDER_VALUE.equals( name ) )
+                {
+                    isEnabled = true;
+                    if ( value != null && !value.isBlank() )
+                    {
+                        flows = parseFlows( value );
+                    }
+                }
             }
-            if ( ENABLED_ID_PROVIDER_VALUE.equals( idProviderStatus ) )
+
+            if ( isDefault || isEnabled )
             {
-                hostIdProvidersMapping.addIdProviderKey( idProviderKey );
+                hostIdProvidersMapping.addIdProvider( idProviderKey, flows );
+                if ( isDefault )
+                {
+                    hostIdProvidersMapping.setDefaultIdProvider( idProviderKey );
+                }
             }
 
         } );
 
         return hostIdProvidersMapping.build();
+    }
+
+    private static Set<IdProviderFlow> parseFlows( final String value )
+    {
+        final EnumSet<IdProviderFlow> flows = EnumSet.noneOf( IdProviderFlow.class );
+        for ( final String token : value.split( "," ) )
+        {
+            IdProviderFlow.from( token.trim() ).ifPresent( flows::add );
+        }
+        return flows;
     }
 
     private Map<String, String> getVirtualHostContext( final String mappingPrefix )

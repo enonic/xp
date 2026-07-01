@@ -1,5 +1,7 @@
 package com.enonic.xp.portal.impl.idprovider;
 
+import java.util.Set;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -15,6 +17,9 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.web.vhost.IdProviderFlow;
+import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 class IdProviderFilterTest
 {
@@ -36,6 +41,14 @@ class IdProviderFilterTest
         final HttpServletRequest httpServletRequest = Mockito.mock( HttpServletRequest.class );
         final HttpServletResponse httpServletResponse = Mockito.mock( HttpServletResponse.class );
         final FilterChain filterChain = Mockito.mock( FilterChain.class );
+
+        // A vhost whose default id provider has the autologin flow enabled, so the filter runs autoLogin.
+        final IdProviderKey idProviderKey = IdProviderKey.from( "myidprovider" );
+        final VirtualHost virtualHost = Mockito.mock( VirtualHost.class );
+        Mockito.when( virtualHost.getDefaultIdProviderKey() ).thenReturn( idProviderKey );
+        Mockito.when( virtualHost.getIdProviderFlows( idProviderKey ) ).thenReturn( Set.of( IdProviderFlow.AUTOLOGIN ) );
+        Mockito.when( httpServletRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+        VirtualHostHelper.setVirtualHost( httpServletRequest, virtualHost );
 
         idProviderFilter.doHandle( httpServletRequest, httpServletResponse, filterChain );
         Mockito.verify( idProviderControllerService ).execute( Mockito.any() );

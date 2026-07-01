@@ -24,6 +24,6 @@ public final class IdProviderControllerScriptFactoryImpl
     public IdProviderControllerScript fromScript( final ResourceKey script )
     {
         final ScriptExports exports = this.scriptService.execute( script );
-        return new IdProviderControllerScriptImpl( exports );
+        return new IdProviderControllerScript( exports );
     }
 }

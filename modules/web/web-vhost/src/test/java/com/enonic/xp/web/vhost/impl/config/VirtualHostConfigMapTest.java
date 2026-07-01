@@ -1,5 +1,6 @@
 package com.enonic.xp.web.vhost.impl.config;
 
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.security.IdProviderKey;
+import com.enonic.xp.web.vhost.IdProviderFlow;
 import com.enonic.xp.web.vhost.VirtualHost;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
@@ -173,6 +175,33 @@ class VirtualHostConfigMapTest
         assertEquals( "system", virtualHost.getDefaultIdProviderKey().toString() );
         assertEquals( 2, virtualHost.getIdProviderKeys().getSize() );
         assertTrue( virtualHost.getIdProviderKeys().contains( IdProviderKey.from( "myProvider" ) ) );
+        // No flow list ⇒ all flows enabled (back-compat).
+        assertEquals( EnumSet.allOf( IdProviderFlow.class ), virtualHost.getIdProviderFlows( IdProviderKey.from( "system" ) ) );
+    }
+
+    @Test
+    void testIdProviderFlows()
+    {
+        map.put( "mapping.myapp1.idProvider.adfs", "default&enabled=login,device" );
+        map.put( "mapping.myapp1.idProvider.system", "enabled=autologin" );
+
+        final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
+
+        assertEquals( "adfs", virtualHost.getDefaultIdProviderKey().toString() );
+        assertEquals( EnumSet.of( IdProviderFlow.LOGIN, IdProviderFlow.DEVICE ),
+                      virtualHost.getIdProviderFlows( IdProviderKey.from( "adfs" ) ) );
+        assertEquals( EnumSet.of( IdProviderFlow.AUTOLOGIN ), virtualHost.getIdProviderFlows( IdProviderKey.from( "system" ) ) );
+        // An id provider not enabled on the vhost has no flows.
+        assertTrue( virtualHost.getIdProviderFlows( IdProviderKey.from( "other" ) ).isEmpty() );
+    }
+
+    @Test
+    void testEnabledWithoutFlowsMeansAll()
+    {
+        map.put( "mapping.myapp1.idProvider.system", "enabled" );
+
+        final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
+        assertEquals( EnumSet.allOf( IdProviderFlow.class ), virtualHost.getIdProviderFlows( IdProviderKey.from( "system" ) ) );
     }
 
     @Test
