@@ -7,6 +7,7 @@ import org.osgi.service.component.annotations.Reference;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.html.HtmlElement;
@@ -62,7 +63,7 @@ public final class TextRenderer
                     return processor.getDocument().getInnerHtml();
                 } );
 
-                final String processedHtml = portalUrlService.processHtml( params );
+                final String processedHtml = PortalRequestAccessor.callWith( portalRequest, () -> portalUrlService.processHtml( params ) );
                 portalResponseBuilder.body( renderHtml( textComponent, processedHtml ) );
             }
         }

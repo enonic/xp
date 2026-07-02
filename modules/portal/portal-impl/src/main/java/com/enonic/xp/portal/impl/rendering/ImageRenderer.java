@@ -14,6 +14,7 @@ import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.html.HtmlBuilder;
@@ -110,8 +111,7 @@ public final class ImageRenderer
         private String buildUrl()
         {
             final ImageUrlParams params = new ImageUrlParams().id( component.getImage().toString() ).scale( "width(768)" );
-
-            return urlService.imageUrl( params );
+            return PortalRequestAccessor.callWith( portalRequest, () -> urlService.imageUrl( params ) );
         }
 
         private String getImageAlternativeText()

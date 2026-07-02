@@ -28,14 +28,12 @@ public final class MacroProcessorScript
         final PortalRequest portalRequest = macroContext.getRequest();
         final ApplicationKey previousAppKey = portalRequest.getApplicationKey();
         portalRequest.setApplicationKey( scriptExports.getScript().getApplicationKey() );
-        PortalRequestAccessor.set( portalRequest );
         try
         {
-            return doProcess( macroContext );
+            return PortalRequestAccessor.callWith( portalRequest, () -> doProcess( macroContext ) );
         }
         finally
         {
-            PortalRequestAccessor.remove();
             portalRequest.setApplicationKey( previousAppKey );
         }
     }

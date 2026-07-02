@@ -10,6 +10,7 @@ import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.macro.Macro;
 import com.enonic.xp.macro.MacroService;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.url.PortalUrlServiceImpl;
@@ -21,6 +22,7 @@ import com.enonic.xp.style.StyleDescriptors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.mock;
 
 class TextRendererTest
@@ -147,6 +149,27 @@ class TextRendererTest
 
         // verify
         assertEquals( "<section data-portal-component-type=\"text\">" + text + "</section>", portalResponse.getBody() );
+    }
+
+    @Test
+    void renderKeepsRequestBoundForCaller()
+    {
+        // a request is bound on the thread before rendering; the renderer must not clear it (see #12177)
+        final PortalRequest boundRequest = new PortalRequest();
+        PortalRequestAccessor.set( boundRequest );
+        try
+        {
+            textComponent = TextComponent.create().text( "<h2>hello</h2>" ).build();
+            renderer = new TextRenderer( service );
+
+            renderer.render( textComponent, portalRequest );
+
+            assertSame( boundRequest, PortalRequestAccessor.get() );
+        }
+        finally
+        {
+            PortalRequestAccessor.remove();
+        }
     }
 
     private static class MockMacroService
