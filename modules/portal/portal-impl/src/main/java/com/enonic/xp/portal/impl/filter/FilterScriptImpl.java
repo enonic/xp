@@ -38,11 +38,13 @@ final class FilterScriptImpl
     {
         final ApplicationKey previousApp = request.getApplicationKey();
         request.setApplicationKey( this.scriptExports.getScript().getApplicationKey() );
-        PortalRequestAccessor.set( request );
         try
         {
-            return Tracer.trace( "filterScript", trace -> trace.put( "script", this.scriptExports.getScript().toString() ),
-                                 () -> doExecute( request, response, webHandlerChain ) );
+            return PortalRequestAccessor.callWith( request, () -> Tracer.trace( "filterScript",
+                                                                                trace -> trace.put( "script",
+                                                                                                    this.scriptExports.getScript().toString() ),
+                                                                                () -> doExecute( request, response,
+                                                                                                 webHandlerChain ) ) );
         }
         catch ( ResourceProblemException | WebException e )
         {
@@ -56,7 +58,6 @@ final class FilterScriptImpl
         }
         finally
         {
-            PortalRequestAccessor.remove();
             request.setApplicationKey( previousApp );
         }
     }

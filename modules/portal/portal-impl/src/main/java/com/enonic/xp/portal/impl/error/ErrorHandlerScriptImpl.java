@@ -31,15 +31,15 @@ final class ErrorHandlerScriptImpl
         final PortalRequest request = portalError.getRequest();
         final ApplicationKey previousApp = request.getApplicationKey();
         request.setApplicationKey( scriptExports.getScript().getApplicationKey() );
-        PortalRequestAccessor.set( portalError.getRequest() );
         try
         {
-            return Tracer.trace( "errorScript", trace -> trace.put( "script", this.scriptExports.getScript().toString() ),
-                                 () -> doExecute( portalError, handlerMethod ) );
+            return PortalRequestAccessor.callWith( request, () -> Tracer.trace( "errorScript",
+                                                                                trace -> trace.put( "script",
+                                                                                                    this.scriptExports.getScript().toString() ),
+                                                                                () -> doExecute( portalError, handlerMethod ) ) );
         }
         finally
         {
-            PortalRequestAccessor.remove();
             request.setApplicationKey( previousApp );
         }
     }

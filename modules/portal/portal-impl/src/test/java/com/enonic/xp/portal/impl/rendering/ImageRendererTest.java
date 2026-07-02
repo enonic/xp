@@ -9,6 +9,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.ContentFixtures;
@@ -17,6 +18,7 @@ import com.enonic.xp.region.ImageComponent;
 import com.enonic.xp.web.HttpStatus;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 class ImageRendererTest
     extends AbstractPortalUrlServiceImplTest
@@ -169,5 +171,21 @@ class ImageRendererTest
         PortalResponse response = renderer.render( imageComponent, portalRequest );
         assertEquals( "<figure data-portal-component-type=\"image\"></figure>", response.getBody() );
         assertEquals( HttpStatus.NOT_FOUND, response.getStatus() );
+    }
+
+    @Test
+    void renderKeepsRequestBoundForCaller()
+    {
+        // a request is bound on the thread before rendering; the renderer must not clear it (see #12177)
+        this.portalRequest.setContent( createContent() );
+
+        final PropertyTree config = new PropertyTree();
+        config.addString( "caption", "Image Title" );
+        imageComponent = ImageComponent.create().image( ContentId.from( "123456" ) ).config( config ).build();
+        renderer = new ImageRenderer( this.service, contentService );
+
+        renderer.render( imageComponent, portalRequest );
+
+        assertSame( portalRequest, PortalRequestAccessor.get() );
     }
 }
