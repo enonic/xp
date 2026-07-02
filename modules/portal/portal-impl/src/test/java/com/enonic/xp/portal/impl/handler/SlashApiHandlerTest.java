@@ -16,6 +16,8 @@ import com.enonic.xp.api.ApiDescriptor;
 import com.enonic.xp.api.ApiDescriptorService;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.data.PropertySet;
@@ -33,10 +35,13 @@ import com.enonic.xp.portal.universalapi.UniversalApiHandler;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
@@ -567,6 +572,7 @@ class SlashApiHandlerTest
         final AdminToolDescriptor toolDescriptor = AdminToolDescriptor.create()
             .title( "My Tool" )
             .key( descriptorKey )
+            .addAllowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) )
             .apiMounts( DescriptorKeys.from( DescriptorKey.from( apiApplicationKey, "myapi" ) ) )
             .build();
 
@@ -577,6 +583,46 @@ class SlashApiHandlerTest
 
         WebResponse response = this.handler.handle( request );
         assertEquals( HttpStatus.OK, response.getStatus() );
+    }
+
+    @Test
+    void testAdminMountToolAccessDenied()
+    {
+        final ApplicationKey apiApplicationKey = ApplicationKey.from( "com.enonic.app.external.app" );
+        final DescriptorKey apiDescriptorKey = DescriptorKey.from( apiApplicationKey, "myapi" );
+        final ApiDescriptor apiDescriptor =
+            ApiDescriptor.create().key( apiDescriptorKey ).allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) ).build();
+
+        when( apiDescriptorService.getByKey( eq( apiDescriptorKey ) ) ).thenReturn( apiDescriptor );
+
+        final ApplicationKey applicationKey = ApplicationKey.from( "com.enonic.app.myapp" );
+        final DescriptorKey descriptorKey = DescriptorKey.from( applicationKey, "mytool" );
+
+        // The API allows everyone and is mounted on the tool, but the tool restricts access to a role the
+        // caller does not hold - reaching the API through the tool must require access to the tool itself.
+        final AdminToolDescriptor toolDescriptor = AdminToolDescriptor.create()
+            .title( "My Tool" )
+            .key( descriptorKey )
+            .addAllowedPrincipals( PrincipalKeys.from( PrincipalKey.ofRole( "system.somerole" ) ) )
+            .apiMounts( DescriptorKeys.from( DescriptorKey.from( apiApplicationKey, "myapi" ) ) )
+            .build();
+
+        when( adminToolDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( toolDescriptor );
+
+        request.setRawPath( "/admin/com.enonic.app.myapp/mytool/_/com.enonic.app.external.app:myapi" );
+        when( servletRequestMock.isUserInRole( any() ) ).thenReturn( true );
+
+        // A logged-in user who is not on the tool's allow list: forbidden resolves to 403 for an
+        // authenticated caller (it would be 401 if unauthenticated).
+        final AuthenticationInfo authInfo = AuthenticationInfo.create()
+            .user( User.create().key( PrincipalKey.ofUser( IdProviderKey.system(), "tester" ) ).login( "tester" ).build() )
+            .principals( RoleKeys.AUTHENTICATED )
+            .build();
+
+        final WebException ex =
+            ContextBuilder.copyOf( ContextAccessor.current() ).authInfo( authInfo ).build().callWith( () -> assertThrows(
+                WebException.class, () -> this.handler.handle( request ) ) );
+        assertEquals( HttpStatus.FORBIDDEN, ex.getStatus() );
     }
 
     @Test
@@ -591,8 +637,12 @@ class SlashApiHandlerTest
 
         final ApplicationKey applicationKey = ApplicationKey.from( "com.enonic.app.myapp" );
         final DescriptorKey descriptorKey = DescriptorKey.from( applicationKey, "mytool" );
-        final AdminToolDescriptor toolDescriptor =
-            AdminToolDescriptor.create().title( "My Tool" ).key( descriptorKey ).apiMounts( DescriptorKeys.empty() ).build();
+        final AdminToolDescriptor toolDescriptor = AdminToolDescriptor.create()
+            .title( "My Tool" )
+            .key( descriptorKey )
+            .addAllowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) )
+            .apiMounts( DescriptorKeys.empty() )
+            .build();
 
         when( adminToolDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( toolDescriptor );
 
@@ -658,6 +708,50 @@ class SlashApiHandlerTest
     }
 
     @Test
+    void testAdminSiteEmbeddedSkipsToolAccessCheck()
+        throws Exception
+    {
+        // Content Studio renders a site inside /admin. The "site" segment is a pseudo-tool - no real
+        // AdminToolDescriptor governs it - so the admin-tool access check must be skipped for site-based
+        // requests; access is governed by the content/project layer instead. Even a tool descriptor that
+        // would deny access must not block it here.
+        request.setBaseUri( "/admin/com.enonic.app.contentstudio/site" );
+        request.setMode( RenderMode.ADMIN );
+        request.setContentPath( ContentPath.from( "/mysite" ) );
+        request.setRawPath(
+            "/admin/com.enonic.app.contentstudio/site/project/draft/mysite/_/com.enonic.app.myapp:api-key-1" );
+        request.setRepositoryId( RepositoryId.from( "com.enonic.cms.project" ) );
+        request.setBranch( Branch.from( "draft" ) );
+        when( servletRequestMock.isUserInRole( any() ) ).thenReturn( true );
+
+        final ApplicationKey applicationKey = ApplicationKey.from( "com.enonic.app.myapp" );
+        final DescriptorKey descriptorKey = DescriptorKey.from( applicationKey, "api-key-1" );
+        final ApiDescriptor apiDescriptor =
+            ApiDescriptor.create().key( descriptorKey ).allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) ).build();
+        when( apiDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( apiDescriptor );
+
+        final Site site = mock( Site.class );
+        when( site.getPath() ).thenReturn( ContentPath.from( "/mysite" ) );
+        mockDataWithSiteConfig( applicationKey, site );
+        request.setSite( site );
+
+        final SiteDescriptor siteDescriptor =
+            SiteDescriptor.create().applicationKey( applicationKey ).apiMounts( DescriptorKeys.from( descriptorKey ) ).build();
+        when( siteService.getDescriptor( eq( applicationKey ) ) ).thenReturn( siteDescriptor );
+
+        // A tool descriptor that would deny access - it must be ignored for site-based requests.
+        final AdminToolDescriptor denyingTool = AdminToolDescriptor.create()
+            .title( "site" )
+            .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.contentstudio" ), "site" ) )
+            .addAllowedPrincipals( PrincipalKeys.from( PrincipalKey.ofRole( "system.somerole" ) ) )
+            .build();
+        when( adminToolDescriptorService.getByKey( any() ) ).thenReturn( denyingTool );
+
+        final WebResponse response = this.handler.handle( request );
+        assertEquals( HttpStatus.OK, response.getStatus() );
+    }
+
+    @Test
     void testAddAndRemoveDynamicApiHandler()
         throws Exception
     {
@@ -673,6 +767,7 @@ class SlashApiHandlerTest
         final AdminToolDescriptor toolDescriptor = AdminToolDescriptor.create()
             .title( "My Tool" )
             .key( descriptorKey )
+            .addAllowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) )
             .apiMounts( DescriptorKeys.from( DescriptorKey.from( apiApplicationKey, "myapi" ) ) )
             .build();
 
@@ -697,8 +792,12 @@ class SlashApiHandlerTest
 
         final ApplicationKey applicationKey = ApplicationKey.from( "com.enonic.app.myapp" );
         final DescriptorKey descriptorKey = DescriptorKey.from( applicationKey, "mytool" );
-        final AdminToolDescriptor toolDescriptor =
-            AdminToolDescriptor.create().title( "My Tool" ).key( descriptorKey ).apiMounts( DescriptorKeys.empty() ).build();
+        final AdminToolDescriptor toolDescriptor = AdminToolDescriptor.create()
+            .title( "My Tool" )
+            .key( descriptorKey )
+            .addAllowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) )
+            .apiMounts( DescriptorKeys.empty() )
+            .build();
 
         when( adminToolDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( toolDescriptor );
         when( servletRequestMock.isUserInRole( any() ) ).thenReturn( true );
