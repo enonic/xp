@@ -129,8 +129,9 @@ public class SlashApiHandler
             throw WebException.notFound( String.format( "API [%s] not found", descriptorKey ) );
         }
 
-        verifyAccessToApi( apiDescriptor, portalRequest );
-        verifyRequestMounted( apiDescriptor, portalRequest );
+        final MountContext mountContext = resolveMountContext( portalRequest );
+        verifyAccessToApi( apiDescriptor, portalRequest, mountContext );
+        verifyRequestMounted( apiDescriptor, portalRequest, mountContext );
 
         final Supplier<WebResponse> handler = dynamicApiHandler != null
             ? () -> executeDynamicApiHandler( portalRequest, dynamicApiHandler )
@@ -159,73 +160,71 @@ public class SlashApiHandler
         } );
     }
 
-    private void verifyRequestMounted( final ApiDescriptor apiDescriptor, final PortalRequest portalRequest )
+    private MountContext resolveMountContext( final PortalRequest portalRequest )
     {
-        final String basePath = portalRequest.getBasePath();
-
-        final DescriptorKey descriptorKey = apiDescriptor.getKey();
-
-        final boolean result;
         if ( portalRequest.getEndpointPath() == null )
         {
             final String connector = portalRequest.getRawRequest() != null
-                ? (String) portalRequest.getRawRequest()
-                           .getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE )
+                ? (String) portalRequest.getRawRequest().getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE )
                 : null;
 
             if ( DispatchConstants.API_CONNECTOR.equals( connector ) )
             {
-                result = apiDescriptor.getMount().contains( "management" );
+                return MountContext.connector( "management" );
             }
             else if ( DispatchConstants.XP_CONNECTOR.equals( connector ) )
             {
-                result = apiDescriptor.getMount().contains( "web" );
+                return MountContext.connector( "web" );
             }
-            else
-            {
-                result = false;
-            }
+            return MountContext.none();
         }
         else if ( PortalRequestHelper.isSiteBase( portalRequest ) )
         {
-            result = verifyRequestMountedOnSites( descriptorKey, portalRequest );
+            return MountContext.site();
         }
-        else if ( basePath.startsWith( PathMatchers.WEBAPP_PREFIX ) )
+        else if ( portalRequest.getBasePath().startsWith( PathMatchers.WEBAPP_PREFIX ) )
         {
-            result = verifyPathMountedOnWebapps( descriptorKey, portalRequest );
+            return MountContext.webapp();
         }
-        else if ( basePath.startsWith( PathMatchers.ADMIN_TOOL_PREFIX ) )
+        else if ( portalRequest.getBasePath().startsWith( PathMatchers.ADMIN_TOOL_PREFIX ) )
         {
-            result = verifyPathMountedOnAdminTool( descriptorKey, portalRequest );
+            return MountContext.adminTool( resolveAdminTool( portalRequest ) );
         }
-        else
+        return MountContext.none();
+    }
+
+    private void verifyRequestMounted( final ApiDescriptor apiDescriptor, final PortalRequest portalRequest, final MountContext mountContext )
+    {
+        final DescriptorKey descriptorKey = apiDescriptor.getKey();
+
+        final boolean result = switch ( mountContext.type() )
         {
-            result = false;
-        }
+            case CONNECTOR -> apiDescriptor.getMount().contains( mountContext.requiredMount() );
+            case SITE -> verifyRequestMountedOnSites( descriptorKey, portalRequest );
+            case WEBAPP -> verifyPathMountedOnWebapps( descriptorKey, portalRequest );
+            case ADMIN_TOOL ->
+                mountContext.adminTool() != null && mountContext.adminTool().getApiMounts().contains( descriptorKey );
+            case NONE -> false;
+        };
+
         if ( !result )
         {
             throw WebException.notFound( String.format( "API [%s] is not mounted", descriptorKey ) );
         }
     }
 
-    private boolean verifyPathMountedOnAdminTool( final DescriptorKey descriptorKey, final PortalRequest portalRequest )
+    private AdminToolDescriptor resolveAdminTool( final PortalRequest portalRequest )
     {
         final MatchResult matcher = PathMatchers.adminTool( portalRequest );
         if ( !matcher.hasMatch() )
         {
-            return false;
+            return null;
         }
 
         final ApplicationKey applicationKey = HandlerHelper.resolveApplicationKey( matcher.group( "app" ) );
         final String tool = matcher.group( "tool" );
 
-        final AdminToolDescriptor adminToolDescriptor = adminToolDescriptorService.getByKey( DescriptorKey.from( applicationKey, tool ) );
-        if ( adminToolDescriptor == null )
-        {
-            return false;
-        }
-
-        return adminToolDescriptor.getApiMounts().contains( descriptorKey );
+        return adminToolDescriptorService.getByKey( DescriptorKey.from( applicationKey, tool ) );
     }
 
     private boolean verifyPathMountedOnWebapps( final DescriptorKey descriptorKey, final PortalRequest portalRequest )
@@ -289,19 +288,64 @@ public class SlashApiHandler
         }
     }
 
-    private void verifyAccessToApi( final ApiDescriptor apiDescriptor, final PortalRequest portalRequest )
+    private void verifyAccessToApi( final ApiDescriptor apiDescriptor, final PortalRequest portalRequest, final MountContext mountContext )
     {
+        final PrincipalKeys principals = ContextAccessor.current().getAuthInfo().getPrincipals();
+
         if ( portalRequest.getBasePath().startsWith( PathMatchers.ADMIN_TOOL_PREFIX ) )
         {
             WebHandlerHelper.checkAdminLoginRole( portalRequest );
         }
 
-        final PrincipalKeys principals = ContextAccessor.current().getAuthInfo().getPrincipals();
+        if ( mountContext.type() == MountContext.Type.ADMIN_TOOL && mountContext.adminTool() != null &&
+            !mountContext.adminTool().isAccessAllowed( principals ) )
+        {
+            throw forbidden( apiDescriptor );
+        }
+
         if ( !apiDescriptor.isAccessAllowed( principals ) )
         {
-            throw WebException.forbidden(
-                String.format( "You don't have permission to access \"%s\" API for \"%s\"", apiDescriptor.getKey().getName(),
-                               apiDescriptor.getKey().getApplicationKey() ) );
+            throw forbidden( apiDescriptor );
+        }
+    }
+
+    private static WebException forbidden( final ApiDescriptor apiDescriptor )
+    {
+        return WebException.forbidden(
+            String.format( "You don't have permission to access \"%s\" API for \"%s\"", apiDescriptor.getKey().getName(),
+                           apiDescriptor.getKey().getApplicationKey() ) );
+    }
+
+    private record MountContext(Type type, String requiredMount, AdminToolDescriptor adminTool)
+    {
+        private enum Type
+        {
+            CONNECTOR, SITE, WEBAPP, ADMIN_TOOL, NONE
+        }
+
+        private static MountContext connector( final String requiredMount )
+        {
+            return new MountContext( Type.CONNECTOR, requiredMount, null );
+        }
+
+        private static MountContext site()
+        {
+            return new MountContext( Type.SITE, null, null );
+        }
+
+        private static MountContext webapp()
+        {
+            return new MountContext( Type.WEBAPP, null, null );
+        }
+
+        private static MountContext adminTool( final AdminToolDescriptor adminTool )
+        {
+            return new MountContext( Type.ADMIN_TOOL, null, adminTool );
+        }
+
+        private static MountContext none()
+        {
+            return new MountContext( Type.NONE, null, null );
         }
     }
 
