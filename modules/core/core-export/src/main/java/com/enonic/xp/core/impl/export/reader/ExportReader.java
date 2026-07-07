@@ -1,6 +1,5 @@
 package com.enonic.xp.core.impl.export.reader;
 
-import java.net.URL;
 import java.util.stream.Stream;
 
 import com.enonic.xp.vfs.VirtualFile;
@@ -10,11 +9,6 @@ import static com.enonic.xp.core.impl.export.ExportConstants.SYSTEM_FOLDER_NAME;
 
 public class ExportReader
 {
-    private static String getLastBitFromUrl( final URL url )
-    {
-        return url.toString().replaceFirst( ".*/([^/?]+).*", "$1" );
-    }
-
     public long getNodeFileCount( final VirtualFile virtualFile )
     {
         long nodeFileCount = virtualFile.getChildren().stream().mapToLong( this::getNodeFileCount ).sum();
@@ -29,7 +23,6 @@ public class ExportReader
     {
         return parent.getChildren()
             .stream()
-            .filter( VirtualFile::isFolder )
-            .filter( ( folder ) -> !getLastBitFromUrl( folder.getUrl() ).equals( SYSTEM_FOLDER_NAME ) );
+            .filter( VirtualFile::isFolder ).filter( ( folder ) -> !folder.getName().equals( SYSTEM_FOLDER_NAME ) );
     }
 }
