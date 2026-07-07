@@ -16,7 +16,9 @@ import com.enonic.xp.vfs.VirtualFile;
 import com.enonic.xp.vfs.VirtualFilePath;
 import com.enonic.xp.vfs.VirtualFilePaths;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -309,6 +311,86 @@ class ZipVirtualFileTest
         final VirtualFile file = current.resolve( VirtualFilePaths.from( "file.txt", "/" ) );
         assertTrue( file.exists() );
         assertEquals( "deep content", file.getCharSource().read() );
+    }
+
+    @Test
+    void testGetUrlEncodesWhitespaceInEntryAndArchivePath()
+        throws IOException
+    {
+        final Path subDir = tempDir.resolve( "my sub dir" );
+        final String exportName = "my-export";
+        final Path baseDir = subDir.resolve( exportName );
+
+        try (ZipExportWriter writer = ZipExportWriter.create( subDir, exportName ))
+        {
+            writer.writeElement( baseDir.resolve( "mynode" ).resolve( "_" ).resolve( "bin" ).resolve( "my photo.jpg" ), "binary" );
+            writer.writeElement( baseDir.resolve( "export.properties" ), "xp.version=1.0" );
+        }
+
+        final Path zipFile = subDir.resolve( exportName + ".zip" );
+        final VirtualFile root = ZipVirtualFile.from( zipFile );
+
+        final VirtualFile attachment = root.resolve( VirtualFilePaths.from( exportName + "/mynode/_/bin/my photo.jpg", "/" ) );
+        assertTrue( attachment.exists() );
+
+        final String url = assertDoesNotThrow( () -> attachment.getUrl().toString() );
+
+        // The whitespace in the entry name is encoded.
+        assertTrue( url.contains( "my%20photo.jpg" ), "entry whitespace should be encoded: " + url );
+        // The whitespace in the archive's own path stays single-encoded (not double-encoded to %2520).
+        assertTrue( url.contains( "my%20sub%20dir" ), "archive path whitespace should be encoded: " + url );
+        assertFalse( url.contains( "%2520" ), "archive path whitespace must not be double-encoded: " + url );
+    }
+
+    @Test
+    void testGetUrlEncodesReservedAndNonAsciiCharacters()
+        throws IOException
+    {
+        final String exportName = "my-export";
+        final Path baseDir = tempDir.resolve( exportName );
+        final String fileName = "50% off #1 résumé.pdf";
+
+        try (ZipExportWriter writer = ZipExportWriter.create( tempDir, exportName ))
+        {
+            writer.writeElement( baseDir.resolve( "mynode" ).resolve( "_" ).resolve( "bin" ).resolve( fileName ), "binary" );
+            writer.writeElement( baseDir.resolve( "export.properties" ), "xp.version=1.0" );
+        }
+
+        final Path zipFile = tempDir.resolve( exportName + ".zip" );
+        final VirtualFile root = ZipVirtualFile.from( zipFile );
+
+        final VirtualFile attachment = root.resolve( VirtualFilePaths.from( exportName + "/mynode/_/bin/" + fileName, "/" ) );
+        assertTrue( attachment.exists() );
+
+        final String url = assertDoesNotThrow( () -> attachment.getUrl().toString() );
+
+        assertTrue( url.contains( "%25" ), "'%' must be encoded: " + url );
+        assertTrue( url.contains( "%23" ), "'#' must be encoded: " + url );
+        assertTrue( url.contains( "%20" ), "whitespace must be encoded: " + url );
+        assertTrue( url.contains( "résumé" ), "non-ASCII is valid in a URI and should be preserved: " + url );
+        assertFalse( url.contains( "#" ), "no raw '#' should remain: " + url );
+        assertFalse( url.contains( " " ), "no raw whitespace should remain: " + url );
+    }
+
+    @Test
+    void testGetUrlForRootEntry()
+        throws IOException
+    {
+        final String exportName = "my-export";
+        final Path baseDir = tempDir.resolve( exportName );
+
+        try (ZipExportWriter writer = ZipExportWriter.create( tempDir, exportName ))
+        {
+            writer.writeElement( baseDir.resolve( "_" ).resolve( "node.xml" ), "<root/>" );
+            writer.writeElement( baseDir.resolve( "export.properties" ), "xp.version=1.0" );
+        }
+
+        final Path zipFile = tempDir.resolve( exportName + ".zip" );
+        final VirtualFile root = ZipVirtualFile.from( zipFile );
+
+        final String url = assertDoesNotThrow( () -> root.getUrl().toString() );
+        assertTrue( url.startsWith( "jar:" ), url );
+        assertTrue( url.contains( ".zip!/" + exportName ), url );
     }
 
     private void addZipEntry( final ZipOutputStream zos, final String path, final String content )
