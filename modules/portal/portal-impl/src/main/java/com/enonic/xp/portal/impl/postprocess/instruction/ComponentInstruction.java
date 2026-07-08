@@ -20,7 +20,7 @@ import com.enonic.xp.region.ComponentPath;
 import com.enonic.xp.region.ComponentService;
 import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.Regions;
-import com.enonic.xp.trace.Trace;
+import com.enonic.xp.trace.Traced;
 import com.enonic.xp.trace.Tracer;
 
 @org.osgi.service.component.annotations.Component(immediate = true)
@@ -101,17 +101,14 @@ public final class ComponentInstruction
         return currentApplication == null ? null : componentService.getByKey( DescriptorKey.from( currentApplication, name ) );
     }
 
+    @Traced("renderComponent")
     private PortalResponse renderComponent( final PortalRequest portalRequest, final Component component )
     {
-        final Trace trace = Tracer.newTrace( "renderComponent" );
-        if ( trace == null )
-        {
-            return rendererDelegate.render( component, portalRequest );
-        }
-
-        trace.put( "componentPath", component.getPath() );
-        trace.put( "type", component.getType().toString() );
-        return Tracer.trace( trace, () -> rendererDelegate.render( component, portalRequest ) );
+        Tracer.withCurrent( trace -> {
+            trace.put( "componentPath", component.getPath() );
+            trace.put( "type", component.getType().toString() );
+        } );
+        return rendererDelegate.render( component, portalRequest );
     }
 
     private Component resolveComponent( final Content content, final ComponentPath path )

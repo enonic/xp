@@ -19,6 +19,9 @@ dependencies {
 
     implementation libs.commons.io
     implementation libs.bytebuddy
+
+    testImplementation project( ':core:core-api' )
+    testImplementation project( ':server:server-trace' )
 }
 
 tasks.named( 'processResources' ) {

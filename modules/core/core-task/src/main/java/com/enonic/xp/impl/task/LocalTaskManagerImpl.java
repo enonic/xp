@@ -33,6 +33,7 @@ import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskInfo;
 import com.enonic.xp.task.TaskProgress;
 import com.enonic.xp.task.TaskState;
+import com.enonic.xp.trace.Traced;
 import com.enonic.xp.trace.Tracer;
 
 @Component(immediate = true)
@@ -160,14 +161,17 @@ public final class LocalTaskManagerImpl
     @Override
     public void submitTask( final DescribedTask runnableTask )
     {
-        Tracer.trace( "task.submit", trace -> {
-            trace.put( "taskId", runnableTask.getTaskId() );
-            trace.put( "name", runnableTask.getName() );
-        }, () -> doSubmitTask( runnableTask ) );
+        doSubmitTask( runnableTask );
     }
 
+    @Traced("task.submit")
     private void doSubmitTask( final DescribedTask runnableTask )
     {
+        Tracer.withCurrent( trace -> {
+            trace.put( "taskId", runnableTask.getTaskId() );
+            trace.put( "name", runnableTask.getName() );
+        } );
+
         final TaskId id = runnableTask.getTaskId();
         final PrincipalKey principalKey = Optional.ofNullable( runnableTask.getTaskContext().getAuthInfo() )
             .map( AuthenticationInfo::getUser )

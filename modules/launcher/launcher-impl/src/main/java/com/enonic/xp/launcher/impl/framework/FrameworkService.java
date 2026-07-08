@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import com.enonic.xp.launcher.impl.SharedConstants;
 import com.enonic.xp.launcher.impl.config.ConfigProperties;
 import com.enonic.xp.launcher.impl.weaver.NashornWeaver;
+import com.enonic.xp.launcher.impl.weaver.TraceWeaver;
 
 import static java.util.Objects.requireNonNullElse;
 
@@ -123,6 +124,7 @@ public class FrameworkService
         startLevelService.setInitialBundleStartLevel( systemStartLevel );
 
         this.felix.getBundleContext().registerService( WeavingHook.class, new NashornWeaver( systemStartLevel ), null );
+        this.felix.getBundleContext().registerService( WeavingHook.class, new TraceWeaver(), null );
 
         startActivators();
         registerServices();

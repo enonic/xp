@@ -12,8 +12,7 @@ import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.region.LayoutDescriptorService;
-import com.enonic.xp.trace.Trace;
-import com.enonic.xp.trace.Tracer;
+import com.enonic.xp.trace.Traced;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.handler.BaseWebHandler;
@@ -56,12 +55,14 @@ public final class PageHandler
         worker.pageDescriptorService = pageDescriptorService;
         worker.pageResolver = new PageResolver( pageTemplateService, pageDescriptorService, layoutDescriptorService );
         worker.portalUrlService = portalUrlService;
-        final Trace trace = Tracer.newTrace( "renderComponent" );
-        if ( trace == null )
-        {
-            return worker.execute();
-        }
-        return Tracer.traceEx( trace, worker::execute );
+        return executeWorker( worker );
+    }
+
+    @Traced("renderComponent")
+    private PortalResponse executeWorker( final PageHandlerWorker worker )
+        throws Exception
+    {
+        return worker.execute();
     }
 
     @Reference

@@ -21,7 +21,6 @@ import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.MediaHashResolver;
 import com.enonic.xp.portal.impl.handler.AbstractAttachmentHandlerWorker;
-import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.web.HttpStatus;
@@ -162,13 +161,9 @@ public final class ImageHandlerWorker
     @Override
     protected void addTrace( final Media media )
     {
-        {
-            final Trace trace = Tracer.current();
-            if ( trace != null )
-            {
-                trace.put( "contentPath", media.getPath() );
-                trace.put( "type", "image" );
-            }
-        }
+        Tracer.withCurrent( trace -> {
+            trace.put( "contentPath", media.getPath() );
+            trace.put( "type", "image" );
+        } );
     }
 }

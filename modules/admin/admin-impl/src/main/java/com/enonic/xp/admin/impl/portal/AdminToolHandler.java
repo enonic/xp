@@ -10,7 +10,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.handler.WebHandlerHelper;
-import com.enonic.xp.trace.Trace;
+import com.enonic.xp.trace.Traced;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
@@ -59,24 +59,26 @@ public final class AdminToolHandler
         worker.adminToolDescriptorService = adminToolDescriptorService;
         worker.descriptorKey = descriptorKey;
 
-        final Trace trace = Tracer.newTrace( "portalRequest" );
-        if ( trace == null )
-        {
-            return worker.execute();
-        }
+        return executeWorker( worker, webRequest, webResponse );
+    }
 
-        trace.put( "path", webRequest.getPath() );
-        trace.put( "method", webRequest.getMethod().toString() );
-        trace.put( "host", webRequest.getHost() );
-        trace.put( "httpRequest", webRequest );
-        trace.put( "httpResponse", webResponse );
-        trace.put( "context", ContextAccessor.current() );
-
-        return Tracer.traceEx( trace, () -> {
-            final PortalResponse response = worker.execute();
-            addTraceInfo( trace, response );
-            return response;
+    @Traced("portalRequest")
+    private PortalResponse executeWorker( final AdminToolHandlerWorker worker, final WebRequest webRequest,
+                                          final WebResponse webResponse )
+        throws Exception
+    {
+        Tracer.withCurrent( trace -> {
+            trace.put( "path", webRequest.getPath() );
+            trace.put( "method", webRequest.getMethod().toString() );
+            trace.put( "host", webRequest.getHost() );
+            trace.put( "httpRequest", webRequest );
+            trace.put( "httpResponse", webResponse );
+            trace.put( "context", ContextAccessor.current() );
         } );
+
+        final PortalResponse response = worker.execute();
+        Tracer.withCurrent( trace -> addTraceInfo( trace, response ) );
+        return response;
     }
 
     @Reference

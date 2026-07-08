@@ -14,6 +14,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.trace.Trace;
+import com.enonic.xp.trace.Traced;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.websocket.WebSocketEndpoint;
 import com.enonic.xp.web.websocket.WebSocketEvent;
@@ -122,20 +123,25 @@ final class WebSocketEntryImpl
     @Override
     public void sendMessage( final String message )
     {
-        final Trace trace = Tracer.newTrace( "websocket" );
-        if ( trace == null || traceApp == null )
+        if ( this.traceApp == null )
         {
-            this.doSendMessage( message );
+            doSendMessage( message );
+            return;
         }
-        else
-        {
+        sendMessageTraced( message );
+    }
+
+    @Traced("websocket")
+    private void sendMessageTraced( final String message )
+    {
+        Tracer.withCurrent( trace -> {
             trace.put( "message", message );
             trace.put( "type", "message_sent" );
             trace.put( "sessionid", this.session.getId() );
-            trace.put( "parentId", traceParentId );
-            trace.put( "app", traceApp );
-            Tracer.trace( trace, () -> this.doSendMessage( message ) );
-        }
+            trace.put( "parentId", this.traceParentId );
+            trace.put( "app", this.traceApp );
+        } );
+        doSendMessage( message );
     }
 
     private void doSendMessage( final String message )
@@ -152,22 +158,26 @@ final class WebSocketEntryImpl
     private void onEvent( final WebSocketEvent event )
     {
         ContextBuilder.copyOf( contextCopy ).build().runWith( () -> {
-            final Trace trace = Tracer.newTrace( "websocket" );
-            if ( trace == null || traceApp == null )
+            if ( this.traceApp == null )
             {
                 this.endpoint.onEvent( event );
+                return;
             }
-            else
-            {
-                trace.put( "message", event.getMessage() );
-                trace.put( "type",
-                           event.getType() == WebSocketEventType.MESSAGE ? "message_received" : event.getType().toString().toLowerCase() );
-                trace.put( "sessionid", event.getSession().getId() );
-                trace.put( "parentId", traceParentId );
-                trace.put( "app", traceApp );
-
-                Tracer.trace( trace, () -> this.endpoint.onEvent( event ) );
-            }
+            onEventTraced( event );
         } );
+    }
+
+    @Traced("websocket")
+    private void onEventTraced( final WebSocketEvent event )
+    {
+        Tracer.withCurrent( trace -> {
+            trace.put( "message", event.getMessage() );
+            trace.put( "type",
+                       event.getType() == WebSocketEventType.MESSAGE ? "message_received" : event.getType().toString().toLowerCase() );
+            trace.put( "sessionid", event.getSession().getId() );
+            trace.put( "parentId", this.traceParentId );
+            trace.put( "app", this.traceApp );
+        } );
+        this.endpoint.onEvent( event );
     }
 }

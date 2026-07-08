@@ -22,8 +22,7 @@ import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
-import com.enonic.xp.trace.Trace;
-import com.enonic.xp.trace.Tracer;
+import com.enonic.xp.trace.Traced;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
@@ -150,12 +149,14 @@ class MappingHandlerHelper
         worker.rendererDelegate = rendererDelegate;
         worker.sseManager = this.sseManager;
 
-        final Trace trace = Tracer.newTrace( "renderComponent" );
-        if ( trace == null )
-        {
-            return worker.execute();
-        }
-        return Tracer.traceEx( trace, worker::execute );
+        return executeWorker( worker );
+    }
+
+    @Traced("renderComponent")
+    private PortalResponse executeWorker( final MappingHandlerWorker worker )
+        throws Exception
+    {
+        return worker.execute();
     }
 
     private PortalResponse handleFilter( final PortalRequest request, final WebResponse response, final WebHandlerChain webHandlerChain,
@@ -167,11 +168,13 @@ class MappingHandlerHelper
         worker.resourceService = this.resourceService;
         worker.filterScriptFactory = this.filterScriptFactory;
 
-        final Trace trace = Tracer.newTrace( "filter" );
-        if ( trace == null )
-        {
-            return worker.execute();
-        }
-        return Tracer.traceEx( trace, worker::execute );
+        return executeFilterWorker( worker );
+    }
+
+    @Traced("filter")
+    private PortalResponse executeFilterWorker( final MappingFilterHandlerWorker worker )
+        throws Exception
+    {
+        return worker.execute();
     }
 }

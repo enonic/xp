@@ -17,6 +17,7 @@ import com.enonic.xp.portal.impl.websocket.WebSocketEndpointImpl;
 import com.enonic.xp.portal.sse.SseManager;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.trace.Trace;
+import com.enonic.xp.trace.Traced;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebRequest;
@@ -63,16 +64,16 @@ public final class WebAppHandler
         {
             return handleRedirect( webRequest );
         }
-        final Trace trace = Tracer.newTrace( "renderApp" );
-        if ( trace == null )
-        {
-            return executeController( portalRequest );
-        }
-        return Tracer.traceEx( trace, () -> {
-            final WebResponse resp = executeController( portalRequest );
-            addTraceInfo( trace, portalRequest.getApplicationKey(), restPath );
-            return resp;
-        } );
+        return executeControllerTraced( portalRequest, restPath );
+    }
+
+    @Traced("renderApp")
+    private PortalResponse executeControllerTraced( final PortalRequest portalRequest, final String restPath )
+        throws Exception
+    {
+        final PortalResponse response = executeController( portalRequest );
+        Tracer.withCurrent( trace -> addTraceInfo( trace, portalRequest.getApplicationKey(), restPath ) );
+        return response;
     }
 
     private WebResponse handleRedirect( WebRequest webRequest )
@@ -115,11 +116,12 @@ public final class WebAppHandler
 
     private WebSocketEndpoint newWebSocketEndpoint( final WebSocketConfig config, final ControllerScript script, final ApplicationKey app )
     {
-        final Trace trace = Tracer.current();
-        if ( trace != null && !trace.containsKey( "app" ) )
-        {
-            trace.put( "app", app.toString() );
-        }
+        Tracer.withCurrent( trace -> {
+            if ( !trace.containsKey( "app" ) )
+            {
+                trace.put( "app", app.toString() );
+            }
+        } );
         return new WebSocketEndpointImpl( config, () -> script );
     }
 

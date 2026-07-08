@@ -9,7 +9,6 @@ import com.enonic.xp.portal.filter.FilterScriptFactory;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
-import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
@@ -80,11 +79,8 @@ final class MappingFilterHandlerWorker
             }
 
             final ControllerMappingDescriptor mapping = mappingDescriptors.get( index++ );
-            final Trace trace = Tracer.current();
-            if ( trace != null )
-            {
-                trace.put( "contentPath", request.getContentPath() != null ? request.getContentPath().toString() : null );
-            }
+            Tracer.withCurrent(
+                trace -> trace.put( "contentPath", request.getContentPath() != null ? request.getContentPath().toString() : null ) );
 
             if ( mapping.isController() )
             {
@@ -92,11 +88,10 @@ final class MappingFilterHandlerWorker
                 return controllerInvoker.invoke( mapping );
             }
 
-            if ( trace != null )
-            {
+            Tracer.withCurrent( trace -> {
                 trace.put( "type", "filter" );
                 trace.put( "filter", mapping.getFilter().toString() );
-            }
+            } );
 
             return getScript( mapping ).execute( (PortalRequest) webRequest, webResponse, this );
         }

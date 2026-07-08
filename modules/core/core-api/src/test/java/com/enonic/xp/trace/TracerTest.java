@@ -17,7 +17,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.inOrder;
@@ -160,5 +162,73 @@ class TracerTest
 
         final int return2 = Tracer.traceEx( "test", () -> 2 );
         assertEquals( 2, return2 );
+    }
+
+    @Test
+    void currentIsScopedToTrace()
+    {
+        final Trace outer = mock( Trace.class );
+        final Trace inner = mock( Trace.class );
+
+        Tracer.trace( outer, () -> {
+            assertSame( outer, Tracer.current() );
+            Tracer.trace( inner, () -> assertSame( inner, Tracer.current() ) );
+            assertSame( outer, Tracer.current() );
+        } );
+
+        assertNull( Tracer.current() );
+    }
+
+    @Test
+    void currentRestoredWhenTraceThrows()
+    {
+        final IllegalStateException failure = new IllegalStateException( "failed" );
+
+        final IllegalStateException thrown = assertThrows( IllegalStateException.class, () -> Tracer.trace( this.trace, () -> {
+            throw failure;
+        } ) );
+
+        assertSame( failure, thrown );
+        assertNull( Tracer.current() );
+
+        final InOrder inOrder = inOrder( this.trace, this.manager );
+        inOrder.verify( this.trace ).start();
+        inOrder.verify( this.manager ).dispatch( argThat( event -> event.getType() == TraceEvent.Type.START ) );
+        inOrder.verify( this.trace ).end();
+        inOrder.verify( this.manager ).dispatch( argThat( event -> event.getType() == TraceEvent.Type.END ) );
+    }
+
+    @Test
+    void traceExPropagatesCheckedException()
+    {
+        final Exception failure = new Exception( "checked" );
+
+        final Exception thrown = assertThrows( Exception.class, () -> Tracer.traceEx( this.trace, () -> {
+            throw failure;
+        } ) );
+
+        assertSame( failure, thrown );
+    }
+
+    @Test
+    void traceIOPropagatesIOException()
+    {
+        final java.io.IOException failure = new java.io.IOException( "io" );
+
+        final java.io.IOException thrown = assertThrows( java.io.IOException.class, () -> Tracer.traceIO( this.trace, () -> {
+            throw failure;
+        } ) );
+
+        assertSame( failure, thrown );
+    }
+
+    @Test
+    void newTraceUsesCurrentAsParent()
+    {
+        when( this.manager.newTrace( any(), any() ) ).thenReturn( this.trace );
+
+        Tracer.trace( this.trace, () -> Tracer.newTrace( "child" ) );
+
+        verify( this.manager ).newTrace( "child", this.trace );
     }
 }

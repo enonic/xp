@@ -22,7 +22,6 @@ import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.service.ServiceDescriptor;
 import com.enonic.xp.service.ServiceDescriptorService;
 import com.enonic.xp.site.SiteConfigs;
-import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
@@ -141,11 +140,12 @@ public class ServiceHandler
     private WebSocketEndpoint newWebSocketEndpoint( final WebSocketConfig config, final ControllerScript script,
                                                     final ApplicationKey applicationKey )
     {
-        final Trace trace = Tracer.current();
-        if ( trace != null && !trace.containsKey( "app" ) )
-        {
-            trace.put( "app", applicationKey.toString() );
-        }
+        Tracer.withCurrent( trace -> {
+            if ( !trace.containsKey( "app" ) )
+            {
+                trace.put( "app", applicationKey.toString() );
+            }
+        } );
         return new WebSocketEndpointImpl( config, () -> script );
     }
 }

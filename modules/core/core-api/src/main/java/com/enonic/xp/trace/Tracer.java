@@ -8,26 +8,22 @@ import java.util.function.Supplier;
 
 public final class Tracer
 {
-    private static final Tracer INSTANCE = new Tracer();
+    private static final ScopedValue<Trace> CURRENT = ScopedValue.newInstance();
 
-    private final ThreadLocal<Trace> current;
-
-    private TraceManager manager;
+    private static volatile TraceManager manager;
 
     private Tracer()
     {
-        this.current = new ThreadLocal<>();
-        this.manager = null;
     }
 
     public static boolean isEnabled()
     {
-        return INSTANCE.manager != null;
+        return manager != null;
     }
 
     public static Trace current()
     {
-        return INSTANCE.current.get();
+        return CURRENT.isBound() ? CURRENT.get() : null;
     }
 
     public static void withCurrent( final Consumer<Trace> consumer )
@@ -41,7 +37,7 @@ public final class Tracer
 
     public static void trace( final Trace trace, final Runnable runnable )
     {
-        trace( trace, () -> {
+        callWith( trace, () -> {
             runnable.run();
             return null;
         } );
@@ -49,64 +45,25 @@ public final class Tracer
 
     public static <T> T trace( final Trace trace, final TraceRunnable<T> runnable )
     {
-        try
-        {
-            return traceEx( trace, runnable::run );
-        }
-        catch ( final RuntimeException e )
-        {
-            throw e;
-        }
-        catch ( final Exception e )
-        {
-            throw new RuntimeException( e );
-        }
+        return callWith( trace, runnable::run );
     }
 
     public static <T> T traceEx( final Trace trace, final Callable<T> callable )
         throws Exception
     {
-        final Trace current = current();
-
-        try
-        {
-            setCurrent( trace );
-            startTrace( trace );
-            return callable.call();
-        }
-        finally
-        {
-            endTrace( trace );
-            setCurrent( current );
-        }
+        return callWith( trace, callable::call );
     }
 
     public static <T> T traceIO( final Trace trace, final TraceIO<T> callable )
         throws IOException
     {
-        final Trace current = current();
-
-        try
-        {
-            setCurrent( trace );
-            startTrace( trace );
-            return callable.call();
-        }
-        finally
-        {
-            endTrace( trace );
-            setCurrent( current );
-        }
+        return callWith( trace, callable::call );
     }
 
     public static Trace newTrace( final String name )
     {
-        if ( !isEnabled() )
-        {
-            return null;
-        }
-
-        return INSTANCE.manager.newTrace( name, current() );
+        final TraceManager current = manager;
+        return current == null ? null : current.newTrace( name, current() );
     }
 
     public static void trace( final String name, final Runnable runnable )
@@ -123,29 +80,17 @@ public final class Tracer
     {
         final Trace trace = newTrace( name );
 
-        if ( trace != null )
-        {
-            before.accept( trace );
-            final Trace current = current();
-
-            try
-            {
-                setCurrent( trace );
-                startTrace( trace );
-                final T result = main.get();
-                after.accept( trace, result );
-                return result;
-            }
-            finally
-            {
-                endTrace( trace );
-                setCurrent( current );
-            }
-        }
-        else
+        if ( trace == null )
         {
             return main.get();
         }
+
+        before.accept( trace );
+        return callWith( trace, () -> {
+            final T result = main.get();
+            after.accept( trace, result );
+            return result;
+        } );
     }
 
     public static <T> T trace( final String name, final Consumer<Trace> before, final Supplier<T> main )
@@ -171,12 +116,21 @@ public final class Tracer
 
     public static void setManager( final TraceManager manager )
     {
-        INSTANCE.manager = manager;
+        Tracer.manager = manager;
     }
 
-    private static void setCurrent( final Trace trace )
+    static <T, X extends Throwable> T callWith( final Trace trace, final ScopedValue.CallableOp<T, X> op )
+        throws X
     {
-        INSTANCE.current.set( trace );
+        try
+        {
+            startTrace( trace );
+            return ScopedValue.where( CURRENT, trace ).call( op );
+        }
+        finally
+        {
+            endTrace( trace );
+        }
     }
 
     private static void startTrace( final Trace trace )
@@ -187,9 +141,10 @@ public final class Tracer
         }
 
         trace.start();
-        if ( INSTANCE.manager != null )
+        final TraceManager current = manager;
+        if ( current != null )
         {
-            INSTANCE.manager.dispatch( TraceEvent.start( trace ) );
+            current.dispatch( TraceEvent.start( trace ) );
         }
     }
 
@@ -201,9 +156,10 @@ public final class Tracer
         }
 
         trace.end();
-        if ( INSTANCE.manager != null )
+        final TraceManager current = manager;
+        if ( current != null )
         {
-            INSTANCE.manager.dispatch( TraceEvent.end( trace ) );
+            current.dispatch( TraceEvent.end( trace ) );
         }
     }
 }

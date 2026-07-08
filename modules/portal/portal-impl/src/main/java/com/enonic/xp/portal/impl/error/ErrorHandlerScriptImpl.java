@@ -8,6 +8,7 @@ import com.enonic.xp.portal.impl.controller.PortalResponseSerializer;
 import com.enonic.xp.portal.impl.mapper.PortalErrorMapper;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.trace.Traced;
 import com.enonic.xp.trace.Tracer;
 
 final class ErrorHandlerScriptImpl
@@ -33,10 +34,7 @@ final class ErrorHandlerScriptImpl
         request.setApplicationKey( scriptExports.getScript().getApplicationKey() );
         try
         {
-            return PortalRequestAccessor.callWith( request, () -> Tracer.trace( "errorScript",
-                                                                                trace -> trace.put( "script",
-                                                                                                    this.scriptExports.getScript().toString() ),
-                                                                                () -> doExecute( portalError, handlerMethod ) ) );
+            return PortalRequestAccessor.callWith( request, () -> doExecute( portalError, handlerMethod ) );
         }
         finally
         {
@@ -44,8 +42,11 @@ final class ErrorHandlerScriptImpl
         }
     }
 
+    @Traced("errorScript")
     private PortalResponse doExecute( final PortalError portalError, final String handlerMethod )
     {
+        Tracer.withCurrent( trace -> trace.put( "script", this.scriptExports.getScript().toString() ) );
+
         final PortalErrorMapper portalErrorMapper = new PortalErrorMapper( portalError );
         final ScriptValue result = this.scriptExports.executeMethod( handlerMethod, portalErrorMapper );
 

@@ -105,6 +105,7 @@ import com.enonic.xp.site.CmsService;
 import com.enonic.xp.site.MixinMappingService;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigService;
+import com.enonic.xp.trace.Traced;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
 
@@ -387,12 +388,18 @@ public class ContentServiceImpl
     }
 
     @Override
+    @Traced("content.getById")
     public Content getById( final ContentId contentId )
     {
         requireReadAccess();
 
-        return Tracer.trace( "content.getById", trace -> trace.put( "id", contentId ), () -> doGetById( contentId ),
-                             ( trace, content ) -> trace.put( "path", content.getPath().toString() ) );
+        Tracer.withCurrent( trace -> trace.put( "id", contentId ) );
+
+        final Content content = doGetById( contentId );
+
+        Tracer.withCurrent( trace -> trace.put( "path", content.getPath().toString() ) );
+
+        return content;
     }
 
     private Content doGetById( final ContentId contentId )
@@ -416,6 +423,7 @@ public class ContentServiceImpl
     }
 
     @Override
+    @Traced("content.getNearestSite")
     public Site getNearestSite( final ContentId contentId )
     {
         requireReadAccess();
@@ -426,26 +434,39 @@ public class ContentServiceImpl
             .contentTypeService( this.contentTypeService )
             .eventPublisher( this.eventPublisher )
             .build();
-        return Tracer.trace( "content.getNearestSite", trace -> trace.put( "id", contentId ), command::execute, ( trace, site ) -> {
+
+        Tracer.withCurrent( trace -> trace.put( "id", contentId ) );
+
+        final Site site = command.execute();
+
+        Tracer.withCurrent( trace -> {
             if ( site != null )
             {
                 trace.put( "path", site.getPath().toString() );
             }
         } );
+
+        return site;
     }
 
     @Override
+    @Traced("content.findNearestSiteByPath")
     public Site findNearestSiteByPath( final ContentPath contentPath )
     {
         requireReadAccess();
 
-        return Tracer.trace( "content.findNearestSiteByPath", trace -> trace.put( "contentPath", contentPath ),
-                             () -> (Site) doFindNearestByPath( contentPath, Content::isSite ), ( trace, site ) -> {
-                if ( site != null )
-                {
-                    trace.put( "path", site.getPath().toString() );
-                }
-            } );
+        Tracer.withCurrent( trace -> trace.put( "contentPath", contentPath ) );
+
+        final Site site = (Site) doFindNearestByPath( contentPath, Content::isSite );
+
+        Tracer.withCurrent( trace -> {
+            if ( site != null )
+            {
+                trace.put( "path", site.getPath().toString() );
+            }
+        } );
+
+        return site;
     }
 
     private Content doFindNearestByPath( final ContentPath contentPath, final Predicate<Content> predicate )
@@ -461,6 +482,7 @@ public class ContentServiceImpl
     }
 
     @Override
+    @Traced("content.getByIds")
     public Contents getByIds( final GetContentByIdsParams params )
     {
         requireReadAccess();
@@ -471,16 +493,24 @@ public class ContentServiceImpl
             .eventPublisher( this.eventPublisher )
             .build();
 
-        return Tracer.trace( "content.getByIds", trace -> trace.put( "id", params.getIds() ), command::execute );
+        Tracer.withCurrent( trace -> trace.put( "id", params.getIds() ) );
+
+        return command.execute();
     }
 
     @Override
+    @Traced("content.getByPath")
     public @NonNull Content getByPath( final ContentPath path )
     {
         requireReadAccess();
 
-        return Tracer.trace( "content.getByPath", trace -> trace.put( "path", path ), () -> doGetByPath( path ),
-                             ( trace, content ) -> trace.put( "id", content.getId() ) );
+        Tracer.withCurrent( trace -> trace.put( "path", path ) );
+
+        final Content content = doGetByPath( path );
+
+        Tracer.withCurrent( trace -> trace.put( "id", content.getId() ) );
+
+        return content;
     }
 
     private Content doGetByPath( final ContentPath path )
@@ -509,6 +539,7 @@ public class ContentServiceImpl
     }
 
     @Override
+    @Traced("content.getByPaths")
     public Contents getByPaths( final ContentPaths paths )
     {
         requireReadAccess();
@@ -519,10 +550,13 @@ public class ContentServiceImpl
             .eventPublisher( this.eventPublisher )
             .build();
 
-        return Tracer.trace( "content.getByPaths", trace -> trace.put( "path", paths ), command::execute );
+        Tracer.withCurrent( trace -> trace.put( "path", paths ) );
+
+        return command.execute();
     }
 
     @Override
+    @Traced("content.findByParent")
     public FindContentByParentResult findByParent( final FindContentByParentParams params )
     {
         requireReadAccess();
@@ -533,14 +567,21 @@ public class ContentServiceImpl
             .eventPublisher( this.eventPublisher )
             .build();
 
-        return Tracer.trace( "content.findByParent", trace -> {
+        Tracer.withCurrent( trace -> {
             trace.put( "query", params.getParentPath() != null ? params.getParentPath() : params.getParentId() );
             trace.put( "from", params.getFrom() );
             trace.put( "size", params.getSize() );
-        }, command::execute, ( trace, result ) -> trace.put( "hits", result.getTotalHits() ) );
+        } );
+
+        final FindContentByParentResult result = command.execute();
+
+        Tracer.withCurrent( trace -> trace.put( "hits", result.getTotalHits() ) );
+
+        return result;
     }
 
     @Override
+    @Traced("content.findIdsByParent")
     public FindContentIdsByParentResult findIdsByParent( final FindContentByParentParams params )
     {
         requireReadAccess();
@@ -551,11 +592,17 @@ public class ContentServiceImpl
             .eventPublisher( this.eventPublisher )
             .build();
 
-        return Tracer.trace( "content.findIdsByParent", trace -> {
+        Tracer.withCurrent( trace -> {
             trace.put( "query", params.getParentPath() != null ? params.getParentPath() : params.getParentId() );
             trace.put( "from", params.getFrom() );
             trace.put( "size", params.getSize() );
-        }, command::execute, ( trace, result ) -> trace.put( "hits", result.getTotalHits() ) );
+        } );
+
+        final FindContentIdsByParentResult result = command.execute();
+
+        Tracer.withCurrent( trace -> trace.put( "hits", result.getTotalHits() ) );
+
+        return result;
     }
 
     @Override
@@ -629,6 +676,7 @@ public class ContentServiceImpl
     }
 
     @Override
+    @Traced("content.find")
     public FindContentIdsByQueryResult find( final ContentQuery query )
     {
         requireReadAccess();
@@ -640,12 +688,18 @@ public class ContentServiceImpl
             .eventPublisher( this.eventPublisher )
             .build();
 
-        return Tracer.trace( "content.find", trace -> {
+        Tracer.withCurrent( trace -> {
             trace.put( "query", query.getQueryExpr() );
             trace.put( "filter", query.getQueryFilters() );
             trace.put( "from", query.getFrom() );
             trace.put( "size", query.getSize() );
-        }, command::execute, ( trace, result ) -> trace.put( "hits", result.getTotalHits() ) );
+        } );
+
+        final FindContentIdsByQueryResult result = command.execute();
+
+        Tracer.withCurrent( trace -> trace.put( "hits", result.getTotalHits() ) );
+
+        return result;
     }
 
     @Override
@@ -798,6 +852,7 @@ public class ContentServiceImpl
     }
 
     @Override
+    @Traced("content.exists")
     public boolean contentExists( final ContentId contentId )
     {
         final ContentExistsCommand command = ContentExistsCommand.create( contentId )
@@ -805,11 +860,18 @@ public class ContentServiceImpl
             .contentTypeService( this.contentTypeService )
             .eventPublisher( this.eventPublisher )
             .build();
-        return Tracer.trace( "content.exists", trace -> trace.put( "id", contentId ), command::execute,
-                             ( trace, exists ) -> trace.put( "exists", exists ) );
+
+        Tracer.withCurrent( trace -> trace.put( "id", contentId ) );
+
+        final boolean exists = command.execute();
+
+        Tracer.withCurrent( trace -> trace.put( "exists", exists ) );
+
+        return exists;
     }
 
     @Override
+    @Traced("content.exists")
     public boolean contentExists( final ContentPath contentPath )
     {
         final ContentExistsCommand command = ContentExistsCommand.create( contentPath )
@@ -817,11 +879,18 @@ public class ContentServiceImpl
             .contentTypeService( this.contentTypeService )
             .eventPublisher( this.eventPublisher )
             .build();
-        return Tracer.trace( "content.exists", trace -> trace.put( "path", contentPath ), command::execute,
-                             ( trace, exists ) -> trace.put( "exists", exists ) );
+
+        Tracer.withCurrent( trace -> trace.put( "path", contentPath ) );
+
+        final boolean exists = command.execute();
+
+        Tracer.withCurrent( trace -> trace.put( "exists", exists ) );
+
+        return exists;
     }
 
     @Override
+    @Traced("content.getBinary")
     public ByteSource getBinary( final ContentId contentId, final BinaryReference binaryReference )
     {
         final GetBinaryCommand command = GetBinaryCommand.create( contentId, binaryReference )
@@ -829,18 +898,26 @@ public class ContentServiceImpl
             .contentTypeService( this.contentTypeService )
             .eventPublisher( this.eventPublisher )
             .build();
-        return Tracer.trace( "content.getBinary", trace -> {
+
+        Tracer.withCurrent( trace -> {
             trace.put( "id", contentId );
             trace.put( "reference", binaryReference );
-        }, command::execute, ( trace, byteSource ) -> {
+        } );
+
+        final ByteSource byteSource = command.execute();
+
+        Tracer.withCurrent( trace -> {
             if ( byteSource != null )
             {
                 trace.put( "size", byteSource.sizeIfKnown().or( -1L ) );
             }
         } );
+
+        return byteSource;
     }
 
     @Override
+    @Traced("content.getBinary")
     public ByteSource getBinary( final ContentId contentId, final ContentVersionId contentVersionId, final BinaryReference binaryReference )
     {
         final GetBinaryByVersionCommand command = GetBinaryByVersionCommand.create( contentId, contentVersionId, binaryReference )
@@ -848,19 +925,27 @@ public class ContentServiceImpl
             .contentTypeService( this.contentTypeService )
             .eventPublisher( this.eventPublisher )
             .build();
-        return Tracer.trace( "content.getBinary", trace -> {
+
+        Tracer.withCurrent( trace -> {
             trace.put( "id", contentId );
             trace.put( "versionId", contentVersionId );
             trace.put( "reference", binaryReference );
-        }, command::execute, ( trace, byteSource ) -> {
+        } );
+
+        final ByteSource byteSource = command.execute();
+
+        Tracer.withCurrent( trace -> {
             if ( byteSource != null )
             {
                 trace.put( "size", byteSource.sizeIfKnown().or( -1L ) );
             }
         } );
+
+        return byteSource;
     }
 
     @Override
+    @Traced("content.getByIdAndVersionId")
     public Content getByIdAndVersionId( final ContentId contentId, final ContentVersionId versionId )
     {
         requireReadAccess();
@@ -873,10 +958,16 @@ public class ContentServiceImpl
             .eventPublisher( this.eventPublisher )
             .build();
 
-        return Tracer.trace( "content.getByIdAndVersionId", trace -> {
+        Tracer.withCurrent( trace -> {
             trace.put( "contentId", contentId );
             trace.put( "versionId", versionId );
-        }, command::execute, ( trace, content ) -> trace.put( "path", content.getPath().toString() ) );
+        } );
+
+        final Content content = command.execute();
+
+        Tracer.withCurrent( trace -> trace.put( "path", content.getPath().toString() ) );
+
+        return content;
     }
 
     @Override

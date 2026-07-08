@@ -37,6 +37,7 @@ import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.trace.Trace;
+import com.enonic.xp.trace.Traced;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
@@ -145,19 +146,13 @@ public class SlashApiHandler
         return dynamicApiHandler != null ? dynamicApiHandler.getApiDescriptor() : apiDescriptorService.getByKey( descriptorKey );
     }
 
+    @Traced("universalAPI")
     private WebResponse execute( final PortalRequest portalRequest, final DescriptorKey descriptorKey,
                                  final Supplier<WebResponse> supplier )
     {
-        final Trace trace = Tracer.newTrace( "universalAPI" );
-        if ( trace == null )
-        {
-            return handleAPIRequest( portalRequest, supplier );
-        }
-        return Tracer.trace( trace, () -> {
-            final WebResponse response = handleAPIRequest( portalRequest, supplier );
-            addTranceInfo( trace, descriptorKey, response );
-            return response;
-        } );
+        final WebResponse response = handleAPIRequest( portalRequest, supplier );
+        Tracer.withCurrent( trace -> addTranceInfo( trace, descriptorKey, response ) );
+        return response;
     }
 
     private MountContext resolveMountContext( final PortalRequest portalRequest )

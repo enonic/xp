@@ -15,7 +15,7 @@ import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
 import com.enonic.xp.security.IdProviderKey;
-import com.enonic.xp.trace.Trace;
+import com.enonic.xp.trace.Traced;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
@@ -81,24 +81,25 @@ public class IdentityHandler
 
         final PortalRequest portalRequest = createPortalRequest( webRequest, idProviderKey, idProviderFunction );
 
-        final Trace trace = Tracer.newTrace( "portalRequest" );
+        return handleTraced( webRequest, idProviderKey, idProviderFunction, portalRequest );
+    }
 
-        if ( trace == null )
-        {
-            return doHandle( idProviderKey, idProviderFunction, portalRequest );
-        }
-
-        trace.put( "path", webRequest.getPath() );
-        trace.put( "method", webRequest.getMethod().toString() );
-        trace.put( "host", webRequest.getHost() );
-        trace.put( "httpRequest", webRequest );
-        trace.put( "context", ContextAccessor.current() );
-
-        return Tracer.traceIO( trace, () -> {
-            final PortalResponse portalResponse = doHandle( idProviderKey, idProviderFunction, portalRequest );
-            HandlerHelper.addTraceInfo( trace, portalResponse );
-            return portalResponse;
+    @Traced("portalRequest")
+    private PortalResponse handleTraced( final WebRequest webRequest, final IdProviderKey idProviderKey, final String idProviderFunction,
+                                         final PortalRequest portalRequest )
+        throws IOException
+    {
+        Tracer.withCurrent( trace -> {
+            trace.put( "path", webRequest.getPath() );
+            trace.put( "method", webRequest.getMethod().toString() );
+            trace.put( "host", webRequest.getHost() );
+            trace.put( "httpRequest", webRequest );
+            trace.put( "context", ContextAccessor.current() );
         } );
+
+        final PortalResponse portalResponse = doHandle( idProviderKey, idProviderFunction, portalRequest );
+        Tracer.withCurrent( trace -> HandlerHelper.addTraceInfo( trace, portalResponse ) );
+        return portalResponse;
     }
 
     private PortalResponse doHandle( final IdProviderKey idProviderKey, final String idProviderFunction, final PortalRequest portalRequest )

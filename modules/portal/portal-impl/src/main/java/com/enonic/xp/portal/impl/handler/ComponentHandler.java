@@ -30,7 +30,7 @@ import com.enonic.xp.region.FragmentComponent;
 import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.site.Site;
-import com.enonic.xp.trace.Trace;
+import com.enonic.xp.trace.Traced;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
@@ -89,16 +89,18 @@ public class ComponentHandler
 
         final PortalRequest portalRequest = updatePortalRequest( webRequest );
 
-        final Trace trace = Tracer.newTrace( "renderComponent" );
-        if ( trace == null )
-        {
-            return doHandle( portalRequest );
-        }
+        return handleTraced( portalRequest );
+    }
 
-        trace.put( "componentPath", portalRequest.getComponent().getPath() );
-        trace.put( "type", portalRequest.getComponent().getType().toString() );
-
-        return Tracer.trace( trace, () -> doHandle( portalRequest ) );
+    @Traced("renderComponent")
+    private PortalResponse handleTraced( final PortalRequest portalRequest )
+        throws IOException
+    {
+        Tracer.withCurrent( trace -> {
+            trace.put( "componentPath", portalRequest.getComponent().getPath() );
+            trace.put( "type", portalRequest.getComponent().getType().toString() );
+        } );
+        return doHandle( portalRequest );
     }
 
     private PortalResponse doHandle( final PortalRequest portalRequest )
