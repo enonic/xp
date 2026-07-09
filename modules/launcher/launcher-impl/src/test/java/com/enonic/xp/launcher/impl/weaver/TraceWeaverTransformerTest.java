@@ -161,18 +161,6 @@ class TraceWeaverTransformerTest
     }
 
     @Test
-    void oldClassFileVersionIsNotWoven()
-        throws Exception
-    {
-        final byte[] bytes = fixtureBytes();
-        // patch major version to 50 (Java 6) - invokedynamic is unavailable there
-        bytes[6] = 0;
-        bytes[7] = 50;
-
-        assertNull( TraceWeaverTransformer.transform( bytes ) );
-    }
-
-    @Test
     void interfaceDefaultMethodIsWoven()
         throws Exception
     {
@@ -190,18 +178,6 @@ class TraceWeaverTransformerTest
 
         assertEquals( "Hi world", result );
         assertEquals( "fixture.iface", this.manager.singleTrace().getName() );
-    }
-
-    @Test
-    void oldInterfaceVersionIsNotWoven()
-        throws Exception
-    {
-        final byte[] bytes = classBytes( TracedInterfaceFixture.class );
-        // private interface methods require class-file version 53+ (Java 9)
-        bytes[6] = 0;
-        bytes[7] = 52;
-
-        assertNull( TraceWeaverTransformer.transform( bytes ) );
     }
 
     @Test

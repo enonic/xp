@@ -75,18 +75,6 @@ final class TraceWeaverTransformer
             return null;
         }
 
-        // The wrapper uses invokedynamic (class-file version 51+); the body of an interface method becomes a
-        // private interface method (version 53+). Older classes are left untouched - the annotation stays inert.
-        final int majorVersion = reader.readUnsignedShort( 6 );
-        final boolean isInterface = ( reader.getAccess() & Opcodes.ACC_INTERFACE ) != 0;
-        final int requiredVersion = isInterface ? Opcodes.V9 : Opcodes.V1_7;
-        if ( majorVersion < ( requiredVersion & 0xFFFF ) )
-        {
-            LOG.warn( "Class {} (class-file version {}) is too old for trace weaving - @Traced is ignored",
-                      reader.getClassName(), majorVersion );
-            return null;
-        }
-
         final ClassWriter writer = new ClassWriter( reader, ClassWriter.COMPUTE_MAXS );
         reader.accept( new WeavingClassVisitor( writer, tracedMethods ), 0 );
         return writer.toByteArray();

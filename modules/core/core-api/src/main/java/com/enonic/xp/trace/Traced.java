@@ -21,8 +21,7 @@ import java.lang.annotation.Target;
  * any attributes: listeners handling start events must tolerate traces whose attributes are still being added.
  * Attributes are guaranteed complete when the end event is dispatched.
  * <p>
- * The annotation has no effect on abstract or native methods, or on constructors. Classes with a class-file
- * version older than Java 7 (and interfaces older than Java 9) are not woven.
+ * The annotation has no effect on abstract or native methods, or on constructors.
  */
 @Documented
 @Target(ElementType.METHOD)
