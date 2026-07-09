@@ -25,7 +25,7 @@ class DescriptorServiceImplTest
     @Override
     protected void initialize()
     {
-        final DescriptorFacetFactoryImpl facetFactory = new DescriptorFacetFactoryImpl( applicationService, resourceService );
+        final DescriptorFacetFactoryImpl facetFactory = new DescriptorFacetFactoryImpl( schemaService, resourceService );
 
         this.service = new DescriptorServiceImpl( facetFactory );
 

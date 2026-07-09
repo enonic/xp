@@ -1,0 +1,48 @@
+package com.enonic.xp.core.impl.schema.parser;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.core.impl.schema.YmlParserBase;
+import com.enonic.xp.form.Form;
+import com.enonic.xp.region.LayoutDescriptor;
+import com.enonic.xp.region.RegionDescriptors;
+import com.enonic.xp.schema.LocalizedText;
+import com.enonic.xp.util.GenericValue;
+
+public final class YmlLayoutDescriptorParser
+{
+    private static final YmlParserBase PARSER = new YmlParserBase();
+
+    static
+    {
+        PARSER.addMixIn( LayoutDescriptor.Builder.class, LayoutDescriptorBuilderMixIn.class );
+    }
+
+    public static LayoutDescriptor.Builder parse( final String resource, final ApplicationKey currentApplication )
+    {
+        return PARSER.parse( "Layout", resource, LayoutDescriptor.Builder.class, currentApplication );
+    }
+
+    @JsonIgnoreProperties("kind")
+    private abstract static class LayoutDescriptorBuilderMixIn
+    {
+        @JsonProperty("title")
+        abstract LayoutDescriptor.Builder title( LocalizedText text );
+
+        @JsonProperty("description")
+        abstract LayoutDescriptor.Builder description( LocalizedText text );
+
+        @JsonProperty("form")
+        abstract LayoutDescriptor.Builder config( Form config );
+
+        @JsonProperty("regions")
+        @JsonDeserialize(using = RegionDescriptorsDeserializer.class)
+        abstract LayoutDescriptor.Builder regions( RegionDescriptors value );
+
+        @JsonProperty("config")
+        abstract LayoutDescriptor.Builder schemaConfig( GenericValue value );
+    }
+}

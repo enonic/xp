@@ -1,13 +1,13 @@
 package com.enonic.xp.lib.schema.mapper;
 
 import com.enonic.xp.region.LayoutDescriptor;
-import com.enonic.xp.resource.DynamicSchemaResult;
+import com.enonic.xp.schema.SchemaResult;
 import com.enonic.xp.script.serializer.MapGenerator;
 
 public final class LayoutDescriptorMapper
     extends DescriptorMapper<LayoutDescriptor>
 {
-    public LayoutDescriptorMapper( final DynamicSchemaResult<LayoutDescriptor> schema )
+    public LayoutDescriptorMapper( final SchemaResult<LayoutDescriptor> schema )
     {
         super( schema );
     }

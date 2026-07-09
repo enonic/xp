@@ -1,13 +1,13 @@
 package com.enonic.xp.lib.schema.mapper;
 
 import com.enonic.xp.page.PageDescriptor;
-import com.enonic.xp.resource.DynamicSchemaResult;
+import com.enonic.xp.schema.SchemaResult;
 import com.enonic.xp.script.serializer.MapGenerator;
 
 public final class PageDescriptorMapper
     extends DescriptorMapper<PageDescriptor>
 {
-    public PageDescriptorMapper( final DynamicSchemaResult<PageDescriptor> schema )
+    public PageDescriptorMapper( final SchemaResult<PageDescriptor> schema )
     {
         super( schema );
     }

@@ -20,7 +20,7 @@ let resource = 'kind: "Style"\n' +
 
 
 // BEGIN
-// Create virtual styles.
+// Create dynamic styles.
 var result = schemaLib.createStyles({
     application: 'myapp',
     resource

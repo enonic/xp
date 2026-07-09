@@ -27,10 +27,6 @@ function checkRequired<T extends object, K extends keyof T>(
     return obj[name];
 }
 
-export interface CreateVirtualApplicationParams {
-    key: string;
-}
-
 export interface Application {
     key: string;
     version: string | null;
@@ -40,54 +36,6 @@ export interface Application {
     modifiedTime: string | null;
     started: boolean;
     system: boolean;
-}
-
-interface CreateVirtualApplicationHandler {
-    setKey(value: string): void;
-
-    execute(): Application;
-}
-
-/**
- * Creates virtual application.
- *
- * @param {object} params JSON with the parameters.
- * @param {string} params.key Application key.
- *
- * @returns {Application} created application.
- */
-export function createVirtualApplication(params: CreateVirtualApplicationParams): Application {
-    const key = checkRequired(params, 'key');
-
-    const bean: CreateVirtualApplicationHandler = __.newBean<CreateVirtualApplicationHandler>('com.enonic.xp.lib.app.CreateVirtualApplicationHandler');
-    bean.setKey(key);
-    return __.toNativeObject(bean.execute());
-}
-
-export interface DeleteVirtualApplicationParams {
-    key: string;
-}
-
-interface DeleteVirtualApplicationHandler {
-    setKey(value: string): void;
-
-    execute(): boolean;
-}
-
-/**
- * Deletes virtual application.
- *
- * @param {object} params JSON with the parameters.
- * @param {string} params.key Application key.
- *
- * @returns {boolean} deletion result.
- */
-export function deleteVirtualApplication(params: DeleteVirtualApplicationParams): boolean {
-    const key = checkRequired(params, 'key');
-
-    const bean: DeleteVirtualApplicationHandler = __.newBean<DeleteVirtualApplicationHandler>('com.enonic.xp.lib.app.DeleteVirtualApplicationHandler');
-    bean.setKey(key);
-    return __.toNativeObject(bean.execute());
 }
 
 export interface GetApplicationParams {
@@ -101,7 +49,9 @@ interface GetApplicationHandler {
 }
 
 /**
- * Fetches application by key.
+ * Fetches an installed application by key. Namespaces (virtual applications) are not taken into account.
+ *
+ * @deprecated Returns installed applications only; namespaces (virtual applications) are not included.
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.key Application key.
@@ -121,7 +71,9 @@ interface ListApplicationsHandler {
 }
 
 /**
- * Fetches both static and virtual applications.
+ * Fetches installed applications. Namespaces (virtual applications) are not taken into account.
+ *
+ * @deprecated Returns installed applications only; namespaces (virtual applications) are not included.
  *
  * @returns {Application[]} applications list.
  */
@@ -176,32 +128,6 @@ export function getDescriptor(params: GetApplicationDescriptorParams): Applicati
     const key = checkRequired(params, 'key');
 
     const bean: GetApplicationDescriptorHandler = __.newBean<GetApplicationDescriptorHandler>('com.enonic.xp.lib.app.GetApplicationDescriptorHandler');
-    bean.setKey(key);
-    return __.toNativeObject(bean.execute());
-}
-
-export interface GetApplicationModeParams {
-    key: string;
-}
-
-interface GetApplicationModeHandler {
-    setKey(value: string): void;
-
-    execute(): string | null;
-}
-
-/**
- * Fetches a mode of the app with the app key.
- *
- * @param {object} params JSON with the parameters.
- * @param {string} params.key Application key.
- *
- * @returns {string | null} application mode, or null if the application is not installed.
- */
-export function getApplicationMode(params: GetApplicationModeParams): string | null {
-    const key = checkRequired(params, 'key');
-
-    const bean: GetApplicationModeHandler = __.newBean<GetApplicationModeHandler>('com.enonic.xp.lib.app.GetApplicationModeHandler');
     bean.setKey(key);
     return __.toNativeObject(bean.execute());
 }

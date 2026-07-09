@@ -1,6 +1,6 @@
 package com.enonic.xp.lib.schema.mapper;
 
-import com.enonic.xp.resource.DynamicSchemaResult;
+import com.enonic.xp.schema.SchemaResult;
 import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.formfragment.FormFragmentDescriptor;
@@ -13,20 +13,20 @@ public class SchemaConverter
 
     }
 
-    public static SchemaMapper convert( final DynamicSchemaResult<? extends BaseSchema<?>> result )
+    public static SchemaMapper convert( final SchemaResult<? extends BaseSchema<?>> result )
     {
         final Object dynamicSchema = result.getSchema();
         if ( dynamicSchema instanceof ContentType )
         {
-            return new ContentTypeMapper( (DynamicSchemaResult<ContentType>) result );
+            return new ContentTypeMapper( (SchemaResult<ContentType>) result );
         }
         if ( dynamicSchema instanceof FormFragmentDescriptor )
         {
-            return new FormFragmentMapper( (DynamicSchemaResult<FormFragmentDescriptor>) result );
+            return new FormFragmentMapper( (SchemaResult<FormFragmentDescriptor>) result );
         }
         if ( dynamicSchema instanceof MixinDescriptor )
         {
-            return new MixinDescriptorMapper( (DynamicSchemaResult<MixinDescriptor>) result );
+            return new MixinDescriptorMapper( (SchemaResult<MixinDescriptor>) result );
         }
 
         throw new IllegalArgumentException( "invalid component type: " + result.getClass() );

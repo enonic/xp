@@ -5,16 +5,24 @@ import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import org.osgi.framework.Bundle;
+
+import com.google.common.base.Suppliers;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.BundleApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.ClassLoaderApplicationUrlResolver;
-import com.enonic.xp.core.impl.app.resolver.FakeCmsYamlUrlResolver;
+import com.enonic.xp.core.impl.app.resolver.FilteredApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.MultiApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.NodeResourceApplicationUrlResolver;
+import com.enonic.xp.core.impl.schema.NamespaceConstants;
+import com.enonic.xp.core.impl.schema.NamespaceContext;
+import com.enonic.xp.node.NodeName;
+import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.server.RunMode;
 
@@ -22,12 +30,9 @@ public final class ApplicationFactory
 {
     private final NodeService nodeService;
 
-    private final AppConfig appConfig;
-
-    ApplicationFactory( final NodeService nodeService, final AppConfig appConfig )
+    ApplicationFactory( final NodeService nodeService )
     {
         this.nodeService = nodeService;
-        this.appConfig = appConfig;
     }
 
     public ApplicationImpl create( final Bundle bundle )
@@ -42,25 +47,11 @@ public final class ApplicationFactory
             return createUrlResolverBySource( bundle, source );
         }
 
-        final BundleApplicationUrlResolver bundleUrlResolver = new BundleApplicationUrlResolver( bundle );
-        final ApplicationKey appKey = ApplicationHelper.getApplicationKey( bundle );
-        final NodeResourceApplicationUrlResolver nodeResourceApplicationResolver =
-            new NodeResourceApplicationUrlResolver( appKey, nodeService );
-        final ClassLoaderApplicationUrlResolver classLoaderUrlResolver = createClassLoaderUrlResolver( bundle );
-        final FakeCmsYamlUrlResolver fakeSiteXmlUrlResolver = new FakeCmsYamlUrlResolver( appKey, nodeService );
+        final ApplicationKey applicationKey = ApplicationHelper.getApplicationKey( bundle );
 
-        final boolean addCLR = RunMode.isDev() && classLoaderUrlResolver != null;
-
-        if ( appConfig.virtual_enabled() && appConfig.virtual_schema_override() )
-        {
-            return addCLR ? new MultiApplicationUrlResolver( nodeResourceApplicationResolver, classLoaderUrlResolver, bundleUrlResolver,
-                                                             fakeSiteXmlUrlResolver )
-                : new MultiApplicationUrlResolver( nodeResourceApplicationResolver, bundleUrlResolver, fakeSiteXmlUrlResolver );
-        }
-        else
-        {
-            return addCLR ? new MultiApplicationUrlResolver( classLoaderUrlResolver, bundleUrlResolver ) : bundleUrlResolver;
-        }
+        return new MultiApplicationUrlResolver( new NodeResourceApplicationUrlResolver( applicationKey, nodeService ),
+                                                new FilteredApplicationUrlResolver( createBundleUrlResolver( bundle ),
+                                                                                    () -> schemaResourceFilter( applicationKey ) ) );
     }
 
     ApplicationUrlResolver createUrlResolverBySource( final Bundle bundle, final String source )
@@ -68,21 +59,40 @@ public final class ApplicationFactory
         switch ( source )
         {
             case "bundle":
-                final ClassLoaderApplicationUrlResolver classLoaderUrlResolver = createClassLoaderUrlResolver( bundle );
-                final boolean addCLR = RunMode.isDev() && classLoaderUrlResolver != null;
-
-                return addCLR
-                    ? new MultiApplicationUrlResolver( classLoaderUrlResolver, new BundleApplicationUrlResolver( bundle ) )
-                    : new BundleApplicationUrlResolver( bundle );
+                return createBundleUrlResolver( bundle );
             case "virtual":
-                if ( !appConfig.virtual_enabled() )
-                {
-                    throw new IllegalStateException( "virtual apps are disabled" );
-                }
                 return new NodeResourceApplicationUrlResolver( ApplicationHelper.getApplicationKey( bundle ), nodeService );
             default:
                 throw new IllegalArgumentException( "invalid application resolver source: " + source );
         }
+    }
+
+    private ApplicationUrlResolver createBundleUrlResolver( final Bundle bundle )
+    {
+        final List<ApplicationUrlResolver> resolvers = new ArrayList<>();
+
+        final ClassLoaderApplicationUrlResolver classLoaderUrlResolver = createClassLoaderUrlResolver( bundle );
+        if ( RunMode.isDev() && classLoaderUrlResolver != null )
+        {
+            resolvers.add( classLoaderUrlResolver );
+        }
+
+        resolvers.add( new BundleApplicationUrlResolver( bundle ) );
+
+        return resolvers.size() == 1 ? resolvers.get( 0 ) : new MultiApplicationUrlResolver( resolvers.toArray( ApplicationUrlResolver[]::new ) );
+    }
+
+    // Schema resources (descriptors and i18n phrases) must not be contributed by the bundle when the application node exists in the namespace repo (system.app)
+    private Predicate<String> schemaResourceFilter( final ApplicationKey applicationKey )
+    {
+        final Supplier<Boolean> appNodeExists = Suppliers.memoize( () -> appNodeExists( applicationKey ) );
+        return path -> !( SchemaResourcePaths.isSchemaResourcePath( path ) && appNodeExists.get() );
+    }
+
+    private boolean appNodeExists( final ApplicationKey applicationKey )
+    {
+        final NodePath appPath = new NodePath( NamespaceConstants.NAMESPACE_APP_ROOT_PARENT, NodeName.from( applicationKey.toString() ) );
+        return NamespaceContext.createAdminContext().callWith( () -> nodeService.nodeExists( appPath ) );
     }
 
     private ClassLoaderApplicationUrlResolver createClassLoaderUrlResolver( final Bundle bundle )

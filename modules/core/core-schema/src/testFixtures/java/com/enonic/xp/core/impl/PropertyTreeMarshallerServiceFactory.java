@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl;
 
-import com.enonic.xp.core.impl.form.PropertyTreeMarshallerServiceImpl;
+import com.enonic.xp.core.impl.schema.form.PropertyTreeMarshallerServiceImpl;
 import com.enonic.xp.form.PropertyTreeMarshallerService;
 
 public class PropertyTreeMarshallerServiceFactory

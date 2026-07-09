@@ -17,7 +17,11 @@ public final class ListApplicationsHandler
 
     public List<ApplicationMapper> execute()
     {
-        return applicationServiceSupplier.get().list().stream().map( ApplicationMapper::new ).collect( Collectors.toList() );
+        return applicationServiceSupplier.get()
+            .getInstalledApplications()
+            .stream()
+            .map( ApplicationMapper::new )
+            .collect( Collectors.toList() );
     }
 
     @Override

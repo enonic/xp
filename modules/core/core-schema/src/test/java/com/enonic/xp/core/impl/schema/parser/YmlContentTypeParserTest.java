@@ -1,0 +1,77 @@
+package com.enonic.xp.core.impl.schema.parser;
+
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.time.Instant;
+
+import org.junit.jupiter.api.Test;
+
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.schema.content.ContentType;
+import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.util.GenericValue;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class YmlContentTypeParserTest
+{
+    @Test
+    void testParse()
+        throws Exception
+    {
+        final String yaml = readAsString( "/descriptors/content-type.yml" );
+
+        final ApplicationKey myapp = ApplicationKey.from( "myapp" );
+        ContentType.Builder builder = YmlContentTypeParser.parse( yaml, myapp );
+        builder.name( ContentTypeName.from( myapp, "article" ) );
+
+        final Instant now = Instant.now();
+        builder.createdTime( now );
+
+        final ContentType contentType = builder.build();
+
+        assertEquals( ContentTypeName.from( "myapp:article" ), contentType.getName() );
+        assertEquals( "Article", contentType.getTitle() );
+        assertEquals( "i18n.article.displayName", contentType.getTitleI18nKey() );
+        assertNotNull( contentType.getForm() );
+        assertEquals( now, contentType.getCreatedTime() );
+
+        assertNotNull( contentType.getForm().getFormFragment( "myFragment" ) );
+        assertNotNull( contentType.getForm().getFormFragment( "myFragment2" ) );
+
+        assertEquals( "Article heading", contentType.getDisplayNamePlaceholder() );
+        assertEquals( "article.title", contentType.getDisplayNamePlaceholderI18nKey() );
+        assertEquals( "${expression}", contentType.getDisplayNameExpression() );
+        assertEquals( "${title}-${description}", contentType.getDisplayNameListExpression() );
+
+        final GenericValue schemaConfig = contentType.getSchemaConfig();
+
+        assertNotNull( schemaConfig );
+        assertTrue( schemaConfig.optional( "prop1" ).isPresent() );
+        assertTrue( schemaConfig.optional( "prop2" ).isPresent() );
+        assertTrue( schemaConfig.optional( "prop3" ).isPresent() );
+        assertTrue( schemaConfig.optional( "prop4" ).isPresent() );
+    }
+
+    @Test
+    void testParseYaml()
+        throws Exception
+    {
+        final String yaml = readAsString( "/descriptors/content-type.yaml" );
+
+        final ApplicationKey myapp = ApplicationKey.from( "myapp" );
+        ContentType.Builder builder = YmlContentTypeParser.parse( yaml, myapp );
+        builder.name( ContentTypeName.from( myapp, "article" ) );
+
+        assertNotNull( builder.build() );
+    }
+
+    private String readAsString( final String name )
+        throws Exception
+    {
+        return Files.readString( Paths.get( YmlContentTypeParserTest.class.getResource( name ).toURI() ), StandardCharsets.UTF_8 );
+    }
+}

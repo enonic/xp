@@ -1,7 +1,7 @@
 package com.enonic.xp.lib.schema.mapper;
 
 import com.enonic.xp.region.ComponentDescriptor;
-import com.enonic.xp.resource.DynamicSchemaResult;
+import com.enonic.xp.schema.SchemaResult;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
@@ -13,7 +13,7 @@ public abstract class DescriptorMapper<T extends ComponentDescriptor>
 
     private final Resource resource;
 
-    DescriptorMapper( final DynamicSchemaResult<T> descriptor )
+    DescriptorMapper( final SchemaResult<T> descriptor )
     {
         this.descriptor = descriptor.getSchema();
         this.resource = descriptor.getResource();

@@ -11,6 +11,7 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.core.impl.schema.YmlMacroDescriptorParser;
 import com.enonic.xp.descriptor.DescriptorKeyLocator;
 import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.Form;

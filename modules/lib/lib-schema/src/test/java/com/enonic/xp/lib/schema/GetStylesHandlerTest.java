@@ -1,0 +1,72 @@
+package com.enonic.xp.lib.schema;
+
+import java.time.Instant;
+
+import org.junit.jupiter.api.Test;
+
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.schema.SchemaResult;
+import com.enonic.xp.resource.Resource;
+import com.enonic.xp.style.ImageStyle;
+import com.enonic.xp.style.StyleDescriptor;
+
+import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+class GetStylesHandlerTest
+    extends BaseSchemaHandlerTest
+{
+    @Test
+    void testStyles()
+    {
+        when( schemaService.getStyles( isA( ApplicationKey.class ) ) ).thenAnswer( params -> {
+            final ApplicationKey applicationKey = params.getArgument( 0, ApplicationKey.class );
+
+            StyleDescriptor styleDescriptor = StyleDescriptor.create()
+                .application( applicationKey )
+                .addStyleElement( ImageStyle.create()
+                                      .label( "Style display name" )
+
+                                      .name( "mystyle" )
+                                      .labelI18nKey( "style.display" )
+                                      .aspectRatio( "16:9" )
+                                      .filter( "sharpen()" )
+                                      .build() )
+                .addStyleElement( ImageStyle.create()
+                                      .label( "Plain" )
+                                      .name( "plain" )
+                                      .build() )
+                .modifiedTime( Instant.parse( "2021-02-25T10:44:33.170079900Z" ) )
+                .build();
+
+            final Resource resource = mock( Resource.class );
+            when( resource.readString() ).thenReturn( """
+                kind: "Style"
+                styles:
+                - name: "mystyle"
+                  type: "Image"
+                  label:
+                    text: "Style display name"
+                    i18n: "style.display"
+                  aspectRatio: "16:9"
+                  filter: "sharpen()"
+                - name: "plain"
+                  type: "Image"
+                  label: "Plain"
+                """ );
+
+            return new SchemaResult<>( styleDescriptor, resource );
+        } );
+
+        runScript( "/lib/xp/examples/schema/getStyles.js" );
+    }
+
+
+    @Test
+    void testNull()
+    {
+        runFunction( "/test/GetStylesHandlerTest.js", "getNull" );
+    }
+
+}

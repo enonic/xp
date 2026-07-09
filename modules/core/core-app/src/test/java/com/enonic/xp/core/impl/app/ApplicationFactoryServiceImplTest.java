@@ -1,8 +1,8 @@
 package com.enonic.xp.core.impl.app;
 
+import java.time.Instant;
 import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -16,19 +16,20 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.MultiApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.NodeResourceApplicationUrlResolver;
+import com.enonic.xp.core.impl.schema.NamespaceConstants;
 import com.enonic.xp.node.FindNodesByQueryResult;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.resource.Resource;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -39,21 +40,12 @@ class ApplicationFactoryServiceImplTest
     @Mock(stubOnly = true)
     private NodeService nodeService;
 
-    private AppConfig appConfig;
-
-    @BeforeEach
-    void init()
-    {
-        appConfig = mock( AppConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
-        when( appConfig.virtual_enabled() ).thenReturn( true );
-    }
-
     @Test
     void lifecycle()
         throws Exception
     {
         final BundleContext bundleContext = getBundleContext();
-        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService, appConfig );
+        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService );
         service.activate();
 
         final String appName = "app1";
@@ -77,11 +69,9 @@ class ApplicationFactoryServiceImplTest
     void findActiveApplication()
         throws Exception
     {
-        when( appConfig.virtual_enabled() ).thenReturn( true );
-
         final BundleContext bundleContext = getBundleContext();
         when( nodeService.findByQuery( any( NodeQuery.class ) ) ).thenReturn( FindNodesByQueryResult.create().build() );
-        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService, appConfig );
+        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService );
         service.activate();
 
         final String appName = "app1";
@@ -104,7 +94,7 @@ class ApplicationFactoryServiceImplTest
     {
         final BundleContext bundleContext = getBundleContext();
         when( nodeService.findByQuery( any( NodeQuery.class ) ) ).thenReturn( FindNodesByQueryResult.create().build() );
-        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService, appConfig );
+        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService );
         service.activate();
 
         final String appName = "app1";
@@ -128,36 +118,46 @@ class ApplicationFactoryServiceImplTest
     }
 
     @Test
-    void findDisabledVirtualApplication()
+    void bundleApplicationWithNamespace_noDefaultCmsYaml()
+        throws Exception
     {
-        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
         final BundleContext bundleContext = getBundleContext();
-        when( nodeService.nodeExists(
-            new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( applicationKey.getName() ) ) ) ).thenReturn( true );
+        when( nodeService.findByQuery( any( NodeQuery.class ) ) ).thenReturn( FindNodesByQueryResult.create().build() );
 
-        when( appConfig.virtual_enabled() ).thenReturn( false );
+        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
+        final NodePath appPath = new NodePath( NamespaceConstants.NAMESPACE_APP_ROOT_PARENT, NodeName.from( "app1" ) );
+        when( nodeService.nodeExists( appPath ) ).thenReturn( true );
+        when( nodeService.getByPath( appPath ) ).thenReturn(
+            Node.create().id( NodeId.from( "app-node" ) ).name( "app1" ).parentPath( NodePath.ROOT ).timestamp( Instant.now() ).build() );
 
-        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService, appConfig );
+        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService );
         service.activate();
 
+        final Bundle bundle = deploy( "app1", newBundle( "app1", true ) );
+        bundle.start();
 
-        assertTrue( service.findActiveApplication( applicationKey ).isEmpty() );
+        final Optional<ApplicationUrlResolver> resolver = service.findResolver( applicationKey, null );
+        assertThat( resolver ).isNotEmpty();
+
+        final Resource resource = resolver.get().findResource( "/cms/cms.yaml" );
+        assertThat( resource ).isNull();
     }
 
     @Test
-    void findVirtualApplication()
+    void findNamespaceApplicationResolver()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
         final BundleContext bundleContext = getBundleContext();
         when( nodeService.nodeExists(
-            new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( applicationKey.getName() ) ) ) ).thenReturn( true );
+            new NodePath( NamespaceConstants.NAMESPACE_APP_ROOT_PARENT, NodeName.from( applicationKey.getName() ) ) ) ).thenReturn( true );
 
-        when( appConfig.virtual_enabled() ).thenReturn( true );
-        when( appConfig.virtual_schema_override() ).thenReturn( false );
-
-        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService, appConfig );
+        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService );
         service.activate();
 
-        assertEquals( applicationKey, service.findActiveApplication( applicationKey ).get().getKey() );
+        assertThat( service.findActiveApplication( applicationKey ) ).isEmpty();
+
+        final Optional<ApplicationUrlResolver> resolver = service.findResolver( applicationKey, null );
+        assertThat( resolver ).isNotEmpty();
+        assertThat( resolver.get() ).isInstanceOf( NodeResourceApplicationUrlResolver.class );
     }
 }

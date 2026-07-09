@@ -20,7 +20,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.AbstractNodeTest;
-import com.enonic.xp.core.impl.app.VirtualAppConstants;
+import com.enonic.xp.core.impl.schema.NamespaceConstants;
 import com.enonic.xp.core.impl.audit.AuditLogConstants;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.dump.BranchDumpResult;
@@ -820,7 +820,7 @@ class DumpServiceImplTest
             .filter( Predicate.isEqual( SystemConstants.SYSTEM_REPO_ID )
                          .or( Predicate.isEqual( AuditLogConstants.AUDIT_LOG_REPO_ID ) )
                          .or( Predicate.isEqual( SchedulerConstants.SCHEDULER_REPO_ID ) )
-                         .or( Predicate.isEqual( VirtualAppConstants.VIRTUAL_APP_REPO_ID ) )
+                         .or( Predicate.isEqual( NamespaceConstants.NAMESPACE_APP_REPO_ID ) )
                          .negate() )
             .forEach( this::doDeleteRepository );
 

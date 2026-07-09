@@ -28,7 +28,7 @@ public abstract class AbstractDescriptorServiceTest
         this.formFragmentService = Mockito.mock( CmsFormFragmentService.class );
         when( this.formFragmentService.inlineFormItems( any() ) ).then( returnsFirstArg() );
 
-        final DescriptorFacetFactoryImpl facetFactory = new DescriptorFacetFactoryImpl( this.applicationService, this.resourceService );
+        final DescriptorFacetFactoryImpl facetFactory = new DescriptorFacetFactoryImpl( this.schemaService, this.resourceService );
 
         final DescriptorServiceImpl descriptorServiceImpl = new DescriptorServiceImpl( facetFactory );
         descriptorServiceImpl.addLoader( new LayoutDescriptorLoader( this.resourceService, this.formFragmentService ) );

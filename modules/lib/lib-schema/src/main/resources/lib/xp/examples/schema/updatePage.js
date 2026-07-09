@@ -5,7 +5,7 @@ var assert = require('/lib/xp/testing');
 
 let resource = `kind: "Page"
 title:
-  text: "Virtual Page"
+  text: "Dynamic Page"
   i18n: "key.display-name"
 description:
   text: "My Page Description"
@@ -28,10 +28,9 @@ regions:
   - "footer"`;
 
 // BEGIN
-// Update virtual page.
-var result = schemaLib.updateComponent({
+// Update dynamic page.
+var result = schemaLib.updatePage({
     key: 'myapp:mypage',
-    type: 'PAGE',
     resource
 
 });
@@ -43,7 +42,7 @@ log.info('Updated page: ' + result.key);
 
 assert.assertJsonEquals({
     key: 'myapp:mypage',
-    title: 'Virtual Page',
+    title: 'Dynamic Page',
     titleI18nKey: 'key.display-name',
     description: 'My Page Description',
     descriptionI18nKey: 'key.description',
@@ -51,7 +50,7 @@ assert.assertJsonEquals({
     modifiedTime: '2021-09-25T10:00:00Z',
     resource: 'kind: "Page"\n' +
               'title:\n' +
-              '  text: "Virtual Page"\n' +
+              '  text: "Dynamic Page"\n' +
               '  i18n: "key.display-name"\n' +
               'description:\n' +
               '  text: "My Page Description"\n' +

@@ -4,8 +4,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.schema.SchemaService;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -15,7 +15,7 @@ class DescriptorFacetFactoryImplTest
 {
     private ResourceService resourceService;
 
-    private ApplicationService applicationService;
+    private SchemaService schemaService;
 
     private MyDescriptorLoader descriptorLoader;
 
@@ -25,9 +25,9 @@ class DescriptorFacetFactoryImplTest
     void setup()
     {
         this.resourceService = Mockito.mock( ResourceService.class );
-        this.applicationService = Mockito.mock( ApplicationService.class );
+        this.schemaService = Mockito.mock( SchemaService.class );
 
-        this.facetFactory = new DescriptorFacetFactoryImpl( this.applicationService, this.resourceService );
+        this.facetFactory = new DescriptorFacetFactoryImpl( this.schemaService, this.resourceService );
 
         this.descriptorLoader = new MyDescriptorLoader();
     }
@@ -41,7 +41,7 @@ class DescriptorFacetFactoryImplTest
 
         final DescriptorFacetImpl<MyDescriptor> implFacet = (DescriptorFacetImpl<MyDescriptor>) facet;
         assertSame( this.resourceService, implFacet.resourceService );
-        assertSame( this.applicationService, implFacet.applicationService );
+        assertSame( this.schemaService, implFacet.schemaService );
         assertSame( this.descriptorLoader, implFacet.loader );
     }
 }

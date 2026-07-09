@@ -4,14 +4,13 @@ var assert = require('/lib/xp/testing');
 /* global log*/
 
 // BEGIN
-// Create virtual part.
+// Delete dynamic part.
 
 var params = {
-    key: 'myapp:mypart',
-    type: 'PART'
+    key: 'myapp:mypart'
 };
 
-var result = schemaLib.deleteComponent(params);
+var result = schemaLib.deletePart(params);
 
 
 if (result) {

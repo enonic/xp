@@ -1,10 +1,11 @@
 package com.enonic.xp.core.impl.app;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,21 +23,18 @@ import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationInvalidationLevel;
 import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationMode;
 import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.app.Applications;
-import com.enonic.xp.app.CreateVirtualApplicationParams;
 import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.config.ConfigBuilder;
+import com.enonic.xp.core.impl.schema.NamespaceConstants;
+import com.enonic.xp.core.impl.schema.NamespaceAppService;
 import com.enonic.xp.config.Configuration;
 import com.enonic.xp.core.impl.app.event.ApplicationClusterEvents;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventPublisher;
-import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.node.CreateNodeParams;
-import com.enonic.xp.node.DeleteNodeResult;
-import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.ListNodesParams;
 import com.enonic.xp.node.ListNodesResult;
 import com.enonic.xp.node.Node;
@@ -45,9 +43,7 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeListEntry;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.Nodes;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -84,8 +80,6 @@ class ApplicationServiceImplTest
 
     private NodeService nodeService;
 
-    private VirtualAppService virtualAppService;
-
     @BeforeEach
     void initService()
     {
@@ -106,9 +100,14 @@ class ApplicationServiceImplTest
 
         nodeService = mock( NodeService.class );
 
-        virtualAppService = new VirtualAppService( nodeService );
+        when( nodeService.create( isA( CreateNodeParams.class ) ) ).thenAnswer( invocation -> {
+            final CreateNodeParams params = invocation.getArgument( 0 );
+            return Node.create().id( NodeId.from( params.getName() ) ).name( params.getName() ).parentPath( params.getParent() ).build();
+        } );
 
-        this.service = new ApplicationServiceImpl( applicationRegistry, repoService, eventPublisher, appFilterService, virtualAppService,
+        final NamespaceAppService namespaceAppService = new NamespaceAppService( nodeService );
+
+        this.service = new ApplicationServiceImpl( applicationRegistry, repoService, eventPublisher, appFilterService, namespaceAppService,
                                                    auditLogSupport );
     }
 
@@ -124,85 +123,73 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    void get_application()
+    void get_application_not_found()
+    {
+        assertNull( this.service.getInstalledApplication( ApplicationKey.from( "app1" ) ) );
+    }
+
+    @Test
+    void get_prefers_installed_application()
     {
         final Bundle bundle = deployAppBundle( "app1" );
         applicationRegistry.registerApplication( bundle );
 
-        final ApplicationAdaptor result = (ApplicationAdaptor) this.service.get( ApplicationKey.from( "app1" ) );
+        final Application result = this.service.get( ApplicationKey.from( "app1" ) );
+
+        assertSame( applicationRegistry.get( ApplicationKey.from( "app1" ) ), result );
+    }
+
+    @Test
+    void get_returns_namespace_backed_application()
+    {
+        final ApplicationKey key = ApplicationKey.from( "app1" );
+
+        final NodePath appPath = new NodePath( NamespaceConstants.NAMESPACE_APP_ROOT_PARENT, NodeName.from( key.toString() ) );
+        when( nodeService.getByPath( appPath ) ).thenReturn(
+            Node.create().id( NodeId.from( "app-node" ) ).name( key.toString() ).parentPath( NamespaceConstants.NAMESPACE_APP_ROOT_PARENT )
+                .build() );
+
+        final Application result = this.service.get( key );
+
         assertNotNull( result );
-        assertSame( bundle, result.getBundle() );
+        assertEquals( key, result.getKey() );
+        assertTrue( result.isStarted() );
     }
 
     @Test
-    void get_virtual_application()
+    void get_not_installed_and_no_namespace()
     {
-        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
-        when( nodeService.nodeExists(
-            new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( applicationKey.getName() ) ) ) ).thenReturn( true );
-
-        final Application virtualApp = this.service.get( applicationKey );
-
-        assertEquals( applicationKey, virtualApp.getKey() );
-        assertTrue( virtualApp.getModifiedTime().compareTo( Instant.now() ) <= 0 );
+        assertNull( this.service.get( ApplicationKey.from( "app1" ) ) );
     }
 
     @Test
-    void create_virtual_application()
+    void list_merges_installed_applications_and_namespaces()
     {
-        final Node appNode = Node.create().id( NodeId.from( "app-node" ) ).name( "app-node" ).parentPath( NodePath.ROOT ).build();
-        final ApplicationKey appKey = ApplicationKey.from( "app1" );
+        final Bundle bundle = deployAppBundle( "app1" );
+        applicationRegistry.registerApplication( bundle );
 
-        when( nodeService.create( isA( CreateNodeParams.class ) ) ).thenReturn( appNode );
+        final NodeIds ids = NodeIds.from( NodeId.from( "ns1" ), NodeId.from( "ns2" ) );
+        when( nodeService.list( isA( ListNodesParams.class ) ) ).thenReturn( ListNodesResult.create()
+                                                                                 .addEntry( new NodeListEntry( NodeId.from( "ns1" ),
+                                                                                                               new NodePath( "/app1" ),
+                                                                                                               Instant.EPOCH ) )
+                                                                                 .addEntry( new NodeListEntry( NodeId.from( "ns2" ),
+                                                                                                               new NodePath( "/app2" ),
+                                                                                                               Instant.EPOCH ) )
+                                                                                 .build() );
+        when( nodeService.getByIds( ids ) ).thenReturn(
+            Nodes.from( Node.create().id( new NodeId() ).name( "app1" ).parentPath( NodePath.ROOT ).build(),
+                        Node.create().id( new NodeId() ).name( "app2" ).parentPath( NodePath.ROOT ).build() ) );
 
-        final Application result = VirtualAppContext.createAdminContext()
-            .callWith( () -> this.service.createVirtualApplication( CreateVirtualApplicationParams.create().key( appKey ).build() ) );
+        final Applications result = this.service.list();
 
-        assertEquals( appKey, result.getKey() );
-    }
+        assertEquals( 2, result.getSize() );
 
-    @Test
-    void create_virtual_application_without_admin()
-    {
-        final Node appNode = Node.create().id( NodeId.from( "app-node" ) ).parentPath( NodePath.ROOT ).build();
-        final ApplicationKey appKey = ApplicationKey.from( "app1" );
+        final Application app1 =
+            result.stream().filter( app -> app.getKey().equals( ApplicationKey.from( "app1" ) ) ).findFirst().orElseThrow();
+        assertSame( applicationRegistry.get( ApplicationKey.from( "app1" ) ), app1 );
 
-        when( nodeService.create( isA( CreateNodeParams.class ) ) ).thenReturn( appNode );
-
-        assertThrows( ForbiddenAccessException.class,
-                      () -> this.service.createVirtualApplication( CreateVirtualApplicationParams.create().key( appKey ).build() ) );
-    }
-
-    @Test
-    void delete_virtual_application()
-    {
-        final ApplicationKey appKey = ApplicationKey.from( "app1" );
-
-        final DeleteNodeResult result = DeleteNodeResult.create()
-            .add( new DeleteNodeResult.Result( NodeId.from( "nodeid" ), NodeVersionId.from( "nodeversionid" ) ) )
-            .build();
-        when( nodeService.delete( argThat( argument -> new NodePath( "/app1" ).equals( argument.getNodePath() ) ) ) ).thenReturn( result );
-
-        assertTrue( VirtualAppContext.createAdminContext().callWith( () -> this.service.deleteVirtualApplication( appKey ) ) );
-    }
-
-    @Test
-    void delete_virtual_application_without_admin()
-    {
-        final ApplicationKey appKey = ApplicationKey.from( "app1" );
-
-        final DeleteNodeResult result = DeleteNodeResult.create()
-            .add( new DeleteNodeResult.Result( NodeId.from( "nodeid" ), NodeVersionId.from( "nodeversionid" ) ) )
-            .build();
-        when( nodeService.delete( argThat( argument -> new NodePath( "/app1" ).equals( argument.getNodePath() ) ) ) ).thenReturn( result );
-
-        assertThrows( ForbiddenAccessException.class, () -> this.service.deleteVirtualApplication( appKey ) );
-    }
-
-    @Test
-    void get_application_not_found()
-    {
-        assertNull( this.service.getInstalledApplication( ApplicationKey.from( "app1" ) ) );
+        assertTrue( result.stream().anyMatch( app -> app.getKey().equals( ApplicationKey.from( "app2" ) ) ) );
     }
 
     @Test
@@ -218,36 +205,6 @@ class ApplicationServiceImplTest
         final Applications result = this.service.getInstalledApplications();
         assertNotNull( result );
         assertEquals( 2, result.getSize() );
-    }
-
-    @Test
-    void list()
-    {
-        final Bundle bundle1 = deployAppBundle( "app1" );
-        final Bundle bundle2 = deployAppBundle( "app2" );
-        deployBundle( "noapp" );
-
-        applicationRegistry.registerApplication( bundle1 );
-        applicationRegistry.registerApplication( bundle2 );
-
-        NodeId virtualAppNodeId = NodeId.from( "virtual-app-id" );
-
-        final NodeIds ids = NodeIds.from( virtualAppNodeId );
-
-        when( nodeService.list( isA( ListNodesParams.class ) ) ).thenReturn( ListNodesResult.create()
-                                                                                         .addEntry( new NodeListEntry( virtualAppNodeId,
-                                                                                                                       new NodePath(
-                                                                                                                           "/app3" ),
-                                                                                                                       Instant.EPOCH ) )
-                                                                                         .build() );
-
-        when( nodeService.getByIds( ids ) ).thenReturn(
-            Nodes.from( Node.create().id( new NodeId() ).name( "app3" ).parentPath( NodePath.ROOT ).build() ) );
-
-        final Applications result = this.service.list();
-        assertNotNull( result );
-        assertEquals( 3, result.getSize() );
-        assertEquals( "app3", result.get( 2 ).getKey().toString() );
     }
 
     @Test
@@ -405,6 +362,88 @@ class ApplicationServiceImplTest
         verifyInstallEvents( ApplicationKey.from( "my.bundle" ), node.id(), times( 1 ) );
         verifyInstalledEvents( ApplicationKey.from( "my.bundle" ), node.id(), times( 1 ) );
         verifyStartedEvent( application.getKey(), times( 1 ) );
+    }
+
+    @Test
+    void install_global_persists_schema()
+        throws Exception
+    {
+        final Node node = Node.create().id( NodeId.from( "mynode" ) ).parentPath( NodePath.ROOT ).name( "my.bundle" ).build();
+
+        final String bundleName = "my.bundle";
+
+        mockRepoCreateNode( node );
+        mockRepoGetNode( node, bundleName );
+
+        final String cmsResource = "kind: \"CMS\"\nform: [ ]\n";
+        final String contentTypeResource = "kind: \"ContentType\"\nform: [ ]\n";
+        final String phrasesResource = "action.save=Save\n";
+
+        final ByteSource byteSource = ByteSource.wrap( ByteStreams.toByteArray( newBundle( bundleName, true )
+                                                                                    .addResource( "cms/cms.yaml", new ByteArrayInputStream(
+                                                                                        cmsResource.getBytes( StandardCharsets.UTF_8 ) ) )
+                                                                                    .addResource(
+                                                                                        "cms/content-types/mytype/mytype.yaml",
+                                                                                        new ByteArrayInputStream(
+                                                                                            contentTypeResource.getBytes(
+                                                                                                StandardCharsets.UTF_8 ) ) )
+                                                                                    .addResource(
+                                                                                        "cms/i18n/phrases/phrases_en.properties",
+                                                                                        new ByteArrayInputStream(
+                                                                                            phrasesResource.getBytes(
+                                                                                                StandardCharsets.UTF_8 ) ) )
+                                                                                    .build() ) );
+
+        this.service.installGlobalApplication( byteSource );
+
+        verify( nodeService ).create( argThat( ( CreateNodeParams params ) -> bundleName.equals( params.getName().toString() ) &&
+            NamespaceConstants.NAMESPACE_APP_ROOT_PARENT.equals( params.getParent() ) ) );
+
+        verify( nodeService ).create( argThat( ( CreateNodeParams params ) -> "cms.yaml".equals( params.getName().toString() ) &&
+            cmsResource.equals( params.getData().getString( "resource" ) ) ) );
+
+        verify( nodeService ).create( argThat( ( CreateNodeParams params ) -> "mytype.yaml".equals( params.getName().toString() ) &&
+            contentTypeResource.equals( params.getData().getString( "resource" ) ) ) );
+
+        verify( nodeService ).create( argThat( ( CreateNodeParams params ) -> "phrases_en.properties".equals( params.getName().toString() ) &&
+            phrasesResource.equals( params.getData().getString( "resource" ) ) ) );
+    }
+
+    @Test
+    void install_global_without_cms_yaml_does_not_persist_schema()
+        throws Exception
+    {
+        final Node node = Node.create().id( NodeId.from( "mynode" ) ).parentPath( NodePath.ROOT ).name( "my.bundle" ).build();
+
+        final String bundleName = "my.bundle";
+
+        mockRepoCreateNode( node );
+        mockRepoGetNode( node, bundleName );
+
+        final String contentTypeResource = "kind: \"ContentType\"\nform: [ ]\n";
+
+        final ByteSource byteSource = ByteSource.wrap( ByteStreams.toByteArray( newBundle( bundleName, true )
+                                                                                    .addResource(
+                                                                                        "cms/content-types/mytype/mytype.yaml",
+                                                                                        new ByteArrayInputStream(
+                                                                                            contentTypeResource.getBytes(
+                                                                                                StandardCharsets.UTF_8 ) ) )
+                                                                                    .build() ) );
+
+        this.service.installGlobalApplication( byteSource );
+
+        verify( nodeService, never() ).create( any( CreateNodeParams.class ) );
+    }
+
+    @Test
+    void install_local_does_not_persist_schema()
+        throws Exception
+    {
+        final ByteSource byteSource = createBundleSource( "my.bundle" );
+
+        this.service.installLocalApplication( byteSource );
+
+        verify( nodeService, never() ).create( any( CreateNodeParams.class ) );
     }
 
     @Test
@@ -818,75 +857,6 @@ class ApplicationServiceImplTest
         applicationRegistry.configure( bundle, ConfigBuilder.create().add( "c", "d" ).build() );
 
         verify( mock, times( 1 ) ).invalidate( eq( key ), eq( ApplicationInvalidationLevel.FULL ) );
-    }
-
-
-    @Test
-    void get_application_mode()
-    {
-        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
-
-        final List<String> appNodeNames =
-            List.of( "cms", "content-types", "form-fragments", "mixins", "parts", "layouts", "pages", "styles" );
-
-        when( nodeService.create( isA( CreateNodeParams.class ) ) ).thenAnswer( params -> {
-            final CreateNodeParams createNodeParams = params.getArgument( 0 );
-
-            if ( applicationKey.toString().equals( createNodeParams.getName().toString() ) )
-            {
-
-                when( nodeService.nodeExists(
-                    new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( applicationKey.getName() ) ) ) ).thenReturn(
-                    true );
-
-                return Node.create()
-                    .id( NodeId.from( createNodeParams.getName() ) )
-                    .name( createNodeParams.getName() )
-                    .parentPath( NodePath.ROOT )
-                    .build();
-
-            }
-            if ( appNodeNames.contains( createNodeParams.getName().toString() ) )
-            {
-                return Node.create()
-                    .id( NodeId.from( createNodeParams.getName() ) )
-                    .name( createNodeParams.getName() )
-                    .parentPath( new NodePath( "/app1" ) )
-                    .build();
-            }
-
-            return null;
-        } );
-
-        VirtualAppContext.createAdminContext()
-            .runWith( () -> virtualAppService.create( CreateVirtualApplicationParams.create().key( applicationKey ).build() ) );
-
-        assertThrows( ForbiddenAccessException.class, () -> service.getApplicationMode( applicationKey ) );
-        assertEquals( ApplicationMode.VIRTUAL,
-                      VirtualAppContext.createAdminContext().callWith( () -> service.getApplicationMode( applicationKey ) ) );
-
-        final Bundle bundle = deployAppBundle( "app1" );
-        applicationRegistry.registerApplication( bundle );
-
-        assertEquals( ApplicationMode.AUGMENTED,
-                      VirtualAppContext.createAdminContext().callWith( () -> service.getApplicationMode( applicationKey ) ) );
-
-    }
-
-    @Test
-    void get_application_mode_bundled()
-    {
-        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
-
-        when( nodeService.findByQuery( isA( NodeQuery.class ) ) ).thenAnswer( searchParams -> FindNodesByQueryResult.create().build() );
-
-        assertNull( VirtualAppContext.createAdminContext().callWith( () -> service.getApplicationMode( applicationKey ) ) );
-
-        final Bundle bundle = deployAppBundle( "app1" );
-        applicationRegistry.registerApplication( bundle );
-
-        assertEquals( ApplicationMode.BUNDLED,
-                      VirtualAppContext.createAdminContext().callWith( () -> service.getApplicationMode( applicationKey ) ) );
     }
 
     private void verifyInstalledEvents( final ApplicationKey applicationKey, final NodeId nodeId, final VerificationMode times )
