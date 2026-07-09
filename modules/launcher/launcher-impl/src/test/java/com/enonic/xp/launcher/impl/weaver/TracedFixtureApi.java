@@ -25,4 +25,6 @@ public interface TracedFixtureApi
     String notTraced();
 
     List<String> firstAndLast( List<String> values );
+
+    long syncTwice( long value );
 }

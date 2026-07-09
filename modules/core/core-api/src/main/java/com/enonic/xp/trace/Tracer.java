@@ -43,6 +43,10 @@ public final class Tracer
         } );
     }
 
+    /**
+     * Executes the runnable in the given trace scope. Exceptions propagate unchanged: tracing never alters what a
+     * caller catches.
+     */
     public static <T> T trace( final Trace trace, final TraceRunnable<T> runnable )
     {
         return callWith( trace, runnable::run );

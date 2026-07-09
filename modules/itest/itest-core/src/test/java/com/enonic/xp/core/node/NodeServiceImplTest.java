@@ -77,6 +77,8 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.trace.Trace;
+import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.GenericValue;
 
@@ -90,6 +92,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -112,6 +115,22 @@ class NodeServiceImplTest
         final Node fetchedNode = this.nodeService.getById( NodeId.from( createdNode.id() ) );
 
         assertEquals( createdNode, fetchedNode );
+    }
+
+    @Test
+    void get_by_id_records_trace_attributes()
+    {
+        final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
+
+        // outside OSGi the @Traced wrapper is inert; a manually bound trace exercises the attribute enrichment code
+        final Trace trace = mock( Trace.class );
+        final Node fetchedNode = Tracer.trace( trace, () -> this.nodeService.getById( createdNode.id() ) );
+
+        assertEquals( createdNode, fetchedNode );
+        verify( trace ).put( "id", createdNode.id() );
+        verify( trace ).put( eq( "repo" ), any() );
+        verify( trace ).put( eq( "branch" ), any() );
+        verify( trace ).put( "path", createdNode.path() );
     }
 
     @Test

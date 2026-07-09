@@ -20,6 +20,7 @@ import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -110,6 +111,31 @@ class TraceSupportTest
 
         assertSame( failure, thrown );
         verify( this.trace ).end();
+    }
+
+    @Test
+    void disabledTracingShieldsEnclosingTrace()
+    {
+        final Trace outer = mock( Trace.class );
+
+        Tracer.trace( outer, () -> {
+            // tracing gets disabled while the outer trace is still bound
+            Tracer.setManager( null );
+            try
+            {
+                TraceSupport.trace( "inner", () -> {
+                    assertNull( Tracer.current() );
+                    Tracer.withCurrent( t -> t.put( "polluted", true ) );
+                    return null;
+                } );
+            }
+            catch ( final Throwable t )
+            {
+                throw new AssertionError( t );
+            }
+        } );
+
+        verify( outer, never() ).put( any(), any() );
     }
 
     @Test

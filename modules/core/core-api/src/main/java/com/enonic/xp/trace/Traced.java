@@ -17,7 +17,12 @@ import java.lang.annotation.Target;
  * When tracing is disabled, or when the class is loaded outside the OSGi framework (for example in unit tests),
  * the annotated method behaves exactly as written.
  * <p>
- * The annotation has no effect on abstract or native methods, or on constructors.
+ * Note that the trace start event is dispatched when the method is entered, before the method body has recorded
+ * any attributes: listeners handling start events must tolerate traces whose attributes are still being added.
+ * Attributes are guaranteed complete when the end event is dispatched.
+ * <p>
+ * The annotation has no effect on abstract or native methods, or on constructors. Classes with a class-file
+ * version older than Java 7 (and interfaces older than Java 9) are not woven.
  */
 @Documented
 @Target(ElementType.METHOD)

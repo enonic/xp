@@ -2,14 +2,21 @@ package com.enonic.xp.server.internal.trace;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.TraceLocation;
 
+/**
+ * Attributes are stored in a ConcurrentHashMap: trace events are dispatched to listeners on another thread while
+ * the traced code may still be adding attributes, so the map must be safe for concurrent reads and iteration.
+ * Null values (which ConcurrentHashMap rejects) are treated as removals to keep the lenient Map contract that
+ * trace enrichment code relies on.
+ */
 final class TraceImpl
-    extends HashMap<String, Object>
+    extends ConcurrentHashMap<String, Object>
     implements Trace
 {
     private final String id;
@@ -34,6 +41,22 @@ final class TraceImpl
         this.parentId = parentId;
         this.name = name;
         this.location = location;
+    }
+
+    @Override
+    public Object put( final String key, final Object value )
+    {
+        if ( value == null )
+        {
+            return remove( key );
+        }
+        return super.put( key, value );
+    }
+
+    @Override
+    public void putAll( final Map<? extends String, ?> map )
+    {
+        map.forEach( this::put );
     }
 
     @Override

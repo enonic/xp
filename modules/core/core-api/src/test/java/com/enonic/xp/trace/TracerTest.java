@@ -223,6 +223,29 @@ class TracerTest
     }
 
     @Test
+    void exceptionsPropagateUnchangedRegardlessOfTracing()
+    {
+        final java.io.IOException checked = new java.io.IOException( "checked" );
+
+        // tracing never alters what a caller catches - even a sneaky-thrown checked exception stays as-is
+        final java.io.IOException thrownTraced =
+            assertThrows( java.io.IOException.class, () -> Tracer.trace( this.trace, () -> sneakyThrow( checked ) ) );
+        assertSame( checked, thrownTraced );
+
+        Tracer.setManager( null );
+        final java.io.IOException thrownUntraced =
+            assertThrows( java.io.IOException.class, () -> Tracer.trace( (Trace) null, () -> sneakyThrow( checked ) ) );
+        assertSame( checked, thrownUntraced );
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T, X extends Throwable> T sneakyThrow( final Throwable t )
+        throws X
+    {
+        throw (X) t;
+    }
+
+    @Test
     void newTraceUsesCurrentAsParent()
     {
         when( this.manager.newTrace( any(), any() ) ).thenReturn( this.trace );

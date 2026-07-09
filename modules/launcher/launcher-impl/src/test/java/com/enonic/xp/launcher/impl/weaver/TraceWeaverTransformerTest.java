@@ -130,15 +130,78 @@ class TraceWeaverTransformerTest
     void disabledTracingPassesThrough()
         throws Exception
     {
-        final TracedFixtureApi fixture = newWovenFixture();
+        final Class<?> wovenClass = wovenFixtureClass();
+        final TracedFixtureApi fixture = (TracedFixtureApi) wovenClass.getConstructor().newInstance();
         Tracer.setManager( null );
 
+        // exercises the woven fast path (no lambda, direct body call) for all return shapes
         assertEquals( "Hello world", fixture.hello( "world" ) );
         fixture.voidWork();
         assertEquals( 1, fixture.getVoidCalls() );
+        assertEquals( 6L, fixture.add( 1, 2L, 3.5d ) );
+        assertEquals( 84L, fixture.syncTwice( 42L ) );
+        assertEquals( List.of( "a", "c" ), fixture.firstAndLast( List.of( "a", "b", "c" ) ) );
+        assertEquals( 42L, wovenClass.getMethod( "twice", long.class ).invoke( null, 21L ) );
 
         assertTrue( this.manager.traces.isEmpty() );
         assertTrue( this.manager.events.isEmpty() );
+    }
+
+    @Test
+    void synchronizedModifierPreserved()
+        throws Exception
+    {
+        final Class<?> wovenClass = wovenFixtureClass();
+
+        assertTrue( java.lang.reflect.Modifier.isSynchronized( wovenClass.getMethod( "syncTwice", long.class ).getModifiers() ) );
+
+        final TracedFixtureApi fixture = (TracedFixtureApi) wovenClass.getConstructor().newInstance();
+        assertEquals( 84L, fixture.syncTwice( 42L ) );
+        assertEquals( "fixture.sync", this.manager.singleTrace().getName() );
+    }
+
+    @Test
+    void oldClassFileVersionIsNotWoven()
+        throws Exception
+    {
+        final byte[] bytes = fixtureBytes();
+        // patch major version to 50 (Java 6) - invokedynamic is unavailable there
+        bytes[6] = 0;
+        bytes[7] = 50;
+
+        assertNull( TraceWeaverTransformer.transform( bytes ) );
+    }
+
+    @Test
+    void interfaceDefaultMethodIsWoven()
+        throws Exception
+    {
+        final byte[] woven = TraceWeaverTransformer.transform( classBytes( TracedInterfaceFixture.class ) );
+        assertNotNull( woven );
+
+        final WovenClassLoader loader =
+            new WovenClassLoader( TracedInterfaceFixture.class.getName(), woven, getClass().getClassLoader() );
+        final Class<?> wovenInterface = loader.loadClass( TracedInterfaceFixture.class.getName() );
+
+        final Object proxy =
+            java.lang.reflect.Proxy.newProxyInstance( loader, new Class<?>[]{wovenInterface}, ( p, method, args ) ->
+                java.lang.reflect.InvocationHandler.invokeDefault( p, method, args ) );
+        final Object result = wovenInterface.getMethod( "greet", String.class ).invoke( proxy, "world" );
+
+        assertEquals( "Hi world", result );
+        assertEquals( "fixture.iface", this.manager.singleTrace().getName() );
+    }
+
+    @Test
+    void oldInterfaceVersionIsNotWoven()
+        throws Exception
+    {
+        final byte[] bytes = classBytes( TracedInterfaceFixture.class );
+        // private interface methods require class-file version 53+ (Java 9)
+        bytes[6] = 0;
+        bytes[7] = 52;
+
+        assertNull( TraceWeaverTransformer.transform( bytes ) );
     }
 
     @Test

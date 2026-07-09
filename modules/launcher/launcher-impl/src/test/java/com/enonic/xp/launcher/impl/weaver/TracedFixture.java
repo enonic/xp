@@ -76,4 +76,11 @@ public class TracedFixture
     {
         return value * 2;
     }
+
+    @Override
+    @Traced("fixture.sync")
+    public synchronized long syncTwice( final long value )
+    {
+        return value * 2;
+    }
 }

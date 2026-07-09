@@ -2,7 +2,6 @@ package com.enonic.xp.repo.impl.node;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Spliterator;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -399,11 +398,10 @@ public class NodeServiceImpl
             trace.put( "from", multiNodeQuery.getNodeQuery().getFrom() );
             trace.put( "size", multiNodeQuery.getNodeQuery().getSize() );
 
-            final Spliterator<SearchTarget> searchTargetSpliterator = multiNodeQuery.getSearchTargets().spliterator();
-            trace.put( "repo", StreamSupport.stream( searchTargetSpliterator, false )
+            trace.put( "repo", StreamSupport.stream( multiNodeQuery.getSearchTargets().spliterator(), false )
                 .map( searchTarget -> searchTarget.getRepositoryId().toString() )
                 .collect( Collectors.joining( "," ) ) );
-            trace.put( "branch", StreamSupport.stream( searchTargetSpliterator, false )
+            trace.put( "branch", StreamSupport.stream( multiNodeQuery.getSearchTargets().spliterator(), false )
                 .map( searchTarget -> searchTarget.getBranch().toString() )
                 .collect( Collectors.joining( "," ) ) );
         } );

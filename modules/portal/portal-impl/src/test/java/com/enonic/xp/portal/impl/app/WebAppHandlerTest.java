@@ -12,6 +12,8 @@ import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.sse.SseManager;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.trace.Trace;
+import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
@@ -91,6 +93,28 @@ class WebAppHandlerTest
 
         assertSame( response, this.handler.doHandle( this.request, null, this.chain ) );
         assertEquals( "/webapp/myapp", this.request.getContextPath() );
+    }
+
+    @Test
+    void handle_executeController_recordsTraceAttributes()
+        throws Exception
+    {
+        this.request.setApplicationKey( ApplicationKey.from( "myapp" ) );
+        this.request.setBaseUri( "/webapp/myapp" );
+        this.request.setRawPath( "/webapp/myapp/a.txt" );
+
+        final ControllerScript script = mock( ControllerScript.class );
+        when( this.controllerScriptFactory.fromScript( ResourceKey.from( "myapp:/webapp/webapp.js" ) ) ).thenReturn( script );
+
+        final PortalResponse response = PortalResponse.create().build();
+        when( script.execute( any() ) ).thenReturn( response );
+
+        // outside OSGi the @Traced wrapper is inert; a manually bound trace exercises the attribute enrichment code
+        final Trace trace = mock( Trace.class );
+        assertSame( response, Tracer.traceEx( trace, () -> this.handler.doHandle( this.request, null, this.chain ) ) );
+
+        verify( trace ).put( "app", "myapp" );
+        verify( trace ).put( "path", "/a.txt" );
     }
 
     @Test

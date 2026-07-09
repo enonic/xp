@@ -56,4 +56,19 @@ class TraceImplTest
         assertTrue( this.trace.getDuration().toMillis() >= 0 );
         assertFalse( this.trace.inProgress() );
     }
+
+    @Test
+    void putNullValueRemoves()
+    {
+        this.trace.put( "key", "value" );
+        assertEquals( "value", this.trace.get( "key" ) );
+
+        // null values are treated as removals (the map must stay ConcurrentHashMap-safe without throwing NPE)
+        this.trace.put( "key", null );
+        assertNull( this.trace.get( "key" ) );
+        assertFalse( this.trace.containsKey( "key" ) );
+
+        this.trace.put( "absent", null );
+        assertFalse( this.trace.containsKey( "absent" ) );
+    }
 }

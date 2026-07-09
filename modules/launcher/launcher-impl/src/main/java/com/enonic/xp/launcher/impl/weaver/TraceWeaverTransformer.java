@@ -41,6 +41,10 @@ final class TraceWeaverTransformer
 
     private static final int API = Opcodes.ASM9;
 
+    private static final String TRACER_INTERNAL_NAME = "com/enonic/xp/trace/Tracer";
+
+    private static final String TRACE_DESCRIPTOR = "Lcom/enonic/xp/trace/Trace;";
+
     private static final String SUPPORT_INTERNAL_NAME = "com/enonic/xp/trace/TraceSupport";
 
     private static final String CALL_INTERNAL_NAME = SUPPORT_INTERNAL_NAME + "$TracedCall";
@@ -68,6 +72,18 @@ final class TraceWeaverTransformer
         final Map<String, String> tracedMethods = collectTracedMethods( reader );
         if ( tracedMethods.isEmpty() )
         {
+            return null;
+        }
+
+        // The wrapper uses invokedynamic (class-file version 51+); the body of an interface method becomes a
+        // private interface method (version 53+). Older classes are left untouched - the annotation stays inert.
+        final int majorVersion = reader.readUnsignedShort( 6 );
+        final boolean isInterface = ( reader.getAccess() & Opcodes.ACC_INTERFACE ) != 0;
+        final int requiredVersion = isInterface ? Opcodes.V9 : Opcodes.V1_7;
+        if ( majorVersion < ( requiredVersion & 0xFFFF ) )
+        {
+            LOG.warn( "Class {} (class-file version {}) is too old for trace weaving - @Traced is ignored",
+                      reader.getClassName(), majorVersion );
             return null;
         }
 
@@ -170,10 +186,10 @@ final class TraceWeaverTransformer
                 return super.visitMethod( access, name, descriptor, signature, exceptions );
             }
 
-            // Visible wrapper method: keeps name, signature, declared exceptions and annotations.
-            // ACC_SYNCHRONIZED moves to the body method so the monitor is held around the original code only.
-            final MethodVisitor wrapper =
-                super.visitMethod( access & ~Opcodes.ACC_SYNCHRONIZED, name, descriptor, signature, exceptions );
+            // Visible wrapper method: keeps name, access flags (including ACC_SYNCHRONIZED, which participates in
+            // serialVersionUID computation and reflective modifiers), signature, declared exceptions and
+            // annotations. The body method keeps ACC_SYNCHRONIZED too; the re-acquire is reentrant and cheap.
+            final MethodVisitor wrapper = super.visitMethod( access, name, descriptor, signature, exceptions );
 
             final int bodyAccess = Opcodes.ACC_PRIVATE | Opcodes.ACC_SYNTHETIC |
                 ( access & ( Opcodes.ACC_STATIC | Opcodes.ACC_SYNCHRONIZED | Opcodes.ACC_VARARGS ) );
@@ -298,11 +314,29 @@ final class TraceWeaverTransformer
                 this.wrapper.visitLineNumber( this.firstLine, start );
             }
 
+            // Fast path: tracing disabled and no enclosing trace to shield - invoke the body directly, with no
+            // lambda allocation. When an enclosing trace exists, the slow path is taken even if tracing was just
+            // disabled, so the trace scope (bound to null) still shields the enclosing trace from enrichment.
+            final Label slowPath = new Label();
+            this.wrapper.visitMethodInsn( Opcodes.INVOKESTATIC, TRACER_INTERNAL_NAME, "isEnabled", "()Z", false );
+            this.wrapper.visitJumpInsn( Opcodes.IFNE, slowPath );
+            this.wrapper.visitMethodInsn( Opcodes.INVOKESTATIC, TRACER_INTERNAL_NAME, "current", "()" + TRACE_DESCRIPTOR, false );
+            this.wrapper.visitJumpInsn( Opcodes.IFNONNULL, slowPath );
+
+            loadReceiverAndArguments( argumentTypes, isStatic );
+            this.wrapper.visitMethodInsn( isStatic ? Opcodes.INVOKESTATIC : Opcodes.INVOKESPECIAL, this.owner,
+                                          this.name + BODY_METHOD_SUFFIX, this.descriptor, this.ownerIsInterface );
+            this.wrapper.visitInsn( returnType.getOpcode( Opcodes.IRETURN ) );
+
+            this.wrapper.visitLabel( slowPath );
+            this.wrapper.visitFrame( Opcodes.F_SAME, 0, null, 0, null );
+
             this.wrapper.visitLdcInsn( this.traceName );
 
             // Load receiver and arguments as lambda captures.
+            loadReceiverAndArguments( argumentTypes, isStatic );
+
             final Type[] capturedTypes;
-            int slot = 0;
             if ( isStatic )
             {
                 capturedTypes = argumentTypes;
@@ -312,13 +346,6 @@ final class TraceWeaverTransformer
                 capturedTypes = new Type[argumentTypes.length + 1];
                 capturedTypes[0] = Type.getObjectType( this.owner );
                 System.arraycopy( argumentTypes, 0, capturedTypes, 1, argumentTypes.length );
-                this.wrapper.visitVarInsn( Opcodes.ALOAD, 0 );
-                slot = 1;
-            }
-            for ( final Type argumentType : argumentTypes )
-            {
-                this.wrapper.visitVarInsn( argumentType.getOpcode( Opcodes.ILOAD ), slot );
-                slot += argumentType.getSize();
             }
 
             final String samInternalName = isVoid ? VOID_CALL_INTERNAL_NAME : CALL_INTERNAL_NAME;
@@ -338,6 +365,21 @@ final class TraceWeaverTransformer
             emitReturn( returnType );
 
             this.wrapper.visitMaxs( 0, 0 );
+        }
+
+        private void loadReceiverAndArguments( final Type[] argumentTypes, final boolean isStatic )
+        {
+            int slot = 0;
+            if ( !isStatic )
+            {
+                this.wrapper.visitVarInsn( Opcodes.ALOAD, 0 );
+                slot = 1;
+            }
+            for ( final Type argumentType : argumentTypes )
+            {
+                this.wrapper.visitVarInsn( argumentType.getOpcode( Opcodes.ILOAD ), slot );
+                slot += argumentType.getSize();
+            }
         }
 
         private void emitReturn( final Type returnType )

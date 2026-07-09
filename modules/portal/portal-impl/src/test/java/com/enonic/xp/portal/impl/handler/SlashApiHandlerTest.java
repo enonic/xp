@@ -47,6 +47,8 @@ import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
+import com.enonic.xp.trace.Trace;
+import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
@@ -221,6 +223,31 @@ class SlashApiHandlerTest
         assertNull( request.getSite() );
         assertNull( request.getContent() );
         assertEquals( "/api/com.enonic.app.myapp:api-key", request.getContextPath() );
+    }
+
+    @Test
+    void testHandleApiRecordsTraceAttributes()
+        throws Exception
+    {
+        request.setRawPath( "/api/com.enonic.app.myapp:api-key" );
+
+        ApiDescriptor apiDescriptor = ApiDescriptor.create()
+            .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "api-key" ) )
+            .allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) )
+            .mount( "web" )
+            .build();
+
+        when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
+
+        // outside OSGi the @Traced wrapper is inert; a manually bound trace exercises the attribute enrichment code
+        final Trace trace = mock( Trace.class );
+        final WebResponse webResponse = Tracer.traceEx( trace, () -> this.handler.handle( request ) );
+
+        assertEquals( HttpStatus.OK, webResponse.getStatus() );
+        verify( trace ).put( "app", "com.enonic.app.myapp" );
+        verify( trace ).put( "api", "api-key" );
+        verify( trace ).put( eq( "status" ), any() );
+        verify( trace ).put( eq( "type" ), any() );
     }
 
     @Test

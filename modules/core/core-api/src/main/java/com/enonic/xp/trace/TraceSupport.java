@@ -35,6 +35,9 @@ public final class TraceSupport
     /**
      * Executes a woven non-void method body in a trace scope. Exceptions thrown by the body - checked or
      * unchecked - propagate unchanged.
+     * <p>
+     * The scope is established even when no trace could be created (tracing disabled): the body then runs with no
+     * current trace bound, so {@link Tracer#withCurrent} enrichment can never leak onto an enclosing trace.
      *
      * @param name trace name
      * @param call intercepted method body
@@ -44,13 +47,7 @@ public final class TraceSupport
     public static Object trace( final String name, final TracedCall call )
         throws Throwable
     {
-        final Trace trace = Tracer.newTrace( name );
-        if ( trace == null )
-        {
-            return call.invoke();
-        }
-
-        return Tracer.callWith( trace, call::invoke );
+        return Tracer.callWith( Tracer.newTrace( name ), call::invoke );
     }
 
     /**
@@ -64,14 +61,7 @@ public final class TraceSupport
     public static void trace( final String name, final TracedVoidCall call )
         throws Throwable
     {
-        final Trace trace = Tracer.newTrace( name );
-        if ( trace == null )
-        {
-            call.invoke();
-            return;
-        }
-
-        Tracer.callWith( trace, () -> {
+        trace( name, () -> {
             call.invoke();
             return null;
         } );
