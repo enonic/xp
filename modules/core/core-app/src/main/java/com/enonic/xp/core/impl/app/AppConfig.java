@@ -8,6 +8,4 @@ public @interface AppConfig
 
     boolean virtual_enabled() default false;
 
-    boolean virtual_schema_override() default true;
-
 }

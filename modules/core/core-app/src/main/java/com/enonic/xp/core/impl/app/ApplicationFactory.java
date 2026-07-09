@@ -8,11 +8,9 @@ import java.util.List;
 
 import org.osgi.framework.Bundle;
 
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.BundleApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.ClassLoaderApplicationUrlResolver;
-import com.enonic.xp.core.impl.app.resolver.FakeCmsYamlUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.MultiApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.NodeResourceApplicationUrlResolver;
 import com.enonic.xp.node.NodeService;
@@ -43,24 +41,11 @@ public final class ApplicationFactory
         }
 
         final BundleApplicationUrlResolver bundleUrlResolver = new BundleApplicationUrlResolver( bundle );
-        final ApplicationKey appKey = ApplicationHelper.getApplicationKey( bundle );
-        final NodeResourceApplicationUrlResolver nodeResourceApplicationResolver =
-            new NodeResourceApplicationUrlResolver( appKey, nodeService );
         final ClassLoaderApplicationUrlResolver classLoaderUrlResolver = createClassLoaderUrlResolver( bundle );
-        final FakeCmsYamlUrlResolver fakeSiteXmlUrlResolver = new FakeCmsYamlUrlResolver( appKey, nodeService );
 
         final boolean addCLR = RunMode.isDev() && classLoaderUrlResolver != null;
 
-        if ( appConfig.virtual_enabled() && appConfig.virtual_schema_override() )
-        {
-            return addCLR ? new MultiApplicationUrlResolver( nodeResourceApplicationResolver, classLoaderUrlResolver, bundleUrlResolver,
-                                                             fakeSiteXmlUrlResolver )
-                : new MultiApplicationUrlResolver( nodeResourceApplicationResolver, bundleUrlResolver, fakeSiteXmlUrlResolver );
-        }
-        else
-        {
-            return addCLR ? new MultiApplicationUrlResolver( classLoaderUrlResolver, bundleUrlResolver ) : bundleUrlResolver;
-        }
+        return addCLR ? new MultiApplicationUrlResolver( classLoaderUrlResolver, bundleUrlResolver ) : bundleUrlResolver;
     }
 
     ApplicationUrlResolver createUrlResolverBySource( final Bundle bundle, final String source )

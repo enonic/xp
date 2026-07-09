@@ -863,7 +863,7 @@ class ApplicationServiceImplTest
         final Bundle bundle = deployAppBundle( "app1" );
         applicationRegistry.registerApplication( bundle );
 
-        assertEquals( ApplicationMode.AUGMENTED,
+        assertEquals( ApplicationMode.BUNDLED,
                       VirtualAppContext.createAdminContext().callWith( () -> service.getApplicationMode( applicationKey ) ) );
 
     }

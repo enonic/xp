@@ -15,7 +15,7 @@ class GetApplicationModeHandlerTest
     void testExample()
     {
 
-        when( applicationService.getApplicationMode( isA( ApplicationKey.class ) ) ).thenReturn( ApplicationMode.AUGMENTED );
+        when( applicationService.getApplicationMode( isA( ApplicationKey.class ) ) ).thenReturn( ApplicationMode.BUNDLED );
 
         runScript( "/lib/xp/examples/app/getApplicationMode.js" );
     }

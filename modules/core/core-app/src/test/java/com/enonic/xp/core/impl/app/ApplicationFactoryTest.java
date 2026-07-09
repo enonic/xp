@@ -46,12 +46,11 @@ class ApplicationFactoryTest
     }
 
     @Test
-    void createUrlResolver_prod_without_virtual_apps()
+    void createUrlResolver_prod()
     {
         final Bundle bundle = deploy( "app1", true, false );
 
         final AppConfig appConfig = mock( AppConfig.class );
-        when( appConfig.virtual_enabled() ).thenReturn( false );
         RunModeSupport.set( RunMode.PROD );
 
         final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService, appConfig ).createUrlResolver( bundle, null );
@@ -60,13 +59,11 @@ class ApplicationFactoryTest
     }
 
     @Test
-    void createUrlResolver_dev_with_source()
+    void createUrlResolver_dev_with_source_path()
     {
         final Bundle bundle = deploy( "app1", true, true );
 
         final AppConfig appConfig = mock( AppConfig.class );
-        when( appConfig.virtual_enabled() ).thenReturn( true );
-        when( appConfig.virtual_schema_override() ).thenReturn( true );
         RunModeSupport.set( RunMode.DEV );
 
         final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService, appConfig ).createUrlResolver( bundle, null );
@@ -75,69 +72,11 @@ class ApplicationFactoryTest
     }
 
     @Test
-    void createUrlResolver_dev_virtual_not_override()
-    {
-        final Bundle bundle = deploy( "app1", true, true );
-
-        final AppConfig appConfig = mock( AppConfig.class );
-        when( appConfig.virtual_enabled() ).thenReturn( true );
-        when( appConfig.virtual_schema_override() ).thenReturn( false );
-        RunModeSupport.set( RunMode.DEV );
-
-        final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService, appConfig ).createUrlResolver( bundle, null );
-        assertNotNull( resolver );
-    }
-
-    @Test
-    void createUrlResolver_prod_virtual_not_override()
-    {
-        final Bundle bundle = deploy( "app1", true, true );
-
-        final AppConfig appConfig = mock( AppConfig.class );
-        when( appConfig.virtual_enabled() ).thenReturn( true );
-        when( appConfig.virtual_schema_override() ).thenReturn( false );
-        RunModeSupport.set( RunMode.PROD );
-
-        final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService, appConfig ).createUrlResolver( bundle, null );
-        assertNotNull( resolver );
-    }
-
-    @Test
-    void createUrlResolver_dev_with_source_without_virtual_apps()
-    {
-        final Bundle bundle = deploy( "app1", true, true );
-
-        final AppConfig appConfig = mock( AppConfig.class );
-        when( appConfig.virtual_enabled() ).thenReturn( false );
-        RunModeSupport.set( RunMode.DEV );
-
-        final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService, appConfig ).createUrlResolver( bundle, null );
-        assertNotNull( resolver );
-        assertInstanceOf( MultiApplicationUrlResolver.class, resolver );
-    }
-
-    @Test
-    void createUrlResolver_dev_no_source()
+    void createUrlResolver_dev_without_source_path()
     {
         final Bundle bundle = deploy( "app1", true, false );
 
         final AppConfig appConfig = mock( AppConfig.class );
-        when( appConfig.virtual_enabled() ).thenReturn( true );
-        when( appConfig.virtual_schema_override() ).thenReturn( true );
-        RunModeSupport.set( RunMode.DEV );
-
-        final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService, appConfig ).createUrlResolver( bundle, null );
-        assertNotNull( resolver );
-        assertInstanceOf( MultiApplicationUrlResolver.class, resolver );
-    }
-
-    @Test
-    void createUrlResolver_dev_no_source_no_virtual_apps()
-    {
-        final Bundle bundle = deploy( "app1", true, false );
-
-        final AppConfig appConfig = mock( AppConfig.class );
-        when( appConfig.virtual_enabled() ).thenReturn( false );
         RunModeSupport.set( RunMode.DEV );
 
         final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService, appConfig ).createUrlResolver( bundle, null );
@@ -152,7 +91,6 @@ class ApplicationFactoryTest
 
         final AppConfig appConfig = mock( AppConfig.class );
         when( appConfig.virtual_enabled() ).thenReturn( true );
-        when( appConfig.virtual_schema_override() ).thenReturn( false );
         RunModeSupport.set( RunMode.DEV );
 
         final ApplicationFactory applicationFactory = new ApplicationFactory( nodeService, appConfig );

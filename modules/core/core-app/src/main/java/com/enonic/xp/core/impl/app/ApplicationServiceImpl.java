@@ -238,26 +238,14 @@ public final class ApplicationServiceImpl
         requireSchemaAdminRole();
 
         final boolean hasReal = this.registry.get( applicationKey ) != null;
-        final boolean hasVirtual =
-            VirtualAppContext.createAdminContext().callWith( () -> this.virtualAppService.get( applicationKey ) ) != null;
-
         if ( hasReal )
         {
-            if ( hasVirtual )
-            {
-                return ApplicationMode.AUGMENTED;
-            }
-            else
-            {
-                return ApplicationMode.BUNDLED;
-            }
-        }
-        else if ( hasVirtual )
-        {
-            return ApplicationMode.VIRTUAL;
+            return ApplicationMode.BUNDLED;
         }
 
-        return null;
+        final boolean hasVirtual =
+            VirtualAppContext.createAdminContext().callWith( () -> this.virtualAppService.get( applicationKey ) ) != null;
+        return hasVirtual ? ApplicationMode.VIRTUAL : null;
     }
 
     private Application doInstallGlobalApplication( final ByteSource byteSource )

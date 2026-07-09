@@ -14,5 +14,5 @@ log.info('Application mode: ' + result);
 // END
 
 
-assert.assertEquals('augmented', result);
+assert.assertEquals('bundled', result);
 

@@ -14,7 +14,7 @@ import org.osgi.framework.BundleContext;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
-import com.enonic.xp.core.impl.app.resolver.MultiApplicationUrlResolver;
+import com.enonic.xp.core.impl.app.resolver.BundleApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.NodeResourceApplicationUrlResolver;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeName;
@@ -117,7 +117,7 @@ class ApplicationFactoryServiceImplTest
         bundle.start();
         Optional<ApplicationUrlResolver> activeResolver = service.findResolver( applicationKey, null );
         assertThat( activeResolver ).isNotEmpty();
-        assertThat( activeResolver.get() ).isInstanceOf( MultiApplicationUrlResolver.class );
+        assertThat( activeResolver.get() ).isInstanceOf( BundleApplicationUrlResolver.class );
 
         activeResolver = service.findResolver( applicationKey, "virtual" );
         assertThat( activeResolver ).isNotEmpty();
@@ -153,7 +153,6 @@ class ApplicationFactoryServiceImplTest
             new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( applicationKey.getName() ) ) ) ).thenReturn( true );
 
         when( appConfig.virtual_enabled() ).thenReturn( true );
-        when( appConfig.virtual_schema_override() ).thenReturn( false );
 
         final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService, appConfig );
         service.activate();
