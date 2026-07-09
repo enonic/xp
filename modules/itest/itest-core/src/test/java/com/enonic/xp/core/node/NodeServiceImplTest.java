@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -78,9 +77,6 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.trace.Trace;
-import com.enonic.xp.trace.TraceManager;
-import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.GenericValue;
 
@@ -106,17 +102,6 @@ class NodeServiceImplTest
     void setUp()
     {
         this.createDefaultRootNode();
-
-        final TraceManager manager = mock( TraceManager.class );
-        final Trace trace = mock( Trace.class );
-        when( manager.newTrace( any(), any() ) ).thenReturn( trace );
-        Tracer.setManager( manager );
-    }
-
-    @AfterEach
-    void tearDown()
-    {
-        Tracer.setManager( null );
     }
 
     @Test

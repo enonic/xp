@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -48,9 +47,6 @@ import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
-import com.enonic.xp.trace.Trace;
-import com.enonic.xp.trace.TraceManager;
-import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
@@ -135,17 +131,6 @@ class SlashApiHandlerTest
         servletRequestMock = mock( HttpServletRequest.class );
         when( servletRequestMock.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.XP_CONNECTOR );
         request.setRawRequest( servletRequestMock );
-
-        final TraceManager manager = mock( TraceManager.class );
-        final Trace trace = mock( Trace.class );
-        when( manager.newTrace( any(), any() ) ).thenReturn( trace );
-        Tracer.setManager( manager );
-    }
-
-    @AfterEach
-    void tearDown()
-    {
-        Tracer.setManager( null );
     }
 
     @Test
@@ -263,14 +248,6 @@ class SlashApiHandlerTest
 
         WebException exception = assertThrows( WebException.class, () -> this.handler.handle( request ) );
         assertEquals( HttpStatus.NOT_FOUND, exception.getStatus() );
-    }
-
-    @Test
-    void testHandleApiWithoutTracer()
-        throws Exception
-    {
-        Tracer.setManager( null );
-        testHandleApi();
     }
 
     @Test
