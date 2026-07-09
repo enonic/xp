@@ -20,8 +20,8 @@ import org.slf4j.LoggerFactory;
  * OSGi load-time weaving hook that instruments methods annotated with {@code com.enonic.xp.trace.Traced}.
  * <p>
  * Each annotated method is rewritten when its class is loaded: the original method body is moved to a synthetic
- * method and the annotated method is replaced by a wrapper that executes the body through
- * {@code com.enonic.xp.trace.TraceSupport}, establishing a trace scope around the invocation.
+ * method and the annotated method is replaced by a wrapper that executes the body through the public
+ * {@code com.enonic.xp.trace.Tracer} API, establishing a trace scope around the invocation.
  * <p>
  * Weaving is purely name-based - the hook never loads application classes itself - and applies to every bundle
  * that can see the {@code com.enonic.xp.trace} package, so both XP internals and third-party applications can use

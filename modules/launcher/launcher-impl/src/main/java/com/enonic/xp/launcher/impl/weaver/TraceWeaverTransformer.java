@@ -24,12 +24,15 @@ import net.bytebuddy.jar.asm.Type;
  * For every traced method {@code m}, the method body is moved to a private synthetic method {@code m$xpTraced}
  * and {@code m} is replaced by:
  * <pre>{@code
- * return TraceSupport.trace( "<name>", () -> m$xpTraced( <captured this and arguments> ) );
+ * return Tracer.trace( "<name>", () -> m$xpTraced( <captured this and arguments> ) );
  * }</pre>
- * The lambda is created with an {@code invokedynamic} instruction bound to {@link java.lang.invoke.LambdaMetafactory},
- * so no auxiliary classes need to be injected into the bundle - the JVM spins the capturing class at link time.
- * Checked exceptions, primitive return values and generic signatures are preserved; method annotations stay on
- * the visible wrapper method.
+ * using the ordinary public {@code Tracer.trace(String, TraceRunnable)} API ({@code Tracer.trace(String, Runnable)}
+ * for void methods - LambdaMetafactory cannot adapt a void body to a value-returning functional shape). The lambda
+ * is created with an {@code invokedynamic} instruction bound to {@link java.lang.invoke.LambdaMetafactory}, so no
+ * auxiliary classes need to be injected into the bundle - the JVM spins the capturing class at link time.
+ * Checked exceptions propagate unchanged (the {@code throws} clause is a compile-time construct with no runtime
+ * verification), primitive return values and generic signatures are preserved; method annotations stay on the
+ * visible wrapper method.
  */
 final class TraceWeaverTransformer
 {
@@ -45,11 +48,9 @@ final class TraceWeaverTransformer
 
     private static final String TRACE_DESCRIPTOR = "Lcom/enonic/xp/trace/Trace;";
 
-    private static final String SUPPORT_INTERNAL_NAME = "com/enonic/xp/trace/TraceSupport";
+    private static final String TRACE_RUNNABLE_INTERNAL_NAME = "com/enonic/xp/trace/TraceRunnable";
 
-    private static final String CALL_INTERNAL_NAME = SUPPORT_INTERNAL_NAME + "$TracedCall";
-
-    private static final String VOID_CALL_INTERNAL_NAME = SUPPORT_INTERNAL_NAME + "$TracedVoidCall";
+    private static final String RUNNABLE_INTERNAL_NAME = "java/lang/Runnable";
 
     private static final Handle METAFACTORY = new Handle( Opcodes.H_INVOKESTATIC, "java/lang/invoke/LambdaMetafactory", "metafactory",
                                                           "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodHandle;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;",
@@ -336,19 +337,19 @@ final class TraceWeaverTransformer
                 System.arraycopy( argumentTypes, 0, capturedTypes, 1, argumentTypes.length );
             }
 
-            final String samInternalName = isVoid ? VOID_CALL_INTERNAL_NAME : CALL_INTERNAL_NAME;
+            final String samInternalName = isVoid ? RUNNABLE_INTERNAL_NAME : TRACE_RUNNABLE_INTERNAL_NAME;
             final Type samMethodType = isVoid ? Type.getMethodType( "()V" ) : Type.getMethodType( "()Ljava/lang/Object;" );
             final Handle bodyHandle =
                 new Handle( isStatic ? Opcodes.H_INVOKESTATIC : Opcodes.H_INVOKESPECIAL, this.owner, this.name + BODY_METHOD_SUFFIX,
                             this.descriptor, this.ownerIsInterface );
 
-            this.wrapper.visitInvokeDynamicInsn( "invoke",
+            this.wrapper.visitInvokeDynamicInsn( "run",
                                                  Type.getMethodDescriptor( Type.getObjectType( samInternalName ), capturedTypes ),
                                                  METAFACTORY, samMethodType, bodyHandle, samMethodType );
 
-            this.wrapper.visitMethodInsn( Opcodes.INVOKESTATIC, SUPPORT_INTERNAL_NAME, "trace", isVoid
-                ? "(Ljava/lang/String;L" + VOID_CALL_INTERNAL_NAME + ";)V"
-                : "(Ljava/lang/String;L" + CALL_INTERNAL_NAME + ";)Ljava/lang/Object;", false );
+            this.wrapper.visitMethodInsn( Opcodes.INVOKESTATIC, TRACER_INTERNAL_NAME, "trace", isVoid
+                ? "(Ljava/lang/String;L" + RUNNABLE_INTERNAL_NAME + ";)V"
+                : "(Ljava/lang/String;L" + TRACE_RUNNABLE_INTERNAL_NAME + ";)Ljava/lang/Object;", false );
 
             emitReturn( returnType );
 

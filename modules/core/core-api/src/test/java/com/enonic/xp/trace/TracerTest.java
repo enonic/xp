@@ -24,6 +24,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -220,6 +221,21 @@ class TracerTest
         } ) );
 
         assertSame( failure, thrown );
+    }
+
+    @Test
+    void disabledTracingShieldsEnclosingTrace()
+    {
+        Tracer.trace( this.trace, () -> {
+            // tracing gets disabled while the outer trace is still bound
+            Tracer.setManager( null );
+            Tracer.trace( "inner", () -> {
+                assertNull( Tracer.current() );
+                Tracer.withCurrent( t -> t.put( "polluted", true ) );
+            } );
+        } );
+
+        verify( this.trace, never() ).put( any(), any() );
     }
 
     @Test

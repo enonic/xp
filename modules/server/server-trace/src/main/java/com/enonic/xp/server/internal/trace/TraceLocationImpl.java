@@ -3,15 +3,13 @@ package com.enonic.xp.server.internal.trace;
 import java.util.Set;
 
 import com.enonic.xp.trace.TraceLocation;
-import com.enonic.xp.trace.TraceSupport;
 import com.enonic.xp.trace.Tracer;
 
 final class TraceLocationImpl
     implements TraceLocation
 {
     private static final Set<String> IGNORED_CLASSES =
-        Set.of( TraceLocationImpl.class.getName(), Tracer.class.getName(), TraceSupport.class.getName(),
-                TraceService.class.getName() );
+        Set.of( TraceLocationImpl.class.getName(), Tracer.class.getName(), TraceService.class.getName() );
 
     private final String method;
 
