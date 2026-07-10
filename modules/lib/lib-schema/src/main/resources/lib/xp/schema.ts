@@ -314,7 +314,7 @@ export function getComponent(params: GetDynamicComponentParams): LayoutDescripto
     return __.toNativeObject(bean.execute());
 }
 
-export interface SiteDescriptor {
+export interface CmsDescriptor {
     application: string;
     resource: string;
     modifiedTime: string;
@@ -326,28 +326,28 @@ export interface SiteDescriptor {
     }[];
 }
 
-export interface GetDynamicSiteParams {
+export interface GetDynamicCmsParams {
     application: string;
 }
 
-interface GetDynamicSiteHandler {
+interface GetDynamicCmsHandler {
     setApplication(value: string): void;
 
-    execute(): SiteDescriptor | null;
+    execute(): CmsDescriptor | null;
 }
 
 /**
- * Fetches dynamic site schema resource.
+ * Fetches dynamic CMS schema resource.
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.application Application key.
  *
- * @returns {SiteDescriptor | null} fetched resource, or `null` if not found.
+ * @returns {CmsDescriptor | null} fetched resource, or `null` if not found.
  */
-export function getSite(params: GetDynamicSiteParams): SiteDescriptor | null {
+export function getCms(params: GetDynamicCmsParams): CmsDescriptor | null {
     const application = checkRequired(params, 'application');
 
-    const bean: GetDynamicSiteHandler = __.newBean<GetDynamicSiteHandler>('com.enonic.xp.lib.schema.GetDynamicSiteHandler');
+    const bean: GetDynamicCmsHandler = __.newBean<GetDynamicCmsHandler>('com.enonic.xp.lib.schema.GetDynamicCmsHandler');
     bean.setApplication(application);
     return __.toNativeObject(bean.execute());
 }
@@ -545,33 +545,33 @@ export function updateComponent(params: UpdateDynamicComponentParams): LayoutDes
     return __.toNativeObject(bean.execute());
 }
 
-export interface UpdateDynamicSiteParams {
+export interface UpdateDynamicCmsParams {
     application: string;
     resource: string;
 }
 
-interface UpdateDynamicSiteHandler {
+interface UpdateDynamicCmsHandler {
     setApplication(value: string): void;
 
     setResource(value: string): void;
 
-    execute(): SiteDescriptor;
+    execute(): CmsDescriptor;
 }
 
 /**
- * Updates dynamic site schema resource.
+ * Updates dynamic CMS schema resource.
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.application Application key.
- * @param {string} params.resource Site schema resource value.
+ * @param {string} params.resource CMS schema resource value.
  *
- * @returns {SiteDescriptor} updated resource.
+ * @returns {CmsDescriptor} updated resource.
  */
-export function updateSite(params: UpdateDynamicSiteParams): SiteDescriptor {
+export function updateCms(params: UpdateDynamicCmsParams): CmsDescriptor {
     const application = checkRequired(params, 'application');
     const resource = checkRequired(params, 'resource');
 
-    const bean: UpdateDynamicSiteHandler = __.newBean<UpdateDynamicSiteHandler>('com.enonic.xp.lib.schema.UpdateDynamicSiteHandler');
+    const bean: UpdateDynamicCmsHandler = __.newBean<UpdateDynamicCmsHandler>('com.enonic.xp.lib.schema.UpdateDynamicCmsHandler');
     bean.setApplication(application);
     bean.setResource(resource);
     return __.toNativeObject(bean.execute());

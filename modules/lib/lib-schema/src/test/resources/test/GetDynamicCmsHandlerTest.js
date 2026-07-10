@@ -4,7 +4,7 @@ var assert = require('/lib/xp/testing');
 /* global log*/
 
 exports.getNull = function () {
-    assert.assertThrows(() => schemaLib.getSite({
+    assert.assertThrows(() => schemaLib.getCms({
         application: null
     }));
 };

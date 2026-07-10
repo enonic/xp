@@ -4,19 +4,29 @@ var assert = require('/lib/xp/testing');
 /* global log*/
 
 // BEGIN
-// Fetch virtual site.
-var result = schemaLib.getSite({
+// Fetch virtual CMS.
+var result = schemaLib.getCms({
     application: 'myapp'
 });
 
-log.info('Fetched site: myapp');
+log.info('Fetched CMS: myapp');
 
 // END
 
 
 assert.assertJsonEquals({
     application: 'myapp',
-    resource: '<site><some-data></some-data></site>',
+    resource: `kind: "CMS"
+mixins:
+- name: "myapplication:my"
+  optional: false
+form:
+- type: "Double"
+  name: "input"
+  label: "Input"
+  occurrences:
+    min: 0
+    max: 1`,
     modifiedTime: '2021-02-25T10:44:33.170079900Z',
     form: [
         {

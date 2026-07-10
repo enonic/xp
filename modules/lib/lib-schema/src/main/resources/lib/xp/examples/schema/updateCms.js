@@ -20,14 +20,14 @@ form:
 
 
 // BEGIN
-// Update virtual styles.
-var result = schemaLib.updateSite({
+// Update virtual CMS.
+var result = schemaLib.updateCms({
     application: 'myapp',
     resource
 
 });
 
-log.info('Updated site: ' + result.application);
+log.info('Updated CMS: ' + result.application);
 
 // END
 

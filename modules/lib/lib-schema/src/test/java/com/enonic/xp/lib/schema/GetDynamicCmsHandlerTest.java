@@ -22,11 +22,11 @@ import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class GetDynamicSiteHandlerTest
+class GetDynamicCmsHandlerTest
     extends BaseSchemaHandlerTest
 {
     @Test
-    void testSite()
+    void testCms()
     {
         when( dynamicSchemaService.getCmsDescriptor( isA( ApplicationKey.class ) ) ).thenAnswer( params -> {
             final ApplicationKey applicationKey = params.getArgument( 0, ApplicationKey.class );
@@ -47,19 +47,22 @@ class GetDynamicSiteHandlerTest
                 .build();
 
             final Resource resource = mock( Resource.class );
-            when( resource.readString() ).thenReturn( "<site><some-data></some-data></site>" );
+            when( resource.readString() ).thenReturn( "kind: \"CMS\"\n" + "mixins:\n" + "- name: \"myapplication:my\"\n" +
+                                                          "  optional: false\n" + "form:\n" + "- type: \"Double\"\n" +
+                                                          "  name: \"input\"\n" + "  label: \"Input\"\n" + "  occurrences:\n" +
+                                                          "    min: 0\n" + "    max: 1" );
 
             return new DynamicSchemaResult<>( cmsDescriptor, resource );
         } );
 
-        runScript( "/lib/xp/examples/schema/getSite.js" );
+        runScript( "/lib/xp/examples/schema/getCms.js" );
     }
 
 
     @Test
     void testNull()
     {
-        runFunction( "/test/GetDynamicSiteHandlerTest.js", "getNull" );
+        runFunction( "/test/GetDynamicCmsHandlerTest.js", "getNull" );
     }
 
 }
