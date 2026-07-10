@@ -40,6 +40,8 @@ public final class VirtualAppConstants
 
     public static final String LAYOUT_ROOT_NAME = "layouts";
 
+    public static final String MACROS_ROOT_NAME = "macros";
+
     public static final String STYLE_NAME = "style";
 
     public static final NodePath VIRTUAL_APP_ROOT_PARENT = NodePath.ROOT;

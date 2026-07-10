@@ -3,6 +3,7 @@ package com.enonic.xp.resource;
 import java.util.List;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.region.ComponentDescriptor;
 import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.site.CmsDescriptor;
@@ -42,5 +43,14 @@ public interface DynamicSchemaService
 
     boolean deleteStyles( ApplicationKey key );
 
+    DynamicSchemaResult<MacroDescriptor> createMacro( CreateDynamicMacroParams params );
+
+    DynamicSchemaResult<MacroDescriptor> updateMacro( UpdateDynamicMacroParams params );
+
+    DynamicSchemaResult<MacroDescriptor> getMacro( GetDynamicMacroParams params );
+
+    List<DynamicSchemaResult<MacroDescriptor>> listMacros( ListDynamicMacrosParams params );
+
+    boolean deleteMacro( DeleteDynamicMacroParams params );
 
 }

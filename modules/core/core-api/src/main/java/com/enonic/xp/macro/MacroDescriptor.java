@@ -97,6 +97,11 @@ public final class MacroDescriptor
         return new Builder();
     }
 
+    public static Builder copyOf( final MacroDescriptor source )
+    {
+        return new Builder( source );
+    }
+
     public static final class Builder
     {
         private MacroKey key;
@@ -119,6 +124,19 @@ public final class MacroDescriptor
 
         private Builder()
         {
+        }
+
+        private Builder( final MacroDescriptor source )
+        {
+            this.key = source.key;
+            this.title = source.title;
+            this.titleI18nKey = source.titleI18nKey;
+            this.description = source.description;
+            this.descriptionI18nKey = source.descriptionI18nKey;
+            this.form = source.form;
+            this.icon = source.icon;
+            this.modifiedTime = source.modifiedTime;
+            this.schemaConfig( source.schemaConfig );
         }
 
         public Builder key( final MacroKey key )

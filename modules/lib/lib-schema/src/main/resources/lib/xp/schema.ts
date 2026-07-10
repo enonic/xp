@@ -672,3 +672,159 @@ export function listSchemas(params: ListDynamicSchemasParams): ContentTypeSchema
     bean.setType(type);
     return __.toNativeObject(bean.execute());
 }
+
+export interface MacroDescriptor {
+    key: string;
+    name: string;
+    title: string;
+    titleI18nKey: string;
+    description: string;
+    descriptionI18nKey: string;
+    modifiedTime: string;
+    resource: string;
+    form: FormItem[];
+    config: Record<string, ConfigValue>;
+    icon?: Icon;
+}
+
+export interface CreateDynamicMacroParams {
+    key: string;
+    resource: string;
+}
+
+interface CreateDynamicMacroHandler {
+    setKey(value: string): void;
+
+    setResource(value: string): void;
+
+    execute(): MacroDescriptor;
+}
+
+/**
+ * Creates dynamic macro resource.
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key Macro resource descriptor key.
+ * @param {string} params.resource Macro resource value.
+ *
+ * @returns {MacroDescriptor} created resource.
+ */
+export function createMacro(params: CreateDynamicMacroParams): MacroDescriptor {
+    const key = checkRequired(params, 'key');
+    const resource = checkRequired(params, 'resource');
+
+    const bean: CreateDynamicMacroHandler = __.newBean<CreateDynamicMacroHandler>('com.enonic.xp.lib.schema.CreateDynamicMacroHandler');
+    bean.setKey(key);
+    bean.setResource(resource);
+    return __.toNativeObject(bean.execute());
+}
+
+export interface UpdateDynamicMacroParams {
+    key: string;
+    resource: string;
+}
+
+interface UpdateDynamicMacroHandler {
+    setKey(value: string): void;
+
+    setResource(value: string): void;
+
+    execute(): MacroDescriptor;
+}
+
+/**
+ * Updates dynamic macro resource.
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key Macro resource descriptor key.
+ * @param {string} params.resource Macro resource value.
+ *
+ * @returns {MacroDescriptor} updated resource.
+ */
+export function updateMacro(params: UpdateDynamicMacroParams): MacroDescriptor {
+    const key = checkRequired(params, 'key');
+    const resource = checkRequired(params, 'resource');
+
+    const bean: UpdateDynamicMacroHandler = __.newBean<UpdateDynamicMacroHandler>('com.enonic.xp.lib.schema.UpdateDynamicMacroHandler');
+    bean.setKey(key);
+    bean.setResource(resource);
+    return __.toNativeObject(bean.execute());
+}
+
+export interface GetDynamicMacroParams {
+    key: string;
+}
+
+interface GetDynamicMacroHandler {
+    setKey(value: string): void;
+
+    execute(): MacroDescriptor | null;
+}
+
+/**
+ * Fetches dynamic macro resource.
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key Macro resource descriptor key.
+ *
+ * @returns {MacroDescriptor | null} fetched resource, or `null` if not found.
+ */
+export function getMacro(params: GetDynamicMacroParams): MacroDescriptor | null {
+    const key = checkRequired(params, 'key');
+
+    const bean: GetDynamicMacroHandler = __.newBean<GetDynamicMacroHandler>('com.enonic.xp.lib.schema.GetDynamicMacroHandler');
+    bean.setKey(key);
+    return __.toNativeObject(bean.execute());
+}
+
+export interface ListDynamicMacrosParams {
+    application: string;
+}
+
+interface ListDynamicMacrosHandler {
+    setApplication(value: string): void;
+
+    execute(): MacroDescriptor[];
+}
+
+/**
+ * Fetches dynamic macro resources.
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.application Application key.
+ *
+ * @returns {MacroDescriptor[]} fetched resources.
+ */
+export function listMacros(params: ListDynamicMacrosParams): MacroDescriptor[] {
+    const application = checkRequired(params, 'application');
+
+    const bean: ListDynamicMacrosHandler = __.newBean<ListDynamicMacrosHandler>('com.enonic.xp.lib.schema.ListDynamicMacrosHandler');
+    bean.setApplication(application);
+    return __.toNativeObject(bean.execute());
+}
+
+export interface DeleteDynamicMacroParams {
+    key: string;
+}
+
+interface DeleteDynamicMacroHandler {
+    setKey(value: string): void;
+
+    execute(): boolean;
+}
+
+/**
+ * Removes dynamic macro resource.
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key Macro resource descriptor key.
+ *
+ * @returns {boolean} true if succeeded, false otherwise.
+ */
+export function deleteMacro(params: DeleteDynamicMacroParams): boolean {
+    const key = checkRequired(params, 'key');
+
+    const bean: DeleteDynamicMacroHandler = __.newBean<DeleteDynamicMacroHandler>('com.enonic.xp.lib.schema.DeleteDynamicMacroHandler');
+    bean.setKey(key);
+    return __.toNativeObject(bean.execute());
+}

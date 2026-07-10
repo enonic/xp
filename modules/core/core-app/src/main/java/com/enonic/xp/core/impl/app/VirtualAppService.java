@@ -117,8 +117,10 @@ public class VirtualAppService
         final NodeId pageNodeId = initPageNode( siteRoot.path() );
         final NodeId mixinNodeId = initCmsFormFragmentNode( siteRoot.path() );
         final NodeId xDataNodeId = initMixinsNode( siteRoot.path() );
+        final NodeId macroNodeId = initMacrosNode( siteRoot.path() );
 
-        return NodeIds.from( siteRoot.id(), contentTypeNodeId, partNodeId, layoutNodeId, pageNodeId, mixinNodeId, xDataNodeId );
+        return NodeIds.from( siteRoot.id(), contentTypeNodeId, partNodeId, layoutNodeId, pageNodeId, mixinNodeId, xDataNodeId,
+                             macroNodeId );
     }
 
     private NodeId initContentTypeNode( final NodePath parent )
@@ -176,6 +178,16 @@ public class VirtualAppService
         return nodeService.create( CreateNodeParams.create()
                                        .data( new PropertyTree() )
                                        .name( VirtualAppConstants.MIXINS_ROOT_NAME )
+                                       .parent( parent )
+                                       .permissions( VirtualAppConstants.VIRTUAL_APP_REPO_DEFAULT_ACL )
+                                       .build() ).id();
+    }
+
+    private NodeId initMacrosNode( final NodePath parent )
+    {
+        return nodeService.create( CreateNodeParams.create()
+                                       .data( new PropertyTree() )
+                                       .name( VirtualAppConstants.MACROS_ROOT_NAME )
                                        .parent( parent )
                                        .permissions( VirtualAppConstants.VIRTUAL_APP_REPO_DEFAULT_ACL )
                                        .build() ).id();

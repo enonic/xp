@@ -34,19 +34,24 @@ const {
     createSchema, 
     createComponent, 
     createStyles,
+    createMacro,
     getSchema,
     getComponent,
     getCms,
     getStyles,
+    getMacro,
     deleteSchema,
     deleteComponent,
     deleteStyles, 
+    deleteMacro,
     updateSchema,
     updateComponent,
     updateCms,
     updateStyles,
+    updateMacro,
     listComponents, 
-    listSchemas
+    listSchemas,
+    listMacros
 } = require('/lib/xp/schema');
 ```
 
@@ -79,19 +84,24 @@ import {
     createSchema,
     createComponent,
     createStyles,
+    createMacro,
     getSchema,
     getComponent,
     getCms,
     getStyles,
+    getMacro,
     deleteSchema,
     deleteComponent,
     deleteStyles,
+    deleteMacro,
     updateSchema,
     updateComponent,
     updateCms,
     updateStyles,
+    updateMacro,
     listComponents,
-    listSchemas
+    listSchemas,
+    listMacros
 } from '/lib/xp/schema';
 ```
 

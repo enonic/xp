@@ -61,6 +61,8 @@ import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.itest.AbstractElasticsearchIntegrationTest;
+import com.enonic.xp.macro.MacroDescriptor;
+import com.enonic.xp.macro.MacroKey;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.page.PageDescriptor;
@@ -89,19 +91,24 @@ import com.enonic.xp.repo.impl.storage.NodeStorageServiceImpl;
 import com.enonic.xp.repo.impl.version.VersionServiceImpl;
 import com.enonic.xp.resource.CreateDynamicComponentParams;
 import com.enonic.xp.resource.CreateDynamicContentSchemaParams;
+import com.enonic.xp.resource.CreateDynamicMacroParams;
 import com.enonic.xp.resource.CreateDynamicStylesParams;
 import com.enonic.xp.resource.DeleteDynamicComponentParams;
 import com.enonic.xp.resource.DeleteDynamicContentSchemaParams;
+import com.enonic.xp.resource.DeleteDynamicMacroParams;
 import com.enonic.xp.resource.DynamicComponentType;
 import com.enonic.xp.resource.DynamicContentSchemaType;
 import com.enonic.xp.resource.DynamicSchemaResult;
 import com.enonic.xp.resource.GetDynamicComponentParams;
 import com.enonic.xp.resource.GetDynamicContentSchemaParams;
+import com.enonic.xp.resource.GetDynamicMacroParams;
 import com.enonic.xp.resource.ListDynamicComponentsParams;
 import com.enonic.xp.resource.ListDynamicContentSchemasParams;
+import com.enonic.xp.resource.ListDynamicMacrosParams;
 import com.enonic.xp.resource.UpdateDynamicCmsParams;
 import com.enonic.xp.resource.UpdateDynamicComponentParams;
 import com.enonic.xp.resource.UpdateDynamicContentSchemaParams;
+import com.enonic.xp.resource.UpdateDynamicMacroParams;
 import com.enonic.xp.resource.UpdateDynamicStylesParams;
 import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.schema.content.ContentType;
@@ -1548,6 +1555,116 @@ class DynamicSchemaServiceImplTest
                                                                                                 .build() ) ) ).usingRecursiveComparison()
             .isNull();
 
+    }
+
+    @Test
+    void createMacro()
+        throws Exception
+    {
+        final String resource = readResource( "_macro.yaml" );
+
+        final CreateDynamicMacroParams params =
+            CreateDynamicMacroParams.create().key( MacroKey.from( "myapp:mymacro" ) ).resource( resource ).build();
+
+        final DynamicSchemaResult<MacroDescriptor> result =
+            createAdminContext().callWith( () -> dynamicSchemaService.createMacro( params ) );
+
+        final MacroDescriptor macroDescriptor = result.getSchema();
+
+        createAdminContext().runWith( () -> assertThat( macroDescriptor ).usingRecursiveComparison()
+            .isEqualTo( dynamicSchemaService.getMacro(
+                GetDynamicMacroParams.create().key( MacroKey.from( "myapp:mymacro" ) ).build() ).getSchema() ) );
+
+        assertEquals( "mymacro", macroDescriptor.getName() );
+        assertEquals( "myapp", macroDescriptor.getKey().getApplicationKey().toString() );
+        assertEquals( "Virtual Macro", macroDescriptor.getTitle() );
+        assertEquals( "key.display-name", macroDescriptor.getTitleI18nKey() );
+        assertEquals( "My Macro Description", macroDescriptor.getDescription() );
+        assertEquals( "key.description", macroDescriptor.getDescriptionI18nKey() );
+        assertEquals( 1, macroDescriptor.getForm().size() );
+        assertNotNull( macroDescriptor.getModifiedTime() );
+        assertEquals( 1, macroDescriptor.getSchemaConfig().properties().size() );
+
+        assertEquals( "node", result.getResource().getResolverName() );
+        assertTrue( result.getResource().exists() );
+        assertEquals( resource, result.getResource().readString() );
+        assertEquals( "myapp:/cms/macros/mymacro/mymacro.yaml", result.getResource().getKey().toString() );
+
+        final Node resourceNode = VirtualAppContext.createAdminContext()
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/macros/mymacro/mymacro.yaml" ) ) );
+
+        assertEquals( resource, resourceNode.data().getString( "resource" ) );
+    }
+
+    @Test
+    void updateMacro()
+        throws Exception
+    {
+        final CreateDynamicMacroParams createParams = CreateDynamicMacroParams.create()
+            .key( MacroKey.from( "myapp:mymacro" ) )
+            .resource( """
+                           kind: "Macro"
+                           title: "MyMacro"
+                           form: [ ]
+                           """ )
+            .build();
+
+        createAdminContext().runWith( () -> dynamicSchemaService.createMacro( createParams ) );
+
+        final String resource = readResource( "_macro.yaml" );
+
+        final UpdateDynamicMacroParams updateParams =
+            UpdateDynamicMacroParams.create().key( MacroKey.from( "myapp:mymacro" ) ).resource( resource ).build();
+
+        final DynamicSchemaResult<MacroDescriptor> result =
+            createAdminContext().callWith( () -> dynamicSchemaService.updateMacro( updateParams ) );
+
+        assertEquals( "Virtual Macro", result.getSchema().getTitle() );
+        assertEquals( resource, result.getResource().readString() );
+    }
+
+    @Test
+    void listMacros()
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
+
+        assertThat( createAdminContext().callWith( () -> dynamicSchemaService.listMacros(
+            ListDynamicMacrosParams.create().applicationKey( applicationKey ).build() ) ) ).isEmpty();
+
+        DynamicSchemaResult<MacroDescriptor> macro1 = createAdminContext().callWith( () -> dynamicSchemaService.createMacro(
+            CreateDynamicMacroParams.create().key( MacroKey.from( "myapp:mymacro1" ) ).resource( readResource( "_macro.yaml" ) ).build() ) );
+        DynamicSchemaResult<MacroDescriptor> macro2 = createAdminContext().callWith( () -> dynamicSchemaService.createMacro(
+            CreateDynamicMacroParams.create().key( MacroKey.from( "myapp:mymacro2" ) ).resource( readResource( "_macro.yaml" ) ).build() ) );
+        createAdminContext().callWith( () -> dynamicSchemaService.createMacro(
+            CreateDynamicMacroParams.create()
+                .key( MacroKey.from( "my_other_app:mymacro" ) )
+                .resource( readResource( "_macro.yaml" ) )
+                .build() ) );
+
+        final List<DynamicSchemaResult<MacroDescriptor>> results = createAdminContext().callWith(
+            () -> dynamicSchemaService.listMacros( ListDynamicMacrosParams.create().applicationKey( applicationKey ).build() ) );
+
+        assertThat( results ).usingRecursiveComparison().isEqualTo( List.of( macro1, macro2 ) );
+    }
+
+    @Test
+    void deleteMacro()
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
+
+        DynamicSchemaResult<MacroDescriptor> macro = createAdminContext().callWith( () -> dynamicSchemaService.createMacro(
+            CreateDynamicMacroParams.create().key( MacroKey.from( "myapp:mymacro" ) ).resource( readResource( "_macro.yaml" ) ).build() ) );
+
+        final boolean result = createAdminContext().callWith(
+            () -> dynamicSchemaService.deleteMacro( DeleteDynamicMacroParams.create().key( macro.getSchema().getKey() ).build() ) );
+
+        assertTrue( result );
+
+        assertThat( createAdminContext().callWith( () -> dynamicSchemaService.listMacros(
+            ListDynamicMacrosParams.create().applicationKey( applicationKey ).build() ) ) ).isEmpty();
+
+        assertThat( createAdminContext().callWith( () -> dynamicSchemaService.getMacro(
+            GetDynamicMacroParams.create().key( macro.getSchema().getKey() ).build() ) ) ).usingRecursiveComparison().isNull();
     }
 
     @Test

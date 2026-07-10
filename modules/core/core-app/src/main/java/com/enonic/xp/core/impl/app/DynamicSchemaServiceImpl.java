@@ -12,6 +12,8 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.exception.ForbiddenAccessException;
+import com.enonic.xp.macro.MacroDescriptor;
+import com.enonic.xp.macro.MacroKey;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
@@ -24,20 +26,25 @@ import com.enonic.xp.resource.CreateDynamicContentSchemaParams;
 import com.enonic.xp.resource.CreateDynamicStylesParams;
 import com.enonic.xp.resource.DeleteDynamicComponentParams;
 import com.enonic.xp.resource.DeleteDynamicContentSchemaParams;
+import com.enonic.xp.resource.CreateDynamicMacroParams;
+import com.enonic.xp.resource.DeleteDynamicMacroParams;
 import com.enonic.xp.resource.DynamicComponentType;
 import com.enonic.xp.resource.DynamicContentSchemaType;
 import com.enonic.xp.resource.DynamicSchemaResult;
 import com.enonic.xp.resource.DynamicSchemaService;
 import com.enonic.xp.resource.GetDynamicComponentParams;
 import com.enonic.xp.resource.GetDynamicContentSchemaParams;
+import com.enonic.xp.resource.GetDynamicMacroParams;
 import com.enonic.xp.resource.ListDynamicComponentsParams;
 import com.enonic.xp.resource.ListDynamicContentSchemasParams;
+import com.enonic.xp.resource.ListDynamicMacrosParams;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UpdateDynamicCmsParams;
 import com.enonic.xp.resource.UpdateDynamicComponentParams;
 import com.enonic.xp.resource.UpdateDynamicContentSchemaParams;
+import com.enonic.xp.resource.UpdateDynamicMacroParams;
 import com.enonic.xp.resource.UpdateDynamicStylesParams;
 import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.schema.BaseSchemaName;
@@ -332,6 +339,81 @@ public class DynamicSchemaServiceImpl
         return dynamicResourceManager.deleteResource( resourceFolderPath, VirtualAppConstants.STYLE_NAME, false );
     }
 
+    @Override
+    public DynamicSchemaResult<MacroDescriptor> createMacro( final CreateDynamicMacroParams params )
+    {
+        requireAdminRole();
+
+        final MacroDescriptor descriptor = dynamicResourceParser.parseMacro( params.getKey(), params.getResource() );
+
+        final NodePath resourceFolderPath = createMacroFolderPath( params.getKey() );
+        final Resource resource =
+            dynamicResourceManager.createResource( resourceFolderPath, params.getKey().getName(), params.getResource() );
+
+        return new DynamicSchemaResult<>(
+            MacroDescriptor.copyOf( descriptor ).modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) ).build(), resource );
+    }
+
+    @Override
+    public DynamicSchemaResult<MacroDescriptor> updateMacro( final UpdateDynamicMacroParams params )
+    {
+        requireAdminRole();
+
+        final MacroDescriptor descriptor = dynamicResourceParser.parseMacro( params.getKey(), params.getResource() );
+
+        final NodePath resourceFolderPath = createMacroFolderPath( params.getKey() );
+        final Resource resource =
+            dynamicResourceManager.updateResource( resourceFolderPath, params.getKey().getName(), params.getResource() );
+
+        return new DynamicSchemaResult<>(
+            MacroDescriptor.copyOf( descriptor ).modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) ).build(), resource );
+    }
+
+    @Override
+    public DynamicSchemaResult<MacroDescriptor> getMacro( final GetDynamicMacroParams params )
+    {
+        requireAdminRole();
+
+        final NodePath resourceFolderPath = createMacroFolderPath( params.getKey() );
+        final Resource resource = dynamicResourceManager.getResource( resourceFolderPath, params.getKey().getName() );
+
+        if ( resource.exists() && resource.getSize() > 0 )
+        {
+            final MacroDescriptor descriptor = dynamicResourceParser.parseMacro( params.getKey(), resource.readString() );
+            return new DynamicSchemaResult<>(
+                MacroDescriptor.copyOf( descriptor ).modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) ).build(), resource );
+        }
+        return null;
+    }
+
+    @Override
+    public List<DynamicSchemaResult<MacroDescriptor>> listMacros( final ListDynamicMacrosParams params )
+    {
+        requireAdminRole();
+
+        return dynamicResourceManager.listResources( createMacroRootPath( params.getKey() ) )
+            .stream()
+            .map( resource -> {
+                final MacroDescriptor descriptor =
+                    dynamicResourceParser.parseMacro( MacroKey.from( params.getKey(), getResourceName( resource.getKey() ) ),
+                                                      resource.readString() );
+
+                return new DynamicSchemaResult<>(
+                    MacroDescriptor.copyOf( descriptor ).modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) ).build(),
+                    resource );
+            } )
+            .collect( Collectors.toList() );
+    }
+
+    @Override
+    public boolean deleteMacro( final DeleteDynamicMacroParams params )
+    {
+        requireAdminRole();
+
+        final NodePath resourceFolderPath = createMacroFolderPath( params.getKey() );
+        return dynamicResourceManager.deleteResource( resourceFolderPath, params.getKey().getName(), true );
+    }
+
     private BaseSchemaName getSchemaName( final ApplicationKey applicationKey, final DynamicContentSchemaType type, final String name )
     {
         switch ( type )
@@ -389,6 +471,21 @@ public class DynamicSchemaServiceImpl
         return NodePath.create( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT )
             .addElement( key.toString() )
             .addElement( VirtualAppConstants.CMS_ROOT_NAME )
+            .build();
+    }
+
+    private NodePath createMacroFolderPath( final MacroKey key )
+    {
+        final NodePath macroRootPath = createMacroRootPath( key.getApplicationKey() );
+        return new NodePath( macroRootPath, NodeName.from( key.getName() ) );
+    }
+
+    private NodePath createMacroRootPath( final ApplicationKey key )
+    {
+        return NodePath.create( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT )
+            .addElement( key.toString() )
+            .addElement( VirtualAppConstants.CMS_ROOT_NAME )
+            .addElement( VirtualAppConstants.MACROS_ROOT_NAME )
             .build();
     }
 
