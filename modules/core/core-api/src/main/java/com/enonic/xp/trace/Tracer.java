@@ -6,11 +6,15 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
+@NullMarked
 public final class Tracer
 {
-    private static final ScopedValue<Trace> CURRENT = ScopedValue.newInstance();
+    private static final ScopedValue<@Nullable Trace> CURRENT = ScopedValue.newInstance();
 
-    private static volatile TraceManager manager;
+    private static volatile @Nullable TraceManager manager;
 
     private Tracer()
     {
@@ -21,7 +25,7 @@ public final class Tracer
         return manager != null;
     }
 
-    public static Trace current()
+    public static @Nullable Trace current()
     {
         return CURRENT.isBound() ? CURRENT.get() : null;
     }
@@ -35,7 +39,7 @@ public final class Tracer
         }
     }
 
-    public static void trace( final Trace trace, final Runnable runnable )
+    public static void trace( final @Nullable Trace trace, final Runnable runnable )
     {
         callWith( trace, () -> {
             runnable.run();
@@ -47,24 +51,24 @@ public final class Tracer
      * Executes the runnable in the given trace scope. Exceptions propagate unchanged: tracing never alters what a
      * caller catches.
      */
-    public static <T> T trace( final Trace trace, final TraceRunnable<T> runnable )
+    public static <T extends @Nullable Object> T trace( final @Nullable Trace trace, final TraceRunnable<T> runnable )
     {
         return callWith( trace, runnable::run );
     }
 
-    public static <T> T traceEx( final Trace trace, final Callable<T> callable )
+    public static <T extends @Nullable Object> T traceEx( final @Nullable Trace trace, final Callable<T> callable )
         throws Exception
     {
         return callWith( trace, callable::call );
     }
 
-    public static <T> T traceIO( final Trace trace, final TraceIO<T> callable )
+    public static <T extends @Nullable Object> T traceIO( final @Nullable Trace trace, final TraceIO<T> callable )
         throws IOException
     {
         return callWith( trace, callable::call );
     }
 
-    public static Trace newTrace( final String name )
+    public static @Nullable Trace newTrace( final String name )
     {
         final TraceManager current = manager;
         return current == null ? null : current.newTrace( name, current() );
@@ -75,12 +79,13 @@ public final class Tracer
         trace( newTrace( name ), runnable );
     }
 
-    public static <T> T trace( final String name, final TraceRunnable<T> runnable )
+    public static <T extends @Nullable Object> T trace( final String name, final TraceRunnable<T> runnable )
     {
         return trace( newTrace( name ), runnable );
     }
 
-    public static <T> T trace( final String name, final Consumer<Trace> before, final Supplier<T> main, final BiConsumer<Trace, T> after )
+    public static <T extends @Nullable Object> T trace( final String name, final Consumer<Trace> before, final Supplier<T> main,
+                                                        final BiConsumer<Trace, T> after )
     {
         final Trace trace = newTrace( name );
 
@@ -97,13 +102,13 @@ public final class Tracer
         } );
     }
 
-    public static <T> T trace( final String name, final Consumer<Trace> before, final Supplier<T> main )
+    public static <T extends @Nullable Object> T trace( final String name, final Consumer<Trace> before, final Supplier<T> main )
     {
         return trace( name, before, main, ( trace, t ) -> {
         } );
     }
 
-    public static <T> T trace( final String name, final Consumer<Trace> before, final Runnable main )
+    public static <T extends @Nullable Object> @Nullable T trace( final String name, final Consumer<Trace> before, final Runnable main )
     {
         return trace( name, before, () -> {
             main.run();
@@ -112,18 +117,19 @@ public final class Tracer
         } );
     }
 
-    public static <T> T traceEx( final String name, final Callable<T> callable )
+    public static <T extends @Nullable Object> T traceEx( final String name, final Callable<T> callable )
         throws Exception
     {
         return traceEx( newTrace( name ), callable );
     }
 
-    public static void setManager( final TraceManager manager )
+    public static void setManager( final @Nullable TraceManager manager )
     {
         Tracer.manager = manager;
     }
 
-    static <T, X extends Throwable> T callWith( final Trace trace, final ScopedValue.CallableOp<T, X> op )
+    static <T extends @Nullable Object, X extends Throwable> T callWith( final @Nullable Trace trace,
+                                                                         final ScopedValue.CallableOp<T, X> op )
         throws X
     {
         try
@@ -137,7 +143,7 @@ public final class Tracer
         }
     }
 
-    private static void startTrace( final Trace trace )
+    private static void startTrace( final @Nullable Trace trace )
     {
         if ( trace == null )
         {
@@ -152,7 +158,7 @@ public final class Tracer
         }
     }
 
-    private static void endTrace( final Trace trace )
+    private static void endTrace( final @Nullable Trace trace )
     {
         if ( trace == null )
         {

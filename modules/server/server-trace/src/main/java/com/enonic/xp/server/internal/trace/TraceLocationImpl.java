@@ -2,9 +2,13 @@ package com.enonic.xp.server.internal.trace;
 
 import java.util.Set;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import com.enonic.xp.trace.TraceLocation;
 import com.enonic.xp.trace.Tracer;
 
+@NullMarked
 final class TraceLocationImpl
     implements TraceLocation
 {
@@ -48,7 +52,7 @@ final class TraceLocationImpl
         return this.className + "." + this.method + ":" + this.lineNumber;
     }
 
-    static TraceLocation findLocation()
+    static @Nullable TraceLocation findLocation()
     {
         return StackWalker.getInstance()
             .walk( frames -> frames.filter( frame -> !IGNORED_CLASSES.contains( frame.getClassName() ) )

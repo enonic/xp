@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.osgi.framework.hooks.weaving.WeavingHook;
 import org.osgi.framework.hooks.weaving.WovenClass;
 import org.osgi.framework.namespace.PackageNamespace;
@@ -30,6 +32,7 @@ import org.slf4j.LoggerFactory;
  * <p>
  * If a class cannot be woven for any reason it is loaded unmodified, and tracing for that class is simply skipped.
  */
+@NullMarked
 public class TraceWeaver
     implements WeavingHook
 {
@@ -87,7 +90,7 @@ public class TraceWeaver
      * resolved package wire, by providing the package itself, or through a dynamic package import. Everything else
      * (framework internals, third-party libraries) is skipped without scanning class bytes.
      */
-    private boolean canSeeTracePackage( final BundleWiring wiring )
+    private boolean canSeeTracePackage( final @Nullable BundleWiring wiring )
     {
         if ( wiring == null )
         {
@@ -128,7 +131,7 @@ public class TraceWeaver
         return false;
     }
 
-    private static boolean containsTracedDescriptor( final byte[] bytes )
+    private static boolean containsTracedDescriptor( final byte @Nullable [] bytes )
     {
         if ( bytes == null || bytes.length < TRACED_DESCRIPTOR_BYTES.length )
         {

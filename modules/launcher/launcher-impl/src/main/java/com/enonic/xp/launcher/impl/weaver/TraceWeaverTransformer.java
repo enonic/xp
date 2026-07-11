@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +36,7 @@ import net.bytebuddy.jar.asm.Type;
  * verification), primitive return values and generic signatures are preserved; method annotations stay on the
  * visible wrapper method.
  */
+@NullMarked
 final class TraceWeaverTransformer
 {
     static final String TRACED_DESCRIPTOR = "Lcom/enonic/xp/trace/Traced;";
@@ -66,7 +69,7 @@ final class TraceWeaverTransformer
      * @param bytes original class bytes
      * @return woven class bytes, or {@code null} if the class has no methods to weave
      */
-    static byte[] transform( final byte[] bytes )
+    static byte @Nullable [] transform( final byte[] bytes )
     {
         final ClassReader reader = new ClassReader( bytes );
 
@@ -92,15 +95,15 @@ final class TraceWeaverTransformer
         reader.accept( new ClassVisitor( API )
         {
             @Override
-            public MethodVisitor visitMethod( final int access, final String name, final String descriptor, final String signature,
-                                              final String[] exceptions )
+            public @Nullable MethodVisitor visitMethod( final int access, final String name, final String descriptor,
+                                                        final @Nullable String signature, final String @Nullable [] exceptions )
             {
                 allMethods.add( name + descriptor );
 
                 return new MethodVisitor( API )
                 {
                     @Override
-                    public AnnotationVisitor visitAnnotation( final String annotationDescriptor, final boolean visible )
+                    public @Nullable AnnotationVisitor visitAnnotation( final String annotationDescriptor, final boolean visible )
                     {
                         if ( !TRACED_DESCRIPTOR.equals( annotationDescriptor ) )
                         {
@@ -119,7 +122,7 @@ final class TraceWeaverTransformer
                         return new AnnotationVisitor( API )
                         {
                             @Override
-                            public void visit( final String elementName, final Object value )
+                            public void visit( final @Nullable String elementName, final Object value )
                             {
                                 if ( "value".equals( elementName ) && value instanceof String traceName && !traceName.isEmpty() )
                                 {
@@ -146,7 +149,7 @@ final class TraceWeaverTransformer
     {
         private final Map<String, String> tracedMethods;
 
-        private String internalName;
+        private @Nullable String internalName;
 
         private boolean isInterface;
 
@@ -157,8 +160,8 @@ final class TraceWeaverTransformer
         }
 
         @Override
-        public void visit( final int version, final int access, final String name, final String signature, final String superName,
-                           final String[] interfaces )
+        public void visit( final int version, final int access, final String name, final @Nullable String signature,
+                           final @Nullable String superName, final String @Nullable [] interfaces )
         {
             this.internalName = name;
             this.isInterface = ( access & Opcodes.ACC_INTERFACE ) != 0;
@@ -166,8 +169,8 @@ final class TraceWeaverTransformer
         }
 
         @Override
-        public MethodVisitor visitMethod( final int access, final String name, final String descriptor, final String signature,
-                                          final String[] exceptions )
+        public MethodVisitor visitMethod( final int access, final String name, final String descriptor,
+                                          final @Nullable String signature, final String @Nullable [] exceptions )
         {
             final String traceName = this.tracedMethods.get( name + descriptor );
             if ( traceName == null )

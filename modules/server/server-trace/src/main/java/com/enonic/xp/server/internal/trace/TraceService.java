@@ -1,5 +1,7 @@
 package com.enonic.xp.server.internal.trace;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -13,6 +15,7 @@ import com.enonic.xp.trace.TraceEvent;
 import com.enonic.xp.trace.TraceManager;
 import com.enonic.xp.trace.Tracer;
 
+@NullMarked
 @Component(immediate = true, configurationPid = "com.enonic.xp.server.trace")
 public final class TraceService
     implements TraceManager
@@ -42,7 +45,7 @@ public final class TraceService
     }
 
     @Override
-    public Trace newTrace( final String name, final Trace parent )
+    public Trace newTrace( final String name, final @Nullable Trace parent )
     {
         return new TraceImpl( name, parent != null ? parent.getId() : null, TraceLocationImpl.findLocation() );
     }

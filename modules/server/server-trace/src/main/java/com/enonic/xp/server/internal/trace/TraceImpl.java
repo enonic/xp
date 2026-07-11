@@ -9,6 +9,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +27,7 @@ import com.enonic.xp.trace.TraceLocation;
  * (String | Boolean | Long | Double | List&lt;String&gt;), so trace consumers and exporters never observe
  * arbitrary - possibly mutable - objects.
  */
+@NullMarked
 final class TraceImpl
     extends ConcurrentHashMap<String, Object>
     implements Trace
@@ -37,21 +40,21 @@ final class TraceImpl
 
     private final String id;
 
-    private final String parentId;
+    private final @Nullable String parentId;
 
     private final String name;
 
-    private Instant startTime;
+    private @Nullable Instant startTime;
 
     private long startTimeNano;
 
-    private Instant endTime;
+    private @Nullable Instant endTime;
 
     private long endTimeNano;
 
-    private final TraceLocation location;
+    private final @Nullable TraceLocation location;
 
-    TraceImpl( final String name, final String parentId, final TraceLocation location )
+    TraceImpl( final String name, final @Nullable String parentId, final @Nullable TraceLocation location )
     {
         this.id = UUID.randomUUID().toString();
         this.parentId = parentId;
@@ -61,7 +64,7 @@ final class TraceImpl
 
     @Deprecated
     @Override
-    public Object put( final String key, final Object value )
+    public @Nullable Object put( final String key, final @Nullable Object value )
     {
         if ( value == null )
         {
@@ -118,7 +121,7 @@ final class TraceImpl
     }
 
     @Override
-    public String getParentId()
+    public @Nullable String getParentId()
     {
         return this.parentId;
     }
@@ -130,19 +133,19 @@ final class TraceImpl
     }
 
     @Override
-    public TraceLocation getLocation()
+    public @Nullable TraceLocation getLocation()
     {
         return this.location;
     }
 
     @Override
-    public Instant getStartTime()
+    public @Nullable Instant getStartTime()
     {
         return this.startTime;
     }
 
     @Override
-    public Instant getEndTime()
+    public @Nullable Instant getEndTime()
     {
         return this.endTime;
     }

@@ -5,6 +5,9 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 /**
  * A single trace with attributes.
  * <p>
@@ -28,20 +31,21 @@ import java.util.Map;
  * object is converted with {@code String.valueOf}, and a {@code null} value removes the attribute. Reading
  * attributes through the map view remains supported until a typed read view replaces it.
  */
+@NullMarked
 public interface Trace
     extends Map<String, Object>
 {
     String getId();
 
-    String getParentId();
+    @Nullable String getParentId();
 
     String getName();
 
-    TraceLocation getLocation();
+    @Nullable TraceLocation getLocation();
 
-    Instant getStartTime();
+    @Nullable Instant getStartTime();
 
-    Instant getEndTime();
+    @Nullable Instant getEndTime();
 
     boolean inProgress();
 
@@ -56,7 +60,7 @@ public interface Trace
      *
      * @return this trace, for chaining
      */
-    default Trace attribute( final String key, final String value )
+    default Trace attribute( final String key, final @Nullable String value )
     {
         if ( value != null )
         {
@@ -103,7 +107,7 @@ public interface Trace
      *
      * @return this trace, for chaining
      */
-    default Trace attribute( final String key, final List<String> values )
+    default Trace attribute( final String key, final @Nullable List<String> values )
     {
         if ( values != null )
         {
@@ -118,7 +122,7 @@ public interface Trace
      */
     @Deprecated
     @Override
-    Object put( String key, Object value );
+    @Nullable Object put( String key, @Nullable Object value );
 
     /**
      * @deprecated Record attributes with the typed {@code attribute} methods instead. Trace will stop extending
@@ -133,7 +137,7 @@ public interface Trace
      */
     @Deprecated
     @Override
-    Object remove( Object key );
+    @Nullable Object remove( Object key );
 
     /**
      * @deprecated Attributes cannot be removed - overwrite them instead. Trace will stop extending {@code Map}.
