@@ -130,6 +130,11 @@ public class TraceWeaver
 
     private static boolean containsTracedDescriptor( final byte[] bytes )
     {
+        if ( bytes == null || bytes.length < TRACED_DESCRIPTOR_BYTES.length )
+        {
+            return false;
+        }
+
         final byte first = TRACED_DESCRIPTOR_BYTES[0];
         final int max = bytes.length - TRACED_DESCRIPTOR_BYTES.length;
 

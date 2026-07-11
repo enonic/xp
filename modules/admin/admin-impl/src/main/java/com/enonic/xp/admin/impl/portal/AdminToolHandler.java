@@ -64,12 +64,11 @@ public final class AdminToolHandler
         worker.adminToolDescriptorService = adminToolDescriptorService;
         worker.descriptorKey = descriptorKey;
 
-        return executeWorker( worker, webRequest, webResponse );
+        return executeWorker( worker, webRequest );
     }
 
     @Traced("portalRequest")
-    private PortalResponse executeWorker( final AdminToolHandlerWorker worker, final WebRequest webRequest,
-                                          final WebResponse webResponse )
+    private PortalResponse executeWorker( final AdminToolHandlerWorker worker, final WebRequest webRequest )
         throws Exception
     {
         Tracer.withCurrent( trace -> {

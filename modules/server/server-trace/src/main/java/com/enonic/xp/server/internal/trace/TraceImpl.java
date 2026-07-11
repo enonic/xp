@@ -31,6 +31,8 @@ final class TraceImpl
 {
     private static final Logger LOG = LoggerFactory.getLogger( TraceImpl.class );
 
+    private static final int MAX_COERCION_LOGGED_TYPES = 100;
+
     private static final Set<String> COERCION_LOGGED_TYPES = ConcurrentHashMap.newKeySet();
 
     private final String id;
@@ -101,7 +103,7 @@ final class TraceImpl
             }
             return List.copyOf( strings );
         }
-        if ( COERCION_LOGGED_TYPES.add( value.getClass().getName() ) )
+        if ( COERCION_LOGGED_TYPES.size() < MAX_COERCION_LOGGED_TYPES && COERCION_LOGGED_TYPES.add( value.getClass().getName() ) )
         {
             LOG.debug( "Trace attribute value of type {} converted to String - record strings, booleans, longs, doubles " +
                            "or lists of strings instead", value.getClass().getName() );
