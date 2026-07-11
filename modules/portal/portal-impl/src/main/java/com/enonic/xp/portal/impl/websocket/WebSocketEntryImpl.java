@@ -1,6 +1,6 @@
 package com.enonic.xp.portal.impl.websocket;
 
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -47,7 +47,7 @@ final class WebSocketEntryImpl
         final Trace trace = Tracer.current();
         if ( trace != null )
         {
-            trace.put( "websocket", Map.of( "protocols", endpoint.getConfig().getSubProtocols() ) );
+            trace.put( "websocket", List.copyOf( endpoint.getConfig().getSubProtocols() ) );
             traceParentId = trace.getId();
             traceApp = (String) trace.get( "app" );
         }

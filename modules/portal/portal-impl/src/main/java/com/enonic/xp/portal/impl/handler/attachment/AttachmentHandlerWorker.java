@@ -40,7 +40,7 @@ public final class AttachmentHandlerWorker
     protected void addTrace( final Content content )
     {
         Tracer.withCurrent( trace -> {
-            trace.put( "contentPath", content.getPath() );
+            trace.put( "contentPath", content.getPath().toString() );
             trace.put( "type", "attachment" );
         } );
     }

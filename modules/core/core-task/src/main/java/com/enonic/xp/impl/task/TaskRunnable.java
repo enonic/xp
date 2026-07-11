@@ -50,9 +50,9 @@ final class TaskRunnable
         Tracer.withCurrent( trace -> {
             final User user =
                 runnableTask.getTaskContext().getAuthInfo() != null ? runnableTask.getTaskContext().getAuthInfo().getUser() : null;
-            trace.put( "taskId", runnableTask.getTaskId() );
-            trace.put( "user", requireNonNullElseGet( user, User::anonymous ).getKey() );
-            trace.put( "app", runnableTask.getApplicationKey() );
+            trace.put( "taskId", runnableTask.getTaskId().toString() );
+            trace.put( "user", requireNonNullElseGet( user, User::anonymous ).getKey().toString() );
+            trace.put( "app", runnableTask.getApplicationKey().toString() );
         } );
 
         progressReporter.running();

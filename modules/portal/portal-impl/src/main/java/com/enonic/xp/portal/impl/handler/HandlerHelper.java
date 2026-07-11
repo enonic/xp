@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.google.common.io.ByteSource;
@@ -12,11 +13,14 @@ import com.google.common.primitives.Longs;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.resource.Resource;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
@@ -135,6 +139,18 @@ public final class HandlerHelper
             trace.put( "status", webResponse.getStatus().value() );
             trace.put( "type", webResponse.getContentType().toString() );
             trace.put( "size", getSize( webResponse ) );
+        }
+    }
+
+    public static void addContextInfo( final Trace trace )
+    {
+        final Context context = ContextAccessor.current();
+        trace.put( "repo", Objects.toString( context.getRepositoryId(), null ) );
+        trace.put( "branch", Objects.toString( context.getBranch(), null ) );
+        final AuthenticationInfo authInfo = context.getAuthInfo();
+        if ( authInfo != null && authInfo.getUser() != null )
+        {
+            trace.put( "user", authInfo.getUser().getKey().toString() );
         }
     }
 

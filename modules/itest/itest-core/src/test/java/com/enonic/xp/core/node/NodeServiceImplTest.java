@@ -127,10 +127,10 @@ class NodeServiceImplTest
         final Node fetchedNode = Tracer.trace( trace, () -> this.nodeService.getById( createdNode.id() ) );
 
         assertEquals( createdNode, fetchedNode );
-        verify( trace ).put( "id", createdNode.id() );
+        verify( trace ).put( "id", createdNode.id().toString() );
         verify( trace ).put( eq( "repo" ), any() );
         verify( trace ).put( eq( "branch" ), any() );
-        verify( trace ).put( "path", createdNode.path() );
+        verify( trace ).put( "path", createdNode.path().toString() );
     }
 
     @Test

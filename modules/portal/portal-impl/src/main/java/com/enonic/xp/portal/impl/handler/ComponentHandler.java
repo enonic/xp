@@ -97,7 +97,7 @@ public class ComponentHandler
         throws IOException
     {
         Tracer.withCurrent( trace -> {
-            trace.put( "componentPath", portalRequest.getComponent().getPath() );
+            trace.put( "componentPath", portalRequest.getComponent().getPath().toString() );
             trace.put( "type", portalRequest.getComponent().getType().toString() );
         } );
         return doHandle( portalRequest );

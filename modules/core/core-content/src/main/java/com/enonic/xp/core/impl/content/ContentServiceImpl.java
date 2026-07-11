@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
+import java.util.Objects;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
@@ -393,7 +394,7 @@ public class ContentServiceImpl
     {
         requireReadAccess();
 
-        Tracer.withCurrent( trace -> trace.put( "id", contentId ) );
+        Tracer.withCurrent( trace -> trace.put( "id", contentId.toString() ) );
 
         final Content content = doGetById( contentId );
 
@@ -435,7 +436,7 @@ public class ContentServiceImpl
             .eventPublisher( this.eventPublisher )
             .build();
 
-        Tracer.withCurrent( trace -> trace.put( "id", contentId ) );
+        Tracer.withCurrent( trace -> trace.put( "id", contentId.toString() ) );
 
         final Site site = command.execute();
 
@@ -455,7 +456,7 @@ public class ContentServiceImpl
     {
         requireReadAccess();
 
-        Tracer.withCurrent( trace -> trace.put( "contentPath", contentPath ) );
+        Tracer.withCurrent( trace -> trace.put( "contentPath", contentPath.toString() ) );
 
         final Site site = (Site) doFindNearestByPath( contentPath, Content::isSite );
 
@@ -493,7 +494,7 @@ public class ContentServiceImpl
             .eventPublisher( this.eventPublisher )
             .build();
 
-        Tracer.withCurrent( trace -> trace.put( "id", params.getIds() ) );
+        Tracer.withCurrent( trace -> trace.put( "id", params.getIds().stream().map( ContentId::toString ).toList() ) );
 
         return command.execute();
     }
@@ -504,11 +505,11 @@ public class ContentServiceImpl
     {
         requireReadAccess();
 
-        Tracer.withCurrent( trace -> trace.put( "path", path ) );
+        Tracer.withCurrent( trace -> trace.put( "path", path.toString() ) );
 
         final Content content = doGetByPath( path );
 
-        Tracer.withCurrent( trace -> trace.put( "id", content.getId() ) );
+        Tracer.withCurrent( trace -> trace.put( "id", content.getId().toString() ) );
 
         return content;
     }
@@ -550,7 +551,7 @@ public class ContentServiceImpl
             .eventPublisher( this.eventPublisher )
             .build();
 
-        Tracer.withCurrent( trace -> trace.put( "path", paths ) );
+        Tracer.withCurrent( trace -> trace.put( "path", paths.stream().map( ContentPath::toString ).toList() ) );
 
         return command.execute();
     }
@@ -568,7 +569,7 @@ public class ContentServiceImpl
             .build();
 
         Tracer.withCurrent( trace -> {
-            trace.put( "query", params.getParentPath() != null ? params.getParentPath() : params.getParentId() );
+            trace.put( "query", Objects.toString( params.getParentPath() != null ? params.getParentPath() : params.getParentId(), null ) );
             trace.put( "from", params.getFrom() );
             trace.put( "size", params.getSize() );
         } );
@@ -593,7 +594,7 @@ public class ContentServiceImpl
             .build();
 
         Tracer.withCurrent( trace -> {
-            trace.put( "query", params.getParentPath() != null ? params.getParentPath() : params.getParentId() );
+            trace.put( "query", Objects.toString( params.getParentPath() != null ? params.getParentPath() : params.getParentId(), null ) );
             trace.put( "from", params.getFrom() );
             trace.put( "size", params.getSize() );
         } );
@@ -689,8 +690,8 @@ public class ContentServiceImpl
             .build();
 
         Tracer.withCurrent( trace -> {
-            trace.put( "query", query.getQueryExpr() );
-            trace.put( "filter", query.getQueryFilters() );
+            trace.put( "query", Objects.toString( query.getQueryExpr(), null ) );
+            trace.put( "filter", Objects.toString( query.getQueryFilters(), null ) );
             trace.put( "from", query.getFrom() );
             trace.put( "size", query.getSize() );
         } );
@@ -861,7 +862,7 @@ public class ContentServiceImpl
             .eventPublisher( this.eventPublisher )
             .build();
 
-        Tracer.withCurrent( trace -> trace.put( "id", contentId ) );
+        Tracer.withCurrent( trace -> trace.put( "id", contentId.toString() ) );
 
         final boolean exists = command.execute();
 
@@ -880,7 +881,7 @@ public class ContentServiceImpl
             .eventPublisher( this.eventPublisher )
             .build();
 
-        Tracer.withCurrent( trace -> trace.put( "path", contentPath ) );
+        Tracer.withCurrent( trace -> trace.put( "path", contentPath.toString() ) );
 
         final boolean exists = command.execute();
 
@@ -900,8 +901,8 @@ public class ContentServiceImpl
             .build();
 
         Tracer.withCurrent( trace -> {
-            trace.put( "id", contentId );
-            trace.put( "reference", binaryReference );
+            trace.put( "id", contentId.toString() );
+            trace.put( "reference", binaryReference.toString() );
         } );
 
         final ByteSource byteSource = command.execute();
@@ -927,9 +928,9 @@ public class ContentServiceImpl
             .build();
 
         Tracer.withCurrent( trace -> {
-            trace.put( "id", contentId );
-            trace.put( "versionId", contentVersionId );
-            trace.put( "reference", binaryReference );
+            trace.put( "id", contentId.toString() );
+            trace.put( "versionId", contentVersionId.toString() );
+            trace.put( "reference", binaryReference.toString() );
         } );
 
         final ByteSource byteSource = command.execute();
@@ -959,8 +960,8 @@ public class ContentServiceImpl
             .build();
 
         Tracer.withCurrent( trace -> {
-            trace.put( "contentId", contentId );
-            trace.put( "versionId", versionId );
+            trace.put( "contentId", contentId.toString() );
+            trace.put( "versionId", versionId.toString() );
         } );
 
         final Content content = command.execute();

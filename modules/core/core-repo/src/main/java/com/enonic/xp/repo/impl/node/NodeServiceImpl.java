@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.node;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -127,14 +128,14 @@ public class NodeServiceImpl
     public Node getById( final NodeId id )
     {
         Tracer.withCurrent( trace -> {
-            trace.put( "id", id );
-            trace.put( "repo", ContextAccessor.current().getRepositoryId() );
-            trace.put( "branch", ContextAccessor.current().getBranch() );
+            trace.put( "id", id.toString() );
+            trace.put( "repo", ContextAccessor.current().getRepositoryId().toString() );
+            trace.put( "branch", ContextAccessor.current().getBranch().toString() );
         } );
 
         final Node node = executeGetById( id );
 
-        Tracer.withCurrent( trace -> trace.put( "path", node.path() ) );
+        Tracer.withCurrent( trace -> trace.put( "path", node.path().toString() ) );
 
         return node;
     }
@@ -157,15 +158,15 @@ public class NodeServiceImpl
     {
         verifyContext();
         Tracer.withCurrent( trace -> {
-            trace.put( "id", id );
-            trace.put( "versionId", versionId );
-            trace.put( "repo", ContextAccessor.current().getRepositoryId() );
-            trace.put( "branch", ContextAccessor.current().getBranch() );
+            trace.put( "id", id.toString() );
+            trace.put( "versionId", versionId.toString() );
+            trace.put( "repo", ContextAccessor.current().getRepositoryId().toString() );
+            trace.put( "branch", ContextAccessor.current().getBranch().toString() );
         } );
 
         final Node node = executeGetByIdAndVersionId( id, versionId );
 
-        Tracer.withCurrent( trace -> trace.put( "path", node.path() ) );
+        Tracer.withCurrent( trace -> trace.put( "path", node.path().toString() ) );
 
         return node;
     }
@@ -219,9 +220,9 @@ public class NodeServiceImpl
     public @Nullable Node getByPath( final NodePath path )
     {
         Tracer.withCurrent( trace -> {
-            trace.put( "path", path );
-            trace.put( "repo", ContextAccessor.current().getRepositoryId() );
-            trace.put( "branch", ContextAccessor.current().getBranch() );
+            trace.put( "path", path.toString() );
+            trace.put( "repo", ContextAccessor.current().getRepositoryId().toString() );
+            trace.put( "branch", ContextAccessor.current().getBranch().toString() );
         } );
 
         final Node node = executeGetByPath( path );
@@ -229,7 +230,7 @@ public class NodeServiceImpl
         Tracer.withCurrent( trace -> {
             if ( node != null )
             {
-                trace.put( "id", node.id() );
+                trace.put( "id", node.id().toString() );
             }
         } );
 
@@ -265,9 +266,9 @@ public class NodeServiceImpl
         verifyContext();
 
         Tracer.withCurrent( trace -> {
-            trace.put( "id", ids );
-            trace.put( "repo", ContextAccessor.current().getRepositoryId() );
-            trace.put( "branch", ContextAccessor.current().getBranch() );
+            trace.put( "id", ids.stream().map( NodeId::toString ).toList() );
+            trace.put( "repo", ContextAccessor.current().getRepositoryId().toString() );
+            trace.put( "branch", ContextAccessor.current().getBranch().toString() );
         } );
 
         return executeGetByIds( ids );
@@ -291,9 +292,9 @@ public class NodeServiceImpl
         verifyContext();
 
         Tracer.withCurrent( trace -> {
-            trace.put( "path", paths );
-            trace.put( "repo", ContextAccessor.current().getRepositoryId() );
-            trace.put( "branch", ContextAccessor.current().getBranch() );
+            trace.put( "path", paths.stream().map( NodePath::toString ).toList() );
+            trace.put( "repo", ContextAccessor.current().getRepositoryId().toString() );
+            trace.put( "branch", ContextAccessor.current().getBranch().toString() );
         } );
 
         return executeGetByPaths( paths );
@@ -316,11 +317,11 @@ public class NodeServiceImpl
     {
         verifyContext();
         Tracer.withCurrent( trace -> {
-            trace.put( "parent", params.getParentPath() != null ? params.getParentPath() : params.getParentId() );
+            trace.put( "parent", Objects.toString( params.getParentPath() != null ? params.getParentPath() : params.getParentId(), null ) );
             trace.put( "from", params.getFrom() );
             trace.put( "size", params.getSize() );
-            trace.put( "repo", ContextAccessor.current().getRepositoryId() );
-            trace.put( "branch", ContextAccessor.current().getBranch() );
+            trace.put( "repo", ContextAccessor.current().getRepositoryId().toString() );
+            trace.put( "branch", ContextAccessor.current().getBranch().toString() );
         } );
 
         final FindNodesByParentResult result = executeFindByParent( params );
@@ -354,12 +355,12 @@ public class NodeServiceImpl
     {
         verifyContext();
         Tracer.withCurrent( trace -> {
-            trace.put( "query", nodeQuery.getQuery() );
-            trace.put( "filter", nodeQuery.getQueryFilters() );
+            trace.put( "query", Objects.toString( nodeQuery.getQuery(), null ) );
+            trace.put( "filter", Objects.toString( nodeQuery.getQueryFilters(), null ) );
             trace.put( "from", nodeQuery.getFrom() );
             trace.put( "size", nodeQuery.getSize() );
-            trace.put( "repo", ContextAccessor.current().getRepositoryId() );
-            trace.put( "branch", ContextAccessor.current().getBranch() );
+            trace.put( "repo", ContextAccessor.current().getRepositoryId().toString() );
+            trace.put( "branch", ContextAccessor.current().getBranch().toString() );
         } );
 
         final FindNodesByQueryResult result = executeFindByQuery( nodeQuery );
@@ -393,17 +394,14 @@ public class NodeServiceImpl
             .forEach( searchTarget -> verifyBranchExists( searchTarget.getRepositoryId(), searchTarget.getBranch() ) );
 
         Tracer.withCurrent( trace -> {
-            trace.put( "query", multiNodeQuery.getNodeQuery().getQuery() );
-            trace.put( "filter", multiNodeQuery.getNodeQuery().getQueryFilters() );
+            trace.put( "query", Objects.toString( multiNodeQuery.getNodeQuery().getQuery(), null ) );
+            trace.put( "filter", Objects.toString( multiNodeQuery.getNodeQuery().getQueryFilters(), null ) );
             trace.put( "from", multiNodeQuery.getNodeQuery().getFrom() );
             trace.put( "size", multiNodeQuery.getNodeQuery().getSize() );
 
-            trace.put( "repo", StreamSupport.stream( multiNodeQuery.getSearchTargets().spliterator(), false )
-                .map( searchTarget -> searchTarget.getRepositoryId().toString() )
-                .collect( Collectors.joining( "," ) ) );
-            trace.put( "branch", StreamSupport.stream( multiNodeQuery.getSearchTargets().spliterator(), false )
-                .map( searchTarget -> searchTarget.getBranch().toString() )
-                .collect( Collectors.joining( "," ) ) );
+            trace.put( "searchTargets", StreamSupport.stream( multiNodeQuery.getSearchTargets().spliterator(), false )
+                .map( searchTarget -> searchTarget.getRepositoryId() + ":" + searchTarget.getBranch() )
+                .toList() );
         } );
 
         final FindNodesByMultiRepoQueryResult result = executeFindByQuery( multiNodeQuery );
@@ -703,8 +701,8 @@ public class NodeServiceImpl
     {
         verifyContext();
         Tracer.withCurrent( trace -> {
-            trace.put( "refreshMode", refreshMode );
-            trace.put( "repo", ContextAccessor.current().getRepositoryId() );
+            trace.put( "refreshMode", refreshMode.toString() );
+            trace.put( "repo", ContextAccessor.current().getRepositoryId().toString() );
         } );
 
         RefreshCommand.create().indexServiceInternal( this.indexServiceInternal ).refreshMode( refreshMode ).build().execute();
@@ -750,10 +748,10 @@ public class NodeServiceImpl
     {
         verifyContext();
         Tracer.withCurrent( trace -> {
-            trace.put( "id", nodeId );
-            trace.put( "reference", reference );
-            trace.put( "repo", ContextAccessor.current().getRepositoryId() );
-            trace.put( "branch", ContextAccessor.current().getBranch() );
+            trace.put( "id", nodeId.toString() );
+            trace.put( "reference", reference.toString() );
+            trace.put( "repo", ContextAccessor.current().getRepositoryId().toString() );
+            trace.put( "branch", ContextAccessor.current().getBranch().toString() );
         } );
 
         final ByteSource byteSource = executeGetBinary( nodeId, reference );
@@ -782,11 +780,11 @@ public class NodeServiceImpl
     {
         verifyContext();
         Tracer.withCurrent( trace -> {
-            trace.put( "id", nodeId );
-            trace.put( "versionId", nodeVersionId );
-            trace.put( "reference", reference );
-            trace.put( "repo", ContextAccessor.current().getRepositoryId() );
-            trace.put( "branch", ContextAccessor.current().getBranch() );
+            trace.put( "id", nodeId.toString() );
+            trace.put( "versionId", nodeVersionId.toString() );
+            trace.put( "reference", reference.toString() );
+            trace.put( "repo", ContextAccessor.current().getRepositoryId().toString() );
+            trace.put( "branch", ContextAccessor.current().getBranch().toString() );
         } );
 
         final ByteSource byteSource = executeGetBinary( nodeId, nodeVersionId, reference );
@@ -848,9 +846,9 @@ public class NodeServiceImpl
     {
         verifyContext();
         Tracer.withCurrent( trace -> {
-            trace.put( "id", nodeId );
-            trace.put( "repo", ContextAccessor.current().getRepositoryId() );
-            trace.put( "branch", ContextAccessor.current().getBranch() );
+            trace.put( "id", nodeId.toString() );
+            trace.put( "repo", ContextAccessor.current().getRepositoryId().toString() );
+            trace.put( "branch", ContextAccessor.current().getBranch().toString() );
         } );
 
         final boolean exists = NodeHelper.runAsAdmin( () -> doGetById( nodeId ) ) != null;
@@ -867,9 +865,9 @@ public class NodeServiceImpl
         verifyContext();
 
         Tracer.withCurrent( trace -> {
-            trace.put( "path", nodePath );
-            trace.put( "repo", ContextAccessor.current().getRepositoryId() );
-            trace.put( "branch", ContextAccessor.current().getBranch() );
+            trace.put( "path", nodePath.toString() );
+            trace.put( "repo", ContextAccessor.current().getRepositoryId().toString() );
+            trace.put( "branch", ContextAccessor.current().getBranch().toString() );
         } );
 
         final boolean exists = NodeHelper.runAsAdmin( () -> executeGetByPath( nodePath ) ) != null;

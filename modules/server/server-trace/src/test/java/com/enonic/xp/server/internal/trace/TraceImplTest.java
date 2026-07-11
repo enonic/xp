@@ -58,6 +58,37 @@ class TraceImplTest
     }
 
     @Test
+    void putNormalizesValues()
+    {
+        // pass-through types
+        this.trace.put( "string", "value" );
+        this.trace.put( "boolean", true );
+        this.trace.put( "long", 42L );
+        this.trace.put( "double", 1.5d );
+        assertEquals( "value", this.trace.get( "string" ) );
+        assertEquals( Boolean.TRUE, this.trace.get( "boolean" ) );
+        assertEquals( 42L, this.trace.get( "long" ) );
+        assertEquals( 1.5d, this.trace.get( "double" ) );
+
+        // numeric widening
+        this.trace.put( "int", 7 );
+        this.trace.put( "float", 2.5f );
+        assertEquals( 7L, this.trace.get( "int" ) );
+        assertEquals( 2.5d, this.trace.get( "float" ) );
+
+        // iterables become immutable lists of strings
+        this.trace.put( "list", java.util.List.of( "a", 1, true ) );
+        assertEquals( java.util.List.of( "a", "1", "true" ), this.trace.get( "list" ) );
+
+        // arbitrary objects are converted eagerly to String
+        this.trace.put( "object", new java.math.BigInteger( "9999999999999999999999" ) );
+        assertEquals( "9999999999999999999999", this.trace.get( "object" ) );
+
+        this.trace.put( "uri", java.net.URI.create( "repo:branch" ) );
+        assertEquals( "repo:branch", this.trace.get( "uri" ) );
+    }
+
+    @Test
     void putNullValueRemoves()
     {
         this.trace.put( "key", "value" );

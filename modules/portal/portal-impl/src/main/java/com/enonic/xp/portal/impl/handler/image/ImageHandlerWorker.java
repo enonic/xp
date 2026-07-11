@@ -162,7 +162,7 @@ public final class ImageHandlerWorker
     protected void addTrace( final Media media )
     {
         Tracer.withCurrent( trace -> {
-            trace.put( "contentPath", media.getPath() );
+            trace.put( "contentPath", media.getPath().toString() );
             trace.put( "type", "image" );
         } );
     }

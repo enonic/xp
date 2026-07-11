@@ -8,7 +8,6 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
@@ -93,8 +92,7 @@ public class IdentityHandler
             trace.put( "path", webRequest.getPath() );
             trace.put( "method", webRequest.getMethod().toString() );
             trace.put( "host", webRequest.getHost() );
-            trace.put( "httpRequest", webRequest );
-            trace.put( "context", ContextAccessor.current() );
+            HandlerHelper.addContextInfo( trace );
         } );
 
         final PortalResponse portalResponse = doHandle( idProviderKey, idProviderFunction, portalRequest );

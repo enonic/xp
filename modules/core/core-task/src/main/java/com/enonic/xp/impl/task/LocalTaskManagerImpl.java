@@ -168,7 +168,7 @@ public final class LocalTaskManagerImpl
     private void doSubmitTask( final DescribedTask runnableTask )
     {
         Tracer.withCurrent( trace -> {
-            trace.put( "taskId", runnableTask.getTaskId() );
+            trace.put( "taskId", runnableTask.getTaskId().toString() );
             trace.put( "name", runnableTask.getName() );
         } );
 
