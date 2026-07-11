@@ -21,6 +21,8 @@ import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UrlResource;
 import com.enonic.xp.script.ScriptFixturesFacade;
 import com.enonic.xp.script.runtime.ScriptRuntimeFactory;
+import com.enonic.xp.trace.TestTrace;
+import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.Version;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
@@ -85,6 +87,19 @@ class FilterScriptImplTest
         this.portalRequest.setMethod( HttpMethod.GET );
         execute( "myapplication:/filter/simple.js", null );
         assertEquals( HttpStatus.OK, this.portalResponse.getStatus() );
+    }
+
+    @Test
+    void testExecute_recordsScriptTraceAttribute()
+    {
+        this.portalRequest.setMethod( HttpMethod.GET );
+
+        // outside OSGi the @Traced wrapper is inert; a manually bound trace exercises the attribute enrichment code
+        final TestTrace trace = TestTrace.of( "filterScript" );
+        Tracer.trace( trace, () -> execute( "myapplication:/filter/simple.js", null ) );
+
+        assertEquals( HttpStatus.OK, this.portalResponse.getStatus() );
+        assertEquals( "myapplication:/filter/simple.js", trace.get( "script" ) );
     }
 
     @Test

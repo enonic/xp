@@ -22,6 +22,7 @@ dependencies {
     compileOnly libs.jspecify
 
     testImplementation project( ':core:core-api' )
+    testImplementation( testFixtures( project( ':core:core-api' ) ) )
     testImplementation project( ':server:server-trace' )
 }
 

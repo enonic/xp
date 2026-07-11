@@ -27,16 +27,45 @@ import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.trace.TestTrace;
+import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.GeoPoint;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ContentServiceImplTest_find
     extends AbstractContentServiceTest
 {
+
+    @Test
+    void records_trace_attributes()
+    {
+        final Content content = createContent( ContentPath.ROOT, "my-content" );
+
+        final ContentQuery query = ContentQuery.create()
+            .queryExpr( QueryParser.parse( "_id = '" + content.getId() + "'" ) )
+            .queryFilter(
+                ValueFilter.create().fieldName( "_id" ).addValue( ValueFactory.newString( content.getId().toString() ) ).build() )
+            .from( 0 )
+            .size( 10 )
+            .build();
+
+        // outside OSGi the @Traced wrapper is inert; a manually bound trace exercises the attribute enrichment code
+        final TestTrace trace = TestTrace.of( "content.find" );
+        final FindContentIdsByQueryResult result = Tracer.trace( trace, () -> this.contentService.find( query ) );
+
+        assertEquals( 1L, result.getTotalHits() );
+        // nested node-level tracing shares the bound trace and overwrites "query"/"filter" with the converted node query
+        assertTrue( trace.containsKey( "query" ) );
+        assertTrue( trace.containsKey( "filter" ) );
+        assertEquals( 0L, trace.get( "from" ) );
+        assertEquals( 10L, trace.get( "size" ) );
+        assertEquals( 1L, trace.get( "hits" ) );
+    }
 
     @Test
     void order_by_path()

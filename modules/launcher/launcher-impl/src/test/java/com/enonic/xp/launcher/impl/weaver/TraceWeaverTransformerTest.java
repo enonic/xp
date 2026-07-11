@@ -10,6 +10,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.trace.TestTrace;
 import com.enonic.xp.trace.TraceEvent;
 import com.enonic.xp.trace.Traced;
 import com.enonic.xp.trace.Tracer;
@@ -47,7 +48,7 @@ class TraceWeaverTransformerTest
 
         assertEquals( "Hello world", fixture.hello( "world" ) );
 
-        final RecordingTraceManager.TestTrace trace = this.manager.singleTrace();
+        final TestTrace trace = this.manager.singleTrace();
         assertEquals( "fixture.hello", trace.getName() );
         assertEquals( "world", trace.get( "who" ) );
         assertNotNull( trace.getStartTime() );
@@ -103,7 +104,7 @@ class TraceWeaverTransformerTest
         final IOException thrown = assertThrows( IOException.class, fixture::failWork );
         assertEquals( "fixture failed", thrown.getMessage() );
 
-        final RecordingTraceManager.TestTrace trace = this.manager.singleTrace();
+        final TestTrace trace = this.manager.singleTrace();
         assertEquals( "fixture.fail", trace.getName() );
         assertNotNull( trace.getEndTime() );
         assertEquals( TraceEvent.Type.END, this.manager.events.get( this.manager.events.size() - 1 ).getType() );
@@ -118,11 +119,10 @@ class TraceWeaverTransformerTest
         assertEquals( "Hello nested", fixture.nested( "nested" ) );
 
         assertEquals( 2, this.manager.traces.size() );
-        final RecordingTraceManager.TestTrace parent = this.manager.traces.get( 0 );
-        final RecordingTraceManager.TestTrace child = this.manager.traces.get( 1 );
+        final TestTrace parent = this.manager.traces.get( 0 );
+        final TestTrace child = this.manager.traces.get( 1 );
         assertEquals( "fixture.nested", parent.getName() );
         assertEquals( "fixture.hello", child.getName() );
-        assertSame( parent, child.getParent() );
         assertEquals( parent.getId(), child.getParentId() );
     }
 

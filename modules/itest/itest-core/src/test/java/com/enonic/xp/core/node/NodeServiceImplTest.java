@@ -34,6 +34,8 @@ import com.enonic.xp.node.DeleteNodeResult;
 import com.enonic.xp.node.DuplicateNodeParams;
 import com.enonic.xp.node.FindNodesByMultiRepoQueryResult;
 import com.enonic.xp.node.FindNodesByParentParams;
+import com.enonic.xp.node.FindNodesByParentResult;
+import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.GetNodeVersionsParams;
 import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.MultiRepoNodeHit;
@@ -50,10 +52,12 @@ import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.repository.BranchNotFoundException;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.node.NodeVersions;
+import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.RefreshMode;
@@ -66,6 +70,7 @@ import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.filter.ValueFilter;
+import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.repo.impl.NodeEvents;
 import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.RepositoryConstants;
@@ -77,7 +82,7 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.trace.Trace;
+import com.enonic.xp.trace.TestTrace;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.GenericValue;
@@ -91,13 +96,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 class NodeServiceImplTest
     extends AbstractNodeTest
@@ -124,14 +124,224 @@ class NodeServiceImplTest
         final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
 
         // outside OSGi the @Traced wrapper is inert; a manually bound trace exercises the attribute enrichment code
-        final Trace trace = mock( Trace.class );
+        final TestTrace trace = TestTrace.of( "node.getById" );
         final Node fetchedNode = Tracer.trace( trace, () -> this.nodeService.getById( createdNode.id() ) );
 
         assertEquals( createdNode, fetchedNode );
-        verify( trace ).attribute( "id", createdNode.id().toString() );
-        verify( trace ).attribute( eq( "repo" ), anyString() );
-        verify( trace ).attribute( eq( "branch" ), anyString() );
-        verify( trace ).attribute( "path", createdNode.path().toString() );
+        assertEquals( createdNode.id().toString(), trace.get( "id" ) );
+        assertEquals( ContextAccessor.current().getRepositoryId().toString(), trace.get( "repo" ) );
+        assertEquals( ContextAccessor.current().getBranch().toString(), trace.get( "branch" ) );
+        assertEquals( createdNode.path().toString(), trace.get( "path" ) );
+    }
+
+    @Test
+    void get_by_path_and_by_id_and_version_id_record_trace_attributes()
+    {
+        final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
+
+        final TestTrace byPathTrace = TestTrace.of( "node.getByPath" );
+        final Node byPath = Tracer.trace( byPathTrace, () -> this.nodeService.getByPath( createdNode.path() ) );
+
+        assertEquals( createdNode, byPath );
+        assertEquals( createdNode.path().toString(), byPathTrace.get( "path" ) );
+        assertEquals( ContextAccessor.current().getRepositoryId().toString(), byPathTrace.get( "repo" ) );
+        assertEquals( ContextAccessor.current().getBranch().toString(), byPathTrace.get( "branch" ) );
+        assertEquals( createdNode.id().toString(), byPathTrace.get( "id" ) );
+
+        final TestTrace byVersionTrace = TestTrace.of( "node.getByIdAndVersionId" );
+        final Node byVersion = Tracer.trace( byVersionTrace, () -> this.nodeService.getByIdAndVersionId( createdNode.id(),
+                                                                                                         createdNode.getNodeVersionId() ) );
+
+        assertEquals( createdNode, byVersion );
+        assertEquals( createdNode.id().toString(), byVersionTrace.get( "id" ) );
+        assertEquals( createdNode.getNodeVersionId().toString(), byVersionTrace.get( "versionId" ) );
+        assertEquals( ContextAccessor.current().getRepositoryId().toString(), byVersionTrace.get( "repo" ) );
+        assertEquals( ContextAccessor.current().getBranch().toString(), byVersionTrace.get( "branch" ) );
+        assertEquals( createdNode.path().toString(), byVersionTrace.get( "path" ) );
+    }
+
+    @Test
+    void get_by_ids_and_get_by_paths_record_trace_attributes()
+    {
+        final Node node1 = createNode( CreateNodeParams.create().name( "node1" ).parent( NodePath.ROOT ).build() );
+        final Node node2 = createNode( CreateNodeParams.create().name( "node2" ).parent( NodePath.ROOT ).build() );
+
+        final TestTrace byIdsTrace = TestTrace.of( "node.getByIds" );
+        final Nodes byIds = Tracer.trace( byIdsTrace, () -> this.nodeService.getByIds( NodeIds.from( node1.id(), node2.id() ) ) );
+
+        assertEquals( 2, byIds.getSize() );
+        assertEquals( List.of( node1.id().toString(), node2.id().toString() ), byIdsTrace.get( "id" ) );
+        assertEquals( ContextAccessor.current().getRepositoryId().toString(), byIdsTrace.get( "repo" ) );
+        assertEquals( ContextAccessor.current().getBranch().toString(), byIdsTrace.get( "branch" ) );
+
+        final TestTrace byPathsTrace = TestTrace.of( "node.getByPaths" );
+        final Nodes byPaths =
+            Tracer.trace( byPathsTrace, () -> this.nodeService.getByPaths( NodePaths.from( node1.path(), node2.path() ) ) );
+
+        assertEquals( 2, byPaths.getSize() );
+        assertEquals( List.of( node1.path().toString(), node2.path().toString() ), byPathsTrace.get( "path" ) );
+        assertEquals( ContextAccessor.current().getRepositoryId().toString(), byPathsTrace.get( "repo" ) );
+        assertEquals( ContextAccessor.current().getBranch().toString(), byPathsTrace.get( "branch" ) );
+    }
+
+    @Test
+    void find_by_parent_records_trace_attributes()
+    {
+        final Node parent = createNode( CreateNodeParams.create().name( "my-parent" ).parent( NodePath.ROOT ).build() );
+        createNode( CreateNodeParams.create().name( "my-child" ).parent( parent.path() ).build() );
+        refresh();
+
+        final TestTrace trace = TestTrace.of( "node.findByParent" );
+        final FindNodesByParentResult result = Tracer.trace( trace, () -> this.nodeService.findByParent(
+            FindNodesByParentParams.create().parentPath( parent.path() ).from( 1 ).size( 10 ).build() ) );
+
+        assertEquals( parent.path().toString(), trace.get( "parent" ) );
+        assertEquals( 1L, trace.get( "from" ) );
+        assertEquals( 10L, trace.get( "size" ) );
+        assertEquals( ContextAccessor.current().getRepositoryId().toString(), trace.get( "repo" ) );
+        assertEquals( ContextAccessor.current().getBranch().toString(), trace.get( "branch" ) );
+        assertEquals( result.getTotalHits(), trace.get( "hits" ) );
+        assertEquals( 1L, trace.get( "hits" ) );
+
+        // from/size default to 0/-1 on the params and are then still recorded (null from/size is rejected downstream)
+        final TestTrace defaultsTrace = TestTrace.of( "node.findByParent" );
+        Tracer.trace( defaultsTrace, () -> this.nodeService.findByParent(
+            FindNodesByParentParams.create().parentPath( parent.path() ).build() ) );
+
+        assertEquals( 0L, defaultsTrace.get( "from" ) );
+        assertEquals( -1L, defaultsTrace.get( "size" ) );
+        assertEquals( 1L, defaultsTrace.get( "hits" ) );
+    }
+
+    @Test
+    void find_by_query_records_trace_attributes()
+    {
+        createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
+        refresh();
+
+        final NodeQuery nodeQuery = NodeQuery.create()
+            .query( QueryParser.parse( "_name = 'my-node'" ) )
+            .addQueryFilter( ValueFilter.create()
+                                 .fieldName( NodeIndexPath.NAME.getPath() )
+                                 .addValue( ValueFactory.newString( "my-node" ) )
+                                 .build() )
+            .from( 0 )
+            .size( 10 )
+            .build();
+
+        final TestTrace trace = TestTrace.of( "node.findByQuery" );
+        final FindNodesByQueryResult result = Tracer.trace( trace, () -> this.nodeService.findByQuery( nodeQuery ) );
+
+        assertEquals( 1L, result.getTotalHits() );
+        assertEquals( nodeQuery.getQuery().toString(), trace.get( "query" ) );
+        assertEquals( nodeQuery.getQueryFilters().toString(), trace.get( "filter" ) );
+        assertEquals( 0L, trace.get( "from" ) );
+        assertEquals( 10L, trace.get( "size" ) );
+        assertEquals( ContextAccessor.current().getRepositoryId().toString(), trace.get( "repo" ) );
+        assertEquals( ContextAccessor.current().getBranch().toString(), trace.get( "branch" ) );
+        assertEquals( 1L, trace.get( "hits" ) );
+    }
+
+    @Test
+    void find_by_query_multi_repo_records_trace_attributes()
+    {
+        createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
+        refresh();
+
+        final NodeQuery nodeQuery = NodeQuery.create().query( QueryParser.parse( "_name = 'my-node'" ) ).from( 0 ).size( 10 ).build();
+
+        final SearchTargets searchTargets = SearchTargets.create()
+            .add( SearchTarget.create()
+                      .repositoryId( ContextAccessor.current().getRepositoryId() )
+                      .branch( ContextAccessor.current().getBranch() )
+                      .principalKeys( ContextAccessor.current().getAuthInfo().getPrincipals() )
+                      .build() )
+            .build();
+
+        final TestTrace trace = TestTrace.of( "node.findByQueryMulti" );
+        final FindNodesByMultiRepoQueryResult result =
+            Tracer.trace( trace, () -> this.nodeService.findByQuery( new MultiRepoNodeQuery( searchTargets, nodeQuery ) ) );
+
+        assertEquals( 1L, result.getTotalHits() );
+        assertEquals( nodeQuery.getQuery().toString(), trace.get( "query" ) );
+        assertEquals( nodeQuery.getQueryFilters().toString(), trace.get( "filter" ) );
+        assertEquals( 0L, trace.get( "from" ) );
+        assertEquals( 10L, trace.get( "size" ) );
+        assertEquals( List.of( ContextAccessor.current().getRepositoryId() + ":" + ContextAccessor.current().getBranch() ),
+                      trace.get( "searchTargets" ) );
+        assertEquals( 1L, trace.get( "hits" ) );
+    }
+
+    @Test
+    void node_exists_records_trace_attributes()
+    {
+        final Node node = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
+
+        final TestTrace byIdTrace = TestTrace.of( "node.exists" );
+        final boolean existsById = Tracer.trace( byIdTrace, () -> this.nodeService.nodeExists( node.id() ) );
+
+        assertTrue( existsById );
+        assertEquals( node.id().toString(), byIdTrace.get( "id" ) );
+        assertEquals( ContextAccessor.current().getRepositoryId().toString(), byIdTrace.get( "repo" ) );
+        assertEquals( ContextAccessor.current().getBranch().toString(), byIdTrace.get( "branch" ) );
+        assertEquals( Boolean.TRUE, byIdTrace.get( "exists" ) );
+
+        final NodePath missingPath = new NodePath( "/missing-node" );
+        final TestTrace byPathTrace = TestTrace.of( "node.exists" );
+        final boolean existsByPath = Tracer.trace( byPathTrace, () -> this.nodeService.nodeExists( missingPath ) );
+
+        assertFalse( existsByPath );
+        assertEquals( missingPath.toString(), byPathTrace.get( "path" ) );
+        assertEquals( ContextAccessor.current().getRepositoryId().toString(), byPathTrace.get( "repo" ) );
+        assertEquals( ContextAccessor.current().getBranch().toString(), byPathTrace.get( "branch" ) );
+        assertEquals( Boolean.FALSE, byPathTrace.get( "exists" ) );
+    }
+
+    @Test
+    void get_binary_records_trace_attributes()
+    {
+        final PropertyTree data = new PropertyTree();
+        final BinaryReference binaryRef = BinaryReference.from( "binary" );
+        data.addBinaryReference( "my-binary", binaryRef );
+
+        final byte[] binarySource = "binary_source".getBytes();
+
+        final Node node = this.nodeService.create( CreateNodeParams.create()
+                                                       .name( "my-node" )
+                                                       .parent( NodePath.ROOT )
+                                                       .data( data )
+                                                       .attachBinary( binaryRef, ByteSource.wrap( binarySource ) )
+                                                       .build() );
+
+        final TestTrace trace = TestTrace.of( "node.getBinary" );
+        final ByteSource byteSource = Tracer.trace( trace, () -> this.nodeService.getBinary( node.id(), binaryRef ) );
+
+        assertNotNull( byteSource );
+        assertEquals( node.id().toString(), trace.get( "id" ) );
+        assertEquals( binaryRef.toString(), trace.get( "reference" ) );
+        assertEquals( ContextAccessor.current().getRepositoryId().toString(), trace.get( "repo" ) );
+        assertEquals( ContextAccessor.current().getBranch().toString(), trace.get( "branch" ) );
+        assertEquals( byteSource.sizeIfKnown().or( -1L ), trace.get( "size" ) );
+
+        final TestTrace byVersionTrace = TestTrace.of( "node.getBinary" );
+        final ByteSource byVersion =
+            Tracer.trace( byVersionTrace, () -> this.nodeService.getBinary( node.id(), node.getNodeVersionId(), binaryRef ) );
+
+        assertNotNull( byVersion );
+        assertEquals( node.id().toString(), byVersionTrace.get( "id" ) );
+        assertEquals( node.getNodeVersionId().toString(), byVersionTrace.get( "versionId" ) );
+        assertEquals( binaryRef.toString(), byVersionTrace.get( "reference" ) );
+        assertEquals( byVersion.sizeIfKnown().or( -1L ), byVersionTrace.get( "size" ) );
+    }
+
+    @Test
+    void refresh_records_trace_attributes()
+    {
+        final TestTrace trace = TestTrace.of( "node.refresh" );
+        Tracer.trace( trace, () -> this.nodeService.refresh( RefreshMode.ALL ) );
+
+        assertEquals( RefreshMode.ALL.toString(), trace.get( "refreshMode" ) );
+        assertEquals( ContextAccessor.current().getRepositoryId().toString(), trace.get( "repo" ) );
     }
 
     @Test

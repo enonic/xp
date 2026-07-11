@@ -47,7 +47,7 @@ import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
-import com.enonic.xp.trace.Trace;
+import com.enonic.xp.trace.TestTrace;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
@@ -67,12 +67,11 @@ import com.enonic.xp.webapp.WebappService;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.InstanceOfAssertFactories.type;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -242,14 +241,15 @@ class SlashApiHandlerTest
         when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
 
         // outside OSGi the @Traced wrapper is inert; a manually bound trace exercises the attribute enrichment code
-        final Trace trace = mock( Trace.class );
+        final TestTrace trace = TestTrace.of( "universalAPI" );
         final WebResponse webResponse = Tracer.traceEx( trace, () -> this.handler.handle( request ) );
 
         assertEquals( HttpStatus.OK, webResponse.getStatus() );
-        verify( trace ).attribute( "app", "com.enonic.app.myapp" );
-        verify( trace ).attribute( "api", "api-key" );
-        verify( trace ).attribute( eq( "status" ), anyLong() );
-        verify( trace ).attribute( eq( "type" ), anyString() );
+        assertEquals( "com.enonic.app.myapp", trace.get( "app" ) );
+        assertEquals( "api-key", trace.get( "api" ) );
+        assertEquals( 200L, trace.get( "status" ) );
+        assertInstanceOf( String.class, trace.get( "type" ) );
+        assertInstanceOf( Long.class, trace.get( "size" ) );
     }
 
     @Test

@@ -16,13 +16,30 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.trace.TestTrace;
+import com.enonic.xp.trace.Tracer;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ContentServiceImplTest_getById
     extends AbstractContentServiceTest
 {
+
+    @Test
+    void records_trace_attributes()
+    {
+        final Content content = createContent( ContentPath.ROOT, "my-content" );
+
+        // outside OSGi the @Traced wrapper is inert; a manually bound trace exercises the attribute enrichment code
+        final TestTrace trace = TestTrace.of( "content.getById" );
+        final Content fetchedContent = Tracer.trace( trace, () -> this.contentService.getById( content.getId() ) );
+
+        assertEquals( content.getId(), fetchedContent.getId() );
+        assertEquals( content.getId().toString(), trace.get( "id" ) );
+        assertEquals( content.getPath().toString(), trace.get( "path" ) );
+    }
 
     @Test
     void test_pending_publish_master()

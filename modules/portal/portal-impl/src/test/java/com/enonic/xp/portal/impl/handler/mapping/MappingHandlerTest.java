@@ -58,6 +58,8 @@ import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptors;
+import com.enonic.xp.trace.TestTrace;
+import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
@@ -237,6 +239,32 @@ class MappingHandlerTest
         final WebResponse response = this.handler.handle( this.request, PortalResponse.create().build(), null );
         assertEquals( HttpStatus.OK, response.getStatus() );
         assertEquals( "Ok body", response.getBody() );
+    }
+
+    @Test
+    void executeScript_recordsTraceAttributes()
+        throws Exception
+    {
+        final ResourceKey controller = ResourceKey.from( "demo:/services/test" );
+        final ControllerMappingDescriptor mapping =
+            ControllerMappingDescriptor.create().controller( controller ).pattern( ".*/content" ).build();
+
+        setupContentAndSite( mapping, false );
+
+        this.request.setBaseUri( "/site" );
+        this.request.setContentPath( ContentPath.from( "/site/somesite/content" ) );
+
+        when( rendererDelegate.render( isA( ControllerMappingDescriptor.class ), same( request ) ) ).thenReturn(
+            PortalResponse.create().body( "Ok body" ).build() );
+
+        // outside OSGi the @Traced wrapper is inert; a manually bound trace exercises the attribute enrichment code
+        final TestTrace trace = TestTrace.of( "portalRequest" );
+        final WebResponse response =
+            Tracer.traceEx( trace, () -> this.handler.handle( this.request, PortalResponse.create().build(), null ) );
+
+        assertEquals( HttpStatus.OK, response.getStatus() );
+        assertEquals( "/site/somesite/content", trace.get( "contentPath" ) );
+        assertEquals( "mapping", trace.get( "type" ) );
     }
 
     @Test

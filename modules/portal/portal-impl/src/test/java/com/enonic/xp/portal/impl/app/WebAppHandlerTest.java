@@ -12,7 +12,7 @@ import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.sse.SseManager;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.trace.Trace;
+import com.enonic.xp.trace.TestTrace;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebRequest;
@@ -110,11 +110,11 @@ class WebAppHandlerTest
         when( script.execute( any() ) ).thenReturn( response );
 
         // outside OSGi the @Traced wrapper is inert; a manually bound trace exercises the attribute enrichment code
-        final Trace trace = mock( Trace.class );
+        final TestTrace trace = TestTrace.of( "renderApp" );
         assertSame( response, Tracer.traceEx( trace, () -> this.handler.doHandle( this.request, null, this.chain ) ) );
 
-        verify( trace ).attribute( "app", "myapp" );
-        verify( trace ).attribute( "path", "/a.txt" );
+        assertEquals( "myapp", trace.get( "app" ) );
+        assertEquals( "/a.txt", trace.get( "path" ) );
     }
 
     @Test
