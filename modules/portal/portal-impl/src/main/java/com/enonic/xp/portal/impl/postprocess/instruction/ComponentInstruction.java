@@ -105,8 +105,8 @@ public final class ComponentInstruction
     private PortalResponse renderComponent( final PortalRequest portalRequest, final Component component )
     {
         Tracer.withCurrent( trace -> {
-            trace.put( "componentPath", component.getPath().toString() );
-            trace.put( "type", component.getType().toString() );
+            trace.attribute( "componentPath", component.getPath().toString() );
+            trace.attribute( "type", component.getType().toString() );
         } );
         return rendererDelegate.render( component, portalRequest );
     }

@@ -50,9 +50,9 @@ final class TaskRunnable
         Tracer.withCurrent( trace -> {
             final User user =
                 runnableTask.getTaskContext().getAuthInfo() != null ? runnableTask.getTaskContext().getAuthInfo().getUser() : null;
-            trace.put( "taskId", runnableTask.getTaskId().toString() );
-            trace.put( "user", requireNonNullElseGet( user, User::anonymous ).getKey().toString() );
-            trace.put( "app", runnableTask.getApplicationKey().toString() );
+            trace.attribute( "taskId", runnableTask.getTaskId().toString() );
+            trace.attribute( "user", requireNonNullElseGet( user, User::anonymous ).getKey().toString() );
+            trace.attribute( "app", runnableTask.getApplicationKey().toString() );
         } );
 
         progressReporter.running();
@@ -71,7 +71,7 @@ final class TaskRunnable
         }
 
         final boolean result = success;
-        Tracer.withCurrent( trace -> trace.put( "success", result ) );
+        Tracer.withCurrent( trace -> trace.attribute( "success", result ) );
         return result;
     }
 

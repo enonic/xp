@@ -89,9 +89,9 @@ public class IdentityHandler
         throws IOException
     {
         Tracer.withCurrent( trace -> {
-            trace.put( "path", webRequest.getPath() );
-            trace.put( "method", webRequest.getMethod().toString() );
-            trace.put( "host", webRequest.getHost() );
+            trace.attribute( "path", webRequest.getPath() );
+            trace.attribute( "method", webRequest.getMethod().toString() );
+            trace.attribute( "host", webRequest.getHost() );
             HandlerHelper.addContextInfo( trace );
         } );
 

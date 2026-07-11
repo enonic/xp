@@ -136,21 +136,21 @@ public final class HandlerHelper
     {
         if ( trace != null )
         {
-            trace.put( "status", webResponse.getStatus().value() );
-            trace.put( "type", webResponse.getContentType().toString() );
-            trace.put( "size", getSize( webResponse ) );
+            trace.attribute( "status", webResponse.getStatus().value() );
+            trace.attribute( "type", webResponse.getContentType().toString() );
+            trace.attribute( "size", getSize( webResponse ) );
         }
     }
 
     public static void addContextInfo( final Trace trace )
     {
         final Context context = ContextAccessor.current();
-        trace.put( "repo", Objects.toString( context.getRepositoryId(), null ) );
-        trace.put( "branch", Objects.toString( context.getBranch(), null ) );
+        trace.attribute( "repo", Objects.toString( context.getRepositoryId(), null ) );
+        trace.attribute( "branch", Objects.toString( context.getBranch(), null ) );
         final AuthenticationInfo authInfo = context.getAuthInfo();
         if ( authInfo != null && authInfo.getUser() != null )
         {
-            trace.put( "user", authInfo.getUser().getKey().toString() );
+            trace.attribute( "user", authInfo.getUser().getKey().toString() );
         }
     }
 

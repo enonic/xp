@@ -102,7 +102,7 @@ class TraceEndToEndTest
         final CountDownLatch delivered = expectEvents( 2 );
 
         final String result = Tracer.trace( "legacyExternal", () -> {
-            Tracer.withCurrent( trace -> trace.put( "legacy", true ) );
+            Tracer.withCurrent( trace -> trace.attribute( "legacy", true ) );
             return "ok";
         } );
 

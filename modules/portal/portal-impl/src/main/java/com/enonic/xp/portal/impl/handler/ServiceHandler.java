@@ -143,7 +143,7 @@ public class ServiceHandler
         Tracer.withCurrent( trace -> {
             if ( !trace.containsKey( "app" ) )
             {
-                trace.put( "app", applicationKey.toString() );
+                trace.attribute( "app", applicationKey.toString() );
             }
         } );
         return new WebSocketEndpointImpl( config, () -> script );

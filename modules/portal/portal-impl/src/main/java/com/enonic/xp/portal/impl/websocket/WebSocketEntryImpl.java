@@ -47,7 +47,7 @@ final class WebSocketEntryImpl
         final Trace trace = Tracer.current();
         if ( trace != null )
         {
-            trace.put( "websocket", List.copyOf( endpoint.getConfig().getSubProtocols() ) );
+            trace.attribute( "websocket", List.copyOf( endpoint.getConfig().getSubProtocols() ) );
             traceParentId = trace.getId();
             traceApp = (String) trace.get( "app" );
         }
@@ -135,11 +135,11 @@ final class WebSocketEntryImpl
     private void sendMessageTraced( final String message )
     {
         Tracer.withCurrent( trace -> {
-            trace.put( "message", message );
-            trace.put( "type", "message_sent" );
-            trace.put( "sessionid", this.session.getId() );
-            trace.put( "parentId", this.traceParentId );
-            trace.put( "app", this.traceApp );
+            trace.attribute( "message", message );
+            trace.attribute( "type", "message_sent" );
+            trace.attribute( "sessionid", this.session.getId() );
+            trace.attribute( "parentId", this.traceParentId );
+            trace.attribute( "app", this.traceApp );
         } );
         doSendMessage( message );
     }
@@ -171,12 +171,12 @@ final class WebSocketEntryImpl
     private void onEventTraced( final WebSocketEvent event )
     {
         Tracer.withCurrent( trace -> {
-            trace.put( "message", event.getMessage() );
-            trace.put( "type",
+            trace.attribute( "message", event.getMessage() );
+            trace.attribute( "type",
                        event.getType() == WebSocketEventType.MESSAGE ? "message_received" : event.getType().toString().toLowerCase() );
-            trace.put( "sessionid", event.getSession().getId() );
-            trace.put( "parentId", this.traceParentId );
-            trace.put( "app", this.traceApp );
+            trace.attribute( "sessionid", event.getSession().getId() );
+            trace.attribute( "parentId", this.traceParentId );
+            trace.attribute( "app", this.traceApp );
         } );
         this.endpoint.onEvent( event );
     }

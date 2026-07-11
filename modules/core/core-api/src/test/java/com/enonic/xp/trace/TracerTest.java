@@ -19,6 +19,8 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.same;
@@ -231,11 +233,11 @@ class TracerTest
             Tracer.setManager( null );
             Tracer.trace( "inner", () -> {
                 assertNull( Tracer.current() );
-                Tracer.withCurrent( t -> t.put( "polluted", true ) );
+                Tracer.withCurrent( t -> t.attribute( "polluted", true ) );
             } );
         } );
 
-        verify( this.trace, never() ).put( any(), any() );
+        verify( this.trace, never() ).attribute( anyString(), anyBoolean() );
     }
 
     @Test

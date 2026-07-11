@@ -57,6 +57,7 @@ final class TraceImpl
         this.location = location;
     }
 
+    @Deprecated
     @Override
     public Object put( final String key, final Object value )
     {
@@ -67,6 +68,7 @@ final class TraceImpl
         return super.put( key, normalize( value ) );
     }
 
+    @Deprecated
     @Override
     public void putAll( final Map<? extends String, ?> map )
     {

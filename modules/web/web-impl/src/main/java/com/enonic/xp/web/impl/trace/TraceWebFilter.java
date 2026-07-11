@@ -38,11 +38,11 @@ public final class TraceWebFilter
         throws Exception
     {
         Tracer.withCurrent( trace -> {
-            trace.put( "path", req.getPath() );
-            trace.put( "rawpath", req.getRawPath() );
-            trace.put( "url", req.getUrl() );
-            trace.put( "method", req.getMethod().toString() );
-            trace.put( "host", req.getHost() );
+            trace.attribute( "path", req.getPath() );
+            trace.attribute( "rawpath", req.getRawPath() );
+            trace.attribute( "url", req.getUrl() );
+            trace.attribute( "method", req.getMethod().toString() );
+            trace.attribute( "host", req.getHost() );
             addContextInfo( trace );
         } );
 
@@ -56,12 +56,12 @@ public final class TraceWebFilter
     private static void addContextInfo( final Trace trace )
     {
         final Context context = ContextAccessor.current();
-        trace.put( "repo", Objects.toString( context.getRepositoryId(), null ) );
-        trace.put( "branch", Objects.toString( context.getBranch(), null ) );
+        trace.attribute( "repo", Objects.toString( context.getRepositoryId(), null ) );
+        trace.attribute( "branch", Objects.toString( context.getBranch(), null ) );
         final AuthenticationInfo authInfo = context.getAuthInfo();
         if ( authInfo != null && authInfo.getUser() != null )
         {
-            trace.put( "user", authInfo.getUser().getKey().toString() );
+            trace.attribute( "user", authInfo.getUser().getKey().toString() );
         }
     }
 }

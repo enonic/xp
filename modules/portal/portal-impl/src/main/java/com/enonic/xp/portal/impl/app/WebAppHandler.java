@@ -119,7 +119,7 @@ public final class WebAppHandler
         Tracer.withCurrent( trace -> {
             if ( !trace.containsKey( "app" ) )
             {
-                trace.put( "app", app.toString() );
+                trace.attribute( "app", app.toString() );
             }
         } );
         return new WebSocketEndpointImpl( config, () -> script );
@@ -135,8 +135,8 @@ public final class WebAppHandler
     {
         if ( trace != null )
         {
-            trace.put( "app", applicationKey.toString() );
-            trace.put( "path", path );
+            trace.attribute( "app", applicationKey.toString() );
+            trace.attribute( "path", path );
         }
     }
 }

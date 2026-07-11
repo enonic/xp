@@ -80,7 +80,7 @@ final class MappingFilterHandlerWorker
 
             final ControllerMappingDescriptor mapping = mappingDescriptors.get( index++ );
             Tracer.withCurrent(
-                trace -> trace.put( "contentPath", request.getContentPath() != null ? request.getContentPath().toString() : null ) );
+                trace -> trace.attribute( "contentPath", request.getContentPath() != null ? request.getContentPath().toString() : null ) );
 
             if ( mapping.isController() )
             {
@@ -89,8 +89,8 @@ final class MappingFilterHandlerWorker
             }
 
             Tracer.withCurrent( trace -> {
-                trace.put( "type", "filter" );
-                trace.put( "filter", mapping.getFilter().toString() );
+                trace.attribute( "type", "filter" );
+                trace.attribute( "filter", mapping.getFilter().toString() );
             } );
 
             return getScript( mapping ).execute( (PortalRequest) webRequest, webResponse, this );

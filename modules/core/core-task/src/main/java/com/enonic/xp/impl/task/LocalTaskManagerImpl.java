@@ -168,8 +168,8 @@ public final class LocalTaskManagerImpl
     private void doSubmitTask( final DescribedTask runnableTask )
     {
         Tracer.withCurrent( trace -> {
-            trace.put( "taskId", runnableTask.getTaskId().toString() );
-            trace.put( "name", runnableTask.getName() );
+            trace.attribute( "taskId", runnableTask.getTaskId().toString() );
+            trace.attribute( "name", runnableTask.getName() );
         } );
 
         final TaskId id = runnableTask.getTaskId();

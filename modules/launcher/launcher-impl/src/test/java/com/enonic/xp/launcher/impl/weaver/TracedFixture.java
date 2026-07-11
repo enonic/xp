@@ -19,7 +19,7 @@ public class TracedFixture
     @Traced("fixture.hello")
     public String hello( final String who )
     {
-        Tracer.withCurrent( trace -> trace.put( "who", who ) );
+        Tracer.withCurrent( trace -> trace.attribute( "who", who ) );
         return "Hello " + who;
     }
 

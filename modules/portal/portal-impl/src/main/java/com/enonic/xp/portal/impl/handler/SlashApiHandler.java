@@ -265,8 +265,8 @@ public class SlashApiHandler
 
     private static void addTranceInfo( final Trace trace, final DescriptorKey descriptorKey, final WebResponse response )
     {
-        trace.put( "app", descriptorKey.getApplicationKey().toString() );
-        trace.put( "api", descriptorKey.getName() );
+        trace.attribute( "app", descriptorKey.getApplicationKey().toString() );
+        trace.attribute( "api", descriptorKey.getName() );
         HandlerHelper.addTraceInfo( trace, response );
     }
 

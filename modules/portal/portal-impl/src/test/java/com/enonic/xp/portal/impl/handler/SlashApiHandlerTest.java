@@ -71,6 +71,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -244,10 +246,10 @@ class SlashApiHandlerTest
         final WebResponse webResponse = Tracer.traceEx( trace, () -> this.handler.handle( request ) );
 
         assertEquals( HttpStatus.OK, webResponse.getStatus() );
-        verify( trace ).put( "app", "com.enonic.app.myapp" );
-        verify( trace ).put( "api", "api-key" );
-        verify( trace ).put( eq( "status" ), any() );
-        verify( trace ).put( eq( "type" ), any() );
+        verify( trace ).attribute( "app", "com.enonic.app.myapp" );
+        verify( trace ).attribute( "api", "api-key" );
+        verify( trace ).attribute( eq( "status" ), anyLong() );
+        verify( trace ).attribute( eq( "type" ), anyString() );
     }
 
     @Test

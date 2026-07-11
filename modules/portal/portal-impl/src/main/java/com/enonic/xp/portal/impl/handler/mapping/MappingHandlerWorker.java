@@ -46,8 +46,8 @@ final class MappingHandlerWorker
         final ControllerScript controllerScript = getScript();
 
         Tracer.withCurrent( trace -> {
-            trace.put( "contentPath", this.request.getContentPath() != null ? this.request.getContentPath().toString() : null );
-            trace.put( "type", "mapping" );
+            trace.attribute( "contentPath", this.request.getContentPath() != null ? this.request.getContentPath().toString() : null );
+            trace.attribute( "type", "mapping" );
         } );
 
         this.request.setControllerScript( controllerScript );
@@ -89,7 +89,7 @@ final class MappingHandlerWorker
         Tracer.withCurrent( trace -> {
             if ( app != null && !trace.containsKey( "app" ) )
             {
-                trace.put( "app", app.toString() );
+                trace.attribute( "app", app.toString() );
             }
         } );
         return new WebSocketEndpointImpl( config, script );

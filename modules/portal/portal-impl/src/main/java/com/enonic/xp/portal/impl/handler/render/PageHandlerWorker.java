@@ -63,8 +63,8 @@ final class PageHandlerWorker
         this.request.setApplicationKey( resolvedPage.getApplicationKey() );
 
         Tracer.withCurrent( trace -> {
-            trace.put( "contentPath", effectiveContent.getPath().toString() );
-            trace.put( "type", "page" );
+            trace.attribute( "contentPath", effectiveContent.getPath().toString() );
+            trace.attribute( "type", "page" );
         } );
 
         return rendererDelegate.render( effectiveContent, this.request );

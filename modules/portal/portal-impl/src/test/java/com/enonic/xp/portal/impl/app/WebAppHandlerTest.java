@@ -113,8 +113,8 @@ class WebAppHandlerTest
         final Trace trace = mock( Trace.class );
         assertSame( response, Tracer.traceEx( trace, () -> this.handler.doHandle( this.request, null, this.chain ) ) );
 
-        verify( trace ).put( "app", "myapp" );
-        verify( trace ).put( "path", "/a.txt" );
+        verify( trace ).attribute( "app", "myapp" );
+        verify( trace ).attribute( "path", "/a.txt" );
     }
 
     @Test

@@ -57,7 +57,7 @@ public final class ResponseProcessorExecutor
     @Traced("responseProcessorScript")
     private PortalResponse executeFilter( final ScriptExports filterExports, final PortalRequest request, final PortalResponse response )
     {
-        Tracer.withCurrent( trace -> trace.put( "script", filterExports.getScript().toString() ) );
+        Tracer.withCurrent( trace -> trace.attribute( "script", filterExports.getScript().toString() ) );
 
         final PortalRequestMapper requestMapper = new PortalRequestMapper( request );
         final PortalResponseMapper responseMapper = new PortalResponseMapper( response );

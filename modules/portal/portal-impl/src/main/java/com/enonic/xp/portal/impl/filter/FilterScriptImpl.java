@@ -62,7 +62,7 @@ final class FilterScriptImpl
     @Traced("filterScript")
     private PortalResponse doExecute( final PortalRequest request, final WebResponse response, final WebHandlerChain webHandlerChain )
     {
-        Tracer.withCurrent( trace -> trace.put( "script", this.scriptExports.getScript().toString() ) );
+        Tracer.withCurrent( trace -> trace.attribute( "script", this.scriptExports.getScript().toString() ) );
 
         if ( !this.scriptExports.hasMethod( FILTER_SCRIPT_METHOD ) )
         {

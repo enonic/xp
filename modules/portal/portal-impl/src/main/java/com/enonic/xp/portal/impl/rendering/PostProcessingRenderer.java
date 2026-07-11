@@ -73,9 +73,9 @@ public abstract class PostProcessingRenderer<R>
                                              final PortalResponse portalResponse )
     {
         Tracer.withCurrent( trace -> {
-            trace.put( "app", filter.getApplication().toString() );
-            trace.put( "name", filter.getName() );
-            trace.put( "type", "filter" );
+            trace.attribute( "app", filter.getApplication().toString() );
+            trace.attribute( "name", filter.getName() );
+            trace.attribute( "type", "filter" );
         } );
         return processorExecutor.execute( filter, portalRequest, portalResponse );
     }

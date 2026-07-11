@@ -73,9 +73,9 @@ public final class AdminToolHandler
         throws Exception
     {
         Tracer.withCurrent( trace -> {
-            trace.put( "path", webRequest.getPath() );
-            trace.put( "method", webRequest.getMethod().toString() );
-            trace.put( "host", webRequest.getHost() );
+            trace.attribute( "path", webRequest.getPath() );
+            trace.attribute( "method", webRequest.getMethod().toString() );
+            trace.attribute( "host", webRequest.getHost() );
             addContextInfo( trace );
         } );
 
@@ -87,12 +87,12 @@ public final class AdminToolHandler
     private static void addContextInfo( final Trace trace )
     {
         final Context context = ContextAccessor.current();
-        trace.put( "repo", Objects.toString( context.getRepositoryId(), null ) );
-        trace.put( "branch", Objects.toString( context.getBranch(), null ) );
+        trace.attribute( "repo", Objects.toString( context.getRepositoryId(), null ) );
+        trace.attribute( "branch", Objects.toString( context.getBranch(), null ) );
         final AuthenticationInfo authInfo = context.getAuthInfo();
         if ( authInfo != null && authInfo.getUser() != null )
         {
-            trace.put( "user", authInfo.getUser().getKey().toString() );
+            trace.attribute( "user", authInfo.getUser().getKey().toString() );
         }
     }
 

@@ -45,7 +45,7 @@ final class ErrorHandlerScriptImpl
     @Traced("errorScript")
     private PortalResponse doExecute( final PortalError portalError, final String handlerMethod )
     {
-        Tracer.withCurrent( trace -> trace.put( "script", this.scriptExports.getScript().toString() ) );
+        Tracer.withCurrent( trace -> trace.attribute( "script", this.scriptExports.getScript().toString() ) );
 
         final PortalErrorMapper portalErrorMapper = new PortalErrorMapper( portalError );
         final ScriptValue result = this.scriptExports.executeMethod( handlerMethod, portalErrorMapper );

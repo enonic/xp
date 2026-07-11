@@ -394,11 +394,11 @@ public class ContentServiceImpl
     {
         requireReadAccess();
 
-        Tracer.withCurrent( trace -> trace.put( "id", contentId.toString() ) );
+        Tracer.withCurrent( trace -> trace.attribute( "id", contentId.toString() ) );
 
         final Content content = doGetById( contentId );
 
-        Tracer.withCurrent( trace -> trace.put( "path", content.getPath().toString() ) );
+        Tracer.withCurrent( trace -> trace.attribute( "path", content.getPath().toString() ) );
 
         return content;
     }
@@ -436,14 +436,14 @@ public class ContentServiceImpl
             .eventPublisher( this.eventPublisher )
             .build();
 
-        Tracer.withCurrent( trace -> trace.put( "id", contentId.toString() ) );
+        Tracer.withCurrent( trace -> trace.attribute( "id", contentId.toString() ) );
 
         final Site site = command.execute();
 
         Tracer.withCurrent( trace -> {
             if ( site != null )
             {
-                trace.put( "path", site.getPath().toString() );
+                trace.attribute( "path", site.getPath().toString() );
             }
         } );
 
@@ -456,14 +456,14 @@ public class ContentServiceImpl
     {
         requireReadAccess();
 
-        Tracer.withCurrent( trace -> trace.put( "contentPath", contentPath.toString() ) );
+        Tracer.withCurrent( trace -> trace.attribute( "contentPath", contentPath.toString() ) );
 
         final Site site = (Site) doFindNearestByPath( contentPath, Content::isSite );
 
         Tracer.withCurrent( trace -> {
             if ( site != null )
             {
-                trace.put( "path", site.getPath().toString() );
+                trace.attribute( "path", site.getPath().toString() );
             }
         } );
 
@@ -494,7 +494,7 @@ public class ContentServiceImpl
             .eventPublisher( this.eventPublisher )
             .build();
 
-        Tracer.withCurrent( trace -> trace.put( "id", params.getIds().stream().map( ContentId::toString ).toList() ) );
+        Tracer.withCurrent( trace -> trace.attribute( "id", params.getIds().stream().map( ContentId::toString ).toList() ) );
 
         return command.execute();
     }
@@ -505,11 +505,11 @@ public class ContentServiceImpl
     {
         requireReadAccess();
 
-        Tracer.withCurrent( trace -> trace.put( "path", path.toString() ) );
+        Tracer.withCurrent( trace -> trace.attribute( "path", path.toString() ) );
 
         final Content content = doGetByPath( path );
 
-        Tracer.withCurrent( trace -> trace.put( "id", content.getId().toString() ) );
+        Tracer.withCurrent( trace -> trace.attribute( "id", content.getId().toString() ) );
 
         return content;
     }
@@ -551,7 +551,7 @@ public class ContentServiceImpl
             .eventPublisher( this.eventPublisher )
             .build();
 
-        Tracer.withCurrent( trace -> trace.put( "path", paths.stream().map( ContentPath::toString ).toList() ) );
+        Tracer.withCurrent( trace -> trace.attribute( "path", paths.stream().map( ContentPath::toString ).toList() ) );
 
         return command.execute();
     }
@@ -569,14 +569,20 @@ public class ContentServiceImpl
             .build();
 
         Tracer.withCurrent( trace -> {
-            trace.put( "query", Objects.toString( params.getParentPath() != null ? params.getParentPath() : params.getParentId(), null ) );
-            trace.put( "from", params.getFrom() );
-            trace.put( "size", params.getSize() );
+            trace.attribute( "query", Objects.toString( params.getParentPath() != null ? params.getParentPath() : params.getParentId(), null ) );
+            if ( params.getFrom() != null )
+            {
+                trace.attribute( "from", params.getFrom() );
+            }
+            if ( params.getSize() != null )
+            {
+                trace.attribute( "size", params.getSize() );
+            }
         } );
 
         final FindContentByParentResult result = command.execute();
 
-        Tracer.withCurrent( trace -> trace.put( "hits", result.getTotalHits() ) );
+        Tracer.withCurrent( trace -> trace.attribute( "hits", result.getTotalHits() ) );
 
         return result;
     }
@@ -594,14 +600,20 @@ public class ContentServiceImpl
             .build();
 
         Tracer.withCurrent( trace -> {
-            trace.put( "query", Objects.toString( params.getParentPath() != null ? params.getParentPath() : params.getParentId(), null ) );
-            trace.put( "from", params.getFrom() );
-            trace.put( "size", params.getSize() );
+            trace.attribute( "query", Objects.toString( params.getParentPath() != null ? params.getParentPath() : params.getParentId(), null ) );
+            if ( params.getFrom() != null )
+            {
+                trace.attribute( "from", params.getFrom() );
+            }
+            if ( params.getSize() != null )
+            {
+                trace.attribute( "size", params.getSize() );
+            }
         } );
 
         final FindContentIdsByParentResult result = command.execute();
 
-        Tracer.withCurrent( trace -> trace.put( "hits", result.getTotalHits() ) );
+        Tracer.withCurrent( trace -> trace.attribute( "hits", result.getTotalHits() ) );
 
         return result;
     }
@@ -690,15 +702,15 @@ public class ContentServiceImpl
             .build();
 
         Tracer.withCurrent( trace -> {
-            trace.put( "query", Objects.toString( query.getQueryExpr(), null ) );
-            trace.put( "filter", Objects.toString( query.getQueryFilters(), null ) );
-            trace.put( "from", query.getFrom() );
-            trace.put( "size", query.getSize() );
+            trace.attribute( "query", Objects.toString( query.getQueryExpr(), null ) );
+            trace.attribute( "filter", Objects.toString( query.getQueryFilters(), null ) );
+            trace.attribute( "from", query.getFrom() );
+            trace.attribute( "size", query.getSize() );
         } );
 
         final FindContentIdsByQueryResult result = command.execute();
 
-        Tracer.withCurrent( trace -> trace.put( "hits", result.getTotalHits() ) );
+        Tracer.withCurrent( trace -> trace.attribute( "hits", result.getTotalHits() ) );
 
         return result;
     }
@@ -862,11 +874,11 @@ public class ContentServiceImpl
             .eventPublisher( this.eventPublisher )
             .build();
 
-        Tracer.withCurrent( trace -> trace.put( "id", contentId.toString() ) );
+        Tracer.withCurrent( trace -> trace.attribute( "id", contentId.toString() ) );
 
         final boolean exists = command.execute();
 
-        Tracer.withCurrent( trace -> trace.put( "exists", exists ) );
+        Tracer.withCurrent( trace -> trace.attribute( "exists", exists ) );
 
         return exists;
     }
@@ -881,11 +893,11 @@ public class ContentServiceImpl
             .eventPublisher( this.eventPublisher )
             .build();
 
-        Tracer.withCurrent( trace -> trace.put( "path", contentPath.toString() ) );
+        Tracer.withCurrent( trace -> trace.attribute( "path", contentPath.toString() ) );
 
         final boolean exists = command.execute();
 
-        Tracer.withCurrent( trace -> trace.put( "exists", exists ) );
+        Tracer.withCurrent( trace -> trace.attribute( "exists", exists ) );
 
         return exists;
     }
@@ -901,8 +913,8 @@ public class ContentServiceImpl
             .build();
 
         Tracer.withCurrent( trace -> {
-            trace.put( "id", contentId.toString() );
-            trace.put( "reference", binaryReference.toString() );
+            trace.attribute( "id", contentId.toString() );
+            trace.attribute( "reference", binaryReference.toString() );
         } );
 
         final ByteSource byteSource = command.execute();
@@ -910,7 +922,7 @@ public class ContentServiceImpl
         Tracer.withCurrent( trace -> {
             if ( byteSource != null )
             {
-                trace.put( "size", byteSource.sizeIfKnown().or( -1L ) );
+                trace.attribute( "size", byteSource.sizeIfKnown().or( -1L ) );
             }
         } );
 
@@ -928,9 +940,9 @@ public class ContentServiceImpl
             .build();
 
         Tracer.withCurrent( trace -> {
-            trace.put( "id", contentId.toString() );
-            trace.put( "versionId", contentVersionId.toString() );
-            trace.put( "reference", binaryReference.toString() );
+            trace.attribute( "id", contentId.toString() );
+            trace.attribute( "versionId", contentVersionId.toString() );
+            trace.attribute( "reference", binaryReference.toString() );
         } );
 
         final ByteSource byteSource = command.execute();
@@ -938,7 +950,7 @@ public class ContentServiceImpl
         Tracer.withCurrent( trace -> {
             if ( byteSource != null )
             {
-                trace.put( "size", byteSource.sizeIfKnown().or( -1L ) );
+                trace.attribute( "size", byteSource.sizeIfKnown().or( -1L ) );
             }
         } );
 
@@ -960,13 +972,13 @@ public class ContentServiceImpl
             .build();
 
         Tracer.withCurrent( trace -> {
-            trace.put( "contentId", contentId.toString() );
-            trace.put( "versionId", versionId.toString() );
+            trace.attribute( "contentId", contentId.toString() );
+            trace.attribute( "versionId", versionId.toString() );
         } );
 
         final Content content = command.execute();
 
-        Tracer.withCurrent( trace -> trace.put( "path", content.getPath().toString() ) );
+        Tracer.withCurrent( trace -> trace.attribute( "path", content.getPath().toString() ) );
 
         return content;
     }

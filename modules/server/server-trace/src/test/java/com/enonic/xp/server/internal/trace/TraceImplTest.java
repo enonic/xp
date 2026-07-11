@@ -58,6 +58,32 @@ class TraceImplTest
     }
 
     @Test
+    void typedAttributeMethods()
+    {
+        this.trace.attribute( "string", "value" )
+            .attribute( "long", 42L )
+            .attribute( "double", 1.5d )
+            .attribute( "boolean", true )
+            .attribute( "list", java.util.List.of( "a", "b" ) );
+
+        assertEquals( "value", this.trace.get( "string" ) );
+        assertEquals( 42L, this.trace.get( "long" ) );
+        assertEquals( 1.5d, this.trace.get( "double" ) );
+        assertEquals( Boolean.TRUE, this.trace.get( "boolean" ) );
+        assertEquals( java.util.List.of( "a", "b" ), this.trace.get( "list" ) );
+
+        // null values are ignored, not removals
+        this.trace.attribute( "string", (String) null );
+        assertEquals( "value", this.trace.get( "string" ) );
+        this.trace.attribute( "absent", (java.util.List<String>) null );
+        assertFalse( this.trace.containsKey( "absent" ) );
+
+        // overwrite is allowed
+        this.trace.attribute( "string", "updated" );
+        assertEquals( "updated", this.trace.get( "string" ) );
+    }
+
+    @Test
     void putNormalizesValues()
     {
         // pass-through types

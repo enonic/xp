@@ -92,6 +92,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -127,10 +128,10 @@ class NodeServiceImplTest
         final Node fetchedNode = Tracer.trace( trace, () -> this.nodeService.getById( createdNode.id() ) );
 
         assertEquals( createdNode, fetchedNode );
-        verify( trace ).put( "id", createdNode.id().toString() );
-        verify( trace ).put( eq( "repo" ), any() );
-        verify( trace ).put( eq( "branch" ), any() );
-        verify( trace ).put( "path", createdNode.path().toString() );
+        verify( trace ).attribute( "id", createdNode.id().toString() );
+        verify( trace ).attribute( eq( "repo" ), anyString() );
+        verify( trace ).attribute( eq( "branch" ), anyString() );
+        verify( trace ).attribute( "path", createdNode.path().toString() );
     }
 
     @Test
