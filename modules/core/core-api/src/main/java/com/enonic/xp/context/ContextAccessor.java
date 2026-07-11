@@ -2,15 +2,10 @@ package com.enonic.xp.context;
 
 public final class ContextAccessor
 {
-    static final ThreadLocal<Context> INSTANCE = ThreadLocal.withInitial( ContextAccessor::initialValue );
-
-    private static Context initialValue()
-    {
-        return ContextBuilder.create().build();
-    }
+    static final ScopedValue<Context> INSTANCE = ScopedValue.newInstance();
 
     public static Context current()
     {
-        return INSTANCE.get();
+        return INSTANCE.isBound() ? INSTANCE.get() : ContextBuilder.create().build();
     }
 }

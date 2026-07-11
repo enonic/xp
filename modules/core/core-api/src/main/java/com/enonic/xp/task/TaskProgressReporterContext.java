@@ -2,39 +2,16 @@ package com.enonic.xp.task;
 
 public final class TaskProgressReporterContext
 {
-    private static final ThreadLocal<ProgressReporter> CURRENT = new ThreadLocal<>();
+    private static final ScopedValue<ProgressReporter> CURRENT = ScopedValue.newInstance();
 
     public static ProgressReporter current()
     {
-        return CURRENT.get();
-    }
-
-    private static void set( final ProgressReporter req )
-    {
-        if ( req == null )
-        {
-            CURRENT.remove();
-        }
-        else
-        {
-            CURRENT.set( req );
-        }
+        return CURRENT.isBound() ? CURRENT.get() : null;
     }
 
     public static RunnableTask withContext( final RunnableTask runnableTask )
     {
-        return ( id, progressReporter ) -> {
-            final ProgressReporter old = current();
-            set( progressReporter );
-
-            try
-            {
-                runnableTask.run( id, progressReporter );
-            }
-            finally
-            {
-                set( old );
-            }
-        };
+        return ( id, progressReporter ) -> ScopedValue.where( CURRENT, progressReporter )
+            .run( () -> runnableTask.run( id, progressReporter ) );
     }
 }

@@ -11,12 +11,11 @@ class ContextAccessorTest
     @Test
     void testCurrent()
     {
-        ContextAccessor.INSTANCE.remove();
         assertNotNull( ContextAccessor.current() );
 
         final Context context = Mockito.mock( Context.class );
-        ContextAccessor.INSTANCE.set( context );
-        assertSame( context, ContextAccessor.current() );
-        ContextAccessor.INSTANCE.remove();
+        ScopedValue.where( ContextAccessor.INSTANCE, context ).run( () -> assertSame( context, ContextAccessor.current() ) );
+
+        assertNotNull( ContextAccessor.current() );
     }
 }

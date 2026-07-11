@@ -19,6 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.AdditionalAnswers;
 import org.mockito.Mockito;
 
@@ -125,6 +126,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 
+@ExtendWith(ContextAccessorSupport.class)
 public abstract class AbstractContentServiceTest
     extends AbstractElasticsearchIntegrationTest
 {
@@ -179,8 +181,6 @@ public abstract class AbstractContentServiceTest
 
     private ExecutorService executorService;
 
-    private Context initialContext;
-
     protected CmsService cmsService;
 
     protected Context ctxDraft()
@@ -227,9 +227,14 @@ public abstract class AbstractContentServiceTest
     {
         executorService = Executors.newSingleThreadExecutor();
 
-        initialContext = ContextAccessor.current();
-        ContextAccessorSupport.getInstance().set( ctxDraft() );
+        final Context ctx = ctxDraft();
+        ContextAccessorSupport.getInstance().set( ctx );
 
+        ctx.runWith( this::setUpServices );
+    }
+
+    private void setUpServices()
+    {
         final BinaryServiceImpl binaryService = new BinaryServiceImpl( BLOB_STORE );
 
         final StorageDaoImpl storageDao = new StorageDaoImpl( client );
@@ -366,7 +371,7 @@ public abstract class AbstractContentServiceTest
     {
         projectService.delete( testprojectName );
 
-        ContextAccessorSupport.getInstance().set( initialContext );
+        ContextAccessorSupport.getInstance().remove();
 
         executorService.shutdownNow();
     }

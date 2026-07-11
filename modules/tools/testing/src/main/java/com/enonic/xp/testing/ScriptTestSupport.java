@@ -9,6 +9,7 @@ import java.nio.file.Path;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -50,6 +51,7 @@ import com.enonic.xp.testing.resource.ClassLoaderResourceService;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ExtendWith(ContextAccessorSupport.class)
 public abstract class ScriptTestSupport
 {
     private boolean http;
@@ -100,7 +102,16 @@ public abstract class ScriptTestSupport
     public final void setup()
         throws Exception
     {
-        initialize();
+        final Context context = ContextBuilder.create()
+            .repositoryId( "com.enonic.cms.default" )
+            .branch( ContentConstants.BRANCH_DRAFT )
+            .build();
+
+        ContextAccessorSupport.getInstance().set( context );
+        context.callWith( () -> {
+            initialize();
+            return null;
+        } );
     }
 
     @AfterEach
@@ -113,11 +124,6 @@ public abstract class ScriptTestSupport
     protected void initialize()
         throws Exception
     {
-        ContextAccessorSupport.getInstance().set( ContextBuilder.create()
-                                                      .repositoryId( "com.enonic.cms.default" )
-                                                      .branch( ContentConstants.BRANCH_DRAFT )
-                                                      .build() );
-
         this.serviceRegistry = new MockServiceRegistry();
 
         this.portalRequest = createPortalRequest();

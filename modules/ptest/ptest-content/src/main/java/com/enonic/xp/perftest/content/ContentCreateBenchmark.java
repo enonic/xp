@@ -56,12 +56,12 @@ public class ContentCreateBenchmark
     @Benchmark
     public Content create()
     {
-        return bs.contentService.create( CreateContentParams.create()
+        return bs.callInDraftContext( () -> bs.contentService.create( CreateContentParams.create()
             .name( "perf-" + seq.getAndIncrement() )
             .displayName( "perf" )
             .parent( ContentPath.ROOT )
             .contentData( new PropertyTree() )
             .type( ContentTypeName.folder() )
-            .build() );
+            .build() ) );
     }
 }

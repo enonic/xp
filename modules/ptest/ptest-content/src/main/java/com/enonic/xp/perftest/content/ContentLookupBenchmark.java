@@ -55,18 +55,21 @@ public class ContentLookupBenchmark
 
         ids = new ArrayList<>( CORPUS_SIZE );
         paths = new ArrayList<>( CORPUS_SIZE );
-        for ( int i = 0; i < CORPUS_SIZE; i++ )
-        {
-            final Content c = bs.contentService.create( CreateContentParams.create()
-                .name( "corpus-" + i )
-                .displayName( "corpus" )
-                .parent( ContentPath.ROOT )
-                .contentData( new PropertyTree() )
-                .type( ContentTypeName.folder() )
-                .build() );
-            ids.add( c.getId() );
-            paths.add( c.getPath() );
-        }
+        bs.callInDraftContext( () -> {
+            for ( int i = 0; i < CORPUS_SIZE; i++ )
+            {
+                final Content c = bs.contentService.create( CreateContentParams.create()
+                    .name( "corpus-" + i )
+                    .displayName( "corpus" )
+                    .parent( ContentPath.ROOT )
+                    .contentData( new PropertyTree() )
+                    .type( ContentTypeName.folder() )
+                    .build() );
+                ids.add( c.getId() );
+                paths.add( c.getPath() );
+            }
+            return null;
+        } );
 
         // End of corpus build: force a refresh so all corpus entries are
         // searchable, then restore production-like settings for measurement.
@@ -86,12 +89,12 @@ public class ContentLookupBenchmark
     @Benchmark
     public Content getById()
     {
-        return bs.contentService.getById( ids.get( rng.nextInt( ids.size() ) ) );
+        return bs.callInDraftContext( () -> bs.contentService.getById( ids.get( rng.nextInt( ids.size() ) ) ) );
     }
 
     @Benchmark
     public Content getByPath()
     {
-        return bs.contentService.getByPath( paths.get( rng.nextInt( paths.size() ) ) );
+        return bs.callInDraftContext( () -> bs.contentService.getByPath( paths.get( rng.nextInt( paths.size() ) ) ) );
     }
 }

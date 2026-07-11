@@ -5,6 +5,7 @@ import java.util.Base64;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 
 import com.google.common.net.HttpHeaders;
@@ -13,7 +14,10 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextAccessorSupport;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.security.IdProvider;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.IdProviders;
@@ -29,6 +33,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(ContextAccessorSupport.class)
 class BasicAuthFilterTest
 {
     private BasicAuthFilter filter;
@@ -44,7 +49,10 @@ class BasicAuthFilterTest
     @BeforeEach
     void setup()
     {
-        ContextAccessor.current().getLocalScope().setSession( new SessionMock() );
+        final Context context = ContextBuilder.create().build();
+        context.getLocalScope().setSession( new SessionMock() );
+        ContextAccessorSupport.getInstance().set( context );
+
         this.request = Mockito.mock( HttpServletRequest.class );
         this.response = Mockito.mock( HttpServletResponse.class );
         this.chain = Mockito.mock( FilterChain.class );
@@ -62,6 +70,7 @@ class BasicAuthFilterTest
     void tearDown()
     {
         ContextAccessor.current().getLocalScope().setSession( null );
+        ContextAccessorSupport.getInstance().remove();
     }
 
     private AuthenticationInfo goodAuthenticationInfo()

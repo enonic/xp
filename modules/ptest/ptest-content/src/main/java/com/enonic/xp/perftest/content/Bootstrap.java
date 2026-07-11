@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -22,7 +23,6 @@ import com.google.common.net.HttpHeaders;
 import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
-import com.enonic.xp.context.ContextAccessorSupport;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.content.ContentAuditLogFilterService;
 import com.enonic.xp.core.impl.content.ContentAuditLogSupportImpl;
@@ -138,8 +138,17 @@ public final class Bootstrap
         executorService = Executors.newSingleThreadExecutor();
         projectName = ProjectName.from( "ptest" + PROJECT_COUNTER.incrementAndGet() );
 
-        ContextAccessorSupport.getInstance().set( draftContext() );
+        draftContext().runWith( () -> initServices( client ) );
+    }
 
+    /** Runs the given operation with the draft context bound, like a request or task would. */
+    public <T> T callInDraftContext( final Callable<T> callable )
+    {
+        return draftContext().callWith( callable );
+    }
+
+    private void initServices( final Client client )
+    {
         final MemoryBlobStore blobStore = new MemoryBlobStore();
         final BinaryServiceImpl binaryService = new BinaryServiceImpl( blobStore );
 

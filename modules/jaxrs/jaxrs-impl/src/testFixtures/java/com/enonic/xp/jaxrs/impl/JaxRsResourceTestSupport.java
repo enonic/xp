@@ -9,6 +9,7 @@ import org.jboss.resteasy.spi.Dispatcher;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -19,8 +20,10 @@ import com.fasterxml.jackson.jakarta.rs.json.JacksonJsonProvider;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextAccessorSupport;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.context.LocalScope;
 import com.enonic.xp.core.internal.json.ObjectMapperHelper;
 import com.enonic.xp.jaxrs.impl.multipart.MultipartFormReader;
@@ -30,6 +33,7 @@ import com.enonic.xp.web.multipart.MultipartService;
 
 import static java.util.Objects.requireNonNull;
 
+@ExtendWith(ContextAccessorSupport.class)
 public abstract class JaxRsResourceTestSupport
 {
     private static final ObjectMapper MAPPER = ObjectMapperHelper.create();
@@ -64,9 +68,9 @@ public abstract class JaxRsResourceTestSupport
 
         mockCurrentContextHttpRequest();
 
-        ContextAccessorSupport.getInstance().remove();
-
-        ContextAccessor.current().getLocalScope().setSession( new SessionMock() );
+        final Context context = ContextBuilder.create().build();
+        context.getLocalScope().setSession( new SessionMock() );
+        ContextAccessorSupport.getInstance().set( context );
     }
 
     @AfterEach
@@ -83,6 +87,8 @@ public abstract class JaxRsResourceTestSupport
                 session.invalidate();
             }
         }
+
+        ContextAccessorSupport.getInstance().remove();
     }
 
     private void mockCurrentContextHttpRequest()

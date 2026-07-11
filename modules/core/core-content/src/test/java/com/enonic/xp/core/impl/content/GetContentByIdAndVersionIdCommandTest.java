@@ -3,6 +3,7 @@ package com.enonic.xp.core.impl.content;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 
 import com.enonic.xp.content.Content;
@@ -27,6 +28,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(ContextAccessorSupport.class)
 class GetContentByIdAndVersionIdCommandTest
 {
     private final ContentId contentId = ContentId.from( "contentid" );
