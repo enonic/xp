@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.handler.mapping;
 
+import java.util.Objects;
 import java.util.function.Supplier;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -88,12 +89,7 @@ final class MappingHandlerWorker
     private WebSocketEndpoint newWebSocketEndpoint( final WebSocketConfig config, final Supplier<ControllerScript> script,
                                                     final ApplicationKey app )
     {
-        Tracer.withCurrent( trace -> {
-            if ( app != null && !trace.containsKey( "app" ) )
-            {
-                trace.attribute( "app", app.toString() );
-            }
-        } );
+        Tracer.withCurrent( trace -> trace.attribute( "app", Objects.toString( app, null ) ) );
         return new WebSocketEndpointImpl( config, script );
     }
 }

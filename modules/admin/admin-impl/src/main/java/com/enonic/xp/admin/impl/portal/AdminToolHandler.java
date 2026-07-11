@@ -1,20 +1,14 @@
 package com.enonic.xp.admin.impl.portal;
 
-import java.util.Objects;
-
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.admin.tool.AdminToolDescriptorService;
-import com.enonic.xp.context.Context;
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.handler.WebHandlerHelper;
-import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Traced;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.WebException;
@@ -75,18 +69,6 @@ public final class AdminToolHandler
         final PortalResponse response = worker.execute();
         Tracer.withCurrent( trace -> addTraceInfo( trace, response ) );
         return response;
-    }
-
-    private static void addContextInfo( final Trace trace )
-    {
-        final Context context = ContextAccessor.current();
-        trace.attribute( "repo", Objects.toString( context.getRepositoryId(), null ) );
-        trace.attribute( "branch", Objects.toString( context.getBranch(), null ) );
-        final AuthenticationInfo authInfo = context.getAuthInfo();
-        if ( authInfo != null && authInfo.getUser() != null )
-        {
-            trace.attribute( "user", authInfo.getUser().getKey().toString() );
-        }
     }
 
     @Reference

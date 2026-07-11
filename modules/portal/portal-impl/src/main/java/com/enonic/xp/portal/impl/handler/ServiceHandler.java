@@ -140,12 +140,7 @@ public class ServiceHandler
     private WebSocketEndpoint newWebSocketEndpoint( final WebSocketConfig config, final ControllerScript script,
                                                     final ApplicationKey applicationKey )
     {
-        Tracer.withCurrent( trace -> {
-            if ( !trace.containsKey( "app" ) )
-            {
-                trace.attribute( "app", applicationKey.toString() );
-            }
-        } );
+        Tracer.withCurrent( trace -> trace.attribute( "app", applicationKey.toString() ) );
         return new WebSocketEndpointImpl( config, () -> script );
     }
 }

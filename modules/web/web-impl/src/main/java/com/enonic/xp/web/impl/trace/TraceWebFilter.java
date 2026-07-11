@@ -1,13 +1,7 @@
 package com.enonic.xp.web.impl.trace;
 
-import java.util.Objects;
-
 import org.osgi.service.component.annotations.Component;
 
-import com.enonic.xp.context.Context;
-import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Traced;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.WebRequest;
@@ -51,17 +45,5 @@ public final class TraceWebFilter
         Tracer.withCurrent( trace -> addTraceInfo( trace, webResponse ) );
 
         return webResponse;
-    }
-
-    private static void addContextInfo( final Trace trace )
-    {
-        final Context context = ContextAccessor.current();
-        trace.attribute( "repo", Objects.toString( context.getRepositoryId(), null ) );
-        trace.attribute( "branch", Objects.toString( context.getBranch(), null ) );
-        final AuthenticationInfo authInfo = context.getAuthInfo();
-        if ( authInfo != null && authInfo.getUser() != null )
-        {
-            trace.attribute( "user", authInfo.getUser().getKey().toString() );
-        }
     }
 }

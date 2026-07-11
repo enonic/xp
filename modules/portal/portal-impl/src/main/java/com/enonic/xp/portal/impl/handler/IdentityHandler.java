@@ -20,6 +20,7 @@ import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
+import com.enonic.xp.web.handler.BaseWebHandler;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 
@@ -91,7 +92,7 @@ public class IdentityHandler
             trace.attribute( "path", portalRequest.getPath() );
             trace.attribute( "method", portalRequest.getMethod().toString() );
             trace.attribute( "host", portalRequest.getHost() );
-            HandlerHelper.addContextInfo( trace );
+            BaseWebHandler.addContextInfo( trace );
         } );
 
         final IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create()

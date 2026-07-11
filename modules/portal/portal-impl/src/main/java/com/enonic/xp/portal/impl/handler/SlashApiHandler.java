@@ -36,7 +36,6 @@ import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
-import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Traced;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.HttpMethod;
@@ -151,7 +150,10 @@ public class SlashApiHandler
                                  final Supplier<WebResponse> supplier )
     {
         final WebResponse response = handleAPIRequest( portalRequest, supplier );
-        Tracer.withCurrent( trace -> addTranceInfo( trace, descriptorKey, response ) );
+        Tracer.withCurrent( trace -> {
+            trace.attribute( "app", descriptorKey.getApplicationKey().toString() ).attribute( "api", descriptorKey.getName() );
+            HandlerHelper.addTraceInfo( trace, response );
+        } );
         return response;
     }
 
@@ -261,13 +263,6 @@ public class SlashApiHandler
             .filter( Objects::nonNull )
             .map( SiteDescriptor::getApiMounts )
             .anyMatch( mounts -> mounts.contains( descriptorKey ) );
-    }
-
-    private static void addTranceInfo( final Trace trace, final DescriptorKey descriptorKey, final WebResponse response )
-    {
-        trace.attribute( "app", descriptorKey.getApplicationKey().toString() );
-        trace.attribute( "api", descriptorKey.getName() );
-        HandlerHelper.addTraceInfo( trace, response );
     }
 
     private WebResponse handleAPIRequest( final PortalRequest portalRequest, final Supplier<WebResponse> supplier )

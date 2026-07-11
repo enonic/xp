@@ -16,7 +16,6 @@ import com.enonic.xp.portal.impl.sse.SseEndpointImpl;
 import com.enonic.xp.portal.impl.websocket.WebSocketEndpointImpl;
 import com.enonic.xp.portal.sse.SseManager;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Traced;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.HttpStatus;
@@ -85,7 +84,8 @@ public final class WebAppHandler
         throws Exception
     {
         final ApplicationKey applicationKey = req.getApplicationKey();
-        Tracer.withCurrent( trace -> addTraceInfo( trace, applicationKey, req.getRawPath().substring( req.getBaseUri().length() ) ) );
+        Tracer.withCurrent( trace -> trace.attribute( "app", applicationKey.toString() )
+            .attribute( "path", req.getRawPath().substring( req.getBaseUri().length() ) ) );
         final ControllerScript script = getScript( applicationKey );
         final PortalResponse res = script.execute( req );
 
@@ -109,12 +109,7 @@ public final class WebAppHandler
 
     private WebSocketEndpoint newWebSocketEndpoint( final WebSocketConfig config, final ControllerScript script, final ApplicationKey app )
     {
-        Tracer.withCurrent( trace -> {
-            if ( !trace.containsKey( "app" ) )
-            {
-                trace.attribute( "app", app.toString() );
-            }
-        } );
+        Tracer.withCurrent( trace -> trace.attribute( "app", app.toString() ) );
         return new WebSocketEndpointImpl( config, () -> script );
     }
 
@@ -124,12 +119,4 @@ public final class WebAppHandler
         return this.controllerScriptFactory.fromScript( script );
     }
 
-    private void addTraceInfo( final Trace trace, final ApplicationKey applicationKey, final String path )
-    {
-        if ( trace != null )
-        {
-            trace.attribute( "app", applicationKey.toString() );
-            trace.attribute( "path", path );
-        }
-    }
 }
