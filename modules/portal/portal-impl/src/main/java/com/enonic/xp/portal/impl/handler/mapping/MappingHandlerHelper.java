@@ -22,7 +22,6 @@ import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
-import com.enonic.xp.trace.Traced;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
@@ -149,13 +148,6 @@ class MappingHandlerHelper
         worker.rendererDelegate = rendererDelegate;
         worker.sseManager = this.sseManager;
 
-        return executeWorker( worker );
-    }
-
-    @Traced("renderComponent")
-    private PortalResponse executeWorker( final MappingHandlerWorker worker )
-        throws Exception
-    {
         return worker.execute();
     }
 
@@ -168,13 +160,6 @@ class MappingHandlerHelper
         worker.resourceService = this.resourceService;
         worker.filterScriptFactory = this.filterScriptFactory;
 
-        return executeFilterWorker( worker );
-    }
-
-    @Traced("filter")
-    private PortalResponse executeFilterWorker( final MappingFilterHandlerWorker worker )
-        throws Exception
-    {
         return worker.execute();
     }
 }

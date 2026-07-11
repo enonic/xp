@@ -14,6 +14,7 @@ import com.enonic.xp.portal.sse.SseManager;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
+import com.enonic.xp.trace.Traced;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.sse.SseConfig;
@@ -40,6 +41,7 @@ final class MappingHandlerWorker
         this.request = request;
     }
 
+    @Traced("renderComponent")
     public PortalResponse execute()
         throws Exception
     {

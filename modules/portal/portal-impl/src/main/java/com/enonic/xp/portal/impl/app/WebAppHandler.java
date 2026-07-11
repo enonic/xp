@@ -64,16 +64,7 @@ public final class WebAppHandler
         {
             return handleRedirect( webRequest );
         }
-        return executeControllerTraced( portalRequest, restPath );
-    }
-
-    @Traced("renderApp")
-    private PortalResponse executeControllerTraced( final PortalRequest portalRequest, final String restPath )
-        throws Exception
-    {
-        final PortalResponse response = executeController( portalRequest );
-        Tracer.withCurrent( trace -> addTraceInfo( trace, portalRequest.getApplicationKey(), restPath ) );
-        return response;
+        return executeController( portalRequest );
     }
 
     private WebResponse handleRedirect( WebRequest webRequest )
@@ -89,10 +80,12 @@ public final class WebAppHandler
         return WebResponse.create().status( HttpStatus.TEMPORARY_REDIRECT ).header( HttpHeaders.LOCATION, redirectUrl ).build();
     }
 
+    @Traced("renderApp")
     private PortalResponse executeController( final PortalRequest req )
         throws Exception
     {
         final ApplicationKey applicationKey = req.getApplicationKey();
+        Tracer.withCurrent( trace -> addTraceInfo( trace, applicationKey, req.getRawPath().substring( req.getBaseUri().length() ) ) );
         final ControllerScript script = getScript( applicationKey );
         final PortalResponse res = script.execute( req );
 

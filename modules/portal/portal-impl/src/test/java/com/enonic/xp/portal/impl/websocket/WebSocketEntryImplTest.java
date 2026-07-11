@@ -103,16 +103,20 @@ class WebSocketEntryImplTest
     }
 
     @Test
-    void sendMessageWithoutTraceJustDelegates()
+    void sendMessageWithoutOriginTrace()
     {
-        // constructed without a bound trace: the no-trace branch must simply delegate
+        // constructed without a bound trace: message attributes are still recorded,
+        // but app/parentId are absent since the originating request was not traced
         final WebSocketEntryImpl entry = new WebSocketEntryImpl( this.endpoint, this.registry );
         entry.onOpen( this.session, null );
 
         final TestTrace sendTrace = TestTrace.of( "ws" );
         Tracer.trace( sendTrace, () -> entry.sendMessage( "hello" ) );
 
-        assertFalse( sendTrace.containsKey( "message" ) );
+        assertEquals( "hello", sendTrace.get( "message" ) );
+        assertEquals( "message_sent", sendTrace.get( "type" ) );
+        assertFalse( sendTrace.containsKey( "app" ) );
+        assertFalse( sendTrace.containsKey( "parentId" ) );
         verify( this.asyncRemote ).sendText( "hello" );
     }
 

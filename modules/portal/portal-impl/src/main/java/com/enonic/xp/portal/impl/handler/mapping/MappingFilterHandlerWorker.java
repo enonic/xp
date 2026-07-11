@@ -9,6 +9,7 @@ import com.enonic.xp.portal.filter.FilterScriptFactory;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
+import com.enonic.xp.trace.Traced;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
@@ -48,6 +49,7 @@ final class MappingFilterHandlerWorker
         this.controllerInvoker = controllerInvoker;
     }
 
+    @Traced("filter")
     public PortalResponse execute()
         throws Exception
     {

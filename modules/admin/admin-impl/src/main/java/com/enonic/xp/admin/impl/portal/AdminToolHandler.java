@@ -46,9 +46,17 @@ public final class AdminToolHandler
     }
 
     @Override
+    @Traced("portalRequest")
     protected WebResponse doHandle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
         throws Exception
     {
+        Tracer.withCurrent( trace -> {
+            trace.attribute( "path", webRequest.getPath() );
+            trace.attribute( "method", webRequest.getMethod().toString() );
+            trace.attribute( "host", webRequest.getHost() );
+            addContextInfo( trace );
+        } );
+
         WebHandlerHelper.checkAdminLoginRole( webRequest );
 
         final DescriptorKey descriptorKey = AdminToolPortalHandler.getDescriptorKey( webRequest.getBasePath() );
@@ -63,20 +71,6 @@ public final class AdminToolHandler
         worker.controllerScriptFactory = this.controllerScriptFactory;
         worker.adminToolDescriptorService = adminToolDescriptorService;
         worker.descriptorKey = descriptorKey;
-
-        return executeWorker( worker, webRequest );
-    }
-
-    @Traced("portalRequest")
-    private PortalResponse executeWorker( final AdminToolHandlerWorker worker, final WebRequest webRequest )
-        throws Exception
-    {
-        Tracer.withCurrent( trace -> {
-            trace.attribute( "path", webRequest.getPath() );
-            trace.attribute( "method", webRequest.getMethod().toString() );
-            trace.attribute( "host", webRequest.getHost() );
-            addContextInfo( trace );
-        } );
 
         final PortalResponse response = worker.execute();
         Tracer.withCurrent( trace -> addTraceInfo( trace, response ) );

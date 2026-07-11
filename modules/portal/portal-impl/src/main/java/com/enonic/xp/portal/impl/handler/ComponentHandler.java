@@ -89,22 +89,15 @@ public class ComponentHandler
 
         final PortalRequest portalRequest = updatePortalRequest( webRequest );
 
-        return handleTraced( portalRequest );
-    }
-
-    @Traced("renderComponent")
-    private PortalResponse handleTraced( final PortalRequest portalRequest )
-        throws IOException
-    {
-        Tracer.withCurrent( trace -> {
-            trace.attribute( "componentPath", portalRequest.getComponent().getPath().toString() );
-            trace.attribute( "type", portalRequest.getComponent().getType().toString() );
-        } );
         return doHandle( portalRequest );
     }
 
+    @Traced("renderComponent")
     private PortalResponse doHandle( final PortalRequest portalRequest )
     {
+        Tracer.withCurrent( trace -> trace.attribute( "componentPath", portalRequest.getComponent().getPath().toString() )
+            .attribute( "type", portalRequest.getComponent().getType().toString() ) );
+
         final PortalResponse result = rendererDelegate.render( portalRequest.getComponent(), portalRequest );
         final boolean isEditMode = portalRequest.getMode() == RenderMode.EDIT;
         final PortalResponse response = ( isEditMode && result.hasContributions() ) ? addHasContributionsHeader( result ) : result;

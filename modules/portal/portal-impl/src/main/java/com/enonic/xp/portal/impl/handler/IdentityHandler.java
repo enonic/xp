@@ -80,29 +80,20 @@ public class IdentityHandler
 
         final PortalRequest portalRequest = createPortalRequest( webRequest, idProviderKey, idProviderFunction );
 
-        return handleTraced( webRequest, idProviderKey, idProviderFunction, portalRequest );
+        return doHandle( idProviderKey, idProviderFunction, portalRequest );
     }
 
     @Traced("portalRequest")
-    private PortalResponse handleTraced( final WebRequest webRequest, final IdProviderKey idProviderKey, final String idProviderFunction,
-                                         final PortalRequest portalRequest )
-        throws IOException
-    {
-        Tracer.withCurrent( trace -> {
-            trace.attribute( "path", webRequest.getPath() );
-            trace.attribute( "method", webRequest.getMethod().toString() );
-            trace.attribute( "host", webRequest.getHost() );
-            HandlerHelper.addContextInfo( trace );
-        } );
-
-        final PortalResponse portalResponse = doHandle( idProviderKey, idProviderFunction, portalRequest );
-        Tracer.withCurrent( trace -> HandlerHelper.addTraceInfo( trace, portalResponse ) );
-        return portalResponse;
-    }
-
     private PortalResponse doHandle( final IdProviderKey idProviderKey, final String idProviderFunction, final PortalRequest portalRequest )
         throws IOException
     {
+        Tracer.withCurrent( trace -> {
+            trace.attribute( "path", portalRequest.getPath() );
+            trace.attribute( "method", portalRequest.getMethod().toString() );
+            trace.attribute( "host", portalRequest.getHost() );
+            HandlerHelper.addContextInfo( trace );
+        } );
+
         final IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create()
             .idProviderKey( idProviderKey )
             .functionName( idProviderFunction )
@@ -117,6 +108,7 @@ public class IdentityHandler
                 String.format( "ID Provider function [%s] not found for id provider [%s]", idProviderFunction, idProviderKey ) );
         }
 
+        Tracer.withCurrent( trace -> HandlerHelper.addTraceInfo( trace, portalResponse ) );
         return portalResponse;
     }
 

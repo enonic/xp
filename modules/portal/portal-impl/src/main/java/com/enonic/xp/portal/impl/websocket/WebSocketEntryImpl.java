@@ -121,26 +121,14 @@ final class WebSocketEntryImpl
     }
 
     @Override
+    @Traced("websocket")
     public void sendMessage( final String message )
     {
-        if ( this.traceApp == null )
-        {
-            doSendMessage( message );
-            return;
-        }
-        sendMessageTraced( message );
-    }
-
-    @Traced("websocket")
-    private void sendMessageTraced( final String message )
-    {
-        Tracer.withCurrent( trace -> {
-            trace.attribute( "message", message );
-            trace.attribute( "type", "message_sent" );
-            trace.attribute( "sessionid", this.session.getId() );
-            trace.attribute( "parentId", this.traceParentId );
-            trace.attribute( "app", this.traceApp );
-        } );
+        Tracer.withCurrent( trace -> trace.attribute( "message", message )
+            .attribute( "type", "message_sent" )
+            .attribute( "sessionid", this.session.getId() )
+            .attribute( "parentId", this.traceParentId )
+            .attribute( "app", this.traceApp ) );
         doSendMessage( message );
     }
 
@@ -155,29 +143,15 @@ final class WebSocketEntryImpl
         return this.groups.contains( group );
     }
 
+    @Traced("websocket")
     private void onEvent( final WebSocketEvent event )
     {
-        ContextBuilder.copyOf( contextCopy ).build().runWith( () -> {
-            if ( this.traceApp == null )
-            {
-                this.endpoint.onEvent( event );
-                return;
-            }
-            onEventTraced( event );
-        } );
-    }
-
-    @Traced("websocket")
-    private void onEventTraced( final WebSocketEvent event )
-    {
-        Tracer.withCurrent( trace -> {
-            trace.attribute( "message", event.getMessage() );
-            trace.attribute( "type",
-                       event.getType() == WebSocketEventType.MESSAGE ? "message_received" : event.getType().toString().toLowerCase() );
-            trace.attribute( "sessionid", event.getSession().getId() );
-            trace.attribute( "parentId", this.traceParentId );
-            trace.attribute( "app", this.traceApp );
-        } );
-        this.endpoint.onEvent( event );
+        Tracer.withCurrent( trace -> trace.attribute( "message", event.getMessage() )
+            .attribute( "type",
+                        event.getType() == WebSocketEventType.MESSAGE ? "message_received" : event.getType().toString().toLowerCase() )
+            .attribute( "sessionid", event.getSession().getId() )
+            .attribute( "parentId", this.traceParentId )
+            .attribute( "app", this.traceApp ) );
+        ContextBuilder.copyOf( contextCopy ).build().runWith( () -> this.endpoint.onEvent( event ) );
     }
 }
