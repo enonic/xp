@@ -48,7 +48,6 @@ public final class AdminToolHandler
             trace.attribute( "path", webRequest.getPath() );
             trace.attribute( "method", webRequest.getMethod().toString() );
             trace.attribute( "host", webRequest.getHost() );
-            addContextInfo( trace );
         } );
 
         WebHandlerHelper.checkAdminLoginRole( webRequest );

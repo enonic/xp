@@ -3,17 +3,13 @@ package com.enonic.xp.web.handler;
 import java.io.IOException;
 import java.util.EnumSet;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.google.common.io.ByteSource;
 import com.google.common.net.HttpHeaders;
 import com.google.common.primitives.Longs;
 
-import com.enonic.xp.context.Context;
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.resource.Resource;
-import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
@@ -159,22 +155,6 @@ public abstract class BaseWebHandler
             trace.attribute( "status", webResponse.getStatus().value() );
             trace.attribute( "type", webResponse.getContentType().toString() );
             trace.attribute( "size", getSize( webResponse ) );
-        }
-    }
-
-    /**
-     * Records the current context (repo, branch, authenticated user) on the trace. Values that are not present
-     * in the context are simply not recorded.
-     */
-    public static void addContextInfo( final Trace trace )
-    {
-        final Context context = ContextAccessor.current();
-        trace.attribute( "repo", Objects.toString( context.getRepositoryId(), null ) );
-        trace.attribute( "branch", Objects.toString( context.getBranch(), null ) );
-        final AuthenticationInfo authInfo = context.getAuthInfo();
-        if ( authInfo != null && authInfo.getUser() != null )
-        {
-            trace.attribute( "user", authInfo.getUser().getKey().toString() );
         }
     }
 

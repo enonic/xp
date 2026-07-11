@@ -37,7 +37,6 @@ public final class TraceWebFilter
             trace.attribute( "url", req.getUrl() );
             trace.attribute( "method", req.getMethod().toString() );
             trace.attribute( "host", req.getHost() );
-            addContextInfo( trace );
         } );
 
         final WebResponse webResponse = chain.handle( req, res );
