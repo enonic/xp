@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.io.Files;
 
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceError;
 import com.enonic.xp.resource.ResourceKey;
@@ -104,7 +105,8 @@ public final class ScriptExecutorImpl
         {
             exportsCache.expireCacheIfNeeded();
         }
-        return CompletableFuture.completedFuture( key ).thenApplyAsync( this::doExecuteMain, asyncExecutor );
+        return CompletableFuture.completedFuture( key )
+            .thenApplyAsync( k -> ContextBuilder.create().build().callWith( () -> doExecuteMain( k ) ), asyncExecutor );
     }
 
     private ScriptExports doExecuteMain( final ResourceKey key )
