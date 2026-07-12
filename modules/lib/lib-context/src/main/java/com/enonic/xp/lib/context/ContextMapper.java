@@ -17,6 +17,7 @@ import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.session.Session;
+import com.enonic.xp.util.GenericValue;
 
 public final class ContextMapper
     implements MapSerializable
@@ -89,12 +90,56 @@ public final class ContextMapper
     {
         gen.map( "attributes" );
         getAttributes().forEach( ( k, v ) -> {
-            if ( canBeSerialized( v ) )
+            if ( v instanceof GenericValue genericValue )
+            {
+                serializeGenericValue( gen, k, genericValue );
+            }
+            else if ( canBeSerialized( v ) )
             {
                 gen.value( k, v );
             }
         } );
         gen.end();
+    }
+
+    private static void serializeGenericValue( final MapGenerator gen, final String name, final GenericValue value )
+    {
+        switch ( value.getType() )
+        {
+            case OBJECT ->
+            {
+                gen.map( name );
+                value.properties().forEach( entry -> serializeGenericValue( gen, entry.getKey(), entry.getValue() ) );
+                gen.end();
+            }
+            case LIST ->
+            {
+                gen.array( name );
+                value.values().forEach( element -> serializeGenericValue( gen, element ) );
+                gen.end();
+            }
+            default -> gen.value( name, value.toRawJs() );
+        }
+    }
+
+    private static void serializeGenericValue( final MapGenerator gen, final GenericValue value )
+    {
+        switch ( value.getType() )
+        {
+            case OBJECT ->
+            {
+                gen.map();
+                value.properties().forEach( entry -> serializeGenericValue( gen, entry.getKey(), entry.getValue() ) );
+                gen.end();
+            }
+            case LIST ->
+            {
+                gen.array();
+                value.values().forEach( element -> serializeGenericValue( gen, element ) );
+                gen.end();
+            }
+            default -> gen.value( value.toRawJs() );
+        }
     }
 
     private Map<String, Object> getAttributes()

@@ -41,22 +41,15 @@ public abstract class ScriptRunnerSupport
     }
 
     private Set<String> findTestNames()
-        throws Exception
     {
-        this.initialize();
-        try
-        {
-            return this.runScript( this.getScriptTestFile() )
-                .getValue()
-                .getKeys()
-                .stream()
-                .filter( name -> name.startsWith( "test" ) )
-                .collect( Collectors.toSet() );
-        }
-        finally
-        {
-            this.deinitialize();
-        }
+        // setup() has already initialized the environment, and the dynamic tests run inside the same
+        // lifecycle, so the ambient context installed by setup() must stay in place until destroy().
+        return this.runScript( this.getScriptTestFile() )
+            .getValue()
+            .getKeys()
+            .stream()
+            .filter( name -> name.startsWith( "test" ) )
+            .collect( Collectors.toSet() );
     }
 
     private void executeFunction( final ScriptExports exports, final String name )

@@ -6,6 +6,8 @@ import java.util.function.Supplier;
 
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.context.LocalScope;
+import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.security.IdProviderKey;
@@ -17,10 +19,14 @@ import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.auth.VerifiedUsernameAuthToken;
+import com.enonic.xp.util.GenericValue;
 
 public final class ContextHandlerBean
     implements ScriptBean
 {
+    // Applied unconditionally, so script attributes cannot collide with platform keys in the local scope.
+    private static final String CUSTOM_PREFIX = "custom.";
+
     private Supplier<Context> context;
 
     private Supplier<SecurityService> securityService;
@@ -44,6 +50,41 @@ public final class ContextHandlerBean
     public ContextRunParams newRunParams()
     {
         return new ContextRunParams();
+    }
+
+    public void setCustom( final String name, final ScriptValue value )
+    {
+        final LocalScope localScope = this.context.get().getLocalScope();
+        final GenericValue converted = toGenericValue( value );
+        if ( converted == null )
+        {
+            localScope.removeAttribute( CUSTOM_PREFIX + name );
+        }
+        else
+        {
+            localScope.setAttribute( CUSTOM_PREFIX + name, converted );
+        }
+    }
+
+    private static GenericValue toGenericValue( final ScriptValue value )
+    {
+        if ( value == null )
+        {
+            return null;
+        }
+        if ( value.isValue() )
+        {
+            return GenericValue.fromRawJava( value.getValue() );
+        }
+        if ( value.isArray() )
+        {
+            return GenericValue.fromRawJava( value.getList() );
+        }
+        if ( value.isObject() )
+        {
+            return GenericValue.fromRawJava( value.getMap() );
+        }
+        throw new IllegalArgumentException( "Local attribute value must be JSON-like" );
     }
 
     private void applyRepository( final ContextBuilder builder, final String repository )
