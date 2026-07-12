@@ -144,7 +144,7 @@ public class TraceWeaver
 
         for ( int i = 0; i <= max; i++ )
         {
-            if ( bytes[i] == TRACED_DESCRIPTOR_BYTES[0] && Arrays.equals( bytes, i, i + length, TRACED_DESCRIPTOR_BYTES, 0, length ) )
+            if ( Arrays.equals( bytes, i, i + length, TRACED_DESCRIPTOR_BYTES, 0, length ) )
             {
                 return true;
             }
