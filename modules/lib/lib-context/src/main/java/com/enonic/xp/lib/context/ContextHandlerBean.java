@@ -52,7 +52,7 @@ public final class ContextHandlerBean
         return new ContextRunParams();
     }
 
-    public void setCustom( final String name, final ScriptValue value )
+    public void setCustomLocalAttribute( final String name, final ScriptValue value )
     {
         final LocalScope localScope = this.context.get().getLocalScope();
         final GenericValue converted = toGenericValue( value );

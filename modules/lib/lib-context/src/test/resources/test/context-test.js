@@ -71,12 +71,12 @@ function customAttribute(name) {
 exports.after = function () {
     // custom attributes live in the local scope shared by all dynamic tests of this run
     ['myObject', 'myScalar', 'myList', 'shared', 'detached'].forEach(function (name) {
-        context.setCustom(name, null);
+        context.setCustomLocalAttribute(name, null);
     });
 };
 
-exports.testSetCustom = function () {
-    context.setCustom('myObject', {
+exports.testSetCustomLocalAttribute = function () {
+    context.setCustomLocalAttribute('myObject', {
         a: 1,
         b: 'text',
         c: true,
@@ -96,29 +96,29 @@ exports.testSetCustom = function () {
         }
     }, customAttribute('myObject'));
 
-    context.setCustom('myScalar', 42);
+    context.setCustomLocalAttribute('myScalar', 42);
     assert.assertEquals(42, customAttribute('myScalar'));
 
-    context.setCustom('myList', ['a', 'b']);
+    context.setCustomLocalAttribute('myList', ['a', 'b']);
     assert.assertJsonEquals(['a', 'b'], customAttribute('myList'));
 };
 
-exports.testSetCustom_remove = function () {
-    context.setCustom('toRemoveWithNull', 'value');
-    context.setCustom('toRemoveWithNull', null);
+exports.testSetCustomLocalAttribute_remove = function () {
+    context.setCustomLocalAttribute('toRemoveWithNull', 'value');
+    context.setCustomLocalAttribute('toRemoveWithNull', null);
     assert.assertTrue(customAttribute('toRemoveWithNull') === undefined);
 
-    context.setCustom('toRemoveWithUndefined', 'value');
-    context.setCustom('toRemoveWithUndefined');
+    context.setCustomLocalAttribute('toRemoveWithUndefined', 'value');
+    context.setCustomLocalAttribute('toRemoveWithUndefined');
     assert.assertTrue(customAttribute('toRemoveWithUndefined') === undefined);
 };
 
-exports.testSetCustom_sharedWithNestedRun = function () {
-    context.setCustom('shared', 'outer');
+exports.testSetCustomLocalAttribute_sharedWithNestedRun = function () {
+    context.setCustomLocalAttribute('shared', 'outer');
 
     var inner = context.run({branch: 'draft'}, function () {
         var seen = customAttribute('shared');
-        context.setCustom('shared', 'inner');
+        context.setCustomLocalAttribute('shared', 'inner');
         return seen;
     });
 
@@ -126,9 +126,9 @@ exports.testSetCustom_sharedWithNestedRun = function () {
     assert.assertEquals('inner', customAttribute('shared'));
 };
 
-exports.testSetCustom_serializedOnWrite = function () {
+exports.testSetCustomLocalAttribute_serializedOnWrite = function () {
     var source = {list: ['one']};
-    context.setCustom('detached', source);
+    context.setCustomLocalAttribute('detached', source);
     source.list.push('two');
 
     assert.assertJsonEquals({list: ['one']}, customAttribute('detached'));

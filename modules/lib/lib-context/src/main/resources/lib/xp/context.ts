@@ -60,8 +60,8 @@ interface ContextRunParams {
     setCallback<T>(fn: () => T): void;
 }
 
-export type CustomValue = string | number | boolean | CustomValue[] | {
-    [key: string]: CustomValue;
+export type CustomAttributeValue = string | number | boolean | CustomAttributeValue[] | {
+    [key: string]: CustomAttributeValue;
 };
 
 interface ContextHandler {
@@ -71,7 +71,7 @@ interface ContextHandler {
 
     newRunParams(): ContextRunParams;
 
-    setCustom(name: string, value: ScriptValue | null): void;
+    setCustomLocalAttribute(name: string, value: ScriptValue | null): void;
 }
 
 const bean: ContextHandler = __.newBean<ContextHandler>('com.enonic.xp.lib.context.ContextHandlerBean');
@@ -149,13 +149,13 @@ export function get(): Context {
  * Setting `null` or `undefined` removes the attribute.
  *
  * @example
- * contextLib.setCustom('my-data', {values: ['one', 'two']});
+ * contextLib.setCustomLocalAttribute('my-data', {values: ['one', 'two']});
  * const data = contextLib.get().attributes['custom.my-data'];
  *
  * @param {string} name Attribute name, stored with the `custom.` prefix.
  * @param {string|number|boolean|array|object|null} [value] JSON-like value to store, or null/undefined to remove the attribute.
  */
-export function setCustom(name: string, value?: CustomValue | null): void {
-    bean.setCustom(name, value === null || value === undefined ? null : __.toScriptValue(value));
+export function setCustomLocalAttribute(name: string, value?: CustomAttributeValue | null): void {
+    bean.setCustomLocalAttribute(name, value === null || value === undefined ? null : __.toScriptValue(value));
 }
 
