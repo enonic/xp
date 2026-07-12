@@ -4,7 +4,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 
 import com.enonic.xp.content.ContentConstants;
@@ -28,7 +27,6 @@ import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.sortvalues.SortValuesProperty;
 
-@ExtendWith(ContextAccessorSupport.class)
 class FindContentIdsByQueryCommandTest
 {
 

@@ -2,7 +2,6 @@ package com.enonic.xp.portal.impl.url;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -31,7 +30,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(ContextAccessorSupport.class)
 public abstract class AbstractPortalUrlServiceImplTest
 {
     protected PortalRequest portalRequest;

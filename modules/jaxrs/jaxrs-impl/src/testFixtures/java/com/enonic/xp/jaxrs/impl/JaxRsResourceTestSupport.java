@@ -9,7 +9,6 @@ import org.jboss.resteasy.spi.Dispatcher;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -33,7 +32,6 @@ import com.enonic.xp.web.multipart.MultipartService;
 
 import static java.util.Objects.requireNonNull;
 
-@ExtendWith(ContextAccessorSupport.class)
 public abstract class JaxRsResourceTestSupport
 {
     private static final ObjectMapper MAPPER = ObjectMapperHelper.create();

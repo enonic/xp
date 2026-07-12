@@ -6,11 +6,11 @@ import java.util.concurrent.Executors;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextAccessorSupport;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
@@ -56,7 +56,6 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.withSettings;
 
-@ExtendWith(ContextAccessorSupport.class)
 public abstract class AbstractIssueServiceTest
     extends AbstractElasticsearchIntegrationTest
 {
@@ -79,6 +78,8 @@ public abstract class AbstractIssueServiceTest
 
     private ExecutorService executorService;
 
+    private Context initialContext;
+
     @BeforeEach
     void setUpAbstractIssueServiceTest()
     {
@@ -89,13 +90,9 @@ public abstract class AbstractIssueServiceTest
         final Context ctx =
             ContextBuilder.create().branch( WS_DEFAULT ).repositoryId( TEST_REPO_ID ).authInfo( TEST_DEFAULT_USER_AUTHINFO ).build();
 
+        initialContext = ContextAccessor.current();
         ContextAccessorSupport.getInstance().set( ctx );
 
-        ctx.runWith( this::setUpServices );
-    }
-
-    private void setUpServices()
-    {
         final MemoryBlobStore blobStore = new MemoryBlobStore();
 
         final BinaryServiceImpl binaryService = new BinaryServiceImpl( blobStore );
@@ -177,7 +174,7 @@ public abstract class AbstractIssueServiceTest
     @AfterEach
     void tearDownAbstractIssueServiceTest()
     {
-        ContextAccessorSupport.getInstance().remove();
+        ContextAccessorSupport.getInstance().set( initialContext );
         executorService.shutdownNow();
     }
 

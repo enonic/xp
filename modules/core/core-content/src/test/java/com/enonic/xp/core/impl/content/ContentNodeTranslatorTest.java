@@ -3,7 +3,6 @@ package com.enonic.xp.core.impl.content;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
@@ -22,7 +21,6 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@ExtendWith(ContextAccessorSupport.class)
 class ContentNodeTranslatorTest
 {
     public static final NodeId ID_1 = NodeId.from( "id1" );

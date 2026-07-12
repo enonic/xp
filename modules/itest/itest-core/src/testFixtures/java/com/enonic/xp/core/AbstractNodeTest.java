@@ -7,7 +7,6 @@ import java.util.function.Consumer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
 
 import com.enonic.xp.branch.Branch;
@@ -95,7 +94,6 @@ import static java.util.Objects.requireNonNullElse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
-@ExtendWith(ContextAccessorSupport.class)
 public abstract class AbstractNodeTest
     extends AbstractElasticsearchIntegrationTest
 {
@@ -166,6 +164,8 @@ public abstract class AbstractNodeTest
 
     protected IndexServiceImpl indexService;
 
+    private Context initialContext;
+
     private final boolean clearBeforeEach;
 
     protected Context ctxDefault()
@@ -219,60 +219,56 @@ public abstract class AbstractNodeTest
         }
         eventPublisher = mock( EventPublisher.class );
 
-        final Context ctx = ctxDefault();
-        ContextAccessorSupport.getInstance().set( ctx );
+        initialContext = ContextAccessor.current();
+        ContextAccessorSupport.getInstance().set( ctxDefault() );
 
-        ctx.callWith( () -> {
-            HomeDirSupport.set( temporaryFolder.toFile().toPath() );
+        HomeDirSupport.set( temporaryFolder.toFile().toPath() );
 
-            this.binaryService = new BinaryServiceImpl( BLOB_STORE );
+        this.binaryService = new BinaryServiceImpl( BLOB_STORE );
 
-            NodeVersionServiceImpl nodeDao = new NodeVersionServiceImpl( BLOB_STORE, new RepoConfiguration( Map.of() ) );
+        NodeVersionServiceImpl nodeDao = new NodeVersionServiceImpl( BLOB_STORE, new RepoConfiguration( Map.of() ) );
 
-            this.storageDao = new StorageDaoImpl( client );
+        this.storageDao = new StorageDaoImpl( client );
 
-            final SearchDaoImpl searchDao = new SearchDaoImpl( client );
+        final SearchDaoImpl searchDao = new SearchDaoImpl( client );
 
-            this.branchService = new BranchServiceImpl( storageDao, searchDao );
+        this.branchService = new BranchServiceImpl( storageDao, searchDao );
 
-            this.versionService = new VersionServiceImpl( storageDao );
+        this.versionService = new VersionServiceImpl( storageDao );
 
-            this.commitService = new CommitServiceImpl( storageDao );
+        this.commitService = new CommitServiceImpl( storageDao );
 
-            this.indexedDataService = new IndexDataServiceImpl( storageDao );
+        this.indexedDataService = new IndexDataServiceImpl( storageDao );
 
-            this.storageService =
-                new NodeStorageServiceImpl( versionService, branchService, commitService, nodeDao, indexedDataService );
+        this.storageService = new NodeStorageServiceImpl( versionService, branchService, commitService, nodeDao, indexedDataService );
 
-            this.searchService = new NodeSearchServiceImpl( searchDao );
+        this.searchService = new NodeSearchServiceImpl( searchDao );
 
-            this.indexServiceInternal = new IndexServiceInternalImpl( client );
+        this.indexServiceInternal = new IndexServiceInternalImpl( client );
 
-            this.nodeRepositoryService = new NodeRepositoryServiceImpl( indexServiceInternal );
+        this.nodeRepositoryService = new NodeRepositoryServiceImpl( indexServiceInternal );
 
-            this.repositoryEntryService =
-                new RepositoryEntryServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService );
+        this.repositoryEntryService =
+            new RepositoryEntryServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService );
 
-            this.repositoryService =
-                new RepositoryServiceImpl( repositoryEntryService, nodeRepositoryService, storageService, searchService, branchService,
-                                           () -> null );
+        this.repositoryService =
+            new RepositoryServiceImpl( repositoryEntryService, nodeRepositoryService, storageService, searchService, branchService,
+                                       () -> null );
 
-            this.nodeService = new NodeServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService );
+        this.nodeService = new NodeServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService );
 
-            this.indexService =
-                new IndexServiceImpl( indexServiceInternal, indexedDataService, searchService, nodeDao, repositoryEntryService );
+        this.indexService =
+            new IndexServiceImpl( indexServiceInternal, indexedDataService, searchService, nodeDao, repositoryEntryService );
 
-            bootstrap();
+        bootstrap();
 
-            createTestRepository();
-            return null;
-        } );
+        createTestRepository();
     }
 
     @AfterEach
     void tearDownAbstractNodeTest()
     {
-        ContextAccessorSupport.getInstance().remove();
+        ContextAccessorSupport.getInstance().set( initialContext );
     }
 
     protected void bootstrap()

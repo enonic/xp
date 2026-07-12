@@ -10,7 +10,6 @@ import java.util.Map;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -55,7 +54,6 @@ import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(ContextAccessorSupport.class)
 class PortalUrlServiceImpl_processHtmlTest
 {
     private ContentService contentService;
