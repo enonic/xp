@@ -30,6 +30,8 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
+import com.enonic.xp.trace.TestTrace;
+import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
@@ -157,6 +159,21 @@ class AttachmentHandlerTest
         assertEquals( MediaType.PNG, res.getContentType() );
         assertNull( res.getHeaders().get( "Content-Disposition" ) );
         assertSame( this.mediaBytes, res.getBody() );
+    }
+
+    @Test
+    void inline_recordsTraceAttributes()
+        throws Exception
+    {
+        this.request.setRawPath( "/_/attachment/inline/123456/logo.png" );
+
+        // outside OSGi the @Traced wrapper is inert; a manually bound trace exercises the attribute enrichment code
+        final TestTrace trace = TestTrace.of( "portalRequest" );
+        final PortalResponse res = Tracer.traceEx( trace, () -> this.handler.handle( this.request ) );
+
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertEquals( "/path/to/content", trace.get( "contentPath" ) );
+        assertEquals( "attachment", trace.get( "type" ) );
     }
 
     @Test

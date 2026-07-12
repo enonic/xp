@@ -356,6 +356,29 @@ class MappingHandlerTest
     }
 
     @Test
+    void executeFilter_recordsTraceAttributes()
+        throws Exception
+    {
+        final ResourceKey filter = ResourceKey.from( "demo:/services/test" );
+        final ControllerMappingDescriptor mapping = ControllerMappingDescriptor.create().filter( filter ).pattern( ".*/content" ).build();
+
+        setupContentAndSite( mapping, false );
+
+        this.request.setBaseUri( "/site" );
+        this.request.setContentPath( ContentPath.from( "/site/somesite/content" ) );
+
+        // outside OSGi the @Traced wrapper is inert; a manually bound trace exercises the attribute enrichment code
+        final TestTrace trace = TestTrace.of( "filter" );
+        final WebResponse response =
+            Tracer.traceEx( trace, () -> this.handler.handle( this.request, PortalResponse.create().build(), null ) );
+
+        assertEquals( HttpStatus.OK, response.getStatus() );
+        assertEquals( "/site/somesite/content", trace.get( "contentPath" ) );
+        assertEquals( "filter", trace.get( "type" ) );
+        assertEquals( "demo:/services/test", trace.get( "filter" ) );
+    }
+
+    @Test
     void executeFilter_withPage()
         throws Exception
     {

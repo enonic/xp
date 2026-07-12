@@ -34,6 +34,8 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
+import com.enonic.xp.trace.TestTrace;
+import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
@@ -246,6 +248,23 @@ class ImageHandlerTest
         assertEquals( HttpStatus.OK, res.getStatus() );
         assertEquals( MediaType.PNG, res.getContentType() );
         assertInstanceOf( ByteSource.class, res.getBody() );
+    }
+
+    @Test
+    void imageFound_recordsTraceAttributes()
+        throws Exception
+    {
+        setupContent();
+
+        this.request.setRawPath( "/_/image/123456/scale-100-100/image-name.jpg" );
+
+        // outside OSGi the @Traced wrapper is inert; a manually bound trace exercises the attribute enrichment code
+        final TestTrace trace = TestTrace.of( "portalRequest" );
+        final WebResponse res = Tracer.traceEx( trace, () -> this.handler.handle( this.request ) );
+
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertEquals( "/path/to/image-name.jpg", trace.get( "contentPath" ) );
+        assertEquals( "image", trace.get( "type" ) );
     }
 
     @Test

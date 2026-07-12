@@ -38,10 +38,15 @@ import com.enonic.xp.service.ServiceDescriptor;
 import com.enonic.xp.service.ServiceDescriptorService;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
+import com.enonic.xp.trace.TestTrace;
+import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebResponse;
+import com.enonic.xp.web.websocket.WebSocketConfig;
+import com.enonic.xp.web.websocket.WebSocketContext;
+import com.enonic.xp.web.websocket.WebSocketEndpoint;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -174,6 +179,30 @@ class ServiceHandlerTest
         assertNotNull( this.request.getApplicationKey() );
         assertNull( this.request.getSite() );
         assertNull( this.request.getContent() );
+    }
+
+    @Test
+    void executeScript_webSocket_recordsAppTraceAttribute()
+        throws Exception
+    {
+        this.request.setBaseUri( "/webapp/demo" );
+        this.request.setRawPath( "/_/service/demo/test" );
+        this.request.setApplicationKey( ApplicationKey.from( "demo" ) );
+
+        when( this.controllerScript.execute( Mockito.any() ) ).thenReturn(
+            PortalResponse.create().webSocket( new WebSocketConfig() ).build() );
+
+        final WebSocketContext webSocketContext = mock( WebSocketContext.class );
+        when( webSocketContext.apply( Mockito.any( WebSocketEndpoint.class ) ) ).thenReturn( true );
+        this.request.setWebSocketContext( webSocketContext );
+
+        // outside OSGi the @Traced wrapper is inert; a manually bound trace exercises the attribute enrichment code
+        final TestTrace trace = TestTrace.of( "portalRequest" );
+        final WebResponse response = Tracer.traceEx( trace, () -> this.handler.handle( this.request ) );
+
+        assertEquals( HttpStatus.OK, response.getStatus() );
+        verify( webSocketContext ).apply( Mockito.any( WebSocketEndpoint.class ) );
+        assertEquals( "demo", trace.get( "app" ) );
     }
 
     @Test
