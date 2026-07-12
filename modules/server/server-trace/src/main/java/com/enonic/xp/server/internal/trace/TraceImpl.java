@@ -82,30 +82,36 @@ final class TraceImpl
 
     private static Object normalize( final Object value )
     {
-        if ( value instanceof String || value instanceof Boolean || value instanceof Long || value instanceof Double )
+        return switch ( value )
         {
-            return value;
-        }
-        if ( value instanceof Integer || value instanceof Short || value instanceof Byte )
+            case String s -> s;
+            case Boolean b -> b;
+            case Long l -> l;
+            case Double d -> d;
+            case Integer i -> i.longValue();
+            case Short s -> s.longValue();
+            case Byte b -> b.longValue();
+            case Float f -> f.doubleValue();
+            case Iterable<?> iterable -> toStringList( iterable );
+            default -> coerceToString( value );
+        };
+    }
+
+    private static List<String> toStringList( final Iterable<?> iterable )
+    {
+        final List<String> strings = new ArrayList<>();
+        for ( final Object element : iterable )
         {
-            return ( (Number) value ).longValue();
-        }
-        if ( value instanceof Float floatValue )
-        {
-            return floatValue.doubleValue();
-        }
-        if ( value instanceof Iterable<?> iterable )
-        {
-            final List<String> strings = new ArrayList<>();
-            for ( final Object element : iterable )
+            if ( element != null )
             {
-                if ( element != null )
-                {
-                    strings.add( String.valueOf( element ) );
-                }
+                strings.add( String.valueOf( element ) );
             }
-            return List.copyOf( strings );
         }
+        return List.copyOf( strings );
+    }
+
+    private static String coerceToString( final Object value )
+    {
         if ( COERCION_LOGGED_TYPES.size() < MAX_COERCION_LOGGED_TYPES && COERCION_LOGGED_TYPES.add( value.getClass().getName() ) )
         {
             LOG.debug( "Trace attribute value of type {} converted to String - record strings, booleans, longs, doubles " +

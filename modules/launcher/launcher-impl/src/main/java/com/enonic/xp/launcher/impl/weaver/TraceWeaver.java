@@ -1,6 +1,7 @@
 package com.enonic.xp.launcher.impl.weaver;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -133,29 +134,20 @@ public class TraceWeaver
 
     private static boolean containsTracedDescriptor( final byte @Nullable [] bytes )
     {
-        if ( bytes == null || bytes.length < TRACED_DESCRIPTOR_BYTES.length )
+        if ( bytes == null )
         {
             return false;
         }
 
-        final byte first = TRACED_DESCRIPTOR_BYTES[0];
-        final int max = bytes.length - TRACED_DESCRIPTOR_BYTES.length;
+        final int length = TRACED_DESCRIPTOR_BYTES.length;
+        final int max = bytes.length - length;
 
-        outer:
         for ( int i = 0; i <= max; i++ )
         {
-            if ( bytes[i] != first )
+            if ( bytes[i] == TRACED_DESCRIPTOR_BYTES[0] && Arrays.equals( bytes, i, i + length, TRACED_DESCRIPTOR_BYTES, 0, length ) )
             {
-                continue;
+                return true;
             }
-            for ( int j = 1; j < TRACED_DESCRIPTOR_BYTES.length; j++ )
-            {
-                if ( bytes[i + j] != TRACED_DESCRIPTOR_BYTES[j] )
-                {
-                    continue outer;
-                }
-            }
-            return true;
         }
         return false;
     }
