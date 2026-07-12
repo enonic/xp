@@ -84,7 +84,7 @@ public final class ContextHandlerBean
         {
             return GenericValue.fromRawJava( value.getMap() );
         }
-        throw new IllegalArgumentException( "Local attribute value must be JSON-like" );
+        throw new IllegalArgumentException( "Local attribute value must be a string, number, boolean, array or object" );
     }
 
     private void applyRepository( final ContextBuilder builder, final String repository )

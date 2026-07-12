@@ -93,8 +93,9 @@ public final class ScriptEventManagerImpl
         {
             try
             {
-                // Bind a context for the whole dispatch, so ambient state (e.g. REQUEST-scope login)
-                // stays visible to the listener without leaking into other dispatches.
+                // Bind a fresh context around the whole dispatch: ambient state the listener itself sets
+                // (e.g. REQUEST-scope login) stays visible for the rest of that dispatch, and nothing
+                // leaks between dispatches.
                 asyncExecutor.execute( () -> ContextBuilder.create().build().runWith( () -> listener.onEvent( event ) ) );
             }
             catch ( RejectedExecutionException e )
