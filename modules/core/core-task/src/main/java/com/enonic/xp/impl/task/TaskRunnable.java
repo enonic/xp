@@ -56,23 +56,20 @@ final class TaskRunnable
         } );
 
         progressReporter.running();
-        boolean success;
         try
         {
             newContext().runWith( () -> runnableTask.run( progressReporter ) );
             progressReporter.finished();
-            success = true;
+            Tracer.withCurrent( trace -> trace.attribute( "success", true ) );
+            return true;
         }
         catch ( Throwable t )
         {
             progressReporter.failed( t.getMessage() );
             LOG.error( "Error executing task [{}] '{}': {}", runnableTask.getTaskId(), runnableTask.getName(), t.getMessage(), t );
-            success = false;
+            Tracer.withCurrent( trace -> trace.attribute( "success", false ) );
+            return false;
         }
-
-        final boolean result = success;
-        Tracer.withCurrent( trace -> trace.attribute( "success", result ) );
-        return result;
     }
 
     private Context newContext()
