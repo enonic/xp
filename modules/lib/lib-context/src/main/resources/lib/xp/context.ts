@@ -138,12 +138,10 @@ export function get(): Context {
 /**
  * Stores a JSON-like value as a custom attribute in the local scope of the current context.
  *
- * The local scope lives for the duration of the current execution - for instance a request, including its
- * response processors and filters, or a task run - and is shared with nested `run` calls. This makes it
- * possible to pass data from a page or component controller to response processors and filters.
+ * The local scope lives for the duration of the current execution and is shared with nested `run` calls,
+ * so a value stored by one piece of code is visible to everything else running in the same execution.
  *
- * The attribute is stored under the `custom.` prefix and is returned by `get()` as
- * `attributes['custom.<name>']`, similar to how custom events are prefixed.
+ * The attribute is stored under the `custom.` prefix and is returned by `get()` as `attributes['custom.<name>']`.
  *
  * The value is serialized on write: later modifications of the passed object are not reflected in the
  * stored attribute, and readers always get their own copy.
@@ -151,8 +149,8 @@ export function get(): Context {
  * Setting `null` or `undefined` removes the attribute.
  *
  * @example
- * contextLib.setCustom('tracking-tags', {tags: ['tag1', 'tag2']});
- * const tags = contextLib.get().attributes['custom.tracking-tags'];
+ * contextLib.setCustom('my-data', {values: ['one', 'two']});
+ * const data = contextLib.get().attributes['custom.my-data'];
  *
  * @param {string} name Attribute name, stored with the `custom.` prefix.
  * @param {string|number|boolean|array|object|null} [value] JSON-like value to store, or null/undefined to remove the attribute.
