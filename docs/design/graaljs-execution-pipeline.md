@@ -246,12 +246,12 @@ While rebuilding the boundary, make conversion rules explicit and total in one p
   `xp.script-engine.nashorn-compat` system property and the experimental-options flag on the
   shared engine are gone. Apps needing Nashorn semantics select the real Nashorn engine via
   `X-Script-Engine` instead of a half-compatible Graal mode.
-- *(done on this branch)* guest-value sharing between contexts is **disabled**
-  (`allowValueSharing(false)`). GraalJS would otherwise let a `Value` from one context be passed
-  into another (same engine), with every access re-entering the owning context — with the slot
-  pool that means a leaked value silently serializes slots against each other and risks
-  monitor-ordering deadlocks. Now it fails fast. Sharing across slots is done with host objects
-  and proxies (which cross freely) or eager conversion — never guest objects.
+- *(investigated, not possible)* disabling guest-value sharing (`allowValueSharing(false)`) as
+  a fail-fast assertion against cross-slot `Value` leaks: GraalJS forbids it for contexts bound
+  to a shared engine (context creation fails), and the shared engine is required for code-cache
+  sharing. It also breaks the legitimate `Value.asValue(...)` host-context pattern. Isolation
+  therefore relies on the executor's slot discipline (ThreadLocal / `holdsLock` resolution):
+  guest objects never cross slots — convert eagerly or share host-backed state.
 
 ## 5. Trade-offs we consciously accept ("works differently on GraalJS")
 

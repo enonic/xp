@@ -35,16 +35,17 @@ public final class GraalJSContextFactory
     {
         final AtomicReference<Context> contextRef = new AtomicReference<>();
 
+        // Note: guest values passed between contexts silently re-enter their owning context on
+        // every access — with the context pool that means latent serialization and deadlock
+        // risk. allowValueSharing(false) would fail fast on such leaks, but GraalJS forbids
+        // disabling it for contexts bound to a shared engine, which we require for code-cache
+        // sharing. Isolation therefore relies on the executor's slot discipline: never pass
+        // guest objects across slots — convert eagerly or share host-backed state.
         final Context.Builder contextBuilder = Context.newBuilder( "js" )
             .allowHostAccess( hostAccess( contextRef ) )
             .allowHostClassLookup( className -> true )
             .option( "js.strict", "true" )
-            .allowHostClassLoading( true )
-            // guest values must never cross contexts: with the context pool, a leaked Value
-            // accessed from another slot would silently re-enter its owning context (latent
-            // serialization and deadlock). Fail fast instead; host objects and proxies still
-            // cross freely — convert or share host-backed state, never guest objects.
-            .allowValueSharing( false );
+            .allowHostClassLoading( true );
 
         if ( sharedEngine != null )
         {
