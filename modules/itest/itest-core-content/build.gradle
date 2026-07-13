@@ -39,9 +39,8 @@ tasks.register( 'integrationTest', Test ) {
     shouldRunAfter test
 }
 
-check.dependsOn( tasks.named( 'integrationTest' ) )
-
+// Not part of `check`: integration tests are slow and must be invoked explicitly
+// with `./gradlew integrationTest`.
 tasks.named( 'jacocoTestReport' ) {
-    dependsOn( tasks.named( 'integrationTest' ) )
     executionData.from = fileTree( layout.buildDirectory ).include( "/jacoco/*.exec" )
 }
