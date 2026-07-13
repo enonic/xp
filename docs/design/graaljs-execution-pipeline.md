@@ -220,9 +220,18 @@ closure on another thread", which JS cannot honor. Proposal:
 *Decision:* the synchronous request model is retained — it has served well with Jetty's thread
 pool, and an async servlet / promise-controller model (originally sketched here) is **out of
 scope**. Instead, the pool scales until contexts are not the bottleneck: the target is a total
-context budget in the order of the Jetty worker pool, shared **across all applications** rather
-than fixed per app. A blocked request then always owns a thread *and* a context, exactly like a
-classic Java servlet application.
+context budget in the order of **peak concurrent JS executions**, shared **across all
+applications** rather than fixed per app. A blocked request then always owns a thread *and* a
+context, exactly like a classic Java servlet application.
+
+Sizing note: HTTP requests are bounded by the Jetty worker pool, but websocket and SSE
+connections are async and do not hold worker threads — connection counts can be orders of
+magnitude larger than any thread pool. That is exactly why affinity *hashes many connections
+onto few slots* (§ phase 3) instead of dedicating a context per connection: 10k idle sockets
+cost nothing, and only their momentarily-executing event handlers occupy slots. Two
+consequences: the budget sizes for concurrent *executions* (workers + event-dispatch
+concurrency), not connections; and pinned event handlers should stay short — a hot slot
+serializes all connections hashed to it, and event-dispatch threads block while waiting on it.
 
 What this requires of the pool (the "elastic pool" work):
 
