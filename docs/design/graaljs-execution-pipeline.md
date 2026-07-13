@@ -291,9 +291,15 @@ what every Node.js cluster / worker deployment already imposes on developers.
    listeners with no lib changes), and `GraalObjectConverter.toFunction` returns handles. This
    alone turns crashes into correct-but-serialized behavior on the current single context.
    Small, independently shippable.
-2. **Worker pool behind a flag** — `JsWorkerPool`, per-worker exports cache, thread
-   confinement, `xp.script-engine.graal.pool-size` (default 1 = today's behavior; dev mode
-   forces 1). Main-worker rule for `main.js`.
+2. **Context pool behind a flag** *(started on this branch)* — `GraalScriptExecutor` now owns N
+   `ContextSlot`s (context + value factory + per-slot `require` cache), checked out per
+   invocation; `xp.script-engine.graal.pool-size` (default 1 = today's behavior; dev mode
+   forces 1). `ScriptExports` became a pool-aware facade so cached controller scripts don't pin
+   one slot. The context monitor remains the ownership primitive — slot resolution is
+   ThreadLocal → `Thread.holdsLock` scan → checkout, which keeps `require` on a foreign-thread
+   callback in the callback's own slot and avoids slot/monitor deadlock cycles. Still to do
+   from the original plan: dedicated worker threads (queue instead of monitor) and a
+   main-worker rule for `main.js` listeners at pool sizes above 1.
 3. **Connection affinity** — websocket/SSE binding, per-connection ordering guarantees;
    closes [#8644](https://github.com/enonic/xp/issues/8644).
 4. **Detached `executeFunction` + docs** — opt-in Web-Worker semantics; migration guide

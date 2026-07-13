@@ -1,29 +1,29 @@
 package com.enonic.xp.script.graal.executor;
 
-import org.graalvm.polyglot.Context;
+import org.graalvm.polyglot.Value;
 
 import com.enonic.xp.resource.ResourceError;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
 
+/**
+ * Pool-aware exports facade: not bound to one context, it resolves the module's exports in
+ * whatever slot serves the invocation (loading the module there on first use). Consumers cache
+ * instances of this class (e.g. portal controller scripts), so binding to a single slot would
+ * pin all callers of a script to one context and defeat the pool.
+ */
 final class GraalScriptExports
     implements ScriptExports
 {
-    private final Context context;
+    private final GraalScriptExecutor executor;
 
     private final ResourceKey script;
 
-    private final ScriptValue value;
-
-    private final Object raw;
-
-    GraalScriptExports( final Context context, final ResourceKey script, final ScriptValue value, final Object raw )
+    GraalScriptExports( final GraalScriptExecutor executor, final ResourceKey script )
     {
-        this.context = context;
+        this.executor = executor;
         this.script = script;
-        this.value = value;
-        this.raw = raw;
     }
 
     @Override
@@ -35,26 +35,25 @@ final class GraalScriptExports
     @Override
     public ScriptValue getValue()
     {
-        return this.value;
+        return executor.withExports( script, ( slot, exports ) -> slot.scriptValueFactory.newValue( exports ) );
     }
 
     @Override
     public boolean hasMethod( final String name )
     {
-        return getMethod( name ) != null;
+        return executor.withExports( script, ( slot, exports ) -> getMethod( slot, exports, name ) != null );
     }
 
     @Override
     public ScriptValue executeMethod( final String name, final Object... args )
     {
-        final ScriptValue method = getMethod( name );
-        if ( method == null )
-        {
-            return null;
-        }
+        return executor.withExports( script, ( slot, exports ) -> {
+            final ScriptValue method = getMethod( slot, exports, name );
+            if ( method == null )
+            {
+                return null;
+            }
 
-        synchronized ( context )
-        {
             try
             {
                 return method.call( args );
@@ -63,21 +62,19 @@ final class GraalScriptExports
             {
                 throw new ResourceError( script, "Method execute failed: [" + script + "][" + name + "]", e );
             }
-        }
+        } );
     }
 
     @Override
     public Object getRawValue()
     {
-        return this.raw;
+        return executor.withExports( script, ( slot, exports ) -> exports );
     }
 
-    private ScriptValue getMethod( final String name )
+    private ScriptValue getMethod( final GraalScriptExecutor.ContextSlot slot, final Value exports, final String name )
     {
-        synchronized ( context )
-        {
-            final ScriptValue func = this.value.getMember( name );
-            return ( ( func != null ) && func.isFunction() ) ? func : null;
-        }
+        final ScriptValue value = slot.scriptValueFactory.newValue( exports );
+        final ScriptValue func = value.getMember( name );
+        return ( ( func != null ) && func.isFunction() ) ? func : null;
     }
 }

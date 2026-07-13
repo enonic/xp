@@ -1,12 +1,21 @@
 package com.enonic.xp.script.graal.executor;
 
 import java.io.Closeable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import javax.script.Bindings;
 import javax.script.ScriptEngine;
@@ -36,7 +45,6 @@ import com.enonic.xp.script.impl.function.ApplicationInfoBuilder;
 import com.enonic.xp.script.impl.service.ServiceRegistry;
 import com.enonic.xp.script.impl.util.JavascriptHelper;
 import com.enonic.xp.script.impl.util.ObjectConverter;
-import com.enonic.xp.script.impl.value.ScriptValueFactory;
 import com.enonic.xp.script.runtime.ScriptSettings;
 import com.enonic.xp.server.RunMode;
 
@@ -49,11 +57,7 @@ public class GraalScriptExecutor
 
     private final Executor asyncExecutor;
 
-    private final Context context;
-
     private final ScriptSettings scriptSettings;
-
-    private final ScriptExportsCache<Value> exportsCache;
 
     private final ClassLoader classLoader;
 
@@ -63,15 +67,18 @@ public class GraalScriptExecutor
 
     private final Map<String, Object> mocks = new ConcurrentHashMap<>();
 
-    private final Map<ResourceKey, Runnable> disposers = new ConcurrentHashMap<>();
+    private final Map<ResourceKey, Queue<Runnable>> disposers = new ConcurrentHashMap<>();
 
-    private final ScriptValueFactory<Value> scriptValueFactory;
+    private final List<ContextSlot> slots;
 
-    private final JavascriptHelper<Value> javascriptHelper;
+    private final BlockingQueue<ContextSlot> freeSlots;
+
+    private final ThreadLocal<ContextSlot> boundSlot = new ThreadLocal<>();
 
     public GraalScriptExecutor( final GraalJSContextFactory contextFactory, final Executor asyncExecutor, final ClassLoader classLoader,
                                 final ScriptSettings scriptSettings, final ServiceRegistry serviceRegistry,
-                                final ResourceService resourceService, final ApplicationInfoBuilder application )
+                                final ResourceService resourceService, final ApplicationInfoBuilder application,
+                                final int contextPoolSize )
     {
         this.asyncExecutor = asyncExecutor;
         this.scriptSettings = scriptSettings;
@@ -79,35 +86,33 @@ public class GraalScriptExecutor
         this.serviceRegistry = serviceRegistry;
         this.classLoader = classLoader;
 
-        final GraalScriptValueFactory scriptValueFactory =
-            new GraalScriptValueFactory( contextFactory, new GraalJavascriptHelperFactory() );
-        this.scriptValueFactory = scriptValueFactory;
-        this.javascriptHelper = this.scriptValueFactory.getJavascriptHelper();
-        this.exportsCache = new ScriptExportsCache<>( resourceService::getResource, this::runDisposers );
-        this.context = scriptValueFactory.getContext();
-        final Map<String, Object> globalVariables = new HashMap<>( this.scriptSettings.getGlobalVariables() );
-        globalVariables.put( "app", ProxyObject.fromMap( application.buildMap( HashMap::new ) ) );
-        globalVariables.forEach( ( key, value ) -> this.context.getBindings( "js" ).putMember( key, value ) );
+        final int poolSize = Math.max( 1, contextPoolSize );
+        this.slots = new ArrayList<>( poolSize );
+        for ( int i = 0; i < poolSize; i++ )
+        {
+            this.slots.add( new ContextSlot( contextFactory, application ) );
+        }
+        this.freeSlots = new ArrayBlockingQueue<>( poolSize );
+        this.freeSlots.addAll( this.slots );
     }
 
     @Override
     public ScriptExports executeMain( final ResourceKey key )
     {
-        if ( RunMode.isDev() )
-        {
-            exportsCache.expireCacheIfNeeded();
-        }
-        return doExecuteMain( key );
+        withSlot( slot -> {
+            if ( RunMode.isDev() )
+            {
+                slot.exportsCache.expireCacheIfNeeded();
+            }
+            return requireInSlot( slot, key );
+        } );
+        return new GraalScriptExports( this, key );
     }
 
     @Override
     public CompletableFuture<ScriptExports> executeMainAsync( final ResourceKey key )
     {
-        if ( RunMode.isDev() )
-        {
-            exportsCache.expireCacheIfNeeded();
-        }
-        return CompletableFuture.completedFuture( key ).thenApplyAsync( this::doExecuteMain, asyncExecutor );
+        return CompletableFuture.completedFuture( key ).thenApplyAsync( this::executeMain, asyncExecutor );
     }
 
     @Override
@@ -119,20 +124,13 @@ public class GraalScriptExecutor
             return mock;
         }
 
-        try
-        {
-            return exportsCache.getOrCompute( key, this::requireJsOrJson );
-        }
-        catch ( InterruptedException | TimeoutException e )
-        {
-            throw new RuntimeException( "Script require failed: [" + key + "]", e );
-        }
+        return withSlot( slot -> requireInSlot( slot, key ) );
     }
 
     @Override
     public ScriptValue newScriptValue( final Object value )
     {
-        return scriptValueFactory.newValue( value );
+        return withSlot( slot -> slot.scriptValueFactory.newValue( value ) );
     }
 
     @Override
@@ -162,7 +160,7 @@ public class GraalScriptExecutor
     @Override
     public ObjectConverter getObjectConverter()
     {
-        return javascriptHelper.objectConverter();
+        return currentSlot().javascriptHelper.objectConverter();
     }
 
     @Override
@@ -179,54 +177,130 @@ public class GraalScriptExecutor
     @Override
     public void registerDisposer( final ResourceKey key, final Runnable callback )
     {
-        this.disposers.put( key, callback );
+        this.disposers.computeIfAbsent( key, k -> new ConcurrentLinkedQueue<>() ).add( callback );
     }
 
     @Override
     public void runDisposers()
     {
-        this.disposers.values().forEach( Runnable::run );
+        this.disposers.values().forEach( queue -> queue.forEach( Runnable::run ) );
     }
 
     @Override
     public void close()
     {
-        if ( context != null )
+        for ( final ContextSlot slot : slots )
         {
-            context.close();
+            slot.context.close();
         }
     }
 
-    private ScriptExports doExecuteMain( final ResourceKey key )
+    /**
+     * Runs work on an exclusively owned context slot. Resolution order: the slot already bound to
+     * this thread (nested executions during a request), a slot whose context monitor this thread
+     * already holds (callbacks routed through {@code JsFunctionHandle}/{@code ScriptValue}
+     * monitors calling back into the executor, e.g. {@code require} on a foreign thread — must
+     * not acquire a different slot, both for correctness and to avoid slot/monitor deadlocks),
+     * and only then a checkout from the free queue.
+     */
+    <T> T withSlot( final Function<ContextSlot, T> work )
     {
-        final Object exports = executeRequire( key );
-        ScriptValue scriptValue = scriptValueFactory.newValue( exports );
-        return new GraalScriptExports( context, key, scriptValue, exports );
+        final ContextSlot bound = this.boundSlot.get();
+        if ( bound != null )
+        {
+            return work.apply( bound );
+        }
+
+        for ( final ContextSlot slot : slots )
+        {
+            if ( Thread.holdsLock( slot.context ) )
+            {
+                return runBound( slot, work );
+            }
+        }
+
+        final ContextSlot slot = takeSlot();
+        try
+        {
+            synchronized ( slot.context )
+            {
+                return runBound( slot, work );
+            }
+        }
+        finally
+        {
+            this.freeSlots.add( slot );
+        }
     }
 
-    private Value requireJsOrJson( final Resource resource )
+    <T> T withExports( final ResourceKey key, final BiFunction<ContextSlot, Value, T> work )
     {
-        return "json".equals( resource.getKey().getExtension() ) ? requireJson( resource ) : requireJs( resource );
+        return withSlot( slot -> work.apply( slot, requireInSlot( slot, key ) ) );
     }
 
-    private Value requireJs( final Resource resource )
+    private <T> T runBound( final ContextSlot slot, final Function<ContextSlot, T> work )
+    {
+        this.boundSlot.set( slot );
+        try
+        {
+            return work.apply( slot );
+        }
+        finally
+        {
+            this.boundSlot.remove();
+        }
+    }
+
+    private ContextSlot takeSlot()
+    {
+        try
+        {
+            final ContextSlot slot = this.freeSlots.poll( 5, TimeUnit.MINUTES );
+            if ( slot == null )
+            {
+                throw new RuntimeException( "Timed out waiting for a free script context" );
+            }
+            return slot;
+        }
+        catch ( final InterruptedException e )
+        {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException( "Interrupted while waiting for a free script context", e );
+        }
+    }
+
+    private Value requireInSlot( final ContextSlot slot, final ResourceKey key )
+    {
+        try
+        {
+            return slot.exportsCache.getOrCompute( key, resource -> requireJsOrJson( slot, resource ) );
+        }
+        catch ( InterruptedException | TimeoutException e )
+        {
+            throw new RuntimeException( "Script require failed: [" + key + "]", e );
+        }
+    }
+
+    private Value requireJsOrJson( final ContextSlot slot, final Resource resource )
+    {
+        return "json".equals( resource.getKey().getExtension() ) ? requireJson( slot, resource ) : requireJs( slot, resource );
+    }
+
+    private Value requireJs( final ContextSlot slot, final Resource resource )
     {
         final SimpleBindings bindings = new SimpleBindings();
         bindings.put( ScriptEngine.FILENAME, getFileName( resource ) );
 
-        synchronized ( context )
-        {
-            final Value func = doExecute( bindings, resource );
-            return executeRequire( resource.getKey(), func );
-        }
+        final Value func = doExecute( slot, bindings, resource );
+        return executeRequire( slot, resource.getKey(), func );
     }
 
-    private Value requireJson( final Resource resource )
+    private Value requireJson( final ContextSlot slot, final Resource resource )
     {
         try
         {
             final String text = resource.readString();
-            return this.javascriptHelper.parseJson( text );
+            return slot.javascriptHelper.parseJson( text );
         }
         catch ( final Exception e )
         {
@@ -234,17 +308,17 @@ public class GraalScriptExecutor
         }
     }
 
-    private Value executeRequire( final ResourceKey script, final Value func )
+    private Value executeRequire( final ContextSlot slot, final ResourceKey script, final Value func )
     {
         try
         {
-            Value exports = javascriptHelper.newJsObject();
+            Value exports = slot.javascriptHelper.newJsObject();
 
-            Value module = javascriptHelper.newJsObject();
+            Value module = slot.javascriptHelper.newJsObject();
             module.putMember( "id", script.toString() );
             module.putMember( "exports", exports );
 
-            final GraalScriptFunctions functions = new GraalScriptFunctions( context, script, this );
+            final GraalScriptFunctions functions = new GraalScriptFunctions( slot.context, script, this );
             func.execute( functions.getLog(), functions.getRequire(), functions.getResolve(), functions, exports, module );
             return module.getMember( "exports" );
         }
@@ -268,14 +342,14 @@ public class GraalScriptExecutor
         return resource.getKey().toString();
     }
 
-    private Value doExecute( final Bindings bindings, final Resource script )
+    private Value doExecute( final ContextSlot slot, final Bindings bindings, final Resource script )
     {
         try
         {
             final String text = script.readString();
             final String source = PRE_SCRIPT + text + POST_SCRIPT;
-            bindings.forEach( ( key, value ) -> this.context.getBindings( "js" ).putMember( key, value ) );
-            return this.context.eval( Source.newBuilder( "js", source, script.getKey().toString() ).build() );
+            bindings.forEach( ( key, value ) -> slot.context.getBindings( "js" ).putMember( key, value ) );
+            return slot.context.eval( Source.newBuilder( "js", source, script.getKey().toString() ).build() );
         }
         catch ( final Exception e )
         {
@@ -284,6 +358,55 @@ public class GraalScriptExecutor
         catch ( final StackOverflowError e )
         {
             throw new ResourceError( script.getKey(), "Script execute failed: [" + script.getKey() + "]", e );
+        }
+    }
+
+    /**
+     * The slot to use for conversions requested outside a slot execution — the bound/held slot
+     * when inside one, the first slot otherwise (matching the single-context behavior).
+     */
+    private ContextSlot currentSlot()
+    {
+        final ContextSlot bound = this.boundSlot.get();
+        if ( bound != null )
+        {
+            return bound;
+        }
+        for ( final ContextSlot slot : slots )
+        {
+            if ( Thread.holdsLock( slot.context ) )
+            {
+                return slot;
+            }
+        }
+        return slots.get( 0 );
+    }
+
+    /**
+     * One pooled JS context with everything bound to it: value factory, helper and the
+     * {@code require} cache. Cached exports are {@link Value}s of this slot's context and must
+     * never mix with another slot's.
+     */
+    final class ContextSlot
+    {
+        final GraalScriptValueFactory scriptValueFactory;
+
+        final JavascriptHelper<Value> javascriptHelper;
+
+        final Context context;
+
+        final ScriptExportsCache<Value> exportsCache;
+
+        ContextSlot( final GraalJSContextFactory contextFactory, final ApplicationInfoBuilder application )
+        {
+            this.scriptValueFactory = new GraalScriptValueFactory( contextFactory, new GraalJavascriptHelperFactory() );
+            this.javascriptHelper = this.scriptValueFactory.getJavascriptHelper();
+            this.context = this.scriptValueFactory.getContext();
+            this.exportsCache = new ScriptExportsCache<>( resourceService::getResource, GraalScriptExecutor.this::runDisposers );
+
+            final Map<String, Object> globalVariables = new HashMap<>( scriptSettings.getGlobalVariables() );
+            globalVariables.put( "app", ProxyObject.fromMap( application.buildMap( HashMap::new ) ) );
+            globalVariables.forEach( ( key, value ) -> this.context.getBindings( "js" ).putMember( key, value ) );
         }
     }
 }

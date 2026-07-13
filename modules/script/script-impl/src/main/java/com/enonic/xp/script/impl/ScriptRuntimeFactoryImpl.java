@@ -34,6 +34,7 @@ import com.enonic.xp.script.impl.standard.ScriptRuntimeImpl;
 import com.enonic.xp.script.runtime.ScriptRuntime;
 import com.enonic.xp.script.runtime.ScriptRuntimeFactory;
 import com.enonic.xp.script.runtime.ScriptSettings;
+import com.enonic.xp.server.RunMode;
 
 import static java.util.Objects.requireNonNullElseGet;
 
@@ -120,6 +121,16 @@ public class ScriptRuntimeFactoryImpl
         return normalizeEngineName( System.getProperty( "xp.script-engine", NASHORN_SCRIPT_ENGINE ) );
     }
 
+    /**
+     * GraalJS contexts per application. Above 1, requests execute in parallel on separate
+     * contexts at the cost of per-context module state (see the execution-pipeline design doc).
+     * Dev mode stays at 1 so script reloading keeps a single context to invalidate.
+     */
+    private static int contextPoolSize()
+    {
+        return RunMode.isDev() ? 1 : Math.max( 1, Integer.getInteger( "xp.script-engine.graal.pool-size", 1 ) );
+    }
+
     private static String normalizeEngineName( final String scriptEngine )
     {
         final String se = scriptEngine.toLowerCase( Locale.ROOT );
@@ -171,7 +182,8 @@ public class ScriptRuntimeFactoryImpl
                 }
                 return new GraalScriptExecutor( new GraalJSContextFactory( appClassloader, engine ),
                                                 scriptAsyncService.getAsyncExecutor( applicationKey ), appClassloader, settings,
-                                                new ServiceRegistryImpl( appBundleContext ), resourceService, appInfo );
+                                                new ServiceRegistryImpl( appBundleContext ), resourceService, appInfo,
+                                                contextPoolSize() );
             }
             else if ( NASHORN_SCRIPT_ENGINE.equals( appScriptEngine ) )
             {
