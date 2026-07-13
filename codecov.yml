@@ -7,3 +7,10 @@ coverage:
     project:
       default:
         informational: true
+    # Fixed target instead of auto (base coverage): the auto target tracks
+    # overall project coverage, which no longer includes integration tests.
+    # 80% keeps a real gate on changed lines while tolerating defensive
+    # branches (interrupts, timeouts, StackOverflowError handlers).
+    patch:
+      default:
+        target: 80%
