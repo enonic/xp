@@ -45,7 +45,7 @@ To get started with Enonic, visit **[developer.enonic.com/start](https://develop
 ## Building
 
 **Prerequisites:**
-- [JDK 25](https://adoptium.net/temurin/releases?version=25) or [GraalVM 25](https://www.graalvm.org/downloads/) — GraalVM is required to *run* the platform
+- [GraalVM 25](https://www.graalvm.org/downloads/) — required both to build and to run the platform. The build uses a GraalVM Community toolchain, and Gradle downloads it automatically when it is not installed locally.
 - [Git](https://git-scm.com/downloads)
 
 ```sh

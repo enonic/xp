@@ -100,6 +100,16 @@ configure( javaProjects ) {
     apply from: "$rootDir/gradle/java.gradle"
 }
 
+// Modules whose tests execute JavaScript run their test suite once per script engine:
+// Nashorn via `test`, GraalJS via `testGraalJs` (both wired into `check`).
+def jsTestProjects = project( ':lib' ).subprojects +
+    [ project( ':script:script-impl' ), project( ':portal:portal-impl' ), project( ':core:core-task' ),
+      project( ':app:app-system' ), project( ':tools:testing' ) ]
+
+configure( jsTestProjects ) {
+    apply from: "$rootDir/gradle/js-tests.gradle"
+}
+
 tasks.register('ci') {
     description = 'Builds and generates coverage report.'
     dependsOn = ['build', 'jacocoMergedReport']
