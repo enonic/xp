@@ -306,8 +306,15 @@ what every Node.js cluster / worker deployment already imposes on developers.
    callback in the callback's own slot and avoids slot/monitor deadlock cycles. Still to do
    from the original plan: dedicated worker threads (queue instead of monitor) and a
    main-worker rule for `main.js` listeners at pool sizes above 1.
-3. **Connection affinity** — websocket/SSE binding, per-connection ordering guarantees;
-   closes [#8644](https://github.com/enonic/xp/issues/8644).
+3. **Connection affinity** *(started on this branch)* — `ScriptExports.pinned(affinityKey)` /
+   `ControllerScript.pinned(affinityKey)` give hash-stable slot affinity with no per-connection
+   bookkeeping (equal keys always resolve to the same slot). Portal websocket and SSE endpoints
+   pin every event by session id / SSE client id, so one connection's handlers execute in one
+   context, in arrival order (fair per-slot locks). Scripts stay freshly resolved per event, so
+   dev-mode reload semantics are unchanged. Universal-API endpoints are untouched (their
+   handlers are Java-based today — extend when JS-backed handlers arrive). Addresses the
+   ordering/state side of [#8644](https://github.com/enonic/xp/issues/8644) at pool sizes
+   above 1.
 4. **Detached `executeFunction` + docs** — opt-in Web-Worker semantics; migration guide
    listing the §5 divergences.
 5. **Async servlet + promise controllers** — portal-level, after the pool is proven.

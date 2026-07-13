@@ -2,6 +2,8 @@ package com.enonic.xp.portal.impl.websocket;
 
 import java.util.function.Supplier;
 
+import jakarta.websocket.Session;
+
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketEndpoint;
@@ -23,7 +25,10 @@ public final class WebSocketEndpointImpl
     @Override
     public void onEvent( final WebSocketEvent event )
     {
-        this.scriptSupplier.get().onSocketEvent( event );
+        final ControllerScript script = this.scriptSupplier.get();
+        final Session session = event.getSession();
+        // all events of one connection execute with affinity to one script context
+        ( session != null ? script.pinned( session.getId() ) : script ).onSocketEvent( event );
     }
 
     @Override

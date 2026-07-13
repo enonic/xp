@@ -63,6 +63,13 @@ final class ControllerScriptImpl
     }
 
     @Override
+    public ControllerScript pinned( final Object affinityKey )
+    {
+        final ScriptExports pinnedExports = this.scriptExports.pinned( affinityKey );
+        return pinnedExports == this.scriptExports ? this : new ControllerScriptImpl( pinnedExports );
+    }
+
+    @Override
     public void onSocketEvent( final WebSocketEvent event )
     {
         final boolean exists = this.scriptExports.hasMethod( "webSocketEvent" );

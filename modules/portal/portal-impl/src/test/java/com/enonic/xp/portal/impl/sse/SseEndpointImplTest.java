@@ -11,8 +11,10 @@ import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.web.sse.SseConfig;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class SseEndpointImplTest
 {
@@ -28,6 +30,7 @@ class SseEndpointImplTest
     void onEvent_delegatesToScript()
     {
         final ControllerScript script = mock( ControllerScript.class );
+        when( script.pinned( any() ) ).thenReturn( script );
         final SseEndpointImpl endpoint = new SseEndpointImpl( SseConfig.empty(), () -> script );
 
         final SseEvent event = SseEvent.create()

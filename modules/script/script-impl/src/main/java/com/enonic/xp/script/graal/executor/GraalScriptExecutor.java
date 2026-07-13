@@ -6,14 +6,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -71,7 +71,7 @@ public class GraalScriptExecutor
 
     private final List<ContextSlot> slots;
 
-    private final BlockingQueue<ContextSlot> freeSlots;
+    private final AtomicInteger roundRobin = new AtomicInteger();
 
     private final ThreadLocal<ContextSlot> boundSlot = new ThreadLocal<>();
 
@@ -92,8 +92,6 @@ public class GraalScriptExecutor
         {
             this.slots.add( new ContextSlot( contextFactory, application ) );
         }
-        this.freeSlots = new ArrayBlockingQueue<>( poolSize );
-        this.freeSlots.addAll( this.slots );
     }
 
     @Override
@@ -197,13 +195,14 @@ public class GraalScriptExecutor
 
     /**
      * Runs work on an exclusively owned context slot. Resolution order: the slot already bound to
-     * this thread (nested executions during a request), a slot whose context monitor this thread
-     * already holds (callbacks routed through {@code JsFunctionHandle}/{@code ScriptValue}
-     * monitors calling back into the executor, e.g. {@code require} on a foreign thread — must
-     * not acquire a different slot, both for correctness and to avoid slot/monitor deadlocks),
-     * and only then a checkout from the free queue.
+     * this thread (nested executions during a request — affinity is best-effort under nesting,
+     * the bound slot always wins to keep re-entrancy deadlock-free), a slot whose context monitor
+     * this thread already holds (callbacks routed through {@code JsFunctionHandle}/
+     * {@code ScriptValue} monitors calling back into the executor, e.g. {@code require} on a
+     * foreign thread — must not acquire a different slot, both for correctness and to avoid
+     * slot/monitor deadlocks), then the pinned slot if given, and only then any free slot.
      */
-    <T> T withSlot( final Function<ContextSlot, T> work )
+    <T> T withSlot( final ContextSlot pinned, final Function<ContextSlot, T> work )
     {
         final ContextSlot bound = this.boundSlot.get();
         if ( bound != null )
@@ -219,23 +218,52 @@ public class GraalScriptExecutor
             }
         }
 
-        final ContextSlot slot = takeSlot();
-        try
+        if ( pinned != null )
         {
-            synchronized ( slot.context )
+            return lockAndRun( pinned, work );
+        }
+
+        final int start = this.roundRobin.getAndIncrement();
+        final int size = slots.size();
+        for ( int i = 0; i < size; i++ )
+        {
+            final ContextSlot slot = slots.get( Math.floorMod( start + i, size ) );
+            if ( slot.lock.tryLock() )
             {
-                return runBound( slot, work );
+                try
+                {
+                    synchronized ( slot.context )
+                    {
+                        return runBound( slot, work );
+                    }
+                }
+                finally
+                {
+                    slot.lock.unlock();
+                }
             }
         }
-        finally
-        {
-            this.freeSlots.add( slot );
-        }
+        return lockAndRun( slots.get( Math.floorMod( start, size ) ), work );
     }
 
-    <T> T withExports( final ResourceKey key, final BiFunction<ContextSlot, Value, T> work )
+    <T> T withSlot( final Function<ContextSlot, T> work )
     {
-        return withSlot( slot -> work.apply( slot, requireInSlot( slot, key ) ) );
+        return withSlot( null, work );
+    }
+
+    <T> T withExports( final ResourceKey key, final ContextSlot pinned, final BiFunction<ContextSlot, Value, T> work )
+    {
+        return withSlot( pinned, slot -> work.apply( slot, requireInSlot( slot, key ) ) );
+    }
+
+    /**
+     * The slot serving executions pinned to the given stable key: deterministic by key hash, so
+     * equal keys (e.g. one websocket connection) always resolve to the same slot without any
+     * per-connection bookkeeping.
+     */
+    ContextSlot slotFor( final Object affinityKey )
+    {
+        return slots.get( Math.floorMod( affinityKey.hashCode(), slots.size() ) );
     }
 
     private <T> T runBound( final ContextSlot slot, final Function<ContextSlot, T> work )
@@ -251,21 +279,30 @@ public class GraalScriptExecutor
         }
     }
 
-    private ContextSlot takeSlot()
+    private <T> T lockAndRun( final ContextSlot slot, final Function<ContextSlot, T> work )
     {
         try
         {
-            final ContextSlot slot = this.freeSlots.poll( 5, TimeUnit.MINUTES );
-            if ( slot == null )
+            if ( !slot.lock.tryLock( 5, TimeUnit.MINUTES ) )
             {
                 throw new RuntimeException( "Timed out waiting for a free script context" );
             }
-            return slot;
         }
         catch ( final InterruptedException e )
         {
             Thread.currentThread().interrupt();
             throw new RuntimeException( "Interrupted while waiting for a free script context", e );
+        }
+        try
+        {
+            synchronized ( slot.context )
+            {
+                return runBound( slot, work );
+            }
+        }
+        finally
+        {
+            slot.lock.unlock();
         }
     }
 
@@ -389,6 +426,11 @@ public class GraalScriptExecutor
      */
     final class ContextSlot
     {
+        /**
+         * Fair, so pinned waiters (per-connection events) execute in arrival order.
+         */
+        final ReentrantLock lock = new ReentrantLock( true );
+
         final GraalScriptValueFactory scriptValueFactory;
 
         final JavascriptHelper<Value> javascriptHelper;

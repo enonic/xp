@@ -26,7 +26,8 @@ public final class SseEndpointImpl
     @Override
     public void onEvent( final SseEvent event )
     {
-        this.scriptSupplier.get().onSseEvent( event );
+        // all events of one client execute with affinity to one script context
+        this.scriptSupplier.get().pinned( event.getClientId() ).onSseEvent( event );
     }
 
     @Override

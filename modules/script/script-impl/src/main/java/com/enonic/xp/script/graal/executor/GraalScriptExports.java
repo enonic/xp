@@ -20,10 +20,25 @@ final class GraalScriptExports
 
     private final ResourceKey script;
 
+    private final GraalScriptExecutor.ContextSlot pinnedSlot;
+
     GraalScriptExports( final GraalScriptExecutor executor, final ResourceKey script )
+    {
+        this( executor, script, null );
+    }
+
+    private GraalScriptExports( final GraalScriptExecutor executor, final ResourceKey script,
+                                final GraalScriptExecutor.ContextSlot pinnedSlot )
     {
         this.executor = executor;
         this.script = script;
+        this.pinnedSlot = pinnedSlot;
+    }
+
+    @Override
+    public ScriptExports pinned( final Object affinityKey )
+    {
+        return affinityKey == null ? this : new GraalScriptExports( executor, script, executor.slotFor( affinityKey ) );
     }
 
     @Override
@@ -35,19 +50,19 @@ final class GraalScriptExports
     @Override
     public ScriptValue getValue()
     {
-        return executor.withExports( script, ( slot, exports ) -> slot.scriptValueFactory.newValue( exports ) );
+        return executor.withExports( script, pinnedSlot, ( slot, exports ) -> slot.scriptValueFactory.newValue( exports ) );
     }
 
     @Override
     public boolean hasMethod( final String name )
     {
-        return executor.withExports( script, ( slot, exports ) -> getMethod( slot, exports, name ) != null );
+        return executor.withExports( script, pinnedSlot, ( slot, exports ) -> getMethod( slot, exports, name ) != null );
     }
 
     @Override
     public ScriptValue executeMethod( final String name, final Object... args )
     {
-        return executor.withExports( script, ( slot, exports ) -> {
+        return executor.withExports( script, pinnedSlot, ( slot, exports ) -> {
             final ScriptValue method = getMethod( slot, exports, name );
             if ( method == null )
             {
@@ -68,7 +83,7 @@ final class GraalScriptExports
     @Override
     public Object getRawValue()
     {
-        return executor.withExports( script, ( slot, exports ) -> exports );
+        return executor.withExports( script, pinnedSlot, ( slot, exports ) -> exports );
     }
 
     private ScriptValue getMethod( final GraalScriptExecutor.ContextSlot slot, final Value exports, final String name )

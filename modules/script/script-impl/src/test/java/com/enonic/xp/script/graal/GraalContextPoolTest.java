@@ -113,6 +113,21 @@ class GraalContextPoolTest
 
     @Test
     @Timeout(60)
+    void pinnedExportsStickToOneSlot()
+    {
+        final ScriptExports exports = scriptExecutor.executeMain( ResourceKey.from( "graaljs:pool-test.js" ) );
+
+        final ScriptExports pinned = exports.pinned( "connection-1" );
+        assertEquals( 1, intValue( pinned.executeMethod( "inc" ) ) );
+        assertEquals( 2, intValue( pinned.executeMethod( "inc" ) ) );
+        assertEquals( 3, intValue( pinned.executeMethod( "inc" ) ) );
+
+        // an equal key resolves to the same slot on a fresh view
+        assertEquals( 4, intValue( exports.pinned( "connection-1" ).executeMethod( "inc" ) ) );
+    }
+
+    @Test
+    @Timeout(60)
     void requiresJsonInSlot()
         throws Exception
     {
