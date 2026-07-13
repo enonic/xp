@@ -37,11 +37,6 @@ public final class JsFunctionHandle
         this.function = function;
     }
 
-    public static JsFunctionHandle of( final Value function )
-    {
-        return new JsFunctionHandle( function.getContext(), function );
-    }
-
     public Object execute( final Object... args )
     {
         synchronized ( context )

@@ -1,6 +1,7 @@
 package com.enonic.xp.script.graal;
 
 
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -32,8 +33,10 @@ public final class GraalJSContextFactory
 
     public Context create()
     {
+        final AtomicReference<Context> contextRef = new AtomicReference<>();
+
         final Context.Builder contextBuilder = Context.newBuilder( "js" )
-            .allowHostAccess( hostAccess() )
+            .allowHostAccess( hostAccess( contextRef ) )
             .allowHostClassLookup( className -> true )
             .option( "js.strict", "true" )
             .allowHostClassLoading( true );
@@ -54,7 +57,9 @@ public final class GraalJSContextFactory
             contextBuilder.hostClassLoader( classLoader );
         }
 
-        return contextBuilder.build();
+        final Context context = contextBuilder.build();
+        contextRef.set( context );
+        return context;
     }
 
     /**
@@ -63,16 +68,22 @@ public final class GraalJSContextFactory
      * default host proxies: default proxies enter the context on whatever thread invokes them
      * and fail on concurrent access, while handles route through the context's ownership
      * discipline. Host-object functions are left to the default conversion.
+     * <p>
+     * Handles must lock the exact {@link Context} instance every other execution path
+     * synchronizes on, so the mappings close over a reference set once the context is built —
+     * deriving the context from the {@link Value} can yield a different wrapper instance,
+     * silently breaking mutual exclusion.
      */
-    private static HostAccess hostAccess()
+    private static HostAccess hostAccess( final AtomicReference<Context> contextRef )
     {
         final Predicate<Value> isJsFunction = value -> value.canExecute() && !value.isHostObject();
+        final Function<Value, JsFunctionHandle> toHandle = value -> new JsFunctionHandle( contextRef.get(), value );
         return HostAccess.newBuilder( HostAccess.ALL )
-            .targetTypeMapping( Value.class, Function.class, isJsFunction, JsFunctionHandle::of )
-            .targetTypeMapping( Value.class, Consumer.class, isJsFunction, JsFunctionHandle::of )
-            .targetTypeMapping( Value.class, Runnable.class, isJsFunction, JsFunctionHandle::of )
-            .targetTypeMapping( Value.class, Supplier.class, isJsFunction, JsFunctionHandle::of )
-            .targetTypeMapping( Value.class, Predicate.class, isJsFunction, JsFunctionHandle::of )
+            .targetTypeMapping( Value.class, Function.class, isJsFunction, toHandle::apply )
+            .targetTypeMapping( Value.class, Consumer.class, isJsFunction, toHandle::apply )
+            .targetTypeMapping( Value.class, Runnable.class, isJsFunction, toHandle::apply )
+            .targetTypeMapping( Value.class, Supplier.class, isJsFunction, toHandle::apply )
+            .targetTypeMapping( Value.class, Predicate.class, isJsFunction, toHandle::apply )
             .build();
     }
 }
