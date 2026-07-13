@@ -254,6 +254,39 @@ several node queries) and freeing parked servlet threads under overload. Both ca
 later without unwinding anything here — the ownership machinery is what a promise bridge would
 build on anyway.
 
+#### Workload classes (bulkheads)
+
+One shared pool lets any workload class starve the others; the budgets are partitioned instead:
+
+- **Requests** — the elastic pool above. Nested executions (component rendering) stay on the
+  request's slot via the ThreadLocal binding.
+- **Websocket/SSE events** — a small hash-shared partition (connections vastly outnumber
+  contexts by design). Caveat recorded from review: partitioning *contexts* does not partition
+  the *threads that wait for them* — event-dispatch threads are shared, so event executions
+  must bound their slot wait (short timeout + error event) or move to per-connection queues
+  drained by a dedicated dispatcher; otherwise a saturated ws partition still blocks shared
+  threads and the bulkhead leaks.
+- **Tasks — ephemeral context per execution.** XP runs tasks on **virtual threads**, and IO-wait
+  workloads are a loved use case: task concurrency is effectively unbounded and an IO-waiting
+  JS task holds its context for the entire wait. Any *bounded* task partition therefore
+  regresses the Nashorn-era behavior (100 parked tasks over 8 slots = 8-way concurrency). So
+  detached tasks (and named `submitTask` executions) get a **fresh context per execution** —
+  create, run, close — with the shared engine reusing compiled code, so the per-run cost is
+  module re-initialization only: noise for long IO tasks, documented for hot short ones (which
+  can stay on the routed legacy path). Concurrency then scales with in-flight tasks; memory
+  backpressure is a single `max-task-contexts` semaphore that virtual threads park on cheaply.
+  This also fixes a defect in the initial phase-4 implementation: detached tasks currently
+  borrow request-serving slots for their full duration.
+- **Legacy routed `executeFunction`** cannot move to any task pool — a closure is physically
+  bound to its submitting context; it stays serialized with its origin slot (one more reason
+  the docs steer to detached/`submitTask`).
+
+Virtual-thread facts this design relies on: JEP 491 (JDK 24) removed synchronized-monitor
+pinning, so the context-monitor discipline and the fair per-slot locks are both VT-safe on
+XP's Java 25 baseline. **Validation item:** confirm GraalJS context enter/leave on virtual
+threads with the shipped polyglot version (a dedicated test), since every task-side execution
+does exactly that.
+
 ### 4.6 Representation clean-up
 
 While rebuilding the boundary, make conversion rules explicit and total in one place:
