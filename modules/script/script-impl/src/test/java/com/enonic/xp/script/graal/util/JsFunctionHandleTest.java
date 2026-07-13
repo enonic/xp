@@ -10,6 +10,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Value;
@@ -22,7 +24,11 @@ import com.enonic.xp.script.graal.GraalJSContextFactory;
 import com.enonic.xp.script.impl.util.ObjectConverter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class JsFunctionHandleTest
@@ -141,6 +147,69 @@ class JsFunctionHandleTest
         assertEquals( 42, ( (Number) result ).intValue() );
     }
 
+    @Test
+    @Timeout(30)
+    void runnableSupplierAndPredicateBecomeHandles()
+        throws Exception
+    {
+        final MultiHolder holder = new MultiHolder();
+        context.eval( "js", "(function (h) {" + //
+            " h.setRunnable(function () { h.log('ran'); });" + //
+            " h.setSupplier(function () { return 7; });" + //
+            " h.setPredicate(function (x) { return x > 3; });" + //
+            "})" ).execute( holder );
+
+        assertInstanceOf( JsFunctionHandle.class, holder.runnable );
+        assertInstanceOf( JsFunctionHandle.class, holder.supplier );
+        assertInstanceOf( JsFunctionHandle.class, holder.predicate );
+
+        executor.submit( holder.runnable ).get();
+        assertEquals( "ran", holder.received );
+        assertEquals( 7, ( (Number) executor.submit( () -> holder.supplier.get() ).get() ).intValue() );
+        assertTrue( executor.submit( () -> holder.predicate.test( 5 ) ).get() );
+        assertFalse( executor.submit( () -> holder.predicate.test( 1 ) ).get() );
+    }
+
+    @Test
+    @Timeout(30)
+    void convertsScalarResults()
+        throws Exception
+    {
+        @SuppressWarnings("unchecked") final Function<Object, Object> fn = context.eval( "js", "(function (kind) {" + //
+            " if (kind === 'date') return new Date(1000);" + //
+            " if (kind === 'bool') return true;" + //
+            " if (kind === 'none') return null;" + //
+            " return 's';" + //
+            "})" ).as( Function.class );
+
+        assertEquals( new java.util.Date( 1000 ), executor.submit( () -> fn.apply( "date" ) ).get() );
+        assertEquals( Boolean.TRUE, executor.submit( () -> fn.apply( "bool" ) ).get() );
+        assertNull( executor.submit( () -> fn.apply( "none" ) ).get() );
+        assertEquals( "s", executor.submit( () -> fn.apply( "str" ) ).get() );
+    }
+
+    @Test
+    @Timeout(30)
+    void returnsHostObjectsUnwrapped()
+        throws Exception
+    {
+        @SuppressWarnings("unchecked") final Function<Object, Object> fn =
+            context.eval( "js", "(function (o) { return o; })" ).as( Function.class );
+
+        final Object host = new CallbackHolder();
+        assertSame( host, executor.submit( () -> fn.apply( host ) ).get() );
+    }
+
+    @Test
+    @Timeout(30)
+    void translatesErrors()
+    {
+        @SuppressWarnings("unchecked") final Function<Object, Object> fn =
+            context.eval( "js", "(function () { throw new Error('boom'); })" ).as( Function.class );
+
+        assertThrows( RuntimeException.class, () -> fn.apply( null ) );
+    }
+
     public static class CallbackHolder
     {
         volatile Function<Object, Object> callback;
@@ -160,6 +229,37 @@ class JsFunctionHandleTest
         public void setListener( final Consumer<Object> listener )
         {
             this.listener = listener;
+        }
+
+        public void log( final Object value )
+        {
+            this.received = value;
+        }
+    }
+
+    public static class MultiHolder
+    {
+        volatile Runnable runnable;
+
+        volatile Supplier<Object> supplier;
+
+        volatile Predicate<Object> predicate;
+
+        volatile Object received;
+
+        public void setRunnable( final Runnable runnable )
+        {
+            this.runnable = runnable;
+        }
+
+        public void setSupplier( final Supplier<Object> supplier )
+        {
+            this.supplier = supplier;
+        }
+
+        public void setPredicate( final Predicate<Object> predicate )
+        {
+            this.predicate = predicate;
         }
 
         public void log( final Object value )
