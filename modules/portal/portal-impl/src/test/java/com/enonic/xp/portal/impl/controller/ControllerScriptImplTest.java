@@ -10,6 +10,8 @@ import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.web.sse.SseEvent;
 import com.enonic.xp.web.sse.SseEventType;
 
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -35,6 +37,29 @@ class ControllerScriptImplTest
         script.onSseEvent( event );
 
         verify( exports ).executeMethod( eq( "sseEvent" ), any( SseEventMapper.class ) );
+    }
+
+    @Test
+    void pinned_wrapsPinnedExports()
+    {
+        final ScriptExports exports = mock( ScriptExports.class );
+        final ScriptExports pinnedExports = mock( ScriptExports.class );
+        when( exports.pinned( "connection" ) ).thenReturn( pinnedExports );
+
+        final ControllerScriptImpl script = new ControllerScriptImpl( exports );
+
+        assertNotSame( script, script.pinned( "connection" ) );
+    }
+
+    @Test
+    void pinned_sameExports_returnsSameInstance()
+    {
+        final ScriptExports exports = mock( ScriptExports.class );
+        when( exports.pinned( "connection" ) ).thenReturn( exports );
+
+        final ControllerScriptImpl script = new ControllerScriptImpl( exports );
+
+        assertSame( script, script.pinned( "connection" ) );
     }
 
     @Test

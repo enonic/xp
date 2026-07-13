@@ -38,6 +38,8 @@ class ScriptRuntimeTest
         assertSame( script, exports.getScript() );
         assertTrue( exports.hasMethod( "hello" ) );
         assertEquals( "Hello World!", exports.executeMethod( "hello", "World" ).getValue() );
+        // a null affinity key is a no-op view on every engine
+        assertSame( exports, exports.pinned( null ) );
     }
 
     @Test

@@ -3,6 +3,7 @@ package com.enonic.xp.script.graal;
 import java.io.Closeable;
 import java.net.URL;
 import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -199,6 +200,38 @@ class GraalContextPoolTest
 
     @Test
     @Timeout(60)
+    void waitsFairlyWhenAtCapacity()
+        throws Exception
+    {
+        final ScriptExecutor limited = newExecutor( 1, GraalContextBudget.unlimited() );
+        try
+        {
+            final ScriptExports exports = limited.executeMain( ResourceKey.from( "graaljs:pool-test.js" ) );
+
+            final Gate gate = new Gate();
+            final Future<ScriptValue> blocked = threads.submit( () -> exports.executeMethod( "block", gate ) );
+            assertTrue( gate.awaitEntered() );
+
+            final Future<?> opener = threads.submit( () -> {
+                Thread.sleep( 300 );
+                gate.open();
+                return null;
+            } );
+
+            // capacity 1 and the only slot is busy inside `block`: this execution must wait for it
+            assertEquals( 2, intValue( exports.executeMethod( "inc" ) ) );
+
+            assertEquals( 1, intValue( blocked.get() ) );
+            opener.get();
+        }
+        finally
+        {
+            ( (Closeable) limited ).close();
+        }
+    }
+
+    @Test
+    @Timeout(60)
     void executesOnVirtualThreads()
         throws Exception
     {
@@ -227,6 +260,31 @@ class GraalContextPoolTest
     private static int intValue( final ScriptValue value )
     {
         return ( (Number) value.getValue() ).intValue();
+    }
+
+    public static class Gate
+    {
+        private final CountDownLatch entered = new CountDownLatch( 1 );
+
+        private final CountDownLatch release = new CountDownLatch( 1 );
+
+        public void await()
+            throws InterruptedException
+        {
+            entered.countDown();
+            release.await();
+        }
+
+        void open()
+        {
+            release.countDown();
+        }
+
+        boolean awaitEntered()
+            throws InterruptedException
+        {
+            return entered.await( 10, TimeUnit.SECONDS );
+        }
     }
 
     public static class SyncPoint
