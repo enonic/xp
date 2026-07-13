@@ -39,7 +39,12 @@ public final class GraalJSContextFactory
             .allowHostAccess( hostAccess( contextRef ) )
             .allowHostClassLookup( className -> true )
             .option( "js.strict", "true" )
-            .allowHostClassLoading( true );
+            .allowHostClassLoading( true )
+            // guest values must never cross contexts: with the context pool, a leaked Value
+            // accessed from another slot would silently re-enter its owning context (latent
+            // serialization and deadlock). Fail fast instead; host objects and proxies still
+            // cross freely — convert or share host-backed state, never guest objects.
+            .allowValueSharing( false );
 
         if ( sharedEngine != null )
         {
