@@ -91,3 +91,53 @@ exports.executeDetachedRejectsFunctionParams = function () {
         }
     });
 };
+
+exports.executeDetachedArrayParams = function () {
+
+    taskLib.executeFunction({
+        description: 'Array params',
+        detached: true,
+        params: [20, 22],
+        func: function (params) {
+            testInstance.record(params[0] + params[1]);
+        }
+    });
+};
+
+exports.executeDetachedScalarParams = function () {
+
+    taskLib.executeFunction({
+        description: 'Scalar params',
+        detached: true,
+        params: 42,
+        func: function (params) {
+            testInstance.record(params);
+        }
+    });
+};
+
+exports.executeDetachedRejectsFunctionInArrayParams = function () {
+
+    taskLib.executeFunction({
+        description: 'Bad array params',
+        detached: true,
+        params: {
+            list: [function () {
+            }]
+        },
+        func: function () {
+        }
+    });
+};
+
+exports.executeDetachedRejectsFunctionAsParams = function () {
+
+    taskLib.executeFunction({
+        description: 'Function as params',
+        detached: true,
+        params: function () {
+        },
+        func: function () {
+        }
+    });
+};
