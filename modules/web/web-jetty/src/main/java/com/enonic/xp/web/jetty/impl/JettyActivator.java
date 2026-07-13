@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.ServerSocketChannel;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.eclipse.jetty.ee11.servlet.ServletContextHandler;
@@ -58,6 +59,8 @@ public final class JettyActivator
 
     private volatile ServiceRegistration<Server> serverServiceRegistration;
 
+    private volatile ExecutorService virtualThreadsExecutor;
+
     @Activate
     public JettyActivator( final JettyConfig config, final BundleContext bundleContext,
                            @Reference final JettySessionStoreConfigurator jettySessionStoreConfigurator,
@@ -79,7 +82,10 @@ public final class JettyActivator
             new QueuedThreadPool( config.threadPool_maxThreads(), config.threadPool_minThreads(), config.threadPool_idleTimeout() );
         if ( config.threadPool_virtualThreads() )
         {
-            threadPool.setVirtualThreadsExecutor( Executors.newVirtualThreadPerTaskExecutor() );
+            // Jetty stops the thread pool but does not own the provided executor: keep it and
+            // shut it down on deactivate
+            this.virtualThreadsExecutor = Executors.newVirtualThreadPerTaskExecutor();
+            threadPool.setVirtualThreadsExecutor( this.virtualThreadsExecutor );
         }
         final Server server = new Server( threadPool );
 
@@ -150,6 +156,10 @@ public final class JettyActivator
         this.serverServiceRegistration.unregister();
         this.server.stop();
         this.server.destroy();
+        if ( this.virtualThreadsExecutor != null )
+        {
+            this.virtualThreadsExecutor.shutdown();
+        }
         LOG.info( "Stopped Jetty" );
     }
 

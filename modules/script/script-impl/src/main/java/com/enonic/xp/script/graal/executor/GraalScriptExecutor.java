@@ -447,7 +447,18 @@ public class GraalScriptExecutor
             {
                 return null;
             }
-            slot = new ContextSlot( contextFactory, application );
+            try
+            {
+                slot = new ContextSlot( contextFactory, application );
+            }
+            catch ( RuntimeException e )
+            {
+                if ( budgeted )
+                {
+                    budget.releaseContexts( 1 );
+                }
+                throw e;
+            }
             slots.set( index, slot );
             hasSlots = true;
             if ( budgeted )
