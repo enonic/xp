@@ -287,6 +287,20 @@ XP's Java 25 baseline. **Validation item:** confirm GraalJS context enter/leave 
 threads with the shipped polyglot version (a dedicated test), since every task-side execution
 does exactly that.
 
+#### Engine code cache: what makes many contexts affordable — and its retention rule
+
+The shared engine's code cache is what compensates the memory of many contexts: parsed/compiled
+code is shared, so per-context cost is runtime module state only. But the cache is keyed by
+`Source` equality and held **weakly** — an entry survives only while an equal `Source` instance
+is strongly reachable. Today `doExecute` builds a fresh `Source` per require and discards it:
+long-lived slots keep their code alive through their own contexts, but an **ephemeral task
+context retains nothing after close** — between task runs the app's cache entries become
+collectable, and repeated tasks may silently pay full re-parse/compile, defeating the
+"re-init only" cost model. Requirement: a per-app **strong `Source` registry**
+(`ResourceKey → Source`, invalidated with the app and on dev-mode reload) used by `doExecute`.
+It pins the engine-cache entries for the app's lifetime, makes new-slot and ephemeral-context
+warmup parse-free, and costs only the retained source text.
+
 ### 4.6 Representation clean-up
 
 While rebuilding the boundary, make conversion rules explicit and total in one place:
