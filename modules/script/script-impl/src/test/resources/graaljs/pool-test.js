@@ -10,3 +10,13 @@ exports.inc = function () {
     counter++;
     return counter;
 };
+
+exports.mkCallback = function () {
+    return function () {
+        return require('/pool-lib.js').value;
+    };
+};
+
+exports.readJson = function () {
+    return require('/pool-data.json').key;
+};

@@ -32,6 +32,10 @@ import com.enonic.xp.script.runtime.ScriptSettings;
 import com.enonic.xp.util.Version;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class GraalContextPoolTest
 {
@@ -90,6 +94,47 @@ class GraalContextPoolTest
 
         // a subsequent call lands on either slot — both are at 1, so the result is deterministic
         assertEquals( 2, intValue( exports.executeMethod( "inc" ) ) );
+    }
+
+    @Test
+    @Timeout(60)
+    void callbackRequiresInItsOwnSlot()
+        throws Exception
+    {
+        final ScriptExports exports = scriptExecutor.executeMain( ResourceKey.from( "graaljs:pool-test.js" ) );
+
+        final ScriptValue callback = exports.executeMethod( "mkCallback" );
+
+        // a callback invoked on a foreign thread holds its context monitor; the require() inside
+        // must resolve to the callback's own slot, not check out a different one
+        final ScriptValue result = threads.submit( () -> callback.call() ).get();
+        assertEquals( 42, ( (Number) result.getValue() ).intValue() );
+    }
+
+    @Test
+    @Timeout(60)
+    void requiresJsonInSlot()
+        throws Exception
+    {
+        final ScriptExports exports = scriptExecutor.executeMain( ResourceKey.from( "graaljs:pool-test.js" ) );
+
+        assertEquals( 7, intValue( exports.executeMethod( "readJson" ) ) );
+    }
+
+    @Test
+    @Timeout(60)
+    void exportsResolveAcrossPool()
+        throws Exception
+    {
+        final ScriptExports exports =
+            scriptExecutor.executeMainAsync( ResourceKey.from( "graaljs:pool-test.js" ) ).get( 30, TimeUnit.SECONDS );
+
+        assertTrue( exports.hasMethod( "inc" ) );
+        assertFalse( exports.hasMethod( "unknown" ) );
+        assertNull( exports.executeMethod( "unknown" ) );
+        assertNotNull( exports.getValue() );
+        assertNotNull( exports.getRawValue() );
+        assertNotNull( scriptExecutor.newScriptValue( "scalar" ) );
     }
 
     private static int intValue( final ScriptValue value )
