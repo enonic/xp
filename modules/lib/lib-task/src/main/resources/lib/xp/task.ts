@@ -27,17 +27,37 @@ function checkRequired<T extends object, K extends keyof T>(
     return obj[name];
 }
 
-export type CallbackFn = () => void;
+export type CallbackFn = (params?: Record<string, unknown>) => void;
 
 export interface ExecuteFunctionParams {
     description: string;
     func: CallbackFn;
+
+    /**
+     * Runs the function detached from the submitting scope: it is re-materialized from source in
+     * whatever script context executes the task, so detached tasks run in parallel on pooled
+     * script engines instead of being serialized with the submitter. Variables captured from the
+     * surrounding scope are NOT available (referencing one throws) — pass everything the function
+     * needs via `params`. Use a function expression or arrow function (shorthand method syntax
+     * cannot be re-materialized).
+     */
+    detached?: boolean;
+
+    /**
+     * Data passed to a detached function as its single argument. Converted eagerly at submit
+     * time; must contain data only — functions are rejected.
+     */
+    params?: Record<string, unknown>;
 }
 
 interface ExecuteFunctionHandler {
     setDescription(value: string | null): void;
 
     setFunc(callbackFn?: CallbackFn | null): void;
+
+    setSource(value: string): void;
+
+    setParams(value: ScriptValue | null): void;
 
     executeFunction(): string;
 }
@@ -70,6 +90,11 @@ interface ExecuteFunctionHandler {
  * @param {object} params JSON with the parameters.
  * @param {string} params.description Text describing the task to be executed.
  * @param {function} params.func Callback function to be executed asynchronously.
+ * @param {boolean} [params.detached] Run the function detached from the submitting scope:
+ * re-materialized from source in the executing script context, so it runs in parallel on pooled
+ * script engines. Captured outer variables are not available — pass data via `params.params`.
+ * @param {object} [params.params] Data passed to a detached function as its single argument.
+ * Converted eagerly at submit time; functions are rejected.
  *
  * @returns {string} Id of the task that will be executed.
  */
@@ -80,7 +105,12 @@ export function executeFunction(params: ExecuteFunctionParams): string {
     const func = checkRequired(params, 'func');
 
     bean.setDescription(description);
-    bean.setFunc(func);
+    if (params.detached) {
+        bean.setSource(String(func));
+        bean.setParams(params.params !== undefined ? __.toScriptValue(params.params) : null);
+    } else {
+        bean.setFunc(func);
+    }
 
     return bean.executeFunction();
 }

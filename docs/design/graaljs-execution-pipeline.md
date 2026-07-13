@@ -315,8 +315,14 @@ what every Node.js cluster / worker deployment already imposes on developers.
    handlers are Java-based today — extend when JS-backed handlers arrive). Addresses the
    ordering/state side of [#8644](https://github.com/enonic/xp/issues/8644) at pool sizes
    above 1.
-4. **Detached `executeFunction` + docs** — opt-in Web-Worker semantics; migration guide
-   listing the §5 divergences.
+4. **Detached `executeFunction`** *(started on this branch)* —
+   `task.executeFunction({ detached: true, params, func })`: the function travels as source
+   (captured via `Function.prototype.toString` at submit) plus eagerly converted data params
+   (functions rejected at submit), and is re-materialized by an internal runner module
+   (`/lib/xp/detached-task.js`, executed through `PortalScriptService` → the pooled exports
+   facade) in whatever slot serves the task thread — true parallelism on GraalJS, identical
+   semantics on Nashorn. Captured outer variables throw `ReferenceError` (strict-mode global
+   eval), matching Web-Worker expectations. Still to do: the §5 migration guide for docs.
 5. **Async servlet + promise controllers** — portal-level, after the pool is proven.
 6. **Flip the default** — `xp.script-engine=GraalJS` with pool enabled; Nashorn path stays for
    one release cycle via `X-Script-Engine` per app, then removed.
