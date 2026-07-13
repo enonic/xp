@@ -1,5 +1,7 @@
 package com.enonic.xp.script.graal.executor;
 
+import java.util.function.BiFunction;
+
 import org.graalvm.polyglot.Value;
 
 import com.enonic.xp.resource.ResourceError;
@@ -22,23 +24,32 @@ final class GraalScriptExports
 
     private final GraalScriptExecutor.ContextSlot pinnedSlot;
 
+    private final boolean isolated;
+
     GraalScriptExports( final GraalScriptExecutor executor, final ResourceKey script )
     {
-        this( executor, script, null );
+        this( executor, script, null, false );
     }
 
     private GraalScriptExports( final GraalScriptExecutor executor, final ResourceKey script,
-                                final GraalScriptExecutor.ContextSlot pinnedSlot )
+                                final GraalScriptExecutor.ContextSlot pinnedSlot, final boolean isolated )
     {
         this.executor = executor;
         this.script = script;
         this.pinnedSlot = pinnedSlot;
+        this.isolated = isolated;
     }
 
     @Override
     public ScriptExports pinned( final Object affinityKey )
     {
-        return affinityKey == null ? this : new GraalScriptExports( executor, script, executor.slotFor( affinityKey ) );
+        return affinityKey == null ? this : new GraalScriptExports( executor, script, executor.slotFor( affinityKey ), false );
+    }
+
+    @Override
+    public ScriptExports isolated()
+    {
+        return isolated ? this : new GraalScriptExports( executor, script, null, true );
     }
 
     @Override
@@ -50,19 +61,19 @@ final class GraalScriptExports
     @Override
     public ScriptValue getValue()
     {
-        return executor.withExports( script, pinnedSlot, ( slot, exports ) -> slot.scriptValueFactory.newValue( exports ) );
+        return withExports( ( slot, exports ) -> slot.scriptValueFactory.newValue( exports ) );
     }
 
     @Override
     public boolean hasMethod( final String name )
     {
-        return executor.withExports( script, pinnedSlot, ( slot, exports ) -> getMethod( slot, exports, name ) != null );
+        return withExports( ( slot, exports ) -> getMethod( slot, exports, name ) != null );
     }
 
     @Override
     public ScriptValue executeMethod( final String name, final Object... args )
     {
-        return executor.withExports( script, pinnedSlot, ( slot, exports ) -> {
+        return withExports( ( slot, exports ) -> {
             final ScriptValue method = getMethod( slot, exports, name );
             if ( method == null )
             {
@@ -83,7 +94,12 @@ final class GraalScriptExports
     @Override
     public Object getRawValue()
     {
-        return executor.withExports( script, pinnedSlot, ( slot, exports ) -> exports );
+        return withExports( ( slot, exports ) -> exports );
+    }
+
+    private <T> T withExports( final BiFunction<GraalScriptExecutor.ContextSlot, Value, T> work )
+    {
+        return isolated ? executor.withIsolatedExports( script, work ) : executor.withExports( script, pinnedSlot, work );
     }
 
     private ScriptValue getMethod( final GraalScriptExecutor.ContextSlot slot, final Value exports, final String name )

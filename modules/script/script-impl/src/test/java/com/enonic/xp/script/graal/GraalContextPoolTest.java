@@ -25,6 +25,7 @@ import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UrlResource;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.script.graal.executor.GraalContextBudget;
 import com.enonic.xp.script.graal.executor.GraalScriptExecutor;
 import com.enonic.xp.script.impl.executor.ScriptExecutor;
 import com.enonic.xp.script.impl.function.ApplicationInfoBuilder;
@@ -44,28 +45,37 @@ class GraalContextPoolTest
 
     private ExecutorService threads;
 
+    private BundleContext bundleContext;
+
+    private ApplicationInfoBuilder application;
+
+    private ResourceService resourceService;
+
     @BeforeEach
     void setUp()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "graaljs" );
 
-        final BundleContext bundleContext = Mockito.mock( BundleContext.class );
+        this.bundleContext = Mockito.mock( BundleContext.class );
 
-        final ApplicationInfoBuilder application =
-            new ApplicationInfoBuilder( applicationKey, ConfigBuilder.create().build(), Version.emptyVersion );
+        this.application = new ApplicationInfoBuilder( applicationKey, ConfigBuilder.create().build(), Version.emptyVersion );
 
-        final ResourceService resourceService = Mockito.mock( ResourceService.class );
+        this.resourceService = Mockito.mock( ResourceService.class );
         Mockito.when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {
             final ResourceKey resourceKey = invocation.getArgument( 0 );
             final URL resourceUrl = GraalContextPoolTest.class.getResource( "/" + resourceKey.getApplicationKey() + resourceKey.getPath() );
             return new UrlResource( resourceKey, resourceUrl );
         } );
 
-        this.scriptExecutor =
-            new GraalScriptExecutor( new GraalJSContextFactory(), Executors.newSingleThreadExecutor(), getClass().getClassLoader(),
-                                     ScriptSettings.create().build(), new ServiceRegistryImpl( bundleContext ), resourceService,
-                                     application, 2 );
+        this.scriptExecutor = newExecutor( 2, GraalContextBudget.unlimited() );
         this.threads = Executors.newFixedThreadPool( 2 );
+    }
+
+    private ScriptExecutor newExecutor( final int capacity, final GraalContextBudget budget )
+    {
+        return new GraalScriptExecutor( new GraalJSContextFactory(), Executors.newSingleThreadExecutor(), getClass().getClassLoader(),
+                                        ScriptSettings.create().build(), new ServiceRegistryImpl( bundleContext ), resourceService,
+                                        application, capacity, budget );
     }
 
     @AfterEach
@@ -151,6 +161,54 @@ class GraalContextPoolTest
         assertNotNull( exports.getValue() );
         assertNotNull( exports.getRawValue() );
         assertNotNull( scriptExecutor.newScriptValue( "scalar" ) );
+    }
+
+    @Test
+    @Timeout(60)
+    void isolatedExecutionsGetFreshContexts()
+    {
+        final ScriptExports exports = scriptExecutor.executeMain( ResourceKey.from( "graaljs:pool-test.js" ) );
+
+        // every isolated invocation runs in a fresh, private context
+        assertEquals( 1, intValue( exports.isolated().executeMethod( "inc" ) ) );
+        assertEquals( 1, intValue( exports.isolated().executeMethod( "inc" ) ) );
+
+        // the pooled contexts are untouched by isolated runs
+        assertEquals( 1, intValue( exports.executeMethod( "inc" ) ) );
+    }
+
+    @Test
+    @Timeout(60)
+    void budgetExhaustionFallsBackToExistingSlot()
+        throws Exception
+    {
+        final ScriptExecutor limited = newExecutor( 4, new GraalContextBudget( 0, 4 ) );
+        try
+        {
+            final ScriptExports exports = limited.executeMain( ResourceKey.from( "graaljs:pool-test.js" ) );
+
+            // only the first (unbudgeted) slot exists; differently hashed keys share it
+            assertEquals( 1, intValue( exports.pinned( "a" ).executeMethod( "inc" ) ) );
+            assertEquals( 2, intValue( exports.pinned( "b" ).executeMethod( "inc" ) ) );
+        }
+        finally
+        {
+            ( (Closeable) limited ).close();
+        }
+    }
+
+    @Test
+    @Timeout(60)
+    void executesOnVirtualThreads()
+        throws Exception
+    {
+        final ScriptExports exports = scriptExecutor.executeMain( ResourceKey.from( "graaljs:pool-test.js" ) );
+
+        try (ExecutorService virtualThreads = Executors.newVirtualThreadPerTaskExecutor())
+        {
+            assertEquals( 1, virtualThreads.submit( () -> intValue( exports.executeMethod( "inc" ) ) ).get() );
+            assertEquals( 1, virtualThreads.submit( () -> intValue( exports.isolated().executeMethod( "inc" ) ) ).get() );
+        }
     }
 
     @Test

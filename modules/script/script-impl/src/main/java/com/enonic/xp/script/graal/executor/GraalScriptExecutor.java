@@ -1,9 +1,9 @@
 package com.enonic.xp.script.graal.executor;
 
 import java.io.Closeable;
-import java.util.ArrayList;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.CompletableFuture;
@@ -13,6 +13,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReferenceArray;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -55,6 +56,14 @@ public class GraalScriptExecutor
 
     private static final String POST_SCRIPT = "\n});";
 
+    private static final long SLOT_WAIT_SECONDS = 300;
+
+    /**
+     * Pinned executions (websocket/SSE events) run on shared event-dispatch threads — they must
+     * fail fast when their slot is saturated instead of holding those threads for minutes.
+     */
+    private static final long PINNED_SLOT_WAIT_SECONDS = 30;
+
     private final Executor asyncExecutor;
 
     private final ScriptSettings scriptSettings;
@@ -65,33 +74,69 @@ public class GraalScriptExecutor
 
     private final ResourceService resourceService;
 
+    private final GraalJSContextFactory contextFactory;
+
+    private final ApplicationInfoBuilder application;
+
+    private final GraalContextBudget budget;
+
     private final Map<String, Object> mocks = new ConcurrentHashMap<>();
 
     private final Map<ResourceKey, Queue<Runnable>> disposers = new ConcurrentHashMap<>();
 
-    private final List<ContextSlot> slots;
+    /**
+     * Strong per-app source registry: the shared engine's code cache is weak and keyed by
+     * {@link Source} equality, so entries survive only while an equal Source is strongly
+     * reachable. Retaining them here keeps slot growth and ephemeral task contexts parse-free.
+     * Cleared on dev-mode cache expiry so reloads pick up changed resources.
+     */
+    private final Map<ResourceKey, Source> sources = new ConcurrentHashMap<>();
+
+    /**
+     * Lazily populated, fixed logical capacity: affinity hashes over the array length, so a
+     * pool growing under load never remaps pinned connections.
+     */
+    private final AtomicReferenceArray<ContextSlot> slots;
+
+    private final Object slotCreationLock = new Object();
+
+    private int budgetedSlots;
+
+    private boolean hasSlots;
 
     private final AtomicInteger roundRobin = new AtomicInteger();
 
-    private final ThreadLocal<ContextSlot> boundSlot = new ThreadLocal<>();
+    /**
+     * The slot bound to the current execution scope (nested executions must stay on it). A
+     * ScopedValue, aligned with the platform-wide ThreadLocal elimination; shared across
+     * executors, so reads check slot ownership — a nested cross-app call must not adopt the
+     * outer app's slot.
+     */
+    private static final ScopedValue<ContextSlot> BOUND_SLOT = ScopedValue.newInstance();
 
     public GraalScriptExecutor( final GraalJSContextFactory contextFactory, final Executor asyncExecutor, final ClassLoader classLoader,
                                 final ScriptSettings scriptSettings, final ServiceRegistry serviceRegistry,
                                 final ResourceService resourceService, final ApplicationInfoBuilder application,
-                                final int contextPoolSize )
+                                final int contextPoolCapacity )
+    {
+        this( contextFactory, asyncExecutor, classLoader, scriptSettings, serviceRegistry, resourceService, application,
+              contextPoolCapacity, GraalContextBudget.unlimited() );
+    }
+
+    public GraalScriptExecutor( final GraalJSContextFactory contextFactory, final Executor asyncExecutor, final ClassLoader classLoader,
+                                final ScriptSettings scriptSettings, final ServiceRegistry serviceRegistry,
+                                final ResourceService resourceService, final ApplicationInfoBuilder application,
+                                final int contextPoolCapacity, final GraalContextBudget budget )
     {
         this.asyncExecutor = asyncExecutor;
         this.scriptSettings = scriptSettings;
         this.resourceService = resourceService;
         this.serviceRegistry = serviceRegistry;
         this.classLoader = classLoader;
-
-        final int poolSize = Math.max( 1, contextPoolSize );
-        this.slots = new ArrayList<>( poolSize );
-        for ( int i = 0; i < poolSize; i++ )
-        {
-            this.slots.add( new ContextSlot( contextFactory, application ) );
-        }
+        this.contextFactory = contextFactory;
+        this.application = application;
+        this.budget = budget;
+        this.slots = new AtomicReferenceArray<>( Math.max( 1, contextPoolCapacity ) );
     }
 
     @Override
@@ -195,9 +240,18 @@ public class GraalScriptExecutor
     @Override
     public void close()
     {
-        for ( final ContextSlot slot : slots )
+        synchronized ( slotCreationLock )
         {
-            slot.context.close();
+            for ( int i = 0; i < slots.length(); i++ )
+            {
+                final ContextSlot slot = slots.get( i );
+                if ( slot != null )
+                {
+                    slot.context.close();
+                }
+            }
+            budget.releaseContexts( budgetedSlots );
+            budgetedSlots = 0;
         }
     }
 
@@ -208,19 +262,21 @@ public class GraalScriptExecutor
      * this thread already holds (callbacks routed through {@code JsFunctionHandle}/
      * {@code ScriptValue} monitors calling back into the executor, e.g. {@code require} on a
      * foreign thread — must not acquire a different slot, both for correctness and to avoid
-     * slot/monitor deadlocks), then the pinned slot if given, and only then any free slot.
+     * slot/monitor deadlocks), then the pinned slot if given; anonymous executions prefer a free
+     * existing slot, then grow the pool within the budget, then wait fairly.
      */
     <T> T withSlot( final ContextSlot pinned, final Function<ContextSlot, T> work )
     {
-        final ContextSlot bound = this.boundSlot.get();
-        if ( bound != null )
+        final ContextSlot bound = BOUND_SLOT.orElse( null );
+        if ( bound != null && bound.owner() == this )
         {
             return work.apply( bound );
         }
 
-        for ( final ContextSlot slot : slots )
+        for ( int i = 0; i < slots.length(); i++ )
         {
-            if ( Thread.holdsLock( slot.context ) )
+            final ContextSlot slot = slots.get( i );
+            if ( slot != null && Thread.holdsLock( slot.context ) )
             {
                 return runBound( slot, work );
             }
@@ -228,15 +284,15 @@ public class GraalScriptExecutor
 
         if ( pinned != null )
         {
-            return lockAndRun( pinned, work );
+            return lockAndRun( pinned, work, PINNED_SLOT_WAIT_SECONDS );
         }
 
         final int start = this.roundRobin.getAndIncrement();
-        final int size = slots.size();
+        final int size = slots.length();
         for ( int i = 0; i < size; i++ )
         {
             final ContextSlot slot = slots.get( Math.floorMod( start + i, size ) );
-            if ( slot.lock.tryLock() )
+            if ( slot != null && slot.lock.tryLock() )
             {
                 try
                 {
@@ -251,7 +307,33 @@ public class GraalScriptExecutor
                 }
             }
         }
-        return lockAndRun( slots.get( Math.floorMod( start, size ) ), work );
+
+        // every existing slot is busy: grow within the budget
+        for ( int i = 0; i < size; i++ )
+        {
+            final int index = Math.floorMod( start + i, size );
+            if ( slots.get( index ) == null )
+            {
+                final ContextSlot created = slotAt( index );
+                if ( created != null )
+                {
+                    return lockAndRun( created, work, SLOT_WAIT_SECONDS );
+                }
+                break;
+            }
+        }
+
+        // at capacity or out of budget: wait fairly on an existing slot
+        for ( int i = 0; i < size; i++ )
+        {
+            final ContextSlot slot = slots.get( Math.floorMod( start + i, size ) );
+            if ( slot != null )
+            {
+                return lockAndRun( slot, work, SLOT_WAIT_SECONDS );
+            }
+        }
+
+        throw new IllegalStateException( "No script context available" );
     }
 
     <T> T withSlot( final Function<ContextSlot, T> work )
@@ -265,33 +347,106 @@ public class GraalScriptExecutor
     }
 
     /**
-     * The slot serving executions pinned to the given stable key: deterministic by key hash, so
-     * equal keys (e.g. one websocket connection) always resolve to the same slot without any
-     * per-connection bookkeeping.
+     * Executes against a fresh, private context that lives for this invocation only — the
+     * execution model for detached tasks: task threads are virtual and effectively unbounded,
+     * and an IO-waiting task holds its context for the entire wait, so tasks must not compete
+     * for request-serving slots. Bounded by the task-context budget; the shared source registry
+     * keeps re-initialization parse-free.
+     */
+    <T> T withIsolatedExports( final ResourceKey key, final BiFunction<ContextSlot, Value, T> work )
+    {
+        budget.acquireTaskContext();
+        try
+        {
+            final ContextSlot slot = new ContextSlot( contextFactory, application );
+            try
+            {
+                synchronized ( slot.context )
+                {
+                    return runBound( slot, s -> work.apply( s, requireInSlot( s, key ) ) );
+                }
+            }
+            finally
+            {
+                slot.context.close();
+            }
+        }
+        finally
+        {
+            budget.releaseTaskContext();
+        }
+    }
+
+    /**
+     * The slot serving executions pinned to the given stable key: deterministic by key hash
+     * over the fixed capacity, so equal keys (e.g. one websocket connection) always resolve to
+     * the same slot without any per-connection bookkeeping. Falls back to the nearest existing
+     * slot when the budget is exhausted.
      */
     ContextSlot slotFor( final Object affinityKey )
     {
-        return slots.get( Math.floorMod( affinityKey.hashCode(), slots.size() ) );
+        final int size = slots.length();
+        final int index = Math.floorMod( affinityKey.hashCode(), size );
+        final ContextSlot slot = slotAt( index );
+        if ( slot != null )
+        {
+            return slot;
+        }
+        for ( int i = 0; i < size; i++ )
+        {
+            final ContextSlot existing = slots.get( Math.floorMod( index + i, size ) );
+            if ( existing != null )
+            {
+                return existing;
+            }
+        }
+        throw new IllegalStateException( "No script context available" );
+    }
+
+    private ContextSlot slotAt( final int index )
+    {
+        final ContextSlot existing = slots.get( index );
+        if ( existing != null )
+        {
+            return existing;
+        }
+        synchronized ( slotCreationLock )
+        {
+            ContextSlot slot = slots.get( index );
+            if ( slot != null )
+            {
+                return slot;
+            }
+            // an app's first slot is always allowed — a full global budget must not lock a
+            // fresh application out; only growth beyond it is budgeted
+            final boolean budgeted = hasSlots;
+            if ( budgeted && !budget.tryAcquireContext() )
+            {
+                return null;
+            }
+            slot = new ContextSlot( contextFactory, application );
+            slots.set( index, slot );
+            hasSlots = true;
+            if ( budgeted )
+            {
+                budgetedSlots++;
+            }
+            return slot;
+        }
     }
 
     private <T> T runBound( final ContextSlot slot, final Function<ContextSlot, T> work )
     {
-        this.boundSlot.set( slot );
-        try
-        {
-            return work.apply( slot );
-        }
-        finally
-        {
-            this.boundSlot.remove();
-        }
+        // scoped rebinding nests naturally: an isolated execution inside a slot-bound one
+        // shadows the binding for its scope and the outer binding is restored on exit
+        return ScopedValue.where( BOUND_SLOT, slot ).call( () -> work.apply( slot ) );
     }
 
-    private <T> T lockAndRun( final ContextSlot slot, final Function<ContextSlot, T> work )
+    private <T> T lockAndRun( final ContextSlot slot, final Function<ContextSlot, T> work, final long waitSeconds )
     {
         try
         {
-            if ( !slot.lock.tryLock( 5, TimeUnit.MINUTES ) )
+            if ( !slot.lock.tryLock( waitSeconds, TimeUnit.SECONDS ) )
             {
                 throw new RuntimeException( "Timed out waiting for a free script context" );
             }
@@ -391,10 +546,9 @@ public class GraalScriptExecutor
     {
         try
         {
-            final String text = script.readString();
-            final String source = PRE_SCRIPT + text + POST_SCRIPT;
+            final Source source = this.sources.computeIfAbsent( script.getKey(), key -> buildSource( script ) );
             bindings.forEach( ( key, value ) -> slot.context.getBindings( "js" ).putMember( key, value ) );
-            return slot.context.eval( Source.newBuilder( "js", source, script.getKey().toString() ).build() );
+            return slot.context.eval( source );
         }
         catch ( final Exception e )
         {
@@ -406,25 +560,57 @@ public class GraalScriptExecutor
         }
     }
 
+    private static Source buildSource( final Resource script )
+    {
+        try
+        {
+            final String source = PRE_SCRIPT + script.readString() + POST_SCRIPT;
+            return Source.newBuilder( "js", source, script.getKey().toString() ).build();
+        }
+        catch ( final IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
+    }
+
+    private void onCacheExpired()
+    {
+        runDisposers();
+        // stale sources must not outlive the exports cache — dev-mode reloads re-parse
+        this.sources.clear();
+    }
+
     /**
      * The slot to use for conversions requested outside a slot execution — the bound/held slot
-     * when inside one, the first slot otherwise (matching the single-context behavior).
+     * when inside one, any existing slot otherwise (matching the single-context behavior).
      */
     private ContextSlot currentSlot()
     {
-        final ContextSlot bound = this.boundSlot.get();
-        if ( bound != null )
+        final ContextSlot bound = BOUND_SLOT.orElse( null );
+        if ( bound != null && bound.owner() == this )
         {
             return bound;
         }
-        for ( final ContextSlot slot : slots )
+        for ( int i = 0; i < slots.length(); i++ )
         {
-            if ( Thread.holdsLock( slot.context ) )
+            final ContextSlot slot = slots.get( i );
+            if ( slot != null )
+            {
+                if ( Thread.holdsLock( slot.context ) )
+                {
+                    return slot;
+                }
+            }
+        }
+        for ( int i = 0; i < slots.length(); i++ )
+        {
+            final ContextSlot slot = slots.get( i );
+            if ( slot != null )
             {
                 return slot;
             }
         }
-        return slots.get( 0 );
+        return slotAt( 0 );
     }
 
     /**
@@ -447,12 +633,17 @@ public class GraalScriptExecutor
 
         final ScriptExportsCache<Value> exportsCache;
 
+        GraalScriptExecutor owner()
+        {
+            return GraalScriptExecutor.this;
+        }
+
         ContextSlot( final GraalJSContextFactory contextFactory, final ApplicationInfoBuilder application )
         {
             this.scriptValueFactory = new GraalScriptValueFactory( contextFactory, new GraalJavascriptHelperFactory() );
             this.javascriptHelper = this.scriptValueFactory.getJavascriptHelper();
             this.context = this.scriptValueFactory.getContext();
-            this.exportsCache = new ScriptExportsCache<>( resourceService::getResource, GraalScriptExecutor.this::runDisposers );
+            this.exportsCache = new ScriptExportsCache<>( resourceService::getResource, GraalScriptExecutor.this::onCacheExpired );
 
             final Map<String, Object> globalVariables = new HashMap<>( scriptSettings.getGlobalVariables() );
             globalVariables.put( "app", ProxyObject.fromMap( application.buildMap( HashMap::new ) ) );

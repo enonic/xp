@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.ServerSocketChannel;
 import java.util.List;
+import java.util.concurrent.Executors;
 
 import org.eclipse.jetty.ee11.servlet.ServletContextHandler;
 import org.eclipse.jetty.ee11.servlet.ServletHolder;
@@ -76,6 +77,10 @@ public final class JettyActivator
     {
         final QueuedThreadPool threadPool =
             new QueuedThreadPool( config.threadPool_maxThreads(), config.threadPool_minThreads(), config.threadPool_idleTimeout() );
+        if ( config.threadPool_virtualThreads() )
+        {
+            threadPool.setVirtualThreadsExecutor( Executors.newVirtualThreadPerTaskExecutor() );
+        }
         final Server server = new Server( threadPool );
 
         this.jettySessionStoreConfigurator.configure( server, sessionScavengeIntervalSeconds( config.session_timeout() ) );

@@ -24,6 +24,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationListener;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.script.graal.GraalJSContextFactory;
+import com.enonic.xp.script.graal.executor.GraalContextBudget;
 import com.enonic.xp.script.graal.executor.GraalScriptExecutor;
 import com.enonic.xp.script.impl.async.ScriptAsyncService;
 import com.enonic.xp.script.impl.executor.ScriptExecutor;
@@ -49,6 +50,8 @@ public class ScriptRuntimeFactoryImpl
     private static final String NASHORN_SCRIPT_ENGINE = "Nashorn";
 
     private final List<ScriptRuntimeImpl> list = new CopyOnWriteArrayList<>();
+
+    private final GraalContextBudget graalContextBudget = new GraalContextBudget( maxContexts(), maxTaskContexts() );
 
     private final ResourceService resourceService;
 
@@ -122,13 +125,31 @@ public class ScriptRuntimeFactoryImpl
     }
 
     /**
-     * GraalJS contexts per application. Above 1, requests execute in parallel on separate
-     * contexts at the cost of per-context module state (see the execution-pipeline design doc).
-     * Dev mode stays at 1 so script reloading keeps a single context to invalidate.
+     * Logical GraalJS slot capacity per application (the affinity hash space). Slots are created
+     * lazily on demand within the global cross-app budget, so capacity is cheap; it defaults to
+     * the global maximum and can be overridden per installation with
+     * {@code xp.script-engine.graal.pool-size}. Dev mode stays at 1 so script reloading keeps a
+     * single context to invalidate. Above 1, module state is per-context (see the
+     * execution-pipeline design doc).
      */
-    private static int contextPoolSize()
+    private static int contextPoolCapacity()
     {
-        return RunMode.isDev() ? 1 : Math.max( 1, Integer.getInteger( "xp.script-engine.graal.pool-size", 1 ) );
+        if ( RunMode.isDev() )
+        {
+            return 1;
+        }
+        final Integer poolSize = Integer.getInteger( "xp.script-engine.graal.pool-size" );
+        return poolSize != null ? Math.max( 1, poolSize ) : maxContexts();
+    }
+
+    private static int maxContexts()
+    {
+        return Math.max( 1, Integer.getInteger( "xp.script-engine.graal.max-contexts", 200 ) );
+    }
+
+    private static int maxTaskContexts()
+    {
+        return Math.max( 1, Integer.getInteger( "xp.script-engine.graal.max-task-contexts", 100 ) );
     }
 
     private static String normalizeEngineName( final String scriptEngine )
@@ -183,7 +204,7 @@ public class ScriptRuntimeFactoryImpl
                 return new GraalScriptExecutor( new GraalJSContextFactory( appClassloader, engine ),
                                                 scriptAsyncService.getAsyncExecutor( applicationKey ), appClassloader, settings,
                                                 new ServiceRegistryImpl( appBundleContext ), resourceService, appInfo,
-                                                contextPoolSize() );
+                                                contextPoolCapacity(), graalContextBudget );
             }
             else if ( NASHORN_SCRIPT_ENGINE.equals( appScriptEngine ) )
             {

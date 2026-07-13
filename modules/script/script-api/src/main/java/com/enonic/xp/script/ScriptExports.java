@@ -26,4 +26,16 @@ public interface ScriptExports
     {
         return this;
     }
+
+    /**
+     * Returns a view of these exports whose every execution runs in a fresh, private script
+     * context that lives for that invocation only — full isolation from all other executions,
+     * intended for background tasks so they never compete with request-serving contexts.
+     * Module state does not survive between invocations, and function values must not escape
+     * the invocation. Engines without context pooling return {@code this}.
+     */
+    default ScriptExports isolated()
+    {
+        return this;
+    }
 }

@@ -260,12 +260,12 @@ One shared pool lets any workload class starve the others; the budgets are parti
 
 - **Requests** — the elastic pool above. Nested executions (component rendering) stay on the
   request's slot via the ThreadLocal binding.
-- **Websocket/SSE events** — a small hash-shared partition (connections vastly outnumber
-  contexts by design). Caveat recorded from review: partitioning *contexts* does not partition
-  the *threads that wait for them* — event-dispatch threads are shared, so event executions
-  must bound their slot wait (short timeout + error event) or move to per-connection queues
-  drained by a dedicated dispatcher; otherwise a saturated ws partition still blocks shared
-  threads and the bulkhead leaks.
+- **Websocket/SSE events** — no separate partition: events *steal from the request pool* via
+  hash affinity and drive its lazy growth like any other execution (connections vastly
+  outnumber contexts by design; only momentarily-executing handlers occupy slots). Because
+  event-dispatch threads are shared, pinned executions bound their slot wait (30 s instead of
+  the 5-minute request wait) so a saturated hot slot fails events fast instead of holding
+  shared threads.
 - **Tasks — ephemeral context per execution.** XP runs tasks on **virtual threads**, and IO-wait
   workloads are a loved use case: task concurrency is effectively unbounded and an IO-waiting
   JS task holds its context for the entire wait. Any *bounded* task partition therefore
@@ -283,9 +283,11 @@ One shared pool lets any workload class starve the others; the budgets are parti
 
 Virtual-thread facts this design relies on: JEP 491 (JDK 24) removed synchronized-monitor
 pinning, so the context-monitor discipline and the fair per-slot locks are both VT-safe on
-XP's Java 25 baseline. **Validation item:** confirm GraalJS context enter/leave on virtual
-threads with the shipped polyglot version (a dedicated test), since every task-side execution
-does exactly that.
+XP's Java 25 baseline. GraalJS context enter/leave on virtual threads is covered by a dedicated
+test, since task executions already run on virtual threads. Request handling on virtual threads
+exists as an **experimental, default-off** Jetty option (`threadPool.virtualThreads`) — a
+future consideration, not the supported mode. The executor's scope binding uses `ScopedValue`
+(not `ThreadLocal`), aligned with the platform-wide ThreadLocal elimination.
 
 #### Engine code cache: what makes many contexts affordable — and its retention rule
 
@@ -393,9 +395,15 @@ what every Node.js cluster / worker deployment already imposes on developers.
    facade) in whatever slot serves the task thread — true parallelism on GraalJS, identical
    semantics on Nashorn. Captured outer variables throw `ReferenceError` (strict-mode global
    eval), matching Web-Worker expectations. Still to do: the §5 migration guide for docs.
-5. **Elastic pool (contexts ≈ threads)** — replaces the earlier async-servlet phase, see §4.5:
-   lazy slot creation over a fixed logical capacity, a global cross-app context budget, slot
-   metrics + footprint measurement, and the host-backed `lib-cache` registry as prerequisite.
+5. **Elastic pool (contexts ≈ concurrent executions)** *(started on this branch)* — replaces
+   the earlier async-servlet phase, see §4.5. Landed: lazy slot creation over a fixed logical
+   capacity (affinity-stable growth), the global cross-app context budget
+   (`xp.script-engine.graal.max-contexts`, default 200; first slot per app always allowed),
+   ephemeral task contexts behind `ScriptExports.isolated()` bounded by
+   `xp.script-engine.graal.max-task-contexts`, the strong per-app `Source` registry, bounded
+   pinned waits, and the experimental Jetty virtual-threads option (default off). Remaining:
+   slot-count/footprint metrics and the host-backed `lib-cache` registry (per-context caches
+   fragment at scale).
 6. **Flip the default** — `xp.script-engine=GraalJS` with pool enabled; Nashorn path stays for
    one release cycle via `X-Script-Engine` per app, then removed.
 

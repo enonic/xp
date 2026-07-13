@@ -180,6 +180,14 @@ public @interface JettyConfig
     int threadPool_idleTimeout() default 60000;
 
     /**
+     * Experimental: handle requests on virtual threads. Blocking request handling then parks a
+     * virtual thread instead of holding a platform worker, so slow or script-bound requests
+     * cannot starve the worker pool; selector and acceptor infrastructure stays on platform
+     * threads. Off by default — an option for experiments, not (yet) the supported mode.
+     */
+    boolean threadPool_virtualThreads() default false;
+
+    /**
      * The time in milliseconds that a websocket may be idle before closing.
      */
     long websocket_idleTimeout() default 300000;
