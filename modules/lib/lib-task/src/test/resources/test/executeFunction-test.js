@@ -25,6 +25,31 @@ exports.executeFunctionThrowingError = function () {
     t.assertEquals('123', taskId);
 };
 
+exports.executeFunctionWithParams = function () {
+
+    var taskId = taskLib.executeFunction({
+        description: 'Task with params',
+        params: {a: 20, b: 22},
+        func: function (params) {
+            testInstance.record(params.a + params.b);
+        }
+    });
+
+    t.assertEquals('7ca603c1-3b88-4009-8f30-46ddbcc4bb19', taskId);
+};
+
+exports.executeClosureFunction = function () {
+
+    var captured = 'closure';
+
+    taskLib.executeFunction({
+        description: 'Closure task',
+        func: function () {
+            testInstance.record(captured);
+        }
+    });
+};
+
 exports.executeDetachedFunction = function () {
 
     var taskId = taskLib.executeFunction({

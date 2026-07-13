@@ -8,8 +8,20 @@
  */
 exports.run = function (source, params) {
     'use strict';
-    // eslint-disable-next-line no-eval -- re-materializing the submitted function from source is
-    // the feature; indirect eval runs in global scope, isolating it from the submitting scope
-    var fn = (0, eval)('(' + source + ')');
+    var fn;
+    try {
+        // eslint-disable-next-line no-eval -- re-materializing the submitted function from source is
+        // the feature; indirect eval runs in global scope, isolating it from the submitting scope
+        fn = (0, eval)('(' + source + ')');
+    } catch (e) {
+        // shorthand method syntax (`func() {...}`) is not a valid expression on its own:
+        // evaluate it as an object-literal method instead
+        // eslint-disable-next-line no-eval
+        var holder = (0, eval)('({' + source + '})');
+        for (var key in holder) {
+            fn = holder[key];
+            break;
+        }
+    }
     return params === undefined || params === null ? fn() : fn(params);
 };

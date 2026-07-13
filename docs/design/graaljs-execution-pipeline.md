@@ -176,16 +176,24 @@ final class JsFunctionHandle implements Function<Object[], Object> {
   they become safe by construction, at the cost of executing on the owner worker (serialized
   with that worker's other jobs, not with the whole app).
 
-### 4.3 `executeFunction` — two modes
+### 4.3 `executeFunction` — always detached on pooled engines
 
 The user-facing contract of `task.executeFunction` is the problem: it promises "run this
-closure on another thread", which JS cannot honor. Proposal:
+closure on another thread", which JS cannot honor.
 
-1. **Default (safe) mode — "run later on owner"**: the handle from §4.2 makes today's API work
-   correctly: the task thread submits the closure invocation to the owning worker. Semantics:
-   *asynchronous, but not parallel with that worker* — exactly how `setTimeout` behaves in a
-   browser. No API change, no crash, mild documentation note.
-2. **Detached mode — eager params, no closures (opt-in)**: for real parallelism, add
+*Decision:* **on pooled engines tasks are always detached** — JS developers have long been
+familiar with worker patterns, and a routed closure would only *appear* to work while silently
+serializing the task with the submitting context. Engines without pooling (Nashorn) keep the
+historical closure behavior; `detached: true` opts into the portable worker semantics
+everywhere. The engine is probed at submit via `ScriptExports.isolated()` (pooled engines
+return a distinct view); apps bundling an older compiled task lib (no source captured) keep the
+routed-handle fallback of §4.2, so nothing crashes. `params` are delivered on every path.
+
+1. **Routed fallback — "run later on owner"**: the handle from §4.2 keeps closure-based calls
+   from old compiled libs correct: the task thread submits the closure invocation to the owning
+   worker. Semantics: *asynchronous, but not parallel with that worker* — exactly how
+   `setTimeout` behaves in a browser.
+2. **Detached mode — eager params, no closures (the pooled-engine default)**:
    `task.executeFunction({ func, params })` where:
    - `params` are **eagerly converted to plain data at submit time** (JSON-like deep copy via
      `GraalObjectConverter`, rejecting functions/host references);

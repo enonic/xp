@@ -34,17 +34,17 @@ export interface ExecuteFunctionParams {
     func: CallbackFn;
 
     /**
-     * Runs the function detached from the submitting scope: it is re-materialized from source in
-     * whatever script context executes the task, so detached tasks run in parallel on pooled
-     * script engines instead of being serialized with the submitter. Variables captured from the
-     * surrounding scope are NOT available (referencing one throws) — pass everything the function
-     * needs via `params`. Use a function expression or arrow function (shorthand method syntax
-     * cannot be re-materialized).
+     * Forces the function to run detached from the submitting scope on every engine: it is
+     * re-materialized from source in the executing script context, Web Worker style. On pooled
+     * script engines (GraalJS) tasks are ALWAYS detached — this flag exists to opt into the
+     * same portable semantics on engines that would otherwise keep closures. Variables captured
+     * from the surrounding scope are NOT available in a detached function (referencing one
+     * throws) — pass everything it needs via `params`.
      */
     detached?: boolean;
 
     /**
-     * Data passed to a detached function as its single argument. Converted eagerly at submit
+     * Data passed to the task function as its single argument. Converted eagerly at submit
      * time; must contain data only — functions are rejected.
      */
     params?: Record<string, unknown>;
@@ -58,6 +58,8 @@ interface ExecuteFunctionHandler {
     setSource(value: string): void;
 
     setParams(value: ScriptValue | null): void;
+
+    setDetached(value: boolean): void;
 
     executeFunction(): string;
 }
@@ -90,10 +92,11 @@ interface ExecuteFunctionHandler {
  * @param {object} params JSON with the parameters.
  * @param {string} params.description Text describing the task to be executed.
  * @param {function} params.func Callback function to be executed asynchronously.
- * @param {boolean} [params.detached] Run the function detached from the submitting scope:
- * re-materialized from source in the executing script context, so it runs in parallel on pooled
- * script engines. Captured outer variables are not available — pass data via `params.params`.
- * @param {object} [params.params] Data passed to a detached function as its single argument.
+ * @param {boolean} [params.detached] Force detached (Web Worker) semantics on every engine.
+ * On pooled script engines (GraalJS) tasks are always detached: the function is re-materialized
+ * from source in the executing script context and captured outer variables are not available —
+ * pass data via `params.params`.
+ * @param {object} [params.params] Data passed to the task function as its single argument.
  * Converted eagerly at submit time; functions are rejected.
  *
  * @returns {string} Id of the task that will be executed.
@@ -105,12 +108,10 @@ export function executeFunction(params: ExecuteFunctionParams): string {
     const func = checkRequired(params, 'func');
 
     bean.setDescription(description);
-    if (params.detached) {
-        bean.setSource(String(func));
-        bean.setParams(params.params !== undefined ? __.toScriptValue(params.params) : null);
-    } else {
-        bean.setFunc(func);
-    }
+    bean.setFunc(func);
+    bean.setSource(String(func));
+    bean.setParams(params.params !== undefined ? __.toScriptValue(params.params) : null);
+    bean.setDetached(params.detached === true);
 
     return bean.executeFunction();
 }

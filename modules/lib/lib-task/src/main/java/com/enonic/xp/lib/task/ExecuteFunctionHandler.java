@@ -7,6 +7,7 @@ import java.util.function.Supplier;
 
 import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
@@ -26,20 +27,29 @@ public final class ExecuteFunctionHandler
 
     private String description;
 
-    private Function<Void, Void> taskFunction;
+    private Function<Object, Object> taskFunction;
 
     private String source;
 
     private Object params;
+
+    private ScriptValue paramsValue;
+
+    private boolean detached;
 
     public void setDescription( final String description )
     {
         this.description = description;
     }
 
-    public void setFunc( final Function<Void, Void> taskFunction )
+    public void setFunc( final Function<Object, Object> taskFunction )
     {
         this.taskFunction = taskFunction;
+    }
+
+    public void setDetached( final boolean detached )
+    {
+        this.detached = detached;
     }
 
     /**
@@ -53,19 +63,46 @@ public final class ExecuteFunctionHandler
 
     public void setParams( final ScriptValue value )
     {
+        this.paramsValue = value;
         this.params = value == null ? null : requireDataOnly( toData( value ) );
     }
 
     public String executeFunction()
     {
         final TaskService taskService = taskServiceSupplier.get();
-        final RunnableTask runnableTask = this.source != null
+        final RunnableTask runnableTask = useDetached()
             ? new DetachedFunctionTaskWrapper( scriptServiceSupplier, detachedRunner, source, params, description )
-            : new TaskWrapper( taskFunction, description );
+            : new TaskWrapper( taskFunction, paramsValue == null ? null : paramsValue.getValue(), description );
         final TaskId taskId =
             taskService.submitLocalTask( SubmitLocalTaskParams.create().runnableTask( runnableTask ).description( description ).build() );
 
         return taskId.toString();
+    }
+
+    /**
+     * Pooled script engines always run task functions detached (Web Worker semantics: only
+     * {@code params} and globals in scope) — a routed closure would serialize the task with the
+     * submitting context. Engines without pooling keep the historical closure behavior unless
+     * detached is requested explicitly. Probed via {@link ScriptExports#isolated()}: pooled
+     * engines return a distinct view.
+     */
+    private boolean useDetached()
+    {
+        if ( detached )
+        {
+            return true;
+        }
+        if ( source == null )
+        {
+            return false;
+        }
+        final PortalScriptService scriptService = scriptServiceSupplier.get();
+        if ( scriptService == null )
+        {
+            return false;
+        }
+        final ScriptExports runnerExports = scriptService.execute( detachedRunner );
+        return runnerExports.isolated() != runnerExports;
     }
 
     @Override

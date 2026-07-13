@@ -15,13 +15,16 @@ final class TaskWrapper
 {
     private static final Logger LOG = LoggerFactory.getLogger( SubmitTaskHandler.class );
 
-    private final Function<Void, Void> taskFunction;
+    private final Function<Object, Object> taskFunction;
+
+    private final Object params;
 
     private final String description;
 
-    TaskWrapper( final Function<Void, Void> taskFunction, final String description )
+    TaskWrapper( final Function<Object, Object> taskFunction, final Object params, final String description )
     {
         this.taskFunction = taskFunction;
+        this.params = params;
         this.description = description;
     }
 
@@ -35,7 +38,7 @@ final class TaskWrapper
     {
         try
         {
-            taskFunction.apply( null );
+            taskFunction.apply( params );
         }
         catch ( Throwable t )
         {

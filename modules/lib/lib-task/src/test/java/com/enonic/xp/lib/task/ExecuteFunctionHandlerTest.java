@@ -102,6 +102,43 @@ public class ExecuteFunctionHandlerTest
     }
 
     @Test
+    void testExecuteFunctionWithParams()
+    {
+        final MockTaskService mockTaskMan = new MockTaskService();
+        mockTaskMan.taskId = TaskId.from( "7ca603c1-3b88-4009-8f30-46ddbcc4bb19" );
+        addService( TaskService.class, mockTaskMan );
+
+        runFunction( "/test/executeFunction-test.js", "executeFunctionWithParams" );
+
+        assertEquals( 42, ( (Number) this.recorded ).intValue() );
+    }
+
+    @Test
+    void testClosureFunction_alwaysDetachedOnPooledEngines()
+    {
+        final MockTaskService mockTaskMan = new MockTaskService();
+        mockTaskMan.taskId = TaskId.from( "7ca603c1-3b88-4009-8f30-46ddbcc4bb19" );
+        addService( TaskService.class, mockTaskMan );
+
+        if ( isPooledEngine() )
+        {
+            // tasks are always detached: the captured variable is not available
+            assertThrows( RuntimeException.class, () -> runFunction( "/test/executeFunction-test.js", "executeClosureFunction" ) );
+        }
+        else
+        {
+            // engines without pooling keep the historical closure behavior
+            runFunction( "/test/executeFunction-test.js", "executeClosureFunction" );
+            assertEquals( "closure", this.recorded );
+        }
+    }
+
+    private static boolean isPooledEngine()
+    {
+        return "GraalJS".equalsIgnoreCase( System.getProperty( "xp.script-engine", "Nashorn" ) );
+    }
+
+    @Test
     void testExecuteDetachedFunction()
     {
         final MockTaskService mockTaskMan = new MockTaskService();
