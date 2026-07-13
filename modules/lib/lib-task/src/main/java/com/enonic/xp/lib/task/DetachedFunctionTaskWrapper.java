@@ -48,10 +48,10 @@ final class DetachedFunctionTaskWrapper
     @Override
     public void run( final TaskId id, final ProgressReporter progressReporter )
     {
-        TaskProgressReporterContext.withContext( this::runTask ).run( id, progressReporter );
+        TaskProgressReporterContext.withContext( ( taskId, reporter ) -> runTask( taskId ) ).run( id, progressReporter );
     }
 
-    private void runTask( final TaskId id, final ProgressReporter progressReporter )
+    private void runTask( final TaskId id )
     {
         try
         {
