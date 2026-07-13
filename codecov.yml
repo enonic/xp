@@ -1,0 +1,9 @@
+coverage:
+  status:
+    # Informational: integration-test coverage no longer feeds PR builds
+    # (integrationTest is detached from `check`), so absolute project
+    # coverage dropped and must not block PRs. Patch status still gates
+    # coverage of changed lines.
+    project:
+      default:
+        informational: true
