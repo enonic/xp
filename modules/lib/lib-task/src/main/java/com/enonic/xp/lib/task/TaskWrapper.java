@@ -17,14 +17,11 @@ final class TaskWrapper
 
     private final Function<Object, Object> taskFunction;
 
-    private final Object params;
-
     private final String description;
 
-    TaskWrapper( final Function<Object, Object> taskFunction, final Object params, final String description )
+    TaskWrapper( final Function<Object, Object> taskFunction, final String description )
     {
         this.taskFunction = taskFunction;
-        this.params = params;
         this.description = description;
     }
 
@@ -38,7 +35,7 @@ final class TaskWrapper
     {
         try
         {
-            taskFunction.apply( params );
+            taskFunction.apply( null );
         }
         catch ( Throwable t )
         {

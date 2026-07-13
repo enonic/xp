@@ -106,11 +106,14 @@ export function executeFunction(params: ExecuteFunctionParams): string {
 
     const description = checkRequired(params, 'description');
     const func = checkRequired(params, 'func');
+    const funcParams = params.params;
 
     bean.setDescription(description);
-    bean.setFunc(func);
+    // the routed path calls the function on the submitting context, where closures are legal:
+    // bind params here instead of routing them through Java
+    bean.setFunc(funcParams === undefined ? func : () => func(funcParams));
     bean.setSource(String(func));
-    bean.setParams(params.params !== undefined ? __.toScriptValue(params.params) : null);
+    bean.setParams(funcParams !== undefined ? __.toScriptValue(funcParams) : null);
     bean.setDetached(params.detached === true);
 
     return bean.executeFunction();

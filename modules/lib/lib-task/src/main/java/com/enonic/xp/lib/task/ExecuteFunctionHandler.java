@@ -33,8 +33,6 @@ public final class ExecuteFunctionHandler
 
     private Object params;
 
-    private ScriptValue paramsValue;
-
     private boolean detached;
 
     public void setDescription( final String description )
@@ -61,9 +59,12 @@ public final class ExecuteFunctionHandler
         this.source = source;
     }
 
+    /**
+     * Data for a detached function, delivered as its single argument. The routed path binds
+     * params to the function on the JS side instead — closures are legal there.
+     */
     public void setParams( final ScriptValue value )
     {
-        this.paramsValue = value;
         this.params = value == null ? null : requireDataOnly( toData( value ) );
     }
 
@@ -72,7 +73,7 @@ public final class ExecuteFunctionHandler
         final TaskService taskService = taskServiceSupplier.get();
         final RunnableTask runnableTask = useDetached()
             ? new DetachedFunctionTaskWrapper( scriptServiceSupplier, detachedRunner, source, params, description )
-            : new TaskWrapper( taskFunction, paramsValue == null ? null : paramsValue.getValue(), description );
+            : new TaskWrapper( taskFunction, description );
         final TaskId taskId =
             taskService.submitLocalTask( SubmitLocalTaskParams.create().runnableTask( runnableTask ).description( description ).build() );
 
