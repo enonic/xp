@@ -43,9 +43,9 @@ compatibility trade-offs ("works differently on GraalJS") we would consciously a
   (`modules/script/script-impl/src/main/java/com/enonic/xp/script/impl/ScriptRuntimeFactoryImpl.java`).
 - `GraalScriptExecutor` keeps a per-app `ScriptExportsCache<Value>` — the `require()` cache.
   Cached exports are `Value` objects **bound to that single context**.
-- `GraalJSContextFactory` builds the context with `HostAccess.ALL`, host class lookup, and the
-  optional `js.nashorn-compat` mode behind the `xp.script-engine.nashorn-compat` system
-  property.
+- `GraalJSContextFactory` builds the context with `HostAccess.ALL` and host class lookup. (It
+  used to offer an opt-in `js.nashorn-compat` mode behind the `xp.script-engine.nashorn-compat`
+  system property — removed on this branch, see §4.6.)
 
 ### 2.2 Where the locking is
 
@@ -241,8 +241,11 @@ While rebuilding the boundary, make conversion rules explicit and total in one p
 - stop wrapping module source with string concatenation (`PRE_SCRIPT + text + POST_SCRIPT`
   broke trailing `//# sourceMap` comments, #9339) — use a real function-constructor style
   wrapper with a trailing newline, or `Source` with proper URI + a bound receiver;
-- drop `js.nashorn-compat` from the default path entirely; it exists only as a migration
-  crutch ([#9071](https://github.com/enonic/xp/issues/9071)).
+- ~~drop `js.nashorn-compat` entirely; it exists only as a migration crutch
+  ([#9071](https://github.com/enonic/xp/issues/9071))~~ — *done on this branch*: the
+  `xp.script-engine.nashorn-compat` system property and the experimental-options flag on the
+  shared engine are gone. Apps needing Nashorn semantics select the real Nashorn engine via
+  `X-Script-Engine` instead of a half-compatible Graal mode.
 
 ## 5. Trade-offs we consciously accept ("works differently on GraalJS")
 

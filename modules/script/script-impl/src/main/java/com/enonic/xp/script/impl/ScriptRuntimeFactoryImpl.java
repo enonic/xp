@@ -166,8 +166,7 @@ public class ScriptRuntimeFactoryImpl
                 {
                     if ( engine == null )
                     {
-                        engine =
-                            Engine.newBuilder().allowExperimentalOptions( Boolean.getBoolean( "xp.script-engine.nashorn-compat" ) ).build();
+                        engine = Engine.newBuilder().build();
                     }
                 }
                 return new GraalScriptExecutor( new GraalJSContextFactory( appClassloader, engine ),

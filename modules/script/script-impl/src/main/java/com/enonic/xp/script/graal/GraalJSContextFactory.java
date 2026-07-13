@@ -41,13 +41,6 @@ public final class GraalJSContextFactory
             .option( "js.strict", "true" )
             .allowHostClassLoading( true );
 
-        if ( Boolean.getBoolean( "xp.script-engine.nashorn-compat" ) )
-        {
-            contextBuilder.allowExperimentalOptions( true );
-            contextBuilder.option( "js.nashorn-compat", "true" );
-            contextBuilder.option( "js.ecmascript-version", "2020" );
-        }
-
         if ( sharedEngine != null )
         {
             contextBuilder.engine( sharedEngine );
