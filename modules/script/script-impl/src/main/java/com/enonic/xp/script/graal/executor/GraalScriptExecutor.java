@@ -181,7 +181,15 @@ public class GraalScriptExecutor
     @Override
     public void runDisposers()
     {
-        this.disposers.values().forEach( queue -> queue.forEach( Runnable::run ) );
+        // drain, so each registered disposer runs at most once — a script reload (dev-mode cache
+        // expiry) re-registers its disposer, and leftovers must not run again on the next expiry
+        this.disposers.values().forEach( queue -> {
+            Runnable disposer;
+            while ( ( disposer = queue.poll() ) != null )
+            {
+                disposer.run();
+            }
+        } );
     }
 
     @Override

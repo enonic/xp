@@ -9,6 +9,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -150,6 +151,19 @@ class GraalContextPoolTest
         assertNotNull( exports.getValue() );
         assertNotNull( exports.getRawValue() );
         assertNotNull( scriptExecutor.newScriptValue( "scalar" ) );
+    }
+
+    @Test
+    @Timeout(60)
+    void disposersRunAtMostOnce()
+    {
+        final AtomicInteger runs = new AtomicInteger();
+        scriptExecutor.registerDisposer( ResourceKey.from( "graaljs:pool-test.js" ), runs::incrementAndGet );
+
+        scriptExecutor.runDisposers();
+        scriptExecutor.runDisposers();
+
+        assertEquals( 1, runs.get() );
     }
 
     private static int intValue( final ScriptValue value )
