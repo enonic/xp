@@ -267,7 +267,7 @@ public class GraalScriptExecutor
      */
     <T> T withSlot( final ContextSlot pinned, final Function<ContextSlot, T> work )
     {
-        final ContextSlot bound = BOUND_SLOT.orElse( null );
+        final ContextSlot bound = boundSlot();
         if ( bound != null && bound.owner() == this )
         {
             return work.apply( bound );
@@ -285,6 +285,12 @@ public class GraalScriptExecutor
         }
 
         return withAnySlot( work );
+    }
+
+    private static ContextSlot boundSlot()
+    {
+        // not orElse(null): ScopedValue.orElse rejects null by spec
+        return BOUND_SLOT.isBound() ? BOUND_SLOT.get() : null;
     }
 
     private ContextSlot heldSlot()
@@ -603,7 +609,7 @@ public class GraalScriptExecutor
      */
     private ContextSlot currentSlot()
     {
-        final ContextSlot bound = BOUND_SLOT.orElse( null );
+        final ContextSlot bound = boundSlot();
         if ( bound != null && bound.owner() == this )
         {
             return bound;
