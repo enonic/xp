@@ -281,10 +281,13 @@ what every Node.js cluster / worker deployment already imposes on developers.
    (see `gradle/js-tests.gradle`; applied to all `lib:*` modules, `script-impl`, `portal-impl`,
    `core-task`, `app-system`, `tools:testing`). GraalJS regressions now fail CI instead of
    surfacing in production; every fix below lands with engine-parity coverage by construction.
-1. **Boundary audit & handle type** — introduce `JsFunctionHandle` and route *all* JS-function
-   escapes through it (script-impl, lib-task, lib-event, portal mappers). This alone turns
-   crashes into correct-but-serialized behavior on the current single context. Small,
-   independently shippable.
+1. **Boundary audit & handle type** *(started on this branch)* — introduce `JsFunctionHandle`
+   and route *all* JS-function escapes through it. Implemented so far: `HostAccess` target-type
+   mappings convert JS functions passed to `Function`/`Consumer`/`Runnable`/`Supplier`/
+   `Predicate` parameters into handles (covers `lib-task` `executeFunction` and `lib-event`
+   listeners with no lib changes), and `GraalObjectConverter.toFunction` returns handles. This
+   alone turns crashes into correct-but-serialized behavior on the current single context.
+   Small, independently shippable.
 2. **Worker pool behind a flag** — `JsWorkerPool`, per-worker exports cache, thread
    confinement, `xp.script-engine.graal.pool-size` (default 1 = today's behavior; dev mode
    forces 1). Main-worker rule for `main.js`.

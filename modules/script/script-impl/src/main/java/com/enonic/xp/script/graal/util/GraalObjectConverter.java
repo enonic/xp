@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
+import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Value;
 
 import com.enonic.xp.script.impl.util.JavascriptHelper;
@@ -19,9 +20,12 @@ public final class GraalObjectConverter
 {
     private final JavascriptHelper<?> helper;
 
-    public GraalObjectConverter( final JavascriptHelper<?> helper )
+    private final Context context;
+
+    public GraalObjectConverter( final JavascriptHelper<?> helper, final Context context )
     {
         this.helper = helper;
+        this.context = context;
     }
 
     @Override
@@ -169,6 +173,7 @@ public final class GraalObjectConverter
 
     private Function<Object[], Object> toFunction( final Value source )
     {
-        return arg -> toObject( source.execute( arg ) );
+        final JsFunctionHandle handle = new JsFunctionHandle( context, source );
+        return handle::execute;
     }
 }
