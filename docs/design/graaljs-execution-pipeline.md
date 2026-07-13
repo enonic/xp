@@ -215,21 +215,35 @@ closure on another thread", which JS cannot honor. Proposal:
   style, host-backed map) rather than module-level variables; module state is per-worker after
   this change (§5).
 
-### 4.5 Async servlet model (phase 2+)
+### 4.5 Scaling model: contexts ≈ threads (async model rejected)
 
-Independent but complementary: once every JS execution is "submit job, get
-`CompletableFuture`", the portal can switch handlers to Jetty async:
+*Decision:* the synchronous request model is retained — it has served well with Jetty's thread
+pool, and an async servlet / promise-controller model (originally sketched here) is **out of
+scope**. Instead, the pool scales until contexts are not the bottleneck: the target is a total
+context budget in the order of the Jetty worker pool, shared **across all applications** rather
+than fixed per app. A blocked request then always owns a thread *and* a context, exactly like a
+classic Java servlet application.
 
-- `WebDispatcherServlet` calls `request.startAsync()`, submits the controller job, frees the
-  servlet thread, and completes the `AsyncContext` when the future resolves.
-- Controllers may return a `Promise`; the worker keeps the context alive until resolution
-  (GraalJS promise interop), enabling `async`/`await` in controllers with host-provided async
-  APIs (HTTP client, node queries) later.
-- This is where the pool pays off: servlet threads stop being hostages of the JS lock, and
-  backpressure becomes explicit (queue length per worker) instead of thread starvation.
+What this requires of the pool (the "elastic pool" work):
 
-This should *follow* the ownership redesign, not precede it — async servlets over a single
-locked context would change nothing.
+1. **Lazy slot creation with fixed logical capacity.** Slots are addressed by index in
+   `[0, capacity)` and created on first use. Affinity hashing maps keys onto the *capacity*,
+   not the live slot count, so a pool growing under load never remaps existing connections.
+2. **A global budget, not per-app pools.** Apps grow on demand within a shared cap
+   (`xp.script-engine.graal.max-contexts`); at the cap, requests wait for a free slot (today's
+   behavior) instead of creating one. Idle-slot reaping can come later — grow-only is an
+   acceptable first version since idle contexts cost only memory.
+3. **Footprint measurement and metrics.** The viability constraint is per-context memory
+   (each slot re-requires the app's module graph) and per-slot warmup. A slot-count gauge and
+   a measured per-context RSS for representative apps must precede raising defaults.
+4. **Host-backed shared state first.** At large N the §5 trade-off bites hardest through
+   `lib-cache`: per-context caches at N≈200 mean cache hit rates collapse. The host-backed
+   per-app cache registry (§5 mitigation) moves from "nice to have" to prerequisite.
+
+What is consciously given up by rejecting async: intra-request parallelism (`Promise.all` over
+several node queries) and freeing parked servlet threads under overload. Both can be revisited
+later without unwinding anything here — the ownership machinery is what a promise bridge would
+build on anyway.
 
 ### 4.6 Representation clean-up
 
@@ -323,14 +337,16 @@ what every Node.js cluster / worker deployment already imposes on developers.
    facade) in whatever slot serves the task thread — true parallelism on GraalJS, identical
    semantics on Nashorn. Captured outer variables throw `ReferenceError` (strict-mode global
    eval), matching Web-Worker expectations. Still to do: the §5 migration guide for docs.
-5. **Async servlet + promise controllers** — portal-level, after the pool is proven.
+5. **Elastic pool (contexts ≈ threads)** — replaces the earlier async-servlet phase, see §4.5:
+   lazy slot creation over a fixed logical capacity, a global cross-app context budget, slot
+   metrics + footprint measurement, and the host-backed `lib-cache` registry as prerequisite.
 6. **Flip the default** — `xp.script-engine=GraalJS` with pool enabled; Nashorn path stays for
    one release cycle via `X-Script-Engine` per app, then removed.
 
 ## 8. Open questions
 
-- Pool sizing policy: per app, global cap, or weighted by app traffic? A global worker budget
-  (shared scheduler, contexts as resources) may fit better than N threads × M apps.
+- ~~Pool sizing policy: per app, global cap, or weighted by app traffic?~~ Decided (§4.5): a
+  global cross-app budget in the order of the Jetty thread pool, grown lazily on demand.
 - ES modules (`import`) support could ride on the new pipeline (`Source.mimeType
   ("application/javascript+module")`) — worth deciding before freezing the wrapper design.
 - Should the "main" worker also serve requests, or stay reserved for listeners/timers?
