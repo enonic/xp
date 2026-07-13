@@ -394,11 +394,11 @@ public class ContentServiceImpl
     {
         requireReadAccess();
 
-        Tracer.withCurrent( trace -> trace.attribute( "id", contentId.toString() ) );
+        Tracer.attribute( "id", contentId.toString() );
 
         final Content content = doGetById( contentId );
 
-        Tracer.withCurrent( trace -> trace.attribute( "path", content.getPath().toString() ) );
+        Tracer.attribute( "path", content.getPath().toString() );
 
         return content;
     }
@@ -436,7 +436,7 @@ public class ContentServiceImpl
             .eventPublisher( this.eventPublisher )
             .build();
 
-        Tracer.withCurrent( trace -> trace.attribute( "id", contentId.toString() ) );
+        Tracer.attribute( "id", contentId.toString() );
 
         final Site site = command.execute();
 
@@ -456,7 +456,7 @@ public class ContentServiceImpl
     {
         requireReadAccess();
 
-        Tracer.withCurrent( trace -> trace.attribute( "contentPath", contentPath.toString() ) );
+        Tracer.attribute( "contentPath", contentPath.toString() );
 
         final Site site = (Site) doFindNearestByPath( contentPath, Content::isSite );
 
@@ -505,11 +505,11 @@ public class ContentServiceImpl
     {
         requireReadAccess();
 
-        Tracer.withCurrent( trace -> trace.attribute( "path", path.toString() ) );
+        Tracer.attribute( "path", path.toString() );
 
         final Content content = doGetByPath( path );
 
-        Tracer.withCurrent( trace -> trace.attribute( "id", content.getId().toString() ) );
+        Tracer.attribute( "id", content.getId().toString() );
 
         return content;
     }
@@ -582,7 +582,7 @@ public class ContentServiceImpl
 
         final FindContentByParentResult result = command.execute();
 
-        Tracer.withCurrent( trace -> trace.attribute( "hits", result.getTotalHits() ) );
+        Tracer.attribute( "hits", result.getTotalHits() );
 
         return result;
     }
@@ -613,7 +613,7 @@ public class ContentServiceImpl
 
         final FindContentIdsByParentResult result = command.execute();
 
-        Tracer.withCurrent( trace -> trace.attribute( "hits", result.getTotalHits() ) );
+        Tracer.attribute( "hits", result.getTotalHits() );
 
         return result;
     }
@@ -710,7 +710,7 @@ public class ContentServiceImpl
 
         final FindContentIdsByQueryResult result = command.execute();
 
-        Tracer.withCurrent( trace -> trace.attribute( "hits", result.getTotalHits() ) );
+        Tracer.attribute( "hits", result.getTotalHits() );
 
         return result;
     }
@@ -874,11 +874,11 @@ public class ContentServiceImpl
             .eventPublisher( this.eventPublisher )
             .build();
 
-        Tracer.withCurrent( trace -> trace.attribute( "id", contentId.toString() ) );
+        Tracer.attribute( "id", contentId.toString() );
 
         final boolean exists = command.execute();
 
-        Tracer.withCurrent( trace -> trace.attribute( "exists", exists ) );
+        Tracer.attribute( "exists", exists );
 
         return exists;
     }
@@ -893,11 +893,11 @@ public class ContentServiceImpl
             .eventPublisher( this.eventPublisher )
             .build();
 
-        Tracer.withCurrent( trace -> trace.attribute( "path", contentPath.toString() ) );
+        Tracer.attribute( "path", contentPath.toString() );
 
         final boolean exists = command.execute();
 
-        Tracer.withCurrent( trace -> trace.attribute( "exists", exists ) );
+        Tracer.attribute( "exists", exists );
 
         return exists;
     }
@@ -978,7 +978,7 @@ public class ContentServiceImpl
 
         final Content content = command.execute();
 
-        Tracer.withCurrent( trace -> trace.attribute( "path", content.getPath().toString() ) );
+        Tracer.attribute( "path", content.getPath().toString() );
 
         return content;
     }

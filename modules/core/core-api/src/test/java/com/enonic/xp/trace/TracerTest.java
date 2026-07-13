@@ -226,6 +226,30 @@ class TracerTest
     }
 
     @Test
+    void staticAttributeRecordsOnCurrentTrace()
+    {
+        // no trace bound: all no-ops
+        Tracer.attribute( "string", "value" );
+        Tracer.attribute( "long", 1L );
+        Tracer.attribute( "boolean", true );
+        verifyNoInteractions( this.trace );
+
+        Tracer.trace( this.trace, () -> {
+            Tracer.attribute( "string", "value" );
+            Tracer.attribute( "long", 1L );
+            Tracer.attribute( "double", 1.5d );
+            Tracer.attribute( "boolean", true );
+            Tracer.attribute( "list", java.util.List.of( "a" ) );
+        } );
+
+        verify( this.trace ).attribute( "string", "value" );
+        verify( this.trace ).attribute( "long", 1L );
+        verify( this.trace ).attribute( "double", 1.5d );
+        verify( this.trace ).attribute( "boolean", true );
+        verify( this.trace ).attribute( "list", java.util.List.of( "a" ) );
+    }
+
+    @Test
     void disabledTracingShieldsEnclosingTrace()
     {
         Tracer.trace( this.trace, () -> {

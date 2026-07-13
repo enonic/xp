@@ -60,14 +60,14 @@ final class TaskRunnable
         {
             newContext().runWith( () -> runnableTask.run( progressReporter ) );
             progressReporter.finished();
-            Tracer.withCurrent( trace -> trace.attribute( "success", true ) );
+            Tracer.attribute( "success", true );
             return true;
         }
         catch ( Throwable t )
         {
             progressReporter.failed( t.getMessage() );
             LOG.error( "Error executing task [{}] '{}': {}", runnableTask.getTaskId(), runnableTask.getName(), t.getMessage(), t );
-            Tracer.withCurrent( trace -> trace.attribute( "success", false ) );
+            Tracer.attribute( "success", false );
             return false;
         }
     }

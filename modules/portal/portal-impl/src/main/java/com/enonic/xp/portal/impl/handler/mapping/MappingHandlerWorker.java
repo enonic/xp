@@ -89,7 +89,7 @@ final class MappingHandlerWorker
     private WebSocketEndpoint newWebSocketEndpoint( final WebSocketConfig config, final Supplier<ControllerScript> script,
                                                     final ApplicationKey app )
     {
-        Tracer.withCurrent( trace -> trace.attribute( "app", Objects.toString( app, null ) ) );
+        Tracer.attribute( "app", Objects.toString( app, null ) );
         return new WebSocketEndpointImpl( config, script );
     }
 }

@@ -1,6 +1,7 @@
 package com.enonic.xp.trace;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -36,6 +37,70 @@ public final class Tracer
         if ( trace != null )
         {
             consumer.accept( trace );
+        }
+    }
+
+    /**
+     * Records a single string attribute on the current trace; does nothing when no trace is bound. Note that the
+     * value argument is evaluated by the caller regardless - record expensive-to-compute values, or several
+     * attributes at once, inside {@link #withCurrent(Consumer)} instead. Ignored when the value is {@code null}.
+     */
+    public static void attribute( final String key, final @Nullable String value )
+    {
+        final Trace trace = current();
+        if ( trace != null )
+        {
+            trace.attribute( key, value );
+        }
+    }
+
+    /**
+     * Records a single integer attribute on the current trace; does nothing when no trace is bound.
+     * Values that may exceed 2^53 must be recorded as strings instead.
+     */
+    public static void attribute( final String key, final long value )
+    {
+        final Trace trace = current();
+        if ( trace != null )
+        {
+            trace.attribute( key, value );
+        }
+    }
+
+    /**
+     * Records a single floating-point attribute on the current trace; does nothing when no trace is bound.
+     */
+    public static void attribute( final String key, final double value )
+    {
+        final Trace trace = current();
+        if ( trace != null )
+        {
+            trace.attribute( key, value );
+        }
+    }
+
+    /**
+     * Records a single boolean attribute on the current trace; does nothing when no trace is bound.
+     */
+    public static void attribute( final String key, final boolean value )
+    {
+        final Trace trace = current();
+        if ( trace != null )
+        {
+            trace.attribute( key, value );
+        }
+    }
+
+    /**
+     * Records a single list-of-strings attribute on the current trace; does nothing when no trace is bound.
+     * Ignored when the value is {@code null}.
+     */
+    public static void attribute( final String key, final @Nullable List<String> values )
+    {
+        final Trace trace = current();
+        if ( trace != null )
+        {
+            trace.attribute( key, values );
         }
     }
 

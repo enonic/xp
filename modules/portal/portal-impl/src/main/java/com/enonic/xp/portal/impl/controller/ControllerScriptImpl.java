@@ -50,7 +50,7 @@ final class ControllerScriptImpl
     @Traced("controllerScript")
     private PortalResponse doExecute( final PortalRequest portalRequest )
     {
-        Tracer.withCurrent( trace -> trace.attribute( "script", this.scriptExports.getScript().toString() ) );
+        Tracer.attribute( "script", this.scriptExports.getScript().toString() );
 
         final HttpMethod method = portalRequest.getMethod();
         final String methodName = method == HttpMethod.HEAD ? HttpMethod.GET.name() : method.name();

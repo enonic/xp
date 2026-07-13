@@ -109,7 +109,7 @@ public final class WebAppHandler
 
     private WebSocketEndpoint newWebSocketEndpoint( final WebSocketConfig config, final ControllerScript script, final ApplicationKey app )
     {
-        Tracer.withCurrent( trace -> trace.attribute( "app", app.toString() ) );
+        Tracer.attribute( "app", app.toString() );
         return new WebSocketEndpointImpl( config, () -> script );
     }
 

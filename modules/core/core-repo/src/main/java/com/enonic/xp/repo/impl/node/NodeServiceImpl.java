@@ -135,7 +135,7 @@ public class NodeServiceImpl
 
         final Node node = executeGetById( id );
 
-        Tracer.withCurrent( trace -> trace.attribute( "path", node.path().toString() ) );
+        Tracer.attribute( "path", node.path().toString() );
 
         return node;
     }
@@ -166,7 +166,7 @@ public class NodeServiceImpl
 
         final Node node = executeGetByIdAndVersionId( id, versionId );
 
-        Tracer.withCurrent( trace -> trace.attribute( "path", node.path().toString() ) );
+        Tracer.attribute( "path", node.path().toString() );
 
         return node;
     }
@@ -332,7 +332,7 @@ public class NodeServiceImpl
 
         final FindNodesByParentResult result = executeFindByParent( params );
 
-        Tracer.withCurrent( trace -> trace.attribute( "hits", result.getTotalHits() ) );
+        Tracer.attribute( "hits", result.getTotalHits() );
 
         return result;
     }
@@ -371,7 +371,7 @@ public class NodeServiceImpl
 
         final FindNodesByQueryResult result = executeFindByQuery( nodeQuery );
 
-        Tracer.withCurrent( trace -> trace.attribute( "hits", result.getTotalHits() ) );
+        Tracer.attribute( "hits", result.getTotalHits() );
 
         return result;
     }
@@ -412,7 +412,7 @@ public class NodeServiceImpl
 
         final FindNodesByMultiRepoQueryResult result = executeFindByQuery( multiNodeQuery );
 
-        Tracer.withCurrent( trace -> trace.attribute( "hits", result.getTotalHits() ) );
+        Tracer.attribute( "hits", result.getTotalHits() );
 
         return result;
     }
@@ -762,7 +762,7 @@ public class NodeServiceImpl
 
         final ByteSource byteSource = executeGetBinary( nodeId, reference );
 
-        Tracer.withCurrent( trace -> trace.attribute( "size", byteSource.sizeIfKnown().or( -1L ) ) );
+        Tracer.attribute( "size", byteSource.sizeIfKnown().or( -1L ) );
 
         return byteSource;
     }
@@ -795,7 +795,7 @@ public class NodeServiceImpl
 
         final ByteSource byteSource = executeGetBinary( nodeId, nodeVersionId, reference );
 
-        Tracer.withCurrent( trace -> trace.attribute( "size", byteSource.sizeIfKnown().or( -1L ) ) );
+        Tracer.attribute( "size", byteSource.sizeIfKnown().or( -1L ) );
 
         return byteSource;
     }
@@ -859,7 +859,7 @@ public class NodeServiceImpl
 
         final boolean exists = NodeHelper.runAsAdmin( () -> doGetById( nodeId ) ) != null;
 
-        Tracer.withCurrent( trace -> trace.attribute( "exists", exists ) );
+        Tracer.attribute( "exists", exists );
 
         return exists;
     }
@@ -878,7 +878,7 @@ public class NodeServiceImpl
 
         final boolean exists = NodeHelper.runAsAdmin( () -> executeGetByPath( nodePath ) ) != null;
 
-        Tracer.withCurrent( trace -> trace.attribute( "exists", exists ) );
+        Tracer.attribute( "exists", exists );
 
         return exists;
     }
