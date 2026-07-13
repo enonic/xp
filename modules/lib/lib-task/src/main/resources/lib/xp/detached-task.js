@@ -8,6 +8,8 @@
  */
 exports.run = function (source, params) {
     'use strict';
+    // eslint-disable-next-line no-eval -- re-materializing the submitted function from source is the feature;
+    // indirect eval runs in global scope, which is what isolates the function from the submitting scope
     var fn = (0, eval)('(' + source + ')');
     return params === undefined || params === null ? fn() : fn(params);
 };
