@@ -273,13 +273,10 @@ public class GraalScriptExecutor
             return work.apply( bound );
         }
 
-        for ( int i = 0; i < slots.length(); i++ )
+        final ContextSlot held = heldSlot();
+        if ( held != null )
         {
-            final ContextSlot slot = slots.get( i );
-            if ( slot != null && Thread.holdsLock( slot.context ) )
-            {
-                return runBound( slot, work );
-            }
+            return runBound( held, work );
         }
 
         if ( pinned != null )
@@ -287,6 +284,24 @@ public class GraalScriptExecutor
             return lockAndRun( pinned, work, PINNED_SLOT_WAIT_SECONDS );
         }
 
+        return withAnySlot( work );
+    }
+
+    private ContextSlot heldSlot()
+    {
+        for ( int i = 0; i < slots.length(); i++ )
+        {
+            final ContextSlot slot = slots.get( i );
+            if ( slot != null && Thread.holdsLock( slot.context ) )
+            {
+                return slot;
+            }
+        }
+        return null;
+    }
+
+    private <T> T withAnySlot( final Function<ContextSlot, T> work )
+    {
         final int start = this.roundRobin.getAndIncrement();
         final int size = slots.length();
         for ( int i = 0; i < size; i++ )
@@ -307,7 +322,11 @@ public class GraalScriptExecutor
                 }
             }
         }
+        return lockAndRun( grownOrExistingSlot( start, size ), work, SLOT_WAIT_SECONDS );
+    }
 
+    private ContextSlot grownOrExistingSlot( final int start, final int size )
+    {
         // every existing slot is busy: grow within the budget
         for ( int i = 0; i < size; i++ )
         {
@@ -317,22 +336,20 @@ public class GraalScriptExecutor
                 final ContextSlot created = slotAt( index );
                 if ( created != null )
                 {
-                    return lockAndRun( created, work, SLOT_WAIT_SECONDS );
+                    return created;
                 }
                 break;
             }
         }
-
         // at capacity or out of budget: wait fairly on an existing slot
         for ( int i = 0; i < size; i++ )
         {
             final ContextSlot slot = slots.get( Math.floorMod( start + i, size ) );
             if ( slot != null )
             {
-                return lockAndRun( slot, work, SLOT_WAIT_SECONDS );
+                return slot;
             }
         }
-
         throw new IllegalStateException( "No script context available" );
     }
 
@@ -591,16 +608,10 @@ public class GraalScriptExecutor
         {
             return bound;
         }
-        for ( int i = 0; i < slots.length(); i++ )
+        final ContextSlot held = heldSlot();
+        if ( held != null )
         {
-            final ContextSlot slot = slots.get( i );
-            if ( slot != null )
-            {
-                if ( Thread.holdsLock( slot.context ) )
-                {
-                    return slot;
-                }
-            }
+            return held;
         }
         for ( int i = 0; i < slots.length(); i++ )
         {
