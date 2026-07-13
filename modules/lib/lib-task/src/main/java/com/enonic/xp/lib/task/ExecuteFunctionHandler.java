@@ -96,13 +96,22 @@ public final class ExecuteFunctionHandler
         {
             return false;
         }
-        final PortalScriptService scriptService = scriptServiceSupplier.get();
-        if ( scriptService == null )
+        try
         {
+            final PortalScriptService scriptService = scriptServiceSupplier.get();
+            if ( scriptService == null )
+            {
+                return false;
+            }
+            final ScriptExports runnerExports = scriptService.execute( detachedRunner );
+            return runnerExports.isolated() != runnerExports;
+        }
+        catch ( RuntimeException e )
+        {
+            // no script service (minimal runtimes, tests): keep the routed behavior;
+            // explicitly detached tasks bypass this probe and surface real errors at run time
             return false;
         }
-        final ScriptExports runnerExports = scriptService.execute( detachedRunner );
-        return runnerExports.isolated() != runnerExports;
     }
 
     @Override
