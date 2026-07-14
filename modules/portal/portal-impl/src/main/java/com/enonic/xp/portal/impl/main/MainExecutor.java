@@ -5,11 +5,13 @@ import java.util.concurrent.CompletableFuture;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.condition.Condition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationListener;
+import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.script.ScriptExports;
@@ -23,9 +25,19 @@ public final class MainExecutor
     private final PortalScriptService scriptService;
 
     @Activate
-    public MainExecutor( @Reference final PortalScriptService scriptService )
+    public MainExecutor( @Reference final PortalScriptService scriptService, @Reference final ApplicationService applicationService,
+                         @Reference(target = "(" + Condition.CONDITION_ID +
+                             "=com.enonic.xp.server.deploy.ready)") final Condition deployReady )
     {
         this.scriptService = scriptService;
+
+        for ( final Application app : applicationService.getInstalledApplications() )
+        {
+            if ( app.isStarted() )
+            {
+                activated( app );
+            }
+        }
     }
 
     @Override
