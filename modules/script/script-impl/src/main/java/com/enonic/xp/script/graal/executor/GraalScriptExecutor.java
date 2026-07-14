@@ -675,6 +675,7 @@ public class GraalScriptExecutor
             return pins.get() > 0;
         }
 
+        @SuppressWarnings("deprecation") // globalVariables kept for the xp-testing harness only
         ContextSlot( final GraalJSContextFactory contextFactory, final ApplicationInfoBuilder application )
         {
             this.scriptValueFactory = new GraalScriptValueFactory( contextFactory, new GraalJavascriptHelperFactory() );

@@ -106,6 +106,7 @@ class GraalJSDiscoveryTest
     }
 
     @Test
+    @SuppressWarnings("deprecation")
     void test5()
         throws Exception
     {

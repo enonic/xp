@@ -20,6 +20,13 @@ public final class ScriptSettings
         this.debug = builder.debug;
     }
 
+    /**
+     * @deprecated Custom JS globals are being phased out: {@code app} is the only supported
+     * production global, and injected globals get per-context identity on pooled script engines.
+     * This mechanism remains only for the {@code xp-testing} harness ({@code testInstance}) and
+     * will be removed together with its migration.
+     */
+    @Deprecated
     public Map<String, Object> getGlobalVariables()
     {
         return this.globalMap;
@@ -60,6 +67,11 @@ public final class ScriptSettings
             this.globalMap = ImmutableMap.builder();
         }
 
+        /**
+         * @deprecated Custom JS globals are being phased out — see
+         * {@link ScriptSettings#getGlobalVariables()}. Do not add new uses.
+         */
+        @Deprecated
         public Builder globalVariable( final String name, final Object value )
         {
             this.globalMap.put( name, value );

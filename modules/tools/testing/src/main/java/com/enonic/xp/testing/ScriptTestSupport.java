@@ -135,7 +135,7 @@ public abstract class ScriptTestSupport
         this.scriptSettings.binding( Context.class, ContextAccessor::current );
         this.scriptSettings.binding( PortalRequest.class, () -> this.portalRequest );
         this.scriptSettings.debug( new ScriptDebugSettings() );
-        this.scriptSettings.globalVariable( "testInstance", this );
+        addTestInstanceGlobal();
 
         this.executor = createExecutor();
         PortalRequestAccessor.set( this.portalRequest );
@@ -162,6 +162,21 @@ public abstract class ScriptTestSupport
         this.scriptSettings.binding( type, () -> instance );
     }
 
+    @SuppressWarnings("deprecation")
+    private void addTestInstanceGlobal()
+    {
+        // the last sanctioned use of custom JS globals: test scripts reach their JUnit test
+        // object as `testInstance`
+        this.scriptSettings.globalVariable( "testInstance", this );
+    }
+
+    /**
+     * @deprecated Custom JS globals are being phased out ({@code app} and {@code testInstance}
+     * are the only supported ones). Pass data to scripts through services, beans or function
+     * arguments instead.
+     */
+    @Deprecated
+    @SuppressWarnings("deprecation")
     protected final void addGlobalVariable( final String name, final Object value )
     {
         this.scriptSettings.globalVariable( name, value );

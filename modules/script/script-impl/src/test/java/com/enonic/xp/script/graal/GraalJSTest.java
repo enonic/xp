@@ -25,6 +25,7 @@ import com.enonic.xp.util.Version;
 class GraalJSTest
 {
     @Test
+    @SuppressWarnings("deprecation")
     void test()
         throws Exception
     {

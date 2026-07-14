@@ -67,6 +67,7 @@ public final class ScriptExecutorImpl
 
     private final JavascriptHelper<Bindings> javascriptHelper;
 
+    @SuppressWarnings("deprecation") // globalVariables kept for the xp-testing harness only
     public ScriptExecutorImpl( final Executor asyncExecutor, final ClassLoader classLoader, final ScriptSettings scriptSettings,
                                final ServiceRegistry serviceRegistry, final ResourceService resourceService,
                                final ApplicationInfoBuilder appInfo )
