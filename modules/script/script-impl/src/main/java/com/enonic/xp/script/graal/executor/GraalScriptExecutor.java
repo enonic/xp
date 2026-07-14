@@ -58,6 +58,8 @@ public class GraalScriptExecutor
 
     private static final long SLOT_WAIT_SECONDS = 300;
 
+    private static final String MAIN_SCRIPT_PATH = "/main.js";
+
     /**
      * Pinned executions (websocket/SSE events) run on shared event-dispatch threads — they must
      * fail fast when their slot is saturated instead of holding those threads for minutes.
@@ -147,8 +149,6 @@ public class GraalScriptExecutor
         this.budget = budget;
         this.slots = new AtomicReferenceArray<>( Math.max( 1, contextPoolCapacity ) );
     }
-
-    private static final String MAIN_SCRIPT_PATH = "/main.js";
 
     @Override
     public ScriptExports executeMain( final ResourceKey key )
