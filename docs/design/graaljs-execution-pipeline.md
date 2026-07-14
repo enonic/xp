@@ -181,13 +181,23 @@ final class JsFunctionHandle implements Function<Object[], Object> {
 The user-facing contract of `task.executeFunction` is the problem: it promises "run this
 closure on another thread", which JS cannot honor.
 
-*Decision:* **on pooled engines tasks are always detached** — JS developers have long been
-familiar with worker patterns, and a routed closure would only *appear* to work while silently
-serializing the task with the submitting context. Engines without pooling (Nashorn) keep the
-historical closure behavior; `detached: true` opts into the portable worker semantics
-everywhere. The engine is probed at submit via `ScriptExports.isolated()` (pooled engines
-return a distinct view); apps bundling an older compiled task lib (no source captured) keep the
+*Decision:* **the engine decides — there is no user-facing flag.** On pooled engines tasks are
+always detached: JS developers have long been familiar with worker patterns, and a routed
+closure would only *appear* to work while silently serializing the task with the submitting
+context. Engines without pooling (Nashorn) always keep the historical attached-closure
+behavior. The engine is probed at submit via `ScriptExports.isolated()` (pooled engines return
+a distinct view); apps bundling an older compiled task lib (no source captured) keep the
 routed-handle fallback of §4.2, so nothing crashes. `params` are delivered on every path.
+
+A detached function must be able to talk to the world: `log`, `require`, `resolve` and `__`
+are module-wrapper *parameters* in this codebase, not globals, so a bare re-materialized
+function would see only `params`, `app` and engine built-ins. The runner therefore evaluates
+the source inside a wrapper — `(function (log, require, resolve, __) { return (<source>); })` —
+and applies its own module environment, so detached functions can load libraries and log.
+`require` resolves relative to the runner's location (`/lib/xp/`): absolute paths are the
+documented convention. (An earlier `detached: true` opt-in flag existed briefly and was
+removed: engine-dependent defaults plus a flag made three behavior combinations to document
+and test, for no real use case.)
 
 1. **Routed fallback — "run later on owner"**: the handle from §4.2 keeps closure-based calls
    from old compiled libs correct: the task thread submits the closure invocation to the owning
@@ -354,7 +364,7 @@ what every Node.js cluster / worker deployment already imposes on developers.
 | Limitation today | Root cause | Fix in this proposal |
 |---|---|---|
 | App effectively single-threaded | one `Context` + `synchronized` everywhere | worker pool (§4.1) |
-| `executeFunction` broken | closure invoked on foreign thread | routed handle by default; detached eager-param mode opt-in (§4.3) |
+| `executeFunction` broken | closure invoked on foreign thread | detached eager-param mode on pooled engines, routed handle elsewhere (§4.3) |
 | Callbacks (`lib-event`, converter `toFunction`) crash under load | unsynchronized cross-thread `Value.execute` | `JsFunctionHandle` routing (§4.2) |
 | Websocket/SSE ordering & state unclear | global lock + module state | per-connection worker affinity (§4.4) |
 | Servlet threads blocked on JS lock | sync dispatch | async servlet + promise controllers (§4.5) |
@@ -395,14 +405,17 @@ what every Node.js cluster / worker deployment already imposes on developers.
    handlers are Java-based today — extend when JS-backed handlers arrive). Addresses the
    ordering/state side of [#8644](https://github.com/enonic/xp/issues/8644) at pool sizes
    above 1.
-4. **Detached `executeFunction`** *(started on this branch)* —
-   `task.executeFunction({ detached: true, params, func })`: the function travels as source
-   (captured via `Function.prototype.toString` at submit) plus eagerly converted data params
-   (functions rejected at submit), and is re-materialized by an internal runner module
-   (`/lib/xp/detached-task.js`, executed through `PortalScriptService` → the pooled exports
-   facade) in whatever slot serves the task thread — true parallelism on GraalJS, identical
-   semantics on Nashorn. Captured outer variables throw `ReferenceError` (strict-mode global
-   eval), matching Web-Worker expectations. Still to do: the §5 migration guide for docs.
+4. **Detached `executeFunction`** *(started on this branch)* — the engine decides, no
+   user-facing flag: on pooled engines `task.executeFunction({ params, func })` always runs
+   detached — the function travels as source (captured via `Function.prototype.toString` at
+   submit) plus eagerly converted data params (functions rejected at submit), and is
+   re-materialized by an internal runner module (`/lib/xp/detached-task.js`, executed through
+   `PortalScriptService` → `ScriptExports.isolated()`) in a fresh context — true parallelism
+   on GraalJS. The runner applies its module environment (`log`, `require`, `resolve`, `__`)
+   to the re-materialized function, so detached functions can load libraries and log; captured
+   outer variables throw `ReferenceError`, matching Web-Worker expectations. Nashorn always
+   keeps the historical attached-closure behavior. Still to do: the §5 migration guide for
+   docs.
 5. **Elastic pool (contexts ≈ concurrent executions)** *(started on this branch)* — replaces
    the earlier async-servlet phase, see §4.5. Landed: lazy slot creation over a fixed logical
    capacity (affinity-stable growth), the global cross-app context budget

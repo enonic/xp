@@ -33,8 +33,6 @@ public final class ExecuteFunctionHandler
 
     private Object params;
 
-    private boolean detached;
-
     public void setDescription( final String description )
     {
         this.description = description;
@@ -43,11 +41,6 @@ public final class ExecuteFunctionHandler
     public void setFunc( final Function<Object, Object> taskFunction )
     {
         this.taskFunction = taskFunction;
-    }
-
-    public void setDetached( final boolean detached )
-    {
-        this.detached = detached;
     }
 
     /**
@@ -81,18 +74,15 @@ public final class ExecuteFunctionHandler
     }
 
     /**
-     * Pooled script engines always run task functions detached (Web Worker semantics: only
-     * {@code params} and globals in scope) — a routed closure would serialize the task with the
-     * submitting context. Engines without pooling keep the historical closure behavior unless
-     * detached is requested explicitly. Probed via {@link ScriptExports#isolated()}: pooled
-     * engines return a distinct view.
+     * The engine decides how the task function runs. Pooled script engines (GraalJS) always run
+     * it detached — Web Worker semantics: re-materialized from source in a fresh context with
+     * {@code params}, {@code log} and {@code require} in scope, because a routed closure would
+     * serialize the task with the submitting context. Engines without pooling (Nashorn) always
+     * keep the historical attached-closure behavior. Probed via {@link ScriptExports#isolated()}:
+     * pooled engines return a distinct view.
      */
     private boolean useDetached()
     {
-        if ( detached )
-        {
-            return true;
-        }
         if ( source == null )
         {
             return false;
@@ -109,8 +99,7 @@ public final class ExecuteFunctionHandler
         }
         catch ( RuntimeException e )
         {
-            // no script service (minimal runtimes, tests): keep the routed behavior;
-            // explicitly detached tasks bypass this probe and surface real errors at run time
+            // no script service (minimal runtimes, tests): keep the attached behavior
             return false;
         }
     }

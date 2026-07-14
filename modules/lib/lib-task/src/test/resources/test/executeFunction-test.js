@@ -50,39 +50,49 @@ exports.executeClosureFunction = function () {
     });
 };
 
-exports.executeDetachedFunction = function () {
-
-    var taskId = taskLib.executeFunction({
-        description: 'Detached task',
-        detached: true,
-        params: {a: 1, b: 2},
-        func: function (params) {
-            // no closures here: only `params` and true globals are in scope
-            testInstance.record(params.a + params.b);
-        }
-    });
-
-    t.assertEquals('7ca603c1-3b88-4009-8f30-46ddbcc4bb19', taskId);
-};
-
-exports.executeDetachedClosureFails = function () {
-
-    var captured = 42;
+exports.executeFunctionUsingLibs = function () {
 
     taskLib.executeFunction({
-        description: 'Detached closure',
-        detached: true,
-        func: function () {
-            return captured;
+        description: 'Task using libs',
+        params: {a: 40, b: 2},
+        func: function (params) {
+            // a detached function can load libraries and log: the runner provides
+            // `log`, `require`, `resolve` and `__`
+            var testing = require('/lib/xp/testing.js');
+            var sum = params.a + params.b;
+            testing.assertNotNull(sum);
+            log.info('Task computed %s', sum);
+            testInstance.record(sum);
         }
     });
 };
 
-exports.executeDetachedRejectsFunctionParams = function () {
+exports.executeArrayParams = function () {
+
+    taskLib.executeFunction({
+        description: 'Array params',
+        params: [20, 22],
+        func: function (params) {
+            testInstance.record(params[0] + params[1]);
+        }
+    });
+};
+
+exports.executeScalarParams = function () {
+
+    taskLib.executeFunction({
+        description: 'Scalar params',
+        params: 42,
+        func: function (params) {
+            testInstance.record(params);
+        }
+    });
+};
+
+exports.executeRejectsFunctionParams = function () {
 
     taskLib.executeFunction({
         description: 'Bad params',
-        detached: true,
         params: {
             cb: function () {
             }
@@ -92,35 +102,10 @@ exports.executeDetachedRejectsFunctionParams = function () {
     });
 };
 
-exports.executeDetachedArrayParams = function () {
-
-    taskLib.executeFunction({
-        description: 'Array params',
-        detached: true,
-        params: [20, 22],
-        func: function (params) {
-            testInstance.record(params[0] + params[1]);
-        }
-    });
-};
-
-exports.executeDetachedScalarParams = function () {
-
-    taskLib.executeFunction({
-        description: 'Scalar params',
-        detached: true,
-        params: 42,
-        func: function (params) {
-            testInstance.record(params);
-        }
-    });
-};
-
-exports.executeDetachedRejectsFunctionInArrayParams = function () {
+exports.executeRejectsFunctionInArrayParams = function () {
 
     taskLib.executeFunction({
         description: 'Bad array params',
-        detached: true,
         params: {
             list: [function () {
             }]
@@ -130,11 +115,10 @@ exports.executeDetachedRejectsFunctionInArrayParams = function () {
     });
 };
 
-exports.executeDetachedRejectsFunctionAsParams = function () {
+exports.executeRejectsFunctionAsParams = function () {
 
     taskLib.executeFunction({
         description: 'Function as params',
-        detached: true,
         params: function () {
         },
         func: function () {

@@ -139,81 +139,71 @@ public class ExecuteFunctionHandlerTest
     }
 
     @Test
-    void testExecuteDetachedFunction()
+    void testExecuteFunction_usingLibs()
     {
         final MockTaskService mockTaskMan = new MockTaskService();
         mockTaskMan.taskId = TaskId.from( "7ca603c1-3b88-4009-8f30-46ddbcc4bb19" );
         addService( TaskService.class, mockTaskMan );
 
-        runFunction( "/test/executeFunction-test.js", "executeDetachedFunction" );
-
-        assertEquals( 3, ( (Number) this.recorded ).intValue() );
-    }
-
-    @Test
-    void testExecuteDetachedFunction_closureNotAvailable()
-    {
-        final MockTaskService mockTaskMan = new MockTaskService();
-        mockTaskMan.taskId = TaskId.from( "7ca603c1-3b88-4009-8f30-46ddbcc4bb19" );
-        addService( TaskService.class, mockTaskMan );
-
-        assertThrows( RuntimeException.class, () -> runFunction( "/test/executeFunction-test.js", "executeDetachedClosureFails" ) );
-    }
-
-    @Test
-    void testExecuteDetachedFunction_functionParamsRejected()
-    {
-        final MockTaskService mockTaskMan = new MockTaskService();
-        mockTaskMan.taskId = TaskId.from( "7ca603c1-3b88-4009-8f30-46ddbcc4bb19" );
-        addService( TaskService.class, mockTaskMan );
-
-        assertThrows( RuntimeException.class,
-                      () -> runFunction( "/test/executeFunction-test.js", "executeDetachedRejectsFunctionParams" ) );
-    }
-
-    @Test
-    void testExecuteDetachedFunction_arrayParams()
-    {
-        final MockTaskService mockTaskMan = new MockTaskService();
-        mockTaskMan.taskId = TaskId.from( "7ca603c1-3b88-4009-8f30-46ddbcc4bb19" );
-        addService( TaskService.class, mockTaskMan );
-
-        runFunction( "/test/executeFunction-test.js", "executeDetachedArrayParams" );
+        runFunction( "/test/executeFunction-test.js", "executeFunctionUsingLibs" );
 
         assertEquals( 42, ( (Number) this.recorded ).intValue() );
     }
 
     @Test
-    void testExecuteDetachedFunction_scalarParams()
+    void testExecuteFunction_functionParamsRejected()
     {
         final MockTaskService mockTaskMan = new MockTaskService();
         mockTaskMan.taskId = TaskId.from( "7ca603c1-3b88-4009-8f30-46ddbcc4bb19" );
         addService( TaskService.class, mockTaskMan );
 
-        runFunction( "/test/executeFunction-test.js", "executeDetachedScalarParams" );
+        assertThrows( RuntimeException.class,
+                      () -> runFunction( "/test/executeFunction-test.js", "executeRejectsFunctionParams" ) );
+    }
+
+    @Test
+    void testExecuteFunction_arrayParams()
+    {
+        final MockTaskService mockTaskMan = new MockTaskService();
+        mockTaskMan.taskId = TaskId.from( "7ca603c1-3b88-4009-8f30-46ddbcc4bb19" );
+        addService( TaskService.class, mockTaskMan );
+
+        runFunction( "/test/executeFunction-test.js", "executeArrayParams" );
 
         assertEquals( 42, ( (Number) this.recorded ).intValue() );
     }
 
     @Test
-    void testExecuteDetachedFunction_functionInArrayParamsRejected()
+    void testExecuteFunction_scalarParams()
     {
         final MockTaskService mockTaskMan = new MockTaskService();
         mockTaskMan.taskId = TaskId.from( "7ca603c1-3b88-4009-8f30-46ddbcc4bb19" );
         addService( TaskService.class, mockTaskMan );
 
-        assertThrows( RuntimeException.class,
-                      () -> runFunction( "/test/executeFunction-test.js", "executeDetachedRejectsFunctionInArrayParams" ) );
+        runFunction( "/test/executeFunction-test.js", "executeScalarParams" );
+
+        assertEquals( 42, ( (Number) this.recorded ).intValue() );
     }
 
     @Test
-    void testExecuteDetachedFunction_functionAsParamsRejected()
+    void testExecuteFunction_functionInArrayParamsRejected()
     {
         final MockTaskService mockTaskMan = new MockTaskService();
         mockTaskMan.taskId = TaskId.from( "7ca603c1-3b88-4009-8f30-46ddbcc4bb19" );
         addService( TaskService.class, mockTaskMan );
 
         assertThrows( RuntimeException.class,
-                      () -> runFunction( "/test/executeFunction-test.js", "executeDetachedRejectsFunctionAsParams" ) );
+                      () -> runFunction( "/test/executeFunction-test.js", "executeRejectsFunctionInArrayParams" ) );
+    }
+
+    @Test
+    void testExecuteFunction_functionAsParamsRejected()
+    {
+        final MockTaskService mockTaskMan = new MockTaskService();
+        mockTaskMan.taskId = TaskId.from( "7ca603c1-3b88-4009-8f30-46ddbcc4bb19" );
+        addService( TaskService.class, mockTaskMan );
+
+        assertThrows( RuntimeException.class,
+                      () -> runFunction( "/test/executeFunction-test.js", "executeRejectsFunctionAsParams" ) );
     }
 }

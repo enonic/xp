@@ -34,18 +34,15 @@ export interface ExecuteFunctionParams {
     func: CallbackFn;
 
     /**
-     * Forces the function to run detached from the submitting scope on every engine: it is
-     * re-materialized from source in the executing script context, Web Worker style. On pooled
-     * script engines (GraalJS) tasks are ALWAYS detached — this flag exists to opt into the
-     * same portable semantics on engines that would otherwise keep closures. Variables captured
-     * from the surrounding scope are NOT available in a detached function (referencing one
-     * throws) — pass everything it needs via `params`.
-     */
-    detached?: boolean;
-
-    /**
      * Data passed to the task function as its single argument. Converted eagerly at submit
      * time; must contain data only — functions are rejected.
+     *
+     * On pooled script engines (GraalJS) the task function runs detached from the submitting
+     * scope, Web Worker style: it is re-materialized from source in a fresh script context,
+     * so variables captured from the surrounding scope are NOT available (referencing one
+     * throws) — pass everything it needs via `params`. `log`, `require` and `resolve` are
+     * provided; use absolute paths with `require`. Engines without pooling keep the
+     * historical closure behavior.
      */
     params?: Record<string, unknown>;
 }
@@ -58,8 +55,6 @@ interface ExecuteFunctionHandler {
     setSource(value: string): void;
 
     setParams(value: ScriptValue | null): void;
-
-    setDetached(value: boolean): void;
 
     executeFunction(): string;
 }
@@ -92,10 +87,11 @@ interface ExecuteFunctionHandler {
  * @param {object} params JSON with the parameters.
  * @param {string} params.description Text describing the task to be executed.
  * @param {function} params.func Callback function to be executed asynchronously.
- * @param {boolean} [params.detached] Force detached (Web Worker) semantics on every engine.
- * On pooled script engines (GraalJS) tasks are always detached: the function is re-materialized
- * from source in the executing script context and captured outer variables are not available —
- * pass data via `params.params`.
+ * On pooled script engines (GraalJS) the function runs detached, Web Worker style: it is
+ * re-materialized from source in a fresh script context and captured outer variables are not
+ * available — pass data via `params.params`. `log`, `require` and `resolve` are provided;
+ * use absolute paths with `require`. Engines without pooling keep the historical closure
+ * behavior.
  * @param {object} [params.params] Data passed to the task function as its single argument.
  * Converted eagerly at submit time; functions are rejected.
  *
@@ -114,7 +110,6 @@ export function executeFunction(params: ExecuteFunctionParams): string {
     bean.setFunc(funcParams === undefined ? func : () => func(funcParams));
     bean.setSource(String(func));
     bean.setParams(funcParams !== undefined ? __.toScriptValue(funcParams) : null);
-    bean.setDetached(params.detached === true);
 
     return bean.executeFunction();
 }
