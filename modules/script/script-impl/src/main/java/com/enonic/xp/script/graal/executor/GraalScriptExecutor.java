@@ -240,6 +240,9 @@ public class GraalScriptExecutor
     @Override
     public void close()
     {
+        // this executor's disposers run against this executor's contexts, while they are
+        // still open (#10844); the queues drain, so a prior run makes this a no-op
+        runDisposers();
         synchronized ( slotCreationLock )
         {
             for ( int i = 0; i < slots.length(); i++ )

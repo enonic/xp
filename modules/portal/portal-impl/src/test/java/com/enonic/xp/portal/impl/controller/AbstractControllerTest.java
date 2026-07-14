@@ -76,7 +76,8 @@ public abstract class AbstractControllerTest
         final PortalScriptServiceImpl scriptService = new PortalScriptServiceImpl( runtimeFactory );
         scriptService.initialize();
 
-        this.factory = new ControllerScriptFactoryImpl( scriptService );
+        this.factory = new ControllerScriptFactoryImpl( scriptService, key -> {
+        } );
 
         this.postProcessor = new PostProcessorImpl();
     }

@@ -383,6 +383,23 @@ class GraalContextPoolTest
         assertEquals( 1, runs.get() );
     }
 
+    @Test
+    @Timeout(60)
+    void closeRunsPendingDisposersOnce()
+        throws Exception
+    {
+        final ScriptExecutor local = newExecutor( 1, GraalContextBudget.unlimited() );
+        final AtomicInteger runs = new AtomicInteger();
+        local.registerDisposer( ResourceKey.from( "graaljs:pool-test.js" ), runs::incrementAndGet );
+
+        // instance-owned teardown: closing the executor runs its own disposers, exactly once
+        ( (Closeable) local ).close();
+        assertEquals( 1, runs.get() );
+
+        ( (Closeable) local ).close();
+        assertEquals( 1, runs.get() );
+    }
+
     private static int intValue( final ScriptValue value )
     {
         return ( (Number) value.getValue() ).intValue();

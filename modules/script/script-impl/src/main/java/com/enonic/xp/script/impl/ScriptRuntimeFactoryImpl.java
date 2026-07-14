@@ -96,7 +96,10 @@ public class ScriptRuntimeFactoryImpl
     @Override
     public void deactivated( final Application app )
     {
-        this.list.forEach( runtime -> runtime.runDisposers( app.getKey() ) );
+        // full instance teardown, not a name-keyed disposer lookup (#10844): the executor of
+        // the deactivated incarnation runs its disposers, closes its contexts and returns its
+        // budget; a replacement incarnation gets a fresh executor lazily
+        this.list.forEach( runtime -> runtime.invalidate( app.getKey() ) );
     }
 
     @Override
@@ -117,6 +120,11 @@ public class ScriptRuntimeFactoryImpl
     public void dispose( final ScriptRuntime runtime )
     {
         this.list.remove( runtime );
+        if ( runtime instanceof ScriptRuntimeImpl )
+        {
+            // instance-owned teardown: run disposers, close contexts, return budget permits
+            ( (ScriptRuntimeImpl) runtime ).close();
+        }
     }
 
     private static String defaultEngineName()

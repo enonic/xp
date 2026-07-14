@@ -58,37 +58,38 @@ class ScriptRuntimeImplTest
     }
 
     @Test
-    void runDisposers()
+    void invalidate_runsDisposersOfTheRemovedExecutor()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "myApp" );
         when( scriptExecutorFactory.apply( applicationKey ) ).thenReturn( scriptExecutor );
 
         final ScriptRuntimeImpl scriptRuntime = new ScriptRuntimeImpl( scriptExecutorFactory );
-        final ResourceKey resourceKey = ResourceKey.from( applicationKey, "/main.js" );
+        scriptRuntime.execute( ResourceKey.from( applicationKey, "/main.js" ) );
 
-        scriptRuntime.execute( resourceKey );
-
-        scriptRuntime.runDisposers( applicationKey );
+        scriptRuntime.invalidate( applicationKey );
+        // idempotent: the executor is gone, nothing to dispose twice
+        scriptRuntime.invalidate( applicationKey );
 
         verify( scriptExecutor, Mockito.times( 1 ) ).runDisposers();
     }
 
     @Test
-    void runDisposers_no_script_executor()
+    void invalidate_runsDisposersBeforeClosingTheExecutor()
+        throws Exception
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "myApp" );
-        when( scriptExecutorFactory.apply( applicationKey ) ).thenReturn( scriptExecutor );
+        final ScriptExecutor closeableExecutor =
+            mock( ScriptExecutor.class, Mockito.withSettings().extraInterfaces( java.io.Closeable.class ) );
+        when( scriptExecutorFactory.apply( applicationKey ) ).thenReturn( closeableExecutor );
 
         final ScriptRuntimeImpl scriptRuntime = new ScriptRuntimeImpl( scriptExecutorFactory );
-        final ResourceKey resourceKey = ResourceKey.from( applicationKey, "/main.js" );
-
-        scriptRuntime.execute( resourceKey );
+        scriptRuntime.execute( ResourceKey.from( applicationKey, "/main.js" ) );
 
         scriptRuntime.invalidate( applicationKey );
 
-        scriptRuntime.runDisposers( applicationKey );
-
-        verify( scriptExecutor, Mockito.never() ).runDisposers();
+        final org.mockito.InOrder inOrder = Mockito.inOrder( closeableExecutor );
+        inOrder.verify( closeableExecutor ).runDisposers();
+        inOrder.verify( (java.io.Closeable) closeableExecutor ).close();
     }
 
     @Test

@@ -471,27 +471,35 @@ twice over:
   the pooled pipeline it cannot happen: modules load inside their slot's lock+monitor
   (single-threaded per context, run-to-completion), and each slot's `require` cache is confined
   to that slot, so no thread can ever observe another thread's partially-initialized exports.
-- *The ordering half becomes a one-place fix.* Every script execution of an app now funnels
-  through its executor (`withSlot`/`withExports`/`withIsolatedExports`). A per-app bootstrap
-  gate — executions await a latch that the `main.js` run opens, with the nested-execution
-  bypass the slot resolution already provides (scope binding / held monitor) — would close
-  #7821 for both engines without touching call sites. Detached tasks submitted *by* `main.js`
-  would naturally queue behind bootstrap. Not implemented here; recorded as an enabled
-  follow-up.
+- *The ordering half is fixed on this branch* — at the portal choke point rather than inside
+  the engines: `MainExecutor` arms a per-app bootstrap gate before starting `main.js` and opens
+  it when the execution completes (success, failure or app deactivation — a broken `main.js`
+  surfaces in the log, never as a permanently dammed app), and
+  `ControllerScriptFactory.fromScript` awaits the gate (`BootstrapState`), so every controller
+  — webapp, service, mapping, API, error, id-provider — observes a fully bootstrapped
+  application on both engines. Tasks and event callbacks are deliberately *not* gated: worker
+  patterns spawned by `main.js` itself must run (a gated task that `main.js` polls would
+  deadlock). The wait is bounded (300 s, then fail-open with a warning) so a hanging
+  `main.js` degrades to today's behavior instead of a deadlock. Remaining window: requests in
+  the instant between bundle activation and the `ApplicationListener` round slip through
+  ungated — strictly better than today, not perfect.
 
 **[#10844 Disposers race condition](https://github.com/enonic/xp/issues/10844)** — disposers
 registered by one bundle incarnation invoked for its replacement (rooted in #7966). The
 pipeline sharpens both the fix shape and the stakes:
 
 - Everything app-scoped now lives in one closeable executor instance: slots, the strong
-  `Source` registry, the disposer queues, the budgeted-slot count. The correct lifecycle is
-  *instance-owned teardown* — closing the old executor runs **its** disposers against **its**
-  contexts and releases **its** budget — never name-keyed lookup at dispose time, which is
-  exactly where #10844's cross-incarnation confusion comes from.
-- New urgency: an un-closed replaced executor no longer leaks only memory — it pins permits of
-  the **global** context budget (`max-contexts`, shared by all apps). Repeated local-app
-  replacement without deterministic executor close would drain cross-app capacity. #7966/#10844
-  should be scheduled together with (or before) the default-engine flip.
+  `Source` registry, the disposer queues, the budgeted-slot count. *Fixed on this branch as
+  instance-owned teardown*: app deactivation performs a full `invalidate` — atomically remove
+  the executor instance, run **its** disposers against **its** still-open contexts, close them
+  and return **its** budget permits. The name-keyed `runDisposers(key)` lookup (which under
+  replacement resolves to the successor incarnation — the #10844 confusion) is gone; runtime
+  disposal tears down all owned executors the same way. The remaining exposure is the #7966
+  event-ordering root: a late `deactivated` event can still tear down a *healthy successor*
+  executor — but that now self-heals (it is lazily recreated on next use) instead of running
+  the wrong incarnation's disposers or leaking budget.
+- The urgency note stands for #7966 itself: executor teardown is only as reliable as the app
+  lifecycle events that trigger it.
 
 **[#6775 Global namespace](https://github.com/enonic/xp/issues/6775)** — align XP's global
 namespace with browser/node. The pipeline moves in this issue's direction and GraalJS itself

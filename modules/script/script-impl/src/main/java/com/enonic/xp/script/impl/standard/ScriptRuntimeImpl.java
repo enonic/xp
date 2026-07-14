@@ -66,12 +66,27 @@ public class ScriptRuntimeImpl
     public void invalidate( final ApplicationKey key )
     {
         LOG.debug( "Remove Script Executor for {}", key );
-        final ScriptExecutor scriptExecutor = executors.remove( key );
-        if ( scriptExecutor instanceof Closeable )
+        final ScriptExecutor removed = executors.remove( key );
+        if ( removed == null )
+        {
+            return;
+        }
+        // instance-owned teardown (#10844): the removed executor's own disposers run against
+        // its own (still open) contexts — never a name-keyed lookup, which under application
+        // replacement can resolve to the successor instance
+        try
+        {
+            removed.runDisposers();
+        }
+        catch ( Exception e )
+        {
+            LOG.warn( "Error while running disposers for {}", key, e );
+        }
+        if ( removed instanceof Closeable )
         {
             try
             {
-                ( (Closeable) scriptExecutor ).close();
+                ( (Closeable) removed ).close();
             }
             catch ( IOException e )
             {
@@ -94,21 +109,12 @@ public class ScriptRuntimeImpl
         return executor.getObjectConverter().toJs( value );
     }
 
-    public void runDisposers( final ApplicationKey key )
+    /**
+     * Tears down every executor this runtime owns — used when the runtime itself is disposed.
+     */
+    public void close()
     {
-        final ScriptExecutor executor = executors.get( key );
-        if ( executor != null )
-        {
-            LOG.debug( "Run script disposers for {}", key );
-            try
-            {
-                executor.runDisposers();
-            }
-            catch ( Exception e )
-            {
-                LOG.warn( "Error while running disposers", e );
-            }
-        }
+        executors.keySet().forEach( this::invalidate );
     }
 
     private ScriptExecutor getExecutor( final ApplicationKey key )
