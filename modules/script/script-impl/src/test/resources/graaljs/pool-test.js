@@ -17,6 +17,14 @@ exports.mkCallback = function () {
     };
 };
 
+exports.mkBlocker = function (sync) {
+    return function () {
+        sync.await();
+        counter++;
+        return counter;
+    };
+};
+
 exports.readJson = function () {
     return require('/pool-data.json').key;
 };

@@ -178,6 +178,44 @@ class GraalContextPoolTest
 
     @Test
     @Timeout(60)
+    void connectionEventsSerializeWithForeignThreadCallbacks()
+        throws Exception
+    {
+        final ScriptExports exports = scriptExecutor.executeMain( ResourceKey.from( "graaljs:pool-test.js" ) );
+
+        // a connection pinned to the exact slot that served its request (the websocket model)
+        final ScriptExports connection = exports.executeBound( view -> view );
+        connection.retain();
+        try
+        {
+            // a callback created in the connection's context escapes to a foreign thread and
+            // occupies the context (it takes the context monitor, not the slot lock)
+            final Gate gate = new Gate();
+            final ScriptValue blocker = connection.executeMethod( "mkBlocker", gate );
+            final Future<ScriptValue> busy = threads.submit( () -> blocker.call() );
+            assertTrue( gate.awaitEntered() );
+
+            final Future<?> opener = threads.submit( () -> {
+                Thread.sleep( 300 );
+                gate.open();
+                return null;
+            } );
+
+            // an event for the connection must wait for the callback's turn to end: it observes
+            // the callback's increment, proving mutual exclusion on the shared context
+            assertEquals( 2, intValue( connection.executeMethod( "inc" ) ) );
+
+            assertEquals( 1, intValue( busy.get() ) );
+            opener.get();
+        }
+        finally
+        {
+            connection.release();
+        }
+    }
+
+    @Test
+    @Timeout(60)
     void allSlotsRetainedFallsBackForLiveness()
         throws Exception
     {
