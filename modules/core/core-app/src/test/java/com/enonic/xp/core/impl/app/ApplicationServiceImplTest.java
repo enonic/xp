@@ -25,7 +25,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationMode;
 import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.app.Applications;
-import com.enonic.xp.app.CreateVirtualApplicationParams;
+import com.enonic.xp.app.CreateNamespaceParams;
 import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.config.Configuration;
@@ -155,7 +155,7 @@ class ApplicationServiceImplTest
         when( nodeService.create( isA( CreateNodeParams.class ) ) ).thenReturn( appNode );
 
         final Application result = VirtualAppContext.createAdminContext()
-            .callWith( () -> this.service.createVirtualApplication( CreateVirtualApplicationParams.create().key( appKey ).build() ) );
+            .callWith( () -> this.service.createNamespace( CreateNamespaceParams.create().key( appKey ).build() ) );
 
         assertEquals( appKey, result.getKey() );
     }
@@ -169,7 +169,7 @@ class ApplicationServiceImplTest
         when( nodeService.create( isA( CreateNodeParams.class ) ) ).thenReturn( appNode );
 
         assertThrows( ForbiddenAccessException.class,
-                      () -> this.service.createVirtualApplication( CreateVirtualApplicationParams.create().key( appKey ).build() ) );
+                      () -> this.service.createNamespace( CreateNamespaceParams.create().key( appKey ).build() ) );
     }
 
     @Test
@@ -854,7 +854,7 @@ class ApplicationServiceImplTest
         } );
 
         VirtualAppContext.createAdminContext()
-            .runWith( () -> virtualAppService.create( CreateVirtualApplicationParams.create().key( applicationKey ).build() ) );
+            .runWith( () -> virtualAppService.create( CreateNamespaceParams.create().key( applicationKey ).build() ) );
 
         assertThrows( ForbiddenAccessException.class, () -> service.getApplicationMode( applicationKey ) );
         assertEquals( ApplicationMode.VIRTUAL,

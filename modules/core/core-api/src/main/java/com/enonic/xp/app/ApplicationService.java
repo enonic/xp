@@ -29,7 +29,7 @@ public interface ApplicationService
 
     void installAllStoredApplications();
 
-    Application createVirtualApplication( CreateVirtualApplicationParams params );
+    Application createNamespace( CreateNamespaceParams params );
 
     boolean deleteVirtualApplication( ApplicationKey key );
 

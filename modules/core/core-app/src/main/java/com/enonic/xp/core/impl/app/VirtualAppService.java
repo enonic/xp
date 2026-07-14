@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.CreateVirtualApplicationParams;
+import com.enonic.xp.app.CreateNamespaceParams;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.exception.ForbiddenAccessException;
@@ -63,11 +63,11 @@ public class VirtualAppService
         }
     }
 
-    public Application create( final CreateVirtualApplicationParams params )
+    public Application create( final CreateNamespaceParams params )
     {
         requireAdminRole();
 
-        VirtualAppContext.createContext().runWith( () -> initVirtualAppNode( params.getKey() ) );
+        VirtualAppContext.createContext().runWith( () -> initVirtualAppNode( params ) );
 
         return VirtualAppFactory.create( params.getKey(), nodeService );
     }
@@ -79,11 +79,17 @@ public class VirtualAppService
         return VirtualAppContext.createContext().callWith( () -> deleteVirtualAppNode( key ) );
     }
 
-    private Node initVirtualAppNode( final ApplicationKey applicationKey )
+    private Node initVirtualAppNode( final CreateNamespaceParams params )
     {
+        final PropertyTree data = new PropertyTree();
+        if ( params.getDescription() != null )
+        {
+            data.setString( "description", params.getDescription() );
+        }
+
         final Node virtualAppNode = nodeService.create( CreateNodeParams.create()
-                                                            .data( new PropertyTree() )
-                                                            .name( applicationKey.toString() )
+                                                            .data( data )
+                                                            .name( params.getKey().toString() )
                                                             .parent( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT )
                                                             .permissions( VirtualAppConstants.VIRTUAL_APP_REPO_DEFAULT_ACL )
                                                             .build() );

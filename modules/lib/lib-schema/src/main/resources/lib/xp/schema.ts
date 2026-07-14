@@ -828,3 +828,41 @@ export function deleteMacro(params: DeleteDynamicMacroParams): boolean {
     bean.setKey(key);
     return __.toNativeObject(bean.execute());
 }
+
+export interface Namespace {
+    key: string;
+    description?: string;
+}
+
+export interface CreateNamespaceParams {
+    key: string;
+    description?: string;
+}
+
+interface CreateNamespaceHandler {
+    setKey(value: string): void;
+
+    setDescription(value: string): void;
+
+    execute(): Namespace;
+}
+
+/**
+ * Creates a namespace (virtual application).
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key Namespace (application) key.
+ * @param {string} [params.description] Namespace description.
+ *
+ * @returns {Namespace} created namespace.
+ */
+export function createNamespace(params: CreateNamespaceParams): Namespace {
+    const key = checkRequired(params, 'key');
+
+    const bean: CreateNamespaceHandler = __.newBean<CreateNamespaceHandler>('com.enonic.xp.lib.schema.CreateNamespaceHandler');
+    bean.setKey(key);
+    if (params.description != null) {
+        bean.setDescription(params.description);
+    }
+    return __.toNativeObject(bean.execute());
+}

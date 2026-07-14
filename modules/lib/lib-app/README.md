@@ -45,7 +45,6 @@ global objects, e.g. `log`, `app`, `__`, etc, requiring a library by the default
 
 ```ts
 const {
-    createVirtualApplication,
     deleteVirtualApplication,
     get,
     list,
@@ -79,7 +78,6 @@ types mapping to your configuration.
 
 ```ts
 import {
-    createVirtualApplication,
     deleteVirtualApplication,
     get,
     list,

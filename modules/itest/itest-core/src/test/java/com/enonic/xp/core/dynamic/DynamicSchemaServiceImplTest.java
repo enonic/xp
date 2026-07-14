@@ -26,7 +26,7 @@ import org.osgi.framework.Constants;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
-import com.enonic.xp.app.CreateVirtualApplicationParams;
+import com.enonic.xp.app.CreateNamespaceParams;
 import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -273,11 +273,11 @@ class DynamicSchemaServiceImplTest
             new ApplicationServiceImpl( applicationRegistry, repoService, eventPublisher, appFilterService, virtualAppService,
                                         new ApplicationAuditLogSupportImpl( mock( AuditLogService.class ) ) );
 
-        createSchemaAdminContext().runWith( () -> applicationService.createVirtualApplication(
-            CreateVirtualApplicationParams.create().key( ApplicationKey.from( "myapp" ) ).build() ) );
+        createSchemaAdminContext().runWith( () -> applicationService.createNamespace(
+            CreateNamespaceParams.create().key( ApplicationKey.from( "myapp" ) ).build() ) );
 
-        createAdminContext().runWith( () -> applicationService.createVirtualApplication(
-            CreateVirtualApplicationParams.create().key( ApplicationKey.from( "my_other_app" ) ).build() ) );
+        createAdminContext().runWith( () -> applicationService.createNamespace(
+            CreateNamespaceParams.create().key( ApplicationKey.from( "my_other_app" ) ).build() ) );
 
         projectService =
             new ProjectServiceImpl( repositoryService, repositoryService, indexService, nodeService, securityService, eventPublisher,

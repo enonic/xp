@@ -3,13 +3,16 @@ package com.enonic.xp.app;
 import static java.util.Objects.requireNonNull;
 
 
-public final class CreateVirtualApplicationParams
+public final class CreateNamespaceParams
 {
     private final ApplicationKey key;
 
-    private CreateVirtualApplicationParams( final Builder builder )
+    private final String description;
+
+    private CreateNamespaceParams( final Builder builder )
     {
         this.key = builder.key;
+        this.description = builder.description;
     }
 
     public static Builder create()
@@ -22,9 +25,16 @@ public final class CreateVirtualApplicationParams
         return key;
     }
 
+    public String getDescription()
+    {
+        return description;
+    }
+
     public static final class Builder
     {
         private ApplicationKey key;
+
+        private String description;
 
         private Builder()
         {
@@ -36,15 +46,21 @@ public final class CreateVirtualApplicationParams
             return this;
         }
 
+        public Builder description( final String description )
+        {
+            this.description = description;
+            return this;
+        }
+
         private void validate()
         {
             requireNonNull( key, "key is required" );
         }
 
-        public CreateVirtualApplicationParams build()
+        public CreateNamespaceParams build()
         {
             validate();
-            return new CreateVirtualApplicationParams( this );
+            return new CreateNamespaceParams( this );
         }
     }
 }

@@ -23,7 +23,7 @@ import com.enonic.xp.app.ApplicationMode;
 import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
-import com.enonic.xp.app.CreateVirtualApplicationParams;
+import com.enonic.xp.app.CreateNamespaceParams;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.app.event.ApplicationClusterEvents;
 import com.enonic.xp.core.impl.app.event.ApplicationEvents;
@@ -221,7 +221,7 @@ public final class ApplicationServiceImpl
     }
 
     @Override
-    public Application createVirtualApplication( final CreateVirtualApplicationParams params )
+    public Application createNamespace( final CreateNamespaceParams params )
     {
         return this.virtualAppService.create( params );
     }

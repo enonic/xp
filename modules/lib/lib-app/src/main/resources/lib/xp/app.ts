@@ -27,10 +27,6 @@ function checkRequired<T extends object, K extends keyof T>(
     return obj[name];
 }
 
-export interface CreateVirtualApplicationParams {
-    key: string;
-}
-
 export interface Application {
     key: string;
     version: string | null;
@@ -40,28 +36,6 @@ export interface Application {
     modifiedTime: string | null;
     started: boolean;
     system: boolean;
-}
-
-interface CreateVirtualApplicationHandler {
-    setKey(value: string): void;
-
-    execute(): Application;
-}
-
-/**
- * Creates virtual application.
- *
- * @param {object} params JSON with the parameters.
- * @param {string} params.key Application key.
- *
- * @returns {Application} created application.
- */
-export function createVirtualApplication(params: CreateVirtualApplicationParams): Application {
-    const key = checkRequired(params, 'key');
-
-    const bean: CreateVirtualApplicationHandler = __.newBean<CreateVirtualApplicationHandler>('com.enonic.xp.lib.app.CreateVirtualApplicationHandler');
-    bean.setKey(key);
-    return __.toNativeObject(bean.execute());
 }
 
 export interface DeleteVirtualApplicationParams {
