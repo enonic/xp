@@ -1,25 +1,29 @@
 package com.enonic.xp.portal.impl.main;
 
+import java.util.Dictionary;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceRegistration;
+import org.osgi.service.condition.Condition;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.script.ScriptExports;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -32,125 +36,84 @@ class MainExecutorTest
     @Mock
     private PortalScriptService scriptService;
 
+    @Mock
+    private BundleContext bundleContext;
+
+    @Mock
+    private ServiceRegistration<Condition> registration;
+
     @BeforeEach
+    @SuppressWarnings("unchecked")
     void setup()
     {
-        this.executor = new MainExecutor( this.scriptService );
+        lenient().when( this.bundleContext.registerService( eq( Condition.class ), any(), any() ) ).thenReturn( this.registration );
+        this.executor = new MainExecutor( this.scriptService, this.bundleContext );
     }
 
-    @Test
-    void mainJsMissing()
+    private static Application app()
     {
         final Application app = mock( Application.class );
         when( app.getKey() ).thenReturn( ApplicationKey.from( "foo.bar" ) );
-
-        this.executor.activated( app );
-
-        verify( this.scriptService, times( 1 ) ).hasScript( any() );
-        verify( this.scriptService, times( 0 ) ).execute( any() );
+        return app;
     }
 
     @Test
-    void mainJsError()
+    void mainJsMissing_bootstrapsImmediately()
     {
         final ResourceKey key = ResourceKey.from( "foo.bar:/main.js" );
-        when( this.scriptService.hasScript( key ) ).thenReturn( true );
-        when( this.scriptService.executeAsync( key ) ).thenReturn( CompletableFuture.failedFuture( new RuntimeException() ) );
+        when( this.scriptService.hasScript( key ) ).thenReturn( false );
 
-        final Application app = mock( Application.class );
-        when( app.getKey() ).thenReturn( ApplicationKey.from( "foo.bar" ) );
+        this.executor.activated( app() );
 
-        this.executor.activated( app );
+        verify( this.scriptService, never() ).executeAsync( any() );
+        final Dictionary<String, ?> props = captureRegisteredProps();
+        assertEquals( AppBootstrapBarrierImpl.BOOTSTRAP_CONDITION_ID, props.get( Condition.CONDITION_ID ) );
+        assertEquals( "foo.bar", props.get( AppBootstrapBarrierImpl.APPLICATION_PROPERTY ) );
     }
 
     @Test
-    void mainJsExecute()
+    void mainJsExecute_bootstrapsOnCompletion()
     {
         final ResourceKey key = ResourceKey.from( "foo.bar:/main.js" );
         when( this.scriptService.hasScript( key ) ).thenReturn( true );
         when( this.scriptService.executeAsync( key ) ).thenReturn( CompletableFuture.completedFuture( null ) );
 
-        final Application app = mock( Application.class );
-        when( app.getKey() ).thenReturn( ApplicationKey.from( "foo.bar" ) );
+        this.executor.activated( app() );
 
-        this.executor.activated( app );
+        assertEquals( "foo.bar", captureRegisteredProps().get( AppBootstrapBarrierImpl.APPLICATION_PROPERTY ) );
     }
 
     @Test
-    void awaitBootstrapped_unknownApp_returnsImmediately()
+    void mainJsError_stillBootstraps()
     {
-        this.executor.awaitBootstrapped( ApplicationKey.from( "never.activated" ) );
-    }
-
-    @Test
-    void awaitBootstrapped_blocksUntilMainJsCompletes()
-        throws Exception
-    {
-        final ApplicationKey appKey = ApplicationKey.from( "foo.bar" );
-        final ResourceKey key = ResourceKey.from( "foo.bar:/main.js" );
-        final CompletableFuture<ScriptExports> mainJs = new CompletableFuture<>();
-        when( this.scriptService.hasScript( key ) ).thenReturn( true );
-        when( this.scriptService.executeAsync( key ) ).thenReturn( mainJs );
-
-        final Application app = mock( Application.class );
-        when( app.getKey() ).thenReturn( appKey );
-        this.executor.activated( app );
-
-        final CountDownLatch awaiting = new CountDownLatch( 1 );
-        final Thread controller = new Thread( () -> {
-            awaiting.countDown();
-            this.executor.awaitBootstrapped( appKey );
-        } );
-        controller.start();
-
-        assertTrue( awaiting.await( 10, TimeUnit.SECONDS ) );
-        // the controller thread is gated while main.js has not completed
-        controller.join( 300 );
-        assertTrue( controller.isAlive() );
-
-        mainJs.complete( null );
-        controller.join( TimeUnit.SECONDS.toMillis( 10 ) );
-        assertFalse( controller.isAlive() );
-
-        // completed bootstrap: subsequent awaits return immediately
-        this.executor.awaitBootstrapped( appKey );
-    }
-
-    @Test
-    void awaitBootstrapped_opensOnMainJsFailure()
-    {
-        final ApplicationKey appKey = ApplicationKey.from( "foo.bar" );
         final ResourceKey key = ResourceKey.from( "foo.bar:/main.js" );
         when( this.scriptService.hasScript( key ) ).thenReturn( true );
         when( this.scriptService.executeAsync( key ) ).thenReturn( CompletableFuture.failedFuture( new RuntimeException() ) );
 
-        final Application app = mock( Application.class );
-        when( app.getKey() ).thenReturn( appKey );
-        this.executor.activated( app );
+        this.executor.activated( app() );
 
-        // a broken main.js must not dam the application
-        this.executor.awaitBootstrapped( appKey );
+        // a broken main.js must not leave the application un-bootstrapped
+        verify( this.bundleContext ).registerService( eq( Condition.class ), eq( Condition.INSTANCE ), any() );
     }
 
     @Test
-    void deactivated_releasesWaiters()
-        throws Exception
+    void deactivated_unregistersTheCondition()
     {
-        final ApplicationKey appKey = ApplicationKey.from( "foo.bar" );
         final ResourceKey key = ResourceKey.from( "foo.bar:/main.js" );
-        when( this.scriptService.hasScript( key ) ).thenReturn( true );
-        when( this.scriptService.executeAsync( key ) ).thenReturn( new CompletableFuture<>() );
+        when( this.scriptService.hasScript( key ) ).thenReturn( false );
 
-        final Application app = mock( Application.class );
-        when( app.getKey() ).thenReturn( appKey );
+        final Application app = app();
         this.executor.activated( app );
-
-        final Thread controller = new Thread( () -> this.executor.awaitBootstrapped( appKey ) );
-        controller.start();
-
         this.executor.deactivated( app );
 
-        controller.join( TimeUnit.SECONDS.toMillis( 10 ) );
-        assertFalse( controller.isAlive() );
+        verify( this.registration, times( 1 ) ).unregister();
+    }
+
+    @SuppressWarnings("unchecked")
+    private Dictionary<String, ?> captureRegisteredProps()
+    {
+        final ArgumentCaptor<Dictionary<String, ?>> captor = ArgumentCaptor.forClass( Dictionary.class );
+        verify( this.bundleContext ).registerService( eq( Condition.class ), eq( Condition.INSTANCE ), captor.capture() );
+        return captor.getValue();
     }
 }

@@ -481,17 +481,22 @@ twice over:
   ungated because the dedicated context already serializes them with bootstrap (a listener
   handle waits on the main context's monitor until `main.js`'s evaluation completes).
 - *The ordering half is fixed on this branch* — at the portal choke point rather than inside
-  the engines: `MainExecutor` arms a per-app bootstrap gate before starting `main.js` and opens
-  it when the execution completes (success, failure or app deactivation — a broken `main.js`
-  surfaces in the log, never as a permanently dammed app), and
-  `ControllerScriptFactory.fromScript` awaits the gate (`BootstrapState`), so every controller
-  — webapp, service, mapping, API, error, id-provider — observes a fully bootstrapped
-  application on both engines. Tasks and event callbacks are deliberately *not* gated: worker
-  patterns spawned by `main.js` itself must run (a gated task that `main.js` polls would
-  deadlock). The wait is bounded (300 s, then fail-open with a warning) so a hanging
-  `main.js` degrades to today's behavior instead of a deadlock. Remaining window: requests in
-  the instant between bundle activation and the `ApplicationListener` round slip through
-  ungated — strictly better than today, not perfect.
+  the engines, and modelled as a standard **OSGi R8 `Condition`** (a string-identified marker
+  service) rather than a bespoke bootstrap service: `MainExecutor` runs `main.js` on activation
+  and, when it completes (success, failure or — for apps without `main.js` — immediately),
+  registers a `Condition` service tagged `osgi.condition.id=com.enonic.xp.portal.app.bootstrapped`
+  with an `application` property; on deactivation it unregisters it. Bootstrap state therefore
+  lives in the service registry as a string, not in a service's memory. `ControllerScriptFactory`
+  / `IdProviderControllerScriptFactory` await that Condition (`AppBootstrapBarrier`, a thin
+  registry-reading consumer seam — a `ServiceTracker` on the per-app filter), so every
+  controller — webapp, service, mapping, API, error, id-provider — observes a fully bootstrapped
+  application on both engines. A broken `main.js` still publishes the Condition (surfaces in the
+  log, never a permanently dammed app). Tasks and event callbacks are deliberately *not* gated:
+  worker patterns spawned by `main.js` itself must run (a gated task that `main.js` polls would
+  deadlock). The wait is bounded (300 s, then fail-open with a warning) so a hanging `main.js`
+  degrades to today's behavior instead of a deadlock. Remaining window: requests in the instant
+  between bundle activation and the `ApplicationListener` round slip through ungated — strictly
+  better than today, not perfect.
 
 **[#10844 Disposers race condition](https://github.com/enonic/xp/issues/10844)** — disposers
 registered by one bundle incarnation invoked for its replacement (rooted in #7966). The

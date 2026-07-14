@@ -1,110 +1,110 @@
 package com.enonic.xp.portal.impl.main;
 
-import java.util.concurrent.CompletableFuture;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.condition.Condition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationListener;
+import com.enonic.xp.core.internal.Dictionaries;
 import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.resource.ResourceKey;
 
-@Component(immediate = true, service = {ApplicationListener.class, BootstrapState.class})
+/**
+ * Executes each application's {@code main.js} on activation and publishes a per-application
+ * bootstrap {@link Condition} once it completes — the signal controllers await before running
+ * (<a href="https://github.com/enonic/xp/issues/7821">#7821</a>). The Condition is a plain
+ * string-identified marker in the OSGi service registry: bootstrap state lives there, not in a
+ * bespoke service.
+ */
+@Component(immediate = true)
 public final class MainExecutor
-    implements ApplicationListener, BootstrapState
+    implements ApplicationListener
 {
     private static final Logger LOG = LoggerFactory.getLogger( MainExecutor.class );
 
-    private static final long BOOTSTRAP_WAIT_SECONDS = 300;
-
     private final PortalScriptService scriptService;
 
-    private final ConcurrentMap<ApplicationKey, CompletableFuture<Void>> bootstraps = new ConcurrentHashMap<>();
+    private final BundleContext bundleContext;
+
+    private final ConcurrentMap<ApplicationKey, ServiceRegistration<Condition>> conditions = new ConcurrentHashMap<>();
 
     @Activate
-    public MainExecutor( @Reference final PortalScriptService scriptService )
+    public MainExecutor( @Reference final PortalScriptService scriptService, final BundleContext bundleContext )
     {
         this.scriptService = scriptService;
+        this.bundleContext = bundleContext;
     }
 
     @Override
     public void activated( final Application app )
     {
-        executeMain( app.getKey(), ResourceKey.from( app.getKey(), "/main.js" ) );
+        final ApplicationKey applicationKey = app.getKey();
+        final ResourceKey mainScript = ResourceKey.from( applicationKey, "/main.js" );
+
+        if ( this.scriptService.hasScript( mainScript ) )
+        {
+            this.scriptService.executeAsync( mainScript ).whenComplete( ( exports, e ) -> {
+                if ( e != null )
+                {
+                    LOG.error( "Error while executing {} Application controller", applicationKey, e );
+                }
+                else
+                {
+                    LOG.debug( "Completed execution of {} Application controller", applicationKey );
+                }
+                // publish on success AND failure: a broken main.js surfaces in the log, not as a
+                // permanently un-bootstrapped application
+                publishBootstrapped( applicationKey );
+            } );
+        }
+        else
+        {
+            // no main.js: the application is trivially bootstrapped
+            publishBootstrapped( applicationKey );
+        }
     }
 
     @Override
     public void deactivated( final Application app )
     {
-        final CompletableFuture<Void> gate = this.bootstraps.remove( app.getKey() );
-        if ( gate != null )
-        {
-            // release anyone awaiting the bootstrap of a dying application
-            gate.complete( null );
-        }
+        unregister( this.conditions.remove( app.getKey() ) );
     }
 
-    @Override
-    public void awaitBootstrapped( final ApplicationKey key )
+    private void publishBootstrapped( final ApplicationKey applicationKey )
     {
-        final CompletableFuture<Void> gate = this.bootstraps.get( key );
-        if ( gate == null || gate.isDone() )
-        {
-            return;
-        }
-        try
-        {
-            gate.get( BOOTSTRAP_WAIT_SECONDS, TimeUnit.SECONDS );
-        }
-        catch ( InterruptedException e )
-        {
-            Thread.currentThread().interrupt();
-            throw new RuntimeException( "Interrupted while waiting for " + key + " to bootstrap", e );
-        }
-        catch ( ExecutionException e )
-        {
-            // unreachable: the gate always completes with null
-        }
-        catch ( TimeoutException e )
-        {
-            // fail open: a hanging main.js must not dam the application forever
-            LOG.warn( "main.js of {} has not completed within {}s - proceeding without it", key, BOOTSTRAP_WAIT_SECONDS );
-        }
+        final ServiceRegistration<Condition> registration = this.bundleContext.registerService( Condition.class, Condition.INSTANCE,
+                                                                                                Dictionaries.copyOf(
+                                                                                                    Map.of( Condition.CONDITION_ID,
+                                                                                                            AppBootstrapBarrierImpl.BOOTSTRAP_CONDITION_ID,
+                                                                                                            AppBootstrapBarrierImpl.APPLICATION_PROPERTY,
+                                                                                                            applicationKey.toString() ) ) );
+        // replace any registration left by a previous incarnation of the same application
+        unregister( this.conditions.put( applicationKey, registration ) );
     }
 
-    private void executeMain( final ApplicationKey applicationKey, final ResourceKey key )
+    private static void unregister( final ServiceRegistration<Condition> registration )
     {
-        if ( !this.scriptService.hasScript( key ) )
+        if ( registration != null )
         {
-            return;
+            try
+            {
+                registration.unregister();
+            }
+            catch ( IllegalStateException e )
+            {
+                // already unregistered (bundle stopping) - nothing to do
+            }
         }
-        // armed before execution starts: controller executions await the gate (#7821), so
-        // main.js initialization observably happens before any controller runs
-        final CompletableFuture<Void> gate = new CompletableFuture<>();
-        this.bootstraps.put( applicationKey, gate );
-
-        this.scriptService.executeAsync( key ).whenComplete( ( u, e ) -> {
-            if ( e != null )
-            {
-                LOG.error( "Error while executing {} Application controller", applicationKey, e );
-            }
-            else
-            {
-                LOG.debug( "Completed execution of {} Application controller", applicationKey );
-            }
-            // open on success AND failure: a broken main.js surfaces in the log, not as a
-            // permanently dammed application
-            gate.complete( null );
-        } );
     }
 }
