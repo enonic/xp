@@ -66,6 +66,22 @@ class ScriptRuntimeFactoryImplTest
         when( application.getKey() ).thenReturn( applicationKey );
         scriptRuntimeFactory.deactivated( application );
 
-        verify( scriptRuntime ).runDisposers( eq( applicationKey ) );
+        // deactivation is a full instance teardown, not a name-keyed disposer lookup (#10844)
+        verify( scriptRuntime ).invalidate( eq( applicationKey ) );
+    }
+
+    @Test
+    void dispose_closesTheRuntime()
+    {
+        final ScriptRuntimeFactoryImpl scriptRuntimeFactory =
+            spy( new ScriptRuntimeFactoryImpl( bundleContext, resourceService, scriptAsyncService ) );
+
+        final ScriptRuntimeImpl scriptRuntime = mock( ScriptRuntimeImpl.class );
+        when( scriptRuntimeFactory.doCreate( any() ) ).thenReturn( scriptRuntime );
+
+        scriptRuntimeFactory.create( ScriptSettings.create().build() );
+        scriptRuntimeFactory.dispose( scriptRuntime );
+
+        verify( scriptRuntime ).close();
     }
 }
