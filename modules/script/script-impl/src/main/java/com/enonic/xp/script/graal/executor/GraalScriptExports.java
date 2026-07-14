@@ -32,6 +32,16 @@ final class GraalScriptExports
         this( executor, script, null, false );
     }
 
+    /**
+     * A view permanently pinned to the given slot — used for {@code main.js}, whose exports
+     * must always execute in the dedicated main context.
+     */
+    static GraalScriptExports pinnedTo( final GraalScriptExecutor executor, final ResourceKey script,
+                                        final GraalScriptExecutor.ContextSlot slot )
+    {
+        return new GraalScriptExports( executor, script, slot, false );
+    }
+
     private GraalScriptExports( final GraalScriptExecutor executor, final ResourceKey script,
                                 final GraalScriptExecutor.ContextSlot pinnedSlot, final boolean isolated )
     {

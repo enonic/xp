@@ -104,6 +104,15 @@ public class GraalScriptExecutor
 
     private boolean hasSlots;
 
+    /**
+     * The dedicated {@code main.js} context — the "main worker rule": the app's bootstrap
+     * script, the event listeners it registers and the disposers it leaves behind all share
+     * this one context (handles bind to their creating context), and it lives outside the
+     * request pool, so requests never disturb it and it never serves requests. Unbudgeted,
+     * like the first pooled slot: at most one per application.
+     */
+    private volatile ContextSlot mainSlot;
+
     private final AtomicInteger roundRobin = new AtomicInteger();
 
     /**
@@ -139,17 +148,37 @@ public class GraalScriptExecutor
         this.slots = new AtomicReferenceArray<>( Math.max( 1, contextPoolCapacity ) );
     }
 
+    private static final String MAIN_SCRIPT_PATH = "/main.js";
+
     @Override
     public ScriptExports executeMain( final ResourceKey key )
     {
-        withSlot( slot -> {
+        final ContextSlot pinned = MAIN_SCRIPT_PATH.equals( key.getPath() ) ? mainSlot() : null;
+        withSlot( pinned, slot -> {
             if ( RunMode.isDev() )
             {
                 slot.exportsCache.expireCacheIfNeeded();
             }
             return requireInSlot( slot, key );
         } );
-        return new GraalScriptExports( this, key );
+        return pinned == null ? new GraalScriptExports( this, key ) : GraalScriptExports.pinnedTo( this, key, pinned );
+    }
+
+    private ContextSlot mainSlot()
+    {
+        final ContextSlot existing = this.mainSlot;
+        if ( existing != null )
+        {
+            return existing;
+        }
+        synchronized ( slotCreationLock )
+        {
+            if ( this.mainSlot == null )
+            {
+                this.mainSlot = new ContextSlot( contextFactory, application );
+            }
+            return this.mainSlot;
+        }
     }
 
     @Override
@@ -245,6 +274,11 @@ public class GraalScriptExecutor
         runDisposers();
         synchronized ( slotCreationLock )
         {
+            if ( mainSlot != null )
+            {
+                mainSlot.context.close();
+                mainSlot = null;
+            }
             for ( int i = 0; i < slots.length(); i++ )
             {
                 final ContextSlot slot = slots.get( i );
@@ -298,6 +332,13 @@ public class GraalScriptExecutor
 
     private ContextSlot heldSlot()
     {
+        // listeners and disposers execute on the main context: their nested require() must
+        // resolve there, like any other held-monitor callback
+        final ContextSlot main = this.mainSlot;
+        if ( main != null && Thread.holdsLock( main.context ) )
+        {
+            return main;
+        }
         for ( int i = 0; i < slots.length(); i++ )
         {
             final ContextSlot slot = slots.get( i );

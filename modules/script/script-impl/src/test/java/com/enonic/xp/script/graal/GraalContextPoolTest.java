@@ -385,6 +385,29 @@ class GraalContextPoolTest
 
     @Test
     @Timeout(60)
+    void mainJsGetsADedicatedContext()
+        throws Exception
+    {
+        final ScriptExports main = scriptExecutor.executeMain( ResourceKey.from( "graaljs:/main.js" ) );
+        assertEquals( 1, intValue( main.executeMethod( "inc" ) ) );
+
+        // request traffic executes on pool slots and never touches the main context
+        final ScriptExports exports = scriptExecutor.executeMain( ResourceKey.from( "graaljs:pool-test.js" ) );
+        for ( int i = 0; i < 8; i++ )
+        {
+            exports.executeMethod( "inc" );
+        }
+        assertEquals( 2, intValue( main.executeMethod( "inc" ) ) );
+
+        // a listener created by main.js executes in the main context from any thread,
+        // sharing main.js module state
+        final ScriptValue listener = main.executeMethod( "mkListener" );
+        final ScriptValue result = threads.submit( () -> listener.call() ).get();
+        assertEquals( 3, ( (Number) result.getValue() ).intValue() );
+    }
+
+    @Test
+    @Timeout(60)
     void closeRunsPendingDisposersOnce()
         throws Exception
     {

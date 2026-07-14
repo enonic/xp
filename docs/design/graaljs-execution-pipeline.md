@@ -405,9 +405,12 @@ what every Node.js cluster / worker deployment already imposes on developers.
    forces 1). `ScriptExports` became a pool-aware facade so cached controller scripts don't pin
    one slot. The context monitor remains the ownership primitive — slot resolution is
    ThreadLocal → `Thread.holdsLock` scan → checkout, which keeps `require` on a foreign-thread
-   callback in the callback's own slot and avoids slot/monitor deadlock cycles. Still to do
-   from the original plan: dedicated worker threads (queue instead of monitor) and a
-   main-worker rule for `main.js` listeners at pool sizes above 1.
+   callback in the callback's own slot and avoids slot/monitor deadlock cycles. The
+   **main-worker rule is landed**: `main.js` loads into a dedicated context outside the pool
+   array — the listeners it registers and the disposers it leaves behind are handles bound to
+   that same context (unbudgeted, at most one per app), requests never disturb it and it never
+   serves requests. Dropped from the original plan: dedicated worker threads (queue instead of
+   monitor) — the ownership monitor has proven sufficient.
 3. **Connection affinity** *(started on this branch)* — `ScriptExports.executeBound(work)` /
    `ControllerScript.executeBound(work)` run a request bound to one context and hand `work` a
    view pinned to that exact context. Portal handlers execute every controller this way; a
@@ -471,6 +474,12 @@ twice over:
   the pooled pipeline it cannot happen: modules load inside their slot's lock+monitor
   (single-threaded per context, run-to-completion), and each slot's `require` cache is confined
   to that slot, so no thread can ever observe another thread's partially-initialized exports.
+  `main.js` additionally gets a **dedicated context** (the main-worker rule, §4.1/phase 2):
+  bootstrap, its listeners and its disposers share one context that requests never touch.
+  Deadlock audit note: event dispatch is single-threaded today, so `main.js` structurally
+  cannot wait on its own listeners — gating listeners would also be safe; they are left
+  ungated because the dedicated context already serializes them with bootstrap (a listener
+  handle waits on the main context's monitor until `main.js`'s evaluation completes).
 - *The ordering half is fixed on this branch* — at the portal choke point rather than inside
   the engines: `MainExecutor` arms a per-app bootstrap gate before starting `main.js` and opens
   it when the execution completes (success, failure or app deactivation — a broken `main.js`
