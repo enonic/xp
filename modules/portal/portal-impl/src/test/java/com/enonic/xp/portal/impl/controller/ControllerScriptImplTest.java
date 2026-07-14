@@ -5,6 +5,7 @@ import java.util.function.Function;
 
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.impl.mapper.SseEventMapper;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.util.GenericValue;
@@ -76,6 +77,18 @@ class ControllerScriptImplTest
 
         script.release();
         verify( exports ).release();
+    }
+
+    @Test
+    void interfaceDefaults_areNoOps()
+    {
+        // engines without pooling rely on the interface defaults: bound scopes receive the
+        // controller itself and retain/release do nothing
+        final ControllerScript script = request -> null;
+
+        assertSame( script, script.executeBound( bound -> bound ) );
+        script.retain();
+        script.release();
     }
 
     @Test

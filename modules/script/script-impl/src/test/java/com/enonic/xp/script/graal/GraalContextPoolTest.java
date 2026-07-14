@@ -38,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class GraalContextPoolTest
@@ -244,6 +245,23 @@ class GraalContextPoolTest
 
         // the pooled contexts are untouched by isolated runs
         assertEquals( 1, intValue( exports.executeMethod( "inc" ) ) );
+    }
+
+    @Test
+    @Timeout(60)
+    void retainAndBindAreNoOpsWithoutAPinnedSlot()
+    {
+        final ScriptExports exports = scriptExecutor.executeMain( ResourceKey.from( "graaljs:pool-test.js" ) );
+
+        // views without a pinned slot have nothing to retain — both calls are safe no-ops
+        exports.retain();
+        exports.release();
+
+        // an isolated view has no slot to capture: bound scopes receive the view itself
+        final ScriptExports isolated = exports.isolated();
+        assertSame( isolated, isolated.executeBound( view -> view ) );
+        isolated.retain();
+        isolated.release();
     }
 
     @Test

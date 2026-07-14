@@ -23,6 +23,9 @@ import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.handler.WebHandlerChain;
 import com.enonic.xp.web.sse.SseConfig;
 import com.enonic.xp.web.sse.SseEndpoint;
+import com.enonic.xp.web.websocket.WebSocketConfig;
+import com.enonic.xp.web.websocket.WebSocketContext;
+import com.enonic.xp.web.websocket.WebSocketEndpoint;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -167,6 +170,26 @@ class WebAppHandlerTest
 
         assertEquals( HttpStatus.TEMPORARY_REDIRECT, response.getStatus() );
         assertEquals( "/webapp/myapp/?param=value&other=test", response.getHeaders().get( "Location" ) );
+    }
+
+    @Test
+    void handle_appliesWebSocketWhenResponseHasConfig()
+        throws Exception
+    {
+        this.request.setApplicationKey( ApplicationKey.from( "myapp" ) );
+        this.request.setBaseUri( "/webapp/myapp" );
+        this.request.setRawPath( "/webapp/myapp/a.txt" );
+
+        final ControllerScript script = mock( ControllerScript.class, CALLS_REAL_METHODS );
+        when( this.controllerScriptFactory.fromScript( ResourceKey.from( "myapp:/webapp/webapp.js" ) ) ).thenReturn( script );
+
+        final WebSocketContext webSocketContext = mock( WebSocketContext.class );
+        this.request.setWebSocketContext( webSocketContext );
+        when( script.execute( any() ) ).thenReturn( PortalResponse.create().webSocket( new WebSocketConfig() ).build() );
+
+        this.handler.doHandle( this.request, null, this.chain );
+
+        verify( webSocketContext ).apply( any( WebSocketEndpoint.class ) );
     }
 
     @Test
