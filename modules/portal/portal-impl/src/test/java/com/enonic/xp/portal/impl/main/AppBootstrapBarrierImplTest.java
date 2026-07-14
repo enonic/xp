@@ -10,6 +10,7 @@ import org.osgi.service.condition.Condition;
 
 import com.enonic.xp.app.ApplicationKey;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.nullable;
@@ -31,24 +32,30 @@ class AppBootstrapBarrierImplTest
         when( context.getServiceReferences( eq( Condition.class ), anyString() ) ).thenReturn(
             List.of( mock( ServiceReference.class ) ) );
 
-        new AppBootstrapBarrierImpl( context, 50 ).await( APP );
+        new AppBootstrapBarrierImpl( context ).await( APP );
 
         // fast path: no tracker is opened when the bootstrap condition is already present
         verify( context, never() ).createFilter( anyString() );
     }
 
     @Test
-    void failsOpenWhenConditionNeverAppears()
+    @SuppressWarnings("unchecked")
+    void awaitsThroughTrackerWhenNotYetIndexed()
         throws Exception
     {
         final BundleContext context = mock( BundleContext.class );
+        final ServiceReference<Condition> reference = mock( ServiceReference.class );
+
+        // fast path misses, but the ServiceTracker finds the condition when it opens
         when( context.getServiceReferences( eq( Condition.class ), anyString() ) ).thenReturn( List.of() );
         when( context.createFilter( anyString() ) ).thenAnswer( invocation -> FrameworkUtil.createFilter( invocation.getArgument( 0 ) ) );
-        when( context.getServiceReferences( nullable( String.class ), anyString() ) ).thenReturn( null );
+        when( context.getServiceReferences( nullable( String.class ), anyString() ) ).thenReturn(
+            new ServiceReference[]{reference} );
+        when( context.getService( reference ) ).thenReturn( Condition.INSTANCE );
 
-        // the bounded wait elapses without the condition appearing: the caller proceeds, no throw
-        new AppBootstrapBarrierImpl( context, 50 ).await( APP );
+        new AppBootstrapBarrierImpl( context ).await( APP );
 
         verify( context ).createFilter( anyString() );
+        verify( context ).getService( reference );
     }
 }
