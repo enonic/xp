@@ -28,10 +28,18 @@ public final class AppBootstrapBarrierImpl
 
     private final BundleContext context;
 
+    private final long waitMillis;
+
     @Activate
     public AppBootstrapBarrierImpl( final BundleContext context )
     {
+        this( context, TimeUnit.SECONDS.toMillis( WAIT_SECONDS ) );
+    }
+
+    AppBootstrapBarrierImpl( final BundleContext context, final long waitMillis )
+    {
         this.context = context;
+        this.waitMillis = waitMillis;
     }
 
     @Override
