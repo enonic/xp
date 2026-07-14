@@ -1,6 +1,7 @@
 package com.enonic.xp.script.graal.executor;
 
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import org.graalvm.polyglot.Value;
 
@@ -41,9 +42,33 @@ final class GraalScriptExports
     }
 
     @Override
-    public ScriptExports pinned( final Object affinityKey )
+    public <T> T executeBound( final Function<ScriptExports, T> work )
     {
-        return affinityKey == null ? this : new GraalScriptExports( executor, script, executor.slotFor( affinityKey ), false );
+        if ( isolated )
+        {
+            return work.apply( this );
+        }
+        // resolve one slot up front (honoring an existing binding or pin) and keep it bound for
+        // the whole scope; the view handed to work stays pinned to that exact slot afterwards
+        return executor.withSlot( pinnedSlot, slot -> work.apply( new GraalScriptExports( executor, script, slot, false ) ) );
+    }
+
+    @Override
+    public void retain()
+    {
+        if ( pinnedSlot != null )
+        {
+            pinnedSlot.retain();
+        }
+    }
+
+    @Override
+    public void release()
+    {
+        if ( pinnedSlot != null )
+        {
+            pinnedSlot.release();
+        }
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.enonic.xp.script;
 
+import java.util.function.Function;
+
 import com.enonic.xp.resource.ResourceKey;
 
 
@@ -16,15 +18,35 @@ public interface ScriptExports
     Object getRawValue();
 
     /**
-     * Returns a view of these exports whose executions have affinity to one underlying script
-     * context, chosen deterministically from the given stable key (e.g. a websocket session id).
-     * Repeated calls with an equal key select the same context, giving stateful consumers
-     * per-connection ordering and module-state affinity on pooled script engines. Engines
-     * without context pooling, or a {@code null} key, return {@code this}.
+     * Runs {@code work} with one exclusively-held script context bound to the calling thread for
+     * the whole scope: every execution inside — through these exports or nested ones — lands on
+     * that exact context. {@code work} receives a view of these exports permanently pinned to it,
+     * which may be retained beyond the scope so that later executions (e.g. the events of a
+     * connection opened by this scope) run on the very context that ran the scope, preserving
+     * its module state. Engines without context pooling simply pass {@code this}.
      */
-    default ScriptExports pinned( Object affinityKey )
+    default <T> T executeBound( Function<ScriptExports, T> work )
     {
-        return this;
+        return work.apply( this );
+    }
+
+    /**
+     * Marks the context this view is pinned to as referenced by a long-lived consumer (e.g. an
+     * open websocket or SSE connection): while referenced, the context is excluded from serving
+     * unrelated executions, so the consumer's state and latency are not disturbed by the request
+     * pool. Reference-counted — pair every call with {@link #release()}. No-op on views without
+     * a pinned context and on engines without pooling.
+     */
+    default void retain()
+    {
+    }
+
+    /**
+     * Releases one {@link #retain()} reference; at zero the pinned context returns to the
+     * general pool.
+     */
+    default void release()
+    {
     }
 
     /**

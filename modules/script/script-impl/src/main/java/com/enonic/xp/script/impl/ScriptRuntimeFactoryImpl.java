@@ -125,7 +125,7 @@ public class ScriptRuntimeFactoryImpl
     }
 
     /**
-     * Logical GraalJS slot capacity per application (the affinity hash space). Slots are created
+     * Logical GraalJS slot capacity per application. Slots are created
      * lazily on demand within the global cross-app budget, so capacity is cheap; it defaults to
      * the global maximum and can be overridden per installation with
      * {@code xp.script-engine.graal.pool-size}. Dev mode stays at 1 so script reloading keeps a

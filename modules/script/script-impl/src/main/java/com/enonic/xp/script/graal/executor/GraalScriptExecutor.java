@@ -93,8 +93,8 @@ public class GraalScriptExecutor
     private final Map<ResourceKey, Source> sources = new ConcurrentHashMap<>();
 
     /**
-     * Lazily populated, fixed logical capacity: affinity hashes over the array length, so a
-     * pool growing under load never remaps pinned connections.
+     * Lazily populated, fixed logical capacity: slots retained by live connections leave the
+     * request rotation, and growth fills free indices instead.
      */
     private final AtomicReferenceArray<ContextSlot> slots;
 
@@ -313,7 +313,9 @@ public class GraalScriptExecutor
         for ( int i = 0; i < size; i++ )
         {
             final ContextSlot slot = slots.get( Math.floorMod( start + i, size ) );
-            if ( slot != null && slot.lock.tryLock() )
+            // retained slots belong to live connections (websocket/SSE): the request pool
+            // leaves them alone and grows replacements instead
+            if ( slot != null && !slot.isRetained() && slot.lock.tryLock() )
             {
                 try
                 {
@@ -333,7 +335,7 @@ public class GraalScriptExecutor
 
     private ContextSlot grownOrExistingSlot( final int start, final int size )
     {
-        // every existing slot is busy: grow within the budget
+        // every eligible slot is busy: grow within the budget
         for ( int i = 0; i < size; i++ )
         {
             final int index = Math.floorMod( start + i, size );
@@ -347,14 +349,25 @@ public class GraalScriptExecutor
                 break;
             }
         }
-        // at capacity or out of budget: wait fairly on an existing slot
+        // at capacity or out of budget: wait fairly on an existing free slot
+        ContextSlot retainedFallback = null;
         for ( int i = 0; i < size; i++ )
         {
             final ContextSlot slot = slots.get( Math.floorMod( start + i, size ) );
             if ( slot != null )
             {
-                return slot;
+                if ( !slot.isRetained() )
+                {
+                    return slot;
+                }
+                retainedFallback = slot;
             }
+        }
+        // liveness over exclusivity: when every existing slot is retained by a connection and
+        // nothing can grow, sharing a retained slot beats starving requests
+        if ( retainedFallback != null )
+        {
+            return retainedFallback;
         }
         throw new IllegalStateException( "No script context available" );
     }
@@ -398,32 +411,6 @@ public class GraalScriptExecutor
         {
             budget.releaseTaskContext();
         }
-    }
-
-    /**
-     * The slot serving executions pinned to the given stable key: deterministic by key hash
-     * over the fixed capacity, so equal keys (e.g. one websocket connection) always resolve to
-     * the same slot without any per-connection bookkeeping. Falls back to the nearest existing
-     * slot when the budget is exhausted.
-     */
-    ContextSlot slotFor( final Object affinityKey )
-    {
-        final int size = slots.length();
-        final int index = Math.floorMod( affinityKey.hashCode(), size );
-        final ContextSlot slot = slotAt( index );
-        if ( slot != null )
-        {
-            return slot;
-        }
-        for ( int i = 0; i < size; i++ )
-        {
-            final ContextSlot existing = slots.get( Math.floorMod( index + i, size ) );
-            if ( existing != null )
-            {
-                return existing;
-            }
-        }
-        throw new IllegalStateException( "No script context available" );
     }
 
     private ContextSlot slotAt( final int index )
@@ -653,6 +640,13 @@ public class GraalScriptExecutor
          */
         final ReentrantLock lock = new ReentrantLock( true );
 
+        /**
+         * Live connections referencing this slot. While positive, the slot serves only its
+         * connections' events (and executions explicitly pinned to it) — the request pool
+         * skips it, except as a last resort when nothing else exists.
+         */
+        private final AtomicInteger pins = new AtomicInteger();
+
         final GraalScriptValueFactory scriptValueFactory;
 
         final JavascriptHelper<Value> javascriptHelper;
@@ -664,6 +658,21 @@ public class GraalScriptExecutor
         GraalScriptExecutor owner()
         {
             return GraalScriptExecutor.this;
+        }
+
+        void retain()
+        {
+            pins.incrementAndGet();
+        }
+
+        void release()
+        {
+            pins.updateAndGet( count -> Math.max( 0, count - 1 ) );
+        }
+
+        boolean isRetained()
+        {
+            return pins.get() > 0;
         }
 
         ContextSlot( final GraalJSContextFactory contextFactory, final ApplicationInfoBuilder application )

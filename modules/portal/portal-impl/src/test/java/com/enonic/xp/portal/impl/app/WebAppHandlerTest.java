@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -98,7 +99,7 @@ class WebAppHandlerTest
         this.request.setBaseUri( "/webapp/myapp" );
         this.request.setRawPath( "/webapp/myapp/a.txt" );
 
-        final ControllerScript script = mock( ControllerScript.class );
+        final ControllerScript script = mock( ControllerScript.class, CALLS_REAL_METHODS );
         when( this.controllerScriptFactory.fromScript( ResourceKey.from( "myapp:/webapp/webapp.js" ) ) ).thenReturn( script );
 
         final PortalResponse response = PortalResponse.create().build();
@@ -117,7 +118,7 @@ class WebAppHandlerTest
         this.request.setPath( "/webapp/myapp" );
         this.request.setRawPath( "/webapp/myapp/" );
 
-        final ControllerScript script = mock( ControllerScript.class );
+        final ControllerScript script = mock( ControllerScript.class, CALLS_REAL_METHODS );
         when( this.controllerScriptFactory.fromScript( ResourceKey.from( "myapp:/webapp/webapp.js" ) ) ).thenReturn( script );
 
         final PortalResponse response = PortalResponse.create().build();
@@ -176,7 +177,7 @@ class WebAppHandlerTest
         this.request.setBaseUri( "/webapp/myapp" );
         this.request.setRawPath( "/webapp/myapp/a.txt" );
 
-        final ControllerScript script = mock( ControllerScript.class );
+        final ControllerScript script = mock( ControllerScript.class, CALLS_REAL_METHODS );
         when( this.controllerScriptFactory.fromScript( ResourceKey.from( "myapp:/webapp/webapp.js" ) ) ).thenReturn( script );
 
         when( script.execute( any() ) ).thenReturn( PortalResponse.create().sse( SseConfig.empty() ).build() );

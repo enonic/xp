@@ -125,17 +125,85 @@ class GraalContextPoolTest
 
     @Test
     @Timeout(60)
-    void pinnedExportsStickToOneSlot()
+    void boundViewSticksToCapturingSlot()
     {
         final ScriptExports exports = scriptExecutor.executeMain( ResourceKey.from( "graaljs:pool-test.js" ) );
 
-        final ScriptExports pinned = exports.pinned( "connection-1" );
-        assertEquals( 1, intValue( pinned.executeMethod( "inc" ) ) );
-        assertEquals( 2, intValue( pinned.executeMethod( "inc" ) ) );
-        assertEquals( 3, intValue( pinned.executeMethod( "inc" ) ) );
+        final ScriptExports bound = exports.executeBound( view -> {
+            // inside the scope every execution shares the captured slot, through either handle
+            assertEquals( 1, intValue( view.executeMethod( "inc" ) ) );
+            assertEquals( 2, intValue( exports.executeMethod( "inc" ) ) );
+            return view;
+        } );
 
-        // an equal key resolves to the same slot on a fresh view
-        assertEquals( 4, intValue( exports.pinned( "connection-1" ).executeMethod( "inc" ) ) );
+        // the view captured by the scope keeps executing on the exact same slot afterwards
+        assertEquals( 3, intValue( bound.executeMethod( "inc" ) ) );
+        assertEquals( 4, intValue( bound.executeMethod( "inc" ) ) );
+    }
+
+    @Test
+    @Timeout(60)
+    void retainedSlotIsSkippedByTheRequestPool()
+    {
+        final ScriptExports exports = scriptExecutor.executeMain( ResourceKey.from( "graaljs:pool-test.js" ) );
+
+        // a connection captures the slot that served its request and retains it
+        final ScriptExports connection = exports.executeBound( view -> {
+            assertEquals( 1, intValue( view.executeMethod( "inc" ) ) );
+            return view;
+        } );
+        connection.retain();
+        try
+        {
+            // anonymous executions never land on the retained slot — its module state is
+            // untouched no matter how many requests run
+            for ( int i = 0; i < 8; i++ )
+            {
+                exports.executeMethod( "inc" );
+            }
+            assertEquals( 2, intValue( connection.executeMethod( "inc" ) ) );
+        }
+        finally
+        {
+            connection.release();
+        }
+
+        // released: the slot serves the request pool again — with both slots free, two
+        // consecutive round-robin executions hit both, advancing the released slot's counter
+        exports.executeMethod( "inc" );
+        exports.executeMethod( "inc" );
+        assertEquals( 4, intValue( connection.executeMethod( "inc" ) ) );
+    }
+
+    @Test
+    @Timeout(60)
+    void allSlotsRetainedFallsBackForLiveness()
+        throws Exception
+    {
+        final ScriptExecutor limited = newExecutor( 1, GraalContextBudget.unlimited() );
+        try
+        {
+            final ScriptExports exports = limited.executeMain( ResourceKey.from( "graaljs:pool-test.js" ) );
+
+            final ScriptExports connection = exports.executeBound( view -> {
+                assertEquals( 1, intValue( view.executeMethod( "inc" ) ) );
+                return view;
+            } );
+            connection.retain();
+            try
+            {
+                // the only slot is retained and nothing can grow: sharing it beats starving
+                assertEquals( 2, intValue( exports.executeMethod( "inc" ) ) );
+            }
+            finally
+            {
+                connection.release();
+            }
+        }
+        finally
+        {
+            ( (Closeable) limited ).close();
+        }
     }
 
     @Test
@@ -188,9 +256,11 @@ class GraalContextPoolTest
         {
             final ScriptExports exports = limited.executeMain( ResourceKey.from( "graaljs:pool-test.js" ) );
 
-            // only the first (unbudgeted) slot exists; differently hashed keys share it
-            assertEquals( 1, intValue( exports.pinned( "a" ).executeMethod( "inc" ) ) );
-            assertEquals( 2, intValue( exports.pinned( "b" ).executeMethod( "inc" ) ) );
+            // only the first (unbudgeted) slot exists; every bound capture resolves to it
+            final ScriptExports first = exports.executeBound( view -> view );
+            final ScriptExports second = exports.executeBound( view -> view );
+            assertEquals( 1, intValue( first.executeMethod( "inc" ) ) );
+            assertEquals( 2, intValue( second.executeMethod( "inc" ) ) );
         }
         finally
         {

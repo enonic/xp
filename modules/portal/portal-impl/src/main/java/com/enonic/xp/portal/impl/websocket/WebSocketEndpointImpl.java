@@ -1,34 +1,55 @@
 package com.enonic.xp.portal.impl.websocket;
 
-import java.util.function.Supplier;
-
-import jakarta.websocket.Session;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketEndpoint;
 import com.enonic.xp.web.websocket.WebSocketEvent;
+import com.enonic.xp.web.websocket.WebSocketEventType;
 
 public final class WebSocketEndpointImpl
     implements WebSocketEndpoint
 {
-    private final Supplier<ControllerScript> scriptSupplier;
+    /**
+     * Pinned to the exact script context that executed the handshake request, so every event of
+     * this connection sees the module state the handshake initialized.
+     */
+    private final ControllerScript script;
 
     private final WebSocketConfig config;
 
-    public WebSocketEndpointImpl( final WebSocketConfig config, final Supplier<ControllerScript> scriptSupplier )
+    private final AtomicBoolean released = new AtomicBoolean();
+
+    public WebSocketEndpointImpl( final WebSocketConfig config, final ControllerScript script )
     {
         this.config = config;
-        this.scriptSupplier = scriptSupplier;
+        this.script = script;
     }
 
     @Override
     public void onEvent( final WebSocketEvent event )
     {
-        final ControllerScript script = this.scriptSupplier.get();
-        final Session session = event.getSession();
-        // all events of one connection execute with affinity to one script context
-        ( session != null ? script.pinned( session.getId() ) : script ).onSocketEvent( event );
+        final WebSocketEventType type = event.getType();
+        if ( type == WebSocketEventType.OPEN )
+        {
+            // the connection now references the handshake context: keep it out of the request
+            // pool until the connection ends
+            this.script.retain();
+        }
+        try
+        {
+            this.script.onSocketEvent( event );
+        }
+        finally
+        {
+            // ERROR may or may not be followed by CLOSE: release exactly once on the first
+            // terminal event
+            if ( ( type == WebSocketEventType.CLOSE || type == WebSocketEventType.ERROR ) && this.released.compareAndSet( false, true ) )
+            {
+                this.script.release();
+            }
+        }
     }
 
     @Override

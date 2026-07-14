@@ -220,18 +220,31 @@ and test, for no real use case.)
    as the canonical parallel primitive — it already has the right shape: the task worker
    `require`s the module itself in its own context.
 
-### 4.4 Websockets and SSE — per-connection worker affinity
+### 4.4 Websockets and SSE — connections keep the exact context of their request
 
-- On socket open (`webSocketEvent` with `type: open`) / SSE stream start, **bind the connection
-  to one worker** (round-robin or least-loaded). All subsequent events for that connection are
-  jobs on that worker's queue — giving per-connection FIFO ordering and race-free handler
-  state, which is precisely what [#8644](https://github.com/enonic/xp/issues/8644) asks for.
+- The handshake/subscribe request executes **bound to one context**
+  (`ControllerScript.executeBound`), and the connection's endpoint keeps a view of the
+  controller **pinned to that exact context** — not a hash-chosen one. Every subsequent event
+  of the connection executes there, seeing precisely the module state the request initialized,
+  in arrival order (fair per-slot locks). This gives per-connection FIFO ordering and race-free
+  handler state, which is what [#8644](https://github.com/enonic/xp/issues/8644) asks for.
+- While a connection references its context (`retain()` on OPEN, `release()` once on the first
+  terminal event — CLOSE/ERROR/TIMEOUT), **the context leaves the request pool**: unrelated
+  requests never run there, so connection state and event latency are not disturbed, and the
+  pool grows replacement slots within capacity and budget instead. Liveness beats exclusivity
+  in one corner: if every existing slot is retained and nothing can grow, requests share a
+  retained slot rather than starve.
+- An earlier design hashed connection keys onto slots (zero bookkeeping, but a *random* stable
+  slot that kept serving requests). Rejected: the handshake's module state ended up on a
+  different context than the events, and request traffic interleaved with connection handlers.
+  The refcount is the bookkeeping cost of doing it right — one integer per slot, no
+  per-connection registry.
 - Cross-connection coordination (`send to group`, subscriber counts) already lives in Java
-  (`WebSocketManagerImpl`) and stays there — broadcast never needs to enter JS, so worker
+  (`WebSocketManagerImpl`) and stays there — broadcast never needs to enter JS, so context
   affinity does not fragment groups.
-- Per-connection JS state should be attached to the event object (`event.session.attributes`
-  style, host-backed map) rather than module-level variables; module state is per-worker after
-  this change (§5).
+- Per-connection JS state may live in module-level variables of the connection's context — the
+  handshake and all events share one context. State spanning *multiple* connections must still
+  be host-backed (§5): different connections may hold different contexts.
 
 ### 4.5 Scaling model: contexts ≈ threads (async model rejected)
 
@@ -244,18 +257,18 @@ context, exactly like a classic Java servlet application.
 
 Sizing note: HTTP requests are bounded by the Jetty worker pool, but websocket and SSE
 connections are async and do not hold worker threads — connection counts can be orders of
-magnitude larger than any thread pool. That is exactly why affinity *hashes many connections
-onto few slots* (§ phase 3) instead of dedicating a context per connection: 10k idle sockets
-cost nothing, and only their momentarily-executing event handlers occupy slots. Two
-consequences: the budget sizes for concurrent *executions* (workers + event-dispatch
-concurrency), not connections; and pinned event handlers should stay short — a hot slot
-serializes all connections hashed to it, and event-dispatch threads block while waiting on it.
+magnitude larger than any thread pool. Retained contexts (§4.4) therefore *are* the sizing
+pressure to watch: each live connection app-wide keeps one context out of the request pool
+(connections of one app naturally share a context when they were served by it — retention
+counts references, not connections). The budget sizes for concurrent *executions plus retained
+connections' contexts*, and pinned event handlers should stay short — one connection's slow
+handler delays the other events bound to the same context.
 
 What this requires of the pool (the "elastic pool" work):
 
 1. **Lazy slot creation with fixed logical capacity.** Slots are addressed by index in
-   `[0, capacity)` and created on first use. Affinity hashing maps keys onto the *capacity*,
-   not the live slot count, so a pool growing under load never remaps existing connections.
+   `[0, capacity)` and created on first use; retention marks a slot as connection-owned and
+   the pool grows replacements at free indices.
 2. **A global budget, not per-app pools.** Apps grow on demand within a shared cap
    (`xp.script-engine.graal.max-contexts`); at the cap, requests wait for a free slot (today's
    behavior) instead of creating one. Idle-slot reaping can come later — grow-only is an
@@ -277,13 +290,12 @@ build on anyway.
 One shared pool lets any workload class starve the others; the budgets are partitioned instead:
 
 - **Requests** — the elastic pool above. Nested executions (component rendering) stay on the
-  request's slot via the ThreadLocal binding.
-- **Websocket/SSE events** — no separate partition: events *steal from the request pool* via
-  hash affinity and drive its lazy growth like any other execution (connections vastly
-  outnumber contexts by design; only momentarily-executing handlers occupy slots). Because
-  event-dispatch threads are shared, pinned executions bound their slot wait (30 s instead of
-  the 5-minute request wait) so a saturated hot slot fails events fast instead of holding
-  shared threads.
+  request's slot via the scoped binding.
+- **Websocket/SSE events** — no separate partition: a connection *steals the exact slot its
+  request ran on* out of the pool (retained while the connection lives), and the pool grows
+  replacements within capacity and budget. Because event-dispatch threads are shared, pinned
+  executions bound their slot wait (30 s instead of the 5-minute request wait) so a saturated
+  connection slot fails events fast instead of holding shared threads.
 - **Tasks — ephemeral context per execution.** XP runs tasks on **virtual threads**, and IO-wait
   workloads are a loved use case: task concurrency is effectively unbounded and an IO-waiting
   JS task holds its context for the entire wait. Any *bounded* task partition therefore
@@ -353,7 +365,7 @@ per-app**. `main.js` and every required module run once *per context*. Impact an
 | Module-level cache (`lib-cache`) | one instance per app | one per worker | `lib-cache` is a host object (Caffeine) — host objects may be shared across contexts; register instances in a host-side per-app registry keyed by module+name, so all workers see one cache |
 | App singleton / counter in a module | global per app | per worker | document; provide `lib-app-state` (host-backed shared map with data-only values) for intentional shared state |
 | `main.js` side effects (event listeners, cron via lib-cron) | run once | would run N times | run `main.js` on a **dedicated "main" worker** only; listeners registered there execute there (routed handles, §4.2) |
-| WebSocket handler state in module vars | racy but shared | per worker; per-connection thanks to affinity | prefer connection-scoped state; document |
+| WebSocket handler state in module vars | racy but shared | per context; a connection shares one context with its handshake request (§4.4) | works per connection; state spanning connections must be host-backed |
 | Dev-mode file-change invalidation | clear one cache | clear N caches | pool size 1 in dev mode |
 
 These are exactly the "minimal, documented" divergences the platform can afford — they mirror
@@ -366,7 +378,7 @@ what every Node.js cluster / worker deployment already imposes on developers.
 | App effectively single-threaded | one `Context` + `synchronized` everywhere | worker pool (§4.1) |
 | `executeFunction` broken | closure invoked on foreign thread | detached eager-param mode on pooled engines, routed handle elsewhere (§4.3) |
 | Callbacks (`lib-event`, converter `toFunction`) crash under load | unsynchronized cross-thread `Value.execute` | `JsFunctionHandle` routing (§4.2) |
-| Websocket/SSE ordering & state unclear | global lock + module state | per-connection worker affinity (§4.4) |
+| Websocket/SSE ordering & state unclear | global lock + module state | connections keep their request's exact context (§4.4) |
 | Servlet threads blocked on JS lock | sync dispatch | async servlet + promise controllers (§4.5) |
 | Object representation surprises | scattered lazy/eager conversion | single conversion spec + tests (§4.6) |
 
@@ -396,12 +408,17 @@ what every Node.js cluster / worker deployment already imposes on developers.
    callback in the callback's own slot and avoids slot/monitor deadlock cycles. Still to do
    from the original plan: dedicated worker threads (queue instead of monitor) and a
    main-worker rule for `main.js` listeners at pool sizes above 1.
-3. **Connection affinity** *(started on this branch)* — `ScriptExports.pinned(affinityKey)` /
-   `ControllerScript.pinned(affinityKey)` give hash-stable slot affinity with no per-connection
-   bookkeeping (equal keys always resolve to the same slot). Portal websocket and SSE endpoints
-   pin every event by session id / SSE client id, so one connection's handlers execute in one
-   context, in arrival order (fair per-slot locks). Scripts stay freshly resolved per event, so
-   dev-mode reload semantics are unchanged. Universal-API endpoints are untouched (their
+3. **Connection affinity** *(started on this branch)* — `ScriptExports.executeBound(work)` /
+   `ControllerScript.executeBound(work)` run a request bound to one context and hand `work` a
+   view pinned to that exact context. Portal handlers execute every controller this way; a
+   websocket/SSE endpoint keeps the pinned view, so all events of a connection execute on the
+   very context that ran the handshake — its module state included — in arrival order (fair
+   per-slot locks). Endpoints `retain()` the context on OPEN and `release()` it once on the
+   first terminal event: while retained, the context is excluded from the request pool (the
+   pool grows replacements within capacity and budget; if everything is retained and nothing
+   can grow, requests share a retained slot — liveness over exclusivity). Replaced the earlier
+   hash-key affinity (`pinned(affinityKey)`): a random stable slot lost the handshake's module
+   state and kept serving unrelated requests. Universal-API endpoints are untouched (their
    handlers are Java-based today — extend when JS-backed handlers arrive). Addresses the
    ordering/state side of [#8644](https://github.com/enonic/xp/issues/8644) at pool sizes
    above 1.
@@ -418,7 +435,7 @@ what every Node.js cluster / worker deployment already imposes on developers.
    docs.
 5. **Elastic pool (contexts ≈ concurrent executions)** *(started on this branch)* — replaces
    the earlier async-servlet phase, see §4.5. Landed: lazy slot creation over a fixed logical
-   capacity (affinity-stable growth), the global cross-app context budget
+   capacity (retention-aware growth), the global cross-app context budget
    (`xp.script-engine.graal.max-contexts`, default 200; first slot per app always allowed),
    ephemeral task contexts behind `ScriptExports.isolated()` bounded by
    `xp.script-engine.graal.max-task-contexts`, the strong per-app `Source` registry, bounded

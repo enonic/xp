@@ -391,16 +391,24 @@ public class SlashApiHandler
     private PortalResponse executeController( final PortalRequest req, final DescriptorKey descriptorKey )
     {
         final ControllerScript script = getScript( descriptorKey );
-        final PortalResponse res = script.execute( req );
-        final WebSocketConfig webSocketConfig = res.getWebSocket();
 
+        // bound execution: a connection opened by this request stays on the exact context that
+        // executed it
+        final ControllerScript[] boundRef = new ControllerScript[1];
+        final PortalResponse res = script.executeBound( bound -> {
+            boundRef[0] = bound;
+            return bound.execute( req );
+        } );
+        final ControllerScript boundScript = boundRef[0];
+
+        final WebSocketConfig webSocketConfig = res.getWebSocket();
         applyWebSocketIfPresent( req.getWebSocketContext(), webSocketConfig,
-                                 () -> new WebSocketEndpointImpl( webSocketConfig, () -> script ) );
+                                 () -> new WebSocketEndpointImpl( webSocketConfig, boundScript ) );
 
         final SseConfig sseConfig = res.getSse();
         if ( sseConfig != null )
         {
-            final SseEndpointImpl sseEndpoint = new SseEndpointImpl( sseConfig, () -> script );
+            final SseEndpointImpl sseEndpoint = new SseEndpointImpl( sseConfig, boundScript );
             this.sseManager.setupSse( req, sseEndpoint );
         }
 

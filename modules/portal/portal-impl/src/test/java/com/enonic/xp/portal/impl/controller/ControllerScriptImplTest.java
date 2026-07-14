@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.controller;
 
 import java.util.UUID;
+import java.util.function.Function;
 
 import org.junit.jupiter.api.Test;
 
@@ -40,26 +41,41 @@ class ControllerScriptImplTest
     }
 
     @Test
-    void pinned_wrapsPinnedExports()
+    void executeBound_wrapsBoundExports()
     {
         final ScriptExports exports = mock( ScriptExports.class );
-        final ScriptExports pinnedExports = mock( ScriptExports.class );
-        when( exports.pinned( "connection" ) ).thenReturn( pinnedExports );
+        final ScriptExports boundExports = mock( ScriptExports.class );
+        when( exports.executeBound( any() ) ).thenAnswer(
+            invocation -> invocation.getArgument( 0, Function.class ).apply( boundExports ) );
 
         final ControllerScriptImpl script = new ControllerScriptImpl( exports );
 
-        assertNotSame( script, script.pinned( "connection" ) );
+        assertNotSame( script, script.executeBound( bound -> bound ) );
     }
 
     @Test
-    void pinned_sameExports_returnsSameInstance()
+    void executeBound_sameExports_passesSameInstance()
     {
         final ScriptExports exports = mock( ScriptExports.class );
-        when( exports.pinned( "connection" ) ).thenReturn( exports );
+        when( exports.executeBound( any() ) ).thenAnswer(
+            invocation -> invocation.getArgument( 0, Function.class ).apply( exports ) );
 
         final ControllerScriptImpl script = new ControllerScriptImpl( exports );
 
-        assertSame( script, script.pinned( "connection" ) );
+        assertSame( script, script.executeBound( bound -> bound ) );
+    }
+
+    @Test
+    void retainAndRelease_delegateToExports()
+    {
+        final ScriptExports exports = mock( ScriptExports.class );
+        final ControllerScriptImpl script = new ControllerScriptImpl( exports );
+
+        script.retain();
+        verify( exports ).retain();
+
+        script.release();
+        verify( exports ).release();
     }
 
     @Test

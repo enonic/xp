@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.controller;
 
 import java.util.Locale;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.jspecify.annotations.NullMarked;
@@ -63,10 +64,22 @@ final class ControllerScriptImpl
     }
 
     @Override
-    public ControllerScript pinned( final Object affinityKey )
+    public <T> T executeBound( final Function<ControllerScript, T> work )
     {
-        final ScriptExports pinnedExports = this.scriptExports.pinned( affinityKey );
-        return pinnedExports == this.scriptExports ? this : new ControllerScriptImpl( pinnedExports );
+        return this.scriptExports.executeBound(
+            bound -> work.apply( bound == this.scriptExports ? this : new ControllerScriptImpl( bound ) ) );
+    }
+
+    @Override
+    public void retain()
+    {
+        this.scriptExports.retain();
+    }
+
+    @Override
+    public void release()
+    {
+        this.scriptExports.release();
     }
 
     @Override
