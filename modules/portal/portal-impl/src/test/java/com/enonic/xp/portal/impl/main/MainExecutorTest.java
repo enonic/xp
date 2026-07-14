@@ -46,7 +46,9 @@ class MainExecutorTest
     @SuppressWarnings("unchecked")
     void setup()
     {
-        lenient().when( this.bundleContext.registerService( eq( Condition.class ), any(), any() ) ).thenReturn( this.registration );
+        // eq( Condition.INSTANCE ) also disambiguates from the ServiceFactory registerService overload
+        lenient().when( this.bundleContext.registerService( eq( Condition.class ), eq( Condition.INSTANCE ), any() ) )
+            .thenReturn( this.registration );
         this.executor = new MainExecutor( this.scriptService, this.bundleContext );
     }
 
